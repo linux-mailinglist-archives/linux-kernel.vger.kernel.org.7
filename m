@@ -1,233 +1,212 @@
-Return-Path: <linux-kernel+bounces-798050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE9CDB418E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:42:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61A6EB41963
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F77B3BF81F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:42:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 442351B21223
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1B92F0C63;
-	Wed,  3 Sep 2025 08:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD5B2F28F4;
+	Wed,  3 Sep 2025 08:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="iylZ97Qy"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazolkn19010019.outbound.protection.outlook.com [52.103.33.19])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FOYvRcAa"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3F82EFDB5;
-	Wed,  3 Sep 2025 08:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.33.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756888872; cv=fail; b=pk5vpVwpSpNJh85r6IHynKac5gx+kbaiwwq8UYYj854/m1rWDoGyx+ygYmEHe+OMqnVHbkRLWKI8bkP+wmMrTPxGcCDp8gqC/+SQGL1vrbjTTsmBb7Ru5asjDfiRVNPWOJE8GfITe/DB+lck62JVczmlzgSu5/Y+kyildcbVA/4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756888872; c=relaxed/simple;
-	bh=n1Y1sPCUFpnOeP+PEKDpaGL8q+TzgT7J9PBsFgASNIw=;
-	h=Message-ID:Date:To:Cc:References:Subject:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OhuqXPuREL9Cg8YqD5JQDHcI4lNsOTg8EzjyKKVhWF/T1C/r5eF7BbnRhYzwSQnAPYk4ypsG2C2QnYfAbTv+pY3XOxFc4UwT3vSR3r1ZXAazvyeE+5v1dn44JEq0QpFpN/0numDLCH+vZDv+P7fN0lfMJbDz6wVNl76SKWP16JQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=iylZ97Qy; arc=fail smtp.client-ip=52.103.33.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=psxE2lsnx4DtlJQZsA317YevQIIAatVht5puNERBs4yXRnTB/A8qdxFLs7PNKcGH+4lztYlh2vOx980nDZ5q3D+YkgfWP0ZnXX1zVCFzsXBXkcONQk581ljJasaB2Fb7ra1kDBB+AIkAtv3TRRgeXVM3LPXcOQmDgNC3YApw6GxZF7DS37ZKxk3I7eKCX0byc/8lNPKFDamriphKJbifFTuZx5xNcF+9Gfh8CghcMTR3g63kp7xgvsrON4oMsOAp2iQx5XIXNNSfEzgBSYd467q++Ym2up66J6IHkdSnLTs+fTuEjwDH+4CBL7wrTF2SrMXcm2pOrwFDBWRiSbGGmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AHwPSVMBjGEXR1SKPAtuWsazj7c+2dO8K78V9W0fwO8=;
- b=TUWl9g8wZ96LE+dle09MVhG2efOKafrw+fXNHnQ2hKkZuz5/4Op+UvpVrGzlCgCGKqcpo99vdBVO9mB5/Qwl7Ve/InyctQ8Q1orxANIXevXKem0p7kQDRFKweQqDfhfRMg3vMKXV3bibo9IVttjE9C0ncKLZGbHIGMJsXpgoqxmnrQNqZh9HdnykdKMlpJOcYqiR9zX7k54xXJ7JI/bmSCLLABOb9yGJrujgriREv0biDYzN0//3DlvQqeFyQj2K6ObkiGLzvuRwlIqDI/VUuJkuGFkbL2OR/QvX/A9/RKMsxCEhUsaHUloeW/Ug8FBcpmC9C3I4PY3sLkI8qU0ijw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AHwPSVMBjGEXR1SKPAtuWsazj7c+2dO8K78V9W0fwO8=;
- b=iylZ97QyvzcGrIVCWttyYlTPHQR6liGR9r8I06ftEFfGZOxTz7dF+mZGowXAOlHgBQ1z0ppa96C/Oqto9yMcQLmYcw/h4tPoGKwVFnBuCYn+xehewdECdfEVjIesgxIP55bpG4qqSl6yc2Y0fpkyklRV8/a65F7Qu/8VLautTNxBFgDmAmO3cEjqDlE6EcgTIByYW6xBvT3JvOgPUFapMyGD1CFTJ8TaSE+pUZHgzhUvDgxc9oEwboONqBrECwiIOnGFgQa+pZsFueBbFF1SPOezSg7EsFJ6AfjY0KbuxrvE1P2NTMBwBwEqzEDlGCwbKiItgxFDxtzxq3UJ+YftgQ==
-Received: from AM7P189MB1009.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:175::17)
- by PR3P189MB1035.EURP189.PROD.OUTLOOK.COM (2603:10a6:102:48::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Wed, 3 Sep
- 2025 08:41:07 +0000
-Received: from AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
- ([fe80::5756:694d:1641:3b13]) by AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
- ([fe80::5756:694d:1641:3b13%4]) with mapi id 15.20.9073.026; Wed, 3 Sep 2025
- 08:41:07 +0000
-Message-ID:
- <AM7P189MB100958EDD985483DB1F32EC5E301A@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
-Date: Wed, 3 Sep 2025 10:41:05 +0200
-User-Agent: Mozilla Thunderbird
-To: devnull+fenglin.wu.oss.qualcomm.com@kernel.org
-Cc: andersson@kernel.org, bryan.odonoghue@linaro.org, conor+dt@kernel.org,
- david.collins@oss.qualcomm.com, devicetree@vger.kernel.org,
- dmitry.baryshkov@oss.qualcomm.com, fenglin.wu@oss.qualcomm.com,
- gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com,
- kernel@oss.qualcomm.com, konrad.dybcio@oss.qualcomm.com,
- konradybcio@kernel.org, krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-usb@vger.kernel.org, me@kuruczgy.com, robh@kernel.org, sre@kernel.org,
- subbaraman.narayanamurthy@oss.qualcomm.com
-References: <20250826-qcom_battmgr_update-v3-8-74ea410ef146@oss.qualcomm.com>
-Subject: Re: [PATCH v3 8/8] arm64: dts: qcom: x1e80100-crd: Add charge limit
- nvmem
-Content-Language: en-US
-From: Maud Spierings <maud_spierings@hotmail.com>
-In-Reply-To: <20250826-qcom_battmgr_update-v3-8-74ea410ef146@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AS4P189CA0065.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:20b:659::8) To AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:20b:175::17)
-X-Microsoft-Original-Message-ID:
- <343ef088-9147-4b3e-9f44-32dabd4e0ae0@hotmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7080B2F2903
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756889768; cv=none; b=UWQQ3OrthREVt3dEonV5mMz+eizyNnXW5pVEk6H7u76DI+nOTRKhji14X1MQ+VB1/Srau3Sfat9zV9vevMKBhP4IDyrbgL57haClDmqIPFH/H2MFdrl0JYg+sa2kPRxV39cTCOM6O4vP4pDBCtCAk4We/C5Sw5tjchpfvaES+Rg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756889768; c=relaxed/simple;
+	bh=268Ct99JjtUApKF9A6vpxfxU1JCp/9r8U9S08u1M2zg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=V0VZcJJUxEfVyFxqgRvBqhXQqy1xcp/uhfaXurhNVpsexUWPbrAH1tV1K7Hw7U3BjvHombU4O0tyjolOiKj5tfQQuuYBPrlqiHDOZLPXXrFKKjEp+/NbQuizZqCRyKM66mgjwB7Uh9Y47YbYa17dgU+P6SboqwSEOqs3WUavA6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FOYvRcAa; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250903085556epoutp0311cde22019ce392dfbb0fe1753b27a9c~huezjAWyD1650916509epoutp03h
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:55:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250903085556epoutp0311cde22019ce392dfbb0fe1753b27a9c~huezjAWyD1650916509epoutp03h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756889756;
+	bh=bA76rll/wXeKqMGIRxAZgS5mWnhgMeLsw86yBouXkGc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FOYvRcAa68wNooeH/Z3AJA/PWBgcnBOqFi/7Cz01ijBMVqcloJEe3odUurCJU4w5I
+	 eYqRF3sOTHowu3wjvlK4vE+gIKJahjeZA98DFjkzHiNpsOC+rB1GF7QxqdhkdWsszw
+	 0HtbzwOaCCeQ1GQtaWgOepVgUwW/agYKt5Zd0fVQ=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250903085556epcas5p3308bab41b8ae1bbe946b8cee7e35adf8~huezRTXL52834228342epcas5p3F;
+	Wed,  3 Sep 2025 08:55:56 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cGxKR31lBz3hhTJ; Wed,  3 Sep
+	2025 08:55:55 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250903084608epcas5p19a0ad4f0d1bad27889426e525d0c4598~huWQIIitD1722017220epcas5p1q;
+	Wed,  3 Sep 2025 08:46:08 +0000 (GMT)
+Received: from node122.. (unknown [109.105.118.122]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250903084608epsmtip2836f174f83877da7399e25e322ef2ca3~huWPXdGwN0822408224epsmtip21;
+	Wed,  3 Sep 2025 08:46:08 +0000 (GMT)
+From: Xue He <xue01.he@samsung.com>
+To: yukuai1@huaweicloud.com, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com
+Subject: Re: [PATCH] block: plug attempts to batch allocate tags multiple
+ times
+Date: Wed,  3 Sep 2025 08:41:35 +0000
+Message-Id: <20250903084135.2860-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <345e9d6e-8bb2-3d43-4c3c-cc16fa7dd8c1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7P189MB1009:EE_|PR3P189MB1035:EE_
-X-MS-Office365-Filtering-Correlation-Id: f48c21ef-945c-4164-a23f-08ddeac59f56
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|41001999006|19110799012|8060799015|5072599009|461199028|6090799003|23021999003|15080799012|52005399003|3412199025|40105399003|440099028;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MWptR3N4R1hHQVhMeWw5QUw4Y1hNTDhta2tsWk83Mno1V04yUE9uK216QTNj?=
- =?utf-8?B?Wmw3aDVkUC9GcE45bzRJaFZuVWJicjMxVStVY3B2YXp2eDV1QjdsRHBtSk5k?=
- =?utf-8?B?K2R0ZXd6QWJuMFF2clA0aGdqSUtVUmFPejRxVmd3Rk92YnIyYkpqM1hYNlVm?=
- =?utf-8?B?dWZLbytlYjN0OVlaMWlFbUVISktqU1FVWURPb3pYSlJweHNhSmlQbEVUY3Rn?=
- =?utf-8?B?aXNNNmIyalZDYWNhdTZCais4dFFWYVQ5WWJiaHoydmxZYk1UYzE2bTZvR1ow?=
- =?utf-8?B?SXZMc3hWUDJ1UUQ1NHVTa3BhMTJ1bXBydzRSVUFZRUdzb0R2UlRmT1FRaVE0?=
- =?utf-8?B?SkFyNlgxbGw2UzI2SzRKUnA2bHJBVXNIK3NmUXUwTUxrVGdOWWZGRjRuWldo?=
- =?utf-8?B?ak9DT2JUZDB3bkJRSmREbUdNY2o1Mkw3L0YyanRjOERFZFFUczZXV1hGSG5h?=
- =?utf-8?B?UzdXYlp0Z09YdytuZ3RDZkYrcko2c2xveWF6WnRqS0RlbjZSb2NBdzRhMnRF?=
- =?utf-8?B?Nm9Dbm5mT3VEdWc1RVkyd0xqd2VWdlNpQlo4UDZkeHRFTWNXWU5UeElDTGN4?=
- =?utf-8?B?bFNxeW9UTUtvR1NKM2pjRjVlZEkvczlpMFIxa3dURzBTNHpES2ozejltU3d5?=
- =?utf-8?B?dElDb3ArblVYanJOajgrd3JWbHVTZUR3VnNrcjZvNWVWd0FJdjV4a3UvNEJU?=
- =?utf-8?B?OFRyOS9uZEdzdkFDN3ZVNUpTc0prZ3RHQWZISjQwVmhINGVkdnJrZEp6a2lF?=
- =?utf-8?B?NlpBeHpIajRJdHd5MklveFBsQ1ZMVnlDeENGNUluZzIvVzZ5d0x0aFdNTHp5?=
- =?utf-8?B?eE1pMC9ydExJSjFzSm9zYmtSS2gyVmQ5ZTl2Tk1zNkp2cmkrQ1RvTGY4cXBC?=
- =?utf-8?B?Ym9uUjZKZmgyVTFwN09QVWNaTEFJWElHc0huQ0VyTzN0NWIvV0xTelBuWXJT?=
- =?utf-8?B?NGpWa3JmRVR2dFdLTHdqTEpTWlNNVHRHZWoxTzVUUDB5OVFiYndHa3Z4bkpO?=
- =?utf-8?B?SXB4bWlUdG52emZtalgrZ1I3bk5ML29zSlRNcW5kb3AvV294cVIrQ2dNTGRh?=
- =?utf-8?B?TkwySDJrcXpTOWpBTEhmd3h2azdvYTY1MzFCbnl2RlpnUDZOUC9VUkd2VG8r?=
- =?utf-8?B?VlM3bkQ3ZzV0aUM2bmZ5bjRlcTN4bTlWUzBuSVRzR0d0NFUvb25VU0FoVTYy?=
- =?utf-8?B?WGwzcmdyTzVDWTYyekpLN3dhZFpDMklQa1NTM2VKN0twN0dDTno2Wlg2VHVN?=
- =?utf-8?B?NFlCUnBKYjNXN3ZjYTlPQTVQbkViZHN0WHBCbmxUWnZQK2ptdFAwYW5TYkFQ?=
- =?utf-8?B?eFBaVm5NcE9FQXZyZTVXa2grd3NTSi9hSTV1N0NFODZSVHBpanIvcXFaQmUx?=
- =?utf-8?B?NHFQc29ad05Zd050NlA1L3pyYytVVEZrNFF4ejNXYTNoV2oyK05jb2FlUHQw?=
- =?utf-8?B?K00yRVFGUFN4bitmSGVmdENNQ0UxeTRlZ0lTZi9ma1UzemZqdEFXMU9pclBR?=
- =?utf-8?B?Y0pQdkhNRFoxOWFteW5vY1pDM1R2NGRGNnBUMnZBSXlEVGlPZU5iRVhMdlFK?=
- =?utf-8?B?Wk5YK3BLWk0ram9hUW5FUVhTZDJzWXJObHlHd1NVWWpLR25CdUc4T2szR2R6?=
- =?utf-8?Q?VfX4gG8QNxtOvixUeU11tyV8Z0NRuZEhIOlINg5tZnQE=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MjkxaXo4eEE4d0lINmJkenlodWI0MDRKa056bXdqMW9XUW5hRHY5VDVuVkU4?=
- =?utf-8?B?bkVPQnZlWE5JSG5YNGNweVRmZ09qcmpqcHpYSVU2UE1vKzF0QnhZTDJITHZB?=
- =?utf-8?B?THN6RWlGay9JWTl6TXdpVHZMdG1XNm5mVE9oWkNmRmY4OTlkY1V4SllxVEZR?=
- =?utf-8?B?YmdEOGZJbTVuN0JqQ0Yzd2ZaVjBOTkQ2RFovZ1F1bk1qYlFTbEVWLzlyYklh?=
- =?utf-8?B?bExsOHRWejFia1hQRStUUTRpSTB3OTNXQkpBV1A4VmJidHdVZlBucFdFbVd6?=
- =?utf-8?B?QWFVTXA4eEVzRXFZUHdtMjFUbG83VmU5TFY5OFJJbThpR3E2VGgrdHpaY3V0?=
- =?utf-8?B?TDkzb0ZPb0szeVU0ODhqSFkxYTZsYU43VXJEaHFxTDBHUlVBcjNVaWZ0SVE4?=
- =?utf-8?B?MkZiY3JQLzRqbDcwUU14cFJuMTNlRzcvcUNyWHhKVEZRYW9kdm00Q2xsMWFT?=
- =?utf-8?B?dHhJK0NlejFwNjNEaDJ6RXIzOHFQTy9HTjBsKzFGTEJ2MFlGUDhRenRnOVo2?=
- =?utf-8?B?R0k0eUQvV0k2VXBlcGhSd1k5SVBuekJnY2gvS21LMlkyVzZIZnpkUTV6bm9x?=
- =?utf-8?B?YTQzY2J3RHNyWThLVnhwZU5BbSs3QlV3RzIvVmthd0NxTGoydng4QkR6eGNp?=
- =?utf-8?B?M01lSjBYZGhDVmZMeDRjbjB5cUwyWE44ZnRuL3FuK1B5TDVpT1JjV2NzVnZR?=
- =?utf-8?B?K3pTN3VZTFBTUnZ6ZHZGTU9JQ3BrUXFkRW9ENFFXS3FWd3YzOFFBZ3A4b1hq?=
- =?utf-8?B?SXZTeWV0ZHhUSlYzNm9ocHRaWjJ2U1pPK0pVSSswZXdrSmJwRzRLWDJOSUpX?=
- =?utf-8?B?aEF0TTR6UmtGbGc2M1RuUVJ3SlZDaHlYSmNSRHBySldpRlpuZW82T1FFUXEx?=
- =?utf-8?B?OVpqUmJhbXY3dWVSQnU4SWxtQTY5andZZU5jYzI2aEhtRFlGZlhSNnAwUWRq?=
- =?utf-8?B?d1RTSGZCRjNvSUtBR3pKYVplZmJiZ2QzbDVOOGlKVW5yN3VKMmdhK0YyblFu?=
- =?utf-8?B?aEsyTmU0WmZGemx2NmR4L3ZGRGZWUVRKaHU4cEgxZFBrclJCRG85K2gzVDNO?=
- =?utf-8?B?ZmJRSnZzd25uS1hvNG50eS9ieTNkQVRCcnNDQ2NRLzBSUWZPK3NKR3MyWmxV?=
- =?utf-8?B?M09Uby9nMEdjbEN1VlNQSkQxQ3hVc3pMbG1WMElnd2RkVis2SHdDV2lsM00y?=
- =?utf-8?B?THEvZGpzS0NCTHQ1VElkVUc3cE42alMwNnR5V1Z6RjkzTFlJTTNNSHUzMTJU?=
- =?utf-8?B?aEI3V3dOclIwWTNPRkxIN0JOUGFHTHgwVENhZHNaRUg0OWdTazJmK0RnOTdG?=
- =?utf-8?B?eGJWSkVZWnVFSGF4UFlqeVFHdEo4b3JVblRVeGRsb1k0dXNVS0pLMGEvZFZT?=
- =?utf-8?B?YU9IRE94YzRXMFRLRnhsbW1Za3lRbzFPdG8zK0M4TkpUOVY5bVoyUGVFbVlk?=
- =?utf-8?B?eVNoODVPYXM2bXo4NFVpczFkeDF4ckpwMEV4NEtRSzR3YkxBajJ0MHVJSVg5?=
- =?utf-8?B?eHVDWDkvYXMxQlZ4NThPdFZrK1czVWtmZVlpYktJdm0xV1lDOWF4U3FjZ2p1?=
- =?utf-8?B?WUx0ajZYTTdYQXI1RWxlQ3dteGFHNVpsaFptOTlzU2dVVnhFcE5mUkoyRlZs?=
- =?utf-8?B?cHhSUysxYnVCUDd5eWFUSE1TTW0zUjJ6a3IzSkVYdm1pRFB0WGljZ2ZLSjBI?=
- =?utf-8?B?QmNQajh3NkM4TXRWM1l2cElQTWtEWjJweUtxK3hPQk9IRXRyVnJDSzNiTC8w?=
- =?utf-8?Q?PePV8kUKtEq/S6CUdhhzQHCqqUanDNRy+IiPw4/?=
-X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-2ef4d.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: f48c21ef-945c-4164-a23f-08ddeac59f56
-X-MS-Exchange-CrossTenant-AuthSource: AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 08:41:07.6430
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3P189MB1035
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250903084608epcas5p19a0ad4f0d1bad27889426e525d0c4598
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-505,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250903084608epcas5p19a0ad4f0d1bad27889426e525d0c4598
+References: <345e9d6e-8bb2-3d43-4c3c-cc16fa7dd8c1@huaweicloud.com>
+	<CGME20250903084608epcas5p19a0ad4f0d1bad27889426e525d0c4598@epcas5p1.samsung.com>
 
-Hi Fenglin,
+On 2025/09/02 08:47 AM, Yu Kuai wrote:
+>On 2025/09/01 16:22, Xue He wrote:
+......
+>> This patch aims to allow the remaining I/O operations to retry batch
+>> allocation of tags, reducing the overhead caused by multiple
+>> individual tag allocations.
+>> 
+>> ------------------------------------------------------------------------
+>> test result
+>> During testing of the PCIe Gen4 SSD Samsung PM9A3, the perf tool
+>> observed CPU improvements. The CPU usage of the original function
+>> _blk_mq_alloc_requests function was 1.39%, which decreased to 0.82%
+>> after modification.
+>> 
+>> Additionally, performance variations were observed on different devices.
+>> workload:randread
+>> blocksize:4k
+>> thread:1
+>> ------------------------------------------------------------------------
+>>                    PCIe Gen3 SSD   PCIe Gen4 SSD    PCIe Gen5 SSD
+>> native kernel     553k iops       633k iops        793k iops
+>> modified          553k iops       635k iops        801k iops
+>> 
+>> with Optane SSDs, the performance like
+>> two device one thread
+>> cmd :sudo taskset -c 0 ./t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1
+>> -n1 -r4 /dev/nvme0n1 /dev/nvme1n1
+>> 
+>
+>How many hw_queues and how many tags in each hw_queues in your nvme?
+>I feel it's unlikely that tags can be exhausted, usually cpu will become
+>bottleneck first.
 
-> Add nvmem cells for getting charge control thresholds if they have
-> been set previously.
-> 
-> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/x1-crd.dtsi         |  2 ++
->  arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi | 20 ++++++++++++++++++++
->  2 files changed, 22 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1-crd.dtsi b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-> index c9f0d505267081af66b0973fe6c1e33832a2c86b..8c3d30dd936ef9b12867971f5f237dd12484072d 100644
-> --- a/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-> @@ -82,6 +82,8 @@ pmic-glink {
->  				    <&tlmm 123 GPIO_ACTIVE_HIGH>,
->  				    <&tlmm 125 GPIO_ACTIVE_HIGH>;
->  
-> +		nvmem-cells = <&charge_limit_en>, <&charge_limit_end>, <&charge_limit_delta>;
-> +		nvmem-cell-names = "charge_limit_en", "charge_limit_end", "charge_limit_delta";
->  		/* Left-side rear port */
->  		connector@0 {
->  			compatible = "usb-c-connector";
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-> index c02fd4d15c9649c222caaafa5ed2c777a10fb4f5..abf7afe5127d7b8b572513234e00009ce837837d 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-> @@ -239,6 +239,26 @@ reboot_reason: reboot-reason@48 {
->  			};
->  		};
->  
-> +		pmk8550_sdam_15: nvram@7e00 {
-> +			compatible = "qcom,spmi-sdam";
-> +			reg = <0x7e00>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges = <0 0x7e00 0x100>;
-> +
-> +			charge_limit_en: charge-limit-en@73 {
-> +				reg = <0x73 0x1>;
-> +			};
-> +
-> +			charge_limit_end: charge-limit-end@75 {
-> +				reg = <0x75 0x1>;
-> +			};
-> +
-> +			charge_limit_delta: charge-limit-delta@75 {
+the information of my nvme like this:
+number of CPU: 16
+memory: 16G
+nvme nvme0: 16/0/16 default/read/poll queue
+cat /sys/class/nvme/nvme0/nvme0n1/queue/nr_requests
+1023
 
-I think this is supposed to be @76 given the reg property below and the 
-other ones above.
+In more precise terms, I think it is not that the tags are fully exhausted,
+but rather that after scanning the bitmap for free bits, the remaining
+contiguous bits are nsufficient to meet the requirement (have but not enough).
+The specific function involved is __sbitmap_queue_get_batch in lib/sbitmap.c.
+                    get_mask = ((1UL << nr_tags) - 1) << nr;
+                    if (nr_tags > 1) {
+                            printk("before %ld\n", get_mask);
+                    }
+                    while (!atomic_long_try_cmpxchg(ptr, &val,
+                                                      get_mask | val))
+                            ;
+                    get_mask = (get_mask & ~val) >> nr;
 
-> +				reg = <0x76 0x1>;
-> +			};
-> +		};
-> +
->  		pmk8550_gpios: gpio@8800 {
->  			compatible = "qcom,pmk8550-gpio", "qcom,spmi-gpio";
->  			reg = <0xb800>;
-> 
-> -- 
-> 2.34.1
+where during the batch acquisition of contiguous free bits, an atomic operation
+is performed, resulting in the actual tag_mask obtained differing from the
+originally requested one.
 
-Kind regards,
-Maud
+Am I missing something?
+
+>> base: 6.4 Million IOPS
+>> patch: 6.49 Million IOPS
+>> 
+>> two device two thread
+>> cmd: sudo taskset -c 0 ./t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1
+>> -n1 -r4 /dev/nvme0n1 /dev/nvme1n1
+>> 
+>> base: 7.34 Million IOPS
+>> patch: 7.48 Million IOPS
+>> -------------------------------------------------------------------------
+>> 
+>> Signed-off-by: hexue <xue01.he@samsung.com>
+>> ---
+>>   block/blk-mq.c | 8 +++++---
+>>   1 file changed, 5 insertions(+), 3 deletions(-)
+>> 
+>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>> index b67d6c02eceb..1fb280764b76 100644
+>> --- a/block/blk-mq.c
+>> +++ b/block/blk-mq.c
+>> @@ -587,9 +587,9 @@ static struct request *blk_mq_rq_cache_fill(struct request_queue *q,
+>>   	if (blk_queue_enter(q, flags))
+>>   		return NULL;
+>>   
+>> -	plug->nr_ios = 1;
+>> -
+>>   	rq = __blk_mq_alloc_requests(&data);
+>> +	plug->nr_ios = data.nr_tags;
+>> +
+>>   	if (unlikely(!rq))
+>>   		blk_queue_exit(q);
+>>   	return rq;
+>> @@ -3034,11 +3034,13 @@ static struct request *blk_mq_get_new_requests(struct request_queue *q,
+>>   
+>>   	if (plug) {
+>>   		data.nr_tags = plug->nr_ios;
+>> -		plug->nr_ios = 1;
+>>   		data.cached_rqs = &plug->cached_rqs;
+>>   	}
+>>   
+>>   	rq = __blk_mq_alloc_requests(&data);
+>> +	if (plug)
+>> +		plug->nr_ios = data.nr_tags;
+>> +
+>>   	if (unlikely(!rq))
+>>   		rq_qos_cleanup(q, bio);
+>>   	return rq;
+>> 
+>
+>In __blk_mq_alloc_requests(), if __blk_mq_alloc_requests_batch() failed,
+>data->nr_tags is set to 1, so plug->nr_ios = data.nr_tags will still set
+>plug->nr_ios to 1 in this case.
+>
+>What am I missing?
+
+yes, you are right, if __blk_mq_alloc_requests_batch() failed, it will set
+to 1. However, in this case, it did not fail to execute; instead, the
+allocated number of tags was insufficient, as only a partial number were
+allocated. Therefore, the function is considered successfully executed.
+
+>Thanks,
+>Kuai
+>
+
+Thanks,
+Xue
 
