@@ -1,196 +1,172 @@
-Return-Path: <linux-kernel+bounces-798306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB4D8B41C1B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:42:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E95B41C20
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F8E21B27C23
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:43:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7B35E8045
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BD02F2911;
-	Wed,  3 Sep 2025 10:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cJW8bpRz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F8C2F28FB
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551082F290A;
+	Wed,  3 Sep 2025 10:43:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824DE2F1FE1;
+	Wed,  3 Sep 2025 10:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756896168; cv=none; b=fxQIes8FVdFqO5SbAht1omIrUwSfS544fRPaPAn0Fu9gVGGdQDituuhAHF+KbBBkgiglWDLdaEHNBcHXZ+TcMjBPWjOQdvKR88CgIo6rNY6CcNqxnl3wHNNsdBhe63N5ENmWfZFlqHWR82gDVSzyunLaq8AhJd4dReuj/pcgv90=
+	t=1756896214; cv=none; b=j6usoTCBtSFC4B3N5gZ0PkcX/VHMxFD3gEeZqgFrojYE1hBBZ1JXoj2xGjqDcmoN0FOHDOEPvOcnRM0DOzSYL6vkk6LGKT1e2i9+vJZRMlru4hl+jjUOJT20qnMvIzC+WYmX6S+/eCSzh50I0drp+giZ85PVZgGdk3VVokwikkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756896168; c=relaxed/simple;
-	bh=6iAiHuDb4uJBKU0Hn1aR76kePafhf0bAF3FlgAjugEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E3fuV9RrmDKnbrKNsKyRfWxxSVxvKZThbBqu6MUT2PyjWK7mpwKmiieKSJ4HAFMXpTpWjq9hr/UEttLbLpHXzTvLq5+OCBk/Ai/Oz9URDkf6RT3MeNwgQeMrGCFF8zpwgZWsHJqw+N0cda1qrTs8dYdjOEBOL4HNM/1WjaED2WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cJW8bpRz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583AVjaO004244
-	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 10:42:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AGfr4+Tq+pRH0dbxPVgty5UEqTX1thn/IcBnYM4r6iU=; b=cJW8bpRzr2Y7+x01
-	iNMS27+r+sqcTDXL+XrKxJT3cQXqjvJMKjKzKxU+fBiOdnfs9fWUIf8ldx/1Kr4b
-	y+LYgraHG7K320Iz8zsbrd7cyvQtUJPThi7U+sl8opq0KnGdH6NMCunDXifjHEdR
-	6Dneq6ckqntEsWEnbmRsKz9w7ZZjugn2uZXipDArTh9qlNlmZfNhAhOEGpZXNgrm
-	tr9/1jvcF9dDpl69xhqnx0r71dmFsA0DJaOSY09AaIY4V/xBAt0TucHfVgh5ci7C
-	Bo5wc9B/G6qdPXgHPo0e4bBwp72j18xXWzPMnm+T2WFrquZhQ3B5Q16Gu/qjApDC
-	Fqo2hg==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urmjk98m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 10:42:45 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b32216a52cso11163801cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 03:42:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756896165; x=1757500965;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AGfr4+Tq+pRH0dbxPVgty5UEqTX1thn/IcBnYM4r6iU=;
-        b=ZA5+zFu8TmqnA6euV++PffbjJWAfEKUbbDRrk9OJTvltsRzryvrZnL6GpoQJ650tHw
-         ku7gdPg9cSpKZee1TogjlUKtZDpK8bWewAj5SMC0gJpd48Q0+EqaIhyrZ1VsupqcnwWf
-         4oO1OWaOOba2+TkR7X2CcK0RxvfPMVC0e6AuwkSgpTaaHHfTJ4J2dSpBadJLU62apwDi
-         9JdAt91OuKTQMb7qS2bQZxaFykOoh8+G1tDXrSxkGcPICb6QOwG+kPyDBcDI1BgNGhBF
-         WW8Avl7d0bjRQABvPiHuwQ9Hpivcm1SLP1A1YmcZ7jAcJ+ZdAOJV2n5Yy0PLhgLc1Qs4
-         APNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzaNKzS+2kZzOAijUN7f7VrGPCWJOGQRF1wUCQbHC9BVeEvdQegP8Lz7+r1JJYjkqNp2AIk1lTlTbpsmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7V1DvYpGa6Ur5fXcPHSlU7e0ZhnrXf9rpvxiTJB83R304c/ym
-	tuxhzzkC2CcQ0UMaMiRL3uesaYP3CpJNdrsPIf1DqeO8Qz1q6uFIN7bE+RKc8PdzwxUcvKgyTFy
-	kWomx/3naX9V+zmgD4b9w9iT/su+RkmZxUacA2t0AuqQKw+mN943+FWy8HKLoFYFz2EY=
-X-Gm-Gg: ASbGncsQKrTl9envrjimMfFdXfFH+mQN5HRXbe5ziM0sSoXHikgS0ywMOYP6/fCKtI5
-	YJE/oCGiFYDFOV/cczue+vZ6XVw2L8+lvqES9vrbxoVsBqJGIlBegeld/grk8VzorMG1CHTTz4L
-	Ny0Q2ea3DYTHFv7csePOj6/2ZYB2EQVylil5Xd0rQP81yPWAMb+InOa8u4WhE0ch2PwYKIlETo8
-	teexGIe7iPIchXn1f7y1f/IRTKLvGQyNe9gS4sp+X/t66lfx5tBfF+IHlOLlgbCFnR2/AcGeUxH
-	V41AIPYe9XLdUDT04peEr6s2mwFfJ6hbDbK8qP2SsGps720FGbDFHS214spxqLwQ5SWfW0ZJ4y3
-	xLmDIWQP4cZPPNAjHzcLE7Q==
-X-Received: by 2002:a05:622a:1895:b0:4ae:b029:cd7a with SMTP id d75a77b69052e-4b30e98a602mr156109131cf.9.1756896164595;
-        Wed, 03 Sep 2025 03:42:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEVffWGT/P4HQ1hOU4OQt/ExG64VXiLoPZAGAGCtyi6SsM4nP3uvC3ksMYhqBwvHlyRLWq2nA==
-X-Received: by 2002:a05:622a:1895:b0:4ae:b029:cd7a with SMTP id d75a77b69052e-4b30e98a602mr156108941cf.9.1756896164049;
-        Wed, 03 Sep 2025 03:42:44 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b046e6c630fsm78582266b.55.2025.09.03.03.42.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 03:42:43 -0700 (PDT)
-Message-ID: <67aa2a1a-3adf-4c97-a7b8-865b5ca3b17e@oss.qualcomm.com>
-Date: Wed, 3 Sep 2025 12:42:38 +0200
+	s=arc-20240116; t=1756896214; c=relaxed/simple;
+	bh=0xgXK32LwH4jKgL1saEp2OIZ8OaGhKzMMdKC166g8RE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S+Fzk+y2NxkEcjVDNb0SukIwzfryVbOn3pla0coRgVduklBpAyrmhEqVR/XNauC0ntXhxMDPJNgw5yX0DPcOkR4n/O5D7/fKuqOhmNrildKJLp1IIH8tJqfX60moc/+8Q5jaNLoS64UfGudCidtjuYBgpIrJryEbxc6jvRoid0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0E321688;
+	Wed,  3 Sep 2025 03:43:24 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0DDAD3F6A8;
+	Wed,  3 Sep 2025 03:43:28 -0700 (PDT)
+Date: Wed, 3 Sep 2025 11:43:09 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org,
+	oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org,
+	james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com,
+	ahmed.genidi@arm.com, kevin.brodsky@arm.com,
+	scott@os.amperecomputing.com, mbenes@suse.cz,
+	james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org,
+	pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com,
+	maz@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 2/5] arm64: initialise SCTLR2_ELx register at boot time
+Message-ID: <aLgbvWYeCr5l1MF6@e133380.arm.com>
+References: <20250821172408.2101870-1-yeoreum.yun@arm.com>
+ <20250821172408.2101870-3-yeoreum.yun@arm.com>
+ <aLW4A3rTcJvA0c+j@e133380.arm.com>
+ <aLXmCJOuxCHVXEYx@e129823.arm.com>
+ <aLbJeQf9LKXFTxzS@e133380.arm.com>
+ <aLbPjmy/ZYSd+wzA@e129823.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 5/7] arm64: dts: qcom: Add initial support for MSM8937
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
-        Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Rob Clark
- <robin.clark@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Robert Marko <robimarko@gmail.com>,
-        Das Srinagesh <quic_gurus@quicinc.com>,
-        Srinivas Kandagatla <srini@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, iommu@lists.linux.dev,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        linux@mainlining.org, Dang Huynh <danct12@riseup.net>
-References: <20250831-msm8937-v8-0-b7dcd63caaac@mainlining.org>
- <20250831-msm8937-v8-5-b7dcd63caaac@mainlining.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250831-msm8937-v8-5-b7dcd63caaac@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=OemYDgTY c=1 sm=1 tr=0 ts=68b81ba5 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=bBqXziUQAAAA:8 a=OuZLqq7tAAAA:8
- a=sAN_IsTCchqKF9ABz68A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22 a=BjKv_IHbNJvPKzgot4uq:22 a=AKGiAy9iJ-JzxKVHQNES:22
-X-Proofpoint-GUID: ztpMSk5TCoOADDmVP2vbAo2kJsOXppWl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNCBTYWx0ZWRfX02nQxAiJ5EB1
- NkgvBVthWBCpeG6Qw72CEKLHl6NkIXvnN4Uzi+xTNtj6AbWjbvdhblCmNI0wxLbrVtg3Vg2cbHG
- CVXghMokR3+8hOprnDByHhIaWcwJTh2l10SGN4LAuZxqOLbuziIF+64S1RVlT7dvJxwNOb6Tv4q
- GlsyExj1h0E0/t+zj3aYH87UmMk6QL0y1hJeP1VZs7Y7/w0ZK4KfFBfqO944rlJCFiC8hIjv3Ne
- Cdnr5qi3EJFIz2uNqifw6apM7AmaKTSDuHsljFY3FGhNfGZ+0vw7f9V6enx38Jrixqowrnj5dwo
- t7gObWC9FA3ad+NkYF2i+R6OeO2dJXmyr8nxxvBa9X/u+EUo2FT0DpUolA80Ljz39x1/JNEikfP
- Bo2Pw9DQ
-X-Proofpoint-ORIG-GUID: ztpMSk5TCoOADDmVP2vbAo2kJsOXppWl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_05,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300024
+In-Reply-To: <aLbPjmy/ZYSd+wzA@e129823.arm.com>
 
-On 8/31/25 2:29 PM, Barnabás Czémán wrote:
-> From: Dang Huynh <danct12@riseup.net>
+Hi,
+
+On Tue, Sep 02, 2025 at 12:05:50PM +0100, Yeoreum Yun wrote:
+> Hi Dave,
 > 
-> Add initial support for MSM8937 SoC.
+> [...]
 > 
-> Signed-off-by: Dang Huynh <danct12@riseup.net>
-> Co-developed-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
+> > > > > diff --git a/arch/arm64/kernel/hyp-stub.S b/arch/arm64/kernel/hyp-stub.S
+> > > > > index 36e2d26b54f5..ac12f1b4f8e2 100644
+> > > > > --- a/arch/arm64/kernel/hyp-stub.S
+> > > > > +++ b/arch/arm64/kernel/hyp-stub.S
+> > > > > @@ -144,7 +144,17 @@ SYM_CODE_START_LOCAL(__finalise_el2)
+> > > > >
+> > > > >  .Lskip_indirection:
+> > > > >  .Lskip_tcr2:
+> > > > > +	mrs_s	x1, SYS_ID_AA64MMFR3_EL1
+> > > > > +	ubfx	x1, x1, #ID_AA64MMFR3_EL1_SCTLRX_SHIFT, #4
+> > > > > +	cbz	x1, .Lskip_sctlr2
+> > > > > +	mrs_s	x1, SYS_SCTLR2_EL12
+> > > > > +	msr_s	SYS_SCTLR2_EL1, x1
+> > > > >
+> > > > > +	// clean SCTLR2_EL1
+> > > > > +	mov_q	x1, INIT_SCTLR2_EL1
+> > > > > +	msr_s	SYS_SCTLR2_EL12, x1
+> > > >
+> > > > I'm still not sure why we need to do this.  The code doesn't seem to
+> > > > clean up by the EL1 value of any other register -- or have I missed
+> > > > something?
+> > > >
+> > > > We have already switched to EL2, via the HVC call that jumped to
+> > > > __finalise_el2.  We won't run at EL1 again unless KVM starts a guest --
+> > > > but in that case, it's KVM's responsibility to set up the EL1 registers
+> > > > before handing control to the guest.
+> > > >
+> > > > In any case, is SCTLR2_EL1 ever set to anything except INIT_SCTLR2_EL1
+> > > > before we get here?
 
 [...]
 
-> +		qfprom: qfprom@a4000 {
-> +			compatible = "qcom,msm8937-qfprom", "qcom,qfprom";
-> +			reg = <0x000a4000 0x1000>;
+> When I look at init_el2(), it returns to EL1 via:
+> 
+>   mov x0, #INIT_PSTATE_EL1
+>   msr spsr_el2, x0
+>   ...
+>   eret
+> 
+> In other words, from init_kernel_el() through finalise_el2(),
+> all system-register accesses are made at EL1 (i.e., SYS_REG_EL1).
+> During this period, it appears that only SCTLR_EL1 is modified,
+> so the code only needs to care about the accessed register — SCTLR_EL1.
+> 
+> That’s why SCTLR_EL1 is reinitialised at the end of finalise_el2().
+> Otherwise, the MMU bit might remain enabled, which could cause errors later
+> when launching a VM under VHE.
+> 
+> However, the idea behind this patch is to initialise SCTLR2_ELx
+> the same way as SCTLR_ELx.
+> I’m not sure whether SCTLR2_ELx is modified during this period.
+> If it is (now or in the future),
+> it should be cleared/reinitialised just like SCTLR_EL1.
+> 
+> This patch is based on the assumption that there may be modifications to
+> SCTLR2_ELx during this period. So it isn’t about other system registers;
+> it’s about the register actually used during this period.
+> 
+> Am I missing anything?
+> 
+> Thanks!
+> 
+> --
+> Sincerely,
+> Yeoreum Yun
 
-here you reserve 0x1000 for the qfprom
+I think I missed the SCTLR_EL1 reset in the idmap code after the
+enter_vhe label.
 
-[...]
+Actually, I'm not sure whether there is any architectural reason for
+setting SCTLR_EL1 to INIT_SCTLR_EL1_MMU_OFF here.  "for good measure"
+suggests that it felt like a good idea but there was no known reason
+for it.  The commit message for the original patch doesn't offer an
+explanation -- maybe Marc can remember.
 
-> +			gpu_speed_bin: gpu-speed-bin@601b {
-> +				reg = <0x601b 0x1>;
+This might be a defence against speculative translation table walks
+using the EL1&0 regime (but the architecture says [RNRJPP]: "If an
+implementation is executing at EL3 or EL2, the PE is not permitted to
+use the registers associated with the EL1&0 translation regime to
+speculatively access memory or translation tables.")  So it shouldn't
+really matter, but in case buggy CPUs don't implement this rule
+properly it may be a good idea to turn the stage1 MMU off just in case.
 
-and here you make way for OOB accesses
+Since it's there, though, it probably does make sense to reinitialise
+SCTLR2_EL1 at the same time -- but can you move this so that it is next
+to the SCTLR_EL1 reinitialisation?  Otherwise, the purpose of
+reinitialising SCTLR2_EL1 is unclear.  It really should come under the
+same "for good measure" justification as the SCTLR_EL1 reset.
 
-Make qfprom length 0x3000 with the current base and the gpu
-speed bin should be at base+0x201b, I *think* (the docs aren't
-super clear on that)
 
-[...]
+However, I don't think this has anything to do with putting things into
+a clean state for VMs.  KVM defines the reset state for all the _EL1
+regs explicitly -- failing to do that would be a bug in KVM.
 
-> +		mdss: display-subsystem@1a00000 {
-> +			compatible = "qcom,mdss";
-> +			reg = <0x01a00000 0x1000>,
-> +			      <0x01ab0000 0x1040>;
+(See arch/arm64/kvm/sys_regs.c : sys_reg_descs[], kvm_reset_sys_regs().)
 
-In v5, I pointed out the size of vbif should be 0x3000.. and the random
-newline below wcss-wlan2-pins {} is still there too
-
-Konrad
+Cheers
+---Dave
 
