@@ -1,148 +1,203 @@
-Return-Path: <linux-kernel+bounces-797830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D6D1B415E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:11:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE9DB415E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD5865E80F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:11:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEAB55E80B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F432DA76A;
-	Wed,  3 Sep 2025 07:10:51 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638A72D9794;
+	Wed,  3 Sep 2025 07:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DoIdLn6u"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2061.outbound.protection.outlook.com [40.107.95.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A672D9EDC
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756883451; cv=none; b=BJghn7DIVUuEOIRrJSFWQRvptas5kuQLfPDNV44NtB2lNY1UY5Uxng3C2y5xxndt6AfEu8y34+3lg4Dqu7CFQMOwRFg1iudsLv2dZ5GfkZyTRxnXL1YlerUaSKLWfh1icw1N3CXk4TjkLFwO7QiUU8u9Dj0ezNJdhXDVgwe3JYA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756883451; c=relaxed/simple;
-	bh=z3o0bilwhDAquPyA40rDwkmCId8o1zHnXpkGPgt30ww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IA8j1CXcvQA5GS+JYZlIWdJjabjPuzG2+nEPLff71LPlK/Hxjo2pHhu4BghfbO59b2dUmnhf0j3DlWd4uzv18fFGf4rVAmj5C3/ObTHjcChG8XeNb+xJGmKsfx3U31R2xjP6O2slfVRUO0coCxAOiuBOP79THHlso+sleWmKZ/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uthdY-0008T2-FV; Wed, 03 Sep 2025 09:10:32 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uthdU-003WP4-2U;
-	Wed, 03 Sep 2025 09:10:28 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uthdU-00HVsN-1z;
-	Wed, 03 Sep 2025 09:10:28 +0200
-Date: Wed, 3 Sep 2025 09:10:28 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Kory Maincent <kory.maincent@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Jiri Pirko <jiri@resnulli.us>, Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
-	Dent Project <dentproject@linuxfoundation.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH net-next v2 4/4] net: pse-pd: pd692x0: Add devlink
- interface for configuration save/reset
-Message-ID: <aLfp5H5CTa24wA7H@pengutronix.de>
-References: <20250829-feature_poe_permanent_conf-v2-0-8bb6f073ec23@bootlin.com>
- <20250829-feature_poe_permanent_conf-v2-4-8bb6f073ec23@bootlin.com>
- <20250901133100.3108c817@kernel.org>
- <20250902164314.12ce43b4@kmaincent-XPS-13-7390>
- <20250902134212.4ceb5bc3@kernel.org>
- <20250902134844.7e3593b9@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3684F5E0;
+	Wed,  3 Sep 2025 07:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756883446; cv=fail; b=a2wprR5+ujH5dgUEwt5s7RanOYK9/LR/aFVm8af4RmKqvrpV8aw0PO6tzc5AHB5h23Oz1AvFyLJBo6EJCz+Yh88BMODzUB4aZRiS66cWpJ0G/qtNr0Uz/vvZmIuDLabO646lmaC5EliKjbELyJTESNdtTOFSivuoAfPShZB/qis=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756883446; c=relaxed/simple;
+	bh=k8ACBeoWNx4GGA/9XXR92N+7L6z9Ho7gdUNTn6+U7gQ=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=f1gaDMGXVwtax2JmcadLaY/n3eqg+cQxpr7B0TdJwYd84d52ImdRxkuexCWktZFwM1GE6/e0tbK8QfgysOGYl/rtvy3e+wZo2OR8KUfqay1QJrFIulg4+rYTrnIs5y3LOzT5205n51kgTYY5TAIKraHZ6/Uv5JWcuDhzaHZPjNI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DoIdLn6u; arc=fail smtp.client-ip=40.107.95.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=APpwaQ3bIdQM8YVvpJ2oWdX78Cg66Kzr4mC4C13atnRT1Sg7u6WcakBIGyvn5vtSZimuR+znVGlmvUQCYuimTLTo40w7QYS81IrFJPK2R9TuZYsSs1wRuu7+dKsQb1hrLk8iXzROYzibCFJM3lQZ3LJMXLmXNeFx9HzWeiP80kePrVYKilbEil8PxCKCjXEvIWgCGPk5aGDZiAeCrBpZdpFRaIGreEgD/yes5AuaE4b9Azy4G4jtqsq5Dbx8kIXP39gefhjjogjVErTCENbSUjMIlqRMaimuMvgKh2l709FwU0Xu28FRafvMVU3NA7l1OgEwFA+onqsBv6zz6Z3+TQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=St4CBxegb5jcEIpnwics6dUYobXarIReFA5SAAyvHjA=;
+ b=ApfQEMO0voxFWMLocOey70FT3/RF3OCKMZiIS+HO9b/2SM8WWYCjsy7twKVhYY9P+079qswB9LJD/UhhfK8bFI0B8jMwgvemPI3/cfk6P+EXf83XbinhKpsH4cr80AZDC8QbE4WC7iQnjD1Rzour3A6t+llbnX2cKl1BHccHwKaicsTGugJK8dEKAlAV6V4nrh9D1cqZtSIOoyVcwHXU2WY8ixdSGGO1geyklKCX1xFA4u1LIQjz2D9kIzDliVN/Mr0WoBP/dL1ql0v/Sl/kshkx75+mw6h3eFOCfoAJPajjesTUiBDjZhhs757hm3LRlJ8vkgJ2kj2CqFhBXepdmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=St4CBxegb5jcEIpnwics6dUYobXarIReFA5SAAyvHjA=;
+ b=DoIdLn6uVtX1WkGwbiYoo0VRVC7GxBAaTECyz3qK94EfTmWVjVpRxpeGzjnRTvYxOH0hf2GWqbM7rS1R8VYYi+6pHmDWp7OYvECZxpwAkpP1M1sTTXv+5RGVSNkGavXfAQBFU0MlqL11lYMtAqAEX9ILK4S2wm5lW/ub4QrAsgjADQhYzhI4EF1dtu7qNS8rKoWWIoQTVxafldGs7a6c+B8nP22zVDhX2R1y+70MtYSGS8idH3pbIb3UFOZ04RVqXyp9vqWBmqeLcb72eiYU9bS7dseSoerocKQFkzBd2qG5qiPP9bAhxjd4i49T5LJhjXE5atFaUjPEeiT/PIHUPA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by SJ2PR12MB8720.namprd12.prod.outlook.com (2603:10b6:a03:539::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Wed, 3 Sep
+ 2025 07:10:41 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9052.027; Wed, 3 Sep 2025
+ 07:10:41 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 03 Sep 2025 16:10:38 +0900
+Message-Id: <DCIZ79KKSSF1.25NJT5ZWR3OOS@nvidia.com>
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Danilo Krummrich" <dakr@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Joel
+ Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v3 02/11] gpu: nova-core: move GSP boot code out of
+ `Gpu` constructor
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250902-nova_firmware-v3-0-56854d9c5398@nvidia.com>
+ <20250902-nova_firmware-v3-2-56854d9c5398@nvidia.com>
+ <843554b1-f4c5-43f5-a23b-583339708bea@kernel.org>
+In-Reply-To: <843554b1-f4c5-43f5-a23b-583339708bea@kernel.org>
+X-ClientProxiedBy: TYCP286CA0081.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b3::7) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250902134844.7e3593b9@kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SJ2PR12MB8720:EE_
+X-MS-Office365-Filtering-Correlation-Id: fa32546b-292e-40cd-6ddc-08ddeab8fe1e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|10070799003|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NERpNnZvZUNtVDVQZVNlMGRBSGhLMG5ya0htUzZKYU5iQ2tDaFZNRjk0S2ZB?=
+ =?utf-8?B?eFdRNFlaLzNzYVJ1MzFBZEUrbEkzUXlGbklvOElscndZR216VXN1SW81N3Jj?=
+ =?utf-8?B?VkUwb0ZpLzJMSkNFZFBlZHJOUmo0bEw0Ti9YenNJaXJWQmVZcUJhRzRZTzNS?=
+ =?utf-8?B?cldMZ1d5UFg3N0IycVNIRFFsTCtTUjBiOXQ2NmQ4OGVlYkp1VUpiU0hjOEFO?=
+ =?utf-8?B?S1BwdTBmcUd0L0hjVlRPYUxEWWd5bklTM0toeWd1MUdTNW5zNk94WllkYWFE?=
+ =?utf-8?B?SGpmSGdPcUs2MjMrR1lSbXJ1WldNZytqTUhwbWpLNkpoSGQvMXFXV3dUcEVV?=
+ =?utf-8?B?Y1hsTk1zTmxmVk9wUWRMaFBndm9mT3A4TEJOQTNjM0I1MFlLOTdCQmhFYjVr?=
+ =?utf-8?B?V2ZDUThkdWJyc3lTNXpIcWI4ejh2YVVOQjR2U1VZV3h1VDg2RjlsUnZyUFJU?=
+ =?utf-8?B?VFNGcWpYV2NyRW5EOEVXdlkzOUIrUEs2d0tKeC9xMDRDd3ArK0Vua04wNmxM?=
+ =?utf-8?B?OEprdHlHaUsxN2ZTVmU5RXpGQ2VsRzBzQ01NRnN1WjJwOGswZWk4WnVaaHd5?=
+ =?utf-8?B?d2hrckxJanN1dWdNVmFtVUVQSGdmOFV3NmlEWnBYM1FvU2N4ZnhkRkhpNnRY?=
+ =?utf-8?B?RWRFR3ZzOEI2ODNRZ2NmeGxzdDJwYzUrbTY4YUZXNFEyVDZFMEpnSFpDczdT?=
+ =?utf-8?B?N2F4TFlNR05DenB2ZFZpV25ES1NndVBYT2J1T2p5N0J4YkE2Y0VRajh0UFlR?=
+ =?utf-8?B?TzdmTTdGaEc4ek9UejVOUlU3azVGRGdLRnFHRTUra0Vvam1lNEN5dHg1bWZ2?=
+ =?utf-8?B?SFhmeWViNmQ4MElleHdCWkZBSnp0Zkp3WXVtSy9MU2laTG1IQVFQOWhSTm5a?=
+ =?utf-8?B?VGFhL1cvZllSdUQ3MEV1aUJQM0lObVowSys0eXRxZFdSQWVlRm9XSVJwMDAz?=
+ =?utf-8?B?SHlxM08yNkExbEwxb2JiVHlNY0pndEFIUUEySFJNNVExTUZEK252N0pTZ0Vw?=
+ =?utf-8?B?WlRvMUIzQlpsNWw0TDdaTnMrZ1FYckRJU3UyK0UzRWg4WkkraTFYNDVpVUtT?=
+ =?utf-8?B?S0FmY1dNYU5iSnc3amZRUmZnU0JDY1VZOEJHTTJUelZNblRHRXZDTFhqTFpK?=
+ =?utf-8?B?MHNndXN0WndISVBKTHNjcDQ3cFVrZk9FdnNmenpVeFhXdldNSGVSUzJESmU4?=
+ =?utf-8?B?S3ZjVU9vTTBaYUxnWDJUS0hLYVNTTWFNTGJDb1RrelArWUp1Vm5XT3FBd0pZ?=
+ =?utf-8?B?RFp5d2I5YzdUcGhLamRTVGFaVEl5VTN5SlBwMlZQRlcyT1VTQlRaWFNFT242?=
+ =?utf-8?B?eWJCK2Rva2tNSlZtYjduOVh5bWp6OTdNcnI0SnJqQkEwMnJ5OFFiNm90NG95?=
+ =?utf-8?B?bUVBQllLWEIxTVM1YU8rZXBnbW1ta2kyeWE4bG42bE9rMTJqVEk4N21iQS8w?=
+ =?utf-8?B?c3QrLzNOUmlWdkZvY1JNUS8vbVlEQkpzQ0hQQ2NVT1BNdWZlS2wxenVJc2Vk?=
+ =?utf-8?B?N09sNmVtbzdmdkhIQTB1YzhFbmRMS0RHMzlJVkYydHhFNUgvVEtDYzRUNUdw?=
+ =?utf-8?B?b0RoWWtXL0dBNUpYNjhMd01wbG1vVlgzWU5HTGRBU2E5M2FKeXA3TFM0dWFT?=
+ =?utf-8?B?eUFLODV6MXhHaWVIcUo5TGlGRjN0QUdEbXlYOXg1NFMvc1dJZUpwVkwvSFBQ?=
+ =?utf-8?B?eGVmMG9tWjlkQ0JHWHBleUNTQXdPVFpsWHhZRGZoWWx4TkU5Ykh0MGpqZkRM?=
+ =?utf-8?B?cjl2UjM1clRtMGFDRkZnWkN4VkhmSGVocGhlang0ZHlCNzhvZ1ZhZWMzVkky?=
+ =?utf-8?B?SzhoSmg4U0w4aDBQaDY5NXkxYnZXZU1qNHpxaGorbHpzdW1oZG1QNnpIOE1G?=
+ =?utf-8?B?cDlHMWJGK0xhZmNYakJqeXh2U1h1VnhWSm1lTGlPVEdUMEtyRHE3ZFVBWEE1?=
+ =?utf-8?Q?OOpp43C75bQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(10070799003)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WmJyWG8rN3JKRW9QQzFMaGFZQzJZYzRvTjlMUk5ibWJUR0ZwTzVtM0lBci9O?=
+ =?utf-8?B?U0M3aS84RXVYZFBqK01FQWptMkdQRXZralVGeWpxa0ZXcWtJblFzSHNQUitX?=
+ =?utf-8?B?dW5sM3gwTkdDRThtTmFMdEF0Y0NoL0oyQU0vd0p0MXBwRitFL3JOSjZXcXFT?=
+ =?utf-8?B?a2U0WjQ2WDRPR2tiOUlKOVF4TWJ5SGxHUUtaNkZYWVl5NGF3cllkc0tzelNo?=
+ =?utf-8?B?SzVTQWF2TWZPaUYzWXNsVGhPL0RnWExlK1J2azIwTXZhaU9LNzNYTzE2b21i?=
+ =?utf-8?B?ZDBRYWdVUlUyL2J6NTZ4SG84bEJ5cEorY0x0M2VzR0E1eDg0b2E0Zlk4RWJw?=
+ =?utf-8?B?b1l4YzlrcnA0NzBIclV3Y3J6aHpyMFF4WkNQdDJLNk5zc2s3SE1KTy8xNzZO?=
+ =?utf-8?B?bnZwT2pyVnRMUSt1bGxvWTJWRFpuUzR5YUxMZkFqdnBCZzlOYXUwS1RTdTNN?=
+ =?utf-8?B?S0VraGplOGFwME1WUVRQclVELzA4QjA3RUFpd0pXbTA2eWZYZCtaVGVzREFH?=
+ =?utf-8?B?aG9lRmVmcGFnRlQycEdQTjJvdWx2RmRWSTBDTUJmUnFrd1IrejdWeGcyTFU4?=
+ =?utf-8?B?MG1RTEdBWW9XSWZlVE0zOElQVmpLKzdsZjBsSVpOQldDaXdyV2picUVBb1hj?=
+ =?utf-8?B?MWVndjRvcHEzSDFUQ3hpb2JBc01nMXpaZGZZaGtmQXphTVhXenhsSnBiWEJL?=
+ =?utf-8?B?UEZGSUpSbjRZY1AzVkpWbGlZVFM0T3ZUVU1ReTBaYzZPWTR4VVdiajVzRzhs?=
+ =?utf-8?B?aVh3VElzV1pPam94alE5UytyZGVKUHNBTlVKNVJGK2VoZ1VydFRsZS9wZ3lo?=
+ =?utf-8?B?L29iTks4RG40Vk1lSDdzUEFIT0RJa3p1SksvTEhoZ2N3ZG9yMTRwUmQ2Vmx0?=
+ =?utf-8?B?aThZY002ZkxRU2RGRkxyMDV2d2lPOFo1SFJqNWFoTzJkSnNXVjhOQllIS1hG?=
+ =?utf-8?B?WS82TFJXNkR6RlI3T1NKRWZzSFNQMzJxQjdZUjlXdWJMcGVTZCtzMEZwRCs5?=
+ =?utf-8?B?ZVZUQXY5U2dxZmRkOHlLMjloUzBkeUk1TThrSmI5S25KK2d6TUhWUldTTFQ0?=
+ =?utf-8?B?a2laVVZnbzQ1YXRjV0NMcFdCcmFLc0JVeG1JV0s3TVVXek1iamFtT2pMS0sr?=
+ =?utf-8?B?VW5mcHpXR3lLbXZ2UWl1akpWSm1SeTl4YzFqSHVKcVY4akdKRW4wTDYvNjh3?=
+ =?utf-8?B?cUNLYkk1c0l2UTFmaTNyWFREVkZlTmtLZlZmbUlQdERBUFFKdDNLU3BLSEVJ?=
+ =?utf-8?B?U0w3K281eGpaNWFLZktKbzdDeER3WXBLdGJQWFF6Uk5QZTVheFp5OTRqbTZu?=
+ =?utf-8?B?LzFidW1FaTVTbGhSZ0lMdUU0ak14SUpkRGNsTHdReXdpOFU3c3RXUlowN0JQ?=
+ =?utf-8?B?RnRLczJZTVlrN3d5WjNFdmJOQnptTFhQUHBvaHM0em9TT0hnWHNFS2ZUL0ds?=
+ =?utf-8?B?RDdDc0Frb0x3TERFc0t6NHBXQUNtMmpuNmpqbkxjYUJNemVpWmQxRUZSakQr?=
+ =?utf-8?B?Yy9yYTN4eTZxN2hBOW81SXFnZEl5N2VaV29UckJTYm5DaTN2bHJ5VCttS2tI?=
+ =?utf-8?B?czAzaTVYUzk0SG9hM2N0a0VFM3pEUEhLUkxoQUpiWUltUVZrUk0zQXZVT0V5?=
+ =?utf-8?B?c3o2SkR6eHVvRWIvS2xkdDU2c0c0WXRDUnh5RU5nOEEvcUhtL3l0U3VuQXJU?=
+ =?utf-8?B?Z1ZsN3dNL3RPTnJNaEdSSGdLVXRUeGJMRjBPY2RveUx6WkRET1FPcWRudkZ2?=
+ =?utf-8?B?VzlyeEhndzRhc1NsTkhkTjlEUWg2aGFNOTZUNlNjMy9wdTVWbm9KS2tOeDdz?=
+ =?utf-8?B?WER4c2J2c2lybnBXSUI1VjMyU0tvZHZnR0VrVE9ST0RhLzlIeTFyeE54aWcy?=
+ =?utf-8?B?YTlnMk5ESXQrTCtDN0IxL2V3RWYvYk0yL3NIdWZVOG1yNVRuYXY3MnYyTEpt?=
+ =?utf-8?B?bnh0S1ZsbUN0YUpxMmFoVWkxRVJzNWxlMElTQkFZTjRNbVpOdW1HRkwramJ6?=
+ =?utf-8?B?eFFQMmNXNlZMZnBXekd0dnJvTTVscWFrOTN4dzJiUCtsam9YMUxtT3ZzV216?=
+ =?utf-8?B?aGoyeERET2ZncnhYZUl3RFhJaWlDQnlPUmN1TnVIdmZqNUhJUWV1dkpnaHdq?=
+ =?utf-8?B?Ykl3OGNpY0xKNU5INWE2L25EQy8yQklWY2hBT0IwanVzbmU3ZTVSVWQ3eHNw?=
+ =?utf-8?Q?/oCFwpmtv8hApqOmRVzBwfteuD4Thyj+R+QJbnKeUAGe?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa32546b-292e-40cd-6ddc-08ddeab8fe1e
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 07:10:41.6449
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ujMChAC1neXdzE8SsQPrHK3fUhzsuFpDciX7dL1PE7HRfe2mbfvNxh4Ev73m+Q1WrtAkWi4d2PXG5pbHkEM2jA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8720
 
-On Tue, Sep 02, 2025 at 01:48:44PM -0700, Jakub Kicinski wrote:
-> On Tue, 2 Sep 2025 13:42:12 -0700 Jakub Kicinski wrote:
-> > On Tue, 2 Sep 2025 16:43:14 +0200 Kory Maincent wrote:
-> > > > Sorry for not offering a clear alternative, but I'm not aware of any
-> > > > precedent for treating devlink params as action triggers. devlink params
-> > > > should be values that can be set and read, which is clearly not
-> > > > the case here:    
-> > > 
-> > > Ok.
-> > > We could save the configuration for every config change and add a reset-conf
-> > > action to devlink reload uAPI? The drawback it that it will bring a bit of
-> > > latency (about 110ms) for every config change.
-> > > 
-> > > Or adding a new devlink uAPI like a devlink conf but maybe we don't have enough
-> > > cases to add such generic new uAPI.
-> > > Or get back to the first proposition to use sysfs. 
-> > > 
-> > > What do you think?  
-> > 
-> > If you are asking for my real preference, abstracting away whether it's
-> > doable and justifiable amount of effort for you -- I'd explore using
-> > flags in the ethtool header to control whether setting is written to
-> > the flash.
-> 
-> PS. failing that the less uAPI the better. Tho, given that the whole
-> point here is giving user the ability to write the flash -- asking for
-> uAPI-light approach feels contradictory.
-> 
-> Taking a step back -- the "save to flash" is something that OEM FW
-> often supports. But for Linux-based control the "save to flash" should
-> really be equivalent to updating some user space config. When user
-> configures interfaces in OpenWRT we're not flashing them into the
-> device tree... Could you perhaps explain what makes updating the
-> in-flash config a high-priority requirement for PoE?
-> 
+On Wed Sep 3, 2025 at 8:12 AM JST, Danilo Krummrich wrote:
+> On 9/2/25 4:31 PM, Alexandre Courbot wrote:
+>>       pub(crate) fn new(
+>>           pdev: &pci::Device<device::Bound>,
+>>           devres_bar: Arc<Devres<Bar0>>,
+>
+> The diff is hiding it, but with this patch we should also make sure that =
+this=20
+> returns impl PinInit<Self, Error> rather than Result<impl PinInit<Self>.
+>
+> I think this should be possible now.
 
-I think the main use case question is: what happens if the application
-CPU reboots?
-Do we go back to “safe defaults”? But what are safe defaults - that can
-vary a lot between systems.
-
-In many setups, if the CPU reboots it also means the bridge is down, so
-there is no packet forwarding. In that case, does it even make sense to
-keep providing PoE power if the networking part is non-functional?
-
-Another angle: does it make sense to overwrite the hardware power-on
-defaults each time the system starts? Or should we rather be able to
-read back the stored defaults from the hardware into the driver and work
-with them?
-
-Does anyone here have field experience with similar devices? How are
-these topics usually handled outside of my bubble?
-
-Best Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+There is still code that can return errors (falcon creation, etc) - do
+you mean that we should move it into the pin initializer and turn it
+into a `try_pin_init`?
 
