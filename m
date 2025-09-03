@@ -1,47 +1,67 @@
-Return-Path: <linux-kernel+bounces-797537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8EACB411B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:14:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5156B411AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D43954612E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:14:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 670871B256B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F321D63CD;
-	Wed,  3 Sep 2025 01:14:27 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA1D198A11;
-	Wed,  3 Sep 2025 01:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B34B1D5CC7;
+	Wed,  3 Sep 2025 01:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CUe7Uv97"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6D18F40;
+	Wed,  3 Sep 2025 01:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756862067; cv=none; b=Q3N0bPZICfUhKHKc4lfFUvlvvtOBHDO7FtkeD4Y5GP5H8e9HsTwDomx9cYdt0Nfk15w7tmKwRuLWRuf2myXPR/TOJNXiwXIx2Gq6xdxo3KnMjJVZSvW6bYhCFFF2HZFAGULuuWOVtUKMNuCdLZeO3Yk1+TFt1ZaIIA/WFiRSu+o=
+	t=1756861726; cv=none; b=ii9BiHXIoCI+z4k6xlHB78hwpD3ME/dPzRkd0dmycJEwgKPAUHOmAmXpOjsA+kPyDoVJOktAmup1vjMPsAli+uB+JrZcQzUHac4sSplcJ+TQUk6CYUCLUcR3SntMgnVjAkSF/EoavkkLWi994UUXr1Ehx8qLZ2BLBpQ7tKd+XiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756862067; c=relaxed/simple;
-	bh=YGy6FHj+0W6QmOiNNAP8isBYrAnLigXI05LyPGv38VI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=eLHXzYxqdtjuAdoBs1cyIe6LvMmCs9PwxxLx9o5Uh7rQHyMKimDfrWvVWxdmjZIG5GuOJ0aL7zXut4recbjyAlfZ3I828ri8S1CucQc9yma44WWIuuG910LZ+B1HYB1seFZWKBX31m9bfuYiGhvrQi9fBud69LZ2XQHs7Y4nn2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 346F092009C; Wed,  3 Sep 2025 03:08:37 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 3201C92009B;
-	Wed,  3 Sep 2025 02:08:37 +0100 (BST)
-Date: Wed, 3 Sep 2025 02:08:37 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Osama Abdelkader <osama.abdelkader@gmail.com>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mips: math-emu: replace deprecated strcpy() in
- me-debugfs
-In-Reply-To: <20250902132314.49374-1-osama.abdelkader@gmail.com>
-Message-ID: <alpine.DEB.2.21.2509030204040.16010@angie.orcam.me.uk>
-References: <20250902132314.49374-1-osama.abdelkader@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1756861726; c=relaxed/simple;
+	bh=e5/KG2RipKNRW/k1nCvd7VHEUkpw8jgjiB0Snb+ds8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=htwGvGaXrPfzELC+bpJgYwkNjLCLIhXIU8DFb2qmsU27rhfAkYzGnaXutI2wEAujHIOlZ3Np0ZcayK8hTJJ2wJ5Dv7x1Nv7K5Hb7gKpP0u68pcszF38HfItFUoYNN82u6IPiRpvGXfLxgHLFukCgURZkOJBVn54rnnO9IHntYQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CUe7Uv97; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA504C4CEED;
+	Wed,  3 Sep 2025 01:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756861726;
+	bh=e5/KG2RipKNRW/k1nCvd7VHEUkpw8jgjiB0Snb+ds8Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CUe7Uv97FS5VyuqhbVwuLouh53l4mEIm9t2KYiDIq1hERqtOeE2s/s3P6zxyrw2Th
+	 RpmMeylaTosN77vbs58h14A4hDRLuxxzlpPO4zCbXk4aLQkv19/loiJ8SAZxlKyhN1
+	 bsUroR3uapE639Jn1uwmILBPs9zZL3RroS8MwHunuFHdw5vWZVRan/WGXD40SGBaY6
+	 8SGTAjxgbiq0H+xWc52vKqdDwUoTUdTRzlmyhfNchA96EPbuB57AnDtk6ZMJon2Qsb
+	 9rxCyuaV2J6vfdrcb5nlmSO3LpgRX7LUA8cVh1qbHTQUhGhNtdETq6HXWDYEJbW/Ju
+	 lcJ8PGk7XL31g==
+Date: Tue, 2 Sep 2025 18:08:43 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Fan Gong <gongfan1@huawei.com>
+Cc: Zhu Yikai <zhuyikai1@h-partners.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn
+ Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
+ <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
+ Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
+ <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi
+ <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>, Michael Ellerman
+ <mpe@ellerman.id.au>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, Suman
+ Ghosh <sumang@marvell.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Joe Damato <jdamato@fastly.com>, Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH net-next v03 02/14] hinic3: HW management interfaces
+Message-ID: <20250902180843.5ba05bf2@kernel.org>
+In-Reply-To: <07e099c1395b725d880900550eaceb44a189d901.1756524443.git.zhuyikai1@h-partners.com>
+References: <cover.1756524443.git.zhuyikai1@h-partners.com>
+	<07e099c1395b725d880900550eaceb44a189d901.1756524443.git.zhuyikai1@h-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,27 +69,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2 Sep 2025, Osama Abdelkader wrote:
+On Sat, 30 Aug 2025 16:08:41 +0800 Fan Gong wrote:
+> +int hinic3_init_cfg_mgmt(struct hinic3_hwdev *hwdev)
+> +{
+> +	struct hinic3_cfg_mgmt_info *cfg_mgmt;
+> +	int err;
+> +
+> +	if (!hwdev->hwif->attr.num_ceqs) {
+> +		dev_err(hwdev->dev, "Ceq num cfg in fw is zero\n");
+> +		return -EINVAL;
+> +	}
 
-> diff --git a/arch/mips/math-emu/me-debugfs.c b/arch/mips/math-emu/me-debugfs.c
-> index d5ad76b2bb67..49bf2b827ce2 100644
-> --- a/arch/mips/math-emu/me-debugfs.c
-> +++ b/arch/mips/math-emu/me-debugfs.c
-> @@ -37,11 +37,11 @@ DEFINE_SIMPLE_ATTRIBUTE(fops_fpuemu_stat, fpuemu_stat_get, NULL, "%llu\n");
->   * used in debugfs item names to be clearly associated to corresponding
->   * MIPS FPU instructions.
->   */
-> -static void adjust_instruction_counter_name(char *out_name, char *in_name)
-> +static void adjust_instruction_counter_name(char *out_name, size_t len, char *in_name)
->  {
->  	int i = 0;
->  
-> -	strcpy(out_name, in_name);
-> +	strscpy(out_name, in_name, len);
-
- It'd make sense to keep the order of the incoming parameters the same as 
-the arguments here so as to avoid the need for register shuffling.
-
-  Maciej
+The input checking in most of the functions looks like defensive
+programming. The values should be checked when they are set / loaded,
+not on input to random functions. Defensive programming should be
+avoided in the kernel (meaning, unless you can point out actual callers
+which need the validation, and can explain why doing the check in the
+callee rather than the caller is cleaner -- the check should be in the
+caller).
 
