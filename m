@@ -1,159 +1,135 @@
-Return-Path: <linux-kernel+bounces-799547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8656FB42D6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:30:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A02B42D72
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D89F565962
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:30:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDEAA486570
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33BA2F39A4;
-	Wed,  3 Sep 2025 23:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FAE277007;
+	Wed,  3 Sep 2025 23:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CETVKolm"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gYjEgMLd"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4011459F7
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 23:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2191F266574
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 23:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756942203; cv=none; b=dqBX8IRJ4Laad/O1tBpxTNdA4titq3wcqfLavDn/qCX8iaplk7GvuqeIK24kVyGYHyiP8ELFRQwRuoXw4tBQfQIcbVAvM4gUlJURZ0eR2k+dpL6pC2TcJlQCHvsqHw6n24dBIfo0H7hDZ4MpN79l814NVIvxhWEFrVXwfzHSHec=
+	t=1756942239; cv=none; b=MV52eY/A8nZnPzxmFCa3FErIZS1b7vK+l6cidlnay2P5QffyhFTQxGvVUiqrccbnOIxx1Ofu253YFTMVXxbLx663E+Q2muj1aKyFUnv3JCbLySVeEedClpHrz24anl0iuA6EeQgePohk7OK/SnW5tio38Uxfwt8nFkGvuBV792I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756942203; c=relaxed/simple;
-	bh=GNr7VFuJevqVS2hBqVOZK3r8mR73l9bbWq/xzZ2iqUk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E37nxbGYFxZanjAXavpXAlNi9n3Fa7/VRab8Ml7NtvwgYPFwK5TdkYmwyPuHYfna3wxuip16Kj/iHO/S6AITJxexH96vGqEzoJZ6pXTlgVPFci0Ip3hpc1/sfz92Dm4YPD8RFaQ1Q6A5NujdgM61xFMFMz0hUd/FxFEJVXNgafw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CETVKolm; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3f663225929so3146155ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 16:30:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1756942200; x=1757547000; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YvqGMPyp0FchAqYhsEWYsUXhRgyEZLtEOdipJAz6MGY=;
-        b=CETVKolmy87znVbk6iJqY3eDsDZ0h3twv4RoqNGsUyyIDxO4OEZVtYDKXp3uFz/jKD
-         UApC/7NWBsZGrFhbr+KyBgLg3Lx3mDVRkCoPBlpFcRcQEKkEMGGAlEW6iDxcUVOhL3AK
-         JA1KAeBFepn0XxR8VdNMS2/YURh4qM8cG574aPGE3cjyH6rJivGtNAnM99zlhKNL+D2B
-         707BV5H0CJjbMxtjZ3BlraLvtDg4Ki/eL8Wk1e9y9EmfgI4IdtQRQJx5EJNv/dwGdFqT
-         GAr8BB9cevE+tRI9t1Zx1yZW2Rky2N1JGYsxRsHEBNsGLjo7Eyc1DDSz3Y2mG9MJNWot
-         bykg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756942200; x=1757547000;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YvqGMPyp0FchAqYhsEWYsUXhRgyEZLtEOdipJAz6MGY=;
-        b=Rn4u/VT2CiRaSqG0LBd60ov2FnrfW8ldqjEV9VFrEqZK1kccAAJYXSyXlmcakmTxg9
-         Nc2byl+yducmRUa+M1fCxjZSbxNOlPy6QYFUlMHlTmtQb94ywElGHG+jv7dYXjA8COC+
-         JX0kiT1kw/qlzEWWBZpVdQQ7AHDJXHs+pucei9xFuQoD4E4/LQg/AKGtOET6fUCrxDtZ
-         u92SFPskHhQESI0cxm6e2jPsSR7D0pwf3oHVWDfG31vUi/jZR10U5N0craOHSqe8KuPz
-         7J82FV2m1GPxxLtt3LCgjdDdBjrptPfntse0A9vGwpjgt/s4w7K45a8yv32QXfDIIkcU
-         zuLA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3RAksG629bVUrfeEN3ifxpAikBPvDuq5eckFJzOa4HwbOD7QfX9K8EQKOCMqhRcCqa+q5z/9BWPrypIs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBJCWAhEEvFz7qPcwLaQHjqr+obky6nkwPcNjKxA5EFoe8oubW
-	BD/5gIp+XP24QvOGnDSusJoasFFZ9daLlx9rhJ5pwd82LPwaHxD0inTDmVB74s3836o=
-X-Gm-Gg: ASbGncuKbARMrakfzMDWjnpDx+ZD3JyXk2Qtceuhr0ogZLKQUQDdOn6vWPTXK86G8Um
-	xlZZ+mxwcnx7XWkCylbNcx7NZXFObI/ujE4kEw6DXY81DfD33gWn44MqboGxae3ZOvJA82QAbuJ
-	81VzHxbvMxHFzTd3g85s6osPJy6UJHowpiR9k0BbsMcXGbIV12SeZRBlOCrIuKQcAvKuzJnwCct
-	lPes/ByrS6IeleBir8axgxAdjNq/y0shYRoELB0SRRkYQgOpczgGr5+5VjIX1YJvcFoUB4F84k2
-	JuIUonUG/U9FM9RdOm1JTF+NkODqeIkGUXEjSM3GfW9zdBOoqpCjTUylwW/NJxwxnJKjwNHqze4
-	tZ3CZt6Zx2TOgMWOqn15eY4C7UwQT
-X-Google-Smtp-Source: AGHT+IHu4lmtN61kR+SUYR1vSljYZPLL/bhjVNR3pwIPbHq7Flpijoa8vuWAQObGbrdcYyjDn0HhKA==
-X-Received: by 2002:a92:c24b:0:b0:3e5:53da:3d7 with SMTP id e9e14a558f8ab-3f400097e47mr319540815ab.6.1756942200159;
-        Wed, 03 Sep 2025 16:30:00 -0700 (PDT)
-Received: from [172.20.0.68] ([70.88.81.106])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3f3e07ea071sm56727295ab.31.2025.09.03.16.29.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 16:29:59 -0700 (PDT)
-Message-ID: <26aa509e-3070-4f6b-8150-7c730e05951d@kernel.dk>
-Date: Wed, 3 Sep 2025 17:29:57 -0600
+	s=arc-20240116; t=1756942239; c=relaxed/simple;
+	bh=9k8cwHFfS6mQi0rNbfS1VSFnFMFfe9G0/khjroNDtY0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=meZRXZ1WXWe8lWOw1UTqmt6osddbUM0e6SPVMAtFsS8U9UbZ/CHNMvwaJyxDsVl88C97XaexTWoLwPmWn45ngdPhw8RO9ywYVlcnENWgdR21BbYJZjEQ0lJ+cD6hWUUTmV6GzvdcUEQ/kImMoqCR3rboQky9qOzcrzvfTC6sN2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gYjEgMLd; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756942224;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2gF9nx6eMMapslYLJpUtDnYswISTCfOBidr6oM0KZc8=;
+	b=gYjEgMLdGEMiHywRyPh4AwLwNc75TYOydh6kp33yMxnfVzV1BouIN0nxrkTulAYnaG2JBi
+	yZsMEjQd92BV97Vi3eqFf0h1TtMm8Dv2xXaojDidujJ3jIoGt98F/++5B/gzwgQ/l0XafC
+	yAAYoXegRTtt4lnB867FOPkjVtCwobw=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Tejun Heo <tj@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,  Martin KaFai Lau
+ <martin.lau@linux.dev>,  Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+  linux-mm <linux-mm@kvack.org>,  bpf <bpf@vger.kernel.org>,  Suren
+ Baghdasaryan <surenb@google.com>,  Johannes Weiner <hannes@cmpxchg.org>,
+  Michal Hocko <mhocko@suse.com>,  David Rientjes <rientjes@google.com>,
+  Matt Bobrowski <mattbobrowski@google.com>,  Song Liu <song@kernel.org>,
+  Alexei Starovoitov <ast@kernel.org>,  Andrew Morton
+ <akpm@linux-foundation.org>,  LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
+In-Reply-To: <aLeLzWygjrTsgBo8@slm.duckdns.org> (Tejun Heo's message of "Tue,
+	2 Sep 2025 14:29:01 -1000")
+References: <20250818170136.209169-1-roman.gushchin@linux.dev>
+	<20250818170136.209169-2-roman.gushchin@linux.dev>
+	<CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
+	<87ms7tldwo.fsf@linux.dev>
+	<1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
+	<87wm6rwd4d.fsf@linux.dev>
+	<ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
+	<CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
+	<87iki0n4lm.fsf@linux.dev> <aLeLzWygjrTsgBo8@slm.duckdns.org>
+Date: Wed, 03 Sep 2025 16:30:16 -0700
+Message-ID: <87qzwnxgfr.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot ci] Re: io_uring: avoid uring_lock for
- IORING_SETUP_SINGLE_ISSUER
-To: syzbot ci <syzbot+cibd93ea08a14d0e1c@syzkaller.appspotmail.com>,
- csander@purestorage.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-References: <68b8b95f.050a0220.3db4df.0206.GAE@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <68b8b95f.050a0220.3db4df.0206.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-On 9/3/25 3:55 PM, syzbot ci wrote:
-> syzbot ci has tested the following series
-> 
-> [v1] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-> https://lore.kernel.org/all/20250903032656.2012337-1-csander@purestorage.com
-> * [PATCH 1/4] io_uring: don't include filetable.h in io_uring.h
-> * [PATCH 2/4] io_uring/rsrc: respect submitter_task in io_register_clone_buffers()
-> * [PATCH 3/4] io_uring: factor out uring_lock helpers
-> * [PATCH 4/4] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-> 
-> and found the following issue:
-> WARNING in io_handle_tw_list
-> 
-> Full report is available here:
-> https://ci.syzbot.org/series/54ae0eae-5e47-4cfe-9ae7-9eaaf959b5ae
-> 
-> ***
-> 
-> WARNING in io_handle_tw_list
-> 
-> tree:      linux-next
-> URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next
-> base:      5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
-> arch:      amd64
-> compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> config:    https://ci.syzbot.org/builds/1de646dd-4ee2-418d-9c62-617d88ed4fd2/config
-> syz repro: https://ci.syzbot.org/findings/e229a878-375f-4286-89fe-b6724c23addd/syz_repro
-> 
-> ------------[ cut here ]------------
-> WARNING: io_uring/io_uring.h:127 at io_ring_ctx_lock io_uring/io_uring.h:127 [inline], CPU#1: iou-sqp-6294/6297
-> WARNING: io_uring/io_uring.h:127 at io_handle_tw_list+0x234/0x2e0 io_uring/io_uring.c:1155, CPU#1: iou-sqp-6294/6297
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 6297 Comm: iou-sqp-6294 Not tainted syzkaller #0 PREEMPT(full) 
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> RIP: 0010:io_ring_ctx_lock io_uring/io_uring.h:127 [inline]
-> RIP: 0010:io_handle_tw_list+0x234/0x2e0 io_uring/io_uring.c:1155
-> Code: 00 00 48 c7 c7 e0 90 02 8c be 8e 04 00 00 31 d2 e8 01 e5 d2 fc 2e 2e 2e 31 c0 45 31 e4 4d 85 ff 75 89 eb 7c e8 ad fb 00 fd 90 <0f> 0b 90 e9 cf fe ff ff 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 22 ff
-> RSP: 0018:ffffc900032cf938 EFLAGS: 00010293
-> RAX: ffffffff84bfcba3 RBX: dffffc0000000000 RCX: ffff888107f61cc0
-> RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000000000
-> RBP: ffff8881119a8008 R08: ffff888110bb69c7 R09: 1ffff11022176d38
-> R10: dffffc0000000000 R11: ffffed1022176d39 R12: ffff8881119a8000
-> R13: ffff888108441e90 R14: ffff888107f61cc0 R15: 0000000000000000
-> FS:  00007f81f25716c0(0000) GS:ffff8881a39f5000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000001b31b63fff CR3: 000000010f24c000 CR4: 00000000000006f0
-> Call Trace:
->  <TASK>
->  tctx_task_work_run+0x99/0x370 io_uring/io_uring.c:1223
->  io_sq_tw io_uring/sqpoll.c:244 [inline]
->  io_sq_thread+0xed1/0x1e50 io_uring/sqpoll.c:327
->  ret_from_fork+0x47f/0x820 arch/x86/kernel/process.c:148
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->  </TASK>
+Tejun Heo <tj@kernel.org> writes:
 
-Probably the sanest thing to do here is to clear
-IORING_SETUP_SINGLE_ISSUER if it's set with IORING_SETUP_SQPOLL. If we
-allow it, it'll be impossible to uphold the locking criteria on both the
-issue and register side.
+> Hello, Roman. How are you?
 
--- 
-Jens Axboe
+Hi Tejun! Thank you for the links...
+
+>
+> On Tue, Sep 02, 2025 at 10:31:33AM -0700, Roman Gushchin wrote:
+> ...
+>> Btw, what's the right way to attach struct ops to a cgroup, if there is
+>> one? Add a cgroup_id field to the struct and use it in the .reg()
+>> callback? Or there is something better?
+>
+> So, I'm trying to do something similar with sched_ext. Right now, I only
+> have a very rough prototype (I can attach multiple schedulers with warnings
+> and they even can schedule for several seconds before melting down).
+> However, the basic pieces should may still be useful. The branch is:
+>
+>  git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-hier-prototype
+>
+> There are several pieces:
+>
+> - cgroup recently grew lifetime notifiers that you can hook in there to
+>   receive on/offline events. This is useful for initializing per-cgroup
+>   fields and cleaning up when cgroup dies:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/tree/kernel/sched/ext.c?h=scx-hier-prototype#n5469
+
+This is neat, I might use this for the psi struct ops to give a user a
+chance to create new trigger(s) if a new cgroup is created.
+
+>
+> - I'm passing in cgroup_id as an optional field in struct_ops and then in
+>   enable path, look up the matching cgroup, verify it can attach there and
+>   insert and update data structures accordingly:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/tree/kernel/sched/ext.c?h=scx-hier-prototype#n5280
+
+Yeah, we discussed this option with Martin up in this thread. It doesn't
+look as the best possible solution, but maybe the best we have at the moment.
+
+Ideally, I want something like this:
+
+void test_oom(void)
+{
+	struct test_oom *skel;
+	int err, cgroup_fd;
+
+        cgroup_fd = open(...);
+        if (cgroup_fd < 0)
+		goto cleanup;
+
+	skel = test_oom__open_and_load();
+        if (!skel)
+		goto cleanup;
+
+	err = test_oom__attach_cgroup(skel, cgroup_fd);
+	if (CHECK_FAIL(err))
+		goto cleanup;
 
