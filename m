@@ -1,156 +1,142 @@
-Return-Path: <linux-kernel+bounces-798216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE01BB41AC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:55:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FAF9B41AC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 880F01B254C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:56:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BDA91BA1074
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B58B2F39A0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0B92F3C29;
 	Wed,  3 Sep 2025 09:53:35 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E339E2F28F0;
-	Wed,  3 Sep 2025 09:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="pXoYO4uN";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WZpPJKSu"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CD42F1FF4;
+	Wed,  3 Sep 2025 09:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756893214; cv=none; b=SXV+YZsykN2HVa+5gdBbxW1YVwzuaimgBFzbqFl2RIIoy1Dc2m5S7u98guNYYuzvYc9vIMBbqu7t3mChWgdFrJYIR/O/PpASOA6psUC5JDERGVMlT8xchzxD/vdCyQlXvo5JUd+vAkqY+tI12C6rCgp6iiWsj6+TliA9IfrA36g=
+	t=1756893215; cv=none; b=nHaSO1IIlWyYgo7hBuGiR8oklCNbKHTi6KIGotqOKdE9l3qquuyDEmhYBJX9ZW649xApAxOfEj+UFJy9Jd5HmdAnHlqZXy6QcW6M+S1AYl17JrFvFjitMG/qBIWVWw3D4sAwj59r7cjVbUwsJIkxWA9Pu6XJ87CqbvhUTw1la9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756893214; c=relaxed/simple;
-	bh=PuAfWmWmu4+nzyctL9OZNVJZoNyu+8EySupeLi2tGKU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L9NuQIHMr0XlxBhkyqUtnoYqOkhx0uLUJPxU/i6/ID6kdQN/Xxp3Qcd6fuobexj3OAqPYEuA9IkagRz0lzi8h6tQeUkJRpHNJLXnD4uLm3CZ0dr0j4UCJDK9671Wq46UM9BVfqfDATa+vcwefMOQtG/m7L+1Dp2dJY/1eGGC0fM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8Bx1tAUELho8i0GAA--.12914S3;
-	Wed, 03 Sep 2025 17:53:24 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJAxfcEMELhom_16AA--.5842S5;
-	Wed, 03 Sep 2025 17:53:24 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>
-Cc: WANG Rui <wangrui@loongson.cn>,
-	rust-for-linux@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 3/3] LoongArch: Handle table jump option for RUST
-Date: Wed,  3 Sep 2025 17:53:15 +0800
-Message-ID: <20250903095315.15057-4-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20250903095315.15057-1-yangtiezhu@loongson.cn>
-References: <20250903095315.15057-1-yangtiezhu@loongson.cn>
+	s=arc-20240116; t=1756893215; c=relaxed/simple;
+	bh=277RioR3basjGp9kALm3hs9oH+dbVhaHNkYk9uma6EQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oou/AUIAQ4S1uynnClmz3oeFQXJBWkdH1djzutmArc0ED6fW+n6vibNkilm4xB+Vsb/dXFPi2b/y/5r/gyVFJiL2Ha0SYxzwAG83HlM0ELSvabfWWxLWOt9Z2YuofY2U4o7vIORzC4S9FEY5vSiAz0+9u4aXz+RxE34DU/Vpe5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=pXoYO4uN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WZpPJKSu; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id 6A797EC0336;
+	Wed,  3 Sep 2025 05:53:29 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Wed, 03 Sep 2025 05:53:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1756893209; x=1756979609; bh=jNNb+nr/hF
+	Kdcw+MyWg50Siwcv+G2MEA1WmLkk6R+24=; b=pXoYO4uNcVZuUx9Lb0lz/ceknJ
+	VORA4T5rp/2utYlvIq/8FCigI1G2XxgMf2/f0gtvW20zmDflVKBUbuQwcjlkcLGk
+	BCBXtv6OZjTs5CfVP9rBI8gloI+8kHsKA9iEfm5urKuWjK1c+XqnsFtzhGkYzac1
+	pWC7Yb0rtiuvSSP5uBzlClipQA4dQOHtWxvF0MmcWEfXTvTPyulpJaKlcVDnKk69
+	VExqh/IB8N0UeSYuyS36M33Vm3i/3xIheVXth8eCbUL4/WNPzcV9A8goig4tda9B
+	fXwyxnIMZNQFS260aPWVPGC4abO/ls7C3t7XP52RQDLFd/OPdEgZA0wgpkxQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1756893209; x=1756979609; bh=jNNb+nr/hFKdcw+MyWg50Siwcv+G2MEA1Wm
+	Lkk6R+24=; b=WZpPJKSuPdSVvsUz8WkC51Yhv7zyC3tkBUR6DeoxnRR3wM8R/mi
+	3DDfpSWxr3nlfbv4g1zYSnehh4MZndgr4D/T6Phn3PuuYCDuujxHzDtPXGo08t9/
+	YRY1yeyVra9XZAvf4FGa6FaFLh8GvPKz0mDJllwn9HF+dRT2rPPx4OpeRWbWsWFM
+	aszLMJzSK/sL0BQ2ClWVNiDONcYJYTyHYu0VlEus2PoMhWJGsrxU1skSV1i9g+tl
+	8X5FRWtFicWL4gI87JsUbgGh/s3PpjmN5mkhdLIAX1T31j1KdUD3NqEvrjyighzB
+	mJiXM4iFrlJJDXrYnOnWJ8ElIL7ktYkMv8g==
+X-ME-Sender: <xms:FxC4aG1qr09vvHwIJ4hRbt7dkIQxbA0fvsqT7xu7-Qa-EuI1Y0SAtg>
+    <xme:FxC4aMkjjJBlZaG1qNx88mBDxwo_Xhu75G-jqvsAUqKkRP9XRf8eRjyuRp5rPUJ8r
+    n4Wt8-hhISP1shtCe0>
+X-ME-Received: <xmr:FxC4aHZ5L4UDCpYxS4iPuJ2jp77oF68P09_Bh3agX1CIy18Cb4gvlewcgjaINc4RmuJVrWjOvYwkXbvqBUJgZ6aLOCp95D_yeWw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvkeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomheplfgrnhhnvgcuifhr
+    uhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpefgvdffve
+    elgedujeeffeehheekheelheefgfejffeftedugeethfeuudefheefteenucevlhhushht
+    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruhdrnh
+    gvthdpnhgspghrtghpthhtohepvddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
+    pehhtghhsehlshhtrdguvgdprhgtphhtthhopehsvhgvnheskhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtohepthhofihinhgthhgvnhhmihesghhmrghilhdrtghomhdprhgtphhtthho
+    pegrlhihshhsrgesrhhoshgvnhiifigvihhgrdhiohdprhgtphhtthhopehnvggrlhesgh
+    homhhprgdruggvvhdprhgtphhtthhopehjrghsshhishhinhhghhgsrhgrrhesghhmrghi
+    lhdrtghomhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    epkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdought
+    sehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:FxC4aKpXGXfqNRJtXU3bKWXf82Z1HtC8gg6cm1QSI4juZ64CPJpJvA>
+    <xmx:FxC4aNgClrkAVGxrPUSoA5iIA9dD-IuPEqmWHNN_kwc6d3MH4dldvg>
+    <xmx:FxC4aMxWuRIbQ_rTseCZMo3e5lePw_bkoEo1iX_61QGtyH-FqaYTug>
+    <xmx:FxC4aL8MmHW_zqynwVULmAhwl-4ii_YK6UIH_NVlSD4x8Q_GitvppA>
+    <xmx:GRC4aNXiqaEM5KtsXta-J8fDubHw9ulAUXUwLhYT3ONsidDAlYyK2-Ol>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 3 Sep 2025 05:53:27 -0400 (EDT)
+Date: Wed, 3 Sep 2025 11:53:25 +0200
+From: Janne Grunau <j@jannau.net>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Sven Peter <sven@kernel.org>, Nick Chan <towinchenmi@gmail.com>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Jassi Brar <jassisinghbrar@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hector Martin <marcan@marcan.st>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Sagi Grimberg <sagi@grimberg.me>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v3 7/9] nvme: apple: Add Apple A11 support
+Message-ID: <20250903095325.GA89417@robin.jannau.net>
+References: <20250821-t8015-nvme-v3-0-14a4178adf68@gmail.com>
+ <20250821-t8015-nvme-v3-7-14a4178adf68@gmail.com>
+ <20250825080710.GA23193@lst.de>
+ <89251134-9685-439e-b220-92717663f038@kernel.org>
+ <20250902052646.GA11139@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxfcEMELhom_16AA--.5842S5
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxZF4rtrW5uF4fJrWrZr1DurX_yoW5ZF1xpw
-	nru3s5tr4rGFn7t39xJayUWr4rJrnxtw13XFs7G348Aay7X34UZrs2y3srXFy8AwnxW3yS
-	qryrK3y3KFWDC3XCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
-	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AK
-	xVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUcCD7UUUUU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250902052646.GA11139@lst.de>
 
-When compiling with LLVM and CONFIG_RUST is set, there exist objtool
-warnings "sibling call from callable instruction with modified stack
-frame" in rust/core.o and rust/kernel.o.
+On Tue, Sep 02, 2025 at 07:26:46AM +0200, Christoph Hellwig wrote:
+> On Wed, Aug 27, 2025 at 05:56:33PM +0200, Sven Peter wrote:
+> >> Do you want to merge this through the apple SOC tree?  If so:
+> >>
+> >> Acked-by: Christoph Hellwig <hch@lst.de>
+> >>
+> >>
+> >
+> > I don't think that's necessary since there are no build time dependencies 
+> > but if you want to I can take it through there.
+> 
+> Merging it through nvme sounds fine as well, I just through up
+> grabbing everything together would be easier.  I also noticed there's
+> another Apple hw enablement series that touches nvme, so I guess both
+> should go through the same tree?
 
-For this special case, the related object file shows that there is no
-generated relocation section '.rela.discard.tablejump_annotate' for the
-table jump instruction jirl, thus objtool can not know that what is the
-actual destination address.
+yes, they should go through the same tree if they go in the same cycle.
+They conflict in dt-bindings and possibly the driver. We should avoid
+burden someone else with this conflict resolution.
 
-If the rustc has the option "-Cllvm-args=--loongarch-annotate-tablejump",
-pass the option to enable jump table for objtool, otherwise it is better
-to remain -Zno-jump-tables to keep compatibility with older rustc.
-
-How to test:
-
-(1) Please install rustc 1.78.0 (without annotate-tablejump option) or
-1.87.0 (with annotate-tablejump option), do not use the latest version
-for now, otherwise there may be build error:
-
-     --> rust/kernel/lib.rs:331:13
-      |
-  331 |         loc.file_with_nul()
-      |             ^^^^^^^^^^^^^ method not found in `&'a Location<'a>`
-
-  error: aborting due to 1 previous error
-
-(2) Execute the following command:
-
-  $ rustup component add rust-src
-  $ make LLVM=1 rustavailable
-  $ make ARCH=loongarch LLVM=1 clean defconfig
-  $ scripts/config -d MODVERSIONS \
-    -e RUST -e SAMPLES -e SAMPLES_RUST \
-    -e SAMPLE_RUST_CONFIGFS -e SAMPLE_RUST_MINIMAL \
-    -e SAMPLE_RUST_MISC_DEVICE -e SAMPLE_RUST_PRINT \
-    -e SAMPLE_RUST_DMA -e SAMPLE_RUST_DRIVER_PCI \
-    -e SAMPLE_RUST_DRIVER_PLATFORM -e SAMPLE_RUST_DRIVER_FAUX \
-    -e SAMPLE_RUST_DRIVER_AUXILIARY -e SAMPLE_RUST_HOSTPROGS
-  $ make ARCH=loongarch LLVM=1 olddefconfig all
-
-Suggested-by: WANG Rui <wangrui@loongson.cn>
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/loongarch/Kconfig  | 4 ++++
- arch/loongarch/Makefile | 6 ++++++
- 2 files changed, 10 insertions(+)
-
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index f0abc38c40ac..57933a717e92 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -298,6 +298,10 @@ config AS_HAS_LVZ_EXTENSION
- config CC_HAS_ANNOTATE_TABLEJUMP
- 	def_bool $(cc-option,-mannotate-tablejump)
- 
-+config RUSTC_HAS_ANNOTATE_TABLEJUMP
-+	depends on RUST
-+	def_bool $(rustc-option,-Cllvm-args=--loongarch-annotate-tablejump)
-+
- menu "Kernel type and options"
- 
- source "kernel/Kconfig.hz"
-diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-index 9d80af7f75c8..b26d47707031 100644
---- a/arch/loongarch/Makefile
-+++ b/arch/loongarch/Makefile
-@@ -106,6 +106,12 @@ KBUILD_CFLAGS			+= -mannotate-tablejump
- else
- KBUILD_CFLAGS			+= -fno-jump-tables # keep compatibility with older compilers
- endif
-+ifdef CONFIG_RUSTC_HAS_ANNOTATE_TABLEJUMP
-+# Pass '--loongarch-annotate-tablejump' via '-Cllvm-args' to rustc when RUST is enabled.
-+KBUILD_RUSTFLAGS		+= -Cllvm-args=--loongarch-annotate-tablejump
-+else
-+KBUILD_RUSTFLAGS		+= -Zno-jump-tables # keep compatibility with older compilers
-+endif
- ifdef CONFIG_LTO_CLANG
- # The annotate-tablejump option can not be passed to LLVM backend when LTO is enabled.
- # Ensure it is aware of linker with LTO, '--loongarch-annotate-tablejump' also needs to
--- 
-2.42.0
-
+Janne
 
