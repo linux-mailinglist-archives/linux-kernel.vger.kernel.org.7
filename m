@@ -1,169 +1,123 @@
-Return-Path: <linux-kernel+bounces-798930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88FEDB424D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:17:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C843FB424DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E92AB682E36
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:16:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12AAC3B2C4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767371F4C87;
-	Wed,  3 Sep 2025 15:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C215C24113C;
+	Wed,  3 Sep 2025 15:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AWfrNMst"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TQmoy9Ke"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8F61FF7C8
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7D3239E7D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756912526; cv=none; b=PlHBGVotW4SHDcLANcRhgcP6MapAXbbwQ/1iks3ZJymsU0APt8gdnYZDiPvYaGGswshrBJDrrD0SHsKf1FK2KjqSBiUq7bFpv002uDjKfak+UZu/a314ruzZlACzaYYnahchV6ifyMl+IqX6Af3t/JBfDAzTMQ1SxF80YqT8ehY=
+	t=1756912548; cv=none; b=WcdQfixWDP5dg3RUIG29wog8hrmO/GC3HOyDxJS9hrNvEUrXCpngWfYVobd+kbBkLyuHGHoOnUPYyaz0JIaUEWdbH7XVikjb5j3HPupommd/4t3XseCqpd70ZLzr7YS1gBldxpr9Vj6sJkC1MfTcDI4we4pgIZ3uFfcNb5dWHyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756912526; c=relaxed/simple;
-	bh=Qs0vM4WnRg1sWrSQDhD/dHdJLErkQzLDPp/S8NA9xJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqhDZIufBScDXzep/ZlnNChY5TkLVMXQsrY8erqUPi/xbtTTQ/KP7fz+SnZJzXEk4wTHmXXcgbuxG5Oqc7JPSylrICHTXRDQqb8q4m6MW648A9EJFfL22UoH4DWN5MRG6c+ioeLwendeJ0t0IYD3Hl9u5fnDC3leFt+knSkVAoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AWfrNMst; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756912524;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qbSBenbpjTa++jsPneELJOEvjFDl0VlvYT1LTF09Ibk=;
-	b=AWfrNMst+9J1x8YX+6eobddg2wBGVCqUTX1KQH1ePZBbsCvC3DikmoYJUWy/OWgl32fcjg
-	jslljsESSYDbXFWz5SUNdieXLxrBbOzQIMNRmuqkmmW31k/T7szruard3gh0TFFiWFuTsb
-	x4fsplUMp37rwUqUhe+G1qlOyWWJWg4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-245-brwRv92UN-SdwOtKWrzbOg-1; Wed, 03 Sep 2025 11:15:22 -0400
-X-MC-Unique: brwRv92UN-SdwOtKWrzbOg-1
-X-Mimecast-MFC-AGG-ID: brwRv92UN-SdwOtKWrzbOg_1756912521
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b7a0d1a71so311465e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 08:15:22 -0700 (PDT)
+	s=arc-20240116; t=1756912548; c=relaxed/simple;
+	bh=ifVcf96DgqG0NA809UwmItaf7+rgJl4P3Yh//OMkxKw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Rd+Y/Lcj9mhYUhEcqPSIWZEwIYu2aDiLsywWtJ5vNGCHWxiJ3YnX8VDM2LKcoYrtgfHcPiBhedtNGWZn7veLuQqqke5kmNmoNhcwym6uvJadMAbUKXmM5exdr3cCK4byAiSeQy9+gVuCcyPsFJMIQ1/c/dQyUHFU5eMC0b74GDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TQmoy9Ke; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3da9ad0c1f4so26700f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 08:15:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756912544; x=1757517344; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0G2pXnWEohSUeTnmA6oR72H6xhskrL3wwthjDu2SlnQ=;
+        b=TQmoy9KevsG4far8+RXbcrr49szXEKJxrEk7Pl4mmx+cY3e6AXLXHY/tlfboJeOH4J
+         woClHJMehJ+hzIl1CTOPuzlsfQH6hJRjhClD+m+JbjWm1Iu9TtlStUW4JIWIDmnMSSo5
+         Hvy9R//xcRIkAWCnASdqLRVyULk8QDhlqTqJrg14vCXxBNu/z6tOe8CHxKSelp/xmGxJ
+         HkSkJy2kqGCJW9QS+TcCjgL81U4QObFypQVsb0CzPrIuAXROyrzRfyTZZF5uCupo/8uq
+         WwfRSdzCDx1kamF1xjtmyXIuYuwI0jTbIVWDxJPjwlnphmXV817rQxelYXA1aj3Y+fCO
+         PHFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756912521; x=1757517321;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qbSBenbpjTa++jsPneELJOEvjFDl0VlvYT1LTF09Ibk=;
-        b=ZzrB6m0ZLLiujT/DpBcA/nlwbhmnrGWXAAYbyEQY4WxJkkxWF4cYo1vxK+YjXNCLuD
-         a1TJybJSI9N3dQo3/fV/qRS5Ly1I0bPQDx6IyRGSYkF9jvIu5hcxR9x3d9wa1hyG6oNm
-         SYHVd69X9VUEfEp+yT4Q5m/W+ywy5CDORdVDx0CX31Sn+OicIEeGz/TXZvCDQIP7W6FI
-         aDosmwvqsI8fpVTghvPIsymDfH963LDvW6VY0HeAw3G0CxAM0H1YI04v/WPVfItL7VQ2
-         ke00mvh5R2KgnTZSsm7pn+Jb6/NeXeKSodKTc3bffcS9TiXW4vkyxCLqy0hzxdWt0oS9
-         CxUw==
-X-Forwarded-Encrypted: i=1; AJvYcCU79MtlB2tdbom6K2U4MlVlRirsBJCfBRotTO048uDmv0kG3KDEaVZ0mmbe9YdazJ3BT2kQJhIeFIWUowU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQi2aqu0W0quHena/UV9iYdYVIacXYaSnYgRB5LIUQJ//mVmuE
-	Wl0fo6mTpyxPjoMd1hi71yibjMI5Wyz6DzHeQm9KzjKo0eNAlk4RpzbQKx25qPEZsqw9YTfIL6k
-	GWB365QZ3PmIc5fvVFKzF+40ondw/8P5SM3LP6T2j+ndZRjNtlHSmnZP5LKVlP1UkfA==
-X-Gm-Gg: ASbGnctdMebbSbSWno3t2xevi2ibYE4jGOs86DTCIMP4Q1m4cIuhhhFma5VywyOkA3r
-	WRF1hLjKFJF+VKdSis6akvJ3F+BJdASYWdr0j0DwtPXgEVgTA11Se4NxrmZAdfQpDjk5bresPMI
-	ERDihkNVIIwGegNSS9pLSl7QDZCRAH1cSvFWUqaXImOshggfyqB9Sq5mgoAVpyMQizqfL3WVoNi
-	hdUskD0CcH5D9KGNblbp4Q5osJffkcsapuJBR3e7WqQUWXL2Cr92ZWi+GWqv+QTFLQbqsvbWFcX
-	GDbTWw8gGOn1PbwcrFEDeECMkzfX8Z0eQ8ruS9idBbiSizqwk6QCeuC7gmyUW+99YQAq8ow=
-X-Received: by 2002:a05:600c:1d04:b0:45b:82e8:c94b with SMTP id 5b1f17b1804b1-45c9ba76d74mr32283265e9.18.1756912521366;
-        Wed, 03 Sep 2025 08:15:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFhDv2jD1vUWaLSAILrInFOmf3ssm9G/W1i5T3Ku2qX4/HBVn1l3SPVtqllrd7Mm4c5Hxfjow==
-X-Received: by 2002:a05:600c:1d04:b0:45b:82e8:c94b with SMTP id 5b1f17b1804b1-45c9ba76d74mr32282875e9.18.1756912520893;
-        Wed, 03 Sep 2025 08:15:20 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.70.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e8879cesm243996435e9.12.2025.09.03.08.15.19
+        d=1e100.net; s=20230601; t=1756912544; x=1757517344;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0G2pXnWEohSUeTnmA6oR72H6xhskrL3wwthjDu2SlnQ=;
+        b=TA8HdA0XGgSmSkUnohQ8meAXCZYA1hlPCLmZoqSk3Wpz6ijLfvk3T94lZJ/PkpvXmJ
+         hakT4IC/KuB3QraKoXaQvgcTfpJT+SwnxyqIEKySYBEFdmCNEDgAg18CqNVTzOIHYpDL
+         jhuM/aV+jU155PEnZ35+rlPpzXTnKfNq95l0nwZ6KPD7AUu7XrnosyuzmjcRVK+S6CJQ
+         Rk9Tm0bHdHDU91PMRpbGPs449+ErakF2/ASy7bHi2v0ZfxzKDn4Vh2GAZcR79xV2QCSU
+         Vycrb/g/zqnF0asNFlpzQAdGRdm19gy8S53SiBowx4uGpjbR159aKEkW/sZ81emxRYdL
+         nLQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEEnQV6I8QHmwKh5TRcGkD8PPpRiv05kVnGRaJrGFQiBl2fIkkLodSlZWeL8V5WOS0DLdaUpRomeQtsLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2RdHHqXYVssTs1BGUOQwFOAGvDC27dGAc7MdDMePvuufJWXg5
+	Ihqx9LHSZYuj0J0CQzV24bsf2FUR7c/kTJiCEjr1BWDwmLAUhkVz+XvpbtgPmumawi4=
+X-Gm-Gg: ASbGnctIrClTQLpUT3SA5WD9dsYAfsNMKj0GUCarRwesVZFZHJfgOvmgCAUZtbHcPo4
+	3/nCgjjhpcwpiz2w9IvhCqnnd7SguZ0KrbuoCNY8Cgw/auO4Jjf099Bx2nFfpV0VRojuy6n4l5L
+	6ZheH7I6AEST4aU1nqq6/vhlkdGbZJSQI6dWoOWXsTJDmHJ0qExcGgjZfQhHx51gDnfkc96H/nH
+	3mHgquXG723YiZreeqrek+A9Da/mR2HiWGb36feUCIHaPQvkFE/gUYuJ1PwIlIUnTH6vV25rEyP
+	jUqpz7amcRXuXkUa2DPQ7H6nPbA582ANSnrBqNDOFhJ/r4fJWjNGA0b2yl1GHdLlqMSuJvClkS8
+	33x0uz4iFNBFTV1WWiLYRnJdWB3QuQ3UVpzZBYJVLrA==
+X-Google-Smtp-Source: AGHT+IGQhVGmTIGL8a09lUU9PnK+bUupkLG3N/awXg9MaNVqeSNYnHK4+blhn+mLhEMARgV1ijTb0Q==
+X-Received: by 2002:a05:6000:26d1:b0:3c9:9ec0:2055 with SMTP id ffacd0b85a97d-3d1dfb114f1mr14146638f8f.39.1756912544494;
+        Wed, 03 Sep 2025 08:15:44 -0700 (PDT)
+Received: from ho-tower-lan.lan ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d0f85c287fsm22090097f8f.52.2025.09.03.08.15.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 08:15:20 -0700 (PDT)
-Date: Wed, 3 Sep 2025 17:15:18 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luca Abeni <luca.abeni@santannapisa.it>,
-	Yuri Andriaccio <yurand2000@gmail.com>
-Subject: Re: [PATCH 05/16] sched/deadline: Return EBUSY if dl_bw_cpus is zero
-Message-ID: <aLhbhv1oiwxQ2E6b@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250903095008.162049-1-arighi@nvidia.com>
- <20250903095008.162049-6-arighi@nvidia.com>
- <aLhWh9_bJ5oKlQ3O@jlelli-thinkpadt14gen4.remote.csb>
- <aLhafcdtmW6s-ydD@gpd4>
+        Wed, 03 Sep 2025 08:15:43 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+Subject: [PATCH 0/2] perf tools: read_build_id() blocking argument fixes
+Date: Wed, 03 Sep 2025 16:15:25 +0100
+Message-Id: <20250903-james-perf-read-build-id-fix-v1-0-6a694d0a980f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLhafcdtmW6s-ydD@gpd4>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI1buGgC/x2MwQqDQAwFf0VyNpCuWmh/pXhY3bc2pbWSRSmI/
+ 97gcYZhdiowRaF7tZNh06Lf2eFSVzQ+4zyBNTlTkNDJTRp+xQ8KL7DMhph4WPWdPOKsPxbkax5
+ GSNsE8sVicH3uH/1x/AGFgkNrbgAAAA==
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ James Clark <james.clark@linaro.org>
+X-Mailer: b4 0.14.0
 
-On 03/09/25 17:10, Andrea Righi wrote:
-> On Wed, Sep 03, 2025 at 04:53:59PM +0200, Juri Lelli wrote:
-> > Hi,
-> > 
-> > On 03/09/25 11:33, Andrea Righi wrote:
-> > > From: Joel Fernandes <joelagnelf@nvidia.com>
-> > > 
-> > > Hotplugged CPUs coming online do an enqueue but are not a part of any
-> > > root domain containing cpu_active() CPUs. So in this case, don't mess
-> > > with accounting and we can retry later. Without this patch, we see
-> > > crashes with sched_ext selftest's hotplug test due to divide by zero.
-> > > 
-> > > Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> > > ---
-> > >  kernel/sched/deadline.c | 7 ++++++-
-> > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> > > index 3c478a1b2890d..753e50b1e86fc 100644
-> > > --- a/kernel/sched/deadline.c
-> > > +++ b/kernel/sched/deadline.c
-> > > @@ -1689,7 +1689,12 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
-> > >  	cpus = dl_bw_cpus(cpu);
-> > >  	cap = dl_bw_capacity(cpu);
-> > >  
-> > > -	if (__dl_overflow(dl_b, cap, old_bw, new_bw))
-> > > +	/*
-> > > +	 * Hotplugged CPUs coming online do an enqueue but are not a part of any
-> > > +	 * root domain containing cpu_active() CPUs. So in this case, don't mess
-> > > +	 * with accounting and we can retry later.
-> > > +	 */
-> > > +	if (!cpus || __dl_overflow(dl_b, cap, old_bw, new_bw))
-> > >  		return -EBUSY;
-> > >  
-> > >  	if (init) {
-> > 
-> > Yuri is proposing to ignore dl-servers bandwidth contribution from
-> > admission control (as they essentially operate on the remaining
-> > bandwidth portion not available to RT/DEADLINE tasks):
-> > 
-> > https://lore.kernel.org/lkml/20250903114448.664452-1-yurand2000@gmail.com/
-> > 
-> > His patch should make this patch not required. Would you be able and
-> > willing to test this assumption?
-> 
-> I'll run some tests with Yuri's patch applied and dropping this one (and we
-> may also need to drop "[PATCH 10/16] sched/deadline: Account ext server
-> bandwidth").
+The function now takes an argument for O_NONBLOCK. The first fix seems
+straightforward. The second one is _probably_ fine, but I can't really
+see any easy way to fix it because libbfd handles all its own IO. Maybe
+we need to compile in both versions of read_build_id() and only call the
+libbfd one on regular files? Or maybe in that specific use case it
+doesn't care, the commit message for adding libbfd there mentioned Wine
+PE binaries.
 
-Please mind that Yuri's change is still under discussion! :))
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+James Clark (2):
+      perf tests: Fix "PE file support" test build
+      perf symbols: Fix HAVE_LIBBFD_BUILDID_SUPPORT build
 
-I just wanted to mention it here as it might change how we account for
-dl-servers if we decide to go that way.
+ tools/perf/tests/pe-file-parsing.c | 4 ++--
+ tools/perf/util/symbol-elf.c       | 3 ++-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+---
+base-commit: 07d9df80082b8d1f37e05658371b087cb6738770
+change-id: 20250903-james-perf-read-build-id-fix-0ef6fbce0432
 
-Thanks,
-Juri
+Best regards,
+-- 
+James Clark <james.clark@linaro.org>
 
 
