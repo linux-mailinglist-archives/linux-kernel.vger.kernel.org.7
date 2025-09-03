@@ -1,91 +1,97 @@
-Return-Path: <linux-kernel+bounces-798311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9FAB41C2C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:46:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F90B41C2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12DD03B11A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:46:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6F6F3B59C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD75A275AE9;
-	Wed,  3 Sep 2025 10:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180852D3EE5;
+	Wed,  3 Sep 2025 10:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8XM54Q9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DLiuXvco"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1024E32F775;
-	Wed,  3 Sep 2025 10:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651D732F775;
+	Wed,  3 Sep 2025 10:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756896388; cv=none; b=WDpWdYLGozFBNvNEBvMeEKj2/hcrD4OSlnuJig5bWHaZjg4GkuwASelbV84LH+AYEXHPPqP3aftUIvmvHnEZPHa0s/XhNq11VWq5mrTmirvb/Q+qmO010rtUTKz6ALzbABp3W2xODkXBXLNLAWck+rbWabOJGd8cmSbeMmlubJc=
+	t=1756896429; cv=none; b=IzGDQJOaDyNYkLIYeAWRlWt2wgwAiRET7QxbimmxBcPTMHWdbl6a8LeB6r7LgJgRbeL1B9u3W8ewyJ4rgHZW4hFIcvm8DtGJDKMwxXKTNPigK4Vr/o+jI15u6oBN3L9uob88gPGVOqXT1ruFXzTffrqbtDaaxzax2tVnQFcae90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756896388; c=relaxed/simple;
-	bh=xCORtF7Xtywho3xt/2429Hnazk0pyqIkbRzbJS8JLhM=;
+	s=arc-20240116; t=1756896429; c=relaxed/simple;
+	bh=fz5qmFrEHCXZUGWMGVIO3vtqxPDyiM48ah7GvAY13vk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aXPeZ1K7bEV4vkKl2lu8huKWKiaSK4t/KRW1F4H32pElMFnmzDHr6MJXXR/0b5++8XnIxvka4OQw9aSD/UbGBzPPH6v4+3gsRxsdDekNL0jMmz5ZV5V9B9dAC7vi69uc/o2hUGxlE1B+7ZXMXroHpCnpVblXlTElTMMs9Bl1Kwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8XM54Q9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D65EC4CEF0;
-	Wed,  3 Sep 2025 10:46:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tlagLiKBPfl9GC5MYz/xLdEwSPuzMEfPZ1muOzo+ZbCeFENq8JtADmJdI9Vv130Xtt631OGD1QOtXBXQuZ19kry7Sg5OitvNQBE+CoJuv9fSvuvaMTGnnBwqByybcumnxHTneHasKPwjvWhyyiz/dGmmEofRvEwX+5U+j5cvmmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DLiuXvco; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46BA4C4CEF0;
+	Wed,  3 Sep 2025 10:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756896387;
-	bh=xCORtF7Xtywho3xt/2429Hnazk0pyqIkbRzbJS8JLhM=;
+	s=k20201202; t=1756896428;
+	bh=fz5qmFrEHCXZUGWMGVIO3vtqxPDyiM48ah7GvAY13vk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j8XM54Q9mNYCmYa3DjMoNaOvXBat723N3OcHQ6DSrGMb8h1WkPE9hQ946XJ//iceG
-	 Qggqn7vFvTQKklfNg2x64d1S8bMSjP9MDniQ/fRuSXgpFotqlozaGxMTfAKhqM4DoV
-	 W7WxKJrLi2Lu6SffhVk6q2zxofwZS7tlQSJa2y/FltWKQ1aWVc6Z1yElGytNN0vmL0
-	 pIob1nV+tAg/EtM9Kwt9lxYPrkSeB55mvrxVlIFz1aEQbnylqR+wP9FKJQrWybfzfx
-	 NcmNVT8iXxgaTRKOC1nTw4jgjLnfYerZlpD5M/koCjZLxp/X/EsR/AVKI+zsW3tHtu
-	 g8LMFak9ektHg==
-Date: Wed, 3 Sep 2025 11:46:23 +0100
-From: Lee Jones <lee@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Walle <mwalle@kernel.org>
-Cc: jcormier@criticallink.com, Job Sava <jsava@criticallink.com>,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] mfd: tps6594: add power button and power-off
-Message-ID: <20250903104623.GJ2163762@google.com>
-References: <20250826134631.1499936-1-mwalle@kernel.org>
- <175689630841.2597045.5125819314695096057.b4-ty@kernel.org>
+	b=DLiuXvcoHuAIBpbv0ee5qIMH7HCHPPpMhiovtn8kXwCAXNY3PBePahseuun4mmUJX
+	 gGY3HT+raXunXIYkIIZLke2+fOgGSzvF7gnMnsUZ/eBC+d9shNnRtJauTV+MpRUOHe
+	 3QSpVyI/5SK0pb4lcuN+AmXb1rI8/ltFu0SNQqa+OCvIEx1EG/Vp9uWT0sGvvnAbvk
+	 Dlbaa+nNWzjLjOWIRZEdS//BNvfdW8EWAHwcwffSPa2C3LHhY9RYNoYNAiP446B+Sw
+	 ZfDgOIqpJmPXjJIZpKsRsG+PeTC8/5nmxIe0DDd9wJklTIp0SwysMA9i3SwGRHmh10
+	 2nfrTJkoSPPFg==
+Date: Wed, 3 Sep 2025 11:47:02 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, achill@achill.org
+Subject: Re: [PATCH 6.12 00/95] 6.12.45-rc1 review
+Message-ID: <c452b3fd-770b-4fb8-bed4-6e89ff7240df@sirena.org.uk>
+References: <20250902131939.601201881@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IlbTxWye2kNCvcVN"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <175689630841.2597045.5125819314695096057.b4-ty@kernel.org>
+In-Reply-To: <20250902131939.601201881@linuxfoundation.org>
+X-Cookie: Ma Bell is a mean mother!
 
-On Wed, 03 Sep 2025, Lee Jones wrote:
 
-> On Tue, 26 Aug 2025 15:46:28 +0200, Michael Walle wrote:
-> > I took over the series from [1] since the original developer was an
-> > intern and is no longer with their former company.
-> > 
-> > Changelog is in the individual patches. But the most prominent
-> > change is that the pin mux config is now read from the chip itself
-> > instead of having a DT property.
-> > 
-> > [...]
-> 
-> Applied, thanks!
-> 
-> [1/3] input: tps6594-pwrbutton: Add power button functionality
->       commit: 170031ff27dd7a07fdedee7f3710a19dcdf889bd
-> [2/3] mfd: tps6594: add power button functionality
->       commit: d766ca01c208bdf0f36098607efe1e250ccf41c5
-> [3/3] mfd: tps6594: Add board power-off support
->       commit: 2215a87b02ad8d353cd3edebd1bed01db2458986
+--IlbTxWye2kNCvcVN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Submitted for build testing.  Once complete, I'll send out a PR.
+On Tue, Sep 02, 2025 at 03:19:36PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.45 release.
+> There are 95 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Note to self: ib-mfd-input-6.18
+Tested-by: Mark Brown <broonie@kernel.org>
 
--- 
-Lee Jones [李琼斯]
+--IlbTxWye2kNCvcVN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi4HKUACgkQJNaLcl1U
+h9APoAf/XWN6qKPtAxH+YXrd6CBW7IEWpc92yghyvMnYVLt6+HmwzeS8J9hUmxrh
+qe/sz2GARO8Uk1PIaaFdQI/80wo6x3HdM8x44mqLL7yFUZRYqgoOZbFmOdk7ZbiC
+Z2QHTss2V620DVJhGFyIKNRKGkpzCClg/9c3RSTK0EjTPEiNh/XZNERAaqdjYzhS
+kBFyislLE4vURtusNliBKaGtUJA5d8MT5erpis4Mv9i57vLT53tz/C5atDu4o8YR
+g/sA3+18Cujs9vmvRCU3bWGyJKpELVAk7wMryg7rcvqj7ZmalXGkUgzwYP7pK7UM
+9MQO16UukQszgJLuBsZF/+cjKAbuTQ==
+=jQib
+-----END PGP SIGNATURE-----
+
+--IlbTxWye2kNCvcVN--
 
