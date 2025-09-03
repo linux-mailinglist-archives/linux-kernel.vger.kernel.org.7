@@ -1,79 +1,87 @@
-Return-Path: <linux-kernel+bounces-798114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A79ABB419A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:12:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56EF4B419AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72EE0541CC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:12:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A13EE482051
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931A8279DA3;
-	Wed,  3 Sep 2025 09:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9101B17BA6;
+	Wed,  3 Sep 2025 09:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ty0BaPpi"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2086.outbound.protection.outlook.com [40.107.102.86])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jf0xQhBq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F0427F72C
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756890738; cv=fail; b=My4hTz/4WH27ST/6Xe6xkm43Et6L4A+HFGANFXPh+mYWdqgXCmGEAA3Cxa1Q7tGeY/o7/wI4zw75jHsG5MJZolGg575OnCgQax5u7xB048oy0qW53aaP9gTYTSpW7vyjNTN57YKOtLFiKfdpGYHDqF4M9cZlI8MN7ZmuQ/Qk438=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756890738; c=relaxed/simple;
-	bh=4CRn53NAJgYkn5iwK0rhkqi+QQYuaag9VylB2KaGOcg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sjFlTzFiu0MElt5rnfVzO9ZrO+Eia07hKaCF1DxTC2xKu27PyElsxfuRLXdEIFqmSjk+G1dEJ3UfuDeuQsiJkVJCPUjZ94CaHsSugCF5AtsPZi8t2SxlqS0shhq1pVm+l5pb6nBrmEwZxMoyUFVtFJq+FLQbKc5ESfH0DiHHU8Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ty0BaPpi; arc=fail smtp.client-ip=40.107.102.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Yc68zUYSu3WlulExTxRzi/1YyBnaHvB6FqYtUUTg915yOOWZY26E7dUa9TB0c7Gi2OIwTKhlGCoxhj2IobtrkBgVTVgFy0QgFVFWevl7MW23OqXkh/iT70zgq4iL1EOzptyocTu4PDFrLAYAIIgWWz1CGVMAI98iGfbnFw8ct38GcQhUqBjERRY3DiQbmd98aLTI71f4BytGkyVuUEqZHpSomeJLe2zJ/pwcgIaDRFdf3KXEzTlUUjx+kD08RyNUYH5aqaAYbprTkVfq0XSAXdP2svYAPdbMOmG9JXm1f06ra+Yq8Xy/Ounf5Unmix5Lo61F+gDSPW6i8YbRv31PvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iuO7jgI6eQs8iR3SthhhpT24UJpkkQK8uwP0ne75BAU=;
- b=jwDr5wbCd8xzBpjvr0nKSgS0yxM3O+LBnSGqVTBdas3tdGkcf5L/pESfVGMal0ehHNqnZkzYDl6tUG5fmWcP7ButDqmWaFNnDaFVti+YTcVeuz9N2Oy6AnhLOpCTpnoSX9oOU4Hwfkhy0setw1jX4v4a0Zx1rLDQCzGmHinIKhNwyPJU9b9HMh8XGdoEcc31F7dGiBvBKCpikpMD8xFH4SLSL7jLBnNMRVSyyXmX15M5JIrzr2FoduY2w0BW+Ahty0GQhErkc68l62O9vsuHMjKdYv+HlnrhO1uj0tEtvF37pS+be3JRF2j4fd6H8sqHBq/A30wU1l4FtjpTdVliRw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=bytedance.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iuO7jgI6eQs8iR3SthhhpT24UJpkkQK8uwP0ne75BAU=;
- b=ty0BaPpi4t56VEPZ6sTlIxckqz1xdkAfbnZyvb60VCWXXR0F1db8oQwXkvNK7pRJYcReLGCDH9PHFZS5MwjUatV2J1HMd8q9cAspuhT/QCIKTcfOtek/4Na56IMpMpEXPueJkEVDmX1aE/L0OofP29KfuGsIJPjX0739Vd6V9BM=
-Received: from BYAPR11CA0081.namprd11.prod.outlook.com (2603:10b6:a03:f4::22)
- by DS7PR12MB5791.namprd12.prod.outlook.com (2603:10b6:8:76::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Wed, 3 Sep
- 2025 09:12:09 +0000
-Received: from SJ1PEPF00002310.namprd03.prod.outlook.com
- (2603:10b6:a03:f4:cafe::94) by BYAPR11CA0081.outlook.office365.com
- (2603:10b6:a03:f4::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.16 via Frontend Transport; Wed,
- 3 Sep 2025 09:12:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00002310.mail.protection.outlook.com (10.167.242.164) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9094.14 via Frontend Transport; Wed, 3 Sep 2025 09:12:09 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 3 Sep
- 2025 04:12:06 -0500
-Received: from [10.136.37.163] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 3 Sep 2025 04:12:01 -0500
-Message-ID: <2b2e91e7-0514-4728-a3a3-96282a0d4286@amd.com>
-Date: Wed, 3 Sep 2025 14:41:55 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB93D279DA3
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756890759; cv=none; b=Xdo3yvFPRy30bl/3LTJexFr4OAroLOumklrvpRvpkChkM7veUW9qDxcPsoMs7US544C+08CD6KKIog5u34q9f6KweObd74Rlj4+PEpcsz7tl8CNHWiea5WluSe1qXtsH59HZ5vJXeXvW84FpgB+MWzgESiVDImW2xAI4zH9pafY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756890759; c=relaxed/simple;
+	bh=cxe3hMIZT+QIzC3aj+rChBvHjYo+TmkIeIvbyWzTbkw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m08znRwmisAbYCLkknlL3nqK0gMWh6yjXSuM4k9EWnWiVCLtYme83KcELWJGvoqInB8RejSkYJMSv75DBqTEpjuq54xgZjE+V1OTZH1ANjOrSs6uTHJFgSuuU2Nd45vsDfvMij7Wr/qqO6FavbFo0EQCrbkGvkmzUcdyltBJ208=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jf0xQhBq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5832AIZW018247
+	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 09:12:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OVGKJk2Lv/6cSlW8nPZxFi9+cu1Hs+eu77TPY89OEGI=; b=jf0xQhBqJU+sapDh
+	N6+sOWZCLRO8J3HeukJaEd2cSVumV+Eneich3byzeYvhiObYn8nPanpNe5myqkNJ
+	1tMDZkVuJaBnmIXx2o6Hj7o9+/7q6sCAtiqfYjA7aAGgFGhVQWnzh2yS4MN/Unh4
+	rG2rKdwbOkk/la6Wf3Vm6l5XaMoTwM2pZpR/x7ZF+iAxxeJH0lohjUOsVBAJmmnq
+	nePQ88QiPYui2PR2w/7dpUh5omGNq7eD790xPQiPr0vvQKQ9bJlnPrTN3/3q8B7j
+	AO99OiN2rVy7bM5ctgPfiazHgqkWBqt64bJ5XNMqoBqHkPYYyCHY9HjZ4+qsJACI
+	b8yqNw==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48wqvwcpc6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 09:12:35 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24c99f6521dso4460135ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 02:12:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756890755; x=1757495555;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OVGKJk2Lv/6cSlW8nPZxFi9+cu1Hs+eu77TPY89OEGI=;
+        b=rtNp3A5O1JaaqvMfJju0HBVIqNjLHrpeNRhA1K0chLYsCAUMHdXznCrdQLPuIFQA+s
+         SR9quNxNOwnhAjUbDQT6eorbKXOSstnmhpyYEEcqU0rw9UhY2o5Q2ZofmXPO/XQpG5KG
+         fNVYpet5PHrBpDTpCZX7FIuXtatNk7bBEKDtGtJsrIXSCTmn2K/IfElduWTimnYB/OdJ
+         M9FzeuEVKAI0duMpZLIcJDAP9vrvw/Wl3OrsKrXNbVnkbZDNxKIwuMosaRaYsTAa7wWS
+         9tDbN6QpZNgJNRvzFtZPiZemz8zM+ZnLe0twNtPslozA15HloFhuPTZbs8iNWnauvRe3
+         9WRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbbFqCb2HqE1NGhNowRkKZJUDOqAdPehCjY8OYc4Y5PwT76Y1Pvc+aGgfBLXCtkxheWL/NMj+O0DWexZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/YBKOlOlcEbi58+JSK3kalLfdIILXNPGhgTf18aREmh31e4rC
+	kQHrUfZcK0jp2YtJ9NIsc+mV+OkVAkIgFAmFr3+PJpcffeouSsXeacsnOH9dMrNZLQTEDNCUk4Q
+	xsnSaFrHVCUDg0MMERE5/7tVSBshIfXABRya3YNok65axwiiAARVIMmFEnew2i/tFuoY=
+X-Gm-Gg: ASbGncuX8lUO//zEz/NP7WLYsNZ10OP3XXsbxxFpCWT+p/3Rsfdl2KcUx2CJ3+nouGl
+	LcpaKxVJ8CdsQEnMFF4HqdZKtLAT6NXe3lbEESbqTT7vXkz1MwFXtKBr3QmCPFTvOE8tRm+ZZcD
+	Nid1HRdvGGIftGw4LScEQ/uhCx6Ztgu+m9jtZg2NqqeWVnZoRWA+7PSnuS/D/FgnbrDgCd0b6vF
+	Szv/CWdSA3U2SGscVnn/YLgw8jjsP6fecrZO7R8rXLJqOsG298E6RUaKtPcBwZMAcBOSbagqQ0F
+	23QUMYsnUl1zcf+xopxlGtrM+DPYy7+uOm0d5I0oCI/ptmJ7lUxrmzgbyMBJZG8X3Dt+T0lQYA=
+	=
+X-Received: by 2002:a17:903:2444:b0:24b:1163:552d with SMTP id d9443c01a7336-24b11635af4mr81492515ad.11.1756890754844;
+        Wed, 03 Sep 2025 02:12:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFlxwNjUEHkil6HdnR5uUPgdOQXVoh/CYspkYZQI/7DHUgrQ4WqIWHgmci0fhFLFnnqV0FVUg==
+X-Received: by 2002:a17:903:2444:b0:24b:1163:552d with SMTP id d9443c01a7336-24b11635af4mr81492055ad.11.1756890754229;
+        Wed, 03 Sep 2025 02:12:34 -0700 (PDT)
+Received: from [10.218.1.199] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327da8e71a8sm16644559a91.15.2025.09.03.02.12.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 02:12:33 -0700 (PDT)
+Message-ID: <d6816cc6-c69e-4746-932e-8b030ca17245@oss.qualcomm.com>
+Date: Wed, 3 Sep 2025 14:42:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,252 +89,187 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] sched/fair: Switch to task based throttle model
-To: Aaron Lu <ziqianlu@bytedance.com>, Valentin Schneider
-	<vschneid@redhat.com>
-CC: Ben Segall <bsegall@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>, Josh Don <joshdon@google.com>,
-	Ingo Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, <linux-kernel@vger.kernel.org>, Juri Lelli
-	<juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven
- Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, Chuyi Zhou
-	<zhouchuyi@bytedance.com>, Jan Kiszka <jan.kiszka@siemens.com>, Florian
- Bezdeka <florian.bezdeka@siemens.com>, Songtang Liu
-	<liusongtang@bytedance.com>, Sebastian Andrzej Siewior
-	<bigeasy@linutronix.de>
-References: <20250715071658.267-1-ziqianlu@bytedance.com>
- <20250715071658.267-4-ziqianlu@bytedance.com>
- <xhsmhv7myp46n.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <20250808101330.GA75@bytedance>
- <xhsmhsei2ox4o.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <20250812084828.GA52@bytedance>
- <xhsmhh5y9j3ut.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <20250815092910.GA33@bytedance> <20250822110701.GB289@bytedance>
- <20250903071410.GA42@bytedance>
+Subject: Re: [PATCH 3/5] arm64: dts: qcom: lemans-evk: Extend peripheral and
+ subsystem support
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Monish Chunara <quic_mchunara@quicinc.com>,
+        Sushrut Shree Trivedi <quic_sushruts@quicinc.com>,
+        Wasim Nazir <wasim.nazir@oss.qualcomm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>, kernel@oss.qualcomm.com,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        netdev@vger.kernel.org,
+        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
+        Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>,
+        Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Vishal Kumar Pal <quic_vispal@quicinc.com>
+References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
+ <20250826-lemans-evk-bu-v1-3-08016e0d3ce5@oss.qualcomm.com>
+ <kycmxk3qag7uigoiitzcxcak22cewdv253fazgaidjcnzgzlkz@htrh22msxteq>
+ <3f94ccc8-ac8a-4c62-8ac6-93dd603dcd36@quicinc.com>
+ <zys26seraohh3gv2kl3eb3rd5pdo3y5vpfw6yxv6a7y55hpaux@myzhufokyorh>
+ <aLG3SbD1JNULED20@hu-mchunara-hyd.qualcomm.com>
+ <ozkebjk6gfgnootoyqklu5tqj7a7lgrm34xbag7yhdwn5xfpcj@zpwr6leefs3l>
+ <ed3a79e0-516e-42f4-b3c6-a78ca6c01d86@oss.qualcomm.com>
+ <ly5j2eodrajifosz34nokia4zckfftakz5253d2h6kd2cxjoq3@yrquqgpnvhp6>
+ <ctwvrrkomc3n6gginw2dp5vip7xh5jhwbi5joyr64gocsm2esb@4zfpbvvziv5i>
 Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250903071410.GA42@bytedance>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB04.amd.com: kprateek.nayak@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002310:EE_|DS7PR12MB5791:EE_
-X-MS-Office365-Filtering-Correlation-Id: d7f9d629-3a9b-4750-eabc-08ddeac9f627
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024|7416014|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZWk2V3d1MHF4bnYxZGtiaUhacWhLMXY5M2cvNE5ub3hTdjVtSEI5OHRVWmVR?=
- =?utf-8?B?bURyMHpzc2VTRXd3QjI4aHVYU3UvVjh3dVBXT25aTUJuQnN3eEFHelg4OVE1?=
- =?utf-8?B?MU1BOUlhR0RNSEY3UjF1UTZ5eFdEdytqd1V1OUN4eFVCdmszZVdPK1dCeTdY?=
- =?utf-8?B?cTBxbmNRdW9la2QrL0tLdmZWeEljYmJRS3pmQUNNaVBXQmw1dGNMeHN0VG52?=
- =?utf-8?B?T0hwT3NxZ0kyMit5QWhXbEFnSXhkdWM1UDcvWWxaS3VXQllQUE1NRXQzSmxS?=
- =?utf-8?B?S3V4U1Y1cjlyMUVUU3lFZDNSdWJzUjlFSkhwNVlZVm54djVzMER4ODc0dXJH?=
- =?utf-8?B?eGtqLzZpZ2tGdDZzMEo2eTYvRUZQMXNmMUwraW56dDVBMDM5MlozV1R3QU5R?=
- =?utf-8?B?WmNDb1dCb3JYMDdscVZXeXRJRjFuOHpqbkM4RjlGT0ZQZUJWVUxGWG5YMjhJ?=
- =?utf-8?B?cXFiaEwwTDkwMVUyMElWYTFJejR3VkgzQkpsMVdLODZIdnVyZmR2QUc1VU1h?=
- =?utf-8?B?YkFUaHlXeXV2VzdUOTB2RjNCUWQrWmUzSllHbXk4TmV6WVNUQ2krSHpzQzNv?=
- =?utf-8?B?bzduNHBpaUltNWV4RVBndERSb3pRNzdoV2l1UXphV2EvdHBMaVp1cmRWRkdm?=
- =?utf-8?B?aXd3RGEwK05mNTB5VFk2WCs5OURYK2tNZlVxMXJkdUJ2dkZTOVJyZ0N4My9W?=
- =?utf-8?B?cEF5VjZsczJHcVBsTVZGYWo0MVRNT3Q5dU02SkxKamV5VStPU1kwZXpCa3di?=
- =?utf-8?B?N3J1NzZ2Q2JtbjViWkVQUEpQc0t1WWdwNHJCTXVPdUhPZDBnb2dWWlVVRDJO?=
- =?utf-8?B?Y2JCZGhPZVJCRnNzN0RMUnFQR0lqUFdGMGpXdk10ajdqeEQ1d05uZk0xMFZ4?=
- =?utf-8?B?dkhiQlR5UkEzY05IekZwU1pTWmZ2cHFKWDgyYVdNQzN6UWNYWS9tNkZGa3FH?=
- =?utf-8?B?MFBQL3VlT1BoT3Vzb1h4SEV6RDFFcVBjVEx0Y0VFMWxua3AzOCtJMHlGa1N3?=
- =?utf-8?B?UytVdTg1RWxBTlFMMk84SkRXaFdMRU9pby96c0NzYUNrV1hSZUdianZpcE02?=
- =?utf-8?B?cDF4RHF0UW5QNGlhM2lISFJtOVFJZE56Z0tId3BWUEFrZDZWZXB5emsrT0pV?=
- =?utf-8?B?eHF3c3psTGR3V015TFI1Zy83QlBlNEViQWp6SWRHRUVoTEtJa3FWY3NWNFVk?=
- =?utf-8?B?dkxJVUswWE9iYUwvTnJaZERGVFlTV24wL285ZmkzMWtFTzYxcmRPVllVWkFN?=
- =?utf-8?B?Y0FwTUo1cjl3blp4eTgzQ3VnNFF4ZjdhaVJKbTlCWEhSZ2dHTDlLcm5zMW5o?=
- =?utf-8?B?aWVrMGo3M0kvU2l6ZGpLWWV4QzllcnVZYUx5cWFpWTZRaGNqMFZlOG5nZGRB?=
- =?utf-8?B?bUFNNWFMZ2NTckhiUUV3R3pnTUJCc25TZWVJZEhBVFk5V2J6QVRoZndKMDNp?=
- =?utf-8?B?K29tWkQxYWtPWm1scThuMm5nTWVxREM2WlQ4azYrenVjQTFBQ3RCL3BOalR1?=
- =?utf-8?B?VW51V0xxWUZFZ1d0NEZ0REcwSFNGWlhCSXZSRytSOXRRbmRFVHlCY1d5RTNW?=
- =?utf-8?B?aHN6Z2d2WUhzTThHdmFkZm0yYXNUeTdzSGxxTXh2aXAwZG14dnk1OEowcitJ?=
- =?utf-8?B?RzZYN0xYWG1sSEZsVEJKZ1Y3cmFYSjIrV1gvUXhvbDVVb1M1WXU0Lzk1TWZX?=
- =?utf-8?B?dzI4UzJUck0wbnl5ZXlGNTNFSkxUbkFvQzNMbjBxUnBFemtVMjVhKzJkeHZR?=
- =?utf-8?B?UEtiWUx1LzdQK0VkR2kvM1F1djFCSWhvUkpaL3dLTTlIS2l4bWtURUp3eVJJ?=
- =?utf-8?B?dWVOSnZKbnZ3MWJZMTVQNDkvTmYzUlUvbjhVQnp2azY1dDZsZ2FKZUpOQlhI?=
- =?utf-8?B?NUFVSmtuZHNsN0FrcC84dDVTK0Y3cXdSbW4zTUxsa3BTdnluOHM3QXhwMXVa?=
- =?utf-8?B?UGlXYWtGSVlreUVCSzQ1aW5sM0IwYktNUDhlODQ0SS91UXprdEoxNGI3SHZU?=
- =?utf-8?B?MUg3UGY4RHlYU1lRUkg3b0JQWXZnSHoyaDg2YWtnYllvRlFCZ2dVQmpNTWdD?=
- =?utf-8?B?V25KRmpMeWF2bTFaUXBwbW1uQXdLTnQ4M2I1dz09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024)(7416014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 09:12:09.4273
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7f9d629-3a9b-4750-eabc-08ddeac9f627
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002310.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5791
+From: Krishna Kurapati PSSNV <krishna.kurapati@oss.qualcomm.com>
+In-Reply-To: <ctwvrrkomc3n6gginw2dp5vip7xh5jhwbi5joyr64gocsm2esb@4zfpbvvziv5i>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAyMDAyNCBTYWx0ZWRfX3CGAscCYS4/Z
+ 93xdfW55ghhU1poXRg6XCVYjMvEGzuKnD6uZZFOdAZS5H9DY8hcy+nG++KT5jMjBgg3K6n4/pJN
+ PJ1pyLgkf/HahXr9KJvgm1lz9F0h8CiEPr7p5u+16rmHTDyTTyoRpc7LQJgbQ55XYW/TkUFktDF
+ AuOIQrQqxxsekFAOemy9CoY0KDNvfQvGhlPNja+GLX+TEdUV3U3Zxp5Fyrg8AHNr/d0mM+aXgsb
+ 5xApsvB2fcqqKrfCZYt1CKn8yChiumiANBhRjKhr4wquwoo+GXjQaW0IHCz4z1F8FERxGAbltpp
+ rBE+pEr7Gar5ItlQnfQ7tSHnd+Tv1zZpmxfvW4rhKupqIZKheOafB2b2/t5MsPvxEZsBDmmxTsy
+ wMg6jGAj
+X-Authority-Analysis: v=2.4 cv=WKh/XmsR c=1 sm=1 tr=0 ts=68b80683 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=V5NJ_6AyxSgfeeEKDpIA:9 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: hK-fWTl2Kx3_9j5IWbRp8dJxw1MA5G2-
+X-Proofpoint-ORIG-GUID: hK-fWTl2Kx3_9j5IWbRp8dJxw1MA5G2-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_05,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 adultscore=0
+ spamscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509020024
 
-Hello Aaron,
 
-On 9/3/2025 12:44 PM, Aaron Lu wrote:
-> On Fri, Aug 22, 2025 at 07:07:01PM +0800, Aaron Lu wrote:
->> With this said, I reduced the task number and retested on this 2nd AMD
->> Genoa:
->> - quota set to 50 cpu for each level1 cgroup;
 
-What exactly is the quota and period when you say 50cpu?
-
->> - using only 1 fd pair, i.e. 2 task for each cgroup:
->>   hackbench -p -g 1 -f 1 -l 50000000
->>   i.e. each leaf cgroup has 1 sender task and 1 receiver task, total
->>   task number is 2 * 200 = 400 tasks.
+On 9/2/2025 10:46 PM, Dmitry Baryshkov wrote:
+> On Tue, Sep 02, 2025 at 05:34:27AM +0300, Dmitry Baryshkov wrote:
+>> On Mon, Sep 01, 2025 at 01:02:15PM +0530, Krishna Kurapati PSSNV wrote:
+>>>
+>>>
+>>> On 8/29/2025 9:54 PM, Dmitry Baryshkov wrote:
+>>>> On Fri, Aug 29, 2025 at 07:50:57PM +0530, Monish Chunara wrote:
+>>>>> On Thu, Aug 28, 2025 at 04:30:00PM +0300, Dmitry Baryshkov wrote:
+>>>>>> On Thu, Aug 28, 2025 at 06:38:03PM +0530, Sushrut Shree Trivedi wrote:
+>>>>>>>
+>>>>>>> On 8/27/2025 7:05 AM, Dmitry Baryshkov wrote:
+>>>>>>>> On Tue, Aug 26, 2025 at 11:51:02PM +0530, Wasim Nazir wrote:
+>>>>>>>>> Enhance the Qualcomm Lemans EVK board file to support essential
+>>>>>>>>> peripherals and improve overall hardware capabilities, as
+>>>>>>>>> outlined below:
+>>>>>>>>>      - Enable GPI (Generic Peripheral Interface) DMA-0/1/2 and QUPv3-0/2
+>>>>>>>>>        controllers to facilitate DMA and peripheral communication.
+>>>>>>>>>      - Add support for PCIe-0/1, including required regulators and PHYs,
+>>>>>>>>>        to enable high-speed external device connectivity.
+>>>>>>>>>      - Integrate the TCA9534 I/O expander via I2C to provide 8 additional
+>>>>>>>>>        GPIO lines for extended I/O functionality.
+>>>>>>>>>      - Enable the USB0 controller in device mode to support USB peripheral
+>>>>>>>>>        operations.
+>>>>>>>>>      - Activate remoteproc subsystems for supported DSPs such as Audio DSP,
+>>>>>>>>>        Compute DSP-0/1 and Generic DSP-0/1, along with their corresponding
+>>>>>>>>>        firmware.
+>>>>>>>>>      - Configure nvmem-layout on the I2C EEPROM to store data for Ethernet
+>>>>>>>>>        and other consumers.
+>>>>>>>>>      - Enable the QCA8081 2.5G Ethernet PHY on port-0 and expose the
+>>>>>>>>>        Ethernet MAC address via nvmem for network configuration.
+>>>>>>>>>        It depends on CONFIG_QCA808X_PHY to use QCA8081 PHY.
+>>>>>>>>>      - Add support for the Iris video decoder, including the required
+>>>>>>>>>        firmware, to enable video decoding capabilities.
+>>>>>>>>>      - Enable SD-card slot on SDHC.
+>>>>>>>>>
+>>>>>>>>> Co-developed-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+>>>>>>>>> Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+>>>>>>>>> Co-developed-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+>>>>>>>>> Signed-off-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+>>>>>>>>> Co-developed-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+>>>>>>>>> Signed-off-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+>>>>>>>>> Co-developed-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+>>>>>>>>> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+>>>>>>>>> Co-developed-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
+>>>>>>>>> Signed-off-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
+>>>>>>>>> Co-developed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>>>>>>>>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>>>>>>>>> Co-developed-by: Monish Chunara <quic_mchunara@quicinc.com>
+>>>>>>>>> Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
+>>>>>>>>> Co-developed-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
+>>>>>>>>> Signed-off-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
+>>>>>>>>> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+>>>>>>>>> ---
+>>>>>>>>>     arch/arm64/boot/dts/qcom/lemans-evk.dts | 387 ++++++++++++++++++++++++++++++++
+>>>>>>>>>     1 file changed, 387 insertions(+)
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>>> @@ -356,6 +720,29 @@ &ufs_mem_phy {
+>>>>>>>>>     	status = "okay";
+>>>>>>>>>     };
+>>>>>>>>> +&usb_0 {
+>>>>>>>>> +	status = "okay";
+>>>>>>>>> +};
+>>>>>>>>> +
+>>>>>>>>> +&usb_0_dwc3 {
+>>>>>>>>> +	dr_mode = "peripheral";
+>>>>>>>> Is it actually peripheral-only?
+>>>>>>>
+>>>>>>> Hi Dmitry,
+>>>>>>>
+>>>>>>> HW supports OTG mode also, but for enabling OTG we need below mentioned
+>>>>>>> driver changes in dwc3-qcom.c :
+>>>>>>
+>>>>>> Is it the USB-C port? If so, then you should likely be using some form
+>>>>>> of the Type-C port manager (in software or in hardware). These platforms
+>>>>>> usually use pmic-glink in order to handle USB-C.
+>>>>>>
+>>>>>> Or is it micro-USB-OTG port?
+>>>>>>
+>>>>>
+>>>>> Yes, it is a USB Type-C port for usb0 and we are using a 3rd party Type-C port
+>>>>> controller for the same. Will be enabling relevant dts node as part of OTG
+>>>>> enablement once driver changes are in place.
+>>>>
+>>>> Which controller are you using? In the existing designs USB-C works
+>>>> without extra patches for the DWC3 controller.
+>>>>
+>>>
+>>> Hi Dmitry,
+>>>
+>>>   On EVK Platform, the VBUS is controlled by a GPIO from expander. Unlike in
+>>> other platforms like SA8295 ADP, QCS8300 Ride, instead of keeping vbus
+>>> always on for dr_mode as host mode, we wanted to implement vbus control in
+>>> dwc3-qcom.c based on top of [1]. In this patch, there is set_role callback
+>>> present to turn off/on the vbus. So after this patch is merged, we wanted to
+>>> implement vbus control and then flatten DT node and then add vbus supply to
+>>> glue node. Hence made peripheral only dr_mode now.
 >>
->>         base             head               diff
->> Time    127.77±2.60%     127.49±2.63%       noise
->>
->> In this setup, performance is about the same.
->>
->> Now I'm wondering why on Intel EMR, running that extreme setup(8000
->> tasks), performance of task based throttle didn't see noticeable drop...
+>> In such a case VBUS should be controlled by the USB-C controller rather
+>> than DWC3. The reason is pretty simple: the power direction and data
+>> direction are not 1:1 related anymore. The Type-C port manager decides
+>> whether to supply power over USB-C / Vbus or not and (if supported)
+>> which voltage to use. See TCPM's tcpc_dev::set_vbus().
 > 
-> Looks like hackbench doesn't like task migration on this AMD system
-> (domain0 SMT; domain1 MC; domain2 PKG; domain3 NUMA).
+> Okay, your Type-C manager is HD3SS3220. It drives ID pin low if the VBUS
+> supply should be enabled. Please enhance the driver with this
+> functionality. You cann't use the USB role status since it doesn't
+> perform VSafe0V checks.
 > 
-> If I revert patch5, running this 40 * 200 = 8000 hackbench workload
-> again, performance is roughly the same now(head~1 is slightly worse but
-> given the 4+% stddev in base, it can be considered in noise range):
-> 
->          base              head~1(patch1-4)    diff     head(patch1-5)
-> Time     82.55±4.82%       84.45±2.70%         -2.3%    99.69±6.71%
-> 
-> According to /proc/schedstat, the lb_gained for domain2 is:
-> 
->          NOT_IDLE IDLE  NEWLY_IDLE
-> base        0     8052    81791    
-> head~1      0     7197   175096
-> head        1    14818   793065
 
-Since these are mostly idle and newidle balance, I wonder if we can run
-into a scenario where,
+Hi Dmitry,
 
-1. All the tasks are throttled.
-2. CPU turning idle does a newidle balance.
-3. CPU pulls a tasks from throttled hierarchy and selects it.
-4. The task exits to user space and is dequeued.
-5. Goto 1.
+  Thanks for the suggestion. Sure, will take up the task of implementing 
+vbus supply based on id-pin in hd3 driver.
 
-and when the CPU is unthrottled, it has a large number of tasks on it
-that'll again require a load balance to even stuff out.
+  Also, will move to otg once that is implemented in port controller 
+driver. Will keep it in device mode for now in this series (or its 
+further revision). Also will make sure to document it in commit text in 
+next revision.
 
-> 
-> Other domains have similar number: base has smallest migration number
-> while head has the most and head~1 reduce the number a lot. I suppose
-> this is expected, because we removed the throttled_lb_pair() restriction
-> in patch5 and that can cause runnable tasks in throttled hierarchy to be
-> balanced to other cpus while in base, this can not happen.
-> 
-> I think patch5 still makes sense and is correct, it's just this specific
-> workload doesn't like task migrations. Intel EMR doesn't suffer from
-> this, I suppose that's because EMR has a much larger LLC while AMD Genoa
-> has a relatively small LLC and task migrations across LLC boundary hurts
-> hackbench's performance.
-
-I think we can leave the throttled_lb_pair() condition as is and revisit
-it later if this is visible in real world workloads. I cannot think of
-any easy way to avoid the case for potential pileup without accounting
-for the throttled tasks in limbo except for something like below at
-head~1:
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index bdc9bfa0b9ef..3dc807af21ba 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9385,7 +9385,7 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
- 	/*
- 	 * We do not migrate tasks that are:
- 	 * 1) delayed dequeued unless we migrate load, or
--	 * 2) throttled_lb_pair, or
-+	 * 2) throttled_lb_pair unless we migrate load, or
- 	 * 3) cannot be migrated to this CPU due to cpus_ptr, or
- 	 * 4) running (obviously), or
- 	 * 5) are cache-hot on their current CPU, or
-@@ -9394,7 +9394,8 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
- 	if ((p->se.sched_delayed) && (env->migration_type != migrate_load))
- 		return 0;
- 
--	if (throttled_lb_pair(task_group(p), env->src_cpu, env->dst_cpu))
-+	if (throttled_lb_pair(task_group(p), env->src_cpu, env->dst_cpu) &&
-+	    env->migration_type != migrate_load)
- 		return 0;
- 
- 	/*
----
-
-Since load_avg moves slowly, it might be enough to avoid pileup of
-tasks. This is similar to the condition for migrating delayed tasks
-above but unlike the hierarchies of delayed tasks, the weight of
-throttled hierarchy does change when throttled tasks are transitioned to
-limbo so this needs some more staring at.
-
-> 
-> I also tried to apply below hack to prove this "task migration across
-> LLC boundary hurts hackbench" theory on both base and head:
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index b173a059315c2..34c5f6b75e53d 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -9297,6 +9297,9 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
->  	if ((p->se.sched_delayed) && (env->migration_type != migrate_load))
->  		return 0;
->  
-> +	if (!(env->sd->flags & SD_SHARE_LLC))
-> +		return 0;
-> +
->  	if (throttled_lb_pair(task_group(p), env->src_cpu, env->dst_cpu))
->  		return 0;
->  
-> With this diff applied, the result is:
-> 
-> 
->          base'              head'              diff
-> Time     74.78±8.2%         78.87±15.4%        -5.47%
-> 
-> base': base + above diff
-> head': head + above diff
-> 
-> So both performs better now, but with much larger variance, I guess
-> that's because no load balance on domain2 and above now. head' is still
-> worse than base, but not as much as before.
-> 
-> To conclude this: hackbench doesn't like task migration, especially when
-> task is migrated across LLC boundary. patch5 removed the restriction of
-> no balancing throttled tasks, this caused more balance to happen and
-> hackbench doesn't like this. But balancing has its own merit and could
-> still benefit other workloads so I think patch5 should stay, especially
-> considering that when throttled tasks are eventually dequeued, they will
-> not stay on rq's cfs_tasks list so no need to take special care for them
-> when doing load balance.
-
-Mathieu had run some experiments a couple years ago where he too
-discovered reducing the number of migrations for hackbench helps but it
-wasn't clear if these strategies would benefit real-world workloads:
-
-https://lore.kernel.org/lkml/20230905171105.1005672-1-mathieu.desnoyers@efficios.com/ 
-https://lore.kernel.org/lkml/20231018204511.1563390-1-mathieu.desnoyers@efficios.com/
-
-> 
-> On a side note: should we increase the cost of balancing tasks out of LLC
-> boundary? I tried to enlarge sysctl_sched_migration_cost 100 times for
-> domains without SD_SHARE_LLC in task_hot() but that didn't help.
-
-I'll take a look at sd->imbalance_pct and see if there is any room for
-improvements there. Thank you again for the detailed analysis.
-
--- 
-Thanks and Regards,
-Prateek
-
+Regards,
+krishna,
 
