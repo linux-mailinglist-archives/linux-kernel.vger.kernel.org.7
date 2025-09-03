@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-799255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5EFB42914
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:51:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E69DB42915
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 952F47B344E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:50:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B0A55816DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAF836932E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C0C36934A;
 	Wed,  3 Sep 2025 18:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BkUYsbGt"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="U6oWkHLN"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691A2320CB6
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 18:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD2B368097
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 18:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756925501; cv=none; b=cB5usAYb74QEY8ew5kwk6F3GJW+W7EKEsh4BASo08KPtEMm08PUvWzuZqdcY90akgIik8D2xRFusyIf/i+NzgxCldr18xIB6Z9qmIDwSG5ueIJFCqIp/znvwiwXiRAgE1d9+tY2HFhxbmXzgUQktmDcE1e1ySW8MoBOCqrJwqEY=
+	t=1756925502; cv=none; b=EveDSyVTc/GAg11IHxVGrbiWOMRazkYKhxtT9GSHDTDrXEyakr0d0ENynGceVAth/7rKfP0h8a++Z+2bUECxd7WxoWaMpgsTWKFz8X14yko/mzn39LxM7dHGozd7FPvhBtERLVE/n+jfCq5Cj1yJ7Rs3qJhhNM7+myJu+BJ2Wb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756925501; c=relaxed/simple;
-	bh=P16GWZ5xMUMdCjEEjMnPh5ZFPrJLj34FT+iME57x8eU=;
+	s=arc-20240116; t=1756925502; c=relaxed/simple;
+	bh=R0oflqcTBWlX0b4YCyWSou1MTD7R2HRR3jtaeYRxJbE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=s2QG4BEQfQ7y3FU+aPHOGaTbt40EP69rKeB0OdZa52AduLzI3S7BAocgy6LBOohmeTdWR4/+Yr4uQvYnydfLiWL7EHLbpvyS1n7DFzB0kce/3lCF2jAy5t1XdDvYnWJuG/g16VBBnKF6cSkBz9SKGpHechOsnahL6Q9+Qi4Q954=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BkUYsbGt; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=TzqgLayChMX9eAjg59HKZdYqNrUDAN/NpRUs8NjDBA6f4vsPiCszS67UlGBWT7g/U6xibPADKVbt2IXYsQBwF5MvuEAuKOnYphKppZ1weohM7+21uR4meIApKAcR11ICnLjCCFSgbEPtMUZ4w0YzJ1NmCEBNYabVXI+nK3oVGdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=U6oWkHLN; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756925497;
-	bh=P16GWZ5xMUMdCjEEjMnPh5ZFPrJLj34FT+iME57x8eU=;
+	s=mail; t=1756925498;
+	bh=R0oflqcTBWlX0b4YCyWSou1MTD7R2HRR3jtaeYRxJbE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=BkUYsbGtp2rYAc5YwKpVGlVaA4k2enidF4Dus0SXDGCsPTckpmlFMh/SONVST9sMj
-	 4KwU51jIXDp1ZcWLj46Q193fcwjNjMdabJht3Xa397oS9EPV+2EAlt46twm98wUCop
-	 SPPgROV/cn/hwHHOLZowE5vJStTxB1rrpmokAMZaAnyQnW5zJmFokx//AyVpeVnp5p
-	 HQs1olCnaPle8XOkhINAohc2B1ZY6JAcXyTvTVNbMilejpbPUu40xRBjdp8UXLB39d
-	 VNfxdBgLN/AF7UVKUuDKwJzN22s3UHOTI0EtcLlRy5DAo7Z+IJDSmgsaHl+Q2ASRLs
-	 QaPolybIPY8vw==
+	b=U6oWkHLNgFsMr372iGKU0vgp9oh/H36eTC9Wa5sznTgNeAS2Rbz/e5j/cCll+Ysd6
+	 bo+SHro9I3ezrZBWVxSdFV20DRfGpppRLH3ahqlsu3apQAuQKEUNxnp0nOrhNShd3n
+	 rvyCtjxrqObjvOboaC77Z62pKeGZwyuOdHPHHmrZk7vU9JtCuhRq9skwRMqPDbZ4Yi
+	 Dxap/27yhkFQxTLTZe5frhVzk8Yc/+BqiEVxbjuRh3aJVWnL/ptr6Oc/5SWVNAftgy
+	 ProROScqdasCOhhXhBm9VMtkr9sljfH1UB5UUbCb6XjlpJ33K1OAnKIZ9nLMHfIfpy
+	 +5ii3FWfEysDw==
 Received: from localhost (unknown [82.79.138.60])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 7F62317E129F;
-	Wed,  3 Sep 2025 20:51:37 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 49B6B17E1301;
+	Wed,  3 Sep 2025 20:51:38 +0200 (CEST)
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Wed, 03 Sep 2025 21:51:00 +0300
-Subject: [PATCH v4 2/6] drm/bridge: dw-hdmi-qp: Fixup timer base setup
+Date: Wed, 03 Sep 2025 21:51:01 +0300
+Subject: [PATCH v4 3/6] drm/rockchip: dw_hdmi_qp: Improve error handling
+ with dev_err_probe()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-rk3588-hdmi-cec-v4-2-fa25163c4b08@collabora.com>
+Message-Id: <20250903-rk3588-hdmi-cec-v4-3-fa25163c4b08@collabora.com>
 References: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
 In-Reply-To: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
 To: Sandy Huang <hjc@rock-chips.com>, 
@@ -75,83 +76,130 @@ To: Sandy Huang <hjc@rock-chips.com>,
  Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
 Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org
+ linux-kernel@vger.kernel.org, Daniel Stone <daniels@collabora.com>
 X-Mailer: b4 0.14.2
 
-Currently the TIMER_BASE_CONFIG0 register gets initialized to a fixed
-value as initially found in vendor driver code supporting the RK3588
-SoC.  As a matter of fact the value matches the rate of the HDMI TX
-reference clock, which is roughly 428.57 MHz.
+The error handling in dw_hdmi_qp_rockchip_bind() is quite inconsistent,
+i.e. in some cases the error code is not included in the message, while
+in some other cases there is no check for -EPROBE_DEFER.
 
-However, on RK3576 SoC that rate is slightly lower, i.e. 396.00 MHz, and
-the incorrect register configuration breaks CEC functionality.
+Since this is part of the probe path, address the aforementioned issues
+by switching to dev_err_probe(), which also reduces the code a bit.
 
-Set the timer base according to the actual reference clock rate that
-shall be provided by the platform driver.  Otherwise fallback to the
-vendor default.
-
-While at it, also drop the unnecessary empty lines in
-dw_hdmi_qp_init_hw().
-
+Reviewed-by: Daniel Stone <daniels@collabora.com>
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c | 12 +++++++++---
- include/drm/bridge/dw_hdmi_qp.h              |  1 +
- 2 files changed, 10 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c | 62 ++++++++++----------------
+ 1 file changed, 24 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
-index fc98953672b6fb388d05201e280d24b8f214498a..4ba7b339eff62592aa748429a3bfca82494679d1 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
-@@ -161,6 +161,7 @@ struct dw_hdmi_qp {
- 		void *data;
- 	} phy;
+diff --git a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
+index ed6e8f036f4b3d76425725c130394cedf039acd0..a775d89f20fc20e9103ecbac0dcf3db10ba9984f 100644
+--- a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
+@@ -455,10 +455,8 @@ static int dw_hdmi_qp_rockchip_bind(struct device *dev, struct device *master,
+ 		return -ENODEV;
  
-+	unsigned long ref_clk_rate;
- 	struct regmap *regm;
+ 	if (!cfg->ctrl_ops || !cfg->ctrl_ops->io_init ||
+-	    !cfg->ctrl_ops->irq_callback || !cfg->ctrl_ops->hardirq_callback) {
+-		dev_err(dev, "Missing platform ctrl ops\n");
+-		return -ENODEV;
+-	}
++	    !cfg->ctrl_ops->irq_callback || !cfg->ctrl_ops->hardirq_callback)
++		return dev_err_probe(dev, -ENODEV, "Missing platform ctrl ops\n");
  
- 	unsigned long tmds_char_rate;
-@@ -1210,13 +1211,11 @@ static void dw_hdmi_qp_init_hw(struct dw_hdmi_qp *hdmi)
- {
- 	dw_hdmi_qp_write(hdmi, 0, MAINUNIT_0_INT_MASK_N);
- 	dw_hdmi_qp_write(hdmi, 0, MAINUNIT_1_INT_MASK_N);
--	dw_hdmi_qp_write(hdmi, 428571429, TIMER_BASE_CONFIG0);
-+	dw_hdmi_qp_write(hdmi, hdmi->ref_clk_rate, TIMER_BASE_CONFIG0);
+ 	hdmi->ctrl_ops = cfg->ctrl_ops;
+ 	hdmi->dev = &pdev->dev;
+@@ -471,10 +469,9 @@ static int dw_hdmi_qp_rockchip_bind(struct device *dev, struct device *master,
+ 			break;
+ 		}
+ 	}
+-	if (hdmi->port_id < 0) {
+-		dev_err(hdmi->dev, "Failed to match HDMI port ID\n");
+-		return hdmi->port_id;
+-	}
++	if (hdmi->port_id < 0)
++		return dev_err_probe(hdmi->dev, hdmi->port_id,
++				     "Failed to match HDMI port ID\n");
  
- 	/* Software reset */
- 	dw_hdmi_qp_write(hdmi, 0x01, I2CM_CONTROL0);
--
- 	dw_hdmi_qp_write(hdmi, 0x085c085c, I2CM_FM_SCL_CONFIG0);
--
- 	dw_hdmi_qp_mod(hdmi, 0, I2CM_FM_EN, I2CM_INTERFACE_CONTROL0);
+ 	plat_data.phy_ops = cfg->phy_ops;
+ 	plat_data.phy_data = hdmi;
+@@ -495,39 +492,30 @@ static int dw_hdmi_qp_rockchip_bind(struct device *dev, struct device *master,
  
- 	/* Clear DONE and ERROR interrupts */
-@@ -1262,6 +1261,13 @@ struct dw_hdmi_qp *dw_hdmi_qp_bind(struct platform_device *pdev,
- 	hdmi->phy.ops = plat_data->phy_ops;
- 	hdmi->phy.data = plat_data->phy_data;
+ 	hdmi->regmap = syscon_regmap_lookup_by_phandle(dev->of_node,
+ 						       "rockchip,grf");
+-	if (IS_ERR(hdmi->regmap)) {
+-		dev_err(hdmi->dev, "Unable to get rockchip,grf\n");
+-		return PTR_ERR(hdmi->regmap);
+-	}
++	if (IS_ERR(hdmi->regmap))
++		return dev_err_probe(hdmi->dev, PTR_ERR(hdmi->regmap),
++				     "Unable to get rockchip,grf\n");
  
-+	if (plat_data->ref_clk_rate) {
-+		hdmi->ref_clk_rate = plat_data->ref_clk_rate;
-+	} else {
-+		hdmi->ref_clk_rate = 428571429;
-+		dev_warn(dev, "Set ref_clk_rate to vendor default\n");
-+	}
-+
- 	dw_hdmi_qp_init_hw(hdmi);
+ 	hdmi->vo_regmap = syscon_regmap_lookup_by_phandle(dev->of_node,
+ 							  "rockchip,vo-grf");
+-	if (IS_ERR(hdmi->vo_regmap)) {
+-		dev_err(hdmi->dev, "Unable to get rockchip,vo-grf\n");
+-		return PTR_ERR(hdmi->vo_regmap);
+-	}
++	if (IS_ERR(hdmi->vo_regmap))
++		return dev_err_probe(hdmi->dev, PTR_ERR(hdmi->vo_regmap),
++				     "Unable to get rockchip,vo-grf\n");
  
- 	ret = devm_request_threaded_irq(dev, plat_data->main_irq,
-diff --git a/include/drm/bridge/dw_hdmi_qp.h b/include/drm/bridge/dw_hdmi_qp.h
-index b4a9b739734ec7b67013b683fe6017551aa19172..76ecf31301997718604a05f70ce9eab8695e26b5 100644
---- a/include/drm/bridge/dw_hdmi_qp.h
-+++ b/include/drm/bridge/dw_hdmi_qp.h
-@@ -24,6 +24,7 @@ struct dw_hdmi_qp_plat_data {
- 	void *phy_data;
- 	int main_irq;
- 	int cec_irq;
-+	unsigned long ref_clk_rate;
- };
+ 	ret = devm_clk_bulk_get_all_enabled(hdmi->dev, &clks);
+-	if (ret < 0) {
+-		dev_err(hdmi->dev, "Failed to get clocks: %d\n", ret);
+-		return ret;
+-	}
++	if (ret < 0)
++		return dev_err_probe(hdmi->dev, ret, "Failed to get clocks\n");
  
- struct dw_hdmi_qp *dw_hdmi_qp_bind(struct platform_device *pdev,
+ 	hdmi->enable_gpio = devm_gpiod_get_optional(hdmi->dev, "enable",
+ 						    GPIOD_OUT_HIGH);
+-	if (IS_ERR(hdmi->enable_gpio)) {
+-		ret = PTR_ERR(hdmi->enable_gpio);
+-		dev_err(hdmi->dev, "Failed to request enable GPIO: %d\n", ret);
+-		return ret;
+-	}
++	if (IS_ERR(hdmi->enable_gpio))
++		return dev_err_probe(hdmi->dev, PTR_ERR(hdmi->enable_gpio),
++				     "Failed to request enable GPIO\n");
+ 
+ 	hdmi->phy = devm_of_phy_get_by_index(dev, dev->of_node, 0);
+-	if (IS_ERR(hdmi->phy)) {
+-		ret = PTR_ERR(hdmi->phy);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(hdmi->dev, "failed to get phy: %d\n", ret);
+-		return ret;
+-	}
++	if (IS_ERR(hdmi->phy))
++		return dev_err_probe(hdmi->dev, PTR_ERR(hdmi->phy),
++				     "Failed to get phy\n");
+ 
+ 	cfg->ctrl_ops->io_init(hdmi);
+ 
+@@ -556,17 +544,15 @@ static int dw_hdmi_qp_rockchip_bind(struct device *dev, struct device *master,
+ 
+ 	hdmi->hdmi = dw_hdmi_qp_bind(pdev, encoder, &plat_data);
+ 	if (IS_ERR(hdmi->hdmi)) {
+-		ret = PTR_ERR(hdmi->hdmi);
+ 		drm_encoder_cleanup(encoder);
+-		return ret;
++		return dev_err_probe(hdmi->dev, PTR_ERR(hdmi->hdmi),
++				     "Failed to bind dw-hdmi-qp");
+ 	}
+ 
+ 	connector = drm_bridge_connector_init(drm, encoder);
+-	if (IS_ERR(connector)) {
+-		ret = PTR_ERR(connector);
+-		dev_err(hdmi->dev, "failed to init bridge connector: %d\n", ret);
+-		return ret;
+-	}
++	if (IS_ERR(connector))
++		return dev_err_probe(hdmi->dev, PTR_ERR(connector),
++				     "Failed to init bridge connector\n");
+ 
+ 	return drm_connector_attach_encoder(connector, encoder);
+ }
 
 -- 
 2.51.0
