@@ -1,102 +1,149 @@
-Return-Path: <linux-kernel+bounces-798853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E44B423EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:41:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DDF4B423EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 843375E2ABD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:41:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6F805E3B8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E4D215F5C;
-	Wed,  3 Sep 2025 14:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675B621765B;
+	Wed,  3 Sep 2025 14:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TVW2HVwR"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Isyln6Yf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890641E7C03;
-	Wed,  3 Sep 2025 14:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3911C862D;
+	Wed,  3 Sep 2025 14:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756910503; cv=none; b=PQ/hH5kxTwmZYqfpEmdZog26t7bE43Y7t2YRqgj1tfpT5+8EjnbrGb21pXvq9AGmqAWULA4aBUYUA/neu4XboJSmcMajZCVp4Z/biUS/cxlEOtq4nkYJ2ZGASe1kp7d8yjDxg/QjYPOxykcdMT3zZCblZcP71y3Ae8XCkasz9+g=
+	t=1756910563; cv=none; b=TfKx9WEyxiJGaQ8/YT7X3CfzOjRpiNdnjm3lEOvMSbbnBVkFvsWvz5YBjO1fVw3T8uJ7y0FcEoGgw4v8PSHxMVAw50mljFCGgJ7uq02gem/Qncyi0a+MEy9v9QhbWleZh4oqj53oin/2+x71MZcW31TWITDqsS+BakDo5NPihtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756910503; c=relaxed/simple;
-	bh=k4XdbAII5aXMNyNVG/VE7oL9lq52sejPpaShUA5rWlg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=huhfmMKBHvDHnGB1YzbL1haSgXqq4gN9Qn6qAeqEgrXinq7BoXFBnWuXaJCA+PlCJvyADfMFkVjWGwsRXYMii2b06/czDGLNQienZcZGxPFOkyYQ0SBZ3un8OCOfsDH8Xd90g//QQG4rJdyOaG3DyzjmYLISMZoZy1BW6daA8CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TVW2HVwR; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-249406d5878so247455ad.0;
-        Wed, 03 Sep 2025 07:41:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756910502; x=1757515302; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Ger7eRFWOnEDsWAy5uZiueTzoJglS49TKSLyDGmKwQ=;
-        b=TVW2HVwRMil8VYTQ7PJ/VEe3Yc6dzlJoVDB3r4YJYULKkdC6Hz2XAwMfWFB/bkcJd8
-         aHHq4rG64aLnlQI2IcxNgZ2YfC+ceVZYDD9dfi4OyyuIXsUnI66xnuKMAdYsIgHZ3f/o
-         ivIjIz9zBdBATb+bXtfVZe3f89AZhot2Pn2QSuUKQeDn49jC2MrONGbm2C7ErYT/n4uf
-         7KVK05DuCFz2ykKIzNYm1XRtrMmWwx0VVIKZO3Empr/Bxia/XowAayjqQ9XEBFiMui/4
-         4u9RXONqJQAv9YgGB9Q/+88zPIVLM43PvXY+fn9UUo/gpjoekDYf970D/6wuyzR5Ud01
-         6GKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756910502; x=1757515302;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Ger7eRFWOnEDsWAy5uZiueTzoJglS49TKSLyDGmKwQ=;
-        b=sj8MD0MkIl2gLZRgPzFHj/6dQt1/ilCtc9oG+RM0gZuleIBAEkQyjZnti8yn5ykhNA
-         ggURfcIewOSxgB8UYOlnG36ykDdiW7acvwX1LTK4utfL03Rbn3PtJijrjIouT1my7Rub
-         +7QG9cPI6G/TSkLInaF3td5EgC2MducaxHn/Pg35UXnlGSkeIRy4QeHObBs6Sor9cxe3
-         Sbs725G4QEdOkgxXToB52ytk7wps0dNP5mt9Pf2pyN/Dtc0SOEVsaKTZqUG3BKbLxN3b
-         A51RqeiuKLiQ2zMDMDAtYRl3M8vpgbJY695bKzVJBtBFXBJgyikopS25G8VNFSNULZoC
-         rRJw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8YmfoOltFHbNZ2AcB1vYUeCpNXbrQOm4qVnupXBCjA0AVR9siAuZk0WPrVcotw+bmInugYfcygOuBSg==@vger.kernel.org, AJvYcCWnLwbWI8QVjO/JAOXT+k3CkF73mcwZ90VcPzhGENN5jJB4sg3uLQo1ZnwCpVwIDHjXuq4IZde3i1Sy2NzE@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnCzoMcDQMroH3wsmgWRgTYD5ODTAJnGXmwy4MMtf3ahSWsvG6
-	E7FAzk0Ix4Tq20c6afkJBV1MzjCMqdqZUMk+gyFf8WgTSMQKllhyYKe+pb3TUeSU
-X-Gm-Gg: ASbGncu2QG04bgf3PZ8dAY3E1QRBuXCVePF20edqe9QwiJlTcaPGnkPbO19YCcHfxng
-	C4QOX+UkFF6oS/xCZ5KYIDVZtuM5j+ugXNKoRuvoyD4EFOON5LP7C3jxz1UMkuQsWsPrIKTcyvK
-	JUDxbrGgSauk2G+7+8RITt3c3frpktpH4RoHj2nJv/lnHsk4p/pmDg3hYKlvUgSkF+RhwwakUS3
-	d9AN7M5p2LkMpWCKpdxIRt5rsxQKKQjR9jfauJ4N+qpyctD33fdVd1kyN82xPvu9CYrPwrgihNN
-	tXgOTbcDG3TInby5jeCM6dbNfUnPPP7mt5oIvicTE1aPd3a97DYc5eya8HZAH4R7Wm5IXGJkAIN
-	wTOiqVDANMtY2sjjZp91hTnA=
-X-Google-Smtp-Source: AGHT+IFimwyJc/f9qeruGj8o1cjgUAE+cR2k36Kj1isZSiYtQPPHcXVP9wmEJKHkviN5FMCQxk6Awg==
-X-Received: by 2002:a17:902:d2c7:b0:248:ac4d:23a1 with SMTP id d9443c01a7336-24944a9b18fmr228175725ad.37.1756910501698;
-        Wed, 03 Sep 2025 07:41:41 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:dde1:b1e1:74ba:18b3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b2570cfb0sm43398915ad.139.2025.09.03.07.41.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 07:41:41 -0700 (PDT)
-Date: Wed, 3 Sep 2025 07:41:38 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, 
-	Andreas Kemnade <andreas@kemnade.info>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2 RESEND] input: touchcreen: tsc2007: make interrupt
- optional
-Message-ID: <shoj2hck4xennpvobmao3ydelvlaedihs7i37e3gzkrzitn3lm@q25cfufuwg5y>
-References: <20250824091927.105121-1-clamor95@gmail.com>
+	s=arc-20240116; t=1756910563; c=relaxed/simple;
+	bh=nKe5S8ycLOzlLVAPStN7aGZhiVpT24J1UIRxuEv2Yw8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YqX6CQJuEWfA7B9AvYwvxggb/vkEvS3O6G7kQJKb6DTO/W6obNrYG8DJy1+3/2Kc8uFgsJQdJFoHt2eCXqmYGTLE1ykgi5Hyqin0+3bYrhaPp7XhletsrRqFYgS45w0OwKGfU3YYiJ+pJYLhOVPgxEu6LiVMihWKuE3dHu8JwZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Isyln6Yf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7B4DC4CEE7;
+	Wed,  3 Sep 2025 14:42:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756910563;
+	bh=nKe5S8ycLOzlLVAPStN7aGZhiVpT24J1UIRxuEv2Yw8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Isyln6YfCyS8lm/je/aRbzCGEX8RBC3azcY6te/H1QmmZAwAdGXWCTYnHlTC1eHq9
+	 C1XVkfEcGL9Rr4eHPtMzTxvUDtfRWDjRVB6+K4mTcOnjO44uzThp9//DsH/2G6r038
+	 kdRYOPACCuVc8SDT5Bt8nF+3wsUxQ+zEcN9t4dH0E00hU7hXsAa0qZ4c4aEbXC6qkT
+	 l2KH8vKj+amv2MqoXJJqRpuFi8beSwLULEbV6E+vJxaS1DG2DIduUlx2pY3Qw22yZg
+	 4/HHOZHGfBfwprvr+7DJisicJ1e5i5DMdUuqGah88a7BMldfHemnL7b0q0b4SbydkN
+	 szirxuc1qpmQw==
+From: guoren@kernel.org
+To: tjeznach@rivosinc.com,
+	joro@8bytes.org,
+	will@kernel.org,
+	robin.murphy@arm.com
+Cc: guoren@kernel.org,
+	paul.walmsley@sifive.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	palmer@dabbelt.com,
+	iommu@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] iommu/riscv: Use two individual 4-byte accesses for 8-byte register
+Date: Wed,  3 Sep 2025 10:42:17 -0400
+Message-Id: <20250903144217.837448-1-guoren@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250824091927.105121-1-clamor95@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 24, 2025 at 12:19:25PM +0300, Svyatoslav Ryhel wrote:
-> In case tsc2007 is used as an ADC sensor there will be no interrupt
-> provided at all, so set up an interrupt only if one is present and
-> remove associated warning.
+From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
 
-Applied the lot, thank you.
+The RISC-V IOMMU memory-mapped register interface define:
 
+The 8-byte IOMMU registers are defined in such a way that
+software can perform two individual 4-byte accesses.
+
+Therefore, use two individual 4-byte accesses for an 8-byte
+register to make the driver compatible with a 32-bit-wide
+interconnect.
+
+Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
+---
+ drivers/iommu/riscv/iommu.c |  7 +++++--
+ drivers/iommu/riscv/iommu.h | 27 ++++++++++++++++++++-------
+ 2 files changed, 25 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+index 0eae2f4bdc5e..9a80464ed7be 100644
+--- a/drivers/iommu/riscv/iommu.c
++++ b/drivers/iommu/riscv/iommu.c
+@@ -662,9 +662,12 @@ void riscv_iommu_disable(struct riscv_iommu_device *iommu)
+ 
+ #define riscv_iommu_read_ddtp(iommu) ({ \
+ 	u64 ddtp; \
+-	riscv_iommu_readq_timeout((iommu), RISCV_IOMMU_REG_DDTP, ddtp, \
+-				  !(ddtp & RISCV_IOMMU_DDTP_BUSY), 10, \
++	u32 ddtp_lo, ddtp_hi; \
++	riscv_iommu_readl_timeout((iommu), RISCV_IOMMU_REG_DDTP, ddtp_lo, \
++				  !(ddtp_lo & RISCV_IOMMU_DDTP_BUSY), 10, \
+ 				  RISCV_IOMMU_DDTP_TIMEOUT); \
++	ddtp_hi = riscv_iommu_readl(iommu, RISCV_IOMMU_REG_DDTP + 4); \
++	ddtp = ((u64)ddtp_hi << 32) | ddtp_lo; \
+ 	ddtp; })
+ 
+ static int riscv_iommu_iodir_alloc(struct riscv_iommu_device *iommu)
+diff --git a/drivers/iommu/riscv/iommu.h b/drivers/iommu/riscv/iommu.h
+index 46df79dd5495..698acffff298 100644
+--- a/drivers/iommu/riscv/iommu.h
++++ b/drivers/iommu/riscv/iommu.h
+@@ -69,18 +69,31 @@ void riscv_iommu_disable(struct riscv_iommu_device *iommu);
+ #define riscv_iommu_readl(iommu, addr) \
+ 	readl_relaxed((iommu)->reg + (addr))
+ 
+-#define riscv_iommu_readq(iommu, addr) \
+-	readq_relaxed((iommu)->reg + (addr))
++static inline u64 riscv_iommu_readq(struct riscv_iommu_device *iommu,
++				      u16 addr)
++{
++	u32 val_lo, val_hi;
++
++	val_lo = readl_relaxed((iommu)->reg + (addr));
++	val_hi = readl_relaxed((iommu)->reg + (addr) + 4);
++
++	return (u64) val_lo | ((u64) val_hi << 32);
++}
+ 
+ #define riscv_iommu_writel(iommu, addr, val) \
+ 	writel_relaxed((val), (iommu)->reg + (addr))
+ 
+-#define riscv_iommu_writeq(iommu, addr, val) \
+-	writeq_relaxed((val), (iommu)->reg + (addr))
++static inline void riscv_iommu_writeq(struct riscv_iommu_device *iommu,
++				      u16 addr, u64 val)
++{
++	u32 val_lo, val_hi;
+ 
+-#define riscv_iommu_readq_timeout(iommu, addr, val, cond, delay_us, timeout_us) \
+-	readx_poll_timeout(readq_relaxed, (iommu)->reg + (addr), val, cond, \
+-			   delay_us, timeout_us)
++	val_hi = (u32) (val >> 32);
++	val_lo = (u32) val;
++
++	writel_relaxed((val_hi), (iommu)->reg + (addr) + 4);
++	writel_relaxed((val_lo), (iommu)->reg + (addr));
++}
+ 
+ #define riscv_iommu_readl_timeout(iommu, addr, val, cond, delay_us, timeout_us) \
+ 	readx_poll_timeout(readl_relaxed, (iommu)->reg + (addr), val, cond, \
 -- 
-Dmitry
+2.40.1
+
 
