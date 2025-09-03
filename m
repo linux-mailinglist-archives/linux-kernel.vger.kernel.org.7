@@ -1,169 +1,210 @@
-Return-Path: <linux-kernel+bounces-798238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD79B41B00
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:04:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A5BB41B08
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 579291894A07
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:04:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3D4C1899431
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DDC2D7DE1;
-	Wed,  3 Sep 2025 10:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A1F277CA4;
+	Wed,  3 Sep 2025 10:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xqrXNDbo"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="WwU6NwPX";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="WwU6NwPX"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC91199252
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C96A2DAFB0
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756893839; cv=none; b=bf5Ud49Tf7kie1BPnLk6KSOSgFwQQWN17sa+ulD05ARLTqtGzGQJhoiu7xj5L2aSv7EhrRsV5pvvj0QqA0tRAyauRT9hfD9LkUwm6XNEF/Mu+SEvbsdIRRE8Hj9NVLbBjPBeuIgeS47F6Uz9X1rMJHIHuVitS53kZrYsMG/xKCM=
+	t=1756893870; cv=none; b=cBti0uDV0Nl0AyzoLihFmg9rMO9sE/Bc9OcMEd2YRglw7q54GeTG5U4v5T460JwX79Ka5kofJB/er6deM6duT02vVN2kioW0fi2mPixzis115qvz+mfEcGrAsnvY2ftFmUV2gK9JSbUpIVe5uEIe6AOGskZXSs8/kjZGQ1atRbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756893839; c=relaxed/simple;
-	bh=zWxl9Sr6da0F+FgQYgftZKubZiEg6j5Exk0NZN4j1b4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FMkfom38g0uDNTNKcpJdTMOD0jMXRG4tzNAiYR5goL7GE1seLPgfJdJgoVmafRaTiVvvidWplm17vbzErlOhH5Siam5jsFyNNpZ2nQOW7Sf+iUGAd6X5QhnTJxxdNDSaIUMkjigI55+3qFDfTlnrwvkhm0dSDBREjd75mNYcKrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xqrXNDbo; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb731ca55so125306366b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 03:03:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756893836; x=1757498636; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Nq2yI35kD6p+VHyKDMeG5P0SE7VILz4NHeh1edAL9LY=;
-        b=xqrXNDboAe/FHL0SsmD9bjgd4csmB9eIjYvWlxxvXLRKVMGMNd0JdcH436WvwA4IT4
-         i9WgqJhoddAnhnA2XOvBwyN+4LBQNpoQrZjBGQ075t7SDx32SXdXUzvdc86xkOXEEkys
-         r2/GYkvX/7D4RtHwdThO+kS9XY+pr9INZh8/WZP3enDu+KlZ7FjuWWNP0n0d038t4ZzV
-         kR3Nnm/4yfRwzS2z58vhFpZTJqdvyaqyaBW+1wGRQ+0kFpslp3LZlAzOiI0aqUFoj0m5
-         6/f2HMSiVVwZnn5LtE5H/un71E+G9lUKVjQhp90LBOGrpBiTyeMfbOw1YPDE6l3Kyxlo
-         5uXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756893836; x=1757498636;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nq2yI35kD6p+VHyKDMeG5P0SE7VILz4NHeh1edAL9LY=;
-        b=CTQtFvshC9wmIFvMAk11EyNiCVoC31TndLmwqikCG6jkEUbwy+En/sNvvt/9gZwRBl
-         jfOJxrRf6JpmK4CZvLYCxEo+UHwCBbbm6uYj+Vi8tlBvpE/OQ8+ym5+pQX2+iqNWeMUv
-         cXC4D7+dy3fbbkyQnR+4qX5FaIm2capJgMyARj0WAU1UWt4X++DXHE8OjeA3ViigF1d5
-         1cW5CzDtBibP5LS5VNRoy0lbSIZqWQbpHA3ZVvJkTVRS+yDPrs5Vmi4iafPJsIHQfKbG
-         P4Lp+VMG8ffIvIMgZ3IRFYbxuoBIXSV36VHZvIORfMZgtSWm/9y8k4NLg3HdYuJd9Ga9
-         EWPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrr2pwHF0A3tsHO0d+QswiMYNTColn1ddPSc368kOaMfFoowiRBGAs2CzD/5B9pKCOHDOo+f6ytL4sAfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFQRYkNyrPjn/NSkfAgnYjgpXPFZGuBPqS2hpL5uhKCeNErA4f
-	x4bvammiG6GDr4R5/tX0lQSCS0R2EJOwbvvrPBJRJphTuXyCt1T/3/7WUO/zd5V0nH8=
-X-Gm-Gg: ASbGnctj+pTpufEdMrrEJPXLIfLoVrHfD/ypr3b1GWBQZosYxRIRkxvkL1k3nD6k6cj
-	uIQsTeEDT9fs70xPyj5tK0xh3lR5uYJYht8mpBTLrGb5mj/dyzQZOwGUbsJHqQ4n1k+c5Uprmvc
-	jjI/Ldc5fUlnErNuoo/A33T+Ov6i01XOuECFYAHLKerWJcacC16lx4X5qJVBDhicPMM4raY8L+A
-	L+/oEStYrRihaLEzQGNaXcrX0JIAkCnOE3yFVDENv1lPmDErdUgkA+4ZfFmvTc2oLm9HcKrlMNf
-	6K+3j06rGzpxWcp+StlmCNehx2Tdd8tBX3a2dkkNMFQpG2sUtSSIpZiB7H5Iu0irwneEat/e1cj
-	S2OG04rJxiQTs0OuzSPNl/ZalSAdEXM4aIKInHuZrhHq9KkBTBGcbMw==
-X-Google-Smtp-Source: AGHT+IHwwLrkuoIbCE3SevCtSLBrMSxsijMwNty5Zrfr9laq8AP328QMNjXpn4aVHwbkdv5gDR+qyQ==
-X-Received: by 2002:a17:907:e8d:b0:afe:d218:3d21 with SMTP id a640c23a62f3a-aff040b2788mr957125666b.4.1756893836256;
-        Wed, 03 Sep 2025 03:03:56 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b045e576edbsm255447266b.75.2025.09.03.03.03.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 03:03:55 -0700 (PDT)
-Message-ID: <94ade558-90db-4076-92a7-ec9ffd709b71@linaro.org>
-Date: Wed, 3 Sep 2025 12:03:54 +0200
+	s=arc-20240116; t=1756893870; c=relaxed/simple;
+	bh=ZL8Xi+kOXTtPn8QwdiGgDgKsdF1yNtO8Uu26fcqKlUY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HpzNMQ0yy2SAXugQ/Ttmsma4RZg5hYby2++QiSjDgw6ugPRvyZqJs2BjalJ+tZXa8Uaqh7W3GZktDiX/VlKnaxSVHmtJ/PynB5t8llLp5CordxV9GHw1KdBd0+HworLT1MyLYobyOWz3U2lcpI0Gm2oU+QS1zwa9gxFExX3DCoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=WwU6NwPX; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=WwU6NwPX; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from pathway.suse.cz (unknown [IPv6:2a07:de40:b2bf:1b::12bd])
+	by smtp-out2.suse.de (Postfix) with ESMTP id 202E31F456;
+	Wed,  3 Sep 2025 10:04:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1756893866; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=gihWC4HK9+f2rzVQ0Oi9hOnorwW/l6eP52gOtYB8VpQ=;
+	b=WwU6NwPXaOVvrhxVTy/krh5R+ozaBvc6I8xIBd0ICZRe9t5HDUfVV6+XXb4ThZJpU05wbs
+	KIauAV3QgpkY9R/oeQEU3Qlc0Q7gutZCtkdqgHstfQPqMfRRQvi1PHEHC3YX0+fFQCf83K
+	YmqQ09HOu1JKakt/K2MnFQzZZSKZQxA=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=WwU6NwPX
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1756893866; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=gihWC4HK9+f2rzVQ0Oi9hOnorwW/l6eP52gOtYB8VpQ=;
+	b=WwU6NwPXaOVvrhxVTy/krh5R+ozaBvc6I8xIBd0ICZRe9t5HDUfVV6+XXb4ThZJpU05wbs
+	KIauAV3QgpkY9R/oeQEU3Qlc0Q7gutZCtkdqgHstfQPqMfRRQvi1PHEHC3YX0+fFQCf83K
+	YmqQ09HOu1JKakt/K2MnFQzZZSKZQxA=
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Petr Mladek <pmladek@suse.com>,
+	Feng Tang <feng.tang@linux.alibaba.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] panic: Remove redundant panic-cpu backtrace
+Date: Wed,  3 Sep 2025 12:04:18 +0200
+Message-ID: <20250903100418.410026-1-pmladek@suse.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ASoC: qcom: audioreach: Add support for Speaker
- Protection module
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250821141625.131990-3-krzysztof.kozlowski@linaro.org>
- <d2d01b40-677c-4ad7-9742-29a40082f40a@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <d2d01b40-677c-4ad7-9742-29a40082f40a@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: ****************
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [16.71 / 50.00];
+	SPAM_FLAG(5.00)[];
+	NEURAL_SPAM_LONG(3.50)[1.000];
+	NEURAL_SPAM_SHORT(2.99)[0.996];
+	BAYES_HAM(-2.97)[99.86%];
+	HFILTER_HOSTNAME_UNKNOWN(2.50)[];
+	RDNS_NONE(2.00)[];
+	ONCE_RECEIVED(1.20)[];
+	HFILTER_HELO_IP_A(1.00)[pathway.suse.cz];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	HFILTER_HELO_NORES_A_OR_MX(0.30)[pathway.suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DIRECT_TO_MX(0.00)[git-send-email 2.50.1];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,suse.com:email];
+	TO_MATCH_ENVRCPT_ALL(0.00)[]
+X-Spamd-Bar: ++++++++++++++++
+X-Rspamd-Queue-Id: 202E31F456
+X-Rspamd-Action: add header
+X-Spam-Flag: YES
+X-Spam-Score: 16.71
+X-Spam: Yes
 
-On 03/09/2025 11:31, Konrad Dybcio wrote:
-> On 8/21/25 4:16 PM, Krzysztof Kozlowski wrote:
->> Speaker Protection is capability of ADSP to adjust the gain during
->> playback to different speakers and their temperature.  This allows good
->> playback without blowing the speakers up.
-> 
-> exciting!
->>
->> Implement parsing MODULE_ID_SPEAKER_PROTECTION from Audioreach topology
->> and sending it as command to the ADSP.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
-> 
-> [...]
-> 
->> +struct param_id_sp_op_mode {
->> +	uint32_t operation_mode;
-> 
-> "u32"
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
 
-This will be quite inconsistent. See coding style: "you should conform
-to the existing choices in that code".
+Backtraces from all CPUs are printed during panic() when
+SYS_INFO_ALL_CPU_BT is set. It shows the backtrace for
+the panic-CPU even when it has already been explicitly
+printed before.
 
-Best regards,
-Krzysztof
+Do not change the legacy code which prints the backtrace
+in various context, for example, as part of Oops report,
+right after panic message. It will always be visible in
+the crash dump.
+
+Instead, remember when the backtrace was printed, and skip
+it when dumping the optional backtraces on all CPUs.
+
+Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Link: https://lore.kernel.org/r/20250731030314.3818040-1-senozhatsky@chromium.org
+[pmladek@suse.com: Handle situations when the backtrace was not printed for the panic CPU.]
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+---
+Hi,
+
+I resend my proposal [1] as a proper patch.
+
+Changes against v1:
+
+  - Handle situations when the backtrace was not printed for
+    the panic CPU.
+
+[1] https://lore.kernel.org/all/aJs7p_UjPIfb_XYd@pathway/
+
+kernel/panic.c | 30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 72fcbb5a071b..e3cec9bc05ef 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -67,6 +67,7 @@ static unsigned int warn_limit __read_mostly;
+ static bool panic_console_replay;
+ 
+ bool panic_triggering_all_cpu_backtrace;
++bool panic_this_cpu_backtrace_printed;
+ 
+ int panic_timeout = CONFIG_PANIC_TIMEOUT;
+ EXPORT_SYMBOL_GPL(panic_timeout);
+@@ -328,6 +329,19 @@ void check_panic_on_warn(const char *origin)
+ 		      origin, limit);
+ }
+ 
++static void panic_trigger_all_cpu_backtrace(void)
++{
++	/* Temporary allow non-panic CPUs to write their backtraces. */
++	panic_triggering_all_cpu_backtrace = true;
++
++	if (panic_this_cpu_backtrace_printed)
++		trigger_allbutcpu_cpu_backtrace(raw_smp_processor_id());
++	else
++		trigger_all_cpu_backtrace();
++
++	panic_triggering_all_cpu_backtrace = false;
++}
++
+ /*
+  * Helper that triggers the NMI backtrace (if set in panic_print)
+  * and then performs the secondary CPUs shutdown - we cannot have
+@@ -335,12 +349,8 @@ void check_panic_on_warn(const char *origin)
+  */
+ static void panic_other_cpus_shutdown(bool crash_kexec)
+ {
+-	if (panic_print & SYS_INFO_ALL_CPU_BT) {
+-		/* Temporary allow non-panic CPUs to write their backtraces. */
+-		panic_triggering_all_cpu_backtrace = true;
+-		trigger_all_cpu_backtrace();
+-		panic_triggering_all_cpu_backtrace = false;
+-	}
++	if (panic_print & SYS_INFO_ALL_CPU_BT)
++		panic_trigger_all_cpu_backtrace();
+ 
+ 	/*
+ 	 * Note that smp_send_stop() is the usual SMP shutdown function,
+@@ -422,13 +432,15 @@ void vpanic(const char *fmt, va_list args)
+ 		buf[len - 1] = '\0';
+ 
+ 	pr_emerg("Kernel panic - not syncing: %s\n", buf);
+-#ifdef CONFIG_DEBUG_BUGVERBOSE
+ 	/*
+ 	 * Avoid nested stack-dumping if a panic occurs during oops processing
+ 	 */
+-	if (!test_taint(TAINT_DIE) && oops_in_progress <= 1)
++	if (test_taint(TAINT_DIE) || oops_in_progress > 1) {
++		panic_this_cpu_backtrace_printed = true;
++	} else if (IS_ENABLED(CONFIG_DEBUG_BUGVERBOSE)) {
+ 		dump_stack();
+-#endif
++		panic_this_cpu_backtrace_printed = true;
++	}
+ 
+ 	/*
+ 	 * If kgdb is enabled, give it a chance to run before we stop all
+-- 
+2.50.1
+
 
