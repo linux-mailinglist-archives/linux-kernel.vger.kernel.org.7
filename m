@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-798856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B728DB423EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:43:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1932B423F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D2655E2DEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:43:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 934DF1BC3243
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27020213E6D;
-	Wed,  3 Sep 2025 14:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DA521A447;
+	Wed,  3 Sep 2025 14:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LmJBTmVy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V4Mnb8+Q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EBD1C862D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955891C862D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756910609; cv=none; b=dDVho+85U8AwSVJ10VSDJx1GwPREZ7ffruBS2Ec5K+7FE53JskQJcjqNHx0I8w5cOIPEzj3gVzD1IGi21xzKANHFNIA6Jtfu4o9dMx4XRU2mIDlIeAKBOIQRLt1NvBRh+aut43hVum8BrRgkJQtkIEVcJjUpCpZpHpmdDrI1QdE=
+	t=1756910675; cv=none; b=J+4TqjE9J8u/ucfLrFSCVxPXDjg7+XuvlP0sx1qZBgiV3Pq+nXWtQ/gm8If39AWuxQq0wkybW1abuvErWb32MpckzTu4444urI/o5u076P8j1hySe/LD2LGwODa3O5+I4AjrsRhARB+vHXxYskr2DGb50LvhgXN3+1KGPI+l6/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756910609; c=relaxed/simple;
-	bh=qsg5b1hCS0TH3mz58QfmV5A/hWbcjsLvlIP4yl/lCZ0=;
+	s=arc-20240116; t=1756910675; c=relaxed/simple;
+	bh=K1yuBMDpnPOt4/KeRFVE2CusvjBh1MGwKZHLk7xzD4A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nay/B8QOm8Afwq1nyIDiRNQU6HeM9Js57CnrIGO+waFkMnNmlRO6dIjL71tSiWlNNvhKfZRQbFU8abZVCVBd2jvT2ezwosrhMIavnPNmGDg1vnwjFHZDWN8/55Hog9KMHfujmg2WSpUIDt+9MVoybnRgmft75Z0Wvu9+9YiNFDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LmJBTmVy; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=L3ETHcLPUgUL70WMU5QhTFjXnrXBh9twdyPS/RXmeNao3toSfZypYd1g9IkoKa2ZmFl1FScp44QtPWMt5J6ZkfHNuNKAae4TfD5MsL5LQiAckFa/VL8XbZh0oppcOPBGPqN/+4Q0VbRbavqnjY88E5ciidZaZTykpY0mp8ZgnLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V4Mnb8+Q; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756910606;
+	s=mimecast20190719; t=1756910671;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PCtH6GLs0daKTSTUdfVUnTaEI5cKFQFkvOMaqMYTXws=;
-	b=LmJBTmVyKqKPQ3ECDftplN2Y2AuI+53jYd9LzYW2IpGcTpUWg42P7Rj5P+xOeTNBwFlxIc
-	14vTVEMpYWmQ+3+2wuuvCtUv2H1TOMvYfVUlWhd9EzgyyjWjbpvrO5jTG/1MmpiqHlFfOw
-	k9c6SE1twA3gYsnL9w+Qh78DXJmbAAU=
+	bh=hJy/79mHdukukK/k7N0QCn2psTcagRNxoMm4TPphiNQ=;
+	b=V4Mnb8+QfGMolnwkYgJnEZAdvY1uCo9FDDfds9MB/z+wm5XF7hB4SzhR25NHUS1GwaaeGa
+	h/J2yI2EzuP82xw96t4h2resTtJxG3T+lTnUEXKK/Zo9EXKFnNUHjtCWU4kt749tFmjPKM
+	gttt0cQkyYlJV1bui/A1uisgWJWtFf8=
 Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
  [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-278-WtQmNRSeNwijBPK-1NPpDg-1; Wed, 03 Sep 2025 10:43:24 -0400
-X-MC-Unique: WtQmNRSeNwijBPK-1NPpDg-1
-X-Mimecast-MFC-AGG-ID: WtQmNRSeNwijBPK-1NPpDg_1756910603
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45d6c770066so164075e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 07:43:24 -0700 (PDT)
+ us-mta-685-4bfc_JWYOeyOy1cGgeSsSA-1; Wed, 03 Sep 2025 10:44:30 -0400
+X-MC-Unique: 4bfc_JWYOeyOy1cGgeSsSA-1
+X-Mimecast-MFC-AGG-ID: 4bfc_JWYOeyOy1cGgeSsSA_1756910669
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b467f5173so38425e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 07:44:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756910603; x=1757515403;
+        d=1e100.net; s=20230601; t=1756910669; x=1757515469;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PCtH6GLs0daKTSTUdfVUnTaEI5cKFQFkvOMaqMYTXws=;
-        b=l9PQEVMmV4QIP+9KMldFX+WlF2HD5C1a2zozWayl5NXVmT60sEzsbnRbPG+PrRifzH
-         LXb5AK1zr5YzSrWFgLJPymyvjyLbNCkMysy5AVKwB1Y6pZmOUwngWSRun5PgT521ewf0
-         ksuOkiO8qKChultwKZdPVr70igmhbQSvDtvohG100+RECF5MDs+7DG9bdJk4IptX+YR3
-         njlIvN8rhNlHjzK1ncCQQMy960PcurZ+z5z1lEv12PQYL3xM6PQduCKvUuet9wo+Mcq3
-         xkO7EVd06cQoz02QX+QPyYl4kzi6Cm9c5UCtSL/BmYLwiSloabLNlQashTFf6ZXzoUzM
-         YFTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGRsFnaPzSwZgTArYmMXBfcvpq1600q2OhkZwd18vqVr1NzesReaBGTvKCEQ2gDCMT2tZpXionwZCayEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQkQjRyl4nE0x+OJgPxuj2fWtVKTPHIEiJkTBt25aqYvMJ+hSA
-	xT5iu7bJ0jk1jQTXrK5ClDJCNBLHJiGTNPfGww6JRztIWqV4XmPZBZLZzoa5KBnGikEVeIsa3cu
-	a5LvoUVylAT5IkJdpjBYhOmr09hSF8XOdymwBIERcALpVMgyrfAmlPyWTVSzwBNyBFQ==
-X-Gm-Gg: ASbGncuR2JqPLAE9c0iyS8TaEru2hLwf97Y8xwntcCOuut52d7xlnqRpkkD8fzuWr2D
-	3YCPEvg8Xedb1vJrPNn4zWcJ7ioSL5/v+I1bTD/087e797Gyt077oU53cmsFoyYTPV7l28OAOt7
-	P9J/kAgzLkgVTWQ5OuedOU462UoyGwU2zyx8pz2ggBWpqrT8XBtfMIFyV06di6MLe9ueuCXqCbQ
-	ndNuJnH8hARZs/hhaTzXWBUUe8FwqQIibWEvu9AQ23fLbWGCf22i5jCjP8vHK2zA7+0JJijMvDs
-	p7kJz8lFtoSLxPD9Kdg9oPq2wfj4j19PMBD3N53SQ1XCTIcq0Rfw3pDKi6t6UAgJ2jtCrO8=
-X-Received: by 2002:a05:600c:1f13:b0:45b:8ab0:59a9 with SMTP id 5b1f17b1804b1-45b8ab05bd1mr108070825e9.18.1756910603001;
-        Wed, 03 Sep 2025 07:43:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF69gAChxFwcluBRYHF0+z51FCVtEVCadQL0dqsUkUmSsfKqXS/cjr5c0WBKbduX2OT6RRehw==
-X-Received: by 2002:a05:600c:1f13:b0:45b:8ab0:59a9 with SMTP id 5b1f17b1804b1-45b8ab05bd1mr108070485e9.18.1756910602534;
-        Wed, 03 Sep 2025 07:43:22 -0700 (PDT)
+        bh=hJy/79mHdukukK/k7N0QCn2psTcagRNxoMm4TPphiNQ=;
+        b=gVNOsZSdAjS9v1e81ZpNSPVcPWzH/g4zl85S6j554W3HDohgYAh26iqFovSCkD4Unl
+         myYCeke1Nw927Ve25oSLNO1XV7tiQLO4iUhZnbBsR8L0D12nRELdSm+8EOy/uyl5bgpd
+         NIbe/GVuwZ0T4gHFp2URWYjDl34rHLcAzf8Ztdf67Fl88F+Sc9QZ2gnJLxnP4aAdc/gU
+         02vrT1PLKaTjLB7z+2+i6qzBDWSTvFsm6tScVcpjiGGAebRp6zmvK0U+furqLniaS7oy
+         8DHSkiYDmN2oK4MiVNalH76ya2SN5uJy4iy9pwdrLkVMENadwrAPw47jxpFPfjnKBOxu
+         jGqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgOcg2Frm5f2hr+0k+hBw9GL9RUGBkS3ux6/UpiiC9I6bN5BfbSee8dJ2RPnnxbjvCjA9fb75Y+7+6tK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCLaKejDnFln3D+gNy3DS0C3RSexPzYiulpUx6F/aKW1Y/y1cU
+	WpMNwwdlBQH1YZ0F76DVrpKOkZTYjCXvAv1fumLAc7oJvurwQUtdjetL4iC+/wqxmUX0NJC3Ewq
+	+kHka6zcRZpn7SKT/Jy9oxVwNhOXDQa+hRWhKJLlkrc3e7E2aGLMvbQBeTfxRF4v03w==
+X-Gm-Gg: ASbGncuM/dbafvoJdY6BXA67lofV/66qOx7jJ65ee6e0jtIKf/bBEhsdI0wcSBEwTHi
+	UxL6OLmnuIZ2bOXSfjNgqC9owsdhTYbZ/BJ5eKOyqMSfJrzNa2KjAgp4rDMB1UK6oWMllsYVsbo
+	66GqIay2tmWEYQlh3l1IqQ4bh57sYEvRM/+IuydaUo0k8PpTrZfSQyi+J8dg+pkTIFo3go2ulLC
+	f0g0ScaiOg5t7+DW6zapWzGRjwUTqQzyvIgvAGTotElJS9fFsGaQ+tNSUNFlFaWl0H9ZyYgCwQM
+	bO0N8egKkC7KUZsUwTE5fAgKbhXlq5Sg+chSsWzABUEI+lPH/XtVQaXWRME/QvKXGG6d5gU=
+X-Received: by 2002:a05:600c:1e87:b0:45b:47e1:f5fe with SMTP id 5b1f17b1804b1-45b855c0d3dmr110370935e9.34.1756910669125;
+        Wed, 03 Sep 2025 07:44:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFKbkCMZ4LvPme/EuBzwbZA95CEfK10pvDin+qYg4BSO4x2L+ewZWsEmuElBxgPinCjh7EOCw==
+X-Received: by 2002:a05:600c:1e87:b0:45b:47e1:f5fe with SMTP id 5b1f17b1804b1-45b855c0d3dmr110370615e9.34.1756910668723;
+        Wed, 03 Sep 2025 07:44:28 -0700 (PDT)
 Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.70.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b72c55c1bsm342903985e9.10.2025.09.03.07.43.21
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7d2393sm242270935e9.3.2025.09.03.07.44.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 07:43:21 -0700 (PDT)
-Date: Wed, 3 Sep 2025 16:43:19 +0200
+        Wed, 03 Sep 2025 07:44:28 -0700 (PDT)
+Date: Wed, 3 Sep 2025 16:44:26 +0200
 From: Juri Lelli <juri.lelli@redhat.com>
 To: Andrea Righi <arighi@nvidia.com>
 Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
@@ -91,11 +91,10 @@ Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
 	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
 	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/16] sched/debug: Stop and start server based on if it
- was active
-Message-ID: <aLhUB86NwnaQ8bMf@jlelli-thinkpadt14gen4.remote.csb>
+Subject: Re: [PATCH 04/16] sched/deadline: Clear the defer params
+Message-ID: <aLhUSknzOOOU3lKJ@jlelli-thinkpadt14gen4.remote.csb>
 References: <20250903095008.162049-1-arighi@nvidia.com>
- <20250903095008.162049-4-arighi@nvidia.com>
+ <20250903095008.162049-5-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,56 +103,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250903095008.162049-4-arighi@nvidia.com>
+In-Reply-To: <20250903095008.162049-5-arighi@nvidia.com>
 
 Hi,
 
 On 03/09/25 11:33, Andrea Righi wrote:
 > From: Joel Fernandes <joelagnelf@nvidia.com>
 > 
-> Currently the DL server interface for applying parameters checks
-> CFS-internals to identify if the server is active. This is error-prone
-> and makes it difficult when adding new servers in the future.
+> The defer params were not cleared in __dl_clear_params. Clear them.
 > 
-> Fix it, by using dl_server_active() which is also used by the DL server
-> code to determine if the DL server was started.
+> Without this is some of my test cases are flaking and the DL timer is
+> not starting correctly AFAICS.
 > 
-> Acked-by: Tejun Heo <tj@kernel.org>
+> Fixes: a110a81c52a9 ("sched/deadline: Deferrable dl server")
 > Reviewed-by: Andrea Righi <arighi@nvidia.com>
 > Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> ---
->  kernel/sched/debug.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-> index dbe2aee8628ce..e71f6618c1a6a 100644
-> --- a/kernel/sched/debug.c
-> +++ b/kernel/sched/debug.c
-> @@ -354,6 +354,8 @@ static ssize_t sched_fair_server_write(struct file *filp, const char __user *ubu
->  		return err;
->  
->  	scoped_guard (rq_lock_irqsave, rq) {
-> +		bool is_active;
-> +
->  		runtime  = rq->fair_server.dl_runtime;
->  		period = rq->fair_server.dl_period;
->  
-> @@ -376,7 +378,8 @@ static ssize_t sched_fair_server_write(struct file *filp, const char __user *ubu
->  			return  -EINVAL;
->  		}
->  
-> -		if (rq->cfs.h_nr_queued) {
-> +		is_active = dl_server_active(&rq->fair_server);
-> +		if (is_active) {
->  			update_rq_clock(rq);
->  			dl_server_stop(&rq->fair_server);
->  		}
 
-I believe this chunk will unfortunately conflict with bb4700adc3ab
-("sched/deadline: Always stop dl-server before changing parameters"),
-but it should be an easy fix. :)
+Acked-by: Juri Lelli <juri.lelli@redhat.com>
 
-Thanks,
+Thanks!
 Juri
 
 
