@@ -1,64 +1,90 @@
-Return-Path: <linux-kernel+bounces-799500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A61ABB42CC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:25:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D53B42CC6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C156566CA3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:25:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C10793B77C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBBC2ED177;
-	Wed,  3 Sep 2025 22:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8F42EDD69;
+	Wed,  3 Sep 2025 22:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="NuLDJx/V"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e8MsM39I"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90548155333;
-	Wed,  3 Sep 2025 22:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A1C2EDD64;
+	Wed,  3 Sep 2025 22:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756938308; cv=none; b=BLZ7rdp+y0E3FFB3RMDzDoKCwUKkoY1Jpj2rGTvYPk0WHuOvsncjr6qIxXBBdQSjzIN5cdONL7TBRtsq56I/YlLwIqk0II5+GUavzHMHEoODAWi7jNpFnaJ/1vXlqN4mvLFEBuZ3fiUgpWdQtSM+3A+PJ/Bb5KAE/w001IWH1jc=
+	t=1756938589; cv=none; b=XIdFcia1qK9LpNH7u7BJY1q57AjVifUcPVKPc6hxV+MW5EZ+m8yZKohbOHaRLAUqX1z6I9k77MKLRe7XSuK/wtIkehi2poozbQGbT7GBfmacFj8DqgV6siUuRLL39UaAhZOMYeRWz6QKcZZ7Q7f9PcSW01b2xgGgZUJO1ER9kh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756938308; c=relaxed/simple;
-	bh=PAqn5ll1w4WzA93V6UQALMVRNrs6OiC8TUzJboJnmk0=;
+	s=arc-20240116; t=1756938589; c=relaxed/simple;
+	bh=PSEVuZUNWlueqS+Ui8pc2fm3qOdMiz+R5imI8e5EXAw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ewsye/mTYauq+E2xMSi5X4RVBf1WRsmqJYCqhCJzb2lg+B7nOo5LzlPCF3rj/ntdhpcW7KHohAo0tNpXM0gsJJW/1F5/7IkfuQT0qjD5z66pfN7SZnxo+XU9jZjeV0f7hNjTHtC9W0A72YdGuzC4LHK4x5P5m8Q2XdC7VzS269g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=NuLDJx/V; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=hOnnk2noF78dfU4ZbGRpjhX2RXceifum6ah+cMOBfng=; b=NuLDJx/VtDjySh6kD/OJEVSaBC
-	bzSz26/RcgKObjJWpskrD77FACyb/aVax19Hk6rFmi38QUqQ/k/WSPAc7Pvsv5X3465V247yIdM7M
-	KN0BOZlB54aQf6O8CQmwW8aJv2TBN8dvkUg9Z/krfp9DUO0raBiYEP6OZN9FDTmXwdZQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1utvtp-0076Ff-N1; Thu, 04 Sep 2025 00:24:17 +0200
-Date: Thu, 4 Sep 2025 00:24:17 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Dong Yibo <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, rdunlap@infradead.org,
-	vadim.fedorenko@linux.dev, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v10 3/5] net: rnpgbe: Add basic mbx ops support
-Message-ID: <659df824-7509-4ffe-949b-187d7d44f69f@lunn.ch>
-References: <20250903025430.864836-1-dong100@mucse.com>
- <20250903025430.864836-4-dong100@mucse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ix1Vxbw5ALQbdayYfJ/RbM3iNaiuEAOsfRt+j7qKqjwEPKyeNYpNLM9b6SgtQe68v+3lTgmdvTJapaFCvViuDqoI22PouJxCwvQ6ZGoAjkdwiswtoRSR4FGiELGaq3ijFutcUAwa0otJQ6WJXu4gJ9xVRkdhjUftdhPfNtrRtIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e8MsM39I; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756938588; x=1788474588;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PSEVuZUNWlueqS+Ui8pc2fm3qOdMiz+R5imI8e5EXAw=;
+  b=e8MsM39ITKnyhH7t9WtSxSpg+qD7sH6h/RlV+cn406O8eHFBmqRbN/p/
+   9AS7e7rriVKgifKOE0BdplgG7Xfo/DrkCwslTLjcvr8hrKIir32WLOL6J
+   +oJuRlUcq8xKsISbcfc87SY2R5hZrbLl8hcVMqV26ZDlz059/sQWmucB7
+   ghPnd2EMKIsk+PPhME2La3WWjxZ4+g9hZrdrSasHCzBAtFRMJE9p6tDtN
+   apGxnzl8FTybkfYwMT8aEW0dRrV5de0fVJo9J9+MfRKx2YSMnv4AGXkbO
+   gokN2UAEQ3Sj0x36DzhBXA6+AB+jftVTIvivfBxeGJzqg5tBBlB1HV+m0
+   Q==;
+X-CSE-ConnectionGUID: ugixRcPGQwehC63L/m7Dlw==
+X-CSE-MsgGUID: WAlhLn7YRmaYYhqKSg/FeA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="59378141"
+X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
+   d="scan'208";a="59378141"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 15:29:47 -0700
+X-CSE-ConnectionGUID: 40QyShBNR7CMykOLW2VH5Q==
+X-CSE-MsgGUID: mfOXVpV6SzGI80goFY9hpg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
+   d="scan'208";a="172161049"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 03 Sep 2025 15:29:43 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1utvyk-0004Tz-1o;
+	Wed, 03 Sep 2025 22:29:33 +0000
+Date: Thu, 4 Sep 2025 06:28:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+	Ceclan Dumitru <dumitru.ceclan@analog.com>,
+	Jonathan Santos <Jonathan.Santos@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>
+Subject: Re: [PATCH v10 2/2] iio: adc: max14001: New driver
+Message-ID: <202509040617.gcAKQNlG-lkp@intel.com>
+References: <f3ea9c127b7836cc978def5d906740c6da1cfb1e.1756816682.git.marilene.agarcia@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,68 +93,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250903025430.864836-4-dong100@mucse.com>
+In-Reply-To: <f3ea9c127b7836cc978def5d906740c6da1cfb1e.1756816682.git.marilene.agarcia@gmail.com>
 
->  struct mucse_mbx_info {
-> +	struct mucse_mbx_stats stats;
-> +	u32 timeout;
-> +	u32 usec_delay;
-> +	u16 size;
-> +	u16 fw_req;
-> +	u16 fw_ack;
-> +	/* lock for only one use mbx */
-> +	struct mutex lock;
->  	/* fw <--> pf mbx */
->  	u32 fw_pf_shm_base;
->  	u32 pf2fw_mbox_ctrl;
+Hi Marilene,
 
-> +/**
-> + * mucse_obtain_mbx_lock_pf - Obtain mailbox lock
-> + * @hw: pointer to the HW structure
-> + *
-> + * This function maybe used in an irq handler.
-> + *
-> + * Return: 0 if we obtained the mailbox lock or else -EIO
-> + **/
-> +static int mucse_obtain_mbx_lock_pf(struct mucse_hw *hw)
-> +{
-> +	struct mucse_mbx_info *mbx = &hw->mbx;
-> +	int try_cnt = 5000;
-> +	u32 reg;
-> +
-> +	reg = PF2FW_MBOX_CTRL(mbx);
-> +	while (try_cnt-- > 0) {
-> +		mbx_ctrl_wr32(mbx, reg, MBOX_PF_HOLD);
-> +		/* force write back before check */
-> +		wmb();
-> +		if (mbx_ctrl_rd32(mbx, reg) & MBOX_PF_HOLD)
-> +			return 0;
-> +		udelay(100);
-> +	}
-> +	return -EIO;
-> +}
+kernel test robot noticed the following build warnings:
 
-If there is a function which obtains a lock, there is normally a
-function which releases a lock. But i don't see it.
+[auto build test WARNING on d1487b0b78720b86ec2a2ac7acc683ec90627e5b]
 
-> +void mucse_init_mbx_params_pf(struct mucse_hw *hw)
-> +{
-> +	struct mucse_mbx_info *mbx = &hw->mbx;
-> +
-> +	mbx->usec_delay = 100;
-> +	mbx->timeout = (4 * USEC_PER_SEC) / mbx->usec_delay;
-> +	mbx->stats.msgs_tx = 0;
-> +	mbx->stats.msgs_rx = 0;
-> +	mbx->stats.reqs = 0;
-> +	mbx->stats.acks = 0;
-> +	mbx->size = MUCSE_MAILBOX_BYTES;
-> +	mutex_init(&mbx->lock);
+url:    https://github.com/intel-lab-lkp/linux/commits/Marilene-Andrade-Garcia/dt-bindings-iio-adc-add-max14001/20250902-212046
+base:   d1487b0b78720b86ec2a2ac7acc683ec90627e5b
+patch link:    https://lore.kernel.org/r/f3ea9c127b7836cc978def5d906740c6da1cfb1e.1756816682.git.marilene.agarcia%40gmail.com
+patch subject: [PATCH v10 2/2] iio: adc: max14001: New driver
+config: hexagon-randconfig-r113-20250904 (https://download.01.org/0day-ci/archive/20250904/202509040617.gcAKQNlG-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 2e122990391b2ba062e6308a12cfedf7206270ba)
+reproduce: (https://download.01.org/0day-ci/archive/20250904/202509040617.gcAKQNlG-lkp@intel.com/reproduce)
 
-And this mutex never seems to be used anywhere. What is it supposed to
-be protecting?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509040617.gcAKQNlG-lkp@intel.com/
 
-    Andrew
+sparse warnings: (new ones prefixed by >>)
+>> drivers/iio/adc/max14001.c:109:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 [usertype] spi_tx_buffer @@     got unsigned long @@
+   drivers/iio/adc/max14001.c:109:27: sparse:     expected restricted __be16 [usertype] spi_tx_buffer
+   drivers/iio/adc/max14001.c:109:27: sparse:     got unsigned long
+>> drivers/iio/adc/max14001.c:110:29: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned short [usertype] val @@     got restricted __be16 [usertype] spi_tx_buffer @@
+   drivers/iio/adc/max14001.c:110:29: sparse:     expected unsigned short [usertype] val
+   drivers/iio/adc/max14001.c:110:29: sparse:     got restricted __be16 [usertype] spi_tx_buffer
+>> drivers/iio/adc/max14001.c:110:29: sparse: sparse: cast from restricted __be16
+>> drivers/iio/adc/max14001.c:110:29: sparse: sparse: cast from restricted __be16
+>> drivers/iio/adc/max14001.c:110:29: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned short [usertype] __x @@     got restricted __be16 [usertype] @@
+   drivers/iio/adc/max14001.c:110:29: sparse:     expected unsigned short [usertype] __x
+   drivers/iio/adc/max14001.c:110:29: sparse:     got restricted __be16 [usertype]
+>> drivers/iio/adc/max14001.c:110:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 [usertype] spi_tx_buffer @@     got int @@
+   drivers/iio/adc/max14001.c:110:27: sparse:     expected restricted __be16 [usertype] spi_tx_buffer
+   drivers/iio/adc/max14001.c:110:27: sparse:     got int
+>> drivers/iio/adc/max14001.c:120:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 [usertype] spi_rx_buffer @@     got int @@
+   drivers/iio/adc/max14001.c:120:27: sparse:     expected restricted __be16 [usertype] spi_rx_buffer
+   drivers/iio/adc/max14001.c:120:27: sparse:     got int
+>> drivers/iio/adc/max14001.c:121:21: sparse: sparse: cast to restricted __be16
+>> drivers/iio/adc/max14001.c:121:21: sparse: sparse: restricted __be16 degrades to integer
+>> drivers/iio/adc/max14001.c:121:21: sparse: sparse: restricted __be16 degrades to integer
+   drivers/iio/adc/max14001.c:133:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 [usertype] spi_tx_buffer @@     got unsigned long @@
+   drivers/iio/adc/max14001.c:133:27: sparse:     expected restricted __be16 [usertype] spi_tx_buffer
+   drivers/iio/adc/max14001.c:133:27: sparse:     got unsigned long
+   drivers/iio/adc/max14001.c:136:29: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned short [usertype] val @@     got restricted __be16 [usertype] spi_tx_buffer @@
+   drivers/iio/adc/max14001.c:136:29: sparse:     expected unsigned short [usertype] val
+   drivers/iio/adc/max14001.c:136:29: sparse:     got restricted __be16 [usertype] spi_tx_buffer
+   drivers/iio/adc/max14001.c:136:29: sparse: sparse: cast from restricted __be16
+   drivers/iio/adc/max14001.c:136:29: sparse: sparse: cast from restricted __be16
+   drivers/iio/adc/max14001.c:136:29: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned short [usertype] __x @@     got restricted __be16 [usertype] @@
+   drivers/iio/adc/max14001.c:136:29: sparse:     expected unsigned short [usertype] __x
+   drivers/iio/adc/max14001.c:136:29: sparse:     got restricted __be16 [usertype]
+   drivers/iio/adc/max14001.c:136:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 [usertype] spi_tx_buffer @@     got int @@
+   drivers/iio/adc/max14001.c:136:27: sparse:     expected restricted __be16 [usertype] spi_tx_buffer
+   drivers/iio/adc/max14001.c:136:27: sparse:     got int
 
----
-pw-bot: cr
+vim +109 drivers/iio/adc/max14001.c
+
+    89	
+    90	static int max14001_read(struct max14001_state *st, u16 reg_addr, u16 *reg_data)
+    91	{
+    92		struct spi_transfer xfers[] = {
+    93			{
+    94				.tx_buf = &st->spi_tx_buffer,
+    95				.len = sizeof(st->spi_tx_buffer),
+    96				.cs_change = 1,
+    97			}, {
+    98				.rx_buf = &st->spi_rx_buffer,
+    99				.len = sizeof(st->spi_rx_buffer),
+   100			},
+   101		};
+   102		int ret;
+   103	
+   104		/*
+   105		 * Prepare SPI transmit buffer 16 bit-value big-endian format and
+   106		 * reverses bit order to align with the LSB-first input on SDI port
+   107		 * in order to meet the device communication requirements.
+   108		 */
+ > 109		st->spi_tx_buffer = FIELD_PREP(MAX14001_MASK_ADDR, reg_addr);
+ > 110		st->spi_tx_buffer = bitrev16(cpu_to_be16(st->spi_tx_buffer));
+   111	
+   112		ret = spi_sync_transfer(st->spi, xfers, ARRAY_SIZE(xfers));
+   113		if (ret)
+   114			return ret;
+   115	
+   116		/*
+   117		 * Convert received 16-bit value from big-endian to cpu-endian format
+   118		 * and reverses bit order.
+   119		 */
+ > 120		st->spi_rx_buffer = bitrev16(be16_to_cpu(st->spi_rx_buffer));
+ > 121		*reg_data = FIELD_GET(MAX14001_MASK_DATA, st->spi_rx_buffer);
+   122	
+   123		return 0;
+   124	}
+   125	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
