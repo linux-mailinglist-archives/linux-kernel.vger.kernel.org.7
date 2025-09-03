@@ -1,137 +1,186 @@
-Return-Path: <linux-kernel+bounces-798797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD396B42310
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:07:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEEE8B42313
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF0423B5941
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:06:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3388E3ACCE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B633126B3;
-	Wed,  3 Sep 2025 14:05:37 +0000 (UTC)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F3930EF6A;
+	Wed,  3 Sep 2025 14:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="Bt5I6ns3"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A958F3112D5;
-	Wed,  3 Sep 2025 14:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1C02F4A0B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908337; cv=none; b=iQTdlqgHTuh2kOSr6gfDiGDENoYinLrFz7lUQVbtc4hWPhNGHlD14cNGwP6j6GJ7COrItsxjE+AgGpfA5lP+vNDlvf/Y4ZkjIv95pubSKaz0I8RSeAUWnAP98AC45WyCM+rTxbzRMFXtm1Tataweyk3PL5PAnhL9HaSKK8KGByQ=
+	t=1756908369; cv=none; b=QTanHzWFI1Bl6E9vWIZY9D3TJukmWkGEMMHVlwesWHAS/QjAlfog0JKB65X9NjW1ZGvSg5FqPFNEh/ZKIKUtwwq1A3hw2hVk9XWUfbCw1l1l0DoO0hdnLtLHWdwfBZ+qVXEOU+Q2QrrK+oRPx6bG4sFw9Hd1x1XVmXlhPorm2do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908337; c=relaxed/simple;
-	bh=iXp8HSDTdwY5DmqRI+0Mxlc4cmzuOiwvHRGosXlakII=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aiqD2QPS2+Oq6kjKr8na0cDmUxIvQA8NUXQftfjxLjd/9EmgulDx+us332pbrIpxFh6fJv333T/Imgyb57kyX+N71VDfjrmAtaTF2gi9hMZV7E6HkjzrdX8FM++TMi41L3mSZXJncYyz9ABDQLgQSvkwxVfJ9R//0FR3LHDCp+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-52a73cc9f97so1609997137.3;
-        Wed, 03 Sep 2025 07:05:35 -0700 (PDT)
+	s=arc-20240116; t=1756908369; c=relaxed/simple;
+	bh=jJvjScnyctCjCrW9uH75zudbESAeHApJCJbWt0aaOPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u6kkbHL25lRRaiZqHVZYaN5+1qjrscG7LOwfiCJV+yUGDtJzYF91FIL6hBka1LLqGAsBARnT3+aM2bYDadi1dJgR1ip8uH9+WlBkJxbkqJYaf40p6xohwjhSlnzj3rjL+oQHJ/fIdvBYcCIn0/96TnMaYVKhp3R4VHplUwkRXsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=Bt5I6ns3; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-248ff68356aso6775585ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 07:06:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=wbinvd.org; s=wbinvd; t=1756908367; x=1757513167; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MjiZpHaOGAzMnI40BIIZ11hI7GlxfYSDqRw3KpQJVjo=;
+        b=Bt5I6ns3QjS5/tn1xhY5FCnWhuvycOov8EjcbzyWr7Y8YbBGWa2QNmvX/pg/QDLSE2
+         fh3KcR0+ygyqy7OaZ4GHumJHQkJ1OxLOvCgnIigQLLmhbb2RLgJAwlS2bbY86M2Sn3l5
+         9dmP7CsFqWM2Qcp68NBPOteiEBj54ZeCQJHZUL+Wz8TmHEgTUknhZeqox1r6WJy/qc2L
+         tY+fGpFEwH08lFfovSR+/lMShWzK82mLkKpmDf8eOPkCXrX4pUw+x23PFrgrOQmstrJ4
+         7KWjRo7ZVkGVslzmU4pBvRVtlm1Ap+PX1+S4o9+vsJD0gVMj77grJfD/ZaP089U5BS3J
+         BmHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756908334; x=1757513134;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7+cvu6EvGlNcLjycyZdd2oEZU0V7LAk2mk1teEIGf4s=;
-        b=lRZjI+NpGt0ASSzxrGg4UPJ08bndUtbZ+RJ0yhuXjalCaCgA+zBYSZwoQyqHSaPKcE
-         ltkf4DwNDitsEeHl/l9iWKOQ4bpm8ZENI4rCRuddUcfYG5XE52rzmcWYW+nJMyVE5zu4
-         hzk3MPNS5duDD9Lc1s9mO4wzTIWU8lWDLxuUTSNkye8CNQV687ih6PFJNKp8troAWLUX
-         SFW1g99m5RQ4H8YHeXT9yfjUd2YB2KhtWZtIsn8YE2O36sVqWq6zLrT1kSShdA0vl2D7
-         mrWKzkGyhMAXRB6yqMh5nbBqbuwkj4D45zf31WmVAEHT/CfCae52S/z3hW28AudnZ55n
-         2MWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOQaZgxcMXGJaiimyuQjxtE4QZGPCCZbtKIq5icbkliDElryJJlj3K3TMIn+BmIME59z9YyUeW0PNf7UC9fTtqZEE=@vger.kernel.org, AJvYcCXmdXnuZIjWTa3hBY6geezyoR/nFxlJ4LIQD9N5BrpiCwuef9a4ZBjR7fOYVogpEuXqrzOuZu+I7CR4yfzI@vger.kernel.org, AJvYcCXzOQswoNPhMHZokvzeeVkF2SzM46SAl+z9uqxl+0dpoH5pRM7Jj5hfZZwIXgPRR7DqxV/8nF7CJByo@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQBxdPrDX275RZEyE0PcvmzlpzzySm7vL37LnAdMBqfJjhsGR7
-	1pXChTTQHpmWt6UN4XMSzP6tqe/koQiDmz6o4OU+m1Z/uUzf+jSL2FH7rpXuMZ51
-X-Gm-Gg: ASbGncvc9javZDM+LHn8wj/poqwl+yBoLCXpbXwtPbHK3P7OnnZjIyjJ6J0tNnN50r4
-	ukT+PqUkYP2G44giQGvnrAUo7CCNgdo9x+N3WYEWahnIGklBsnGlQU8aFArlcLpJTrHmcHemxFR
-	K39UaYCmO8AediFAu2vNhX7ckU94/Oe5Fhz5nGiYWiN9yzWqmM/9BDMbm1+cIGddCDFA9SdjcmE
-	gTJNiTeryYhzydXxqWFmXdkLnbKxG+aDifIZSv586/Le6VoKv2hZGBO/aUCzDlCJsGlgi3F4MTM
-	bhlJ2yEhF0uWhT6B5blbtCQUAMinzNIHkSYomAuK50NMieEemOyyMQ2U4z0EaWBj4qk9lBNwg7P
-	JI3damk4oQUxZHvkc3PFEVUOr558zUs985Cw+QZwJ7b8cqkNhTk72kkPFjAhO
-X-Google-Smtp-Source: AGHT+IEwLDVO0pMUZ7AE7H7hPHl9DghGWCfRKTy7MT7DIDM728fXV2Unw50e8zEJ2gRQqU3RXel/dQ==
-X-Received: by 2002:a05:6102:6446:b0:51e:92cc:6e6a with SMTP id ada2fe7eead31-52b1c359d84mr4338205137.33.1756908334203;
-        Wed, 03 Sep 2025 07:05:34 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-898364cdf79sm2519183241.1.2025.09.03.07.05.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 07:05:33 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-52a73cc9f97so1609965137.3;
-        Wed, 03 Sep 2025 07:05:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUBM7Qmio9ExWM0ZDRY6XIFWaVJXgfY3NUDGGjEIPfFpf/9UycXgEcpYtRfjgU8TobzOralAlAv6VEqvnIV@vger.kernel.org, AJvYcCUk3Bu0h8QDp/uvw9cb1+TpBFCfrvJGO+83hk52/noqer9a9m8PsTQg+kRcqoABqBiRMjQXDVeo/BUb@vger.kernel.org, AJvYcCWhOydeRMH6FBu+djpYS2agWn7O3VIG7rYNu4pjIrzMXeWeW05lSeieZcDem6c5OM7ylfeq4JiGXwlugIBEOBbHv3g=@vger.kernel.org
-X-Received: by 2002:a05:6102:5809:b0:527:8b63:78e1 with SMTP id
- ada2fe7eead31-52b19532b98mr4817203137.1.1756908333491; Wed, 03 Sep 2025
- 07:05:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756908367; x=1757513167;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MjiZpHaOGAzMnI40BIIZ11hI7GlxfYSDqRw3KpQJVjo=;
+        b=uTRaAlenLe7LqKEah++k/0VGZY3HUzsuU8ll47LXjA22jgXIfDFnWBjYRMXlzoT+Zz
+         JWhwWbmPZnaCX3z0xXDeUM6h6pcPRauc4a9PYZnkP9XTCFUR2A+GviwgNA6FcoqODyrk
+         iX1J4jXrsWJARvJAOVlCq9Nz8J1+FIexjOYX/DU/f3XE256eTZLVadqzKE4p/4Qw189Y
+         g3h9i5v/WmSsnDAHf6lZlEOFqFJn/fqmhRs2LtRhw0eu2kKx24JH/3VbBGpqjOoeOzth
+         gSceu2n8S7Hyoth5FWP/6LVc/CsTfQO0X8AOCYGUpA2TLTBvL7OsQ1kzH+y/N2OXjJX0
+         ODnA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0ezednSuX84+DwnixlmSQmp9felQQRSm6bu1u/UIAxe2PAhXL2HIvFx/vG/zxgUzkKc2wcQVjbMTBXKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeOHmK4WnxqCkuHO7UCOYsBeFtS4uQFFRhbZ7ur69RLVaueBen
+	LuXBBVyban9p/faO5Op2040uo4S/hqfr74Dwrs5aV/1iWYbsZLH9EvUdcHbVA9Iz56w=
+X-Gm-Gg: ASbGncuhN+XxUGcgjFE2n+KdBBaeRppyzPTU6gTWCF/tFgkBizP3gU02nriy+U+M6ZI
+	V1WfgeiVT1q/CP0/d2/BCFv7GaogayfUnFmaoBGATXMraQcL/lG9bfxwkgjM6pIuBO9247/78gz
+	wytwyn6Fl+EODLdHRjax7OlXFSc0DKmAMgRnbD4scDMM48GO/+r7L8VIS5zlFHSriqYCv8LVuFe
+	KWhyAZfrDL0lLH4FZHsVkdREGEZMgmXeOrWs5AqpAV5q6Eikjv6rTGsSVNe+SsN1d7HUUoh5H2Z
+	KN6yCYOh4w2smUkrny7/7/TYRGDfnrijGulWt+fKAYq/fEsh/Eu6QBd78JyHvBhoN+t6O35qZX+
+	O2iq0vfgZN/318ngPsGnyyUa1
+X-Google-Smtp-Source: AGHT+IFlIeuwMod5aclkQ/QtX6cKW39pAdUeh1p1zXqs3QyuVJvhTttccp2Nuw4HcUpvwD0nuOddbQ==
+X-Received: by 2002:a17:903:186:b0:246:2cb3:5768 with SMTP id d9443c01a7336-24944b4323fmr220781315ad.30.1756908366468;
+        Wed, 03 Sep 2025 07:06:06 -0700 (PDT)
+Received: from mozart.vkv.me ([192.184.167.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9e39094dsm16821705ad.84.2025.09.03.07.06.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 07:06:05 -0700 (PDT)
+Date: Wed, 3 Sep 2025 07:06:06 -0700
+From: Calvin Owens <calvin@wbinvd.org>
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>, linux-kernel@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org,
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+	oe-kbuild-all@lists.linux.dev,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Sean Wang <sean.wang@mediatek.com>,
+	linux-mediatek@lists.infradead.org, naresh.kamboju@linaro.org
+Subject: [PATCH v3] Bluetooth: Fix build after header cleanup
+Message-ID: <aLhLTiIMRnjHfvOn@mozart.vkv.me>
+References: <202508300413.OnIedvRh-lkp@intel.com>
+ <b78a4255d17adbb74140aa23f89cb7653af96c75.1756513671.git.calvin@wbinvd.org>
+ <84fd4012-966b-4983-b015-ffce06509b5e@molgen.mpg.de>
+ <aLNRvzXE4O9dKZoN@mozart.vkv.me>
+ <CABBYNZJBDgQHwmx82H2XJ-LCeOsxc77PPo6NA4zzT0dt7Uxddw@mail.gmail.com>
+ <aLcQsE3x9o4BzXxp@mozart.vkv.me>
+ <aLhK5wEHgxc3BIgb@mozart.vkv.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821161946.1096033-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250821161946.1096033-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250821161946.1096033-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 3 Sep 2025 16:05:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWPst=JAbyL43SZAHTrCR=wajs15JZXCH4kmM41cdAh5w@mail.gmail.com>
-X-Gm-Features: Ac12FXyZrnxtSY-6RsRk8_dv6d3svCQcb4w0x1zUw1epH97KQsL6SFr4wzNGRoU
-Message-ID: <CAMuHMdWPst=JAbyL43SZAHTrCR=wajs15JZXCH4kmM41cdAh5w@mail.gmail.com>
-Subject: Re: [PATCH 4/6] arm64: dts: renesas: r9a09g077: Add USB2.0 support
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aLhK5wEHgxc3BIgb@mozart.vkv.me>
 
-Hi Prabhakar,
+Some Kconfig dependencies are needed after my recent cleanup, since
+the core code has its own option.
 
-On Thu, 21 Aug 2025 at 18:19, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add EHCI, OHCI, PHY and HSUSB nodes to RZ/T2H (R9A09G077) SoC DTSI.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Since btmtksdio does not actually call h4_recv_buf(), move the
+definitions it uses outside the BT_HCIUART_H4 gate in hci_uart.h to
+avoid adding a dependency for btmtksdio.
 
-Thanks for your patch!
+The rest I touched (bpa10x, btmtkuart, and btnxpuart) do really call
+h4_recv_buf(), so the dependency is required, add it for them.
 
-> --- a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
+Fixes: 0e272fc7e17d ("Bluetooth: remove duplicate h4_recv_buf() in header")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202508300413.OnIedvRh-lkp@intel.com/
+Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+---
+ drivers/bluetooth/Kconfig    | 6 ++++++
+ drivers/bluetooth/hci_uart.h | 8 ++++----
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-> +               hsusb: usb@92041000 {
-> +                       compatible = "renesas,usbhs-r9a09g077";
-> +                       reg = <0 0x92041000 0 0x10000>;
+diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
+index 4ab32abf0f48..7df69ccb6600 100644
+--- a/drivers/bluetooth/Kconfig
++++ b/drivers/bluetooth/Kconfig
+@@ -312,7 +312,9 @@ config BT_HCIBCM4377
+ 
+ config BT_HCIBPA10X
+ 	tristate "HCI BPA10x USB driver"
++	depends on BT_HCIUART
+ 	depends on USB
++	select BT_HCIUART_H4
+ 	help
+ 	  Bluetooth HCI BPA10x USB driver.
+ 	  This driver provides support for the Digianswer BPA 100/105 Bluetooth
+@@ -437,8 +439,10 @@ config BT_MTKSDIO
+ 
+ config BT_MTKUART
+ 	tristate "MediaTek HCI UART driver"
++	depends on BT_HCIUART
+ 	depends on SERIAL_DEV_BUS
+ 	depends on USB || !BT_HCIBTUSB_MTK
++	select BT_HCIUART_H4
+ 	select BT_MTK
+ 	help
+ 	  MediaTek Bluetooth HCI UART driver.
+@@ -483,7 +487,9 @@ config BT_VIRTIO
+ 
+ config BT_NXPUART
+ 	tristate "NXP protocol support"
++	depends on BT_HCIUART
+ 	depends on SERIAL_DEV_BUS
++	select BT_HCIUART_H4
+ 	select CRC32
+ 	select CRC8
+ 	help
+diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
+index 5ea5dd80e297..cbbe79b241ce 100644
+--- a/drivers/bluetooth/hci_uart.h
++++ b/drivers/bluetooth/hci_uart.h
+@@ -121,10 +121,6 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable);
+ void hci_uart_set_speeds(struct hci_uart *hu, unsigned int init_speed,
+ 			 unsigned int oper_speed);
+ 
+-#ifdef CONFIG_BT_HCIUART_H4
+-int h4_init(void);
+-int h4_deinit(void);
+-
+ struct h4_recv_pkt {
+ 	u8  type;	/* Packet type */
+ 	u8  hlen;	/* Header length */
+@@ -162,6 +158,10 @@ struct h4_recv_pkt {
+ 	.lsize = 2, \
+ 	.maxlen = HCI_MAX_FRAME_SIZE \
+ 
++#ifdef CONFIG_BT_HCIUART_H4
++int h4_init(void);
++int h4_deinit(void);
++
+ struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
+ 			    const unsigned char *buffer, int count,
+ 			    const struct h4_recv_pkt *pkts, int pkts_count);
+-- 
+2.47.2
 
-"0x1000", as the region starting at 0x92043000 is marked reserved?
-I can fix that while applying.
-
-> +                       interrupts = <GIC_SPI 587 IRQ_TYPE_LEVEL_HIGH>,
-> +                                    <GIC_SPI 588 IRQ_TYPE_LEVEL_HIGH>,
-> +                                    <GIC_SPI 589 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&cpg CPG_MOD 408>;
-> +                       phys = <&usb2_phy 3>;
-> +                       phy-names = "usb";
-> +                       power-domains = <&cpg>;
-> +                       status = "disabled";
-> +               };
-> +
->                 sdhi0: mmc@92080000  {
->                         compatible = "renesas,sdhi-r9a09g077",
->                                      "renesas,sdhi-r9a09g057";
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
