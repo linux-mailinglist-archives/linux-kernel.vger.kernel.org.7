@@ -1,156 +1,114 @@
-Return-Path: <linux-kernel+bounces-798276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 236E6B41BB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:23:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E17B41BB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD26920736C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:23:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8561A86E05
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1722EA481;
-	Wed,  3 Sep 2025 10:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0FA2EA479;
+	Wed,  3 Sep 2025 10:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HggVaUDs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JxgJgN5k"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABA32D63F4;
-	Wed,  3 Sep 2025 10:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7632E9EA9;
+	Wed,  3 Sep 2025 10:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756894973; cv=none; b=bvp6hFHqVLoau7RpAYwgXMiwF0BI5afLUMscLP4MOe5QKw3JBYE2AiN3IMj7TnUo7MsUJUNpJVknJnqnJxURYRcAECAn1x731YXHTLIRS+ddOBfdzd6X7v9F70rZh1kMl2LROVbKI70OW3I+murkTSYbgIxpIr7S0/ReJnxQYjE=
+	t=1756894999; cv=none; b=A9KO7qzChDOJOHrCD0pRQedKQwX7ihY444CDBddvc8oxkezaXbKUD1Gnan7e9CIqv67UXt+sEGO/Hd8VWi8s1owA7/oKpQxHkG9Q/l2J/u4ofqDwPYiUEOAe5Q3I4Kvo+FR1/OV+y26FtXTOf/fie8DBQ2XNh8W1OjFgmEDF42I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756894973; c=relaxed/simple;
-	bh=hEddkyRBq0eYhs86EpYDI0PR1kM06ibMXa7C70wF0A8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cWED1N5E91Rtb6ETSkzxNNi9r79OY80BmoCp79incPny9xX8GZ7jAsNnYDgD2Q89qLwg8MUVI9vh9sAmTuKYy1NXyvHedFXbPTzozN7BisNnyCwmDR5F46k943szMNNrtVOlP0SSAcBdbjbPWpWWE+k1I3mKpaZm4Iord8QFXXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HggVaUDs; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756894972; x=1788430972;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=hEddkyRBq0eYhs86EpYDI0PR1kM06ibMXa7C70wF0A8=;
-  b=HggVaUDs6B5f0jjwnfhFSe8/Ze/5LEgjauNQ/5TUJY30DB18cimKRVkT
-   +aNsLVgdW55iJaeiH7gtEgadiG+IjSN3n6xz20M2CsssdMiQ0/aLUtxlc
-   vCgaGi1TB7AbGvlg6SgwfpuANKZ9vf3lKfLI1k8V6BsWuiC+kv095E8sM
-   OZE3t4WV4l13e4hwEWIuf4Q+dVawdt66nXtB5qSekXcp5xPM5iX+QLm96
-   2DjXdKqLpo/pKvvgwFGszxCfBbhoaMEKEfjafZYOW9AEgzkvYZwBDfXy5
-   h97+mgrGnUqBdI38YP63yiC4Fl8T1uGjmG1zPyi6o60nqR/5is3wICIE3
-   g==;
-X-CSE-ConnectionGUID: 9y793YRqT9q9KsmIRzgYQQ==
-X-CSE-MsgGUID: TKosgqm4QMOmg8xd/O6PZQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="59318108"
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="59318108"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:22:50 -0700
-X-CSE-ConnectionGUID: YTo0WasPQBSP1GD2jJB+Ig==
-X-CSE-MsgGUID: 5tCXY7/9Tha1Hp4Y6DZptQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="195180921"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:22:40 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1utkdQ-0000000AxFa-1l46;
-	Wed, 03 Sep 2025 13:22:36 +0300
-Date: Wed, 3 Sep 2025 13:22:36 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Alexey Klimov <alexey.klimov@linaro.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Sean Wang <sean.wang@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Tony Lindgren <tony@atomide.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
-	imx@lists.linux.dev, linux-omap@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v7 16/16] pinctrl: qcom: make the pinmuxing strict
-Message-ID: <aLgW7J-j4nn0u8uo@smile.fi.intel.com>
-References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
- <20250902-pinctrl-gpio-pinfuncs-v7-16-bb091daedc52@linaro.org>
- <aLcBcjvMbrxoDYoC@smile.fi.intel.com>
- <CAMRc=MfcFMgkNqWNZV5o0NxkAvxBTjC3vv56Cr98n0R2CkxuPw@mail.gmail.com>
- <CAHp75VcgaqnDrPH27wxfgyK6zz4RAKJQB0r7G2vbTONTxkEzTw@mail.gmail.com>
- <CAMRc=MfhhX2NJ0fhhX8u+7=sdyUy0G27n7caGf9=TpHxUDJVxg@mail.gmail.com>
+	s=arc-20240116; t=1756894999; c=relaxed/simple;
+	bh=GbcLAdAhFKI9Ex7GIGV1fgOFZiAQOcEHxjTZZhi1/kw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MwP7M8RaxAPfxM4LISlwhPAwGiH5eHJpiKSLmOdNsM+Rjh3JROvARdAFLjlflSbJGj3NcHN/Wq6zyPjdKyOjpnko09zkWpS2aWo/W2PgT6gN1GETBd8CInbw1FXiI2TZ7pAOPkpvDujCkP8QiBnbbIYk3iYuO07B90m7bt9UrUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JxgJgN5k; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from isaac-ThinkPad-T16-Gen-2.lan (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A277A982;
+	Wed,  3 Sep 2025 12:22:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756894924;
+	bh=GbcLAdAhFKI9Ex7GIGV1fgOFZiAQOcEHxjTZZhi1/kw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JxgJgN5k0EjPF1CIuYMT1+2TtAjMpHWrC5RxIg8Kj2tPMVQsWxh+C28GuFMkA26Uy
+	 GPJpN5dbvhbgPsdjIid5iXS0i8UHRVwGEBz3SgDbivbLS4nGLPBneTe75HhYNLWF24
+	 QX8sQ71uRGV4zzobYJ1wOArfTX24rEVbaK54uhjk=
+From: Isaac Scott <isaac.scott@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: rmfrfs@gmail.com,
+	martink@posteo.de,
+	kernel@puri.sm,
+	mchehab@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	linux-media@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hverkuil@kernel.org,
+	nicolas.dufresne@collabora.com,
+	sakari.ailus@linux.intel.com,
+	tomi.valkeinen@ideasonboard.com,
+	jonas@kwiboo.se,
+	dan.scally+renesas@ideasonboard.com,
+	m.szyprowski@samsung.com,
+	mehdi.djait@linux.intel.com,
+	niklas.soderlund+renesas@ragnatech.se,
+	Isaac Scott <isaac.scott@ideasonboard.com>
+Subject: [PATCH v2 0/3] media: imx-mipi-csis: Get the number of active lanes from mbus_config
+Date: Wed,  3 Sep 2025 11:22:39 +0100
+Message-ID: <20250903102243.1563527-1-isaac.scott@ideasonboard.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MfhhX2NJ0fhhX8u+7=sdyUy0G27n7caGf9=TpHxUDJVxg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Sep 03, 2025 at 09:33:34AM +0200, Bartosz Golaszewski wrote:
-> On Tue, Sep 2, 2025 at 10:46 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Tue, Sep 2, 2025 at 8:42 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > > On Tue, Sep 2, 2025 at 4:38 PM Andy Shevchenko
-> > > <andriy.shevchenko@intel.com> wrote:
-> > > > On Tue, Sep 02, 2025 at 01:59:25PM +0200, Bartosz Golaszewski wrote:
+It is possible that the number of desired active MIPI CSI2 data lanes
+does not match the maximum listed in device tree. Add a helper function
+to v4l2_common that calls the get_mbus_config op to get the number of
+actively used data lanes in drivers that support it.
 
-...
+Compare it to the number of lanes configured in device tree, and if its
+invalid, use the number present in device tree.
 
-> > > > > The strict flag in struct pinmux_ops disallows the usage of the same pin
-> > > > > as a GPIO and for another function. Without it, a rouge user-space
-> > > > > process with enough privileges (or even a buggy driver) can request a
-> > > > > used pin as GPIO and drive it, potentially confusing devices or even
-> > > > > crashing the system. Set it globally for all pinctrl-msm users.
-> > > >
-> > > > How does this keep (or allow) I²C generic recovery mechanism to work?
-> 
-> Anyway, what is your point? I don't think it has any impact on this.
+This series also uses the helper in imx-mipi-csis driver to set the
+currently configured num_data_lanes, while keeping track of the number
+of data lanes set in device tree to ensure we can still use all possible
+lanes if we need to, and the upstream subdev driver requests them.
 
-If we have a group of pins that are marked as I²C, and we want to use recovery
-via GPIOs, would it be still possible to request as GPIO when controller driver
-is in the strict mode?
+Tested on v6.15, compile tested on v6.17-rc4.
+
+---------
+
+Changes v1 -> v2:
+
+- Added helper function to get active data lanes in v4l2-common
+- Store the maximum data lanes possible, as configured in device tree
+- Added media: prefix to commit titles
+
+Isaac Scott (3):
+  media: v4l: Add helper to get number of active lanes via a pad
+  media: imx-mipi-csis: Store the number of data_lanes configured in dt
+  media: imx-mipi-csis: Get number of active lanes via mbus_config
+
+ drivers/media/platform/nxp/imx-mipi-csis.c |  8 ++++++-
+ drivers/media/v4l2-core/v4l2-common.c      | 25 ++++++++++++++++++++++
+ include/media/v4l2-common.h                |  1 +
+ 3 files changed, 33 insertions(+), 1 deletion(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
