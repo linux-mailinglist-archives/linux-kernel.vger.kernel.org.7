@@ -1,494 +1,163 @@
-Return-Path: <linux-kernel+bounces-798980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96064B4257E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:32:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB54B42584
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 147B23A2246
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:30:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083404849D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909DB270ED9;
-	Wed,  3 Sep 2025 15:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5342727F0;
+	Wed,  3 Sep 2025 15:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WDtLapsd"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="apnG0CKT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553AF2727F2
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C276823D287;
+	Wed,  3 Sep 2025 15:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756913295; cv=none; b=EDtJNV4xpuyRQ3esBM/8lsDM8XAPyO3NAKNkt+ANiqeqUWT3Ftr97Q25QiEors2RmHdoqhHWXO+fLUVyaUfKX4Lp2Chpp0F7rJDxyb7S6ho0lYLEND/yJJ+VKxaUws2bm8JnnkesmUuBokRLbUoW0F5mvNrlIXqbsQ/Htu5lwDw=
+	t=1756913373; cv=none; b=Ev9j0IvHht1cY36Lw2XqO1WHGQNrOxh97NDGF4fNruGTc0woQnP3txPz9YT4cqe0wEqvFO/axMpFF+XiT1fwPFyiGssXYQdl2Yyzyc2bPYTOOxki0aRrq5KL6SipOjmGLa8tGIGYNe7gGT+T4VyPMUarvWyRG3Qft+oN3g6jzS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756913295; c=relaxed/simple;
-	bh=KaFGZuOlr53tA5CLbYg/3cGDK7DZ4Kb9dmPKV4O181o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C8mWfHZXhIDxxbENH7YMuq2cQCW7Fn5icxkImN9zMCd5PU1vebnaeQwBvfe2oX9XzDYRzmfNsyFBNYUVHdJ0zOhtAlOOPUOm2+cjGDA12VxyMxRNSnApotzcheNM0vMQwyxrnoYgw6hkouoxBE1hOLvGil3ZRATpLsPfsdCdIdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WDtLapsd; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b89147cfbso536495e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 08:28:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756913292; x=1757518092; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RMOYVSoK5BkxYevwHV6Cyg4/hrGKJ/HxslO02CI64SA=;
-        b=WDtLapsdHESCCZFanp1DDcawP2MZOvufYZZWrp8wRW0XZ1P0cN7rrkNau66B8FkRnV
-         lDp1NJUvvo2u7nYIzrCmIao3gOK4ILon9nKy3/++jZCf4JDQgc9FqJWKb4LZPFprYteY
-         CrMpkE4aCCHmsH1UoUnRTNNVd4G0/CbXVkHugtH/rbAxvTF37wgnavjo9re5VWRDFkFj
-         7r+zvnW/jXxJifl/VHQxy5SaboHtLinlvKZwT9WNrk6PPzbKmm++2Yjw/ImoWU+NyT+f
-         Pr0BbXKjDeCMcgkiTgVDXn9U3vEXZXZaJMm3VUnKqtbGKwK6CVs4JOF3K0mR/dLIMuED
-         b+pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756913292; x=1757518092;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RMOYVSoK5BkxYevwHV6Cyg4/hrGKJ/HxslO02CI64SA=;
-        b=mKlaVZB3bkoeYCYHpjPZnykxxh/GNqMGrBKKgqm3Ui0+YSmQgRmE+hChmPJ54JBWOk
-         bGxCt2CKkn6LaI2QxMarpppajvjM/avfRzEtDFn09qKFlxV5zb+kXRVvXVM/L8m/2AtT
-         d7oeA7xiHc1/83FDg7IzhAkHVsq/7IKI7WxF6uOBsk5b0uvYZeI8xv1XN63b+3AdJlU0
-         DXyV/DhrTjO2dy3M2iwKiIyY4PUeN+YWIQjLqCOgQuEa758etduto4oD0cex+n9xvgED
-         thjJOvYhJ7JaTOGxKp47kshcx8q/bsFEECIZ0Jwl03qeRs54hwtovLXJj7KBBQ/A2WKd
-         KOlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXqvJAN9C+j1TLvAxWNPaoRJekE/aEEKeaVhg35bpMZ09wslIF24nB7vi9VGJdgNIgnQaG5AGFKXZoFGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPw/mIeHAtrkRrZaCNmF/xO03oFQNceo45t1I6F+hmKmpGGyFX
-	7zDhYFi5kY9xd5s5pe8aZLwzUDwCqWd1L7V++9RMk8APlUVnd6St/qQUwAEyktAUrbI=
-X-Gm-Gg: ASbGncv+yNTsd+xLGntmvia+HaYTLxCNfZMkc9ny7BFt7t0HNGlPYzP/VoHZ9rT9bIV
-	1f5ImkY9TIpCkftXRFdJl9SS1e3kU6wx3Qqyerzd1HKh9rR7v2B+x6aI58zx5OaylU33PqarMD1
-	nzQQFTjv/mQOatuNXFlBEWqsmM9ccyzFVi0D80WsbDL4cd4WLw6H3f5G68PNFP3WqDrb4bWswWn
-	TIK91B4zUASNv9ssOSEJjSG4DLqbtNMNni1C6aLNmGDqRFkpCN0X6tXJhadVXLtnSLI8Q3FanWQ
-	BVeIOrPaz0jpGmlKlszmfOYKKFf/F9ek/J6CEhxNb6XyNqSU6ZJ/VX+UW7W0x15qCntEc4ab2t4
-	mVS0sftKEEnejNSHldoktnWk6uWkP6lqo67qpc0KFfgTNBDXrYbvUgzLyqpUrdj4QkkGD8KWt1R
-	WwuhyLF+0lpPpsvZoV9j76bMg=
-X-Google-Smtp-Source: AGHT+IEuh6crD5+Cf4a9xDtCrUUELdcNnUdyzt4VPPB76Nxw/zsI9NCkM8/M+S5XzWuIb/KHOg3KzA==
-X-Received: by 2002:a05:600c:470b:b0:45b:90fc:1ede with SMTP id 5b1f17b1804b1-45c8e725fbdmr34472765e9.6.1756913291411;
-        Wed, 03 Sep 2025 08:28:11 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:2a30:223c:d73b:565a? ([2a05:6e02:1041:c10:2a30:223c:d73b:565a])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3cf270fbd01sm24499827f8f.13.2025.09.03.08.28.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 08:28:10 -0700 (PDT)
-Message-ID: <a34efc36-0100-4a7f-b131-566413ab88ae@linaro.org>
-Date: Wed, 3 Sep 2025 17:28:09 +0200
+	s=arc-20240116; t=1756913373; c=relaxed/simple;
+	bh=VIC3yESeSFavKGxbmPdXIWhH/KHmeXOIED4A31+ezvE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HQAn0YUg5oqDl4Ow3Ac3SPFsTpMGQajXNu+XkUOp5Cs78jZXeYxN+Z6UXswOM4+4thFMLqAaH1MCDDiWcFYmv56uSD5FIJa15EVo8ySW/Vk2cUl2+B4apoFsbqtCKbawTlkE9VCjqw1JQulYajfNu/xzFnfD40V8R2f8dp66oOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=apnG0CKT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F2FC4CEE7;
+	Wed,  3 Sep 2025 15:29:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756913373;
+	bh=VIC3yESeSFavKGxbmPdXIWhH/KHmeXOIED4A31+ezvE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=apnG0CKTdKsdZHcilpZah+9QTA9Pp8xfDSZM28TFW3A/lnYW/imlO23Yo30cBBGaJ
+	 FGaW8LjAN6LvwhElgRSMceeMZhJdfeQch20cEt+2eLyIYVIcWPKPhzis378GXOVOSM
+	 jZiRhphCsvLh/+yrR3YM5mGsSC7HH+IEl+AXnJIDJHknOwJdQfat/egCULhZnnLEUe
+	 tTRhCLKOwRFcv6zrXJeugd5cWol4mRcJv3i7ZPisLE331rl0JAm+ardoLSW1juW5Ns
+	 5n1yLqrkqufDz+9UnhKbMuf1iwzKDdbeM/RYv18Y6UiAX4k03p72QHiR/DCDZnjUVJ
+	 bl+uTgi5gThcQ==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61cebce2f78so12738138a12.1;
+        Wed, 03 Sep 2025 08:29:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVNTNAylWNhwXV8XNSetbLUI5pi+SUsYo40w4qmI3i1NuPOYfLdfNpYDWP85O0UCAd3d6oTwe5JI9QLrj0=@vger.kernel.org, AJvYcCWeOLpeVcaTjIKy3o1e6cRT2bHMu8DN69rLOsZs9DndK0aJ2+0sGJln4ieQ/peZDLJn4xfIlbmcUKQh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8hUtAi/Rgpwb+ILvRrQF4nPn/qWfKNgU7BoffB3BgyWElUPjO
+	Gaf1wpFLipctvSkHZCf5+bGm95cI5wkYbXDn/pq4tFotmTgck7EH44QaoGuNoF0aFj6RKRm4ndT
+	xkcHO2f08berAP4K4Kul0SvQP2onf3A==
+X-Google-Smtp-Source: AGHT+IHIZntuL2/Ac5u2OaDFAuRDB+LbG/bkyWkqoVLmP8JAXC3VGc5IAFp7aOeSXvXSi7KwhtkL+44jIjkwTuJse7Y=
+X-Received: by 2002:a05:6402:3594:b0:61e:49dc:171f with SMTP id
+ 4fb4d7f45d1cf-61e49dc176fmr10199592a12.1.1756913371891; Wed, 03 Sep 2025
+ 08:29:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] iio: adc: Add the NXP SAR ADC support for the
- s32g2/3 platforms
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
- andy@kernel.org, robh@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
- linux-iio@vger.kernel.org, s32@nxp.com, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, chester62515@gmail.com, mbrugger@suse.com,
- ghennadi.procopciuc@oss.nxp.com
-References: <20250903102756.1748596-1-daniel.lezcano@linaro.org>
- <20250903102756.1748596-3-daniel.lezcano@linaro.org>
- <aLgrGlpNrDTC5LAd@smile.fi.intel.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <aLgrGlpNrDTC5LAd@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250902151543.147439-1-klaus.kudielka@gmail.com> <hiu2ouj4f7zak2ovtwtigf6fylz4c7fdyyqiqezsddoouzr4n5@bfs7kudjfnp5>
+In-Reply-To: <hiu2ouj4f7zak2ovtwtigf6fylz4c7fdyyqiqezsddoouzr4n5@bfs7kudjfnp5>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 3 Sep 2025 10:29:19 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLo8WbHMtjdbsauncusFh--OkNWXcN_pkpPxxT8xAmBNA@mail.gmail.com>
+X-Gm-Features: Ac12FXy3-NzR24Y_vWe7NkORfh2uesLtfRvYO0BBWxGtos2fLyE26nKGT2Xfr8k
+Message-ID: <CAL_JsqLo8WbHMtjdbsauncusFh--OkNWXcN_pkpPxxT8xAmBNA@mail.gmail.com>
+Subject: Re: [PATCH] PCI: mvebu: Fix the use of the for_each_of_range() iterator
+To: Jan Palus <jpalus@fastmail.com>
+Cc: Klaus Kudielka <klaus.kudielka@gmail.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Bjorn Helgaas <helgaas@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-Hi Andy,
-
-thank you for the review
-
-
-On 03/09/2025 13:48, Andy Shevchenko wrote:
-> On Wed, Sep 03, 2025 at 12:27:56PM +0200, Daniel Lezcano wrote:
->> From: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
->>
->> The NXP S32G2 and S32G3 platforms integrate a successive approximation
->> register (SAR) ADC. Two instances are available, each providing 8
->> multiplexed input channels with 12-bit resolution. The conversion rate
->> is up to 1 Msps depending on the configuration and sampling window.
->>
->> The SAR ADC supports raw, buffer, and trigger modes. It can operate
->> in both single-shot and continuous conversion modes, with optional
->> hardware triggering through the cross-trigger unit (CTU) or external
->> events. An internal prescaler allows adjusting the sampling clock,
->> while per-channel programmable sampling times provide fine-grained
->> trade-offs between accuracy and latency. Automatic calibration is
->> performed at probe time to minimize offset and gain errors.
->>
->> The driver is derived from the BSP implementation and has been partly
->> rewritten to comply with upstream requirements. For this reason, all
->> contributors are listed as co-developers, while the author refers to
->> the initial BSP driver file creator.
->>
->> All modes have been validated on the S32G274-RDB2 platform using an
->> externally generated square wave captured by the ADC. Tests covered
->> buffered streaming via IIO, trigger synchronization, and accuracy
->> verification against a precision laboratory signal source.
-> 
-> ...
-> 
->> +#include <linux/circ_buf.h>
-> 
-> Why not kfifo?
-
-Are you suggesting to use kfifo instead of the circular buffer in the code ?
-
->> +#include <linux/clk.h>
->> +#include <linux/completion.h>
->> +#include <linux/dma-mapping.h>
->> +#include <linux/dmaengine.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/iopoll.h>
-> 
-> + match.h and more are missing...
-> 
->> +#include <linux/module.h>
-> 
->> +#include <linux/of_irq.h>
->> +#include <linux/of_platform.h>
-> 
-> Misuse of headers, and please make driver agnostic. There is none OF specifics
-> in the code AFAICT.
-> 
->> +#include <linux/platform_device.h>
->> +#include <linux/slab.h>
-> 
-> ...
-> 
->> +/* Main Configuration Register */
->> +#define REG_ADC_MCR(__base)		(__base)
-> 
-> Useless macro. Perhaps (looking the others) this should be
-> ((__base) + 0x00) which makes much more sense.
-
-Sure
-
->> +#define REG_ADC_MCR_NRSMPL_32		BIT(11)
->> +#define REG_ADC_MCR_NRSMPL_128		BIT(12)
->> +#define REG_ADC_MCR_NRSMPL_512		(BIT(11) | BIT(12))
-> 
-> These are not bits, please use them in a form of 0, 1, 2, 3 and why not using
-> bitfield.h?
+On Wed, Sep 3, 2025 at 7:44=E2=80=AFAM Jan Palus <jpalus@fastmail.com> wrot=
+e:
 >
-> ...
-> 
->> +#define NXP_SAR_ADC_CONV_TIMEOUT_MS	100
->> +#define NXP_SAR_ADC_CAL_TIMEOUT_US	100000
-> 
-> (100 * USEC_PER_MSEC)
-> 
->> +#define NXP_SAR_ADC_WAIT_US		2000
-> 
-> (2 * USEC_PER_MSEC)
+> On 02.09.2025 17:13, Klaus Kudielka wrote:
+> > The blamed commit simplifies code, by using the for_each_of_range()
+> > iterator. But it results in no pci devices being detected anymore on
+> > Turris Omnia (and probably other mvebu targets).
+> >
+> > Analysis:
+> >
+> > To determine range.flags, of_pci_range_parser_one() uses bus->get_flags=
+(),
+> > which resolves to of_bus_pci_get_flags(). That function already returns=
+ an
+> > IORESOURCE bit field, and NOT the original flags from the "ranges"
+> > resource.
+> >
+> > Then mvebu_get_tgt_attr() attempts the very same conversion again.
+> > But this is a misinterpretation of range.flags.
+> >
+> > Remove the misinterpretation of range.flags in mvebu_get_tgt_addr(),
+> > to restore the intended behavior.
+> >
+> > Signed-off-by: Klaus Kudielka <klaus.kudielka@gmail.com>
+> > Fixes: 5da3d94a23c6 ("PCI: mvebu: Use for_each_of_range() iterator for =
+parsing "ranges"")
+> > Reported-by: Bjorn Helgaas <helgaas@kernel.org>
+> > Closes: https://lore.kernel.org/r/20250820184603.GA633069@bhelgaas/
+> > Reported-by: Jan Palus <jpalus@fastmail.com>
+> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D220479
+> > ---
+> >  drivers/pci/controller/pci-mvebu.c | 14 ++------------
+> >  1 file changed, 2 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controlle=
+r/pci-mvebu.c
+> > index 755651f338..4e2e1fa197 100644
+> > --- a/drivers/pci/controller/pci-mvebu.c
+> > +++ b/drivers/pci/controller/pci-mvebu.c
+> > @@ -1168,9 +1168,6 @@ static void __iomem *mvebu_pcie_map_registers(str=
+uct platform_device *pdev,
+> >       return devm_ioremap_resource(&pdev->dev, &port->regs);
+> >  }
+> >
+> > -#define DT_FLAGS_TO_TYPE(flags)       (((flags) >> 24) & 0x03)
+> > -#define    DT_TYPE_IO                 0x1
+> > -#define    DT_TYPE_MEM32              0x2
+> >  #define DT_CPUADDR_TO_TARGET(cpuaddr) (((cpuaddr) >> 56) & 0xFF)
+> >  #define DT_CPUADDR_TO_ATTR(cpuaddr)   (((cpuaddr) >> 48) & 0xFF)
+> >
+> > @@ -1189,17 +1186,10 @@ static int mvebu_get_tgt_attr(struct device_nod=
+e *np, int devfn,
+> >               return -EINVAL;
+> >
+> >       for_each_of_range(&parser, &range) {
+> > -             unsigned long rtype;
+> >               u32 slot =3D upper_32_bits(range.bus_addr);
+> >
+> > -             if (DT_FLAGS_TO_TYPE(range.flags) =3D=3D DT_TYPE_IO)
+> > -                     rtype =3D IORESOURCE_IO;
+> > -             else if (DT_FLAGS_TO_TYPE(range.flags) =3D=3D DT_TYPE_MEM=
+32)
+> > -                     rtype =3D IORESOURCE_MEM;
+> > -             else
+> > -                     continue;
+> > -
+> > -             if (slot =3D=3D PCI_SLOT(devfn) && type =3D=3D rtype) {
+> > +             if (slot =3D=3D PCI_SLOT(devfn) &&
+> > +                 type =3D=3D (range.flags & IORESOURCE_TYPE_BITS)) {
+> >                       *tgt =3D DT_CPUADDR_TO_TARGET(range.cpu_addr);
+> >                       *attr =3D DT_CPUADDR_TO_ATTR(range.cpu_addr);
+>
+> Thanks for the patch Klaus! While it does improve situation we're not
+> quite there yet. It appears that what used to be stored in `cpuaddr` var
+> is also very different from `range.cpu_addr` value so the results
+> in both `*tgt` and `*attr` are both wrong.
+>
+> Previously `cpuaddr` had a value like ie 0x8e8000000000000 or
+> 0x4d0000000000000. Now `range.cpu_addr` is always 0xffffffffffffffff.
+> Luckily what used to be stored in `cpuaddr`:
 
-Why is this more understandable than the raw value ?
+~0 is OF_BAD_ADDR which means we couldn't translate the address. Seems
+it is not needed here, but it should work. Can you define DEBUG in
+drivers/of/address.c and post the log?
 
-> 
->> +#define NXP_SAR_ADC_DMA_BUFF_SZ		(PAGE_SIZE * NXP_SAR_ADC_DMA_SAMPLE_SZ)
-> 
-> Oh, PAGE_SIZE is not good to use. I believe this HW is not tolerant to any page size.
-> (Note, we made similar mistake in Intel IPU3 camera driver, which is now fixed)
-
-Is it acceptable to put a hardcoded 4096 value ?
-
-> ...
-> 
->> +	/* Protect circular buffers access. */
->> +	spinlock_t lock;
-> 
-> + spinlock.h
-> 
->> +	/*
->> +	 * Save and restore context
->> +	 */
->> +	u32 inpsamp;
->> +	u32 pwdn;
-> 
-> + types.h
-> 
-> ...
-> 
->> +		ndelay(div64_u64(NSEC_PER_SEC, clk_get_rate(info->clk) * 3U));
-> 
-> + delay.h
-> 
-> Actually + math64.h (no need to include math.h which I mentioned elsewhere).
-> 
-> ...
-> 
->> +static inline int nxp_sar_adc_calibration_wait(void __iomem *base)
->> +{
->> +	u32 msr, ret;
->> +
->> +	ret = read_poll_timeout(readl, msr, !(msr & REG_ADC_MSR_CALBUSY),
-> 
-> Why not readl_poll_timeout()?
-> 
->> +				NXP_SAR_ADC_WAIT_US,
->> +				NXP_SAR_ADC_CAL_TIMEOUT_US,
->> +				true, REG_ADC_MSR(base));
->> +	if (ret)
->> +		return ret;
-> 
->> +	if (!(msr & REG_ADC_MSR_CALFAIL))
->> +		return 0;
-> 
-> I would expect standard pattern — "errors first", but here either works.
-
-Does it mean this chunk of code can be preserved or do you prefer an 
-error block followed with a return 0 ?
-
->> +	/*
->> +	 * If the calibration fails, the status register bit must be
->> +	 * cleared
->> +	 */
->> +	msr &= ~REG_ADC_MSR_CALFAIL;
->> +
->> +	writel(msr, REG_ADC_MSR(base));
->> +
->> +	return -EAGAIN;
->> +}
-> 
-> ...
-> 
->> +{
->> +	struct nxp_sar_adc *info = iio_priv(indio_dev);
->> +	int i, ret;
-> 
-> Why is 'i' signed?
-> 
->> +
->> +	for (i = 0; i < info->channels_used; i++) {
->> +		ret = nxp_sar_adc_read_data(info, info->buffered_chan[i]);
->> +		if (ret < 0) {
->> +			nxp_sar_adc_read_notify(info);
->> +			return;
->> +		}
->> +
->> +		info->buffer[i] = ret;
->> +	}
->> +
->> +	nxp_sar_adc_read_notify(info);
->> +	iio_push_to_buffers_with_timestamp(indio_dev,
->> +					   info->buffer,
->> +					   iio_get_time_ns(indio_dev));
->> +	iio_trigger_notify_done(indio_dev->trig);
->> +}
-> 
-> ...
-> 
->> +	/*
->> +	 * On disable, we have to wait for the transaction to finish.
->> +	 * ADC does not abort the transaction if a chain conversion
->> +	 * is in progress.
->> +	 * Wait for the worst case scenario - 80 ADC clk cycles.
->> +	 */
->> +	ndelay(div64_u64(NSEC_PER_SEC, clk_get_rate(info->clk)) * 80U);
-> 
-> Could it possible go wrong and with low rate clocks (kHz:ish) this will go into
-> lo-o-o-o-ng *atomic* delay?
-
-It is the ADC clock where we need to wait for 80 cycles. The lowest 
-clock rate is 40MHz, but on this platform it is 80MHz IIRC. This routine 
-is called only when the capture finishes. Except I'm missing something, 
-this scenario should not happen.
-
->> +}
-> 
-> ...
-> 
->> +		nxp_sar_adc_channels_enable(info, 1 >> chan->channel);
-> 
-> 1 >> ?!? Did you want BIT(channel)? Or simply channel != 0?
-
-Yeah, BIT(chan->channel) is better
-
->> +static void nxp_sar_adc_dma_cb(void *data)
->> +{
->> +	struct nxp_sar_adc *info = iio_priv((struct iio_dev *)data);
->> +	struct iio_dev *indio_dev = data;
->> +	struct dma_tx_state state;
->> +	struct circ_buf *dma_buf;
->> +	struct device *dev_dma;
->> +	unsigned long flags;
->> +	u32 *dma_samples;
->> +	s64 timestamp;
->> +	int idx, ret;
->> +
->> +	dma_buf = &info->dma_buf;
->> +	dma_samples = (u32 *)dma_buf->buf;
->> +	dev_dma = info->dma_chan->device->dev;
-> 
->> +	spin_lock_irqsave(&info->lock, flags);
-> 
-> Why not guard()() from cleanup.h?
-
-sure
-
->> +	dmaengine_tx_status(info->dma_chan,
->> +			    info->cookie, &state);
-> 
-> Perfectly one line. No return check?
-
-Ok, will see if the IIO DMA API has an impact on this portion of code 
-before checking the return code. However, the status is often ignored in 
-the other drivers.
-
-[ ... ]
-
->> +/*
->> + * The documentation describes the reset values for the
->> + * registers. However some registers do not have these values after a
->> + * reset. It is a not desirable situation. In some other SoC family
->> + * documentation NXP recommend to not assume the default values are
->> + * set and to initialize the registers conforming to the documentation
->> + * reset information to prevent this situation. Assume the same rule
->> + * applies here as there is a discrepancy between what is read from
->> + * the registers at reset time and the documentation.
->> + */
->> +static void nxp_sar_adc_set_default_values(struct nxp_sar_adc *info)
->> +{
->> +	const u32 mcr_default	= 0x00003901;
->> +	const u32 msr_default	= 0x00000001;
->> +	const u32 ctr_default	= 0x00000014;
->> +	const u32 cimr_default	= 0x00000000;
->> +	const u32 ncmr_default	= 0x00000000;
-> 
-> What is the purpose of having these constant to be temporary variables in the
-> code?
-
-The purpose is to group everything in a single function. As the default 
-values are only used in this function, creating the macros where we have 
-to roll up and down to check their values seemed to me pointless. But if 
-you prefer macros, it is fine I can convert them.
-
->> +	writel(mcr_default, REG_ADC_MCR(info->regs));
->> +	writel(msr_default, REG_ADC_MSR(info->regs));
->> +	writel(ctr_default, REG_ADC_CTR0(info->regs));
->> +	writel(ctr_default, REG_ADC_CTR1(info->regs));
->> +	writel(cimr_default, REG_ADC_CIMR0(info->regs));
->> +	writel(cimr_default, REG_ADC_CIMR1(info->regs));
->> +	writel(ncmr_default, REG_ADC_NCMR0(info->regs));
->> +	writel(ncmr_default, REG_ADC_NCMR1(info->regs));
->> +}
-> 
-> ...
-> 
->> +static int nxp_sar_adc_probe(struct platform_device *pdev)
->> +{
->> +	const struct nxp_sar_adc_data *data;
->> +	struct nxp_sar_adc *info;
->> +	struct iio_dev *indio_dev;
->> +	struct resource *mem;
->> +	struct device *dev = &pdev->dev;
->> +	int irq;
->> +	int ret;
->> +
->> +	indio_dev = devm_iio_device_alloc(dev, sizeof(struct nxp_sar_adc));
->> +	if (!indio_dev)
->> +		return -ENOMEM;
->> +
->> +	info = iio_priv(indio_dev);
-> 
->> +	data = of_device_get_match_data(dev);
-> 
-> We have an agnostic alternative in property.h.
-> 
->> +	info->vref = data->vref;
-> 
-> vref_uV / vref_mV in both cases?
-
-Good suggestion, it makes sense
-
->> +	info->regs = devm_platform_get_and_ioremap_resource(pdev, 0, &mem);
->> +	if (IS_ERR(info->regs))
->> +		return dev_err_probe(dev, PTR_ERR(info->regs),
->> +				     "failed to get and remap resource");
->> +
->> +	irq = platform_get_irq(pdev, 0);
->> +	if (irq < 0)
-> 
->> +		return dev_err_probe(dev, irq, "no irq resource\n");
-> 
-> No need, it prints message if fails.
-> 
->> +	ret = devm_request_irq(dev, irq, nxp_sar_adc_isr, 0,
->> +			       dev_name(dev), indio_dev);
->> +	if (ret < 0)
->> +		dev_err_probe(dev, ret, "failed requesting irq, irq = %d\n", irq);
->> +
->> +	info->regs_phys = mem->start;
->> +	spin_lock_init(&info->lock);
->> +
->> +	info->clk = devm_clk_get_enabled(dev, "adc");
->> +	if (IS_ERR(info->clk))
->> +		return dev_err_probe(dev, PTR_ERR(info->clk),
->> +				     "failed to get the clock\n");
-> 
->> +	platform_set_drvdata(pdev, indio_dev);
-> 
->> +	init_completion(&info->completion);
->> +
->> +	indio_dev->name = dev_name(dev);
->> +	indio_dev->info = &nxp_sar_adc_iio_info;
->> +	indio_dev->modes = INDIO_DIRECT_MODE | INDIO_BUFFER_SOFTWARE;
->> +	indio_dev->channels = nxp_sar_adc_iio_channels;
->> +	indio_dev->num_channels = ARRAY_SIZE(nxp_sar_adc_iio_channels);
->> +
->> +	nxp_sar_adc_set_default_values(info);
->> +
->> +	ret = nxp_sar_adc_calibration(info);
->> +	if (ret) {
->> +		dev_err(dev, "Calibration failed: %d\n", ret);
->> +		return ret;
-> 
-> Be consistent. It looks like driver is written by 2+ people who do not
-> communicate with each other.
-
-Indeed ... :)
-
->> +	}
->> +
->> +	ret = nxp_sar_adc_dma_probe(dev, info);
->> +	if (ret) {
->> +		dev_err(dev, "Failed to initialize the dma\n");
->> +		return ret;
->> +	}
->> +
->> +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
->> +					      &iio_pollfunc_store_time,
->> +					      &nxp_sar_adc_trigger_handler,
->> +					      &iio_triggered_buffer_setup_ops);
->> +	if (ret < 0) {
->> +		dev_err(dev, "Couldn't initialise the buffer\n");
->> +		return ret;
->> +	}
->> +
->> +	ret = devm_iio_device_register(dev, indio_dev);
->> +	if (ret) {
->> +		dev_err(dev, "Couldn't register the device.\n");
->> +		return ret;
->> +	}
-> 
->> +	dev_info(dev, "Device initialized successfully.\n");
-> 
-> Noise. This should be dropped.
-
-Ok, thanks again for the review
-
-   -- Daniel
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Rob
 
