@@ -1,144 +1,296 @@
-Return-Path: <linux-kernel+bounces-797985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76C2B4180B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:10:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58FF3B41818
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79D9C7A33AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:08:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4234D3BB21D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E142E7F19;
-	Wed,  3 Sep 2025 08:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE082E7BDA;
+	Wed,  3 Sep 2025 08:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LAmTNsU4"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TyrXk/NQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F152E717C;
-	Wed,  3 Sep 2025 08:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA812E62B4
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756887016; cv=none; b=rnwnzwf+rwhvoUIBk4HVDiDRYsHl/qDwkJlmWls31fSgrvGJoqLPm5TlhJZo7HZN+K8xM+kfm30LHJwgNeNE77KKzyULSk3+qxrptwjALQzw4/RVSf8aARYMtPaYQrtffC1w23ftn5+/b0fXyQqyqGPmEImZAkTK5y3qu4BRrLc=
+	t=1756887074; cv=none; b=BMDIZKpBqp3kNoK6gVwQ6yn8A5fvIGxv1wa8Ngw1TSWcv4LXJq2gOXYNVyQso6sPgxJq0a750Au7XolwvuSYrAJscv4r0smCODpdy+mZUiA7ztsrWQE4GeWZb4+K5km0P8eh84PvbuVx3GM7NMl/vP+UuxiK1u/g0pDNG+6HU6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756887016; c=relaxed/simple;
-	bh=VfaCq80owY5zLWJX+gDkWw66Sb+Orzm0ucUHP5iyN68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJ8kNJFORu95w66NPaOCElR95H7cxIpnIJZFI9cr2K5JBrZC7ndMnDOvu6r7uGf/K26WE3fDdF9X1kL/hUWmU/XSHg2BczV2BIv8BZFwJOibqLiQ6LY0qHDni8apF4nqoAeq8XIm/PNAW/v8RZNxpqNKyfzv+Te6Va7LcO2qwTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LAmTNsU4; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-329e47dfa3eso1412742a91.1;
-        Wed, 03 Sep 2025 01:10:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756887014; x=1757491814; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8nLTCkRe0AkcGEGb8s2DM+RZJeechQxS5KtsRb6Dd7o=;
-        b=LAmTNsU4QfA/pxLowxk3vQUyyQHQtMN/tB0tZfEiR8ZDHvuRkk9LSYxBzUs0UDJ4YL
-         hJghnr7pmaAZx1xDjFgFQEfZAqVaGY8VIGqe0+E6vFUnFHofq/+9axiv0qxkFJz2XOrt
-         pgWJlMrT5HeAmUQi16DWpJMmlcdFe/C7g1QJdZLa7d41Zupx1oLoT2dJ6c95/T7tOFQ0
-         6YuUwI3moYvyHHWsZvtETiP83ZHZOtMgzFmQ2nCThX7QRoIIdjKJOihMlUGvpBP6HET4
-         JO3J13L7ZWSXDoqa4pWhCrJM0IlvFwp+Imaue3iKIuw4anW98nOSH6N9dyJm97bTrl1G
-         hmLw==
+	s=arc-20240116; t=1756887074; c=relaxed/simple;
+	bh=WFb5NsGQMehScrncHkSRfKHFaad12RZWRtjrznFDSDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rKoZaKOWq+w5IPbFJ+mK7LR5hViIXFZaxzzu/bGeZ0BI51JA+OQXt8RShzQvthFOYvuHmT5S5K1MkeLqnLC0ByiI0/gYG8P+quwV4xWtCNu+b1Dg4uyCnpgL5KIYvzZD15ilJhoy+My209hWVoZCLFgI9oGPWDpH43hi/XCdk0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TyrXk/NQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756887070;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8UkxVY/g1eI/pJSPhScZgnxFl4cSUR/RLbF6nS7dre8=;
+	b=TyrXk/NQksavwA4asZcQZ/ICxNncpkzWqSCaqzoatx3nLE4rANYLSCf3lSRqDzYLMaJyYx
+	T6kXKC9HpuzwR/QciD3P050b5wPblEopY6bJD1havkxKR7b33faKOy0cPRPAYxYUKRW7Xt
+	vOcuqr/wpB6Kbbtbm6YHIsJNlGjavUg=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-70-8QWwsJxXMFey8MyyY4XTSg-1; Wed, 03 Sep 2025 04:11:09 -0400
+X-MC-Unique: 8QWwsJxXMFey8MyyY4XTSg-1
+X-Mimecast-MFC-AGG-ID: 8QWwsJxXMFey8MyyY4XTSg_1756887068
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b8af0b986so4852465e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:11:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756887014; x=1757491814;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8nLTCkRe0AkcGEGb8s2DM+RZJeechQxS5KtsRb6Dd7o=;
-        b=OGStM9qo3rmQZ1WEBBdkL0bC84esAH1cnbxdAkKj5vHOIP5unFxr6NezwaPW72MiIW
-         KpW0hL89HidBTRJGImNreJESenuLa1p2JTvPF9PqdwVNN8lpc64u7/WObv0cPEC24QkA
-         ElISQVPG8L2nWekh0vH+MOe2Vz0F696DbYiPtFoMrU33iucUm2hGqYtJSPTLiK3JGBm+
-         BW0PRTMoInrkwmTgBD5MpewO6vMEjQVP0vQQ6aNoiWssxcOGgybCGxMx8IBi5UaeGwCm
-         3SKLkWo6cr8P5bTAWm0iPBbfVPb3Krm9DarTm+faZBCAEMeuKCmYM1G7+moSPadTdm4N
-         0/IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2xQvausUcgXMQLdL/zKNWgqueVLeG+i/yGLt5frn2QWE4yDKEwYACUDfC9dseACYQek0bdL2NNK6uzmQ1@vger.kernel.org, AJvYcCWbiF4Ch2oFJ3c/KiyyEVvWZMUJSk07PnICBQFyzKtr6XBdGjkx6CAYaK07eizGGDnaJiwdSXlE7j6J@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsaLRnim1pmsI5QXmlYY0THbLQxnrXsvRMoenWbiXjOviCAcs8
-	jCpwqZ/8rSaWaF9rSg9T8CP2P78Vz23zxU7prnaiuopmIAE5LiXQagv0uL2Sso9b
-X-Gm-Gg: ASbGnctii0fD2P6OQhBX70F/Ae+YxBlL4R6eYCs9ex8pLWpaNraNy70XFs6G4N1iuux
-	kt3hlvk3zBjNt7iUcKWl0gkSQ7WUl9RtslNHm6rcqr6bcZCSuDQBmuPM/51uUdD+tEboYMquuJ2
-	QPNg9K0gwmXvqWAu9Tmp58D1LPISLrEqfXBa9Pru/G9qSeskjVpDLsArJtMIpdTzQQWNIglRry9
-	I+2zQHP15En9Uz+9j9vyfXWexcMNMeyi6w59pzuOyNpIUqH5PzRDJhHC1ZxujcdW5PfOpt8ZZhf
-	Afds+ieZ6q3iTuJX2ftgONsN59JJxKTUedAggBgN/VBcdwIwx7xY7H0D6WmZLFWpfd9Su7oRHvY
-	/1JKt5IoINV9d7Jd5sij92Kb69bt5qujXDWU8yYoZNFcG1rs5TZrLEzVsFfsK
-X-Google-Smtp-Source: AGHT+IE8Tp+ko/yGOuPYB+iCHClScqH+Y6HDa2+oTz418oyuUhltMnIr5gMdAWkIiVssOpGt715qOQ==
-X-Received: by 2002:a17:90b:5865:b0:328:a89:3dc8 with SMTP id 98e67ed59e1d1-3281543cc5emr18706748a91.14.1756887013677;
-        Wed, 03 Sep 2025 01:10:13 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32b50a35ca0sm2491467a91.12.2025.09.03.01.10.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 01:10:13 -0700 (PDT)
-Date: Wed, 3 Sep 2025 16:10:10 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Luis Henriques <luis@igalia.com>
-Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-	"409411716@gms.tku.edu.tw" <409411716@gms.tku.edu.tw>,
-	Xiubo Li <xiubli@redhat.com>,
-	"idryomov@gmail.com" <idryomov@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Subject: Re: [PATCH] ceph: optimize ceph_base64_encode() with block processing
-Message-ID: <aLf34hrnwULGA+0m@visitorckw-System-Product-Name>
-References: <20250830132822.7827-1-409411716@gms.tku.edu.tw>
- <fce1adab2b450097edbcea3ec83420257997ec00.camel@ibm.com>
- <aLdcNhKrPXxaEUtm@visitorckw-System-Product-Name>
- <f4f33ae461e0f1cf2f28d1c22546bd67cd9c4da3.camel@ibm.com>
- <aLf0eJcvCj9zcn-g@igalia.com>
+        d=1e100.net; s=20230601; t=1756887068; x=1757491868;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8UkxVY/g1eI/pJSPhScZgnxFl4cSUR/RLbF6nS7dre8=;
+        b=nO7tuZMPVJeJ8mA90Jjp4PHcoMPt5QvlJFHaM4HWzmFEDp6sAUSmVRGyfhCZwQJW27
+         7N4yh3r4xltw9UdaXkrw3FEEf9eI47bgQ6ZdivH0yu/QSWxBkF0zY+Z5pOx9ALfCpqdI
+         FEb2PPx1X/VCmA9au2GHNAhDJuFUD/sDyfPk9EsXaBIq4R/uMtkmuvDPPauPt/nzz68m
+         pwk/wfwFOtUwDrFarxxbz8Kp6t+fRUcWVt+KVLx37ihK8cYADFMB9NbX8dYLEmXouhOs
+         OYap3wLgpuUB4e1rvn4d+PE12zhxS89dxblkHEK8BjwxPR8Ua80lTnrsxY8oxhQ3ViWF
+         swvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUo1BHZU+fosYSHBhp3MB5tZCRt6owgATuiQDQ0IhhLSWEdinSO8DHQow50E67jXpAFlOadldQYiU+e99Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEu13/VbMnQBXAGYedDo2wtOF0U7th7zBX+clS+oXd9WGP716a
+	XtGbjQws/gQtlOGExFn+kH0l1+TfYMHBWkHeGdk5Wa3ELEkDxwaQ1ouvtsGoRIWxhRCNulb8VWj
+	oMJiXfhWrw6/gyi1ahkzBca/lle/GHR7IHqQgXIXkRRTltfwqkj/5AAejBoKD/deFiQ==
+X-Gm-Gg: ASbGncux05rCqcLIuC27ChS198tbS859VL4BtdQ0APgTyy5Xc9nkzpQjUWkJ7sqw3+j
+	UfJ99jrhACu85PaLo1n0WxjvqacTZSSdL0eHq6Ri3ZWZZ/ogteeGn91zm0udiifh9aH60QpNWLt
+	tKu7ujyXR3UwkLNA+9eefpSzEh8BIR3LhjuGGScf3MY4iOBg20g5RQNAQN25OXxODDml2Ipx/ft
+	U18z8Qtzi98x7t1Mwpn4mPfh7BoELu6bysUS/3uY8FodwJs/kPm62F9g1N+LW+pYLiJ03cvVlWR
+	5+5vBfEL2swwNh5LQZjaCsF7UaHFnYQMg625dOAbTp0TTTGoom4/N98xmBSYnKX1C/E3WtuIH+Y
+	8Chjwu9NubleJkBXDaVbfPNlqiEjoBEP+ceJNXNVXrLdGnOsAM67zwJyeMqhkMOj9Spg=
+X-Received: by 2002:a05:600c:c4a1:b0:459:443e:b18a with SMTP id 5b1f17b1804b1-45b8559aff8mr131317575e9.14.1756887068425;
+        Wed, 03 Sep 2025 01:11:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEDxGXVQhvmfQ7QL41Vte3hx4orJbJWoRMyeFq2/Ey7ZnhPJtVK5izMGQC+aAFle3fgJPi6zg==
+X-Received: by 2002:a05:600c:c4a1:b0:459:443e:b18a with SMTP id 5b1f17b1804b1-45b8559aff8mr131317115e9.14.1756887067920;
+        Wed, 03 Sep 2025 01:11:07 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f09:9c00:8173:2a94:640d:dd31? (p200300d82f099c0081732a94640ddd31.dip0.t-ipconnect.de. [2003:d8:2f09:9c00:8173:2a94:640d:dd31])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7c461edasm140355785e9.9.2025.09.03.01.11.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 01:11:07 -0700 (PDT)
+Message-ID: <cd52244b-12f6-43aa-9db2-925348566bed@redhat.com>
+Date: Wed, 3 Sep 2025 10:11:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLf0eJcvCj9zcn-g@igalia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/9] mm, swap: tidy up swap device and cluster info
+ helpers
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
+ Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>,
+ Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>,
+ Kemeng Shi <shikemeng@huaweicloud.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ linux-kernel@vger.kernel.org
+References: <20250822192023.13477-1-ryncsn@gmail.com>
+ <20250822192023.13477-5-ryncsn@gmail.com>
+ <39087ce8-6f6a-4998-95e4-813e265318d0@redhat.com>
+ <CAMgjq7C+mChdnbcrYEkKyuuRN9-THXwBdFeCVwvW_m-_CWCzvw@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <CAMgjq7C+mChdnbcrYEkKyuuRN9-THXwBdFeCVwvW_m-_CWCzvw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 03, 2025 at 08:55:36AM +0100, Luis Henriques wrote:
-> On Tue, Sep 02, 2025 at 09:21:14PM +0000, Viacheslav Dubeyko wrote:
-> > On Wed, 2025-09-03 at 05:05 +0800, Kuan-Wei Chiu wrote:
-> > > On Tue, Sep 02, 2025 at 07:37:22PM +0000, Viacheslav Dubeyko wrote:
-> > > > On Sat, 2025-08-30 at 21:28 +0800, Guan-Chun Wu wrote:
-> > > > > Previously, ceph_base64_encode() used a bitstream approach, handling one
-> > > > > input byte at a time and performing extra bit operations. While correct,
-> > > > > this method was suboptimal.
-> > > > > 
-> > > > 
-> > > > Sounds interesting!
-> > > > 
-> > > > Is ceph_base64_decode() efficient then?
-> > > > Do we have something in crypto library of Linux kernel? Maybe we can use
-> > > > something efficient enough from there?
-> > > > 
-> > > Hi Viacheslav,
-> > > 
-> > > FYI, we already have base64 encode/decode implementations in
-> > > lib/base64.c. As discussed in another thread [1], I think we can put
-> > > the optimized version there and have users switch to call the library
-> > > functions.
-> > > 
-> > > [1]: https://lore.kernel.org/lkml/38753d95-8503-4b72-9590-cb129aa49a41@t-8ch.de/  
-> > > 
-> > > 
-> > 
-> > Sounds great! Generalized version of this algorithm is much better than
-> > supporting some implementation in Ceph code.
+On 02.09.25 17:03, Kairui Song wrote:
+> On Tue, Sep 2, 2025 at 10:14 PM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 22.08.25 21:20, Kairui Song wrote:
+>>> From: Kairui Song <kasong@tencent.com>
+>>>
+>>> swp_swap_info is the most commonly used helper for retrieving swap info.
+>>> It has an internal check that may lead to a NULL return value, but
+>>> almost none of its caller checks the return value, making the internal
+>>> check pointless. In fact, most of these callers already ensured the
+>>> entry is valid and never expect a NULL value.
+>>>
+>>> Tidy this up and shorten the name.
+>>
+>> Shorter != better. But yes, "swp_swap" was a mess.
+>>
+>>> If the caller can make sure the
+>>> swap entry/type is valid and the device is pinned, use the new introduced
+>>> swp_info/swp_type_info instead. They have more debug sanity checks and
+>>> lower overhead as they are inlined.
+>>>
+>>> Callers that may expect a NULL value should use
+>>> swp_get_info/swp_type_get_info instead.
+>>
+>> High-level comments:
+>>
+>> 1) I hate the "swp" vs. "swap". Is that a valuable distinction or could
+>> we just convert it to "swap" as we touch it?
 > 
-> Please note that ceph can not use the default base64 implementation because
-> it uses the '_' character in the encoding, as explained in commit
-> 
->   64e86f632bf1 ("ceph: add base64 endcoding routines for encrypted names")
-> 
-> That's why it implements it's own version according to an IMAP RFC, which
-> uses '+' and ',' instead of '-' and '_'.
-> 
-Perhaps we could modify the API to allow users to provide a custom
-base64 table or an extra parameter to specify which RFC standard to use
-for encoding/decoding?
+> Totally agree. I was just blindly following the old style. It's kind
+> of confusing indeed.
 
-Regards,
-Kuan-Wei
+... and not a lot of space saved :)
+
+> 
+>>
+>> You're converting swap_type_to_swap_info() to swp_type_to_swap_info(),
+>> and I am not sure if that is the right direction :)
+>>
+>>
+>> 2) Can we just call it "swap_entry" when we work on a swap entry and
+>> "swap_type" when we work on a swap type in the function name?
+>>
+>> swp_info() is a rather bad function name.
+>>
+>>
+>> 3) I am not sure about "to" -> "get". "to" is much more readable in that
+>> context and consistent.
+>>
+>>
+>> 4) swp_info[] vs. swap_info() gah.
+>>
+>>
+>> I would just have done:
+>>
+>> swap_type_to_info(int type)
+>> __swap_type_to_info(int type)
+>> swap_entry_to_info(swp_entry_t entry)
+>> __swap_entry_to_info(swp_entry_t entry)
+>>
+>> __ are the expert functions where we don't expect NULL.
+>>
+> 
+> Thanks a lot for the suggestions! I also like the idea of using "__"
+> to seperate the non-NULL version a lot and implis the caller have to
+> careful.
+
+Right, it's the "pro" version :)
+
+> 
+> My concern was that names will be getting very long in later commits
+> following this convention. Which is also the reason I want to shorten
+> them here.
+> 
+> A lot of SWAP relate operations will be cluster based, so it will be
+> very common to get offset or the swap cluster from a swap entry.
+> We will end up having a really long name like
+> __swap_entry_to_cluster_offset (convert swap entry to offset inside a
+> cluster).
+
+That's a perfectly fine length though :)
+
+> 
+> Since we already have the swap entry type called `swp_entry_t` and
+> helprs like `swp_offset` and 'swp_swap_info' that convert an entry to
+> other swap things, so I thought that anything converts swap entry /
+> offset to others are named `swp_*`.
+
+Yeah, I think that's just bad historical baggage we should clean up at 
+some point.
+
+> 
+> Maybe a bad practise here, we can fix it while at it, or at least no
+> longer introduce more confusing names.
+> 
+> I can follow this suggested style, will it be a good idea if we have
+> following set of helpers?
+> 
+> For swap cluster and swap device (swap_info_struct):
+> swap_type_to_info(int)
+> __swap_type_to_info(int)
+> swap_entry_to_info(swp_entry_t)
+> __swap_entry_to_info(swp_entry_t)
+> __swap_offset_to_cluster(struct swap_info_struct *, pgoff_t)
+> __swap_entry_to_cluster(swp_entry_t)
+
+Looks great to me, but let's hear other opinions.
+
+> 
+> And for offsets, we still use:
+> swp_offset() (Existing helper)
+
+Yeah, there's also "swp_type" and "swp_offset_pfn". They really only 
+extract basic properties of the entry, so they are a bit special.
+
+I think we should call them "swap_entry_offset" "swap_entry_type" 
+"swap_entry_pfn".
+
+Now, that's not something I would expect in your series.
+
+> swp_cluster_offset()
+
+That one could later become swap_entry_cluster_offset()
+
+> 
+> Now all swp_* helpers are pure arithmetic operations (we just renamed
+> swp_swap_info which seems the only exception). Is this better?
+
+I'm already happy once we name+document the new functions properly.
+
+I could probably live with "swp_cluster_offset" for the time being :)
+
+-- 
+Cheers
+
+David / dhildenb
+
 
