@@ -1,197 +1,124 @@
-Return-Path: <linux-kernel+bounces-797980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6F9EB417FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:07:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E40B41800
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C693516557C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:07:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08A501775F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4F72E9EA8;
-	Wed,  3 Sep 2025 08:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054A82E62C3;
+	Wed,  3 Sep 2025 08:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="l+qdVHF0"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YnbBQYr+"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C5A2E62B3;
-	Wed,  3 Sep 2025 08:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2E22E54C8;
+	Wed,  3 Sep 2025 08:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756886826; cv=none; b=YqnkZvQ4YWJ0wb6IKDLBLSnmu8FAgrH8Lb8nj4Ts2swfqkR//6Eso5qrZuu192s/aWr0edd0pXeZSYvw7+F/WNgJlutn4ZPHVaDrdj7LK+IjVJ/DUSCsVi2NvXywPqMitW/yb+iKRV7Q9tsg8W7ocWHnUAN0YwMXcb44aptZWig=
+	t=1756886839; cv=none; b=IB54/gBgcO+IcLS3giM6zR4e90gdJC4MmRwILjPm1a6pzRKypCdbDvWNX41RLEVtS5QvREBmSSf9dBKHMpX2f+WwKwFwpNzP6jZKbLy+FYuvrJQ1Uyhg86p2fVCXbd/e/WBWwxsC8CNSs+IFcbgK+MfjAUHbhWBJp0y7F9UrTBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756886826; c=relaxed/simple;
-	bh=CeCM/HmjZliMLnHkBvZkg72p0Kg5C8W0aOUbx0JRgAk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=WSnj0SvAiePvq7qD2vmXQ2THCW95jH+8SdFfqWMpMFkov+aUQuactAPXvCeboa3Eu/42DL78y966chWBNP4RWqmtM0UiFkhJnYCEYXuiAz3pYkRy6FESFiH4tbVbDf2QzydUhHsumkq2c2E4EGS4gvOZvNuYWXMfQduvuE7f2Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=l+qdVHF0; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582Nffc4004032;
-	Wed, 3 Sep 2025 08:06:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=mJRYJJ
-	iGP3O9OmhSaZUakyOS2WjUvaQxrQqD8pIfL50=; b=l+qdVHF0vDyRMtwaebUoIj
-	z2iDp0yC30Zvzlx4E1dtOGBP2UUtPm68/zYHrMxaBDyImWaQC5pOkapvOEWuPkm0
-	Wa/maFl4XV8LUqY/kCnJg1kbFU9GCqfPK1Nax6Z/YEGgi6ix2GKhYVH4UGEln+Im
-	OuMAxum2fDIBxU8avLT29fWaLxHyqlkF18sK79qNHqZQCpDXhjFXbmk/3euQw1Da
-	M/xGDIKt/RMZPcLkd8pR6W6ML8tjCvcyTEDW1ka84745/Qz2JaPuCJk45fVHByiG
-	Ar3yGRktQRmUABSVI7XT4gdyKrsP+5Clew6+xJ4gSx63XzTKwamlQ5CVstMUDtUg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usvftp2d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Sep 2025 08:06:48 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5837pAAa012647;
-	Wed, 3 Sep 2025 08:06:47 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usvftp29-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Sep 2025 08:06:47 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5836IqKV019404;
-	Wed, 3 Sep 2025 08:06:46 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48vd4mxcv4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Sep 2025 08:06:46 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58386jfv60752372
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 3 Sep 2025 08:06:45 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5CCE92004B;
-	Wed,  3 Sep 2025 08:06:45 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EBD7B20040;
-	Wed,  3 Sep 2025 08:06:44 +0000 (GMT)
-Received: from [9.152.212.92] (unknown [9.152.212.92])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  3 Sep 2025 08:06:44 +0000 (GMT)
-Message-ID: <03b13088-8dae-4d68-8594-6523b4aee406@linux.ibm.com>
-Date: Wed, 3 Sep 2025 10:06:44 +0200
+	s=arc-20240116; t=1756886839; c=relaxed/simple;
+	bh=VshbNHGT/d2pjHoF9/J0MH2WYAbtTTCtbfaiPhsWUU8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BrrcK3J+VVJftdp2LPcxacLNqA/uVlZ6YATCAVjg7BkZ0Mzv0mjEnhzV+tVK/jlaYNRiM0UnXTxbqkrwjFuzSQMyE7KpXiHAfLSWTK7/w6eQM5jL20hQQ+yS0c1V0xbjpNLURJrtl4SfrZMhCWd+GAxUMDFunsadX7lGilYm/lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YnbBQYr+; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45cb5c60ed3so694655e9.2;
+        Wed, 03 Sep 2025 01:07:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756886835; x=1757491635; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hZTy5PSuTM5rEw0pIf6nxs+pKdYAXNk6URBgB/E9ySA=;
+        b=YnbBQYr+cX9Bvd0pZf0BgdlnmPtTzRmZkAnNTxC7zpCR0rEoAXKqc7FeGJdTmay9pi
+         ODpH1G5c1Co/0u2rYNTOO1j+Cy3/WyhZDzNdvJpRNvyKzewaK1Nhzx3C3ZvYi2cH1cxZ
+         p6ZOBpXvqbe+AQOlkSvGrHuFMQjOSlmuFgijecHLJuwUBhncU7UAcGE+Q+Bs5ovtB+wU
+         CqhQFd5tKJgzXTziynBwq/+ePt/WIDIie6+9BQBvyo+SXb8+0mYiRHtglzVEd8GhCWOY
+         vT4jvLarlQ5zWaNYU4ZbwqjyWyOYZwGLaIiCWcIJDc8B7C1PB/oNQFc0Tre24HpT2Xpt
+         PX9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756886835; x=1757491635;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hZTy5PSuTM5rEw0pIf6nxs+pKdYAXNk6URBgB/E9ySA=;
+        b=mjQjuMBr7wSU9TJwUF+asPattU0Bn5V0XUb1Zh4QbAB2B+sPf7JCCa/GeYW9WoYSG6
+         Mzs07Jy1rJLs0WWvwNw122diRAk1F3lz6h1PufJhDRsIpbNIR9u4/aI+5Uut+BVT44dg
+         /Nvx9KvZp8u3BogHVUGdnAlRgpQrvxxR8N4R8BASADtdhGcpyziS3d1DzuyF/jGIeRnE
+         N/8JhLi2+fsjFCg9EiWu2XWjmxzJitrmIDRkPVTwlZLKRzR9xTFCYiRJRPtv6TzmEU5i
+         69UjFW1arXw+JEw4tCusdxJio8VVaSqh/dKpaOY4MaK2CgNZIcewGeT63G4d4fDeMDB8
+         Xoqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUMk0kSyh412lNVd9IJYlEeE4ovCa9e+gMbGXSBXbE6lP5FSxrxXbPHWbuacg9YBR28R1Tt+abH8lK+lk=@vger.kernel.org, AJvYcCUxyp0MI2LQ4EP6HxdC8bMfKVoQRMBH1vNht1a286U3GWFurw9TucdfMmDOS8zB7OyoE8H9dd/myf9Ydtw5@vger.kernel.org, AJvYcCVBC2gKInije7QQVM6gxy+gzpAo/sA++TPPMS6ZkXHTUi9Unzwq48NRO2mTa7QNYvaJupnjW1Yk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxph0U+Prvl8x15pWZQDW2npBwrx7Z88TjOmaAOoVtY+M9wp8bi
+	wThwFWU+u1SHpuIHyQmmeP/YSvaYqLcDwzBf4dDLfmpIuQdsGHCNtyOh
+X-Gm-Gg: ASbGnctPk3h5JvKTFlM28lxiwSdGJIpveSe+eCU1FBGDZFTgGcmUHVtbtXMHquih8Xb
+	WMDWsqkkERCYynH5qnTHNKd9RTfcugjwF84HtgxZPw8ioXTp35oUPAbsgPKTx1+jCjTcAzXHkTK
+	ZtxhBprhld9uPJI/xGRpWh8yz2xwtTdTY5twtTrbja+Ql3l3Q8xsy2uPIvM31wzv3Fd4DBw4zRV
+	kCu31D5JBRBRtb06iIsPTX2bUELdoESpEbVzarR32q3U9y8LkdGNSTlt4X+i2WWjlpsRr1p02Cj
+	qUCxi+a6BScXdZsvjARnoXichdBBKPqfhDwqdwf9MhfeY2yU2h6Cmq0Y5UpchAzaGRqhonCPzqq
+	d5s16ZFNuo3q5zMNF4dMvTcXp99bKFV348TZP6dTFkVgGKsHu+ic6QJ1+2ZX3Pw==
+X-Google-Smtp-Source: AGHT+IEpGBOP1B1Jph5fgexU4vMmswDuYQqgA49JGWQuOcwTIUvg6AkoYPsE1hTfBRhrYgvcN4/h2A==
+X-Received: by 2002:a05:6000:2883:b0:3cb:9930:78bd with SMTP id ffacd0b85a97d-3d064dfe9camr6000577f8f.5.1756886834510;
+        Wed, 03 Sep 2025 01:07:14 -0700 (PDT)
+Received: from thomas-precision3591.u-ga.fr ([2001:660:5301:24:6179:26f2:8797:e6a9])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3d3a7492001sm17768599f8f.42.2025.09.03.01.07.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 01:07:14 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	stable@vger.kernel.org,
+	Corentin Labbe <clabbe@baylibre.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Heiko Stuebner <heiko@sntech.de>,
+	John Keeping <john@keeping.me.uk>,
+	linux-crypto@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: rockchip - Fix dma_unmap_sg() nents value
+Date: Wed,  3 Sep 2025 10:06:46 +0200
+Message-ID: <20250903080648.614539-2-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/15] Legacy hardware/cache events as json
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-        Thomas Falcon <thomas.falcon@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
-        Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>,
-        Leo Yan <leo.yan@arm.com>, Vince Weaver <vincent.weaver@maine.edu>
-References: <20250828205930.4007284-1-irogers@google.com>
-Content-Language: en-US
-From: Thomas Richter <tmricht@linux.ibm.com>
-Organization: IBM
-In-Reply-To: <20250828205930.4007284-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=behrUPPB c=1 sm=1 tr=0 ts=68b7f718 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
- a=h0uksLzaAAAA:8 a=7CQSdrXTAAAA:8 a=VnNF1IyMAAAA:8 a=KByoUL483hSIROooWq4A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=MSi_79tMYmZZG2gvAgS0:22
- a=a-qgeE7W1pNrGK8U0ZQC:22
-X-Proofpoint-ORIG-GUID: y5jHuvcz1AvdARQJzfuyJqumQ_eV1ZXa
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzNCBTYWx0ZWRfX1kek//mDJGNd
- TmMxhEX7iwrmfwBFMFWnTVNlXuoKChTkUkqA78axxAm43Flnt5eW7uUGaRh0GLgUpBVY+0WaX3J
- 5KWn5Jl0UkjswVxxqzL9nZBleXR3cfH7wtclGw6Bk0R5Szk2lY+/MzOf8N+3EfsRemld13Ql9hk
- RVN5qr/hLKlxZKvwMzYXEfik1cd4BiPmJ/L/t8BkyWa+9ZihmqFUPglPO8OJ1maoecGUmt/Z92g
- SgjZ1KHXARlYmYFmnPYn0BopVW9kXg809Lnetz7AEX4wAeS1TKdu0XoOU1kbNzNW5Th9Eh85dOC
- Z6d0EMDCbkCBHLqPrHLK6OfiTYYcrIF/pQow2VoSGrlDAfGouwkLgOiy0EWRdFDL7fmIVf3+9og
- L6Vw68VN
-X-Proofpoint-GUID: cjcZczKn9cVb7gI_Smn-YkYgwY_C4PT9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 impostorscore=0 spamscore=0 clxscore=1011 phishscore=0
- priorityscore=1501 adultscore=0 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300034
 
-On 8/28/25 22:59, Ian Rogers wrote:
-> Mirroring similar work for software events in commit 6e9fa4131abb
-> ("perf parse-events: Remove non-json software events"). These changes
-> migrate the legacy hardware and cache events to json.  With no hard
-> coded legacy hardware or cache events the wild card, case
-> insensitivity, etc. is consistent for events. This does, however, mean
-> events like cycles will wild card against all PMUs. A change doing the
-> same was originally posted and merged from:
-> https://lore.kernel.org/r/20240416061533.921723-10-irogers@google.com
-> and reverted by Linus in commit 4f1b067359ac ("Revert "perf
-> parse-events: Prefer sysfs/JSON hardware events over legacy"") due to
-> his dislike for the cycles behavior on ARM with perf record. Earlier
-> patches in this series make perf record event opening failures
-> non-fatal and hide the cycles event's failure to open on ARM in perf
-> record, so it is expected the behavior will now be transparent in perf
-> record on ARM. perf stat with a cycles event will wildcard open the
-> event on all PMUs.
-> 
-> The change to support legacy events with PMUs was done to clean up
-> Intel's hybrid PMU implementation. Having sysfs/json events with
-> increased priority to legacy was requested by Mark Rutland
->  <mark.rutland@arm.com> to fix Apple-M PMU issues wrt broken legacy
-> events on that PMU. It is believed the PMU driver is now fixed, but
-> this has only been confirmed on ARM Juno boards. It was requested that
-> RISC-V be able to add events to the perf tool json so the PMU driver
-> didn't need to map legacy events to config encodings:
-> https://lore.kernel.org/lkml/20240217005738.3744121-1-atishp@rivosinc.com/
-> This patch series achieves this.
-> 
-> A previous series of patches decreasing legacy hardware event
-> priorities was posted in:
-> https://lore.kernel.org/lkml/20250416045117.876775-1-irogers@google.com/
-> Namhyung Kim <namhyung@kernel.org> mentioned that hardware and
-> software events can be implemented similarly:
-> https://lore.kernel.org/lkml/aIJmJns2lopxf3EK@google.com/
-> and this patch series achieves this.
-> 
-> Note, patch 1 (perf parse-events: Fix legacy cache events if event is
-> duplicated in a PMU) fixes a function deleted by patch 15 (perf
-> parse-events: Remove hard coded legacy hardware and cache
-> parsing). Adding the json exposed an issue when legacy cache (not
-> legacy hardware) and sysfs/json events exist. The fix is necessary to
-> keep tests passing through the series. It is also posted for backports
-> to stable trees.
-> 
-> The perf list behavior includes a lot more information and events. The
-> before behavior on a hybrid alderlake is:
+The dma_unmap_sg() functions should be called with the same nents as the
+dma_map_sg(), not the value the map function returned.
 
+Fixes: 57d67c6e8219 ("crypto: rockchip - rework by using crypto_engine")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+---
+ drivers/crypto/rockchip/rk3288_crypto_ahash.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-.....
-
-For s390 the whole series:
-
-Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+diff --git a/drivers/crypto/rockchip/rk3288_crypto_ahash.c b/drivers/crypto/rockchip/rk3288_crypto_ahash.c
+index d6928ebe9526..b9f5a8b42e66 100644
+--- a/drivers/crypto/rockchip/rk3288_crypto_ahash.c
++++ b/drivers/crypto/rockchip/rk3288_crypto_ahash.c
+@@ -254,7 +254,7 @@ static void rk_hash_unprepare(struct crypto_engine *engine, void *breq)
+ 	struct rk_ahash_rctx *rctx = ahash_request_ctx(areq);
+ 	struct rk_crypto_info *rkc = rctx->dev;
+ 
+-	dma_unmap_sg(rkc->dev, areq->src, rctx->nrsg, DMA_TO_DEVICE);
++	dma_unmap_sg(rkc->dev, areq->src, sg_nents(areq->src), DMA_TO_DEVICE);
+ }
+ 
+ static int rk_hash_run(struct crypto_engine *engine, void *breq)
 -- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-IBM Deutschland Research & Development GmbH
+2.43.0
 
-Vorsitzender des Aufsichtsrats: Wolfgang Wendt
-
-Geschäftsführung: David Faller
-
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
