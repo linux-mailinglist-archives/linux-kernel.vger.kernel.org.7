@@ -1,209 +1,227 @@
-Return-Path: <linux-kernel+bounces-798014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA4FB41864
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:26:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C128B41866
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78C267AA3C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:24:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41F11BA2F3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121F72E8DF0;
-	Wed,  3 Sep 2025 08:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59C52E3AEA;
+	Wed,  3 Sep 2025 08:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TL0ViPMF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="MsJC+2rx"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5726D1D6DA9;
-	Wed,  3 Sep 2025 08:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9BC16A95B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756887988; cv=none; b=MWxfRHWXG52Lv1znXM+a0pwwwrVpWe4a1p3WbnMyKFRCHm220ye1XP8U9WuvVwMNHGzu0sXNN4ss+XdqJiiyjq8DlpE62km7eWw8ABRCvprobGazCWyfNcMkaKtesftK4I5JAaosghYNPrBtDC34ML8kC6jov//w83zRvUP4s68=
+	t=1756888039; cv=none; b=tXK4C7UCKymuTK3+EMnMIePkFzIL0ehpPVzOYIyeXpV98W/M/RRPMRG1XL8iZbGADlIHZf7xeZl4e5ygXK8u1jqkKOeA4+BWB5ygNOkX1P2hPrA7u+HtwD7oTuxsgXnPGFnchgU6eqjQUVuz1GAzWdvRrmCYLykeTAllCRa4Mag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756887988; c=relaxed/simple;
-	bh=zW7TNLfa4KbD81DgW3vApU7vw2XK4yGJuNII46K+LP8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=ZF5ri5Pr2R1aPAfXptOsokdoiOTAb2r+esKmhvEWWKVO5grgzwHRmNJs7sr6tPS2qhGVigEvvUzVXLXtRB94h/2Gk5LFcZwiz5L487dAjvGmmC4ghewx1QAobIG0ZH8ZHGU0wmmp/02qxwG0xGdX9yZ4Limn7lVLwu2J6aphVGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TL0ViPMF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5368BC4CEF0;
-	Wed,  3 Sep 2025 08:26:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756887986;
-	bh=zW7TNLfa4KbD81DgW3vApU7vw2XK4yGJuNII46K+LP8=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=TL0ViPMFzxCUOD60fpt2D70YnJ5+2MVzpcMuup7ylSEWM84B7/br1zhsKcfu9AHd4
-	 nMgW0+W+12qBYP03uBqSojB7ZiMKFXpKltcmxdNfCeAHci8x7GmUm0CzobVxmt+4fK
-	 jjwtYadsyI0Ett44NRPRQipLROyiPq3jINnsihMordfY8876pC+HXmjmYEG84QWZzT
-	 KEQHbFXHGxtzKtketd1mYBPjX1cUrPqS/106h4DnfUYy8Y9M3ViYWjmVhvvK9suLpo
-	 IPrpHNBcOhmabIyiaP4xGuAFo/5LXymYhFzKwAtwchdtcODQEii9WgezgFSQa2m/7F
-	 fblJ9A//Vtj4w==
+	s=arc-20240116; t=1756888039; c=relaxed/simple;
+	bh=I99lu9ewXOKf756pvdytEwBsiC0SQY0hGN4JCjJXvm4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SobnSSmX2isw2I62mxrFFAOUG86iKJaX6WZIj5YvrakFx1C042ihgAsuJtVQ8/xUxkJU6AhtEVqx9WnzLzSfi4OQtMLy0nVASU6yNARyc71s+fglX1WliKUMwEZjZwVU8L1O/SMfDKGlhj/QVoMIkbQxcGqnKluHy/bXiJ11rcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=MsJC+2rx; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-772488c78bcso3583619b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:27:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1756888035; x=1757492835; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=d7MyvbuehqyHPFoj0yXmMeImr3j7gjRiUhu3hTPI4Oc=;
+        b=MsJC+2rx++j9eK5WT9wY3pl+DRV7Upff4i6H+B5DqRegNuHNgxwmB515FQNGJLiLO/
+         WPp63p1msIDOZ0224vLT3mqpTliEjxSMbiEdfrRc+D2i6Qpwmkzk2040FjVfIzvYJLc2
+         7UIehmDV9IDbseX3WP22QuHXMt/K0OW+xyslbomOWs3aigvP0HzFDa6LElJw/37K5l0n
+         MqF8ZrccLJnyYQA0XF0o+vSicZ5oCIg7x1PsbP4TtuDW7bife5pSYQOaZ/jcFi0ZsaCK
+         PkMhIYoUkkNAKwKWyW/TSk5ZxgZuwlTyGtj3UnoR5+jMrmvHHenaFBJ/7IvFzaQ9D+Kv
+         FPmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756888035; x=1757492835;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d7MyvbuehqyHPFoj0yXmMeImr3j7gjRiUhu3hTPI4Oc=;
+        b=grn2tIc0cPgPOa9Vljt5PYObKp9+1ZBO5suRHMJkxrGAikiWa8r9jaZyJPDG2KLLxN
+         M/hmBvf2cNXKnh17kMPlxm0pH9ITWjV1sqqZzBecujdt20M2KxBI/fNOEaZDYTv7JB8a
+         es8P+/2vdBlIh/+Gm8OvMRNQTYxs4DIsvENnrzU++HItyGVfwcGxJtxnuWQfHHtpUCD2
+         DYOQx+awcYpicaYSmWAThC2QLrYT81YIO+DjHXNmwiFiv0O8/f37MhRa/5OYPUBQIFiB
+         c91kO4ct9Tk+LFca2F2H9ZNPu7E/F9jyxAKABnwg49M7MOYVD4/vSMXNDIIJ5V0qVory
+         E5Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlXWgusKHAfHqFjnr7ydYxKbbDRE4QIYDgopxG9i7zLEsTPRAXZyzxuFGbFGEGv6WVqrggeAHA9wWhS48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkmKt3WEPXLjXWRkQ919rkXDzkzsr5ntLpZztI1UklSdFy5dt/
+	s0b0GH/fnF8M0cUPGvcaQNO4nZxdwv3OKcOXIrFIeGW1n2o26NxZOKYiaE6smWBtJzUHUNnKirX
+	ShrZf
+X-Gm-Gg: ASbGncuqXy34ygeNbHbjJdAxymmHn4VcM7OtgzXlvNyR8ritx9MqMma7wjEQLZ2d6jm
+	4KZ5hdlFX2+04LcOGIp04eJdnF3jwCbxiVnFfd0XJdtc0BcEfKtzozyR8JLJCvMVyRrv3kpGduQ
+	B5X18qAqYCzCI/rqlx1ZrX3qB5Tqz9zOBSlY2thUsw1Y4Z5dywG5TCVYA/NB7Udw0VBgM4oF8Ie
+	gE85EpKIigS4dgcGhw9AeolkPv73VLc7SnfF9IPkeAX1H8bIg4YcUHtXlfKM0I7jr3oI9//2bGt
+	mKfEFoot9ZTAGCLW04Kq8q1mc/1c+o36jIXoKnboQNSmVEaAQmmpGgMphn865wvtGlvu9eIErHt
+	WceQf1BJz0/fEKhX4ldAemPPk+wqZtCF8OxDnBTTIHd0UvLpLACU1vxMqaF6NG6fi92b4jh01yY
+	24JB8r7foGELwZjxBCXOzJxE50Dy/L+Q==
+X-Google-Smtp-Source: AGHT+IEXDI+4Cxdd9GZkPAFGxSlru8Um1RtkCHB3w0+OjUmK7c2c9iaH92pRYEXqsS+1c1bSrjjkJA==
+X-Received: by 2002:a05:6a00:1495:b0:770:56bf:ab5a with SMTP id d2e1a72fcca58-7723e36b526mr15626694b3a.19.1756888035099;
+        Wed, 03 Sep 2025 01:27:15 -0700 (PDT)
+Received: from ubuntu.. (202.60.225.076.static.cyberec.com. [202.60.225.76])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2b7d10sm16014435b3a.33.2025.09.03.01.27.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 01:27:14 -0700 (PDT)
+From: Zhongtian Wu <wuzhongtian@huaqin.corp-partner.google.com>
+To: dianders@chromium.org,
+	neil.armstrong@linaro.org,
+	jessica.zhang@oss.qualcomm.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Zhongtian Wu <wuzhongtian@huaqin.corp-partner.google.com>
+Subject: [PATCH] drm/panel-edp: Add edp panels used by mt8189 chromebooks
+Date: Wed,  3 Sep 2025 16:26:28 +0800
+Message-Id: <20250903082628.2847842-1-wuzhongtian@huaqin.corp-partner.google.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Sep 2025 10:26:20 +0200
-Message-Id: <DCJ0T81CZQ88.6IK6LG0E0R02@kernel.org>
-Subject: Re: [PATCH v3 02/11] gpu: nova-core: move GSP boot code out of
- `Gpu` constructor
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Joel
- Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-To: "Alexandre Courbot" <acourbot@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250902-nova_firmware-v3-0-56854d9c5398@nvidia.com>
- <20250902-nova_firmware-v3-2-56854d9c5398@nvidia.com>
- <DCIKSL18GE9A.2R4BAGR56YVPF@kernel.org>
- <DCIZ5VVLACXO.1L0QTYM5YVRQV@nvidia.com>
-In-Reply-To: <DCIZ5VVLACXO.1L0QTYM5YVRQV@nvidia.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Sep 3, 2025 at 9:08 AM CEST, Alexandre Courbot wrote:
-> On Wed Sep 3, 2025 at 4:53 AM JST, Danilo Krummrich wrote:
->> On Tue Sep 2, 2025 at 4:31 PM CEST, Alexandre Courbot wrote:
->>> diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/dr=
-iver.rs
->>> index 274989ea1fb4a5e3e6678a08920ddc76d2809ab2..1062014c0a488e959379f00=
-9c2e8029ffaa1e2f8 100644
->>> --- a/drivers/gpu/nova-core/driver.rs
->>> +++ b/drivers/gpu/nova-core/driver.rs
->>> @@ -6,6 +6,8 @@
->>> =20
->>>  #[pin_data]
->>>  pub(crate) struct NovaCore {
->>> +    // Placeholder for the real `Gsp` object once it is built.
->>> +    pub(crate) gsp: (),
->>>      #[pin]
->>>      pub(crate) gpu: Gpu,
->>>      _reg: auxiliary::Registration,
->>> @@ -40,8 +42,14 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdI=
-nfo) -> Result<Pin<KBox<Self
->>>          )?;
->>> =20
->>>          let this =3D KBox::pin_init(
->>> -            try_pin_init!(Self {
->>> +            try_pin_init!(&this in Self {
->>>                  gpu <- Gpu::new(pdev, bar)?,
->>> +                gsp <- {
->>> +                    // SAFETY: `this.gpu` is initialized to a valid va=
-lue.
->>> +                    let gpu =3D unsafe { &(*this.as_ptr()).gpu };
->>> +
->>> +                    gpu.start_gsp(pdev)?
->>> +                },
->>
->> Please use pin_chain() [1] for this.
->
-> Sorry, but I couldn't figure out how I can use pin_chain here (and
-> couldn't find any relevant example in the kernel code either). Can you
-> elaborate a bit?
+Add a few generic edp panels used by mt8189 chromebooks. For
+BOE-NV140WUM-N44 V8.2 , the enable timing required 80ms. For
+CSW-MNE007QB3-1, the hpd_absent timing rquired 80,the enable timing
+required 50ms.For CSW-MNE007QS3-6, the enable timing required 50ms. For
+CMN-N140JCA-ELK, the enable timing required 80ms and disable timing
+required 50ms.
 
-I thought of just doing the following, which I think should be equivalent (=
-diff
-against current nova-next).
+BOE NV140WUM-N44 V8.2
+edid-decode (hex):
 
-diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/driver=
-.rs
-index 274989ea1fb4..6d62867f7503 100644
---- a/drivers/gpu/nova-core/driver.rs
-+++ b/drivers/gpu/nova-core/driver.rs
-@@ -41,7 +41,9 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) =
--> Result<Pin<KBox<Self
+00 ff ff ff ff ff ff 00 09 e5 6a 0a 00 00 00 00
+2e 20 01 04 a5 1e 13 78 03 fb f5 96 5d 5a 91 29
+1e 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 61 40 80 04 71 b0 3c 40 30 20
+36 00 2d bc 10 00 00 1a 81 33 80 04 71 b0 3c 40
+30 20 36 00 2d bc 10 00 00 1a 00 00 00 fd 00 28
+3c 4c 4c 10 01 0a 20 20 20 20 20 20 00 00 00 fe
+00 4e 56 31 34 30 57 55 4d 2d 4e 34 34 0a 01 7c
 
-         let this =3D KBox::pin_init(
-             try_pin_init!(Self {
--                gpu <- Gpu::new(pdev, bar)?,
-+                gpu <- Gpu::new(pdev, bar)?.pin_chain(|gpu| {
-+                    gpu.start_gsp(pdev)
-+                }),
-                 _reg: auxiliary::Registration::new(
-                     pdev.as_ref(),
-                     c_str!("nova-drm"),
-diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
-index 8caecaf7dfb4..211bc1a5a5b3 100644
---- a/drivers/gpu/nova-core/gpu.rs
-+++ b/drivers/gpu/nova-core/gpu.rs
-@@ -266,7 +266,7 @@ fn run_fwsec_frts(
-     pub(crate) fn new(
-         pdev: &pci::Device<device::Bound>,
-         devres_bar: Arc<Devres<Bar0>>,
--    ) -> Result<impl PinInit<Self>> {
-+    ) -> Result<impl PinInit<Self, Error>> {
-         let bar =3D devres_bar.access(pdev.as_ref())?;
-         let spec =3D Spec::new(bar)?;
-         let fw =3D Firmware::new(pdev.as_ref(), spec.chipset, FIRMWARE_VER=
-SION)?;
-@@ -302,11 +302,16 @@ pub(crate) fn new(
+02 03 0d 00 68 1a 00 00 01 01 28 3c 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 06
 
-         Self::run_fwsec_frts(pdev.as_ref(), &gsp_falcon, bar, &bios, &fb_l=
-ayout)?;
+CSW MNE007QB3-1:
+edid-decode (hex):
 
--        Ok(pin_init!(Self {
-+        Ok(try_pin_init!(Self {
-             spec,
-             bar: devres_bar,
-             fw,
-             sysmem_flush,
-         }))
-     }
-+
-+    pub(crate) fn start_gsp(&self, _pdev: &pci::Device<device::Core>) -> R=
-esult {
-+        // noop
-+        Ok(())
-+    }
- }
+00 ff ff ff ff ff ff 00 0e 77 6e 14 00 00 00 00
+00 23 01 04 a5 1e 13 78 07 ee 95 a3 54 4c 99 26
+0f 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 35 3c 80 a0 70 b0 23 40 30 20
+36 00 2d bc 10 00 00 18 2b 30 80 a0 70 b0 23 40
+30 20 36 00 2d bc 10 00 00 18 00 00 00 fd 00 28
+3c 4a 4a 0f 01 0a 20 20 20 20 20 20 00 00 00 fc
+00 4d 4e 45 30 30 37 51 42 33 2d 31 0a 20 01 69
 
-But maybe it doesn't capture your intend?
+70 20 79 02 00 21 00 1d c8 0b 5d 07 80 07 b0 04
+00 3d 8a 54 cd a4 99 66 62 0f 02 45 54 40 5e 40
+5e 00 44 12 78 2e 00 06 00 44 40 5e 40 5e 81 00
+20 74 1a 00 00 03 01 28 3c 00 00 00 00 00 00 3c
+00 00 00 00 8d 00 e3 05 04 00 e6 06 01 00 60 60
+ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 68 90
 
->>
->> More in general, unsafe code should be the absolute last resort. If we a=
-dd new
->> unsafe code I'd love to see a comment justifying why there's no other wa=
-y than
->> using unsafe code for this, as we agreed in [2].
->>
->> I did a quick grep on this series and I see 21 occurrences of "unsafe", =
-if I
->> substract the ones for annotations and for FromBytes impls, it's still 9=
- new
->> ones. :(
->>
->> Do we really need all of them?
->
-> I've counted 16 uses of `unsafe`. :)
+CSW MNE007QS3-6:
+edid-decode (hex):
 
-I did a grep | wc on the mbox file, so it includes the 5 additional occurre=
-nces
-from the annotations. :)
+00 ff ff ff ff ff ff 00 0e 77 3f 14 00 00 00 00
+00 22 01 04 a5 1e 13 78 03 2c c5 94 5c 59 95 29
+1e 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 ea 3d 80 c8 70 b0 2e 40 30 20
+36 00 2e bd 10 00 00 1a 88 31 80 c8 70 b0 2e 40
+30 20 36 00 2e bd 10 00 00 1a 00 00 00 fd 00 28
+3c 4b 4b 10 01 0a 20 20 20 20 20 20 00 00 00 fc
+00 4d 4e 45 30 30 37 51 53 33 2d 36 0a 20 01 80
 
-Otherwise the 9 "real" ones I counted seem to match the 3 bindgen ones (fin=
-e of
-course) plus the 5 ones from the pin initializers (we should avoid them).
+70 20 79 02 00 81 00 14 74 1a 00 00 03 01 28 3c
+00 00 00 00 00 00 3c 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 9e 90
 
->
-> - 3 in the bindgen-generated code (these can't be avoided),
-> - 7 to implement `FromBytes`,
-> - 1 to work around the fact that `FromBytes` doesn't work on slices yet
->   (maybe that one can be removed)
-> - 5 as a result of intra-dependencies in PinInit initializers (which we
->   might be able to remove if I figure out how to use `pin_chain`).
->
-> So best-case scenario would be that we will be down to 10 that are truly
-> unavoidable.
+CMN N140JCA-ELK:
+edid-decode (hex):
+
+00 ff ff ff ff ff ff 00 0d ae 41 14 00 00 00 00
+25 21 01 04 a5 1e 13 78 03 28 65 97 59 54 8e 27
+1e 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 42 3c 80 a0 70 b0 24 40 30 20
+a6 00 2d bc 10 00 00 18 35 30 80 a0 70 b0 24 40
+30 20 a6 00 2d bc 10 00 00 18 00 00 00 fd 00 28
+3c 4b 4b 10 01 0a 20 20 20 20 20 20 00 00 00 fe
+00 4e 31 34 30 4a 43 41 2d 45 4c 4b 0a 20 01 14
+
+02 03 0d 00 68 1a 00 00 01 01 28 3c 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 06
+
+Signed-off-by: Zhongtian Wu <wuzhongtian@huaqin.corp-partner.google.com>
+---
+ drivers/gpu/drm/panel/panel-edp.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
+index 9a56e208cbdd..bd7243bdccbb 100644
+--- a/drivers/gpu/drm/panel/panel-edp.c
++++ b/drivers/gpu/drm/panel/panel-edp.c
+@@ -1949,6 +1949,7 @@ static const struct edp_panel_entry edp_panels[] = {
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cb6, &delay_200_500_e200, "NT116WHM-N44"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cfa, &delay_200_500_e50, "NV116WHM-A4D"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0d73, &delay_200_500_e80, "NE140WUM-N6S"),
++	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0a6a, &delay_200_500_e80, "NV140WUM-N44 V8.2"),
+ 
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x1130, &delay_200_500_e50, "N116BGE-EB2"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x1132, &delay_200_500_e80_d50, "N116BGE-EA2"),
+@@ -1978,6 +1979,7 @@ static const struct edp_panel_entry edp_panels[] = {
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x14d6, &delay_200_500_e80_d50, "N140BGA-EA4"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x14e5, &delay_200_500_e80_d50, "N140HGA-EA1"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x162b, &delay_200_500_e80_d50, "N160JCE-ELL"),
++	EDP_PANEL_ENTRY('C', 'M', 'N', 0x1441, &delay_200_500_e80_d50, "N140JCA-ELK"),
+ 
+ 	EDP_PANEL_ENTRY('C', 'S', 'O', 0x1200, &delay_200_500_e50_p2e200, "MNC207QS1-1"),
+ 	EDP_PANEL_ENTRY('C', 'S', 'O', 0x1413, &delay_200_500_e50_p2e200, "MNE007JA1-2"),
+@@ -1987,6 +1989,8 @@ static const struct edp_panel_entry edp_panels[] = {
+ 	EDP_PANEL_ENTRY('C', 'S', 'W', 0x1104, &delay_200_500_e50, "MNB601LS1-4"),
+ 	EDP_PANEL_ENTRY('C', 'S', 'W', 0x1448, &delay_200_500_e50, "MNE007QS3-7"),
+ 	EDP_PANEL_ENTRY('C', 'S', 'W', 0x1457, &delay_80_500_e80_p2e200, "MNE007QS3-8"),
++	EDP_PANEL_ENTRY('C', 'S', 'W', 0x146e, &delay_80_500_e50, "MNE007QB3-1"),
++	EDP_PANEL_ENTRY('C', 'S', 'W', 0x143f, &delay_200_500_e50, "MNE007QS3-6"),
+ 
+ 	EDP_PANEL_ENTRY('E', 'T', 'C', 0x0000, &delay_50_500_e200_d200_po2e335, "LP079QX1-SP0V"),
+ 
+-- 
+2.34.1
+
 
