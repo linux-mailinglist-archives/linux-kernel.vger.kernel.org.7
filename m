@@ -1,251 +1,262 @@
-Return-Path: <linux-kernel+bounces-799081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE6BB426BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:22:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD30B426C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C88158303E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:21:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5C31682062
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4AB2C11F2;
-	Wed,  3 Sep 2025 16:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4A62C21FB;
+	Wed,  3 Sep 2025 16:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o3fT6hQB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ckWGXJY6"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6098B2C0F76
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 16:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1434C2C11F9;
+	Wed,  3 Sep 2025 16:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756916499; cv=none; b=YJnr18Cqg4LVdp+BtMQCMjOD/hp3ld02lP2EVNA1YnTXQQ640liM7Btk+OaO3fdRa4Q7xu/4Oyl8QF7dAv5ZwMadKVu2GaY3Da40BKvK4buPf2w3F/+9ou4pEjDPSYzYEMS1wJHcpGUfUYZbOPcAPdjoru0trTeEzxNDbmO48FE=
+	t=1756916549; cv=none; b=nSB2BpxeprnxwzkTmCfCnpaKMNOtR0T2U0zbfv0uaRShWXU8QwNMnvkUFJae0FI7Br2JVap3VdgmcTFN7ur90eMcW8YoJKGwB9hd43+VGWnMIjtQ/efZNr8Ad0PmcBsR35SjR33UDzE9mjQEpT6RQYrJLC/ReEFD2pN49EC54zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756916499; c=relaxed/simple;
-	bh=5y9/LOX9VXnUof4KCobvcMPKBNq7SeIq0vgHO1bIvFk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=I+I42FL/anJF+X8k5/wovPNgAL843+miiLgXpJ4XD3ZOcRcZhq1DsB85ky/FatSWoB9LyPkZdPspHp48dXLWUcmkLFeGiJTWms4fQMPLDVjL8mSynZ1I1OL8IFU7VmSVPHLFdnHH69Dk6VJleWXfgI5o9W1tFc2Harlr93RJHPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o3fT6hQB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583Dx8k6030172
-	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 16:21:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WblTmxyDjkY/Gy6Np0QzctOFtRv2wJUtvij+J2fOPmM=; b=o3fT6hQBKDarPClj
-	xKlKuDA1F99ReCeiSW5x3LqlBxMymbxP0+1ZsVAJJQmVdWQ5VQ9w3MmscUQPeWDM
-	B9kfuuEIKtRbngubHPqtyZGbdakP9D+wcBOcenHEboo1JB+rYf0kBiKeS1GDMUPL
-	XRgswhtEoXWLZS2RAlArSLmNeyf1I+9AU2bitWgOC4UHdj3LaUN2Ri9QR0sc5Eca
-	9d4SVxQ6uFTv/YbH3gSizr2i3ml9QbMnzPsk40pxkP8MBdV/k0AlWNVExWV7bcbh
-	Hziui7zSG4Mj0bKst92JRGjhQXpPL4TvEPFZMp6CR5bGYv8qY7/Clxp2jXKLu6WF
-	eQmu2w==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48upnpchku-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 16:21:36 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b32fe42b83so1660591cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 09:21:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756916494; x=1757521294;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WblTmxyDjkY/Gy6Np0QzctOFtRv2wJUtvij+J2fOPmM=;
-        b=kOv2/Yqcg/RcVG+oXcLnkTR5bgdnSweVy+8BG+YAMzuM+l9CyWs37tLr2M9A4xVJv/
-         IpT4XcXn4C+9R7jjxvotie3X7gRziIdIqnZilST01wf12sEeM+lX9o9U9v5WF4RUVZ+3
-         +RXn62szGlRP2RIC/1G83ZlDp3M7c2K9HPMOg6nDqttvyF3LnZzAPZ32YDo/jiQbBrKb
-         nFrtNdU8DsqYlOO1ZQvDDlVh+ORfCvsi29iluR5d2fIyodx2l/wsW+OFzsQMEtiFJlVw
-         eHVDtx4U/P1/raHJL12QqKsDNsbVbcLMPQXxEBYgNdXmvmSa5NhRUuOO3LnJdvxjTryx
-         O6/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUcE6e6FDXB8X1VQul0lHgfybzwzFNe/f/z5EGi9a3ixb9dsvSlS/Lv7zgQ0ONNlwHelH1cFROQXBDUu9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIEc8m8MP29W4Laq1u0hqQYc3HbMJMkNr+i+5Z7trhNAxB13HJ
-	mScbtVHp6EidkdvLXBaDMfAHTks2giruJ+Jr8TxxSncKXda/MNm2TJWJ9vb1IeU26FmWMflGlq3
-	j5dcd65gl44isWkaBtU9/dnW9PEN4SCGoXAhaiESCN7/3Wxymk/SwBzH+Q/WA4Zlriac=
-X-Gm-Gg: ASbGncuvgBrmixmiTIoKbX0huvyHwNPBqJalpCVxqtNbl2ldESTPMay7gRDfEQPDeAn
-	EMcCJNWt0KWHqFf4cF6Sd8JKeMGxT36zF2jYdqK8Vap1AbgY9OhVfZRhgQ+ymLTZoCyPX77ltOq
-	wkrNE/peeOPMxaPhIh2j0G8bR4xs5Hmp+e92KWYub//uVb161WtwlMSR+sJJ6irK2kvcaVAYbph
-	ESegC3rCrD9d0e+goZ9IWBPNOkImoL9iXne8XARrTlK82ECZJ2LZLlblIz6n/FiScxP1cYWrVsa
-	8yS53CbRrwOofrSuU2GSFGtFRmFQT99dWc7Y1VSCfstzHQNfaj8d0iP6gxvlPs6QUzl14r0ANEj
-	RVDOGA2Qy1YKi4Xl6RCNi46zTK20s3QAKOB62nJpkqZUrjv3MAmFW
-X-Received: by 2002:a05:622a:4207:b0:4b0:8633:f979 with SMTP id d75a77b69052e-4b31da18e7emr190317601cf.42.1756916494128;
-        Wed, 03 Sep 2025 09:21:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGH6zK6ssgJ2R6k42L+9KHbyZ0IHREZqlNOx6b6c/oWVi7dL5fUo5H5X1oTc/ZVSF9H6KnihA==
-X-Received: by 2002:a05:622a:4207:b0:4b0:8633:f979 with SMTP id d75a77b69052e-4b31da18e7emr190317081cf.42.1756916493380;
-        Wed, 03 Sep 2025 09:21:33 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608acfc24fsm608343e87.104.2025.09.03.09.21.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 09:21:32 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Wed, 03 Sep 2025 19:21:29 +0300
-Subject: [PATCH 2/2] drm/bridge: write full Audio InfoFrame
+	s=arc-20240116; t=1756916549; c=relaxed/simple;
+	bh=jZZngHPqPl0jzwcdfvrr1f4Qb2IcADssB2yhQ8TzxcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=baq3aDb0EWQddY6kEM4Fx8EdOFzocIHwVA8yUORvZTJA1ID6HCryWN87tWEdUD3SyPP7iXlE9cpUy2xb+l3/vjoqUY1V/2RvJXM/MlYRxmoakoDvPnMG71rewf673TwafGpuHdT4+Ggh87LS5yUsUVrh2r5bAUwYQLfYmbqNMX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ckWGXJY6; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D9C9D40E00DE;
+	Wed,  3 Sep 2025 16:22:23 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id E8Z0PEJV3Z0l; Wed,  3 Sep 2025 16:22:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756916539; bh=Yg2x7twhatQMmLV35XK8qG2QDsmMBwv2i1ZvKyXM5L4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ckWGXJY6kAmZFF3NcGYnYQBkLFal1wh6zbcZMyxsAhCJ2kmjvs25HfuEDLs0fXcke
+	 vDvLQ+vlaIfa9HJdiXRbf/lgDYYHI+rA4e4Y+QrvC5THuDOnIBWClTTdTNRc3+icST
+	 QXKvSTbOPbrX311b6IpDhhn+w2gLDaLjW23lPgqrtjDe8owJQAttmpovsB5dO4D/Ka
+	 uwlS2J2JF7M3RWW3ssoZy2ZjuFUrlXrVowxlNxAJQ4NJtk6w/UgLngc6kG791E0GIf
+	 +bcSocNkFAmnq4QO1tswaETQevGgNoPFZsnRO2Ivami7hXU3WuB5g1IRk2k6rYe7gA
+	 UDTYFZ1yr9EHQ84uWrsfsOp8I9NVLTKf5wY4uohyvTu7hReK2YkQp8di95JBsaGwIc
+	 0J9FiXN6sUvEjz9rjtBKbLsqe8VEyjZNxmPyJQjmrhfHQuUClFgjtqnqyuLXpwdnfa
+	 uMOdo1Bi3iy2JW3d6ZgZgHevd5q8MTYCVl5XAhZwvsbwivfIIA4pmRw70uI8I7mVmi
+	 8qd4BXAVfCR/1Vi51WsWmWrCobLMM8olynHCBKY8mzBO6rTgei1yqdYyMaFvytdF3r
+	 r0gwvXafBovgll6syanewcLDjp0fiopVoktMItFz1J8+4bboo/UzpS7ztG5d4MhflD
+	 rFO2rVeGW6f8l76j2ttCgZLw=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id EDAF140E0163;
+	Wed,  3 Sep 2025 16:22:06 +0000 (UTC)
+Date: Wed, 3 Sep 2025 18:22:00 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb+git@google.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nikunj A Dadhania <nikunj@amd.com>
+Subject: Re: [PATCH v7 00/22] x86: strict separation of startup code
+Message-ID: <20250903162200.GIaLhrKOJeL6ThYHa1@fat_crate.local>
+References: <20250828102202.1849035-24-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-adv7511-audio-infoframe-v1-2-05b24459b9a4@oss.qualcomm.com>
-References: <20250903-adv7511-audio-infoframe-v1-0-05b24459b9a4@oss.qualcomm.com>
-In-Reply-To: <20250903-adv7511-audio-infoframe-v1-0-05b24459b9a4@oss.qualcomm.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4464;
- i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=5y9/LOX9VXnUof4KCobvcMPKBNq7SeIq0vgHO1bIvFk=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBouGsJveN4HLdRJ8IB5G8+U9Lh400HQd/qR/T00
- LyCEoIaB0OJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaLhrCQAKCRCLPIo+Aiko
- 1fxGB/9i3ZzB7usHFqhtwX/AFclaoIjm5lOEq0SjPg3IatQhhYWvXzUKoJgIEx47Ly+sY9XmZG/
- hvVqt0r/1SC1x1ib/bAkJEMBmm+8WBiufKY5J9ox3ne5zMhVE+IO/yF3FfUsdvJBFCvRoX+fySk
- +gOI4L9aTx79Rg+rfgkgManrj+KUMN+Rx44s3IdvccpLMSNbRUe+YOqxQlbjPErz1bTsjJZzXAN
- VCFJD/j6fJDooSxe8URS8RX0dhojc7T+kqRjhf50oG6S07TVCK4hueuZrLiJgSiEVaNEOiN7t/7
- oh4av779flz+47IRLbqZAGwaH8KTc/SK2cnfWHxD84KNa5Ky
-X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-GUID: _d2fdZyftz40d6ajI2OOnkm2t15GSQOW
-X-Authority-Analysis: v=2.4 cv=Jt/xrN4C c=1 sm=1 tr=0 ts=68b86b10 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=hApPcyOduhRKQ7iII6kA:9 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-ORIG-GUID: _d2fdZyftz40d6ajI2OOnkm2t15GSQOW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAwMSBTYWx0ZWRfX5xKBpNCdft9+
- /CX5AiBebqr4X+sElaVMZ2jtXeCIU/9eNw9ua8Or3PyYg3XRoDXw8RCDIDk+UjI4uAXNczjt/9E
- ylQCslrCJS6BHtPSG+9JqpwgISRqbw/4Hgv1ikVfQZLL7TV6cIoH0mK8DdgmrMOPK007oIoNv/R
- mDxFGPt39J7M7WsuI7GxDQ+Mlv8pPitdpOMmSOp6qKsXPtxiMOpN0tmjFkxSUzwJFKGX3zb8f4Q
- bUqwFv6F//UzQWEboy+gPANvuAgfYmioEjaGomKzufrH5L2oL+JXBhc4yv9aIYMRchP39ythyUV
- KZyEVyM2nNUSFF8P9YevITW3LkDbRZGk3yqqgU1qHRcU7Bjft9gr9C8bb0CqaFJYG5WH/dUb0MC
- XOUrzygJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_08,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0
- spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300001
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250828102202.1849035-24-ardb+git@google.com>
 
-Instead of writing the first byte of the infoframe (and hoping that the
-rest is default / zeroes), hook Audio InfoFrame support into the
-write_infoframe / clear_infoframes callbacks and use
-drm_atomic_helper_connector_hdmi_update_audio_infoframe() to write the
-frame.
+On Thu, Aug 28, 2025 at 12:22:03PM +0200, Ard Biesheuvel wrote:
+> Changes since v6:
+> - Rebase onto latest tip/master which incorporates v6.17-rc1a
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+...
+
+So, due to the interactions with the Secure AVIC stuff, I've been doing some
+patch tetris. Two patches: the first one goes ontop of x86/apic and the second
+one goes ontop of this set.
+
+Will run some build tests with them first tho...
+
+patch 1:
+
 ---
- drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 23 ++++++-----------------
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c   | 18 ++++++++++++++++++
- 2 files changed, 24 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-index 766b1c96bc887d228492cd7ab0d61094590fa876..87e7e820810a886af8e899410c51e729200f3222 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-@@ -12,6 +12,8 @@
- #include <sound/soc.h>
- #include <linux/of_graph.h>
+commit aa532319e46228422f7deb8d54853c4b218276f1 (HEAD -> refs/heads/tip-x86-apic)
+Author: Borislav Petkov (AMD) <bp@alien8.de>
+Date:   Wed Sep 3 17:42:05 2025 +0200
+
+    WIP
+    
+    Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index b64f43010a12..e858e2979db0 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -1129,7 +1129,7 @@ u64 savic_ghcb_msr_read(u32 reg)
+ 	if (res != ES_OK) {
+ 		pr_err("Secure AVIC MSR (0x%llx) read returned error (%d)\n", msr, res);
+ 		/* MSR read failures are treated as fatal errors */
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
+ 	}
  
-+#include <drm/display/drm_hdmi_state_helper.h>
-+
- #include "adv7511.h"
+ 	__sev_put_ghcb(&state);
+@@ -1159,7 +1159,7 @@ void savic_ghcb_msr_write(u32 reg, u64 value)
+ 	if (res != ES_OK) {
+ 		pr_err("Secure AVIC MSR (0x%llx) write returned error (%d)\n", msr, res);
+ 		/* MSR writes should never fail. Any failure is fatal error for SNP guest */
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
+ 	}
  
- static void adv7511_calc_cts_n(unsigned int f_tmds, unsigned int fs,
-@@ -155,17 +157,8 @@ int adv7511_hdmi_audio_prepare(struct drm_bridge *bridge,
- 	regmap_update_bits(adv7511->regmap, ADV7511_REG_I2C_FREQ_ID_CFG,
- 			   ADV7511_I2C_FREQ_ID_CFG_RATE_MASK, rate << 4);
+ 	__sev_put_ghcb(&state);
+diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
+index 0020d77a0800..01a6e4dbe423 100644
+--- a/arch/x86/include/asm/sev-common.h
++++ b/arch/x86/include/asm/sev-common.h
+@@ -208,6 +208,7 @@ struct snp_psc_desc {
+ #define GHCB_TERM_SVSM_CAA		9	/* SVSM is present but CAA is not page aligned */
+ #define GHCB_TERM_SECURE_TSC		10	/* Secure TSC initialization failed */
+ #define GHCB_TERM_SVSM_CA_REMAP_FAIL	11	/* SVSM is present but CA could not be remapped */
++#define GHCB_TERM_SAVIC_FAIL		12	/* Secure AVIC-specific failure */
  
--	/* send current Audio infoframe values while updating */
--	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
--			   BIT(5), BIT(5));
--
--	regmap_write(adv7511->regmap, ADV7511_REG_AUDIO_INFOFRAME(0), 0x1);
--
--	/* use Audio infoframe updated info */
--	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
--			   BIT(5), 0);
--
--	return 0;
-+	return drm_atomic_helper_connector_hdmi_update_audio_infoframe(connector,
-+								       &hparms->cea);
+ #define GHCB_RESP_CODE(v)		((v) & GHCB_MSR_INFO_MASK)
+ 
+diff --git a/arch/x86/kernel/apic/x2apic_savic.c b/arch/x86/kernel/apic/x2apic_savic.c
+index b846de0fbcfa..2b82bb64055a 100644
+--- a/arch/x86/kernel/apic/x2apic_savic.c
++++ b/arch/x86/kernel/apic/x2apic_savic.c
+@@ -363,7 +363,7 @@ static void savic_setup(void)
+ 	 */
+ 	res = savic_register_gpa(gpa);
+ 	if (res != ES_OK)
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
+ 
+ 	native_wrmsrq(MSR_AMD64_SAVIC_CONTROL,
+ 		      gpa | MSR_AMD64_SAVIC_EN | MSR_AMD64_SAVIC_ALLOWEDNMI);
+@@ -376,13 +376,13 @@ static int savic_probe(void)
+ 
+ 	if (!x2apic_mode) {
+ 		pr_err("Secure AVIC enabled in non x2APIC mode\n");
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
+ 		/* unreachable */
+ 	}
+ 
+ 	savic_page = alloc_percpu(struct secure_avic_page);
+ 	if (!savic_page)
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);;
+ 
+ 	return 1;
  }
+
+---
+
+patch 2
+
+---
+
+commit 07d41a19c5a01506e1080e352c26c50c8dce6e6b (refs/remotes/ps2/tip-x86-sev, refs/remotes/ps2/HEAD)
+Author: Borislav Petkov (AMD) <bp@alien8.de>
+Date:   Wed Sep 3 18:14:54 2025 +0200
+
+    WIP
+    
+    Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+
+diff --git a/arch/x86/boot/startup/sev-startup.c b/arch/x86/boot/startup/sev-startup.c
+index 39465a0ff4e5..a9b0a9c32d8f 100644
+--- a/arch/x86/boot/startup/sev-startup.c
++++ b/arch/x86/boot/startup/sev-startup.c
+@@ -144,7 +144,7 @@ static struct cc_blob_sev_info *__init find_cc_blob(struct boot_params *bp)
  
- int adv7511_hdmi_audio_startup(struct drm_bridge *bridge,
-@@ -188,15 +181,9 @@ int adv7511_hdmi_audio_startup(struct drm_bridge *bridge,
- 	/* not copyrighted */
- 	regmap_update_bits(adv7511->regmap, ADV7511_REG_AUDIO_CFG1,
- 				BIT(5), BIT(5));
--	/* enable audio infoframes */
--	regmap_update_bits(adv7511->regmap, ADV7511_REG_PACKET_ENABLE1,
--				BIT(3), BIT(3));
- 	/* AV mute disable */
- 	regmap_update_bits(adv7511->regmap, ADV7511_REG_GC(0),
- 				BIT(7) | BIT(6), BIT(7));
--	/* use Audio infoframe updated info */
--	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
--				BIT(5), 0);
+ found_cc_info:
+ 	if (cc_info->magic != CC_BLOB_SEV_HDR_MAGIC)
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
  
- 	/* enable SPDIF receiver */
- 	if (adv7511->audio_source == ADV7511_AUDIO_SOURCE_SPDIF)
-@@ -214,4 +201,6 @@ void adv7511_hdmi_audio_shutdown(struct drm_bridge *bridge,
- 	if (adv7511->audio_source == ADV7511_AUDIO_SOURCE_SPDIF)
- 		regmap_update_bits(adv7511->regmap, ADV7511_REG_AUDIO_CONFIG,
- 				   BIT(7), 0);
-+
-+	drm_atomic_helper_connector_hdmi_clear_audio_infoframe(connector);
+ 	return cc_info;
  }
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-index 26f8310382d8d1632dda5185b2b0230b59a6063a..b9be8654130758e69ac7ccbc73a82cc25d731a5c 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -893,6 +893,9 @@ static int adv7511_bridge_hdmi_clear_infoframe(struct drm_bridge *bridge,
- 	struct adv7511 *adv7511 = bridge_to_adv7511(bridge);
+@@ -218,8 +218,3 @@ bool __init snp_init(struct boot_params *bp)
  
- 	switch (type) {
-+	case HDMI_INFOFRAME_TYPE_AUDIO:
-+		adv7511_packet_disable(adv7511, ADV7511_PACKET_ENABLE_AUDIO_INFOFRAME);
-+		break;
- 	case HDMI_INFOFRAME_TYPE_AVI:
- 		adv7511_packet_disable(adv7511, ADV7511_PACKET_ENABLE_AVI_INFOFRAME);
- 		break;
-@@ -917,6 +920,21 @@ static int adv7511_bridge_hdmi_write_infoframe(struct drm_bridge *bridge,
- 	struct adv7511 *adv7511 = bridge_to_adv7511(bridge);
+ 	return true;
+ }
+-
+-void __init __noreturn snp_abort(void)
+-{
+-	sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
+-}
+diff --git a/arch/x86/boot/startup/sme.c b/arch/x86/boot/startup/sme.c
+index 2ddde901c8c5..e7ea65f3f1d6 100644
+--- a/arch/x86/boot/startup/sme.c
++++ b/arch/x86/boot/startup/sme.c
+@@ -532,7 +532,7 @@ void __init sme_enable(struct boot_params *bp)
+ 	 * enablement abort the guest.
+ 	 */
+ 	if (snp_en ^ !!(msr & MSR_AMD64_SEV_SNP_ENABLED))
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
  
- 	switch (type) {
-+	case HDMI_INFOFRAME_TYPE_AUDIO:
-+		/* send current Audio infoframe values while updating */
-+		regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
-+				   BIT(5), BIT(5));
-+
-+		/* The Audio infoframe id is not configurable */
-+		regmap_bulk_write(adv7511->regmap, ADV7511_REG_AUDIO_INFOFRAME_VERSION,
-+				  buffer + 1, len - 1);
-+
-+		/* use Audio infoframe updated info */
-+		regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
-+				   BIT(5), 0);
-+
-+		adv7511_packet_enable(adv7511, ADV7511_PACKET_ENABLE_AUDIO_INFOFRAME);
-+		break;
- 	case HDMI_INFOFRAME_TYPE_AVI:
- 		/* send current AVI infoframe values while updating */
- 		regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
+ 	/* Check if memory encryption is enabled */
+ 	if (feature_mask == AMD_SME_BIT) {
+diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+index f222bef9dca8..32c7dd916e4b 100644
+--- a/arch/x86/include/asm/sev.h
++++ b/arch/x86/include/asm/sev.h
+@@ -512,7 +512,6 @@ void snp_set_memory_shared(unsigned long vaddr, unsigned long npages);
+ void snp_set_memory_private(unsigned long vaddr, unsigned long npages);
+ void snp_set_wakeup_secondary_cpu(void);
+ bool snp_init(struct boot_params *bp);
+-void __noreturn snp_abort(void);
+ void snp_dmi_setup(void);
+ int snp_issue_svsm_attest_req(u64 call_id, struct svsm_call *call, struct svsm_attest_call *input);
+ void snp_accept_memory(phys_addr_t start, phys_addr_t end);
+@@ -597,7 +596,6 @@ static inline void snp_set_memory_shared(unsigned long vaddr, unsigned long npag
+ static inline void snp_set_memory_private(unsigned long vaddr, unsigned long npages) { }
+ static inline void snp_set_wakeup_secondary_cpu(void) { }
+ static inline bool snp_init(struct boot_params *bp) { return false; }
+-static inline void snp_abort(void) { }
+ static inline void snp_dmi_setup(void) { }
+ static inline int snp_issue_svsm_attest_req(u64 call_id, struct svsm_call *call, struct svsm_attest_call *input)
+ {
+diff --git a/tools/objtool/noreturns.h b/tools/objtool/noreturns.h
+index 6a922d046b8e..802895fae3ca 100644
+--- a/tools/objtool/noreturns.h
++++ b/tools/objtool/noreturns.h
+@@ -45,7 +45,6 @@ NORETURN(rewind_stack_and_make_dead)
+ NORETURN(rust_begin_unwind)
+ NORETURN(rust_helper_BUG)
+ NORETURN(sev_es_terminate)
+-NORETURN(snp_abort)
+ NORETURN(start_kernel)
+ NORETURN(stop_this_cpu)
+ NORETURN(usercopy_abort)
+
 
 -- 
-2.47.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
