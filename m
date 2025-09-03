@@ -1,302 +1,90 @@
-Return-Path: <linux-kernel+bounces-798736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 956AEB42241
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:43:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E99B4221D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274181A849B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:44:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1EBE17BBF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C6130BF78;
-	Wed,  3 Sep 2025 13:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F30304967;
+	Wed,  3 Sep 2025 13:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="oCcQ+uML";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="CkAiWh1f"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fGnE1oZ+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E629430ACFD;
-	Wed,  3 Sep 2025 13:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403FD3043CD;
+	Wed,  3 Sep 2025 13:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756907008; cv=none; b=OwzC3iqeartMyPgJN7PWXjC6HSwX9JiFUnW1RPdn/A8ojkQU/DS64so7+wuI1SJqwCMYa1UMn8uXhdh2Ruz4kbGM7Vq7xhU62eNKP5ngLUd7PIQ6JZ8t1bAMQ5YFAU6MD4BJY8NvX2VhriJXL/DHnghkS5Hb64py66e+SVDN73o=
+	t=1756906820; cv=none; b=Hi+bKL9t9FZaXadZF1RAzKHxQfVjZ7N/7WkKc9ei5ciwXpmtpsY6lecqGK7vj/nGaAnRRI94CP5tPjjczzyqWm2k09wRSaLMIvJrnKzPmXYm76pK/ZeN+MLI/Vni1R1JbwgpnOFWBO/omuABzHmm+6fKo4LamxXikWOoeRmLiLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756907008; c=relaxed/simple;
-	bh=LiTD58crriff3+i/DaZ/JHdbeZ6OC8m8NyrMya/WK7E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TZnn3ORFmggS+iRI/ZKpl2FGJM6Of/YnpcxlvPHuGKjdbElg+0ZsvC7NSbXcF27nFwbg0edaJbHdu42hdx3vVLEiuM0OYh/UoyMT4TtcuTdyZbPa5pisgjRVfu9IKS+NDOTXVvaMdC7+jxs/lDZznwwwchCB8H8FPkfkj2RPa1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=oCcQ+uML; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=CkAiWh1f; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1756906767; bh=NjgRbnbloalJci5IXWJUBIo
-	93R7X5a+c4GaQ8qoKnVE=; b=oCcQ+uMLjMry4N87fgxjtEktYKzDxtBvDkZDlc5oho6xSqAy8b
-	CNuJrVeOxfWOoP/8NCQUJ5UlKIoKxQYaycb6ORr2kfF3HMHbfQlD8sjkCilXIcQojVRqNJvaexC
-	jGBdIZkZJgG9ghzTKnoLDulrshY5WZZYJyXuD58MXtBIn6lpLq1AjGJAsLunwbgwhLrD5LGMonP
-	h4bBHpt7mSYJlXv7gdic8G0vYo01abe43hR9ttzRhv833OSmPt4X5KgjSYQKfzuFJ8ZXD0m5XU1
-	tnAFepGhWKeF7U3LOu2CQnIvZgtFq7QFEr4ZMcOJUsklEteZQtGEtIw6Mr6zadzCL1A==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1756906767; bh=NjgRbnbloalJci5IXWJUBIo
-	93R7X5a+c4GaQ8qoKnVE=; b=CkAiWh1fTgJSKn+rS7u+D1My4+MEQBe3P51TjkyRbwRxeXKxBc
-	BQ2ed8tTxPwsq++r3NaAmoIoJ5pYWuDnhTAQ==;
-From: Nickolay Goppen <setotau@mainlining.org>
-Date: Wed, 03 Sep 2025 16:39:03 +0300
-Subject: [PATCH v5 3/3] pinctrl: qcom: Add SDM660 LPASS LPI TLMM
+	s=arc-20240116; t=1756906820; c=relaxed/simple;
+	bh=lvv5D8mnkMTlnoYs3i3HuxRJ3lgI3ZhGxgUn/QmY3UM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Oj076V26baOGB3iNLVro/WwkcU1vdfX/qquTAWR5XFuQO3OokIVOYeF6OaU2nK1xB9G1GqeFnf9th/xHt7d4Jsb5tPojvIEJfCs+1tAfCxK/0J/Gx4aQOUj6zlaAbnInS5MLbzHSomkJubF6IFLWXt+utakHdI/zmXE7XfLtkEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fGnE1oZ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1D8BC4CEF7;
+	Wed,  3 Sep 2025 13:40:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756906819;
+	bh=lvv5D8mnkMTlnoYs3i3HuxRJ3lgI3ZhGxgUn/QmY3UM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fGnE1oZ+39/GuuoRDaaTkt8MY88oEZU5KWK1TUP3Wr1jdXKmEgQIkCCuj+DkbZZLJ
+	 85aUZR0NHrhz3PIWsZTLVJiIFkYbd53gnDJmFxm/bObU3P2udHHEbRa0tztPuSdNKu
+	 ew1FDTCuquP/YVUMFlzLHuYnTaxYOcbz5pHm6O+zCGMhZ9WdU/9Nn40wP1Y/PjWfSq
+	 FbIg9+gIJdb4zfVUU1kHSu6fuYjcS8TPsnWGMQ10yoWh0blkYIyayjZO8QZqIlAbk6
+	 8a1D5zZubfGAeEYGozDY8IyEXKEaBDz2+TIdhlW2XPassEPrCXyH51+mCmy9PXwmzn
+	 E4dcNNhICy7Hw==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61e425434bbso5667078a12.2;
+        Wed, 03 Sep 2025 06:40:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUHE6u5hJShq0wFSFCQopxGWdcCNkAzR7NWE/oIeqhCIqs5KLwlkmmYc1xHF/hHIEYfrgtWzcMHf4k2WAnL@vger.kernel.org, AJvYcCWn2TMOM/AefxnwyFQs1Gz6fRF+BuTIVPbz7CfyKwwx/BhkAEiCBm47fd9CE/dXRBYi5GOSV7coi4PD@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP9INLEqhQ1MT/Ztayr6giBbV1/IvBVJ8Fdms0RDJ+UJnprTpn
+	aNA2lBdOKDLBVsbJT7kBjfBbv7l8uuPkG8vqfz8aAiWjXpOwZf6Uq4E8KkPR43yGaoLspViPyhR
+	V2nIX2OkXUWjl5U5kET8HioxXooZxlg==
+X-Google-Smtp-Source: AGHT+IEI5rONWAGmUuQ0T6juo/pf8XchiICM5ct7ySlMdcsLqlsl5dtas428fYuAutHdVTYx18c+P5yWiK2OhZsk7uQ=
+X-Received: by 2002:a05:6402:2547:b0:61a:7e43:662b with SMTP id
+ 4fb4d7f45d1cf-61d26d78762mr15929022a12.27.1756906818326; Wed, 03 Sep 2025
+ 06:40:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-sdm660-lpass-lpi-v5-3-fe171098b6a1@mainlining.org>
-References: <20250903-sdm660-lpass-lpi-v5-0-fe171098b6a1@mainlining.org>
-In-Reply-To: <20250903-sdm660-lpass-lpi-v5-0-fe171098b6a1@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Nickolay Goppen <setotau@mainlining.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org, 
- Nickolay Goppen <setotau@yandex.ru>, 
- Richard Acayan <mailingradian@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756906764; l=9035;
- i=setotau@mainlining.org; s=20250815; h=from:subject:message-id;
- bh=jdzMsv0I5+K+keZvN/8JiUh48jrg0P9XtfLOUtNOfFE=;
- b=iwZmA1NhBxkZhtbvGD++aUkIHaRSGd4lfc5mEk7mzJqtdlOw1VbwIwHHD7VUVaFpDooWhun/J
- COnyhywxnaiCQ6cHEQwCDuPYGBI+xgzXuYTeScoaV3yPMTV7H0PKOuw
-X-Developer-Key: i=setotau@mainlining.org; a=ed25519;
- pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
+References: <20250829211330.1336274-1-robh@kernel.org> <0c815a7562551caf3960cd38b5d867c80747de4b.camel@codeconstruct.com.au>
+In-Reply-To: <0c815a7562551caf3960cd38b5d867c80747de4b.camel@codeconstruct.com.au>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 3 Sep 2025 08:40:06 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJmTmb3GF+CvidWhzgoDP60tb=BtggMcyEP_Ev9dNtjAQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwNsWO5DYzNPykwatojxDlJys_qPpKp_KZ_wSvZHEoXKmrvoXoQmYLtNWw
+Message-ID: <CAL_JsqJmTmb3GF+CvidWhzgoDP60tb=BtggMcyEP_Ev9dNtjAQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: aspeed: Drop syscon "reg-io-width" properties
+To: Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Joel Stanley <joel@jms.id.au>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Richard Acayan <mailingradian@gmail.com>
+On Wed, Sep 3, 2025 at 2:18=E2=80=AFAM Andrew Jeffery
+<andrew@codeconstruct.com.au> wrote:
+>
+> On Fri, 2025-08-29 at 16:13 -0500, Rob Herring (Arm) wrote:
+> > The default width is 4 bytes for "syscon" devices, so "reg-io-width" is
+> > redundant and can be dropped.
+>
+> I had a quick look in the syscon bindings and can't see that this is
+> documented? The driver implementation behaves this way though.
 
-The Snapdragon 660 has a Low-Power Island (LPI) TLMM for configuring
-pins related to audio. Add the driver for this.
-Also, this driver uses predefined pin_offsets for each pin taken from
-downstream driver, which does not follow the usual 0x1000 distance
-between pins and uses an array with predefined offsets that do not
-follow any regular pattern [1].
+It's not. I suppose we could add that to syscon-common.yaml, but
+that's only documentation. It has 0 effect on the schema validation. I
+would guess we have hundreds of syscon's that rely on the default.
 
-[1] https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/LA.UM.7.2.c27-07400-sdm660.0/drivers/pinctrl/qcom/pinctrl-lpi.c#L107
-
-Signed-off-by: Richard Acayan <mailingradian@gmail.com>
-Co-developed-by: Nickolay Goppen <setotau@mainlining.org>
-Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
----
- drivers/pinctrl/qcom/Kconfig                    |  10 ++
- drivers/pinctrl/qcom/Makefile                   |   1 +
- drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c | 161 ++++++++++++++++++++++++
- 3 files changed, 172 insertions(+)
-
-diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-index dd9bbe8f3e11c37418d2143b33c21eeea10d456b..ef42520115f461302098d878cb76c6f25e55b5e4 100644
---- a/drivers/pinctrl/qcom/Kconfig
-+++ b/drivers/pinctrl/qcom/Kconfig
-@@ -68,6 +68,16 @@ config PINCTRL_SC7280_LPASS_LPI
- 	  Qualcomm Technologies Inc LPASS (Low Power Audio SubSystem) LPI
- 	  (Low Power Island) found on the Qualcomm Technologies Inc SC7280 platform.
- 
-+config PINCTRL_SDM660_LPASS_LPI
-+	tristate "Qualcomm Technologies Inc SDM660 LPASS LPI pin controller driver"
-+	depends on GPIOLIB
-+	depends on ARM64 || COMPILE_TEST
-+	depends on PINCTRL_LPASS_LPI
-+	help
-+	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-+	  Qualcomm Technologies Inc LPASS (Low Power Audio SubSystem) LPI
-+	  (Low Power Island) found on the Qualcomm Technologies Inc SDM660 platform.
-+
- config PINCTRL_SM4250_LPASS_LPI
- 	tristate "Qualcomm Technologies Inc SM4250 LPASS LPI pin controller driver"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
-index 2acff520a285a47a4a179f815402adaa5ce5addd..a81c1e127897a50fb2136c5eb38a076ebe5709a6 100644
---- a/drivers/pinctrl/qcom/Makefile
-+++ b/drivers/pinctrl/qcom/Makefile
-@@ -44,6 +44,7 @@ obj-$(CONFIG_PINCTRL_SC7280_LPASS_LPI) += pinctrl-sc7280-lpass-lpi.o
- obj-$(CONFIG_PINCTRL_SC8180X)	+= pinctrl-sc8180x.o
- obj-$(CONFIG_PINCTRL_SC8280XP)	+= pinctrl-sc8280xp.o
- obj-$(CONFIG_PINCTRL_SDM660)   += pinctrl-sdm660.o
-+obj-$(CONFIG_PINCTRL_SDM660_LPASS_LPI) += pinctrl-sdm660-lpass-lpi.o
- obj-$(CONFIG_PINCTRL_SDM670) += pinctrl-sdm670.o
- obj-$(CONFIG_PINCTRL_SDM845) += pinctrl-sdm845.o
- obj-$(CONFIG_PINCTRL_SDX55) += pinctrl-sdx55.o
-diff --git a/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..a8dae43f19c3cf5025bf17860685d05407305c11
---- /dev/null
-+++ b/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c
-@@ -0,0 +1,161 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * This driver is solely based on the limited information in downstream code.
-+ * Any verification with schematics would be greatly appreciated.
-+ *
-+ * Copyright (c) 2023, Richard Acayan. All rights reserved.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+
-+#include "pinctrl-lpass-lpi.h"
-+
-+enum lpass_lpi_functions {
-+	LPI_MUX_comp_rx,
-+	LPI_MUX_dmic1_clk,
-+	LPI_MUX_dmic1_data,
-+	LPI_MUX_dmic2_clk,
-+	LPI_MUX_dmic2_data,
-+	LPI_MUX_mclk0,
-+	LPI_MUX_pdm_tx,
-+	LPI_MUX_pdm_clk,
-+	LPI_MUX_pdm_rx,
-+	LPI_MUX_pdm_sync,
-+
-+	LPI_MUX_gpio,
-+	LPI_MUX__,
-+};
-+
-+static const struct pinctrl_pin_desc sdm660_lpi_pinctrl_pins[] = {
-+	PINCTRL_PIN(0, "gpio0"),
-+	PINCTRL_PIN(1, "gpio1"),
-+	PINCTRL_PIN(2, "gpio2"),
-+	PINCTRL_PIN(3, "gpio3"),
-+	PINCTRL_PIN(4, "gpio4"),
-+	PINCTRL_PIN(5, "gpio5"),
-+	PINCTRL_PIN(6, "gpio6"),
-+	PINCTRL_PIN(7, "gpio7"),
-+	PINCTRL_PIN(8, "gpio8"),
-+	PINCTRL_PIN(9, "gpio9"),
-+	PINCTRL_PIN(10, "gpio10"),
-+	PINCTRL_PIN(11, "gpio11"),
-+	PINCTRL_PIN(12, "gpio12"),
-+	PINCTRL_PIN(13, "gpio13"),
-+	PINCTRL_PIN(14, "gpio14"),
-+	PINCTRL_PIN(15, "gpio15"),
-+	PINCTRL_PIN(16, "gpio16"),
-+	PINCTRL_PIN(17, "gpio17"),
-+	PINCTRL_PIN(18, "gpio18"),
-+	PINCTRL_PIN(19, "gpio19"),
-+	PINCTRL_PIN(20, "gpio20"),
-+	PINCTRL_PIN(21, "gpio21"),
-+	PINCTRL_PIN(22, "gpio22"),
-+	PINCTRL_PIN(23, "gpio23"),
-+	PINCTRL_PIN(24, "gpio24"),
-+	PINCTRL_PIN(25, "gpio25"),
-+	PINCTRL_PIN(26, "gpio26"),
-+	PINCTRL_PIN(27, "gpio27"),
-+	PINCTRL_PIN(28, "gpio28"),
-+	PINCTRL_PIN(29, "gpio29"),
-+	PINCTRL_PIN(30, "gpio30"),
-+	PINCTRL_PIN(31, "gpio31"),
-+};
-+
-+static const char * const comp_rx_groups[] = { "gpio22", "gpio24" };
-+static const char * const dmic1_clk_groups[] = { "gpio26" };
-+static const char * const dmic1_data_groups[] = { "gpio27" };
-+static const char * const dmic2_clk_groups[] = { "gpio28" };
-+static const char * const dmic2_data_groups[] = { "gpio29" };
-+static const char * const mclk0_groups[] = { "gpio18" };
-+static const char * const pdm_tx_groups[] = { "gpio20" };
-+static const char * const pdm_clk_groups[] = { "gpio18" };
-+static const char * const pdm_rx_groups[] = { "gpio21", "gpio23", "gpio25" };
-+static const char * const pdm_sync_groups[] = { "gpio19" };
-+
-+const struct lpi_pingroup sdm660_lpi_pinctrl_groups[] = {
-+	LPI_PINGROUP_OFFSET(0, LPI_NO_SLEW, _, _, _, _, 0x0000),
-+	LPI_PINGROUP_OFFSET(1, LPI_NO_SLEW, _, _, _, _, 0x1000),
-+	LPI_PINGROUP_OFFSET(2, LPI_NO_SLEW, _, _, _, _, 0x2000),
-+	LPI_PINGROUP_OFFSET(3, LPI_NO_SLEW, _, _, _, _, 0x2010),
-+	LPI_PINGROUP_OFFSET(4, LPI_NO_SLEW, _, _, _, _, 0x3000),
-+	LPI_PINGROUP_OFFSET(5, LPI_NO_SLEW, _, _, _, _, 0x3010),
-+	LPI_PINGROUP_OFFSET(6, LPI_NO_SLEW, _, _, _, _, 0x4000),
-+	LPI_PINGROUP_OFFSET(7, LPI_NO_SLEW, _, _, _, _, 0x4010),
-+	LPI_PINGROUP_OFFSET(8, LPI_NO_SLEW, _, _, _, _, 0x5000),
-+	LPI_PINGROUP_OFFSET(9, LPI_NO_SLEW, _, _, _, _, 0x5010),
-+	LPI_PINGROUP_OFFSET(10, LPI_NO_SLEW, _, _, _, _, 0x5020),
-+	LPI_PINGROUP_OFFSET(11, LPI_NO_SLEW, _, _, _, _, 0x5030),
-+	LPI_PINGROUP_OFFSET(12, LPI_NO_SLEW, _, _, _, _, 0x6000),
-+	LPI_PINGROUP_OFFSET(13, LPI_NO_SLEW, _, _, _, _, 0x6010),
-+	LPI_PINGROUP_OFFSET(14, LPI_NO_SLEW, _, _, _, _, 0x7000),
-+	LPI_PINGROUP_OFFSET(15, LPI_NO_SLEW, _, _, _, _, 0x7010),
-+	LPI_PINGROUP_OFFSET(16, LPI_NO_SLEW, _, _, _, _, 0x5040),
-+	LPI_PINGROUP_OFFSET(17, LPI_NO_SLEW, _, _, _, _, 0x5050),
-+
-+	/* The function names of the PDM GPIOs are derived from SDM670 */
-+	LPI_PINGROUP_OFFSET(18, LPI_NO_SLEW, pdm_clk, mclk0, _, _, 0x8000),
-+	LPI_PINGROUP_OFFSET(19, LPI_NO_SLEW, pdm_sync, _, _, _, 0x8010),
-+	LPI_PINGROUP_OFFSET(20, LPI_NO_SLEW, pdm_tx, _, _, _, 0x8020),
-+	LPI_PINGROUP_OFFSET(21, LPI_NO_SLEW, pdm_rx, _, _, _, 0x8030),
-+	LPI_PINGROUP_OFFSET(22, LPI_NO_SLEW, comp_rx, _, _, _, 0x8040),
-+	LPI_PINGROUP_OFFSET(23, LPI_NO_SLEW, pdm_rx, _, _, _, 0x8050),
-+	LPI_PINGROUP_OFFSET(24, LPI_NO_SLEW, comp_rx, _, _, _, 0x8060),
-+	LPI_PINGROUP_OFFSET(25, LPI_NO_SLEW, pdm_rx, _, _, _, 0x8070),
-+	LPI_PINGROUP_OFFSET(26, LPI_NO_SLEW, dmic1_clk, _, _, _, 0x9000),
-+	LPI_PINGROUP_OFFSET(27, LPI_NO_SLEW, dmic1_data, _, _, _, 0x9010),
-+	LPI_PINGROUP_OFFSET(28, LPI_NO_SLEW, dmic2_clk, _, _, _, 0xa000),
-+	LPI_PINGROUP_OFFSET(29, LPI_NO_SLEW, dmic2_data, _, _, _, 0xa010),
-+
-+	LPI_PINGROUP_OFFSET(30, LPI_NO_SLEW, _, _, _, _, 0xb000),
-+	LPI_PINGROUP_OFFSET(31, LPI_NO_SLEW, _, _, _, _, 0xb010),
-+};
-+
-+const struct lpi_function sdm660_lpi_pinctrl_functions[] = {
-+	LPI_FUNCTION(comp_rx),
-+	LPI_FUNCTION(dmic1_clk),
-+	LPI_FUNCTION(dmic1_data),
-+	LPI_FUNCTION(dmic2_clk),
-+	LPI_FUNCTION(dmic2_data),
-+	LPI_FUNCTION(mclk0),
-+	LPI_FUNCTION(pdm_tx),
-+	LPI_FUNCTION(pdm_clk),
-+	LPI_FUNCTION(pdm_rx),
-+	LPI_FUNCTION(pdm_sync),
-+};
-+
-+static const struct lpi_pinctrl_variant_data sdm660_lpi_pinctrl_data = {
-+	.pins = sdm660_lpi_pinctrl_pins,
-+	.npins = ARRAY_SIZE(sdm660_lpi_pinctrl_pins),
-+	.groups = sdm660_lpi_pinctrl_groups,
-+	.ngroups = ARRAY_SIZE(sdm660_lpi_pinctrl_groups),
-+	.functions = sdm660_lpi_pinctrl_functions,
-+	.nfunctions = ARRAY_SIZE(sdm660_lpi_pinctrl_functions),
-+	.flags = LPI_FLAG_SLEW_RATE_SAME_REG | LPI_FLAG_USE_PREDEFINED_PIN_OFFSET
-+};
-+
-+static const struct of_device_id sdm660_lpi_pinctrl_of_match[] = {
-+	{
-+		.compatible = "qcom,sdm660-lpass-lpi-pinctrl",
-+		.data = &sdm660_lpi_pinctrl_data,
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, sdm660_lpi_pinctrl_of_match);
-+
-+static struct platform_driver sdm660_lpi_pinctrl_driver = {
-+	.driver = {
-+		.name = "qcom-sdm660-lpass-lpi-pinctrl",
-+		.of_match_table = sdm660_lpi_pinctrl_of_match,
-+	},
-+	.probe = lpi_pinctrl_probe,
-+	.remove = lpi_pinctrl_remove,
-+};
-+module_platform_driver(sdm660_lpi_pinctrl_driver);
-+
-+MODULE_AUTHOR("Richard Acayan <mailingradian@gmail.com>");
-+MODULE_DESCRIPTION("QTI SDM660 LPI GPIO pin control driver");
-+MODULE_LICENSE("GPL");
-
--- 
-2.51.0
-
+Rob
 
