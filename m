@@ -1,58 +1,74 @@
-Return-Path: <linux-kernel+bounces-799424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA66B42B70
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:57:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD7DB42B78
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4BE21B21E01
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:58:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FFC4567A85
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19062E8DF7;
-	Wed,  3 Sep 2025 20:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682602EACF8;
+	Wed,  3 Sep 2025 21:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ji1YyKyg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q6n6Sg8z"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F404F5E0;
-	Wed,  3 Sep 2025 20:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561F32EA759;
+	Wed,  3 Sep 2025 21:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756933061; cv=none; b=t1UDyKmU8dn3b7foOCkVSBNz4n/qljO/3LUonVMnrPzqYZ2wiFw0kCHeQ3GDaFNunvSYJGaJ++rLzAD4Ojwh68itNIxZl1H00iwv0r3duRIiGy7yB7WyO1UKzSYOSp7V9lUptQA0O0ULONiMfPoKj0RAOzhzIgEIy7a1NJ/XcJk=
+	t=1756933283; cv=none; b=mRh7hPwXBx20edaknXMuykZcP7ZCmVHrCd3a0gKPhtverdPNDnqtdXWRTsnovLCnX8TQfQ59Qz9N0SMr0prAhSfqd4NRjGWZS24F1bG9vXOgH480+qax15fbnr6IhpvP1+EqP0PF64no9QDqKLL5zFoOXCdmO/dw+YS8of2/tDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756933061; c=relaxed/simple;
-	bh=f/KWYTA/DxpHnAzgn5OQod2RUCvIH1M7xETk4wmHHkA=;
+	s=arc-20240116; t=1756933283; c=relaxed/simple;
+	bh=XGdtskBGFwtyVmK1+2rQa6K/YB7bXVnyuqJbm3/8uYI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HsleCHcj+ZL7PGkTemsTdPU0h3LRI9C10xjKKdFbrDTn2wshTGvoBcrnY391GK3/f4QxJDnc+4MhKVfHEXK/6hrVSeL6lCX5aMFiZBPymI9ExebX85xNUbfba0l9k9mZ4C+JO7iVnZUYMIhuBjZt0q9je/zPC2Z+lqOOJ4g/ecU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ji1YyKyg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70F0EC4CEE7;
-	Wed,  3 Sep 2025 20:57:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756933060;
-	bh=f/KWYTA/DxpHnAzgn5OQod2RUCvIH1M7xETk4wmHHkA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ji1YyKygbp0FQk0KAUrs6L8RptQPsE1zLNHBMQRQKXDHoZ6NpuJnIQyKV7WK9moXS
-	 Ip35U2v7OzpXdAPJqvgN7Zr/xc8PNtNEFH0x3iV8JpFg5g6WCR9zwUFwcaQTaKviqv
-	 Hv5m5j5BlGVSjyeQCWT484PCz0iFAtRCP9HSoqlVwVJ9yQHIK2fIEIinqmPLNpT8xY
-	 MXx/jiDJgnriHGyDoPMLJnm/VEo/J+0WCQs3QFWH4/HSAN2NPiKrmtgKouyf1kSbru
-	 +dO3VBscSvggsNyGI2aA81S20V8jJVJx4C9OAwvpxRBI9GTHASR66wOHWTKY49aZRl
-	 FKkBAz25lEMXQ==
-Date: Wed, 3 Sep 2025 10:57:39 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	sched-ext@lists.linux.dev, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH sched_ext/for-6.18] sched_ext: Use cgroup_lock/unlock()
- to synchronize against cgroup operations
-Message-ID: <aLirwysOBpAGubIy@slm.duckdns.org>
-References: <aLeANmpO03QiPgSX@slm.duckdns.org>
- <aLg4SsZHY66n3Vi2@gpd4>
- <aLhvUpkanqxNHyZe@slm.duckdns.org>
- <aLipid4JRKEac1bS@gpd4>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F65I5Lf3jmxthyCHbyE+NQ54vDVJOTXwPWOwPpG8pUGtDn6hJ9HXtTss5uJpI3J5iP0lSOYDFSCu3jEzNgx5h8zRugG+fTW2rx9nwRlmHexhxPczPzVgtqXdITXYSsqRwHwb4GTU8aEItgGyIMFQL7nv67+sVtS3kO9ldZv5FcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q6n6Sg8z; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XGyZmgjExmsUZagUGeDDTjnxL29Q9nuxRuIDWGJRPo0=; b=q6n6Sg8z2OTXCODlF0HhYQDenI
+	/dEkTZtI3M3mHdsd9kmgquVEGU3N6Jl4hcdO4OTyqDfofqLarN7HcUu/bq0v7P4jKSLPXa6TWb8q/
+	I08RPLd1qZNH1kgTx85f7a3lwftClNFKxpn1gDpla4g6MhQQfPC7NnAuNTpIufnKeFg/2nRb+N4pg
+	MiAFevHM/8Qs90HJlQ4wHj0NYg6CayuWspJnm4hz3bLDobVmvLwMdZaPgHHuPRA/njA0+fE5FFzzH
+	hySYJLVn+HBJiEpb6DcdZIfrcTUpsz4usbRg0tYaGj2WjjTpmCwlu/AEbGIjxYlAKp+DyihkznZDN
+	9StjEMfA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1utubQ-00000007yhf-0fEl;
+	Wed, 03 Sep 2025 21:01:13 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 18D9D300220; Wed, 03 Sep 2025 23:01:12 +0200 (CEST)
+Date: Wed, 3 Sep 2025 23:01:12 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCHv6 perf/core 09/22] uprobes/x86: Add uprobe syscall to
+ speed up uprobe
+Message-ID: <20250903210112.GS4067720@noisy.programming.kicks-ass.net>
+References: <20250720112133.244369-1-jolsa@kernel.org>
+ <20250720112133.244369-10-jolsa@kernel.org>
+ <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
+ <aLirakTXlr4p2Z7K@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,39 +77,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aLipid4JRKEac1bS@gpd4>
+In-Reply-To: <aLirakTXlr4p2Z7K@krava>
 
-On Wed, Sep 03, 2025 at 10:48:09PM +0200, Andrea Righi wrote:
-> On Wed, Sep 03, 2025 at 06:39:46AM -1000, Tejun Heo wrote:
-> > Hello,
+On Wed, Sep 03, 2025 at 10:56:10PM +0200, Jiri Olsa wrote:
+
+> > > +SYSCALL_DEFINE0(uprobe)
+> > > +{
+> > > +       struct pt_regs *regs = task_pt_regs(current);
+> > > +       struct uprobe_syscall_args args;
+> > > +       unsigned long ip, sp;
+> > > +       int err;
+> > > +
+> > > +       /* Allow execution only from uprobe trampolines. */
+> > > +       if (!in_uprobe_trampoline(regs->ip))
+> > > +               goto sigill;
 > > 
-> > On Wed, Sep 03, 2025 at 02:44:58PM +0200, Andrea Righi wrote:
-> > > >  static void scx_cgroup_lock(void)
-> > > >  {
-> > > > -	percpu_down_write(&scx_cgroup_rwsem);
-> > > > +	percpu_down_write(&scx_cgroup_ops_rwsem);
-> > > > +	cgroup_lock();
-> > > >  }
-> > > 
-> > > Shouldn't we acquire cgroup_lock() before scx_cgroup_ops_rwsem to avoid
-> > > a potential AB-BA deadlock?
+> > Hey Jiri,
 > > 
-> > There's no existing ordering between the two locks, so any order should be
-> > safe. The reason why I put it in this particular order is because any
-> > cgroup_lock() holder has no reason to grab ops_rwsem now or in the future
-> > while the opposite direction is still unlikely but theoretically more
-> > possible.
+> > So I've been thinking what's the simplest and most reliable way to
+> > feature-detect support for this sys_uprobe (e.g., for libbpf to know
+> > whether we should attach at nop5 vs nop1), and clearly that would be
+> > to try to call uprobe() syscall not from trampoline, and expect some
+> > error code.
+> > 
+> > How bad would it be to change this part to return some unique-enough
+> > error code (-ENXIO, -EDOM, whatever).
+> > 
+> > Is there any reason not to do this? Security-wise it will be just fine, right?
 > 
-> Isn't scx_group_set_weight() called with cgroup_mutex held? In this case
-> the order is cgroup_lock() -> scx_cgroup_ops_rwsem, or am I missing
-> something?
+> good question.. maybe :) the sys_uprobe sigill error path followed the
+> uprobe logic when things go bad, seem like good idea to be strict
+> 
+> I understand it'd make the detection code simpler, but it could just
+> just fork and check for sigill, right?
 
-Oh, no, cgroup_lock() is only held for operations that change the cgroup
-hierarchy - cgroup creation, deletion, controller enable/disable, task
-migration and so on. Writes to control knobs doesn't acquire cgroup_lock().
-
-Thanks.
-
--- 
-tejun
+Can't you simply uprobe your own nop5 and read back the text to see what
+it turns into?
 
