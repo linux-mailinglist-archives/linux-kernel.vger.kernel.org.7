@@ -1,127 +1,97 @@
-Return-Path: <linux-kernel+bounces-799131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79359B4276E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:59:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C88B42774
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3652B7A9728
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:58:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8CB41889FE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3F4312826;
-	Wed,  3 Sep 2025 16:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E10E31B11F;
+	Wed,  3 Sep 2025 17:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Du5TE5lY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="JNRqTkGj"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E8630ACEC;
-	Wed,  3 Sep 2025 16:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756918776; cv=none; b=JfS3LqQVrDDHEKw7k1iA/7tmU7FWi5d7u0RkEq3tUdxXiyJPGaIEnxdMGvIwY3rsOIKpPZjt909m4BewJO2rvocDx/gLRE3cucxUHEJMGXVk2cw2f7qJ7oMUdtbYyExqd4dw4tNPqA8dyxL3uQNgAdbeZfW6sIkrRNSENiqne4M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756918776; c=relaxed/simple;
-	bh=Bqf24ykq34pargsaFkq2Si91QolnsDSUcmZFVagHHxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IPAUA5wnyXlfQeYnHtLYLpI34jMrKdQ1Qpb+XVty3OtAqWvBB5/fn3hf7qgln+6MWN/OihOnjYfYb1Uwsd69TCimYVMudT1BkgAeYn+qe4BH4pw0bZ8eZMfKBSmfMj9/a8VEe2pGmIjhRJJyBPAG73ekMJ1wtcjCLfAxJq1gd+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Du5TE5lY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAA1FC4CEE7;
-	Wed,  3 Sep 2025 16:59:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756918776;
-	bh=Bqf24ykq34pargsaFkq2Si91QolnsDSUcmZFVagHHxk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Du5TE5lYoogdhCZUtO1tel1NWCb+x+qPCPq3AV01bnDFGXDJRT39do3O1tCPzV4rh
-	 yS0i9EHdHo7tJ+8i/v93XBaqHQ5atOrYSve6VFvjL21XhFRWFqOJR86gnyEW4s2464
-	 sKhw6iR1mdlWKulnBALC/mBZYBz02XHK0rCLL7eBcdMeboglcMnGj6uW6ulA9t4d/+
-	 DNzP3DvqvpWSPMl/0+2yVxKLSnMBOG4XbQqsgMuxCrzV/wp/KdED0zTxhyojEwuA2O
-	 IWnf0MUhCF1wzyx07TUlZNwhYU09CKPzn1Qs7E7SyJ0dbDSd9EcbjDAshkm9U18Kyk
-	 /BFUncYou4Ecg==
-Date: Wed, 3 Sep 2025 09:59:31 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	clang-built-linux <llvm@lists.linux.dev>,
-	open list <linux-kernel@vger.kernel.org>, dmaengine@vger.kernel.org,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Vinod Koul <vkoul@kernel.org>, Guodong Xu <guodong@riscstar.com>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Benjamin Copeland <benjamin.copeland@linaro.org>
-Subject: Re: next-20250903 x86_64 clang-20 allyesconfig mmp_pdma.c:1188:14:
- error: shift count >= width of type [-Werror,-Wshift-count-overflow]
-Message-ID: <20250903165931.GA3288670@ax162>
-References: <CA+G9fYsPcMfW-e_0_TRqu4cnwqOqYF3aJOeKUYk6Z4qRStdFvg@mail.gmail.com>
- <a07b0ebf-25e7-48ba-a1da-2c04fc0e027f@app.fastmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0062D481F;
+	Wed,  3 Sep 2025 17:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756918850; cv=pass; b=qDHT7xrUfRCj3rnEhe5zFIeaj/sXINBd7zOXnZZRqOk7DUsvXMExD4f+MlxK274lwHgpOA/fUeQfvHHpTsV897Hgdqmxtl+v3cPTP0rALtFy9xHjUZ7V1EkHRiB3n5oFILR3Mj0zerpyxk2wY/OLOx7DcibsSIs15BvI5yuoJjg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756918850; c=relaxed/simple;
+	bh=xYywHF63vu9Hnz2rgaGv3NTiqlWju88O0hyzHabmkHo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P7tM8k7GE8Yj0H25R0lswfN5+H+BA9kyhTgEoLb/YYZ6fVGNtb2pHJOR86HMWcxEtOG+aZW6C6Vq8LE5Zk2kWbO2Srz8FJ8JT706+3lvnybbkxllY1mbczwIWG2VvniSbhKyLGxti51Kk6B65hZxEy0kvtO1xmlnPFBgqWYyyrM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=JNRqTkGj; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
+ARC-Seal: i=1; a=rsa-sha256; t=1756918803; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=W8jZs/m4kHlqzCkU6djWRpHkTZkRdCrBCMGWTXgjAHxLhcr57usUawrP6QcAAas8NBHcaAM4eJL8LgDxxmK6uGpa/koGICF0AzxpziN7IsE1AZoK5nxHihnjxhhDudspNz8u2asPwVEG74rL/qSvfWG3Fho3b7BhJCpUkQSwsyA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756918803; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=WyTMW/VsquP3eLZFDnSYpE40hd0f1MFOnn4qLTmo8eQ=; 
+	b=lojD4A4XsE/7rNfyj53+oIaCyWFtWvbHMzxFYAKk3u8hCClE+wZ1X746pP/SvRvr3sJTNfuQci5Bb7x05yEwaOfgwODJWK8oQ3sz1q/biO9/G0pVaDm5isLaEuLQibugqkeCM7Tq1hsSQDSEWM3N+nSLQANlsJbd7DFPSyIb7Mc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=yukuai.org.cn;
+	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
+	dmarc=pass header.from=<hailan@yukuai.org.cn>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756918803;
+	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=WyTMW/VsquP3eLZFDnSYpE40hd0f1MFOnn4qLTmo8eQ=;
+	b=JNRqTkGjpL7bcrW9LWaiNFOmLDFs+KlfO+jk1w0CuMC9dm+qo2rlGb1+kGyedji4
+	LLJdNNBtpEvBh4Ct3KO3fRnyN1239TM9ZpxPYxKn8cHWeebdMIf3zrN4Xzfqm79qKkl
+	+mrP8YPJlGt12klooHnQ7e3+5qDcP87lGXZU1pzI=
+Received: by mx.zohomail.com with SMTPS id 1756918799888735.5865422299123;
+	Wed, 3 Sep 2025 09:59:59 -0700 (PDT)
+Message-ID: <ad353972-085f-42a3-b8f0-20416312479b@yukuai.org.cn>
+Date: Thu, 4 Sep 2025 00:59:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a07b0ebf-25e7-48ba-a1da-2c04fc0e027f@app.fastmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 14/15] block: fix disordered IO in the case
+ recursive split
+To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: colyli@kernel.org, hare@suse.de, dlemoal@kernel.org, tieren@fnnas.com,
+ axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
+ kmo@daterainc.com, satyat@google.com, ebiggers@google.com, neil@brown.name,
+ akpm@linux-foundation.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ linux-raid@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
+ <20250901033220.42982-15-yukuai1@huaweicloud.com>
+ <aLhD8Vi-UwnwK93L@infradead.org>
+From: Yu Kuai <hailan@yukuai.org.cn>
+In-Reply-To: <aLhD8Vi-UwnwK93L@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Wed, Sep 03, 2025 at 02:04:10PM +0200, Arnd Bergmann wrote:
-> On Wed, Sep 3, 2025, at 12:08, Naresh Kamboju wrote:
-> 
-> > Build error:
-> > drivers/dma/mmp_pdma.c:1188:14: error: shift count >= width of type
-> > [-Werror,-Wshift-count-overflow]
-> >  1188 |         .dma_mask = DMA_BIT_MASK(64),   /* force 64-bit DMA
-> > addr capability */
-> >       |                     ^~~~~~~~~~~~~~~~
-> > include/linux/dma-mapping.h:73:54: note: expanded from macro 'DMA_BIT_MASK'
-> >    73 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-> >       |                                                      ^ ~~~
-> 
-> I see two separate issues:
-> 
-> 1. The current DMA_BIT_MASK() definition seems unfortunate, as the
-> '(n) == 64' check is meant to avoid this problem, but I think this
-> only works inside of a function, not in a static structure definition.
+Hi,
 
-Right, this is one of our longest outstanding issues :/
+在 2025/9/3 21:34, Christoph Hellwig 写道:
+> Btw disordered IO sounds a bit odd to me.  I'm not a native english
+> sepaker, but in the past we've used the term "I/O reordering" for
+> issues like this.
+>
+>> +		if (split && !bdev_is_zoned(bio->bi_bdev))
+> Why are zoned devices special cased here?
+>
+I'm not that sure about zoned device before, I'll remove this checking,
+and mention the problem Bart met in commit message in the next version.
 
-https://github.com/ClangBuiltLinux/linux/issues/92
-https://github.com/llvm/llvm-project/issues/38137
+Thanks,
+Kuai
 
-This only happens at global scope.
-
-> This could perhaps be avoided by replacing the ?: operator with
-> __builtin_choose_expr(), but that likely causes other build failures.
-
-Yeah, that makes the problem worse somehow even though GCC says the
-non-taken option should not be evaluated...
-
-  drivers/dma/mmp_pdma.c:1188:14: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
-   1188 |         .dma_mask = DMA_BIT_MASK(64),   /* force 64-bit DMA addr capability */
-        |                     ^~~~~~~~~~~~~~~~
-  include/linux/dma-mapping.h:73:70: note: expanded from macro 'DMA_BIT_MASK'
-     73 | #define DMA_BIT_MASK(n) __builtin_choose_expr((n) == 64, ~0ULL, (1ULL<<(n))-1)
-        |                                                                      ^ ~~~
-  drivers/dma/mmp_pdma.c:1323:27: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
-   1323 |                 dma_set_mask(pdev->dev, DMA_BIT_MASK(64));
-        |                                         ^~~~~~~~~~~~~~~~
-  include/linux/dma-mapping.h:73:70: note: expanded from macro 'DMA_BIT_MASK'
-     73 | #define DMA_BIT_MASK(n) __builtin_choose_expr((n) == 64, ~0ULL, (1ULL<<(n))-1)
-        |                                                                      ^ ~~~
-
-> Guodong, how about a patch to drop all the custom dma_mask handling
-> and instead just use dma_set_mask_and_coherent(DMA_BIT_MASK(64))
-> or dma_set_mask_and_coherent(DMA_BIT_MASK(32)) here? Instead of
-> passing the mask in the mmp_pdma_ops, you can replace it e.g. with
-> a 'bool addr64' flag, or an 'int dma_width' number that
-> gets passed into the DMA_MASK_MASK().
-
-If this works, I think it is worth pursuing to avoid this bogus
-warning/error.
-
-Cheers,
-Nathan
 
