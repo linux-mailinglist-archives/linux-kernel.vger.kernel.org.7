@@ -1,179 +1,129 @@
-Return-Path: <linux-kernel+bounces-797819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F19BB415BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:01:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF43B415BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1B157A6F68
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:59:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BAA85E62B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9D32D94A8;
-	Wed,  3 Sep 2025 07:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89432D7DCA;
+	Wed,  3 Sep 2025 07:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fkWe1baj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XK34mdlr"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F7D2D3EC9;
-	Wed,  3 Sep 2025 07:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85C9270578
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756882851; cv=none; b=mlIM44W6OT+f6Tp39YVfUBiIiQsCJyM0t+wwPmU7qjuqnqtglDntPbAmbq+MoRTpJCCPVA2R1My80daPJ99aoJ7eExhHr0N0MHjHLKG8eMWUrt18GCQbx+L3kPgmgh4KuOHrXIPSCg0CrzKp0KtT9JP6w0ofzb+YSNfCsc+z2eE=
+	t=1756882843; cv=none; b=Jbb6ryMEx/sHe8eQYf11lQIcvrMkJgT2ENqi5ZTL7/pr27XtkJdvpWHAu29JxdmEzJ2bD0hJ+KzkJFHUmpjr75obibUdZv+IQ1ib4Kb+0cwJj4IKTE+22pb9gmKa9lFGwSwwO1FzgOTY0T6m4g3sAbuMAPQbDw8yv/VesXQ9ib0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756882851; c=relaxed/simple;
-	bh=4WOcmsJ1ltApDp57ZzrYgfeS6xmB1ybhbMhEjEAEp48=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qoA8nlrX24tAgA23oR9LDQRnathZ+j7gjPh32pTD91pnLhae0vO07yCsusSEVUrfY0kGUldc9wDjkNWg7g7Ff1EBo/DjjBPHr/CzD6yEL5cE6o0xF4jyVad5rmzpNdG2VQFe53ZeoZBDnAWqPyKrpIqEtR1l8sD6NK+He5VYf6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fkWe1baj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5831TCGt023427;
-	Wed, 3 Sep 2025 07:00:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0B7furphkdJFWVi3RfqTepuGiQOg1Vrgr5nYqmWysRs=; b=fkWe1bajvUTIwSG+
-	BWsTYZrcJp1HpotYlV1AUhqWO6vIfay8oAGocYFRrXzArVswkZrGgpHCYZ7Rr2tw
-	JiymTz3dBozq237089qy5Io7D/HnLxS7qIy+zmEdihKnpB8Nlfg1MnxorXrKKQNs
-	VOej5+EgQ5pZGvS06F3cRIa2RI09UP1EPHo7ZzWkE4z1ZlDYKq8zdMUItNRMxK+U
-	3Z4MlEAEeHMllQ+c5bvH7+dQGIV1eO+pAiC7tC6ZPEaazaljZC2NJW3H4QoKUpoH
-	WsXmB+TtAxDBD2pC9DzAnuXP5Z557Ze+O3d56UBQ2/1l9+zCHNH1+TK4KIRWmdcT
-	AfyW7w==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48upnpaq42-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Sep 2025 07:00:32 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58370VtB027441
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Sep 2025 07:00:31 GMT
-Received: from [10.239.105.140] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 3 Sep
- 2025 00:00:26 -0700
-Message-ID: <59a714eb-8c2e-4c6a-8c9f-f90e11d848cb@quicinc.com>
-Date: Wed, 3 Sep 2025 15:00:23 +0800
+	s=arc-20240116; t=1756882843; c=relaxed/simple;
+	bh=oVCavdrm4v3wXN5EGefiOGtZMyGf4oSb+mlfB3AhRs8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NC5AExfKnzqftdOZby/Fk2bLfYMQuMLDOKqaROpHPhWaNXrKMsA+fS+rkm7uICV20NWKxNJJXUDtJqHhfxL5l/NV4PKEe9lT7QhZ+hFL+lQhFKvvG4LQJ7WifOytZCVtfCRePmhkWJJN2Zk09uNUG+USj/Bo1kKLjqqisg9p4jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XK34mdlr; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso38425005e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 00:00:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1756882839; x=1757487639; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4SeVcETCZnlVYVPJLuLayVDeCpLMJgj8fEd5DO+wa8w=;
+        b=XK34mdlrf6o/HbCOCOtVu03lxN19tGhvVM3KvGSjt6XEArD8v/5hHDMqGG9oHE5/X3
+         AAUjTlcmpMNgVALnyyAexcHzwH+1qEFQGsPAm1iiq92k3gzcYbULtUB9AXsZ8DP5qvuT
+         2Ae+fGrv+3w4ty8Ylf0ae2rGn1AbkBcgPtGkUsBv0517OTxp2hTIeO/H2gQSKfFNTI33
+         jMwWuz6LlVx6BjhKbGX3mccHRGwZyfXuNWTsU8HrTJCfdjCeo6d6qowmJ1W3+Rvl7Om6
+         6LanXqaND+oHo8ShBBCaWeQH5F1w4DBEIPtQYIiVyjPJZHKbk32eoGFIWPB+Zu8WUvsF
+         KUPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756882839; x=1757487639;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4SeVcETCZnlVYVPJLuLayVDeCpLMJgj8fEd5DO+wa8w=;
+        b=cmVlyqmRpQS7rhdjZZQKqJNO7lthhCSh7qegxid3Sk0UDF6EYSwkVSwtyXUKgUF8tO
+         trS5URBcsfbiI+21x76+SmhwePrthv4c6ci0msXYFhOSMuD7PuJ5xk+00V1aR9euzin0
+         +abLui80Y+amIBUhwJTlXnhf7FFSjWE6FXpxzJ2zv39fy49xxQizKcZBM15AOQfeWLdF
+         Q2aQo3QilXjcAKbPCRi0I8iwQGPTzeQmrcg8nWW86oLhps+CmS2S8Tw7ICeUOTgifDQ2
+         w2J3NzSy9llqOzDjm+G+sHE/INvXHi3COUFduWRXaNf+SWtXChTBkKDXWB4ALETek35w
+         ncYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ4Tt6MvoEVjSrAkDvxawnse7ELrurl7uXbp856Nu5GrrXi7bFnEHqPWVlJmyGSFo8jQnYD58XCIrWyhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyBqllxfDBH6204l+CisANbl5xeAR/bSeSU49qXrUKHFLWm2xZ
+	N8n/TsNc3APWgQn6bni3f5AmK9m0ywxygukOTCc2sZ99K/HKlVWaJpQAYKVBHrHO6/w=
+X-Gm-Gg: ASbGncstso/cnRLaYwmY2Z01NkSi8GLaRnlOWQKv86g5XJ56qom0C+T77ehFUBU4Mun
+	u5blQc0D3LzCtnMPBV7Q773Z7c31Un+8L0iaMh/J+/199ur+vlscGcDJz1az1ptvh5Nz0tvJuW9
+	eE61bT31gyfbgrrSd9+T9CMXD6Yi9oryzudOSrFasZGt/8KY7NTXQB7s89h2S21sMTgXkgEDyGu
+	Lw4jrzfIcvITrhfDy+xeZhawwp3s3E6apA4PLYd+AhXMizUHiGtrLkl171Ve2yjcWgw8rmaovKd
+	hBxQoxuxChRZcrOXUO19wQlGQV+akARPMbqth7c2cf+yHEao8tysvp190DXGMBjzUDitWKl0CJs
+	vo2n9tbsnz5+JZsPf8xFP4VPEsOKngjygF/FrUJFbwBNNWP5002Ho7s5v
+X-Google-Smtp-Source: AGHT+IEoXoDchPxjlW6nm9//Q2WMCRnFI5AVjrKIHIeZDsgd4U6erHhnOiYunkXji17UofJ0tU0gOg==
+X-Received: by 2002:a05:600c:35c8:b0:45b:8939:8b1c with SMTP id 5b1f17b1804b1-45b89398f5emr91109865e9.27.1756882839064;
+        Wed, 03 Sep 2025 00:00:39 -0700 (PDT)
+Received: from localhost (109-81-86-254.rct.o2.cz. [109.81.86.254])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b6f306c22sm312469495e9.13.2025.09.03.00.00.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 00:00:38 -0700 (PDT)
+Date: Wed, 3 Sep 2025 09:00:37 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: zhongjinji <zhongjinji@honor.com>
+Cc: akpm@linux-foundation.org, feng.han@honor.com, fengbaopeng@honor.com,
+	liam.howlett@oracle.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, liulu.liu@honor.com, lorenzo.stoakes@oracle.com,
+	rientjes@google.com, shakeel.butt@linux.dev, surenb@google.com,
+	tglx@linutronix.de, tianxiaobin@honor.com
+Subject: Re: [PATCH v6 1/2] mm/oom_kill: Do not delay oom reaper when the
+ victim is frozen
+Message-ID: <aLfnldGMZkRkt8Z8@tiehlicka>
+References: <aLWmf6qZHTA0hMpU@tiehlicka>
+ <20250902160129.13862-1-zhongjinji@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] virtio-spi: Add virtio-spi.h
-To: "Michael S. Tsirkin" <mst@redhat.com>
-CC: <andriy.shevchenko@intel.com>, <harald.mommer@oss.qualcomm.com>,
-        <quic_msavaliy@quicinc.com>, <broonie@kernel.org>,
-        <virtio-dev@lists.linux.dev>, <viresh.kumar@linaro.org>,
-        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <hdanton@sina.com>, <qiang4.zhang@linux.intel.com>,
-        <alex.bennee@linaro.org>, <quic_ztu@quicinc.com>
-References: <20250820084944.84505-1-quic_haixcui@quicinc.com>
- <20250820084944.84505-3-quic_haixcui@quicinc.com>
- <20250821044351-mutt-send-email-mst@kernel.org>
- <1a63f5f9-add0-4a22-b01c-2f0c8d9efcec@quicinc.com>
- <20250828063350-mutt-send-email-mst@kernel.org>
-Content-Language: en-US
-From: Haixu Cui <quic_haixcui@quicinc.com>
-In-Reply-To: <20250828063350-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: b-X9GZFnG_VHSZ64rqKhKpTgh1bqkTSu
-X-Authority-Analysis: v=2.4 cv=Jt/xrN4C c=1 sm=1 tr=0 ts=68b7e790 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
- a=kBQPIZexwyFoi4fVXFQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: b-X9GZFnG_VHSZ64rqKhKpTgh1bqkTSu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAwMSBTYWx0ZWRfX/O6zdZErx7cN
- 8qruV6MpzMpe2DxCiz2BOMmhJL5Rh3hdXr1y2gRlDvuIUOGIr3b3Q8gZsFNllUC02Wk6uOs9vFk
- bEYM9YMIIH2SpMGxep3vDgXomeVweZjn4NkVWO4m+Lkr5199Ydxxmg8wJtlri8AYuU72Pv+CBh1
- aqh1XytznGl3kD4kO6WdVaJNNKy8u7QLqRILnpLncqtdiAd1b/XW9ynUPRWlWmAJGXbrjyWPNx7
- qieOIrZYho3e6T0ngZyB7ECwQMh6D+kRYrAhSUVensDM9/EfGDeIeIVwtKYiZQia5KIHx/OKQHF
- AtIKBQfCJCYJZjkJgtSCERuBGjjiqnXX1Hy5TLmwXuWTxfZiW31gaHezVcXIypPLAkenAMkKY1F
- FuvdFkTv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_02,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0
- spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902160129.13862-1-zhongjinji@honor.com>
 
-
-
-On 8/28/2025 6:34 PM, Michael S. Tsirkin wrote:
-> On Mon, Aug 25, 2025 at 05:19:03PM +0800, Haixu Cui wrote:
->>
->>
->> On 8/21/2025 4:45 PM, Michael S. Tsirkin wrote:
->>
->>
->>>> +
->>>> +/* Sample data on trailing clock edge */
->>>> +#define VIRTIO_SPI_CPHA			_BITUL(0)
->>>> +/* Clock is high when IDLE */
->>>> +#define VIRTIO_SPI_CPOL			_BITUL(1)
->>>> +/* Chip Select is active high */
->>>> +#define VIRTIO_SPI_CS_HIGH			_BITUL(2)
->>>> +/* Transmit LSB first */
->>>> +#define VIRTIO_SPI_MODE_LSB_FIRST		_BITUL(3)
->>>> +/* Loopback mode */
->>>> +#define VIRTIO_SPI_MODE_LOOP			_BITUL(4)
->>>
->>> It is generally preferable to have an enum with just bit
->>> numbers.
->>>
->>>
->>> E.g.
->>>
->>> enum {
->>> VIRTIO_SPI_F_CPHA = 0,
->>> }
->>>
->>>
->>> Userspace can add _BITUL wrappers itself if it
->>> wants.
->>>
->>>
->>
->> Hi Michael,
->>
->> Thank you for the suggestion regarding the bit definitions.
->>
->> Would it be acceptable to keep the current macro definitions with _BITUL()
->> because these macros are also used within the virtio SPI driver itself?
->>
->> Looking forward to your guidance.
->>
->> Best regards,
->> Haixu Cui
->>
+On Wed 03-09-25 00:01:29, zhongjinji wrote:
+[...]
+> @@ -772,12 +773,18 @@ static void mark_oom_victim(struct task_struct *tsk)
+>                 mmgrab(tsk->signal->oom_mm);
 > 
-> 
-> move them to the .c file if you want them.
-> 
+>         /*
+> -        * Make sure that the task is woken up from uninterruptible sleep
+> +        * Make sure that the process is woken up from uninterruptible sleep
+>          * if it is frozen because OOM killer wouldn't be able to free
+>          * any memory and livelock. freezing_slow_path will tell the freezer
+> -        * that TIF_MEMDIE tasks should be ignored.
+> +        * that TIF_MEMDIE thread should be ignored.
+>          */
+> -       __thaw_task(tsk);
+> +       rcu_read_lock();
+> +       for_each_thread(tsk, t) {
+> +               set_tsk_thread_flag(t, TIF_MEMDIE);
+> +               __thaw_task(t);
+> +       }
+> +       rcu_read_unlock();
+> +
 
-Hi Michael,
-I've observed that other virtio drivers - such as virtio-i2c and 
-virtio-net - commonly define feature bits directly in their headers and 
-use them in their drivers.
+I would prefer if we had thaw_process() rather than open code it here.
+But the implementation matches what I would expect it to do.
 
-To maintain alignment with those drivers and ensure consistency in 
-usage, I’d prefer to retain the current macro-based approach for 
-defining feature bits.
+>         atomic_inc(&oom_victims);
+>         cred = get_task_cred(tsk);
+>         trace_mark_victim(tsk, cred->uid.val);
 
-Do you think this would be reasonable in this case?
-
-Thanks & BR
-
-
+-- 
+Michal Hocko
+SUSE Labs
 
