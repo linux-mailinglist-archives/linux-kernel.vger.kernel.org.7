@@ -1,274 +1,230 @@
-Return-Path: <linux-kernel+bounces-799060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91DCB42677
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:17:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE1FAB4267A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B5718944E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:17:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CBF15681EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07932C08B2;
-	Wed,  3 Sep 2025 16:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705C0284894;
+	Wed,  3 Sep 2025 16:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="QNc1W652"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011026.outbound.protection.outlook.com [52.101.65.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Fdaf0/TR"
+Received: from mail-il1-f225.google.com (mail-il1-f225.google.com [209.85.166.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664E42BF005;
-	Wed,  3 Sep 2025 16:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756916218; cv=fail; b=BSHbyYi8R+IRPq55MbgsbqeYtyHWhARzmy1craPBmeGx+T5KJDt5JG1+vlkq+T3UIBamzOcVyVJKVX0bSQGL2vdV2IovqpwoEIlbLOLkSC+bs5rqKw8uVdCeX4S1ctP4OfJDDcbT3k1keTnpZmgn4L5d+DEgk98FOWveUDsTN2U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756916218; c=relaxed/simple;
-	bh=2zYnQ7GqIcIynrJhdhScC8U8zfDtgOY6Kki6p3kHnNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nCs74s3FXsmt0p0Kej/1kRr05Tchvrr4HWkvQunG3opy42DSriKVgiauVz2NKX8CcXRByFztAXsbJ9I4iU5IFPYfpmcKAo8TuCquTh5yJdJ6gPxh32tjZcbS4jFZXop7cLpMRbz53Slvt5qlq4MFXVTz4IrTrRVAaZE7psq375M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=QNc1W652; arc=fail smtp.client-ip=52.101.65.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F5SjH1uPV3gCJgWf6VUNFAovMTarHCsCoNxhkPsirA1qjO1dYxnxI5MP+CEu+JoIuzzSaQwk5SpitOys4oSeUAQYU4/Ax4O+bVv9kN06TJS9Pnf5TefbqpghI2WarM0YKQss9JRu+YFee3BeJQ+goC78qEmebzMLMSfkvgTZUjavdRn3dChH9psMDvJqcy3FkNdVj9utBFkBxVfYWepnaVtJbf4XJeGoFAQsQumpUO8WCzrAlc2Pr74Z6Dpe+H2BY/swkN69vCiiYo7Ggkd1B3UxdaHJEVd8XpA58hPMtSuq4SXvcuPijQK4iYQYUcYqCKgNQkl5D2f5Jl6bTl2veg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rGAbVVoCB/myKVsFsCmZ/RXtZWg4XKET30Muzuywiqs=;
- b=KaIcREEvSQUW6lmokiaZllhGsTHSnheuHltNIHIMMRXcWIVqEOZ4lQxfHP8uDwUn20CH4LlEU4cJbKREEp+9c4zyBqD8WD83hP+0a1mjxQD7216j27xMFuZYDI0BIgoSiuOi9wuPUii4HTMyqsHdUwY98PBim6fRbXFlJCzY9F3UYTIRl7BRuZ+JSZ2ZNsAkGJp3qdfj3EpURhpAMk0diIY7EyOD/imz4AkP47qv1xPrH9+iUpKATb6xl4T3k57GMOLfjS1sjbjHzAU/Ujy7SDKMxeu93uJ+UPXhthWYFM7OcS2Oe2KsRuwpa5ndMpRhK2rVxFqHbc3ZI9LKGz2UQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rGAbVVoCB/myKVsFsCmZ/RXtZWg4XKET30Muzuywiqs=;
- b=QNc1W6522g0e+AX573tnxfJMKo+zOkXM7CPmLWElhL5cslaBko+0Bs5PqFS0wCPP2hrZqX5MFfdh7kRpT1nkw1KyYjabHJ9c3YMh/6wHaQnb/JF5PaROV5op0gwuXfH58Pn/B8X7GkiMvPyVmjUoUpAFPSLHZa3p/VwuQ8Pl0Zr1KatGrg0Xo5cHupB5eibOzmqRnfDhB/xdYrxe/zSJ5mr8zzEePLEQb2Fb4Q6wA0U1zoHlHV0dK5UnwSvpZi2e5DHgf2XfwJDMuXDH7pfZoO63lSffMbHO7gfx9VsqD6oKRPEsQumZw2FD5POVfEf92/XpjoH98KGgzZyv7KoVIw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by DU4PR04MB10483.eurprd04.prod.outlook.com (2603:10a6:10:565::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Wed, 3 Sep
- 2025 16:16:53 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%7]) with mapi id 15.20.9094.015; Wed, 3 Sep 2025
- 16:16:52 +0000
-Date: Wed, 3 Sep 2025 12:16:42 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Guoniu Zhou <guoniu.zhou@nxp.com>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/4] media: dt-bindings: nxp,imx8mq-mipi-csi2: Add
- i.MX8ULP compatible string
-Message-ID: <aLhp6ui9b/OpOUyX@lizhi-Precision-Tower-5810>
-References: <20250901-csi2_imx8ulp-v5-0-67964d1471f3@nxp.com>
- <20250901-csi2_imx8ulp-v5-1-67964d1471f3@nxp.com>
- <20250901154610.GB13448@pendragon.ideasonboard.com>
- <aLZMQ7c8qr5XO88d@lizhi-Precision-Tower-5810>
- <20250902083554.GD13448@pendragon.ideasonboard.com>
- <7c461931-3b04-4354-a892-52f469511c5a@kernel.org>
- <20250902123524.GK13448@pendragon.ideasonboard.com>
- <647fdf8a-835b-44d1-b0b8-a3d253a14787@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <647fdf8a-835b-44d1-b0b8-a3d253a14787@kernel.org>
-X-ClientProxiedBy: PH5P222CA0007.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:510:34b::13) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB7F2BF005
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 16:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.225
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756916227; cv=none; b=T3dnoNIBhZCWyUHQ7HgSK8hRA2zlhFWHpCaZy7PbqdeJ62syXEL3vrpbxMYLeM2o980lD4XxRM4N8VE9jlJ6nMDtaKvSi9uIB2bORjYACjF+1K4WwimCKd96Fa0lyEz4mYHEuR1Bk4KebHjcDZDsHtI4KcwVwN2z7nODi+7fcFw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756916227; c=relaxed/simple;
+	bh=1llv7wH1VQiIuNBw9e8TTndgICnN6X6SRI4+KSovQUs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KoOUtWl4YSku9yub2BFQ2OKFSHj7xofnB+dL7VAs1uT55HzcuoGcX42CG9hevx4SR7wXQl3hWkDKMSBkPPiW68GhICytvkWYtN1/56Mr50fju5kGrPjymmsV62SYDEajghUo93JbvVW2WFjsifh62PeJWcxRjxQrg26o1acAvTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Fdaf0/TR; arc=none smtp.client-ip=209.85.166.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-il1-f225.google.com with SMTP id e9e14a558f8ab-3ee6485e7d7so22725ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 09:17:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756916225; x=1757521025;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NEyeMhR/QXTIN+yafgST63K3oGIIG+IXiOqEdcRlOfE=;
+        b=osYoH3Vgo15FacTqIE/yR5ogus9VOmW9NMFNmB4M/I7XKgPSKg0yGzYhki8F5/uhnR
+         rUrWXQoC9qZ0rgw+XT4y2N2nyye6KvKijzf/j0HePxF9muICl4XODxRl5Qx1x9iX3gzD
+         dHj/O2MolC1ZvRMkOanZyW+5fxk7nXDQeftkpwUbaVt9YdZrNRL+oFyQtCJgTzIOnVyK
+         mCA5u2A4+YBgEUAb+F8II/Tw6k7UDWyagXuu3jociVksSuj8zMO6ovoq/QeL6hc4oa1r
+         xAyD4Z+y56V8IHw37/5fxY3jhvFjGU+2swT0fL0VQ1/snxaFBUPZGuME73ccsr8NQfKV
+         1gfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYnHipqEuRr2uRL9WozGFCPT0V4VZuO4e8QlDmoB9HopaM92WxbjM8aJhfA9Xb8iPq1XgdMAzeP6KNTTs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeqK6npqtFkv+bc6VSCGpygogAgyYDbPD4VERTuYmfAArTYO8/
+	dRgF22RNY0erhIos2sHHzaU0CIRxu2WQOVsNox6Sd1ZJzvv+K33DTuUNFLtbHONypKQ/xhi1HkP
+	RpXtT6XOfqeUzJzSov4z3mkdHtx2RF7ltX826Tg248HUAolhzFtsWbm5VwzVC3HuqiVHaoApgp3
+	rdeDZAFiYJ+v/Qz/b/xybbTre7zRA5oAUKx6+6LXDaZdit4L8zR2MZ4zYfuWpniopdUjs0MmmV/
+	yU9I/QTI6+DFcSKvhp3omRN
+X-Gm-Gg: ASbGncuG1GqXWB/4XjeJyPpsUFiPQWDnyIifsBrfVfLR6pdxsi4KOaCCOL0FiDamUz/
+	hhNUtWAm2sGbUqOV0SeO0Z70Ox+uU8sf2Os5mDimNLmwhJViaVt3qCga/me42bvOFVtn0/8qsIG
+	+xMHoKkYDidKuE7K5rVDslPnTziaTE/LiJO6D/gtmBxOpSCRZqBEt/BjzXQnQ0vZr6zzBTf2jaT
+	eWlIxzuPI7vMNIpU6CWTU7VRKe7g3FAtnP8kvz0rx7u5Uv3hI88zGpB9K6aH7YG+kIpvZHCIRkZ
+	oF9fbEO5ePrdl8qrgk7euiA4WIYZDVGDxCnV0ndDnuEZ/8EFwXU9fYf0klzFI/l52qD/NFBm9BP
+	/DMDoijMKHUUDqnTPAyVXsTmLK6YA2j+z/G44zlPOPEuvIUQqIY5HeO+z6x9nIAi+SGQa8SO9gP
+	HUmueKlYw=
+X-Google-Smtp-Source: AGHT+IE4xfCNsso2MJxjnkkVO079OAEYZE9f2caj1BX4gc1853Yhq8kPmvDqNX0MPumMmJAjQ+ZygNfZ40F2
+X-Received: by 2002:a05:6e02:144c:b0:3f0:3510:aec4 with SMTP id e9e14a558f8ab-3f400281e66mr281754795ab.8.1756916225131;
+        Wed, 03 Sep 2025 09:17:05 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
+        by smtp-relay.gmail.com with ESMTPS id 8926c6da1cb9f-50d8ec984besm741940173.0.2025.09.03.09.17.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Sep 2025 09:17:05 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b47b4d296eso1791391cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 09:17:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1756916224; x=1757521024; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=NEyeMhR/QXTIN+yafgST63K3oGIIG+IXiOqEdcRlOfE=;
+        b=Fdaf0/TR7whzLlTORKnSQV/XajC1XNZpG3nKKdctDcVOH+sPNOgGFKrW5r0bW8Lb1z
+         WY8tmTzv6V5ODrvETq39a43GuQ6DC93XBY6o2XhjRsVcDnS8Ar9yD6vRd9BtjV6644Wb
+         HhijCm9Eg078e6rUpvg+FzuHJhql+6Lyyl+Ik=
+X-Forwarded-Encrypted: i=1; AJvYcCXVaRw58sWEaohwDD+R+unUKFUQ8/OAG3XUIdyZ5IjnQPE6TW29/Czza/XwI8d3A6Dg7L9tUPT4omoU0j0=@vger.kernel.org
+X-Received: by 2002:ac8:57cc:0:b0:4b3:b34:9395 with SMTP id d75a77b69052e-4b31dd27962mr180189201cf.65.1756916224076;
+        Wed, 03 Sep 2025 09:17:04 -0700 (PDT)
+X-Received: by 2002:ac8:57cc:0:b0:4b3:b34:9395 with SMTP id d75a77b69052e-4b31dd27962mr180188711cf.65.1756916223483;
+        Wed, 03 Sep 2025 09:17:03 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b48f756d93sm13694341cf.33.2025.09.03.09.16.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 09:17:02 -0700 (PDT)
+Message-ID: <b229ea9b-96c9-4910-a827-f4d9cc14fa96@broadcom.com>
+Date: Wed, 3 Sep 2025 09:16:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|DU4PR04MB10483:EE_
-X-MS-Office365-Filtering-Correlation-Id: 78dd9f8b-94c2-4cf9-96ed-08ddeb054b02
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|10070799003|7416014|1800799024|376014|52116014|19092799006|366016;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?Ea9awQaga6rVfgruFQMyuCu9Vr4drVASO44cz+lIkYY52TIOY0/5QWTOOVHF?=
- =?us-ascii?Q?cK0nmVpekPNNgYtfVniOI0bBc83skecgtFsdNU/rZLW3dcKZms5yiEBrQGl1?=
- =?us-ascii?Q?Z9ZsNa9ajzR9RQnBFrja+nrN9z3sSe9Q68h63VxUl9I9+NharNCXU+Yc3T2E?=
- =?us-ascii?Q?gOzyrSK0vjez8GK51dh7U9jFKnSNavNsMkU/L+RPxL/jDh2yD63itAVK5Qlb?=
- =?us-ascii?Q?F5oftA72vf/mr9GYkk/3ppEym28Me2aovVXur7BQTfJQZ5EZudZepEdaH7pQ?=
- =?us-ascii?Q?4/ZW1nrovgB2GpWruQb2JaEGZenuQfrH0D5mn9Q7zobTUqXkQxeuUX6eXPFU?=
- =?us-ascii?Q?En6lP3BHE0+smc+p2P8P/whAj56ftGluaZUrpPUboclHVbhoe+i5Jt3yA7gd?=
- =?us-ascii?Q?Uw4Vgf6r/h3hLFADtOTzlQz1mLssDZuYClaLTHnpHfrbbSG4xB+LnBM7f0RE?=
- =?us-ascii?Q?hypDTB5uJAGzvqnxHVY9kunzDq1+IcYQJK9q9RxETpm3BsoR8ZPpYFqEiz7M?=
- =?us-ascii?Q?BiZ2ZVx9p6HKinxwzv3MaqV0vXtJyoe4FgFIIWWFryaGbI90A6jKV+VK5cqg?=
- =?us-ascii?Q?cQJIF9h122GYNHwL0vOhrBbRyXBhjHoPIAEkK9JiK0dFmXQZp+wW4v5z51Mk?=
- =?us-ascii?Q?D9T2yesrMi6fgrY/QYetLViLBh1/FLQ7qySGTmOYN3C8of8ytmJ4dqYziJwF?=
- =?us-ascii?Q?vWk18ms12WoLFPvFYqBitCdUed6Gwj3gHGuTvxjiNjANHLu49OzRUZjg3EXI?=
- =?us-ascii?Q?HCC0keTxch0st9uSTNNm/629cCo9IpQQ01v2I83C5CFsIaApnU8orBOkQQI0?=
- =?us-ascii?Q?tICRv6vy/aqfbJ41heIO0WRVfjYo/fqvEB8V9SsDDEt3sCnl76lT2248ikjn?=
- =?us-ascii?Q?xIIEi+natrYDCibKje4XiUktZRf+JSGLYNvA5KKdMX5d0kZGCGp4NeKve7yM?=
- =?us-ascii?Q?cLrKIFXX8Ch78IjVS5wxB3Jhepsufj6Z1yyPlHDCvKbS1dUiumFWPHU9BiGJ?=
- =?us-ascii?Q?5meuKDtm6rWMtisVYDecSlu5K9OH3m3DnpZ5BD7KHCMCMhWgI/G3BaaUXGsu?=
- =?us-ascii?Q?HTSXOShAtB5T74a48lWImr/yBXMQA8vlM9OgS02OWHVFrkhbUv3D7+pyu28h?=
- =?us-ascii?Q?nwN3EMqtpPIHUwHX+1lp8IrWQvuB8JIRlxS2hktosCx9XvU36jNOuC+6RUhx?=
- =?us-ascii?Q?Eck40pGr3mp2Jdkcw4W1q6QQKL6K+g7MUtOh9SKYlN3FrVCHXCZ1udwEEIPU?=
- =?us-ascii?Q?o1Tt7DA9xVNhEg+E8GyP+8l6wesuTB8oMI5z2y2QdGxWfwhYAVfl2b0Vh9An?=
- =?us-ascii?Q?njwKxCWS0MLLzjEgTXxek1DQ5tOpS1fLfcPh+rEoXjvQaO/3bO0nZjOWpmkS?=
- =?us-ascii?Q?p9hE+Jw=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(7416014)(1800799024)(376014)(52116014)(19092799006)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?WbYonPNLuGoErbKmB/VbifBv6szYstC8tlxj7//dYvtpm/mppacMWNan2jzn?=
- =?us-ascii?Q?ZvpoD/5G0AFROWvPDIcQ5wX/oFMbu5nm/ySfJ/wfiiXUcxsXsJ9Ocu0isGEh?=
- =?us-ascii?Q?h5G7Se32phO/pTY8NJnvRqDlz2jrqk+ZE047fwb1tZ0cbbv8a476AVGm3+nn?=
- =?us-ascii?Q?STujIfHR+vbxSKZW9Pf9Tkdn5DNVImrWDqJmJ+eahjygdNgkafGOmyHAfxVt?=
- =?us-ascii?Q?/pDn2e0uy/Hp04cy4MLBzDBxjBFYY7kOVmzi5YO/2G5429t5cbMRH15OhuwY?=
- =?us-ascii?Q?Aiqy7Wg4lQo3PqWtOzZFxf2URevPrVq3FNzpG4nXfCaWTv6IpW0goWe5ZIjM?=
- =?us-ascii?Q?wCOdqkMHO1kCWFWXnY8iwnQY71nR2axIyQXV8mT2A0J3frGzj2bnPUp+XRqw?=
- =?us-ascii?Q?uVKg4A4TUj0va1r5aoBU3napU0yVXysvvXCTZKL3sh2y8cYMQHg5zJcu7b52?=
- =?us-ascii?Q?mie3h3VYAlOAJF/itwd61nf2zZDXDK59Rb9ofMXQYsOmn73QWk7upraDnBBv?=
- =?us-ascii?Q?8F7UnRpCXMjGd69lAfEgcnL01LnCUMxMoUzxndz4bCBJjD3Zs5jx0/rJscOc?=
- =?us-ascii?Q?fz+WszU85RgFym7RVlYZXwyTLO2CHu/sMzRene+BZXL8GoeJ/BkAGCoSAeCp?=
- =?us-ascii?Q?h7NNwGCiHhR6sKc/ly0HpFLpduqytrBrAOKpmsVOcsF/5fP7xuXHD6LGkUQa?=
- =?us-ascii?Q?4Px4asu3LcSuWLWmChQnmIrKkUCB7oxz7UhsK9FtlvmPnlNCQayXzU7xg6kw?=
- =?us-ascii?Q?yHlDmouU4zNAsbc8I4HQhWwp9LmnMTwv5TIZtEsXoPLEN9ofc/WDMYvF5o+4?=
- =?us-ascii?Q?s9s/FjolwXFjUtcRSbbfj2d/Vhs9ZBC1UxZwfksfrkSw1zG2XSC2yX1/k4CW?=
- =?us-ascii?Q?q8bjh++iARlkgWrpFXO1IcKRw/irqA5rCaSsKVqaP+ko+4dFknhn0N+uuWjL?=
- =?us-ascii?Q?PT/0xNeihUg3TbfdyOjN30X2mKTMhgnnbwb5MudiJ4vK19otvo/ONOo7XClQ?=
- =?us-ascii?Q?56WXTCz1WHwfwq4++Axh41vPSZDmmjh14feXEI9BQ+KtAGKdFGjhXPu/OkZb?=
- =?us-ascii?Q?T4RUC72ZWBf923PgGZ/RKSOW9ts75LraZavLN+u48i1nijt3A55NFhpqKGXD?=
- =?us-ascii?Q?q1IYs4VCIuV2/L6PDWHVx78I4FMQKAY9Plb0TEj0Wg5UNkDo21uddfZkZb82?=
- =?us-ascii?Q?xxDC/beLpMzTTuWMOxwaKlbhO2QIJv99ZYRCWIfVDAH4y30H9sDeak13UHLj?=
- =?us-ascii?Q?XE8kVY+X+sAwdCpQsbs17NQfw2NaZPDFhxzYWkS+PH6mo9bOP9t9Eva+VOTG?=
- =?us-ascii?Q?HT1Soa5bn3rY7iiNFi8eeicafpZhFjDCi6sUrhID0eSJ/wGoPaJ2ae7bzATc?=
- =?us-ascii?Q?i3WW+WjgcbSdVDB+GyhkFSXq1aVUL6dyqsOJ5h6mNaxxVOBRloVJvLh/RJVp?=
- =?us-ascii?Q?S7WRRLOslJzLnkp8/PpfsVp9GBe0fC6kxl9koCVFM96pRYKiY0SBFUdeFRZs?=
- =?us-ascii?Q?YDamTTJFOsxmn6CCFdTJpdG77k8rVcDTkDlpRd2kz16c03bEaCyqgbYuF+yK?=
- =?us-ascii?Q?bPpCXlMqOWOBRbKzy/MxUDSb1duDlIc1Om5UAM6OuhV0UboEzNPzmy0UE29u?=
- =?us-ascii?Q?WC7ML0Zmbom9hZ/nthVmWvnvPMuvvEEVWKwYoGCkB8+E?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78dd9f8b-94c2-4cf9-96ed-08ddeb054b02
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 16:16:52.4669
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k//nBjiq8zE0PAA6A8COrfKV50Oi9ey0IYR1B6TxRacmhc7np3zLxTiA+3ovv3OTntSzsL90OJ/xTRFyqP/v2A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10483
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] include: linux: Destage VCHIQ interface headers
+To: Stefan Wahren <wahrenst@gmx.net>, Jai Luthra
+ <jai.luthra@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Umang Jain <uajain@igalia.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+ kernel-list@raspberrypi.com
+References: <20250827-vchiq-destage-v1-0-5052a0d81c42@ideasonboard.com>
+ <20250827-vchiq-destage-v1-1-5052a0d81c42@ideasonboard.com>
+ <20250827124016.GF5650@pendragon.ideasonboard.com>
+ <we7tl65ijs44ae2zxfejmvnml3ls2pkfhcp2fqsmvec2eqevwm@yb45fs7nnf5s>
+ <8ed6519a-6e45-4793-b11b-7b63c1703d6e@gmx.net>
+ <910dae68-0545-46fa-b41f-8e4fb32ed649@broadcom.com>
+ <c35ab51a-e9df-48f5-bc18-889980098d08@gmx.net>
+ <175690728665.8095.6551736878574350999@freya>
+ <02213561-7a72-474a-be83-98d5ba575f0c@gmx.net>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <02213561-7a72-474a-be83-98d5ba575f0c@gmx.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On Tue, Sep 02, 2025 at 05:53:39PM +0200, Krzysztof Kozlowski wrote:
-> On 02/09/2025 14:35, Laurent Pinchart wrote:
-> > On Tue, Sep 02, 2025 at 02:26:53PM +0200, Krzysztof Kozlowski wrote:
-> >> On 02/09/2025 10:35, Laurent Pinchart wrote:
-> >>>>>>          compatible:
-> >>>>>>            contains:
-> >>>>>>              enum:
-> >>>>>> -              - fsl,imx8qxp-mipi-csi2
-> >>>>>> +              - fsl,imx8ulp-mipi-csi2
-> >>>>>> +    then:
-> >>>>>> +      properties:
-> >>>>>> +        reg:
-> >>>>>> +          minItems: 2
-> >>>>>> +        resets:
-> >>>>>> +          minItems: 2
-> >>>>>> +          maxItems: 2
-> >>>>>> +        clocks:
-> >>>>>> +          minItems: 4
-> >>>>>> +        clock-names:
-> >>>>>> +          minItems: 4
-> >>>>>
-> >>>>> But according to this, the ULP version requires more clocks than the QXP
-> >>>>> version.
-> >>>>
-> >>>> If only clock number difference, generally, it is still compatible and can
-> >>>> be fallback, especialy driver use devm_bulk_clk_get_all().
-> >>>
-> >>> That's a driver-specific implementation decision, so I don't think it
-> >>> should be taken into account to decide on compatibility.
-> >>
-> >> The clock inputs do not restrict compatibility. If Linux can use
-> >> fallback to bind and operate properly, then it's a strong indication
-> >> devices are compatible.
-> >>
-> >> Imagine exactly the same registers, so same programming interface, but
-> >> one device takes one more clock which just needs to be enabled through
-> >> its lifetime. Such devices are fully compatible, even though clock
-> >> inputs differ.
-> >
-> > That's only the case if someone enables the clock, isn't it ? From a DT
-> > binding point of view, how can we know that the extra clock will be
->
-> We talk about software using the binding in this particular case. Can
-> the software use fallback? Yes, it can.
->
-> > enabled by a component separate from the driver (in this case by the
-> > fact that the devm_bulk_clk_get_all() function gets all clocks) ?
->
-> If you go that way, only 100% identical devices are compatible.
->
-> >
-> >> I also wanted to express exactly that case on my slides from OSSE -
-> >> slide 28:
-> >> https://osseu2025.sched.com/event/25Vsl/dts-101-from-roots-to-trees-aka-devicetree-for-beginners-krzysztof-kozlowski-linaro
-> >
-> > Quoting that slide, you wrote
-> >
-> > "Two devices are compatible when the new device works with Linux drivers
-> > bound via fallback (old) compatible".
-> >
-> > That is clearly the case here for the existing *Linux* driver. But what
-> > if the driver called devm_bulkd_clk_get() with a device-specific list of
-> > clocks ? Or what if the same DT bindings are used on an OS that has no
-> > clk_get_all() equivalent ? This is my concern with declaring those two
-> > devices as compatible: they may be from the point of view of the current
-> > implementation of the corresponding Linux kernel driver, but DT bindings
-> > are not Linux-specific.
->
-> It seems you think of compatibility as new device is compatible with old
-> kernel, e.g. one not requesting that clock. We don't talk about such case.
->
-> >
-> > Or do DT bindings assume that drivers have to always enable all clocks
-> > declared in DT, even if they don't know what those clocks are ? That
-> > seems error-prone, in quite a few cases drivers need to handle separate
-> > clocks in a device-specific way, with for instance a particular
-> > ordering, preventing them from using devm_bulk_clk_get_all(). If all
-> > drivers are required to manage all clocks declared in DT, this would get
-> > messy quite quickly.
-> >
-> I don't really want to dive into such specifics, because it is
-> impossible to create a generic rule of out. We decide here about
-> programming interface mostly. Can Linux use the one from fallback-device
-> to properly operate the new one? Can the same driver bind to fallback
-> and operate the new device?
+On 9/3/25 08:03, Stefan Wahren wrote:
+> Am 03.09.25 um 15:48 schrieb Jai Luthra:
+>> Hi Florian, Stefan,
+>>
+>> Quoting Stefan Wahren (2025-08-28 11:49:47)
+>>> Hi Florian,
+>>>
+>>> Am 28.08.25 um 04:17 schrieb Florian Fainelli:
+>>>>
+>>>> On 8/27/2025 12:05 PM, Stefan Wahren wrote:
+>>>>> Hi,
+>>>>>
+>>>>> Am 27.08.25 um 16:33 schrieb Umang Jain:
+>>>>>> On Wed, Aug 27, 2025 at 02:40:16PM +0200, Laurent Pinchart wrote:
+>>>>>>> Hi Jai,
+>>>>>>>
+>>>>>>> Thank you for the patch.
+>>>>>>>
+>>>>>>> On Wed, Aug 27, 2025 at 11:54:08AM +0530, Jai Luthra wrote:
+>>>>>>>> From: Umang Jain <umang.jain@ideasonboard.com>
+>>>>>>>>
+>>>>>>>> Move the VCHIQ headers from drivers/staging/vc04_services/ 
+>>>>>>>> include to
+>>>>>>>> include/linux/vchiq
+>>>>>>>>
+>>>>>>>> This is done so that they can be shared between the VCHIQ interface
+>>>>>>>> (which is going to be de-staged in a subsequent commit from 
+>>>>>>>> staging)
+>>>>>>>> and the VCHIQ drivers left in the staging/vc04_services (namely
+>>>>>>>> bcm2835-audio, bcm2835-camera).
+>>>>>>>>
+>>>>>>>> The include/linux/vchiq/ provides a central location to serve both
+>>>>>>>> of these areas.
+>>>>>>> Lots of SoC-specific headers are stored in include/linux/soc/ 
+>>>>>>> $vendor/.
+>>>>>>> This would be include/linux/soc/bcm/vchiq/ in this case. I'm also 
+>>>>>>> fine
+>>>>>>> with include/linux/vchiq/ but other people may have a preference.
+>>>>>> I agree with this point and I might have missed to notice the
+>>>>>> include/linux/soc earlier. That's seems a better location to me since
+>>>>>> it's actually broadcom-specific.
+>>>>> I would expect that headers and source would be more related.
+>>>>>
+>>>>> For example:
+>>>>>
+>>>>> include/linux/soc/bcm
+>>>>>
+>>>>> drivers/soc/bcm/
+>>>> This is not Broadcom code, it is Raspberry Pi AFAICT, therefore, just
+>>>> like drivers/firmware/raspberrypi.c, we would need some namespacing
+>>>> here that reflects that, ideally.
+>>> The VCHIQ code originally comes from Broadcom, but the current
+>>> implementation has been adapted and tested for Raspberry Pi. I'm not
+>>> against a Raspberry Pi specific namespace.
+>> Thanks for the suggestions. For v2 I'll use:
+>>
+>> include/linux/soc/raspberrypi
+>> drivers/soc/raspberrypi
+> I'm fine with this.
 
-So my understand is correct. we should use fallback string if driver can
-work with it.
+Still is not properly name spaced IMHO. There is clearly a lot of cross 
+pollination between Raspberry Pi and Broadcom on the BCM283x and BCM27xx 
+SoCs, but ultimately, Broadcom makes the SoC and delivers it to 
+Raspberry Pi.
 
-Frank
-
->
-> If you enable clock by clock for whatever reason, e.g. very specific
-> programming power up sequence, then answer would be: no, Linux cannot
-> use fallback because handling clocks differ.
->
-> Best regards,
-> Krzysztof
+I would really rather that you used drivers/platform/raspberrypi and 
+include/linux/raspberrypi than the previously suggested paths.
+-- 
+Florian
 
