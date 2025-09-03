@@ -1,62 +1,56 @@
-Return-Path: <linux-kernel+bounces-798291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82465B41BE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:31:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D86EB41BEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA62E6829CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:31:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AC66169621
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922392EB873;
-	Wed,  3 Sep 2025 10:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E27E2EBDD9;
+	Wed,  3 Sep 2025 10:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tth4tRFf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGHA0fp3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C86279DA3;
-	Wed,  3 Sep 2025 10:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEF322A80D;
+	Wed,  3 Sep 2025 10:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756895493; cv=none; b=Q0mnxpY57zTxdTuQ235DMcU5hP6FmU/xUBztK0pN6awHctPpUzu0AjQe5r6gq9mb9/oMlLatgxXPsd5oseG8JgoF6PN8qT4N9vl9iitt2TF5A6bkgkqAHwzf+bHhX/heW/tbIyYki1YsOaQy86y8ZG8kW6B0t9CLWKbe/iJLrkw=
+	t=1756895541; cv=none; b=Ot5FJyyW42PaJMo3oa6W+fmqlI0oOV7pmpnIug4xlTnbSkqpkWpx+2bhUbJAggOh67nnr/FarkPmhWzMjLZiY0IdAwMUmLOUHt4fSa+lzgxxgy6jUrBNu9Me0y/D8gFMaAYHgK8gVQsmR6jeW0cOYlvOG/zCJKeyd7IMKXSyAb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756895493; c=relaxed/simple;
-	bh=0B3nLZs7Ua+KW7LjOWjwB9lGSpTmwpy/EG15w0U8e3k=;
+	s=arc-20240116; t=1756895541; c=relaxed/simple;
+	bh=OfzrlZXS+tBMSuJAzsFH4VWHQa6joDmypBhEW3I93v8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UxZANJ3/LuEAxj+PYidWTJSz2iHAVp1HmZLbWHeaiMFq5C85zXH1saD8QkzntbeTVtabc5tyOnKuQeNSAZ6auGG4RsGOaICpNghgqXM/2cv8UNlva7GU25OOlI2gdkgcDYrM1w0OSPmkeuejKKVn41toGEcpep9yGDneece6Afg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tth4tRFf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42D1FC4CEF0;
-	Wed,  3 Sep 2025 10:31:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZBqup9vtp7hppBKuMIuTqRIcIEJ4WDLsfHYFmsCNavXPOMKz6s/JFbD0EgLwpFXjYc9H/xZUzEe4Bc5ryGo7sN8l6ix36aF/+B6zmNRdi85wI1CZ+3r2VIAXDer3FWtNvZ5Olynv74ZuxglRWOOina82hnZNFqJanU50ZlPUuE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UGHA0fp3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF577C4CEF0;
+	Wed,  3 Sep 2025 10:32:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756895492;
-	bh=0B3nLZs7Ua+KW7LjOWjwB9lGSpTmwpy/EG15w0U8e3k=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=tth4tRFfCHGy1dEHvnj7kXw9/jgOF5MohFf9B/2S2wtsL04C9HC718pXarghT+Biq
-	 kkb+H8NBzX/qFdL13wvDJNMBrTnhCVz5EWxNya5ZfjEw5Afu9GJmbs1L7IeN9zcfW1
-	 /QbguRnl7W406SHwohDd36HLhPULUixtapOWVhQJBo765HlKVCXOJrcHCFxojVnJlk
-	 SKgqTTbortv8ZB6Z3v3H0rW24cdQkLr82dguvemFUtrdj5CfpB6JoOLPgF6ISM/R0G
-	 G4w6cnckYytQ8bHMpB0EdXM0RLGA+mbiJSTBECybJLaCJrTm/qJa5mTT2QfzaXY1B7
-	 Avq7nT/yC8m9Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D85D4CE0FFB; Wed,  3 Sep 2025 03:31:31 -0700 (PDT)
-Date: Wed, 3 Sep 2025 03:31:31 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [paulmck-rcu:dev.2025.08.13a] [tracing]  364ac25d46:
- WARNING:at_arch/x86/mm/fault.c:#do_user_addr_fault
-Message-ID: <d1ee722b-eb90-4b7e-9c2f-2db7d3b33ce9@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <202508211038.c93e8603-lkp@intel.com>
- <68044ea3-32c1-4d72-9bd3-fe2031669d79@paulmck-laptop>
- <aLebLoM2OQD+KPxQ@xsang-OptiPlex-9020>
+	s=k20201202; t=1756895541;
+	bh=OfzrlZXS+tBMSuJAzsFH4VWHQa6joDmypBhEW3I93v8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UGHA0fp3Hf1VEqeMMAZrlym6PXabO9rrhcd1lvPa2WIXppoeyaZpTlX33Ha+Oxa4l
+	 CowlJYe7rWfTlggy9zoRE6n4HkKJPbs7FxxCWT3ojJZZ9Fg7JCOvkRsrjrbfe0hDxl
+	 m4i2Lgq3XFWrVqu1J5ngy7bJp66xcgRIoy4mhoY/yZXh7Cc3AXwSpfkVhE3tqG3XhB
+	 UETEhyweujRGFIBXIJONOP4GF++pjORZ6tsw1noHizONGEEhDS4IM07q1tHTcEBiBm
+	 F1TT+Ls0atcjKvScPCIpFITyZ/z17NjYKj6FCLcum/ohMXUdbjcUkk/WuUhAa/cavw
+	 NkdPePleYX4JA==
+Date: Wed, 3 Sep 2025 12:32:17 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] i2c: s3c2410: Drop S3C2410 OF support
+Message-ID: <gqcst3ceesm6zt3es332wbr3wqabayuvax4do6mg3y6725aufv@iarjuy462xcz>
+References: <20250830103601.82046-3-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,99 +59,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aLebLoM2OQD+KPxQ@xsang-OptiPlex-9020>
+In-Reply-To: <20250830103601.82046-3-krzysztof.kozlowski@linaro.org>
 
-On Wed, Sep 03, 2025 at 09:34:38AM +0800, Oliver Sang wrote:
-> hi, Paul,
-> 
-> On Fri, Aug 29, 2025 at 08:07:41AM -0700, Paul E. McKenney wrote:
-> > On Thu, Aug 21, 2025 at 01:26:45PM +0800, kernel test robot wrote:
-> > > 
-> > > hi, Paul,
-> > > 
-> > > we also noticed there is similar commit in newer branch
-> > >   dev.2025.08.14a
-> > >   dev.2025.08.19a
-> > > but we didn't finish any bisect for them so far.
-> > > 
-> > > if the issue is already known and fixed in newer version, please just ignore
-> > > this report. sorry if any inconvenience.
-> > > 
-> > > below full report FYI.
-> > > 
-> > > 
-> > > Hello,
-> > > 
-> > > kernel test robot noticed "WARNING:at_arch/x86/mm/fault.c:#do_user_addr_fault" on:
-> > > 
-> > > commit: 364ac25d46eea504eb90229d2a1f92e18c1a1eae ("tracing: Guard __DECLARE_TRACE() use of __DO_TRACE_CALL() with SRCU-fast")
-> > > https://git.kernel.org/cgit/linux/kernel/git/paulmck/linux-rcu.git dev.2025.08.13a
-> > > 
-> > > in testcase: boot
-> > > 
-> > > config: i386-randconfig-004-20250819
-> > > compiler: clang-20
-> > > test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
-> > > 
-> > > (please refer to attached dmesg/kmsg for entire log/backtrace)
-> > 
-> > Thank you for your testing efforts, and apologies for being slow!
-> > 
-> > Could you please try the diagnostic patch at the end of this email?
-> > 
-> > 							Thanx, Paul
-> 
-> by applying the patch, the issue gone. but since you said this is a 'diagnostic
-> patch', not sure if it's a real fix. anyway:
-> 
-> Tested-by: kernel test robot <oliver.sang@intel.com>
+Hi Krzysztof,
 
-Thank you very much!  This tells me that something on the code path from
-the tracepoint to the BPF program needs to have preemption disabled.
-I will leave the diagnostic patch in my tree, and will be looking into
-what the real fix should be.
+On Sat, Aug 30, 2025 at 12:36:02PM +0200, Krzysztof Kozlowski wrote:
+> Samsung S3C2410 SoC was removed from the Linux kernel in the
+> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
+> 2023.  There are no in-kernel users of "samsung,s3c2410-i2c" compatible.
+> 
+> However, there is still a user of "s3c2410-i2c" platform device ID,
+> S3C64xx platform, so that part needs to stay.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-							Thanx, Paul
+As an ex-Samsung active developer (and always hoping to be back
+someday):
 
-> [...]
-> 
-> > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > > the same patch/commit), kindly add following tags
-> > > | Reported-by: kernel test robot <oliver.sang@intel.com>
-> > > | Closes: https://lore.kernel.org/oe-lkp/202508211038.c93e8603-lkp@intel.com
-> 
-> [...]
-> 
-> > > The kernel config and materials to reproduce are available at:
-> > > https://download.01.org/0day-ci/archive/20250821/202508211038.c93e8603-lkp@intel.com
-> > > -- 
-> > > 0-DAY CI Kernel Test Service
-> > > https://github.com/intel/lkp-tests/wiki
-> > 
-> > 
-> > commit 2d6142ce44dca77fb173bb96850634b169277214
-> > Author: Paul E. McKenney <paulmck@kernel.org>
-> > Date:   Thu Aug 28 12:56:42 2025 -0700
-> > 
-> >     EXP tracing: Diagnostic for __DECLARE_TRACE() use of SRCU-fast
-> >     
-> >     This patch is intended to test the theory that preemption needs to be
-> >     disabled in some portion of the tracing infrastructure extending from
-> >     the __DECLARE_TRACE() macro to the target BPF program.
-> >     
-> >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > 
-> > diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-> > index a22c1ab88560b8..c422e4c5ed51ed 100644
-> > --- a/include/linux/tracepoint.h
-> > +++ b/include/linux/tracepoint.h
-> > @@ -273,7 +273,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
-> >  	static inline void __do_trace_##name(proto)			\
-> >  	{								\
-> >  		if (cond) {						\
-> > -			guard(srcu_fast_notrace)(&tracepoint_srcu);	\
-> > +			guard(preempt_notrace)();			\
-> >  			__DO_TRACE_CALL(name, TP_ARGS(args));		\
-> >  		}							\
-> >  	}								\
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+
+Thanks,
+Andi
 
