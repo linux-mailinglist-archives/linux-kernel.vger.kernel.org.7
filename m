@@ -1,125 +1,135 @@
-Return-Path: <linux-kernel+bounces-799534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D514AB42D43
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:16:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC4EB42D4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 211FA7C470E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:16:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F1091B2741F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C4B26F463;
-	Wed,  3 Sep 2025 23:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CE02D24A4;
+	Wed,  3 Sep 2025 23:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="iz3y9e2Y"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="dybKmvnx"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4425A1FDE01
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 23:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CA11D88A4
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 23:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756941404; cv=none; b=dV5GYgXhbgFmEIoR0pjfHN8u8XLHK9KUqsB0eFuS5c0MX1k9NUzQJ9LChUp6qP0oJWAMzreM+UmanOPCMiy8DbNDHJtLVroAAZ+4qJFZe7WGHyjyZUDZSq6jREoSl9/J6KGeoMRsDdyMVaDsQduxu4x9V90obIW5EIxrhT3x0Bk=
+	t=1756941468; cv=none; b=HoRfPcatC+l03IbETJqhJ9QeZv0USofw7NK3F+JF6Equ2k+O8F8ihXIbgegPaJ9R5Qjgrrk28tZq0hmhZ1/GptsjFRd6/RBYwWB2lKrPGnXBHWzreNwcSO5Pnx95pmwjFTDXbI4rI40GSZTxlwK7oz17MBr5cGqJcbIDawoXIcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756941404; c=relaxed/simple;
-	bh=pFx7XWcGl6utlmWhzJGmvbSQZ1HAvh4p4+RjC+57UmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zmta+MQcy+sQfFD45TbQJY1eYYvGEUSov8VtU5CnEY9g1T7+fLj3+GbXRuvnzMIhm8Md6Q2zGaAnbOaJmOElXp+TSP0O+TSgqcRtSC+w7MNvWZtY8Db3FGxaoAbjE8areTki8JcgiV01Y+oUOnrJaEny+zejbnjBhrzUnokFTzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=iz3y9e2Y; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3f2b6e0b93dso2624195ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 16:16:41 -0700 (PDT)
+	s=arc-20240116; t=1756941468; c=relaxed/simple;
+	bh=CL0UQKHeFAeKYytwKaMnrKI/oiLvCPtOmNdScKbzt5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n3gx3NgmRXFf1kdIJJhh6TB49qPAEejXL7eFJ7QXz2Q3tKIDaBPiZQeI/U0CgwIEMt11E5fBXOxsoKAGtIO+sACKs0KCCRmmO3K/4u9xTcAPWY8MuxqMJmk1l7IA0zzT79g3NCt+ihu0BmRzeyf0Nv3ulxPbG0rlfiHxTSzOpIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=dybKmvnx; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24b1622788dso3825915ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 16:17:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1756941401; x=1757546201; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+KPINxE8NLcsO2+XZfNzopULJzjAwBxz5WLUo/LdzEw=;
-        b=iz3y9e2YJ31NRNmT80QNw49auXg1RvsfX5AA2b/ga940YLPxeC2HkQaa3bmixXbMFR
-         JRDQyf0MdCz3y+yEJawQTOV015+mjJktxbat6hnUtxzFZ0O+TOMqp3Vs+LzO2HgTbCSU
-         1F2ED5awlJx80sFZgEnYba5/22ZiIdJprZRxJ8cXURgN7xYKkUiyd46/xvwED0CJJ48P
-         ZedaI4nrqlt4PtrsP/L8IfMmCV8ZBQLxeTI7VMpWwKFsP9NkT8fc7eoYzdC3T88BVTW/
-         2NQzUvi3feRRBh24SIKgz3srUiluoxrzq5hEQdxX6+eV5/DP799GmBzoz1qNekL5RzpY
-         fh/A==
+        d=arista.com; s=google; t=1756941466; x=1757546266; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SkLytKk0F+mcrLFLoKny4gT/DGyLbmcZKBHsU7/uGGI=;
+        b=dybKmvnxdxNBBOyMC6A1Hg928KpZTIE8FS4GjsV5xF4rVob6kdHnyYxIIdfKflaAeZ
+         GUhc6ZPbNzr6Bv6FhT2qULIeH3jrUkUdZUTELApN2CXMA1veHyRNuCmPiJhChk6R8xs/
+         dikYHtUbIG8EPerpFqqsvmyPj2t4mB2Tvw6qNA9YbRFSXJ3W/xDGiKW6VhEAKuubu/zB
+         VJckxONvXU3rdZSGedzCNVw/ZcIH47LSnapPSKRbtS65VAiehKYJ5D1W/BysPdPrTKBZ
+         9FBPcu1PAOxUcPODP4J1jSZOhsp+0nFFeN8GiwSDmEJMyA+2hX8s2/Ui/kC1T67C9nR9
+         1qcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756941401; x=1757546201;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+KPINxE8NLcsO2+XZfNzopULJzjAwBxz5WLUo/LdzEw=;
-        b=NtNRAnmvZTz90WuDllWsPNkr1EtaieUd4gqXkUaMwkNRSk7Xx2ZWSHIj3kGmdmnOYb
-         ZHJ89eVQP7W3iv5e5+R7LdW1WcWg+Eblr4HkZT7XUEvz4NqGHaz2kB8LEZ29tv2hGNHg
-         erITjJXsqQNXO6zuWqO/7LxMezrwnDSlQ7IHoIelGD9WSry1QHkPt1AfnlAVpvIdHj8+
-         qKy/om/nDOL8s7Ni/KYZb114JgHwbj5pi6Nf2qxQKm7ttVPeGVjoLzMIvpnTS7s6neR7
-         8dQItcR0JdPdqjcklk8rHod++Dsx1e8bHTemQ6KKaAX7dnP3fQfPIoEJUwgozBFOQQb9
-         ZTyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpsZqXWdale4vuovxN8JdSJgKdw2MWcPnpyBOwhWSsT2PVpbhrYNGlC1FVfK+LSYoJz4YKf3xISGUgGaU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBfZ3NGUjVgRHjo3i1nb4hLWLFqvrUx1AlCgGnBbQqKIlM3TGT
-	GQx7M7LFqIjLj7R7K7TZ97g3TVLl5TCS6ACc2rn+GoVbJCXzuQO9/SGxR4cFBWNrPMI=
-X-Gm-Gg: ASbGncto9GMolewT06mbt48Yl0HeiKOSvxD6YSKiuFIdZPV/YqsOZde3+yiLwiN1AGd
-	A7+Kg35DVSdNJuZuwdatajV81TtgL1OyvqL7gEuZWuYsBn24onlL4Y9Arv4c7B1YoOKOs8tM4Vt
-	Rcfvd6430Bk+x1J/mXoF0IpnXZNDqZ8NdBLIXyHIgxKmLSXocgxHwej2QU47GGnZt+hKiXCYfAF
-	jI2GGu9EAfVjRXrQCANcY6WNNR9jiO4C0ABxluWRGKcO0dBXR5OJpaQgm9fe+RmT2mIrbcYUeJM
-	yd/pctt0VAC4R6yY5ACjh6oPOfreN1B7/zilMhTUzuC9WShscFNStaqX+x4xt5fJCZW0lKdmkoF
-	itz06iIRR+ZrUXL/7cQ==
-X-Google-Smtp-Source: AGHT+IG01+W9C+jp8uuJ6RhPj6TWC9qjYtGqfBKyHCxLVVNZ/WZUlprqA6pmAZkb2nBGyflgs6jh9g==
-X-Received: by 2002:a05:6e02:1aa6:b0:3ed:a76d:bce1 with SMTP id e9e14a558f8ab-3f3ffcac8a0mr233316755ab.7.1756941401095;
-        Wed, 03 Sep 2025 16:16:41 -0700 (PDT)
-Received: from [172.20.0.68] ([70.88.81.106])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3f65c076d97sm18857345ab.19.2025.09.03.16.16.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 16:16:40 -0700 (PDT)
-Message-ID: <51277999-41ec-45ad-a074-2352f46c882e@kernel.dk>
-Date: Wed, 3 Sep 2025 17:16:39 -0600
+        d=1e100.net; s=20230601; t=1756941466; x=1757546266;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SkLytKk0F+mcrLFLoKny4gT/DGyLbmcZKBHsU7/uGGI=;
+        b=UMfoh+i08+Umy0SUH82qggcpsscA1XFJ4Sdq6fUqFIjo84o10cZ22bAf1z//j/JF1R
+         KMM/5TMIiHQb01x3OEOx0O7+jJJ+OcxksPd5SFhx4a1a8imO/iVEVy5YhujIfEi7l7SB
+         o9/O5t3kqGwNgNiTi23CzRz48t/fHOO4+FWz08MujBgXY4dKGyaNPf+wgDYd627qx3Pr
+         +wtoFn8nz1iDzK89EhqPiMy01gvpVh/c7JcgfiWq5LQk6CdE9muRCf4glR2Y55QJqvj7
+         pPXMOh55aVGpEC4OGMtBc3/9r70t8r6uKrmmhe7vTuGwakYWlY92K+puwHSeJjZlhjpj
+         H9fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfw+4rGdVxmCmIJDy6gP/X9E4NMqW9dIsZrmY0POfQo2pCR+XPh0hGciejhefZV+gDJcXLsZPRilgy9pA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvP++mcpuIzIjdk1Jqkb5/IWGpRS+hLi9qVEIFawbrQw5KAWc5
+	wTEcEBQJog08y3Ev3EFOCYDOHTIt9E4sYjw4KaXFJBTODJx7ziJkN6umMlSUaRXqXaZLyWA8bfH
+	46ywzHEXkiGGbX2IEpjUhVY7UVVuhAtsW6qPeWpXZ
+X-Gm-Gg: ASbGncs6NPkIkTyBAzhgxr5rsDDtp0aSjqNouCVmre+qEpJeHzI0xMf6Rl8OBuI9+yj
+	NTq9/OPFaEaQIDv51eVNCUKSJ8E4uMi/2PXEGN2PR7yW4a2kqmJuHqjNSS2L8X/b6+LVGwJJlWt
+	S/dRa/SXLGyyoxTBuWOZvSf8Gok2T7VFRO07cwhqlcn8EUiwyko9cRMAreSIthYOWrb95y43oCp
+	+QZReFSbcplVduijij05+1YHroEhqXC9lpSphZWimrnSX1YwAvParg8v4LEBLEL0BQ7whOZl04N
+	0iDzh6m2cfOLBAmIe0FMIg==
+X-Google-Smtp-Source: AGHT+IFhxtDQVDa6LZXo7J9DiC/8b0oih5DuwHzcLELXLnzuGVPULslhDSQUy7MKs9lywPezWpqkyjhkghnqW1y2cL4=
+X-Received: by 2002:a17:903:1ab0:b0:246:76ed:e25d with SMTP id
+ d9443c01a7336-24944b15b8cmr209598675ad.50.1756941466531; Wed, 03 Sep 2025
+ 16:17:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: remove WRITE_ONCE() in io_uring_create()
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250902215144.1925256-1-csander@purestorage.com>
- <28b5e071-70f2-4f46-86af-11879be0f2a4@kernel.dk>
- <CADUfDZrpJuq7QH47XTBvCFsENm88WQGX2YYnEPHat_UD6nLC=A@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CADUfDZrpJuq7QH47XTBvCFsENm88WQGX2YYnEPHat_UD6nLC=A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250830-b4-tcp-ao-md5-rst-finwait2-v3-0-9002fec37444@arista.com>
+ <20250830-b4-tcp-ao-md5-rst-finwait2-v3-2-9002fec37444@arista.com>
+ <20250902160858.0b237301@kernel.org> <CAGrbwDRHOaiBcMecGrE=bdRG6m0aHyk_VBtpN6-g-B92NF=hTA@mail.gmail.com>
+ <20250903152331.2e31b3cf@kernel.org>
+In-Reply-To: <20250903152331.2e31b3cf@kernel.org>
+From: Dmitry Safonov <dima@arista.com>
+Date: Thu, 4 Sep 2025 00:17:34 +0100
+X-Gm-Features: Ac12FXyyy_gj7FyaNK9Ji_76uhk24Wy2vOB8JA_2EMYfRrYXPoL-9MEPDggYIDA
+Message-ID: <CAGrbwDTT-T=v672DR4wJU0qw_yO2QCMQ4OyuLjw+6Y=zSu5xfw@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 2/2] tcp: Free TCP-AO/TCP-MD5 info/keys
+ without RCU
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Dmitry Safonov via B4 Relay <devnull+dima.arista.com@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+	Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Bob Gilligan <gilligan@arista.com>, 
+	Salam Noureddine <noureddine@arista.com>, Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/2/25 9:32 PM, Caleb Sander Mateos wrote:
-> On Tue, Sep 2, 2025 at 6:20 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 9/2/25 3:51 PM, Caleb Sander Mateos wrote:
->>> There's no need to use WRITE_ONCE() to set ctx->submitter_task in
->>> io_uring_create() since no other thread can access the io_ring_ctx until
->>> a file descriptor is associated with it. So use a normal assignment
->>> instead of WRITE_ONCE().
->>
->> Would probably warrant a code comment to that effect, as just reading
->> the code would be slightly confusing after this.
-> 
-> Could you elaborate on why you find it confusing? I wouldn't expect to
-> see WRITE_ONCE() or any other atomic operation used when initializing
-> memory prior to it being made accessible from other threads. It looks
-> like commit 8579538c89e3 ("io_uring/msg_ring: fix remote queue to
-> disabled ring") added the WRITE_ONCE() both here and in
-> io_register_enable_rings(). But it's only needed in
-> io_register_enable_rings(), where the io_ring_ctx already has an
-> associated file descriptor and may be accessed concurrently from
-> multiple threads.
+On Wed, Sep 3, 2025 at 11:23=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+> On Wed, 3 Sep 2025 18:41:39 +0100 Dmitry Safonov wrote:
+> > > On Sat, 30 Aug 2025 05:31:47 +0100 Dmitry Safonov via B4 Relay wrote:
+> > > > Now that the destruction of info/keys is delayed until the socket
+> > > > destructor, it's safe to use kfree() without an RCU callback.
+> > > > As either socket was yet in TCP_CLOSE state or the socket refcounte=
+r is
+> > > > zero and no one can discover it anymore, it's safe to release memor=
+y
+> > > > straight away.
+> > > > Similar thing was possible for twsk already.
+> > >
+> > > After this patch the rcu members of struct tcp_ao* seem to no longer
+> > > be used?
+> >
+> > Right. I'll remove tcp_ao_info::rcu in v4.
+> > For tcp_ao_key it's needed for the regular key rotation, as well as
+> > for tcp_md5sig_key.
+>
+> Hm, maybe I missed something. I did a test allmodconfig build yesterday
+> and while the md5sig_key rcu was still needed, removing the ao_key
+> didn't cause issues. But it was just a quick test I didn't even config
+> kconfig is sane.
 
-Just add simple comment saying something like "No need for a WRITE_ONCE()
-here, as it's before the ring is visible/enabled". Otherwise I bet I'll
-be fielding a patch for that in the future.
+Hmm, probably CONFIG_TCP_AO was off?
+tcp_ao_delete_key() does call_rcu(&key->rcu, tcp_ao_key_free_rcu).
 
--- 
-Jens Axboe
+Looking at the code now, I guess what I could have done even more is
+migrating tcp_sock::ao_info (and tcp_timewait_sock::ao_info) from
+rcu_*() helpers to acquire/release ones. Somewhat feeling uneasy about
+going that far just yet. Should I do it with another cleanup on the
+top, what do you think?
 
+Thanks,
+           Dmitry
 
