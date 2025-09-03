@@ -1,159 +1,116 @@
-Return-Path: <linux-kernel+bounces-798944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA236B424F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:21:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 953B7B424FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CECBC1BC360F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:20:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B232C1893C98
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EAF22259E;
-	Wed,  3 Sep 2025 15:17:23 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F97D1C8629;
+	Wed,  3 Sep 2025 15:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LA60sFe9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D27222593
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0197A134CF
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756912643; cv=none; b=Kog4bYJk5J6snTePz9wVCj+qb7q3LAKFbeRbOSbgYjKebd2iTW04i80HI3Y/5f687R+2IS1exuiIb8pUDuiQcsKK9HNyhzmK3qf2JI7U+0d91J6DScuvi4AIwGE2Q/DBWWZb0K16d09dOKvXlaYWGSo4B6VeiaURE9XwjINN85o=
+	t=1756912842; cv=none; b=kvvqimzixyKIUH+efefTUQyy79LyCIfFe8AXhKJbeUYLePZL7GhSjp+IWWEpX/6Tr8XRRtrE57caoKFURQSJjPUHfzix2RrdWnjDeAqTcS5wWz/AEr+/fFR+r8+5rqDXBu91fdPwtpg1loM2HSwNucZ84exJMVCo7JyC2FPn2iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756912643; c=relaxed/simple;
-	bh=fCwJaunZ6z4VKL23zFtkSSgKZVwna4t6if/azimFgS4=;
+	s=arc-20240116; t=1756912842; c=relaxed/simple;
+	bh=NsdBhHawH+DBK1N4+s9d1OtnfBm0/q8nXUgv6A1I7SY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TKd7klKbvAY7Xoa1qsZAoCunLiipSia0hxQOLThNtphfeVDyj1sOrBvXYnwInMypLZqR9Wx1BA530EGdG74vGFbdaJthT4nMBIrB7ISKmUHohLTn9tWHTaF1slOPi0Mp+eRBeIMmjEN5CHfhmNmQRYWRgIAMsGjf0oCCTqZOEVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1utpEB-0006Li-Pb; Wed, 03 Sep 2025 17:16:51 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1utpE9-003a6L-2s;
-	Wed, 03 Sep 2025 17:16:49 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 79C52465B63;
-	Wed, 03 Sep 2025 15:16:49 +0000 (UTC)
-Date: Wed, 3 Sep 2025 17:16:48 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, devicetree@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kernel@pengutronix.de, linux-can@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] ARM: dts: stm32: add resets property to m_can
- nodes in the stm32mp153
-Message-ID: <20250903-uncovered-magnetic-marmot-dd7c37-mkl@pengutronix.de>
-References: <20250807-stm32mp15-m_can-add-reset-v2-0-f69ebbfced1f@pengutronix.de>
- <20250807-stm32mp15-m_can-add-reset-v2-2-f69ebbfced1f@pengutronix.de>
- <59f25804-d310-4492-b95f-19c42cf3cd42@foss.st.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o5vGs/1KQv1mWPx3N7bDn38yqBPOxW2hxV5lbucuXKiZhn1SrVn2v/8AwUqGY09xWJpYiMKjAzfGgT2+/C3r/0Me7Q6NcaLNoKYiSvyAUnZ6Ol06WwdzHq3UbB5azFHG2vvMIPlPr/TuTZusYjOFVkNGPnvjE+Ug/9UydeADLHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LA60sFe9; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756912841; x=1788448841;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=NsdBhHawH+DBK1N4+s9d1OtnfBm0/q8nXUgv6A1I7SY=;
+  b=LA60sFe9TxbPLgpGVyZKfRRQXczh3CJgI7rPTRFZ0kvOnKNntHt7V5/p
+   vrBj9z7kZT0YId6rVlCZv59oQVv8tZ94QXVRwhiaCPAS5/Uwtn2kTV1jc
+   MT7dHSNw6CZz0jUTBFfKQYXl/w5JqpONr7tUzdkmzpSntdVqFCGzZKYan
+   BLLZNQzE4L4SRRtLoSb711uFWgJufoWwlH9cW4F4HnkB/lpSDNbzd8bFD
+   X1F6OcNOeHaiM1Tsf7pZqjW9bbdxVeKdmF4Ai0mizHMi/5SuCkwSXyRtX
+   3TFWs0l2cN7qSF9uNaitBGom2eQXZ6s6nbOzMRg6KsWhpCKabRUAPXM6E
+   Q==;
+X-CSE-ConnectionGUID: qHTUR5p2Sy6/U6QmkZE45g==
+X-CSE-MsgGUID: ptxKL4F/RD6YBxHmNwXZXA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="63049516"
+X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
+   d="scan'208";a="63049516"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 08:20:39 -0700
+X-CSE-ConnectionGUID: l1KLAxBORmG8/Xpf3eoZfw==
+X-CSE-MsgGUID: Nu+VCvZ1QMyTUxC0ID/UpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
+   d="scan'208";a="171179893"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 08:20:37 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1utpHn-0000000B1Ny-0uPw;
+	Wed, 03 Sep 2025 18:20:35 +0300
+Date: Wed, 3 Sep 2025 18:20:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Peter Tyser <ptyser@xes-inc.com>,
+	Lee Jones <lee@kernel.org>
+Subject: Re: [PATCH v1 1/2] resource: Introduce resource_rebase() helper
+Message-ID: <aLhcwuj-Bg39n6W3@smile.fi.intel.com>
+References: <20250903081414.1972179-1-andriy.shevchenko@linux.intel.com>
+ <20250903081414.1972179-2-andriy.shevchenko@linux.intel.com>
+ <e1d7bc7c-6862-919c-a637-bfabce591b62@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="drmik7hqv5i24xa5"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <59f25804-d310-4492-b95f-19c42cf3cd42@foss.st.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e1d7bc7c-6862-919c-a637-bfabce591b62@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
+
+On Wed, Sep 03, 2025 at 03:29:00PM +0300, Ilpo Järvinen wrote:
+> On Wed, 3 Sep 2025, Andy Shevchenko wrote:
+
+...
+
+> > +static inline void resource_rebase(struct resource *res, resource_size_t start)
+> > +{
+> > +	resource_set_range(res, start + res->start, resource_size(res));
+> > +}
+> 
+> This seems fine, it's nice to get rid of complex ->end calculations. But I 
+> wanted to mention another common case which is resetting the base to zero.
+> Are we expected to use resource_rebase() for those cases too? I've been 
+> thinking of adding something like resource_reset().
+> 
+> resource_rebase(res, 0) would work for those cases but it doesn't then  
+> carry the intent of "removing" the base in its name. Opinions?
+
+Another case I have just realised is repeated "rebase" over the statically
+global resource (when driver is in but device is bind-unbind-and-repeat).
+
+Perhaps rebase has to be idempotent. That will do exactly, if I'm not mistaken,
+what you are telling as a _reset() by default.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
---drmik7hqv5i24xa5
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/2] ARM: dts: stm32: add resets property to m_can
- nodes in the stm32mp153
-MIME-Version: 1.0
-
-On 03.09.2025 15:10:42, Alexandre TORGUE wrote:
-> Hi Marc
->=20
-> On 8/7/25 08:09, Marc Kleine-Budde wrote:
-> > On the STM32MP153 the m_cam IP cores (a.k.a. FDCAN) have an external
-> > shared reset in the RCC. Add the reset to both m_can nodes.
-> >=20
-> > Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-> > ---
-> >   arch/arm/boot/dts/st/stm32mp153.dtsi | 2 ++
-> >   1 file changed, 2 insertions(+)
-> >=20
-> > diff --git a/arch/arm/boot/dts/st/stm32mp153.dtsi b/arch/arm/boot/dts/s=
-t/stm32mp153.dtsi
-> > index 4640dafb1598..92794b942ab2 100644
-> > --- a/arch/arm/boot/dts/st/stm32mp153.dtsi
-> > +++ b/arch/arm/boot/dts/st/stm32mp153.dtsi
-> > @@ -40,6 +40,7 @@ m_can1: can@4400e000 {
-> >   		interrupt-names =3D "int0", "int1";
-> >   		clocks =3D <&rcc CK_HSE>, <&rcc FDCAN_K>;
-> >   		clock-names =3D "hclk", "cclk";
-> > +		resets =3D <&rcc FDCAN_R>;
-> >   		bosch,mram-cfg =3D <0x0 0 0 32 0 0 2 2>;
-> >   		access-controllers =3D <&etzpc 62>;
-> >   		status =3D "disabled";
-> > @@ -54,6 +55,7 @@ m_can2: can@4400f000 {
-> >   		interrupt-names =3D "int0", "int1";
-> >   		clocks =3D <&rcc CK_HSE>, <&rcc FDCAN_K>;
-> >   		clock-names =3D "hclk", "cclk";
-> > +		resets =3D <&rcc FDCAN_R>;
-> >   		bosch,mram-cfg =3D <0x1400 0 0 32 0 0 2 2>;
-> >   		access-controllers =3D <&etzpc 62>;
-> >   		status =3D "disabled";
-> >=20
->=20
-> How those reset are handled at driver side ?
-
-I've created a patch that adds a shared reset to the m_can driver:
-
-| https://lore.kernel.org/all/20250812-m_can-fix-state-handling-v1-7-b739e0=
-6c0a3b@pengutronix.de/
-
-The reset is de-asserted during probe and when the interface does up,
-otherwise it asserted. This way the IP gets reset only when both
-interfaces are down.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---drmik7hqv5i24xa5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmi4W90ACgkQDHRl3/mQ
-kZw7OQf+IAk77vePmsl5sa2RCJ64dVjof83jSrEidTOll5/fyIaPux6Y/xW/WlOl
-r7Jiw9c8rTb66LdAl7QxlV9SthVj3iaD8qIRt3jFOTHtLOVOjuOh6UPP3rdoSSQS
-rE/eve4ZibgRYje/9Uzey2lJ2Mybq/qDtexmqzygOngruvvWLe+4BdKHykjQPBXu
-TnGA+vSAVZ7Gd0vmbSeL7OWBMLD4i6i5L0SW1O2L5vLVGr7eHSqHp+TAP4Qwd2ls
-oJwojmqYInUMNjCsZyDpX+/O60KsA0wlWnp5JCoIM4JwuzDSruI6mBTeChvRdQc4
-S2srAIKWU7ZOpyhRiJ0Sq0Jw2hY9Xg==
-=u+QD
------END PGP SIGNATURE-----
-
---drmik7hqv5i24xa5--
 
