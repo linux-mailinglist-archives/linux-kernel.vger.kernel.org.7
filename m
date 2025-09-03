@@ -1,220 +1,185 @@
-Return-Path: <linux-kernel+bounces-798890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00969B42456
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:03:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F0FB42459
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A84C17DFC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:02:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 247A22065DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7629D217F33;
-	Wed,  3 Sep 2025 15:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8C61EFF9A;
+	Wed,  3 Sep 2025 15:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="f8dUii+I"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2054.outbound.protection.outlook.com [40.107.237.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lhue5TIl"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD4630DEC0;
-	Wed,  3 Sep 2025 15:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756911749; cv=fail; b=h6RNhXZTnvC7iku5j3wBn4QJ7e1g+MHvfT0T18yNaM3DA4ckpSaSlhiOpW087WJvUniHwneLRSXxl9/WXej0YGsBYSqWrFkhNwd+7V3Yqkq3JibsvVoUhYOf/MQO8WIAtsifXAWw1CwieMQiQXHNWo38qSZdKetIGLafnF191vk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756911749; c=relaxed/simple;
-	bh=Um8lInFiaJaFrrTyEySzUbMq2K2BLFjQZRlInqnpzCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=VMAM5BMfTUhrPdmkbQLro4dwaAdgkqufYYeydf+ln0fFDXYgPjluLBF7yxpsZnLzwc8bOhBrVTQWX7KYq2ig6eOoknOA5j94qQRoWPptsRu9CKj3dk0YJ4a5RgQpckLEZDWG7XucoLJNkNbY+1JuH7bMK9DuKbFo9aovsNU1ia8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=f8dUii+I; arc=fail smtp.client-ip=40.107.237.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o4Bp7d9Cc/UhDgGg9KjrxosFpmPyZ88/IMxPBS5Wf550DRN5+hT1cU1W90R+cX1Mnbw3M5Tjx7KqdiaCeBA2sjUHhm5NJsGSdLrtVlrdbVEd9PGjMYwqpwD9vpJmdJB4zaoyrqws5QirJUZ8fryY3oAYYfs46zoWSCJkmKuFNBCDzv1pfvWwtaNLJBGcqZx8maVKDrWchFTKQhY3VF1uhsu2qSbjx8gmrfrbAX7bTuyqqusovs/H2AIW3AH6ApMzOhfpmCKTz6kxwKRPGoiySWrsaa1wkX0pIiOfRC4W+pyiO1a/8twOuy+AWu2UTj+tNsxGx5a/2+RYO4DF2A46Og==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FhDgREVKqHT5JW76Rco9qWw48VdwqCKPLsLGp0CT4ko=;
- b=YxjwDP5a8gonabNXqnOAM8CpbGuT1Qiq33CehJzoBoZQCFYKHtTSLyxkCNduoq/hfj30GTGoCJq/w/3HvuhLC4O19LXXDbnQkobPPOXgP9hdnQdUiEFZpMsLR0QYfovSuND7TUGrTokOeqY0x/Om1ObVl6sDsLHSzP3Yu9WjkhS8i/n+L3O3CXDBnZTfYkPjsi8JYrcUuCLrpAyGIuEgn/Sau8/SWFUip4/WacLa5dSoKAIYnkfIm+nZRrhFBK5kyS4IOTYLmy4GoIlq4tviiTDD+llmjE9trBDTdIf/5gqEbdmwKsefKlMVFMqVc3a2WwgFqCS2n3kRK/VFpV8hXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FhDgREVKqHT5JW76Rco9qWw48VdwqCKPLsLGp0CT4ko=;
- b=f8dUii+IY7Y3F22xMwgANxCKlWi0tDaBlfSrYSmnYJApiPklQBQ4xLa/zwqOxnCs1FVlTNT1xmtrNaf1LBB6UYZpDkVaqbPtrhTO7ZhSRTIDliScQ60khvDdocVUqYYJDa1QL2wh0/Gklgdcf/wRVrb0GHR8U/2D48CbYyzMSM2jI2lEAFbfsY9cXQGKh8CDXPd7LJys/Is5r0CfgDu+SKRPPMY9KxtPmgPa9TWsWNN/d+YrP4s+SghQSDhDQRBU3VFoizdipY3/MyJwLuMz8sYTahqDhuDbD/QMPSMT6hum8KmHJbs+cr6RATqq7Ms68SoLdo2rh0o9/40clqlyaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by SJ2PR12MB8953.namprd12.prod.outlook.com (2603:10b6:a03:544::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Wed, 3 Sep
- 2025 15:02:22 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.9073.026; Wed, 3 Sep 2025
- 15:02:21 +0000
-Date: Wed, 3 Sep 2025 17:02:17 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/16] sched/debug: Stop and start server based on if it
- was active
-Message-ID: <aLhYeQZBcTsz2KLG@gpd4>
-References: <20250903095008.162049-1-arighi@nvidia.com>
- <20250903095008.162049-4-arighi@nvidia.com>
- <aLhUB86NwnaQ8bMf@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLhUB86NwnaQ8bMf@jlelli-thinkpadt14gen4.remote.csb>
-X-ClientProxiedBy: MI2P293CA0003.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::16) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F47A3101AA
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756911794; cv=none; b=f1UAi6POlaOLC34BMFnC3mFVKNSM6x/DXvgbA/qd1hWmGOVHhYgptrSUAF8eUaWZP/1/WvyNxGmCWimpl3tDsE1Ovf9kucesz86m5bTwiEylq8O0kZZ9gLhHi7dSKaENdoUG4FaM8CgJAjtGu/Ir+gdQ8j5P8yfnmj+EIRZ5Y/s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756911794; c=relaxed/simple;
+	bh=LekdRFzFZGbphNAI7RPhmxPwnfPr7M4Uz0MSWilmzVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NZlyZPuWhHP5gZcpog6a+qTmFIRiuwMDcuiHaKLZc7j9fkc6qK6/zH5QhmWEx9mTa+h5sPYbO/PNphZ9+UKfACpSHLuhHuKBXLS4iSH7Dlo8tBUbmYuhufE/OZH5kXRyx1X2ObUkdkSthOcrLlCcMD6Uv08Nzikh5GtU03hUUGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lhue5TIl; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b7d485173so381795e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 08:03:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756911791; x=1757516591; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vb9H2OtYCm0pJa79dfHcS+lvaJaqfNpw4BGLzTlGfN4=;
+        b=lhue5TIlbhlVCXVAscFKWU7JqRhIvfKtTRdYOjjbtrazqhTjC2JPqMdm15IpaW00g1
+         T4YMxBPBtSVGGUpk1X3VY7DlUszSYzhBh+81F/Q22uMhPlcZvcldLpViGRAbyZj28b2g
+         CPtZgtUIXN46sLbNcY0H9QG/b4o55GAF4Kzt5OlaQmzJAbQqCWotM+uXJ9T3rxCNjxBP
+         XnOnOdkySz1p4AJw3xCiv2txjduIMmZlupun2qyBTF6wJo9m/KTCfgkA8sT5ddSQnoYe
+         iL/tKQ/lkjnotpHLJeTn/Yjk3Eogenkflui5HF0dEAyPo+mpvvE4odAfw4qgQ1XYaQ0X
+         89Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756911791; x=1757516591;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vb9H2OtYCm0pJa79dfHcS+lvaJaqfNpw4BGLzTlGfN4=;
+        b=BhbEsDb97f2DyaSDLc1fYdp5wa2Pxno2Nhh1pd5PbNTW6SZCfb7TIs6V5bwl/qy0S6
+         aQB/liyyRBh5ZZYUTpEiuJivZO8kDqQMrrDzU3hfPFziClBJBXfCKk2q2wwvKyykmkl+
+         h+74/+Z5/NiRNwHY376pzkT2Sos7QLNOq5lyfLKeLY0AUILuZd5xlKL3NzrGa+Y37P7w
+         YcextmTIdmVlWerv15+5j2hXgosEJhOsJ9v7PsBJWSelVaVql1pIqFKZMX5HfqbBIbcy
+         2hTTo3iX9/WDKLNU+7OluSPPCBNBSU6/pxfzmluiOO9DY3Tmaie0DTWgeqTw1Kdbha6a
+         DmGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUE+Kog3qRzyTLKOqDD9RW26TA6/Cm2WWPpU28YMpvMusIh3jY3VG+UX8oN4iwZ1ztdyJMh+sqDabV6948=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweSmzAufiUe5ig2p3PmbKISq+UvJbM5eHAeGxzn4mC/3z/hySF
+	2qDdoxTs99t73o8U2dAtt6kVmrPWbz2NyjUyxx8LEKGexkrGwTVNFfEWBkOMeP5IiTM=
+X-Gm-Gg: ASbGncvUHxlnSAiY9o1dlamV2vvgmmCYh+UIkXVhIyjzoCg2jM548P+rm8zIWKWaMIO
+	Ol/dcOjLIZorte0cwdCQSc5CI4F9nyHRwX/eOe/QtA2j/xZlpu8eg18u59KhJMrueBgw4f2qDc/
+	JX1bzH7o3hxCJFBJfTYT17BzIOUriiS1Nyagc3fA7YHkr9BipBTttNw43rYxXqC7507nrakB8vh
+	E6U5lw+BE7ZdUwoEuJ5+yLxy7MolEHFIx1pRi+Aqgr7sqU/3ChYwOcUOJE/KCsv9Ozg6szaygui
+	+q9WAr+D3iv/kmqnCOeBnAz/Zx8qWXSD/qnSUuSDrNXAXwRR8mqWi6rRBCQKfHS8jz1qTgGPTR6
+	ts4RmZXP9vKzdNrQHPWnUi2L/Vs2fuYZYi0/4G1jUYxCP9UhinRg8k+u3v1RepxcBj2KWlilnWa
+	MHAxSSAh3pxBaXUSpdnoTb9fOxyEJWPg==
+X-Google-Smtp-Source: AGHT+IHgxGzSBKO2RRcMFfLj2ZBw0StjQrIND6sOj2Qk5dHscpmAOqzGzyVkeDc8krrGAjKPU2Waxw==
+X-Received: by 2002:a05:600c:310b:b0:459:e3f8:92ec with SMTP id 5b1f17b1804b1-45b85532b05mr140779095e9.10.1756911789005;
+        Wed, 03 Sep 2025 08:03:09 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b73c52735sm306287285e9.22.2025.09.03.08.03.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 08:03:08 -0700 (PDT)
+Message-ID: <0b4472cb-0c73-4eb8-a360-22b40aae44f5@linaro.org>
+Date: Wed, 3 Sep 2025 16:03:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SJ2PR12MB8953:EE_
-X-MS-Office365-Filtering-Correlation-Id: ae6aa02c-1c26-4a9f-0887-08ddeafae258
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fdEnjzgjN/Bl/WghZlwjusXZw+bvy85fBH1OTkxnyd7+pgZInrxTj3pwDyf/?=
- =?us-ascii?Q?19WrGuwFn2WLfM4dwJsayL4WKDCBXsHDEvs2Gnz1X1VeGTTYb46O1KwG7NpS?=
- =?us-ascii?Q?SQJ5pGYreUodt+fBColMw18O2uKISIjzxYfhltWrFXZKRb2WXbB35NbGmG4I?=
- =?us-ascii?Q?xuQXwB32hVpGp9SWoLT6GnjTNnbGQDiqnJt8B3ketp4i8rShRs5gtEyKChfb?=
- =?us-ascii?Q?BSsDQIBLfk9uMiHZwxTiD6ZTOes/aACwDchMbl9FJURwU3d0pMbghIj9n30E?=
- =?us-ascii?Q?QfhNszDuno0UdcMz3fH9M82/QxBZL1NkkO74eK98bprJdZFGAfEaCYH9iRd4?=
- =?us-ascii?Q?XAVvgDNcuOOuIPjXY0BfTjM9BdiZ/tljEC12HiSK0Miu/PtDvwSWWfgYt1Um?=
- =?us-ascii?Q?Wa8J8yijU8qYICKQDdoQPWlCRiMAclY5mRvwjeQaPXxFrhyD8pyYTAlIrg8V?=
- =?us-ascii?Q?svfTx+Jbj4uTkb/mrSJtCWWBVC+NqDrPLTjm1i+rTGqfM6KhOCUZzs8ghE89?=
- =?us-ascii?Q?nYK/cY/jMtlmjiEYJW3NbPmS29ep8O8CtYGcpti77GLooBQwUQPN8C4Keydj?=
- =?us-ascii?Q?L2sJC2Z8BuiEjCEiV4dTNZ1saz5zUITIJcx90vEH/GVnsndv7/oL3DDiNijh?=
- =?us-ascii?Q?JdbKnMgnsPmo6tOT/LpEoQvQIIFZeaG0Q7AA3K71CmChSGE6LIVc5YmkouOg?=
- =?us-ascii?Q?p5CUAlUnKWzKJkQkinyDzfVjsKOBkYwsMeSDVBkVTeahiF6fhznomcYEUHJa?=
- =?us-ascii?Q?sWQJTQGSFweF492u2qDN4tkPr5TBhIY34Lhq0Bzx6ew7LPhq8N7izAxQPiZ8?=
- =?us-ascii?Q?AyGF5q8DNzCGIGLu0eYR390sMRlawT+1X3aFxbpE50iGbNLS12bzRRCqs/eN?=
- =?us-ascii?Q?3RtkdueuVAXur6PjKlngGcLD6sLDM0inRVbQOyWjcMsU/bNBHSbt56lqjvA/?=
- =?us-ascii?Q?RqmniKPKC/SoGTmLkWXjQ2Grv03VURd242FgLyVhZJCQlkVg2w0ajoNtRzKD?=
- =?us-ascii?Q?WWmMPBGnuZvLoazRudOUsJuFIm0zABS4NdznMHvoehvPb73rTSIB7qfTep6T?=
- =?us-ascii?Q?HmMmvMbFWd33giq689mMEPJeN1Pepi5g5qMtIuev+DHv/4CzGcg6YA9wBAyX?=
- =?us-ascii?Q?H3hTLB16J7jdZcSiYdEB9WCETabaCXxXncTNAZbfO4/cYTv5PrKdtwrzeciV?=
- =?us-ascii?Q?4ihxqMQnb/sPtq25UH1wSR2hnk2holUpEt2nveUQORq1yKiVbEpQzh8xuJIM?=
- =?us-ascii?Q?f7AVXt8biZ+9X62eqq5ixp67zUmKkSx895MZac5Lkodh6ITZ8FNT6HoR/pz7?=
- =?us-ascii?Q?t/phkZ339y8Csd5NEHHiAr9/VAMKUmFacoAXkWszGvK4ELo+nN9t+KbkLh3V?=
- =?us-ascii?Q?oMUXG4C//YNULmkSZxrdD8UecwnTf2HhB5OYrMKyAd4isC1VtjwUKi540K8E?=
- =?us-ascii?Q?t8VrrS1W3mE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?i+BM+K8E0+wfY2sBa93fDYkx107Yct8cmg5gVD4nU31Qp7qBMhmZ3UnLMAAC?=
- =?us-ascii?Q?O7KwEnh9qJZSSDT9jREEPsDmgL2eWgvYBW7TM4/uY5AZLtpCocvLSURrXmRh?=
- =?us-ascii?Q?AiDEGwX4QuUnCKUT3lrRuYFGSAjH5SB51S0eoIAByXxlsQPK1u+b3dS8CVdY?=
- =?us-ascii?Q?/LtMH6t8yrPzlWs6r+PQS9a0SDb/+/DSIjpX4Ps9NtgGQnHmXwAGe32bulB0?=
- =?us-ascii?Q?Me6W8coddZwDo67+iEGqrdJM0enz6DCutk/1ZrCv8PWj8UT0b53gLCAzBOtv?=
- =?us-ascii?Q?97AsbXPDxukf/NEWoT1WiB0BXru8rN5u6jx7o8JV8Qz45oexii4VmMkDTjpa?=
- =?us-ascii?Q?KMIDijx57neTx1aXZVDNQRc0lCvkIOTEhCPxXbHlc+mJRqHojCTOOhO73Bls?=
- =?us-ascii?Q?25z9D8qyqKOC/51U3kCH7LPcYQDBmRsfFV4cXEjWe4XZqI4+l7D3VdHMrEJy?=
- =?us-ascii?Q?uAg1mPLW1yyefL/VhnFIBz/iPkJw9Nh3SZAMsMK57PAPTO2eF5yBVpQ4w9PD?=
- =?us-ascii?Q?udqyIGwkzsV8mYfGTjaL28AbM7nQzOq8ja4tq0NZdbBPf0khKBboArmC80zR?=
- =?us-ascii?Q?1FVMgmgHoQgddJC6D2DTpTNXWC+xQ/99yizjVf0Q80RTAPNuNrZF9j/i/pTN?=
- =?us-ascii?Q?tRxnCZBOi/qf7COUFK7Nuayc0Bgg+9hReAQ+p/s+CSMQVH/PJQlgWDfSeWJL?=
- =?us-ascii?Q?ePcIv+C5PHzthS5E1A+XQs9wH3bnpcjJLn8HOh8VzonyEXiir/Xxw07CPE5d?=
- =?us-ascii?Q?mH36EX/WBV/5bKmXlQnMNbFGlFwhyOKRE81RlxiDpUISfz+ALUsjZ/szbyIB?=
- =?us-ascii?Q?Sh8QasMZBmeNju6ynAcEscmvJlZSxgqbnLIB0Xt3bN8Jao9KKgjxPzQ9B8y3?=
- =?us-ascii?Q?qchQFX1GaBblD/gTbfG5lsJr0Pbo4KFUO4IMdnO+/j6B+cabEoGu/2NV9850?=
- =?us-ascii?Q?Wc9byriuX4FlefCZfjYVcq2JsvzBf24TFf/gPfvxX1/iBwUGu3ocDTPxMsu1?=
- =?us-ascii?Q?Whwch0OUlXhUzSwXrVoKj1Y22hwNqbRLWduMtw84LfktY2Zf5kL8neixhKKO?=
- =?us-ascii?Q?BqpqYNNt4pktSkgnNWv21+6RjxOEAVaESmEzjj9MjCCEcdDxNiiMWM3vBQqQ?=
- =?us-ascii?Q?Qmft8RWczCcYnjOsS44kZDNGqpieLJMJRr07zN2pcWwOzQTWcXxjYd+bgvN4?=
- =?us-ascii?Q?qKLjyt9wr8QfSlEXJ977t2eOXkviw+xXkke+AL2dR9HShStur7XKxPtVSiNg?=
- =?us-ascii?Q?nBx64JCP+rNXd+D+i+eSXer9ePAmhaiOOX606vjmdIbn3QQNzoh9VdTfnqfs?=
- =?us-ascii?Q?ltsQGj+hYuZTEvKsqzw1DJQ9ukBt9GDIRRT96gP/K9R9XN/3mAnW3cmWKUcJ?=
- =?us-ascii?Q?AptRPUT6Dm4JplKrH3uOOpN+DDm3hdwMMjvLQLt649VMzzVmDcUfU3oM79E4?=
- =?us-ascii?Q?jfH+hqvnYOanwY4W43QAORLPqG87rQYfTjBr0IFSIXWIj+JCcrkY8Rx3HC5F?=
- =?us-ascii?Q?bVDlEqEKmg/apnpM1Mr+NMz0GGrl9Lwev6vraiqE1NNoJMc1uH5Gu3jil0Db?=
- =?us-ascii?Q?WdcwlrL/+EnFkTwiGqFQZ1yWnIp2qsU7udusQ7jJ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae6aa02c-1c26-4a9f-0887-08ddeafae258
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 15:02:21.8960
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: x1e03+NGdTVWXR5CamryByCrQiTUcgKhfuxt6vwkLkXBvsajJxWLEkRwYoQkCWhN2oF6iD2Stfr9Z3cqepV5zA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8953
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/11] soc: qcom: mdtloader: Add context aware
+ qcom_mdt_pas_load() helper
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <20250819165447.4149674-3-mukesh.ojha@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250819165447.4149674-3-mukesh.ojha@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 03, 2025 at 04:43:19PM +0200, Juri Lelli wrote:
-> Hi,
+On 19/08/2025 17:54, Mukesh Ojha wrote:
+> Currently, remoteproc and non-remoteproc subsystems use different
+> variants of the MDT loader helper API, primarily due to the handling of
+> the metadata context. Remoteproc subsystems retain this context until
+> authentication and reset, while non-remoteproc subsystems (e.g., video,
+> graphics) do not require it.
 > 
-> On 03/09/25 11:33, Andrea Righi wrote:
-> > From: Joel Fernandes <joelagnelf@nvidia.com>
-> > 
-> > Currently the DL server interface for applying parameters checks
-> > CFS-internals to identify if the server is active. This is error-prone
-> > and makes it difficult when adding new servers in the future.
-> > 
-> > Fix it, by using dl_server_active() which is also used by the DL server
-> > code to determine if the DL server was started.
-> > 
-> > Acked-by: Tejun Heo <tj@kernel.org>
-> > Reviewed-by: Andrea Righi <arighi@nvidia.com>
-> > Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> > ---
-> >  kernel/sched/debug.c | 7 +++++--
-> >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-> > index dbe2aee8628ce..e71f6618c1a6a 100644
-> > --- a/kernel/sched/debug.c
-> > +++ b/kernel/sched/debug.c
-> > @@ -354,6 +354,8 @@ static ssize_t sched_fair_server_write(struct file *filp, const char __user *ubu
-> >  		return err;
-> >  
-> >  	scoped_guard (rq_lock_irqsave, rq) {
-> > +		bool is_active;
-> > +
-> >  		runtime  = rq->fair_server.dl_runtime;
-> >  		period = rq->fair_server.dl_period;
-> >  
-> > @@ -376,7 +378,8 @@ static ssize_t sched_fair_server_write(struct file *filp, const char __user *ubu
-> >  			return  -EINVAL;
-> >  		}
-> >  
-> > -		if (rq->cfs.h_nr_queued) {
-> > +		is_active = dl_server_active(&rq->fair_server);
-> > +		if (is_active) {
-> >  			update_rq_clock(rq);
-> >  			dl_server_stop(&rq->fair_server);
-> >  		}
+> Add context aware qcom_mdt_pas_load() function which uses context
+> returned from qcom_scm_pas_ctx_init() and use it till subsystems
+> is out of set. This will also help in unifying the API used by
+> remoteproc and non-remoteproc subsystems drivers.
 > 
-> I believe this chunk will unfortunately conflict with bb4700adc3ab
-> ("sched/deadline: Always stop dl-server before changing parameters"),
-> but it should be an easy fix. :)
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> ---
 
-Right, I also tested that in a separate branch, this patchset is rebased on
-top of Tejun's branch that doesn't have bb4700adc3ab yet. But from a
-sched_ext perspective everything seems to work fine either way.
+I'm struggling with the logic here a little bit.
 
-Thanks,
--Andrea
+You take this function which calls qcom_mtd_load_no_init();
+
+>   
+> -		ret = qcom_mdt_pas_init(pas->dev, pas->dtb_firmware, pas->dtb_firmware_name,
+> -					pas->dtb_pas_id, pas->dtb_mem_phys,
+> -					&pas->dtb_pas_metadata);
+> -		if (ret)
+> -			goto release_dtb_firmware;
+> -
+> -		ret = qcom_mdt_load_no_init(pas->dev, pas->dtb_firmware, pas->dtb_firmware_name,
+> -					    pas->dtb_mem_region, pas->dtb_mem_phys,
+> -					    pas->dtb_mem_size, &pas->dtb_mem_reloc);
+> +		ret = qcom_mdt_pas_load(pas->dtb_pas_ctx, pas->dtb_firmware, pas->dtb_firmware_name,
+> +					pas->dtb_mem_region, &pas->dtb_mem_reloc);
+
+and then turn it into
+
+> +int qcom_mdt_pas_load(struct qcom_scm_pas_ctx *ctx, const struct firmware *fw,
+> +		      const char *firmware, void *mem_region, phys_addr_t *reloc_base)
+> +{
+> +	int ret;
+> +
+> +	ret = __qcom_mdt_pas_init(ctx->dev, fw, firmware, ctx->peripheral,
+> +				  ctx->mem_phys, ctx->metadata);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return __qcom_mdt_load(ctx->dev, fw, firmware, mem_region, ctx->mem_phys,
+> +			       ctx->mem_size, reloc_base);
+
+Surely you want to qcom_mdt_load_no_init ?
+
+On current kernel
+return __qcom_mdt_load(ctx->dev, fw, firmware, mem_region, ctx,
+		       mem_phys, ctx->mem_size,
+		       reloc_base, true);
+
+but that's a functional change
+
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_mdt_pas_load);
+the no_init version of this looks like this:
+
+int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
+                           const char *firmware, int pas_id,
+                           void *mem_region, phys_addr_t mem_phys,
+                           size_t mem_size, phys_addr_t *reloc_base)
+{
+         return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region,
+			       mem_phys, mem_size, reloc_base, false);
+}
+EXPORT_SYMBOL_GPL(qcom_mdt_load_no_init);
+
+So is it really the intention of this patch to change the callsites 
+where qcom_mdt_pas_load() away from the init version to the no_init 
+version ?
+
+Maybe its a symptom of patch collision but hmm, having a hard time 
+cherry-picking this to test.
+
+---
+bod
+
 
