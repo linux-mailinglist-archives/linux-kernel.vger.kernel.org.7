@@ -1,119 +1,158 @@
-Return-Path: <linux-kernel+bounces-798449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB516B41E21
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:02:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1AD2B41E1F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52518160244
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:01:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E987118904E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE259286428;
-	Wed,  3 Sep 2025 12:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D6v6y2my"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C8B283FF4;
+	Wed,  3 Sep 2025 12:00:08 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790C328466F
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F072FD7A7;
+	Wed,  3 Sep 2025 12:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756900853; cv=none; b=UCTQeDbY243yT/nwAAcA1lZyhWDZ/M7NKTfEVewmYWNY0Y5okRQd1lDv6yDRzCPV3jcujfnyaxsLmEONs7jTN6OMB8n/orfO3KQLtJhklbQzURIxOo6yICCgy+kPnF8YDH8xSK7KG5CNpugtMvXZuDjDPHtyCQ6A8xx5eMFldxw=
+	t=1756900808; cv=none; b=k2XB12I3KmVpiCe5eEhFoNaB1O3CF6f1ziTh+fJO89jtS1UbIsEpVQABlijkvY9jVO2CuADPOgAuxvGh994lgNIzbSZ2gttKgmsxjwCb+K842zoO4MrtHUhrcBPewuF1rW4iG0UtLyxpacWX7RiOxN7na7ixA4yzRH2R2NYugCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756900853; c=relaxed/simple;
-	bh=+grVyZxAWtKNFWpbultXM2V6yd2mmR2F3jJF5AT5BFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BUHFmYgW+a+TSppsPRrSry5JQtokPxNrajc0+9+nk5N9JtDHgygkhbdybS4BQH92Tqcw5jFrfgSULqn8MKhJ5xo8qwhXwZXijvt/ZkEw3k8OeZTc8JLzOJvqltXzBwY1O8llqrjLRcnAlaiAtUi76rd9aFG0P6m5cECZ1moAaG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D6v6y2my; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756900850;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1nw6naDuPKKSADEwjZLNE9uKM8R6m9CFTff86lS75ms=;
-	b=D6v6y2myBsfYHOJWPkVGh1cmyrtwYl0+jSTXGzcWtQuYUPivOXCk/7lsqYJ343vduS8omS
-	teiiq27WMtH1wq5Mlc3XeO5WjkUgYfrCRxIQalgN1Fbr2yuskwC9SdEvQ+u3kp+sEeK6fi
-	ugApB7AcK8kQeMxfdNL0+GqBUGmuAxA=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-5--AUOuqbjOgiGyYcAnxfZKQ-1; Wed,
- 03 Sep 2025 08:00:48 -0400
-X-MC-Unique: -AUOuqbjOgiGyYcAnxfZKQ-1
-X-Mimecast-MFC-AGG-ID: -AUOuqbjOgiGyYcAnxfZKQ_1756900842
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9B7461800291;
-	Wed,  3 Sep 2025 12:00:41 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.52])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 446F31800446;
-	Wed,  3 Sep 2025 12:00:35 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  3 Sep 2025 13:59:19 +0200 (CEST)
-Date: Wed, 3 Sep 2025 13:59:13 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH perf/core 03/11] perf: Add support to attach standard
- unique uprobe
-Message-ID: <20250903115912.GD18799@redhat.com>
-References: <20250902143504.1224726-1-jolsa@kernel.org>
- <20250902143504.1224726-4-jolsa@kernel.org>
+	s=arc-20240116; t=1756900808; c=relaxed/simple;
+	bh=45SFBCX7ymFr1NNsVrJRsAAdN4WtgrdDrn+YDV+in/E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S3kxRrq1HBhKEL/Ao4GDJ2weicY88KBdyDzdRAbu0n3ZG/E29xistbzKSgzcHKRsbf6WkMTp8rs43V0/XevRv8cH7DsUNnj6WVHT2HXhCLspCFMOB/WTRqUQLOljpfTJSb6LMFSlVWMPguCGH5EgCRWDom8zdUOJMFHI32oh4GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4cH1RB5cs9z2wB80;
+	Wed,  3 Sep 2025 20:01:10 +0800 (CST)
+Received: from kwepemj200013.china.huawei.com (unknown [7.202.194.25])
+	by mail.maildlp.com (Postfix) with ESMTPS id DF8DC140155;
+	Wed,  3 Sep 2025 20:00:02 +0800 (CST)
+Received: from huawei.com (10.50.85.155) by kwepemj200013.china.huawei.com
+ (7.202.194.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 3 Sep
+ 2025 20:00:02 +0800
+From: Li Lingfeng <lilingfeng3@huawei.com>
+To: <chuck.lever@oracle.com>, <jlayton@kernel.org>, <neil@brown.name>,
+	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+	<linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
+	<lilingfeng3@huawei.com>, <zhangjian496@huawei.com>, <bcodding@redhat.com>
+Subject: [PATCH v2] nfsd: remove long-standing revoked delegations by force
+Date: Wed, 3 Sep 2025 19:59:18 +0800
+Message-ID: <20250903115918.788159-1-lilingfeng3@huawei.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902143504.1224726-4-jolsa@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemj200013.china.huawei.com (7.202.194.25)
 
-Slightly off-topic, but
+When file access conflicts occur between clients, the server recalls
+delegations. If the client holding delegation fails to return it after
+a recall, nfs4_laundromat adds the delegation to cl_revoked list.
+This causes subsequent SEQUENCE operations to set the
+SEQ4_STATUS_RECALLABLE_STATE_REVOKED flag, forcing the client to
+validate all delegations and return the revoked one.
 
-On 09/02, Jiri Olsa wrote:
->
-> @@ -11144,7 +11147,7 @@ static int perf_uprobe_event_init(struct perf_event *event)
->  {
->  	int err;
->  	unsigned long ref_ctr_offset;
-> -	bool is_retprobe;
-> +	bool is_retprobe, is_unique;
->  
->  	if (event->attr.type != perf_uprobe.type)
->  		return -ENOENT;
-> @@ -11159,8 +11162,9 @@ static int perf_uprobe_event_init(struct perf_event *event)
->  		return -EOPNOTSUPP;
->  
->  	is_retprobe = event->attr.config & PERF_PROBE_CONFIG_IS_RETPROBE;
-> +	is_unique = event->attr.config & PERF_PROBE_CONFIG_IS_UNIQUE;
->  	ref_ctr_offset = event->attr.config >> PERF_UPROBE_REF_CTR_OFFSET_SHIFT;
-> -	err = perf_uprobe_init(event, ref_ctr_offset, is_retprobe);
-> +	err = perf_uprobe_init(event, ref_ctr_offset, is_retprobe, is_unique);
+However, if the client fails to return the delegation like this:
+nfs4_laundromat                       nfsd4_delegreturn
+ unhash_delegation_locked
+ list_add // add dp to reaplist
+          // by dl_recall_lru
+ list_del_init // delete dp from
+               // reaplist
+                                       destroy_delegation
+                                        unhash_delegation_locked
+                                         // do nothing but return false
+ revoke_delegation
+ list_add // add dp to cl_revoked
+          // by dl_recall_lru
 
-I am wondering why (with or without this change) perf_uprobe_init() needs
-the additional arguments besides "event". It can look at event->attr.config
-itself?
+The delegation will remain in the server's cl_revoked list while the
+client marks it revoked and won't find it upon detecting
+SEQ4_STATUS_RECALLABLE_STATE_REVOKED.
+This leads to a loop:
+the server persistently sets SEQ4_STATUS_RECALLABLE_STATE_REVOKED, and the
+client repeatedly tests all delegations, severely impacting performance
+when numerous delegations exist.
 
-Same for perf_kprobe_init()...
+Since abnormal delegations are removed from flc_lease via nfs4_laundromat
+--> revoke_delegation --> destroy_unhashed_deleg -->
+nfs4_unlock_deleg_lease --> kernel_setlease, and do not block new open
+requests indefinitely, retaining such a delegation on the server is
+unnecessary.
 
-Oleg.
+Reported-by: Zhang Jian <zhangjian496@huawei.com>
+Fixes: 3bd64a5ba171 ("nfsd4: implement SEQ4_STATUS_RECALLABLE_STATE_REVOKED")
+Closes: https://lore.kernel.org/all/ff8debe9-6877-4cf7-ba29-fc98eae0ffa0@huawei.com/
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+---
+  Changes in v2:
+  1) Set SC_STATUS_CLOSED unconditionally in destroy_delegation();
+  2) Determine whether to remove the delegation based on SC_STATUS_CLOSED,
+     rather than by timeout;
+  3) Modify the commit message.
+ fs/nfsd/nfs4state.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 88c347957da5..bb9e1df4e41f 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -1336,6 +1336,11 @@ static void destroy_delegation(struct nfs4_delegation *dp)
+ 
+ 	spin_lock(&state_lock);
+ 	unhashed = unhash_delegation_locked(dp, SC_STATUS_CLOSED);
++	/*
++	 * Unconditionally set SC_STATUS_CLOSED, regardless of whether the
++	 * delegation is hashed, to mark the current delegation as invalid.
++	 */
++	dp->dl_stid.sc_status |= SC_STATUS_CLOSED;
+ 	spin_unlock(&state_lock);
+ 	if (unhashed)
+ 		destroy_unhashed_deleg(dp);
+@@ -4326,6 +4331,8 @@ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	int buflen;
+ 	struct net *net = SVC_NET(rqstp);
+ 	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
++	struct list_head *pos, *next;
++	struct nfs4_delegation *dp;
+ 
+ 	if (resp->opcnt != 1)
+ 		return nfserr_sequence_pos;
+@@ -4470,6 +4477,19 @@ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	default:
+ 		seq->status_flags = 0;
+ 	}
++	if (!list_empty(&clp->cl_revoked)) {
++		spin_lock(&clp->cl_lock);
++		list_for_each_safe(pos, next, &clp->cl_revoked) {
++			dp = list_entry(pos, struct nfs4_delegation, dl_recall_lru);
++			if (dp->dl_stid.sc_status & SC_STATUS_CLOSED) {
++				list_del_init(&dp->dl_recall_lru);
++				spin_unlock(&clp->cl_lock);
++				nfs4_put_stid(&dp->dl_stid);
++				spin_lock(&clp->cl_lock);
++			}
++		}
++		spin_unlock(&clp->cl_lock);
++	}
+ 	if (!list_empty(&clp->cl_revoked))
+ 		seq->status_flags |= SEQ4_STATUS_RECALLABLE_STATE_REVOKED;
+ 	if (atomic_read(&clp->cl_admin_revoked))
+-- 
+2.46.1
 
 
