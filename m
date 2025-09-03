@@ -1,216 +1,141 @@
-Return-Path: <linux-kernel+bounces-799352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB71B42A60
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:57:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13507B42A6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C149C3B94D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:57:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C64331C21CEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70D136998F;
-	Wed,  3 Sep 2025 19:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46572D6605;
+	Wed,  3 Sep 2025 20:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJtPwOd5"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XpunDJ7M"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BDE2D6E6C;
-	Wed,  3 Sep 2025 19:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7962B32F754;
+	Wed,  3 Sep 2025 20:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756929463; cv=none; b=JuFNFqpnwX01du/kPln4r1dXUgFZ8OCWuHnSIx//HAzraDw654zOCjLH8mJJmWVpWDzN+pOPvw3QVOrNpJQmNycBD/4jmplfK+Wef2cHgtE/bju/B9b95e57BUieTYwGLTRW5TT1Ru4Ik5v3+KOE+RBEvoOPtb1cKT2x0TaKr3I=
+	t=1756929800; cv=none; b=H9lFnH4qh/a7EeJNuUeCCPznQ4iHtSfrfjb4FTCkUUHof1Rq5Ai/o72bX3IIb5O4wQ7yz2kMnYoVX4f1hEKxVmFdsc2adY4BzL12cUMdyflAS0zCQ9Xau8+E7uLWxCIywEWQM4qEz2YepSRr4+n0PPlAapx/4IbWRxPjt8fx3QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756929463; c=relaxed/simple;
-	bh=NQOh6CPJRu8MO+MPKo+ElHzrE43y4ifxJ4cqcm58V1M=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g/+0BWKBF8dTM8cC3Eq+6eE9IwdeXNjy9YXCyqzvbVs5DI3PUeQtGplFv417JeMUQZV8kPFfD4HUqkJMN1BcLBD8uPx8MNT41ItdYVN0bxLJKYsrqem4AJea+ezi45lUnjOHBJHRuFyZB6o6+6N8pAMNBAIMXg5mYv2Vcend6r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJtPwOd5; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1756929800; c=relaxed/simple;
+	bh=/GnEnyvIds6NMEuy70lyQ7iozsauSfnagRTg05Nb+2E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kJSBG2bG4HaKvjU88IATu3YOXXmq2FlnF2Y74nzgQw9tAx/Q15A9GD8xMTF7M9jyA2GD/5afZTkva4lUpuLlwAzTwZZJpikb69ic1A3axEmvKc9WADKHBCWm9jSMfreXRyqeqUJvkqZPuCfCaZSBSox8uyOkwNmJs0fo9YyAkCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XpunDJ7M; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-61ded2712f4so328875a12.1;
-        Wed, 03 Sep 2025 12:57:40 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55ce508d4d6so200519e87.0;
+        Wed, 03 Sep 2025 13:03:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756929459; x=1757534259; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=57f6UrxKZVi5P3iZAoNMgVEmRpxNaCoeH2w/+gFeGeA=;
-        b=XJtPwOd5USnHMVUIEOFWvwRKGO6fyNeqgcknNvYZE5fgOVxSuN+Uz76cxCqc5hsqiS
-         DMQiqray+/rKsDd9m4Yl2HzjzGJkVnIitwEB5D2uQpRp769PqBjy3G5qUTk+g6nBJUkI
-         2wms82+8azFEqgwFeV2ZU2vYhOH2V8vU0qP5q6ULrSPUzb9BkzkUApD69bO28+Lftq5g
-         K/iLT7teagOQSJS973l2Crnq0vGPBnl1spMicS+QMZBAaG1cZJLHKSBVBpVAzorIeT1G
-         j4lKUZERJyuV2k6nvQZvx6Z7UoxyL5ld/s8epazDUG14n1Wx2AL/auT+f75kpISYJbN5
-         5Asw==
+        d=gmail.com; s=20230601; t=1756929797; x=1757534597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OVCyKPOHSsiPuZSH2bGLKwR4+CtPnqenhzlKImlxxGM=;
+        b=XpunDJ7MD1CqNCh5kb8wvcCicyNH6saZxcy30Hr5B9WtNbM3CPCYMIskxtJiSKDqf6
+         tbvuh9E8EsGi78GUSmF8dbYkwJ0vsMnvYSzSc1iJJleiYTHniW3J0HmFKZl5EupMyL90
+         8KPuEoI1PsJyZe6WLrJcocAMGpVCorr/RdxfVecqjQKv0Q1yGt7OV3KrirRHa4SPgMTb
+         /f/qNA4WiOJol7BDpQ+JLGJ/Ania/tAosYtsZep/5GugouAvVA+YLu/sjPuCjlf+sinn
+         HpyIRpW2dyPiaJ3Pm1NcfLCufr18Zjv8Bzi8jqzO4qlnDD/XzLQ0BWRel17bMcsNg68a
+         1pMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756929459; x=1757534259;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=57f6UrxKZVi5P3iZAoNMgVEmRpxNaCoeH2w/+gFeGeA=;
-        b=V5QbnjHArAPWwOFZBBUQkhKopjAGxgtsj93qM4ZNzlxVkugKNHf8sGf57U7tXi0YME
-         ZUUkKpXYy+/bEWA3vq4vlrajSESlDyh2wFoXRdBWkOwsr4ZEWsSLd6TjGfaiyNzQM3T4
-         ZWVyStMXJwe/CMTp3naSlMTa0Na8j36A+cb7gX7E+BfWnjk1WK6eIw8thRRFOx19oXeL
-         vgHDGIgSKvoHOcOc+mJZDvObiMVZVvtjLxhhGJYcc0a8QNRvlSidJLVLHjORKd/pqMq7
-         sFFa9fd7wqgz7tYOy7ruh+gavQTAIgODE8fKxi9ggyoXgr50hFKObZFSEnZD2F85Ncc/
-         q5WA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6EsmFfYJaJQ2p4kRqdnfUaI8NiQcy4pMP3EyL2JDspYqe4466lMbJlznzp82FbHfDXvFeJGWotqs90sPaJIcW99l+@vger.kernel.org, AJvYcCXILHJydWNI0KjdmSOKGCQtLIIn9hEumy/jkU242JJD7TymC8rajR5MK0OFuGNvaWZVvMHC1lz8WH1Msuam@vger.kernel.org, AJvYcCXk1w8gCSOglr4i84n24JZHd2/uT0RfHkr+SfZNRf/928pR2kL7My2MRrgKQx59SMFIsXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1mf4hZrEsRSl1gpOqvW9ANWkWr42JPf72gY8vVON7e7qAZ5im
-	qu3lbOJZBhgU97lJquxflQ+Q4Zc4axCMYlHDRs3pTMV3Gx3bbKIbCYQa
-X-Gm-Gg: ASbGnctItjDzMczwjj0/VZ6N+G9+/xnDWr7oSGWMJz/jwlMbSCp/GCbn4AuLDNwkIm7
-	lKNisMzgrk6TCs3dBfA10LLu5net6SKLvr81hOfLN7T4zhPts+oiVb0lQ31OhRX9Tg9lPpELsM7
-	fCe9j4Z1wn2gfJAq8i5Gtsr7GtT3fxqi7yXVNaS+lq3O5vAfkfin2rGF6dXh3LeR1vdHhqAfjsI
-	aegSKZfXOsLqQhI7RsNiS7ykUN3EXJokpz/FGpdpskDq64PEKPLVWU7o9jz2SvCSWsQQqcnkKRM
-	D212T9ArKlKzqBD7VnN3O1z5L/fkaEC3a9Delb4nNA0NCCizCYXMypJmeIoAS0tag0ruEoNtmmU
-	+1a5NV72ncDLY8y0ZYBEJbA==
-X-Google-Smtp-Source: AGHT+IFj5cz+Tx9E3AoYVYXnNw1csMKb/uB4P1Kf9/gIv8Fb6O5+hjh0HyGj3cPNOcDWaR/MA6z2Yg==
-X-Received: by 2002:a05:6402:5c8:b0:618:534:550a with SMTP id 4fb4d7f45d1cf-61d26c53c4amr15960860a12.24.1756929458960;
-        Wed, 03 Sep 2025 12:57:38 -0700 (PDT)
-Received: from krava ([176.74.159.170])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc1c7a8fsm12538518a12.3.2025.09.03.12.57.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 12:57:38 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 3 Sep 2025 21:57:37 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH perf/core 02/11] uprobes: Skip emulate/sstep on unique
- uprobe when ip is changed
-Message-ID: <aLidsd7DZ-eoJMvJ@krava>
-References: <20250902143504.1224726-1-jolsa@kernel.org>
- <20250902143504.1224726-3-jolsa@kernel.org>
- <20250903112648.GC18799@redhat.com>
- <CAEf4BzZ87DAtQSKOOLjADP3C7_4FwNw6iZr_OKYtPNO=RqFAjQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1756929797; x=1757534597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OVCyKPOHSsiPuZSH2bGLKwR4+CtPnqenhzlKImlxxGM=;
+        b=ruT+epKLBGVOyqj3O2CDbn9BySTLV6/ZYmIwPuQZBp3e5ir+itRtpCuPJ5JudXXVLD
+         Cg/KTJbyfD9PoVVxYBxOXZMV4QU5ldAG8HEIaeksGo5Jt8muUFyb7VUo20W5GXXIXHL1
+         w8wahAxFMsNSLSvjNyAfnhoRr6Uj6SCw/YWW/EO+1FJJUTs33kVdvp7xryo0Iu5FF5F3
+         511tVWQH3TAcQe/OKAjGrs7CgStdZ3RwYT+93/uuXZVJoBfhMa0EXzTEvIJejiMogIIM
+         Rb4XDy2zsVjIVv790nEiITfrlUUU5dxJk7BNGYHoiQctISmFK7ESoLrmFJ3iH5fqT8n/
+         qzXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUulxwvq2K+sl2CBqoPVfY2rmQzlVkmu3YqH894bdg/NwQvFiDRbU4g7qN/Am82YtARw9hVpXIf79ItdqfZ@vger.kernel.org, AJvYcCX2K/KNsBiPxD83Jig1DXtcVQArRTXs653CaFHdoko3pFK73T70EIquTgnaeuorquqkAI1lHKLdfrggXBo=@vger.kernel.org, AJvYcCXfbY7uDkEVCgInimjaKJhKkh5tvO0Nmv9m0SwTorh6IW/yEk/NHIWZqzBtzrkXdgRj9cc9vpM1ROAD@vger.kernel.org, AJvYcCXgSAx8KFmxndWZrVBM+I3HdNWYHoT7t35Aub91VaU4/mYRvAdNB26EdPgwHRryGY29pHZovkkZc86i@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2NuLCxooek7bvIqEb+UqMmmZTGjzwYYK2nquM0okg/Go1d37z
+	83JOIPKLe1a5kreUJsR9jiej6lSwTbFq9xatvkR6VDOvh9QsnpeYdRJF8NSBQatOzJzu2LKXTgq
+	4pB73hxwOFU4xszAShGL115IDV8lim3M=
+X-Gm-Gg: ASbGncv6alX9EytDyB1oQ/PepmPJOYJ3mYTt7odHsNuC6u0EKxpTHAdv2W/yjWAcxWI
+	GvrnxHvWuqPpvQuRaaYj/dvJEWwwa7lRfiP6WSiDpPkoFTq7uArBZ2WtJFy60TItInQHD7MdjVF
+	n5FFi4u/ayWMIjLW/y57vJ067t1ri+UkWrTYgQYS//kdPYSxA/8t9GwWPoVy1aGJ4XLln+jQmuP
+	A7+VWupczbFWKvI7emw0p02GIxF
+X-Google-Smtp-Source: AGHT+IGQ+MSQmso+WRSx4PehMSzyC243Ed59bXozsvm2C9c3duCkAx99xM+64CNu/YaQvU0yXQneMAeWEzI0NJeRFiY=
+X-Received: by 2002:a05:6512:eaa:b0:55f:4321:4ad6 with SMTP id
+ 2adb3069b0e04-55f70948893mr5066121e87.44.1756929796386; Wed, 03 Sep 2025
+ 13:03:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZ87DAtQSKOOLjADP3C7_4FwNw6iZr_OKYtPNO=RqFAjQ@mail.gmail.com>
+References: <20250903-tegra210-speedo-v2-0-89e6f86b8942@gmail.com> <20250903-tegra210-speedo-v2-1-89e6f86b8942@gmail.com>
+In-Reply-To: <20250903-tegra210-speedo-v2-1-89e6f86b8942@gmail.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Wed, 3 Sep 2025 15:03:04 -0500
+X-Gm-Features: Ac12FXyxjeI6n6U06P265p3zT3OBNoc4LSPzdOdF_n2VtoVV-v4DkdQvlgmhS_Y
+Message-ID: <CALHNRZ83jeMbudD9LfddEntkLDgygsg_D5LAovXXpFnZie9D7w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: tegra124-dfll: Add property to
+ limit frequency
+To: webgeek1234@gmail.com
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Joseph Lo <josephl@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 03, 2025 at 11:20:01AM -0700, Andrii Nakryiko wrote:
-> On Wed, Sep 3, 2025 at 4:28 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > On 09/02, Jiri Olsa wrote:
-> > >
-> > > If user decided to take execution elsewhere, it makes little sense
-> > > to execute the original instruction, so let's skip it.
-> >
-> > Exactly.
-> >
-> > So why do we need all these "is_unique" complications? Only a single
-> 
-> I second this. This whole is_unique flag just seems like an
-> unnecessary thing that spills all around (extra kernel and libbpf
-> flags/APIs), and it's all just not to confuse the second uprobe
-> attached? Let's just allow uprobes to override user registers and
-> handle IP change on kernel side (as unlikely() check)?
+On Wed, Sep 3, 2025 at 2:30=E2=80=AFPM Aaron Kling via B4 Relay
+<devnull+webgeek1234.gmail.com@kernel.org> wrote:
+>
+> From: Aaron Kling <webgeek1234@gmail.com>
+>
+> The dfll driver generates opp tables based on internal CVB tables
+> instead of using dt opp tables. Some devices such as the Jetson Nano
+> require limiting the max frequency even further than the corresponding
+> CVB table allows in order to maintain thermal limits.
+>
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll=
+.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> index f7d347385b5775ddd702ecbb9821acfc9d4b9ff2..8a049b684f962f2b06209a478=
+66711b92c15c085 100644
+> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> @@ -70,6 +70,9 @@ Required properties for PWM mode:
+>    - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
+>    - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled=
+.
+>
+> +Optional properties for limiting frequency:
+> +- nvidia,dfll-max-freq: Maximum scaling frequency in hertz.
+> +
+>  Example for I2C:
+>
+>  clock@70110000 {
+>
+> --
+> 2.50.1
+>
+>
 
-yes! ;-) I'd just refresh rfc version then
+Yes, I know this still needs to be converted to json before it can be
+merged, but I wanted to get an updated revision of this and another
+series that depends on it out for everything else to be reviewed. I'd
+still like to see Thierry's conversion pushed, then I can stack this
+on top of that.
 
-thanks,
-jirka
-
-
-
-> 
-> > is_unique/exclusive consumer can change regs->ip, so I guess handle_swbp()
-> > can just do
-> >
-> >         handler_chain(uprobe, regs);
-> >         if (instruction_pointer(regs) != bp_vaddr)
-> >                 goto out;
-> >
-> >
-> > > Allowing this
-> > > behaviour only for uprobe with unique consumer attached.
-> >
-> > But if a non-exclusive consumer changes regs->ip, we have a problem
-> > anyway, right?
-> >
-> > We can probably add something like
-> >
-> >                 rc = uc->handler(uc, regs, &cookie);
-> >         +       WARN_ON(!uc->is_unique && instruction_pointer(regs) != bp_vaddr);
-> >
-> > into handler_chain(), although I don't think this is needed.
-> >
-> > Oleg.
-> >
-> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > > ---
-> > >  kernel/events/uprobes.c | 13 ++++++++++---
-> > >  1 file changed, 10 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > > index b9b088f7333a..da8291941c6b 100644
-> > > --- a/kernel/events/uprobes.c
-> > > +++ b/kernel/events/uprobes.c
-> > > @@ -2568,7 +2568,7 @@ static bool ignore_ret_handler(int rc)
-> > >       return rc == UPROBE_HANDLER_REMOVE || rc == UPROBE_HANDLER_IGNORE;
-> > >  }
-> > >
-> > > -static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
-> > > +static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs, bool *is_unique)
-> > >  {
-> > >       struct uprobe_consumer *uc;
-> > >       bool has_consumers = false, remove = true;
-> > > @@ -2582,6 +2582,9 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
-> > >               __u64 cookie = 0;
-> > >               int rc = 0;
-> > >
-> > > +             if (is_unique)
-> > > +                     *is_unique |= uc->is_unique;
-> > > +
-> > >               if (uc->handler) {
-> > >                       rc = uc->handler(uc, regs, &cookie);
-> > >                       WARN(rc < 0 || rc > 2,
-> > > @@ -2735,6 +2738,7 @@ static void handle_swbp(struct pt_regs *regs)
-> > >  {
-> > >       struct uprobe *uprobe;
-> > >       unsigned long bp_vaddr;
-> > > +     bool is_unique = false;
-> > >       int is_swbp;
-> > >
-> > >       bp_vaddr = uprobe_get_swbp_addr(regs);
-> > > @@ -2789,7 +2793,10 @@ static void handle_swbp(struct pt_regs *regs)
-> > >       if (arch_uprobe_ignore(&uprobe->arch, regs))
-> > >               goto out;
-> > >
-> > > -     handler_chain(uprobe, regs);
-> > > +     handler_chain(uprobe, regs, &is_unique);
-> > > +
-> > > +     if (is_unique && instruction_pointer(regs) != bp_vaddr)
-> > > +             goto out;
-> > >
-> > >       /* Try to optimize after first hit. */
-> > >       arch_uprobe_optimize(&uprobe->arch, bp_vaddr);
-> > > @@ -2819,7 +2826,7 @@ void handle_syscall_uprobe(struct pt_regs *regs, unsigned long bp_vaddr)
-> > >               return;
-> > >       if (arch_uprobe_ignore(&uprobe->arch, regs))
-> > >               return;
-> > > -     handler_chain(uprobe, regs);
-> > > +     handler_chain(uprobe, regs, NULL);
-> > >  }
-> > >
-> > >  /*
-> > > --
-> > > 2.51.0
-> > >
-> >
+Aaron
 
