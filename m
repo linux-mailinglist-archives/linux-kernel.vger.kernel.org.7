@@ -1,410 +1,391 @@
-Return-Path: <linux-kernel+bounces-799203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3395B42865
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:55:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EE7B42862
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 554D11BC44CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:55:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECDA01BC43F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709FE33438A;
-	Wed,  3 Sep 2025 17:55:24 +0000 (UTC)
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A8A3376B5;
+	Wed,  3 Sep 2025 17:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VZswPj5N"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2071.outbound.protection.outlook.com [40.107.236.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8043F335BDC
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 17:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756922123; cv=none; b=h29WzJkSYwyc2H7fJa481BmfsQXJsOP9gku6rCsQQ4+4m5cgT5+Fi2pq9U9r23B/kiYga4uwj1vOD/Kf9vuSw2JugJO8DyntKu3cupBsilMyN4q40jAlWEg9LwDnF2k/OfeKznz438mjgFqtA5tvBVHaZDWMekNcnCcQ9jYpbLE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756922123; c=relaxed/simple;
-	bh=/8rsHS+LbgeTVpPOsrULsfEpfPhYj6hAJyai20s+Fkw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kL1gOX0aJrjXAeNe47AXFvVpYwOeJFeTmcX85ecwkXtwUX+oOO2ut1nDat9yup7SIdKZDkREE8UbqUNZ0tYHcWiz1LJdoAsLzZRFX3UVaQwjYLOo9PT3L6Qg+CnmnIuKzBmg1WlcgD/sCdTQh+Hu8X5CnnckGtJAOk+sv9Y21iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-afcb78ead12so26898866b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 10:55:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756922120; x=1757526920;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rE6sMR2V6dQNYG7uMaNxZlN9DZIgkFqNanZMnaH82Zc=;
-        b=uPEnLBbbdcBD2JEM8g4ClUhuabzsCBgHNZ4QSAD/9L+lxANGncem6SAZoazBotWD63
-         fi3cZa2tD9S1nc3OJ6U/zVjdIX/EQ1p9armOjiZgoFU7bMJ0wnsMKzzVJHXnQqeea6Z8
-         AOJ5SV5MvNlh0DFdXXnSRwkr27y42tQB4pKJoUTZUpnjTRt2Av5FSPp8HehA/3vU4mQD
-         PzrsL0vcfd/F2hb8HJ6MJBTJOUJiY35t4uu/eXBWzcVTFc05kbVhowmV84S6tQaK4cv8
-         OSW03hMBXF6NDBAfBHjU9IMuFVWovhP6TJWLFTkP0ykUDLk/ACvAFsQ5pv2skhA2Hx1Y
-         2/7w==
-X-Gm-Message-State: AOJu0YwtfGpsrSNzcMMl29T0qdPVXB630PVXGfwnRZqkyUMuts0vRr7l
-	SC953erpW2tNEucV2LVupQ7W51NX0R4ibp7fHSi5eV2ys1vMh7N259ib
-X-Gm-Gg: ASbGncsz/3Io2LnIwiDfIhDCfceRtMhFihJI9/hpkpCHskUEiSqSUQEbT7HA9Cgytg3
-	nZn/ngbJmTo2CxI0gAtrOMSzyGohi2YZtkzCp7gEgjMI7oOab902pqMdJwxX/SdCprSvGafd4KK
-	nN6XG4eEm+qePo200P3vvJHpYWUPxy3m2q9opqgreMkB6NU8tyBXMOzCr1Uixe/BdotlTXrJK2l
-	hPtO8HYF1uRG7UMHBsfiMIge0/fezjHVd4YOmAHkr+oqS0DDLkfOhmYdEc/FR4tLsHdQVEW/y0x
-	EBNmt/lKWs+ylnS+Ba6Uc83SN7mPwzei8heQyZFICZVy918AVq14TOiXVpMyEz2h5SOIdgRttF+
-	8Fl+sUQlohXjTHcTHQ6ghNWDXi/yOBrKsKmmi/Z0ERTXprUqd/eUVRw==
-X-Google-Smtp-Source: AGHT+IHHBVohk4nCQjSYVtw12lspw2u6yScJSaM5H/Naygn/6zFXTMpjQGElU13X2GIxfkuUmHPJIQ==
-X-Received: by 2002:a17:907:7e9e:b0:afe:d055:7531 with SMTP id a640c23a62f3a-b01d979fdacmr1651797466b.48.1756922119368;
-        Wed, 03 Sep 2025 10:55:19 -0700 (PDT)
-Received: from Al-Qamar ([2a00:f29:348:d0f:ed4a:2775:c4b1:9fde])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b046e6c630fsm164714366b.55.2025.09.03.10.55.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 10:55:19 -0700 (PDT)
-From: Fidal@web.codeaurora.org, Palamparambil@web.codeaurora.org,
-	palamparambilfidal089@gmail.com
-To: kgdb-bugreport@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	dianders@chromium.org,
-	Fidal Palamparambil <hellomystoryswherei@gmail.com>
-Subject: [PATCH] media: pci: Add core driver for Techwell TW68xx video capture devices
-Date: Wed,  3 Sep 2025 21:54:17 +0400
-Message-ID: <20250903175417.1340-1-palamparambilfidal089@gmail.com>
-X-Mailer: git-send-email 2.50.1.windows.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8F333438A;
+	Wed,  3 Sep 2025 17:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756922102; cv=fail; b=T6/ahOpPJrMujORNgzPlHLLSnJixDSWw0HKOBOZT0mC2cOX+2hdX9EDc4lBcAQACQ/QGs3coIB8a5rCLVyD1xC/uRG4H1zkNFFMruS9xKGHfKOgu0pWCxN0j9/CxAUMYKzdMO2LDGygd7fAcjIvaCq2fe+qPiWoIGU7lb1ZBCx4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756922102; c=relaxed/simple;
+	bh=M71spwxMXVK3qXRLL9m965FqfbVWijMLGpqYJva63So=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=V0iTRW3UWTaX6ugqRcSRhIixL/7g20VjbFQl4ENLXXCPe6AltiSKfPXoENGh7f+WAQhnRD8dHeC831YE20rcKsI2Xxcq6bsV2g/4Pps46sYdJeENqbQpSCWMLMOTGdPoVx73iiQHJLoIDhI4yidW1HT8aYf0cAl2xXB7Yw89y2k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VZswPj5N; arc=fail smtp.client-ip=40.107.236.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bShNIoAqP5BqeGVwWJXNSkbCE3jIkEsQAGJ+lDswpfwzFpYiajuGfCZ7/m+KbfxH4q44OKlHEjD0omCAYruDPIJqHEOaUMA11771/MMO73qHVkMz44jTQzQGk4fdqLrQklqzIYVNsVE270XAZ0JATFFND2GVjJzBtCuoxNzdkHsxwzPR1ipBZRFLbwh6vFj2NgLZfOh+5QkVgBMVKWF86Dpsp92z3JMyI6OREatkBZBULg9P2emGZZ5cgXQUGl7PjiS5bazqnJ25Y2pQm4AUmdSyRHjDtUDfQ+VcVtDDT7w896SZFHKJNyCcEQkWmO1brPf7gb5no/KZtedoSGmXlQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iKoLylk4Re4jmw02P5CcUKuUcr9OqLwfnJpAfBh2Zc8=;
+ b=iQGmUPErCXXrzbtDcxsz38LMMr46rKR8DXp9MI0JFvPU4I8glG/8gqW8ZVWmmnYXIhtEUVDUvY+wuZmHQY2LuqyKIcyXAmk5zErUvjJYkJD232BK0OqNXGd0/qsHCNdmZ5NZgz6TAryWVQFSfa4yb/d/NgGKqEa37J3ySH4abGU4MNramg8Yz1JJD8nBeavqO3pOMzbkchY/cRtwLHnMcseTCkE+zE9BR+hP15icXx1IYFP8NevId+S7ArtTtHT2WpOTJZRwvpUKUnvtfs4jCGVj5khcNo3ZlNWsdDIdFBoLZt0zYXNruQgqbioLQDAvtQbWWzJuhSj2d1JqrPETQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iKoLylk4Re4jmw02P5CcUKuUcr9OqLwfnJpAfBh2Zc8=;
+ b=VZswPj5NSeMYlNo0m0iFJ+/Dz7MM/nORuW2tktEqZ7tofEeuijHJ5ZfKXN3LO1lbfIoxXOW8ZjJBDzLLCkZLy11ZU1b5sK3hA6q62ReW0Avx9i696ayLJgF5AFpav0SgUF4ijBmzjqQbjJCDiw5K6sWCNhYHYjD/vv3obF3/+5TiS1onpNnm27tOyDZ3xCR82bWVQE7rd571s8bo7y0R2P7eRY1l2t/6446kgUutFvpK9xvA6qYvubD7VJMq07yib+6K6pH/o22oEsBFTzL0CJ65TYIfx+lrS0CeEuosI/Xx77ymU8ziTVPaJ9WPDL8SR6ZYtgtO5yCceAHppIUCNQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by SJ5PPF4D350AC80.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::993) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Wed, 3 Sep
+ 2025 17:54:55 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.9073.021; Wed, 3 Sep 2025
+ 17:54:54 +0000
+Message-ID: <5067c4fb-718c-4362-85d0-68a2ba53ea4f@nvidia.com>
+Date: Wed, 3 Sep 2025 13:54:51 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] nova-core: Add a library for bitfields in Rust
+ structs
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>,
+ Alexandre Courbot <acourbot@nvidia.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, John Hubbard <jhubbard@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org
+References: <20250824135954.2243774-1-joelagnelf@nvidia.com>
+ <D0E4757B-B26C-49AE-9076-267C0CBC2577@collabora.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <D0E4757B-B26C-49AE-9076-267C0CBC2577@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BL0PR0102CA0031.prod.exchangelabs.com
+ (2603:10b6:207:18::44) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SJ5PPF4D350AC80:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86b570a0-a3a9-4fad-f929-08ddeb12fcb2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M054THlpYVhUcGxHdkFCU1pMUnpWZUNTbzhqYXNpVzNMS1J1Yy9xYzZVZUVz?=
+ =?utf-8?B?a0Jid1Z3a01rZVlzTTAzdHptaDBDWTU0ZG5DaGczSUltbWFLem5TODkyWjZP?=
+ =?utf-8?B?RkllZGp0MjQzdlpvMXZVR29WMzBXenMrT0Vqa0pkNlB0NWV6UVlXTkdid0xw?=
+ =?utf-8?B?Q2dxL01FMm9WRFNSOCtBRGV3QjNmVkIzeTNqQjNLOTBSZXJTMlBkUVJpVE5i?=
+ =?utf-8?B?aU9reWl6R05GWnFidndYc1JJWVlqcTFLYTVNSUJMSE5YSnJnVlNEcXBzb0Rp?=
+ =?utf-8?B?Qy9lUDJNcDR6b3R4N0xPTkpBb1MrVWFVZWpIVW1zUFlBbTlaYzNzSjRkWFlx?=
+ =?utf-8?B?eEhxZUF6SWFZSHBueVJhZjcvVERnTEUwYlFjVEpWR1orWlZVMlZTKzlvRFJM?=
+ =?utf-8?B?enZxZXBHYmErQityOVJySytObjM2anBYbk9rTGpUd2FtK2JZbDlsR0pwU2V6?=
+ =?utf-8?B?SktHeFR6cnc3MEtNOENONEJ3ME1RWkJzRGhJTy91SEdDd2N2SEpkRGU4RVRR?=
+ =?utf-8?B?Y09Mc21ZTXcvRkMxblZZUmY1ZTVyc1NkZkJONXlCcFJXZnh6RndSQ0IxOEVm?=
+ =?utf-8?B?SUphYjVkNGVjQ0NpbTI3QVBsOVRNZk9xY2VNVnJ4TWJRQWNDSCszYkxoME1y?=
+ =?utf-8?B?c2RqTWNDV21GN1JSRVB5b1lnSUxRd0syaFVOV2l1TzBSZFUvRWZ2WGdiWWZH?=
+ =?utf-8?B?b0dNNkFSZG9rNXl3NXBXY3gxNHY2OTZBUytWeXBmaVcrem0wSU0vY0xCczBI?=
+ =?utf-8?B?YzNZRXRoZGZhWTgxNWkySlVjV0lhbnF3Qi92dkVnYkdMQUJZVktIQWZUUS93?=
+ =?utf-8?B?VitOTm1xOW52MHZ3bDJBZFFia2o3NjNzK2p1RUhJbjNQWkVLVnNpU3VRUGow?=
+ =?utf-8?B?eWhBcENuaFdhRG5laU4wanRsNVZvYXVMclRtMGFCV2ZtQXJwd1VKdHR4dERX?=
+ =?utf-8?B?VXRaN0oxZnBCenExbm5LZ1BZSndlbU5UcUQzTi9ZaE1ybnNEQkx6K1ZLRFVk?=
+ =?utf-8?B?NjF4dGFWT3hJaytQa3NjUlkxNE1uL2grNW03UnVlV3kvbnV1UFBvV1lrNGtY?=
+ =?utf-8?B?U2VhMVVGU01SRDhUaWNBOHp5YitUeUR5eFFlbUUxQ2RWTjN0dGM0SStGZmJm?=
+ =?utf-8?B?SnRSVEtoNVFjendMNkhQNFQwWkJva1lhb21EVnV1NldkVG8zUjE4Z0k1c2ZS?=
+ =?utf-8?B?ZDRReE9kVlZPUWE0eTJBTVpDUDFGZEFxMnVaM25xY2JsRkludmFYVXlsQU95?=
+ =?utf-8?B?NjF1dndPWlpKaTA0RzZ1ZHhmSWk1SEhLWkhQNXNiWCtQeFpLOFdLK2xrcE9i?=
+ =?utf-8?B?MUpKQUtVaGk1WkRZeCtnbWEyTTZhQ21Fd2hQNmx3cjY1bEpDemkzdzhuK0dj?=
+ =?utf-8?B?N3dCT3V1QU9Pa3A0ZVpHUU9lZFR5T0dJRVQya0JhOHFmaXVrLzNpcXRHTHNZ?=
+ =?utf-8?B?TGlBQW5vWWFud0dkQlNockFvSjA1SGVZMUt5OGsyaUtKTEdxZkZLaXFPaElB?=
+ =?utf-8?B?dVhOT2ZaUXpUeWJCOXI3UkFFMW00LzZyd1F5SG0yVEppTUo4N2RqNHpOcjg3?=
+ =?utf-8?B?UjkrNU9hUGc3dWlYQ3RYd21tWUo1QjBJeEgyUzdidGhTaWp2OFo2aFZmMEhX?=
+ =?utf-8?B?eUt2UFZqMFFHTHhkL2Y0SEoyU0tLQXZJWlFuQXFXQkRNUytsRmhUOVpGY1Nq?=
+ =?utf-8?B?Z0kraEZ1dnNSTnVXNGlrdmYvZEd0SERNc0ZySWlqMVNmMFd3ZTRVbzRFaUtF?=
+ =?utf-8?B?VTRHTC80U1lFTFUzZTQ3YTFNZElTSFkwdWxXSmxmbVBtcjg1RjhGV29LeEVI?=
+ =?utf-8?B?eVZrQTRMNTZudnphbS8wdDd3QmZMdlBTbHZ2UGptTEJFSWdEVHFhaEF0Y1pk?=
+ =?utf-8?B?ZGltcC9Obm1velZuTEhBNUdvc1FLaDgwUjVvUHhoTVFhQ1E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b1dVVWd4U0xHRHZibThyR3RkaTBRNVNzTFp6REhVb01vZ3ZBczNVZWZ2aXRI?=
+ =?utf-8?B?UlZWSFNVZVFibGNOL2VwNFJEMjAvWW0rTjl3Nld2SFo1MFBjSlZCdDNYcGJC?=
+ =?utf-8?B?YS9sWmhqekFheXhueFQ1ZnN0V0FndnRIWGpQaEpmMXdjcHlHZlJOQXFnUXpI?=
+ =?utf-8?B?VUJCZFdsU1drVEUwTmphTGwxV0VicTRLZUZ3QkZTWHpkcUNIWTQ2RFB2cGxW?=
+ =?utf-8?B?aWpQQU1RelJkS3QzTlg1NDdRalBJajVlNWsrNkc0cTV1bWVycVhHTlBXaTl4?=
+ =?utf-8?B?Y3VPS2VkNUx0QWRNamVScUVzRFpXQXRXc21BK3JUVDhWL2drR3J0TS9zaTNX?=
+ =?utf-8?B?Mk9yWUVRdUdNdFdpQnZRdnJac2xvWEtOblFoODlRcURhSm5KU3BNbTZyRE1G?=
+ =?utf-8?B?emNIQmVKQjZvL0VlaGdIcDR1ZlMzaEoxaVhhZlcxdWVIM1hJbjMvUUYxOXor?=
+ =?utf-8?B?MTY0QkduV2ZNdWY0Q0IrVElEQUxGZTNNcE1ITjdsSzZsdXphYW5lN28rdHF6?=
+ =?utf-8?B?SHowRGoxU1dpM3RkeDgzNTVpdjUyL1Z3eEY2d0hHcitOT05wVmZZVE4wV25h?=
+ =?utf-8?B?YzczWU1VS1lzSm1BRGJ4a1MzWUNETk1mK1JUU0dwcDAzdlZoU011Q21rU3dn?=
+ =?utf-8?B?MlVlYVl5dUpISmpYeXdlSHdyczZQR1FoRVVDeEJDS2w1N3VzRGNWQU5zeTdK?=
+ =?utf-8?B?cUhka0M1VXRIamhtaXhpVWJHWDltSjZXaVYvU2ZxUThwV3JBaHozVzdzdm56?=
+ =?utf-8?B?UXlQaUpQUkJvTTg4RkcvRzVFMUpJNlg3aWE2U1JuZ0lGQnVGV00vYWpiMEtU?=
+ =?utf-8?B?YTU0UXVUUnE4R3EwcmdCaUJSQW4wbmJWaHV6dVlDVHV4V21UYnc2YlozbytH?=
+ =?utf-8?B?a2tsVHNGM2t1b3VPZEJoMGtiNjBBOGFIaFFubTZMa21NbGlFQXFKc0EzWUdP?=
+ =?utf-8?B?Z2N2R2tiRmpYdHdmZkY0aFcraWRhSlZHZi9EeitpOGs4eXdnVWZkamVBbGV2?=
+ =?utf-8?B?TnZNYjd6OG0vQXhsL3gyUkZZeDdPTWJiTHBCUFZPS04xOVNaa1FEd2daL2M4?=
+ =?utf-8?B?dC9XU21yYktvY25ETGEwM2MzUitQYzFERHZDY2x2SCtFbndNZXV1OUhhSDJD?=
+ =?utf-8?B?Q2JwYXdSYitWam9MOW5xSlMrNzZwVWF4eGF1QU80NzdDQWVmQVUveXFBbjJ1?=
+ =?utf-8?B?L3JmSkUzQTB1NVlUdFdXYnlkdFM5N1NCQXE4eHc5Y2c1c0txK1p5cUV0YWxO?=
+ =?utf-8?B?ajl3QnU5Z1JSSUJscUVDa0tyYmFBWTNZZjc5L2wwQjZHUW9VV1hJQ2RIOVg0?=
+ =?utf-8?B?Q3QxamJWSmp3a3cyeTZXTGtZbjlkcjJ2dldQNmxlV1Myc3R4dWRDRUc0dkFs?=
+ =?utf-8?B?VTFubVE2eUVHZnRmRXlWell5ck50N0RSdUZkK3BKK3U1K2dJSzVGR0E4RzJV?=
+ =?utf-8?B?ajZ3WVBISDlkSFU5czFTSUZIYm41ZHpFR0JMN0hLdG51TzZQR0lCcS9kaFhE?=
+ =?utf-8?B?ZmIzWktqT0pUeFRpOWhxcFl5amFHanJxWm1vS2ZNWFd5U3dVYjFqNk93U080?=
+ =?utf-8?B?NmhPRFhIT2R3OVp1MTRDeTRyTDZBbG05MWxXNmsrME9mNlJxSjQwZjFuSXd4?=
+ =?utf-8?B?eGdlM1dyVGVBUGJuNXhsejNCSmFpQWRwNE9CQXFETW4ybmxkS1hudHppby9M?=
+ =?utf-8?B?TDJlQktkNmdRYWVURGsxL1JERVo1b3V2NjlIa2lzWUlxb253am5lRHdpbE1I?=
+ =?utf-8?B?WnlMblNqQnVyaW1Rd2FKSGNycEhMUTRwVStIczlHSjkzc3NkeWJIeHMyUERQ?=
+ =?utf-8?B?eHIwaGZNamlSVG9wanpValJmTFFTamp0dDlWNkhFeTVtTHNyalB3SkkzL0Nw?=
+ =?utf-8?B?WEF3clM4MnlxR0xsVGZjUnRreFM3ditXbUlNbGNQWnR4dlpFSE51ekJoZjEv?=
+ =?utf-8?B?cW9UbGQyS1lIUzhGeHptSlVLL1ZaLzZFaHM5d2JYQmJlNlp6d2RYL1NFREd2?=
+ =?utf-8?B?Q01MY21VRnkreERHZ3RYTk82VGhCQUhTZjdsRzRMcGlaVTNxa2NmRklJRThq?=
+ =?utf-8?B?NG9JcXhZSEl5SUdocjR2cWc4L1IrS1B3R1cvT2pYTDBjbmlHY3V0L2hJNXZK?=
+ =?utf-8?Q?6R9UvFvZmJbLS102/3GR6o4DL?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86b570a0-a3a9-4fad-f929-08ddeb12fcb2
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 17:54:54.0159
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Qioiqovf2Pbcsy6S5dEN4aa1hHc159dzQh2sXD9obJ2T9boPzlpB08eDVWin9z5S4yDp2urDr8L3mB+b7WbXTQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF4D350AC80
 
-From: Fidal Palamparambil <hellomystoryswherei@gmail.com>
 
-Introduce a new PCI driver for Techwell TW6800/6801/6804-based video
-capture cards. This replaces the old Nuvoton WPCM450 SoC ID code in
-this tree snapshot.
 
-Key features:
-- PCI probe and remove handling for multiple TW68xx variants.
-- Full hardware initialization sequence with documented register setup.
-- Video IRQ handler with proper masking and error diagnostics.
-- Device memory mapping via devm_ioremap_resource and managed IRQs.
-- DMA mask configuration with fallback to 24-bit addressing.
-- V4L2 core registration, control handler initialization, and
-  video device setup.
-- Power management (suspend/resume) support to restore DMA state and
-  active buffers.
+On 9/3/2025 9:29 AM, Daniel Almeida wrote:
+> Hi Joel,
+> 
+>> On 24 Aug 2025, at 10:59, Joel Fernandes <joelagnelf@nvidia.com> wrote:
+>>
+>> Add a minimal bitfield library for defining in Rust structures (called
+>> bitstruct), similar in concept to bit fields in C structs. This will be used
+>> for defining page table entries and other structures in nova-core.
+>>
+>> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+>> ---
+>> drivers/gpu/nova-core/bitstruct.rs | 149 +++++++++++++++++++++++++++++
+>> drivers/gpu/nova-core/nova_core.rs |   1 +
+>> 2 files changed, 150 insertions(+)
+>> create mode 100644 drivers/gpu/nova-core/bitstruct.rs
+>>
+>> diff --git a/drivers/gpu/nova-core/bitstruct.rs b/drivers/gpu/nova-core/bitstruct.rs
+>> new file mode 100644
+>> index 000000000000..661a75da0a9c
+>> --- /dev/null
+>> +++ b/drivers/gpu/nova-core/bitstruct.rs
+>> @@ -0,0 +1,149 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +//
+>> +// bitstruct.rs — C-style library for bitfield-packed Rust structures
+>> +//
+>> +// A library that provides support for defining bit fields in Rust
+>> +// structures to circumvent lack of native language support for this.
+>> +//
+>> +// Similar usage syntax to the register! macro.
+>> +
+>> +use kernel::prelude::*;
+>> +
+>> +/// Macro for defining bitfield-packed structures in Rust.
+>> +/// The size of the underlying storage type is specified with #[repr(TYPE)].
+>> +///
+>> +/// # Example (just for illustration)
+>> +/// ```rust
+>> +/// bitstruct! {
+>> +///     #[repr(u64)]
+>> +///     pub struct PageTableEntry {
+>> +///         0:0       present     as bool,
+>> +///         1:1       writable    as bool,
+>> +///         11:9      available   as u8,
+>> +///         51:12     pfn         as u64,
+>> +///         62:52     available2  as u16,
+>> +///         63:63     nx          as bool,
+>> +///     }
+>> +/// }
+>> +/// ```
+>> +///
+>> +/// This generates a struct with methods:
+>> +/// - Constructor: `default()` sets all bits to zero.
+>> +/// - Field accessors: `present()`, `pfn()`, etc.
+>> +/// - Field setters: `set_present()`, `set_pfn()`, etc.
+>> +/// - Builder methods: `with_present()`, `with_pfn()`, etc.
+> 
+> I think this could use a short example highlighting the builder pattern. It may
+> be initially unclear that the methods can be chained, even though the word
+> “builder” is being used.
 
-This driver follows V4L2 framework conventions, drawing from cx88,
-sa7134, and bt87x driver design. Original authorship and contributions
-are retained, with updates for modern kernel APIs.
+Sure, added, thanks!
 
-Signed-off-by: Fidal Palamparambil <hellomystoryswherei@gmail.com>
----
- drivers/media/pci/tw68/tw68-core.c | 165 +++++++++++++++--------------
- 1 file changed, 84 insertions(+), 81 deletions(-)
+> 
+>> +/// - Raw conversion: `from_raw()`, `into_raw()`
+>> +#[allow(unused_macros)]
+>> +macro_rules! bitstruct {
+>> +    (
+>> +        #[repr($storage:ty)]
+>> +        $vis:vis struct $name:ident {
+>> +            $(
+>> +                $hi:literal : $lo:literal $field:ident as $field_type:tt
+>> +            ),* $(,)?
+>> +        }
+>> +    ) => {
+>> +        #[repr(transparent)]
+>> +        #[derive(Copy, Clone, Default)]
+>> +        $vis struct $name($storage);
+>> +
+>> +        impl $name {
+>> +            /// Create from raw value
+>> +            #[inline(always)]
+>> +            $vis const fn from_raw(val: $storage) -> Self {
+>> +                Self(val)
+>> +            }
+>> +
+>> +            /// Get raw value
+>> +            #[inline(always)]
+>> +            $vis const fn into_raw(self) -> $storage {
+>> +                self.0
+>> +            }
+>> +        }
+>> +
+>> +        impl core::fmt::Debug for $name {
+>> +            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+>> +                write!(f, "{}({:#x})", stringify!($name), self.0)
+>> +            }
+>> +        }
+>> +
+>> +        // Generate all field methods
+>> +        $(
+>> +            bitstruct_field_impl!($vis, $name, $storage, $hi, $lo, $field as $field_type);
+>> +        )*
+>> +    };
+>> +}
+>> +
+>> +/// Helper to calculate mask for bit fields
+>> +#[allow(unused_macros)]
+>> +macro_rules! bitstruct_mask {
+>> +    ($hi:literal, $lo:literal, $storage:ty) => {{
+>> +        let width = ($hi - $lo + 1) as usize;
+>> +        let storage_bits = 8 * core::mem::size_of::<$storage>();
+>> +        if width >= storage_bits {
+>> +            <$storage>::MAX
+>> +        } else {
+>> +            ((1 as $storage) << width) - 1
+> 
+> Can’t we have a build_assert here instead?
 
-diff --git a/drivers/media/pci/tw68/tw68-core.c b/drivers/media/pci/tw68/tw68-core.c
-index 35dd19b2427e..fd5c4cccfb56 100644
---- a/drivers/media/pci/tw68/tw68-core.c
-+++ b/drivers/media/pci/tw68/tw68-core.c
-@@ -72,9 +72,9 @@ static const struct pci_device_id tw68_pci_tbl[] = {
- 	{0,}
- };
- 
-+MODULE_DEVICE_TABLE(pci, tw68_pci_tbl);
- /* ------------------------------------------------------------------ */
- 
--
- /*
-  * The device is given a "soft reset". According to the specifications,
-  * after this "all register content remain unchanged", so we also write
-@@ -130,7 +130,6 @@ static int tw68_hw_init1(struct tw68_dev *dev)
- 	tw_writeb(TW68_AGCGAIN, 0xf0);	/* 288	AGC gain when loop disabled */
- 	tw_writeb(TW68_PEAKWT, 0xd8);	/* 28C	White peak threshold */
- 	tw_writeb(TW68_CLMPL, 0x3c);	/* 290	Y channel clamp level */
--/*	tw_writeb(TW68_SYNCT, 0x38);*/	/* 294	Sync amplitude */
- 	tw_writeb(TW68_SYNCT, 0x30);	/* 294	Sync amplitude */
- 	tw_writeb(TW68_MISSCNT, 0x44);	/* 298	Horiz sync, VCR detect sens */
- 	tw_writeb(TW68_PCLAMP, 0x28);	/* 29C	Clamp pos from PLL sync */
-@@ -191,36 +190,43 @@ static irqreturn_t tw68_irq(int irq, void *dev_id)
- 
- 	status = orig = tw_readl(TW68_INTSTAT) & dev->pci_irqmask;
- 	/* Check if anything to do */
--	if (0 == status)
-+	if (status == 0)
- 		return IRQ_NONE;	/* Nope - return */
-+	
- 	for (loop = 0; loop < 10; loop++) {
- 		if (status & dev->board_virqmask)	/* video interrupt */
- 			tw68_irq_video_done(dev, status);
-+		
- 		status = tw_readl(TW68_INTSTAT) & dev->pci_irqmask;
--		if (0 == status)
--			return IRQ_HANDLED;
-+		if (status == 0)
-+			goto out;
- 	}
--	dev_dbg(&dev->pci->dev, "%s: **** INTERRUPT NOT HANDLED - clearing mask (orig 0x%08x, cur 0x%08x)",
--			dev->name, orig, tw_readl(TW68_INTSTAT));
--	dev_dbg(&dev->pci->dev, "%s: pci_irqmask 0x%08x; board_virqmask 0x%08x ****\n",
--			dev->name, dev->pci_irqmask, dev->board_virqmask);
-+	
-+	dev_warn_ratelimited(&dev->pci->dev,
-+			     "%s: **** INTERRUPT NOT HANDLED - clearing mask (orig 0x%08x, cur 0x%08x)\n",
-+			     dev->name, orig, tw_readl(TW68_INTSTAT));
-+	dev_warn_ratelimited(&dev->pci->dev,
-+			     "%s: pci_irqmask 0x%08x; board_virqmask 0x%08x ****\n",
-+			     dev->name, dev->pci_irqmask, dev->board_virqmask);
- 	tw_clearl(TW68_INTMASK, dev->pci_irqmask);
-+out:
- 	return IRQ_HANDLED;
- }
- 
- static int tw68_initdev(struct pci_dev *pci_dev,
--				     const struct pci_device_id *pci_id)
-+			const struct pci_device_id *pci_id)
- {
- 	struct tw68_dev *dev;
-+	struct resource *res;
- 	int vidnr = -1;
- 	int err;
- 
- 	dev = devm_kzalloc(&pci_dev->dev, sizeof(*dev), GFP_KERNEL);
--	if (NULL == dev)
-+	if (!dev)
- 		return -ENOMEM;
- 
- 	dev->instance = v4l2_device_set_name(&dev->v4l2_dev, "tw68",
--						&tw68_instance);
-+					     &tw68_instance);
- 
- 	err = v4l2_device_register(&pci_dev->dev, &dev->v4l2_dev);
- 	if (err)
-@@ -228,30 +234,43 @@ static int tw68_initdev(struct pci_dev *pci_dev,
- 
- 	/* pci init */
- 	dev->pci = pci_dev;
--	if (pci_enable_device(pci_dev)) {
--		err = -EIO;
--		goto fail1;
-+	err = pci_enable_device(pci_dev);
-+	if (err) {
-+		dev_err(&pci_dev->dev, "Failed to enable PCI device\n");
-+		goto fail_v4l2;
- 	}
- 
- 	dev->name = dev->v4l2_dev.name;
- 
--	if (UNSET != latency) {
--		pr_info("%s: setting pci latency timer to %d\n",
--		       dev->name, latency);
-+	if (latency != UNSET) {
-+		dev_info(&pci_dev->dev, "setting pci latency timer to %d\n",
-+			 latency);
- 		pci_write_config_byte(pci_dev, PCI_LATENCY_TIMER, latency);
- 	}
- 
- 	/* print pci info */
- 	pci_read_config_byte(pci_dev, PCI_CLASS_REVISION, &dev->pci_rev);
--	pci_read_config_byte(pci_dev, PCI_LATENCY_TIMER,  &dev->pci_lat);
--	pr_info("%s: found at %s, rev: %d, irq: %d, latency: %d, mmio: 0x%llx\n",
--		dev->name, pci_name(pci_dev), dev->pci_rev, pci_dev->irq,
--		dev->pci_lat, (u64)pci_resource_start(pci_dev, 0));
-+	pci_read_config_byte(pci_dev, PCI_LATENCY_TIMER, &dev->pci_lat);
-+	dev_info(&pci_dev->dev, "found at %s, rev: %d, irq: %d, latency: %d, mmio: 0x%llx\n",
-+		 pci_name(pci_dev), dev->pci_rev, pci_dev->irq,
-+		 dev->pci_lat, (u64)pci_resource_start(pci_dev, 0));
-+	
- 	pci_set_master(pci_dev);
-+	
-+	/* Set DMA mask - try 32-bit first, then fallback to 24-bit if needed */
- 	err = dma_set_mask(&pci_dev->dev, DMA_BIT_MASK(32));
- 	if (err) {
--		pr_info("%s: Oops: no 32bit PCI DMA ???\n", dev->name);
--		goto fail1;
-+		err = dma_set_mask(&pci_dev->dev, DMA_BIT_MASK(24));
-+		if (err) {
-+			dev_err(&pci_dev->dev, "No suitable DMA available\n");
-+			goto fail_pci;
-+		}
-+	}
-+	
-+	err = dma_set_coherent_mask(&pci_dev->dev, DMA_BIT_MASK(32));
-+	if (err) {
-+		dev_err(&pci_dev->dev, "Failed to set consistent DMA mask\n");
-+		goto fail_pci;
- 	}
- 
- 	switch (pci_id->device) {
-@@ -273,66 +292,51 @@ static int tw68_initdev(struct pci_dev *pci_dev,
- 		break;
- 	}
- 
--	/* get mmio */
--	if (!request_mem_region(pci_resource_start(pci_dev, 0),
--				pci_resource_len(pci_dev, 0),
--				dev->name)) {
--		err = -EBUSY;
--		pr_err("%s: can't get MMIO memory @ 0x%llx\n",
--			dev->name,
--			(unsigned long long)pci_resource_start(pci_dev, 0));
--		goto fail1;
-+	/* get mmio using devm_ioremap_resource */
-+	res = &pci_dev->resource[0];
-+	dev->lmmio = devm_ioremap_resource(&pci_dev->dev, res);
-+	if (IS_ERR(dev->lmmio)) {
-+		err = PTR_ERR(dev->lmmio);
-+		dev_err(&pci_dev->dev, "can't ioremap() MMIO memory\n");
-+		goto fail_pci;
- 	}
--	dev->lmmio = ioremap(pci_resource_start(pci_dev, 0),
--			     pci_resource_len(pci_dev, 0));
- 	dev->bmmio = (__u8 __iomem *)dev->lmmio;
--	if (NULL == dev->lmmio) {
--		err = -EIO;
--		pr_err("%s: can't ioremap() MMIO memory\n",
--		       dev->name);
--		goto fail2;
--	}
-+
- 	/* initialize hardware #1 */
--	/* Then do any initialisation wanted before interrupts are on */
- 	tw68_hw_init1(dev);
- 
- 	/* get irq */
- 	err = devm_request_irq(&pci_dev->dev, pci_dev->irq, tw68_irq,
--			  IRQF_SHARED, dev->name, dev);
-+			       IRQF_SHARED, dev->name, dev);
- 	if (err < 0) {
--		pr_err("%s: can't get IRQ %d\n",
--		       dev->name, pci_dev->irq);
--		goto fail3;
-+		dev_err(&pci_dev->dev, "can't get IRQ %d\n", pci_dev->irq);
-+		goto fail_pci;
- 	}
- 
- 	/*
--	 *  Now do remainder of initialisation, first for
--	 *  things unique for this card, then for general board
-+	 * Now do remainder of initialisation, first for
-+	 * things unique for this card, then for general board
- 	 */
- 	if (dev->instance < TW68_MAXBOARDS)
- 		vidnr = video_nr[dev->instance];
-+	
- 	/* initialise video function first */
- 	err = tw68_video_init2(dev, vidnr);
- 	if (err < 0) {
--		pr_err("%s: can't register video device\n",
--		       dev->name);
--		goto fail4;
-+		dev_err(&pci_dev->dev, "can't register video device\n");
-+		goto fail_pci;
- 	}
-+	
- 	tw_setl(TW68_INTMASK, dev->pci_irqmask);
- 
--	pr_info("%s: registered device %s\n",
--	       dev->name, video_device_node_name(&dev->vdev));
-+	dev_info(&pci_dev->dev, "registered device %s\n",
-+		 video_device_node_name(&dev->vdev));
- 
- 	return 0;
- 
--fail4:
--	video_unregister_device(&dev->vdev);
--fail3:
--	iounmap(dev->lmmio);
--fail2:
--	release_mem_region(pci_resource_start(pci_dev, 0),
--			   pci_resource_len(pci_dev, 0));
--fail1:
-+fail_pci:
-+	pci_disable_device(pci_dev);
-+fail_v4l2:
- 	v4l2_device_unregister(&dev->v4l2_dev);
- 	return err;
- }
-@@ -340,8 +344,7 @@ static int tw68_initdev(struct pci_dev *pci_dev,
- static void tw68_finidev(struct pci_dev *pci_dev)
- {
- 	struct v4l2_device *v4l2_dev = pci_get_drvdata(pci_dev);
--	struct tw68_dev *dev =
--		container_of(v4l2_dev, struct tw68_dev, v4l2_dev);
-+	struct tw68_dev *dev = container_of(v4l2_dev, struct tw68_dev, v4l2_dev);
- 
- 	/* shutdown subsystems */
- 	tw_clearl(TW68_DMAC, TW68_DMAP_EN | TW68_FIFO_EN);
-@@ -351,11 +354,8 @@ static void tw68_finidev(struct pci_dev *pci_dev)
- 	video_unregister_device(&dev->vdev);
- 	v4l2_ctrl_handler_free(&dev->hdl);
- 
--	/* release resources */
--	iounmap(dev->lmmio);
--	release_mem_region(pci_resource_start(pci_dev, 0),
--			   pci_resource_len(pci_dev, 0));
--
-+	/* release resources - devm handles ioremap cleanup */
-+	pci_disable_device(pci_dev);
- 	v4l2_device_unregister(&dev->v4l2_dev);
- }
- 
-@@ -363,8 +363,7 @@ static int __maybe_unused tw68_suspend(struct device *dev_d)
- {
- 	struct pci_dev *pci_dev = to_pci_dev(dev_d);
- 	struct v4l2_device *v4l2_dev = pci_get_drvdata(pci_dev);
--	struct tw68_dev *dev = container_of(v4l2_dev,
--				struct tw68_dev, v4l2_dev);
-+	struct tw68_dev *dev = container_of(v4l2_dev, struct tw68_dev, v4l2_dev);
- 
- 	tw_clearl(TW68_DMAC, TW68_DMAP_EN | TW68_FIFO_EN);
- 	dev->pci_irqmask &= ~TW68_VID_INTS;
-@@ -379,25 +378,29 @@ static int __maybe_unused tw68_suspend(struct device *dev_d)
- 
- static int __maybe_unused tw68_resume(struct device *dev_d)
- {
-+	struct pci_dev *pci_dev = to_pci_dev(dev_d);
- 	struct v4l2_device *v4l2_dev = dev_get_drvdata(dev_d);
--	struct tw68_dev *dev = container_of(v4l2_dev,
--					    struct tw68_dev, v4l2_dev);
-+	struct tw68_dev *dev = container_of(v4l2_dev, struct tw68_dev, v4l2_dev);
- 	struct tw68_buf *buf;
- 	unsigned long flags;
- 
--	/* Do things that are done in tw68_initdev ,
--		except of initializing memory structures.*/
--
-+	/* Do things that are done in tw68_initdev,
-+	 * except for initializing memory structures.
-+	 */
- 	msleep(100);
- 
-+	tw68_hw_init1(dev);
- 	tw68_set_tvnorm_hw(dev);
- 
--	/*resume unfinished buffer(s)*/
--	spin_lock_irqsave(&dev->slock, flags);
--	buf = container_of(dev->active.next, struct tw68_buf, list);
--
--	tw68_video_start_dma(dev, buf);
-+	/* Restore interrupt mask */
-+	tw_setl(TW68_INTMASK, dev->pci_irqmask);
- 
-+	/* Resume unfinished buffer(s) */
-+	spin_lock_irqsave(&dev->slock, flags);
-+	if (!list_empty(&dev->active)) {
-+		buf = container_of(dev->active.next, struct tw68_buf, list);
-+		tw68_video_start_dma(dev, buf);
-+	}
- 	spin_unlock_irqrestore(&dev->slock, flags);
- 
- 	return 0;
-@@ -415,4 +418,4 @@ static struct pci_driver tw68_pci_driver = {
- 	.driver.pm = &tw68_pm_ops,
- };
- 
--module_pci_driver(tw68_pci_driver);
-+module_pci_driver(tw68_pci_driver);
-\ No newline at end of file
--- 
-2.50.1.windows.1
+Good idea, will change.
+
+>> +    }};
+>> +}
+>> +
+>> +#[allow(unused_macros)]
+>> +macro_rules! bitstruct_field_impl {
+>> +    ($vis:vis, $struct_name:ident, $storage:ty, $hi:literal, $lo:literal, $field:ident as $field_type:tt) => {
+>> +        impl $struct_name {
+>> +            #[inline(always)]
+>> +            $vis const fn $field(&self) -> $field_type {
+>> +                let field_val = (self.0 >> $lo) & bitstruct_mask!($hi, $lo, $storage);
+>> +                bitstruct_cast_value!(field_val, $field_type)
+>> +            }
+>> +        }
+>> +        bitstruct_make_setters!($vis, $struct_name, $storage, $hi, $lo, $field, $field_type);
+>> +    };
+>> +}
+>> +
+>> +/// Helper macro to convert extracted value to target type
+>> +///
+>> +/// Special handling for bool types is required because the `as` keyword
+>> +/// cannot be used to convert to bool in Rust. For bool fields, we check
+>> +/// if the extracted value is non-zero. For all other types, we use the
+>> +/// standard `as` conversion.
+>> +#[allow(unused_macros)]
+>> +macro_rules! bitstruct_cast_value {
+>> +    ($field_val:expr, bool) => {
+>> +        $field_val != 0
+>> +    };
+>> +    ($field_val:expr, $field_type:tt) => {
+>> +        $field_val as $field_type
+>> +    };
+>> +}
+>> +
+>> +#[allow(unused_macros)]
+>> +macro_rules! bitstruct_write_bits {
+>> +    ($raw:expr, $hi:literal, $lo:literal, $val:expr, $storage:ty) => {{
+>> +        let mask = bitstruct_mask!($hi, $lo, $storage);
+>> +        ($raw & !(mask << $lo)) | ((($val as $storage) & mask) << $lo)
+>> +    }};
+>> +}
+>> +
+>> +#[allow(unused_macros)]
+>> +macro_rules! bitstruct_make_setters {
+> 
+>> +    ($vis:vis, $struct_name:ident, $storage:ty, $hi:literal, $lo:literal, $field:ident, $field_type:tt) => {
+>> +        ::kernel::macros::paste! {
+>> +            impl $struct_name {
+>> +                #[inline(always)]
+>> +                #[allow(dead_code)]
+>> +                $vis fn [<set_ $field>](&mut self, val: $field_type) {
+>> +                    self.0 = bitstruct_write_bits!(self.0, $hi, $lo, val, $storage);
+>> +                }
+>> +
+>> +                #[inline(always)]
+>> +                #[allow(dead_code)]
+>> +                $vis const fn [<with_ $field>](mut self, val: $field_type) -> Self {
+>> +                    self.0 = bitstruct_write_bits!(self.0, $hi, $lo, val, $storage);
+>> +                    self
+>> +                }
+>> +            }
+>> +        }
+>> +    };
+>> +}
+>> diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
+>> index cb2bbb30cba1..54505cad4a73 100644
+>> --- a/drivers/gpu/nova-core/nova_core.rs
+>> +++ b/drivers/gpu/nova-core/nova_core.rs
+>> @@ -2,6 +2,7 @@
+>>
+>> //! Nova Core GPU Driver
+>>
+>> +mod bitstruct;
+>> mod dma;
+>> mod driver;
+>> mod falcon;
+>> -- 
+>> 2.34.1
+>>
+>>
+> 
+> The code itself looks good. Thanks for doing this work, it will be useful for Tyr :)
+
+Glad to hear! I will send a v2 out today or tomorrow, thanks.
+
+ - Joel
 
 
