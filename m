@@ -1,142 +1,134 @@
-Return-Path: <linux-kernel+bounces-798217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FAF9B41AC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:56:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37EDBB41AC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:57:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BDA91BA1074
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:56:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E7E216F1F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0B92F3C29;
-	Wed,  3 Sep 2025 09:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04D02E9726;
+	Wed,  3 Sep 2025 09:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="pXoYO4uN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WZpPJKSu"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q0KxacRn"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CD42F1FF4;
-	Wed,  3 Sep 2025 09:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694862E9741
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756893215; cv=none; b=nHaSO1IIlWyYgo7hBuGiR8oklCNbKHTi6KIGotqOKdE9l3qquuyDEmhYBJX9ZW649xApAxOfEj+UFJy9Jd5HmdAnHlqZXy6QcW6M+S1AYl17JrFvFjitMG/qBIWVWw3D4sAwj59r7cjVbUwsJIkxWA9Pu6XJ87CqbvhUTw1la9c=
+	t=1756893267; cv=none; b=lI2a65TkYoJGxa1k1D/aGwSRnBncMlH1CiZnSF7GOwMlDqVFV06l8ns4xf8yMVrtTxwlKZ18xufle6rt2FiHALSQrcMyaMcRv8vij4GTTTc4Qm7HeS23KttRF/NW12yJZGen2vGRqPGdrkDKOnD9uUVKGuHOQMMwursbVGPWojs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756893215; c=relaxed/simple;
-	bh=277RioR3basjGp9kALm3hs9oH+dbVhaHNkYk9uma6EQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oou/AUIAQ4S1uynnClmz3oeFQXJBWkdH1djzutmArc0ED6fW+n6vibNkilm4xB+Vsb/dXFPi2b/y/5r/gyVFJiL2Ha0SYxzwAG83HlM0ELSvabfWWxLWOt9Z2YuofY2U4o7vIORzC4S9FEY5vSiAz0+9u4aXz+RxE34DU/Vpe5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=pXoYO4uN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WZpPJKSu; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6A797EC0336;
-	Wed,  3 Sep 2025 05:53:29 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Wed, 03 Sep 2025 05:53:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1756893209; x=1756979609; bh=jNNb+nr/hF
-	Kdcw+MyWg50Siwcv+G2MEA1WmLkk6R+24=; b=pXoYO4uNcVZuUx9Lb0lz/ceknJ
-	VORA4T5rp/2utYlvIq/8FCigI1G2XxgMf2/f0gtvW20zmDflVKBUbuQwcjlkcLGk
-	BCBXtv6OZjTs5CfVP9rBI8gloI+8kHsKA9iEfm5urKuWjK1c+XqnsFtzhGkYzac1
-	pWC7Yb0rtiuvSSP5uBzlClipQA4dQOHtWxvF0MmcWEfXTvTPyulpJaKlcVDnKk69
-	VExqh/IB8N0UeSYuyS36M33Vm3i/3xIheVXth8eCbUL4/WNPzcV9A8goig4tda9B
-	fXwyxnIMZNQFS260aPWVPGC4abO/ls7C3t7XP52RQDLFd/OPdEgZA0wgpkxQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1756893209; x=1756979609; bh=jNNb+nr/hFKdcw+MyWg50Siwcv+G2MEA1Wm
-	Lkk6R+24=; b=WZpPJKSuPdSVvsUz8WkC51Yhv7zyC3tkBUR6DeoxnRR3wM8R/mi
-	3DDfpSWxr3nlfbv4g1zYSnehh4MZndgr4D/T6Phn3PuuYCDuujxHzDtPXGo08t9/
-	YRY1yeyVra9XZAvf4FGa6FaFLh8GvPKz0mDJllwn9HF+dRT2rPPx4OpeRWbWsWFM
-	aszLMJzSK/sL0BQ2ClWVNiDONcYJYTyHYu0VlEus2PoMhWJGsrxU1skSV1i9g+tl
-	8X5FRWtFicWL4gI87JsUbgGh/s3PpjmN5mkhdLIAX1T31j1KdUD3NqEvrjyighzB
-	mJiXM4iFrlJJDXrYnOnWJ8ElIL7ktYkMv8g==
-X-ME-Sender: <xms:FxC4aG1qr09vvHwIJ4hRbt7dkIQxbA0fvsqT7xu7-Qa-EuI1Y0SAtg>
-    <xme:FxC4aMkjjJBlZaG1qNx88mBDxwo_Xhu75G-jqvsAUqKkRP9XRf8eRjyuRp5rPUJ8r
-    n4Wt8-hhISP1shtCe0>
-X-ME-Received: <xmr:FxC4aHZ5L4UDCpYxS4iPuJ2jp77oF68P09_Bh3agX1CIy18Cb4gvlewcgjaINc4RmuJVrWjOvYwkXbvqBUJgZ6aLOCp95D_yeWw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvkeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    epfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomheplfgrnhhnvgcuifhr
-    uhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpefgvdffve
-    elgedujeeffeehheekheelheefgfejffeftedugeethfeuudefheefteenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruhdrnh
-    gvthdpnhgspghrtghpthhtohepvddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
-    pehhtghhsehlshhtrdguvgdprhgtphhtthhopehsvhgvnheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtohepthhofihinhgthhgvnhhmihesghhmrghilhdrtghomhdprhgtphhtthho
-    pegrlhihshhsrgesrhhoshgvnhiifigvihhgrdhiohdprhgtphhtthhopehnvggrlhesgh
-    homhhprgdruggvvhdprhgtphhtthhopehjrghsshhishhinhhghhgsrhgrrhesghhmrghi
-    lhdrtghomhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdought
-    sehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:FxC4aKpXGXfqNRJtXU3bKWXf82Z1HtC8gg6cm1QSI4juZ64CPJpJvA>
-    <xmx:FxC4aNgClrkAVGxrPUSoA5iIA9dD-IuPEqmWHNN_kwc6d3MH4dldvg>
-    <xmx:FxC4aMxWuRIbQ_rTseCZMo3e5lePw_bkoEo1iX_61QGtyH-FqaYTug>
-    <xmx:FxC4aL8MmHW_zqynwVULmAhwl-4ii_YK6UIH_NVlSD4x8Q_GitvppA>
-    <xmx:GRC4aNXiqaEM5KtsXta-J8fDubHw9ulAUXUwLhYT3ONsidDAlYyK2-Ol>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Sep 2025 05:53:27 -0400 (EDT)
-Date: Wed, 3 Sep 2025 11:53:25 +0200
-From: Janne Grunau <j@jannau.net>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Sven Peter <sven@kernel.org>, Nick Chan <towinchenmi@gmail.com>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Jassi Brar <jassisinghbrar@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hector Martin <marcan@marcan.st>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Sagi Grimberg <sagi@grimberg.me>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v3 7/9] nvme: apple: Add Apple A11 support
-Message-ID: <20250903095325.GA89417@robin.jannau.net>
-References: <20250821-t8015-nvme-v3-0-14a4178adf68@gmail.com>
- <20250821-t8015-nvme-v3-7-14a4178adf68@gmail.com>
- <20250825080710.GA23193@lst.de>
- <89251134-9685-439e-b220-92717663f038@kernel.org>
- <20250902052646.GA11139@lst.de>
+	s=arc-20240116; t=1756893267; c=relaxed/simple;
+	bh=RhkEPFn1xmViNE2hu3hA56fTjRO4yTnz3NaB+IP/EoM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fqB1IWoo6rWmvhwZPmu/iwxB9zSDAC1GKLF6aVCHtZkPO0sPcFTiDMXJsl11S/OXCjcTAlbmEguUBJ1stQBrKJMxDi6hDVsRts2UVGDnAzRC+E/B7jmYFTlZx/DMDSf3ieMm4CE5nwDYXRAHlDGsrmHyP25kMjyito3oHSZLvAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q0KxacRn; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-726549f81a6so1962046d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 02:54:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756893264; x=1757498064; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=n2Rzk7zMFMEV7RW/mx0yGAjSShG/CZFQjSUWSelah8c=;
+        b=q0KxacRnI/ha291IpqX2IyTxElVbf56j6fSYRbRxV9de97Cpxim8Ry1B+IzgVWlgT7
+         x/xsQQFi0txDBQagdFu4hR1mFxlmoyuL74uc/r8oVD/SjU3IqPh3VTfZr3BiPGnII8tv
+         k3T0OLKvBE1b6R1JOzLwtWQnA7ey7BkWKPngtHvhhHxJMw1xGRjq/5srXOiAmJuw/BG0
+         8sEoY65GjPcXt6h8L3TdfDGGYA1DsA64nfecSIb7rCq/ZJae3safYSW9DdwUTMAz+cg+
+         o64hoWEueKUhm3I8bF9Q7l4wXNqNbZarcOaVc7Dr6keltO3rUuiMGHL3+SanNK8x4vPy
+         MnPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756893264; x=1757498064;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n2Rzk7zMFMEV7RW/mx0yGAjSShG/CZFQjSUWSelah8c=;
+        b=Q5/zHaH1TifXa7lLfl73R1rRhMnJZcGXox2Daj855hY47tXcAab6YZmZqOz1pFLvcf
+         OVzqn6E7p07F/zjlfh7XevXpBavLGzviaZmN+o3VBZd+rmzM/0xBQyGAQqRYaZ2gb/Cu
+         wpHt8sXqu6nv5uFdHrad4xXmPNRyKOjKGBok5tHzoV0lJlAlFWB1sTCsSUIF0Up0Yh8y
+         /PCOkJ/qhBp96uQtEQfs12dwcuxSkdggOWXMj0UEUSbX34PLyyTy0TQgxvGnuxP4CgWu
+         bBI4DejjG/Hh4q7rIsFHTBbFluf23kAj0/oNV6UE5go380mxl1M0+0wnVdmpBtnEHkg/
+         i5Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnQyEKmgSF4Mhcr3Fr5/39bHSTRZq/EGkDckozUnHx6rMJuuu6scOtn/pCBLLWKrtC66gvX4K2KJYABUo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFX+d03ID8Nr8JUvVjPv/Fwu7B8whl01dNFe2PJvaJQ9Ew3Ks+
+	gmjbgUDMlZw6i13JDxP54IC8xVUIHUePe45iyKjWT4hxF7myxsMDlVHmy3Ors1gX1g49PwKhNkf
+	Z42C867EIDZpOM8bWZb0UX643yBKpVwHmYADLYIa7
+X-Gm-Gg: ASbGncvgK0T48g3WbAFY1HBv0JQjd1Ajvdimdg76tZPgp519XF7QJlJEBFa81xWFkQH
+	/A5uHmxWwYL+J4tjhI1ASUerPVFwP27ErMglBYi40mARDGMhOrx7yJB4CVv9H9BbfptFS6Yc4Lw
+	zfw3HHF5dtND0GddcXW8E7FBc36gdntijv26SbRFrycd1kvWOahGrqASKJRk9GhspnPdtZYQ/o2
+	J3zhONVR/cRSOxhH7dJem0MHIQjDDy7vhnKrvytXYI=
+X-Google-Smtp-Source: AGHT+IHHxZ7Hfb0qrsN8QMhYVtNZyxle5uZ0dlr8VDvhNcjFGlkqe7J8XNVXFgqPaB9c4DZ7Jz/xYjkzW/9XPfW8urE=
+X-Received: by 2002:ad4:5dc9:0:b0:70d:fee8:e588 with SMTP id
+ 6a1803df08f44-70fac870233mr189626166d6.34.1756893264049; Wed, 03 Sep 2025
+ 02:54:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250902052646.GA11139@lst.de>
+References: <20250901164212.460229-1-ethan.w.s.graham@gmail.com> <20250901164212.460229-4-ethan.w.s.graham@gmail.com>
+In-Reply-To: <20250901164212.460229-4-ethan.w.s.graham@gmail.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Wed, 3 Sep 2025 11:53:46 +0200
+X-Gm-Features: Ac12FXz83uIidiq7UvM7XG7YD3kWK8XfBqOv9db-g6kDKvYfHmTPpgNK10-2Ga0
+Message-ID: <CAG_fn=UX9+1=CwGB-KCe+s85ZzQXfhqO+2dJVqs93XLKYedeWw@mail.gmail.com>
+Subject: Re: [PATCH v2 RFC 3/7] kfuzztest: implement core module and input processing
+To: Ethan Graham <ethan.w.s.graham@gmail.com>
+Cc: ethangraham@google.com, andreyknvl@gmail.com, brendan.higgins@linux.dev, 
+	davidgow@google.com, dvyukov@google.com, jannh@google.com, elver@google.com, 
+	rmoar@google.com, shuah@kernel.org, tarasmadan@google.com, 
+	kasan-dev@googlegroups.com, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, dhowells@redhat.com, 
+	lukas@wunner.de, ignat@cloudflare.com, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 02, 2025 at 07:26:46AM +0200, Christoph Hellwig wrote:
-> On Wed, Aug 27, 2025 at 05:56:33PM +0200, Sven Peter wrote:
-> >> Do you want to merge this through the apple SOC tree?  If so:
-> >>
-> >> Acked-by: Christoph Hellwig <hch@lst.de>
-> >>
-> >>
-> >
-> > I don't think that's necessary since there are no build time dependencies 
-> > but if you want to I can take it through there.
-> 
-> Merging it through nvme sounds fine as well, I just through up
-> grabbing everything together would be easier.  I also noticed there's
-> another Apple hw enablement series that touches nvme, so I guess both
-> should go through the same tree?
+> +/**
+> + * struct kfuzztest_simple_fuzzer_state - Global state for the KFTF module.
 
-yes, they should go through the same tree if they go in the same cycle.
-They conflict in dt-bindings and possibly the driver. We should avoid
-burden someone else with this conflict resolution.
+s/KFTF/KFuzzTest
 
-Janne
+
+> +
+> +               pr_info("KFuzzTest: registered target %s", targ->name);
+> +       }
+> +
+> +       /* Taint the kernel after successfully creating the debugfs entries. */
+> +       add_taint(TAINT_TEST, LOCKDEP_STILL_OK);
+
+Maybe elaborate a little that we taint the kernel because these entry
+points allow calling (almost) arbitrary kernel code upon user request?
+
+
+> +       /* Patch pointers. */
+> +       for (i = 0; i < rt->num_entries; i++) {
+> +               re = rt->entries[i];
+> +               src = regions->regions[re.region_id];
+> +               ptr_location = (uintptr_t *)((char *)payload_start + src.offset + re.region_offset);
+> +               if (re.value == KFUZZTEST_REGIONID_NULL)
+> +                       *ptr_location = (uintptr_t)NULL;
+> +               else if (re.value < regions->num_regions) {
+> +                       dst = regions->regions[re.value];
+> +                       *ptr_location = (uintptr_t)((char *)payload_start + dst.offset);
+> +               } else
+> +                       return -EINVAL;
+
+There should be braces around this return statement, see
+https://www.kernel.org/doc/html/latest/process/coding-style.html#placing-braces-and-spaces.
+
+> +
+> +static bool kfuzztest_input_is_valid(struct reloc_region_array *regions, struct reloc_table *rt, void *payload_start,
+> +                                    void *payload_end)
+> +{
+> +       size_t payload_size = (char *)payload_end - (char *)payload_start;
+
+You seem to be casting payload_start and payload_end to char* almost
+everywhere, maybe declare them as [unsigned] char * instead?
 
