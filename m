@@ -1,75 +1,118 @@
-Return-Path: <linux-kernel+bounces-798300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6181B41C00
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:37:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32306B41C06
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54EA91BA6043
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:38:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F233A20809A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44EC2EF677;
-	Wed,  3 Sep 2025 10:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801702F1FC1;
+	Wed,  3 Sep 2025 10:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HaIE1ubK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aoIeSVfg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0E52EBDD9;
-	Wed,  3 Sep 2025 10:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD55258CDF;
+	Wed,  3 Sep 2025 10:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756895864; cv=none; b=dHD8wwe7BVU88+GgtFrCxLRW80fDYPZm9tH1waAdhl0iT+1+l5b0VSkcv2nhOhxE1GGEaUDsuQMj5mMeQOXmkJK4e7op4Bn9/73RaxqeaY4WqTs6co8Gl/lb2lOi9sgCLTxGnLQW8KjVd6iE54afoUPKVM7c5C9MOBFRHJuhzFI=
+	t=1756895925; cv=none; b=kT8Kj4j0iVJf2C43Sp5iDwdPsTDLSdXl5mJH25KbfZgcyi4fQt7/zy7BNxYJ8kKZi82+7uznt96e31DVCjVpqAaSiLWG4NYssPfqOdLvw7MQzK8mCNcz32lloC8y8gJi1uNekllnVftjNgR3oxv/hLhhSNXk8QOt3nvBNfIOCfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756895864; c=relaxed/simple;
-	bh=Lfo4jcAKp/pnHLEzvJi5SJDxARnSzwZ9vzqotnTGkSg=;
+	s=arc-20240116; t=1756895925; c=relaxed/simple;
+	bh=GCTF1UYtOSCeRAlhubdQAJ7qhlBqyZpfpnhA1MMIZJE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m2TFu+LEKcgrCJSDajutCxFdczuld1oF7r/rpaxXo5mebW0KILvtYF/hpxCRda0ZR5LoNGWe/CaY6pV3bkv1Gkltvr/aMEz+FKh+ArC8i91jBIvT8KevCg1wkiyLSggaqNrNkKk3UeUE1v46Xrh5VR5kGvze2UhdYvbxBBlunO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HaIE1ubK; arc=none smtp.client-ip=198.175.65.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=aaoY5na9iFzoHZdcee8m4+gcXKSxfw7blnozHd5xOdMOup+l2xG0jYqX6AGiVzRmYu5Ec016KxU2PnKakMVo7C2RVi1U/LzHOWogqFAAECDdW7YSgkqY0OfuAkKrIoo6GE8XDLbIhDZEqNDAqq2/ZgyMMSVUUma414L0QUupmpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aoIeSVfg; arc=none smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756895863; x=1788431863;
+  t=1756895924; x=1788431924;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:content-transfer-encoding:in-reply-to;
-  bh=Lfo4jcAKp/pnHLEzvJi5SJDxARnSzwZ9vzqotnTGkSg=;
-  b=HaIE1ubKq4QIpKGRByuUPZ263wA2JFXJp5rinx+JpjtZm0q8kp9iIPzz
-   KAtQnZjRmef0RzN88IiSo3jucFKy0/doEP7/wm7mR+7setUu40ihO5aIp
-   fhxlEyiuQLpL+Cim1ZbDFFFk1zUAUzmpyE8ujTy+MwSLuh/pxWCXaEmgl
-   8PtL7hgnaodOp+9BKwXtc1u3KwAYPaH4Se50eWxxTY9CFrg3Uf5UgoYDn
-   eez2njY3vUy8Xm+eJhk01jLH3wf9dwX8P9LxUReub+351j1lQZiroYy1X
-   m0/IOsxQ/oFc/EsnsAwbpOye6sD/eUyf0TUjPMk1GwqEf4vTLQJaqo/90
+  bh=GCTF1UYtOSCeRAlhubdQAJ7qhlBqyZpfpnhA1MMIZJE=;
+  b=aoIeSVfgjxBHaBK/rH7eeDtjQn6Q93RiB9ABmLVlCPmjCKXUIIPqN/nV
+   KM0cssTP95HMkBWKzLY0/l3d8NRTnpcK4PWYron/+JrhboKVkBl4U3S13
+   Bh5pybcx0vaY35wVOE8ZSR9zcTmuu0lWla6FXzgj2yW3A871RzNYklG+s
+   H6Wx/gRMJ2u06zDiAGYIDycA0GJ4+I49tlpOw8m68CWbTRw1S4FJDiAl1
+   WR4uza9hQ6vvJnArbqe30TMsnQqJIvR1ViQWKsDWHtb2oW+AsD9Qwz3C+
+   F8G8jGU51Sa5bgwGByzQnnOOdHZt4KSMXnrBor9D/06I8fGrJSaACIqMA
    w==;
-X-CSE-ConnectionGUID: YhAz1w2IRsy4Kf+nrCmd1Q==
-X-CSE-MsgGUID: 5DYF/xGOQE2yCmS2JZG+2Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81789676"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="81789676"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:37:42 -0700
-X-CSE-ConnectionGUID: 7+2GAz/ERVun8rqsEVJ7JQ==
-X-CSE-MsgGUID: YgC7aelUTjeM2gJ4SlcWKg==
+X-CSE-ConnectionGUID: TJP5/xWPQoiHurVgJD/mLg==
+X-CSE-MsgGUID: l58jsQxpQGeM2TkdaaISDw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="70632573"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="70632573"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:38:43 -0700
+X-CSE-ConnectionGUID: gcUgIZtvSDO2dFM95UNdfw==
+X-CSE-MsgGUID: hQkiLlfsRpSs+9G/ykDw9A==
 X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="202430131"
 Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:37:39 -0700
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:38:33 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
 	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1utkrw-0000000AxTO-2xSM;
-	Wed, 03 Sep 2025 13:37:36 +0300
-Date: Wed, 3 Sep 2025 13:37:36 +0300
+	id 1utksl-0000000AxU5-0dpr;
+	Wed, 03 Sep 2025 13:38:27 +0300
+Date: Wed, 3 Sep 2025 13:38:26 +0300
 From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Akshay Jindal <akshayaj.lkd@gmail.com>
-Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com,
-	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] iio: light: ltr390: Implement runtime PM support
-Message-ID: <aLgacK0MMojkaKuW@smile.fi.intel.com>
-References: <20250901184238.34335-1-akshayaj.lkd@gmail.com>
- <aLbptFRh9ZvAVfLn@smile.fi.intel.com>
- <CAE3SzaTnNckFDRMDqGPDAg471bRskJ=_n5C_qSLKQeq3F-Lu_g@mail.gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Tony Lindgren <tony@atomide.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v7 16/16] pinctrl: qcom: make the pinmuxing strict
+Message-ID: <aLgaoivmBUgoeO6B@smile.fi.intel.com>
+References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
+ <20250902-pinctrl-gpio-pinfuncs-v7-16-bb091daedc52@linaro.org>
+ <aLcBcjvMbrxoDYoC@smile.fi.intel.com>
+ <CAMRc=MfcFMgkNqWNZV5o0NxkAvxBTjC3vv56Cr98n0R2CkxuPw@mail.gmail.com>
+ <CAHp75VcgaqnDrPH27wxfgyK6zz4RAKJQB0r7G2vbTONTxkEzTw@mail.gmail.com>
+ <CAMRc=MfhhX2NJ0fhhX8u+7=sdyUy0G27n7caGf9=TpHxUDJVxg@mail.gmail.com>
+ <aLgW7J-j4nn0u8uo@smile.fi.intel.com>
+ <CAMRc=MdA21fwnamymG6YhqBjKDso_nJs_4xefPNONQNfEcPHXA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,52 +122,41 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAE3SzaTnNckFDRMDqGPDAg471bRskJ=_n5C_qSLKQeq3F-Lu_g@mail.gmail.com>
+In-Reply-To: <CAMRc=MdA21fwnamymG6YhqBjKDso_nJs_4xefPNONQNfEcPHXA@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Sep 03, 2025 at 09:15:53AM +0530, Akshay Jindal wrote:
-> On Tue, Sep 2, 2025 at 6:27 PM Andy Shevchenko
+On Wed, Sep 03, 2025 at 12:34:00PM +0200, Bartosz Golaszewski wrote:
+> On Wed, Sep 3, 2025 at 12:22 PM Andy Shevchenko
 > <andriy.shevchenko@intel.com> wrote:
-> > On Tue, Sep 02, 2025 at 12:12:36AM +0530, Akshay Jindal wrote:
+> > On Wed, Sep 03, 2025 at 09:33:34AM +0200, Bartosz Golaszewski wrote:
+> > > On Tue, Sep 2, 2025 at 10:46 PM Andy Shevchenko
+> > > <andy.shevchenko@gmail.com> wrote:
+> > > > On Tue, Sep 2, 2025 at 8:42 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> > > > > On Tue, Sep 2, 2025 at 4:38 PM Andy Shevchenko
+> > > > > <andriy.shevchenko@intel.com> wrote:
+> > > > > > On Tue, Sep 02, 2025 at 01:59:25PM +0200, Bartosz Golaszewski wrote:
 
 ...
 
-> > >       /* Ensure that power off and interrupts are disabled */
-> > > -     if (regmap_clear_bits(data->regmap, LTR390_INT_CFG,
-> > > -                             LTR390_LS_INT_EN) < 0)
-> > > -             dev_err(&data->client->dev, "failed to disable interrupts\n");
-> > > +     if (data->irq_enabled) {
-> > > +             if (regmap_clear_bits(data->regmap, LTR390_INT_CFG,
-> > > +                                     LTR390_LS_INT_EN) < 0)
+> > > > > > > The strict flag in struct pinmux_ops disallows the usage of the same pin
+> > > > > > > as a GPIO and for another function. Without it, a rouge user-space
+> > > > > > > process with enough privileges (or even a buggy driver) can request a
+> > > > > > > used pin as GPIO and drive it, potentially confusing devices or even
+> > > > > > > crashing the system. Set it globally for all pinctrl-msm users.
+> > > > > >
+> > > > > > How does this keep (or allow) I²C generic recovery mechanism to work?
+> > >
+> > > Anyway, what is your point? I don't think it has any impact on this.
 > >
-> > Wrong indentation, hard to read line, either one line, or do better.
-> > Actually why not assign it to ret? The above not only simple style issue,
-> > but also makes readability much harder as the semantics of '0' is
-> > completely hidden. This style is discouraged.
-> Earlier did not use ret here, because powerdown function is of type void.
-> But if readability is the issue, I have used ret.
+> > If we have a group of pins that are marked as I²C, and we want to use recovery
+> > via GPIOs, would it be still possible to request as GPIO when controller driver
+> > is in the strict mode?
 > 
-> Regarding clubbing into 1 line, I have my reservations there. I think we
-> should not violate the 80 char line limit.
+> Yes, if you mark that function as a "GPIO" function in the pin
+> controller driver.
 
-Shouldn't != mustn't, esp. when it's about readability.
-
-> Also since the line is already 1-level indented (begins at 9th column, due to
-> if(data->irq_enabled) check), the spillover will be too much. The readability
-> does not seem to be taking a substantial hit here. Let me know if this is
-> non-negotiable for you. Will happily make the changes.
-
-		ret = regmap_clear_bits(data->regmap, LTR390_INT_CFG, LTR390_LS_INT_EN);
-
-only 88 characters. One can make it shorter, yes
-
-	struct regmap *map = data->regmap;
-
-		ret = regmap_clear_bits(map, LTR390_INT_CFG, LTR390_LS_INT_EN);
-
-
-79 characters.
+How would it prevent from requesting from user space?
 
 -- 
 With Best Regards,
