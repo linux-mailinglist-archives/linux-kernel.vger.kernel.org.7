@@ -1,113 +1,123 @@
-Return-Path: <linux-kernel+bounces-797570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC93BB411FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:39:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4442B41200
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2333B1527
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:39:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F20F3B592A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6551DE2A5;
-	Wed,  3 Sep 2025 01:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833121D63F3;
+	Wed,  3 Sep 2025 01:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+2lHvAW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VWWYQ1yQ"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF165E555;
-	Wed,  3 Sep 2025 01:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79512566
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 01:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756863542; cv=none; b=uxLB37jr3z5FyP2gvY4CbovrKTuvu0pqNPb19qOzxdOqZFXPJzvrostBUO23InS/k4/fJJqdJFf7IrP/CxblP61sEF1ej619N27utpxLgxuRD719s2QRnIprnBMiHp6R9Nxu1jpancErbQjFd7c3aRVSPXAmIawgBJiQ4bED1Iw=
+	t=1756863604; cv=none; b=A6jYTG+TlF8NARX6MbrDmIJeOb76YpYlbf4htc0F76LtIqIgQVV7a076cWSiK7VJTBzpvki7TnQ8+zVVDK73VBJhhbs5Q/s3nhesWH4jC2ksv6aWXkbqVtqHwlCiq1tlrLh4RtBHMirXs5u82mhmtENCtsmRC/6SBDu+e8KWFJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756863542; c=relaxed/simple;
-	bh=zOeJ5ngI5GgY1IUOwe+4owS6Ud/kOULo7zVSgkL3p5s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y918Il5B70wR7rviaAI3n0Jw5rDdh512nZ2sUpFQuVFcl/i9Ypv2tsqc0f15MemcEY22YtnKrMyj7AlRvanYBCeeXvgWKrKLp8F66pH6gj/sckw0+qh1RI/6ec9g8eOpO9AgDpmcctgVJRXnWBBWP4QasE4ZRe1y1wpvuxE4zCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+2lHvAW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54AD9C4CEED;
-	Wed,  3 Sep 2025 01:39:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756863541;
-	bh=zOeJ5ngI5GgY1IUOwe+4owS6Ud/kOULo7zVSgkL3p5s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Z+2lHvAWCl/vO+TD/GRYZ9XtoEazhN/pB71rceWYow23uHBN1fB1jPi5jB706VZEc
-	 nNN69N2/v5o09ABUe26G9HN2Nt7RwNncmLFrsYtZzl9BU3EFIlJNgRy35IzG0iP9XR
-	 rGL4ClS6Yheul2bjqvaK+musBTCTdwTkFjB3JQq0dmjgdFL/82THwQilqMIboxMA8M
-	 TnJl0fbrJe8tjkcHJtN0YM9XEr7T3L0Zr6jWQU8n2m4k6Nqe+OVgHXqJ6YNSX+Ft2c
-	 Bf+3u68972YE44fB0dbAbw39K/JGl3Yf3gytBwHNJLJplH24BgwU8PfsrQcagdJB3D
-	 VLObaZ/NtlyaQ==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61cf8280f02so6949972a12.0;
-        Tue, 02 Sep 2025 18:39:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWMa/o0Fw8zbcI/SRoVxVMGap76FqAjW7t1TEQbg6z1FoXlCsMQ52LsfH/c+JO/WEM9eeReVlHaH3+X@vger.kernel.org, AJvYcCWUb5r1BVfdSMeLm9UDcuYrtwxTiDWQ0dJpyAGHI39rjsFqPtUSFpErMwgEatJ61VnNE9p0FP2TOz5FCQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDZE4q6bc8ycQ9GXh0neOC+BcqiTusKnFyZrJ+3TjzP9THJKOz
-	FAeLt4zvfT0/h20/r53HtGCOx5+qzACKckTsrESdjT9Qup6UrGgi/ZhjWlt5+hyGTjQrcyPR4gR
-	XW04Qyw1ZXBegN6suc/xYtkjFzji3bw==
-X-Google-Smtp-Source: AGHT+IFptbMpMMT2D9FRexdLPIqSHrJPMLwelNoD7hUYbe5eOkeTndk6fldDic2MqA1Vki3qonEvJQY7U6OrawKIpS0=
-X-Received: by 2002:a05:6402:42c2:b0:61e:d636:5815 with SMTP id
- 4fb4d7f45d1cf-61ed6365ademr1443549a12.24.1756863539897; Tue, 02 Sep 2025
- 18:38:59 -0700 (PDT)
+	s=arc-20240116; t=1756863604; c=relaxed/simple;
+	bh=GE4UrC/J5syH3kAVbQU7lQzrSUWTh8gemRAuUoE1WCQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UG9DLJv807epXs6CcCR12IAVeuI/SdB6Zdip72VVQlPuOJVcbmV0vXoTpaCTvVmGegr1Vftl7j0clQNmbQjpI+MSNW/uoSqDZHh/3g2fIsRtxm7uD6wfqScDRaS8X5/xC0yLn971h/Nh1EVr1GoFzWFrleCKhCwC1HPil5i/L6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VWWYQ1yQ; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <06c7a189-7ea2-4005-a1f2-12608fb2931e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756863599;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nBFnrycFy90OytnzxFhcHJdc8o4eGnhelby35FOE5H4=;
+	b=VWWYQ1yQyLGa2x64akE37pTTcmFwUyCWMES7oeh7Gzd3h2W5kN4HNNW9NJXIN2+H4P9G+V
+	N24WCyDrr7uCsLuT5sQvcY6Ibpe5BWJ6fYvJsn6v5FH3kvQDPjyv6FeVDxPYgMf7p9HSsK
+	3jP4FvdKFqz8D+3uytEsLaEmU+kaBWs=
+Date: Wed, 3 Sep 2025 09:39:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902151543.147439-1-klaus.kudielka@gmail.com>
-In-Reply-To: <20250902151543.147439-1-klaus.kudielka@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 2 Sep 2025 20:38:48 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLvF12GZfoZVdHaOxn9uH3axnUT0dHJtD13EQv1rtxQ1g@mail.gmail.com>
-X-Gm-Features: Ac12FXxUo1lmvvhdHtzI1m4RbTesfMH5DhqHLkRQGu05jSBfxV6er8SVWtO9ixw
-Message-ID: <CAL_JsqLvF12GZfoZVdHaOxn9uH3axnUT0dHJtD13EQv1rtxQ1g@mail.gmail.com>
-Subject: Re: [PATCH] PCI: mvebu: Fix the use of the for_each_of_range() iterator
-To: Klaus Kudielka <klaus.kudielka@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bjorn Helgaas <helgaas@kernel.org>, Jan Palus <jpalus@fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] mm: show_mem: show number of zspages in
+ show_free_areas
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Zi Yan <ziy@nvidia.com>, Minchan Kim <minchan@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Yosry Ahmed <yosry.ahmed@linux.dev>, Nhat Pham <nphamcs@gmail.com>,
+ SeongJae Park <sj@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-dev@igalia.com
+References: <20250902-show_mem_zspages-v2-1-545daaa8b410@igalia.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <20250902-show_mem_zspages-v2-1-545daaa8b410@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Sep 2, 2025 at 10:17=E2=80=AFAM Klaus Kudielka <klaus.kudielka@gmai=
-l.com> wrote:
->
-> The blamed commit simplifies code, by using the for_each_of_range()
-> iterator. But it results in no pci devices being detected anymore on
-> Turris Omnia (and probably other mvebu targets).
->
-> Analysis:
->
-> To determine range.flags, of_pci_range_parser_one() uses bus->get_flags()=
-,
-> which resolves to of_bus_pci_get_flags(). That function already returns a=
-n
-> IORESOURCE bit field, and NOT the original flags from the "ranges"
-> resource.
->
-> Then mvebu_get_tgt_attr() attempts the very same conversion again.
-> But this is a misinterpretation of range.flags.
->
-> Remove the misinterpretation of range.flags in mvebu_get_tgt_addr(),
-> to restore the intended behavior.
->
-> Signed-off-by: Klaus Kudielka <klaus.kudielka@gmail.com>
-> Fixes: 5da3d94a23c6 ("PCI: mvebu: Use for_each_of_range() iterator for pa=
-rsing "ranges"")
-> Reported-by: Bjorn Helgaas <helgaas@kernel.org>
-> Closes: https://lore.kernel.org/r/20250820184603.GA633069@bhelgaas/
-> Reported-by: Jan Palus <jpalus@fastmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D220479
+On 2025/9/2 20:49, Thadeu Lima de Souza Cascardo wrote:
+> When OOM is triggered, it will show where the pages might be for each zone.
+> When using zram or zswap, it might look like lots of pages are missing.
+> After this patch, zspages are shown as below.
+> 
+> [   48.792859] Node 0 DMA free:2812kB boost:0kB min:60kB low:72kB high:84kB reserved_highatomic:0KB free_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB zspages:11160kB present:15992kB managed:15360kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+> [   48.792962] lowmem_reserve[]: 0 956 956 956 956
+> [   48.792988] Node 0 DMA32 free:3512kB boost:0kB min:3912kB low:4888kB high:5864kB reserved_highatomic:0KB free_highatomic:0KB active_anon:0kB inactive_anon:28kB active_file:8kB inactive_file:16kB unevictable:0kB writepending:0kB zspages:916780kB present:1032064kB managed:978944kB mlocked:0kB bounce:0kB free_pcp:500kB local_pcp:248kB free_cma:0kB
+> [   48.793118] lowmem_reserve[]: 0 0 0 0 0
+> 
+> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+
+Thanks!
+
 > ---
->  drivers/pci/controller/pci-mvebu.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
-
-Thanks for debugging this. And the code is further simplified which is
-even better!
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> v2:
+> - fix build when CONFIG_ZSMALLOC is not enabled
+> ---
+>   mm/show_mem.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/mm/show_mem.c b/mm/show_mem.c
+> index 41999e94a56d623726ea92f3f38785e8b218afe5..c563d9adfa87765a8736e91c1f68d824b03eaea8 100644
+> --- a/mm/show_mem.c
+> +++ b/mm/show_mem.c
+> @@ -310,6 +310,7 @@ static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_z
+>   			" inactive_file:%lukB"
+>   			" unevictable:%lukB"
+>   			" writepending:%lukB"
+> +			" zspages:%lukB"
+>   			" present:%lukB"
+>   			" managed:%lukB"
+>   			" mlocked:%lukB"
+> @@ -332,6 +333,11 @@ static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_z
+>   			K(zone_page_state(zone, NR_ZONE_INACTIVE_FILE)),
+>   			K(zone_page_state(zone, NR_ZONE_UNEVICTABLE)),
+>   			K(zone_page_state(zone, NR_ZONE_WRITE_PENDING)),
+> +#if IS_ENABLED(CONFIG_ZSMALLOC)
+> +			K(zone_page_state(zone, NR_ZSPAGES)),
+> +#else
+> +			0UL,
+> +#endif
+>   			K(zone->present_pages),
+>   			K(zone_managed_pages(zone)),
+>   			K(zone_page_state(zone, NR_MLOCK)),
+> 
+> ---
+> base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+> change-id: 20250902-show_mem_zspages-d090ea0bd1d4
+> 
+> Best regards,
 
