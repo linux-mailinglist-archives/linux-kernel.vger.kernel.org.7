@@ -1,105 +1,91 @@
-Return-Path: <linux-kernel+bounces-798671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E12B4218C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:29:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8104B42140
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 391177AE6EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:20:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1798C169B1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C6B302778;
-	Wed,  3 Sep 2025 13:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E406E3019A5;
+	Wed,  3 Sep 2025 13:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WTLGWmbb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFWQ4QR8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435192F28E2;
-	Wed,  3 Sep 2025 13:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDF3246BA4;
+	Wed,  3 Sep 2025 13:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756905572; cv=none; b=R2GuPHse8R0ILKaSNG6PjzItx41HwA23ZZ8B0NRDx0sLTD62zLVeil4TK4NVe7wgRfHESlJ3HNA77Yte0Kkf25w4JeX9q4V++C7RM9bdKK52PNLs3xRxygYqgMeJ+mXWVQMyHtrHHSVSQAt8CgG+52kTfyf6bBHekV8GsMBiV9k=
+	t=1756905569; cv=none; b=REtl4h0oY9rneLiPWqwUaTBC/Tv+8+hBzvAqSOdhIZt1BUPkpVR8kuC1a+9TzuCn8huvMBQ7qkjwYpv4N639Tdvo3M3FHTCCkSQgwjbHr64rXQwZageYXchOf8ZAXGCDE5APJ9K2/RME9TC7ajEfCxAzOAeTL+BCu9GfCazk+kA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756905572; c=relaxed/simple;
-	bh=hp6/NLkgKs2XU7QkPF+2ruICId0w3OtofTaIfJkDpsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o+onFmqm/Q7/ffXfmzmv6KlqJC/8C9EpOTg0kr8yD0q8i3XhQRNk7RnY/kEJvcfAR/MFcs9vUhb3OjQFUi4/3NhYsoWU6Am0CaTJiKBvVOIV2VA0EXaidW2/XP+c1Jo5qQ+iK4yqdPWQ8H++g6yo539Xn6blDy4ay8wyusQtXbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WTLGWmbb; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756905571; x=1788441571;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=hp6/NLkgKs2XU7QkPF+2ruICId0w3OtofTaIfJkDpsE=;
-  b=WTLGWmbbbwXg8vp7fs3jA804tpiXYToloXlRQTbTStsQMVDEPiT/6fRv
-   dcAVtIZXuKE3nmTCHxzIEdthr7mt00qqBiBecbGnCv2pbYO/b5ggepNVm
-   t4zcgKOgzHK0dYEroHsZqqkkiTyWUNnYUsvgXT5qw5IoyqZkojWmqteGD
-   QFPwHpSAu6b8+/SQWjgCix6Q25IOl7JgalPpBF+zeq+W95LH/sSm5Ktfa
-   KZm7Gy6xQHkcXqwniMrCzEu1N9YJH3h5TGimbXiuEZI6q3TNdEBFpqq5u
-   wyhm0WZ8S3o611UbXOWuV3Ky2opV9Bk/rYnrGgYRkLgpacYEfwcIJ0B+o
-   Q==;
-X-CSE-ConnectionGUID: 3YIktcUgQoCDlABrUJHemg==
-X-CSE-MsgGUID: Rn5O+gjGSrWd/ZNZv6m66w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="76820032"
-X-IronPort-AV: E=Sophos;i="6.18,235,1751266800"; 
-   d="scan'208";a="76820032"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 06:19:30 -0700
-X-CSE-ConnectionGUID: 7bZnIMmsRuavOb6da1L1IQ==
-X-CSE-MsgGUID: 3/2iDBhqT2+9TaQluPXqhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,235,1751266800"; 
-   d="scan'208";a="171467895"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.204])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 06:19:28 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id BF5B511F99F;
-	Wed, 03 Sep 2025 16:19:24 +0300 (EEST)
-Date: Wed, 3 Sep 2025 16:19:24 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] i2c: core: Use fwnode_for_each_child_node_scoped()
-Message-ID: <aLhAXBhz3AcePUEK@kekkonen.localdomain>
-References: <20250902190443.3252-1-jefflessard3@gmail.com>
- <20250902190443.3252-3-jefflessard3@gmail.com>
+	s=arc-20240116; t=1756905569; c=relaxed/simple;
+	bh=60cH5L24WXT63BCrBq1FYkghtOxWAn0dwvQF6mJ9L04=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=qlECSjs/x4S0UwLWaepO/CQQ/egSBIGWR5Xqs1EKctiCQiUAjaL8kYlyjfyiQ3do8aN07OpDwTNFcyIu3u/bXeBhuG/I5zYEz5Gc8uWWsnBtTmPs+r0dg7oAsWdGdXZi2u9hdu3VOLheIkl8X9s/KxX0PHNVpR/hqEOkM0soqI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFWQ4QR8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 638EBC4CEF0;
+	Wed,  3 Sep 2025 13:19:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756905568;
+	bh=60cH5L24WXT63BCrBq1FYkghtOxWAn0dwvQF6mJ9L04=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=QFWQ4QR87fyUb0GlwBGXv1isC5Lqo70GFiPrDRiVUy6BsAl3Muj0w5Qqh6tWXzcQt
+	 mR6ZWszlS/WqC1qg7UJMA4gqWgNnW7DqrPIUpKfPSfK5aNDvXHDJxVsZLe3yvjMB3p
+	 PbxQSpOS7anLB561F55d+3Rg5YSITbv8D2PC92PwSEkhJyGTxiKgwc0YSZ8zM8TNka
+	 j34bvWzkteY2MBDIvenNlsVjoFocRu21anJ4eT8OgEZcYcqEJviTZftdFoLQ02s4Ye
+	 JIdrVjc+pKA5CbrS9hLw/eoO6pC0yuNaK/yQEGzltQoFfIBVXMXPuL6Gqmu77tkVVw
+	 KrSIG8On6zR9Q==
+From: Lee Jones <lee@kernel.org>
+To: sboyd@kernel.org, Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, 
+ Daire McNamara <daire.mcnamara@microchip.com>, 
+ pierre-henry.moussay@microchip.com, valentina.fernandezalanis@microchip.com, 
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250901-shorten-yahoo-223aeaecd290@spud>
+References: <20250901-shorten-yahoo-223aeaecd290@spud>
+Subject: Re: (subset) [PATCH v4 1/9] dt-bindings: mfd: syscon document the
+ control-scb syscon on PolarFire SoC
+Message-Id: <175690556514.2759012.354928606494922577.b4-ty@kernel.org>
+Date: Wed, 03 Sep 2025 14:19:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250902190443.3252-3-jefflessard3@gmail.com>
+X-Mailer: b4 0.15-dev-c81fc
 
-On Tue, Sep 02, 2025 at 03:04:40PM -0400, Jean-FranÁois Lessard wrote:
-> Replace the manual __free(fwnode_handle) iterator declaration with the
-> new scoped iterator macro for cleaner, less error-prone code.
+On Mon, 01 Sep 2025 12:04:13 +0100, Conor Dooley wrote:
+> The "control-scb" region, contains the "tvs" temperature and voltage
+> sensors and the control/status registers for the system controller's
+> mailbox. The mailbox has a dedicated node, so there's no need for a
+> child node describing it, looking the syscon up by compatible is
+> sufficient.
 > 
-> This eliminates the need for explicit iterator variable declaration with
-> the cleanup attribute, making the code more consistent with other scoped
-> iterator usage patterns in the kernel.
 > 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Jean-FranÁois Lessard <jefflessard3@gmail.com>
+> [...]
 
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Applied, thanks!
 
--- 
-Sakari Ailus
+[1/9] dt-bindings: mfd: syscon document the control-scb syscon on PolarFire SoC
+      commit: 61e08b3e5b2d21efd0459643f1003ad41497507d
+
+--
+Lee Jones [ÊùéÁêºÊñØ]
+
 
