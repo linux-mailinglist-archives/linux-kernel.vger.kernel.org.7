@@ -1,113 +1,202 @@
-Return-Path: <linux-kernel+bounces-797765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0212AB41520
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:24:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D54B41523
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBE3F680168
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:24:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9286177E68
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20632D8396;
-	Wed,  3 Sep 2025 06:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC8B2D781F;
+	Wed,  3 Sep 2025 06:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOgFF4Le"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="gEhSP1mt"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA8D19992C
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 06:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAA9263C75;
+	Wed,  3 Sep 2025 06:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756880479; cv=none; b=GVxkON/WocrnAry0V9hlCLOKTecQ1mBEB7ttIyZnVFfNHuTBQxDf4ndkzdrmdHduFa8mrz8qLW5+kYAdN+YFOxrbSKSsimrnOB0W39r1tCaTFcEmWPuWbbJEVHl9b4Lk2EPxc895iSK3IQvid7qlL1m6Uc1gpY1JEMgV0unwSnA=
+	t=1756880665; cv=none; b=hnVTb7VlWeWpv8mUL064nHnbt2joMjP106RP0qZvU680y+8vViszws9O+MH6CQt7ganpOQJ03WH0oeGWUyGe0nRexkd9nH03+SwjdH7BRld3/ax7wEAq+psWKwlxON3KYc5N6rN2Wgu61FORB/JKT72Xo9QfbJSTQmpwRZz649g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756880479; c=relaxed/simple;
-	bh=NznlH5PgUYjdRJyI7ivYzbTBuMkKWeEALjW0fPj3M9g=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U5TZLDGds2R8kqvrkpzB1mgdBSOR2ONi9wmE/jVrh2CWeAYOhIkxemH9Xhw9W1lCJllbbLv2ZaVXglmzNW+6OZw5mpBYDKEPyHPNir6Uo4XG7SKX7XSf/vXy7ucliD2ek12mkI30iVonhnT3wIZ9Qs5d2O9nHDBUT9V/9xtjVyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOgFF4Le; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7590BC4CEF0;
-	Wed,  3 Sep 2025 06:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756880475;
-	bh=NznlH5PgUYjdRJyI7ivYzbTBuMkKWeEALjW0fPj3M9g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QOgFF4LedZbxEfKfHATx+pSSrDBulZnJOFdTjB7Hb5RX+IARuNNSGttBgxL1+Io7B
-	 d5ZzUAle8y9/OeT/5GeEoldpPPuJT/N+ip7NolMPM7t39iy3l/qKj0fiX5wq0OOqYD
-	 2DoJK4oTd+X+kCHd9SUmxnxAV0tsMvG2WlbDH4HYVAGpws2FXaJUzVmbEmozbeGcqF
-	 tStKTAairJKSJs1oczK7dw5P4drPd4dQsuvLIwjd4rnylY8YgkVvOJJu4u4MIdwdw2
-	 lhpij5ZkaKXOVZnQUf2fCbZFPdlAQNINrCdd5bqdynDdZmmnBcNEoxRwvhieJb+YX1
-	 7jxiiSNEBRRlw==
-Received: from 93-47-110-174.ip112.fastwebnet.it ([93.47.110.174] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1utgro-00000002qgc-3rgU;
-	Wed, 03 Sep 2025 06:21:13 +0000
-Date: Wed, 03 Sep 2025 07:21:07 +0100
-Message-ID: <87y0qwys30.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Zenghui Yu <yuzenghui@huawei.com>
-Cc: <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<lpieralisi@kernel.org>,
-	<tglx@linutronix.de>,
-	<wanghaibin.wang@huawei.com>
-Subject: Re: [PATCH] irqchip/gic-v5: Remove the redundant ITS cache invalidation
-In-Reply-To: <20250903023319.1820-1-yuzenghui@huawei.com>
-References: <20250903023319.1820-1-yuzenghui@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1756880665; c=relaxed/simple;
+	bh=Iv7bNu8u4qg1R4rWSyiQsI+0IiNTLHdoRTQUkbCexds=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=Dq6b7GAirfyLUiL1vOLnKURo8RUFPa/Q4oiQwl/pp3nGlMGQ36zM6oQK3w/pQEXJcq020uG/3/oFUKiiNFpP4DA5c6yuiIy5PwgqjqDlEs723P4BP+WZHbFa76IJ99LosNJmLaF+bSanW1K9jzxjmPweLuEIGYgt3WsfJWPqHU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=gEhSP1mt; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=x4tCiHtEuBHcImWWTid6RD8zgtR1UUnyUWotA4DUPnM=; b=gEhSP1mtfUGcLZ09rC2smCtsK6
+	T0tSls0dAi/cgEHrDAQ2LfNb4+LPYu/okrLOXpML/Fx8NqGVNseED23x0c+pPTBE+s61KBJTuQMsx
+	vfKgL62zMUIiQAb5NqJNiq7sBJVDEbXfIT7djkWNiiood2lMStN/Gtb3B6U5/j/Efxv4qYsuO9MTA
+	+5zD/Qqn6N6+LkrSXIdWDMAVH2z4xda+9mPD5ljmN+u8e9ILp8jvh8wynTJsQDJ21+kZIMfi8jh4N
+	10u7WjZfgECckNcZYqHHVUv/wN5abRN8PXomVtoeRz/haH1Elo7TGKsC8VUgNGf3eYDZPs078izSY
+	QvHEHZQw==;
+Received: from [122.175.9.182] (port=39230 helo=zimbra.couthit.local)
+	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1utgug-0000000AzlO-2Eye;
+	Wed, 03 Sep 2025 02:24:11 -0400
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id 715AC1782011;
+	Wed,  3 Sep 2025 11:53:58 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id 4B13717820F5;
+	Wed,  3 Sep 2025 11:53:58 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id MbJDssR--aGZ; Wed,  3 Sep 2025 11:53:58 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id E63761782011;
+	Wed,  3 Sep 2025 11:53:57 +0530 (IST)
+Date: Wed, 3 Sep 2025 11:53:57 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: Md Danish Anwar <a0501179@ti.com>
+Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
+	rogerq <rogerq@kernel.org>, andrew+netdev <andrew+netdev@lunn.ch>, 
+	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
+	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>, 
+	robh <robh@kernel.org>, krzk+dt <krzk+dt@kernel.org>, 
+	conor+dt <conor+dt@kernel.org>, ssantosh <ssantosh@kernel.org>, 
+	richardcochran <richardcochran@gmail.com>, 
+	m-malladi <m-malladi@ti.com>, s hauer <s.hauer@pengutronix.de>, 
+	afd <afd@ti.com>, jacob e keller <jacob.e.keller@intel.com>, 
+	horms <horms@kernel.org>, johan <johan@kernel.org>, 
+	m-karicheri2 <m-karicheri2@ti.com>, s-anna <s-anna@ti.com>, 
+	glaroque <glaroque@baylibre.com>, 
+	saikrishnag <saikrishnag@marvell.com>, 
+	kory maincent <kory.maincent@bootlin.com>, 
+	diogo ivo <diogo.ivo@siemens.com>, 
+	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
+	basharath <basharath@couthit.com>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	netdev <netdev@vger.kernel.org>, 
+	devicetree <devicetree@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	ALOK TIWARI <alok.a.tiwari@oracle.com>, 
+	Bastien Curutchet <bastien.curutchet@bootlin.com>, 
+	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
+	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
+	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
+	mohan <mohan@couthit.com>
+Message-ID: <806290623.278790.1756880637551.JavaMail.zimbra@couthit.local>
+In-Reply-To: <1b892cde-bcdc-4a4e-83b7-35cc13eef8f4@ti.com>
+References: <20250822132758.2771308-1-parvathi@couthit.com> <20250822132758.2771308-3-parvathi@couthit.com> <1b892cde-bcdc-4a4e-83b7-35cc13eef8f4@ti.com>
+Subject: Re: [PATCH net-next v14 2/5] net: ti: icssm-prueth: Adds ICSSM
+ Ethernet driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 93.47.110.174
-X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, lpieralisi@kernel.org, tglx@linutronix.de, wanghaibin.wang@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
+Thread-Topic: icssm-prueth: Adds ICSSM Ethernet driver
+Thread-Index: mF5rnq3mgVHUKrTfxh1Anq5GbFjbRg==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Wed, 03 Sep 2025 03:33:19 +0100,
-Zenghui Yu <yuzenghui@huawei.com> wrote:
-> 
-> An ITS cache invalidation has been performed immediately after programming
-> the L2 DTE in gicv5_its_device_register(). No need to perform it again
-> right after a successful gicv5_its_device_register().
+Hi,
 
-Indeed. And this call doesn't check it's been successful either.
+>=20
+> On 8/22/2025 6:55 PM, Parvathi Pudi wrote:
+>> From: Roger Quadros <rogerq@ti.com>
+>>=20
+>> Updates Kernel configuration to enable PRUETH driver and its dependencie=
+s
+>> along with makefile changes to add the new PRUETH driver.
+>>=20
+>> Changes includes init and deinit of ICSSM PRU Ethernet driver including
+>> net dev registration and firmware loading for DUAL-MAC mode running on
+>> PRU-ICSS2 instance.
+>>=20
+>> Changes also includes link handling, PRU booting, default firmware loadi=
+ng
+>> and PRU stopping using existing remoteproc driver APIs.
+>>=20
+>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>> Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
+>> Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
+>=20
+> [ ... ]
+>=20
+>> +=09/* get mac address from DT and set private and netdev addr */
+>> +=09ret =3D of_get_ethdev_address(eth_node, ndev);
+>> +=09if (!is_valid_ether_addr(ndev->dev_addr)) {
+>> +=09=09eth_hw_addr_random(ndev);
+>> +=09=09dev_warn(prueth->dev, "port %d: using random MAC addr: %pM\n",
+>> +=09=09=09 port, ndev->dev_addr);
+>> +=09}
+>> +=09ether_addr_copy(emac->mac_addr, ndev->dev_addr);
+>> +
+>> +=09/* connect PHY */
+>> +=09emac->phydev =3D of_phy_get_and_connect(ndev, eth_node,
+>> +=09=09=09=09=09      icssm_emac_adjust_link);
+>> +=09if (!emac->phydev) {
+>> +=09=09dev_dbg(prueth->dev, "PHY connection failed\n");
+>> +=09=09ret =3D -EPROBE_DEFER;
+>> +=09=09goto free;
+>> +=09}
+>> +
+>=20
+> Why are you returning EPROBE_DEFER here? If phy connection fails, you
+> should just return and fail the probe. That's what ICSSG driver does.
+>=20
+> In drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>=20
+> 404   =E2=94=82     ndev->phydev =3D of_phy_connect(emac->ndev, emac->phy=
+_node,
+> 405   =E2=94=82                       &emac_adjust_link, 0,
+> 406   =E2=94=82                       emac->phy_if);
+> 407   =E2=94=82     if (!ndev->phydev) {
+> 408   =E2=94=82         dev_err(prueth->dev, "couldn't connect to phy %s\=
+n",
+> 409   =E2=94=82             emac->phy_node->full_name);
+> 410   =E2=94=82         return -ENODEV;
+> 411   =E2=94=82     }
+>=20
+>=20
+> Before phy connect you do `dev_warn(prueth->dev, "port %d: using random
+> MAC addr: %pM\n"`
+>=20
+> If device is using random mac address, this will be printed, your phy
+> connect fails, you try probe again, print comes again, phy fails again
+> and so on ...
+>=20
+> This results in system getting spammed with continuos prints of "using
+> random MAC addr"
+>=20
+> I suggest if phy fails, let the probe fail don't do EPROBE_DEFER.
+>=20
+> Saw this issue on few boards which has issue with ICSSG phy.
+>=20
 
-> 
-> Remove it.
-> 
-> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
-> ---
->  drivers/irqchip/irq-gic-v5-its.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v5-its.c b/drivers/irqchip/irq-gic-v5-its.c
-> index 2fb58d76f521..554485f0be1f 100644
-> --- a/drivers/irqchip/irq-gic-v5-its.c
-> +++ b/drivers/irqchip/irq-gic-v5-its.c
-> @@ -768,8 +768,6 @@ static struct gicv5_its_dev *gicv5_its_alloc_device(struct gicv5_its_chip_data *
->  		goto out_dev_free;
->  	}
->  
-> -	gicv5_its_device_cache_inv(its, its_dev);
-> -
->  	its_dev->its_node = its;
->  
->  	its_dev->event_map = (unsigned long *)bitmap_zalloc(its_dev->num_events, GFP_KERNEL);
+Yes, we will check and address this in the next version.
 
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-
-	M.
-
--- 
-Jazz isn't dead. It just smells funny.
+Thanks and Regards,
+Parvathi.
 
