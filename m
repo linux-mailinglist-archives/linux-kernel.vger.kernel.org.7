@@ -1,151 +1,123 @@
-Return-Path: <linux-kernel+bounces-798233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41341B41AEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:01:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 909A2B41AF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:03:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA10A1890A55
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:01:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5945016F809
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEA429CE1;
-	Wed,  3 Sep 2025 10:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405292E3AE3;
+	Wed,  3 Sep 2025 10:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gLOjMkmo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WGOVOp8j"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB691217F2E;
-	Wed,  3 Sep 2025 10:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B702D3A6E;
+	Wed,  3 Sep 2025 10:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756893675; cv=none; b=Vt3ITliL45kxyxbpltW6KxVrQcnSCu3Ebu0/ItWKdJ45zvPqthSUJw6fKahnmq1UaXgdEZfLEjgrFxqgxzDH+NKi5ALhez9I77LjTvFG4jXQqZrojQS9JehNVRQ1h61Iu8mu3biNCNLv2vHNjYtxzaapvAthudJ/+vbV79jk/5A=
+	t=1756893800; cv=none; b=k5WLlT8ZB2LJnHfKy0WDBs24BWv5dZ76BUFzEAq/DaC4ZD74OGexz8yi+diU74ljw0o6OEQrSheqO6vO2KIPWyy2brfxGLhIa0toCH2R0/pW3RNWtPeKp1j7czu4R/jZTM0qXpcrk6k8xHD6gdJQUrh4cGsSzpZh8RZZT0IcKaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756893675; c=relaxed/simple;
-	bh=B2Q577TjWIcrbRtvx74l8SXwGWVA4w1sbot6JtJZjS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UIafrF+4nL3sd44KNkTx0H525p0amga3cYzx4ZfiHxOo1DbB22wmtKco9AZWW1SdpbyFmBq+mlY84j8LIt5QWUVe/9ImIZnhK5VZrBJdRy6ixKIrp4IrsInEDE1svgWa78jj9yg1Ve6KCLJz0IlOXqboa5rGEgBiJCRTFTFddOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gLOjMkmo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4474C4CEF0;
-	Wed,  3 Sep 2025 10:01:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756893674;
-	bh=B2Q577TjWIcrbRtvx74l8SXwGWVA4w1sbot6JtJZjS4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gLOjMkmo/owD/Budlyh5wYJThLnMn6Oc+mNBx/6h+lMaxJAhXK2YtKvZ/Qx9xVVvt
-	 iT94G7hLxfaZPGa1ROxPEc0G7Jo5NG3P7olkLPb1aBKXr9XC6cBBl2UQw5xT2OKo4f
-	 uNwC4RQwJz+ibnbIbs6cqzyowpYopCL5Tg4Dk7aWZjtXFw4E8hmG1kFQnzkFq8hrpg
-	 mzfsNRX8GE4EN+ue4nnPV6rVwXbKmlHlTBv/nZqXFEdTGieij3Z+Kqw/mCXjujf4fC
-	 cekee4TG2gdT2sjdWRJSvyqehMrQ1sjrNlGIiPAHIPDOHCdj+zqfYV6LXUoYFSCEMD
-	 qbZ2bd3kNWKLQ==
-Date: Wed, 3 Sep 2025 11:01:05 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	Will Deacon <will@kernel.org>, jannh@google.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v20 4/8] fork: Add shadow stack support to clone3()
-Message-ID: <734e4c2c-a478-4019-86f7-4965c2b042e1@sirena.org.uk>
-References: <20250902-clone3-shadow-stack-v20-0-4d9fff1c53e7@kernel.org>
- <20250902-clone3-shadow-stack-v20-4-4d9fff1c53e7@kernel.org>
- <aLdbT67auUpaOj2T@arm.com>
+	s=arc-20240116; t=1756893800; c=relaxed/simple;
+	bh=0ZPxvE++kjDwbZXPjF0sDxxNrHcRHnaI9qILXHsLE2M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CdKsHUWb8KY5m3vy5cDNjMVcRo9Emx47b0FPYyBwDnJJqm6v7H7YCnPEBwRX51sDnTBR8/s/x38Sd6QgRIIMbpcxciH6NB9lm92YzViP2d/ORy9vqi8RwqISoHqqiPPYOmUAsZEWdwLbWdZuh+5S1gUIRkT7jVMsHj/ef3VNmC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WGOVOp8j; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b4716f9a467so802777a12.0;
+        Wed, 03 Sep 2025 03:03:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756893798; x=1757498598; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YgbMRQUc5eRrRBiJK+N/XxrKzBvJ2dEhNy/lilwY3gg=;
+        b=WGOVOp8jDjmF4Hi5b36NyExqeKaSxOIKq5BzY3Gqj+wSJm2DXJuVuOVQ57SOBWSjbk
+         HMdhWylrM7Zg9m5zacMUCpyWBX+W1ANagBp518qSTg/YaqElXliBP4yaok4EKNU0xQvd
+         PTLlJw6Pc9Uiai0n61E7jUHIb0QUKUhoGWRWqf/n4unmQ1xHyaD0tYyc9c4E6hFGCGot
+         V4ouxldjZBYRH6OBz3iYqfLjSr0CvUXII3JO+7ODFbXBPGuoFDI4T/AnDXM/ymhQC9MJ
+         ZZJRqY3n0sl93GjBjrqYx4H8hFJ7B5zq+NJicXkYTKKPKdn/fVtkdf9Qr/PT4HfzLlbj
+         WwAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756893798; x=1757498598;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YgbMRQUc5eRrRBiJK+N/XxrKzBvJ2dEhNy/lilwY3gg=;
+        b=Qa4IpEclLv9m1nIcGRkgzJl/XdqlKvr3NHYVbwS3+aowyrKzEHVHd5OW3MWmpJOQav
+         qsh57LroSzikJAGdvlSZGMILpqmy6wg4/tEIM+DDOn2gYqTxp61jG3Hj9Gmzl2sNaHhi
+         kFvcahcvbPV8uhPvNu8cz8YSz4rYg7/cTmOkSFKVPlbk9Ik+YcwwapLA0+/5h+AsMaGP
+         i4RaXtgosth0oIQEkVxOH7tx9VvVLLCK8AXx5yr4NqIZ+wqr8TKN60YHKBupiekkOmMB
+         zF+0ArsaBv0ih/5tsR+cNQ6EIzhnsylg5d1lyTfsqbDH+RsbdJZU2Cojp3AI0KSFH5TY
+         aG5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVrmRIEUf8jpNyml3vDcS3y+CgGX+oDsQjXpFvvgPJ3uxVs9L/0MEIwWZ7hmu+iwRkUetqMQLUms372c8Q=@vger.kernel.org, AJvYcCXv07/ya5DHn86P+RYzQrPvS3Hmi5o5Q/wIQyXWmx4cklc68G+Y4mtITKF+EYJQ3YdrYnvkdrbCYwQ5myLlVCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylYD7eeeaxDotiLkhh6oBVZXLHEjQ2L6erm10dMqwDmWjqXPiV
+	O7OC4+S1Ti8UifBcGrTvF07SvR7yhktuvOJrGRasPTB2gRWjPRHC24u0gPZMrYayJtQHNdbmkKE
+	cuKHxfhGo23FNlCEjjrHytVXx18JGFoI=
+X-Gm-Gg: ASbGncue2TTiob0LPhZKO9zIMtyXPhaifutYV8qHrF8KtVjdr9MVF6YcGKXjIoxTV/J
+	RoBW5E+P6Q8mPIvf1zqGbqV4F49vZfjkDgsnNKrHISXJa6ZD1SHxNY8xwvG8MT27XLeh36cLdzE
+	p4nhsKVBskZDO7DDRF7BLPAlOCJGalx06GIhGZq/AJNUz25gXvwdZxKfZmjSvfyLz4R0hrGJF1E
+	1FVQ2x1rTpbpaQxBbu3LS1HG/ZXRoCVj3GBfY7Ps/PWBtCFXxziAuzDMlXUE2Eo+8fLR08GMUUL
+	bTfTpxRp8RfU5IzBtjE1ch6Yn86yS556QhGJ
+X-Google-Smtp-Source: AGHT+IF1drbJnXtfZZ8zYkcNWKkBm91s6BKPijOBEDVGIWtcvxdjKU4Tan7TbgcI5ovaMpvUsGr9yGVrgGP9Pwve9jw=
+X-Received: by 2002:a17:90b:1e0f:b0:32b:7082:b4 with SMTP id
+ 98e67ed59e1d1-32b70820446mr500316a91.1.1756893798517; Wed, 03 Sep 2025
+ 03:03:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9vEWHDJml80AW6hw"
-Content-Disposition: inline
-In-Reply-To: <aLdbT67auUpaOj2T@arm.com>
-X-Cookie: You were s'posed to laugh!
+References: <20250829192243.678079-1-ojeda@kernel.org> <20250829192243.678079-4-ojeda@kernel.org>
+ <CANiq72k7_GbFwRxW5vikF_SpiNcNm7Ff0oe6jyYX_voDg92QFA@mail.gmail.com>
+ <2025083032-barmaid-rising-a977@gregkh> <CANiq72nAagBBPhyU3XdETMKBuFPbMMRaSTStWPpyLnByYPP=+A@mail.gmail.com>
+ <2025090325-drinking-illusion-ef3d@gregkh>
+In-Reply-To: <2025090325-drinking-illusion-ef3d@gregkh>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 3 Sep 2025 12:03:06 +0200
+X-Gm-Features: Ac12FXxbDdR4QPlJmACRMoGL91T5xgbMv2dg4TrsLcHw3W1mo3SjnyY3z7tN85A
+Message-ID: <CANiq72n-R_NaMzWtYe3430RwOpOtmxb9KP7ee5FxV+AHXGA2+g@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rust: error: replace `WARN_ON_ONCE` comment with `debug_assert!`
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Sep 3, 2025 at 11:46=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> There are no "constraints" only a definition of a vulnerability that we
+> must follow.  And for that, any way that a user could cause a reboot or
+> panic, without having root privileges, gets assigned a CVE.
+>
+> One exception being if lockdep or a few other "debugging only" options
+> are enabled.  Those are explicitly stated by their maintainers that they
+> should NEVER be enabled in a real system.  For those we do not assign
+> CVEs as they should never be actually triggered by a user.
+>
+> So I don't know what to recommend here.  I strongly advise against
+> adding code to the kernel that can cause users to reboot their boxes if
+> they do something.  But hey, if developers want to do that, I'll gladly
+> assign CVEs for when it happens :)
 
---9vEWHDJml80AW6hw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sounds good to me, thanks.
 
-On Tue, Sep 02, 2025 at 10:02:07PM +0100, Catalin Marinas wrote:
-> On Tue, Sep 02, 2025 at 11:21:48AM +0100, Mark Brown wrote:
+These are meant to be debug assertions, so it should be fine. We can
+be more explicit in the wording of the config option.
 
-> > +	mm = get_task_mm(p);
-> > +	if (!mm)
-> > +		return -EFAULT;
-
-> In theory, I don't think we need the get_task_mm() -> mmget() since
-> copy_mm() early on already did this and the task can't disappear from
-> underneath while we are creating it.
-
-mmget() will only have been done in the CLONE_VM case, if we're in the
-!CLONE_VM case we do a dup_mm() but that also returns with a reference.
-I didn't know if people would be happier with the reference clearly
-taken by the code using things or not, the general pattern is that
-whenever we're doing anything with remote VMs we take a reference.
-
-> > +	mmap_read_lock(mm);
-> > +
-> > +	addr = untagged_addr_remote(mm, args->shadow_stack_token);
-> > +	page = get_user_page_vma_remote(mm, addr, FOLL_FORCE | FOLL_WRITE,
-> > +					&vma);
-
-> However, I wonder whether it makes sense to use the remote mm access
-> here at all. Does this code ever run without CLONE_VM? If not, this is
-> all done within the current mm context.
-
-Yes, userspace can select if it wants CLONE_VM or not so we should
-handle that case.  We discussed this on prior versions and we felt that
-while we couldn't immediately see the use case for !CLONE_VM there
-wasn't a good reason to restrict the creativity of userspace developers,
-and given that you can specify the regular stack in these cases it seems
-logical that you'd also be able to specify the shadow stack.
-
-> I can see the x86 shstk_alloc_thread_stack() returns early if !CLONE_VM.
-> Similarly on arm64. I think the behaviour is preserved with this series
-> but I'm not entirely sure from the contextual diff (I need to apply the
-> patches locally).
-
-That is all for the case where the kernel allocates and manages the
-shadow stack, it's the behaviour that this series allows userspace to
-override.
-
---9vEWHDJml80AW6hw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi4EeAACgkQJNaLcl1U
-h9C9iAf8CfCzzwiQJ36masHVjY8H/SDctzkmeaMnXiIjH732CjftOeKNoRPZ34ol
-CKFnvEZkggURFZsZuKo9c3hQMhp+u+OO+5oomf9iAW2Pa8ApmUryW3Nfqy+nUqHe
-H10R6RH4qUvxmVNKVZ5zJEQzqNMuotibH4JgXj37AUswWB1Rc7Q0g4RIcYs/yAUp
-1/lM83ad8OzpakfhhTqipogrUWchOLxnFvDoWomOAmwlg5pvQTAmfAiX2QZNThj/
-bBCrHAftwe9Gy7RdYwINEgcLEFmip48YDuhEoBAk5yO+HQtJ0oEnKAZoggEUKM4L
-I1UziLq0GrtZG9TfyvDE4OlF5Yq2jQ==
-=p7O0
------END PGP SIGNATURE-----
-
---9vEWHDJml80AW6hw--
+Cheers,
+Miguel
 
