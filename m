@@ -1,138 +1,113 @@
-Return-Path: <linux-kernel+bounces-797658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C92B41302
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:34:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B336B412FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4FA214E2C9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:34:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43EE11B637A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA342D0600;
-	Wed,  3 Sep 2025 03:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8458A2C3757;
+	Wed,  3 Sep 2025 03:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QPt9Xjh3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="U5kYNxCd"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F152222A7;
-	Wed,  3 Sep 2025 03:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901A032F740
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 03:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756870456; cv=none; b=SXKfBi6zXydaL3s7oLMhEEIecU/2rSFVkswa1epiqgoyVSl/L2utNrdm0mWMXs9Z/QJSkQfss7cbE9sqq+jp+L/EvPljowA3Uk4QjKXdmGqOT+yS3O0ReKy/JKYHpEwn7oh/rHkQvOoNnTjtVB0mtzvEjN/u7zpfDY7Fhxbs51g=
+	t=1756870378; cv=none; b=q0EpcreCbbWQDUZROnsgxiP8Qsnhv4dTbqW+4kw+y1ioH8dyztR70JEcOMx+RmT17vOEa+wj7b29CglHDNzt/8F1IU+6x/3206ZBsfphsfCVAsXfLWoMNU+jTQdolfNneIo2pHx/OKEr96UaJRFRUQLELjOVETc3HXkjbOIeOYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756870456; c=relaxed/simple;
-	bh=GT+w7R53TN4U82IK7+ynC/kbDyjPCW364v+r7Rfy3v4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NASdLxPrXtKcv4uFRu6agJTa2ZaUJIIrp/lbvGov5xk6pnQNg0soK9f4RMUcTO9B2Z4p2ZWOrubokIDIPb2p2wbZMYApMc0sMyueGaX2x/+o0ZkVNold+xwDn39xiyqOzjwZ5oY+++fvTpXSFREfW294/Q7VFVGoca7zPzxQJRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QPt9Xjh3; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756870454; x=1788406454;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GT+w7R53TN4U82IK7+ynC/kbDyjPCW364v+r7Rfy3v4=;
-  b=QPt9Xjh3PszdCO7IC43tfdEaFFXgXPC8XHw/MPWmzsWlswn2LMwwEaoy
-   kdTSWOg6ga0NLvuQXlt0Pav3fLcIrvrDnm4N/0KQiF8kvPBB5N9EKj05s
-   vREu2AokB1lc+Gd0fFXS042Lv2L58Va1ASuf5qkcazSAYHWF3WGwhgNBI
-   xIvSKYIZ3mkJSgBgwvpg9r1+RPPztjWG41/1ORmJKnIYLzu36o+xIFnUH
-   IJ9l1spJCjtCspeMxkAPCSFXZ6bPW/wUMH1cLGX5O9/nXGH98Fp1VcVy8
-   COzH8jbzofqrWAB5hlBGrmqvRqGVamXsxv9B6yjPIPSnktH9V/49va1ED
-   A==;
-X-CSE-ConnectionGUID: ZOjCVR7NSPOKIFXAHhrfdw==
-X-CSE-MsgGUID: ATU4pd0ESOmhbjkZ8TIUWA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="62991728"
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="62991728"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 20:34:14 -0700
-X-CSE-ConnectionGUID: rSEFnjZCQ/WoXAeL+LEOgg==
-X-CSE-MsgGUID: f4EMu7MwShavow9v4fRk7A==
-X-ExtLoop1: 1
-Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 02 Sep 2025 20:34:10 -0700
-Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uteFV-0003Jd-3C;
-	Wed, 03 Sep 2025 03:33:41 +0000
-Date: Wed, 3 Sep 2025 11:32:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jiri Olsa <jolsa@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH perf/core 03/11] perf: Add support to attach standard
- unique uprobe
-Message-ID: <202509031116.yIcyjvUx-lkp@intel.com>
-References: <20250902143504.1224726-4-jolsa@kernel.org>
+	s=arc-20240116; t=1756870378; c=relaxed/simple;
+	bh=+FiSYvmYX05jcdCQoxpgi0laSBKLf5me+yHBNrNMd80=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BYRzEwceN4THct1hll2+7XK5DWwFnhb/xkC1pb2UfyHgvBLm9nYhYZo8Qh7d7AqnMaj3kQKSibOjSCukZT7zkuEtOgkVEsrJPJtl9P1ePc7wCxMiEtihcb8PewhgJqt1LlEJULwYM06xd6PhnA397k+IseYAcFfoURB4PJWenc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=U5kYNxCd; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24b132bd90dso3141175ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 20:32:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1756870376; x=1757475176; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+FiSYvmYX05jcdCQoxpgi0laSBKLf5me+yHBNrNMd80=;
+        b=U5kYNxCdDgLW/4WC9Qequz+YtzHGrYMFwk6yRzLwGSCS+GP5fS52HcT9cs8XRKtU7y
+         Mls42sI999RcUn9QGhAzJj+bQsObDfFshjvp11C2//yAEnFJ7wcmAQHPH3myhbRNC48B
+         J6wqU6OkpX8eYozH93Z1c+azictMLvXYSl1aKGeNcg4L7/lgVNC5/vYOLHaRsoXYEg+I
+         YMYZFmQugmj/9pfxEo2txEXN49dveb+81h3KUozTRuwTk4gJnoTl7EeejrjiWBSXhGHH
+         AEouRGvdpRZ7P4ojAoovCD9DpuFxh4e+tDNl96o1o4wDoHYAxZQiKqMz1Pk+11KTB+mq
+         /EUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756870376; x=1757475176;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+FiSYvmYX05jcdCQoxpgi0laSBKLf5me+yHBNrNMd80=;
+        b=pWdXtsZztPDAcB7myqP1ZL1tByk2+a8ffxemKHMoalW/8G+lxgJrx7mOKD96QQGZQa
+         QjkFOgYdfEne900vZY/MD3gRSnYr8RCtRR1ZCqSSPVlYvtZWpWF1EYW9vqI08wjLJqUu
+         V16sQISLvxZpgpRQIXbuVGHbrAeVqowb8csUaPYuw3Y1mDK8Vre2fcRDQMFrimiZXHib
+         GUX6fQkiKOSJQd0n1krYlC3vkvd/9fKdxrBcCD6y1FdUn/x1Ks6baSSgwz+UsAN0WnNZ
+         HxV9vNH6fYAqQoNRntwrjx9upLcFhfRI81uhi34EFajoHT5VtOeoz7OGK7tg7kzUhOxF
+         rL7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVDd9ZpU52uoHgvVIuha9Hey/kxZpw+uUAb22JQH6G9gxTkm1kME3MA9podhRQvYYOL540UxGfKS+8Erhc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGahGY0sj8jvqSC52yQLMP+nDaPiWMurKLE4sAX/H8T9pLRFRq
+	nY7nSSYiIXnWY003il+Y9Lbtortlb0TBt18ST4z+dR6La2KZpM6/eZTLsOxlwgh7sd6V++0eyxa
+	7C3NjQE3Zxu8MzRDaFaInMiRjRdbW2zmTDdOlM87hYQ==
+X-Gm-Gg: ASbGncunRU0ntldCFc144T1zIw0N1pfbBECWS0ztvsmC3Uiihzq8CE1etm+nByK15ja
+	Ez3mAeW72U8SmDEGz+9yGdWHSdj3nNleY1q949zKZiCvxPQqLSCbS6XWlX1UT+4cCV51dd0ZTvS
+	Q70N3D+nGPx8IXBfKJQD9yn2EqgPJLimAWefjzpUaiu2fDJv2aLsbCk5mqw8OQmNjO8FVz1I0nI
+	N07nUdXTCTB
+X-Google-Smtp-Source: AGHT+IHR1oLlpsMfamy/liFpzWMH0CrAwaJxhyoxyjBDWiy/oTKaMWBpnGwzYkUjOo07Y3tRAhd7jt34bwMer7Nzvt8=
+X-Received: by 2002:a17:90b:1d0b:b0:327:c9bb:be51 with SMTP id
+ 98e67ed59e1d1-327f5b3edbemr11696646a91.1.1756870375719; Tue, 02 Sep 2025
+ 20:32:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902143504.1224726-4-jolsa@kernel.org>
+References: <20250902215144.1925256-1-csander@purestorage.com> <28b5e071-70f2-4f46-86af-11879be0f2a4@kernel.dk>
+In-Reply-To: <28b5e071-70f2-4f46-86af-11879be0f2a4@kernel.dk>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 2 Sep 2025 20:32:43 -0700
+X-Gm-Features: Ac12FXxmY0nLz9R5Q2PmLsvzfZAyrh0ZNb4MhXtgtaoo8VQjT-NyWG78r4sD0xE
+Message-ID: <CADUfDZrpJuq7QH47XTBvCFsENm88WQGX2YYnEPHat_UD6nLC=A@mail.gmail.com>
+Subject: Re: [PATCH] io_uring: remove WRITE_ONCE() in io_uring_create()
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+On Tue, Sep 2, 2025 at 6:20=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 9/2/25 3:51 PM, Caleb Sander Mateos wrote:
+> > There's no need to use WRITE_ONCE() to set ctx->submitter_task in
+> > io_uring_create() since no other thread can access the io_ring_ctx unti=
+l
+> > a file descriptor is associated with it. So use a normal assignment
+> > instead of WRITE_ONCE().
+>
+> Would probably warrant a code comment to that effect, as just reading
+> the code would be slightly confusing after this.
 
-kernel test robot noticed the following build warnings:
+Could you elaborate on why you find it confusing? I wouldn't expect to
+see WRITE_ONCE() or any other atomic operation used when initializing
+memory prior to it being made accessible from other threads. It looks
+like commit 8579538c89e3 ("io_uring/msg_ring: fix remote queue to
+disabled ring") added the WRITE_ONCE() both here and in
+io_register_enable_rings(). But it's only needed in
+io_register_enable_rings(), where the io_ring_ctx already has an
+associated file descriptor and may be accessed concurrently from
+multiple threads.
 
-[auto build test WARNING on tip/perf/core]
-[also build test WARNING on next-20250902]
-[cannot apply to bpf-next/net bpf-next/master bpf/master perf-tools-next/perf-tools-next perf-tools/perf-tools trace/for-next linus/master acme/perf/core v6.17-rc4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jiri-Olsa/uprobes-Add-unique-flag-to-uprobe-consumer/20250902-224356
-base:   tip/perf/core
-patch link:    https://lore.kernel.org/r/20250902143504.1224726-4-jolsa%40kernel.org
-patch subject: [PATCH perf/core 03/11] perf: Add support to attach standard unique uprobe
-config: x86_64-randconfig-001-20250903 (https://download.01.org/0day-ci/archive/20250903/202509031116.yIcyjvUx-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250903/202509031116.yIcyjvUx-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509031116.yIcyjvUx-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/trace_events.h:10,
-                    from include/trace/syscall.h:7,
-                    from include/linux/syscalls.h:95,
-                    from kernel/events/core.c:34:
->> include/linux/perf_event.h:2073:32: warning: 'format_attr_unique' defined but not used [-Wunused-variable]
-    2073 | static struct device_attribute format_attr_##_name = __ATTR_RO(_name)
-         |                                ^~~~~~~~~~~~
-   kernel/events/core.c:11055:1: note: in expansion of macro 'PMU_FORMAT_ATTR'
-   11055 | PMU_FORMAT_ATTR(unique, "config:1");
-         | ^~~~~~~~~~~~~~~
-
-
-vim +/format_attr_unique +2073 include/linux/perf_event.h
-
-b6c00fb9949fbd0 Kan Liang 2023-01-04  2069  
-b6c00fb9949fbd0 Kan Liang 2023-01-04  2070  #define PMU_FORMAT_ATTR(_name, _format)					\
-b6c00fb9949fbd0 Kan Liang 2023-01-04  2071  	PMU_FORMAT_ATTR_SHOW(_name, _format)				\
-641cc938815dfd0 Jiri Olsa 2012-03-15  2072  									\
-641cc938815dfd0 Jiri Olsa 2012-03-15 @2073  static struct device_attribute format_attr_##_name = __ATTR_RO(_name)
-641cc938815dfd0 Jiri Olsa 2012-03-15  2074  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Caleb
 
