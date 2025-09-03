@@ -1,233 +1,154 @@
-Return-Path: <linux-kernel+bounces-797722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7262B4147C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:47:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3898FB41478
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E8F95E58DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:47:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0364B5423D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBE52D77E4;
-	Wed,  3 Sep 2025 05:46:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D70D2D6E7D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 05:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D84D2D73A3;
+	Wed,  3 Sep 2025 05:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Ve/eYgzS"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FD220EB;
+	Wed,  3 Sep 2025 05:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756878416; cv=none; b=MhMHgkEKSknUt8Q/W0ZEJXn4KPpGgHzdrtEQ8aT6JERNv+YiF/Nh+WoRD0NBN4TTm941V16pTHJIME83VKCDA9ZBNpA0J8S6m89+gtGo61VhCa4F9tzeFsLn+dq+rSi31xZUgXaH//lm2yMAAKcj89ODjfKH/raYwaIkq6N/+g0=
+	t=1756878404; cv=none; b=GHDmdnTvgidn3GbEH+Aa+Vevkoo5glBzSsb8eyRolLu/8aZ8QGdLV4SpAki8IgKBTzquX7SsNOEpj8vf3pCQ3YyJ93Dv76+7OQCiZCeJ9EbD2cL1BQJqsXBgmqjB1gLXqFPFsOQzI7AzGwNzSbeiBf1DyHJ1r6YM3TBs4ebDYPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756878416; c=relaxed/simple;
-	bh=Jl3WpVHXIZdY2ca7KshMjbxNVbQkn15azD0gWvUsNZ0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rIgMucbz/BcVrsAsgO6oHVd+7hA5RVgIsmtzi/HYe1dXI2bB+BY3qwRfpo35Ia+c8u49zWD721Qdlsg7hEnMaPLBFHh75k+kZLw6tWvk8PmwzSkzMNaD9OuVGwAgQL1ZKVzfH2johoa/4AlnOewzPgQ/uB2otp6oBRv5RAhrR54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 64C451692;
-	Tue,  2 Sep 2025 22:46:44 -0700 (PDT)
-Received: from MacBook-Pro.blr.arm.com (MacBook-Pro.blr.arm.com [10.164.18.48])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 923DE3F694;
-	Tue,  2 Sep 2025 22:46:48 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	kas@kernel.org,
-	willy@infradead.org,
-	hughd@google.com
-Cc: ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	npache@redhat.com,
-	ryan.roberts@arm.com,
-	baohua@kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH 2/2] mm: Drop all references of writable and SCAN_PAGE_RO
-Date: Wed,  3 Sep 2025 11:16:35 +0530
-Message-Id: <20250903054635.19949-2-dev.jain@arm.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250903054635.19949-1-dev.jain@arm.com>
-References: <20250903054635.19949-1-dev.jain@arm.com>
+	s=arc-20240116; t=1756878404; c=relaxed/simple;
+	bh=Zffg5Z8PXY4zN2j9mhgh+YxhyBSx05brIZWAwih9GV0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dT5JOf/C4hUcK8dHa5NVQIggrkVIfxj450g2BvJk5uoQufTC1GUCC+yavQxhEBCDpGQjOPryUAlOiqB1Qt+vRSy8qEDlbXKSiUO6T1oerb5cXALCW2D/zy//7ciEgtjmNM6znExavo99LyQuPndHZqZwY9UJKfFDdLhPj4WJ8lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Ve/eYgzS; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1756878400;
+	bh=Zffg5Z8PXY4zN2j9mhgh+YxhyBSx05brIZWAwih9GV0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=Ve/eYgzSLT+JX8CYm/uZYyXSsH/1b/RAEpWcreHIQTlZ9J6GgZuBvNJy/9KHhUxLM
+	 GCfJxVtR+BQ58eP6pe+FfQ2UZ8JlDemGxWY7vJmD6RGwLRTVZzI6tQYw/zbA7UgkWu
+	 nZ3RfXQnbK2JLf+eG2tmoD00VihAjzwKZ1zLM4moSDStti+gVvdTDhxCbedkkS5bjC
+	 2baawU2OyhSLiGH8ZYyO7GO7FuKdzcP3RR+lZpRwAfgnbDZdl+En2RcbeHVanf7F2c
+	 ncL5ApDbUGPNGQHUQusvKr05fLEC1JvXB5qfkQ0X15JbMqLfU7RAX7CCKIfkE9OHpN
+	 2PKFxr9fcI+Ew==
+Received: from [192.168.68.113] (unknown [180.150.112.213])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id BFD326E02C;
+	Wed,  3 Sep 2025 13:46:37 +0800 (AWST)
+Message-ID: <c9348ebb7f0cd24c950ba07abf4641a1d5382160.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v8 2/2] ARM: dts: aspeed: Add NVIDIA GB200 UT3.0b board
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Donald Shannon <donalds@nvidia.com>, robh@kernel.org,
+ krzk+dt@kernel.org,  conor+dt@kernel.org
+Cc: joel@jms.id.au, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
+Date: Wed, 03 Sep 2025 15:16:36 +0930
+In-Reply-To: <20250815224344.908130-3-donalds@nvidia.com>
+References: <20250815224344.908130-1-donalds@nvidia.com>
+	 <20250815224344.908130-3-donalds@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Now that all actionable outcomes from checking pte_write() are gone,
-drop the related references.
-
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- include/trace/events/huge_memory.h | 19 ++++++-------------
- mm/khugepaged.c                    | 14 +++-----------
- 2 files changed, 9 insertions(+), 24 deletions(-)
-
-diff --git a/include/trace/events/huge_memory.h b/include/trace/events/huge_memory.h
-index 2305df6cb485..dd94d14a2427 100644
---- a/include/trace/events/huge_memory.h
-+++ b/include/trace/events/huge_memory.h
-@@ -19,7 +19,6 @@
- 	EM( SCAN_PTE_NON_PRESENT,	"pte_non_present")		\
- 	EM( SCAN_PTE_UFFD_WP,		"pte_uffd_wp")			\
- 	EM( SCAN_PTE_MAPPED_HUGEPAGE,	"pte_mapped_hugepage")		\
--	EM( SCAN_PAGE_RO,		"no_writable_page")		\
- 	EM( SCAN_LACK_REFERENCED_PAGE,	"lack_referenced_page")		\
- 	EM( SCAN_PAGE_NULL,		"page_null")			\
- 	EM( SCAN_SCAN_ABORT,		"scan_aborted")			\
-@@ -55,15 +54,14 @@ SCAN_STATUS
- 
- TRACE_EVENT(mm_khugepaged_scan_pmd,
- 
--	TP_PROTO(struct mm_struct *mm, struct folio *folio, bool writable,
-+	TP_PROTO(struct mm_struct *mm, struct folio *folio,
- 		 int referenced, int none_or_zero, int status, int unmapped),
- 
--	TP_ARGS(mm, folio, writable, referenced, none_or_zero, status, unmapped),
-+	TP_ARGS(mm, folio, referenced, none_or_zero, status, unmapped),
- 
- 	TP_STRUCT__entry(
- 		__field(struct mm_struct *, mm)
- 		__field(unsigned long, pfn)
--		__field(bool, writable)
- 		__field(int, referenced)
- 		__field(int, none_or_zero)
- 		__field(int, status)
-@@ -73,17 +71,15 @@ TRACE_EVENT(mm_khugepaged_scan_pmd,
- 	TP_fast_assign(
- 		__entry->mm = mm;
- 		__entry->pfn = folio ? folio_pfn(folio) : -1;
--		__entry->writable = writable;
- 		__entry->referenced = referenced;
- 		__entry->none_or_zero = none_or_zero;
- 		__entry->status = status;
- 		__entry->unmapped = unmapped;
- 	),
- 
--	TP_printk("mm=%p, scan_pfn=0x%lx, writable=%d, referenced=%d, none_or_zero=%d, status=%s, unmapped=%d",
-+	TP_printk("mm=%p, scan_pfn=0x%lx, referenced=%d, none_or_zero=%d, status=%s, unmapped=%d",
- 		__entry->mm,
- 		__entry->pfn,
--		__entry->writable,
- 		__entry->referenced,
- 		__entry->none_or_zero,
- 		__print_symbolic(__entry->status, SCAN_STATUS),
-@@ -117,15 +113,14 @@ TRACE_EVENT(mm_collapse_huge_page,
- TRACE_EVENT(mm_collapse_huge_page_isolate,
- 
- 	TP_PROTO(struct folio *folio, int none_or_zero,
--		 int referenced, bool  writable, int status),
-+		 int referenced, int status),
- 
--	TP_ARGS(folio, none_or_zero, referenced, writable, status),
-+	TP_ARGS(folio, none_or_zero, referenced, status),
- 
- 	TP_STRUCT__entry(
- 		__field(unsigned long, pfn)
- 		__field(int, none_or_zero)
- 		__field(int, referenced)
--		__field(bool, writable)
- 		__field(int, status)
- 	),
- 
-@@ -133,15 +128,13 @@ TRACE_EVENT(mm_collapse_huge_page_isolate,
- 		__entry->pfn = folio ? folio_pfn(folio) : -1;
- 		__entry->none_or_zero = none_or_zero;
- 		__entry->referenced = referenced;
--		__entry->writable = writable;
- 		__entry->status = status;
- 	),
- 
--	TP_printk("scan_pfn=0x%lx, none_or_zero=%d, referenced=%d, writable=%d, status=%s",
-+	TP_printk("scan_pfn=0x%lx, none_or_zero=%d, referenced=%d, status=%s",
- 		__entry->pfn,
- 		__entry->none_or_zero,
- 		__entry->referenced,
--		__entry->writable,
- 		__print_symbolic(__entry->status, SCAN_STATUS))
- );
- 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index a0f1df2a7ae6..af5f5c80fe4e 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -39,7 +39,6 @@ enum scan_result {
- 	SCAN_PTE_NON_PRESENT,
- 	SCAN_PTE_UFFD_WP,
- 	SCAN_PTE_MAPPED_HUGEPAGE,
--	SCAN_PAGE_RO,
- 	SCAN_LACK_REFERENCED_PAGE,
- 	SCAN_PAGE_NULL,
- 	SCAN_SCAN_ABORT,
-@@ -557,7 +556,6 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
- 	struct folio *folio = NULL;
- 	pte_t *_pte;
- 	int none_or_zero = 0, shared = 0, result = SCAN_FAIL, referenced = 0;
--	bool writable = false;
- 
- 	for (_pte = pte; _pte < pte + HPAGE_PMD_NR;
- 	     _pte++, address += PAGE_SIZE) {
-@@ -671,9 +669,6 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
- 		     folio_test_referenced(folio) || mmu_notifier_test_young(vma->vm_mm,
- 								     address)))
- 			referenced++;
--
--		if (pte_write(pteval))
--			writable = true;
- 	}
- 
- 	if (unlikely(cc->is_khugepaged && !referenced)) {
-@@ -681,13 +676,13 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
- 	} else {
- 		result = SCAN_SUCCEED;
- 		trace_mm_collapse_huge_page_isolate(folio, none_or_zero,
--						    referenced, writable, result);
-+						    referenced, result);
- 		return result;
- 	}
- out:
- 	release_pte_pages(pte, _pte, compound_pagelist);
- 	trace_mm_collapse_huge_page_isolate(folio, none_or_zero,
--					    referenced, writable, result);
-+					    referenced, result);
- 	return result;
- }
- 
-@@ -1280,7 +1275,6 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
- 	unsigned long _address;
- 	spinlock_t *ptl;
- 	int node = NUMA_NO_NODE, unmapped = 0;
--	bool writable = false;
- 
- 	VM_BUG_ON(address & ~HPAGE_PMD_MASK);
- 
-@@ -1344,8 +1338,6 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
- 			result = SCAN_PTE_UFFD_WP;
- 			goto out_unmap;
- 		}
--		if (pte_write(pteval))
--			writable = true;
- 
- 		page = vm_normal_page(vma, _address, pteval);
- 		if (unlikely(!page) || unlikely(is_zone_device_page(page))) {
-@@ -1435,7 +1427,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
- 		*mmap_locked = false;
- 	}
- out:
--	trace_mm_khugepaged_scan_pmd(mm, folio, writable, referenced,
-+	trace_mm_khugepaged_scan_pmd(mm, folio, referenced,
- 				     none_or_zero, result, unmapped);
- 	return result;
- }
--- 
-2.30.2
+SGkgRG9uYWxkLAoKU29ycnkgZm9yIHRoZSBkZWxheS4KCk9uIEZyaSwgMjAyNS0wOC0xNSBhdCAx
+NTo0MyAtMDcwMCwgRG9uYWxkIFNoYW5ub24gd3JvdGU6Cj4gVGhpcyBpcyBhbiBBc3BlZWQgQVNU
+MjYwMCBiYXNlZCB1bml0IHRlc3RpbmcgcGxhdGZvcm0gZm9yIEdCMjAwLgo+IFVUMy4wYiBpcyBk
+aWZmZXJlbnQgdGhhbiBudmlkaWEtZ2IyMDBudmwtYm1jIGR1ZSB0byBuZXR3b3JraW5nIHRvcG9s
+b2d5Cj4gZGlmZmVyZW5jZXMsIGFkZGl0aW9uYWwgZ3BpbyBleHBhbmRlcnMsIGFuZCB2b2x0YWdl
+IHJlZ3VsYXRvciBnYXRpbmcKPiBzb21lIGRldmljZXMuCj4gCj4gUmVmZXJlbmNlIHRvIEFzdDI2
+MDAgU09DIFsxXS4KPiBSZWZlcmVuY2UgdG8gQmxhY2t3ZWxsIEdCMjAwTlZMIFBsYXRmb3JtIFsy
+XS4KPiAKPiBMaW5rOiBodHRwczovL3d3dy5hc3BlZWR0ZWNoLmNvbS9zZXJ2ZXJfYXN0MjYwMC/C
+oFsxXQo+IExpbms6IGh0dHBzOi8vbnZkYW0ud2lkZW4ubmV0L3Mvd3duc3hyaG0ydy9ibGFja3dl
+bGwtZGF0YXNoZWV0LTMzODQ3MDPCoFsyXQo+IFNpZ25lZC1vZmYtYnk6IERvbmFsZCBTaGFubm9u
+IDxkb25hbGRzQG52aWRpYS5jb20+Cj4gLS0tCj4gwqBhcmNoL2FybS9ib290L2R0cy9hc3BlZWQv
+TWFrZWZpbGXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqDCoCAxICsKPiDCoC4uLi9hc3Bl
+ZWQvYXNwZWVkLWJtYy1udmlkaWEtZ2IyMDAtdXQzMGIuZHRzwqAgfCAxMDMwICsrKysrKysrKysr
+KysrKysrCj4gwqAyIGZpbGVzIGNoYW5nZWQsIDEwMzEgaW5zZXJ0aW9ucygrKQo+IMKgY3JlYXRl
+IG1vZGUgMTAwNjQ0IGFyY2gvYXJtL2Jvb3QvZHRzL2FzcGVlZC9hc3BlZWQtYm1jLW52aWRpYS1n
+YjIwMC11dDMwYi5kdHMKPiAKPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvYXNwZWVk
+L01ha2VmaWxlIGIvYXJjaC9hcm0vYm9vdC9kdHMvYXNwZWVkL01ha2VmaWxlCj4gaW5kZXggYWJh
+NzQ1MWFiNzQ5Li4zN2VkYzQ2MjVhOWYgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMv
+YXNwZWVkL01ha2VmaWxlCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvYXNwZWVkL01ha2VmaWxl
+Cj4gCgoqc25pcCoKCj4gKyZncGlvMCB7Cj4gK8KgwqDCoMKgwqDCoMKgZ3Bpby1saW5lLW5hbWVz
+ID0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLypBMC1BNyovICIiLCAiIiwgIiIs
+ICIiLCAiIiwgIiIsICIiLCAiIiwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLypC
+MC1CNyovICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsICIiLCAiIiwKPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgLypDMC1DNyovICJTR1BJT19JMkNfTVVYX1NFTC1PIiwgIiIsICIiLCAi
+IiwgIiIsICIiLCAiIiwgIiIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qRDAt
+RDcqLyAiIiwgIiIsICIiLCAiVUFSVDFfTVVYX1NFTC1PIiwgIiIsICJGUEdBX1BFWF9SU1RfTC1P
+IiwgIiIsICIiLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAvKkUwLUU3Ki8gIlJU
+TDgyMjFfUEhZX1JTVF9MLU8iLCAiUlRMODIxMV9QSFlfSU5UX0wtSSIswqAiIiwgIlVBUlQzX01V
+WF9TRUwtTyIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCIiLCAiIiwgIiIsICJTR1BJT19CTUNf
+RU4tTyIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qRjAtRjcqLyAiIiwgIiIs
+ICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oC8qRzAtRzcqLyAiIiwgIiIsICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsCj4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoC8qSDAtSDcqLyAiIiwgIiIsICIiLCAiIiwgIiIsICIiLCAiIiwg
+IiIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qSTAtSTcqLyAiIiwgIiIsICIi
+LCAiIiwgIiIsICJRU1BJMl9SU1RfTC1PIiwgIkdMT0JBTF9XUF9CTUMtTyIsICJCTUNfRERSNF9U
+RU4tTyIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qSjAtSjcqLyAiIiwgIiIs
+ICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oC8qSzAtSzcqLyAiIiwgIiIsICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsCj4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoC8qTDAtTDcqLyAiIiwgIiIsICIiLCAiIiwgIiIsICIiLCAiIiwg
+IiIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qTTAtTTcqLyAiUENJRV9FUF9S
+U1RfRU4tTyIsICJCTUNfRlJVX1dQLU8iLCAiRlBHQV9SU1RfTC1PIiwgIlNUQllfUE9XRVJfRU4t
+TyIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCJTVEJZX1BPV0VSX1BHLUkiLCAiUENJRV9FUF9S
+U1RfTC1PIiwgIiIsICIiLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAvKk4wLU43
+Ki8gIiIsICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsICIiLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAvKk8wLU83Ki8gIiIsICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsICIiLAo+ICvC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAvKlAwLVA3Ki8gIiIsICIiLCAiIiwgIiIsICIi
+LCAiIiwgIiIsICIiLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAvKlEwLVE3Ki8g
+IiIsICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsICIiLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAvKlIwLVI3Ki8gIiIsICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsICIiLAo+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAvKlMwLVM3Ki8gIiIsICIiLCAiIiwgIiIsICIiLCAi
+IiwgIiIsICIiLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAvKlQwLVQ3Ki8gIiIs
+ICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsICIiLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAvKlUwLVU3Ki8gIiIsICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsICIiLAo+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAvKlYwLVY3Ki8gIkFQX0VST1RfUkVRLU8iLCAiRVJPVF9B
+UF9HTlQtSSIsICIiLCAiIiwiUENCX1RFTVBfQUxFUlQtSSIsICIiLCIiLCAiIiwKPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLypXMC1XNyovICIiLCAiIiwgIiIsICIiLCAiIiwgIiIs
+ICIiLCAiIiwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLypYMC1YNyovICIiLCAi
+IiwgIlRQTV9NVVhfU0VMLU8iLCAiIiwgIiIsICIiLCAiIiwgIiIsCj4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoC8qWTAtWTcqLyAiIiwgIiIsICIiLCAiRU1NQ19SU1QtTyIsICIiLCIi
+LCAiIiwgIiIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qWjAtWjcqLyAiQk1D
+X1JFQURZLU8iLCIiLCAiIiwgIiIsICIiLCAiIiwgIiIsICIiOwo+ICt9Owo+ICsKPiArJmdwaW8x
+IHsKPiArwqDCoMKgwqDCoMKgwqAvKiAzNiAxLjhWIEdQSU9zICovCj4gK8KgwqDCoMKgwqDCoMKg
+Z3Bpby1saW5lLW5hbWVzID0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLypBMC1B
+NyovICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsICIiLCAiIiwKPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgLypCMC1CNyovICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsICJJT19FWFBBTkRF
+Ul9JTlRfTC1JIiwiIiwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLypDMC1DNyov
+ICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsICIiLCAiIiwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgLypEMC1ENyovICIiLCAiIiwgIiIsICIiLCAiIiwgIiIsICJTUElfSE9TVF9UUE1f
+UlNUX0wtTyIsICJTUElfQk1DX0ZQR0FfSU5UX0wtSSIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoC8qRTAtRTcqLyAiIiwgIiIsICIiLCAiIiwgIiIsICIiLCAiIiwgIiI7Cj4gK307
+Cj4gKwo+ICsmc2dwaW9tMCB7CgpTbyB0aGUgc3R5bGUgZ3VpZGUgYXNrcyB0aGUgcmVmZXJlbmNl
+ZCBub2RlcyB0byBiZSBvcmRlcmVkIGVpdGhlcgphbHBoYWJldGljYWxseSwgb3IgaW4gRFRTSSBv
+cmRlclsxXSAod2hpY2ggc2hvdWxkIGJlIHVuaXQtYWRkcmVzcwpvcmRlcikuCgpbMV06IGh0dHBz
+Oi8vZG9jcy5rZXJuZWwub3JnL2RldmljZXRyZWUvYmluZGluZ3MvZHRzLWNvZGluZy1zdHlsZS5o
+dG1sI29yZGVyLW9mLW5vZGVzCgpXaGF0IHdlIGhhdmUgdG8gdGhlIHF1b3RlZCBzZWN0aW9uIGFi
+b3ZlIGlzbid0IGluIGFscGhhYmV0aWNhbCBvcmRlci4KVG8gdGhpcyBwb2ludCBpdCB3YXMgRFRT
+SSBvcmRlciwgYnV0IHRoYXQgYnJlYWtzIGhlcmUgdG9vLgoKTXkgcHJlZmVyZW5jZSBpcyB0aGF0
+IG5vZGVzIGluIHRoZSBEVFMgcmVmZXJlbmNpbmcgdGhlIERUU0kgYXJlCmFscGhhYmV0aWNhbCAo
+YXMgd2UgY2FuJ3Qgc2VlIHRoZSB1bml0IGFkZHJlc3MgZm9yIG9yZGVyaW5nKS4gQ2FuIHlvdQpw
+bGVhc2UgZml4IGl0PwoKWW91IG1lbnRpb24gaW4geW91ciBjb3ZlciBsZXR0ZXIgdGhhdCBvcmRl
+cmluZyB3YXMgYWRkcmVzc2VkIGluIHYzIC0KZGlkIHdlIGxvc2UgdGhhdCBhbG9uZyB0aGUgd2F5
+PwoKKnNuaXAqCgo+ICsKPiArJnVhcnRfcm91dGluZyB7IH07CgpEcm9wIHRoaXM/CgpDaGVlcnMs
+CgpBbmRyZXcK
 
 
