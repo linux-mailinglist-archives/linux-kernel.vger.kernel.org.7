@@ -1,102 +1,117 @@
-Return-Path: <linux-kernel+bounces-799512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31F0B42CFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:50:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BEF2B42CFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A142A189F546
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:50:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842F3A001EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF20E2ECD39;
-	Wed,  3 Sep 2025 22:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B982ECE85;
+	Wed,  3 Sep 2025 22:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XHjf7jeF"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="tj6yAb73"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC9019C560;
-	Wed,  3 Sep 2025 22:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450FD266B56;
+	Wed,  3 Sep 2025 22:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756939813; cv=none; b=UE1Prv9qMSBt2yTSKCfulq+/oRA3UU40dmUVNG6w5+lE1gc/D3MxzuP4iX2JGxzusBCqdUHZ6NsL8lWi67KgtuXmH53FCd2Md7O/bFwtoYq873INjz2ccja5yHF3r2yAFXMIHs6UQ8OBDR6MYhrYX66fvX0MO1FdHsyt0Fn8hgg=
+	t=1756939847; cv=none; b=jD2F108eRENNEtV9aEu5R7nbrWE2kBLgEF1cR/8b/LpC2jMaKr/09uOUxwm9VR8cJLZIK1pqfn4SgoAT4n3SpDhUUjfugHSqy3JHSuCUHTlcE4gkmCgY0spD2Aw6JI8gB/m3i/v19KyRogKXj/SRMwAoBPl0vXQi370dhZ237cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756939813; c=relaxed/simple;
-	bh=As5rtX3D5LB2wVeZvRuFo1VLXRYr4qskDKDe3OpTwlI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=RIDSsuCQ35wNrSuWiXZ/ueIkzkchc+1mzFmPnKSCb/BoVV0N1uHi+p0mouRZXXby9nwLN3xF0+nNz7+O7GWtjlWeYE1DkViHfqlTjmp2T4ANKmqkeEq+I+Ofr4fYYHWL3x3P5k/hmMUVwyPPUY7EPprOKoMZVpam4owxGgbC63E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XHjf7jeF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D2FCC4CEF4;
-	Wed,  3 Sep 2025 22:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756939812;
-	bh=As5rtX3D5LB2wVeZvRuFo1VLXRYr4qskDKDe3OpTwlI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=XHjf7jeFpYmeaUewcAb7SW4H4UtmZMhox1ss7yeUhnb+Mn4ahh6DumpoJKQtNSfcZ
-	 PM+PVN0buemow0HOFJy7oO9Y0K8uh/48rXBxKTP+P3zAFH7rJtVxyJAUQ5XIvt0VMS
-	 C9qaKLUu4B/zk6QOx+CTKpAkpsHgIjTqQC3takyihWrfTWQh1OvrnaNw4plvLY1o+/
-	 2AXhmJRDALA9bFXunpxJ6832LDbJdBzJbbEOFEzsFfuaIwqt+ak7/ghMhtDxgxipX3
-	 g7CqRMl1vU/26Gs2xtInqgY4wllW1nsZbAUJIVyV4lcA1Phq3oSFykIhHPp3QG91bU
-	 5+/9rjbRD4rBA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB3F2383C259;
-	Wed,  3 Sep 2025 22:50:18 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1756939847; c=relaxed/simple;
+	bh=pbdquukSnGS+wF5QF8MilgjIYNJenjTo1pFIRO4nz7w=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=sG+c5Qk+QzOBRBtd4LjWGyj0hf2VYh3ROGSF0GNZvbsP3N6jRAFlMrpbQvyQQdvkfj3qxt4aBDrNzSi7APPPpUWKXHV0vzFSDBfRHR54sQ6eTGGUrYM6MmisUYpF93PvJIUpeat2vkfwzqgD0w/P4FKfKyevneZjj7Tmrk7ULio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=tj6yAb73; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FBCFC4CEE7;
+	Wed,  3 Sep 2025 22:50:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1756939846;
+	bh=pbdquukSnGS+wF5QF8MilgjIYNJenjTo1pFIRO4nz7w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tj6yAb73B0+cXYAia7kJ0XU6KHNEqIRkke4BZtr7R8O3us7SWoXS68AcMqQ5L0hpG
+	 BmXM1jzeqpYF1icn0sEmvoQNczqPpgLGcyzhDPUPeLtnMlScyq5/FqV42gRzdDgUrV
+	 ENGoguY3Pv2qLi4Nn8AB7DOzFJn1HN7+BvDWtq7o=
+Date: Wed, 3 Sep 2025 15:50:46 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Youling Tang <youling.tang@linux.dev>
+Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, chizhiling@163.com, Youling Tang
+ <tangyouling@kylinos.cn>, Chi Zhiling <chizhiling@kylinos.cn>
+Subject: Re: [PATCH] mm/filemap: Align last_index to folio size
+Message-Id: <20250903155046.bd82ae87ab9d30fe32ace2a6@linux-foundation.org>
+In-Reply-To: <afff8170-eed3-4c5c-8cc7-1595ccd32052@linux.dev>
+References: <20250711055509.91587-1-youling.tang@linux.dev>
+	<jk3sbqrkfmtvrzgant74jfm2n3yn6hzd7tefjhjys42yt2trnp@avx5stdnkfsc>
+	<afff8170-eed3-4c5c-8cc7-1595ccd32052@linux.dev>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] tools: ynl-gen: fix nested array counting
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175693981774.1226328.5930762500179486996.git-patchwork-notify@kernel.org>
-Date: Wed, 03 Sep 2025 22:50:17 +0000
-References: <20250902160001.760953-1-ast@fiberby.net>
-In-Reply-To: <20250902160001.760953-1-ast@fiberby.net>
-To: =?utf-8?b?QXNiasO4cm4gU2xvdGggVMO4bm5lc2VuIDxhc3RAZmliZXJieS5uZXQ+?=@codeaurora.org
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, donald.hunter@gmail.com, horms@kernel.org,
- jacob.e.keller@intel.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Tue, 12 Aug 2025 17:08:53 +0800 Youling Tang <youling.tang@linux.dev> wrote:
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue,  2 Sep 2025 15:59:59 +0000 you wrote:
-> The blamed commit introduced the concept of split attribute
-> counting, and later allocating an array to hold them, however
-> TypeArrayNest wasn't updated to use the new counting variable.
+> Hi, Jan
+> On 2025/7/14 17:33, Jan Kara wrote:
+> > On Fri 11-07-25 13:55:09, Youling Tang wrote:
+> >> From: Youling Tang <tangyouling@kylinos.cn>
+>
+> ...
+>
+> >> --- a/mm/filemap.c
+> >> +++ b/mm/filemap.c
+> >> @@ -2584,8 +2584,9 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+> >>   	unsigned int flags;
+> >>   	int err = 0;
+> >>   
+> >> -	/* "last_index" is the index of the page beyond the end of the read */
+> >> -	last_index = DIV_ROUND_UP(iocb->ki_pos + count, PAGE_SIZE);
+> >> +	/* "last_index" is the index of the folio beyond the end of the read */
+> >> +	last_index = round_up(iocb->ki_pos + count, mapping_min_folio_nrbytes(mapping));
+> >> +	last_index >>= PAGE_SHIFT;
+> > I think that filemap_get_pages() shouldn't be really trying to guess what
+> > readahead code needs and round last_index based on min folio order. After
+> > all the situation isn't special for LBS filesystems. It can also happen
+> > that the readahead mark ends up in the middle of large folio for other
+> > reasons. In fact, we already do have code in page_cache_ra_order() ->
+> > ra_alloc_folio() that handles rounding of index where mark should be placed
+> > so your changes essentially try to outsmart that code which is not good. I
+> > think the solution should really be placed in page_cache_ra_order() +
+> > ra_alloc_folio() instead.
+> >
+> > In fact the problem you are trying to solve was kind of introduced (or at
+> > least made more visible) by my commit ab4443fe3ca62 ("readahead: avoid
+> > multiple marked readahead pages"). There I've changed the code to round the
+> > index down because I've convinced myself it doesn't matter and rounding
+> > down is easier to handle in that place. But your example shows there are
+> > cases where rounding down has weird consequences and rounding up would have
+> > been better. So I think we need to come up with a method how to round up
+> > the index of marked folio to fix your case without reintroducing problems
+> > mentioned in commit ab4443fe3ca62.
+> Yes, I simply replaced round_up() in ra_alloc_folio() with round_down()
+> to avoid this phenomenon before submitting this patch.
 > 
-> Abbreviated example from tools/net/ynl/generated/nl80211-user.c:
-> nl80211_if_combination_attributes_parse(...):
->   unsigned int n_limits = 0;
->   [...]
->   ynl_attr_for_each(attr, nlh, yarg->ys->family->hdr_len)
-> 	if (type == NL80211_IFACE_COMB_LIMITS)
-> 		ynl_attr_for_each_nested(attr2, attr)
-> 			dst->_count.limits++;
->   if (n_limits) {
-> 	dst->_count.limits = n_limits;
-> 	/* allocate and parse attributes */
->   }
+> But at present, I haven't found a suitable way to solve both of these 
+> problems
+> simultaneously. Do you have a better solution on your side?
 > 
-> [...]
 
-Here is the summary with links:
-  - [net,v2] tools: ynl-gen: fix nested array counting
-    https://git.kernel.org/netdev/net/c/b4ada0618eed
+fyi, this patch remains stuck in mm.git awaiting resolution.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Do we have any information regarding its importance?  Which means do we
+have any measurement of its effect upon any real-world workload?
 
+Thanks.
 
 
