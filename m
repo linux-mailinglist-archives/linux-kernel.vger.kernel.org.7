@@ -1,94 +1,98 @@
-Return-Path: <linux-kernel+bounces-799163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42B8B427DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:22:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 671ECB427F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63EBB189F8A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:23:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DC1F188055A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4AC3126B3;
-	Wed,  3 Sep 2025 17:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C3331E102;
+	Wed,  3 Sep 2025 17:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cky2BVTe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MlkBA6Qn"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0E229DB99;
-	Wed,  3 Sep 2025 17:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1528D2765E3;
+	Wed,  3 Sep 2025 17:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756920154; cv=none; b=kr/CYAfrWdP8XJcO3KXBOw/aX79vRdftfarkae6S6pb96acXW6rZJ3O/9etUC1Qc0v1zpqRNlOckPAh9fFaGqyb5d0NCoswxmJllMoSE6kZlzcdYFqRlu77SUGovixkEoLj5ttaPF2nRTFBodMU8ccs2eboaexDTGhRUMFu9vX8=
+	t=1756920579; cv=none; b=WSqLo+q8GbYlOWEyNsLZUJYDpjbiGI5j1UGsFiwxEsokSnh1XmBGOJ892aPyJZGd+Mt6skqF4P8OQ1lEIbBxkBNRTyBRPlB8ArkgrYEVkIO7Iw0AJcrCs/E318cv5xZKs0ZrTjTwvh1SOMjO7BtNPuQ+79xwiolNJU6MqZn/Ols=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756920154; c=relaxed/simple;
-	bh=38qRBcVLemJuIO3Zcx8DVpVL1QoFDMKDswFRU8GkwHs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=WhlBYIYhrFzAcafaniueA1lEr7+oLe+GEL3qJLJ+DgBLrKJUkKRbFpIWZvrJOHdz/f5e+XZwovNChddLiZQymyAoZiNODOcLMb9ki5GUmLVB0hj+EFIxqHiODD6U+0Gcu32ToH8osxegkGOFwZWoXlr6oRND605pAaZIlaFhfPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cky2BVTe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37C9FC4CEE7;
-	Wed,  3 Sep 2025 17:22:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756920153;
-	bh=38qRBcVLemJuIO3Zcx8DVpVL1QoFDMKDswFRU8GkwHs=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=Cky2BVTe8KD9vzLnUdMoMsD0y6FBMaEFOv9TN8sIYqX8BGaUBMpcUERzgyOidn3kN
-	 HMul+OwyW8dXvDH0OBNIC+sOp6h1yg2VnO8Mc8DIT+Myl2bAcSz8Q59hEhuAu8pSbs
-	 mfkqD0D2QTViQaVnvI47lCOryEM9JCjusn7w3gp5n9BQ2O5p7OIZboZkym4XaFOvPq
-	 UgcXa3woQKwVYZkkVKNLuenq8kX0Ylkc7BXfhbG23pBo5ZxKlHC/kVaQHNgrNNfBRa
-	 5BJpoSTp4eUNTlzRZRWNL3Bvz43M/4Ma4uW0akVd8JRUtgszdDpyn9YyibAgTbiNtt
-	 7NybjNz9KNfhQ==
+	s=arc-20240116; t=1756920579; c=relaxed/simple;
+	bh=MgR3tYmVRb8vi08gFaEidd7fXX3CfhvWHiW0QflcxGo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Wv3F91p0P2QZG2ruVZ70c/U1zyT2HHEggumyOXqs4Rh23Qf2QAMtMtZs+yYLKi760br/S1yic1QixN9icfGc+gmPuaGyvodpaq+l9pF0DDGYAv5xVpMSIWgAKsZz4fPSogO+ix2uumfmA6Dd9zSeUpYH8HMB6Vk+hG+ghzEfjM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=MlkBA6Qn; arc=none smtp.client-ip=192.19.144.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 6A66BC000C6F;
+	Wed,  3 Sep 2025 10:22:55 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 6A66BC000C6F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1756920175;
+	bh=MgR3tYmVRb8vi08gFaEidd7fXX3CfhvWHiW0QflcxGo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MlkBA6QnPCNo2FcawW4uT+Gz1EJVgjkBd9nbRAdayc/HP+ysGLPlA8GU9E5AmwLJa
+	 Pstlg+3YByjjjpg4r/X8vQx1vz62LtFWO9r5NGOVsjFhS3yMrR81drZjApVRRHPEIO
+	 O18WrfkYWFVsHr9ILOgmdOsR7c63nfWMTCN0nAxg=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 0A6A0180004FC;
+	Wed,  3 Sep 2025 10:22:55 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: bcm-kernel-feedback-list@broadcom.com,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH] arm64: dts: broadcom: bcm2712: Add default GIC address cells
+Date: Wed,  3 Sep 2025 10:22:54 -0700
+Message-ID: <20250903172254.2512047-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250822133407.312505-2-krzysztof.kozlowski@linaro.org>
+References: <20250822133407.312505-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Sep 2025 19:22:29 +0200
-Message-Id: <DCJC7Q9MZEM3.34FU7BXXZ7UGF@kernel.org>
-Subject: Re: [PATCH v4 1/2] device property: Add scoped fwnode child node
- iterators
-Cc: =?utf-8?q?Jean-Fran=C3=A7ois_Lessard?= <jefflessard3@gmail.com>,
- "Wolfram Sang" <wsa+renesas@sang-engineering.com>, "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>, "Daniel Scally" <djrscally@gmail.com>,
- "Heikki Krogerus" <heikki.krogerus@linux.intel.com>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Javier Carrasco" <javier.carrasco.cruz@gmail.com>,
- <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-acpi@vger.kernel.org>
-To: "Sakari Ailus" <sakari.ailus@linux.intel.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250902190443.3252-1-jefflessard3@gmail.com>
- <20250902190443.3252-2-jefflessard3@gmail.com>
- <aLhAKJBUNQVH1Vmf@kekkonen.localdomain>
-In-Reply-To: <aLhAKJBUNQVH1Vmf@kekkonen.localdomain>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-(Cc: Javier)
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-On Wed Sep 3, 2025 at 3:18 PM CEST, Sakari Ailus wrote:
-> Do we really need the available variant?
->
-> Please see
-> <URL:https://lore.kernel.org/linux-acpi/Zwj12J5bTNUEnxA0@kekkonen.localdo=
-main/>.
->
-> I'll post a patch to remove fwnode_get_next_available_child_node(), too.
+On Fri, 22 Aug 2025 15:34:08 +0200, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+> Add missing address-cells 0 to GIC interrupt node to silence W=1
+> warning:
+> 
+>   bcm2712.dtsi:494.4-497.31: Warning (interrupt_map): /axi/pcie@1000110000:interrupt-map:
+>     Missing property '#address-cells' in node /soc@107c000000/interrupt-controller@7fff9000, using 0 as fallback
+> 
+> Value '0' is correct because:
+> 1. GIC interrupt controller does not have children,
+> 2. interrupt-map property (in PCI node) consists of five components and
+>    the fourth component "parent unit address", which size is defined by
+>    '#address-cells' of the node pointed to by the interrupt-parent
+>    component, is not used (=0)
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-Either I'm missing something substantial or the link does indeed not provid=
-e an
-obvious justification of why you want to send a patch to remove
-fwnode_get_next_available_child_node().
-
-Do you mean to say that all fwnode backends always return true for
-device_is_available() and hence the fwnode API should not make this distinc=
-tion?
-
-I.e. are you referring to the fact that of_fwnode_get_next_child_node() alw=
-ays
-calls of_get_next_available_child() and swnode has no device_is_available()
-callback and hence is always available? What about ACPI?
+Applied to https://github.com/Broadcom/stblinux/commits/devicetree-arm64/next, thanks!
+--
+Florian
 
