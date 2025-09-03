@@ -1,134 +1,88 @@
-Return-Path: <linux-kernel+bounces-798009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 144C9B4185A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:25:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434BCB41859
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CD2B3BED12
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:25:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 239E03B277E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4612DAFC3;
-	Wed,  3 Sep 2025 08:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="JgO79AiA"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6302E3AEA;
+	Wed,  3 Sep 2025 08:25:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF53C2DF716;
-	Wed,  3 Sep 2025 08:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACA22DAFC3
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756887906; cv=none; b=VZIdDmkabH3w1V5X2R0k2xX5wqRD37mvXoJzFXb72APadD1c3FX0Mi9n7iObAVfkXkeXrfWLWo63q+GCIhriMaMoh37zzV/LYq4nY3cEHnyvLIX1OE6sa9xqlvgUTzI9rerRiQwAuHUAon83Vm191/Ltwf5K6rCA9NIXxulxJs0=
+	t=1756887905; cv=none; b=m5YVhr+GzBCCu9bBLU96NREEkfrTjTJB/HVaEVyjSFb/OZekiHkMzhcbSnr5l+NJnKDoIsk9e1dbkMxTdfjj8PzXY4bV/ZHaR4AkXplc6KK1drtZWTVqrh9s/ThnbsvRnvxqYFQZKwsNzh7GCFr6LiE6988EeUH6c3IErMWJAzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756887906; c=relaxed/simple;
-	bh=aIKvsyaaE9IcH3GTXT7d6qopOlRrWy67Dm7j+/pv2qA=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=HcFx/cFvS0DtTkG4o+TrK2ZfNiH9vDUQBhQhI8zVMmIJ1D9k1ypkNEPNnmxR4fjpaGxNFzA9CW9M6m8GATLiKyg51EVBULJq5HQxkFCLe2DotlfOxaGhnOZmh6W1PB0+WkDlXSeryyUpKhiwfKXhWeofziqS/pubihDzdkpVMvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=JgO79AiA; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1756887905; c=relaxed/simple;
+	bh=1SG2Pmpaf8XCeDosOyXRUhxymyY3tfFtwfGSFD1UtEI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=K3/lDdWhKJu7pqYL3nJqj19KKBs3YQBWpydeTIOqGZhKSUkFROG7ALiaDnHlsrapBNlELg9J9IrjrsSDuTFxRs6TS/CN5fH0pZBiHJutCAc+Ov6okuGAsrerzS9NUTzqy352EJv6gEbbwKkpqqA+pPhk+vg3/2QX2CkLURvvHd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-887146211abso409734139f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:25:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756887903; x=1757492703;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VI0ka6O6ZS6blT+a3/AcHhRWBhKlrnjhBV+UJLK4OBE=;
+        b=s0EpKhdI/oskpX75LZtCcYx7zJ4y7cW1q5cQaqykIRUj7ZlOUmMFD6FoH2WSpOK1zy
+         73cCjdqe86wz+bHezmwZuVi2dYoWxyl49RpLTwNfmC+cX0b7xlGsCJcBGTcPcRnysJhV
+         VRRBagzkfItnwNEKW4C1sarciCuvwenkbSWLtQTIyI8dwIRZ9hEgRuf4iSiSe7+/NHcR
+         hWdDcWguij0JqSfzSWK61NziKnrMAnCIIMmNbCcr5uqyc+DHuUyyc2H/lD+9QO0jRUD2
+         /oCYCVwAGjPHZzBoItEhVLAPmnJl8lE/YSsn0MkXUYtgFAOLuJ5AqfvA0OLXF9lvlq65
+         X3Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIGknn07+fuBU3ZDO80HStRrHUscg0B64nPEb1OhqTq6BylV2KCz1vMetKETyrq1RCEcnsr/0+6JHs2Fo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCnPq36ZBIzxpmAeqhqn3sRgconXndJKCebaltoDk8OUhOQQ6P
+	QWFViRcZAgNcN6BZdVdKirePUMARovJEDRKI/gU0BKKqggsXVpif0JqJgwADlt+GBZS68B5/bIR
+	d+NCkoTc/xxYQNpmthi/Hlp2ZqBLZU1sFFuRvVdb3xdOMJGCzJ/LOLsBPopg=
+X-Google-Smtp-Source: AGHT+IGw3/FCe5XaNbRj5L4aNHsUUDVQqUKVxCY/To4aco3gEMJZwKJi96fGvmuJsIbqcZFcKjOTt0PRcPYV+B28fNUW+0y8/NUQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1756887896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j7BHoohsON/uHAsQoNKnfX6vsph4pvo5v6eXoOgK4Xc=;
-	b=JgO79AiAN14ntr3cqlfxjcoIkm18Z2ZBhnHHEB34/+bYAj+zKxsa0+b4e0e8jX6xsC2IQI
-	Tfm7cnCRV9Tx4inYr0yhhbhkfXyS5auIvPCNyFgh5uFRfbBZ9z91H/MQj4BWO7yOfn+Rfe
-	HOyVAC5hSo3Y3aqjEETL6uD/OrpYlENP2KEBfLWIIfRNNyAFmk7LrNILhN+LT0OC7BExe9
-	0B/L9JwpZieirO+SmBq6SLTX941Y/Yu2XAwJw8WAsLwKHPOnYn380W/tmVh0Slc+QCvWcE
-	tIUp0oORqbh618V7Qt5QtoOHJIlwaTvGQpkg39v7gNQgMLepk5SGrh052hKwsA==
-Date: Wed, 03 Sep 2025 10:24:55 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Sarthak Garg <quic_sartgarg@quicinc.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio
- <konradybcio@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
- quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
- quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com,
- kernel@oss.qualcomm.com
-Subject: Re: [PATCH V5 0/4] Add level shifter support for qualcomm SOC's
-In-Reply-To: <20250903080404.3260135-1-quic_sartgarg@quicinc.com>
-References: <20250903080404.3260135-1-quic_sartgarg@quicinc.com>
-Message-ID: <3453985c13aa51d068c0174e51e378fb@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-Received: by 2002:a05:6602:6b19:b0:887:1781:ce6b with SMTP id
+ ca18e2360f4ac-8871f49957dmr2405010139f.11.1756887902950; Wed, 03 Sep 2025
+ 01:25:02 -0700 (PDT)
+Date: Wed, 03 Sep 2025 01:25:02 -0700
+In-Reply-To: <aLfal0B4HnWJVWz1@infradead.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b7fb5e.050a0220.3db4df.01e8.GAE@google.com>
+Subject: Re: [syzbot] [xfs?] WARNING in xfs_trans_alloc
+From: syzbot <syzbot+ab02e4744b96de7d3499@syzkaller.appspotmail.com>
+To: cem@kernel.org, hch@infradead.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Sarthak and Krzysztof,
+Hello,
 
-On 2025-09-03 10:04, Sarthak Garg wrote:
-> Add level shifter support for qualcomm SOC's.
-> 
-> - Changed from v4
->     - As suggested by Krzysztof Kozlowski Renamed the property from
->     `max-sd-hs-frequency` to `max-sd-hs-hz` for clarity.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-I just spotted this series, so I'm sorry for jumping in late.  To me,
-"max-sd-hs-frequency" was actually a better choice, because it goes
-together with the already existing "max-frequency" property.
+Reported-by: syzbot+ab02e4744b96de7d3499@syzkaller.appspotmail.com
+Tested-by: syzbot+ab02e4744b96de7d3499@syzkaller.appspotmail.com
 
-Yes, "max-sd-hs-hz" is obviously more clear, but to me, consistency
-is more important.  Just my $.02.
+Tested on:
 
->     - As suggested by Krzysztof Kozlowski remove min/max constraints
->     and add default: 50000000 in dt-bindings.
->     - As suggested by Konrad Dybcio moved max-sd-hs-hz property in the
->     SoC dtsi.
->     - Retained sdhci-caps-mask in sm8550.dtsi for now and will revisit
->     its removal for future targets after thorough validation and 
-> testing
->     from the beginning.
-> 
-> - Changed from v3
->     - As suggested by Krzysztof Kozlowski moved the property from the
->     SoC-level DTS to the board-level DTS.
->     - Revised the commit messages to clearly explain its 
-> board-specific.
-> 
-> - Changed from v2
->     - As suggested by Konrad Dybcio and Ulf Hansson redesigned logic
->       to introduce a new DT property max-sd-hs-frequency and override
->       the hs_max_dtr accordingly in sd.c file.
-> 
-> - Changed from v1
->     - As suggested by Krzysztof Kozlowski redesigned logic to use
->     compatible property for adding this level shifter support.
->     - Addressed Adrian Hunter comments on V1 with resepect to
->       checkpatch.
->     - Cleared the bits first and then set bits in
->       sdhci_msm_execute_tuning as suggested by Adrian Hunter.
->     - Upated the if condition logic in msm_set_clock_rate_for_bus_mode
->       as suggested by Adrian Hunter.
-> 
-> Sarthak Garg (4):
->   mmc: sdhci-msm: Enable tuning for SDR50 mode for SD card
->   dt-bindings: mmc: controller: Add max-sd-hs-frequency property
->   mmc: core: Introduce a new flag max-sd-hs-hz
->   arm64: dts: qcom: sm8550: Add max-sd-hs-hz property
-> 
->  .../bindings/mmc/mmc-controller-common.yaml       |  8 ++++++++
->  arch/arm64/boot/dts/qcom/sm8550.dtsi              |  1 +
->  drivers/mmc/core/host.c                           |  2 ++
->  drivers/mmc/core/sd.c                             |  2 +-
->  drivers/mmc/host/sdhci-msm.c                      | 15 +++++++++++++++
->  include/linux/mmc/host.h                          |  1 +
->  6 files changed, 28 insertions(+), 1 deletion(-)
+commit:         e6b9dce0 Merge tag 'sound-6.17-rc5' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=145aee62580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=39f8a155475bc42d
+dashboard link: https://syzkaller.appspot.com/bug?extid=ab02e4744b96de7d3499
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
