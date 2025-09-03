@@ -1,224 +1,163 @@
-Return-Path: <linux-kernel+bounces-798051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CEC9B418E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:42:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E179FB418E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD2B9681920
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:42:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D3A51BA483A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A772EC0B4;
-	Wed,  3 Sep 2025 08:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF392EC550;
+	Wed,  3 Sep 2025 08:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xs6JibLe"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="RAQYzjRm"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841052EC0AE
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9412ED143
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756888895; cv=none; b=a8T08owGHW4gDy2LoGA5Y/4vGB+602cWc930iSn2vJLrqJrvOQfAjBhogf809Z8UVARqknKEATFmgfyzKzX0kb15pvSIWo/drsWmQd3e6NJ8Qbq2swMniubrYB5JckDgYqrQVXMq7ukZd06hoRF26JqyS6QozWJia1/i4XVXtmU=
+	t=1756888866; cv=none; b=J54u3eAraf9hNDZxvhu0J9cZydlgo/y2cFFra27bMGuC2c845EvcFThw7Zsve8kYoxJds8PY7rnEktujhSfaY+onmQJ8d9gE2IO25SIKDW73IsHOm5zPQxV4+O1TN0Ua0M5agitXUBz6MwzHJZi7ngFZDL6cXX2/k8vxGKlFjB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756888895; c=relaxed/simple;
-	bh=ORH9/GodysTSwJ1DXX9s07Oow+2mZpM8t/zerT4S4KU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IgwkqCYN+Npp7c4ChYhs+jxGZHaZ4tivF7wT12wA+cz1VBplytkaaDyvkpFOPb7faJeBJMzqIa6jnu3/TYG2QOYnxc56uzKVXm6+mNyNtNZ0KD8qnkM8iNyNf6l1BAq60ihbaiXKboGSvF6E9b1Zbq/15GUvP7IeLXFI6aSNfao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xs6JibLe; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-72238e9f8ffso8338516d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:41:33 -0700 (PDT)
+	s=arc-20240116; t=1756888866; c=relaxed/simple;
+	bh=JsNVQI+TIrorPHcMKJYXnp9wWGJJyxNgOxqE89EoXZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GFQVo3wbiCgpGNRcBX26KIqxxq8+U6s8DwxPF84N7C82Pc6TmrmsCB+7USefXj9kvWHW2e8Hjf39QIda1pjG715OgNZ8EQxN0HGySr92QfHvTyX/6Z1ltI29pBFyx8wKSJJ7hx7t4hfk4y74jB1pTan2cotpM2ozNThkcCjudK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=RAQYzjRm; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b065d59so42851375e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:41:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756888892; x=1757493692; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=q/+sjUPKzzeyDNJhhYPMVRz16X6YZ4H6NdmqB+0gdRo=;
-        b=Xs6JibLepB6jyzefFGsOpuwB9+rTysDSVZ4Qe13IYjU/R7DlAaV30VKWzMHvvnJrQW
-         Pq0bO0iIOXMmNfLzHgRjK8ldzMBWm9bqKJwOoKYQBryVmgYq+1YupsQd8eGogs590dlt
-         2j70iA2U5t4Ac3Ilmy22ueciBy8wkxwGAs7bnAL/AZIOdCgf/05jMQQ+X57cmmHJuQd7
-         XkqC81txgimLebj0qYYIPibh2nQ+Cg5xDtLDrtH7HsO42ctoE9pGgenQg3yTCy/+BcIF
-         P528guhJ1kAWM0mQ/EGtU309GS5yMIrVWp/JQkSfbLyGMEasuxzvcNDh45Zcc3sSatcS
-         7uDA==
+        d=openvpn.net; s=google; t=1756888863; x=1757493663; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=0TB5YZ2Z3EXPa0RdeJrcF8HUqJiNgkWuQmRT0sSvhkg=;
+        b=RAQYzjRmqDiE55QbU2Bq0JGGqXBOGeyQ1OuIti4VY5w1MmdXFGYC/zVXyBNY1cgAmZ
+         7sLDiI82r1rbo4p2H82OfyySEx/xjWjcpc4fEtkt1i6bfDy5cXZ5ITOvEbTIBTJEHvvE
+         SfaRfu+v0HxERv0+c57DdH26FFvONp8m+RxUmGRy6rJYF5U+KHCeSqEzTy+AygFWaCdf
+         ex6vPzYq2X9zlDPf9PSORQ2sxAcTVjDRUk/OGcTgX4Sxv6ajagWuY2zkp0VA1ZMMe/Zw
+         17cs/iVlH+FD/tMYNg9vFZX4kTgzo/0XnjXqKJJBLw2q82zrrYGIV86pW7VbyQSPV918
+         KlPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756888892; x=1757493692;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q/+sjUPKzzeyDNJhhYPMVRz16X6YZ4H6NdmqB+0gdRo=;
-        b=jVVdtWjAgK2YJQXezO2NxRy2W2ijrBcq+ug1cG69WuTI6mb3K9P5tkkO/5Y/HWkE+u
-         qlmM5nwYMQTrgr9jvk0493lrX5EM1pxRdMhEM32tmNfdXsftteJ1cA5oKtWLQzueT+uk
-         vz4ndTMtXSlu09SzGmAdG55yKOcatiR1LEWRwec1w1GcXAGUmNCJ3Bkk1GJrCMUKUXhc
-         5RRFd3mhjXjx3KcBJNXiFbDkBX+EXTUzgl5h5X4chq0uNrom9rn+tlzPLk6jIRLYACgX
-         PVc3xYxyKg7Wf56ZoGkpgnWeJZKCSjs5jWIZWsDjWpr7fsNbSigx1KEX4t8FiTzb6syO
-         n2pg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuj4uYMCWWDld2tGkTuZWRLAsoaeGZlpr+9P5YuFR8UPBesPhZBbM6e65gXMKrhXepZL1Ew2uDm6UNuC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjxhCMLzcFrsV6zy7tMWlvDdBpO9AMBq+0NRkCOJM8ul1uz+hU
-	c5TsBShNI8pOLIFBUMry6aKw2YwS5GpY14IXLu+hlaiyRCrb3AlHY9oq0NstU02xqPwe6lEuEmJ
-	sA1/9Ccja3cIhLZHBySaKlR9RlYwkolu7ZNwm9tkI
-X-Gm-Gg: ASbGncs9rS3s/o6tzST/JHCavGm9Khr92HvERTGk2sUEpmi1Mrwgu7jDth9Q3lyA7OJ
-	2d89P9asSwBbplZp6yZkMpt/RGl74+F8GPeyur0yygV8eCAsvvqYhUkGNJdMWImEh6Jghn0n+e4
-	SHLjLYL7GSNYcq/xd10fXBCm3ifnOKFjPYQ4xQ6ief6Vi02Apg0S4d9/Dj+HUcY/ZWOZf3caei1
-	Ttbx3p74smkqgtqHkbGL+7DydVOcza4BBkEXij80O0=
-X-Google-Smtp-Source: AGHT+IF4vmfJfHqBQxZcNttdrfTYxkvTiSAKs+ul8tcs9Dnds2dX1cmh7ADC/k+xZJ11x/E266a48LBXxeBGRHRjSoc=
-X-Received: by 2002:a05:6214:400c:b0:70d:fd01:992d with SMTP id
- 6a1803df08f44-70fac73d452mr164331216d6.16.1756888891694; Wed, 03 Sep 2025
- 01:41:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756888863; x=1757493663;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0TB5YZ2Z3EXPa0RdeJrcF8HUqJiNgkWuQmRT0sSvhkg=;
+        b=G5Z3waY4tlzI7alsz3nHwDuvOfODTyWWFwZXpLs9dPfPGreix/p3cg0caZeR4lJoXM
+         laHc7cT3bfC/7uij8mV+m9D6/b1zRwuPfFeFDCBA+mZjku/4DYGVsfLvVd2nd22DcOCN
+         KQC65f9356FIO/z+CE3OMb5+y0UpHElsDGrE4rBPm5bRNdsCqDTatQPNcA8+qxZWIsP/
+         JUuYyVxXmd3gC76EjhyKA3y9+PV2JyV0MIHT74su0Vxlq8937EnpcOrtBSAHIM4nyhwm
+         HAe4sv8BbMewGdDzrV6o1YkdsgGFFTj8V+KCItMMn8K5NQ1A1a5ujoPZ0CeYaDF6LIwD
+         InYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHtQtXyWoj2iSVhpRAfdPIsItFHkSEXC7uv6JCALHpnO8WC7TeKYWx1fJ6kK96XJJqkF5f0vXkPLPOooA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5k8DQ6SUqGECMJSNm1WE+7525A+UtnjZSUCodfq/bFH01oBaT
+	GWqVl7BjQ1Lh1zKdRMG2BAfxdeOmbgcGbz/6DADMm/VEPz2L2GqI4giBl722TFx1LTHpXY/2QV5
+	omAHy0F3V+NTHNzSknQekbr+Z10P5a2soG7jU8WsPQ1MOv8r00uMYYVwRGA0=
+X-Gm-Gg: ASbGncsfaGXfpMxbq52qH30e6NFlYsQICjeweRn2UeIJ6uNb14lwpbyOKwWzximO6Pl
+	XaCLwfBIB0x7nZv2vHEubLS9yZoqvUDaQ+v0WaRE/G720pvELs8CtUnQMdQ//5A3Iv+TKRlN9nz
+	xC/4fmnZomSVgBgdRg5jzDtOObSC0vHTMHwv7X+zX0WGUTLg5kTr0+gyLU4z47PTSfO0Ov0Wfow
+	VDl1+sqOIM1LR61kB1rzxe7w2PcZ/b7kfxpqnt0gNMOgTuyCLnr+FhdjzLT4EpE55QRLm7W2Drj
+	0W+qS47Z2vAF1RygSTB8pFenEl9CVcSrEvKSQJpqZ7HbSy9/fGwx+aKx5U/1DAhSotzHoh6vMxO
+	zoe6XF40tJWmVmGZi/Zlr5EbnRA1p9owiTddKKNBqIFkT+J6133KknNrsTxOH9lLsgVVR
+X-Google-Smtp-Source: AGHT+IFmeOmpAlDVviXXUbydolz2hQ73o+t1pjbKxEZVQJtQs/jjkhYanNEEinULoQLn2ujCXocLPw==
+X-Received: by 2002:a05:600c:3b01:b0:45b:88c6:709d with SMTP id 5b1f17b1804b1-45b88c67339mr98096095e9.25.1756888862683;
+        Wed, 03 Sep 2025 01:41:02 -0700 (PDT)
+Received: from ?IPV6:2001:67c:2fbc:1:9d8:889a:5a4d:126c? ([2001:67c:2fbc:1:9d8:889a:5a4d:126c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e886619sm227507755e9.15.2025.09.03.01.41.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 01:41:02 -0700 (PDT)
+Message-ID: <0c104f3d-5ee6-4d07-a183-62d603ce56df@openvpn.net>
+Date: Wed, 3 Sep 2025 10:41:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901164212.460229-1-ethan.w.s.graham@gmail.com> <20250901164212.460229-3-ethan.w.s.graham@gmail.com>
-In-Reply-To: <20250901164212.460229-3-ethan.w.s.graham@gmail.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Wed, 3 Sep 2025 10:40:55 +0200
-X-Gm-Features: Ac12FXwvjV2R_1nfj-fpPxtTM3Ef-lrf13TD6fJR0T0JxJ4IOXBIbC7rd81mwII
-Message-ID: <CAG_fn=XWr1_Qvzqq3_dUm-3DjpCFxBz7SbYaW8OMZ1BohjVYDA@mail.gmail.com>
-Subject: Re: [PATCH v2 RFC 2/7] kfuzztest: add user-facing API and data structures
-To: Ethan Graham <ethan.w.s.graham@gmail.com>
-Cc: ethangraham@google.com, andreyknvl@gmail.com, brendan.higgins@linux.dev, 
-	davidgow@google.com, dvyukov@google.com, jannh@google.com, elver@google.com, 
-	rmoar@google.com, shuah@kernel.org, tarasmadan@google.com, 
-	kasan-dev@googlegroups.com, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, dhowells@redhat.com, 
-	lukas@wunner.de, ignat@cloudflare.com, herbert@gondor.apana.org.au, 
-	davem@davemloft.net, linux-crypto@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] ovpn: use kmalloc_array() for array space
+ allocation
+To: chuguangqing <chuguangqing@inspur.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, horms@kernel.org,
+ Sabrina Dubroca <sd@queasysnail.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+References: <20250901112136.2919-1-chuguangqing@inspur.com>
+ <20250902090051.1451-1-chuguangqing@inspur.com>
+ <20250902090051.1451-2-chuguangqing@inspur.com>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <20250902090051.1451-2-chuguangqing@inspur.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> --- a/arch/x86/kernel/vmlinux.lds.S
-> +++ b/arch/x86/kernel/vmlinux.lds.S
-> @@ -112,6 +112,26 @@ ASSERT(__relocate_kernel_end - __relocate_kernel_start <= KEXEC_CONTROL_CODE_MAX
->  #else
->  #define KEXEC_RELOCATE_KERNEL
->  #endif
-> +
-> +#ifdef CONFIG_KFUZZTEST
-> +#define KFUZZTEST_TABLE                                                        \
-> +       . = ALIGN(PAGE_SIZE);                                           \
-> +       __kfuzztest_targets_start = .;                                  \
-> +       KEEP(*(.kfuzztest_target));                                     \
-> +       __kfuzztest_targets_end = .;                                    \
-> +       . = ALIGN(PAGE_SIZE);                                           \
-> +       __kfuzztest_constraints_start = .;                              \
-> +       KEEP(*(.kfuzztest_constraint));                                 \
-> +       __kfuzztest_constraints_end = .;                                \
-> +       . = ALIGN(PAGE_SIZE);                                           \
-> +       __kfuzztest_annotations_start = .;                              \
-> +       KEEP(*(.kfuzztest_annotation));                                 \
-> +       __kfuzztest_annotations_end = .;
-> +
-> +#else /* CONFIG_KFUZZTEST */
-> +#define KFUZZTEST_TABLE
-> +#endif /* CONFIG_KFUZZTEST */
+Hello and thanks a lot for contribution!
 
-I think the definition of KFUZZTEST_TABLE should better be in
-include/asm-generic/vmlinux.lds.h, so that it can be used by other
-architectures.
+This is indeed a nice improvement, however, we've been working on 
+changing this part of the code.
 
-> + * KFuzzTest receives its input from userspace as a single binary blob. This
-> + * format allows for the serialization of complex, pointer-rich C structures
-> + * into a flat buffer that can be safely passed into the kernel. This format
-> + * requires only a single copy from userspace into a kenrel buffer, and no
+We already have a pending commit in the queue (to be sent to net-next 
+soonish):
 
-Nit: kernel
+https://github.com/mandelbitdev/ovpn-net-next/commit/9b62844193de705502fdf4a693dfe0f6c7d94f13
 
-> + * further kernel allocations. Pointers are patched internally using a "region"
-> + * system where each region corresponds to some pointed-to data.
-> + *
-> + * Regions should be padded to respect alignment constraints of their underlying
-> + * types, and should be followed by at least 8 bytes of padding. These padded
-> + * regions are poisoned by KFuzzTest to ensure that KASAN catches OOB accesses.
-> + *
-> + * The format consists of a prefix and three main components:
+With the mentioned patch, the line you are changing does not exist 
+anymore, therefore I don't think it makes sense to merge your patch 
+first and then removing it again in the next commit.
 
-Nit: s/prefix/header?
+Sorry about this!
 
-> + * 1. An 8-byte header: Contains KFUZZTEST_MAGIC in the first 4 bytes, and the
-> + *     version number in the subsequent 4 bytes. This ensures backwards
-> + *     compatibility in the event of future format changes.
-> + * 2. A reloc_region_array: Defines the memory layout of the target structure
-> + *     by partitioning the payload into logical regions. Each logical region
-> + *     should contain the byte representation of the type that it represents,
-> + *     including any necessary padding. The region descriptors should be
-> + *     ordered by offset ascending.
-> + * 3. A reloc_table: Provides "linking" instructions that tell the kernel how
-> + *     to patch pointer fields to point to the correct regions. By design,
-> + *     the first region (index 0) is passed as input into a FUZZ_TEST.
-> + * 4. A Payload: The raw binary data for the structure and its associated
-> + *     buffers. This should be aligned to the maximum alignment of all
-> + *     regions to satisfy alignment requirements of the input types, but this
-> + *     isn't checked by the parser.
+Please feel free to stick around and submit more patches in the future!
 
-Maybe also call it "target structure" here?
-
-> + * For a detailed specification of the binary layout see the full documentation
-> + * at: Documentation/dev-tools/kfuzztest.rst
-> + */
-> +
-> +/**
-> + * struct reloc_region - single contiguous memory region in the payload
-> + *
-> + * @offset: The byte offset of this region from the start of the payload, which
-> + *     should be aligned to the alignment requirements of the region's
-> + *     underlying type.
-> + * @size: The size of this region in bytes.
-> + */
-> +struct reloc_region {
-> +       uint32_t offset;
-> +       uint32_t size;
-> +};
-> +
-> +/**
-> + * struct reloc_region_array - array of regions in an input
-
-Nit: newline here for consistency.
+Regards,
 
 
-> +#define __KFUZZTEST_DEFINE_CONSTRAINT(arg_type, field, val1, val2, tpe)                                         \
-> +       static struct kfuzztest_constraint __constraint_##arg_type##_##field __section(".kfuzztest_constraint") \
-> +               __used = {                                                                                      \
-> +                       .input_type = "struct " #arg_type,                                                      \
-> +                       .field_name = #field,                                                                   \
-> +                       .value1 = (uintptr_t)val1,                                                              \
-> +                       .value2 = (uintptr_t)val2,                                                              \
-> +                       .type = tpe,                                                                            \
-> +               }
-> +
-> +/**
-> + * KFUZZTEST_EXPECT_EQ - constrain a field to be equal to a value
-> + *
-> + * @arg_type: name of the input structure, without the leading "struct ".
-> + * @field: some field that is comparable
-> + * @val: a value of the same type as @arg_type.@field
-> + */
-> +#define KFUZZTEST_EXPECT_EQ(arg_type, field, val)                                    \
-> +       do {                                                                         \
-> +               if (arg->field != val)                                               \
-> +                       return;                                                      \
-> +               __KFUZZTEST_DEFINE_CONSTRAINT(arg_type, field, val, 0x0, EXPECT_EQ); \
+-- 
+Antonio Quartulli
+OpenVPN Inc.
 
-Doesn't the compiler complain about defining __used in the middle of the block?
-Maybe move it before the if statement?
-
-> + * KFUZZTEST_EXPECT_NE - constrain a field to be not equal to a value
-
-Nit: you could probably save some space and extract the boilerplate
-from KFUZZTEST_EXPECT_XX into a helper macro.
-
-> +config KFUZZTEST
-> +       bool "KFuzzTest - enable support for internal fuzz targets"
-> +       depends on DEBUG_FS && DEBUG_KERNEL
-
-Given that you only have the sections defined for x86, you should
-probably put something like "depends on X86_64" here.
-If you go for it, please mention somewhere that the framework is only
-available for x86_64, and add "x86:" to the patch title.
-
-An alternative would be to add KFUZZTEST_TABLE to vmlinux.lds.S for
-every architecture.
 
