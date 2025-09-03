@@ -1,117 +1,186 @@
-Return-Path: <linux-kernel+bounces-799555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844B3B42D7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:38:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 124EAB42D84
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BCEF4877CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:38:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 476BB1B2861A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FF027A12D;
-	Wed,  3 Sep 2025 23:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hJ6TjoOb"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621132C21F9;
+	Wed,  3 Sep 2025 23:39:51 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6446A24677D;
-	Wed,  3 Sep 2025 23:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1D11E3DE5;
+	Wed,  3 Sep 2025 23:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756942675; cv=none; b=hI98lgSr5nM66b+X7TPWjvPfaQygR025jRWalbIGIEgNBZ2hstmsDx9vr0dV+aFStY44ZydlCyB9b7s6QskzWbc6ZkUCxvcPmV/w0bsO+5mwx0qvI/WVVzmip+iS6HyGl49JCI6VRyV8Qu4BjYULT1PRnA4n9Dd7zwS6qi2e8G4=
+	t=1756942791; cv=none; b=YnXLu2VqhIDo3yKm4a6TrxE+grDI6hDZy6E6WwC44T8Ii3zmnd/sQ8IMU9T0ifPSJPbbgg1SJXI1Gh/ZNSF7KfnZr/DdAhp23tqaF9mcyP8Gjmdj4c/AYNWCnkE2dUv3HqtlxFKX/0FROOulxWdiJaCNcf6uEKrvH0ogucSRuug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756942675; c=relaxed/simple;
-	bh=stw58zCoGvddooZhq93UKDXlgwE9hSJd7dCfuvUXu1I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PChnkhBR7O4J1gMwU6MSxwhGFAgwsoisYp5lcefp2CLgtHtpqZVgFzxu5MIMYjqvFkf+6q5bPyPbHFhnuQ/7tXQmurJWCUhvDY7oJUybRTa00zNe6wJ7+ub9HO9DZtwaLk9DFhAurV+9HL7FmCRlGzd8rL4/MZDff8xbwVL354U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hJ6TjoOb; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-336b071e7e5so3540461fa.1;
-        Wed, 03 Sep 2025 16:37:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756942671; x=1757547471; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tv/e5+QmWiSB8PrnuSDhZ46U1TqYFEGl3buUo+cKFiE=;
-        b=hJ6TjoOb6PPZa3++LLtROGKGT/sdIoYhPwUanl9/MiFtKaCqDpy6YyJnbRM6xU1y5Z
-         v4PSINJsDRTBySt4XgbY34efntbeYY4+ibBFGRqmrg5gjOQ/Zzl8tLOV0CdI7k06ONz4
-         Li78/XpJ3fol96GkJ+Y9Kq8Lb2oVcmyofCDpsDhmrdZE0q4QPFL7P3Ed/gCR5uYhxuxk
-         zYNUs0UTcthzx0vPmqb0X7YH3F4bCr/tn3MtpxYHTaUFgl0v25yIXFJejbkyRUweysaK
-         CG6L1q8BYps4aDeTtxCN5VSb/RUPXLaxL19RhiZswsWizOI/x9sbECS59LUnoScNuAgd
-         G3uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756942671; x=1757547471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tv/e5+QmWiSB8PrnuSDhZ46U1TqYFEGl3buUo+cKFiE=;
-        b=D5HSgO7tVmu5LNZ8Qy+OS/ev9DAH+gFWarxWSPehpn64nAijsHAuHI+jOnMpaIN6uM
-         APCajjYNmAFXR7h0uorezwjbXFgfoC5m9Dys/Ll7WT7cblbajdBk1K83USNRCghGyCy0
-         D6TcvwIk7aZCYUSZoy4F9tlfM2EvMDG90GEpLZPJREl3AyBcL9d0XXqLJhg3cD0CdODr
-         4vK0fGSlsyieFuLcDefGy6vSJYb4LxclcwLUndq4liZZSsTyVX4VUdi/yoHDAtZtuH89
-         xr3ib70I57ZAB7yXYWZKoCjqsYgF0wK4QV1GplC2XiHFRyDow5v/DOa6vmMgQvWfPZLR
-         3mpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXaxoHgqQteN+CGeHnNbWOOA83Hm/U2+dxutB/vvrkhUSklBEk/PNZREkKif+3z9nDGTXjm2rTM58K+cyTK@vger.kernel.org, AJvYcCXsZ+8fwG6sZSj22FhPgx77+CKUewR+opYXEj7HqzGbCKNOoFtmfX3uKB2Xs4DwsWEXB8ZdanFhXr+N@vger.kernel.org
-X-Gm-Message-State: AOJu0YzejZV/AJ0xYLtPVnq/nWsv10SGvfUMHNIA8C7gepJeITLYXWl0
-	+8vDBMrG4oZKNheWcF4u66DpO8OpJ3tsvuBS3YAlOCjWcOuczcwSBMmMgrfLJUIbVTBk3KEpx7g
-	EtynXNwHyKt6Z0BKGZCaZEx9vjm0GBDw=
-X-Gm-Gg: ASbGncuH3lWDR8H/lEQWc2HvjM9JxG1+YUidA+gOc97E+AxZ5mlU8eCN6fo3QqDJQjx
-	ajfsQrNqWPxpFhfvD4Ks9ri0IQdgR+JzO+wvS4k1GVc7kzYihQNI1gWubkA/rauSfalZ0FJVS5v
-	DE4EPY4dSnQSk56xzcSBDoB9SCJDa4VE/wH8UldHYe7Sg94WP3VfjZKGLrPcmqqBCNM5xmMYQT9
-	K7PU2pnM14PL1SCZKEDaWmCxAH3xT4l52qmilobxthtNmOG8w==
-X-Google-Smtp-Source: AGHT+IFYFXtX+tu/KEl7pQSY71FNh6F7y1XpLJcTeG502OgoDXb/vUP+HRDx37HC/Vxfaeu0jNJZux+/9gdjOo9o0+E=
-X-Received: by 2002:a05:651c:221a:b0:338:164:905c with SMTP id
- 38308e7fff4ca-3380164ae7bmr15568211fa.40.1756942671236; Wed, 03 Sep 2025
- 16:37:51 -0700 (PDT)
+	s=arc-20240116; t=1756942791; c=relaxed/simple;
+	bh=EibqTbrDVCsXwQVRnQHV9k7RYVpWkuN5VkDrAVCGo8E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fPSXkXOBZv6+JjD9TY7vcWddaE8zK7b9QNg+IgQHSJbotKoAxT3lQM/yR+bBFzE6q2j+hrQ0uEsl7Rj2B3bFNDywp7tu3zImCl046kd033rispY/v9v2hNMsCWI0qbHcvFd3Po/i0cDWXTFzDL1M7bN3ZiJ6Ip27fsFI/asin8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from 7cf34ddaca59.ant.amazon.com (unknown [IPv6:2a01:e0a:3e8:c0d0:d63:c24f:a3ef:4dc9])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 9179240A6E;
+	Wed,  3 Sep 2025 23:39:45 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 2a01:e0a:3e8:c0d0:d63:c24f:a3ef:4dc9) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=7cf34ddaca59.ant.amazon.com
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: alexei.starovoitov@gmail.com,
+	yonghong.song@linux.dev,
+	song@kernel.org
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	sdf@fomichev.me,
+	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com,
+	Arnaud Lecomte <contact@arnaud-lcm.com>
+Subject: [PATCH bpf-next v7 1/3] bpf: refactor max_depth computation in
+ bpf_get_stack()
+Date: Thu,  4 Sep 2025 01:39:10 +0200
+Message-Id: <20250903233910.29431-1-contact@arnaud-lcm.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903-imx6_dts_warning-v1-0-1e883d72e790@nxp.com> <20250903-imx6_dts_warning-v1-5-1e883d72e790@nxp.com>
-In-Reply-To: <20250903-imx6_dts_warning-v1-5-1e883d72e790@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 3 Sep 2025 20:37:39 -0300
-X-Gm-Features: Ac12FXyZOBrMIjlst-APzm8-fpvaAVU9IDxp1yLvwRyOjk9Sn4UouD6F8_4boGQ
-Message-ID: <CAOMZO5AGv2ykKmL631A6O2yas-1ffmFaZdHFGMxrFx93G9t8XA@mail.gmail.com>
-Subject: Re: [PATCH 05/16] ARM: dts: imx6qdl-aristainetos2: rename
- ethernet-phy to ethernet-phy@0
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	hs@nabladev.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175694278619.6396.11533088594509506004@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-Hi Frank,
+A new helper function stack_map_calculate_max_depth() that
+computes the max depth for a stackmap.
 
-Thanks for working on this series.
+Changes in v2:
+ - Removed the checking 'map_size % map_elem_size' from
+   stack_map_calculate_max_depth
+ - Changed stack_map_calculate_max_depth params name to be more generic
 
-On Wed, Sep 3, 2025 at 5:20=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
->
-> Rename ethernet-phy to ethernet-phy@0 to fix below CHECK_DTB warnings:
->   arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos2_4.dtb: ethernet@2188000 =
-(fsl,imx6q-fec): mdio: Unevaluated properties are not allowed ('ethernet-ph=
-y' was unexpected)
-....
+Changes in v3:
+ - Changed map size param to size in max depth helper
 
-> -               ethphy: ethernet-phy {
-> +               ethphy: ethernet-phy@0 {
->                         compatible =3D "ethernet-phy-ieee802.3-c22";
-> +                       reg =3D <0>;
+Changes in v4:
+ - Fixed indentation in max depth helper for args
 
-Are you sure the Ethernet PHY is actually at address 0?
+Changes in v5:
+ - Bound back trace_nr to num_elem in __bpf_get_stack
+ - Make a copy of sysctl_perf_event_max_stack
+   in stack_map_calculate_max_depth
 
-The board schematics are often needed to get this information.
+Changes in v6:
+ - Restrained max_depth computation only when required
+ - Additional cleanup from Song in __bpf_get_stack
 
-I'm adding Heiko on CC in case he can confirm.
+Changes in v7:
+ - Removed additional cleanup from v6
+
+Link to v6: https://lore.kernel.org/all/20250903135323.97847-1-contact@arnaud-lcm.com/
+
+Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
+---
+ kernel/bpf/stackmap.c | 38 +++++++++++++++++++++++++++-----------
+ 1 file changed, 27 insertions(+), 11 deletions(-)
+
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index 3615c06b7dfa..ed707bc07173 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -42,6 +42,28 @@ static inline int stack_map_data_size(struct bpf_map *map)
+ 		sizeof(struct bpf_stack_build_id) : sizeof(u64);
+ }
+ 
++/**
++ * stack_map_calculate_max_depth - Calculate maximum allowed stack trace depth
++ * @size:  Size of the buffer/map value in bytes
++ * @elem_size:  Size of each stack trace element
++ * @flags:  BPF stack trace flags (BPF_F_USER_STACK, BPF_F_USER_BUILD_ID, ...)
++ *
++ * Return: Maximum number of stack trace entries that can be safely stored
++ */
++static u32 stack_map_calculate_max_depth(u32 size, u32 elem_size, u64 flags)
++{
++	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
++	u32 max_depth;
++	u32 curr_sysctl_max_stack = READ_ONCE(sysctl_perf_event_max_stack);
++
++	max_depth = size / elem_size;
++	max_depth += skip;
++	if (max_depth > curr_sysctl_max_stack)
++		return curr_sysctl_max_stack;
++
++	return max_depth;
++}
++
+ static int prealloc_elems_and_freelist(struct bpf_stack_map *smap)
+ {
+ 	u64 elem_size = sizeof(struct stack_map_bucket) +
+@@ -300,20 +322,17 @@ static long __bpf_get_stackid(struct bpf_map *map,
+ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+ 	   u64, flags)
+ {
+-	u32 max_depth = map->value_size / stack_map_data_size(map);
+-	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
++	u32 elem_size = stack_map_data_size(map);
+ 	bool user = flags & BPF_F_USER_STACK;
+ 	struct perf_callchain_entry *trace;
+ 	bool kernel = !user;
++	u32 max_depth;
+ 
+ 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
+ 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
+ 		return -EINVAL;
+ 
+-	max_depth += skip;
+-	if (max_depth > sysctl_perf_event_max_stack)
+-		max_depth = sysctl_perf_event_max_stack;
+-
++	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
+ 	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
+ 				   false, false);
+ 
+@@ -406,8 +425,8 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 			    struct perf_callchain_entry *trace_in,
+ 			    void *buf, u32 size, u64 flags, bool may_fault)
+ {
+-	u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
+ 	bool user_build_id = flags & BPF_F_USER_BUILD_ID;
++	u32 trace_nr, copy_len, elem_size, max_depth;
+ 	bool crosstask = task && task != current;
+ 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+ 	bool user = flags & BPF_F_USER_STACK;
+@@ -438,10 +457,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 		goto clear;
+ 	}
+ 
+-	num_elem = size / elem_size;
+-	max_depth = num_elem + skip;
+-	if (sysctl_perf_event_max_stack < max_depth)
+-		max_depth = sysctl_perf_event_max_stack;
++	max_depth = stack_map_calculate_max_depth(size, elem_size, flags);
+ 
+ 	if (may_fault)
+ 		rcu_read_lock(); /* need RCU for perf's callchain below */
+-- 
+2.47.3
+
 
