@@ -1,141 +1,119 @@
-Return-Path: <linux-kernel+bounces-799047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9152BB42647
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:11:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B72EAB42652
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D0C44811F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:11:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E3B97B3C96
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B13B2BDC03;
-	Wed,  3 Sep 2025 16:11:15 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB7F2BE7A6;
+	Wed,  3 Sep 2025 16:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="g0GotaTv"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A6C1E4AE;
-	Wed,  3 Sep 2025 16:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF832BE651
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 16:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756915875; cv=none; b=JJFlu8hQYHmAQRQmbndIDLHCJVJnZGrTB0dnrn5/pZtOiPR4Vh0gTWQeqBjwWIcWx5d4e2BjHIXZViIrO8rjf9PkBMr1ttLXxSJ6IqvIqN6xf2i5X6BVGJFHXgobrhGkrAblkjyeK0F3brEwYBaaHWtvbA4TowwHwPL6Pe7jqds=
+	t=1756915955; cv=none; b=Ilgkr9+mf0kHJhLA2LfATPVtEC2nARYcYj+uyuCb9Tzmj9+xDwZA2Lraw7iN3mtxqTHlSrywSqEaCo33Jf3j6qo3nBB63fufM8eXlWKVhFF3d9Oy+AnzPmhOfiujjSsPvKDNrLBPMOU9satLB8JFbldrjKkOoaWNlEQiHwYKs8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756915875; c=relaxed/simple;
-	bh=IbusH9NWKOse/MmWhLMJmjfclKRjhrodSRa7rAqYtKg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dWhchvWRM/kUdd2DFkmW0m5daHx609iw2EPt5+1ITCCJsuGjco9Vzo5O6b/VETruLkiUhqmBPBrUpWxn9peuo7lN3jnuTrHANTOZ+Apn9y00sgIYQdpJ/FZBs3pWGOfVr78KMAFdf0c0XKuUaF7yssC4yqIw6ItuJIkx5A3r2K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cH6wm3ttyz6M54k;
-	Thu,  4 Sep 2025 00:08:40 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 01B151400D9;
-	Thu,  4 Sep 2025 00:11:09 +0800 (CST)
-Received: from localhost (10.202.227.251) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 3 Sep
- 2025 18:11:07 +0200
-Date: Wed, 3 Sep 2025 17:11:05 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: David Lechner <dlechner@baylibre.com>
-CC: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
-	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, Kim Seer Paller <kimseer.paller@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Nuno =?ISO-8859-1?Q?S=E1?=
-	<nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen
-	<lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-	Marcelo Schmitt <Marcelo.Schmitt@analog.com>, Ceclan Dumitru
-	<dumitru.ceclan@analog.com>, Jonathan Santos <Jonathan.Santos@analog.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>
-Subject: Re: [PATCH v10 0/2] Add MAX14001/MAX14002 support
-Message-ID: <20250903171105.00003dcd@huawei.com>
-In-Reply-To: <dfcdaf9a-1980-4059-9268-2e9ae96831e8@baylibre.com>
-References: <cover.1756816682.git.marilene.agarcia@gmail.com>
-	<dfcdaf9a-1980-4059-9268-2e9ae96831e8@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1756915955; c=relaxed/simple;
+	bh=jVYSc68dlYLIHKx6ZtZFTCSfeXf14R8XdkSzH6Aqiyk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oMBhqGI7UeWWUOS5MxSOPD7HWoOE9YsXEZ4VTdjLFyYlWzuCYUDK1GfqmRuYccoiWZ9KFaZGQ2I4P4tpgyrEjtASaV6j3Ai4Fn3+TiUZ6A555D0grOeY7V1/1gKLARoCp2+sKiTGBMy7sIre2huY5q+MDx/6ERXRec7eGWCIIpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=g0GotaTv; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55f7b6e4145so3327911e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 09:12:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756915952; x=1757520752; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YDv0YkWfgMrbAykmYhgPc5757sIuuDQeVA6MDv7fwBM=;
+        b=g0GotaTvYeDS/wUcPp+TCppD4nJrMcFXWFKkMsl/AXwlo8AjTv7WSr1kbAj6cIm8I0
+         AuXn+bz9/UBFxCv+NSXKgKArQygHeJtyi+5lGTDeiGB+zYCyLNnaWi25OKf3zXMzt3fI
+         a1OIPJxLfhLwXO9w5sjdCo6TQ3E9FdexCJaJ8G7rl+QBHId6kTLYDMVdZKWUiIi5STUs
+         1gZ9A1CbNhksVd3xmYvwfOEIBm/xg3S9kam9sjGcpKCeAA1HiYrvBZBfeAo+ApaSIMx0
+         9j+tKenTmvoJ4JMf2MXAP+YbIULvCMj167877Ochsf4+pFJDeiihsJ4L/do1tkD8DUNd
+         ysbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756915952; x=1757520752;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YDv0YkWfgMrbAykmYhgPc5757sIuuDQeVA6MDv7fwBM=;
+        b=FzLY+50sb+8KuLYr/j0LRrk6wpl728ASQodsGJ1JcD1WUXg2HUFbh3UVoIz2iHm9Ha
+         oPfzu93yCSFhF9x6xpS9botV/2NOrYuxCoCEnAgHJqX7Z4LP5VNXYCQvWYblmiBVMfKg
+         e2468pTXtDZre6ZljfUvmhmhppWZM/O3nRSg1cmCpbInI1HFUrLOHlunXdGvJhmrBySu
+         /58lUVKQd85HkhW6k6nzEiX7Wze0kzlefRtXha3Tf/fZc17tvC7whLUXlTGxuenpuXnk
+         Ol44N9rBRI9JI9rONC5jChvyXgCItYsTN634olSC46BCgAHAeQI68EXssyy3FuU5EuzH
+         W5DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFOF58ygS3dPCwkgUK+El6nVogP87gJYWh7B52PmXwsXdtp2v569D/ZdQNU+vZm3KmLqz9bWMpL0EwTI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw43ryS3UQgcC+YPKmtb4pdEBwKUWnuQHH2px71L6bareO1CFPr
+	PEFeEK7jDHgA2b/OJUWmCwSR/vOgMVfY7zKKL/VbxnBI4zEp0WCMMfnD6As2pcFheR0zNQPeLqR
+	OvmwwLOzrYF8mDDh4F3CQYFeBRUP0cGtdkyGTr2+8dQ==
+X-Gm-Gg: ASbGncuN7h3BonVrb5/l3sBPrkWZhnY7mlyy/bzYusPSB9gG8upbcqonuRRgmdXHce5
+	3isMVdWgusry+EQ/PWijkqVesNdWVFXFJSgjHfDlGtm8WTYVAPmqoYdSSyLDd/mg1TpfQnFtJkM
+	H4OgvX+3DF3Siq59jvEM+UdczGOohVc/jgK2r5HStOkUU0hsUbZmtEjAjRvE2B96hW7a4pHnVxN
+	zJa5T3x3yHQ3jBTjYz+bcA3q0YaKCKHbLtCK3c=
+X-Google-Smtp-Source: AGHT+IG9kbY2aWTL+bQ4CXwiiutR8P33iBoPBAGU9ej78mB+Iz64u9wBkzKBXujWDJSkJohiCiXP1iFkD6uUx+YHjIw=
+X-Received: by 2002:a05:6512:4608:b0:55f:67d5:938e with SMTP id
+ 2adb3069b0e04-55f7094f818mr4090090e87.39.1756915951790; Wed, 03 Sep 2025
+ 09:12:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250825-gpio-mmio-gpio-conv-v1-0-356b4b1d5110@linaro.org>
+ <20250825-gpio-mmio-gpio-conv-v1-5-356b4b1d5110@linaro.org> <aLhhpiVpGscOFydS@black.igk.intel.com>
+In-Reply-To: <aLhhpiVpGscOFydS@black.igk.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 3 Sep 2025 18:12:20 +0200
+X-Gm-Features: Ac12FXyZAxIt_WffCZOnIM4e2vN_EwG-wp8GqcwHD84BnpN3MJueeTCK3eA5rqA
+Message-ID: <CAMRc=Mfk9yBSkMQj_egtfNQ8=A+mvyqqy+_KM690GCV-Sts0Lg@mail.gmail.com>
+Subject: Re: [PATCH RESEND 05/14] gpio: ts4800: use generic device properties
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Yinbo Zhu <zhuyinbo@loongson.cn>, 
+	Hoan Tran <hoan@os.amperecomputing.com>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Yang Shen <shenyang39@huawei.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-unisoc@lists.infradead.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
+On Wed, Sep 3, 2025 at 5:41=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+>
+> On Mon, Aug 25, 2025 at 11:48:46AM +0200, Bartosz Golaszewski wrote:
+> >
+> > Avoid pulling in linux/of.h by using the generic device properties.
+>
+> ...
+>
+> > -     retval =3D of_property_read_u32(node, "ngpios", &ngpios);
+> > +     retval =3D device_property_read_u32(dev, "ngpios", &ngpios);
+> >       if (retval =3D=3D -EINVAL)
+> >               ngpios =3D DEFAULT_PIN_NUMBER;
+> >       else if (retval)
+>
+> Don't we have a method in GPIOLIB that does this (can be called explicitl=
+y by the drivers)?
+>
 
->=20
-> > because of the unique way this device handles communication, such as=20
-> > inverting bits before sending a message, updating the write enable regi=
-ster=20
-> > before writing any other register, and updating it again afterward. How=
-ever,=20
-> > as I am still new to the IIO kernel code, I may be missing something. I=
-f you=20
-> > could provide further explanation or an example, I would be grateful.
-> >=20
-> > Regarding locking, Kim=E2=80=99s original code implemented it, and it r=
-emains in=20
-> > the driver.
-> >=20
-> > I still have a question about using _mean_raw (IIO_CHAN_INFO_AVERAGE_RA=
-W)=20
-> > to read the register containing the latest filtered average ADC reading=
-s.=20
-> > Should I create a v11 version with a patch to include in_voltageY_mean_=
-raw=20
-> > in the file /linux/Documentation/ABI/testing/sysfs-bus-iio?  =20
->=20
-> There is already "/sys/bus/iio/devices/iio:deviceX/in_Y_mean_raw" which
-> I think is intended to cover that.
->=20
-> > The idea is to use in_voltageY_mean_raw to return the filtered average =
-and=20
-> > also to set how many ADC readings (0, 2, 4, or 8) are included in the m=
-ean=20
+Sure but we don't have the same behavior in GPIO core, we don't know
+what DEFAULT_PIN_NUMBER is. I can't test this functionally so don't
+want to change semantics.
 
-0 is an odd value, I assume 1 given average of 0 readings is effectively un=
-defined.
-
-> > calculation. Any feedback on using IIO_CHAN_INFO_AVERAGE_RAW this way w=
-ould=20
-> > be appreciated.
-
-Sorry I missed this question in earlier versions.  I'm terrible at reading
-cover letters!
-
-Definitely don't use the in_voltage_mean_raw value for the control of the a=
-veraging
-width.  That is too obscure and normal convention is read and write of
-sysfs attributes should see effectively the same value (or not all
-either read or write)
-
-This is a little unusual as normally when we see this sort of thing it
-easily maps to oversampling but in this case it's a moving window average
-rather than a downsampling style.
-
-So a few options come to mind.
-1. Treat it as a filter on a channel. Describe with 3dB point and type as
-   box filter.
-   We probably want to describe it as an additional channel to do this or
-   we could have assumption that to read unfiltered, you set the
-   filter 3dB to inf (see other discussion ongoing about that).
-
-2. Add another attribute to add richer info to the in_voltage_mean_raw
-   Something like in_voltage_mean_num.
-   Bit of a special case but we have had the mean_raw interface a long time
-   so we can't get rid of that and it seems illogical to force use of filter
-   ABI to control it.
-
-> >=20
-Other stuff from David followed but I have nothing to add to that.
-
-Jonathan
-
+Bart
 
