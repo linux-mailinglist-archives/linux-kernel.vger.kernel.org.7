@@ -1,146 +1,211 @@
-Return-Path: <linux-kernel+bounces-798247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C21D9B41B2C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:08:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F5AB41B2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E2801BA5469
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:08:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1041D174261
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3BF2DAFDD;
-	Wed,  3 Sep 2025 10:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC50B2E8B6C;
+	Wed,  3 Sep 2025 10:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G1d4eipZ"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=blackwall.org header.i=@blackwall.org header.b="Hl2C5Hct"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CAD255E26
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C80535957
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756894104; cv=none; b=qWZDk8K6cWZth16FF+JGWSJr0zjloJ0AGavo6kxKZouk+aKB9eN+RxWwDvbSBxbRfdxXIh3LkvhNgcq6JpCPy/crwRixxSMGYdSQcAff1sGhRjXDF00SISTeeQuG7mZUSEn4RiTPcSlbEuVWwtgCISWrwxOyrh2gJ8eYHxqeDCM=
+	t=1756894112; cv=none; b=QvvngAWpTUTHDM//atcZGEeGE3XXmoHckMYAiyB/CUzHBoXJp4WodzrY1/V8xe3QBAYLOq3s6u+mqcDPhnE5xCTlNy1i5VxAcPA9AMnkfRsXELnqm5TkQOU40qFZvawqUq19H4CkwA6p5Yk9TcvR08QMchPR4/to8Tvg+MpoDXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756894104; c=relaxed/simple;
-	bh=N60bxwoBK42jCkCkhaiyJ2RpMvLMJ+7cNdqT2d4o0Pw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=fVT5nHcvk9up4xaH+6dpRy/DIuxAz5fdv7YpSSE8fJNjs+K2J/oNd5u9Hu20A7U8k+qd+erTbASWkLskBEq4ilgr0HvEpyKES6lGDn25MYJovd/XrZIG5L1BHBjNFYIcTEziZG58BMqr+AJ24vuy5prUFnOusPZauaYGsfq6kyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G1d4eipZ; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b4f7053cc38so2277728a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 03:08:22 -0700 (PDT)
+	s=arc-20240116; t=1756894112; c=relaxed/simple;
+	bh=qJtX9JrzHUfYr86Q6dN6NST8Wdm1ij9B+wmXyqKJpBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=in/L0+Rq2HedsKq03Y5wZ+PgywuGKrhHBKsaelrzw5Ea/sp4ERB7XoFlqo2tg/Oyqmp0anr8EO85D5BqIL5+eU0RPkkCq0jaTRPiaP0lgVIxTdvVXPYOlJFHkOSMR6+lUSWHyzkuAwzC5eGFI6aoitV1DSWVKcKABhajZBlsfns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall.org header.i=@blackwall.org header.b=Hl2C5Hct; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f6f434c96so4154566e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 03:08:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756894102; x=1757498902; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=m8UwOAQLFxlapL4wJjDPziLZroOio1WKHWOdBe615V4=;
-        b=G1d4eipZmRAJMGwYANGG4YXgARox1s2XRDXBe0IhBdHj52CJ1hDV3FtPUfYXwsUHbp
-         9JQL2iZ92RNL41yNq8f9TOdpLtWCGoS8zkJD+M2XeTktoPTsx98YD61Y378aSB94QuAk
-         QLV5/F//T5vRz+9LW4xN8pxA0CaRvcvZuTxPoquzNdT6vkLfUTcx0NjN+234x9dirtRc
-         b3O2SN15nno6jgQoprBXztLcv1NsMYlaj8m/+30Om8eCGtFgmdlLI8DyIt5BsFuZKYC8
-         RKJ4HsQO3fNbsluZCcIUl0/b3vSfwOA9xTyWCJTfQt/tzGu121TucPN0pYN0A//3n7MS
-         ibDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756894102; x=1757498902;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=blackwall.org; s=google; t=1756894108; x=1757498908; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=m8UwOAQLFxlapL4wJjDPziLZroOio1WKHWOdBe615V4=;
-        b=et0R0cp1vYZmdkSN/pKIZDTTmOyqPHFRsAVQOCYbnVMwScfgAx8VeV4BmhLQgK7xpZ
-         /dUSdL/FACiAIHUk80AZDCcSusDKrlPm8C2IrkMiAGtgFKQ+cLdUAap1x4WRRBx4hg2v
-         bTlK0lQgHdWuPhod3csOpO/Ev+JRg+/IKdm+/NP5y2l1HSGb4qbbh3bLSTR0o7LjNQin
-         fEobBuu4MbAew6UpnFmCrLAQ1k9Ys1nS+fEsPHVZc6YVuUJS8MH+T4d8gFBkIe+rBOf2
-         LEgPu+1dkLbkhoIp0xN6hIGDLpZmie+ryvcBn/lZgjTFm/kkczDAXd0wZPqUCQjACLzt
-         U8EA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQS3Jbp9k+NfBdNkH3+PVjLqMqWlCLr/5DcgVwh62E+F8hU+0ERsG7sIKpuBhRUlN/9ukPbILK2UTXe9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH3POXcWqn3NU7+4WwI54GF1efJDy7ib54YZ2OzMvjPc1MaCGa
-	co7OkIJI1igN4+UJbwc5iQqgg3tHEksCPQXBzwGH8J6wZSdMnP3Q461EcZRiKhq/IEDKzIpS7Q3
-	1pVYL1/h6XMAYwvgPxqobVOdmyS+Alef0yduEPob5bQ==
-X-Gm-Gg: ASbGnctv/B15o2TftrkRTIdAHXfMJI0tklZ/DBq2Eg7yadcqqgfNJvDFjKYQLziiDfd
-	UizUTqEursHtjw94ufWBmKEsR99owOG7GaGS9M0/1cc4VurFP8s3ET9TpiZwZDZ6xNboHi//Nw/
-	lhtDuBaKin9thjYQkR2eT2cj8pH3TjYVJjrDNHG8IQe/L3GDkZUpi9sOXsH01WR1iGh6ebqhJH3
-	lq2wPJTrNpJMfWZABECnjHD9uQq3o0kvxdK3X6d
-X-Google-Smtp-Source: AGHT+IFXPS/WTlketDT7Ry+T0jvnXkJWiEWLHz4L2qR0cIclYFFQxTiDX5NTPXgKjBbk7T07stAxT1Awro5pXflUEHw=
-X-Received: by 2002:a17:90b:54c5:b0:329:8160:437a with SMTP id
- 98e67ed59e1d1-3298160446amr17933963a91.24.1756894102326; Wed, 03 Sep 2025
- 03:08:22 -0700 (PDT)
+        bh=LgxSLuacOSiAliVBo9T6UoRFjla5an5sZrNTYabGCaM=;
+        b=Hl2C5HctOlxi2vtdHe7nvLpyUSA7Yqw2DLgKMvCIEJf/B+rG8o18JXomC/pKJ5aYnq
+         WL2QoxnKduqom3mG1M7jdFxEsP8xwZ4BYEkrcDdUccmZ3yKCxZoUoa6v3SuqMlWjjMp7
+         teiVtRQirfK7+oWc6cEqwDj+f4Lob8Wg9KMavaFPcsEWMpcJUf3/NXaP82QauGFxVKxh
+         bCcl/Jw9t3k6qtiLOTaODHE80So6qMa2vk9z1AXhvkyYvxoLhB+c0UOmgZPWqGQtqvJT
+         iU9Ft82l6MM5nhVSeba99PKqafHwmThqxJhdOt1X5VKV5b9VpzETj5G6oSgNkVaUyaMM
+         RyDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756894108; x=1757498908;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LgxSLuacOSiAliVBo9T6UoRFjla5an5sZrNTYabGCaM=;
+        b=K7ces/4YBzsN9wqj31MpMoJzgFgKQ36zrAolawO0gIZqXP6OO+TCZgBkI5HbdH6IBF
+         mX6Oz7hhAkgcPIpObFO0B3JvJTC5GsuK3BfimVfCumw9tiE4e3tj5FwOSOKq7bmqDqtY
+         gMT7SmY8S3FbzXb80U6eid89/syRGowrY0BD7S9kfUiK/t+OurSGEAamOOn+xkMD7JRw
+         fm7UcRA4UxSQQJY2+/EKNinzg+FoqJ1iKU9DaqjY8QFDNI7kVaJ9UlDEodZYo1gRT9TZ
+         tDaTye/EauDR7cs7TbbVnyY/6gykoxCxjYzNjYKokWFNTMOmmZDKrGsDEqLGrcKkOe9j
+         Y+IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSiSdupRW+/lGDG6/mhLL1QOFbqZ5iQl3Ai6lSeIkOmb7sdQ9TTJxMbT50AgVIQw/0XAHq4e5m21sx9tQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIttflGld0W69e55cN0VV6NqaMk2s5dpxB6uukqVffbRCPJG2O
+	1N8amGtJVu6tOhfjKrEF/+lySGxQW7ae9NhJTyXRnpL6p3sM2F83zwa/3mXc0OdXFIk=
+X-Gm-Gg: ASbGncstE3TAWQFt46VJHmPYyNgJx5PfScpUPE07MyWSV+0bAK5FBmRxgXNXowbh9UC
+	0OMfCI8gOcXGxKnNJvgxMZdMv86rtuWRw3ULVLEqM5DkgA6qDjColRuHtquX1EV/wGYjOwslN8L
+	jTGQy4IYZnyYjJNfjcGI5/GHdpXg6UZq/q2YDsQgUsX8v93yBlJ0TmmGPr6HnEb698rY7ceauYr
+	g5i3b4Ebz5vFGtLOTN19CV+VT7Ijpp4iXzwoPleicU6pkz4ocvFxT2V+DjBBBzIwOYEsVSsgIfc
+	S/pDA9URiuhh6N7OgW2Cdcf3fXtkNd0bbxsD6fsPHUkaLWkE0simZ8Ddlef31prXh8kGueYyQ6z
+	trRHqFV+FrJwnzjcbb44bfnLA65R34qLIxWrpwaMck9tefY/CLqqdxilaNJKcQD0YVjI=
+X-Google-Smtp-Source: AGHT+IHXf+8BRUc9VKztwBDE44uJbCq8HfDYm4XkzCGHzVKe8cY4jFi8CRi3pEVvkXEvbG51NW6TZg==
+X-Received: by 2002:a05:6512:689:b0:55f:54a8:9ec with SMTP id 2adb3069b0e04-55f709b6857mr4930716e87.52.1756894106967;
+        Wed, 03 Sep 2025 03:08:26 -0700 (PDT)
+Received: from [100.115.92.205] (176.111.185.210.kyiv.nat.volia.net. [176.111.185.210])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ad1351bsm411401e87.121.2025.09.03.03.08.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 03:08:26 -0700 (PDT)
+Message-ID: <c1964582-a96a-4b46-afb7-0cdfa8208ef6@blackwall.org>
+Date: Wed, 3 Sep 2025 13:08:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 3 Sep 2025 15:38:11 +0530
-X-Gm-Features: Ac12FXxzMFZM2zT7oOOLzDits6M_03K1dnyTRhCYTrY8QuqW8ke90eorpMyKwq0
-Message-ID: <CA+G9fYsPcMfW-e_0_TRqu4cnwqOqYF3aJOeKUYk6Z4qRStdFvg@mail.gmail.com>
-Subject: next-20250903 x86_64 clang-20 allyesconfig mmp_pdma.c:1188:14: error:
- shift count >= width of type [-Werror,-Wshift-count-overflow]
-To: clang-built-linux <llvm@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>, 
-	dmaengine@vger.kernel.org, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>
-Cc: Vinod Koul <vkoul@kernel.org>, Guodong Xu <guodong@riscstar.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/9] net: bridge: reduce multicast checks in fast path
+To: =?UTF-8?Q?Linus_L=C3=BCssing?= <linus.luessing@c0d3.blue>
+Cc: Jakub Kicinski <kuba@kernel.org>, bridge@lists.linux.dev,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ido Schimmel <idosch@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Simon Horman <horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Eric Dumazet <edumazet@google.com>, "David S . Miller"
+ <davem@davemloft.net>, Kuniyuki Iwashima <kuniyu@google.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Xiao Liang <shaw.leon@gmail.com>
+References: <20250829085724.24230-1-linus.luessing@c0d3.blue>
+ <20250829084747.55c6386f@kernel.org>
+ <bfb11627-64d5-42a0-911e-8be99e222396@blackwall.org>
+ <aLdQhJoViBzxcWYE@sellars>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <aLdQhJoViBzxcWYE@sellars>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following build warnings / errors were noticed on x86_64 allyesconfig
-with clang-20 toolchain running on Linux next-20250903 tag.
+On 9/2/25 23:16, Linus Lüssing wrote:
+> Hi Nik, thanks for the suggestions and review again!
+> 
+> 
+> On Fri, Aug 29, 2025 at 07:23:24PM +0300, Nikolay Aleksandrov wrote:
+>>
+>> a few notes for v2:
+>> - please use READ/WRTE_ONCE() for variables that are used without locking
+> 
+> Just to understand the issue, otherwise the data path would assume
+> an old inactive or active state for a prolonged time after toggling?
+> Or what would happen?
+>
+> 
 
-But the gcc-13 builds passed.
+It's more about marking these as used without locking so KCSAN won't flag them and also
+to clearly show people that intent.
 
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
+>> - please make locking symmetric, I saw that br_multicast_open() expects the lock to be already held, while
+>>    __br_multicast_stop() takes it itself
+> 
+> I think that's what I tried before submitting. Initially wanted
+> to have the locking inside, but then it would deadlock on
+> br_multicast_toggle()->br_multicast_open()->... as this is the one
+> place where br_multicast_open() is called with the multicast spinlock
+> already held.
+> 
+> On the other hand, moving the spinlock out of / around
+> __br_multicast_stop() would lead to a sleeping-while-atomic bug
+> when calling timer_delete_sync() in there. And if I were to change
+> these to a timer_delete() I guess there is no way to do the sync
+> part after unlocking? There is no equivalent to something like the
+> flush_workqueue() / drain_workqueue() for workqueues, but for
+> simple timers instead, right?
+> 
+> I would also love to go for the first approach, taking the
+> spinlock inside of __br_multicast_open(). But not quite sure how
+> to best and safely change br_multicast_toggle() then.
+> 
+> 
 
-First seen on next-20250903
-Bad: next-20250903
-Good: next-20250902
+Well, this is not an easy one to solve, would require more thought and
+changes to get the proper locking, but it certainly shouldn't be left
+asymmetric - having one take the lock, and expecting that it's already taken
+for the other, that is definitely unacceptable. Please spend more time on this
+and think about how it can be changed. Right now I don't have the time to dig
+in and make a proper proposal, but I'm happy to review and discuss proposed
+solutions.
 
-Build regression: next-20250903 x86_64 clang-20 allyesconfig
-mmp_pdma.c:1188:14: error: shift count >= width of type
-[-Werror,-Wshift-count-overflow]
+>> - is the mcast lock really necessary, would atomic ops do for this tracking?
+> 
+> Hm, not sure. We'd be checking multiple variables before toggling
+> the new brmctx->ip{4,6}_active. As the checked variables can
+> change from multiple contexts couldn't the following happen then?
+> 
+> 
+> Start: ip*_active = false, snooping_enabled = false,
+>         vlan_snooping_enabled = true, vlan{id:42}->snooping_enabled = false
+> 
+> Thread A)                     Thread B)
+> --------------------------------------------------------------------------
+>                                br_multicast_toggle(br, 1, ...)
+> 			      -> loads vlan{id:42}->snooping_enabled: false
+> --------------------------------------------------------------------------
+> br_multicast_toggle_one_vlan(vlan{id:42}, true)
+> -> vlan->priv_flags: set per-vlan-mc-snooping to true
+> -> br_multicast_update_active()
+>     checks snooping_enabled: false
+>     -> keeping vlan's ip*_active at false
+> --------------------------------------------------------------------------
+>                                -> sets snooping_enabled: true
+>                                -> br_multicast_update_active()
+> 			         -> checks vlan{id:42}->snooping_enabled:
+> 				    false (from earlier load above)
+>                                   -> keeping vlan's ip*_active at false
+> 
+> Result: vlan's ip*_active is still false even though it should be
+> true now?
+> 
+> .o(Or were netlink and sysfs handlers somehow ensured to never run in
+> parallel?)
+> 
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+They are, netlink and sysfs are supposed to take the same locks so they
+cannot run in parallel changing options.
 
-x86_64:
-  build:
-    * clang-20-allyesconfig
+> 
+> I'm not that versed with atomic's and explicit memory barriers,
+> could that prevent something like that even if multiple variables
+> are involved? Only used lockless atomic_t's for atomic_inc()/_dec() so far.
+> And otherwise used explicit locking.
+> 
+> 
+> 
+>> - can you provide the full view somewhere, how would this tracking be used? I fear
+>>    there might still be races.
+> 
+> My original switchdev integration plan so far was roughly still the same
+> as in the previous pull-request:
+> 
+> https://patchwork.kernel.org/project/netdevbpf/patch/20250522195952.29265-5-linus.luessing@c0d3.blue/
+> 
+> And using it in rtl83xx in OpenWrt like this:
+> https://github.com/openwrt/openwrt/pull/18780/commits/708bbc4b73bc90cd13839c613e6634aa5faeeace#diff-b5c9a9cc66e207d77fea5d063dca2cce20cf4ae3a28fc0a5d5eebd47a024d5c3
+> 
+> But haven't updated these yet onto this PR, will do that later.
 
-Build error:
-drivers/dma/mmp_pdma.c:1188:14: error: shift count >= width of type
-[-Werror,-Wshift-count-overflow]
- 1188 |         .dma_mask = DMA_BIT_MASK(64),   /* force 64-bit DMA
-addr capability */
-      |                     ^~~~~~~~~~~~~~~~
-include/linux/dma-mapping.h:73:54: note: expanded from macro 'DMA_BIT_MASK'
-   73 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-      |                                                      ^ ~~~
-1 error generated.
-make[5]: *** [scripts/Makefile.build:287: drivers/dma/mmp_pdma.o] Error 1
-
-
-## Source
-* Kernel version: 6.17.0-rc4
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Git describe: next-20250903
-* Git commit: 5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
-* Architectures: x86_64
-* Toolchains: clang-20
-* Kconfigs: allyesconfig
-
-## Build
-* Build log: https://qa-reports.linaro.org/api/testruns/29752023/log_file/
-* Build details:
-https://regressions.linaro.org/lkft/linux-next-master/next-20250903/build/clang-20-allyesconfig/
-* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/32B39xPuITjxcbak13h2MrLZJP4
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32B39xPuITjxcbak13h2MrLZJP4/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/32B39xPuITjxcbak13h2MrLZJP4/config
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Thanks.
 
