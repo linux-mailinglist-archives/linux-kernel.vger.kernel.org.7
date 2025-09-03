@@ -1,139 +1,115 @@
-Return-Path: <linux-kernel+bounces-798286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 595CBB41BD9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:28:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA00DB41BDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA5E87A5237
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:27:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B60AE5411C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4748B2F0C73;
-	Wed,  3 Sep 2025 10:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC4A2DD5F6;
+	Wed,  3 Sep 2025 10:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vok1qK4R"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f7eCDwJN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205EF2ED84F;
-	Wed,  3 Sep 2025 10:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69142E9EB8;
+	Wed,  3 Sep 2025 10:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756895315; cv=none; b=EXDm95GfMo3Ece2FuVjUDVHWcfxj3F9MMlU+g+Xyc3PyIfIVZuw8e/KF5coanUupJyeHwR+BJG+RmyD7WZYei+abFdAdUIr20y16L4N2ouVgdPbT0SbMj1E937IGUm2ZRklOZdZQYnBjSxAKPg5PY+R9nFbA+LVohKNdIVAc2vE=
+	t=1756895399; cv=none; b=HJNGbVdYFZj3aMIELMZlgWS/zGojxf8B+Um78qat/OHt1iqBFugxU1IgDuwPBxCnzoFNUsvTQi/IITsG7+4D8KKknZQ//Pg6a2172bSPFO6+nqPAJZoJWDjdsKEU1n71T3z+i3Espf6qNYi2I3rkiPiufhoKIRSqlivZrKsLwvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756895315; c=relaxed/simple;
-	bh=MT33R0JtPbGlbxTpxLWmtl9dyNYq9ekSL901r3ltk28=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KyC2KAkD4nWRnUepXfpaoLxaE9NxUs+HhckFi5sWNoWfRQqYuGS+OApc4WwgcTJf9TO+aYHYBdmNgRiRj1snXy9q+Vevx9eLFbpCNwdm9wdEHfYxhpPfWozgddsm0PQxZQP1gC8ZKy1Rdxkg3BU+DNtK4e2+Op9PYeBajYO18Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vok1qK4R; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24aacdf40a2so9369165ad.1;
-        Wed, 03 Sep 2025 03:28:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756895313; x=1757500113; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w/5sRARH/MrxbC7CqhPIy+nQvt4VVCRT77w8qNlk6QY=;
-        b=Vok1qK4RyMtHu7RYB+2WLbdSwjaxdN7LyB4yRzVJ4xWdVG9lv4ZYnfGPMrIw5p7FBF
-         XkYzfStrnC6T2p706B2nTUEWynDfuiBuZmLqiGCWvmuDLliosWG7ugdaaVwXoh6aqT0O
-         ySazH9riRj/lpXS1gjK1OUGolxD50lGptsIho98NTyqd7f6AQdE4Q6lCwULx7v7qWPsp
-         9hWmf9/2Q72R/cnGn25ItWQRXuL+lAsiupdUQV7vOx3pZW5GZfiUsnw0QACnFaS5hdc4
-         7FiTo8IwIFX1RREi6YGYnbWmDTGJQepIudF66v7PSUNrX8+FwsM8HJkPCeB8AYRgG3qM
-         0kdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756895313; x=1757500113;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w/5sRARH/MrxbC7CqhPIy+nQvt4VVCRT77w8qNlk6QY=;
-        b=Yo8KcezuXZ5FOrLqLMjDjd2rL9ea8T24ecwAvSdSWsWTNoeUX3KNDu6IfzRl+NiaYe
-         LDGC9bi3SbhRzUTZcPnHtU1h4NWlVHcgHs6UWTlDPtpdK5ExUMww0cDZUxcp7iuXdA9v
-         CaPaZ7Ou0zvYCVK2IKUClzmjyyoZ5ClSLSnOeBwgqa38yJXAn4SS/fKisKBvJ5XDDEc/
-         i6FCb1s26ul3KNz5AbvM3xQTq9FrW1c1Y34uOz0uuti5pY8MK/x5Ue8aV8G9Ybvq9a0g
-         Y0Bma8DKYF90H1klorNpyqA+nvNO8MDGHZEBm50cSWuw8ZMVeVSEmdd/Q2BRS8yXvaxA
-         KHCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUw7Tfy8vWb6rDUXUCqzhLVN653ECTmm7dUlS793DcMPtkvh3jBs4iagVlzI6VzyCb/oSc5tUPtaQUKK84=@vger.kernel.org, AJvYcCWZsfQjI9ECFnoV61ivw5lRJRbaRid+0/6IDK48iEVSzy7EuspelkZwyq13PB/8lo6NlquOgC/R8Xm27DkBiqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF1lexfgz4rA7XkpAWX0vvX61LyM7Q/58TW+p2Vxv3CjEUe1Sj
-	IKU9777/3Lgvz/kij9/J5nRmA0e6Ff1TG1NKvD4YX8yY1TviCXCGR2gllagCTIhEpK5FpPqHvXb
-	LYTD/QG2UgRInNLd6q47bu01uWwRqorA=
-X-Gm-Gg: ASbGncv2RKHqWS+XkZYkqLC4b0HL3jcpKbOwz2T/mCKnACtLC52WiK4Dz3QNlCy8uEe
-	hHowk/5IaBx4Tfo4sisdoCmdRlXP6ulD7o5fZf7R8dLN2ccRhfnkoHqIno8el6miy/EOMqbAIoX
-	8vxHx14F8AGDK3DRmyk2mBBYCDbbYbEb4awW8p+qM9NoX4t3vxU2ZITAGF6xBzpCbsjuATZ6O+P
-	ehhCEyN7U2Ilqoyp8adj69F4BtMedmSHmV1Crk5hPRf5oPfrnJe0HnenqXPA4+F2SJwYITvlS9g
-	UPs1sykJFc+mUNOywyuqjLud5v7dfKobB4uJ
-X-Google-Smtp-Source: AGHT+IFEKoh9Yoyy+qA7m2lg3d/RWinqGDyMV3KpWiUNfa6fSFU2oSwzJzlC58Z+3GwCct3Y994q9UEQVEUOAmf9XNQ=
-X-Received: by 2002:a17:902:c409:b0:248:79d4:939f with SMTP id
- d9443c01a7336-2490fc97225mr123506415ad.7.1756895313392; Wed, 03 Sep 2025
- 03:28:33 -0700 (PDT)
+	s=arc-20240116; t=1756895399; c=relaxed/simple;
+	bh=9ChJERbF28V62YULxJTUijcjwER+YGRa4ul/JAPdBug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y5DqdVKHkfsFH6NG3Tqe5TvMv0kHCt7NaUC8u6vKLwoYo/O8UToNHzcFDhAD7kDpi448c4cFzPPD/rnTqA+P+nx0P/hgwSb4zS6N+4JXhT8WqqRcri2vONWxTQgATN5mP8m0QHCaFlP1rDFugR5dQMO2StV70BrKh4t5Qhr5sZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f7eCDwJN; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756895398; x=1788431398;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=9ChJERbF28V62YULxJTUijcjwER+YGRa4ul/JAPdBug=;
+  b=f7eCDwJNINczRSOJbSDtejE8HIl5JyRZNBO9YIW1lDj0RU/AKr0tjeYl
+   o69nrjZylgE+zmdn1T27iUNOnxAweL7Z2uKy0N0Prt8rKqWWEgmCOr/A7
+   o9usdklT6t7v8FiFSQbetTaUTgr1g6uqXAC+KCs/Z5inQGJiNTEOmXhgR
+   3HL2uYdojrEXrwHNnFTIpbCAqtOqQM9qqq5yW3FrF8lt8zVrKBq5RWRMq
+   KVtalt8uLWUVTR5yFawK0wM9o9/p2JAuMdeGSW9KzFSsFFIRamyB+LXBn
+   i6Oaeq4RcswIW3MapG6HXSmCTgaPjz7C3QmSi5WcqKnIYLSlFAgi5ICd5
+   w==;
+X-CSE-ConnectionGUID: gP2H2uVdSUGJ0Qz3+zDl/A==
+X-CSE-MsgGUID: 9F9eOb4eSBy7pXP5mh2Neg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81789240"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="81789240"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:29:57 -0700
+X-CSE-ConnectionGUID: 98hTFI56SnCjvurjbaAATQ==
+X-CSE-MsgGUID: 8u/XXmfRTBqszrgcQw5jZw==
+X-ExtLoop1: 1
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:29:55 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1utkkS-0000000AxMd-11zh;
+	Wed, 03 Sep 2025 13:29:52 +0300
+Date: Wed, 3 Sep 2025 13:29:52 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] device property: Add scoped fwnode child node
+ iterators
+Message-ID: <aLgYoLa6LHEQIdbC@smile.fi.intel.com>
+References: <20250902190443.3252-1-jefflessard3@gmail.com>
+ <20250902190443.3252-2-jefflessard3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903095315.15057-1-yangtiezhu@loongson.cn> <20250903095315.15057-4-yangtiezhu@loongson.cn>
-In-Reply-To: <20250903095315.15057-4-yangtiezhu@loongson.cn>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 3 Sep 2025 12:28:20 +0200
-X-Gm-Features: Ac12FXySq6GpPGdcsnBaBnSmKXNhwG7-Ypt-SnPNuOd4ijDkvAUU0G7fjPzdayc
-Message-ID: <CANiq72n5hg-ZyGV4oEca9iCbmQByanFUpNTkS=QmE1k8MUBR8w@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] LoongArch: Handle table jump option for RUST
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	WANG Rui <wangrui@loongson.cn>, rust-for-linux@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250902190443.3252-2-jefflessard3@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Sep 3, 2025 at 11:53=E2=80=AFAM Tiezhu Yang <yangtiezhu@loongson.cn=
-> wrote:
->
-> When compiling with LLVM and CONFIG_RUST is set, there exist objtool
-> warnings "sibling call from callable instruction with modified stack
-> frame" in rust/core.o and rust/kernel.o.
+On Tue, Sep 02, 2025 at 03:04:39PM -0400, Jean-François Lessard wrote:
+> Add scoped versions of fwnode child node iterators that automatically
+> handle reference counting cleanup using the __free() attribute:
+> 
+> - fwnode_for_each_child_node_scoped()
+> - fwnode_for_each_available_child_node_scoped()
+> 
+> These macros follow the same pattern as existing scoped iterators in the
+> kernel, ensuring fwnode references are automatically released when the
+> iterator variable goes out of scope. This prevents resource leaks and
+> eliminates the need for manual cleanup in error paths.
+> 
+> The implementation mirrors the non-scoped variants but uses
+> __free(fwnode_handle) for automatic resource management, providing a
+> safer and more convenient interface for drivers iterating over firmware
+> node children.
 
-Thanks for fixing this! I have seen it for a long time in my CI:
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-I think this is:
+-- 
+With Best Regards,
+Andy Shevchenko
 
-    Reported-by: Miguel Ojeda <ojeda@kernel.org>
-    Closes: https://lore.kernel.org/rust-for-linux/CANiq72mNeCuPkCDrG2db3w=
-=3DAX+O-zYrfprisDPmRac_qh65Dmg@mail.gmail.com/
 
-Perhaps consider adding an example of the warning in the log for
-future Lore searches:
-
-    rust/core.o: warning: objtool:
-_RNvXs1_NtNtCs5QSdWC790r4_4core5ascii10ascii_charNtB5_9AsciiCharNtNtB9_3fmt=
-5Debug3fmt+0x54:
-sibling call from callable instruction with modified stack frame
-
-> (1) Please install rustc 1.78.0 (without annotate-tablejump option) or
-> 1.87.0 (with annotate-tablejump option), do not use the latest version
-> for now, otherwise there may be build error:
-
-Nightly is not a released version, and it is expected that it breaks
-from time to time. Even beta may break. We are ~2 months away from
-that release.
-
-In any case, I don't think this information is related to this commit.
-
-> +config RUSTC_HAS_ANNOTATE_TABLEJUMP
-> +       depends on RUST
-> +       def_bool $(rustc-option,-Cllvm-args=3D--loongarch-annotate-tablej=
-ump)
-
-I think this may be fine given it is `-Cllvm-args` and anyway
-LoongArch doesn't use a `target.json` (which is great!), but please
-double-check reading what I wrote in 46e24a545cdb ("rust:
-kasan/kbuild: fix missing flags on first build") just in case.
-
-I hope this helps!
-
-Cheers,
-Miguel
 
