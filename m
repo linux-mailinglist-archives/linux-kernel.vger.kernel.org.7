@@ -1,162 +1,246 @@
-Return-Path: <linux-kernel+bounces-798101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FE24B4197B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:00:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB39B41983
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D28071790E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:00:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 481A23A9B58
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7008C2ED85D;
-	Wed,  3 Sep 2025 09:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32C42ED85D;
+	Wed,  3 Sep 2025 09:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="m/QHDpo6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="JVVbtdeQ"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1E02DFA2F
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635EB1A7264;
+	Wed,  3 Sep 2025 09:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756890043; cv=none; b=sT0uzXvJli1qwl+KTw7TJdOXYHnus33bXkoyPZoFVde/VqMshI09VYnBaS/9ihY4phZeQRyWADC69bysfOh3eb8M7SuL8lLg1G0doPTDLEvY2FiHE+sbNVp1QOLssurSaPQXEtkqLn8IVkx27o+EwNH1mi2TAJ09g045YBb7vqU=
+	t=1756890088; cv=none; b=uIrOwiENqpZr6iRWHrlVTEk5V/PC2aEqv+1yvS/9ikR/M5+NZBdWbN2RilTNqQdjUxLW1VEVDpwKISj2u8Nm0l+/bC75/gaUiPwSAlAn+ROg1YgrhECUJXGkJlQMQ3FQ9k8Th5rdsv5Er6TcIXWEXl3Ye8B1M0KF9anKjHI6ngs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756890043; c=relaxed/simple;
-	bh=SbOOxV6Xe6CCn43EVipuJCMXzlrEjAWOJ8RB3sOYs40=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k5jUA+r274cUEKBMqVykNbdX7gjmoh8Ap2NmNU1n3GNKmbAUH/vF7PS2G/Vul5L+BR+EH90tkIebTb7wo81gnk72iZZ3DMQkptaZdoONysar+9dpTQigpN37QH6yw+UVlP3OPnuShwnNcc0MDOWma1upluTbIJbSg7SoKUUqksc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=m/QHDpo6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5832I5JL004336
-	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 09:00:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	k+LEakHcMi5MUQWyBYBQ5DPF7nqZWUcEjlntDch+SZE=; b=m/QHDpo6ewiGGnsx
-	V6Ae1JGQA5xNOELboQVqUHP360hdBoyxKuB6UsUSUzYLGVLIhdAQcbhAB/7VuTAQ
-	sXKLF7bjKErAg0G/YpDnzQUMdqw0PgX4xLzHCfLoF2YnoxsQ5/hWC9ak0HloTQ77
-	ABoxg0pMmRNe7eUog8wMsleDrOsreXlzKVkHheyHcq/dYhwAktK+4B2CQ5fsMU66
-	gv92CKC4FcszhmM8dv+nHeQoKmiW2hGZ9TSE0ZS7CjCF/n2Tftct/TyIZblFF+Z3
-	Hi9ICIFEq/lyTuoLybwtWuf15zeOsuSqluEK3tzOkYRB3RREZAlMtnRGZiqoXZAR
-	CQ91/Q==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urmjjvmk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 09:00:40 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b3349c2c38so72329211cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 02:00:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756890040; x=1757494840;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k+LEakHcMi5MUQWyBYBQ5DPF7nqZWUcEjlntDch+SZE=;
-        b=qg4Ui7a2qZjv8IfiXmnjyHBEHQGwf6wuzNPs3xqprKX+pTwkNAVQ4/dbA97+qjbEV2
-         /gXlm8r3E994DcaUKWf10HOVdr7+EkN8IGP6j8vRGtyvmajncMcDizXL0k0WyUdbC7um
-         Dlo8jbfZO3kKmoRO5RDoqrVoiR/P5B1pwNZ6wo5RXieeHLt8bxrhOIVUJeDglapII2AF
-         /Xg/Lwaxrkf5q0EDZpPYQZaaP/pVlfP2YxAYp+JumyQ04xyYWir6IqXfmByQ22/LG9Ic
-         /xYSnUg2IwsLMJTbwREk1yovHxnJNkheo/Hn6L0bxIRDWQsFWeiiTlercFp7Kc49hv/n
-         aGhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXov7YZKHC7KKpPgR+Cd1kEeUIP1QelUS1ijyjFd7fE5d2Ma+hDXL7XIevR4f/h2UcH5jLg8nXCKySI68=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJTsPoeySyvqbC3jAa+jlN4tT8am/OwmWctYAT9FAUkPKmI8C7
-	PcDgbCzghrpI6rWVugNAcuKmz16ewzKBln8uzkyHO4nGXlQxWBBmJ5dQ1wmqHUzOvoTnYdi86KO
-	/oeErAV9XgLs74Y9Sd8XFTUn2RrtDKurPMQwX1Pvuztuh8N7J06IKjZz6UHa04HXVWwQ=
-X-Gm-Gg: ASbGncuBvErxfkqLW2qpkamvI6/1Dvgcf9+zD91L9Pq7IS3f8biFzKLZW9JaDNjc80D
-	qquy6OzsqLM7pz4u+2rbK+3Vt7lmZslYEsinJTA2E2vepATdMMUwB5RczGc+JYyYPwjpeR2VfsQ
-	N/gNsjQqnjne49ilMi4XCsjJCVOab2xCcBm+iPCi75pDAySspxb6cURw6CuIN2PTmEBJrAppszn
-	ANnCvqd7zeHHARX+H86SpzLxPd4xHVv8Ch6hl6WbcakPZplxhTlXcTsAlM7DKyYiKIuI4GDd0pt
-	28BZXXY4tabIOyIFmu2dJ+cpb+u9t2PSMF0NSa2g0klGrFIE2bbTD8XXvFdHWejrXlc=
-X-Received: by 2002:ac8:5789:0:b0:4b2:d1c5:ee8 with SMTP id d75a77b69052e-4b31dccd8d7mr171353931cf.74.1756890039884;
-        Wed, 03 Sep 2025 02:00:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEG1UDc3HGeDuXiKdWk0dURpTABwshxbMsyQ9pUNYSRcUghr0tBI4RwEEBCyMHDrmUtaG/ajQ==
-X-Received: by 2002:ac8:5789:0:b0:4b2:d1c5:ee8 with SMTP id d75a77b69052e-4b31dccd8d7mr171353561cf.74.1756890039313;
-        Wed, 03 Sep 2025 02:00:39 -0700 (PDT)
-Received: from [192.168.68.118] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45b940bbc0dsm75958965e9.2.2025.09.03.02.00.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 02:00:38 -0700 (PDT)
-Message-ID: <e6ae9e25-1a92-412f-9916-4c92676b8c5f@oss.qualcomm.com>
-Date: Wed, 3 Sep 2025 10:00:37 +0100
+	s=arc-20240116; t=1756890088; c=relaxed/simple;
+	bh=RUEmUKNYm6/iJgFZj0dysnF0Rzwitb3AXoVyRx2E8CQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YgxpiNPG9tQjXHhHGrf1BZGHqJvA+fGn4Jejqc0CPeMdMjq4wV3uWMMNA/6BJR4nE4Jo3Jp+0pJf5xljaUIuNYm93Np80HBat9j/0BTEIV7PCRtlNB9c69R6RbXUDwfj9PAP00gve43aLRwDQcN23VzVLd6iGfm801N+bIOOjUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=JVVbtdeQ; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 6151BA079A;
+	Wed,  3 Sep 2025 11:01:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=xI8kR4Vsm264OZYzKPTA
+	7zHRqZ4MLO4Aq50kaY8JXe0=; b=JVVbtdeQaUMRFpo8oLiVhxU2KVOGZNKGqec6
+	reucawqe031zerfch0qTB/uxnc73NIhehHNTyrOPoocvzIKPNFjIzTCbHkzPAD73
+	xeRrC6hoeHBawJBst9kgS6vFTWUmOdVBJuIKdx2iuClwaWtoeU6HHnAvT+oy1S9p
+	iwubdydIXaRR6hVtWaBJAepotRXK02k3H8LyAdthSaIwy8wTqGvjyeBnqnJ/ty9S
+	34rDLSgbCBHCs2p1gEHtyhnaLHKEYF4HaN7knCd0LQ+nYjw/1VsFZhleugPdUhNr
+	TpUP+upCeI8eQI0835R/NaTFUNISyENHuv+vovgtB26qdPOAt7vUQEhwLTeBS9UB
+	efgkNqA+DvjL6ymLu6PLkBI5JfesRa66inSU1R2tg5YefN1k+LQIQY3FNPOuLlwO
+	4Tw2JhB2VsiSzqQZfKV6OmmHXVXgUg1mMR96FAu93tbCZKrQshft+Wiq7P+VY/vA
+	P2Udb+T1aP1FgvLoErYOhpX4LsMq7BdaEgK0ZeyOBHywG5hOXtQLF/NE9XPJA9Go
+	Efe5gkMMjCGD+K9LIh/d4EorwsyaUY036+ToGWb9tkosksVCVYW95qJcHbwVBejs
+	ec8yBV4ClKrBeIRN6r5e8i4Ko8OgzHcbDoqtS4wVLTW0X8EiMhEdqQSJRy8YnUvW
+	7qdS5sY=
+Date: Wed, 3 Sep 2025 11:01:20 +0200
+From: Buday Csaba <buday.csaba@prolan.hu>
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>
+CC: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, <devicetree@vger.kernel.org>,
+	<imx@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] ARM: dts: imx6ul-tx6ul: Switch away from deprecated
+ `phy-reset-gpios`
+Message-ID: <aLgD4Dx828nKXfkC@debianbuilder>
+References: <20250815-b4-tx6ul-dt-phy-rst-v1-1-9b65e315d9d3@prolan.hu>
+ <fa7e2cef-5242-4f3b-84ea-d77b959f6bdb@pengutronix.de>
+ <c85a94ee-59e1-47d6-8200-813bb434caf2@prolan.hu>
+ <1bf75411-4a51-4103-b314-a8a7253bafca@pengutronix.de>
+ <aLf162kc8_VB163Z@debianbuilder>
+ <e3966efb-9f81-4c01-86f3-c89864a89173@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] ASoC: dt-bindings: qcom: Add Glymur LPASS wsa and va
- macro codecs
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Cc: srini@kernel.org, broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, perex@perex.cz, tiwai@suse.com,
-        linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250902140044.54508-1-srinivas.kandagatla@oss.qualcomm.com>
- <20250902140044.54508-5-srinivas.kandagatla@oss.qualcomm.com>
- <20250903-diligent-tunneling-angelfish-bae3b3@kuoka>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <20250903-diligent-tunneling-angelfish-bae3b3@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=OemYDgTY c=1 sm=1 tr=0 ts=68b803b8 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=cQA_P7Yw0F7ou3pLjNcA:9 a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: DBrQpTXRvrEE-j6V7PpzwoxIfBVmxs4A
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNCBTYWx0ZWRfXxN6CtMEoolsM
- CoIzKUTH0iaWJ0WbL66z63jEFZAM25UAtw0o6d0UIBiSlTtc9WfqwR3ko2kNfO4EnuWNtCsHotQ
- 29B0kNEmPCMiyNk43bnQNiThJh1eUbPvgPfwhMrTx/lwkB7Znb5ObSX87czyd6f7mA5uxUAbCps
- RleqjiQth+6yTDJUoJSU2nyUWE9f0URpveQHMBLQSsZSntD9iObifm77MpjpLAEn39AhG1oD2Ng
- GUdbmAWXz1cmkuMC7r/lNAt8tz18IYaOexOBPGaApqteDv+VhQuvO6hlD6VxZcwA67jzMZQEb5z
- 9bqOj6ToljQtXHSpqaw6ldizpbyT7kXYhlsqLRTu/QMda+dVbV4KnABskuO7izl1ttBiydTjml5
- GIoVScku
-X-Proofpoint-ORIG-GUID: DBrQpTXRvrEE-j6V7PpzwoxIfBVmxs4A
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_05,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300024
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e3966efb-9f81-4c01-86f3-c89864a89173@pengutronix.de>
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1756890080;VERSION=7998;MC=2853248995;ID=1364479;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155E637062
 
-
-
-On 9/3/25 8:57 AM, Krzysztof Kozlowski wrote:
-> On Tue, Sep 02, 2025 at 03:00:42PM +0100, Srinivas Kandagatla wrote:
->> Document compatibles for Qualcomm Glymur SoC macro digital codecs
->> (VA and WSA), compatible with previous generation (SM8550 and SM8650).
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->> ---
->>  Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml | 1 +
->>  .../devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml          | 1 +
->>  2 files changed, 2 insertions(+)
->>
+On Wed, Sep 03, 2025 at 10:43:46AM +0200, Ahmad Fatoum wrote:
+> Hi,
 > 
-> What about tx and rx? Not yet ready?
-
-Correct, I have not verified tx and rx yet on this platform which is why
-I did not set the bindings for it yet.
-
-TX and RX codecs are using SDCA so its possible that there might be some
-delta here.
-
-
---srini
+> On 9/3/25 10:01 AM, Buday Csaba wrote:
+> > On Wed, Sep 03, 2025 at 09:50:08AM +0200, Ahmad Fatoum wrote:
+> >>> [1] https://lore.kernel.org/lkml/20250709133222.48802-4-buday.csaba@prolan.hu/
+> >>
+> >> Is this mainline yet?
+> >>
+> > 
+> > No, it is not. It was never the most beautiful piece of code, so I understand
+> > that.
+> > 
+> > But if you could give us some guidance, that would help a lot.
+> > 
+> > Specifically:
+> > 
+> > 1)  If `phy-reset-gpios` is deprecated, than we should start treating it as
+> >     such, and not rely on it in future releases. Perhaps we should also add a
+> >     warning message, when it is found in the device tree.
 > 
+> Disagreed. Deprecated properties should be removed only about clarifying
+> the impact of the removal on users. Replacing a deprecated property with
+> an expectation that bootloader board code has deasserted reset is not
+> acceptable IMO.
+
+I was only trying to reason, that since `phy-reset-gpios` has been marked as 
+deprecated in 5.3 (which was 6 years ago), perhaps a inserting a warning note
+now would be appropriate.
+But that is related to the driver, not the DT.
+I completely agree with the rest.
+
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > 2)  On the other hand, if it is here to stay for a long time, it should be
+> >     fixed. Now the gpio is claimed during fec_reset_phy(), and never released.
+> >     It can not be used by the driver later, like in fec_init(), because the
+> >     gpio reference is only stored in a local variable of fec_reset_phy().
+> >     Previous patches that would have stored the reference in the driver were
+> >     rejected on the grounds that it is deprecated. But if it is not, then we
+> >     can create a patch that would make it work properly.
 > 
-> Best regards,
-> Krzysztof
+> Ye, this needs to be solved differently.
+> 
+> > 3)  Andrew pointed out, that resetting a PHY before probing it may cause
+> >     regressions. That is certainly a valid concern, but for most of the 
+> >     devices resetting it means starting from a known state, and should be the
+> >     default. But we could create a device tree property, that controls this
+> >     behaviour.
+> 
+> Marco had a more involved series to address this:
+> https://lore.kernel.org/all/20230405-net-next-topic-net-phy-reset-v1-0-7e5329f08002@pengutronix.de/
+> 
+> But it went no where. I don't recall the details.
+>
+
+Interesting. So Andrew is not against resetting before probe, it just has to
+be done properly. ;)
+ 
+> I think the best you can do with existing bindings is to give your PHY a
+> compatible that spells out vendor/device ID, e.g. ethernet-phy-id0141.0dd4.
+> 
+> Then Linux can probe the device even while it's in reset.
+> 
+> The downside is that it hardcodes a specific PHY ID, but this may be
+> acceptable here.
+
+Yes, for now that would be acceptable for us, with some loss of generality.
+
+Regards,
+Csaba
+
+> 
+> Cheers,
+> Ahmad
+> 
+> > 
+> > Regards,
+> > Csaba
+> > 
+> >> Cheers,
+> >> Ahmad
+> >>
+> >>>
+> >>>>>
+> >>>>> Co-developed-by: Csaba Buday <buday.csaba@prolan.hu>
+> >>>>> Signed-off-by: Csaba Buday <buday.csaba@prolan.hu>lan8710 reset
+> >>>>> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+> >>>>> ---
+> >>>>>   arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi | 8 +++++++-
+> >>>>>   1 file changed, 7 insertions(+), 1 deletion(-)
+> >>>>>
+> >>>>> diff --git a/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi b/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
+> >>>>> index f053358bc9317f8447d65013a18670cb470106b2..0a5e90704ea481b0716d6ff6bc6d2110914d4f31 100644
+> >>>>> --- a/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
+> >>>>> +++ b/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
+> >>>>> @@ -246,7 +246,6 @@ &fec1 {
+> >>>>>       pinctrl-names = "default";
+> >>>>>       pinctrl-0 = <&pinctrl_enet1 &pinctrl_enet1_mdio &pinctrl_etnphy0_rst>;
+> >>>>>       phy-mode = "rmii";
+> >>>>> -    phy-reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
+> >>>>>       phy-supply = <&reg_3v3_etn>;
+> >>>>>       phy-handle = <&etnphy0>;
+> >>>>>       status = "okay";
+> >>>>> @@ -262,6 +261,13 @@ etnphy0: ethernet-phy@0 {
+> >>>>>               pinctrl-0 = <&pinctrl_etnphy0_int>;
+> >>>>>               interrupt-parent = <&gpio5>;
+> >>>>>               interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
+> >>>>> +            /* Reset SHOULD be a PHY property */
+> >>>>
+> >>>> Comment belongs into commit message.
+> >>>
+> >>> Agreed.
+> >>>
+> >>>>> +            reset-names = "phy";
+> >>>>> +            reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
+> >>>>> +            reset-assert-us = <100>;
+> >>>>> +            reset-deassert-us = <25000>;
+> >>>>> +            /* Energy detect sometimes causes link failures */
+> >>>>> +            smsc,disable-energy-detect;
+> >>>>
+> >>>> Unrelated change not described in the commit message.
+> >>>
+> >>> Oh, this has accidentally made it into here from our DT. Thanks for spotting it!
+> >>>
+> >>>> Cheers,
+> >>>> Ahmad
+> >>>>
+> >>>>>               status = "okay";
+> >>>>>           };
+> >>>>>  
+> >>>>> ---
+> >>>>> base-commit: 0cc53520e68bea7fb80fdc6bdf8d226d1b6a98d9
+> >>>>> change-id: 20250815-b4-tx6ul-dt-phy-rst-7afc190a6907
+> >>>>>
+> >>>>> Best regards,
+> >>>>
+> >>>>
+> >>>
+> >>> Bence
+> >>>
+> >>>
+> >>
+> >>
+> >> -- 
+> >> Pengutronix e.K.                           |                             |
+> >> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+> >> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+> >> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> >>
+> > 
+> > 
+> 
+> -- 
+> Pengutronix e.K.                  |                             |
+> Steuerwalder Str. 21              | http://www.pengutronix.de/  |
+> 31137 Hildesheim, Germany         | Phone: +49-5121-206917-0    |
+> Amtsgericht Hildesheim, HRA 2686  | Fax:   +49-5121-206917-5555 |
+> 
 > 
 
 
