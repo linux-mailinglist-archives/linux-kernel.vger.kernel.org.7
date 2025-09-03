@@ -1,83 +1,64 @@
-Return-Path: <linux-kernel+bounces-798192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2BB2B41A82
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:49:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C266B41A7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9265D5641D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:49:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 222BC1BA4C3A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F81D2701D9;
-	Wed,  3 Sep 2025 09:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2279225F96D;
+	Wed,  3 Sep 2025 09:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jHw1hgDZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vEpkRS8e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B0E26B95B
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D3321A425;
+	Wed,  3 Sep 2025 09:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756892985; cv=none; b=d8fKdtvd8mrrclmD3c1ibP9RADtf0ueV61E2h7/pbqNbvSoLu7o6xusjs36b41Ow+OiFtAJkQ9GJrh/4egUl9U64g1GbVv/7rENrrVJF+LVAJhbGP8xj6vD/Yq0wFDAnYCwsaA/Ik3VzjIMY7T37NF4qwj0ZS3sPqbI221SO8SM=
+	t=1756892895; cv=none; b=kJlYJfhYZpZpdDGsvDVw9kE6iT4kfZmS3w1qCIdcCVlAijCwV+Pa5VZfImeCHvPgjygCu1Eh0RllYwYzd15eKipD38nXXVfMNIgvUKVFnlApL9QAk2ZwdGunpuQb5YNWQBDjx2BJBDfOku6tQzl5POzkNifd1zen3TPR0Ujdu1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756892985; c=relaxed/simple;
-	bh=/GXQxrq4olsaQZF0tYUyMIdCmN1wPnFvKRAgcOdpAvM=;
+	s=arc-20240116; t=1756892895; c=relaxed/simple;
+	bh=bMCZYJzX4r1caQDY+4LLdVSIBbbsh6amHV8lHquVp1U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BZfvkHy5Q6DoxQj75uPKR0301fsoS08Lq3z0grgcYMo3IjGQLTz8pLqdilY1BvbifoYZEUYLcm4LvbEtZTocK/iaql+lLAkTDaDJYiIzn0BYYKdHwLlPWD5fCvQs2O86O4FrrV9CosQ12zhCTLuyR5oRbOheO++vtHiAx/TQT+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jHw1hgDZ; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756892983; x=1788428983;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/GXQxrq4olsaQZF0tYUyMIdCmN1wPnFvKRAgcOdpAvM=;
-  b=jHw1hgDZZw2ED9GeNEFJA/gfxnOy2uGfgqz4aGNhrdA2/4/IjYNVmLA5
-   d9mv7w0lweZT8/ldbTU+DqL+xnAHZJY+n8xKClpRH0d5tP0IpX8bz5dlj
-   yZzFvKRsKn8xLwJMc0NwP6KtoVygeaosWhHxWYidnIdJi4TsvaR+kxGcW
-   k25mV3Ys42wx2dS3ZCXGX7vpKGeyoDQ7LDdubEBhkYLIA3174Mp8e/j1j
-   Dgm1wXLkYeo7RO3mlk0zjYz1HK4CiX3ChRuDKb0j9h+fi6fiFYRAzGSBa
-   cwVhhdLDo0qdp9ggHov46PR7omEfOnZyEIhJy76UPOWERqHvJrRhb4Vmm
-   Q==;
-X-CSE-ConnectionGUID: 5VHN1XxRSk6MFRBo9ZPBWA==
-X-CSE-MsgGUID: q89vjHnxQVqPMyv7xfkabg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="46774649"
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="46774649"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 02:49:42 -0700
-X-CSE-ConnectionGUID: pySSvOT5SSeshVvcZ+dbcw==
-X-CSE-MsgGUID: ecH8QOpuQ46rlnkuzuD9Cw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="172006550"
-Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 03 Sep 2025 02:49:35 -0700
-Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1utk6m-0003il-0P;
-	Wed, 03 Sep 2025 09:49:09 +0000
-Date: Wed, 3 Sep 2025 17:47:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yueyang Pan <pyyjason@gmail.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
-	Vishal Moola <vishal.moola@gmail.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Usama Arif <usamaarif642@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	kernel-team@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] mm/show_mem: Add trylock while printing alloc info
-Message-ID: <202509031744.HcibSETe-lkp@intel.com>
-References: <1491df0ac12a7626b7c9b00e26a6e10adb8c9045.1756827906.git.pyyjason@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GaqCTqfHn5gVQSTEsnyc6uI5mmI0aNLZdaSHIH84bs2AILRumVPXTshZEAHJbnqrBQMkUiu2l25EEITJfS278eoDDv9eOym9mSg6mz+MWCNbPYr+C03upQt5OEGUw/AoxAa//SgLRvmSDB+1GHhF80dOo7GmWuJjVaG7W6lIJyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vEpkRS8e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C0CFC4CEF1;
+	Wed,  3 Sep 2025 09:48:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1756892894;
+	bh=bMCZYJzX4r1caQDY+4LLdVSIBbbsh6amHV8lHquVp1U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vEpkRS8ep6J0XdI2ePyO0Jn8LI59zyV42pu0BySpJ5arERSo6pTQc/QEcrkaEoogC
+	 sdnI9h5eN8VfuJ6pJ6v+6OFdyp8PqPQRn1R8KNWdH+cKT9Ribn3OtBnM7LQbuSFCFJ
+	 lQaDRtXmrPksc8lx1Yo8JVnN4P/MARyDX0Q8aRno=
+Date: Wed, 3 Sep 2025 11:48:11 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org, Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+	clang-built-linux <llvm@lists.linux.dev>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Ben Copeland <benjamin.copeland@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH 5.4 00/23] 5.4.298-rc1 review
+Message-ID: <2025090317-envelope-professed-b38a@gregkh>
+References: <20250902131924.720400762@linuxfoundation.org>
+ <CA+G9fYtoKARW00i0ct=M+-1OAWoQhE_rvsS6RJPPQ7YEcZ4C1w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,81 +67,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1491df0ac12a7626b7c9b00e26a6e10adb8c9045.1756827906.git.pyyjason@gmail.com>
+In-Reply-To: <CA+G9fYtoKARW00i0ct=M+-1OAWoQhE_rvsS6RJPPQ7YEcZ4C1w@mail.gmail.com>
 
-Hi Yueyang,
+On Wed, Sep 03, 2025 at 03:11:26PM +0530, Naresh Kamboju wrote:
+> On Tue, 2 Sept 2025 at 19:17, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 5.4.298 release.
+> > There are 23 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.298-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> 
+> The following build warnings / errors were noticed on powerpc cell_defconfig
+> and mpc83xx_defconfig with clang-20 toolchain on stable-rc 5.4.298-rc1.
+> 
+> But the gcc-12 build passed.
+> 
+> * powerpc, build
+>   - clang-20-cell_defconfig
+>   - clang-20-mpc83xx_defconfig
+>   - clang-nightly-cell_defconfig
+>   - clang-nightly-mpc83xx_defconfig
+> 
+> Regression Analysis:
+> - New regression? yes
+> - Reproducibility? yes
+> 
+> First seen on 5.4.298-rc1
+> Bad: 5.4.298-rc1
+> Good: v5.4.297
+> 
+> Build regression: stable-rc 5.4.298-rc1 powerpc/boot/util.S:44: Error:
+> junk at end of line, first unrecognized character is `0'
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-kernel test robot noticed the following build warnings:
+Known issue, patch already submitted:
+	https://lore.kernel.org/r/20250902235234.2046667-1-nathan@kernel.org
 
-[auto build test WARNING on akpm-mm/mm-everything]
+Will queue that up for the next round of releases, using clang-20 on
+5.4.y is brave :)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yueyang-Pan/mm-show_mem-Dump-the-status-of-the-mem-alloc-profiling-before-printing/20250903-000616
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/1491df0ac12a7626b7c9b00e26a6e10adb8c9045.1756827906.git.pyyjason%40gmail.com
-patch subject: [PATCH v2 2/2] mm/show_mem: Add trylock while printing alloc info
-config: i386-buildonly-randconfig-001-20250903 (https://download.01.org/0day-ci/archive/20250903/202509031744.HcibSETe-lkp@intel.com/config)
-compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250903/202509031744.HcibSETe-lkp@intel.com/reproduce)
+thanks,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509031744.HcibSETe-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from mm/show_mem.c:18:
-   mm/show_mem.c: In function 'show_free_areas':
-   mm/show_mem.c:336:49: error: 'NR_ZSPAGES' undeclared (first use in this function); did you mean 'NR_STATS'?
-     336 |                         K(zone_page_state(zone, NR_ZSPAGES)),
-         |                                                 ^~~~~~~~~~
-   mm/internal.h:560:16: note: in definition of macro 'K'
-     560 | #define K(x) ((x) << (PAGE_SHIFT-10))
-         |                ^
-   include/linux/printk.h:512:26: note: in expansion of macro 'printk_index_wrap'
-     512 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                          ^~~~~~~~~~~~~~~~~
-   mm/show_mem.c:298:17: note: in expansion of macro 'printk'
-     298 |                 printk(KERN_CONT
-         |                 ^~~~~~
-   mm/show_mem.c:336:49: note: each undeclared identifier is reported only once for each function it appears in
-     336 |                         K(zone_page_state(zone, NR_ZSPAGES)),
-         |                                                 ^~~~~~~~~~
-   mm/internal.h:560:16: note: in definition of macro 'K'
-     560 | #define K(x) ((x) << (PAGE_SHIFT-10))
-         |                ^
-   include/linux/printk.h:512:26: note: in expansion of macro 'printk_index_wrap'
-     512 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                          ^~~~~~~~~~~~~~~~~
-   mm/show_mem.c:298:17: note: in expansion of macro 'printk'
-     298 |                 printk(KERN_CONT
-         |                 ^~~~~~
-   In file included from include/linux/spinlock.h:89,
-                    from include/linux/wait.h:9,
-                    from include/linux/wait_bit.h:8,
-                    from include/linux/fs.h:7,
-                    from include/linux/highmem.h:5,
-                    from include/linux/bvec.h:10,
-                    from include/linux/blk_types.h:10,
-                    from include/linux/blkdev.h:9,
-                    from mm/show_mem.c:8:
-   mm/show_mem.c: In function '__show_mem':
->> mm/show_mem.c:399:32: warning: unused variable 'mem_alloc_profiling_spinlock' [-Wunused-variable]
-     399 |         static DEFINE_SPINLOCK(mem_alloc_profiling_spinlock);
-         |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/spinlock_types.h:43:44: note: in definition of macro 'DEFINE_SPINLOCK'
-      43 | #define DEFINE_SPINLOCK(x)      spinlock_t x = __SPIN_LOCK_UNLOCKED(x)
-         |                                            ^
-
-
-vim +/mem_alloc_profiling_spinlock +399 mm/show_mem.c
-
-   396	
-   397	void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
-   398	{
- > 399		static DEFINE_SPINLOCK(mem_alloc_profiling_spinlock);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+greg k-h
 
