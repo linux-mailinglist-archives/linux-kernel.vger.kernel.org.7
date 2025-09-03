@@ -1,72 +1,73 @@
-Return-Path: <linux-kernel+bounces-798834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3584AB4239A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:27:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC56B4239F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD89F56563E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:27:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BBF27AAA00
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320142BF016;
-	Wed,  3 Sep 2025 14:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C4A3112D3;
+	Wed,  3 Sep 2025 14:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="QK/IehQz"
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="TAYGuZ76"
 Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7481B2DAFC3
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AA230AAB8
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756909628; cv=none; b=k3xE8uYqeWZmEXQpGt+W1bpeBsp95T/XnHsB9lhuxEqA6W8OyO8u28yJrKAYxpkAV/t99KiR2r94t2H/e2ZV+WDQ0cd25HQ9vHQO4xcbm7IUQhJf+2GAeEQeIkzrOQ7Nni7Uh7h+n/EN6piF7Luj0aNhdyMWmxQBVg8+ExQAPKc=
+	t=1756909657; cv=none; b=Uik6+ZioyeALeO6ZybLcV7mM/iLbkRyYV+59cA+Z7b4bjNgI82romyDtNqa900SKBd8SaMvLlfqxc5UwuTQNXowCo2TxGb7iesM0W21TJdEd2Vsa7iQnji5btGSezvs7mvp0ncNXRwX9ZsCKkvT8IM3dMaPPo+GsbLOzNsY8NVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756909628; c=relaxed/simple;
-	bh=e/zFJjbx73n1Dt/ZnqKEGTpmWUYSLV76MnVr+ILHEK0=;
+	s=arc-20240116; t=1756909657; c=relaxed/simple;
+	bh=z7gG2wi7trHnM1dLuhDkxffPABy5/ujoFUZv+6zQlUM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LVSHOMbpQvwp0/5AyZKqf1G1lDcN6zL0HyzyxK4zOXL1praPaW/XCbo+65n6dIt36TrYNjTidoh+M7RaKzFP3redu3fSQZLQh4y6jiIcqdoW3G0REyznsADILvU8RhspFXrlDu7qJlHqH/MRhqC1S9/GEGh21u+pR+oAd1p2dDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=QK/IehQz; arc=none smtp.client-ip=103.21.126.64
+	 Content-Type:Content-Disposition:In-Reply-To; b=U/uAPX+fvo3hwgNiEP6Tk1YjtScEP/7zEPXuZ6yX++41cQOqMsBS+2PaAdsjErbzdUg9pFsKcRpujb6llfoX0M/U+pNGctN6B56G4bA5sppZpTLWvbMwdEtkAaquo/jGllllwJ4ZX1S/hmdLbArMo/jxVXA3HesYDJ48m1JyCFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=TAYGuZ76; arc=none smtp.client-ip=103.21.126.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
 Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 1AB79101C6DE
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 19:57:04 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 1AB79101C6DE
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 372111010F83
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 19:57:30 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 372111010F83
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1756909624; bh=e/zFJjbx73n1Dt/ZnqKEGTpmWUYSLV76MnVr+ILHEK0=;
+	t=1756909650; bh=z7gG2wi7trHnM1dLuhDkxffPABy5/ujoFUZv+6zQlUM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QK/IehQzak9088znJBfmWWaU5VoENSQubye6FUuwC412/nKERDgLZ/HkTd7AdygqD
-	 adb8E3SITZQFJLc67STxkpUyJw6AD2Cg5LCvKVo3jzJX7nnJcOk2h5pIzEkYNj4aTu
-	 T5gGnte0tkSQm9kqe/8pqzwJAJV9Cau0wixAGc+8=
-Received: (qmail 32446 invoked by uid 510); 3 Sep 2025 19:57:04 +0530
+	b=TAYGuZ76CQwdYOiX64Dd9sjvOopAgKIqedT9xGMo9rs4g4zIZ+Cr+XAhkHEXRVXd4
+	 tDrMQTqNSR9xcN0v5QdGTMIh5e9hLKoUiTk+4emMgUglM3TzFwG+TouOkdNSWv7HuX
+	 +qG8c929K4n1lagpEUXxPZauR5GHbdwkcYsi1qfg=
+Received: (qmail 32748 invoked by uid 510); 3 Sep 2025 19:57:30 +0530
 X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
  spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.464319 secs; 03 Sep 2025 19:57:04 +0530
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.404273 secs; 03 Sep 2025 19:57:30 +0530
 X-Spam-Level: 
 X-Spam-Pyzor: Reported 0 times.
 X-Envelope-From: akhilesh@ee.iitb.ac.in
 X-Qmail-Scanner-Mime-Attachments: |
 X-Qmail-Scanner-Zip-Files: |
 Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
-  by ldns2.iitb.ac.in with SMTP; 3 Sep 2025 19:57:00 +0530
+  by ldns2.iitb.ac.in with SMTP; 3 Sep 2025 19:57:26 +0530
 Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns2.iitb.ac.in (Postfix) with ESMTP id F221B3414E2;
-	Wed,  3 Sep 2025 19:56:59 +0530 (IST)
+	by ldns2.iitb.ac.in (Postfix) with ESMTP id 2D0293414ED;
+	Wed,  3 Sep 2025 19:57:26 +0530 (IST)
 Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
 	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 52A981E8143E;
-	Wed,  3 Sep 2025 19:56:59 +0530 (IST)
-Date: Wed, 3 Sep 2025 19:56:54 +0530
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 0E8181E8143E;
+	Wed,  3 Sep 2025 19:57:26 +0530 (IST)
+Date: Wed, 3 Sep 2025 19:57:21 +0530
 From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
 To: alexandre.belloni@bootlin.com, krzk+dt@kernel.org, robh@kernel.org,
 	conor+dt@kernel.org
 Cc: skhan@linuxfoundation.org, linux-rtc@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	akhileshpatilvnit@gmail.com
-Subject: [PATCH 4/7] rtc: m41t93: Add alarm support
-Message-ID: <4f78f8fa113d4262e162972f5c15155410a64e8b.1756908788.git.akhilesh@ee.iitb.ac.in>
+Subject: [PATCH 5/7] rtc: m41t93: fix device connection/detection logic
+ during probe
+Message-ID: <c3deec9e679cd4e4a49a2cc1cba340c552faefdc.1756908788.git.akhilesh@ee.iitb.ac.in>
 References: <cover.1756908788.git.akhilesh@ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,141 +79,65 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1756908788.git.akhilesh@ee.iitb.ac.in>
 
-Implement alarm feature for rtc-m41t93 by adding necessary
-callbacks - set_alarm, read_alarm and alarm_irq_enable.
-Enable support to configure alarm 1 out of 2 alarms present in this rtc.
+Fix the incorrect assumption about WDAY register (0x4) bits 3 to 7
+being 0 after initial power-on to test response from device during probe
 
-Tested by observing IRQ pin (pin 12 of SOX18 package) on logic analyzer
-going low after alarm condition is met.
+Do not expect these bits to be 0 after power on as datasheet does not
+explicitly mention these power on defaults but recommends software to
+clear these bits during operation. Refer section 3.15 for initial
+power-on default bits.
+
+Fix the random probe failures after power on by removing this condition
+check. Add alternate response check logic which performs write, read,
+compare check on device SRAM register to check device connection.
 
 Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
 ---
- drivers/rtc/rtc-m41t93.c | 101 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 101 insertions(+)
+ drivers/rtc/rtc-m41t93.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/rtc/rtc-m41t93.c b/drivers/rtc/rtc-m41t93.c
-index ad862bf706b6..8cc179e08a4a 100644
+index 8cc179e08a4a..902797070246 100644
 --- a/drivers/rtc/rtc-m41t93.c
 +++ b/drivers/rtc/rtc-m41t93.c
-@@ -22,6 +22,14 @@
- #define M41T93_REG_DAY			5
- #define M41T93_REG_MON			6
- #define M41T93_REG_YEAR			7
-+#define M41T93_REG_AL1_MONTH		0xa
-+#define M41T93_REG_AL1_DATE		0xb
-+#define M41T93_REG_AL1_HOUR		0xc
-+#define M41T93_REG_AL1_MIN		0xd
-+#define M41T93_REG_AL1_SEC		0xe
-+#define M41T93_BIT_A1IE                 BIT(7)
-+#define M41T93_BIT_ABE			BIT(5)
-+#define M41T93_FLAG_AF1                 BIT(6)
+@@ -30,6 +30,7 @@
+ #define M41T93_BIT_A1IE                 BIT(7)
+ #define M41T93_BIT_ABE			BIT(5)
+ #define M41T93_FLAG_AF1                 BIT(6)
++#define M41T93_SRAM_BASE		0x19
  
  
  #define M41T93_REG_ALM_HOUR_HT		0xc
-@@ -153,10 +161,103 @@ static int m41t93_get_time(struct device *dev, struct rtc_time *tm)
- 	return ret;
- }
+@@ -290,17 +291,25 @@ static int m41t93_probe(struct spi_device *spi)
+ 		return PTR_ERR(m41t93->regmap);
+ 	}
  
-+static int m41t93_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct m41t93_data *m41t93 = dev_get_drvdata(dev);
-+	int ret;
-+	unsigned int val;
-+	u8 alarm_vals[5] = {0};
-+
-+	ret = regmap_bulk_write(m41t93->regmap, M41T93_REG_AL1_DATE, alarm_vals, 4);
-+	if (ret)
-+		return ret;
-+
-+	/* Set alarm values */
-+	alarm_vals[0] = bin2bcd(alrm->time.tm_mon + 1) & 0x1f;
-+	alarm_vals[1] = bin2bcd(alrm->time.tm_mday) & 0x3f;
-+	alarm_vals[2] = bin2bcd(alrm->time.tm_hour) & 0x3f;
-+	alarm_vals[3] = bin2bcd(alrm->time.tm_min) & 0x7f;
-+	alarm_vals[4] = bin2bcd(alrm->time.tm_sec) & 0x7f;
-+
-+	if (alrm->enabled) {
-+		/* Enable alarm IRQ generation
-+		 * Note: SQWE is forced disabled while setting alarm
-+		 */
-+		alarm_vals[0] |= M41T93_BIT_A1IE | M41T93_BIT_ABE;
+-	ret = regmap_read(m41t93->regmap, M41T93_REG_WDAY, &res);
+-	if (ret < 0) {
++	ret = regmap_write(m41t93->regmap, M41T93_SRAM_BASE, 0xA5);
++	if (ret) {
+ 		dev_err(&spi->dev, "IO error\n");
+ 		return -EIO;
+ 	}
+ 
+-	if (res < 0 || (res & 0xf8) != 0) {
+-		dev_err(&spi->dev, "not found 0x%x.\n", res);
++	ret = regmap_read(m41t93->regmap, M41T93_SRAM_BASE, &res);
++	if (ret) {
++		dev_err(&spi->dev, "IO error\n");
++		return -EIO;
 +	}
 +
-+	ret = regmap_bulk_write(m41t93->regmap, M41T93_REG_AL1_MONTH,
-+				alarm_vals, sizeof(alarm_vals));
-+	if (ret)
-+		return ret;
-+
-+	/* Device address pointer is now at FLAG register, move it to other location
-+	 * to finish setting alarm, as recommended by the datasheet.
-+	 * We do read of AL1_MONTH register to achieve this.
-+	 */
-+	ret = regmap_read(m41t93->regmap, M41T93_REG_AL1_MONTH, &val);
-+	if (ret)
-+		return ret;
-+
-+	if (bcd2bin(val & 0x1f) == (alrm->time.tm_mon & 0x1f))
-+		dev_notice(dev, "Alarm set successfully\n");
-+
-+	return 0;
-+}
-+
-+static int m41t93_get_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct m41t93_data *m41t93 = dev_get_drvdata(dev);
-+	int ret;
-+	unsigned int val;
-+	u8 alarm_vals[5] = {0};
-+
-+	ret = regmap_bulk_read(m41t93->regmap, M41T93_REG_AL1_MONTH,
-+			       alarm_vals, sizeof(alarm_vals));
-+	if (ret)
-+		return ret;
-+
-+	alrm->time.tm_mon = bcd2bin(alarm_vals[0] & 0x1f) - 1;
-+	alrm->time.tm_mday = bcd2bin(alarm_vals[1] & 0x3f);
-+	alrm->time.tm_hour = bcd2bin(alarm_vals[2] & 0x3f);
-+	alrm->time.tm_min = bcd2bin(alarm_vals[3] & 0x7f);
-+	alrm->time.tm_sec = bcd2bin(alarm_vals[4] & 0x7f);
-+
-+	alrm->enabled =  !!(alarm_vals[0] & M41T93_BIT_A1IE);
-+
-+	ret = regmap_read(m41t93->regmap, M41T93_REG_FLAGS, &val);
-+	if (ret)
-+		return ret;
-+
-+	alrm->pending = (val & M41T93_FLAG_AF1) && alrm->enabled;
-+
-+	return 0;
-+}
-+
-+static int m41t93_alarm_irq_enable(struct device *dev, unsigned int enabled)
-+{
-+	struct m41t93_data *m41t93 = dev_get_drvdata(dev);
-+	unsigned int val;
-+	int ret;
-+
-+	val = enabled ? M41T93_BIT_A1IE | M41T93_BIT_ABE :
-+		~(M41T93_BIT_A1IE | M41T93_BIT_ABE);
-+
-+	ret = regmap_update_bits(m41t93->regmap, M41T93_REG_AL1_MONTH,
-+				 M41T93_BIT_A1IE | M41T93_BIT_ABE, val);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
++	if (res != 0xA5) {
++		dev_err(&spi->dev, "No valid response from device 0x%x.\n", res);
+ 		return -ENODEV;
+ 	}
  
- static const struct rtc_class_ops m41t93_rtc_ops = {
- 	.read_time	= m41t93_get_time,
- 	.set_time	= m41t93_set_time,
-+	.set_alarm	= m41t93_set_alarm,
-+	.read_alarm	= m41t93_get_alarm,
-+	.alarm_irq_enable = m41t93_alarm_irq_enable,
- };
++	dev_notice(&spi->dev, "m41t93 device response success\n");
++
+ 	spi_set_drvdata(spi, m41t93);
  
- static struct spi_driver m41t93_driver;
+ 	m41t93->rtc = devm_rtc_device_register(&spi->dev, m41t93_driver.driver.name,
 -- 
 2.34.1
 
