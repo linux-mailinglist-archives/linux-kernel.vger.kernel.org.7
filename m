@@ -1,144 +1,142 @@
-Return-Path: <linux-kernel+bounces-797682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 207E0B41374
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:14:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16232B41376
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8ABB545D16
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFA9E3B1CD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4FC2D3236;
-	Wed,  3 Sep 2025 04:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LX6lc/8I"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9D02D0620;
+	Wed,  3 Sep 2025 04:15:23 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506D62D3233
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 04:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEEA273810;
+	Wed,  3 Sep 2025 04:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756872892; cv=none; b=gYkMn5rjKp2KYilO5ps3VyG8aG2DKutndvEBaMUZEryYXMHT5DyN6RTtGdMdnhraNDu4BbJOInv+YHycEz8zhbRdUt0vdsb8PKs5wlUmjxUnxLwLawRTGC5cimPvAd2joriIz18CwSxj+VuJna9c4NvLyXfACWy4C7v186Agoww=
+	t=1756872923; cv=none; b=j917O72SM+Om1I1/3AzWIsUlxdGqtVhJ3lHHLetuYtGmqTXenrhkNQwgyhDm+ya2ctvrU7lGgZgEw8jeSbgd6huK+cSkDBJYEhNYRd7VvnF/7/GATHZh740hS7hLpXYd0W7wXrgr+hkSV7m5c9iFUPYYTBrZDLkWoW9FZETfeXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756872892; c=relaxed/simple;
-	bh=pwpMnp02iR5Nb2xJei5nSyPw103lFtmOwIACABH/wec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j4DHmfxby9v5uLNo8dGa4nKq0HnyJqKN0NMw8FE3kb9zB1B0OkcHlltnPnQHk1AgLjCc9ATdYKTdrzmltG/F948oDwgMHyi/RA8uFf9wp3W91uQf67MSAytJ8BpUW+6TzcPo9uRxgDr26Ut5PwdHCa3K8xvIO3YJ48rZ6u16mY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LX6lc/8I; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3277c603b83so3764194a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 21:14:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756872890; x=1757477690; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3736M7NCTLnENtRRfPhfcHj37p+iIh+YlnUYDC/dTVs=;
-        b=LX6lc/8IUF+pScPW4nmbhn51UMQyqKdHekTgDIDfQdbQ9lHh8iyUPz07ZqI9zKxsI1
-         /O8a9768TVrLkQbL+3q4T7WmHl5xBKaQAT3WsgxsyPdFWbTKdwxXoIe9wIt282YRGvLB
-         /T6wOd/GGB+5iVgPQ8Tn60GPf5pgzfLfOAldSZlNxcok2RcQj7MS9rbgrhcOzF6ns/2B
-         G2dX28q+jGRg8TiC4lRYTp/tdiBPGGngqL+Z+Afnq1houfRnbvz1gY6JRAYDrTEwwiLt
-         bBdzHv20KrimuzXdjnkQeAmzdiLZ5hK5hSzGlbF5leNJni23K+KJVmQKIllLIPA4DcZD
-         EgIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756872890; x=1757477690;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3736M7NCTLnENtRRfPhfcHj37p+iIh+YlnUYDC/dTVs=;
-        b=O/ti2RgULXuC4QOjwV+GqqoWLKTR0QcofrKaP197sAGUW6MPWYQ2mbPmh1B9NmSjRT
-         /1JvTCIz2l+8w9dyJpa6BTRjOIQHB52d033buwMa8dWmjAG3UwoyOz4Tcov3gr4/Y6V2
-         DxJqM5mZAcz7zBX13q7caFzDjhH7+FCBCUUU6Xgf5fzlaa1e0KTzcv7DhWA3gRp+OaUB
-         i3/aCH3BqWX922+vCkp70Y/+GTyZMpuJrLIWKbQXQhVyaAzhexkORgq/s1s3NFVBsGvp
-         O2E/irmLGTrvLfzxhk3pEkCk19WsBTkZDSqoAYJBM3FVgLFhIVYY7IYsuDLlqEV1N4xa
-         NnqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2xZZw4A1nbyqO41quuDn7Dg3CfnXiKsbelcU4dQ3VTNAD0wnYHCqvTXR3STsljOg3Qfosg5WLMGx4VFc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcPxrfID61YdEYr/DCPx2DAbSJqiBjDMzwn8VBPzpjQVP2mD90
-	f6ta/ppMGgmog1emTtrTBPGZ0BhF9KkY/ZYAncE00fTu9GFYw9LWySnnEjnY+MrWAUsngSD/gOS
-	OmwkZ
-X-Gm-Gg: ASbGncvXNZrsE2uM029NIz1FVIYC54r/05NJt06S6fHpuYXtVfhbrNDzQeKz2eUUE9X
-	/U575bvwpcud3pljyjgdN1guMmYtAZfeVBT1K5XM9FHWsYsVppsmxmzUpu5Z3XwhMgkCynT+tgd
-	becK7N/A1YU0iGSoWWFkGfZPcg/eZ46VaOPm/rAbfZ0sOYjyAf45y0iTbHbigcw9IZDxl/NSlD8
-	/EOsvDf8Of37oNOr3UTdcEAzzdXC2mL2ExQTGQ0p+CDgU1BB4y4ja+3185SNdBMX5442MeQkULY
-	JXlNkf1W3d8mse2NSr0F11Lu1PEx8/VFaNGfsytb1GstLfPUz/kYg8SrKFMkUuIuQH4Ksvsrzr5
-	TaIpW1sKqkXEUSd87Ij08XLKpCsUFbp6F1dI=
-X-Google-Smtp-Source: AGHT+IGcvj4f93HyRKYjmm+ix+F/dgYOGHgJhEHnb22iW86TWueIT+1XgMH2qdsfKMuWPvqAcJ0VJg==
-X-Received: by 2002:a17:90b:2884:b0:327:ca0a:67b4 with SMTP id 98e67ed59e1d1-3281544fe3amr20695525a91.12.1756872890400;
-        Tue, 02 Sep 2025 21:14:50 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-329d08a36b3sm4862695a91.25.2025.09.02.21.14.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 21:14:49 -0700 (PDT)
-Date: Wed, 3 Sep 2025 09:44:47 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/3] cpufreq: powernow: Use int type to store negative
- error codes
-Message-ID: <20250903041447.6t7q5ddoqwm3og4d@vireshk-i7>
-References: <20250902114545.651661-1-rongqianfeng@vivo.com>
- <20250902114545.651661-3-rongqianfeng@vivo.com>
+	s=arc-20240116; t=1756872923; c=relaxed/simple;
+	bh=GuRr763jlK6fbSSNGrRKUXsei1H3/BG5/gQDE61R2d0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ud5EnafJ/Km1yF0G5Wgrh8jNq5OR3nL0gDI7zTS9t7PJI6IYUiV54FhgX7btOPm/Z5RYss6Jtmh+kyvZIOiJ9LCiwCP7pCrN2f2o2q5ZCdPB2L7pGi/kcsMTtDqqj8I51N6W/tcCl8xnl3nCYVX1ClgwP6ttBR/PfBZcz9eSFKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cGq5R3y3bz14MXT;
+	Wed,  3 Sep 2025 12:15:07 +0800 (CST)
+Received: from kwepemf100007.china.huawei.com (unknown [7.202.181.221])
+	by mail.maildlp.com (Postfix) with ESMTPS id 82A5514027D;
+	Wed,  3 Sep 2025 12:15:17 +0800 (CST)
+Received: from [10.67.109.184] (10.67.109.184) by
+ kwepemf100007.china.huawei.com (7.202.181.221) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 3 Sep 2025 12:15:16 +0800
+Message-ID: <e3c22d00-1a0c-45e0-bc76-955d367ab4d1@huawei.com>
+Date: Wed, 3 Sep 2025 12:15:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902114545.651661-3-rongqianfeng@vivo.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tracing: Fix missing errno when zero parser->idx in
+ trace_pid_write
+Content-Language: en-US
+To: <rostedt@goodmis.org>
+CC: <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>, Pu Lehui
+	<pulehui@huaweicloud.com>, <linux-kernel@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>
+References: <20250821071721.3609109-1-pulehui@huaweicloud.com>
+From: Pu Lehui <pulehui@huawei.com>
+In-Reply-To: <20250821071721.3609109-1-pulehui@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemf100007.china.huawei.com (7.202.181.221)
 
-$Subject is incorrect.
 
-On 02-09-25, 19:45, Qianfeng Rong wrote:
-> In powernow_decode_bios(), the 'ret' variable stores either negative error
-> codes or zero returned by get_ranges(), so it needs to be changed to int
-> type.
-
-You don't need to mention this now. You are making a different change.
-
-> However, since the 'ret' variable is only used once and can be
-> simplified to 'return get_ranges()', it is better to remove the 'ret'
-> variable.
+On 2025/8/21 15:17, Pu Lehui wrote:
+> From: Pu Lehui <pulehui@huawei.com>
 > 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
->  drivers/cpufreq/powernow-k7.c | 4 +---
+> When trace_get_user in trace_pid_write parses an only space, the
+> !trace_parser_loaded branch will break with no errno, causing
+> tr->filtered_pids to still be assigned with pid_list, which may trigger
+> potential problems.
 
-There should be a `---` line in between these two statements, you have
-corrupted your patch somehow.
+Hi Steven,
 
->  1 file changed, 1 insertion(+), 3 deletions(-)
+Sorry, this patch will break the cleanup functionality of 
+"set_ftrace_pid" as indicated in [0]. Pls ignore this patch.
+
+Link: https://lore.kernel.org/all/202509022339.ae20a8bb-lkp@intel.com [0]
+
 > 
-> diff --git a/drivers/cpufreq/powernow-k7.c b/drivers/cpufreq/powernow-k7.c
-> index 31039330a3ba..72430c3c5500 100644
-> --- a/drivers/cpufreq/powernow-k7.c
-> +++ b/drivers/cpufreq/powernow-k7.c
-> @@ -451,7 +451,6 @@ static int powernow_decode_bios(int maxfid, int startvid)
->  	unsigned int i, j;
->  	unsigned char *p;
->  	unsigned int etuple;
-> -	unsigned int ret;
->  
->  	etuple = cpuid_eax(0x80000001);
->  
-> @@ -500,8 +499,7 @@ static int powernow_decode_bios(int maxfid, int startvid)
->  				    (startvid == pst->startvid)) {
->  					print_pst_entry(pst, j);
->  					p = (char *)pst + sizeof(*pst);
-> -					ret = get_ranges(p);
-> -					return ret;
-> +					return get_ranges(p);
->  				} else {
->  					unsigned int k;
->  					p = (char *)pst + sizeof(*pst);
-> -- 
-> 2.34.1
+> This patch will also silence the fault injection syzkaller warning in
+> tracepoint_add_func [0]. We can reproduce the warning by following the
+> steps below:
+> 1. echo 8 >> set_event_notrace_pid. Let tr->filtered_pids owns one pid
+>     and register sched_switch tracepoint.
+> 2. echo ' ' >> set_event_pid, and perform fault injection during chunk
+>     allocation of trace_pid_list_alloc. Let pid_list with no pid and
+> assign to tr->filtered_pids.
+> 3. echo ' ' >> set_event_pid. Let pid_list is NULL and assign to
+>     tr->filtered_pids.
+> 4. echo 9 >> set_event_pid, will trigger the double register
+>     sched_switch tracepoint warning.
 
--- 
-viresh
+As for this fault injection syzkaller issue, shall we need to silence 
+it? How about the below fix?
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index e6b50b416e63..c17c031e7917 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -834,7 +834,11 @@ int trace_pid_write(struct trace_pid_list 
+*filtered_pids,
+                 /* copy the current bits to the new max */
+                 ret = trace_pid_list_first(filtered_pids, &pid);
+                 while (!ret) {
+-                       trace_pid_list_set(pid_list, pid);
++                       ret = trace_pid_list_set(pid_list, pid);
++                       if (ret) {
++                               trace_parser_put(&parser);
++                               return ret;
++                       }
+                         ret = trace_pid_list_next(filtered_pids, pid + 
+1, &pid);
+                         nr_pids++;
+                 }
+
+> 
+> Link: https://lore.kernel.org/all/67cb890e.050a0220.d8275.022e.GAE@google.com [0]
+> Fixes: b27f266f74fb ("tracing: Fix return value of trace_pid_write()")
+> Signed-off-by: Pu Lehui <pulehui@huawei.com>
+> ---
+>   kernel/trace/trace.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 8d8935ed416d..feeb7eb71318 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -853,10 +853,10 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
+>   		ubuf += ret;
+>   		cnt -= ret;
+>   
+> +		ret = -EINVAL;
+>   		if (!trace_parser_loaded(&parser))
+>   			break;
+>   
+> -		ret = -EINVAL;
+>   		if (kstrtoul(parser.buffer, 0, &val))
+>   			break;
+>   
 
