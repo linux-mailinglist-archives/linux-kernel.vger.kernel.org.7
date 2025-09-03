@@ -1,79 +1,72 @@
-Return-Path: <linux-kernel+bounces-799023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDE71B425F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:52:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E766B425FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD65D16BEC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:51:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5593A5D63
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF1528C011;
-	Wed,  3 Sep 2025 15:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2C9289E17;
+	Wed,  3 Sep 2025 15:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gcFyzXhA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ZMCt5Am0"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A8D28B4FA;
-	Wed,  3 Sep 2025 15:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1476A21D5B3;
+	Wed,  3 Sep 2025 15:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756914673; cv=none; b=HwdXMEIyhW79j+toUQiNlk2rQauOYynQHSWUNLXAsT/Oyx1u0lhTkMNXotB1Ll7upyEsH0yIBzT4Crho6UQRkSLNUsDoLWLrI9ufaKS6IZFQKp8I1yKo6ytY3R9gcAluN/GT+RZd/dnbbaCxKUr8yht1u4WuGEHVOWKRcPA3VOs=
+	t=1756914736; cv=none; b=pXiG5o6HGjGxWAoWKw6ZT+TlFhw4d/eVsL25iuOMxdFpT206+fGw3rTTZaMel/u6ONGKg9dA9+5YY5IwVlcQo/kXG3QHmOhDr5G0Ot8Jjfilxzq0nU7324kcjYlj0btcZRGVTuKwp+s6EQR18JeKQyN9OhSfnjvX/GVgyJcTID0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756914673; c=relaxed/simple;
-	bh=jDcu9ohaMsZLetBVvF384J1O7tyKxslm3o1sZzCQpa8=;
+	s=arc-20240116; t=1756914736; c=relaxed/simple;
+	bh=a1yA4jUQ5l1E5iJTp9AQgTYYm687vZMk3gU+OqtM9Qs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HjfDeXEEoJ/bWYAFgfRs4x2sfOukW3ugRHDloL33cPyI+0C2m0B33OytjdHjsoz7puK0mch0uWzml4AAgOlgXimkzd/eyPBhpkPU2P7nehZZh173f6zhlQl1SuNB6mkStsE+LWHS4n/gi/zcVmnjgsX6FSmhAORCMrGRF9YO2R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gcFyzXhA; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756914672; x=1788450672;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jDcu9ohaMsZLetBVvF384J1O7tyKxslm3o1sZzCQpa8=;
-  b=gcFyzXhA3OfwzxMjSxuu1yk+X/YH3bEv/CsSU9TDmBFV+JF7u4PU2NwL
-   suXObSi62B4e/3lPSLVzGCemxvhgT20YPV2XHaNASDuJRfknZ4kfPMfsT
-   LD4r0kozEI14QrFMAs8VW8Z4FrC9XN4S211yKu1dXxNfoEEQYsmttPS76
-   Ve3mObE6oVIHB5P3yje4CCpvhKtgANrLsvgsoq2aj8k+4ZraMqD550VMM
-   6Dulu6S5H0yx2M6uCbfPuCr+v4FKeQQL8/Y9lo3pAC9HpKoZDdw+KG7/1
-   XTLQ7VqjZm2uaB3eB8MOHPNgO0IAmrFOUvsbiKcYpW5BMXl+86s5lt5R6
-   Q==;
-X-CSE-ConnectionGUID: DtIM5X/2Qa6Izs7O7uxzyQ==
-X-CSE-MsgGUID: gqxISdfITtWxZY/Bs4iR4w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="62876678"
-X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
-   d="scan'208";a="62876678"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 08:51:11 -0700
-X-CSE-ConnectionGUID: y+zVVm5HRl+ykJu1eu0XDA==
-X-CSE-MsgGUID: EwAhWLTbTHaszJY20N5Kcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
-   d="scan'208";a="195272489"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa002.fm.intel.com with ESMTP; 03 Sep 2025 08:51:08 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 40C9294; Wed, 03 Sep 2025 17:51:07 +0200 (CEST)
-Date: Wed, 3 Sep 2025 17:51:07 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Yang Shen <shenyang39@huawei.com>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-unisoc@lists.infradead.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH RESEND 09/14] gpio: dwapb: use new generic GPIO chip API
-Message-ID: <aLhj6xsR-NepfRx0@black.igk.intel.com>
-References: <20250825-gpio-mmio-gpio-conv-v1-0-356b4b1d5110@linaro.org>
- <20250825-gpio-mmio-gpio-conv-v1-9-356b4b1d5110@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B3QbB8yeeBtDL1Q2wUYsc05t0OweYWtyPSEuEHVo8GS64725aIwloEmf/z41S2Mb135/V5NbtAJ6kAzW2SvozYRAaTl3BZGKCS/4u9TrJWIHPu8AmikivdUzMY3iqNE44tgF/hSowRgUfIVBBUTE0F0kBJZDDBheh8KTbPbNaA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ZMCt5Am0; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=UO8sfqFJi/fVejE+Tg3iYyOh3DnadUFH30obltVdUHc=; b=ZMCt5Am0uW7ZzyWprCxlWsJBlI
+	IRytku73GtWFO5o1WFmDNqzFdJlYjQz8kCrMDWr7T1AFIEB4QMaQEtbgRRGH0Nw5PTPO4654Q8puI
+	lx4Vh+Id7lLGELyH8zSMhPIAOyX9h+4g1zPhbsi6ucu2OGp82HADyV5YeiRb8qr8JFqVBrNkrzbLS
+	kQKi0w9X+YH0ibESholcPALDcUSuAFkUtyq+SX6YtbEz6zra/8bNBfQsGZwW20EqnF6GTwCAVWzTG
+	k5i6cXGDTPXtSOPUvOzjdTAL5wrlzMlBM/2GgvlaTMLlpEWzqoyG0EPJykx4ftjHtyaKsc0qijLPo
+	8MSfz1Tw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44846)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1utpmN-000000000kl-0biF;
+	Wed, 03 Sep 2025 16:52:11 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1utpmL-000000000f5-17Dg;
+	Wed, 03 Sep 2025 16:52:09 +0100
+Date: Wed, 3 Sep 2025 16:52:09 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 net 1/2] net: phylink: add lock for serializing
+ concurrent pl->phydev writes with resolver
+Message-ID: <aLhkKVsbrkXmFbgK@shell.armlinux.org.uk>
+References: <20250903152348.2998651-1-vladimir.oltean@nxp.com>
+ <aLheK_1pYbirLe8R@shell.armlinux.org.uk>
+ <20250903153120.4oiwyz6bxfj3fuuv@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,36 +75,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250825-gpio-mmio-gpio-conv-v1-9-356b4b1d5110@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250903153120.4oiwyz6bxfj3fuuv@skbuf>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Aug 25, 2025 at 11:48:50AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Wed, Sep 03, 2025 at 06:31:20PM +0300, Vladimir Oltean wrote:
+> On Wed, Sep 03, 2025 at 04:26:35PM +0100, Russell King (Oracle) wrote:
+> > On Wed, Sep 03, 2025 at 06:23:47PM +0300, Vladimir Oltean wrote:
+> > > @@ -2305,6 +2314,7 @@ void phylink_disconnect_phy(struct phylink *pl)
+> > >  
+> > >  	phy = pl->phydev;
+> > >  	if (phy) {
+> > > +		mutex_lock(&pl->phy_lock);
+> > 
+> > If we can, I think it would be better to place this a couple of lines
+> > above and move the unlock.
 > 
-> Convert the driver to using the new generic GPIO chip interfaces from
-> linux/gpio/generic.h.
+> Sorry for potentially misunderstanding, do you mean like this?
+> 
+> 	mutex_lock(&pl->phy_lock);
+> 	phy = pl->phydev;
+> 	if (phy) {
+> 		mutex_lock(&phy->lock);
+> 		mutex_lock(&pl->state_mutex);
+> 		pl->phydev = NULL;
+> 		pl->phy_enable_tx_lpi = false;
+> 		pl->mac_tx_clk_stop = false;
+> 		mutex_unlock(&pl->state_mutex);
+> 		mutex_unlock(&phy->lock);
+> 		mutex_unlock(&pl->phy_lock);
+> 		flush_work(&pl->resolve);
+> 
+> 		phy_disconnect(phy);
+> 	} else {
+> 		mutex_unlock(&pl->phy_lock);
+> 	}
+> 
+> move the unlock where? because flush_work(&pl->resolve) needs to happen
+> unlocked, otherwise we'll deadlock with phylink_resolve().
+> 
+> Additionally, dereferincing pl->phydev under rtnl_lock() is already safe,
+> and doesn't need the secondary clock.
 
-...
+The reason I'm making the suggestion is for consistency. If the lock
+is there to ensure that reading pl->phydev is done safely, having one
+site where we read it and then take the lock makes it look confusing.
+I've also been thinking that it should be called pl->phydev_mutex
+(note that phylink uses _mutex for mutexes.)
 
-> +static inline struct dwapb_gpio *to_dwapb_gpio(struct gpio_chip *gc)
-> +{
-> +	return container_of(to_gpio_generic_chip(gc),
-> +			    struct dwapb_gpio_port, chip)->gpio;
-> +}
+To avoid it looking weird, what about this:
 
-Since it's not a macro anymore it can be done better:
+	mutex_lock(&pl->phy_lock);
+	phy = pl->phydev;
+	if (phy) {
+		mutex_lock(&phy->lock);
+		mutex_lock(&pl->state_mutex);
+		pl->phydev = NULL;
+		pl->phy_enable_tx_lpi = false;
+		pl->mac_tx_clk_stop = false;
+		mutex_unlock(&pl->state_mutex);
+		mutex_unlock(&phy->lock);
+	}
+	mutex_unlock(&pl->phy_lock);
 
-	struct dwapb_gpio_port *port;
+	if (phy) 
+ 		flush_work(&pl->resolve);
+ 
+ 		phy_disconnect(phy);
+ 	}
 
-	port = container_of(to_gpio_generic_chip(gc), struct dwapb_gpio_port, chip);
-	return port->gpio;
-
-Also, have you checked the bloat-o-meter before and after, wondering if we gain
-something with this.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
