@@ -1,208 +1,189 @@
-Return-Path: <linux-kernel+bounces-797954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C10B4179F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:01:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C32B417B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F1D7173453
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:01:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B837C32D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D502EB854;
-	Wed,  3 Sep 2025 08:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C2D2EA490;
+	Wed,  3 Sep 2025 08:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TRmilK5p"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGLfcg+m"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9172E9721
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D272E2845;
+	Wed,  3 Sep 2025 08:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756886433; cv=none; b=gMgmaZWZ8z5Ca7r7xM3E5rhRvzzZMyQZ9NbuftJ160zP9qj3xXfuME773+NZnTddQOuaEKQdIjuM/JGOPTokojuoWQhZUuB7G6fIOwXS7LCqSLxv9qs1+5R9GyG3Srctc2fxDB5YXND9+L7vZQZMcIhfXIjGeENgC/dZNZxedSI=
+	t=1756886491; cv=none; b=YR0lbNWWCsou/FXvXft9WQw9VivGqDPSqwL/oJAW26BHAKtmAyRS7ZtE2WpOhPVyo7E6cnbCunNwRAEowbWrCfHT/OA7+IMF4Lok/fpDQLNstDo5HyjArLikOswWCLgtkJHA0AhkjGRf4LOkZuJ1H2UdYwBXNjGomlOHqB+BsUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756886433; c=relaxed/simple;
-	bh=xYNaEt7CUTKOxVLYF1M1ryGT9g17ddUywJZeiTfyHqM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VCcM/cNb5J6/+mqwyBQyLmmSZLLcF1rphZa8k1NvVGiewOFUwhroHanI44j2KrwEQUU76ax58lzQl6JytdSpENzQZJxxz8grWj43OvSJMhBvvL5e+f0heSFa9KUPmj6Ci0hdrtRESEZ5bcr7RkNFDCK2YDkfsy3hRasMC7fmm30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TRmilK5p; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756886428;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oBh6cegRU5vIqxeNtdbA8Z6LWKwX6vsH3YnVQj1SefE=;
-	b=TRmilK5pbesTQIDviOb8g1hJEyZbIuM0y5sX/mf9PZYXhID1ByeVRJLg4s+PldetVqAaWp
-	kzWlvOVXFuvPk/8/PL/XSx/VGR2nJa4qRX8zf0DhNkxdpjtxz31ib1pGA7nZ7UUar7SCbQ
-	uZibjKo8Re8G88PugioNG7IVV3MynV4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-450-zk9h0l2fPDqWu6FLWlIjLw-1; Wed, 03 Sep 2025 04:00:27 -0400
-X-MC-Unique: zk9h0l2fPDqWu6FLWlIjLw-1
-X-Mimecast-MFC-AGG-ID: zk9h0l2fPDqWu6FLWlIjLw_1756886427
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b9c1b74d0so7476205e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:00:27 -0700 (PDT)
+	s=arc-20240116; t=1756886491; c=relaxed/simple;
+	bh=5adYNtw8eeCPBlwESfeKES9xQnEhpvXhnoWbYivNGTA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L6+avpvIcwxb11UwLu9tPBX60ZzJgM3c2qegk2gd0KM+figjfGhs5Cf4bBafXJB39zn/DWX8EwG8jIduJ7JGQB4xgDIln3YupULKtKst5URD8DDJWss2S50enK9rdOWXHUTc8FzKbctbGH7E1mbkeMm92BnJ0rYKTNskvGofaq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OGLfcg+m; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-336ce4a894cso28021311fa.1;
+        Wed, 03 Sep 2025 01:01:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756886487; x=1757491287; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NZeYwMyzCuzis//8vlsX2RpvnF5aLJyp6/ELWk/TlGY=;
+        b=OGLfcg+mTA/AHgW1hHVjAsj4F3EwvzysbUspHyLcQdJNOzcIbAO17IR/MZUjKj171y
+         0VZL1MQESYDhfy7cbC2eOhgRFc79ruldiCBbTpQi6jfmoA96xqG9Nkoh8IlofiTK9PaK
+         b/jc9TiQwimoqx/zJdbk7NkKKTXg1VZW5DyqaXBt9uEQcTON1vHvtKGdM7bhf3/R+j4i
+         mjKbXDu1kTIKmYDvwIfVNjRUgoZRTM2bYap25IZA190wOeyo2LhmsjElehe0EYBYdY46
+         /27/SfwQIohgMAtZcKcDEiwpzvszL1/c0XcvatCJzkdC+CIqNvWfe86NAoWHTDDJH122
+         sofA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756886426; x=1757491226;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oBh6cegRU5vIqxeNtdbA8Z6LWKwX6vsH3YnVQj1SefE=;
-        b=CzwHbA0768rWJ1nYGhRjQgCHD4GbpnqO5ce3hs3vYwcgMlP2QhTiaMxbQmuc8BO4qu
-         /dhoYMtCAwzAiBiaaw0wBhDUpsX5m4Zxy4T/+2Sz7QylwK8W2QP8dFCSbfRq+JPLTvS+
-         fFKOHckq26RJsA9kNFb82Qg6FzvCetpOoXp1TRJhAbKIwTbbVIqQSSH5tz+a1kF2iNNZ
-         9DKIC/0JqftshIstJV28FEn1g/Rbk1miR2P/a5AVUZaZgYkfaRg9KUOoL6gAvggj4hQ5
-         LnEiKCTTzQizjI4JT8wB2G/EBEuItq2/QxmBC9cQMnXUyvSKdLCUwL1z3KZeQ8rjYx1a
-         Q+RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwNmmIyUhq/h4WO3R2GLc0feMqHQZOcAKIi/K5zh5Hm13Drm7p1FVZy49DTCiKRlPnM/jxupvEjpV/gwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtOIJFMnLpI9SVxTyR0zcg4iK/TXY1Tkfy8APomve6du1+nuzq
-	0nh8zY9F5gFovdI0leOgrsK+ZwgIJoUTS/z2qa55C7WlJXtai8KbTG2hnrXqrORgpBGfjZalABB
-	0yNbW8MSzXEmRjjU6H25MID19HFLfcMo4pAHsJx0MWb90VJJ3/G4WlUHRHtP6JLjN6Q==
-X-Gm-Gg: ASbGncuYRPwA9T/DaHvLgw1SmN076trLn5p2hl5zRT6PC9UQ/HY88n4Nz2c4V+YecFp
-	NtFK3a3mNiGvw7Ph56fWTppxX7vO1o2npZy5rDqp6Y/bXDHJAaIYzRBz5KebFvnaV5zFpVIX9GA
-	kYbTUouRwRS697F+pFyzaCQrweEVDaAzf3W9lG/hx4Y679MYaUEWUW3TYj2Degisi1+QQdWxQ3/
-	WHH4PkVH9ChdD5XqZUI9Hn6SVVeK2wJK8cGiIBXcAqrZ3ta2Zr7e2/ZPupvrEVa6EljrQjzWoB/
-	uWjqa2V8X1KaTApF9ITeJGYp1NOpNjwg8vMvpBcWaXMNxppvlblg8WVEvt7clW1Qkh8mXIW/JJE
-	W5wLfdychzBiGGvBQDuF+6u8Ia0YRKzzha1TEtxh2Gwl6X4JYnkfND4h4SFb4OO2TlFQ=
-X-Received: by 2002:a05:600c:470a:b0:45b:8b34:34a5 with SMTP id 5b1f17b1804b1-45b8b343742mr91308145e9.23.1756886425030;
-        Wed, 03 Sep 2025 01:00:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGvBov+2sCYC8kUy1LMz0NKTPJSNfIKJ0Y4Pc9pD6sJfPp+mtZCtKL911g00Hjd0GsxF29PUw==
-X-Received: by 2002:a05:600c:470a:b0:45b:8b34:34a5 with SMTP id 5b1f17b1804b1-45b8b343742mr91306835e9.23.1756886422976;
-        Wed, 03 Sep 2025 01:00:22 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f09:9c00:8173:2a94:640d:dd31? (p200300d82f099c0081732a94640ddd31.dip0.t-ipconnect.de. [2003:d8:2f09:9c00:8173:2a94:640d:dd31])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0c6b99sm310327755e9.4.2025.09.03.01.00.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 01:00:22 -0700 (PDT)
-Message-ID: <734e09b6-9100-449f-aa77-75a18b634db2@redhat.com>
-Date: Wed, 3 Sep 2025 10:00:21 +0200
+        d=1e100.net; s=20230601; t=1756886487; x=1757491287;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NZeYwMyzCuzis//8vlsX2RpvnF5aLJyp6/ELWk/TlGY=;
+        b=MxIcS3AIqWBDk6hAy4bOn7z56YISEBMExgRtwC9R/e8nJsWdYhy0nltXgm3Fq5DESa
+         w1/+YqlO4hqRIqnquQ715JsDjkZ/G8baymeVXIMwhxNtMnuf7WqES19Rsd2tMtGXvutl
+         vNgGd1eIEl5vX6wJkkAitzNOUfr/NIKXEwnXBG81sPx3IThK+4zElt1A/iIT8P1hMEsM
+         7QXdhVMzMm/NFAy6elFXzaDiMQtsWzqR6HdD1tIfUmOZgfGObc24iQfgJEr/y87TU7mq
+         VvEaYMoLAt0cP41FuUYqwbyhGlT5peAHH8Sl5qXa5Rb8FzeyRpijFm+UtRUty6BLxWTx
+         eRMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ99UqecZv4dYRTELYCJpaIUMjL0cEPWwn4xBIIGSgiouWv7X/mwn3NWJIuITjYZQLIBwVMw1tIrsR@vger.kernel.org, AJvYcCWVROk+FcVm7i83c7Ix76EN+Fyvh33HZ4uIZK+GLJG27s4cOOJDqON8DH2rY+pKZgQm2JNdTPGmk+q6o6u+@vger.kernel.org, AJvYcCX8JQ7G5eIhdMbMm95+nZoh+Ol10oZrBEATdBxhQ+VfX/kiYD+eqNDB+r9X9UqaWKdKMkyZ5tGEA+O4HAY=@vger.kernel.org, AJvYcCXl+6JYZIk27CH09czBLM/u2rtVYCZBqvOmWWpmoY4vV9ZNrQGVwm+iQYF7t3ew6ZqXpo4O0lM7lTOn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6P1tHDa71zzCUc6cuDmBjVPBqBGDK44j6OwUmPaymbxXc1vDF
+	xO++V9WItwyToB4owc31PEI7J1f09FwF+U+yULOfdS6oYtqNiThaUtmX9B0g+eepS7MzQRiDGG7
+	rENEi5kLyAF3T5Ip1hL0PKwMZ/fb+SYo=
+X-Gm-Gg: ASbGncu942lJdqSXJYzX/hm/FWbHAN12cw140pA9Fa/4UZ1xQvuN32p8K2WXnEBwMNy
+	yfz1pewl3DRaf8E2QFRubmliCdrfhhe5rCthUbixSznubqVTLh+Lt100eEassspRd+jFOv+0Nup
+	21uqCTg+G8mbYwbbhkzNmJ1Gyw2eBWjql5UFJBb5EVBEvQo43UX/fBGQeJFSuRiVCl90KzfiAn4
+	q2G6d8=
+X-Google-Smtp-Source: AGHT+IEI3I+GxVBPOF8gc7J4Oqd1/t5YV0Bte28WUjFe0d65Vgbk1ymjWZhh2AJoHnXTXqniFHPbds6D5HMab52iYDU=
+X-Received: by 2002:a2e:a54a:0:b0:336:e199:6d87 with SMTP id
+ 38308e7fff4ca-336e19972ffmr29514141fa.13.1756886486085; Wed, 03 Sep 2025
+ 01:01:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] mm, swap: use unified helper for swap cache look up
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
- Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>,
- Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>,
- Kemeng Shi <shikemeng@huaweicloud.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- linux-kernel@vger.kernel.org
-References: <20250822192023.13477-1-ryncsn@gmail.com>
- <20250822192023.13477-2-ryncsn@gmail.com>
- <e22b8472-6d20-49b4-b49b-78f79f126294@redhat.com>
- <CAMgjq7Bqffjm3dTZ+bHALisCkw7ASao_1h4ZZVM6kd14YdKzmA@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CAMgjq7Bqffjm3dTZ+bHALisCkw7ASao_1h4ZZVM6kd14YdKzmA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
+ <7006329.Sb9uPGUboI@senjougahara> <CALHNRZ8pn9shfq6PdeVe+CEzbq9wu-Vv6UDvD19=MsFrZQsBKg@mail.gmail.com>
+ <26156028.ouqheUzb2q@senjougahara>
+In-Reply-To: <26156028.ouqheUzb2q@senjougahara>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Wed, 3 Sep 2025 03:01:14 -0500
+X-Gm-Features: Ac12FXxmKZYRO3zLyOtCmaUxx74vfBoK6p_zw0GKyByqvrfdOXN-TWzcf3hp-tk
+Message-ID: <CALHNRZ894WcNaAuLFoDLwJ8mXDRM8PzdqRFzcyYUMPy+0q0nMw@mail.gmail.com>
+Subject: Re: [PATCH 5/5] arm64: tegra: Limit max cpu frequency on P3450
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Joseph Lo <josephl@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02.09.25 19:13, Kairui Song wrote:
-> On Tue, Sep 2, 2025 at 6:13 PM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 22.08.25 21:20, Kairui Song wrote:
->>> From: Kairui Song <kasong@tencent.com>
->>>
->>> Always use swap_cache_get_folio for swap cache folio look up. The reason
->>> we are not using it in all places is that it also updates the readahead
->>> info, and some callsites want to avoid that.
->>>
->>> So decouple readahead update with swap cache lookup into a standalone
->>> helper, let the caller call the readahead update helper if that's
->>> needed. And convert all swap cache lookups to use swap_cache_get_folio.
->>>
->>> After this commit, there are only three special cases for accessing swap
->>> cache space now: huge memory splitting, migration and shmem replacing,
->>> because they need to lock the Xarray. Following commits will wrap their
->>> accesses to the swap cache too with special helpers.
->>>
->>> Signed-off-by: Kairui Song <kasong@tencent.com>
->>> ---
->>
->>
->>
->>> +void swap_update_readahead(struct folio *folio,
->>> +                        struct vm_area_struct *vma,
->>> +                        unsigned long addr)
->>>    {
->>
->> Oh, one thing. Regarding recent const-correctness discussions, "folio"
->> should probably be const here.
->>
-> 
-> Not here, swap_update_readahead does folio_test_clear_readahead so...
-> 
+On Wed, Sep 3, 2025 at 2:29=E2=80=AFAM Mikko Perttunen <mperttunen@nvidia.c=
+om> wrote:
+>
+> On Wednesday, September 3, 2025 3:28=E2=80=AFPM Aaron Kling wrote:
+> > On Wed, Sep 3, 2025 at 12:50=E2=80=AFAM Mikko Perttunen <mperttunen@nvi=
+dia.com> wrote:
+> > >
+> > > On Saturday, August 16, 2025 2:53=E2=80=AFPM Aaron Kling via B4 Relay=
+ wrote:
+> > > > From: Aaron Kling <webgeek1234@gmail.com>
+> > > >
+> > > > P3450's cpu is only rated for 1.4 GHz while the CVB table it uses t=
+ries
+> > > > to scale to 1.5 GHz. Set an appropriate limit on the maximum scalin=
+g
+> > > > frequency.
+> > >
+> > > Looking at downstream, from what I can tell, the CPU's maximum freque=
+ncy is indeed 1.55GHz under normal conditions. However, at temperatures ove=
+r 90C, its voltage is limited to 1090mV. Reference:
+> > >
+> > > static struct dvfs_therm_limits
+> > > tegra210_core_therm_caps_ucm2[MAX_THERMAL_LIMITS] =3D {
+> > >         {86, 1090},
+> > >         {0, 0},
+> > > };
+> > > (rel-32 kernel-4.9/drivers/soc/tegra/tegra210-dvfs.c)
+> > >
+> > > Here the throttling is set at 86C, I suppose to give some margin.
+> > >
+> > > 1090mV perfectly matches the 1.479GHz operating point defined in the =
+upstream kernel. So it seems to me that rather than setting a maximum frequ=
+ency, we would need temperature dependent DVFS. Or, at least as a first ste=
+p, we could have the driver just always limit the maximum frequency so it f=
+its under the thermal cap voltage -- the temperature limit is rather high, =
+after all.
+> > >
+> > > If you have other information, please do tell.
+> >
+> > I am basing on this line in the downstream porg dt repo:
+> >
+> > nvidia,dfll-max-freq-khz =3D <1479000>;
+> > (tegra-l4t-r32.7.6_good kernel-dts/tegra210-porg-p3448-common.dtsi)
+> >
+> > Which in the downstream dfll driver limits the max frequency it will us=
+e:
+> >
+> >         max_freq =3D fcpu_data->cpu_max_freq_table[speedo_id];
+> >         if (!of_property_read_u32(pdev->dev.of_node, "nvidia,dfll-max-f=
+req-khz",
+> >                                   &f))
+> >                 max_freq =3D min(max_freq, f * 1000UL);
+> > (tegra-l4t-r32.7.6_good drivers/clk/tegra/clk-tegra124-dfll-fcpu.c)
+> >
+> > If I read the commit history correctly, it does appear that this limit
+> > was set because the always-on use case was failing thermal tests. I
+> > couldn't say if it was intentional that this throttling was applied to
+> > all use cases or not, but that is what appears to have happened. Hence
+> > trying to replicate here in an effort to squash stability issues.
+>
+> I can't see any reference to failing thermal tests. Can to point to the c=
+ommit?
 
-Ah, makes sense!
+In the porg dt repo, commit hash d1326f08, which adds the
+nvidia,dfll-max-freq-khz property, the message body states: "Set
+CPU/GPU Fmax limit for 24x7 105C UCM." I read that to mean that the
+24x7 always-on use case model was failing to stay under 105C unless
+the cpu and gpu frequencies were limited. Is that an incorrect
+reading? 105C is kind of a crazy number anyways, beyond the soctherm
+critical shutdown temperature.
 
-> I'll try add const to other places where I see the folio is const,
-> thanks for the info!
+> I looked into why this was added for porg -- it does not seem to be relat=
+ed to reliability, but more so consistency of performance. I don't think th=
+at's a huge concern for upstream -- though in any case we should be capping=
+ the frequency in the DFLL driver for now since we don't support dynamic th=
+ermal capping.
 
+So the whole conversation winds around to: The change is valid, but
+the commit message needs better justification?
 
-Thanks!
+As a side note: I'm still chasing multiple stability issues on various
+t210 devices. Though, the only one I've seen on p3450/p3541 is that
+nouveau intermittently fails to init the gpu. Just hangs on probe and
+eventually something times out, stack traces, and causes a panic
+reboot. Seems to be about a 50/50 chance for me, but works fine if
+probe succeeds. For another dev, it only works once in a blue moon,
+but still dies shortly thereafter even if probe works. I thought it
+might be related to the cpu/gpu getting 'overclocked'. But even after
+this series, the problem persists. So maybe me calling this underclock
+a stability fix is inaccurate. But stability issues still exist.
 
-
--- 
-Cheers
-
-David / dhildenb
-
+Aaron
 
