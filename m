@@ -1,108 +1,93 @@
-Return-Path: <linux-kernel+bounces-797989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97158B4181B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:12:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC8FFB41822
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 649F8166DCE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:12:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8997D1B236B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9B42E7F19;
-	Wed,  3 Sep 2025 08:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7692EA468;
+	Wed,  3 Sep 2025 08:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kN0YLQfF"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ccvU4TE7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35DD28315D;
-	Wed,  3 Sep 2025 08:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E622E7BAC
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756887139; cv=none; b=Is2vM+7XbO0t+E+NBRXlfb5KfOxQ4xGzbtyb5MGo0dlBregAruF2cx3pkosMuQWuounT/jlUfBkJt3NWCnrQJPs4/TKL8rpbzUSFwF4G5CfETi08Evmz4NEASc93EWWYUVS+vFeyhbawE9w+Z0DGXnL2ct6uvYVJ+c7pHBzLpRE=
+	t=1756887262; cv=none; b=HERYUtwNUI7L4P0XnS8kmJiWSSTLsU8FyuaAOqtpbVwe9YB4W0DgRWI7IV+VTq/B0j8DKmWiAWSdMB7MWVuboSsarxdmu3Idp+aKdnlAc5+jxQQPDlBlQMMJeGBv+s6F4Po658+aJkT2MAo9Ab2YetZTpXAW7TYfY5mjgP+sCxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756887139; c=relaxed/simple;
-	bh=1bDVjTqTrvTyx3jCOVewrN5vmmyZijgy/U9beuzNqik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XlTJYBG/2GLIuGqOOuN9qRv1NWDaSsi2urIlymGpkABLOU1n5wv5/7lOMkUF9WkbUFN/U0AAbJ8Cx8/lBrUtLDh6t0Qv9+jFLp+W+i5nlzUBh69DRExobZw251jJbh4y7G+lLqZdX/vBax70kfX7pLgQ6Razab2p6dGfZbDIKF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kN0YLQfF; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=82BXPuTIAmYs8Jgya751jyIs2p821MLp1j4bro46M3c=; b=kN0YLQfF0Kqedc8S5A6h+o6O/6
-	butaHyUaf77lZbt8jbYVbyt3s2C7e+qUhoqykljabExiBdGoaeI1J0p3SCEC1aCR6E56sJgN+pgQR
-	QUOhf9QucUxcNcdhYzJcVBrfkd9dLgvQaHJGV8jQteh/UFL7CmAfC/WvbQGwHYhWc2bMg0rskvWVk
-	oNFOpUpdUQpCz1Adz7gxkuRNghc5tFUKFPaVhnsufHhh031+WZHOevobOSQe0OUyM//WbE4cD0788
-	n/MbRMh6kBP6Qfc9TsAn6kyG4V+UvE+5Fj81BqacNPhF/NeljZndxMSmQekBmgDNOUwuLR7WxGTLO
-	3gr8V27g==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utibC-0000000HVse-42d2;
-	Wed, 03 Sep 2025 08:12:11 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 30D4130039F; Wed, 03 Sep 2025 10:12:11 +0200 (CEST)
-Date: Wed, 3 Sep 2025 10:12:11 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: kan.liang@linux.intel.com
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	irogers@google.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-s390@vger.kernel.org,
-	Sumanth Korikkar <sumanthk@linux.ibm.com>
-Subject: Re: [PATCH] perf: Fix the POLL_HUP delivery breakage
-Message-ID: <20250903081211.GO3245006@noisy.programming.kicks-ass.net>
-References: <20250811182644.1305952-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1756887262; c=relaxed/simple;
+	bh=UsxmT48ZkvcIpmHsJt+8ZU+J2MNRX2CZYyGfQXr97Ew=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hU/GLUnP5pDX2SJHmm+2flhQjCt+/UsGbEwu3YvIclugfLs8qTp7RBOXztXkxEYbmLRsDD7KGjYyT9Ub+zoJQYWUifchaNav6QR+8TuLGsYUyNf+puPLr7F0APd313+ax9S6ASfFF4zsmn0liJPO0DEc11jsrW2vuYlhj98oM/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ccvU4TE7; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756887261; x=1788423261;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=UsxmT48ZkvcIpmHsJt+8ZU+J2MNRX2CZYyGfQXr97Ew=;
+  b=ccvU4TE78hDDGkXVNxc+GbyU6VUV2TOpVObDbZz1UCyvEabzsfxBUndV
+   yfY0HzTqHDZNP1XsiLH51yev/bURQfg47qvcJJ5CMaDcbIrdKj/FxjPnU
+   J3hNtcv5paKskYh3vjUWJXjCACcGm6M2B/mhD6Lr+RWNhXnKpl/WAMr2Q
+   OzAis/ykfHuOOIdx5ptLx/UchHnBg9eanUVl2Mx/2ac4daxm4I1/mLvMr
+   LDKH83KwxPtTQYl2IxdcjaOFr/SLDZ0ZCHWAtR9TqweUqlOc0tbMKK3yr
+   rYmWQVptV1paBeFQ7S19N2SLQiTEH5U/KFozWHTBuaToLbLpcO8WcMA95
+   w==;
+X-CSE-ConnectionGUID: vOA/4CN7SJC0vOZyh3DyRQ==
+X-CSE-MsgGUID: 01nZUDpgSDGX5K4ocQHZdw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="70621389"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="70621389"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 01:14:19 -0700
+X-CSE-ConnectionGUID: 3iw70NX3TBik9Edm5F8a4A==
+X-CSE-MsgGUID: +oZj9FAqQvSXb5sRjLjPDg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="171092930"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa009.jf.intel.com with ESMTP; 03 Sep 2025 01:14:16 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id BB88894; Wed, 03 Sep 2025 10:14:15 +0200 (CEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: Peter Tyser <ptyser@xes-inc.com>,
+	Lee Jones <lee@kernel.org>
+Subject: [PATCH v1 0/2] mfd: lpc_ich: Simplify GPIO resource handling
+Date: Wed,  3 Sep 2025 10:12:27 +0200
+Message-ID: <20250903081414.1972179-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811182644.1305952-1-kan.liang@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 11, 2025 at 11:26:44AM -0700, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> The event_limit can be set by the PERF_EVENT_IOC_REFRESH to limit the
-> number of events. When the event_limit reaches 0, the POLL_HUP signal
-> should be sent. But it's missed.
-> 
-> The corresponding counter should be stopped when the event_limit reaches
-> 0. It was implemented in the ARCH-specific code. However, since the
-> commit 9734e25fbf5a ("perf: Fix the throttle logic for a group"), all
-> the ARCH-specific code has been moved to the generic code. The code to
-> handle the event_limit was lost.
-> 
-> Add the event->pmu->stop(event, 0); back.
-> 
-> Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
-> Closes: https://lore.kernel.org/lkml/aICYAqM5EQUlTqtX@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com/
-> Reported-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
-> Tested-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> ---
->  kernel/events/core.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index dd8cf3c7fb7a..ec19c456b66d 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -10378,6 +10378,7 @@ static int __perf_event_overflow(struct perf_event *event,
->  		ret = 1;
->  		event->pending_kill = POLL_HUP;
->  		perf_event_disable_inatomic(event);
-> +		event->pmu->stop(event, 0);
->  	}
->  
->  	if (event->attr.sigtrap) {
+Introduce a helper to iopoll.h which allows to simplify GPIO resource handling
+in lpc_ich driver for the starter. The helper can be used in many other cases.
 
-Right. I've queued the patch, but should we take a hard look at anybody
-still consuming the return value of perf_event_overflow?
+Andy Shevchenko (2):
+  resource: Introduce resource_rebase() helper
+  mfd: lpc_ich: Convert to use resource_rebase()
+
+ drivers/mfd/lpc_ich.c  | 38 ++++++++------------------------------
+ include/linux/ioport.h |  6 ++++++
+ 2 files changed, 14 insertions(+), 30 deletions(-)
+
+-- 
+2.50.1
+
 
