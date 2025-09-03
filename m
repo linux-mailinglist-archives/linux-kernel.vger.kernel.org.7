@@ -1,239 +1,144 @@
-Return-Path: <linux-kernel+bounces-799245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB564B428EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:43:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD56DB428EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 869153AFFDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9824568042A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD90A36809A;
-	Wed,  3 Sep 2025 18:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6831436809C;
+	Wed,  3 Sep 2025 18:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="Jo1eOqAT"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4Tn/UbA3"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2857C3629B8
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 18:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756925031; cv=pass; b=DuEa8nj3+bfXMA4E3xqj9z3sZ1Z5QdYIyDU/IkBthyD0VaOs/X8ypwPm9S2IBEyN5x94WCMX7qyUf/GIsMTfxYqEbFyTCutxr8vhjGKONYZg7euz+gPnhyxBh4KcRCgZem1h6PnSnQes1skVzhtxLJv/e8nMolHyePAKFqpvhzs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756925031; c=relaxed/simple;
-	bh=mVVxg8GWE4G6crBZIhefiyImIkUh+D8hyZX7Ycao6FY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CFh256V5lyTBNwrCAd7IuSOFKuSnN/JvVQ0V59/KasicqaLkHKWBr285nDlZRMAhVS8AMcvHvl5kyer0gsR//UTk3jco4LHQGQ3y+H/YG84RCPW1e7b6ZYwtdJ0+kgUVRIoxhM8yGAGDsndC5jFzmlaht4yPELi+qkvGmp19/sU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=Jo1eOqAT; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756924941; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=XPN1vKcx8Ej224AtZVj8ZCULAAnbkrzDGKmbONvCEkg8h0+2l8E9mxYRh78Jd211J5Yl85xXARVlrrmU5TVjV7pD7h/TFxVW9Z+i554tUn271xCAWqOvs29yNsgTTvRYZ65XJ9RS5WPvJ4R0NhZ7OVH8KsFfOyps1LB1+/AXE4I=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756924941; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=N3wTVuzRWFsLOmgF08rX8v9agtMLx+eUNjsrlNZ33Qw=; 
-	b=ACPIjUrLHMabibtDfsKXZrSSris3uh3lJmHY78Cvvmg3t2l+crKWa+Mz1P4NIZq1rZLWNCGmzOvJZN1jIAtx07UjCWQE5k/LdRei/w25nl3QI10V743TrG1VqaO42yYlcmYikFfknR58tTlcboCH5WIcRhzwLUZd2BTvZhzpMNI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
-	dmarc=pass header.from=<nfraprado@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756924941;
-	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=N3wTVuzRWFsLOmgF08rX8v9agtMLx+eUNjsrlNZ33Qw=;
-	b=Jo1eOqATLjRJA8HTdL2X5U8rl6y8yyfGPZYaNl9OH+UqdX57//qTAM0JeYml0vJM
-	zQHHIrC/TKwg5vZBW3hvpMxQtb7zaxUWydAb1f3eYfei+stG3e75zv6/B0N78IqP4YT
-	EHlzVNyxP/1DhFoJbKHHpNUBd8aThUouP2eATzTM=
-Received: by mx.zohomail.com with SMTPS id 1756924938273225.66438221064573;
-	Wed, 3 Sep 2025 11:42:18 -0700 (PDT)
-Message-ID: <269ca85a59f613568543f45867fba7e604cc9f11.camel@collabora.com>
-Subject: Re: [PATCH RFC 1/5] drm: Support post-blend color pipeline API
-From: =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado" <nfraprado@collabora.com>
-To: Daniel Stone <daniel@fooishbar.org>, Xaver Hugl <xaver.hugl@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard	
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	 <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Chun-Kuang Hu	
- <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Matthias
- Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
- <angelogioacchino.delregno@collabora.com>, Alex Hung <alex.hung@amd.com>, 
-	wayland-devel@lists.freedesktop.org, harry.wentland@amd.com,
- leo.liu@amd.com, 	ville.syrjala@linux.intel.com,
- pekka.paalanen@collabora.com, contact@emersion.fr, 	mwen@igalia.com,
- jadahl@redhat.com, sebastian.wick@redhat.com, 	shashank.sharma@amd.com,
- agoins@nvidia.com, joshua@froggi.es, mdaenzer@redhat.com, 
-	aleixpol@kde.org, victoria@system76.com, uma.shankar@intel.com, 
-	quic_naseer@quicinc.com, quic_cbraga@quicinc.com,
- quic_abhinavk@quicinc.com, 	marcan@marcan.st, Liviu.Dudau@arm.com,
- sashamcintosh@google.com, 	chaitanya.kumar.borah@intel.com,
- louis.chauvet@bootlin.com, mcanal@igalia.com, 	kernel@collabora.com,
- daniels@collabora.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, Simona Vetter <simona.vetter@ffwll.ch>
-Date: Wed, 03 Sep 2025 14:42:14 -0400
-In-Reply-To: <CAPj87rMTOD3_tC70QX4xz3G4zdG=tmwt5VgPhq6jNyf8bbW49Q@mail.gmail.com>
-References: 
-	<20250822-mtk-post-blend-color-pipeline-v1-0-a9446d4aca82@collabora.com>
-	 <20250822-mtk-post-blend-color-pipeline-v1-1-a9446d4aca82@collabora.com>
-	 <CAPj87rPAoD2D99zTdsvJ=9K8+G17mTS2jDYHMPYmXNtUyp2L_Q@mail.gmail.com>
-	 <CAFZQkGwotQ6cxVCSgp-BhUi5DaZ7MyVvbnrDJW11Z7ztzqy58g@mail.gmail.com>
-	 <CAPj87rMTOD3_tC70QX4xz3G4zdG=tmwt5VgPhq6jNyf8bbW49Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7363D3629B8
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 18:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756924980; cv=none; b=RzJD/1QLBnp8Aj3jmg9H4IEH3bXm/Erzw0HTGahCJ3UvhIJwcI8+G94UGztwHPMV2jK63S8yQWlukpwLH3DScziAcdBwCKtTpCbBCXg3V0Y18FcVNtpjTqXyJnwwOd8lM+4trnfOJ+QrT9JdVJhKHGgNcj+X1Lz0wEuLFIpy8ZY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756924980; c=relaxed/simple;
+	bh=Dp47Bw4LhXp29qV4lfEDG5HOY3Q+6+YPzTiMrwpA2DA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=ILxijOttYu80kT7HPmSVMCj0QXImiv/4/IwZsmG0YwdBu4hA2QQP0uyDPHg4xMb3lqWL1HoV4dhV9Ickvl8bujTfIZeftPpbprjaKq2HUxXmCs79Xf6X6q3CCYTmK0BUTO8ebxH0M4ZrCSDs2tvrfu3tjoAvKRHzyLpJ3GcW+94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4Tn/UbA3; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-324e4c3af5fso96919a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 11:42:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756924979; x=1757529779; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=l5aN7djIkkUT2sBdfyx1qSEcAbRYo6zyioJkgOjgjEc=;
+        b=4Tn/UbA3LOeB5b6sjrsE7M+vzZAoP5N0HnjlMs43Kzq236kDoA/IpCfNQkbzntQkuM
+         ++dYvMjPvcheBKSJOZ9GkKD90JcG4zAFlC920FcD7vG0cefq0vvg+kpVINuSeWbbG3Vu
+         jZzSYnXVBn/tAHT51Dw+eHotTtfp4iR6PV9qNcc/be1RRhO+d8u4t8TUTj1KjCwFrO85
+         8P3VgIJgyInBfML/LXriLQDzIPaaWMb601+RuGQXHq326c3SpeHUAHNwILcDBm/0DEj9
+         eYWAcCaG91Ctu8WKm6pNfwA9yv65BfRb+8llYdkKt/Cz6PeBNEBFojBhN4pcoIYvE5hD
+         G5eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756924979; x=1757529779;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l5aN7djIkkUT2sBdfyx1qSEcAbRYo6zyioJkgOjgjEc=;
+        b=YSMJIOwdjWsC3KtGgy8WnHtWTKra62w9eXyPbawAqbHr/r/ZRT2V7lYaqFUegZ3rUx
+         VluqwnxdIZSKo6FJhfHyt/Oka2FjSf6P89lXP5slVGusonXTxIw/1pdVbrdaFNhGDWjZ
+         iwcfmrhnaf4p7QxrQBTpwYVZ9cyBqAHSnTvNvBoTBPcehGfaQo+boA3lirFtUv37J6gh
+         BPadNfV//gPfwHxY1wOIAdtLsFfwwDaQKIHhxBhjmDh9LES0XaxTzWK3m0DEuGoefkgD
+         Cu4Co9p3AKONgvWIc92MdE6FqaiFiH/xkSUoeedCV9anYVS216jVC04OS2vPk5g9BzPh
+         0y6A==
+X-Forwarded-Encrypted: i=1; AJvYcCX2t4WfPxIh/OGWpBtGGs6I023tkBKgS+nl3/u8UCcEYxV0ulKuYFm7/3dQKS5QfwnN07gTnHZNdIOikZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBPz3WZC7xryDrLrlAiJaO9f+bSTizVeh4MKUeErMda3uCd6k3
+	CKcPyt1fvlhuLkStZbosOUYrSOwf7DUWOaXcFwwaxUMucO1C2To783ghB3oHABkq5CT1kBrKBWf
+	3HRj5B/XrYw==
+X-Google-Smtp-Source: AGHT+IE82ZLItzbcwVjR6xjPMcTS9kABRExAjPt9nXLxYjTqAax/qoSHCG+MF4EpCY9h8hZnLVp7XgNX2Loz
+X-Received: from pjad23.prod.google.com ([2002:a17:90a:1117:b0:329:7289:8bdb])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1a8b:b0:327:e8d0:cb18
+ with SMTP id 98e67ed59e1d1-328156cc9f7mr20206450a91.29.1756924978715; Wed, 03
+ Sep 2025 11:42:58 -0700 (PDT)
+Date: Wed,  3 Sep 2025 11:42:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-ZohoMailClient: External
-X-ZohoMail-Owner: <269ca85a59f613568543f45867fba7e604cc9f11.camel@collabora.com>+zmo_0_nfraprado@collabora.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
+Message-ID: <20250903184248.695267-1-irogers@google.com>
+Subject: [PATCH v1 1/2] perf test: Add an 'import perf' test shell script
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Collin Funk <collin.funk1@gmail.com>, Ravi Bangoria <ravi.bangoria@amd.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2025-08-26 at 13:25 +0100, Daniel Stone wrote:
-> Hi,
->=20
-> On Mon, 25 Aug 2025 at 19:45, Xaver Hugl <xaver.hugl@gmail.com>
-> wrote:
-> > > > @@ -416,6 +417,24 @@ int drm_mode_object_get_properties(struct
-> > > > drm_mode_object *obj, bool atomic,
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 if (post_blend_color_pipeline && obj->type =3D=3D
-> > > > DRM_MODE_OBJECT_CRTC) {
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct d=
-rm_crtc *crtc =3D
-> > > > obj_to_crtc(obj);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct d=
-rm_mode_config mode_config =3D
-> > > > crtc->dev->mode_config;
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (prop=
- =3D=3D
-> > > > mode_config.gamma_lut_property ||
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 prop =3D=3D
-> > > > mode_config.degamma_lut_property ||
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 prop =3D=3D
-> > > > mode_config.gamma_lut_size_property ||
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 prop =3D=3D mode_config.ctm_property)
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 continue;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 }
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 if (!post_blend_color_pipeline && obj->type =3D=3D
-> > > > DRM_MODE_OBJECT_CRTC) {
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct d=
-rm_crtc *crtc =3D
-> > > > obj_to_crtc(obj);
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (prop=
- =3D=3D crtc-
-> > > > >color_pipeline_property)
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 continue;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 }
-> > >=20
-> > > Hmmm. One issue with this is that it makes things like drm_info
-> > > harder: if drm_info opted into the client cap, it would no longer
-> > > be
-> > > able to see any GAMMA_LUT/etc programmed by the prior userspace.
-> > > So I
-> > > think allowing at least read-only access would be reasonable
-> > > here.
-> >=20
-> > FWIW the cap for per-plane pipelines also hides COLOR_RANGE and
-> > COLOR_ENCODING properties from the client.
-> >=20
-> > From a compositor POV, I slightly prefer hiding the properties
-> > entirely, but ignoring them on the compositor side when a color
-> > pipeline is available would also be trivial.
->=20
-> It makes it impossible to do smooth transitions from legacy clients,
-> as the old (current) properties can't be read back.
->=20
-> I assume the atomic state would also carry the old values (even if
-> the
-> drivers are specified to have to ignore them), so there would be an
-> odd transition:
-> * pre-colorop userspace sets GAMMA_LUT to invert brightness
-> * colorop userspace takes over, does not set any colorops on the
-> CRTC,
-> brightness is no longer inverted (presumably? depends on what the
-> default set of colorops is? and what the drivers do?), but the atomic
-> state still carries the old gamma_lut blob
-> * pre-colorop userspace takes over, does not touch GAMMA_LUT,
-> brightness is inverted as the colorop from the previous atomic state
-> is ignored and the pre-atomic one now takes precedence
->=20
-> This isn't necessarily wrong per se, but does seem kind of janky and
-> error-prone: like should the old state be reset to zero/bypass for
-> commits from colorop-aware clients? Or should we explicitly allow 0
-> but no other value?
+The 'import perf' test needs to set up a path to the python module as
+well as to know the python command to invoke. These are hard coded at
+build time to be build a directory and the python used in the build,
+which is less than desirable. Avoid the hard coded values by reusing
+the existing shell script python setup and determine a potential built
+python module via the path of the perf executable.
 
-Hi, thanks for the feedback!
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/tests/shell/python-use.sh | 36 ++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100755 tools/perf/tests/shell/python-use.sh
 
-Based on this discussion, this is my understanding for the changes
-desired on the series and their reasonings:
+diff --git a/tools/perf/tests/shell/python-use.sh b/tools/perf/tests/shell/python-use.sh
+new file mode 100755
+index 000000000000..fd2ee5390060
+--- /dev/null
++++ b/tools/perf/tests/shell/python-use.sh
+@@ -0,0 +1,36 @@
++#!/bin/bash
++# 'import perf' in python
++# SPDX-License-Identifier: GPL-2.0
++# Just test if we can load the python binding.
++set -e
++
++shelldir=$(dirname "$0")
++# shellcheck source=lib/setup_python.sh
++. "${shelldir}"/lib/setup_python.sh
++
++MODULE_DIR=$(dirname "$(which perf)")/python
++
++if [ -d "$MODULE_DIR" ]
++then
++    CMD=$(cat <<EOF
++import sys
++sys.path.insert(0, '$MODULE_DIR')
++import perf
++print('success!')
++EOF
++    )
++else
++    CMD=$(cat <<EOF
++import perf
++print('success!')
++EOF
++    )
++fi
++
++echo -e "Testing 'import perf' with:\n$CMD"
++
++if ! echo "$CMD" | $PYTHON | grep -q "success!"
++then
++  exit 1
++fi
++exit 0
+-- 
+2.51.0.338.gd7d06c2dae-goog
 
-1. Add a driver cap, DRM_CAP_POST_BLEND_COLOR_PIPELINE, which drivers
-will use to signal they support post-blend color pipelines.
-  - Reason: Allow userspace to figure out that the driver doesn't
-support post-blend color pipelines and choose to not set the client
-cap, DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE, so it can use legacy
-color management instead.
-2. Make it so setting the client cap,
-DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE, fails if the driver cap,
-DRM_CAP_POST_BLEND_COLOR_PIPELINE, isn't set
-  - Reason: Prevent userspace from making color management unusable if
-the driver doesn't support post-blend color pipelines, as the legacy
-color-management properties (GAMMA_LUT, DEGAMMA_LUT, CTM) would be
-unwriteable with the client cap set.
-3. Make legacy color-management properties (GAMMA_LUT, DEGAMMA_LUT,
-CTM) read-only if the client cap,
-DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE, is set
-  - Reason: Allow drm_info to print legacy color management
-configuration while still enabling post-blend color pipelines through
-the client cap. Also to allow smooth handover from pre-colorop
-userspace client to colorop-ready userspace client, as the latter can
-now replicate the legacy color configuration through the colorops.
-
-Side note: Smooth handover back to pre-colorop userspace after tweaking
-the colorops to something else would not be possible without making the
-legacy properties writable too, so that the client could update them to
-match the colorops setting before switching back. I don't imagine this
-would be a common use case, and colorops are a superset of the legacy
-properties so there are cases where it wouldn't even be possible to
-replicate the colorop setting on the legacy properties, but thought I'd
-mention this limitation for completeness' sake.
-
-Also, as Xaver noted, this feedback also applies to pre-blend pipelines
-and its legacy color-management properties (COLOR_ENCODING,
-COLOR_RANGE), so the same changes would be desirable there for the same
-reasons. So we should share this feedback on that series as well.
-
-
-Does this sound right?
-
---=20
-Thanks,
-
-N=C3=ADcolas
 
