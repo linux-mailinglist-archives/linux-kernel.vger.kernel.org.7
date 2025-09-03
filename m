@@ -1,139 +1,108 @@
-Return-Path: <linux-kernel+bounces-797521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4427B4118A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:56:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 919D0B4118C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 332171893AE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:56:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D89D482A34
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144501B5EB5;
-	Wed,  3 Sep 2025 00:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A398719F12D;
+	Wed,  3 Sep 2025 00:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mu57fO9m"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="M09Ujxba"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA602195B1A;
-	Wed,  3 Sep 2025 00:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6FF14EC73;
+	Wed,  3 Sep 2025 00:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756860951; cv=none; b=J2INQP4X+v29etkpIyBXvBjs0Y7FUSC9T0OPf7dd4mzj3onLujRcYhuH+U1TLfef6WkLK+e+uXB/XjKiex9OJTchEE9fara753B5+7+EBLJevXpGJH9vluXN3Z5JANCNJ0Pbs0WUIwB/mi+vZv7QDRcpAa+5Tc34UmDFSaI4bag=
+	t=1756860977; cv=none; b=Pl9IMCQo2I4tBXl3zN2F44VF+xXqinMqzr5ABnKxKpnNOtdqbYuAuPyQWhXHcz1Tx+AbdaXrhc8izZNoeB3x1wyPQU5Vn3pL2kx5rtlxN8kg0qQbjhXjvWxf1Y/Gc/bYpRN1GidH9RHPmuTVCcvfN30gkH47j0JTR70zz2OrghA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756860951; c=relaxed/simple;
-	bh=swZueAhBXSwklO7Tf/fSg9bLL3E16TGenKFw98dM9Wk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GIjJO/cRN+lWId6rOoIVrKT/LsGrcV99/ARoZ7akIvvUr9AHDWwEqvCiTZLf4yrItLNUTUtppa0C25pVS2msfTdwQ/rsgXfneCij8cAOSCFNJk1ZNVinfBZtOgv3tdiJBeqSt5g760Qpz9shlX3HR3n0/PWFzeLJFWaJFosmqbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mu57fO9m; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55f6186cc17so4936739e87.2;
-        Tue, 02 Sep 2025 17:55:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756860948; x=1757465748; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=biFf42usLj+Vl0gHJRJPvudXd19GDtQlKIRujcLuh50=;
-        b=Mu57fO9mnGb6wQSV+akQdt6rmo+F4HgUyAwJOWsLusZGtIAbX/8T7luezRG4M1GTwe
-         IwaF/WtoCNw1YbukPpB+BwOHqYNz8hsXc2F1a048CswPc6SiMlp65cqonabI0Cl43t33
-         inC21+ZGelYIPKYx4fo9ylAUwJVP7HkH99lmNcszSSIK6qPUU4vULvfmC0pw7FG9ftWN
-         SYoyFVmCLGYxh+QekGzD37IaVe+ifWornLB0z+RvxRSIKvYPGouS/hzkNnKiiIIlq6XG
-         JaOMVcl6oLBfFSeuqxh1s8GZrxuTblvYAt8ie/OhAHP/Av4encivn0LnlODPVgOjfyjf
-         kt3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756860948; x=1757465748;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=biFf42usLj+Vl0gHJRJPvudXd19GDtQlKIRujcLuh50=;
-        b=b79mY24GRpZOPKK+v09e9kQj/YQVTXDoqqgO2P9DehjMPes+pCIacJVKmyqmgME+Pv
-         24BJrDSimsAR+7mgGExOsN9CRnkkhApweNhdCVCC6xvuEO8ETOugODWR52bXDXaqLDf4
-         x5xgW0C5OB2uo4vcHt/ewEuMGc0Bgj+6EnXYhWeKhu0bOzxKMrqg1DCW4OJlr6mek9bM
-         iJs9o9sdIZATWKUlPDbM+J7WXnlToUPIUFkC/XK7o3M4wHTcXYV7eR1/lmeahbufEavl
-         JmIEXvcUQlJdCYP2BbW6AzTG4LCUePP792FsBI+GxDMs1wqBovv9111iewHt2AjH4Qp+
-         UqmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqgbcEnKmF6j+7u5wn2SCNt8nwA6ZjzgklOR17EDp+cshmDXVUB1lsAJyXQp9rMBYxWvQhwIRLw1U=@vger.kernel.org, AJvYcCVf4KttbraW5K+Srr1jsHxJeeR0QlncYToH7smUPj5Qc2nug64T/rVPGCj8Hk1JG5O5oajv117av+NbYdw=@vger.kernel.org, AJvYcCVr5+TxGrXHUcXFq67BqOpC7nCN2h5MiZ1vWBqoSoEQ+pGn4iMOCxutKzpnvH7bw9A7X7nYnzJZ+OGF@vger.kernel.org, AJvYcCWT0vnE3PQz9gNBZtsujdU5rNYteRbrQvQsfyrbvZx8QXNImLtOUlyPzovXKo08QQztVLeMq0qN9qCo94dM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiAx+OkbNS1TooxE9zYqbZOX8tNXB08y7uXRaKFSpVhdfvKLYT
-	1FdrXf2SccMK7Vd9yoYE7NFh4S8F6rKW0frmpDW71PtqLuCQmG8Xr1y8PMCCDayKZA7xywJEgIO
-	08YieNF1Xlay6aEgtCxUhvbYru5RUb1M=
-X-Gm-Gg: ASbGncu8DWzysgY0+C/VPa37OzL+tH8bbxIjgWqeQV8ZaH5vHbZsUhS4Pu1ad08L+iD
-	n0kNHbnuKod3gmPhRLdnScBSgtCYYuVXphVwfGrPJF9IC5Ve9ITYnv+M7qDc42druMeCZGMBQ9f
-	zW4/E6Mp+v3VUPchnJLaDTOaQkaivR4J/PV9Hv66g1fJ/VYPLm2q42X8KfYZLy6QLnHNcOKu89k
-	C8sjtOp
-X-Google-Smtp-Source: AGHT+IGPZiMfaP1paVpXDCG7OlJWEUH8L/hCasKQtaW7zajb61su/qh6PDSxtn5RJPKHGKRCZNKuZzFMs+Ee/c4fsFU=
-X-Received: by 2002:a05:6512:4045:10b0:55f:71ad:5913 with SMTP id
- 2adb3069b0e04-55f71ad6048mr3433585e87.50.1756860947536; Tue, 02 Sep 2025
- 17:55:47 -0700 (PDT)
+	s=arc-20240116; t=1756860977; c=relaxed/simple;
+	bh=vMUBpOspAwuRbk3s8zYi5ml7mvtL6cW/MHTRA4NY7ro=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=jtKv0tmEl6CYa7iVLFTIut8937Qxa1gK50eSOXyETu/tcPzunse9DiImME+We7ZQFNHmV4Qpd8+foOIs/+mVI8tCuOq8Lh9Tos6J97VLLiOlZHn6YTDftPWp/odENVYOLxStL5OcU+ytH0juuU6V5EZnguR34SA2OcjBtPKJhCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=M09Ujxba; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from neptunite.rasen.tech (unknown [IPv6:2404:7a81:160:2100:30ba:ee2f:ad96:6665])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 111D3162B;
+	Wed,  3 Sep 2025 02:55:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756860902;
+	bh=vMUBpOspAwuRbk3s8zYi5ml7mvtL6cW/MHTRA4NY7ro=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=M09UjxbaNl4O7Aq5tpPeCiAvMeaYwv5r0yOTL0GZdgx+4CItYw64sXEQszZXQYdYP
+	 0GJ1Y1XRYj0p3daiEop57gWfDtU6YT1+OVvMuYMJLP4WyXuxJx5jJUhSz3QSvrOFlC
+	 XQxrbiuL8S0iIyk2o/nCeDhN+ir2y/Mf2w+OunwY=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828-t210-actmon-v1-0-aeb19ec1f244@gmail.com> <25477710.6Emhk5qWAg@senjougahara>
-In-Reply-To: <25477710.6Emhk5qWAg@senjougahara>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 2 Sep 2025 19:55:36 -0500
-X-Gm-Features: Ac12FXyiMmcEPBnXVhKhTD563A-aPjl9MtxAaVDXptfjkCQhW65cAeinrQCkxqE
-Message-ID: <CALHNRZ-660RVcYLo9Pxxj9gz1s0x4nLYOSFwbtiEwSU1qbvA5Q@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/7] Support Tegra210 actmon for dynamic EMC scaling
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <m31popxjqk.fsf@t19.piap.pl>
+References: <175308758352.3134829.9472501038683860006@localhost> <m3qzxyug1s.fsf@t19.piap.pl> <m3cy9futcj.fsf@t19.piap.pl> <m34iumujcs.fsf@t19.piap.pl> <m3zfcet41n.fsf@t19.piap.pl> <m3a545t789.fsf@t19.piap.pl> <20250812103243.GK30054@pendragon.ideasonboard.com> <175501095338.74722.11604545949710100799@localhost> <CAHCN7xKq_o_u7PhPMcZ2W9nzrFP8+CnhaYJOyxnjpKfbMTBCEw@mail.gmail.com> <m31popxjqk.fsf@t19.piap.pl>
+Subject: Re: FYI: i.MX8MP ISP (RKISP1) MI registers corruption: resolved
+From: Paul Elder <paul.elder@ideasonboard.com>
+Cc: Stefan Klug <stefan.klug@ideasonboard.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Dafna Hirschfeld <dafna@fastmail.com>, Heiko Stuebner <heiko@sntech.de>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Ondrej Jirman <megi@xff.cz>, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Adam Ford <aford173@gmail.com>, Krzysztof =?utf-8?q?Ha=C5=82asa?= <khalasa@piap.pl>
+Date: Wed, 03 Sep 2025 09:56:04 +0900
+Message-ID: <175686096405.1542294.2802960782852730947@neptunite.rasen.tech>
+User-Agent: alot/0.0.0
 
-On Tue, Sep 2, 2025 at 6:51=E2=80=AFPM Mikko Perttunen <mperttunen@nvidia.c=
-om> wrote:
->
-> On Friday, August 29, 2025 1:01=E2=80=AFPM Aaron Kling via B4 Relay wrote=
-:
-> > This series adds interconnect support to tegra210 MC and EMC, then
-> > enables actmon. This enables dynamic emc scaling.
-> >
-> > This series is marked RFC for two reasons:
-> >
-> > 1) Calculating rate from bandwidth usage results in double the expected
-> >    rate. I thought this might be due to the ram being 64-bit, but the
-> >    related CFG5 register reports 32-bit on both p2371-2180 and
-> >    p3450-0000. I'm using the calculation used for Tegra124 and haven't
-> >    seen seen anything obviously different between the ram handling on
-> >    these archs to cause a different result. I have considered that the
-> >    number of channels might affect the reporting, and factoring in that
-> >    variable does result in the correct rate, but I don't want to assume
-> >    that's correct without confirmation.
->
-> My thinking is also that this is due to the channels. L4T says
->
-> /*
->  * Tegra11 has dual 32-bit memory channels, while
->  * Tegra12 has single 64-bit memory channel. Tegra21
->  * has either dual 32 bit channels (LP4) or a single
->  * 64 bit channel (LP3).
->  *
->  * MC effectively operates as 64-bit bus.
->  */
->
-> next to calculating bw_to_freq, and proceeds to use the same divisor for =
-T114 to T210. Regarding the CFG5_DRAM_WIDTH field, I'm guessing it gives th=
-e width for one channel, but I'm not sure how it would function for other m=
-emory types -- I'm not sure if any Tegra210 devices using memory other than=
- LPDDR4 were ever released.
+Hi Krzysztof,
 
-Mmm. "MC effectively operates as 64-bit bus." So I could just hardcode
-64-bit dram width and skip reading the CFG5_DRAM_WIDTH field
-altogether. And regardless of the layout, if I'm reading that
-correctly, the calculation would remain correct. That should get the
-numbers I'm expecting on the devkits, but I will verify again before
-uploading a new revision.
+Quoting Krzysztof Ha=C5=82asa (2025-09-02 18:54:27)
+> Hi,
+>=20
+> summary:
+>=20
+> I've done a few additional tests and it seems the MEDIA_AXI clock is the
+> problem. Reducing it to 400 MHz while still running MEDIA_ISP at 500 MHz
+> produces no errors.
+> MEDIA_ISP at 400 MHz and MEDIA_AXI at 500 MHz produces errors, though
+> (register address errors while reading and writing from/to ISP MI
+> (memory interface) registers, only on the secondary ISP (isp1), and
+> generally only while streaming data from the ISP).
+>=20
+> What is driven by MEDIA_AXI clock root? MEDIAMIX: ISI, LCDIF, ISP, DWE.
+>=20
+> According to both datasheets (industrial and commercial), MEDIA_AXI
+> is limited to 400 MHz in normal mode and 500 MHz in overdrive mode.
+> All my hardware is setup for overdrive mode, though (two manufacturers,
+> both using the same PMIC setup).
 
-Aaron
+Thanks for the investigation!
+
+>=20
+> Since no hardware in the official Linux kernel tree (DT) uses the second
+> ISP... Should we just add a warning to the imx8mp.dtsi and be done with
+> it?
+
+afaiu we can't yet use the ISI and ISP simultaneously, so the ISI is
+enabled by default and you need overlays to enable the ISP, so
+technically nothing upstream uses either ISP. To my knowledge, there is
+hardware where you can use both though, such as the Debix SOM A
+(imx8mp-debix-som-a-bmb-08.dts) [0].
+
+
+Paul
+
+[0] https://debix.io/hardware/debix-som-a-io-board.html
+
+> Out of tree hardware using isp1 (csi1) obviously exists.
+> --=20
+> Krzysztof "Chris" Ha=C5=82asa
+>=20
+> Sie=C4=87 Badawcza =C5=81ukasiewicz
+> Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
+> Al. Jerozolimskie 202, 02-486 Warszawa
 
