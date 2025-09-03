@@ -1,279 +1,162 @@
-Return-Path: <linux-kernel+bounces-798096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF424B41970
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:59:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FE24B4197B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACF141896695
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:59:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D28071790E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A102C1591;
-	Wed,  3 Sep 2025 08:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7008C2ED85D;
+	Wed,  3 Sep 2025 09:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="brUcCgje"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="m/QHDpo6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A31257851
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1E02DFA2F
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756889917; cv=none; b=miftqF8G0vwq+qCr5+/8RTC3WO9boz5LZZ7AWMjLngLG7i75tYYVku5kzeg34GxkNY6nEYifKf4vQIBJe25aObIkv84ZAp4CI9AUpLIf8anGxtdRPPJ40OH+P3u7m1VHdAxYCUdoJE14MqSV00IY0nhNSzRCXaW1xN/UwImTqdQ=
+	t=1756890043; cv=none; b=sT0uzXvJli1qwl+KTw7TJdOXYHnus33bXkoyPZoFVde/VqMshI09VYnBaS/9ihY4phZeQRyWADC69bysfOh3eb8M7SuL8lLg1G0doPTDLEvY2FiHE+sbNVp1QOLssurSaPQXEtkqLn8IVkx27o+EwNH1mi2TAJ09g045YBb7vqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756889917; c=relaxed/simple;
-	bh=cWss5KSr5baYEsadUndMGJzvEYEA64szR0XEJUk+TrQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sb/IlLRREKgJlavzIMYBoMcI4MRzxUTmBi51SyuZNXgAfFJIWt31VkyKuADj4g8jxDBto5oPc5wXbtlPGURUNqWH/DiUElHi/2cC54kjKuGPH8I6IhlcA2t0KS3HWhzIg4Q2TxEY47/LQZToDt65aRoGLa2MhTLCjAXpFPVcN1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=brUcCgje; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-33808d9e10bso1971021fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:58:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1756889914; x=1757494714; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o7DZbr5IPE7KPqwr8CmuJ7G0mqK+7ozrUki3YjXg8lg=;
-        b=brUcCgje0/7vA+VOeg+MNxlx4i3uSr2kCH5vMSBGVG9SKTU8NUhEMt8WJDq5Iti3dt
-         b3aWlsTkot282PQRdX1I0/tnvLQJNrl3671ijUUDlyevAeaZ3i4vTukHB99sR4azVqdG
-         9AL0+aH1JICxBz2SuZrii2BHwnClmt/A5lJhB3oU3LAWVQYQXl2erj9J96VetAICUJBe
-         VzrHjV21uwfuDGDFoj33Rm4BkKksyuQGSVt3gR1TMxfKnA1Ym8N0QgcZbhl0HYPT87Fu
-         uCzuCOrrEPrTwB4KQ3ApkY8KvxYMWLPm5Ax1XnaNrdSXKRXEXdaCpTYZnRLTx6HNJRCi
-         CMrA==
+	s=arc-20240116; t=1756890043; c=relaxed/simple;
+	bh=SbOOxV6Xe6CCn43EVipuJCMXzlrEjAWOJ8RB3sOYs40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k5jUA+r274cUEKBMqVykNbdX7gjmoh8Ap2NmNU1n3GNKmbAUH/vF7PS2G/Vul5L+BR+EH90tkIebTb7wo81gnk72iZZ3DMQkptaZdoONysar+9dpTQigpN37QH6yw+UVlP3OPnuShwnNcc0MDOWma1upluTbIJbSg7SoKUUqksc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=m/QHDpo6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5832I5JL004336
+	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 09:00:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	k+LEakHcMi5MUQWyBYBQ5DPF7nqZWUcEjlntDch+SZE=; b=m/QHDpo6ewiGGnsx
+	V6Ae1JGQA5xNOELboQVqUHP360hdBoyxKuB6UsUSUzYLGVLIhdAQcbhAB/7VuTAQ
+	sXKLF7bjKErAg0G/YpDnzQUMdqw0PgX4xLzHCfLoF2YnoxsQ5/hWC9ak0HloTQ77
+	ABoxg0pMmRNe7eUog8wMsleDrOsreXlzKVkHheyHcq/dYhwAktK+4B2CQ5fsMU66
+	gv92CKC4FcszhmM8dv+nHeQoKmiW2hGZ9TSE0ZS7CjCF/n2Tftct/TyIZblFF+Z3
+	Hi9ICIFEq/lyTuoLybwtWuf15zeOsuSqluEK3tzOkYRB3RREZAlMtnRGZiqoXZAR
+	CQ91/Q==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urmjjvmk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 09:00:40 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b3349c2c38so72329211cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 02:00:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756889914; x=1757494714;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o7DZbr5IPE7KPqwr8CmuJ7G0mqK+7ozrUki3YjXg8lg=;
-        b=mXYw5PUm6+3mcHAXxetTuG6WTd1qyNkmXHrGOp7tJRfeC10shxxTNFYdKp7A0iU4QC
-         TiblXVkDiduZ2KiI/dmxEIXwR1XPB0ViJTZQpfANSAWEUHOZ/4AwJqA1DWyzGLVIkqj9
-         /AKNwgn1JQ3DNx4OcUyqgKXlMMKVzUQY0Y28V4AFkSKpk26wka1gTi7Yf37jG2EtaZJn
-         YwLCk126SRHNH6sI38voiEqyy70bE4aX8IWeGkAxkPo30U9P09Cjcr1lUg3r62z93GJ5
-         bxK+LzJK4TPQRfi3Y5gnJoqhnp/eRHo+SnwlAnZw8igZpAwwk4muP6wVfm+JIlIabp9Y
-         IxrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVIBOoVojwyYOzIeMcbqaq7qS94qEa7Q/iWQgPjQ8X90Nn+EkS96HAKKM82e3L8NBkn4p5oDWD5hNtzZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI9rMUNN+hX0WxqtZL8Aa41eynSsTv4Sb4pnwPWJkw0HdBDOM6
-	rkueM1XDDj+zHgMHpa6wvm3OZgw6A3nZFImIjRmVoWXF0vfRa3d8ILW6VvsOEl2L1to93s4v9Vx
-	g0huHINR6vHHbCpcn4CPe66biag488ND3GkshapDxmA==
-X-Gm-Gg: ASbGnctXSBQspr5oRxZepjhzw+ZvP1JQchS6Q319HTWySNLYMC4dOQX1xzvyBy3sQWu
-	5Kwcupe+zbfwAEb9ws19QpXoVq/SAcicgJSBCjKHB8VzCBi6z+8I5IlYORIiXxXS2/VgPClguXq
-	RiPL/8uY6GPcUkfTCbbCKjO+I2ByMYCVjpXtKBjk//u99SZu5lgZUaUwQ787M0lBLGfucUaA5tm
-	UWaCqeUp9R0IktGOKyMJ22dMUJzdEUTvADH
-X-Google-Smtp-Source: AGHT+IFWZ1KRHLT58ws0GLUyYgsxqndwv00B/CVuSizWtD5TQIXhe4G2nzXHLgGunu2r8TYG1KYxHIJpaIS7aNOjkHw=
-X-Received: by 2002:a05:651c:410c:b0:337:f40b:ceff with SMTP id
- 38308e7fff4ca-337f40bd6b0mr10888081fa.0.1756889913537; Wed, 03 Sep 2025
- 01:58:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756890040; x=1757494840;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k+LEakHcMi5MUQWyBYBQ5DPF7nqZWUcEjlntDch+SZE=;
+        b=qg4Ui7a2qZjv8IfiXmnjyHBEHQGwf6wuzNPs3xqprKX+pTwkNAVQ4/dbA97+qjbEV2
+         /gXlm8r3E994DcaUKWf10HOVdr7+EkN8IGP6j8vRGtyvmajncMcDizXL0k0WyUdbC7um
+         Dlo8jbfZO3kKmoRO5RDoqrVoiR/P5B1pwNZ6wo5RXieeHLt8bxrhOIVUJeDglapII2AF
+         /Xg/Lwaxrkf5q0EDZpPYQZaaP/pVlfP2YxAYp+JumyQ04xyYWir6IqXfmByQ22/LG9Ic
+         /xYSnUg2IwsLMJTbwREk1yovHxnJNkheo/Hn6L0bxIRDWQsFWeiiTlercFp7Kc49hv/n
+         aGhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXov7YZKHC7KKpPgR+Cd1kEeUIP1QelUS1ijyjFd7fE5d2Ma+hDXL7XIevR4f/h2UcH5jLg8nXCKySI68=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJTsPoeySyvqbC3jAa+jlN4tT8am/OwmWctYAT9FAUkPKmI8C7
+	PcDgbCzghrpI6rWVugNAcuKmz16ewzKBln8uzkyHO4nGXlQxWBBmJ5dQ1wmqHUzOvoTnYdi86KO
+	/oeErAV9XgLs74Y9Sd8XFTUn2RrtDKurPMQwX1Pvuztuh8N7J06IKjZz6UHa04HXVWwQ=
+X-Gm-Gg: ASbGncuBvErxfkqLW2qpkamvI6/1Dvgcf9+zD91L9Pq7IS3f8biFzKLZW9JaDNjc80D
+	qquy6OzsqLM7pz4u+2rbK+3Vt7lmZslYEsinJTA2E2vepATdMMUwB5RczGc+JYyYPwjpeR2VfsQ
+	N/gNsjQqnjne49ilMi4XCsjJCVOab2xCcBm+iPCi75pDAySspxb6cURw6CuIN2PTmEBJrAppszn
+	ANnCvqd7zeHHARX+H86SpzLxPd4xHVv8Ch6hl6WbcakPZplxhTlXcTsAlM7DKyYiKIuI4GDd0pt
+	28BZXXY4tabIOyIFmu2dJ+cpb+u9t2PSMF0NSa2g0klGrFIE2bbTD8XXvFdHWejrXlc=
+X-Received: by 2002:ac8:5789:0:b0:4b2:d1c5:ee8 with SMTP id d75a77b69052e-4b31dccd8d7mr171353931cf.74.1756890039884;
+        Wed, 03 Sep 2025 02:00:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEG1UDc3HGeDuXiKdWk0dURpTABwshxbMsyQ9pUNYSRcUghr0tBI4RwEEBCyMHDrmUtaG/ajQ==
+X-Received: by 2002:ac8:5789:0:b0:4b2:d1c5:ee8 with SMTP id d75a77b69052e-4b31dccd8d7mr171353561cf.74.1756890039313;
+        Wed, 03 Sep 2025 02:00:39 -0700 (PDT)
+Received: from [192.168.68.118] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45b940bbc0dsm75958965e9.2.2025.09.03.02.00.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 02:00:38 -0700 (PDT)
+Message-ID: <e6ae9e25-1a92-412f-9916-4c92676b8c5f@oss.qualcomm.com>
+Date: Wed, 3 Sep 2025 10:00:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901164212.460229-1-ethan.w.s.graham@gmail.com> <20250901164212.460229-8-ethan.w.s.graham@gmail.com>
-In-Reply-To: <20250901164212.460229-8-ethan.w.s.graham@gmail.com>
-From: Ignat Korchagin <ignat@cloudflare.com>
-Date: Wed, 3 Sep 2025 09:58:22 +0100
-X-Gm-Features: Ac12FXzBn0vfVPWXT-oRg7YFxfn5ZjyJ_zA4MQI9Ke7h9u6mEjL9U6otTFUfOcM
-Message-ID: <CALrw=nGkk01xXG7S68FggsWQXygTXnXGz8AvseQuRE9K-OE0uA@mail.gmail.com>
-Subject: Re: [PATCH v2 RFC 7/7] crypto: implement KFuzzTest targets for PKCS7
- and RSA parsing
-To: Ethan Graham <ethan.w.s.graham@gmail.com>
-Cc: ethangraham@google.com, glider@google.com, andreyknvl@gmail.com, 
-	brendan.higgins@linux.dev, davidgow@google.com, dvyukov@google.com, 
-	jannh@google.com, elver@google.com, rmoar@google.com, shuah@kernel.org, 
-	tarasmadan@google.com, kasan-dev@googlegroups.com, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, dhowells@redhat.com, 
-	lukas@wunner.de, herbert@gondor.apana.org.au, davem@davemloft.net, 
-	linux-crypto@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] ASoC: dt-bindings: qcom: Add Glymur LPASS wsa and va
+ macro codecs
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Cc: srini@kernel.org, broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, perex@perex.cz, tiwai@suse.com,
+        linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250902140044.54508-1-srinivas.kandagatla@oss.qualcomm.com>
+ <20250902140044.54508-5-srinivas.kandagatla@oss.qualcomm.com>
+ <20250903-diligent-tunneling-angelfish-bae3b3@kuoka>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+In-Reply-To: <20250903-diligent-tunneling-angelfish-bae3b3@kuoka>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=OemYDgTY c=1 sm=1 tr=0 ts=68b803b8 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
+ a=cQA_P7Yw0F7ou3pLjNcA:9 a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: DBrQpTXRvrEE-j6V7PpzwoxIfBVmxs4A
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNCBTYWx0ZWRfXxN6CtMEoolsM
+ CoIzKUTH0iaWJ0WbL66z63jEFZAM25UAtw0o6d0UIBiSlTtc9WfqwR3ko2kNfO4EnuWNtCsHotQ
+ 29B0kNEmPCMiyNk43bnQNiThJh1eUbPvgPfwhMrTx/lwkB7Znb5ObSX87czyd6f7mA5uxUAbCps
+ RleqjiQth+6yTDJUoJSU2nyUWE9f0URpveQHMBLQSsZSntD9iObifm77MpjpLAEn39AhG1oD2Ng
+ GUdbmAWXz1cmkuMC7r/lNAt8tz18IYaOexOBPGaApqteDv+VhQuvO6hlD6VxZcwA67jzMZQEb5z
+ 9bqOj6ToljQtXHSpqaw6ldizpbyT7kXYhlsqLRTu/QMda+dVbV4KnABskuO7izl1ttBiydTjml5
+ GIoVScku
+X-Proofpoint-ORIG-GUID: DBrQpTXRvrEE-j6V7PpzwoxIfBVmxs4A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_05,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300024
 
-On Mon, Sep 1, 2025 at 5:43=E2=80=AFPM Ethan Graham <ethan.w.s.graham@gmail=
-.com> wrote:
->
-> From: Ethan Graham <ethangraham@google.com>
->
-> Add KFuzzTest targets for pkcs7_parse_message, rsa_parse_pub_key, and
-> rsa_parse_priv_key to serve as real-world examples of how the framework i=
-s used.
->
-> These functions are ideal candidates for KFuzzTest as they perform comple=
-x
-> parsing of user-controlled data but are not directly exposed at the sysca=
-ll
-> boundary. This makes them difficult to exercise with traditional fuzzing =
-tools
-> and showcases the primary strength of the KFuzzTest framework: providing =
-an
-> interface to fuzz internal functions.
 
-nit: can I ask for another real example? AFAIK this subsystem is
-rarely used (at least directly by users). However, one user-controlled
-widely used parser terrifies me: load_script() function from
-binfmt_script.c, which parses the shebang line for scripts. I would
-really like to see what this framework can do to fuzz that.
 
-> The targets are defined within /lib/tests, alongside existing KUnit
-> tests.
->
-> Signed-off-by: Ethan Graham <ethangraham@google.com>
->
-> ---
-> v2:
-> - Move KFuzzTest targets outside of the source files into dedicated
->   _kfuzz.c files under /crypto/asymmetric_keys/tests/ as suggested by
->   Ignat Korchagin and Eric Biggers.
-> ---
-> ---
->  crypto/asymmetric_keys/Kconfig                | 15 ++++++++
->  crypto/asymmetric_keys/Makefile               |  2 +
->  crypto/asymmetric_keys/tests/Makefile         |  2 +
->  crypto/asymmetric_keys/tests/pkcs7_kfuzz.c    | 22 +++++++++++
->  .../asymmetric_keys/tests/rsa_helper_kfuzz.c  | 38 +++++++++++++++++++
->  5 files changed, 79 insertions(+)
->  create mode 100644 crypto/asymmetric_keys/tests/Makefile
->  create mode 100644 crypto/asymmetric_keys/tests/pkcs7_kfuzz.c
->  create mode 100644 crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c
->
-> diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kcon=
-fig
-> index e1345b8f39f1..7a4c5eb18624 100644
-> --- a/crypto/asymmetric_keys/Kconfig
-> +++ b/crypto/asymmetric_keys/Kconfig
-> @@ -104,3 +104,18 @@ config FIPS_SIGNATURE_SELFTEST_ECDSA
->         depends on CRYPTO_ECDSA=3Dy || CRYPTO_ECDSA=3DFIPS_SIGNATURE_SELF=
-TEST
->
->  endif # ASYMMETRIC_KEY_TYPE
-> +
-> +config PKCS7_MESSAGE_PARSER_KFUZZ
+On 9/3/25 8:57 AM, Krzysztof Kozlowski wrote:
+> On Tue, Sep 02, 2025 at 03:00:42PM +0100, Srinivas Kandagatla wrote:
+>> Document compatibles for Qualcomm Glymur SoC macro digital codecs
+>> (VA and WSA), compatible with previous generation (SM8550 and SM8650).
+>>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+>> ---
+>>  Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml | 1 +
+>>  .../devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml          | 1 +
+>>  2 files changed, 2 insertions(+)
+>>
+> 
+> What about tx and rx? Not yet ready?
 
-I'm a bit worried about the scalability of defining one (visible)
-config option per fuzz file/module. Is there a use-case, where a user
-would want to enable some targets, but not the others? Can it be
-unconditionally enabled and compiled only if CONFIG_KFUZZTEST=3Dy?
+Correct, I have not verified tx and rx yet on this platform which is why
+I did not set the bindings for it yet.
 
-> +       bool "Build fuzz target for PKCS#7 parser"
-> +       depends on KFUZZTEST
-> +       depends on PKCS7_MESSAGE_PARSER
-> +       default y
-> +       help
-> +         Builds the KFuzzTest targets for PKCS#7.
-> +
-> +config RSA_HELPER_KFUZZ
-> +       bool "Build fuzz targets for RSA helpers"
-> +       depends on KFUZZTEST
-> +       default y
-> +       help
-> +         Builds the KFuzzTest targets for RSA helper functions.
-> diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Mak=
-efile
-> index bc65d3b98dcb..77b825aee6b2 100644
-> --- a/crypto/asymmetric_keys/Makefile
-> +++ b/crypto/asymmetric_keys/Makefile
-> @@ -67,6 +67,8 @@ obj-$(CONFIG_PKCS7_TEST_KEY) +=3D pkcs7_test_key.o
->  pkcs7_test_key-y :=3D \
->         pkcs7_key_type.o
->
-> +obj-y +=3D tests/
-> +
->  #
->  # Signed PE binary-wrapped key handling
->  #
-> diff --git a/crypto/asymmetric_keys/tests/Makefile b/crypto/asymmetric_ke=
-ys/tests/Makefile
-> new file mode 100644
-> index 000000000000..42a779c9042a
-> --- /dev/null
-> +++ b/crypto/asymmetric_keys/tests/Makefile
-> @@ -0,0 +1,2 @@
-> +obj-$(CONFIG_PKCS7_MESSAGE_PARSER_KFUZZ) +=3D pkcs7_kfuzz.o
-> +obj-$(CONFIG_RSA_HELPER_KFUZZ) +=3D rsa_helper_kfuzz.o
-> diff --git a/crypto/asymmetric_keys/tests/pkcs7_kfuzz.c b/crypto/asymmetr=
-ic_keys/tests/pkcs7_kfuzz.c
-> new file mode 100644
-> index 000000000000..84d0b0d8d0eb
-> --- /dev/null
-> +++ b/crypto/asymmetric_keys/tests/pkcs7_kfuzz.c
-> @@ -0,0 +1,22 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * PKCS#7 parser KFuzzTest target
-> + *
-> + * Copyright 2025 Google LLC
-> + */
-> +#include <crypto/pkcs7.h>
-> +#include <linux/kfuzztest.h>
-> +
-> +struct pkcs7_parse_message_arg {
-> +       const void *data;
-> +       size_t datalen;
-> +};
-> +
-> +FUZZ_TEST(test_pkcs7_parse_message, struct pkcs7_parse_message_arg)
-> +{
-> +       KFUZZTEST_EXPECT_NOT_NULL(pkcs7_parse_message_arg, data);
-> +       KFUZZTEST_ANNOTATE_LEN(pkcs7_parse_message_arg, datalen, data);
-> +       KFUZZTEST_EXPECT_LE(pkcs7_parse_message_arg, datalen, 16 * PAGE_S=
-IZE);
-> +
-> +       pkcs7_parse_message(arg->data, arg->datalen);
-> +}
-> diff --git a/crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c b/crypto/asy=
-mmetric_keys/tests/rsa_helper_kfuzz.c
-> new file mode 100644
-> index 000000000000..5877e54cb75a
-> --- /dev/null
-> +++ b/crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c
-> @@ -0,0 +1,38 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * RSA key extract helper KFuzzTest targets
-> + *
-> + * Copyright 2025 Google LLC
-> + */
-> +#include <linux/kfuzztest.h>
-> +#include <crypto/internal/rsa.h>
-> +
-> +struct rsa_parse_pub_key_arg {
-> +       const void *key;
-> +       size_t key_len;
-> +};
-> +
-> +FUZZ_TEST(test_rsa_parse_pub_key, struct rsa_parse_pub_key_arg)
-> +{
-> +       KFUZZTEST_EXPECT_NOT_NULL(rsa_parse_pub_key_arg, key);
-> +       KFUZZTEST_ANNOTATE_LEN(rsa_parse_pub_key_arg, key_len, key);
-> +       KFUZZTEST_EXPECT_LE(rsa_parse_pub_key_arg, key_len, 16 * PAGE_SIZ=
-E);
-> +
-> +       struct rsa_key out;
-> +       rsa_parse_pub_key(&out, arg->key, arg->key_len);
-> +}
-> +
-> +struct rsa_parse_priv_key_arg {
-> +       const void *key;
-> +       size_t key_len;
-> +};
-> +
-> +FUZZ_TEST(test_rsa_parse_priv_key, struct rsa_parse_priv_key_arg)
-> +{
-> +       KFUZZTEST_EXPECT_NOT_NULL(rsa_parse_priv_key_arg, key);
-> +       KFUZZTEST_ANNOTATE_LEN(rsa_parse_priv_key_arg, key_len, key);
-> +       KFUZZTEST_EXPECT_LE(rsa_parse_priv_key_arg, key_len, 16 * PAGE_SI=
-ZE);
-> +
-> +       struct rsa_key out;
-> +       rsa_parse_priv_key(&out, arg->key, arg->key_len);
-> +}
-> --
-> 2.51.0.318.gd7df087d1a-goog
->
+TX and RX codecs are using SDCA so its possible that there might be some
+delta here.
 
-Ignat
+
+--srini
+> 
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Best regards,
+> Krzysztof
+> 
+
 
