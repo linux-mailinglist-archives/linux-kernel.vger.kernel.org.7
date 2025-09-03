@@ -1,146 +1,75 @@
-Return-Path: <linux-kernel+bounces-797845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE00B4161C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:18:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C7FB4161F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 976FF1BA099D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:18:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9A1C548763
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6152D9EDF;
-	Wed,  3 Sep 2025 07:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647552D97BE;
+	Wed,  3 Sep 2025 07:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Onavuu25"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="JWW4LWs3"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2972D8399;
-	Wed,  3 Sep 2025 07:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683A72D6E64;
+	Wed,  3 Sep 2025 07:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756883907; cv=none; b=gFhCM2noGOJwp7josZ3Ts/V2rNlUacU/44+5ifs6DfodShAT2P24cKzWAnTiY/LNMrTJNUwAkQanJK81RvASQ7fp7CpjZvAoodO2w3L8CXNeE1+BNZMaz5kR4ACo5u2lHnZYwDePhUic0CZM++0y6XwhwTQSkBJsX86QgOfPnbk=
+	t=1756883922; cv=none; b=tsGqi9xprfMzmeaaHGrY0pFAQ4jaLEBNhDDV+1n9j7X19kyZkKcjE386Xz1ZfYdWxs1uGH8sJX/hWoZCNuri8JJHCUogXhW/R8oQIsQmwhaxiPaHNzwRuR8kTxAxv/VFltJECQZTrYhiGKpt8FHHZZYGwbcQHKmv4Mbj/EpbMPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756883907; c=relaxed/simple;
-	bh=YuoISYCyGQJP6CZlxMjw80wdeLcQLhpCqTKRpVB9WGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mV+4DmuDcqRjOjqdvp+XLDIgQzUMAOIm/SZPcD4fjj3oW+jTA76bHRAHKaoEkbaiw0ThMbGV7ozsU+eNkN8KOCOdKHz/gg/EAfyW9FoL09eeOVgrVaCC1WWS6B7DX1Uf8r3qQ0RuBAcZuYmbOq3mlUeCpSXTu8H9DutD6BhIZig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Onavuu25; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4367C4CEF0;
-	Wed,  3 Sep 2025 07:18:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756883907;
-	bh=YuoISYCyGQJP6CZlxMjw80wdeLcQLhpCqTKRpVB9WGY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Onavuu25vmdsBWj3aAVpuIn0haCHhtOp0Ucgqa+e3guMFePD70UzmO3VarK12SaQx
-	 MhI8xYFXTDMvSw4aiGbmzcnCCGlM9YVQzLP3E+9xR7cG7fcaLZu3bS+yFmr3J0OMJX
-	 hiVOhRGgBtePUldLKUlszstDLfYIU9bSiOdquNB1Utdt/qAH9bYwgg1Oo7fRgbVoJx
-	 /KpbvsKsvueX80BtwbSw7WVP9zpbr2MkceGhy/vQOm8QdHYdDUOBMKz+XIJzioMkK5
-	 jefMMNyqHoSz4ynxNBO8dckT2rKDJZd/GU3SXvJ0Ip/eqdkWIp0TID/ivpjp4MgIGJ
-	 q0lR6Myo4T04A==
-Date: Wed, 3 Sep 2025 09:18:24 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Nishanth Menon <nm@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Mengyuan Lou <mengyuanlou@net-swift.com>, 
-	Xin Guo <guoxin09@huawei.com>, Lei Wei <quic_leiwei@quicinc.com>, Lee Trager <lee@trager.us>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Fan Gong <gongfan1@huawei.com>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>, Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>, 
-	Suman Anna <s-anna@ti.com>, Tero Kristo <kristo@kernel.org>, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com, 
-	Roger Quadros <rogerq@kernel.org>
-Subject: Re: [PATCH net-next v2 1/8] dt-bindings: net: ti,rpmsg-eth: Add DT
- binding for RPMSG ETH
-Message-ID: <20250903-dark-horse-of-storm-cf68ea@kuoka>
-References: <20250902090746.3221225-1-danishanwar@ti.com>
- <20250902090746.3221225-2-danishanwar@ti.com>
+	s=arc-20240116; t=1756883922; c=relaxed/simple;
+	bh=uRXv1zst4Bt7hVDwEw6Xuli+96Oj2bzsZ/K5tIhZjAE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CohFySzDiP0ZdewxMPAncp9Ye5nriScZabU8C/8U8L10kbjP8Hp8BBFCc6iI8YtOyo0+aiU8DSt568x3oSSLRh2Ok5nz83mSGwQuUS/fpHHOMTD/YrVMNRsqpTEpMLsNubAaqqkNY+4tcEpJ26sO3LRaHgJnEOTcAEbds3C5FCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=JWW4LWs3; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1756883919;
+	bh=uRXv1zst4Bt7hVDwEw6Xuli+96Oj2bzsZ/K5tIhZjAE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=JWW4LWs3tbhpRxs8lsvP7o9byunRuzY8Y/VBgveoTqQl9Dirf9r8oPqMZnthfs7SI
+	 JsaPYQi9d3XbOv6tZx+8BToq3JP1fuGozp8BYG47j9oV0wKXxe6cZZtCTu7p4iB3wG
+	 CjE1xqbiJKOZeEgxdi74oJht354j7I6voOV/835gf9swmq65Miftl144m+DwoeiYw6
+	 P/5yZsKogLm6udutuVBHBG8gJYk0qovUk6MEQKhzEV5758hXC8OnZPCM8qfPN+lfO5
+	 GNOw8zx7T/X9CA9uHx9o9bm4dDgUSj4zWiXoii+2IP59VglNDGt1TlNYAY2tzzfFEB
+	 0EaFEmy/Y9E9w==
+Received: from [10.209.99.88] (unknown [180.150.112.213])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id A474B6FE7C;
+	Wed,  3 Sep 2025 15:18:38 +0800 (AWST)
+Message-ID: <0c815a7562551caf3960cd38b5d867c80747de4b.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] ARM: dts: aspeed: Drop syscon "reg-io-width" properties
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: "Rob Herring (Arm)" <robh@kernel.org>, Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley
+	 <joel@jms.id.au>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Date: Wed, 03 Sep 2025 16:48:37 +0930
+In-Reply-To: <20250829211330.1336274-1-robh@kernel.org>
+References: <20250829211330.1336274-1-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250902090746.3221225-2-danishanwar@ti.com>
 
-On Tue, Sep 02, 2025 at 02:37:39PM +0530, MD Danish Anwar wrote:
-> Add device tree binding documentation for Texas Instruments RPMsg Ethernet
-> channels. This binding describes the shared memory communication interface
-> between host processor and a remote processor for Ethernet packet exchange.
-> 
-> The binding defines the required 'memory-region' property that references
-> the dedicated shared memory area used for exchanging Ethernet packets
-> between processors.
-> 
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> ---
->  .../devicetree/bindings/net/ti,rpmsg-eth.yaml | 38 +++++++++++++++++++
->  1 file changed, 38 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/ti,rpmsg-eth.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/net/ti,rpmsg-eth.yaml b/Documentation/devicetree/bindings/net/ti,rpmsg-eth.yaml
-> new file mode 100644
-> index 000000000000..1c86d5c020b0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/ti,rpmsg-eth.yaml
-> @@ -0,0 +1,38 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/ti,rpmsg-eth.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments RPMsg channel nodes for Ethernet communication
-> +
-> +description: |
-> +  RPMsg Ethernet subnode represents the communication interface between host
-> +  processor and a remote processor.
-> +
-> +maintainers:
-> +  - MD Danish Anwar <danishanwar@ti.com>
-> +
-> +properties:
-> +  memory-region:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: |
-> +      Phandle to the shared memory region used for communication between the
-> +      host processor and the remote processor.
-> +      This shared memory region is used to exchange Ethernet packets.
-> +
-> +required:
-> +  - memory-region
-> +
-> +additionalProperties: false
+On Fri, 2025-08-29 at 16:13 -0500, Rob Herring (Arm) wrote:
+> The default width is 4 bytes for "syscon" devices, so "reg-io-width" is
+> redundant and can be dropped.
 
-This cannot be really tested and is pointless binding... Really, one
-property does not make it a device node.
+I had a quick look in the syscon bindings and can't see that this is
+documented? The driver implementation behaves this way though.
 
-
-> +
-> +examples:
-> +  - |
-> +    main_r5fss0_core0 {
-> +        mboxes = <&mailbox0_cluster2 &mbox_main_r5fss0_core0>;
-> +        memory-region = <&main_r5fss0_core0_dma_memory_region>,
-> +                        <&main_r5fss0_core0_memory_region>;
-
-All this is irrelevant, drop.
-
-> +        rpmsg-eth {
-> +            memory-region = <&main_r5fss0_core0_memory_region_shm>;
-> +        };
-> +    };
-> -- 
-> 2.34.1
-> 
+Andrew
 
