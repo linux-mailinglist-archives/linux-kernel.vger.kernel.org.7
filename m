@@ -1,210 +1,235 @@
-Return-Path: <linux-kernel+bounces-797648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D87B412E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:27:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FEBAB412EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B12D25E651D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:27:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7820544467
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9FF2D0636;
-	Wed,  3 Sep 2025 03:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446B32C21DC;
+	Wed,  3 Sep 2025 03:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="PsnShx/C"
-Received: from mail-qk1-f225.google.com (mail-qk1-f225.google.com [209.85.222.225])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EXRCUynW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333692C3247
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 03:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43CD2C234E
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 03:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756870022; cv=none; b=MuhkBVCG2549ULh46zRJ2UxNiiIgb+mSKnt7n75geu3Gw6c5leQ5004tCQo0IyjL7beuwqDS5El37+iRFeSGTo3EwVUa+KLfLRnA0/ixPaMnPeG0RP2cvHnevR/ohnU4fT/ApZ4w+5UkM3QaLyoeb2hEdFDPGpd09vs7j5WWDgg=
+	t=1756870051; cv=none; b=pD0HEygujJZ9Nj4Jt8zaUfnrYxDR96vsIz+C6xD3pfdmrnQmtZ+tikCWvx4BO236HflqN5Rl6c1Eoi3liJl+MgAv9ZfBwftbUZahxEzxYjFCqh6SosYLO3rnojJdpGCRhwT5GJckcRV+KoEwE1j48VkCBqpz2+Y0CN6p8D69ZV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756870022; c=relaxed/simple;
-	bh=ImgJ+08fKEjfMojQOkHQFAmBOTeJebqjPQWHFiTfvp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ju/5fsguQCZvLSPswBFFqZEvkzt8FmmsuihIGknmRO5e51Oe+lWqWkC0XMl9iCsl8Ey56nnidT1N3Ez0lGpFzur8djX1/tLeLGjxBsA1SA7IQ2VFQStVYOTMSH0GnK8XlsUA4ZoenAfmtyHnYCXgAMrST9raqqYnLcYmp3O1eRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=PsnShx/C; arc=none smtp.client-ip=209.85.222.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-qk1-f225.google.com with SMTP id af79cd13be357-7fa8ed0e412so83505085a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 20:27:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1756870020; x=1757474820; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KAonx/bmXDCVaViB1VqlrTFlzUKjezpOhMXA1F7pd6Y=;
-        b=PsnShx/CTYW2GVay6yo6Ynz/rz7VRSpbqWfkQHdXMW3RKPN6rhrIAMs+GOAWAM/zIr
-         OwiW410Ee1gEXMEPrKhXf068TUSvwowp/1qaftSehLkAxoRDLPLN/DdpwEErKGpWFBgv
-         KLmFwv/i6DKBgMKHVOoebH5wbUYYU/YxuxmVIDQ4HswVJB9HeNkGCjnkKlrL+CbkWUhw
-         gnfUbREo4gPpRB5XozB+lh8rESK31QJhyAJ4XGrg5YrlKHYCf/ITMuM93/W6tO8Airbg
-         8h1z0yjdzXyvFkEhqqxIpZ8+CZ0xEdoZG9EVRSvfJHvWZT7zg4hA/UlNntfO8G64ZqmM
-         WOYQ==
+	s=arc-20240116; t=1756870051; c=relaxed/simple;
+	bh=lTcGU0j+B/KRWiPTPpr6H/E+7j7DFUOHOKJ0vpOE0Bo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d9etGi13SgQl96LN8faByUy2Q4fSNAbuCjAtyOakRc/aj8R2bqMaizWNTCp6JZSOlNv3SFcFmZ5VmZ9GFHmqVldtaFnSYpJSEdjjyiEVqEbq168YZnfeDtWI2tDBPXWP5epUBLHnXYFplWWUv1cEgd7TVd7L2KeuYyP1GkEDykc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EXRCUynW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756870047;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z2T/xR3r/11wYNPVnD6b61m9Re4acFhV681jwKf5dBQ=;
+	b=EXRCUynWp9FSj9yYwuJJf5PS6yW7Uttie+3kdWitR2BhKErmrZKiGK9SmqfAEyOra5AQIH
+	cKs/tq3ZZ09Kz8PPc6S7eCK0EZkhVFirJqOVnSs+glJ+eelvaU3bGFn3KvSsH6dDql7gzr
+	v0sFw1d11lH9PmZwglUBQM0Dp4OLjLs=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-684-kAMG7-NtMv65f1iFee4gpg-1; Tue, 02 Sep 2025 23:27:26 -0400
+X-MC-Unique: kAMG7-NtMv65f1iFee4gpg-1
+X-Mimecast-MFC-AGG-ID: kAMG7-NtMv65f1iFee4gpg_1756870046
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b47630f9aa7so5069363a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 20:27:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756870020; x=1757474820;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756870045; x=1757474845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KAonx/bmXDCVaViB1VqlrTFlzUKjezpOhMXA1F7pd6Y=;
-        b=oLManXZXS5NoW607Bv1AXjBu3vuNF/UvCzo55R4FaHr8DOh57B1Pyxc0ZKcsqBG1UC
-         ZxYaijSvzqSzDNgipNTLipy91EPZGdOJFchjkV9+WUM7FdIFINcddt6kC4TpaaH2v6Vj
-         qh3jOazsTWZGUdEXznsqdS3ZWlwGs4TrG0Y6HcTkEObAKpazBq6u4KMLgZKxfUgs2izn
-         dFrhEb/exJpOhu052Q9c7wpX63B23oq9DYXVUTJoyTneiV/jZpls4lE8P+K7UkMFNM1E
-         z2iKkUB4/KSp5mOy+65RqpZsETlOb2g+WVJA0Sh7F2P3cwuvUXIeM4eqa/A+cnm9bcRq
-         KFJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVa65v8YYMRgNrrV4KTKVoWrxLvra+0NCXSuKSQUrO8877SLOrr69ntIxct43SbwLvKz+9+qB6lRDIDMqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNsb0uNDv9CJzjNSiHmgFbJP2b2GsaKuPtDaj2LWouTO/Ukn3x
-	mZm4CdpyYe53DzmGhv3YwSlXMi5cBj8qdu7f45lvu+eMQpCUeZ74svDSro3f45D786QEGur2MML
-	lp7kbtOmV2l4zFp7AdsMKvsQr+8OMs/tDsiPN
-X-Gm-Gg: ASbGncuRXEXnrj6HiCXf8LqX556kFRnvHqeKp6HNn6361tBk3fYHtOWt3hEWJRSi1Jf
-	HIH2o5ULedzLUG0+kKYUVF1G0c4JzQir98HzIe13ccuQhPexjDLePGYK5G5kr1P83qj1R4tP58X
-	kk/5M3bHARluuSqur3WUKcw+DPT/1OjJGQuhlmkNieNjG85QBy9aEPrSwcSZkesZmfZZRHQgov7
-	cklF0K85UqlcIW7mvhSQOr1gFiC0jlPCrYM6jSougq1D2Ki4zfyPOypjKsoWf7JfotQxWpwlJYN
-	7yGY8+0Dqz65cwPk7up+h5MDySXzbAUkwdpXEy8L/mv91cf6KWNUwVn6NC+Y0QyZD56mrIeB
-X-Google-Smtp-Source: AGHT+IG4HTg3TQ8eCdCiuungKWZdyTjI6dzWCVcFbYKIm0C/iu3B1cWQBq2QkDd1mxDz5E33rWXupNCuUCCi
-X-Received: by 2002:a0c:f11c:0:b0:722:c5aa:3c75 with SMTP id 6a1803df08f44-722c5aa4a96mr11310576d6.2.1756870020190;
-        Tue, 02 Sep 2025 20:27:00 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
-        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-720b4c2bcbdsm2295146d6.34.2025.09.02.20.26.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 20:27:00 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::1199])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 88655340344;
-	Tue,  2 Sep 2025 21:26:59 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 866C3E41964; Tue,  2 Sep 2025 21:26:59 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH 4/4] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-Date: Tue,  2 Sep 2025 21:26:56 -0600
-Message-ID: <20250903032656.2012337-5-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250903032656.2012337-1-csander@purestorage.com>
-References: <20250903032656.2012337-1-csander@purestorage.com>
+        bh=z2T/xR3r/11wYNPVnD6b61m9Re4acFhV681jwKf5dBQ=;
+        b=WTXJLSqvxGPmaOt6YQoZnb0qZUlVAchgoSXXQTjXY0dsNZGXVlt1nLcfZuRmTNgmt9
+         7NjC7rKbLevVIViYRcEW+vt6HLERsKo9KLXSiQSUj6EqYiuo7Y+9P3W7lvkOeIJzKEdp
+         NLOyneMl5lLR8t1qAqV5Kg7RkBgosWY9gq9qbAwypex1+idHzMGWwhInD2TAZHxkCzKe
+         r+jQOsO3OSwPPn+Em8aULR7jtFLZq0Jl1+cAtedkPSeGtaYDJmoeJ66cYEKrJLjhOn30
+         sVwXVtbDzOhLHgqKmQNJTp+WPUp3kGeaj6ONZwzevxpGzCGbhY+4FgxH6croHGLT9urZ
+         GB2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVXA0DyRA+XJsSVrsM7sb1dpfpEhDrPf1aIN1OB/4x46icSwuLxlKUoumle99uPWyh4bEc46LrdKmZNkvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMqelSFRDvubVrTXx/mN3FbDfPpYbThDo1NqzihkH7cAxH7teV
+	6jd1U8MiMGGy4zExfFbmdc8l8w1TnpA8pHGOCH+D1TqrkQtnTaIPubV+bEr1N0gqK1lR7joZoK0
+	baopUXHpS1b6bYmHM2E1Oyf3Btdt8emaAahiiCtJcl4677zIhB2QFhfJ2fgBRo0C4SgpkqLPtAa
+	DBYva+qvAXDR4IRL1+gM0wPAQ23RWSyCBHAuw/V1n4
+X-Gm-Gg: ASbGnctn4Vn8+G5yolRihcwgw4vjpvdBdUL+7skAzez3/ujuXlSW8rpqFNtk1bSXlCf
+	7Mr2t9nKun+k2s/E0DDU0B8o4u5k1C81aBCp5URB/NvJEv1G/IrjBv89rcOh7AYVnPWpBYwUPvm
+	b1hGoYKii9sHYwKroZqjFUcg==
+X-Received: by 2002:a05:6a20:394a:b0:246:458:8531 with SMTP id adf61e73a8af0-24604588bb9mr3835043637.4.1756870045580;
+        Tue, 02 Sep 2025 20:27:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF654StFop0VmttbXdI6h3i/+JEE26lgQd4YZDecg6lum+37DruFX2g8p1zoTrM2WthQZP8j1AJR/b2m+JipfE=
+X-Received: by 2002:a05:6a20:394a:b0:246:458:8531 with SMTP id
+ adf61e73a8af0-24604588bb9mr3835009637.4.1756870045093; Tue, 02 Sep 2025
+ 20:27:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250902080957.47265-1-simon.schippers@tu-dortmund.de> <20250902080957.47265-3-simon.schippers@tu-dortmund.de>
+In-Reply-To: <20250902080957.47265-3-simon.schippers@tu-dortmund.de>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 3 Sep 2025 11:27:13 +0800
+X-Gm-Features: Ac12FXx80Co_MQ122woCuwffgY5tJuHMLL2CZJvnoO2WufQ6137aEb3rV1oKZPE
+Message-ID: <CACGkMEssRJDZht3vTR1KRArQLWi-rLU4b5_8+kAgz4uc0wuQgA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] netdev queue flow control for TUN
+To: Simon Schippers <simon.schippers@tu-dortmund.de>
+Cc: willemdebruijn.kernel@gmail.com, mst@redhat.com, eperezma@redhat.com, 
+	stephen@networkplumber.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
+	kvm@vger.kernel.org, Tim Gebauer <tim.gebauer@tu-dortmund.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-io_ring_ctx's mutex uring_lock can be quite expensive in high-IOPS
-workloads. Even when only one thread pinned to a single CPU is accessing
-the io_ring_ctx, the atomic CAS required to lock and unlock the mutex is
-a very hot instruction. The mutex's primary purpose is to prevent
-concurrent io_uring system calls on the same io_ring_ctx. However, there
-is already a flag IORING_SETUP_SINGLE_ISSUER that promises only one
-task will make io_uring_enter() and io_uring_register() system calls on
-the io_ring_ctx once it's enabled.
-So if the io_ring_ctx is setup with IORING_SETUP_SINGLE_ISSUER, skip the
-uring_lock mutex_lock() and mutex_unlock() for the io_uring_enter()
-submission as well as for io_handle_tw_list(). io_uring_enter()
-submission calls __io_uring_add_tctx_node_from_submit() to verify the
-current task matches submitter_task for IORING_SETUP_SINGLE_ISSUER. And
-task work can only be scheduled on tasks that submit io_uring requests,
-so io_handle_tw_list() will also only be called on submitter_task.
-There is a goto from the io_uring_enter() submission to the middle of
-the IOPOLL block which assumed the uring_lock would already be held.
-This is no longer the case for IORING_SETUP_SINGLE_ISSUER, so goto the
-preceding mutex_lock() in that case.
-It may be possible to avoid taking uring_lock in other places too for
-IORING_SETUP_SINGLE_ISSUER, but these two cover the primary hot paths.
-The uring_lock in io_uring_register() is necessary at least before the
-io_uring is enabled because submitter_task isn't set yet. uring_lock is
-also used to synchronize IOPOLL on submitting tasks with io_uring worker
-tasks, so it's still needed there. But in principle, it should be
-possible to remove the mutex entirely for IORING_SETUP_SINGLE_ISSUER by
-running any code needing exclusive access to the io_ring_ctx in task
-work context on submitter_task.
+On Tue, Sep 2, 2025 at 4:10=E2=80=AFPM Simon Schippers
+<simon.schippers@tu-dortmund.de> wrote:
+>
+> The netdev queue is stopped in tun_net_xmit after inserting an SKB into
+> the ring buffer if the ring buffer became full because of that. If the
+> insertion into the ptr_ring fails, the netdev queue is also stopped and
+> the SKB is dropped. However, this never happened in my testing.
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- io_uring/io_uring.c |  6 +++++-
- io_uring/io_uring.h | 14 ++++++++++++++
- 2 files changed, 19 insertions(+), 1 deletion(-)
+You can reach this by using pktgen on TUN.
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 7f19b6da5d3d..5793f6122159 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3534,12 +3534,15 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 		if (ret != to_submit) {
- 			io_ring_ctx_unlock(ctx);
- 			goto out;
- 		}
- 		if (flags & IORING_ENTER_GETEVENTS) {
--			if (ctx->syscall_iopoll)
-+			if (ctx->syscall_iopoll) {
-+				if (ctx->flags & IORING_SETUP_SINGLE_ISSUER)
-+					goto iopoll;
- 				goto iopoll_locked;
-+			}
- 			/*
- 			 * Ignore errors, we'll soon call io_cqring_wait() and
- 			 * it should handle ownership problems if any.
- 			 */
- 			if (ctx->flags & IORING_SETUP_DEFER_TASKRUN)
-@@ -3556,10 +3559,11 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 			 * We disallow the app entering submit/complete with
- 			 * polling, but we still need to lock the ring to
- 			 * prevent racing with polled issue that got punted to
- 			 * a workqueue.
- 			 */
-+iopoll:
- 			mutex_lock(&ctx->uring_lock);
- iopoll_locked:
- 			ret2 = io_validate_ext_arg(ctx, flags, argp, argsz);
- 			if (likely(!ret2))
- 				ret2 = io_iopoll_check(ctx, min_complete);
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index a0580a1bf6b5..7296b12b0897 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -121,20 +121,34 @@ bool io_match_task_safe(struct io_kiocb *head, struct io_uring_task *tctx,
- 
- void io_activate_pollwq(struct io_ring_ctx *ctx);
- 
- static inline void io_ring_ctx_lock(struct io_ring_ctx *ctx)
- {
-+	if (ctx->flags & IORING_SETUP_SINGLE_ISSUER) {
-+		WARN_ON_ONCE(current != ctx->submitter_task);
-+		return;
-+	}
-+
- 	mutex_lock(&ctx->uring_lock);
- }
- 
- static inline void io_ring_ctx_unlock(struct io_ring_ctx *ctx)
- {
-+	if (ctx->flags & IORING_SETUP_SINGLE_ISSUER) {
-+		WARN_ON_ONCE(current != ctx->submitter_task);
-+		return;
-+	}
-+
- 	mutex_unlock(&ctx->uring_lock);
- }
- 
- static inline void io_ring_ctx_assert_locked(const struct io_ring_ctx *ctx)
- {
-+	if (ctx->flags & IORING_SETUP_SINGLE_ISSUER &&
-+	    current == ctx->submitter_task)
-+		return;
-+
- 	lockdep_assert_held(&ctx->uring_lock);
- }
- 
- static inline void io_lockdep_assert_cq_locked(struct io_ring_ctx *ctx)
- {
--- 
-2.45.2
+> To ensure
+> that the ptr_ring change is available to the consumer before the netdev
+> queue stop, an smp_wmb() is used.
+>
+> Then in tun_ring_recv, the new helper wake_netdev_queue is called in the
+> blocking wait queue and after consuming an SKB from the ptr_ring. This
+> helper first checks if the netdev queue has stopped. Then with the paired
+> smp_rmb() it is known that tun_net_xmit will not produce SKBs anymore.
+> With that knowledge, the helper can then wake the netdev queue if there i=
+s
+> at least a single spare slot in the ptr_ring by calling ptr_ring_spare
+> with cnt=3D1.
+>
+> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
+> ---
+>  drivers/net/tun.c | 33 ++++++++++++++++++++++++++++++---
+>  1 file changed, 30 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> index cc6c50180663..735498e221d8 100644
+> --- a/drivers/net/tun.c
+> +++ b/drivers/net/tun.c
+> @@ -1060,13 +1060,21 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *s=
+kb, struct net_device *dev)
+>
+>         nf_reset_ct(skb);
+>
+> -       if (ptr_ring_produce(&tfile->tx_ring, skb)) {
+> +       queue =3D netdev_get_tx_queue(dev, txq);
+> +       if (unlikely(ptr_ring_produce(&tfile->tx_ring, skb))) {
+> +               /* Paired with smp_rmb() in wake_netdev_queue. */
+> +               smp_wmb();
+> +               netif_tx_stop_queue(queue);
+
+The barrier looks odd since it requires the driver to care about the
+ordering, can you elaborate more on this?
+
+There's a WRITE_ONCE + mb() in netif_tx_stop_queue already:
+
+static __always_inline void netif_tx_stop_queue(struct netdev_queue *dev_qu=
+eue)
+{
+        /* Paired with READ_ONCE() from dev_watchdog() */
+        WRITE_ONCE(dev_queue->trans_start, jiffies);
+
+        /* This barrier is paired with smp_mb() from dev_watchdog() */
+        smp_mb__before_atomic();
+
+        /* Must be an atomic op see netif_txq_try_stop() */
+        set_bit(__QUEUE_STATE_DRV_XOFF, &dev_queue->state);
+}
+
+>                 drop_reason =3D SKB_DROP_REASON_FULL_RING;
+>                 goto drop;
+>         }
+> +       if (ptr_ring_full(&tfile->tx_ring)) {
+> +               /* Paired with smp_rmb() in wake_netdev_queue. */
+> +               smp_wmb();
+> +               netif_tx_stop_queue(queue);
+> +       }
+>
+>         /* dev->lltx requires to do our own update of trans_start */
+> -       queue =3D netdev_get_tx_queue(dev, txq);
+>         txq_trans_cond_update(queue);
+>
+>         /* Notify and wake up reader process */
+> @@ -2110,6 +2118,24 @@ static ssize_t tun_put_user(struct tun_struct *tun=
+,
+>         return total;
+>  }
+>
+> +static inline void wake_netdev_queue(struct tun_file *tfile)
+
+Let's rename this to tun_wake_xxx.
+
+> +{
+> +       struct netdev_queue *txq;
+> +       struct net_device *dev;
+> +
+> +       rcu_read_lock();
+> +       dev =3D rcu_dereference(tfile->tun)->dev;
+> +       txq =3D netdev_get_tx_queue(dev, tfile->queue_index);
+> +
+> +       if (netif_tx_queue_stopped(txq)) {
+> +               /* Paired with smp_wmb() in tun_net_xmit. */
+> +               smp_rmb();
+> +               if (ptr_ring_spare(&tfile->tx_ring, 1))
+
+I wonder if there would be a case that will use cnt > 1. If not a
+ptr_ring_can_produce() should be sufficient.
+
+> +                       netif_tx_wake_queue(txq);
+> +       }
+> +       rcu_read_unlock();
+> +}
+> +
+>  static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err=
+)
+>  {
+>         DECLARE_WAITQUEUE(wait, current);
+> @@ -2139,7 +2165,7 @@ static void *tun_ring_recv(struct tun_file *tfile, =
+int noblock, int *err)
+>                         error =3D -EFAULT;
+>                         break;
+>                 }
+> -
+> +               wake_netdev_queue(tfile);
+>                 schedule();
+>         }
+>
+> @@ -2147,6 +2173,7 @@ static void *tun_ring_recv(struct tun_file *tfile, =
+int noblock, int *err)
+>         remove_wait_queue(&tfile->socket.wq.wait, &wait);
+>
+>  out:
+> +       wake_netdev_queue(tfile);
+>         *err =3D error;
+>         return ptr;
+>  }
+> --
+> 2.43.0
+>
+
+Thanks
 
 
