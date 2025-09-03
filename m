@@ -1,133 +1,135 @@
-Return-Path: <linux-kernel+bounces-798794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA6EB4230A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:06:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C7CB422FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47BD33A10C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:05:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D2001BA33CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4A23126A0;
-	Wed,  3 Sep 2025 14:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DB030FC19;
+	Wed,  3 Sep 2025 14:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRQcU94k"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LsEahmPS";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NpJErwMq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26C830F52B;
-	Wed,  3 Sep 2025 14:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105B230EF6A
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908294; cv=none; b=NuuGHtJomQUg/eovX4KkBNBZmVuhvi1/xh8zTyR5oveH0kmc01l+rlQ16PG1pWBGd0fxRxJyBl/LTIXhyccl/ZxH6LSm2EsGt7XeaqwsTqBLAtyXgvxWMxZhawNhCMeIfGHYlJ/q0nCfeZZVgxJNNmWFtTLzT3hUHpnazuGyvIk=
+	t=1756908293; cv=none; b=InMd66NE+WYEdgZ3AV0o8SSz7uAEjfjjwgxpalHLSD2YlFQvPgbgZR/COuJ9fNZRTINkcxNhGRDHisIr+XQziJsur9jnN7o+eRy2qIw8dEjql3IE83fQMniN4zL883aU8Tis/gRo+UBuB/IQOlNZXUqd/1JbgG6SWy1eujgm+4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908294; c=relaxed/simple;
-	bh=WlYdqytM/Vj98qRczF+ba6NXkIY9WaVkU2I4vOVFzvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ftRfdfKhmvMSvCTVjczelr25LVgnE2ako1amOmx3A6z/q8YxhDXhyisztPw76GBru2L/doVko1d3KMkA3m+gCabR9vN513PZzCs9euUugyametxa72ws/ozmAPeowmDncxp4md89Tfa8afEy5M5dS67EhL5PSv2F6gNlgik2UyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RRQcU94k; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aff0365277aso166767266b.1;
-        Wed, 03 Sep 2025 07:04:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756908291; x=1757513091; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=elJSkPEBBVngQQj4aVEZfKL8gC/PHjpdX2yIo3pkLZE=;
-        b=RRQcU94k5M+1MscYvHVGcyKw/dOYWPa97HJMzSdGGn+Q9syho4hHlv6k26VqZFbrD7
-         7iyAoNBjkouMb90sTSMxfSKeWI3p9bw0LyOFGx3LQpTz8J3YHQSL56KoMNbS6TH7sHOp
-         8xJgWOicPTLjXtkp9ZMH5OTMaGkwh5n/Q+jODLt2fT2pK/yBp3GNV0Sjl1vf0seYq/3d
-         JIbXR+b8CoVF3YKHWBrDFHFqdEEGg1xi1zhFOk6TMHzV/zScdHGcHFhns2Psqhp1lM4g
-         b/SdaIqLt08lH59gZiiKJhCgXn06JHXGW1/cytbFirWsLQOCMHsAu2vF7ZkmlUF0cJMM
-         E9Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756908291; x=1757513091;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=elJSkPEBBVngQQj4aVEZfKL8gC/PHjpdX2yIo3pkLZE=;
-        b=Efo4QJKHXT0TQSlwCfBa7ckyTS+x9kW3CGvENw+r6wb/optJA88wZ8ubOsmJKBNhcY
-         9WcaF7HWR4Z7GCLT+Qb6c10frPcOmijfg9WAVx3jGsY+4F6fToUIDIgmtvWWxbOgG6qS
-         Wa1VG7jPsFNTCccHhtkv5Odk6+YcuTaICvjaqK9Xx3pZtWaZHT10GF90HrIIs2lHNUn/
-         8wa8ZjJY/ghcomAGWcXfollieICljWQOTgmypLS7zq3GqB9+jWkZEAbMHSETrWZ8l0Zx
-         nNRp9iEUmxQM3TlaKNIO4syOVIFxDTapdbsAofmcXMpmX+WVT1tE6EgRvQcIMg8E9+tT
-         5aQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJIaY3Nfc+KxWo8lcaHzSjMj9q8DozflFH12P0Wuy29VMELwZeRY9mS8Ks1qiN5jtRUahzJTun2ZDDkQA=@vger.kernel.org, AJvYcCXAyz+LnIrXMb7OA0hGM9lrC2IZ2qZq4EEg6rlBe/OlPrmflgU7+HMg2ur65UgwaC5M3UqSHE1KQ/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmDThxOdmjXTZf6lBuapMO3v6IcPyUD/Q26CAbuCRCog2mlsjr
-	KJxK7MEEEAY300CwKQLqwXun2c9IxljVHM1wSfI4HRRYvBRGyu1WIg48
-X-Gm-Gg: ASbGncvAQtUDqRgRt7Z5sw26CJ0cTG8OduWxTq8kPRpxhYPY9nwtW4TLOHLcj10l1Wd
-	LCg366KupKMzhLTXKjzguBcPFGSMz0tNM3LCpXlv4siM0HFs42Y0pdwN6CXk5nfYABmvWq8W/zS
-	F2VmIONn6du6bsCFcgR2ylqUMQftzABYkVMK/dvovy0gQJcptmLe7sVOVxwgARDGZ2gcpHMK9cL
-	3Gh1xXCURh4jG0L/SOxPJBFkLqjqTSNhl3bZPybOSsz7/NZWHRi9ynE3XRE8C0PUwb7EdGC3o0Q
-	KS9MmDMigdrD5Vv+ReUcAwbFD56j6qLm6CBlytavwfkSxyVPtQ2hOdRDu3Oj6Ij3c2oWC4zwOdV
-	i+CG9xPg9CF5aspBvQCQ70+9ERnf/lBbyRhva7/J9J3Z/oiumL3G7a96Nm8cXBj2NIpzP180iee
-	mjA0Dl
-X-Google-Smtp-Source: AGHT+IH9sChVGEdo1pXaN7DIDwBJVmaRZi8ChKV/MLQ8N2XXlJDN/wp+PCoVDTfqcuNcGwkyxzlkAw==
-X-Received: by 2002:a17:907:7207:b0:b04:5888:7a7d with SMTP id a640c23a62f3a-b0458887c81mr462554166b.22.1756908290474;
-        Wed, 03 Sep 2025 07:04:50 -0700 (PDT)
-Received: from osama ([2a02:908:1b0:afe0:f7e0:2e82:8677:dae8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61ec74de341sm3124045a12.4.2025.09.03.07.04.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 07:04:49 -0700 (PDT)
-Date: Wed, 3 Sep 2025 16:04:47 +0200
-From: Osama Abdelkader <osama.abdelkader@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] thermal: hwmon: replace deprecated strcpy() with
- strscpy()
-Message-ID: <aLhK_zMvtkdCtsHR@osama>
-References: <20250901150653.166978-1-osama.abdelkader@gmail.com>
- <CAJZ5v0hrKBNxDeZOKpUXyuZV7LRUX4ov4ifEGDtNMrA8km6uOA@mail.gmail.com>
+	s=arc-20240116; t=1756908293; c=relaxed/simple;
+	bh=XJsdfKXolKL7MQMpmsEoCa/sJdGQ8gQET+iiNg76i88=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=BQIqcudp813sga4Wnf0RskJoQe0LsJHlTBdc4pB90Jqje/Xp6hnWsQRT+P9FNrHhmb4AV2FQH/IBu1w8fQPgDJLHSM9bAAT41dgSTEgfCRS4+t71zhS0yNUb8EpFYaXCODD67/s5OQ+7M+2X76y+brh1DYnKZft83mpoEFyswqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LsEahmPS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NpJErwMq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250903135433.444329373@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756908289;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=QKiSmAlCPU4t8RZAP+5VMuWb25EaM54GJSGXdcx/Xvo=;
+	b=LsEahmPSXjRVb2sYx+imvHKn2gIcyw5vrivjxXFuO2tgtzFzqkkWgYSXhvLghnm+9F/5JW
+	V3iq/ccXBfinrwpvLiK6fXBVX7JiXFJbql//84nqHshBuC+DCPo2iVUR6Mw7D7DU4DniG3
+	WmwlrmvhJYclWXOxPNH9I0iEBe3QuAK6bZszH2gUvnSOxNLHKZqm7RzKoHocZNi4r6jotf
+	iCwLeQ6VqA/loCYGzYEYbMER92Mpj6M7oZiPHvzro75xcvg+TQqTjtuedNWgvnNJhUwRmT
+	uWIhZVmxYolPgPkSY/qAJ/JMpDeNfBLdn8oKyXV8sDgwxO4zxMqHfCAMmhzALQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756908289;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=QKiSmAlCPU4t8RZAP+5VMuWb25EaM54GJSGXdcx/Xvo=;
+	b=NpJErwMqUCIJxMSLpwtrkRG6ahIsq+ORuUAsr//0UQI44xSMgYcWeyAVCukzX4u+TNINuU
+	VagEt3mGKRWfEcBA==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>
+Subject: [patch 2/2] PCI/MSI: Remove the conditional parent [un]mask logic
+References: <86o6vjelw2.wl-maz@kernel.org>
+ <87ecv1ob9q.ffs@tglx>
+ <20250903134437.863638669@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0hrKBNxDeZOKpUXyuZV7LRUX4ov4ifEGDtNMrA8km6uOA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Date: Wed,  3 Sep 2025 16:04:48 +0200 (CEST)
 
-On Wed, Sep 03, 2025 at 01:50:03PM +0200, Rafael J. Wysocki wrote:
-> On Mon, Sep 1, 2025 at 5:06 PM Osama Abdelkader
-> <osama.abdelkader@gmail.com> wrote:
-> >
-> > strcpy() is deprecated; use strscpy() instead.
-> 
-> So why is it better to use strscpy() in this particular case?
+Now that msi_lib_init_dev_msi_info() overwrites the irq_[un]mask()
+callbacks when the MSI_FLAG_PCI_MSI_MASK_PARENT flag is set by the parent
+domain, the conditional [un]mask logic is obsolete.
 
-Thanks for the review. Technically, there is no change since both have const buf size,
-it's just for consistency with other drivers.
+Remove it.
 
-Regards,
-Osama
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+---
+ drivers/pci/msi/irqdomain.c |   20 --------------------
+ 1 file changed, 20 deletions(-)
 
-> 
-> > Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
-> > ---
-> >  drivers/thermal/thermal_hwmon.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/thermal/thermal_hwmon.c b/drivers/thermal/thermal_hwmon.c
-> > index 0ecccd4d8556..64cc3ab949fe 100644
-> > --- a/drivers/thermal/thermal_hwmon.c
-> > +++ b/drivers/thermal/thermal_hwmon.c
-> > @@ -96,7 +96,7 @@ thermal_hwmon_lookup_by_type(const struct thermal_zone_device *tz)
-> >
-> >         mutex_lock(&thermal_hwmon_list_lock);
-> >         list_for_each_entry(hwmon, &thermal_hwmon_list, node) {
-> > -               strcpy(type, tz->type);
-> > +               strscpy(type, tz->type);
-> >                 strreplace(type, '-', '_');
-> >                 if (!strcmp(hwmon->type, type)) {
-> >                         mutex_unlock(&thermal_hwmon_list_lock);
-> > --
-> > 2.43.0
-> >
+--- a/drivers/pci/msi/irqdomain.c
++++ b/drivers/pci/msi/irqdomain.c
+@@ -170,22 +170,6 @@ static unsigned int cond_startup_parent(
+ 	return 0;
+ }
+ 
+-static __always_inline void cond_mask_parent(struct irq_data *data)
+-{
+-	struct msi_domain_info *info = data->domain->host_data;
+-
+-	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
+-		irq_chip_mask_parent(data);
+-}
+-
+-static __always_inline void cond_unmask_parent(struct irq_data *data)
+-{
+-	struct msi_domain_info *info = data->domain->host_data;
+-
+-	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
+-		irq_chip_unmask_parent(data);
+-}
+-
+ static void pci_irq_shutdown_msi(struct irq_data *data)
+ {
+ 	struct msi_desc *desc = irq_data_get_msi_desc(data);
+@@ -208,14 +192,12 @@ static void pci_irq_mask_msi(struct irq_
+ 	struct msi_desc *desc = irq_data_get_msi_desc(data);
+ 
+ 	pci_msi_mask(desc, BIT(data->irq - desc->irq));
+-	cond_mask_parent(data);
+ }
+ 
+ static void pci_irq_unmask_msi(struct irq_data *data)
+ {
+ 	struct msi_desc *desc = irq_data_get_msi_desc(data);
+ 
+-	cond_unmask_parent(data);
+ 	pci_msi_unmask(desc, BIT(data->irq - desc->irq));
+ }
+ 
+@@ -268,12 +250,10 @@ static unsigned int pci_irq_startup_msix
+ static void pci_irq_mask_msix(struct irq_data *data)
+ {
+ 	pci_msix_mask(irq_data_get_msi_desc(data));
+-	cond_mask_parent(data);
+ }
+ 
+ static void pci_irq_unmask_msix(struct irq_data *data)
+ {
+-	cond_unmask_parent(data);
+ 	pci_msix_unmask(irq_data_get_msi_desc(data));
+ }
+ 
+
 
