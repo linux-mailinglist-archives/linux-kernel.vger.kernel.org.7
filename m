@@ -1,218 +1,145 @@
-Return-Path: <linux-kernel+bounces-799528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D138B42D29
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:01:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E48B42D2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA5FA1C208D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:01:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E48861C20B48
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12DF279331;
-	Wed,  3 Sep 2025 23:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A4C2ECEB5;
+	Wed,  3 Sep 2025 23:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="E9X/y0U+"
-Received: from mail-106112.protonmail.ch (mail-106112.protonmail.ch [79.135.106.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MF9Whsl2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6772D4811
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 23:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABD52EA17B;
+	Wed,  3 Sep 2025 23:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756940489; cv=none; b=poQWeEmwek33r6hIlMpFXcC6/t7L1Z9QqcYVo5UEjBfuMduHEy3haY4feRaxlTTpOdQTHKVdrALy+t97qpmoFoOIAtAbDxHOX3d/Wdwo6qY4rrOf3FSsa3Hnk9VPfynX1BTEKk/O4kTv8lm7yjx0S38z5GhnrH8a85DdbjL3zEg=
+	t=1756940693; cv=none; b=rLNi4RbbSI3SGrBf4XUH9sqpoUWa9MILXVVMrGwCEqAsvvR1IKQ1W302ogsc1BFm1JkYijMGfOpoILd48zcw28eO1H+mGOY6q3uGzOB7g0mCEgNBpyr6kgELtNi0nqQ7N+n9jLdoNma8ZQqJBdwLAknMsJ0fJ9gJ7KBaKgojGGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756940489; c=relaxed/simple;
-	bh=lZ9xb05bUXxKypMRgvZnimpNmq21pgLVLuItt/0VFy4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BwkDQJAWGJsF3rvEUVumoZePZ+VURN7C/aUS9ptcH/H9Q1j2/q0qo7sXtRot3wOl8+3Nx3wz5hBhyXSm5yhjVwI0QtYJ2RrbOv60P3yRDLyn2plpYNtSsjSPZwKOsFsPy8VqLKFNO7ImrOH00HwS+W1gEj456dE3eFzWBIP7okw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=E9X/y0U+; arc=none smtp.client-ip=79.135.106.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
-	s=protonmail; t=1756940477; x=1757199677;
-	bh=auZFfKxrrTCXJ1CCI6DDscX7wnIOgy6WBhNj7GtVhbg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:From:To:
-	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=E9X/y0U+Gnzi8BWpYc3G+wxmYVKc4FEQXrvwuJPBcJfnCvtOdEG+CJ2hTngoFc7fL
-	 XvPdNlVAE+oZSifPj1NkGoT5D8iicgZ1YrCmNASznGLkVeW6fTQUj0QNQm44q7NI90
-	 KuQDdjzv9iPx3BfIYx9cdvRjT6nyRYLJEWcXgBrNc3Ucln6QMWpA3Tij5qNh6baqjk
-	 OByzA6ewal95TXMPkcwFHeVw3bvVAdNaVpUeRLtl5vlAkYXk4+/aji5OFkkG9xBezG
-	 DZRcZcKb1tZ+iZbSBj4S6ThF071boS5QfS2jqAoVQpzPslxwJNLMFe9mg5pIoG0uhG
-	 ZczV9pTksa67Q==
-X-Pm-Submission-Id: 4cHJ4q3ZjKz2ScCs
-From: Aleksandrs Vinarskis <alex@vinarskis.com>
-To: hansg@kernel.org,
-	Aleksandrs Vinarskis <alex@vinarskis.com>,
-	Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: andy.shevchenko@gmail.com,
-	devicetree@vger.kernel.org,
-	linus.walleij@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH 2/2] leds: led-class: Add devicetree support to led_get()
-Date: Thu,  4 Sep 2025 01:01:12 +0200
-Message-ID: <8aa9dfc5-5e77-48af-b2f4-f1964d20d6d1@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <8aa9dfc5-5e77-48af-b2f4-f1964d20d6d1@kernel.org>
-References: <8aa9dfc5-5e77-48af-b2f4-f1964d20d6d1@kernel.org>
+	s=arc-20240116; t=1756940693; c=relaxed/simple;
+	bh=pixD2eN8dunhZH5Jtt5km52Vej0Uu1/pEJTGRmEeGyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=MSHzldpKl9PSZBSIfvHPrWEFrLODIqHOGj+yna31/w5z+SmHB59XEF+mAcSL07cYuG6Kh4ZTpjoFvACRK3DQIW5eSXiMxNwYikaD5kJ6j4Bosw/snRIIu/Mm/7OlSsgnn6Rc8Y2kIRO/gZviXhtzSvrXWp0E1QDFu2j+bEI/hKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MF9Whsl2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B208C4CEE7;
+	Wed,  3 Sep 2025 23:04:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756940692;
+	bh=pixD2eN8dunhZH5Jtt5km52Vej0Uu1/pEJTGRmEeGyA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=MF9Whsl2udzrNQKRG4tXMfwuJUUrP90EgPJyAYGwoRLafhBEE8oHu5v+Y5KXXsWEp
+	 ZlwgNwsEx1KSla3bdRSyJ72z3bduKn05bX/mBGXdTsvCy3FDbIsTU8lXY2vQtRW+ty
+	 EGIwAxA01m3tyIRXKG5N3m9HruGKZ9l1aTEIgN4zIVQ8JQ8UQZmBp+UyicyzNFX57k
+	 K/Uq2JzTsFVbd8Rd/GjcvkBSYiSS5fppu0mgChLPma1JI69yWIaTYJlWDUqyyU/oi3
+	 xEi1E5QF2fJ0Ue3tD47xuVS4F2Ozle3J/Z/HplqBRfzIQQC3xb9OGh60TyID6VKDEG
+	 JFye6hOXCLEeg==
+Date: Wed, 3 Sep 2025 18:04:50 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: David Box <david.e.box@linux.intel.com>
+Cc: rafael@kernel.org, bhelgaas@google.com, vicamo.yang@canonical.com,
+	kenny@panix.com, ilpo.jarvinen@linux.intel.com,
+	nirmal.patel@linux.intel.com, mani@kernel.org,
+	linux-pm@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 1/2] PCI/ASPM: Add host-bridge API to override default
+ ASPM/CLKPM link state
+Message-ID: <20250903230450.GA1236832@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ng67s7imjpj7i5ym7unvmewzhyk4ybgpkgw5aizicfs423vsxh@hvpfmk32ooe4>
 
-> Hi Aleksandrs,
-> 
-> Thank you for working on this.
-> 
-> On 2-Sep-25 1:10 PM, Aleksandrs Vinarskis wrote:
-> > From: Hans de Goede <hansg@kernel.org>
+On Fri, Aug 29, 2025 at 12:54:20PM -0700, David Box wrote:
+> On Thu, Aug 28, 2025 at 03:43:45PM -0500, Bjorn Helgaas wrote:
+> > On Mon, Aug 25, 2025 at 01:35:22PM -0700, David E. Box wrote:
+> > > Synthetic PCIe hierarchies, such as those created by Intel VMD, are not
+> > > enumerated by firmware and do not receive BIOS-provided ASPM or CLKPM
+> > > defaults. Devices in such domains may therefore run without the intended
+> > > power management.
+> > > 
+> > > Add a host-bridge mechanism that lets controller drivers supply their own
+> > > defaults. A new aspm_default_link_state field in struct pci_host_bridge is
+> > > set via pci_host_set_default_pcie_link_state(). During link initialization,
+> > > if this field is non-zero, ASPM and CLKPM defaults come from it instead of
+> > > BIOS.
+> > > 
+> > > This enables drivers like VMD to align link power management with platform
+> > > expectations and avoids embedding controller-specific quirks in ASPM core
+> > > logic.
 > > 
-> > Turn of_led_get() into a more generic __of_led_get() helper function,
-> > which can lookup LEDs in devicetree by either name or index.
+> > I think this kind of sidesteps the real issue.  Drivers for host
+> > controllers or PCI devices should tell us about *broken* things, but
+> > not about things advertised by the hardware and available for use.
+> 
+> I agree with the principle. The intent isn’t for VMD (or any controller) to
+> override valid platform policy. It’s to handle synthetic domains where the
+> platform doesn’t provide any policy path (no effective _OSC/FADT for the child
+> hierarchy). In those cases, the controller is the only agent that knows the
+> topology and can supply sane defaults.
+> 
+> I’m happy to tighten the patch to explicitly cover synthetic domains only.
+> Instead of an API, we could have a boolean flag 'aspm_synthetic_domain'. When
+> set by the controller, we can do:
+> 
+>     if (host_bridge->aspm_synthetic_domain)
+>             link->aspm_default = PCIE_LINK_STATE_ALL;
+> 
+> This at least addresses your concern about policy decision, leaving it to the
+> core to determine how these domains are handled rather than an ABI that lets
+> domains set policy.
+> 
+> > The only documented policy controls I'm aware of for ASPM are:
 > > 
-> > And use this new helper to add devicetree support to the generic
-> > (non devicetree specific) [devm_]led_get() function.
+> >   - FADT "PCIe ASPM Controls" bit ("if set, OS must not enable ASPM
+> >     control on this platform")
 > > 
-> > This uses the standard devicetree pattern of adding a -names string array
-> > to map names to the indexes for an array of resources.
+> >   - _OSC negotiation for control of the PCIe Capability (OS is only
+> >     allowed to write PCI_EXP_LNKCTL if platform has granted control to
+> >     the OS)
 > > 
-> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > Reviewed-by: Lee Jones <lee@kernel.org>
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> 
-> Please update this to:
-> 
-> Reviewed-by: Hans de Goede <hansg@kernel.org>
-> 
-> to match the update of the author which you already did.
-> 
-> Also note that checkpatch should complain about the mismatch,
-> please ensure to run checkpatch before posting v2.
-
-Hi,
-
-ahh, I actually did not even see that email got changed, apologies. Seems
-'b4' auto-corrected it when sending, which would explain why checkpatch
-did not catch it, as I run it before importing and sending via 'b4'. Sure,
-will fix - did you mean to change your signoff to R-by, or is it a mistake?
-
-> 
-> > Tested-by: Aleksandrs Vinarskis <alex@vinarskis.com>
-> > ---
-> >  drivers/leds/led-class.c | 38 +++++++++++++++++++++++++++++---------
-> >  1 file changed, 29 insertions(+), 9 deletions(-)
+> > I think what we *should* be doing is enabling ASPM when it's
+> > advertised, subject to those platform policy controls and user choices
+> > like CONFIG_PCIEASPM_PERFORMANCE/POWERSAVE/etc and sysfs attributes.
 > > 
-> > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> > index 15633fbf3c166aa4f521774d245f6399a642bced..6f2ef4fa556b44ed3bf69dff556ae16fd2b7652b 100644
-> > --- a/drivers/leds/led-class.c
-> > +++ b/drivers/leds/led-class.c
-> > @@ -248,19 +248,18 @@ static const struct class leds_class = {
-> >  	.pm = &leds_class_dev_pm_ops,
-> >  };
-> >  
-> > -/**
-> > - * of_led_get() - request a LED device via the LED framework
-> > - * @np: device node to get the LED device from
-> > - * @index: the index of the LED
-> > - *
-> > - * Returns the LED device parsed from the phandle specified in the "leds"
-> > - * property of a device tree node or a negative error-code on failure.
-> > - */
-> > -static struct led_classdev *of_led_get(struct device_node *np, int index)
-> > +static struct led_classdev *__of_led_get(struct device_node *np, int index,
-> > +					 const char *name)
-> >  {
-> >  	struct device *led_dev;
-> >  	struct device_node *led_node;
-> >  
-> > +	/*
-> > +	 * For named LEDs, first look up the name in the "led-names" property.
-> > +	 * If it cannot be found, then of_parse_phandle() will propagate the error.
-> > +	 */
-> > +	if (name)
-> > +		index = of_property_match_string(np, "led-names", name);
-> >  	led_node = of_parse_phandle(np, "leds", index);
-> >  	if (!led_node)
-> >  		return ERR_PTR(-ENOENT);
-> > @@ -271,6 +270,20 @@ static struct led_classdev *of_led_get(struct device_node *np, int index)
-> >  	return led_module_get(led_dev);
-> >  }
-> >  
-> > +/**
-> > + * of_led_get() - request a LED device via the LED framework
-> > + * @np: device node to get the LED device from
-> > + * @index: the index of the LED
-> > + *
-> > + * Returns the LED device parsed from the phandle specified in the "leds"
-> > + * property of a device tree node or a negative error-code on failure.
-> > + */
-> > +struct led_classdev *of_led_get(struct device_node *np, int index)
-> > +{
-> > +	return __of_led_get(np, index, NULL);
-> > +}
-> > +EXPORT_SYMBOL_GPL(of_led_get);
-> 
-> I probably did this myself, but since of_led_get() is private now
-> (I guess it was not private before?) and since we are moving away from
-> "of" specific functions to using generic dev_xxxx functions in the kernel
-> in general, I think this just should be a static helper.
-> 
-> Or probably even better: just add the name argument to of_led_get()
-> before without renaming it, update the existing callers to pass
-> an extra NULL arg and completely drop this wrapper.
-> 
-
-That indeed sounds like a better and cleaner option, will change it.
-This way also incorporates the rest of the feedback on this series.
-
-> Also notice that adding the EXPORT_SYMBOL_GPL() while there was
-> none before should go hand in hand with adding a prototype to
-> a relevant .h file. However please just keep this private and
-> drop the wrapper.
-
-Thanks for the clarification, missed that, and the review.
-
-Alex
-
-> 
-> Regards,
-> 
-> Hans
-> 
-> 
-> 
-> 
-> > +
-> >  /**
-> >   * led_put() - release a LED device
-> >   * @led_cdev: LED device
-> > @@ -342,9 +355,16 @@ EXPORT_SYMBOL_GPL(devm_of_led_get);
-> >  struct led_classdev *led_get(struct device *dev, char *con_id)
-> >  {
-> >  	struct led_lookup_data *lookup;
-> > +	struct led_classdev *led_cdev;
-> >  	const char *provider = NULL;
-> >  	struct device *led_dev;
-> >  
-> > +	if (dev->of_node) {
-> > +		led_cdev = __of_led_get(dev->of_node, -1, con_id);
-> > +		if (!IS_ERR(led_cdev) || PTR_ERR(led_cdev) != -ENOENT)
-> > +			return led_cdev;
-> > +	}
-> > +
-> >  	mutex_lock(&leds_lookup_lock);
-> >  	list_for_each_entry(lookup, &leds_lookup_list, list) {
-> >  		if (!strcmp(lookup->dev_id, dev_name(dev)) &&
+> > So basically I think link->aspm_default should be PCIE_LINK_STATE_ALL
+> > without drivers doing anything at all.  Maybe we have to carve out
+> > exceptions, e.g., "VMD hierarchies are exempt from _OSC," or "devices
+> > on x86 systems before 2026 can't enable more ASPM than BIOS did," or
+> > whatever.  Is there any baby step we can make in that direction?
 > > 
+> > This feels a little scary, so feel free to convince me it can't be
+> > done :)
+> 
+> I understand your direction of enabling all advertised states by
+> default (subject to FADT/_OSC and user settings). To explore that,
+> I’ll send an RFC in parallel with this patch that proposes a baby
+> step, e.g.  add instrumentation so we can see where BIOS left
+> capabilities unused, and make it opt-in via a boot param so we can
+> evaluate impact safely.
+
+The instrumentation, absolutely.  We need something about what was
+already enabled and when we change things.
+
+> So this series will handle the VMD gap directly, and the RFC can
+> kick off the wider discussion about defaults on ACPI-managed hosts.
+> Does that sound like a reasonable approach and split?
+
+I don't really want a parallel approach because I don't think it would
+ever converge again.  BUT I think you're still OK for VMD, because I
+think the default should be PCIE_LINK_STATE_ALL, and when we carve out
+the exceptions that would not be in vmd.c, and it's easy to say that
+there's no exception for VMD.
 
