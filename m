@@ -1,168 +1,161 @@
-Return-Path: <linux-kernel+bounces-798880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D05B4242E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:58:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB9DB42428
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C3CC5E1FF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:58:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14CFA5E748E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8569230AADB;
-	Wed,  3 Sep 2025 14:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DA63054D2;
+	Wed,  3 Sep 2025 14:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Cd9fGRh2"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFA72FE588;
-	Wed,  3 Sep 2025 14:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CR0Exwn5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CE4213E6D;
+	Wed,  3 Sep 2025 14:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756911477; cv=none; b=YYe+B5s6WyBUEKjsaZaBvLIjtgAKPPMjkZIxuOytJpAoxTz7ySjBzd4PTT0bSCTQ9+sOC7ZL8wBaIJgi9GFyM574DmNZJ/sZ6mlRm+Ns1cPQvw4HfgL4QgucU4zpX0LUaGR9EsVBiY9J2prltLTsYqaAm3quQ5LLuwLhLFdsdWY=
+	t=1756911369; cv=none; b=baDV3tSxsYKBmJmFv+OHEsquTKhL7Xjxhi1fIZDaXithV1uRyT6fivNjQu0iPEmRPsYtawh/UnjKjkExAohJCcOpWi4rl7397uJzRMMK+pKi9+e3Ejn5y35i/l19+aUi2F4qIkksgImzj+N+/1yeFNM2cJPYispQgUKH0RtWYe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756911477; c=relaxed/simple;
-	bh=BdwG62fDtg47vvCb4MwKCLyM9BMZmSyZyWT0ZVlVrnM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=X1WJ10vs/MgbDyd38yEBgM3aY3/IHdx7ybpkY+tUYl5O3QcXHxZ5Jl99xwJklYtf6G25nCKsVEgFBlVGB6yAp45OTxMKIK9ZJ/GLMbXd5tlFI505qTwkB+QYYJHo8ruejq0q6l+oTYwnxXMpIdTLym4d0YGBBfs+6ZOUBi+ivgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Cd9fGRh2; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=K8WY9aFD+CUj89iruPgyjiRLIAu3DijEUC4gWKS0H0M=;
-	b=Cd9fGRh2gXyapWpgfugzdtLl9dI+PReNtmxWt7uAMWW3pH/DOKycIZCrsGWJQ5
-	NUg1oVvDNALjAA7HqRaGqGKqMhY4VonNVsPCmr6vPg2yW0XBZ7sXO1/o35/7yvsj
-	3zIkKwIFCS3Y0JJNCGuyFggguOQ3UUUyaYuu6SNk6/7lc=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wCnnT4AV7honETyGA--.7418S2;
-	Wed, 03 Sep 2025 22:56:01 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: kerneljasonxing@gmail.com,
-	willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v10 1/2] net: af_packet: remove last_kactive_blk_num field
-Date: Wed,  3 Sep 2025 22:56:00 +0800
-Message-Id: <20250903145600.512627-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756911369; c=relaxed/simple;
+	bh=fyT8F1OdM5Im8IxoGeyk6V0vUNEhI+uFQ3mu15FZr98=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E68BReJC+S+GZ4y+ldofGTf/ZnKFAvNGEVa021N30JtDVsytNeZryF7w8dT331paTev0VCjFbeW+/S1Melmf5W4+qiOAnKpLB25/W8MJThCjTdHn1HBDR0+jLbVfKWyTo9rflT5C0swueZIPRpD3aVkiPH0BTrIzMzs/xWHhAkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CR0Exwn5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C1EC4CEE7;
+	Wed,  3 Sep 2025 14:56:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756911369;
+	bh=fyT8F1OdM5Im8IxoGeyk6V0vUNEhI+uFQ3mu15FZr98=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CR0Exwn5abVZ3SLaiL1Fks0DMyZweqUobY4ouS1FKSSqB1jsQSxNyZS+LiGgrbIQE
+	 vILuGfJfU/DhvdDecvSbn2sUUZo/DYFhom35YB5S+C+lopGVN72S9oXLn28zNIO1Fx
+	 +PtBTBylyZ9fGmXs3pzIbxYBzGfl73oD92aWgynpdK5TNdnmkwr49FXL8bFstDOL9v
+	 WvLfgmTmROOmPWr33Cx6i4gSy6F6bAvqD4y+P5tiTsiVRMDJLRoH28b8vbrsYFYC22
+	 KNtloPgcimwzVNC7PWrzSeH2S8i3w0+D9XJs0DRZ4wbjUhxVq0s3lAh/tmw0RpGbGR
+	 K32bYfiuf2hkA==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject:
+ [PATCH v1] cpufreq: core: Rearrange variable declarations involving __free()
+Date: Wed, 03 Sep 2025 16:56:04 +0200
+Message-ID: <4691667.LvFx2qVVIh@rafael.j.wysocki>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCnnT4AV7honETyGA--.7418S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXryDZr43Wr4ftrW7tr1UZFb_yoWrJw1DpF
-	WrGw13Gw4Du3yjgw47XwnFvryrWw45Ar15Wrn5JFZ5AFy7XryrAFW29FW5XFy8trsxtw42
-	vw48GFyxAw1DuFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U8uciUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiow29Cmi4Tr6zNAAAs+
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 2, 2025 at 22:04 PM Jason Xing <kerneljasonxing@gmail.com> wrote:
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> > kactive_blk_num (K) is incremented on block close. last_kactive_blk_num (L)
-> > is set to match K on block open and each timer. So the only time that they
-> > differ is if a block is closed in tpacket_rcv and no new block could be
-> > opened.
-> > So the origin check L==K in timer callback only skip the case 'no new block
-> > to open'. If we remove L==K check, it will make prb_curr_blk_in_use check
-> > earlier, which will not cause any side effect.
-> 
-> I believe the above commit message needs to be revised:
-> 1) the above sentence (starting from 'if we remove L....') means
-> nothing because your modification doesn't change the behaviour when
-> the queue is not frozen.
-> 2) lack of proofs/reasons on why exposing the prb_open_block() logic doesn't
-> cause side effects. It's the key proof that shows to future readers to
-> make sure this patch will not bring trouble.
+Follow cleanup.h recommendations and always define and assign variables
+in one statement when __free() is used.
 
-This diff file may not clearly demonstrate the changes made to the
-prb_retire_rx_blk_timer_expired function. We have simply removed the check for
-pkc->last_kactive_blk_num == pkc->kactive_blk_num; the other logic remains unchanged.
-Therefore, we should only need to explain why removing the check for
-pkc->last_kactive_blk_num == pkc->kactive_blk_num will not cause any negative impacts.
+No intentional functional impact.
 
-I will clarify in the commit that our change to prb_retire_rx_blk_timer_expired only
-involves removing the check for pkc->last_kactive_blk_num == pkc->kactive_blk_num,
-to ensure that everyone understands this point, as it may not be clearly visible from
-the diff file.
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpufreq/cpufreq.c |   27 +++++++--------------------
+ 1 file changed, 7 insertions(+), 20 deletions(-)
 
-The commit may be changed as follow:
-
-kactive_blk_num (K) is only incremented on block close.
-In timer callback prb_retire_rx_blk_timer_expired, except delete_blk_timer
-is true, last_kactive_blk_num (L) is set to match kactive_blk_num (K) in
-all cases. L is also set to match K in prb_open_block.
-The only case K not equal to L is when scheduled by tpacket_rcv
-and K is just incremented on block close but no new block could be opened,
-so that it does not call prb_open_block in prb_dispatch_next_block.
-This patch modifies the prb_retire_rx_blk_timer_expired function by simply 
-removing the check for L == K. Why can we remove the check for L == K in
-timer callback?
-In prb_freeze_queue, reset_pending_on_curr_blk (R) is set to 1. If R == 1,
-prb_queue_frozen return 1. In prb_retire_rx_blk_timer_expired,
-frozen = prb_queue_frozen(pkc); so frozen is 1 when R == 1.
-
-Consider the following case:
-(before applying this patch)
-cpu0                                  cpu1
-tpacket_rcv
-  ...
-    prb_dispatch_next_block
-      prb_freeze_queue (R = 1)
-                                      prb_retire_rx_blk_timer_expired
-                                        L != K
-                                          _prb_refresh_rx_retire_blk_timer
-                                            refresh timer
-                                            set L = K
-(after applying this patch)
-cpu0                                  cpu1
-tpacket_rcv
-  ...
-    prb_dispatch_next_block
-      prb_freeze_queue (R = 1)
-                                      prb_retire_rx_blk_timer_expired
-                                        !forzen is 0
-                                          check prb_curr_blk_in_use
-                                            if true
-                                              same as (before apply)
-                                            if false
-                                              prb_open_block
-Before applying this patch, prb_retire_rx_blk_timer_expired will do nothing
-but refresh timer and set L = K in the case above. After applying this
-patch, it will check prb_curr_blk_in_use and call prb_open_block if
-user-space caught up.
-
-
-Please check if the above description is appropriate. I will change the
-description as above in PATCH v11.
-
-
-> 
-> >
-> > Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
-> 
-> It was suggested by Willem, so please add:
-> Suggested-by: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-
-Okay, I will add it in the PATCH v11.
-
-> 
-> So far, it looks good to me as well:
-> Reviewed-by: Jason Xing <kerneljasonxing@gmail.com>
-> 
-> And I will finish reviewing the other patch by tomorrow :)
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1845,7 +1845,6 @@ static unsigned int cpufreq_verify_curre
+  */
+ unsigned int cpufreq_quick_get(unsigned int cpu)
+ {
+-	struct cpufreq_policy *policy __free(put_cpufreq_policy) = NULL;
+ 	unsigned long flags;
+ 
+ 	read_lock_irqsave(&cpufreq_driver_lock, flags);
+@@ -1860,7 +1859,7 @@ unsigned int cpufreq_quick_get(unsigned
+ 
+ 	read_unlock_irqrestore(&cpufreq_driver_lock, flags);
+ 
+-	policy = cpufreq_cpu_get(cpu);
++	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
+ 	if (policy)
+ 		return policy->cur;
+ 
+@@ -1876,9 +1875,7 @@ EXPORT_SYMBOL(cpufreq_quick_get);
+  */
+ unsigned int cpufreq_quick_get_max(unsigned int cpu)
+ {
+-	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+-
+-	policy = cpufreq_cpu_get(cpu);
++	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
+ 	if (policy)
+ 		return policy->max;
+ 
+@@ -1894,9 +1891,7 @@ EXPORT_SYMBOL(cpufreq_quick_get_max);
+  */
+ __weak unsigned int cpufreq_get_hw_max_freq(unsigned int cpu)
+ {
+-	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+-
+-	policy = cpufreq_cpu_get(cpu);
++	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
+ 	if (policy)
+ 		return policy->cpuinfo.max_freq;
+ 
+@@ -1920,9 +1915,7 @@ static unsigned int __cpufreq_get(struct
+  */
+ unsigned int cpufreq_get(unsigned int cpu)
+ {
+-	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+-
+-	policy = cpufreq_cpu_get(cpu);
++	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
+ 	if (!policy)
+ 		return 0;
+ 
+@@ -2751,9 +2744,7 @@ static void cpufreq_policy_refresh(struc
+  */
+ void cpufreq_update_policy(unsigned int cpu)
+ {
+-	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+-
+-	policy = cpufreq_cpu_get(cpu);
++	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
+ 	if (!policy)
+ 		return;
+ 
+@@ -2770,9 +2761,7 @@ EXPORT_SYMBOL(cpufreq_update_policy);
+  */
+ void cpufreq_update_limits(unsigned int cpu)
+ {
+-	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+-
+-	policy = cpufreq_cpu_get(cpu);
++	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
+ 	if (!policy)
+ 		return;
+ 
+@@ -3054,9 +3043,7 @@ static int __init cpufreq_core_init(void
+ 
+ static bool cpufreq_policy_is_good_for_eas(unsigned int cpu)
+ {
+-	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+-
+-	policy = cpufreq_cpu_get(cpu);
++	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
+ 	if (!policy) {
+ 		pr_debug("cpufreq policy not set for CPU: %d\n", cpu);
+ 		return false;
 
 
-Thanks
-Xin Zhao
 
 
