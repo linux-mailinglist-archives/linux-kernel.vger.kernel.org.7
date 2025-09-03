@@ -1,80 +1,49 @@
-Return-Path: <linux-kernel+bounces-798059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C1D5B41908
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:48:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8770DB41912
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50E0D167D15
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:48:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E3BA3BD095
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04612EB86D;
-	Wed,  3 Sep 2025 08:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0965D1F948;
+	Wed,  3 Sep 2025 08:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V47aNZD6"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="sq2ND0bR";
+	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="Ijyt+a2L"
+Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0A11DD877
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA502868AF
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756889290; cv=none; b=lgnsewrEb3qUoIm5Fn6jVjsZyUt+2/L3VXtkVlB9cmVbOqIkR00yYmiSXhnG01U8l1DZddwYZ3ByH6mi6eTpcMQirYunPHKsrYOZIBXbFWXvIDcLMZzeWCeiR66iZvUPbXzqS94B4BEbk6EMwmrAs9/ADeqQuVI3WdNahRhH7/M=
+	t=1756889366; cv=none; b=vDWWlLQmadZSfNlZLLYtDbc2876xO2OpIcq8Dp0tWX/kwktwbPkg7h6Xoze7ka4WK3Q7WPsSvLktE2ckVqCvO3revOQyacWqR7eqRueBxXxOxxUy0lsN8ejqUGpRnQ31kf4mCAVb4Ti00Q7/PvyIgtoSCuMa+jdepRmNlDdqfU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756889290; c=relaxed/simple;
-	bh=G/HQAICVyosrIp4ApXauWvFtOuVnGI7B86rhG1fg2Xo=;
+	s=arc-20240116; t=1756889366; c=relaxed/simple;
+	bh=AkCjBU3pSfpCPh5JsZWyIh6IB6M0mW3pLGh/tQM6azY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=si/iaoTE8ebvZEFV82QzBJqQFmdAencqxaPmVaUEnfgmE7e/wAaufBSyQjSbLFQIHShxTYlzUPfeQeJGlta0B/sIPyYaWJv/AVzi3oEfdEDNoPL4+thgKuvOkhJnP1fKByYgCBVjJbc/qW4fQMqI/p72Ppt+V/tOawaWmzcJOyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V47aNZD6; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3d2564399a5so1422485f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:48:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1756889287; x=1757494087; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=7+dFhyhyqJr75WwSaOHE7BII74yZAHk+nCpXZ3qcIN8=;
-        b=V47aNZD6+myt7DbmGWumvxzyD+cLIcqxll0B65u4OQjbimxzstF2xnFKAeVIhgIhQB
-         d2YFdES5eVT9+MXuZXqsU59EvYDJXfamY3CMUzo4xFtaYAQWz+HX/urF+HBeQAZqhuCx
-         4wVnsOIB9Ah32PisqILE+KmpeM3bS5mqR/pXUO7loShsTKTnJRjJpGeELRZ8oCpgY00h
-         +RpBwYYc3H5xQAuV/DYdcuqDnoObkpZfzkEtf5sdDPLlqrqjylSuEf8pFSKsmeKEABVc
-         1QiuSfS/4UlLesV7q4HXWwhPHfa9z7DOf43kEZYzxrIZk+zd5z0dOGAtEsBcuyCiHtSk
-         HDWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756889287; x=1757494087;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7+dFhyhyqJr75WwSaOHE7BII74yZAHk+nCpXZ3qcIN8=;
-        b=l6z4ChIkRZZfx5M2vBa/0m005DZs/xMtcwiEZlZ9WVg7dnkrjDE2OPsW5tv8Js8V00
-         qk1dKcWiLyRTkovvX5+HECL1LJKgFo5SDZmpJeEfoaS8Yn7hbmbD8H6eAph6br//tele
-         gzvLN0mkuZWLt2XRXTnVcpqlTQCbQhb2MyGqf4ZMz/VzoEl/tEQYdR+4rSB4smxezWFB
-         1nNnEOmIvplMm2Q07IZM9K8aH1g0wNh8b2E0siPS6qSM2XA3r1UZ2IljXGuM+tMGpxzC
-         lsBMBDQnM3EC78hR6EWL5fdid6yJflvEwq62PW3aIjgMCFOnQZrtze7rlMlPT0rigo/Y
-         ej+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUD+tAET8mCLTYuwGx19pMT28P2ZkPIvrrrPWmkn7aMfvQNsMAuoAYp5S/u8lZzwogV2kTUCR5MHYEBZMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxF3AmO232H8N5mid2Q1RsheA0HaTDCXz1W89ab4wdh75r6TE8N
-	kjbhdpydYnd7On2D01Huj92ryw7fMp2bwI2dRBoQLGShOHh3lDiBVjcy/Q2yxPwI/z4=
-X-Gm-Gg: ASbGncubcIhY+wCp/DQQct0ZcIam2fAif1rBrlszlVTW1lzs2IN3KwVVS9/Dh5EGUC9
-	Ydsja79QLlnv7IHjEGpl2lwMtxf6MebVX2O+4eWH+ySaQRKJnbFtvzpFRpxCdqxhX97ovyfPYzx
-	qqAhyHB9QM0XBhDvT+VTC77jZ+Jy2j9v9YBIsgdkBwbg8/e+F1eJrGhNRwGYiookfdHtmcjc5sy
-	7yeZ0IGn/i1NzUEnoJGygAeubJBQC4wjIaNPPYNgn1Gq9AJVIJUj5mPWfRMCzUmqy/zXtr8WIr2
-	LAwpKRVUgRwMMMMpTYcC2J4SGPpz96vEeDpQXOz44yKU4rCc/hfi1yHZZJfMYnWaQLwocN1rmkV
-	FAu6VsIYEc4Z5ceMLfxj/e1idOS2jSuCE7rmhxTQzuzO5isuFePL8stJ4EPSWWg==
-X-Google-Smtp-Source: AGHT+IHbXlAmsIr5mQsBVFTxh9EzMGiTHl5fiPrZ9WFCdZ67HAZOog5Phq9OBFDDnIrmcC3cSLTumg==
-X-Received: by 2002:a05:6000:288b:b0:3cd:2328:898b with SMTP id ffacd0b85a97d-3d1e05b5c25mr10817288f8f.47.1756889286519;
-        Wed, 03 Sep 2025 01:48:06 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249067de9f1sm153203545ad.151.2025.09.03.01.48.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 01:48:06 -0700 (PDT)
-Message-ID: <9d6db7e9-318f-4242-9883-9eee8ee20f5e@suse.com>
-Date: Wed, 3 Sep 2025 18:18:01 +0930
+	 In-Reply-To:Content-Type; b=i4Xq8AVZV0/n9xqbNiO/mF+SUI/wyh90xNCsq4EFTxQ2marRXMewxBNYSVJ+zLSaKc/IRIRk32uIJ/yBXIdHmdsiL8xh8sV6QjnVDhkCrEMneXwx0hjNZ8+h25S0oB3Tj3QexeBV402awRHABmRaC9/XkMge2CsJDToJynUbgMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=sq2ND0bR; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=Ijyt+a2L; arc=none smtp.client-ip=51.159.152.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
+DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1756889339; bh=HjOHEWMSMrU5p/zkpwE6dIR
+	BHC+CIfleuHQUkcLp8Uk=; b=sq2ND0bRElkSLV+K2Zb2GyBpijps3zsYqbhBqGbb64VNoI97Mj
+	tiO480pDQxzLZvFWQ3mbIUhwxB1aNSqs0oksnhnEGeUa844V+NvE28ix9NRQ+GCXq5wlcCcw5n3
+	GZV7CSXEvdeuKDIHke5AIIynI9bdQs21h4qKgFAN+GxX1b3MJjWfk2jn3oIWDiOACIN1zQi65CY
+	Nk/5j7NTTY6X/irYLssR1NeqBw5yrpfuTNo3vkqnP0aggl5kZB88TGUfoFB+cwaxgLmQZGbLmIw
+	imP5lHROygenfvKG/V9FK2GzxvWp0LgT1kJ/vxIcq77jo58+yxPAMp1Dzu1KDKQNAwg==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1756889339; bh=HjOHEWMSMrU5p/zkpwE6dIR
+	BHC+CIfleuHQUkcLp8Uk=; b=Ijyt+a2L89KHy6PEhWIlTcrWd/aXddM9LchOwHtni1IQgrTdDj
+	I+UM27gH7Lcf1UVf0hJUMKGSlyU/6G1TL1BQ==;
+Message-ID: <0f4c18b7-4591-4450-8d55-b7bfe789d9fa@damsy.net>
+Date: Wed, 3 Sep 2025 10:48:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,206 +51,161 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [btrfs] bddf57a707:
- stress-ng.sync-file.ops_per_sec 44.2% regression
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-References: <202509031643.303d114c-lkp@intel.com>
+Subject: Re: [PATCH v1 1/2] drm/amdgpu: increment share sched score on entity
+ selection
+To: Tvrtko Ursulin <tursulin@ursulin.net>,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250822134348.6819-1-pierre-eric.pelloux-prayer@amd.com>
+ <a05bb414-4dd1-4cbe-aa1a-beaea2d056aa@ursulin.net>
 Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <202509031643.303d114c-lkp@intel.com>
+From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
+In-Reply-To: <a05bb414-4dd1-4cbe-aa1a-beaea2d056aa@ursulin.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Hi,
 
+Le 01/09/2025 à 11:02, Tvrtko Ursulin a écrit :
+> 
+> On 22/08/2025 14:43, Pierre-Eric Pelloux-Prayer wrote:
+>> For hw engines that can't load balance jobs, entities are
+>> "statically" load balanced: on their first submit, they select
+>> the best scheduler based on its score.
+>> The score is made up of 2 parts:
+>> * the job queue depth (how much jobs are executing/waiting)
+>> * the number of entities assigned
+>>
+>> The second part is only relevant for the static load balance:
+>> it's a way to consider how many entities are attached to this
+>> scheduler, knowing that if they ever submit jobs they will go
+>> to this one.
+>>
+>> For rings that can load balance jobs freely, idle entities
+>> aren't a concern and shouldn't impact the scheduler's decisions.
+>>
+>> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+>> ---
+>>   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c | 23 ++++++++++++++++++-----
+>>   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h |  1 +
+>>   2 files changed, 19 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c b/drivers/gpu/drm/amd/ 
+>> amdgpu/amdgpu_ctx.c
+>> index f5d5c45ddc0d..4a078d2d98c5 100644
+>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
+>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
+>> @@ -206,9 +206,11 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx *ctx, 
+>> u32 hw_ip,
+>>   {
+>>       struct drm_gpu_scheduler **scheds = NULL, *sched = NULL;
+>>       struct amdgpu_device *adev = ctx->mgr->adev;
+>> +    bool static_load_balancing = false;
+>>       struct amdgpu_ctx_entity *entity;
+>>       enum drm_sched_priority drm_prio;
+>>       unsigned int hw_prio, num_scheds;
+>> +    struct amdgpu_ring *aring;
+>>       int32_t ctx_prio;
+>>       int r;
+>> @@ -236,17 +238,22 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx 
+>> *ctx, u32 hw_ip,
+>>           r = amdgpu_xcp_select_scheds(adev, hw_ip, hw_prio, fpriv,
+>>                           &num_scheds, &scheds);
+>>           if (r)
+>> -            goto cleanup_entity;
+>> +            goto error_free_entity;
+> 
+> Indeed, previously this was calling drm_sched_entity_fini() before 
+> drm_sched_entity_init() and it only worked because of kzalloc.
+> 
+>>       }
+>>       /* disable load balance if the hw engine retains context among dependent 
+>> jobs */
+>> -    if (hw_ip == AMDGPU_HW_IP_VCN_ENC ||
+>> -        hw_ip == AMDGPU_HW_IP_VCN_DEC ||
+>> -        hw_ip == AMDGPU_HW_IP_UVD_ENC ||
+>> -        hw_ip == AMDGPU_HW_IP_UVD) {
+>> +    static_load_balancing = hw_ip == AMDGPU_HW_IP_VCN_ENC ||
+>> +                hw_ip == AMDGPU_HW_IP_VCN_DEC ||
+>> +                hw_ip == AMDGPU_HW_IP_UVD_ENC ||
+>> +                hw_ip == AMDGPU_HW_IP_UVD;
+>> +
+>> +    if (static_load_balancing) {
+>>           sched = drm_sched_pick_best(scheds, num_scheds);
+>>           scheds = &sched;
+>>           num_scheds = 1;
+>> +        aring = container_of(sched, struct amdgpu_ring, sched);
+>> +        entity->sched_ring_score = aring->sched_score;
+>> +        atomic_inc(entity->sched_ring_score);
+> 
+> If we were to bike-shed we could find a way to avoid the new local variables. 
+> Keeping the if as is and assign to entity->sched_ring_score directly, and then 
+> checking for that on the cleanup path. Still works due kzalloc. Or if relying on 
+> kzalloc is not desired, at least bool static_load_balance could be replaced by 
+> re-naming the aring local as static_aring and using it like the name suggests.
+> 
+> Could also move the atomic_inc to the success path to avoid having to add code 
+> to error unwind.
+> 
 
-在 2025/9/3 18:14, kernel test robot 写道:
-> 
-> Hello,
-> 
-> kernel test robot noticed a 44.2% regression of stress-ng.sync-file.ops_per_sec on:
-> 
-> 
-> commit: bddf57a70781ef8821d415200bdbcb71f443993a ("btrfs: delay btrfs_open_devices() until super block is created")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> 
-> [still regression on      linus/master fb679c832b6497f19fffb8274c419783909c0912]
-> [still regression on linux-next/master 3cace99d63192a7250461b058279a42d91075d0c]
-> 
-> testcase: stress-ng
-> config: x86_64-rhel-9.4
-> compiler: gcc-12
-> test machine: 64 threads 2 sockets Intel(R) Xeon(R) Gold 6346 CPU @ 3.10GHz (Ice Lake) with 256G memory
-> parameters:
-> 
-> 	nr_threads: 100%
-> 	disk: 1HDD
-> 	testtime: 60s
-> 	fs: btrfs
-> 	test: sync-file
-> 	cpufreq_governor: performance
-> 
-> 
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202509031643.303d114c-lkp@intel.com
-> 
-> 
-> Details are as below:
-> -------------------------------------------------------------------------------------------------->
-> 
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20250903/202509031643.303d114c-lkp@intel.com
-> 
-> =========================================================================================
-> compiler/cpufreq_governor/disk/fs/kconfig/nr_threads/rootfs/tbox_group/test/testcase/testtime:
->    gcc-12/performance/1HDD/btrfs/x86_64-rhel-9.4/100%/debian-12-x86_64-20240206.cgz/lkp-icl-2sp8/sync-file/stress-ng/60s
-> 
-> commit:
->    de339cbfb4 ("btrfs: call bdev_fput() to reclaim the blk_holder immediately")
->    bddf57a707 ("btrfs: delay btrfs_open_devices() until super block is created")
+Christian, Alex: any preferences on the code style to use here?
 
-This doesn't sound sane to me.
+> Both cases are I think equally racy in the sense that parallel 
+> amdgpu_ctx_init_entity invocations can all pick the same sched. But that is true 
+> today AFAICT because score is not incremented until later in the job submit 
+> process.
+> 
+> I suppose one way to make the assignment more robust would be to "rotate" (or 
+> randomize) the sched list atomically before calling drm_sched_pick_best. Thoughts?
+> 
 
-The two commits are only affecting btrfs mounting/unmounting, I can not 
-make any sense on why they would affect performance.
-
-Or does stress-ng doing a lot of mounting/unmounting?
+IMO without the ability to do job level load balancing, there will always be 
+cases where the scheduler choice is not optimal. For this reason I prefered to 
+keep the code as simple as possible.
 
 Thanks,
-Qu
+Pierre-Eric
 
+
+> Regards,
 > 
-> de339cbfb4027957 bddf57a70781ef8821d415200bd
-> ---------------- ---------------------------
->           %stddev     %change         %stddev
->               \          |                \
->     1885182 ±  2%     -35.0%    1226241        cpuidle..usage
->        1.35 ±  3%     +26.8%       1.71 ± 31%  iostat.cpu.iowait
->      114330           -10.0%     102922        meminfo.Shmem
->       17680 ±  2%     -39.7%      10656 ±  2%  vmstat.system.cs
->       32084 ±  3%     -33.6%      21290 ±  2%  vmstat.system.in
->        0.08 ±  2%      -0.0        0.05 ±  2%  mpstat.cpu.all.irq%
->        0.03 ±  6%      -0.0        0.02 ±  5%  mpstat.cpu.all.soft%
->        0.66 ±  3%      -0.2        0.45 ±  2%  mpstat.cpu.all.sys%
->      311692 ±  9%     -17.9%     255869 ± 12%  numa-numastat.node0.numa_hit
->      304181 ±  8%     -24.2%     230456 ± 20%  numa-numastat.node1.local_node
->      331109 ±  6%     -19.3%     267048 ± 11%  numa-numastat.node1.numa_hit
->      311531 ±  9%     -17.9%     255766 ± 13%  numa-vmstat.node0.numa_hit
->      330584 ±  6%     -19.3%     266623 ± 10%  numa-vmstat.node1.numa_hit
->      303656 ±  8%     -24.2%     230030 ± 20%  numa-vmstat.node1.numa_local
->       59.00 ± 13%     -41.5%      34.50 ± 10%  perf-c2c.DRAM.local
->        1139 ±  4%     -46.1%     613.67 ±  5%  perf-c2c.DRAM.remote
->        1254 ±  5%     -45.3%     686.50 ±  2%  perf-c2c.HITM.local
->      681.33 ±  3%     -45.8%     369.50 ±  6%  perf-c2c.HITM.remote
->        1.33 ± 41%     -93.8%       0.08 ±223%  sched_debug.cfs_rq:/.runnable_avg.min
->        1.33 ± 41%     -93.8%       0.08 ±223%  sched_debug.cfs_rq:/.util_avg.min
->       10502           -34.4%       6886        sched_debug.cpu.nr_switches.avg
->        8094 ±  2%     -41.8%       4710 ±  2%  sched_debug.cpu.nr_switches.min
->       21146 ±  2%     -44.2%      11809        stress-ng.sync-file.ops
->      352.20 ±  2%     -44.2%     196.65        stress-ng.sync-file.ops_per_sec
->       34.00 ±  2%     -43.6%      19.17        stress-ng.time.percent_of_cpu_this_job_got
->       20.20 ±  2%     -43.6%      11.38        stress-ng.time.system_time
->      513054 ±  2%     -45.5%     279629        stress-ng.time.voluntary_context_switches
->       28437           -10.3%      25522        proc-vmstat.nr_shmem
->       25303            -1.0%      25040        proc-vmstat.nr_slab_reclaimable
->      644388           -18.6%     524319        proc-vmstat.numa_hit
->      578153           -20.8%     458095        proc-vmstat.numa_local
->      682807           -18.2%     558809        proc-vmstat.pgalloc_normal
->      675599           -18.3%     551960 ±  2%  proc-vmstat.pgfree
->        1.61            -5.0%       1.53        perf-stat.i.MPKI
->   6.692e+08 ±  3%      -8.2%  6.144e+08 ±  6%  perf-stat.i.branch-instructions
->       23.54            -2.2       21.29        perf-stat.i.cache-miss-rate%
->     2665211 ±  3%     -27.0%    1946091 ±  4%  perf-stat.i.cache-misses
->    12037045 ±  3%     -18.2%    9840696 ±  3%  perf-stat.i.cache-references
->       18418 ±  3%     -40.1%      11025        perf-stat.i.context-switches
->        2.13            -5.4%       2.01        perf-stat.i.cpi
->   3.964e+09 ±  3%     -19.8%  3.177e+09 ±  4%  perf-stat.i.cpu-cycles
->      181.54 ±  3%     -23.8%     138.31 ±  4%  perf-stat.i.cpu-migrations
->        1472            +7.4%       1581        perf-stat.i.cycles-between-cache-misses
->   3.216e+09 ±  3%      -7.6%  2.972e+09 ±  6%  perf-stat.i.instructions
->        0.65            +8.4%       0.71 ±  2%  perf-stat.i.ipc
->        0.83           -20.9%       0.66 ±  2%  perf-stat.overall.MPKI
->        4.24            +0.3        4.58 ±  2%  perf-stat.overall.branch-miss-rate%
->       22.13            -2.4       19.76        perf-stat.overall.cache-miss-rate%
->        1.23           -13.1%       1.07 ±  2%  perf-stat.overall.cpi
->        1488            +9.8%       1634        perf-stat.overall.cycles-between-cache-misses
->        0.81           +15.1%       0.93 ±  2%  perf-stat.overall.ipc
->   6.587e+08 ±  3%      -8.2%  6.047e+08 ±  6%  perf-stat.ps.branch-instructions
->     2623092 ±  3%     -27.0%    1915109 ±  4%  perf-stat.ps.cache-misses
->    11851537 ±  3%     -18.3%    9688099 ±  3%  perf-stat.ps.cache-references
->       18125 ±  3%     -40.2%      10847        perf-stat.ps.context-switches
->   3.903e+09 ±  3%     -19.8%  3.129e+09 ±  4%  perf-stat.ps.cpu-cycles
->      178.73 ±  3%     -23.8%     136.12 ±  4%  perf-stat.ps.cpu-migrations
->   3.166e+09 ±  3%      -7.6%  2.925e+09 ±  6%  perf-stat.ps.instructions
->   2.004e+11            -9.3%  1.818e+11 ±  5%  perf-stat.total.instructions
->        0.00 ±223%   +4160.0%       0.04 ± 35%  perf-sched.sch_delay.avg.ms.schedule_preempt_disabled.__mutex_lock.constprop.0.btrfs_create_pending_block_groups
->        0.01          -100.0%       0.00        perf-sched.sch_delay.avg.ms.schedule_timeout.btrfs_sync_log.btrfs_sync_file.do_fsync
->        0.01 ± 15%    +246.8%       0.03 ± 96%  perf-sched.sch_delay.max.ms.__cond_resched.__wait_for_common.barrier_all_devices.write_all_supers.btrfs_sync_log
->        0.00 ±223%   +4180.0%       0.04 ± 35%  perf-sched.sch_delay.max.ms.schedule_preempt_disabled.__mutex_lock.constprop.0.btrfs_create_pending_block_groups
->        0.02 ± 98%    -100.0%       0.00        perf-sched.sch_delay.max.ms.schedule_timeout.btrfs_sync_log.btrfs_sync_file.do_fsync
->        0.16 ±106%     -77.8%       0.04 ± 39%  perf-sched.sch_delay.max.ms.wait_log_commit.btrfs_sync_log.btrfs_sync_file.do_fsync
->       27.42 ±  3%     +53.9%      42.21 ±  4%  perf-sched.total_wait_and_delay.average.ms
->       40831 ±  3%     -36.6%      25906 ±  4%  perf-sched.total_wait_and_delay.count.ms
->       27.41 ±  3%     +54.0%      42.21 ±  4%  perf-sched.total_wait_time.average.ms
->      229.23 ±  2%     +51.7%     347.78 ± 15%  perf-sched.wait_and_delay.avg.ms.irq_thread.kthread.ret_from_fork.ret_from_fork_asm
->       12.64 ±  3%     +56.9%      19.84 ±  3%  perf-sched.wait_and_delay.avg.ms.schedule_preempt_disabled.rwsem_down_read_slowpath.down_read.btrfs_tree_read_lock_nested
->        2.33 ± 11%     +63.7%       3.81 ± 18%  perf-sched.wait_and_delay.avg.ms.schedule_preempt_disabled.rwsem_down_write_slowpath.down_write.btrfs_tree_lock_nested
->        6.94 ±  2%     +29.6%       9.00 ± 11%  perf-sched.wait_and_delay.avg.ms.schedule_timeout.rcu_gp_fqs_loop.rcu_gp_kthread.kthread
->        0.31 ±  5%    +421.7%       1.64 ± 25%  perf-sched.wait_and_delay.avg.ms.wait_log_commit.btrfs_sync_log.btrfs_sync_file.do_fsync
->       18.67 ±  5%     -35.7%      12.00 ± 16%  perf-sched.wait_and_delay.count.irq_thread.kthread.ret_from_fork.ret_from_fork_asm
->       22342 ±  4%     -40.1%      13375 ±  4%  perf-sched.wait_and_delay.count.schedule_preempt_disabled.rwsem_down_read_slowpath.down_read.btrfs_tree_read_lock_nested
->        9405 ±  4%     -40.8%       5564 ±  4%  perf-sched.wait_and_delay.count.schedule_preempt_disabled.rwsem_down_write_slowpath.down_write.btrfs_tree_lock_nested
->      666.83 ±  2%     -22.5%     516.50 ± 10%  perf-sched.wait_and_delay.count.schedule_timeout.rcu_gp_fqs_loop.rcu_gp_kthread.kthread
->        4582 ±  4%     -37.4%       2866 ±  5%  perf-sched.wait_and_delay.count.wait_log_commit.btrfs_sync_log.btrfs_sync_file.do_fsync
->        5.34 ± 21%    +756.6%      45.72 ±  4%  perf-sched.wait_time.avg.ms.io_schedule.bit_wait_io.__wait_on_bit.out_of_line_wait_on_bit
->       22.83 ±  2%     +15.9%      26.46 ±  8%  perf-sched.wait_time.avg.ms.io_schedule.folio_wait_bit_common.write_all_supers.btrfs_sync_log
->      229.23 ±  2%     +51.6%     347.59 ± 15%  perf-sched.wait_time.avg.ms.irq_thread.kthread.ret_from_fork.ret_from_fork_asm
->       12.63 ±  3%     +57.1%      19.83 ±  3%  perf-sched.wait_time.avg.ms.schedule_preempt_disabled.rwsem_down_read_slowpath.down_read.btrfs_tree_read_lock_nested
->        2.32 ± 12%     +64.0%       3.81 ± 18%  perf-sched.wait_time.avg.ms.schedule_preempt_disabled.rwsem_down_write_slowpath.down_write.btrfs_tree_lock_nested
->        8.58 ±  9%    -100.0%       0.00        perf-sched.wait_time.avg.ms.schedule_timeout.btrfs_sync_log.btrfs_sync_file.do_fsync
->        6.94 ±  2%     +29.6%       8.99 ± 11%  perf-sched.wait_time.avg.ms.schedule_timeout.rcu_gp_fqs_loop.rcu_gp_kthread.kthread
->        0.31 ±  5%    +427.4%       1.63 ± 25%  perf-sched.wait_time.avg.ms.wait_log_commit.btrfs_sync_log.btrfs_sync_file.do_fsync
->      101.57 ± 20%     +56.6%     159.06 ± 22%  perf-sched.wait_time.max.ms.io_schedule.bit_wait_io.__wait_on_bit.out_of_line_wait_on_bit
->      116.41 ± 27%    -100.0%       0.00        perf-sched.wait_time.max.ms.schedule_timeout.btrfs_sync_log.btrfs_sync_file.do_fsync
+> Tvrtko
 > 
-> 
-> 
-> 
-> Disclaimer:
-> Results have been estimated based on internal Intel analysis and are provided
-> for informational purposes only. Any difference in system hardware or software
-> design or configuration may affect actual performance.
-> 
-> 
+>>       }
+>>       r = drm_sched_entity_init(&entity->entity, drm_prio, scheds, num_scheds,
+>> @@ -264,6 +271,9 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx *ctx, 
+>> u32 hw_ip,
+>>       drm_sched_entity_fini(&entity->entity);
+>>   error_free_entity:
+>> +    if (static_load_balancing)
+>> +        atomic_dec(entity->sched_ring_score);
+>> +
+>>       kfree(entity);
+>>       return r;
+>> @@ -514,6 +524,9 @@ static void amdgpu_ctx_do_release(struct kref *ref)
+>>               if (!ctx->entities[i][j])
+>>                   continue;
+>> +            if (ctx->entities[i][j]->sched_ring_score)
+>> +                atomic_dec(ctx->entities[i][j]->sched_ring_score);
+>> +
+>>               drm_sched_entity_destroy(&ctx->entities[i][j]->entity);
+>>           }
+>>       }
+>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h b/drivers/gpu/drm/amd/ 
+>> amdgpu/amdgpu_ctx.h
+>> index 090dfe86f75b..076a0e165ce0 100644
+>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
+>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
+>> @@ -39,6 +39,7 @@ struct amdgpu_ctx_entity {
+>>       uint32_t        hw_ip;
+>>       uint64_t        sequence;
+>>       struct drm_sched_entity    entity;
+>> +    atomic_t        *sched_ring_score;
+>>       struct dma_fence    *fences[];
+>>   };
 
 
