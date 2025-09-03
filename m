@@ -1,85 +1,47 @@
-Return-Path: <linux-kernel+bounces-797688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF32EB41394
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:40:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F8AB4139F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:43:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 756465E81BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:40:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CA5068014B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6EBD2D3EE1;
-	Wed,  3 Sep 2025 04:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5472D46B6;
+	Wed,  3 Sep 2025 04:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CZohyeTE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjFXhU0c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52242D3A71
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 04:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90F22D3EF6;
+	Wed,  3 Sep 2025 04:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756874451; cv=none; b=OyHr63zcKIrYYvBcQME4+F6oHJu+HUD8ntWo/n5pIOw2VeJB3cCfzlxXF5gZ8nGvjekhSDAEc/z6qtiyBBJrYYDTu5G332Q62mLBW37Xv//ntaRWkRT8zvbjOoV09f8QHkflfdW6AGjVcteLUh1Jz14c5fNgqpLUoIXV4IuxAPM=
+	t=1756874579; cv=none; b=RyRMmx+RYwWNTxF2fVaInkns8fb+YyFimaS9G6pdWIf+LMQsTzb0zVH3Z9Eoe3goWtZSbCLWanmpO9bYMnNtCjSGiBvj2eN84f3EBEwZnEytYCBcpJ2OaS1V9z+tk3QGfinV0NKtwzFBUO0geY1aUT6Q3dk5ofZIePF49O/BlT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756874451; c=relaxed/simple;
-	bh=KWFa2fQ25xYb+puOyfr3wLeuHY8yOvTpbdOg+JLQUIo=;
+	s=arc-20240116; t=1756874579; c=relaxed/simple;
+	bh=aWz5MDl+vUp3tC2LaOmVwlwThf5DJzTm0+LvRWNW0BU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hPsFGHdC80dFA+AhqdHDhLDdRD7KfMFrgBCaWtxn1Q9G+fYQbVF7J9yp3GJFN7zGHHvV6jl8XcKA44N8kb8jTYkE17TdyKgqM/64gBMiDrgBSCrD4NnK0pMoislR0yqaubeEOshy/yS0RgrAxgA8TcHFq5khG7cyMWSxhvFRPvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CZohyeTE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756874447;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nFKFd7BRRcC6ayNrWC4OEZv5/Y2ehiWbsueptb8aZyE=;
-	b=CZohyeTE2MCbNM9IWRRbTit0bHlm+r7BgS6rChWfe6kzkKrNFeKoBWwwHYZT81p5qhYELB
-	Mh54Kzlor0g8OulIVaNW4TFkHR/oZEdO7ikR4o5XNopjRf2eViXmZCosDqIx3QMxAeW9FX
-	2ze++G4ZogPqDnDa7BiXXN82xQrzvhU=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-648-gOrAATvnOberpiIFYQJNqA-1; Wed, 03 Sep 2025 00:40:46 -0400
-X-MC-Unique: gOrAATvnOberpiIFYQJNqA-1
-X-Mimecast-MFC-AGG-ID: gOrAATvnOberpiIFYQJNqA_1756874445
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-337f3ee628eso7600741fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 21:40:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756874444; x=1757479244;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nFKFd7BRRcC6ayNrWC4OEZv5/Y2ehiWbsueptb8aZyE=;
-        b=FQOHsWQlIg5+WSP1KrVxeYd/bz508K2ejEo1bjSW30Q8B8Kh4GYSBUda3IBQPBDB2O
-         b2G4tkgDNatY4P0Z03kw4D4AS9Jxcxi1Ih4oWJu585Yde9+f4jvmIwi+x58hlMHuEg1U
-         rLuAfp6onMU4BqvEHQBkaMuYDfW7sDgT9h2RqSlMNZPI+3PPoH7njho+fFGkynPYyGyg
-         WmTUuirVi4PSX++FQj5L4vfvsA0QL6NtjX9EeRqSlyvgF5HmfYOVWPjs5r0cW2QnxREX
-         ql9neC7of+WCtxinmYtRki+/mMdsMa+SFaE81kM1f3RQIz2pSoiJPKBBXVy88YWnONfA
-         Sgog==
-X-Forwarded-Encrypted: i=1; AJvYcCW7HcLM4A5ooMpQBz56hUa6LXdamtRFzlbAr5zKLwJ7WWYV5yXpIUlH3x41nTd5H0RYf8/joPM5cqzjHIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl6tie6j9FYQW/wiQeYxjH9BikWrG4l/IDqMBGy/2EOLOYAJAm
-	8+ETS06edq6fI83eNcg6fkau3JPfh5ig9JRdW17t7pHs+vM+Z8xfP687lTkolSAckSI5a7CuiWL
-	eE+hyvLRmIHslRSWZw3YcI0gquoiUvkkYJ9vjW8d7b8ForMj+faCb88inwbzkk/B0
-X-Gm-Gg: ASbGnctkXp6qyRG7i0FL1i8amoeZXfpGgufkfd3P8TWsE6ub4mugZyYzo2q+/3Lp44O
-	JLIVoNS9gpuZy/HJ6OH0J/YDDYynZAwBcyiV0ieOfXBwbuSqZ0joEYEYGakA9yUhn04rLFzJhtW
-	RfvAUWmX9DA5rEqle6M/C7vkyUElh8zFUIueMO972WbPtEaLsDeOF6epcPEMbKyYmi/hhCN46Ia
-	sLdKESpUq6SCxnDI0Emx0RQstnOZFV05Fyai+3emF8WH6Gd227PYyBBrwS2tqexPglfj6fY29J2
-	5TodIiqNxpcLmLYhO9pwxy+4XE8Jb1FrRiAPBXfPO1HYDXvYPjltOwX13ZBsVXwQAA==
-X-Received: by 2002:a2e:a990:0:b0:336:e1d6:8920 with SMTP id 38308e7fff4ca-336e1d6917cmr23417341fa.31.1756874444346;
-        Tue, 02 Sep 2025 21:40:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEB9QYuRkeTjERXflES7M4qiiN/3BjWaFP3YSaUZpEcyOTHs10oLde5VZHbPVXv9pkoXi4/XQ==
-X-Received: by 2002:a2e:a990:0:b0:336:e1d6:8920 with SMTP id 38308e7fff4ca-336e1d6917cmr23417061fa.31.1756874443807;
-        Tue, 02 Sep 2025 21:40:43 -0700 (PDT)
-Received: from [192.168.1.86] (85-23-48-6.bb.dnainternet.fi. [85.23.48.6])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f4c50f79sm7951591fa.1.2025.09.02.21.40.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 21:40:43 -0700 (PDT)
-Message-ID: <ea6caec5-fd20-444c-b937-6cab61198c46@redhat.com>
-Date: Wed, 3 Sep 2025 07:40:42 +0300
+	 In-Reply-To:Content-Type; b=HoyiMtgQL2/zhKYyD1ISj7WBvpfa6YSAF6spdP+sc9AVb1VXCUvT9oeFn0yZRRG7uuYFUiEdaEMN8lMIsD1lfsthHaOIObFSLK1t+VvO+MvhSE4XJjW1sOxG6F4mgTvITGbh19vfE1aE1HtED8h1DPm8GznYrbzzOxuQdOcvWGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjFXhU0c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC1AC4CEF0;
+	Wed,  3 Sep 2025 04:42:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756874579;
+	bh=aWz5MDl+vUp3tC2LaOmVwlwThf5DJzTm0+LvRWNW0BU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CjFXhU0cO5IsSRZTwXpbGzZrNsCGG3WbO57KNfS3fpMcQ6VCmn0L76qI2+Scs931C
+	 kMMPcYyiw3RPL6gj0gkM/dfrL+33sX9He6/18ykz5xBTZp7QVg1PYJ3ELRLitwB/qE
+	 8ctu6g6/+eo+OsuoggDLPxRpR0NgJz7HjpiHNKqOj2ts8se92yJitpiEF9w/AnQkiv
+	 WyVAgHzzJqKqNOhe4e8IKfqWXaALmAuzlXRif9C8UM5S4oBeGeDLTVp4CBCiIh2zQ4
+	 ewx0NUjbKG+3psobCjDMIdr2unEij/Y3e1gImlSEGCn3ksoyJ5CoOHim7SDgk2oAZ4
+	 X8goCEB0EbShA==
+Message-ID: <4e3d62bb-11de-4538-a244-251bd7d0d52e@kernel.org>
+Date: Tue, 2 Sep 2025 23:42:57 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,205 +49,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v4 05/15] mm/migrate_device: handle partially mapped folios
- during collection
-To: Balbir Singh <balbirs@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250903011900.3657435-1-balbirs@nvidia.com>
- <20250903011900.3657435-6-balbirs@nvidia.com>
+Subject: Re: [PATCH v10 0/4] Adjust fbcon console device detection
+To: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ Daniel Dadap <ddadap@nvidia.com>
+References: <20250811162606.587759-1-superm1@kernel.org>
 Content-Language: en-US
-From: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
-In-Reply-To: <20250903011900.3657435-6-balbirs@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20250811162606.587759-1-superm1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 9/3/25 04:18, Balbir Singh wrote:
-
-> Extend migrate_vma_collect_pmd() to handle partially mapped large
-> folios that require splitting before migration can proceed.
->
-> During PTE walk in the collection phase, if a large folio is only
-> partially mapped in the migration range, it must be split to ensure
-> the folio is correctly migrated.
->
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
-> Cc: Rakie Kim <rakie.kim@sk.com>
-> Cc: Byungchul Park <byungchul@sk.com>
-> Cc: Gregory Price <gourry@gourry.net>
-> Cc: Ying Huang <ying.huang@linux.alibaba.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Nico Pache <npache@redhat.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Dev Jain <dev.jain@arm.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: Lyude Paul <lyude@redhat.com>
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: Mika Penttilä <mpenttil@redhat.com>
-> Cc: Matthew Brost <matthew.brost@intel.com>
-> Cc: Francois Dugast <francois.dugast@intel.com>
->
-> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+On 8/11/2025 11:26 AM, Mario Limonciello (AMD) wrote:
+> Systems with more than one GPU userspace doesn't know which one to be
+> used to treat as primary.  The concept of primary is important to be
+> able to decide which GPU is used for display and  which is used for
+> rendering.  If it's guessed wrong then both GPUs will be kept awake
+> burning a lot of power.
+> 
+> Historically it would use the "boot_vga" attribute but this isn't
+> present on modern GPUs.
+> 
+> This series started out as changes to VGA arbiter to try to handle a case
+> of a system with 2 GPUs that are not VGA devices and avoid changes to
+> userspace.  This was discussed but decided not to overload the VGA arbiter
+> for non VGA devices.
+> 
+> Instead move the x86 specific detection of framebuffer resources into x86
+> specific code that the fbcon can use to properly identify the primary
+> device. This code is still called from the VGA arbiter, and the logic does
+> not change there. To avoid regression default to VGA arbiter and only fall
+> back to looking up with x86 specific detection method.
+> 
+> In order for userspace to also be able to discover which device was the
+> primary video display device create a new sysfs file 'boot_display'.
+> 
+> A matching userspace implementation for this file is available here:
+> Link: https://gitlab.freedesktop.org/xorg/lib/libpciaccess/-/merge_requests/39
+> Link: https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2038
+> 
+> Dave Airlie has been pinged for a comment on this approach.
+> Dave had suggested in the past [1]:
+> 
+> "
+>   But yes if that doesn't work, then maybe we need to make the boot_vga
+>   flag mean boot_display_gpu, and fix it in the kernel
+> "
+> 
+> This was one of the approached tried in earlier revisions and it was
+> rejected in favor of creating a new sysfs file (which is what this
+> version does).
+> 
+> As the dependendent symbols are in 6.17-rc1 this can merge through
+> drm-misc-next.
+> 
+> Link: https://gitlab.freedesktop.org/xorg/lib/libpciaccess/-/merge_requests/37#note_2938602 [1]
+> 
 > ---
->  mm/migrate_device.c | 95 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 95 insertions(+)
->
-> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
-> index e05e14d6eacd..e58c3f9d01c8 100644
-> --- a/mm/migrate_device.c
-> +++ b/mm/migrate_device.c
-> @@ -54,6 +54,54 @@ static int migrate_vma_collect_hole(unsigned long start,
->  	return 0;
->  }
->  
-> +/**
-> + * migrate_vma_split_folio - Helper function to split a(n) (m)THP folio
-> + *
-> + * @folio - the folio to split
-> + * @fault_page - struct page associated with the fault if any
-> + *
-> + * Returns 0 on success
-> + */
-> +static int migrate_vma_split_folio(struct folio *folio,
-> +				   struct page *fault_page)
-> +{
-> +	int ret;
-> +	struct folio *fault_folio = fault_page ? page_folio(fault_page) : NULL;
-> +	struct folio *new_fault_folio = NULL;
-> +
-> +	if (folio != fault_folio) {
-> +		folio_get(folio);
-> +		folio_lock(folio);
-> +	}
-> +
-> +	ret = split_folio(folio);
-> +	if (ret) {
-> +		if (folio != fault_folio) {
-> +			folio_unlock(folio);
-> +			folio_put(folio);
-> +		}
-> +		return ret;
-> +	}
-> +
-> +	new_fault_folio = fault_page ? page_folio(fault_page) : NULL;
-> +
-> +	/*
-> +	 * Ensure the lock is held on the correct
-> +	 * folio after the split
-> +	 */
-> +	if (!new_fault_folio) {
-> +		folio_unlock(folio);
-> +		folio_put(folio);
-> +	} else if (folio != new_fault_folio) {
-> +		folio_get(new_fault_folio);
-> +		folio_lock(new_fault_folio);
-> +		folio_unlock(folio);
-> +		folio_put(folio);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  				   unsigned long start,
->  				   unsigned long end,
-> @@ -136,6 +184,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  			 * page table entry. Other special swap entries are not
->  			 * migratable, and we ignore regular swapped page.
->  			 */
-> +			struct folio *folio;
-> +
->  			entry = pte_to_swp_entry(pte);
->  			if (!is_device_private_entry(entry))
->  				goto next;
-> @@ -147,6 +197,29 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  			    pgmap->owner != migrate->pgmap_owner)
->  				goto next;
->  
-> +			folio = page_folio(page);
-> +			if (folio_test_large(folio)) {
-> +				int ret;
-> +
-> +				/*
-> +				 * The reason for finding pmd present with a
-> +				 * large folio for the pte is partial unmaps.
-> +				 * Split the folio now for the migration to be
-> +				 * handled correctly
-> +				 */
-> +				pte_unmap_unlock(ptep, ptl);
-> +				ret = migrate_vma_split_folio(folio,
-> +							  migrate->fault_page);
-> +
-> +				if (ret) {
-> +					ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
-> +					goto next;
-> +				}
-> +
-> +				addr = start;
-> +				goto again;
-> +			}
-> +
->  			mpfn = migrate_pfn(page_to_pfn(page)) |
->  					MIGRATE_PFN_MIGRATE;
->  			if (is_writable_device_private_entry(entry))
-> @@ -171,6 +244,28 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  					pgmap->owner != migrate->pgmap_owner)
->  					goto next;
->  			}
-> +			folio = page_folio(page);
-> +			if (folio_test_large(folio)) {
-> +				int ret;
-> +
-> +				/*
-> +				 * The reason for finding pmd present with a
-> +				 * large folio for the pte is partial unmaps.
-> +				 * Split the folio now for the migration to be
-> +				 * handled correctly
-> +				 */
+> v10:
+>   * Add patches that didn't merge to v6.17-rc1 in
+>   * Move sysfs file to drm ownership
+> 
+> Mario Limonciello (AMD) (4):
+>    Fix access to video_is_primary_device() when compiled without
+>      CONFIG_VIDEO
+>    PCI/VGA: Replace vga_is_firmware_default() with a screen info check
+>    fbcon: Use screen info to find primary device
+>    DRM: Add a new 'boot_display' attribute
+> 
+>   Documentation/ABI/testing/sysfs-class-drm |  8 +++++
+>   arch/parisc/include/asm/video.h           |  2 +-
+>   arch/sparc/include/asm/video.h            |  2 ++
+>   arch/x86/include/asm/video.h              |  2 ++
+>   arch/x86/video/video-common.c             | 25 +++++++++++++-
+>   drivers/gpu/drm/drm_sysfs.c               | 41 +++++++++++++++++++++++
+>   drivers/pci/vgaarb.c                      | 31 +++--------------
+>   7 files changed, 83 insertions(+), 28 deletions(-)
+>   create mode 100644 Documentation/ABI/testing/sysfs-class-drm
+> 
+> 
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
 
-There are other reasons like vma splits for various reasons.
+Bjorn,
 
-> +				pte_unmap_unlock(ptep, ptl);
-> +				ret = migrate_vma_split_folio(folio,
-> +							  migrate->fault_page);
-> +
-> +				if (ret) {
-> +					ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
-> +					goto next;
-> +				}
-> +
-> +				addr = start;
-> +				goto again;
-> +			}
->  			mpfn = migrate_pfn(pfn) | MIGRATE_PFN_MIGRATE;
->  			mpfn |= pte_write(pte) ? MIGRATE_PFN_WRITE : 0;
->  		}
+Any feedback for this series?
+
+Thanks,
 
 
