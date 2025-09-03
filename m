@@ -1,142 +1,105 @@
-Return-Path: <linux-kernel+bounces-799082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6587B426C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:22:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8AB2B426C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7924917D2BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:22:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B35A16AF01
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459A02C1595;
-	Wed,  3 Sep 2025 16:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BED12D1916;
+	Wed,  3 Sep 2025 16:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PejF1BUC"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rbt3shGZ"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39762C11F5;
-	Wed,  3 Sep 2025 16:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053112D0636;
+	Wed,  3 Sep 2025 16:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756916547; cv=none; b=QI6ZEci0b+LpRMEoZKcxEGJcrN1PPbaGYWk7cIsJ2OiSZmV/VGObvMJrP7axlWJ14NjONRbR0mcIF0pTZzfG4XPz52qZi4vJyYQQ5wTuQCLF+HfX0RHLeniz+8EvowXuXaVufmvOSQAltMRwz5ThCkCr9zYT49MqSj0333igb84=
+	t=1756916619; cv=none; b=WhzBZqEW7r4fsdfAeUkLBEnSpl7NWv7IMkLnHPNyIhbUQW6eTabdufozFcPYP4FdRStGW5W0H5+oFNhq3bXQ9SnDORMCftlqDOTXfPrUWb4eQTpaswuTN3QI/rUakbxcKhJB+U7vKQhuPWk6kBOSdJP0KGC5ee5gdkLedruAXKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756916547; c=relaxed/simple;
-	bh=wvEMkXHaJpIb5xv6+vYPGH0V897Ec7hErb/+81B2ijg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZIlcmWwoFIsvmWay18ptQkCJYK/oV41/TxfRR0VvSl2iN8NumOvodbkdOZOiwmHSqMcgUNFeUi4v8lYMEVrjGwaTiAdMlsy14RNldM3g6VtbxfHSBYEDMEy9CIq7ZNQe5GdWWlcoWlFZBQqptxf/OpeIbz2pvXjCseBQlIf+SDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PejF1BUC; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1756916619; c=relaxed/simple;
+	bh=Kt96tEsvNPNOjY+g1sxHxiuoh/475QUX+lSsCNRnQas=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t+HekquwrQl4Ms2PUfkuBNsegcPHtmkWm5PzmyH/toAHuQ8tV2Wn0VZ91kEAEt5z1lnvL6JQLhr5exuHmijzkJKKPs00ZIZ11zCxRE+1HDLjprrCETlA9tZ33QAkLrDacvgZRr/XsBZt4bc4Aig1SQgDh/J6x5r+uStsPUV8lnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rbt3shGZ; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b043da5a55fso12854266b.0;
-        Wed, 03 Sep 2025 09:22:25 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-333f92a69d4so338281fa.2;
+        Wed, 03 Sep 2025 09:23:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756916544; x=1757521344; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qoXcLYlwl2JhaADi+GiTu4E6RqdYGplWovLMYfPiy+Y=;
-        b=PejF1BUCWogRvX4oxF/NBUedhQ2LcLhAbMxGP7ZDjBNM+SGDv3/p84Zvhsu1pzYWhA
-         8/EslI31zVRc9EbQxPN9Kyu0OJDmlCXvqEd+iLEA6kv0mrjsef9ObbJMNu4ZghsuWi4S
-         RsSR1HfOUgnOlMpz7XSE8yrn/VCsAqhv4HLA8vWdWaaGNE38feeY0gmx4dLgs495rPjb
-         EFRsZdKTUB50QNprzz3+z6lmeEig430ChOEBvyJPkYSdJYZJJjJ5n7dBhJg5/p+IpF8a
-         nHBIS+AsxDxJe7pxMFnYhjDObbKM3L8KXo7tKBzI8neMHTpx475iNmbZQsaT03yoqwZ2
-         RQ7w==
+        d=gmail.com; s=20230601; t=1756916615; x=1757521415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rb9evFrTQGBrXC/a6b4VX+Lj11KItL9NSFD24NgEz+I=;
+        b=Rbt3shGZm9vPoLYWdDPWqhNS+bbZ+XVdJONrMpasLemXz6rMs+WpOprhlubQppbEgt
+         VNUvGDz7LATUwwLkbF/MSRpkl2mYMYii2a6vUWydjtuVxrQLPuSLkw1Xt6pf/c+F4U8v
+         Cu16RT2EBNwpqLprs4H4EFgHK4EQXXwrIFi9TRcLy4dTBXPu1zOlebBdnsrMJxdfZhqH
+         cIkMIx+XCNvSOYt5QQGb7z1tXhhYhJDzTMUObe/WghEI2yiK/QpYjJGJ4QVho191tNfS
+         UURcKNt3OUx4sQQhHsqU7P9u58i2TScUMmrunQjjskgXWEboyasN8lDhal8c6Iftncjs
+         /SAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756916544; x=1757521344;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qoXcLYlwl2JhaADi+GiTu4E6RqdYGplWovLMYfPiy+Y=;
-        b=XS2SxgwK0Hk53qPpYJuuQD1/Xu/cUqCN3gHW8jOpb8R3i4RLS34vFCvnGbSlTB71uR
-         ugu1LlgkiEpdfs3WrYdWiBB+y6C80MmvmpwygvlIKni46E8RCkqIe1olsMFS+bAvl1/c
-         5KfDN1YsNUxbA/owBlsbg3v9N67ZoV/s5ciT6t9cws+z3K0TY3Tg3bVjJxlVx5OgGgAP
-         oL0+eHqv/NlpxRKUNd5cHpwWRSVmVvqzg/UjqhdKNdGVYQTyKtkrDzXnxKQlpgZHJcoP
-         kgXeWMxyENhBCBq/UU91lIhX8/GT/JC646ous8WIxvUoTQ8FQgnOC/z0G45JTl+HDzqL
-         x0qg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFX5GFdriM1dqanQUrj9vWR/tIuKp8IajRlVm+Ea54cFglvKRgWHe39jkLCLn+k83aWNk=@vger.kernel.org, AJvYcCXP9D7P+LGWOD0dVddeVgnRemS36VYQWxYHpFFZLp/IW2bN9OoJWm/Ts1i41E9qNCL7TPBn5E3dfcnJNvRf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNpyyHeV07IQAYxlI2Pf+eDryFDnjejj/rzrtLD5QtKt4uIDnQ
-	De9EqKurL6nDHFvDWyVhVxluUdrcU0Y7fKjaitCFimlhyziuPYuHrJZmGa6tEywiYOuiRor25v5
-	KLhWza2cKf/X/VcwpaRQHK3AJ2gKxRPw=
-X-Gm-Gg: ASbGncsGGswlFiPyXoLFAGPkWQ+g6ZciaVleh21WTLkGaOtklAtKQ+iqvx4p8BqnTqT
-	gdJEoiKd0dIFGD3D9lcc+tc3pwnNQdpfFNvQsXISDlL1x64slR4VdxRkSVdutVD2Bsp7UkF07rw
-	O8el5g/XIHqoYXjDx2SmhrCBzh3JLqj4ayQSmEJYY8Qi284Ig+JxYE0r64baqiwSSLAUd/yt1dy
-	H4Lxdv6nSWchJ29WSFeKUTtQNcy6r4k1A==
-X-Google-Smtp-Source: AGHT+IGQ8n18m8I2q6yIHPhanq7C0Sx4MTsmfLvhh5jrkKlsJ9ILbpiYYZi1z3E1dkmEqo+Y2ttHV03Zr7KEsHVDeCo=
-X-Received: by 2002:a17:907:724e:b0:b04:5200:5ebe with SMTP id
- a640c23a62f3a-b0452006a0dmr734282566b.54.1756916544055; Wed, 03 Sep 2025
- 09:22:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756916615; x=1757521415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rb9evFrTQGBrXC/a6b4VX+Lj11KItL9NSFD24NgEz+I=;
+        b=q5aXyjtRnnoEPiXZK2d2apJ4EhyxefmT/DapmvBJ1OmUU/DYefBe7WqH1IypdZWKX2
+         Jboy4aNnWr08E1iwp2aqgmoOi9rSzyWLNj6lILO1K6YzO2dzxwt8oVxqy3t+niuRZNvT
+         SRUta6RnzMJhU9n8IVbg+IBddTJ/2PeFiPw7dIiyNYx7M2InZeUA3EDrbuaXZ0YqpaXt
+         j8GXcLnXHAOxsihSY7SZQ/lfz0r8h9iNsdqloEh3peHtC7uopmLZ2OsTwr0qrI7QNzbc
+         IapeT5EGwWt6jqhuLnZbD9uDy81PUTWlnrh3QqZxhZ2QBK3HkVjlCPj+1bAapv4tAf3+
+         j63Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWYrRSdKiLj525T/ucL2K5y8oXhuO2bMuQRZrhy7KaeFmbv2m/oXLrkR5rmzLLMHTBOiar8gLbMj0H+Zxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHL/SnAqEml3ZGjSsZTzuTw44hmEoxz/F4awkjk3AjadoEWSnu
+	o+URGLnv/lh6dt1plxEym+gtCGu2ug+FHS/Lmr91W4NiSGJcLPYzDPdk6C9x0w==
+X-Gm-Gg: ASbGnctHLf9ryJ2TWQ2JoiIg+Jc2yB0r0uar6bsqFDe5p1RmZKKC8KOMsMjXTcomBYu
+	FS9ehw8yj85ZPrFGypI5y4pZMWmXIyu3ZplFDuY0s43EPs4phMjjWCBgeDuc3zjDTTmvE3ZSEGS
+	QfUbw+SAMzO5nLdf+gEc5Ox2KSdVv9ZGQVipgFXKJ6yZJb0oTMgZNBAf8LObC1ITODojB+dj6WZ
+	N85RnTaMe342HANi0WOiDwGx5BPkvay/R+NtycuVp5KcWzeMtG3fdoQh9L3cY+dFzcfd5wEaLCT
+	qew1goR7o5n4Wh9gWNP7GPeDbZ87t3tIYxxTcS2MPTN7eLha6DnE4WKNVzE2ye83+8MI1aDh6SW
+	Az7usPIwg3KQrWxVq/iQdYqeC
+X-Google-Smtp-Source: AGHT+IGOK/VUsUpvWclVJ4jHlzmJOtnW1cQMooinJr+riB3tGMXW3ZFFPzMBpZnxHZm0YXO7HJywhg==
+X-Received: by 2002:a2e:a549:0:b0:338:875:bed3 with SMTP id 38308e7fff4ca-3380875c73amr8259511fa.36.1756916615146;
+        Wed, 03 Sep 2025 09:23:35 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f508fb9esm10472361fa.56.2025.09.03.09.23.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 09:23:34 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Nick Dyer <nick@shmanahar.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Henrik Rydberg <rydberg@bitmath.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/1] input: touchscreen: atmel_mxt_ts: add support for generic touchscreen configurations
+Date: Wed,  3 Sep 2025 19:23:26 +0300
+Message-ID: <20250903162327.109538-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903135222.97604-1-contact@arnaud-lcm.com>
- <CAADnVQLf0wj9hV=tAA=p_GXgpQ6DxtB4heoDqTmb5dEc5P6zfg@mail.gmail.com> <d6223a4c-3e24-464f-893b-6bef57b973b8@arnaud-lcm.com>
-In-Reply-To: <d6223a4c-3e24-464f-893b-6bef57b973b8@arnaud-lcm.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 3 Sep 2025 09:22:12 -0700
-X-Gm-Features: Ac12FXznT-1rusU-3jxth4QlayUs-SuZES4nwed-YHS-tqSYt9sVH74isA7_nE4
-Message-ID: <CAADnVQL5Ms+3N9CYK=YTCMfWYfd=BEzXNggB2Sg+i_obVfUb8g@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v6 1/2] bpf: refactor max_depth computation in bpf_get_stack()
-To: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
-Cc: Yonghong Song <yonghong.song@linux.dev>, Song Liu <song@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Eduard <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Stanislav Fomichev <sdf@fomichev.me>, 
-	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com, 
-	syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 3, 2025 at 9:20=E2=80=AFAM Lecomte, Arnaud <contact@arnaud-lcm.=
-com> wrote:
->
->
-> On 03/09/2025 18:12, Alexei Starovoitov wrote:
-> > On Wed, Sep 3, 2025 at 6:52=E2=80=AFAM Arnaud Lecomte <contact@arnaud-l=
-cm.com> wrote:
-> >> A new helper function stack_map_calculate_max_depth() that
-> >> computes the max depth for a stackmap.
-> >>
-> >> Changes in v2:
-> >>   - Removed the checking 'map_size % map_elem_size' from
-> >>     stack_map_calculate_max_depth
-> >>   - Changed stack_map_calculate_max_depth params name to be more gener=
-ic
-> >>
-> >> Changes in v3:
-> >>   - Changed map size param to size in max depth helper
-> >>
-> >> Changes in v4:
-> >>   - Fixed indentation in max depth helper for args
-> >>
-> >> Changes in v5:
-> >>   - Bound back trace_nr to num_elem in __bpf_get_stack
-> >>   - Make a copy of sysctl_perf_event_max_stack
-> >>     in stack_map_calculate_max_depth
-> >>
-> >> Changes in v6:
-> >>   - Restrained max_depth computation only when required
-> >>   - Additional cleanup from Song in __bpf_get_stack
-> > This is not a refactor anymore.
-> > Pls don't squash different things into one patch.
-> > Keep refactor as patch 1, and another cleanup as patch 2.
->
-> The main problem is that patch 2 is not a cleanup too. It is a bug fix
-> so it doesn't really
-> fit either.
-> We could maybe split this patch into 2 new patches but I don't really
-> like this idea.
-> If we decide to stick to 2 patches format, I don't have any preference
-> which patch's scope
-> should be extended.
+This provides support for generic touchscreen configuration options like
+swapped-x-y, min-x, min-y, size-x, size-y, etc.
 
-I wasn't proposing to squash cleanup into patch 2.
-Make 3 patches where each one is doing one thing.
+Svyatoslav Ryhel (1):
+  input: touchscreen: atmel_mxt_ts: add support for generic touchscreen
+    configurations
+
+ drivers/input/touchscreen/atmel_mxt_ts.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+-- 
+2.48.1
+
 
