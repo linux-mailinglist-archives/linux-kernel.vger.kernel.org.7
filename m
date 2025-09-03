@@ -1,113 +1,140 @@
-Return-Path: <linux-kernel+bounces-798347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF33B41CB7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:08:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E85B41CBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B6911BA6866
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:08:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A8EE7B62F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF692F659F;
-	Wed,  3 Sep 2025 11:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80552F6585;
+	Wed,  3 Sep 2025 11:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fSymEeh6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SeAALVaf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0272F5305;
-	Wed,  3 Sep 2025 11:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16FD2F4A14;
+	Wed,  3 Sep 2025 11:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756897668; cv=none; b=WlermTuKefV3s8mG+xTVhjCPy7vvnWCJCN2mc9wNtGj4SgpkuoRu1MrXzGczNhQatq8/hvH8vLWH9zQR9UeVzC0wF8aWRQTq8qn0FLmvSA/joAfdbZ5MVq5QVxLhIH73PGktuPDQtzP4TFUXkTx2O2xHFSJTEeOfPqcBesHMVnE=
+	t=1756897695; cv=none; b=sKlXLfIL0xQsrOQM040EhKQ90yU+QxG52SJcdvqLh+YeGGJE47xb7Kga7qGiRP8EfSe8DQCgRrDzmdx5qhUGoyKafwKZqGARPP2HeEXKY0rkvKR2fsw38wHAvVvbl6sc/YKLq04Hp2M6M6R54U2MxTEQ+CCHnhMrGxUByX68Dyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756897668; c=relaxed/simple;
-	bh=Rn4oGXhbcrYs2K3Dha2QKPcBreQzKeMaMsXQQ1ZcJxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ggM+QWgtS9rRzlUcDXhgpCacaw1iAyfzN4L1Rmio5OAEB+A8zOxiaqa4hyWVfZV1wcvLA6fraKLxdyF9a8rdwPlZEzgY3WliXB039QSq1nmY988lgKJdKWvtaMx3YvBvrpvqqTOoOwRHhVY2hQsrMpjnZyML/PBcTb8zrbu5ikA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fSymEeh6; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756897667; x=1788433667;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Rn4oGXhbcrYs2K3Dha2QKPcBreQzKeMaMsXQQ1ZcJxE=;
-  b=fSymEeh6q9+yomzEK00V2A2STE5xeVawpr7uRBXcsIVj0fmw7XcSmRyw
-   lPZm+1CMKPdWcIE3uLktyr31riA4aPPnBNgON4Dq4d0CMefYJuRaVrnCG
-   rHLzzFVfz7wYIjSzLd6KoHU1Ph36fizd+yWijxpE/+ZNdwRrat4sLNqZg
-   QVpmtFZwQvoxe2oxYczpaHm0blB6lET6NmUv8bgYoYl2JmdXPFnbgiU3M
-   +5kGHAXwKb8qYNTSfim5ZioFjErIT+gFauuUwgrOKYhrTjtnH7c72+0l/
-   JO3pNDsBdBzXjUw7gY+a5fagBqMc9fCErqe/A/TjiGvMrQr1/hKHjoJ8g
-   Q==;
-X-CSE-ConnectionGUID: ztHMNzPgQIeh91idjpiDTQ==
-X-CSE-MsgGUID: ggBM6V77Qf6A88YqgrYtyA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="69819902"
-X-IronPort-AV: E=Sophos;i="6.18,235,1751266800"; 
-   d="scan'208";a="69819902"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 04:07:46 -0700
-X-CSE-ConnectionGUID: pJpnTF79Qe2LcM4SPRGO/Q==
-X-CSE-MsgGUID: uPX+WvPSRCe46Fqk+1Cs9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,235,1751266800"; 
-   d="scan'208";a="171129834"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 04:07:44 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1utlL2-0000000Axra-1OMv;
-	Wed, 03 Sep 2025 14:07:40 +0300
-Date: Wed, 3 Sep 2025 14:07:40 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [RFC PATCH v2 0/2] staging: media: atomisp: Refactor bit logic
- helpers in vmem.c
-Message-ID: <aLghfGH1ATFQT-9P@smile.fi.intel.com>
-References: <20250903092754.2751556-1-abarnas@google.com>
+	s=arc-20240116; t=1756897695; c=relaxed/simple;
+	bh=hsbplQXkIgA37YP5Hij+j9CljYvH3aawi/l8DPlQ+b4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=D/BePKOopCkEeD9XU/pxGNU6ey7Xd1Fk6fKlUcg6rNPQ6m2p1BWfLGby0iCLcobfhWN7vC8a1Hps1W9JBQtAvL/3jg+Xv/Zzpbj3WrbIlN7vo/HR9z1BZgFY/i7RNaRY8eE0N0x+hMYlnLUKGUfBJee5waq3yhHv9H7j4E0Yj1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SeAALVaf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583AQOFT032191;
+	Wed, 3 Sep 2025 11:08:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Nx1aRmTFwve7HbtAAO/FVUGNc41TS5u5EKcY/Z96E0k=; b=SeAALVafy1aL0qod
+	1g/XgCg8ghWMnqU96q9xOARoombDx+SkTF3Q33g01ycxOPPvCiypLQGHsTel2qB/
+	hS5eSh3bDAxl5ANdspit6G1r1QmJhfdwpSLZyaIxdRst7XSiltLlr0UUaFu1hIYU
+	423jf7vLkyOfNVw/H51ObRfCxZ83t6BPPHZwYvAWwe+dXMLpAMNpiOPh4pQtIRho
+	Pf2Aay+s9P+hRQnlNg7b/BQP20nnJ5U8wL2Xm/zabSkZr8LifEc0vO2G69olAXou
+	u9WpZhyROb4Lxlxb/67VCGAySaLhbQwOM4Rrd44Wm8Caw9ga4oj4cxQKPKKaQZxk
+	37zZKg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ura8ubh0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Sep 2025 11:08:10 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 583B89UA028316
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 3 Sep 2025 11:08:09 GMT
+Received: from [10.216.53.8] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 3 Sep
+ 2025 04:08:03 -0700
+Message-ID: <1f77c650-3b09-580b-e3cc-85afca056160@quicinc.com>
+Date: Wed, 3 Sep 2025 16:37:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250903092754.2751556-1-abarnas@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: Add Monaco EVK initial board
+ support
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Umang Chheda <umang.chheda@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Rakesh Kota <rakesh.kota@oss.qualcomm.com>,
+        Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>,
+        Viken Dadhaniya
+	<viken.dadhaniya@oss.qualcomm.com>,
+        Mohd Ayaan Anwar
+	<quic_mohdayaa@quicinc.com>,
+        Arun Khannna <quic_arkhanna@quicinc.com>,
+        "Monish Chunara" <quic_mchunara@quicinc.com>,
+        Swati Agarwal
+	<swati.agarwal@oss.qualcomm.com>
+References: <20250826181506.3698370-1-umang.chheda@oss.qualcomm.com>
+ <20250826181506.3698370-3-umang.chheda@oss.qualcomm.com>
+ <ao3nb3xkeutqetqx7amlfbqtvhuyojfvzm4prsze2mhgb2rpnc@s2bsigcrlxzo>
+ <26faedb2-63ca-e2e0-aad6-49575a8c49bf@quicinc.com>
+ <j3kuygqqymh5pbujdum4tc275fbd5xrhejry4c5spuivxloon4@zrqfuqtydvyf>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <j3kuygqqymh5pbujdum4tc275fbd5xrhejry4c5spuivxloon4@zrqfuqtydvyf>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: rV6Pxi5aXBdMZqphX6sEzVBHxi03iRlb
+X-Proofpoint-GUID: rV6Pxi5aXBdMZqphX6sEzVBHxi03iRlb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyMCBTYWx0ZWRfX6QFWl0eJDqrT
+ wmTLKT3ohhunIYKNzmca2LA2PCfJR17LMem/YxAROcwnUjEN8hcp5fGQ3RrLhper/3i4b7Izg2n
+ ZmPraLB068B6OHgJwn44SMTnGFz5N1ClDOLulzRuTZUmPCzHjoJGXcRIe0DhoiWRH/4icvk71MG
+ XUiBVTqQWTED9J4BdIAJiVW//DQbRMECo9CmUBgavNhwB/TwEbFOmWhrm69zqxSmugEzauFaGyV
+ 4udgBzAeLjRrKicm5W15nXzq5ueDkDlwhhPI7mn7JyIooMghL7AS34jeBaWKBDq1euZEbJoU1lz
+ 3TMrQA0nCqICBFbO49fqyfzCOaJ9vKtUDHpXRYyMun12YKi4koFPXyDXI1wU9AG7EAS8O5H2NeH
+ SO1X8LRC
+X-Authority-Analysis: v=2.4 cv=VNndn8PX c=1 sm=1 tr=0 ts=68b8219a cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
+ a=DOWRbtWmwZy1LnYVOegA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_06,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0
+ clxscore=1015 adultscore=0 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300020
 
-On Wed, Sep 03, 2025 at 09:27:52AM +0000, Adrian Barnaś wrote:
-> Refactor proposition for bit operation in vmem.c.
-> * Previous name for function "inv_subword()" for me is not telling what
-> function acctualy does - it clears bit specified by subword, so renamed
-> to clear_subword()
-> * Added a helper to create a proper bitmask for a subword, without using
-> GENMASK(end-1, start) which was claimed to be unsafe
-> * Simplified subword() and clear_subword() to be more readable.
-> 
-> Continuation of https://lore.kernel.org/linux-staging/20250902073841.2338568-1-abarnas@google.com/ 
 
-Thanks for the effort, but I think it's just a tip of the iceberg.
-What we really need is to completely rewrite hive_sim_wide_unpack()
-and hive_sim_wide_pack(). If we want to preserve arbitrary bit numbers
-we ought to use bitmap API rather than that custom approach.
+On 9/3/2025 4:33 PM, Dmitry Baryshkov wrote:
+>>>> - Support for the Iris video decoder, including the required
+>>>>     firmware, to enable video decoding capabilities.
+>>> I don't see firmware being declared here.
+>> It would pick the default firmware from driver monaco platform data.
+> Yes, but the commit message says something different.
 
--- 
-With Best Regards,
-Andy Shevchenko
+You are right. Should be updated in the next revision.
 
-
+Regards,
+Vikash
 
