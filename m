@@ -1,121 +1,117 @@
-Return-Path: <linux-kernel+bounces-799554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0639B42D7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:37:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 844B3B42D7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DEB8582059
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:37:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BCEF4877CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1EE2F5324;
-	Wed,  3 Sep 2025 23:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FF027A12D;
+	Wed,  3 Sep 2025 23:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="DrXH5bNF"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hJ6TjoOb"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125DD2F0C6E
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 23:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6446A24677D;
+	Wed,  3 Sep 2025 23:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756942582; cv=none; b=sElLVJ9Dd+8dPaOhAsy1Na1uTfvlW/FK/MkRvIJbVPJ8XkS5KsLqkyApZjnUsqUcEt4RoADla17HtkdhFz0L+P6QKnAYAff5Ua+4ZUR/1WCYVJK3/tWi5vt67JvWmESyMmL6CVP5Q+dk2iunasG/0ctJxdeW9Od/Et7HmKeVZH0=
+	t=1756942675; cv=none; b=hI98lgSr5nM66b+X7TPWjvPfaQygR025jRWalbIGIEgNBZ2hstmsDx9vr0dV+aFStY44ZydlCyB9b7s6QskzWbc6ZkUCxvcPmV/w0bsO+5mwx0qvI/WVVzmip+iS6HyGl49JCI6VRyV8Qu4BjYULT1PRnA4n9Dd7zwS6qi2e8G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756942582; c=relaxed/simple;
-	bh=hTsUf+7pIdM/lXCqAe9D86CNr2C3O5JzzF0WNrYSDIU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=JlAdXq2empjiKKtVRSaxgMylw9BMUAAj7Wi5TSuihWbMhaVXIu/vtcIlch4KWbOZjbIWbYl0cctG25JcQAp1UOW0Q4M0j9EbWZF9wwiKPCWw04RZf4PtS/CI9SwYVPfulZOMegbkim6zAxJ6/PSa67BeqDwXBsOQftvCMYnMQOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=DrXH5bNF; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3ecbe06f849so3438215ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 16:36:20 -0700 (PDT)
+	s=arc-20240116; t=1756942675; c=relaxed/simple;
+	bh=stw58zCoGvddooZhq93UKDXlgwE9hSJd7dCfuvUXu1I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PChnkhBR7O4J1gMwU6MSxwhGFAgwsoisYp5lcefp2CLgtHtpqZVgFzxu5MIMYjqvFkf+6q5bPyPbHFhnuQ/7tXQmurJWCUhvDY7oJUybRTa00zNe6wJ7+ub9HO9DZtwaLk9DFhAurV+9HL7FmCRlGzd8rL4/MZDff8xbwVL354U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hJ6TjoOb; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-336b071e7e5so3540461fa.1;
+        Wed, 03 Sep 2025 16:37:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1756942579; x=1757547379; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1756942671; x=1757547471; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QpgLGMWO0awdNrt/VLr9OxSO9rXyxL66JQE1TwfW2uw=;
-        b=DrXH5bNFOFDGGBA7a5ba+H5TbdMgdKJAPsxeN4Wj+n6XUT19vlRnPmbEcboKP2x9/q
-         vKe72MjpspPHgJO1O6V/2Z0OmngQ34mgRZjowDqlobqLsQgo6zn1pR5GP86rJwsQheDO
-         0YyMvNhINfsQnp+ik5KdD04ddXO5arfXG3oW0d+iXpmBsqxAFHw8hjVRlxbBh06l1ZHj
-         PfUlnJkIbXrsX0JivnIvFsdtN3dCxkdjB0db3X/lUY/+cZ73q7yRKm6RYe89yMQmObkH
-         wv5XzJqZ1DhvieyJr2PM6cfSnQlM9kqTD6VtDUBXvcPQyc3266cRyS+K+jfbB667qKb1
-         dCJA==
+        bh=Tv/e5+QmWiSB8PrnuSDhZ46U1TqYFEGl3buUo+cKFiE=;
+        b=hJ6TjoOb6PPZa3++LLtROGKGT/sdIoYhPwUanl9/MiFtKaCqDpy6YyJnbRM6xU1y5Z
+         v4PSINJsDRTBySt4XgbY34efntbeYY4+ibBFGRqmrg5gjOQ/Zzl8tLOV0CdI7k06ONz4
+         Li78/XpJ3fol96GkJ+Y9Kq8Lb2oVcmyofCDpsDhmrdZE0q4QPFL7P3Ed/gCR5uYhxuxk
+         zYNUs0UTcthzx0vPmqb0X7YH3F4bCr/tn3MtpxYHTaUFgl0v25yIXFJejbkyRUweysaK
+         CG6L1q8BYps4aDeTtxCN5VSb/RUPXLaxL19RhiZswsWizOI/x9sbECS59LUnoScNuAgd
+         G3uA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756942579; x=1757547379;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756942671; x=1757547471;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QpgLGMWO0awdNrt/VLr9OxSO9rXyxL66JQE1TwfW2uw=;
-        b=Cfd+q50z9f4A0wO7PUmN6R2InA5LzF39p3T9S7fT2v3+94zD1seLXakMziZc2jlHrs
-         cvX7tgDyBFqoHueLZWV3pFVwBu4CAieigJ+ZSMiz9moULM0IOCn/89WGZIBPHDIvSlL+
-         TYCgphsZ7NK8yDJ3K494cUx8FzM8msXasXrmT5EehTbbFRiVJn3QQ2UYEOhy0HuvgBb+
-         w8VM0HpJ1cbhn2SO2rB7MbX4uhH79yLC77nUDmv6q2+1B5hwSpYAA9TfA3BkLdZ76o04
-         6m+DstNSK/f/Qjvzk2QY18hVTdMW5PuXUbadx83fZlBiIioEu45PQV8vPJEyGWkwgqcc
-         +Rcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUg5HgQN8fVLTX9oENE7ddWxGvf5sAR0CeFkdQP4BtL57z5BSmtrucotHUrxgGgSED0veV7hZtR1KoMn8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLklEu69B+tClhG4HFwOUIdCZrREDSoWs+QuTRZwJv4O2dUHBo
-	nsxCQSI5wX7pmy9gGerapmcKof2lWpW3pR3lFkmJQXYAJq0q4VYstP2z8R5IJYifDV6bZXYMXoX
-	h099I
-X-Gm-Gg: ASbGncvuYTUGOInOBKkVa0FgOevdagcpvLdNU3zUS1oAt7kUwRNu4pcJaYwSlPGnxcq
-	htvcBc+QUMkiSDcLl8vn9iGGU8cbf/eQ4GHcQUyYQGCQSh5slqSXJV++APawRv3t/iCIxtPDjqD
-	taBVVVgHL6QD5oou0NGYF7+AI0dUeyuhNuTq5mrV5CynWg3PYJYucykACim7Wfyfj64HoRsZZdB
-	gQDeKXRmSYawdez2AjyWWtgov7VaH5OaRBgXcA2kkPU9TNw7lnALSC7+IUsnwrbG1qxL8nxOmey
-	zyYcaHylX4yMA+nD5v7z9DK4F48oTX5P8GtDFqNRjfL/DK8EWiEqCArtQkiL95bkMLqcMw/7ri+
-	fJ3xmGHG3Hpyc6ljkYZqVL427toPS7nJdQk8Z
-X-Google-Smtp-Source: AGHT+IHnXqc+QrXXfnvVjSXU+Urf58cLLyfm4Xz21aO3AQHu4oJHxvNC61ADrYGkuPGDXqoCBDPmSw==
-X-Received: by 2002:a92:cda5:0:b0:3f6:6228:33d3 with SMTP id e9e14a558f8ab-3f662283597mr46635955ab.19.1756942579489;
-        Wed, 03 Sep 2025 16:36:19 -0700 (PDT)
-Received: from [127.0.0.1] ([70.88.81.106])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3f65d1ef2c7sm18736855ab.5.2025.09.03.16.36.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 16:36:18 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Ming Lei <ming.lei@redhat.com>, 
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250808153251.282107-1-csander@purestorage.com>
-References: <20250808153251.282107-1-csander@purestorage.com>
-Subject: Re: [PATCH] ublk: inline __ublk_ch_uring_cmd()
-Message-Id: <175694257775.217330.8898056117894470803.b4-ty@kernel.dk>
-Date: Wed, 03 Sep 2025 17:36:17 -0600
+        bh=Tv/e5+QmWiSB8PrnuSDhZ46U1TqYFEGl3buUo+cKFiE=;
+        b=D5HSgO7tVmu5LNZ8Qy+OS/ev9DAH+gFWarxWSPehpn64nAijsHAuHI+jOnMpaIN6uM
+         APCajjYNmAFXR7h0uorezwjbXFgfoC5m9Dys/Ll7WT7cblbajdBk1K83USNRCghGyCy0
+         D6TcvwIk7aZCYUSZoy4F9tlfM2EvMDG90GEpLZPJREl3AyBcL9d0XXqLJhg3cD0CdODr
+         4vK0fGSlsyieFuLcDefGy6vSJYb4LxclcwLUndq4liZZSsTyVX4VUdi/yoHDAtZtuH89
+         xr3ib70I57ZAB7yXYWZKoCjqsYgF0wK4QV1GplC2XiHFRyDow5v/DOa6vmMgQvWfPZLR
+         3mpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXaxoHgqQteN+CGeHnNbWOOA83Hm/U2+dxutB/vvrkhUSklBEk/PNZREkKif+3z9nDGTXjm2rTM58K+cyTK@vger.kernel.org, AJvYcCXsZ+8fwG6sZSj22FhPgx77+CKUewR+opYXEj7HqzGbCKNOoFtmfX3uKB2Xs4DwsWEXB8ZdanFhXr+N@vger.kernel.org
+X-Gm-Message-State: AOJu0YzejZV/AJ0xYLtPVnq/nWsv10SGvfUMHNIA8C7gepJeITLYXWl0
+	+8vDBMrG4oZKNheWcF4u66DpO8OpJ3tsvuBS3YAlOCjWcOuczcwSBMmMgrfLJUIbVTBk3KEpx7g
+	EtynXNwHyKt6Z0BKGZCaZEx9vjm0GBDw=
+X-Gm-Gg: ASbGncuH3lWDR8H/lEQWc2HvjM9JxG1+YUidA+gOc97E+AxZ5mlU8eCN6fo3QqDJQjx
+	ajfsQrNqWPxpFhfvD4Ks9ri0IQdgR+JzO+wvS4k1GVc7kzYihQNI1gWubkA/rauSfalZ0FJVS5v
+	DE4EPY4dSnQSk56xzcSBDoB9SCJDa4VE/wH8UldHYe7Sg94WP3VfjZKGLrPcmqqBCNM5xmMYQT9
+	K7PU2pnM14PL1SCZKEDaWmCxAH3xT4l52qmilobxthtNmOG8w==
+X-Google-Smtp-Source: AGHT+IFYFXtX+tu/KEl7pQSY71FNh6F7y1XpLJcTeG502OgoDXb/vUP+HRDx37HC/Vxfaeu0jNJZux+/9gdjOo9o0+E=
+X-Received: by 2002:a05:651c:221a:b0:338:164:905c with SMTP id
+ 38308e7fff4ca-3380164ae7bmr15568211fa.40.1756942671236; Wed, 03 Sep 2025
+ 16:37:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+References: <20250903-imx6_dts_warning-v1-0-1e883d72e790@nxp.com> <20250903-imx6_dts_warning-v1-5-1e883d72e790@nxp.com>
+In-Reply-To: <20250903-imx6_dts_warning-v1-5-1e883d72e790@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 3 Sep 2025 20:37:39 -0300
+X-Gm-Features: Ac12FXyZOBrMIjlst-APzm8-fpvaAVU9IDxp1yLvwRyOjk9Sn4UouD6F8_4boGQ
+Message-ID: <CAOMZO5AGv2ykKmL631A6O2yas-1ffmFaZdHFGMxrFx93G9t8XA@mail.gmail.com>
+Subject: Re: [PATCH 05/16] ARM: dts: imx6qdl-aristainetos2: rename
+ ethernet-phy to ethernet-phy@0
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	hs@nabladev.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Frank,
 
-On Fri, 08 Aug 2025 09:32:50 -0600, Caleb Sander Mateos wrote:
-> ublk_ch_uring_cmd_local() is a thin wrapper around __ublk_ch_uring_cmd()
-> that copies the ublksrv_io_cmd from user-mapped memory to the stack
-> using READ_ONCE(). This ublksrv_io_cmd is passed by pointer to
-> __ublk_ch_uring_cmd() and __ublk_ch_uring_cmd() is a large function
-> unlikely to be inlined, so __ublk_ch_uring_cmd() will have to load the
-> ublksrv_io_cmd fields back from the stack. Inline __ublk_ch_uring_cmd()
-> into ublk_ch_uring_cmd_local() and load the ublksrv_io_cmd fields into
-> local variables with READ_ONCE(). This allows the compiler to delay
-> loading the fields until they are needed and choose whether to store
-> them in registers or on the stack.
-> 
-> [...]
+Thanks for working on this series.
 
-Applied, thanks!
+On Wed, Sep 3, 2025 at 5:20=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
+>
+> Rename ethernet-phy to ethernet-phy@0 to fix below CHECK_DTB warnings:
+>   arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos2_4.dtb: ethernet@2188000 =
+(fsl,imx6q-fec): mdio: Unevaluated properties are not allowed ('ethernet-ph=
+y' was unexpected)
+....
 
-[1/1] ublk: inline __ublk_ch_uring_cmd()
-      commit: 225dc96f35afce6ffe3d798ffc0064445847a63b
+> -               ethphy: ethernet-phy {
+> +               ethphy: ethernet-phy@0 {
+>                         compatible =3D "ethernet-phy-ieee802.3-c22";
+> +                       reg =3D <0>;
 
-Best regards,
--- 
-Jens Axboe
+Are you sure the Ethernet PHY is actually at address 0?
 
+The board schematics are often needed to get this information.
 
-
+I'm adding Heiko on CC in case he can confirm.
 
