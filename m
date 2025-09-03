@@ -1,221 +1,244 @@
-Return-Path: <linux-kernel+bounces-797903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A9AB416FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:40:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B6EB416F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF2B188780C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:40:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04F69563EDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAFC2DEA6F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170A72DE71A;
 	Wed,  3 Sep 2025 07:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="w58D3xj1"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jjzxFdSd"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98ACE2DCF73;
-	Wed,  3 Sep 2025 07:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2952D876B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756885225; cv=none; b=LWD0gG7MN8RM0ZAQq5HRs1Z9LIg90yi3PaFp//OXxCj+XDVgjYjtcKt4e2cJY+bwyoKEOJuQowAWPPgfTurygmuHTkEcMWmdpvrprqiKHn8iplpomdunuI0OFgz2/5dD3e26yvQdiXkG5Zl/q6g/QIXFA2e9PzZd7Nf1qUpn1bU=
+	t=1756885225; cv=none; b=kWXv+MrOTlyItFQoOcEOj6XLI11R82f54Sjt/9rYZTYecUAFib6xFM9GAOJdIrfep+II86sfEtME9IFr6dIYH2pEzXTatGHlYJxj9IQsZsUVMyyRDWUNiu38UiY7Jy6ABviYtr9ULCfo4OBnMpSKVLt2DyfUSxm71iuQFTFEQpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756885225; c=relaxed/simple;
-	bh=aTgLHvvF6JmGVGZt/bk1emsLPAjdFT4gzAm4X5FjEIw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UGQ0SdPaSgbWSsMyNPOW0dnO3YCz6yuV2XgkX1/uIVu8hxMH8QAxWYSnwAFzZ87v/tjNpqEv63AHV/Z3kigihHUgQr0IPIDE02FrwklBVJRPF6bkt7Tb/6CU1Hwgs/UNVlrDbjlsa5iEhxDOL83ISOhC0QRJZqWL4V73J7UIbJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=w58D3xj1; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5837dm2Q3175100;
-	Wed, 3 Sep 2025 02:39:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756885188;
-	bh=imb31yK7pF8UIKtXY+8IGVFXWstsGVcDs9Q0NngwkRA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=w58D3xj10tbK9xE+TD/MiieAlFBvEbquPglqKnPkQaMMDJodxdKza6m1Pkn8BDGGP
-	 hEuhBhk1XLXnu5tkvw9s95R2aKr9m8naEdpnCn8JlGKim5NwiQaSJTK6fS3vruE4vG
-	 SCZkeyjbgu8DPTNMGTyk9CwyIQbkMW1YZUbXYbWY=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5837dmoW3432825
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 3 Sep 2025 02:39:48 -0500
-Received: from DFLE206.ent.ti.com (10.64.6.64) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 3
- Sep 2025 02:39:48 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE206.ent.ti.com
- (10.64.6.64) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20; Wed, 3 Sep
- 2025 02:39:47 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 3 Sep 2025 02:39:47 -0500
-Received: from [172.24.233.14] (shark.dhcp.ti.com [172.24.233.14])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5837df5u919737;
-	Wed, 3 Sep 2025 02:39:42 -0500
-Message-ID: <97231ac9-5cde-49bf-931b-d5baf6d2d2d1@ti.com>
-Date: Wed, 3 Sep 2025 13:09:41 +0530
+	bh=hhSAMSQrkXhD2o3m/B4dWzq5cXZfmbWoROyPBzStHGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CIKLd6K0l09EQWCyzQSIIjmMfrRl63k9KyMHXf6UrDBvPdu5f4/4kmx+V3OIGmZKgvWG65U75IaIKmBiXjxaJ6X5DSvtzH4WLiUwHp7d/j/iRoDId6GP5wRZZioRSydZ60d9vQYDS5zNHzRWG2Glyc6zGEPM5TpjIMbwUebDxLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jjzxFdSd; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756885221;
+	bh=hhSAMSQrkXhD2o3m/B4dWzq5cXZfmbWoROyPBzStHGA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jjzxFdSdRavg8LWIhLEq96iWWR1q7iLPMomMe3lTvyX25lLfMRTbrHXgQTcZJO8KS
+	 OumgbTNQJ8vxKIV//SydgzBQ15eNY1f4a+KIAx4r0iROPyr4skkJ8cADVGO0GxSVPD
+	 mPIEUdBDyAbliCzfs3mnIRtfN+DKaRrT8v05ltZB4CYP3HiIuntKmmRG3iVTwpybEh
+	 c9pQ83L0x9xkHfwfYl7fZGI1u6u76R3cmO/d5ianLut3OC2Swz+qOclT1b6ktoZwdi
+	 A+mckqja41cmmK4cJ5cQhBiOsZuUHlh+BiILySjtiaGdC73VzIFKTHFRf4N0E+yMls
+	 xRF+1IoPT25fg==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C3A7B17E127E;
+	Wed,  3 Sep 2025 09:40:20 +0200 (CEST)
+Date: Wed, 3 Sep 2025 09:40:15 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Chia-I Wu <olvaffe@gmail.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] drm/panthor: assign unique names to queues
+Message-ID: <20250903094015.0e47de12@fedora>
+In-Reply-To: <20250902200624.428175-1-olvaffe@gmail.com>
+References: <20250902200624.428175-1-olvaffe@gmail.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/24] pmdomain: Add generic ->sync_state() support to
- genpd
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Saravana Kannan
-	<saravanak@google.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-pm@vger.kernel.org>
-CC: "Rafael J . Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>,
-        Tomi Valkeinen
-	<tomi.valkeinen@ideasonboard.com>,
-        Johan Hovold <johan@kernel.org>,
-        "Maulik
- Shah" <maulik.shah@oss.qualcomm.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Thierry Reding
-	<thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Hiago De
- Franco" <hiago.franco@toradex.com>,
-        Geert Uytterhoeven
-	<geert@linux-m68k.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250701114733.636510-1-ulf.hansson@linaro.org>
-Content-Language: en-US
-From: Sebin Francis <sebin.francis@ti.com>
-In-Reply-To: <20250701114733.636510-1-ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Ulf,
+On Tue,  2 Sep 2025 13:06:24 -0700
+Chia-I Wu <olvaffe@gmail.com> wrote:
 
-On 01/07/25 17:17, Ulf Hansson wrote:
-> Changes in v3:
-> 	- Added a couple of patches to adress problems on some Renesas
-> 	platforms. Thanks Geert and Tomi for helping out!
-> 	- Adressed a few comments from Saravanna and Konrad.
-> 	- Added some tested-by tags.
+> Userspace relies on the ring field of gpu_scheduler tracepoints to
+> identify a drm_gpu_scheduler.  The value of the ring field is taken from
+> sched->name.
 > 
-> Changes in v2:
-> 	- Well, quite a lot as I discovered various problems when doing
-> 	additional testing of corner-case. I suggest re-review from scratch,
-> 	even if I decided to keep some reviewed-by tags.
-> 	- Added patches to allow some drivers that needs to align or opt-out
-> 	from the new common behaviour in genpd.
+> Because we typically have multiple schedulers running in parallel in
+> each process, assign unique names to schedulers such that userspace can
+> distinguish them.
 > 
-> If a PM domain (genpd) is powered-on during boot, there is probably a good
-> reason for it. Therefore it's known to be a bad idea to allow such genpd to be
-> powered-off before all of its consumer devices have been probed. This series
-> intends to fix this problem.
-> 
-> We have been discussing these issues at LKML and at various Linux-conferences
-> in the past. I have therefore tried to include the people I can recall being
-> involved, but I may have forgotten some (my apologies), feel free to loop them
-> in.
-> > I have tested this with QEMU with a bunch of local test-drivers and 
-DT nodes.
-> Let me know if you want me to share this code too.
-> 
-> Please help review and test!
+> Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
 
-During testing on a TI platform, I observed new kernel warnings after 
-applying this patch series:
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-ti_sci_pm_domains 44043000.system-controller:power-controller: 
-sync_state() pending due to fd00000.gpu
-
-These warnings occur when a device (in this case, the GPU) has no driver 
-bound to it. The fw_devlink_dev_sync_state[0] in the core has a check 
-before printing this warning. It checks whether the device driver has a 
-sync_state handler OR the device bus has a sync_state handler in the 
-dev_has_sync_state[1]. If both conditions are false, 
-fw_devlink_dev_sync_state[0] performs an early return before printing 
-the warning.
-
-Before this patch series, both handlers were absent for device driver 
-ti_sci_pm_domains and the device bus, so both conditions failed and no 
-warnings were printed.
-
-This patch series adds a sync_state handler for the bus, which now 
-satisfies the second condition. So it doesn't do an early return and 
-proceeds to print the warning.
-
-[0]: https://elixir.bootlin.com/linux/v6.16/source/drivers/base/core.c#L1777
-[1]: 
-https://elixir.bootlin.com/linux/v6.16/source/include/linux/device.h#L909
-
-Thanks
-Sebin
-
-> Finally, a big thanks to Saravana for all the support!
 > 
-> Kind regards
-> Ulf Hansson
+> ---
 > 
+> v2:
+>  - include drm_client_id in the name to be truly unique
+>  - remove unnecessary NULL in drm_sched_init_args initialization
+>  - reformat to column width 100
 > 
-> Saravana Kannan (1):
->    driver core: Add dev_set_drv_sync_state()
+> v3:
+>  - switch to kasprintf for queue name
+>    - open to alternatives such as name[48], shorter prefix (e.g.,
+>      panthor-q), etc.
+> ---
+>  drivers/gpu/drm/panthor/panthor_drv.c   |  2 +-
+>  drivers/gpu/drm/panthor/panthor_sched.c | 38 ++++++++++++++++++-------
+>  drivers/gpu/drm/panthor/panthor_sched.h |  3 +-
+>  3 files changed, 31 insertions(+), 12 deletions(-)
 > 
-> Ulf Hansson (23):
->    pmdomain: renesas: rcar-sysc: Add genpd OF provider at
->      postcore_initcall
->    pmdomain: renesas: rmobile-sysc: Move init to postcore_initcall
->    pmdomain: renesas: rcar-gen4-sysc: Move init to postcore_initcall
->    pmdomain: core: Prevent registering devices before the bus
->    pmdomain: core: Add a bus and a driver for genpd providers
->    pmdomain: core: Add the genpd->dev to the genpd provider bus
->    pmdomain: core: Export a common ->sync_state() helper for genpd
->      providers
->    pmdomain: core: Prepare to add the common ->sync_state() support
->    soc/tegra: pmc: Opt-out from genpd's common ->sync_state() support
->    cpuidle: psci: Opt-out from genpd's common ->sync_state() support
->    cpuidle: riscv-sbi: Opt-out from genpd's common ->sync_state() support
->    pmdomain: qcom: rpmpd: Use of_genpd_sync_state()
->    pmdomain: qcom: rpmhpd: Use of_genpd_sync_state()
->    firmware/pmdomain: xilinx: Move ->sync_state() support to firmware
->      driver
->    firmware: xilinx: Don't share zynqmp_pm_init_finalize()
->    firmware: xilinx: Use of_genpd_sync_state()
->    driver core: Export get_dev_from_fwnode()
->    pmdomain: core: Add common ->sync_state() support for genpd providers
->    pmdomain: core: Default to use of_genpd_sync_state() for genpd
->      providers
->    pmdomain: core: Leave powered-on genpds on until late_initcall_sync
->    pmdomain: core: Leave powered-on genpds on until sync_state
->    cpuidle: psci: Drop redundant sync_state support
->    cpuidle: riscv-sbi: Drop redundant sync_state support
-> 
->   drivers/base/core.c                         |   8 +-
->   drivers/cpuidle/cpuidle-psci-domain.c       |  14 --
->   drivers/cpuidle/cpuidle-riscv-sbi.c         |  14 --
->   drivers/firmware/xilinx/zynqmp.c            |  18 +-
->   drivers/pmdomain/core.c                     | 211 ++++++++++++++++++--
->   drivers/pmdomain/qcom/rpmhpd.c              |   2 +
->   drivers/pmdomain/qcom/rpmpd.c               |   2 +
->   drivers/pmdomain/renesas/rcar-gen4-sysc.c   |   2 +-
->   drivers/pmdomain/renesas/rcar-sysc.c        |  19 +-
->   drivers/pmdomain/renesas/rmobile-sysc.c     |   3 +-
->   drivers/pmdomain/xilinx/zynqmp-pm-domains.c |  16 --
->   drivers/soc/tegra/pmc.c                     |  26 ++-
->   include/linux/device.h                      |  13 ++
->   include/linux/firmware/xlnx-zynqmp.h        |   6 -
->   include/linux/pm_domain.h                   |  17 ++
->   15 files changed, 291 insertions(+), 80 deletions(-)
-> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index 9256806eb6623..be962b1387f03 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -1105,7 +1105,7 @@ static int panthor_ioctl_group_create(struct drm_device *ddev, void *data,
+>  	if (ret)
+>  		goto out;
+>  
+> -	ret = panthor_group_create(pfile, args, queue_args);
+> +	ret = panthor_group_create(pfile, args, queue_args, file->client_id);
+>  	if (ret < 0)
+>  		goto out;
+>  	args->group_handle = ret;
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index ba5dc3e443d9c..b328631c00489 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -360,6 +360,9 @@ struct panthor_queue {
+>  	/** @entity: DRM scheduling entity used for this queue. */
+>  	struct drm_sched_entity entity;
+>  
+> +	/** @name: DRM scheduler name for this queue. */
+> +	char *name;
+> +
+>  	/**
+>  	 * @remaining_time: Time remaining before the job timeout expires.
+>  	 *
+> @@ -901,6 +904,8 @@ static void group_free_queue(struct panthor_group *group, struct panthor_queue *
+>  	if (queue->scheduler.ops)
+>  		drm_sched_fini(&queue->scheduler);
+>  
+> +	kfree(queue->name);
+> +
+>  	panthor_queue_put_syncwait_obj(queue);
+>  
+>  	panthor_kernel_bo_destroy(queue->ringbuf);
+> @@ -3308,9 +3313,10 @@ static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
+>  
+>  static struct panthor_queue *
+>  group_create_queue(struct panthor_group *group,
+> -		   const struct drm_panthor_queue_create *args)
+> +		   const struct drm_panthor_queue_create *args,
+> +		   u64 drm_client_id, u32 gid, u32 qid)
+>  {
+> -	const struct drm_sched_init_args sched_args = {
+> +	struct drm_sched_init_args sched_args = {
+>  		.ops = &panthor_queue_sched_ops,
+>  		.submit_wq = group->ptdev->scheduler->wq,
+>  		.num_rqs = 1,
+> @@ -3323,7 +3329,6 @@ group_create_queue(struct panthor_group *group,
+>  		.credit_limit = args->ringbuf_size / sizeof(u64),
+>  		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
+>  		.timeout_wq = group->ptdev->reset.wq,
+> -		.name = "panthor-queue",
+>  		.dev = group->ptdev->base.dev,
+>  	};
+>  	struct drm_gpu_scheduler *drm_sched;
+> @@ -3398,6 +3403,15 @@ group_create_queue(struct panthor_group *group,
+>  	if (ret)
+>  		goto err_free_queue;
+>  
+> +	/* assign a unique name */
+> +	queue->name = kasprintf(GFP_KERNEL, "panthor-queue-%llu-%u-%u", drm_client_id, gid, qid);
+> +	if (!queue->name) {
+> +		ret = -ENOMEM;
+> +		goto err_free_queue;
+> +	}
+> +
+> +	sched_args.name = queue->name;
+> +
+>  	ret = drm_sched_init(&queue->scheduler, &sched_args);
+>  	if (ret)
+>  		goto err_free_queue;
+> @@ -3447,7 +3461,8 @@ static void add_group_kbo_sizes(struct panthor_device *ptdev,
+>  
+>  int panthor_group_create(struct panthor_file *pfile,
+>  			 const struct drm_panthor_group_create *group_args,
+> -			 const struct drm_panthor_queue_create *queue_args)
+> +			 const struct drm_panthor_queue_create *queue_args,
+> +			 u64 drm_client_id)
+>  {
+>  	struct panthor_device *ptdev = pfile->ptdev;
+>  	struct panthor_group_pool *gpool = pfile->groups;
+> @@ -3540,12 +3555,16 @@ int panthor_group_create(struct panthor_file *pfile,
+>  	memset(group->syncobjs->kmap, 0,
+>  	       group_args->queues.count * sizeof(struct panthor_syncobj_64b));
+>  
+> +	ret = xa_alloc(&gpool->xa, &gid, group, XA_LIMIT(1, MAX_GROUPS_PER_POOL), GFP_KERNEL);
+> +	if (ret)
+> +		goto err_put_group;
+> +
+>  	for (i = 0; i < group_args->queues.count; i++) {
+> -		group->queues[i] = group_create_queue(group, &queue_args[i]);
+> +		group->queues[i] = group_create_queue(group, &queue_args[i], drm_client_id, gid, i);
+>  		if (IS_ERR(group->queues[i])) {
+>  			ret = PTR_ERR(group->queues[i]);
+>  			group->queues[i] = NULL;
+> -			goto err_put_group;
+> +			goto err_erase_gid;
+>  		}
+>  
+>  		group->queue_count++;
+> @@ -3553,10 +3572,6 @@ int panthor_group_create(struct panthor_file *pfile,
+>  
+>  	group->idle_queues = GENMASK(group->queue_count - 1, 0);
+>  
+> -	ret = xa_alloc(&gpool->xa, &gid, group, XA_LIMIT(1, MAX_GROUPS_PER_POOL), GFP_KERNEL);
+> -	if (ret)
+> -		goto err_put_group;
+> -
+>  	mutex_lock(&sched->reset.lock);
+>  	if (atomic_read(&sched->reset.in_progress)) {
+>  		panthor_group_stop(group);
+> @@ -3575,6 +3590,9 @@ int panthor_group_create(struct panthor_file *pfile,
+>  
+>  	return gid;
+>  
+> +err_erase_gid:
+> +	xa_erase(&gpool->xa, gid);
+> +
+>  err_put_group:
+>  	group_put(group);
+>  	return ret;
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.h b/drivers/gpu/drm/panthor/panthor_sched.h
+> index 742b0b4ff3a3c..f4a475aa34c0a 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.h
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.h
+> @@ -21,7 +21,8 @@ struct panthor_job;
+>  
+>  int panthor_group_create(struct panthor_file *pfile,
+>  			 const struct drm_panthor_group_create *group_args,
+> -			 const struct drm_panthor_queue_create *queue_args);
+> +			 const struct drm_panthor_queue_create *queue_args,
+> +			 u64 drm_client_id);
+>  int panthor_group_destroy(struct panthor_file *pfile, u32 group_handle);
+>  int panthor_group_get_state(struct panthor_file *pfile,
+>  			    struct drm_panthor_group_get_state *get_state);
+
 
