@@ -1,204 +1,175 @@
-Return-Path: <linux-kernel+bounces-798741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EF42B42257
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:45:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD8BB4225F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E82B2175457
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:45:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA5FE3AA9CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16F030DD29;
-	Wed,  3 Sep 2025 13:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BB630DEB4;
+	Wed,  3 Sep 2025 13:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EtV1vxk9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="bSEQb82j"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1D872618;
-	Wed,  3 Sep 2025 13:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756907130; cv=none; b=dXU1Uq/RGcUSaPC/RSE4b/uNd/YgKjV40lv/5nd50GHCGF4ursOkLw2dYR10JmGH9ELS/9aQoFVQVxOvkmL2QF/SVbUIfWBLNtZDuQB9MFZnf3abunhLyrRL1BDaw1B05Fzji+2CVyhgkQFmo8zyjB79QHKVKiLBmCtfbdyLUy8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756907130; c=relaxed/simple;
-	bh=6Bp49XvIiL/gpcZUSJHbjfPDkjkxFuVv8aVM1mwkppM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ncAJg4mfq0B75xF6ONlw6yYpPHFicpTUwi5+8AUqGNztUzbLLIzi1c6+pYc2XDCwNG3X0DghGma7SFpKdj6GOemgMfd5eHGxcyDfhXyXk010qvfe1FeBHi/i4I3GIW78b1XGex6QSNEYjF5dW31UpT47ByoCVuLH3vml7iO4g4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EtV1vxk9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B88B2C4CEFE;
-	Wed,  3 Sep 2025 13:45:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756907129;
-	bh=6Bp49XvIiL/gpcZUSJHbjfPDkjkxFuVv8aVM1mwkppM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EtV1vxk9Knh7vuhM8x4HkCnMMQg77LBHWAZjfHt0hykdAtk0J7zkljpn1dRo8ALRy
-	 nJBjQbGoGlt335lc6Yejbwt37hjTv6p8SfDTunaRiW2oQzHQJq0rlhZtQ1LRmN6+mL
-	 IGnwxZAwUAyqQhCdqcZjg6unlXq+oHZaIHgAwNaLEtGxgemHO0ZOaXw9RabH2oRHjO
-	 1NAsUX1pvy8xvLLbjRFOhcQ7OcGTcv3rYRTxHcZtSDX9/AS365g+6AYkmZe7Gug6n+
-	 egQHkiSWI1KySu6kre/fm/A9KyjZ9fyn2Wecsk4AkYcdc4XAKirge13OlUIx7BdFSr
-	 JLHu0DYRXsxWw==
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-74382048b8cso4085416a34.3;
-        Wed, 03 Sep 2025 06:45:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU7mEeVQ8ID3EM2uvimvABgR5DEJPM8H2+TKiJl624j3/toRsNvUWGtgSHTmfrEsc3D4ft0bkMecAA=@vger.kernel.org, AJvYcCUNH1JaNwu50mHa7UCnsmuTy/zwyQtfKvQh2I1RkQ94Jqbbl/jBzs2vfLAlQIJwoZ7kocx47mh2YvQFqg==@vger.kernel.org, AJvYcCUPKgNgUxsgKTXeiA/XKh7oZDWbwHcmPo+SG5IzKakbFRGBWWIoWr901e58It41NatomCCR2VLKheVF@vger.kernel.org, AJvYcCUnpH0fe9ODPV8mftWp7RgSL+qnQYEayKq0cQPQ5YvYAo7DuPgOfYfmXbzi4lPGzLax1XCIxSB8kJaGy2mX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3oF7TQS+N82BAXvSkGK32/PGxbanOKNRFcyl1bUiqAbtcZGOv
-	NUKvPIQhUkoKV9Nxv+hwgUhqhlWxn0ELbNxREK0AZlm6k5CdbzjFI3ht69oecG8dfMTjK8q+dTk
-	jgFRnJidB0YPLW1krR0ceZDDLKDM0FOI=
-X-Google-Smtp-Source: AGHT+IFj7tJ0lfFEWygwFa+BeDrtHlIidd3MSLvzw4pQoHyU3fN8psDlEaELWcEJ9+cmnisQYq8U5lt0bInRpr2lJAs=
-X-Received: by 2002:a05:6830:6682:b0:745:9ba6:d32c with SMTP id
- 46e09a7af769-7459ba6d61bmr1062886a34.2.1756907128976; Wed, 03 Sep 2025
- 06:45:28 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6981130AACE;
+	Wed,  3 Sep 2025 13:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756907259; cv=pass; b=k7AhYHfEqaWraHX+y2+z3ByOCjTsf7l71JqY6UeqSyEcWWE66XKwh+bs9WQhl1BoBeEXnGKU4yytDaCyxAwrS8kJoJNcJazc2wXtWfi7Rzs6PtLRKLyqraX1cLIfjwjTEufP6fDDebTlICzHtowloVIyVFobVR3nqM1P51Jvpwg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756907259; c=relaxed/simple;
+	bh=ITJTWecC+CSDvkSqKeo9BXVvz8TjMY6zMS2W+ttZqRI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=D7IYEHFSlJ+OI3PPXlLkxdRaf1Gr+PI5vbg3tDASBgbsI55EVuG6J0KL77GARkP4RBFutMUJYxp+zNHx5HEkvACkjzmXOPNMMjh1oFszCXhHlY0jHtbCg3XTFvwhkwvpniwrriTXlXMfD/BP8BNsFJpjHVOln5dhDue9EcTYthU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=bSEQb82j; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756907224; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Sy8gKNkmpG47Q0A9MAR77itWBHvUdOTff+X5kQJyDSv9IuAT5fcJeNwCfA+M+cNVQdazTDmwM7VT9Nu+vyRCNzBO8CO+5OoryPany4+tK8mldqPQhuyBcmZaf6zTUwteOAvKEBCtLFlKyocNHgM7gncsMQytGSQca4pZa7xgPmM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756907224; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=9aAPxOQn6Z5+vfXZjg3b8yBK4ErWjXJUixPFKFs14ZQ=; 
+	b=lqzX3Zqrm/X9/Ki25VkBrjfdt3b1BVtrMzYjv+GS5S7ECXUSHuFfr3FFkiwYQrUXiI34jMXZAhz1jDnyNPXGSQjq98AxxXEDozpHshdxuCe7A+p7ULJtxPSIx5BFHLXZp2cgEuQCI9cVCj3wV8U0owYTPtBh7LtFlmQy7IS8HFI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756907224;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=9aAPxOQn6Z5+vfXZjg3b8yBK4ErWjXJUixPFKFs14ZQ=;
+	b=bSEQb82jBNgi9OFte2HnDy/HS3awc2pw6RvXLO2D+Cgo+tkdtrm4hc0GNyAyvzui
+	1oDxRWWSMBHPjP9kSlJ/WOnl2RsXxyf7kY2Wcm+lK2BRCZITILw4nci/IckbTVr37la
+	LhcZnUemsrA+zff/DjY91YTmUKEbZf+h65cQZlVs=
+Received: by mx.zohomail.com with SMTPS id 1756907222551404.6800223646171;
+	Wed, 3 Sep 2025 06:47:02 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250903131733.57637-1-zhangzihuan@kylinos.cn> <20250903131733.57637-8-zhangzihuan@kylinos.cn>
-In-Reply-To: <20250903131733.57637-8-zhangzihuan@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 3 Sep 2025 15:45:17 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hirWzWZiLbAXPWB58SQv3CAW95iHLnsqs=i2twVCcmwg@mail.gmail.com>
-X-Gm-Features: Ac12FXwBQmIxy8zPXuaWqJJ1Bp0qaxbUEME_ozpvMpdmoYPanY06xkhRVAoy8ys
-Message-ID: <CAJZ5v0hirWzWZiLbAXPWB58SQv3CAW95iHLnsqs=i2twVCcmwg@mail.gmail.com>
-Subject: Re: [PATCH v4 07/10] powercap: dtpm_cpu: Use scope-based cleanup helper
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Ben Horgan <ben.horgan@arm.com>, 
-	zhenglifeng <zhenglifeng1@huawei.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Len Brown <lenb@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
-	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v6 1/7] rust: add C wrappers for ww_mutex inline functions
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250903131313.4365-2-work@onurozkan.dev>
+Date: Wed, 3 Sep 2025 10:46:45 -0300
+Cc: rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ lossin@kernel.org,
+ lyude@redhat.com,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ boqun.feng@gmail.com,
+ gary@garyguo.net,
+ a.hindborg@kernel.org,
+ aliceryhl@google.com,
+ tmgross@umich.edu,
+ dakr@kernel.org,
+ peterz@infradead.org,
+ mingo@redhat.com,
+ will@kernel.org,
+ longman@redhat.com,
+ felipe_life@live.com,
+ daniel@sedlak.dev,
+ bjorn3_gh@protonmail.com
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <142043A6-0F31-4684-A203-AFFC6F36F6AE@collabora.com>
+References: <20250903131313.4365-1-work@onurozkan.dev>
+ <20250903131313.4365-2-work@onurozkan.dev>
+To: =?utf-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Wed, Sep 3, 2025 at 3:18=E2=80=AFPM Zihuan Zhang <zhangzihuan@kylinos.cn=
-> wrote:
->
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
->
-> No functional change intended.
->
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+
+
+> On 3 Sep 2025, at 10:13, Onur =C3=96zkan <work@onurozkan.dev> wrote:
+>=20
+> Some of the kernel's `ww_mutex` functions are implemented as
+> `static inline`, so they are inaccessible from Rust as bindgen
+> can't generate code on them. This patch provides C function wrappers
+> around these inline implementations, so bindgen can see them and =
+generate
+> the corresponding Rust code.
+>=20
+> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
 > ---
->  drivers/powercap/dtpm_cpu.c | 30 +++++++++++-------------------
->  1 file changed, 11 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/powercap/dtpm_cpu.c b/drivers/powercap/dtpm_cpu.c
-> index 99390ec1481f..f76594185fa2 100644
-> --- a/drivers/powercap/dtpm_cpu.c
-> +++ b/drivers/powercap/dtpm_cpu.c
-> @@ -144,19 +144,17 @@ static int update_pd_power_uw(struct dtpm *dtpm)
->  static void pd_release(struct dtpm *dtpm)
->  {
->         struct dtpm_cpu *dtpm_cpu =3D to_dtpm_cpu(dtpm);
-> -       struct cpufreq_policy *policy;
->
->         if (freq_qos_request_active(&dtpm_cpu->qos_req))
->                 freq_qos_remove_request(&dtpm_cpu->qos_req);
->
-> -       policy =3D cpufreq_cpu_get(dtpm_cpu->cpu);
-> -       if (policy) {
-> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D
-> +               cpufreq_cpu_get(dtpm_cpu->cpu);
+> rust/helpers/helpers.c  |  1 +
+> rust/helpers/ww_mutex.c | 39 +++++++++++++++++++++++++++++++++++++++
+> 2 files changed, 40 insertions(+)
+> create mode 100644 rust/helpers/ww_mutex.c
+>=20
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 7cf7fe95e41d..4c789c5537b1 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -50,4 +50,5 @@
+> #include "vmalloc.c"
+> #include "wait.c"
+> #include "workqueue.c"
+> +#include "ww_mutex.c"
+> #include "xarray.c"
+> diff --git a/rust/helpers/ww_mutex.c b/rust/helpers/ww_mutex.c
+> new file mode 100644
+> index 000000000000..61a487653394
+> --- /dev/null
+> +++ b/rust/helpers/ww_mutex.c
+> @@ -0,0 +1,39 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +
-> +       if (policy)
->                 for_each_cpu(dtpm_cpu->cpu, policy->related_cpus)
->                         per_cpu(dtpm_per_cpu, dtpm_cpu->cpu) =3D NULL;
->
-> -               cpufreq_cpu_put(policy);
-> -       }
-> -
->         kfree(dtpm_cpu);
->  }
->
-> @@ -192,7 +190,6 @@ static int cpuhp_dtpm_cpu_online(unsigned int cpu)
->  static int __dtpm_cpu_setup(int cpu, struct dtpm *parent)
->  {
->         struct dtpm_cpu *dtpm_cpu;
-> -       struct cpufreq_policy *policy;
->         struct em_perf_state *table;
->         struct em_perf_domain *pd;
->         char name[CPUFREQ_NAME_LEN];
-> @@ -202,21 +199,19 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *p=
-arent)
->         if (dtpm_cpu)
->                 return 0;
->
-> -       policy =3D cpufreq_cpu_get(cpu);
-> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D
-> +               cpufreq_cpu_get(cpu);
+> +#include <linux/ww_mutex.h>
 > +
->         if (!policy)
->                 return 0;
->
->         pd =3D em_cpu_get(cpu);
-> -       if (!pd || em_is_artificial(pd)) {
-> -               ret =3D -EINVAL;
-> -               goto release_policy;
-> -       }
-> +       if (!pd || em_is_artificial(pd))
-> +               return -EINVAL;
->
->         dtpm_cpu =3D kzalloc(sizeof(*dtpm_cpu), GFP_KERNEL);
-> -       if (!dtpm_cpu) {
-> -               ret =3D -ENOMEM;
-> -               goto release_policy;
-> -       }
-> +       if (!dtpm_cpu)
-> +               return -ENOMEM;
->
->         dtpm_init(&dtpm_cpu->dtpm, &dtpm_ops);
->         dtpm_cpu->cpu =3D cpu;
-> @@ -239,7 +234,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *par=
-ent)
->         if (ret < 0)
->                 goto out_dtpm_unregister;
-
-So this change kind of goes against another recommendation given in cleanup=
-.h:
-
- * Lastly, given that the benefit of cleanup helpers is removal of
- * "goto", and that the "goto" statement can jump between scopes, the
- * expectation is that usage of "goto" and cleanup helpers is never
- * mixed in the same function. I.e. for a given routine, convert all
- * resources that need a "goto" cleanup to scope-based cleanup, or
- * convert none of them.
-
->
-> -       cpufreq_cpu_put(policy);
->         return 0;
->
->  out_dtpm_unregister:
-> @@ -251,8 +245,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *par=
-ent)
->                 per_cpu(dtpm_per_cpu, cpu) =3D NULL;
->         kfree(dtpm_cpu);
->
-> -release_policy:
-> -       cpufreq_cpu_put(policy);
->         return ret;
->  }
->
+> +void rust_helper_ww_mutex_init(struct ww_mutex *lock, struct ww_class =
+*ww_class)
+> +{
+> + ww_mutex_init(lock, ww_class);
+> +}
+> +
+> +void rust_helper_ww_acquire_init(struct ww_acquire_ctx *ctx, struct =
+ww_class *ww_class)
+> +{
+> + ww_acquire_init(ctx, ww_class);
+> +}
+> +
+> +void rust_helper_ww_acquire_done(struct ww_acquire_ctx *ctx)
+> +{
+> + ww_acquire_done(ctx);
+> +}
+> +
+> +void rust_helper_ww_acquire_fini(struct ww_acquire_ctx *ctx)
+> +{
+> + ww_acquire_fini(ctx);
+> +}
+> +
+> +void rust_helper_ww_mutex_lock_slow(struct ww_mutex *lock, struct =
+ww_acquire_ctx *ctx)
+> +{
+> + ww_mutex_lock_slow(lock, ctx);
+> +}
+> +
+> +int rust_helper_ww_mutex_lock_slow_interruptible(struct ww_mutex =
+*lock, struct ww_acquire_ctx *ctx)
+> +{
+> + return ww_mutex_lock_slow_interruptible(lock, ctx);
+> +}
+> +
+> +bool rust_helper_ww_mutex_is_locked(struct ww_mutex *lock)
+> +{
+> + return ww_mutex_is_locked(lock);
+> +}
+> +
 > --
+> 2.50.0
+>=20
+
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+
 
