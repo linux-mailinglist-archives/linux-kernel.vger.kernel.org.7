@@ -1,146 +1,143 @@
-Return-Path: <linux-kernel+bounces-799469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F34EB42C34
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:54:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 657F2B42C32
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8929C547AE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:54:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 402F954383A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B512ECD14;
-	Wed,  3 Sep 2025 21:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B6D2ECD2A;
+	Wed,  3 Sep 2025 21:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WkJNchEz"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="ZxF5ALnS"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6572EC571;
-	Wed,  3 Sep 2025 21:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97C42DFA2B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 21:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756936465; cv=none; b=riLymuye0fffMznrJJBRvTAtN1zbb9gKiEtnP0Kw/UjGelWf3zKCEI9pYLiJimHkN5wzA/WLaXOTN7EoKSBs79u7pw0k/FnJx8wDn2PHwT+oTHpZI0oElC/RQLkjO3O0qFX/a9vPqzqO49dLW9wc9wD/tNxDLL1lg0D9VqxCOAk=
+	t=1756936459; cv=none; b=riEylGFoRBrNlqgOJBdlOMEfQrdWqPIg6CIqBrZO/j0h23Tx+74L9L0xC4V9EQCwRk9rvdEXkUwsCM4HKKQ3BohM0F7jl3lnumhp5zPbLqHHJfqcNKH2FbRGhF4l3EJ8ZiS03Bvtlmn8VKoJQnnU0832Q+k69U6lcNmR8NB1A2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756936465; c=relaxed/simple;
-	bh=2Fwh2iCN79zwJ9CZwrvRHtl7jEqe+DJLLOwze192rtY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eeqbMMKb1LVNUkzdQq1AS1QfgSum5JhRg5LSVJlaWWYnEpr612osr7+VXxYWGQ48eyptP9FJ7eFG8+sm/EJrYRS5RDzXcus70ma4uOgLDT2CLvZogkGUqZ4DU8gltpsmHGa/Ct//ND44YSlhx4KJ7C2fDv0Mqkm4QgFbjfpu5T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WkJNchEz; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7459d6801c6so354757a34.1;
-        Wed, 03 Sep 2025 14:54:24 -0700 (PDT)
+	s=arc-20240116; t=1756936459; c=relaxed/simple;
+	bh=tswpR0eGqHosqIn747IEZC9EzPHFnq+U1jAp/krTHUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uHitR29rC1cqwVK2Ql8I9Ew3CkKwsI5YsRVpOAxeOb+cgLmg78iOIBQrbL36HPjuxIJ+EA9M/HpJIXTxRvaGpqjzNjgr6FN5Q8I+6it6kd5YtSeNRHZ5vADkiOupljsudvQI6Sz25i36ps/d6mRp4MDtdRVc939SfCG5fDUw3Cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=ZxF5ALnS; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7e86faa158fso37379485a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 14:54:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756936463; x=1757541263; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Na8GqGkKeYmzOVkpGWkaWiV/wQpLfv9h0KINbYMp0Z4=;
-        b=WkJNchEz23i0wQlDZiMEN/h5jyCfOvjY1IfoPWoFv8hfe6DD20nLlG8oGQdso8lq9m
-         ILwfZiip7KYmj0aguqVFh+CXQRqxT3zilmfX9mkCRRvNcd7D4viTNF3QBufYLbmJP0hf
-         czS0MBmhtghKis/5cgsDK03vAdo/zO/U2WmGHgYDSMduEUmds+E6ff3pSxxPt/7ce3f1
-         8Q1SttazTDJh9AFXk9D7HtIaR8QZpQOQ6kKWKjRDKpfDM3Jz6PDyjPrwLX9A1oT22Dl6
-         xvfQ1Lxo0Wp/Nj4dGjh4orpLJhGjWzUp7tebO32Oj3iQhOEni+w9SB45xB8rR+xo2Uub
-         SpnQ==
+        d=rowland.harvard.edu; s=google; t=1756936456; x=1757541256; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iWRgOnL0eoFk2ynixMqxAVyWo1C3OiiDh4wrpd6Cmnw=;
+        b=ZxF5ALnSUUaShuhYrRlDUZ4Q3HhPIxoE90rDO/IkgM0bxi5+uBH9eHjZwDZ7iuANY2
+         HYoeusXOpjpPlAX/PFyFjQreU17Avex88jDg06CQxWnCqdiPr+sc9KinyyLmFBsbXpd7
+         8nSrsEhwOIfrvhcxlbSYVNj6pmRvZnS07n6d6fuPqaENlc+uxPIRCb11aMgLyZVqIfRi
+         H4Hvx3QzNjDqyXmBw7b7+PexBu4+kC+Qge46c9krKBIFPg1yUK8p4kAdLoom07XH5RU7
+         jmPjIeu0JAyYiJXYYO3HqCz9dSqWKgXrztxpb3aTQrgCspq4L7FUG1xX0PYKVw8ppHr7
+         oGeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756936463; x=1757541263;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Na8GqGkKeYmzOVkpGWkaWiV/wQpLfv9h0KINbYMp0Z4=;
-        b=kU2mLr2o/ssbCb7aWrm0Y6o457a4aPdDPKIj7gLTmPxR7snJlG6E0foKd4mGcbqCA6
-         9sYWwp4qHBG7dESIjugr6odn3t5tTpOOmmLnaPiLRq6uPt57xtwqrCbOi69MTxL+IvQP
-         M9EIWkm2awSSYRrU+7LJHHI6HWddHDyUAwiY8KzdFDhOTtJV2+vOIWw0bBHvguIQPOVS
-         elsocR2Tn2eegwZygxssb2fB/G541SsKuqipEjGdDn3avVlRfMOJlXB5ACP2P9Vz9/w5
-         +P4bgN3eQiwaiqA7IlpwhyNwvYpD6mjq08yIXKtbqj3uTSbgUWNALDFlS1OD5zlEMqSG
-         /vmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtYY8X7TdP091r6vh/pfrPjViQdiyOJhJ8PY5gWCWchnVp+SlR5xHD4eVzFG7V4QEKfGhgRHJPoCc=@vger.kernel.org, AJvYcCXP2WAqB/EMxR6eJOMlSro3PfiYFtCHTL+MbJ4LScD9+oo9aPWt5AabY3mVHbbUJv6uodjX3snflMANgRCs@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLaXLD06rqA+13NOtVqI/GCzaIsBqdFz3cX4aNI2GC1YlHvVHY
-	HpCHrNOzFk6f/pULLjuNOQt3Hinf5m2ixM6CT7Zypr8YoZmBemE/0eVvXnUEH3duD6YBN5t74Lj
-	3eA9DCOzio+ujvF65qKne2TMcXCgx3jk=
-X-Gm-Gg: ASbGnctpkNB9HrT7RB+zQ0Djb/3W+Td2OTV1O9PaEVUmjYJBB6SpK6cvTsyxJkY+Yt0
-	heiS+asnvqx1OCgb63MjZv18PDrwR0pbdaZFVIzYMqbIGwQnIjUtW+FWi6L/nCM/Qf831Iupmh8
-	sodNIguemnh7AWiFOyV8/LZ/f0h2Q62GN/uMcs8hvM/YMTqM3zi/X6r+iAZsgvSzoWco/lape6x
-	r4qjvEr
-X-Google-Smtp-Source: AGHT+IEIiOJ+Ge/0RE4Rg3pbkhIwhCUUADWOPiwvOTnWUssx/l5Cgi+om/N9oYsp52XcF/n5mBcmm9+dwjZ66qJ+XPM=
-X-Received: by 2002:a05:6808:6a84:b0:438:3b69:ab94 with SMTP id
- 5614622812f47-4383b69aff8mr364428b6e.0.1756936463447; Wed, 03 Sep 2025
- 14:54:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756936456; x=1757541256;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iWRgOnL0eoFk2ynixMqxAVyWo1C3OiiDh4wrpd6Cmnw=;
+        b=dfe19UYAmYuC9s/SPkzIX5f00BgAdGD1OKNv7mL3BH6EaTd3ATa4cZAXZ/UfdnaLMx
+         oOIo5bQSIv0ODJF0e3y6z+RK7U4GsrPePucLzpcQ4pbpwAona2rF+Ou7uF96f9xL1faZ
+         U63EI1BDGEaVpHQZQVllLVDBPCVFl0EeiWU/ZNDAqxevPxP+Ah7G9veTeKE6TvVh78Jw
+         oSI3UM9HQiBvsWmmpkMw2IPhAAFZ/O6glOsbKPFZMPAfAEO4GOv25jL8V6Ba8bp22LzU
+         maq+YABwjoqHu4tpCk4PzjUIMw7JIM2OyYVyD+VPlqY1hWEJ/ZIla69pW2nE79X46SsV
+         0gsg==
+X-Forwarded-Encrypted: i=1; AJvYcCWA4ishhmipnsYDOdDpDKqyBbSdtpmJ9/iH5nPZpWS44I5p8QcYsolfJDP+lBj9T8bKpRFfYyAxm8LMClw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz30mPr5qoTODgYqiJoewxlyPPtZKn+i+qnze6PSFN7Vf0Q/QPa
+	x7QjTn4zFhM9t+HOJF66gPK3hRg7gE8cevC9Z7ZiOcR0N5VKe2OQTF0fhVTl5N3CQA==
+X-Gm-Gg: ASbGncviaIaD1/VL/IxeD0Ju51CFkXKE3bXDWUgbtWUtZcUbtIvcewbSIjIZOykSlIG
+	7NCu+QR7YxBhxmxXQVH7fj18qDlPoRductlw6mpAmX2QMpcA6Evf9opDYTHm22n0Q6yaXUqEqGz
+	PStTgFoK0kBJmnJtcV5esq2l+uIITLt8iV4bCKeSEFrGaDaxbha9SpGcDmjq+E9bGSR6BwgAO9f
+	+lLvk2BkFSgWF0oyoT8pXYZ+rrLocx4MHGxMpbZYQSh5O5zBsTkit8TE6Fu1ApwRSDrkd4YRe2d
+	dSub8j3RY0LH+s8MfQuBgpLsOxu8VzYfwDXEGn9i3P15mscgUOuIcXU4es7oRCQl60HVlTEUMIs
+	UXbUEPBL0PxjlV7nZC+qCiN1NO46uS+e3up0sIixH
+X-Google-Smtp-Source: AGHT+IE8dw4k/KGdYZTX/v7KzznvvPVdvFeyTtaQcGhN2f5ubQ2hCe5z/yb9tY8RXq8ykcDEwkDi1Q==
+X-Received: by 2002:a05:620a:450b:b0:7f8:dc79:317c with SMTP id af79cd13be357-7fed2f47b4amr1752914885a.11.1756936455749;
+        Wed, 03 Sep 2025 14:54:15 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::207])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-80af4b3bda6sm155836585a.39.2025.09.03.14.54.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 14:54:15 -0700 (PDT)
+Date: Wed, 3 Sep 2025 17:54:12 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	ryan zhou <ryanzhou54@gmail.com>, Roy Luo <royluo@google.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH] drvier: usb: dwc3: Fix runtime PM trying to activate
+ child device xxx.dwc3 but parent is not active
+Message-ID: <59951c2d-60e8-47a8-a43c-00b92e095043@rowland.harvard.edu>
+References: <5d692b81-6f58-4e86-9cb0-ede69a09d799@rowland.harvard.edu>
+ <CAJZ5v0jQpQjfU5YCDbfdsJNV=6XWD=PyazGC3JykJVdEX3hQ2Q@mail.gmail.com>
+ <20250829004312.5fw5jxj2gpft75nx@synopsys.com>
+ <e3b5a026-fe08-4b7e-acd1-e78a88c5f59c@rowland.harvard.edu>
+ <CAJZ5v0gwBvC-y0fgWLMCkKdd=wpXs2msf5HCFaXkc1HbRfhNsg@mail.gmail.com>
+ <f8965cfe-de9a-439c-84e3-63da066aa74f@rowland.harvard.edu>
+ <CAJZ5v0g9nip2KUs2hoa7yMMAow-WsS-4EYX6FvEbpRFw10C2wQ@mail.gmail.com>
+ <CAJZ5v0gzFWW6roYTjUFeL2Tt8kKJ_g5Q=tp2=s87dy05x-Hvww@mail.gmail.com>
+ <38b706cc-5966-4766-9165-51935fdcd790@rowland.harvard.edu>
+ <CAJZ5v0h=i9XF_SQMOhz3P+4SAH3Qy-r1oUiiw7Bp=PcRnJjVbQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250824-complete_on_current_cpu_doc-v2-1-fd13debcb020@gmail.com>
-In-Reply-To: <20250824-complete_on_current_cpu_doc-v2-1-fd13debcb020@gmail.com>
-From: Andrei Vagin <avagin@gmail.com>
-Date: Wed, 3 Sep 2025 14:54:11 -0700
-X-Gm-Features: Ac12FXzK9doLkRD-IfjyFvgHOLujT96VxSiVGJE9BHhSEpob6Vg9c-rIbBfFVRk
-Message-ID: <CANaxB-wK9JRWK8jwB6bPjPHd6=FM36Rzm5kTBv-XPjuh0+15GA@mail.gmail.com>
-Subject: Re: [PATCH v2] docs: scheduler: completion: Document complete_on_current_cpu()
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0h=i9XF_SQMOhz3P+4SAH3Qy-r1oUiiw7Bp=PcRnJjVbQ@mail.gmail.com>
 
-On Sun, Aug 24, 2025 at 6:38=E2=80=AFAM Javier Carrasco
-<javier.carrasco.cruz@gmail.com> wrote:
->
-> Commit 6f63904c8f3e ("sched: add a few helpers to wake up tasks on the
-> current cpu") introduced this new function to the completion API that
-> has not been documented yet.
->
-> Document complete_on_current_cpu() explaining what it does and when its
-> usage is justified.
->
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->
-> ---
-> Changes in v2:
-> - Rebase onto v6.17-rc1
-> - Fix patch formatting (drop --- before the Signed-off-by tag).
-> - Link to v1: https://lore.kernel.org/r/20250703-complete_on_current_cpu_=
-doc-v1-1-262dc859b38a@gmail.com
-> ---
->  Documentation/scheduler/completion.rst | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/Documentation/scheduler/completion.rst b/Documentation/sched=
-uler/completion.rst
-> index adf0c0a56d02..db9c131f0b62 100644
-> --- a/Documentation/scheduler/completion.rst
-> +++ b/Documentation/scheduler/completion.rst
-> @@ -272,6 +272,10 @@ Signaling completion from IRQ context is fine as it =
-will appropriately
->  lock with spin_lock_irqsave()/spin_unlock_irqrestore() and it will never
->  sleep.
->
-> +Use complete_on_current_cpu() to wake up the task on the current CPU.
-> +It makes use of the WF_CURRENT_CPU flag to move the task to be woken up
-> +to the current CPU, achieving faster context switches. To use this varia=
-nt,
-> +the context switch speed must be relevant and the optimization justified=
-.
+On Wed, Sep 03, 2025 at 09:30:47PM +0200, Rafael J. Wysocki wrote:
+> I personally think that it would be reasonable to simply preserve
+> device states in error paths unless they have been changed already
+> before the error (or suspend abort due to a wakeup signal).
 
-I think it's worth mentioning that this only makes sense if the
-current task falls
-asleep right after it wakes up the target task.
+The problem is complicated by the interaction between runtime-PM states 
+and system-sleep states.  In the case, we've been considering, B changes 
+from runtime-suspended to runtime-suspended + system-suspended.  
+Therefore the error path is allowed to modify B's state.
 
->
->  try_wait_for_completion()/completion_done():
->  --------------------------------------------
->
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250702-complete_on_current_cpu_doc-94dfc72a39f8
->
-> Best regards,
-> --
-> Javier Carrasco <javier.carrasco.cruz@gmail.com>
->
->
+> By this rule, B would be left in runtime suspend if it were still in
+> runtime suspend when the error (or suspend abort in general) occurred
+> and then it doesn't matter what happens to A.
+
+More fully, B would be changed from runtime-suspended + system-suspended 
+back to simply runtime-suspended.  Unfortunately, none of the PM 
+callbacks in the kernel are defined to make this change -- at least, not 
+without some cooperation from the driver.
+
+> The PM core can do something like that for the drivers opting in for
+> runtime PM integration assistance, so to speak.  That is, drivers that
+> point their ->suspend() and ->resume() callbacks to
+> pm_runtime_force_suspend() and pm_runtime_force_resume(),
+> respectively, or set DPM_FLAG_SMART_SUSPEND (or both at the same time
+> which is now feasible).  Otherwise, it is hard to say what the
+> expectations of the driver are and some code between the driver and
+> the PM core may be involved (say, the PCI bus type).
+
+Setting DPM_FLAG_SMART_SUSPEND really does sound like the best answer.
+
+But there still should be some way the PM core can make resumes easier 
+for drivers that don't set the flag.  Something like: If the device is 
+in runtime suspend with SMART_SUSPEND clear, perform a runtime resume on 
+the device's parent (and anything else the device depends on) before 
+invoking ->resume.
+
+Alan Stern
 
