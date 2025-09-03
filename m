@@ -1,143 +1,139 @@
-Return-Path: <linux-kernel+bounces-798284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35685B41BD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:28:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 595CBB41BD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0711854105D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:28:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA5E87A5237
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BB82F1FF4;
-	Wed,  3 Sep 2025 10:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4748B2F0C73;
+	Wed,  3 Sep 2025 10:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BFrrDGXi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vok1qK4R"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675E32EC088;
-	Wed,  3 Sep 2025 10:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205EF2ED84F;
+	Wed,  3 Sep 2025 10:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756895286; cv=none; b=VawYvhWRINV7N8rfcopwzLpqHo350yi9GF0YUcZnWx/SVRQOXk/K6GK1a5yDx0PNNBWhQ3TLte+mBGh0uypjL5NbMpM6f0zbT6V0avBkFhuJzZchs02RIV/dVkpm4sU+TXItjHAjjhSgOBXF9zebZYo+cY/t45gfshgdtsYcOj0=
+	t=1756895315; cv=none; b=EXDm95GfMo3Ece2FuVjUDVHWcfxj3F9MMlU+g+Xyc3PyIfIVZuw8e/KF5coanUupJyeHwR+BJG+RmyD7WZYei+abFdAdUIr20y16L4N2ouVgdPbT0SbMj1E937IGUm2ZRklOZdZQYnBjSxAKPg5PY+R9nFbA+LVohKNdIVAc2vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756895286; c=relaxed/simple;
-	bh=d0x3JX/+9DiVecJg9Q5If5tZJiuJvMmVamNF3ZJOfzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UP2Cyqx+K3pTFJKyUzt65ZMw1tuU5YkJ8dFlA4RvrgSKwNCrB8YRCh9BVZuJtOkO3WW8fZ6Ga+bVauM3P27GJ0tnxHp9pGTVtZ4r3FlhgozCPouUIXPMkVCQ+R+uBouwmjcg+PpLEki065RSwwseqeDGvBBIJV9V9jdJVo9omnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BFrrDGXi; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756895285; x=1788431285;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=d0x3JX/+9DiVecJg9Q5If5tZJiuJvMmVamNF3ZJOfzo=;
-  b=BFrrDGXigzk12OdWpxxMXL6I77W4SA9RfQ+N069TtpnI5DrLpmXCFt7/
-   hRfg2K0QPjUSIyUwdgnEQr0Nh+aSbEJwRGxCMDkZff8UjgMRpeIPlSBaZ
-   scfETUWf57Z2zvXu0Z7WCol1HOTfJLdOm+fThF+D3LLj3GXEu2pLmGKmZ
-   /V3Xt5FXlhk1rjv3/nOMi7Iw1Ld8gZqucrRh9uTMwM3U1XFvUKJRcplZI
-   2jyb2pb5g3vOyXnicMZWkGqHSHTaNSjanaHu2hVwlMe8wKD1WoK+dxble
-   +VySLkm3rpWWhJmR9HuG0QRpzdrIKVqcNZQt8w98kR47xf1wNkOVgZ9LL
-   w==;
-X-CSE-ConnectionGUID: ZfFpFdxfSEm5v5ye3lsC1w==
-X-CSE-MsgGUID: KuUZ+0f0SuSTbPva1Qd37g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59153507"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="59153507"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:28:04 -0700
-X-CSE-ConnectionGUID: TralALkLQU+8hrjAbmNTdw==
-X-CSE-MsgGUID: JieKwavoTYOry3mIJvdrIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="208764839"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:28:01 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1utkib-0000000AxL8-2lXL;
-	Wed, 03 Sep 2025 13:27:57 +0300
-Date: Wed, 3 Sep 2025 13:27:57 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Haixu Cui <quic_haixcui@quicinc.com>
-Cc: harald.mommer@oss.qualcomm.com, quic_msavaliy@quicinc.com,
-	broonie@kernel.org, virtio-dev@lists.linux.dev,
-	viresh.kumar@linaro.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hdanton@sina.com,
-	qiang4.zhang@linux.intel.com, alex.bennee@linaro.org,
-	quic_ztu@quicinc.com, virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v9 3/3] SPI: Add virtio SPI driver
-Message-ID: <aLgYLS6Lr5O2cIhK@smile.fi.intel.com>
-References: <20250828093451.2401448-1-quic_haixcui@quicinc.com>
- <20250828093451.2401448-4-quic_haixcui@quicinc.com>
- <aLWMZH3NTfM8qOUy@smile.fi.intel.com>
- <5dcabe90-c25b-4af5-b51f-5cda7113b5f4@quicinc.com>
+	s=arc-20240116; t=1756895315; c=relaxed/simple;
+	bh=MT33R0JtPbGlbxTpxLWmtl9dyNYq9ekSL901r3ltk28=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KyC2KAkD4nWRnUepXfpaoLxaE9NxUs+HhckFi5sWNoWfRQqYuGS+OApc4WwgcTJf9TO+aYHYBdmNgRiRj1snXy9q+Vevx9eLFbpCNwdm9wdEHfYxhpPfWozgddsm0PQxZQP1gC8ZKy1Rdxkg3BU+DNtK4e2+Op9PYeBajYO18Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vok1qK4R; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24aacdf40a2so9369165ad.1;
+        Wed, 03 Sep 2025 03:28:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756895313; x=1757500113; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w/5sRARH/MrxbC7CqhPIy+nQvt4VVCRT77w8qNlk6QY=;
+        b=Vok1qK4RyMtHu7RYB+2WLbdSwjaxdN7LyB4yRzVJ4xWdVG9lv4ZYnfGPMrIw5p7FBF
+         XkYzfStrnC6T2p706B2nTUEWynDfuiBuZmLqiGCWvmuDLliosWG7ugdaaVwXoh6aqT0O
+         ySazH9riRj/lpXS1gjK1OUGolxD50lGptsIho98NTyqd7f6AQdE4Q6lCwULx7v7qWPsp
+         9hWmf9/2Q72R/cnGn25ItWQRXuL+lAsiupdUQV7vOx3pZW5GZfiUsnw0QACnFaS5hdc4
+         7FiTo8IwIFX1RREi6YGYnbWmDTGJQepIudF66v7PSUNrX8+FwsM8HJkPCeB8AYRgG3qM
+         0kdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756895313; x=1757500113;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w/5sRARH/MrxbC7CqhPIy+nQvt4VVCRT77w8qNlk6QY=;
+        b=Yo8KcezuXZ5FOrLqLMjDjd2rL9ea8T24ecwAvSdSWsWTNoeUX3KNDu6IfzRl+NiaYe
+         LDGC9bi3SbhRzUTZcPnHtU1h4NWlVHcgHs6UWTlDPtpdK5ExUMww0cDZUxcp7iuXdA9v
+         CaPaZ7Ou0zvYCVK2IKUClzmjyyoZ5ClSLSnOeBwgqa38yJXAn4SS/fKisKBvJ5XDDEc/
+         i6FCb1s26ul3KNz5AbvM3xQTq9FrW1c1Y34uOz0uuti5pY8MK/x5Ue8aV8G9Ybvq9a0g
+         Y0Bma8DKYF90H1klorNpyqA+nvNO8MDGHZEBm50cSWuw8ZMVeVSEmdd/Q2BRS8yXvaxA
+         KHCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUw7Tfy8vWb6rDUXUCqzhLVN653ECTmm7dUlS793DcMPtkvh3jBs4iagVlzI6VzyCb/oSc5tUPtaQUKK84=@vger.kernel.org, AJvYcCWZsfQjI9ECFnoV61ivw5lRJRbaRid+0/6IDK48iEVSzy7EuspelkZwyq13PB/8lo6NlquOgC/R8Xm27DkBiqM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF1lexfgz4rA7XkpAWX0vvX61LyM7Q/58TW+p2Vxv3CjEUe1Sj
+	IKU9777/3Lgvz/kij9/J5nRmA0e6Ff1TG1NKvD4YX8yY1TviCXCGR2gllagCTIhEpK5FpPqHvXb
+	LYTD/QG2UgRInNLd6q47bu01uWwRqorA=
+X-Gm-Gg: ASbGncv2RKHqWS+XkZYkqLC4b0HL3jcpKbOwz2T/mCKnACtLC52WiK4Dz3QNlCy8uEe
+	hHowk/5IaBx4Tfo4sisdoCmdRlXP6ulD7o5fZf7R8dLN2ccRhfnkoHqIno8el6miy/EOMqbAIoX
+	8vxHx14F8AGDK3DRmyk2mBBYCDbbYbEb4awW8p+qM9NoX4t3vxU2ZITAGF6xBzpCbsjuATZ6O+P
+	ehhCEyN7U2Ilqoyp8adj69F4BtMedmSHmV1Crk5hPRf5oPfrnJe0HnenqXPA4+F2SJwYITvlS9g
+	UPs1sykJFc+mUNOywyuqjLud5v7dfKobB4uJ
+X-Google-Smtp-Source: AGHT+IFEKoh9Yoyy+qA7m2lg3d/RWinqGDyMV3KpWiUNfa6fSFU2oSwzJzlC58Z+3GwCct3Y994q9UEQVEUOAmf9XNQ=
+X-Received: by 2002:a17:902:c409:b0:248:79d4:939f with SMTP id
+ d9443c01a7336-2490fc97225mr123506415ad.7.1756895313392; Wed, 03 Sep 2025
+ 03:28:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5dcabe90-c25b-4af5-b51f-5cda7113b5f4@quicinc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250903095315.15057-1-yangtiezhu@loongson.cn> <20250903095315.15057-4-yangtiezhu@loongson.cn>
+In-Reply-To: <20250903095315.15057-4-yangtiezhu@loongson.cn>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 3 Sep 2025 12:28:20 +0200
+X-Gm-Features: Ac12FXySq6GpPGdcsnBaBnSmKXNhwG7-Ypt-SnPNuOd4ijDkvAUU0G7fjPzdayc
+Message-ID: <CANiq72n5hg-ZyGV4oEca9iCbmQByanFUpNTkS=QmE1k8MUBR8w@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/3] LoongArch: Handle table jump option for RUST
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	WANG Rui <wangrui@loongson.cn>, rust-for-linux@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 03, 2025 at 05:04:46PM +0800, Haixu Cui wrote:
-> On 9/1/2025 8:07 PM, Andy Shevchenko wrote:
-> > On Thu, Aug 28, 2025 at 05:34:51PM +0800, Haixu Cui wrote:
-> > > This is the virtio SPI Linux kernel driver.
+On Wed, Sep 3, 2025 at 11:53=E2=80=AFAM Tiezhu Yang <yangtiezhu@loongson.cn=
+> wrote:
+>
+> When compiling with LLVM and CONFIG_RUST is set, there exist objtool
+> warnings "sibling call from callable instruction with modified stack
+> frame" in rust/core.o and rust/kernel.o.
 
-...
+Thanks for fixing this! I have seen it for a long time in my CI:
 
-> > > +#include <linux/completion.h>
-> > > +#include <linux/interrupt.h>
-> > > +#include <linux/io.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/spi/spi.h>
-> > > +#include <linux/stddef.h>
-> > 
-> > A lot of headers are still missing. See below.
-> 
-> This driver compiles successfully, and I believe all required definitions
-> are resolved through indirect inclusion. For example, since I included
-> virtio.h, there is no need to explicitly include device.h, scatterlist.h or
-> types.h.
-> 
-> I avoided redundant #includes to keep the code clean and minimal.
-> 
-> If there are any essential headers I’ve overlooked, please feel free to
-> highlight them—I’ll gladly include them in the next revision.
+I think this is:
 
-The rationale is described on https://include-what-you-use.org/.
+    Reported-by: Miguel Ojeda <ojeda@kernel.org>
+    Closes: https://lore.kernel.org/rust-for-linux/CANiq72mNeCuPkCDrG2db3w=
+=3DAX+O-zYrfprisDPmRac_qh65Dmg@mail.gmail.com/
 
-...
+Perhaps consider adding an example of the warning in the log for
+future Lore searches:
 
-> I plan to update the code as follows:
-> 
-> struct virtio_spi_req *spi_req __free(kfree) = NULL;
-> spi_req = kzalloc(sizeof(*spi_req), GFP_KERNEL);
-> if(!spi_req)
->     return -ENOMEM;
-> 
-> This follows the pattern used in
-> virtio_net(https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/virtio_net.c?h=v6.17-rc4#n3746)
-> 
-> I'd like to check if this style is acceptable here, thanks.
+    rust/core.o: warning: objtool:
+_RNvXs1_NtNtCs5QSdWC790r4_4core5ascii10ascii_charNtB5_9AsciiCharNtNtB9_3fmt=
+5Debug3fmt+0x54:
+sibling call from callable instruction with modified stack frame
 
-The style is fine. The potential issue (not now and probably never) is that the
-scope of the variable in this case is different which might lead to unexpected
-side-effects. That said, You can go with it.
+> (1) Please install rustc 1.78.0 (without annotate-tablejump option) or
+> 1.87.0 (with annotate-tablejump option), do not use the latest version
+> for now, otherwise there may be build error:
 
--- 
-With Best Regards,
-Andy Shevchenko
+Nightly is not a released version, and it is expected that it breaks
+from time to time. Even beta may break. We are ~2 months away from
+that release.
 
+In any case, I don't think this information is related to this commit.
 
+> +config RUSTC_HAS_ANNOTATE_TABLEJUMP
+> +       depends on RUST
+> +       def_bool $(rustc-option,-Cllvm-args=3D--loongarch-annotate-tablej=
+ump)
+
+I think this may be fine given it is `-Cllvm-args` and anyway
+LoongArch doesn't use a `target.json` (which is great!), but please
+double-check reading what I wrote in 46e24a545cdb ("rust:
+kasan/kbuild: fix missing flags on first build") just in case.
+
+I hope this helps!
+
+Cheers,
+Miguel
 
