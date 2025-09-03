@@ -1,86 +1,108 @@
-Return-Path: <linux-kernel+bounces-798145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A142B419FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:28:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29BF5B419FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA36768394B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:28:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA1BA204104
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F3F2F3625;
-	Wed,  3 Sep 2025 09:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D162A2F39BE;
+	Wed,  3 Sep 2025 09:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aaJiHxMm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zQdYIfra"
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1952EB5BD;
-	Wed,  3 Sep 2025 09:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7912F0C70
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756891678; cv=none; b=e7EzWgq2MNihAEdzbpe7OnWjfNha5VsEwhYRFCDzTyuRTvwPsm2oa4jGgiMHhpLqP6NDdd8sWnZKZo207whlrKGBsLiqNEo8tTNpz9LXNLfX8bUUc2ME/S+KdRn3MPKvJ8XEBUYs0GhzILeBTd0qoyaPV+DLrsRdMgZ8KyV1h48=
+	t=1756891687; cv=none; b=FXblrFzlga489TmYJH+sTc3bM5pj5nYSi+0dVa/lR0D0ep3VegW8WUVLaVhW08x/rHfHnXvBaMjdl628Mhbie1MV/d9H4rHOHMGdnoWplUCeTgPl3dAM0quR0sLOsbrMhTB+zvLtqoKcsr7ErXc8qFxmMgGGcEjB7P4fkHD58UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756891678; c=relaxed/simple;
-	bh=zoygvyrvbpRQP0lvFaQr5ZvBPQrrVcLHonREwQLABLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O1fxwRSilvqOszdpkL1hYBIDVSkQNt+pzpB130KhXKmhpap8ryjjiVrm1WlqssNg2Ki9XN0zo1z3vwlszlgRjzXJykI/kqyqv8Az5FE44PUVlVhCDEpb+0zFv8m6Z+XFd0JNF1BDthpljebKmYhWAln1aKPBjuCKFm8I3O/FdL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aaJiHxMm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 094DEC4CEF0;
-	Wed,  3 Sep 2025 09:27:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756891677;
-	bh=zoygvyrvbpRQP0lvFaQr5ZvBPQrrVcLHonREwQLABLU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aaJiHxMmxm+KDWV54GEw0wFKqHa23MozUT9t1F6E6ykgPQidtVov9eFpwyt2PT/e1
-	 ykvXi8dABrzbhFHZac+ksIqZX5jqvgdo+i/bFDYYqs72VAONSagJP7/hSdvvYCxKz1
-	 eI1/thKT/ROliJ9DvpqJgMsGdmQ2Nm7CxoQr1q03RenOSahf10HJFkPQBnUPtjYevu
-	 7P7PWKjHLGsxIaf3fDgTDHGDy72eJAoJ0j0J3xFjm2UsyWc53a8WTuSfAJkdS7HDlA
-	 Rn/Cqm6KHIE+bQpWm2+d5YOls7aiPXWdMtpkunQRf6ofwIiK55Vv7GdgjI45bB7G7g
-	 0BP6SbigvujPw==
-Date: Wed, 3 Sep 2025 10:27:50 +0100
-From: Lee Jones <lee@kernel.org>
-To: a0282524688@gmail.com
-Cc: tmyu0@nuvoton.com, linus.walleij@linaro.org, brgl@bgdev.pl,
-	andi.shyti@kernel.org, mkl@pengutronix.de,
-	mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net,
-	jdelvare@suse.com, alexandre.belloni@bootlin.com,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH RESEND v14 0/7] Add Nuvoton NCT6694 MFD drivers
-Message-ID: <20250903092750.GG2163762@google.com>
-References: <20250825092403.3301266-1-a0282524688@gmail.com>
+	s=arc-20240116; t=1756891687; c=relaxed/simple;
+	bh=RDTKu9h7P2J8owWSAM18mx6quxofHLD1wpX6bUaKLbQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=X2QNw5OfkbCFxhqlklbq2DuAlV9k4ZV7npUPc0yEs4u6MRSed+N9Zuyg7v9hMZZaxaKfjsUl2c9fuyGP2zvenpKvmW0Xev9XkT1r+LqC0AruV1OQ2YPNthg7IJ3fuQj4nZYhMiDthYdxnWteLlbBkbaLo5UlwSpVDn53GxNFva8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zQdYIfra; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b0419841db9so208620866b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 02:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756891684; x=1757496484; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TiPNCvnjapcrlxfeGYfsAXzGtFUSy9Sla5QKQ86OmtE=;
+        b=zQdYIfrawp+Tqv86ghfr2nDkUq1UVAcpALUXaeG5DubS7s/2sU263H2at9WDyuNK/n
+         lUT79fIJRhUW3TdgKbMpAdkGsrMlbCuYgN2t8803x4CcQprG97I84T7NcgLRTnUosUk8
+         vgR085vkcCBf7q4krX1MnNRCettNMoOnG+TrtF5LIr2tKRMrjuj/V6GWb3WFjDuhJqlt
+         siuvsFiZCEZvZLMZ1TB/Yduvp+IWAdnZN0xcxRRlfCt/GKBQ6ZawsNyQT55cWQB++d3b
+         u5bmYOtXW9C7zwCvkeOazRHcPamUSF9lrE+q1WaWjer8byk4CCKQFizp/wj5W5UljFau
+         H9uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756891684; x=1757496484;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TiPNCvnjapcrlxfeGYfsAXzGtFUSy9Sla5QKQ86OmtE=;
+        b=eMwmM7IX32UJbTJA9DsbrSaZNvX7EdspF+T0gQTqSR9mwqp3i8Dz1MgDohl5NnLXqj
+         gUauZZ9jjbDTMOv5AqcRCkfmkL+ynv8yvlE8PwXlcsZ24wQvfQC8mCvwT6gtbU4SFdYC
+         QrJLm+iGtyXSM2VtbMK6AujRo/KHOHyEj2IiIbkBC0lLEczWeNDnfQXTUE10t069ECPH
+         Vb5fQVPKlfRdP1WUujG9nqhmnxQBs0JcMIrnS0iklbeu25EEgfUpVlT2cSQjUkJqZ1CO
+         VNqD7sOBX7J5eCE+0Jm+osFP8DzgJa51c+V1n2vHfhX4TZcGyFo1rFVKYGlR1WCVk7G/
+         7RGw==
+X-Forwarded-Encrypted: i=1; AJvYcCURTYegt8IPOHRVp86V4cqJUNeofFQ6obycDwWLx4GVwmthwn4Vr44fI/JdXIXJcuzP9pUbUir13fJL5Vg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwufDf+91FKQ6p1EIOG46+vMbnfhueRp4s9QU+xRdGxPklp2qyW
+	XiYRgqDa+XrTqlJpLmDYf4bEBzqnJX6Rm857KAfbr4wExQMYyQAXOYb1pLNW7PFFMfjtWdQdxpG
+	beixJXFpkQw==
+X-Google-Smtp-Source: AGHT+IFH5XwKUXYHk/3S5VJI7dgKyWD/UZ8O7WJTKCucvA63LhSVX1nX4l6gGeMpjYHCtQk+b/SuYYxHvsCs
+X-Received: from ejclj9.prod.google.com ([2002:a17:907:1889:b0:b04:54de:8bcb])
+ (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:9494:b0:afc:a18f:65e9
+ with SMTP id a640c23a62f3a-b01d8c9018fmr1590592566b.27.1756891684064; Wed, 03
+ Sep 2025 02:28:04 -0700 (PDT)
+Date: Wed,  3 Sep 2025 09:27:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250825092403.3301266-1-a0282524688@gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
+Message-ID: <20250903092754.2751556-1-abarnas@google.com>
+Subject: [RFC PATCH v2 0/2] staging: media: atomisp: Refactor bit logic
+ helpers in vmem.c
+From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
+To: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-staging@lists.linux.dev
+Cc: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 25 Aug 2025, a0282524688@gmail.com wrote:
+Refactor proposition for bit operation in vmem.c.
+* Previous name for function "inv_subword()" for me is not telling what
+function acctualy does - it clears bit specified by subword, so renamed
+to clear_subword()
+* Added a helper to create a proper bitmask for a subword, without using
+GENMASK(end-1, start) which was claimed to be unsafe
+* Simplified subword() and clear_subword() to be more readable.
 
-> From: Ming Yu <a0282524688@gmail.com>
-> 
-> This patch series introduces support for Nuvoton NCT6694, a peripheral
-> expander based on USB interface. It models the chip as an MFD driver
-> (1/7), GPIO driver(2/7), I2C Adapter driver(3/7), CANfd driver(4/7),
-> WDT driver(5/7), HWMON driver(6/7), and RTC driver(7/7).
+Continuation of https://lore.kernel.org/linux-staging/20250902073841.233856=
+8-1-abarnas@google.com/=20
 
-Doesn't apply.
+Adrian Barna=C5=9B (2):
+  staging: media: atomisp: Change name to better follow its behavior
+  staging: media: atomisp: Simplify logic in vmem.c
 
-Please rebase onto v6.17-rc1 and submit a [RESEND].
+ .../pci/hive_isp_css_common/host/vmem.c       | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
--- 
-Lee Jones [李琼斯]
+--=20
+2.51.0.355.g5224444f11-goog
+
 
