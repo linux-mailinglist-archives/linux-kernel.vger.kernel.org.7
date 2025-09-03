@@ -1,336 +1,165 @@
-Return-Path: <linux-kernel+bounces-799165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA564B427EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:25:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 002AAB427F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1464B3ABD24
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:25:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA3951891423
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C279E320CCC;
-	Wed,  3 Sep 2025 17:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABFF31578B;
+	Wed,  3 Sep 2025 17:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A1yJpYek"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B023313E1D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 17:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VywDLcgD"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FFF1EBFFF;
+	Wed,  3 Sep 2025 17:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756920299; cv=none; b=EloT+9+w4TyCkrIe0XahmJ3mvQ+Rlf3WZWTiinNDej7hdKPw4pKEmHE/OvaLjA8uZwWwY2fQMk/YFCB2UOqWNx4lPhcBN+S9fD1zTCqDbanPqVmhu8X0VXJcVrlbi0GzL7Ultlu65+7wJg9a0ZtuUqE0uFEep8saMqTmUsg4+r0=
+	t=1756920384; cv=none; b=PAbLqwOgumZSulZ6CnOY3pHgwnWqQ0qgq5nD6/4pBspDm102zMBFI05FrQCJbA4Ic2hVLc2W0OCHFYascvdhiiwlEwGYwDzaGNk60ISbtiZGbRxqydAn30g2PAZINcN4OLKsV+VjTUgB48iSDMKp//84zLImtP7+HILe7r3nP+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756920299; c=relaxed/simple;
-	bh=iKEWfmFrqaqXaxnFlEfibOPobVwqgig+QY7VP7uydlA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=flIQjxHtlO0viJfJm9dlFe5uh+fZKSR6yqZdSHdUPLkhLtS5cqImrFJUsKsD+5o6RN2ouzcRM/XNNgQ7wwSrpzCtKetyQh6EXEMRByVJ/Zm66LL2Pu+mEDYWFbsHgMPHYxu2XVMoTT6hnyEay+aYE9NJyeEHfmD6F9Vw5frMgTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A1yJpYek; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b4c949fc524so29709a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 10:24:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756920297; x=1757525097; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZcBLO5WQFNSiCNIYliaGKFO4gbbcqxHBarWACkVCehw=;
-        b=A1yJpYekcTi4lRlyZ/eyxTbFon5p5Z9U4Sj3VMqTFf41qd35dwqQmLyzPKm6YlUQtL
-         9vp8kxmFv8+1Adt+HblRe0VQ6eRAvHmw2cvXXAB4gV4kO2ubHI3zo4Ye6hMG8T84Dnyb
-         8bCignGFrBodn4i+P1kIXAod5IuphSHtS0+71n//OdtTpN7Qmlew25/Y3zlSK9sjPi0A
-         52gpShHiz8VTji6iPPPaH7IS8PrkChGnma6z3LYEiK7NGKuieQpl3KobNnO5/6CrKoNd
-         xLbqeNA57q+NR+zOVaaHqPpGBloHS/yuisCXPJ1n9lQ1kSl20lMrgXfZzB9ERKeEgItV
-         qtSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756920297; x=1757525097;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZcBLO5WQFNSiCNIYliaGKFO4gbbcqxHBarWACkVCehw=;
-        b=PTThEMwcIB0hxhY1Y2+64xT4fa/ZaD4Vr+6oauyfZO6Qn83ZADnR/LIAYv7L6Sm6jk
-         j9LIr2gkwQjFNaJW5YwuV46UlZxKtbwCPdPeBMctgqMwvCb4T0xrZq4pqC4iwPmavSrJ
-         ki1RUyQjGwdQdJPl38BCXqxed+s2NIP43dwW7niLNEz1ukoNi3WNQfgJ2m1CWfMJqbek
-         zUzp6SWQYDNqvcQCVIDnEjmE3ClGe3gsWgYNfsPvgxzmb2kJXcjQUH+IzXyxEHpLioqi
-         hE0lxhtlL3LokIzU8kJ046XFSUxYBPhZoOTM6pe3w3sWnu/OGmOnbOUUBbHVwGLZNLqL
-         AcwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeW9452pVOLHPfXIvqdLgsk7DHwL4FnUSx7ZTM0Qzfk6uqUuJvCVc92wUEqj3dvdDgWrS13LxNoLXoQ3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqyJ3k+5U8rsRbRkhxDt8Bha3bZ2FAU3NNxeVKZ71fFojig9ql
-	Abuvx6b36FelAN4AOfP0zls0Ym+IeShmbBuhWToXreyjCeRuJzlM/U9tcxARDFp8xGIwPXFHF8u
-	si+4Iinu8Wg==
-X-Google-Smtp-Source: AGHT+IGrUtTmq2A3LULEO37FIg18dfky4t87pKsZQ3/zNmocgUbcFlFtDfIqvz3ZV7Tk281QMN5biz6HeeVp
-X-Received: from pjb8.prod.google.com ([2002:a17:90b:2f08:b0:329:ccdd:e725])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d410:b0:327:6c75:1e3
- with SMTP id 98e67ed59e1d1-328156cc715mr18681947a91.25.1756920297498; Wed, 03
- Sep 2025 10:24:57 -0700 (PDT)
-Date: Wed,  3 Sep 2025 10:24:53 -0700
+	s=arc-20240116; t=1756920384; c=relaxed/simple;
+	bh=MMVLaoX+6VlfjNKjiqzYoloF5TmT2cECAamMPbJZnNo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JcA7znnv57HXa6kewIuAFqqEmkijyDQXiRl2T0FH5BtjDQSIkCNOc5YifRJGHqiWQBjbUWnT7Juo39k/UfprQMiUiCQg1TKZllxhRFPuN7iGsWCk9FXeuWBAaijXn2AQncNEv8Q8z4AbMKun7saB57O3F8MwpxoOO+vBt2zMF2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VywDLcgD; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=dCIqqthfYGahQeKtj9M6ZR9oMSs9qAHhqVEZZDd1nbo=;
+	b=VywDLcgDbIUEsud4LeMk+VH/eG8HrypOEtnajBaxyLLbnflod6Pwaa7lgcGe+m
+	FWfEGc7PjzAM4FKiLKqC9i/85Yr4jD9q55xr8uBgCfRgNqVIdwh1/pQG0L/YQg6l
+	VCmn3Rfihi95x6Ax4RDOVTP+cGACL1XvfcscDZyKYS0qM=
+Received: from [IPV6:240e:b8f:919b:3100:3980:6173:5059:2d2a] (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgD33zsnerho91e9Bg--.4893S2;
+	Thu, 04 Sep 2025 01:25:59 +0800 (CST)
+Message-ID: <80da951b-674b-4092-bc9b-e5b0bac1c35e@163.com>
+Date: Thu, 4 Sep 2025 01:25:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
-Message-ID: <20250903172453.645226-1-irogers@google.com>
-Subject: [PATCH v1] bpf: Add kernel-doc for struct bpf_prog_info
-From: Ian Rogers <irogers@google.com>
-To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/13] PCI: dwc: Refactor register access with
+ dw_pcie_*_dword helper
+To: Rob Herring <robh@kernel.org>
+Cc: lpieralisi@kernel.org, bhelgaas@google.com, mani@kernel.org,
+ kwilczynski@kernel.org, jingoohan1@gmail.com, cassel@kernel.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hans Zhang <hans.zhang@cixtech.com>
+References: <20250828135951.758100-1-18255117159@163.com>
+ <CAL_JsqJ0cXB4bz+DAUq25V5suS0D-CHnujh0UyxA66UjajJO-g@mail.gmail.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <CAL_JsqJ0cXB4bz+DAUq25V5suS0D-CHnujh0UyxA66UjajJO-g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PSgvCgD33zsnerho91e9Bg--.4893S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJFy8GFWxWF4rXw1ktrWDJwb_yoW5WFW5pF
+	WUCFWayF4UJanF9F1kXa18Zr10g3s5t3y3WFy7G395XF4UAFWqqFyakFy5A3ZxGrWkZF10
+	vw47taykuw4DA3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Un_-PUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQxi9o2i4dZJvrQAAsw
 
-Recently diagnosing a regression [1] would have been easier if struct
-bpf_prog_info had some comments explaining its usage. As I found it
-hard to generate comments for some parts of the struct,q what is here is a
-mix of mostly hand written, but some AI written, comments.
 
-[1] https://lore.kernel.org/lkml/CAP-5=fWJQcmUOP7MuCA2ihKnDAHUCOBLkQFEkQES-1ZZTrgf8Q@mail.gmail.com/
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- include/uapi/linux/bpf.h | 187 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 186 insertions(+), 1 deletion(-)
+On 2025/8/29 04:44, Rob Herring wrote:
+> On Thu, Aug 28, 2025 at 9:00 AM Hans Zhang <18255117159@163.com> wrote:
+>>
+>> From: Hans Zhang <hans.zhang@cixtech.com>
+>>
+>> Register bit manipulation in DesignWare PCIe controllers currently
+>> uses repetitive read-modify-write sequences across multiple drivers.
+>> This pattern leads to code duplication and increases maintenance
+>> complexity as each driver implements similar logic with minor variations.
+>>
+>> This series introduces dw_pcie_*_dword() to centralize atomic
+>> register modification. The helper performs read-clear-set-write operations
+>> in a single function, replacing open-coded implementations. Subsequent
+>> patches refactor individual drivers to use this helper, eliminating
+>> redundant code and ensuring consistent bit handling.
+>>
+>> The change reduces overall code size by ~350 lines while improving
+>> maintainability. Each controller driver is updated in a separate
+>> patch to preserve bisectability and simplify review.
+> 
+> If RMW functions are an improvement, then they should go in io.h. I
+> don't think they are because they obfuscate the exact register
+> modifications and the possible need for locking. With common API,
+> anyone that understands kernel APIs will know what's going on. With a
+> driver specific API, then you have to go lookup what the API does
+> exactly. So I don't think this is an improvement.
+> 
+> Rob
 
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index 233de8677382..008b559dc5c5 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -6607,45 +6607,230 @@ struct sk_reuseport_md {
- 
- #define BPF_TAG_SIZE	8
- 
-+/**
-+ * struct bpf_prog_info - Information about a BPF program.
-+ *
-+ * This structure is used by the bpf(BPF_OBJ_GET_INFO_BY_FD) syscall to retrieve
-+ * metadata about a loaded BPF program. When values like the jited_prog_insns
-+ * are desired typically two syscalls will be made, the first to determine the
-+ * length of the buffers and the second with buffers for the syscall to fill
-+ * in. The variables within the struct are ordered to minimize padding.
-+ */
- struct bpf_prog_info {
-+	/**
-+	 * @type: The type of the BPF program (e.g.,
-+	 * BPF_PROG_TYPE_SOCKET_FILTER, BPF_PROG_TYPE_KPROBE). This defines
-+	 * where the program can be attached.
-+	 */
- 	__u32 type;
-+	/**
-+	 * @id: A unique, kernel-assigned ID for the loaded BPF program.
-+	 */
- 	__u32 id;
-+	/**
-+	 * @tag: A user-defined tag for the program, often a hash of the
-+	 * object file it came from. Size is BPF_TAG_SIZE (8 bytes).
-+	 */
- 	__u8  tag[BPF_TAG_SIZE];
-+	/**
-+	 * @jited_prog_len: As an in argument this is the length of the
-+	 * jited_prog_insns buffer. As an out argument, the length of the
-+	 * JIT-compiled (native machine code) program image in bytes.
-+	 */
- 	__u32 jited_prog_len;
-+	/**
-+	 * @xlated_prog_len: As an in argument this is the length of the
-+	 * xlated_prog_insns buffer. As an out argument, the length of the
-+	 * translated BPF bytecode in bytes, after the verifier has potentially
-+	 * modified it. 'xlated' is short for 'translated'.
-+	 */
- 	__u32 xlated_prog_len;
-+	/**
-+	 * @jited_prog_insns: When 0 (NULL) this is ignored by the kernel. When
-+	 * non-zero a pointer to a buffer is expected and the kernel will write
-+	 * jited_prog_len(s) worth of JIT-compiled machine code instructions into
-+	 * the buffer.
-+	 */
- 	__aligned_u64 jited_prog_insns;
-+	/**
-+	 * @xlated_prog_insns: When 0 (NULL) this is ignored by the kernel. When
-+	 * non-zero a pointer to a buffer is expected and the kernel will write
-+	 * xlated_prog_len(s) worth of translated, after BPF verification, BPF
-+	 * bytecode into the buffer.
-+	 */
- 	__aligned_u64 xlated_prog_insns;
--	__u64 load_time;	/* ns since boottime */
-+	/**
-+	 * @load_time: The timestamp (in nanoseconds since boot time) when the
-+	 * program was loaded into the kernel.
-+	 */
-+	__u64 load_time;
-+	/**
-+	 * @created_by_uid: The user ID of the process that loaded this program.
-+	 */
- 	__u32 created_by_uid;
-+	/**
-+	 * @nr_map_ids: As an in argument this is the length of the map_ids
-+	 * buffer in sizes of u32 (4 bytes). As an out argument, the number of
-+	 * BPF maps used by this BPF program.
-+	 */
- 	__u32 nr_map_ids;
-+	/**
-+	 * @map_ids: When 0 (NULL) this is ignored by the kernel. When non-zero
-+	 * a pointer to a buffer is expected and the kernel will write
-+	 * nr_map_ids(s) worth of u32 kernel allocated BPF map id values into the
-+	 * buffer.
-+	 */
- 	__aligned_u64 map_ids;
-+	/**
-+	 * @name: The name of the program, as specified in the ELF object file.
-+	 * The max length is BPF_OBJ_NAME_LEN (16 characters).
-+	 */
- 	char name[BPF_OBJ_NAME_LEN];
-+	/**
-+	 * @ifindex: If the program is attached to a network device (netdev),
-+	 * this field holds the interface index.
-+	 */
- 	__u32 ifindex;
-+	/**
-+	 * @gpl_compatible: A flag indicating if the program is compatible with
-+	 * a GPL license. This is important for using certain GPL-only helpers.
-+	 */
- 	__u32 gpl_compatible:1;
- 	__u32 :31; /* alignment pad */
-+	/**
-+	 * @netns_dev: The device identifier of the network namespace the
-+	 * program is attached to.
-+	 */
- 	__u64 netns_dev;
-+	/**
-+	 * @netns_ino: The inode number of the network namespace the program is
-+	 * attached to.
-+	 */
- 	__u64 netns_ino;
-+	/**
-+	 * @nr_jited_ksyms: As an in argument this is the length of the
-+	 * jited_ksyms buffer in sizes of u64 (8 bytes). As an out argument, the
-+	 * number of kernel symbols that the BPF program calls.
-+	 */
- 	__u32 nr_jited_ksyms;
-+	/**
-+	 * @nr_jited_func_lens: As an in argument this is the length of the
-+	 * jited_func_lens buffer in sizes of u32 (4 bytes). As an out argument,
-+	 * the number of distinct functions within the JIT-ed program.
-+	 */
- 	__u32 nr_jited_func_lens;
-+	/**
-+	 * @jited_ksyms: When 0 (NULL) this is ignored by the kernel. When
-+	 * non-zero a pointer to a buffer is expected and the kernel will write
-+	 * nr_jited_ksyms(s) worth of addresses of kernel symbols into the u64
-+	 * buffer.
-+	 */
- 	__aligned_u64 jited_ksyms;
-+	/**
-+	 * @jited_func_lens: When 0 (NULL) this is ignored by the kernel. When
-+	 * non-zero a pointer to a buffer is expected and the kernel will write
-+	 * nr_jited_func_lens(s) worth of lengths into the u32 buffer.
-+	 */
- 	__aligned_u64 jited_func_lens;
-+	/**
-+	 * @btf_id: The ID of the BTF (BPF Type Format) object associated with
-+	 * this program, which contains type information for debugging and
-+	 * introspection.
-+	 */
- 	__u32 btf_id;
-+	/**
-+	 * @func_info_rec_size: The size in bytes of a single `bpf_func_info`
-+	 * record.
-+	 */
- 	__u32 func_info_rec_size;
-+	/**
-+	 * @func_info: When 0 (NULL) this is ignored by the kernel. When
-+	 * non-zero a pointer to a buffer is expected and the kernel will write
-+	 * nr_func_info(s) worth of func_info_rec_size values.
-+	 */
- 	__aligned_u64 func_info;
-+	/**
-+	 * @nr_func_info: As an in argument this is the length of the func_info
-+	 * buffer in sizes of func_info_rec_size. As an out argument, the number
-+	 * of `bpf_func_info` records available.
-+	 */
- 	__u32 nr_func_info;
-+	/**
-+	 * @nr_line_info: As an in argument this is the length of the line_info
-+	 * buffer in sizes of line_info_rec_size. As an out argument, the number
-+	 * of `bpf_line_info` records, which map BPF instructions to source code
-+	 * lines.
-+	 */
- 	__u32 nr_line_info;
-+	/**
-+	 * @line_info: When 0 (NULL) this is ignored by the kernel. When
-+	 * non-zero a pointer to a buffer is expected and the kernel will write
-+	 * nr_line_info(s) worth of line_info_rec_size values.
-+	 */
- 	__aligned_u64 line_info;
-+	/**
-+	 * @jited_line_info: When 0 (NULL) this is ignored by the kernel. When
-+	 * non-zero a pointer to a buffer is expected and the kernel will write
-+	 * nr_jited_line_info(s) worth of jited_line_info_rec_size values.
-+	 */
- 	__aligned_u64 jited_line_info;
-+	/**
-+	 * @nr_line_info: As an in argument this is the length of the
-+	 * jited_line_info buffer in sizes of jited_line_info_rec_size. As an
-+	 * out argument, the number of `bpf_line_info` records, which map JIT-ed
-+	 * instructions to source code lines.
-+	 */
- 	__u32 nr_jited_line_info;
-+	/**
-+	 * @line_info_rec_size: The size in bytes of a `bpf_line_info` record.
-+	 */
- 	__u32 line_info_rec_size;
-+	/**
-+	 * @jited_line_info_rec_size: The size in bytes of a `bpf_line_info`
-+	 * record for JIT-ed code.
-+	 */
- 	__u32 jited_line_info_rec_size;
-+	/**
-+	 * @nr_prog_tags: As an in argument this is the length of the prog_tags
-+	 * buffer in sizes of BPF_TAG_SIZE (8 bytes). As an out argument, the
-+	 * number of program tags, which are hashes of programs that this
-+	 * program can tail-call.
-+	 */
- 	__u32 nr_prog_tags;
-+	/**
-+	 * @prog_tags: When 0 (NULL) this is ignored by the kernel. When
-+	 * non-zero a pointer to a buffer is expected and the kernel will write
-+	 * nr_prog_tags(s) worth of BPF_TAG_SIZE values.
-+	 */
- 	__aligned_u64 prog_tags;
-+	/**
-+	 * @run_time_ns: The total accumulated execution time of the program in
-+	 * nanoseconds.
-+	 */
- 	__u64 run_time_ns;
-+	/**
-+	 * @run_cnt: The total number of times the program has been executed.
-+	 */
- 	__u64 run_cnt;
-+	/**
-+	 * @recursion_misses: The number of failed tail calls due to reaching
-+	 * the recursion limit.
-+	 */
- 	__u64 recursion_misses;
-+	/**
-+	 * @verified_insns: The number of instructions processed by the
-+	 * verifier.
-+	 */
- 	__u32 verified_insns;
-+	/**
-+	 * @attach_btf_obj_id: If attached via BTF (e.g., fentry/fexit), this is
-+	 * the BTF object ID of the target object (e.g., kernel vmlinux).
-+	 */
- 	__u32 attach_btf_obj_id;
-+	/**
-+	 * @attach_btf_id: The BTF type ID of the function or tracepoint this
-+	 * program is attached to.
-+	 */
- 	__u32 attach_btf_id;
- } __attribute__((aligned(8)));
- 
--- 
-2.51.0.338.gd7d06c2dae-goog
+Dear Rob,
+
+Thank you very much for your reply.
+
+My initial idea was to simplify the logic we wrote a lot of RMW under 
+the DWC driver. Then I saw that there were similar well-handled codes in 
+the linux kernel, so I came to do some cleaning work.
+
+
+drivers/pci/access.c
+int pcie_capability_clear_and_set_dword(struct pci_dev *dev, int pos,
+					u32 clear, u32 set)
+{
+	int ret;
+	u32 val;
+
+	ret = pcie_capability_read_dword(dev, pos, &val);
+	if (ret)
+		return ret;
+
+	val &= ~clear;
+	val |= set;
+	return pcie_capability_write_dword(dev, pos, val);
+}
+EXPORT_SYMBOL(pcie_capability_clear_and_set_dword);
+
+
+include/linux/pci.h
+static inline int pcie_capability_set_dword(struct pci_dev *dev, int pos,
+					    u32 set)
+{
+	return pcie_capability_clear_and_set_dword(dev, pos, 0, set);
+}
+
+static inline int pcie_capability_clear_dword(struct pci_dev *dev, int pos,
+					      u32 clear)
+{
+	return pcie_capability_clear_and_set_dword(dev, pos, clear, 0);
+}
+
+
+
+And the subsequent introduced API: Personally, I think they are very 
+valuable for reference. Of course, it depends on the final opinions of 
+the maintainer and all of you.
+
+drivers/pci/access.c
+void pci_clear_and_set_config_dword(const struct pci_dev *dev, int pos,
+				    u32 clear, u32 set)
+{
+	u32 val;
+
+	pci_read_config_dword(dev, pos, &val);
+	val &= ~clear;
+	val |= set;
+	pci_write_config_dword(dev, pos, val);
+}
+EXPORT_SYMBOL(pci_clear_and_set_config_dword);
+
+
+
+Best regards,
+Hans
 
 
