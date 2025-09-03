@@ -1,94 +1,126 @@
-Return-Path: <linux-kernel+bounces-798181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD7DAB41A67
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:46:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26053B41A62
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42649166896
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:46:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4B87680CE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F032D595D;
-	Wed,  3 Sep 2025 09:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40F323C513;
+	Wed,  3 Sep 2025 09:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HcFGa0Tr"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GV0C1yzv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32474231832
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C262B23BCF8;
+	Wed,  3 Sep 2025 09:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756892767; cv=none; b=XoF6tDym3+yUFv/NXyXAbccYvfr3GYiWnE8FdTpj3qSYdF3F6hQyx71IpthdEr9ylXmhdTD3lczvvyB0Fl+3Ddpynr86QI0+PWYQh9ERP69/EyuCC3WWzarpG9UoEdUw0CvdDBu9OZNJEGs+i/CkPKStajBzk0dfFY3dK69HwxA=
+	t=1756892763; cv=none; b=K66ZRchaYvDlwOKxpXBt/2CAYjF6oD21Zlx38NVnzFSFkW2WuU9ZH1VRX19ydrXRFm+SM9Ow2ysZclHdJsMrp+6xGFPN0wO2ZJV6IBzOYu/ifOr6N5o3L7M8tBBg2WWY/UQTueJlqs6JLZzYE8gerdCsSxyDlMitMj+dd7mnMtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756892767; c=relaxed/simple;
-	bh=mJEZezaaAvDWlpLgZGr6gvr2k1GiPwLmXdP8VleSAVU=;
+	s=arc-20240116; t=1756892763; c=relaxed/simple;
+	bh=ZKlDPs5tUy7NnCdcegG/WFo2cZdk8beeu3/iLMX0A4c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dD38rYvlUm3R6JXFWhu+ry1iu3Qe2wOrVsoNQ8cVSD8wKGCFBgzoFdAoc3nKaR26Sy8M0kelgkmGp1HkPj5EonL6p+Foq3yociM9WGf269S9Ag0WDMU/sl06CoJrJWkfIOfLlm43m/+uKxsR3Bq3LDdbL/sWuR2p53AHkgbZCoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HcFGa0Tr; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=qZD6
-	3uFUUWm/vKdNbnOPDAIu7KIlkgvjimOu757PzOY=; b=HcFGa0Trj5A9lugbOuv7
-	nAQ5a//v4VMybK49wDJ16RvfaBJRqz5Gc4hMYVLUwU4fuWIqXYNzIkB8ugrLOCuR
-	zRzjJ1K3u4rhVCKCjFv5PQwxE80LdYfCT+wUcIsuXgRkMN6wdyVRshzoGBrkqb1h
-	q1IkJQSdr90orGtWPU4blEZOluYp+t+7LbiaPcmzrI5JCI79F8GOZEjxg4BA8D8p
-	LB1quYysEiyyu/lVvEM3mpR6jfRlUiYi23qPZCGy9yENwiFjmaMZhy3hvlWWCGUz
-	HtOGfDjsQ7xCi6D/wTxJRgG3hlJm/Q+RmHDiPc2tZE6nIKS+/11l5NZr7zUWe2XP
-	2Q==
-Received: (qmail 3244023 invoked from network); 3 Sep 2025 11:45:53 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Sep 2025 11:45:53 +0200
-X-UD-Smtp-Session: l3s3148p1@/45yeOI9IIMujnu+
-Date: Wed, 3 Sep 2025 11:45:52 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Matthew Gerlach <matthew.gerlach@altera.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: net: renesas,rzn1-gmac: Constrain
- interrupts
-Message-ID: <aLgOUGOp7Db0keZ-@ninjato>
-References: <20250902154051.263156-3-krzysztof.kozlowski@linaro.org>
- <20250902154051.263156-4-krzysztof.kozlowski@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fnAb+Ay0B43CkIdJN9CcH5WeK/OE1BGCZFH8XBGQX4k5gKJR6A+njRHAXKTltJ6/crKTXSbaxQeS8wJPJwSm8zMISdSRHCypaZVKFxD27NY0GEr2Z6qYg0X5GHEB8LvFn8O7RoypPbZA3HU2TLwKHeZ03+LTT08vn2xkAkWtr14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GV0C1yzv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA252C4CEF0;
+	Wed,  3 Sep 2025 09:46:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1756892762;
+	bh=ZKlDPs5tUy7NnCdcegG/WFo2cZdk8beeu3/iLMX0A4c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GV0C1yzvREcrwqNjc2PMT67tBBFW/EXhnoIs/QPooaoc8Obdf9N7h3j7PJ5Z/SYjH
+	 ee9berSxGonB2lm1cEbUhrSeqH47I7a1xEwd3ldBEe7lDDGP/PYRM66DJWLtT6BJid
+	 CZWppXqwnkBGcxaq5o8hmS5jHMhN3xzZSiC11V+8=
+Date: Wed, 3 Sep 2025 11:45:58 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH 3/3] rust: error: replace `WARN_ON_ONCE` comment with
+ `debug_assert!`
+Message-ID: <2025090325-drinking-illusion-ef3d@gregkh>
+References: <20250829192243.678079-1-ojeda@kernel.org>
+ <20250829192243.678079-4-ojeda@kernel.org>
+ <CANiq72k7_GbFwRxW5vikF_SpiNcNm7Ff0oe6jyYX_voDg92QFA@mail.gmail.com>
+ <2025083032-barmaid-rising-a977@gregkh>
+ <CANiq72nAagBBPhyU3XdETMKBuFPbMMRaSTStWPpyLnByYPP=+A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250902154051.263156-4-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72nAagBBPhyU3XdETMKBuFPbMMRaSTStWPpyLnByYPP=+A@mail.gmail.com>
 
-On Tue, Sep 02, 2025 at 05:40:53PM +0200, Krzysztof Kozlowski wrote:
-> Renesas RZN1 GMAC uses three interrupts in in-kernel DTS and common
-> snps,dwmac.yaml binding is flexible, so define precise constraint for
-> this device.
+On Sat, Aug 30, 2025 at 01:07:52PM +0200, Miguel Ojeda wrote:
+> On Sat, Aug 30, 2025 at 8:28 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > If you wish to state that CONFIG_RUST_DEBUG_ASSERTIONS=y should NEVER be
+> > used in ANY shipping Linux system, then yes, we can carve out an
+> > exception for this (we do that if lockdep is enabled as that should
+> > never be in a running system, only a development one).
 > 
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> The config option is meant for development purposes ("debug"). We
+> don't control all its behavior anyway, because the compiler/stdlib
+> will also add many assertions (e.g. for unsafe preconditions). So, for
+> instance, it could easily have a non-trivial performance impact.
+> 
+> For the same reason, it will also change behavior depending on the
+> compiler version. So, for instance, new assertions in new compiler
+> versions could have an impact that is not seen in previous versions.
+> 
+> Thus, for this particular config option, we cannot guarantee much, and
+> the help text already states "This can be used to enable extra
+> debugging code in development but not in production.".
+> 
+> Having said that, I regularly CI-test our main branches with the
+> option enabled, and it has worked fine so far.
+> 
+> So if a user actually run with such kind of asserts in production,
+> because they really want to crash on anything and everything, I don't
+> see why they couldn't. It may really be that it actually stops an
+> important exploit from going on. Of course, it may also be that it
+> elevates a trivial bug into a denial of service elsewhere, but that
+> risk may be worth it for certain users.
+> 
+> In fact, I would say it is a good thing that certain specialized users
+> run with it enabled, because then it means they may find potential
+> bugs for others, and that makes everyone safer in practice.
+> 
+> But I don't know what exact constraints the CVE system puts on you, so
+> it is hard to assess what the best wording for such an option would
+> be.
 
-Double checked with the original RZ/N1 docs:
+There are no "constraints" only a definition of a vulnerability that we
+must follow.  And for that, any way that a user could cause a reboot or
+panic, without having root privileges, gets assigned a CVE.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+One exception being if lockdep or a few other "debugging only" options
+are enabled.  Those are explicitly stated by their maintainers that they
+should NEVER be enabled in a real system.  For those we do not assign
+CVEs as they should never be actually triggered by a user.
 
+So I don't know what to recommend here.  I strongly advise against
+adding code to the kernel that can cause users to reboot their boxes if
+they do something.  But hey, if developers want to do that, I'll gladly
+assign CVEs for when it happens :)
+
+thanks,
+
+greg k-h
 
