@@ -1,141 +1,113 @@
-Return-Path: <linux-kernel+bounces-797764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ADF2B4151E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:24:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0212AB41520
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66788546F7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:23:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBE3F680168
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445552D8372;
-	Wed,  3 Sep 2025 06:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20632D8396;
+	Wed,  3 Sep 2025 06:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQtVhaUc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOgFF4Le"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7861D2D780C;
-	Wed,  3 Sep 2025 06:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA8D19992C
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 06:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756880429; cv=none; b=pn6B33sce7sptkd3PsYomt8UAd+HPrUoOEwUqcbq/yAmevuFT9bdxc/dheGrdgbzWeQzYorKpew8bOMy8Cx93da9TLs+MUIMinaYuZq81MeWxE0bPPkRcjHlLIvu9MVckB/Y1+WYCVTBcnZ5m9UawjTUfC5J2QiaviS9NjeALVM=
+	t=1756880479; cv=none; b=GVxkON/WocrnAry0V9hlCLOKTecQ1mBEB7ttIyZnVFfNHuTBQxDf4ndkzdrmdHduFa8mrz8qLW5+kYAdN+YFOxrbSKSsimrnOB0W39r1tCaTFcEmWPuWbbJEVHl9b4Lk2EPxc895iSK3IQvid7qlL1m6Uc1gpY1JEMgV0unwSnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756880429; c=relaxed/simple;
-	bh=nxLa0Yb++BmQMMXEsr0ERsx0XN0AYtJHj5ufrtDVXpg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wm/t+nvtOIOcbPD5rexqvkVL3m7pSA07hZibjb0ahHpsYFc1zuEgBcD54+SsJ3YDfXo4sthWk55fSnzLVfJ4SZ4C6eDzBfZQWEfzwe1QRZmj6v3EgFeK3Yal5H6pxwfvKDQ1gh1KHSAJFi6nU2uKtir/iN7WkYkCXT8Rn5/yvYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XQtVhaUc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6157DC4CEF0;
-	Wed,  3 Sep 2025 06:20:26 +0000 (UTC)
+	s=arc-20240116; t=1756880479; c=relaxed/simple;
+	bh=NznlH5PgUYjdRJyI7ivYzbTBuMkKWeEALjW0fPj3M9g=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U5TZLDGds2R8kqvrkpzB1mgdBSOR2ONi9wmE/jVrh2CWeAYOhIkxemH9Xhw9W1lCJllbbLv2ZaVXglmzNW+6OZw5mpBYDKEPyHPNir6Uo4XG7SKX7XSf/vXy7ucliD2ek12mkI30iVonhnT3wIZ9Qs5d2O9nHDBUT9V/9xtjVyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOgFF4Le; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7590BC4CEF0;
+	Wed,  3 Sep 2025 06:21:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756880429;
-	bh=nxLa0Yb++BmQMMXEsr0ERsx0XN0AYtJHj5ufrtDVXpg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XQtVhaUcPSsGTmu8emALJhA/izMnShEk39QOoJwPUXq2Z6I3no8aCt/kvR5vKCu5w
-	 SxLpWtuRfjNgZdr51gbKl/QK+lx8ErObWeJO8RYOmL0u4JkOKB1T+Py7Vz3l0RgCJ/
-	 S/3/U7ovlg1utCvCdRgB/VG+SQA7kgqUodeKVB7P03OEhovIIWjhhJI85o7xK5dE17
-	 IjdP4/r9qt1PuQt364J6KGLNOs3Yd+2YFVaqnG3gdjS56BivClUrXY9v4gB5oUvpe/
-	 Ei/sswTs5c4Uizm+n96kWJrg0lZfnw/VkXQ2kBU04XawmA6yGFRTKH5/K9ooTQhyTp
-	 ebqVfGvCGTIaQ==
-Message-ID: <47c7adc9-fa91-4d4e-9be4-912623c627d6@kernel.org>
-Date: Wed, 3 Sep 2025 08:20:24 +0200
+	s=k20201202; t=1756880475;
+	bh=NznlH5PgUYjdRJyI7ivYzbTBuMkKWeEALjW0fPj3M9g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QOgFF4LedZbxEfKfHATx+pSSrDBulZnJOFdTjB7Hb5RX+IARuNNSGttBgxL1+Io7B
+	 d5ZzUAle8y9/OeT/5GeEoldpPPuJT/N+ip7NolMPM7t39iy3l/qKj0fiX5wq0OOqYD
+	 2DoJK4oTd+X+kCHd9SUmxnxAV0tsMvG2WlbDH4HYVAGpws2FXaJUzVmbEmozbeGcqF
+	 tStKTAairJKSJs1oczK7dw5P4drPd4dQsuvLIwjd4rnylY8YgkVvOJJu4u4MIdwdw2
+	 lhpij5ZkaKXOVZnQUf2fCbZFPdlAQNINrCdd5bqdynDdZmmnBcNEoxRwvhieJb+YX1
+	 7jxiiSNEBRRlw==
+Received: from 93-47-110-174.ip112.fastwebnet.it ([93.47.110.174] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1utgro-00000002qgc-3rgU;
+	Wed, 03 Sep 2025 06:21:13 +0000
+Date: Wed, 03 Sep 2025 07:21:07 +0100
+Message-ID: <87y0qwys30.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Zenghui Yu <yuzenghui@huawei.com>
+Cc: <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>,
+	<lpieralisi@kernel.org>,
+	<tglx@linutronix.de>,
+	<wanghaibin.wang@huawei.com>
+Subject: Re: [PATCH] irqchip/gic-v5: Remove the redundant ITS cache invalidation
+In-Reply-To: <20250903023319.1820-1-yuzenghui@huawei.com>
+References: <20250903023319.1820-1-yuzenghui@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] Support dynamic EMC frequency scaling on
- Tegra186/Tegra194
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
- <20250902-glittering-toucan-of-feminism-95fd9f@kuoka>
- <CALHNRZ_CNvq_srzBZytrO6ZReg81Z6g_-Sa+=26kBEHx_c8WQA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CALHNRZ_CNvq_srzBZytrO6ZReg81Z6g_-Sa+=26kBEHx_c8WQA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 93.47.110.174
+X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, lpieralisi@kernel.org, tglx@linutronix.de, wanghaibin.wang@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 02/09/2025 18:51, Aaron Kling wrote:
-> On Tue, Sep 2, 2025 at 3:23 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On Sun, Aug 31, 2025 at 10:33:48PM -0500, Aaron Kling wrote:
->>> This series borrows the concept used on Tegra234 to scale EMC based on
->>> CPU frequency and applies it to Tegra186 and Tegra194. Except that the
->>> bpmp on those archs does not support bandwidth manager, so the scaling
->>> iteself is handled similar to how Tegra124 currently works.
->>>
->>
->> Three different subsystems and no single explanation of dependencies and
->> how this can be merged.
+On Wed, 03 Sep 2025 03:33:19 +0100,
+Zenghui Yu <yuzenghui@huawei.com> wrote:
 > 
-> The only cross-subsystem hard dependency is that patches 5 and 6 need
-> patches 1 and 2 respectively. Patch 5 logically needs patch 3 to
-> operate as expected, but there should not be compile compile or probe
-> failures if those are out of order. How would you expect this to be
-> presented in a cover letter?
+> An ITS cache invalidation has been performed immediately after programming
+> the L2 DTE in gicv5_its_device_register(). No need to perform it again
+> right after a successful gicv5_its_device_register().
 
-Also, placing cpufreq patch between two memory controller patches means
-you really make it more difficult to apply it for the maintainers.
-Really, think thoroughly how this patchset is supposed to be read.
+Indeed. And this call doesn't check it's been successful either.
 
-I will move it to the bottom of my review queue.
+> 
+> Remove it.
+> 
+> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+> ---
+>  drivers/irqchip/irq-gic-v5-its.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v5-its.c b/drivers/irqchip/irq-gic-v5-its.c
+> index 2fb58d76f521..554485f0be1f 100644
+> --- a/drivers/irqchip/irq-gic-v5-its.c
+> +++ b/drivers/irqchip/irq-gic-v5-its.c
+> @@ -768,8 +768,6 @@ static struct gicv5_its_dev *gicv5_its_alloc_device(struct gicv5_its_chip_data *
+>  		goto out_dev_free;
+>  	}
+>  
+> -	gicv5_its_device_cache_inv(its, its_dev);
+> -
+>  	its_dev->its_node = its;
+>  
+>  	its_dev->event_map = (unsigned long *)bitmap_zalloc(its_dev->num_events, GFP_KERNEL);
 
-Best regards,
-Krzysztof
+Reviewed-by: Marc Zyngier <maz@kernel.org>
+
+	M.
+
+-- 
+Jazz isn't dead. It just smells funny.
 
