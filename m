@@ -1,248 +1,134 @@
-Return-Path: <linux-kernel+bounces-798894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3DE2B4245D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:04:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE98B4257C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 028C07B5629
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:03:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B831889317
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31CEC311C1E;
-	Wed,  3 Sep 2025 15:04:33 +0000 (UTC)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD05A25291B;
+	Wed,  3 Sep 2025 15:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=worksmobile.com header.i=@worksmobile.com header.b="yoeS5+qL";
+	dkim=pass (1024-bit key) header.d=korea.ac.kr header.i=@korea.ac.kr header.b="dsAQssHO"
+Received: from cvsmtppost104.wmail.worksmobile.com (cvsmtppost104.wmail.worksmobile.com [125.209.209.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581DA2D6604;
-	Wed,  3 Sep 2025 15:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FCE21A447
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=125.209.209.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756911872; cv=none; b=tXdymkTTTw0S0uvOPF2ScTYfxtYDZPoQIFtjZjRCKt2rbW7sqqwI6pnxYnpQ13FVWGSd8jR/hMm2yU+rkEGYp/V5B/+T6BiyP0gBS7CDpGG/B+Rn9SheUl/k096PM3pggWPvYNvhIeXRrNp4t5uzlNaCu1Y84kyoZrN2FPw7Rkw=
+	t=1756913110; cv=none; b=CrLlZ7Roqbsdb8vfMin3sZonwCiQY8M9qowuF6JNxtr/9ec3NiH/W/763RGdjrU1doFQO05B2ANQ9nVVAlQkvV30EJUc/CdGc9OzKdrYkhOHzmOMB3exJCHswu1EJDCKEg8/uT5JPb7emAkO/Nuf9qqPY79eifDHgn9jWU4Exh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756911872; c=relaxed/simple;
-	bh=h8smzc7ZHq9Va/r9ZxrqhulE3gzpiaWyH0i/4kfVPa4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tXydPInGHRidGiv2nXanxuOc0HY4fCjmcoGfFo9U8zpIO+G6xwAxxQOS5DQLGiJt5sJuGfHHe7oI4VAMb2LWB2/bKtXiCqwEBIOVNY0eYNccT/oQul2okX1dj/ZHIsupqg/czBRmOqZ5p+ztzzopRhQuyYpkZZ2pBf4nqqCbLkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-71d601859f5so218677b3.0;
-        Wed, 03 Sep 2025 08:04:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756911869; x=1757516669;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lfxaat4ZLKZU69SwdrM/SBfl8rybrnaouM8vw93evjg=;
-        b=KDBooPf4lN3mzH/HxenEb1q3gi6f3WVkOlZ66+gsCCU+161a0Y9k47iGWZovxZ05Lw
-         mVK+8T7SJM71Vuhzg28rlo9uErEMnP3asLsYzR6CXEOZ9KdmKiTAsnPWTnOc7+IB4zca
-         EPSLgDdd5wFSDqVHsKxHUtTHtzDE7hCSdmltv4pKjceVOyW4cZgiRCzDL+kjBOtXJl7s
-         1z1tFDn3nOal8ZIbMt1Be1fpQpcuMWWI0K44TLzGK0ItTcmHB/ULpzZFBQTheFu5PbEV
-         4zXHs8uMmspgf2mZjcuNqOk+MgtEZLzml6jmvH9+OaPcPirLY0h0YMAVuR05WJ7nik2F
-         6wiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHz9I9268WEmVvBWQ+jI5JDPcrSAKRftEbMHpTgruoUVe4Xq3kU6s95VDg6v6OkLrck/qLt3FG8SfF@vger.kernel.org, AJvYcCUN9EAfAlumyyFce7CiHnl/upvikF+jh0bFQeseBGpzV1hM28PfX+nh32OrO+K19GBnKmNairlYaUL+w5aG+z2It9U=@vger.kernel.org, AJvYcCVQSK+meWbvPXJPLh/+PzBdR/y3J2dqanPXovRkr7h/tF3Lc/BscKw5QDDAuK67bj5lvdPLollFaffEHZb/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjZs9fNA8ceeQCgxV4gd3hbS+9PqPwpmR23bFKLYOn/V6f3YMo
-	v/cqy2hUetNh4TXHxxa+71kCaHGzaDtSSY5SlV9GyKT9ldfAaYH0Ey424caVmnja
-X-Gm-Gg: ASbGncvGjXsbt5bf/KG69ILeYKpiuXTBO+Ajq+MgW4dJh/B38zfB515u6ps1wOz9BCV
-	8Ga+M/tX5ATitItdsoimqy+88Eg06FrVULnG1Ku7MW7jrlgS+2CyTyYn2qAu9E8G5yh/EH6j5pV
-	fuYlSeekX15gVxTFF7skGvUHF3r/BhGYYqJYSYyD1xzeHgvYBprg0BdOA+a501tOBZpPyyru43Z
-	tPEzexT6WSccm5YqlQ4+yvolnbUunlPcfBZE9yNsol5M19H/nxp1c8qSgrpbYBD68kSRGJRojKZ
-	glYvzcgyh5VjVPFBAyzbniLYG2kI9Jr0dx4FLzEKKvk/ZnOSTva1+Dm+YFun9zKweut4LL1DEVn
-	DajwlfRBGei6QWOeNHgBEx0UttB7Iftq8buTdht4fOByHT6AqnAhR5HUm7sD3r6l8
-X-Google-Smtp-Source: AGHT+IFiCAwvXt8gl25yKEJU0gCavGCSDLg0XodGdzKYmmpRtx0j2wJ4m2KrjE1Bx8VgeE6d4KPvLA==
-X-Received: by 2002:a05:690c:7203:b0:721:6b2e:a07a with SMTP id 00721157ae682-72276580c26mr179495857b3.51.1756911868268;
-        Wed, 03 Sep 2025 08:04:28 -0700 (PDT)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a82d6ad1sm14215087b3.5.2025.09.03.08.04.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 08:04:27 -0700 (PDT)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-71d601859f5so218047b3.0;
-        Wed, 03 Sep 2025 08:04:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV8+vmMZ6MmT22g++OKN3YZ/5XBPfo076vi7LpsNzs3FlIdj34YnJ0mfw59eHX4LVvCyQX3HZYPGD3BK5sHSQEd5n8=@vger.kernel.org, AJvYcCVBeaJFeXjBMxGNYJoRBPWL8jvHwXBM0BCP+uPS4AHfehKGHXkzsvFen/yXMKIdsLXvKdEQ0jIwgdSxbmLo@vger.kernel.org, AJvYcCVrCG8joKwYrtjFMKazErtAkAh5r9F9Pll8l22lzzamwR5VgAYnFrkP37T/EGtPi7mZHJNII3vpg8nE@vger.kernel.org
-X-Received: by 2002:a05:690e:4281:20b0:604:3849:9be9 with SMTP id
- 956f58d0204a3-6043858ff35mr196806d50.13.1756911867549; Wed, 03 Sep 2025
- 08:04:27 -0700 (PDT)
+	s=arc-20240116; t=1756913110; c=relaxed/simple;
+	bh=3FhiaCfmZwkYLyKJbI+B3fuYEbKg6EUl6NdwQ1AxukY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=REZ78EkVSNc7UT/+yYgFuZpV/UEs79GDDv2LWP5isv68s8Trd6Z6QUowomGXC704x97/5Q73AvXiGWLkjCXVQ35FxdF7Jl0bzVmcr3p1WkAbwDYyp3/3hynhTNdjz/1+27bkrSGgBUXEE0wnopqNnaHwAPtP18AMxylupMRykGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=korea.ac.kr; spf=pass smtp.mailfrom=korea.ac.kr; dkim=pass (2048-bit key) header.d=worksmobile.com header.i=@worksmobile.com header.b=yoeS5+qL; dkim=pass (1024-bit key) header.d=korea.ac.kr header.i=@korea.ac.kr header.b=dsAQssHO; arc=none smtp.client-ip=125.209.209.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=korea.ac.kr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=korea.ac.kr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=worksmobile.com;
+	s=s20171120; t=1756911890;
+	bh=3FhiaCfmZwkYLyKJbI+B3fuYEbKg6EUl6NdwQ1AxukY=;
+	h=From:To:Subject:Date:Message-ID:From:Subject:Feedback-ID:
+	 X-Works-Security;
+	b=yoeS5+qLqwx51cCugDjTqy/HAuqvWmjhXmTMaOBS2ZR7ht81xBTCXx8WyrysE3QJJ
+	 gSgUmt9qJF/+tQe0Be5xHgunSYVvJqPVdiNesCr0bjNFoDQ9buoHcHZo8EhUp1TaNN
+	 Bi1g2x4atDw8iIZxYz+Q2QPUv/GR6OkS2GiMmMxTrblO2qwMoHvyZD/Bc4ytNOdLMT
+	 /gABI8y93gSX733fVKDQEx/7ij5xhAHoxlU3dN8WV5zK0+rUcqLFPyZRfH+1JWOc3w
+	 eiZynDBdqJTxRvegMLncIkSI2U/qOotbvbClgay43HllGGvI3Ii730J6WafNYQgux5
+	 zSXJ6ZSqz7U2g==
+Received: from cvsendbo004.wmail ([10.113.20.173])
+  by cvsmtppost104.wmail.worksmobile.com with ESMTP id cASYGVhjQi+rxRTMLOvezw
+  for <linux-kernel@vger.kernel.org>;
+  Wed, 03 Sep 2025 15:04:50 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=korea.ac.kr;
+	s=naverworks; t=1756911890;
+	bh=3FhiaCfmZwkYLyKJbI+B3fuYEbKg6EUl6NdwQ1AxukY=;
+	h=From:To:Subject:Date:Message-ID:From:Subject:Feedback-ID:
+	 X-Works-Security;
+	b=dsAQssHOInAbkx77EBdrK50Cc/qJksE186U24D/5Hg2iqMTOllmi6xSx1+WQ0F07J
+	 FxMh2k/I/PrMUpjvEbjaVec/KRkpTAkK1Uyw9yWZcQy8RDJWHvg+yC+B41ClQHQeIB
+	 8vNSBIBg917LJnvOgvvu7dbv17YwtF5NDwsfwMLA=
+X-Session-ID: paH7lmGFTMuO7byS2M2b2w
+X-Works-Send-Opt: L/bwjAJYjHm/FqMrKBmmKxg/FACYjHmm
+X-Works-Smtp-Source: VdnXaAM9FqJZ+Hmmaxtl+6E=
+Received: from camellia.vcn11051708.oraclevcn.com ([130.162.137.185])
+  by cvnsmtp104.wmail.worksmobile.com with ESMTP id paH7lmGFTMuO7byS2M2b2w
+  for <multiple recipients>
+  (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+  Wed, 03 Sep 2025 15:04:50 -0000
+From: Geonha Lee <w1nsom3gna@korea.ac.kr>
+To: kvmarm@lists.linux.dev
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Geonha Lee <w1nsom3gna@korea.ac.kr>
+Subject: [PATCH] KVM: arm64: nested: fix VNCR TLB ASID match logic for non-Global entries
+Date: Thu,  4 Sep 2025 00:04:21 +0900
+Message-ID: <20250903150421.90752-1-w1nsom3gna@korea.ac.kr>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821161946.1096033-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250821161946.1096033-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250821161946.1096033-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 3 Sep 2025 17:04:15 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVb_5+gVDCUYYZ2Xj55gXzZATx+5vaY6uS1TuCNYb9Qeg@mail.gmail.com>
-X-Gm-Features: Ac12FXzyG34U6XPHgyKHtYspSpPi6ndMXIbD2Xuo0m32dAbQoSis4tQUVb1Fekc
-Message-ID: <CAMuHMdVb_5+gVDCUYYZ2Xj55gXzZATx+5vaY6uS1TuCNYb9Qeg@mail.gmail.com>
-Subject: Re: [PATCH 6/6] arm64: dts: renesas: rzt2h-n2h-evk: Enable USB2.0 support
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Prabhakar,
+kvm_vncr_tlb_lookup() is supposed to return true when the cached VNCR
+TLB entry is valid for the current context. For non-Global entries, that
+means the entry’s ASID must match the current ASID.
 
-On Thu, 21 Aug 2025 at 18:19, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Enable USB2.0 support on RZ/T2H and RZ/N2H EVKs.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+The current code returns true when the ASIDs do *not* match, which
+inverts the logic. This is a potential vulnerability:
 
-Thanks for your patch!
+- Valid entries are ignored and we fall back to kvm_translate_vncr(),
+  hurting performance.
+- Mismatched entries are treated as permission faults (-EPERM) instead
+  of triggering a fresh translation.
+- This can also cause stale translations to be (wrongly) considered
+  valid across address spaces.
 
-> --- a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-> @@ -29,6 +29,28 @@
->   */
->  #define SD1_MICRO_SD   1
->
-> +/*
-> + * USB Pin Configuration:
-> + *
-> + * This board is equipped with three USB connectors: Type-A (CN80), Mini-B (CN79),
-> + * and Micro-AB (CN33). The RZ/T2H SoC has a single USB channel, so either the USB
-> + * host interface or the USB function interface can be used, but not both at the
-> + * same time.
+Flip the predicate so non-Global entries only hit when ASIDs match.
 
-Please reflow the text to fit in 80 columns.
+Reported-by: Team 0xB6 in bob14
+  DongHa Lee (@GAP-dev)
+  Gyujeong Jin (@gyutrange)
+  Daehyeon Ko (@4ncienth)
+  Geonha Lee (@leegn4a)
+  Hyungyu Oh (@DQPC_lover)
+  Jaewon Yang (@R4mbb)
 
-The last sentence applies to the CN80 and CN79 connectors only, right?
+Signed-off-by: Geonha Lee <w1nsom3gna@korea.ac.kr>
+---
+ arch/arm64/kvm/nested.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> + *
-> + * By default, the Type-A (CN80) and Mini-B (CN79) connectors are enabled.
-> + * Configure the switches as follows:
-> + *   - P00_0 - P00_2 (control signals for USB power supply): SW1[5] = ON
-> + *   - USB_VBUSIN (used for USB function): SW7[7] = OFF; SW7[8] = ON
-> + *   - USB_VBUSEN (used for USB_HF_VBUSEN): SW7[9] = OFF; SW7[10] = ON
-> + *
-> + * To enable the Micro-AB (CN33) USB OTG connector, set the following macro to 1
-> + * and configure the switches as follows:
-> + *   - P00_0 - P00_2 (control signals for USB power supply): SW1[5] = ON
-> + *   - USB_VBUSIN (used for USB OTG): SW7[7] = ON; SW7[8] = OFF
-> + *   - USB_VBUSEN (used for USB_OTG_VBUSEN): SW7[9] = ON; SW7[10] = OFF
-> + */
-> +#define USB_OTG                0
-> +
->  #include "rzt2h-n2h-evk-common.dtsi"
->
->  / {
-> @@ -145,4 +167,18 @@ i2c1_pins: i2c1-pins {
->                 pinmux = <RZT2H_PORT_PINMUX(5, 0, 0x17)>, /* SDA */
->                          <RZT2H_PORT_PINMUX(4, 7, 0x17)>; /* SCL */
->         };
-> +
-> +#if USB_OTG
-> +       usb-exicen-hog {
-> +               gpio-hog;
-> +               gpios = <RZT2H_GPIO(0, 2) GPIO_ACTIVE_HIGH>;
-> +               output-high;
-> +               line-name = "usb_exicen_a";
-> +       };
-> +#endif
-> +
-> +       usb_pins: usb-pins {
-> +               pinmux = <RZT2H_PORT_PINMUX(0, 0, 0x13)>, /* VBUS */
-
-s/VBUS/VBUSEN/?
-
-> +                        <RZT2H_PORT_PINMUX(0, 1, 0x13)>; /* OVRCUR */
-> +       };
->  };
-> diff --git a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-> index 80f358fb2d74..b98b0f7c1128 100644
-> --- a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-> @@ -33,6 +33,33 @@
->   */
->  #define SD1_MICRO_SD   1
->
-> +/*
-> + * USB Pin Configuration:
-> + *
-> + * This board is equipped with three USB connectors: Type-A (CN7), Mini-B (CN8),
-> + * and Micro-AB (CN9). The RZ/N2H SoC has a single USB channel, so either the USB
-> + * host interface or the USB function interface can be used, but not both at the
-> + * same time.
-
-Please reflow the text to fit in 80 columns.
-
-The last sentence applies to the CN7 and CN8 connectors only, right?
-
-> + *
-> + * By default, the Type-A (CN7) and Mini-B (CN8) connectors are enabled.
-> + * Configure the switches as follows:
-> + *   - P02_2 - P02_3 (control signals for USB power supply): DSW2[6] = OFF;
-
-s/DSW2[6]/DSW2[5]/?
-
-> + *     - P02_2 (used for VBUSEN): DSW14[5] = OFF; DSW14[6] = ON
-> + *     - P02_3 (used for USB_OVRCUR): DSW14[1] = OFF; DSW14[2] = ON
-> + *   - USB_VBUSIN (used for VBUS of CN8 for function): DSW16[1] = OFF; DSW16[2] = ON
-> + *   - USB_VBUSEN (used for USB_HF_VBUSEN): DSW16[3] = OFF; DSW16[4] = ON
-> + *
-> + * To enable the Micro-AB (CN9) USB OTG connector, set the following macro to 1
-> + * and configure the switches as follows:
-> + *   - P02_2 - P02_3 (control signals for USB power supply): DSW2[6] = OFF;
-
-s/DSW2[6]/DSW2[5]/?
-
-> + *     - P02_2 (used for VBUSEN): DSW14[5] = OFF; DSW14[6] = ON
-> + *     - P02_3 (used for USB_OVRCUR): DSW14[1] = OFF; DSW14[2] = ON
-> + *   - USB_VBUSIN (used for VBUS of CN9 for OTG): DSW16[1] = ON; DSW16[2] = OFF
-> + *   - USB_VBUSEN (used for USB_OTG_VBUSEN): DSW16[3] = ON; DSW16[4] = OFF
-> + *   - USB_EXICEN (used for USB OTG EXICEN): DSW14[3] = OFF; DSW14[4] = ON
-
-Looks like you could use P00_0 - P00_2 instead of P02_2 - P02_3, like
-on the RZ/T2H EVK?
-But you don't want to do that because you want to use these pins for Ethernet?
-
-> + */
-> +#define USB_OTG                0
-> +
->  #include "rzt2h-n2h-evk-common.dtsi"
->
->  /*
-> @@ -185,4 +212,18 @@ i2c1_pins: i2c1-pins {
->                 pinmux = <RZT2H_PORT_PINMUX(3, 3, 0x17)>,
->                          <RZT2H_PORT_PINMUX(3, 4, 0x17)>;
->         };
-> +
-> +#if USB_OTG
-> +       usb-exicen-hog {
-> +               gpio-hog;
-> +               gpios = <RZT2H_GPIO(2, 4) GPIO_ACTIVE_HIGH>;
-> +               output-high;
-> +               line-name = "usb_exicen_a";
-> +       };
-> +#endif
-> +
-> +       usb_pins: usb-pins {
-> +               pinmux = <RZT2H_PORT_PINMUX(2, 2, 0x13)>, /* VBUS */
-
-s/VBUS/VBUSEN/?
-
-> +                        <RZT2H_PORT_PINMUX(2, 3, 0x13)>; /* OVRCUR */
-> +       };
->  };
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
+index 77db81bae86f..24eab94d7d7f 100644
+--- a/arch/arm64/kvm/nested.c
++++ b/arch/arm64/kvm/nested.c
+@@ -1276,7 +1276,7 @@ static bool kvm_vncr_tlb_lookup(struct kvm_vcpu *vcpu)
+ 		    !(tcr & TCR_ASID16))
+ 			asid &= GENMASK(7, 0);
+ 
+-		return asid != vt->wr.asid;
++		return asid == vt->wr.asid;
+ 	}
+ 
+ 	return true;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.43.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
