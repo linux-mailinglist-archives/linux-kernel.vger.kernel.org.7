@@ -1,136 +1,142 @@
-Return-Path: <linux-kernel+bounces-797671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6545EB41354
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:01:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D22EEB41359
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC6AD7A988B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:59:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12937C026E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D36A2D1F61;
-	Wed,  3 Sep 2025 04:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16812D3748;
+	Wed,  3 Sep 2025 04:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eYsn4Gcc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nOQtONCM"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA4D1E412A
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 04:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9778925A321;
+	Wed,  3 Sep 2025 04:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756872057; cv=none; b=PCOKzvyDrfC6a4w6BoOeIaQlfxe7Ds7R64gey0885E1n5pYvDdoFqFsrHhOv2S9SyyijdEtL6b56MwY63mKmU5EiiPDiFPNAQIAkTurRaNu9XHSYXCjBT8RBg0NBqnId90WOpVFAaVeYdt2MrZF1Z3Yysg2FF2HsCw6EuTeabKs=
+	t=1756872059; cv=none; b=golNxAZOM4W++WLGbl12gtiaL8/EAK1Ha7VAGHv1rQRukYdixZ9nhWYcCpndK1Rg/lu5scW45GmILLv6jlFL98v7XmUkS+9StXpjVQMov6EtG4caS/VZk1sRrAyHdJraSZs3gHKopGA5cV5tVyjT2cRaLYUMQkazueLEYo066o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756872057; c=relaxed/simple;
-	bh=U0jjFOIRPE2pVoUMIlyB9h7+kH8XE4j8UQpdjONzyjE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gZyeSn9DApWxFOuwgo28PN1ZQagE7vqU2Sgrmjqyp+gBdINbh6Sn4v4qpIDOOsUVWWfAEOM1W/AUaY5cO/cxwND+4B29TF+1xG8Ve8OvXF+y25/6fSx1lUWwTsKVQewbCo5DxE6AHM8wsvqjoeJK57x279QYPfTizxvxVRgrZX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eYsn4Gcc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756872055;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U0jjFOIRPE2pVoUMIlyB9h7+kH8XE4j8UQpdjONzyjE=;
-	b=eYsn4Gccsj0DMz5OwFHuYs6+PuEp9yJ/ftoGgFOrRzqHKPH9TERXQ6YIaGop3hzWg7HWbg
-	l20ArN4Yp5Fz1YLNg+3OaFDgaY9SFP4v8hBm8qS1wrHtDAAjezXxUvxcGJ+TGpZ2YiNg+b
-	YBUsqvvOYV453OX2+JirSjKyE26vFsY=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-618-FSFBuBcEPf293kFE1D0pTg-1; Wed, 03 Sep 2025 00:00:53 -0400
-X-MC-Unique: FSFBuBcEPf293kFE1D0pTg-1
-X-Mimecast-MFC-AGG-ID: FSFBuBcEPf293kFE1D0pTg_1756872052
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24aa3cf81a8so43638725ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 21:00:53 -0700 (PDT)
+	s=arc-20240116; t=1756872059; c=relaxed/simple;
+	bh=6UR9ejdf4VPdId/kJKjtTmDnIcSf6XuqhLcmd7IRW2s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=B9HnfWoXYXlDC02p093VwcT5sMVFCuY2tzL5DgioX00+RMb1GapiewgXVIOvgwGHb/8eQR05owkbRMPUTNIT0yUw5Y1r27mojyjF14UxBzrn4f9JNCP+PU5mXs9SkqcvDI3JaLR1CxFURNn6ovp20bAVPeibCGDUzbmg77QdR8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nOQtONCM; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-77247e25a69so269092b3a.2;
+        Tue, 02 Sep 2025 21:00:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756872057; x=1757476857; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CRg1H5QKeFRVFkhJ6WwioKBMmTGdYWt+yD/4+yi4RdQ=;
+        b=nOQtONCMQdTSS7hWMvZRr/2oSmmfoq2jTHR5/s4ZiBkNoR5d4+esBGJ/DZ29NL69MP
+         fqukMv5vaHmOrv4EyvWvUgifiKBQ9ooAelTu8pxqj45CWVk0RwI/BqlLnzuViDCHN0on
+         stcs6JG56jN2xcVT6tNRnqSuEmFSUoVb7cPTcRSOseA3XIpNaRw2bxdeluVp92NiQQNG
+         ylFvQ/7muIFsmjAChIqWn3ZkJawsIOii1A7Cx75VA1o5IdD5sgI2/DtM8gEicbqHvuc4
+         eCN98dqvXHMUhlkb+zUPY3R9gM4BQdMW0U8dQExNur4WvcEzjh+BOt5a/9+/U55hgZgZ
+         6Y1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756872052; x=1757476852;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756872057; x=1757476857;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U0jjFOIRPE2pVoUMIlyB9h7+kH8XE4j8UQpdjONzyjE=;
-        b=MQXr2gmzkxCgO77DJ88ZjbuHCArHo3JKUFMPDEXID1LzzeVrQPu3F8twQmAFfn7kpV
-         Qlzu1g6lP5c+zsGzQclcpNm+Q+rEkUrKS21ic7wnRDbPDiRn12FTfS3WsdlsHmt+xTyK
-         sRcJYPDprQlRl/EYmC/7CXpmYOIdzxUx0SxRdRUjBI0uRtITRjhrsKR7X2z+VyXsn4kq
-         sALQhkeKHRY4caSXFqg/Xn2ZoiqLAyNNT9EhNVO85kA06ayse1uWWUGRi6PN88np7lyI
-         pj2VwOulgJVFaPpo6p1euQ7mAbyC6cziv8aVdvR+lA7yRhzBiTfss5mlAmnPh1s3zGDz
-         6Zcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSRVGd7srGFp3J5aq4Ra+IQs0ab7MkW7Zmp25QZFGozdzzmgxnGjnbz5Cbd4VItoUVZ8vsp2Gvv8bYJJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoIFQx6BVEeAIY7Fi+q0XjH+E3Sp4bmB94wLsYoPXW6pMqy+ic
-	wP5Q8aGf7g3oLPnMLlRcXr0w1zIDGaf1seQ3XLg+Av+uYxocpzEwDWVEymmuYqlSaWnxxVcHoZk
-	1z/sGkvbFkj9RDeHX+E/rfJcVhYHZgH8b2DRBJh0hQF9cXrhXJDuc08Wqjc7azEcTrCTRS6WgkU
-	o7oY0XJVADp7Dannwm5Oyqpg8p7iTiT7vMnUivdWMc
-X-Gm-Gg: ASbGnctcc2gozMaEkXD11Qo4ClH/owMv/Wsk31m4XNEHHcAXnfB1OktIl0RB4clOlgm
-	aLQI2qi5dohVF99pbdTeYbkiAAo/Pp+c3D8Jd3B6Le4BSeooCiDAs3tRu+ZgtJHHhja443lZNJt
-	Y64H1lAY/8ibOh5kv+nKvY0g==
-X-Received: by 2002:a17:903:1ab0:b0:246:76ed:e25d with SMTP id d9443c01a7336-24944b15b8cmr169377645ad.50.1756872052059;
-        Tue, 02 Sep 2025 21:00:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH5aB6Qqxj9qWYTbp0SCLMQoviI6dY5kYYbJnZhA2Hm84dGyl7OdRCsvBI+vTe21NUsYwxF2ONdt98uJqVn0hA=
-X-Received: by 2002:a17:903:1ab0:b0:246:76ed:e25d with SMTP id
- d9443c01a7336-24944b15b8cmr169377215ad.50.1756872051574; Tue, 02 Sep 2025
- 21:00:51 -0700 (PDT)
+        bh=CRg1H5QKeFRVFkhJ6WwioKBMmTGdYWt+yD/4+yi4RdQ=;
+        b=fU49C4IOLaOAvegpARLvdOeRV8UA42i3Klr/JGjDhQN+uM7nRnWD+b9NhVUKGmyQ6S
+         ZYWPsfJmfg2Wx6mSoyHGnLxoe4wCa2jx7Hny2C+cSmk30Wqpdm+rw6Uz2rCQMeaLYbgN
+         pHf+TFPUAXfvpGAvRe/+YFrm90G9nFYdSFnRDqVnw9pRIMx0V0cx792ob+dZDvW0PLUh
+         32dx8hCXmeZGMfvioI0nxvBM4hVskYYRc8iehHlMfVkV1Hip2ok7r3yKKuxZl/llBK6C
+         2BiFZB4NvduWM1ofgeDfMr/m4Mru5FUIsjb+067C/6SRKC8c4eSvrKFvHSCJu/KbwT3J
+         c9MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUq688Ak0ZbFjwGfYv80RNzuLW3DfkpVCAxfDVHOnuic02VvnXfS4z7Z3SvqoZikVRkxvK2@vger.kernel.org, AJvYcCV8v5QTm7CLJ9+AbT+PFjW0OkA94T2gDMWdr0yZ6Ay/oiPIkT8iPAKddhT/Y+CQigZRDG3CoHDWkabWIsZ0@vger.kernel.org, AJvYcCVQCXNLoO+UfgRhuTkpcQ4QMpzTqCHpeEz1fs/PCn+koi8v39SJbdm4NhSc03nLirFOUjm+craS2ZVz@vger.kernel.org, AJvYcCVfwiy893ADKB3J1WG1Ahm+dWrPV4ZSoguKpyhtcieFOLndVrxzdWK+UhWwxlQhYNwMzFz2XplWHkgs@vger.kernel.org, AJvYcCVfyYapbCj31D0gNFVw5Zqdw8wECFAwNvGy9rWY85YZ5ONq9FJEbvnra+WUbabD4YL7uLwMZqGORGeZflUykA==@vger.kernel.org, AJvYcCWWmhCaCYwhGCBdDynmmtWF9o2WbsM2ueRDm402aCugF6OTogXnNFHCy1WHhSplPvKOQ1D5a+4F0UZX@vger.kernel.org
+X-Gm-Message-State: AOJu0YytaUN02DZht0lv9LhfUuMSQys1x6pb1qjmgmll6znz2STtNLZp
+	TM4vm84YWI6zjtp7Txs9deWL27QAq8ifhMsV/gER+LvScHlBfP8HyMMc
+X-Gm-Gg: ASbGncuem6/ENzIMx3cuIiy+71C35YQebw2b3LkNaxhUFx/543fXwhf77RnBILEa6jM
+	btyyL0A37bZ9LD76/LAJ+oObWNFPSShByl+8U6V9HZRrHKmNLALQD9tiQHmb4T85aoofyBnmOPG
+	6j6j8cDUTY6Y1enumLUZMHNRC/Ekk6vGSCm+fdn6/fzfobKWlf8WxB4ttTUw+vwDqr7XD4Zusmd
+	UQF8whVVl6NHpUgpE1BXj1WiS5xw8pr+93vWEedMNzMMH69h+AeLFW9cTcd4uR8dpj/dwt63cVc
+	ZDpTP4jxUeDmfvcZyl9qRoaX2H7jrJYVws05X3kN/kYAc/qsANQGGL+3GiAm1SuLBEmhLYV1aPQ
+	mHDTD02pk8xluIOYwFSsqt+vXwJVBPwwPnLT/6z/tPiD8zY9LUA==
+X-Google-Smtp-Source: AGHT+IE90pfwfxg7f/fDuh03cv7xCHKmMMJxtPjEvyUYKYaMHOvpneeXe9lal81BrPks03fBQxlqdA==
+X-Received: by 2002:a05:6a00:807:b0:737:6589:81e5 with SMTP id d2e1a72fcca58-77232745936mr12138992b3a.2.1756872056706;
+        Tue, 02 Sep 2025 21:00:56 -0700 (PDT)
+Received: from ranganath.. ([2406:7400:98:c842:443f:2e7:2136:792b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2b2f56sm14970241b3a.26.2025.09.02.21.00.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 21:00:56 -0700 (PDT)
+From: Ranganath V N <vnranganath.20@gmail.com>
+To: rdunlap@infradead.org
+Cc: brauner@kernel.org,
+	conor+dt@kernel.org,
+	corbet@lwn.net,
+	devicetree@vger.kernel.org,
+	djwong@kernel.org,
+	krzk+dt@kernel.org,
+	krzk@kernel.org,
+	kvm@vger.kernel.org,
+	laurent.pinchart@ideasonboard.com,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	pbonzini@redhat.com,
+	robh@kernel.org,
+	vnranganath.20@gmail.com
+Subject: Re: [PATCH] Documentation: Fix spelling mistakes
+Date: Wed,  3 Sep 2025 09:30:43 +0530
+Message-ID: <20250903040043.19398-1-vnranganath.20@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <A33D792E-4773-458B-ACF4-5E66B1FCB5AC@infradead.org>
+References: <A33D792E-4773-458B-ACF4-5E66B1FCB5AC@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902080957.47265-1-simon.schippers@tu-dortmund.de>
-In-Reply-To: <20250902080957.47265-1-simon.schippers@tu-dortmund.de>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 3 Sep 2025 12:00:40 +0800
-X-Gm-Features: Ac12FXzvemknOpwKY7V_bPmSMDz5x5JOaUgCJhdjwkkYam90CI_kt2z3omxI2R8
-Message-ID: <CACGkMEviyLXU46YE=FmON-VomyWUtmjevE8FOFq=wwvjsmVoQQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 0/4] TUN/TAP & vhost_net: netdev queue flow
- control to avoid ptr_ring tail drop
-To: Simon Schippers <simon.schippers@tu-dortmund.de>
-Cc: willemdebruijn.kernel@gmail.com, mst@redhat.com, eperezma@redhat.com, 
-	stephen@networkplumber.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 2, 2025 at 4:10=E2=80=AFPM Simon Schippers
-<simon.schippers@tu-dortmund.de> wrote:
->
-> This patch series deals with TUN/TAP and vhost_net which drop incoming
-> SKBs whenever their internal ptr_ring buffer is full. Instead, with this
-> patch series, the associated netdev queue is stopped before this happens.
-> This allows the connected qdisc to function correctly as reported by [1]
-> and improves application-layer performance, see benchmarks.
->
-> This patch series includes TUN, TAP, and vhost_net because they share
-> logic. Adjusting only one of them would break the others. Therefore, the
-> patch series is structured as follows:
-> 1. New ptr_ring_spare helper to check if the ptr_ring has spare capacity
-> 2. Netdev queue flow control for TUN: Logic for stopping the queue upon
-> full ptr_ring and waking the queue if ptr_ring has spare capacity
-> 3. Additions for TAP: Similar logic for waking the queue
-> 4. Additions for vhost_net: Calling TUN/TAP methods for waking the queue
->
-> Benchmarks ([2] & [3]):
-> - TUN: TCP throughput over real-world 120ms RTT OpenVPN connection
-> improved by 36% (117Mbit/s vs 185 Mbit/s)
-> - TAP: TCP throughput to local qemu VM stays the same (2.2Gbit/s), an
-> improvement by factor 2 at emulated 120ms RTT (98Mbit/s vs 198Mbit/s)
-> - TAP+vhost_net: TCP throughput to local qemu VM approx. the same
-> (23.4Gbit/s vs 23.9Gbit/s), same performance at emulated 120ms RTT
-> (200Mbit/s)
-> - TUN/TAP/TAP+vhost_net: Reduction of ptr_ring size to ~10 packets
-> possible without losing performance
->
-> Possible future work:
-> - Introduction of Byte Queue Limits as suggested by Stephen Hemminger
-> - Adaption of the netdev queue flow control for ipvtap & macvtap
+>On September 2, 2025 12:59:05 PM PDT, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>On 02/09/2025 21:38, Ranganath V N wrote:
+>>> Corrected a few spelling mistakes to improve the readability.
+>>> 
+>>> Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/submitting-patches.rst | 2 +-
+>>>  Documentation/filesystems/iomap/operations.rst           | 2 +-
+>>>  Documentation/virt/kvm/review-checklist.rst              | 2 +-
+>>>  3 files changed, 3 insertions(+), 3 deletions(-)
+>>> 
+>>> diff --git a/Documentation/devicetree/bindings/submitting-patches.rst b/Documentation/devicetree/bindings/submitting-patches.rst
+>>> index 46d0b036c97e..191085b0d5e8 100644
+>>> --- a/Documentation/devicetree/bindings/submitting-patches.rst
+>>> +++ b/Documentation/devicetree/bindings/submitting-patches.rst
+>>> @@ -66,7 +66,7 @@ I. For patch submitters
+>>>       any DTS patches, regardless whether using existing or new bindings, should
+>>>       be placed at the end of patchset to indicate no dependency of drivers on
+>>>       the DTS.  DTS will be anyway applied through separate tree or branch, so
+>>> -     different order would indicate the serie is non-bisectable.
+>>> +     different order would indicate the series is non-bisectable.
+>>That's not entirely a spelling mistake
+>>https://en.wiktionary.org/wiki/serie#English
+>>
+>>Best regards,
+>>Krzysztof
 
-Could you please run pktgen on TUN as well to see the difference?
 
-Thanks
+>Obsolete.  Close enough for me. 
 
+Hi,
+Thanks for the response. Do you want me to resend the patch by ignoring this?
+particular "serie".
+
+Ranganath
 
