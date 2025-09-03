@@ -1,131 +1,210 @@
-Return-Path: <linux-kernel+bounces-798939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3651DB424EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:20:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7065B424E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68EB1584A47
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:18:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43AD91881761
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEF224468D;
-	Wed,  3 Sep 2025 15:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A741258EF0;
+	Wed,  3 Sep 2025 15:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GA1sAcT3"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="ErY3l/KV"
+Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4698023F412
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F14E63CF;
+	Wed,  3 Sep 2025 15:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756912550; cv=none; b=LrIWefJ+EIjIbausC6aabGMJrV6t16QePuWjuON5FSR0tcAtSyq/TGqhPDCqOb+Ppc6fF8bW7GBd8Ibhe7bCXewD9XJ0mrv7bV9aqrFRlPj0JVAIS1PBxBNJ8Hgvugbks28OWsz0Gw66+7CP0FyZ3TnSTJaeYHsSXt16iY5mMVE=
+	t=1756912611; cv=none; b=kbczkalBrbmuZ6URa6JsI17icbe1dEzR8cdxuWcvSouyO9NQMMMMJo8KkwSr2ho333H6YW7788ntw++XqcOzCM8urX8yFRHyyvw7q8mio3hE36aUBTjyevenAxoQLrzh9PtNbk2P5eUz3K6J0Tnf2jrT5NB3WxZAA5bTgisAmjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756912550; c=relaxed/simple;
-	bh=l5JR3+UPUEJ2ClCwj8ex+lrVpnlr8I65tG5mWXGoWUU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SwJROpJhoNXhgVPgoZS9GSdKs/NrgtwzCCKjUaUxIwqb5uYOMLJ6H+Ur2RUxeS8bjLIrPRDBtw8OHW8cKpxMp5dmmosPFAvYDJZhEnyy1F9f0i5MSvi+1p4jvUeVUxV7qItCQpbJcPrzaSSB8vwJMSj4tXqcvHB3cWCFfCpbqds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GA1sAcT3; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45b9814efbcso8250185e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 08:15:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756912547; x=1757517347; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fMR5sXuAMQlcJIniIrDARobJ0FFiLjcpiPVUSqhd9zk=;
-        b=GA1sAcT3ccTSs2srYyACOmN28J7qbl1PHVLGf5113S5hPo3R8/WgzMjHTylDPyiwMR
-         rXfTB2/8D/BILYR2lmdC6QjBTH8eIGuQUvgXknfsMDL9fPXnqaBZtEfqMP6gAvcZmQSD
-         Q45srAuWBQ58+9i0LLLRlXy3M6McU96jtu32VAEHmHeEvId0UsG0QNC1Xcap+v0S5FvF
-         DckdgkdZ8Iv0dAjpiio2SHoOsGUCeAinyoNoImuvRJs9E9aqPRanWOTAD1wIVmKH08Qf
-         mWUZED9dbwXbrk481LjVZXs+gkJpZdYxbDiv1BTFQeHS5b3FBG+swqkWHE6/IGna9PPe
-         ICEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756912547; x=1757517347;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fMR5sXuAMQlcJIniIrDARobJ0FFiLjcpiPVUSqhd9zk=;
-        b=n4a/9WV7Ui3n/jUA+P6AJ2vOQ8nApS+gChs/GSn4Kvy+Fr6BJ/hQ4ouJkGICo7GKOW
-         C3S3Ff3VMPvtckphyb+jgfd1T7tYafSDsJ4YY1SzoOwyN9nHe030lVhKMiqzmJG3BGqZ
-         iLul0LFiWtWi1tULs31dLP+Nves2uDFysh5UWcc50ifI9QSWj3RoZif+z6I37EfA2Peu
-         pY4XwrDLhISnd/OafbGV/pUjt71gm8ovlZ91ZZkkDaVCXTr0IMsIWkRs0UVAgnsuuNIE
-         ailznqr3hBVtQMoH0h7LUSIVGOSyGGahxr3bwpbfkFUeH0UQFUZBm1HhiASW9P/ugvYs
-         5uNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsGYljjRmRnmGcqzNyekq9CiHd+hJffUcCnRzPAv4PUjGsw1FxxtCo7mKr/Dx3i7jXQ4tjBb3XsR2m/bU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGwC5liGwsJ/MbW+kZ+9KAohlJqLQXNHiP/w5Swf/95DYD5swb
-	Ab8nqqw6bXyM9bj2mzAf0eNLePRtJCed11olJqfduS93PFVioLkUcZVz3OiZwgHytzUhBdhnKvV
-	vvgX3LrI=
-X-Gm-Gg: ASbGncur329g+zvDoix5NXezaxiU1Qdbh1/QyLZmdzAMfZ4ixnyjygWzKdq2MTpLKh3
-	0yjLBWy1eCq45A9Nsv0esP5NhFnoipuakMvrRDTLogkvU6g71etcSqXPQbXlbNqpLVI0Ad06TGv
-	8ndKPJpnHOMHcswiFCvUWlVuzjlCgyYrmfWBmUc1mpkgO4hjxKOVp8YT6Z6qBwDVq62fXUFlspH
-	VWDbPZmHThjMV3F/CVoPr44wMLeZ31jDzMemUsNFfBZUZdLA36PysSaaChdKucmlV43swSTAdjK
-	N7KQl30kCqWDS9CtDevI5gj+ca/eK8Hvkk4AnzmChsVcM1dk5AO2E0U5Jyo3qgFv+hZsnQH6q9b
-	1Ph34g6yAh8D/9x91U5fAAHy4zY5Y5BeiwIs2pBYGtQ==
-X-Google-Smtp-Source: AGHT+IGqmlvtcSgBojPlbYZQhWtD2pJ/2FpKNNBsSoYyGicnvhdImai5K6SAb/1Au4J2gguwRAbk9g==
-X-Received: by 2002:a05:600c:648a:b0:45c:b523:5a09 with SMTP id 5b1f17b1804b1-45cb5235bfbmr28123975e9.16.1756912546581;
-        Wed, 03 Sep 2025 08:15:46 -0700 (PDT)
-Received: from ho-tower-lan.lan ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d0f85c287fsm22090097f8f.52.2025.09.03.08.15.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 08:15:46 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-Date: Wed, 03 Sep 2025 16:15:27 +0100
-Subject: [PATCH 2/2] perf symbols: Fix HAVE_LIBBFD_BUILDID_SUPPORT build
+	s=arc-20240116; t=1756912611; c=relaxed/simple;
+	bh=ttg+OChwUbkpoVDWCw3xGKa0n3d+t7aSDC55RG2VqSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fPUO4dspRjA6SnZ1vMSE2qOdaDQWxKeLKvvUruLq6NHPfUV5V8uSpbf9KrNK4kO5LDSmmWSInjPl/AnJubrKPTAASL2vQA/Wysxrsjp2x4SGlz/ltqcCmdPZOKes5Cp//d9a5ErlVJLxq/5W1OR12ETpqMKuCaDclhSSgYzB1eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=ErY3l/KV; arc=none smtp.client-ip=168.119.41.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
+	 s=mail; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References
+	:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=a3G9xHdW/VxHSePvTIzerhYn95SpSnVWLe7bCZKfh6U=; b=ErY3l/KVYqsCbtBZ+lyIGVK6W5
+	WIbVl4M+Tc128AqaMRvcelzBJaKWXq8+iGnxTyjvVOzsNAU7D9LLM61gxtDs5DVXK9RVlMOIQ75vW
+	duwF15DALAsLbMOX3tYlNgNiFfAsR09Jr49oSG+WNy284Vx7xELoC4QkQ5ZlYs1bUmSk=;
+Received: from 194-208-208-245.tele.net ([194.208.208.245]:61793 helo=[192.168.0.207])
+	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+	(Exim 4.93)
+	(envelope-from <matthias.fend@emfend.at>)
+	id 1utpDx-005LvW-4e; Wed, 03 Sep 2025 17:16:38 +0200
+Message-ID: <8417d761-114b-4e41-8a4a-9eac2600637f@emfend.at>
+Date: Wed, 3 Sep 2025 17:16:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250903-james-perf-read-build-id-fix-v1-2-6a694d0a980f@linaro.org>
-References: <20250903-james-perf-read-build-id-fix-v1-0-6a694d0a980f@linaro.org>
-In-Reply-To: <20250903-james-perf-read-build-id-fix-v1-0-6a694d0a980f@linaro.org>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
- James Clark <james.clark@linaro.org>
-X-Mailer: b4 0.14.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] media: add Himax HM1246 image sensor
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bsp-development.geo@leica-geosystems.com,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20250526-hm1246-v2-0-6b882827a3a5@emfend.at>
+Content-Language: de-DE
+From: Matthias Fend <matthias.fend@emfend.at>
+In-Reply-To: <20250526-hm1246-v2-0-6b882827a3a5@emfend.at>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: 
+X-Spam-Bar: 
+X-Spam-Report: 
 
-read_build_id() now has a blocking argument, but libbfd uses fopen()
-internally which doesn't support O_NONBLOCK. Fix the build by adding the
-argument and ignoring it:
+Hi all,
 
-  util/symbol-elf.c:964:8: error: too many arguments to function ‘read_build_id’
-    964 |  err = read_build_id(filename, bid, block);
+since I sent the first version of this patch series quite some time ago 
+and, apart from the bindings there has been no feedback, I wanted to 
+check whether there might be any fundamental concerns (such as the 
+sensor being somewhat older)?
 
-Fixes: 2c369d91d093 ("perf symbol: Add blocking argument to filename__read_build_id")
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- tools/perf/util/symbol-elf.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+If there are no general objections to this driver, I would be very 
+grateful for any comments or suggestions for improvement.
 
-diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index 033c79231a54..e0d6ff7d0acf 100644
---- a/tools/perf/util/symbol-elf.c
-+++ b/tools/perf/util/symbol-elf.c
-@@ -873,7 +873,8 @@ static int elf_read_build_id(Elf *elf, void *bf, size_t size)
- 
- #ifdef HAVE_LIBBFD_BUILDID_SUPPORT
- 
--static int read_build_id(const char *filename, struct build_id *bid)
-+static int read_build_id(const char *filename, struct build_id *bid,
-+			 bool block __maybe_unused)
- {
- 	size_t size = sizeof(bid->data);
- 	int err = -1;
+Thanks
+  ~Matthias
 
--- 
-2.34.1
+Added Sakari and Laurent to CC.
+
+Am 26.05.2025 um 08:59 schrieb Matthias Fend:
+> Hello,
+> 
+> this series adds support for the Himax HM1246 image sensor.
+> The Himax HM1246-AWD is a 1/3.7-Inch CMOS image sensor SoC with an active
+> array size of 1296 x 976. The datasheet can b
+> Currently, only the native RAW mode is supported. Other modes and the
+> internal image signal processing pipeline are not currently supported.
+> The data sheet is available on the manufacturer's website [1].
+> Tested on i.MX8MP hardware. A Toshiba TC358746 bridge was used to convert
+> the sensor's parallel video output into MIPI signals for the i.MX8MP.
+> 
+> Best regards
+>   ~Matthias
+>   
+> [1] https://www.himax.com.tw/wp-content/uploads/2024/03/HM1246-AWD_DS_v01.pdf
+> 
+> v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
+> 
+> Compliance test for device /dev/v4l-subdev4:
+> 
+> Driver Info:
+>          Driver version   : 6.12.0
+>          Capabilities     : 0x00000000
+>          Client Capabilities: 0x0000000000000003
+> streams interval-uses-which
+> Required ioctls:
+>          test VIDIOC_SUDBEV_QUERYCAP: OK
+>          test invalid ioctls: OK
+> 
+> Allow for multiple opens:
+>          test second /dev/v4l-subdev4 open: OK
+>          test VIDIOC_SUBDEV_QUERYCAP: OK
+>          test for unlimited opens: OK
+> 
+> Debug ioctls:
+>          test VIDIOC_LOG_STATUS: OK (Not Supported)
+> 
+> Input ioctls:
+>          test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+>          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>          test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+>          test VIDIOC_ENUMAUDIO: OK (Not Supported)
+>          test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+>          test VIDIOC_G/S_AUDIO: OK (Not Supported)
+>          Inputs: 0 Audio Inputs: 0 Tuners: 0
+> 
+> Output ioctls:
+>          test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+>          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>          test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+>          test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+>          test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+>          Outputs: 0 Audio Outputs: 0 Modulators: 0
+> 
+> Input/Output configuration ioctls:
+>          test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+>          test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+>          test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+>          test VIDIOC_G/S_EDID: OK (Not Supported)
+> 
+> Control ioctls:
+>          test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+>          test VIDIOC_QUERYCTRL: OK
+>          test VIDIOC_G/S_CTRL: OK
+>          test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+>          test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+>          test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+>          Standard Controls: 15 Private Controls: 0
+> 
+> Format ioctls:
+>          test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+>          test VIDIOC_G/S_PARM: OK (Not Supported)
+>          test VIDIOC_G_FBUF: OK (Not Supported)
+>          test VIDIOC_G_FMT: OK (Not Supported)
+>          test VIDIOC_TRY_FMT: OK (Not Supported)
+>          test VIDIOC_S_FMT: OK (Not Supported)
+>          test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+>          test Cropping: OK (Not Supported)
+>          test Composing: OK (Not Supported)
+>          test Scaling: OK (Not Supported)
+> 
+> Codec ioctls:
+>          test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+>          test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+>          test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+> 
+> Buffer ioctls:
+>          test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+>          test CREATE_BUFS maximum buffers: OK
+>          test VIDIOC_REMOVE_BUFS: OK
+>          test VIDIOC_EXPBUF: OK (Not Supported)
+>          test Requests: OK (Not Supported)
+> 
+> Total for device /dev/v4l-subdev4: 45, Succeeded: 45, Failed: 0, Warnings: 0
+> 
+> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+> ---
+> Changes in v2:
+> - Use macros for 64-bit division
+> - Avoid compiler warnings about potentially uninitialized variables
+> - Fix two uses of dev_err_probe
+> - Link to v1: https://lore.kernel.org/r/20250403-hm1246-v1-0-30990d71bc42@emfend.at
+> 
+> ---
+> Matthias Fend (2):
+>        media: dt-bindings: i2c: add Himax HM1246 image sensor
+>        media: i2c: add Himax HM1246 image sensor driver
+> 
+>   .../bindings/media/i2c/himax,hm1246.yaml           |  111 ++
+>   MAINTAINERS                                        |    8 +
+>   drivers/media/i2c/Kconfig                          |    9 +
+>   drivers/media/i2c/Makefile                         |    1 +
+>   drivers/media/i2c/hm1246.c                         | 1421 ++++++++++++++++++++
+>   5 files changed, 1550 insertions(+)
+> ---
+> base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
+> change-id: 20250403-hm1246-96b0cdab773c
+> 
+> Best regards,
 
 
