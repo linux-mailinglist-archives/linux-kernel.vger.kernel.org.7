@@ -1,178 +1,130 @@
-Return-Path: <linux-kernel+bounces-798091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E05B41961
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:57:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7902B4195D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8CF566CF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:57:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 895CD7A5CB8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC42B2F0C63;
-	Wed,  3 Sep 2025 08:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7970C2ECD3F;
+	Wed,  3 Sep 2025 08:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIpTPaTz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="oP4oJUu8"
+Received: from omta033.useast.a.cloudfilter.net (omta033.useast.a.cloudfilter.net [44.202.169.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365892E229E;
-	Wed,  3 Sep 2025 08:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72302EBDE9
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756889775; cv=none; b=Na+wLEajqgGv79WQ+YTnwaRPbzc6pqKa793/2jcpq6HA7480Vu8NoQzoJ6f/8lWorRpe3FaxhORh5FCOPcUzI3/2wpa/KU5woQ5XlbAy0Am1WHYnpaH9GV6MACuMbHtEKfodHxNc+BSnec6I117fK8+D9rnWbbDd+lX1pF5/+6E=
+	t=1756889786; cv=none; b=iC7LKCyvYaqpezbHRq8fcLyg92vKQEBUO4WKnMtPHZZv7aXJN65u4BrBeTuV5gnOSm6dq0VBT8+csLg9sf+fycwW/Y0+WUZIKDFcHfDLfSdf8i2wv8BEElxRMtl7Y/ZNyDOus5ViJaz5fXwQGjOcXzvivDC36AnakZfHHK+RIuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756889775; c=relaxed/simple;
-	bh=q0tHz+BMppn+t5zOxfWZIctQRwVYHLuE0UcrNZZKdo4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JVYMzxlpITKu8ZlvEvOhBszwFZhdRgXXK1zPtjBmtS465hXJsMQTyVwd3Z5d+MRaL98j8POYU8nmY2nnTvsmHxK+3BKawnXuWVIdLLlw1WgH5SAZz5LCMGmq/1lSeBh5ZYxHOMwBx/V/EsB/OZQz5l70jPpdFTzDQMFjy47h+EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIpTPaTz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 10859C4CEF0;
-	Wed,  3 Sep 2025 08:56:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756889775;
-	bh=q0tHz+BMppn+t5zOxfWZIctQRwVYHLuE0UcrNZZKdo4=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=NIpTPaTzzHX7kB1f8K503erRMyypAXp1ExsDMwEhyLo+dF1be4OFKtlwDQVfIIahP
-	 ESEMMz41sEaWtoKNZ03tJ9d9IJ0MiI6QaSzTeo8avGezs+TtC5yI5a30t4d4BB6v/6
-	 O70WUoRIcXFhUmhrDmBDs88a/69IwmCC65sslg6afBp+/xZyXD8e2qAuXVJyWEsxrx
-	 CXYDyRL8LpCA4/AYREoiSV59XCl7Br2dG/n1P6aqY+OtupCCehxq1SbsjnPAu0OFKq
-	 jVjETpWA9H//y/7Wx7qZHhKDGss7GCsWGMKJCFiO0ekZAQdNIo4sEMed3DvDWI/WB4
-	 mycw0vDRbpR5A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F03F0CA1009;
-	Wed,  3 Sep 2025 08:56:14 +0000 (UTC)
-From: Anthony Brandon via B4 Relay <devnull+anthony.amarulasolutions.com@kernel.org>
-Date: Wed, 03 Sep 2025 10:56:13 +0200
-Subject: [PATCH v4] dmaengine: xilinx: xdma: Fix regmap max_register
+	s=arc-20240116; t=1756889786; c=relaxed/simple;
+	bh=8wcxB9gsKzgfR+hJwpbQcWLa/crjgWboYQytgv0SKVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qDTGWGVOHnHLFmX4kvaAXPoQFv/NUSS8GHPiPvINChzDbwiqmhyhrNnhgFyPNXute1vlXuCYYDuZF0bLrQ2/jjpQJE8IwVeflVTz664vCOWouHVz7mHcTIu9MHpmIhN4gMzvq+L5yLa0eI1n1BbmyCP9lJbO7hPIOqJTJt3v7Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=oP4oJUu8; arc=none smtp.client-ip=44.202.169.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6004b.ext.cloudfilter.net ([10.0.30.210])
+	by cmsmtp with ESMTPS
+	id tfbHu2xZtU1JTtjHyuzBf7; Wed, 03 Sep 2025 08:56:23 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id tjHyuNVBh6yOitjHyuBjQd; Wed, 03 Sep 2025 08:56:22 +0000
+X-Authority-Analysis: v=2.4 cv=OduYDgTY c=1 sm=1 tr=0 ts=68b802b6
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=wQHQzwf_Hs2TCVCgcZgA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=aeeKAF3PBFlKS0N1RC3x8dkcm9vxicJpkuKAZH7nWGg=; b=oP4oJUu82D18ifLiihjSYQKRqs
+	NfTBNNCRcKVOGprX6m2AjBMbsFQ43ZAjPHokA1R/+PhE0gfQIkhjI4mi9Y2FBMUe+vSMtqOlWoZ7s
+	RpVYFF7E2kTtdUgsTLnatQhM0Dc7sILeIgaXEfMhK1gj2JVWXV2MiZSBu7ipOQIvQ9NZUI40f3NhD
+	o8+miJ+PNPy0lSyvTGe8CLjX8o42vUdXZgc/Lg2yGouU/ow4nTbze+BkOPZpNv5clT6QayPPjBpeg
+	Nm9lGVkC/5IljvNVsyJssGSe/5svw+/7wnXNlOaqbVwFUShFYirzB8IjbYwYeblNOmhmi7zlfMBli
+	57tYERdg==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:59458 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1utjHx-00000000ire-1j36;
+	Wed, 03 Sep 2025 02:56:21 -0600
+Message-ID: <c50b8153-7e14-49bc-8d54-d4f3f58892cb@w6rz.net>
+Date: Wed, 3 Sep 2025 01:56:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 00/95] 6.12.45-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250902131939.601201881@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250902131939.601201881@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-xdma-max-reg-v4-1-894721175025@amarulasolutions.com>
-X-B4-Tracking: v=1; b=H4sIAKwCuGgC/33OywqDMBCF4VeRrJuSycVLV32P0sVooga0KYmKR
- Xz3RleloMv/wHzMQoLx1gRySxbizWSDda8Y8pKQqsVXY6jVsQlnXLGCAZ11j7THmXrTUEhlUaV
- SFULlJJ68vantvHOPZ+zWhsH5z65PsK0H0AQUaJkikyoFo0u4Y49+7DC4bhziT+FauZ5s5sTPH
- B6dGkXGBWaQV/rEEb8O/3NEdNQGlbnmJagDZ13XL3+nWz9DAQAA
-X-Change-ID: 20250901-xdma-max-reg-1649c6459358
-To: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>, 
- Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, 
- Vinod Koul <vkoul@kernel.org>, Michal Simek <michal.simek@amd.com>
-Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Anthony Brandon <anthony@amarulasolutions.com>, 
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3123;
- i=anthony@amarulasolutions.com; h=from:subject:message-id;
- bh=L9Jh4ojlLzKIglwK2lLLxgJIk6sX82XB7wh+bXhzPgA=;
- b=owGbwMvMwCUWIi5b4HjluATjabUkhowdTGuXbz2h8O6vR9h7l8sJXDd2xeuveNJvuSdM7f7co
- LlBt/jiO0pZGMS4GGTFFFnKdeR5PZTrypVmPjGGmcPKBDKEgYtTACayiJHhn8qiHF9TpoxqOeMV
- 03eG+W0RdGx0+/VCIXcmz4H1iZdzmxgZnspOWb3hmObTayGdPPNCuJXqK/8y2R1pOFGZv0JJr9i
- bEwA=
-X-Developer-Key: i=anthony@amarulasolutions.com; a=openpgp;
- fpr=772C1F0D48237E772299E43354171D7041D4C718
-X-Endpoint-Received: by B4 Relay for anthony@amarulasolutions.com/default
- with auth_id=505
-X-Original-From: Anthony Brandon <anthony@amarulasolutions.com>
-Reply-To: anthony@amarulasolutions.com
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1utjHx-00000000ire-1j36
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:59458
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 37
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPiLDlZtsHqaDPgoHAcPJQPr48ysBdYxFDr25i4918+aUeYLjJdcayn8iP7uys77272Rnsv/r5wQWF3EXmj0oSnsB7YvltQK5JYmX545OTyDY92TAGDC
+ 1tZkQetq7HMg42cAGPkMQzm3rGI7mzanle6WWOOLpa3rxIL1f00yZ0Z8FQHLNQd8i10eRkM7r6j8r7HvPhSiOiRg2zoxaQLn3ec=
 
-From: Anthony Brandon <anthony@amarulasolutions.com>
+On 9/2/25 06:19, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.45 release.
+> There are 95 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.45-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-The max_register field is assigned the size of the register memory
-region instead of the offset of the last register.
-The result is that reading from the regmap via debugfs can cause
-a segmentation fault:
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-tail /sys/kernel/debug/regmap/xdma.1.auto/registers
-Unable to handle kernel paging request at virtual address ffff800082f70000
-Mem abort info:
-  ESR = 0x0000000096000007
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x07: level 3 translation fault
-[...]
-Call trace:
- regmap_mmio_read32le+0x10/0x30
- _regmap_bus_reg_read+0x74/0xc0
- _regmap_read+0x68/0x198
- regmap_read+0x54/0x88
- regmap_read_debugfs+0x140/0x380
- regmap_map_read_file+0x30/0x48
- full_proxy_read+0x68/0xc8
- vfs_read+0xcc/0x310
- ksys_read+0x7c/0x120
- __arm64_sys_read+0x24/0x40
- invoke_syscall.constprop.0+0x64/0x108
- do_el0_svc+0xb0/0xd8
- el0_svc+0x38/0x130
- el0t_64_sync_handler+0x120/0x138
- el0t_64_sync+0x194/0x198
-Code: aa1e03e9 d503201f f9400000 8b214000 (b9400000)
----[ end trace 0000000000000000 ]---
-note: tail[1217] exited with irqs disabled
-note: tail[1217] exited with preempt_count 1
-Segmentation fault
-
-Fixes: 17ce252266c7 ("dmaengine: xilinx: xdma: Add xilinx xdma driver")
-Signed-off-by: Anthony Brandon <anthony@amarulasolutions.com>
-Reviewed-by: Lizhi Hou <lizhi.hou@amd.com>
-Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
----
-Changes in v4:
-- Reorder Reviewed-by
-- Link to v3: https://lore.kernel.org/r/20250902-xdma-max-reg-v3-1-5fa37b8d2b15@amarulasolutions.com
-
-Changes in v3:
-- Add Fixes tag
-- Link to v2: https://lore.kernel.org/r/20250901-xdma-max-reg-v2-1-fa3723a718cd@amarulasolutions.com
-
-Changes in v2:
-- Define new constant XDMA_MAX_REG_OFFSET and use that.
-- Link to v1: https://lore.kernel.org/r/20250901-xdma-max-reg-v1-1-b6a04561edb1@amarulasolutions.com
----
- drivers/dma/xilinx/xdma-regs.h | 1 +
- drivers/dma/xilinx/xdma.c      | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/dma/xilinx/xdma-regs.h b/drivers/dma/xilinx/xdma-regs.h
-index 6ad08878e93862b770febb71b8bc85e66813428e..70bca92621aa41b0367d1e236b3e276344a26320 100644
---- a/drivers/dma/xilinx/xdma-regs.h
-+++ b/drivers/dma/xilinx/xdma-regs.h
-@@ -9,6 +9,7 @@
- 
- /* The length of register space exposed to host */
- #define XDMA_REG_SPACE_LEN	65536
-+#define XDMA_MAX_REG_OFFSET	(XDMA_REG_SPACE_LEN - 4)
- 
- /*
-  * maximum number of DMA channels for each direction:
-diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
-index 0d88b1a670e142dac90d09c515809faa2476a816..5ecf8223c112e468c79ce635398ba393a535b9e0 100644
---- a/drivers/dma/xilinx/xdma.c
-+++ b/drivers/dma/xilinx/xdma.c
-@@ -38,7 +38,7 @@ static const struct regmap_config xdma_regmap_config = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
--	.max_register = XDMA_REG_SPACE_LEN,
-+	.max_register = XDMA_MAX_REG_OFFSET,
- };
- 
- /**
-
----
-base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-change-id: 20250901-xdma-max-reg-1649c6459358
-
-Best regards,
--- 
-Anthony Brandon <anthony@amarulasolutions.com>
-
+Tested-by: Ron Economos <re@w6rz.net>
 
 
