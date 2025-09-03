@@ -1,142 +1,121 @@
-Return-Path: <linux-kernel+bounces-799297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFDA9B429B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:21:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D93F0B429BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F0803BD1F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:21:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99E115E3443
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638C335CED8;
-	Wed,  3 Sep 2025 19:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601EF369328;
+	Wed,  3 Sep 2025 19:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="QVg0UfJL"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QXhpDnB7"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8932F3619
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 19:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFC831354F;
+	Wed,  3 Sep 2025 19:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756927265; cv=none; b=WB9YTxLn8kYf2aZdGBGRcJ2kSDp55VT5Chaz43nOAsrvyAB9zOl8+kyfhL6amxf8fROVJup+MOXkXCVuRfe6LjnOfPYxTCJsBTnneZfe1vrKyszXg7ZBWAVM/UpujHrCIi7tFDS5RBdysCFBF/U9u8jeglkYCHUCbbXdbliwGIk=
+	t=1756927267; cv=none; b=EimBVMSBg5pstafDO07Qp4kKEUYTEUz6QEPt7wMQZ/wRvs/Txeiqoe1Xaw3GaAEirqeT5fj5k94QZSsAL5O2EQXFo5btb+ni8vmOIYMWpPATpY/HIpuczNoZO1KtsdDTrjCTj7lA2k9E7Y09ZgCiXNeAbZw+0ogyZ2HWGhRTfB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756927265; c=relaxed/simple;
-	bh=hSkvSWyCj5TG+K6dDKbK2f7/2LUdXbAtJRmHN0LkS5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tFgtAy0zy6kC3ug0YieEzJ4jeCiis0bAp8sUKhY5X4X4ea9kJcQzAI/V7Ra4jNyDc1bj922Wo4QEYVFKX58nVzQIA5LnVzqV+IBx0l25CoyltYNx70LIqUU+bu2YqfiVvgCgWoAbeuM2y4WU5kPAzOpiP5zyirxdjSOGMrpFLSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=QVg0UfJL; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
-Date: Wed, 3 Sep 2025 21:20:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1756927251;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SMNUha3xD+Rt2dAgtb0zQ4SvE9n+JpMWof0kjfU/cXc=;
-	b=QVg0UfJLMlv1In1mpr0Y++srvzXc85BR+8GHcS2uVNMyRe55/mbrA5+W6Y3uAm9rwXhnML
-	G49K0tMJe3BizoEd51XH+pyu06fYzYVd+y1chcd431EM7kuEvpeeKdYH+sZzy4SBxfad5E
-	55FjIDBYTfjxUTEmsC7HHp64ojgww0g=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Henrik Grimler <henrik@grimler.se>
-To: Devang Tailor <dev.tailor@samsung.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	alim.akhtar@samsung.com, alexandre.belloni@bootlin.com,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org, faraz.ata@samsung.com
-Subject: Re: [PATCH v2 2/3] rtc: s3c: support for exynosautov9 on-chip RTC
-Message-ID: <20250903192046.GA4126@l14.localdomain>
-References: <20250710083434.1821671-1-dev.tailor@samsung.com>
- <CGME20250710082536epcas5p4f9dcd50ff474066562b2cbd40199d2d9@epcas5p4.samsung.com>
- <20250710083434.1821671-3-dev.tailor@samsung.com>
+	s=arc-20240116; t=1756927267; c=relaxed/simple;
+	bh=aLD9XsJZLNrGfgU8JkpGpMKsfl8VuYpXTJJHY27rXrE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F05iSZhsX7gcutZTxQ8B9NmtE/kdWQqD8ubxjGFr2gI1YFgSYYFoTgSInSkS8nUM7ml8cr5ouKzJCpFNXYMUgEiFQX+ZILPxvDVUhcISSfSGDGXvxYzmlZIaAKA+l15bQhijMRTUT98HYJ9ibhQX/iBWn4qZI/6cwnk1CL0+OUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QXhpDnB7; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b04271cfc3eso30058366b.3;
+        Wed, 03 Sep 2025 12:21:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756927264; x=1757532064; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wNHasVCS6vOy7hyKo8I4nxHuz9FBhu/ttxTxBrqAOVA=;
+        b=QXhpDnB7yrSnR8fjT7taLZEhjgUJYjXZto2jzk7cExMuv4ToVRBnpZKZ4WXUb5IsJH
+         +TKCcr1nSX0/gz0ONtQcpKNgpT+C58amrDtNLk2CQP9lXD3BrKVwXph3fJF/Iu2SM9Rk
+         e68sTtK7Dat+aLqKZYLeWvM8YOXZ3hQA2UlIn4ShCF/2cyBJe2dMPbMz2cJzK2WlJJiN
+         +u+bIVzm7Ail5PKeptVjsP5Z9sC3/BPcCmH+5JMweiiWEQ4FpFx94FNAJDzNBUMUezT+
+         vqIugchHskHuCy6p7YU+xatlb2RoeB9G7V1BUn+Gnr07qpLzQyAYOmhjuvgHPXi2W8i+
+         A+QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756927264; x=1757532064;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wNHasVCS6vOy7hyKo8I4nxHuz9FBhu/ttxTxBrqAOVA=;
+        b=lMPjPLfTDnqMT0o7pHVAN84g/TR3mzAvf+gNlnH8QnvYi1Mp3YX8okHQp6ge5Dbar+
+         80a5C1P/D9jOKKA/SzUs85JL+6f6x2QPkQne4qn+NRjyIins+79Ixk3N1+8LNCl/EP5A
+         l3TRcbfbpB2Xazt1N5VYHvwjPC8K95L/1G45H/z6jAWBPwu5ltwF2jRN4k78uDmSACIR
+         PPs36eZx6tOt8sx1jRMZeQntE/kfpzP9tsj1FtX/oSKqMLLNqtXh6AImCh2xYxa4m58O
+         J4iCs5rCadkv7rerWNEex/ld4ygeJPcKQWHxbG+TTnEVkwrXaG5CzJyBWkkCzcEW683j
+         OwCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaH1knEus22S2DW/5g+svzze57X5weNmHDFXYaKmfoiuoEltldfEi3q82LMzsOT/99cQaUFq7KvnZHe4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCvLECWIZjNGnaks02haSrM9iGRRkq0dULIo/G92Mcvo76BblP
+	/YTDp7Gswc0PzGk4iGDIlW+oVS+VHlbQBkQTvC01ZDhb2Z1H/MPIfHcJ
+X-Gm-Gg: ASbGncvqSpXIehPRWlTFgkKYZpaYMobi2G5bKEbTk+XUb6J6lJI+CcEaFLX/vwMS92j
+	imFudTTxOJiFF09oqX2AcHtyrpqP9ty+mJjeVmrReSJ6Ni/Jfth6MFWSuAjXk/80nd/vMDSAw8E
+	uRIhMzYNCRAE6eG1qk0k5Siv0ISMAGB0pQ+/iuxQrqDmu9052dYA88Kl8Q3nyYpcAXuPbqH2SMj
+	4+l2vIhs3t85ormbyiz0YdwrJ4adQl6Hdf0ua9uVqSGQr/nE0KRugM7ppMlqaPiIJ9zhB0utaAz
+	RVtXtkO5IBPcfGQt5ECAuVFEHj4TvvwD9y3WSyaTWqRBGz9cgj7G95vLw+IoC4EQspmtfKMk7PH
+	GtIVPaqW6PBNwiYE5WyayeiJnVMUZ8fLVOBul8YhAVUrit1tR9ee9dSymi8vTqs88H6PMlWboQL
+	EN56hs
+X-Google-Smtp-Source: AGHT+IH/IfylxWan7vzpeNdmYMqbKq3xELh8jCpPztfoP2R7WN0qlSQYqRfou0E0X2xYkvb1AWhhdg==
+X-Received: by 2002:a17:907:1c85:b0:ae0:cc5f:88ef with SMTP id a640c23a62f3a-b01d9731c27mr1626762266b.32.1756927264273;
+        Wed, 03 Sep 2025 12:21:04 -0700 (PDT)
+Received: from XPS.. ([2a02:908:1b0:afe0:5d6b:7d4c:ed7e:88a9])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0079183496sm1167273966b.13.2025.09.03.12.21.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 12:21:03 -0700 (PDT)
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+To: rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	rui.zhang@intel.com,
+	lukasz.luba@arm.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Osama Abdelkader <osama.abdelkader@gmail.com>
+Subject: [PATCH v2] thermal: hwmon: replace deprecated strcpy() with strscpy()
+Date: Wed,  3 Sep 2025 21:20:59 +0200
+Message-ID: <20250903192059.11353-1-osama.abdelkader@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710083434.1821671-3-dev.tailor@samsung.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-Hi Devang,
+strcpy() is deprecated, use strscpy() instead for consistency with thermal
+subsystem since this is the only strcpy there.
 
-On Thu, Jul 10, 2025 at 02:04:33PM +0530, Devang Tailor wrote:
-> The on-chip RTC of this SoC is almost similar to the previous
-> versions of SoC. Hence re-use the existing driver with platform specific
-> change to enable RTC.
+Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
+---
+v2:
+Improve the commit msg: add that this is the only strcpy left in thermal subsystem
+---
+ drivers/thermal/thermal_hwmon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Could you please describe what the differences are to previous SoCs?
-You write almost similar, please elaborate in what way in commit
-message.
+diff --git a/drivers/thermal/thermal_hwmon.c b/drivers/thermal/thermal_hwmon.c
+index 0ecccd4d8556..64cc3ab949fe 100644
+--- a/drivers/thermal/thermal_hwmon.c
++++ b/drivers/thermal/thermal_hwmon.c
+@@ -96,7 +96,7 @@ thermal_hwmon_lookup_by_type(const struct thermal_zone_device *tz)
+ 
+ 	mutex_lock(&thermal_hwmon_list_lock);
+ 	list_for_each_entry(hwmon, &thermal_hwmon_list, node) {
+-		strcpy(type, tz->type);
++		strscpy(type, tz->type);
+ 		strreplace(type, '-', '_');
+ 		if (!strcmp(hwmon->type, type)) {
+ 			mutex_unlock(&thermal_hwmon_list_lock);
+-- 
+2.43.0
 
-> This has been tested with 'hwclock' & 'date' utilities
-> 
-> Signed-off-by: Devang Tailor <dev.tailor@samsung.com>
-> ---
-> 
->  drivers/rtc/rtc-s3c.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-> index 5dd575865adf..8db24b6360b8 100644
-> --- a/drivers/rtc/rtc-s3c.c
-> +++ b/drivers/rtc/rtc-s3c.c
-> @@ -384,6 +384,15 @@ static void s3c6410_rtc_disable(struct s3c_rtc *info)
->  	writew(con, info->base + S3C2410_RTCCON);
->  }
->  
-> +static void exynosautov9_rtc_disable(struct s3c_rtc *info)
-> +{
-> +	unsigned int con;
-> +
-> +	con = readb(info->base + S3C2410_RTCCON);
-> +	con &= ~S3C2410_RTCCON_RTCEN;
-> +	writeb(con, info->base + S3C2410_RTCCON);
-> +}
-
-Rather than adding a new rtc_disable variant I think this could be
-handled in existing s3c24xx_rtc_disable (and I think that is what
-Krzysztof meant). How about adding a new bool to rtc_data that
-describes if S3C2410_TICNT reg is supported or not, and checking it in
-s3c24xx_rtc_disable?
-
-Best regards,
-Henrik Grimler
-
->  static void s3c_rtc_remove(struct platform_device *pdev)
->  {
->  	struct s3c_rtc *info = platform_get_drvdata(pdev);
-> @@ -574,6 +583,12 @@ static struct s3c_rtc_data const s3c6410_rtc_data = {
->  	.disable		= s3c6410_rtc_disable,
->  };
->  
-> +static const struct s3c_rtc_data exynosautov9_rtc_data = {
-> +	.irq_handler		= s3c6410_rtc_irq,
-> +	.enable			= s3c24xx_rtc_enable,
-> +	.disable		= exynosautov9_rtc_disable,
-> +};
-> +
->  static const __maybe_unused struct of_device_id s3c_rtc_dt_match[] = {
->  	{
->  		.compatible = "samsung,s3c2410-rtc",
-> @@ -590,6 +605,9 @@ static const __maybe_unused struct of_device_id s3c_rtc_dt_match[] = {
->  	}, {
->  		.compatible = "samsung,exynos3250-rtc",
->  		.data = &s3c6410_rtc_data,
-> +	}, {
-> +		.compatible = "samsung,exynosautov9-rtc",
-> +		.data = &exynosautov9_rtc_data,
->  	},
->  	{ /* sentinel */ },
->  };
-> -- 
-> 2.34.1
-> 
-> 
 
