@@ -1,111 +1,316 @@
-Return-Path: <linux-kernel+bounces-798698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7900CB42189
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:29:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA83B421A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067F41885F95
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:29:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6CCC1A81489
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F84303CB4;
-	Wed,  3 Sep 2025 13:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52973090F1;
+	Wed,  3 Sep 2025 13:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U1LcaJFB"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="UWzPjg7H"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F04302776;
-	Wed,  3 Sep 2025 13:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756906134; cv=none; b=WngF8Dc4Q/kRCEg6d4knRNe1g6sPy50oPay/tYalp5lamcu5ekYwIL0xxOT3vG2EdJemPziBng3NV9TArySXDkuQbFKPY/d0llVDg6XXYMd7x7X+BhFFEQfDV8OZL9s135cE3ildKFQKtgyzxAs6wniEra+tRth0ChXJWndwLZ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756906134; c=relaxed/simple;
-	bh=hsABvs17BadY5osyuv6Ozk7YDzMdfHke4VNm2Ky2Fzk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eSKG5uK8YsnA6vYexg8zcNjO2rMXVx5C1ShfTgb3hwiAvCjr/FdUkBZ2xy0fvQAwK3ZsJoB3xXz7y5d758L/bhxGk4HHmaB4vRih6Ji0RKVvu7gdS7rRIk1O2tlFeie3AZP7t+S2vIzLP7G4YlxLLhYZ+ry72saBfcVSeUK6+MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U1LcaJFB; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b844f1b18so2116965e9.1;
-        Wed, 03 Sep 2025 06:28:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756906131; x=1757510931; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ip7GEHTLGREs3wFJiE55XHO29SvS6xXq6xvgtwM1hmk=;
-        b=U1LcaJFBIl9DYc3Da6+Qdsa6u9UuELK/FrhMWzGd7P9oF1RQJ6H1Z/qfheYrlTVSC5
-         /csr2DSMrOE5oXQqBNZsakGgCtoSeO/1/ZG4UVXLesozlp2TKufgxCrn/H4TMGYxE+MH
-         yp8fGN46vJM+rqFFTeHO+ZkZbAuzygOIVlwsHpDs0nwM5Z4Xmj5+B1I30X6+aKjKO+sa
-         k/P6m1ffNDzULUteTui6vUgiCfTfh2GSZuZyJOJwSfD6ZFFjafYatQBX9yFkqK5Utba3
-         h8L+kMNXUlZlZ15W2uH29QV9PNmbw/JCVjLYrTD4unugwmmq6BnUmul3eT6y4oJ27uMM
-         zzTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756906131; x=1757510931;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ip7GEHTLGREs3wFJiE55XHO29SvS6xXq6xvgtwM1hmk=;
-        b=QCquI9PgiHGAFoPDwqUozxpB+tt5O4lsOsljeiLczN5Vr0NvcHKjxTGCSp/LShPBkG
-         uSf/3sWOLGXjvPqlndy4LsJbDsQJKQNeWOi4wbr5ShiYYNsCBic5J1HphVub/2awBZE/
-         vg7rJZViaFdVfIsp+upu3LKz8WK/RumZOAPOpWFe8a7nDDlfxOrldvyh3YsKwu3bhm1O
-         PlZFe5zjFwJiFLHgxM2F0JuMGBcwlfyfGBe8dBc5fVFC9SAB4yj9RWu5VOeZWzZEoleX
-         aAZGdQkgJ98mpSaX01eNjCWvqR+ivS0eT/h4+D0RNmfLJwXY7gc8CvKwIyWBazpyPF0K
-         L8TA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0NhsTUeAq9uLwpZGXPmcKDpjoKCTtA919bSxPYEKHaWbAo77recRyU/KzpYCl3xYFWyofW1nZ@vger.kernel.org, AJvYcCWw+Qv7oITd2d7sePiCXuReLaa8E1xtsRGbVgEZAZceMgU3rudLcumctjelZxRNQgi4RNQJ0tpoH8mutmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqPAC/08Ll4ISrY2enacRbhN+sMKpr4sc6trB0PrjXX01eWRLM
-	OocfS1s5n9XLftGyt2CJA/MpOw8HSAYCfFOwVTrDaIV6VebA41CoFef6q5bORbU5
-X-Gm-Gg: ASbGncvtUCrrzREiCVPETO3kzltztFK5Y+Q8F7pal0AXMC4/VdCNwoW9HtMzc66MWxj
-	fQuqP+X0n3OX5QEjyM2FxmSLTLzV9JtMbVGjBB31Y9Vkjw3JwNdB1o+BPDc2HE1MSjHCFLh165m
-	B/z22wxcnjNAY10i9dEzPCpy/zoyOYFUwpmKVV6fcbze/sZQcjDH2JVymhDJ7+iQFa0khjfV1HV
-	CJRBftHs+PIT0KozZqprKm4B3OmrlPo5lH0I/FrnWRAPDucTHP3lVe8d2rlqEMSWKtN7bUV6Se2
-	axCwWvpfiLK+muprF3Jmd29fIZg1wo7S3a4Z6KET1SWrUYA+8HPO6U30X7GJmXcFZ/AgaYWTIgp
-	IukJYT/OkiJ52IhQnD7K0A8ZEiA==
-X-Google-Smtp-Source: AGHT+IFeJ6G/GbGn+sWTQsbcWZbTftScTGIoGy1BjSSWZN3VsmKFELydGycedx9xP/3uz2B9wV8LrQ==
-X-Received: by 2002:a05:600c:6385:b0:459:ddd6:1cbf with SMTP id 5b1f17b1804b1-45b81e2235amr68213045e9.0.1756906131066;
-        Wed, 03 Sep 2025 06:28:51 -0700 (PDT)
-Received: from skbuf ([2a02:2f04:d005:3b00:e6e0:f5a6:e762:89fa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45cb6e44373sm7552185e9.3.2025.09.03.06.28.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 06:28:49 -0700 (PDT)
-Date: Wed, 3 Sep 2025 16:28:46 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: dsa: dsa_loop: use int type to store negative error
- codes
-Message-ID: <20250903132846.h4eeqi5faqkghrzv@skbuf>
-References: <20250903123404.395946-1-rongqianfeng@vivo.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15609308F0F;
+	Wed,  3 Sep 2025 13:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756906232; cv=pass; b=VqwIi6HoCSJNR1e+5VR66bkJSN+9eq3OYfJiMLeCu23CQmK0B2zZNmtmcS+32QhThdKY8mv7017zwo4nGL1QSigsHNqNMbA6j3kulJnJpVplEdVCsqH36jh+VzHOV5xef3w73FgecnEcITBvNTmTFS7C1OdqZtxmSC0OYf6jm0A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756906232; c=relaxed/simple;
+	bh=+VDz2wAb2Lk/COTWyJhejbwNI//9fGvh6mlB8MJdIQA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=TOcSsF7MJRY6MFGouubTqAfxU18hVsLfbXMtl/w1TfPihLFHu9EoYfpXpJruj4J1q/2fjxfjNdeIhRsMrI22WUhz/ECVAiOOIIaTUw5uprbamHYcuRfbG/CPjvo1foAbxHG+0v3AqZLMcROHqjhZ8pFs/sDeWCXykx+O5tTFgbk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=UWzPjg7H; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756906205; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=nu/jD3iyW8518XgRhqdkMjrEML10/xaiWdOZsb0zfX6pgGP5dCQznFBDOmC4BnPCnoBUeeopfFnRSC/QF3fUwv3NvV5fJSATbR+4x/P6ycPK4AbWrK1TcHUnII1W64kKNGcLX1D11aNiUfNE5L9ZSlvBx6ieNzZdeQ7DICcUPqw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756906205; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=4rdL4BMSJjWrp5Ar1gyiWHdHZrTo81ucFzwVlSGzyt4=; 
+	b=X4vRD0WftvUzR7Lx4CVZod9PXp2ClbVKpaidophFVn9AP4Jv8ppQH8xs/+pf220ShBgVQUt+O8mOzU2/muJ1jJ/Xanv/zj3g2u/Gu3U9qis1VBeodaTYGletKpH+TL+QEVHCLmKIfseTy1DaVQCT7NBOtyY2LU+DujHrRYWUYXU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756906205;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=4rdL4BMSJjWrp5Ar1gyiWHdHZrTo81ucFzwVlSGzyt4=;
+	b=UWzPjg7H9tY72eLTC7zboCAvOIaBAQa4VHxY+Efo+9xh06o5ZkI4C3lU4KVa5N5T
+	RwnX/i0ybunYN4ej8m6r5yX3pDJj/BugHrEafnfjovotMHt7/qLqbUUVeAugHdU1Uis
+	b1n7UCjf4mPNJXiIJlSuLjw8nvsr93IJwfK2+c9Q=
+Received: by mx.zohomail.com with SMTPS id 1756906203342831.6629861652933;
+	Wed, 3 Sep 2025 06:30:03 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903123404.395946-1-rongqianfeng@vivo.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH 1/2] nova-core: Add a library for bitfields in Rust
+ structs
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250824135954.2243774-1-joelagnelf@nvidia.com>
+Date: Wed, 3 Sep 2025 10:29:46 -0300
+Cc: linux-kernel@vger.kernel.org,
+ Danilo Krummrich <dakr@kernel.org>,
+ Alexandre Courbot <acourbot@nvidia.com>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ John Hubbard <jhubbard@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>,
+ nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D0E4757B-B26C-49AE-9076-267C0CBC2577@collabora.com>
+References: <20250824135954.2243774-1-joelagnelf@nvidia.com>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Wed, Sep 03, 2025 at 08:34:03PM +0800, Qianfeng Rong wrote:
-> Change the 'ret' variable in dsa_loop_init() from unsigned int to int, as
-> it needs to store either negative error codes or zero returned by
-> mdio_driver_register().
-> 
-> Storing the negative error codes in unsigned type, doesn't cause an issue
-> at runtime but can be confusing.  Additionally, assigning negative error
-> codes to unsigned type may trigger a GCC warning when the -Wsign-conversion
-> flag is enabled.
-> 
-> No effect on runtime.
-> 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+Hi Joel,
+
+> On 24 Aug 2025, at 10:59, Joel Fernandes <joelagnelf@nvidia.com> =
+wrote:
+>=20
+> Add a minimal bitfield library for defining in Rust structures (called
+> bitstruct), similar in concept to bit fields in C structs. This will =
+be used
+> for defining page table entries and other structures in nova-core.
+>=20
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 > ---
+> drivers/gpu/nova-core/bitstruct.rs | 149 +++++++++++++++++++++++++++++
+> drivers/gpu/nova-core/nova_core.rs |   1 +
+> 2 files changed, 150 insertions(+)
+> create mode 100644 drivers/gpu/nova-core/bitstruct.rs
+>=20
+> diff --git a/drivers/gpu/nova-core/bitstruct.rs =
+b/drivers/gpu/nova-core/bitstruct.rs
+> new file mode 100644
+> index 000000000000..661a75da0a9c
+> --- /dev/null
+> +++ b/drivers/gpu/nova-core/bitstruct.rs
+> @@ -0,0 +1,149 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// bitstruct.rs =E2=80=94 C-style library for bitfield-packed Rust =
+structures
+> +//
+> +// A library that provides support for defining bit fields in Rust
+> +// structures to circumvent lack of native language support for this.
+> +//
+> +// Similar usage syntax to the register! macro.
+> +
+> +use kernel::prelude::*;
+> +
+> +/// Macro for defining bitfield-packed structures in Rust.
+> +/// The size of the underlying storage type is specified with =
+#[repr(TYPE)].
+> +///
+> +/// # Example (just for illustration)
+> +/// ```rust
+> +/// bitstruct! {
+> +///     #[repr(u64)]
+> +///     pub struct PageTableEntry {
+> +///         0:0       present     as bool,
+> +///         1:1       writable    as bool,
+> +///         11:9      available   as u8,
+> +///         51:12     pfn         as u64,
+> +///         62:52     available2  as u16,
+> +///         63:63     nx          as bool,
+> +///     }
+> +/// }
+> +/// ```
+> +///
+> +/// This generates a struct with methods:
+> +/// - Constructor: `default()` sets all bits to zero.
+> +/// - Field accessors: `present()`, `pfn()`, etc.
+> +/// - Field setters: `set_present()`, `set_pfn()`, etc.
+> +/// - Builder methods: `with_present()`, `with_pfn()`, etc.
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+I think this could use a short example highlighting the builder pattern. =
+It may
+be initially unclear that the methods can be chained, even though the =
+word
+=E2=80=9Cbuilder=E2=80=9D is being used.
+
+> +/// - Raw conversion: `from_raw()`, `into_raw()`
+> +#[allow(unused_macros)]
+> +macro_rules! bitstruct {
+> +    (
+> +        #[repr($storage:ty)]
+> +        $vis:vis struct $name:ident {
+> +            $(
+> +                $hi:literal : $lo:literal $field:ident as =
+$field_type:tt
+> +            ),* $(,)?
+> +        }
+> +    ) =3D> {
+> +        #[repr(transparent)]
+> +        #[derive(Copy, Clone, Default)]
+> +        $vis struct $name($storage);
+> +
+> +        impl $name {
+> +            /// Create from raw value
+> +            #[inline(always)]
+> +            $vis const fn from_raw(val: $storage) -> Self {
+> +                Self(val)
+> +            }
+> +
+> +            /// Get raw value
+> +            #[inline(always)]
+> +            $vis const fn into_raw(self) -> $storage {
+> +                self.0
+> +            }
+> +        }
+> +
+> +        impl core::fmt::Debug for $name {
+> +            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> =
+core::fmt::Result {
+> +                write!(f, "{}({:#x})", stringify!($name), self.0)
+> +            }
+> +        }
+> +
+> +        // Generate all field methods
+> +        $(
+> +            bitstruct_field_impl!($vis, $name, $storage, $hi, $lo, =
+$field as $field_type);
+> +        )*
+> +    };
+> +}
+> +
+> +/// Helper to calculate mask for bit fields
+> +#[allow(unused_macros)]
+> +macro_rules! bitstruct_mask {
+> +    ($hi:literal, $lo:literal, $storage:ty) =3D> {{
+> +        let width =3D ($hi - $lo + 1) as usize;
+> +        let storage_bits =3D 8 * core::mem::size_of::<$storage>();
+> +        if width >=3D storage_bits {
+> +            <$storage>::MAX
+> +        } else {
+> +            ((1 as $storage) << width) - 1
+
+Can=E2=80=99t we have a build_assert here instead?
+
+> +        }
+> +    }};
+> +}
+> +
+> +#[allow(unused_macros)]
+> +macro_rules! bitstruct_field_impl {
+> +    ($vis:vis, $struct_name:ident, $storage:ty, $hi:literal, =
+$lo:literal, $field:ident as $field_type:tt) =3D> {
+> +        impl $struct_name {
+> +            #[inline(always)]
+> +            $vis const fn $field(&self) -> $field_type {
+> +                let field_val =3D (self.0 >> $lo) & =
+bitstruct_mask!($hi, $lo, $storage);
+> +                bitstruct_cast_value!(field_val, $field_type)
+> +            }
+> +        }
+> +        bitstruct_make_setters!($vis, $struct_name, $storage, $hi, =
+$lo, $field, $field_type);
+> +    };
+> +}
+> +
+> +/// Helper macro to convert extracted value to target type
+> +///
+> +/// Special handling for bool types is required because the `as` =
+keyword
+> +/// cannot be used to convert to bool in Rust. For bool fields, we =
+check
+> +/// if the extracted value is non-zero. For all other types, we use =
+the
+> +/// standard `as` conversion.
+> +#[allow(unused_macros)]
+> +macro_rules! bitstruct_cast_value {
+> +    ($field_val:expr, bool) =3D> {
+> +        $field_val !=3D 0
+> +    };
+> +    ($field_val:expr, $field_type:tt) =3D> {
+> +        $field_val as $field_type
+> +    };
+> +}
+> +
+> +#[allow(unused_macros)]
+> +macro_rules! bitstruct_write_bits {
+> +    ($raw:expr, $hi:literal, $lo:literal, $val:expr, $storage:ty) =3D> =
+{{
+> +        let mask =3D bitstruct_mask!($hi, $lo, $storage);
+> +        ($raw & !(mask << $lo)) | ((($val as $storage) & mask) << =
+$lo)
+> +    }};
+> +}
+> +
+> +#[allow(unused_macros)]
+> +macro_rules! bitstruct_make_setters {
+
+> +    ($vis:vis, $struct_name:ident, $storage:ty, $hi:literal, =
+$lo:literal, $field:ident, $field_type:tt) =3D> {
+> +        ::kernel::macros::paste! {
+> +            impl $struct_name {
+> +                #[inline(always)]
+> +                #[allow(dead_code)]
+> +                $vis fn [<set_ $field>](&mut self, val: $field_type) =
+{
+> +                    self.0 =3D bitstruct_write_bits!(self.0, $hi, =
+$lo, val, $storage);
+> +                }
+> +
+> +                #[inline(always)]
+> +                #[allow(dead_code)]
+> +                $vis const fn [<with_ $field>](mut self, val: =
+$field_type) -> Self {
+> +                    self.0 =3D bitstruct_write_bits!(self.0, $hi, =
+$lo, val, $storage);
+> +                    self
+> +                }
+> +            }
+> +        }
+> +    };
+> +}
+> diff --git a/drivers/gpu/nova-core/nova_core.rs =
+b/drivers/gpu/nova-core/nova_core.rs
+> index cb2bbb30cba1..54505cad4a73 100644
+> --- a/drivers/gpu/nova-core/nova_core.rs
+> +++ b/drivers/gpu/nova-core/nova_core.rs
+> @@ -2,6 +2,7 @@
+>=20
+> //! Nova Core GPU Driver
+>=20
+> +mod bitstruct;
+> mod dma;
+> mod driver;
+> mod falcon;
+> --=20
+> 2.34.1
+>=20
+>=20
+
+The code itself looks good. Thanks for doing this work, it will be =
+useful for Tyr :)
+
+=E2=80=94 Daniel=
 
