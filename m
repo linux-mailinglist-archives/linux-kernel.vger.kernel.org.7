@@ -1,123 +1,267 @@
-Return-Path: <linux-kernel+bounces-798899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4825B4246E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:08:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757BEB42487
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96C08163A0F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:08:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5C0C189894E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAC731353E;
-	Wed,  3 Sep 2025 15:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0024C31354F;
+	Wed,  3 Sep 2025 15:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rc8oL8WI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NFRUAu5k"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7AB312830;
-	Wed,  3 Sep 2025 15:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBB9320A15
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756912106; cv=none; b=gWOBVt0tHsdWJrq7GweWdPqPTfpBrpLhpddG3XSmlyFRHW7l2UddYvkVVFlVJdgFrCeiFuQdZwsWjSONkN+v55SrzAqeTarup1Y7hpKnqy1i35x/NwrAWN4Kl8CeMhVUyTj+XLKohTX8Qg5w5IWaNXpJ+ZKKbxSAIWhKRGu284I=
+	t=1756912191; cv=none; b=hVg7Rl3bkVff/SdfFx7LxSEfu4TTyJ6JR3+Om35ehTuA8GppEuAfHpBf7dDhYmgVoW4XA43+sx9W8WJ4K2N7Kf97mcVSt0UwjUrGHdO98PXL6wBiXLjFsD0zukwXP9p1lfjfuJRhAHLPsKo5NK9a1rRZkwFIExYJ9TFEMJMoPHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756912106; c=relaxed/simple;
-	bh=4OGMjsPefYUiz5Eg4nhv/X6kX9TsR0TDPzAxkLnV3wo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cIn3JAh4aYDZcac8IY/y3PM/vBtUvLe4aEBdjFQ0MBBN38plQqQLkPj0CW5lgwvM7Ykflr9Am1HtaXubssZBMp10pskQbfksVBkwc3KBqH3fYIilYVnEGtsFB+B8NXNx9kVVh+Gz+ReGP+YvEe3oo83NRLl0J4kGLp/8mk+aTdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rc8oL8WI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E889DC4CEF0;
-	Wed,  3 Sep 2025 15:08:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756912106;
-	bh=4OGMjsPefYUiz5Eg4nhv/X6kX9TsR0TDPzAxkLnV3wo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Rc8oL8WI10Z2IK54JvcGKmhDxZOeVJ1FpJ9Gw8VtFPu4qwdqZq4Y2ldfFEICy2X/3
-	 ZFUra86pmW7xvwMn3EweJ3D+XxXpBCPbE5CsNF9C9OnPon3CceSK6ia/Ec5TLvNHgn
-	 Y6KEoM2mXVXLiyWgYQtg7xlV0aegBjX0uapBnRo6527dZjG8smrN+HI2WHG86fr2yp
-	 2P5ZJ1yp4GZZwOQ5iANYqiHs21OcpYPt/UM2Y+hxEaD8mMCCB+p/vdLOttxpclPkJG
-	 +jed467QYTUODHDTzIhYST/UsqF88O7+EyWY3K0E5gGGqjBJ3td2sO3rVNRO8QY3vv
-	 Uk3uqZRemmKYw==
-Message-ID: <cd671c41-2f52-4be9-b2ad-f547daff5a3a@kernel.org>
-Date: Wed, 3 Sep 2025 17:08:22 +0200
+	s=arc-20240116; t=1756912191; c=relaxed/simple;
+	bh=qLecQka6HFxLzOrBlZFfGTh062nsD3HVcEENONBoVb0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SBKRFrossFDbwtwTyz7v6+mHsx1BrHikzIa8QDAdqH2nXtcJZVh2uwU7hIEu+qO2cDvXKMNb3gDbOfOPbwdKlGmKRkbprx1y4bd2KULTwg+/hic7nnhln7C3n5rDuNg2/4lcHIH1i80uXfSRg0R4X0MtoXjW9wq4u7cr41nlz0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NFRUAu5k; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756912185;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=z8AV0OJds+fFH71HcwghCBdJfs0C/HrPFWiOzLPMsfE=;
+	b=NFRUAu5kkMaTQEbhf78td4dSfU4W0yom7HwQz5aOchScrzZ7DYNhqRHsifdS/4vELbSb6z
+	dIRpSYU8ZxKtjBNFyLSvmGpeq/xzsXDIj/v/VgPW3ihbZmsiqcYOuRlCcJP+B8Mn4cjkdE
+	fU49pe616WukmMiSgEmHWLaTIkjGPCk=
+From: Yajun Deng <yajun.deng@linux.dev>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	Yajun Deng <yajun.deng@linux.dev>
+Subject: [PATCH] sched/rt: pass rq and task_struct pointers to update_stats functions
+Date: Wed,  3 Sep 2025 15:08:24 +0000
+Message-ID: <20250903150824.16960-1-yajun.deng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] cpufreq: core: Rearrange variable declarations
- involving __free()
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Zihuan Zhang <zhangzihuan@kylinos.cn>
-References: <4691667.LvFx2qVVIh@rafael.j.wysocki>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <4691667.LvFx2qVVIh@rafael.j.wysocki>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 03/09/2025 16:56, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Follow cleanup.h recommendations and always define and assign variables
-> in one statement when __free() is used.
-> 
-> No intentional functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
+These __update_stats functions only require the rq and task_struct
+parameters. All update_stats functions convert the rt_rq to rq and the
+rt_se to task_struct. And all callers of update_stats will get the
+rt_rq from the rq and the rt_se from the task_struct.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The rq_of_rt_rq() always returns the top-level rq, which is unique for
+each CPU. The rt_task_of() is only available for the task_struct. They
+are doing the convering and being converted. However, these conversions
+don't change anything.
 
-Best regards,
-Krzysztof
+Just pass the rq and task_struct pointers to these update_stats functions.
+If it don't have a task_struct pointer, call rt_entity_is_task() to ensure
+the task isn't NULL.
+
+Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
+---
+ kernel/sched/rt.c | 91 ++++++++++-------------------------------------
+ 1 file changed, 18 insertions(+), 73 deletions(-)
+
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 390f3d08abbe..feef4508efca 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -1212,107 +1212,56 @@ static void __delist_rt_entity(struct sched_rt_entity *rt_se, struct rt_prio_arr
+ 	rt_se->on_list = 0;
+ }
+ 
+-static inline struct sched_statistics *
+-__schedstats_from_rt_se(struct sched_rt_entity *rt_se)
+-{
+-	/* schedstats is not supported for rt group. */
+-	if (!rt_entity_is_task(rt_se))
+-		return NULL;
+-
+-	return &rt_task_of(rt_se)->stats;
+-}
+-
+ static inline void
+-update_stats_wait_start_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se)
++update_stats_wait_start_rt(struct rq *rq, struct task_struct *p)
+ {
+-	struct sched_statistics *stats;
+-	struct task_struct *p = NULL;
+-
+ 	if (!schedstat_enabled())
+ 		return;
+ 
+-	if (rt_entity_is_task(rt_se))
+-		p = rt_task_of(rt_se);
+-
+-	stats = __schedstats_from_rt_se(rt_se);
+-	if (!stats)
+-		return;
+-
+-	__update_stats_wait_start(rq_of_rt_rq(rt_rq), p, stats);
++	__update_stats_wait_start(rq, p, &p->stats);
+ }
+ 
+ static inline void
+-update_stats_enqueue_sleeper_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se)
++update_stats_enqueue_sleeper_rt(struct rq *rq, struct task_struct *p)
+ {
+-	struct sched_statistics *stats;
+-	struct task_struct *p = NULL;
+-
+ 	if (!schedstat_enabled())
+ 		return;
+ 
+-	if (rt_entity_is_task(rt_se))
+-		p = rt_task_of(rt_se);
+-
+-	stats = __schedstats_from_rt_se(rt_se);
+-	if (!stats)
+-		return;
+-
+-	__update_stats_enqueue_sleeper(rq_of_rt_rq(rt_rq), p, stats);
++	__update_stats_enqueue_sleeper(rq, p, &p->stats);
+ }
+ 
+ static inline void
+-update_stats_enqueue_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se,
+-			int flags)
++update_stats_enqueue_rt(struct rq *rq, struct task_struct *p, int flags)
+ {
+-	if (!schedstat_enabled())
+-		return;
+-
+ 	if (flags & ENQUEUE_WAKEUP)
+-		update_stats_enqueue_sleeper_rt(rt_rq, rt_se);
++		update_stats_enqueue_sleeper_rt(rq, p);
+ }
+ 
+ static inline void
+-update_stats_wait_end_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se)
++update_stats_wait_end_rt(struct rq *rq, struct task_struct *p)
+ {
+-	struct sched_statistics *stats;
+-	struct task_struct *p = NULL;
+-
+ 	if (!schedstat_enabled())
+ 		return;
+ 
+-	if (rt_entity_is_task(rt_se))
+-		p = rt_task_of(rt_se);
+-
+-	stats = __schedstats_from_rt_se(rt_se);
+-	if (!stats)
+-		return;
+-
+-	__update_stats_wait_end(rq_of_rt_rq(rt_rq), p, stats);
++	__update_stats_wait_end(rq, p, &p->stats);
+ }
+ 
+ static inline void
+-update_stats_dequeue_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se,
+-			int flags)
++update_stats_dequeue_rt(struct rq *rq, struct task_struct *p, int flags)
+ {
+-	struct task_struct *p = NULL;
+ 
+ 	if (!schedstat_enabled())
+ 		return;
+ 
+-	if (rt_entity_is_task(rt_se))
+-		p = rt_task_of(rt_se);
+-
+ 	if ((flags & DEQUEUE_SLEEP) && p) {
+ 		unsigned int state;
+ 
+ 		state = READ_ONCE(p->__state);
+ 		if (state & TASK_INTERRUPTIBLE)
+-			__schedstat_set(p->stats.sleep_start,
+-					rq_clock(rq_of_rt_rq(rt_rq)));
++			__schedstat_set(p->stats.sleep_start, rq_clock(rq));
+ 
+ 		if (state & TASK_UNINTERRUPTIBLE)
+-			__schedstat_set(p->stats.block_start,
+-					rq_clock(rq_of_rt_rq(rt_rq)));
++			__schedstat_set(p->stats.block_start, rq_clock(rq));
+ 	}
+ }
+ 
+@@ -1392,7 +1341,8 @@ static void enqueue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flags)
+ {
+ 	struct rq *rq = rq_of_rt_se(rt_se);
+ 
+-	update_stats_enqueue_rt(rt_rq_of_se(rt_se), rt_se, flags);
++	if (rt_entity_is_task(rt_se))
++		update_stats_enqueue_rt(rq, rt_task_of(rt_se), flags);
+ 
+ 	dequeue_rt_stack(rt_se, flags);
+ 	for_each_sched_rt_entity(rt_se)
+@@ -1404,7 +1354,8 @@ static void dequeue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flags)
+ {
+ 	struct rq *rq = rq_of_rt_se(rt_se);
+ 
+-	update_stats_dequeue_rt(rt_rq_of_se(rt_se), rt_se, flags);
++	if (rt_entity_is_task(rt_se))
++		update_stats_dequeue_rt(rq, rt_task_of(rt_se), flags);
+ 
+ 	dequeue_rt_stack(rt_se, flags);
+ 
+@@ -1429,7 +1380,7 @@ enqueue_task_rt(struct rq *rq, struct task_struct *p, int flags)
+ 		rt_se->timeout = 0;
+ 
+ 	check_schedstat_required();
+-	update_stats_wait_start_rt(rt_rq_of_se(rt_se), rt_se);
++	update_stats_wait_start_rt(rq_of_rt_se(rt_se), p);
+ 
+ 	enqueue_rt_entity(rt_se, flags);
+ 
+@@ -1631,12 +1582,9 @@ static void wakeup_preempt_rt(struct rq *rq, struct task_struct *p, int flags)
+ 
+ static inline void set_next_task_rt(struct rq *rq, struct task_struct *p, bool first)
+ {
+-	struct sched_rt_entity *rt_se = &p->rt;
+-	struct rt_rq *rt_rq = &rq->rt;
+-
+ 	p->se.exec_start = rq_clock_task(rq);
+ 	if (on_rt_rq(&p->rt))
+-		update_stats_wait_end_rt(rt_rq, rt_se);
++		update_stats_wait_end_rt(rq, p);
+ 
+ 	/* The running task is never eligible for pushing */
+ 	dequeue_pushable_task(rq, p);
+@@ -1702,11 +1650,8 @@ static struct task_struct *pick_task_rt(struct rq *rq)
+ 
+ static void put_prev_task_rt(struct rq *rq, struct task_struct *p, struct task_struct *next)
+ {
+-	struct sched_rt_entity *rt_se = &p->rt;
+-	struct rt_rq *rt_rq = &rq->rt;
+-
+ 	if (on_rt_rq(&p->rt))
+-		update_stats_wait_start_rt(rt_rq, rt_se);
++		update_stats_wait_start_rt(rq, p);
+ 
+ 	update_curr_rt(rq);
+ 
+-- 
+2.25.1
+
 
