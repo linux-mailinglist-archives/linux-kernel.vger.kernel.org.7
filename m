@@ -1,47 +1,42 @@
-Return-Path: <linux-kernel+bounces-798981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36A60B42581
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:32:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 493BCB42590
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C60F3BD0AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:31:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 694841BC6D56
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D97C2417E6;
-	Wed,  3 Sep 2025 15:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJkHJfIl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6A527FB2F;
+	Wed,  3 Sep 2025 15:30:33 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64481240611
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F9627C84E;
+	Wed,  3 Sep 2025 15:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756913370; cv=none; b=lcSTrAVEWNS2qyfC+/snHf4mSqCZ/nG5wEYwmpO5hdKUu2VuPmOdb6lOFq9n+80BvIIw24gvKTVOhhxUpq6a7nZpVK4TA62XgLmsNXG6wkUkUoQt026M5XJbMWEmHE8bQSLaQTD4Jat6cPps2H0rZOjECjOSHDl/d5UlVpChLjM=
+	t=1756913433; cv=none; b=IYIfx/ct/f32bJRtIear2Bobgy6mxw8tqkFrEW9EVTFufKHMh8/co24V5p8g1WQCCcpc2NS17tkawxwk15uZuJNswABH/UB60J4xF56up0w9gDNkwp6V1A5bunZ8yyBmIFL01KcNWrBmRYq92dEw14v8mp1ubzq0IiqssaE9JDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756913370; c=relaxed/simple;
-	bh=ztrictOOXdKIOkZOv0vYw2oH6HTP2dFEhJNp2iYtftY=;
+	s=arc-20240116; t=1756913433; c=relaxed/simple;
+	bh=ckvd7eniKu7DFcSuwjibc3qsbueGYz1Inqnn96GoEjE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fb9PbSrGaqbMGS5e8G2TVHamdyavkB1ZPy+VczOE04ddY4CcRztDdPblHMQBmQpySafTmqpHHHKtKdEiVdP3g6N7RkBn59p+pi8ypgBilFlbbmk6zfEsHQmH4BGrTRhabk5R+pPhdJwp6Yvg8TyWgesTrVNNlWDMeFLw/JHKuFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJkHJfIl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59403C4CEE7;
-	Wed,  3 Sep 2025 15:29:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756913369;
-	bh=ztrictOOXdKIOkZOv0vYw2oH6HTP2dFEhJNp2iYtftY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tJkHJfIlL+zKnBEtSDv4HCm/ViYjPOBC8zlDC7w2Srb3VZIA2c0Z8ev4XTcN+TfnW
-	 IGYL3t7dn+F4Uj+pUrzRnJDy5QnsYQKS9bLPSppvDTFwjCrTdEt7g/6pdIp5OXOaMt
-	 bk1d2aniL4RBlyGafV3k5qOQsm+JcXMrhtpS+ZrqvrYgzHy1/OLBX3RXzUF9kieg4/
-	 v92qiGfbvefKM1DRSFR/Fxm8t6UczfgA75Hyd9/fjHi+XAmUhteNhsLVh/Sk8RcFBI
-	 FcuxaSxKaKvTZZq3YzxVXgmOo1f/sHCbeJGvRcmbYfjP4JT7xJFdv7DvFSAvMC9DHk
-	 0iXpPf8wd6TOw==
-Message-ID: <f5581961-2e47-4cd4-86e9-47ec37f71c06@kernel.org>
-Date: Wed, 3 Sep 2025 10:29:28 -0500
+	 In-Reply-To:Content-Type; b=TseKzdtXZNU2DsEleQ9xCIABkdGu0/+2jQOoBhUAntYe/KTq2CIOd71hr/L4z0REJQdhKc0u0Xe1+IX8mMO0wRxWHHVItMwgfa6B1Isg5DFEfxLHnMRdnxA1cVcPkckzPma1IX18yx3adWewN7peGosQDAIsFOFN1B2GDVrpgto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.5] (ip5f5af7fc.dynamic.kabel-deutschland.de [95.90.247.252])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id DB90A60213AFF;
+	Wed, 03 Sep 2025 17:29:43 +0200 (CEST)
+Message-ID: <6afa0585-1903-4a56-b433-1087897519bf@molgen.mpg.de>
+Date: Wed, 3 Sep 2025 17:29:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,116 +44,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] drm: panel-backlight-quirks: Log applied panel
- brightness quirks
-To: "Deucher, Alexander" <Alexander.Deucher@amd.com>,
- Antheas Kapenekakis <lkml@antheas.dev>,
- "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "philm@manjaro.org" <philm@manjaro.org>,
- "Koenig, Christian" <Christian.Koenig@amd.com>,
- Robert Beckett <bob.beckett@collabora.com>
-References: <20250829145541.512671-1-lkml@antheas.dev>
- <20250829145541.512671-7-lkml@antheas.dev>
- <CAGwozwHaWPwy6_LTvTy4ybdrN27fEXc-GbhYEt4_cM88_VGYPA@mail.gmail.com>
- <588626d9-eb27-4376-8741-a1cc2e2e17cf@kernel.org>
- <BL1PR12MB5144E131D87B8B6584CF297DF701A@BL1PR12MB5144.namprd12.prod.outlook.com>
+Subject: Re: [PATCH v3] Bluetooth: Fix build after header cleanup
+To: Calvin Owens <calvin@wbinvd.org>
+Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+ Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+ oe-kbuild-all@lists.linux.dev, Marcel Holtmann <marcel@holtmann.org>,
+ Sean Wang <sean.wang@mediatek.com>, linux-mediatek@lists.infradead.org,
+ naresh.kamboju@linaro.org
+References: <202508300413.OnIedvRh-lkp@intel.com>
+ <b78a4255d17adbb74140aa23f89cb7653af96c75.1756513671.git.calvin@wbinvd.org>
+ <84fd4012-966b-4983-b015-ffce06509b5e@molgen.mpg.de>
+ <aLNRvzXE4O9dKZoN@mozart.vkv.me>
+ <CABBYNZJBDgQHwmx82H2XJ-LCeOsxc77PPo6NA4zzT0dt7Uxddw@mail.gmail.com>
+ <aLcQsE3x9o4BzXxp@mozart.vkv.me> <aLhK5wEHgxc3BIgb@mozart.vkv.me>
+ <aLhLTiIMRnjHfvOn@mozart.vkv.me>
 Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <BL1PR12MB5144E131D87B8B6584CF297DF701A@BL1PR12MB5144.namprd12.prod.outlook.com>
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <aLhLTiIMRnjHfvOn@mozart.vkv.me>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/3/25 10:03 AM, Deucher, Alexander wrote:
-> [Public]
+Dear Calvin,
+
+
+Thank you for the patch.
+
+Am 03.09.25 um 16:06 schrieb Calvin Owens:
+> Some Kconfig dependencies are needed after my recent cleanup, since
+> the core code has its own option.
 > 
->> -----Original Message-----
->> From: Mario Limonciello <superm1@kernel.org>
->> Sent: Wednesday, September 3, 2025 12:53 AM
->> To: Antheas Kapenekakis <lkml@antheas.dev>; amd-gfx@lists.freedesktop.org
->> Cc: dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org;
->> philm@manjaro.org; Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig,
->> Christian <Christian.Koenig@amd.com>; Robert Beckett
->> <bob.beckett@collabora.com>
->> Subject: Re: [PATCH v3 6/6] drm: panel-backlight-quirks: Log applied panel
->> brightness quirks
->>
->> On 8/29/2025 10:01 AM, Antheas Kapenekakis wrote:
->>> On Fri, 29 Aug 2025 at 16:57, Antheas Kapenekakis <lkml@antheas.dev> wrote:
->>>>
->>>> Currently, when a panel brightness quirk is applied, there is no log
->>>> indicating that a quirk was applied. Unwrap the drm device on its own
->>>> and use drm_info() to log when a quirk is applied.
->>>>
->>>> Suggested-by: Mario Limonciello <mario.limonciello@amd.com>
->>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-
-Besides the one thing you identified this looks fine to me.
-
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-
->>>> ---
->>>>    .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c    | 16 +++++++++++++---
->>>>    1 file changed, 13 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->>>> b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->>>> index 263f15f6fdea..2a3e17d83d6e 100644
->>>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->>>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->>>> @@ -3617,13 +3617,15 @@ static void update_connector_ext_caps(struct
->> amdgpu_dm_connector *aconnector)
->>>>           struct drm_connector *conn_base;
->>>>           struct amdgpu_device *adev;
->>>>           struct drm_luminance_range_info *luminance_range;
->>>> +       struct drm_device *drm;
->>>>
->>>>           if (aconnector->bl_idx == -1 ||
->>>>               aconnector->dc_link->connector_signal != SIGNAL_TYPE_EDP)
->>>>                   return;
->>>>
->>>>           conn_base = &aconnector->base;
->>>> -       adev = drm_to_adev(conn_base->dev);
->>>> +       drm = conn_base->dev;
->>>> +       adev = drm_to_adev(drm);
->>>>
->>>>           caps = &adev->dm.backlight_caps[aconnector->bl_idx];
->>>>           caps->ext_caps = &aconnector->dc_link->dpcd_sink_ext_caps;
->>>> @@ -3659,12 +3661,20 @@ static void update_connector_ext_caps(struct
->> amdgpu_dm_connector *aconnector)
->>>>           panel_backlight_quirk =
->>>>                   drm_get_panel_backlight_quirk(aconnector->drm_edid);
->>>>           if (!IS_ERR_OR_NULL(panel_backlight_quirk)) {
->>>> -               if (panel_backlight_quirk->min_brightness)
->>>> +               if (panel_backlight_quirk->min_brightness) {
->>>> +                       drm_info(drm,
->>>> +                                "Applying panel backlight quirk, min_brightness: %d\n",
->>>> +
->>>> + panel_backlight_quirk->min_brightness);
->>>
->>> mmm, needs a -1 here
->>>
->>
->> You may as well re-order it too so that you set caps->min_input_signal and access
->> it in this message.
->>
+> Since btmtksdio does not actually call h4_recv_buf(), move the
+> definitions it uses outside the BT_HCIUART_H4 gate in hci_uart.h to
+> avoid adding a dependency for btmtksdio.
 > 
-> With that fixed up, the series is:
-> Acked-by: Alex Deucher <alexander.deucher@amd.com>
+> The rest I touched (bpa10x, btmtkuart, and btnxpuart) do really call
+> h4_recv_buf(), so the dependency is required, add it for them.
 > 
+> Fixes: 0e272fc7e17d ("Bluetooth: remove duplicate h4_recv_buf() in header")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202508300413.OnIedvRh-lkp@intel.com/
+> Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+> ---
+>   drivers/bluetooth/Kconfig    | 6 ++++++
+>   drivers/bluetooth/hci_uart.h | 8 ++++----
+>   2 files changed, 10 insertions(+), 4 deletions(-)
 > 
+> diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
+> index 4ab32abf0f48..7df69ccb6600 100644
+> --- a/drivers/bluetooth/Kconfig
+> +++ b/drivers/bluetooth/Kconfig
+> @@ -312,7 +312,9 @@ config BT_HCIBCM4377
+>   
+>   config BT_HCIBPA10X
+>   	tristate "HCI BPA10x USB driver"
+> +	depends on BT_HCIUART
+>   	depends on USB
+> +	select BT_HCIUART_H4
+>   	help
+>   	  Bluetooth HCI BPA10x USB driver.
+>   	  This driver provides support for the Digianswer BPA 100/105 Bluetooth
+> @@ -437,8 +439,10 @@ config BT_MTKSDIO
+>   
+>   config BT_MTKUART
+>   	tristate "MediaTek HCI UART driver"
+> +	depends on BT_HCIUART
+>   	depends on SERIAL_DEV_BUS
+>   	depends on USB || !BT_HCIBTUSB_MTK
+> +	select BT_HCIUART_H4
+>   	select BT_MTK
+>   	help
+>   	  MediaTek Bluetooth HCI UART driver.
+> @@ -483,7 +487,9 @@ config BT_VIRTIO
+>   
+>   config BT_NXPUART
+>   	tristate "NXP protocol support"
+> +	depends on BT_HCIUART
+>   	depends on SERIAL_DEV_BUS
+> +	select BT_HCIUART_H4
+>   	select CRC32
+>   	select CRC8
+>   	help
+> diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
+> index 5ea5dd80e297..cbbe79b241ce 100644
+> --- a/drivers/bluetooth/hci_uart.h
+> +++ b/drivers/bluetooth/hci_uart.h
+> @@ -121,10 +121,6 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable);
+>   void hci_uart_set_speeds(struct hci_uart *hu, unsigned int init_speed,
+>   			 unsigned int oper_speed);
+>   
+> -#ifdef CONFIG_BT_HCIUART_H4
+> -int h4_init(void);
+> -int h4_deinit(void);
+> -
+>   struct h4_recv_pkt {
+>   	u8  type;	/* Packet type */
+>   	u8  hlen;	/* Header length */
+> @@ -162,6 +158,10 @@ struct h4_recv_pkt {
+>   	.lsize = 2, \
+>   	.maxlen = HCI_MAX_FRAME_SIZE \
+>   
+> +#ifdef CONFIG_BT_HCIUART_H4
+> +int h4_init(void);
+> +int h4_deinit(void);
+> +
+>   struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
+>   			    const unsigned char *buffer, int count,
+>   			    const struct h4_recv_pkt *pkts, int pkts_count);
 
-I've added a manual fixup for that change in the last patch and pushed 
-the series to drm-misc-next.
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
 
-a3ae3384be770 (HEAD -> drm-misc-next, drm-misc/for-linux-next, 
-drm-misc/drm-misc-next) drm: panel-backlight-quirks: Log applied panel 
-brightness quirks
-bf0365b005d9a drm: panel-backlight-quirks: Add Steam Deck brightness quirk
-aef10b1138e99 drm: panel-backlight-quirks: Add brightness mask quirk
-f7033fab81d82 drm: panel-backlight-quirks: Add secondary DMI match
-6eee1ef9e5985 drm: panel-backlight-quirks: Convert brightness quirk to 
-generic structure
-9931e4be11f21 drm: panel-backlight-quirks: Make EDID match optional
+
+Kind regards,
+
+Paul
 
