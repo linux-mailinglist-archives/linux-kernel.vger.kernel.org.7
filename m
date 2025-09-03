@@ -1,246 +1,432 @@
-Return-Path: <linux-kernel+bounces-797613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8AAB4127D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:46:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44571B4128D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1C8A3BC574
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:46:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D95407A39B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F1A3594B;
-	Wed,  3 Sep 2025 02:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19551FBEAC;
+	Wed,  3 Sep 2025 02:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KQe6cXoB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="md2rXUYj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00931FBEAC;
-	Wed,  3 Sep 2025 02:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756867559; cv=fail; b=rjE78UDXgLXMbargPpyLLv6xngwsmCSjaUoqLUVQpGm2sngPuttBZu2N/bPINIKSMoI6UE3yxiHHDT45aj9yt/PWlAcDPA2H9NlrCCCF91MFtOmaz92cI6mYCHQKsGo7LT3svfObjcPNmJo6MU6x0fesAdJYdwvtLKGoXGQ6tws=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756867559; c=relaxed/simple;
-	bh=bavyTglhuibOsiaG+YAWfLo/Mm16u/SnhvL6b6NkUi0=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=F/vT8EKGKUhFSs5NbSNniggVOdGF3d+siRJXYRunRgnYkrilnrEM2WSyVaHLUIpvW3rZpdGbbWBz4b1ShDPzgP9XhzFdU5g7JHkOxIOpD5Xanw1O9xNbUBdyo08qnq3JTzhBx/DQ3ZvGU7MFjPaE+TcqwpKmFUR6OkDNpI16Uhg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KQe6cXoB; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756867558; x=1788403558;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=bavyTglhuibOsiaG+YAWfLo/Mm16u/SnhvL6b6NkUi0=;
-  b=KQe6cXoBKD7AOFA5U5lql1RfSZdz8QK9M0Oc5HGNWv+m7XbZPQQQG9nv
-   LTYf9hpwEaxivYdl4cCRn8m0rtWuCwagldhnaMABMlQgUfh8ULb9gXhlU
-   OOQHz1ewHM2nlKz+PcMy6Y5dZuNPkNTFKWsUFcI7q3H8jguP0q8SIYp7E
-   v6LhYLCwaofPG2he8lZiY4OEAf1suHQDSR1U+bn5mP4+Qc3UeYV8dngFi
-   /JS+Ua+Wlu4Z3L6e9YESO6NwsRvxxMkd2siGRZ3AX29Chnx5OrDygzQBa
-   X/qDvw1XfQ3/KYufAqMtf2KugGlrls0PzgHFzuo2jQqPjw9ZiLY9d52Dn
-   w==;
-X-CSE-ConnectionGUID: i+nzSsw/QE+Sf7dhQLR4Cg==
-X-CSE-MsgGUID: nW+s9Nk1T4OaqRZ2CMMCqw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63002794"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63002794"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 19:45:57 -0700
-X-CSE-ConnectionGUID: YNUYo10vQxyNA+K5etTaog==
-X-CSE-MsgGUID: id5rZrbsQie/4Fq60AVerg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="195097899"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 19:45:56 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 2 Sep 2025 19:45:56 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Tue, 2 Sep 2025 19:45:55 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.59)
- by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 2 Sep 2025 19:45:55 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nY7iEbiyggsu0p/weEOJDYpU/wisuz8J7Go8URjwpXT4OXZixzbJp1T0Hhx622id4nqrpVvdvApHnJZEu5Uhzs+YG1U+SRBN4jNsCMPImiLLTkV8M2r3pntx5cdPPVsnUtzmtNtTsPHuWAphhaQZgGjGU737lo7tNqvYmVJU7MrP12T22pirFmE7W49JSRFOuF38LurqO7CyN/d+agnoH5cJOuM3VuKx+QRxP8AkBLx5nDDxUWb4WJydz4pPknFeB3K1bZltfIQEYfx3zPyLfdrIEDQCxV5ckq06ulbFkxErMcExlvJLlYdZhsm7SP09uaUjzvWkpg9WsSLwt3B98w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XjyJfQesfx4RzvGWIT/CjveBUKm47ce+V7f4E5j9XN0=;
- b=Duwh/YvX/05QYm+QSUXpp0AGd9GqYD2Bx6NO8UjPE7fospeqD+JCE3eTz65axh7X6s84s+uDsQXCSTHWCxs2q+BnPqn92gPq0kXMCXjz2J0Srur/lJ9NsiKGHlpMEt0CIti49AQyguKx6SgdbhGy3JMBWpSsZBLgr87Le1vlfVZQStrK0nkBYL6KZQOxZZp7d9aD+oFdXstMw+JckITBG5yQrbQMsiU6CZB/pFsJmU5GNCuczd6pGZMPvRXSDSGhMj2Js+9XKkLyR4OUuUsT1Vt384OvDg503x3udpbZtD4YwVI+S1IwafzzzGzaKiBq0OQ06RZOcwIMesTKHoHP+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by SA2PR11MB5129.namprd11.prod.outlook.com (2603:10b6:806:11f::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Wed, 3 Sep
- 2025 02:45:52 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.9073.026; Wed, 3 Sep 2025
- 02:45:51 +0000
-Message-ID: <b26f303b-3acd-44c1-a53e-15a9db6dcf1c@intel.com>
-Date: Tue, 2 Sep 2025 19:45:48 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17 27/33] fs/resctrl: Auto assign counters on mkdir and
- clean up on group removal
-To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <tony.luck@intel.com>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>
-CC: <Dave.Martin@arm.com>, <james.morse@arm.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <akpm@linux-foundation.org>, <rostedt@goodmis.org>,
-	<paulmck@kernel.org>, <pawan.kumar.gupta@linux.intel.com>, <kees@kernel.org>,
-	<arnd@arndb.de>, <fvdl@google.com>, <seanjc@google.com>,
-	<thomas.lendacky@amd.com>, <yosry.ahmed@linux.dev>, <xin@zytor.com>,
-	<sohil.mehta@intel.com>, <kai.huang@intel.com>, <xiaoyao.li@intel.com>,
-	<peterz@infradead.org>, <mario.limonciello@amd.com>, <xin3.li@intel.com>,
-	<perry.yuan@amd.com>, <chang.seok.bae@intel.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<peternewman@google.com>, <eranian@google.com>, <gautham.shenoy@amd.com>
-References: <cover.1755224735.git.babu.moger@amd.com>
- <1ee0f8674f0ab48bdbc3e05c11b7df30d6fa53fe.1755224735.git.babu.moger@amd.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <1ee0f8674f0ab48bdbc3e05c11b7df30d6fa53fe.1755224735.git.babu.moger@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0372.namprd04.prod.outlook.com
- (2603:10b6:303:81::17) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3123D3594B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 02:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756867673; cv=none; b=Sc49TIba+481mATg4ntnmIOksPyRDgEpq8OaLGJ+rTZdQ0pcMh3O/+b7htRY4/fbQJGyE2NcgN0erVsrbKdmucU+prwLei2JBYRUrD65pHTBZ/Ewcyk9xxK733+5GvNtoqvCzQoM2WJYl1B+06vdz60PibnvHOtkCJjzL5R2JhE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756867673; c=relaxed/simple;
+	bh=bDay9Mb+vLOifItB0nmhRJN4skjtbZAPiZreWnN3X0c=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=IX0VgIfNTF9liASqtbqY5wMbglJHjAdPWmqC0JdA+x0GHB6bfc7dLr0kNane8jH5cDsnIRfT2yGuo4OXL+uEhLDkTcLlEpiplg+Ouew2EBTbjaLtZh5ng1+GiCsuyz6jni7AzSb7im1j089f+S3cLRFjKgDfZv2SaJz5HWaVRy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=md2rXUYj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583240VY018254
+	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 02:47:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MR4kOjYGWE+3dtlgB4cQLtnV0AU3BFNkg+7eBEnx9Uk=; b=md2rXUYjLn7pvb5o
+	QRnLxFk7VUDgATnzM7VFIxeHLiv62syDGG7jSg/vRL0Nhv0R3b1oGLBTYT3+eE9M
+	YvCRchozMgSJq0D19sqPCMXRvVPtpX0bF54FU1wKk513xRi0DOw1tjwDLJ1w0bIq
+	2S8+M7UtRBB8I4UrP5L/8v/QsWpR30IlesAXxJTAGaYO1Qt507YzHUEopGw00RLP
+	DvWj8KXMpZSkrOPwmEWMRIKYSWx1iGpmCnNmxNPHH1nN+X6esaQJG/VRUBi2iWCr
+	CGbQ08bFcCPBUmuXJnjqqatayB+iaU45K/Qwadx6v6/1KQhwZYxuWqsn754Y+Rcb
+	QdGwog==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48wqvwbnpt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 02:47:51 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-77267239591so2958428b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 19:47:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756867670; x=1757472470;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MR4kOjYGWE+3dtlgB4cQLtnV0AU3BFNkg+7eBEnx9Uk=;
+        b=F4gj85/IrOhKHJ7Qfjmbx+7Vietl/YhKANMtpBwtVabwFYQdS/gKJWIWiqTAXVepwn
+         bteXMmyuBfDTmZnafxpBGKspFXln8sjglL3t+CIaMlFprZQK0KcbU1dshqPJ1RybMMYC
+         8V7syxnR8LZ3eZ/kc9kIt/h8d5nIMmMqRQ1qrIjSAKJQO2RclqwxztFf/LBLZ6rpe6EC
+         iE+hBrKGt7P2uwaV3CYWfLCrqLRRFsmMlruH9fsAsC6+KT+kej4CvgFIRyiBe5H2sqiK
+         gGoCNlZA+WLZiUfEkH+g1hyheNDqQSlPDQl+vugo+qGD+2jfkbQDo4Ikw5xH3dS7C9H0
+         n26Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV55Sgl8y8SghvcaeGvQvrr3RQrWlQr1sADeYU5hIlwtSVT9WwamIcCPsBqApyfK59gpKfW+BrgFijSA8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt8D+k/30mBa99J8FVX33U5Sjy/FmqZUeGs62vOga217moZMDv
+	rUBJcshyHbjCptxVieGzUaBOvr8+2MKp+mOPOq3vnvyX6aqoxZ8aJVSw7irfFKvNzh03X32v3g0
+	RcbtPbVncqCJ3x57Dhp0hhcDDzzpCXNpujHe1nWqMl9A2bfgq6fDAt/O3rMvrp2fkkVA=
+X-Gm-Gg: ASbGncui2fhsRwZVXcMdKUXHGMhNZq9lcZxI93huZ9GiazcEyHOpa5mlh61wmZNIsNW
+	97L+DmjEBpFCOU/2QEgEODcVq9w/lrqCC/n25aAJ6fk42ovzUqywDy58EuNPYW0EVlPqI8neaSZ
+	P6kGioXcbQtUmqUNyZnewEQzgTWkS4ot76i+NKN/qNQOnevhcSDJsieDMEPgvMJszx6q62pYp8v
+	jJoBEmrmFhgGokkfFVB1IllDeKtJYqdpcvc+VxcLUkqiUCivXahYpk5mnOJJrsk1AOruqpFw1o2
+	WBbFY64QFgtNz5As25+gsqO0m5tqURrTvdep6ZivjcK5opkAGDBHWoOw+j4ymP5oTdNLe7070se
+	4gQ0UEepIVLRfi47kp1oq6zMcoOMU
+X-Received: by 2002:a05:6a00:39a0:b0:757:ca2b:48a3 with SMTP id d2e1a72fcca58-7723e259561mr15595218b3a.9.1756867670479;
+        Tue, 02 Sep 2025 19:47:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHDO7sTee57O3KQCsZo26R1EkKcAn2uGXwp7NsC8REemaNjEc7JaagReOo8ixwYY9UtqoAwbg==
+X-Received: by 2002:a05:6a00:39a0:b0:757:ca2b:48a3 with SMTP id d2e1a72fcca58-7723e259561mr15595192b3a.9.1756867669946;
+        Tue, 02 Sep 2025 19:47:49 -0700 (PDT)
+Received: from [10.133.33.16] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7725d5b90fasm6884902b3a.100.2025.09.02.19.47.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 19:47:49 -0700 (PDT)
+Message-ID: <67e3d491-0af3-4fd7-87f9-5ece1521174d@oss.qualcomm.com>
+Date: Wed, 3 Sep 2025 10:47:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SA2PR11MB5129:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f58018c-f668-462d-30ea-08ddea93ff10
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bFRDb2Ywd3k1eEg1aWhVMFJlbStqN3dSMDlMTFpiVHNUNGFZTzRhTDM4MzVX?=
- =?utf-8?B?M1d2TVNLdEMrb0FaUHZOMTR0UFJ4TDdNS2V6Ny9XZFdzc1E3TjczRi8vYmtS?=
- =?utf-8?B?L1BMV0RCSzIvZkE5eDRUUG9ranF3cDhoNERzNHpkamtSalJnUlh3NkNOMGpk?=
- =?utf-8?B?QVBiV2lWSHdhd3o0SUZ0STZEb2FNeGw0NVZReUtPTkFaU0pNK3VkMDVJVzhP?=
- =?utf-8?B?a2V0VUMzM2ZKQUQ4WFcyMGcyUkxhRlVEN252d2o2OElVN1JpU0MzZFpib1VW?=
- =?utf-8?B?eFpRT3U1RGEzZG9JSjAzV0VSaWtGbm9qdzlmVE9SMnhuRXZJUDFGZmJmeGI5?=
- =?utf-8?B?REE3azlSdmNhMy9jaFZ4S0w3VjFQaU01dTlteHhIcjdmUDlmT25BYUU4c3Nz?=
- =?utf-8?B?d3A3VUNkZG1HN2VubGhwZlo1cnFHanVMTXZYTHp1QkVQYy83UVlaL0NrcU5C?=
- =?utf-8?B?N0ZlV1JQaDBiWXQzL0RRaTc5aGo4bTN2NHF4OFkydkJZKy96c0thT2pKcmdU?=
- =?utf-8?B?UW1teTBCT2U5M2pTYkJtbks2QnF3eGlDNGZlL2loNG5tRXBVVGtDMVBpb2M2?=
- =?utf-8?B?VWc3MkVGTGVnQVRERjliZkI1WG1DaGs1QU53N1lFOUg1NnNSbmhsQlh0Qy9S?=
- =?utf-8?B?VU1WTTR0V21uU1MrTTg4Y0JaTHF1QTZqbGw1bmh2YjRkV05abkIyQjlJTTV0?=
- =?utf-8?B?MFE5ZU1QT200aU9zcTlibjNpd0xTell4Mkc2MHZ0ZzdjV3pTK2k1bEUvT3lP?=
- =?utf-8?B?WE9ZNkFGMFhKWjJaY2lTMjJGNFIvd0lvbVVJSDVpc1N0TmhwL0NZWnJ0L2t3?=
- =?utf-8?B?dDR6Q1ZMbG41bWhlaHlud3NYV1U3YW85OGR4eldJVFBrekdpRVBiL0pENWRo?=
- =?utf-8?B?SU8wR1BtV3JlbExnMlhxSFpWbDhabER3eDFqU2RaY0VmdXZpbGYvMjZxS1Vp?=
- =?utf-8?B?U1NScjM0SlFsamh3U3NUaDZ0YTZ2Y3FJdXA4aXJDd09YN2VGMk1KeEREcTc4?=
- =?utf-8?B?UE9zUjJtNHJPcHRCL1QweWRnRndBekhmNmJLa3JPejA5cW56UnppRWdoenBU?=
- =?utf-8?B?VFo0M3ZhQldMTmZDUU9iQjh5VkpBMGNBaExWMHZ5NjBPay9wY29BZ1YwS0xt?=
- =?utf-8?B?aHJnK0tROTdzL25pditSOVJwSFgxekhPcVd1T1NzYnRhQVp2aGZrRXpoMjNT?=
- =?utf-8?B?bXNmSUhubVZIb3R2TGZKVjZER0V5S0U5Q1h4NXZJcG16MVhQRjBWclp0Um1R?=
- =?utf-8?B?c25IOHoySVVQdnJXblFQRklqTjZjcFFuYytkblcxdWcvZHc2WThES2VDVThB?=
- =?utf-8?B?OWN0LzBOYWkrTWEvNDgrdUMyazhVRTZCc3VCV1hqU0FsRTZOdUhVejU3bTU5?=
- =?utf-8?B?SHVuSUFtZ1YrK3VHd3pNcmlMbW4raE1HcSt1eEJDbDFqazdSS2xQVzMvYWor?=
- =?utf-8?B?L0F2aWh5N3lPVUEvWlQ2MzRsT0xab2xpMmMyMVRqRE1jeXYrTE9QSVRXUWt5?=
- =?utf-8?B?UElIZ0RtM0hFRDI2S1Q5a3pRVmM0ZzdoL25qZnNHWm9mY3lYOUtmaERtbzRl?=
- =?utf-8?B?MFlxVG90Umc2aGJYYjZvK2s2dytTNndrTlRqR3ZvSExOUVBUUVRoTGRmc0tS?=
- =?utf-8?B?QVo5RStsanVqWllGMXN4bXcwUVNNdFE1ZG9KeDJxbEQrcGp3R3FGTDJ3eDEy?=
- =?utf-8?B?TFNxTjYxbXBRc0VDNnRGbk9KQ2NTQlIxbUl2b2dtZ25XOVB6aDFIUmt1S0hr?=
- =?utf-8?B?S1Yrb1cweGtrbVZFVFlPTlRrcEFGVjdOVkswemlvQ2MrV2YwTzYya2JyaE9m?=
- =?utf-8?B?bVJodWN1eXRoYlV6Skk2OURpSHVWakhxZnJ0ZTUyWXdJNEN4L1RMdnhHWkh3?=
- =?utf-8?B?OHlRakJLR2R0Q25jWW9RaXlXWmdzUFIzbWEzeGd0U25JL1EzWUpqWkViZ21a?=
- =?utf-8?Q?2RBhI330F2o=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?emZ1cFdkeS9ENlJiNTc0dWtDMVVzK3ZUZEZSbXVHOFp1TFF5WmloNk0wR0Fm?=
- =?utf-8?B?MjRxbm5QckZYRWlsMGJtTEowODRxSDMxRzJrMEliQ2QycHpCQVhHKzk3NXk1?=
- =?utf-8?B?NWFUTnhRNlRsd1R6SzVFM0hzZ1NHS21MQkpJTGRvbzhGbTM1alIyMGxSS3hL?=
- =?utf-8?B?MFk4YnNyMWFFUmcyL2RPUlVNT1o4R2d0dTB1Qkl0VFQ3Vi80RVZGblZ4RjM4?=
- =?utf-8?B?K29WUk43TDRoV1lhZFBJNVA0T3RDV1lRbU5FOTBReGZLSmVjM2lycit6ZU8v?=
- =?utf-8?B?WFFkNHY0OHNCNyt0bnhESUQ0ZmxneTBROUNnVHg4RjU3c2Z3RFlIdTNMajhB?=
- =?utf-8?B?Kzh6QVp4QUVGQU9uRGhzeFlnbzk4SzBybGs5UkE0RUMzVW50TUl6U2N1Si92?=
- =?utf-8?B?OWh1azZUcXRrdUNqa3NVT2hVU2taYlFYVzVaSG1aTFN2Y3hMaXVDQjhZSWJG?=
- =?utf-8?B?aGtSMTg2SXdWMmlwNEV3OUgzcjliR1ZLQVNRRERPalNyWFI3Rkh1T3h2cUhW?=
- =?utf-8?B?VlYwNW1KbGczY3E3em8xbDk3UDNLQUwzN3dDUUJiV0R2ZVZudGVxWThRVEpx?=
- =?utf-8?B?YjA1Qno5d1BENDdhR0FhL2UxTloyQlJqK2J6MEN5ZmVvVlVRaElrZHpvNHNJ?=
- =?utf-8?B?TUM3cFFxdWwxemh6MmNPa3hwN2UzOEtJU3BiOWZoVW5maWFmcG5wMTZ0Qmwv?=
- =?utf-8?B?OXhUR0FHT2svOWFFWXV5aXYxYmZPWFVDbUZyY0JiT2MwNkJxeTFJRnJ6THU2?=
- =?utf-8?B?eFJTMmlkbDhEN3Z6ZFpjK0tpSUxuYmlFN3NGbHU0eEd4WVJFUHdzYUE2S0Q2?=
- =?utf-8?B?TENzc3JEdW5pMDNhSFByK3QwejZubEZURlNvTjkzVWhHengxbmJYWGFDWXpR?=
- =?utf-8?B?V2JQbjQ1ZURGMTNhWVh1WEJSMzBjLzVRVml1NHlRTEdTV1hqZFBuakROQ0hw?=
- =?utf-8?B?MUZYWTFnQkxxUGNGalhQRHFtTGxLNzJzbDhNdnhCVHd1M05pQWRvZVdGcHhI?=
- =?utf-8?B?eXdhbHRQZUtQeFJRb1d6VmQ1SGJ6akY0SGp1VlJRd2FJQ2VvTUlWOVpJMVBR?=
- =?utf-8?B?ZDVmZ0U4MUVqT3h3TEVhQVU1TkU0OEkwOHQwSm5raDYwZ0U2WlVKeUh0ZDVM?=
- =?utf-8?B?c0RMZm1FQmxiWi9SdTU4Z3V6aWFsK0xYWVV1TktQQmRDOTFnU3pGSjRTSUJB?=
- =?utf-8?B?bEZyNUpRVW1pM3Rpd3l3dkRrajl3NHFkbUNrTUhSTkwyT1dWeUFXM0h0eTN3?=
- =?utf-8?B?RVhQeFFnTG5lM0dEZWxuTlpLZUZHN0dndU5HOWdzVEtNWisxb3RDV2tTQys4?=
- =?utf-8?B?bFFUYkkzK3M5ZWVrYkhSWHAwTFVGS1FDYXBEa3lPejhmaVdodklhdlB3TEVh?=
- =?utf-8?B?R2ZIMnYyWVF0MDVGN21WSG5oY3I2Z2lhU01DTmhnMzNHakxUTm1KbWFxTEhy?=
- =?utf-8?B?bU1LVlJkMDd5VkpzRVRXR05tSWVSQ0dLQTVnbEt4bmQrSVFsOFdCcXF3ZmZR?=
- =?utf-8?B?NHdWU21NdFBMN3VWeFkvYzhFMllQR3VWanBxTmw0R3JZWnNKd3hOd3pZRjgz?=
- =?utf-8?B?elkyQjErM2l3eUhRdFUrTy9zVTM4dXpKSXF0T3psb29teVM2WmZFMUtRYVgr?=
- =?utf-8?B?SUd6aGRuMVp4OWJjOW95ZTVockZ2TGFPM1RRbGQ1dzRCZms5SEVzdk5GTlRR?=
- =?utf-8?B?eEtZM1hySmQ2TnhuYUJZa0Jaa0NUdmZQZFRjR0pWa3VaQSt3ek1iZXJyLzFF?=
- =?utf-8?B?aFB5bC8vajdORzcrem55dkNzU0toTEtSbVdpUklQVmdvSXpvM00yancrUWk1?=
- =?utf-8?B?ZGMzUysrRCtrRzkrUzBrOFM0T2h2SXB2OHpGaDhXa2JPR0J3OVh2dHB4Tk4v?=
- =?utf-8?B?L3dkTVgwN2lBNzhIeXBZRVExcFJGandWTHc1ZTFTbTNOZk9rNmNIVUxFZWV2?=
- =?utf-8?B?VStPSjc3MkxZMEhSVEVSWUtYNis5K1M5alFEY2VtdHREbmFkd21wQjdwbGxN?=
- =?utf-8?B?cjUzMVJRUVpVczBUTERkbEtPSGFjM2lqZmxCcUxHNmpUcDlWNXlCWVdhVEdv?=
- =?utf-8?B?TjYrZFVES29mN1MvNDBSMmw4aStPNzhHMmUrNjZXOFZFR3VJRXBGTDBsTkNr?=
- =?utf-8?B?SFdSQnlaVlQwVUErZkxINUhuUks2YW1aamdNNXI2cDFFSjgyMlJzR2d3Mm05?=
- =?utf-8?B?NFE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f58018c-f668-462d-30ea-08ddea93ff10
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 02:45:51.8208
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DRKKBHpIDyi0J38sqnaPgl79lyyPjPRmauIDXrJLygLlf4ugcLR/shZLj5B2cenS/5pGfD1N0icrxtDp4SOMXOpy5R/PemuX2c90h6kCJqI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5129
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] coresight: tpdm: add static tpdm support
+From: Jie Gan <jie.gan@oss.qualcomm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
+        Mao Jinlong <jinlmao.mao@oss.qualcomm.com>,
+        Tao Zhang <quic_taozha@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, coresight@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250822103008.1029-1-jie.gan@oss.qualcomm.com>
+ <20250822103008.1029-3-jie.gan@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20250822103008.1029-3-jie.gan@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAyMDAyNCBTYWx0ZWRfXzCY0l3vnMyZG
+ szSRjoBFoK0T6yYayWtsYCOOfcG4AXjIl7KkGPSDp9hPrQjuAHfCQafC6+sKuiNl1pvw9hajO/B
+ WRkuvsTOXUkhpsk4W6n7bxgQvJoJ5wYpUnDh1RaPb2C6fltA5cc40PF0587vRyIIIaHJ9jy5ZYc
+ f1FM2svo/Yo9CpckUmVWrk3qv+EO2KrdTamwe2eqcJfbIWy/4VJ9qoIu5Fo1LOxb4nl4nomZX1L
+ IHBc/tktJjKqWOYPxMKsgaUPACHH881dcngOEihjgl0uD1hUTWVoY8S8tfru7PMkRBoT/45+pbv
+ RTzksoFhNpeb+ZczFVgUUQw25zJD39RuYT/CtD5WOXDLXmWCdnsfOUuwIw0HIMo/5fP/KN6dEaN
+ 0k3uR5WW
+X-Authority-Analysis: v=2.4 cv=WKh/XmsR c=1 sm=1 tr=0 ts=68b7ac57 cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=DS5xQBhA3tpC-DeSMgwA:9 a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-GUID: DS4mhCGLkuIzyhadFNAmi5DrzGm_8yTs
+X-Proofpoint-ORIG-GUID: DS4mhCGLkuIzyhadFNAmi5DrzGm_8yTs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_01,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 adultscore=0
+ spamscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509020024
 
-Hi Babu,
 
-On 8/14/25 7:25 PM, Babu Moger wrote:
-> Resctrl provides a user-configurable option mbm_assign_on_mkdir that
-> determines if a counter will automatically be assigned to an RMID, event
-> pair when its associated monitor group is created via mkdir.
+
+On 8/22/2025 6:30 PM, Jie Gan wrote:
+> The static TPDM function as a dummy source, however, it is essential
+> to enable the port connected to the TPDA and configure the element size.
+> Without this, the TPDA cannot correctly receive trace data from the
+> static TPDM. Since the static TPDM does not require MMIO mapping to
+> access its registers, a clock controller is not mandatory for its
+> operation.
+
+Gentle ping.
+
+Can you please help to review the patch?
+This patch has a dependency:
+https://lore.kernel.org/all/20250806080931.14322-1-jie.gan@oss.qualcomm.com/
+
+Thanks,
+Jie
+
 > 
-> Enable mbm_assign_on_mkdir by default to automatically assign counters to
-> the two default events (MBM total and MBM local) of a new monitoring group
-> created via mkdir. This maintains backward compatibility with original
-> resctrl support for these two events.
-> 
-> Unassign and free counters belonging to a monitoring group when the group
-> is deleted.
-> 
-> Monitor group creation does not fail if a counter cannot be assigned to one
-> or both events. There may be limited counters and users have the
-> flexibility to modify counter assignments at a later time. Log the error
-> message "Failed to allocate counter for <event> in domain <id>" in
-> /sys/fs/resctrl/info/last_cmd_status when a new monitoring group is created
-> but counter assignment failed.
-> 
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
 > ---
+>   drivers/hwtracing/coresight/coresight-tpda.c |   9 ++
+>   drivers/hwtracing/coresight/coresight-tpdm.c | 148 ++++++++++++++-----
+>   drivers/hwtracing/coresight/coresight-tpdm.h |   8 +
+>   3 files changed, 131 insertions(+), 34 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
+> index 333b3cb23685..4e93fa5bace4 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+> @@ -68,6 +68,15 @@ static int tpdm_read_element_size(struct tpda_drvdata *drvdata,
+>   	int rc = -EINVAL;
+>   	struct tpdm_drvdata *tpdm_data = dev_get_drvdata(csdev->dev.parent);
+>   
+> +	if (coresight_is_static_tpdm(csdev)) {
+> +		rc = fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
+> +					      "qcom,dsb-element-bits", &drvdata->dsb_esize);
+> +		rc &= fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
+> +					       "qcom,cmb-element-bits", &drvdata->cmb_esize);
+> +
+> +		goto out;
+> +	}
+> +
+>   	if (tpdm_data->dsb) {
+>   		rc = fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
+>   				"qcom,dsb-element-bits", &drvdata->dsb_esize);
+> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c b/drivers/hwtracing/coresight/coresight-tpdm.c
+> index 7214e65097ec..1766b0182819 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpdm.c
+> +++ b/drivers/hwtracing/coresight/coresight-tpdm.c
+> @@ -495,7 +495,9 @@ static int tpdm_enable(struct coresight_device *csdev, struct perf_event *event,
+>   		return -EBUSY;
+>   	}
+>   
+> -	__tpdm_enable(drvdata);
+> +	if (!coresight_is_static_tpdm(csdev))
+> +		__tpdm_enable(drvdata);
+> +
+>   	drvdata->enable = true;
+>   	spin_unlock(&drvdata->spinlock);
+>   
+> @@ -551,7 +553,9 @@ static void tpdm_disable(struct coresight_device *csdev,
+>   		return;
+>   	}
+>   
+> -	__tpdm_disable(drvdata);
+> +	if (!coresight_is_static_tpdm(csdev))
+> +		__tpdm_disable(drvdata);
+> +
+>   	coresight_set_mode(csdev, CS_MODE_DISABLED);
+>   	drvdata->enable = false;
+>   	spin_unlock(&drvdata->spinlock);
+> @@ -1342,10 +1346,9 @@ static const struct attribute_group *tpdm_attr_grps[] = {
+>   	NULL,
+>   };
+>   
+> -static int tpdm_probe(struct amba_device *adev, const struct amba_id *id)
+> +static int tpdm_probe(struct device *dev, struct resource *res)
+>   {
+>   	void __iomem *base;
+> -	struct device *dev = &adev->dev;
+>   	struct coresight_platform_data *pdata;
+>   	struct tpdm_drvdata *drvdata;
+>   	struct coresight_desc desc = { 0 };
+> @@ -1354,32 +1357,33 @@ static int tpdm_probe(struct amba_device *adev, const struct amba_id *id)
+>   	pdata = coresight_get_platform_data(dev);
+>   	if (IS_ERR(pdata))
+>   		return PTR_ERR(pdata);
+> -	adev->dev.platform_data = pdata;
+> +	dev->platform_data = pdata;
+>   
+>   	/* driver data*/
+>   	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+>   	if (!drvdata)
+>   		return -ENOMEM;
+> -	drvdata->dev = &adev->dev;
+> +	drvdata->dev = dev;
+>   	dev_set_drvdata(dev, drvdata);
+>   
+> -	base = devm_ioremap_resource(dev, &adev->res);
+> -	if (IS_ERR(base))
+> -		return PTR_ERR(base);
+> +	if (res) {
+> +		base = devm_ioremap_resource(dev, res);
+> +		if (IS_ERR(base))
+> +			return PTR_ERR(base);
+>   
+> -	drvdata->base = base;
+> +		drvdata->base = base;
+> +		ret = tpdm_datasets_setup(drvdata);
+> +		if (ret)
+> +			return ret;
+>   
+> -	ret = tpdm_datasets_setup(drvdata);
+> -	if (ret)
+> -		return ret;
+> +		if (drvdata && tpdm_has_dsb_dataset(drvdata))
+> +			of_property_read_u32(drvdata->dev->of_node,
+> +					     "qcom,dsb-msrs-num", &drvdata->dsb_msr_num);
+>   
+> -	if (drvdata && tpdm_has_dsb_dataset(drvdata))
+> -		of_property_read_u32(drvdata->dev->of_node,
+> -			   "qcom,dsb-msrs-num", &drvdata->dsb_msr_num);
+> -
+> -	if (drvdata && tpdm_has_cmb_dataset(drvdata))
+> -		of_property_read_u32(drvdata->dev->of_node,
+> -			   "qcom,cmb-msrs-num", &drvdata->cmb_msr_num);
+> +		if (drvdata && tpdm_has_cmb_dataset(drvdata))
+> +			of_property_read_u32(drvdata->dev->of_node,
+> +					     "qcom,cmb-msrs-num", &drvdata->cmb_msr_num);
+> +	}
+>   
+>   	/* Set up coresight component description */
+>   	desc.name = coresight_alloc_device_name(&tpdm_devs, dev);
+> @@ -1388,34 +1392,51 @@ static int tpdm_probe(struct amba_device *adev, const struct amba_id *id)
+>   	desc.type = CORESIGHT_DEV_TYPE_SOURCE;
+>   	desc.subtype.source_subtype = CORESIGHT_DEV_SUBTYPE_SOURCE_TPDM;
+>   	desc.ops = &tpdm_cs_ops;
+> -	desc.pdata = adev->dev.platform_data;
+> -	desc.dev = &adev->dev;
+> +	desc.pdata = dev->platform_data;
+> +	desc.dev = dev;
+>   	desc.access = CSDEV_ACCESS_IOMEM(base);
+> -	desc.groups = tpdm_attr_grps;
+> +	if (res)
+> +		desc.groups = tpdm_attr_grps;
+>   	drvdata->csdev = coresight_register(&desc);
+>   	if (IS_ERR(drvdata->csdev))
+>   		return PTR_ERR(drvdata->csdev);
+>   
+>   	spin_lock_init(&drvdata->spinlock);
+>   
+> -	/* Decrease pm refcount when probe is done.*/
+> -	pm_runtime_put(&adev->dev);
+> -
+>   	return 0;
+>   }
+>   
+> -static void tpdm_remove(struct amba_device *adev)
+> +static int tpdm_remove(struct device *dev)
+>   {
+> -	struct tpdm_drvdata *drvdata = dev_get_drvdata(&adev->dev);
+> +	struct tpdm_drvdata *drvdata = dev_get_drvdata(dev);
+>   
+>   	coresight_unregister(drvdata->csdev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int dynamic_tpdm_probe(struct amba_device *adev,
+> +			      const struct amba_id *id)
+> +{
+> +	int ret;
+> +
+> +	ret = tpdm_probe(&adev->dev, &adev->res);
+> +	if (!ret)
+> +		pm_runtime_put(&adev->dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static void dynamic_tpdm_remove(struct amba_device *adev)
+> +{
+> +	tpdm_remove(&adev->dev);
+>   }
+>   
+>   /*
+>    * Different TPDM has different periph id.
+>    * The difference is 0-7 bits' value. So ignore 0-7 bits.
+>    */
+> -static const struct amba_id tpdm_ids[] = {
+> +static const struct amba_id dynamic_tpdm_ids[] = {
+>   	{
+>   		.id	= 0x001f0e00,
+>   		.mask	= 0x00ffff00,
+> @@ -1423,17 +1444,76 @@ static const struct amba_id tpdm_ids[] = {
+>   	{ 0, 0, NULL },
+>   };
+>   
+> -static struct amba_driver tpdm_driver = {
+> +MODULE_DEVICE_TABLE(amba, dynamic_tpdm_ids);
+> +
+> +static struct amba_driver dynamic_tpdm_driver = {
+>   	.drv = {
+>   		.name   = "coresight-tpdm",
+>   		.suppress_bind_attrs = true,
+>   	},
+> -	.probe          = tpdm_probe,
+> -	.id_table	= tpdm_ids,
+> -	.remove		= tpdm_remove,
+> +	.probe          = dynamic_tpdm_probe,
+> +	.id_table	= dynamic_tpdm_ids,
+> +	.remove		= dynamic_tpdm_remove,
+>   };
+>   
+> -module_amba_driver(tpdm_driver);
+> +static int tpdm_platform_probe(struct platform_device *pdev)
+> +{
+> +	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	int ret;
+> +
+> +	pm_runtime_get_noresume(&pdev->dev);
+> +	pm_runtime_set_active(&pdev->dev);
+> +	pm_runtime_enable(&pdev->dev);
+> +
+> +	ret = tpdm_probe(&pdev->dev, res);
+> +	pm_runtime_put(&pdev->dev);
+> +	if (ret)
+> +		pm_runtime_disable(&pdev->dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static void tpdm_platform_remove(struct platform_device *pdev)
+> +{
+> +	struct tpdm_drvdata *drvdata = dev_get_drvdata(&pdev->dev);
+> +
+> +	if (WARN_ON(!drvdata))
+> +		return;
+> +
+> +	tpdm_remove(&pdev->dev);
+> +	pm_runtime_disable(&pdev->dev);
+> +}
+> +
+> +static const struct of_device_id static_tpdm_match[] = {
+> +	{.compatible = "qcom,coresight-static-tpdm"},
+> +	{}
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, static_tpdm_match);
+> +
+> +static struct platform_driver static_tpdm_driver = {
+> +	.probe		= tpdm_platform_probe,
+> +	.remove		= tpdm_platform_remove,
+> +	.driver		= {
+> +		.name	= "coresight-static-tpdm",
+> +		.of_match_table = static_tpdm_match,
+> +		.suppress_bind_attrs = true,
+> +	},
+> +};
+> +
+> +static int __init tpdm_init(void)
+> +{
+> +	return coresight_init_driver("tpdm", &dynamic_tpdm_driver, &static_tpdm_driver,
+> +				     THIS_MODULE);
+> +}
+> +
+> +static void __exit tpdm_exit(void)
+> +{
+> +	coresight_remove_driver(&dynamic_tpdm_driver, &static_tpdm_driver);
+> +}
+> +
+> +module_init(tpdm_init);
+> +module_exit(tpdm_exit);
+>   
+>   MODULE_LICENSE("GPL");
+>   MODULE_DESCRIPTION("Trace, Profiling & Diagnostic Monitor driver");
+> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.h b/drivers/hwtracing/coresight/coresight-tpdm.h
+> index b11754389734..9f52c88ce5c1 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpdm.h
+> +++ b/drivers/hwtracing/coresight/coresight-tpdm.h
+> @@ -343,4 +343,12 @@ struct tpdm_dataset_attribute {
+>   	enum dataset_mem mem;
+>   	u32 idx;
+>   };
+> +
+> +static inline bool coresight_is_static_tpdm(struct coresight_device *csdev)
+> +{
+> +	struct device_node *node = csdev->dev.parent->of_node;
+> +
+> +	return (csdev &&
+> +		of_device_is_compatible(node, "qcom,coresight-static-tpdm"));
+> +}
+>   #endif  /* _CORESIGHT_CORESIGHT_TPDM_H */
 
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-
-Reinette
 
