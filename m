@@ -1,101 +1,105 @@
-Return-Path: <linux-kernel+bounces-799124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79088B42758
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:55:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF4BB42754
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 146931BC3C59
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:55:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 797B51BA1912
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC983312826;
-	Wed,  3 Sep 2025 16:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="IsTK7dFz"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCF430F542;
+	Wed,  3 Sep 2025 16:55:12 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6162BF3E2;
-	Wed,  3 Sep 2025 16:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756918524; cv=pass; b=hNXYsTkNBm6uu03o3ujR9rJvmpiInjgpAcK4Gt9cUbStbMCyztXA/abHsb5hPtorIluAseh9t4ovuxn5MrIgoHoYQeFiaSd5gihKp5UxYYc/XJgGrJXbhh90F+2YQoDpzOssw3JR9oloG3qxBigN3a/zTuuPwcSpofA+o9xhW+M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756918524; c=relaxed/simple;
-	bh=XML3TLtqNLit6Cuk/fd0UijgFeKExTOFCjoiSKp+kCo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YmXpSKcgaOl+T/b81rqnUtnCN5O4ucRWHNdkoAbwcRJZypMp998VYgrML1ylqiNq30V3Gt9aOwDojC4JZ9QyCFfj+Tn/JzyFdWInNQ6KhfiNjhhHAMC5Yuq3uO/VYdUcBcj4s34/qoDCuMS0jRyA0VY6M5GyoF8e7VlAKJIAYak=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=IsTK7dFz; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yukuai.org.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
-ARC-Seal: i=1; a=rsa-sha256; t=1756918475; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=LxA6xthJl3yR5kw+yNsCzgnMqt/DMw7Aj/qxGR2Zgzq7BTZHE1yJKgF+CmsrZei7cZfT/IEBwzehJofGst/z7g3RBBjXJSoqO+p+LoIHh6fVdu4FlbhyyFrlChSeBYxXnPWuT8piSSNtHf/8jw2qJgMTlVQOQYJIdYqPg8Dw2NM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756918475; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=7WdYZEXC6O5mRGfLpDBkGN8H25EvnFvIzc7KmEQNUo8=; 
-	b=npEau/1a9jaELQMDb9H01ZEtu1nDoGWwNN8hw9ySKQxh3fhx3WCharWZfl8NLOt6DDfbXtjPc9VxDfgiAVIPI2O1lGiixYqLUQOJKKtXFceLR51R5BEjjOHa4mQOzGxsZW9iAck0ioFuNYwetAoPPpnJnEFeAk2J6H4yzQjUgjk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=yukuai.org.cn;
-	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
-	dmarc=pass header.from=<hailan@yukuai.org.cn>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756918475;
-	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=7WdYZEXC6O5mRGfLpDBkGN8H25EvnFvIzc7KmEQNUo8=;
-	b=IsTK7dFzFhrJMg20s4XZnfRvA7LatZIg12EmMPmYg54oaH8ad3o66ID/CAh7hN4V
-	qe4uvBxHTtY2j32S4INqMgW7F93Cf27LcEX/vH6acM2NYwcm9WEQxtazbkuZKLHqruY
-	YF87Gs8q6fLEg3o4SzeCDrkqMvaPUyoOneCaekU8=
-Received: by mx.zohomail.com with SMTPS id 1756918472587914.1197745405617;
-	Wed, 3 Sep 2025 09:54:32 -0700 (PDT)
-Message-ID: <5378349f-4d00-4d3e-9834-f3ddf2e514cc@yukuai.org.cn>
-Date: Thu, 4 Sep 2025 00:54:21 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7973A2BF3E2;
+	Wed,  3 Sep 2025 16:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756918512; cv=none; b=ga4RF7kkZz/izJIJsKFHLx/6vodaP6GPFErSG5ATL8GSP+z+hb1yJJojHvKqCQCnHadK6txstdbezOva/RY/Lut65a7hrGSlFPY+aOFCnC0IiZ46Xq5MZ1CvUvfRrekPXvPiMmZGiA7gAWvHZuAFyKo7rJG7/OO1K/eVE9utf6o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756918512; c=relaxed/simple;
+	bh=30uqmxUWwwZjA2mmV57rJmq7l79ruMZyoiTHZmBLM9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c2WsD1/SXqOz14itcRxgmPHCimuPTLLCVqz3Ckow6dHRpvHm/Zf8XNpFhDPOlHeJZcsznwIVGtmLSKIOoZx+tTxOZMYV3tSMetjqpH6PgUzgSsFwLCLjF5qGUI8nqsUNbEiKLfgk8ecW3kwla8oG+Ku3AqdLo1ArrEn1eZDeU3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b042ec947e4so15671066b.0;
+        Wed, 03 Sep 2025 09:55:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756918509; x=1757523309;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QDdwyuaVc8VSTl6NQmoSrQNloKdIcjoMxK537r629qc=;
+        b=Hm5VRHh8XC/qrU+6rsQP9bnekGF4VjM2ZBzidiPE1b/21Q2wOlL5EEnaGmBPm4+BaY
+         7dlOhatbdvNPGZLhhgbEKfi+atfrv/Xwvlnfs3yhdlXP2z/9AraBW8KPV4Ln+MHEgSsE
+         g94L7/iaGyO4hfSsN0uU6pFrXAuvAhr0iQnJN7yNK85vrz29KxBiicsr1Bmphy8A0ew1
+         bfm1vD6D6jMq7z7EAZuvu2OUSKSEZRX48/ggiy+o20/NIjGGnUAIu9WLBQhNmYByMrFA
+         vZc546GKAlybLQgT65m1C8bDourNVeelzzzIWngdzPzjkS/DfpiF2xxQSE8CSjuR8JV0
+         Rmyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUbQ07hsOtOIXGbBmZ6etRCeg9SSNy8/k53i+v5FXQHgT0Gu//BEeRPXOLJP7SJU77Fh056CIN@vger.kernel.org, AJvYcCXqMwe1EKIlgH/4VYKNfB6oP04fAAnFPWnSs4E1TFq1xq+k0FgCI1GnJN+syrqE1wqwo/DOzWIw9ndSNkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEUn3N6lu1s1o/VzhOIqSPGDPO2az8JaL2UJs5+cZQhvcVaHzr
+	WkAefwkEqkCFEaXOF4t9QslWiNvU1eR6l5Y1zB6PZS+87VOzlrtBUiWO
+X-Gm-Gg: ASbGncuT0jSqGVLULzYwzaxmN8fWaqfPU3zdPTi+RcL5VsYapHRh9EV0JNB1Y5nkCx4
+	U7HYmttCD35nW6w0GumJNz8hVjePSBmzplSaFmW8YWeBkuAGS73JnVp1SYF/Zey0P4QI8c3Mbm3
+	9QV0gI7Hs3gQiffaIf2CG8IAa4INKWncwelSGSHiq7ThJKt8qvGA19RhWfoagrYfGuWKvGN1L7w
+	0vMpNXog925MjPmnyM+/PcuCZgdWOdvghnd9HsTSqE06Fxz63UMnQn2QcfitVggPgeQuD/5VusS
+	KZvZyfg6vjAlStzVHF7D9YsZzjJIWcTGoND3RtAEydFTrEzmSfmnoEMIQrfkcGcBpxAcAQoy933
+	kp5RNi/4pG+/hetrEuokZXhI=
+X-Google-Smtp-Source: AGHT+IHj2ea6XeYQe5FG+mFIfrJNdxtnyrHgGC5qizxT1Mt2Lf2mzyFI4yV+cXlZTyes3qLz69Uv4A==
+X-Received: by 2002:a17:907:9444:b0:b04:4d7b:9ad2 with SMTP id a640c23a62f3a-b044d7ba932mr805242366b.39.1756918508646;
+        Wed, 03 Sep 2025 09:55:08 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:6::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0236d310casm1115557966b.44.2025.09.03.09.55.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 09:55:07 -0700 (PDT)
+Date: Wed, 3 Sep 2025 09:55:05 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rt-devel@lists.linux.dev, kernel-team@meta.com, efault@gmx.de, calvin@wbinvd.org, 
+	willemdebruijn.kernel@gmail.com
+Subject: Re: [PATCH 7/7] netpoll: Flush skb_pool as part of netconsole cleanup
+Message-ID: <sz3tq6rkykm2565stkd4qhj6k6t5wtd2nwboby47goq32hkfor@xwlmwuy7y27x>
+References: <20250902-netpoll_untangle_v3-v1-0-51a03d6411be@debian.org>
+ <20250902-netpoll_untangle_v3-v1-7-51a03d6411be@debian.org>
+ <20250902170938.0d671102@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 02/15] block: add QUEUE_FLAG_BIO_ISSUE
-To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: colyli@kernel.org, hare@suse.de, dlemoal@kernel.org, tieren@fnnas.com,
- axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
- kmo@daterainc.com, satyat@google.com, ebiggers@google.com, neil@brown.name,
- akpm@linux-foundation.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- linux-raid@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
- <20250901033220.42982-3-yukuai1@huaweicloud.com>
- <aLhBqTrbUWVK4OKy@infradead.org>
-From: Yu Kuai <hailan@yukuai.org.cn>
-In-Reply-To: <aLhBqTrbUWVK4OKy@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902170938.0d671102@kernel.org>
 
-Hi,
+On Tue, Sep 02, 2025 at 05:09:38PM -0700, Jakub Kicinski wrote:
+> On Tue, 02 Sep 2025 07:36:29 -0700 Breno Leitao wrote:
+> > @@ -607,8 +596,6 @@ static void __netpoll_cleanup(struct netpoll *np)
+> >  		call_rcu(&npinfo->rcu, rcu_cleanup_netpoll_info);
+> >  	} else
+> >  		RCU_INIT_POINTER(np->dev->npinfo, NULL);
+> > -
+> > -	skb_pool_flush(np);
+> >  }
+> >  
+> 
+> Please don't post conflicting patches to net and net-next.
+> Fixes have to go in first, trees converge, and then the net-next patches
+> can be posted.
 
-在 2025/9/3 21:24, Christoph Hellwig 写道:
-> On Mon, Sep 01, 2025 at 11:32:07AM +0800, Yu Kuai wrote:
->>   static inline void blkcg_bio_issue_init(struct bio *bio)
->>   {
->> -	bio->issue_time_ns = blk_time_get_ns();
->> +	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
->> +
->> +	if (test_bit(QUEUE_FLAG_BIO_ISSUE, &q->queue_flags))
->> +		bio->issue_time_ns = blk_time_get_ns();
->>   }
-> Given that this is called on a bio and called from generic code
-> and not blk-mq, the flag should in the gendisk and not the queue.
->
-ok, will change to disk, and also change set/clear the flag to
-enable/disable iolatency.
+Ack. I will wait until the invalid cleanup patch[1] lands in net-next
+before submitting a v2 for this change.
 
-Thanks,
-Kuai
-
+Link: https://lore.kernel.org/all/20250901-netpoll_memleak-v1-1-34a181977dfc@debian.org/ [1]
 
