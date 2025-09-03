@@ -1,62 +1,73 @@
-Return-Path: <linux-kernel+bounces-798715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C075B421E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:37:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A445B421D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 984BF5807D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:36:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 249CC4E4F0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7749C3090EA;
-	Wed,  3 Sep 2025 13:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3352A3090EA;
+	Wed,  3 Sep 2025 13:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSm9Bpqx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mz8tPaow"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA6D1FDE09;
-	Wed,  3 Sep 2025 13:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5719C2F4A0B;
+	Wed,  3 Sep 2025 13:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756906555; cv=none; b=BLwc6Bb3/2dpm7dWqov6dVjkSGrs4lBJNVKEjU9XUg3o+sfD//4k0tNYKvJYAKzBq4+dIDJzC4tknyn1aXNOOwHBkRQrzy6OF6w1PAkZnzcZXu6s92r/WtSCsPTpmkujDj3+Q6Bf354z1VxkLWViHNo0czfqqyLK+jnrUMwZUiY=
+	t=1756906564; cv=none; b=FWEsg7oj91f6D8ZeXiv3wgonDlnmNO/mImnVofzGRoVPe2QONUhxWWAlmOYquGsbJtAJ/LiKHqcqd4C5/yKuAVVdCihm/wn6E/yiYFHVSG3bDuVhzyP5xM/eZ09j1UV+IIrJu2m4qYvunQOUcL17aKfiRDxbCw2jw4LiBErxKug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756906555; c=relaxed/simple;
-	bh=sTpJYr2zp8LHrOcPJLG4wwyrHVGeO0gIJp52vosX9gk=;
+	s=arc-20240116; t=1756906564; c=relaxed/simple;
+	bh=vGFz3odNyr8060Aa2TccDkThKx77JB9ylQrhp0r0nC8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fE5qqpLVT1RDOJ7NE+nDWb5zSriPAbEeLkBxB9b/Ozdl8mxQ/LXE/pZJXtjFuSPn1pkcgSA8IQFk5S0KItjPtSuy62YxYd/Un0jiayqyOnq+VpRZ2B5+v3vtoC5Qlm0PJhYNL66+SuZ4wJ2FJRhpaZGWKmWzk5gYhmBh4nJ5P0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSm9Bpqx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF386C4CEF0;
-	Wed,  3 Sep 2025 13:35:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=T+HwRYBo5d2pyO/rzF3d8t2K/JrIpD2SCUe9M0qMeObxePb1Y94g412BWFslQilxOg3BorRu3kJg/fSl8m9tJ68N2EpR7Oj1ChtzDFrE9C/9+mDOggykQcUHC5u5vXF+A3/nFq47GQ6CdFxWmMyoI+VJGMoV3msVvk31PEPH7NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mz8tPaow; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52123C4CEF0;
+	Wed,  3 Sep 2025 13:36:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756906555;
-	bh=sTpJYr2zp8LHrOcPJLG4wwyrHVGeO0gIJp52vosX9gk=;
+	s=k20201202; t=1756906560;
+	bh=vGFz3odNyr8060Aa2TccDkThKx77JB9ylQrhp0r0nC8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gSm9BpqxhoY5su2yUqKJjCmxZjfNyREzTeBLgxg2CXQzawHfgDGsAycXu0hFl6loo
-	 i4UYSrj/9TkJGdTJN/j5pCpmBXf6P9tYJWy4XMiP0NFnZT9l+LXHsyt1rQquVbYJs1
-	 +ChPT8tFBZFuDrpTyxQ2iSiGZxvEORwjeeeFCkN/ikL611j2ilGrw4/HBIAyYThikw
-	 nbOWh2gzkK9O3hPcT/pc3bisY9tpbMTI/wqj4qjprPGsWPEHRSga5fxWLWIw4GKpsE
-	 cImSI2186Y3iwXG+HCUh/AvWetxKUgh7g4hKDX0/2gjQuuwcNj6jNnLyRuTVwRhOUG
-	 1GHuArs5fOmYw==
-Date: Wed, 3 Sep 2025 14:35:50 +0100
-From: Lee Jones <lee@kernel.org>
-To: Alexander Kurz <akurz@blala.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Dzmitry Sankouski <dsankouski@gmail.com>,
+	b=mz8tPaowswg6VTNwTTlRgZusJ5DA7a65+mPIW3iirWWm6b+sfIs4RhyeNJXtLvFjn
+	 dDpao0baMbTU3nz6gWxHn6Dz2ZfLT0nhgwkB5TKBQJsB5QYfrzICmNgODpOoAAp+MM
+	 pFGuZRGroPiqM3+5hUTSDXun1xDoWyQGG1WcCC9Eqhb1c9OgQqtPWJNBrg9wM9tLhw
+	 7pFRoCi9PvbVk/7kGPBwxHx4g0cq1UtLyNHnA98bFCwfxD3Je0nu/1ZBv5/WSKjTUD
+	 51IJtZbTlfQkhsVgERCUCeJdJltRflNaxd4KIXbBUWa2J3hAYgzHDR6n0eU3XTfV5U
+	 TJZ7r8yJRV5Rw==
+Date: Wed, 3 Sep 2025 10:35:57 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Collin Funk <collin.funk1@gmail.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
 	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] Input: mc13783-pwrbutton: enable other mc13xxx
- PMIC
-Message-ID: <20250903133550.GB2764654@google.com>
-References: <20250829201517.15374-1-akurz@blala.de>
- <20250829201517.15374-5-akurz@blala.de>
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Gautam Menghani <gautam@linux.ibm.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH v10 08/11] perf python: Add evlist compute_metric
+Message-ID: <aLhEPS6T-Sxnujrp@x1>
+References: <20250819013941.209033-1-irogers@google.com>
+ <20250819013941.209033-9-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,170 +77,228 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250829201517.15374-5-akurz@blala.de>
+In-Reply-To: <20250819013941.209033-9-irogers@google.com>
 
-On Fri, 29 Aug 2025, Alexander Kurz wrote:
+On Mon, Aug 18, 2025 at 06:39:38PM -0700, Ian Rogers wrote:
+> Add a compute_metric function that computes a metric double value for a
+> given evlist, metric name, CPU and thread. For example:
+> ```
+> >>> import perf
+> >>> x = perf.parse_metrics("TopdownL1")
+> >>> x.open()
+> >>> x.enable()
+> >>> x.disable()
+> >>> x.metrics()
+> ['tma_bad_speculation', 'tma_frontend_bound', 'tma_backend_bound', 'tma_retiring']
+> >>> x.compute_metric('tma_bad_speculation', 0, -1)
+> 0.08605342847131037
+> ```
 
-> All three mc13xxx types do feature two common power buttons referred as
-> ONOFD[12] (mc13783) and PWRON[12] (mc13892/mc34708) in the SoC reference
-> manuals. Add support for PWRON[12] (mc13892/mc34708) but skip support for
-> button PWRON3 (mc13892) for sake of simplicity.
-> 
-> Signed-off-by: Alexander Kurz <akurz@blala.de>
+Added the following to fix the build on the still not EOLed OpenSUSE
+15, ok?
+
+- Arnaldo
+
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index 56102034d5b8c469..47178404802f4069 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -1386,7 +1386,7 @@ static int prepare_metric(const struct metric_expr *mexp,
+ static PyObject *pyrf_evlist__compute_metric(struct pyrf_evlist *pevlist,
+ 					     PyObject *args, PyObject *kwargs)
+ {
+-	int ret, cpu = 0, cpu_idx, thread = 0, thread_idx;
++	int ret, cpu = 0, cpu_idx = 0, thread = 0, thread_idx = 0;
+ 	const char *metric;
+ 	struct rb_node *node;
+ 	struct metric_expr *mexp = NULL;
+
+Committer notes:
+
+Initialize thread_idx and cpu_idx to zero as albeit them not possibly
+coming out unitialized from the loop as mexp would be not NULL only if
+they were initialized, some older compilers don't notice that and error
+with:
+
+    GEN     /tmp/build/perf/python/perf.cpython-36m-x86_64-linux-gnu.so
+  /git/perf-6.17.0-rc3/tools/perf/util/python.c: In function ‘pyrf_evlist__compute_metric’:
+  /git/perf-6.17.0-rc3/tools/perf/util/python.c:1363:3: error: ‘thread_idx’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
+     evsel__read_counter(metric_events[i], cpu_idx, thread_idx);
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  /git/perf-6.17.0-rc3/tools/perf/util/python.c:1389:41: note: ‘thread_idx’ was declared here
+    int ret, cpu = 0, cpu_idx, thread = 0, thread_idx;
+                                           ^~~~~~~~~~
+  /git/perf-6.17.0-rc3/tools/perf/util/python.c:1363:3: error: ‘cpu_idx’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
+     evsel__read_counter(metric_events[i], cpu_idx, thread_idx);
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  /git/perf-6.17.0-rc3/tools/perf/util/python.c:1389:20: note: ‘cpu_idx’ was declared here
+    int ret, cpu = 0, cpu_idx, thread = 0, thread_idx;
+                      ^~~~~~~
+  /git/perf-6.17.0-rc3/tools/perf/util/python.c: At top level:
+  cc1: error: unrecognized command line option ‘-Wno-cast-function-type’ [-Werror]
+  cc1: all warnings being treated as errors
+  error: command 'gcc' failed with exit status 1
+  cp: cannot stat '/tmp/build/perf/python_ext_build/lib/perf*.so': No such file or directory
+
+- Arnaldo
+ 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Reviewed-by: Howard Chu <howardchu95@gmail.com>
 > ---
->  drivers/input/misc/Kconfig             |  4 +--
->  drivers/input/misc/mc13783-pwrbutton.c | 44 +++++++++++++++++++++++---
-
->  include/linux/mfd/mc13783.h            |  4 +--
->  include/linux/mfd/mc13xxx.h            |  2 ++
-
-Acked-by: Lee Jones <lee@kernel.org>
-
->  4 files changed, 46 insertions(+), 8 deletions(-)
+>  tools/perf/util/python.c | 125 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 125 insertions(+)
 > 
-> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-> index 0fb21c99a5e3..b66e920369f2 100644
-> --- a/drivers/input/misc/Kconfig
-> +++ b/drivers/input/misc/Kconfig
-> @@ -276,8 +276,8 @@ config INPUT_MC13783_PWRBUTTON
->  	tristate "MC13783 ON buttons"
->  	depends on MFD_MC13XXX
->  	help
-> -	  Support the ON buttons of MC13783 PMIC as an input device
-> -	  reporting power button status.
-> +	  Support the ON buttons of MC13783/MC13892/MC34708 PMIC as an input
-> +	  device reporting power button status.
->  
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called mc13783-pwrbutton.
-> diff --git a/drivers/input/misc/mc13783-pwrbutton.c b/drivers/input/misc/mc13783-pwrbutton.c
-> index ace9f286fd24..c9eea57ceedd 100644
-> --- a/drivers/input/misc/mc13783-pwrbutton.c
-> +++ b/drivers/input/misc/mc13783-pwrbutton.c
-> @@ -30,16 +30,21 @@
->  #include <linux/sched.h>
->  #include <linux/slab.h>
->  
-> +struct mc13xxx_button_devtype {
-> +	int button_id_max;
-> +};
-> +
->  struct mc13783_pwrb {
->  	struct input_dev *pwr;
->  	struct mc13xxx *mc13783;
-> -#define MC13783_PWRB_B1_POL_INVERT	(1 << 0)
-> -#define MC13783_PWRB_B2_POL_INVERT	(1 << 1)
-> -#define MC13783_PWRB_B3_POL_INVERT	(1 << 2)
->  	int flags;
->  	unsigned short keymap[3];
->  };
->  
-> +#define MC13783_PWRB_B1_POL_INVERT	(1 << 0)
-> +#define MC13783_PWRB_B2_POL_INVERT	(1 << 1)
-> +#define MC13783_PWRB_B3_POL_INVERT	(1 << 2)
-> +
->  #define MC13783_REG_INTERRUPT_SENSE_1		5
->  #define MC13783_IRQSENSE1_ONOFD1S		(1 << 3)
->  #define MC13783_IRQSENSE1_ONOFD2S		(1 << 4)
-> @@ -108,6 +113,8 @@ static int mc13783_pwrbutton_probe(struct platform_device *pdev)
->  {
->  	const struct mc13xxx_buttons_platform_data *pdata;
->  	struct mc13xxx *mc13783 = dev_get_drvdata(pdev->dev.parent);
-> +	struct mc13xxx_button_devtype *devtype =
-> +		(struct mc13xxx_button_devtype *)pdev->id_entry->driver_data;
->  	struct input_dev *pwr;
->  	struct mc13783_pwrb *priv;
->  	int err = 0;
-> @@ -127,6 +134,11 @@ static int mc13783_pwrbutton_probe(struct platform_device *pdev)
->  	if (!priv)
->  		return -ENOMEM;
->  
-> +	if (devtype->button_id_max < 2 && pdata->b_on_flags[2] & 0x3) {
-> +		dev_err(&pdev->dev, "button not supported\n");
-> +		return -ENODEV;
-> +	}
-> +
->  	reg |= (pdata->b_on_flags[0] & 0x3) << MC13783_POWER_CONTROL_2_ON1BDBNC;
->  	reg |= (pdata->b_on_flags[1] & 0x3) << MC13783_POWER_CONTROL_2_ON2BDBNC;
->  	reg |= (pdata->b_on_flags[2] & 0x3) << MC13783_POWER_CONTROL_2_ON3BDBNC;
-> @@ -239,12 +251,15 @@ static void mc13783_pwrbutton_remove(struct platform_device *pdev)
->  {
->  	struct mc13783_pwrb *priv = platform_get_drvdata(pdev);
->  	const struct mc13xxx_buttons_platform_data *pdata;
-> +	struct mc13xxx_button_devtype *devtype =
-> +		(struct mc13xxx_button_devtype *)pdev->id_entry->driver_data;
->  
->  	pdata = dev_get_platdata(&pdev->dev);
->  
->  	mc13xxx_lock(priv->mc13783);
->  
-> -	if (pdata->b_on_flags[2] & MC13783_BUTTON_ENABLE)
-> +	if (devtype->button_id_max >= 2 &&
-> +		pdata->b_on_flags[2] & MC13783_BUTTON_ENABLE)
->  		mc13xxx_irq_free(priv->mc13783, MC13783_IRQ_ONOFD3, priv);
->  	if (pdata->b_on_flags[1] & MC13783_BUTTON_ENABLE)
->  		mc13xxx_irq_free(priv->mc13783, MC13783_IRQ_ONOFD2, priv);
-> @@ -254,7 +269,28 @@ static void mc13783_pwrbutton_remove(struct platform_device *pdev)
->  	mc13xxx_unlock(priv->mc13783);
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 31089f8e5519..e0769538b8d9 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -14,6 +14,7 @@
+>  #include "evlist.h"
+>  #include "evsel.h"
+>  #include "event.h"
+> +#include "expr.h"
+>  #include "print_binary.h"
+>  #include "record.h"
+>  #include "strbuf.h"
+> @@ -1330,6 +1331,124 @@ static PyObject *pyrf_evlist__metrics(struct pyrf_evlist *pevlist)
+>  	return list;
 >  }
 >  
-> +static const struct mc13xxx_button_devtype mc13783_button_devtype = {
-> +	.button_id_max	= 2,
-> +};
+> +static int prepare_metric(const struct metric_expr *mexp,
+> +			  const struct evsel *evsel,
+> +			  struct expr_parse_ctx *pctx,
+> +			  int cpu_idx, int thread_idx)
+> +{
+> +	struct evsel * const *metric_events = mexp->metric_events;
+> +	struct metric_ref *metric_refs = mexp->metric_refs;
 > +
-> +static const struct mc13xxx_button_devtype mc13892_button_devtype = {
-> +	/* PWRON3 is not supported yet. */
-> +	.button_id_max	= 1,
-> +};
+> +	for (int i = 0; metric_events[i]; i++) {
+> +		char *n = strdup(evsel__metric_id(metric_events[i]));
+> +		double val, ena, run;
+> +		int source_count = evsel__source_count(metric_events[i]);
+> +		int ret;
+> +		struct perf_counts_values *old_count, *new_count;
 > +
-> +static const struct mc13xxx_button_devtype mc34708_button_devtype = {
-> +	.button_id_max	= 1,
-> +};
+> +		if (!n)
+> +			return -ENOMEM;
 > +
-> +static const struct platform_device_id mc13xxx_pwrbutton_idtable[] = {
-> +	{ "mc13783-pwrbutton", (kernel_ulong_t)&mc13783_button_devtype },
-> +	{ "mc13892-pwrbutton", (kernel_ulong_t)&mc13892_button_devtype },
-> +	{ "mc34708-pwrbutton", (kernel_ulong_t)&mc34708_button_devtype },
-> +	{ /* sentinel */ }
-> +};
+> +		if (source_count == 0)
+> +			source_count = 1;
 > +
->  static struct platform_driver mc13783_pwrbutton_driver = {
-> +	.id_table	= mc13xxx_pwrbutton_idtable,
->  	.probe		= mc13783_pwrbutton_probe,
->  	.remove		= mc13783_pwrbutton_remove,
->  	.driver		= {
-> diff --git a/include/linux/mfd/mc13783.h b/include/linux/mfd/mc13783.h
-> index c25b1676741b..ab6db774e1fa 100644
-> --- a/include/linux/mfd/mc13783.h
-> +++ b/include/linux/mfd/mc13783.h
-> @@ -65,8 +65,8 @@
->  #define MC13783_IRQ_UDM		23
->  #define MC13783_IRQ_1HZ		MC13XXX_IRQ_1HZ
->  #define MC13783_IRQ_TODA	MC13XXX_IRQ_TODA
-> -#define MC13783_IRQ_ONOFD1	27
-> -#define MC13783_IRQ_ONOFD2	28
-> +#define MC13783_IRQ_ONOFD1	MC13XXX_IRQ_PWRON1
-> +#define MC13783_IRQ_ONOFD2	MC13XXX_IRQ_PWRON2
->  #define MC13783_IRQ_ONOFD3	29
->  #define MC13783_IRQ_SYSRST	MC13XXX_IRQ_SYSRST
->  #define MC13783_IRQ_RTCRST	MC13XXX_IRQ_RTCRST
-> diff --git a/include/linux/mfd/mc13xxx.h b/include/linux/mfd/mc13xxx.h
-> index 0393083af28a..36e5e7de7cb2 100644
-> --- a/include/linux/mfd/mc13xxx.h
-> +++ b/include/linux/mfd/mc13xxx.h
-> @@ -67,6 +67,8 @@ int mc13xxx_irq_unmask(struct mc13xxx *mc13xxx, int irq);
->  #define MC13XXX_IRQ_LOBATH	14
->  #define MC13XXX_IRQ_1HZ		24
->  #define MC13XXX_IRQ_TODA	25
-> +#define MC13XXX_IRQ_PWRON1	27
-> +#define MC13XXX_IRQ_PWRON2	28
->  #define MC13XXX_IRQ_SYSRST	30
->  #define MC13XXX_IRQ_RTCRST	31
->  #define MC13XXX_IRQ_PC		32
+> +		ret = evsel__ensure_counts(metric_events[i]);
+> +		if (ret)
+> +			return ret;
+> +
+> +		/* Set up pointers to the old and newly read counter values. */
+> +		old_count = perf_counts(metric_events[i]->prev_raw_counts, cpu_idx, thread_idx);
+> +		new_count = perf_counts(metric_events[i]->counts, cpu_idx, thread_idx);
+> +		/* Update the value in metric_events[i]->counts. */
+> +		evsel__read_counter(metric_events[i], cpu_idx, thread_idx);
+> +
+> +		val = new_count->val - old_count->val;
+> +		ena = new_count->ena - old_count->ena;
+> +		run = new_count->run - old_count->run;
+> +
+> +		if (ena != run && run != 0)
+> +			val = val * ena / run;
+> +		ret = expr__add_id_val_source_count(pctx, n, val, source_count);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	for (int i = 0; metric_refs && metric_refs[i].metric_name; i++) {
+> +		int ret = expr__add_ref(pctx, &metric_refs[i]);
+> +
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static PyObject *pyrf_evlist__compute_metric(struct pyrf_evlist *pevlist,
+> +					     PyObject *args, PyObject *kwargs)
+> +{
+> +	int ret, cpu = 0, cpu_idx, thread = 0, thread_idx;
+> +	const char *metric;
+> +	struct rb_node *node;
+> +	struct metric_expr *mexp = NULL;
+> +	struct expr_parse_ctx *pctx;
+> +	double result = 0;
+> +
+> +	if (!PyArg_ParseTuple(args, "sii", &metric, &cpu, &thread))
+> +		return NULL;
+> +
+> +	for (node = rb_first_cached(&pevlist->evlist.metric_events.entries);
+> +	     mexp == NULL && node;
+> +	     node = rb_next(node)) {
+> +		struct metric_event *me = container_of(node, struct metric_event, nd);
+> +		struct list_head *pos;
+> +
+> +		list_for_each(pos, &me->head) {
+> +			struct metric_expr *e = container_of(pos, struct metric_expr, nd);
+> +
+> +			if (strcmp(e->metric_name, metric))
+> +				continue;
+> +
+> +			if (e->metric_events[0] == NULL)
+> +				continue;
+> +
+> +			cpu_idx = perf_cpu_map__idx(e->metric_events[0]->core.cpus,
+> +						    (struct perf_cpu){.cpu = cpu});
+> +			if (cpu_idx < 0)
+> +				continue;
+> +
+> +			thread_idx = perf_thread_map__idx(e->metric_events[0]->core.threads,
+> +							  thread);
+> +			if (thread_idx < 0)
+> +				continue;
+> +
+> +			mexp = e;
+> +			break;
+> +		}
+> +	}
+> +	if (!mexp) {
+> +		PyErr_Format(PyExc_TypeError, "Unknown metric '%s' for CPU '%d' and thread '%d'",
+> +			     metric, cpu, thread);
+> +		return NULL;
+> +	}
+> +
+> +	pctx = expr__ctx_new();
+> +	if (!pctx)
+> +		return PyErr_NoMemory();
+> +
+> +	ret = prepare_metric(mexp, mexp->metric_events[0], pctx, cpu_idx, thread_idx);
+> +	if (ret) {
+> +		expr__ctx_free(pctx);
+> +		errno = -ret;
+> +		PyErr_SetFromErrno(PyExc_OSError);
+> +		return NULL;
+> +	}
+> +	if (expr__parse(&result, pctx, mexp->metric_expr))
+> +		result = 0.0;
+> +
+> +	expr__ctx_free(pctx);
+> +	return PyFloat_FromDouble(result);
+> +}
+> +
+>  static PyObject *pyrf_evlist__mmap(struct pyrf_evlist *pevlist,
+>  				   PyObject *args, PyObject *kwargs)
+>  {
+> @@ -1564,6 +1683,12 @@ static PyMethodDef pyrf_evlist__methods[] = {
+>  		.ml_flags = METH_NOARGS,
+>  		.ml_doc	  = PyDoc_STR("List of metric names within the evlist.")
+>  	},
+> +	{
+> +		.ml_name  = "compute_metric",
+> +		.ml_meth  = (PyCFunction)pyrf_evlist__compute_metric,
+> +		.ml_flags = METH_VARARGS | METH_KEYWORDS,
+> +		.ml_doc	  = PyDoc_STR("compute metric for given name, cpu and thread")
+> +	},
+>  	{
+>  		.ml_name  = "mmap",
+>  		.ml_meth  = (PyCFunction)pyrf_evlist__mmap,
 > -- 
-> 2.39.5
-> 
-
--- 
-Lee Jones [李琼斯]
+> 2.51.0.rc1.167.g924127e9c0-goog
 
