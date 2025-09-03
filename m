@@ -1,365 +1,150 @@
-Return-Path: <linux-kernel+bounces-799031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E3A0B42612
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:58:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69DF9B42617
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 351CF7A79AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:55:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3460D176B71
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E32296BB4;
-	Wed,  3 Sep 2025 15:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067EB2989B5;
+	Wed,  3 Sep 2025 15:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AGXE/Y6i"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EqYqChm4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00D3296159
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E563513A258
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756915020; cv=none; b=Pvb41w5D80Kkg0uhAxL5nIB96yb7GJha75giucLeHi0uPIL7NUvqZuMjFo1JnRI1ilu/Mfi0POWhk/WvCUJCi5AN1NeerxPsQqtgvuyzINxPBx9eBnSjBxJV61ctqwv+sS1Zwsw8rklBsw+Z++mJTB+28qGfmD6pTG23JXwtjVE=
+	t=1756915164; cv=none; b=IN1hbLsVdrrqxHMQVlUhAyjc1JUB7LbMDuV6xgDWRwTJcWCG2hQ1xMX1YBzUbeXfN9i+vq4P7h8msRdTG+OgP+fWk/T1iyJnHHKyunGcMtkvH+mrlHPGoPBOxWpZV2a5LsuFwNpUl6kiil5u/cDUfTsNx9mDPOBaAVpq8AB3vBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756915020; c=relaxed/simple;
-	bh=FcggE/uWbBl8JnTOxhEzX/59JtK477cFmCG/JIhhW3c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nR/xZeEIVQSe5NhUiJZHr0wRPZono6NFHn8uNA/5vSzjEiFOTjeJ3sBN7rsgkPUj+ojqyx8uHYE/elPUaEievgOT3tcVtsdcoCszyduz4ECzYxL8lfuyX1w4ayMizKxFgU6v5X4wruuyMk6DV466xqwNWCccu5qL3XEzh77Vdno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AGXE/Y6i; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24b2d018f92so184675ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 08:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756915018; x=1757519818; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HnwvHxPjTnx+N5RJFuwb32JKGXTS/g25wdy/xSnxsQ0=;
-        b=AGXE/Y6ioV1ChN14WDTDmCYbIntt3VsxJRwMMGBG5Fdilc+pdPoLi1LjgA4OU414VK
-         4rvPPOjB1lnlbJYP0Z6PHZYYg0XSbBkF+E6Gp8gC8z2w7Y9jsO5cQ88S/VXnawp/URyO
-         M0LLUJF+WHb92Mjt/4go4HIe9AIGp3VVlAHE9PxkgaG8t/l5hbx8QI7x4L7vR495z7qU
-         YYbU7sbf72N3wRF3nl6GqG/rAzcBF/q/07txGl+3flywEBtZJw8VgBTKnvksmU0/siVV
-         FwWG6bQQAc/OU0mrkfSR4GrstXZYGBj68qVMizTsx9ZzvIa8X5sR+Ld5vm39f+U89pqN
-         ifIQ==
+	s=arc-20240116; t=1756915164; c=relaxed/simple;
+	bh=JNMPH5k3WcBdGHvIhwkV+wM3E5WR4tEjM8O7jMB819Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BY4n6y9qCXlTPpyq+fafsftVCNDNy1azG5a9wIB5ECvSzNryAXtpx7KzHrtdjz4KfqoW/CD08YwHqprlQeBCiSG8+1vdJcCrxzBlqRuGpvaHaRx+YsDqplbqD7UfnJwPvohUzEsmvdnx8jGpVttWUamgaDjPTIvyOpXp9FbPtiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EqYqChm4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583DwxFv007608
+	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 15:59:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JoondHVb2/f/1ydbXUBDu0DfSCvLLfXEhj4RfdZtE60=; b=EqYqChm4V7FtJ0s2
+	dC2mDVa3bh3aETlAwgSrvCJEWP+tYhRPU41BC1mYldl00uP5rOf+SM6imdLX3hO8
+	iyaotOG2w1gay7YinUkAHkF5KWdBz6H+5f0lia+pSXibg9mWzmT8vdxl/3ikvOd2
+	cmdvk95hb7ZVN28riyyspWzqBBZZGoeisRq6Ih3aTn3eNzUbcHDnb6+yyI46kenF
+	nDEOb7lVGLvSOHqODRLf0j6O7aANS/bY3iS1X0O26/6eGctx1KyI7Dt8S4s1WKgJ
+	EutSRf6QQMTHQe1meKGGSFiqVevhdMQGZThqwxlwam/ne+ynW9kndmI1uhuYaIBK
+	YFAg0Q==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48uscv4dpw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 15:59:21 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b3387c826eso239811cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 08:59:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756915018; x=1757519818;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HnwvHxPjTnx+N5RJFuwb32JKGXTS/g25wdy/xSnxsQ0=;
-        b=sCZwFC5dxJZixqYwgy2P14za/WwkhgT7mPeRiIhAlmN96Qm5Clo1Y5eILMuncws92L
-         4qYBjQZ3MH7vWypyB7QkPf53ZsqgdJNwNQQr69NEAELqtBqjnIMJpWMl11Hazj2cMaYh
-         HYWPgnwUJYAC5LACII1I7a/fL4gzreYOG8zogcft9EMTvzDaX7H4jPaDWdkJd5THUwwN
-         bvHhzNsorDsCoKivX3ZCBXrekcBX5Yml70T9rSkfjw0+rGvx3hjPQnHBChJQ1oAZjFjO
-         AJJRffX3tFw76pon5kEFSILMPy7GZBR1x209sGWSBYWIovuO7crHUT0vPo0pcvJFT1i8
-         +L8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWuZdnP6MyQbTGK+yBPACtIusZrk86kceUkmEEBcGgzSWX0Vq9uUZioZRsM5Cv7tzxxl/FiWWSTsCB4GSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVF9gznd191fZA9OCPsvhlqZYSc5S9kH/8DTxmrtSSe7Czp7Yq
-	5xgSlv1vMKVjCVlbmHvECpYNbuQ8uWG0hI435n5BOn0NuKE27OhzPRkl/vsGKqxSsj+Fm30JG2D
-	T/CdqCiDJ1d/kJbMTal8xS5ktwSodSIWFRwG+gUFD
-X-Gm-Gg: ASbGncsvB0qr6sQ+nJlzIIIk4hH8wU63C57M+NBtlAKZYh/AnezkoinlOrPDH0TBy6F
-	S3FvNfoeVQOiSeD1ynzipPrJZW0Zmt3+Iqxwspo2ex7oajhD8PTH/HL0O1A5p6dO3ko/tpBd1R0
-	bZu//HRdAsarfMQbE9UNeUn4we4mZ/NjhO0RfNWW31MmzJDdalay+4kbRQhe3OVQVsTcDHjn2Zu
-	FF92StwhaqEGpXGoU4w5itUPvI/gBfBf2U8UYLEpJfDc1dgFWUDWjg=
-X-Google-Smtp-Source: AGHT+IFTHvqoT2OR2s8c3xI4+CoVeU3XaezOnH2pFs4JroQifqwas8t1FP5KdmIJpifdt8xokNii5GMRjd3DjlmuCBE=
-X-Received: by 2002:a17:902:fc84:b0:248:79e8:9a3b with SMTP id
- d9443c01a7336-2493e913330mr4680795ad.12.1756915017605; Wed, 03 Sep 2025
- 08:56:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756915161; x=1757519961;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JoondHVb2/f/1ydbXUBDu0DfSCvLLfXEhj4RfdZtE60=;
+        b=D+HVywzL4guBm3MaJTztOklmXh+HvfEsUQ11DuFUkuzgz6UQf/3PsDCwYHP+xMAT+6
+         n7BqbvCmO3UXxOUFEf8iD2eiF8lzwCATLXyOmPDrPLa6tLQ301xh1iyar6HEMsP0SpHw
+         BWUEnqzd5lgBdfPsJ8RuM6Tn6KVbwlMjoDAitqdkCuGjIP2ml9fY76TX5nKvflTaYnaz
+         C/ElnRHEAWooFqcERMXWSnztPNjYrTA3SkIjdYxAPyR5mXVVb+6oj1n0EAzf8aQG6RAD
+         sTRLj5nVebMXzTQKLSnLXdTmMmJvnSOJk4f0R3PmCAIdxypmD1GNE1TGrsO0qmhISPA+
+         h0xA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/KMWQl9C4sYOCBMLrh7aNOfM0foI1rgapIaVyR5Q0jBuHhPMdsCNbUXeE0Hs6ufYYoPORjpUWDRUJIT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOzZ3+Fj8oy1XRsq00YnSs2c4M3S3xpxp1XghW6qnSOarA4hw4
+	/86lbXMJPlOO35/MzjbD3HXlcD0nBN5XUJomcvhWbuBPMXuGbqff1wH1R3Ck813sakZtZ9gdFGR
+	yGT/HqzGaq2vn/jUaql8Nsych4xzKSdpwc8P7oJPd+L9zT57paEYq1S2oZGz/elSONE0=
+X-Gm-Gg: ASbGnctmBvivlpDgpruLJ1rMyL27Yd7TYCzkqkjvHTLY2w352LimBziABg4l9YWCASb
+	/GrOR/0gY6TkVC66iKJVxtTAlvrnEreeh37tnDQRxf4aVXZI6KHJ/1wgxiQ4ieXO/GTcSO07amR
+	a4LjGsH0g/vqkRS4K6yQi5LCLCD0a9p7gB6OFkp3NVAax1Yl8ODKIIfmQl+YS6HB4QpPmxA0+Tx
+	L2w68RhRwpoSN8lzlHN0oJYQl91yYiJ62+jOpjg8Rh7647vbJD1uI78urAUq4Vwn2fiw472Wb3f
+	IRNVRepHO9GC6Uy2kzpEBSOpvfO0GXyXoCHrxlr+jjBrL0skzcp5r6xT013NNymV71qs+NN6Dtj
+	f7Nz5gKCGJgdjXQEQgnPSDw==
+X-Received: by 2002:ac8:7d0c:0:b0:4ab:6b8c:1a41 with SMTP id d75a77b69052e-4b313e8321amr143129781cf.7.1756915161030;
+        Wed, 03 Sep 2025 08:59:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IExgTsN6zBLbfiQxn8VdgOLVcjIE+dE8RIguKNUapAfNMSnt7dg9W7Uh4W7sqhgWh6QlyYMZw==
+X-Received: by 2002:ac8:7d0c:0:b0:4ab:6b8c:1a41 with SMTP id d75a77b69052e-4b313e8321amr143129451cf.7.1756915160366;
+        Wed, 03 Sep 2025 08:59:20 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b046c296c90sm180845666b.83.2025.09.03.08.59.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 08:59:19 -0700 (PDT)
+Message-ID: <a53c6bae-710e-4939-990f-5974346f6c75@oss.qualcomm.com>
+Date: Wed, 3 Sep 2025 17:59:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819013941.209033-1-irogers@google.com> <20250819013941.209033-9-irogers@google.com>
- <aLhEPS6T-Sxnujrp@x1>
-In-Reply-To: <aLhEPS6T-Sxnujrp@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 3 Sep 2025 08:56:45 -0700
-X-Gm-Features: Ac12FXyjVzG7iBvy-OpM-PJdZ2JFNs5MlhRwmm3Tz8fcQKuseaxxI30ja6Ey-qc
-Message-ID: <CAP-5=fWDbpKzwSOo0rCHNLa6hBDjG4wMO3MKQt3wUQzVaVj6jA@mail.gmail.com>
-Subject: Re: [PATCH v10 08/11] perf python: Add evlist compute_metric
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Collin Funk <collin.funk1@gmail.com>, 
-	Howard Chu <howardchu95@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
-	Gautam Menghani <gautam@linux.ibm.com>, Thomas Falcon <thomas.falcon@intel.com>, 
-	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: lemans: enable static TPDM
+To: Jie Gan <jie.gan@oss.qualcomm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+ <mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
+        Mao Jinlong <jinlmao.mao@oss.qualcomm.com>,
+        Tao Zhang <quic_taozha@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, coresight@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250822103008.1029-1-jie.gan@oss.qualcomm.com>
+ <20250822103008.1029-4-jie.gan@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250822103008.1029-4-jie.gan@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMSBTYWx0ZWRfX5fzViQIarZBO
+ H+OR1Aq/oR9Z6Ho9QIgrV7FmKgn9adNSOGuMYahsJFIrZLswEYCCBjUew9cvwON/IB8pSnr5Hft
+ 29+SNjlzJ/Jetg9re/6EA81Ezmp2xAtrfOfZpR4koQALIeTCmc5rQKjH5E5x+P42XmPYahSjiz0
+ XYLhde2LcdClVzfl9sIfEfltd8paltf5VYJUokFo0Tjj948HA2YHdJht5ELKivDMYZjDgL585gU
+ Gqru6K6vQPk6CjtpKqXsHfxYSGpyJRG5I7zpuj1gKET+JjUvx8Ie+tQCbqnRGZ+2ZKijJdPppZ7
+ eflwZpnq8NL/WLhHb3scPWj+/NRsvISR/Y6dCa+6EWeU557SH5GpcmGELtq8FQigM9d2BJTbfrP
+ VBwetnR8
+X-Authority-Analysis: v=2.4 cv=A8xsP7WG c=1 sm=1 tr=0 ts=68b865da cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=_EvAq3oGWgLp-oLdTm4A:9
+ a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-ORIG-GUID: z-W0rbgC90MIt5m7jVk0ztCwD4l70QxT
+X-Proofpoint-GUID: z-W0rbgC90MIt5m7jVk0ztCwD4l70QxT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_08,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 spamscore=0 impostorscore=0 bulkscore=0 clxscore=1015
+ suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300031
 
-On Wed, Sep 3, 2025 at 6:36=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
-l.org> wrote:
->
-> On Mon, Aug 18, 2025 at 06:39:38PM -0700, Ian Rogers wrote:
-> > Add a compute_metric function that computes a metric double value for a
-> > given evlist, metric name, CPU and thread. For example:
-> > ```
-> > >>> import perf
-> > >>> x =3D perf.parse_metrics("TopdownL1")
-> > >>> x.open()
-> > >>> x.enable()
-> > >>> x.disable()
-> > >>> x.metrics()
-> > ['tma_bad_speculation', 'tma_frontend_bound', 'tma_backend_bound', 'tma=
-_retiring']
-> > >>> x.compute_metric('tma_bad_speculation', 0, -1)
-> > 0.08605342847131037
-> > ```
->
-> Added the following to fix the build on the still not EOLed OpenSUSE
-> 15, ok?
+On 8/22/25 12:30 PM, Jie Gan wrote:
+> Enable static TPDM device for lemans.
+> 
+> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+> ---
 
-Looks good to me!
+perhaps renaming 'turing' to 'cdsp' would make things easier to
+comprehend
 
-Thanks,
-Ian
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-> - Arnaldo
->
-> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-> index 56102034d5b8c469..47178404802f4069 100644
-> --- a/tools/perf/util/python.c
-> +++ b/tools/perf/util/python.c
-> @@ -1386,7 +1386,7 @@ static int prepare_metric(const struct metric_expr =
-*mexp,
->  static PyObject *pyrf_evlist__compute_metric(struct pyrf_evlist *pevlist=
-,
->                                              PyObject *args, PyObject *kw=
-args)
->  {
-> -       int ret, cpu =3D 0, cpu_idx, thread =3D 0, thread_idx;
-> +       int ret, cpu =3D 0, cpu_idx =3D 0, thread =3D 0, thread_idx =3D 0=
-;
->         const char *metric;
->         struct rb_node *node;
->         struct metric_expr *mexp =3D NULL;
->
-> Committer notes:
->
-> Initialize thread_idx and cpu_idx to zero as albeit them not possibly
-> coming out unitialized from the loop as mexp would be not NULL only if
-> they were initialized, some older compilers don't notice that and error
-> with:
->
->     GEN     /tmp/build/perf/python/perf.cpython-36m-x86_64-linux-gnu.so
->   /git/perf-6.17.0-rc3/tools/perf/util/python.c: In function =E2=80=98pyr=
-f_evlist__compute_metric=E2=80=99:
->   /git/perf-6.17.0-rc3/tools/perf/util/python.c:1363:3: error: =E2=80=98t=
-hread_idx=E2=80=99 may be used uninitialized in this function [-Werror=3Dma=
-ybe-uninitialized]
->      evsel__read_counter(metric_events[i], cpu_idx, thread_idx);
->      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   /git/perf-6.17.0-rc3/tools/perf/util/python.c:1389:41: note: =E2=80=98t=
-hread_idx=E2=80=99 was declared here
->     int ret, cpu =3D 0, cpu_idx, thread =3D 0, thread_idx;
->                                            ^~~~~~~~~~
->   /git/perf-6.17.0-rc3/tools/perf/util/python.c:1363:3: error: =E2=80=98c=
-pu_idx=E2=80=99 may be used uninitialized in this function [-Werror=3Dmaybe=
--uninitialized]
->      evsel__read_counter(metric_events[i], cpu_idx, thread_idx);
->      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   /git/perf-6.17.0-rc3/tools/perf/util/python.c:1389:20: note: =E2=80=98c=
-pu_idx=E2=80=99 was declared here
->     int ret, cpu =3D 0, cpu_idx, thread =3D 0, thread_idx;
->                       ^~~~~~~
->   /git/perf-6.17.0-rc3/tools/perf/util/python.c: At top level:
->   cc1: error: unrecognized command line option =E2=80=98-Wno-cast-functio=
-n-type=E2=80=99 [-Werror]
->   cc1: all warnings being treated as errors
->   error: command 'gcc' failed with exit status 1
->   cp: cannot stat '/tmp/build/perf/python_ext_build/lib/perf*.so': No suc=
-h file or directory
->
-> - Arnaldo
->
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > Reviewed-by: Howard Chu <howardchu95@gmail.com>
-> > ---
-> >  tools/perf/util/python.c | 125 +++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 125 insertions(+)
-> >
-> > diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-> > index 31089f8e5519..e0769538b8d9 100644
-> > --- a/tools/perf/util/python.c
-> > +++ b/tools/perf/util/python.c
-> > @@ -14,6 +14,7 @@
-> >  #include "evlist.h"
-> >  #include "evsel.h"
-> >  #include "event.h"
-> > +#include "expr.h"
-> >  #include "print_binary.h"
-> >  #include "record.h"
-> >  #include "strbuf.h"
-> > @@ -1330,6 +1331,124 @@ static PyObject *pyrf_evlist__metrics(struct py=
-rf_evlist *pevlist)
-> >       return list;
-> >  }
-> >
-> > +static int prepare_metric(const struct metric_expr *mexp,
-> > +                       const struct evsel *evsel,
-> > +                       struct expr_parse_ctx *pctx,
-> > +                       int cpu_idx, int thread_idx)
-> > +{
-> > +     struct evsel * const *metric_events =3D mexp->metric_events;
-> > +     struct metric_ref *metric_refs =3D mexp->metric_refs;
-> > +
-> > +     for (int i =3D 0; metric_events[i]; i++) {
-> > +             char *n =3D strdup(evsel__metric_id(metric_events[i]));
-> > +             double val, ena, run;
-> > +             int source_count =3D evsel__source_count(metric_events[i]=
-);
-> > +             int ret;
-> > +             struct perf_counts_values *old_count, *new_count;
-> > +
-> > +             if (!n)
-> > +                     return -ENOMEM;
-> > +
-> > +             if (source_count =3D=3D 0)
-> > +                     source_count =3D 1;
-> > +
-> > +             ret =3D evsel__ensure_counts(metric_events[i]);
-> > +             if (ret)
-> > +                     return ret;
-> > +
-> > +             /* Set up pointers to the old and newly read counter valu=
-es. */
-> > +             old_count =3D perf_counts(metric_events[i]->prev_raw_coun=
-ts, cpu_idx, thread_idx);
-> > +             new_count =3D perf_counts(metric_events[i]->counts, cpu_i=
-dx, thread_idx);
-> > +             /* Update the value in metric_events[i]->counts. */
-> > +             evsel__read_counter(metric_events[i], cpu_idx, thread_idx=
-);
-> > +
-> > +             val =3D new_count->val - old_count->val;
-> > +             ena =3D new_count->ena - old_count->ena;
-> > +             run =3D new_count->run - old_count->run;
-> > +
-> > +             if (ena !=3D run && run !=3D 0)
-> > +                     val =3D val * ena / run;
-> > +             ret =3D expr__add_id_val_source_count(pctx, n, val, sourc=
-e_count);
-> > +             if (ret)
-> > +                     return ret;
-> > +     }
-> > +
-> > +     for (int i =3D 0; metric_refs && metric_refs[i].metric_name; i++)=
- {
-> > +             int ret =3D expr__add_ref(pctx, &metric_refs[i]);
-> > +
-> > +             if (ret)
-> > +                     return ret;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static PyObject *pyrf_evlist__compute_metric(struct pyrf_evlist *pevli=
-st,
-> > +                                          PyObject *args, PyObject *kw=
-args)
-> > +{
-> > +     int ret, cpu =3D 0, cpu_idx, thread =3D 0, thread_idx;
-> > +     const char *metric;
-> > +     struct rb_node *node;
-> > +     struct metric_expr *mexp =3D NULL;
-> > +     struct expr_parse_ctx *pctx;
-> > +     double result =3D 0;
-> > +
-> > +     if (!PyArg_ParseTuple(args, "sii", &metric, &cpu, &thread))
-> > +             return NULL;
-> > +
-> > +     for (node =3D rb_first_cached(&pevlist->evlist.metric_events.entr=
-ies);
-> > +          mexp =3D=3D NULL && node;
-> > +          node =3D rb_next(node)) {
-> > +             struct metric_event *me =3D container_of(node, struct met=
-ric_event, nd);
-> > +             struct list_head *pos;
-> > +
-> > +             list_for_each(pos, &me->head) {
-> > +                     struct metric_expr *e =3D container_of(pos, struc=
-t metric_expr, nd);
-> > +
-> > +                     if (strcmp(e->metric_name, metric))
-> > +                             continue;
-> > +
-> > +                     if (e->metric_events[0] =3D=3D NULL)
-> > +                             continue;
-> > +
-> > +                     cpu_idx =3D perf_cpu_map__idx(e->metric_events[0]=
-->core.cpus,
-> > +                                                 (struct perf_cpu){.cp=
-u =3D cpu});
-> > +                     if (cpu_idx < 0)
-> > +                             continue;
-> > +
-> > +                     thread_idx =3D perf_thread_map__idx(e->metric_eve=
-nts[0]->core.threads,
-> > +                                                       thread);
-> > +                     if (thread_idx < 0)
-> > +                             continue;
-> > +
-> > +                     mexp =3D e;
-> > +                     break;
-> > +             }
-> > +     }
-> > +     if (!mexp) {
-> > +             PyErr_Format(PyExc_TypeError, "Unknown metric '%s' for CP=
-U '%d' and thread '%d'",
-> > +                          metric, cpu, thread);
-> > +             return NULL;
-> > +     }
-> > +
-> > +     pctx =3D expr__ctx_new();
-> > +     if (!pctx)
-> > +             return PyErr_NoMemory();
-> > +
-> > +     ret =3D prepare_metric(mexp, mexp->metric_events[0], pctx, cpu_id=
-x, thread_idx);
-> > +     if (ret) {
-> > +             expr__ctx_free(pctx);
-> > +             errno =3D -ret;
-> > +             PyErr_SetFromErrno(PyExc_OSError);
-> > +             return NULL;
-> > +     }
-> > +     if (expr__parse(&result, pctx, mexp->metric_expr))
-> > +             result =3D 0.0;
-> > +
-> > +     expr__ctx_free(pctx);
-> > +     return PyFloat_FromDouble(result);
-> > +}
-> > +
-> >  static PyObject *pyrf_evlist__mmap(struct pyrf_evlist *pevlist,
-> >                                  PyObject *args, PyObject *kwargs)
-> >  {
-> > @@ -1564,6 +1683,12 @@ static PyMethodDef pyrf_evlist__methods[] =3D {
-> >               .ml_flags =3D METH_NOARGS,
-> >               .ml_doc   =3D PyDoc_STR("List of metric names within the =
-evlist.")
-> >       },
-> > +     {
-> > +             .ml_name  =3D "compute_metric",
-> > +             .ml_meth  =3D (PyCFunction)pyrf_evlist__compute_metric,
-> > +             .ml_flags =3D METH_VARARGS | METH_KEYWORDS,
-> > +             .ml_doc   =3D PyDoc_STR("compute metric for given name, c=
-pu and thread")
-> > +     },
-> >       {
-> >               .ml_name  =3D "mmap",
-> >               .ml_meth  =3D (PyCFunction)pyrf_evlist__mmap,
-> > --
-> > 2.51.0.rc1.167.g924127e9c0-goog
+Konrad
 
