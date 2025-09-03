@@ -1,105 +1,190 @@
-Return-Path: <linux-kernel+bounces-797719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BABB41476
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:46:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3946B4147B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71F0754233B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:46:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52E0A1B23EFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB93A2D5406;
-	Wed,  3 Sep 2025 05:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJkN5Ubk"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C6A20EB;
-	Wed,  3 Sep 2025 05:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B8B2D6E58;
+	Wed,  3 Sep 2025 05:46:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E972D6E50
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 05:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756878398; cv=none; b=HlXFAwAJq1eEPr1PwJul5FtDhTkbnwGeq1PIDahuHi6eoMA5vViTiH+XI71IWWM9PB9FumH7te2TApFDYVb6xiTz9sbOfnMkfx/nlvRlNxYb++i6nqZRWHO0a+uB6I8sBuCaT6Dlx+mBjHNlVwE3wSAGTM1nXSrWfSij6lFoAaE=
+	t=1756878411; cv=none; b=kcKvW7L2bxdE8op3gPwMkkHMpe67hiSLirne8ZUa7zcLVo97sR/rjgqDZQxGRgbo10IRkC2NsQ2Z447wcTYAeIa5k553H16eoBwS39XLcnPsE+q5PI6G1CO3sf5IOhJI74F6aohp3MVaIsV7YJGeA+R95WgQohd8VTu+tgjWKB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756878398; c=relaxed/simple;
-	bh=lba/onyM72LkmC40tYiUqo276H57gB2CvydBi6T6zoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n9jfzYPoawK8XZ7DRe0cJZ48BGpezrBfYonkV5QJNM2JZJGvYRGuqpkby2Qth583VDBIUbrKflXCIcXOm/NBqiP9l1xBLSg4LiO4vQPoE/XSYvz89YNbNP3LeBNMaSpzPL5i4oU1uTGdRb0NKoVmy234s/sPfndZpNzj9Dro8cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LJkN5Ubk; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7723bf02181so2794064b3a.1;
-        Tue, 02 Sep 2025 22:46:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756878395; x=1757483195; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N56o4i6wpcq7MoneUhLU2w8v3e0MP3V6I9jOXvxsGzI=;
-        b=LJkN5UbkpIgKi9hWzW1+ZvtofG/CEDOFrSEFpvhWgJ+ev7GZRKEb0kMjVQtMAJ3mAG
-         Tp32nEJpT9Jnl+jCpCqL1S4RdDLajm1Coj5JPj5NXBtj0VE7dXZVR6UPUWNTB9/rJ7Am
-         53ZAaNc0khBgKAKE5X7idgU7O0Wv9xcMUKHPkJghw9EhIla1Bpi6KGDUGSSdcRTHT+Ga
-         ciX1ZzsLM3Hkqvm8GyeR9k6BJ+IIBK4NAKtfXfoUaqyJipVGr3uSiBPCM6/GacJjTLUJ
-         Awxv86vzyy1lS/c/FAtcQnaTIRHLOR7MLzzRNM5z6sABu4ENIVzLKSHH1/qfRmlfSOrZ
-         Qfmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756878395; x=1757483195;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N56o4i6wpcq7MoneUhLU2w8v3e0MP3V6I9jOXvxsGzI=;
-        b=K2aobvkYBJqksVBfHjoFRl+WjdS62PjKuPKPTWK1aqk+rcLW41cm/Rn1rHvBPetir6
-         5/+f//K4QpruK6qJEVadb9DY9YBFN399eEBorAnut8q2AWdLluQU58shcsHwBIPRA4Eo
-         gDw203omn4nOnXm0I1VK8kf3BuIfCuRE1+kmrb/jc8DXK6vgpxWPtVTl5qqYAVod/nb7
-         eHmj+a67rtfGXXV0tmevK1GONkyFAuWfg7aufY7GGgYTD35DDSIxgv8MT2ZUdUG3rftg
-         o5WkaIJXpX4fb237lQ9kpRk91XISRWGH3UPuGZmG5I9BKcpfkQJQP01RGX5AiDwVwJnf
-         5lqg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6YunO1MBlyY0jl6IbeHjjDpg0PxfmKMeieNh5zF7gogmYERNnzZVllsJLqFgrcrLt+Xb2sAiO6WA=@vger.kernel.org, AJvYcCWG8HdCkgdVynKUG0xsnnRljJNlaDDfL70RWz9Hw0SxGGM8qtOomz+VUKnnpeFROiN/9Gzjk0RBReO2wbkJ@vger.kernel.org, AJvYcCXb3oBiptDVB7b2pda9G4hgYng5mN+3VHuTfOcUAV/KTroCa2zEWq6UtdUqqutJ07TH9kz+JEtS7vDptGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoKnpRxomMlZpheSCvyaGsVm8LE8/ygOx3SOAA60KxV3h+rjxh
-	DNMM1zEGeViiTpTzJlsYHbvsdkMk+1XqPkeTF4cot/jCLU4I7eqry4V5
-X-Gm-Gg: ASbGncu3JoeS3ipIe9fiGwV+kWiqf4tWI61ObgGNsnrRrO+f0GJVf2RtOEBoCPQeBSd
-	i+qD7D7xBxPn4ByCThT8JTb6cdo6Hv1C+Fq/BSSMxMnd6mLkkSD3+RC/58RVQe7pGbvqn2wZPR0
-	xWMv2w8iex9jbJeO1ry/r6KTqZma4gYH+vCRSoC5JGKPHZQz0kMXZjURTH88KP66DsrusHQEVA3
-	Vsb0rj87fBpvN4izkMJKUFGyQYSYSNU1ZnqZ07tfySP0y5NUCWXSSoxmYWm4CpA0OazHq41MlzU
-	xYyMkwlZ65tZ3Bw+bQd8tWhNqi6b4oveUjQBNC39HPibDz5ssbSpy9plygVlIsVVPsS9YNjjR1D
-	JYnRq9RSP2/0XjSzUOuyg5H0HTJR4tOlAGdSBqyj4FRSJOA==
-X-Google-Smtp-Source: AGHT+IEV4Vd2Y2C/hEN7OzTOzJalF3mXaqeIzl0gxBoE8BM9yE4GNNUoGTh8tHsozmaUEx+RVqUCyA==
-X-Received: by 2002:a05:6a20:1595:b0:243:af83:6c75 with SMTP id adf61e73a8af0-243d6f0293fmr19716646637.28.1756878395509;
-        Tue, 02 Sep 2025 22:46:35 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4f317ee7cfsm8828644a12.3.2025.09.02.22.46.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 22:46:34 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Tue, 2 Sep 2025 22:46:33 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Tom Ingleby <tom@ewsting.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Eugene Shalygin <eugene.shalygin@gmail.com>,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] hwmon: (asus-ec-sensors) add ROG STRIX Z690-E GAMING
- WIFI
-Message-ID: <cb9a8cf7-4e20-49a0-b590-8190d329178c@roeck-us.net>
-References: <20250903031800.4173-1-tom@ewsting.com>
+	s=arc-20240116; t=1756878411; c=relaxed/simple;
+	bh=x4blfb/zei7mMcim4vZSiwl2q4qU0g8ae0/cDVmNHEw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qHyN30GNGWjR8Scgs2PiD1JeGS9DlPU/88tpTPz5lP+6uVcxuYOPdACCPtgu62g/cuy5v8ZYFLl1cOw1GVd24E8Wf/EJHsbg6UYLJVmXl/4toemL84QXzlyDbHAiHMF3VX+4COVgoPHtqYxa4xdvm96PZFhhUKiGscD4tprlQqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C17EF1691;
+	Tue,  2 Sep 2025 22:46:39 -0700 (PDT)
+Received: from MacBook-Pro.blr.arm.com (MacBook-Pro.blr.arm.com [10.164.18.48])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F2F7A3F694;
+	Tue,  2 Sep 2025 22:46:43 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	kas@kernel.org,
+	willy@infradead.org,
+	hughd@google.com
+Cc: ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	baohua@kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH 1/2] mm: Enable khugepaged to operate on non-writable VMAs
+Date: Wed,  3 Sep 2025 11:16:34 +0530
+Message-Id: <20250903054635.19949-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903031800.4173-1-tom@ewsting.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 02, 2025 at 08:17:56PM -0700, Tom Ingleby wrote:
-> Add support for the ASUS ROG STRIX Z690-E GAMING WIFI
-> 
-> Signed-off-by: Tom Ingleby <tom@ewsting.com>
+Currently khugepaged does not collapse a region which does not have a
+single writable page. This is wasteful since non-writable VMAs mapped by
+the application won't benefit from THP collapse. Therefore, remove this
+restriction and allow khugepaged to collapse a VMA with arbitrary
+protections.
 
-Applied.
+Along with this, currently MADV_COLLAPSE does not perform a collapse on a
+non-writable VMA, and this restriction is nowhere to be found on the
+manpage - the restriction itself sounds wrong to me since the user knows
+the protection of the memory it has mapped, so collapsing read-only
+memory via madvise() should be a choice of the user which shouldn't
+be overriden by the kernel.
 
-Guenter
+On an arm64 machine, an average of 5% improvement is seen on some mmtests
+benchmarks, particularly hackbench, with a maximum improvement of 12%.
+
+Signed-off-by: Dev Jain <dev.jain@arm.com>
+---
+RFC->v1:
+Drop writable references from tracepoints
+
+RFC:
+https://lore.kernel.org/all/20250901074817.73012-1-dev.jain@arm.com/
+
+I can see performance improvements on mmtests run on an arm64 machine
+comparing with 6.17-rc2. (I) denotes statistically significant improvement,
+(R) denotes statistically significant regression (Please ignore the
+numbers in the middle column):
+
++------------------------------------+----------------------------------------------------------+-----------------------+--------------------------+
+| mmtests/hackbench                  | process-pipes-1 (seconds)                                |                 0.145 |                   -0.06% |
+|                                    | process-pipes-4 (seconds)                                |                0.4335 |                   -0.27% |
+|                                    | process-pipes-7 (seconds)                                |                 0.823 |              (I) -12.13% |
+|                                    | process-pipes-12 (seconds)                               |    1.3538333333333334 |               (I) -5.32% |
+|                                    | process-pipes-21 (seconds)                               |    1.8971666666666664 |               (I) -2.87% |
+|                                    | process-pipes-30 (seconds)                               |    2.5023333333333335 |               (I) -3.39% |
+|                                    | process-pipes-48 (seconds)                               |                3.4305 |               (I) -5.65% |
+|                                    | process-pipes-79 (seconds)                               |     4.245833333333334 |               (I) -6.74% |
+|                                    | process-pipes-110 (seconds)                              |     5.114833333333333 |               (I) -6.26% |
+|                                    | process-pipes-141 (seconds)                              |                6.1885 |               (I) -4.99% |
+|                                    | process-pipes-172 (seconds)                              |     7.231833333333334 |               (I) -4.45% |
+|                                    | process-pipes-203 (seconds)                              |     8.393166666666668 |               (I) -3.65% |
+|                                    | process-pipes-234 (seconds)                              |     9.487499999999999 |               (I) -3.45% |
+|                                    | process-pipes-256 (seconds)                              |    10.316166666666666 |               (I) -3.47% |
+|                                    | process-sockets-1 (seconds)                              |                 0.289 |                    2.13% |
+|                                    | process-sockets-4 (seconds)                              |    0.7596666666666666 |                    1.02% |
+|                                    | process-sockets-7 (seconds)                              |    1.1663333333333334 |                   -0.26% |
+|                                    | process-sockets-12 (seconds)                             |    1.8641666666666665 |                   -1.24% |
+|                                    | process-sockets-21 (seconds)                             |    3.0773333333333333 |                    0.01% |
+|                                    | process-sockets-30 (seconds)                             |                4.2405 |                   -0.15% |
+|                                    | process-sockets-48 (seconds)                             |     6.459666666666666 |                    0.15% |
+|                                    | process-sockets-79 (seconds)                             |    10.156833333333333 |                    1.45% |
+|                                    | process-sockets-110 (seconds)                            |    14.317833333333333 |                   -1.64% |
+|                                    | process-sockets-141 (seconds)                            |               20.8735 |               (I) -4.27% |
+|                                    | process-sockets-172 (seconds)                            |    26.205333333333332 |                    0.30% |
+|                                    | process-sockets-203 (seconds)                            |    31.298000000000002 |                   -1.71% |
+|                                    | process-sockets-234 (seconds)                            |    36.104000000000006 |                   -1.94% |
+|                                    | process-sockets-256 (seconds)                            |     39.44016666666667 |                   -0.71% |
+|                                    | thread-pipes-1 (seconds)                                 |   0.17550000000000002 |                    0.66% |
+|                                    | thread-pipes-4 (seconds)                                 |   0.44716666666666666 |                    1.66% |
+|                                    | thread-pipes-7 (seconds)                                 |                0.7345 |                   -0.17% |
+|                                    | thread-pipes-12 (seconds)                                |     1.405833333333333 |               (I) -4.12% |
+|                                    | thread-pipes-21 (seconds)                                |    2.0113333333333334 |               (I) -2.13% |
+|                                    | thread-pipes-30 (seconds)                                |    2.6648333333333336 |               (I) -3.78% |
+|                                    | thread-pipes-48 (seconds)                                |    3.6341666666666668 |               (I) -5.77% |
+|                                    | thread-pipes-79 (seconds)                                |                4.4085 |               (I) -5.31% |
+|                                    | thread-pipes-110 (seconds)                               |     5.374666666666666 |               (I) -6.12% |
+|                                    | thread-pipes-141 (seconds)                               |     6.385666666666666 |               (I) -4.00% |
+|                                    | thread-pipes-172 (seconds)                               |     7.403000000000001 |               (I) -3.01% |
+|                                    | thread-pipes-203 (seconds)                               |     8.570333333333332 |               (I) -2.62% |
+|                                    | thread-pipes-234 (seconds)                               |     9.719166666666666 |               (I) -2.00% |
+|                                    | thread-pipes-256 (seconds)                               |    10.552833333333334 |               (I) -2.30% |
+|                                    | thread-sockets-1 (seconds)                               |                0.3065 |                (R) 2.39% |
++------------------------------------+----------------------------------------------------------+-----------------------+--------------------------+
+
++------------------------------------+----------------------------------------------------------+-----------------------+--------------------------+
+| mmtests/sysbench-mutex             | sysbenchmutex-1 (usec)                                   |    194.38333333333333 |                   -0.02% |
+|                                    | sysbenchmutex-4 (usec)                                   |               200.875 |                   -0.02% |
+|                                    | sysbenchmutex-7 (usec)                                   |    201.23000000000002 |                    0.00% |
+|                                    | sysbenchmutex-12 (usec)                                  |    201.77666666666664 |                    0.12% |
+|                                    | sysbenchmutex-21 (usec)                                  |                203.03 |                   -0.40% |
+|                                    | sysbenchmutex-30 (usec)                                  |               203.285 |                    0.08% |
+|                                    | sysbenchmutex-48 (usec)                                  |    231.30000000000004 |                    2.59% |
+|                                    | sysbenchmutex-79 (usec)                                  |               362.075 |                   -0.80% |
+|                                    | sysbenchmutex-110 (usec)                                 |     516.8233333333334 |                   -3.87% |
+|                                    | sysbenchmutex-128 (usec)                                 |     593.3533333333334 |               (I) -4.46% |
++------------------------------------+----------------------------------------------------------+-----------------------+--------------------------+
+
+ mm/khugepaged.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 4ec324a4c1fe..a0f1df2a7ae6 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -676,9 +676,7 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+ 			writable = true;
+ 	}
+ 
+-	if (unlikely(!writable)) {
+-		result = SCAN_PAGE_RO;
+-	} else if (unlikely(cc->is_khugepaged && !referenced)) {
++	if (unlikely(cc->is_khugepaged && !referenced)) {
+ 		result = SCAN_LACK_REFERENCED_PAGE;
+ 	} else {
+ 		result = SCAN_SUCCEED;
+@@ -1421,9 +1419,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+ 		     mmu_notifier_test_young(vma->vm_mm, _address)))
+ 			referenced++;
+ 	}
+-	if (!writable) {
+-		result = SCAN_PAGE_RO;
+-	} else if (cc->is_khugepaged &&
++	if (cc->is_khugepaged &&
+ 		   (!referenced ||
+ 		    (unmapped && referenced < HPAGE_PMD_NR / 2))) {
+ 		result = SCAN_LACK_REFERENCED_PAGE;
+@@ -2830,7 +2826,6 @@ int madvise_collapse(struct vm_area_struct *vma, unsigned long start,
+ 		case SCAN_PMD_NULL:
+ 		case SCAN_PTE_NON_PRESENT:
+ 		case SCAN_PTE_UFFD_WP:
+-		case SCAN_PAGE_RO:
+ 		case SCAN_LACK_REFERENCED_PAGE:
+ 		case SCAN_PAGE_NULL:
+ 		case SCAN_PAGE_COUNT:
+-- 
+2.30.2
+
 
