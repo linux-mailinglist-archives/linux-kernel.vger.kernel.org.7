@@ -1,158 +1,231 @@
-Return-Path: <linux-kernel+bounces-798862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 485D9B42400
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:48:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF01B42404
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2790A174483
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:48:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A77A43BDFB3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244942E92D1;
-	Wed,  3 Sep 2025 14:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74302EC085;
+	Wed,  3 Sep 2025 14:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="VcLFIlxF"
-Received: from smtpout6.mo534.mail-out.ovh.net (smtpout6.mo534.mail-out.ovh.net [54.36.140.177])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="BpCpmjTi"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011014.outbound.protection.outlook.com [52.101.70.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD3D285CB6
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.36.140.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756910907; cv=none; b=ZS9xE6RbFPRa6EFYiSGWDXLXLaEP7AOXy4Az+vkY1hfSxdGgh5hy1ientwOW+KewEn2t9yvQ49GJSduDZ+iWeBtePYRkf/NP+2qmYxVacFUBNFJac4z+n40YdgpgofjU4jXue/PxyPmA6hn8td+On4n000pfdULyceg0JbOsYP8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756910907; c=relaxed/simple;
-	bh=K+tD++mGpOfZH6uzOxNKEeJrECtR+CMAyvWWXnMxo8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qrNa15Cguzh0t83kkV4oU+qm//zbHgzON/V7qYngHx6DWpARnTzlV3PWPGAu+beC9TDTM/ctx8bi9qfrVEtcJdfaPfQAhnUz6OXuVZN2+wrstinZvDb5Qlby4sbJSFpatd+7TMvHUYTGYMpvJCOWCsRxZ+ywyzMHuxGlSKWBya4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=VcLFIlxF; arc=none smtp.client-ip=54.36.140.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
-Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net [152.228.215.222])
-	by mo534.mail-out.ovh.net (Postfix) with ESMTPS id 4cH5800ZP4z6Bwl;
-	Wed,  3 Sep 2025 14:48:16 +0000 (UTC)
-Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net. [127.0.0.1])
-        by director3.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <brgl@bgdev.pl>; Wed,  3 Sep 2025 14:48:15 +0000 (UTC)
-Received: from mta2.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.168.184])
-	by director3.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4cH57z6Kqyz5wFW;
-	Wed,  3 Sep 2025 14:48:15 +0000 (UTC)
-Received: from orca.pet (unknown [10.1.6.9])
-	by mta2.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id C27273E3352;
-	Wed,  3 Sep 2025 14:48:14 +0000 (UTC)
-Authentication-Results:garm.ovh; auth=pass (GARM-95G001fd61621b-61d5-4f72-a2e6-6405b16da93f,
-                    FA25AB0AA1A9BF3DCBEBCC83EEB30DB7881EF5C4) smtp.auth=marcos@orca.pet
-X-OVh-ClientIp:79.117.41.176
-Message-ID: <b11dcd50-a87e-47ff-b406-776e432f07bd@orca.pet>
-Date: Wed, 3 Sep 2025 16:48:15 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7AE20A5DD;
+	Wed,  3 Sep 2025 14:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756910974; cv=fail; b=Hsn/3bXrY9BhBE41pBFxfrcL+L0dwoVYwcnlHXodAla+oi+6tz96q0JYgloWp2AU99VnSHLjb4DUB6ovsiG9YXQSm0xA1dAIJO1PCV6JvGXsHSgYeba+z1nCke2I7XyIoD9kmQF6D3xB2aVU8RvIepezd00MmP9lj6r9r6v5XYk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756910974; c=relaxed/simple;
+	bh=RIZa+QZbjnjwsz6IoX/RD6HlLtto2ici0t1CC1hEPWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=d7U16ggBpKn5K9cfiRAjARAGbG5H88FqJ1OhZMAzHbWwyB7hDaOx373xGZJ6Zmx7AOmdNXGPFlzPBryjFdlMcmB1UP8m5goRMpRtTk4doyg51Rp93k8XbchCRPYMX80eJl35qnm3UUAEixpysAbPJGrS8PO29SygcFlQH4oM+Y4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=BpCpmjTi; arc=fail smtp.client-ip=52.101.70.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kClNajcLpvqcNWNuta9pU7Izo0dRkr68Y/Mzg1FpKC6unwqXlMUQT6mc6oa9t7otGcy5sBUKqhjTLaLAxxYablCHROlfjJ2ImbL6XcLuXsTPhbGbpBUBgeDBi2WQn2iLQM0Wyz49aRKiPDvARky0V8dGgoEw6X2QcYpbeW8hNw3cUqDchDYWDnI2hfUZdkzTJWlvAMFxINdAJh14kLasJrzrjWgPUxwwMys4WNP146uSPdZrtXtKYoLtWXGcf2Y0MWaQIiQfwk0N2WK1rk+6ayQSoaMDiGImD48zeDFD/wMMK3uDpQZwituSx4w1JA4EV1+AcdvSGJrPQQ8TKJZSDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=plnbngCPUVbYWa1BsicwezENb9/v5bfu3F4Am6tRHlw=;
+ b=hprHP7kV1q/+xpGbwuBd5HwxFZhLwkKjy6KSXsvze7hYm3vbaXNR3If26D//Wn1Eog/zNrI4B+11CDAhNb1iSXYb6qSxbaY5qIe1RF0zKb9FEKlWWD3w+uolMNrym3Rx+rcVOV01sWUD7Q56TdEo8Tzu61yU120MXoOQiYGxKbKmtKKWJ54zSUyWPQxCTW74pJZMfOpSSVaz8O5hehXugnFf6GMl6W1ODQDGjQqesnKHeUMrKp1vbe7QLNjrLAeU+Di6q4oMo3BQ2YMZJ/ohnYlkiEXE9VQhA51fUj4WqeWamGkCxP0YWFuDnmfGu2vG8nUx9Z5rBQ7OH2dQm2KXpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=plnbngCPUVbYWa1BsicwezENb9/v5bfu3F4Am6tRHlw=;
+ b=BpCpmjTihT2y/6vocxSVO19pRdp5x6xQqgZEF89cS3WeNO9rdC9NUAHiRqrx8wzmsGTdEJXgMj8AnwCzSM5iDSwwFOh9Sh2iZLCzSYM9xKnyHy+/UctY1jVUDaliU02S5pUIITZjRK1t/cFa8JDzXpe4sHSfOVbU0OmUYqbo5rwLlJlD+q9E3j6avwumNJ41MkgoancOejj4nGL1gyAwMsifeYbgJWqaFcqMNzuexYsFVVa1981wk65fQJDWrZY+r1BxGD/hfJaX4PXXKZq0hYZHV55xWvgMLxL3U74DAiOMYe8eyXm5EdI+1T2fEpGbZqbqon5jQQmcNo6AXjIPRw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by AM9PR04MB8422.eurprd04.prod.outlook.com (2603:10a6:20b:3ea::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Wed, 3 Sep
+ 2025 14:49:30 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%7]) with mapi id 15.20.9094.015; Wed, 3 Sep 2025
+ 14:49:30 +0000
+Date: Wed, 3 Sep 2025 10:48:59 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] dmaengine: imx-sdma: drop legacy device_node np
+ check
+Message-ID: <aLhVW2xkjer5SEkZ@lizhi-Precision-Tower-5810>
+References: <20250903-v6-16-topic-sdma-v1-0-ac7bab629e8b@pengutronix.de>
+ <20250903-v6-16-topic-sdma-v1-1-ac7bab629e8b@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903-v6-16-topic-sdma-v1-1-ac7bab629e8b@pengutronix.de>
+X-ClientProxiedBy: BYAPR05CA0004.namprd05.prod.outlook.com
+ (2603:10b6:a03:c0::17) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] mfd: vortex: implement new driver for Vortex
- southbridges
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Michael Walle <mwalle@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org,
- linux-pci@vger.kernel.org
-References: <20250822135816.739582-1-marcos@orca.pet>
- <20250822135816.739582-4-marcos@orca.pet>
- <20250902151828.GU2163762@google.com>
- <45b84c38-4046-4fb0-89af-6a2cc4de99cf@orca.pet>
- <20250903072117.GY2163762@google.com>
- <1d4352b6-c27e-4946-be36-87765f3fb7c3@orca.pet>
- <20250903140115.GC2764654@google.com>
-Content-Language: es-ES
-From: Marcos Del Sol Vives <marcos@orca.pet>
-In-Reply-To: <20250903140115.GC2764654@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 6138124817232582246
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefgedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduudejrdeguddrudejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepkedprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
- hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheefgegmpdhmohguvgepshhmthhpohhuth
-DKIM-Signature: a=rsa-sha256; bh=hUaRlYoluP1SLEjFJzymDSSwfKaLIPXTBwU8vyuHXIU=;
- c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1756910896;
- v=1;
- b=VcLFIlxFp2tMBzDjpw4X+0YZl/XD0X2f0k7u7W1oJX0b5WDR14uL4noiMAnfxBr9rKj3fKOG
- kYa0rABI2W9jJAqDJnR5KLUV6xM4ml0yVRLA+1YnCdr2wXbsPAFYIAuspK1Ob8OsnqfN91kZxwN
- CiH2xeLaooKA7YgPJdqI4IgmQ/UKKoRBbOGT6lw/XevtaBGGE8tI1LVwDgbpkQiA2CxJLdr9P9C
- zew81B5t28KJYDs8p6WMejKIZeLGPgtA4ZGQw+xDd2353DRAIJGHbfqV06J+pihoa5iQCkg+PBM
- +FulApsJtss2dU9mTRkhXzwNoYLGhFfbIbYYpn7S7b+Mw==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AM9PR04MB8422:EE_
+X-MS-Office365-Filtering-Correlation-Id: 12e99a3b-8b95-4e74-2d40-08ddeaf9098d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|19092799006|7416014|1800799024|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?XXGYfWEYgKTitcm2xPP2Kg4qy/0QiWmJjAf3+Xh1OzYNCG6O83tNX+keXGeE?=
+ =?us-ascii?Q?vB+vEQ0tWTHwx//Khc33azFlBYBXgRQVXhbxRFz8BMm4M8n3OniNgyMRk8iM?=
+ =?us-ascii?Q?K3zo3ayewA46KGY8g068oBM1flsxsEemRT6zF9UmBelX165AAhPpssFYDSN5?=
+ =?us-ascii?Q?ikgGhVqVipuLphE4PTbKqvio1Fa5ZPDXz7I3SdwMm/VFOE15CzwIRpebhKvJ?=
+ =?us-ascii?Q?W3fJRY8PM3CibrVHbD9J9n4AXLaqA2aT1msElTnUcziAZv5ls+Fp8hbIqV3E?=
+ =?us-ascii?Q?dwuOi1O+/X7WQKJ7P0O0WANPWs/0HaubXahuQMPfezrrwnbJCH/B1hpNjOzR?=
+ =?us-ascii?Q?AWRpUWofr2YWPgs08JH5DzD2Nq7eJzfWCORpe+9XMQGnsycV8b9/Ls7ZgkY/?=
+ =?us-ascii?Q?hbhTQKq3Egt+40yHdgtCCjo1yYcBWBJ2o8zO8OGx0IlM/SpGTQGXqB8COOnk?=
+ =?us-ascii?Q?ybUmh9wH3f+0a8b3MaACWM79mUL2qHKiYRGPhes5Hv14EGr4tJtMUQtD/BGh?=
+ =?us-ascii?Q?3+/eyF9xEsl5laKDRfje1DSeQRm5qYNVGlXgm04eMcu06w/sSMFFqRGfhrs4?=
+ =?us-ascii?Q?zrjCW51FlQta36StPIbUoB3dUW7GpCZscKSqQZEXC8krEahxhiyH/AjusHWx?=
+ =?us-ascii?Q?bSWz0Gim0EKxNBCJa2W936q/g+5rDuhEhwxgTpdeh8IV8jmweP4l/MtEJaDX?=
+ =?us-ascii?Q?zPo2kEE0gpAi4dQhT/2QLNA9PxKDftJBAENg6KEnjfZ/v+BS7S9HqpE7g2gb?=
+ =?us-ascii?Q?EN/6JmEjsTru1Rhf0CUFtgbLIxDudsudngQ8K/vy9z5lYk7HLI4s1Gh7mr96?=
+ =?us-ascii?Q?vrYEHuTuis+VmzgtQPXSLkMW+TqmEokPmloNBtoW3D+3AS73k07U3gB9s8oP?=
+ =?us-ascii?Q?VXrfQaLIss4DaHO2LM8qyKz4QrC/nNlBOZq55Qn2v0X6J89R9SBANkyK4t5x?=
+ =?us-ascii?Q?sjsHWwz3qJFYFoPJu2zsqEYGWP2CWw3A9vJ5C4sWpsqGB+sdFQQ1H7v8Er5d?=
+ =?us-ascii?Q?yVadUYGsrsANM+7fJJt2lRHtQSDb7Vro+UK3rSW67rKo/hXj527UgYP8JXMS?=
+ =?us-ascii?Q?a6ZVb8ZvKA0EsuEIFm5khTkoRKWWVH7mmOViJUySrIJKu/eGZdnV6JbpRdis?=
+ =?us-ascii?Q?lGVm4Qkvxzr7VN5EPH/6sUweC+tF3KbjXQT+gL0U2YK47x1Z9tHVHzMFH34h?=
+ =?us-ascii?Q?o7z4TWfuHo0RvCdtOi16gSNRUo8ZvSh2kl0iFuhv21V0zZxBRAPxhkA48DAF?=
+ =?us-ascii?Q?vLmFF5JvMMFPRw8ttsEjQBdkfCUpPMEHjTXJxj7mOCs5OpmgMEGDzHwoFbAw?=
+ =?us-ascii?Q?G5uWkHX5LPD30g0DkokaZakyHllNM/WxnIK+eQaf1CR51nEtvYyCYnp0zeUN?=
+ =?us-ascii?Q?ra+EGJ2iOWPuaThq5ZS/QgmENtZRZLLXwf4LH/oqIw+NB1iDruLnZy6n4EVb?=
+ =?us-ascii?Q?lgqLtuLa/kSFi4X0Y5jMQ74zmPFpqS3PxzZDVaSvKZ4w3/eb4wBEPQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(19092799006)(7416014)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Sh1EJ4J/b+NBJKUDyL5b/0myVqN4I3CGHaoclKSnO9bmBghT4fLayzw3SxK5?=
+ =?us-ascii?Q?5afV8Wxj7hP1LBH4Z0KKbuitjvQ/HIlb5hj0DMl3Nx4TsJC6fgLiCbvoGkHS?=
+ =?us-ascii?Q?Zgjzs4FVo6SYufASkEBZEF5PZAbpQqmC1XvvqWuk0VhEYMGYctLIbE23XRs4?=
+ =?us-ascii?Q?amnRyWoaLikG2w4XwuAB1hJizg735+33yPkd+nmyYolbnr1q4h822qLWuN/A?=
+ =?us-ascii?Q?ON6t7ZHKB2AJwzQ27OrKkZJndh7ooubQ5wU7S8vcXJv3yIJTorMA4+uHsQ1U?=
+ =?us-ascii?Q?vZmf3Wp7OVQ50G6vEa41UBe0yG03lTwR1piId2SCYWJ6mhD0iPmprImotJam?=
+ =?us-ascii?Q?7stX6HSNmt1bNqh2RtfbxW9TK7JAPsxeTkxhnzm1lljXdnesVsB4rf16wOsf?=
+ =?us-ascii?Q?S4pQuLc8810AbI+p7AyNxF4qHc46xC6tFXfl50R3GU4JnkrtvbRzpBX8xzq6?=
+ =?us-ascii?Q?IemeMV7dqES0blvV9ZPEwM9iunz1QSPGwogD9Dk+NfAxMYBWLggU6OTgOD2Q?=
+ =?us-ascii?Q?amI8sDv7DEodC56W2ZWzKJfpot5qGXTEdLhcrV82f4+Ak0QUImjDt/grkniZ?=
+ =?us-ascii?Q?ROEZO32vPR2Szlqg8SLBscjyqyVYvjVR+hc34rbahh+jDcQVb7Lq8zV0HbA2?=
+ =?us-ascii?Q?nmh1qKW6fgd96lrZmJuGC4MAy2WoJMKTPo/684INbORclYtC0XBsLFM5SkGQ?=
+ =?us-ascii?Q?vhETjyFZc7+0iVyl9i9EgkH4RhhnjNQLasj2kYdbNM73QOh1PWj8XUsG/KJn?=
+ =?us-ascii?Q?fNvN9uQv4ApeRhvDbR00bo7x375q5zndTNTj5+NRpuJ3mHcge129bUqUZEbk?=
+ =?us-ascii?Q?m8yrJy0o59uea1SkuSo58zN1QxNzd6yDDDI5Jxw5/Tfk86XD8TffhCv8PnD4?=
+ =?us-ascii?Q?kXqjtRm84OAZavoyDgxveiNMLtW76yRokwQXOEarvP4tnUtLjqxbFOGtbzHc?=
+ =?us-ascii?Q?CvMu7M/yrXmZ05mek+Dk1bTC9jEJkemK79Sa3vUOsTCcAwjieFkx/gnBODad?=
+ =?us-ascii?Q?Lvjf7ra3IRth3gI1R6iuaIg5a81ZoTqx7E1CjGPx2VrlV4M8MA72H0trh0cD?=
+ =?us-ascii?Q?8wLXyInLLxaOdgNvW0tKQrKp/YMQ3fi8mj8c0+m9ZtUN4Js4jyu4DJBRlpWp?=
+ =?us-ascii?Q?SOcCD8eEu50SVxZJD7xOw4T2Xf3xxBe+e6EgFxN/6otl/wYtTNdnrYHyeXbP?=
+ =?us-ascii?Q?NrwYRb70nuJpAS70rRqXzLRhgRTB/66ymbE8RodiM6ZQtulUGwQo732utNDR?=
+ =?us-ascii?Q?tnomC/OLJDl1wYKpJO+wtM/TVWPYPrs1qbZE2mMQk4etDqvTd2ttUIPTt/gw?=
+ =?us-ascii?Q?mtyQYzK5kf/xpnWqR0+NGl85HHNNU1H6+aLmTCV7BzgB8gzmWwMI631qpq1L?=
+ =?us-ascii?Q?/AmEfaZ+WaEkCNXUR9JBvas7vefun0fKISAa6SqneYjU/UEIJ9ZE10P/6Uzu?=
+ =?us-ascii?Q?0keP6iGzADtHUzVcZEv3k0KKVve9fCUuNFUOvFCdcUbWjqBYRRojY+9N6Z/X?=
+ =?us-ascii?Q?PQ/wVyo95bMNV8YPVU9iDpdDEMbW37r6AehYvmRCpt5ZAWj+CmzKJgWXVeMm?=
+ =?us-ascii?Q?0Gg1xl5bm7VOgRa1KBRfwxp872AoKc806g+GTG53?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12e99a3b-8b95-4e74-2d40-08ddeaf9098d
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 14:49:30.1531
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dkbLsJ7oA7muMXPeu56DYW4ywtgPXDwyMnihngOQsrkLDtyfalbvjmWMgwvbk7bb6I7Q/ggg+Q1xA1tlpl9zyA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8422
 
-El 03/09/2025 a las 16:01, Lee Jones escribió:
->> patch series and thus make it a proper MFD (at the cost of delaying
->> even further the GPIO inclusion), or keep the struct mfd_cell array
->> as a single-element array and implement the watchdog later on another
->> merge request, using that very same array.
->>
->> I am however not okay with wasting my time rewriting that to bypass
->> the MFD API for this, so I can waste even more time later
->> implementing again the MFD API, just because linguistically
->> one (right now) is technically not "multi".
-> 
-> I don't get this.  If you implement the WDT now, you will be "multi", so
-> what are you protesting against?
+On Wed, Sep 03, 2025 at 03:06:09PM +0200, Marco Felsch wrote:
+> The legacy 'if (np)' was required in past where we had pdata and dt.
+> Nowadays the driver binds only to dt platforms. So using a new kernel
+> but still use pdata is not possible, therefore we can drop the legacy
+> 'if' code path.
+>
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 
-That GPIO is something required to perform the poweroff sequence, a must
-for any machine, while WDT is just a "nice to have".
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Implementing now the WDT just because of a linguistic preference means
-delaying something more important in favour of a "nice to have".
-
->> That seems very unreasonable, specially when it wouldn't be a first
->> since at least these other devices are also using MFD with a single
->> device:
->>
->>   - 88pm80
-> 
-> % grep name drivers/mfd/88pm800.c
-> 	.name = "88pm80x-rtc",
-> 	.name = "88pm80x-onkey",
-> 	.name = "88pm80x-regulator",
-> 	.name = "88pm800",
-
-If you open the file, you'll see it uses five single-element arrays.
-
->>   - 88pm805
-> 
-> % grep name drivers/mfd/88pm805.c       
-> 	.name = "88pm80x-codec",
-> 	.name = "88pm805",
-> 
-
-Same as above.
-
->>   - at91-usart
-> 
-> % grep NAME drivers/mfd/at91-usart.c
-> 	MFD_CELL_NAME("at91_usart_spi");
-> 	MFD_CELL_NAME("atmel_usart_serial");
-
-Has two single-element arrays. It registers one or the other, never both
-(just like my patch does!)
-
->>   - stw481x
-> 
-> * Copyright (C) 2013 ST-Ericsson SA
-> 
->>   - vx855
-> 
-> * Copyright (C) 2009 VIA Technologies, Inc.
-> 
->>   - wm8400
-> 
-> * Copyright 2008 Wolfson Microelectronics PLC.
-> 
-
-To my knowledge the definition of "multi" has not been changed
-since any of those years.
-
+> ---
+>  drivers/dma/imx-sdma.c | 32 ++++++++++++++------------------
+>  1 file changed, 14 insertions(+), 18 deletions(-)
+>
+> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+> index 02a85d6f1bea2df7d355858094c0c0b0bd07148e..89b4b1266726a9c8a552dc48670825ae00717e1c 100644
+> --- a/drivers/dma/imx-sdma.c
+> +++ b/drivers/dma/imx-sdma.c
+> @@ -2325,11 +2325,9 @@ static int sdma_probe(struct platform_device *pdev)
+>  			vchan_init(&sdmac->vc, &sdma->dma_device);
+>  	}
+>
+> -	if (np) {
+> -		sdma->iram_pool = of_gen_pool_get(np, "iram", 0);
+> -		if (sdma->iram_pool)
+> -			dev_info(&pdev->dev, "alloc bd from iram.\n");
+> -	}
+> +	sdma->iram_pool = of_gen_pool_get(np, "iram", 0);
+> +	if (sdma->iram_pool)
+> +		dev_info(&pdev->dev, "alloc bd from iram.\n");
+>
+>  	ret = sdma_init(sdma);
+>  	if (ret)
+> @@ -2369,21 +2367,19 @@ static int sdma_probe(struct platform_device *pdev)
+>  		goto err_init;
+>  	}
+>
+> -	if (np) {
+> -		ret = of_dma_controller_register(np, sdma_xlate, sdma);
+> -		if (ret) {
+> -			dev_err(&pdev->dev, "failed to register controller\n");
+> -			goto err_register;
+> -		}
+> +	ret = of_dma_controller_register(np, sdma_xlate, sdma);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "failed to register controller\n");
+> +		goto err_register;
+> +	}
+>
+> -		spba_bus = of_find_compatible_node(NULL, NULL, "fsl,spba-bus");
+> -		ret = of_address_to_resource(spba_bus, 0, &spba_res);
+> -		if (!ret) {
+> -			sdma->spba_start_addr = spba_res.start;
+> -			sdma->spba_end_addr = spba_res.end;
+> -		}
+> -		of_node_put(spba_bus);
+> +	spba_bus = of_find_compatible_node(NULL, NULL, "fsl,spba-bus");
+> +	ret = of_address_to_resource(spba_bus, 0, &spba_res);
+> +	if (!ret) {
+> +		sdma->spba_start_addr = spba_res.start;
+> +		sdma->spba_end_addr = spba_res.end;
+>  	}
+> +	of_node_put(spba_bus);
+>
+>  	/*
+>  	 * Because that device tree does not encode ROM script address,
+>
+> --
+> 2.47.2
+>
 
