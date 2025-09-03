@@ -1,129 +1,183 @@
-Return-Path: <linux-kernel+bounces-798707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30098B421B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:32:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33BE0B421AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 329675E5772
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:32:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F14084E4E76
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5F4308F0E;
-	Wed,  3 Sep 2025 13:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8DF308F01;
+	Wed,  3 Sep 2025 13:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zK1y7ofR"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="t6CQIDOw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WPLF8Jl+";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="t6CQIDOw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WPLF8Jl+"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CA0307AE1
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894C1308F3B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756906322; cv=none; b=MRogYfJUu1Uzy04yjlmL1Zw0ODh2OjTD0Z+fYsjQ3DKN302sOX4xJbOiXjpRafsb0mtJXj6EhD2haYKDyBLkrfEF7ZfTUjMNhwIHv/p09clXhpE5xRnwvHm8a5JRYNNTcjdXvC4O0hRhIZWG1GMJcldy6sbas9r7yoIOU9VY/vk=
+	t=1756906320; cv=none; b=ezccgcvnK5vzSKKO7CqEblexuUxkeJYwxOXmI4UZS8e5uVQ3NsolA95zu2Ne1YIXK6XMgbVLtoOjS39NENRfcEOcNyfHs2rEHmILfdJ/koaDf2rDmg+e/WaEZi+47q+8XA+nJWEZSsZQUgLANSEppQXjas/GZDMvt03x4jPWZFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756906322; c=relaxed/simple;
-	bh=HMyrqafZWVvnCp8l3xl9EjMdbJHyX9qnKtyEFsPn8dE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=krBDDfeCUYkNyH0dihPJ8PCLL2XipzpmLeIFcaA5ZSEPeTVIj8nSuVnlTCL6vQe/cDCdHX84J6xhhpbAz7nl8tBhp0vIfJSu30J9XjHhIEWkyF2aEPPA/5FeUaKjSZUH6K6FO4g0By6atR3cKZEGr4u+c/h20nEVPW0f6fnIiSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zK1y7ofR; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b8b7ac427so21456475e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 06:32:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756906319; x=1757511119; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jV/+kNQU+fID5A7W7F8ncUimxdPkwRhQZObi8KDWFN4=;
-        b=zK1y7ofRkabpTVTCK72t1pu/W63oE1k9cWiQ7iCp8g6fJ56OmbzmKaB+VGNKqm+k74
-         RstJas+QJu2w5nvLmF4MwLl0M/Q8ETcXt5DSXHJlcW4W03dhGsfoD6IXKgqZlFKhWY3q
-         9TIyKEBiFY2RcJ+cyPlpUKB65IimGqbZ0ejuUyM9VKd03F5oY69T623wErhxaflnw48V
-         7EXfQNnsDwkd0uTwHR+4MV/NCMoctN5+HfVYyFcq8nd2AfPhs+IX5A3yCEt0AR6hhWuo
-         +tuf/SgYnGUzpfUKlDUTC7NmZUD9xSS3co5ihP6W2kj5CmIEknNA1owGStToRsNoVs0Z
-         8Hlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756906319; x=1757511119;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jV/+kNQU+fID5A7W7F8ncUimxdPkwRhQZObi8KDWFN4=;
-        b=gWqk37V91RDeGEu1qKt3U2Y1gG2RoQx+DAu/C3V9HjS8GdCG39wl+LH5L5KthN1KmK
-         e0z65h6lDWLORh1tCw3B/6/WXIu3ngCjTRs4VWX4JrT8XzlzEiVNj8MfqG5p/OtjmF0m
-         OnDgzM0slP5/4MVNyUlhx0JmR6cmfOR++qTGP3d7GxqQLfjW/q2QlWntqjtGUzVnA54Y
-         ESTspGLF4a2ac5vDvWPiimsNzzC+0Pp5Af1A8DjFuFSTgXv+YGSipG3VZGu2I6oKbes3
-         CiP1BQRMYzSkq/TVGqBGZenyP8ln8sv5FduRzm4ofEH0nArkLilxUOP8FdQEtp+zDun3
-         Ttqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMSxvZJxhPajSbrMKkor0+RKnBTFDMopj2LBdxbw/8TKswxrbNcXVA40BDXjZD2er0mvCcHDCSs3MuHRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7VHlDN8U3/Yv/86moYpFJmaZDSCBOZHXZDqpykMiJYAdElY3c
-	XYsZO+jQFGI2iwzJIXxV5HVesnD4k7IVTJwvuBTQEEWjK+5vgMIDsoh40jsAM7Q9aA4=
-X-Gm-Gg: ASbGncul8WjmLWei2I4N/haT0rclqRQ+kkyWYBYCC5mKL8wGVAH0Wiu2CDMEK0Rg/vM
-	HXGXF3cm5Im9Ei84HSCgSS+imucAfmaZBVV5RjrPn9uEbCFjvyx/kBgY2tsXjXaY5lr2jPmvSH2
-	BKaRqqDdjxLjad9fxQkbf+mHYqU/5preFPci8uVWettkI+erOsm1sN2baTf+5EaaBztgBVCb0tt
-	cd6gArTwU1Uwtro0XrK+lPHYiXsb473Isb/Qh3QBVzRqy1/wUP7Qjxiuf+L1hzkgjcuiuHoDrZ6
-	kXMtG/cqy9HYGtESgQT1rM/P8aG03hvb5SptRYhw5ztjrxoGYFiObZzby6OGJSY9gqj4mOI+31B
-	6kItWRPxlqtUN6eZrRSNJgwK2a2l7oUJRPnsw5Nq9dQvriNm1Eb+6eMGZL01HNYG4iLkItVeb6k
-	lGS2H9zhS8varjDxoxr8qpTDGHqcl9O7cQxhGG0Lf4
-X-Google-Smtp-Source: AGHT+IHgsBA9rledeTVeo8KQley7QFRDXyCYgnqMKEv7MzsQIBH95kbaAiwwLJ8XXVf/C9Q9lEUUqQ==
-X-Received: by 2002:a05:600c:46c8:b0:450:d386:1afb with SMTP id 5b1f17b1804b1-45b85532ec8mr134876395e9.9.1756906318707;
-        Wed, 03 Sep 2025 06:31:58 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f306c22sm327450385e9.13.2025.09.03.06.31.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 06:31:58 -0700 (PDT)
-Message-ID: <b5a0ad0d-ceba-40d3-a111-0831c4538cea@linaro.org>
-Date: Wed, 3 Sep 2025 14:31:55 +0100
+	s=arc-20240116; t=1756906320; c=relaxed/simple;
+	bh=aSnS4pvSDH/7u/cUFs0wyGPAIN8XB1S6cH0Hhkf7X2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qs6f1LbmpwmEchDXapCl4/sCkBEmIS6QaVpKb6WEWwDnSMfQnanvqTzhUgMb/xRtk5D+J80ecqRfGUS+iIeigBZEhev11rgNwisZ6dMxyJrwVQaANmbh6d1ldPrFtAzZl6kD0pk6HYMLgvRn7FwNOGr0IOMRmWWn9TIf+owPn2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=t6CQIDOw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WPLF8Jl+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=t6CQIDOw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WPLF8Jl+; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B6A25211A5;
+	Wed,  3 Sep 2025 13:31:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756906316; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6EB2W1pLl4m1e5pdwO9j0i4xflpTmsKnJvOETtyCf/4=;
+	b=t6CQIDOw5YkTvwNeljQgxRsfAnsJy41Amk6T/BubjysfOI0nJUu3swT6iEs6ShFZmjaHwF
+	zA/Q0pH00EHbVTYnRCJCQPGlitC9sQtwTh0SSeIZXSDmwqH4YEU391xAk6xh/8cR+TRLUp
+	G0CRo0UysuI7NEfep2dJjVsJjaGXfRM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756906316;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6EB2W1pLl4m1e5pdwO9j0i4xflpTmsKnJvOETtyCf/4=;
+	b=WPLF8Jl+q2lN645zRfrKozTTpWDVYYKr5uFivyynhlk1ELWtzHxEfaAt6+WAq5NRRGZ2K6
+	CbDnPE2wPtou4yCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=t6CQIDOw;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WPLF8Jl+
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756906316; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6EB2W1pLl4m1e5pdwO9j0i4xflpTmsKnJvOETtyCf/4=;
+	b=t6CQIDOw5YkTvwNeljQgxRsfAnsJy41Amk6T/BubjysfOI0nJUu3swT6iEs6ShFZmjaHwF
+	zA/Q0pH00EHbVTYnRCJCQPGlitC9sQtwTh0SSeIZXSDmwqH4YEU391xAk6xh/8cR+TRLUp
+	G0CRo0UysuI7NEfep2dJjVsJjaGXfRM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756906316;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6EB2W1pLl4m1e5pdwO9j0i4xflpTmsKnJvOETtyCf/4=;
+	b=WPLF8Jl+q2lN645zRfrKozTTpWDVYYKr5uFivyynhlk1ELWtzHxEfaAt6+WAq5NRRGZ2K6
+	CbDnPE2wPtou4yCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A04D313888;
+	Wed,  3 Sep 2025 13:31:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Xx0iJ0xDuGhKQwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 03 Sep 2025 13:31:56 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1DA19A0809; Wed,  3 Sep 2025 15:31:56 +0200 (CEST)
+Date: Wed, 3 Sep 2025 15:31:56 +0200
+From: Jan Kara <jack@suse.cz>
+To: Diangang Li <lidiangang@bytedance.com>
+Cc: jack@suse.cz, amir73il@gmail.com, stephen.s.brennan@oracle.com, 
+	changfengnan@bytedance.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 0/1] fsnotify: clear PARENT_WATCHED flags lazily for v5.4
+Message-ID: <ownanwiqdhijstazux3j5jsawdyw6tcgjufk6zrejppnqyoy7d@hdqmfb4q7wpz>
+References: <20250903093413.3434-1-lidiangang@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/11] Peripheral Image Loader support for Qualcomm
- SoCs running Linux host at EL2
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <660c2594-9a93-450e-9a2e-17ef6b4c696d@linaro.org>
- <20250820112242.usd4sdd3avxdlcas@hu-mojha-hyd.qualcomm.com>
- <f5582304-8f55-4c3b-b752-9cefa1e4df96@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <f5582304-8f55-4c3b-b752-9cefa1e4df96@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903093413.3434-1-lidiangang@bytedance.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: B6A25211A5
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,oracle.com,bytedance.com,vger.kernel.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.01
 
-On 03/09/2025 12:56, Konrad Dybcio wrote:
->> Can you try with this next-20250814 tag ?
-> You sent it on the 19th, so it's in your best interest to run a quick
+On Wed 03-09-25 17:34:12, Diangang Li wrote:
+> Hi Amir, Jan, et al,
 > 
-> git rebase --onto linux-next/master $(git describe --abbrev=0)
+> Commit `41f49be2e51a71` ("fsnotify: clear PARENT_WATCHED flags lazily")
+> has resolved the softlockup in `__fsnotify_parent` when there are millions
+> of negative dentries. The Linux kernel CVE team has assigned CVE-2024-47660
+> to this issue[1]. I noticed that the CVE patch was only backported to the
+> 5.10 stable tree, and not to 5.4. Is there any specific reason or analysis
+> regarding the 5.4 branch? We have encountered this issue in our production
+> environments running kernel 5.4. After manually applying and deconflicting
+> this patch, the problem was resolved.
 > 
-> and giving the series a prompt re-test before sending, because there might have
-> been incompatible changes, whether ones that would prevent applying, or break
-> things functionally
+> Any comments or suggestions regarding this backport would be appreciated.
 
-I can't even find that tag next-20250814 closets thing is
+I don't have any objections against including this in 5.4-stable branch.
+Probably it was not applied because of some patch conflict. Feel free to
+send the backport to stable@vger.kernel.org, I believe Greg will gladly
+pickup the patch.
 
-| * \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \   00062ea01d35e - Merge 
-tag 'drm-xe-fixes-2025-08-14' of 
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes (3 weeks ago)
+								Honza
 
-but patch #9 in this series stubbornly won't apply to any SHA I've tried.
-
-meh
-
----
-bod
+> 
+> Thanks,
+> Diangang
+> 
+> [1]: https://lore.kernel.org/all/2024100959-CVE-2024-47660-2d61@gregkh/
+> 
+> Amir Goldstein (1):
+>   fsnotify: clear PARENT_WATCHED flags lazily
+> 
+>  fs/notify/fsnotify.c             | 31 +++++++++++++++++++++----------
+>  fs/notify/fsnotify.h             |  2 +-
+>  fs/notify/mark.c                 | 32 +++++++++++++++++++++++++++++---
+>  include/linux/fsnotify_backend.h |  8 +++++---
+>  4 files changed, 56 insertions(+), 17 deletions(-)
+> 
+> -- 
+> 2.39.5
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
