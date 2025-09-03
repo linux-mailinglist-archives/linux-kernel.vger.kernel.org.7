@@ -1,95 +1,88 @@
-Return-Path: <linux-kernel+bounces-799126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FC80B4275D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:56:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4263B42764
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7ED73B568C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:56:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 710875E187B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9613F3126BF;
-	Wed,  3 Sep 2025 16:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFEE31354F;
+	Wed,  3 Sep 2025 16:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wq4L9OSC"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Um53eHRv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90AD30C358;
-	Wed,  3 Sep 2025 16:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70DE5C96;
+	Wed,  3 Sep 2025 16:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756918578; cv=none; b=bn8/7Ik9cmWXoMBI/N4DeGYZZGXW71vRym3AJN1LVObbFTnk+e3flNhQ3WlYjfkGsBnP5DlgXEqCZRipgTDSCaO3gPvjQsD7x82cRPZOP7l8porIIO8mfMw5Iysr3Cm2xM0xBpX2wdWnnLXAEr8SKQ8OPHuY5zJf4dDZzPMrRqU=
+	t=1756918619; cv=none; b=uGicHhvfFQjBJthFrcFIPDM0FyqO/6NYcjCuhpkV4628WQwhTnU35Q8JulQs/9tiz0cWu8TO9dQGcS/t0JqhbB1eYV+RwzZvJab1cHyjsOwRORWSjY5Wc6XgYsQpZmkWQ6LSXiqL4IxOLw0wnwDGoi0dBDC+P+XNHBf5D1ONQR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756918578; c=relaxed/simple;
-	bh=KkyPyPYFOCaDt6JzYd87BjoueRIAM/Jp2CURBrf6SI8=;
+	s=arc-20240116; t=1756918619; c=relaxed/simple;
+	bh=QiYajCeX5zYm3JFjT/360LOEa9NzPD+APMFmmBjZjag=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YkBTV3cRSfBwv+xNkUtbLkdlItpFmdnIY2oBwghef/J6zgRENMC7KeZ5imzeRTb5ZyOeRMKLckwPWs3nXG/knH0Hk2MraBLt3o3omchHXd2BAKH/v4mRToxXmLzuQkD585+SdYHoCjFXgYnLXFguamVmWd+SoLFjbY+ikkAP1Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wq4L9OSC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC168C4CEF4;
-	Wed,  3 Sep 2025 16:56:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756918577;
-	bh=KkyPyPYFOCaDt6JzYd87BjoueRIAM/Jp2CURBrf6SI8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=XkrzFqpLxbE2MAPXS9TlvdO+H3x+vbnUoGhTk8Jar6YqyZkSYCqT5GZuzzhIFkOIvcM2ca1b718ibDQrpiPOJyPDshGmjJ+H3uyUnkrw4ViSwvP9N8Tstio9H9H4bhxMWvm4u2EfVCzEIe0lDdceCj8kjgeTx5g6vmga6llLZaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Um53eHRv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 088A2C4CEE7;
+	Wed,  3 Sep 2025 16:56:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1756918618;
+	bh=QiYajCeX5zYm3JFjT/360LOEa9NzPD+APMFmmBjZjag=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wq4L9OSCzp96SP8iprdpHmdp/Y71vR3HFzf2TmbePP7frKjkJKRU/5eq6ZEGCoNLD
-	 y7Ja+8wPhS2vBvaWIuz7R22G3XqKMBJmsuubCqai1SCYKCixJqZy5EVg8rsd+Als/o
-	 pRdvVfTgpv7G25jRvX5cOBvUiQd+3WWFyonJH65RXUdYQ/OjNt2mX+eptcvi5iAjxK
-	 VvGAvQjccU9Kd+OGMdB/MxZ99hDWcycTgCLTM8StzFnQ8OnRlaqcsXPbLpExxLNENh
-	 wjGcblZ1yuLsYT/WhLO9I9KPGSmidFkYqxSyeT4WBqvTvzG41TeMCNABV4mw78Yw7U
-	 Jv1CZNv9SwHlA==
-Date: Wed, 3 Sep 2025 18:56:12 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Cezar Chiru <chiru.cezar.89@gmail.com>
-Cc: wsa+renesas@sang-engineering.com, peda@axentia.se, jdelvare@suse.com, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: Main i2c-*.c files and algos/ subdirectory : Fix
- errors and warnings generated by checkpatch
-Message-ID: <fkiu64vdlndg5lvuaktao2vmvmn5al7xcpksrjmxrr4ldz5ssn@dolroldcknpd>
-References: <20250830093016.160753-1-chiru.cezar.89@gmail.com>
+	b=Um53eHRv3gZM/O/7UM/zQjLeFHCJyboqUqS/V/0hHLLPaoLDmy5BAEBsvMPNxCU/J
+	 YioJmEVtF+NsXOS+PLwAUmCq/QYeGJjMFRdVqj7uknqHEjdbiGRGkM4l064VBebIsX
+	 n0pT/fhFTvqsmB5Kv7UQKmHouPr4dWFO538IzQXg=
+Date: Wed, 3 Sep 2025 18:56:55 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Haakon Bugge <haakon.bugge@oracle.com>
+Cc: Allison Henderson <allison.henderson@oracle.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	OFED mailing list <linux-rdma@vger.kernel.org>,
+	"rds-devel@oss.oracle.com" <rds-devel@oss.oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net 2/2] rds: ib: Remove unused extern definition
+Message-ID: <2025090314-corporate-yanking-e1b1@gregkh>
+References: <20250903163140.3864215-1-haakon.bugge@oracle.com>
+ <20250903163140.3864215-2-haakon.bugge@oracle.com>
+ <2025090340-rejoicing-kleenex-c29d@gregkh>
+ <1D680271-B2DF-4CAB-A91D-4577CA6861E8@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250830093016.160753-1-chiru.cezar.89@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1D680271-B2DF-4CAB-A91D-4577CA6861E8@oracle.com>
 
-Hi Cezar,
-
-On Sat, Aug 30, 2025 at 12:30:15PM +0300, Cezar Chiru wrote:
-> Fixed some coding style errors and warnings plus some minor changes
-> in code as reported by checkpatch script. The busses/ and muxes/
-> subfolders will be dealt with another commit. Main changes were done
-> to comments, defines of 'if' statement, swapping 'unsigned' with
-> 'unsigned int' and other minor changes.
+On Wed, Sep 03, 2025 at 04:51:01PM +0000, Haakon Bugge wrote:
 > 
-> Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
-> ---
->  drivers/i2c/Kconfig              |  2 +-
->  drivers/i2c/algos/i2c-algo-bit.c | 29 +++++++++------
->  drivers/i2c/algos/i2c-algo-pca.c | 25 +++++++++----
->  drivers/i2c/algos/i2c-algo-pcf.c | 61 ++++++++++++++++++++++----------
->  drivers/i2c/algos/i2c-algo-pcf.h | 10 +++---
->  drivers/i2c/i2c-boardinfo.c      |  2 +-
->  drivers/i2c/i2c-core-base.c      | 59 +++++++++++++++++++-----------
->  drivers/i2c/i2c-dev.c            | 47 ++++++++++++++----------
->  drivers/i2c/i2c-mux.c            |  1 +
->  drivers/i2c/i2c-slave-eeprom.c   |  2 +-
->  drivers/i2c/i2c-smbus.c          |  2 +-
->  drivers/i2c/i2c-stub.c           | 29 +++++++--------
->  12 files changed, 170 insertions(+), 99 deletions(-)
+> 
+> > On 3 Sep 2025, at 18:38, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > 
+> > On Wed, Sep 03, 2025 at 06:31:37PM +0200, Håkon Bugge wrote:
+> >> Fixes: 2cb2912d6563 ("RDS: IB: add Fastreg MR (FRMR) detection support")
+> >> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+> >> ---
+> >> net/rds/ib_mr.h | 1 -
+> >> 1 file changed, 1 deletion(-)
+> > 
+> > I know I can't take patches without any changelog text, but maybe other
+> > maintainer are more lax :)
+> 
+> You mean the empty commit message? Did pass checkpatch.pl --strict though.
 
-first of all, thanks for your patch, but I can't accept it.
-Please split your patch in several smaller patches with single
-changes.
-
-Granularity is very important for reviews and git blame.
-
-Thanks,
-Andi
+checkpatch is a hint.  What would you want to see if you were a reviewer?
 
