@@ -1,109 +1,161 @@
-Return-Path: <linux-kernel+bounces-799266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89646B42929
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:55:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B4EB4292E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9B797B90A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:54:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 694611A86060
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2285369324;
-	Wed,  3 Sep 2025 18:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97312369323;
+	Wed,  3 Sep 2025 18:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="Td5hLOs/"
-Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T8Ppfyv+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389581547C9;
-	Wed,  3 Sep 2025 18:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D251547C9;
+	Wed,  3 Sep 2025 18:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756925732; cv=none; b=JJyWdme8Gp3/kV3lcEAfsZPGGg5nOHd5E/x3axykebOB28an8uajLHDCNxYMI59zjsk1TKEpiLsKgo0s3pPOsW0HO065yODtMQYXH1xs54DXCSIfWCZMcMDsP1RJpOvJ6ECV2K/LtlcRU9A0vHQkwnb6smkY/nHuW+Sk/KsVNLk=
+	t=1756925789; cv=none; b=BFRwMftgj1qoBGG8DNXelQWs8rQhn72B4R4e6E5EPdLLResHIaptKfKQRBKzkcrzkCDOolBV3X9sVIVTyi39QZYej2UFIAPJR6H8bY5Ty+xv9ERbfN/Swl9wFIod9sPda5I3wuPceZDWlD2hYDobj8pUT0fj0BceJiaftiWOAFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756925732; c=relaxed/simple;
-	bh=q1PBB34EdsjgNUFzHZgAtK4E4ZE/BeIbEQJOmAy5iYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E/3gUhe0/h7T239PmBKD4UpLkLVcbvIcfqLs9YPfrNlRrk6mvBGRLGaYamJk0LrPXsYg3ziq65h4D4bFZOUEuhOySmS+T+djZ8hXcWwvDlFfv0iN7CEM6KtwC3TGabCGoZ7HXM5iTDrmTTfPFb5QVUMSxE0jupAZRpQAQ1Cupl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=Td5hLOs/; arc=none smtp.client-ip=129.217.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
-Received: from [192.168.178.143] (pd9eaae6b.dip0.t-ipconnect.de [217.234.174.107])
-	(authenticated bits=0)
-	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 583ItP78029180
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 3 Sep 2025 20:55:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
-	s=unimail; t=1756925725;
-	bh=q1PBB34EdsjgNUFzHZgAtK4E4ZE/BeIbEQJOmAy5iYY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Td5hLOs/8TpA4H5OoGdbmmwJTVJ9tlKqm5fNwhdZpNKIBSwmaKEw0BF4qXlc8Xee+
-	 BjTIM/cDV6H9Dq3fYOCbdMtMxrRxVNSSxEDb+Umb9uu5ISYFHMXeLQb8MH3EktxEA+
-	 +/tTFCydC/mMzEac8JaPfc96LVvB6GY41gL3VVrs=
-Message-ID: <e7a2e703-f618-48c0-8de2-637c178207f4@tu-dortmund.de>
-Date: Wed, 3 Sep 2025 20:55:24 +0200
+	s=arc-20240116; t=1756925789; c=relaxed/simple;
+	bh=Di/kTCAveoUUjQoVNNWL0t0vFQa2mlSFvm1V0OlnA+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Qkyc2lYEOJy6ETAL42CzsyccZD8xnVCGp4/MzwtNUHOulREeGDAC2oC6QVYRVMLByGDp/7MgvGKjKoarBTONq/xVdyux7u6+qy0IsH3FDUzbdSGgWrrnVAvKR1tvyr9sUxi/JUhQOBF+q6Owit57L2+iDzDjR2d6JuBwDPiDoXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T8Ppfyv+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 264F4C4CEF4;
+	Wed,  3 Sep 2025 18:56:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756925787;
+	bh=Di/kTCAveoUUjQoVNNWL0t0vFQa2mlSFvm1V0OlnA+g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=T8Ppfyv+fQ4oge60ckzlsCSvW0CS+/8F/KblhmfNBNBDzbKqjG7GHTSmPj8+pbYSs
+	 mJZyGaAF+FSfRZJYUrRoY1RxsOJYKLbo7FUWl5LlNY9jkGZTtNi/QSLtW73ZanbFbf
+	 JPggwbng1Y4ppaHYCO3f8mvPWg94FyZZK/2fGBwBcfFUT2FeKfmJBtIfyKwsngOk/3
+	 S564EK9e3uTxJ8CeP6MfogFN2CJIBe1ksKCl8OAIJuMzW5ZbSWH0+xhQBwpzPW6Gs5
+	 ShvvfeiN2Ce2wFeeWi3NEq2gII1Sn07PzDp5WzIeNdJZE0KylQfjniN6JbvWBzRvoe
+	 BZvD5XS18d8Xw==
+Date: Wed, 3 Sep 2025 13:56:25 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	cros-qcom-dts-watchers@chromium.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com,
+	quic_mrana@quicinc.com, quic_vpernami@quicinc.com,
+	mmareddy@quicinc.com
+Subject: Re: [PATCH v8 2/5] PCI: dwc: Add support for ELBI resource mapping
+Message-ID: <20250903185625.GA1213441@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH net-next v4 0/4] TUN/TAP & vhost_net: netdev queue flow
- control to avoid ptr_ring tail drop
-To: Jason Wang <jasowang@redhat.com>
-Cc: willemdebruijn.kernel@gmail.com, mst@redhat.com, eperezma@redhat.com,
-        stephen@networkplumber.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-        kvm@vger.kernel.org
-References: <20250902080957.47265-1-simon.schippers@tu-dortmund.de>
- <CACGkMEviyLXU46YE=FmON-VomyWUtmjevE8FOFq=wwvjsmVoQQ@mail.gmail.com>
-Content-Language: en-US
-From: Simon Schippers <simon.schippers@tu-dortmund.de>
-In-Reply-To: <CACGkMEviyLXU46YE=FmON-VomyWUtmjevE8FOFq=wwvjsmVoQQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <rijfzrfngdtfc2ckxarzrcyt3xx23mldmijdlx7efbkputhkxz@i4cvdsmtavge>
 
-Jason Wang wrote:
-> On Tue, Sep 2, 2025 at 4:10 PM Simon Schippers
-> <simon.schippers@tu-dortmund.de> wrote:
->>
->> This patch series deals with TUN/TAP and vhost_net which drop incoming
->> SKBs whenever their internal ptr_ring buffer is full. Instead, with this
->> patch series, the associated netdev queue is stopped before this happens.
->> This allows the connected qdisc to function correctly as reported by [1]
->> and improves application-layer performance, see benchmarks.
->>
->> This patch series includes TUN, TAP, and vhost_net because they share
->> logic. Adjusting only one of them would break the others. Therefore, the
->> patch series is structured as follows:
->> 1. New ptr_ring_spare helper to check if the ptr_ring has spare capacity
->> 2. Netdev queue flow control for TUN: Logic for stopping the queue upon
->> full ptr_ring and waking the queue if ptr_ring has spare capacity
->> 3. Additions for TAP: Similar logic for waking the queue
->> 4. Additions for vhost_net: Calling TUN/TAP methods for waking the queue
->>
->> Benchmarks ([2] & [3]):
->> - TUN: TCP throughput over real-world 120ms RTT OpenVPN connection
->> improved by 36% (117Mbit/s vs 185 Mbit/s)
->> - TAP: TCP throughput to local qemu VM stays the same (2.2Gbit/s), an
->> improvement by factor 2 at emulated 120ms RTT (98Mbit/s vs 198Mbit/s)
->> - TAP+vhost_net: TCP throughput to local qemu VM approx. the same
->> (23.4Gbit/s vs 23.9Gbit/s), same performance at emulated 120ms RTT
->> (200Mbit/s)
->> - TUN/TAP/TAP+vhost_net: Reduction of ptr_ring size to ~10 packets
->> possible without losing performance
->>
->> Possible future work:
->> - Introduction of Byte Queue Limits as suggested by Stephen Hemminger
->> - Adaption of the netdev queue flow control for ipvtap & macvtap
+On Mon, Sep 01, 2025 at 07:18:17PM +0530, Manivannan Sadhasivam wrote:
+> On Thu, Aug 28, 2025 at 01:04:23PM GMT, Krishna Chaitanya Chundru wrote:
+> > External Local Bus Interface(ELBI) registers are optional registers in
+> > DWC IPs having vendor specific registers.
+> > 
+> > Since ELBI register space is applicable for all DWC based controllers,
+> > move the resource get code to DWC core and make it optional.
 > 
-> Could you please run pktgen on TUN as well to see the difference?
-> 
-> Thanks
->
+> As discussed offline, this changes also warrants switching the glue
+> drivers to use 'dw_pci::elbi' base instead of their own. So I've
+> ammended this commit to include those changes also while applying
+> (which was straightforward).
 
-Yes, I will look into it :)
+I'm glad if we can do this in the DWC core instead of individual
+drivers, but in the case of qcom, this changes the mapping from using
+devm_pci_remap_cfgspace() to using devm_ioremap_resource():
+
+  qcom_pcie_ep_get_io_resources
+    platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi")
+    devm_pci_remap_cfg_resource
+      devm_pci_remap_cfgspace
+        pci_remap_cfgspace
+          ioremap_np                  # (except on arch/arm)
+
+  dw_pcie_get_resources
+    platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi")
+    devm_ioremap_resource
+      __devm_ioremap_resource(..., DEVM_IOREMAP)
+        __devm_ioremap
+          switch (type)
+          case DEVM_IOREMAP: ioremap
+
+I assume this change from ioremap_np() to ioremap() is fine, but
+please verify and update the commit log to mention this change and
+explain why it's ok.
+
+(I don't think the qcom changes were posted to the mailing list; you
+can see them here:
+https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/dwc-ecam&id=d39e0103e38f9889271a77a837b6179b42d6730d)
+
+> > Suggested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-designware.c | 9 +++++++++
+> >  drivers/pci/controller/dwc/pcie-designware.h | 1 +
+> >  2 files changed, 10 insertions(+)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> > index 89aad5a08928cc29870ab258d33bee9ff8f83143..4684c671a81bee468f686a83cc992433b38af59d 100644
+> > --- a/drivers/pci/controller/dwc/pcie-designware.c
+> > +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> > @@ -167,6 +167,15 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
+> >  		}
+> >  	}
+> >  
+> > +	if (!pci->elbi_base) {
+> > +		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi");
+> > +		if (res) {
+> > +			pci->elbi_base = devm_ioremap_resource(pci->dev, res);
+> > +			if (IS_ERR(pci->elbi_base))
+> > +				return PTR_ERR(pci->elbi_base);
+> > +		}
+> > +	}
+> > +
+> >  	/* LLDD is supposed to manually switch the clocks and resets state */
+> >  	if (dw_pcie_cap_is(pci, REQ_RES)) {
+> >  		ret = dw_pcie_get_clocks(pci);
+> > diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> > index 00f52d472dcdd794013a865ad6c4c7cc251edb48..ceb022506c3191cd8fe580411526e20cc3758fed 100644
+> > --- a/drivers/pci/controller/dwc/pcie-designware.h
+> > +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> > @@ -492,6 +492,7 @@ struct dw_pcie {
+> >  	resource_size_t		dbi_phys_addr;
+> >  	void __iomem		*dbi_base2;
+> >  	void __iomem		*atu_base;
+> > +	void __iomem		*elbi_base;
+> >  	resource_size_t		atu_phys_addr;
+> >  	size_t			atu_size;
+> >  	resource_size_t		parent_bus_offset;
+> > 
+> > -- 
+> > 2.34.1
+> > 
+> 
+> -- 
+> மணிவண்ணன் சதாசிவம்
 
