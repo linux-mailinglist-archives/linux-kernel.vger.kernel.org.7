@@ -1,165 +1,121 @@
-Return-Path: <linux-kernel+bounces-799166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 002AAB427F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D8CDB427F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA3951891423
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:26:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ED171A82BE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABFF31578B;
-	Wed,  3 Sep 2025 17:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7757A31CA61;
+	Wed,  3 Sep 2025 17:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VywDLcgD"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FFF1EBFFF;
-	Wed,  3 Sep 2025 17:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bS/3Clob"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513F62F29;
+	Wed,  3 Sep 2025 17:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756920384; cv=none; b=PAbLqwOgumZSulZ6CnOY3pHgwnWqQ0qgq5nD6/4pBspDm102zMBFI05FrQCJbA4Ic2hVLc2W0OCHFYascvdhiiwlEwGYwDzaGNk60ISbtiZGbRxqydAn30g2PAZINcN4OLKsV+VjTUgB48iSDMKp//84zLImtP7+HILe7r3nP+c=
+	t=1756920543; cv=none; b=mmB/DHgAPHsaTFnT1s015c3iRq5IZHScPAyIImo05NP7y0Tn1lUeAEShbeDQySD+AgS3cS0U36USSItJeSXVaTeuUquzBj1NeLPeBHI3kCqX20Ve8W89DbLAE2lLyYVF5cE9PK/v6WS1ay3zjPoykRaCFZ0VsX9mlI5T0mm/gcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756920384; c=relaxed/simple;
-	bh=MMVLaoX+6VlfjNKjiqzYoloF5TmT2cECAamMPbJZnNo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JcA7znnv57HXa6kewIuAFqqEmkijyDQXiRl2T0FH5BtjDQSIkCNOc5YifRJGHqiWQBjbUWnT7Juo39k/UfprQMiUiCQg1TKZllxhRFPuN7iGsWCk9FXeuWBAaijXn2AQncNEv8Q8z4AbMKun7saB57O3F8MwpxoOO+vBt2zMF2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VywDLcgD; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=dCIqqthfYGahQeKtj9M6ZR9oMSs9qAHhqVEZZDd1nbo=;
-	b=VywDLcgDbIUEsud4LeMk+VH/eG8HrypOEtnajBaxyLLbnflod6Pwaa7lgcGe+m
-	FWfEGc7PjzAM4FKiLKqC9i/85Yr4jD9q55xr8uBgCfRgNqVIdwh1/pQG0L/YQg6l
-	VCmn3Rfihi95x6Ax4RDOVTP+cGACL1XvfcscDZyKYS0qM=
-Received: from [IPV6:240e:b8f:919b:3100:3980:6173:5059:2d2a] (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgD33zsnerho91e9Bg--.4893S2;
-	Thu, 04 Sep 2025 01:25:59 +0800 (CST)
-Message-ID: <80da951b-674b-4092-bc9b-e5b0bac1c35e@163.com>
-Date: Thu, 4 Sep 2025 01:25:59 +0800
+	s=arc-20240116; t=1756920543; c=relaxed/simple;
+	bh=czDIasOMcTnmNXpGC7buC1etHu3sNqn7jeUj8jZmgng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o5Ud6N/KtbztZmf2HRsNiTE9urJa5Z0b7Ftz6Cx/ZM2kRI/HDlencMp9+nHnPiAGoNqHcnu2tt4xJLeu/sOCEaZy2RKQ54pUG2PQx9xDiVA7M7Us0gh0FWrEXwgRevPBQ6X+keoXKKm583HOLeHMMYlUhvSAOXrjiCeQZTSGa+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bS/3Clob; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b04163fe08dso22003966b.3;
+        Wed, 03 Sep 2025 10:29:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756920541; x=1757525341; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XWu9xeL8VBpey0n7SWYhCd7sec1c7YLPdObD5FR6epg=;
+        b=bS/3ClobxJt62rsH1mq0UfaLEQW59cwM7Us75y2coDFCho1qSNQ0863W2savOU6Iic
+         YruUYdI5Z1hWsMnpmFlmGJWVWcie9IycKbcKxcYaPytPdO8iqK/vFkN09Eba2srm/HFP
+         6Ak4KLoGvArXZslhdI3XEZaE8CChWqQxHtkbm+Y+maoSWzD+OlCqeb90ZvjleC/ibUCx
+         Ls/hWkcsIwVl28/CmZQFwjJkQdS6Qc2RKYKjOpTDHJPnW3QV+LXUsdMvXe0hemJIGMhN
+         Z1kl3zcsWKFk8hqDIJxta+fG5gQf8sGzzqaCcWPOjLm9JUAxm/NUHHEsz8okYSQ0Dh4S
+         /bkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756920541; x=1757525341;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XWu9xeL8VBpey0n7SWYhCd7sec1c7YLPdObD5FR6epg=;
+        b=P3htT9jHkQoRFVB1iwf5nlEYz6mg/WisO7hq5rEZN8x99F+UaJ4KJM6HJds5/Q3mbv
+         xQ50lBMIS0iAv0tzHyE4ICMNy+XFfmDT8FYXjDiiNucuOLBDTEVl5UNGYfwh0gMvrrZL
+         viwwH8B3xjyOeS3wLp1qwrO8xMyNvfWXHcWVV1SbPqYRu85RHjONzjAcRLR/phI06Al5
+         my7AITJAXBdOoNvOH8gA1mLUXVHTnvdnB0kmvaVD51tgrfkkWB7cvzuHwoBC/OuQLWc/
+         ULjha0WeTAwN2k0iyCYyrSN18Lj5j8a0FVtHo1MbVqRSuyX6nCzc555VDF872S9j8mw6
+         zG5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUMpm1K2/pmiC+qPv1QD0dfNKcID5a1fOsoUC2V744HWA5M3HpcIOfH2ZbqM9Pbrt54dhWww33NC1g=@vger.kernel.org, AJvYcCXErlgZiN9rZwPaXlJm1yqbPklX13LR+g6Hp3RFO3z8h7B0+sKzGdcGGAhI45aN+hyTsE78X8WG4DXB98M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY7SOiv0Awutj25UdoD0V8A5sA2e992BNiwjCjGnZMgU/AN1im
+	jrv5GQ245mCCTsKCZcOJohFPDQRJFd06OGS12jso93bhQp02YXOBfVa1
+X-Gm-Gg: ASbGncu1rAyULO1ZqBqBP+6C0oenA4n1sR1j1oCWinAXoUwwHt5Ni2C+d0NtydznCWq
+	ooCAefDm8YX3uJRUTKA1fxRZWKdrJp0cq8/c2UqK2IdPZSaVofd5Yi4avbGA6Mv99XThgDO8TLO
+	n5VoaVcmRXCkvcKzFMAUqRao/xhpAqaPLFofBbZfR4/wWCzN/aMUdLMJLAEdlBAvnPiKBhIBDfy
+	heoiJeyS/j33GBlZl6S6Y0LycBlYSQjNTycMpXj15NjCS3NdfcocRtmWAPSPrEiHRC803Mcd3Zc
+	T9xv61ATLKnsl0TKekm6KLK2ALcEZHxClvkyepTxZo0eZJWKXfTodTiCl+QemxNm5PbdzTkIMBN
+	9IYUs4u7Wy6u//TftBF3iHCIaZ+R/c13xMEqCBwJue/FLgfFGjOBi1/njqlqPHnuSDQMIgcrbAz
+	QW/lIQ
+X-Google-Smtp-Source: AGHT+IELUIt2PidsVExRo1sEvtHXYrQqf/H6nGOn9Vany7WFI0RwS1E2R3PgT0vB0jB9W4a4VvEelg==
+X-Received: by 2002:a17:907:da0:b0:b04:616c:d74d with SMTP id a640c23a62f3a-b04616cdf40mr441162866b.0.1756920540397;
+        Wed, 03 Sep 2025 10:29:00 -0700 (PDT)
+Received: from osama ([2a02:908:1b0:afe0:5935:131b:b520:dff5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff08b86833sm1328911466b.48.2025.09.03.10.28.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 10:28:59 -0700 (PDT)
+Date: Wed, 3 Sep 2025 19:28:57 +0200
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] thermal: hwmon: replace deprecated strcpy() with
+ strscpy()
+Message-ID: <aLh62dIWcHtWv2uj@osama>
+References: <20250901150653.166978-1-osama.abdelkader@gmail.com>
+ <CAJZ5v0hrKBNxDeZOKpUXyuZV7LRUX4ov4ifEGDtNMrA8km6uOA@mail.gmail.com>
+ <aLhK_zMvtkdCtsHR@osama>
+ <CAJZ5v0j2ooBwnPWKjXGyYOOBtjs6zbAh-+jaUaV5u7sBi87+Rw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/13] PCI: dwc: Refactor register access with
- dw_pcie_*_dword helper
-To: Rob Herring <robh@kernel.org>
-Cc: lpieralisi@kernel.org, bhelgaas@google.com, mani@kernel.org,
- kwilczynski@kernel.org, jingoohan1@gmail.com, cassel@kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hans Zhang <hans.zhang@cixtech.com>
-References: <20250828135951.758100-1-18255117159@163.com>
- <CAL_JsqJ0cXB4bz+DAUq25V5suS0D-CHnujh0UyxA66UjajJO-g@mail.gmail.com>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <CAL_JsqJ0cXB4bz+DAUq25V5suS0D-CHnujh0UyxA66UjajJO-g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PSgvCgD33zsnerho91e9Bg--.4893S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJFy8GFWxWF4rXw1ktrWDJwb_yoW5WFW5pF
-	WUCFWayF4UJanF9F1kXa18Zr10g3s5t3y3WFy7G395XF4UAFWqqFyakFy5A3ZxGrWkZF10
-	vw47taykuw4DA3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Un_-PUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQxi9o2i4dZJvrQAAsw
+In-Reply-To: <CAJZ5v0j2ooBwnPWKjXGyYOOBtjs6zbAh-+jaUaV5u7sBi87+Rw@mail.gmail.com>
 
-
-
-On 2025/8/29 04:44, Rob Herring wrote:
-> On Thu, Aug 28, 2025 at 9:00 AM Hans Zhang <18255117159@163.com> wrote:
->>
->> From: Hans Zhang <hans.zhang@cixtech.com>
->>
->> Register bit manipulation in DesignWare PCIe controllers currently
->> uses repetitive read-modify-write sequences across multiple drivers.
->> This pattern leads to code duplication and increases maintenance
->> complexity as each driver implements similar logic with minor variations.
->>
->> This series introduces dw_pcie_*_dword() to centralize atomic
->> register modification. The helper performs read-clear-set-write operations
->> in a single function, replacing open-coded implementations. Subsequent
->> patches refactor individual drivers to use this helper, eliminating
->> redundant code and ensuring consistent bit handling.
->>
->> The change reduces overall code size by ~350 lines while improving
->> maintainability. Each controller driver is updated in a separate
->> patch to preserve bisectability and simplify review.
+On Wed, Sep 03, 2025 at 04:21:35PM +0200, Rafael J. Wysocki wrote:
+> On Wed, Sep 3, 2025 at 4:04 PM Osama Abdelkader
+> <osama.abdelkader@gmail.com> wrote:
+> >
+> > On Wed, Sep 03, 2025 at 01:50:03PM +0200, Rafael J. Wysocki wrote:
+> > > On Mon, Sep 1, 2025 at 5:06 PM Osama Abdelkader
+> > > <osama.abdelkader@gmail.com> wrote:
+> > > >
+> > > > strcpy() is deprecated; use strscpy() instead.
+> > >
+> > > So why is it better to use strscpy() in this particular case?
+> >
+> > Thanks for the review. Technically, there is no change since both have const buf size,
+> > it's just for consistency with other drivers.
 > 
-> If RMW functions are an improvement, then they should go in io.h. I
-> don't think they are because they obfuscate the exact register
-> modifications and the possible need for locking. With common API,
-> anyone that understands kernel APIs will know what's going on. With a
-> driver specific API, then you have to go lookup what the API does
-> exactly. So I don't think this is an improvement.
+> $ cd linux-kernel-source
+> $ git grep strcpy | wc -l
+> 1187
 > 
-> Rob
+> What kind of consistency do you mean?
 
-Dear Rob,
-
-Thank you very much for your reply.
-
-My initial idea was to simplify the logic we wrote a lot of RMW under 
-the DWC driver. Then I saw that there were similar well-handled codes in 
-the linux kernel, so I came to do some cleaning work.
-
-
-drivers/pci/access.c
-int pcie_capability_clear_and_set_dword(struct pci_dev *dev, int pos,
-					u32 clear, u32 set)
-{
-	int ret;
-	u32 val;
-
-	ret = pcie_capability_read_dword(dev, pos, &val);
-	if (ret)
-		return ret;
-
-	val &= ~clear;
-	val |= set;
-	return pcie_capability_write_dword(dev, pos, val);
-}
-EXPORT_SYMBOL(pcie_capability_clear_and_set_dword);
-
-
-include/linux/pci.h
-static inline int pcie_capability_set_dword(struct pci_dev *dev, int pos,
-					    u32 set)
-{
-	return pcie_capability_clear_and_set_dword(dev, pos, 0, set);
-}
-
-static inline int pcie_capability_clear_dword(struct pci_dev *dev, int pos,
-					      u32 clear)
-{
-	return pcie_capability_clear_and_set_dword(dev, pos, clear, 0);
-}
-
-
-
-And the subsequent introduced API: Personally, I think they are very 
-valuable for reference. Of course, it depends on the final opinions of 
-the maintainer and all of you.
-
-drivers/pci/access.c
-void pci_clear_and_set_config_dword(const struct pci_dev *dev, int pos,
-				    u32 clear, u32 set)
-{
-	u32 val;
-
-	pci_read_config_dword(dev, pos, &val);
-	val &= ~clear;
-	val |= set;
-	pci_write_config_dword(dev, pos, val);
-}
-EXPORT_SYMBOL(pci_clear_and_set_config_dword);
-
-
-
-Best regards,
-Hans
-
+I mean in thermal subsystem, it's only this one.
 
