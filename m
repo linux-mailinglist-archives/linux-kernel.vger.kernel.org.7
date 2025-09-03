@@ -1,262 +1,142 @@
-Return-Path: <linux-kernel+bounces-799083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AD30B426C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:23:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6587B426C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5C31682062
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:22:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7924917D2BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4A62C21FB;
-	Wed,  3 Sep 2025 16:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459A02C1595;
+	Wed,  3 Sep 2025 16:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ckWGXJY6"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PejF1BUC"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1434C2C11F9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39762C11F5;
 	Wed,  3 Sep 2025 16:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756916549; cv=none; b=nSB2BpxeprnxwzkTmCfCnpaKMNOtR0T2U0zbfv0uaRShWXU8QwNMnvkUFJae0FI7Br2JVap3VdgmcTFN7ur90eMcW8YoJKGwB9hd43+VGWnMIjtQ/efZNr8Ad0PmcBsR35SjR33UDzE9mjQEpT6RQYrJLC/ReEFD2pN49EC54zc=
+	t=1756916547; cv=none; b=QI6ZEci0b+LpRMEoZKcxEGJcrN1PPbaGYWk7cIsJ2OiSZmV/VGObvMJrP7axlWJ14NjONRbR0mcIF0pTZzfG4XPz52qZi4vJyYQQ5wTuQCLF+HfX0RHLeniz+8EvowXuXaVufmvOSQAltMRwz5ThCkCr9zYT49MqSj0333igb84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756916549; c=relaxed/simple;
-	bh=jZZngHPqPl0jzwcdfvrr1f4Qb2IcADssB2yhQ8TzxcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=baq3aDb0EWQddY6kEM4Fx8EdOFzocIHwVA8yUORvZTJA1ID6HCryWN87tWEdUD3SyPP7iXlE9cpUy2xb+l3/vjoqUY1V/2RvJXM/MlYRxmoakoDvPnMG71rewf673TwafGpuHdT4+Ggh87LS5yUsUVrh2r5bAUwYQLfYmbqNMX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ckWGXJY6; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D9C9D40E00DE;
-	Wed,  3 Sep 2025 16:22:23 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id E8Z0PEJV3Z0l; Wed,  3 Sep 2025 16:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756916539; bh=Yg2x7twhatQMmLV35XK8qG2QDsmMBwv2i1ZvKyXM5L4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ckWGXJY6kAmZFF3NcGYnYQBkLFal1wh6zbcZMyxsAhCJ2kmjvs25HfuEDLs0fXcke
-	 vDvLQ+vlaIfa9HJdiXRbf/lgDYYHI+rA4e4Y+QrvC5THuDOnIBWClTTdTNRc3+icST
-	 QXKvSTbOPbrX311b6IpDhhn+w2gLDaLjW23lPgqrtjDe8owJQAttmpovsB5dO4D/Ka
-	 uwlS2J2JF7M3RWW3ssoZy2ZjuFUrlXrVowxlNxAJQ4NJtk6w/UgLngc6kG791E0GIf
-	 +bcSocNkFAmnq4QO1tswaETQevGgNoPFZsnRO2Ivami7hXU3WuB5g1IRk2k6rYe7gA
-	 UDTYFZ1yr9EHQ84uWrsfsOp8I9NVLTKf5wY4uohyvTu7hReK2YkQp8di95JBsaGwIc
-	 0J9FiXN6sUvEjz9rjtBKbLsqe8VEyjZNxmPyJQjmrhfHQuUClFgjtqnqyuLXpwdnfa
-	 uMOdo1Bi3iy2JW3d6ZgZgHevd5q8MTYCVl5XAhZwvsbwivfIIA4pmRw70uI8I7mVmi
-	 8qd4BXAVfCR/1Vi51WsWmWrCobLMM8olynHCBKY8mzBO6rTgei1yqdYyMaFvytdF3r
-	 r0gwvXafBovgll6syanewcLDjp0fiopVoktMItFz1J8+4bboo/UzpS7ztG5d4MhflD
-	 rFO2rVeGW6f8l76j2ttCgZLw=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id EDAF140E0163;
-	Wed,  3 Sep 2025 16:22:06 +0000 (UTC)
-Date: Wed, 3 Sep 2025 18:22:00 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb+git@google.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nikunj A Dadhania <nikunj@amd.com>
-Subject: Re: [PATCH v7 00/22] x86: strict separation of startup code
-Message-ID: <20250903162200.GIaLhrKOJeL6ThYHa1@fat_crate.local>
-References: <20250828102202.1849035-24-ardb+git@google.com>
+	s=arc-20240116; t=1756916547; c=relaxed/simple;
+	bh=wvEMkXHaJpIb5xv6+vYPGH0V897Ec7hErb/+81B2ijg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZIlcmWwoFIsvmWay18ptQkCJYK/oV41/TxfRR0VvSl2iN8NumOvodbkdOZOiwmHSqMcgUNFeUi4v8lYMEVrjGwaTiAdMlsy14RNldM3g6VtbxfHSBYEDMEy9CIq7ZNQe5GdWWlcoWlFZBQqptxf/OpeIbz2pvXjCseBQlIf+SDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PejF1BUC; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b043da5a55fso12854266b.0;
+        Wed, 03 Sep 2025 09:22:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756916544; x=1757521344; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qoXcLYlwl2JhaADi+GiTu4E6RqdYGplWovLMYfPiy+Y=;
+        b=PejF1BUCWogRvX4oxF/NBUedhQ2LcLhAbMxGP7ZDjBNM+SGDv3/p84Zvhsu1pzYWhA
+         8/EslI31zVRc9EbQxPN9Kyu0OJDmlCXvqEd+iLEA6kv0mrjsef9ObbJMNu4ZghsuWi4S
+         RsSR1HfOUgnOlMpz7XSE8yrn/VCsAqhv4HLA8vWdWaaGNE38feeY0gmx4dLgs495rPjb
+         EFRsZdKTUB50QNprzz3+z6lmeEig430ChOEBvyJPkYSdJYZJJjJ5n7dBhJg5/p+IpF8a
+         nHBIS+AsxDxJe7pxMFnYhjDObbKM3L8KXo7tKBzI8neMHTpx475iNmbZQsaT03yoqwZ2
+         RQ7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756916544; x=1757521344;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qoXcLYlwl2JhaADi+GiTu4E6RqdYGplWovLMYfPiy+Y=;
+        b=XS2SxgwK0Hk53qPpYJuuQD1/Xu/cUqCN3gHW8jOpb8R3i4RLS34vFCvnGbSlTB71uR
+         ugu1LlgkiEpdfs3WrYdWiBB+y6C80MmvmpwygvlIKni46E8RCkqIe1olsMFS+bAvl1/c
+         5KfDN1YsNUxbA/owBlsbg3v9N67ZoV/s5ciT6t9cws+z3K0TY3Tg3bVjJxlVx5OgGgAP
+         oL0+eHqv/NlpxRKUNd5cHpwWRSVmVvqzg/UjqhdKNdGVYQTyKtkrDzXnxKQlpgZHJcoP
+         kgXeWMxyENhBCBq/UU91lIhX8/GT/JC646ous8WIxvUoTQ8FQgnOC/z0G45JTl+HDzqL
+         x0qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFX5GFdriM1dqanQUrj9vWR/tIuKp8IajRlVm+Ea54cFglvKRgWHe39jkLCLn+k83aWNk=@vger.kernel.org, AJvYcCXP9D7P+LGWOD0dVddeVgnRemS36VYQWxYHpFFZLp/IW2bN9OoJWm/Ts1i41E9qNCL7TPBn5E3dfcnJNvRf@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNpyyHeV07IQAYxlI2Pf+eDryFDnjejj/rzrtLD5QtKt4uIDnQ
+	De9EqKurL6nDHFvDWyVhVxluUdrcU0Y7fKjaitCFimlhyziuPYuHrJZmGa6tEywiYOuiRor25v5
+	KLhWza2cKf/X/VcwpaRQHK3AJ2gKxRPw=
+X-Gm-Gg: ASbGncsGGswlFiPyXoLFAGPkWQ+g6ZciaVleh21WTLkGaOtklAtKQ+iqvx4p8BqnTqT
+	gdJEoiKd0dIFGD3D9lcc+tc3pwnNQdpfFNvQsXISDlL1x64slR4VdxRkSVdutVD2Bsp7UkF07rw
+	O8el5g/XIHqoYXjDx2SmhrCBzh3JLqj4ayQSmEJYY8Qi284Ig+JxYE0r64baqiwSSLAUd/yt1dy
+	H4Lxdv6nSWchJ29WSFeKUTtQNcy6r4k1A==
+X-Google-Smtp-Source: AGHT+IGQ8n18m8I2q6yIHPhanq7C0Sx4MTsmfLvhh5jrkKlsJ9ILbpiYYZi1z3E1dkmEqo+Y2ttHV03Zr7KEsHVDeCo=
+X-Received: by 2002:a17:907:724e:b0:b04:5200:5ebe with SMTP id
+ a640c23a62f3a-b0452006a0dmr734282566b.54.1756916544055; Wed, 03 Sep 2025
+ 09:22:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250828102202.1849035-24-ardb+git@google.com>
+References: <20250903135222.97604-1-contact@arnaud-lcm.com>
+ <CAADnVQLf0wj9hV=tAA=p_GXgpQ6DxtB4heoDqTmb5dEc5P6zfg@mail.gmail.com> <d6223a4c-3e24-464f-893b-6bef57b973b8@arnaud-lcm.com>
+In-Reply-To: <d6223a4c-3e24-464f-893b-6bef57b973b8@arnaud-lcm.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 3 Sep 2025 09:22:12 -0700
+X-Gm-Features: Ac12FXznT-1rusU-3jxth4QlayUs-SuZES4nwed-YHS-tqSYt9sVH74isA7_nE4
+Message-ID: <CAADnVQL5Ms+3N9CYK=YTCMfWYfd=BEzXNggB2Sg+i_obVfUb8g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v6 1/2] bpf: refactor max_depth computation in bpf_get_stack()
+To: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
+Cc: Yonghong Song <yonghong.song@linux.dev>, Song Liu <song@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Eduard <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
+	KP Singh <kpsingh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Stanislav Fomichev <sdf@fomichev.me>, 
+	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com, 
+	syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 28, 2025 at 12:22:03PM +0200, Ard Biesheuvel wrote:
-> Changes since v6:
-> - Rebase onto latest tip/master which incorporates v6.17-rc1a
+On Wed, Sep 3, 2025 at 9:20=E2=80=AFAM Lecomte, Arnaud <contact@arnaud-lcm.=
+com> wrote:
+>
+>
+> On 03/09/2025 18:12, Alexei Starovoitov wrote:
+> > On Wed, Sep 3, 2025 at 6:52=E2=80=AFAM Arnaud Lecomte <contact@arnaud-l=
+cm.com> wrote:
+> >> A new helper function stack_map_calculate_max_depth() that
+> >> computes the max depth for a stackmap.
+> >>
+> >> Changes in v2:
+> >>   - Removed the checking 'map_size % map_elem_size' from
+> >>     stack_map_calculate_max_depth
+> >>   - Changed stack_map_calculate_max_depth params name to be more gener=
+ic
+> >>
+> >> Changes in v3:
+> >>   - Changed map size param to size in max depth helper
+> >>
+> >> Changes in v4:
+> >>   - Fixed indentation in max depth helper for args
+> >>
+> >> Changes in v5:
+> >>   - Bound back trace_nr to num_elem in __bpf_get_stack
+> >>   - Make a copy of sysctl_perf_event_max_stack
+> >>     in stack_map_calculate_max_depth
+> >>
+> >> Changes in v6:
+> >>   - Restrained max_depth computation only when required
+> >>   - Additional cleanup from Song in __bpf_get_stack
+> > This is not a refactor anymore.
+> > Pls don't squash different things into one patch.
+> > Keep refactor as patch 1, and another cleanup as patch 2.
+>
+> The main problem is that patch 2 is not a cleanup too. It is a bug fix
+> so it doesn't really
+> fit either.
+> We could maybe split this patch into 2 new patches but I don't really
+> like this idea.
+> If we decide to stick to 2 patches format, I don't have any preference
+> which patch's scope
+> should be extended.
 
-...
-
-So, due to the interactions with the Secure AVIC stuff, I've been doing some
-patch tetris. Two patches: the first one goes ontop of x86/apic and the second
-one goes ontop of this set.
-
-Will run some build tests with them first tho...
-
-patch 1:
-
----
-
-commit aa532319e46228422f7deb8d54853c4b218276f1 (HEAD -> refs/heads/tip-x86-apic)
-Author: Borislav Petkov (AMD) <bp@alien8.de>
-Date:   Wed Sep 3 17:42:05 2025 +0200
-
-    WIP
-    
-    Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index b64f43010a12..e858e2979db0 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -1129,7 +1129,7 @@ u64 savic_ghcb_msr_read(u32 reg)
- 	if (res != ES_OK) {
- 		pr_err("Secure AVIC MSR (0x%llx) read returned error (%d)\n", msr, res);
- 		/* MSR read failures are treated as fatal errors */
--		snp_abort();
-+		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
- 	}
- 
- 	__sev_put_ghcb(&state);
-@@ -1159,7 +1159,7 @@ void savic_ghcb_msr_write(u32 reg, u64 value)
- 	if (res != ES_OK) {
- 		pr_err("Secure AVIC MSR (0x%llx) write returned error (%d)\n", msr, res);
- 		/* MSR writes should never fail. Any failure is fatal error for SNP guest */
--		snp_abort();
-+		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
- 	}
- 
- 	__sev_put_ghcb(&state);
-diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
-index 0020d77a0800..01a6e4dbe423 100644
---- a/arch/x86/include/asm/sev-common.h
-+++ b/arch/x86/include/asm/sev-common.h
-@@ -208,6 +208,7 @@ struct snp_psc_desc {
- #define GHCB_TERM_SVSM_CAA		9	/* SVSM is present but CAA is not page aligned */
- #define GHCB_TERM_SECURE_TSC		10	/* Secure TSC initialization failed */
- #define GHCB_TERM_SVSM_CA_REMAP_FAIL	11	/* SVSM is present but CA could not be remapped */
-+#define GHCB_TERM_SAVIC_FAIL		12	/* Secure AVIC-specific failure */
- 
- #define GHCB_RESP_CODE(v)		((v) & GHCB_MSR_INFO_MASK)
- 
-diff --git a/arch/x86/kernel/apic/x2apic_savic.c b/arch/x86/kernel/apic/x2apic_savic.c
-index b846de0fbcfa..2b82bb64055a 100644
---- a/arch/x86/kernel/apic/x2apic_savic.c
-+++ b/arch/x86/kernel/apic/x2apic_savic.c
-@@ -363,7 +363,7 @@ static void savic_setup(void)
- 	 */
- 	res = savic_register_gpa(gpa);
- 	if (res != ES_OK)
--		snp_abort();
-+		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
- 
- 	native_wrmsrq(MSR_AMD64_SAVIC_CONTROL,
- 		      gpa | MSR_AMD64_SAVIC_EN | MSR_AMD64_SAVIC_ALLOWEDNMI);
-@@ -376,13 +376,13 @@ static int savic_probe(void)
- 
- 	if (!x2apic_mode) {
- 		pr_err("Secure AVIC enabled in non x2APIC mode\n");
--		snp_abort();
-+		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
- 		/* unreachable */
- 	}
- 
- 	savic_page = alloc_percpu(struct secure_avic_page);
- 	if (!savic_page)
--		snp_abort();
-+		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);;
- 
- 	return 1;
- }
-
----
-
-patch 2
-
----
-
-commit 07d41a19c5a01506e1080e352c26c50c8dce6e6b (refs/remotes/ps2/tip-x86-sev, refs/remotes/ps2/HEAD)
-Author: Borislav Petkov (AMD) <bp@alien8.de>
-Date:   Wed Sep 3 18:14:54 2025 +0200
-
-    WIP
-    
-    Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-
-diff --git a/arch/x86/boot/startup/sev-startup.c b/arch/x86/boot/startup/sev-startup.c
-index 39465a0ff4e5..a9b0a9c32d8f 100644
---- a/arch/x86/boot/startup/sev-startup.c
-+++ b/arch/x86/boot/startup/sev-startup.c
-@@ -144,7 +144,7 @@ static struct cc_blob_sev_info *__init find_cc_blob(struct boot_params *bp)
- 
- found_cc_info:
- 	if (cc_info->magic != CC_BLOB_SEV_HDR_MAGIC)
--		snp_abort();
-+		sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
- 
- 	return cc_info;
- }
-@@ -218,8 +218,3 @@ bool __init snp_init(struct boot_params *bp)
- 
- 	return true;
- }
--
--void __init __noreturn snp_abort(void)
--{
--	sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
--}
-diff --git a/arch/x86/boot/startup/sme.c b/arch/x86/boot/startup/sme.c
-index 2ddde901c8c5..e7ea65f3f1d6 100644
---- a/arch/x86/boot/startup/sme.c
-+++ b/arch/x86/boot/startup/sme.c
-@@ -532,7 +532,7 @@ void __init sme_enable(struct boot_params *bp)
- 	 * enablement abort the guest.
- 	 */
- 	if (snp_en ^ !!(msr & MSR_AMD64_SEV_SNP_ENABLED))
--		snp_abort();
-+		sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
- 
- 	/* Check if memory encryption is enabled */
- 	if (feature_mask == AMD_SME_BIT) {
-diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-index f222bef9dca8..32c7dd916e4b 100644
---- a/arch/x86/include/asm/sev.h
-+++ b/arch/x86/include/asm/sev.h
-@@ -512,7 +512,6 @@ void snp_set_memory_shared(unsigned long vaddr, unsigned long npages);
- void snp_set_memory_private(unsigned long vaddr, unsigned long npages);
- void snp_set_wakeup_secondary_cpu(void);
- bool snp_init(struct boot_params *bp);
--void __noreturn snp_abort(void);
- void snp_dmi_setup(void);
- int snp_issue_svsm_attest_req(u64 call_id, struct svsm_call *call, struct svsm_attest_call *input);
- void snp_accept_memory(phys_addr_t start, phys_addr_t end);
-@@ -597,7 +596,6 @@ static inline void snp_set_memory_shared(unsigned long vaddr, unsigned long npag
- static inline void snp_set_memory_private(unsigned long vaddr, unsigned long npages) { }
- static inline void snp_set_wakeup_secondary_cpu(void) { }
- static inline bool snp_init(struct boot_params *bp) { return false; }
--static inline void snp_abort(void) { }
- static inline void snp_dmi_setup(void) { }
- static inline int snp_issue_svsm_attest_req(u64 call_id, struct svsm_call *call, struct svsm_attest_call *input)
- {
-diff --git a/tools/objtool/noreturns.h b/tools/objtool/noreturns.h
-index 6a922d046b8e..802895fae3ca 100644
---- a/tools/objtool/noreturns.h
-+++ b/tools/objtool/noreturns.h
-@@ -45,7 +45,6 @@ NORETURN(rewind_stack_and_make_dead)
- NORETURN(rust_begin_unwind)
- NORETURN(rust_helper_BUG)
- NORETURN(sev_es_terminate)
--NORETURN(snp_abort)
- NORETURN(start_kernel)
- NORETURN(stop_this_cpu)
- NORETURN(usercopy_abort)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+I wasn't proposing to squash cleanup into patch 2.
+Make 3 patches where each one is doing one thing.
 
