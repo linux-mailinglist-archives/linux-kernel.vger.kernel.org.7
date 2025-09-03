@@ -1,201 +1,209 @@
-Return-Path: <linux-kernel+bounces-798342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FEA5B41C9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:05:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9F9B41CA5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F1387B586C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:03:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D62981BA6527
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE092F4A17;
-	Wed,  3 Sep 2025 11:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6053E2F5331;
+	Wed,  3 Sep 2025 11:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggb9XAOn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="uxtdTPXC"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B6D3AC39;
-	Wed,  3 Sep 2025 11:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F74F2ED143
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 11:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756897522; cv=none; b=uwO6a4Et7wq9+p3D0HebECDhAolp6lgNLXuVlZe3wi7/CIJG+zaRCtpjMd8vE7kbJis0vxv0pqDGnqtUdsoteuZAnm7II4KrRSrFrT8pghsZQ86kEOXkCc+fHwqczqOD0T3yTSLbsvDm0JO27qFKfvZprmN5VpDbWNKP8Rockkk=
+	t=1756897542; cv=none; b=uWGsxvvUBDz6wgWsB+5A6ZEAOp3NIi5YFzO/2SZCr3bfCgeqM+lnvnhmuHHXMfxEnfM0jwZ2WuhP0e4TU5QKMtMMSZrxxoNpu+tUtvJyfNii/iEdUcOtAQyczup2cfeqo5Dp8BMJT3q/Vxo9MJEunHAKdXnuuWoPDifOccHDczk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756897522; c=relaxed/simple;
-	bh=rZ2DDWGNicVIDpxbt6WBxkpuXKZ7yljlhaXlWCuPQeg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=j3SuGBPdLa/zDYzyLR7a+R0F0Ds/m1o4AMAL3rtLHMcMtmyKnx+VzJz6Ew8oPXVE84uNkc798bQKQXc/nIve2I53t4mw5ivOUFgR4uvWhQkVKml0sXAOhKnbxR40xJ8tkLARqi0o/FTPP3WcylaW5X7NKZZ3eNH2tr/cUGQaLbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggb9XAOn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E3AAC4CEF0;
-	Wed,  3 Sep 2025 11:05:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756897521;
-	bh=rZ2DDWGNicVIDpxbt6WBxkpuXKZ7yljlhaXlWCuPQeg=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=ggb9XAOnIFuNb0Yr72J2eO8bIm8EOURyntxFrJkUuScr/+3U4j9AcxV5468ICvmmQ
-	 aHYJqgGloFteC9jOtR2jOFsGzffd3bRMFoL9/Kes5TCEoszKRsY5NMoj74iPE8ApDw
-	 9yaxR0hVQsdBiQG5c1AJb2IBfZRYEfwlmDMy/23lFCFQ0J2RVU/zT4VpsoiapgWKT3
-	 bk7TH2vvVHxxbVKr0BAfPxDa/jK4U4aprT+zSTQrrVkyGhX/nHJVCLVUAmjDbzYS+I
-	 O2ZqEqTvUZKkZX50LKHhVJe2l5ltqK/R0KmMwaTWYEw+aPTxO8P0I1yv69VHAHOEYn
-	 4KieIRBTQ+CVA==
+	s=arc-20240116; t=1756897542; c=relaxed/simple;
+	bh=Hz4Ww0n5ndOPZ5lTF42At7O5rnM+5Mbm8JKoATPAMNQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oPgEefAZCGeAVLTX4fqSCVCg8KT6sR5f7bjWEiOxUWhsbq+dNJobDjIBBYjgz1y9kKz+bJm7NnvYu+5wVBeh1Ay/C4Cnok4vApBtWnumHDT+5wcrQl4nhVs65pq4TQnYkssVTws/XkmRgII3U+R+6vn5amZ4cWYpUBaAZEo+xJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=uxtdTPXC; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5607a240c75so3119536e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 04:05:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756897539; x=1757502339; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TY99cVzo51RXHn+Vw+SAL0C6lDtANRsUUB+6t6UiVNI=;
+        b=uxtdTPXCeVHlw4sN35+9NbLtRyf6LzijynUIVC9RLmHMva6hJ3Ov/cM/iPM1oaZauC
+         pbTliyruv/w+0QuGJHPtYr9cRyZvE/M6C8lOxnTYF2gxQcEunKpoGx18pq6vKJA8BuMV
+         8xWjcgkqV2CkahyNRWXVuyFO/KmIhr6yzRqZ+8UV38LWUnLbPUdHB+rf4PUS9PyO2jlO
+         Zv4Ct7/LhL/QFZm5z3qbk65iwSqxBO6yvcYHLjhRIj+5DxWQq6EnOI3bPO6YSqFVzIRi
+         hZrjrCaFGrQO4RKLZ2QP3jwmqiT9BzoR2MleNvkUCA7OlmmvePPdz65p25d9PO7AiaxH
+         1tKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756897539; x=1757502339;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TY99cVzo51RXHn+Vw+SAL0C6lDtANRsUUB+6t6UiVNI=;
+        b=l79bvDYraUYerCg1xG1oJvE8D9peJqfyuhDL5+CiOCMkzReNgs/uYnuINBC2V+z1tP
+         +3G3MK6XsvZAMNSm0mj8x/BKfDmhkqYKP17HrXbzs+Zyh/0IlQbupUltv6Kmxcg1P+3N
+         CfAAFY0IDvGB1EdCO8MTm7w7kHaYQTO+n7Ab2un5Wf+8spkyK7Ww5O24caIHM2+koyIx
+         2sqBbjAGswZ2O/AGoBGFLCqqa3IaEeynPXeMWkmhUq/kjZfstG6L98MB0ILI6bPM54u5
+         g/y8zQXQJ1gyaudfKCb4qf/iTuCwh+Se2OlC9fxjEe5GeFFgjznToO2+r0Y1TccvuTus
+         lrcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyzr06hLsjCnMmVbNn2FuWQeEIFMSffmY8xP4M08QMkEPC6b3zby7LHP3jKDt36XPazCJ8VJmktlWJmQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2/SEwesnEcUvsbSVE8vaOvChDMbpfYc4OEAzqmK8hQCiF7mtU
+	htb0ElrbomvBrG2j6Kg9TJsPyMFAbFFR6UYA/56oe4enci/uhU5oTe/hUFijlGC7xs+JaDMXEaC
+	tes9NKLo2EL7J+UMmTCMFE9NiA3cjZ2yNqPU6DHR7IA==
+X-Gm-Gg: ASbGncso1JaBNxX+Q8kxcRXHaeek+GjiafkJN58saWp7mMcgvh8D6ukncdyrVrfhgeR
+	q8CqQPBFSW6xKhM//M6oxOa8Sk1bOHoyBbbs2ISWw2Tlfr7xJWs7k+8adSyiN/NpK5e5AfCCXy7
+	PKbKUISO9qpHtD9nLXbxveKCcYIoSk3dFjRt6ivVffQ8o4roRCn/FoL6xELewQAMJvnn+8Fc2zy
+	d3JM+fzP24IDVhtFgORMK9mHyosIgy78wRTBCQ5AZl4Fd4Gkg==
+X-Google-Smtp-Source: AGHT+IGaO6jKgae4Bb0nnUY/KIMNPM9fcQrt4rcPCJpxbytVdpNy16Q2X9IuotKVynxw9JndtWotWpVme+DKGbgxexI=
+X-Received: by 2002:a05:6512:b8a:b0:55f:62f9:cad2 with SMTP id
+ 2adb3069b0e04-55f7093e564mr3786208e87.26.1756897538646; Wed, 03 Sep 2025
+ 04:05:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
+ <20250902-pinctrl-gpio-pinfuncs-v7-16-bb091daedc52@linaro.org>
+ <aLcBcjvMbrxoDYoC@smile.fi.intel.com> <CAMRc=MfcFMgkNqWNZV5o0NxkAvxBTjC3vv56Cr98n0R2CkxuPw@mail.gmail.com>
+ <CAHp75VcgaqnDrPH27wxfgyK6zz4RAKJQB0r7G2vbTONTxkEzTw@mail.gmail.com>
+ <CAMRc=MfhhX2NJ0fhhX8u+7=sdyUy0G27n7caGf9=TpHxUDJVxg@mail.gmail.com>
+ <aLgW7J-j4nn0u8uo@smile.fi.intel.com> <CAMRc=MdA21fwnamymG6YhqBjKDso_nJs_4xefPNONQNfEcPHXA@mail.gmail.com>
+ <aLgaoivmBUgoeO6B@smile.fi.intel.com> <CAMRc=Me84OX=UEmAXxmwE8oOH=1UBsyHe-7XmU0c8a2gG9JnCA@mail.gmail.com>
+ <aLgeDNLABpmkShIU@smile.fi.intel.com>
+In-Reply-To: <aLgeDNLABpmkShIU@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 3 Sep 2025 13:05:27 +0200
+X-Gm-Features: Ac12FXyayAu5ynqkVYj2uRlegQC_XlF19483EKV3MWs-LYc9T7mcvfMXmn9zXkQ
+Message-ID: <CAMRc=MdD9g4WiBCP0qYGuy5e3pnQf5MUHTqkUOnrUvcWUYK27A@mail.gmail.com>
+Subject: Re: [PATCH v7 16/16] pinctrl: qcom: make the pinmuxing strict
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Alexey Klimov <alexey.klimov@linaro.org>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mips@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-mm@kvack.org, imx@lists.linux.dev, linux-omap@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Sep 2025 13:05:15 +0200
-Message-Id: <DCJ46WGRUXR8.1GKGGL2568E1X@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Joel
- Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-To: "Alexandre Courbot" <acourbot@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v3 02/11] gpu: nova-core: move GSP boot code out of
- `Gpu` constructor
-References: <20250902-nova_firmware-v3-0-56854d9c5398@nvidia.com>
- <20250902-nova_firmware-v3-2-56854d9c5398@nvidia.com>
- <DCIKSL18GE9A.2R4BAGR56YVPF@kernel.org>
- <DCIZ5VVLACXO.1L0QTYM5YVRQV@nvidia.com>
- <DCJ0T81CZQ88.6IK6LG0E0R02@kernel.org>
- <DCJ3R8YQUYK1.3K5BCWHMAEOL7@nvidia.com>
-In-Reply-To: <DCJ3R8YQUYK1.3K5BCWHMAEOL7@nvidia.com>
 
-On Wed Sep 3, 2025 at 12:44 PM CEST, Alexandre Courbot wrote:
-> On Wed Sep 3, 2025 at 5:26 PM JST, Danilo Krummrich wrote:
->> On Wed Sep 3, 2025 at 9:08 AM CEST, Alexandre Courbot wrote:
->>> On Wed Sep 3, 2025 at 4:53 AM JST, Danilo Krummrich wrote:
->>>> On Tue Sep 2, 2025 at 4:31 PM CEST, Alexandre Courbot wrote:
->>>>> diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/=
-driver.rs
->>>>> index 274989ea1fb4a5e3e6678a08920ddc76d2809ab2..1062014c0a488e959379f=
-009c2e8029ffaa1e2f8 100644
->>>>> --- a/drivers/gpu/nova-core/driver.rs
->>>>> +++ b/drivers/gpu/nova-core/driver.rs
->>>>> @@ -6,6 +6,8 @@
->>>>> =20
->>>>>  #[pin_data]
->>>>>  pub(crate) struct NovaCore {
->>>>> +    // Placeholder for the real `Gsp` object once it is built.
->>>>> +    pub(crate) gsp: (),
->>>>>      #[pin]
->>>>>      pub(crate) gpu: Gpu,
->>>>>      _reg: auxiliary::Registration,
->>>>> @@ -40,8 +42,14 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::I=
-dInfo) -> Result<Pin<KBox<Self
->>>>>          )?;
->>>>> =20
->>>>>          let this =3D KBox::pin_init(
->>>>> -            try_pin_init!(Self {
->>>>> +            try_pin_init!(&this in Self {
->>>>>                  gpu <- Gpu::new(pdev, bar)?,
->>>>> +                gsp <- {
->>>>> +                    // SAFETY: `this.gpu` is initialized to a valid =
-value.
->>>>> +                    let gpu =3D unsafe { &(*this.as_ptr()).gpu };
->>>>> +
->>>>> +                    gpu.start_gsp(pdev)?
->>>>> +                },
->>>>
->>>> Please use pin_chain() [1] for this.
->>>
->>> Sorry, but I couldn't figure out how I can use pin_chain here (and
->>> couldn't find any relevant example in the kernel code either). Can you
->>> elaborate a bit?
->>
->> I thought of just doing the following, which I think should be equivalen=
-t (diff
->> against current nova-next).
->>
->> diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/dri=
-ver.rs
->> index 274989ea1fb4..6d62867f7503 100644
->> --- a/drivers/gpu/nova-core/driver.rs
->> +++ b/drivers/gpu/nova-core/driver.rs
->> @@ -41,7 +41,9 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInf=
-o) -> Result<Pin<KBox<Self
->>
->>          let this =3D KBox::pin_init(
->>              try_pin_init!(Self {
->> -                gpu <- Gpu::new(pdev, bar)?,
->> +                gpu <- Gpu::new(pdev, bar)?.pin_chain(|gpu| {
->> +                    gpu.start_gsp(pdev)
->> +                }),
->>                  _reg: auxiliary::Registration::new(
->>                      pdev.as_ref(),
->>                      c_str!("nova-drm"),
->> diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
->> index 8caecaf7dfb4..211bc1a5a5b3 100644
->> --- a/drivers/gpu/nova-core/gpu.rs
->> +++ b/drivers/gpu/nova-core/gpu.rs
->> @@ -266,7 +266,7 @@ fn run_fwsec_frts(
->>      pub(crate) fn new(
->>          pdev: &pci::Device<device::Bound>,
->>          devres_bar: Arc<Devres<Bar0>>,
->> -    ) -> Result<impl PinInit<Self>> {
->> +    ) -> Result<impl PinInit<Self, Error>> {
->>          let bar =3D devres_bar.access(pdev.as_ref())?;
->>          let spec =3D Spec::new(bar)?;
->>          let fw =3D Firmware::new(pdev.as_ref(), spec.chipset, FIRMWARE_=
-VERSION)?;
->> @@ -302,11 +302,16 @@ pub(crate) fn new(
->>
->>          Self::run_fwsec_frts(pdev.as_ref(), &gsp_falcon, bar, &bios, &f=
-b_layout)?;
->>
->> -        Ok(pin_init!(Self {
->> +        Ok(try_pin_init!(Self {
->>              spec,
->>              bar: devres_bar,
->>              fw,
->>              sysmem_flush,
->>          }))
->>      }
->> +
->> +    pub(crate) fn start_gsp(&self, _pdev: &pci::Device<device::Core>) -=
-> Result {
->> +        // noop
->> +        Ok(())
->> +    }
->>  }
->>
->> But maybe it doesn't capture your intend?
+On Wed, Sep 3, 2025 at 12:53=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
 >
-> The issue is that `start_gsp` returns a value (currently a placeholder
-> `()`, but it will change into a real type) that needs to be stored into
-> the newly-introduced `gsp` member of `NovaCore`. I could not figure how
-> how `pin_chain` could help with this (and this is the same problem for
-> the other `unsafe` statements in `firmware/gsp.rs`).
+> On Wed, Sep 03, 2025 at 12:41:48PM +0200, Bartosz Golaszewski wrote:
+> > On Wed, Sep 3, 2025 at 12:38=E2=80=AFPM Andy Shevchenko
+> > <andriy.shevchenko@intel.com> wrote:
+> > > On Wed, Sep 03, 2025 at 12:34:00PM +0200, Bartosz Golaszewski wrote:
+> > > > On Wed, Sep 3, 2025 at 12:22=E2=80=AFPM Andy Shevchenko
+> > > > <andriy.shevchenko@intel.com> wrote:
+> > > > > On Wed, Sep 03, 2025 at 09:33:34AM +0200, Bartosz Golaszewski wro=
+te:
+> > > > > > On Tue, Sep 2, 2025 at 10:46=E2=80=AFPM Andy Shevchenko
+> > > > > > <andy.shevchenko@gmail.com> wrote:
+> > > > > > > On Tue, Sep 2, 2025 at 8:42=E2=80=AFPM Bartosz Golaszewski <b=
+rgl@bgdev.pl> wrote:
+> > > > > > > > On Tue, Sep 2, 2025 at 4:38=E2=80=AFPM Andy Shevchenko
+> > > > > > > > <andriy.shevchenko@intel.com> wrote:
+> > > > > > > > > On Tue, Sep 02, 2025 at 01:59:25PM +0200, Bartosz Golasze=
+wski wrote:
+>
+> ...
+>
+> > > > > > > > > > The strict flag in struct pinmux_ops disallows the usag=
+e of the same pin
+> > > > > > > > > > as a GPIO and for another function. Without it, a rouge=
+ user-space
+> > > > > > > > > > process with enough privileges (or even a buggy driver)=
+ can request a
+> > > > > > > > > > used pin as GPIO and drive it, potentially confusing de=
+vices or even
+> > > > > > > > > > crashing the system. Set it globally for all pinctrl-ms=
+m users.
+> > > > > > > > >
+> > > > > > > > > How does this keep (or allow) I=C2=B2C generic recovery m=
+echanism to work?
+> > > > > >
+> > > > > > Anyway, what is your point? I don't think it has any impact on =
+this.
+> > > > >
+> > > > > If we have a group of pins that are marked as I=C2=B2C, and we wa=
+nt to use recovery
+> > > > > via GPIOs, would it be still possible to request as GPIO when con=
+troller driver
+> > > > > is in the strict mode?
+> > > >
+> > > > Yes, if you mark that function as a "GPIO" function in the pin
+> > > > controller driver.
+> > >
+> > > How would it prevent from requesting from user space?
+> >
+> > It wouldn't, we don't discriminate between user-space and in-kernel
+> > GPIO users. A function either is a GPIO or isn't. Can you point me to
+> > the driver you're thinking about or is this a purely speculative
+> > question?
+>
+> The recovery mechanism is in I=C2=B2C core and many drivers use that.
+> I'm not aware of Qualcomm drivers in particular. But mechanism is
+> in use in I=C2=B2C DesignWare which is distributed a lot among platforms,
+> so using word 'purely' is incorrect, and word 'speculative' is a bit
+> strong, but you can think of the issue coming later on when somebody
+> does something like this.
+>
+> The same applies to the in-band wakeup UART mechanism.
+>
+> Which means that with this series we will relax it back anyway for
+> the above mentioned cases.
+>
+> (Not sure, but SPI DesignWare requires programming SPI native chip select=
+s even
+>  if the GPIO is used for that, this might have also some implications, bu=
+t here
+>  it's for real 'purely speculative'.)
+>
 
-Ok, I see, I think Benno is already working on a solution to access previou=
-sly
-initialized fields from subsequent initializers.
+The high-level answer is: yes, a pin that will be used by GPIOLIB
+needs the function it's muxed to, to be marked as "GPIOable" in its
+parent pin controller if it's strict. That's still better than the
+current situation.
 
-@Benno: What's the status of this? I haven't seen an issue for that in the
-pin-init GitHub repo, should we create one?
+I can imagine we could differentiate between in-kernel and user-space
+users of GPIOs and then make it impossible for the latter to request
+certain pins while they could still be requested in the kernel but
+that's outside of the scope of this series.
 
-However, in this case I'm a bit confused why we want Gsp next to Gpu? Why n=
-ot
-just make Gsp a member of Gpu then?
+I don't see why this would stop these patches though, as they don't
+break anything unless you decide to make your pin controller strict in
+which situation you'd need to verify which functions can GPIOs anyway.
 
-I thought the intent was to keep temporary values local to start_gsp() and =
-not
-store them next to Gpu in the same allocation?
-
-> It is a common pattern when initializing a pinned object, so I agree it
-> would be nice support this without unsafe code.
+Bartosz
 
