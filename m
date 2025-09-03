@@ -1,123 +1,122 @@
-Return-Path: <linux-kernel+bounces-799005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7AC7B425C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:45:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A699EB425C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A1FC3B0AB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:45:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95DC856847D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D3C13A258;
-	Wed,  3 Sep 2025 15:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C4B2868A2;
+	Wed,  3 Sep 2025 15:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpZOoyQJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HUmjNwYe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBF6285C8A;
-	Wed,  3 Sep 2025 15:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD34D287243;
+	Wed,  3 Sep 2025 15:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756914302; cv=none; b=pwRSRdHvmoasqg3MWG47wet9L80CsBgYL8MfaAJ6zbZHi4S/1xe8iMTZ5nDacn+Y2eC5Uf0uRx5hmwWVlFbcXjRcjilc1Y0MJdNkucC0kEW1MgJqineQCejwisW12RCp4VKa+Yd5pCvvce2lIsxhtIwARU1GzSwa/tV+aD0t+kk=
+	t=1756914306; cv=none; b=px3SQULzgHM9eFqY3vAy+Z7IzLpScc78bqim73W4kblsGrUDsVSDVSHXIGIW+47+ZSQf36WRFPGn2ak9Bw6TCfVaieSq4E7prjDgQm0/PRsdpdmzniYiJCdFpJYDo95BaNDY04T0CtdcjOdEPk1vcN0xTE3V+qT0FtXLQy72HQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756914302; c=relaxed/simple;
-	bh=uGAsJGJpxFTuaDQGGkCgIKWHmb8lqqQagqgiF5HxTWc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Me/UsGWH9GygJ7j/T+jJ/UdinzGx8Ke7GMg6zsBFrucyrpRheFPX3Tme27mNgXlIrSUPKDxsou9Feb9PxdihMRYn7u3BRVJq8KlhKr9UW8YeelIFWXq1xwy/RgM0zPvQH5me+d9ptsKf0j6i84Vu9CIlCLwLf7WLhJDHhuxg5oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpZOoyQJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A8E0C4CEF0;
-	Wed,  3 Sep 2025 15:45:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756914302;
-	bh=uGAsJGJpxFTuaDQGGkCgIKWHmb8lqqQagqgiF5HxTWc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RpZOoyQJjY6zwmfqMRfRaJs1CEyKHhqCZmi2VogdhVE64l8kCkKVq8YYkKF3RJQB5
-	 /JaNo6aZSbVKNgCbOXfuSsphLmfOldD3xDVs2dT+ShQe+eUKhU9LTHpMoJwuJmgu88
-	 Yky28Ohx5PrYUQEqS3PkJbIzGdms8+hCb/Q44vkrSIqYjFkvagxl6g/CsGBJzi3p5y
-	 gKKUhY/mFJMou+v1o0tT+sIQi54DAlPs5FiPAROWWuCPNSVnXbJis5ymwrJ+QUYyhG
-	 VLHJfK6FfiPXgYBuTjDYk/5xLy8iL9VtEu4riCoNpC7rAnxKjXzRE6bV9oemrM9s9k
-	 qumLtKUWxtHMA==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1utpfQ-00000007N6f-0ucW;
-	Wed, 03 Sep 2025 17:45:00 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 3/3] tools/docs: sphinx-* break documentation bulds on openSUSE
-Date: Wed,  3 Sep 2025 17:44:36 +0200
-Message-ID: <35ccc7da482127f1ed1f04b22b6fe42c39e86ab7.1756913837.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1756913837.git.mchehab+huawei@kernel.org>
-References: <cover.1756913837.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1756914306; c=relaxed/simple;
+	bh=RmIXgX4EPYbEWf+ZuRyxg8gVS0O/rPn4FNVOhp5P5DQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fhnLIsEDYDzw1LQlJp152mymDLz7RHlNKWEf+boMBHUJmM2zE0KNlAdr1KhaEW8cl04384Vyb6AUZ0MWtYm0ryApQtDmqubloLdh3u5/2R+SIrSVhZyVEjf8Wt6T/HCoFoSBKjrGLp1pHbo6cuCJqESqAdnQ7IH5mPGIPvZH91E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HUmjNwYe; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756914305; x=1788450305;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RmIXgX4EPYbEWf+ZuRyxg8gVS0O/rPn4FNVOhp5P5DQ=;
+  b=HUmjNwYefqozFulfvhzDN4QhVqH6Rc8D/xaqEZerat3IAxge0JcwGhxp
+   BvM8AJbl8chb3ji0nPRPsOPtmRjDmQ7r/0Y9oRxHgr4k+jT+KMQlN9MNw
+   2ptEobpSm06TE2cEELonEsxOW/4QV3q7YeutEIWkrz6TkW6S03eSeuUxc
+   8DseELcQ+NZjewJWuf/j4cz0ughOJoD9y9KeQjpFQxwUV936IRnSJOxz8
+   mGUReOj4wCj8+aM4UAY7tZFC4aQsUS4JWn8jQvt/z1MCNjjNQSz3FCTPb
+   NwKg3Lj94HDyQf9n3dx6+kB0lHpmpIwr3X3HZWbSOc2q3LO5Zl75xfHGM
+   w==;
+X-CSE-ConnectionGUID: bE54IqfuTl6Tj+/Ba0Zz+g==
+X-CSE-MsgGUID: B3M0HyvcSJaKpKUkZ7BNFg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="84662832"
+X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
+   d="scan'208";a="84662832"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 08:45:04 -0700
+X-CSE-ConnectionGUID: iISP29WiSIKcCafvMOGpUw==
+X-CSE-MsgGUID: JOSrHn6xRGumw7gqBYMURg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
+   d="scan'208";a="175985164"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa004.jf.intel.com with ESMTP; 03 Sep 2025 08:45:01 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id D7E0695; Wed, 03 Sep 2025 17:44:59 +0200 (CEST)
+Date: Wed, 3 Sep 2025 17:44:59 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Yang Shen <shenyang39@huawei.com>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-unisoc@lists.infradead.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH RESEND 07/14] gpio: ts4800: use new generic GPIO chip API
+Message-ID: <aLhie72v1T9Bw1vx@black.igk.intel.com>
+References: <20250825-gpio-mmio-gpio-conv-v1-0-356b4b1d5110@linaro.org>
+ <20250825-gpio-mmio-gpio-conv-v1-7-356b4b1d5110@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825-gpio-mmio-gpio-conv-v1-7-356b4b1d5110@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Before this patch, building htmldocs on opensuseLEAP works
-fine:
+On Mon, Aug 25, 2025 at 11:48:48AM +0200, Bartosz Golaszewski wrote:
+> 
+> Convert the driver to using the new generic GPIO chip interfaces from
+> linux/gpio/generic.h.
 
-    # make htmldocs
-    Available Python versions:
-      /usr/bin/python3.11
+...
 
-    Python 3.6.15 not supported. Changing to /usr/bin/python3.11
-    Python 3.6.15 not supported. Changing to /usr/bin/python3.11
-    Using alabaster theme
-    Using Python kernel-doc
+> +	config = (typeof(config)){
 
-    ...
+First of all, what's wrong with the pattern used in the kernel when we
+explicitly show the compound literal? Also we put a space before {.
 
-As the logic detects that Python 3.6 is too old and recommends
-intalling python311-Sphinx. If installed, documentation builds
-work like a charm.
+> +		.dev = dev,
+> +		.sz = 2,
+> +		.dat = base_addr + INPUT_REG_OFFSET,
+> +		.set = base_addr + OUTPUT_REG_OFFSET,
+> +		.dirout = base_addr + DIRECTION_REG_OFFSET,
+> +	};
+> +
+> +	retval = gpio_generic_chip_init(chip, &config);
+>  	if (retval)
+> -		return dev_err_probe(dev, retval, "bgpio_init failed\n");
+> +		return dev_err_probe(dev, retval,
+> +				     "failed to initialize the generic GPIO chip\n");
 
-Yet, some develpers complained that running python3.11 instead
-of python3 should not happen. So, let's break the build to make
-them happier:
+Second, can't it all be hidden in the GPIOLIB just by passing the pointer to
+the above initialised structure? Yes, it will take a pointer space in GPIO chip
+for all, but I think it will reduce the burden.
 
-    # make htmldocs Available Python versions:
-      /usr/bin/python3.11
-
-    Python 3.6.15 not supported. Bailing out
-    make[2]: *** [Documentation/Makefile:74: htmldocs] Error 1
-    make[1]: *** [/root/Makefile:1806: htmldocs] Error 2
-    make: *** [Makefile:248: __sub-make] Error 2
-
-It should be then up to the user to figure out a way to make
-it work again.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- tools/docs/sphinx-pre-install | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/docs/sphinx-pre-install b/tools/docs/sphinx-pre-install
-index 663d4e2a3f57..ecd08e09bae9 100755
---- a/tools/docs/sphinx-pre-install
-+++ b/tools/docs/sphinx-pre-install
-@@ -1531,7 +1531,7 @@ def main():
- 
-     checker = SphinxDependencyChecker(args)
- 
--    PythonVersion.check_python(MIN_PYTHON_VERSION)
-+    PythonVersion.check_python(MIN_PYTHON_VERSION, show_alternatives=True)
-     checker.check_needs()
- 
- # Call main if not used as module
 -- 
-2.51.0
+With Best Regards,
+Andy Shevchenko
+
 
 
