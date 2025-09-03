@@ -1,235 +1,262 @@
-Return-Path: <linux-kernel+bounces-797650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FEBAB412EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:28:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5914DB412ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7820544467
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:28:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44AC45E8857
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446B32C21DC;
-	Wed,  3 Sep 2025 03:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F9A2C324F;
+	Wed,  3 Sep 2025 03:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EXRCUynW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xuArzmV2"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43CD2C234E
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 03:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ACC2C2361;
+	Wed,  3 Sep 2025 03:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756870051; cv=none; b=pD0HEygujJZ9Nj4Jt8zaUfnrYxDR96vsIz+C6xD3pfdmrnQmtZ+tikCWvx4BO236HflqN5Rl6c1Eoi3liJl+MgAv9ZfBwftbUZahxEzxYjFCqh6SosYLO3rnojJdpGCRhwT5GJckcRV+KoEwE1j48VkCBqpz2+Y0CN6p8D69ZV8=
+	t=1756870092; cv=none; b=t9tdcr72OeiqX5eIbuePUeDZLig8li0NntPMIT17RNW0CakNaSOc+HRXOI64rTTYFroi+L6mT/kyn3ohRele2lleLGKK6DWaHjousaK1qcblyOVfzcR7xUK7yCun4I+5SGYIKhavrtdQA9TtTBOmo25+gLS+TUGzvcPLthq2GQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756870051; c=relaxed/simple;
-	bh=lTcGU0j+B/KRWiPTPpr6H/E+7j7DFUOHOKJ0vpOE0Bo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d9etGi13SgQl96LN8faByUy2Q4fSNAbuCjAtyOakRc/aj8R2bqMaizWNTCp6JZSOlNv3SFcFmZ5VmZ9GFHmqVldtaFnSYpJSEdjjyiEVqEbq168YZnfeDtWI2tDBPXWP5epUBLHnXYFplWWUv1cEgd7TVd7L2KeuYyP1GkEDykc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EXRCUynW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756870047;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z2T/xR3r/11wYNPVnD6b61m9Re4acFhV681jwKf5dBQ=;
-	b=EXRCUynWp9FSj9yYwuJJf5PS6yW7Uttie+3kdWitR2BhKErmrZKiGK9SmqfAEyOra5AQIH
-	cKs/tq3ZZ09Kz8PPc6S7eCK0EZkhVFirJqOVnSs+glJ+eelvaU3bGFn3KvSsH6dDql7gzr
-	v0sFw1d11lH9PmZwglUBQM0Dp4OLjLs=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-684-kAMG7-NtMv65f1iFee4gpg-1; Tue, 02 Sep 2025 23:27:26 -0400
-X-MC-Unique: kAMG7-NtMv65f1iFee4gpg-1
-X-Mimecast-MFC-AGG-ID: kAMG7-NtMv65f1iFee4gpg_1756870046
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b47630f9aa7so5069363a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 20:27:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756870045; x=1757474845;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z2T/xR3r/11wYNPVnD6b61m9Re4acFhV681jwKf5dBQ=;
-        b=WTXJLSqvxGPmaOt6YQoZnb0qZUlVAchgoSXXQTjXY0dsNZGXVlt1nLcfZuRmTNgmt9
-         7NjC7rKbLevVIViYRcEW+vt6HLERsKo9KLXSiQSUj6EqYiuo7Y+9P3W7lvkOeIJzKEdp
-         NLOyneMl5lLR8t1qAqV5Kg7RkBgosWY9gq9qbAwypex1+idHzMGWwhInD2TAZHxkCzKe
-         r+jQOsO3OSwPPn+Em8aULR7jtFLZq0Jl1+cAtedkPSeGtaYDJmoeJ66cYEKrJLjhOn30
-         sVwXVtbDzOhLHgqKmQNJTp+WPUp3kGeaj6ONZwzevxpGzCGbhY+4FgxH6croHGLT9urZ
-         GB2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVXA0DyRA+XJsSVrsM7sb1dpfpEhDrPf1aIN1OB/4x46icSwuLxlKUoumle99uPWyh4bEc46LrdKmZNkvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMqelSFRDvubVrTXx/mN3FbDfPpYbThDo1NqzihkH7cAxH7teV
-	6jd1U8MiMGGy4zExfFbmdc8l8w1TnpA8pHGOCH+D1TqrkQtnTaIPubV+bEr1N0gqK1lR7joZoK0
-	baopUXHpS1b6bYmHM2E1Oyf3Btdt8emaAahiiCtJcl4677zIhB2QFhfJ2fgBRo0C4SgpkqLPtAa
-	DBYva+qvAXDR4IRL1+gM0wPAQ23RWSyCBHAuw/V1n4
-X-Gm-Gg: ASbGnctn4Vn8+G5yolRihcwgw4vjpvdBdUL+7skAzez3/ujuXlSW8rpqFNtk1bSXlCf
-	7Mr2t9nKun+k2s/E0DDU0B8o4u5k1C81aBCp5URB/NvJEv1G/IrjBv89rcOh7AYVnPWpBYwUPvm
-	b1hGoYKii9sHYwKroZqjFUcg==
-X-Received: by 2002:a05:6a20:394a:b0:246:458:8531 with SMTP id adf61e73a8af0-24604588bb9mr3835043637.4.1756870045580;
-        Tue, 02 Sep 2025 20:27:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF654StFop0VmttbXdI6h3i/+JEE26lgQd4YZDecg6lum+37DruFX2g8p1zoTrM2WthQZP8j1AJR/b2m+JipfE=
-X-Received: by 2002:a05:6a20:394a:b0:246:458:8531 with SMTP id
- adf61e73a8af0-24604588bb9mr3835009637.4.1756870045093; Tue, 02 Sep 2025
- 20:27:25 -0700 (PDT)
+	s=arc-20240116; t=1756870092; c=relaxed/simple;
+	bh=pCpIF9yEFX5Z8afykzZoOGFp+1bCMBjIY/+LG1kCqCA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i7rlFGCFAjtu2yjUQya+B0M0VlRaMsOvhlvMDpYlBtNXZaIPzRYRUU7DurT50nKlmiVX0IvE6lhPaf5Iv7P7l6y/srn2CxFmZNE6Kfm2XPyngKl4+4/UryQymTk0UTjTloD4F45KhTlyyBLC6IUnFgf7YJLpcekva1yK3hcA58w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xuArzmV2; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1756870080; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=9pNvoK8E483FKVV4UiISiOQElVaIf1JmFvnG6QIAnXY=;
+	b=xuArzmV2AVC72U47CcF3YgD2OzW8xVIiaJxEYKnVZVmFJWN+dCtLVThNfQtf8Z8QLUw+T8uISnbJmG0/h5WPiXkO1S1MTpbt+xO/GxzTg7MOMVW94fDoC/FvWW8BJMw+a+dt1EgJMRvGFGtZV4u9WPHMtiVUW1jniwJXP4zeprI=
+Received: from 30.74.144.125(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WnA-49f_1756870075 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 03 Sep 2025 11:27:57 +0800
+Message-ID: <9ccc6d6b-c077-4b8a-b8da-99cabf182e17@linux.alibaba.com>
+Date: Wed, 3 Sep 2025 11:27:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902080957.47265-1-simon.schippers@tu-dortmund.de> <20250902080957.47265-3-simon.schippers@tu-dortmund.de>
-In-Reply-To: <20250902080957.47265-3-simon.schippers@tu-dortmund.de>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 3 Sep 2025 11:27:13 +0800
-X-Gm-Features: Ac12FXx80Co_MQ122woCuwffgY5tJuHMLL2CZJvnoO2WufQ6137aEb3rV1oKZPE
-Message-ID: <CACGkMEssRJDZht3vTR1KRArQLWi-rLU4b5_8+kAgz4uc0wuQgA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] netdev queue flow control for TUN
-To: Simon Schippers <simon.schippers@tu-dortmund.de>
-Cc: willemdebruijn.kernel@gmail.com, mst@redhat.com, eperezma@redhat.com, 
-	stephen@networkplumber.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
-	kvm@vger.kernel.org, Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 00/13] khugepaged: mTHP support
+To: Usama Arif <usamaarif642@gmail.com>, David Hildenbrand
+ <david@redhat.com>, Dev Jain <dev.jain@arm.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, ziy@nvidia.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, corbet@lwn.net, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
+ peterx@redhat.com, wangkefeng.wang@huawei.com, sunnanyong@huawei.com,
+ vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
+ yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
+ aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
+ catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
+ dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, hughd@google.com
+References: <20250819134205.622806-1-npache@redhat.com>
+ <CAA1CXcCqhFoGBvFK-ox2sJw7QHaFt+-Lw09BDYsAGKg4qc8nSw@mail.gmail.com>
+ <CAA1CXcAXTL811VJxqyL18CUw8FNek6ibPr6pKJ_7rfGn-ZU-1A@mail.gmail.com>
+ <5bea5efa-2efc-4c01-8aa1-a8711482153c@lucifer.local>
+ <CAA1CXcBDq9PucQdfQRh1iqJLPB6Jn6mNy28v_AuHWb9kz1gpqQ@mail.gmail.com>
+ <d110a84a-a827-48b4-91c5-67cec3e92874@lucifer.local>
+ <95012dfc-d82d-4ae2-b4cd-1e8dcf15e44b@redhat.com>
+ <bdbb5168-7657-4f11-a42d-b75cce7e0bca@lucifer.local>
+ <e34e1ffe-c377-4c9a-b28b-ca873f3620ac@redhat.com>
+ <db2320ee-6bd4-49c1-8fce-0468f48e1842@linux.alibaba.com>
+ <c8c5e818-536a-4d72-b8dc-36aeb1b61800@arm.com>
+ <2a141eef-46e2-46e1-9b0f-066ec537600d@linux.alibaba.com>
+ <f34b5fcb-6a97-4d97-86a8-906083b53be6@redhat.com>
+ <eb02c281-6d41-44af-8eaf-8ffc29153a3a@linux.alibaba.com>
+ <286e2cb3-6beb-4d21-b28a-2f99bb2f759b@redhat.com>
+ <17075d6a-a209-4636-ae42-2f8944aea745@gmail.com>
+ <287f3b64-bc34-48d9-9778-c519260c3dba@redhat.com>
+ <ad6ed55e-2471-46be-b123-5272f3052e01@gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <ad6ed55e-2471-46be-b123-5272f3052e01@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 2, 2025 at 4:10=E2=80=AFPM Simon Schippers
-<simon.schippers@tu-dortmund.de> wrote:
->
-> The netdev queue is stopped in tun_net_xmit after inserting an SKB into
-> the ring buffer if the ring buffer became full because of that. If the
-> insertion into the ptr_ring fails, the netdev queue is also stopped and
-> the SKB is dropped. However, this never happened in my testing.
 
-You can reach this by using pktgen on TUN.
 
-> To ensure
-> that the ptr_ring change is available to the consumer before the netdev
-> queue stop, an smp_wmb() is used.
->
-> Then in tun_ring_recv, the new helper wake_netdev_queue is called in the
-> blocking wait queue and after consuming an SKB from the ptr_ring. This
-> helper first checks if the netdev queue has stopped. Then with the paired
-> smp_rmb() it is known that tun_net_xmit will not produce SKBs anymore.
-> With that knowledge, the helper can then wake the netdev queue if there i=
-s
-> at least a single spare slot in the ptr_ring by calling ptr_ring_spare
-> with cnt=3D1.
->
-> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
-> ---
->  drivers/net/tun.c | 33 ++++++++++++++++++++++++++++++---
->  1 file changed, 30 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index cc6c50180663..735498e221d8 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -1060,13 +1060,21 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *s=
-kb, struct net_device *dev)
->
->         nf_reset_ct(skb);
->
-> -       if (ptr_ring_produce(&tfile->tx_ring, skb)) {
-> +       queue =3D netdev_get_tx_queue(dev, txq);
-> +       if (unlikely(ptr_ring_produce(&tfile->tx_ring, skb))) {
-> +               /* Paired with smp_rmb() in wake_netdev_queue. */
-> +               smp_wmb();
-> +               netif_tx_stop_queue(queue);
+On 2025/9/3 04:23, Usama Arif wrote:
+> 
+> 
+> On 02/09/2025 12:03, David Hildenbrand wrote:
+>> On 02.09.25 12:34, Usama Arif wrote:
+>>>
+>>>
+>>> On 02/09/2025 10:03, David Hildenbrand wrote:
+>>>> On 02.09.25 04:28, Baolin Wang wrote:
+>>>>>
+>>>>>
+>>>>> On 2025/9/2 00:46, David Hildenbrand wrote:
+>>>>>> On 29.08.25 03:55, Baolin Wang wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 2025/8/28 18:48, Dev Jain wrote:
+>>>>>>>>
+>>>>>>>> On 28/08/25 3:16 pm, Baolin Wang wrote:
+>>>>>>>>> (Sorry for chiming in late)
+>>>>>>>>>
+>>>>>>>>> On 2025/8/22 22:10, David Hildenbrand wrote:
+>>>>>>>>>>>> Once could also easily support the value 255 (HPAGE_PMD_NR / 2- 1),
+>>>>>>>>>>>> but not sure
+>>>>>>>>>>>> if we have to add that for now.
+>>>>>>>>>>>
+>>>>>>>>>>> Yeah not so sure about this, this is a 'just have to know' too, and
+>>>>>>>>>>> yes you
+>>>>>>>>>>> might add it to the docs, but people are going to be mightily
+>>>>>>>>>>> confused, esp if
+>>>>>>>>>>> it's a calculated value.
+>>>>>>>>>>>
+>>>>>>>>>>> I don't see any other way around having a separate tunable if we
+>>>>>>>>>>> don't just have
+>>>>>>>>>>> something VERY simple like on/off.
+>>>>>>>>>>
+>>>>>>>>>> Yeah, not advocating that we add support for other values than 0/511,
+>>>>>>>>>> really.
+>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> Also the mentioned issue sounds like something that needs to be
+>>>>>>>>>>> fixed elsewhere
+>>>>>>>>>>> honestly in the algorithm used to figure out mTHP ranges (I may be
+>>>>>>>>>>> wrong - and
+>>>>>>>>>>> happy to stand corrected if this is somehow inherent, but reallly
+>>>>>>>>>>> feels that
+>>>>>>>>>>> way).
+>>>>>>>>>>
+>>>>>>>>>> I think the creep is unavoidable for certain values.
+>>>>>>>>>>
+>>>>>>>>>> If you have the first two pages of a PMD area populated, and you
+>>>>>>>>>> allow for at least half of the #PTEs to be non/zero, you'd collapse
+>>>>>>>>>> first a
+>>>>>>>>>> order-2 folio, then and order-3 ... until you reached PMD order.
+>>>>>>>>>>
+>>>>>>>>>> So for now we really should just support 0 / 511 to say "don't
+>>>>>>>>>> collapse if there are holes" vs. "always collapse if there is at
+>>>>>>>>>> least one pte used".
+>>>>>>>>>
+>>>>>>>>> If we only allow setting 0 or 511, as Nico mentioned before, "At 511,
+>>>>>>>>> no mTHP collapses would ever occur anyway, unless you have 2MB
+>>>>>>>>> disabled and other mTHP sizes enabled. Technically, at 511, only the
+>>>>>>>>> highest enabled order would ever be collapsed."
+>>>>>>>> I didn't understand this statement. At 511, mTHP collapses will occur if
+>>>>>>>> khugepaged cannot get a PMD folio. Our goal is to collapse to the
+>>>>>>>> highest order folio.
+>>>>>>>
+>>>>>>> Yes, I’m not saying that it’s incorrect behavior when set to 511. What I
+>>>>>>> mean is, as in the example I gave below, users may only want to allow a
+>>>>>>> large order collapse when the number of present PTEs reaches half of the
+>>>>>>> large folio, in order to avoid RSS bloat.
+>>>>>>
+>>>>>> How do these users control allocation at fault time where this parameter
+>>>>>> is completely ignored?
+>>>>>
+>>>>> Sorry, I did not get your point. Why does the 'max_pte_none' need to
+>>>>> control allocation at fault time? Could you be more specific? Thanks.
+>>>>
+>>>> The comment over khugepaged_max_ptes_none gives a hint:
+>>>>
+>>>> /*
+>>>>    * default collapse hugepages if there is at least one pte mapped like
+>>>>    * it would have happened if the vma was large enough during page
+>>>>    * fault.
+>>>>    *
+>>>>    * Note that these are only respected if collapse was initiated by khugepaged.
+>>>>    */
+>>>>
+>>>> In the common case (for anything that really cares about RSS bloat) you will just a
+>>>> get a THP during page fault and consequently RSS bloat.
+>>>>
+>>>> As raised in my other reply, the only documented reason to set max_ptes_none=0 seems
+>>>> to be when an application later (after once possibly getting a THP already during
+>>>> page faults) did some MADV_DONTNEED and wants to control the usage of THPs itself using
+>>>> MADV_COLLAPSE.
+>>>>
+>>>> It's a questionable use case, that already got more problematic with mTHP and page
+>>>> table reclaim.
+>>>>
+>>>> Let me explain:
+>>>>
+>>>> Before mTHP, if someone would MADV_DONTNEED (resulting in
+>>>> a page table with at least one pte_none entry), there would have been no way we would
+>>>> get memory over-allocated afterwards with max_ptes_none=0.
+>>>>
+>>>> (1) Page faults would spot "there is a page table" and just fallback to order-0 pages.
+>>>> (2) khugepaged was told to not collapse through max_ptes_none=0.
+>>>>
+>>>> But now:
+>>>>
+>>>> (A) With mTHP during page-faults, we can just end up over-allocating memory in such
+>>>>       an area again: page faults will simply spot a bunch of pte_nones around the fault area
+>>>>       and install an mTHP.
+>>>>
+>>>> (B) With page table reclaim (when zapping all PTEs in a table at once), we will reclaim the
+>>>>       page table. The next page fault will just try installing a PMD THP again, because there is
+>>>>       no PTE table anymore.
+>>>>
+>>>> So I question the utility of max_ptes_none. If you can't tame page faults, then there is only
+>>>> limited sense in taming khugepaged. I think there is vale in setting max_ptes_none=0 for some
+>>>> corner cases, but I am yet to learn why max_ptes_none=123 would make any sense.
 
-The barrier looks odd since it requires the driver to care about the
-ordering, can you elaborate more on this?
+Thanks David for your explanation. I see your point now.
 
-There's a WRITE_ONCE + mb() in netif_tx_stop_queue already:
+>>> For PMD mapped THPs with THP shrinker, this has changed. You can basically tame pagefaults, as when you encounter
+>>> memory pressure, the shrinker kicks in if the value is less than HPAGE_PMD_NR -1 (i.e. 511 for x86), and
+>>> will break down those hugepages and free up zero-filled memory.
+>>
+>> You are not really taming page faults, though, you are undoing what page faults might have messed up :)
+>>
+>> I have seen in our prod workloads where
+>>> the memory usage and THP usage can spike (usually when the workload starts), but with memory pressure,
+>>> the memory usage is lower compared to with max_ptes_none = 511, while still still keeping the benefits
+>>> of THPs like lower TLB misses.
+>>
+>> Thanks for raising that: I think the current behavior is in place such that you don't bounce back-and-forth between khugepaged collapse and shrinker-split.
+>>
+> 
+> Yes, both collapse and shrinker split hinge on max_ptes_none to prevent one of these things thrashing the effect of the other.
+> 
+>> There are likely other ways to achieve that, when we have in mind that the thp shrinker will install zero pages and max_ptes_none includes
+>> zero pages.
+>>
+>>>
+>>> I do agree that the value of max_ptes_none is magical and different workloads can react very differently
+>>> to it. The relationship is definitely not linear. i.e. if I use max_ptes_none = 256, it does not mean
+>>> that the memory regression of using THP=always vs THP=madvise is halved.
+>>
+>> To which value would you set it? Just 510? 0?
+>>
+> 
+> There are some very large workloads in the meta fleet that I experimented with and found that having
+> a small value works out. I experimented with 0, 51 (10%) and 256 (50%). 51 was found to be an optimal
+> comprimise in terms of application metrics improving, having an acceptable amount of memory regression and
+> improved system level metrics (lower TLB misses, lower page faults). I am sure there was a better value out
+> there for these workloads, but not possible to experiment with every value.
+> 
+> In terms of wider rollout across the fleet, we are going to target 0 (or a very very small value)
+> when moving from THP=madvise to always. Mainly because it is the least likely to cause a memory regression as
+> THP shrinker will deal with page faults faulting in mostly zero-filled pages and khugepaged wont collapse
+> pages that are dominated by 4K zero-filled chunks.
 
-static __always_inline void netif_tx_stop_queue(struct netdev_queue *dev_qu=
-eue)
-{
-        /* Paired with READ_ONCE() from dev_watchdog() */
-        WRITE_ONCE(dev_queue->trans_start, jiffies);
+Thanks for sharing this. We're also investigating what max_ptes_none 
+should be set to in order to use the THP shrinker properly, and 
+currently, our customers always set max_ptes_none to its default value: 
+511, which is not good.
 
-        /* This barrier is paired with smp_mb() from dev_watchdog() */
-        smp_mb__before_atomic();
-
-        /* Must be an atomic op see netif_txq_try_stop() */
-        set_bit(__QUEUE_STATE_DRV_XOFF, &dev_queue->state);
-}
-
->                 drop_reason =3D SKB_DROP_REASON_FULL_RING;
->                 goto drop;
->         }
-> +       if (ptr_ring_full(&tfile->tx_ring)) {
-> +               /* Paired with smp_rmb() in wake_netdev_queue. */
-> +               smp_wmb();
-> +               netif_tx_stop_queue(queue);
-> +       }
->
->         /* dev->lltx requires to do our own update of trans_start */
-> -       queue =3D netdev_get_tx_queue(dev, txq);
->         txq_trans_cond_update(queue);
->
->         /* Notify and wake up reader process */
-> @@ -2110,6 +2118,24 @@ static ssize_t tun_put_user(struct tun_struct *tun=
-,
->         return total;
->  }
->
-> +static inline void wake_netdev_queue(struct tun_file *tfile)
-
-Let's rename this to tun_wake_xxx.
-
-> +{
-> +       struct netdev_queue *txq;
-> +       struct net_device *dev;
-> +
-> +       rcu_read_lock();
-> +       dev =3D rcu_dereference(tfile->tun)->dev;
-> +       txq =3D netdev_get_tx_queue(dev, tfile->queue_index);
-> +
-> +       if (netif_tx_queue_stopped(txq)) {
-> +               /* Paired with smp_wmb() in tun_net_xmit. */
-> +               smp_rmb();
-> +               if (ptr_ring_spare(&tfile->tx_ring, 1))
-
-I wonder if there would be a case that will use cnt > 1. If not a
-ptr_ring_can_produce() should be sufficient.
-
-> +                       netif_tx_wake_queue(txq);
-> +       }
-> +       rcu_read_unlock();
-> +}
-> +
->  static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err=
-)
->  {
->         DECLARE_WAITQUEUE(wait, current);
-> @@ -2139,7 +2165,7 @@ static void *tun_ring_recv(struct tun_file *tfile, =
-int noblock, int *err)
->                         error =3D -EFAULT;
->                         break;
->                 }
-> -
-> +               wake_netdev_queue(tfile);
->                 schedule();
->         }
->
-> @@ -2147,6 +2173,7 @@ static void *tun_ring_recv(struct tun_file *tfile, =
-int noblock, int *err)
->         remove_wait_queue(&tfile->socket.wq.wait, &wait);
->
->  out:
-> +       wake_netdev_queue(tfile);
->         *err =3D error;
->         return ptr;
->  }
-> --
-> 2.43.0
->
-
-Thanks
-
+If 0 is better, it seems like there isn't much conflict with the values 
+expected by mTHP collapse (0 and 511). Sounds good to me.
 
