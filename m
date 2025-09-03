@@ -1,84 +1,144 @@
-Return-Path: <linux-kernel+bounces-797741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04977B414B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C8ADB414BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9229560CD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:08:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1BCE169A2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D402D77E6;
-	Wed,  3 Sep 2025 06:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C422D7805;
+	Wed,  3 Sep 2025 06:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vB0ywPsi"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhG5GB8k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633F02D5938;
-	Wed,  3 Sep 2025 06:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6977014A9B;
+	Wed,  3 Sep 2025 06:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756879713; cv=none; b=udQqxrwRjXsGpUBPV1BE4+8CFYhuDI4ylj0Lh9eysCe9qRo22OuzsJw0qqijGuhiLuAB86l4At2ZNIH6dOz3y7rYc2amtPC0AW/2UpDSmPBkCxU/0O1sGr/qBguGTt5cA2zPbcl3X7tdHaxd6jvPqLD52mlS827jQe6Z+gZagBI=
+	t=1756879884; cv=none; b=Zgzdbz6ipTNQqxQhNpB/yv5prUeNfNYtUesg/g98hcy35PtrkB9/ldfp7JcgkPDQgKCKvh/AehNLpRePni4mIQSNDwTRrxphHEp/WRQ7PEZO3m8A8q35zNNpLkv7we1vOOD9tq+y/NYq28Qh0am5miBExgCSmgTl9ZKG2o/pqiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756879713; c=relaxed/simple;
-	bh=xoXZ8fI6UslXlNQFkGXP2ovZvb7oU9JUnj0hhiY1+q4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m7xkFbRrzvJoZEclbMk+865VkPvV85P0hgsEtJ43qcKVfzl40MDkwCTUMvZqi7AvPXF8hAvstJjE+ohME6nHTc82qopaVoymDYPiLPjuUrz3hgnxhoGlS4Qjlr/Hpje0P4i/tUBqOW07jKgaQz/aJzhO7iTIcJi6FOSYEPn4STA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vB0ywPsi; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=L851IHbqrVpIrG6uFeEojRb7BABVfLuDX9yKbnxc82M=; b=vB0ywPsi0BiQ0RcWLFCg4b9CXM
-	8tfr/Yz9TErvtAmM90+NrYZsMZpdOe5SGTMu4slh80l/mmthTGXCrW8G5Gp4wCnPh9kB2wlptISfP
-	Bc1OwxOzR6Z8fklu+6YKwonvY7CxxD7/SU/Nm4wocgKLdYA3IYrP59xOFDgneKbDyerNCsyxN/rLs
-	W8A54YkMxXQt61lsuEr5TTemAOKc7pkiiuWH6aHcyX6VnJICvu0YHlRy/07zZf9zOFiMIVApAVKIW
-	v0A0j8tl2GP062oziB2w0j76xrP5OhDLrvO5/5aQaGSsSn5zRZXEvHSoG8rWpXmO5h0VZ0bovgy4m
-	Q6ceWpug==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utgfX-00000004Tjn-3wiY;
-	Wed, 03 Sep 2025 06:08:31 +0000
-Date: Tue, 2 Sep 2025 23:08:31 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: syzbot <syzbot+0391d34e801643e2809b@syzkaller.appspotmail.com>,
-	cem@kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] KASAN: slab-use-after-free Read in xfs_buf_rele
- (4)
-Message-ID: <aLfbXzRIXsRYibF3@infradead.org>
-References: <68b6d7b3.050a0220.3db4df.01cf.GAE@google.com>
- <aLeUdemAZ5wmtZel@dread.disaster.area>
+	s=arc-20240116; t=1756879884; c=relaxed/simple;
+	bh=DEWGVqilbGOs6UgUqJ9p5sDy7a3JODRL7uL+KLdqaDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OPnVd3hRkVLVhRB/XvU8TtxT8JJhKuRF7IMLT+GLHTxTKQ2ft66vlUdG4xTSq1CJarohMPt/bQ3CgZNZNSRfluRDWiP7D9CrPG+Jn5QwIcmWXw/aDoIpv1pDYJclMI/pAo2/T7N1PEHLhhzfDCt9xmYKl1Jr+m21yWZn3dHxOqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhG5GB8k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2C74C4CEF0;
+	Wed,  3 Sep 2025 06:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756879884;
+	bh=DEWGVqilbGOs6UgUqJ9p5sDy7a3JODRL7uL+KLdqaDM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OhG5GB8keEQ58YNgxAI/Sjc1rocLhOfxCLl/XZwlEzS1WCwat/fRihODLk7ZhvcWr
+	 H3XYzOgamWZw2UP1IcvzjzFaTBdCBESmwBjW57Q0I4QlZ/cxF1rW0y5KmmG5aM1SZs
+	 0uwLCKpyV6hM1ZLubZDbjoGbQOQY4z6fZm3zXiREW8Xa2eaDBHXBu8+MrVOXj9aNfo
+	 pqJnCWRxzZG176Yw/RX5egzLS+IB1ebxgjYZCtkELZ6V0YgtZVtdAYK9klO4OCqnRM
+	 DQ1ON/yN8nE1oOUXnkRR5ccXnOp7joOzEV/f+6jB4MMYU965FZbZcYRzziTXfVhat1
+	 LzBIkLuy7dzZg==
+Message-ID: <04ca5584-b10e-465d-bbda-627b7f743ce9@kernel.org>
+Date: Wed, 3 Sep 2025 08:11:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLeUdemAZ5wmtZel@dread.disaster.area>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 12/12] PM: EM: Use scope-based cleanup helper
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: airlied@gmail.com, alim.akhtar@samsung.com, beata.michalska@arm.com,
+ ben.horgan@arm.com, bp@alien8.de, catalin.marinas@arm.com,
+ cw00.choi@samsung.com, daniel.lezcano@kernel.org,
+ dave.hansen@linux.intel.com, dri-devel@lists.freedesktop.org,
+ edubezval@gmail.com, festevam@gmail.com, imx@lists.linux.dev,
+ intel-gfx@lists.freedesktop.org, j-keerthy@ti.com,
+ jani.nikula@linux.intel.com, kernel@pengutronix.de,
+ kyungmin.park@samsung.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org, linux-pm@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, lukasz.luba@arm.com, mpe@ellerman.id.au,
+ myungjoo.ham@samsung.com, pavel@kernel.org, ptsm@linux.microsoft.com,
+ rafael@kernel.org, rodrigo.vivi@intel.com, rui.zhang@intel.com,
+ s.hauer@pengutronix.de, shawnguo@kernel.org, simona@ffwll.ch,
+ srinivas.pandruvada@linux.intel.com, sudeep.holla@arm.com,
+ sumitg@nvidia.com, thierry.reding@gmail.com, tursulin@ursulin.net,
+ viresh.kumar@linaro.org, will@kernel.org, yangyicong@hisilicon.com,
+ zhenglifeng1@huawei.com
+References: <b38e64cc-4971-4e71-931c-820453aa91a7@kernel.org>
+ <20250903021230.1044454-1-zhangzihuan@kylinos.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250903021230.1044454-1-zhangzihuan@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 03, 2025 at 11:05:57AM +1000, Dave Chinner wrote:
-> I think that the buftarg rhashtable needs to initialised before the
-> shrinker is registered, then freed from xfs_destroy_buftarg() after
-> the shrinker has been shut down as it must live longer than the
-> buftarg shrinker instance. i.e. the buftarg rhashtable needs to have
-> the same life cycle as the buftarg LRU list....
+On 03/09/2025 04:12, Zihuan Zhang wrote:
+>> You are not improving the source code here. This is not how to use
+>>  __free() and you clearly do not understand the source code.
+> 
+> Sorry for the problem, policy should be assigned after cpumask_test_cpu().
+> 
+> I actually realized earlier that __free() only frees at the end of the variable’s lifetime. 
+> I had suggested using a braced macro in cpufreq.h to allow immediate release after use, 
+> but I understand the maintainer’s advice to “keep it simple” and will follow that.
+> 
+>> What's more, you did not use standard tools which would tell you this is
+>> buggy and wrong.
+> 
+> Could you please let me know which standard tools you recommend for detecting such issues? 
+> 
+> I’d like to use them to avoid similar mistakes in the future.
+All standard tools used for kernel development, sparse, smatch, clang,
+coccinelle, see my talk from OSSE25.
 
-My RFC patch to switch back to a per-buftarg hashtable would do that:
-
-https://git.infradead.org/?p=users/hch/xfs.git;a=commitdiff;h=e3cc537864a7ab980abfa18a3efe01a111aad1d7
-
-I still haven't gotten around doing serious performance testing on it,
-and I'm busy right now.  But in about two weeks I'll probably have
-both a bit of time and access to a big enough system to do serious
-scalability testing on it.
-
+Best regards,
+Krzysztof
 
