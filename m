@@ -1,85 +1,189 @@
-Return-Path: <linux-kernel+bounces-798682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82577B4216B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:27:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8ACB4214A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4866716F898
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:24:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34C481BC2748
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD8130506D;
-	Wed,  3 Sep 2025 13:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915E7302CB3;
+	Wed,  3 Sep 2025 13:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TLdK/WGI"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPpEcytq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549CF1BD01D;
-	Wed,  3 Sep 2025 13:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07072FFDD4;
+	Wed,  3 Sep 2025 13:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756905792; cv=none; b=u6Ii5i8/X9ZOgDZKm0pAluzCdHfWoqyz+9p7i4tjPAKpk8WMvAP+gikikgmljfMcRtbSp1Ku8wOXrkgCFJM+HPWgg+6z+fH7nEsatOtEI9aKObkdikLgWW2g7kfcRa5EjfijOAityJ7xDmVLmoRrkl2vc7U0/ozkvLKpEaHPnWM=
+	t=1756905823; cv=none; b=cHcT5ZZyWghWLptabLn/RmmCDgMZ08XUwd9vvVEf/wpIysUDflRkePAeScBdNsDgYu1r2UwVnvKRTwxuQaN+ytXnjlgsw4oV8n3cUwNOJpP+SX7GzS/Bm3mcOOJI+ytuJl+uKmohAyXAWSex2J0C0mcQLXY7GYLLGEFakT+cGFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756905792; c=relaxed/simple;
-	bh=tUbvyc5KAD5wmw7ap2ylCviQaoF8thLHIYsY0sxr9uI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ahI0378fHOeKDvDU8owDckcQIw46/puyTLecZaSFCXOpxgj+GbqpN7Ac6GJTA23wVp7eIYMiSbG7i9LiajF5VhP59vEgfVaJpk6y5MtQCpJIps5exjOJ7/DH2H4N20bX10UPF3DWRZdc+f1j5yFnI1HQV97aCD8t903wx1Q/QQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TLdK/WGI; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=O7Um2miBU1i6ixWvXoQnJcB8IAc9Oh39tNXyVLO4/gY=; b=TLdK/WGI01V2qN69B4ZFBR1O8n
-	q2uBnqELLvTmLnIPJDximQpqm7Jmk6UTeqVjDO0NIEbhk4cmzVAXFZmJhaQdNQuQFCAhJqiD3AbCI
-	Zrday6m51axI4ZID6DuUfoBbheqOuiJBFcC13zFwEmyGzmb/l/BoI2JvL76nF9KqyFIU0YDdP23If
-	n7ZAOEw+Gkr+/hqDEP+4vmGyyjhIwR6EgqllcFTmWcHDaZt7uuaGyKRwGINy/ZX7MQM9FYFr5ntEJ
-	RL0ERPDBk8lKc2irxcAAxm7tsbNEOMsqWNP/mk+ehFWpZoIog6j9CXy9ypfB8ttqKGTZG8p1QJwOh
-	Vhjho4OQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utnS2-00000006Zu3-3pb7;
-	Wed, 03 Sep 2025 13:23:02 +0000
-Date: Wed, 3 Sep 2025 06:23:02 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: hch@infradead.org, colyli@kernel.org, hare@suse.de, dlemoal@kernel.org,
-	tieren@fnnas.com, axboe@kernel.dk, tj@kernel.org,
-	josef@toxicpanda.com, song@kernel.org, kmo@daterainc.com,
-	satyat@google.com, ebiggers@google.com, neil@brown.name,
-	akpm@linux-foundation.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-raid@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
-	yangerkun@huawei.com, johnny.chenyi@huawei.com
-Subject: Re: [PATCH RFC v3 01/15] block: cleanup bio_issue
-Message-ID: <aLhBNoC_M2NGotxJ@infradead.org>
-References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
- <20250901033220.42982-2-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1756905823; c=relaxed/simple;
+	bh=MNOCIHc890ZPbX81TBDONhDZg01sJ8IBrTS7pqPoFeY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F0xEeXBx+lTdhvy85GCcnlHmlmn+SnzFCjo1RQnwFdg3xidFLTwrNpgvkFrUEp4K5Fb7qbr426drBynbODc9Qx/cz5dEulqZ+5E7Ru7dazXvthYixwsaK/2v79Nr2mSrYMyWJ9PRdVbt0YquQiQC8iosdx4XOzULMkGYcNqTrCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPpEcytq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54FCDC113D0;
+	Wed,  3 Sep 2025 13:23:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756905823;
+	bh=MNOCIHc890ZPbX81TBDONhDZg01sJ8IBrTS7pqPoFeY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FPpEcytq9aWkc1yFeTV1Dy+aeuNeBTemmC5rC27NFDjKUzH1CdxdIHWINCnqSpQyg
+	 6MPLBsnw4Z3tl5OS0ltj5etYNac8uIjuz057aJvwNe7lsvbnOqQCUi7M0eY+x7Vomw
+	 frmLXLUfAZ6jPOjoGriyx9qMonLn3SEcX8AaAM5ZthdTfJD2zjQ2JB4v7ZtP1YTj0j
+	 fCyX+AMirTsv/3c/wKdQzNdS98pJ6I4a+2bvdurMP4V39HcMssOqRBF0XMA94wFTpD
+	 KowDCNR2fY9SpRavGHLrK4UyT5J/cdzwLBNrLagEGm3KeNl0fk8EyVO2a1R5JfvG/D
+	 2ScWj8Uimqryg==
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74381e207a0so4667534a34.0;
+        Wed, 03 Sep 2025 06:23:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUgKQCKKh35RC6A2xe/c/IanAwGWNxQliXQmGWgvlb2+BTE9tsQ7mIduDMZ32ZlbRd5HqWku/sPPIFY@vger.kernel.org, AJvYcCVW3ubXcao7F+PVelt88jtP+OKHQ3kuaGwG+zMxDrvIB6UMjhgbjDxKLGs7TZzB1SeLWFlEXRWyE3UShQ==@vger.kernel.org, AJvYcCXgCU88MjdALd9DB+HQ32ARlHfSFb4IIkeWpTejddvBawfslt0oHJsvkv4S1IBWCtvbRn/cg5ZcW58=@vger.kernel.org, AJvYcCXi7ppFDia+tDf9J636Dju3SLCd/50qT4v7OGC8Hj4qLf+js/sr4CfSchNC0tKQGiNhtNvovIMf5XtdMEvI@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAt26jvQIMXFpbheHfL68LR+wetvn+cnQulqgljUalkUmhrajs
+	aRPxcrNeu8plMtJ6rTcx8xQOF6LSYpgFE+InSiXaYz+3zC2mve0PPuKmPdcj8hVEpPugNA3dlKp
+	sJd2JNUzC0jTdaQhAaAOmnaWwCHZWg+M=
+X-Google-Smtp-Source: AGHT+IF/Rvddiz3lwXC8DDW9/+npOMEcse4CHEj2QqCzERRaclrypAQPOhyZw11rYQSZDwxHFmim9Y4Gnx4KJlOQneM=
+X-Received: by 2002:a05:6830:411c:b0:73b:2617:87f1 with SMTP id
+ 46e09a7af769-74569edcb41mr7583799a34.28.1756905822245; Wed, 03 Sep 2025
+ 06:23:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901033220.42982-2-yukuai1@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20250903131733.57637-1-zhangzihuan@kylinos.cn> <20250903131733.57637-3-zhangzihuan@kylinos.cn>
+In-Reply-To: <20250903131733.57637-3-zhangzihuan@kylinos.cn>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 3 Sep 2025 15:23:31 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0j5O4Q72P-OLiR4RK4g8E5joi_gu_O4HZymh9hJvy551g@mail.gmail.com>
+X-Gm-Features: Ac12FXyUy2bB6YBuDXd6gAvqnfWCJZTJ2jsW3Zhm6c3o2d27uMS2JyeGNtCLZcI
+Message-ID: <CAJZ5v0j5O4Q72P-OLiR4RK4g8E5joi_gu_O4HZymh9hJvy551g@mail.gmail.com>
+Subject: Re: [PATCH v4 02/10] ACPI: processor: thermal: Use scope-based
+ cleanup helper
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Ben Horgan <ben.horgan@arm.com>, 
+	zhenglifeng <zhenglifeng1@huawei.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Len Brown <lenb@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
+	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-arm-kernel@lists.infradead.org, intel-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
+	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 01, 2025 at 11:32:06AM +0800, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Now that bio->bi_issue is only used by io-latency to get bio issue time,
-> replace bio_issue with u64 time directly and remove bio_issue to make
-> code cleaner.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+On Wed, Sep 3, 2025 at 3:18=E2=80=AFPM Zihuan Zhang <zhangzihuan@kylinos.cn=
+> wrote:
+>
+> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+> annotation for policy references. This reduces the risk of reference
+> counting mistakes and aligns the code with the latest kernel style.
+>
+> No functional change intended.
+>
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> ---
+>  drivers/acpi/processor_thermal.c | 37 ++++++++++++++++++--------------
+>  1 file changed, 21 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/acpi/processor_thermal.c b/drivers/acpi/processor_th=
+ermal.c
+> index 1219adb11ab9..5043f17d27b7 100644
+> --- a/drivers/acpi/processor_thermal.c
+> +++ b/drivers/acpi/processor_thermal.c
+> @@ -62,19 +62,14 @@ static int phys_package_first_cpu(int cpu)
+>         return 0;
+>  }
+>
+> -static int cpu_has_cpufreq(unsigned int cpu)
+> +static bool cpu_has_cpufreq(unsigned int cpu)
+>  {
+> -       struct cpufreq_policy *policy;
+> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpuf=
+req_cpu_get(cpu);
+>
+>         if (!acpi_processor_cpufreq_init)
+>                 return 0;
+>
+> -       policy =3D cpufreq_cpu_get(cpu);
+> -       if (policy) {
+> -               cpufreq_cpu_put(policy);
+> -               return 1;
+> -       }
+> -       return 0;
+> +       return !!policy;
+>  }
+>
+>  static int cpufreq_get_max_state(unsigned int cpu)
+> @@ -93,9 +88,23 @@ static int cpufreq_get_cur_state(unsigned int cpu)
+>         return reduction_step(cpu);
+>  }
+>
+> +static long long cpufreq_get_max_freq(unsigned int cpu)
+> +{
+> +       long long max_freq;
+> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D
+> +               cpufreq_cpu_get(cpu);
+> +
+> +       if (!policy)
+> +               return -EINVAL;
+> +
+> +       max_freq =3D (policy->cpuinfo.max_freq *
+> +               (100 - reduction_step(cpu) * cpufreq_thermal_reduction_pc=
+tg)) / 100;
+> +
+> +       return max_freq;
+> +}
+> +
+>  static int cpufreq_set_cur_state(unsigned int cpu, int state)
+>  {
+> -       struct cpufreq_policy *policy;
+>         struct acpi_processor *pr;
+>         unsigned long max_freq;
+>         int i, ret;
+> @@ -120,14 +129,10 @@ static int cpufreq_set_cur_state(unsigned int cpu, =
+int state)
+>                 if (unlikely(!freq_qos_request_active(&pr->thermal_req)))
+>                         continue;
+>
+> -               policy =3D cpufreq_cpu_get(i);
+> -               if (!policy)
+> -                       return -EINVAL;
+> -
+> -               max_freq =3D (policy->cpuinfo.max_freq *
+> -                           (100 - reduction_step(i) * cpufreq_thermal_re=
+duction_pctg)) / 100;
+> +               max_freq =3D cpufreq_get_max_freq(cpu);
+>
+> -               cpufreq_cpu_put(policy);
+> +               if (max_freq =3D=3D -EINVAL)
+> +                       return -EINVAL;
 
-Looks good:
+Please also move the code below to the new function so it does not
+need to return a value.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-
+>
+>                 ret =3D freq_qos_update_request(&pr->thermal_req, max_fre=
+q);
+>                 if (ret < 0) {
+> --
 
