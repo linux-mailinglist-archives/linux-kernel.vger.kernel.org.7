@@ -1,120 +1,111 @@
-Return-Path: <linux-kernel+bounces-797507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E1BB41153
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:29:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22105B41155
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A061B629B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:29:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97305E29B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C00019F12D;
-	Wed,  3 Sep 2025 00:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD90A29CEB;
+	Wed,  3 Sep 2025 00:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UHxl1z2M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kmLSNv31"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01FA188580;
-	Wed,  3 Sep 2025 00:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA5C800
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 00:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756859343; cv=none; b=IE3q+YYWm1SAZyyyi8kEo649r83aQP9Ytpjw6M1S4XhhZ5BUZfNrcQmMY5DN25YsrjjITtOloKsMxN34Uu4sPKwPjrPqPAPUj3/7Ic1yXxawHoeyXRKGlkew2yS/TsKOqXmY+N8XcCjO39IbcGQlcI/QKARE/Vs76qFwsA370YE=
+	t=1756859428; cv=none; b=WlEUSe4m2oCx5AO7TXvfsJzR7egV69x16mg7tf4ymfgNdUgT8RbAbh6y5zYkap7FYCulo5nRDq6v0NJO9kt+5/6t+cgAMRWYaBg7Iw/zofBAl0klm8UphRXNl9LzxSEXOmHPuiNocXbIYR/TOwKeqUwTcL3W2DOcQLlHgGvVx2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756859343; c=relaxed/simple;
-	bh=U6crchSx22A1Dkt0nN8K+hqbGunsTXrVtw8pYSSnspQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gGTQOBLCPG8HW7J+Qrcyvs3wWSmsBkZhpncOEoy8ZKpfcB9RR5TSbcaLGqvKlbfzmF6NGhRcpr8EXbka1Y9RiUD1dG4z1dR52xDtql8pWgAAC/upClcZKpABZznEtZuEM/y/PYMp0XsQkERCaZyjH+VAxGpLbyBNMT/dwQlncg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UHxl1z2M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E84BC4CEED;
-	Wed,  3 Sep 2025 00:29:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756859342;
-	bh=U6crchSx22A1Dkt0nN8K+hqbGunsTXrVtw8pYSSnspQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UHxl1z2MauCod22FbWqCkY6B5xkLKi5v1sCfCih9PmgDeWl6ShYcQ4PqJQC2fCBDD
-	 ejCgibNuovMVGUJl/ISP88p2mUL1tipGRboeaDkwOSPjYKxdz+i9BLka2e5meyuAl/
-	 iLaiOyimIXhQ7f29wZx7a8laO0//URfaUDDKqgjSF/wm+mmFDuyqD8TbWlmqO/3Tpu
-	 PGvi2PYP7h9YI6Vqlf64fLXbkhHKbL/HxBZk5aAmFE3BCpMZR7geaUzPGagj7gSUQT
-	 vAYVUEOO8JtZV4uLblMB3kmx6TDPHaYTR4hYT4Tq00dk1eVrdYNIU113DI9qGSfx8j
-	 yLyDyRnl1PwIw==
-Date: Tue, 2 Sep 2025 14:29:01 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	linux-mm <linux-mm@kvack.org>, bpf <bpf@vger.kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@suse.com>,
-	David Rientjes <rientjes@google.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
-Message-ID: <aLeLzWygjrTsgBo8@slm.duckdns.org>
-References: <20250818170136.209169-1-roman.gushchin@linux.dev>
- <20250818170136.209169-2-roman.gushchin@linux.dev>
- <CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
- <87ms7tldwo.fsf@linux.dev>
- <1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
- <87wm6rwd4d.fsf@linux.dev>
- <ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
- <CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
- <87iki0n4lm.fsf@linux.dev>
+	s=arc-20240116; t=1756859428; c=relaxed/simple;
+	bh=avxoggIy7iNMq1V9YTUJVFJ2AwIXBC8XWfTRiq0XybI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=df0zuS5yGJV5HyXKKEaUZhqvI9BQyhS0WdIZuNX7JeJGEGB3Ju7VJCbwB7WtZuxCzhZ1pMtYTBMOhbpDbvKfa2gxtf4AUaYMuAr+RRm83TRGt+AI3jtYpGVsjLe7/LgJKFfapW430D6IMs9Fv70C9Wk5d66egmaw1pQyLrhMgCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kmLSNv31; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756859414;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oATve04/PpCSXjt9BZQOkk2Qc8tlxwWxSK5sGt1qgbY=;
+	b=kmLSNv31AHeFXz4x//T4DbkgO+0bwAqi0uieRQ4eRXYRhIjH53r/biqthzW7KuMQeSDntt
+	xusOfsKlLb8wrFH5dftIh+JA+8imUMGm6VysmuXVdG+gyUlTeX1L6VaWNuyC52Z+MHmAq9
+	UzRbUuMnhFQ9hdnvD+Yv9J7Cg/SEdhk=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: SVM: Replace kzalloc() + copy_from_user() with memdup_user()
+Date: Wed,  3 Sep 2025 02:29:50 +0200
+Message-ID: <20250903002951.118912-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87iki0n4lm.fsf@linux.dev>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello, Roman. How are you?
+Replace kzalloc() followed by copy_from_user() with memdup_user() to
+improve and simplify svm_set_nested_state().
 
-On Tue, Sep 02, 2025 at 10:31:33AM -0700, Roman Gushchin wrote:
-...
-> Btw, what's the right way to attach struct ops to a cgroup, if there is
-> one? Add a cgroup_id field to the struct and use it in the .reg()
-> callback? Or there is something better?
+Return early if an error occurs instead of trying to allocate memory for
+'save' when memory allocation for 'ctl' already failed.
 
-So, I'm trying to do something similar with sched_ext. Right now, I only
-have a very rough prototype (I can attach multiple schedulers with warnings
-and they even can schedule for several seconds before melting down).
-However, the basic pieces should may still be useful. The branch is:
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ arch/x86/kvm/svm/nested.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
- git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-hier-prototype
-
-There are several pieces:
-
-- cgroup recently grew lifetime notifiers that you can hook in there to
-  receive on/offline events. This is useful for initializing per-cgroup
-  fields and cleaning up when cgroup dies:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/tree/kernel/sched/ext.c?h=scx-hier-prototype#n5469
-
-- I'm passing in cgroup_id as an optional field in struct_ops and then in
-  enable path, look up the matching cgroup, verify it can attach there and
-  insert and update data structures accordingly:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/tree/kernel/sched/ext.c?h=scx-hier-prototype#n5280
-
-- I wanted to be able to group BPF programs together so that the related BPF
-  timers, tracing progs and so on can call sched_ext kfuncs to operate on
-  the associated scheduler instance. This currently isn't possible, so I'm
-  using a really silly hack. I'm hoping we'd be able to get something better
-  in the future:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/commit/?h=scx-hier-prototype&id=b459b1f967fe1767783360761042cd36a1a5f2d6
-
-Thanks.
-
+diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
+index b7fd2e869998..826473f2d7c7 100644
+--- a/arch/x86/kvm/svm/nested.c
++++ b/arch/x86/kvm/svm/nested.c
+@@ -1798,17 +1798,15 @@ static int svm_set_nested_state(struct kvm_vcpu *vcpu,
+ 	if (kvm_state->size < sizeof(*kvm_state) + KVM_STATE_NESTED_SVM_VMCB_SIZE)
+ 		return -EINVAL;
+ 
+-	ret  = -ENOMEM;
+-	ctl  = kzalloc(sizeof(*ctl),  GFP_KERNEL);
+-	save = kzalloc(sizeof(*save), GFP_KERNEL);
+-	if (!ctl || !save)
+-		goto out_free;
+-
+-	ret = -EFAULT;
+-	if (copy_from_user(ctl, &user_vmcb->control, sizeof(*ctl)))
+-		goto out_free;
+-	if (copy_from_user(save, &user_vmcb->save, sizeof(*save)))
+-		goto out_free;
++	ctl = memdup_user(&user_vmcb->control, sizeof(*ctl));
++	if (IS_ERR(ctl))
++		return PTR_ERR(ctl);
++
++	save = memdup_user(&user_vmcb->save, sizeof(*save));
++	if (IS_ERR(save)) {
++		kfree(ctl);
++		return PTR_ERR(save);
++	}
+ 
+ 	ret = -EINVAL;
+ 	__nested_copy_vmcb_control_to_cache(vcpu, &ctl_cached, ctl);
 -- 
-tejun
+2.51.0
+
 
