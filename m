@@ -1,75 +1,61 @@
-Return-Path: <linux-kernel+bounces-797997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A17AB4182F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:16:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B51B41823
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2A8216AAE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:16:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BC833B1BE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B8E2EA72B;
-	Wed,  3 Sep 2025 08:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0B42E7BDA;
+	Wed,  3 Sep 2025 08:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mhoQaYWJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lxGAarQo"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83B52DCF55;
-	Wed,  3 Sep 2025 08:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B60C2E8896;
+	Wed,  3 Sep 2025 08:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756887373; cv=none; b=XIJgmFkCaOCWT+7b5r11V/pmbl2Ld4tOJwh2bLZiO3wX4Ue5GbJ6R4WuGG1PVfsze2B/hKu7KKmyj5W7fVPhAbFFkXbAMSsqJ4Nym1c8nVz6IeE9fvRonz0rhJEzzSAaIh9TIt5rx7wD7vcMILUlOjLwxi2bQL46dHVw18mvQis=
+	t=1756887281; cv=none; b=VgTOl2G3/mB+652l1duv6oTNtcObKTPV8OyeRg5DGP1MSxD+tPO/+ripj/s6IJm/3pR0uDiDwm2d3PwpIPdgAa3bilH6iJT5YXi8rG+Re/6DEhswVHVQDk+nq9Yrr8vfGGVkQnDhWRomy/X+6laglR8X8v1szuyzMrMBOkG2+YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756887373; c=relaxed/simple;
-	bh=QdFctaTdCxVBox5X0aH0FPreiOksaazml8cclYfxhvc=;
+	s=arc-20240116; t=1756887281; c=relaxed/simple;
+	bh=fs+KWwZR1QzA87GtTYQdJ+LTlKnXWvFf7ZvudGJ6gtU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XArM1MbYW8dU1Dnj7DVVaEOqpd3whkHbyuwt0RG703akzrC3Mzk6gJ1m040ESf+ImsRh0L5v0Wx8wIX/MsUEfyAd+e3tZ5BVURXN5WxLfi7CLSLhFgLoYKU+UAJ17PgzsDk7QlIdu9JitV9g90geR6TD6xOZqbwYG12x5ethEY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mhoQaYWJ; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756887371; x=1788423371;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QdFctaTdCxVBox5X0aH0FPreiOksaazml8cclYfxhvc=;
-  b=mhoQaYWJ4DdfMYwvOo4k2hxhUe5RePS1qI0HkPf7m82MTXUCjiB4zQ+9
-   9kQc9mrwNfuETEYHTU4LFcBZpgTD4lB95mqo3HQX8GzRLEx+aR7jg+8+i
-   ehHhhFvzYXL6OlUAW2yXV1l4dqT2L6dOxRdFM9MwhPnm9jfCD10MHsosg
-   1KVl9SS9CBC4Cq8fvrr/gkjuXeUJS7cUpPakzYymcPDKBVycZWo+fiHlD
-   bLSMnYUE0a1SHBjOinW9IzxdYx01Dzupht4tmQwZU2fmfvhXVPrRBNhyS
-   UZO12SvRpWAi/NNk/A7lUxHxpQV0E/L4o5lHwWCxCqh535ur3nMWti9Be
-   g==;
-X-CSE-ConnectionGUID: 1KaJkzlUR3GPnHLY15y8Lg==
-X-CSE-MsgGUID: +O7xb6OKRpih+5M1ZMoqGA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="69894618"
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="69894618"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 01:16:11 -0700
-X-CSE-ConnectionGUID: Y/WIdI61R2OZCJv3eMVx8g==
-X-CSE-MsgGUID: 7pquVhkLTZiX7jQljyftiw==
-X-ExtLoop1: 1
-Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 03 Sep 2025 01:16:08 -0700
-Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1utieh-0003Z9-1M;
-	Wed, 03 Sep 2025 08:15:52 +0000
-Date: Wed, 3 Sep 2025 16:13:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Christian Brauner <christian@brauner.io>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Andreas Gruenbacher <agruenba@redhat.com>, Jan Kara <jack@suse.com>,
-	gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gfs2, udf: update to use mmap_prepare
-Message-ID: <202509031521.aEPzyTZp-lkp@intel.com>
-References: <20250902115341.292100-1-lorenzo.stoakes@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lpI4ZRATNPmy/vFq0TjD/3O6JpKJYuQACRSyxAz60oJrNAK7vFu1ak0q5llmRoIYH3DXQDCt1cOcRG6pJuhiHYx2NYRg6MLfc1WxET+O0mq0b7MLZ90Zz2Scoj0AlTyqmftIYojpe7jMwSe67IdCvUonxwaQsC5ntl7TCKQVFXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lxGAarQo; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=32qY64HQUKLqyiUo1HqOoBz1g0vVm/t/Ehcvc+7u+8o=; b=lxGAarQosFF7RE+ye+ERnM2ENo
+	2dDYCQZOOCcQag2wVOe47w1koeDOpg2aNnk3aJ2ck6TYq5vtV1IREfXERnGoDHILgwNGNFdwInnwl
+	g+Zly/a0ANxSxxWSsI1ELtzQX4Hxo02DQENWPJ/78S4DXOfGPKhP141zthDFkHp+VlCW/vmd/fb3V
+	mnXuJIA/tiD63VqWpjhEq12TxFSR2TZ9dbSiSbMjm/LIP+JFWhF58Po8PbGogG6Bj2sobfajJK0tj
+	pJ82MuBcWpA6TiqiRTHOycYtS1ckq5gFA3FvXFvG0IMYz5pLHtiA4peIGJOeHTxmqTQHV/2QzMxC2
+	StfiIfXw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1utidZ-0000000HXNZ-1gxt;
+	Wed, 03 Sep 2025 08:14:38 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 988F13003F0; Wed, 03 Sep 2025 10:14:37 +0200 (CEST)
+Date: Wed, 3 Sep 2025 10:14:37 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>, sched-ext@lists.linux.dev,
+	Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH sched_ext/for-6.18] sched_ext: Use cgroup_lock/unlock()
+ to synchronize against cgroup operations
+Message-ID: <20250903081437.GP3245006@noisy.programming.kicks-ass.net>
+References: <aLeANmpO03QiPgSX@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,71 +64,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250902115341.292100-1-lorenzo.stoakes@oracle.com>
+In-Reply-To: <aLeANmpO03QiPgSX@slm.duckdns.org>
 
-Hi Lorenzo,
+On Tue, Sep 02, 2025 at 01:39:34PM -1000, Tejun Heo wrote:
+> SCX hooks into CPU cgroup controller operations and read-locks
+> scx_cgroup_rwsem to exclude them while enabling and disable schedulers.
+> While this works, it's unnecessarily complicated given that
+> cgroup_[un]lock() are available and thus the cgroup operations can be locked
+> out that way.
+> 
+> Drop scx_cgroup_rwsem locking from the tg on/offline and cgroup [can_]attach
+> operations. Instead, grab cgroup_lock() from scx_cgroup_lock(). Drop
+> scx_cgroup_finish_attach() which is no longer necessary. Drop the now
+> unnecessary rcu locking and css ref bumping in scx_cgroup_init() and
+> scx_cgroup_exit().
+> 
+> As scx_cgroup_set_weight/bandwidth() paths aren't protected by
+> cgroup_lock(), rename scx_cgroup_rwsem to scx_cgroup_ops_rwsem and retain
+> the locking there.
+> 
+> This is overall simpler and will also allow enable/disable paths to
+> synchronize against cgroup changes independent of the CPU controller.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> ---
+> This results in a tiny simplification on the core side. Peter, if you don't
+> object, I'll route this through sched_ext/for-6.18.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on gfs2/for-next linus/master v6.17-rc4 next-20250902]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Lorenzo-Stoakes/gfs2-udf-update-to-use-mmap_prepare/20250902-200024
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250902115341.292100-1-lorenzo.stoakes%40oracle.com
-patch subject: [PATCH] gfs2, udf: update to use mmap_prepare
-config: x86_64-randconfig-005-20250903 (https://download.01.org/0day-ci/archive/20250903/202509031521.aEPzyTZp-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250903/202509031521.aEPzyTZp-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509031521.aEPzyTZp-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> fs/gfs2/file.c:1582:18: error: use of undeclared identifier 'gfs2_mmap'; did you mean 'vfs_mmap'?
-    1582 |         .mmap_prepare   = gfs2_mmap,
-         |                           ^~~~~~~~~
-         |                           vfs_mmap
-   include/linux/fs.h:2393:19: note: 'vfs_mmap' declared here
-    2393 | static inline int vfs_mmap(struct file *file, struct vm_area_struct *vma)
-         |                   ^
->> fs/gfs2/file.c:1582:18: error: incompatible function pointer types initializing 'int (*)(struct vm_area_desc *)' with an expression of type 'int (struct file *, struct vm_area_struct *)' [-Wincompatible-function-pointer-types]
-    1582 |         .mmap_prepare   = gfs2_mmap,
-         |                           ^~~~~~~~~
-   2 errors generated.
-
-
-vim +1582 fs/gfs2/file.c
-
-  1574	
-  1575	const struct file_operations gfs2_file_fops = {
-  1576		.llseek		= gfs2_llseek,
-  1577		.read_iter	= gfs2_file_read_iter,
-  1578		.write_iter	= gfs2_file_write_iter,
-  1579		.iopoll		= iocb_bio_iopoll,
-  1580		.unlocked_ioctl	= gfs2_ioctl,
-  1581		.compat_ioctl	= gfs2_compat_ioctl,
-> 1582		.mmap_prepare	= gfs2_mmap,
-  1583		.open		= gfs2_open,
-  1584		.release	= gfs2_release,
-  1585		.fsync		= gfs2_fsync,
-  1586		.lock		= gfs2_lock,
-  1587		.flock		= gfs2_flock,
-  1588		.splice_read	= copy_splice_read,
-  1589		.splice_write	= gfs2_file_splice_write,
-  1590		.setlease	= simple_nosetlease,
-  1591		.fallocate	= gfs2_fallocate,
-  1592		.fop_flags	= FOP_ASYNC_LOCK,
-  1593	};
-  1594	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+No problem, that's fine. 
 
