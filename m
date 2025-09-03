@@ -1,166 +1,1238 @@
-Return-Path: <linux-kernel+bounces-799171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B53B4B427FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:31:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B90B427FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7012E7C21BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:31:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBB6A7C2174
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A371131578B;
-	Wed,  3 Sep 2025 17:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CC51758B;
+	Wed,  3 Sep 2025 17:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JDeTD7NU"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b="KFoPu9yq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="auTVFjRQ"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEED33997;
-	Wed,  3 Sep 2025 17:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35088282EE;
+	Wed,  3 Sep 2025 17:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756920679; cv=none; b=JvgBhRbWxRMzQRcxR8LhY9Pm5Dgq/soYcMCKqTm5q+bsc4zexfKZ6osZTo9MpA/6Y18utxMmkOHRU84FGQNleM76D5j2nI3EFXyMFxbNGOPhBEYBZv9RMysrd/xQiQlTk+bShaC4KiQ5WPHP6FsvOlSNYVecn38jv2XdY89zZpA=
+	t=1756920673; cv=none; b=sJhfuuyZRWbnAqCFHP2QQdT90uYYIgRC6mlmNd5ESdXo3jndkgexYkxnLDCpr6XExY7dJWyyGMclkt8rjUWxhElB3fHwBYTmv51bxYs3Lz9eqbOiwfU5Ss1pnRMTNJSv8lZCJnmZyU2BY0P/6dPNIgDxGrnankI6ou5s/vHMlf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756920679; c=relaxed/simple;
-	bh=sQSdsEyKd03PoGo1S9AyOwCwrCj5ZzNJZe6aF37J244=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ImqJm/TOq2Gyj/KFaDhz74QlZSEiYHmsiBYkoHR65HjTFY8GiUPPUMstA5PXYq0qu+caOmxNGuuJUfdksgUYqwnT7GaVl/Nsp2Z7hBncx3wWcJ99YHUYePp3eYCXepdk0wx0eP/RdcxnkhAy7qCktXSGFW6Y1GzUvEroWypv12g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JDeTD7NU; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1756920664; x=1757525464; i=markus.elfring@web.de;
-	bh=sQSdsEyKd03PoGo1S9AyOwCwrCj5ZzNJZe6aF37J244=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=JDeTD7NU74XJPwH9aXpNtFBf34sGtaaD//rI+fPsuGbt3PdquOIRQSpBitcxkGQB
-	 G3I/B2U0/fOB8QHqPDmJ6pIrGS+H9r0pxf6OO+/U1z0ie+mjhRuZkZcGvLs3Jp6gr
-	 RRF+17AF1ysO0d9XhHk5T+m9aY/euVK49yNTSzabu4yiIrK1fVmYGQhfwPuXNJRzG
-	 kKe4jxTlBLj3JN6uIklXT6ggjN+PorsvEhbrka98pr+1j6c1OxR4bT9WSO02HQ6Hm
-	 WMMIe2N0mMq5SkSmPQB3I4kZX2P+u0nYWoKQqbuMfk6fsXQ2/FiY62IuvARuNxxhg
-	 M9Qpi4Ic8aJfNpq7kw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.225]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MKMA7-1vB6eu3gJb-00U41a; Wed, 03
- Sep 2025 19:31:03 +0200
-Message-ID: <2dca6191-fbe2-4b4e-834b-5462ed4abbd8@web.de>
-Date: Wed, 3 Sep 2025 19:31:01 +0200
+	s=arc-20240116; t=1756920673; c=relaxed/simple;
+	bh=he7IshlRil/h4hQ8sp9UB7UqEUbVdMbWq0+u7rLnW4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yd1Bf3/l7ZInjUF9DNttnu7hMU92RyfDOluL7edmvj/9+A1MEfe30sWiavDq6xHHAkBWC2aPftRNEIxu9GfP2weSzVRVeEqmGI+TdOQeCk4cBiBMji78hmz+dUQGZaQ17npl8DQMuWw3313LZm0YOrmeMxYCzXUMYw8rgxGrsSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com; spf=pass smtp.mailfrom=fastmail.com; dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b=KFoPu9yq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=auTVFjRQ; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.com
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 6FEFD14003B7;
+	Wed,  3 Sep 2025 13:31:08 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Wed, 03 Sep 2025 13:31:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1756920668;
+	 x=1757007068; bh=og+IC19JqfXradgQ2Q3tRC+R5U+0xPVyYVp/r/aEtrw=; b=
+	KFoPu9yqdbB4XGGjZGlpke2cSdetSchmexrXbKdZgYjF/CVhtg9ONXjuRA56wIRq
+	RQIRgIAawaBN5xoy1w3iSe0AKdNwcy1qmMrdAEBylrzaKu1zzQrtRlyTy129GZcU
+	4fNB6mRrI1Gi/qdaeIuuBMc5a2VEPX2ZYeVZmuP5E8+9YczCmJxbAhA2ynyyJZyv
+	Sv4fz/yTNd1p/mTfsVvYyiReel1YPlaeZQY0akQivbkumiEqGTw5ye5R/jx+KXst
+	Al88h2GKqBN5Uqsk8CCwnS9cnhud0rVm4LnA/6psz1d//ZNeRSPx460KKbmu3YU4
+	r7x85vCMgoMKnm9tTUTdlQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756920668; x=
+	1757007068; bh=og+IC19JqfXradgQ2Q3tRC+R5U+0xPVyYVp/r/aEtrw=; b=a
+	uTVFjRQ9oWQGoK1zjU20EgjhdDRFnbVKO6xiGDJrYVC+pcIVrszw6Z/t6f8ZuIxb
+	CVWiY78jgo3AYoByIxyjL/LSknitbUOzl4pldhYZosjuWbwGyRpwzqmcadRzW8wR
+	16k9zTS+uqQkE7N1eVjhcThh0GE5nS6FInHfHU7OJpShPj7sdQoHFztY6MgB07lJ
+	xSzURuE+xvdkmxnfP7fUUIddtzZHury45Z9aiDRpSOOfcrBdN1w46XCLgajOXucK
+	DgExzzkSt/TYAk/pXgp+Tk1YYxn4I3NuEjvPouSQg8N5F4sOhYpiTdPrlK2bQFae
+	g38XnW5+EOwMGvSiY/LcQ==
+X-ME-Sender: <xms:XHu4aH22E2z7-ls-M92JAkqBQG9y8oNKauilznAem5KdnG-yOifEQw>
+    <xme:XHu4aAgPLiX4TftFuHPTmhWqAFoe5AmJmVDdtBa5SE4frcWEMqS6wyjfhXwbC9bjk
+    F3-Nrqast0c9Lb2Iw>
+X-ME-Received: <xmr:XHu4aPYU6FP7sTCz4qJ9scdrOv0ZmOvUqI7gJUVkO4ZlCSa5v8K6fpDrrV23jmpSnLQ7Dqlo7qJzuYDTslytCJ3ZYlyz9mA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefjeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epfffhvfevuffkfhggtggugfgjfgestheksfdttderjeenucfhrhhomheplfgrnhcurfgr
+    lhhushcuoehjphgrlhhushesfhgrshhtmhgrihhlrdgtohhmqeenucggtffrrghtthgvrh
+    hnpedugeehgfffkeefgfetfeekjeeigeduvdetlefhgfevleelhfevgffgffejvdehueen
+    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepjhhprghluhhssehfrghsthhmrghilhdrtghomhdp
+    nhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehroh
+    gshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhlrghushdrkhhuughivghlkhgr
+    sehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhise
+    gsohhothhlihhnrdgtohhmpdhrtghpthhtohepphgrlhhisehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehlphhivghrrghlihhsiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    epkhifihhltgiihihnshhkiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrnhhi
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhr
+    gh
+X-ME-Proxy: <xmx:XHu4aEUSXmA7hynjXXDY0ZDgZ0tuBqj_vvU8RSkCvlURdxct25OeVg>
+    <xmx:XHu4aPFkgZ8Oubo315C-zCc7Nrx_Vx_mjLADrLPmrp6jjNo2takwOg>
+    <xmx:XHu4aGaL3s_QfcF1g5hV0MBc6fL-3TCvekETfsSdpGkiCBQ4CpD9rw>
+    <xmx:XHu4aGFKsXZqR45dizJQo9hA0C0rJrO6JHjNESZ7xIpMhFNZLzPwDA>
+    <xmx:XHu4aMxHfLzRZNGn13YAKYs4-6ZuZmW0Se1kxaHZ1kzG3HeTalkKolLx>
+Feedback-ID: i01894241:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 3 Sep 2025 13:31:07 -0400 (EDT)
+Date: Wed, 3 Sep 2025 19:31:06 +0200
+From: Jan Palus <jpalus@fastmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Klaus Kudielka <klaus.kudielka@gmail.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH] PCI: mvebu: Fix the use of the for_each_of_range()
+ iterator
+Message-ID: <soia4lq57jd65u3rzrjbnpcqknd3gifptz4ysem46qodp6zbsb@ha44wvvdvkl2>
+References: <20250902151543.147439-1-klaus.kudielka@gmail.com>
+ <hiu2ouj4f7zak2ovtwtigf6fylz4c7fdyyqiqezsddoouzr4n5@bfs7kudjfnp5>
+ <CAL_JsqLo8WbHMtjdbsauncusFh--OkNWXcN_pkpPxxT8xAmBNA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Miaoqian Lin <linmq006@gmail.com>, dri-devel@lists.freedesktop.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- David Airlie <airlied@gmail.com>,
- Javier Martinez Canillas <javierm@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Thierry Reding <treding@nvidia.com>, Thomas Zimmermann <tzimmermann@suse.de>
-References: <20250903140035.2529812-1-linmq006@gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH=5D_As_the_doc_of_of=5Fparse=5Fphandle=28?=
- =?UTF-8?B?KSBzdGF0ZXM6IOKApg==?=
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250903140035.2529812-1-linmq006@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:87SZ9oMoKX9LeHHWvXONnGJNLU1Y7sONOTgLM8DlW96NxuiN54J
- 06CNwMtGWPtQQN7Pfw01kDxSXKZtdBCKZusRU7kvN+3jSKDo8ktJsKO1eU7yZdF1IZQ6jf0
- 7W2IOSIzjYVYsWIGEMJEXE+GhG8A6LZxJWa1sa5o+AIZpZP/mYMqzMvrUHLws6FIgc5tSi+
- FVNMK88nF0wjs5AkXvXEQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Swveffn1sWE=;KGZucvT+j0RsjpDn0bg/1V5oOsS
- Z09RPrBjvlr2ZXBntEa5Qx6W4rc0bCCwsmhK3WYiJOvrDXFmXDxNkHhmT/eEqHdZy5eyOhqp9
- ZJuTH3XRw7ZNmqHpTkj9+QcKAfaUqAIAG+CM4W0Wx5hhWy+Gzcl+HMsxqzbtkb4k1o31JbL9D
- LVBtX8VwbZHMkGAAGCrFKdYUQo9FXPg+Gp72p5dFsFwOJqermJmBwYsinqA26R7recM6XKonL
- /dg1ywD1rFlcqgjaZtceDmWkXikopb8svmPPu04C9rX0r8plsjGulbvVX1HfTtg27gj5DeGDD
- iVDAi9Uu6XZNpbkODBKRgmPNNO19SCXkkbFZI9UHWRmioYyVZjQ2dYOUrjZnawHy/EI1CMdFy
- tsQqKXnIHyMqU+OVR/oQBBqKJRgEIShrIcxB21ExkhDLSBpV03g+AEV4YtKOD/oPVtrlQjHsf
- AQNF9uZQozo2Jqn7oiavZsXS3iFIajF3g/mGYL6gcLYPXDgxlodxHbdaMuWHIv/a7Rp2Lfbtf
- +0L+076GIL9W717WBIRY5zUKeGusgsixuAVesBpDRiadcg69wg5nqY0R1/TA/49WIz6zFOuue
- uJezsNRkuAqwRqaIp7bjZoqYC6T9t4KIOgUTI4ScLSbujmSnEgnyRUVgpxOOW2oyRQK54r5jW
- ikmTT11LFHS0pfccrVni8xcF+40ugDdzpVD6FO3e/xi0lI9rO7Z1ENx6tQqLw1yNZYRF6EdFu
- SsliDzRdyMNcC9HMsk3d78KjZGT/5KtlszKfpIs3wnHUl8tsjRmxtyEJovdJtsICVdj3WWjbB
- ZKZrtnlPBbLDfEFaQ9OBwfY9Oy90Iyr0A3k+lV42HyzLBFAqRC4myRH4n7UQcIDb5t8ja8xKR
- c2t1b/JfUMdvvyNZmd9VxPdVKBE+SFIGog7/WUVGKCHFxYBoEq7O7cCh0rBydZHUWjgj0EhYv
- DIqQO4vYXk70Nb3kPFlFzDsQwtbYLG+0EzAF67PHB+HAeCBMsIHLnraPsRaj6aNkZb8fSC7Af
- Q3mENYIjciF1d59/G2mQk+vQqPv2j3EnR33NXVVf2xqX/cFmeacPfBd/fEUIlVv/8QTP92pG4
- kH7MORdAoIffkGon9iJsdQbJw1J4qMJXPRRRxs5R2s7ROnVnQCcjTNXlLbbMunpOpwAwpuzS/
- OhqWnr95A2uVzkQxbG52zprTzbyred4n/1EHpt8TDteQMYdTz1Ufo8yi+5w72HtztTuziffta
- G3s7fok9gWo4RPr87xOryJZsdfOde6JdGcNjdX3OiOcxmKVr/C2WSKcFFiqLmCEl9EWYDXqYc
- M73jmc54jiBW/XInytSDdwoXqcmltop0uI8ennQogqhNx622uy/SGwr6DkBYAf571Vh8P1WST
- QWv+gnOBHKgrWYh/4q8sjTxrw4fcPxGyb0Co37hGXXQ/hb4tb1ijQ77UJtI8q26ldntv9dnd3
- pEDk8JZtMOmam4NLz9018FnyMdecsM0M1phY7sghXoiNHnGwAGiwfksUbtzBUtHDfcS+3Yxud
- Hp9DumpuwQWFowY9dOdFpY6U4zwsHA0i4/fM8wtwOyj6vN9Ly1ulfberFkI4WyFrCIUCmvT0s
- /NVsC5ZyKAzEJnUZJpBPdt86cCqPJEgsWACI2tEIr2dlqL5N14PGaamR7k5ydBQAFfW1o/Oqp
- noSIEVtdSW1SmwlSBAF0/whql6YEdt7NhpxZpDO163sBO/QDVOXf+yxIajUYGF9iiq7Twf7Ra
- yxGEjlH0x82eNmjLNzl7Zga+v9EzHEYHcj3HtZDlLj3FqH9SbUNeqRd6pd296rnhq8qH6mWr/
- /hCq7YpzR1MWD9asRoBGmJ/S+U0eIQOXvTiLk2PvfhtVhz2qy3+S3oTgqar8w9BIeikgOnkQt
- WKPVxg/bNOiW6dkU4PbFhJgx0rYbODE6X3xYBcj21AGf7q9ICTF3sDk/k0OFymeMRy8ctbdnv
- tUqzzVBseFnrAH8wnqHk/cmvts7TYZqBr7a+Om1UVlrmB8FxLydiMfk3rw0suj467HRBtg9IB
- 6xcsursa+elai4HUlX4LwBSWtuc3QJxP8zxeJvxMVvt7THJC7hx+IuGmwZAafjLjK2fn7wRti
- 0nnR5pr7iP4zi2it6XZeRvmFpyBArd+cONkzEjKgRs0AVK+qEFMc1cOgyqmz8bw0ZoREeSNbc
- dlCWAtb4D4gSVekifUR+uUjgIjLmwVSnn4V7POu2JyFpFZavroO5fiW/KsIBDVvaYtgPxaKvr
- xv2t3zSCIdrskbRWSUvzdmumm4trjWhRGBXh/qSPF1wc9axW/1x9YzzRUCQA5diIteMxzDBZJ
- 48oqdgUGNzUhicyHIc35EAhAWzbaHBV5ZcDkli4lrvjEWKBITwgprFkbcTeWHkGRIAd45amq0
- ejcvB8flVs/oVwp/d4gx5Y9fguYrPx0s9ZQu0elzTu9nqyWk8nLG/n/yVc9kVB/PYo0ATfEMt
- 5Yi6N3k0VK98fUrTn5b3szopHAq7JdiHQDXEMRM8r0TkEUXi9ocfq0bPt6rFrMzvXKJxZIQU9
- GGakgJ9syaT7W3+3YEnFaqNuldF4cxSQZ7ZdmZYW6tTqxZquQ6kR+y8sqeNxrU4MS2FpHDFN5
- GP5Prz2+94bURvfgunbOQAbtNqCpowBCDJv1WHBJ1xk9g4irE/3HzpVNuDW3GBO7X6sGqXLPx
- zIj1a2NeZZFsiZcFxdayQlAkVO+8X8nlHAw+2Igd5IiZIC0KYWPL4MXVa9p7lJ6gW72bGNrE8
- 5lRhzFn471kSVxEff/DKc8OG+vqDRTMPZ3DdqJF+Fag61J3qkFYe/XL7TebHNCQMyMRU8Ez75
- +3fXNGLYv/pBdD/7W62ozVqvn6ocOdSb+V36Ds5Uwts4G8lWzW4PXLHiGMAU9ziTJ3Z3KnNQG
- gSqWot0o4S+Q2zq79zVzRQo+tg50QWdOWQgOOPr/3c6PHncVHPXTw1jab8zYIze7rmk9qdBCH
- GIcCUo/NdpMHUBQJnI1XYFt9K+126eGvICSpkDRtVST0abAOYpGf1fjsiSKKMDLIaqDzkHtIi
- hNJMcidHVkq/TeoqBWBsc+FVSkNkksZMwnVDoPf10oNhaZnPADghm6ZTLlT98AKZ8/dDiT5xP
- ctEfrFQ6mwn0Uky1wNllhXx3ctJocSgwdYxyUg0mjJjNN8Np/0qFTCeissbXQRPOvCGjwhP5S
- vZRLKN995IQgTU+NkLl2HbHL/AZS4SHe7mfwUSKQCK3bny4lpveYHe9N08B+SFJPkYNy4fTqw
- Mag/LzXblhFGvDm++CbAfS4g+XSHSDIgFHwwtvOx98Mh2pn9Q05UjWnMALb0rntHnKCTyuN9l
- p2XTayIcZNAWIm5vJE1IAZbNHZpGX0qSA5QXChQzEj/7sH0DWDjI/cWPT8NkABArR6hgAKWtI
- 1g3G9N9Keb1Lxl3kTej7BeHScghxOT29mQ9aiHuK8wtyvS1tI2haNjRLM3p4DJR0nv1L/ty0h
- bQ73DfORVuGWuHQGvjCsTV1w5GrEM31MSTJxQB7IwDxNS1X8QJig7nzZirZqNpk+nXTm3gwnN
- w5gZ+qi5RJQjVSg7sujgzrfiW/0cpvabIbgg+n2/ygHiUka0dqio0bsA8Sywed6MICTvhN3em
- h7GqsW4hXlwF/IoszGisWRn2NloH6j++2Jnkgxffri3WalEjlp66DPZHe2dwyOeRR2KA2i1nJ
- FsgAenGsTOj16JnvziKnfzLS4wjxbujGVCs3OF/MC3XfyUaSVOdhs5E2kK3ibg+uLvvWCKsc3
- 2rjE7yiqcGQcXcThk2S6SGRU7AYh0z4CkLkdyCNXwj2TTz0YMKgt6zsElVhSnuFkBTOtp8u+v
- tHoA2o/03f3yt8PVoh0IelqZbe03CLLAYMx8vTV1qPG2rdVgFPy6rsh0s92XtUUky/Z4zuBRh
- Yfs2bM8KkPpkJNanhn32cWtKlgSyAwc0YbPygGOMElicb8dHmw3EVRZ4OucyQD1/GF05jfkRV
- HLikRsLcE7CFRdkgUaNj/HL35v+MLC/QqXvf8kZ0b0yF9GKMsT++cT5NMopIA8jOZPfLu1dm/
- WCBfDD9NSUWb3908z38XmB7up5Jc/4NlOMPT/1WpTtB7NIug43rAMfYGBGnZSihT/1bwaeQR7
- IFfQHkrZ6RrpRYnFMunXZG4JOrUThPRnmTHHWZ2e7LSIeA6fSQJrMC9ha25OKKyXQaKhOgmSO
- 0grSrNDRGLvA7roKXxLbdj5zn4AwnkHkKRl29pxb5OCPP6ZnupljVCnc7GtRTKtstpO42D/aO
- TWBxRhWVJXit+jK3MeYjLS2fq7bMveV0euZn9iJQR+tAhleqwtmod2d+ssjsmwTQMdHU2LdhC
- p+9NF7I5YhMzK2G/4YffdX59UyP35DLcWOQQ1ZG+FrIxwz9NoCkZzak6flgZD8ToQ1+S55M03
- RQvVGqisjU7uwcZTwEMZRM80HcKG7qhvQdD257LgfbNn4+v2J8tgKMzvwmtTuYQ+5X2g3XyaX
- I/VRYCdMmoQnv5ygw+ZTfbx03emKy/d/g6REjFcgqQId0GX/NNdcIH3pDfIzIX4Kk714gA9Ra
- M6XMhnsUVZHSOYQ51KA5G7ppcOpi8qcj88pgFpPI+ENWg4EAhWp2OEBnY+sCiXgteN5rav1mm
- IeMAILs9HUmEasBBDM6v6pqcg6wtA+bLX3eazIKZ5NfisW0ODZ8SKmcxa99LdJVUodkhxkmyz
- woQywJYYB6R1+uA/0UEtQyumS55n/MW2t/Afc48QxJzKHK7L1z6aikbmgTE6X4+WrC+CdwM=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqLo8WbHMtjdbsauncusFh--OkNWXcN_pkpPxxT8xAmBNA@mail.gmail.com>
+User-Agent: NeoMutt/20250510
 
-Please choose a more appropriate patch subject.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc4#n638
+On 03.09.2025 10:29, Rob Herring wrote:
+> On Wed, Sep 3, 2025 at 7:44 AM Jan Palus <jpalus@fastmail.com> wrote:
+> >
+> > On 02.09.2025 17:13, Klaus Kudielka wrote:
+> > > The blamed commit simplifies code, by using the for_each_of_range()
+> > > iterator. But it results in no pci devices being detected anymore on
+> > > Turris Omnia (and probably other mvebu targets).
+> > >
+> > > Analysis:
+> > >
+> > > To determine range.flags, of_pci_range_parser_one() uses bus->get_flags(),
+> > > which resolves to of_bus_pci_get_flags(). That function already returns an
+> > > IORESOURCE bit field, and NOT the original flags from the "ranges"
+> > > resource.
+> > >
+> > > Then mvebu_get_tgt_attr() attempts the very same conversion again.
+> > > But this is a misinterpretation of range.flags.
+> > >
+> > > Remove the misinterpretation of range.flags in mvebu_get_tgt_addr(),
+> > > to restore the intended behavior.
+> > >
+> > > Signed-off-by: Klaus Kudielka <klaus.kudielka@gmail.com>
+> > > Fixes: 5da3d94a23c6 ("PCI: mvebu: Use for_each_of_range() iterator for parsing "ranges"")
+> > > Reported-by: Bjorn Helgaas <helgaas@kernel.org>
+> > > Closes: https://lore.kernel.org/r/20250820184603.GA633069@bhelgaas/
+> > > Reported-by: Jan Palus <jpalus@fastmail.com>
+> > > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220479
+> > > ---
+> > >  drivers/pci/controller/pci-mvebu.c | 14 ++------------
+> > >  1 file changed, 2 insertions(+), 12 deletions(-)
+> > >
+> > > diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controller/pci-mvebu.c
+> > > index 755651f338..4e2e1fa197 100644
+> > > --- a/drivers/pci/controller/pci-mvebu.c
+> > > +++ b/drivers/pci/controller/pci-mvebu.c
+> > > @@ -1168,9 +1168,6 @@ static void __iomem *mvebu_pcie_map_registers(struct platform_device *pdev,
+> > >       return devm_ioremap_resource(&pdev->dev, &port->regs);
+> > >  }
+> > >
+> > > -#define DT_FLAGS_TO_TYPE(flags)       (((flags) >> 24) & 0x03)
+> > > -#define    DT_TYPE_IO                 0x1
+> > > -#define    DT_TYPE_MEM32              0x2
+> > >  #define DT_CPUADDR_TO_TARGET(cpuaddr) (((cpuaddr) >> 56) & 0xFF)
+> > >  #define DT_CPUADDR_TO_ATTR(cpuaddr)   (((cpuaddr) >> 48) & 0xFF)
+> > >
+> > > @@ -1189,17 +1186,10 @@ static int mvebu_get_tgt_attr(struct device_node *np, int devfn,
+> > >               return -EINVAL;
+> > >
+> > >       for_each_of_range(&parser, &range) {
+> > > -             unsigned long rtype;
+> > >               u32 slot = upper_32_bits(range.bus_addr);
+> > >
+> > > -             if (DT_FLAGS_TO_TYPE(range.flags) == DT_TYPE_IO)
+> > > -                     rtype = IORESOURCE_IO;
+> > > -             else if (DT_FLAGS_TO_TYPE(range.flags) == DT_TYPE_MEM32)
+> > > -                     rtype = IORESOURCE_MEM;
+> > > -             else
+> > > -                     continue;
+> > > -
+> > > -             if (slot == PCI_SLOT(devfn) && type == rtype) {
+> > > +             if (slot == PCI_SLOT(devfn) &&
+> > > +                 type == (range.flags & IORESOURCE_TYPE_BITS)) {
+> > >                       *tgt = DT_CPUADDR_TO_TARGET(range.cpu_addr);
+> > >                       *attr = DT_CPUADDR_TO_ATTR(range.cpu_addr);
+> >
+> > Thanks for the patch Klaus! While it does improve situation we're not
+> > quite there yet. It appears that what used to be stored in `cpuaddr` var
+> > is also very different from `range.cpu_addr` value so the results
+> > in both `*tgt` and `*attr` are both wrong.
+> >
+> > Previously `cpuaddr` had a value like ie 0x8e8000000000000 or
+> > 0x4d0000000000000. Now `range.cpu_addr` is always 0xffffffffffffffff.
+> > Luckily what used to be stored in `cpuaddr`:
+> 
+> ~0 is OF_BAD_ADDR which means we couldn't translate the address. Seems
+> it is not needed here, but it should work. Can you define DEBUG in
+> drivers/of/address.c and post the log?
 
+All of OF: entries from pci initialization (with explicit marks where
+mvebu_get_tgt_attr() enters and exits):
 
-> Move the of_parse_phandle() call after devm_kzalloc() and add the missing
-> of_node_put() call immediately after of_address_to_resource() to properly
-> release the device node reference.
+mvebu-pcie soc:pcie: host bridge /soc/pcie ranges:
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00080000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000080000
+OF: parent translation for: f1000000
+OF: with offset: 80000
+OF: one level translation: f1080000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00040000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000040000
+OF: parent translation for: f1000000
+OF: with offset: 40000
+OF: one level translation: f1040000
+OF: reached root node
+mvebu-pcie soc:pcie:      MEM 0x00f1080000..0x00f1081fff -> 0x0000080000
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00040000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000040000
+OF: parent translation for: f1000000
+OF: with offset: 40000
+OF: one level translation: f1040000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00044000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000044000
+OF: parent translation for: f1000000
+OF: with offset: 44000
+OF: one level translation: f1044000
+OF: reached root node
+mvebu-pcie soc:pcie:      MEM 0x00f1040000..0x00f1041fff -> 0x0000040000
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00044000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000044000
+OF: parent translation for: f1000000
+OF: with offset: 44000
+OF: one level translation: f1044000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00048000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000048000
+OF: parent translation for: f1000000
+OF: with offset: 48000
+OF: one level translation: f1048000
+OF: reached root node
+mvebu-pcie soc:pcie:      MEM 0x00f1044000..0x00f1045fff -> 0x0000044000
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00048000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000048000
+OF: parent translation for: f1000000
+OF: with offset: 48000
+OF: one level translation: f1048000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e8000000000000
+OF: not found !
+mvebu-pcie soc:pcie:      MEM 0x00f1048000..0x00f1049fff -> 0x0000048000
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e0000000000000
+OF: not found !
+mvebu-pcie soc:pcie:      MEM 0xffffffffffffffff..0x00fffffffe -> 0x0100000000
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e8000000000000
+OF: not found !
+mvebu-pcie soc:pcie:       IO 0xffffffffffffffff..0x00fffffffe -> 0x0100000000
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e0000000000000
+OF: not found !
+mvebu-pcie soc:pcie:      MEM 0xffffffffffffffff..0x00fffffffe -> 0x0200000000
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04d80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4d8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4d8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4d8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4d8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4d8000000000000
+OF: not found !
+mvebu-pcie soc:pcie:       IO 0xffffffffffffffff..0x00fffffffe -> 0x0200000000
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04d80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4d8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4d8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4d8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4d8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4d8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04d00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4d0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4d0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4d0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4d0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4d0000000000000
+OF: not found !
+mvebu-pcie soc:pcie:      MEM 0xffffffffffffffff..0x00fffffffe -> 0x0300000000
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04d00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4d0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4d0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4d0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4d0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4d0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04b80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4b8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4b8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4b8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4b8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4b8000000000000
+OF: not found !
+mvebu-pcie soc:pcie:       IO 0xffffffffffffffff..0x00fffffffe -> 0x0300000000
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04b80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4b8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4b8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4b8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4b8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4b8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04b00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4b0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4b0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4b0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4b0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4b0000000000000
+OF: not found !
+mvebu-pcie soc:pcie:      MEM 0xffffffffffffffff..0x00fffffffe -> 0x0400000000
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04b00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4b0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4b0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4b0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4b0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4b0000000000000
+OF: not found !
+mvebu-pcie soc:pcie:       IO 0xffffffffffffffff..0x00fffffffe -> 0x0400000000
 
-How do you think about to increase the application of scope-based resource management?
-https://elixir.bootlin.com/linux/v6.17-rc4/source/include/linux/of.h#L138
+mvebu_get_tgt_attr() start
 
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00080000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000080000
+OF: parent translation for: f1000000
+OF: with offset: 80000
+OF: one level translation: f1080000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00040000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000040000
+OF: parent translation for: f1000000
+OF: with offset: 40000
+OF: one level translation: f1040000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00040000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000040000
+OF: parent translation for: f1000000
+OF: with offset: 40000
+OF: one level translation: f1040000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00044000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000044000
+OF: parent translation for: f1000000
+OF: with offset: 44000
+OF: one level translation: f1044000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00044000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000044000
+OF: parent translation for: f1000000
+OF: with offset: 44000
+OF: one level translation: f1044000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00048000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000048000
+OF: parent translation for: f1000000
+OF: with offset: 48000
+OF: one level translation: f1048000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00048000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000048000
+OF: parent translation for: f1000000
+OF: with offset: 48000
+OF: one level translation: f1048000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e0000000000000
+OF: not found !
 
-> Found via static analysis.
+mvebu_get_tgt_attr() end
 
-Which concrete software tools would be involved for this purpose?
+mvebu_get_tgt_attr() start
 
-Regards,
-Markus
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00080000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000080000
+OF: parent translation for: f1000000
+OF: with offset: 80000
+OF: one level translation: f1080000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00040000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000040000
+OF: parent translation for: f1000000
+OF: with offset: 40000
+OF: one level translation: f1040000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00040000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000040000
+OF: parent translation for: f1000000
+OF: with offset: 40000
+OF: one level translation: f1040000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00044000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000044000
+OF: parent translation for: f1000000
+OF: with offset: 44000
+OF: one level translation: f1044000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00044000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000044000
+OF: parent translation for: f1000000
+OF: with offset: 44000
+OF: one level translation: f1044000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00048000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000048000
+OF: parent translation for: f1000000
+OF: with offset: 48000
+OF: one level translation: f1048000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00048000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000048000
+OF: parent translation for: f1000000
+OF: with offset: 48000
+OF: one level translation: f1048000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04d80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4d8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4d8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4d8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4d8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4d8000000000000
+OF: not found !
 
+mvebu_get_tgt_attr() end
+
+mvebu-pcie soc:pcie: pcie1.0: Slot power limit 10.0W
+
+mvebu_get_tgt_attr() start
+
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00080000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000080000
+OF: parent translation for: f1000000
+OF: with offset: 80000
+OF: one level translation: f1080000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00040000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000040000
+OF: parent translation for: f1000000
+OF: with offset: 40000
+OF: one level translation: f1040000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00040000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000040000
+OF: parent translation for: f1000000
+OF: with offset: 40000
+OF: one level translation: f1040000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00044000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000044000
+OF: parent translation for: f1000000
+OF: with offset: 44000
+OF: one level translation: f1044000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00044000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000044000
+OF: parent translation for: f1000000
+OF: with offset: 44000
+OF: one level translation: f1044000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00048000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000048000
+OF: parent translation for: f1000000
+OF: with offset: 48000
+OF: one level translation: f1048000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00048000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000048000
+OF: parent translation for: f1000000
+OF: with offset: 48000
+OF: one level translation: f1048000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04d80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4d8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4d8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4d8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4d8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4d8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04d80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4d8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4d8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4d8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4d8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4d8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04d00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4d0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4d0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4d0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4d0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4d0000000000000
+OF: not found !
+
+mvebu_get_tgt_attr() end
+
+mvebu_get_tgt_attr() start
+
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00080000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000080000
+OF: parent translation for: f1000000
+OF: with offset: 80000
+OF: one level translation: f1080000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00040000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000040000
+OF: parent translation for: f1000000
+OF: with offset: 40000
+OF: one level translation: f1040000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00040000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000040000
+OF: parent translation for: f1000000
+OF: with offset: 40000
+OF: one level translation: f1040000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00044000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000044000
+OF: parent translation for: f1000000
+OF: with offset: 44000
+OF: one level translation: f1044000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00044000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000044000
+OF: parent translation for: f1000000
+OF: with offset: 44000
+OF: one level translation: f1044000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00048000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000048000
+OF: parent translation for: f1000000
+OF: with offset: 48000
+OF: one level translation: f1048000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: f0010000 00048000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000048000
+OF: parent translation for: f1000000
+OF: with offset: 48000
+OF: one level translation: f1048000
+OF: reached root node
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 08e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=8e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=8e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=8e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04e00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4e0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4e0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4e0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04d80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4d8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4d8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4d8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4d8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4d8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04d80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4d8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4d8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4d8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4d8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4d8000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04d00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4d0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4d0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4d0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4d0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4d0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04d00000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4d0000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4d0000000000000
+OF: default map, cp=919000000000000, s=10000, da=4d0000000000000
+OF: default map, cp=915000000000000, s=10000, da=4d0000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4d0000000000000
+OF: not found !
+OF: ** translation for device /soc/pcie **
+OF: bus is default (na=2, ns=1) on /soc
+OF: translating address: 04b80000 00000000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=4b8000000000000
+OF: default map, cp=11d000000000000, s=100000, da=4b8000000000000
+OF: default map, cp=919000000000000, s=10000, da=4b8000000000000
+OF: default map, cp=915000000000000, s=10000, da=4b8000000000000
+OF: default map, cp=c04000000000000, s=100000, da=4b8000000000000
+OF: not found !
+
+mvebu_get_tgt_attr() end
+
+mvebu-pcie soc:pcie: pcie2.0: Slot power limit 10.0W
+OF: ** translation for device /soc/pcie/pcie@2,0 **
+OF: bus is pci (na=3, ns=2) on /soc/pcie
+OF: translating address: 82001000 00000000 00040000
+OF: parent bus is default (na=2, ns=1) on /soc
+OF: walking ranges...
+OF: default map, cp=80000, s=2000, da=40000
+OF: default map, cp=40000, s=2000, da=40000
+OF: parent translation for: f0010000 00040000
+OF: with offset: 0
+OF: one level translation: f0010000 00040000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000040000
+OF: parent translation for: f1000000
+OF: with offset: 40000
+OF: one level translation: f1040000
+OF: reached root node
+OF: ** translation for device /soc/pcie/pcie@3,0 **
+OF: bus is pci (na=3, ns=2) on /soc/pcie
+OF: translating address: 82001800 00000000 00044000
+OF: parent bus is default (na=2, ns=1) on /soc
+OF: walking ranges...
+OF: default map, cp=80000, s=2000, da=44000
+OF: default map, cp=40000, s=2000, da=44000
+OF: default map, cp=44000, s=2000, da=44000
+OF: parent translation for: f0010000 00044000
+OF: with offset: 0
+OF: one level translation: f0010000 00044000
+OF: parent bus is default (na=1, ns=1) on 
+OF: walking ranges...
+OF: default map, cp=f001000000000000, s=100000, da=f001000000044000
+OF: parent translation for: f1000000
+OF: with offset: 44000
+OF: one level translation: f1044000
+OF: reached root node
+mvebu-pcie soc:pcie: PCI host bridge to bus 0000:00
 
