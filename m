@@ -1,115 +1,142 @@
-Return-Path: <linux-kernel+bounces-798327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF79B41C59
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:54:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 923D1B41C5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61890560FD2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:54:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563C3561282
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A0D2FB99E;
-	Wed,  3 Sep 2025 10:52:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC912FB63F;
-	Wed,  3 Sep 2025 10:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB602F39DA;
+	Wed,  3 Sep 2025 10:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ReawGCfP";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lGL7uF8M";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ReawGCfP";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lGL7uF8M"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677852F39D3
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756896732; cv=none; b=LUWnRbKw15mT0heXU3GTdC18YlOM6evDNS/TUS9oaDPi+yo4pgTWLzW+MXMTHgQYXu7h5thwCELfnR4R398/eZkqHeklYejvXulKu0T4cUGVnKKIVUqpCB5N889yvUA+EmNIr0DgqhT2v7aP9dn/Rpl1dGI7PCLxeignokSHD08=
+	t=1756896749; cv=none; b=BhMn+1/I4/lqSCJEz5YnGFznPMg8jm8N3dohjj8aIGYoOz2zY3+98uhxc9fbHv6XBOODeNgDXokQCt4Nu4vDIxec99CBYzlRgX6f5hrxec5gosy2EaT+pQ/nYgpZSEDezr7+Ep/sOn10KsQjISuPooGTPDtCJqfwvt5/3KIyrIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756896732; c=relaxed/simple;
-	bh=w7nuUSP0f817FXPXAUem6RI/OKXBGEG3thaO9lBwwTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o/hufiGEYS5Qz+d9VE6vYinDERefyDsTYMP+hKBYxv/ZwTH3yW1GGd8TKrhWFZlRJIChzNqFsUN1pqNGvkNVr+awsjUF4njavin21B9N/zQe83Mu1+T+YAvXsE32Q8JxVbmPZJQHZNiv9VTJahbCO+gH60fl16ijFW5wY9DzmAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C72914BF;
-	Wed,  3 Sep 2025 03:52:02 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ACADB3F694;
-	Wed,  3 Sep 2025 03:52:06 -0700 (PDT)
-Date: Wed, 3 Sep 2025 11:52:03 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org,
-	oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org,
-	james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com,
-	ahmed.genidi@arm.com, kevin.brodsky@arm.com,
-	scott@os.amperecomputing.com, mbenes@suse.cz,
-	james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org,
-	pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com,
-	maz@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 0/5] initialize SCTRL2_ELx
-Message-ID: <aLgd0/7peYBA4z87@e133380.arm.com>
-References: <20250821172408.2101870-1-yeoreum.yun@arm.com>
- <aLW5OIgv8/bvvY9E@e133380.arm.com>
- <aLXjVNCbT6YeWlSS@e129823.arm.com>
+	s=arc-20240116; t=1756896749; c=relaxed/simple;
+	bh=nO9g3PNXhwTLKuaA2Jm4zlIfcuIINjcXTwiFdT85LUY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CVNndXRfTmxytP4mE+xpfhBkBVCBwN2isuDnjYA284XTDonUrDEDepQaGEnZSm1V9F9rUgbQlDUUQjKL30ofaaEKKFVbfLDfFK1JRSxMUM7uRPJ+sCQiMbyOcUQ5DNqq1v7v5HLIkpicSwCMUHLGgdKQ2FZuIvG7bI6K+bmzT3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ReawGCfP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lGL7uF8M; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ReawGCfP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lGL7uF8M; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 82F0F1F456;
+	Wed,  3 Sep 2025 10:52:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756896745; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SnMOUYeZoFXkfeNuRCqWig5KNvw7Qlwif546rjx2fGc=;
+	b=ReawGCfPiV9LEelH6cW6IkvDBRd8ncVPj3hLP2aO1u2rxIE5yRcHLh5c5kbL08+7bCZEQC
+	8uK1etXrJI7El9u63QgMUg++UwG/r2zbQMR+D3ZIoc4q8yFLWXTmlTrrFGLJec5oVdODfT
+	giY3j3gLj+y3aTcGP2o1Bda7N1EJgo0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756896745;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SnMOUYeZoFXkfeNuRCqWig5KNvw7Qlwif546rjx2fGc=;
+	b=lGL7uF8MNkBZ+XZo4oyF5Q8wc0LR4m3KBs6sVEUD72IeaRJKwahPsddmonJJSjH8CanV86
+	TzfsbGrprk48tyDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756896745; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SnMOUYeZoFXkfeNuRCqWig5KNvw7Qlwif546rjx2fGc=;
+	b=ReawGCfPiV9LEelH6cW6IkvDBRd8ncVPj3hLP2aO1u2rxIE5yRcHLh5c5kbL08+7bCZEQC
+	8uK1etXrJI7El9u63QgMUg++UwG/r2zbQMR+D3ZIoc4q8yFLWXTmlTrrFGLJec5oVdODfT
+	giY3j3gLj+y3aTcGP2o1Bda7N1EJgo0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756896745;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SnMOUYeZoFXkfeNuRCqWig5KNvw7Qlwif546rjx2fGc=;
+	b=lGL7uF8MNkBZ+XZo4oyF5Q8wc0LR4m3KBs6sVEUD72IeaRJKwahPsddmonJJSjH8CanV86
+	TzfsbGrprk48tyDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 44A5A13888;
+	Wed,  3 Sep 2025 10:52:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BEyMD+kduGgSDgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 03 Sep 2025 10:52:25 +0000
+Date: Wed, 03 Sep 2025 12:52:24 +0200
+Message-ID: <87qzwnvmdz.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Cryolitia PukNgae <cryolitia@uniontech.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	linux-sound@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: docs: Remove 3rd person singular s in *to indicate*
+In-Reply-To: <20250903100842.267194-1-pmenzel@molgen.mpg.de>
+References: <20250903100842.267194-1-pmenzel@molgen.mpg.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLXjVNCbT6YeWlSS@e129823.arm.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-Hi,
-
-On Mon, Sep 01, 2025 at 07:17:56PM +0100, Yeoreum Yun wrote:
-> Hi Dave,
+On Wed, 03 Sep 2025 12:08:41 +0200,
+Paul Menzel wrote:
 > 
-> > On Thu, Aug 21, 2025 at 06:24:03PM +0100, Yeoreum Yun wrote:
-> > > This series introduces initial support for the SCTLR2_ELx registers in Linux.
-> > > The feature is optional starting from ARMv8.8/ARMv9.3,
-> > > and becomes mandatory from ARMv8.9/ARMv9.4.
-> > >
-> > > Currently, Linux has no strict need to modify SCTLR2_ELx--
-> > > at least assuming that firmware initializes
-> > > these registers to reasonable defaults.
-> > >
-> > > However, several upcoming architectural features will require configuring
-> > > control bits in these registers.
-> > > Notable examples include FEAT_PAuth_LR and FEAT_CPA2.
-> >
-> > This looks OK to me now, except for one or two minor issues (see
-> > replies to the patches).
-> >
-> > I think we will need a way of testing all the code paths before this
-> > should be merged, though.
-> >
-> > Have you tested all the code paths, or are there some things that have
-> > not been tested?
-> 
-> I've tested for pKVM, nested and nhve and crash path
-> (I do my best what can I do for modified path).
+> Fixes: 78811dd56def ("ALSA: docs: Add documents for recently changes in snd-usb-audio")
+> Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
 
-Was that just confirming that the kernel boots / does not crash?
+Applied now.  Thanks.
 
-What about CPU suspend/resume and hotplug?
 
-My concern is that most of the defined SCTLR2_ELx bits won't affect
-kernel execution unless the corresponding hardware features are
-actively being used -- so while we know that the patches don't break
-the kernel, this may not prove that SCTLR2_ELx is really being
-initialised / saved / restored / reset correctly.
-
-> > Since this code is not useful by itself, it may make sense to delay
-> > merging it until we have patches for a feature that depends on SCTLR2.
-> 
-> Whatever I pass this detiermination for maintainer.
-
-Sure, that's just my opinion.
-
-Either way, this doesn't stop anyone from building support for specific
-features on top of this series before it gets merged.
-
-Cheers
----Dave
+Takashi
 
