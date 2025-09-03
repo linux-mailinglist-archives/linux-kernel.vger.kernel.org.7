@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-797669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD96B4134A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:57:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA4F0B4134D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C34E547FEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77D575E60C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA9533E7;
-	Wed,  3 Sep 2025 03:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F350F2D0C8B;
+	Wed,  3 Sep 2025 03:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SIv2BiEm"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="glEped29"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE2C2D0637
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 03:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED162C324D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 03:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756871865; cv=none; b=tawzYABZmeuUAVtXK54RYQib2lqh3JYv54QfQAZ7m0DQGE1kal3lgAYd31X976SCbVO0Oi7FiO7MG+96pcCdl8HL3pFkyIgudRDbCJxzySpTW2CnuhY4bZn4/31TN2bKOtS4Cx96mjPkWCKS0fL0beaEfyzTo4Cm84vSSi49YmE=
+	t=1756871913; cv=none; b=pZ4YZwutp6qonDkwZDRhVYyQ5CBLZITHEsHLYEbEcxOb7iZ3H0MrQZnIpmofv1VNqzFMy60kZPTWMji1890y7gAk0iUvs6R4W3/DgPphD4v8EPjZUON9k1RcOPYKuWLtvq4ssAfzrXtgZ1nDMwtSyFGTDrrY49Qd2tGEhFdYjC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756871865; c=relaxed/simple;
-	bh=A7ssKPkqIDibigKVgV/mQDJH2sZnTU82jjxAnNgso+g=;
+	s=arc-20240116; t=1756871913; c=relaxed/simple;
+	bh=vMknnbbQmYzTOFy2Csd2WCcR3K2hCxpNauH+LM1kfoI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MCcJwwEzRTJibyuy00p3glZy38w/1AgWwtut1HVgv3mQmm3j55zDFdq6TCWL2UYnxaNEvbuMCB9zyybUr//xaG1gqP4ACQqZAamlKK4dB9jmmtBBvfCpU+zI8FY8/6AB4xRB/CDXkf5mTKCfRSUa4JeUrGGYwnetnmkkqeL6qA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SIv2BiEm; arc=none smtp.client-ip=170.10.129.124
+	 To:Cc:Content-Type; b=GAtva54vLEEupvtrNuZUB5aBwo6NCrCEatUUa3YPIUzrDn/pef2Vi05FEC0S2Efc7vdyrqR2YFteJtR8RlDh9ReElWmS1sbDiZyON1MFlfPbukMQj/JCxumD7cjVAFhI3iNu80RNH1GjpU7hfyFT3qW1XL72hfInGo2PfA9jY74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=glEped29; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756871861;
+	s=mimecast20190719; t=1756871910;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8FMeOQhsZ/Bz1a50krITAkDUmAVmdmpSJmIX2uvA258=;
-	b=SIv2BiEmERfzQzVD5y6UBwZKoIDQYPnpuweLLsITANkPjUWrb54s4+eF78ef1wh5YfiIAg
-	b/xqqyKY3AGs7mjoLxEfu+1ASEnY2d22uiOocwMTfka4uIlAk61UX2KgEaEgCvUGy0pDLN
-	n10S7srf6hvQLIOdYeLbj9pTA0X3xhQ=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=sNvYNe5vg9ZjKfIbx4GJXjyG8dW0HQaniQkkjzhXIEE=;
+	b=glEped29BlAQFKdMVFaoiSiZdkNZ0jqYVT/KlVvktXiqxoD9SNuLcWHZSuw1cdr2SKoRXK
+	719TzKl3gfBg7/zm8OKQgw4xqnV/T9LIQsog6Zz1Yq81BBUwLuik9d5eLHA9AwL2FbLPAV
+	orVQmrsxoehzEtE7xXl8T58VRJ66mEo=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-103-F7_MuvrAM4KsHaNPbpwBIQ-1; Tue, 02 Sep 2025 23:57:39 -0400
-X-MC-Unique: F7_MuvrAM4KsHaNPbpwBIQ-1
-X-Mimecast-MFC-AGG-ID: F7_MuvrAM4KsHaNPbpwBIQ_1756871858
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-248eec89618so65163285ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 20:57:38 -0700 (PDT)
+ us-mta-513-n5xWyvv_Ouuf6NQ0kt-OSg-1; Tue, 02 Sep 2025 23:58:29 -0400
+X-MC-Unique: n5xWyvv_Ouuf6NQ0kt-OSg-1
+X-Mimecast-MFC-AGG-ID: n5xWyvv_Ouuf6NQ0kt-OSg_1756871908
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-329ee69e7deso1290372a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 20:58:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756871858; x=1757476658;
+        d=1e100.net; s=20230601; t=1756871908; x=1757476708;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8FMeOQhsZ/Bz1a50krITAkDUmAVmdmpSJmIX2uvA258=;
-        b=nbIrDs4ArB5qF93XI92l9U4x5Dt+MygcGE8H0yyybkCQSnjH3F5ZWP576UidB6EG1m
-         4IYkIEKP83mtwGnA0ak/7P51BegqfUa9TFGbAnXpbkKYEHi1wn2a5zk2GTls+E4Rv2zm
-         076+Yz2TXydAS1ApPs92q0vTSC0me7wCPxQ5TqvEqFXejPneFbEfQa7uLONSIaUUv4Tk
-         FeW1Z2ydshC3+pmFKmsKQyQGecaIo9W5eBeFNXGqWDhkFFEAS+knmlcYEdR4qgYDXhp9
-         WRRfurIAXMt3qw+Wh4CH+P9IkzylgCl4L7TX15fMy2nh/w7kfs9Zdy8SCrVe10m3k84M
-         vjYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdlrm0IqgdPotezI21DJ83O0ptwQdM3cql8YdshLDpM79AuNacOgKVKIIyFZvoJlxfKveBQkaNA+16YkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu6Ikf7SjMs5YDqb/kFzK5cHCKgPEmiLOnZIc07XMpexViVIft
-	0dbVJMHLJYii+FHMYCR8JS+gWkixkMXU5FCi3dxycDPoy9uX/+D769zEYZglXW82tY7PjY5k1cZ
-	g0udb/6tAtb+wP4H4kH3WCP2GMsCiwKTW0/ZcIRehTnmYfhOVIRZUJsCHsjmvDvU8yPMT7BN7GJ
-	pZr5o8fNwUsWm+ErYMW2Dq1vmMOWPIAYEuNCMjwjPj
-X-Gm-Gg: ASbGnctvE6/B8/K13pGl18rKe4MiixErp4xVRJ0BP4eNCU0/6xek4D+1yur7Jgz6nl8
-	e5YkCQpGJYhSqE0atu2plCXo43vixX+/k4+YI57u1HnuIZ0iwWU5xU/weopTGLA/NBaOb5FTdFY
-	kGygSvbwcWg4psERCmVl7ceQ==
-X-Received: by 2002:a17:903:3c45:b0:246:4eb3:9c08 with SMTP id d9443c01a7336-24944870a65mr173393675ad.5.1756871857882;
-        Tue, 02 Sep 2025 20:57:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFkE3iE/jqdcUHOgbC8sPvuCPSZCKKD0K/m8LwLji6un3PH2aumk05za/muG1bJ4viYeIzj5Ff9OEL5hv3VF8o=
-X-Received: by 2002:a17:903:3c45:b0:246:4eb3:9c08 with SMTP id
- d9443c01a7336-24944870a65mr173393355ad.5.1756871857260; Tue, 02 Sep 2025
- 20:57:37 -0700 (PDT)
+        bh=sNvYNe5vg9ZjKfIbx4GJXjyG8dW0HQaniQkkjzhXIEE=;
+        b=fALrEJ246chLw3GmOxSHB33FUnDGFVWDhI+SjlivdZ955oZ0cRBAeAo9fGEn/45J9I
+         HqmsoEtZT7JUeo5EDusahxhkDc+vMJlQZe+Su5AAWw7Hh6bseMCNzRjCJNB4T03e+PJj
+         5UxvOjns4iOvfyYXzn0qlX3DVbxy0kqGiwa3ViXgpCIs4vlrrZwvDSxIuKG7lVjUBG6L
+         8peH3yDM6rIDC5IcWupF/mQ6tKH+JcBNSZIx3OxSsenBN/SIBoKyaW8Fx02Sh1eXi4k3
+         KgtP33XwsgZEpPQ2BCQ0EL35U8O0LsUdGN++GtH8WrTwCHZg/W/kPirJK6S+u1f58lC+
+         GNfw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8yhgkXTutr4jWtBgjWa4XRZ+qLJ5VEBuOPO/m3PWaBbw7XjaAnx8FOo495bfaz4zP/snaZGcgXFIX6go=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVLyzRSFLGFqmmc09seCwSDAI+m1Wr4OlbtQcQywkpcyK2Bx05
+	na7/aKwH7dUxkaZ+yRFoHQrsXesTpRoo+rMzXPRABYmhjvgzqmVVjIPOKZUAWlxxNKGWHIOq9g6
+	uTVoXovs6PeC4lPEhIgkpzH6DySNnmoohq9WEmi5jALgGihROTiD7NHMEEY3tozIThU2aWB24Z/
+	ksRJgdVr5VFM66jvGBRGJCqd4Tz5EqPkg4PNDqu2+B
+X-Gm-Gg: ASbGncsM9si6+DrmeLwS2/M0WOK1p/3O2VNZxj9P9dU4ec8WZTaine9XDv28E+TSKYA
+	VbhXw7YDHCtWruQTZJjm6b07IBBlRmz7doQr2fUt/zGDP+gY5VaH35GJ+tGmougKuG6LQMUXtHq
+	Nmdk5bvWC3h7e+xpflgthTQA==
+X-Received: by 2002:a17:90b:35c3:b0:327:ced1:26e2 with SMTP id 98e67ed59e1d1-328156baf5amr18434116a91.18.1756871908150;
+        Tue, 02 Sep 2025 20:58:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGj/l9+XDmJEijKU+wd1/EfrIGEVTmiQHMGFvLZVwWY+MpGINUIbbo3w/Qh26mBLxXeGt+dZGVUhyR6UTD9/h0=
+X-Received: by 2002:a17:90b:35c3:b0:327:ced1:26e2 with SMTP id
+ 98e67ed59e1d1-328156baf5amr18434091a91.18.1756871907644; Tue, 02 Sep 2025
+ 20:58:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,9 +84,9 @@ References: <20250826112709.1051172-1-eperezma@redhat.com> <20250826112709.10511
  <CACGkMEvd9w_ijpf=+re8oUxUWfq6Q_0HaDM==_e65df3439k7w@mail.gmail.com> <CAJaqyWeHLw9CUEkH1KF8np2zJMC-zMRU6AFRJEhczzuF7MNU8A@mail.gmail.com>
 In-Reply-To: <CAJaqyWeHLw9CUEkH1KF8np2zJMC-zMRU6AFRJEhczzuF7MNU8A@mail.gmail.com>
 From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 3 Sep 2025 11:57:26 +0800
-X-Gm-Features: Ac12FXxQzUUcpGjD91I8f81-ocOtOBSKHxA1qUyDeVHyGayy8sNvtEGSiahbZ0Y
-Message-ID: <CACGkMEuoH3J9HwRU_G5wsDoeP7EjYfUU-aCDRbsjmcv45OG2mw@mail.gmail.com>
+Date: Wed, 3 Sep 2025 11:58:15 +0800
+X-Gm-Features: Ac12FXxSXhLTpVqItZbwqLFmkkE7aWjAaPiNbYHNxF5T95f90TGBfdwRbZ2e3zk
+Message-ID: <CACGkMEsUjfPadVi8Qr8L723mbQ_21WG7e07mDd79KDHFNn_AFw@mail.gmail.com>
 Subject: Re: [PATCH 2/6] vduse: add vq group support
 To: Eugenio Perez Martin <eperezma@redhat.com>
 Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
@@ -234,57 +234,10 @@ vice *vdpa, u8 status)
 > My understanding was it is ok to start with this version by [1]. We
 > can even make it asynchronous on top if we find this is a bottleneck
 > and the VDUSE device would need no change, would that work?
->
-> > > +
-> > >         dev->status =3D status;
-> > >  }
-> > >
-> > > @@ -789,6 +825,7 @@ static const struct vdpa_config_ops vduse_vdpa_co=
-nfig_ops =3D {
-> > >         .set_vq_cb              =3D vduse_vdpa_set_vq_cb,
-> > >         .set_vq_num             =3D vduse_vdpa_set_vq_num,
-> > >         .get_vq_size            =3D vduse_vdpa_get_vq_size,
-> > > +       .get_vq_group           =3D vduse_get_vq_group,
-> > >         .set_vq_ready           =3D vduse_vdpa_set_vq_ready,
-> > >         .get_vq_ready           =3D vduse_vdpa_get_vq_ready,
-> > >         .set_vq_state           =3D vduse_vdpa_set_vq_state,
-> > > @@ -1737,12 +1774,19 @@ static bool features_is_valid(struct vduse_de=
-v_config *config)
-> > >         return true;
-> > >  }
-> > >
-> > > -static bool vduse_validate_config(struct vduse_dev_config *config)
-> > > +static bool vduse_validate_config(struct vduse_dev_config *config,
-> > > +                                 u64 api_version)
-> > >  {
-> > >         if (!is_mem_zero((const char *)config->reserved,
-> > >                          sizeof(config->reserved)))
-> > >                 return false;
-> > >
-> > > +       if (api_version < VDUSE_API_VERSION_1 && config->ngroups)
-> > > +               return false;
-> > > +
-> > > +       if (api_version >=3D VDUSE_API_VERSION_1 && config->ngroups >=
- 0xffff)
-> > > +               return false;
-> >
-> > Let's use a macro instead of magic number.
-> >
->
-> The rest of the limits are hardcoded, but I'm ok with changing this.
-> Is UINT16_MAX ok here, or do you prefer something like MAX_NGROUPS and
-> MAX_ASID?
 
-MAX_NGROUPS and MAX_ASID seem to be better.
+I think I need to understand why we can not defer this to get_group_asid() =
+call.
 
 Thanks
-
->
-> [...]
->
-> [1] https://patchew.org/linux/20250807115752.1663383-1-eperezma@redhat.co=
-m/20250807115752.1663383-3-eperezma@redhat.com/#CACGkMEuVngGjgPZXnajiPC+pcb=
-t+dr6jqKRQr8OcX7HK1W3WNQ@mail.gmail.com
->
 
 
