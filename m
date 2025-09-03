@@ -1,347 +1,203 @@
-Return-Path: <linux-kernel+bounces-799222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EE18B42898
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:22:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E092B4289C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A66F6189AF7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:22:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2BBE3B3E05
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D8036207E;
-	Wed,  3 Sep 2025 18:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EC63629A1;
+	Wed,  3 Sep 2025 18:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BP36bZag"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ILSpGjOE"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013008.outbound.protection.outlook.com [40.107.162.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EBF1ADC97;
-	Wed,  3 Sep 2025 18:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756923718; cv=none; b=X/o8uiuTeAD8FSq+9JUJfTsasybU0zrd7I5L3A8gooJSKyKWNW51/1wZe6qqT5t9asAVxce6z3IDQV2NGpDzdZF1K+euTmDRv0zrgswHg5V7UiLuMOs+Fy/DsVagjkftL9oSHeFNdXGuOwPBjSk3ank8hir9lJsiX/TK9C82y4Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756923718; c=relaxed/simple;
-	bh=W0lC5R2+34xg5aYdHdN0hLDRbtgE256F3kX1lB/D8DU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/CdYiOI7qgjRFn6UzZRVvLBkJaHusywJ1j11DwboNMI5678AW4GXAgcJpMZ9CrV7krimyljBiR7Prqj+3fRFEwRTZ+4gnvoYvS5LXJdqOjgDEku36s5JAAmk/buLUjtQnMIbHBARAZEte596vyil4+BR2YUaGrlYXe1T31xHyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BP36bZag; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-70dfd18a27fso1479336d6.0;
-        Wed, 03 Sep 2025 11:21:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756923715; x=1757528515; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LNP7ImyZ1MBjGXawCz04pirTs+Puchh4Cq6FlBkHlhE=;
-        b=BP36bZagGU1Z6HMRcyl2vUksDjPzTjCNgtj48j5o4Ofc/r1GZGZ3Ql+3oZ+sq8Lyqq
-         I1BIdqEP3zqyrOuw5xbnmgldW1SOPj6pd8PUJ29blOk3z0fGPqwtbvCgsG28L48E0Gri
-         8GlWL1yItiM/8nZC1sn8veatDce3C4S22EamJrISAHP6U+9K5mLt/Io34EXhnOAOzYEs
-         YWi2nXfgrxbrhyQm+FkCSHF6VBYd7ObaqwcyklFY6JMqwvrHsN37zD/8Y0hAkqpxSHXi
-         4yufjOWt9e+HEHeSmAzenyHqP8YHxTMIpoYtYqqHV9Byxxzjuj8x9Q+65EykOlQKqjdk
-         tX3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756923715; x=1757528515;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LNP7ImyZ1MBjGXawCz04pirTs+Puchh4Cq6FlBkHlhE=;
-        b=ZG2ZfAn8E7SLeQLMJ1wnKZpK/LmjFklvmDfAcDwcoJBYkXRs+3v3PBe45BMK4/pK50
-         joSHWLNnmviBM/b/cL++LXtkIxQdxdR650cNhD1tgCzTnNpzxEFiLzbAsAtbgnyvUBzO
-         ercL8C2B1FXMZ18ckAxXcrqr+tbdFNlyBo+Naj0WmWScd5ouSyZY/2v5P6i1hB6lOR2b
-         oZ6D6milsEtMF2VliN072l4g6fmGi3g3EQbdI1tCJx4Jq14gZHvd1YyaTnXfEHK3LV8/
-         qYbicNE4uJ4o31AaKI9+MbsgMD6h2cbjhgGKhiblWcFylcue48AWbbbasNp7NsBD5Qvf
-         HU1A==
-X-Forwarded-Encrypted: i=1; AJvYcCW1xHvQvMeTfAvPG+c+3+8DBenbDKBtqIfZfUqumoiWbtOh+F78glAh6Vfgp13FnF0g4vBb7OyZ+yhiW30=@vger.kernel.org, AJvYcCWuo//+loG10aJG+A/Wwgj0QOLd6KB9bLl5dgomHA553DbZaJuuCp0wT0M5Na+lRcDNfEWwPzmJv0fY5rrTJDG425iQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8lRbSKsraGv6G2j452oqGNTAVaBP33pvSyz+q99Yxf5gDPkYO
-	0lrTVA163MlTfefZUpVcT+ijjUhyROz4FO9e26ebW+zNlbkpGxMInRG+0hvXijXc1+tMNw==
-X-Gm-Gg: ASbGncsvuzBMgp0+oVXDiG3Wdd8oWX7nNs4//I9+0sfe2ohGasRSWrgboQ21B2/Qpa2
-	++yXPSMrk4fdsVpGdHWi8RBft62z+3Obu9QFkrz4cQYMfe3JCY0RrVvItNeBBOXCQTPKWMWOFVI
-	055gvse1+DV9zKzFrsruyTQDZL1BCYwopY5CZWwaSHJEFQlzHvPDpIHMmmX9vdcmpFfsVdQ5XfS
-	5lYCEaP5eseUuR+ELT9Izjnww7V5NKp8Jc+ObUeW0+W9AcZXH3zAF7GZkWMqFjHzPQsNn3WDzfm
-	jGmXqEqtRTf46TEpdf88T7pyoFCY9DzmxgP/O+/Rxd2IhUpeHPyvGqlPHNlK7Kiv68UcrG9aaqN
-	OpLwCo8fy6CSFnxTq2tC1wOPOLWQKozA2pRl8q613MA1ChzNP
-X-Google-Smtp-Source: AGHT+IED1sNvP+KLffopKUwQrmP7u+htZP1Exnpw6dAOY5RtZLV0gBKxjlmXyLlQc+326nA+U256Pg==
-X-Received: by 2002:a05:6214:d01:b0:71e:bbb8:9dba with SMTP id 6a1803df08f44-71ebbb8a43fmr95585986d6.56.1756923715104;
-        Wed, 03 Sep 2025 11:21:55 -0700 (PDT)
-Received: from gmail.com (wlc3.cooper.edu. [199.98.16.8])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720add668bdsm31981106d6.33.2025.09.03.11.21.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 11:21:54 -0700 (PDT)
-Date: Thu, 4 Sep 2025 03:21:52 +0900
-From: Ryan Chung <seokwoo.chung130@gmail.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] trace_fprobe.c: TODO: handle filter, nofilter or
- symbol list
-Message-ID: <aLiHQNBPOytj_85Q@gmail.com>
-References: <20250829102050.232291-1-seokwoo.chung130@gmail.com>
- <20250902112147.165c8030837b6b21cf402fd3@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7B732F759;
+	Wed,  3 Sep 2025 18:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756923864; cv=fail; b=AO7cdrNvowor3MF+US0sTUkso9QihxuoItrkwVie3P+UcfAMWjvwDNxNEue/kHaz9dnmonvhYgmfh+ppm+upMhRYuDrtgDMaulwOJygj6Htlsjd/zuhZsi7N9XhFxbu76oh10dGZHgCsMOOoXfRvUIz7PWp8ouhjecBquhtaPPM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756923864; c=relaxed/simple;
+	bh=lUDXjkXvXH8RZXywx1XlwwERygZbJpKm6zfQWkVVwp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PHCYR0xfwdRpU1IJUwzsjJnfOaEsYnUWoM2FBDrWbNaJS+eZcA2ZwCJBSYLMo44pN7jdAzytRe7AB0xEsv4HfD5tS2njba5mTrxbJq21nTNgYxJoWiOpQIPBO1A0oQ+LGW6zUbrlJrCgun2aop3Jwbze/tlHJweuQwicFTrp/h0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ILSpGjOE; arc=fail smtp.client-ip=40.107.162.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q3qaFqjbh5gpHF2sFwYjPRH8KytUHHeCCiXhqLhnoi5t/081lM1ayxZ2y1dprxAs0cF1kgxa1oyEC007mYUst3kx6fewed9Z9w7wIhXlbSpJ6SHChLVLAeRyq0PQE8w6SHy3jrdmqjCmYQj6+MrL2VhA+9KvJrM4iuodr4oio7rlWR9xui6qpyNSTLy0MVEIE32kqGZfJnrJK1TpqvGHqv/WDplJ8OrGCYJFIgX7yA8q7sodBLMEaAcwIFAcxKSUUa6h2pWwr69AIk8W5nZepsz9bXsxrg6wkZsaG0F+QOfAezvWSKghM2tKY0i8ukOEnlxD+E1tdTs6h1e/HfllSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wCmaLDQ6UWYVikB9m7gOWjmq76stDc7cUZoaEF2xpD8=;
+ b=iw/DK9+zUlfd5QR7Xv0Kj6kRpYeRqlanPgf6hKMOWYugtUwvkmhCNfsvPS4CxOVc+acA1yr4ZaPAayNYIKfzf9MEKDXgnYGbVrytIyntFxJOJH4InRMwkPArCFAxhiPr8dkVoEY4d1Qr6Pm04VCJAcnlTj0Cnq1j576rMpBmwc/96BsK3KOV92Bn/9TN36kMuKZnrsNEU4f8b6fF4cKQgflCYkgt0rN2ZqB1bLbSSO0KH1WmWxPbmS0sFmTbrE8lE8lskNHFwqT6nyb37+IuebvjjoE2cG+ZYfl2uDPzueQnb/N6RF5lNjly/hjtxJHn6SfDyddhVOIB//ru94k0yw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wCmaLDQ6UWYVikB9m7gOWjmq76stDc7cUZoaEF2xpD8=;
+ b=ILSpGjOEtvH0c/qthLJCRMo1g74BmWf8AR1966z9XEtxp96ZCO2M2CaWEWCZqjgCo2sScvA1OBcow90cVsZxYSzlyBUIdrryaNpkxiKe4Vtkb1ZqSP16stxl1zXXATHCQRSNaQrldxp8bxCXsGWsgb4M9P0hpWzHNCmGSXKF53SMW8q6G22FcA2+o9YPwP7YFKdvMy77gfQmffYkzM7z+4bO4ZG1LaENev6UrD+7xeMFd/FVT6Riavtf4J8V5PIvp3u/GxcX8yNFSa+kn8dc+XcDrLdPrUDQQV7TOhsH+OTIVKuKEIQ75tqY2yuHPr/zfAiStoHQfQjQWQ+pDblBsg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by GV2PR04MB11167.eurprd04.prod.outlook.com (2603:10a6:150:27b::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Wed, 3 Sep
+ 2025 18:24:14 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%7]) with mapi id 15.20.9094.015; Wed, 3 Sep 2025
+ 18:24:14 +0000
+Date: Wed, 3 Sep 2025 14:24:10 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: rtc: pcf2127: add compatible string
+ nxp,rtc-pcf2123
+Message-ID: <aLiHyoI6orsalmyJ@lizhi-Precision-Tower-5810>
+References: <20250903165536.431586-1-Frank.Li@nxp.com>
+ <202509031658298690ab12@mail.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202509031658298690ab12@mail.local>
+X-ClientProxiedBy: AM9P195CA0024.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21f::29) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250902112147.165c8030837b6b21cf402fd3@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|GV2PR04MB11167:EE_
+X-MS-Office365-Filtering-Correlation-Id: e3327039-bb6f-4ed5-e58f-08ddeb1715df
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|19092799006|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IcFobG9SmzZl4wBuD09bsUwn/qXz7XVVFjGBSoj1AcVbchmzB+Rkf0+6rKIx?=
+ =?us-ascii?Q?w4DuUpG7e5ZR3X3xJUhDcxZa0dyoYeySlCXYZ7guknSBMAfKksWGJR+gKXZR?=
+ =?us-ascii?Q?+kZJYjfG+FskHq6YKQBB5rovEOmWpoGMIaMRzrCGzizledpMV8ujwXQijeEc?=
+ =?us-ascii?Q?wNJ/4QakgoDX9kcgLF8iHDMYChjEMHldEsUoZE0r0Vv90CX355jrpNdfmLAZ?=
+ =?us-ascii?Q?h0B6TQZoIWs0ZpvjribKzy/OH/xagPAA/lukuV5UEXnrdZtEv9+P+Qxn8cg8?=
+ =?us-ascii?Q?MCJNNv2ybRXUEt9F/GDORXbL5t9nBi7n9J589IijrL2LpjKBtGVUeanWKZby?=
+ =?us-ascii?Q?awkpFk4Lraf2qk+uWIIx8tAgtHmPhoIo4rp56jUo7HNjmeC1z+lMjfnxKO4o?=
+ =?us-ascii?Q?vxcybiLcKASayOBriekH4q4otzpeMBxbgsNdghxFCGm93rGYuzDFJN98z0py?=
+ =?us-ascii?Q?DBRSXGzKd2RSyoRxJHyYK8K3sk21PBZSfOJ7B6GXYeUfZIWBg1dPLb1h8eTj?=
+ =?us-ascii?Q?8ZzP8wARrwCfVvf7Q2dFUNRTH0bWHx386WNosI63fIRPTcjDeEP/o80BzfGc?=
+ =?us-ascii?Q?FsRx16nGxiZJRD4sgIvGpHYDsNzpHqRyHShAHXZqXvun2StgSTsZH8/TR1fE?=
+ =?us-ascii?Q?q/MSYZRJ6m0BoS+ECoRWJEgkQgGIhp96+jGtm8+A1ROiVI1rK43IJlEFytJ6?=
+ =?us-ascii?Q?ibvCnlBb/ZlD2+wMhydc/n94JEj3TD2a0nt3ur7XJj9KSRTUdmT+Unex8NoX?=
+ =?us-ascii?Q?g+6hjqeVoishiZu4/WyPIhS8ValSqgx+j9aYi/pRcRYetta7QcOgcD2Myo+H?=
+ =?us-ascii?Q?JJ2X0BzPKPz893w2HS1J7mLK/Hpr271GGKJNQTZlH9LwX6K54zTIj+KCJ75i?=
+ =?us-ascii?Q?hh8BBPHHs7n+SHrUl68uYRDYdOfQQ6w40AjqbEj9dtOyl/V0vXgjw66rZXlW?=
+ =?us-ascii?Q?xc1GxbGwzEPnHdmdDtTQYyifiWy4skwaSq1PwchR1zoiUf9TY5E7oaGpq+Fp?=
+ =?us-ascii?Q?lPLACauIW6qDDATcQBDaEp+/XzV1eEQyR3QMvTeU+pkYQkr9jvlV5h5PmDhk?=
+ =?us-ascii?Q?AzGy2BIUXAxBOQG+tmJOsAx8oY9IiCfcq6okIWmW7EBeknPgEyxJol7R7Z5n?=
+ =?us-ascii?Q?9DuSj75TgjX5MnKHnliTP6QuVNVH2gcMxXKIvaUWfqMxo+2p+JX9w/MXdKU8?=
+ =?us-ascii?Q?e1y2izSCyjOxzYncWrrL/S4Wyg5bHmFfp3o1e1TFn/pIbVAY6OKyGERS7Gar?=
+ =?us-ascii?Q?x+lzisxBR63nHit1dIzzBLo8NACrJczLOvzKA7lRgtUSurG2Dyc+Pys/B0RT?=
+ =?us-ascii?Q?fvG4AqlKViW6KxO19p5SctQrFlkY7oKMf9LXOGtOU3EoyT4vIAH3dzOf2YA6?=
+ =?us-ascii?Q?zFBNw80EQePK448Xmcu627bB08CGmatTglFKKxmVKZcyi082v0Ck4LBFDCXa?=
+ =?us-ascii?Q?lCUSbGcvsgE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Oho/4ETM9nRzvE9iIwP2Ih5dylQMppxAD5x+YaN1HfETad9xP3imlL4clr4b?=
+ =?us-ascii?Q?BXAGmS2q55F1RanABa9i/Nu9+AmWi4qnxtoYmwF2aq9zY00l9a5dQuuKA/wj?=
+ =?us-ascii?Q?oU8B7HmrGY4YBrl1gtNWOz0ngcn0i2e3q5zZ5fCMfmiD3AfGhzvA6zKNeUuW?=
+ =?us-ascii?Q?S+x6NdR/bC7FU2oivtX4uR84RdA1/Pac0SmmbkHrm5CjOyMvW3EE/wkLodhJ?=
+ =?us-ascii?Q?8vK5OeA9wsQ9Puv3/Z7tLuDKVV7NqWzHk9k34fnv4ME0EiEMv/6HaD3R5snc?=
+ =?us-ascii?Q?+mgPFEa/RC/z6dmTwlD+Bsxu47lNbjb6lrHP79XM/qYi4LM1vOoGXfipAOEz?=
+ =?us-ascii?Q?O61DPLnEBN9CbUgMtnCU7tXHlne3UugLbpFJfB/T5ZIXVnHgdtspnEWhyN9k?=
+ =?us-ascii?Q?Lp7AYQZvbYY2oYkCmr6OWoHD+jZAe2tMkN/7NQmgsVOcvFvRKDHwfv+OoHcc?=
+ =?us-ascii?Q?lenhJ8+MzFXEa3RSdN/6MmcmNRGRtsxPygzIXcYOIrL94RfnS5oy17SsJ08d?=
+ =?us-ascii?Q?zBu/PiGjq0QQZ+R7JjWZDCHKJJSAcd+iscqA25FNDxSxzWWDqggWgQxRwLOe?=
+ =?us-ascii?Q?HUg0pDmrr0CsLYiBjccPN17eC/fN9P09r+vGlpiCTprp00fasefO9OcyzTmV?=
+ =?us-ascii?Q?6NQU12b4RmCQpt7OVxgTADmIjg3UGYMDaynzJk5Sj/3XwZ2QjVXI8LVw5EyT?=
+ =?us-ascii?Q?DNf9IPvJADLtEYG17yOZI1ZoyimItXl4lIhZmXtS+gGl2tjZIZ1HTEAWbqcD?=
+ =?us-ascii?Q?sQPuCnPngdFSH8VnK+vVTbjg2hoXL9tbl8IePDvCUWRdfMxth8TPUAlXtemv?=
+ =?us-ascii?Q?/PrF9+SycztlRq5o+IPqWw6cRU+fhaQJkWVF1moF2F/3aMjYtRPaGe+M++f1?=
+ =?us-ascii?Q?ui3Lf6yKhpDQ/f9plp0QNXOeErzOn34CcavDi7crsrQsJXBlMXVLam2p5N2V?=
+ =?us-ascii?Q?XWPWva11AVJrECARLctVeRIY7z94kPoO4jUMKGYS9l9ALBt62F+2H7qSmVsS?=
+ =?us-ascii?Q?uEDF1rTllhhjH6wWbmet47CFwv4qUNnvv/3Dg+CnyBFoDl7Sf4LlVHVeHItE?=
+ =?us-ascii?Q?ESLJAhJgxi0d4A4H+UvlGsD7wyFpuOmAS8WSdGUuv0vUDfdzw+b6iVG//V8I?=
+ =?us-ascii?Q?3Df7tFrvWtF6Zaj8dZtV/waPpnyo5nTOSsbVxGIJfKLSdwizDsRBqoR3mYDE?=
+ =?us-ascii?Q?uM5Kygoaun0Dy0cXI/8M0RAKb22epWGhLj+JLtcJ+HjeAkbOFtlDyQkHpkU6?=
+ =?us-ascii?Q?zFqYKerrM6ZjdU5luepsjVk2mIdAZhUJ3Hdz8/55ii7b4OY+pbqJ1zsUPqcZ?=
+ =?us-ascii?Q?GPxvs5j+SmYP0w9S+5KtOqXmVEylk8m19iWLywY6Z742ZDgs5TasR4xGoI6a?=
+ =?us-ascii?Q?qKq8bq5w142X0l1iQYCctnug2OJcpM9AySDqC2X/RDezWACqSp0+U95K2B6M?=
+ =?us-ascii?Q?8I1wYZobCIMa4U1DVOtoRGmrMVsr5qcOn/nAkW8s/a4Tf2/TiN26Ngpb+M6j?=
+ =?us-ascii?Q?X5fmksyhIIa2kIw+4BXNIbQ1nW+LWBjjGkJKvSmQ5fPDpwUb4nSaejM5rmnS?=
+ =?us-ascii?Q?QlqjJAy9DpLCiOvt71SxEjnoElaPNMEhxvtPlJRy?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e3327039-bb6f-4ed5-e58f-08ddeb1715df
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 18:24:14.4613
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pe+VRzQmfDqeRDC1abpy5i3YDCIAHYcq9+/FBnGLyZQvs4+80edDop4QEJym+Iv04ghxM/etqeRHI0n9QK3Czw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB11167
 
-On Tue, Sep 02, 2025 at 11:21:47AM +0900, Masami Hiramatsu wrote:
-Hi Masami,
-
-Thank you for your comments.
-
-> Hi Ryan,
-> 
-> Thanks for update.
-> 
-> On Fri, 29 Aug 2025 19:20:50 +0900
-> Ryan Chung <seokwoo.chung130@gmail.com> wrote:
-> 
-> > This v2 addresses the TODO in trace_fprobe to handle comma-separated
-> > symbol lists and the '!' prefix. Tokens starting with '!' are collected
-> > as "nofilter", and the others as "filter", then passed to
-> > register_fprobe() accordingly. Empty tokens are rejected and errors are
-> > reported with trace_probe_log_err().
-> 
-> OK, can you describe how it changes the syntax. You may find more things
-> to write it down.
-> 
-
-> For example, fprobe is not only a function entry, but also it supports
-> function return. How it is specified? Current "%return" suffix is introduced
-> for single symbol (function), like schedule%return. If we introduce a list
-> of symbols and filters, it looks more complicated.
-> 
-
-I see your concern and where my confusion came from.
-
-> For example, "!funcAB,funcC,funcA*%return" seems like the exit of funcA*,
-> the entry of funcC, but not covers funcAB. It is naturally misleading
-> users. We have to check "funcA*%return,!funcAB,funcC" pattern.
-> 
-> Thus, I think we should use another suffix, like ":exit" (I think the colon
-> does strongly separate than comma, what do you think?), or just
-> prohibit to use "%return" but user needs to specify "$retval" in fetcharg
-> to specify it is the fprobe on function exit. (this maybe more natural)
-> 
-
-I agree with you here. Using another suffix will make it more clearer
-for the user. 
-
-So in that sense, I am guessing you are suggesting:
-:exit (return)
-:entry (explicit entry)
-
-So this applies to the entire list. If a comma or wildcard is present
-and %return appears, the parser will reject it with -EINVAL and a
-precise trace_probe_log() index. For a single symbol, we use the legacy
-foo%return.
-
-Ex)
-funcA*,!funcAB,funcC          # entry (default)
-funcA*,!funcAB,funcC:exit     # exit (spec-level)
-schedule%return               # single-symbol legacy
-
-> The reason why I talked about how to specify the exit point of a function
-> so far, is because the variables that can be accessed at the entrance
-> and exit are different.
-> 
-
-Ah I see.
-
-> Also, fprobe supports event-name autogeneration from the symbol name,
-> e.g. 'symbol__entry' or 'symbol__exit'. Recently I found the symbol
-> already supports wildcards, so sanitize it from the event name [1]
-> 
-> [1] https://lore.kernel.org/all/175535345114.282990.12294108192847938710.stgit@devnote2/
-> 
-> To use this list-style filters, we may need to reject if there is no
-> event name. Of cause we can generate event-name from the symbol list
-> but you need to sanitize non alphabet-number characters.
-> 
-> Ah, here is another one, symbol is used for ctx->funcname, and this is
-> used for querying BTF. But obviously BTF context is unusable for this
-> case. So we should set the ctx->funcname = NULL with listed filter.
-> 
-
-So it seems like this TODO is actually a bit larger scope than the
-patch anticipated.
-
-In that sense, maybe we could:
-- for Single, literaly symbol, keep autogen symbol__entry/symbol__exit
-  and sanitize wildcards.
-- for List or wildcard, require an explicit [GROUP/]EVENT; reject if
-  ommitted. No autogen.
-
-I don't completely understand ctx->funcname you mentioned for the
-usecase for querying BTF. I will research it more.
-
-> > 
-> > Questions for maintainers (to confirm my understanding):
-> >   * Parsing location: Masami suggested doing the parsing in the parse
-> >     stage (e.g., via parse_symbol_and_return()). v2 keeps the logic in
-> >     __register_trace_fprobe(), but I can move the call into the parsing
-> >     path in v3 if that is the preferred place. Is that correct?
-> 
-> Most of above processes have been done in parse_symbol_and_return(),
-> thus the parsing it should be done around there.
-> 
-
-Thank you.
-
-> >   * Documentation: I plan to update the user-facing docs for fprobe
-> >     syntax. Is Documentation/trace/ the right place (e.g., 
-> >     Documentation/trace/fprobetrace.rst)?
-> 
-> Yes, please explain it with examples.
-> 
-> Also, can you add a testcase (in a sparate patch) for this syntax?)
-> 
-
-Yes. I will add selftests under tools/testing/selftests/ftrace/:
-Accept when list entry/exit; ! exclusions; whitespace variants.
-Reject when empty tokens, leading/trailing commas, %return with lists or
-wildcards, mixed forms.
-Naming: autogen only for single literal; list/wildcard requires explicit
-event name. 
-BTF: ctx->fullname == NULL when multi/wildcard.
-
-I will add the following: 
-# entry across a list
-echo 'f:net/tx_entry tcp_sendmsg*,!tcp_sendmsg_locked,tcp_sendpage' \
-  > /sys/kernel/tracing/dynamic_events
-
-# exit across the same list (spec-level)
-echo 'f:net/tx_exit tcp_sendmsg*,!tcp_sendmsg_locked,tcp_sendpage:exit' \
-  > /sys/kernel/tracing/dynamic_events
-
-echo 1 > /sys/kernel/tracing/events/net/tx_entry/enable
-echo 1 > /sys/kernel/tracing/events/net/tx_exit/enable
-
-> Thank you,
-> 
-> > 
-> > Link: https://lore.kernel.org/linux-trace-kernel/20250812162101.5981-1-seokwoo.chung130@gmail.com/
-> > Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
-> 
+On Wed, Sep 03, 2025 at 06:58:29PM +0200, Alexandre Belloni wrote:
+> On 03/09/2025 12:55:36-0400, Frank Li wrote:
+> > Add compatible string nxp,rtc-pcf2123, which style is not consistent with
+> > existed compatible string because existed driver and dts use
+> > nxp,rtc-pcf2123.
+> >
+> > Fix below CHECK_DTBS warning:
+> > arch/arm/boot/dts/nxp/imx/imx6q-evi.dtb: /soc/bus@2000000/spba-bus@2000000/spi@2018000/rtc@3: failed to match any schema with compatible: ['nxp,rtc-pcf2123']
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > > ---
-> > 
-> > Changes in v2:
-> >   * Classify '!' tokens as nofilter, others as filter; pass both to
-> >     register_fprobe().
-> >   * Reject empty tokens; log errors with trace_probe_log_*().
-> >   * Use __free(kfree) for temporary buffers.
-> >   * Keep subject and style per "Submitting patches" (tabs, wrapping).
-> >   * No manual dedup (leave to ftrace).
-> > 
-> >  kernel/trace/trace_fprobe.c | 48 +++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 46 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-> > index b36ade43d4b3..d731d9754a39 100644
-> > --- a/kernel/trace/trace_fprobe.c
-> > +++ b/kernel/trace/trace_fprobe.c
-> > @@ -815,6 +815,11 @@ static int trace_fprobe_verify_target(struct trace_fprobe *tf)
-> >  static int __register_trace_fprobe(struct trace_fprobe *tf)
-> 
-> This is not a good place to add anymore, because this change turned out
-> not to meet the expected prerequisites. (when I commented TODO here,
-> I didn't expected too.)
-> 
-> Anyway, this is a good opportunity to review this TODO deeper.
-> 
-> Thank you,
-> 
+> >  Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml b/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
+> > index 11fcf0ca1ae07..595c20df6a411 100644
+> > --- a/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
+> > +++ b/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
+> > @@ -20,6 +20,7 @@ properties:
+> >        - nxp,pcf2127
+> >        - nxp,pcf2129
+> >        - nxp,pcf2131
+> > +      - nxp,rtc-pcf2123
+>
+> Nope, you need to fix the devicetree.
 
-I see. My question is whether or not all the symbol and filter should be
-done in a separate location or possibly separate function (i.e.,
-parse_symbol_and_return()).
+Oh, driver drivers/rtc/rtc-pcf2123.c also use nxp,rtc-pcf2123. For such old
+devices, generally keep it as it.
 
-Unless you prefer dropping %return entirely now, I’ll keep it for
-single-symbol compatibility and mark it legacy in
-Documentation/trace/fprobetrace.rst. I’ll send v3 with the parser
-move, the spec-level suffix, explicit-name rule for list/wildcard,
-BTF guard, docs, and selftests.
+Maybe DT team members provide more professional comments for it.
 
-> >  {
-> >  	int i, ret;
-> > +	const char *p, *q;
-> > +	size_t spec_len, flen = 0, nflen = 0, tlen;
-> > +	bool have_f = false, have_nf = false;
-> > +	char *filter __free(kfree) = NULL;
-> > +	char *nofilter __free(kfree) = NULL;
-> >  
-> >  	/* Should we need new LOCKDOWN flag for fprobe? */
-> >  	ret = security_locked_down(LOCKDOWN_KPROBES);
-> > @@ -835,8 +840,47 @@ static int __register_trace_fprobe(struct trace_fprobe *tf)
-> >  	if (trace_fprobe_is_tracepoint(tf))
-> >  		return __regsiter_tracepoint_fprobe(tf);
-> >  
-> > -	/* TODO: handle filter, nofilter or symbol list */
-> > -	return register_fprobe(&tf->fp, tf->symbol, NULL);
-> > +	spec_len = strlen(tf->symbol);
-> > +	filter = kzalloc(spec_len + 1, GFP_KERNEL);
-> > +	nofilter = kzalloc(spec_len + 1, GFP_KERNEL);
-> > +	if (!filter || !nofilter)
-> > +		return -ENOMEM;
-> > +
-> > +	p = tf->symbol;
-> > +	for (p = tf->symbol; p; p = q ? q + 1 : NULL) {
-> > +		q = strchr(p, ',');
-> > +		tlen = q ? (size_t)(q-p) : strlen(p);
-> > +
-> > +		/* reject empty token */
-> > +		if (!tlen) {
-> > +			trace_probe_log_set_index(1);
-> > +			trace_probe_log_err(0, BAD_TP_NAME);
-> > +			return -EINVAL;
-> > +		}
-> > +
-> > +		if (*p == '!') {
-> > +			if (tlen == 1) {
-> > +				trace_probe_log_set_index(1);
-> > +				trace_probe_log_err(0, BAD_TP_NAME);
-> > +				return -EINVAL;
-> > +			}
-> > +			if (have_nf)
-> > +				nofilter[nflen++] = ',';
-> > +			memcpy(nofilter + nflen, p + 1, tlen - 1);
-> > +			nflen += tlen - 1;
-> > +			have_nf = true;
-> > +		} else {
-> > +			if (have_f)
-> > +				filter[flen++] = ',';
-> > +			memcpy(filter + flen, p, tlen);
-> > +			flen += tlen;
-> > +			have_f = true;
-> > +		}
-> > +	}
-> > +
-> > +	return register_fprobe(&tf->fp,
-> > +			have_f ? filter : NULL,
-> > +			have_nf ? nofilter : NULL);
-> >  }
-> >  
-> >  /* Internal unregister function - just handle fprobe and flags */
-> > -- 
-> > 2.43.0
-> > 
-> 
-> 
-> -- 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Best regards,
-Ryan Chung
-
-
+Frank
+>
+> >
+> >    reg:
+> >      maxItems: 1
+> > --
+> > 2.34.1
+> >
+>
+> --
+> Alexandre Belloni, co-owner and COO, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
