@@ -1,355 +1,222 @@
-Return-Path: <linux-kernel+bounces-798175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B92B41A54
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:44:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC65B41A52
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A099F1BA4476
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:44:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81A4E562A28
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46062EDD40;
-	Wed,  3 Sep 2025 09:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6C82F0C46;
+	Wed,  3 Sep 2025 09:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bmBI6nEw"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lgHqXa1j"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208EB2AE66
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058ED26AF3
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756892671; cv=none; b=g3Isd6cX9JaOszl+N4zFbQBJdkBe9Imm5+cReu6TPaqVNMvBZOdBWYE+J7IY2BvFtJyjn5tVP3K117rEcpvfwRsCc7zEaG6CjvQI6SS/gFMAx40F0yEk3gL7w54iMYX8djkMfQ4MyUT6AGdqpPUUfySYVUf3J/7kt0aMLAmTPYs=
+	t=1756892656; cv=none; b=pkX3IoVv8vtHJjyuffutTcZPAtKM9e4U7sONdQJTdfcnwW1BmijhWUxwqSTddrWroT+wKyIXcJXaX/vEkaIfSZPe5vYEts4wj0aCQEqWwNSyXp+ZD0beF0K+oCu7NQkZRtF/hzXynQrtQquom9VmMVpXTBEUmYn3Bo69dKNAs54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756892671; c=relaxed/simple;
-	bh=KI4cLSnI56cN0InnXodA5UOwNWIIVLzWldd9/veIQDc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lltk3fZSpvaDH7Kv6+vFvqInrYJ2uOfR+gaXJD4R8XN+MLCpJf8wSA9nKYiigeEMArpVzGcPGnSt+KWPSMPKoMRGKpasEjoBbYEu/hoZHrmNkprEzhlgnk00scjHp5D4C/WMiZA81t9cwepxnt0VtodPKr/lo6SQujIG+zxcyNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bmBI6nEw; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5839ht1e2802373;
-	Wed, 3 Sep 2025 04:43:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756892635;
-	bh=4IQraepvHDavhiIS15/BCQUwpcuHCQKkQqP1WzuXAfk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=bmBI6nEwTVe7P7CGxelO8b4A4l4gaZFzCKzjSgZB6sTt7W53eH4bitfUcGZWqSOL1
-	 +TjusOokP+l8byg0mIVfBXbPOPzh59j/PF/X6T6K76+CoyFI21oymsS7kTVPUMCHrH
-	 n/yw5SysHnCCOcwealhXqVAil2BI3w5M5gqInv4g=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5839hsOC2953230
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 3 Sep 2025 04:43:54 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 3
- Sep 2025 04:43:54 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 3 Sep 2025 04:43:54 -0500
-Received: from [172.24.233.20] (a0512632.dhcp.ti.com [172.24.233.20])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5839hn4o1083955;
-	Wed, 3 Sep 2025 04:43:50 -0500
-Message-ID: <1102f8c5-5bb0-4d77-b1b1-81a86533f0aa@ti.com>
-Date: Wed, 3 Sep 2025 15:13:49 +0530
+	s=arc-20240116; t=1756892656; c=relaxed/simple;
+	bh=4DO31URqLOlIMCZRzxmllm/LEhaNDOtfIDJngVNU0gQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mob3PL6M67zMvSoEOuSaeXNnvd+eu6eEm/5x/N5rvRtMtb67a07bjyXz9KCcPzkX7WE4QYReD63jcb+h8UGJ46LoID3Y+t9+4YrD/7PxMB93IHihV38LrexwPbS5a3v2MixxJypne5usZDlV+bt8KW4t9hfayK4sfmmYmF5sqfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lgHqXa1j; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b47174beb13so4246324a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 02:44:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756892654; x=1757497454; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gtzzda4QBQAaKKzF6sjShO0A4Pr/KXZhT9QV7iIvqZg=;
+        b=lgHqXa1jx51lEQToyotxVi67zJk+zp45ZHXkDshRl2jLzdyZzNSR442oBCM2DBwoMX
+         2S0L4msGoitbGsJe6CdSmbwJkByRo78NDT9jWaf2r/VJIHz92j4qN8j6dbZJGG5yZEd7
+         haDRHdNPnpKME4i+/t7VPb0LO6e9Z1NK38ux+qe14Ey5sTpOrd7IS+7b8ZBplayPdyeU
+         nNIKzpXk3BUQvvAASUajCVW7GOoRHDm+HmcKWyy5q9UBA9cpuvBKtiq+4nPBqsNsD8ou
+         AMtZJtfscrkCwJTWFZs6EX11m8wL+Vp8me7Gou2f0rveMf3ho4ItbcyaU9wmpzxwmBEa
+         OLFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756892654; x=1757497454;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gtzzda4QBQAaKKzF6sjShO0A4Pr/KXZhT9QV7iIvqZg=;
+        b=dzFP9pIE2Y8KLoY4rcNRc+pjL3GrjclLDjttx8gzN7BnDACDQahJH0YGsGZbqSmvPm
+         J85QeNe+C/9jeJcCmLFRvM6sK6xn9eo+cGYtqSstgIdM8U0+w514E+/Xl9sWIgSGdy9B
+         nYDiewxAROx4V+ArEkl4PtThJk+jyJtD/vZNvS06pWsiVMD9yVMcHACWsoppYUjlRZbQ
+         5RcPd//1BpliVadrPaRovFteXKqqkU+UWKW3TWbL20HqrD3wszG00b6PVt6G4lNnd/9O
+         NgRhhyF2tVxv5cMSKqF0dzB2dhegCryJb2PLpVdcOphPnrl/Q+8lMLGb2tu4rykNea25
+         gOMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOMVAJ2gCfZL137wo8tQZMLz49w9DmswYWoKTl/cjKFupZVYpHsKNgdoP+4IKIXnnUUgcJ+Az08rhoMm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4jpYVg5AemA9McLfuDavYj8hmkwN3O3FD1RZgpNqHiVl1yJ69
+	IFMva3g6ycZGgOcGiTQJPFvygIT3E6Pgx8c1t1mHPt2CCuUfEPXPP5gDqZjzxpjyC/DBvKrPZph
+	0VHB9gREWbKqSa2wrBvYa+yx1EL5XEM065qFSoMU0Fw==
+X-Gm-Gg: ASbGnctTGmgVGlwzVU21JA99qfgek3NEdUTL+qou6OlSVE9uKHZQwW4DHsAP3+CHOJg
+	IryxRLRvESLZRGlK+J0nIWl/70RBvSzQM+k3jWuzVcqM8bjOuq+0CF0+oSjnThr1Jg5wkb22I11
+	3/m4oZ+Q7rtuY1bRvUsTrhXUcngVIG0JAAgS7QeJQMBsG3xJKQ25icATiCaiOEVgJkFeVVvY1On
+	jZWlRFC1h3nseibFdo8dGRiFJzmna1gS60JAyt9zF6EqkbkUKyT/LvMXUkIXQ==
+X-Google-Smtp-Source: AGHT+IHi/AIip1Etp8O6tE2+9Jrulbj7mZegJyFHVes3qPLwUuW5JJbcwOl3A+MkyPFMk+GbxU0Nie6sEeU80s96Wm8=
+X-Received: by 2002:a17:902:e88f:b0:248:e259:16ba with SMTP id
+ d9443c01a7336-249448f9912mr160615025ad.4.1756892654045; Wed, 03 Sep 2025
+ 02:44:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] drm/tidss: Remove max_pclk_khz from tidss display
- features
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Maxime Ripard
-	<mripard@kernel.org>
-CC: <h-shenoy@ti.com>, <devarsht@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>,
-        <u-kumar1@ti.com>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <jyri.sarha@iki.fi>,
-        <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
-        <airlied@gmail.com>, <simona@ffwll.ch>, <aradhya.bhatia@linux.dev>
-References: <20250819192113.2420396-1-s-jain1@ti.com>
- <20250819192113.2420396-3-s-jain1@ti.com>
- <b95b60c3-5988-4238-a8d4-73bd8bbf8779@ideasonboard.com>
- <20250827-illegal-splendid-coyote-aff8cc@houat>
- <c3488e85-5cf0-4c97-85c3-64f4c2f5c9c5@ideasonboard.com>
- <c7f6958f-2c05-4887-88fa-a36bba3c73b6@ti.com>
- <67c54a2e-953e-4385-ac85-324a0d20e5c1@ideasonboard.com>
-Content-Language: en-US
-From: Swamil Jain <s-jain1@ti.com>
-In-Reply-To: <67c54a2e-953e-4385-ac85-324a0d20e5c1@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250902131926.607219059@linuxfoundation.org>
+In-Reply-To: <20250902131926.607219059@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 3 Sep 2025 15:14:01 +0530
+X-Gm-Features: Ac12FXxnehF-f0uX9uf1w98xh_zbbMgvqVVos902X4S572K02cR0LhUNbnaqGvg
+Message-ID: <CA+G9fYvSa6TioRgDLT_KtYdWYLz4hUbNroVjg9KiBEe6niDr1g@mail.gmail.com>
+Subject: Re: [PATCH 5.10 00/34] 5.10.242-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On 9/3/25 15:01, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 03/09/2025 11:38, Swamil Jain wrote:
->> Hi Tomi, Maxime,
->>
->> On 8/27/25 15:19, Tomi Valkeinen wrote:
->>> Hi,
->>>
->>> On 27/08/2025 12:27, Maxime Ripard wrote:
->>>> On Wed, Aug 27, 2025 at 11:49:22AM +0300, Tomi Valkeinen wrote:
->>>>> On 19/08/2025 22:21, Swamil Jain wrote:
->>>>>> From: Jayesh Choudhary <j-choudhary@ti.com>
->>>>>>
->>>>>> TIDSS hardware by itself does not have variable max_pclk for each VP.
->>>>>> The maximum pixel clock is determined by the limiting factor between
->>>>>> the functional clock and the PLL (parent to the VP/pixel clock).
->>>>>
->>>>> Hmm, this is actually not in the driver, is it? We're not limiting the
->>>>> pclk based on the fclk.
->>>>>
->>>>>> The limitation that has been modeled till now comes from the clock
->>>>>> (PLL can only be programmed to a particular max value). Instead of
->>>>>> putting it as a constant field in dispc_features, we can query the
->>>>>> DM to see if requested clock can be set or not and use it in
->>>>>> mode_valid().
->>>>>>
->>>>>> Replace constant "max_pclk_khz" in dispc_features with
->>>>>> max_successful_rate and max_attempted_rate, both of these in
->>>>>> tidss_device structure would be modified in runtime. In mode_valid()
->>>>>> call, check if a best frequency match for mode clock can be found or
->>>>>> not using "clk_round_rate()". Based on that, propagate
->>>>>> max_successful_rate and max_attempted_rate and query DM again only if
->>>>>> the requested mode clock is greater than max_attempted_rate. (As the
->>>>>> preferred display mode is usually the max resolution, driver ends up
->>>>>> checking the highest clock the first time itself which is used in
->>>>>> subsequent checks).
->>>>>>
->>>>>> Since TIDSS display controller provides clock tolerance of 5%, we use
->>>>>> this while checking the max_successful_rate. Also, move up
->>>>>> "dispc_pclk_diff()" before it is called.
->>>>>>
->>>>>> This will make the existing compatibles reusable if DSS features are
->>>>>> same across two SoCs with the only difference being the pixel clock.
->>>>>>
->>>>>> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
->>>>>> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
->>>>>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
->>>>>> Signed-off-by: Swamil Jain <s-jain1@ti.com>
->>>>>> ---
->>>>>>    drivers/gpu/drm/tidss/tidss_dispc.c | 85 ++++++++++++
->>>>>> +----------------
->>>>>>    drivers/gpu/drm/tidss/tidss_dispc.h |  1 -
->>>>>>    drivers/gpu/drm/tidss/tidss_drv.h   | 11 +++-
->>>>>>    3 files changed, 47 insertions(+), 50 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/
->>>>>> tidss/tidss_dispc.c
->>>>>> index c0277fa36425..c2c0fe0d4a0f 100644
->>>>>> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
->>>>>> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
->>>>>> @@ -58,10 +58,6 @@ static const u16
->>>>>> tidss_k2g_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
->>>>>>    const struct dispc_features dispc_k2g_feats = {
->>>>>>        .min_pclk_khz = 4375,
->>>>>>    -    .max_pclk_khz = {
->>>>>> -        [DISPC_VP_DPI] = 150000,
->>>>>> -    },
->>>>>> -
->>>>>>        /*
->>>>>>         * XXX According TRM the RGB input buffer width up to 2560
->>>>>> should
->>>>>>         *     work on 3 taps, but in practice it only works up to 1280.
->>>>>> @@ -144,11 +140,6 @@ static const u16
->>>>>> tidss_am65x_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
->>>>>>    };
->>>>>>      const struct dispc_features dispc_am65x_feats = {
->>>>>> -    .max_pclk_khz = {
->>>>>> -        [DISPC_VP_DPI] = 165000,
->>>>>> -        [DISPC_VP_OLDI_AM65X] = 165000,
->>>>>> -    },
->>>>>> -
->>>>>>        .scaling = {
->>>>>>            .in_width_max_5tap_rgb = 1280,
->>>>>>            .in_width_max_3tap_rgb = 2560,
->>>>>> @@ -244,11 +235,6 @@ static const u16
->>>>>> tidss_j721e_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
->>>>>>    };
->>>>>>      const struct dispc_features dispc_j721e_feats = {
->>>>>> -    .max_pclk_khz = {
->>>>>> -        [DISPC_VP_DPI] = 170000,
->>>>>> -        [DISPC_VP_INTERNAL] = 600000,
->>>>>> -    },
->>>>>> -
->>>>>>        .scaling = {
->>>>>>            .in_width_max_5tap_rgb = 2048,
->>>>>>            .in_width_max_3tap_rgb = 4096,
->>>>>> @@ -315,11 +301,6 @@ const struct dispc_features dispc_j721e_feats = {
->>>>>>    };
->>>>>>      const struct dispc_features dispc_am625_feats = {
->>>>>> -    .max_pclk_khz = {
->>>>>> -        [DISPC_VP_DPI] = 165000,
->>>>>> -        [DISPC_VP_INTERNAL] = 170000,
->>>>>> -    },
->>>>>> -
->>>>>>        .scaling = {
->>>>>>            .in_width_max_5tap_rgb = 1280,
->>>>>>            .in_width_max_3tap_rgb = 2560,
->>>>>> @@ -376,15 +357,6 @@ const struct dispc_features dispc_am625_feats = {
->>>>>>    };
->>>>>>      const struct dispc_features dispc_am62a7_feats = {
->>>>>> -    /*
->>>>>> -     * if the code reaches dispc_mode_valid with VP1,
->>>>>> -     * it should return MODE_BAD.
->>>>>> -     */
->>>>>> -    .max_pclk_khz = {
->>>>>> -        [DISPC_VP_TIED_OFF] = 0,
->>>>>> -        [DISPC_VP_DPI] = 165000,
->>>>>> -    },
->>>>>> -
->>>>>>        .scaling = {
->>>>>>            .in_width_max_5tap_rgb = 1280,
->>>>>>            .in_width_max_3tap_rgb = 2560,
->>>>>> @@ -441,10 +413,6 @@ const struct dispc_features dispc_am62a7_feats
->>>>>> = {
->>>>>>    };
->>>>>>      const struct dispc_features dispc_am62l_feats = {
->>>>>> -    .max_pclk_khz = {
->>>>>> -        [DISPC_VP_DPI] = 165000,
->>>>>> -    },
->>>>>> -
->>>>>>        .subrev = DISPC_AM62L,
->>>>>>          .common = "common",
->>>>>> @@ -1347,25 +1315,57 @@ static void
->>>>>> dispc_vp_set_default_color(struct dispc_device *dispc,
->>>>>>                DISPC_OVR_DEFAULT_COLOR2, (v >> 32) & 0xffff);
->>>>>>    }
->>>>>>    +/*
->>>>>> + * Calculate the percentage difference between the requested pixel
->>>>>> clock rate
->>>>>> + * and the effective rate resulting from calculating the clock
->>>>>> divider value.
->>>>>> + */
->>>>>> +unsigned int dispc_pclk_diff(unsigned long rate, unsigned long
->>>>>> real_rate)
->>>>>> +{
->>>>>> +    int r = rate / 100, rr = real_rate / 100;
->>>>>> +
->>>>>> +    return (unsigned int)(abs(((rr - r) * 100) / r));
->>>>>> +}
->>>>>> +
->>>>>> +static int check_pixel_clock(struct dispc_device *dispc,
->>>>>> +                 u32 hw_videoport, unsigned long clock)
->>>>>> +{
->>>>>> +    unsigned long round_clock;
->>>>>> +
->>>>>> +    if (dispc->tidss->is_ext_vp_clk[hw_videoport])
->>>>>> +        return 0;
->>>>>> +
->>>>>> +    if (clock <= dispc->tidss->max_successful_rate[hw_videoport])
->>>>>> +        return 0;
->>>>>> +
->>>>>> +    if (clock < dispc->tidss->max_attempted_rate[hw_videoport])
->>>>>> +        return -EINVAL;
->>>>>> +
->>>>>> +    round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
->>>>>> +
->>>>>> +    if (dispc_pclk_diff(clock, round_clock) > 5)
->>>>>> +        return -EINVAL;
->>>>>> +
->>>>>> +    dispc->tidss->max_successful_rate[hw_videoport] = round_clock;
->>>>>> +    dispc->tidss->max_attempted_rate[hw_videoport] = clock;
->>>>>
->>>>> I still don't think this logic is sound. This is trying to find the
->>>>> maximum clock rate, and optimize by avoiding the calls to
->>>>> clk_round_rate() if possible. That makes sense.
->>>>>
->>>>> But checking for the 5% tolerance breaks it, in my opinion. If we find
->>>>> out that the PLL can do, say, 100M, but we need pclk of 90M, the
->>>>> current
->>>>> maximum is still the 100M, isn't it?
->>>>
->>>> 5% is pretty large indeed. We've been using .5% in multiple drivers and
->>>> it proved to be pretty ok. I would advise you tu use it too.
->>>
->>> The 5% comes from OMAP DSS, where we had to do pixel clock with a few
->>> dividers and multipliers. The rates were quite coarse, and we ended up
->>> having quite a large tolerance.
->>>
->>> I think with tidss, we always have a PLL we control, so we should always
->>> have very exact clocks. So I'm fine with dropping it to .5%. However,
->>> this patch and series is about removing the a-bit-too-hardcoded VP clk
->>> max rate code in the driver, so I would leave everything else to another
->>> series.
->>>
->>>> It's not clear to me why avoiding a clk_round_rate() call is something
->>>> worth doing though?
->>>
->>> Hard to say if it's worth doing, someone should make some perf tests.
->>> However, afaik, the calls do go to the firmware, so it involves
->>> inter-processor calls. On OMAP DSS checking the clock rates was slow, as
->>> it involved lots of iterating with dividers and multipliers. Perhaps
->>> it's much faster here.
->>>
->>>> Even caching the maximum rate you have been able to reach before is
->>>> pretty fragile: if the PLL changes its rate, or if a sibling clock has
->>>> set some limits on what the PLL can do, your maximum isn't relevant
->>>> anymore.
->>>
->>> You're right, although afaik it should not happen with TI's SoCs. We
->>> would be in trouble anyway if that were the case (e.g. someone starts
->>> the camera, and suddenly we can't support 1080p anymore).
->>>
->>>> in other words, what's wrong with simply calling clk_round_rate() and
->>>> checking if it's within a .5% deviation?
->>>
->>> This started with discussions how to replace the hardcoded max VP clock
->>> rate (used to quickly weed out impossible rates), which in reality was
->>> actually PLL max clock rate. We don't know the PLL max rate, and can't
->>> query it, so this approach was taken.
->>>
->>>> At the very least, this should be explained in comments or the commit
->>>> message.
->>>
->>> I agree.
->>>
->>> Swamil, can you do some perf tests with clk_round_rate()? If it's fast
->>> (enough), it will simplify the driver.
->>
->> Average execution time is around 112 us.
->> Trace file including the execution time for clk_round_rate(): https://
->> gist.github.com/swamiljain/2abe86982cdeba1d69223d2d525e0cb6
->> It is better to reduce calls to clk_round_rate().
->>
->> Need your suggestions for a better approach.
-> 
-> We can cache the clk_round_rate calls. Checking my monitor, there are 36
-> modes it offers me, but only 20 different pclk rates. Also, we could
-> have multiple clk_round_rate calls happening in the driver for the same
-> mode, and that would also be handled.
-> 
-> Even if clk_round_rate takes a bit long, it only happens once (I hope)
-> when an app does a modeset, and multiple times when a display is
-> connected, I wonder if 100 us is an issue?
-> 
-> Just using clk_round_rate() without any tricks would simplify the driver
-> nicely, so I think we should try to see if we can get that working.
+On Tue, 2 Sept 2025 at 19:15, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-Are you suggesting to just check each time, a clock can be set using 
-clk_round_rate() and not cache max_pclk? But then we have to make sure 
-round_rate should be within some range(5% for us).
+> This is the start of the stable review cycle for the 5.10.242 release.
+> There are 34 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.10.242-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.10.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-> Do you know if there's anything to improve on the clock side, ti-sci or
-> firmare?
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Not sure.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Regards,
-Swamil
-> 
->   Tomi
-> 
+## Build
+* kernel: 5.10.242-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 4576ee67df7a1a73a4ec410a6c8fba6afd0238a3
+* git describe: v5.10.241-35-g4576ee67df7a
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10=
+.241-35-g4576ee67df7a
+
+## Test Regressions (compared to v5.10.240-524-gd8db2c8f2fff)
+
+## Metric Regressions (compared to v5.10.240-524-gd8db2c8f2fff)
+
+## Test Fixes (compared to v5.10.240-524-gd8db2c8f2fff)
+
+## Metric Fixes (compared to v5.10.240-524-gd8db2c8f2fff)
+
+## Test result summary
+total: 38282, pass: 31263, fail: 1860, skip: 4969, xfail: 190
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 100 total, 100 passed, 0 failed
+* arm64: 28 total, 28 passed, 0 failed
+* i386: 20 total, 20 passed, 0 failed
+* mips: 22 total, 22 passed, 0 failed
+* parisc: 3 total, 0 passed, 3 failed
+* powerpc: 21 total, 21 passed, 0 failed
+* riscv: 9 total, 9 passed, 0 failed
+* s390: 9 total, 9 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 24 total, 24 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-exec
+* kselftest-fpu
+* kselftest-futex
+* kselftest-intel_pstate
+* kselftest-kcmp
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
