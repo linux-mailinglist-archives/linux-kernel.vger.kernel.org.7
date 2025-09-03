@@ -1,116 +1,144 @@
-Return-Path: <linux-kernel+bounces-799246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBFD2B428F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:45:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4046EB428F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B67195678F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:45:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78553682259
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560C23680A7;
-	Wed,  3 Sep 2025 18:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29308369320;
+	Wed,  3 Sep 2025 18:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuTkKTjo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="i0qq2+0t"
+Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2373629B8;
-	Wed,  3 Sep 2025 18:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456513629B3;
+	Wed,  3 Sep 2025 18:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756925093; cv=none; b=XOZ1W5JgYb/382n5cZOlvXHk2hwydnm96/XsyBGNPi0loXDqclJlOZHZIMyhdww/tbjW1qaJq8EprUigZl8UEX12TU3O4HJANATzV1RDIuEs2Sw2INAjXOAnGuRoy7bR+GZu372jiHoP55Bq1UlZgCzLVDNAheIAmHYNe/0UIMM=
+	t=1756925126; cv=none; b=XSs5vI2dBd5G8CouHwP/IaRjStuysC7UxZBRllhEppiNHv2JPdiJ/wGs2AOIli4aMQ0T8G4Zu5tMDephB0w9mkOpqVSfGjAjNBmyiuUj3FvcryvREbN9Zzm2Y3cW2ZafN+hwr7KoTmGDhqZPpR4gD+1GLDvMH6lkUx8GDUPALxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756925093; c=relaxed/simple;
-	bh=GsUokiikwbKp5vg1/26TrgCL7azSzjz7RAsIuuQWZKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=X7IskcLbfTS++/MTHiAac3/s1p9zuo6/BZ/TEAeeRFRvl8fqYR+dnPhBRCwBYmozigbiUP6rItQijPBRwhHOcIuiVZ1PLliCsR7i4b4iYNsft6itCakVMnwqKx6RAezySekiSXAqM36MKWj2bneaLGRJdOBWps4dnja68rUlD28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuTkKTjo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D4ECC4CEE7;
-	Wed,  3 Sep 2025 18:44:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756925093;
-	bh=GsUokiikwbKp5vg1/26TrgCL7azSzjz7RAsIuuQWZKg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ZuTkKTjoEfTXoELvBN4x5Vvt61F9HopbzRHhVwsomujm55IvVPjrn8Dsz2VuHFiKR
-	 GgaTpXgnmSo02sJ1gzW+9z4tIGzbzICm9HDSWjyiVSxr2MwW9wBKVPhiGgGudgbZtj
-	 zrGuf6svxGvVDj2Om5BI5Qfbdwuu5499T9DaLs2ixe2U4G6QmW1U8ew0Yb8brCT+/3
-	 0zVqM5pYO/LfsOVYTwplfkdw8S7WcWZPcRdfKt7nQqlRlpO2YytvfojS3YLKTSaLsJ
-	 DPBvNlOU/yCCGABD3NMC30dLCanuLZmxE96ief2Do9IkkxIMwGvas+PcIXPUGx2g30
-	 ox8dKnYCeMqIQ==
-Date: Wed, 3 Sep 2025 20:44:48 +0200
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Jack Wang <jinpu.wang@cloud.ionos.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] scsi: pm80xx: Avoid -Wflex-array-member-not-at-end
- warning
-Message-ID: <aLiMoNzLs1_bu4eJ@kspp>
+	s=arc-20240116; t=1756925126; c=relaxed/simple;
+	bh=yy8dNluZEt1F3hOJQ5JWTdfKQiHarz/++Lo+f/eAcgE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SteAeT3nLIYSmTnAeBDx4/xx4EJC2yXzmMR6eocALCrVyiqN9zZsZthJTbeR+ARScUQzm0Yb0C3cB4QdMY5rhbI3/uJZ0mQWnMqlyXmP7PbiTZ9oLXsPvDyXn9gbQToU+nwbj4HgC2+8bnRkXk4sjhAw1ZH7a5skIHZ6IzImc0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=i0qq2+0t; arc=none smtp.client-ip=129.217.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
+Received: from [192.168.178.143] (pd9eaae6b.dip0.t-ipconnect.de [217.234.174.107])
+	(authenticated bits=0)
+	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 583IjK8r020038
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 3 Sep 2025 20:45:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
+	s=unimail; t=1756925121;
+	bh=yy8dNluZEt1F3hOJQ5JWTdfKQiHarz/++Lo+f/eAcgE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=i0qq2+0tvBdwa+QzPIEJbCMy5KEaX0T7nvssbjLUdhCV6PUJ4sh+0vkaI5ZNk4gjO
+	 i03wSSXFHB6tZuiMHczngkA6eQ9Q9Xe22uKWhAr7+rVMyxPtKA7VfSbWMQMpudm+Sq
+	 di/p8HWVRO7DHsEVT3hIczuIyoIwfl/o3hgDxcHg=
+Message-ID: <62ab3029-3089-430a-b80d-85d87ad7daae@tu-dortmund.de>
+Date: Wed, 3 Sep 2025 20:45:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] netdev queue flow control for TUN
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com, eperezma@redhat.com,
+        stephen@networkplumber.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+        kvm@vger.kernel.org, Tim Gebauer <tim.gebauer@tu-dortmund.de>
+References: <20250902080957.47265-1-simon.schippers@tu-dortmund.de>
+ <20250902080957.47265-3-simon.schippers@tu-dortmund.de>
+ <20250903090723-mutt-send-email-mst@kernel.org>
+Content-Language: en-US
+From: Simon Schippers <simon.schippers@tu-dortmund.de>
+In-Reply-To: <20250903090723-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+Michael S. Tsirkin wrote:
+> On Tue, Sep 02, 2025 at 10:09:55AM +0200, Simon Schippers wrote:
+>> The netdev queue is stopped in tun_net_xmit after inserting an SKB into
+>> the ring buffer if the ring buffer became full because of that. If the
+>> insertion into the ptr_ring fails, the netdev queue is also stopped and
+>> the SKB is dropped. However, this never happened in my testing. To ensure
+>> that the ptr_ring change is available to the consumer before the netdev
+>> queue stop, an smp_wmb() is used.
+>>
+>> Then in tun_ring_recv, the new helper wake_netdev_queue is called in the
+>> blocking wait queue and after consuming an SKB from the ptr_ring. This
+>> helper first checks if the netdev queue has stopped. Then with the paired
+>> smp_rmb() it is known that tun_net_xmit will not produce SKBs anymore.
+>> With that knowledge, the helper can then wake the netdev queue if there is
+>> at least a single spare slot in the ptr_ring by calling ptr_ring_spare
+>> with cnt=1.
+>>
+>> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+>> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+>> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
+> 
+> 
+> Oh you just want to know if produce will succeed?
+> Kind of a version of peek but for producer?
+> 
+> So all this cuteness of looking at the consumer is actually not necessary,
+> and bad for cache.
+> 
+> You just want this:
+> 
+> 
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> 
+> diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
+> index 551329220e4f..de25fe81dd4e 100644
+> --- a/include/linux/ptr_ring.h
+> +++ b/include/linux/ptr_ring.h
+> @@ -96,6 +96,14 @@ static inline bool ptr_ring_full_bh(struct ptr_ring *r)
+>  	return ret;
+>  }
+>  
+> +static inline int __ptr_ring_produce_peek(struct ptr_ring *r)
+> +{
+> +	if (unlikely(!r->size) || r->queue[r->producer])
+> +		return -ENOSPC;
+> +
+> +	return 0;
+> +}
+> +
+>  /* Note: callers invoking this in a loop must use a compiler barrier,
+>   * for example cpu_relax(). Callers must hold producer_lock.
+>   * Callers are responsible for making sure pointer that is being queued
+> @@ -103,8 +111,10 @@ static inline bool ptr_ring_full_bh(struct ptr_ring *r)
+>   */
+>  static inline int __ptr_ring_produce(struct ptr_ring *r, void *ptr)
+>  {
+> -	if (unlikely(!r->size) || r->queue[r->producer])
+> -		return -ENOSPC;
+> +	int r = __ptr_ring_produce_peek(r);
+> +
+> +	if (r)
+> +		return r;
+>  
+>  	/* Make sure the pointer we are storing points to a valid data. */
+>  	/* Pairs with the dependency ordering in __ptr_ring_consume. */
+> 
+> 
+> 
+> Add some docs, and call this, then wake.  No?
+>
 
-Move the conflicting declarations to the end of the corresponding
-structures. Notice that `struct ssp_response_iu` is a flexible
-structure, this is a structure that contains a flexible-array member.
-
-With these changes fix the following warnings:
-
-drivers/scsi/pm8001/pm8001_hwi.h:342:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/scsi/pm8001/pm80xx_hwi.h:561:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- drivers/scsi/pm8001/pm8001_hwi.h | 4 +++-
- drivers/scsi/pm8001/pm80xx_hwi.h | 4 +++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/pm8001/pm8001_hwi.h b/drivers/scsi/pm8001/pm8001_hwi.h
-index fc2127dcb58d..7dc7870a8f86 100644
---- a/drivers/scsi/pm8001/pm8001_hwi.h
-+++ b/drivers/scsi/pm8001/pm8001_hwi.h
-@@ -339,8 +339,10 @@ struct ssp_completion_resp {
- 	__le32	status;
- 	__le32	param;
- 	__le32	ssptag_rescv_rescpad;
--	struct ssp_response_iu  ssp_resp_iu;
- 	__le32	residual_count;
-+
-+	/* Must be last --ends in a flexible-array member. */
-+	struct ssp_response_iu  ssp_resp_iu;
- } __attribute__((packed, aligned(4)));
- 
- 
-diff --git a/drivers/scsi/pm8001/pm80xx_hwi.h b/drivers/scsi/pm8001/pm80xx_hwi.h
-index eb8fd37b2066..21afc28d9875 100644
---- a/drivers/scsi/pm8001/pm80xx_hwi.h
-+++ b/drivers/scsi/pm8001/pm80xx_hwi.h
-@@ -558,8 +558,10 @@ struct ssp_completion_resp {
- 	__le32	status;
- 	__le32	param;
- 	__le32	ssptag_rescv_rescpad;
--	struct ssp_response_iu ssp_resp_iu;
- 	__le32	residual_count;
-+
-+	/* Must be last --ends in a flexible-array member. */
-+	struct ssp_response_iu ssp_resp_iu;
- } __attribute__((packed, aligned(4)));
- 
- #define SSP_RESCV_BIT	0x00010000
--- 
-2.43.0
-
+Yes, this looks great! I like that it does not need any further logic :)
+I will just call this method instead of my approach in wake_netdev_queue
+without taking any locks. It should be just fine since at this moment it
+is known that the producer stopped due to the stopped netdev queue.
 
