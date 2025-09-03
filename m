@@ -1,218 +1,430 @@
-Return-Path: <linux-kernel+bounces-798896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F7BB42462
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:05:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4CD4B42466
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37E2D583FA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:05:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B73E4877A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB89C3126C7;
-	Wed,  3 Sep 2025 15:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77FA3126C7;
+	Wed,  3 Sep 2025 15:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oXaRPEDs"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2089.outbound.protection.outlook.com [40.107.244.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y0SBKD4I"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA4020408A;
-	Wed,  3 Sep 2025 15:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756911926; cv=fail; b=Uc6zQgkVLCmg9NWZ04mNduLeq7HK/4XhB/Tdd1q49cXvu89JDv1wHFZE7bkr6U/O9HxJ08mRIKOqrJokfnp3UCSiWY+7l19fRSSFva/bUU8IZMzUpmxive73wbgj8S7GUaXNuYYNK57u3+So3rwEzijV9N+RgIjA4Bnez/nSfG0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756911926; c=relaxed/simple;
-	bh=Sqn99XdwLIWkjL5NkrKaoOWkw4bI8uRpnG29KA+TBYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=qi1J5nZnfqzmG/yrp2Kfz5q1FdPWakl0WSgi4Rx5PpVN6QUxSi2Zb2EAO2ZZVc2MgWb/SDXPjGy2LVUoAJQPqpMrFQGJfw8hNxepsmy13oDBoHq511R9aNeYuz2P1aPovTMVQ2L2XuCy6zR/r1spmME+WB0aUfrrxxD8fLBlhos=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oXaRPEDs; arc=fail smtp.client-ip=40.107.244.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vlAltRtq8FtkaqSnu4QZGSVSZUE9JFquOQVsaW8J8y8hbpZp41NGq6erj2mQtCkYBSyO4c8dk13SR9NuQAX6AmDZTx+lU5Kd2oquRc4wMOWDM5zHPrPHFOlR19dqzK6HDvTHT73yI/4GcX9+JyrebYQQz7Vs0ihSjYTp6aIoTBvJ8OhVTXd1r0BtwrN5eSqFMd+z7vy09dofnO8h/pDuGw4Mye11wYVna3FvB99EcCIQ5B8dpWkp6Iujkd3cUhkcPLUq78NPurSRcHoeH+kKOFrrmmQKdziXQZJlejTNHY/rpy2PkrAYHZ2OrvZDYLTfTmUk2fdWkE5L/TIgEm5Atw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bSUq1i6W9+IeGHXKVB0RnEb3SfAx/mOXMSwRRMWzYhU=;
- b=NSXYcianlur3K7vhNf7DINE1Om2FfKkThy0OG+VE7o5Ph8NXOeKLSH2lj8LVCbK7z+sKaXryOmgIH8/+hlZqgJX7prNGXFw71FiyX/+M2FOzWGnb7Y86dBsv8eRytMfBYhN7McoxsFm/A8Kvi112oNhOD/o/fzCoSKMiC1eG6uC9NZ5Q6k2bYo22RpK6nLKSAPkNOSGrxN80928e07Cc/7Ppvs/5rRYOaCqQefiOB440XRtdeAT+DhBJBrsq3O26mWTZu2oWMBVWGmI1FHGKmcX6s9WmdC+kvJb4t6R7ATB5OOqsLNI/rryUM2LjW3vnliYwrH/UmkKDjgkwec24GQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bSUq1i6W9+IeGHXKVB0RnEb3SfAx/mOXMSwRRMWzYhU=;
- b=oXaRPEDsQcWJpRKvIKOyDliuzN341FBBMFzI4oCuvcrpN6xgdp1EsjkhhK4qRW39l2l0R0Mmf6UjopOP5oK5f49JSEVZolcXmL0PhRgDQp/9mT2vwnSmZAE5j4aIcEZsoc7/f8oVATy/GRuRNRxkZ1g/iNUG/AS8qx7VbSFMQmo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
- MN0PR12MB5739.namprd12.prod.outlook.com (2603:10b6:208:372::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Wed, 3 Sep
- 2025 15:05:20 +0000
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.9073.026; Wed, 3 Sep 2025
- 15:05:18 +0000
-Date: Wed, 3 Sep 2025 20:35:12 +0530
-From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-To: "Mario Limonciello (AMD)" <superm1@kernel.org>
-Cc: Perry Yuan <perry.yuan@amd.com>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] cpufreq/amd-pstate: Fix a regression leading to EPP 0
- after resume
-Message-ID: <aLhZKNnnyUXOX5wk@BLRRASHENOY1.amd.com>
-References: <20250826052747.2240670-1-superm1@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826052747.2240670-1-superm1@kernel.org>
-X-ClientProxiedBy: BM1PR01CA0151.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:68::21) To DS7PR12MB8252.namprd12.prod.outlook.com
- (2603:10b6:8:ee::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEE31E3DF8
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756912011; cv=none; b=ijscb2oglfQXRVxjdfMYN6elf+xcOrsIwUFdr04E9mEO/XyWrG5lg/BCLvEN3Y2Md6cEXRQ/A9WpUXFjyb4NM8R5WrFIAoYqci85Kq/5XG8Uy/y1n2zVkNh9B+mLkpAmAtYToG7vsG3NJOn0W3sUQizRYVAQEsTdLTpIoV3VZrg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756912011; c=relaxed/simple;
+	bh=bmTfgdmW6og7l6yx2T+X1zz8jwXLqTDPYKEGjH7odDM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PZVfES3a9afK4C5T3tnibaR9yp+KtnB4vAtLYHGKUf0jixgI85pfRJZYhi4gmiS27QDMyHMcApMJ8AuoJbHArZ8Q3v1uGxQD2l/Rv3P3SzqIu9Q4K95v+2y9AO5DOsRFSZ/C7YcM+xKX7Jnu0S2UYeOlcdRctzhw7RVOm8QlFxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y0SBKD4I; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61e8fdfd9b4so2268560a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 08:06:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756912007; x=1757516807; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1wTAdyOlm/H89MIPXpHNMclT4BvrXX7ltwC3KFNrpZs=;
+        b=y0SBKD4IfzUc4xX7w88ke66vxK35W7hiWa1O7Z8aMw0jSH69n8FVWMG2X4I70SdKpB
+         n4xgT2OgIs0C2ssTIIg0KkHVgZ79dAWm6CABsRmU6yPV6a+xSaOzex0xJltrNyE3JJez
+         xK5bhQ7J/muaYIw2q4vz6vsn9+d88aNuYXB7N3JMuiOgZvJ4S9JwNkUvPMuhJob8yzrv
+         9CbJCpOECeWlMUgRbT/ip+j9VeRDdcOQIKRxMrjrLlZ1q6WXhoGNpRWmcU+WZ3Z/scUT
+         EYwfkeANbPEdqcF7OQOTQSKMPHLCgSCi9NEldQWNa2KlXvV2KV+GEAq6Kfrc/D/LT7Cz
+         WGvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756912007; x=1757516807;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1wTAdyOlm/H89MIPXpHNMclT4BvrXX7ltwC3KFNrpZs=;
+        b=gjawRnsfPvM93014Ol7rNMEN1sFvIl2/bMlCf/J6Cc25TI/Q1apDS9A0cGPkAfVDWk
+         ThFSJyKPLUll8/fV76v7G2AtZL+WFGbmVsUh/QA24URk/hMC1Xn3p6g0zoGOt3XKHhn5
+         TGQCDPkKWjSb1mXM+KZHHnduUXwIIL05YjC3dD82bq5jvj4+uS+84JVb9QsV+t8UIuzN
+         h3PNngrebd+gLCsQOvmC83PcCATqs0jrXGtxlIKWrOAkcdcKedCR8KHxc8lgtNklrK9i
+         JZwVxor+htiOftQ996Z9kYJVhUgOM4VphW0WF+UL5/qivePICGaqrNhrC9RwqMUgLH3Y
+         JlfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpGawuZMC0WkMMOHgNR6hT9k6aYqVard56VBeaQLdJnTgn+0gDvOWNnjbbWnSmhnvTeKphKeI+p+HcfzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZSdFvRvlQBIDMJUDY+tg/binTsGuh/HKfKqKiOSFCqSXYDj8h
+	RovI0KcgC+Xzx8teR0zFs93QVCfTOCHimIQkZBMLKnqElrO66CNkXgUt8fg2Rj6XDZzQGPpRoHs
+	IqJmYvrZwezxOwyNXpaZlpSe8fIX7RR2foqjhvWS8wA==
+X-Gm-Gg: ASbGncv3HaeRtJWFe9HxCzABZqtZMP7uE5rbwdFlWuoXxQmH9NhKLSE2O7/g2ZLt0pQ
+	/BHpgRFQMmK8iY7v1HDZrdc/qyf/8uPXiBXFd4MLw16TuEuefi5tWc8Pyh4JHWpPKMkxEEqoE93
+	atYGBKeC0tm46aosUXGm29JrU5kLX3fpg592jHDbgkHQOEST11F4k+18vstjabM9TOIR7HFvrCF
+	xtoMUtbOe5DThuuNGJlM2Nfx2WEOxq3mWroMuzWbnuLEsKDy0NSvPNdNsUZtLA+xUfMu2YrRYmh
+	rL8v0w==
+X-Google-Smtp-Source: AGHT+IF+0pwoAAxX3gf5UWkmV+omghafmOGaLYNyWJBUplkZID7VrCGzVwPUHydMxnaJb7KCcSQuj+InbQ/V0zcvok0=
+X-Received: by 2002:a05:6402:3494:b0:61d:9a4c:d03 with SMTP id
+ 4fb4d7f45d1cf-61d9a4c0e7cmr12317883a12.13.1756912006605; Wed, 03 Sep 2025
+ 08:06:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|MN0PR12MB5739:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ad98cae-54fb-456b-572b-08ddeafb4bb5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?A4MatByDl0k76CepaiakW0CXsvPV4lu158jTBCnIh7UH+c38Vt72JobOhJl8?=
- =?us-ascii?Q?Ceou6pvVwK4etC8L0UTUrUG5JkAdq0Dohf2wDQCHtGl4TUITmvMgukQ+IBQG?=
- =?us-ascii?Q?3HmAkgNciSWi4d8gjAZvPSVi15AYTNMpZNOLgRGacSKfwDFdLshJNLkJq1lH?=
- =?us-ascii?Q?jQ7odsuieZpLNFaeigfbAfdSrn5UOVNjH2z2QilbQ5w262dYjFCXwTZE0aKf?=
- =?us-ascii?Q?sog5u/Ck8d1/KzUbkEBCsKJjKliPSPqAVX+qVnv6tMatR3AXICIBA2AmFL1I?=
- =?us-ascii?Q?zvd2m+YpQ5OgJRPbNlHrME7deXOAheTK5MoNdhgpXMIZI56tDBaItWWhFJHP?=
- =?us-ascii?Q?VYa+bmLzzFHqzuik8cGtVmpf/1VmoObH4Jq963K/nMgocJ57aGa4v9B3TYOB?=
- =?us-ascii?Q?hyyevI5X6gpDLiJDwOy7BJrn0Cnk/oUmFaBMMCP39RMBxrafC0emZuoimD5J?=
- =?us-ascii?Q?GVBU5Zp8IbChrLvadLDzzReEjB8Psty72JCtQCYqh+NwC6FBwnK7dWwRP1wE?=
- =?us-ascii?Q?9f3bsI7u3vjUz9GVKGaDTt5Xxqdy0KEjb92+JLfAckjNl3+x64wqpNw/Awmz?=
- =?us-ascii?Q?JdAI7XjWTGepTXl4i0DlGgH/t5LJOdVpNxacq7l/TpBzom0/lWboBd+8QrcP?=
- =?us-ascii?Q?sxJEQBRDZS+h7Sb7YijxBJvKY5duxPJ+r/tVgdHtKgn8c3r4Uu5P66J3YECj?=
- =?us-ascii?Q?hm8fbll/tUKAYTt9OO5rb3O+bjZntqzsG59AzxhK7p8eX1F1DM1CGUKd7Nse?=
- =?us-ascii?Q?nIvCaGyDXhGu5iguBsC0sf9SyW8Ul/UvELQolUR5bJ2KPcYKvIsPygCf2P9O?=
- =?us-ascii?Q?mFeFlDmet9JBlzOZQWmHVRoQ8Js8RlnlZdn9CzAXmLUwLCOgSO/yZlcWiGr4?=
- =?us-ascii?Q?LFBX0kv4x0IbsJtCCHMgKI6C1qp4SO38/uSvNbzJe0gM5jlV4xDQkmzDsytv?=
- =?us-ascii?Q?79KC5UT6xeEPqC9fZEby5f+v1vHpekZpgioy+4TJkv/nbjaHhsTsHosaPthg?=
- =?us-ascii?Q?/2x3K9uu5SslTFClSPDZIa6hj8haJq1k4hlDvPpKsDnU3wYxZ1ks/elgokYu?=
- =?us-ascii?Q?6jh3ThbwaRKFUbH3Hbs4Tm0U0+1ywLW4HN2QYkA+logCxgt+rrGgAk/3zHb3?=
- =?us-ascii?Q?pSzZusjq4q+17O5rFu0DEb+6x0Dh5qj/c4+4GHNPn1eFjNLiuSZrFQ4lv6k0?=
- =?us-ascii?Q?ABAycpR1vHu798Kxb5YInwXGU5K5XF7fot+PD8g5hYOnUgOMJT6uKywnzf63?=
- =?us-ascii?Q?yR4Sch/sbI+tIStC7/USYEcnSnalnmIBn0xo56gmPYmy7Ye0zt1+6fTCpob8?=
- =?us-ascii?Q?REdqCU/SrE8gJ4qrkGmezUmov5RD5zjfXOnFn+E6AjqHA1pzeKngpHHkl+/Y?=
- =?us-ascii?Q?9F90GgI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gqY5wjcQKm/6x6QYDZyuw5etnRYCKKTpXSzlAWOGRidicNNixvNGPuWVzBbw?=
- =?us-ascii?Q?9jRH4atoLIScJ1wWH1wzu1Vm9oNMSe1LIPEcHSyEy2kNTJdQ/w2Pc+oV1O/G?=
- =?us-ascii?Q?thynsoh0Y7VnunHsAgJ1G8VKfcpLS5LEP3VR/WmcAN82HN6OmTS0T02nGT/J?=
- =?us-ascii?Q?UefRHq5TfAsyR0+kHhEO0k48h+jRX9Xb+KOJtFG/PUi+leRGvUmZA6KV5nmW?=
- =?us-ascii?Q?19GakBxmOLBirjzu5BuVb5nc5MQSYfDt09IQihL/7UD+S+QU4Ls0IAGB8Kvs?=
- =?us-ascii?Q?Gb/Wc++cmoZVoWAbklEuQ0yGFmbspeFEf+04ZWrvU8i/L9zbHtrq+acaNkBC?=
- =?us-ascii?Q?ZCQ1Bh0/00fiMRS3txddmnmMVJZMDARF+xN8s70ByfiFaJA+P5en2bNXbjv/?=
- =?us-ascii?Q?tnN6EaLRX1DvF5WCqbQwbXhYUKfRBkiKwd5KcrTdTWZFkOzbyRXOmKj8EY9v?=
- =?us-ascii?Q?iwhgk2Qx2KLKFQzKGWPHIj181pWxx+eZw9tNUq/FB+7ajPqif31iTz6J80kk?=
- =?us-ascii?Q?rA86LXAyZsJ2UyB9P56M0REG0RCkPR4BBruHCAJhMw5BGYEi3vGGV58ImaK8?=
- =?us-ascii?Q?K0X03H/m23pkIMdUWFPx0xCVQrVqxSJfsKpRvppfT6lhbbA6dppCNX8mWina?=
- =?us-ascii?Q?xEBfhqfZJ+2ZUCjpGlgZBTeC1iP2SRM+B7AnnNqAJ2J8CdMBpuSaBymijuAD?=
- =?us-ascii?Q?gSKcQENZz7mT57k6K7dCb/kRQFTiz9QxievFptGYN5bPQZ+mRBQsyoq9sJ7m?=
- =?us-ascii?Q?Hl3HRE3VJ76naQd4HhxdOiw/p1Mj9yl7+L/dU+VvyRzlqbyLtlbGpvNvoqDF?=
- =?us-ascii?Q?Asi0PCHtRfb4siulbwWMJmqYwtKpgMp9L9d8XAIy/2uIk3zGuC7ELTvFsNNk?=
- =?us-ascii?Q?D3oLqcPKi4TOFmwakceKb427Vp5EYYrRD0G9/b2AN7gEs+SpRijMWYSF1uBa?=
- =?us-ascii?Q?3u7wPRb4qE+QBDu4wn8O82LNodYMeot9AwxlnYiSzCJalFMclHLNA+JuLLVV?=
- =?us-ascii?Q?kMMunW5W7ojucsEdhgHGPIob2dpOSIpJ5TwqQQumAOJX4dTO8KrjxOpIfuSn?=
- =?us-ascii?Q?cDzM4/pmJWPXWklFD6/s7912pTscQ7LOcV6r+pe5V1Zx22x/HsW+9LbnGNpx?=
- =?us-ascii?Q?BCJK1WrwEWZWlVW39G67dUdYn3v6nmy07VR47mhMPF2jqG/NZEYRdmC6/PbR?=
- =?us-ascii?Q?JGyou5a5MfwqiQWnaquzOS0JAyVjvajA/jsyfPxcLZ9V/lFEg6y/bnjfYm3v?=
- =?us-ascii?Q?yEKXQa4H9l+i6iY78N4Upc1k1XeJr7V3khQBngDrOvW7SaaJcZL+UoZthpHK?=
- =?us-ascii?Q?sCFK5ARrx5/9MQ4Z4Dm4JWCl81NrlIOgP+oIRmK3gLIvlX7wdJ1wg129Gze3?=
- =?us-ascii?Q?W0/0Ih/KGGPl9xHbBrpP2J2a7+pTiTl/ZHxJ4Hg3yZYG+iQIxHguxdlQBYNP?=
- =?us-ascii?Q?9uP7UCi9x8hZdHzsdW4jw6wEnnqJXge3kekt4AArfB4K5tpmSHnuVAyPQvBx?=
- =?us-ascii?Q?et+HX1JeKsr2Ww4C/TItho1CNCTDqpIOKQmWx/ouiyqBvvix1BxxJdds3HaF?=
- =?us-ascii?Q?PzLaOxmDWZ2U2kVkR5BvGHyNKIl4E9E8BLcvHQ6O?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ad98cae-54fb-456b-572b-08ddeafb4bb5
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 15:05:18.6856
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5EzrrGawreNn8KgdNzsQx9C5Q0l1RwqIcn/S+7oz86Eirk/r92RLS/H3uBp+pXBSp+U9f6SMSbiNXhFdw5Ht4g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5739
+References: <20250821-imx95-rproc-1-v5-0-e93191dfac51@nxp.com>
+ <20250821-imx95-rproc-1-v5-2-e93191dfac51@nxp.com> <aLHOhKpAQbVCC76-@p14s>
+ <20250830125208.GA22718@nxa18884-linux.ap.freescale.net> <aLcdmY-gqd5cFOYc@p14s>
+ <20250903045611.GA8860@nxa18884-linux.ap.freescale.net> <20250903063915.GA18615@nxa18884-linux.ap.freescale.net>
+In-Reply-To: <20250903063915.GA18615@nxa18884-linux.ap.freescale.net>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Wed, 3 Sep 2025 09:06:34 -0600
+X-Gm-Features: Ac12FXxkYEichdIeujGDnw-u0qzphz0riJYUzRCbZ9M50zatPIwa4Kz2wZhsuT4
+Message-ID: <CANLsYkw0YqSDC7-SmA4x4hB1Z1kO5MVR-dZb8PAbkw6RMW6PNA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] remoteproc: imx_rproc: Add support for System
+ Manager API
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>, 
+	Daniel Baluta <daniel.baluta@nxp.com>, Iuliana Prodan <iuliana.prodan@nxp.com>, 
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Mario,
+On Tue, 2 Sept 2025 at 23:28, Peng Fan <peng.fan@oss.nxp.com> wrote:
+>
+> On Wed, Sep 03, 2025 at 12:56:11PM +0800, Peng Fan wrote:
+> >On Tue, Sep 02, 2025 at 10:38:49AM -0600, Mathieu Poirier wrote:
+> >>On Sat, Aug 30, 2025 at 08:52:09PM +0800, Peng Fan wrote:
+> >>> On Fri, Aug 29, 2025 at 10:00:04AM -0600, Mathieu Poirier wrote:
+> >>> >Good day,
+> >>> >
+> >>> >On Thu, Aug 21, 2025 at 05:05:05PM +0800, Peng Fan wrote:
+> >>> >> i.MX95 features a Cortex-M33 core, six Cortex-A55 cores, and
+> >>> >> one Cortex-M7 core. The System Control Management Interface(SCMI)
+> >>> >> firmware runs on the M33 core. The i.MX95 SCMI firmware named Syst=
+em
+> >>> >> Manager(SM) includes vendor extension protocols, Logical Machine
+> >>> >> Management(LMM) protocol and CPU protocol and etc.
+> >>> >>
+> >>> >> There are three cases for M7:
+> >>> >>  (1) M7 in a separate Logical Machine(LM) that Linux can't control=
+ it.
+> >>> >>  (2) M7 in a separate Logical Machine that Linux can control it us=
+ing
+> >>> >>      LMM protocol
+> >>> >>  (3) M7 runs in same Logical Machine as A55, so Linux can control =
+it
+> >>> >>      using CPU protocol
+> >>> >>
+> >>> >> So extend the driver to using LMM and CPU protocol to manage the M=
+7 core.
+> >>> >>  - Add IMX_RPROC_SM to indicate the remote core runs on a SoC that
+> >>> >>    has System Manager.
+> >>> >>  - Compare linux LM ID(got using scmi_imx_lmm_info) and M7 LM ID(t=
+he ID
+> >>> >>    is fixed as 1 in SM firmware if M7 is in a seprate LM),
+> >>> >>    if Linux LM ID equals M7 LM ID(linux and M7 in same LM), use CP=
+U
+> >>> >>    protocol to start/stop. Otherwise, use LMM protocol to start/st=
+op.
+> >>> >>    Whether using CPU or LMM protocol to start/stop, the M7 status
+> >>> >>    detection could use CPU protocol to detect started or not. So
+> >>> >>    in imx_rproc_detect_mode, use scmi_imx_cpu_started to check the
+> >>> >>    status of M7.
+> >>> >>  - For above case 1 and 2, Use SCMI_IMX_LMM_POWER_ON to detect whe=
+ther
+> >>> >>    the M7 LM is under control of A55 LM.
+> >>> >>
+> >>> >> Current setup relies on pre-Linux software(U-Boot) to do
+> >>> >> M7 TCM ECC initialization. In future, we could add the support in =
+Linux
+> >>> >> to decouple U-Boot and Linux.
+> >>> >>
+> >>> >> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+> >>> >> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> >>> >> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> >>> >> ---
+> >>> >>  drivers/remoteproc/Kconfig     |   2 +
+> >>> >>  drivers/remoteproc/imx_rproc.c | 123 ++++++++++++++++++++++++++++=
+++++++++++++-
+> >>> >>  drivers/remoteproc/imx_rproc.h |   5 ++
+> >>> >>  3 files changed, 127 insertions(+), 3 deletions(-)
+> >>> >>
+> >>> >> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconf=
+ig
+> >>> >> index 48a0d3a69ed08057716f1e7ea950899f60bbe0cf..ee54436fea5ad08a9c=
+198ce74d44ce7a9aa206de 100644
+> >>> >> --- a/drivers/remoteproc/Kconfig
+> >>> >> +++ b/drivers/remoteproc/Kconfig
+> >>> >> @@ -27,6 +27,8 @@ config IMX_REMOTEPROC
+> >>> >>          tristate "i.MX remoteproc support"
+> >>> >>          depends on ARCH_MXC
+> >>> >>          depends on HAVE_ARM_SMCCC
+> >>> >> +        depends on IMX_SCMI_CPU_DRV || !IMX_SCMI_CPU_DRV
+> >>> >> +        depends on IMX_SCMI_LMM_DRV || !IMX_SCMI_LMM_DRV
+> >>> >>          select MAILBOX
+> >>> >>          help
+> >>> >>            Say y here to support iMX's remote processors via the r=
+emote
+> >>> >> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/i=
+mx_rproc.c
+> >>> >> index a6eef0080ca9e46efe60dcb3878b9efdbdc0f08e..151b9ca34bac2dac9d=
+f0ed873f493791f2d1466e 100644
+> >>> >> --- a/drivers/remoteproc/imx_rproc.c
+> >>> >> +++ b/drivers/remoteproc/imx_rproc.c
+> >>> >> @@ -8,6 +8,7 @@
+> >>> >>  #include <linux/clk.h>
+> >>> >>  #include <linux/err.h>
+> >>> >>  #include <linux/firmware/imx/sci.h>
+> >>> >> +#include <linux/firmware/imx/sm.h>
+> >>> >>  #include <linux/interrupt.h>
+> >>> >>  #include <linux/kernel.h>
+> >>> >>  #include <linux/mailbox_client.h>
+> >>> >> @@ -22,6 +23,7 @@
+> >>> >>  #include <linux/reboot.h>
+> >>> >>  #include <linux/regmap.h>
+> >>> >>  #include <linux/remoteproc.h>
+> >>> >> +#include <linux/scmi_imx_protocol.h>
+> >>> >>  #include <linux/workqueue.h>
+> >>> >>
+> >>> >>  #include "imx_rproc.h"
+> >>> >> @@ -92,6 +94,11 @@ struct imx_rproc_mem {
+> >>> >>  #define ATT_CORE_MASK   0xffff
+> >>> >>  #define ATT_CORE(I)     BIT((I))
+> >>> >>
+> >>> >> +/* Logical Machine Operation */
+> >>> >> +#define IMX_RPROC_FLAGS_SM_LMM_OP       BIT(0)
+> >>> >> +/* Linux has permission to handle the Logical Machine of remote c=
+ores */
+> >>> >> +#define IMX_RPROC_FLAGS_SM_LMM_AVAIL    BIT(1)
+> >>> >> +
+> >>> >>  static int imx_rproc_xtr_mbox_init(struct rproc *rproc, bool tx_b=
+lock);
+> >>> >>  static void imx_rproc_free_mbox(struct rproc *rproc);
+> >>> >>
+> >>> >> @@ -116,6 +123,8 @@ struct imx_rproc {
+> >>> >>          u32                             entry;          /* cpu st=
+art address */
+> >>> >>          u32                             core_index;
+> >>> >>          struct dev_pm_domain_list       *pd_list;
+> >>> >> +        /* For i.MX System Manager based systems */
+> >>> >> +        u32                             flags;
+> >>> >>  };
+> >>> >>
+> >>> >>  static const struct imx_rproc_att imx_rproc_att_imx93[] =3D {
+> >>> >> @@ -394,6 +403,30 @@ static int imx_rproc_start(struct rproc *rpro=
+c)
+> >>> >>          case IMX_RPROC_SCU_API:
+> >>> >>                  ret =3D imx_sc_pm_cpu_start(priv->ipc_handle, pri=
+v->rsrc_id, true, priv->entry);
+> >>> >>                  break;
+> >>> >> +        case IMX_RPROC_SM:
+> >>> >> +                if (priv->flags & IMX_RPROC_FLAGS_SM_LMM_OP) {
+> >>> >> +                        if (!(priv->flags & IMX_RPROC_FLAGS_SM_LM=
+M_AVAIL))
+> >>> >> +                                return -EACCES;
+> >>> >> +
+> >>> >> +                        ret =3D scmi_imx_lmm_reset_vector_set(dcf=
+g->lmid, dcfg->cpuid, 0, 0);
+> >>> >> +                        if (ret) {
+> >>> >> +                                dev_err(dev, "Failed to set reset=
+ vector lmid(%u), cpuid(%u): %d\n",
+> >>> >> +                                        dcfg->lmid, dcfg->cpuid, =
+ret);
+> >>> >> +                        }
+> >>> >> +
+> >>> >> +                        ret =3D scmi_imx_lmm_operation(dcfg->lmid=
+, SCMI_IMX_LMM_BOOT, 0);
+> >>> >> +                        if (ret)
+> >>> >> +                                dev_err(dev, "Failed to boot lmm(=
+%d): %d\n", ret, dcfg->lmid);
+> >>> >> +                } else {
+> >>> >> +                        ret =3D scmi_imx_cpu_reset_vector_set(dcf=
+g->cpuid, 0, true, false, false);
+> >>> >> +                        if (ret) {
+> >>> >> +                                dev_err(dev, "Failed to set reset=
+ vector cpuid(%u): %d\n",
+> >>> >> +                                        dcfg->cpuid, ret);
+> >>> >> +                        }
+> >>> >> +
+> >>> >> +                        ret =3D scmi_imx_cpu_start(dcfg->cpuid, t=
+rue);
+> >>> >> +                }
+> >>> >> +                break;
+> >>> >>          default:
+> >>> >>                  return -EOPNOTSUPP;
+> >>> >>          }
+> >>> >> @@ -436,6 +469,16 @@ static int imx_rproc_stop(struct rproc *rproc=
+)
+> >>> >>          case IMX_RPROC_SCU_API:
+> >>> >>                  ret =3D imx_sc_pm_cpu_start(priv->ipc_handle, pri=
+v->rsrc_id, false, priv->entry);
+> >>> >>                  break;
+> >>> >> +        case IMX_RPROC_SM:
+> >>> >> +                if (priv->flags & IMX_RPROC_FLAGS_SM_LMM_OP) {
+> >>> >> +                        if (priv->flags & IMX_RPROC_FLAGS_SM_LMM_=
+AVAIL)
+> >>> >> +                                ret =3D scmi_imx_lmm_operation(dc=
+fg->lmid, SCMI_IMX_LMM_SHUTDOWN, 0);
+> >>> >> +                        else
+> >>> >> +                                ret =3D -EACCES;
+> >>> >> +                } else {
+> >>> >> +                        ret =3D scmi_imx_cpu_start(dcfg->cpuid, f=
+alse);
+> >>> >> +                }
+> >>> >> +                break;
+> >>> >>          default:
+> >>> >>                  return -EOPNOTSUPP;
+> >>> >>          }
+> >>> >> @@ -546,10 +589,48 @@ static int imx_rproc_mem_release(struct rpro=
+c *rproc,
+> >>> >>          return 0;
+> >>> >>  }
+> >>> >>
+> >>> >> +static int imx_rproc_sm_lmm_prepare(struct rproc *rproc)
+> >>> >> +{
+> >>> >> +        struct imx_rproc *priv =3D rproc->priv;
+> >>> >> +        const struct imx_rproc_dcfg *dcfg =3D priv->dcfg;
+> >>> >> +        int ret;
+> >>> >> +
+> >>> >> +        if (!(priv->flags & IMX_RPROC_FLAGS_SM_LMM_OP))
+> >>> >> +                return 0;
+> >>> >> +
+> >>> >> +        /*
+> >>> >> +         * Power on the Logical Machine to make sure TCM is avail=
+able.
+> >>> >> +         * Also serve as permission check. If in different Logica=
+l
+> >>> >> +         * Machine, and linux has permission to handle the Logica=
+l
+> >>> >> +         * Machine, set IMX_RPROC_FLAGS_SM_LMM_AVAIL.
+> >>> >> +         */
+> >>> >> +        ret =3D scmi_imx_lmm_operation(dcfg->lmid, SCMI_IMX_LMM_P=
+OWER_ON, 0);
+> >>> >> +        if (ret =3D=3D 0) {
+> >>> >> +                dev_info(priv->dev, "lmm(%d) powered on\n", dcfg-=
+>lmid);
+> >>> >> +                priv->flags |=3D IMX_RPROC_FLAGS_SM_LMM_AVAIL;
+> >>> >
+> >>> >Why is setting this flag needed?  The check that is done on it in
+> >>> >imx_rproc_{start|stop} should be done here.  If there is an error th=
+en we don't
+> >>> >move forward.
+> >>>
+> >>> The flag is to indicate M7 LM could be controlled by Linux LM(to save=
+ SCMI
+> >>> calls. without this flag, heavy SCMI calls will be runs into). The re=
+ason
+> >>> on why set it here:
+> >>> The prepare function will be invoked in two path: rproc_attach and rp=
+roc_fw_boot.
+> >>> When M7 LM works in detached state and not under control of Linux LM,=
+ rproc_stop
+> >>> could still be invoked, so we need to avoid Linux runs into scmi call=
+s to
+> >>> stop M7 LM(even if scmi firmware will return -EACCESS, but with a fla=
+g, we could
+> >>> save a SCMI call), so there is a check in imx_rproc_stop and this is =
+why
+> >>> we need a flag there.
+> >>>
+> >>> The flag check in start might be redundant, but to keep safe, I still=
+ keep
+> >>> it there.
+> >>
+> >>One of the (many) problem I see with this patch is that there is no
+> >>IMX_RPROC_FLAGS_SM_CPU_OP to complement IMX_RPROC_FLAGS_SM_LMM_OP in
+> >>imx_rproc_detect_mode(), leading to if/else statements that are hard to=
+ follow.
+> >
+> >There are only two methods as written in commit log.
+> >one is LMM_OP, the other is CPU_OP
+> >
+> >>
+> >>In imx_rproc_sm_lmm_prepare(), if scmi_imx_lmm_operation() is successfu=
+l, return
+> >>0 immediately.  If -EACCESS the LMM method is unavailable in both norma=
+l and
+> >>detached mode, so priv->flags &=3D ~IMX_RPROC_FLAGS_SM_LMM_OP.
+> >
+> >No. LMM in avaiable in normal and detach mode. I have written in commit =
+log,
+> >There are three cases for M7:
+> > (1) M7 in a separate Logical Machine(LM) that Linux can't control it.
+> > (2) M7 in a separate Logical Machine that Linux can control it using
+> >     LMM protocol
+> > (3) M7 runs in same Logical Machine as A55, so Linux can control it
+> >     using CPU protocol
+> >
+> >>
+> >>The main takeaway here is that the code introduced by this patch is dif=
+ficult to
+> >>understand and maintain.  I suggest you find a way to make things simpl=
+er.
+> >
+> >You asked Daniel to help review this patchset. Daniel and Frank both hel=
+p
+> >reviewed this patchset and gave R-b.
+> >
+> >You also said this patchset "looks fine to you" Jul 21 [1].
+> >
+> >Now you overturn these and say "find a way to make things simpler.
+> >What's the point to ask my colleague to review?  What should I do,
+> >redesign the patchset according to "make things simpler"?
+> >
+> >Please give detailed suggestions, but not a general comment.
+>
+> I realize my previous message may have come across as frustrated =E2=80=
+=94 I truly
+> appreciate your time and feedback. I=E2=80=99m just trying to understand =
+the
+> direction you=E2=80=99d prefer for this patchset, especially since it had=
+ prior
+> R-b=E2=80=99s and your earlier comment that it =E2=80=9Clooks fine.=E2=80=
+=9D
+>
 
+I simply started taking a closer look and quickly found problems.
 
-On Tue, Aug 26, 2025 at 12:27:47AM -0500, Mario Limonciello (AMD) wrote:
-> During the suspend sequence the cached CPPC request is destroyed
-> with the expectation that it's restored during resume.  This assumption
-> broke when the separate cache EPP variable was removed, and then it was
-> broken again by commit 608a76b65288 ("cpufreq/amd-pstate: Add support
-> for the "Requested CPU Min frequency" BIOS option") which explicitly
-> set it to zero during suspend.
-> 
-> Remove the invalidation and set the value during the suspend call to
-> update limits so that the cached variable can be used to restore on
-> resume.
-> 
-> Fixes: 608a76b65288 ("cpufreq/amd-pstate: Add support for the "Requested CPU Min frequency" BIOS option")
-> Fixes: b7a41156588a ("cpufreq/amd-pstate: Invalidate cppc_req_cached during suspend")
-> Closes: https://community.frame.work/t/increased-power-usage-after-resuming-from-suspend-on-ryzen-7040-kernel-6-15-regression/
-> Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
-> ---
->  drivers/cpufreq/amd-pstate.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index bbc27ef9edf7b..8eca4707226b8 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -1626,13 +1626,14 @@ static int amd_pstate_suspend(struct cpufreq_policy *policy)
->  	 * min_perf value across kexec reboots. If this CPU is just resumed back without kexec,
->  	 * the limits, epp and desired perf will get reset to the cached values in cpudata struct
->  	 */
-> -	ret = amd_pstate_update_perf(policy, perf.bios_min_perf, 0U, 0U, 0U, false);
-> +	ret = amd_pstate_update_perf(policy, perf.bios_min_perf,
-> +				     FIELD_GET(AMD_CPPC_DES_PERF_MASK, cpudata->cppc_req_cached),
-> +				     FIELD_GET(AMD_CPPC_MAX_PERF_MASK, cpudata->cppc_req_cached),
-> +				     FIELD_GET(AMD_CPPC_EPP_PERF_MASK, cpudata->cppc_req_cached),
-> +				     false);
->  	if (ret)
->  		return ret;
->  
-> -	/* invalidate to ensure it's rewritten during resume */
-> -	cpudata->cppc_req_cached = 0;
-> -
+> Could you please help clarify what specifically you=E2=80=99d like simpli=
+fied?
+> I=E2=80=99m happy to revise accordingly, but I=E2=80=99d really appreciat=
+e concrete
+> suggestions so I can move forward effectively.
+>
 
-Ah, so cppc_req_cached is required to extract the EPP value in
-amd_pstate_epp_update_limit() which is called by
-amd_pstate_epp_resume().
+I did give suggestions.  The core of this patch is 123 lines - even
+after spending two full hours reviewing it I still don't have a clear
+picture of what is happening.  When that is the case, something is not
+right.  When I look at a patchset, I usually ask myself if I'll
+remember what it does when looking at it again in 6 months.  The
+answer was a clear "no" with this one.
 
-Looks good to me.
-
-Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-
--- 
-Thanks and Regards
-gautham.
-
-
-
->  	/* set this flag to avoid setting core offline*/
->  	cpudata->suspended = true;
->  
-> -- 
-> 2.43.0
-> 
+> @Daniel, @Frank =E2=80=94 since you've reviewed and R-b'd this patchset, =
+do you
+> have thoughts on the latest feedback from Mathieu? Would you agree that
+> further simplification is needed, or is the current structure acceptable?=
+=E2=80=9D
+>
+> Thanks again!
+>
+> Thanks,
+> Peng
+>
+> >
+> >[1] https://lore.kernel.org/all/CANLsYkwZz4xLOG25D6S-AEGFeUBWwyp1=3Dytmu=
+2q90NyEpkoX9g@mail.gmail.com/
+> >
+> >Thanks,
+> >Peng
+> >>
+> >
 
