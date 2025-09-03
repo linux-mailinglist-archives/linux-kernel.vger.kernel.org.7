@@ -1,187 +1,247 @@
-Return-Path: <linux-kernel+bounces-799417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9CBB42B5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:52:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3D1B42B5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBF534866F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:52:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6971A86DBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F8A2E0927;
-	Wed,  3 Sep 2025 20:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8262E764A;
+	Wed,  3 Sep 2025 20:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jVxM+iSG"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2046.outbound.protection.outlook.com [40.107.244.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nH+JkBBS"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEAE82E040D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 20:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756932761; cv=fail; b=sKBv3xvUo42dADosL9DMj+x6ebj2RqMoHYUFGcCkKSuL3uLFXnBY+xJAl8LUMvNgWsk9dIAElr73eIIvXgbaNdJghFxIM6KOKk+LmduVz/WEVbFKzN9olBlHCKlLg2wfVIGcVBI9UPgs96BsI2UNUgt7auzwPM4m2h8SGYpbrVs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756932761; c=relaxed/simple;
-	bh=4/YYaHWzsDiINUE07+jmYi4It13s90cBjGQIpwi4ZGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=uaF1FtB2+6mTIki0UQREpLG1bdXVURE3Rnnr13ddSL/k68e/pcC3tIo417gYbNwYd8Z9Hruer0LqDMKzAVEtGK04NG1kFQP9srzntlMFVtgFU3O5krnzmb4hAWqkIMYne8l1lJNLFP3ADIqhQNPQN1S3HOrqhhFhdNaBBv9Bc7Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jVxM+iSG; arc=fail smtp.client-ip=40.107.244.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ux+/UuqlsOplhWfV0W6V/dyRNGoj7a6oDE8OnCxrTGZkGFIlc+qYDvjUC7ehkzuDaBATczGMLH9AOBhOQMWU0NoY8leZlo4W40BZm1zFTRlFAD/RE0fkiPyjgZ4BCnJR+uDqXomrOgAiRh06bAD4LwDOD0cPmT8n0SofZ5QPnxQ/1BwU5QHFhYVlhsZ2q+zpi9bYIfHX7bPIM/vA7SAIFclQPPdvg0oD7WUeIyokG2BKejWxfMuQWO0nSOSIorAiB9sD/Gm1V+F+EEiqqs5MGPw/OZINrNtZzJTVOAZf/S7DmLR7iCgXxZcuG4x1R8s8wqUNhzOME/B2HfWncZVbDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ypkYSFVaDO3NJsQ4FMWGEL7dUzjA8iEoG38/lHJnvcg=;
- b=rx5/piKbua8lXYzt2pAADfiitEflRbVkPP8mrzJSImhYyBt6lYb2ouWRq6iEigvLM8Msstm/Uo1ysyxmSpw2rxVCS56HuZKjaUq97jDEDuWkMzYB0CzmZztp4gWT+wlzlYED6jqXGfKNvg84r3y1e6HnI56rUOmCupaEMvKixKoUAlXPYCNGTczK3Y27jLbn4A/iKGoT3PlpGhmrv4qoX0c3IwAeIljZwW3cgYPV6unorUY4TOY2ogmaiiYniqi8bpUaNGnUDkYJD+/JdMiVtSqvaYMJFJfk0v9GDyhwiW5GRo6ikD/RnC1y9gzOpsvcTcY+Nxc4Qgv6yodRgtMbnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ypkYSFVaDO3NJsQ4FMWGEL7dUzjA8iEoG38/lHJnvcg=;
- b=jVxM+iSGa3eZ4W7Tm/Eu7X2LnhCI/kwTkR/ggd/YV4Yj1rXjyVXSWEqXc9HolvxmUk4ceWndHyqvzghQvNywtqbWDm7MhV0Apjun3bElZWYWN9K5QkIijUjVZpl7e51tli1jVkcwPwqgSrAqPWf5I9hYRBhogj3fzMvx+dD4dIHqQQCjnvCg/YBHqhDm1WXI8Mr8OGru7OQ4TRfE1iDMHoMRK2VM3m3XI2qd4NE7eXNhF1bupzp7GO6tnQAmJ/zQ27oXO0F1p2EEycaC+futK0KOpWY/kBSgPGYEi2kqTZgGPolZrlZabgdj5aJzPAWWVgmyzY1j5cE0U+48C/crow==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by MN2PR12MB4192.namprd12.prod.outlook.com (2603:10b6:208:1d5::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Wed, 3 Sep
- 2025 20:52:37 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.9073.026; Wed, 3 Sep 2025
- 20:52:37 +0000
-Date: Wed, 3 Sep 2025 22:52:33 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: void@manifault.com, multics69@gmail.com, linux-kernel@vger.kernel.org,
-	sched-ext@meta.com
-Subject: Re: [PATCH 3/4] sched_ext: Move internal type and accessor
- definitions to ext_internal.h
-Message-ID: <aLiqkQPC09mq7sUu@gpd4>
-References: <20250902234817.279206-1-tj@kernel.org>
- <20250902234817.279206-4-tj@kernel.org>
- <aLgZPcwe9UFXw7rb@gpd4>
- <aLh0SAkBdIlGVLTU@slm.duckdns.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLh0SAkBdIlGVLTU@slm.duckdns.org>
-X-ClientProxiedBy: MI1P293CA0002.ITAP293.PROD.OUTLOOK.COM (2603:10a6:290:2::9)
- To LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4BC292B44
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 20:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756932769; cv=none; b=aVLIYgCFAYLdHKh0qnYIyHzoUwSx5H4bN1QMPxNx8jM4RHyLiReAv5llM7DfLCjPtnQ9eQ8MBQmmKYWCyHX72zzAqYzFKF/Q/psj6p5bdnaZnMs1tmbz3arK/b5ew5/v+jOzgBIpesanZHG40rQ3jioyG7EPAwCNXtzxq/KK18E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756932769; c=relaxed/simple;
+	bh=lrGbbZHkPmOkrhxaF1dT80bUwOd57ENAbsAwajvsVvg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fqed+dH7ytigMqfJkMx+BzBzJM0gKWvmeHzCQqRKNWXa3A0Lz7lRcJ75DUR6l/DePTEQPBKVJfgHNbr4Lll+z4CgJPHJVjb8It0MKK8Wkp2dzTfcpIO43AZ1uWE9rxZk0ucVxwFWyeaODoOHEmk1Tkbv4wmHhakgu16d/0+OIvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nH+JkBBS; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b2f4ac4786so3733131cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 13:52:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756932766; x=1757537566; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lrGbbZHkPmOkrhxaF1dT80bUwOd57ENAbsAwajvsVvg=;
+        b=nH+JkBBST6Akfg006ZWF2qYg/p1bvdmj1TC42Ir1OqGT4iht/YEf268WiAe5mvZDkP
+         KfHOSoX408uC03GhsRVqwf1f77CjyPNqMT3dDPlXUQK04hxwFNOSpu4YDCX80SqR6Gn4
+         x4lZZ6+Mw7v7L1103v1Gc5AH2UF+t+gGj38JE4Gz3wDVR/oJrmy04jXfzfLbF6Tlbjen
+         C/oIG1jR22PenNgCQyhy0cMT6croUQMPYs2sjKT+5972FQ1V7HVouw8/VWAhIbLYgtKE
+         bQFStcJLV7SrVyLe/pYlJnOwEAbvX7GZOnMjerWw59KoourzTmX8I53K/+ILeFXDv4gA
+         HhTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756932766; x=1757537566;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lrGbbZHkPmOkrhxaF1dT80bUwOd57ENAbsAwajvsVvg=;
+        b=jP/7mLWpQRucm1sOtPjyP/0rZzEoXLw0XdSGi+jWd+6kapbDEayavQhDfBZ/E7qKoo
+         NZfutJ+TOBN3rvH4NLxG/MCZCNo4h0r+UgtDhRQ67bwMwys03U06b4L7eD+eJW2joZoH
+         3aUCvrsT3peSqGSAsmBcY39EQ2Qn8SJI7oG9cg+rVIs61sMv5dK2PIX1RdztpFYQoDKZ
+         ZvWoau/nMMWqP6SYbGA7IXmMasUwEJg7Z53OerZYbAz0mBQHDAvS46F0XKT3mOF8E+cr
+         TSZ+Q+ME9Xco3noS6+Yh8ELbrikDVR0u5ymWrHqrcg6AcoXS16pm+OP9PiPzyDjRUf5v
+         E1FA==
+X-Forwarded-Encrypted: i=1; AJvYcCV43EePmnUjhlPd2/KTcSRTmqN1mL6qI/8ZaYit76tscmU7h6K4hKQiPLOmytwPXLNeQFUd5BqZikaeSeo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3WsQGZtv7iz44gQ4J9LmeNDARlOghrr+Nc4hNS7CmgmH0IGU9
+	YfnUwUgrl7IgGe9HqF8NvcIjx3InrRYpLfulbFAnyOVbSfNfSqSomguV+bfax8yFDVxMZbUD/Kf
+	xl+scyT7ocOYjUxHKUZ4+wl1fkUnIQH8=
+X-Gm-Gg: ASbGncsIGIlQY0l/c0RHLo98Nb7BKRO6L8egLTHhwJejs9ZdbjdNcL7HHCmVesZxTM1
+	fjYVYBeoOP+CpZltAtku62FxL3PobL4jNjX5QEG2xYUfqQuJ1IrLKFiXPfg1XlbpUpTYfRf0UFv
+	XI13stGTigkrRYHpA+sWnZ1p0+kJfGJg+vrN91PdQZtmrRaMqTDz0ZxkYxUi7gL7IWDLVjoalDn
+	uIH9PQKIUfl/koBow==
+X-Google-Smtp-Source: AGHT+IEeKTRk/jxWcQ9dPhf7ezzD2Bpp4UPWhsV8IsVl0FOkyOHHFGsrc13kHi1JV4+qraqX+0jyUZiSZbSXNsYcJ90=
+X-Received: by 2002:ac8:5a91:0:b0:4b4:ff15:2c22 with SMTP id
+ d75a77b69052e-4b4ff152eddmr23444781cf.15.1756932766141; Wed, 03 Sep 2025
+ 13:52:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|MN2PR12MB4192:EE_
-X-MS-Office365-Filtering-Correlation-Id: a082a045-e056-4fea-831c-08ddeb2bd07d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?j54f7nOaw+HOIFVI38LDdS7lYAAzq8Oph3Ixv9D+nzvZq+aQyq7Ld1tArgRO?=
- =?us-ascii?Q?0LCx2aHjdTGK3tfBMQXf4Bv/532WEYuEYLuRheAvNuxrSzevkftCE4jwvl6l?=
- =?us-ascii?Q?ubUlIU6DYA2y/JJ9Ebg1FuOStvXQR87y5X98ywCE4EHrHZW+XBt/fLNzmjbf?=
- =?us-ascii?Q?M9RN+W7DiVYV/MbMKicSqW+/TWiaxngRFx8REJNTy/de+q+FtYcC7mVXm3Ts?=
- =?us-ascii?Q?rUUXSQ0vy91l7Df//00Wdd0mFjgqP70wDiK2I0wVUW7Y7o5NKPu0rqVH5PkS?=
- =?us-ascii?Q?nbL8TVSRTXO2kbRumJqzKc3Ofsq67YfgIMDKmZIV24ypAPq+PhIcNPpt+AUo?=
- =?us-ascii?Q?+EHwPXrxyWcmqyjaEDsgrBbLXOLn0EmDCO9f4ecZ6x0tN0lKTUHhTloH8DBq?=
- =?us-ascii?Q?JxM6TRRXzvRpxaLRglHtrs+nblPqAxsHC+V7g8EGnElsnAX1TG92uw3A5vm5?=
- =?us-ascii?Q?B2Qd67qdCY4jdbon2C2brv78xXMYo0ewFpDD7g6UzBN46jTXr+IEpsjktuk1?=
- =?us-ascii?Q?PsDoLGF948ydD+57CPrWnUUWhd0HY5vqF/3WeO+uHQguFJCuDoSx2AxgvmDX?=
- =?us-ascii?Q?9VSwl7kpcUNIFKSErSruVRRJKAXLePJK4xibtORDCXwqJUIT6KEIEaDrKRld?=
- =?us-ascii?Q?XdYGaGiV9e9L6n57TEomtFJSNeFIVHI12WvPmzo9MDLfOWz0GTfkJPKPwegF?=
- =?us-ascii?Q?OLoqjCwnUPoYn+nBGPW+m0n/+rHOMmdWvy5BL5z5o5W2h7b+CYow8CFSaith?=
- =?us-ascii?Q?OGBTK/9qHxQJpyJn+fgx7up+iljBeQR3/m92G8+n0nPS6R+7Db0ibyTuQbyi?=
- =?us-ascii?Q?yy/dnIUoYvLaPnT6pzd/TgVZsKGAYahBhmRL+OAtVQQYmaZTXzec5Aevuk1e?=
- =?us-ascii?Q?WYJQ9/WSP400CXOtsfJCH8rdQjnoXK9p50L9xDfGvy+S65ut6i97CDfBrVKl?=
- =?us-ascii?Q?LdVoiC7sQEVOhPN2GIqDyzRMT8P+AL9mH8wZRQz8V05bdcB/MoAQCs0ZKpg3?=
- =?us-ascii?Q?PQCXsn8UlLDQCoJMnEDwP0RPgzAXqPM27CWHDuUR8redpBfCLg3huVfA1bm9?=
- =?us-ascii?Q?SvuW0AfFQrEpcCJF1mw4rPfJ3cTJL5/upfcKJ52gE76yxELk3dnTOOaEggtO?=
- =?us-ascii?Q?DyFXr2EtuwyEAbA2jPFj4Q3Fn1Ix+0AKK6aeTJlvZXZzk6SBJmu+SYJw+WZl?=
- =?us-ascii?Q?dKfpzHKe2R579zeyEu/3Fv9tUSiPV+1un+Plkl/V7HLi0vXDSUdsglFb2trL?=
- =?us-ascii?Q?yhID+m9VaWpoT5cfJNT2u2TWy9vQr+A2YcYrsBckvpJOBuqtgeoJMuLrn8e0?=
- =?us-ascii?Q?aaJGVulL3wfZq2a4YdWNZt79VQHcx64HgYLGFlNsRKh9rNJtfLT660QZA0kr?=
- =?us-ascii?Q?FICKtti01Zmsee6SV6MEpr3M3w4fVI6wX8dD9uaqblHOx57w0Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?W/526eJDhmLoP37W1otUW7zcX2FofMdEQW1ZMCKywkLZSU2+HVdbpX3VF3GW?=
- =?us-ascii?Q?4x9vCljDc9aPshDD/34iDojqiunIq1R0tOwfeRuVffuw9NiT4NUM4h95/nM9?=
- =?us-ascii?Q?CKpaUBB8uLkBv0tbUSKQORX7aksRHgBt6AtS0NatmzLMC+y0SooL+uJ7CHsv?=
- =?us-ascii?Q?HaInNST8TRRfov0AAtpyVuU+J2Pw18ebrdIhwXIpan2DAscLYrSUICnJa6f5?=
- =?us-ascii?Q?lwWQfnp0zQyw4EImdybFPyy8V22/+A33zYunge6tEvNaVR1TKryr7ulcSlCx?=
- =?us-ascii?Q?IumAMScPCxcUYI2T1zmNB7Um16Gt2+mvMshmq2ZOnD1qn6eewJk2NGQTnmUs?=
- =?us-ascii?Q?8Ce++rJ0mTh4xvGjOiu3M6PuzanLo9BKarkmAaei6mljnOWh6nwy41wwPL9C?=
- =?us-ascii?Q?fzRUeOp3E9uj4MMQ2n5R7keG/JlPPuJu2WmrU2pi/73VTCVemgWSRgM/R/xE?=
- =?us-ascii?Q?2HwdvwexCFgYT2XEO9dTklmKzOmaqAPY/BirM8pq0t9gKz3TSfSyxZI1dAkB?=
- =?us-ascii?Q?a0C13SNEVhFwvE+jvO6cKtmP8TZJnsTquzM9QMAQZxTq9jwR0ZVnHjsXNeJz?=
- =?us-ascii?Q?CI8Qb6ayLcqwHmSwLf8nndm+6Bafqs45xohDVaMGHnhaPu6aTJ2KfvkSKsBM?=
- =?us-ascii?Q?cuGNIdyiRMk+n6IvcSOAu4qT4uWDCa2VolP7TKsdrutcf+OzDpasBAnyxUjr?=
- =?us-ascii?Q?MD4EzxnCcIlAfKeFphbsY0gKFg9HvY5obqzGbl/B21TREXJH7C8kteHKqIdf?=
- =?us-ascii?Q?kc/j3FyQ50vaubL+VYMqpN6PhIv0wPrqN1kJ0AWnYA/pdC8nXLq2XMjcMWtg?=
- =?us-ascii?Q?XBl5MzkeLZAbl6xam4RD1PtPqFEduUqtNBAnXaGfS09bB1edxxsuDeFKdfKy?=
- =?us-ascii?Q?fI/4jo1Ya7DtrVWHC5Sf3J+YZk29rnRZLfvTgPc29EyK5TykYUI/b5oc9IXo?=
- =?us-ascii?Q?OcRoaGNSv9UEAeu61KN1upnIc4T20RiDBWY1VdQYwYVaAbktb8n+mzA2h5H8?=
- =?us-ascii?Q?E0N/bVBUlZRib4Ur9suzunjexvPyxHVUQZrNqfCZEpvkLsKWo8E5fgY5X7Kv?=
- =?us-ascii?Q?clna/R/1s1b+5gpZtpooOE8bnQ5TaaYaUHZyGaIi9swVeT6bXp6YfZs+YLdL?=
- =?us-ascii?Q?PXZX33Qsf7ceW51KhYuNLs7Q3mdKghIbQ+++d3l4bKfVhrd2i/CE0pHFk+tD?=
- =?us-ascii?Q?UW32XEo/7XXX2L5RoLAZ39SVyMTAXEuLx2bxettpm8SsKCksZI0kSlKTcJFH?=
- =?us-ascii?Q?D+0KL/o/Y8kRy9ch23aH1QFQ9eKsjvfbFTTeRBA5OKzceMcA+bIrGyx+twe7?=
- =?us-ascii?Q?CCOrEyUFskGCEjXpcTNNuQ+x7TzwGu3GfhbVn3U44R5T1X0INlSk3o9ngddQ?=
- =?us-ascii?Q?8TUvpki1vgjemi+5igNRwYigurM4ALWI5Gw9uwTG3qryERh9Qj1hxM6FMecn?=
- =?us-ascii?Q?3E6lLPh5c4Rdj+EPTHLuPuj1VLR52GpdkLrm9p7k1LrQ1luL5Knb5MjTJeMq?=
- =?us-ascii?Q?G8p0u7rh8IFCvToL9DQVE+IKmxCReD73Qs/MxRNj5vWWaIJ8oJRDjQDl5qN0?=
- =?us-ascii?Q?+ATL+heTKxXricSzBGR52Nj55yTzUsa+4x2KTxor?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a082a045-e056-4fea-831c-08ddeb2bd07d
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 20:52:37.1911
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HGSB5Ze+M6j+L/+KKp47FLbEhI8NZ65V/RzzzhTg6AF9aVMAlvn0qKTgZuKQwiprzGzwVopTAa97bwOqrTfBrw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4192
+References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-9-ryncsn@gmail.com>
+ <CAGsJ_4xON7fYg1VvcjLOsgBb_Wp4ruC+vdA4Q496GH1jXunU1A@mail.gmail.com>
+ <CACePvbUVK45uRPVoO3ubDfQHikebSHFNQOsMTMvJ91QQZH2HwQ@mail.gmail.com>
+ <CAGsJ_4we4ZfNqJ+v7+=0hjNKLakJ-s8qtRsGo_kp0R_th7Xvkw@mail.gmail.com> <CACePvbXjbtowr5wSKR_F_2ou6nVhxK3-+HvSs+P71PYOo0h3UA@mail.gmail.com>
+In-Reply-To: <CACePvbXjbtowr5wSKR_F_2ou6nVhxK3-+HvSs+P71PYOo0h3UA@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 4 Sep 2025 04:52:35 +0800
+X-Gm-Features: Ac12FXz0qfkg7F_ObHqoqis0mbjXyNQlDtGx4gRi-mD9FYViJi2Cg8w3R_9QaCs
+Message-ID: <CAGsJ_4wK2vXzc0z7+JNwChhtk2gSPcrZ=vHJx=qfXcr+cZiTgw@mail.gmail.com>
+Subject: Re: [PATCH 8/9] mm, swap: implement dynamic allocation of swap table
+To: Chris Li <chrisl@kernel.org>
+Cc: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 03, 2025 at 07:00:56AM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> On Wed, Sep 03, 2025 at 12:32:29PM +0200, Andrea Righi wrote:
-> > On Tue, Sep 02, 2025 at 01:48:05PM -1000, Tejun Heo wrote:
-> > > There currently isn't a place to place SCX-internal types and accessors to
-> > > be shared between ext.c and ext_idle.c. Create kernel/sched/ext_internal.h
-> > > and move internal type and accessor definitions there. This trims ext.c a
-> > > bit and makes future additions easier. Pure code reorganization. No
-> > > functional changes.
-> > 
-> > Having sched_ext_ops and scx_*_flags defined in ext_internal.h feels a
-> > bit counterintuitive, sched_ext_ops also includes the documentation for all
-> > the scx callbacks. How about moving these to ext.h and everything else in
-> > ext_internal.h?
-> 
-> Hmm... so, _internal headers are for things which aren't interesting to
-> other subsystems in the kernel. ie. internal to this particular subsystem,
-> which is the case here. I understand that _internal may be counter-intuitive
-> if the reader isn't working in the kernel tree, but am not sure that's a
-> primary concern in naming source files.
+On Wed, Sep 3, 2025 at 8:35=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
+>
+> On Tue, Sep 2, 2025 at 4:31=E2=80=AFPM Barry Song <21cnbao@gmail.com> wro=
+te:
+> >
+> > On Wed, Sep 3, 2025 at 1:17=E2=80=AFAM Chris Li <chrisl@kernel.org> wro=
+te:
+> > >
+> > > On Tue, Sep 2, 2025 at 4:15=E2=80=AFAM Barry Song <21cnbao@gmail.com>=
+ wrote:
+> > > >
+> > > > On Sat, Aug 23, 2025 at 3:21=E2=80=AFAM Kairui Song <ryncsn@gmail.c=
+om> wrote:
+> > > > >
+> > > > > From: Kairui Song <kasong@tencent.com>
+> > > > >
+> > > > > Now swap table is cluster based, which means free clusters can fr=
+ee its
+> > > > > table since no one should modify it.
+> > > > >
+> > > > > There could be speculative readers, like swap cache look up, prot=
+ect
+> > > > > them by making them RCU safe. All swap table should be filled wit=
+h null
+> > > > > entries before free, so such readers will either see a NULL point=
+er or
+> > > > > a null filled table being lazy freed.
+> > > > >
+> > > > > On allocation, allocate the table when a cluster is used by any o=
+rder.
+> > > > >
+> > > >
+> > > > Might be a silly question.
+> > > >
+> > > > Just curious=E2=80=94what happens if the allocation fails? Does the=
+ swap-out
+> > > > operation also fail? We sometimes encounter strange issues when mem=
+ory is
+> > > > very limited, especially if the reclamation path itself needs to al=
+locate
+> > > > memory.
+> > > >
+> > > > Assume a case where we want to swap out a folio using clusterN. We =
+then
+> > > > attempt to swap out the following folios with the same clusterN. Bu=
+t if
+> > > > the allocation of the swap_table keeps failing, what will happen?
+> > >
+> > > I think this is the same behavior as the XArray allocation node with =
+no memory.
+> > > The swap allocator will fail to isolate this cluster, it gets a NULL
+> > > ci pointer as return value. The swap allocator will try other cluster
+> > > lists, e.g. non_full, fragment etc.
+> >
+> > What I=E2=80=99m actually concerned about is that we keep iterating on =
+this
+> > cluster. If we try others, that sounds good.
+>
+> No, the isolation of the current cluster will remove the cluster from
+> the head and eventually put it back to the tail of the appropriate
+> list. It will not keep iterating the same cluster. Otherwise trying to
+> allocate a high order swap entry will also deadlooping on the first
+> cluster if it fails to allocate swap entries.
+>
+> >
+> > > If all of them fail, the folio_alloc_swap() will return -ENOMEM. Whic=
+h
+> > > will propagate back to the try to swap out, then the shrink folio
+> > > list. It will put this page back to the LRU.
+> > >
+> > > The shrink folio list either free enough memory (happy path) or not
+> > > able to free enough memory and it will cause an OOM kill.
+> > >
+> > > I believe previously XArray will also return -ENOMEM at insert a
+> > > pointer and not be able to allocate a node to hold that ponter. It ha=
+s
+> > > the same error poperation path. We did not change that.
+> >
+> > Yes, I agree there was an -ENOMEM, but the difference is that we
+> > are allocating much larger now :-)
+>
+> Even that is not 100% true. The XArray uses kmem_cache. Most of the
+> time it is allocated from the kmem_cache cached page without hitting
+> the system page allocation. When kmem_cache runs out of the current
+> cached page, it will allocate from the system via page allocation, at
+> least page size.
+>
 
-Yeah, that's probably fine. As for the documentation, it's easy to find it
-anyway, so I think it's not an issue.
+Exactly=E2=80=94that=E2=80=99s what I mean. When we hit the cache, allocati=
+on is far more
+predictable than when it comes from the buddy allocator.
 
-Everything else looks good to me, so for the whole patchset:
+> So from the page allocator point of view, the swap table allocation is
+> not bigger either.
 
-Acked-by: Andrea Righi <arighi@nvidia.com>
+I think the fundamental difference lies in how much pressure we place
+on the buddy allocator.
 
-Thanks,
--Andrea
+>
+> > One option is to organize every 4 or 8 swap slots into a group for
+> > allocating or freeing the swap table. This way, we avoid the worst
+> > case where a single unfreed slot consumes a whole swap table, and
+> > the allocation size also becomes smaller. However, it=E2=80=99s unclear
+> > whether the memory savings justify the added complexity and effort.
+>
+> Keep in mind that XArray also has this fragmentation issue as well.
+> When a 64 pointer node is free, it will return to the kmem_cache as
+> free area of the cache page. Only when every object in that page is
+> free, that page can return to the page allocator. The difference is
+> that the unused area seating at the swap table can be used
+> immediately. The unused XArray node will sit in the kmem_cache and
+> need extra kmem_cache_alloc to get the node to be used in the XArray.
+> There is also a subtle difference that all xarray share the same
+> kmem_cache pool for all xarray users. There is no dedicated kmem_cache
+> pool for swap. The swap node might mix with other xarray nodes, making
+> it even harder to release the underlying page. The swap table uses the
+> page directly and it does not have this issue. If you have a swing of
+> batch jobs causing a lot of swap, when the job is done, those swap
+> entries will be free and the swap table can return those pages back.
+> But xarray might not be able to release as many pages because of the
+> mix usage of the xarray. It depends on what other xarray node was
+> allocated during the swap usage.
+
+Yes. If we organize the swap_table in group sizes of 16, 32, 64, 128, and s=
+o
+on, we might gain the same benefit: those small objects become immediately
+available to other allocations=E2=80=94no matter if they are visible to the=
+ buddy
+allocator.
+
+Anyway, I don=E2=80=99t have data to show whether the added complexity is w=
+orth
+trying. I=E2=80=99m just glad the current approach is hoped to land and run=
+ on
+real phones.
+
+>
+> I guess that is too much detail.
+>
+> >
+> > Anyway, I=E2=80=99m glad to see the current swap_table moving towards m=
+erge
+> > and look forward to running it on various devices. This should help
+> > us see if it causes any real issues.
+>
+
+Thanks
+Barry
 
