@@ -1,136 +1,160 @@
-Return-Path: <linux-kernel+bounces-799346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39810B42A51
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:53:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC78B42A55
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC6305E36B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:53:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D6741B26CB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF9336997E;
-	Wed,  3 Sep 2025 19:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68FE436999A;
+	Wed,  3 Sep 2025 19:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YwOZ+rlM"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="BFDPE4K8"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730DF36C06D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 19:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6E8369976
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 19:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756929166; cv=none; b=T3bmdGWGDabAZp4XVlUuE31Whr0jkVChA7DAxKH0cv8zlBeGyqwT/E/X0BCxh64v7tvY3BRmN904tUw7gxQ9wj0Ol5gDnKiuj/pwNjTtcmWInIZ7XW9DIYsZdh3PO5GM4tpo8AUzdkiufJHetsE0OgXSvrYbMvFGnYGGbWP/oFU=
+	t=1756929302; cv=none; b=t9Q7DXEIHYQEpJt3nyWh8PD1qLGaFgfxxMwfXwo9rGLaSZuPbRkU/U+XQbhq0lI7jxMIBehZ4B52JtxidCansuqpPS3yIENAO7966++mJttB2MfXAF4e2nZRnL+nILCb70p0LEoio4qMVDS06pVal+i7bEmcG+1uWarwnDdjko0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756929166; c=relaxed/simple;
-	bh=xfQ1osEND/adCgoCa/Hw96I9E3HfyCuqMHFBC6Nm9so=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=L3wl4KZQoLPM1bgkCGoZC4iXFMRi7rXSmmPrsr1DaaiMwu7WvpkfnE5fsHsRsnHRge99/ww+fClaSUj5bq9OOqADeBUszwXS6cdvAeGIbG1YzZ27wFg3U6g4lvJgqAh9ohRas+k/RzQlvkkasW3oq2YQLACKeE+upPdVF2I6H1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YwOZ+rlM; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756929162;
-	bh=xfQ1osEND/adCgoCa/Hw96I9E3HfyCuqMHFBC6Nm9so=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=YwOZ+rlMx3z3JPOd5ujeK9FPCcK4Fo9BggEEieTK14S1oy5PlJcuw92i/FhQsAm0S
-	 4GL53AtFknTfuHcl0vfhe//+1rdDMRzBwzDtMn0uGu9syDu1rLRezFRQgBgFl95utR
-	 LWElPCjTxWJM10JSPL78T6XUZNAgIowdxQP/GeoB6+UOnS2EutrFrnhe+SJ7B49ZcV
-	 3Zjz/GIiYkRAM1vl1neEeLODILGS7Azr0ZuODmXTOXxninpX14XgqcpLJE9JPgJJeD
-	 e7uPrauGbpNnR+qV+JPLkQXdeXxKE2sconu/0xc5an0sPFRUDtzuCGKs44K2FMggip
-	 fDrLmZW0kvR7g==
-Received: from [192.168.1.90] (unknown [82.79.138.60])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 75B8017E0DC8;
-	Wed,  3 Sep 2025 21:52:41 +0200 (CEST)
-Message-ID: <e030bed8-58d5-4a19-b81c-45193cb900d8@collabora.com>
-Date: Wed, 3 Sep 2025 22:52:40 +0300
+	s=arc-20240116; t=1756929302; c=relaxed/simple;
+	bh=ep2ByU6Sp3PUGleU/SkPJKB1vnJZEKwUxxPzvfc2zHY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Z4sYUBKsDnl0WiEZYjuDuzYpI9W3kg2Menk6K8oQn+CVIk+qc3L4VkloAWF3xxc3PhP0sQparPMsGVrYOkakUegzYu/5xCDqtZU3gPzkqR4IKee8ogLfIsMmPweiGTNspowAc0yWSlcYXwx4MID/ApmLHGLzj5bd33ikR5ySqzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=BFDPE4K8; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b804ed966so477935e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 12:54:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1756929298; x=1757534098; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WemNBSJgvSeExxk4SwgXWO6xPmX/LP/uVncZJ5kxq9E=;
+        b=BFDPE4K8xVUXXC8Gx2hbOM8zU5TTPFUdWYAptHTWz8Yvrch7OX2kghUo/PgBAuvG2q
+         8SAAXklVb3rFhxrdsTlbuNoJVVfsIiho5owfVQCvBtbcJtvO/3357YX3rMv5DvHPaIKk
+         foVdKDLhYlhggvLi3pn9mn4b+aE6ZwZwpL8AX6PByewzQRyCiO7IirTDm8ZieRYirgR7
+         muQ4iK/baLbsZyt9PVSr9fGneYgIzMddMrAggJ8uihi6PhmqNxJOIU1gXu9ZTVbNXS6U
+         X+yCWVD0QNDeNcSAJajza0MFfJqaNfz1HANKipCzKP5PjgZog7l4P2zK5+GwyktMARuk
+         jaRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756929298; x=1757534098;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WemNBSJgvSeExxk4SwgXWO6xPmX/LP/uVncZJ5kxq9E=;
+        b=ap20qbUsvDIbBGQpEkQ3XcgjemRylyRoV0tFraOKtOCeQjGx4tXDnCaYLgSGlRFeKz
+         C5KrDcLGNIYrrVxDtTLHDSPGHj1uAG6/d+sK916/W0RKBU/ueOheDf/KI67oDYTEpVF3
+         7JrrHUyWyT+Yg+ki87Oe9YWeK7aOkLgVt3Vo2XJZL7ZHWsdWREb7+aZcgGv3aiJ+u8KI
+         cK0HS2VI9dxzYDBsN6AR/8gwj9aSUK9RVLBlmbyoJoA/g8nqO0l8bTcwkJBtgPhEd6br
+         W6NL5FeG2FfK8O1nxr1OshF7IkmPEKuZfjocZmb/sdsejMI01tnjfehPe6RC4pPYZFWU
+         U3ig==
+X-Forwarded-Encrypted: i=1; AJvYcCUiNcRps2xbLAljwZGnvtaBeZcoXUdo3HCBfGxrPT0v1OQZTTWm2WOGbOjtWZcn6fv4S8kp8RkruqFmGWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGQy7pfkPL3OM+dJ1rANvmZ/aqKe+4nLup0umcgbcIErvwX4kQ
+	6oYIu9X04mR0FmNSgvXJcWzoH6Gc0mkGy3WQN3H7jHuTws4kdY/r4utLvjvfwoduP+Y=
+X-Gm-Gg: ASbGnctpTKVnIVwlIo3eRJOT1pb7OaWlPxrXC0OW71djQjing+DnHRWjer1t41IewIJ
+	pZ1kV8Zcg0nolFOLRycpZoeaOfl0/S/F6j0Gj5O7HbstLocBA56RNdbBhHq8bv6a3eiTBqLrG/G
+	N9Hfds21EYg3UFMYchwaypYo8bYZOMuPC0+K+voVh5ZfvBoC6Fpak41+ceMBzVr+p08MrYWQkgb
+	66Di2KiRLf7H9NDxxUH6J/PPTdN7hbV04iXq6OiEaLscYGXRq8b8MtyoA49j6bEQ0MNNUnyF1Jq
+	IReSKi3MdJaLTdx2K6sFkYV+jekIDwID6dwEqR6C1GdDvFuA/b/jwY66eE/Mf9NBaMpqcGBYUWm
+	S+zEnd2/7Zt5w/asnAqpPPxkj9X6JA55Gyr/lggmVWUc707KLQ52elnoMMCvGTlm33Pojd7rbCI
+	9aSUHw
+X-Google-Smtp-Source: AGHT+IFJLqX9lWt48uvYEkJALLRR5ugjPDz4Bm8zdqTvK5mO3zXyFw6a/hUpgKW7TWri5+ZASWKjNQ==
+X-Received: by 2002:a05:600c:3153:b0:458:bda4:43df with SMTP id 5b1f17b1804b1-45b85570996mr172993485e9.17.1756929298246;
+        Wed, 03 Sep 2025 12:54:58 -0700 (PDT)
+Received: from alexghiti.eu.rivosinc.com (alexghiti.eu.rivosinc.com. [141.95.202.232])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d95df59e50sm9504812f8f.23.2025.09.03.12.54.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 12:54:57 -0700 (PDT)
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Wed, 03 Sep 2025 19:54:29 +0000
+Subject: [PATCH RFC] riscv: Do not handle break traps from kernel as nmi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/6] Add HDMI CEC support to Rockchip RK3588/RK3576
- SoCs
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-To: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Algea Cao <algea.cao@rock-chips.com>,
- Derek Foreman <derek.foreman@collabora.com>,
- Daniel Stone <daniels@collabora.com>
-References: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250903-dev-alex-break_nmi_v1-v1-1-4a3d81c29598@rivosinc.com>
+X-B4-Tracking: v=1; b=H4sIAPScuGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSwNj3ZTUMt3EnNQK3aSi1MTs+LzczPgyQ11T82RTYyPDNONUCwMloN6
+ CotS0zAqwudFKQW7OSrG1tQDR4C8EbAAAAA==
+X-Change-ID: 20250903-dev-alex-break_nmi_v1-57c5321f3e80
+To: Peter Zijlstra <peterz@infradead.org>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Guo Ren <guoren@kernel.org>, 
+ =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@rivosinc.com>
+Cc: Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1916;
+ i=alexghiti@rivosinc.com; h=from:subject:message-id;
+ bh=ep2ByU6Sp3PUGleU/SkPJKB1vnJZEKwUxxPzvfc2zHY=;
+ b=owGbwMvMwCGWYr9pz6TW912Mp9WSGDJ2zOUQju2NeZLt/efBtlSDKNmvc3VLoqScb2v/XMt29
+ an+IY39HaUsDGIcDLJiiiwK5gldLfZn62f/ufQeZg4rE8gQBi5OAZhItxPD/zq+v5/fzr6bXrSu
+ ZMPx6vftCVu/bNnvsdBf8ceyozc26KUx/M99/HGOKsOcDa2nZq0prmblyUi9l8nxo1j6aJNWYvK
+ bZi4A
+X-Developer-Key: i=alexghiti@rivosinc.com; a=openpgp;
+ fpr=DC049C97114ED82152FE79A783E4BA75438E93E3
 
-Hello Heiko,
+kprobe has been broken on riscv for quite some time. There is an attempt
+[1] to fix that which actually works. This patch works because it enables
+ARCH_HAVE_NMI_SAFE_CMPXCHG and that makes the ring buffer allocation
+succeed when handling a kprobe because we handle *all* kprobes in nmi
+context. We do so because Peter advised us to treat all kernel traps as
+nmi [2].
 
-On 9/3/25 9:50 PM, Cristian Ciocaltea wrote:
-> The first patch in the series implements the CEC capability of the
-> Synopsys DesignWare HDMI QP TX controller found in RK3588 & RK3576 Socs.
-> This is based on the downstream code, but rewritten on top of the CEC
-> helpers added recently to the DRM HDMI connector framework.
-> 
-> The second patch is needed for RK3576 in order to fixup the timer base
-> setup according to the actual reference clock rate, which differs
-> slightly from RK3588.
-> 
-> The following three patches setup platform data with the new information
-> expected by the HDMI QP transmitter library, while improving the error
-> handling in the probe path.
-> 
-> Please note the CEC helpers were affected by a resource deallocation
-> issue which could crash the kernel and freeze the system under certain
-> test conditions.  This has been already fixed in v6.17-rc1 via commit
-> 19920ab98e17 ("drm/display: hdmi-cec-helper: Fix adapter
-> unregistration").
-> 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
-> Changes in v4:
-> - Fixed the bisect-related issues reported by Daniel by implementing
->   the following operations in dw_hdmi_qp_bind():
->   * Disable CEC support when the related IRQ is not available
->   * Set ref_clk_rate to vendor default in case it was not provided by
->     the platform driver
->   * In both scenarios, also print a warning message to highlight the
->     need for fixing the platform driver
-> - Simplified dw_hdmi_qp_cec_init() a bit
->   * Removed the now obsolete cec->irq validation test
->   * Removed the superfluous error checking and logging around
->     devm_request_threaded_irq() call (it already handles all that)
-> - Collected R-b tags from Daniel
-> - Rebased series onto next-20250903
+But that does not seem right for kprobe handling, so instead, treat
+break traps from kernel as non-nmi.
 
-I forgot to mention that luckily there are no conflicts with the patches
-introducing the hw-specific bitfield operations in next-20250903, which this
-revision is based on.
+Link: https://lore.kernel.org/linux-riscv/20250711090443.1688404-1-pulehui@huaweicloud.com/ [1]
+Link: https://lore.kernel.org/linux-riscv/20250422094419.GC14170@noisy.programming.kicks-ass.net/ [2]
+Fixes: f0bddf50586d ("riscv: entry: Convert to generic entry")
+Cc: stable@vger.kernel.org
+Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+---
+This is clearly an RFC and this is likely not the right way to go, it is
+just a way to trigger a discussion about if handling kprobes in an nmi 
+context is the right way or not.
+---
+ arch/riscv/kernel/traps.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I verified the series still applies cleanly onto drm-misc-next, while commit
-ad24f6e10a5f ("drm/rockchip: dw_hdmi_qp: switch to FIELD_PREP_WM16 macro")
-responsible for the macro conversion can be further cherry-picked without
-issues on top of all that.  The resulting file content of
-drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c is identical to what's
-expected after applying this patch set onto next-20250903.
+diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+index 80230de167def3c33db5bc190347ec5f87dbb6e3..90f36bb9b12d4ba0db0f084f87899156e3c7dc6f 100644
+--- a/arch/riscv/kernel/traps.c
++++ b/arch/riscv/kernel/traps.c
+@@ -315,11 +315,11 @@ asmlinkage __visible __trap_section void do_trap_break(struct pt_regs *regs)
+ 		local_irq_disable();
+ 		irqentry_exit_to_user_mode(regs);
+ 	} else {
+-		irqentry_state_t state = irqentry_nmi_enter(regs);
++		irqentry_state_t state = irqentry_enter(regs);
+ 
+ 		handle_break(regs);
+ 
+-		irqentry_nmi_exit(regs, state);
++		irqentry_exit(regs, state);
+ 	}
+ }
+ 
 
-Regards,
-Cristian
+---
+base-commit: ae9a687664d965b13eeab276111b2f97dd02e090
+change-id: 20250903-dev-alex-break_nmi_v1-57c5321f3e80
+
+Best regards,
+-- 
+Alexandre Ghiti <alexghiti@rivosinc.com>
+
 
