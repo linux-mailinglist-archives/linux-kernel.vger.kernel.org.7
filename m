@@ -1,210 +1,125 @@
-Return-Path: <linux-kernel+bounces-798942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7065B424E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A9B5B424EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43AD91881761
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:20:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5155E188EDF1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A741258EF0;
-	Wed,  3 Sep 2025 15:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24BB13A258;
+	Wed,  3 Sep 2025 15:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="ErY3l/KV"
-Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="COfDzCPv"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F14E63CF;
-	Wed,  3 Sep 2025 15:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFDB63CF
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756912611; cv=none; b=kbczkalBrbmuZ6URa6JsI17icbe1dEzR8cdxuWcvSouyO9NQMMMMJo8KkwSr2ho333H6YW7788ntw++XqcOzCM8urX8yFRHyyvw7q8mio3hE36aUBTjyevenAxoQLrzh9PtNbk2P5eUz3K6J0Tnf2jrT5NB3WxZAA5bTgisAmjI=
+	t=1756912620; cv=none; b=ObsQLwy2ByKX0w7tbeA9Q2Y0k5GRpB3fM++Q1rlISc84/O65+zBoweeV2xfem30nrI8S5Db0XAesSFWfx8MDR/7Tqxw2Rp4qQDBsNzNxWaUxKQSbPmYVzreIRXrTZCo52zRBKQcL1S4q0tYleJu1hgKd2QMqArP3SqNuwcHHeuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756912611; c=relaxed/simple;
-	bh=ttg+OChwUbkpoVDWCw3xGKa0n3d+t7aSDC55RG2VqSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fPUO4dspRjA6SnZ1vMSE2qOdaDQWxKeLKvvUruLq6NHPfUV5V8uSpbf9KrNK4kO5LDSmmWSInjPl/AnJubrKPTAASL2vQA/Wysxrsjp2x4SGlz/ltqcCmdPZOKes5Cp//d9a5ErlVJLxq/5W1OR12ETpqMKuCaDclhSSgYzB1eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=ErY3l/KV; arc=none smtp.client-ip=168.119.41.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
-	 s=mail; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References
-	:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=a3G9xHdW/VxHSePvTIzerhYn95SpSnVWLe7bCZKfh6U=; b=ErY3l/KVYqsCbtBZ+lyIGVK6W5
-	WIbVl4M+Tc128AqaMRvcelzBJaKWXq8+iGnxTyjvVOzsNAU7D9LLM61gxtDs5DVXK9RVlMOIQ75vW
-	duwF15DALAsLbMOX3tYlNgNiFfAsR09Jr49oSG+WNy284Vx7xELoC4QkQ5ZlYs1bUmSk=;
-Received: from 194-208-208-245.tele.net ([194.208.208.245]:61793 helo=[192.168.0.207])
-	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-	(Exim 4.93)
-	(envelope-from <matthias.fend@emfend.at>)
-	id 1utpDx-005LvW-4e; Wed, 03 Sep 2025 17:16:38 +0200
-Message-ID: <8417d761-114b-4e41-8a4a-9eac2600637f@emfend.at>
-Date: Wed, 3 Sep 2025 17:16:36 +0200
+	s=arc-20240116; t=1756912620; c=relaxed/simple;
+	bh=byK7zrr1bzY5AYWAm/P3qCdsXI6BM+A7ye4HlXMiUD0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FqpdkjYkZwSJADu9tvqfQ/wdizWXyOU3wnMvTNBGTLXP2UN/Bnk+HGzAc/jlWK9PQUlRNWQO7xK8pbLKpY9kHTrTCtIB/ZD7AmClcNArKPRAkuRpbHtf6+SNJosxln1pO7NGQxcvULcXEW7CsLNB2T22iI8S8DuJp6NwvBGIUKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=COfDzCPv; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3277c603b83so4103449a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 08:16:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1756912617; x=1757517417; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+9xoPboV/qxX+mio2heAhqIyl2Xj0Gq/B/HBIeZiQLI=;
+        b=COfDzCPvFbJba28oGi8G6VPPVEK9HWgP22clzPa/paUnyyrCfjA2hlIFpEGXpo//7v
+         NH7965VpPcKiHcI/W2wVg+teLWWC4Agj1QT3FNT/GnDlOvbUPoZAsnLlO/4AXWhGAQYP
+         owGzZfg92iqbgFvb5TIwfwXPi4hxQwjeB33s97qZl/11hfDjnndvQJ5rPS70j36pMTTN
+         f5HAJDugR/DYrtSVIFGY4XR19u99RhcQsaYDuWUf1rBDO1jIAk4yYGsWRw9dy3z3EaFq
+         iZj8BB5jBUMPekkgQfZ8kZk1d/DU52/fdmfVXNY2o2AFl+sUmHxYtYMYfLeHz02VgR4Z
+         6Log==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756912617; x=1757517417;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+9xoPboV/qxX+mio2heAhqIyl2Xj0Gq/B/HBIeZiQLI=;
+        b=nNgUMowDCiwo0T2dhO+pKISIKoSiIcqhhq1bZnrc745DOZd2dpnIg/fl/77qqHus/k
+         T3si5AgPd440ZTRc6g9jAvZcbUuKSAraFELlGZiIPHhWWZTJEVLHlPgD1M0PUz0eBuVZ
+         9XUT07JPWvfHubXPJ9mqMzj6LHoz9duJAcrinuLCkZQRAQUHDJRAs64k2QzWkCtMbOHi
+         vrKrk8AP3Re/TdbRLrrW4u0tf4RVQlJQlAPgGrdkWJcQeU5YKs+w1Ib0pdYyjG+S0Ojq
+         MKXCEQ/dXI0XHHWt1nJsto6YazZqYJEH+HOIZ4mcfQvMxVHSnZzjUp4hJy99eyfln1Nb
+         XmIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXw68fnJZRAUlI8R25FEvtAZhLTMEe9VoJvA1CHn1CXd/0Mas2Cloif9rOSi1h6d11twyi/Wo3+6XkhJ7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBpsVtHbhWQcaFh4rnUh65g0hWeYXVYN9sLktznXZW5rlMkTcc
+	s2sTqxKB40a7+LQ0ukQyPaiK60ds9aQIpW0FC4LfCQDMVR+UVYP8in/L9b8FnAPCLFQdPFW2Jx1
+	RNy7kW926tX718/8Sw/qaZiQrNCLvJ197wMaRejYP
+X-Gm-Gg: ASbGncsjqkQJT3S6qH4T1pALGboz5uHhnN7Swlt3y9U4N8mvjxS0MpxF6d0Da491L3h
+	S1N+d4qi8h33+VIx4lknOB2iTktQHAnjk1M1vZa30Nks/oz6gTYpZq7lK1rzQucMVJZ2y0ydXRT
+	qknGiBpHtrFTPobEkJp76pKgc3GXmayC8zrDLu+hPIHx4JcQ7lpljPFIDD0hwz1zWWSOv3SgzU6
+	uR1jFQ=
+X-Google-Smtp-Source: AGHT+IEssE/AwRco7TF6rJSchc13XdpTJCYeO75MU4xNduI36Ol1h4daL6qVVMfNUu0Gyun/oQgqHdsHmb0F25e3H80=
+X-Received: by 2002:a17:90b:2cc6:b0:327:7784:5390 with SMTP id
+ 98e67ed59e1d1-328154529a5mr20653103a91.16.1756912616791; Wed, 03 Sep 2025
+ 08:16:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] media: add Himax HM1246 image sensor
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, bsp-development.geo@leica-geosystems.com,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20250526-hm1246-v2-0-6b882827a3a5@emfend.at>
-Content-Language: de-DE
-From: Matthias Fend <matthias.fend@emfend.at>
-In-Reply-To: <20250526-hm1246-v2-0-6b882827a3a5@emfend.at>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: 
-X-Spam-Bar: 
-X-Spam-Report: 
+References: <20250902110049.4437-1-disclosure@aisle.com> <CAHC9VhQsmaGPM7+6HX9vqjPjG7fXwV+F19+U052qaT4DYrwnFA@mail.gmail.com>
+ <CAHC9VhRtXzSGafaqLm_EDq=rj4BhDaOkaS0uJ89W-Scw2Zyxuw@mail.gmail.com>
+In-Reply-To: <CAHC9VhRtXzSGafaqLm_EDq=rj4BhDaOkaS0uJ89W-Scw2Zyxuw@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 3 Sep 2025 11:16:44 -0400
+X-Gm-Features: Ac12FXxk5b0xYb_QejwdO54jHWfoE6P5UxMpliGAjk9JRse0Tc_FuiYv2QlNnkc
+Message-ID: <CAHC9VhS7PyKsGnoT17WojZmUEqYh-HgP2TS-DQdct0yv2BfZqg@mail.gmail.com>
+Subject: Re: [PATCH] audit: fix out-of-bounds read in audit_compare_dname_path
+To: Stanislav Fort <stanislav.fort@aisle.com>, Stanislav Fort <disclosure@aisle.com>
+Cc: audit@vger.kernel.org, torvalds@linuxfoundation.org, eparis@redhat.com, 
+	security@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Sep 2, 2025 at 2:52=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
+> On Tue, Sep 2, 2025 at 2:50=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+> > On Tue, Sep 2, 2025 at 7:00=E2=80=AFAM Stanislav Fort <stanislav.fort@a=
+isle.com> wrote:
+> > >
+> > > When a watch on dir=3D/ is combined with an fsnotify event for a
+> > > single-character name directly under / (e.g., creating /a), an
+> > > out-of-bounds read can occur in audit_compare_dname_path().
+> > >
+> > > The helper parent_len() returns 1 for "/". In audit_compare_dname_pat=
+h(),
+> > > when parentlen equals the full path length (1), the code sets p =3D p=
+ath + 1
+> > > and pathlen =3D 1 - 1 =3D 0. The subsequent loop then dereferences
+> > > p[pathlen - 1] (i.e., p[-1]), causing an out-of-bounds read.
+> > >
+> > > Fix this by adding a pathlen > 0 check to the while loop condition
+> > > to prevent the out-of-bounds access.
+> > >
+> > > Reported-by: Stanislav Fort <disclosure@aisle.com>
+> > > Suggested-by: Linus Torvalds <torvalds@linuxfoundation.org>
+> > > Signed-off-by: Stanislav Fort <disclosure@aisle.com>
+>
+> I also just noticed a disconnect on the email address.  I can leave
+> the Reported-by email as disclosure@, but do you mind if I convert
+> your Signed-off-by email to stanislav.fort@?
 
-since I sent the first version of this patch series quite some time ago 
-and, apart from the bindings there has been no feedback, I wanted to 
-check whether there might be any fundamental concerns (such as the 
-sensor being somewhat older)?
+Stanislav, are you okay with changing your sign-off email to
+stanislav.fort@aisle.com?
 
-If there are no general objections to this driver, I would be very 
-grateful for any comments or suggestions for improvement.
-
-Thanks
-  ~Matthias
-
-Added Sakari and Laurent to CC.
-
-Am 26.05.2025 um 08:59 schrieb Matthias Fend:
-> Hello,
-> 
-> this series adds support for the Himax HM1246 image sensor.
-> The Himax HM1246-AWD is a 1/3.7-Inch CMOS image sensor SoC with an active
-> array size of 1296 x 976. The datasheet can b
-> Currently, only the native RAW mode is supported. Other modes and the
-> internal image signal processing pipeline are not currently supported.
-> The data sheet is available on the manufacturer's website [1].
-> Tested on i.MX8MP hardware. A Toshiba TC358746 bridge was used to convert
-> the sensor's parallel video output into MIPI signals for the i.MX8MP.
-> 
-> Best regards
->   ~Matthias
->   
-> [1] https://www.himax.com.tw/wp-content/uploads/2024/03/HM1246-AWD_DS_v01.pdf
-> 
-> v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
-> 
-> Compliance test for device /dev/v4l-subdev4:
-> 
-> Driver Info:
->          Driver version   : 6.12.0
->          Capabilities     : 0x00000000
->          Client Capabilities: 0x0000000000000003
-> streams interval-uses-which
-> Required ioctls:
->          test VIDIOC_SUDBEV_QUERYCAP: OK
->          test invalid ioctls: OK
-> 
-> Allow for multiple opens:
->          test second /dev/v4l-subdev4 open: OK
->          test VIDIOC_SUBDEV_QUERYCAP: OK
->          test for unlimited opens: OK
-> 
-> Debug ioctls:
->          test VIDIOC_LOG_STATUS: OK (Not Supported)
-> 
-> Input ioctls:
->          test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->          test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
->          test VIDIOC_ENUMAUDIO: OK (Not Supported)
->          test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
->          test VIDIOC_G/S_AUDIO: OK (Not Supported)
->          Inputs: 0 Audio Inputs: 0 Tuners: 0
-> 
-> Output ioctls:
->          test VIDIOC_G/S_MODULATOR: OK (Not Supported)
->          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->          test VIDIOC_ENUMAUDOUT: OK (Not Supported)
->          test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
->          test VIDIOC_G/S_AUDOUT: OK (Not Supported)
->          Outputs: 0 Audio Outputs: 0 Modulators: 0
-> 
-> Input/Output configuration ioctls:
->          test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
->          test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->          test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
->          test VIDIOC_G/S_EDID: OK (Not Supported)
-> 
-> Control ioctls:
->          test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
->          test VIDIOC_QUERYCTRL: OK
->          test VIDIOC_G/S_CTRL: OK
->          test VIDIOC_G/S/TRY_EXT_CTRLS: OK
->          test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
->          test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
->          Standard Controls: 15 Private Controls: 0
-> 
-> Format ioctls:
->          test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
->          test VIDIOC_G/S_PARM: OK (Not Supported)
->          test VIDIOC_G_FBUF: OK (Not Supported)
->          test VIDIOC_G_FMT: OK (Not Supported)
->          test VIDIOC_TRY_FMT: OK (Not Supported)
->          test VIDIOC_S_FMT: OK (Not Supported)
->          test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
->          test Cropping: OK (Not Supported)
->          test Composing: OK (Not Supported)
->          test Scaling: OK (Not Supported)
-> 
-> Codec ioctls:
->          test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
->          test VIDIOC_G_ENC_INDEX: OK (Not Supported)
->          test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-> 
-> Buffer ioctls:
->          test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
->          test CREATE_BUFS maximum buffers: OK
->          test VIDIOC_REMOVE_BUFS: OK
->          test VIDIOC_EXPBUF: OK (Not Supported)
->          test Requests: OK (Not Supported)
-> 
-> Total for device /dev/v4l-subdev4: 45, Succeeded: 45, Failed: 0, Warnings: 0
-> 
-> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
-> ---
-> Changes in v2:
-> - Use macros for 64-bit division
-> - Avoid compiler warnings about potentially uninitialized variables
-> - Fix two uses of dev_err_probe
-> - Link to v1: https://lore.kernel.org/r/20250403-hm1246-v1-0-30990d71bc42@emfend.at
-> 
-> ---
-> Matthias Fend (2):
->        media: dt-bindings: i2c: add Himax HM1246 image sensor
->        media: i2c: add Himax HM1246 image sensor driver
-> 
->   .../bindings/media/i2c/himax,hm1246.yaml           |  111 ++
->   MAINTAINERS                                        |    8 +
->   drivers/media/i2c/Kconfig                          |    9 +
->   drivers/media/i2c/Makefile                         |    1 +
->   drivers/media/i2c/hm1246.c                         | 1421 ++++++++++++++++++++
->   5 files changed, 1550 insertions(+)
-> ---
-> base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
-> change-id: 20250403-hm1246-96b0cdab773c
-> 
-> Best regards,
-
+--
+paul-moore.com
 
