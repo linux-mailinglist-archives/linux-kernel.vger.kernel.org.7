@@ -1,122 +1,271 @@
-Return-Path: <linux-kernel+bounces-799006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A699EB425C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:45:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA27B425EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:50:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95DC856847D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:45:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F43E18903FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C4B2868A2;
-	Wed,  3 Sep 2025 15:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HUmjNwYe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9849E287507;
+	Wed,  3 Sep 2025 15:49:48 +0000 (UTC)
+Received: from bregans-1.gladserv.net (bregans-1.gladserv.net [185.128.211.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD34D287243;
-	Wed,  3 Sep 2025 15:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C115D28725C;
+	Wed,  3 Sep 2025 15:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.211.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756914306; cv=none; b=px3SQULzgHM9eFqY3vAy+Z7IzLpScc78bqim73W4kblsGrUDsVSDVSHXIGIW+47+ZSQf36WRFPGn2ak9Bw6TCfVaieSq4E7prjDgQm0/PRsdpdmzniYiJCdFpJYDo95BaNDY04T0CtdcjOdEPk1vcN0xTE3V+qT0FtXLQy72HQM=
+	t=1756914588; cv=none; b=jx61gYEavdL9+jq4os3bvdM8OjH5+weoeGjyhYujIg4e5Kvp4M2JKpDlfMcRzZS3KSzQd3+Xag7NCTQFU7zKNp5V1Ad2awqx3/NsOT4J9s9J57/Qvm+8O6kNHJ8B7vQWN/6CPgh+ubdOBCDYJEu3HuSlBw/qcKsBNrA10OolVY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756914306; c=relaxed/simple;
-	bh=RmIXgX4EPYbEWf+ZuRyxg8gVS0O/rPn4FNVOhp5P5DQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fhnLIsEDYDzw1LQlJp152mymDLz7RHlNKWEf+boMBHUJmM2zE0KNlAdr1KhaEW8cl04384Vyb6AUZ0MWtYm0ryApQtDmqubloLdh3u5/2R+SIrSVhZyVEjf8Wt6T/HCoFoSBKjrGLp1pHbo6cuCJqESqAdnQ7IH5mPGIPvZH91E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HUmjNwYe; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756914305; x=1788450305;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RmIXgX4EPYbEWf+ZuRyxg8gVS0O/rPn4FNVOhp5P5DQ=;
-  b=HUmjNwYefqozFulfvhzDN4QhVqH6Rc8D/xaqEZerat3IAxge0JcwGhxp
-   BvM8AJbl8chb3ji0nPRPsOPtmRjDmQ7r/0Y9oRxHgr4k+jT+KMQlN9MNw
-   2ptEobpSm06TE2cEELonEsxOW/4QV3q7YeutEIWkrz6TkW6S03eSeuUxc
-   8DseELcQ+NZjewJWuf/j4cz0ughOJoD9y9KeQjpFQxwUV936IRnSJOxz8
-   mGUReOj4wCj8+aM4UAY7tZFC4aQsUS4JWn8jQvt/z1MCNjjNQSz3FCTPb
-   NwKg3Lj94HDyQf9n3dx6+kB0lHpmpIwr3X3HZWbSOc2q3LO5Zl75xfHGM
-   w==;
-X-CSE-ConnectionGUID: bE54IqfuTl6Tj+/Ba0Zz+g==
-X-CSE-MsgGUID: B3M0HyvcSJaKpKUkZ7BNFg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="84662832"
-X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
-   d="scan'208";a="84662832"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 08:45:04 -0700
-X-CSE-ConnectionGUID: iISP29WiSIKcCafvMOGpUw==
-X-CSE-MsgGUID: JOSrHn6xRGumw7gqBYMURg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
-   d="scan'208";a="175985164"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa004.jf.intel.com with ESMTP; 03 Sep 2025 08:45:01 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id D7E0695; Wed, 03 Sep 2025 17:44:59 +0200 (CEST)
-Date: Wed, 3 Sep 2025 17:44:59 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Yang Shen <shenyang39@huawei.com>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-unisoc@lists.infradead.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH RESEND 07/14] gpio: ts4800: use new generic GPIO chip API
-Message-ID: <aLhie72v1T9Bw1vx@black.igk.intel.com>
-References: <20250825-gpio-mmio-gpio-conv-v1-0-356b4b1d5110@linaro.org>
- <20250825-gpio-mmio-gpio-conv-v1-7-356b4b1d5110@linaro.org>
+	s=arc-20240116; t=1756914588; c=relaxed/simple;
+	bh=qpPfbKMt25hjwiG3TOlLtDGm5aHPNIMurOHL/19cYsY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EkXV4CIlafiuqLpRA17vEDWnQ6R6UNz24d/oayFJPgvnQJ455oGuoERY2RXChT1mkp0Un416ChMChs8iL0808YgYeU/scj+6h4GK/Zsv7EM3OJBG/0IjKuRQWqdAzl34n4HfXkm8kt3Cppd/vyDoHYAEDNmtkWH2M+8+R/LSBAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.211.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
+From: Brett A C Sheffield <bacs@librecast.net>
+To: willemdebruijn.kernel@gmail.com
+Cc: bacs@librecast.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	gregkh@linuxfoundation.org,
+	horms@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	shuah@kernel.org,
+	willemb@google.com
+Subject: [PATCH net-next v6] selftests: net: add test for ipv6 fragmentation
+Date: Wed,  3 Sep 2025 15:46:01 +0000
+Message-ID: <20250903154925.13481-1-bacs@librecast.net>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825-gpio-mmio-gpio-conv-v1-7-356b4b1d5110@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 25, 2025 at 11:48:48AM +0200, Bartosz Golaszewski wrote:
-> 
-> Convert the driver to using the new generic GPIO chip interfaces from
-> linux/gpio/generic.h.
+Add selftest for the IPv6 fragmentation regression which affected
+several stable kernels.
 
-...
+Commit a18dfa9925b9 ("ipv6: save dontfrag in cork") was backported to
+stable without some prerequisite commits.  This caused a regression when
+sending IPv6 UDP packets by preventing fragmentation and instead
+returning -1 (EMSGSIZE).
 
-> +	config = (typeof(config)){
+Add selftest to check for this issue by attempting to send a packet
+larger than the interface MTU. The packet will be fragmented on a
+working kernel, with sendmsg(2) correctly returning the expected number
+of bytes sent.  When the regression is present, sendmsg returns -1 and
+sets errno to EMSGSIZE.
 
-First of all, what's wrong with the pattern used in the kernel when we
-explicitly show the compound literal? Also we put a space before {.
+Link: https://lore.kernel.org/stable/aElivdUXqd1OqgMY@karahi.gladserv.com
+Signed-off-by: Brett A C Sheffield <bacs@librecast.net>
+Reviewed-by: Willem de Bruijn <willemb@google.com>
+---
+Thanks again Willem for the review.
 
-> +		.dev = dev,
-> +		.sz = 2,
-> +		.dat = base_addr + INPUT_REG_OFFSET,
-> +		.set = base_addr + OUTPUT_REG_OFFSET,
-> +		.dirout = base_addr + DIRECTION_REG_OFFSET,
-> +	};
-> +
-> +	retval = gpio_generic_chip_init(chip, &config);
->  	if (retval)
-> -		return dev_err_probe(dev, retval, "bgpio_init failed\n");
-> +		return dev_err_probe(dev, retval,
-> +				     "failed to initialize the generic GPIO chip\n");
+v6 changes:
+ - port -> network byte order
+ - remove unecessary variable err
+ - check return value of close()
 
-Second, can't it all be hidden in the GPIOLIB just by passing the pointer to
-the above initialised structure? Yes, it will take a pointer space in GPIO chip
-for all, but I think it will reduce the burden.
+v5 changes:
+ - disable_dad: delete - not needed for lo
+ - main: simplify failure paths
+ - main: char -> static char buf
+ - setup: remove pointless return value
+ - setup: remove unused variable fd
+ - setup: merge with interface_up() to simplify
+ - setup: check all system call return values
+ - remove no longer used headers
 
+v4 changes:
+ - fix "else should follow close brace" (checkpatch ERROR)
+
+v3 changes:
+ - add usleep instead of busy polling on sendmsg
+ - simplify error handling by using error() and leaving cleanup to O/S
+ - use loopback interface - don't bother creating TAP
+ - send to localhost (::1)
+
+v2 changes:
+ - remove superfluous namespace calls - unshare(2) suffices
+ - remove usleep(). Don't wait for the interface to be ready, just send, and
+   handle the (less likely) error case by retrying.
+ - set destination address only once
+ - document our use of the IPv6 link-local source address
+ - send to port 9 (DISCARD) instead of 4242 (DONT PANIC)
+ - ensure sockets are closed on failure paths
+ - use KSFT exit codes for clarity
+
+v5: https://lore.kernel.org/netdev/20250902142502.27278-1-bacs@librecast.net
+v4: https://lore.kernel.org/netdev/20250901123757.13112-1-bacs@librecast.net
+v3: https://lore.kernel.org/netdev/20250901112248.5218-1-bacs@librecast.net
+v2: https://lore.kernel.org/netdev/20250831102908.14655-1-bacs@librecast.net
+v1: https://lore.kernel.org/netdev/20250825092548.4436-3-bacs@librecast.net
+
+ tools/testing/selftests/net/.gitignore        |   1 +
+ tools/testing/selftests/net/Makefile          |   1 +
+ .../selftests/net/ipv6_fragmentation.c        | 114 ++++++++++++++++++
+ 3 files changed, 116 insertions(+)
+ create mode 100644 tools/testing/selftests/net/ipv6_fragmentation.c
+
+diff --git a/tools/testing/selftests/net/.gitignore b/tools/testing/selftests/net/.gitignore
+index 47c293c2962f..3d4b4a53dfda 100644
+--- a/tools/testing/selftests/net/.gitignore
++++ b/tools/testing/selftests/net/.gitignore
+@@ -16,6 +16,7 @@ ip_local_port_range
+ ipsec
+ ipv6_flowlabel
+ ipv6_flowlabel_mgr
++ipv6_fragmentation
+ log.txt
+ msg_oob
+ msg_zerocopy
+diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
+index eef0b8f8a7b0..276e0481d996 100644
+--- a/tools/testing/selftests/net/Makefile
++++ b/tools/testing/selftests/net/Makefile
+@@ -117,6 +117,7 @@ TEST_GEN_FILES += tfo
+ TEST_PROGS += tfo_passive.sh
+ TEST_PROGS += broadcast_pmtu.sh
+ TEST_PROGS += ipv6_force_forwarding.sh
++TEST_GEN_PROGS += ipv6_fragmentation
+ TEST_PROGS += route_hint.sh
+ 
+ # YNL files, must be before "include ..lib.mk"
+diff --git a/tools/testing/selftests/net/ipv6_fragmentation.c b/tools/testing/selftests/net/ipv6_fragmentation.c
+new file mode 100644
+index 000000000000..267ef62b5c72
+--- /dev/null
++++ b/tools/testing/selftests/net/ipv6_fragmentation.c
+@@ -0,0 +1,114 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Author: Brett A C Sheffield <bacs@librecast.net>
++ *
++ * Kernel selftest for the IPv6 fragmentation regression which affected stable
++ * kernels:
++ *
++ *   https://lore.kernel.org/stable/aElivdUXqd1OqgMY@karahi.gladserv.com
++ *
++ * Commit: a18dfa9925b9 ("ipv6: save dontfrag in cork") was backported to stable
++ * without some prerequisite commits.
++ *
++ * This caused a regression when sending IPv6 UDP packets by preventing
++ * fragmentation and instead returning -1 (EMSGSIZE).
++ *
++ * This selftest demonstrates the issue by sending an IPv6 UDP packet to
++ * localhost (::1) on the loopback interface from the autoconfigured link-local
++ * address.
++ *
++ * sendmsg(2) returns bytes sent correctly on a working kernel, and returns -1
++ * (EMSGSIZE) when the regression is present.
++ *
++ * The regression was not present in the mainline kernel, but add this test to
++ * catch similar breakage in future.
++ */
++
++#define _GNU_SOURCE
++
++#include <error.h>
++#include <net/if.h>
++#include <netinet/in.h>
++#include <sched.h>
++#include <stdio.h>
++#include <sys/ioctl.h>
++#include <sys/socket.h>
++#include <unistd.h>
++#include "../kselftest.h"
++
++#define MTU 1500
++#define LARGER_THAN_MTU 8192
++
++static void setup(void)
++{
++	struct ifreq ifr = {
++		.ifr_name = "lo"
++	};
++	int ctl;
++
++	/* we need to set MTU, so do this in a namespace to play nicely */
++	if (unshare(CLONE_NEWNET) == -1)
++		error(KSFT_FAIL, errno, "unshare");
++
++	ctl = socket(AF_LOCAL, SOCK_STREAM, 0);
++	if (ctl == -1)
++		error(KSFT_FAIL, errno, "socket");
++
++	/* ensure MTU is smaller than what we plan to send */
++	ifr.ifr_mtu = MTU;
++	if (ioctl(ctl, SIOCSIFMTU, &ifr) == -1)
++		error(KSFT_FAIL, errno, "ioctl: set MTU");
++
++	/* bring up interface */
++	if (ioctl(ctl, SIOCGIFFLAGS, &ifr) == -1)
++		error(KSFT_FAIL, errno, "ioctl SIOCGIFFLAGS");
++	ifr.ifr_flags = ifr.ifr_flags | IFF_UP;
++	if (ioctl(ctl, SIOCSIFFLAGS, &ifr) == -1)
++		error(KSFT_FAIL, errno, "ioctl: bring interface up");
++
++	if (close(ctl) == -1)
++		error(KSFT_FAIL, errno, "close");
++}
++
++int main(void)
++{
++	struct in6_addr addr = {
++		.s6_addr[15] = 0x01,  /* ::1 */
++	};
++	struct sockaddr_in6 sa = {
++		.sin6_family = AF_INET6,
++		.sin6_addr = addr,
++		.sin6_port = htons(9) /* port 9/udp (DISCARD) */
++	};
++	static char buf[LARGER_THAN_MTU] = {0};
++	struct iovec iov = { .iov_base = buf, .iov_len = sizeof(buf) };
++	struct msghdr msg = {
++		.msg_iov = &iov,
++		.msg_iovlen = 1,
++		.msg_name = (struct sockaddr *)&sa,
++		.msg_namelen = sizeof(sa),
++	};
++	ssize_t rc;
++	int s;
++
++	printf("Testing IPv6 fragmentation\n");
++	setup();
++	s = socket(AF_INET6, SOCK_DGRAM, 0);
++send_again:
++	rc = sendmsg(s, &msg, 0);
++	if (rc == -1) {
++		/* if interface wasn't ready, try again */
++		if (errno == EADDRNOTAVAIL) {
++			usleep(1000);
++			goto send_again;
++		}
++		error(KSFT_FAIL, errno, "sendmsg");
++	} else if (rc != LARGER_THAN_MTU) {
++		error(KSFT_FAIL, errno, "sendmsg returned %zi, expected %i",
++				rc, LARGER_THAN_MTU);
++	}
++	printf("[PASS] sendmsg() returned %zi\n", rc);
++	if (close(s) == -1)
++		error(KSFT_FAIL, errno, "close");
++	return KSFT_PASS;
++}
+
+base-commit: cd8a4cfa6bb43a441901e82f5c222dddc75a18a3
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.49.1
 
 
