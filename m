@@ -1,80 +1,84 @@
-Return-Path: <linux-kernel+bounces-797740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4667B414AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:07:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04977B414B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DA927C05D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:07:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9229560CD4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B722D77E4;
-	Wed,  3 Sep 2025 06:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D402D77E6;
+	Wed,  3 Sep 2025 06:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="GSYt7p1g"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vB0ywPsi"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0B32D6E61;
-	Wed,  3 Sep 2025 06:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633F02D5938;
+	Wed,  3 Sep 2025 06:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756879650; cv=none; b=QuIaveviGd85jiLPi2UBtIM6KER2wwyM045C2BN9fTe+aQfPZfjiURvsrDdvsFY090q5bBsGOH5BwP5iJUrUbO8UGNjUVFVt/oux1JK4JcJ3RP2Lslz2CRyJh5+i6GO0HmpOTXXl/8owae/tjposSCWS+we+iCkBLcQLDkkrsi8=
+	t=1756879713; cv=none; b=udQqxrwRjXsGpUBPV1BE4+8CFYhuDI4ylj0Lh9eysCe9qRo22OuzsJw0qqijGuhiLuAB86l4At2ZNIH6dOz3y7rYc2amtPC0AW/2UpDSmPBkCxU/0O1sGr/qBguGTt5cA2zPbcl3X7tdHaxd6jvPqLD52mlS827jQe6Z+gZagBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756879650; c=relaxed/simple;
-	bh=zc8gkB3r3ly4dKmAy7cMH8HtD1IHK8dkAEfBpuNNzns=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UCM3XB8PGZWvDy76jac8yHhVF6MxodWFezCNaG9YHLtu17w2/+9PY80qn0PydZCCswiG7RgTw1/3/SwSPZ3RpL/72Tbx8Fsboa9eaUwWz4B7O2gNQ4zAjymNGtXgO6GM/RtnXEiC/PeVkARHcQT4jtOr0iOAmct4Pbo5oSW07nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=GSYt7p1g; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1756879645;
-	bh=4RROh9iqQ70OdBywmW1IULQcZq8kweW4OW0QocIf8EY=;
-	h=From:To:In-Reply-To:References:Subject:Date;
-	b=GSYt7p1g4bETO9d6Qq8Y5QOvEUe42ZM625lNOjYH+OOczlvKkSlbOn09/ufRp4XfZ
-	 /et9W1u79/dBVZYfAdiSPWGbocL1uHaGz/HqQE6pSBs52GRUY3GnGJbjvwn2U53KR+
-	 mRmemqbaug9is1yOMIsfZrrIaxPTY0pQk1BSvXgJpztqfeicGoY6TtHY96JD8YxrJr
-	 i0iiy03mDtRx8apj5TcfPYGFP3V2yxoCmiM2j2udEh6YsjO3T3qGOL4nOMTB5jKxGp
-	 WueU2FKz47+e9inVRGwvv7OgDVoNnwyqxy5Xf3I2x64EBU1Hn4CjVK8VMG8BrDsPuj
-	 K4+GGYvegHX5w==
-Received: from [127.0.1.1] (unknown [180.150.112.213])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 59A716E02C;
-	Wed,  3 Sep 2025 14:07:24 +0800 (AWST)
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250819131743.86905-2-krzysztof.kozlowski@linaro.org>
-References: <20250819131743.86905-2-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] ARM: dts: aspeed: Minor whitespace cleanup
-Message-Id: <175687964426.808220.6591590873945932888.b4-ty@codeconstruct.com.au>
-Date: Wed, 03 Sep 2025 15:37:24 +0930
+	s=arc-20240116; t=1756879713; c=relaxed/simple;
+	bh=xoXZ8fI6UslXlNQFkGXP2ovZvb7oU9JUnj0hhiY1+q4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m7xkFbRrzvJoZEclbMk+865VkPvV85P0hgsEtJ43qcKVfzl40MDkwCTUMvZqi7AvPXF8hAvstJjE+ohME6nHTc82qopaVoymDYPiLPjuUrz3hgnxhoGlS4Qjlr/Hpje0P4i/tUBqOW07jKgaQz/aJzhO7iTIcJi6FOSYEPn4STA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vB0ywPsi; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=L851IHbqrVpIrG6uFeEojRb7BABVfLuDX9yKbnxc82M=; b=vB0ywPsi0BiQ0RcWLFCg4b9CXM
+	8tfr/Yz9TErvtAmM90+NrYZsMZpdOe5SGTMu4slh80l/mmthTGXCrW8G5Gp4wCnPh9kB2wlptISfP
+	Bc1OwxOzR6Z8fklu+6YKwonvY7CxxD7/SU/Nm4wocgKLdYA3IYrP59xOFDgneKbDyerNCsyxN/rLs
+	W8A54YkMxXQt61lsuEr5TTemAOKc7pkiiuWH6aHcyX6VnJICvu0YHlRy/07zZf9zOFiMIVApAVKIW
+	v0A0j8tl2GP062oziB2w0j76xrP5OhDLrvO5/5aQaGSsSn5zRZXEvHSoG8rWpXmO5h0VZ0bovgy4m
+	Q6ceWpug==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1utgfX-00000004Tjn-3wiY;
+	Wed, 03 Sep 2025 06:08:31 +0000
+Date: Tue, 2 Sep 2025 23:08:31 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: syzbot <syzbot+0391d34e801643e2809b@syzkaller.appspotmail.com>,
+	cem@kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [xfs?] KASAN: slab-use-after-free Read in xfs_buf_rele
+ (4)
+Message-ID: <aLfbXzRIXsRYibF3@infradead.org>
+References: <68b6d7b3.050a0220.3db4df.01cf.GAE@google.com>
+ <aLeUdemAZ5wmtZel@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLeUdemAZ5wmtZel@dread.disaster.area>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, 19 Aug 2025 15:17:44 +0200, Krzysztof Kozlowski wrote:
-> The DTS code coding style expects exactly one space around '=' or '{'
-> characters.
-> 
-> 
+On Wed, Sep 03, 2025 at 11:05:57AM +1000, Dave Chinner wrote:
+> I think that the buftarg rhashtable needs to initialised before the
+> shrinker is registered, then freed from xfs_destroy_buftarg() after
+> the shrinker has been shut down as it must live longer than the
+> buftarg shrinker instance. i.e. the buftarg rhashtable needs to have
+> the same life cycle as the buftarg LRU list....
 
-Thanks, I've applied this to the BMC tree.
+My RFC patch to switch back to a per-buftarg hashtable would do that:
 
--- 
-Andrew Jeffery <andrew@codeconstruct.com.au>
+https://git.infradead.org/?p=users/hch/xfs.git;a=commitdiff;h=e3cc537864a7ab980abfa18a3efe01a111aad1d7
+
+I still haven't gotten around doing serious performance testing on it,
+and I'm busy right now.  But in about two weeks I'll probably have
+both a bit of time and access to a big enough system to do serious
+scalability testing on it.
 
 
