@@ -1,141 +1,142 @@
-Return-Path: <linux-kernel+bounces-798804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2AD3B42329
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:10:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EBC8B422E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4C1B172284
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:08:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 829A43AA3C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D3A305051;
-	Wed,  3 Sep 2025 14:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95BC3101AE;
+	Wed,  3 Sep 2025 14:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="Gb2fAwLM"
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GyiR/SZ3"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C4C2FF64B
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A755789D;
+	Wed,  3 Sep 2025 14:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908496; cv=none; b=CUeo9jc1w/zdDlQc48B5mIWtXxtPDoS3LI70hXJWGh4bLw0DbtG3DZGYYFJKAt9NcUoeYwPqx7WQRXaA6nZtzDjBI0UOi93IVhWtrX09gSTdr73fDqQ0zfRER08Zct0ggVXwrcsAQxaDMYXxf0+2sq2RL1F2HStJG6wi2D6yfv0=
+	t=1756908047; cv=none; b=Th/I6ofDf0iYnmzSB6S0NvBxTpDdV+pvUkNzGZctN+yFVUQtpABKbQfNiZS7MKXZIfRhmw7gLLjYMJ4dP9LxRhcdyWCqsCnSQjNH00VLbSroNe5w6Nn41iFILt99uD9Iyd46ClrAapfmuTRi79pXxiWR3kMggPQ9gfRRDtCbw7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908496; c=relaxed/simple;
-	bh=k9af2vJYNOv9Ad+WHvcoDXbJbU4NfCe6GSoBa2KBYBg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PILwSCvaU5rzHvhLmm6IHd1szO0uBtsN1WhEkomV96xM8BJOlZaQmhlrfVelN0QzgQASGFAHfbqIQfImdzMUEtUagEk3ouk2movLwHTa/2OYdI6QquuNUFDeMAa2l9g2jCbP0g9Mvw62/AFeSjFeshMn8ROsTUw1PxFNXksluRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=Gb2fAwLM; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
-	; s=mail; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=MywEynYNUb/+vviy4Gt34/JK2ggRg79daM+ma7Rs1DE=; b=Gb2fAwLMTtymMLa7ezoFfLhSpS
-	u1sDrLJZmp5PAtqVxy0YMI0UTXeBzWzUcr7lHjAnImbU3dlfXlHzRl/Xucj3+YoAfx2GyQwBWHpuR
-	liEjR+KCRhUOAwctQBJJkX1DU1wcO9l90tbTfIpKFNcGR7X6lbIVdcRHK+QhZqy53jVmOtm4VAvK3
-	iv6Poz6xSKgnerY7XlnNM22ysjWf0/DoOSviiAXdZGSAdPYWcOZaMl31ClSL3mtlhAE7w00R9gPrM
-	ElZ/15hOBqiJVJ75N/RdDELHMI0bVBnJruPCWJ4JipggYDYB+yAJiaV78QiTfDTTkK4Xty9eVnVK9
-	yguwjVaA==;
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@surriel.com>)
-	id 1uto2H-000000004Ed-2uVr;
-	Wed, 03 Sep 2025 10:00:29 -0400
-Message-ID: <59f1b1b6e1ef24b0d514a9885a08400c76b0eeec.camel@surriel.com>
-Subject: Re: [BUG] x86/mm: regression after 4a02ed8e1cc3
-From: Rik van Riel <riel@surriel.com>
-To: Dave Hansen <dave.hansen@intel.com>, Giovanni Cabiddu
-	 <giovanni.cabiddu@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de, 
-	peterz@infradead.org, dave.hansen@linux.intel.com,
- zhengqi.arch@bytedance.com, 	nadav.amit@gmail.com, thomas.lendacky@amd.com,
- kernel-team@meta.com, 	linux-mm@kvack.org, akpm@linux-foundation.org,
- jackmanb@google.com, 	jannh@google.com, mhklinux@outlook.com,
- andrew.cooper3@citrix.com, 	Manali.Shukla@amd.com, mingo@kernel.org,
- baolu.lu@intel.com, 	david.guckian@intel.com, damian.muszynski@intel.com
-Date: Wed, 03 Sep 2025 10:00:28 -0400
-In-Reply-To: <913a509d-d985-4520-a879-538a1198b946@intel.com>
-References: <20250226030129.530345-1-riel@surriel.com>
-	 <20250226030129.530345-2-riel@surriel.com>
-	 <aLcQ3UCXXNcByW1O@gcabiddu-mobl.ger.corp.intel.com>
-	 <913a509d-d985-4520-a879-538a1198b946@intel.com>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1756908047; c=relaxed/simple;
+	bh=lSF301elCdPOXOy81GiG5IgHSG1690Usuy6RvYlRfa0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qhcTkB3BCoRVhLU6mY9R5qUKzt4GSmd/xqYOK+HGr+zM5Mb3UT0T1wSNmGOlYbKKtHuxQpNP6CFbLIUuKk9PuixqLefbmuCszDuQ+dtUrVogtvok5TLT6/4/X5+S2IvBbMiL7WPD8r3zV7fCbvkPJfufDq/prYZeH6LzbEFW4ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GyiR/SZ3; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77250e45d36so2763933b3a.0;
+        Wed, 03 Sep 2025 07:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756908045; x=1757512845; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xAesZB2lk9ao4BWYXbJjTK7DuZ36IgP0HTueS0+3TwI=;
+        b=GyiR/SZ3LwbvrpCfK8AG+WNipOM/1vifWFQN6K0VwQfCRWN89jDvjP/GP65Qf+EJn6
+         +ufX5Nh8D+qibj8TNIW3WaT170WpFUxqNqLQQbEdyW0TodHyr3nilF7J0cqWmt6qgqfs
+         ZfkT5Jw8SOUiCLYuDgnCa4tIXfdBuwglS6EUBZD8NfInIwnQe7XCftNddB7mo/zPBFCP
+         9cdCm3M5ucVSo6xNWPaCk8Y0iIkziX84Q6pRQIOQvT+zynRLXwO47WCfzfKAHxvF6ike
+         v8yKREburrRZGlyNGETvVH7uHBi7/IalPkAaivOEvSHaYFYm9n0c79+MtqN4WWaaTQoG
+         DGvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756908045; x=1757512845;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xAesZB2lk9ao4BWYXbJjTK7DuZ36IgP0HTueS0+3TwI=;
+        b=shInUsIGLQLRhp5fnB7hLdzsrvLf8jiNtmuiWQtAapwG6gHmLAri61jm1blu4drZhJ
+         BRX6MiGyAW1WDGAknnsxYAmevnIgSigtIgs7CZ0yNzQ6/9HbtCh5IYpHxuq8tvzqteXm
+         jenosbgTlFK7tkY7BeCJdRJcy7pK1fUaXXgdZQGThxOGUkji+DmMwcw5avCbz5jkFQQF
+         Dvm8w+3rWF+xA6iEEbpI9bl28D2KKsjvAuEHYEUcF/tYCJIbwCZQMju9CjUoZKI5Xy7R
+         Dp2M1tOZNS9GEGL7Q0EBP5wAfik5m3i8eT+jGxi84NgSOzam8V8WLAsKnw0v75MPWqOU
+         neyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVY9ZcQqhuspaz3EItBO8xRCFe/tjDqhm/Fky156wsp7BqSgAzQKohQpZMiYEyORloV72VISCI1@vger.kernel.org, AJvYcCWoKCIcC5uev+NDFlIMPM1dJ72A9ItSB4Kb8Oke+J44tYH4n2E5QJhBmm4M75lkO+nw6XY0sDl4mAzeumg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl4+Dze7bfmewy5kz6qSoLWru1/sPwC1bB7lU/k+oQ7EKgmm/M
+	fGA3eWOPFKphWmHctRf8ays8SqDkfmjRah6tBsj7lGHLtMzFgGzuLGVA
+X-Gm-Gg: ASbGncun7j07cHtETAKh5G5h15BJvYC4LvnuVVszKIJuvFfHG2qrl7FH1ucCI5xkIe/
+	QLoirDcisIHmzJjflUY3utGtwp7Aj5PoxVJkgYwUp4HcAp1IWB2u7lgmBTEQe8OfRRp/co/wG75
+	13hGQV6XTtufFngmLwcw/NDtVRL/BZzR8x1Nk6GQisUFLNBwJ5QQTSOsuS52RK4ckgG3f57a9XG
+	RRdb6XAOFnfC5DdRUwEaCIOLUyINnEuwZApaPFkTZM3WdDb/uz+x81jvv9HOo3xatxIHQNoOM/g
+	FtaX9L356xl8oGbrLKGMKKzwMs3aj1C3r4xYJk77HavzEr+8L+t/fo+fwqMCAmXk8QPgYp5UFkI
+	jj1bnDWO6d999SY4E+lmJiypwLmw30RNQnjQtqZ42BUP0kdX7xBlV0jUNfIl5SIV1cFnZu3XAkf
+	ewoO5y0j7/V3r7lQZOsT7/ku9GTq5DPax+gH20iSv3svY6bb1JdoncxGQ=
+X-Google-Smtp-Source: AGHT+IEiZzIqbK6NtZy7OvrioKfNs+nNoDPdVd41ZcGEBWChbdaMmyXQ4AtaISVEW5t+yv55VsqWyg==
+X-Received: by 2002:a05:6a20:9189:b0:248:7a71:c1e with SMTP id adf61e73a8af0-2487a710dcfmr3734029637.52.1756908043165;
+        Wed, 03 Sep 2025 07:00:43 -0700 (PDT)
+Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.22.11.165])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-77243ffcebasm12891155b3a.51.2025.09.03.07.00.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 07:00:42 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thierry Reding <treding@nvidia.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] As the doc of of_parse_phandle() states: "The device_node pointer with refcount incremented.  Use  * of_node_put() on it when done."
+Date: Wed,  3 Sep 2025 22:00:35 +0800
+Message-Id: <20250903140035.2529812-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-09-02 at 08:50 -0700, Dave Hansen wrote:
-> On 9/2/25 08:44, Giovanni Cabiddu wrote:
-> > diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> > index 39f80111e6f1..e66c7662c254 100644
-> > --- a/arch/x86/mm/tlb.c
-> > +++ b/arch/x86/mm/tlb.c
-> > @@ -1459,7 +1459,7 @@ void flush_tlb_mm_range(struct mm_struct *mm,
-> > unsigned long start,
-> > =C2=A0
-> > =C2=A0	put_flush_tlb_info();
-> > =C2=A0	put_cpu();
-> > -	mmu_notifier_arch_invalidate_secondary_tlbs(mm, start,
-> > end);
-> > +	mmu_notifier_arch_invalidate_secondary_tlbs(mm, info-
-> > >start, info->end);
-> > =C2=A0}
->=20
-> That does look like the right solution.
->=20
-> This is the downside of wrapping everything up in that 'info' struct;
-> it's not obvious that the canonical source of the start/end
-> information
-> moved from those variables into the structure.
->=20
-> Rik, is that your read on it too?
->=20
-In flush_tlb_mm_range(), we only need to flush from
-start to end. The same should be true for the mmu notifier.
+The function doesn't calls
+of_node_put() to release this reference, causing a reference leak.
 
-The only reason info->start and info->end can be modified
-is because a global TLB flush can be faster than a ranged
-one.
+Move the of_parse_phandle() call after devm_kzalloc() and add the missing
+of_node_put() call immediately after of_address_to_resource() to properly
+release the device node reference.
 
-I can't think of any reason why that should affect the
-range the mmu notifier needs to flush.
+Found via static analysis.
 
---=20
-All Rights Reversed.
+Fixes: 9a10c7e6519b ("drm/simpledrm: Add support for system memory framebuffers")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/gpu/drm/sysfb/simpledrm.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/sysfb/simpledrm.c b/drivers/gpu/drm/sysfb/simpledrm.c
+index 8530a3ef8a7a..f0bd7e958398 100644
+--- a/drivers/gpu/drm/sysfb/simpledrm.c
++++ b/drivers/gpu/drm/sysfb/simpledrm.c
+@@ -183,15 +183,16 @@ simplefb_get_memory_of(struct drm_device *dev, struct device_node *of_node)
+ 	struct resource *res;
+ 	int err;
+ 
+-	np = of_parse_phandle(of_node, "memory-region", 0);
+-	if (!np)
+-		return NULL;
+-
+ 	res = devm_kzalloc(dev->dev, sizeof(*res), GFP_KERNEL);
+ 	if (!res)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	np = of_parse_phandle(of_node, "memory-region", 0);
++	if (!np)
++		return NULL;
++
+ 	err = of_address_to_resource(np, 0, res);
++	of_node_put(np);
+ 	if (err)
+ 		return ERR_PTR(err);
+ 
+-- 
+2.35.1
+
 
