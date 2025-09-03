@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-798359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF06B41CE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:16:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1F06B41CE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FC8A1751BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:16:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537B668074B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CC326F2A8;
-	Wed,  3 Sep 2025 11:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABA92F9C29;
+	Wed,  3 Sep 2025 11:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHiH2qMy"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MvsNiyI+"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433481A76BB
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 11:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1B62ED865
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 11:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756898180; cv=none; b=aPAkHmDeS5tfktHXuXwHC5qADDmRL2yvt2e6d27xQfw9ynSm0jWHHaUOJOObKoT5vWOwmkNfQPLff/gKR/VdNzltyfnygWyjCZkLV75EfLn+LHXiG+eGQkMW/5o+WHWDg2hcNEWVm/9PUOj2U2CQgGCehWOwi5T0n/2JLfrrvL4=
+	t=1756898182; cv=none; b=rQ9DMTCU8LrCdMZM9mSkqQVIhKRcwvDEzKHudeuYqq2xBjlnv/2A3ORgqu8ssBmuRMlXfmezFq8qkPCOUHhuW4WWg24sOF89ocx3fHr/mGBGQduOFdO+R8q6ZDUhr+460XsPr5tHdLs+aDFwUOz5GrjVETgGDdWqwLGdrCDW9FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756898180; c=relaxed/simple;
-	bh=J9NK4fLqHaAYdEhT4UhzIhpuuhnmYT6Q7PMGcMC8ypk=;
+	s=arc-20240116; t=1756898182; c=relaxed/simple;
+	bh=0MbW27vGMan4p11LIYYvJ5eAYHxjXLPoS4aEwEKlJTU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gA0ubCkRkP6Pn/axkhhmVbQqgtr8rbczM1pSJPNZUDWCr0DbJ3+Z+sPSbFYmDVXT7a4xmK0pk4ZH3AKsMOCrJ8IhrTn3kac78/1qQplZgI/55B5M7HzTkv3S2oeYf9TQw8jh+D21Oqw5yLhUQey2hMWZ593jF/7K6lMoG7EgtsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHiH2qMy; arc=none smtp.client-ip=209.85.221.53
+	 MIME-Version; b=tCdFE++t4vO/dPzyk76HkpVGpg8c+Yynw8cVV3Q2pLGD+ffRNVgckDSWyXO91pb16IzyIKcOIOyzHJPucC5zaObWEDcHuQAwdqs6RN6qx8nkEfBpTcVb3/z/QkE5HljatlsO3B31SG4ByEjyyXPEjrwMu8nn3FBUR3cFM9DltVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MvsNiyI+; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3d44d734cabso2568865f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 04:16:18 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3d48b45f9deso2279020f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 04:16:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756898177; x=1757502977; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756898179; x=1757502979; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lABkHSnvIXMnQ3mvHA4p3Yj4MTD8nCbzazJj3CjC75I=;
-        b=UHiH2qMysK24qpCQ8sZAVjwAlVz2kkCZhZyXmxxSnmbO+uHoN3HvYAV0H0vvVEYqtN
-         K4RNf/HqBhf5zwhJ0JpPetrk/t+6uSYx2/UIaEKtiwr5gCw7gn9MM0Su5YZO/35XMnrA
-         DanDP6Jz6VpenEDoirQR4awjE9L1xW9O7ulaMbDDiNilCZTuXmbpc1RJT6sXC7qu6QBq
-         SCXxccjBTxGgHoCXK1BdyhtGT4cPSf5TQ/Ob60B/9N8ll/lMy1L5IvlrDS35eGQ48et0
-         Z22ciFMVuXWxRuxJMxCHtWlBtK8frzpmI1Kl99md+8plfIZt0Z6DfbPXtJ4cqpieAy5F
-         DnxQ==
+        bh=6/J6B5kO21qmim3edptXX1lboSXT3A4ICQCYNPP7b6E=;
+        b=MvsNiyI+LZc/2PU1krxw4Vg+P37iwaydnUs+RqSzmUArmpYL/GjKs25kWlv+21GUjD
+         /rrYGQRTm0RG2UMi2YQqc2uGinnRT0Qq77sNDGNq8zEsjlbAXSeLwR2AMpKWb68fcE5F
+         xYAQZsUF0HOnI7Rl07xZ8WUnTihUxO0Sbx2YWiTZapGPGA+6NKySdUKwNwdXwfLkEEVA
+         hJQGokTRdWF97i7uBTolB2R13dcVTOt+ai1bHXiMuZ88m4JCPEkbVZXWHEqsOFwUtP3x
+         w9LarpdHZ7r5NYBkj+4K5ZF/mhPQNKdPLO+p4c8fXJlY78ssd+7BfMB16gKkMwvrI0Rw
+         xfYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756898177; x=1757502977;
+        d=1e100.net; s=20230601; t=1756898179; x=1757502979;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lABkHSnvIXMnQ3mvHA4p3Yj4MTD8nCbzazJj3CjC75I=;
-        b=RYNMFKSqN6SSImqSabdIldcYliC61kJHSIfYKROJ07rEsddV2Rws05QVPG8OHF9TmY
-         LDbmnJCThySZsu+eiK5b5ETu3zGDPU1H8SdVkdBSEF94ZDZiu4eMoqKvLgWCMBiLimEL
-         TbmB50REIRJwckHuEEuMFOj00+cz77WKnq6y0DwkbS00efL+yGE5aUjI/FlBijh/61LB
-         btz11toKZ+rxhLoP8Jqda9D+cZk0uzS1Pjg3yREz1o8mk4I1qJcGFd8Od2dSobarHTut
-         /1rLOCKvs/31IhughzG+jPFjv6l3cabmS/0jz73njLKTX45wqgnzDEu1KnrDe1E4EVto
-         up+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWx5+Oq5BiknqF6mXug7DHURVyrgLtnbVXuo6XqRAHZ85ORrYc5EMDTNS/dzKriGUs+zPccsNR7+Q5qBag=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+trIVdQYWSCYXsR0emW+2Ra6/CRhQvtC+skWgZM6UGtqQ1Z51
-	FuL6U1bdwTvNg3MRruUlqnwwIx9YxJG+U00MIGxnz+qXqvKeqk07C4T3
-X-Gm-Gg: ASbGncswhlPdTwNU0OsORg4oat9EYIfp3XY2ykpk2N3T9Qmy/BKWg4HqQqbvOOBalOT
-	fHc1zvHO18sufqRxaUmSbAV3PM6T283cmtJZv4yW0MD/2QbIpuKbz6CAWT8T9d28UOCJxcVKoRO
-	AFohuKLiwiID0FoV609TDwNpfRmUo2pFSfyC+W0xYVfB8nvwJfFpjryw01nRmL9Jj1ntZfGeC/U
-	ifcPzWjl1ZuNgmMqoyj15ui72wDXLy4epZc3lA4fqUfQa3Q62AE0ZEQhiRfTMz4Yx1dvid6rK/0
-	p+V4sLIUAhXVGurRYHmJGOf4tQEIxdVz1Z+azVfMAGkMoJe+ZYI6BVnAVJQWrVCvrTYGpAiQkY+
-	rrIgD7M5evdhKXQ==
-X-Google-Smtp-Source: AGHT+IGyItH6fhxqweNdBqrIhVxCLFxL0ES/3HbetquX8Ifljh6FJc6e7DueFc9I4VoDCyRFj9PknQ==
-X-Received: by 2002:a05:6000:4203:b0:3dd:ab51:d979 with SMTP id ffacd0b85a97d-3ddab51daacmr1895384f8f.10.1756898177219;
-        Wed, 03 Sep 2025 04:16:17 -0700 (PDT)
-Received: from localhost ([2a03:2880:31ff:6::])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3db72983560sm4717559f8f.1.2025.09.03.04.16.16
+        bh=6/J6B5kO21qmim3edptXX1lboSXT3A4ICQCYNPP7b6E=;
+        b=k+mFseg2F9y0RiKVB3koFZRHpLJ0mFkaJ0NOCS3V1vGDGnfhQBKTWnDJXCxJnE0cOC
+         K1XoU2fnM1E8QdBlCqVaSSyhxMsj+wFPe8EfIvEwzhq3m/WquRG6zajcNDgx3vEJnc2B
+         U5HgGxbcrkJG+rYKWBJh+0u36jOt+sSZepafYWJHc9XYG1ap24shFLDY81aXTCDbu6Qi
+         H1aFhw+ywQLS7ToAHYagEg/25l/K1O43f17t5o04jZ6Lr/Q7EvlshSxQ10NJSC8pt7vw
+         CjA7UY974TlDX2G/Fb/+ZbiIWtIAz6VPAJoPIfTSz/knjSRu0cwqnPfBB0dTxd19MsQ2
+         OUrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWIZLctOiNfx3AK+5bY1XFvpajt+Ukwb5t5EAzijxIG/ag0Z3vZOCO5nL0ppzvVm5G2tywuvSgodqp8GA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk+7JG81e+TUoYa5QNMJ8qIMngfo2k+XCjePQtOZjNxT/LkLL4
+	wHo0LXPIWwoVZNxnP8+GUn8ZVxACBGJpuhakdq24dAqsWchxSqOa4o6J
+X-Gm-Gg: ASbGnctUFnOkmsLoInnDtzIR5eE8vom74r9OJv4HB92p4UODa5uzA+M4cuexCujGEfh
+	FemZBv6ALFARGuHgcJjOdarmg50fikewNuuisJ6h71lRZHs6Sh4CJ7mDCfnKL4zQ7FrM5tukNMW
+	ZWFks+zEG96EZzlN+6JUhsjaw1QMReRFHiROrX6MIrHG8Q+N2TUC/Fdfe444HvOcqgmgH6yhAf7
+	4ABcgmfBAgPTj1ondnjhIB542JO9hu+u1yQImzpn5fj8YEnXaBDMgoYW3D98vmTEFZHurBZ8aD+
+	ee4k8P7KeX5RiklMC+FCCfU0jDxZPxzmdd1KJxc6UVR1waDlLE0d07sAxuQXnEVubbRHE0e7qtT
+	eeGfAgJSDOE6Yg5PvhsY6G7tgZg==
+X-Google-Smtp-Source: AGHT+IE4XJp50UJAl1TyaOPKdT+BVYrcIKTmTgL9yNbuNNlBknPz1bjnwok/rktMidIrBE8JQNXNTA==
+X-Received: by 2002:a05:6000:2909:b0:3d0:e72d:867d with SMTP id ffacd0b85a97d-3d1def6a593mr11880201f8f.53.1756898179208;
+        Wed, 03 Sep 2025 04:16:19 -0700 (PDT)
+Received: from localhost ([2a03:2880:31ff:4e::])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7c461edasm144127605e9.9.2025.09.03.04.16.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 04:16:16 -0700 (PDT)
+        Wed, 03 Sep 2025 04:16:18 -0700 (PDT)
 From: Yueyang Pan <pyyjason@gmail.com>
 To: Suren Baghdasaryan <surenb@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -86,9 +86,9 @@ To: Suren Baghdasaryan <surenb@google.com>,
 Cc: linux-mm@kvack.org,
 	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] mm/show_mem: Dump the status of the mem alloc profiling  before printing
-Date: Wed,  3 Sep 2025 04:16:13 -0700
-Message-ID: <d7998ea0ddc2ea1a78bb6e89adf530526f76679a.1756897825.git.pyyjason@gmail.com>
+Subject: [PATCH v3 2/2] mm/show_mem: Add trylock while printing alloc info
+Date: Wed,  3 Sep 2025 04:16:14 -0700
+Message-ID: <4ed91296e0c595d945a38458f7a8d9611b0c1e52.1756897825.git.pyyjason@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1756897825.git.pyyjason@gmail.com>
 References: <cover.1756897825.git.pyyjason@gmail.com>
@@ -100,31 +100,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch prints the status of the memory allocation profiling
-before __show_mem actually prints the detailed allocation info.
-This way will let us know the `0B` we saw in allocation info is
-because the profiling is disabled or the allocation is actually
-0B.
+In production, show_mem() can be called concurrently from two
+different entities, for example one from oom_kill_process()
+another from __alloc_pages_slowpath from another kthread. This
+patch adds a spinlock and invokes trylock before printing out the
+kernel alloc info in show_mem(). This way two alloc info won't
+interleave with each other, which then makes parsing easier.
 
 Signed-off-by: Yueyang Pan <pyyjason@gmail.com>
 ---
- mm/show_mem.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mm/show_mem.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/mm/show_mem.c b/mm/show_mem.c
-index ecf20a93ea54..fd85a028a926 100644
+index fd85a028a926..e9701d07549b 100644
 --- a/mm/show_mem.c
 +++ b/mm/show_mem.c
-@@ -427,7 +427,8 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
+@@ -421,7 +421,9 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
+ 	printk("%lu pages hwpoisoned\n", atomic_long_read(&num_poisoned_pages));
+ #endif
+ #ifdef CONFIG_MEM_ALLOC_PROFILING
+-	{
++	static DEFINE_SPINLOCK(mem_alloc_profiling_spinlock);
++
++	if (spin_trylock(&mem_alloc_profiling_spinlock)) {
+ 		struct codetag_bytes tags[10];
+ 		size_t i, nr;
  
- 		nr = alloc_tag_top_users(tags, ARRAY_SIZE(tags), false);
- 		if (nr) {
--			pr_notice("Memory allocations:\n");
-+			pr_notice("Memory allocations (profiling is currently turned %s):\n",
-+				mem_alloc_profiling_enabled() ? "on" : "off");
- 			for (i = 0; i < nr; i++) {
- 				struct codetag *ct = tags[i].ct;
- 				struct alloc_tag *tag = ct_to_alloc_tag(ct);
+@@ -448,6 +450,7 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
+ 						  ct->lineno, ct->function);
+ 			}
+ 		}
++		spin_unlock(&mem_alloc_profiling_spinlock);
+ 	}
+ #endif
+ }
 -- 
 2.47.3
 
