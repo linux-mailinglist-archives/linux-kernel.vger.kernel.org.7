@@ -1,273 +1,128 @@
-Return-Path: <linux-kernel+bounces-799317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CAD5B429F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:32:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF81BB42A03
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D2C161740
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:32:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A0F116652C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155582E8E11;
-	Wed,  3 Sep 2025 19:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2489D36996C;
+	Wed,  3 Sep 2025 19:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="TUp//0B/"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l5N2FwVO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19B72C18A
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 19:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707782D94A2;
+	Wed,  3 Sep 2025 19:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756927965; cv=none; b=cITZc8OiQ9NQ/9n3FXgcJpMwXgMeQGpQSYjuqJby5OGjULS8mfdBnynReLMR3YELrvx8ipfxHWVmPlZV+owCA745u1nAMgYwJ68kGJZOvnN95XMSTkrb4DVFGyqocCm+wu90NYEigMNBc2KiH8pMX1fofY+dT7yOUqqycmY6bQ0=
+	t=1756928067; cv=none; b=ROcFcBjTHpkFmNtyBcuZTx7i2cic3QC9MsRUUxS9ox59zKeeaml335sbCLGWobiiBM+ra2I2MkSsM1LuUDmh6IAnVgXTc0q6m28PhfF+5lX/FXjWXArfBxKfvVRwD4NaR5CmCkO7aSoKww1jFa9zKPt9aLMKSGK62Xk3PVBDQLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756927965; c=relaxed/simple;
-	bh=iH+MZ49vIraFtVLrRdZziXhGD6P3ujyiwHKrOfj2Jy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=raEYgNeckWttdHV6w+gSaLUP8T29n49B21J0OPxqHkqUAq+5WZfk5rpHjsrvx/j7qUCPFX1nkL415m7XsrhcNOfAXoiZyeSPk4HJPecnIxSF/h7Be0l3VMo78BFvhrWreR+H+0QVpM1vvP4hfZDR71ADYE/9VM1KgLrtjhORcWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=TUp//0B/; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
-Date: Wed, 3 Sep 2025 21:32:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1756927958;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M6TJQFWEs0lqxsAc3VyBDgiQ7ISjtKZ5k/cdkhimoeI=;
-	b=TUp//0B/vpzEYgRzRqG8hT0DluleYeAkUiSt5nXN1CkVrANuLGD4scuJov3pysDvAkqzJX
-	K18nsik+KgSFWW2fJCpuCYUghRqojX/+rxNb/Xvo0AOCyOaJJjzpuAH8ZmanHx0DfUNCx1
-	Y7Z+sSDQGcS4AYurpiom1UKdY7hqBhU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Henrik Grimler <henrik@grimler.se>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] drm/bridge: sii9234: use extcon cable detection
- logic to detect MHL
-Message-ID: <20250903193231.GA5526@l14.localdomain>
-References: <20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se>
- <CGME20250824111745eucas1p20e336aecd501200bdd035bfc30ce1e63@eucas1p2.samsung.com>
- <20250824-exynos4-sii9234-driver-v3-3-80849e716a37@grimler.se>
- <ac222017-d4e2-4fa7-beed-cc6b73042a73@samsung.com>
+	s=arc-20240116; t=1756928067; c=relaxed/simple;
+	bh=DnLt/SBMSfTZBgk5JWHNT9RMOyUX2bInZRqm44ui51g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=W6uHaDFjJmXQ/hfS0xjbLz4C+iNXf/gXS0p+z9saWN8UISFp88QxTJ/8Yldms2jIfIM853Hfz/XUbpWN6yCcP5CzEP5jbpRn6sr1m05hPuBzff5ZDJMMLu+LXAob4LMkQ5GjVxmCQFdSfH8ym6CnyzD/yBcugDed97Zd1EA2/AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l5N2FwVO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0148BC4CEE7;
+	Wed,  3 Sep 2025 19:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756928067;
+	bh=DnLt/SBMSfTZBgk5JWHNT9RMOyUX2bInZRqm44ui51g=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=l5N2FwVOOx4Ag7agp4LqOUzyk/gvZqe7/JMHLHMnLp4QQjwZkbO783EpsFXxZ2u8n
+	 iSUPrj0o2osvU31x2H8sTyCq+oIwwPqk7cdvOcS3u/kK3VDkkwHW8liCsAoraoKX3f
+	 Lcs5ahLhDWdjgdnFJScbvfI3prEPPzsZyMILIVy9BBYo8yZBPXv5KNocgSkBXs5i2z
+	 u6nOpMV0hslZoSA0wr8KGiFoauXT7uetF5GIqT4Okxg33RzfwTHTJnzvAie8D5daon
+	 GFGmA8xRReT3TdK9U+wQNo7Hb6VAkj9yhhx36MWdYsqZe3ME3o3ZyAgeY1IPYtdJB1
+	 LSBhHT4BrZTZw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8BFCA1014;
+	Wed,  3 Sep 2025 19:34:26 +0000 (UTC)
+From: Hrishabh Rajput via B4 Relay <devnull+hrishabh.rajput.oss.qualcomm.com@kernel.org>
+Subject: [PATCH 0/2] Add support for Gunyah Watchdog
+Date: Wed, 03 Sep 2025 19:33:58 +0000
+Message-Id: <20250903-gunyah_watchdog-v1-0-3ae690530e4b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac222017-d4e2-4fa7-beed-cc6b73042a73@samsung.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACaYuGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSwNj3fTSvMrEjPjyxJLkjJT8dF2jFCMzE0sTY4tUI0sloK6CotS0zAq
+ widGxtbUAB4BPbWEAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756928065; l=1783;
+ i=hrishabh.rajput@oss.qualcomm.com; s=20250903; h=from:subject:message-id;
+ bh=DnLt/SBMSfTZBgk5JWHNT9RMOyUX2bInZRqm44ui51g=;
+ b=XfShsxJHzpWyLh8U+wdwsMZp+lUR39UftpyXcbGXlJCSLDWuRvECb2OHQJI4v/e7bkdo904ft
+ opn6k/cpcYBBAwwkPc/Ntqekh16g1Xcy97UMuJnKkeYuFAOMfxuEqYv
+X-Developer-Key: i=hrishabh.rajput@oss.qualcomm.com; a=ed25519;
+ pk=syafMitrjr3b/OYAtA2Im06AUb3fxZY2vJ/t4iCPmgw=
+X-Endpoint-Received: by B4 Relay for
+ hrishabh.rajput@oss.qualcomm.com/20250903 with auth_id=509
+X-Original-From: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+Reply-To: hrishabh.rajput@oss.qualcomm.com
 
-Hi Marek,
+Gunyah is a Type-I hypervisor which was introduced in the patch series
+[1]. It is an open source hypervisor. The source repo is available at
+[2].
 
-On Mon, Aug 25, 2025 at 04:16:50PM +0200, Marek Szyprowski wrote:
-> On 24.08.2025 13:16, Henrik Grimler wrote:
-> > To use MHL we currently need the MHL chip to be permanently on, which
-> > consumes unnecessary power. Let's use extcon attached to MUIC to enable
-> > the MHL chip only if it detects an MHL cable.
-> >
-> > Signed-off-by: Henrik Grimler <henrik@grimler.se>
-> 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> On Trats2 board the status of HDMI connector is no properly reported as 
-> disconnected when no cable is attached.
+The Gunyah Hypervisor doesn't allow its Virtual Machines to directly
+access the MMIO watchdog. It either provides the fully emulated MMIO
+based watchdog interface or the SMC-based watchdog interface depending
+on the hypervisor configuration.
+The SMC-based watchdog follows ARM's SMC Calling Convention (SMCCC)
+version 1.1 and uses Vendor Specific Hypervisor Service Calls space.
 
-Thanks for testing (again)!
+This patch series adds support for the SMC-based watchdog interface
+provided by the Gunyah Hypervisor. The driver supports start/stop
+operations, timeout and pretimeout configuration, pretimeout interrupt
+handling and system restart via watchdog.
 
-In what way is it not properly reported as disconnected, are you
-checking some sysfs property, or with some userspace tool?
+This series is tested on SM8750 platform.
 
-If cable is connected and then disconnected, is status then correctly
-reported?
+[1]
+https://lore.kernel.org/all/20240222-gunyah-v17-0-1e9da6763d38@quicinc.com/
+
+[2]
+https://github.com/quic/gunyah-hypervisor
+
+Signed-off-by: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+---
+Hrishabh Rajput (2):
+      dt-bindings: Add binding for gunyah watchdog
+      watchdog: Add driver for Gunyah Watchdog
+
+ .../bindings/watchdog/qcom,gh-watchdog.yaml        |  76 ++++++
+ MAINTAINERS                                        |   3 +
+ drivers/watchdog/Kconfig                           |  13 +
+ drivers/watchdog/Makefile                          |   1 +
+ drivers/watchdog/gunyah_wdt.c                      | 268 +++++++++++++++++++++
+ include/linux/gunyah_errno.h                       |  77 ++++++
+ 6 files changed, 438 insertions(+)
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250903-gunyah_watchdog-2d2649438e29
 
 Best regards,
-Henrik Grimler
+-- 
+Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
 
-> > ---
-> > v3: add missing return in error path, spotted by Marek
-> >      Use depends on EXTCON || !EXTCON instead of select
-> > v2: add dependency on extcon. Issue reported by kernel test robot
-> >      <lkp@intel.com>
-> > ---
-> >   drivers/gpu/drm/bridge/Kconfig   |  1 +
-> >   drivers/gpu/drm/bridge/sii9234.c | 89 ++++++++++++++++++++++++++++++++++++++--
-> >   2 files changed, 87 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> > index 6945029b35929a8e30054ac1a699bd88ab0487f2..bf73f8d900ebd8da9fa3444c0b2d9bfc901ea773 100644
-> > --- a/drivers/gpu/drm/bridge/Kconfig
-> > +++ b/drivers/gpu/drm/bridge/Kconfig
-> > @@ -304,6 +304,7 @@ config DRM_SII902X
-> >   config DRM_SII9234
-> >   	tristate "Silicon Image SII9234 HDMI/MHL bridge"
-> >   	depends on OF
-> > +	depends on EXTCON || !EXTCON
-> >   	help
-> >   	  Say Y here if you want support for the MHL interface.
-> >   	  It is an I2C driver, that detects connection of MHL bridge
-> > diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
-> > index e43248e515b3dcdde043997288d61f738417b8f0..72c6aeed6e12e43df3b052dadc0990f1609253f0 100644
-> > --- a/drivers/gpu/drm/bridge/sii9234.c
-> > +++ b/drivers/gpu/drm/bridge/sii9234.c
-> > @@ -19,6 +19,7 @@
-> >   
-> >   #include <linux/delay.h>
-> >   #include <linux/err.h>
-> > +#include <linux/extcon.h>
-> >   #include <linux/gpio/consumer.h>
-> >   #include <linux/i2c.h>
-> >   #include <linux/interrupt.h>
-> > @@ -26,6 +27,7 @@
-> >   #include <linux/kernel.h>
-> >   #include <linux/module.h>
-> >   #include <linux/mutex.h>
-> > +#include <linux/of_graph.h>
-> >   #include <linux/regulator/consumer.h>
-> >   #include <linux/slab.h>
-> >   
-> > @@ -170,8 +172,12 @@ struct sii9234 {
-> >   	struct drm_bridge bridge;
-> >   	struct device *dev;
-> >   	struct gpio_desc *gpio_reset;
-> > -	int i2c_error;
-> >   	struct regulator_bulk_data supplies[4];
-> > +	struct extcon_dev *extcon;
-> > +	struct notifier_block extcon_nb;
-> > +	struct work_struct extcon_wq;
-> > +	int cable_state;
-> > +	int i2c_error;
-> >   
-> >   	struct mutex lock; /* Protects fields below and device registers */
-> >   	enum sii9234_state state;
-> > @@ -863,6 +869,70 @@ static int sii9234_init_resources(struct sii9234 *ctx,
-> >   	return 0;
-> >   }
-> >   
-> > +static void sii9234_extcon_work(struct work_struct *work)
-> > +{
-> > +	struct sii9234 *ctx =
-> > +		container_of(work, struct sii9234, extcon_wq);
-> > +	int state = extcon_get_state(ctx->extcon, EXTCON_DISP_MHL);
-> > +
-> > +	if (state == ctx->cable_state)
-> > +		return;
-> > +
-> > +	ctx->cable_state = state;
-> > +
-> > +	if (state > 0)
-> > +		sii9234_cable_in(ctx);
-> > +	else
-> > +		sii9234_cable_out(ctx);
-> > +}
-> > +
-> > +static int sii9234_extcon_notifier(struct notifier_block *self,
-> > +			unsigned long event, void *ptr)
-> > +{
-> > +	struct sii9234 *ctx =
-> > +		container_of(self, struct sii9234, extcon_nb);
-> > +
-> > +	schedule_work(&ctx->extcon_wq);
-> > +
-> > +	return NOTIFY_DONE;
-> > +}
-> > +
-> > +static int sii9234_extcon_init(struct sii9234 *ctx)
-> > +{
-> > +	struct extcon_dev *edev;
-> > +	struct device_node *musb, *muic;
-> > +	int ret;
-> > +
-> > +	/* Get micro-USB connector node */
-> > +	musb = of_graph_get_remote_node(ctx->dev->of_node, 1, -1);
-> > +	/* Then get micro-USB Interface Controller node */
-> > +	muic = of_get_next_parent(musb);
-> > +
-> > +	if (!muic) {
-> > +		dev_info(ctx->dev,
-> > +			 "no extcon found, switching to 'always on' mode\n");
-> > +		return 0;
-> > +	}
-> > +
-> > +	edev = extcon_find_edev_by_node(muic);
-> > +	of_node_put(muic);
-> > +	if (IS_ERR(edev)) {
-> > +		return dev_err_probe(ctx->dev, PTR_ERR(edev),
-> > +			      "invalid or missing extcon\n");
-> > +	}
-> > +
-> > +	ctx->extcon = edev;
-> > +	ctx->extcon_nb.notifier_call = sii9234_extcon_notifier;
-> > +	INIT_WORK(&ctx->extcon_wq, sii9234_extcon_work);
-> > +	ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
-> > +	if (ret) {
-> > +		dev_err(ctx->dev, "failed to register notifier for MHL\n");
-> > +		return ret;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >   static enum drm_mode_status sii9234_mode_valid(struct drm_bridge *bridge,
-> >   					 const struct drm_display_info *info,
-> >   					 const struct drm_display_mode *mode)
-> > @@ -915,12 +985,17 @@ static int sii9234_probe(struct i2c_client *client)
-> >   	if (ret < 0)
-> >   		return ret;
-> >   
-> > +	ret = sii9234_extcon_init(ctx);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> >   	i2c_set_clientdata(client, ctx);
-> >   
-> >   	ctx->bridge.of_node = dev->of_node;
-> >   	drm_bridge_add(&ctx->bridge);
-> >   
-> > -	sii9234_cable_in(ctx);
-> > +	if (!ctx->extcon)
-> > +		sii9234_cable_in(ctx);
-> >   
-> >   	return 0;
-> >   }
-> > @@ -929,7 +1004,15 @@ static void sii9234_remove(struct i2c_client *client)
-> >   {
-> >   	struct sii9234 *ctx = i2c_get_clientdata(client);
-> >   
-> > -	sii9234_cable_out(ctx);
-> > +	if (ctx->extcon) {
-> > +		extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
-> > +					   &ctx->extcon_nb);
-> > +		flush_work(&ctx->extcon_wq);
-> > +		if (ctx->cable_state > 0)
-> > +			sii9234_cable_out(ctx);
-> > +	} else {
-> > +		sii9234_cable_out(ctx);
-> > +	}
-> >   	drm_bridge_remove(&ctx->bridge);
-> >   }
-> >   
-> >
-> Best regards
-> -- 
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
-> 
+
 
