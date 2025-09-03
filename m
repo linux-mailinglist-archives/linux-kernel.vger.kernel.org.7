@@ -1,203 +1,243 @@
-Return-Path: <linux-kernel+bounces-797995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B548EB41825
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:15:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A04EB41834
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CB273A485E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:15:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB013542087
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4862E229E;
-	Wed,  3 Sep 2025 08:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625B42E8DF0;
+	Wed,  3 Sep 2025 08:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U9A+NcCu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xt5ls8Ci"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A682EA46F
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CEF2DCF55
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756887295; cv=none; b=j7VYqVk1RFPp8GZVN/BV/ivX6nE3RFf0OBRVYsabXJdMBXBnjphcxrum73vrxK2i2t4HGbmgxHQ8PijBu7nm8GYRatmLekRA1vvNZ4tEOaulGmT+8B1C1Y+zZmIIdp39yJ7yDMTImHskm7ZmjvNsCkitFmUy59RvrTlZuXDvwOo=
+	t=1756887382; cv=none; b=m+HkPlPjtJzkCO8+oHZyLqvXt4r3Tq8T4j1njHKf39GyqeBl+VsMuBqvUaziZLM0m2z1N0sHRawwx0F1qihDrctBGD19c16hNoHTFR6jYlLKg+DNVHnrCkSa7WZuUrweNJO+C0GxRn51wMinQC6IbES36NoV6jG9uTZWQKRihNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756887295; c=relaxed/simple;
-	bh=QShg1gyJSv43yzcbluqIEbZ0LqjCYuvigw/kWWKPQSA=;
+	s=arc-20240116; t=1756887382; c=relaxed/simple;
+	bh=W7FUojUFnzxGTg8A+tqGW/iXc3ML/j8Xn4Q+Vbq/A34=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a2s5ZrQUlSnlHRqPMjIQcAS4MJPq84wB+FszKD9BohcLDka3bs8KeUI6cmrwVasNRwvld4OtoqPAFCRZbbaoYRVMMDUgn6LX1CrnBz4nmm2TTn6pVWDIsW0S2160hCdcsBPcj2RiNE8gi+zzWyrDmiBN5jUCI//Z8UteLWiNTio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U9A+NcCu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756887291;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kmrZS7szWXEtGTN5BlNSaGdOgx0Rgy5JbXAqnKtXuXc=;
-	b=U9A+NcCueMt1ewK+ksp8tOHo+D65y3ORWkokcAxmBSEaKP3exmIZ4f6tRona5uNLoUWW5Z
-	4zXFreaMzTP7azRT9wM7YoWzkFMY28+DxG7yHH1rveW6nH7xzK26+8wMcbIeYxaFkEXoSO
-	oIZnJ6hJrk5mgbZ9ibnjdnAFVv5LgOM=
-Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com
- [209.85.221.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-457-TGhBk1PrNluRVH8bWCv4qg-1; Wed, 03 Sep 2025 04:14:50 -0400
-X-MC-Unique: TGhBk1PrNluRVH8bWCv4qg-1
-X-Mimecast-MFC-AGG-ID: TGhBk1PrNluRVH8bWCv4qg_1756887290
-Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-544b20274deso1050216e0c.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:14:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=YFsWtr1Gz7dt+ZkeysVgOK+ve/0Lae5FRg6QApbAxOZv3phiLWTK3mpLChR2TCrpmfmqk/YRfqydDRJeO6CjxOahxKBeJsVOGymBpV0ZJB5FwodV6gvpO3DPREmhmA/cysX9+Lq8tas9u6V20dj67zFF4veQVBwIktcHaX1j0DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xt5ls8Ci; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24c786130feso10326065ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:16:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756887380; x=1757492180; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kYJgan4idEGWGAUXtzh/kv+BKTRh2JOtbApGJr0y8I0=;
+        b=xt5ls8CiVyfc+//TEZlWQYATP3uySmz/t3o/Q7S1U/WY1zV3SFOzgv8rCg9EnBdZid
+         ERdRlKiKftV9EFGrKzMw1/hqJmo6Rpa8eSQ9wMNaxwdpmpzNfC9JcY0Cc9mWDx4dX4Ws
+         KwpQZd9J2dPJd+VRHD0rGDOqiXj8DBJxkGC4rmjA+TE5QmpgY/M+cuFSkM5+IwJ5rwJr
+         Xor77827Jy3rATSrA7RE62CzmTBETbtf6YMp5QNvf4kufeXAfukv4D0KHF+D457QTzLe
+         azIRbpQq0H38nYaBdTEwT8UlBNcSWohyBIWVIPk44618KuDifsoGrbQNVoTvSdRTJYds
+         0DoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756887290; x=1757492090;
+        d=1e100.net; s=20230601; t=1756887380; x=1757492180;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kmrZS7szWXEtGTN5BlNSaGdOgx0Rgy5JbXAqnKtXuXc=;
-        b=eww/5fb8O9YeN3ZLzGIYfHz00qOiomVe99ix6AlecvWXvTL4NPATGWsyImpoQ5apPg
-         Vml2IQMaBKlBJaIWf+xJ4O4Y7v8I+TucYrtNpjh5WSri+dnBYMnWVPzn1e5Fqqtgty29
-         +OcdD+1W3VrANUenAgG9uPMDa/YBLikf/jIO+fPQGc3HZlvhnA+hp2Gc4c+5iqIqDsbe
-         oIqBRFNgbqO7f+6bM9qlCi+3HBtN246ZNcSoFkmo6eJl12VDMXBDMqlyvVVrpA7cP0Hz
-         fqNMG2ULuz6xTp8lZR2OKhuT+6685gD9ZhyAEnJ1gZLRVcP52lOGnxANajCC3mAyX9Nu
-         6iQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVI3M7RyUMqAE6pbZPqI7AmCoaCW/U2gHmDkYWWDCh5ABX5vBi0+e4F/eP/5r6lgXP76XpI2gY09OTqP2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp1asgmUD1Gd6o67qMOFPKjLUcT+4Pv2P9HvOAMinWoMz5lCna
-	jR33dVp5kgj77wtAI5GDpl6sNvyYqw9coSkUOlSEqSMG4Dmh5m1Vo1+itRsKvBLxqbn0giQkTs+
-	fYi8/Jzd4i6slFN6r9dp491GDPYtneP1q2d6rwHU1GmLHIdBDMAH8eQ3fViKzPy0DyZQbqW0t2I
-	XqrlH2esJEjSqzs9QgzadCmQZJ3P8YbLUDbCE7fE05WZBrCk6vC7+XgRm3
-X-Gm-Gg: ASbGnctrp1c5X9YUeEWM4LfGUdLXtWyVoPbYOYdoZwyZwwD2sq3ATncHaVKtgckZ6+D
-	rZLwNyRj38APkhprqCb/77PZBYIztguTBFo2ljL7uXq2u2VWBZ+vWcEfzOfaitpcv1dORAaNaPZ
-	IetClCfdqiXqpyIVKMTyim9RfSEd1sV+hltYawHgoM
-X-Received: by 2002:a67:e7c6:0:b0:529:1815:ae8f with SMTP id ada2fe7eead31-52b166d9937mr5270372137.0.1756887289858;
-        Wed, 03 Sep 2025 01:14:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEQg9pi7C2VramjgfkXnAX50/+g90JKvUcAxrQbtvQg2VVl8u990/10NaxBGQrpeJL/cCEIpYkv0+PLhUfXMeI=
-X-Received: by 2002:a67:e7c6:0:b0:529:1815:ae8f with SMTP id
- ada2fe7eead31-52b166d9937mr5270363137.0.1756887289503; Wed, 03 Sep 2025
- 01:14:49 -0700 (PDT)
+        bh=kYJgan4idEGWGAUXtzh/kv+BKTRh2JOtbApGJr0y8I0=;
+        b=YbGSTQ7/nz4fGgcqI1egkYFNytQ3ANpiin7lsKP8z6ihN8DROvhIbvnB3GQb6EbdWU
+         4Pg76uZiGPuc5bKY2PbaaVgWB1w9zO7KVu5xK7b1L63KC1abvh5aijfyFI31Ep7eD/tQ
+         WsBJWbsIEOZNUFsC6+F98DTZ3Oy2mXLXYKRMUoYh9ramhdKaRfIsMrSvIsRNIqUbq05x
+         4cGPO6aibvUyUEk6UhKhKKlKgTZvTSGAikXSsRVr1p2kzDlY/JU7kFZAvxj1T6cijGIY
+         Pa0DWGwkvtqKBevmNtCsDgcom9fWS2fS1zTKVzLEF8WfEoRGuElssw47ee8QPdL7owpr
+         9XSg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8gZnwcxTRdOD1Kz/3LjmC0qKAFYPx5Cc486swKvHNFFG30O7QuUn4GVkRLJUSwx/Tw1f/zs0zM384LmE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEkUvTu8eo08NWcBIyOg58Ej04O/NihHPGB8aLL/Lhq7iWGVhX
+	ehBz17qFdF334wpHuNULr6AnIP8ocUsQoQU6AbOF6SlarsZr8I/TMpxlJeEouBBK2Br1M/FOEz3
+	hkLeCyVDYR3drT5AZwCBWkOfqIeaupqDfonPMeJkq7A==
+X-Gm-Gg: ASbGnctbtHXA5ap8wEMwz1v8DV4CsGSKYQ2Gqxti2MmtgamfHq7WT+QCmBhpSVuWOJO
+	IZVaSoMXoRwcsRPcOy0ipYHVrq37PVOBBGWXl0yLzSRd9/hXGPJu+Yc6P9SszH4/C1kV7nVhOUs
+	D1c6LLNGBg2j8oedeFL6+oUqxvoPvOkilJ7rgTf+KcMPeZqEGme0bVRDf2tp+EPWuiYhIgc+T8m
+	13WJ1SlE9S8wCbWFgppiKYcznSNJX3o/7WLiEhi
+X-Google-Smtp-Source: AGHT+IHotd1w9hgcJaMKlGGOglODYjS7R49yIJBnZVxlXGew4GiiU6D6repM/2G+4YASZCQw7uWImmyPlSqOToqx6T4=
+X-Received: by 2002:a17:902:f642:b0:240:11ba:3842 with SMTP id
+ d9443c01a7336-24944a9a70emr181326735ad.35.1756887380252; Wed, 03 Sep 2025
+ 01:16:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901151448.726098-1-amarkuze@redhat.com> <ae2a652559e30aaea925fc2dfe28602f7216f5b0.camel@ibm.com>
-In-Reply-To: <ae2a652559e30aaea925fc2dfe28602f7216f5b0.camel@ibm.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Wed, 3 Sep 2025 11:14:38 +0300
-X-Gm-Features: Ac12FXylN-Nms0FwMK6dE6U4rKE-xYDe_pQHkFHWdc8MAtTSxgYQ-WKL47AQM84
-Message-ID: <CAO8a2ShM3yar0g83z=aC9VLuPz5bEpBAN8FxRqEqQfSnkgZGUw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ceph/mds_client: transfer CEPH_CAP_PIN when updating
- r_parent on mismatch
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, "idryomov@gmail.com" <idryomov@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250902131939.601201881@linuxfoundation.org>
+In-Reply-To: <20250902131939.601201881@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 3 Sep 2025 13:46:08 +0530
+X-Gm-Features: Ac12FXxkjRNh-TPz8gdmB62ta4_Qq5beeBKaO__NWn-nGW7c-Cjby8qjDju_5Wg
+Message-ID: <CA+G9fYvEyFjh6k02caEL5JYd56A0Xv5e_RSRxkDZeX3A17UTGg@mail.gmail.com>
+Subject: Re: [PATCH 6.12 00/95] 6.12.45-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-These patches apply to the testing branch. They update the r_parent race fi=
-x.
-
-commit a69ac54928a45ad66b6ba84f9bd4be2fd0f9518e
-Author: Alex Markuze <amarkuze@redhat.com>
-Date:   Tue Aug 12 09:57:39 2025 +0000
-
-    ceph: fix race condition where r_parent becomes stale before sending me=
-ssage
-
-    When the parent directory's i_rwsem is not locked, req->r_parent may be=
-come
-    stale due to concurrent operations (e.g. rename) between dentry lookup =
-and
-    message creation. Validate that r_parent matches the encoded parent ino=
-de
-    and update to the correct inode if a mismatch is detected.
-
-    Signed-off-by: Alex Markuze <amarkuze@redhat.com>
-    Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-    Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-
-commit 7128e41a490709c759fde32898eade197acd0978
-Author: Alex Markuze <amarkuze@redhat.com>
-Date:   Tue Aug 12 09:57:38 2025 +0000
-
-    ceph: fix race condition validating r_parent before applying state
-
-    Add validation to ensure the cached parent directory inode matches the
-    directory info in MDS replies. This prevents client-side race condition=
-s
-    where concurrent operations (e.g. rename) cause r_parent to become stal=
-e
-    between request initiation and reply processing, which could lead to
-    applying state changes to incorrect directory inodes.
-
-    Signed-off-by: Alex Markuze <amarkuze@redhat.com>
-    Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-    Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-
-On Tue, Sep 2, 2025 at 9:42=E2=80=AFPM Viacheslav Dubeyko <Slava.Dubeyko@ib=
-m.com> wrote:
+On Tue, 2 Sept 2025 at 19:01, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> On Mon, 2025-09-01 at 15:14 +0000, Alex Markuze wrote:
-> > When the parent directory lock is not held, req->r_parent can become st=
-ale between dentry lookup and request encoding.
-> > The client updates r_parent to the correct inode based on the encoded p=
-ath, but previously did not adjust CEPH_CAP_PIN references.
-> >
-> > Release the pin from the old parent and acquire it for the new parent w=
-hen switching r_parent, ensuring reference accounting stays balanced and av=
-oiding leaks or underflows later in ceph_mdsc_release_request().
-> >
+> This is the start of the stable review cycle for the 6.12.45 release.
+> There are 95 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> I cannot apply the patch on current state of the kernel. I assume that th=
-is
-> patch is improvement of previous patch set. If so, then it will be better=
- to
-> send another version of previous patch set. Otherwise, it's hard to revie=
-w and
-> impossible to test it.
+> Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
+> Anything received after that time might be too late.
 >
-> Thanks,
-> Slava.
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.45-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
 >
-> > Signed-off-by: Alex Markuze <amarkuze@redhat.com>
-> > ---
-> >  fs/ceph/mds_client.c | 11 +++++++++--
-> >  1 file changed, 9 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index ce0c129f4651..4e5926f36e8d 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -3053,12 +3053,19 @@ static struct ceph_msg *create_request_message(=
-struct ceph_mds_session *session,
-> >        */
-> >       if (!parent_locked && req->r_parent && path_info1.vino.ino &&
-> >           ceph_ino(req->r_parent) !=3D path_info1.vino.ino) {
-> > +             struct inode *old_parent =3D req->r_parent;
-> >               struct inode *correct_dir =3D ceph_get_inode(mdsc->fsc->s=
-b, path_info1.vino, NULL);
-> >               if (!IS_ERR(correct_dir)) {
-> >                       WARN_ONCE(1, "ceph: r_parent mismatch (had %llx w=
-anted %llx) - updating\n",
-> > -                               ceph_ino(req->r_parent), path_info1.vin=
-o.ino);
-> > -                     iput(req->r_parent);
-> > +                               ceph_ino(old_parent), path_info1.vino.i=
-no);
-> > +                     /*
-> > +                      * Transfer CEPH_CAP_PIN from the old parent to t=
-he new one.
-> > +                      * The pin was taken earlier in ceph_mdsc_submit_=
-request().
-> > +                      */
-> > +                     ceph_put_cap_refs(ceph_inode(old_parent), CEPH_CA=
-P_PIN);
-> > +                     iput(old_parent);
-> >                       req->r_parent =3D correct_dir;
-> > +                     ceph_get_cap_refs(ceph_inode(req->r_parent), CEPH=
-_CAP_PIN);
-> >               }
-> >       }
-> >
+> thanks,
+>
+> greg k-h
 
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 6.12.45-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 4459b7afd68d8c7f767bfedcb8ce7b7973caee3a
+* git describe: v6.12.44-96-g4459b7afd68d
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
+.44-96-g4459b7afd68d
+
+## Test Regressions (compared to v6.12.43-323-gc7e1bbb35205)
+
+## Metric Regressions (compared to v6.12.43-323-gc7e1bbb35205)
+
+## Test Fixes (compared to v6.12.43-323-gc7e1bbb35205)
+
+## Metric Fixes (compared to v6.12.43-323-gc7e1bbb35205)
+
+## Test result summary
+total: 323915, pass: 299363, fail: 6744, skip: 17352, xfail: 456
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 139 total, 137 passed, 2 failed
+* arm64: 57 total, 56 passed, 1 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 34 total, 33 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 40 total, 40 passed, 0 failed
+* riscv: 25 total, 22 passed, 3 failed
+* s390: 22 total, 21 passed, 1 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 49 total, 48 passed, 1 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* modules
+* perf
+* rcutorture
+* rt-tests-cyclicdeadline
+* rt-tests-pi-stress
+* rt-tests-pmqtest
+* rt-tests-rt-migrate-test
+* rt-tests-signaltest
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
