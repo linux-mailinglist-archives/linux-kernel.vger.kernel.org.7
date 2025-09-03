@@ -1,145 +1,202 @@
-Return-Path: <linux-kernel+bounces-798521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0779B41F25
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:36:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A667DB41F2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61E461BA2DC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:36:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B5E168288
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559672F616A;
-	Wed,  3 Sep 2025 12:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0FF2FE574;
+	Wed,  3 Sep 2025 12:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ACFeqGac"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNCshDMl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279223C01
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B8B1C84DF
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756902910; cv=none; b=VG+czGVw1j8MYCGRdAsP4hHjVWfAco1xoITcnuDgoVGuF/2d6cfh3z2k9vjpR+lGtoIjIyiLaps/5KHKxYtFAB80ekQlS6XLYAk3nrl1MvM3eK3NaXhbwlF4XqPtJh6ZBAHgIbGDQLK9hMayMXnJ1i1p0xQ4j9YvJ+uBGlUWhps=
+	t=1756902935; cv=none; b=Pa2Es25/2w0jp1eNrOdfkeCFY/KG/t+AXaUty1js0QbPhGiSOK8jo+7Y7/vhwNnkHogj7rz36YWdPgGDwatOIJ5h73IxkcUb6/eCK8QO9TmjPIO8QFqRf1Tk16ssUIeLgtCLli6eNigJQPct3gwuP79WWLvLIr4Tibg+4XhiNCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756902910; c=relaxed/simple;
-	bh=2KH/JQ/vqtUTuVCclkQ8P86bxXvO3EGosKw4NB/N1Ao=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=L7CMrOgcNEfkQar2fYMyaeguNvBCpFCu/xUDqPmiVqxl4cscxzckphD/59/++mMLbZmisu7MtsuI+KWONaxGw5EoUhQVNbuOZZL87dWX2c2W+gmkSzRz0uTOhosx+Y3U2YB63JM1OHsnaaVMREWEgKsAq4Hu6JU2BH6BcGmX2MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ACFeqGac; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756902908;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kn9E43Lx4Cfno8vwxAsFxV0RgKs1y/Qo+4mjLYx22d4=;
-	b=ACFeqGacEm/sJdOCBrKKEV51nZGOGcmAKO+JvVuMxoS6X5pwnyx2qxx9g8/tjJt3ts7rT+
-	t5c10wFKGnhj3EAq2gS3dBDnfkIULD2BGG4hIcn6GZcpYcDic2HcSoVcUPh48K8mZImOpU
-	PYESRneX7UAaz4W0ZejQGw5elKkVG0I=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-213-3tof4e7mOB-tbCbQkPqANw-1; Wed, 03 Sep 2025 08:35:06 -0400
-X-MC-Unique: 3tof4e7mOB-tbCbQkPqANw-1
-X-Mimecast-MFC-AGG-ID: 3tof4e7mOB-tbCbQkPqANw_1756902905
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b8af0b986so6983745e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 05:35:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756902905; x=1757507705;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kn9E43Lx4Cfno8vwxAsFxV0RgKs1y/Qo+4mjLYx22d4=;
-        b=ebDf6DtRC1SHeCywwwQvBITjYpcAJ3AdjghV4ix20ez5qF5TZFhUZvwbnpYQy0KyIp
-         EsQOGyy6/mLVLjLxhOV/6MfY25zMOwAq6BaAZNCvDmUNDjXafYLivBbnz7iHbJU4mLL1
-         p7Js8TPtogapEQB6o1N0Gd9Ga+3/QYHG5IVOyiZuBVU/VPDZEBBQT+9qMymt+b5jwekp
-         mSEmzstx5lBYTA3K/Xqh8iS7hW5cTWE54Yt6cajRXOSXU0f6Y+4qKbjVvlamrQUXcx+0
-         9heisnxBS96a3FQNVRR3VYM2YyybEXvb1p3HGkuVuBI66yP7mvh0zSwVHNluPlBBWu1j
-         BBDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYUrBgg+6boyGXRtdg6sn0AyatqvD569dWglKZojIZ8tdQmoPChij6oULKsvmwN9IYnZ75duyoKo8QgvY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNJOoU8EQ0WzHexpm3oll7+85f8dkfyAR/CVEff2gpMONjYDrn
-	sDiPdVYQAAs4rWil/qC91NUQ0Tvajau33FZhxcX0sI4WXM2I2DnWge+1+ZWdyelr14uyPtFQk5W
-	PexYqcZ5/6UEaUto0GkZ+cQXD+FxZtwVwLE7uSzil/FtSF7ZfFs/aWXKTS/x3wCCZjA==
-X-Gm-Gg: ASbGncuHqi4Q27K7xSRmOxIWJkcujMPzpiWuA7GLADHz+LbrX/E0QyGfNlzZzljoJXU
-	5uHEQSmQuZypJNU83OxHN1aMzbEpw5vnK3uOclQS7JIoqWuT1iijVBozMr4cQ/S2h1k3v+xpq45
-	jFjy0rC4wr8rA7nNr5okmOF+UsIBTS3VC6ByI/cPOhp+NUfRLdOl60Cl3TrR2zaLwvWyaQNV2DJ
-	4QdxXNGDjpuiRagstH37nyv5NMMZ/Zdp/EmBqocVjgqMX68ulR2aT/2Tp6+fK/5r3Iur3cWSG09
-	cSS2a1PAbmdRm1+v6dtGDxk9fZJCbdzRJzHgJypnF19L32NnVfMhbNpE3h8Lw23WSCLauyEDGaG
-	t3+XgSQ0n42vDAReDM7QL9f6S
-X-Received: by 2002:a05:600c:5247:b0:45b:910c:adf with SMTP id 5b1f17b1804b1-45b910c0ba0mr64460785e9.12.1756902905376;
-        Wed, 03 Sep 2025 05:35:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4pvRcnWLyJxgCu4zwj3WAp3ebw/VtQ9Vb0SgglYp4db0eA6X7i+c7TZCYs6m0w3klftuXPg==
-X-Received: by 2002:a05:600c:5247:b0:45b:910c:adf with SMTP id 5b1f17b1804b1-45b910c0ba0mr64460485e9.12.1756902904947;
-        Wed, 03 Sep 2025 05:35:04 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45cb5693921sm31840525e9.0.2025.09.03.05.35.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 05:35:03 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Adam Li <adamli@os.amperecomputing.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, frederic@kernel.org, linux-kernel@vger.kernel.org,
- patches@amperecomputing.com
-Subject: Re: [PATCH] sched/nohz: Fix NOHZ imbalance by adding options for
- ILB CPU
-In-Reply-To: <916176fe-ad43-9dd2-ed1c-6f05f838d491@gentwo.org>
-References: <20250819025720.14794-1-adamli@os.amperecomputing.com>
- <xhsmhtt23h0nw.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <7438bb3a-96d6-485a-9ecc-63829db74b39@os.amperecomputing.com>
- <xhsmho6sagz7p.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <d421a5ba-95cb-42fb-a376-1e04c9d6a1ac@os.amperecomputing.com>
- <xhsmhldnegqq4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <1db2d6df-16ff-4521-ada5-da585b87b06f@os.amperecomputing.com>
- <xhsmhfrdblnp3.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <916176fe-ad43-9dd2-ed1c-6f05f838d491@gentwo.org>
-Date: Wed, 03 Sep 2025 14:35:02 +0200
-Message-ID: <xhsmh4itjlnnt.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1756902935; c=relaxed/simple;
+	bh=DLEC9Evf5FlWOMlAZljYLeumaRL0HGk6iNDsEWfj9Yk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O11LsYn6PGxNdM0dLsDmGTVK0FJZ68ZlLdLGv+5Kg0mJ3ts0/mXKQrYf2uDbuRcgTVCf29oIpngqiCihAfMzJs5DB+yqlx8/C8BUmYHFRfOdZuzmW78A/tuOXiVfzYZAM2b/HhYaFv9IFZhBIBzickMutbtu7/vzn/UmouXQ/bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNCshDMl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B7EC4CEFE
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:35:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756902934;
+	bh=DLEC9Evf5FlWOMlAZljYLeumaRL0HGk6iNDsEWfj9Yk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=iNCshDMlH0PP+U9tYmnBYVOGgDIkcmqrwdh58SuD3jbDPCfT4moWf816Uj/eyH1S7
+	 xr6Rsz3M4EqSRpcx0hvbNvyyWs5zwuoj/6hF5BVsUMOZf20AweHu2VMcIkWbDoEm6x
+	 ylEuQbTRLsGKMC1RD+YXty13wYoqapj7BYfUc8Rf7KjNSN2Uu1AIJc2ww91TbO6kIC
+	 eSHMsXBM//vvLNUR9i5Ca/bCJUbVtIFxo0QpsA86qs4I1iiybANMQtPVr33aeZzCgG
+	 yTcC5kBMtuCaAl/492FDWR7eKBOjpJv2n4qd0EGNVANtGlWKdpGO2V5qyYACUqyXwk
+	 /NzZXzwtJB3FA==
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-71d60528734so50897987b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 05:35:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWKlJPMZ+pHoV/avJRea0bANpyfNnsDMo2MDJ0yDdKt/at1yIsaZzEG3m3P0fmzEI8mWcVdmK5fdKn5N9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDHC31MeQ3ffRmFfW/5PIU9/S+2Twlynv2oWmbyoDxnIMWDhQw
+	baaeW71AoBzKu8a/34DAiWeHKsTDmgRW1QoAb9PFe79NIuh0kyvAzQw7JD28gCIppP9ru+cwtG9
+	HB6d7O3R4dKGn01wUJd+WMykfsXVD0MsJAAZ3aFsSKQ==
+X-Google-Smtp-Source: AGHT+IGmgXA5iAxR2DYRbTXvmclzzmqAtU6Yh8IWC7J9OjhAjhsYHmOxUIuiq8Gsl1Ovbv6IdvDksI2ck1w83DXMZ4A=
+X-Received: by 2002:a05:690c:6903:b0:721:40df:7383 with SMTP id
+ 00721157ae682-7227655ae4fmr199308807b3.41.1756902933940; Wed, 03 Sep 2025
+ 05:35:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-9-ryncsn@gmail.com>
+ <CAGsJ_4xON7fYg1VvcjLOsgBb_Wp4ruC+vdA4Q496GH1jXunU1A@mail.gmail.com>
+ <CACePvbUVK45uRPVoO3ubDfQHikebSHFNQOsMTMvJ91QQZH2HwQ@mail.gmail.com> <CAGsJ_4we4ZfNqJ+v7+=0hjNKLakJ-s8qtRsGo_kp0R_th7Xvkw@mail.gmail.com>
+In-Reply-To: <CAGsJ_4we4ZfNqJ+v7+=0hjNKLakJ-s8qtRsGo_kp0R_th7Xvkw@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 3 Sep 2025 05:35:22 -0700
+X-Gmail-Original-Message-ID: <CACePvbXjbtowr5wSKR_F_2ou6nVhxK3-+HvSs+P71PYOo0h3UA@mail.gmail.com>
+X-Gm-Features: Ac12FXzB2G67O6c2neqhsxxf2zRfAm25LgGfCqfNTYe7Va-TDT5xLTpHlg6jKIU
+Message-ID: <CACePvbXjbtowr5wSKR_F_2ou6nVhxK3-+HvSs+P71PYOo0h3UA@mail.gmail.com>
+Subject: Re: [PATCH 8/9] mm, swap: implement dynamic allocation of swap table
+To: Barry Song <21cnbao@gmail.com>
+Cc: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28/08/25 08:44, Christoph Lameter (Ampere) wrote:
-> On Thu, 28 Aug 2025, Valentin Schneider wrote:
+On Tue, Sep 2, 2025 at 4:31=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrote=
+:
 >
->> > Yes, binding the threads to CPU can work around the performance
->> > issue caused by load imbalance. Should we document that 'nohz_full' may cause
->> > the scheduler load balancing not working well and CPU affinity is preferred?
->> >
->>
->> Yeah I guess we could highlight that.
+> On Wed, Sep 3, 2025 at 1:17=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote=
+:
+> >
+> > On Tue, Sep 2, 2025 at 4:15=E2=80=AFAM Barry Song <21cnbao@gmail.com> w=
+rote:
+> > >
+> > > On Sat, Aug 23, 2025 at 3:21=E2=80=AFAM Kairui Song <ryncsn@gmail.com=
+> wrote:
+> > > >
+> > > > From: Kairui Song <kasong@tencent.com>
+> > > >
+> > > > Now swap table is cluster based, which means free clusters can free=
+ its
+> > > > table since no one should modify it.
+> > > >
+> > > > There could be speculative readers, like swap cache look up, protec=
+t
+> > > > them by making them RCU safe. All swap table should be filled with =
+null
+> > > > entries before free, so such readers will either see a NULL pointer=
+ or
+> > > > a null filled table being lazy freed.
+> > > >
+> > > > On allocation, allocate the table when a cluster is used by any ord=
+er.
+> > > >
+> > >
+> > > Might be a silly question.
+> > >
+> > > Just curious=E2=80=94what happens if the allocation fails? Does the s=
+wap-out
+> > > operation also fail? We sometimes encounter strange issues when memor=
+y is
+> > > very limited, especially if the reclamation path itself needs to allo=
+cate
+> > > memory.
+> > >
+> > > Assume a case where we want to swap out a folio using clusterN. We th=
+en
+> > > attempt to swap out the following folios with the same clusterN. But =
+if
+> > > the allocation of the swap_table keeps failing, what will happen?
+> >
+> > I think this is the same behavior as the XArray allocation node with no=
+ memory.
+> > The swap allocator will fail to isolate this cluster, it gets a NULL
+> > ci pointer as return value. The swap allocator will try other cluster
+> > lists, e.g. non_full, fragment etc.
 >
-> We need to make sure that the idle cpus are used when available and
-> needed. Otherwise the scheduler is buggy.
+> What I=E2=80=99m actually concerned about is that we keep iterating on th=
+is
+> cluster. If we try others, that sounds good.
+
+No, the isolation of the current cluster will remove the cluster from
+the head and eventually put it back to the tail of the appropriate
+list. It will not keep iterating the same cluster. Otherwise trying to
+allocate a high order swap entry will also deadlooping on the first
+cluster if it fails to allocate swap entries.
+
 >
-> Such a load balancing action means that there is a cpu that is running
-> multiple processes. Therefore the timer interrrupt and the scheduler
-> processing is active on at least one cpu. We can therefore do something
-> about the situation.
+> > If all of them fail, the folio_alloc_swap() will return -ENOMEM. Which
+> > will propagate back to the try to swap out, then the shrink folio
+> > list. It will put this page back to the LRU.
+> >
+> > The shrink folio list either free enough memory (happy path) or not
+> > able to free enough memory and it will cause an OOM kill.
+> >
+> > I believe previously XArray will also return -ENOMEM at insert a
+> > pointer and not be able to allocate a node to hold that ponter. It has
+> > the same error poperation path. We did not change that.
 >
-> The scheduler needs to move one of the processes onto the idle cpu.
+> Yes, I agree there was an -ENOMEM, but the difference is that we
+> are allocating much larger now :-)
 
-AFAICT we have (at least) two options:
-1) Trigger NOHZ balancing on a busy housekeeping CPU (what this patch does)
+Even that is not 100% true. The XArray uses kmem_cache. Most of the
+time it is allocated from the kmem_cache cached page without hitting
+the system page allocation. When kmem_cache runs out of the current
+cached page, it will allocate from the system via page allocation, at
+least page size.
 
-   This is somewhat against idle load balancing rules (only spend CPU time
-   on that if there is no "genuine" work to run), but I guess from a CPU
-   isolation PoV this can be tallied as just another housekeeping activity
+So from the page allocator point of view, the swap table allocation is
+not bigger either.
 
-2) Trigger NOHZ balancing on an idle NOHZ_FULL CPU
+> One option is to organize every 4 or 8 swap slots into a group for
+> allocating or freeing the swap table. This way, we avoid the worst
+> case where a single unfreed slot consumes a whole swap table, and
+> the allocation size also becomes smaller. However, it=E2=80=99s unclear
+> whether the memory savings justify the added complexity and effort.
 
-   That doesn't steal useful CPU time, but that also potentially causes
-   interference, albeit only if racing with the NOHZ_FULL workload spawning
-   (which shouldn't be the steady state).
+Keep in mind that XArray also has this fragmentation issue as well.
+When a 64 pointer node is free, it will return to the kmem_cache as
+free area of the cache page. Only when every object in that page is
+free, that page can return to the page allocator. The difference is
+that the unused area seating at the swap table can be used
+immediately. The unused XArray node will sit in the kmem_cache and
+need extra kmem_cache_alloc to get the node to be used in the XArray.
+There is also a subtle difference that all xarray share the same
+kmem_cache pool for all xarray users. There is no dedicated kmem_cache
+pool for swap. The swap node might mix with other xarray nodes, making
+it even harder to release the underlying page. The swap table uses the
+page directly and it does not have this issue. If you have a swing of
+batch jobs causing a lot of swap, when the job is done, those swap
+entries will be free and the swap table can return those pages back.
+But xarray might not be able to release as many pages because of the
+mix usage of the xarray. It depends on what other xarray node was
+allocated during the swap usage.
 
-The more I think about it the more I'm leaning towards 1), but I'd like
-other folks' opinion.
+I guess that is too much detail.
 
+>
+> Anyway, I=E2=80=99m glad to see the current swap_table moving towards mer=
+ge
+> and look forward to running it on various devices. This should help
+> us see if it causes any real issues.
+
+Agree.
+
+Chris
 
