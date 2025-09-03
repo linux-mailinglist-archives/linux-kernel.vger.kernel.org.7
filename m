@@ -1,149 +1,146 @@
-Return-Path: <linux-kernel+bounces-798246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0812B41B29
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:07:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C21D9B41B2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 854A216B1FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:07:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E2801BA5469
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35ADE2E8B65;
-	Wed,  3 Sep 2025 10:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3BF2DAFDD;
+	Wed,  3 Sep 2025 10:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jadq0HF3"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G1d4eipZ"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3693129CE1;
-	Wed,  3 Sep 2025 10:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CAD255E26
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756894064; cv=none; b=YAX54DLTZx+3KPd26vvrZXcT7GjypIPnYnX1JDcxxOxobZGlhg1JSaAKjJP1Pp2Eko4BI+04xC148mDCUWRXHZhz0oCbfQkXJHaaCpPFvFpC9vK5qhNUUI1diUanJ/vJJ+7pRVWsNglyYGgfgYCsjOKG4GqU/2LUGtUTBcaTltU=
+	t=1756894104; cv=none; b=qWZDk8K6cWZth16FF+JGWSJr0zjloJ0AGavo6kxKZouk+aKB9eN+RxWwDvbSBxbRfdxXIh3LkvhNgcq6JpCPy/crwRixxSMGYdSQcAff1sGhRjXDF00SISTeeQuG7mZUSEn4RiTPcSlbEuVWwtgCISWrwxOyrh2gJ8eYHxqeDCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756894064; c=relaxed/simple;
-	bh=KULc0f1h5IpWpu9btYuP8kZbCawgVeRxelmFTcI224E=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=AEIhGZyoMIrMw24ekFkSB362jxopgjrB6MEPUL+5xzAROhisaN658a159z/oaAtfVFey20v05e6HMiVWfKrgHYqktR1zgWixxmKHngWV5tdp/Qcu9C9j/daf9t2a3BdyMYIv/ZKWCkxvQQqCtZWK2uHXxRQScixYixAP6UyeIhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jadq0HF3; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24879ed7c17so48327225ad.1;
-        Wed, 03 Sep 2025 03:07:42 -0700 (PDT)
+	s=arc-20240116; t=1756894104; c=relaxed/simple;
+	bh=N60bxwoBK42jCkCkhaiyJ2RpMvLMJ+7cNdqT2d4o0Pw=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=fVT5nHcvk9up4xaH+6dpRy/DIuxAz5fdv7YpSSE8fJNjs+K2J/oNd5u9Hu20A7U8k+qd+erTbASWkLskBEq4ilgr0HvEpyKES6lGDn25MYJovd/XrZIG5L1BHBjNFYIcTEziZG58BMqr+AJ24vuy5prUFnOusPZauaYGsfq6kyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G1d4eipZ; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b4f7053cc38so2277728a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 03:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756894062; x=1757498862; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rVGauGfhr6mvYXp8kJfDTCcj8ZL0niSipeV+OayO1is=;
-        b=jadq0HF3C9qt4/uC8E28yEYHuZ9GrYzcpYGEb54iihPVz+V1YAR6bkxy8Gt+p30PAA
-         O8V6PUaYbfLTCMoGCneqVFcDUGJ7/DQH/TDUs9CSe6OjQ/NTURFkEUJYolht243rZwuM
-         Xc8pYxQHEYzYxETk5BufEOjjTXsCRDAaNm6VULxko1H77RfjTAl0kOJ+SM+SdfXPRC1w
-         uGF2uNS8B8EsjuIe3I0cKeEzPqbvyFDkcA/oSIybJVeits7c+x8JVoHlBJyRZfBBYWkn
-         ZTY7ZDgAaXXcLGROUbEyshTGws5FfVRTjZwYunIuDifGwsynLCcCBTLn1kr3mz5oAQHr
-         TFKA==
+        d=linaro.org; s=google; t=1756894102; x=1757498902; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=m8UwOAQLFxlapL4wJjDPziLZroOio1WKHWOdBe615V4=;
+        b=G1d4eipZmRAJMGwYANGG4YXgARox1s2XRDXBe0IhBdHj52CJ1hDV3FtPUfYXwsUHbp
+         9JQL2iZ92RNL41yNq8f9TOdpLtWCGoS8zkJD+M2XeTktoPTsx98YD61Y378aSB94QuAk
+         QLV5/F//T5vRz+9LW4xN8pxA0CaRvcvZuTxPoquzNdT6vkLfUTcx0NjN+234x9dirtRc
+         b3O2SN15nno6jgQoprBXztLcv1NsMYlaj8m/+30Om8eCGtFgmdlLI8DyIt5BsFuZKYC8
+         RKJ4HsQO3fNbsluZCcIUl0/b3vSfwOA9xTyWCJTfQt/tzGu121TucPN0pYN0A//3n7MS
+         ibDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756894062; x=1757498862;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rVGauGfhr6mvYXp8kJfDTCcj8ZL0niSipeV+OayO1is=;
-        b=GX1D4l7Xp7rMe1wD8z24s9rPoBQ0lES2vt+j62TQjnuiCID3ADVe8H3ir9H7poppLj
-         MLEyrA6R0VAA2xK4up3KjkTePnGJghBOXvSQy4hFrR6gg0/Gdez0lqygZa0g1/BOC6bo
-         nWiYoGCBSR8bGBOBkGH7boSiBPTO0pP5m1HABnn3jBR3k40WyXsRN4yW3vqV8weI7RXO
-         71Fegw+T8lSmmCp8/VVgYgFykiPvzd5uY+5DaG3lc8K06FMdLOPtuC1nqftod0ERXM9L
-         zzLhhHGhdP5HovHTbaaXQuhd7szO7zb7DL+a2TGhv7PN6zuR/HqmFSdBp8qRZpqL0NKn
-         FrZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVy3LECwmfoSEk4ONwSbmxTRdNCpmWXIWuphiVaaDbhJn3r4SU+y0s5t4QAt07z83hthrqna47o@vger.kernel.org, AJvYcCX3NkOBW45iTK+VRWMIN0+2hT5iJWgE4Xy1mthvqKBRpJ7iSybaTwv27X6P6FemXC6TSKUCQrBr25Pj@vger.kernel.org, AJvYcCXZdNQVnMcBYgh6bLerrEuJWg4+oA0If3hJEgMEc1FxQa1VqVgx2F3fFAKsvYTQAtc5u2X2KGCJzmB8Khk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVK5To/JLV7GkuDzXGdl5IvUkJ7vZl/EnajWflqsMBSlYO/JMX
-	QroJoFldSeK8WPhFCwwTC1uocOoLHdXJEoBii1+REudILU9A9iSgr5i2
-X-Gm-Gg: ASbGncsetg9mOiiv6gPiBg5la8elAb0mDgMJm4TJzlm5jCyURj3ZXcz8nS+rSXGrQzU
-	SR0CGe8QgMlj8orUv+i8Ok1bafQZcibKroAWeF0YVo/q+F7bYTcprln34JTfMnnE/nG4q00IA0i
-	cuN8HP8M+869XeT6mkLHx2MsZlUxjoAcrk9jTvEdqQB5kwQftRWpnlZ6gATmqVFScNCxNBuwipr
-	yHItGk7A4q3db2Ugk/Yp/N13qelbqD75B01ERwhHbzkbM+1Wf/l3zEmK243eirtsjP+J8dLNk00
-	XHwoPVRJDebjLeM8E1Bpe/VS/Hz3oseFUk+WTGZpPvmTuJOl1HnIhrlyIE5lcncH/mP+y6pUCeT
-	YWOpRpxzH/Md0tBo=
-X-Google-Smtp-Source: AGHT+IECmCXdKsrRf8TTrVO+be6VDrPYPEsyD7JjfR5byeiaPewWqXxQFtt2BMdS2cQf1GYZWxYKpA==
-X-Received: by 2002:a17:902:d485:b0:248:cd0b:343f with SMTP id d9443c01a7336-24944871f85mr192467405ad.11.1756894062225;
-        Wed, 03 Sep 2025 03:07:42 -0700 (PDT)
-Received: from gmail.com ([223.166.84.173])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24903702354sm158993365ad.19.2025.09.03.03.07.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 03:07:41 -0700 (PDT)
-From: Qingfang Deng <dqfext@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Paul Mackerras <paulus@ozlabs.org>,
-	Matt Domsch <Matt_Domsch@dell.com>,
-	Andrew Morton <akpm@osdl.org>,
-	Brice Goglin <Brice.Goglin@ens-lyon.org>,
-	linux-ppp@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] ppp: fix memory leak in pad_compress_skb
-Date: Wed,  3 Sep 2025 18:07:26 +0800
-Message-ID: <20250903100726.269839-1-dqfext@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1756894102; x=1757498902;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m8UwOAQLFxlapL4wJjDPziLZroOio1WKHWOdBe615V4=;
+        b=et0R0cp1vYZmdkSN/pKIZDTTmOyqPHFRsAVQOCYbnVMwScfgAx8VeV4BmhLQgK7xpZ
+         /dUSdL/FACiAIHUk80AZDCcSusDKrlPm8C2IrkMiAGtgFKQ+cLdUAap1x4WRRBx4hg2v
+         bTlK0lQgHdWuPhod3csOpO/Ev+JRg+/IKdm+/NP5y2l1HSGb4qbbh3bLSTR0o7LjNQin
+         fEobBuu4MbAew6UpnFmCrLAQ1k9Ys1nS+fEsPHVZc6YVuUJS8MH+T4d8gFBkIe+rBOf2
+         LEgPu+1dkLbkhoIp0xN6hIGDLpZmie+ryvcBn/lZgjTFm/kkczDAXd0wZPqUCQjACLzt
+         U8EA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQS3Jbp9k+NfBdNkH3+PVjLqMqWlCLr/5DcgVwh62E+F8hU+0ERsG7sIKpuBhRUlN/9ukPbILK2UTXe9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH3POXcWqn3NU7+4WwI54GF1efJDy7ib54YZ2OzMvjPc1MaCGa
+	co7OkIJI1igN4+UJbwc5iQqgg3tHEksCPQXBzwGH8J6wZSdMnP3Q461EcZRiKhq/IEDKzIpS7Q3
+	1pVYL1/h6XMAYwvgPxqobVOdmyS+Alef0yduEPob5bQ==
+X-Gm-Gg: ASbGnctv/B15o2TftrkRTIdAHXfMJI0tklZ/DBq2Eg7yadcqqgfNJvDFjKYQLziiDfd
+	UizUTqEursHtjw94ufWBmKEsR99owOG7GaGS9M0/1cc4VurFP8s3ET9TpiZwZDZ6xNboHi//Nw/
+	lhtDuBaKin9thjYQkR2eT2cj8pH3TjYVJjrDNHG8IQe/L3GDkZUpi9sOXsH01WR1iGh6ebqhJH3
+	lq2wPJTrNpJMfWZABECnjHD9uQq3o0kvxdK3X6d
+X-Google-Smtp-Source: AGHT+IFXPS/WTlketDT7Ry+T0jvnXkJWiEWLHz4L2qR0cIclYFFQxTiDX5NTPXgKjBbk7T07stAxT1Awro5pXflUEHw=
+X-Received: by 2002:a17:90b:54c5:b0:329:8160:437a with SMTP id
+ 98e67ed59e1d1-3298160446amr17933963a91.24.1756894102326; Wed, 03 Sep 2025
+ 03:08:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 3 Sep 2025 15:38:11 +0530
+X-Gm-Features: Ac12FXxzMFZM2zT7oOOLzDits6M_03K1dnyTRhCYTrY8QuqW8ke90eorpMyKwq0
+Message-ID: <CA+G9fYsPcMfW-e_0_TRqu4cnwqOqYF3aJOeKUYk6Z4qRStdFvg@mail.gmail.com>
+Subject: next-20250903 x86_64 clang-20 allyesconfig mmp_pdma.c:1188:14: error:
+ shift count >= width of type [-Werror,-Wshift-count-overflow]
+To: clang-built-linux <llvm@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>, 
+	dmaengine@vger.kernel.org, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>
+Cc: Vinod Koul <vkoul@kernel.org>, Guodong Xu <guodong@riscstar.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Ben Copeland <benjamin.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-If alloc_skb() fails in pad_compress_skb(), it returns NULL without
-releasing the old skb. The caller does:
+The following build warnings / errors were noticed on x86_64 allyesconfig
+with clang-20 toolchain running on Linux next-20250903 tag.
 
-    skb = pad_compress_skb(ppp, skb);
-    if (!skb)
-        goto drop;
+But the gcc-13 builds passed.
 
-drop:
-    kfree_skb(skb);
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
 
-When pad_compress_skb() returns NULL, the reference to the old skb is
-lost and kfree_skb(skb) ends up doing nothing, leading to a memory leak.
+First seen on next-20250903
+Bad: next-20250903
+Good: next-20250902
 
-Align pad_compress_skb() semantics with realloc(): only free the old
-skb if allocation and compression succeed.  At the call site, use the
-new_skb variable so the original skb is not lost when pad_compress_skb()
-fails.
+Build regression: next-20250903 x86_64 clang-20 allyesconfig
+mmp_pdma.c:1188:14: error: shift count >= width of type
+[-Werror,-Wshift-count-overflow]
 
-Fixes: b3f9b92a6ec1 ("[PPP]: add PPP MPPE encryption module")
-Signed-off-by: Qingfang Deng <dqfext@gmail.com>
----
- drivers/net/ppp/ppp_generic.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-index 65795d099166..f9f0f16c41d1 100644
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -1744,7 +1744,6 @@ pad_compress_skb(struct ppp *ppp, struct sk_buff *skb)
- 		 */
- 		if (net_ratelimit())
- 			netdev_err(ppp->dev, "ppp: compressor dropped pkt\n");
--		kfree_skb(skb);
- 		consume_skb(new_skb);
- 		new_skb = NULL;
- 	}
-@@ -1845,9 +1844,10 @@ ppp_send_frame(struct ppp *ppp, struct sk_buff *skb)
- 					   "down - pkt dropped.\n");
- 			goto drop;
- 		}
--		skb = pad_compress_skb(ppp, skb);
--		if (!skb)
-+		new_skb = pad_compress_skb(ppp, skb);
-+		if (!new_skb)
- 			goto drop;
-+		skb = new_skb;
- 	}
- 
- 	/*
--- 
-2.43.0
+x86_64:
+  build:
+    * clang-20-allyesconfig
 
+Build error:
+drivers/dma/mmp_pdma.c:1188:14: error: shift count >= width of type
+[-Werror,-Wshift-count-overflow]
+ 1188 |         .dma_mask = DMA_BIT_MASK(64),   /* force 64-bit DMA
+addr capability */
+      |                     ^~~~~~~~~~~~~~~~
+include/linux/dma-mapping.h:73:54: note: expanded from macro 'DMA_BIT_MASK'
+   73 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+      |                                                      ^ ~~~
+1 error generated.
+make[5]: *** [scripts/Makefile.build:287: drivers/dma/mmp_pdma.o] Error 1
+
+
+## Source
+* Kernel version: 6.17.0-rc4
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git describe: next-20250903
+* Git commit: 5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
+* Architectures: x86_64
+* Toolchains: clang-20
+* Kconfigs: allyesconfig
+
+## Build
+* Build log: https://qa-reports.linaro.org/api/testruns/29752023/log_file/
+* Build details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250903/build/clang-20-allyesconfig/
+* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/32B39xPuITjxcbak13h2MrLZJP4
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32B39xPuITjxcbak13h2MrLZJP4/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/32B39xPuITjxcbak13h2MrLZJP4/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
