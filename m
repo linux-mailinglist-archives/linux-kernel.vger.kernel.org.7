@@ -1,99 +1,150 @@
-Return-Path: <linux-kernel+bounces-798388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0377AB41D2E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:37:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA1DB41D33
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A48A21BA2F37
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:38:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 174D37A52F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161B32FAC12;
-	Wed,  3 Sep 2025 11:37:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBFC2EA14D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 11:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768E62FB62C;
+	Wed,  3 Sep 2025 11:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jKHDh4s2"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CAD2FABE8
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 11:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756899463; cv=none; b=QLyJGNqFeI/x3p1g3Uoh/vRKWFi2zIj0TESWruQmZCuV/6jgbhhuDSbBJaCRJxFkDHlTaGL08U4S8Owt+v/m61QzzU62DF8JRUeKTY8tzWlYl54ZwPMpfScD8jdJhUkikPgVk+4O/sGVF0kVmm8rC+U9YSmmCkkbNVzdC3PU5E0=
+	t=1756899581; cv=none; b=RReMElIJJHcCD+bWVsZ1yZPyd1l6JNQ1uNnmZSc4yoh0V2j8FD6T3Uo6fqGM1PpzETrwitulP0YU+uu3uiSr2+W763/qRAcpniBsx6PSCzo/qyBUOwGgeiYlxC9RjjNlUQLmAFuxcDnLfHhaEayjiyHVpXVFyximyiIzVf+/rbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756899463; c=relaxed/simple;
-	bh=NQbYdswFi76tdmHsnzSN3w/ucWbcr78bCQR1bLisfZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Usi4zx1Bc20TB77603wwi2dwujUpPawyXY2cw+IFYWLxQjTXaNwYiL0afsij8yJzwnYTMtrO1bnuH0EYvvUB1X0fqeupfGFtxZdtzuzJHubtUZFtu5wrqnO9JAvuH8WRtJfiX8h8iYZZ0m92GJds665j62R3Z+8Co/W38QIYWZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F37AA1688;
-	Wed,  3 Sep 2025 04:37:32 -0700 (PDT)
-Received: from [10.1.39.32] (e122027.cambridge.arm.com [10.1.39.32])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 17F8D3F694;
-	Wed,  3 Sep 2025 04:37:38 -0700 (PDT)
-Message-ID: <988cd2c6-27c7-4f7a-a234-ce0dfd2ea773@arm.com>
-Date: Wed, 3 Sep 2025 12:37:36 +0100
+	s=arc-20240116; t=1756899581; c=relaxed/simple;
+	bh=DEKA94TkS8M4IPM3sEAm/5Qz3a9I4jWJINH3l1Tj/dY=;
+	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=jFv9Bfp28CKT+jYH9WK2QDJujLksI8hFr1OJNOQ7/jpX7HY6jJ/daADb9/4ZHwTR9FC7oLMCUfjbYJoVUTEsiUcM+JC9DBwLcbVihLMew6/EG1FW2luMSOpHDS+pbxSs6Ougs2WKhwzwRdPNbGNw2WfwfPRszp44fvlEdpOFgII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jKHDh4s2; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250903113937epoutp03c35738b5e4309d0d34504615624a8ee0~hwttZb3dh0374603746epoutp03f
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 11:39:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250903113937epoutp03c35738b5e4309d0d34504615624a8ee0~hwttZb3dh0374603746epoutp03f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756899577;
+	bh=7brYymqqs4aIaN8Zo+JAkRMDFy6v/aAdvXLq9zLu890=;
+	h=From:To:In-Reply-To:Subject:Date:References:From;
+	b=jKHDh4s27/JoGOdzhZg27/I0d02Rhr6wRj9FbKmS9rkgC3AfYTlYPZSVbPgxZeIhj
+	 tbvMN3XbmTKx/grFfAbs59jO4+sXWq0DUDSlUoRKhex8JuJHr+/RpylMEcRmCXKZHS
+	 ORw36rWn0+swGH9JUYOix0FWLehVQPuX1xPZ7RL0=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250903113936epcas5p2a2fc50ab07b0fd777b4bee856b31511c~hwttCSEIa0673206732epcas5p2L;
+	Wed,  3 Sep 2025 11:39:36 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.93]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cH0yH46Bnz6B9m4; Wed,  3 Sep
+	2025 11:39:35 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250903113935epcas5p3227334fa7684fe2170093c2851f27476~hwtrskr2T2284122841epcas5p3A;
+	Wed,  3 Sep 2025 11:39:35 +0000 (GMT)
+Received: from INBRO002520 (unknown [107.122.1.191]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250903113933epsmtip13e7d48e7582eba797719ac5d7c4a2873~hwtqTZwKo0781907819epsmtip1o;
+	Wed,  3 Sep 2025 11:39:33 +0000 (GMT)
+From: "Devang Tailor" <dev.tailor@samsung.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<alim.akhtar@samsung.com>, <alexandre.belloni@bootlin.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-rtc@vger.kernel.org>, <faraz.ata@samsung.com>
+In-Reply-To: <20250710083434.1821671-1-dev.tailor@samsung.com>
+Subject: RE: [PATCH v2 0/3] On-chip RTC support for ExynosAutov9
+Date: Wed, 3 Sep 2025 17:09:32 +0530
+Message-ID: <000001dc1cc7$6bfee9d0$43fcbd70$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panthor: validate group queue count
-To: Chia-I Wu <olvaffe@gmail.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250902192001.409738-1-olvaffe@gmail.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250902192001.409738-1-olvaffe@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJ8w0UJjWiHDR7+9bjoByRdFpd+nAMc6yo9sycffmA=
+Content-Language: en-in
+X-CMS-MailID: 20250903113935epcas5p3227334fa7684fe2170093c2851f27476
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf
+References: <CGME20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf@epcas5p1.samsung.com>
+	<20250710083434.1821671-1-dev.tailor@samsung.com>
 
-On 02/09/2025 20:20, Chia-I Wu wrote:
-> A panthor group can have at most MAX_CS_PER_CSG panthor queues.
-> 
-> Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
 
-Good catch - that's a nasty bug.
+Hi,
 
-I think this should have:
 
-Fixes: de8548813824 ("drm/panthor: Add the scheduler logical block")
-
+> -----Original Message-----
+> From: Devang Tailor <dev.tailor=40samsung.com>
+> Sent: 10 July 2025 14:05
+> To: robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org;
+> alim.akhtar=40samsung.com; alexandre.belloni=40bootlin.com;
+> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-
+> rtc=40vger.kernel.org; faraz.ata=40samsung.com
+> Cc: Devang Tailor <dev.tailor=40samsung.com>
+> Subject: =5BPATCH v2 0/3=5D On-chip RTC support for ExynosAutov9
+>=20
+> Enable on-chip RTC support. The on-chip RTC of this SoC is similar to the
+> previous versions of Samsung SoC. So re-use the existing RTC driver with
+> applicable call-backs for initialization and IRQ handling.
+> Add a separate call-back for disabling RTC since existing '.disable'
+> call-backs updates additional bit not valid for RTC of ExynosAutov9.
+>=20
+> Setting and getting hardware clock has been tested using 'hwclock'
+> and 'date' utilities.
+>=20
+> Alarm interrupt has been checked with incrementing interrupt count via =
+=22cat
+> /proc/interrupts =7C grep rtc=22 for 10sec wakeup time via =22echo +10 >
+> /sys/class/rtc/rtc0/wakealarm=22
+>=20
+> changelog
 > ---
->  drivers/gpu/drm/panthor/panthor_sched.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index ba5dc3e443d9c..249ab889ca91f 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -3473,6 +3473,9 @@ int panthor_group_create(struct panthor_file *pfile,
->  	    hweight64(group_args->tiler_core_mask) < group_args->max_tiler_cores)
->  		return -EINVAL;
->  
-> +	if (group_args->queues.count > MAX_CS_PER_CSG)
-> +		return -EINVAL;
-> +
+> Changes in v2:
+> - Fixed the review comment of v1 for mis-aligmnent & asymmetry bit logic.
+> - link for v1 : https://lore.kernel.org/linux-rtc/20250702052426.2404256-=
+1-
+> dev.tailor=40samsung.com/
+>=20
 
-I think this check would be better moved up to
-panthor_ioctl_group_create() (where we already have a zero check). But
-either way:
+Reminder=21
+Can you please help to identify if anything is pending in this patch series=
+ ? I see all three patches are reviewed.
 
-Reviewed-by: Steven Price <steven.price@arm.com>
+>=20
+> Devang Tailor (3):
+>   dt-bindings: rtc: s3c-rtc: add compatible for exynosautov9
+>   rtc: s3c: support for exynosautov9 on-chip RTC
+>   arm64: dts: exynosautov9: add RTC DT node
+>=20
+>  .../devicetree/bindings/rtc/s3c-rtc.yaml       =7C  1 +
+>  .../boot/dts/exynos/exynosautov9-sadk.dts      =7C  4 ++++
+>  arch/arm64/boot/dts/exynos/exynosautov9.dtsi   =7C 10 ++++++++++
+>  drivers/rtc/rtc-s3c.c                          =7C 18 ++++++++++++++++++
+>  4 files changed, 33 insertions(+)
+>=20
+>=20
+> base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
+> --
+> 2.34.1
 
-Thanks,
-Steve
-
->  	group = kzalloc(sizeof(*group), GFP_KERNEL);
->  	if (!group)
->  		return -ENOMEM;
 
 
