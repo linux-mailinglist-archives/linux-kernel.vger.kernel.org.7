@@ -1,215 +1,131 @@
-Return-Path: <linux-kernel+bounces-798641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76869B4209F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:13:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 500CFB420B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 313533AFEAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:13:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DACCD1BC025F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859B2304BC4;
-	Wed,  3 Sep 2025 13:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BCF3002D9;
+	Wed,  3 Sep 2025 13:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NXCjeJi1"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2062.outbound.protection.outlook.com [40.107.237.62])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="1XAqNyxb"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BF4304BA0
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756905045; cv=fail; b=D6pX/p/PulQgXfkknzZS565LDxnAVSp9f5KYmZKuiBd4Z3TQKnY7eunK3fIJ+5wBZJq9j0wwCk8B2FD7Ub41omogJU6JDUSQhsikJEXHBmPU30PNv75Ye5rvxwjghaWgoAEGH4qxcAxZplWZLixC+6Ef59dpwuiye9N4QbFvOMI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756905045; c=relaxed/simple;
-	bh=n/DqPDcCjV002i4XtCzYgthEjVd8zV9lk/5mT05Am28=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=MDW37TFylkUrleEB59Y4DNEQisNwj9T6p86qFM7JvxufaftX8GnJlsvA6fO/H9vwmJgE+XMzrYs6RbLcgqF2jUa6mddPwiAavBomv4fNXmOENsbjWNwW0PRAgb3/MKGHovZDMLMy4kny7XBx8JvY5pVUz1BKpnrGo7Wjx7AApxM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NXCjeJi1; arc=fail smtp.client-ip=40.107.237.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w5D3QjUy+w4BFc/v4wf3bHdrsuQrBbYJEaPZHCb08DM88yMs76RTl78+SEHIiUBpGN643uQS3fpBnuTWiHmqENQ67+bwpRMQs4mz+CzgZ7PTC7VCdkMQyr9uddJ96qLD7FpVtVVVI0VqHwSk7RrUsvNZklwSrt52HkzCU3DrG/sGCSFjmTn13fiAYeSlrhMdefSAgUhsXDPYkHaj1o9t/50BJsGS3Kl6dZAw4azAfOX874Ui4+APihFYxNpVeZ5pSQCvmiZYOOxO92rlmfQeIux6bc95ke3BOLUi70F3jz/QF6qE+GCqR0F3YppmhO8Jn7hpU8cdvceCtMwK8pWg1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hXGOh0kpy2fbSmViBAmrNexhLrWqbdSkM6I6mZB/EXo=;
- b=nI8pnPaTo4mkl4ta3aR5TKHxALJj3/lKAhrZNIH4QgL849zV6GN5XHo2jI/ifw+UxG5S0aK1/qBK0ZV1/f0c/bWgBqA3V78N4VeH2GkInoMnd+Y8NY0Nj+ykyYCbrF4n/JTsAEpEzqvQzlKAsw4M/XZda3NRZmpk7RSdIwrAyZWUvYpNuKqI8OPo9b04c5c/XZy8N6/rJpjmQXDsXIQ1Kx3wTQoXCoj1nab4Loq8oM//vFYa6uzpzgrWy3cFnKn/FbRYg0az9Igh97DUYMiSxbdJSyw4jMcKCy1A5CWEwXGYni0kjcZVKFUyifiJ1+g4eC6j4+yJLyf9JFhFAHhYhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hXGOh0kpy2fbSmViBAmrNexhLrWqbdSkM6I6mZB/EXo=;
- b=NXCjeJi1OCoMvtADhO9TR6RC0kJv4uZX+TINfSje8fU9GDC38XbZZLv5LYbmGy+GbQ5G6IVYCi3XoA7NxCqPAeoIxjElLPHPXgRyX2Q9a8wH2xzYs6tzF5JLzcpONvqQgWw9J00nu9O+3ILramx576iDHfbFzh8kzD8Bf+ncpSatQi7Rs0AnTnur/0VxzUQb4BFm1/kzDbn5AJs1HySIKu0EhLuOfO/katPtK8EVda/XZ4R0ayiV19O+n6mXf8IYgU7ADhvOXxm2B/ThHkI11NhBCDyLddquIR2sIXp+Lh9umA/0sLktUUF0zsO3iZE5+9my+ALTdQcKAYzMvb0t/g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by CY8PR12MB7585.namprd12.prod.outlook.com (2603:10b6:930:98::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Wed, 3 Sep
- 2025 13:10:39 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9052.027; Wed, 3 Sep 2025
- 13:10:39 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Sep 2025 22:10:35 +0900
-Message-Id: <DCJ6UUWUC9JI.MKBSK8M1E6J3@nvidia.com>
-Cc: <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
- Hubbard" <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>,
- "Timur Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, "Nouveau"
- <nouveau-bounces@lists.freedesktop.org>
-Subject: Re: [PATCH 03/10] gpu: nova-core: gsp: Create wpr metadata
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Alexandre Courbot" <acourbot@nvidia.com>, "Alistair Popple"
- <apopple@nvidia.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250827082015.959430-1-apopple@nvidia.com>
- <20250827082015.959430-4-apopple@nvidia.com>
- <DCHAPJRPKSSA.37QLQGAVCERCZ@nvidia.com>
- <iyjecyybwyilem2ituw6esmufid72cximthc5qo2fgdpzz4fko@cb6n2vcrptb5>
- <DCJ6G4DJ1JSY.1U6II6SNMZAZQ@nvidia.com>
-In-Reply-To: <DCJ6G4DJ1JSY.1U6II6SNMZAZQ@nvidia.com>
-X-ClientProxiedBy: TY4PR01CA0076.jpnprd01.prod.outlook.com
- (2603:1096:405:36c::12) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664A62FDC43;
+	Wed,  3 Sep 2025 13:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756905234; cv=none; b=G1q6uGZQmnTrmAzUNyAyxpYGl+KXJZpRQ9aT8BTVf8Coj4g0NIZi9FG4TC9MHxD2fP9hvNEQYO/zzSz5IrCscCryw3qQ0zJ1o0yKpavY9IUllpRcE6JgL6Kn20XrykMn5ii94YUHk4YzmHXDILk0eS2Ndl6CnqU5k8yHYz1LrBU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756905234; c=relaxed/simple;
+	bh=m3KpEmxd79c1OD6LqRkUh0rEK3120b65Xfyz+Q2Hd8A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pvBYlZgaS+Vd+WaoKTqX1KaZITDWz7tf/AGTK+POEIJFUNwUEIIQvBKUmQHb0HqdVpAcV09LKo7HeyKbSG9sndipj1RYsQ2WzD+n+ZnUNtjFKbWKUCn3JSnCQk6Lm96rBFCB93opNuk5gyK2cU9FPr8vZQMgmsWUoIG7vcgReTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=1XAqNyxb; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583Cav0x002331;
+	Wed, 3 Sep 2025 15:13:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	RXR6l5zH9EuL6ygVcZdx0q8KXP/yLgdiG12ZI87yuuE=; b=1XAqNyxb4d0nLr+5
+	/nhC7xFCng4Jy7BmFmFwA/fpX3aQlJxJ5gqJ9vIIptA1g7UdVjnJkMSizX/xx1yt
+	uJqY1ad5BbFYKSNncLqKqzBvnraO1r5QNIjc/JtP59wmhkFekHmeVArisrcVmAmd
+	Mi4FpTXOJ8JLMyAlzf+J7sMUXkz8BrXcYvjkRr5/g2CKbLF0ASzOGFqDTZFyNzvL
+	zWWLtppycLqkRe0PccSj0f7qAByaCMOIMD8/KNC4vqvdA1hS0mOTjjpnG0Ykbz/y
+	Sc6Iy/gcH20DLowj/lHthmw5rXjWUAAz3BgYUCLzlGBttwwFTlmHbG6ZkxIQLX8N
+	okP9Og==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48ur6frhek-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Sep 2025 15:13:25 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DD40540045;
+	Wed,  3 Sep 2025 15:11:33 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D9020290800;
+	Wed,  3 Sep 2025 15:10:43 +0200 (CEST)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 3 Sep
+ 2025 15:10:43 +0200
+Message-ID: <59f25804-d310-4492-b95f-19c42cf3cd42@foss.st.com>
+Date: Wed, 3 Sep 2025 15:10:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CY8PR12MB7585:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34a99fbe-62d6-4227-d07b-08ddeaeb474b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cVRudGpUL3FhemxEMzM0TnFPeExKYitzYmt1b3dWdHpWRWFja044Z1pQamNS?=
- =?utf-8?B?WmlJbFl2YjlsL2J5NXU5SG9MbXM2bnJqT3l6K3doT3paajJjeXVwVjVpU3Rq?=
- =?utf-8?B?cTVXS1c4RjdnNFBhbTE3eC9ySkwrZURFaFBLNERSYWMrNlVEVkhxTDVqa0t2?=
- =?utf-8?B?S0RBb1lGdTUyK2lEbmxDUWtEby8wVkJNUFF1MUVGdzEvY1RuVUVGWllJTXlQ?=
- =?utf-8?B?OTZ0ZVB1R0FVVk5vc2ZydldYeFdlOW5zYURQOEVLV00xUTVvVkFyVHV3UlZV?=
- =?utf-8?B?VzVOQTVraU5mNGh2OEZncUpUSENHN29KWjc2cW1QRjRYM3YrSjEyQzlPN0Rq?=
- =?utf-8?B?ZTN2QWtMOXZXdnpvNnVYVVdoLzA5OTFPdmpsWno3VGg2bzdZc1JPbXFTS1lH?=
- =?utf-8?B?UWprQmhJL2F4RTV2SDlCMWtMSUdnbXFxMWxpSGU3bU9reStka1BuSy9qaTYy?=
- =?utf-8?B?OGphNFRLdTRaYVh1VGxiZWZXSHFodWFmRWxSUW5KQU0wS3NtOTNUSHMwdExV?=
- =?utf-8?B?ZS9MNUpESVVRNEFSSGF2THhGcGgvU0hEZkxVWVhwYTExUDFKMUxJM1N1a2NY?=
- =?utf-8?B?WXFXQ1hQZjRRelF3SHZiNi9OZXZPOFM4ZjU5MDg5VUk0blZBT0U5ejllUnpo?=
- =?utf-8?B?Z3NNMTBVOXJNV0ZCYml6UVVSdDJQSlJhVFFPNDhqREZlTFYvLzNMUlpuSXVK?=
- =?utf-8?B?US9JSlNjUEV6bWhzUmNkbmNlZng5UUs5T1dvek9zeUxXZm1nMDJYY2pOeVor?=
- =?utf-8?B?eGdLZzQ5VlZnUjQyQTRWWnE0emhGeGlXM2NCK0s4NDVxL1YvcjBMQkVnbU9E?=
- =?utf-8?B?TW9GU1pDN1FydVJoUmU1U29LNTFkeEh6V1ByM1NtaDQvdWkvWlZibEVWNURT?=
- =?utf-8?B?aVlEcFVibWNKSEFiQ3FCTjJrazArbzRLZGgvaXFwRG9rblB2UnFUU0tsd1VF?=
- =?utf-8?B?c1NCV3JLZ3FTZEpsNUo4QUVNVmlhcUg5d0J1RUVSNWNDUFNDa05SdzJmdXFI?=
- =?utf-8?B?RURHcTkzVzRyOFdzLzhKcUhlc253Qzh6TGcrZmluU2lOZGNIUmI4dmJHY0th?=
- =?utf-8?B?TGpiZVdvQmkvVkp2ZGVQS3FpQjhWZUZsRlhXUHJoVFYxc1hlNEFGeiszbHVs?=
- =?utf-8?B?TnZFT0o4RGtsNkFUVXZYZ2ZzcjdxZGg4WHpuUUxOd1FoR0s5QmN6Vjlwek12?=
- =?utf-8?B?TmN6Qm52STByaE1vUHZERmEySjNLZDhuVkJTZDBJMkY3Rm9hbHc4OFV3Ujc0?=
- =?utf-8?B?WlR1MGhzMGRIQjJjMFpLOEkvQ0hwdi8rQTdqdWNGYWd3dW45T0tmRlZoN1c1?=
- =?utf-8?B?QVlQL2NyL21yU3BBQ1gxWTFTTkdHdXJ6a3Biclo1TXFnMkNCZjVjSDV1Mk1K?=
- =?utf-8?B?MHFNdDhURTFLZ0JRN3AyTktxVUdSK2doZkliUTczYy9YV2ZuTUtGOHEybU9q?=
- =?utf-8?B?ZkVmNi9WeHpVLytRdFhkRGpPRW5UTVNUcWt1enZtMlVjS2xLMXIvYk1NTjIz?=
- =?utf-8?B?YlNDeHBqVXE5WkU2NzJoWkRWSmZnNko4ZDdoUStIUjdnWlc0U3JONXp0NTZk?=
- =?utf-8?B?dWVjK0J1UVdxaHU2Z01JUVFTOWcrOTczMXozRzV0M1YwT3FCUE5GKzVLMSt2?=
- =?utf-8?B?RS9SVE5mODJVcFozOXpnTi81ZWxYekNKNFFtaXZOUWlteldzUklCR2M5Z0Vp?=
- =?utf-8?B?Z1VaenpDM3ZBNzE5L2h4S1hYWHVWN3BUUFRJT2RlSWxia0lZVkR1RTNjbzBu?=
- =?utf-8?B?V3Q4cGt2a0pIYlEzbWUzdURsY2NFeWlZbENXSW9PcWN0NVJDMGM1SGlrcDR3?=
- =?utf-8?B?UHJBMkZneFB4QTR0RXJBYXF5Z3ZXUUIrTytaVnkzTGNPNHR6T3NZRHVwL3Rp?=
- =?utf-8?B?WmtQKzNDUURiazJ5Q0ppWlEzQU83T0JJMnJyZEhkMEE1TlpvMllQdlVJM3dR?=
- =?utf-8?Q?jM6sffDB2LU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bDAxSDRlOTZ6Rm84Y3ZUMEpIVGVBbzVYU3VvbjlGUlJwSmRBK0IxOTJtUWFx?=
- =?utf-8?B?bVRlMGh5RHl2VGtKZ2dRZjBGWTFld2hGeU0vR29UZCtsRndwLzlZM2lXV1gr?=
- =?utf-8?B?b2lOSlp1WWFTcTZFZ2JxQ2ZVQlBqRG5qUHp0UUlYMHBaVFVGZFUrRFlWcmpW?=
- =?utf-8?B?MTVyUTRqV29kdWU3ZW1xeTd2WHd2OGlMZHVVcFlHbnRPa0VUdDNaN1hJUmh0?=
- =?utf-8?B?aTNoYTBMV0FBcjN6RmZ4TUszeHhZeEYvN21BOTBaRDIvODFvTDZvL2hwTFk4?=
- =?utf-8?B?TWM5QUcyWlMvUm9VYXoyR1dTcncxT0I0YTF5UlVIMmZvVVluRG9WVGhORXJr?=
- =?utf-8?B?bVdrNnlVYUJyU1lOajd3UGZNVGNlSjNCdjN4ZE5YNEdETnA2YVFvQ0g0U1hS?=
- =?utf-8?B?aUJXSUZEL0RRazlvYmc2alBlTmRMRTZFWko4VG9qYlpaT1g0MWlEWXlzMHFz?=
- =?utf-8?B?cG9yZWZnblMvckZQYWVJVjU5Zk5pRGNwdDhXK3pMOTFpZ0xIbFA1cWEzVmR6?=
- =?utf-8?B?R3ZHTXdYdUsrZ0lJNEdHa05FcFhVRHZMQlZjN1hyejNEZWRhNUExOUVEYmNX?=
- =?utf-8?B?eTdNR2JwbTF6QWowVFpNekhSeW52Z09MN2VoRmlUaXEyQkUzMXRxdDljMC9E?=
- =?utf-8?B?VVNjZzNrNGR4K1NpV0pxTzZsSGcwYVRBVWR6eG9haTBjS2tndUYrQ1JyQzNm?=
- =?utf-8?B?MTRWMm5Wa2JQcFNVeDBrQU1md3kycHVUSFVyYTV2d2dNRlRWbWJEdUN5eVdV?=
- =?utf-8?B?YkZ1dnJPeklIajBWUC9XOXUwT3d2d0o4RjFiM0F3eEwyQ2NoUXE2My8xbitu?=
- =?utf-8?B?M1Q1c3BWNHVHK2VxRjIzS3hud2loRktCeGUzZWNQWXkxMzhNL3JvMzdkUjAv?=
- =?utf-8?B?bStxVEduMUtRb3FUS2pNNjJhK3VKaWZvcjVaT085TFFMTDYwekU1djFnLzhZ?=
- =?utf-8?B?MHZ6eTJVRHMyQTJOZG1KZ0c2SkQvbm1FbjNjNDRidnRDK053RHA2Y0JXTUsv?=
- =?utf-8?B?TklJWXdzbWJ2T0lvNG9kVnc4SVdrczBHN3lRRFhjVGdkRzhLKzBjNHJpazFn?=
- =?utf-8?B?U3ZlMVNzUTRFSTlVaVRSMUREajRqYU1jTXNJNEJsME9MUkNLS1VrL3JRcS9Z?=
- =?utf-8?B?U1RmTzNFZm1OQjYrNzZwUFZZbkFUQS9QVGtEQ2NhR2hLN055U09Lc1FuN1Rt?=
- =?utf-8?B?czl5L2t5L2VFRW0zcEdERUZLRkZzZ2VuODBZQmhQeEpyNXRRbVg0UDVvZXdM?=
- =?utf-8?B?K3Y1djhMbExuL2w2cnU2b0V5czhQRFpkTCtlZThpKzJxSWlZa0ZHck1HWEdR?=
- =?utf-8?B?alJxaVVxZVlHUG9pb0w0eTZXa1RWTEFQTlNiYUxnN0t5SEdWQ25sWCtUVkhW?=
- =?utf-8?B?K1NhRlNBZHFWd1VjaGovd2F6Q1RvNDVHdkN1b2s1VkVzMHhJN0dBYjZuWEp1?=
- =?utf-8?B?bkJybDhJYmhDcmROOFZsSFd3dWxMRXZvSFZvR2ttVGxLV29aTDY0Ulh4MkNv?=
- =?utf-8?B?R2w2K0UxTEtwdzdqNmpqQ3I3d0NqZFFNZ3NxK1d2Nnk4Y2ZOd2MwVVNMVFMv?=
- =?utf-8?B?ZGNNa2RMbGZPeWJCQlZMdmNnME1sdUdObXlkVmFwdmVWK3hqWno5QWl5Q0gw?=
- =?utf-8?B?bGRnT2VvVDQ4R2lQNFlsNlc1eUJJcGxGdkVLT1ZMOCt4RTduaWIwTDNIcm5U?=
- =?utf-8?B?eHFGeUhidHN2NWs0N2JBL2RKSUpjYk1BVStxSDVkaVM1QjhOR2JjVmlYdTFY?=
- =?utf-8?B?Znd1TmFoVml5ZGQwYkVlTHhvbHV4QThiREYyTXJpMXY5NVVwb2xGazZUOTFm?=
- =?utf-8?B?VTNpWVpGUWhMNGljckxyY0xNeFBLTEg5ajN6T1FPUnZBeTlBRklyWjNrR3Vm?=
- =?utf-8?B?ZWJuQ2plV1RLWnVPNi85aFZxZ2FIVGpsZzlJa3ZwR2pGbDBqTzlLL0RCdHM3?=
- =?utf-8?B?TjBxU3dydFVoVmZRQWs0cDFBQnA3SWV6OU5xbTQvSkFmNVJDL01vSGlOeDBw?=
- =?utf-8?B?aTdTdkJpV0p0UEU3MTFBelArQU5pSjNYc0VwWUZRbGJMTHV4T3hCR2dHWElG?=
- =?utf-8?B?QlBVc3JXbnp6ZnhVRHRlRXZKT2VacUdTMjVzWXM2eXJZdlJOMlFJU2sxREtW?=
- =?utf-8?B?VUp4ZmM4OUlndjFmZmdqWktkbEx0eDFTUy90SjEvb0FkRGNZTm4wYngrbm5n?=
- =?utf-8?Q?nNOmYU+MVBR6PY5+igToAzns3NERi7v1n5aJyXOQ9MM5?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34a99fbe-62d6-4227-d07b-08ddeaeb474b
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 13:10:39.2194
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LbB1hBLD48lOQD9RMC8Z79sEw5zxq9qe5WzP2AHxZ4ebSOP4MQ9q1VcbWpxkWAE0zsOh2hUWY0RFOrxbfkMlAQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7585
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] ARM: dts: stm32: add resets property to m_can
+ nodes in the stm32mp153
+To: Marc Kleine-Budde <mkl@pengutronix.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chandrasekar Ramakrishnan
+	<rcsekar@samsung.com>,
+        Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@pengutronix.de>, <linux-can@vger.kernel.org>
+References: <20250807-stm32mp15-m_can-add-reset-v2-0-f69ebbfced1f@pengutronix.de>
+ <20250807-stm32mp15-m_can-add-reset-v2-2-f69ebbfced1f@pengutronix.de>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20250807-stm32mp15-m_can-add-reset-v2-2-f69ebbfced1f@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_07,2025-08-28_01,2025-03-28_01
 
-On Wed Sep 3, 2025 at 9:51 PM JST, Alexandre Courbot wrote:
->> And it's all tightly coupled anyway - for example the Gsp boot arguments=
- require some
->> command queue offsets which are all pretty specific to the Gsp implement=
-ation.
->> Ie. we can't define some nice public API in the Gsp crate for "getting a=
-rguments
->> required for booting Gsp" without that just being "here is a struct cont=
-aining
->> all the fields that must be packed into the Gsp arguments for this versi=
-on",
->> which at that point may as well just be the actual struct itself right?
->
-> Which particular structure are you refering to?
+Hi Marc
 
-Ah, I guess that was about `GspArgumentsCached` and the message queue's
-`get_cmdq_offsets` method. For this I guess we can just have a
+On 8/7/25 08:09, Marc Kleine-Budde wrote:
+> On the STM32MP153 the m_cam IP cores (a.k.a. FDCAN) have an external
+> shared reset in the RCC. Add the reset to both m_can nodes.
+> 
+> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> ---
+>   arch/arm/boot/dts/st/stm32mp153.dtsi | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/st/stm32mp153.dtsi b/arch/arm/boot/dts/st/stm32mp153.dtsi
+> index 4640dafb1598..92794b942ab2 100644
+> --- a/arch/arm/boot/dts/st/stm32mp153.dtsi
+> +++ b/arch/arm/boot/dts/st/stm32mp153.dtsi
+> @@ -40,6 +40,7 @@ m_can1: can@4400e000 {
+>   		interrupt-names = "int0", "int1";
+>   		clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
+>   		clock-names = "hclk", "cclk";
+> +		resets = <&rcc FDCAN_R>;
+>   		bosch,mram-cfg = <0x0 0 0 32 0 0 2 2>;
+>   		access-controllers = <&etzpc 62>;
+>   		status = "disabled";
+> @@ -54,6 +55,7 @@ m_can2: can@4400f000 {
+>   		interrupt-names = "int0", "int1";
+>   		clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
+>   		clock-names = "hclk", "cclk";
+> +		resets = <&rcc FDCAN_R>;
+>   		bosch,mram-cfg = <0x1400 0 0 32 0 0 2 2>;
+>   		access-controllers = <&etzpc 62>;
+>   		status = "disabled";
+> 
 
-    fn new(cmdq: &GspCmdq) -> Self
+How those reset are handled at driver side ?
 
-constructor for `GspArgumentsCached` which grabs the information it
-needs from the queue and initializes itself. You would need to have this
-code anyway, it's just a matter of where we put it - inside a function
-of `gsp.rs`, or as a reusable (and easily replacable) constructor.
-
+regards
+alex
 
