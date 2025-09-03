@@ -1,148 +1,102 @@
-Return-Path: <linux-kernel+bounces-798852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E16B423E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E44B423EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 208DB5E17B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 843375E2ABD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CD32135D7;
-	Wed,  3 Sep 2025 14:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E4D215F5C;
+	Wed,  3 Sep 2025 14:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bd6FiEQT"
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TVW2HVwR"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE1F20B1F5
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890641E7C03;
+	Wed,  3 Sep 2025 14:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756910479; cv=none; b=Z9HqePKLYcvdA++cj3B1QIT0w8cyqJExscU5uzxyzni/yUCXBTtKs9KV4HX/BU/zy851Em0ARTwTt5/J66bAuhxUFzzOP5fStKhppl+6vKUKoOkFtxZXQ70Tm4t0KL7SrcUAe7NdD9OBZGSP9YkbA8+LapSVBubL1eYrK6GuW54=
+	t=1756910503; cv=none; b=PQ/hH5kxTwmZYqfpEmdZog26t7bE43Y7t2YRqgj1tfpT5+8EjnbrGb21pXvq9AGmqAWULA4aBUYUA/neu4XboJSmcMajZCVp4Z/biUS/cxlEOtq4nkYJ2ZGASe1kp7d8yjDxg/QjYPOxykcdMT3zZCblZcP71y3Ae8XCkasz9+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756910479; c=relaxed/simple;
-	bh=K3mFIWLIsG39oROp1dwXayOIKtKJ1h8fGBFQHAP7fgU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cRJUEBUtBSmh6ZPZePuj5PrFeeBP0PqmHW6emGZlblbp02R4hU/yCbjQesD/zwTcXLTT57S12cK3Rsb/P3cX2ne5rVWu5x8Y9079g3REHN10W7WRxihdv9BCmrG6njblESDqf3r7oED3hcKYketMCMYzo7se3lZO6VhysVNpuWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bd6FiEQT; arc=none smtp.client-ip=209.85.217.43
+	s=arc-20240116; t=1756910503; c=relaxed/simple;
+	bh=k4XdbAII5aXMNyNVG/VE7oL9lq52sejPpaShUA5rWlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=huhfmMKBHvDHnGB1YzbL1haSgXqq4gN9Qn6qAeqEgrXinq7BoXFBnWuXaJCA+PlCJvyADfMFkVjWGwsRXYMii2b06/czDGLNQienZcZGxPFOkyYQ0SBZ3un8OCOfsDH8Xd90g//QQG4rJdyOaG3DyzjmYLISMZoZy1BW6daA8CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TVW2HVwR; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-5332a040f08so92483137.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 07:41:15 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-249406d5878so247455ad.0;
+        Wed, 03 Sep 2025 07:41:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756910474; x=1757515274; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yyiEoT+mfYk4CeGhzX31QR1RtE0qWzCxT6Ooec2Q79Q=;
-        b=bd6FiEQTNDoCpvRqpnEsN//FjbLwszYAuiwVdGRKU0CSHyREtGgNRay1blkSU34dzT
-         TrJSN8DLTG0EA1Cpq87ve+Wx+bO4tfK4lO1RDNRlf5iJ3y7OfBWexTQ9npdcVvJ2pX0j
-         6MfMpm+56R7+nBssjvnZDfO6lQ9DMktuVvEBW/Ch7K88auLHTZrKV1HReVuvwg39l4fN
-         ZJwC9+TReM1NN9Udky6wEh/RFbtceYsEGee2TaJnevU9eYHgApRmyHQDddQj+v7hcI+I
-         m7vgZDPGJtm/DQWFBcLj7g+oWC5h88B72FyvCzugYYYVMcokSt/LuojCTx41UdwiYUvc
-         75Og==
+        d=gmail.com; s=20230601; t=1756910502; x=1757515302; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Ger7eRFWOnEDsWAy5uZiueTzoJglS49TKSLyDGmKwQ=;
+        b=TVW2HVwRMil8VYTQ7PJ/VEe3Yc6dzlJoVDB3r4YJYULKkdC6Hz2XAwMfWFB/bkcJd8
+         aHHq4rG64aLnlQI2IcxNgZ2YfC+ceVZYDD9dfi4OyyuIXsUnI66xnuKMAdYsIgHZ3f/o
+         ivIjIz9zBdBATb+bXtfVZe3f89AZhot2Pn2QSuUKQeDn49jC2MrONGbm2C7ErYT/n4uf
+         7KVK05DuCFz2ykKIzNYm1XRtrMmWwx0VVIKZO3Empr/Bxia/XowAayjqQ9XEBFiMui/4
+         4u9RXONqJQAv9YgGB9Q/+88zPIVLM43PvXY+fn9UUo/gpjoekDYf970D/6wuyzR5Ud01
+         6GKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756910474; x=1757515274;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yyiEoT+mfYk4CeGhzX31QR1RtE0qWzCxT6Ooec2Q79Q=;
-        b=GdIIa97paN9gI4+yCSnjjWfO3m2TmehSvV66QHn0uAcDevNJEexh0c7hONZC5cdOm4
-         XC+0vYEfooFykc7QZELdXEKV2afzRMiEl9t72v51g395ghbQuzJd677pJkoItaO4iQqR
-         ZnggMsUF4DUox9qNjlllhl3iIMiVEfEbSuAEjlBxij9sNJsq0v0T9CBNh/SYRwpxUrD+
-         xnO6jd2uy9qdMUvP1S/kuGafK4gG0TWnvy/moxyje4YqhjBjIy3BAOhjKL+eDISaUVAS
-         g+dSM0u5EBIprbZZQg8gGWWppwfTaUI8d28SDK55NONeA3pBE8tMEf/zyoboFBYqe2OI
-         fKUw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6ke5Km0put8vCjNPTFbqbMUcSykN66i/7PKJ66HgPh3rcqP+Sco8Q4JfNOPcqtxvmf/9J++nrnEpj4Fc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyodfPGFWwHr9F09YylNs/rogOn7df8yqK16JN7VjwBzyr6udil
-	2secgCRdBlFP21kNIm6JIn/7E31irYFTCExygRp761WpBUBb0Z6sXFhvjG7DN6OFMn/9SGQLFn8
-	gpmSFmtH6axy5BYGUPh/LnC8l5xUCBu/EXw==
-X-Gm-Gg: ASbGncseQISTsNsvdwM4olv1tHATzUABRJyQ3C4OcvBcOkCpHNjkfltEsanwPbdALDO
-	7nk/IcSpPAMdaszl+XtUGkyTHxenkdCPNsVU+9tdqKyYnOxjsrK/hjidYnuByOggfn4FttECcLM
-	qk8DgclVvR8yLUrv+x4WU1QvnxFAYmGafSSsMhaymTKRfFCaU19ehRxlP8JJlhUX1sdUVyZTPMk
-	vs8rK/WOe/1XoExLg==
-X-Google-Smtp-Source: AGHT+IEyh3Y9AxDCa/xdhhqWf1YCQxLzXKwd3gIYOmCkWoy3vTgqsxiRKeS/SpQwqq1y1LWALKzKaX246XyCeC9BWrI=
-X-Received: by 2002:a05:6102:4b8c:b0:525:53c5:e42c with SMTP id
- ada2fe7eead31-52a333c0215mr2108906137.3.1756910474393; Wed, 03 Sep 2025
- 07:41:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756910502; x=1757515302;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5Ger7eRFWOnEDsWAy5uZiueTzoJglS49TKSLyDGmKwQ=;
+        b=sj8MD0MkIl2gLZRgPzFHj/6dQt1/ilCtc9oG+RM0gZuleIBAEkQyjZnti8yn5ykhNA
+         ggURfcIewOSxgB8UYOlnG36ykDdiW7acvwX1LTK4utfL03Rbn3PtJijrjIouT1my7Rub
+         +7QG9cPI6G/TSkLInaF3td5EgC2MducaxHn/Pg35UXnlGSkeIRy4QeHObBs6Sor9cxe3
+         Sbs725G4QEdOkgxXToB52ytk7wps0dNP5mt9Pf2pyN/Dtc0SOEVsaKTZqUG3BKbLxN3b
+         A51RqeiuKLiQ2zMDMDAtYRl3M8vpgbJY695bKzVJBtBFXBJgyikopS25G8VNFSNULZoC
+         rRJw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8YmfoOltFHbNZ2AcB1vYUeCpNXbrQOm4qVnupXBCjA0AVR9siAuZk0WPrVcotw+bmInugYfcygOuBSg==@vger.kernel.org, AJvYcCWnLwbWI8QVjO/JAOXT+k3CkF73mcwZ90VcPzhGENN5jJB4sg3uLQo1ZnwCpVwIDHjXuq4IZde3i1Sy2NzE@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnCzoMcDQMroH3wsmgWRgTYD5ODTAJnGXmwy4MMtf3ahSWsvG6
+	E7FAzk0Ix4Tq20c6afkJBV1MzjCMqdqZUMk+gyFf8WgTSMQKllhyYKe+pb3TUeSU
+X-Gm-Gg: ASbGncu2QG04bgf3PZ8dAY3E1QRBuXCVePF20edqe9QwiJlTcaPGnkPbO19YCcHfxng
+	C4QOX+UkFF6oS/xCZ5KYIDVZtuM5j+ugXNKoRuvoyD4EFOON5LP7C3jxz1UMkuQsWsPrIKTcyvK
+	JUDxbrGgSauk2G+7+8RITt3c3frpktpH4RoHj2nJv/lnHsk4p/pmDg3hYKlvUgSkF+RhwwakUS3
+	d9AN7M5p2LkMpWCKpdxIRt5rsxQKKQjR9jfauJ4N+qpyctD33fdVd1kyN82xPvu9CYrPwrgihNN
+	tXgOTbcDG3TInby5jeCM6dbNfUnPPP7mt5oIvicTE1aPd3a97DYc5eya8HZAH4R7Wm5IXGJkAIN
+	wTOiqVDANMtY2sjjZp91hTnA=
+X-Google-Smtp-Source: AGHT+IFimwyJc/f9qeruGj8o1cjgUAE+cR2k36Kj1isZSiYtQPPHcXVP9wmEJKHkviN5FMCQxk6Awg==
+X-Received: by 2002:a17:902:d2c7:b0:248:ac4d:23a1 with SMTP id d9443c01a7336-24944a9b18fmr228175725ad.37.1756910501698;
+        Wed, 03 Sep 2025 07:41:41 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:dde1:b1e1:74ba:18b3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b2570cfb0sm43398915ad.139.2025.09.03.07.41.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 07:41:41 -0700 (PDT)
+Date: Wed, 3 Sep 2025 07:41:38 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, 
+	Andreas Kemnade <andreas@kemnade.info>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2 RESEND] input: touchcreen: tsc2007: make interrupt
+ optional
+Message-ID: <shoj2hck4xennpvobmao3ydelvlaedihs7i37e3gzkrzitn3lm@q25cfufuwg5y>
+References: <20250824091927.105121-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903122110.389182-1-rongqianfeng@vivo.com>
-In-Reply-To: <20250903122110.389182-1-rongqianfeng@vivo.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 3 Sep 2025 10:41:01 -0400
-X-Gm-Features: Ac12FXzy5Ri8tZm5mbQlpKXXZ-zKYmYlUUy60tQ2sW2evL2L32EL0ptBMza3kj4
-Message-ID: <CADnq5_MtZryr=DEuC7o2bKfEsyRi35=Tnw6ZaaoG84bvKRx5Ag@mail.gmail.com>
-Subject: Re: [PATCH] drm/radeon/ci_dpm: Use int type to store negative error codes
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250824091927.105121-1-clamor95@gmail.com>
 
-Applied.  Thanks!
+On Sun, Aug 24, 2025 at 12:19:25PM +0300, Svyatoslav Ryhel wrote:
+> In case tsc2007 is used as an ADC sensor there will be no interrupt
+> provided at all, so set up an interrupt only if one is present and
+> remove associated warning.
 
-Alex
+Applied the lot, thank you.
 
-On Wed, Sep 3, 2025 at 8:59=E2=80=AFAM Qianfeng Rong <rongqianfeng@vivo.com=
-> wrote:
->
-> Change the 'ret' variable in ci_populate_all_graphic_levels()
-> and ci_populate_all_memory_levels() from u32 to int, as it needs to store
-> either negative error codes or zero returned by other functions.
->
-> Storing the negative error codes in unsigned type, doesn't cause an issue
-> at runtime but can be confusing.  Additionally, assigning negative error
-> codes to unsigned type may trigger a GCC warning when the -Wsign-conversi=
-on
-> flag is enabled.
->
-> No effect on runtime.
->
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> ---
->  drivers/gpu/drm/radeon/ci_dpm.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/radeon/ci_dpm.c b/drivers/gpu/drm/radeon/ci_=
-dpm.c
-> index 7c3a960f486a..1f9f4424055a 100644
-> --- a/drivers/gpu/drm/radeon/ci_dpm.c
-> +++ b/drivers/gpu/drm/radeon/ci_dpm.c
-> @@ -3238,7 +3238,8 @@ static int ci_populate_all_graphic_levels(struct ra=
-deon_device *rdev)
->         u32 level_array_size =3D sizeof(SMU7_Discrete_GraphicsLevel) *
->                 SMU7_MAX_LEVELS_GRAPHICS;
->         SMU7_Discrete_GraphicsLevel *levels =3D pi->smc_state_table.Graph=
-icsLevel;
-> -       u32 i, ret;
-> +       int ret;
-> +       u32 i;
->
->         memset(levels, 0, level_array_size);
->
-> @@ -3285,7 +3286,8 @@ static int ci_populate_all_memory_levels(struct rad=
-eon_device *rdev)
->         u32 level_array_size =3D sizeof(SMU7_Discrete_MemoryLevel) *
->                 SMU7_MAX_LEVELS_MEMORY;
->         SMU7_Discrete_MemoryLevel *levels =3D pi->smc_state_table.MemoryL=
-evel;
-> -       u32 i, ret;
-> +       int ret;
-> +       u32 i;
->
->         memset(levels, 0, level_array_size);
->
-> --
-> 2.34.1
->
+-- 
+Dmitry
 
