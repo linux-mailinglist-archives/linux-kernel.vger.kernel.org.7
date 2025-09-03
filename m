@@ -1,131 +1,284 @@
-Return-Path: <linux-kernel+bounces-798156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D7FB41A1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:32:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7B7EB41A85
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C40A1561E31
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:32:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FB3F1BA0F51
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6FCD2AE66;
-	Wed,  3 Sep 2025 09:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1D8286D64;
+	Wed,  3 Sep 2025 09:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhfLccV8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VDz5hoW/"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2057.outbound.protection.outlook.com [40.107.236.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBF532F756
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756891958; cv=none; b=j6S6EwmPla5FQK3Zrybh4TJffgCbp3eZLcyWaOIonX/BoWpuK3vEjNBw7v1WvViVfLb1yMfXTiU2p+13ZOuSqXhZAq8qrM1qlssP2VfcVsSGzMn6mz+lOg5k/rzf76MtXz3jQMlGK02ECvrjsJR58e1zo3cnsd4Z36Qmhb+ciBQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756891958; c=relaxed/simple;
-	bh=QYNEiv8UzZcglF4OuHMoI1sYm9C7MmUjrT8VXMrcbjs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DeinTKAKCCaMGa4ykR4+W1PV6uVJOfgzzc2jbAAxDGPnP6HBjqVb4iAJIRHMHicPrnBG3YXxk9yKyc2nKTIYDHLPubOvLY+V8/i7sN9hFKckMVw2Ykh0/U/1sYsaYlUmHHmwli2ouBaLBRm3LWlqYEJ1DhSMeAEkgJIy1vyIXAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhfLccV8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE8EC116D0
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:32:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756891957;
-	bh=QYNEiv8UzZcglF4OuHMoI1sYm9C7MmUjrT8VXMrcbjs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qhfLccV8/Wbfuwadslg9tMoSbyC9NvfNemfzNfxSH06nEDnEN0sNAWr77z/XZ8n9J
-	 9VfNzkq4/ecF1fmyWEYvi+TEKFq8YzUvonjCkDUs9OAqZkgBBDCbe2gugiQYPpdaol
-	 X6b6WfUD71CUarVo/NS1fFB5p3xaogSGU6DU+p4va/RS1u0jfd3T0UwXKkF+ESNYh7
-	 Z9g4X1DWTGA0TnA39LqW/05YHGpCm9C9d65MPwAD8TYxHTOtJ8vuvUboATXt8PyvVg
-	 y/nAbH+p7iBztJIeDNbx4bkVnHUwusXDiQyKpxkSVTpwDSm2G4C+cG1rWD4c/4GUJS
-	 pdFRWp+53f01Q==
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71d6051aeafso56846137b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 02:32:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXM6gq6x6jAXuybem2W/PpT9HrzqSxmvYkxC9Tp11A1mXYOCTR9IohL3afZaBToqTglwNT/anPOG8Y+A1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqApTJWyxgwWMxeTqplCh+l3XggNg6qwcyhlNNnTR2skk/DgtB
-	cyG3a5Qjg8r+Cqen5BaIC/Apd2LEITeNzNoKrpYe9ZZMGXuYAAkyO83sb1T1lcdiOTklgcO0izx
-	VnORkUG9uH7n+Z4DzSXnoGlxxuWDcAc1gW+DTgHHflA==
-X-Google-Smtp-Source: AGHT+IHVyg4p5QR0RAptgKvMSgPMubewuNwv+4U8GLEeqLb+YipS9iGNECUENqyGY22+4BFCeDQZqDuyHgVV9qNx8gs=
-X-Received: by 2002:a05:690c:6d8c:b0:722:6a6c:c010 with SMTP id
- 00721157ae682-7227633350bmr137460257b3.8.1756891956703; Wed, 03 Sep 2025
- 02:32:36 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4A81B3935;
+	Wed,  3 Sep 2025 09:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756893030; cv=fail; b=uAUQIprN893cFtuBiLiNYA4K7VkHWeOElgXxJJRqiitt695BkCYbChmRTarEvfQ5HG/bh06EVab3hSGxtOSV+Qqd920B3hpp3AwSR2Ii9jPzYHtCJk3DYPcocHlJqAFp6WmBlFQOQfJxlfARAjpz3AH90ckUvUSDnvKeV+6qn0M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756893030; c=relaxed/simple;
+	bh=G7xuHvO1l2/o1z44+V/WrXCyLnopFQTXomoozYI/7wI=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=OzGR/A/fUdt11puJxVrEXs6rEQaucV/tEpaB0GfUjXOptJs3uN9JatH0yeSImHfdcLBwuOgWu3nD/OmxA1Kj8F5xUV5ER1J0yw7nCK02ziNKS2ZNoLkrZGp8JUHEOvQ6y3eiiEcxHjU+Uhx6Uhui+eZHnLH6bEJDr02M643U0Wg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VDz5hoW/; arc=fail smtp.client-ip=40.107.236.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LvUCFKuxUsvhBTnGslXG6aMVYYOPJwcFu4pT7wUGxO3yTBXr5jq536VpKwBuEmnEPw2CG10omZLjOuNOutMGcNgLEY56T3JlpuFYW0qlorQGVXd1lWn6N27ruTVV2cuyJ6ivI7VXRgErZYSzvkZ31Zc4Hl1riEuXUjmIaGT/M4nqNOGloBZsxq3sIlvPVyTvlptg7BEX89oLewRx5SlOZFkSgYKdRUt+6v+nrMxzrWzNu08L3oh3tmgMxiydp3zVjGJHoUqIIv1fyRVxiFWU79jsYLnl/c3asWQ9+iUWSraKvb2bZvBrDdNG2S7QzjYhakp0LEPGsWQLy4ivfCcgWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=med7YW+Db9Vgbl2dzImv5JRzllDllB5dGoBtHjC1qBA=;
+ b=nMF5LLQofT4b7GowMK12SbYZvaAGmqC/xv7JfsfzyDCsJeWSmr12BcnPlmIgzWOrpg7AyK9Suv/rz/+nO+x19n/FetReLhfDj4RtMlfyOLf4+nhVueL4AyMpmE0kow8Assl1gr0lwZmNwvmua3krV78ERFynl14CYsggr//P9MpWBCj70XT1k1/cRaabxi+hcPDrwuzF8ebBiynffsRn6FpIm4jRo4s87pYHigvWTBxoB4MEvgKFuUYMLFBy1KgjpBxe6EmBs+CyzEHXNI+hFdNjrTq/UzOhxslXEqcTl7DRJ0mKjC0z1Mxg3vu1u0Dh4+Ovk/RShAdZ+YELQDh0Bw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=med7YW+Db9Vgbl2dzImv5JRzllDllB5dGoBtHjC1qBA=;
+ b=VDz5hoW/W+6iC2kJA1nCv61T6bbWgBnmw4Dw4xD7xoEsUaztU4RhRNX4Z2bKPs1iJFio4iZjw3jUjbLp+lw4F/yba26KHHju0eBHLG4Rvn43OoTSRkHHu6kNMUmK7oqDTLhHedqcqPhzp9gcw/IRi01NmqUk3ouJHUDItLpHDWiD68pOC10pts/r/xW7SdTJE1on5IMhipTcQ46Y05TBzF5WdGPdDIyoUtFqCd1MRbdi8BXqEMkdTroxGC5/46nsP5KguBdbzoJyTQClAJbXosrRYZBseC3fxew2dO6ijcdlESilCaEUew+06wS8q/dTMN+U57D7LVOxpl0dVd71zQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by IA0PR12MB8983.namprd12.prod.outlook.com (2603:10b6:208:490::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Wed, 3 Sep
+ 2025 09:50:23 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.9073.026; Wed, 3 Sep 2025
+ 09:50:22 +0000
+From: Andrea Righi <arighi@nvidia.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>,
+	Shuah Khan <shuah@kernel.org>
+Cc: sched-ext@lists.linux.dev,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHSET v8 sched_ext/for-6.18] Add a deadline server for sched_ext tasks
+Date: Wed,  3 Sep 2025 11:33:26 +0200
+Message-ID: <20250903095008.162049-1-arighi@nvidia.com>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MI1P293CA0007.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:2::18) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aKgD7nZy7U+rHt9X@yjaykim-PowerEdge-T330> <CAF8kJuMb5i6GuD_-XWtHPYnu-8dQ0W51_KqUk60DccqbKjNq6w@mail.gmail.com>
- <aKsAES4cXWbDG1xn@yjaykim-PowerEdge-T330> <CACePvbV=OuxGTqoZvgwkx9D-1CycbDv7iQdKhqH1i2e8rTq9OQ@mail.gmail.com>
- <aK2vIdU0szcu7smP@yjaykim-PowerEdge-T330> <CACePvbUJSk23sH01msPcNiiiYw7JqWq_7xP1C7iBUN81nxJ36Q@mail.gmail.com>
- <aLJ4fEWo7V9Xsz15@yjaykim-PowerEdge-T330> <CACePvbW_Q6O2ppMG35gwj7OHCdbjja3qUCF1T7GFsm9VDr2e_g@mail.gmail.com>
- <aLRTyWJN60WEu/3q@yjaykim-PowerEdge-T330> <CACePvbVu7-s1BbXDD4Xk+vBk7my0hef5MBkecg1Vs6CBHMAm3g@mail.gmail.com>
- <aLXEkRAGmTlTGeQO@yjaykim-PowerEdge-T330> <CACePvbXAXbxqRi3_OoiSJKVs0dzuC-021AVaTkE3XOSx7FWvXQ@mail.gmail.com>
-In-Reply-To: <CACePvbXAXbxqRi3_OoiSJKVs0dzuC-021AVaTkE3XOSx7FWvXQ@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Wed, 3 Sep 2025 02:32:25 -0700
-X-Gmail-Original-Message-ID: <CACePvbU2iqLyjc2uR3d=56S4A-N4P7k3oUnwA-6D=TFfQ17jBA@mail.gmail.com>
-X-Gm-Features: Ac12FXybUwxod4Em_QKVug5j6Ua_Z4DLXXFTPr86WOiopqyMskJfrqtzgT6b41k
-Message-ID: <CACePvbU2iqLyjc2uR3d=56S4A-N4P7k3oUnwA-6D=TFfQ17jBA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-To: YoungJun Park <youngjun.park@lge.com>
-Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
-	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
-	bhe@redhat.com, baohua@kernel.org, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com, 
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com, 
-	Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, Kairui Song <ryncsn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|IA0PR12MB8983:EE_
+X-MS-Office365-Filtering-Correlation-Id: 88a0d202-a88e-46c8-3324-08ddeacf4ced
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zy7QepfzMk5TLKTD80tgE/REsxv26C+TA6LAm5pDU1dgjUJrq3AYOT+4yXYe?=
+ =?us-ascii?Q?3Z56OJBfZ4v1xiuvowy7SVuIIxQ+MSyijAQV9BcKTiK4CitsI+EvR5TYlK82?=
+ =?us-ascii?Q?fYID3hpVcoYUdf+nBeMzhM0ft07dwyqUo2c6bEweaQm90cNeuavd1n4KJBcY?=
+ =?us-ascii?Q?PaIuQlqbEOnTX6TvSKkZ4jnaCu2zEhFDrTbWuo+KmxvoiiYRzY4qmynvjWpp?=
+ =?us-ascii?Q?JtBMudJsSEiMHszJ2dr+vGbiLe8XUET1agQ/Wle3UuboZOFF6Y5yOh0X1UaI?=
+ =?us-ascii?Q?XCneRfKaF0B2goO7eGh8rhDBYRZiJrL1gf6IjfTd/iEylWwi48D4sihxUNo/?=
+ =?us-ascii?Q?uSJh43YpBdMtH+wPIzQzOOJY7psOUDWLZEtkT2zc1W/tV9SFLJzqkS2H7LbY?=
+ =?us-ascii?Q?kmWPFljm/KqQ+LvZyqmhYTGTaotfJNGa8RxbdlO6MNo5dA0TlVh2Sc2yrqvl?=
+ =?us-ascii?Q?w1XFBatb3HYALTM0PM06+RCiItz6bmYx9ttCkJwIokF9DYPlWZIX0EPW5rPS?=
+ =?us-ascii?Q?oOgD7SUSIo2qK3Q9DLHHDx5q0vWyyQtP0cIARCNgU0G9w/GmM9COzFO/O0MO?=
+ =?us-ascii?Q?mtWFz3uK/ixijQePU5JRtf9/aq7LbwJTxvJOpWq7n7JZum4WCAOTrwB/LovI?=
+ =?us-ascii?Q?XqdoyG+pTkv38U2P9mhiZ93PmUpivh/0FFNpDEK1UkupUSdEDj1Le78lCK4Q?=
+ =?us-ascii?Q?6kiT9wCBtQEozuBNUjm7SmWrbu2BXwrGBVlzsmK1LqRNctKdWuoMdgS5ipyX?=
+ =?us-ascii?Q?98tdk2yiU6+hJicygHnbpzZ/KvuMdKfi7jmEDd4IVGssNRuKlKWbsusR7R+Z?=
+ =?us-ascii?Q?bZdvBiGWLoxcCTUUDcF3Inu7xpS0y7VmiDGrmd907XM+iPLX3aQWfdCpaBfE?=
+ =?us-ascii?Q?M9k255uLEtZm0mZ56xHaRj1+NUD2hE5UGEMkFzz1uYYE1NnOljgyUBRHkvl6?=
+ =?us-ascii?Q?78I86AHK8baZqXcD7Anf7YpmYxuwO08PcgzL08RzKCt2oyzga18BjCeH/cCT?=
+ =?us-ascii?Q?n5lalC3nC6ffmXcOXy1Yc8Ru5TGZ01+Bq3/5e4jartthv/RZ6J/UAFcbHVR0?=
+ =?us-ascii?Q?lUQ7wn5Zbnty5VzNRKEskE2OVpFuR3LybIjUSOoBk6zXso9lTgdxDaHS8/ju?=
+ =?us-ascii?Q?KR7eQqlmnKRpotzswGSi9Nl7MrenPL1V41vTMJSJ2AoBclufZGJT8T/YfYhQ?=
+ =?us-ascii?Q?0Wu3qs/7E9YgnWksXLvj86oZHK8766d+/0zc+Y+YoSytP/TyD2+XXNlsCyqj?=
+ =?us-ascii?Q?J/LptvXNPZIgMxfXk+RJKUuXKqIFMo0pDK9QUYW7OCQ7wl+C+JILE9m2ScSq?=
+ =?us-ascii?Q?JMgm5kGtRE784IgWZZVSVaAROTZ1FEZRe0SsndZVrWOsoaGZ/7NiZ4T2+HWN?=
+ =?us-ascii?Q?+BgCF0oHHSrsEXViUjHO1q2jcGtBTHq1cYlpbNfCMKPtx9n5rx9EltoFN1s6?=
+ =?us-ascii?Q?prOTdK1EWQFZxaKdKjYrzfx3T+vhft8YqPbn/hlE+Qqk1k4lZdiCr8z/NAWh?=
+ =?us-ascii?Q?ezIM1pL8U/hbH/8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HgTUFM+hltKss/GfMvJlBb5+x8JvaPzr76RfHJva0qm/SdIK3gizjLxBzCHl?=
+ =?us-ascii?Q?AWrqyFHkSunZXN1fXf0OpGeJILPI2SRt28KfGHXBkkgeoVJW3w8mD1wfA//L?=
+ =?us-ascii?Q?CeqiNMrK0bm6YkutND7CzLWmx+C2GvPIxWY6n431BcU3raGtWa3Af7G/Zj6X?=
+ =?us-ascii?Q?a4jrwviejy2znSSITWZMfbE+hpNLHgKogjgyqayjm6ml5tlrl48BkNrbNZV2?=
+ =?us-ascii?Q?ijoP13rI49Ls4neUWtbBt2DS9YLZfQDeKLeD2ZbkRkTfpuvP/mhQPaAdTcfC?=
+ =?us-ascii?Q?24IFdncBMklzm9S1y9gM/sbEY7fbMnYNp3k02yX5x4fYrxPxC9fkUUxY2Tf+?=
+ =?us-ascii?Q?ydMlcdAiSIYLGp53gir6oMksyw+DoYEnynKGKa1+OaKlUlu8NNUbiivus3UK?=
+ =?us-ascii?Q?wRvrOGdqBNwiiP5YojFeH8MLrnWbQEyU2lr9QqMPKONwLCZ84UXLbPpGRysZ?=
+ =?us-ascii?Q?oXijA2if0fpgUmlILPwMu6aFBiSUyflep2C1/goe/7Dgnt+J9ezqdBmrJXoe?=
+ =?us-ascii?Q?3Pf29P5mmlt8MCt9UlEOralfimbYHRI50KCkj+XtRErvwseg/aaTYgz9KD1B?=
+ =?us-ascii?Q?40pGO3XBc2LmtZCBF6hcZB20n8lQA+FPX0QBz6aHLxXX0VEbckCeFThTvXzw?=
+ =?us-ascii?Q?mIbuVK/g3O81kq38kZ9Upft3k6CQtsA4OOLN6nZZFyDjOLnw38ePZs50KUzO?=
+ =?us-ascii?Q?3+HRUw1JjCho9QCVFrqUYsFngqFoUNSGfVbESNqPwyWwnQbMSQ2O628Bf5BA?=
+ =?us-ascii?Q?QvOcBpWRvzBjIhUJhKdB2w9Qe6VJOu2Z3P2boV7mg3qzg7bqJ6H8uVwWmQEy?=
+ =?us-ascii?Q?+dTeIjf8OWj9UeBbMU5AyfY39P6yklewKKNMOVLxTUpAMHHS98sM6GgwXxmy?=
+ =?us-ascii?Q?2zfxWHk6RPpIihKTzzAGCwbJPy4ZBr0sW+9t8iErgtyYRzUm3eOuLtpYSAPt?=
+ =?us-ascii?Q?TCQ4JZbhrsXaOXREg1LyUOLV2TbtVzObbrvs4xep1+RkPtIsgMVGG4FkqZB2?=
+ =?us-ascii?Q?QBX36OfsxsaFR+CFc3eJPnJdyEg4GrNCrNnpRdjbQx+TFFKdIae9nWpqS4rt?=
+ =?us-ascii?Q?GbknuH6FsEpNiKH0WtHN68aINofKof28ioOzm7AT6Jr4US+5hTVa8j9ufTbD?=
+ =?us-ascii?Q?cUDTh92fL1m20PNmZhAbOsEH6zsEiVKqTfKFVO8zGKmdtb9QYfcCWX/sQTav?=
+ =?us-ascii?Q?8K4IV3FelRSUC88cYFY59KyQlFBD6emXiKAu+IL4+BavEUa1NuHWlNctAmG4?=
+ =?us-ascii?Q?bP/PXkuhAC2oweYxn0kfQz2VuqhWPBHSDHbbH1htwZkjTYqPhpjTYlT33nAV?=
+ =?us-ascii?Q?RBDbOOJCB3gHFWrS09gqy7WMU2ImFjqAYEd7q5OMloB5+rQdyEXgzuD4rinF?=
+ =?us-ascii?Q?Gq+icH58SfLbbTr96hD+pRWRBshV+fp7s/ezrIFVGUBrbGBUoRavLT1LdjCM?=
+ =?us-ascii?Q?jNht+fsIjemsRvyRGG4YOlZxxeNnTuviA6AlfLjGQoD+Dn9/ecpbYWYN9hOP?=
+ =?us-ascii?Q?WHQujEPEfohsmxmWRwK5687M/92yx+492Yd+mJjxBwhQd4BCJwNoAl9IrRH7?=
+ =?us-ascii?Q?JTZM84nxFL9greW0U9UTEBhFxB1Hshu6XmLHHFOI?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88a0d202-a88e-46c8-3324-08ddeacf4ced
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 09:50:22.8878
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JT+ZyIYMRWqckzItTSsWCvvJHzlLS0so7cEE4xYsw+TysqIgCUNJ0eC71VIUedpeV2jniUPnzSj+BJtid0oY7A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8983
 
-On Mon, Sep 1, 2025 at 3:40=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
-> You are missing the fact that you need to track two sets of the tier mask=
-.
-> the "swap.ters" is a local tiername you need to track. Default is empty.
->
-> The runtime tier set is the local tier mask walk to the parent, and
-> collect all parent local bitmasks and aggregate into an effective set.
-> The effective tier bitmask is used as the swap allocator.
->
-> What you purpose still has the same problem at:
-> 1) parent "- +ssd"
-> 2) child "' # same as parent.
->
-> If we do what your proposal is. Child will have "ssd" on the bit mask
-> at creation
-> When parents remove the "ssd". the child will keep having the "ssd".
->
-> In  my original proposal, if a parent removes ssd then the child will
-> automatically get it as well.
->
-> I am not happy that you keep introducing change to my proposal and
-> introduce the same buggy behavior again and again. Please respect my
-> time, I am spending my long weekend writing an email to you. Please
-> don't introduce the same bug again just for the sake of changing
-> behavior. Be careful and think through what you are proposing.
+sched_ext tasks can be starved by long-running RT tasks, especially since
+RT throttling was replaced by deadline servers to boost only SCHED_NORMAL
+tasks.
 
-Please accept the sincere apology from me.  I was grumpy, sorry about
-that. I was under pressure to be somewhere else but this email is
-taking longer than I expected to write. I let my bad temper get the
-better of me and I am sorry about that.
+Several users in the community have reported issues with RT stalling
+sched_ext tasks. This is fairly common on distributions or environments
+where applications like video compositors, audio services, etc. run as RT
+tasks by default.
 
-You might not have realized that the proposal you made has the same
-kind of buggy behavior for the usage case where the change of the
-parent and the child gets it.
+Example trace (showing a per-CPU kthread stalled due to the sway Wayland
+compositor running as an RT task):
 
-One side note, I do want to rate limit the new proposals I have to
-defend against. On the other hand, when you make a proposal to change,
-you have no way to predict where I will consider it good or bad.
-Otherwise we don't need to have this discussion. My hash reply is
-uncalled for and I realized that now.
+ runnable task stall (kworker/0:0[106377] failed to run for 5.043s)
+ ...
+ CPU 0   : nr_run=3 flags=0xd cpu_rel=0 ops_qseq=20646200 pnt_seq=45388738
+           curr=sway[994] class=rt_sched_class
+   R kworker/0:0[106377] -5043ms
+       scx_state/flags=3/0x1 dsq_flags=0x0 ops_state/qseq=0/0
+       sticky/holding_cpu=-1/-1 dsq_id=0x8000000000000002 dsq_vtime=0 slice=20000000
+       cpus=01
 
-I am over it now, let's put this behind us and continue our discussion.
+This is often perceived as a bug in the BPF schedulers, but in reality they
+can't do much: RT tasks run outside their control and can potentially
+consume 100% of the CPU bandwidth.
 
-Best regards,
+Fix this by adding a sched_ext deadline server as well so that sched_ext
+tasks are also boosted and do not suffer starvation.
 
-Chris
+Two kselftests are also provided to verify the starvation fixes and
+bandwidth allocation is correct.
+
+This patchset is also available in the following git branch:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/arighi/linux.git scx-dl-server
+
+Changes in v8:
+ - Add tj's patch to de-couple balance and pick_task and avoid changing
+   sched/core callbacks to propagate @rf
+ - Simplify dl_se->dl_server check (suggested by PeterZ)
+ - Small coding style fixes in the kselftests
+ - Link to v7: https://lore.kernel.org/all/20250809184800.129831-1-joelagnelf@nvidia.com/
+
+Changes in v7:
+ - Rebased to Linus master
+ - Link to v6: https://lore.kernel.org/all/20250702232944.3221001-1-joelagnelf@nvidia.com/
+
+Changes in v6:
+ - Added Acks to few patches
+ - Fixes to few nits suggested by Tejun
+ - Link to v5: https://lore.kernel.org/all/20250620203234.3349930-1-joelagnelf@nvidia.com/
+
+Changes in v5:
+ - Added a kselftest (total_bw) to sched_ext to verify bandwidth values
+   from debugfs
+ - Address comment from Andrea about redundant rq clock invalidation
+ - Link to v4: https://lore.kernel.org/all/20250617200523.1261231-1-joelagnelf@nvidia.com/
+
+Changes in v4:
+ - Fixed issues with hotplugged CPUs having their DL server bandwidth
+   altered due to loading SCX
+ - Fixed other issues
+ - Rebased on Linus master
+ - All sched_ext kselftests reliably pass now, also verified that the
+   total_bw in debugfs (CONFIG_SCHED_DEBUG) is conserved with these patches
+ - Link to v3: https://lore.kernel.org/all/20250613051734.4023260-1-joelagnelf@nvidia.com/
+
+Changes in v3:
+ - Removed code duplication in debugfs. Made ext interface separate
+ - Fixed issue where rq_lock_irqsave was not used in the relinquish patch
+ - Fixed running bw accounting issue in dl_server_remove_params
+ - Link to v2: https://lore.kernel.org/all/20250602180110.816225-1-joelagnelf@nvidia.com/
+
+Changes in v2:
+ - Fixed a hang related to using rq_lock instead of rq_lock_irqsave
+ - Added support to remove BW of DL servers when they are switched to/from EXT
+ - Link to v1: https://lore.kernel.org/all/20250315022158.2354454-1-joelagnelf@nvidia.com/
+
+Andrea Righi (6):
+      sched_ext: Exit early on hotplug events during attach
+      sched/deadline: Add support to remove DL server's bandwidth contribution
+      sched/deadline: Account ext server bandwidth
+      sched/deadline: Allow to initialize DL server when needed
+      sched_ext: Selectively enable ext and fair DL servers
+      selftests/sched_ext: Add test for sched_ext dl_server
+
+Joel Fernandes (9):
+      sched/debug: Fix updating of ppos on server write ops
+      sched/debug: Stop and start server based on if it was active
+      sched/deadline: Clear the defer params
+      sched/deadline: Return EBUSY if dl_bw_cpus is zero
+      sched: Add a server arg to dl_server_update_idle_time()
+      sched_ext: Add a DL server for sched_ext tasks
+      sched/debug: Add support to change sched_ext server params
+      sched/deadline: Fix DL server crash in inactive_timer callback
+      selftests/sched_ext: Add test for DL server total_bw consistency
+
+Tejun Heo (1):
+      sched/deadline: De-couple balance and pick_task
+
+ include/linux/sched.h                            |   2 +
+ kernel/sched/core.c                              |  17 +-
+ kernel/sched/deadline.c                          | 152 +++++++++---
+ kernel/sched/debug.c                             | 161 ++++++++++---
+ kernel/sched/ext.c                               | 175 ++++++++++++--
+ kernel/sched/fair.c                              |   4 +-
+ kernel/sched/idle.c                              |   2 +-
+ kernel/sched/sched.h                             |  15 +-
+ kernel/sched/topology.c                          |   5 +
+ tools/testing/selftests/sched_ext/Makefile       |   2 +
+ tools/testing/selftests/sched_ext/rt_stall.bpf.c |  23 ++
+ tools/testing/selftests/sched_ext/rt_stall.c     | 214 +++++++++++++++++
+ tools/testing/selftests/sched_ext/total_bw.c     | 281 +++++++++++++++++++++++
+ 13 files changed, 968 insertions(+), 85 deletions(-)
+ create mode 100644 tools/testing/selftests/sched_ext/rt_stall.bpf.c
+ create mode 100644 tools/testing/selftests/sched_ext/rt_stall.c
+ create mode 100644 tools/testing/selftests/sched_ext/total_bw.c
 
