@@ -1,94 +1,95 @@
-Return-Path: <linux-kernel+bounces-799045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF1DB42643
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72DBBB42642
 	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62C937B25A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:08:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14B1D3B391D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F562BD580;
-	Wed,  3 Sep 2025 16:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195E52BD587;
+	Wed,  3 Sep 2025 16:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OGIcL53j";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3GgwWeT6";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A2oJl7rd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EIDC7OUi"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uUnhmb59";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lQbHs7/a";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uUnhmb59";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lQbHs7/a"
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D5A1E4AE
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 16:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896562BD01E
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 16:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756915817; cv=none; b=DzANhVI5EAXiifWyuCGOE4Gl9j6219Wva1TkhezkEb8h8XvloKKca3MkuNkIxKgPO5orrJSYcC7C8sHZMBWX1sBUIC/3TzvSONPFcDcnypxpWuVf7r2COYgwlo20zfS9fElaJIoJg2uuiX+xZHZMGXxI+5eXgXuiSMc4XOu811s=
+	t=1756915830; cv=none; b=YoTb/SCrso+c3hHuGJ4e4TL5yT1GTP9t9U/mSgew6BcKyj+3HHWQh28TCM91LfOgNWgCpAOxpyyLfeCw8jf67Ij6+ByvJNMSChIhIhlL0JXcwW3fxsyt2203Xy4Z2W5Hgxl5fZbpLwa7xVM08wPF42P5rT2Lsgqg5iSitvt3FWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756915817; c=relaxed/simple;
-	bh=4gw1rl+qD/XYefTx1JVRp9O5GIn7t2IA0hP29y9oL/4=;
+	s=arc-20240116; t=1756915830; c=relaxed/simple;
+	bh=Kk36VwaNEalTPbWrXX15E36PETVs5Xbqy6QkoFBz/0I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MiNeJVT22Qt0gImNwiXP9V3csbPKgU3yLczHmtFJQlCbExV7valcqz8mZP/uNjKejk2Ya4ICMkcQrrfYhKJnu7wyC1eiWcnqggFFAIO0HKgcBi535J+2uWyxm7s16IoAIf2/JZCwHp18TRY44QtPOECFMD2znKluvZifRZiOinw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OGIcL53j; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3GgwWeT6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A2oJl7rd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EIDC7OUi; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=fuhPEinkl9OedY07g/P+TH1NDTrcX2YrFx/q/6y26rPkbGoo1hW++ckWi4FkWbXkhnCJpOIsn0ZizDn27PGdbzheF65Obo3Ozg2gfEEpP8qfnerzCAL4UICoGhr7lDBcjmRx80BpOlXG6sk/fRbb0rd6n3Nb3GQ+lvzHOcbgYQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uUnhmb59; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lQbHs7/a; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uUnhmb59; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lQbHs7/a; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DFB7F211CD;
-	Wed,  3 Sep 2025 16:10:10 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8B41F211D4;
+	Wed,  3 Sep 2025 16:10:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756915811; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1756915826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4kFdrcOpazHZrThB6UJlu0enSEY95qx9lQ2QWGdUPhM=;
-	b=OGIcL53j2wIBWIy54VCWoJGMfkKi/rFapnhivXM5JN09scRlkfxsd4QHOkAcYJA1XCnYQj
-	58xyukuIpX7sDl+6ZGFaoSHsgmNswxgPppitKUUDJK//bdhQdfMB3voDuMec8RydYuQf4o
-	q9OT1xvFRG0890fodzUv+ozADHUZq38=
+	bh=h97e+xHdu6d6LbXnSe4e6A6MWQJlLX6y/dA1iEDnMTg=;
+	b=uUnhmb5951oPr+lmOQkqf9TMWNBXHqh0GqJOAsJ9nD13Is+8ymMDEI8LyQRVNUh35zpona
+	EM3da9AuX3Fp+3v+B4inWjMzLUfU6SFxLCeCTji6wO+9/QBp95Mkads+kSJKLuTqFWEtjO
+	QA59T5sdzDuBg042i34Us7ZuI30yAxw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756915811;
+	s=susede2_ed25519; t=1756915826;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4kFdrcOpazHZrThB6UJlu0enSEY95qx9lQ2QWGdUPhM=;
-	b=3GgwWeT6M3RfdoReY85K7sr7KrAarVPqpyKxSf3A6k+WmBUnwRi/HBOjqt9XhS+wMQ02M3
-	guqz+AIlSCAjpqAw==
+	bh=h97e+xHdu6d6LbXnSe4e6A6MWQJlLX6y/dA1iEDnMTg=;
+	b=lQbHs7/aPFGREwi6ClboaSdsHNgjEN7oCrj+2NKsGaQYYI8Sn0elYTdTFHAjPY73D74TFv
+	vXDaNWkFFy7nYVDw==
 Authentication-Results: smtp-out1.suse.de;
-	none
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=uUnhmb59;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="lQbHs7/a"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756915810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1756915826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4kFdrcOpazHZrThB6UJlu0enSEY95qx9lQ2QWGdUPhM=;
-	b=A2oJl7rdUeSEENGB3+o6WQU/LWh4bphI9pqf+AyoMyp+7gEM4nr7ADKgHea+I2fzt7AadF
-	sE3BoUHP6x10CKb7cAZQm7HEEJ8VfVYCADWc3fbiq2Fv2aWEnl4w9Bajr9p36NIjBm2Kuj
-	VsExHBQiuOZW0Yx7CzycsQSJaHPgLGQ=
+	bh=h97e+xHdu6d6LbXnSe4e6A6MWQJlLX6y/dA1iEDnMTg=;
+	b=uUnhmb5951oPr+lmOQkqf9TMWNBXHqh0GqJOAsJ9nD13Is+8ymMDEI8LyQRVNUh35zpona
+	EM3da9AuX3Fp+3v+B4inWjMzLUfU6SFxLCeCTji6wO+9/QBp95Mkads+kSJKLuTqFWEtjO
+	QA59T5sdzDuBg042i34Us7ZuI30yAxw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756915810;
+	s=susede2_ed25519; t=1756915826;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4kFdrcOpazHZrThB6UJlu0enSEY95qx9lQ2QWGdUPhM=;
-	b=EIDC7OUibeJ1NT1YVW7XMCD+kJt6I/bqMcSyuhDOPJus1hos9HVVjZltrl/ePOPK+6m7dH
-	HwG9Y2U+9D6Mr8Cw==
+	bh=h97e+xHdu6d6LbXnSe4e6A6MWQJlLX6y/dA1iEDnMTg=;
+	b=lQbHs7/aPFGREwi6ClboaSdsHNgjEN7oCrj+2NKsGaQYYI8Sn0elYTdTFHAjPY73D74TFv
+	vXDaNWkFFy7nYVDw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BA2F913A31;
-	Wed,  3 Sep 2025 16:10:10 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7345A13A31;
+	Wed,  3 Sep 2025 16:10:26 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qxcdLWJouGjtdQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 03 Sep 2025 16:10:10 +0000
-Message-ID: <b1b683e7-e191-4487-b549-79a57986c670@suse.cz>
-Date: Wed, 3 Sep 2025 18:10:10 +0200
+	id jc3TG3JouGgFdgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 03 Sep 2025 16:10:26 +0000
+Message-ID: <960bcc7b-2d48-4709-b6c3-4048b32c46fe@suse.cz>
+Date: Wed, 3 Sep 2025 18:10:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,8 +97,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] mm/show_mem: Dump the status of the mem alloc
- profiling before printing
+Subject: Re: [PATCH v3 2/2] mm/show_mem: Add trylock while printing alloc info
 Content-Language: en-US
 To: Yueyang Pan <pyyjason@gmail.com>, Suren Baghdasaryan <surenb@google.com>,
  Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
@@ -106,7 +106,7 @@ To: Yueyang Pan <pyyjason@gmail.com>, Suren Baghdasaryan <surenb@google.com>,
  Shakeel Butt <shakeel.butt@linux.dev>, Usama Arif <usamaarif642@gmail.com>
 Cc: linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org
 References: <cover.1756897825.git.pyyjason@gmail.com>
- <d7998ea0ddc2ea1a78bb6e89adf530526f76679a.1756897825.git.pyyjason@gmail.com>
+ <4ed91296e0c595d945a38458f7a8d9611b0c1e52.1756897825.git.pyyjason@gmail.com>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -147,64 +147,82 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
  dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
  m6M14QORSWTLRg==
-In-Reply-To: <d7998ea0ddc2ea1a78bb6e89adf530526f76679a.1756897825.git.pyyjason@gmail.com>
+In-Reply-To: <4ed91296e0c595d945a38458f7a8d9611b0c1e52.1756897825.git.pyyjason@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
+X-Spamd-Result: default: False [-3.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
+	MX_GOOD(-0.01)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCPT_COUNT_TWELVE(0.00)[13];
 	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FREEMAIL_TO(0.00)[gmail.com,google.com,linux-foundation.org,suse.com,cmpxchg.org,nvidia.com,linux.dev];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email]
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 X-Spam-Flag: NO
 X-Spam-Level: 
-X-Spam-Score: -2.80
+X-Rspamd-Queue-Id: 8B41F211D4
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
 On 9/3/25 13:16, Yueyang Pan wrote:
-> This patch prints the status of the memory allocation profiling
-> before __show_mem actually prints the detailed allocation info.
-> This way will let us know the `0B` we saw in allocation info is
-> because the profiling is disabled or the allocation is actually
-> 0B.
+> In production, show_mem() can be called concurrently from two
+> different entities, for example one from oom_kill_process()
+> another from __alloc_pages_slowpath from another kthread. This
+> patch adds a spinlock and invokes trylock before printing out the
+> kernel alloc info in show_mem(). This way two alloc info won't
+> interleave with each other, which then makes parsing easier.
 > 
 > Signed-off-by: Yueyang Pan <pyyjason@gmail.com>
 
 Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
 > ---
->  mm/show_mem.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  mm/show_mem.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
 > diff --git a/mm/show_mem.c b/mm/show_mem.c
-> index ecf20a93ea54..fd85a028a926 100644
+> index fd85a028a926..e9701d07549b 100644
 > --- a/mm/show_mem.c
 > +++ b/mm/show_mem.c
-> @@ -427,7 +427,8 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
+> @@ -421,7 +421,9 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
+>  	printk("%lu pages hwpoisoned\n", atomic_long_read(&num_poisoned_pages));
+>  #endif
+>  #ifdef CONFIG_MEM_ALLOC_PROFILING
+> -	{
+> +	static DEFINE_SPINLOCK(mem_alloc_profiling_spinlock);
+> +
+> +	if (spin_trylock(&mem_alloc_profiling_spinlock)) {
+>  		struct codetag_bytes tags[10];
+>  		size_t i, nr;
 >  
->  		nr = alloc_tag_top_users(tags, ARRAY_SIZE(tags), false);
->  		if (nr) {
-> -			pr_notice("Memory allocations:\n");
-> +			pr_notice("Memory allocations (profiling is currently turned %s):\n",
-> +				mem_alloc_profiling_enabled() ? "on" : "off");
->  			for (i = 0; i < nr; i++) {
->  				struct codetag *ct = tags[i].ct;
->  				struct alloc_tag *tag = ct_to_alloc_tag(ct);
+> @@ -448,6 +450,7 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
+>  						  ct->lineno, ct->function);
+>  			}
+>  		}
+> +		spin_unlock(&mem_alloc_profiling_spinlock);
+>  	}
+>  #endif
+>  }
 
 
