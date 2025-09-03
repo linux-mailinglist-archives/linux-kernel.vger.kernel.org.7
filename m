@@ -1,212 +1,133 @@
-Return-Path: <linux-kernel+bounces-798090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A6EB41963
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:58:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E43B418EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 442351B21223
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:57:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989485E4625
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD5B2F28F4;
-	Wed,  3 Sep 2025 08:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B942EC540;
+	Wed,  3 Sep 2025 08:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FOYvRcAa"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="GGqHvE0n"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7080B2F2903
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FC52E1C64;
+	Wed,  3 Sep 2025 08:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756889768; cv=none; b=UWQQ3OrthREVt3dEonV5mMz+eizyNnXW5pVEk6H7u76DI+nOTRKhji14X1MQ+VB1/Srau3Sfat9zV9vevMKBhP4IDyrbgL57haClDmqIPFH/H2MFdrl0JYg+sa2kPRxV39cTCOM6O4vP4pDBCtCAk4We/C5Sw5tjchpfvaES+Rg=
+	t=1756888972; cv=none; b=SQkWeg+n2oE5d5/1JhQZYega/Dp+gczJqZVeQCP42igbf+gfg62Hr3fUiq7zQqpapdhhIJQ96OL1pCPuvKmPvxKoUFtIb0o7KKcoLiorGurXAIGinzY6RDJlZwlPbGll71O/GIHC0sQd7tfW9nLSQ5lqPOfxzU0Ke3vpfX6IRmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756889768; c=relaxed/simple;
-	bh=268Ct99JjtUApKF9A6vpxfxU1JCp/9r8U9S08u1M2zg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=V0VZcJJUxEfVyFxqgRvBqhXQqy1xcp/uhfaXurhNVpsexUWPbrAH1tV1K7Hw7U3BjvHombU4O0tyjolOiKj5tfQQuuYBPrlqiHDOZLPXXrFKKjEp+/NbQuizZqCRyKM66mgjwB7Uh9Y47YbYa17dgU+P6SboqwSEOqs3WUavA6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FOYvRcAa; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250903085556epoutp0311cde22019ce392dfbb0fe1753b27a9c~huezjAWyD1650916509epoutp03h
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:55:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250903085556epoutp0311cde22019ce392dfbb0fe1753b27a9c~huezjAWyD1650916509epoutp03h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756889756;
-	bh=bA76rll/wXeKqMGIRxAZgS5mWnhgMeLsw86yBouXkGc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FOYvRcAa68wNooeH/Z3AJA/PWBgcnBOqFi/7Cz01ijBMVqcloJEe3odUurCJU4w5I
-	 eYqRF3sOTHowu3wjvlK4vE+gIKJahjeZA98DFjkzHiNpsOC+rB1GF7QxqdhkdWsszw
-	 0HtbzwOaCCeQ1GQtaWgOepVgUwW/agYKt5Zd0fVQ=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250903085556epcas5p3308bab41b8ae1bbe946b8cee7e35adf8~huezRTXL52834228342epcas5p3F;
-	Wed,  3 Sep 2025 08:55:56 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cGxKR31lBz3hhTJ; Wed,  3 Sep
-	2025 08:55:55 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250903084608epcas5p19a0ad4f0d1bad27889426e525d0c4598~huWQIIitD1722017220epcas5p1q;
-	Wed,  3 Sep 2025 08:46:08 +0000 (GMT)
-Received: from node122.. (unknown [109.105.118.122]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250903084608epsmtip2836f174f83877da7399e25e322ef2ca3~huWPXdGwN0822408224epsmtip21;
-	Wed,  3 Sep 2025 08:46:08 +0000 (GMT)
-From: Xue He <xue01.he@samsung.com>
-To: yukuai1@huaweicloud.com, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com
-Subject: Re: [PATCH] block: plug attempts to batch allocate tags multiple
- times
-Date: Wed,  3 Sep 2025 08:41:35 +0000
-Message-Id: <20250903084135.2860-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <345e9d6e-8bb2-3d43-4c3c-cc16fa7dd8c1@huaweicloud.com>
+	s=arc-20240116; t=1756888972; c=relaxed/simple;
+	bh=AnX3Nm/Hvm5UD05uWR99Rsk/kTDou0vWJ9s+CdVO7EI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dhgkE2yJocg3Dc4zQnFBGXRc+4n45dhdd2oVMw2g1WE1JLxIBuZsbuhA5hqJnhUa2Ili5UjiyWMo2j1Jr5WvjhCAZ+2QdYnQlvQVAnxGcUQSN73OqD9J+qLh7BOs32IrU5flt8zZ5mfC+KzyV2kMNGSTIq6ECmSAuvpHNKoxI5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=GGqHvE0n; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=OPb6tBH44k/DmMeysehj8wmGKP+Wv+tsELAL90Q2HU8=; b=GGqHvE0nnxpvT2q3PVKrLRxuMT
+	36WB26N/KclLNsfgzayFFOrz4nm1X1uurjJXwMXTRKYKKSlW3Q0eBgleYaRg8Fl37MmviC9w3zrdj
+	7MLqQP3BjVE7zpFyGnQoza0EnAZY4BHbNR0vY9eAId/6Kt22XOlzOszlkwakwhIIwE3Fn7l8nSU+s
+	sl2wZWZQINb/on+oVoQGilQIgnwPQCYpZVrZCib86Yg/qAz6RU6W1ATln07J+kD68ifXIJkJLnSUG
+	jmpGiD3eWewHb3Wg5xLGlfy1ylWc3SAkxhIne2UqNlrXIwDutvrgirjvr5hjJS4Wh0F8DYjUJT4zU
+	FHv+fBbw==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1utj4k-0066Ck-E7; Wed, 03 Sep 2025 10:42:42 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,  "409411716@gms.tku.edu.tw"
+ <409411716@gms.tku.edu.tw>,  Xiubo Li <xiubli@redhat.com>,
+  "idryomov@gmail.com" <idryomov@gmail.com>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
+Subject: Re: [PATCH] ceph: optimize ceph_base64_encode() with block processing
+In-Reply-To: <aLf34hrnwULGA+0m@visitorckw-System-Product-Name> (Kuan-Wei
+	Chiu's message of "Wed, 3 Sep 2025 16:10:10 +0800")
+References: <20250830132822.7827-1-409411716@gms.tku.edu.tw>
+	<fce1adab2b450097edbcea3ec83420257997ec00.camel@ibm.com>
+	<aLdcNhKrPXxaEUtm@visitorckw-System-Product-Name>
+	<f4f33ae461e0f1cf2f28d1c22546bd67cd9c4da3.camel@ibm.com>
+	<aLf0eJcvCj9zcn-g@igalia.com>
+	<aLf34hrnwULGA+0m@visitorckw-System-Product-Name>
+Date: Wed, 03 Sep 2025 09:42:42 +0100
+Message-ID: <87tt1kdj0d.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250903084608epcas5p19a0ad4f0d1bad27889426e525d0c4598
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-505,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250903084608epcas5p19a0ad4f0d1bad27889426e525d0c4598
-References: <345e9d6e-8bb2-3d43-4c3c-cc16fa7dd8c1@huaweicloud.com>
-	<CGME20250903084608epcas5p19a0ad4f0d1bad27889426e525d0c4598@epcas5p1.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/09/02 08:47 AM, Yu Kuai wrote:
->On 2025/09/01 16:22, Xue He wrote:
-......
->> This patch aims to allow the remaining I/O operations to retry batch
->> allocation of tags, reducing the overhead caused by multiple
->> individual tag allocations.
->> 
->> ------------------------------------------------------------------------
->> test result
->> During testing of the PCIe Gen4 SSD Samsung PM9A3, the perf tool
->> observed CPU improvements. The CPU usage of the original function
->> _blk_mq_alloc_requests function was 1.39%, which decreased to 0.82%
->> after modification.
->> 
->> Additionally, performance variations were observed on different devices.
->> workload:randread
->> blocksize:4k
->> thread:1
->> ------------------------------------------------------------------------
->>                    PCIe Gen3 SSD   PCIe Gen4 SSD    PCIe Gen5 SSD
->> native kernel     553k iops       633k iops        793k iops
->> modified          553k iops       635k iops        801k iops
->> 
->> with Optane SSDs, the performance like
->> two device one thread
->> cmd :sudo taskset -c 0 ./t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1
->> -n1 -r4 /dev/nvme0n1 /dev/nvme1n1
->> 
->
->How many hw_queues and how many tags in each hw_queues in your nvme?
->I feel it's unlikely that tags can be exhausted, usually cpu will become
->bottleneck first.
+On Wed, Sep 03 2025, Kuan-Wei Chiu wrote:
 
-the information of my nvme like this:
-number of CPU: 16
-memory: 16G
-nvme nvme0: 16/0/16 default/read/poll queue
-cat /sys/class/nvme/nvme0/nvme0n1/queue/nr_requests
-1023
+> On Wed, Sep 03, 2025 at 08:55:36AM +0100, Luis Henriques wrote:
+>> On Tue, Sep 02, 2025 at 09:21:14PM +0000, Viacheslav Dubeyko wrote:
+>> > On Wed, 2025-09-03 at 05:05 +0800, Kuan-Wei Chiu wrote:
+>> > > On Tue, Sep 02, 2025 at 07:37:22PM +0000, Viacheslav Dubeyko wrote:
+>> > > > On Sat, 2025-08-30 at 21:28 +0800, Guan-Chun Wu wrote:
+>> > > > > Previously, ceph_base64_encode() used a bitstream approach, hand=
+ling one
+>> > > > > input byte at a time and performing extra bit operations. While =
+correct,
+>> > > > > this method was suboptimal.
+>> > > > >=20
+>> > > >=20
+>> > > > Sounds interesting!
+>> > > >=20
+>> > > > Is ceph_base64_decode() efficient then?
+>> > > > Do we have something in crypto library of Linux kernel? Maybe we c=
+an use
+>> > > > something efficient enough from there?
+>> > > >=20
+>> > > Hi Viacheslav,
+>> > >=20
+>> > > FYI, we already have base64 encode/decode implementations in
+>> > > lib/base64.c. As discussed in another thread [1], I think we can put
+>> > > the optimized version there and have users switch to call the library
+>> > > functions.
+>> > >=20
+>> > > [1]: https://lore.kernel.org/lkml/38753d95-8503-4b72-9590-cb129aa49a=
+41@t-8ch.de/=20=20
+>> > >=20
+>> > >=20
+>> >=20
+>> > Sounds great! Generalized version of this algorithm is much better than
+>> > supporting some implementation in Ceph code.
+>>=20
+>> Please note that ceph can not use the default base64 implementation beca=
+use
+>> it uses the '_' character in the encoding, as explained in commit
+>>=20
+>>   64e86f632bf1 ("ceph: add base64 endcoding routines for encrypted names=
+")
+>>=20
+>> That's why it implements it's own version according to an IMAP RFC, which
+>> uses '+' and ',' instead of '-' and '_'.
+>>=20
+> Perhaps we could modify the API to allow users to provide a custom
+> base64 table or an extra parameter to specify which RFC standard to use
+> for encoding/decoding?
 
-In more precise terms, I think it is not that the tags are fully exhausted,
-but rather that after scanning the bitmap for free bits, the remaining
-contiguous bits are nsufficient to meet the requirement (have but not enough).
-The specific function involved is __sbitmap_queue_get_batch in lib/sbitmap.c.
-                    get_mask = ((1UL << nr_tags) - 1) << nr;
-                    if (nr_tags > 1) {
-                            printk("before %ld\n", get_mask);
-                    }
-                    while (!atomic_long_try_cmpxchg(ptr, &val,
-                                                      get_mask | val))
-                            ;
-                    get_mask = (get_mask & ~val) >> nr;
+Yes, sure.  That should work as well.  If I remember correctly, I didn't
+bother doing that back then because ceph was the only place that needed a
+custom base64.  But I not really sure, that was long ago.
 
-where during the batch acquisition of contiguous free bits, an atomic operation
-is performed, resulting in the actual tag_mask obtained differing from the
-originally requested one.
-
-Am I missing something?
-
->> base: 6.4 Million IOPS
->> patch: 6.49 Million IOPS
->> 
->> two device two thread
->> cmd: sudo taskset -c 0 ./t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1
->> -n1 -r4 /dev/nvme0n1 /dev/nvme1n1
->> 
->> base: 7.34 Million IOPS
->> patch: 7.48 Million IOPS
->> -------------------------------------------------------------------------
->> 
->> Signed-off-by: hexue <xue01.he@samsung.com>
->> ---
->>   block/blk-mq.c | 8 +++++---
->>   1 file changed, 5 insertions(+), 3 deletions(-)
->> 
->> diff --git a/block/blk-mq.c b/block/blk-mq.c
->> index b67d6c02eceb..1fb280764b76 100644
->> --- a/block/blk-mq.c
->> +++ b/block/blk-mq.c
->> @@ -587,9 +587,9 @@ static struct request *blk_mq_rq_cache_fill(struct request_queue *q,
->>   	if (blk_queue_enter(q, flags))
->>   		return NULL;
->>   
->> -	plug->nr_ios = 1;
->> -
->>   	rq = __blk_mq_alloc_requests(&data);
->> +	plug->nr_ios = data.nr_tags;
->> +
->>   	if (unlikely(!rq))
->>   		blk_queue_exit(q);
->>   	return rq;
->> @@ -3034,11 +3034,13 @@ static struct request *blk_mq_get_new_requests(struct request_queue *q,
->>   
->>   	if (plug) {
->>   		data.nr_tags = plug->nr_ios;
->> -		plug->nr_ios = 1;
->>   		data.cached_rqs = &plug->cached_rqs;
->>   	}
->>   
->>   	rq = __blk_mq_alloc_requests(&data);
->> +	if (plug)
->> +		plug->nr_ios = data.nr_tags;
->> +
->>   	if (unlikely(!rq))
->>   		rq_qos_cleanup(q, bio);
->>   	return rq;
->> 
->
->In __blk_mq_alloc_requests(), if __blk_mq_alloc_requests_batch() failed,
->data->nr_tags is set to 1, so plug->nr_ios = data.nr_tags will still set
->plug->nr_ios to 1 in this case.
->
->What am I missing?
-
-yes, you are right, if __blk_mq_alloc_requests_batch() failed, it will set
-to 1. However, in this case, it did not fail to execute; instead, the
-allocated number of tags was insufficient, as only a partial number were
-allocated. Therefore, the function is considered successfully executed.
-
->Thanks,
->Kuai
->
-
-Thanks,
-Xue
+Cheers,
+--=20
+Lu=C3=ADs
 
