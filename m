@@ -1,178 +1,423 @@
-Return-Path: <linux-kernel+bounces-799190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB08BB42827
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:46:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F52BB42849
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54660682FE0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:46:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4536C1B284AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E807320A27;
-	Wed,  3 Sep 2025 17:46:35 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A631B334718;
+	Wed,  3 Sep 2025 17:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="afZtbeKW"
+Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3233972615
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 17:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801B6200127
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 17:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756921594; cv=none; b=fZJ7fa4/abicp/eZgbcgu1Tp1+pPKE9SJxr4knBhyh35XktCT7EhcBnpKiVuTLs6mF5Sue/KjWn9YCWFj2/AOmZi33sWV5+hRjp3EFeWeV1u/+heGzhvvBU2sdAu2haUPxXQqZaaLpm9oW5L7gvjBFMt6O9kuk5bPxFn7XpVRq0=
+	t=1756921636; cv=none; b=MWKU+3zl1McD7FE+rOxP7NTKkYQlBmYJYkG4klm4IRHWTeB3slGzExuGcIXX4w9S2gF63YIO/gflsIJnJCSHCLGRVJyYwoooxUBUkxCY0yGNxlpBV+byMK+E4jyLZcdmiRqZvHh3RxvhhV2HOZzJ/sQdQ8EoDAuU69AUw0idcXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756921594; c=relaxed/simple;
-	bh=zZhZCXb/kDx+4A4UKV/f5yV//7oJoKKMGlRbg52zu0c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=q3ZRWtBcMwSobejj7vBvZDl5GAcA8LRN1QdFyVHwYwHYQEbJvN7miGEeDzE2U+8mw6EnvUurrEYlnXrQKgROHl4gpTD0gHf7uuRTTHjbvnYs26hJf7Iy1Uo9kh2L7PwMXPozke1okcR2gl0tEUUIZBZTws2GnJPU3ALv5zUf6v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ec58544f79so1783375ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 10:46:32 -0700 (PDT)
+	s=arc-20240116; t=1756921636; c=relaxed/simple;
+	bh=/8rsHS+LbgeTVpPOsrULsfEpfPhYj6hAJyai20s+Fkw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QWuUVoGQe+Rz3jFFkrYqbvQfIFkMgetz9IAkeM3L3Ux6VxR+4DkaconFobNIrGrExJSXDUVWbjjzAsmFK3noJbRGYSYw3Wg/gHyqjLvVbHA9zWy3r68LClJjqca0YExp4QPuvhD4+nyM8hnuajlwPVJprw7Lsqbj/pq7tXa/038=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=afZtbeKW; arc=none smtp.client-ip=209.85.218.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-afec5651966so29370266b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 10:47:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756921633; x=1757526433; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rE6sMR2V6dQNYG7uMaNxZlN9DZIgkFqNanZMnaH82Zc=;
+        b=afZtbeKW62A+7NNFJPKQIw/klt4RlHLvLOc4oz6uwD/o7Jm5BspAsrBOFtMuHGn7li
+         N2QIjoqImt6EAGH9JB3e736DhsMOq/n9GiveTzMppdlDOQcCgsPESFSHOQbQ+OXfTU6C
+         1pBmdcD3dMm94YWDK+vyPrzX5CQPDNV3cqcJ0G+gyEYw1GFByBCIxjZ/hkETtpMBdOY3
+         jvhJy7MzQVuw4Fs9Jv2oejD3/rRtNSEiUCLkEHmzoL75lq//aJUQR6CzGGDoj7lraGxx
+         kOd9k9nLBeST2TlpMaGPOH9ga7XUAJPm2PAdpQs6QyuSFqSoUjNn7ytXzstyXVmoIYvM
+         VIIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756921592; x=1757526392;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dKSwqifOLdDaIbVTuf5YJyDDnSy1g3uyCxhGGW90rrQ=;
-        b=CPr1jgOTSoOo+CMOpt9LEvKd5hBWNiTfT1JoBIDjMesveZ7M8Al7mvMz4OCafeGiY0
-         M/a6ao1pCKMlilxxDBvoyQWnCrhbSi0H9SFAz94/7cE/P5hCqbC5wEEHtXFT220BDvjN
-         kuaL4erIsadKrNDxsVOFDZC2zhbvS+SlPNC3ScPH9md1Ard1LrCRwqYgXxOr9p0soOvg
-         eymhGRc6QIHM0Uv3FJQednpwND5dEFXkCrqis3iaZSxr/AF4DsZaEqJntJG8+e78trXE
-         Rh1rQA82Mh6U/brU9cTF/6heYRkUyRZLGHOIL1WA6jZBy/7NJYlDor0rj4fNB/zqBQVG
-         /FNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSjIAFshPdM0MrKjJsn6TQnQysdfz2bFZeGCVLy5tlwo4j472amT+eswCuVwDaj+u/geDZniMPTDtggjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrHjMnWAImUksdr8wUIY+gjZsyo6q8/+IEIxu19LCXCtJ3wpDb
-	4LbN3A4rYcvaMyXJ2EmDKVm1zzwVwsX+VFvIdtl2wqV/Ztlsuq7CheuieP7OVBQrK8SZ7YR1q7r
-	VrGhhD/Df53E9k99nzwwsHp+JPtMVopUKvIxYXBkBWnfUbQB9ApuElODGyIE=
-X-Google-Smtp-Source: AGHT+IFFJxVR9s3LuLEmG7cWeFeZaUwXJ4lBSwQ+DRJx+m3dHv4u9mHDWmorhzFaF/E+dT/BaHFjmuVPM/5MJbbk4N6aQIQ64c7N
+        d=1e100.net; s=20230601; t=1756921633; x=1757526433;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rE6sMR2V6dQNYG7uMaNxZlN9DZIgkFqNanZMnaH82Zc=;
+        b=VUsrECyvTuF24qsmNl6OUbI2TeN+fCuJb6JxbFa/+O/lfH5KXbtqJ/EleaCQ17beMP
+         MZpMHBZmRd0oBVUaEhRdLeSRk9xNFeOqY0intV/JPrtjLnCmaCB3noKNI96YOscQyF5D
+         zkqyOzWNwLlwotqze9CYoTJZ3jZCkMMQ24G8CdQuJ5O9IouJNC3mR6z5ZZbUbCzCKa22
+         G1utXsSmr6pxTM+ST+6yYerjQsTWMSzu0HQiwDxZVJoyRWjeRmWsViM3UZ+++UlkEWA2
+         41BbmGFqh3CDmOV37CFWCquz0gxXi6rJKClEo+/SROlQqDeZTwl2M079MLV/NDTrdqFb
+         ALAQ==
+X-Gm-Message-State: AOJu0YwBjqj0FQkg88X0EbNj5qOJ35Z/sKfyMs1ed9MYdvTbzJG8Ar85
+	IK/WQ3i0C5RrOl4ra66T7RGmR1PQ0n6fPqqTUJwYmt0+fCaX75PCtV9U
+X-Gm-Gg: ASbGncvH+kX4O7S86bZwdoa/i8vfoTa1W7/JP5rZJCqqq+xRKZU3c3ejWyymy/PlAVC
+	U7630XHfU/bBv9zc+DrIO5jfZoEt5HNdLRrYD7fuXsFl21cpq+NkWwVMRwJBPsVIT32WYJosNcP
+	eh4dmog46gKNyicgfUFHLja+5Dn5yPE8D7s1YlhG5P2Aa6TZOsvGR37XktieGLhE/ABBrfhF/bq
+	itMIL/+fEeG1itbaNEurFmbCC70idc6guq51dWj8Oa3Bf/Cty06927A6dT02ZYDGm+SoXL3P0N3
+	C/slT/sCeTLnh7sSGk552iuY5jV7vLEbQyijV9T5IbkBf2+jLr2MzMqP3L82RMvuHdS2cjd0i7D
+	v4ItO2quM5XqF
+X-Google-Smtp-Source: AGHT+IGcKIXYkWPZAMO2k+IPwx4JKUFFsEf+hIp0UzhPjnwlBw8IIhhzd2vd+zrJ02biROZ4g7t1GQ==
+X-Received: by 2002:a17:907:1c18:b0:b04:25e6:2ddc with SMTP id a640c23a62f3a-b0425e63190mr1265289266b.8.1756921632406;
+        Wed, 03 Sep 2025 10:47:12 -0700 (PDT)
+Received: from Al-Qamar ([2a00:f29:348:d0f:ed4a:2775:c4b1:9fde])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b042fcae867sm756355766b.58.2025.09.03.10.47.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 10:47:12 -0700 (PDT)
+From: Fidal Palamparambil <palamparambilfidal089@gmail.com>
+X-Google-Original-From: Fidal Palamparambil
+To: kgdb-bugreport@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	dianders@chromium.org,
+	Fidal Palamparambil <hellomystoryswherei@gmail.com>
+Subject: [PATCH] media: pci: Add core driver for Techwell TW68xx video capture devices
+Date: Wed,  3 Sep 2025 21:46:56 +0400
+Message-ID: <20250903174657.1689-1-hellomystoryswherei@gmail.com>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17c9:b0:3f0:dce:2550 with SMTP id
- e9e14a558f8ab-3f401be27a3mr241636105ab.19.1756921592288; Wed, 03 Sep 2025
- 10:46:32 -0700 (PDT)
-Date: Wed, 03 Sep 2025 10:46:32 -0700
-In-Reply-To: <20250902-scratch-bobbyeshleman-devmem-tcp-token-upstream-v1-0-d946169b5550@meta.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b87ef8.050a0220.3db4df.01fb.GAE@google.com>
-Subject: [syzbot ci] Re: net: devmem: improve cpu cost of RX token management
-From: syzbot ci <syzbot+ci4cf7c6dde1c8793c@syzkaller.appspotmail.com>
-To: almasrymina@google.com, bobbyeshleman@gmail.com, bobbyeshleman@meta.com, 
-	davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, kuniyu@google.com, 
-	linux-kernel@vger.kernel.org, ncardwell@google.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, sdf@fomichev.me, willemb@google.com
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot ci has tested the following series
+From: Fidal Palamparambil <hellomystoryswherei@gmail.com>
 
-[v1] net: devmem: improve cpu cost of RX token management
-https://lore.kernel.org/all/20250902-scratch-bobbyeshleman-devmem-tcp-token-upstream-v1-0-d946169b5550@meta.com
-* [PATCH net-next 1/2] net: devmem: rename tx_vec to vec in dmabuf binding
-* [PATCH net-next 2/2] net: devmem: use niov array for token management
+Introduce a new PCI driver for Techwell TW6800/6801/6804-based video
+capture cards. This replaces the old Nuvoton WPCM450 SoC ID code in
+this tree snapshot.
 
-and found the following issue:
-general protection fault in sock_devmem_dontneed
+Key features:
+- PCI probe and remove handling for multiple TW68xx variants.
+- Full hardware initialization sequence with documented register setup.
+- Video IRQ handler with proper masking and error diagnostics.
+- Device memory mapping via devm_ioremap_resource and managed IRQs.
+- DMA mask configuration with fallback to 24-bit addressing.
+- V4L2 core registration, control handler initialization, and
+  video device setup.
+- Power management (suspend/resume) support to restore DMA state and
+  active buffers.
 
-Full report is available here:
-https://ci.syzbot.org/series/c0dc7223-4222-461c-b04b-b6f0004c7509
+This driver follows V4L2 framework conventions, drawing from cx88,
+sa7134, and bt87x driver design. Original authorship and contributions
+are retained, with updates for modern kernel APIs.
 
-***
-
-general protection fault in sock_devmem_dontneed
-
-tree:      net-next
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/netdev/net-next.git
-base:      864ecc4a6dade82d3f70eab43dad0e277aa6fc78
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/6c521908-0a73-48bc-a0fd-2576cf868361/config
-C repro:   https://ci.syzbot.org/findings/9374f388-d643-42ea-831b-872eb5000b3c/c_repro
-syz repro: https://ci.syzbot.org/findings/9374f388-d643-42ea-831b-872eb5000b3c/syz_repro
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 5993 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:sock_devmem_dontneed+0x3fd/0x960 net/core/sock.c:1112
-Code: 8b 44 24 40 44 8b 28 44 03 6c 24 14 48 8b 44 24 20 42 80 3c 20 00 74 08 4c 89 ff e8 4d eb c9 f8 4d 8b 3f 4c 89 f8 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 ff e8 34 eb c9 f8 4d 8b 3f 4c 89 f8 48
-RSP: 0018:ffffc90001c4fac0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 1ffff11004ddcfe0
-RDX: ffff88801f6a8000 RSI: 0000000000000400 RDI: 0000000000000000
-RBP: ffffc90001c4fc50 R08: ffffc90001c4fbdf R09: 0000000000000000
-R10: ffffc90001c4fb60 R11: fffff52000389f7c R12: dffffc0000000000
-R13: 00000000ffffffff R14: 0000000000000000 R15: 0000000000000000
-FS:  000055558634d500(0000) GS:ffff8880b8614000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b30e63fff CR3: 0000000026b68000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- sk_setsockopt+0x682/0x2dc0 net/core/sock.c:1302
- do_sock_setsockopt+0x11b/0x1b0 net/socket.c:2340
- __sys_setsockopt net/socket.c:2369 [inline]
- __do_sys_setsockopt net/socket.c:2375 [inline]
- __se_sys_setsockopt net/socket.c:2372 [inline]
- __x64_sys_setsockopt+0x13f/0x1b0 net/socket.c:2372
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fea2bb8ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc81c63348 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007fea2bdc5fa0 RCX: 00007fea2bb8ebe9
-RDX: 0000000000000050 RSI: 0000000000000001 RDI: 0000000000000003
-RBP: 00007fea2bc11e19 R08: 0000000000000048 R09: 0000000000000000
-R10: 0000200000000100 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fea2bdc5fa0 R14: 00007fea2bdc5fa0 R15: 0000000000000005
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:sock_devmem_dontneed+0x3fd/0x960 net/core/sock.c:1112
-Code: 8b 44 24 40 44 8b 28 44 03 6c 24 14 48 8b 44 24 20 42 80 3c 20 00 74 08 4c 89 ff e8 4d eb c9 f8 4d 8b 3f 4c 89 f8 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 ff e8 34 eb c9 f8 4d 8b 3f 4c 89 f8 48
-RSP: 0018:ffffc90001c4fac0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 1ffff11004ddcfe0
-RDX: ffff88801f6a8000 RSI: 0000000000000400 RDI: 0000000000000000
-RBP: ffffc90001c4fc50 R08: ffffc90001c4fbdf R09: 0000000000000000
-R10: ffffc90001c4fb60 R11: fffff52000389f7c R12: dffffc0000000000
-R13: 00000000ffffffff R14: 0000000000000000 R15: 0000000000000000
-FS:  000055558634d500(0000) GS:ffff8880b8614000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b30e63fff CR3: 0000000026b68000 CR4: 00000000000006f0
-----------------
-Code disassembly (best guess):
-   0:	8b 44 24 40          	mov    0x40(%rsp),%eax
-   4:	44 8b 28             	mov    (%rax),%r13d
-   7:	44 03 6c 24 14       	add    0x14(%rsp),%r13d
-   c:	48 8b 44 24 20       	mov    0x20(%rsp),%rax
-  11:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1)
-  16:	74 08                	je     0x20
-  18:	4c 89 ff             	mov    %r15,%rdi
-  1b:	e8 4d eb c9 f8       	call   0xf8c9eb6d
-  20:	4d 8b 3f             	mov    (%r15),%r15
-  23:	4c 89 f8             	mov    %r15,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	4c 89 ff             	mov    %r15,%rdi
-  34:	e8 34 eb c9 f8       	call   0xf8c9eb6d
-  39:	4d 8b 3f             	mov    (%r15),%r15
-  3c:	4c 89 f8             	mov    %r15,%rax
-  3f:	48                   	rex.W
-
-
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
+Signed-off-by: Fidal Palamparambil <hellomystoryswherei@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+ drivers/media/pci/tw68/tw68-core.c | 165 +++++++++++++++--------------
+ 1 file changed, 84 insertions(+), 81 deletions(-)
+
+diff --git a/drivers/media/pci/tw68/tw68-core.c b/drivers/media/pci/tw68/tw68-core.c
+index 35dd19b2427e..fd5c4cccfb56 100644
+--- a/drivers/media/pci/tw68/tw68-core.c
++++ b/drivers/media/pci/tw68/tw68-core.c
+@@ -72,9 +72,9 @@ static const struct pci_device_id tw68_pci_tbl[] = {
+ 	{0,}
+ };
+ 
++MODULE_DEVICE_TABLE(pci, tw68_pci_tbl);
+ /* ------------------------------------------------------------------ */
+ 
+-
+ /*
+  * The device is given a "soft reset". According to the specifications,
+  * after this "all register content remain unchanged", so we also write
+@@ -130,7 +130,6 @@ static int tw68_hw_init1(struct tw68_dev *dev)
+ 	tw_writeb(TW68_AGCGAIN, 0xf0);	/* 288	AGC gain when loop disabled */
+ 	tw_writeb(TW68_PEAKWT, 0xd8);	/* 28C	White peak threshold */
+ 	tw_writeb(TW68_CLMPL, 0x3c);	/* 290	Y channel clamp level */
+-/*	tw_writeb(TW68_SYNCT, 0x38);*/	/* 294	Sync amplitude */
+ 	tw_writeb(TW68_SYNCT, 0x30);	/* 294	Sync amplitude */
+ 	tw_writeb(TW68_MISSCNT, 0x44);	/* 298	Horiz sync, VCR detect sens */
+ 	tw_writeb(TW68_PCLAMP, 0x28);	/* 29C	Clamp pos from PLL sync */
+@@ -191,36 +190,43 @@ static irqreturn_t tw68_irq(int irq, void *dev_id)
+ 
+ 	status = orig = tw_readl(TW68_INTSTAT) & dev->pci_irqmask;
+ 	/* Check if anything to do */
+-	if (0 == status)
++	if (status == 0)
+ 		return IRQ_NONE;	/* Nope - return */
++	
+ 	for (loop = 0; loop < 10; loop++) {
+ 		if (status & dev->board_virqmask)	/* video interrupt */
+ 			tw68_irq_video_done(dev, status);
++		
+ 		status = tw_readl(TW68_INTSTAT) & dev->pci_irqmask;
+-		if (0 == status)
+-			return IRQ_HANDLED;
++		if (status == 0)
++			goto out;
+ 	}
+-	dev_dbg(&dev->pci->dev, "%s: **** INTERRUPT NOT HANDLED - clearing mask (orig 0x%08x, cur 0x%08x)",
+-			dev->name, orig, tw_readl(TW68_INTSTAT));
+-	dev_dbg(&dev->pci->dev, "%s: pci_irqmask 0x%08x; board_virqmask 0x%08x ****\n",
+-			dev->name, dev->pci_irqmask, dev->board_virqmask);
++	
++	dev_warn_ratelimited(&dev->pci->dev,
++			     "%s: **** INTERRUPT NOT HANDLED - clearing mask (orig 0x%08x, cur 0x%08x)\n",
++			     dev->name, orig, tw_readl(TW68_INTSTAT));
++	dev_warn_ratelimited(&dev->pci->dev,
++			     "%s: pci_irqmask 0x%08x; board_virqmask 0x%08x ****\n",
++			     dev->name, dev->pci_irqmask, dev->board_virqmask);
+ 	tw_clearl(TW68_INTMASK, dev->pci_irqmask);
++out:
+ 	return IRQ_HANDLED;
+ }
+ 
+ static int tw68_initdev(struct pci_dev *pci_dev,
+-				     const struct pci_device_id *pci_id)
++			const struct pci_device_id *pci_id)
+ {
+ 	struct tw68_dev *dev;
++	struct resource *res;
+ 	int vidnr = -1;
+ 	int err;
+ 
+ 	dev = devm_kzalloc(&pci_dev->dev, sizeof(*dev), GFP_KERNEL);
+-	if (NULL == dev)
++	if (!dev)
+ 		return -ENOMEM;
+ 
+ 	dev->instance = v4l2_device_set_name(&dev->v4l2_dev, "tw68",
+-						&tw68_instance);
++					     &tw68_instance);
+ 
+ 	err = v4l2_device_register(&pci_dev->dev, &dev->v4l2_dev);
+ 	if (err)
+@@ -228,30 +234,43 @@ static int tw68_initdev(struct pci_dev *pci_dev,
+ 
+ 	/* pci init */
+ 	dev->pci = pci_dev;
+-	if (pci_enable_device(pci_dev)) {
+-		err = -EIO;
+-		goto fail1;
++	err = pci_enable_device(pci_dev);
++	if (err) {
++		dev_err(&pci_dev->dev, "Failed to enable PCI device\n");
++		goto fail_v4l2;
+ 	}
+ 
+ 	dev->name = dev->v4l2_dev.name;
+ 
+-	if (UNSET != latency) {
+-		pr_info("%s: setting pci latency timer to %d\n",
+-		       dev->name, latency);
++	if (latency != UNSET) {
++		dev_info(&pci_dev->dev, "setting pci latency timer to %d\n",
++			 latency);
+ 		pci_write_config_byte(pci_dev, PCI_LATENCY_TIMER, latency);
+ 	}
+ 
+ 	/* print pci info */
+ 	pci_read_config_byte(pci_dev, PCI_CLASS_REVISION, &dev->pci_rev);
+-	pci_read_config_byte(pci_dev, PCI_LATENCY_TIMER,  &dev->pci_lat);
+-	pr_info("%s: found at %s, rev: %d, irq: %d, latency: %d, mmio: 0x%llx\n",
+-		dev->name, pci_name(pci_dev), dev->pci_rev, pci_dev->irq,
+-		dev->pci_lat, (u64)pci_resource_start(pci_dev, 0));
++	pci_read_config_byte(pci_dev, PCI_LATENCY_TIMER, &dev->pci_lat);
++	dev_info(&pci_dev->dev, "found at %s, rev: %d, irq: %d, latency: %d, mmio: 0x%llx\n",
++		 pci_name(pci_dev), dev->pci_rev, pci_dev->irq,
++		 dev->pci_lat, (u64)pci_resource_start(pci_dev, 0));
++	
+ 	pci_set_master(pci_dev);
++	
++	/* Set DMA mask - try 32-bit first, then fallback to 24-bit if needed */
+ 	err = dma_set_mask(&pci_dev->dev, DMA_BIT_MASK(32));
+ 	if (err) {
+-		pr_info("%s: Oops: no 32bit PCI DMA ???\n", dev->name);
+-		goto fail1;
++		err = dma_set_mask(&pci_dev->dev, DMA_BIT_MASK(24));
++		if (err) {
++			dev_err(&pci_dev->dev, "No suitable DMA available\n");
++			goto fail_pci;
++		}
++	}
++	
++	err = dma_set_coherent_mask(&pci_dev->dev, DMA_BIT_MASK(32));
++	if (err) {
++		dev_err(&pci_dev->dev, "Failed to set consistent DMA mask\n");
++		goto fail_pci;
+ 	}
+ 
+ 	switch (pci_id->device) {
+@@ -273,66 +292,51 @@ static int tw68_initdev(struct pci_dev *pci_dev,
+ 		break;
+ 	}
+ 
+-	/* get mmio */
+-	if (!request_mem_region(pci_resource_start(pci_dev, 0),
+-				pci_resource_len(pci_dev, 0),
+-				dev->name)) {
+-		err = -EBUSY;
+-		pr_err("%s: can't get MMIO memory @ 0x%llx\n",
+-			dev->name,
+-			(unsigned long long)pci_resource_start(pci_dev, 0));
+-		goto fail1;
++	/* get mmio using devm_ioremap_resource */
++	res = &pci_dev->resource[0];
++	dev->lmmio = devm_ioremap_resource(&pci_dev->dev, res);
++	if (IS_ERR(dev->lmmio)) {
++		err = PTR_ERR(dev->lmmio);
++		dev_err(&pci_dev->dev, "can't ioremap() MMIO memory\n");
++		goto fail_pci;
+ 	}
+-	dev->lmmio = ioremap(pci_resource_start(pci_dev, 0),
+-			     pci_resource_len(pci_dev, 0));
+ 	dev->bmmio = (__u8 __iomem *)dev->lmmio;
+-	if (NULL == dev->lmmio) {
+-		err = -EIO;
+-		pr_err("%s: can't ioremap() MMIO memory\n",
+-		       dev->name);
+-		goto fail2;
+-	}
++
+ 	/* initialize hardware #1 */
+-	/* Then do any initialisation wanted before interrupts are on */
+ 	tw68_hw_init1(dev);
+ 
+ 	/* get irq */
+ 	err = devm_request_irq(&pci_dev->dev, pci_dev->irq, tw68_irq,
+-			  IRQF_SHARED, dev->name, dev);
++			       IRQF_SHARED, dev->name, dev);
+ 	if (err < 0) {
+-		pr_err("%s: can't get IRQ %d\n",
+-		       dev->name, pci_dev->irq);
+-		goto fail3;
++		dev_err(&pci_dev->dev, "can't get IRQ %d\n", pci_dev->irq);
++		goto fail_pci;
+ 	}
+ 
+ 	/*
+-	 *  Now do remainder of initialisation, first for
+-	 *  things unique for this card, then for general board
++	 * Now do remainder of initialisation, first for
++	 * things unique for this card, then for general board
+ 	 */
+ 	if (dev->instance < TW68_MAXBOARDS)
+ 		vidnr = video_nr[dev->instance];
++	
+ 	/* initialise video function first */
+ 	err = tw68_video_init2(dev, vidnr);
+ 	if (err < 0) {
+-		pr_err("%s: can't register video device\n",
+-		       dev->name);
+-		goto fail4;
++		dev_err(&pci_dev->dev, "can't register video device\n");
++		goto fail_pci;
+ 	}
++	
+ 	tw_setl(TW68_INTMASK, dev->pci_irqmask);
+ 
+-	pr_info("%s: registered device %s\n",
+-	       dev->name, video_device_node_name(&dev->vdev));
++	dev_info(&pci_dev->dev, "registered device %s\n",
++		 video_device_node_name(&dev->vdev));
+ 
+ 	return 0;
+ 
+-fail4:
+-	video_unregister_device(&dev->vdev);
+-fail3:
+-	iounmap(dev->lmmio);
+-fail2:
+-	release_mem_region(pci_resource_start(pci_dev, 0),
+-			   pci_resource_len(pci_dev, 0));
+-fail1:
++fail_pci:
++	pci_disable_device(pci_dev);
++fail_v4l2:
+ 	v4l2_device_unregister(&dev->v4l2_dev);
+ 	return err;
+ }
+@@ -340,8 +344,7 @@ static int tw68_initdev(struct pci_dev *pci_dev,
+ static void tw68_finidev(struct pci_dev *pci_dev)
+ {
+ 	struct v4l2_device *v4l2_dev = pci_get_drvdata(pci_dev);
+-	struct tw68_dev *dev =
+-		container_of(v4l2_dev, struct tw68_dev, v4l2_dev);
++	struct tw68_dev *dev = container_of(v4l2_dev, struct tw68_dev, v4l2_dev);
+ 
+ 	/* shutdown subsystems */
+ 	tw_clearl(TW68_DMAC, TW68_DMAP_EN | TW68_FIFO_EN);
+@@ -351,11 +354,8 @@ static void tw68_finidev(struct pci_dev *pci_dev)
+ 	video_unregister_device(&dev->vdev);
+ 	v4l2_ctrl_handler_free(&dev->hdl);
+ 
+-	/* release resources */
+-	iounmap(dev->lmmio);
+-	release_mem_region(pci_resource_start(pci_dev, 0),
+-			   pci_resource_len(pci_dev, 0));
+-
++	/* release resources - devm handles ioremap cleanup */
++	pci_disable_device(pci_dev);
+ 	v4l2_device_unregister(&dev->v4l2_dev);
+ }
+ 
+@@ -363,8 +363,7 @@ static int __maybe_unused tw68_suspend(struct device *dev_d)
+ {
+ 	struct pci_dev *pci_dev = to_pci_dev(dev_d);
+ 	struct v4l2_device *v4l2_dev = pci_get_drvdata(pci_dev);
+-	struct tw68_dev *dev = container_of(v4l2_dev,
+-				struct tw68_dev, v4l2_dev);
++	struct tw68_dev *dev = container_of(v4l2_dev, struct tw68_dev, v4l2_dev);
+ 
+ 	tw_clearl(TW68_DMAC, TW68_DMAP_EN | TW68_FIFO_EN);
+ 	dev->pci_irqmask &= ~TW68_VID_INTS;
+@@ -379,25 +378,29 @@ static int __maybe_unused tw68_suspend(struct device *dev_d)
+ 
+ static int __maybe_unused tw68_resume(struct device *dev_d)
+ {
++	struct pci_dev *pci_dev = to_pci_dev(dev_d);
+ 	struct v4l2_device *v4l2_dev = dev_get_drvdata(dev_d);
+-	struct tw68_dev *dev = container_of(v4l2_dev,
+-					    struct tw68_dev, v4l2_dev);
++	struct tw68_dev *dev = container_of(v4l2_dev, struct tw68_dev, v4l2_dev);
+ 	struct tw68_buf *buf;
+ 	unsigned long flags;
+ 
+-	/* Do things that are done in tw68_initdev ,
+-		except of initializing memory structures.*/
+-
++	/* Do things that are done in tw68_initdev,
++	 * except for initializing memory structures.
++	 */
+ 	msleep(100);
+ 
++	tw68_hw_init1(dev);
+ 	tw68_set_tvnorm_hw(dev);
+ 
+-	/*resume unfinished buffer(s)*/
+-	spin_lock_irqsave(&dev->slock, flags);
+-	buf = container_of(dev->active.next, struct tw68_buf, list);
+-
+-	tw68_video_start_dma(dev, buf);
++	/* Restore interrupt mask */
++	tw_setl(TW68_INTMASK, dev->pci_irqmask);
+ 
++	/* Resume unfinished buffer(s) */
++	spin_lock_irqsave(&dev->slock, flags);
++	if (!list_empty(&dev->active)) {
++		buf = container_of(dev->active.next, struct tw68_buf, list);
++		tw68_video_start_dma(dev, buf);
++	}
+ 	spin_unlock_irqrestore(&dev->slock, flags);
+ 
+ 	return 0;
+@@ -415,4 +418,4 @@ static struct pci_driver tw68_pci_driver = {
+ 	.driver.pm = &tw68_pm_ops,
+ };
+ 
+-module_pci_driver(tw68_pci_driver);
++module_pci_driver(tw68_pci_driver);
+\ No newline at end of file
+-- 
+2.50.1.windows.1
+
 
