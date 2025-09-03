@@ -1,120 +1,109 @@
-Return-Path: <linux-kernel+bounces-798315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA18CB41C34
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:51:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5FD7B41C31
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64EB91619D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:51:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CA493A7A87
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1CC2F067E;
-	Wed,  3 Sep 2025 10:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD932D47F8;
+	Wed,  3 Sep 2025 10:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h1GQSCto"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Edp5VoE1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8g7ZmmO/"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72312BD58A
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987A122DF86
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756896670; cv=none; b=eMX7knd+C6SeqqwyszY6giZnfxHEub/N617wsWqP4wdZBPPzbqC1yIJwdGTNvN8XFLw6v8Grc/KN7EspJ6ESFtbSzyuKGc6lznj6lGE4TFBb2tkk3c1ecY3NrfRmtSZWM3Dv9GimvVEey/vuiynTh9itEvj/GDX6aew0f5Enq6g=
+	t=1756896604; cv=none; b=iH97nUFkjwqyAnnw1KmpZvIx8neeMB/671cXTPipWUgeXlrgkFoHN5gm36kw4AQPcMLbj0vbTWvq9gmIdEbPxEg0nOudfeSk5/NiID4P+pwLUjeqAlNa/1XL1WAI8sKSvKAmtVKO0M7SOb5Cfxpqu9z0D/ts6KBO5eofT3RTqr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756896670; c=relaxed/simple;
-	bh=R2LCpwreJdznLf2leEoWhdR9qD3ooKnYR6/rcs01KWU=;
+	s=arc-20240116; t=1756896604; c=relaxed/simple;
+	bh=Dsq5ENtOZGjjYxqT8/QSf8TMc3hKrCLp6igtbfl2kf0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CuN+UvSuojiFoCZcKN5HGRPo1xUZsf6nRediE90RduNPrr8ZNC9ax9xhCie/sHPrlITF1xdzyY7xCFTfo6qL4d8OB4TlnsAYeTOQLuT3HL2k1W5D30SPn3nQ4YkVoyYQki+qkloWZE7DNc6bqWkYiR3g8AcqN5Ir5g7sybu6YQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h1GQSCto; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756896667;
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJHwDLMNW5HQQT3i+8x3fStDQSYA4h3JSbcjiHSWz0LLzGNalugEyEu7Zskwlj0cPPK7RLqvbg0iMb5zjtNWDZOIGPI4FBCsOIfoEPw2feWtx6rUccvfxUM/UgcF27LDlLQDIp/KZVOGofR/FAeD+1CIU/hZNrpA8VSY9ZPGAG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Edp5VoE1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8g7ZmmO/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 3 Sep 2025 12:49:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756896599;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=N3Ukxt9C+GpVZT/jwVqngtAkGPSKE0YadV98aD+g7Ro=;
-	b=h1GQSCto/lctXjlc9EyTEOtaLiHgcEFNMJ8ZiD/ZE5M3dcjR2bRs4FFHbb19xq3lkzuWyQ
-	FfG98M3WQiTXabcdUhNDyLKZM0g5uxsDHi6wfk9VMd5ZgL3MnJRPLzfHos/yyEYli32JoW
-	J+tt68FxNNMqLpDZZ2EJJLBxlMSJ89w=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-389-TYMDsMzpOqGvS4HR5evMRg-1; Wed,
- 03 Sep 2025 06:51:04 -0400
-X-MC-Unique: TYMDsMzpOqGvS4HR5evMRg-1
-X-Mimecast-MFC-AGG-ID: TYMDsMzpOqGvS4HR5evMRg_1756896662
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3768218002C1;
-	Wed,  3 Sep 2025 10:51:02 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.52])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2B19819560B1;
-	Wed,  3 Sep 2025 10:50:56 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  3 Sep 2025 12:49:40 +0200 (CEST)
-Date: Wed, 3 Sep 2025 12:49:33 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH perf/core 01/11] uprobes: Add unique flag to uprobe
- consumer
-Message-ID: <20250903104933.GB18799@redhat.com>
-References: <20250902143504.1224726-1-jolsa@kernel.org>
- <20250902143504.1224726-2-jolsa@kernel.org>
+	bh=j6RJiG9LKdMiF6JHUgt/C676r7v1TC9rEint4KQ3yj4=;
+	b=Edp5VoE1mfxAQsPaKzt2DFJgUvT2YTcfW4Fs825/HOglXQzoMIoUM0J5gc/EQ7i0+nAopc
+	r+84KlJ3Ak0A5juv7Q4Cj1AVXHtAYpgXEX5sg0x1iWxqtDDTq4darlByJeoTIEJZuYwAgf
+	Na89kCg+E4PKsKkko58WOPoVTjSfsUAtgUiAADiOwTd/tsGmb08UaYslJjmdETPrbS0XA8
+	+lEeT9NmcExZtlV54ghoEiNVPekg3fUxN8k3pZaci+pJgrVD4FB+ld3Gy3XJ1nZ/FHeu+K
+	gcFcBo9qm8cMRzO8a+DDOP1ejRWRTaexXFBRH/J4CA6d6eOTa3lfBVhjdXZilA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756896599;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j6RJiG9LKdMiF6JHUgt/C676r7v1TC9rEint4KQ3yj4=;
+	b=8g7ZmmO/QT8/F2MQldoLuxcXIMLtJdf6KmIJgbamVe7nrdXUyrz4JIIhtCluFUSERUhA9/
+	W1Sw3g5HXR9NxRBQ==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Arnd Bergmann <arnd@arndb.de>, 
+	Andy Lutomirski <luto@kernel.org>, John Stultz <jstultz@google.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] arm64: uapi: Provide correct __BITS_PER_LONG for the
+ compat vDSO
+Message-ID: <20250903124853-7dd41845-8939-4a01-b50d-42f87cc6583d@linutronix.de>
+References: <20250821-vdso-arm64-compat-bitsperlong-v1-0-700bcabe7732@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250902143504.1224726-2-jolsa@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250821-vdso-arm64-compat-bitsperlong-v1-0-700bcabe7732@linutronix.de>
 
-On 09/02, Jiri Olsa wrote:
->
-> +static bool consumer_can_add(struct list_head *head, struct uprobe_consumer *uc)
-> +{
-> +	/* Uprobe has no consumer, we can add any. */
-> +	if (list_empty(head))
-> +		return true;
-> +	/* Uprobe has consumer/s, we can't add unique one. */
-> +	if (uc->is_unique)
-> +		return false;
-> +	/*
-> +	 * Uprobe has consumer/s, we can add nother consumer only if the
-> +	 * current consumer is not unique.
-> +	 **/
-> +	return !list_first_entry(head, struct uprobe_consumer, cons_node)->is_unique;
-> +}
+Hi arm64 folks,
 
-Since you are going to send V2 anyway... purely cosmetic and subjective nit,
-but somehow I can't resist,
+On Thu, Aug 21, 2025 at 09:56:43AM +0200, Thomas Weiﬂschuh wrote:
+> The generic vDSO library uses the UAPI headers. On arm64 __BITS_PER_LONG is
+> always '64' even when used from the compat vDSO. In that case __GENMASK()
+> does an illegal bitshift, invoking undefined behaviour.
+> 
+> The first patch should go into the 6.17 tree.
 
-	bool consumer_can_add(struct list_head *head, struct uprobe_consumer *new)
-	{
-		struct uprobe_consumer *old = list_first_entry_or_null(...);
+Could you take this series?
 
-		return !old || (!old->exclusive && !new->exclusive);
-	}
 
-looks a bit more readable to me. Please ignore if you like your version more.
+Thanks,
 
-Oleg.
-
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> ---
+> Thomas Weiﬂschuh (3):
+>       arm64: uapi: Provide correct __BITS_PER_LONG for the compat vDSO
+>       arm64: vdso32: Stop suppressing warnings
+>       arm64: vdso32: Respect -Werror from kbuild
+> 
+>  arch/arm64/include/uapi/asm/bitsperlong.h |  5 +++++
+>  arch/arm64/kernel/vdso32/Makefile         | 13 +------------
+>  2 files changed, 6 insertions(+), 12 deletions(-)
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250820-vdso-arm64-compat-bitsperlong-4f59ae7ef6e7
+> 
+> Best regards,
+> -- 
+> Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> 
 
