@@ -1,135 +1,198 @@
-Return-Path: <linux-kernel+bounces-798815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B06D3B42355
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:16:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9D1B42360
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A11E85E7E8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:16:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F7627ACA56
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5270930BF77;
-	Wed,  3 Sep 2025 14:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A6430E848;
+	Wed,  3 Sep 2025 14:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwUm+Nyj"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g2qkEx0s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498361DE4FB;
-	Wed,  3 Sep 2025 14:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6D22FCC0D;
+	Wed,  3 Sep 2025 14:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908982; cv=none; b=fbmeyl2kplua2/iaWHAJeAfQMIqZNQmLwxt71THTRdAhtxsCQApfcTC0sVJtm/tJmCUArIpl2Dy9xEicKbYQY2Q2Shr/8DcwMza0lPDv5eizYAmvDh4KJQtQ0OxoUDoZQPYpiBWEDW5xAcTNbXotzrcoRu4YJMLNcONeTMgwSMc=
+	t=1756909046; cv=none; b=EyKGFxefhnXGMmha2K7m6HS/qNH0MWF0NdaO2/ZM3ciJXUZuH4fMvt83Wk19pkB8IP0zYMA4Ofe9nO1744UROrzIiQM3TVNYH9MRcTX4iWPp1oKwZO2fuYq60FaDS7b5EMpKtrrU2Oyv54flXH0nTIXtZ/YMayWGCQjcuNt0Ssc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908982; c=relaxed/simple;
-	bh=St9fHw10rwgxS1Egz/yc+TzfgHHjx7abaCL7UqiQWBM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Pd8Lz16HEs8yPN8ojAkuYxZI2yzYL0Gvp2snhspfeVRiypknkvHFPgYbL/DMPkLQqcouHkI19pFl+8WlfkcsM46o/WpSWnUo8CCtww9n2yjdYnwl96otpMF0uTL1YUbJFK4qAFnQLPnw/yZMyEhyrxigiDoXzz7J4i7eg5PPZCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BwUm+Nyj; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-772627dd50aso1173491b3a.1;
-        Wed, 03 Sep 2025 07:16:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756908980; x=1757513780; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vSIVzxsZnDEDQYyytjPWJDnoB+qkvrOnEt7Ac3yB9qY=;
-        b=BwUm+Nyj9tss7zeLoHMlDeHhl/pa8Uyr0Ytt8DhRnXLLCgccDayVU4aZ1bIiICBq9M
-         1MWx64BRKoNeQrwyCtsESdGVjBbaiJJRl+QT9364BicNa8bbRoYqAcaLAC7RHieImIIu
-         5dTsujBNE+68WWjSJrHlfgujT7CwqQrsTBcqqYU4ifSo3eF5C+FvUv9saVn8decFWV9s
-         mIQh23VkJ6KZF5Y60/k0wxs1EaoEsIHUdLeGL95IjV83a/b3aRNjwBvmjHjN8b3OTNa2
-         K8fHyCBNin1liWj1LVzttYYoxuenUsGKEP9JleF9qD1IJoABupIxfrtRiz+Lm0lINfMs
-         zCfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756908980; x=1757513780;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vSIVzxsZnDEDQYyytjPWJDnoB+qkvrOnEt7Ac3yB9qY=;
-        b=cMPUNUIKDSi2Iqv1K3qk/2HA1bNdafCuP+LwASY0cE3VDhV2G1cPA0/JWnAhhzQKY+
-         qWJqqwTVKqDt97u3d8ewuUvCkML+eWau3kaQrPaNbCHzFkSH+IioDRayCN1M/2EY+R5I
-         LEnPrUKx/8VSwnr0DqMOA2U6SJascHvJJ6iPwSjF9soFONPscPRkhUvj10We3t70Rr+0
-         JD9XQkjGFxJ1ClJbwccG0GtB1f7/dZmzG3E0eHhY2c8K6Mfcsj/QaHHaemwnvdJvpbH+
-         bZ86AhSNtDBzYm8h9N9ha1CLmGMeAQCOwZsz8QZ708Kqn+AoJwrQiQXJNbzUcKaqsVeN
-         /o2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVjBEHOJabs/oq6e3xHqH1X2nVBb820Qa9Z4lzexcd4YxeKgh3mSExhGpOOolqnoxuKKD30118LOfthmgM=@vger.kernel.org, AJvYcCVumD8tuJHLi/RsY+eV5V7ImxP263mmJwFIrjmfKrRqfYj367JHuYp5tLJ4ck8K1QdcO8+oTRUu@vger.kernel.org, AJvYcCVyPEE7QjDbU6og5xdDC90A1WHojLpwgPykxhwAWayaqJq53UA0HlBsXIwgKNq+sK7uniTQCm4FDoek@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9lg8O3clskjhzR458L2SXmJ1SadQwAgDvZODTKBZCbFLq9QkW
-	1Uc/HYERstzcSjAzHBpERW5stsaSppNpZavnwODjQkS/x9bX/5FJG4kP
-X-Gm-Gg: ASbGncueGVUzj/asHyHnfLgFZoVdNJwWKl7STuVj7mEyv7tXwUoniQgdUJOO+MztLpg
-	yS16M0pdp9ulCJeNNdCtcrCo23mTSqHt70QnNBoYOXx6g4JbWQzRGaHcF4N6BZnd3g38qnGY0z2
-	PrZolN9WN2CXmLtNxql0sjo8QR2RzJiW4oDEcbCqwp0Vhee+7noxIuL0WkxfVZBircT+/Agbz37
-	fuVmFLfEcB8BLzvIBrLY2AOlUuFizT+hFnohxq3NYdaKjjveALYX091ZqvotNy5hAFdO3L+qvwh
-	Mfk8DIbowW6RJyoYzQfwbh3fXO6E/EJ0A++YmFuP40PITAUoBpCJYHTHUE55bjlMlhNnGjHuVp0
-	JfMyvBMYVnE+pZ8Ye4QD7RvFkLBOjaX0UurSev3DyVskfcxuCqP7UXEfZ0UFdYUYuJWFF11WxTM
-	tnZXyfrhSgDBM1GLmIcCTESOlTMGFC+J25XbmLhKCkVGmFDz+Ab0NRkUgeL1ByKR7RUQ==
-X-Google-Smtp-Source: AGHT+IGwsvYyVoIJgvncmGFJxFvcJbXT10B9DfRdoej8UYDq/Vr/6qTmuq10RnOU+77LfVi51PhuNg==
-X-Received: by 2002:a17:903:244d:b0:248:f844:678f with SMTP id d9443c01a7336-2493f04071emr219748565ad.30.1756908980318;
-        Wed, 03 Sep 2025 07:16:20 -0700 (PDT)
-Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.22.11.161])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b4cd38610edsm14508264a12.54.2025.09.03.07.16.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 07:16:19 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Pawel Laszczak <pawell@cadence.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Peter Chen <peter.chen@nxp.com>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] usb: cdns3: cdnsp-pci: remove redundant pci_disable_device() call
-Date: Wed,  3 Sep 2025 22:16:13 +0800
-Message-Id: <20250903141613.2535472-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.35.1
+	s=arc-20240116; t=1756909046; c=relaxed/simple;
+	bh=rkSg1vCoekuc9whKWjo4hgqm1Elyfx6nN2+yYBdxBhc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lFgo4809J7RzDkntROlbTQKFaIcsJ52FDWFV2fM0vlrB6QMPUrRBVn1ro3+DxUa3/q3AVmKMqnTGvoYxHWeVbO2VtFf1tLRcEpnugLofrspQzyWrHwxN8QlU1Pu9TZEKq6cZUYXABwc0GbzaMl/D42Sm/lcld95Frz/j1nGPa/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g2qkEx0s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 075E6C4CEE7;
+	Wed,  3 Sep 2025 14:17:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756909046;
+	bh=rkSg1vCoekuc9whKWjo4hgqm1Elyfx6nN2+yYBdxBhc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=g2qkEx0srlnMZm9jvTuQkoAfUMqfZLmOGvMvWAXSFNRLeSDA5jxOcfWXXmUvxxNM8
+	 yvdadUNZgnBX3z/+e4yDpoxMbRzcPuAnr38KTH3Vu7n/1F7mqMnQLDtY97FOFmU2qb
+	 f3BqGPAIhHQlFrXQgm64XqEAf2KGNfJM92WGL8OAKBaRXkA/f3UgK0fIr7zt5swxiJ
+	 hgOUO2rzO4bNzczWxkpktx7lTBG9e6nmau7vZmkjiEckwkS4MGMoDE1PbRdr39Xoxn
+	 kj4QeQgwRxQT2rdLQor3kdwOYj76BPFKEkjV4l2X1fOg6RdjMK6qKg5Z6N5j4zrE8l
+	 ZL568mTWs7NNw==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  Jason Gunthorpe <jgg@nvidia.com>,
+  Pasha Tatashin <pasha.tatashin@soleen.com>,  jasonmiu@google.com,
+  graf@amazon.com,  changyuanl@google.com,  dmatlack@google.com,
+  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
+  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
+  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
+  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
+  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
+  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
+  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
+  leonro@nvidia.com,  witu@nvidia.com
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+In-Reply-To: <aLbYk30V2EEJJtAf@kernel.org>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
+	<20250826162019.GD2130239@nvidia.com> <aLXIcUwt0HVzRpYW@kernel.org>
+	<mafs0ldmyw1hp.fsf@kernel.org> <aLbYk30V2EEJJtAf@kernel.org>
+Date: Wed, 03 Sep 2025 16:17:15 +0200
+Message-ID: <mafs0qzwnvcwk.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The cdnsp-pci driver uses pcim_enable_device() to enable a PCI device,
-which means the device will be automatically disabled on driver detach
-through the managed device framework. The manual pci_disable_device()
-call in the error path is therefore redundant.
+Hi Mike,
 
-Found via static anlaysis and this is similar to commit 99ca0b57e49f
-("thermal: intel: int340x: processor: Fix warning during module unload").
+On Tue, Sep 02 2025, Mike Rapoport wrote:
 
-Fixes: 3d82904559f4 ("usb: cdnsp: cdns3 Add main part of Cadence USBSSP DRD Driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/usb/cdns3/cdnsp-pci.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+> Hi Pratyush,
+>
+> On Mon, Sep 01, 2025 at 07:01:38PM +0200, Pratyush Yadav wrote:
+>> Hi Mike,
+>> 
+>> On Mon, Sep 01 2025, Mike Rapoport wrote:
+>> 
+>> > On Tue, Aug 26, 2025 at 01:20:19PM -0300, Jason Gunthorpe wrote:
+>> >> On Thu, Aug 07, 2025 at 01:44:35AM +0000, Pasha Tatashin wrote:
+>> >> 
+>> >> > +	/*
+>> >> > +	 * Most of the space should be taken by preserved folios. So take its
+>> >> > +	 * size, plus a page for other properties.
+>> >> > +	 */
+>> >> > +	fdt = memfd_luo_create_fdt(PAGE_ALIGN(preserved_size) + PAGE_SIZE);
+>> >> > +	if (!fdt) {
+>> >> > +		err = -ENOMEM;
+>> >> > +		goto err_unpin;
+>> >> > +	}
+>> >> 
+>> >> This doesn't seem to have any versioning scheme, it really should..
+>> >> 
+>> >> > +	err = fdt_property_placeholder(fdt, "folios", preserved_size,
+>> >> > +				       (void **)&preserved_folios);
+>> >> > +	if (err) {
+>> >> > +		pr_err("Failed to reserve folios property in FDT: %s\n",
+>> >> > +		       fdt_strerror(err));
+>> >> > +		err = -ENOMEM;
+>> >> > +		goto err_free_fdt;
+>> >> > +	}
+>> >> 
+>> >> Yuk.
+>> >> 
+>> >> This really wants some luo helper
+>> >> 
+>> >> 'luo alloc array'
+>> >> 'luo restore array'
+>> >> 'luo free array'
+>> >
+>> > We can just add kho_{preserve,restore}_vmalloc(). I've drafted it here:
+>> > https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git/log/?h=kho/vmalloc/v1
+>> >
+>> > Will wait for kbuild and then send proper patches.
+>> 
+>> I have been working on something similar, but in a more generic way.
+>> 
+>> I have implemented a sparse KHO-preservable array (called kho_array)
+>> with xarray like properties. It can take in 4-byte aligned pointers and
+>> supports saving non-pointer values similar to xa_mk_value(). For now it
+>> doesn't support multi-index entries, but if needed the data format can
+>> be extended to support it as well.
+>> 
+>> The structure is very similar to what you have implemented. It uses a
+>> linked list of pages with some metadata at the head of each page.
+>> 
+>> I have used it for memfd preservation, and I think it is quite
+>> versatile. For example, your kho_preserve_vmalloc() can be very easily
+>> built on top of this kho_array by simply saving each physical page
+>> address at consecutive indices in the array.
+>
+> I've started to work on something similar to your kho_array for memfd case
+> and then I thought that since we know the size of the array we can simply
+> vmalloc it and preserve vmalloc, and that lead me to implementing
+> preservation of vmalloc :)
+>
+> I like the idea to have kho_array for cases when we don't know the amount
+> of data to preserve in advance, but for memfd as it's currently
+> implemented I think that allocating and preserving vmalloc is simpler.
+>
+> As for porting kho_preserve_vmalloc() to kho_array, I also feel that it
+> would just make kho_preserve_vmalloc() more complex and I'd rather simplify
+> it even more, e.g. with preallocating all the pages that preserve indices
+> in advance.
 
-diff --git a/drivers/usb/cdns3/cdnsp-pci.c b/drivers/usb/cdns3/cdnsp-pci.c
-index 8c361b8394e9..5e7b88ca8b96 100644
---- a/drivers/usb/cdns3/cdnsp-pci.c
-+++ b/drivers/usb/cdns3/cdnsp-pci.c
-@@ -85,7 +85,7 @@ static int cdnsp_pci_probe(struct pci_dev *pdev,
- 		cdnsp = kzalloc(sizeof(*cdnsp), GFP_KERNEL);
- 		if (!cdnsp) {
- 			ret = -ENOMEM;
--			goto disable_pci;
-+			goto put_pci;
- 		}
- 	}
- 
-@@ -168,9 +168,6 @@ static int cdnsp_pci_probe(struct pci_dev *pdev,
- 	if (!pci_is_enabled(func))
- 		kfree(cdnsp);
- 
--disable_pci:
--	pci_disable_device(pdev);
--
- put_pci:
- 	pci_dev_put(func);
- 
+I think there are two parts here. One is the data format of the KHO
+array and the other is the way to build it. I think the format is quite
+simple and versatile, and we can have many strategies of building it.
+
+For example, if you are only concerned with pre-allocating data, I can
+very well add a way to initialize the KHO array with with a fixed size
+up front.
+
+Beyond that, I think KHO array will actually make kho_preserve_vmalloc()
+simpler since it won't have to deal with the linked list traversal
+logic. It can just do ka_for_each() and just get all the pages. We can
+also convert the preservation bitmaps to use it so the linked list logic
+is in one place, and others just build on top of it.
+
+>  
+>> The code is still WIP and currently a bit hacky, but I will clean it up
+>> in a couple days and I think it should be ready for posting. You can
+>> find the current version at [0][1]. Would be good to hear your thoughts,
+>> and if you agree with the approach, I can also port
+>> kho_preserve_vmalloc() to work on top of kho_array as well.
+>> 
+>> [0] https://git.kernel.org/pub/scm/linux/kernel/git/pratyush/linux.git/commit/?h=kho-array&id=cf4c04c1e9ac854e3297018ad6dada17c54a59af
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/pratyush/linux.git/commit/?h=kho-array&id=5eb0d7316274a9c87acaeedd86941979fc4baf96
+>> 
+>> -- 
+>> Regards,
+>> Pratyush Yadav
+
 -- 
-2.35.1
-
+Regards,
+Pratyush Yadav
 
