@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-799442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B5CCB42BD0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:24:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0003AB42BD1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:24:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AF5E7C8549
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:24:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B704B7C75D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1C12EC56B;
-	Wed,  3 Sep 2025 21:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1682EBB84;
+	Wed,  3 Sep 2025 21:23:39 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C712EB85A
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 21:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7045A2EC573
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 21:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756934616; cv=none; b=OkgzBygC4uHXlobanPa3SXykaPpKsR3S+RUhdJUd4slC0IsOIseKtK15JQjdnMYD4Nl2mjlfpTiMpJZd66aIDEOIHFPmupyVZDFzOyBPbGw3kts+33rgJ2VfhHGC3zDuxlma3Fd1wu4yhwqvdXmYy4/aR4tFz4FL7UE9qqBipDE=
+	t=1756934619; cv=none; b=MFiqulw2A6z9969l1iGB5tZiSplRPovSHpZcil762ev4KLcQV30xgwxCzWINNucM0lKYiNztcZ4orfvKVJxny04FBIjzlZBPJrhJpAuo1nwLHjATHKoEZ1C5q1ojTj8fma2masyOYL3LDrOsYpjUEVT00LkJgfqRVrejKUPdrgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756934616; c=relaxed/simple;
-	bh=E94B3/I+ey8U/6ABm8kiPpbbVtCdMVHMMGK9O95zHXI=;
+	s=arc-20240116; t=1756934619; c=relaxed/simple;
+	bh=ElRvS8XUhRJeZToccc++Fe/3u4yPQ0/w/ug2DD+z+Xg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FikLaCI4SX6e/0rIPgqXGIv3XEVumb4N6ItEUXumG12ZOPLX7phyhbSlghJbYO1yUzjEwuT4JGvHLDs574IG1xU2z+2ZUfASHDm19LbtcQkKVaUxYalok46tTWnc7TRBW7bbkXHgIWkpj4BuBMVAhD8dVrcEZ9w/wzH8Y+G/T0c=
+	 MIME-Version; b=VuJ9memuufg6UmlozL29eVm1KKBeFWvO1wjYEDiU6erdMJpg213Wf9GdqIjonJu+kvu0Kv8GaN4RiGA8Tgp0jHU7s9QfV18X9KOIy1UUv0Zp3uXUmwUJTBLMW3JrxZCnYXF9MLZJkDWYf7kAvl3ZuIhqFzIckw/PEED7v55afds=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55AAB1BD0;
-	Wed,  3 Sep 2025 14:23:26 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E0421CE0;
+	Wed,  3 Sep 2025 14:23:28 -0700 (PDT)
 Received: from e127648.arm.com (unknown [10.57.93.203])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D6A8B3F694;
-	Wed,  3 Sep 2025 14:23:32 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 044C23F694;
+	Wed,  3 Sep 2025 14:23:34 -0700 (PDT)
 From: Christian Loehle <christian.loehle@arm.com>
 To: tj@kernel.org,
 	arighi@nvidia.com,
@@ -44,9 +44,9 @@ Cc: linux-kernel@vger.kernel.org,
 	peterz@infradead.org,
 	jake@hillion.co.uk,
 	Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH v7 2/3] sched_ext: Introduce scx_bpf_cpu_curr()
-Date: Wed,  3 Sep 2025 22:23:10 +0100
-Message-Id: <20250903212311.369697-3-christian.loehle@arm.com>
+Subject: [PATCH v7 3/3] sched_ext: deprecation warn for scx_bpf_cpu_rq()
+Date: Wed,  3 Sep 2025 22:23:11 +0100
+Message-Id: <20250903212311.369697-4-christian.loehle@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250903212311.369697-1-christian.loehle@arm.com>
 References: <20250903212311.369697-1-christian.loehle@arm.com>
@@ -58,66 +58,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Provide scx_bpf_cpu_curr() as a way for scx schedulers to check the curr
-task of a remote rq without assuming its lock is held.
-
-Many scx schedulers make use of scx_bpf_cpu_rq() to check a remote curr
-(e.g. to see if it should be preempted). This is problematic because
-scx_bpf_cpu_rq() provides access to all fields of struct rq, most of
-which aren't safe to use without holding the associated rq lock.
+scx_bpf_cpu_rq() works on an unlocked rq which generally isn't safe.
+For the common use-cases scx_bpf_locked_rq() and
+scx_bpf_cpu_curr() work, so add a deprecation warning
+to scx_bpf_cpu_rq() so it can eventually be removed.
 
 Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-Acked-by: Andrea Righi <arighi@nvidia.com>
 ---
- kernel/sched/ext.c                       | 14 ++++++++++++++
- tools/sched_ext/include/scx/common.bpf.h |  1 +
- 2 files changed, 15 insertions(+)
+ kernel/sched/ext.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index e15f1b0501a1..6ea81b6a6b2d 100644
+index 6ea81b6a6b2d..1a0afdf5fcf5 100644
 --- a/kernel/sched/ext.c
 +++ b/kernel/sched/ext.c
-@@ -7452,6 +7452,19 @@ __bpf_kfunc struct rq *scx_bpf_locked_rq(void)
- 	return rq;
- }
-
-+/**
-+ * scx_bpf_cpu_curr - Return remote CPU's curr task
-+ * @cpu: CPU of interest
-+ *
-+ * Callers must hold RCU read lock (KF_RCU).
-+ */
-+__bpf_kfunc struct task_struct *scx_bpf_cpu_curr(s32 cpu)
-+{
-+	if (!kf_cpu_valid(cpu, NULL))
-+		return NULL;
-+	return rcu_dereference(cpu_rq(cpu)->curr);
-+}
+@@ -873,6 +873,7 @@ struct scx_sched {
+ 	struct scx_event_stats __percpu *event_stats_cpu;
+ 
+ 	bool			warned_zero_slice;
++	bool			warned_deprecated_rq;
+ 
+ 	atomic_t		exit_kind;
+ 	struct scx_exit_info	*exit_info;
+@@ -7424,9 +7425,18 @@ __bpf_kfunc s32 scx_bpf_task_cpu(const struct task_struct *p)
+  */
+ __bpf_kfunc struct rq *scx_bpf_cpu_rq(s32 cpu)
+ {
++	struct scx_sched *sch = scx_root;
 +
- /**
-  * scx_bpf_task_cgroup - Return the sched cgroup of a task
-  * @p: task of interest
-@@ -7617,6 +7630,7 @@ BTF_ID_FLAGS(func, scx_bpf_task_running, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_task_cpu, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_cpu_rq)
- BTF_ID_FLAGS(func, scx_bpf_locked_rq, KF_RET_NULL)
-+BTF_ID_FLAGS(func, scx_bpf_cpu_curr, KF_RET_NULL | KF_RCU)
- #ifdef CONFIG_CGROUP_SCHED
- BTF_ID_FLAGS(func, scx_bpf_task_cgroup, KF_RCU | KF_ACQUIRE)
- #endif
-diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
-index e9b006226cf6..03e614506fa3 100644
---- a/tools/sched_ext/include/scx/common.bpf.h
-+++ b/tools/sched_ext/include/scx/common.bpf.h
-@@ -92,6 +92,7 @@ bool scx_bpf_task_running(const struct task_struct *p) __ksym;
- s32 scx_bpf_task_cpu(const struct task_struct *p) __ksym;
- struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
- struct rq *scx_bpf_locked_rq(void) __ksym;
-+struct task_struct *scx_bpf_cpu_curr(s32 cpu) __ksym;
- struct cgroup *scx_bpf_task_cgroup(struct task_struct *p) __ksym __weak;
- u64 scx_bpf_now(void) __ksym __weak;
- void scx_bpf_events(struct scx_event_stats *events, size_t events__sz) __ksym __weak;
---
+ 	if (!kf_cpu_valid(cpu, NULL))
+ 		return NULL;
+ 
++	if (!sch->warned_deprecated_rq) {
++		printk_deferred(KERN_WARNING "sched_ext: %s() is deprecated; "
++				"use scx_bpf_locked_rq() when holding rq lock "
++				"or scx_bpf_cpu_curr() to read remote curr safely.\n", __func__);
++		sch->warned_deprecated_rq = true;
++	}
++
+ 	return cpu_rq(cpu);
+ }
+ 
+-- 
 2.34.1
 
 
