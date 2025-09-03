@@ -1,135 +1,209 @@
-Return-Path: <linux-kernel+bounces-798003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C5BB41846
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:21:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E84D8B4184A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A61816C6AA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:21:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 696CF1BA3D10
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4396C2E9757;
-	Wed,  3 Sep 2025 08:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED1C2EAD0B;
+	Wed,  3 Sep 2025 08:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q1bNi8pK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="AlAn68cT";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TEvgNggr"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8466D2D6E64;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF982E9EAE;
 	Wed,  3 Sep 2025 08:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756887698; cv=none; b=c3qu2QM8b7rZyj+UnwlfOF4GeWto1XaW/IyNAZNusJXG/9rhkGJMAmv/oRILVAAfIsupATSYh8HeZOyPF7qbtQ/X/bfZ/Syjfghds4wrbIYh+BgGrmzLlKIkUmNm2/lC+nH4GjtnTcjD3LKmxgouC1MBXmPdBGIGAvGPLKRikG4=
+	t=1756887703; cv=none; b=iUCBIxyCYXPaRmMRPpJWGtA1uPuFNrek42smUdyd8xpleerE10D1KlNMN3s6OAtzawL7x9X82Crldvqhaav3D2qkZH3AylQFVCxz6whMV48HXdHdlEZA781A2W0LMygV8vNrHO61/3WFEE9wBfkwDqmEsYcMi6U+QoCKUVmExnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756887698; c=relaxed/simple;
-	bh=WBf81W1pYWoH/U7fZv0PlK7bHS2UjoD0trS4XRP+BSg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mNIqvSLulXHLcrBgu9I877uKvBNd1MpM5B8/91ouLhs1cibTBPo04WGX43DtrpoTjq0wesga2fao+eAtLVgD0t9eRQL9vUfuVjV4w7mapUGBkBhI2ngXSpFBOu8DRdJXCF1doLbwSShD8pgM12JOlFZS5EbxNoZ7n5QmR7RCGuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q1bNi8pK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04B79C4CEF0;
-	Wed,  3 Sep 2025 08:21:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756887698;
-	bh=WBf81W1pYWoH/U7fZv0PlK7bHS2UjoD0trS4XRP+BSg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=q1bNi8pKSpcvborcUxapoGgtKyHBDr6RHnhF9bIX58cyYIOoNGqc0dz05d9fXvhf9
-	 Xw4wz2TWMhS/f9mgpQsdUOc5+FRh5DdfZN6dtRXA69vvi6yN1lM6p5kIABtVnMwamB
-	 VemU4Wc/KaAyyw5gSSzqoZP5SFmHx0mQTtl9l2Io2h7quOBeb/gWHLDqjZdQ9+3WLy
-	 CXfL3Zs2jJt4COUhORrxh/m/NKcoxyaQV7TDoVCU0gyCDGTUNKz7nDgD801c5sKQYS
-	 GrHt51Z4Z1IGPpobrxOsVJDJXay22Xd0e29mSKZW8s2cwQZTJgEOAWffvOY+1I3E5A
-	 emJCfpOSdPe7Q==
-Message-ID: <6deac56f-e21a-4447-bfa7-a414084676b8@kernel.org>
-Date: Wed, 3 Sep 2025 10:21:32 +0200
+	s=arc-20240116; t=1756887703; c=relaxed/simple;
+	bh=YDQvYYRYePGEkbmnqITfE3daRFS7pSl7/jVkS1aHYYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iX1StW7Z1YBdjjVJ9bdGIHjOZENM7uD0PZrmZOS4ehd99O3y7U0IfaFhCONFvm0lC883UuzposVvUrLbbyf7nVfdYK2Up7DQUksY7wZ/RYvlmr9FPYbXn7MbfrS3g+D2eAaqhZ4xnl/1sNK9Ds6oEg1ZlIr9/Y4swmgCHqu71Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=AlAn68cT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TEvgNggr; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 5DFE9EC02F9;
+	Wed,  3 Sep 2025 04:21:38 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Wed, 03 Sep 2025 04:21:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1756887698; x=
+	1756974098; bh=RamPT76eb1nCXOwlEEiEUWgYTl9dVawyqJagKv68tPU=; b=A
+	lAn68cTiDVqU0IqotjoGZAlhzBf5IGZ3j247HA3HOoboQ18YQAuxq+jXOuRwUj8z
+	GAzcHXk1TcH06cqHOb8Tn9BS1lMmeIxnWY0rqShb0Yt1W2iVQtpuX4f3typE2y1L
+	r6gQX83JewVCKa7GI0uc80qbG4EGFCXq++XmdyWoGk4d5ynBn9VGvFmwbRxtraHG
+	h9DeUU8pUqmYfTIPFCkl1W9DIA/8BKuI9zZVMnb9ILXNYj1jdJ+tg4R4OlK7zEhr
+	HDIYenFrRgsD8RuWFqTRFh0Txfee7oWeNhwjtPjYQho2JeoZsusr4h1Nk1uIhmkP
+	BPmlFY9GgPtCLWyfFlx0A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1756887698; x=1756974098; bh=RamPT76eb1nCXOwlEEiEUWgYTl9dVawyqJa
+	gKv68tPU=; b=TEvgNggraN2B5hb/SCtd1DcmEXK09dFF9qB+Z/PLhcTTDmv9IHu
+	UYUPmk7eIytQ6iXqOnBrMh3ebSzOR+b0zz3q5nGWU5ZE+t0cGAxAREgzESwjaoN5
+	hCQQne8uguSCsywsGGfUmCyN1GIy/NNJS1hEznvvQCOoz+vs1+JHeFrPCjleYvSJ
+	GCkvJQuk6xNn1v2jErA78nQf8D/CeqOjMsa74VOx58m5Gpxq2F3c0w5M99lSYh9o
+	QeegN+vAqfcXQ46fjFPqgAYEeYl2FSVbMg46TK6J6aj5HogunoLXFbb5MSFTjqfI
+	YcQ59/XBm/vQnNdwth9GCMr5eKCpt8zrzlQ==
+X-ME-Sender: <xms:kfq3aB-WUxv5aaSFffFfjySs9eT5lXia7Q3O6kJ-tjHvnYFPGrGRNw>
+    <xme:kfq3aDOo-HtqHDxSpwSY9OoSH_ktVfrvTdud-x2rTwsPRRGt8IMcqbc5ZG9y9QlhJ
+    ecMy_QcGuMQO26B3Co>
+X-ME-Received: <xmr:kfq3aBpjxxaS4yPMFuHAugas5MwMqjiBFVdJ2MKBnJ4vP6O0VbL8M4jDfOTJ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvieehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomhepufgrsghrihhnrgcu
+    ffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrfgrth
+    htvghrnhepuefhhfffgfffhfefueeiudegtdefhfekgeetheegheeifffguedvuefffefg
+    udffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsh
+    gusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopedufedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepfihilhhfrhgvugdrmhgrlhhlrgifrgesfigutg
+    drtghomhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopegu
+    lhgvmhhorghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvghmsegurghvvg
+    hmlhhofhhtrdhnvghtpdhrtghpthhtoheplhhinhhugidqughotgesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehjohhhnhdrfhgrshhtrggsvghnugesghhmrghilh
+    drtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopegrlhhishhtrghirhdrfhhrrghntghishesfigutgdrtg
+    homhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:kfq3aK7bXYVtFsCWsdyAkinfnbnBYIUr8Vg5ONdQvHngMxJensJuPw>
+    <xmx:kvq3aJEkPbV_1wwC4ZG4PgqDosqghvkrAB9oOa-1bEtnJTzdmJeqkw>
+    <xmx:kvq3aM1f-ayVOIrtGu6AeaMA11VlZaU-3xsll2lgtHTrLVopoiZiPw>
+    <xmx:kvq3aGo3WmdM4rrhBvDZ8m6z4ByOPcL1WtZA8LejXWtpata-i0d_rQ>
+    <xmx:kvq3aJpeYqPYkiMpm4yLwGdyYDKv1p3YS2oFtO6gNFwjAslk9M9T7lin>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 3 Sep 2025 04:21:37 -0400 (EDT)
+Date: Wed, 3 Sep 2025 10:21:35 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Cc: "corbet@lwn.net" <corbet@lwn.net>,
+	"dlemoal@kernel.org" <dlemoal@kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Alistair Francis <Alistair.Francis@wdc.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH v2] net/tls: support maximum record size limit
+Message-ID: <aLf6j73xSGGLAhQv@krikkit>
+References: <20250902033809.177182-2-wilfred.opensource@gmail.com>
+ <aLcWOJeAFeM6_U6w@krikkit>
+ <0ba1e9814048e52b1b7cb4f772ad30bdd3a0cbbd.camel@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 4/4] arm64: dts: qcom: sm8550: Add max-sd-hs-hz
- property
-To: Sarthak Garg <quic_sartgarg@quicinc.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
- quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
- quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com
-References: <20250903080404.3260135-1-quic_sartgarg@quicinc.com>
- <20250903080404.3260135-5-quic_sartgarg@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250903080404.3260135-5-quic_sartgarg@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0ba1e9814048e52b1b7cb4f772ad30bdd3a0cbbd.camel@wdc.com>
 
-On 03/09/2025 10:04, Sarthak Garg wrote:
-> Due to board-specific hardware constraints particularly related
-> to level shifter in this case the maximum frequency for SD High-Speed
-> (HS) mode must be limited to 37.5 MHz to ensure reliable operation of SD
-> card in HS mode.
+2025-09-02, 22:50:53 +0000, Wilfred Mallawa wrote:
+> On Tue, 2025-09-02 at 18:07 +0200, Sabrina Dubroca wrote:
+> > 2025-09-02, 13:38:10 +1000, Wilfred Mallawa wrote:
+> > > From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+> Hey Sabrina,
+> > A selftest would be nice (tools/testing/selftests/net/tls.c), but I'm
+> > not sure what we could do on the "RX" side to check that we are
+> > respecting the size restriction. Use a basic TCP socket and try to
+> > parse (and then discard without decrypting) records manually out of
+> > the stream and see if we got the length we wanted?
+> > 
+> So far I have just been using an NVMe TCP Target with TLS enabled and
+> checking that the targets RX record sizes are <= negotiated size in
+> tls_rx_one_record(). I didn't check for this patch and the bug below
+> got through...my bad!
 > 
-> This is achieved by introducing the `max-sd-hs-hz` property in the
-> device tree, allowing the controller to operate within safe frequency
-> limits for HS mode.
-> 
+> Is it possible to get the exact record length into the testing layer?
 
-Probably we will now replicate the same discussion... And it will be
-happening every time you send the same and not reflect it in commit msg.
+Not really, unless we come up with some mechanism using probes. I
+wouldn't go that route unless we don't have any other choice.
 
-Bindings say board setup, this commit msg says board config, but the
-patch says SoC. This is not correct.
+> Wouldn't the socket just return N bytes received which doesn't
+> necessarily correlate to a record size?
 
-Best regards,
-Krzysztof
+Yes. That's why I suggested only using ktls on one side of the test,
+and parsing the records out of the raw stream of bytes on the RX side.
+
+Actually, control records don't get aggregated on read, so sending a
+large non-data buffer should result in separate limit-sized reads. But
+this makes me wonder if this limit is supposed to apply to control
+records, and how the userspace library/application is supposed to deal
+with the possible splitting of those records?
+
+
+Here's a rough example of what I had in mind. The hardcoded cipher
+overhead is a bit ugly but I don't see a way around it. Sanity check
+at the end is probably not needed. I didn't write the loop because I
+haven't had enough coffee yet to get that right :)
+
+
+TEST(tx_record_size)
+{
+	struct tls_crypto_info_keys tls12;
+	int cfd, ret, fd, len, overhead;
+	char buf[1000], buf2[2000];
+	__u16 limit = 100;
+	bool notls;
+
+	tls_crypto_info_init(TLS_1_2_VERSION, TLS_CIPHER_AES_CCM_128,
+			     &tls12, 0);
+
+	ulp_sock_pair(_metadata, &fd, &cfd, &notls);
+
+	if (notls)
+		exit(KSFT_SKIP);
+
+	/* Don't install keys on fd, we'll parse raw records */
+	ret = setsockopt(cfd, SOL_TLS, TLS_TX, &tls12, tls12.len);
+	ASSERT_EQ(ret, 0);
+
+	ret = setsockopt(cfd, SOL_TLS, TLS_TX_RECORD_SIZE_LIM, &limit, sizeof(limit));
+	ASSERT_EQ(ret, 0);
+
+	EXPECT_EQ(send(cfd, buf, sizeof(buf), 0), sizeof(buf));
+	close(cfd);
+
+	ret = recv(fd, buf2, sizeof(buf2), 0);
+	memcpy(&len, buf2 + 3, 2);
+	len = htons(len);
+
+	/* 16B tag + 8B IV -- record header (5B) is not counted but we'll need it to walk the record stream */
+	overhead = 16 + 8;
+
+	// TODO should be <= limit since we may not have filled every
+	// record (especially the last one), and loop over all the
+	// records we got
+	// next record starts at buf2 + (limit + overhead + 5)
+	ASSERT_EQ(len, limit + overhead);
+	/* sanity check that it's a TLS header for application data */
+	ASSERT_EQ(buf2[0], 23);
+	ASSERT_EQ(buf2[1], 0x3);
+	ASSERT_EQ(buf2[2], 0x3);
+
+	close(fd);
+}
+
+
+-- 
+Sabrina
 
