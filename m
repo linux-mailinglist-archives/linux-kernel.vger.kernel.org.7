@@ -1,292 +1,115 @@
-Return-Path: <linux-kernel+bounces-799445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF293B42BDA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:26:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FA08B42BF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FDF34886C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:26:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 111171BC75C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA1F2EB5C1;
-	Wed,  3 Sep 2025 21:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D172F2EB86C;
+	Wed,  3 Sep 2025 21:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AJ5QMHyv"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="anAcspD2";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="pqNva9nI"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D792EB5AC
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 21:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC252E03FF;
+	Wed,  3 Sep 2025 21:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756934787; cv=none; b=Gqm7wKQLyXv0u3fEDq4lW3Q4kgY8jcZ80ewX9ywP0mIKBsiIS9OPYC9jtTZnn7v5M1afOk5x20lz1vZWEbUrlJ+Jfpvyv+O/jCMOTBUlMR6IqbidV4pB3IYruLBwgxQH161rRGZdV84LGAv4oTHYUhPGabkc/IrJXtIajDNP6Eo=
+	t=1756934996; cv=none; b=WuarSM5J00q4/ftlkbyuXFX36XFSNoODOPre914qfxVR2r3UMYe0VAYpYYnvNW7Y3JPVzuUrCkGK7vLrFRnDMUWnlwsUCSjX3weWZCiXcKivqTLgZdNdJj7RYqiay46OsATQgTNASqD6vYoo3g6JM4B1qezFliXVaZSEiqhCzJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756934787; c=relaxed/simple;
-	bh=M33kH1V3bhnMJw3m4nRTDU3lB0zxC4Qc4fFgF5IA4WY=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=QA+HgETemSW86MSeCY7aK4yq52fQa/QGcJpqya62h4Jn1DjZjDZaEimxJyuPxTa/Tv/iys4IR3rkUsvKvxTLk/Ic7F5X8LlgRLkFsBWuiYbgH3CXjTrxNGBB9HQ5KDOmTlLc4IvvG2lw4Js5ZVA4rN3rIxlPvx9XzBghOZW1KR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AJ5QMHyv; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-70fa947a7acso983526d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 14:26:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1756934783; x=1757539583; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZKAFUEHK8OBYchmycuUbisd/bzFy1QHMzYkOvBvFOpA=;
-        b=AJ5QMHyvKING3BjPluB3ye0NMQAKeruFPXa6w2AHY1AyPZz4nZqoS2i/Hre48Tz3sf
-         al3j3k9PQlmnXKJn1XcFr4YVG47PczuSbk/YIlrLgokKqHBF9c6xkaSU+ChUsDYys0TX
-         EH/fiOWXvdbb4EnqeYmHfcoemFb7LhINf4LeR65gs5x3qcErdkEfpCeSo33ZVqHugGOD
-         BrWRY9mW1zqPxCh+T96a7ohNvcDUm9aYcuyGAjeJeQY7fMRUp4Vrat6RAS7TmzJzOeZk
-         8SD8qMCyvbJkLPZeVl5bXwk2hMa0AnFICIqc9s/1/teFwZWwlAYtYVpg8/nu4INQx/cu
-         nFow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756934783; x=1757539583;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZKAFUEHK8OBYchmycuUbisd/bzFy1QHMzYkOvBvFOpA=;
-        b=ZYM/tL+hCCPffGqD4WThOfc3DGeWO9hqkkU0duUMMt1TNiKfPykJKyM8bLvChMkxdV
-         QDS5pfs1nif1CMfcVoJEOFyO3/5npTS7Fer/7luvmbY1pbch7Ju5htsesoC9gpY5VI0Y
-         xZ7P8u8gNzvE9dASdAK1XCOjw9LZoPOzpaV14aW+IWzIt2msvRR3wM+jw/xp3ST3LjlS
-         cpIZGltqTq1z63sL7mEsVcWpMtzwQRx4rwVCuaowLq5nvopBr7+urGgAP5nz95ybv5VG
-         2A+EJIr8Fn5JLnMcOSSgfIpu0Hy6ZkwrgwSP0i3NXwpv3bpVFm2p0ZjYHJ3hHBhjQZni
-         LXfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMX6Ihnx+qeAdvH9faxsx8oN+02FLaHw62bThvdqEu2OI3bB0D7M5egycd8WEXMcCFJVhYVeRGTcf1FG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9/Op9us8E3gDTiAoScW4IKXKBQBj+9HTrHESkm4baoxAA6nXu
-	DzjNAUBvzZtx4JlhS95gMOqZygfwc+r2EztWOxc8dsWY/fmOHqsLSl2QYB0EsJa+Hg==
-X-Gm-Gg: ASbGncvlWHM0aNioo4iMWvxIbmk7LQmnYjfSf/RuoNAAPdd+uX8Kf7w4kiJvp4hSgmX
-	warmW+gB/Hc588BUm+YJC03CiVVxFZfeYiMsUvB7ZGoH+cmvewScFyEmnMNQm/w7dm0oC7EQBF5
-	Dorwbtww9vvq5s1adBkQShNMyLf9ls2fPstF0wVCLfZ1RT2gRKoV7cvb5Ezm3RofOt93YdMUeLY
-	eEC1Q/k97kSMfzYKhl94/tEoEG0kKLkxd7FCTH0w2poa33PE+XqRlzNBdjyEoHhyRLzfiZRehgM
-	E0/gqeiK9Mw0AgmvgWl5ptDpkC+Egh//gUvKtKGuwRJuhmO5pvdeXkpc+IFYEWD4dwWJpVBPTR6
-	SndoO68zxhjxp3PhjJVy3EQHjc3bBsBW7mOaNlk9fgivfdLVXOAH6hTMeKHCIJjOki/1ptp5Otn
-	zaYSo=
-X-Google-Smtp-Source: AGHT+IGjeGVBk59qanrKojqKe1+ebv5QbBLUr+xq2vrJdB1gpx6C81S9JV5wN46o/dcj2HWmCycKCg==
-X-Received: by 2002:a05:6214:c65:b0:71d:478f:e0cd with SMTP id 6a1803df08f44-71d478fe49fmr118773496d6.26.1756934782933;
-        Wed, 03 Sep 2025 14:26:22 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-720b466614bsm34702456d6.38.2025.09.03.14.26.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 14:26:21 -0700 (PDT)
-Date: Wed, 03 Sep 2025 17:26:21 -0400
-Message-ID: <6afc91a9f5caef96b2ca335b6d143670@paul-moore.com>
+	s=arc-20240116; t=1756934996; c=relaxed/simple;
+	bh=Pm72KJkyOx20dJkg1/oHOJ+b8z/476MTARgoZvT6Kko=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WqWCAEV5X/8g4euaAIO3Ey/qQPlJnmSwsoOL1MFtjVblbcqoOo4z/Qh1uwhpJ4BkimtpO1O/LyL3SwOOl9/hVqQLErv1gPwPYZyva+PcL59R8NxzXw9eM28ON08xHDCWyfL1De+JNUi9hXmxX58EDJ/5J3STO6LvCYG53Y7Ch20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=anAcspD2; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=pqNva9nI; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1756934856; bh=KWG1lKRUoYbRab1ldXHp7em
+	ZA3hhQoPTXfqyJ/dofyE=; b=anAcspD2TR1NSE4GORNByPsFoFmmZh9N4ZRwfas5cB2Fs+6s18
+	utAbAfhbhOkoGcq3F5QrY4KhKeAITnsDfeXFMkOWqLGPFZ9i+ida1kidConVIbhZxiR6wrpo0zl
+	Q9d2jMGe0VBoXE0yCxgMN0ScP79GuGuubSoysPHiic7LKx1qqBIl9pU100v6J4n+4dBYLcaqVSo
+	4eGYtVpkJKwPud1F00n07K89X4EcSw/C1XMi0veqWx+hrGg/8MyCFumRGC9jxZxpgvQ0da5Vbdq
+	9bWE7VywZA/Z9wt+Nf7Tanjx8SMGntoGMcxFzZ3h0HdUDgZAcqDXwnGUoy0hA+OeqGw==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1756934856; bh=KWG1lKRUoYbRab1ldXHp7em
+	ZA3hhQoPTXfqyJ/dofyE=; b=pqNva9nIU9A+d2o7h6gM74nzifXEx6oZ2iZBDwwUfPl99wCDFM
+	LQFTpXSMeeIK1VeLCiFaMJ1ID/9fIt89wiBQ==;
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Date: Wed, 03 Sep 2025 23:27:33 +0200
+Subject: [PATCH v2] arm64: dts: qcom: msm8953-xiaomi-daisy: fix cd-gpios
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250903_1645/pstg-lib:20250903_1606/pstg-pwork:20250903_1645
-From: Paul Moore <paul@paul-moore.com>
-To: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, James Morris <jmorris@namei.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, Hugh Dickins <hughd@google.com>, Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] memfd,selinux: call security_inode_init_security_anon
-References: <20250826031824.1227551-1-tweek@google.com>
-In-Reply-To: <20250826031824.1227551-1-tweek@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250903-daisy-sd-fix-v2-1-e08c50f3be57@mainlining.org>
+X-B4-Tracking: v=1; b=H4sIAMSyuGgC/3WMQQ7CIBAAv9Ls2TVAVdCT/zA9YFnpJgoNGGLT8
+ Hexd48zycwKmRJThku3QqLCmWNooHYdjJMNnpBdY1BCHYXpBTrLecHs8MEfFFKOqj+cDCkLLZk
+ TNb3tbkPjifM7pmW7F/mzf0ZFokStNJneno2+m+vLcnhy4OD3MXkYaq1fCb7Ovq0AAAA=
+X-Change-ID: 20250830-daisy-sd-fix-011c23468e2a
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alejandro Tafalla <atafalla@dnyon.com>, 
+ Luca Weiss <luca@lucaweiss.eu>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756934856; l=1448;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=Pm72KJkyOx20dJkg1/oHOJ+b8z/476MTARgoZvT6Kko=;
+ b=spjJ8/o1wszYQYfWdN0OlEkMr5Iy/iURdUV18eYwxwctOkz4dAEUbdslorYf1a5057gPB6ymH
+ ibY4rwWRiHnD1EiYlJi//WON2mkrxq8vVZg/6UNcXGtxc8JN1FVqqaM
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-On Aug 25, 2025 "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com> wrote:
-> 
-> Prior to this change, no security hooks were called at the creation of a
-> memfd file. It means that, for SELinux as an example, it will receive
-> the default type of the filesystem that backs the in-memory inode. In
-> most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
-> be hugetlbfs. Both can be considered implementation details of memfd.
-> 
-> It also means that it is not possible to differentiate between a file
-> coming from memfd_create and a file coming from a standard tmpfs mount
-> point.
-> 
-> Additionally, no permission is validated at creation, which differs from
-> the similar memfd_secret syscall.
-> 
-> Call security_inode_init_security_anon during creation. This ensures
-> that the file is setup similarly to other anonymous inodes. On SELinux,
-> it means that the file will receive the security context of its task.
-> 
-> The ability to limit fexecve on memfd has been of interest to avoid
-> potential pitfalls where /proc/self/exe or similar would be executed
-> [1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
-> similarly to the file class. These access vectors may not make sense for
-> the existing "anon_inode" class. Therefore, define and assign a new
-> class "memfd_file" to support such access vectors.
-> 
-> Guard these changes behind a new policy capability named "memfd_class".
-> 
-> [1] https://crbug.com/1305267
-> [2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.com/
-> 
-> Signed-off-by: Thiébaud Weksteen <tweek@google.com>
-> Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> ---
-> Changes since RFC:
-> - Remove enum argument, simply compare the anon inode name
-> - Introduce a policy capability for compatility
-> - Add validation of class in selinux_bprm_creds_for_exec
-> 
->  include/linux/memfd.h                      |  2 ++
->  mm/memfd.c                                 | 14 +++++++++--
->  security/selinux/hooks.c                   | 27 ++++++++++++++++++----
->  security/selinux/include/classmap.h        |  2 ++
->  security/selinux/include/policycap.h       |  1 +
->  security/selinux/include/policycap_names.h |  1 +
->  security/selinux/include/security.h        |  5 ++++
->  7 files changed, 46 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/memfd.h b/include/linux/memfd.h
-> index 6f606d9573c3..cc74de3dbcfe 100644
-> --- a/include/linux/memfd.h
-> +++ b/include/linux/memfd.h
-> @@ -4,6 +4,8 @@
->  
->  #include <linux/file.h>
->  
-> +#define MEMFD_ANON_NAME "[memfd]"
-> +
->  #ifdef CONFIG_MEMFD_CREATE
->  extern long memfd_fcntl(struct file *file, unsigned int cmd, unsigned int arg);
->  struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx);
-> diff --git a/mm/memfd.c b/mm/memfd.c
-> index bbe679895ef6..63b439eb402a 100644
-> --- a/mm/memfd.c
-> +++ b/mm/memfd.c
-> @@ -433,6 +433,8 @@ static struct file *alloc_file(const char *name, unsigned int flags)
->  {
->  	unsigned int *file_seals;
->  	struct file *file;
-> +	struct inode *inode;
-> +	int err = 0;
->  
->  	if (flags & MFD_HUGETLB) {
->  		file = hugetlb_file_setup(name, 0, VM_NORESERVE,
-> @@ -444,12 +446,20 @@ static struct file *alloc_file(const char *name, unsigned int flags)
->  	}
->  	if (IS_ERR(file))
->  		return file;
-> +
-> +	inode = file_inode(file);
-> +	err = security_inode_init_security_anon(inode,
-> +			&QSTR(MEMFD_ANON_NAME), NULL);
-> +	if (err) {
-> +		fput(file);
-> +		file = ERR_PTR(err);
-> +		return file;
-> +	}
-> +
->  	file->f_mode |= FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
->  	file->f_flags |= O_LARGEFILE;
->  
->  	if (flags & MFD_NOEXEC_SEAL) {
-> -		struct inode *inode = file_inode(file);
-> -
->  		inode->i_mode &= ~0111;
->  		file_seals = memfd_file_seals_ptr(file);
->  		if (file_seals) {
+SD detection was not working because cd-gpios flag
+was wrongly configured, according to downstream sources
+device is using GPIO_ACTIVE_HIGH.
+Fix SD detection with change cd-gpios from GPIO_ACTIVE_LOW
+to GPIO_ACTIVE_HIGH.
 
-Hugh, Baolin, and shmem/mm folks, are you okay with the changes above? If
-so it would be nice to get an ACK from one of you.
+Fixes: 38d779c26395 ("arm64: dts: qcom: msm8953: Add device tree for Xiaomi Mi A2 Lite")
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+Changes in v2:
+- Reword the commit.
+- Link to v1: https://lore.kernel.org/r/20250830-daisy-sd-fix-v1-1-727e83a987b8@mainlining.org
+---
+ arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index c95a5874bf7d..429b2269b35a 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -93,6 +93,7 @@
->  #include <linux/fanotify.h>
->  #include <linux/io_uring/cmd.h>
->  #include <uapi/linux/lsm.h>
-> +#include <linux/memfd.h>
->  
->  #include "avc.h"
->  #include "objsec.h"
-> @@ -2366,9 +2367,12 @@ static int selinux_bprm_creds_for_exec(struct linux_binprm *bprm)
->  	ad.type = LSM_AUDIT_DATA_FILE;
->  	ad.u.file = bprm->file;
->  
-> +	if (isec->sclass != SECCLASS_FILE && isec->sclass != SECCLASS_MEMFD_FILE)
-> +		return -EPERM;
+diff --git a/arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts b/arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts
+index 336b916729e4721b5ba8f4f7e368d0d838aa54ab..ddd7af616794290aa1f06228a95cfa1d42b006e6 100644
+--- a/arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts
++++ b/arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts
+@@ -296,7 +296,7 @@ &sdhc_2 {
+ 	vmmc-supply = <&pm8953_l11>;
+ 	vqmmc-supply = <&pm8953_l12>;
+ 
+-	cd-gpios = <&tlmm 133 GPIO_ACTIVE_LOW>;
++	cd-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
+ 
+ 	pinctrl-names = "default", "sleep";
+ 	pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on &sdc2_data_on &sdc2_cd_on>;
 
-In the interest of failing fast, this should probably be moved up in the
-function to just after where @isec is set.  There are also a number of
-checks that happen prior to this placement, but after the isec assignment.
-While I don't think any of those checks should be an issue, I'd rather
-not to have to worry about those and just fail the non-FILE/MEMFD_FILE
-case as soon as we can in selinux_bprm_creds_for_exec().
+---
+base-commit: 5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
+change-id: 20250830-daisy-sd-fix-011c23468e2a
 
->  	if (new_tsec->sid == old_tsec->sid) {
-> -		rc = avc_has_perm(old_tsec->sid, isec->sid,
-> -				  SECCLASS_FILE, FILE__EXECUTE_NO_TRANS, &ad);
-> +		rc = avc_has_perm(old_tsec->sid, isec->sid, isec->sclass,
-> +				  FILE__EXECUTE_NO_TRANS, &ad);
->  		if (rc)
->  			return rc;
->  	} else {
-> @@ -2378,8 +2382,8 @@ static int selinux_bprm_creds_for_exec(struct linux_binprm *bprm)
->  		if (rc)
->  			return rc;
->  
-> -		rc = avc_has_perm(new_tsec->sid, isec->sid,
-> -				  SECCLASS_FILE, FILE__ENTRYPOINT, &ad);
-> +		rc = avc_has_perm(new_tsec->sid, isec->sid, isec->sclass,
-> +				  FILE__ENTRYPOINT, &ad);
->  		if (rc)
->  			return rc;
->  
-> @@ -2974,10 +2978,18 @@ static int selinux_inode_init_security_anon(struct inode *inode,
->  	struct common_audit_data ad;
->  	struct inode_security_struct *isec;
->  	int rc;
-> +	bool is_memfd = false;
->  
->  	if (unlikely(!selinux_initialized()))
->  		return 0;
->  
-> +	if (name != NULL && name->name != NULL &&
-> +	    !strcmp(name->name, MEMFD_ANON_NAME)) {
-> +		if (!selinux_policycap_memfd_class())
-> +			return 0;
-> +		is_memfd = true;
-> +	}
-> +
->  	isec = selinux_inode(inode);
->  
->  	/*
-> @@ -2996,6 +3008,13 @@ static int selinux_inode_init_security_anon(struct inode *inode,
->  
->  		isec->sclass = context_isec->sclass;
->  		isec->sid = context_isec->sid;
-> +	} else if (is_memfd) {
-> +		isec->sclass = SECCLASS_MEMFD_FILE;
-> +		rc = security_transition_sid(
-> +			sid, sid,
-> +			isec->sclass, name, &isec->sid);
-> +		if (rc)
-> +			return rc;
->  	} else {
->  		isec->sclass = SECCLASS_ANON_INODE;
->  		rc = security_transition_sid(
+Best regards,
+-- 
+Barnabás Czémán <barnabas.czeman@mainlining.org>
 
-We're duplicating the security_transition_sid() call which seems less
-than ideal, how about something like this?
-
-  if (context_inode) {
-    /* ... existing stuff ... */
-  } else {
-    if (is_memfd)
-      isec->sclass = SECCLASS_MEMFD_FILE;
-    else
-      isec->sclass = SECCLASS_ANON_INODE;
-    rc = security_transition_sid(...);
-    if (rc)
-      return rc;
-  }
-
---
-paul-moore.com
 
