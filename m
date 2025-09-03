@@ -1,228 +1,149 @@
-Return-Path: <linux-kernel+bounces-797824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33699B415CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:03:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D54B415D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAEE2564FDA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:03:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F90C1B26F88
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F3D2D978C;
-	Wed,  3 Sep 2025 07:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0092D94BF;
+	Wed,  3 Sep 2025 07:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i+en6jzg"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tHvXhAOm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5E82D94A8
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330E11F92E;
+	Wed,  3 Sep 2025 07:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756883028; cv=none; b=fuA2Wt5rPX9lW6eO9Gn5WiW189Npt6lXa/Um4niH73OOHf4tT7B3jk6KzARlqqUUBSzjsd+T6F7nQEoVbxSnjR/i/b1nD26o0t2QUESEIIItGRamPG1d7XsIJ+7O0QzMg72LMaefi20jYvmUfrBXKGwx2rqcXLSQO5hHQSDlBpI=
+	t=1756883236; cv=none; b=BTyk8jqLy0eZrjjZnIfT86cA7A71jnb1RGJ4ZrOPDrncHgpw+N9A7rtWi1TbaMhwTLoRR+GzOoqzLf3c1lHDwz7yuHznZP/0R5/CGn346plEgXrHmtnEuDA80yZzNrWGuNA3rNIbR9REQB6CuN6+rPVPJfkP5YUzM8moYwsWaJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756883028; c=relaxed/simple;
-	bh=+CzZMuJEXya7F5oV21pY4l6G7TTcJtH9gknq/TQ/aTw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l6TZhPb4+guNsRZ40K5VP0Yyz7FBAt4WrjmZcyryliU6Im7Cigm57njQlQgtXWKrO5lU0ACghZHZEjbzv+MZZR7TmaiKzbmpN/AHUYkT2jXHeI7O2u61KtInJuCHZyAsLZ245UqWdL8rdDWmlnZ1KGX5TOcS26024LhKd7DrPTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i+en6jzg; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b471756592cso4035082a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 00:03:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756883026; x=1757487826; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fL4SkVrTJ9oKe7qs7sANkBC9i27TXliw0xssBarmLsc=;
-        b=i+en6jzgbJcI1EgytFrX3QvBvWuf7sS+8u4snV43r2jZ9yBtDGKNpGv+MnpgIDIuD7
-         0WxhKxniQPtdnt9cROzjxHN/TLUAvZxJ9JjMokc9Q5oYEabPzL7N2NaLSV5An//30cxI
-         ErvePIPEMPXJdZeK+DpSRYHI6e2GiQmt4dMLJPD/v7o8oOwFaFBZOyd5yGoPE4iq2htw
-         WlzvE7ERxtF0ZYJqvT0dv3vMsAKq02yNevxHs+jKD3buHa9LGqhmpDa0R/hxLMzOfb8Z
-         qxNVMxT+nzcdNsDF3AUhCZipj+uMnun3fuFw7Fbc+zde6qJKdn3Wu2J5bwhvcyIEzWex
-         K3zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756883026; x=1757487826;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fL4SkVrTJ9oKe7qs7sANkBC9i27TXliw0xssBarmLsc=;
-        b=T7fXqZVjtnBJhilBydKvhzr+4kfOTVaHXJn7YgChBLlEYA7D/8RBp7p4T6g3D/h5Mx
-         ErEsP/bLIndqP62ig2qfXKZclHwdPhg1Ae4ex2pegPLuo2TvYszU+8UY85uo3834Yamy
-         bRT7DQgFrhh/UCxP99UkoweSip7vtK/3oMajqHu2BCyfTtWA0kychxJB0vlvI5uoco8Y
-         TKrXQovNst/fu2Y54XetI40kviiW0l1cZ/fdSfD96EXmfHSlfMG1hKUjLdMjgPPRSpmO
-         sH4JlP2V+ITB9D1bLJwRoPBO9ejRbVHn7dtLTHzaCbM6lJL5lZM/mCohu+NQp/6ARQ0C
-         HlsA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5XHfbgksTBt5z5T/YUk4OxpJqG3W+ZKc39zVuBr0oLxPqH5iJpLoVmTdrZJ2i2bk41Jzeuxx2pumXhmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3WMN4vos71eucEtagkQjr8vIWIXs3UvfcPzsDfTloP/HUHyb5
-	L/vAjADr/ONpz9uOD/Oxd/cKiKU7Q7qAgsfw/OPpTnkipoDPqoryMogsnpmLjafGE1UWc1rOBIU
-	rN+WUEBRksA7Oja+GzJd8GsPkuxXBfLmwYyHPQos8uA==
-X-Gm-Gg: ASbGnctU4jo7f4v5/8HdDxOjuouaRxgMa0De/w/rbrF1XGb74ehhDxD07Ub0Of4F3FD
-	apmAaC4CopmvWyyQLfeeg30tA1K3N98GlR9W6hlUXfBKdARnpLQYo8bP7CpZQzl1JnPUMzmf5YR
-	xQ3D5j0PvOMoZa26/zLe+hDn9gDAX421ALsG/Tc2xOaG5yyhQNUVzAHgWs2r6g2ZFXfrt4DuGwf
-	lLnQFYHlN40VIpbNOJ5RgnyNB4o7LtE/fIcYv6Z
-X-Google-Smtp-Source: AGHT+IE6Gxv2TMCJAdKOWCYjEhj7lI6inwVBs9oUuCCbiTP1CtDGKISOowssI7uYiatr92QpupXT3zdopt8oyZ18daA=
-X-Received: by 2002:a17:90b:17cd:b0:32a:e706:b7b6 with SMTP id
- 98e67ed59e1d1-32ae706be21mr3502062a91.11.1756883026133; Wed, 03 Sep 2025
- 00:03:46 -0700 (PDT)
+	s=arc-20240116; t=1756883236; c=relaxed/simple;
+	bh=r9uAufaV0I/Ny+9etNBRBx9BD7ng0paiT3NI5GgaMjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gIMPdNAxVSqaAIQI5jsvB6OBBYxYnDwz3rLbBhcOUJwV+1oGCWMlz5KEUty24+1dlgkcbRJqR2n512Fe7EujeY7KfRLbEoZmcmK2/qrsb8jbCnODbHBF1VrGHMZG5uPSsfDu5tU/EPUIStxAQV7Q4I0BngAiOpjD1IbM7bQN0rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tHvXhAOm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FFABC4CEF0;
+	Wed,  3 Sep 2025 07:07:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756883234;
+	bh=r9uAufaV0I/Ny+9etNBRBx9BD7ng0paiT3NI5GgaMjI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tHvXhAOmr/rLGDm4F9bdO6aY3cih50qzjSyfLm4u0wOWjLZwYUCAVI+bfBzHFljGM
+	 2Cr9bKWyfIhiDFBh+fR3sNJZJ2UBwkx9jBmoJwuZXmLZ86mp6Yb281iYGs2pwJ/3vS
+	 Q9OwyBvED1coqdKIhxoDalBx2kN3hou0+4Gpg/lV+4iBWAK4Qk3bwWcNjd2vKYwCoJ
+	 eNvt5lUe1ZlSpxGhEB1CTivK4pPaJwTGxXVzPQzPXBq5hYErmCoprUtSg4CuN/26hA
+	 S+WQEmAwmqGzhJWPslYDndqeLs75ujjImT8w0YvemBs9fspM7SFPqOlkFZ0yILxO7e
+	 JrQ7q66gKxp5Q==
+Date: Wed, 3 Sep 2025 09:07:12 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v2 3/5] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp-phy:
+ Document static lanes mapping
+Message-ID: <20250903-amaranth-rhino-of-wind-3b8850@kuoka>
+References: <20250902-topic-x1e80100-hdmi-v2-0-f4ccf0ef79ab@linaro.org>
+ <20250902-topic-x1e80100-hdmi-v2-3-f4ccf0ef79ab@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902131927.045875971@linuxfoundation.org>
-In-Reply-To: <20250902131927.045875971@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 3 Sep 2025 12:33:33 +0530
-X-Gm-Features: Ac12FXyKfC_-aqYgJLlTgXqXUoZh-SGrsO4A4Lu15UJtjPsYwvrVGOG4RJwNdq0
-Message-ID: <CA+G9fYsHzdo8BqxV9yLs_NeDE3dB6p6GE4H6RhHWGL-oVMyFsw@mail.gmail.com>
-Subject: Re: [PATCH 5.15 00/33] 5.15.191-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, achill@achill.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250902-topic-x1e80100-hdmi-v2-3-f4ccf0ef79ab@linaro.org>
 
-On Tue, 2 Sept 2025 at 19:12, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.15.191 release.
-> There are 33 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.15.191-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Tue, Sep 02, 2025 at 11:00:30AM +0200, Neil Armstrong wrote:
+> The QMP USB3/DP Combo PHY hosts an USB3 phy and a DP PHY on top
+> of a combo glue to route either lanes to the 4 shared physical lanes.
+> 
+> The routing of the lanes can be:
+> - 2 DP + 2 USB3
+> - 4 DP
+> - 2 USB3
+> 
+> The layout of the lanes was designed to be mapped and swapped
+> related to the USB-C Power Delivery negociation, so it supports
+> a finite set of mappings inherited by the USB-C Altmode layouts.
+> 
+> Nevertheless those QMP Comby PHY can be statically used to
+> drive a DisplayPort connector, DP->HDMI bridge, USB3 A Connector,
+> etc... without an USB-C connector and no PD events.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+What is the use case for static mapping? Embedded HDMI port on T14s
+laptop?
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> Add a property that documents the static lanes mapping to
+> each underlying PHY to allow supporting boards directly
+> connecting USB3 and DisplayPort lanes to the QMP Combo
+> lanes.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml         | 29 ++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
+> index c8bc512df08b5694c8599f475de78679a4438449..12511a462bc6245e0b82726d053d8605148c5047 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
+> @@ -76,6 +76,35 @@ properties:
+>    mode-switch: true
+>    orientation-switch: true
+>  
+> +  qcom,static-lanes-mapping:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    minItems: 4
+> +    items:
+> +      enum:
+> +        - 0 # Unconnected (PHY_NONE)
+> +        - 4 # USB3 (PHY_TYPE_USB3)
+> +        - 6 # DisplayPort (PHY_TYPE_DP)
+> +    description:
+> +      Describes the static mapping of the Combo PHY lanes, when not used
+> +      a in a Type-C dynamic setup using USB-C PD Events to change the mapping.
+> +      The 4 lanes can either routed to the underlying DP PHY or the USB3 PHY.
+> +      Only 2 of the lanes can be connected to the USB3 PHY, but the 4 lanes can
+> +      be connected to the DP PHY.
+> +      The numbers corresponds to the PHY Type the lanes are connected to.
+> +      The possible combinations are
+> +        <0 0 0 0> when none are connected
+> +        <4 4 0 6> USB3 and DP single lane
+> +        <4 4 6 6> USB3 and DP
+> +        <6 6 4 4> DP and USB3
+> +        <6 0 4 4> DP and USB3 single lane
 
-## Build
-* kernel: 5.15.191-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 29918c0c5b353baf87a2bbc3e2a4256c99430dba
-* git describe: v5.15.190-34-g29918c0c5b35
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15=
-.190-34-g29918c0c5b35
+> +        <4 4 0 0> USB3 Only
+> +        <0 0 4 4> USB3 Only
 
-## Test Regressions (compared to v5.15.189-645-ge09f9302f92d)
+Why do you need to handle here and in few other places mirrored case?
+Isn't enough to just say you only want USB3? Maybe my first question
+(what is usecase for this) answers this, though.
 
-## Metric Regressions (compared to v5.15.189-645-ge09f9302f92d)
+This looks similar to rockchip,dp-lane-mux, from the objective point of
+view. Please look there and if it is really similar concept this would
+warrant having it as generic property in video-interfaces for example.
 
-## Test Fixes (compared to v5.15.189-645-ge09f9302f92d)
+I also wonder if this should not be stored in the endpoint.
 
-## Metric Fixes (compared to v5.15.189-645-ge09f9302f92d)
+Best regards,
+Krzysztof
 
-## Test result summary
-total: 55718, pass: 45636, fail: 2304, skip: 7414, xfail: 364
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 101 total, 101 passed, 0 failed
-* arm64: 28 total, 28 passed, 0 failed
-* i386: 18 total, 18 passed, 0 failed
-* mips: 22 total, 22 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 22 total, 22 passed, 0 failed
-* riscv: 8 total, 8 passed, 0 failed
-* s390: 9 total, 9 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 24 total, 24 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-futex
-* kselftest-intel_pstate
-* kselftest-kcmp
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
