@@ -1,166 +1,137 @@
-Return-Path: <linux-kernel+bounces-799043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 120BCB4263C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:08:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3720EB4263F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CF948565F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE77B484CD4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAC02BD030;
-	Wed,  3 Sep 2025 16:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF89B2BD036;
+	Wed,  3 Sep 2025 16:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wS/PGVh2"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZSDqUf6I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D9A2989B5
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 16:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300A72BD013;
+	Wed,  3 Sep 2025 16:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756915709; cv=none; b=G3IlAekegnfVsIeDAWEd0bvv+5yhzbn5MylrI9IlxnLxBeYZ8Rkq9fN53LgcdeiHtOe/ncIoD8V7BLP1Vlt5MjVCE0kpgDm9dbFXhifTfF6EkjojtaOz7M4CnubAIDV0/ObGoWzBq6lA3ztaLG5Xr1jHdKetf8ZodYK9hxGxCkU=
+	t=1756915739; cv=none; b=gmefqsYVutYgmzn9BxlNnIy3LrUW2arWX0b3yEG2e7CAdtgw7jPAE89hV9EMbo4OiQ9ZsPHejAsiDo5BQJI2ErcfDTqXGbocX1NvKLOunO6UpH+J2phAGmS6yLvZ6X1kAEwU72So8iEYxynLG1fJnkcaItGpUX7ZZ9o1qBGHhFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756915709; c=relaxed/simple;
-	bh=TcnOqHnxWtRRf9NT+MerUvHTwyfwaLmdD3fXWcz/5rU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rvQ6asAbjDM34sRp4aNAGjrpy0rmMDjXJuW1HskA8OuEnfxWNtoNPJD9+rcgaYIF1wDKbmprcWQvrQyMwcNtJ79Oa7+YsbIAbwR38AJmM5yxCKAxHI07G1ZyolMZfv8KJ60W63hQEOHRVaVmY4EqOCTlOz5AIKdJmiGf0Cqf6Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wS/PGVh2; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24936b6f29bso179215ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 09:08:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756915707; x=1757520507; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N4oEAPOJhyq1/T6c/PPsWOSFUUJWRnUyjFcO2apuW1o=;
-        b=wS/PGVh22PJRIzDq0hCSGIKALbg7w6cbkw2fRA4MeSsWP2DZegKdpGOz6ZOpIZu96K
-         V6vjjEBXH6aOSxcboq9qLpuyXLC1Jo2ZXwdGSUPPmhPF/n5CD7nnBjRct4Mpi9zhMPoS
-         ASwaAKpVm05h9YYu9hhGhPSRiEZ6otMFek3U0V/dHkiGQdOki5za0BDMcoGFm0gv720q
-         K5isr/SmPZoNzQNSOFfwPgh1VBp62X2GmWuI7xiHgs1ztRSrjGBEct1IeEoc+T2+dMhT
-         xXJKkMM3w8BXsi5sS3SktKegQ9mBVpnw3HtC9ZlNuRc6VODq7skyoGKVEd6SXaipgUxx
-         K6TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756915707; x=1757520507;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N4oEAPOJhyq1/T6c/PPsWOSFUUJWRnUyjFcO2apuW1o=;
-        b=b46N+zRo6ANiaUTKUYon2+ScNP4MbPYX+2wdQUplkvKL2ODXgYSi9SH/0KTnx3PE0M
-         WLEQayo5wTf3L+5WHQz8GyYFTuFgcxKYD6jNgP381jj4GJ0U/meu0DVzdhPr4F7Z9cFr
-         qnJs+SJrXV0ggYlTzcwGylrljXjpydrua7qIqs0cjEVA6xQi8/bDzq8jyqTJBNSAdr8o
-         okr1xikZV7IUqTYTPYwg1HgUehwu3samVFoBhfONbtAxUA6LqIBXehIpml1sZaPoHZUR
-         2uWa8EnUp3v7QnbrZUDbzhAdiFvQlijIRGENr4t70xBc8xI4d5Dm5M55AKo+QnPHzt6l
-         WedQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhCMxJ/b7FrEDndXIWaCM0oCvBLcLgPvkRx5KCLIAsraL01XXH73WxBJAtrDEvN+tPYmYzlG3zTovb1uk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwykPKHGvl8GGXPjQaedsWXvcX96yWWjerXYLoGpH/MfkkSKMVS
-	vDbCPKLf0NIDNL1W7nxwIV4neXYiO5hwyCGhMfwDopurZk2rKzOBbT1yM1+K9tVzY6GH5wcdj6g
-	cpPCobzl44y7BHHBVhqEnlPglk1gsyL3QEwLbxPuG
-X-Gm-Gg: ASbGncvC7DKJoVhxLsf4UrvdMgr1+V6su66N+J5BI1I5O7pgSbDRABwKZPTdoMJCc9W
-	lum5yy98lXn46wd4H9MHkZPtiYRiyc6bkTX8IdB+ZZtr+uIXDooRznNPpqlUEvJHJ1t2mcy4fRu
-	XjpgM4qYExtPmw8s2Rb4mRsfPFPuoXQh5eiNY9Cf3D47gZb2HpnOP24o6yW0BDoEn7AnuXKkA7O
-	C4PWw6/IJ0W58HmqSkcj3Erq3I8y5zox8cQDnm8xHlpfK9tit/K7zo=
-X-Google-Smtp-Source: AGHT+IENJInbMwsLUHTnIJnRhiUAa7cm9vbNoqrqt8ITIvS5UFXyo67xRMtE2rrpaCdKkatE3lcGXTFlCVlawA3h0U0=
-X-Received: by 2002:a17:902:ced2:b0:231:f6bc:5c84 with SMTP id
- d9443c01a7336-2493e9224f5mr16770495ad.8.1756915706497; Wed, 03 Sep 2025
- 09:08:26 -0700 (PDT)
+	s=arc-20240116; t=1756915739; c=relaxed/simple;
+	bh=mtkcys/OuZJbfEkAwwoIDAScOcNW90WlNc0yQmGWZfg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C1WWrSd8uTs2aax/AqGFMR2g1kpzkxWszWxRKQRaAs3LeiQvyXa7ngI7157nGGEpMayKNBZH1darBQmG76KzdiMEi8lrXRzqf4ubyDEYYB9u9IGC/dKJ9Xqh/I3DyuEtVI120u2zpwo2TCgeJv1qhJPUkyLfgeeeUFG0HzOqPz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZSDqUf6I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BEC5C4CEE7;
+	Wed,  3 Sep 2025 16:08:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756915738;
+	bh=mtkcys/OuZJbfEkAwwoIDAScOcNW90WlNc0yQmGWZfg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZSDqUf6IwDBoRlD6+/P99Cun1RwHR1RnDE5smkFXoy9Fxq0qLXFRxHKhbs9S7lI3K
+	 uZO9k4sL2JU3bHo/b/+ubWqrgWzQT3Y+WmjgVB9Zyw633PmWK4V7M210WRYWxHo7pP
+	 7zFgcsgR53O8c3k6rVA4mvcF335AQ/xW1GCCaG/csu4/zydm7rw1429sZxv8MF/J9x
+	 f45sX2o6fegNEvFlV0yy55+GjPD5xxiMvRlY2C2NB4TuV3JSNZ7wzuGk6jon3E1RPd
+	 Doxm/tBzNBIMZMCtRxyITj2CnToSi+y0HNhb5HZxIo60On6VHtUCP9ZdBaPSf0DXrz
+	 d8az9llxSVHew==
+Date: Wed, 3 Sep 2025 17:08:54 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Woodrow Douglass <wdouglass@carnegierobotics.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] regulator: pf530x: NXP PF530x regulator driver
+Message-ID: <cd9e526d-9f17-4c2d-99f7-a495e2d58d73@sirena.org.uk>
+References: <20250902-pf530x-v2-0-f105eb073cb1@carnegierobotics.com>
+ <20250902-pf530x-v3-0-4242e7687761@carnegierobotics.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829033138.4166591-1-irogers@google.com> <efb8ef2a-f5e4-4d7d-ba8e-fee5055f7c20@amd.com>
-In-Reply-To: <efb8ef2a-f5e4-4d7d-ba8e-fee5055f7c20@amd.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 3 Sep 2025 09:08:14 -0700
-X-Gm-Features: Ac12FXw05mbX-2WBsT9OXc79YW05EK_HXIDNJcJcMhrjtnv_6s36hT6DAMsOy4s
-Message-ID: <CAP-5=fW6Pzd0mpdXbZmvNjx=UEY__qfcoFZGTsv6SJ4R=ngwfg@mail.gmail.com>
-Subject: Re: [PATCH v5 00/13] Python generated AMD Zen metrics
-To: Sandipan Das <sandidas@amd.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, John Garry <john.g.garry@oracle.com>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Benjamin Gray <bgray@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZXhJwh23vIJKsLSp"
+Content-Disposition: inline
+In-Reply-To: <20250902-pf530x-v3-0-4242e7687761@carnegierobotics.com>
+X-Cookie: You were s'posed to laugh!
 
-On Wed, Sep 3, 2025 at 7:26=E2=80=AFAM Sandipan Das <sandidas@amd.com> wrot=
-e:
->
-> On 8/29/2025 9:01 AM, Ian Rogers wrote:
-> > Generate thirteen sets of additional metrics for AMD zen.  Rapl and
-> > Idle metrics aren't specific to AMD but are placed here for ease and
-> > convenience. Uncore L3 metrics are added along with the majority of
-> > core metrics.
-> >
-> > The patches should be applied on top of:
-> > https://lore.kernel.org/lkml/20250829030727.4159703-1-irogers@google.co=
-m/
-> >
-> > v5. Rebase. Add uop cache hit/miss rates patch. Prefix all metric
-> >     names with lpm_ (short for Linux Perf Metric) so that python
-> >     generated metrics are clearly namespaced.
-> >
-> > v4. Rebase.
-> >     https://lore.kernel.org/lkml/20240926174101.406874-1-irogers@google=
-.com/
-> >
-> > v3. Some minor code cleanup changes.
-> >     https://lore.kernel.org/lkml/20240314055839.1975063-1-irogers@googl=
-e.com/
-> >
-> > v2. Drop the cycles breakdown in favor of having it as a common
-> >     metric, suggested by Kan Liang <kan.liang@linux.intel.com>.
-> >     https://lore.kernel.org/lkml/20240301184737.2660108-1-irogers@googl=
-e.com/
-> >
-> > v1. https://lore.kernel.org/lkml/20240229001537.4158049-1-irogers@googl=
-e.com/
-> >
-> > Ian Rogers (13):
-> >   perf jevents: Add RAPL event metric for AMD zen models
-> >   perf jevents: Add idle metric for AMD zen models
-> >   perf jevents: Add upc metric for uops per cycle for AMD
-> >   perf jevents: Add br metric group for branch statistics on AMD
-> >   perf jevents: Add software prefetch (swpf) metric group for AMD
-> >   perf jevents: Add hardware prefetch (hwpf) metric group for AMD
-> >   perf jevents: Add itlb metric group for AMD
-> >   perf jevents: Add dtlb metric group for AMD
-> >   perf jevents: Add uncore l3 metric group for AMD
-> >   perf jevents: Add load store breakdown metrics ldst for AMD
-> >   perf jevents: Add ILP metrics for AMD
-> >   perf jevents: Add context switch metrics for AMD
-> >   perf jevents: Add uop cache hit/miss rates for AMD
-> >
-> >  tools/perf/pmu-events/amd_metrics.py | 654 ++++++++++++++++++++++++++-
-> >  1 file changed, 651 insertions(+), 3 deletions(-)
-> >
->
-> For clean builds, I am seeing some warnings for the "context-switches" an=
-d
-> "energy-pkg" events.
->
-> ...
-> /home/sandipan/linux/tools/perf/pmu-events/amd_metrics.py:124: SyntaxWarn=
-ing: invalid escape sequence '\-'
->   cs =3D Event("context\-switches")
-> ...
-> /home/sandipan/linux/tools/perf/pmu-events/amd_metrics.py:615: SyntaxWarn=
-ing: invalid escape sequence '\-'
->   pkg =3D Event("power/energy\-pkg/")
-> ...
 
-Thanks Sandipan, I'll fix the warning in v6.
+--ZXhJwh23vIJKsLSp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Ian
+On Wed, Sep 03, 2025 at 11:31:36AM -0400, Woodrow Douglass wrote:
+> On 9/2/25 11:08, Mark Brown wrote:
+> > On Tue, Sep 02, 2025 at 10:21:33AM -0400, Woodrow Douglass wrote:
+
+> >> +static int pf530x_get_status(struct regulator_dev *rdev)
+> >> +{
+
+> > I would have expected this function to check INT_SENSE1/2 for current
+> > error statuses and report those.
+
+> I have added the INT_SENSE1 bits to the REGULATOR_STATUS_ERROR return value. I'm
+> not sure how to properly represent the thermal bits in INT_SENSE2 here -- this
+> part can safely run at high temperatures, some of those bits are just
+> informational in some designs (including the board I'm working on now)
+
+If the device can happily run at those levels then report as a warning.
+
+> > The custom is_enabled() operation doesn't seem to line up with the
+> > generic regmap enable/disable operations, and we don't seem to have
+> > enable_val or disable_val in the regulator_desc which the generic ops
+> > expect.  The whole connection with the modes seems a bit odd, the
+> > standby voltages look like they'd more naturally map to the regulator
+> > API's suspend mode but perhaps these devices are not usually integrated
+> > in that way and this would be controlled separately to system suspend.
+
+> I agree, I was misguided here. I've added enable_reg, enable_mask, enable_val,
+> and disable_val to the regulator_desc initializer, and moved to the regmap
+> function from helpers.c. I'm moving the "suspend mode" settings too here. The
+> board i'm working with has the suspend pin grounded, so I can't really test
+> suspend mode -- supporting that may have to wait for a future patchset.
+
+That's fine, someone can always extend the functionality later.
+
+> >> +static int pf530x_identify(struct pf530x_chip *chip)
+> >> +{
+
+> >> +	dev_info(chip->dev, "%s Regulator found.\n", name);
+
+> > It wouldn't hurt to read and log the data in REV, EMREV and PROG_ID too
+> > (it can be helpful when debugging).
+
+> I've added REV and PROG_ID, EMREV is listed as "Reserved for NXP Internal Use"
+> on page 95 of the datasheet, and  -- I can include those bits here but i'm not
+> sure they're very useful; if you'd like me to include those bits anyway i will
+
+IIRC something in there mentioned it was a metal revision which would
+make sense for the name.  Given the name you may as well include them,
+worst case they just get ignored best case it helps someone debug some
+issue sometime.
+
+--ZXhJwh23vIJKsLSp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi4aBUACgkQJNaLcl1U
+h9Dtpwf/Ukc6dbCrtZOsHbBctRiMsNl+XIJBspR7pGSgzC5V0BOjCHTiU5AGWXOf
+LnXl9777oLoiLLYx/cBCrHTVR/V/P70t/h3DconrMoF8l1H/k6wXqlfTUBV1iugg
+ZCTRMKglg7o8MFRNiZx1dDOvs0mixNDPcbdtt9p6okPdWVllqc1n6PlPmx2d/rF9
+rWvCc97+Wnz4agfMcQCPfz1hNbdU2WNIl4o/Qc2Vuxokdhc36uzsaIz64JQL/jtr
+IK80ZNqsW15DIe1JVYFvQNx4pkpb+6SwMxSON4axCvryG6QSBWTO3cWQdpybV8Os
+Do8d93StRgrpRnzC1VZaL5m1HEDsUA==
+=wnur
+-----END PGP SIGNATURE-----
+
+--ZXhJwh23vIJKsLSp--
 
