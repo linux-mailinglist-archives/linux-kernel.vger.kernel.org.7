@@ -1,89 +1,143 @@
-Return-Path: <linux-kernel+bounces-797590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4753EB41239
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:13:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B172CB41233
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF8B9488566
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:13:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7BEA486C3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3331B20B81B;
-	Wed,  3 Sep 2025 02:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2T/DDg4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640BF1F09A3;
+	Wed,  3 Sep 2025 02:13:02 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C831F4174;
-	Wed,  3 Sep 2025 02:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305251E3DDB;
+	Wed,  3 Sep 2025 02:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756865602; cv=none; b=s9oLFKN7DwVzD1wYm4nlvQ6FBRfkMT43N6joJze443TK702rv1k8UctM6HANidzeRB9XBRgCacmR6X6vpJacGbLeMD5rLT4W2YEyR4TwE4APvDMxGI+rLEkC1Ljp/WqRPIv6g4fJaMotnG1sldRyuZng28+mpZxfXkrNMfkx7aU=
+	t=1756865582; cv=none; b=i6bVzszNB0mZC3KfJGbrl1ylQMvMnNrRisM7hr40X1kBh3lJjxkgMyl4nH/dUUiGQjltaZy0/TlqC/KIbRncxpIe00SvqK/FO7bBQu0Fik/wtGSCO93iziqlMJtBoplKhxO010qIQ5oHlGJHFbdKaaGyC94YKapyT+adxcSyAw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756865602; c=relaxed/simple;
-	bh=zyVMQLH4t1KwmbWNdntt9uhUCwn5poLa8UFhIZx/Pnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OAHs0hdWngxLT1HurtyXkQuNx8Ly2/2FCciKumo/hXLBldTPpiguyHii879AHz71uzGQSq/Z0+nBn7R2gSO4TBSw30BxwAA4JpF2xMlDjYljL2l7kxf19LXvSCHWV/fckSxt/1U6C9cSOph7qArgZzfJBhp4VXyEJfcG2xFoPCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2T/DDg4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB390C4CEED;
-	Wed,  3 Sep 2025 02:13:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756865602;
-	bh=zyVMQLH4t1KwmbWNdntt9uhUCwn5poLa8UFhIZx/Pnk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I2T/DDg4H3W2Qnd6UfRqBJJq2wFkaiwudQpczhYMpOVzwyf/KBVJzBWYVfqVM0ENk
-	 qYR1qUloo7QHSld2UKIRIHi/cCLrO+IySgGM91h1lq7OkDzS++ShWlr52g3PgnfyH+
-	 670IUhCaWtoae06dTZyRo7eeWbzqdGefKEnFg810WEtMJ1b52l2yDPQ4Y29ToCCd8N
-	 GWIWqlda9QeWhbEv8qUYwwAcB27bvNB7TBS/8plpKYrOoOZX5aPxm2zMSrbth+0iAW
-	 CJdwgsG3L9Syy83WtDqLRnus2h9Fmo1OdWQY3gYYTgiPen6zgsMJuB8VSuHPz9Zs/T
-	 dnc6RMZ9+DXeg==
-Date: Tue, 2 Sep 2025 19:12:11 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Zhiqi Song <songzhiqi1@huawei.com>,
-	Longfang Liu <liulongfang@huawei.com>, x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 5/6] lib/crypto: curve25519: Consolidate into single
- module
-Message-ID: <20250903021211.GA6491@sol>
-References: <20250901201815.594177-1-ebiggers@kernel.org>
- <20250901201815.594177-6-ebiggers@kernel.org>
+	s=arc-20240116; t=1756865582; c=relaxed/simple;
+	bh=JI2pw/aLbFjiEEKXaJ1MnG8Mwwiicn7mraaE5Z1JEoc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=itRCFIklglnB4rFVGt8aq0LJIrwdh/y2VKzh0OjZQzLLgxYiqm8xkriixH75y9LKQ2kfTS6UwH/2GjPijhhHXNLIYERr8tehRQ/kQ4fR0kK8OFa9Q574pX8pPtUPQK8938t+b6zBayXfNOY0u5dUQ6fgo2jenyqlbIz+BcP+raY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 7e64a03c886b11f0b29709d653e92f7d-20250903
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:a08d3f21-1eda-4701-933a-4d08872f3f53,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:aa48c90d2685f52c421d2b43104888ae,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|83|102|850,TC:nil,Content:0|50,EDM
+	:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
+	,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 7e64a03c886b11f0b29709d653e92f7d-20250903
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1390030646; Wed, 03 Sep 2025 10:12:51 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id A8973E008FA3;
+	Wed,  3 Sep 2025 10:12:50 +0800 (CST)
+X-ns-mid: postfix-68B7A422-507635249
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id E1C47E008FA2;
+	Wed,  3 Sep 2025 10:12:30 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: krzk@kernel.org
+Cc: airlied@gmail.com,
+	alim.akhtar@samsung.com,
+	beata.michalska@arm.com,
+	ben.horgan@arm.com,
+	bp@alien8.de,
+	catalin.marinas@arm.com,
+	cw00.choi@samsung.com,
+	daniel.lezcano@kernel.org,
+	dave.hansen@linux.intel.com,
+	dri-devel@lists.freedesktop.org,
+	edubezval@gmail.com,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	intel-gfx@lists.freedesktop.org,
+	j-keerthy@ti.com,
+	jani.nikula@linux.intel.com,
+	kernel@pengutronix.de,
+	kyungmin.park@samsung.com,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	lukasz.luba@arm.com,
+	mpe@ellerman.id.au,
+	myungjoo.ham@samsung.com,
+	pavel@kernel.org,
+	ptsm@linux.microsoft.com,
+	rafael@kernel.org,
+	rodrigo.vivi@intel.com,
+	rui.zhang@intel.com,
+	s.hauer@pengutronix.de,
+	shawnguo@kernel.org,
+	simona@ffwll.ch,
+	srinivas.pandruvada@linux.intel.com,
+	sudeep.holla@arm.com,
+	sumitg@nvidia.com,
+	thierry.reding@gmail.com,
+	tursulin@ursulin.net,
+	viresh.kumar@linaro.org,
+	will@kernel.org,
+	yangyicong@hisilicon.com,
+	zhangzihuan@kylinos.cn,
+	zhenglifeng1@huawei.com
+Subject: Re: [PATCH v3 12/12] PM: EM: Use scope-based cleanup helper
+Date: Wed,  3 Sep 2025 10:12:30 +0800
+Message-Id: <20250903021230.1044454-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <b38e64cc-4971-4e71-931c-820453aa91a7@kernel.org>
+References: <b38e64cc-4971-4e71-931c-820453aa91a7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901201815.594177-6-ebiggers@kernel.org>
+Content-Type: text/plain; charset=yes
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 01, 2025 at 01:18:14PM -0700, Eric Biggers wrote:
-> diff --git a/lib/crypto/tests/Kconfig b/lib/crypto/tests/Kconfig
-> index 7e4e66f30a7a6..c0f3b64489dd6 100644
-> --- a/lib/crypto/tests/Kconfig
-> +++ b/lib/crypto/tests/Kconfig
-> @@ -11,13 +11,14 @@ config CRYPTO_LIB_BLAKE2S_KUNIT_TEST
->  	  KUnit tests for the BLAKE2s cryptographic hash function.
->  
->  config CRYPTO_LIB_CURVE25519_KUNIT_TEST
->  	tristate "KUnit tests for Curve25519" if !KUNIT_ALL_TESTS
->  	depends on KUNIT
-> -	default KUNIT_ALL_TESTS
-> +	default KUNIT_ALL_TESTS || CRYPTO_SELFTESTS
->  	select CRYPTO_LIB_BENCHMARK_VISIBLE
->  	select CRYPTO_LIB_CURVE25519
-> +	select CRYPTO_LIB_CURVE25519_GENERIC
->  	help
->  	  KUnit tests for Curve25519.
+> You are not improving the source code here. This is not how to use
+>  __free() and you clearly do not understand the source code.
 
-Small correction above: adding 'select CRYPTO_LIB_CURVE25519_GENERIC'
-is unnecessary here.
+Sorry for the problem, policy should be assigned after cpumask_test_cpu()=
+.
 
-- Eric
+I actually realized earlier that __free() only frees at the end of the va=
+riable=E2=80=99s lifetime.=20
+I had suggested using a braced macro in cpufreq.h to allow immediate rele=
+ase after use,=20
+but I understand the maintainer=E2=80=99s advice to =E2=80=9Ckeep it simp=
+le=E2=80=9D and will follow that.
+
+> What's more, you did not use standard tools which would tell you this i=
+s
+> buggy and wrong.
+
+Could you please let me know which standard tools you recommend for detec=
+ting such issues?=20
+
+I=E2=80=99d like to use them to avoid similar mistakes in the future.
+
+> Don't introduce cleanup.h if you do not understand how it works.
+
+Should I drop this patch?
 
