@@ -1,90 +1,59 @@
-Return-Path: <linux-kernel+bounces-799084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F66B426C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:23:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD778B426D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9F3A3B01C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:23:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6161BA7510
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559D72DCF6A;
-	Wed,  3 Sep 2025 16:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9536F2EA740;
+	Wed,  3 Sep 2025 16:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmpYVXQ7"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EitJZWkA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BF42D060D;
-	Wed,  3 Sep 2025 16:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCC02D060D;
+	Wed,  3 Sep 2025 16:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756916619; cv=none; b=uumeX/DKwIzhYakG3VVoEAbOKZpCG7jd7k7hSO87D9ravCSXW0pF5AB6g1PlJQWGgV+l27AiNKW37J8KXty4zi5oNs9eWbw6vdyeOeC7rEOIh1dUmvkGJgi2o21zxaKj8MvBG/wl61P1iDMZEQJ5dnGfcftp5Du+q5vsr7h3U6o=
+	t=1756916671; cv=none; b=tMo9+TNVnOTTnIyHhK1O6JbiByFO8bkGd6Pr9aJumQwyfardI7IER987tdkiXKKmBlEOnHtZgKvyZDaHRAQk/miS0zouiZ9kYgMD7jfTKivYETMy1F+9USiZcUNqzLpps7qsTYmaqz3FvBvhKdcv+MuyTF+GWHc6kgH/s1UP8ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756916619; c=relaxed/simple;
-	bh=TJ5lxHVYWBSBJTcjNqsWmR5Ye/X+58ulc0qIwXZUCB4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e53DO1xtTpOSjAkKpRQHlZyREMsr0M7GNV9Uusu8FWmFo5DweQhbTlpDzP56gSp7S7W2WnrzeVbWLTKkIeEO1DLBNTGyUkj0mv8Xw5v3EEGuAedOybC445hW+6WLKMu5cqIN/zF9ayC0CebugdUFICE6KhWlS73vY4r3x28s7z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmpYVXQ7; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55f6ad5146eso15233e87.0;
-        Wed, 03 Sep 2025 09:23:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756916616; x=1757521416; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O708xsZOBgWwFjnWY+qzmKxcC8D6pc1i2hZ7VtZjolY=;
-        b=cmpYVXQ7MzQpABenS0oFIDpDYKDKGhIlzrou3RXYZoVR24TDDxKmR/RfPi5mEd2QIq
-         pRBtiuzKnmXebMMcQJ5YC5DSMlcnaY8yHpcqSK6MU8wGe+y2+pC3zAv8cOIma1BMWBxt
-         /CI24bHM04In3GQXSx/zudO8z5bgFluUKdDEBXsFmxeClBkrnX8q3uBUULGM88oTqO4i
-         CyPKU0S2CCwQOjv2UE6hbkatclnkRguUmg/6ptcC7Qn2LaFwyLx0XmVF7Ql4Az1qw7+X
-         /giLPLd8YZQUiLk+Zliz/6dGZm7XT6KnLLo1m3wQboEUBwPmY8KcSN2l+gfuGCc7dHZ2
-         Ia6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756916616; x=1757521416;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O708xsZOBgWwFjnWY+qzmKxcC8D6pc1i2hZ7VtZjolY=;
-        b=hFTdOEm3U1ktnsjrBOcd/3788FrkBp9CnSk6EA9xJhZlVzbZdnfzNh3HjGZdk8kZhQ
-         aIB9uk5tN5359G0lyvGuHU2hHAvh7fWv9dbke8ASRaQuSk6QY/ZyFvtUQVq3bSxDqdBm
-         2FHHjEqkIXKoy8XBkM3G3tB00/aNd/DK324umSjYmWZOO3DGGzmbNjl7X6vcUs9IDMwa
-         VNOTObpTc+TgrSlZD9GTVNtYjMDPSau37xz0ygUAO3ika7qTjyJko41saz220tVZCFoL
-         F2hGODB1mgyM3HvhPOz/EQhww6pjvR4K03c0YGN9vZvmPI+O+mZvyvCr5io1YiqZiUFy
-         kW1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWS85FQeWZ0/tjtIz6K+xiXBjhhkRhRiDRbhn922juUvKhrxu0DL9EjTEGUV6UXrp25F0gA4FH5tJBNeaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN1PVB0m2cknIX27hzLMArHHfEBmRxvk8YQSuhiW9NH7OCSbAZ
-	dgm30EUmBgDLDxf+6BrZOK8S5omusHOyY6j8l9Oq6gdGB9dbBb6+1YpL
-X-Gm-Gg: ASbGncsq8XGAStmpcvnorWRV9q8SM/YkgO23jw95S8FG9/nLYWyF4N8M7RNWcpG/u5U
-	LzhPAqTI0QuI6JOpQqi3HaI6A+QINElLYaQSCv739ZZ4pRwg30G0+N2Jpn4aIGD3a9K1U+xIFUY
-	vZo4UGsAFAMAamEEzdSXnMIHVHAAFYUQb1obeX918+yJaPzAaTk9KBVEbQ89UsMQkPbhsXJyXZp
-	F24m67f6ZoNqlUdeAMvjWlr1FZYNp+XXU5Sq7DgF0D4xqiXrlyvd2YICY/gBrnUT3uxw/i8w5DM
-	9d3wX3gt6QXVe+kDwSetmi07GVTUzQqJ+nUBG9RP5++s0sVznf615t29cQKMZ1sFNPrBlCUFsgo
-	RRXsVQQoFqClQ5pCzV3lrPB5S
-X-Google-Smtp-Source: AGHT+IEMmRe9s/e9sl6RC5X1tZ8xGAxJrlXiZsBjr1sDTI1kCQf7dUewifjBhXLA3cKvSMUaqKuWew==
-X-Received: by 2002:a05:6512:ea0:b0:55b:96e4:11b5 with SMTP id 2adb3069b0e04-55f708b3417mr4343733e87.1.1756916615945;
-        Wed, 03 Sep 2025 09:23:35 -0700 (PDT)
-Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f508fb9esm10472361fa.56.2025.09.03.09.23.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 09:23:35 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Nick Dyer <nick@shmanahar.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Henrik Rydberg <rydberg@bitmath.org>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-input@vger.kernel.org,
+	s=arc-20240116; t=1756916671; c=relaxed/simple;
+	bh=EaJ0dQP0cmlVTMbegDoWFh6Vv8Q18+yi45fBF9P9/DY=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ir5ARxtRATwSo0qQeispjtKiZkB7OSrGFtx9imf41n+NqQxQxKUoSkthDqIxBi/sZaHDzTIFsxsuiYgIHGo5PtXjl9UMLXcXDRIsCEokbjB/pkAALh79q0Kg52rvI43rPvzVwymtfO+A6cYJ4QmDKyAV6777/arzH9hx4MISs+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EitJZWkA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91F72C4CEF0;
+	Wed,  3 Sep 2025 16:24:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756916670;
+	bh=EaJ0dQP0cmlVTMbegDoWFh6Vv8Q18+yi45fBF9P9/DY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EitJZWkAqycrA7/+0hrtFzuV4975eCsucaS38OP40o8Iq22ZzHLGvVNRhcYgL+xk4
+	 oksLJyTxzgU5rz1QarLfGlyzEk6V5KxCwGujh6pUfBY2o5RxIErHjeeMvopfPmKsph
+	 1964yRHYS9H5dyGGnQBeDuQ1ZeshTxgdTJl1AGoe0Nh9FRS9jQrTpjwqVMZjZQZ9KF
+	 vBs7DOB4RKKJzBguTJ9F/LJGSVuAfABnWQjx75gX8U1sn+LHROXvk8/n3xeQlgf0o8
+	 vz1/Echf/nU3pS47vJv0CHWQnNl9H2c+AKMBtjaRJjX9uCuUeUMZqbyZds1kq/8lIc
+	 TsOdvC0h8xhtQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1utqHc-00000007Voj-3PIB;
+	Wed, 03 Sep 2025 18:24:28 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/1] input: touchscreen: atmel_mxt_ts: add support for generic touchscreen configurations
-Date: Wed,  3 Sep 2025 19:23:27 +0300
-Message-ID: <20250903162327.109538-2-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250903162327.109538-1-clamor95@gmail.com>
-References: <20250903162327.109538-1-clamor95@gmail.com>
+Subject: [PATCH v2 0/3] Break building docs on distros where python3==python3.6 or older
+Date: Wed,  3 Sep 2025 18:24:13 +0200
+Message-ID: <cover.1756916565.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.51.0
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,66 +61,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-This provides support for generic touchscreen configuration options like
-swapped-x-y, min-x, min-y, size-x, size-y, etc.
+Add two patches improving python_version logic, adding two extra
+optional arguments: show_alternatives and bail_out.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+The third patch changes the build behavior in a way that distros
+shipped with Python 3.6 like openSUSE Leap, RHEL8 and others will
+break.
+
+Personally, I'm against such patch, but based on some discussions at:
+
+    https://lore.kernel.org/linux-doc/n4qixsp23dccgz6mtrmd2xumcngtphkbywjnxkrqpnuf2dbu2p@2sj44sbyga4j/T/#t
+
+Several developers voiced that the best is to break the build.
+So, I'll let up to the docs maintainer to decide weather or not
+apply the final patch or replace by something that would avoid
+such breakage.
+
+This series is on top of the sphinx-build-wrapper patch:
+    https://lore.kernel.org/linux-doc/cover.1756740314.git.mchehab+huawei@kernel.org/
+
 ---
- drivers/input/touchscreen/atmel_mxt_ts.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 322d5a3d40a0..fc624101147e 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -19,6 +19,7 @@
- #include <linux/firmware.h>
- #include <linux/i2c.h>
- #include <linux/input/mt.h>
-+#include <linux/input/touchscreen.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/of.h>
-@@ -355,6 +356,8 @@ struct mxt_data {
- 	enum mxt_suspend_mode suspend_mode;
- 
- 	u32 wakeup_method;
-+
-+	struct touchscreen_properties prop;
- };
- 
- struct mxt_vb2_buffer {
-@@ -888,8 +891,7 @@ static void mxt_proc_t9_message(struct mxt_data *data, u8 *message)
- 
- 		/* Touch active */
- 		input_mt_report_slot_state(input_dev, MT_TOOL_FINGER, 1);
--		input_report_abs(input_dev, ABS_MT_POSITION_X, x);
--		input_report_abs(input_dev, ABS_MT_POSITION_Y, y);
-+		touchscreen_report_pos(input_dev, &data->prop, x, y, true);
- 		input_report_abs(input_dev, ABS_MT_PRESSURE, amplitude);
- 		input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR, area);
- 	} else {
-@@ -1010,8 +1012,7 @@ static void mxt_proc_t100_message(struct mxt_data *data, u8 *message)
- 			id, type, x, y, major, pressure, orientation);
- 
- 		input_mt_report_slot_state(input_dev, tool, 1);
--		input_report_abs(input_dev, ABS_MT_POSITION_X, x);
--		input_report_abs(input_dev, ABS_MT_POSITION_Y, y);
-+		touchscreen_report_pos(input_dev, &data->prop, x, y, true);
- 		input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR, major);
- 		input_report_abs(input_dev, ABS_MT_PRESSURE, pressure);
- 		input_report_abs(input_dev, ABS_MT_DISTANCE, distance);
-@@ -2212,6 +2213,8 @@ static int mxt_initialize_input_device(struct mxt_data *data)
- 				     0, 255, 0, 0);
- 	}
- 
-+	touchscreen_parse_properties(input_dev, true, &data->prop);
-+
- 	/* For T15 and T97 Key Array */
- 	if (data->T15_reportid_min || data->T97_reportid_min) {
- 		for (i = 0; i < data->t15_num_keys; i++)
+v2:
+- I forgot to merge some hunks at the last patch;
+- I ended modifying the logic: it now provides a hint at the broken
+  distros, showing how to call sphinx-build-wrapper directly to
+  override the python3 version.
+
+Mauro Carvalho Chehab (3):
+  tools/docs: python_version.py: drop a debug print
+  tools/docs: python_version: allow check for alternatives and bail out
+  tools/docs: sphinx-* break documentation bulds on openSUSE
+
+ tools/docs/lib/python_version.py | 45 +++++++++++++++++++++++++-------
+ tools/docs/sphinx-build-wrapper  |  3 ++-
+ tools/docs/sphinx-pre-install    |  3 ++-
+ 3 files changed, 39 insertions(+), 12 deletions(-)
+
 -- 
-2.48.1
+2.51.0
 
 
