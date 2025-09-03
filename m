@@ -1,126 +1,129 @@
-Return-Path: <linux-kernel+bounces-798141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD865B419EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:27:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E81F0B419F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 967961760C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:27:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F4661BA3853
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A6D2F1FCD;
-	Wed,  3 Sep 2025 09:27:25 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028392F290A;
+	Wed,  3 Sep 2025 09:27:46 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE71C2F0C67;
-	Wed,  3 Sep 2025 09:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7852F0C67
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756891644; cv=none; b=bWY/jRRkg/YSJtfqPgLApXNrV2GsHmnNv3nZ/ZofbmgKgdCJaPhW3v5QoVe2u3+gLpMQ1JNp7+k5dhtrbWYyDhG+hZvf+w96zVHypMSu8DH5w5nqroBJlMbo/M3ueB/Ua0f7oQGZj96kwh0MPIo7lsU9ML3/PdwHsbnyeW//+iY=
+	t=1756891665; cv=none; b=Qr/Y53mi92GNVc36RgAsfd33zLL2HTjo3VWKnPhGuivdSeYKkZRy1pmDeEaiDFgBigAZeggF1zhnlRaRUjTf+faaPbx1cKloitU0sBNO7gLDEvlRZWJeS8tu2+J8b87+xy7tuVcqizG2R4lzq2rjErnadl3MuXa0RBwjQLUCVPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756891644; c=relaxed/simple;
-	bh=TTBvdDWN0SRxo51afac9to5kGEx6F2cJ42lwCTuMAjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dvVoGIGd2ENl/HKjLlwPNFxqS7CIgtp/FYJ5ggib55wx9dBIMIwgKQpDM7fGZBKb9jx+o+3+IDeSOSJKIyLAZL+8IgJuxp1JJ70FzMfHWO55z136qHtUU6uLzpb7GN4A6M+kJBxHZFQucEMg47ApYcIJwjdoBhMtrTy/aevcIK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52E21C4CEF0;
-	Wed,  3 Sep 2025 09:27:21 +0000 (UTC)
-Date: Wed, 3 Sep 2025 10:27:18 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
-	arnd@arndb.de, will@kernel.org, peterz@infradead.org,
-	akpm@linux-foundation.org, mark.rutland@arm.com,
-	harisokn@amazon.com, cl@gentwo.org, ast@kernel.org,
-	memxor@gmail.com, zhenglifeng1@huawei.com,
-	xueshuai@linux.alibaba.com, joao.m.martins@oracle.com,
-	boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Subject: Re: [PATCH v4 0/5] barrier: Add smp_cond_load_*_timewait()
-Message-ID: <aLgJ9iqQhq-LT9S0@arm.com>
-References: <20250829080735.3598416-1-ankur.a.arora@oracle.com>
- <aLWITwwDg06F1eXu@arm.com>
- <87tt1kpj4z.fsf@oracle.com>
+	s=arc-20240116; t=1756891665; c=relaxed/simple;
+	bh=UmjmwWfxR6/R7YaGPvKmDgkIvUSP3kUtVHQT662vqwo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Yg8BLHTVszfzNyeUVQL4lK0cymKBBm21Mpk/wBFKZ/+shkaDkXipSJ7zxriO+Bw9VxJrBZQyRnafgKpMs0dsEKezbqIJD1b7Y06jyy8MrvUFfqUXmozPr5jMxUo8epB7zykffmchaIjSFuNKavY2W7sBpffQ1uPvNUkEwi76PP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w001.hihonor.com (unknown [10.68.25.235])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4cGy1X3nKbzYl7mp;
+	Wed,  3 Sep 2025 17:27:12 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w001.hihonor.com
+ (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 3 Sep
+ 2025 17:27:33 +0800
+Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
+ (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 3 Sep
+ 2025 17:27:33 +0800
+From: zhongjinji <zhongjinji@honor.com>
+To: <mhocko@suse.com>
+CC: <rientjes@google.com>, <shakeel.butt@linux.dev>,
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <tglx@linutronix.de>,
+	<liam.howlett@oracle.com>, <lorenzo.stoakes@oracle.com>, <surenb@google.com>,
+	<liulu.liu@honor.com>, <feng.han@honor.com>, <zhongjinji@honor.com>
+Subject: [PATCH v7 0/2] Improvements for victim thawing and reaper VMA traversal
+Date: Wed, 3 Sep 2025 17:27:27 +0800
+Message-ID: <20250903092729.10611-1-zhongjinji@honor.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87tt1kpj4z.fsf@oracle.com>
+Content-Type: text/plain
+X-ClientProxiedBy: w003.hihonor.com (10.68.17.88) To a018.hihonor.com
+ (10.68.17.250)
 
-On Tue, Sep 02, 2025 at 03:46:52PM -0700, Ankur Arora wrote:
-> Catalin Marinas <catalin.marinas@arm.com> writes:
-> > Can you have a go at poll_idle() to see how it would look like using
-> > this API? It doesn't necessarily mean we have to merge them all at once
-> > but it gives us a better idea of the suitability of the interface.
-> 
-> So, I've been testing with some version of the following:
-> 
-> diff --git a/drivers/cpuidle/poll_state.c b/drivers/cpuidle/poll_state.c
-> index 9b6d90a72601..361879396d0c 100644
-> --- a/drivers/cpuidle/poll_state.c
-> +++ b/drivers/cpuidle/poll_state.c
-> @@ -8,35 +8,25 @@
->  #include <linux/sched/clock.h>
->  #include <linux/sched/idle.h>
-> 
-> -#define POLL_IDLE_RELAX_COUNT	200
-> -
->  static int __cpuidle poll_idle(struct cpuidle_device *dev,
->  			       struct cpuidle_driver *drv, int index)
->  {
-> -	u64 time_start;
-> -
-> -	time_start = local_clock_noinstr();
-> +	unsigned long flags;
-> 
->  	dev->poll_time_limit = false;
-> 
->  	raw_local_irq_enable();
->  	if (!current_set_polling_and_test()) {
-> -		unsigned int loop_count = 0;
-> -		u64 limit;
-> +		u64 limit, time_end;
-> 
->  		limit = cpuidle_poll_time(drv, dev);
-> +		time_end = local_clock_noinstr() + limit;
-> 
-> -		while (!need_resched()) {
-> -			cpu_relax();
-> -			if (loop_count++ < POLL_IDLE_RELAX_COUNT)
-> -				continue;
-> +		flags = smp_cond_load_relaxed_timewait(&current_thread_info()->flags,
-> +						       VAL & _TIF_NEED_RESCHED,
-> +						       (local_clock_noinstr() >= time_end));
+This patch series is about improvements to victim process thawing and
+reaper VMA traversal. Even if the oom_reaper is delayed, patch 2 is 
+still beneficial for reaping processes with a large address space
+footprint, and it also greatly improves process_mrelease.
 
-It makes sense to have the non-strict comparison, though it changes the
-original behaviour slightly. Just mention it in the commit log.
+---
 
-> 
-> -			loop_count = 0;
-> -			if (local_clock_noinstr() - time_start > limit) {
-> -				dev->poll_time_limit = true;
-> -				break;
-> -			}
-> -		}
-> +		dev->poll_time_limit = (local_clock_noinstr() >= time_end);
+v6 -> v7:
+- Thawing the victim process prevents the OOM killer from being blocked. [10]
+- Remove report tags
 
-Could we do this instead and avoid another clock read:
+v5 -> v6:
+- Use mas_for_each_rev() for VMA traversal [6]
+- Simplify the judgment of whether to delay in queue_oom_reaper() [7]
+- Refine changelog to better capture the essence of the changes [8]
+- Use READ_ONCE(tsk->frozen) instead of checking mm and additional
+  checks inside for_each_process(), as it is sufficient [9]
+- Add report tags because fengbaopeng and tianxiaobin reported the
+  high load issue of the reaper
 
-		dev->poll_time_limit = !(flags & _TIF_NEED_RESCHED);
+v4 -> v5:
+- Detect frozen state directly, avoid special futex handling. [3]
+- Use mas_find_rev() for VMA traversal to avoid skipping entries. [4]
+- Only check should_delay_oom_reap() in queue_oom_reaper(). [5]
 
-In the original code, it made sense since it had to check the clock
-anyway and break the loop.
+v3 -> v4:
+- Renamed functions and parameters for clarity. [2]
+- Added should_delay_oom_reap() for OOM reap decisions.
+- Traverse maple tree in reverse for improved behavior.
 
-When you repost, please include the rqspinlock and poll_idle changes as
-well to show how the interface is used.
+v2 -> v3:
+- Fixed Subject prefix error.
+
+v1 -> v2:
+- Check robust_list for all threads, not just one. [1]
+
+Reference:
+[1] https://lore.kernel.org/linux-mm/u3mepw3oxj7cywezna4v72y2hvyc7bafkmsbirsbfuf34zpa7c@b23sc3rvp2gp/
+[2] https://lore.kernel.org/linux-mm/87cy99g3k6.ffs@tglx/
+[3] https://lore.kernel.org/linux-mm/aKRWtjRhE_HgFlp2@tiehlicka/
+[4] https://lore.kernel.org/linux-mm/26larxehoe3a627s4fxsqghriwctays4opm4hhme3uk7ybjc5r@pmwh4s4yv7lm/
+[5] https://lore.kernel.org/linux-mm/d5013a33-c08a-44c5-a67f-9dc8fd73c969@lucifer.local/
+[6] https://lore.kernel.org/linux-mm/nwh7gegmvoisbxlsfwslobpbqku376uxdj2z32owkbftvozt3x@4dfet73fh2yy/
+[7] https://lore.kernel.org/linux-mm/af4edeaf-d3c9-46a9-a300-dbaf5936e7d6@lucifer.local/
+[8] https://lore.kernel.org/linux-mm/aK71W1ITmC_4I_RY@tiehlicka/
+[9] https://lore.kernel.org/linux-mm/jzzdeczuyraup2zrspl6b74muf3bly2a3acejfftcldfmz4ekk@s5mcbeim34my/
+[10] https://lore.kernel.org/linux-mm/aLWmf6qZHTA0hMpU@tiehlicka/
+
+The earlier post:
+v6: https://lore.kernel.org/linux-mm/20250829065550.29571-1-zhongjinji@honor.com/
+v5: https://lore.kernel.org/linux-mm/20250825133855.30229-1-zhongjinji@honor.com/
+v4: https://lore.kernel.org/linux-mm/20250814135555.17493-1-zhongjinji@honor.com/
+v3: https://lore.kernel.org/linux-mm/20250804030341.18619-1-zhongjinji@honor.com/
+v2: https://lore.kernel.org/linux-mm/20250801153649.23244-1-zhongjinji@honor.com/
+v1: https://lore.kernel.org/linux-mm/20250731102904.8615-1-zhongjinji@honor.com/
+
+zhongjinji (2):
+  mm/oom_kill: Thaw victim on a per-process basis instead of per-thread
+  mm/oom_kill: The OOM reaper traverses the VMA maple tree in reverse
+    order
+
+ mm/oom_kill.c | 29 ++++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
 -- 
-Catalin
+2.17.1
+
 
