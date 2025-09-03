@@ -1,244 +1,622 @@
-Return-Path: <linux-kernel+bounces-798130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E525B419D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:23:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFCBB419D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B45056118D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:23:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB68B4E1846
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D292F0666;
-	Wed,  3 Sep 2025 09:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C001C2F0666;
+	Wed,  3 Sep 2025 09:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vaisala.com header.i=@vaisala.com header.b="HYJnvaWF"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11021138.outbound.protection.outlook.com [52.101.65.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4/abkOq"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2419032F76E;
-	Wed,  3 Sep 2025 09:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756891422; cv=fail; b=NajwP1uWcE2J0dhUHHoJZYTNCmnv3Kd5eQABdofIeF1h+zMAm//9nsLk+Hd7hkolfseOgX0SUpgU9Fcw8w3fYJ2NQD4jXl+cCvQbpUC0d+xKN3OpmB/nKT2kmEDwHn026RNRpmXfM9mgfOchzB84SAID8wPYO9dkkg8u9CwIXFc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756891422; c=relaxed/simple;
-	bh=TZPkz0xXD5quDdkUWkyuvM2LdUuMHFqveFMmda/ddQI=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=DKHWG4C9PaA8H644Rh5pT50h6jKRuSyeQI7mGUZ4WavymF/XiSYxJopio+iDOzdKSoh2P2f5wEgo2UuXkeC6/mhbFXyF9mF9/eXFQGtUk7SZ9STem7ke4UBRgQ8GgcUE6n3S9TRRGPplDky1DZy/byzhd1busZQXVbgLsygCFiU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vaisala.com; spf=pass smtp.mailfrom=vaisala.com; dkim=pass (2048-bit key) header.d=vaisala.com header.i=@vaisala.com header.b=HYJnvaWF; arc=fail smtp.client-ip=52.101.65.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vaisala.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vaisala.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MAv04yEWnFj+vjX7jKB7kGzvVVRf9TcCm3TpHnl6887NMcS/YUKwDCBTTdmLjDrOWgvTOIE1ncNcFwuGkcWctTXeMjO12XLiXn43d2p0QhM8EquUh6zgiC2uu5TJjPFUiO+5Q6AU/k9y7s1HL5T2SbjIKppmXKwripp+U8k1Qk6/mWQPzokRP7I9UXaO+eIXAS82PZvN0lY7QPY9s+sJPwBGhPwbcsNEtFTWdPbH64SjYAXIjipwvsH3FOmgw2/u8jds/Rpr0ccgS8QXxRNDq6od7fjJKDD8Vp1dsVzT1yDe+vVgJHLbEUemlSROsNFby6Jd0zup1i4JsYCe68PDwQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OPmR1591nrOVD9vCLJHMwl03b13R6dSR96UdQCF6NLU=;
- b=mqXC+kN/90y7aq4H7YUxxNeFXBbvg/ortnic0XnvNz9MW0KErq+Zs9nGOUaZXjz5qyMb4OeQh+20o7fLGLUhWMyvf3X5DM5Jcglbfcv4s2tGWv4Aivc+A72DY17PqTohIun0RNtzR6/nxnnjs49o7h0cFeUlCJfLx5mD9iEcofddlDuCEXoQ8QicLuCq+p9JuSE4UxfOPmF3fhKeXPs+fZ89qaCLX+39aHah4GKFAOy+MlomBr3opGv0imxXjwbzaFgfXTYB+DiHw7id9E3ay7U/+ubKUUyQKBfxRWZqgPLfrmStUqRpfSDvA7SQMP9+k8P/f7LIDsJqgyizMxn6vw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vaisala.com; dmarc=pass action=none header.from=vaisala.com;
- dkim=pass header.d=vaisala.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vaisala.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OPmR1591nrOVD9vCLJHMwl03b13R6dSR96UdQCF6NLU=;
- b=HYJnvaWFca1LlkmMngqJ9vQYBI3/nGCiAcsN4mb7olIlNJLIGeZU8U7DGh4NuzUEhcIaRg1vlueaWG9lvw89g3gV9XiIW3jt1k7vLi+dOUQf6tnTrtXmGv+0r4OeJ70DcA5z1HduK+D/dsGIfG/lDGMHiGJMmzhBsp5OupeMYJ59xLiX4ObYORnzUs9H8tEQP+psz5SGiDXBGXIXxkM/L9fWGhqgxNUOtOo+lD4NmUr6bTLeoNvQ/Pr9vASJ7phGIz3vYMplCZeBBk8vR1CFU+72Z2aqHZqq6nS79wGkxh+qzacGNpV5vi0zlC7yuZW4zgEUzeQjoGi3RQJGWKJvUQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vaisala.com;
-Received: from AS5PR06MB9040.eurprd06.prod.outlook.com (2603:10a6:20b:676::22)
- by DB8PR06MB6377.eurprd06.prod.outlook.com (2603:10a6:10:12c::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Wed, 3 Sep
- 2025 09:23:35 +0000
-Received: from AS5PR06MB9040.eurprd06.prod.outlook.com
- ([fe80::f8cf:8122:6cad:4cf7]) by AS5PR06MB9040.eurprd06.prod.outlook.com
- ([fe80::f8cf:8122:6cad:4cf7%5]) with mapi id 15.20.9094.016; Wed, 3 Sep 2025
- 09:23:35 +0000
-From: Tapio Reijonen <tapio.reijonen@vaisala.com>
-Date: Wed, 03 Sep 2025 09:23:04 +0000
-Subject: [PATCH] serial: max310x: improve interrupt handling
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-master-max310x-improve-interrupt-handling-v1-1-bfb44829e760@vaisala.com>
-X-B4-Tracking: v=1; b=H4sIAPcIuGgC/x2N3QqDMAyFX0VyvUBbGcO9ythFtJkLaC2pSkF8d
- 4NXh+9wfg4orMIF3s0ByrsUWZKBfzQw/CmNjBKNIbjwdJ1rcaaysprU1ruKMmdddkslc3XLK1o
- rTpJGJAqhf/XkBx/B9rLyT+r99fme5wU7vZZqewAAAA==
-X-Change-ID: 20250903-master-max310x-improve-interrupt-handling-aa22b7ba1c1d
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, 
- Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- Tapio Reijonen <tapio.reijonen@vaisala.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756891414; l=1862;
- i=tapio.reijonen@vaisala.com; s=20250903; h=from:subject:message-id;
- bh=TZPkz0xXD5quDdkUWkyuvM2LdUuMHFqveFMmda/ddQI=;
- b=6HqSWMW/r6HevY+BiyXMtRjHFroH3owiPcIAojGFdAv/KBSJi/sbuCZdBriO+IjHJS/1C3jxN
- WBwnjRu9Sz/BLdWgJdK053/n+QBc/k3D3nZz1NOOEQ93HTdzDO13nab
-X-Developer-Key: i=tapio.reijonen@vaisala.com; a=ed25519;
- pk=jWBz3VD84WbWgfEgIqB5iFFiyVIHZr52zVBPOm7qiGo=
-X-ClientProxiedBy: GVZP280CA0098.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:150:275::8) To AS5PR06MB9040.eurprd06.prod.outlook.com
- (2603:10a6:20b:676::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3CB32F76E
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756891481; cv=none; b=cUnQa8DTRagUlpts/9ISpLYbvEVTAPeYJxMZrrcxPRydumclNfYy7t1oosdTUy3QxBR1O4mGDt16lZz5Vb05p7gPuZCC4oZ6EHws5lKwdnpuiGlqJj4VuuYUqspBXlnQH8sx/XxZ3WY3kLQaB9pywEoCq2tHyhjdIHCnprUFkWI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756891481; c=relaxed/simple;
+	bh=xBwk6w4AYXvH/WK0fOstPE9q9YnCGQqI+w7oQZcVQiU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=st01F46xyOrRTQdza3Y/Ewv7uIvqOk7BIRLlqjsiRytgd3NYs06Hf8lLuKuWBsxmrtcIDkT8GlT1h5GNg9MFA7M1e6YGaeswZKFp8jgIO2wLTL2ahRE7HnF+HM5UlJZ6TLWX2wKA3Gog7bDtRAkPUrp50qUsEZXpTVF2CRYDyUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V4/abkOq; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6188b72b7caso6816492a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 02:24:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756891478; x=1757496278; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=61iULmUas/w+ki0bHI/53L3mNbRcIzLVcQjd3QIQ8mA=;
+        b=V4/abkOqsTd1FGsN/kPXwXFsLS5f7bCpnULbbbNkDWVcF+LziC/I82rmzT1GTnr+PQ
+         cpVymxwc8k330fBLP3eraZms0EnYxxDVKErshYLzkT+DLBJUNCU1FNSXawwuspOFEE0u
+         XS/m05HMMO6vmTEvu954qVR3inUd/xzWAyDw3wmSTH21dy8/yUGjj9yd/U6EyqNhnV7g
+         RZzxqqlJVvatKQis6+ta5TCV2tN/derPJZAKZougrvoWK9qRNY3ueL+VSAO4WLmoJVYf
+         4MKaYHVe2793Cu3TnlXVuaiWe0VAkI490eUQPP2ALDULlW5W7EUINSf4i78JAg6qJ2eC
+         lyaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756891478; x=1757496278;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=61iULmUas/w+ki0bHI/53L3mNbRcIzLVcQjd3QIQ8mA=;
+        b=Zfox3AQkb1F2vNGeuxZTw1b3h4q1aw1Y02WvncVDPe4NUedbwkYwJhUTwhzZ+HAfAo
+         iMpwW8KxQvsl0/CJaYr3RhEQ3brYO6CjvCHebx8IJ7/hWtm1BxSWeZqMiT7x0ZLiEedq
+         4TFfeu83iAuQRl7dpIPoza91M5z3OmsNzkb0zq0UMbX2iajHbszXoLHGgwWDGfuCyUNu
+         Lmk8Y5g9YNOn5oIgemWSJS8n3f8q7uaUZL9L1jyDaWdWPPGBVqhej+fhfHdAfQWKal0E
+         RwbHS2ElrQCNJ+g5O2iwwKlaUbTKIxVhz0kHGpYgI9Co/EsU++kaiIiawvH+OkvTzFip
+         PokQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXV7MLotOndKO/R/JT/h/+MYWnPOSfP3oNd/F0gU4UEz0TAscXB1MNJqJTDHY4LoRchRgb/1Q9BQ/VKBD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhrqhyuvS+pjA+pfl+haEgoXzPcC9CFIAHZjOA9jPcyFxuvkLO
+	T0bEQLr8ljLdzqPjvto76ewpf/03f6EH4X5bTPtJF4c+o14pB6rWW4U7VybGo/pVjqmt3xJav8v
+	Dl8OHRkrkOGII+R6/yqbjr6+eq0iiOoA=
+X-Gm-Gg: ASbGncteYXtLFNS4P9oVI8P6bSJsUTJx6YDsCVAJLbIMRlFmGRx5MajkO7PAXeTEwNH
+	vUzm1owpCbp3rHVJKPR87xG5ijgeZQZSESPHFPLKyKoxngdkV5LXbwiQE8BYOaxlbJFv4ntZ9x/
+	Uh+WzAKGJu42hOTKbgTiETStBcRSJUIQkNmLOJNQsi85pZEva3NT1DyjChmEPINSuIwR0HhdNMO
+	61TAkdq/fzKxlV5GyYd
+X-Google-Smtp-Source: AGHT+IG5w8xIO9s7ozFg+aqxkDl7u0BYBpZDTuYYJ0jSat8vNf19VtszjKY5txGRZAV6vMLpDPl5vWqyrOjhjkfSrIY=
+X-Received: by 2002:a05:6402:35c4:b0:61e:9307:705f with SMTP id
+ 4fb4d7f45d1cf-61e930772b2mr10546912a12.7.1756891477309; Wed, 03 Sep 2025
+ 02:24:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS5PR06MB9040:EE_|DB8PR06MB6377:EE_
-X-MS-Office365-Filtering-Correlation-Id: 37ca5e7e-9a67-4555-6505-08ddeacb8e95
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VHRWeVF6c0pFM21WY2tsNTBHRTRjOFBJejJBYmZJbXVMWW5HMTdyR0J5WFJx?=
- =?utf-8?B?SFBORU9LQkRrSmJCRXRCTkQ2MkE3MC9oNnhuK08wV1RNd1BSRktrSlZXQnV4?=
- =?utf-8?B?c3FsZk1DcmFPQlErdnBSYmttYzlVQVJmcGtseW4zWnpsLzlpV1dJVDYyS29O?=
- =?utf-8?B?RnRTRHpUTTEwZnNCNCt3V2ZuYlRzM3hCT3JqOWpwbUI5YWd5MVVUTkRlUmpt?=
- =?utf-8?B?T1haaHdEQzlqbWxoaGtwUXRIcWRtMzYzRW5WRENubDFuRTJ3c0VxT0U1TDYx?=
- =?utf-8?B?cHVYQTNkZENPdmRYRURTeFRtS3hJT2IxM0U5ZnJjenFYV1VSQlM1cklnZnpr?=
- =?utf-8?B?b2tYV2hNRis3QzBaWWRtOWJPdTAzT2ltc2NVTXdXRkQzdldiQ2tVeTVsVzV0?=
- =?utf-8?B?N2dHTlpDNE9iNFlQUTZrRnQ1VlVsMWFqT0VNRFgxM3NJSVkwY2hySDFITm5V?=
- =?utf-8?B?dDI3WHdvci82SS9aMVJFdDUxc2FOUE9lZTRjUXRRREJCbFFadlV6dEVrMDA3?=
- =?utf-8?B?RzNwb3E2TkFjK2xlWkVQcFo0aHNqMW1pdTgyMGR1UUJwYjh1Ykg4cHllbW0r?=
- =?utf-8?B?Qkkrc1hoL1lBQXZVRStMaDNIeUlJMU1NRFV5V3M2WHJRaHNyMUExQVBXVVgz?=
- =?utf-8?B?YnBQZHlSSGd1R2pMNDE3SDFFeEpBNjFZRUR6dEFqcWwwVmJJTXp4bFFDOGRD?=
- =?utf-8?B?ZzE1SXRSUDFhakhLbldITUhtL0ZSVTRiL3o3d1NNNGJ0TVBjbVJwVlczZzFE?=
- =?utf-8?B?dDNlOG4vZjdvOWdoZ1BpZ1ZhcWh4YXl3cHo0ZTZXNW1DaEhaaGx0alBZV21z?=
- =?utf-8?B?cW5ZWFdyMkQrQ2ZiNHNTQWk5dkV4ZERDWW9Db0lLZjRHWlA1WTNhaWtrNlJE?=
- =?utf-8?B?SEUvZUltTitBY1p5L0RxT3lBTSt1TEF3bFIvWFBNZS9TOVRGR1lwREh3dmov?=
- =?utf-8?B?dWN5M212WllSOFJPTFRVL0pXcnNNWEx6a1Z5NTV1NmZPQmNuMWJsSTVRb0tk?=
- =?utf-8?B?M3Y5RnVubkZ5eTduWHJxS1FXdksraVhNeE93QkxjRmE0K1llVUhCeVk0TlVn?=
- =?utf-8?B?TW5SUVp4YURKT0xCNW8zL25ZT1RDWkhoQmw0b283K0sxZnROS2tFK3FvZU41?=
- =?utf-8?B?RGd4M3F2WFBzUHhhY3BZMllpTno5QTRSbDJSWGVydmhJS2xhaXFJeHRqVTgw?=
- =?utf-8?B?OTBhMTlvR0JXWk1OMis0WnM4K0lwNFFJUDgwQWJCNndWTVNURjJDYnZTWEhx?=
- =?utf-8?B?MFRYeHQ1dzlUWi8zZmVJNlRBMG9Tb0VOTEFJZUhYeXNCbSsvcERWS1dCbVlX?=
- =?utf-8?B?VERVaGV1dUpFcXJMVmphRlhKckc4OWExYU5HMCtqaVlyV2tsQjh5cUFFVks0?=
- =?utf-8?B?NmJtaUZUVDBvVDJaRU1aRkk5bHcyT01iYkNMRDI1RWQwUSs4dm9mU3UwWTYv?=
- =?utf-8?B?Y3BxU01oMElLaUVWVTRkeEhJMzNlTSs1Y3dCZmNEY0tKeHVKMlNKMFAxS1Z1?=
- =?utf-8?B?dFZtendKSXB2dVdwZ2lqOEZmdnBBYld5NnVTNzgyaGhpV3FXMzF0MVhYOFFm?=
- =?utf-8?B?SFN4ZXAzeXk4cEpMY3FlYkJ4RGNCNzA3Q295UHpYU3Mrc0ZiUjNyK2FOZkNk?=
- =?utf-8?B?K0wzdWlqWVBZVkZ2KzFQSmhPQ1dYdzg4M3B1Y0ppRll3YzNnQ1RjV1l4RHVx?=
- =?utf-8?B?aVNFL0xCZ1ZWM1B1aVVNQnF3NmNIaWxCcStiUlphOERWaFpBWHd1L2pOVU9h?=
- =?utf-8?B?Szdvc25BZmxXK05Kei8wMitFRC9aTS82bFdzdHBOcGgzTXAwYjF1OUc3N1pF?=
- =?utf-8?B?MHlTbExkZ1lCYVJmSkQvUVlnYTBmNUFHeFZJSU1RVkYrNWYzR0dnYzRETXhy?=
- =?utf-8?B?UFBZZXQyVFhUUHFkWndoVGZxdjhGckVwOTNEYm5DdC9PdTdFenpOKzF6dDZM?=
- =?utf-8?B?SDNPT3l4MUVmeDlqcmxsbEZ6dE9OZllQUHJNTFJRSElteTFDTmZpWGVkZ1pO?=
- =?utf-8?B?TDNSK3dtSXl3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS5PR06MB9040.eurprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ekwzRGxPYlJRdVhFMHR2MjlZTnB0TG1TVUsybjFmeS9SeWZzUUNSTXBuQllN?=
- =?utf-8?B?UXhZOUd3RytaYWVsODRObDdhZjRVYzNIOHhERllwYTg2OW14VGI1aFMwc3Nu?=
- =?utf-8?B?YisvOS80WU1KQzYrbVJKL0RDdkE5UlRxWi93ODVUaVRoT1ltN2Y5VjZ0RS9t?=
- =?utf-8?B?aHJxVkc4WnpCTitXTGZOK1l1N1pab2g3aEw0ZEVFbjh3aHR1UWQyczRDL0Rn?=
- =?utf-8?B?QTdxRThDcUJnb2VrYnhTbU9xaDNxUFBQWmhkVW12T085TmJKdXM3VDZPZTNw?=
- =?utf-8?B?aW1iWTdCVy9nUWRVeFI0Tk5uK0lRQUVDQWk3b0orQ3pNS3ZQOGVkbFY3U0g1?=
- =?utf-8?B?WGRzMHdQbjF4Qk5oMktlMExuYm1aUmk0MEVidzVJL25HdUVFcmZYbHR1QnU0?=
- =?utf-8?B?OS9ra05HNDVKdFkyeFovL1pvSmF4WGxQbUw2djZnbnJDaVF2WkNTcGdzRWRz?=
- =?utf-8?B?ZHJkZjBnQzk0SWdjNktYeUVqaWd4VUhvT2ZLbnZBemY2WHprcEFmSTFVTGpY?=
- =?utf-8?B?dFNGWkcrM2hRV3h1eUhkZDhJRDVZTHNmTGUvL1JCYWwyZHNMazRmcFpCRFlR?=
- =?utf-8?B?V0tURDE3d2h3bDFpZGRSR2xKQVkxZXBDcWZMenQxQWdYNFY0VVEvVGtmR0Rs?=
- =?utf-8?B?WE55d1QxOFcxNlhQb0hWR2Z0YTdGQm9qcXV5VHNJcUF5THBXZDBHaXpxWFlx?=
- =?utf-8?B?VU5ZdE1WOTN1Q2Z0L2VUaVVsaUI0L2pSallyV01OUUtTMTRRT3NIeVF2a0RC?=
- =?utf-8?B?Q2hLTG5hTFhndHNyYmFydWdRV2xOYmp3MURreEI1RkVWRlFvNnR0Mkl1TE1F?=
- =?utf-8?B?NDBIS3h3a0dvdzRYR3NsZ1NXQlh5TEZac1BOUW5CUk9oMnJJV2ZjaXA2VE9H?=
- =?utf-8?B?YlFFMnF0ZUY2dDkvWkdLdy9Pa1Z3TkJBbnlTUTY2a2k5RDd2Z2tpU1NnVHNT?=
- =?utf-8?B?MjNudmRDN2lwUkhidmlzRnRZN3RLNGt5MU93cWVrMldBemVuTElDL013VkZE?=
- =?utf-8?B?TVpOb20xTUo3ZnNxaFN6MmtKNENyTE5TQXJoNWVaeVdMQktMYm1lZnNzb1ow?=
- =?utf-8?B?N2RZdENjL2lSRUE5U2xVTmtseG1lckRHWlpTZ2ZhOU9SUUVLM1BJUm8xTi9x?=
- =?utf-8?B?dUtaWlRYU2R4MWhoZEk5SjlZTjZjcmdwbVhhcmY4b2g4OFYvQ3Y2dVNQeFd0?=
- =?utf-8?B?TnA0bVIrLzBRbWVBbWYxTndjeTFvWlZFTUE3bzc2cjZYNnR4bXV6YUJGWDds?=
- =?utf-8?B?VzdpRmxTS1plY0hZVGoveU9oa2Q3YVIrcDBTYmRLWEFPdWdPTFc1TGlhNGlT?=
- =?utf-8?B?b3UxS3k4VEg1eFQyQURwLzZkOXpuQ3p4QTZCS05ZRUJmNE5KNTl5K0s3NmZ3?=
- =?utf-8?B?czhhSDRyTFhkNTk2TFVHd2gyb1hvcnMyRUE3M1YvMi96S0N0SEkxUkMrcUcw?=
- =?utf-8?B?MmYvY2pYd1IvYWdIUEY2MFNVRW01Rmo3ZnR0UkhxOWNOaFJ4NHg3Sk8rM0hM?=
- =?utf-8?B?MG5uQ21oZGNERjJhTGhTS0hJWkw5SFEwQ011dWhxcUlqZFNXZnU4MWwyQzh1?=
- =?utf-8?B?dVNEZWtsWDJLenRNSWNQOStmSFg2TEVoSWF0UE9IMml0WkVrcUZuM3orTmp5?=
- =?utf-8?B?d0E0Wk4ycXBZRVFGV1NMZit6VmFWYWNGT3U1YXhaTHhqbktQMVA0SkhKUXZo?=
- =?utf-8?B?YVpUWDNQSUNmdGRhdnVPbXFMc25LMUlwUnMvOHZxRkZ1SkNESWZGdmVNSVcw?=
- =?utf-8?B?bzlMZkMzT1FtWjBCMy9sWjdMd1BEcDEzNEY3NzE4ZC9ZUVJIUXU3SGdZVDVV?=
- =?utf-8?B?VXlGcUtUVWUwcFoyTEQ3UndEclE5dDBvbWc0ZTR3eENDTHhnZHpIMTNLTzdW?=
- =?utf-8?B?TVY2UjNyd2xZV2M1dkZxOXFsc2V0akRvSlV4QTNkYTBPS1ZITHA3K3pZaEcr?=
- =?utf-8?B?d1ZzQ1B4Mk1ZZndUOEdhb2MvTWFDVmNHakFsSUtyOXY3QXpuQWNFRjl1K040?=
- =?utf-8?B?eThheS9VakhybURyTENXYWNNM1A2SVdBTU1HKytHRkl2OGFKNFpPNitqOVRx?=
- =?utf-8?B?NVZGS01PZ2NuU3BHQ1ZtZndsQ1BpZCtXeEc4NHMxRkZ3cTlXY1FwQzVRTHdB?=
- =?utf-8?B?K0ZGS3ZUd2ZHbjZEM2J5R0NMNlUxQmZMN2hxMDNnaDZiZnJOcDQ3NFVvK2FV?=
- =?utf-8?B?NHc9PQ==?=
-X-OriginatorOrg: vaisala.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37ca5e7e-9a67-4555-6505-08ddeacb8e95
-X-MS-Exchange-CrossTenant-AuthSource: AS5PR06MB9040.eurprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 09:23:34.9528
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 6d7393e0-41f5-4c2e-9b12-4c2be5da5c57
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IubaUVjslljIbl6QJYtUgMz4O7RIiY3509RXjtu2/UjR5S+bTgYRGfLE2KSQQsH/82HApYacT2hhIicVPAQH7ktFpxSGcqm//O5ZaPpkpZc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR06MB6377
+References: <cover.1755853480.git.zhoubinbin@loongson.cn> <8c67ace6b4b49725b0a2a7345e3683dbdf65e21c.1755853480.git.zhoubinbin@loongson.cn>
+ <20250902144630.GS2163762@google.com>
+In-Reply-To: <20250902144630.GS2163762@google.com>
+From: Binbin Zhou <zhoubb.aaron@gmail.com>
+Date: Wed, 3 Sep 2025 17:24:25 +0800
+X-Gm-Features: Ac12FXwdhHpYKrLEYOwLgD9i2h6nn3QMHqQQmhbny8EoRn02rW5coU0gqSc3yvg
+Message-ID: <CAMpQs4KdzjhUe5NbrGS5SkuBJ3TUU3QpuMSANBzQKsdR+TD_HQ@mail.gmail.com>
+Subject: Re: [PATCH v10 2/3] mfd: ls2kbmc: Add Loongson-2K BMC reset function support
+To: Lee Jones <lee@kernel.org>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>, Huacai Chen <chenhuacai@loongson.cn>, 
+	Corey Minyard <minyard@acm.org>, Huacai Chen <chenhuacai@kernel.org>, Xuerui Wang <kernel@xen0n.name>, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	openipmi-developer@lists.sourceforge.net, jeffbai@aosc.io, 
+	kexybiscuit@aosc.io, wangyao@lemote.com, Chong Qiao <qiaochong@loongson.cn>, 
+	Corey Minyard <corey@minyard.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When there is a heavy load of receiving characters to all
-four UART's, the warning 'Hardware RX FIFO overrun' is
-sometimes detected.
-The current implementation always service first UART3 until
-no more interrupt and then service another UARTs.
+Hi Lee:
 
-This commit improve interrupt service routine to handle all
-interrupt sources, e.g. UARTs when a global IRQ is detected.
+Thanks for your reply.
 
-Signed-off-by: Tapio Reijonen <tapio.reijonen@vaisala.com>
----
- drivers/tty/serial/max310x.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+On Tue, Sep 2, 2025 at 10:46=E2=80=AFPM Lee Jones <lee@kernel.org> wrote:
+>
+> On Fri, 22 Aug 2025, Binbin Zhou wrote:
+>
+> > Since the display is a sub-function of the Loongson-2K BMC, when the
+> > BMC reset, the entire BMC PCIe is disconnected, including the display
+> > which is interrupted.
+> >
+> > Quick overview of the entire LS2K BMC reset process:
+> >
+> > There are two types of reset methods: soft reset (BMC-initiated reboot
+> > of IPMI reset command) and BMC watchdog reset (watchdog timeout).
+> >
+> > First, regardless of the method, an interrupt is generated (PCIe interr=
+upt
+> > for soft reset/GPIO interrupt for watchdog reset);
+> >
+> > Second, during the interrupt process, the system enters bmc_reset_work,
+> > clears the bus/IO/mem resources of the LS7A PCI-E bridge, waits for the=
+ BMC
+> > reset to begin, then restores the parent device's PCI configuration spa=
+ce,
+> > waits for the BMC reset to complete, and finally restores the BMC PCI
+> > configuration space.
+> >
+> > Display restoration occurs last.
+> >
+> > Co-developed-by: Chong Qiao <qiaochong@loongson.cn>
+> > Signed-off-by: Chong Qiao <qiaochong@loongson.cn>
+> > Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+> > Acked-by: Corey Minyard <corey@minyard.net>
+> > Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
+> > ---
+> >  drivers/mfd/ls2k-bmc-core.c | 336 ++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 336 insertions(+)
+>
+> Couple of nits to finish up:
+>
+> > diff --git a/drivers/mfd/ls2k-bmc-core.c b/drivers/mfd/ls2k-bmc-core.c
+> > index 39cc481d9ba1..fa7f1a822076 100644
+> > --- a/drivers/mfd/ls2k-bmc-core.c
+> > +++ b/drivers/mfd/ls2k-bmc-core.c
+> > @@ -10,8 +10,12 @@
+> >   */
+> >
+> >  #include <linux/aperture.h>
+> > +#include <linux/bitfield.h>
+> > +#include <linux/delay.h>
+> >  #include <linux/errno.h>
+> >  #include <linux/init.h>
+> > +#include <linux/iopoll.h>
+> > +#include <linux/kbd_kern.h>
+> >  #include <linux/kernel.h>
+> >  #include <linux/mfd/core.h>
+> >  #include <linux/module.h>
+> > @@ -19,6 +23,8 @@
+> >  #include <linux/pci_ids.h>
+> >  #include <linux/platform_data/simplefb.h>
+> >  #include <linux/platform_device.h>
+> > +#include <linux/stop_machine.h>
+> > +#include <linux/vt_kern.h>
+> >
+> >  /* LS2K BMC resources */
+> >  #define LS2K_DISPLAY_RES_START               (SZ_16M + SZ_2M)
+> > @@ -29,6 +35,48 @@
+> >  #define LS2K_IPMI3_RES_START         (LS2K_IPMI2_RES_START + LS2K_IPMI=
+_RES_SIZE)
+> >  #define LS2K_IPMI4_RES_START         (LS2K_IPMI3_RES_START + LS2K_IPMI=
+_RES_SIZE)
+> >
+> > +#define LS7A_PCI_CFG_SIZE            0x100
+> > +
+> > +/* LS7A bridge registers */
+> > +#define LS7A_PCIE_PORT_CTL0          0x0
+> > +#define LS7A_PCIE_PORT_STS1          0xC
+> > +#define LS7A_GEN2_CTL                        0x80C
+> > +#define LS7A_SYMBOL_TIMER            0x71C
+> > +
+> > +/* Bits of LS7A_PCIE_PORT_CTL0 */
+> > +#define LS2K_BMC_PCIE_LTSSM_ENABLE   BIT(3)
+> > +
+> > +/* Bits of LS7A_PCIE_PORT_STS1 */
+> > +#define LS2K_BMC_PCIE_LTSSM_STS              GENMASK(5, 0)
+> > +#define LS2K_BMC_PCIE_CONNECTED              0x11
+> > +
+> > +#define LS2K_BMC_PCIE_DELAY_US               1000
+> > +#define LS2K_BMC_PCIE_TIMEOUT_US     1000000
+> > +
+> > +/* Bits of LS7A_GEN2_CTL */
+> > +#define LS7A_GEN2_SPEED_CHANG                BIT(17)
+> > +#define LS7A_CONF_PHY_TX             BIT(18)
+> > +
+> > +/* Bits of LS7A_SYMBOL_TIMER */
+> > +#define LS7A_MASK_LEN_MATCH          BIT(26)
+> > +
+> > +/* Interval between interruptions */
+> > +#define LS2K_BMC_INT_INTERVAL                (60 * HZ)
+> > +
+> > +/* Maximum time to wait for U-Boot and DDR to be ready with ms. */
+> > +#define LS2K_BMC_RESET_WAIT_TIME     10000
+> > +
+> > +/* It's an experience value */
+> > +#define LS7A_BAR0_CHECK_MAX_TIMES    2000
+> > +
+> > +#define LS2K_BMC_RESET_GPIO          14
+> > +#define LOONGSON_GPIO_REG_BASE               0x1FE00500
+> > +#define LOONGSON_GPIO_REG_SIZE               0x18
+> > +#define LOONGSON_GPIO_OEN            0x0
+> > +#define LOONGSON_GPIO_FUNC           0x4
+> > +#define LOONGSON_GPIO_INTPOL         0x10
+> > +#define LOONGSON_GPIO_INTEN          0x14
+> > +
+> >  enum {
+> >       LS2K_BMC_DISPLAY,
+> >       LS2K_BMC_IPMI0,
+> > @@ -95,6 +143,281 @@ static struct mfd_cell ls2k_bmc_cells[] =3D {
+> >       },
+> >  };
+> >
+> > +/* Index of the BMC PCI configuration space to be restored at BMC rese=
+t. */
+> > +struct ls2k_bmc_pci_data {
+> > +     u32 pci_command;
+> > +     u32 base_address0;
+> > +     u32 interrupt_line;
+> > +};
+> > +
+> > +/* Index of the parent PCI configuration space to be restored at BMC r=
+eset. */
+> > +struct ls2k_bmc_bridge_pci_data {
+> > +     u32 pci_command;
+> > +     u32 base_address[6];
+> > +     u32 rom_addreess;
+> > +     u32 interrupt_line;
+> > +     u32 msi_hi;
+> > +     u32 msi_lo;
+> > +     u32 devctl;
+> > +     u32 linkcap;
+> > +     u32 linkctl_sts;
+> > +     u32 symbol_timer;
+> > +     u32 gen2_ctrl;
+> > +};
+> > +
+> > +struct ls2k_bmc_pdata {
+>
+> Drop the pdata part completely.
+>
+> pdata is something else.
 
-diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index ce260e9949c3c268e706b2615d6fc01adc21e49b..3234ed7c688ff423d25a007ed8b938b249ae0b82 100644
---- a/drivers/tty/serial/max310x.c
-+++ b/drivers/tty/serial/max310x.c
-@@ -824,15 +824,26 @@ static irqreturn_t max310x_ist(int irq, void *dev_id)
- 
- 	if (s->devtype->nr > 1) {
- 		do {
--			unsigned int val = ~0;
-+			unsigned int val;
-+			unsigned int global_irq = ~0;
-+			int port;
- 
- 			WARN_ON_ONCE(regmap_read(s->regmap,
--						 MAX310X_GLOBALIRQ_REG, &val));
--			val = ((1 << s->devtype->nr) - 1) & ~val;
-+				MAX310X_GLOBALIRQ_REG, &global_irq));
-+
-+			val = ((1 << s->devtype->nr) - 1) & ~global_irq;
-+
- 			if (!val)
- 				break;
--			if (max310x_port_irq(s, fls(val) - 1) == IRQ_HANDLED)
--				handled = true;
-+
-+			do {
-+				port = fls(val) - 1;
-+				if (max310x_port_irq(s, port) == IRQ_HANDLED)
-+					handled = true;
-+
-+				global_irq |= 1 << port;
-+				val = ((1 << s->devtype->nr) - 1) & ~global_irq;
-+			} while (val);
- 		} while (1);
- 	} else {
- 		if (max310x_port_irq(s, 0) == IRQ_HANDLED)
+Emm...
+How about rename it as ls2k_bmc_priv? Otherwise, using ls2k_bmc as a
+structure name seems a bit odd.
 
----
-base-commit: c8bc81a52d5a2ac2e4b257ae123677cf94112755
-change-id: 20250903-master-max310x-improve-interrupt-handling-aa22b7ba1c1d
+>
+> > +     struct device *dev;
+> > +     struct work_struct bmc_reset_work;
+> > +     struct ls2k_bmc_pci_data bmc_pci_data;
+> > +     struct ls2k_bmc_bridge_pci_data bridge_pci_data;
+> > +};
+> > +
+> > +static bool ls2k_bmc_bar0_addr_is_set(struct pci_dev *pdev)
+> > +{
+> > +     u32 addr;
+> > +
+> > +     pci_read_config_dword(pdev, PCI_BASE_ADDRESS_0, &addr);
+> > +
+> > +     return addr & PCI_BASE_ADDRESS_MEM_MASK ? true : false;
+> > +}
+> > +
+> > +static bool ls2k_bmc_pcie_is_connected(struct pci_dev *parent, struct =
+ls2k_bmc_pdata *ddata)
+> > +{
+> > +     void __iomem *base;
+> > +     int val, ret;
+> > +
+> > +     base =3D pci_iomap(parent, 0, LS7A_PCI_CFG_SIZE);
+> > +     if (!base)
+> > +             return false;
+> > +
+> > +     val =3D readl(base + LS7A_PCIE_PORT_CTL0);
+> > +     writel(val | LS2K_BMC_PCIE_LTSSM_ENABLE, base + LS7A_PCIE_PORT_CT=
+L0);
+> > +
+> > +     ret =3D readl_poll_timeout_atomic(base + LS7A_PCIE_PORT_STS1, val=
+,
+> > +                                     (val & LS2K_BMC_PCIE_LTSSM_STS) =
+=3D=3D LS2K_BMC_PCIE_CONNECTED,
+> > +                                     LS2K_BMC_PCIE_DELAY_US, LS2K_BMC_=
+PCIE_TIMEOUT_US);
+> > +     if (ret) {
+> > +             pci_iounmap(parent, base);
+> > +             dev_err(ddata->dev, "PCI-E training failed status=3D0x%x\=
+n", val);
+> > +             return false;
+> > +     }
+> > +
+> > +     pci_iounmap(parent, base);
+> > +     return true;
+> > +}
+> > +
+> > +static void ls2k_bmc_restore_bridge_pci_data(struct pci_dev *parent, s=
+truct ls2k_bmc_pdata *ddata)
+> > +{
+> > +     int base, i =3D 0;
+> > +
+> > +     pci_write_config_dword(parent, PCI_COMMAND, ddata->bridge_pci_dat=
+a.pci_command);
+> > +
+> > +     for (base =3D PCI_BASE_ADDRESS_0; base <=3D PCI_BASE_ADDRESS_5; b=
+ase +=3D 4, i++)
+>
+> Define 4.
+>
+> > +             pci_write_config_dword(parent, base, ddata->bridge_pci_da=
+ta.base_address[i]);
+> > +
+> > +     pci_write_config_dword(parent, PCI_ROM_ADDRESS, ddata->bridge_pci=
+_data.rom_addreess);
+> > +     pci_write_config_dword(parent, PCI_INTERRUPT_LINE, ddata->bridge_=
+pci_data.interrupt_line);
+> > +
+> > +     pci_write_config_dword(parent, parent->msi_cap + PCI_MSI_ADDRESS_=
+LO,
+> > +                            ddata->bridge_pci_data.msi_lo);
+> > +     pci_write_config_dword(parent, parent->msi_cap + PCI_MSI_ADDRESS_=
+HI,
+> > +                            ddata->bridge_pci_data.msi_hi);
+> > +     pci_write_config_dword(parent, parent->pcie_cap + PCI_EXP_DEVCTL,
+> > +                            ddata->bridge_pci_data.devctl);
+> > +     pci_write_config_dword(parent, parent->pcie_cap + PCI_EXP_LNKCAP,
+> > +                            ddata->bridge_pci_data.linkcap);
+> > +     pci_write_config_dword(parent, parent->pcie_cap + PCI_EXP_LNKCTL,
+> > +                            ddata->bridge_pci_data.linkctl_sts);
+> > +
+> > +     pci_write_config_dword(parent, LS7A_GEN2_CTL, ddata->bridge_pci_d=
+ata.gen2_ctrl);
+> > +     pci_write_config_dword(parent, LS7A_SYMBOL_TIMER, ddata->bridge_p=
+ci_data.symbol_timer);
+> > +}
+> > +
+> > +static int ls2k_bmc_recover_pci_data(void *data)
+> > +{
+> > +     struct ls2k_bmc_pdata *ddata =3D data;
+> > +     struct pci_dev *pdev =3D to_pci_dev(ddata->dev);
+> > +     struct pci_dev *parent =3D pdev->bus->self;
+> > +     u32 i;
+> > +
+> > +     /*
+> > +      * Clear the bus, io and mem resources of the PCI-E bridge to zer=
+o, so that
+> > +      * the processor can not access the LS2K PCI-E port, to avoid cra=
+shing due to
+> > +      * the lack of return signal from accessing the LS2K PCI-E port.
+> > +      */
+> > +     pci_write_config_dword(parent, PCI_BASE_ADDRESS_2, 0);
+> > +     pci_write_config_dword(parent, PCI_BASE_ADDRESS_3, 0);
+> > +     pci_write_config_dword(parent, PCI_BASE_ADDRESS_4, 0);
+> > +
+> > +     /*
+> > +      * When the LS2K BMC is reset, the LS7A PCI-E port is also reset,=
+ and its PCI
+> > +      * BAR0 register is cleared. Due to the time gap between the GPIO=
+ interrupt
+> > +      * generation and the LS2K BMC reset, the LS7A PCI BAR0 register =
+is read to
+> > +      * determine whether the reset has begun.
+> > +      */
+> > +     for (i =3D LS7A_BAR0_CHECK_MAX_TIMES; i > 0 ; i--) {
+> > +             if (!ls2k_bmc_bar0_addr_is_set(parent))
+> > +                     break;
+> > +             mdelay(1);
+> > +     };
+> > +
+> > +     if (i =3D=3D 0)
+> > +             return false;
+> > +
+> > +     ls2k_bmc_restore_bridge_pci_data(parent, ddata);
+> > +
+> > +     /* Check if PCI-E is connected */
+> > +     if (!ls2k_bmc_pcie_is_connected(parent, ddata))
+> > +             return false;
+> > +
+> > +     /* Waiting for U-Boot and DDR ready */
+> > +     mdelay(LS2K_BMC_RESET_WAIT_TIME);
+> > +     if (!ls2k_bmc_bar0_addr_is_set(parent))
+> > +             return false;
+> > +
+> > +     /* Restore LS2K BMC PCI-E config data */
+> > +     pci_write_config_dword(pdev, PCI_COMMAND, ddata->bmc_pci_data.pci=
+_command);
+> > +     pci_write_config_dword(pdev, PCI_BASE_ADDRESS_0, ddata->bmc_pci_d=
+ata.base_address0);
+> > +     pci_write_config_dword(pdev, PCI_INTERRUPT_LINE, ddata->bmc_pci_d=
+ata.interrupt_line);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static void ls2k_bmc_events_fn(struct work_struct *work)
+> > +{
+> > +     struct ls2k_bmc_pdata *ddata =3D container_of(work, struct ls2k_b=
+mc_pdata, bmc_reset_work);
+> > +
+> > +     /*
+> > +      * The PCI-E is lost when the BMC resets, at which point access t=
+o the PCI-E
+> > +      * from other CPUs is suspended to prevent a crash.
+> > +      */
+> > +     stop_machine(ls2k_bmc_recover_pci_data, ddata, NULL);
+> > +
+> > +     if (IS_ENABLED(CONFIG_VT)) {
+> > +             /* Re-push the display due to previous PCI-E loss. */
+> > +             set_console(vt_move_to_console(MAX_NR_CONSOLES - 1, 1));
+> > +     }
+> > +}
+> > +
+> > +static irqreturn_t ls2k_bmc_interrupt(int irq, void *arg)
+> > +{
+> > +     struct ls2k_bmc_pdata *ddata =3D arg;
+> > +     static unsigned long last_jiffies;
+> > +
+> > +     if (system_state !=3D SYSTEM_RUNNING)
+> > +             return IRQ_HANDLED;
+> > +
+> > +     /* Skip interrupt in LS2K_BMC_INT_INTERVAL */
+> > +     if (time_after(jiffies, last_jiffies + LS2K_BMC_INT_INTERVAL)) {
+> > +             schedule_work(&ddata->bmc_reset_work);
+> > +             last_jiffies =3D jiffies;
+> > +     }
+> > +
+> > +     return IRQ_HANDLED;
+> > +}
+> > +
+> > +/*
+> > + * Saves the BMC parent device (LS7A) and its own PCI configuration sp=
+ace registers
+> > + * that need to be restored after BMC reset.
+> > + */
+> > +static void ls2k_bmc_save_pci_data(struct pci_dev *pdev, struct ls2k_b=
+mc_pdata *ddata)
+> > +{
+> > +     struct pci_dev *parent =3D pdev->bus->self;
+> > +     int base, i =3D 0;
+> > +
+> > +     pci_read_config_dword(parent, PCI_COMMAND, &ddata->bridge_pci_dat=
+a.pci_command);
+> > +
+> > +     for (base =3D PCI_BASE_ADDRESS_0; base <=3D PCI_BASE_ADDRESS_5; b=
+ase +=3D 4, i++)
+> > +             pci_read_config_dword(parent, base, &ddata->bridge_pci_da=
+ta.base_address[i]);
+> > +
+> > +     pci_read_config_dword(parent, PCI_ROM_ADDRESS, &ddata->bridge_pci=
+_data.rom_addreess);
+> > +     pci_read_config_dword(parent, PCI_INTERRUPT_LINE, &ddata->bridge_=
+pci_data.interrupt_line);
+> > +
+> > +     pci_read_config_dword(parent, parent->msi_cap + PCI_MSI_ADDRESS_L=
+O,
+> > +                           &ddata->bridge_pci_data.msi_lo);
+> > +     pci_read_config_dword(parent, parent->msi_cap + PCI_MSI_ADDRESS_H=
+I,
+> > +                           &ddata->bridge_pci_data.msi_hi);
+> > +
+> > +     pci_read_config_dword(parent, parent->pcie_cap + PCI_EXP_DEVCTL,
+> > +                           &ddata->bridge_pci_data.devctl);
+> > +     pci_read_config_dword(parent, parent->pcie_cap + PCI_EXP_LNKCAP,
+> > +                           &ddata->bridge_pci_data.linkcap);
+> > +     pci_read_config_dword(parent, parent->pcie_cap + PCI_EXP_LNKCTL,
+> > +                           &ddata->bridge_pci_data.linkctl_sts);
+> > +
+> > +     pci_read_config_dword(parent, LS7A_GEN2_CTL, &ddata->bridge_pci_d=
+ata.gen2_ctrl);
+> > +     ddata->bridge_pci_data.gen2_ctrl |=3D FIELD_PREP(LS7A_GEN2_SPEED_=
+CHANG, 0x1)
+> > +                                     | FIELD_PREP(LS7A_CONF_PHY_TX, 0x=
+0);
+> > +
+> > +     pci_read_config_dword(parent, LS7A_SYMBOL_TIMER, &ddata->bridge_p=
+ci_data.symbol_timer);
+> > +     ddata->bridge_pci_data.symbol_timer |=3D LS7A_MASK_LEN_MATCH;
+> > +
+> > +     pci_read_config_dword(pdev, PCI_COMMAND, &ddata->bmc_pci_data.pci=
+_command);
+> > +     pci_read_config_dword(pdev, PCI_BASE_ADDRESS_0, &ddata->bmc_pci_d=
+ata.base_address0);
+> > +     pci_read_config_dword(pdev, PCI_INTERRUPT_LINE, &ddata->bmc_pci_d=
+ata.interrupt_line);
+> > +}
+> > +
+> > +static int ls2k_bmc_pdata_initial(struct ls2k_bmc_pdata *ddata)
+>
+> What are you actually doing here exactly.
+>
+> I don't think "pdata_initial" describes it.
 
-Best regards,
--- 
-Tapio Reijonen <tapio.reijonen@vaisala.com>
+Indeed, as the function expands, its name should be updated.
+It now handles multiple tasks, such as GPIO initialization and
+interrupt registration. Overall, it initializes the ls2k BMC device.
 
+How about renaming it to ls2k_bmc_device_request()?
+>
+> > +{
+> > +     struct pci_dev *pdev =3D to_pci_dev(ddata->dev);
+> > +     int gsi =3D 16 + (LS2K_BMC_RESET_GPIO & 7);
+>
+> Define 16.
+>
+> > +     void __iomem *gpio_base;
+> > +     int irq, ret, val;
+> > +
+> > +     ls2k_bmc_save_pci_data(pdev, ddata);
+> > +
+> > +     INIT_WORK(&ddata->bmc_reset_work, ls2k_bmc_events_fn);
+> > +
+> > +     ret =3D devm_request_irq(&pdev->dev, pdev->irq, ls2k_bmc_interrup=
+t,
+> > +                            IRQF_SHARED | IRQF_TRIGGER_FALLING, "ls2kb=
+mc pcie", ddata);
+> > +     if (ret) {
+> > +             dev_err(ddata->dev, "Failed to request LS2KBMC PCI-E IRQ =
+%d.\n", pdev->irq);
+> > +             return ret;
+> > +     }
+> > +
+> > +     /*
+> > +      * Since gpio_chip->to_irq is not implemented in the Loongson-3 G=
+PIO driver,
+> > +      * acpi_register_gsi() is used to obtain the GPIO IRQ. The GPIO i=
+nterrupt is a
+> > +      * watchdog interrupt that is triggered when the BMC resets.
+> > +      */
+> > +     irq =3D acpi_register_gsi(NULL, gsi, ACPI_EDGE_SENSITIVE, ACPI_AC=
+TIVE_LOW);
+> > +     if (irq < 0)
+> > +             return irq;
+> > +
+> > +     gpio_base =3D ioremap(LOONGSON_GPIO_REG_BASE, LOONGSON_GPIO_REG_S=
+IZE);
+> > +     if (!gpio_base) {
+> > +             ret =3D -ENOMEM;
+> > +             goto acpi_failed;
+> > +     }
+> > +
+> > +     /* Disable GPIO output */
+> > +     val =3D readl(gpio_base + LOONGSON_GPIO_OEN);
+> > +     writel(val | BIT(LS2K_BMC_RESET_GPIO), gpio_base + LOONGSON_GPIO_=
+OEN);
+> > +
+> > +     /* Enable GPIO functionality */
+> > +     val =3D readl(gpio_base + LOONGSON_GPIO_FUNC);
+> > +     writel(val & ~BIT(LS2K_BMC_RESET_GPIO), gpio_base + LOONGSON_GPIO=
+_FUNC);
+> > +
+> > +     /* Set GPIO interrupts to low-level active */
+> > +     val =3D readl(gpio_base + LOONGSON_GPIO_INTPOL);
+> > +     writel(val & ~BIT(LS2K_BMC_RESET_GPIO), gpio_base + LOONGSON_GPIO=
+_INTPOL);
+> > +
+> > +     /* Enable GPIO interrupts */
+> > +     val =3D readl(gpio_base + LOONGSON_GPIO_INTEN);
+> > +     writel(val | BIT(LS2K_BMC_RESET_GPIO), gpio_base + LOONGSON_GPIO_=
+INTEN);
+> > +
+> > +     ret =3D devm_request_irq(ddata->dev, irq, ls2k_bmc_interrupt,
+> > +                            IRQF_SHARED | IRQF_TRIGGER_FALLING, "ls2kb=
+mc gpio", ddata);
+> > +     if (ret)
+> > +             dev_err(ddata->dev, "Failed to request LS2KBMC GPIO IRQ %=
+d.\n", irq);
+> > +
+> > +     iounmap(gpio_base);
+> > +
+> > +acpi_failed:
+> > +     acpi_unregister_gsi(gsi);
+> > +     return ret;
+> > +}
+> > +
+> >  /*
+> >   * Currently the Loongson-2K BMC hardware does not have an I2C interfa=
+ce to adapt to the
+> >   * resolution. We set the resolution by presetting "video=3D1280x1024-=
+16@2M" to the BMC memory.
+> > @@ -134,6 +457,7 @@ static int ls2k_bmc_parse_mode(struct pci_dev *pdev=
+, struct simplefb_platform_da
+> >  static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device=
+_id *id)
+> >  {
+> >       struct simplefb_platform_data pd;
+> > +     struct ls2k_bmc_pdata *ddata;
+> >       resource_size_t base;
+> >       int ret;
+> >
+> > @@ -141,6 +465,18 @@ static int ls2k_bmc_probe(struct pci_dev *dev, con=
+st struct pci_device_id *id)
+> >       if (ret)
+> >               return ret;
+> >
+> > +     ddata =3D devm_kzalloc(&dev->dev, sizeof(*ddata), GFP_KERNEL);
+> > +     if (IS_ERR(ddata)) {
+> > +             ret =3D -ENOMEM;
+> > +             goto disable_pci;
+> > +     }
+> > +
+> > +     ddata->dev =3D &dev->dev;
+> > +
+> > +     ret =3D ls2k_bmc_pdata_initial(ddata);
+> > +     if (ret)
+> > +             goto disable_pci;
+> > +
+> >       ret =3D ls2k_bmc_parse_mode(dev, &pd);
+> >       if (ret)
+> >               goto disable_pci;
+> > --
+> > 2.47.3
+> >
+>
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+
+--
+Thanks.
+Binbin
 
