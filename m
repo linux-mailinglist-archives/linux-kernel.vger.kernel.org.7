@@ -1,302 +1,176 @@
-Return-Path: <linux-kernel+bounces-798578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE2F5B4200F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:53:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A964B4201B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1149A1BA7BFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:53:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D81821BA7A59
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BC23019AF;
-	Wed,  3 Sep 2025 12:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DF42FF14E;
+	Wed,  3 Sep 2025 12:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZFFajYG1"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2047.outbound.protection.outlook.com [40.107.92.47])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aGqYmZkR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA232FFDCB
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756903892; cv=fail; b=AwsOibUqe95E0TVkAZSLkckpDpM/AfWOlrwChR6NS1QTMBvLs/f1sXYHkJkU3UOZwFaJntD7PBWSleXyLS4kYVMNSQiCF0MbEoWnKZNAK2Yct+5SzpwXITSRKOJ9T7ZKQb3w5J+CHZ7FyMq8d5QOJbdQdUBIBhM5++yFBRgJaOs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756903892; c=relaxed/simple;
-	bh=AadAC0KMDY+YjN9pkxuhqw0rWkDqTNllphQxTsCVlpQ=;
-	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
-	 In-Reply-To:MIME-Version; b=k4l2lh7/XK/Ff8De3FYR+uQlhEjW00rhN75I1saYaYfMfJQeUCYlsYxZLGv2HBgb3JmMz3SC497xCcSE1+uLJ4JCsWbkOwdPyOouklPyyOVrnX8Wdl2so4xsEP1z11Yh4jR2tBQ4OgibeFcJ3ZbkFjACxpT2Spa45u/Jsnfrp1Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZFFajYG1; arc=fail smtp.client-ip=40.107.92.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cFbJSXR0xYkkcdJF0GvUAmI2UlescLSEhL2s6BvfWpbeyYRR6A9BeirSkBjQcTN2MxWNzevpU8sk0Tht8akdmjKUEqjaZNUE8XqKCAOyv9t+5cDiL3avmXR7WKiplbDUoDRCB4whMyqKDurAwGJ4r/GfTcmT9sVVjlhGu1bHQ7+QTOT79x6uNVWMEWZ5NPEvrLeDs4p8iySbDmKqq/MFaYq8UnDdZLYqoBS2EP7JFdkwn50UNMsP/hqupyVduGWO65Ygc1tt5bDmEs53fMY1sFkbELQPEAWaVfVsAzNirjpIZpfV+4SDBeYc4AGYEEjTQ1D5DpsR3ARx+y6MJSCQJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tgsbHsheFR2iXaCJ5x2JXa25Fh1PQjR1HUEuo8pwUPc=;
- b=fmdDmfnZDIcw3XTFbW3aV5p1Np31pN6AIeE0Mo5TyhUrZETJleQhXxMcCyzKCv+TKxC4fruYi/c0gADmGrgFfxML0PjVLeRXDbzni2OkWl5XQ13Nzmgf+ATjod7eRweMPDM+nxfbtFVQmYTdZmxFjgTWG+F0T5rVJtKqSjcqwp4YkQPoq6sPFuOX7F8ZSkBzyBb+mO0suiEnpXmpeg3CwWUHIvh5HBh6DhExpVQ3m8ZgliHNboR9R+t2Hdg+q+KqZymV03pwu7kB8bXwQCRxR1PECuQQwkZQKAdesE2A5h3BIHVwaBhbXDrS+Q1w/dh8xZSBlhrJNIV/iHPG9jTpgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tgsbHsheFR2iXaCJ5x2JXa25Fh1PQjR1HUEuo8pwUPc=;
- b=ZFFajYG166rFQ5YBex0LaqRQpXTFqK7sWCDhVzgel3jTVkY+wODdAk45B1zdtvCFoeEDArglBheH2I9pjt8goJLt+GE2XGdkD1G/qcXiVFv+QesZuPMBzukhCHEqduFS5fgFUa6BhMs7x5uf6QhT1BicDlADmz+dsdYdgcQtk85Q5N+Bs6bAcX5HzYf1OXGUhsvTamSAB/ZyC8ONqGgLP0GBKzS2iXvBiXLoxwwQ5OCqEj/F8BcPCVMCMwis6/ozJnCB70nOLbQm4syHPgiRc3HRLizR/TjLVket8mbKeGubPHS4JGlbiC3QG5L6HXEDQQEFHeoeh9veoWNYaBHHkg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by PH7PR12MB6418.namprd12.prod.outlook.com (2603:10b6:510:1fe::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Wed, 3 Sep
- 2025 12:51:23 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9052.027; Wed, 3 Sep 2025
- 12:51:23 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Sep 2025 21:51:20 +0900
-Message-Id: <DCJ6G4DJ1JSY.1U6II6SNMZAZQ@nvidia.com>
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Alistair Popple" <apopple@nvidia.com>
-Cc: <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
- Hubbard" <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>,
- "Timur Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, "Nouveau"
- <nouveau-bounces@lists.freedesktop.org>
-Subject: Re: [PATCH 03/10] gpu: nova-core: gsp: Create wpr metadata
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250827082015.959430-1-apopple@nvidia.com>
- <20250827082015.959430-4-apopple@nvidia.com>
- <DCHAPJRPKSSA.37QLQGAVCERCZ@nvidia.com>
- <iyjecyybwyilem2ituw6esmufid72cximthc5qo2fgdpzz4fko@cb6n2vcrptb5>
-In-Reply-To: <iyjecyybwyilem2ituw6esmufid72cximthc5qo2fgdpzz4fko@cb6n2vcrptb5>
-X-ClientProxiedBy: TYCP286CA0287.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c8::9) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449D178F58;
+	Wed,  3 Sep 2025 12:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756904057; cv=none; b=lawTR7uyCEYs8BdcHwFD+6QrLCYScPUMaC/CV5p0V10MxcLaG89Eg4IafUgmGaBmpQkK6b8KoV5okfqpVGaAIhpSGytaEK5JxLNOtHUueUpv4QpWlO0hWl9QfvI7SSOYG8PuXQBHAmXAeSPOY35+fuESKi75FdEDVpn2+IKdC7I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756904057; c=relaxed/simple;
+	bh=GKyzok/z2dxUBYclYVhvEXgcpXK2CUMlhu43nRL68EI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tXjs4HA2ESz+uL6OHD3FKN/1dg/XgxJBM2DKdvaUTtc1GwSWL3yLesKV6wZwcWHC0V8siXgpaw07h+YZ3xNZnOa5WjK229zr0LQPZ4v7XGHOFu4egwuUF3a02SwVjMZek7ribbm/f09JXH7+4H0qwX6dgwEH5eC0JU1lDn5NrWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aGqYmZkR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FB4CC4CEF0;
+	Wed,  3 Sep 2025 12:54:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756904056;
+	bh=GKyzok/z2dxUBYclYVhvEXgcpXK2CUMlhu43nRL68EI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aGqYmZkRR1fuAHbSynfrAmBfRIiWr5y46yverkTaB/Q+Z5kCkOfz41rnYUvqCi7lN
+	 wLqIGAo5qY58FY6OJCVJuQjfR4mwTh3zodjMCqSGtEkNkj9fCSFu4QaNV7ApnafUP/
+	 +mXTY6HwkjIdi2zwlSkqmq40swY0mrEqJXcsLvUN+8+RYzjev6g2w6byTBl4GahEmA
+	 a8+ITTbTu7q2SzFUw2cVH19+LZSRsU/c01C+38NRhMXPEGgTzxOdg8oHv+LLdE+cbt
+	 f82rTtlkUZ1bo6fs9rkjpr+ngaoSPjRChb+3eOzFcURViENkXR5nrtzIW82gY/QenJ
+	 By9aGQYH6AxSg==
+Message-ID: <f2550076-57b5-46f2-a90a-414e5f2cb8d7@kernel.org>
+Date: Wed, 3 Sep 2025 14:54:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|PH7PR12MB6418:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3cc43ad7-f127-4cfb-fddf-08ddeae89659
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|10070799003|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L3llR2JvYlQ0UExaN2RraGRCQnZsSFNWTkpHc3N6NnhQeTFRVHZtWE1Nd21H?=
- =?utf-8?B?WHFKNCtMbzVnRnJ3QjVWZnBpalNKSEhTU3Zmd0V2WllEODhzWnUydWc1RWNB?=
- =?utf-8?B?TVIyN0E0aHdpSDRaaXV6c1Q1UGFJNjl4QmdYeDFTRENwM0VBVVNQdFpFa3E2?=
- =?utf-8?B?M1dyVmJaNjNYWVlIR1JsOXQ3RVV1K29JRzFaVFFDQlkySG5jSmZmaFhuL0Qw?=
- =?utf-8?B?ck9wUjIzSDZNUEF6RGhCZVNhOWhmcXJFZnV3aFhjUTNua3RCc3Yza0ZpNTdI?=
- =?utf-8?B?WkEra1RGeWExa29nVlU0WUtBTlBNdDFTSUJJdDJhdGJhTS9MVVpuZTBYUHYx?=
- =?utf-8?B?dThxWDZ5d0FScGFVYTUwQ25GeFpKVnJvSVFZQWc4ZzZxK0wxVmIrclk3N3RT?=
- =?utf-8?B?T04yVGlBRENqenJpeEpET2dINmRNWHFyQmRFZ2tNRStZVHlJU2hFR2lEY2Jq?=
- =?utf-8?B?WHpkQU1HQUo5aWhrMVJGTkZMVitBSXFNRXBHVWNGTGRhTWp2VEZIdWpQZzVv?=
- =?utf-8?B?UURCMUdLZ1hzSVdmSHB2L1Z4SGpGbVFWbXlSUFJqNUQ1RVNLd051b1g0TVg1?=
- =?utf-8?B?bWxyYWYzck9DQm5zOCtJb3ZOaGFWVVFHaDAzS2VyVndwWnlUc29Fd0tTalp3?=
- =?utf-8?B?VHBJcmE5R3dZVGtIZTVpUitzTURyV2x0eFYyM0J0UW13MXdKMUFyM0VCa2ta?=
- =?utf-8?B?Y29YRU9lTVdyUm4rbnFBTmEwaTVISzRIQVpuUm5ENlNhVzd3YlJ0N0dlNVhm?=
- =?utf-8?B?RGh2RDYwN1pybzIrT2RIUG5ROGVTNllINFlxRVdJNW5TNEdmOGNnRmltY05v?=
- =?utf-8?B?d1ZVeUY1M0gwZ3JaSHE0WWNXSFhkOXVydTZneUJvUVlmaG5vTHkvNlhCeUE1?=
- =?utf-8?B?Zk96aFZCdzhaSnFOUlFESWNjcUNic3pnVUpJSEt3dXlLVU01T0txMDBqTEVz?=
- =?utf-8?B?SURPZ3pPKzNocGozaGhKRGlOVEV6dFVuTnoyeXBvK2V2U1pPNGxNeUVodXpr?=
- =?utf-8?B?Yys2aktzTHY5TEVKdzl0aHoyQ2kxcDlvaFlxY09nS24wR1pneVk1ZWk1bm9n?=
- =?utf-8?B?dU41d3Z5SVBDWExOWVBFZEFwcGp6NFp3d0Q3OE9SaTZQTmlTcFVCMzJkdENr?=
- =?utf-8?B?L0ZPbEIrNlNoNWxpaEM5TDZRUktOcW40SGQ5WGYzbTVZWUpMTFFmNVRTNmwr?=
- =?utf-8?B?UWlNUTZlVkRMWGNsNGNBazNPaUhBRGNMZnFqcmtjYjM1Tm1KZElldDVhQnk3?=
- =?utf-8?B?d25DWDc1emhoKzYxZDdnb1JBWmJpVXNYdWt0bVIzUlVOZmp1Ti9yVmlLTWx0?=
- =?utf-8?B?Ym0yYnpXcGRoVCtldFd1ZmxIU1NYQzdUY0U4Wm5PeWo5ZnFXY1QrY2ZXZ01J?=
- =?utf-8?B?VXE4Wm1jK1NzOFFLWWdoNTQwQlZUTnE4cWU5VlJxeGdpNkVoMWdoRXEvRDhU?=
- =?utf-8?B?RXRQQmF5RWF2WkVCaGg2akdwd2NoTzAyWFZPUUJ3RnRRNWlwVG9mbllEelVi?=
- =?utf-8?B?V1B2U0hzamhtSE9VV0pFREVzbVhKUU53QlN6MGlBUjVNVXNhMXBDazFzdXda?=
- =?utf-8?B?QjNHcDFrdDd1ajJxWUtoTCtQTGJGWGdzelFnRGMvUTkrOTlQeVVpTkRmdXdV?=
- =?utf-8?B?ekZsWTZjMmZ6c3JPcENibGUzRitGbWxUMTN6ZkFPMENhNUhYZnV6WGVudUd3?=
- =?utf-8?B?bzhTMXgxSU4rSVRDYXlnYjNRanhUQnJMc1NtcWVOOGZaZER2WGM3SlE0dHpx?=
- =?utf-8?B?NlIrOW9FRGJ6bVlydEdHRithSzJnaisvbXhVeWFVUHFPWENlcHJabmtzSHF2?=
- =?utf-8?B?OGRKNjFYbldYTmhEUGl0VWxFb1lYUlJVZVRUSDQ2ZzgxTnBqVnlmeTZJcXR2?=
- =?utf-8?B?UmV1UERTUnBueWlHeHh2cDR3L1ZTNDZGYU5SeHpIMzQzTXZ3b1RyUzBhRnVK?=
- =?utf-8?Q?b0rhTfhf7xQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(10070799003)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cTRSVGg0YkluK0xMSm5qK3hSWmFqdjNoTlJDdjZOZE1lVGoxUkxiTzBYMHdP?=
- =?utf-8?B?Z2lSWXlaeUJFZ1I5anNSUnFxdWFsTWp1ZWJrWlFGbDFOMTFXZGtJMTBsb2Jh?=
- =?utf-8?B?OHowaEFOMmwyMjFqYnd5WGRXYXJSQzZIcWEwU05RLzd2OUlqQVp0aTdad1JE?=
- =?utf-8?B?NVY3a2hnc3JiK043YXZkZnNxdXZ0bzZqdlFZbGdIeFNHRGZXYWtsN3RyUE1i?=
- =?utf-8?B?UHZ5SnJoSTQ0TkRMODhLZFFrb0xRd0hyTEZNWVhTM2I0WFJoUThYSkNOS1VF?=
- =?utf-8?B?cUYwUVBPbDJydnN5cWlXNTdFcW9FMy85Mk1reGZadWdJSitJSlJDcWZKRHgv?=
- =?utf-8?B?SVBVYjJ0bDVuVFRoT1B0S2k2RjhNajY5Q1FkWjhDZ1V0K056VUtFeitlOHZ2?=
- =?utf-8?B?TlU0RFBDY2N5QlRON25lQ1Fwcyt3elgxQXAzb1FDcXZWbUFQb1Q3cDNIdDFY?=
- =?utf-8?B?SDA1U2hYcnhoRWlvRkEwKy9aQ1VYVVQyOUx0OUJVSGpwcm1BSFdqd3g3Zmpk?=
- =?utf-8?B?Vm9KYllVVGNZTVVnL3dIVDY2RnpkSHEwL25kL3ZjS2w4U2grK0Zha2tzMnR4?=
- =?utf-8?B?SmxJQW9XQTliZW5rMDJKS3ArSUpWNE5hNFgzWGV0RTRaRU5YSTVXNXVkSDFr?=
- =?utf-8?B?QXMwZDQrY1lLcUFkM0w1TmhTMW52b3F2VUxSNE9tZGlqcTEvK0U2RGx5SWxL?=
- =?utf-8?B?dHo4eVNvWTdURU9SNkRXNUdrMVFuS04vRFFxbnBEcTRJMUJmaU54NFBPNEZa?=
- =?utf-8?B?RGE1MG15d2FFdmN2Y3lMNWYvRnZTZnRHVkl1SXphQnRsa0hwa2lLMkNXMzMx?=
- =?utf-8?B?NHJqVnFvYXpGZm1RMFFQZFVRREMzQWF0ZldvMEhZaDhoUmpueDc0OEU1ZWQz?=
- =?utf-8?B?cFhiV0JGQTF3MHRWWHlyNXllTHpnaXVPWm9sNTlnZUZqYzE4V1M3cDNDZDRH?=
- =?utf-8?B?WEZRazZyaU0yRnZPWnJXL0lkMmYxVUVUNHhpSzc5bXVwWk1Ta3dBVGphYVVJ?=
- =?utf-8?B?d0NxTGFyMzJ4S3I5NkZhRlJHcjB0eExHS1kxREkvSW8zNWJhcmhOd2xNRnRQ?=
- =?utf-8?B?K29melVWWDJUOXZMT3JBeHVXenlObGhaUk8zRUE3SVRJeis3SXcxdGYra1pY?=
- =?utf-8?B?OWppUnlzREdZYm93Y1prektidXk2ZkJFU1ZvL01jR2hnMTRFSFgyWVlUWGRX?=
- =?utf-8?B?SnUrVFVXTkZ5b24wTGxDVVc2VDhBOW1PZXV5YnNjSkE0ZVlHdFNVMFZXTWNv?=
- =?utf-8?B?emVEcWhxdjhUL1Z1QXdDeHM5UnUyMUZ0dGprY0tmQklUaDNsTTlkUTdwam5m?=
- =?utf-8?B?cU9kWXNNWGx4bm9odklVdXJOK1JTRWpSZ2dhRlF6cEdDN1pzdktwRXdtMTNM?=
- =?utf-8?B?QmpMc0trMFowQnphbE9sb0hyTmlsZzM0WXZPU1ZTYi9uMnhNUlpjM1d3eG1J?=
- =?utf-8?B?aHZ6T0liUENZU0xtVlNTVG5NYitUUUJ0TmhrNnZpRmQvaVRvcTZIOHB4cDNn?=
- =?utf-8?B?ZVVoOExtS0J4Zlllcy83SDdMM3I5QVpwZjNscEZ3MEpaVlZaSkg4d1kvTVYy?=
- =?utf-8?B?MVJaL2M2d0dUUit4QW1VaWRuZm15TW1FMWhrc1RPS3FldVIrQmgweDNSR25D?=
- =?utf-8?B?eFg1WDVuY0EycE1FTVplWUdGbXhzVjdRWVU1QW5LNkIrMHBhWEdRU1djenNi?=
- =?utf-8?B?SkQ1QkNaaklEQ2FKd0xLOXNCUjJ0dTVZQXRVcjNwUkZXOTF5ME9JK29aejBr?=
- =?utf-8?B?MzdyYmxNM2k0OTRWSXJ3MU5qY0cyR1d1NUNBK3lBQ1AvZlJ0eGIxdHVJZlZV?=
- =?utf-8?B?SEJCS0ZwR2JRZGJmMkVpYjE4MlVTZXZZb0M2bk1WS1QzKytLdnVVMDZiSmsz?=
- =?utf-8?B?Y254VVc0bHFZWFJTSGFHSVhtZzNnY1NiTmplNTRYekZRYUQzTkgreVNLdTQ0?=
- =?utf-8?B?MkFzUzJFa2wxdVRKbzc2Z1NNQ2RkV2NHMWJzUE1JaGlvdytORzJoazh1dHIx?=
- =?utf-8?B?MFF2eUhVOGc4bTFING95eEJRUnlzZVZpMXQ5eWNyVzc4T0Z0dGxhcE1acmFX?=
- =?utf-8?B?YU0xSG9MU3lESlZpYlRxTjlhUjlPdFNrUlNLa3VRUlNGaFpCenVwNHRmdDRs?=
- =?utf-8?B?R2F5cml0UEo2ZFdqVXFDeVg0eWRweC9XVVdlMk5IK1EzV1RsUHdaUDJOWEVk?=
- =?utf-8?Q?jmgpXl7L5226limQADLgf+6JDRU+P0mc/WGSeA9uqZyH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3cc43ad7-f127-4cfb-fddf-08ddeae89659
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 12:51:23.4179
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zXywmIM3J2f+Sf3WPcKxAPJYN/FJkpKz0M7WkOzDWCDlzpQp/Efp3Vlw/rsGeM4ByaLPFaJ6qXjZ0PTIAcGrmQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6418
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 2/8] dt-bindings: remoteproc: k3-r5f: Add
+ rpmsg-eth subnode
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Simon Horman
+ <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Mengyuan Lou <mengyuanlou@net-swift.com>, Xin Guo <guoxin09@huawei.com>,
+ Lei Wei <quic_leiwei@quicinc.com>, Lee Trager <lee@trager.us>,
+ Michael Ellerman <mpe@ellerman.id.au>, Fan Gong <gongfan1@huawei.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+ Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
+ Suman Anna <s-anna@ti.com>, Tero Kristo <kristo@kernel.org>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com,
+ Roger Quadros <rogerq@kernel.org>
+References: <20250902090746.3221225-1-danishanwar@ti.com>
+ <20250902090746.3221225-3-danishanwar@ti.com>
+ <20250903-peculiar-hot-monkey-4e7c36@kuoka>
+ <d994594f-7055-47c8-842f-938cf862ffb0@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <d994594f-7055-47c8-842f-938cf862ffb0@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed Sep 3, 2025 at 5:57 PM JST, Alistair Popple wrote:
-<snip>
->> I've discussed the bindings abstractions with Danilo last week. We
->> agreed that no layout information should ever escape the `nvfw` module.
->> I.e. the fields of `GspFwWprMeta` should not even be visible here.
->>=20
->> Instead, `GspFwWprMeta` should be wrapped privately into another
->> structure inside `nvfw`:
->>=20
->>   /// Structure passed to the GSP bootloader, containing the framebuffer=
- layout as well as the DMA
->>   /// addresses of the GSP bootloader and firmware.
->>   #[repr(transparent)]
->>   pub(crate) struct GspFwWprMeta(r570_144::GspFwWprMeta);
->
-> I'm a little bit unsure what the advantage of this is? Admittedly I'm not=
- sure
-> I've seen the discussion from last week so I may have missed something bu=
-t it's
-> not obvious how creating another layer of abstraction is better. How woul=
-d it
-> help contain any layout changes to nvfw? Supporting any new struct fields=
- for
-> example would almost certainly still require code changes outside nvfw.
+On 03/09/2025 09:57, MD Danish Anwar wrote:
+>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>> ---
+>>>  .../devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml     | 6 ++++++
+>>>  1 file changed, 6 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>> index a492f74a8608..4dbd708ec8ee 100644
+>>> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>> @@ -210,6 +210,12 @@ patternProperties:
+>>>            should be defined as per the generic bindings in,
+>>>            Documentation/devicetree/bindings/sram/sram.yaml
+>>>  
+>>> +      rpmsg-eth:
+>>> +        $ref: /schemas/net/ti,rpmsg-eth.yaml
+>>
+>> No, not a separate device. Please read slides from my DT for beginners
+> 
+> I had synced with Andrew and we came to the conclusion that including
+> rpmsg-eth this way will follow the DT guidelines and should be okay.
 
-It is not as much creating a new abstraction layer as it is controlling
-where it resides - nicely contained in `nvfw` or all over the place.
-This is particularly relevant if we consider that binding abstractions
-are more likely to require `unsafe` code, that we will then be able to
-confine to the `nvfw` module. As I got reminded in my own series, we
-don't want `unsafe` code in regular driver modules.
+... and did you check the guidelines? Instead of repeating something not
+related to my comment rather bring argument matching the comment.
 
-Even if a new field is added to `GspFwWprMeta`, there is a good chance
-that the parameters of its current constructor will cover what we need
-to initialize it, so the calling code outside of `nvfw` won't need to
-change. Of course we cannot guarantee this will be true all the time,
-but it still covers us better than the alternative.
 
-And then there is the question of if/when we need to support several
-firmware versions. If we start having code in `gsp` that is specific to
-a given firmware version, this is already a non-starter. Whereas having
-all the abstractions in a single module leaves us in a better position
-to use trait objects and virtual calls, or apply proc-macro magic.
+...
 
->
-> My thinking here was that the bindings (at least for GSP) probably want t=
-o live
-> in the Gsp crate/module, and the rest of the driver would be isolated fro=
-m Gsp
-> changes by the public API provided by the Gsp crate/module rather than tr=
-ying to
-> do that at the binding level. For example the get_gsp_info() command impl=
-emented
-> in [1] provides a separate public struct representing what the rest of th=
-e
-> driver needs, thus ensuring the implementation specific details of Gsp (s=
-uch as
-> struct layout) do not leak into the wider nova-core driver.
->
->> All its implementations should also be there:
->>=20
->>   // SAFETY: Padding is explicit and will not contain uninitialized data=
-.
->>   unsafe impl AsBytes for GspFwWprMeta {}
->>=20
->>   // SAFETY: This struct only contains integer types for which all bit p=
-atterns
->>   // are valid.
->>   unsafe impl FromBytes for GspFwWprMeta {}
->
-> Makes sense.
->
->> And lastly, this `new` method can also be moved into `nvfw`, as an impl
->> block for the wrapping `GspFwWprMeta` type. That way no layout detail
->> escapes that module, and it will be easier to adapt the code to
->> potential layout chances with new firmware versions.
->>=20
->> (note that my series is the one carelessly re-exporting `GspFwWprMeta`
->> as-is - I'll fix that too in v3)
->>=20
->> The same applies to `LibosMemoryRegionInitArgument` of the previous
->> patch, and other types introduced in subsequent patches. Usually there
->> is little more work to do than moving the implentations into `nvfw` as
->> everything is already abstracted correctly - just not where we
->> eventually want it.
->
-> This is where I get a little bit uncomfortable - this doesn't feel right =
-to me.
-> It seems to me moving all these implementations to the bindings would jus=
-t end
-> up with a significant amount of Gsp code in nvfw.rs rather than in the pl=
-aces
-> that actually use it, making nvfw.rs large and unwieldy and the code more
-> distributed and harder to follow.
+> @@ -768,6 +774,7 @@ &main_r5fss0_core0 {
+>  	mboxes = <&mailbox0_cluster2 &mbox_main_r5fss0_core0>;
+>  	memory-region = <&main_r5fss0_core0_dma_memory_region>,
+>  			<&main_r5fss0_core0_memory_region>;
+> +	rpmsg-eth-region = <&main_r5fss0_core0_memory_region_shm>;
 
-If we want to split things more logically, I think it's perfectly fine
-to have e.g. a `nvfw/gsp` module that contains all the GSP abstractions,
-another one for the sequencer, etc. As long as all the version-specific
-bits are contained below `nvfw`.
+You already have here memory-region, so use that one.
 
->
-> And it's all tightly coupled anyway - for example the Gsp boot arguments =
-require some
-> command queue offsets which are all pretty specific to the Gsp implementa=
-tion.
-> Ie. we can't define some nice public API in the Gsp crate for "getting ar=
-guments
-> required for booting Gsp" without that just being "here is a struct conta=
-ining
-> all the fields that must be packed into the Gsp arguments for this versio=
-n",
-> which at that point may as well just be the actual struct itself right?
+>  };
+> 
+>  &main_r5fss0_core1 {
+> 
+> 
+> In this approach I am creating a new phandle to a memory region that
+> will be used by my device.
 
-Which particular structure are you refering to?
+
+
+Best regards,
+Krzysztof
 
