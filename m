@@ -1,93 +1,121 @@
-Return-Path: <linux-kernel+bounces-798792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60BBBB42304
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:05:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB8DB42305
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CC993A17A6
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3A1B3A2942
 	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A049330E829;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F2730E859;
 	Wed,  3 Sep 2025 14:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CkBog7u5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mGWZvAVj"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D2CH0amq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W8dEcRC7"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93326248F58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932D11DEFE9
 	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908291; cv=none; b=nPGdjJLIpOXekwK4juG2tFvLCyFSeb1t+U13I+ue7G8hjOchvjiuqf8soPe5yymkY/n3DYIrOlXsp7BEzxBnOI4S2fAOgFvk6z5K4srgkQR8P/9oSkkVtDpiYUM+R+o5cwyCJBJZkvgcLLTkEdIfRlUXONWrea21xFdbewJgR0c=
+	t=1756908291; cv=none; b=Yjourr3/0unCaNfgg60ScggGHKihtKjYv8rqILwQZNGm4DyehUsoo5zYieKTYCUQ7xemg+1mRhtPN/kfpUIv3wP14ehsPY5+4t5T07GVdzrnsAbgF61JnsII02ZJS6CmBHgT9kKq/4DjADrIhYCai1hxy0mFhHqheTgK2jhiHCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756908291; c=relaxed/simple;
-	bh=p+ZEH/ZcrVhCVIXUI5Udnarys1NFmWVLqksBWm1fQpc=;
-	h=Message-ID:From:To:Cc:In-Reply-To:References:Subject:Date; b=O2I1Glfzry7FgPM3EG3Ew3MuUj7KxDGcSgbcj01RWLe3+rIdVMiF++loJ6uNl+KtcvFKp0C/xqu+A6+I9lvMGHvWVlDQKDciYUJvOQCkee0PRFWuDSZOBYVPbgNjUQhxeSNBu/NEPcz8kIMNJ2eZ8ujbonQKvVQ31sxUBztTUhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CkBog7u5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mGWZvAVj; arc=none smtp.client-ip=193.142.43.55
+	bh=c4jxF5VsWGE8/NaAHmTFJpAckQ+TbS1bG7M/90SDduA=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=i0JTM/aRFe0AxYFyAOc4wkRzROV7G1r+a7m11n5/2WP82KlSl+oInX4LulULvYBnlKKS93XdvNaXuxGuDb2g3UagIxVid3XT2dNRAIU+nCD1wpiJMmj45F0riFljH+AugWTE4rHyWmQ0OSI6hn2ZWQbzO5jJoHlBq2Z2YvrcWOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D2CH0amq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W8dEcRC7; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250903134437.863638669@linutronix.de>
+Message-ID: <20250903135433.380783272@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756908285;
+	s=2020; t=1756908287;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-	bh=C7+UkxIpU7THzOpGEj2MPmejivydauZV25aptIvN9c8=;
-	b=CkBog7u5wJ8+iYsrCv3fsDaau3KE5zj5l9Ccalx6p1opdIRLiSC7D6fbtnmyuJ5EmLbRM7
-	qzJm88TE03pt0RIV1Hcgdi/PJkNOaXhxCjB3tHVwfdEYQjDYMbJOr5cmCYNSO+jIK5/Ido
-	2FdfcoW4CoXUgJl2YyWrBgsjfiiBQFCA+APN6OJZi5PuFc2K2LzW85WQuUkT/4m/TlrMwB
-	3GGh4q5BfZLkcL5ySjeNH5YISw5u6bSoGV836aFE8IbJm0nf+J+d7kIUfKvIYE+5dwVhpr
-	41I4VtlacPAgQn3S3MAtey6jbQDnozHxS1us7dudfIPtFT01SkJbAZ3pMoD8Lg==
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=EGz2zaDvFdXeRQqyZacdGqCCxPU+HkhYjz1f6Tjk9Zw=;
+	b=D2CH0amqrrIFspcFMiKihYVYafh06VAR3Mu0YLa4UBuXNXq9Sd4wyxh80PNXOLdrRQ1UEI
+	2U6Bwx1mBJSqKedsi3fVR8ZWNlYAHzPzKddvRrKzHJ+4uvJFx+EEo8KVmpilZJMoVpcOhc
+	iW5iKwFMSptIhFNinMQFnE4qBAmDkTge9RUhzUUrwfGdZ/dSlzj5xIpHMvGnJSQCgHBOEr
+	R94nysbKn1Gz9HU7a0hAXyPXLoz/s29LcNugbii8s/kw8kF4zPLtWOvBZ0EfwX875eVJBG
+	evaZKf9Fq5hlxBLYR5EsTWDY5+JlLLiAWJSmE5yzvArP7QF2Wng0103bSUNy6g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756908285;
+	s=2020e; t=1756908287;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-	bh=C7+UkxIpU7THzOpGEj2MPmejivydauZV25aptIvN9c8=;
-	b=mGWZvAVjftTGjwUq7bCqUp28wwcUqAYtBIqdsNIblbwkDkmwo3GmnQJ8/N9QGfqmIVmaqK
-	IU5uUaOy3a2okyDg==
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=EGz2zaDvFdXeRQqyZacdGqCCxPU+HkhYjz1f6Tjk9Zw=;
+	b=W8dEcRC7O+enCPD6meNEx9Iulvn0Y4mvwWxwEhj8rkA7A5vwnWgf58JZSIdyJUk/hotp7D
+	DoA3pzWKPJ0tmrBQ==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Marc Zyngier <maz@kernel.org>,
  Bjorn Helgaas <bhelgaas@google.com>
-In-Reply-To: <87ecv1ob9q.ffs@tglx>
+Subject: [patch 1/2] irqchip/msi-lib: Honor the MSI_FLAG_PCI_MSI_MASK_PARENT
+ flag
 References: <86o6vjelw2.wl-maz@kernel.org>
  <87ecv1ob9q.ffs@tglx>
-Subject: [patch 0/2] PCI/MSI: Avoid PCI level masking during normal operation
- if requested
-Date: Wed,  3 Sep 2025 16:04:44 +0200 (CEST)
+ <20250903134437.863638669@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Date: Wed,  3 Sep 2025 16:04:46 +0200 (CEST)
 
-This is a follow up to Marc's attempt on this:
+From: Marc Zyngier <maz@kernel.org>
 
-     https://lore.kernel.org/lkml/20250517103011.2573288-1-maz@kernel.org
+For systems that implement interrupt masking at the interrupt controller
+level, the MSI library offers MSI_FLAG_PCI_MSI_MASK_PARENT.  It indicates
+that it isn't enough to only unmask the interrupt at the PCI device level,
+but that the interrupt controller must also be involved.
 
-Now that the PCI/MSI side has irq_startup/shutdown() callbacks, which do
-the [un]masking at the PCI level, let the MSI parent domains which insist
-on being in charge of masking do so for normal operations.
+However, the way this is currently done is less than optimal, as the
+masking/unmasking is done on both sides, always. It would be far cheaper to
+unmask both at the start of times, and then only deal with the interrupt
+controller mask, which is cheaper than a round-trip to the PCI endpoint.
 
-That avoids going out to the PCI endpoint in the case that an interrupt has
-to be masked on arrival of an interrupt in software (lazy) disabled state.
+Now that the PCI/MSI layer implements irq_startup() and irq_shutdown()
+callbacks, which [un]mask at the PCI level and honor the request to
+[un]mask the parent, this can be trivially done.
 
-That's achieved by overwriting the irq_[un]mask() callbacks in the irq/MSI
-library.
+Overwrite the irq_mask/unmask() callbacks of the device domain interrupt
+chip with irq_[un]mask_parent() when the parent domain asks for it.
 
-As a consequence the conditional mask/unmask logic in the regular
-irq_[un]mask() callbacks of the PCI/MSI domain is not longer required.
+[ tglx: Adopted to the PCI/MSI changes ]
 
-Thanks,
-
-	tglx
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- irqchip/irq-msi-lib.c |   14 ++++++++++++++
- pci/msi/irqdomain.c   |   20 --------------------
- 2 files changed, 14 insertions(+), 20 deletions(-)
+ drivers/irqchip/irq-msi-lib.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
+--- a/drivers/irqchip/irq-msi-lib.c
++++ b/drivers/irqchip/irq-msi-lib.c
+@@ -112,6 +112,20 @@ bool msi_lib_init_dev_msi_info(struct de
+ 	 */
+ 	if (!chip->irq_set_affinity && !(info->flags & MSI_FLAG_NO_AFFINITY))
+ 		chip->irq_set_affinity = msi_domain_set_affinity;
++
++	/*
++	 * If the parent domain insists on being in charge of masking, obey
++	 * blindly. The interrupt is un-masked at the PCI level on startup
++	 * and masked on shutdown to prevent rogue interrupts after the
++	 * driver freed the interrupt. Not masking it at the PCI level
++	 * speeds up operation for disable/enable_irq() as it avoids
++	 * getting all the way out to the PCI device.
++	 */
++	if (info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT) {
++		chip->irq_mask		= irq_chip_mask_parent;
++		chip->irq_unmask	= irq_chip_unmask_parent;
++	}
++
+ 	return true;
+ }
+ EXPORT_SYMBOL_GPL(msi_lib_init_dev_msi_info);
 
 
