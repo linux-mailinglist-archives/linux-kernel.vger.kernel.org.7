@@ -1,199 +1,183 @@
-Return-Path: <linux-kernel+bounces-799321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E7DB42A06
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:35:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 164DBB42A0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79F0B1881E5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:35:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F47D3A9D8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD4B36934A;
-	Wed,  3 Sep 2025 19:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D77369350;
+	Wed,  3 Sep 2025 19:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WTso5ylS"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocaVzao4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8443680AD;
-	Wed,  3 Sep 2025 19:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14D02C18A;
+	Wed,  3 Sep 2025 19:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756928087; cv=none; b=EURpSEewDZYEqiv+vbIrD3gYQ1AfdCG8HE2MCvR7ITzdQns+arPbkgMIdQvw6ZeRIWvcYnQezZmAGIHZ7YyApWrk3rogOuDvhCCeEtPzGCTx8TyvRwcH6WCo3OeUCmpGExogCty2ORs8MZUk5e3SWeZ+9kZeALCVcQUfPkbwSAA=
+	t=1756928181; cv=none; b=ndt3RZhfYgjZsb67SmWap6oCzHILQakFNQuoPDbY6rjNx+gKbH/KVz7mFxahfs9T8H8KjjTFArtkHC5SoyQABR0sADydvPZeCIBPsPSxODoTPDhdTchN1uwfbCVDLPxy2piTEr2nOM7GBf3wtZ0tNqgMaQdzriISvWuQAzu89w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756928087; c=relaxed/simple;
-	bh=od0iOEyF9QpRrHdG1LYp/fOb6P41PETICpxHH3SYReQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XwKpnRah6+rsLryH4wCyx4ITj1RVNoCjTsFk4g59nEgps6W6PTYskHuEQvU1LgRs4WlU+lri0UWp90rdfMoPZRgVcAIt+ec2edLdxzyxniwNKSk+yFY1hx7UhZPefdwx1l8L2wC7fHjcl0Qo1lMqptIMEEIsTonKkiMPOR+0mrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WTso5ylS; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f6f7edf45so190465e87.2;
-        Wed, 03 Sep 2025 12:34:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756928083; x=1757532883; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YhoPZ3kKabKK8oSei6TeoqSwcdOczo6L1cK0Io5ZzOU=;
-        b=WTso5ylSryc8QNwnECV8zHhLGl0JyebO7whT5ymiA66ZdWgP+cJ+/m796k9YQHO6P4
-         PfAw6IqV8cHfuSUCPZvug0yjbJrctlcpjnAEBripMvyp0xYilLpmHnOopkONykBoYCZq
-         0gIjfRBowQDpnJkOuGyHj2jqWCBMDDyhoV7JVZjujFx5lGi51k1kT0D5zPGiNdltGVua
-         sr5jAQlunlV946Kl3weKyyiHjV8MnpwmmsXauQhvZ5QxptoMoBXy2z9bHtG/6dq0wPG8
-         KQ1rTQ0MxyXbrgFTdQaT2S3OVHQkNNoRSnzHVi9nSJFUWQ5/DRtA1mJsB3IRKSLI6oeq
-         biCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756928083; x=1757532883;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YhoPZ3kKabKK8oSei6TeoqSwcdOczo6L1cK0Io5ZzOU=;
-        b=Q3NycwSHaFDi1FHjRFCZDDNEdXWJqaLgKm5zde0S8yIfLZoaN0iLmbNGfM+Y2Q4zd/
-         CVh3wdOlXjTRycAZTS/nkFRxxS14SzyWjvxThZgJ3hQnK0O7TwNh0iaRUS98E+aAxvei
-         2k2OgCujjv+Cn/Op2P46HQHhq5yC6G9GO3B+nl8IHg6ziQ7cOU8jXdoalzOvl1ZNreHz
-         VupxsrKy8jK3Z6LxTIISaOQf3s3CHjkbe4v2LYMaihsJC40ynX/TTe6/WR8Q8zFWDTex
-         2fCbHCN1cjjs3NCfC/94Kmu0yN+aKZ1EyU1APcGrtgnsOcd3misGbPPBtgIIfka06B3F
-         UEdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSwyd1RPkX624zbZN3Wd5AwgJ2CA9rJlO+PQRw0a+Ou251GHO3llokhRnb0vtO1aamrU/f+9IIqd/tUwk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAwkZhXagHi0H0sswHaC0wNNwFO5jVm/eOZFWGyTHmMn2tVgXt
-	WeFookO5vK9iuOA+zCN/BhQdPCBmBuKCSlM+kKpgLFAcXS0tAKHz/WAY
-X-Gm-Gg: ASbGncsQYKdqIGN/JD+1OIAvMuCGv8YKYIJyyQ6zfBo3pAam/UDmSZXofz2mGel0sOM
-	aeJiOylzusn+5grCLsccAi6Bg4P9lb6Db8omvRznSkgVMcV2jd4VdN97zmHIZvVIGTOqckqA6o+
-	gowmKEtsZ4jvH5TJ8RNzPLqLJ+d2kmGcZQuIgvcgfRbEFPnRLUBYJ9wHMwVw7sc/iWNT/CX6Xc+
-	ewDlkWKdESg4/TGnXn8d2WZst+YZyNqhFhIVEnWbMpOa6Ud/Te4QtQMCcyMb8D1EiNnF+rxmUfT
-	DrtFTG3ujrrq1Q5Be13MPLgRvpUnv/jaxXSDFGqwRhbB6wbH3jLsOyffYi2n1wJQvDHlEkc4gqo
-	gLwT50rWhA9al8MfvN4NIrB0LFP8j3tVNY491F8nt1allvmEFpDYY
-X-Google-Smtp-Source: AGHT+IH53+Pe/rLVNPa4pTx6F4mHwzKqIBoVE9zH5oUFhoPYZcYHAHSykvrKWge0h4IW+cPiwTLC+A==
-X-Received: by 2002:a05:6512:1390:b0:55f:33e0:9602 with SMTP id 2adb3069b0e04-55f708a3a29mr5464842e87.9.1756928082878;
-        Wed, 03 Sep 2025 12:34:42 -0700 (PDT)
-Received: from SC-WS-02452.corp.sbercloud.ru ([95.220.211.111])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608acfd3e9sm673862e87.110.2025.09.03.12.34.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 12:34:42 -0700 (PDT)
-From: Sergey Bashirov <sergeybashirov@gmail.com>
-To: Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org,
+	s=arc-20240116; t=1756928181; c=relaxed/simple;
+	bh=J5VDjAzU4bP2iNAyELFb3jm1tCgK9MjUGPIE6C22Gdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=u3rU247m8p6EeBeU9o817R75aAV5ckOgzc6GzfM4io+UXXBAKRkzb5EHh46R5fKTbYf2KT/fppZSZV4k324/wkSINpkUkRWvsxugJw7FGtbv+lT2ujpayeDXXx6/giaDMWwzRo0v9iXj4BKA4qcbjiFJvSGbvzbTai/C3IPOEaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocaVzao4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3982C4CEE7;
+	Wed,  3 Sep 2025 19:36:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756928180;
+	bh=J5VDjAzU4bP2iNAyELFb3jm1tCgK9MjUGPIE6C22Gdg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ocaVzao4pHj7eKEMcbd5Gjt92N6UK53kmHR2XF447/zhQoXmw8ED4iAm8ilUtAevr
+	 vKKdTzgnJB9FZ1a+PVsxADdMDORDhph18ZzFI/AdYmCUQTYzzC/Cz/GKlZS9k1Zp9e
+	 NUT1+eg71S5VoVdEIEVAU4AaUwVtZPQXN2u+rLVMtT5EMAtSknA7fwUlQx8dAotCLT
+	 U9zjAzodQ6z5ATB5gzCWpsQe4EnD+a1Dzt2oh3l4QiKDfzIiGjs5jXyKiKt1azlZ9F
+	 L5BJUGaHOfxeUz/4t2P+LZ3uQGRmemu7XC5xnuUYUudbHtyjsMRq9/ZdI0Zq9DwdS5
+	 /SI2PRaNEUmdQ==
+Date: Wed, 3 Sep 2025 21:36:13 +0200
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Sergey Bashirov <sergeybashirov@gmail.com>,
-	Konstantin Evtushenko <koevtushenko@yandex.com>
-Subject: [PATCH v2] NFSD: Disallow layoutget during grace period
-Date: Wed,  3 Sep 2025 22:34:24 +0300
-Message-ID: <20250903193438.62613-1-sergeybashirov@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] virtio_net: Fix alignment and avoid
+ -Wflex-array-member-not-at-end warning
+Message-ID: <aLiYrQGdGmaDTtLF@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-When the block/scsi layout server is recovering from a reboot and is in a
-grace period, any operation that may result in deletion or reallocation of
-block extents should not be allowed. See RFC 8881, section 18.43.3.
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-If multiple clients write data to the same file, rebooting the server
-during writing can result in the file corruption. Observed this behavior
-while testing pNFS block volume setup.
+Use the new TRAILING_OVERLAP() helper to fix the following warning:
 
-Co-developed-by: Konstantin Evtushenko <koevtushenko@yandex.com>
-Signed-off-by: Konstantin Evtushenko <koevtushenko@yandex.com>
-Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
+drivers/net/virtio_net.c:429:46: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+This helper creates a union between a flexible-array member (FAM)
+and a set of members that would otherwise follow it (in this case
+`u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];`). This
+overlays the trailing members (rss_hash_key_data) onto the FAM
+(hash_key_data) while keeping the FAM and the start of MEMBERS aligned.
+The static_assert() ensures this alignment remains, and it's
+intentionally placed inmediately after `struct virtnet_info` (no
+blank line in between).
+
+Notice that due to tail padding in flexible `struct
+virtio_net_rss_config_trailer`, `rss_trailer.hash_key_data`
+(at offset 83 in struct virtnet_info) and `rss_hash_key_data` (at
+offset 84 in struct virtnet_info) are misaligned by one byte. See
+below:
+
+struct virtio_net_rss_config_trailer {
+        __le16                     max_tx_vq;            /*     0     2 */
+        __u8                       hash_key_length;      /*     2     1 */
+        __u8                       hash_key_data[];      /*     3     0 */
+
+        /* size: 4, cachelines: 1, members: 3 */
+        /* padding: 1 */
+        /* last cacheline: 4 bytes */
+};
+
+struct virtnet_info {
+...
+        struct virtio_net_rss_config_trailer rss_trailer; /*    80     4 */
+
+        /* XXX last struct has 1 byte of padding */
+
+        u8                         rss_hash_key_data[40]; /*    84    40 */
+...
+        /* size: 832, cachelines: 13, members: 48 */
+        /* sum members: 801, holes: 8, sum holes: 31 */
+        /* paddings: 2, sum paddings: 5 */
+};
+
+After changes, those members are correctly aligned at offset 795:
+
+struct virtnet_info {
+...
+        union {
+                struct virtio_net_rss_config_trailer rss_trailer; /*   792     4 */
+                struct {
+                        unsigned char __offset_to_hash_key_data[3]; /*   792     3 */
+                        u8         rss_hash_key_data[40]; /*   795    40 */
+                };                                       /*   792    43 */
+        };                                               /*   792    44 */
+...
+        /* size: 840, cachelines: 14, members: 47 */
+        /* sum members: 801, holes: 8, sum holes: 35 */
+        /* padding: 4 */
+        /* paddings: 1, sum paddings: 4 */
+        /* last cacheline: 8 bytes */
+};
+
+As a last note `struct virtio_net_rss_config_hdr *rss_hdr;` is also
+moved to the end, since it seems those three members should stick
+around together. :)
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 ---
-Changes in v2:
- - Push down the check to layout driver level
 
- fs/nfsd/blocklayout.c    | 8 +++++++-
- fs/nfsd/flexfilelayout.c | 2 +-
- fs/nfsd/nfs4proc.c       | 3 ++-
- fs/nfsd/pnfs.h           | 2 +-
- 4 files changed, 11 insertions(+), 4 deletions(-)
+This should probably include the following tag:
 
-diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
-index 0822d8a119c6..1fbc5bbde07f 100644
---- a/fs/nfsd/blocklayout.c
-+++ b/fs/nfsd/blocklayout.c
-@@ -19,7 +19,7 @@
+	Fixes: ed3100e90d0d ("virtio_net: Use new RSS config structs")
+
+but I'd like to hear some feedback, first.
+
+Thanks!
+
+ drivers/net/virtio_net.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 975bdc5dab84..f4964a18a214 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -425,9 +425,6 @@ struct virtnet_info {
+ 	u16 rss_indir_table_size;
+ 	u32 rss_hash_types_supported;
+ 	u32 rss_hash_types_saved;
+-	struct virtio_net_rss_config_hdr *rss_hdr;
+-	struct virtio_net_rss_config_trailer rss_trailer;
+-	u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];
  
- static __be32
- nfsd4_block_proc_layoutget(struct inode *inode, const struct svc_fh *fhp,
--		struct nfsd4_layoutget *args)
-+		struct nfsd4_layoutget *args, bool in_grace)
- {
- 	struct nfsd4_layout_seg *seg = &args->lg_seg;
- 	struct super_block *sb = inode->i_sb;
-@@ -34,6 +34,9 @@ nfsd4_block_proc_layoutget(struct inode *inode, const struct svc_fh *fhp,
- 		goto out_layoutunavailable;
- 	}
+ 	/* Has control virtqueue */
+ 	bool has_cvq;
+@@ -493,7 +490,16 @@ struct virtnet_info {
+ 	struct failover *failover;
  
-+	if (in_grace)
-+		goto out_grace;
+ 	u64 device_stats_cap;
 +
- 	/*
- 	 * Some clients barf on non-zero block numbers for NONE or INVALID
- 	 * layouts, so make sure to zero the whole structure.
-@@ -111,6 +114,9 @@ nfsd4_block_proc_layoutget(struct inode *inode, const struct svc_fh *fhp,
- out_layoutunavailable:
- 	seg->length = 0;
- 	return nfserr_layoutunavailable;
-+out_grace:
-+	seg->length = 0;
-+	return nfserr_grace;
- }
++	struct virtio_net_rss_config_hdr *rss_hdr;
++
++	/* Must be last --ends in a flexible-array member. */
++	TRAILING_OVERLAP(struct virtio_net_rss_config_trailer, rss_trailer, hash_key_data,
++		u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];
++	);
+ };
++static_assert(offsetof(struct virtnet_info, rss_trailer.hash_key_data) ==
++	      offsetof(struct virtnet_info, rss_hash_key_data));
  
- static __be32
-diff --git a/fs/nfsd/flexfilelayout.c b/fs/nfsd/flexfilelayout.c
-index 3ca5304440ff..274a1e9bb596 100644
---- a/fs/nfsd/flexfilelayout.c
-+++ b/fs/nfsd/flexfilelayout.c
-@@ -21,7 +21,7 @@
- 
- static __be32
- nfsd4_ff_proc_layoutget(struct inode *inode, const struct svc_fh *fhp,
--		struct nfsd4_layoutget *args)
-+		struct nfsd4_layoutget *args, bool in_grace)
- {
- 	struct nfsd4_layout_seg *seg = &args->lg_seg;
- 	u32 device_generation = 0;
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index d7c58aa64f06..5d1d343a4e23 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -2435,6 +2435,7 @@ static __be32
- nfsd4_layoutget(struct svc_rqst *rqstp,
- 		struct nfsd4_compound_state *cstate, union nfsd4_op_u *u)
- {
-+	struct net *net = SVC_NET(rqstp);
- 	struct nfsd4_layoutget *lgp = &u->layoutget;
- 	struct svc_fh *current_fh = &cstate->current_fh;
- 	const struct nfsd4_layout_ops *ops;
-@@ -2498,7 +2499,7 @@ nfsd4_layoutget(struct svc_rqst *rqstp,
- 		goto out_put_stid;
- 
- 	nfserr = ops->proc_layoutget(d_inode(current_fh->fh_dentry),
--				     current_fh, lgp);
-+				     current_fh, lgp, locks_in_grace(net));
- 	if (nfserr)
- 		goto out_put_stid;
- 
-diff --git a/fs/nfsd/pnfs.h b/fs/nfsd/pnfs.h
-index dfd411d1f363..61c2528ef077 100644
---- a/fs/nfsd/pnfs.h
-+++ b/fs/nfsd/pnfs.h
-@@ -30,7 +30,7 @@ struct nfsd4_layout_ops {
- 			const struct nfsd4_getdeviceinfo *gdevp);
- 
- 	__be32 (*proc_layoutget)(struct inode *, const struct svc_fh *fhp,
--			struct nfsd4_layoutget *lgp);
-+			struct nfsd4_layoutget *lgp, bool in_grace);
- 	__be32 (*encode_layoutget)(struct xdr_stream *xdr,
- 			const struct nfsd4_layoutget *lgp);
- 
+ struct padded_vnet_hdr {
+ 	struct virtio_net_hdr_v1_hash hdr;
 -- 
 2.43.0
 
