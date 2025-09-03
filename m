@@ -1,97 +1,147 @@
-Return-Path: <linux-kernel+bounces-798302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36913B41C09
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:40:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7BCB41C0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 781667A264B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:39:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C6286849AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC5B2EF677;
-	Wed,  3 Sep 2025 10:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6F42F1FE2;
+	Wed,  3 Sep 2025 10:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S3SVHAxi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JSr4pE4D"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4E2258CDF;
-	Wed,  3 Sep 2025 10:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE061E5206;
+	Wed,  3 Sep 2025 10:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756896043; cv=none; b=PgaiSa4qxZhCjTa7/A5N6UoHFbsJH31RyTWT5jpfmZHpFQ8HwwjP+6fDVmrxgfmUyRHBtvh05+yP+ZoCqSZU0GqzBO/AEar4e2vwsup7wCdXXAcsg1w57+RqjLQTSW4ZsFQevl6YTGjiyXL28AfHB2nYLi1g25RkACG9WsQYmPo=
+	t=1756896081; cv=none; b=kLyI54iC1tyJE3p+z+NgoEKNyplZeCSKRBsl8PLmrOSTqBJ57cca20/CCoCmWI/xeMMphcpVswmxqZKEXLOe+goYzcpV6F/jAL7UvU0yiZUqSwj3oRctO/w026afx/dHG/VRjv/aTy++7nr6Va7IsS2Qy66i6iysTq5yngVnho4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756896043; c=relaxed/simple;
-	bh=/GR+wgck7acbVEVzqzkAAZZ2N1TqJUrO6jmRcyYRTB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oNWaFqBlbSBHe4wr4391/iSDInTYbQknsryw/WGee/IFQ9JyKh+N8mqBQqcXYy8FMBUQLAn0K61z8eW/4XzA4TbVD28JAJBZHHYmoVkY9sStwfcewV9S8R0L1Ge5xBRK/dyYCwam+mX7USb5z2LP84DTD3024yEzaf7K+GizTug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S3SVHAxi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C036C4CEF0;
-	Wed,  3 Sep 2025 10:40:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756896042;
-	bh=/GR+wgck7acbVEVzqzkAAZZ2N1TqJUrO6jmRcyYRTB0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S3SVHAxiq6+Ko/iJlimGBpOLwMBzSmcefi1WYRoQzW0ry7BGI/oaJ1pOOkYXRtyaa
-	 TK+QoDG2X9x6Fvv4ofdz+E6smjKQeIwojon4ymsqTc4lmFDXLi0yy4JxXbem+zfQor
-	 yoaT/S2QJx0HFtgCBLW+e3j4fLtIGGu7NZZeqSigI9bmYEyqxXfLTQwOnQNapgYuNf
-	 jj1i0ouSIus871TgQVssoGxIGcVBJDg/Ff8qPWLiAioKoqjZfIo7sK6cmf3XFq7BCH
-	 vBHLr65vDTa6NWPxNikgqGqtpLf0rSNWhZKlPeY8AonKlUcOYwyCDCvTo4JFckK+nV
-	 9ndijg69dWNxw==
-Date: Wed, 3 Sep 2025 11:40:36 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, achill@achill.org
-Subject: Re: [PATCH 6.16 000/142] 6.16.5-rc1 review
-Message-ID: <5e10902d-9058-4a7a-8b32-5aa3b30341ff@sirena.org.uk>
-References: <20250902131948.154194162@linuxfoundation.org>
+	s=arc-20240116; t=1756896081; c=relaxed/simple;
+	bh=cQ5AxTNObd/Ros3LgbI1d2H9KbaWvkEuSSK99ckKyZU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=di2BFh681IjW7tqvQatHWlmizsxErX1ZsK1GgBrHYS6OxFtKxOnHh+adne22kuhDxiE9gvQ4bGzc4QMCoTggnU7+buhSRIbHi/corX5Hy2XgnPJAXYg8XmH8+6aOMrQkcDc66hBONM67GhaUFMEt1NHBVjp/u9z/R4tq3gJyXrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JSr4pE4D; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24456ce0b96so9676385ad.0;
+        Wed, 03 Sep 2025 03:41:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756896079; x=1757500879; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M0EPRZe8YJObgeqfHix/soVRNAxr+rVxG0fDuUG583s=;
+        b=JSr4pE4DJAelgsOFQLCl9PTMAmOEWjINBaA0MxebU4uBde2i91d3UO/11Jj9V7rJMN
+         tZLVqgkiFUauJNzyX9ZGJNMETg1lwWNj4oVuy25OzpkcYvB/rbADohz7vWRi1eSse6In
+         +7WfA+kVcZrBHwKLPQ+Sn3OiKKzRdgt+XuF0WO/jAgPyYCuElbXMhFW/2GM4YGcO7Rv8
+         Q6FgMeDo9OJyn3UWXK/NFbcCJ3yX5umwiNBdmodXv6Vj6sVBH9h7tY+59KetT/oVq7Pq
+         lStxiL4X910lIPgwYoDXSMGBDjt2iQ7vkN6kBR60m0S0X6L2yl5DLsB6gEqH5PeFDrcR
+         7TLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756896079; x=1757500879;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M0EPRZe8YJObgeqfHix/soVRNAxr+rVxG0fDuUG583s=;
+        b=JFrbPQcEYiqIVallhg2SKaRY/glbyLqvmUrzG/IJUOCdhLorv7e+MRavrBstr/+O9D
+         JCvO4coTWBjWpmitH0o0outBE6pt3c48gNQstMUViRvNAR/lOeRDjnp+JvrwtTPdNR1h
+         Tg5YDjeiGEWXHdvtJm9vaper4tFN/hVU5HaiXauZrq3CyC95LNmXN5qQ0s9IFPrel4sQ
+         ABFa93QB7/lkxN66Y3Pc0I0qLf+NJto0c7CYYMiZQPH1tTSAxTUwNfd/4uNhsf3K32uA
+         J0cIoBQ4ezAG8qlZqfF9oUd2APE6R19fhCuVL0fFtl5jBjx+VWg/eTvcTMJ/k0gyKvpP
+         AX7w==
+X-Forwarded-Encrypted: i=1; AJvYcCV8kp2iLbqc8JgmXdI0932avydv0+RMGcH8YCIbbfYuSXVzzIMsIaMm81tH/zY4y+J9tcQ76Yd1kUYlPHMc@vger.kernel.org, AJvYcCVk9JfyDD2Qhy3C/dyJ510qCBk9LL+7CcItgkiSxTxPmMT3JJHBh8My35NWEsF7pp/JgGBIWoyOXHCG6QA=@vger.kernel.org, AJvYcCXQiB1xldv9JmKjQ8Mq0Cp/Cc5eHsoYX9/KRNEC7OopVs31pXGuOUNMaQTWc0DBBcNu8m5WhVaE2Ci8@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqY+PJPUmEtftUTowvUP9jDA2OXxJ0eIH9PM1ozzh4dqmnkQgJ
+	j0REJb1D7vAR9Qz17ciVybaRCNE/lSJGWBVnCGFcDBhFJCq71wq2IBwOMscxTkItMmdmR1+RLf8
+	bkGLZI3zUfiCUQ8AK6KWTfLLW8hMPZ0M=
+X-Gm-Gg: ASbGncudKiBjQhNG10u7P0nytkzKSPZhGfdAdUrBKPfFsStS6gTMXKNkmKbRbXGhMNF
+	emG12IbMFNFFpOtDhi6nSoMRGx2C/aTXQah+wn9oQEuXzUUkaPGRYsXT/125MSpdAYVE7hXipMK
+	O2s1Vtc+zVguKL2mFfgKnqWGjV3g5YSgyZc0sIuCE9lyUE9X+3yMgii9g3WrWcjVxrT0Uh7ogNi
+	cpPf5U=
+X-Google-Smtp-Source: AGHT+IFBlgHU9/9J/ynH5B/Y0lYKvN7CIRjLzFRFLjCUSdV7/phYhX05by3bq36srAY3SNogU76UhQZ1T1/Qk7whF0E=
+X-Received: by 2002:a17:902:e891:b0:246:2da9:73a2 with SMTP id
+ d9443c01a7336-2493eff73d7mr197893025ad.27.1756896079484; Wed, 03 Sep 2025
+ 03:41:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nnZRR2/MjgmjOnBb"
-Content-Disposition: inline
-In-Reply-To: <20250902131948.154194162@linuxfoundation.org>
-X-Cookie: You were s'posed to laugh!
+References: <20250821073131.2550798-1-shengjiu.wang@nxp.com>
+ <20250821073131.2550798-5-shengjiu.wang@nxp.com> <20250901185208.394cd162@booty>
+In-Reply-To: <20250901185208.394cd162@booty>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Wed, 3 Sep 2025 18:41:05 +0800
+X-Gm-Features: Ac12FXx8o6RDyP5im-Wa5RK1y5nzjHR2o5AyrKxsM3tEIkvqqNNrZcDYhIoBDY8
+Message-ID: <CAA+D8AOCTqb5jLeRapYk4wRGZrsrPiuAR=ow3OA1B0+M9X4k7w@mail.gmail.com>
+Subject: Re: [PATCH v5 4/7] drm/bridge: dw-hdmi: Add API dw_hdmi_set_sample_iec958()
+ for iec958 format
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com, 
+	neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org, 
+	cristian.ciocaltea@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, victor.liu@nxp.com, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de, 
+	devicetree@vger.kernel.org, l.stach@pengutronix.de, perex@perex.cz, 
+	tiwai@suse.com, linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Sep 2, 2025 at 12:52=E2=80=AFAM Luca Ceresoli <luca.ceresoli@bootli=
+n.com> wrote:
+>
+> Hello Shengjiu,
+>
+> On Thu, 21 Aug 2025 15:31:28 +0800
+> Shengjiu Wang <shengjiu.wang@nxp.com> wrote:
+>
+> > Add API dw_hdmi_set_sample_iec958() for IEC958 format because audio dev=
+ice
+> > driver needs IEC958 information to configure this specific setting.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > Acked-by: Liu Ying <victor.liu@nxp.com>
+>
+> [...]
+>
+> > +void dw_hdmi_set_sample_iec958(struct dw_hdmi *hdmi, unsigned int iec9=
+58)
+> > +{
+> > +     mutex_lock(&hdmi->audio_mutex);
+> > +     hdmi->sample_iec958 =3D iec958;
+> > +     mutex_unlock(&hdmi->audio_mutex);
+> > +}
+>
+> Apologies for jumping in the discussion as late as in v5, but I noticed
+> this patch and I was wondering whether this mutex_lock/unlock() is
+> really needed, as you're copying an int.
 
---nnZRR2/MjgmjOnBb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for your comments.
 
-On Tue, Sep 02, 2025 at 03:18:22PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.16.5 release.
-> There are 142 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Seems it is not necessary to add mutex here. I just follow the code as
+other similar functions.  I will send a new version to update it.
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Best regards
+Shengjiu Wang
 
---nnZRR2/MjgmjOnBb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi4GyMACgkQJNaLcl1U
-h9CpIgf/aSSqt8xsCv+deQUY4iLo4fq+w8kd/vclNt5W+bJE8tJjqDnQeQs6UpRZ
-Ggn4/EoZIkF3IzA/enpua/f8t62JjRbNj3kl6J8Kh2RGPS7DMkAjEbnN+DLMG91b
-RjczMXwfMQE0WO1U4BOQ6wy9UUoF6DTQ2ZXs4xo48/nx6GlsfdUDmj/+oWACviKd
-EARhTtHme0btoEJuqc8nEDibtuj308VzK2ea/K2WdSUaX9jwOihZj9acRZqJBRnX
-VErNSEFF2WnJKqCXkEGMuD4kFw9nNWEVKWUIER+2spLy0v+xdiLvi6wNdbLNZBDg
-CP8InEPw5TGQ/WKDn4y5Pap0TUyIGg==
-=juZQ
------END PGP SIGNATURE-----
-
---nnZRR2/MjgmjOnBb--
+Shengjiu Wang
+>
+> Luca
+>
+> --
+> Luca Ceresoli, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
