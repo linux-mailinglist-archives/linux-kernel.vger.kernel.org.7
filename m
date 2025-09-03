@@ -1,43 +1,81 @@
-Return-Path: <linux-kernel+bounces-798026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1878B41887
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:30:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B6EFB41891
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C00E547A5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:30:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E5987B12C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43102ED166;
-	Wed,  3 Sep 2025 08:28:59 +0000 (UTC)
-Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.54.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9DE2EC545;
+	Wed,  3 Sep 2025 08:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KQZiLdjJ"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552DA2ECEB8
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.54.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D2A2EBDC8
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756888139; cv=none; b=oz9Ix9QjdB3sDFr0NN/KiCIy/HV56pXAYRkbUsFOSZeR3fiRdWiwVE7OQHa5Gf8oRB1Et33rv7CQfvUngcq8ilI15fqRsSsALPboZCHg/MQadGd2WAsDeEHlefCjhbgiCIWMUQQdVl1pzkBliISFYh3RF6FLPYOcAW90Ge2EUW4=
+	t=1756888202; cv=none; b=DvgdaZhXOK1khpneqISIDOL48DPGFopAjiIa3IVusc+rb/YhKI7yOALFFJFAHmw+BhjbqVqRkl1d3iM7vD2zhcPF45ZSvj2Mzheuw316E4E8oCF4ggJSkBJy/x+6BpayMNvL1qxR5DSVMaafQANjVHbs9lfOkcPdH9/aFMujffU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756888139; c=relaxed/simple;
-	bh=NINH+7RW+iIpNTyQMVL/D0TplY6oTWE3aNOfI4gj8H8=;
+	s=arc-20240116; t=1756888202; c=relaxed/simple;
+	bh=eLm1ibHSl6C/nhQUzCCAlK0LgU/3CEeRAhkJW8A8p/o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OpXaoAxMnR65fy+ejlrAJrxHulXc6IXiq1G44Gm5wIoLWg4VQZNrlwwwVfiUDNF3pkVe1TSo0QxXVO7Dwh57n5l+JxkpIzgi2Tl9hh2JLFwRqQz/kJGJbIVRxeR+zAXc6Nm9nIdVdM0MsAkarCn12k/DgeAmwq+v4QiPqSkrxjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=43.154.54.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpip3t1756888125t2bf0b974
-X-QQ-Originating-IP: hNMMUBWBZAMjlucA+xBTHqWVycX+g2+pxJSCJlsVS4I=
-Received: from [IPV6:240f:10b:7440:1:81b2:3bee ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 03 Sep 2025 16:28:40 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13612785056484846069
-Message-ID: <57969F385B5AF318+653dac83-8227-4987-84c6-f3e08b10085c@radxa.com>
-Date: Wed, 3 Sep 2025 17:28:39 +0900
+	 In-Reply-To:Content-Type; b=oyhhOONfuRCqt4siWI/dmijwg9xkYkeXJinnkJ6eWYk8CVpesS+j97TwixtIEFis7NMESE+PaUZiBQ1UUVm3wDMQZ/By/K0EbWVeSX5kHQcVqopUZA+o2ZKBlUVyLVTNWetNQrZ76scTS+h1puDrbLGdPWhfJbnPjRQkgPSF28Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KQZiLdjJ; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ce4ed7a73fso3203694f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:30:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756888199; x=1757492999; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:reply-to:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JjmjCN+3zw+/8oyX8dyZS8w/WP3vRhQB2nXarHS92x4=;
+        b=KQZiLdjJYYoEDjQmjvnyXh7rKRfwalIAMYRSfUWLnB9Yi7bnX//Ze4ssgYveXeJ55c
+         toGvsIhenqd/3FMhgSp2ZuMc1TAzc62FmJ6iZzBc97jtgyI5bXJitzfmjS5UpDEzERnA
+         RAZ8VVpSNNOcyLNSZLleg2lFk2v965H+a22qm/l7jw1+/9veALJk/fuqN35do1aidSZC
+         8YoK3mxD951xjQuX8G/VOc25FEk7UItwJGwjkyxsM/gT1o6L+O/hTleOjQfMHtiOe+4j
+         xlcgs/VWA10Q1A7+5jtwltUDfTC9YmrWSG7UpWWpyMvfH1hBsJO+2BEyfwCVc5oaCs1a
+         xelQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756888199; x=1757492999;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:reply-to:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JjmjCN+3zw+/8oyX8dyZS8w/WP3vRhQB2nXarHS92x4=;
+        b=FI9vNEGDOpjty82eEGVf2AJ3uKENO/b5SFlX3tH2VH5wX3LeECudocbd4lft+2LKTd
+         Pwc7DxLYbTW86TpLZ//++OIc7VOZoCpajgwHi9tBUW0R5MwdmQZeLJCwL4Oqww7/Hsay
+         4u24KxnlD6XRHtfNBqUkpOm54HB3CLkrOrRhChMrgHgiQecV7sT6wkV+rTRkfSk2gMVB
+         1NiXeYI+QtL/FXGKvPC9egz75o3OdARxZBJeRWfBoZJeb8+Ki9aCaTRqjQUv/s3R+CUV
+         pTh/tKPssTmdDL7F3imBOHhdhgIfKK5gnFaQGThEPch8JcHRcdjHNSWehqalq7JTcHg3
+         EmKA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9wsT1s0cKjxemn9dBOv6hK89UkW6hYKe6aHntWc6Obtc53INXKQBE6bjN9xg7loW0pWiRGMZXzVu15bs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynFnfyEQ1cWH5y0SpkmZhsScALQQ7WH7DqTZWKY9+a+E3z9Im0
+	sPwgIPKyWmWlDPbMSm5a6lTCb03oD1JFgDDOOyyDNAlQzYizKTeNJPgBxQEFwIZ8aTk=
+X-Gm-Gg: ASbGncvib+sekAz0wowQB+/Rqv1rhYKR2WY75UVpiRQnM+5f3Rx7H06ViWg1D2KmoLW
+	p+P9ebgdIlgOY0rzA1XzqknNV6QtDmPGsIYDbj372NtbvacVppFjt+RDg4IG1swD0IxSL9G1PLJ
+	uJeWHgzRn8MO6phKqFrYg9ahr5+z634O/egnPyTzIrSQr0FP//yC0pJjv/k0QrE7Aci0p8lrq1C
+	7z5XBzdQFrjU6rlmbsj4+MTpmrrM9sAIk6QgzAV1WHjAWEEjTc2SgP0LOhMrerQOd6jcUBjXkmN
+	x2FtDP98QiXZBwhrYij9hRoAAGuqZXShox46koSkOPrvvlft8Cv1bxRxHu5TMSBXI57JmzePITj
+	2cJSuNTv8ubcoUbZ5BMfzdq4pTGUmcBm3EzbLEk+KBgkxEwamRIZC61HT5vsd15BrawgeHO/G
+X-Google-Smtp-Source: AGHT+IG5MWTyIoLg0UMwWdMG+cUYtmiralF9pLt3yP8qA7dJI+3zBqQtDgGEzwcvvTkyFY2f0pG/6g==
+X-Received: by 2002:a05:6000:290d:b0:3d1:721:31c7 with SMTP id ffacd0b85a97d-3d1e03c6916mr10315756f8f.51.1756888198632;
+        Wed, 03 Sep 2025 01:29:58 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:431c:dad5:266c:f97? ([2a01:e0a:3d9:2080:431c:dad5:266c:f97])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0c6dc1sm312841475e9.1.2025.09.03.01.29.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 01:29:58 -0700 (PDT)
+Message-ID: <f6372ebb-c237-4409-b3a9-8f458be85034@linaro.org>
+Date: Wed, 3 Sep 2025 10:29:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,109 +83,518 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/3] Add Radxa CM5 module and IO board dts
-To: Joseph Kogut <joseph.kogut@gmail.com>, Rob Herring <robh@kernel.org>,
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v3 7/8] power: supply: qcom_battmgr: Add charge control
+ support
+To: fenglin.wu@oss.qualcomm.com, Sebastian Reichel <sre@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Jimmy Hon <honyuenkwun@gmail.com>
-Cc: Steve deRosier <derosier@cal-sierra.com>, devicetree@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250617-rk3588s-cm5-io-dts-upstream-v5-0-8d96854a5bbd@gmail.com>
-Content-Language: en-US
-From: FUKAUMI Naoki <naoki@radxa.com>
-In-Reply-To: <20250617-rk3588s-cm5-io-dts-upstream-v5-0-8d96854a5bbd@gmail.com>
+ <conor+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
+ David Collins <david.collins@oss.qualcomm.com>,
+ =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ kernel@oss.qualcomm.com, devicetree@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <20250826-qcom_battmgr_update-v3-0-74ea410ef146@oss.qualcomm.com>
+ <20250826-qcom_battmgr_update-v3-7-74ea410ef146@oss.qualcomm.com>
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250826-qcom_battmgr_update-v3-7-74ea410ef146@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OEujKQTXCsr9xOLb3rsDiN5M07As5KSTMarFNZ02KICgUtoEM1FaTkSU
-	AoS/OnefB2apHcRVbSwWZqny7OF4SddNHsQdplI//V2unRW6Ob7+dmzcgUo6KXqQgl/xdEH
-	P7xjAOX2W1EnYE7oU8ZbSg9rIsAYhcFiEs4dy9zZv3HYRaojgWZ0Hefph3gIOO8Xd0jc8Ae
-	IfkrMUsvxDqS/Ml7PS6bAro1k4DpgVPISjF4ebuWXRWQs+w8EzB+Ts0A0RX92se+zceGRJV
-	SMPr4Q7DMx1tF5mjr0wtvDmKURVL2iNlW4DhhHWBJ32qLNIfDLErWJASRIdNPDZZQyYsHKi
-	DqV7TvCbrRPelofe2i8qdt1N7hMNi68Cg18Pdbt9W5IrM8LVHivWA7HU21R3Y/Olva/6Gmy
-	j1w+zloot9eT+Ut5jRf8Wv5RG82LhWNmOwJGJgHk0VrAhZlitr0fLSSuNA57c3+RHFkRv/z
-	NlFw/0O+QTCysOXAGDTRJUK6R5CnecS/WSiAvuMrQBsAj0RLJMoXUQwoGw7eiqcpMwNdaMJ
-	6jK84wDhX4GQSgJO1HgEGS4qqUy4MMEt8KXUN1e1sXJ87nQ3qU0quAlanvkcmjjk7fXEkHj
-	sq51KlogpBAJfiohbIACIQChZEjUiaGSeuWAXck8bZzTNaVvOUMMXOuRS4sqwBqVI8BgO7Q
-	b5DhD0MTgW6hhWIv3X+eacNEC81lTpS1jKqrrl/TonSkf29KsFI1pLXkXpWhXDtt95vUnaG
-	boXJwfv8vvFB31ZLKozraaiicnk7pZZzbu1dp7aGIfatTD8OnOAhAXgBlV0Hym0n/p4fAm6
-	S/4Boe+sjA47CH4JHUHRfHMMz4uB8IBX3bs3IUj9rw/5ewltQDvd/mzEu0b8fZRI//VsG5E
-	wa2scbKGoviFFRFOVJ4T/ULHfQMsAnpkygXJpGli85MRXEcV0m5zhr0RbbtZsbcN7InxjtJ
-	ejnhPg/k4b81T7SeWUQI3yPbfeSJq5VLRq8UvwHHPQwOMvDwyomIrwvtXaUlzLmf/1GbJCW
-	xcc68ynWf19xEiKL76wJNL5PGjckHwcthNRuIFtLY6CLEfXf6BCBikqjKlkYNLBPtWl9lMH
-	uXW37rjueHdk8HWpCgwgiMMUKbowDkUwQ==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-SPAM: true
-X-QQ-RECHKSPAM: 3
 
-Hi Joseph,
-
-I'm thinking of continuing your work, so if you've already done 
-something, please let me know.
-
-Best regards,
-
---
-FUKAUMI Naoki
-Radxa Computer (Shenzhen) Co., Ltd.
-
-On 6/18/25 07:11, Joseph Kogut wrote:
-> This patch series adds initial device tree support for the Radxa CM5 SoM
-> and accompanying IO board.
+On 26/08/2025 09:18, Fenglin Wu via B4 Relay wrote:
+> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
 > 
-> V4 -> V5:
->    Patch (2/3), per Jimmy:
->    - Alias eMMC to mmc0
->    - Remove unused sdio alias
->    - Move gmac, hdmi0 nodes to carrier board dts
+> Add charge control support for SM8550 and X1E80100. It's supported
+> with below two power supply properties:
 > 
->    Patch (3/3), per Jimmy:
->    - Enable hdmi0_sound and i2s5_8ch
->    - Remove redundant enablement of sdhci
->    - Enable usb_host2_xhci
+> charge_control_end_threshold: The battery SoC (State of Charge)
+> threshold at which the charging should be terminated.
 > 
->    - Tested HDMI audio
+> charge_control_start_threshold: The battery SoC threshold at
+> which the charging should be resumed.
 > 
-> V3 -> V4:
->    - Fixed XHCI initialization bug by changing try-power-role from source
->      to sink
-> 
-> V2 -> V3:
->    - Addressed YAML syntax error in dt binding (per Rob)
->    - Fixed whitespace issue in dts reported by checkpatch.pl
->    - Split base SoM and carrier board into separate patches
->    - Added further details about the SoM and carrier to the commit
->      messages
-> 
-> V1 -> V2:
->    - Added copyright header and data sheet links
->    - Removed non-existent property
->    - Sorted alphabetically
->    - Removed errant whitespace
->    - Moved status to the end of each node
->    - Removed pinctrl-names property from leds (indicated by CHECK_DTBS)
->    - Removed delays from gmac with internal delay
-> 
-> - Link to v4: https://lore.kernel.org/r/20250605-rk3588s-cm5-io-dts-upstream-v4-0-8445db5ca6b0@gmail.com
-> 
-> Signed-off-by: Joseph Kogut <joseph.kogut@gmail.com>
+> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
 > ---
-> Joseph Kogut (3):
->        dt-bindings: arm: rockchip: Add Radxa CM5 IO board
->        arm64: dts: rockchip: Add rk3588 based Radxa CM5
->        arm64: dts: rockchip: Add support for CM5 IO carrier
+>   drivers/power/supply/qcom_battmgr.c | 290 +++++++++++++++++++++++++++++++++++-
+>   1 file changed, 283 insertions(+), 7 deletions(-)
 > 
->   .../devicetree/bindings/arm/rockchip.yaml          |   7 +
->   arch/arm64/boot/dts/rockchip/Makefile              |   1 +
->   .../boot/dts/rockchip/rk3588s-radxa-cm5-io.dts     | 486 +++++++++++++++++++++
->   .../arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi | 135 ++++++
->   4 files changed, 629 insertions(+)
-> ---
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-> change-id: 20250605-rk3588s-cm5-io-dts-upstream-f4d1e853977e
+> diff --git a/drivers/power/supply/qcom_battmgr.c b/drivers/power/supply/qcom_battmgr.c
+> index 174d3f83ac2b070bb90c21a498686e91cc629ebe..23c68eb942f1b213f634e31a45420b3e113e2764 100644
+> --- a/drivers/power/supply/qcom_battmgr.c
+> +++ b/drivers/power/supply/qcom_battmgr.c
+> @@ -7,6 +7,7 @@
+>   #include <linux/auxiliary_bus.h>
+>   #include <linux/module.h>
+>   #include <linux/mutex.h>
+> +#include <linux/nvmem-consumer.h>
+>   #include <linux/of_device.h>
+>   #include <linux/power_supply.h>
+>   #include <linux/property.h>
+> @@ -68,6 +69,9 @@ enum qcom_battmgr_variant {
+>   #define BATT_RESISTANCE			21
+>   #define BATT_POWER_NOW			22
+>   #define BATT_POWER_AVG			23
+> +#define BATT_CHG_CTRL_EN		24
+> +#define BATT_CHG_CTRL_START_THR		25
+> +#define BATT_CHG_CTRL_END_THR		26
+>   
+>   #define BATTMGR_USB_PROPERTY_GET	0x32
+>   #define BATTMGR_USB_PROPERTY_SET	0x33
+> @@ -92,6 +96,13 @@ enum qcom_battmgr_variant {
+>   #define WLS_TYPE			5
+>   #define WLS_BOOST_EN			6
+>   
+> +#define BATTMGR_CHG_CTRL_LIMIT_EN	0x48
+> +#define CHARGE_CTRL_START_THR_MIN	50
+> +#define CHARGE_CTRL_START_THR_MAX	95
+> +#define CHARGE_CTRL_END_THR_MIN		55
+> +#define CHARGE_CTRL_END_THR_MAX		100
+> +#define CHARGE_CTRL_DELTA_SOC		5
+> +
+>   struct qcom_battmgr_enable_request {
+>   	struct pmic_glink_hdr hdr;
+>   	__le32 battery_id;
+> @@ -126,6 +137,13 @@ struct qcom_battmgr_discharge_time_request {
+>   	__le32 reserved;
+>   };
+>   
+> +struct qcom_battmgr_charge_ctrl_request {
+> +	struct pmic_glink_hdr hdr;
+> +	__le32 enable;
+> +	__le32 target_soc;
+> +	__le32 delta_soc;
+> +};
+> +
+>   struct qcom_battmgr_message {
+>   	struct pmic_glink_hdr hdr;
+>   	union {
+> @@ -238,6 +256,8 @@ struct qcom_battmgr_info {
+>   	unsigned int capacity_warning;
+>   	unsigned int cycle_count;
+>   	unsigned int charge_count;
+> +	unsigned int charge_ctrl_start;
+> +	unsigned int charge_ctrl_end;
+>   	char model_number[BATTMGR_STRING_LEN];
+>   	char serial_number[BATTMGR_STRING_LEN];
+>   	char oem_info[BATTMGR_STRING_LEN];
+> @@ -426,6 +446,8 @@ static const u8 sm8350_bat_prop_map[] = {
+>   	[POWER_SUPPLY_PROP_INTERNAL_RESISTANCE] = BATT_RESISTANCE,
+>   	[POWER_SUPPLY_PROP_STATE_OF_HEALTH] = BATT_SOH,
+>   	[POWER_SUPPLY_PROP_POWER_NOW] = BATT_POWER_NOW,
+> +	[POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD] = BATT_CHG_CTRL_START_THR,
+> +	[POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD] = BATT_CHG_CTRL_END_THR,
+>   };
+>   
+>   static int qcom_battmgr_bat_sm8350_update(struct qcom_battmgr *battmgr,
+> @@ -496,7 +518,8 @@ static int qcom_battmgr_bat_get_property(struct power_supply *psy,
+>   	if (!battmgr->service_up)
+>   		return -EAGAIN;
+>   
+> -	if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
+> +	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
+> +	    battmgr->variant == QCOM_BATTMGR_X1E80100)
+>   		ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
+>   	else
+>   		ret = qcom_battmgr_bat_sm8350_update(battmgr, psp);
+> @@ -601,6 +624,12 @@ static int qcom_battmgr_bat_get_property(struct power_supply *psy,
+>   	case POWER_SUPPLY_PROP_TIME_TO_FULL_AVG:
+>   		val->intval = battmgr->status.charge_time;
+>   		break;
+> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
+> +		val->intval = battmgr->info.charge_ctrl_start;
+> +		break;
+> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
+> +		val->intval = battmgr->info.charge_ctrl_end;
+> +		break;
+>   	case POWER_SUPPLY_PROP_MANUFACTURE_YEAR:
+>   		val->intval = battmgr->info.year;
+>   		break;
+> @@ -626,6 +655,149 @@ static int qcom_battmgr_bat_get_property(struct power_supply *psy,
+>   	return 0;
+>   }
+>   
+> +static int qcom_battmgr_set_charge_control(struct qcom_battmgr *battmgr,
+> +					   u32 target_soc, u32 delta_soc)
+> +{
+> +	struct qcom_battmgr_charge_ctrl_request request = {
+> +		.hdr.owner = cpu_to_le32(PMIC_GLINK_OWNER_BATTMGR),
+> +		.hdr.type = cpu_to_le32(PMIC_GLINK_REQ_RESP),
+> +		.hdr.opcode = cpu_to_le32(BATTMGR_CHG_CTRL_LIMIT_EN),
+> +		.enable = cpu_to_le32(1),
+> +		.target_soc = cpu_to_le32(target_soc),
+> +		.delta_soc = cpu_to_le32(delta_soc),
+> +	};
+> +
+> +	return qcom_battmgr_request(battmgr, &request, sizeof(request));
+> +}
+> +
+> +static int qcom_battmgr_set_charge_start_threshold(struct qcom_battmgr *battmgr, int start_soc)
+> +{
+> +	u32 target_soc, delta_soc;
+> +	int ret;
+> +
+> +	if (start_soc < CHARGE_CTRL_START_THR_MIN ||
+> +	    start_soc > CHARGE_CTRL_START_THR_MAX) {
+> +		dev_err(battmgr->dev, "charge control start threshold exceed range: [%u - %u]\n",
+> +			CHARGE_CTRL_START_THR_MIN, CHARGE_CTRL_START_THR_MAX);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/*
+> +	 * If the new start threshold is larger than the old end threshold,
+> +	 * move the end threshold one step (DELTA_SOC) after the new start
+> +	 * threshold.
+> +	 */
+> +	if (start_soc > battmgr->info.charge_ctrl_end) {
+> +		target_soc = start_soc + CHARGE_CTRL_DELTA_SOC;
+> +		target_soc = min_t(u32, target_soc, CHARGE_CTRL_END_THR_MAX);
+> +		delta_soc = target_soc - start_soc;
+> +		delta_soc = min_t(u32, delta_soc, CHARGE_CTRL_DELTA_SOC);
+> +	} else {
+> +		target_soc =  battmgr->info.charge_ctrl_end;
+> +		delta_soc = battmgr->info.charge_ctrl_end - start_soc;
+> +	}
+> +
+> +	mutex_lock(&battmgr->lock);
+> +	ret = qcom_battmgr_set_charge_control(battmgr, target_soc, delta_soc);
+> +	mutex_unlock(&battmgr->lock);
+> +	if (!ret) {
+> +		battmgr->info.charge_ctrl_start = start_soc;
+> +		battmgr->info.charge_ctrl_end = target_soc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_battmgr_set_charge_end_threshold(struct qcom_battmgr *battmgr, int end_soc)
+> +{
+> +	u32 delta_soc = CHARGE_CTRL_DELTA_SOC;
+> +	int ret;
+> +
+> +	if (end_soc < CHARGE_CTRL_END_THR_MIN ||
+> +	    end_soc > CHARGE_CTRL_END_THR_MAX) {
+> +		dev_err(battmgr->dev, "charge control end threshold exceed range: [%u - %u]\n",
+> +			CHARGE_CTRL_END_THR_MIN, CHARGE_CTRL_END_THR_MAX);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (battmgr->info.charge_ctrl_start && end_soc > battmgr->info.charge_ctrl_start)
+> +		delta_soc = end_soc - battmgr->info.charge_ctrl_start;
+> +
+> +	mutex_lock(&battmgr->lock);
+> +	ret = qcom_battmgr_set_charge_control(battmgr, end_soc, delta_soc);
+> +	mutex_unlock(&battmgr->lock);
+> +	if (!ret) {
+> +		battmgr->info.charge_ctrl_start = end_soc - delta_soc;
+> +		battmgr->info.charge_ctrl_end = end_soc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_battmgr_charge_control_thresholds_init(struct qcom_battmgr *battmgr)
+> +{
+> +	int ret;
+> +	u8 en, end_soc, start_soc, delta_soc;
+> +
+> +	ret = nvmem_cell_read_u8(battmgr->dev->parent, "charge_limit_en", &en);
+> +	if (!ret && en != 0) {
+> +		ret = nvmem_cell_read_u8(battmgr->dev->parent, "charge_limit_end", &end_soc);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		ret = nvmem_cell_read_u8(battmgr->dev->parent, "charge_limit_delta", &delta_soc);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		if (delta_soc >= end_soc)
+> +			return -EINVAL;
+> +
+> +		start_soc = end_soc - delta_soc;
+> +		end_soc = clamp(end_soc, CHARGE_CTRL_END_THR_MIN, CHARGE_CTRL_END_THR_MAX);
+> +		start_soc = clamp(start_soc, CHARGE_CTRL_START_THR_MIN, CHARGE_CTRL_START_THR_MAX);
+> +
+> +		battmgr->info.charge_ctrl_start = start_soc;
+> +		battmgr->info.charge_ctrl_end = end_soc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_battmgr_bat_is_writeable(struct power_supply *psy,
+> +					 enum power_supply_property psp)
+> +{
+> +	switch (psp) {
+> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
+> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
+> +		return 1;
+> +	default:
+> +		return 0;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_battmgr_bat_set_property(struct power_supply *psy,
+> +					 enum power_supply_property psp,
+> +					 const union power_supply_propval *pval)
+> +{
+> +	struct qcom_battmgr *battmgr = power_supply_get_drvdata(psy);
+> +
+> +	if (!battmgr->service_up)
+> +		return -EAGAIN;
+> +
+> +	switch (psp) {
+> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
+> +		return qcom_battmgr_set_charge_start_threshold(battmgr, pval->intval);
+> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
+> +		return qcom_battmgr_set_charge_end_threshold(battmgr, pval->intval);
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static const enum power_supply_property sc8280xp_bat_props[] = {
+>   	POWER_SUPPLY_PROP_STATUS,
+>   	POWER_SUPPLY_PROP_PRESENT,
+> @@ -659,6 +831,43 @@ static const struct power_supply_desc sc8280xp_bat_psy_desc = {
+>   	.get_property = qcom_battmgr_bat_get_property,
+>   };
+>   
+> +static const enum power_supply_property x1e80100_bat_props[] = {
+> +	POWER_SUPPLY_PROP_STATUS,
+> +	POWER_SUPPLY_PROP_PRESENT,
+> +	POWER_SUPPLY_PROP_TECHNOLOGY,
+> +	POWER_SUPPLY_PROP_CYCLE_COUNT,
+> +	POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN,
+> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+> +	POWER_SUPPLY_PROP_POWER_NOW,
+> +	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
+> +	POWER_SUPPLY_PROP_CHARGE_FULL,
+> +	POWER_SUPPLY_PROP_CHARGE_EMPTY,
+> +	POWER_SUPPLY_PROP_CHARGE_NOW,
+> +	POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN,
+> +	POWER_SUPPLY_PROP_ENERGY_FULL,
+> +	POWER_SUPPLY_PROP_ENERGY_EMPTY,
+> +	POWER_SUPPLY_PROP_ENERGY_NOW,
+> +	POWER_SUPPLY_PROP_TEMP,
+> +	POWER_SUPPLY_PROP_MANUFACTURE_YEAR,
+> +	POWER_SUPPLY_PROP_MANUFACTURE_MONTH,
+> +	POWER_SUPPLY_PROP_MANUFACTURE_DAY,
+> +	POWER_SUPPLY_PROP_MODEL_NAME,
+> +	POWER_SUPPLY_PROP_MANUFACTURER,
+> +	POWER_SUPPLY_PROP_SERIAL_NUMBER,
+> +	POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD,
+> +	POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD,
+
+Is it expected to _not_ have POWER_SUPPLY_PROP_STATE_OF_HEALTH & POWER_SUPPLY_PROP_INTERNAL_RESISTANCE here ?
+
+Neil
+
+> +};
+> +
+> +static const struct power_supply_desc x1e80100_bat_psy_desc = {
+> +	.name = "qcom-battmgr-bat",
+> +	.type = POWER_SUPPLY_TYPE_BATTERY,
+> +	.properties = x1e80100_bat_props,
+> +	.num_properties = ARRAY_SIZE(x1e80100_bat_props),
+> +	.get_property = qcom_battmgr_bat_get_property,
+> +	.set_property = qcom_battmgr_bat_set_property,
+> +	.property_is_writeable = qcom_battmgr_bat_is_writeable,
+> +};
+> +
+>   static const enum power_supply_property sm8350_bat_props[] = {
+>   	POWER_SUPPLY_PROP_STATUS,
+>   	POWER_SUPPLY_PROP_HEALTH,
+> @@ -691,6 +900,42 @@ static const struct power_supply_desc sm8350_bat_psy_desc = {
+>   	.get_property = qcom_battmgr_bat_get_property,
+>   };
+>   
+> +static const enum power_supply_property sm8550_bat_props[] = {
+> +	POWER_SUPPLY_PROP_STATUS,
+> +	POWER_SUPPLY_PROP_HEALTH,
+> +	POWER_SUPPLY_PROP_PRESENT,
+> +	POWER_SUPPLY_PROP_CHARGE_TYPE,
+> +	POWER_SUPPLY_PROP_CAPACITY,
+> +	POWER_SUPPLY_PROP_VOLTAGE_OCV,
+> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+> +	POWER_SUPPLY_PROP_VOLTAGE_MAX,
+> +	POWER_SUPPLY_PROP_CURRENT_NOW,
+> +	POWER_SUPPLY_PROP_TEMP,
+> +	POWER_SUPPLY_PROP_TECHNOLOGY,
+> +	POWER_SUPPLY_PROP_CHARGE_COUNTER,
+> +	POWER_SUPPLY_PROP_CYCLE_COUNT,
+> +	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
+> +	POWER_SUPPLY_PROP_CHARGE_FULL,
+> +	POWER_SUPPLY_PROP_MODEL_NAME,
+> +	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
+> +	POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG,
+> +	POWER_SUPPLY_PROP_INTERNAL_RESISTANCE,
+> +	POWER_SUPPLY_PROP_STATE_OF_HEALTH,
+> +	POWER_SUPPLY_PROP_POWER_NOW,
+> +	POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD,
+> +	POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD,
+> +};
+> +
+> +static const struct power_supply_desc sm8550_bat_psy_desc = {
+> +	.name = "qcom-battmgr-bat",
+> +	.type = POWER_SUPPLY_TYPE_BATTERY,
+> +	.properties = sm8550_bat_props,
+> +	.num_properties = ARRAY_SIZE(sm8550_bat_props),
+> +	.get_property = qcom_battmgr_bat_get_property,
+> +	.set_property = qcom_battmgr_bat_set_property,
+> +	.property_is_writeable = qcom_battmgr_bat_is_writeable,
+> +};
+> +
+>   static int qcom_battmgr_ac_get_property(struct power_supply *psy,
+>   					enum power_supply_property psp,
+>   					union power_supply_propval *val)
+> @@ -766,7 +1011,8 @@ static int qcom_battmgr_usb_get_property(struct power_supply *psy,
+>   	if (!battmgr->service_up)
+>   		return -EAGAIN;
+>   
+> -	if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
+> +	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
+> +	    battmgr->variant == QCOM_BATTMGR_X1E80100)
+>   		ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
+>   	else
+>   		ret = qcom_battmgr_usb_sm8350_update(battmgr, psp);
+> @@ -888,7 +1134,8 @@ static int qcom_battmgr_wls_get_property(struct power_supply *psy,
+>   	if (!battmgr->service_up)
+>   		return -EAGAIN;
+>   
+> -	if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
+> +	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
+> +	    battmgr->variant == QCOM_BATTMGR_X1E80100)
+>   		ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
+>   	else
+>   		ret = qcom_battmgr_wls_sm8350_update(battmgr, psp);
+> @@ -1085,6 +1332,9 @@ static void qcom_battmgr_sc8280xp_callback(struct qcom_battmgr *battmgr,
+>   	case BATTMGR_BAT_CHARGE_TIME:
+>   		battmgr->status.charge_time = le32_to_cpu(resp->time);
+>   		break;
+> +	case BATTMGR_CHG_CTRL_LIMIT_EN:
+> +		battmgr->error = 0;
+> +		break;
+>   	default:
+>   		dev_warn(battmgr->dev, "unknown message %#x\n", opcode);
+>   		break;
+> @@ -1198,6 +1448,12 @@ static void qcom_battmgr_sm8350_callback(struct qcom_battmgr *battmgr,
+>   		case BATT_POWER_NOW:
+>   			battmgr->status.power_now = le32_to_cpu(resp->intval.value);
+>   			break;
+> +		case BATT_CHG_CTRL_START_THR:
+> +			battmgr->info.charge_ctrl_start = le32_to_cpu(resp->intval.value);
+> +			break;
+> +		case BATT_CHG_CTRL_END_THR:
+> +			battmgr->info.charge_ctrl_end = le32_to_cpu(resp->intval.value);
+> +			break;
+>   		default:
+>   			dev_warn(battmgr->dev, "unknown property %#x\n", property);
+>   			break;
+> @@ -1280,6 +1536,7 @@ static void qcom_battmgr_sm8350_callback(struct qcom_battmgr *battmgr,
+>   		}
+>   		break;
+>   	case BATTMGR_REQUEST_NOTIFICATION:
+> +	case BATTMGR_CHG_CTRL_LIMIT_EN:
+>   		battmgr->error = 0;
+>   		break;
+>   	default:
+> @@ -1299,7 +1556,8 @@ static void qcom_battmgr_callback(const void *data, size_t len, void *priv)
+>   
+>   	if (opcode == BATTMGR_NOTIFICATION)
+>   		qcom_battmgr_notification(battmgr, data, len);
+> -	else if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
+> +	else if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
+> +		 battmgr->variant == QCOM_BATTMGR_X1E80100)
+>   		qcom_battmgr_sc8280xp_callback(battmgr, data, len);
+>   	else
+>   		qcom_battmgr_sm8350_callback(battmgr, data, len);
+> @@ -1346,11 +1604,13 @@ static char *qcom_battmgr_battery[] = { "battery" };
+>   static int qcom_battmgr_probe(struct auxiliary_device *adev,
+>   			      const struct auxiliary_device_id *id)
+>   {
+> +	const struct power_supply_desc *psy_desc;
+>   	struct power_supply_config psy_cfg_supply = {};
+>   	struct power_supply_config psy_cfg = {};
+>   	const struct of_device_id *match;
+>   	struct qcom_battmgr *battmgr;
+>   	struct device *dev = &adev->dev;
+> +	int ret;
+>   
+>   	battmgr = devm_kzalloc(dev, sizeof(*battmgr), GFP_KERNEL);
+>   	if (!battmgr)
+> @@ -1376,8 +1636,19 @@ static int qcom_battmgr_probe(struct auxiliary_device *adev,
+>   	else
+>   		battmgr->variant = QCOM_BATTMGR_SM8350;
+>   
+> -	if (battmgr->variant == QCOM_BATTMGR_SC8280XP) {
+> -		battmgr->bat_psy = devm_power_supply_register(dev, &sc8280xp_bat_psy_desc, &psy_cfg);
+> +	ret = qcom_battmgr_charge_control_thresholds_init(battmgr);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret,
+> +				     "failed to init battery charge control thresholds\n");
+> +
+> +	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
+> +	    battmgr->variant == QCOM_BATTMGR_X1E80100) {
+> +		if (battmgr->variant == QCOM_BATTMGR_X1E80100)
+> +			psy_desc = &x1e80100_bat_psy_desc;
+> +		else
+> +			psy_desc = &sc8280xp_bat_psy_desc;
+> +
+> +		battmgr->bat_psy = devm_power_supply_register(dev, psy_desc, &psy_cfg);
+>   		if (IS_ERR(battmgr->bat_psy))
+>   			return dev_err_probe(dev, PTR_ERR(battmgr->bat_psy),
+>   					     "failed to register battery power supply\n");
+> @@ -1397,7 +1668,12 @@ static int qcom_battmgr_probe(struct auxiliary_device *adev,
+>   			return dev_err_probe(dev, PTR_ERR(battmgr->wls_psy),
+>   					     "failed to register wireless charing power supply\n");
+>   	} else {
+> -		battmgr->bat_psy = devm_power_supply_register(dev, &sm8350_bat_psy_desc, &psy_cfg);
+> +		if (battmgr->variant == QCOM_BATTMGR_SM8550)
+> +			psy_desc = &sm8550_bat_psy_desc;
+> +		else
+> +			psy_desc = &sm8350_bat_psy_desc;
+> +
+> +		battmgr->bat_psy = devm_power_supply_register(dev, psy_desc, &psy_cfg);
+>   		if (IS_ERR(battmgr->bat_psy))
+>   			return dev_err_probe(dev, PTR_ERR(battmgr->bat_psy),
+>   					     "failed to register battery power supply\n");
 > 
-> Best regards,
 
 
