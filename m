@@ -1,186 +1,112 @@
-Return-Path: <linux-kernel+bounces-799411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13208B42B46
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:47:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C91DB42B47
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 872401A8389D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:47:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C829545587
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16212DBF48;
-	Wed,  3 Sep 2025 20:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDD92E0927;
+	Wed,  3 Sep 2025 20:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="llzdWare"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="C1N71Y6+"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76B72E8DF6
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 20:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB2C285053
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 20:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756932414; cv=none; b=dB/csHFzrBH6mMfnxGpqBIfCLQ0nuFwIGXSZ0RFKfcgfR56g/4Bxgw/zt9ig7DSfeH55xNvO4Lmf3MmY+Wb+N11W4GjPHz1a2qSp0+skFdTIO6GAMySCtdoi90prc1y9sOK7ofpSGrSOyPu90EEahW56tmLny9DTSeBXYfPs34o=
+	t=1756932456; cv=none; b=DqsP2Oe/iX2JW3J7RIfENx95uIGqfcPKkxQmgmPty068WYEJQooFTl88vwgwPWfGvDC+pU2djaOv33Q+2ofGrnC+PeBRdd5iiPnn1EOTjluSS4ftZiKv4mf1unlW00yWx0nhWvNs9BX2q46B4BDMrVfLg+isj5LmEyq1dS+Nh4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756932414; c=relaxed/simple;
-	bh=8Sjpx6LwL8qngcyx8effURsIdeC4kjMw3r2A2PEEfhA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rOht2uTNWaQMTe/Lg4GnQ5cszuK4w0LBMMjfXsRmx3qhpN9PuWLwSB5P04ZPruz6HhiZEM0PX/+XpWNL8nlajQ+qEAitIBSUeuVtItana1I62xURpzEPKt+SCeVvn6mQHutt7CwQF5Upxwuww0YifH/6ypNi4DIUVgLmx3Ipf8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=llzdWare; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b47173749dbso168796a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 13:46:52 -0700 (PDT)
+	s=arc-20240116; t=1756932456; c=relaxed/simple;
+	bh=xOX3t1tNI835fQlZszqsBPrAw0emLRXFXBi/KdgVw70=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RAWwEzINfY7U43pZ9T8PtODX1Xpam15brBanvWK2IuHXRaOdH1DtFYJh1lvcL8YydhfvO1MhL+tVq5sbTbC/A7e7T5AG/8pkdA12QY6ITBVsUVUsRaCV7Izw0G05LR4atHEDmRcU0ujl0YOpjEZq7yV37Toig+lH4l9ltzjNPGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=C1N71Y6+; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-329e1c8e079so211343a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 13:47:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756932412; x=1757537212; darn=vger.kernel.org;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iWGn1Qb0KIjnuqOw6TphYaw5j4IfbMgJEHpHGOy8roU=;
-        b=llzdWarerkRMJ6XwxrSlqT7J4pj/NNtDYVKJehRSulAYzULSd8cPmlf7YnZp1I1BIa
-         SPfibDrAd0AXqFQ/I8PiWwaLrKV9cRtOFzCHFrJoVbnxnZcvyijpsHrk+Lr848ml84ta
-         GZhO0XTltUaGQ2akxvtklaBwagx7ox9rujtzv598cFCPS0iJ2fcVpSF9JH2SrD5fNQ7Q
-         arW236PKwz5eQcebEeDhbQQrrxyZqIlFWH4mcbmSLT/OdE807fRJSrU5ho0O61uRcaOu
-         sPpv+ymLjFyV8uYtoIyH83wR7f8Pf9J32fDPCniKaYrDCP/AyJoZXtCeUADfDmV/Kxws
-         Bq7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756932412; x=1757537212;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1756932454; x=1757537254; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iWGn1Qb0KIjnuqOw6TphYaw5j4IfbMgJEHpHGOy8roU=;
-        b=T2lb/VevNGHYb8qFDjTefnI1S4QmRR4CNJVAzMsm1adEhdiuOK2gjfK2zu5Zl1eoN2
-         i80jXzKL9Fxt4AFSP93vak+GjAVkGikwAi295tukLMilcA0SaH3ROqvL2+INPH5LCrrI
-         Yp37KTL2KbacVfYuyI0OBCsfL50FnKyPubY6SGw2kOU/2/59qjYAMnIJyA/FMpQzrJDs
-         UWjMMsNwHifjU35GyRxgVjfpjIDdY8bqs5zvBlh+0yo5ooe6NsqSPDJcLzNIMqk6Jaou
-         7V6xLJyj5/7fqbcxDjD6F5CpSi+DLuAe8eeMwap57rKLZlwPxR+vAc2dRgmZN8nCaOwS
-         JL1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXhLu0x22CYibs3uApwJdvlt6lRyIwhe99ou0biKLmMsRWcrTTlUhVOj8q43wJm/4EH3owwpVN1UKY0GBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzggWH7lamLFF4IMnJaWpdhAL55fzHVsLFbfGJyXQQiKIt3X6Mt
-	3nBoiwI/S15ZnCspZ0Y32pk9K0ONBKmegUUYni9fuBHVlmGz9P4X9sTK9/SXxbhbBA==
-X-Gm-Gg: ASbGncvLkjLYgE6togcqzofkIvHOwPndCfbMtZc6y51sWOZ7yttUfZkNZVJgR4IY0Ey
-	dRRpo9P9N9zJhXI0T/I2AkPA1/ljkIpWCPlzRv063z2SjfdivQJmFDSuzjVEErMtq0Cnws3y1k/
-	hVFD8AApgK/wiswATmWah/YrVokVEnaWDrOmv+bplhmzfCp2bCxByCnxUQswPudV08PTidYFAl6
-	0fDqDtvUb5joSA3pljn12CRRwZu1iEl9DVeld1E1arJhXRWDGN0MM5KBqECJU2+3z7u25ZQKdkv
-	QX9+vsbqCntR7rfZrhrExK2jXWUH4yZSbBFpxeFnY/j0A5gwsI8p3lQjeAf+/vhwg+zOhwONeIB
-	cTu5IDMl9kcCMrei2p9P2+3tBJcNIkv13upI/fENRKrwsLpM3JPZqXcNaFwZdhT7igVMxUijCE9
-	ez73ojXkQqUg==
-X-Google-Smtp-Source: AGHT+IEDT8HfDdtAel2AQicVpMxeAncF1ME4lzWDyWrqnTfqxyUP0FHouzQS0YPDBmy4427ZPSfVkQ==
-X-Received: by 2002:a17:902:f683:b0:24a:aca0:7ce5 with SMTP id d9443c01a7336-24aaca081ddmr181967905ad.44.1756932411666;
-        Wed, 03 Sep 2025 13:46:51 -0700 (PDT)
-Received: from bsegall-glaptop.localhost ([2a00:79e0:2efc:9:2cc5:e7bd:145c:10aa])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2490375a591sm171671485ad.60.2025.09.03.13.46.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 13:46:51 -0700 (PDT)
-From: Benjamin Segall <bsegall@google.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,  Aaron Lu
- <ziqianlu@bytedance.com>,  Valentin Schneider <vschneid@redhat.com>,
-  Chengming Zhou <chengming.zhou@linux.dev>,  Josh Don
- <joshdon@google.com>,  Ingo Molnar <mingo@redhat.com>,  Vincent Guittot
- <vincent.guittot@linaro.org>,  Xi Wang <xii@google.com>,
-  <linux-kernel@vger.kernel.org>,  Juri Lelli <juri.lelli@redhat.com>,
-  Dietmar Eggemann <dietmar.eggemann@arm.com>,  Steven Rostedt
- <rostedt@goodmis.org>,  Mel Gorman <mgorman@suse.de>,  Chuyi Zhou
- <zhouchuyi@bytedance.com>,  Jan Kiszka <jan.kiszka@siemens.com>,  Florian
- Bezdeka <florian.bezdeka@siemens.com>,  Songtang Liu
- <liusongtang@bytedance.com>,  Chen Yu <yu.c.chen@intel.com>,  Matteo
- Martelli <matteo.martelli@codethink.co.uk>,  Michal Koutn??
- <mkoutny@suse.com>,  Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v4 3/5] sched/fair: Switch to task based throttle model
-In-Reply-To: <14be66aa-e088-4267-ac10-d04d600b1294@amd.com> (K. Prateek
-	Nayak's message of "Wed, 3 Sep 2025 22:42:01 +0530")
-References: <20250829081120.806-1-ziqianlu@bytedance.com>
-	<20250829081120.806-4-ziqianlu@bytedance.com>
-	<20250903145124.GM4067720@noisy.programming.kicks-ass.net>
-	<14be66aa-e088-4267-ac10-d04d600b1294@amd.com>
-Date: Wed, 03 Sep 2025 13:46:48 -0700
-Message-ID: <xm26o6rrtgav.fsf@google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        bh=xOX3t1tNI835fQlZszqsBPrAw0emLRXFXBi/KdgVw70=;
+        b=C1N71Y6+eLpqZ5S3RMeBIKzkGLZ0XQRxsplDdvpKyUQ++ak1N0Xp3YH/E+ovePURuP
+         +cS4zVIQBxHdkFxymI6oWmdMLmzq0mwYy8muL1v1k0REFlOsU+Ut68txVQbSrLjSXb/8
+         T6StVh53IHsgu0mBwK9XZ7f6q/BxtP9mpp3im4CLcZOE4bdLBE03qnznkl+YIaTCjFwF
+         y0AAO4j1oonCYYtKLV44teSxkTMteiz5JY+fC+0RyjmLupeAV4sNgqLiFb7k2sSKK/3G
+         a2a5vJ33lg82/KqsHJ0hIM37BRVy8l0s9isEpuIs0lA36UYxPFKsLKh4mPFZ8I8qS3Aq
+         JTcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756932454; x=1757537254;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xOX3t1tNI835fQlZszqsBPrAw0emLRXFXBi/KdgVw70=;
+        b=n4SkrZhXXq7Bos3Tn+LytBTVHKnIL3xICugU0gQGLLQgf5Vf/37qciGSIlpSwZY+Vg
+         j2SVe4gbQLzZAac8oOD2Zv1P0xljwNkP4NT7Mc/WnwfL3DBf7TPk9ZI8CWNXvyDFQIWS
+         yigThE9t8OSvxs5nNlmbGXsyqqTQyRlFdRjHoi48TCvXLjoyRz9kZTVfz3T43cJb8MfT
+         mHeU3Kh91X5EiMQoPZ0ZR2gNtsasIKfKRBeoNDZ8RucWIeVa9jxaJKxyo2QtglpYVBgw
+         hlBE1wGeKtb52YcA6yt4vHujqxYFbNdNmnlXex7L40y10OYQBiuZoktpHS3UKMUA8wxK
+         M7+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVsN4tqJkL8jcrhfR+C9fbbjh4aVtMw8Br1LLeaMZFLVCy3TqbQLv5Sr/sEsO84zGDyaTbbN/oD8KucKMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp1h6wXtI/yopLj1SkW/hg8IDXpC0d6qmEwOkubrYri3CXrzmy
+	DDW7Jz4NiDFQxfaQNQ5XQWjq1tK77o3ZfYdSkZKtgCv5DJYuStvGKIEazHNITv+1ELh5sdE+zfI
+	Mg8SsIZd45v2mE+KtFAq6iQyb5HZMeFVXq/bE3lMA
+X-Gm-Gg: ASbGncuD/GsuNNKpVXgilwXqP+LvV09CdzCjYD+RWj9EJ+F/9kbKbNQqhi0/TrSO9OQ
+	HEvr/t/hgZO9X/Q21AcjJhehi3Gl1JSdZg8gZ6Th1ltlLBcetf8yWjiSqUP2eNnGiJIq5aVpYGr
+	Q7qKS0TpOWuq1ZBlGqoX09DBpOTI4pg1G7hMfQt/AlbinSlDWEfJCoSPMNBvttNLizHI8X61EZj
+	rDELc0=
+X-Google-Smtp-Source: AGHT+IGkMQJVBqRXSGU922Gw2SQoYESmtMZntOQt802KtRgput2nM13fgy1GouC7w5vlqACo5BZPxtKEyiF/nxMIIPM=
+X-Received: by 2002:a17:90b:48cb:b0:323:28ac:4594 with SMTP id
+ 98e67ed59e1d1-32815414089mr18348545a91.5.1756932454352; Wed, 03 Sep 2025
+ 13:47:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250902110049.4437-1-disclosure@aisle.com> <CAHC9VhQsmaGPM7+6HX9vqjPjG7fXwV+F19+U052qaT4DYrwnFA@mail.gmail.com>
+ <CAHC9VhRtXzSGafaqLm_EDq=rj4BhDaOkaS0uJ89W-Scw2Zyxuw@mail.gmail.com>
+ <CAHC9VhS7PyKsGnoT17WojZmUEqYh-HgP2TS-DQdct0yv2BfZqg@mail.gmail.com> <8e395d8a-2875-4f78-9118-facd5de09a30n@aisle.com>
+In-Reply-To: <8e395d8a-2875-4f78-9118-facd5de09a30n@aisle.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 3 Sep 2025 16:47:22 -0400
+X-Gm-Features: Ac12FXzsE6wqWc2GfQx0HjiRC03KXQ2G9UrGjNyJ4MGKThk3ZmUlEY1kfxw0aqE
+Message-ID: <CAHC9VhShXiHnyN-Q0tWJ9o8advmJ_FKXCCOHb1sKF_noz-JW5Q@mail.gmail.com>
+Subject: Re: [PATCH] audit: fix out-of-bounds read in audit_compare_dname_path
+To: Disclosure <disclosure@aisle.com>
+Cc: "audit@vger.kernel.org" <audit@vger.kernel.org>, 
+	"torvalds@linuxfoundation.org" <torvalds@linuxfoundation.org>, "eparis@redhat.com" <eparis@redhat.com>, 
+	"security@kernel.org" <security@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stanislav Fort <stanislav.fort@aisle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-K Prateek Nayak <kprateek.nayak@amd.com> writes:
-
-> Hello Peter,
+On Wed, Sep 3, 2025 at 2:03=E2=80=AFPM Disclosure <disclosure@aisle.com> wr=
+ote:
 >
-> On 9/3/2025 8:21 PM, Peter Zijlstra wrote:
->>>  static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->>>  {
->>> +	if (task_is_throttled(p)) {
->>> +		dequeue_throttled_task(p, flags);
->>> +		return true;
->>> +	}
->>> +
->>>  	if (!p->se.sched_delayed)
->>>  		util_est_dequeue(&rq->cfs, p);
->>>  
->> 
->> OK, so this makes it so that either a task is fully enqueued (all
->> cfs_rq's) or full not. A group cfs_rq is only marked throttled when all
->> its tasks are gone, and unthrottled when a task gets added. Right?
+> Hi Paul,
 >
-> cfs_rq (and the hierarchy below) is marked throttled when the quota
-> has elapsed. Tasks on the throttled hierarchies will dequeue
-> themselves completely via task work added during pick. When the last
-> task leaves on a cfs_rq of throttled hierarchy, PELT is frozen for
-> that cfs_rq.
+> Yes, please go ahead and change the Signed-off-by to:
+> Signed-off-by: Stanislav Fort <stanislav.fort@aisle.com>
 >
-> When a new task is added on the hierarchy, the PELT is unfrozen and
-> the task becomes runnable. The cfs_rq and the hierarchy is still
-> marked throttled.
->
-> Unthrottling of hierarchy is only done at distribution.
->
->> 
->> But propagate_entity_cfs_rq() is still doing the old thing, and has a
->> if (cfs_rq_throttled(cfs_rq)) break; inside the for_each_sched_entity()
->> iteration.
->> 
->> This seems somewhat inconsistent; or am I missing something ? 
->
-> Probably an oversight. But before that, what was the reason to have
-> stopped this propagation at throttled_cfs_rq() before the changes?
->
+> Sorry for the slight delay and thanks for the quick review, testing, and =
+for adding the Fixes tag.
 
-Yeah, this was one of the things I was (slowly) looking at - with this
-series we currently still abort in:
+No worries, thanks for the fix :)
 
-1) update_cfs_group
-2) dequeue_entities's set_next_buddy
-3) check_preempt_fair
-4) yield_to
-5) propagate_entity_cfs_rq
+I'm merging this into audit/stable-6.17 and I'll plan to send this up
+to Linus later this week.
 
-In the old design on throttle immediately remove the entire cfs_rq,
-freeze time for it, and stop adjusting load. In the new design we still
-pick from it, so we definitely don't want to stop time (and don't). I'm
-guessing we probably also want to now adjust load for it, but it is
-arguable - since all the cfs_rqs for the tg are likely to throttle at the
-same time, so we might not want to mess with the shares distribution,
-since when unthrottle comes around the most likely correct distribution
-is the distribution we had at the time of throttle.
-
-Assuming we do want to adjust load for a throttle then we probably want
-to remove the aborts from update_cfs_group and propagate_entity_cfs_rq.
-I'm guessing that we need the list_add_leaf_cfs_rq from propagate, but
-I'm not 100% sure when they are actually doing something in propagate as
-opposed to enqueue.
-
-The other 3 are the same sort of thing - scheduling pick heuristics
-which imo are pretty arbitrary to keep. We can reasonably say that "the
-most likely thing a task in a throttled hierarchy will do is just go
-throttle itself, so we shouldn't buddy it or let it preempt", but it
-would also be reasonable to let them preempt/buddy normally, in case
-they hold locks or such.
-
-yield_to is used by kvm and st-dma-fence-chain.c. Yielding to a
-throttle-on-exit kvm cpu thread isn't useful (so no need to remove the
-abort there). The dma code is just yielding to a just-spawned kthread,
-so it should be fine either way.
+--=20
+paul-moore.com
 
