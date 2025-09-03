@@ -1,108 +1,105 @@
-Return-Path: <linux-kernel+bounces-799199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED0AB4285F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:53:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7501BB4285B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:53:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D5FC4E1D2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:53:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FCB5163044
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7E83376BF;
-	Wed,  3 Sep 2025 17:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698CF33473D;
+	Wed,  3 Sep 2025 17:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="NlDYNHqx"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXGKWm47"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250622D9795;
-	Wed,  3 Sep 2025 17:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2D22D9795;
+	Wed,  3 Sep 2025 17:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756922016; cv=none; b=lqIsrvUlyABajnqFWvwJQKOCgpxnONmSqhqyPs61uWdPWrwCaKp2tcvUnJVehhtcUJ2XU3kq3+RS+3XJXhNg0Ci8lUBvUS1wg++XVzkcFyEWH9b4ornpabA2E61Y4L6f8l+5qq5HLiT24rHygvR4VjnCY8VJo/xkG3rtgQ732qk=
+	t=1756921982; cv=none; b=SZfIDO2UIUws8B8VoT+SPkwLuExYL1OgrDQSentHu/9TXQVXmnm1tEmMEgxXlbU2vTx+bWqg/So5TWfRsFtAWnKnVsKd+nIz/FNVU8SkswU3R38jFRzQppMS3RQ12sGidipBAgpiSatM5yAeDBN/3O2gUyQ8volBlLG1UAYMFcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756922016; c=relaxed/simple;
-	bh=wR2Vfr+EKguOFVkVDQPfYHMN2PHm1sHKMW0xxM4JxO4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cVaPOgqhwLqO1wABfxYajGLrLvVlRqlDLWifYx0VVLZm4loqFvtnRMeq64vJL/9D7LJ6BJHaB/PCjOXhOm0zifZ6nHygNdfC0qoqHPHer79bNTwuiOr+dCXu58LRp98Irh8PC7Wb9FfImE+Bi0liRIx99gOj9wRoN9R4qjyGEG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=NlDYNHqx; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4cH9Fh0yWJzm0ySJ;
-	Wed,  3 Sep 2025 17:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1756921997; x=1759513998; bh=wR2Vfr+EKguOFVkVDQPfYHMN
-	2PHm1sHKMW0xxM4JxO4=; b=NlDYNHqxaM/i2jsTFF8Efi9FHbLBkn3NEICmqNwF
-	DxJfiRSP1C9fTPe5LTzfPfWh99bVI4O6rfFZFqE5EuIKQMafCVsW1+ZcukdBBNgi
-	5k1ezqxQv5+TYWxa+9Si/X0HnXMcvuldTC3SKu7UPeiYX3hBfRZyKd5kBAI8P5m7
-	kUY6JrguXwNl6N1yYL/7bPJ4ezQ8chr0R4r0OXvjILMUWTckPB+jXp9r/GE00UJg
-	5QmBTW0P/mWe4ZOg8iZvlz/E3Cam6ox8vLQ0wBBSp91E57CnQCnCCigo6IFGphv8
-	ONM2sbV4Jwrc9iIWOelGmjvlXb71Dngo8NOLFq6qilyciQ==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 9PPefpCeIZIc; Wed,  3 Sep 2025 17:53:17 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4cH9F76b6Mzm1746;
-	Wed,  3 Sep 2025 17:52:58 +0000 (UTC)
-Message-ID: <0c345d21-312b-4b83-8296-b8df01b9b819@acm.org>
-Date: Wed, 3 Sep 2025 10:52:57 -0700
+	s=arc-20240116; t=1756921982; c=relaxed/simple;
+	bh=K6zuvZBYxoN1PbngGb2nApov5U4Byc+4zm0S8NaTk6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IQH8QTeCxt4BoF1pQsGLdXnQ6Dgpgy5FFI/7FamCSGNn7RLga7vAV38Y2tWQXGdPFJd7yYy3i2oi1p1pV3NxEixR2eHg1FV3WalVweXB1WI9ekU5cA+UnM94F8UC6XcayMpQIBlRssSUXnKF8ubF7O36TzetlNrDNMx5iCtv/eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXGKWm47; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2393FC4CEE7;
+	Wed,  3 Sep 2025 17:53:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756921982;
+	bh=K6zuvZBYxoN1PbngGb2nApov5U4Byc+4zm0S8NaTk6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EXGKWm47g3NfiexJyTHs4QRjix47kTc4OmnfhjbyVpD347vjCoHF2CxRKmYip8nZR
+	 B27pBRDT4T8l101wBXtdUMTDahAT3sKmURn4MV72rG09nXRUaVUOBBBmZZsZNnb9cC
+	 EzrhvPbWwXNOh82sAKkLO7ihg0HVVGQR3FzMuLFEkBi0T2lgClnRDdP9VIrEKqVLB4
+	 /wv+4gVBcr/YxCiaVFfHPJuxr1GZizE8LY9wPwxq2XuTbWYwGQoqh7MvjQXThkGfry
+	 tGMXej5HCwqKdHRnUpNv7MC/BDG38VwcYN0QhIRIgQLjWkN3uh/3sUW5BU8C2UxcZn
+	 6X1WxAJAXUPDg==
+Date: Wed, 3 Sep 2025 10:53:00 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Thomas Richter <tmricht@linux.ibm.com>,
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, blakejones@google.com,
+	agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+	hca@linux.ibm.com, japo@linux.ibm.com
+Subject: Re: [PATCH v6.17-rc] perf test: Checking BPF metadata collection
+ fails on version string
+Message-ID: <aLiAfPvqghcTF-te@google.com>
+References: <20250822122540.4104658-1-tmricht@linux.ibm.com>
+ <CAP-5=fW43ZAguuB-FB2F6CFTCgd1Fy1Xd+WAt4WSA-fMRTwG5A@mail.gmail.com>
+ <aLhqDDnG4Nu9-h7C@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 14/15] block: fix disordered IO in the case
- recursive split
-To: Yu Kuai <hailan@yukuai.org.cn>, Christoph Hellwig <hch@infradead.org>,
- Yu Kuai <yukuai1@huaweicloud.com>
-Cc: colyli@kernel.org, hare@suse.de, dlemoal@kernel.org, tieren@fnnas.com,
- axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
- kmo@daterainc.com, satyat@google.com, ebiggers@google.com, neil@brown.name,
- akpm@linux-foundation.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- linux-raid@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
- <20250901033220.42982-15-yukuai1@huaweicloud.com>
- <aLhD8Vi-UwnwK93L@infradead.org>
- <ad353972-085f-42a3-b8f0-20416312479b@yukuai.org.cn>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <ad353972-085f-42a3-b8f0-20416312479b@yukuai.org.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aLhqDDnG4Nu9-h7C@x1>
 
-On 9/3/25 9:59 AM, Yu Kuai wrote:
-> =E5=9C=A8 2025/9/3 21:34, Christoph Hellwig =E5=86=99=E9=81=93:
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (split && !bdev_is_zon=
-ed(bio->bi_bdev))
- >>
->> Why are zoned devices special cased here?
->>
-> I'm not that sure about zoned device before, I'll remove this checking,
-> and mention the problem Bart met in commit message in the next version.
+On Wed, Sep 03, 2025 at 01:17:16PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Fri, Aug 22, 2025 at 11:02:27AM -0700, Ian Rogers wrote:
+> > On Fri, Aug 22, 2025 at 5:26 AM Thomas Richter <tmricht@linux.ibm.com> wrote:
+> > > commit edf2cadf01e8f ("perf test: add test for BPF metadata collection")
+> 
+> > > fails consistently on the version string check. The perf version
+> > > string on some of the constant integration test machines contains
+> > > characters with special meaning in grep's extended regular expression
+> > > matching algorithm. The output of perf version is:
+> 
+> > >  # perf version
+> > >  perf version 6.17.0-20250814.rc1.git20.24ea63ea3877.63.fc42.s390x+git
+> 
+> > > and the '+' character has special meaning in egrep command.
+> > > Also the use of egrep is deprecated.
+> 
+> > > Change the perf version string check to fixed character matching
+> > > and get rid of egrep's warning being deprecated. Use grep -F instead.
+> 
+> <SNIP>
+> 
+> > > Fixes: edf2cadf01e8f ("perf test: add test for BPF metadata collection")
+> > > Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> > > Acked-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+> > > Cc: Blake Jones <blakejones@google.com>
+>  
+> > Reviewed-by: Ian Rogers <irogers@google.com>
+> 
+> Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> Namhyung, I think this should go into v6.17-rc.
 
-If I keep the bdev_is_zoned() check, test zbd/014 fails. If I remove it,
-test zbd/014 passes. I think that's a strong argument to remove that
-check. Test zbd/014 is not yet in the blktests repository but is
-available here:
-https://lore.kernel.org/linux-block/a8a714c7-de3d-4cc9-8c23-38b8dc06f5bb@=
-acm.org/
+Sorry for the delay, will add.
 
 Thanks,
+Namhyung
 
-Bart.
 
