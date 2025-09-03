@@ -1,175 +1,90 @@
-Return-Path: <linux-kernel+bounces-799333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354A9B42A23
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:46:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90525B42A14
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A1F01BC8339
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:46:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 487AA3B5CA8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CAD36809B;
-	Wed,  3 Sep 2025 19:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FD0369349;
+	Wed,  3 Sep 2025 19:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ewhac.org header.i=@ewhac.org header.b="uypimqPU"
-Received: from siberian.tulip.relay.mailchannels.net (siberian.tulip.relay.mailchannels.net [23.83.218.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7DD31AF1B;
-	Wed,  3 Sep 2025 19:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.246
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756928752; cv=pass; b=CB7A/KWpHDHYzmZbcf2zzziB2Ei1u9oUkTr7GUqYWl+gyF+XslaU+2Mnn9EG+DXuThfmPqp4gFenVxrAWgGB/QSkHD7cO2+/ySgHZSx1JiOrs9Uy5a8BhCgvjV5ckXZlCmDO11TVmOOzZygR2W9nJ/zL+1/Ecd33TSpWrxDo11k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756928752; c=relaxed/simple;
-	bh=/lqwBrT2KiKCY6VWpjadnR3Dl/NWttxU1QKnKxMWr9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ldW+5GQHGKQ58tHu130MP45Ed/lj3ZyCd92Yletg5BjDLqv8bAJ6tt+NBz3iD/jYbDWyevvvexyCYcoa1fQ2GLzvUJ2dmYn9Vxmo2Yl1EXnACZV/MMNy8pPetwP6E6MsTpZhoRzKaYwYFHVxSISL6DQAuHRYbyb81FiYSOgVbf8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ewhac.org; spf=pass smtp.mailfrom=ewhac.org; dkim=pass (2048-bit key) header.d=ewhac.org header.i=@ewhac.org header.b=uypimqPU; arc=pass smtp.client-ip=23.83.218.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ewhac.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ewhac.org
-X-Sender-Id: dreamhost|x-authsender|ewhac@ewhac.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 36F954E6231;
-	Wed,  3 Sep 2025 19:39:28 +0000 (UTC)
-Received: from pdx1-sub0-mail-a231.dreamhost.com (trex-blue-1.trex.outbound.svc.cluster.local [100.101.142.254])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id C2C854E605D;
-	Wed,  3 Sep 2025 19:39:27 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1756928367; a=rsa-sha256;
-	cv=none;
-	b=WOnWJn50wifg30n3sgbnPsrubNeiWBRS8knOY2wiAvNVW+WP9d+k2UmJVdQ0LJ+iAK93Gj
-	2Sd2sHhAP3MM2XadCiYpFCZEPgxzpOzh4F4gS4X89FnF9F67Lyw7ZTH9keUlPcTMBRv1cj
-	XRzCm7FWMvGXtsqeCs14hzGAMDYFeB2rwyxsh6WD6sHv7owi5GpIP/cetUhUKhg1xKrkMr
-	qUPKzdyz20fNP4l+frabrgZAt10Y9nDq1fmKkZVixHb9gZI4qdEpTAuoxINulxcdsGoejm
-	4qQhh8HpiLMiU7rGfZBhYoXpNd+V1IepRsbBluP/T+TPr4xt7PxfvfZtlVhRgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1756928367;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=32KmRQOubIZ7b2nXAt8ScB+j9QgEziPtpRpQD+wJ5MQ=;
-	b=iua//AcFPzWbXryvqYf2vJ5lydpg/NNpbEHQqHN/TiWiyZ6C2rEL1tfzyNN9IaZhtOYD5M
-	8kPKQeBmE2DeI4mT8HAsRh4/mbROMocQycMg7NZYfdxzO4P9SgiwVBb8bikmoZqlsMKeDp
-	9AO15zAl5bOH5yp5LAlqFqmPP8VT6j6+04aszQlr01hJsmjtnxGyBdWvRtbnzbN/ERdG7K
-	gEqBS5bYHGFpqbBsIJKw3Wr/OGNuSOcpDlhziP+0fMNHjflgQLD983+BtAJ9QgBZEqBXkt
-	EpkTxMQUIc8PJd+pzlcnIObJtpMLTbH+tqDpa6C1IzEfJ0Z9GIjU3ORlxaqKkw==
-ARC-Authentication-Results: i=1;
-	rspamd-c79647f57-fx57s;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=ewhac@ewhac.org
-X-Sender-Id: dreamhost|x-authsender|ewhac@ewhac.org
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|ewhac@ewhac.org
-X-MailChannels-Auth-Id: dreamhost
-X-Battle-Blushing: 10a48e7954cff760_1756928368042_1125601722
-X-MC-Loop-Signature: 1756928368042:2509648997
-X-MC-Ingress-Time: 1756928368042
-Received: from pdx1-sub0-mail-a231.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.101.142.254 (trex/7.1.3);
-	Wed, 03 Sep 2025 19:39:28 +0000
-Received: from ewhac.org (unknown [135.180.175.143])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: ewhac@ewhac.org)
-	by pdx1-sub0-mail-a231.dreamhost.com (Postfix) with ESMTPSA id 4cHCbz4Y1Rz26;
-	Wed,  3 Sep 2025 12:39:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ewhac.org;
-	s=dreamhost; t=1756928367;
-	bh=32KmRQOubIZ7b2nXAt8ScB+j9QgEziPtpRpQD+wJ5MQ=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=uypimqPU7ZRv48Ccg2fqSUwAgOdjXaYmUQnAN7ZIKVsKVe65w2RO64UOqmmZ8DLnD
-	 5pLFe6NXV/pqfbcnh2pSqmwL6T6CwQB+PlI8jp+tNw5/wNrSlXPqvD7l2Xfba80fQW
-	 OxYwU1oF52s4O3anjF7WDabzJCGrf/w7WcUPxqjZ/pl3dC5xiMSi2T6LeHvDx6mjdS
-	 Eg1eY+Uaxl0P1AdxVI87JfheZSPdoVNTCogrGNFpyngIEZO6jGzChbv9addcns7Chv
-	 gLXXqqRfCLhK+WtuX+KnagPQNVn1gfie8ZDY5/KKTMKr2HN2ZRelSbzdMEK7d+9rDr
-	 pIP0iFGcSE+cA==
-Received: from ewhac by walkies with local (Exim 4.98.2)
-	(envelope-from <ewhac@ewhac.org>)
-	id 1uttKI-00000000aQO-3wFX;
-	Wed, 03 Sep 2025 12:39:26 -0700
-Date: Wed, 3 Sep 2025 12:39:26 -0700
-From: "Leo L. Schwab" <ewhac@ewhac.org>
-To: Hans de Goede <hansg@kernel.org>
-Cc: Kate Hsuan <hpa@redhat.com>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] HID: lg-g15 - Add support for Logitech G13.
-Message-ID: <aLiZbkKgIC8jIqE9@ewhac.org>
-References: <20250814212641.197573-2-ewhac@ewhac.org>
- <7d356834-5795-4979-9f51-0ffcec52ae1d@kernel.org>
- <aLSntMknSv3lMarZ@ewhac.org>
- <8ae2cc92-5dfe-466d-95fd-da74309d7244@kernel.org>
- <2de88077-eb8d-44ad-a96a-5db889913cba@kernel.org>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sWBpejXA"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82C32C18A;
+	Wed,  3 Sep 2025 19:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756928431; cv=none; b=Jg5ubISKPyigEuq16HdvpUh0MQoZpmiUkc5nWvW01qeYHpPk6aJbpblv+BbY27OisoePRNi/+iErxpLoExLlP9V2+1hth2EdisD+wnVMsmNnscrZA8CW2/dgGzurSwP1huAnCqGBP1JfR7nWxYxnTjnsZtezOl6aG5dbxJrGdMY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756928431; c=relaxed/simple;
+	bh=JI8xjUkMGnccCXbWE68z49u8YEKBr4YpkrEV/CM4qEQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ncseaXLPdmyUucvfC3Kf6DSxptRQBJ0+uBzpSDiTd8VWOe3Ts5yM7xRimTjQ8wvPilcfm8LXGXWkqrKaTzCxs8Zf9iXAV1MxAWt+cj+K2K3m0W7tlEjz2wr3s/LnBF4OrpGX0YNgYxjtp2VpxQyZXxc/lAbM+2FBvCyH4yxXCeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=sWBpejXA; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.128.180] (unknown [20.236.11.102])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 191FF21199D0;
+	Wed,  3 Sep 2025 12:40:28 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 191FF21199D0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1756928428;
+	bh=wTcgDjQ5eMFf/i1ar6oTU5YNVSoLPTIxypfGHzB4Sfw=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=sWBpejXAdfGKvgRmnUTzAZBTUm1dUVwlWUqJxZrJ1tgRUcnjOTl46TD8kUEhGpdtv
+	 Gw+hc1vdpNNdeGJUj9og7ibIOeyFmBDWZQ/fklMrlehyn6NFHt+xgumaL1HlJowAOg
+	 SAOztUw4YS0rKLTP+jy3A9ndUywaKpiQqkVmkrcc=
+Message-ID: <0105fb29-1d42-49cb-8146-d2dfcb600843@linux.microsoft.com>
+Date: Wed, 3 Sep 2025 12:40:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2de88077-eb8d-44ad-a96a-5db889913cba@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] x86/hyperv: Switch to
+ msi_create_parent_irq_domain()
+To: Nam Cao <namcao@linutronix.de>, "K . Y . Srinivasan" <kys@microsoft.com>,
+ Marc Zyngier <maz@kernel.org>, Haiyang Zhang <haiyangz@microsoft.com>,
+ Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1752868165.git.namcao@linutronix.de>
+ <45df1cc0088057cbf60cb84d8e9f9ff09f12f670.1752868165.git.namcao@linutronix.de>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <45df1cc0088057cbf60cb84d8e9f9ff09f12f670.1752868165.git.namcao@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-	For some reason, your replies aren't making it to me directly -- I
-had to find and scrape your reply off the LKML web site:
+On 7/18/2025 12:57 PM, Nam Cao wrote:
+> Move away from the legacy MSI domain setup, switch to use
+> msi_create_parent_irq_domain().
+> 
+> While doing the conversion, I noticed that hv_irq_compose_msi_msg() is
+> doing more than it is supposed to (composing message content). The
+> interrupt allocation bits should be moved into hv_msi_domain_alloc().
+> However, I have no hardware to test this change, therefore I leave a TODO
+> note.
+> 
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> ---
+>  arch/x86/hyperv/irqdomain.c | 111 ++++++++++++++++++++++++------------
+>  drivers/hv/Kconfig          |   1 +
+>  2 files changed, 77 insertions(+), 35 deletions(-)
 
-On Tue, 2 Sep 2025 23:05:06 +0200, Hans de Goede wrote:
-> On 2-Sep-25 22:41, Leo L. Schwab wrote:
->> 	This does not happen.  The G13 accepts and remembers backlight color
->> settings even when the LEDs have been toggled off locally.
->> [ ... ]
->
-> I see, interesting.
->
-> So what happens if you turn off the backlight with the toggle button on the G13
-> and then write 0 to brightness in sysfs and then press the toggle button again?
->
-	It's a little difficult to see, but the backlight turns back on with
-minimal brightness.  To my eye, it looks like it's displaying #000001.
+Tested on nested root partition.
 
-> Right it does seem that using cdev.brightness_hw_changed is valid in
-> this case.
->
-> But the LED API is supposed to have the brightness attribute present
-> the actual current brightness of the device.
->
-> I'm not sure how upower will react if the poll() on brightness_hw_changed
-> wakes upower up and then the reported brightness is unchanged...
->
-> I need to think about this a bit and check the upower code, let me
-> get back to you on this in a day or 2 ...
->
-	Certainly.
+Looks good, thanks.
 
->> 	This prompts the question:  What is the full intensity calculation
->> formula intended to be?  The docs appear to be rather quiet on this point.
->> If we assume all intensity/brightness values (0-255) are essentially mapped
->> to the range [0.0, 1.0], then it seems to me the calculation is:
->>
->> 	out = intensity * brightness * brightness_hw_changed
->
-> The way the API is intended to work is that after a hw-brightness-changes
-> event brightness == brightness_hw_changed in sysfs.
-> [ ... ]
-> IOW the formula should always be:
->
->  	out = intensity * brightness
->
-	Then this should be written down somewhere.  A quick ripgrep through
-the 6.16 source tree shows brightness_hw_changed is used in *very* few
-places so far, so it'd be good to get this clarified before too many other
-people start having competing interpretations.
-
-> As mentioned before I need to think a bit about how to handle
-> this. [ ... ]
-
-	Fair enough.  I'll hold off on spinning a v6 until I hear from you.
-
-					Schwab
+Tested-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
