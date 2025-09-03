@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-797498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED54B41130
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:10:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC58CB41131
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48EA47A18DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:08:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8162A546B61
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA2C1758B;
-	Wed,  3 Sep 2025 00:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466F23FB31;
+	Wed,  3 Sep 2025 00:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXE0Uf2z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxVbCRsZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94DB3209;
-	Wed,  3 Sep 2025 00:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98766139D;
+	Wed,  3 Sep 2025 00:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756858206; cv=none; b=sLt5CzLPhGU3PD6vszrczVLI77zqw801wViRM4ZNtjaHewcLHE/O+QNcwAVIwUBL+wM19JlDeImGjGVnRHatzb8Gvnihw92Jawu/8SgcgfeO/o+KpCm6E1goNxqLwlpjJoTwm5Ir9SFtFuOo4aRd8fuJcUrWWyxGBHMEINEw+oQ=
+	t=1756858208; cv=none; b=oL2z1V9TOOfGYdc1kcalkoSZoUFIOZG6VRpShl77Q6xjtF/LgfIQbaO5Dqjk9c4HoSN+Qb9+RkiN05i4zSKdiSYfFuYODrmqiMn0cex6tYrF7WY6q5S/gUdJSe5TO0W/nIA/Z6EOJLWhv5xJ8th5611/ibNSLyiEGTYPNZuCHvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756858206; c=relaxed/simple;
-	bh=r5UTc9faZHOyyQhIRhNymit5oTqFRwFxXUiv7cgAUko=;
+	s=arc-20240116; t=1756858208; c=relaxed/simple;
+	bh=7t65t+pa0YCFZd4Pjv7Dvwx9VGOTWFpmCGuJMooS0dE=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Wzv85kCKM8+nmd5AtFnfTmEvphKRXK9+d2f56YgcOH+tIooePBsxmBS4+dABuAmPO6olbzpUjgaMAgCX4aEMAQJVKOpqItI+1tPorfjflYrNPsWTAVLf/PLEq8gRe5KlVHfClu1hF7rFQeC9XMSQo1H211XGFgh3RgJkF/z6Kbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dXE0Uf2z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 976F9C4CEED;
-	Wed,  3 Sep 2025 00:10:06 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=QL3VL5kCt8WNEoMD7fVlj0yTHBJZoY9qAHSgtiYCkKCs342sNr7VDQnh6M33AO8U3Ue7sUrl1l91LngiSLjaHjEeYsK4CfZ27mEDzRfWqLGp+OPvAZGgZmIhG5eNZ5zg2t69DPwvrcm/bl0jgK0dH+L2/0962y9CVXyDvt45jEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxVbCRsZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2376FC4CEF4;
+	Wed,  3 Sep 2025 00:10:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756858206;
-	bh=r5UTc9faZHOyyQhIRhNymit5oTqFRwFxXUiv7cgAUko=;
+	s=k20201202; t=1756858208;
+	bh=7t65t+pa0YCFZd4Pjv7Dvwx9VGOTWFpmCGuJMooS0dE=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=dXE0Uf2zBP4bbVygTAmGOJs/yNaXACp1qDqmJ980pRoZfSDI2hNxB+ydNnTI5Y20+
-	 w+HfmPSpuit41ioL44XG6H/lDIiYw8S/B7WEyU71R0Fmhv063ZAwGBkxHDsrwIPqgi
-	 mZIzr9469aMdYtr53nBpG0FZ9za9fZ33QuPU5Wn4o6nM5dVd425mAgri00LjdgrLH6
-	 GiTv2qcU1oJLFdKD5PevmI0P+gLweSIWZZ7usWPbm4i/LTD5wLr6jrMxVNiDPJuAYB
-	 uOtXWxN8Bl/YG93JMpPovx32l8v/+gFhez52B+msaRXeAbCbHtasN3qsUq4yXd3nau
-	 Lc3S5KeTPmVSA==
+	b=XxVbCRsZ7p/Yq8bkR185s2W40whHBXVAFkH4l0zS1I7Kl8jBB0Bp9TghItnURgX5K
+	 dddfmREkkGmjkHmu7tvFhICb2ORI0ziB2AQZ8mORArSEpJjPYBmOU2t8jVS6Va/mp7
+	 7GVhnLTWdko91VGsxq3AQ+BYYVCITQj8OxM/X0ivkZlDX7ULblwq9PY08dlqjLX9GT
+	 ezMHg6U1ft3pZl+TFltTHhUdtuTDOd3bJloJIjNI9cYes9m2ryiPMVdnBlWdp7H5LD
+	 h8qElq05nYerxMWafcj9DVB5s88Z61o0BpbfUO8Kd2XYtopdawl1PwhyuDosRJPq+S
+	 CMc8Z6W9i0iRw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C08383BF64;
-	Wed,  3 Sep 2025 00:10:13 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDCD383BF64;
+	Wed,  3 Sep 2025 00:10:14 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] net: dsa: mv88e6xxx: Fix fwnode reference leaks in
- mv88e6xxx_port_setup_leds
+Subject: Re: [PATCH v3 net-next 0/2] ipv6: improve rpl_seg_enabled sysctl
+ handling
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175685821201.475224.11323348631634915826.git-patchwork-notify@kernel.org>
-Date: Wed, 03 Sep 2025 00:10:12 +0000
-References: <20250901073224.2273103-1-linmq006@gmail.com>
-In-Reply-To: <20250901073224.2273103-1-linmq006@gmail.com>
-To: =?utf-8?b?5p6X5aaZ5YCpIDxsaW5tcTAwNkBnbWFpbC5jb20+?=@codeaurora.org
-Cc: andrew@lunn.ch, olteanv@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linus.walleij@linaro.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
+ <175685821323.475224.6132941673804776469.git-patchwork-notify@kernel.org>
+Date: Wed, 03 Sep 2025 00:10:13 +0000
+References: <20250901123726.1972881-1-yuehaibing@huawei.com>
+In-Reply-To: <20250901123726.1972881-1-yuehaibing@huawei.com>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, kuniyu@google.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This series was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon,  1 Sep 2025 15:32:23 +0800 you wrote:
-> Fix multiple fwnode reference leaks:
+On Mon, 1 Sep 2025 20:37:24 +0800 you wrote:
+> First commit annotate data-races around it and second one add sanity check that
+> prevents unintentional misconfiguration.
 > 
-> 1. The function calls fwnode_get_named_child_node() to get the "leds" node,
->    but never calls fwnode_handle_put(leds) to release this reference.
-> 
-> 2. Within the fwnode_for_each_child_node() loop, the early return
->    paths that don't properly release the "led" fwnode reference.
+> Yue Haibing (2):
+>   ipv6: annotate data-races around devconf->rpl_seg_enabled
+>   ipv6: Add sanity checks on ipv6_devconf.rpl_seg_enabled
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2] net: dsa: mv88e6xxx: Fix fwnode reference leaks in mv88e6xxx_port_setup_leds
-    https://git.kernel.org/netdev/net/c/f63e7c8a8389
+  - [v3,net-next,1/2] ipv6: annotate data-races around devconf->rpl_seg_enabled
+    https://git.kernel.org/netdev/net/c/3a5f55500f3e
+  - [v3,net-next,2/2] ipv6: Add sanity checks on ipv6_devconf.rpl_seg_enabled
+    (no matching commit)
 
 You are awesome, thank you!
 -- 
