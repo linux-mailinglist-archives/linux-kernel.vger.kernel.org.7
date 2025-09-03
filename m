@@ -1,448 +1,286 @@
-Return-Path: <linux-kernel+bounces-799234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82597B428BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:34:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6157EB428BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7CB37B039B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:32:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A44E27B42CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE8D2D47E4;
-	Wed,  3 Sep 2025 18:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD6F31B137;
+	Wed,  3 Sep 2025 18:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="aRZ5uYkZ"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Oz1WnOt2";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="WTH0fcO5"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4D43629B4
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 18:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756924415; cv=none; b=aM+STlWCPXcaF4xR0FCVTKFaum6Ml+8XvWD0fTQTPZIq3t61qiSGLkZXK3L5URweaf/wmEsWT2VWLtYX3ESma2/cChCoeNN7vYnMh8simf/QdIz6U1Ojt4PqKuRha6v9z9jvqaD2CWvSbRB/fIUwjIaxZ2maYg6xZ2lKTqh9MrY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756924415; c=relaxed/simple;
-	bh=jzdWpVy2WRQxuOLSavRub2jhQs0TqGFWHgH9OMw4VgE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=skEEnyeE+oDUsUpb+1N2IkpdXr65i6PIGADFFdgnqLAqzcyv2QLKu4w6B5tRFc1jdsKJFuI1eQVnFZUqQMU1iMguHjtdW6jrmQqZOmm36v4HwuksF3tVMyGDfmQo85+3xcvoEtvZA2HAOMv3gG3kAUHguixYDhuFauH5sVsdgXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=aRZ5uYkZ; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-70ba7aa131fso1365566d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 11:33:32 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3A01B0439;
+	Wed,  3 Sep 2025 18:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756924530; cv=fail; b=gYZCP1vl4ToiU/FZMNXCCGiRO+YskMDK8dl8NjstuWRKG8W1td7h3cdjBM40E+leJJs0zgc+K7SjcSYcwwbnXz0uJCL3BZlLAwfmPZpydn5P7wuajV6Skx0JLcTyGYim5mbrLDCfZ8OnToj6Q8sWlP5ubNtLj5hswABouNET/3A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756924530; c=relaxed/simple;
+	bh=39scSP9OhWqmw0JYkyEEhZuv0arqBmGRdb6txmEbtQE=;
+	h=References:From:To:Cc:Subject:In-reply-to:Message-ID:Date:
+	 Content-Type:MIME-Version; b=c2irz1txKVedISEyYB8ASF14zbWi3lb59tLy7QhUO9PKhSeovEW500wCmI0M1i9MGRzdPMKxEuayZ9ZWMapNfx6fLg7nldaxPKdE1BeKd123FeUEM2PMkVLCNEsmtAhNx4FD+crO1+6FwKV8F9OQl+9NpIsJEwmO5GNFP0M/dl0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Oz1WnOt2; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=WTH0fcO5; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583IMW9Q000417;
+	Wed, 3 Sep 2025 18:35:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=XwG4yCUxhwRpSTDU47
+	mw+zqSu3Tn9PejGORkXKdfN/s=; b=Oz1WnOt2ZbW+adL/ZtIKxNF6Yu6z+/yji9
+	SyYJNI/BBiBBB+pDvKFCulPbpCDi64h/+odtDsc7gtQxs3Xz40LJPsONrQz3OUtm
+	N/YPAsfUP2PUW7ouWhxfDB7OkXnbmJaUsyn4A3mmGaeoWnbgogUqZJ1sqTWIzPsg
+	PHtx3cZijHbVAraRC1qrDea944Ped0zhTR3Yy8Wwa899TviIaL8m5BJpIWhQDl+i
+	AeHWU4WobHgCG9ZBmZAujHECwDBufaWKVM1Iz7Bw2nXDDPPhuX28QC8rol0dLBav
+	3sK2ob7UTd0PK53S5tb8UAdw7/iTjFs6yHj/MM6nOYi8hOnNak9Q==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48xtw700t0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 03 Sep 2025 18:35:03 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 583H7rx1015807;
+	Wed, 3 Sep 2025 18:35:03 GMT
+Received: from sn4pr2101cu001.outbound.protection.outlook.com (mail-southcentralusazon11012043.outbound.protection.outlook.com [40.93.195.43])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48v01pxgak-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 03 Sep 2025 18:35:03 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jb18neFpZ1Rt4pmNIKU29c3wO/s6jVBGxht1sF2QgN2uVThNeAaR/3ZrFDuaIAMguA8putMScgNyZ6KqHaFe6FtdvvccYDkYdfkmV0wqUfi6MjgVMRAvbxOFtDIl53Q1/iCbdiicxDkSJkYu5+j2B8bbmVSc51DZSF1yNKfQikky+L3C5J5SrYmcNd20sIu6288ofqv4HYwQtAWzx4Z4xleWLV5imm+sWN+ruKyNKhJ5iGcgJ/XWq38+ypQGcfMkbdNGEkwodu3377j1HBjW++plcqHyD3im7pazqsaNEM6bz9iudfPWS0+r2nLqJ+sHEGApKPV8+8bCG77MuA8S1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XwG4yCUxhwRpSTDU47mw+zqSu3Tn9PejGORkXKdfN/s=;
+ b=Oxhsajn1lkXgVBX+o42CU8hCUZSE3pZErk1SGEH8Ju2UwoA1+5ubZmaGfDG7LnYAR3qbg1ZUqzRgsV/9LhO2EAI5ClinTUkiyAbxZQFApxm69J0++y1HnXPypiuASFSs61jDBbhe3Elx3hN5k2/60C3Vwx0ZTG/w1wd2oSEEQKj6WAbkiJlgOcxQh9zCc5HNmpqtZXWFIS44U46VjtnLLjtSWNu2UiCp8MkqTjMGCsM+sI4YyGffrMm/2gXA8DiKKE7CFrz9l42ck5KoeW9VEyB3T3N6NhTkVVZa5aIbsDQtK+5iNHVWIYgsH2R7MzORKl1IDv4HvPu0dKJTELTHFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zetier.com; s=gm; t=1756924411; x=1757529211; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LD+OONIwE2g0cQIrw7/xSzKlvXPLOmxPlr+MjppAfqU=;
-        b=aRZ5uYkZEd2Fl/oRh5r8Y3nRl1p6xPDCPttnfkCZUyCwxDNXh9m540+KHDfF3cWwi3
-         EDu9QJxzRu6FzVQa1O/1EkIPbgx+dWgVu0iFKN01yowhTFljhASuEKw69cYSNO3jiAdb
-         xHc/klzqRAqihr26OiMwvZjwcHVS7u28fVq/a6VCyd05lIlE1KXL7fClbDkdkFoYx4gF
-         KGhoksJg2H32gx/rhBiUDIa+8ExBEEQRSmGyfj/W3N3GlHzEGWwnj+O1m7ocEDCsoBQn
-         wg3dMh92hzeronQmaY7VqP7t7J3u/uRci14u/I3uj8/H63ImngYqjQwlDxbJ7mnhhgCp
-         7RIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756924411; x=1757529211;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LD+OONIwE2g0cQIrw7/xSzKlvXPLOmxPlr+MjppAfqU=;
-        b=VUXmohuDmW7NRac07RDik91RTKSmJjvAEHJNGElRM64P3m4nt0oDu849OZ7uHqmy3W
-         RM43jOVACZIrqKAtxOdCpTGFJkrDWiYIldEjrElS1mVdM5QOxuEUXT24w7gEr5Z8qDr+
-         AZX498XyElSAIVYuckmrliNyG8RD39gCfZeM5c//Ft2+mAEUsR1qibH4+0hEugGqBhkk
-         qUrjb24zxTLjRuXPeoMZUOVomowRt/cuoS6ogUFIvwP8Z12pGJugr8PjDvRdbKlpvmxB
-         x0TZn5ulga+OOReAnzMp0Xi7caOGnQXWLgxORYgv7YMMjl0tus5joJo03IM1uWddJX+0
-         kzzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYkEGmgm9B3S/YWaWLBpsEzTpuWXdfCX6rUwsPZ3Z+FvULFiKKeEq+tgNRjXEPYIdeiVNsmO3FmXYVCYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAwMr4JJFSIl7o0j2F7IT8rf25SDYuOHNFCwfyn2v3gllXFYZZ
-	xfpf6sXutPqvnbJE/wYQ1sS4maonbpCAVuJfDuNgKcnHjdZABn6eujyeWC4xIUOgg40=
-X-Gm-Gg: ASbGncvX3R8KnUPtzg2jMnTy+miQVeURl7TtJTgGeFF+LKao2dr1n0q/Gk9QlhvLeGK
-	BbVlevOjhNYB9VnvDc+BlwvixoqWTSOXsNgxFnVICVB/tydeSO8KCDZOfxoX2pC0kMXXmRpNQ6p
-	KU61IuRYe+7iXaV5E6YU8bSN0alF16zAHkFIz04W3GoNSKsD/72RX9uGt+CXTPkYHEliB/OwAQ6
-	wpk1eZwWXaTf4vkFM63rxxWNq0dYZ227UfCjywjb0IPa0vz1VX01yT6SGHxTQtJwx9KLBfL431Z
-	pIQL2jXwuBfsrGqRCiZOUZKV2swcnnNlSdbfG+ZL6U1j9FDHMdRTU6Hbd+LijlRUV2zxh08tMeX
-	t1b5QUk5crKSiS+1LgdCRiocS8GuF++aO9ESZVg==
-X-Google-Smtp-Source: AGHT+IHRY2RNe25lBq7+3VZDJKD9wjjK8ztFWWR4Tu0fZfwpqN3ow4gnlY7kyF/ZmpNoLKl8QujqtQ==
-X-Received: by 2002:a05:6214:c82:b0:722:3e12:df07 with SMTP id 6a1803df08f44-7223e12df42mr55675626d6.65.1756924411355;
-        Wed, 03 Sep 2025 11:33:31 -0700 (PDT)
-Received: from ethanf.zetier.com ([65.222.209.234])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-72160017b64sm28699916d6.55.2025.09.03.11.33.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 11:33:30 -0700 (PDT)
-From: Ethan Ferguson <ethan.ferguson@zetier.com>
-To: linkinjeon@kernel.org,
-	sj1557.seo@samsung.com,
-	yuezhang.mo@sony.com
-Cc: cpgs@samsung.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ethan Ferguson <ethan.ferguson@zetier.com>
-Subject: [PATCH v5 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
-Date: Wed,  3 Sep 2025 14:33:22 -0400
-Message-Id: <20250903183322.191136-2-ethan.ferguson@zetier.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250903183322.191136-1-ethan.ferguson@zetier.com>
-References: <20250903183322.191136-1-ethan.ferguson@zetier.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XwG4yCUxhwRpSTDU47mw+zqSu3Tn9PejGORkXKdfN/s=;
+ b=WTH0fcO5vgDFjnIjk6Y7HuHWzPB15D+gaJlhSxdR4u3Fd3gjTbNXaHBegg860q6JCTWCC48szr5G6Mp71ldtb2C0N2ahkbZvdr7BpFRxF/u93/FxCAL1/msbO92l23KuoJ1Lsdk1tJCn2oIbFBbCsBHO6oSafF3Ns8oQj5ZbAgo=
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
+ by SA3PR10MB7000.namprd10.prod.outlook.com (2603:10b6:806:316::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Wed, 3 Sep
+ 2025 18:35:00 +0000
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574]) by CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574%4]) with mapi id 15.20.9052.013; Wed, 3 Sep 2025
+ 18:34:59 +0000
+References: <20250829080735.3598416-1-ankur.a.arora@oracle.com>
+ <aLWITwwDg06F1eXu@arm.com> <87tt1kpj4z.fsf@oracle.com>
+ <aLgJ9iqQhq-LT9S0@arm.com>
+User-agent: mu4e 1.4.10; emacs 27.2
+From: Ankur Arora <ankur.a.arora@oracle.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        bpf@vger.kernel.org, arnd@arndb.de, will@kernel.org,
+        peterz@infradead.org, akpm@linux-foundation.org, mark.rutland@arm.com,
+        harisokn@amazon.com, cl@gentwo.org, ast@kernel.org, memxor@gmail.com,
+        zhenglifeng1@huawei.com, xueshuai@linux.alibaba.com,
+        joao.m.martins@oracle.com, boris.ostrovsky@oracle.com,
+        konrad.wilk@oracle.com
+Subject: Re: [PATCH v4 0/5] barrier: Add smp_cond_load_*_timewait()
+In-reply-to: <aLgJ9iqQhq-LT9S0@arm.com>
+Message-ID: <87o6rro04v.fsf@oracle.com>
+Date: Wed, 03 Sep 2025 11:34:56 -0700
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR04CA0388.namprd04.prod.outlook.com
+ (2603:10b6:303:81::33) To CO6PR10MB5409.namprd10.prod.outlook.com
+ (2603:10b6:5:357::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|SA3PR10MB7000:EE_
+X-MS-Office365-Filtering-Correlation-Id: 89b789a1-b30d-47c9-240c-08ddeb1895b5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?sCHr9MSUG8Cgwo94SZAPYFGn6WnImY/YgHeiAVv/safdZWIakKZwLkSJ0Sl8?=
+ =?us-ascii?Q?aTZuDIpoNEVZ51LPVxVS2Qa+07uZrVIeyhBYf7UblGYfTmbQLcfLqqvOF34o?=
+ =?us-ascii?Q?LiW/FRzD6b9xAihrBycavX0gEU4wqwLhX4FzjIvzL3RXqPf0LZe9DMuZuszu?=
+ =?us-ascii?Q?3wrJDcN87zEKtsoYxVy5/+IFgi7cpmVRM6CqxfBRAtXt86O2zyBX+41RI/xg?=
+ =?us-ascii?Q?PaJt9G1GzTKGc3Tzu5uj5GTNaO36J3o5t5RKvA4j4BAxJixs+o0OD9tWUoVD?=
+ =?us-ascii?Q?T1XWiA/ecNZLn5R7mCAhg9ZXHXSer3K2McJaOq/0GGBrK85952nE/ZutDej0?=
+ =?us-ascii?Q?hYnQB2KAAe9mRN3yhgP+njAndGnwpeo9QF7A0GjP7DlcmR4Kp6s21A8RubMg?=
+ =?us-ascii?Q?+OXLZiN2W7Gp/S6adzsNoOsHL/LuvVWIWC6y2+Y7VVD0sfHhsVjhwPJZzk/Z?=
+ =?us-ascii?Q?ODvBSdtNUTHW1H/vMPkELEcXSZ+fvk8pI0D13WY2tjc0dw5a2oAsMd81J8C1?=
+ =?us-ascii?Q?mvEdRT8iJ21go+d5C/ZEALf6KPA+bekZT2g4VLRpeDt3bWWsR7Nw7/F2ylgf?=
+ =?us-ascii?Q?lz6oeccMBqVvliBGRUxALP+vMW2Gs0hgjYSrVfKwiG2PmcKdZhiJziBU5A4L?=
+ =?us-ascii?Q?3qvRZS/S4MtptRrSr+2YAZvZjpOBCLKlqU9//Bsai1UCrlDnBVUgaNVZc70w?=
+ =?us-ascii?Q?6TyrHitUKrqT2kuOO1b6alP4MYyWZCgDVN7wvvpaCuQxY4oqlnv32orOPqfI?=
+ =?us-ascii?Q?LZppqKagWtk4+QysCZFWq34QKNRhqE+VavKkb1jxdPuy71z9e2a0UBMt1Y4d?=
+ =?us-ascii?Q?eP+D+vuhxOTS38/Inbdtjl7eXr8B/tN5oue8vlABlNpjnx7b76jbH6pCFTpx?=
+ =?us-ascii?Q?CFKF7jhqJ7U1ieHY5p94YDodrCGGdC435KbylljuCVqPS6pA4UeyWLAcWSKG?=
+ =?us-ascii?Q?lGUTHNwrxztAFW5GK0uJss6rCwG6MlBkJl/tRvgVa3NBo3rCjKADI0vbs0t1?=
+ =?us-ascii?Q?ay0S8D6NVn08G5Qp8xYX4SNi85EHMVn8uR/uJv7jpOjMELJjXKjBoX6zYP8K?=
+ =?us-ascii?Q?A0md9L5cc3WhkFO+iB09IBHZubcNbD5gAS2aYgGV3QcuBaijRBbe3G58ZWz0?=
+ =?us-ascii?Q?0CWgtJEP6t8MSqLw58MQSTIhoeiGNSW+8TLo0EANhmIiXaz+QIrprtGqU6Zd?=
+ =?us-ascii?Q?yeARhxyUH4VT5ur7HaKVeKO0XfYwE2yOLfU8FbhjW1pyKLplo9PO2YSHCqSp?=
+ =?us-ascii?Q?Fhk91aTGQMG07fD2HU0KWB/jx3FILPtMEPtKufrB+uJfB/OzOoG/D7nzPbjC?=
+ =?us-ascii?Q?yGVBSH5iJjqGt7yoi9NihAK6voRFyNtHBn7dEAKF8Qt8EhGvarTtOuMFYYoH?=
+ =?us-ascii?Q?OB2fmRMvHkVFyqvLD8RMpvv42D0JXfYlRNSeqpdz/BJIEVDiqOFxZ2Jn6J5M?=
+ =?us-ascii?Q?BG1YGCH/fh8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?px2NBQKBEmBxGNGzT8FhGvGSqSmqpxJ93Uyed0TJz7vFv0si+CqJr1DxeK01?=
+ =?us-ascii?Q?Z5LHtsj+S8PuIiOL+X/d8H+tRCUjeXzeGxvWUjy6NkQGn5UGzI3j2gnBaGRh?=
+ =?us-ascii?Q?tlCHjTJ8gLs1x6VUyOIopGmaFimc4/P4zRsglbYPRodsdD1GNh/zjrU4OjbB?=
+ =?us-ascii?Q?cBu+/OzIS3SbBfGKbbQby3UJiOEXWpBKpLhKQJ4bmTtmoRNCBiP3KEYMQA/1?=
+ =?us-ascii?Q?+176vZ6gmwlamt1Zknh61wcok+Bl8ezjX4+Pa/aTwK/UXH0t27TL6iYohmbl?=
+ =?us-ascii?Q?ObEm8qSA08emrGyithsnbh4afAjHPcl9frz5uQTuFhnxN4HbXTwja0yDZaNL?=
+ =?us-ascii?Q?RA/cBnizjKSJ4cFMJlmWuNMom2ScaNk3kmJgF+R/CMnCCSDGTMe2BcoW2v9M?=
+ =?us-ascii?Q?053OZRRY3qZrCLtQeky82bUiWiN0yGAqqRT8toeAx3l3A0bojY20/RK77/vf?=
+ =?us-ascii?Q?vDjg+suDEK+z7Q2hWdjte7BvK6FzU3WqEqGoUvmDwdDn6HKzZ5MgvMBQ6euE?=
+ =?us-ascii?Q?XaG5a7WcbE5f0w/J6tlUgay7yjYzCDsHiGtnlwsaaIM3IOf1w+Mh+itFe856?=
+ =?us-ascii?Q?gsZySuAFx+8uzRrCtAU67901facRdyc7poSy/bEqJI+TZSuxKWpXk9xt9934?=
+ =?us-ascii?Q?F5Nph1nET3DwDnhX+pt+7YI68i/2OO8/FCdulPLyp0FLUsbIgISzjma8Uhru?=
+ =?us-ascii?Q?Mdho/ynPHGMFpyjkeZWtdOGyMY5Sg+8wZw6sVPxW7yD7SYG1cM6AjrVRE27+?=
+ =?us-ascii?Q?QD614IyEMR4/RkEn6J3KQRd7qN4xNUhmBbjxFJ+jkuZRUw5YkhQP+/NeM8ho?=
+ =?us-ascii?Q?13VH7eu1eoV4bm/GN4tHV/bYVQYrxXHFW9W/JRUm/hyU8tZMnuCtSg7hD8nG?=
+ =?us-ascii?Q?iHAf5bCF/QVNnJgqmAb/KXJNfX0PV51sM62KBgj5Hl2txXTUslCKPnm2pZFN?=
+ =?us-ascii?Q?oD9UGJ8XLDfO/DJp/FLDeAAP+OItZtfvI534kjs6BhZmNSeVnVJlJIoSG4gs?=
+ =?us-ascii?Q?OyVg/DngDrqnxTFVgDy59SQddAzHntLJCjHxdbVlO/8VU5gr+S109S+bBl4T?=
+ =?us-ascii?Q?R6aKJw7LcsAGedbxe729cR8urCf5MeP3BR5RxoyB2XmfUILtJgM85yPmJXEJ?=
+ =?us-ascii?Q?N+5lB7MZLuAk0fbUUWtHShWEBqtQ0iO65Lu+tX5T5xi99umBo6lEVIp8tKE1?=
+ =?us-ascii?Q?Mj6WvO59I7t7hSor1ma3IEedRRyV0hsUyiZQhM4VZ5tFgwOfb9oq5Y+AK4vw?=
+ =?us-ascii?Q?BCUex9zFBV4Enwllu/79DIfXHZUHHMH1WgpQW617DRMnGKNNt+SzCoDtmuQC?=
+ =?us-ascii?Q?CTaYmoU2LAIiMVS3L+K1KcVOUm76qw8SDhsF4Tt5poFMYe8WIIjXcAzqKAv5?=
+ =?us-ascii?Q?QE4WoHOjeU9Tg+UUUyt6IofhD8dCd80P7Q22k7auyhihtupVNjUktCnILTm7?=
+ =?us-ascii?Q?3hhkTPye956tbyKDPl3kIdd3/XP0zari8ARIm1Ltgr3vHLfAYIqAJ4VNvlqD?=
+ =?us-ascii?Q?qjlthomCcR8npQbPBHBwhFEklNIYusA63Oho5YSbPw/P0Iyxtb6gd8HyKMSI?=
+ =?us-ascii?Q?XR9DBdrmy3xUgo/OySvtBf+8Fy4Fye/jNPMDTlgvpefmYfPyrP8kJnXshZbG?=
+ =?us-ascii?Q?RA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	X0P3R16M9ZWQA37JACxbr/HEMUm/2OQ21cCsmSm5lu1M2SEtswbo4QuEgZLvZFsBzyXHxyL9h3uNqtA4Lj8OXGUqfhhQNJwh74EqbsBZOFC0zvEHpsBUUjqmzqVQPT6jhi3NbKFsgsp8rM8SKwiLQ6IkeUH33EgNdeVGklzCBhtLZA3R95FMP+V9BuRkf6WNIq0jCU1IxdsVtUNPmHDsC7mhl7zrXykRboznIPAbaWDuPdmmziqAgPSPmD5w4Rav3H2AMEc+UWzvAzVqC2DfSMSBBpVtr+hYsPMZFa+K+vCtDKk02wdnuFRxt9zrDvnBIiwrS4LpvnfDnLkhFmt47Yw3wLGGr+GuyEGVyptTByVsWptYHoKF1WDYcc+bU9/UiVIwMr1CyRaqDK2Trd+nqwgwFRRGgnUFI9EVRS/qRwciLW1MwJZ6nWB7mZdvKB9bN7DxPtOQRbq2yEoThSU31DW1V/2ysYHhbyvlR00N66HwuNTZ05a7Jc0uHQxufEduNdH9h7RtM81imt5oPyJLjxhM30UUI07ndwECNrpCa82ZMdjbbOXaxBs40c52dGA9m6VaoaywBkXC6DXZ1Tw7qUQ/jlVrKT4OwGQEWvEPhHQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89b789a1-b30d-47c9-240c-08ddeb1895b5
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 18:34:59.7186
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mJMNvk5IOkXrtvCss8XjCFLAVLiq/vzZBeAcguYKzxnyuFzLdleg6jrfL3L++WrIDuj36c0l+VVbIz9TupmFnjcx5snjBtSOkm+RAJmz4PM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR10MB7000
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_09,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509030186
+X-Authority-Analysis: v=2.4 cv=LfI86ifi c=1 sm=1 tr=0 ts=68b88a57 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=yJojWOMRYYMA:10
+ a=GoEa3M9JfhUA:10 a=7CQSdrXTAAAA:8 a=tt-1WniTR4Gn8uNbmBIA:9
+ a=a-qgeE7W1pNrGK8U0ZQC:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAzMDE4MyBTYWx0ZWRfXzaAe8HdTWGcc
+ l27CK7fUH5ysdM7GZTxhPUG2JYCC64Ne4nJfovh1/mSibO8vnQ8K8aPfDu3tdJyD8RW70Cc/L25
+ mDdoQL3MGdKcz2UHmxEmBGlCLpcy96LKox+TdKTHgcNflg0/TeKSgHu1RlfKic8NGuvtNmmDUWP
+ 5/spTJ2NCpzJhMiDs0Y3bBoq+GbPlfQ45D8oZZuyyWTzzIxZ3ilAryD9WNnq90+unu15uPx7qPF
+ qnokAnpPOKVTPKykR814s2ngF2t39S24oMzf0rro36ddAR6hYamT13CsCu/NnpofPXYTOsaDTbj
+ Fro9zENCmUjsd8UfIkIipkudqdAGoZaYn3oJJ7C2AFj+oxHI/yAhc8bf0WzBST0ijvpmOChPEU8
+ oOzlomTw
+X-Proofpoint-GUID: _c4qjtwyQw2kcgcvBsocr0g94NcAFrUl
+X-Proofpoint-ORIG-GUID: _c4qjtwyQw2kcgcvBsocr0g94NcAFrUl
 
-Add support for reading / writing to the exfat volume label from the
-FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls
 
-Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
----
- fs/exfat/exfat_fs.h  |   7 ++
- fs/exfat/exfat_raw.h |   6 ++
- fs/exfat/file.c      |  80 +++++++++++++++++++++
- fs/exfat/namei.c     |   2 +-
- fs/exfat/super.c     | 165 +++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 259 insertions(+), 1 deletion(-)
+Catalin Marinas <catalin.marinas@arm.com> writes:
 
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index f8ead4d47ef0..a11a086c9d09 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -431,6 +431,10 @@ static inline loff_t exfat_ondisk_size(const struct inode *inode)
- /* super.c */
- int exfat_set_volume_dirty(struct super_block *sb);
- int exfat_clear_volume_dirty(struct super_block *sb);
-+int exfat_read_volume_label(struct super_block *sb,
-+			    struct exfat_uni_name *label_out);
-+int exfat_write_volume_label(struct super_block *sb,
-+			     struct exfat_uni_name *label);
- 
- /* fatent.c */
- #define exfat_get_next_cluster(sb, pclu) exfat_ent_get(sb, *(pclu), pclu)
-@@ -477,6 +481,9 @@ int exfat_force_shutdown(struct super_block *sb, u32 flags);
- /* namei.c */
- extern const struct dentry_operations exfat_dentry_ops;
- extern const struct dentry_operations exfat_utf8_dentry_ops;
-+int exfat_find_empty_entry(struct inode *inode,
-+		struct exfat_chain *p_dir, int num_entries,
-+			   struct exfat_entry_set_cache *es);
- 
- /* cache.c */
- int exfat_cache_init(void);
-diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
-index 971a1ccd0e89..4082fa7b8c14 100644
---- a/fs/exfat/exfat_raw.h
-+++ b/fs/exfat/exfat_raw.h
-@@ -80,6 +80,7 @@
- #define BOOTSEC_OLDBPB_LEN		53
- 
- #define EXFAT_FILE_NAME_LEN		15
-+#define EXFAT_VOLUME_LABEL_LEN		11
- 
- #define EXFAT_MIN_SECT_SIZE_BITS		9
- #define EXFAT_MAX_SECT_SIZE_BITS		12
-@@ -159,6 +160,11 @@ struct exfat_dentry {
- 			__le32 start_clu;
- 			__le64 size;
- 		} __packed upcase; /* up-case table directory entry */
-+		struct {
-+			__u8 char_count;
-+			__le16 volume_label[EXFAT_VOLUME_LABEL_LEN];
-+			__u8 reserved[8];
-+		} __packed volume_label; /* volume label directory entry */
- 		struct {
- 			__u8 flags;
- 			__u8 vendor_guid[16];
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 538d2b6ac2ec..c44928c02474 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -486,6 +486,82 @@ static int exfat_ioctl_shutdown(struct super_block *sb, unsigned long arg)
- 	return exfat_force_shutdown(sb, flags);
- }
- 
-+static int exfat_ioctl_get_volume_label(struct super_block *sb, unsigned long arg)
-+{
-+	int ret;
-+	char utf8[FSLABEL_MAX] = {0};
-+	struct exfat_uni_name *uniname;
-+
-+	uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
-+	if (!uniname)
-+		return -ENOMEM;
-+
-+	ret = exfat_read_volume_label(sb, uniname);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	ret = exfat_utf16_to_nls(sb, uniname, utf8, FSLABEL_MAX);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	if (copy_to_user((char __user *)arg, utf8, FSLABEL_MAX)) {
-+		ret = -EFAULT;
-+		goto cleanup;
-+	}
-+
-+	ret = 0;
-+
-+cleanup:
-+	kfree(uniname);
-+	return ret;
-+}
-+
-+static int exfat_ioctl_set_volume_label(struct super_block *sb,
-+					unsigned long arg)
-+{
-+	int ret, lossy;
-+	char utf8[FSLABEL_MAX];
-+	struct exfat_uni_name *uniname;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
-+	if (!uniname)
-+		return -ENOMEM;
-+
-+	if (copy_from_user(utf8, (char __user *)arg, FSLABEL_MAX)) {
-+		ret = -EFAULT;
-+		goto cleanup;
-+	}
-+
-+	if (utf8[0]) {
-+		ret = exfat_nls_to_utf16(sb, utf8, strnlen(utf8, FSLABEL_MAX),
-+					 uniname, &lossy);
-+		if (ret < 0) {
-+			goto cleanup;
-+		} else if (lossy & NLS_NAME_LOSSY) {
-+			ret = -EINVAL;
-+			goto cleanup;
-+		}
-+	} else {
-+		uniname->name[0] = 0x0000;
-+		uniname->name_len = 0;
-+	}
-+
-+	if (uniname->name_len > EXFAT_VOLUME_LABEL_LEN) {
-+		exfat_info(sb, "Volume label length too long, truncating");
-+		uniname->name_len = EXFAT_VOLUME_LABEL_LEN;
-+		uniname->name[EXFAT_VOLUME_LABEL_LEN] = 0x0000;
-+	}
-+
-+	ret = exfat_write_volume_label(sb, uniname);
-+
-+cleanup:
-+	kfree(uniname);
-+	return ret;
-+}
-+
- long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-@@ -500,6 +576,10 @@ long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return exfat_ioctl_shutdown(inode->i_sb, arg);
- 	case FITRIM:
- 		return exfat_ioctl_fitrim(inode, arg);
-+	case FS_IOC_GETFSLABEL:
-+		return exfat_ioctl_get_volume_label(inode->i_sb, arg);
-+	case FS_IOC_SETFSLABEL:
-+		return exfat_ioctl_set_volume_label(inode->i_sb, arg);
- 	default:
- 		return -ENOTTY;
- 	}
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index f5f1c4e8a29f..eaa781d6263c 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -300,7 +300,7 @@ static int exfat_check_max_dentries(struct inode *inode)
-  *   the directory entry index in p_dir is returned on succeeds
-  *   -error code is returned on failure
-  */
--static int exfat_find_empty_entry(struct inode *inode,
-+int exfat_find_empty_entry(struct inode *inode,
- 		struct exfat_chain *p_dir, int num_entries,
- 		struct exfat_entry_set_cache *es)
- {
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 8926e63f5bb7..0374e41b48a5 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -573,6 +573,171 @@ static int exfat_verify_boot_region(struct super_block *sb)
- 	return 0;
- }
- 
-+static int exfat_get_volume_label_ptrs(struct super_block *sb,
-+				       struct buffer_head **out_bh,
-+				       struct exfat_dentry **out_dentry,
-+				       bool create)
-+{
-+	int i, ret;
-+	unsigned int type;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct inode *root_inode = sb->s_root->d_inode;
-+	struct exfat_inode_info *ei = EXFAT_I(root_inode);
-+	struct exfat_entry_set_cache es;
-+	struct exfat_chain clu;
-+	struct exfat_dentry *ep, *overwrite_ep = NULL;
-+	struct buffer_head *bh, *overwrite_bh = NULL;
-+
-+	clu.dir = sbi->root_dir;
-+	clu.flags = ALLOC_FAT_CHAIN;
-+
-+	while (clu.dir != EXFAT_EOF_CLUSTER) {
-+		for (i = 0; i < sbi->dentries_per_clu; i++) {
-+			ep = exfat_get_dentry(sb, &clu, i, &bh);
-+
-+			if (!ep) {
-+				ret = -EIO;
-+				goto error;
-+			}
-+
-+			type = exfat_get_entry_type(ep);
-+			if ((type == TYPE_DELETED || type == TYPE_UNUSED)
-+			    && !overwrite_ep && create) {
-+				overwrite_ep = ep;
-+				overwrite_bh = bh;
-+				continue;
-+			}
-+
-+			if (type == TYPE_VOLUME) {
-+				*out_bh = bh;
-+				*out_dentry = ep;
-+
-+				brelse(overwrite_bh);
-+				return 0;
-+			}
-+
-+			brelse(bh);
-+		}
-+
-+		if (exfat_get_next_cluster(sb, &(clu.dir))) {
-+			ret = -EIO;
-+			goto error;
-+		}
-+	}
-+
-+	if (!create) {
-+		ret = -ENOENT;
-+		goto error;
-+	}
-+
-+
-+	if (overwrite_ep) {
-+		ep = overwrite_ep;
-+		bh = overwrite_bh;
-+		goto overwrite;
-+	}
-+
-+	ret = exfat_find_empty_entry(root_inode, &clu, 1, &es);
-+	if (ret < 0)
-+		goto error;
-+
-+	ei->hint_femp.eidx = 0;
-+	ei->hint_femp.count = sbi->dentries_per_clu;
-+	ei->hint_femp.cur = clu;
-+
-+	ep = exfat_get_dentry_cached(&es, 0);
-+	bh = es.bh[EXFAT_B_TO_BLK(es.start_off, sb)];
-+	/* increment use counter so exfat_put_dentry_set doesn't free */
-+	get_bh(bh);
-+	ret = exfat_put_dentry_set(&es, false);
-+	if (ret < 0) {
-+		bforget(bh);
-+		goto error;
-+	}
-+	ei->hint_femp.eidx++;
-+	ei->hint_femp.count--;
-+
-+overwrite:
-+
-+	memset(ep, 0, sizeof(struct exfat_dentry));
-+	ep->type = EXFAT_VOLUME;
-+	*out_bh = bh;
-+	*out_dentry = ep;
-+	return 0;
-+
-+error:
-+	*out_bh = NULL;
-+	*out_dentry = NULL;
-+	return ret;
-+}
-+
-+int exfat_read_volume_label(struct super_block *sb, struct exfat_uni_name *label_out)
-+{
-+	int ret, i;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct buffer_head *bh = NULL;
-+	struct exfat_dentry *ep = NULL;
-+
-+	mutex_lock(&sbi->s_lock);
-+
-+	ret = exfat_get_volume_label_ptrs(sb, &bh, &ep, false);
-+	// ENOENT signifies that a volume label dentry doesn't exist
-+	// We will treat this as an empty volume label and not fail.
-+	if (ret == -ENOENT) {
-+		label_out->name[0] = 0x0000;
-+		label_out->name_len = 0;
-+		ret = 0;
-+	} else if (ret < 0) {
-+		goto cleanup;
-+	} else {
-+		for (i = 0; i < EXFAT_VOLUME_LABEL_LEN; i++)
-+			label_out->name[i] = le16_to_cpu(ep->dentry.volume_label.volume_label[i]);
-+		label_out->name_len = ep->dentry.volume_label.char_count;
-+	}
-+
-+cleanup:
-+	mutex_unlock(&sbi->s_lock);
-+	brelse(bh);
-+	return ret;
-+}
-+
-+int exfat_write_volume_label(struct super_block *sb,
-+			     struct exfat_uni_name *label)
-+{
-+	int ret, i;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct buffer_head *bh = NULL;
-+	struct exfat_dentry *ep = NULL;
-+
-+	if (label->name_len > EXFAT_VOLUME_LABEL_LEN)
-+		return -EINVAL;
-+
-+	mutex_lock(&sbi->s_lock);
-+
-+	ret = exfat_get_volume_label_ptrs(sb, &bh, &ep, true);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	for (i = 0; i < label->name_len; i++)
-+		ep->dentry.volume_label.volume_label[i] =
-+			cpu_to_le16(label->name[i]);
-+	// Fill the rest of the str with 0x0000
-+	for (; i < EXFAT_VOLUME_LABEL_LEN; i++)
-+		ep->dentry.volume_label.volume_label[i] = 0x0000;
-+
-+	ep->dentry.volume_label.char_count = label->name_len;
-+
-+cleanup:
-+	mutex_unlock(&sbi->s_lock);
-+
-+	if (bh) {
-+		exfat_update_bh(bh, IS_DIRSYNC(sb->s_root->d_inode));
-+		brelse(bh);
-+	}
-+
-+	return ret;
-+}
-+
- /* mount the file system volume */
- static int __exfat_fill_super(struct super_block *sb,
- 		struct exfat_chain *root_clu)
--- 
-2.34.1
+> On Tue, Sep 02, 2025 at 03:46:52PM -0700, Ankur Arora wrote:
+>> Catalin Marinas <catalin.marinas@arm.com> writes:
+>> > Can you have a go at poll_idle() to see how it would look like using
+>> > this API? It doesn't necessarily mean we have to merge them all at once
+>> > but it gives us a better idea of the suitability of the interface.
+>>
+>> So, I've been testing with some version of the following:
+>>
+>> diff --git a/drivers/cpuidle/poll_state.c b/drivers/cpuidle/poll_state.c
+>> index 9b6d90a72601..361879396d0c 100644
+>> --- a/drivers/cpuidle/poll_state.c
+>> +++ b/drivers/cpuidle/poll_state.c
+>> @@ -8,35 +8,25 @@
+>>  #include <linux/sched/clock.h>
+>>  #include <linux/sched/idle.h>
+>>
+>> -#define POLL_IDLE_RELAX_COUNT	200
+>> -
+>>  static int __cpuidle poll_idle(struct cpuidle_device *dev,
+>>  			       struct cpuidle_driver *drv, int index)
+>>  {
+>> -	u64 time_start;
+>> -
+>> -	time_start = local_clock_noinstr();
+>> +	unsigned long flags;
+>>
+>>  	dev->poll_time_limit = false;
+>>
+>>  	raw_local_irq_enable();
+>>  	if (!current_set_polling_and_test()) {
+>> -		unsigned int loop_count = 0;
+>> -		u64 limit;
+>> +		u64 limit, time_end;
+>>
+>>  		limit = cpuidle_poll_time(drv, dev);
+>> +		time_end = local_clock_noinstr() + limit;
+>>
+>> -		while (!need_resched()) {
+>> -			cpu_relax();
+>> -			if (loop_count++ < POLL_IDLE_RELAX_COUNT)
+>> -				continue;
+>> +		flags = smp_cond_load_relaxed_timewait(&current_thread_info()->flags,
+>> +						       VAL & _TIF_NEED_RESCHED,
+>> +						       (local_clock_noinstr() >= time_end));
+>
+> It makes sense to have the non-strict comparison, though it changes the
+> original behaviour slightly. Just mention it in the commit log.
+>
+>>
+>> -			loop_count = 0;
+>> -			if (local_clock_noinstr() - time_start > limit) {
+>> -				dev->poll_time_limit = true;
+>> -				break;
+>> -			}
+>> -		}
+>> +		dev->poll_time_limit = (local_clock_noinstr() >= time_end);
+>
+> Could we do this instead and avoid another clock read:
+>
+> 		dev->poll_time_limit = !(flags & _TIF_NEED_RESCHED);
+>
+> In the original code, it made sense since it had to check the clock
+> anyway and break the loop.
+>
+> When you repost, please include the rqspinlock and poll_idle changes as
+> well to show how the interface is used.
 
+Sure.
+
+--
+ankur
 
