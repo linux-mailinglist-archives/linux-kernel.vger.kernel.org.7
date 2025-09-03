@@ -1,142 +1,192 @@
-Return-Path: <linux-kernel+bounces-798328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923D1B41C5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:55:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57BE7B41C67
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563C3561282
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:55:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5C071899027
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB602F39DA;
-	Wed,  3 Sep 2025 10:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762532F5303;
+	Wed,  3 Sep 2025 10:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ReawGCfP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lGL7uF8M";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ReawGCfP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lGL7uF8M"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dEgQXq78"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677852F39D3
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D582F5465;
+	Wed,  3 Sep 2025 10:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756896749; cv=none; b=BhMn+1/I4/lqSCJEz5YnGFznPMg8jm8N3dohjj8aIGYoOz2zY3+98uhxc9fbHv6XBOODeNgDXokQCt4Nu4vDIxec99CBYzlRgX6f5hrxec5gosy2EaT+pQ/nYgpZSEDezr7+Ep/sOn10KsQjISuPooGTPDtCJqfwvt5/3KIyrIE=
+	t=1756896799; cv=none; b=IuhCFFxHPoMWrD27Hwu42T5YHco/p2WSv5Tv+2smpsDB4r1yQkza4Ug5kcbTaAtOg8rlIG9OGadsF82817lggWFifVvAUEnRSE9puzaBrlNfUcMpj9B0PeoxoxKpHMHFEYvz7JEZCCPeW/TkNLNW6gPF5AEptP6qHi3aThbCa3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756896749; c=relaxed/simple;
-	bh=nO9g3PNXhwTLKuaA2Jm4zlIfcuIINjcXTwiFdT85LUY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CVNndXRfTmxytP4mE+xpfhBkBVCBwN2isuDnjYA284XTDonUrDEDepQaGEnZSm1V9F9rUgbQlDUUQjKL30ofaaEKKFVbfLDfFK1JRSxMUM7uRPJ+sCQiMbyOcUQ5DNqq1v7v5HLIkpicSwCMUHLGgdKQ2FZuIvG7bI6K+bmzT3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ReawGCfP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lGL7uF8M; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ReawGCfP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lGL7uF8M; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 82F0F1F456;
-	Wed,  3 Sep 2025 10:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756896745; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SnMOUYeZoFXkfeNuRCqWig5KNvw7Qlwif546rjx2fGc=;
-	b=ReawGCfPiV9LEelH6cW6IkvDBRd8ncVPj3hLP2aO1u2rxIE5yRcHLh5c5kbL08+7bCZEQC
-	8uK1etXrJI7El9u63QgMUg++UwG/r2zbQMR+D3ZIoc4q8yFLWXTmlTrrFGLJec5oVdODfT
-	giY3j3gLj+y3aTcGP2o1Bda7N1EJgo0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756896745;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SnMOUYeZoFXkfeNuRCqWig5KNvw7Qlwif546rjx2fGc=;
-	b=lGL7uF8MNkBZ+XZo4oyF5Q8wc0LR4m3KBs6sVEUD72IeaRJKwahPsddmonJJSjH8CanV86
-	TzfsbGrprk48tyDg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756896745; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SnMOUYeZoFXkfeNuRCqWig5KNvw7Qlwif546rjx2fGc=;
-	b=ReawGCfPiV9LEelH6cW6IkvDBRd8ncVPj3hLP2aO1u2rxIE5yRcHLh5c5kbL08+7bCZEQC
-	8uK1etXrJI7El9u63QgMUg++UwG/r2zbQMR+D3ZIoc4q8yFLWXTmlTrrFGLJec5oVdODfT
-	giY3j3gLj+y3aTcGP2o1Bda7N1EJgo0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756896745;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SnMOUYeZoFXkfeNuRCqWig5KNvw7Qlwif546rjx2fGc=;
-	b=lGL7uF8MNkBZ+XZo4oyF5Q8wc0LR4m3KBs6sVEUD72IeaRJKwahPsddmonJJSjH8CanV86
-	TzfsbGrprk48tyDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 44A5A13888;
-	Wed,  3 Sep 2025 10:52:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BEyMD+kduGgSDgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 03 Sep 2025 10:52:25 +0000
-Date: Wed, 03 Sep 2025 12:52:24 +0200
-Message-ID: <87qzwnvmdz.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Cryolitia PukNgae <cryolitia@uniontech.com>,
-	Takashi Iwai <tiwai@suse.de>,
-	linux-sound@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: docs: Remove 3rd person singular s in *to indicate*
-In-Reply-To: <20250903100842.267194-1-pmenzel@molgen.mpg.de>
-References: <20250903100842.267194-1-pmenzel@molgen.mpg.de>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1756896799; c=relaxed/simple;
+	bh=FUmeNCPfNa/iZWbYGZH641C9Ogg0J/3dPBsw0VAIiWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y5zJp0/CLcsmSzfHjmusc8RRiievp17jWT+4KIcC9kVO0tx2qB2MPxZw4ND8/8WKMc/zb+y1OBi0R5ChmDm6So5VT1DR6kLBPPEE8ZlEoGNJb8SkDyRm6lRg56POW0VTdh8npp97hP70KQDKnp+RMqtoVVprtj/Y4DrGfOu9DNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dEgQXq78; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756896798; x=1788432798;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=FUmeNCPfNa/iZWbYGZH641C9Ogg0J/3dPBsw0VAIiWE=;
+  b=dEgQXq78M2YQgnpeO8U3xJcmbQg0Ro5XBbZvHD1s35peTP5NOI33bJU+
+   ro2oD5mWx3fM9t/J36Jr1VOipX7QUkJiFHjXd2wQfZuVgw2t+GHF5GZ1J
+   jz3+FHa32PN8YkKzT82PMmfj1j0p9Sw3sLJKW5e7oopJ2SYfJGL+0KgQe
+   TR2llJ90P+NA8Z2q3ERTabciaNU8LovQSyF0/fMsyktjBIASor5oJq3jb
+   FBDl0h/Mz0jLEAWICL16xmFxnBlXFY5pSulqJZS2R6/kg+tpTXBlUxns+
+   YQ10Q8Wuofcfc4WFKx8plfQu0uO/E/TDpX5/DqfA7NfGnW4wNnVOfrfAs
+   A==;
+X-CSE-ConnectionGUID: wY9Ge3NdTzKbB7g0lM4vXw==
+X-CSE-MsgGUID: +HwtmeoMT/m2vP5TuJ/sQQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59273776"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59273776"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:53:17 -0700
+X-CSE-ConnectionGUID: fZSJg/OdSLSicfgtY1CHmg==
+X-CSE-MsgGUID: PfccqARKQ1qrVxLteKqPew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="175704587"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:53:06 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1utl6r-0000000Axff-11tp;
+	Wed, 03 Sep 2025 13:53:01 +0300
+Date: Wed, 3 Sep 2025 13:53:00 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Tony Lindgren <tony@atomide.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v7 16/16] pinctrl: qcom: make the pinmuxing strict
+Message-ID: <aLgeDNLABpmkShIU@smile.fi.intel.com>
+References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
+ <20250902-pinctrl-gpio-pinfuncs-v7-16-bb091daedc52@linaro.org>
+ <aLcBcjvMbrxoDYoC@smile.fi.intel.com>
+ <CAMRc=MfcFMgkNqWNZV5o0NxkAvxBTjC3vv56Cr98n0R2CkxuPw@mail.gmail.com>
+ <CAHp75VcgaqnDrPH27wxfgyK6zz4RAKJQB0r7G2vbTONTxkEzTw@mail.gmail.com>
+ <CAMRc=MfhhX2NJ0fhhX8u+7=sdyUy0G27n7caGf9=TpHxUDJVxg@mail.gmail.com>
+ <aLgW7J-j4nn0u8uo@smile.fi.intel.com>
+ <CAMRc=MdA21fwnamymG6YhqBjKDso_nJs_4xefPNONQNfEcPHXA@mail.gmail.com>
+ <aLgaoivmBUgoeO6B@smile.fi.intel.com>
+ <CAMRc=Me84OX=UEmAXxmwE8oOH=1UBsyHe-7XmU0c8a2gG9JnCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Me84OX=UEmAXxmwE8oOH=1UBsyHe-7XmU0c8a2gG9JnCA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, 03 Sep 2025 12:08:41 +0200,
-Paul Menzel wrote:
+On Wed, Sep 03, 2025 at 12:41:48PM +0200, Bartosz Golaszewski wrote:
+> On Wed, Sep 3, 2025 at 12:38 PM Andy Shevchenko
+> <andriy.shevchenko@intel.com> wrote:
+> > On Wed, Sep 03, 2025 at 12:34:00PM +0200, Bartosz Golaszewski wrote:
+> > > On Wed, Sep 3, 2025 at 12:22 PM Andy Shevchenko
+> > > <andriy.shevchenko@intel.com> wrote:
+> > > > On Wed, Sep 03, 2025 at 09:33:34AM +0200, Bartosz Golaszewski wrote:
+> > > > > On Tue, Sep 2, 2025 at 10:46 PM Andy Shevchenko
+> > > > > <andy.shevchenko@gmail.com> wrote:
+> > > > > > On Tue, Sep 2, 2025 at 8:42 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> > > > > > > On Tue, Sep 2, 2025 at 4:38 PM Andy Shevchenko
+> > > > > > > <andriy.shevchenko@intel.com> wrote:
+> > > > > > > > On Tue, Sep 02, 2025 at 01:59:25PM +0200, Bartosz Golaszewski wrote:
+
+...
+
+> > > > > > > > > The strict flag in struct pinmux_ops disallows the usage of the same pin
+> > > > > > > > > as a GPIO and for another function. Without it, a rouge user-space
+> > > > > > > > > process with enough privileges (or even a buggy driver) can request a
+> > > > > > > > > used pin as GPIO and drive it, potentially confusing devices or even
+> > > > > > > > > crashing the system. Set it globally for all pinctrl-msm users.
+> > > > > > > >
+> > > > > > > > How does this keep (or allow) I²C generic recovery mechanism to work?
+> > > > >
+> > > > > Anyway, what is your point? I don't think it has any impact on this.
+> > > >
+> > > > If we have a group of pins that are marked as I²C, and we want to use recovery
+> > > > via GPIOs, would it be still possible to request as GPIO when controller driver
+> > > > is in the strict mode?
+> > >
+> > > Yes, if you mark that function as a "GPIO" function in the pin
+> > > controller driver.
+> >
+> > How would it prevent from requesting from user space?
 > 
-> Fixes: 78811dd56def ("ALSA: docs: Add documents for recently changes in snd-usb-audio")
-> Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> It wouldn't, we don't discriminate between user-space and in-kernel
+> GPIO users. A function either is a GPIO or isn't. Can you point me to
+> the driver you're thinking about or is this a purely speculative
+> question?
 
-Applied now.  Thanks.
+The recovery mechanism is in I²C core and many drivers use that.
+I'm not aware of Qualcomm drivers in particular. But mechanism is
+in use in I²C DesignWare which is distributed a lot among platforms,
+so using word 'purely' is incorrect, and word 'speculative' is a bit
+strong, but you can think of the issue coming later on when somebody
+does something like this.
+
+The same applies to the in-band wakeup UART mechanism.
+
+Which means that with this series we will relax it back anyway for
+the above mentioned cases.
+
+(Not sure, but SPI DesignWare requires programming SPI native chip selects even
+ if the GPIO is used for that, this might have also some implications, but here
+ it's for real 'purely speculative'.)
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Takashi
 
