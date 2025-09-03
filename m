@@ -1,74 +1,160 @@
-Return-Path: <linux-kernel+bounces-797691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD9A6B413A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:47:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3DCB413AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8157C1B25BD3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:47:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2664A5E858E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25652D4804;
-	Wed,  3 Sep 2025 04:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC702D481F;
+	Wed,  3 Sep 2025 04:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vUc474dY"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="a2FNrJmm"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720441DE3DC;
-	Wed,  3 Sep 2025 04:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F762D4801
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 04:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756874823; cv=none; b=DaXy03vcbIeJB2Yq/9GpVWRYrC2XySuI5LzhXbVEqZSIMEo1wfCDf9GRoycXDMke2WOHC9t4R8KPd9PaPxWeiRBMjzmgMv1ZufIQ2KbP1FqycTFHZPYNy59cO+VX4G0xAFyQTPbK9WJDjZFuH0Jj29NZaGI8PY3N4SUCwoZ8fV8=
+	t=1756874899; cv=none; b=beaB2S+BTKFtkFGgQv9YAmodFKs2GmqMh2j/jihTAQgnPPX6L+eYjI04oy3LpcMnIGDtOlKwr03E9tU3z4FRkhQw2JoIrLyhY7wUjCfoCW4NrdSuYU/HCHNHZDJ46lEt6lGuJdxCYeb25gUIrmH0CbyHiU6kkpiqvQPytKh7U3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756874823; c=relaxed/simple;
-	bh=Q6sLYZfbTF2EVDK67+GnWbAGy3UzZVGmyT0OpcGqbnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5wYMf9KWmF6IKF2EPqmWfYdafYyYJ5neCBrHqF5mAASsxknQTaovfIoWNWMajp1Qs8GpFtqrdtyvNDbah8TITaS9ymAtJpg5QywpSNg/bgWhgZXCCx5/UtFXV8LVlSy//nqBq/wbLgsmNVdz4M7P1Hvcw/0RjBq6Peo3ncDSmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vUc474dY; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Oz+na+DDB0qci4Krf6kgl2+d1IC1NsN0QPDO6XJVDfE=; b=vUc474dYrwmNySav+vM3lsDLpH
-	jUDoLv4Fjw+3UWTx5CY25Gp9VHD3c3B7zWcYUJE5f+Xl/Xdyr3H/nRhHkEm8Xx91s23QorubXifzO
-	quLUCCP1bu/C8aowpigJqm4Osuc/AQARO+wxtacoM3s1CwJJJOtc/NoL8aANB6mzmPl847jEz9rwK
-	oMmrG2de/ya8NMX1cvDVJz7lys6UI9X8DcQGpwta6Nvl8LAP5Hg1brF6K8sc2sBxvY6GWKsPa8G+4
-	rmeWD6DnTon2c1/o7+wAnVbdy81TpUo97qq52No0BO2IOrr0zcm8PN2ncOxmbHLVRHnpXOsOSLTve
-	oKYbJCdA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utfOa-0000000FGiY-0yoh;
-	Wed, 03 Sep 2025 04:46:56 +0000
-Date: Wed, 3 Sep 2025 05:46:55 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Ranganath V N <vnranganath.20@gmail.com>
-Cc: rdunlap@infradead.org, brauner@kernel.org, conor+dt@kernel.org,
-	corbet@lwn.net, devicetree@vger.kernel.org, djwong@kernel.org,
-	krzk+dt@kernel.org, krzk@kernel.org, kvm@vger.kernel.org,
-	laurent.pinchart@ideasonboard.com, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, pbonzini@redhat.com, robh@kernel.org
-Subject: Re: [PATCH] Documentation: Fix spelling mistakes
-Message-ID: <aLfIP0nXp06l6xcd@casper.infradead.org>
-References: <A33D792E-4773-458B-ACF4-5E66B1FCB5AC@infradead.org>
- <20250903040043.19398-1-vnranganath.20@gmail.com>
+	s=arc-20240116; t=1756874899; c=relaxed/simple;
+	bh=I6zNRD3w00lAX47piaPwY1NvvSVWY6LUT0pycpnZXLs=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=p/1Wi9fcI+Xf2lpUstPLU+YVqWpznHli6qrqnCynX5beVWEDmTnnGximxGxdo2F4yDDGPgSpfb9n1KOHLXIu+Ivf5QT7CawN3UCOyq+C+C+LhOsi75kYES35q5O06QJhFJcfYxFKFcJMfspArZlW+NcAn2YNo1YDGek127Q2WRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=a2FNrJmm; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250903044815epoutp04c2cce649b3880a918e2a2208b7a09119~hrGi73-6k2744627446epoutp046
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 04:48:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250903044815epoutp04c2cce649b3880a918e2a2208b7a09119~hrGi73-6k2744627446epoutp046
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756874895;
+	bh=8zXvDNoOwy72sNEXyL1WkEq1p5c03frKH9bQVnfpEdI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=a2FNrJmmOsTo0j35RIxp3rTfXO7J44apBEFsDnYgLHjL9qqXgdkV2jHIKnEuqgKsv
+	 Z0Zpv3vAq0Vb+AsMA9KyFiDIeIEJCITjRELzyo5tg0cAsycWl9uXSlChH4UOSRB8kM
+	 i5SaUBCwiLccbGKqBO/Juesq3Cp0GJRAMbsoALgw=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250903044815epcas5p36d2334cc729bc607a0db3151e4354e30~hrGiheA0L2034820348epcas5p3_;
+	Wed,  3 Sep 2025 04:48:15 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cGqqd64yRz3hhTG; Wed,  3 Sep
+	2025 04:48:13 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250903044813epcas5p1020d1e0cd0cba938c7205d018cd72703~hrGhAtNUT0683506835epcas5p1N;
+	Wed,  3 Sep 2025 04:48:13 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250903044811epsmtip1a9aef2f137d586d0ecab89f16bf3a338~hrGfT64ld1389713897epsmtip1P;
+	Wed,  3 Sep 2025 04:48:11 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Ram Kumar Dwivedi'" <quic_rdwivedi@quicinc.com>,
+	<avri.altman@wdc.com>, <bvanassche@acm.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mani@kernel.org>,
+	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+Cc: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+In-Reply-To: <20250902164900.21685-1-quic_rdwivedi@quicinc.com>
+Subject: RE: [PATCH V5 0/4] Add DT-based gear and rate limiting support
+Date: Wed, 3 Sep 2025 10:18:10 +0530
+Message-ID: <3a9101dc1c8d$f476b8e0$dd642aa0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903040043.19398-1-vnranganath.20@gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQMIDrMCzT3okebP/WChCnWdAdn6nwDbtq+ZsiIfvNA=
+Content-Language: en-us
+X-CMS-MailID: 20250903044813epcas5p1020d1e0cd0cba938c7205d018cd72703
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250902164927epcas5p459352c28c0d5c5a4c04bd88345a049f0
+References: <CGME20250902164927epcas5p459352c28c0d5c5a4c04bd88345a049f0@epcas5p4.samsung.com>
+	<20250902164900.21685-1-quic_rdwivedi@quicinc.com>
 
-On Wed, Sep 03, 2025 at 09:30:43AM +0530, Ranganath V N wrote:
-> Thanks for the response. Do you want me to resend the patch by ignoring this?
-> particular "serie".
+Hi Ram
 
-No.  "serie" is obsolete and was clearly a typo.
+> -----Original Message-----
+> From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> Sent: Tuesday, September 2, 2025 10:19 PM
+> To: alim.akhtar@samsung.com; avri.altman@wdc.com;
+> bvanassche@acm.org; robh@kernel.org; krzk+dt@kernel.org;
+> conor+dt@kernel.org; mani@kernel.org;
+> James.Bottomley@HansenPartnership.com; martin.petersen@oracle.com
+> Cc: linux-scsi@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org
+> Subject: [PATCH V5 0/4] Add DT-based gear and rate limiting support
+> 
+> This patch series adds support for limiting the maximum high-speed gear
+and
+> rate used by the UFS controller via device tree properties.
+> 
+> Some platforms may have signal integrity, clock configuration, or layout
+> issues that prevent reliable operation at higher gears or rates.
+> This is especially critical in automotive and other platforms where
+stability is
+> prioritized over peak performance.
+> 
+> The series follows this logical progression:
+> 1. Document the new DT properties in the common UFS binding 2. Clean up
+> existing redundant code in the qcom driver 3. Add platform-level parsing
+> support for the new properties 4. Integrate the platform support in the
+qcom
+> driver
+> 
+> This approach makes the functionality available to other UFS host drivers
+and
+> provides a cleaner, more maintainable implementation.
+> 
+> Changes from V1:
+> - Restructured patch series for better logical flow and maintainability.
+> - Moved DT bindings to ufs-common.yaml making it available for all UFS
+>   controllers.
+> - Added platform-level support in ufshcd-pltfrm.c for code reusability.
+> - Separated the cleanup patch to remove redundant hs_rate assignment in
+>   qcom driver.
+> - Removed SA8155 DTS changes to keep the series focused on core
+>   functionality.
+> - Improved commit messages with better technical rationale.
+> 
+> Changes from V2:
+> - Documented default values of limit-rate and limit-hs-gear in DT bindings
+>   as per Krzysztof's suggestion.
+> 
+> Changes from V3:
+> - Changed limit-rate property from numeric values 1 and 2 to string values
+>   Rate-A and Rate-B for better readability and clarity as suggested by
+>   Bart and Krzysztof.
+> - Added Co-developed-by tag for Nitin Rawat in 3rd patch.
+> 
+> Changes from V4:
+> - Added the missing argument to the error message while parsing
+>   limit-rate property.
+> - Updated the maximum supported value and default for limit-gear
+>   property to gear 6, as per Krzysztof's and Bart's recommendation.
+> - Renamed Rate-A and Rate-B to lowercase (rate-a, rate-b) as suggested
+>   by Krzysztof.
+> 
+Please allow minimum 4 ~ 5 days for reviewers to complete the review before
+posting next version.
+That will also help to reduce the number of iteration a patch goes through.
+Thanks
+
+
+
 
