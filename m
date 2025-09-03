@@ -1,135 +1,127 @@
-Return-Path: <linux-kernel+bounces-798793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C7CB422FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:05:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB41B42330
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D2001BA33CF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:05:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFCCE7BEBB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DB030FC19;
-	Wed,  3 Sep 2025 14:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9CA3128D9;
+	Wed,  3 Sep 2025 14:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LsEahmPS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NpJErwMq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GarjbhYP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105B230EF6A
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2140C3112D5;
+	Wed,  3 Sep 2025 14:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908293; cv=none; b=InMd66NE+WYEdgZ3AV0o8SSz7uAEjfjjwgxpalHLSD2YlFQvPgbgZR/COuJ9fNZRTINkcxNhGRDHisIr+XQziJsur9jnN7o+eRy2qIw8dEjql3IE83fQMniN4zL883aU8Tis/gRo+UBuB/IQOlNZXUqd/1JbgG6SWy1eujgm+4k=
+	t=1756908322; cv=none; b=b5q9RnOlL6AyTDJNQzTJHBV0GYPpk19gjjWHLfhJnfIzsZYekE81Nqdar0+WALXaJpPFVf98aFAVIqiAdPFDxR6XYqHz6xMAR8C8SXHnsTb9D+ez+Sbnb6DJqJvX1uFl/GyhFF9kZfSGQYtpr/u/uev6sY3zchin7zxPeaodxYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908293; c=relaxed/simple;
-	bh=XJsdfKXolKL7MQMpmsEoCa/sJdGQ8gQET+iiNg76i88=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=BQIqcudp813sga4Wnf0RskJoQe0LsJHlTBdc4pB90Jqje/Xp6hnWsQRT+P9FNrHhmb4AV2FQH/IBu1w8fQPgDJLHSM9bAAT41dgSTEgfCRS4+t71zhS0yNUb8EpFYaXCODD67/s5OQ+7M+2X76y+brh1DYnKZft83mpoEFyswqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LsEahmPS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NpJErwMq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250903135433.444329373@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756908289;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=QKiSmAlCPU4t8RZAP+5VMuWb25EaM54GJSGXdcx/Xvo=;
-	b=LsEahmPSXjRVb2sYx+imvHKn2gIcyw5vrivjxXFuO2tgtzFzqkkWgYSXhvLghnm+9F/5JW
-	V3iq/ccXBfinrwpvLiK6fXBVX7JiXFJbql//84nqHshBuC+DCPo2iVUR6Mw7D7DU4DniG3
-	WmwlrmvhJYclWXOxPNH9I0iEBe3QuAK6bZszH2gUvnSOxNLHKZqm7RzKoHocZNi4r6jotf
-	iCwLeQ6VqA/loCYGzYEYbMER92Mpj6M7oZiPHvzro75xcvg+TQqTjtuedNWgvnNJhUwRmT
-	uWIhZVmxYolPgPkSY/qAJ/JMpDeNfBLdn8oKyXV8sDgwxO4zxMqHfCAMmhzALQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756908289;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=QKiSmAlCPU4t8RZAP+5VMuWb25EaM54GJSGXdcx/Xvo=;
-	b=NpJErwMqUCIJxMSLpwtrkRG6ahIsq+ORuUAsr//0UQI44xSMgYcWeyAVCukzX4u+TNINuU
-	VagEt3mGKRWfEcBA==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>
-Subject: [patch 2/2] PCI/MSI: Remove the conditional parent [un]mask logic
-References: <86o6vjelw2.wl-maz@kernel.org>
- <87ecv1ob9q.ffs@tglx>
- <20250903134437.863638669@linutronix.de>
+	s=arc-20240116; t=1756908322; c=relaxed/simple;
+	bh=eKNu0P169Q3NEmF9/2kn88R7etBh4b2ftcRq7KbNGzg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jIMAziFXwlgLB/yIlVUD6X/NitI2mvqQZrUb/y7GzFOYgrIU8YB7qc5D/BbEASEEOqpIOMkbq7L4XTRi/FVRe3LxPjI76lIOBiRr1JM5yqH4R3oGmwnQQFAW+1szBlClczN0m9xdg9iDApIJDwr8wjbgiqZMNI3JpDnoMfYFn2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GarjbhYP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4051C4AF0B;
+	Wed,  3 Sep 2025 14:05:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756908321;
+	bh=eKNu0P169Q3NEmF9/2kn88R7etBh4b2ftcRq7KbNGzg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GarjbhYPuBwzN4LKvw70mu25trun6v2gsNZoMS79qq5b6fFdnkIvAU84g+t/ZNTuA
+	 qItjKLs65j8DmS5uRuHG/tkDx9bXVhY6n/sDUArtE3jYBFiDdbCBST3QfRGBlrIjZZ
+	 0EOijnVmbkyGgntMKf9LztVwMTAF3BXSFTiQIhxDLLh5BAaXagqUwEBIB/EXoG4eUl
+	 281whCCc5omD9u36zHFpRpeOaOwok4ld/LprRIQlPor080oofNvmT9lX50gaNYeXn4
+	 27f6a9fUVkD0fJtu6rpxsExGEGI8IjbPgMEwoK885Yu8kqSJZ31Y78BR6mvEm74tEa
+	 BkIhFCAL3LF5Q==
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61cf8280f02so7799382a12.0;
+        Wed, 03 Sep 2025 07:05:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUweAgXSAStG54oksHYuhWvDYGsA9PgqasTLbzRjcKwFMZz4VKpoAhuc+lAvYCWGQqUOssUBJyRwWFgnB7HhJyXmJc=@vger.kernel.org, AJvYcCWtROtbVXvr8XHs8AHHyNmoEkUHcGSVuaDCRaF6u51yRYdxQ1nUMiQaPCGka7KbjEed1omzQxBRPcJpUm7A@vger.kernel.org, AJvYcCXAmjIthkplsWQN6B8HGyC60NiicM5lZNA6yCujfv/3OWQi6gyHDrgPQhM8BlqCRuPX2zesC6hK/2pF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9kXdrXrllp5y3tT3fGR9e68RSC/6qE95bCcvf+BcMYHu+4oS7
+	ZCkhpMv5y3aIYlWG538ouJMKIzRJvqYkkxalFyHOPxuMnKqWjwSB3gnHe+hcDBOzirdNGZIy9RP
+	LYjjEpz8O1MhV62gKsX9dqkC8YHyWoA==
+X-Google-Smtp-Source: AGHT+IHhgqqdWQtLgJ3n4i+fkorAw1PLf/dG7GMkfPu1VyhaFYexbX0Opd6FI4UepF1zq8MJg0/D/0FlKAcuRTaWSho=
+X-Received: by 2002:a05:6402:1ed6:b0:61e:9ebf:d340 with SMTP id
+ 4fb4d7f45d1cf-61e9ebfd58cmr10082183a12.32.1756908320220; Wed, 03 Sep 2025
+ 07:05:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Wed,  3 Sep 2025 16:04:48 +0200 (CEST)
+References: <20250815230841.3487764-1-robh@kernel.org> <307fa87eb552ac4a1f6dd6139450786195e3892a.camel@codeconstruct.com.au>
+ <360776d4dd765dc2c98f0c1b718fe63d4a8a70d4.camel@codeconstruct.com.au>
+In-Reply-To: <360776d4dd765dc2c98f0c1b718fe63d4a8a70d4.camel@codeconstruct.com.au>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 3 Sep 2025 09:05:06 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+TcACG=vGp__tT8RE6kOjchoUSq59i=H_+qSRn-ucMkw@mail.gmail.com>
+X-Gm-Features: Ac12FXwkg-WgIKnHEs8UoaeM3TBl6YtocnO-RvpeXFYLKucgpiCnVNz9w-PqANM
+Message-ID: <CAL_Jsq+TcACG=vGp__tT8RE6kOjchoUSq59i=H_+qSRn-ucMkw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: aspeed: Fix/add I2C device vendor prefixes
+To: Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Joel Stanley <joel@jms.id.au>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that msi_lib_init_dev_msi_info() overwrites the irq_[un]mask()
-callbacks when the MSI_FLAG_PCI_MSI_MASK_PARENT flag is set by the parent
-domain, the conditional [un]mask logic is obsolete.
+On Wed, Sep 3, 2025 at 1:52=E2=80=AFAM Andrew Jeffery
+<andrew@codeconstruct.com.au> wrote:
+>
+> On Wed, 2025-09-03 at 15:01 +0930, Andrew Jeffery wrote:
+> > Hi Rob,
+> >
+> > On Fri, 2025-08-15 at 18:08 -0500, Rob Herring (Arm) wrote:
+> > > The ASpeed DTS files have various I2C devices with missing or incorre=
+ct
+> > > vendor prefixes in their compatible strings. This hasn't really matte=
+red
+> > > and doesn't impact ABI compatibility as I2C devices get matched with =
+their
+> > > vendor prefix stripped.
+> > >
+> > > With this, the "maxim,max31790" nodes now validate and have some
+> > > warnings. Remove the spurious "#address-cells" and "#size-cells"
+> > > properties to fix the warnings.
+> > >
+> > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > > ---
+> > >  .../aspeed-bmc-arm-stardragon4800-rep2.dts    |  2 +-
+> > >  .../dts/aspeed/aspeed-bmc-facebook-harma.dts  |  8 ++-----
+> > >  .../aspeed/aspeed-bmc-facebook-minerva.dts    | 24 +++++------------=
+--
+> > >  .../aspeed/aspeed-bmc-facebook-tiogapass.dts  |  2 +-
+> > >  .../dts/aspeed/aspeed-bmc-lenovo-hr855xg2.dts |  2 +-
+> > >  .../dts/aspeed/aspeed-bmc-opp-palmetto.dts    |  2 +-
+> > >  .../boot/dts/aspeed/aspeed-bmc-quanta-s6q.dts |  4 ++--
+> > >  7 files changed, 14 insertions(+), 30 deletions(-)
+> > >
+> >
+> > I see you've applied this to your tree. Sorry for being slow on the up-
+> > take, I've been focusing on other things recently. Happy to take it
+> > though, if you're happy to drop it?
+>
+> Actually, do you mind dropping it from your tree? It conflicts with
+> Krzysztof's patch that I'd already applied:
+>
+> https://lore.kernel.org/all/20250819131743.86905-2-krzysztof.kozlowski@li=
+naro.org/
+>
+> I've applied your patch here with a note in the trailer:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/bmc/linux.git/commit/?h=
+=3Daspeed/dt&id=3D61a913644a8c5b6c8bd9da09f78f88e50edfaeb
 
-Remove it.
+I've dropped it. That was inadvertent.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/msi/irqdomain.c |   20 --------------------
- 1 file changed, 20 deletions(-)
-
---- a/drivers/pci/msi/irqdomain.c
-+++ b/drivers/pci/msi/irqdomain.c
-@@ -170,22 +170,6 @@ static unsigned int cond_startup_parent(
- 	return 0;
- }
- 
--static __always_inline void cond_mask_parent(struct irq_data *data)
--{
--	struct msi_domain_info *info = data->domain->host_data;
--
--	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
--		irq_chip_mask_parent(data);
--}
--
--static __always_inline void cond_unmask_parent(struct irq_data *data)
--{
--	struct msi_domain_info *info = data->domain->host_data;
--
--	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
--		irq_chip_unmask_parent(data);
--}
--
- static void pci_irq_shutdown_msi(struct irq_data *data)
- {
- 	struct msi_desc *desc = irq_data_get_msi_desc(data);
-@@ -208,14 +192,12 @@ static void pci_irq_mask_msi(struct irq_
- 	struct msi_desc *desc = irq_data_get_msi_desc(data);
- 
- 	pci_msi_mask(desc, BIT(data->irq - desc->irq));
--	cond_mask_parent(data);
- }
- 
- static void pci_irq_unmask_msi(struct irq_data *data)
- {
- 	struct msi_desc *desc = irq_data_get_msi_desc(data);
- 
--	cond_unmask_parent(data);
- 	pci_msi_unmask(desc, BIT(data->irq - desc->irq));
- }
- 
-@@ -268,12 +250,10 @@ static unsigned int pci_irq_startup_msix
- static void pci_irq_mask_msix(struct irq_data *data)
- {
- 	pci_msix_mask(irq_data_get_msi_desc(data));
--	cond_mask_parent(data);
- }
- 
- static void pci_irq_unmask_msix(struct irq_data *data)
- {
--	cond_unmask_parent(data);
- 	pci_msix_unmask(irq_data_get_msi_desc(data));
- }
- 
-
+Rob
 
