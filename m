@@ -1,123 +1,154 @@
-Return-Path: <linux-kernel+bounces-797571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4442B41200
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:40:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68ADB41205
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F20F3B592A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:40:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20E3817ED52
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833121D63F3;
-	Wed,  3 Sep 2025 01:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VWWYQ1yQ"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31E51E1DFC;
+	Wed,  3 Sep 2025 01:41:28 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79512566
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 01:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D302566;
+	Wed,  3 Sep 2025 01:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756863604; cv=none; b=A6jYTG+TlF8NARX6MbrDmIJeOb76YpYlbf4htc0F76LtIqIgQVV7a076cWSiK7VJTBzpvki7TnQ8+zVVDK73VBJhhbs5Q/s3nhesWH4jC2ksv6aWXkbqVtqHwlCiq1tlrLh4RtBHMirXs5u82mhmtENCtsmRC/6SBDu+e8KWFJU=
+	t=1756863688; cv=none; b=jTK6U3bLHZkNhq6jgW6qLDNRNix1Nv/f/GslBHXBtAjiI/4KEG2wLTvnRzg6OPKAtH7str7YKozBZRtPKDpCWWN8xX5ReISQ+BNdUkAfXjvX86SNRlbhEVAYbaEOFjfu9dzCA19H7bgHQjM013PxPiL8EMmbge6quR5NNzZRaLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756863604; c=relaxed/simple;
-	bh=GE4UrC/J5syH3kAVbQU7lQzrSUWTh8gemRAuUoE1WCQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UG9DLJv807epXs6CcCR12IAVeuI/SdB6Zdip72VVQlPuOJVcbmV0vXoTpaCTvVmGegr1Vftl7j0clQNmbQjpI+MSNW/uoSqDZHh/3g2fIsRtxm7uD6wfqScDRaS8X5/xC0yLn971h/Nh1EVr1GoFzWFrleCKhCwC1HPil5i/L6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VWWYQ1yQ; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <06c7a189-7ea2-4005-a1f2-12608fb2931e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756863599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nBFnrycFy90OytnzxFhcHJdc8o4eGnhelby35FOE5H4=;
-	b=VWWYQ1yQyLGa2x64akE37pTTcmFwUyCWMES7oeh7Gzd3h2W5kN4HNNW9NJXIN2+H4P9G+V
-	N24WCyDrr7uCsLuT5sQvcY6Ibpe5BWJ6fYvJsn6v5FH3kvQDPjyv6FeVDxPYgMf7p9HSsK
-	3jP4FvdKFqz8D+3uytEsLaEmU+kaBWs=
-Date: Wed, 3 Sep 2025 09:39:44 +0800
+	s=arc-20240116; t=1756863688; c=relaxed/simple;
+	bh=A1iTz/bQZLLbrGiybLQQMrmmgfCHqf+1326YBH1shOM=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Fj3Cs7yV/2Z62T/2YcCRGiFpRAaEpjO/FStljv6rGdrMfNhuzp50WkZNy6rGyd77cq68JcYR7h/5jTGbRZJZNe0VIMREm/xuSdNFWsa/3K9oQ6JdB3TzaLsWk5mlWEJb1Kp7U2eeH0H4O2oFf8iJEQczgx3uClXWGAVTSsldI5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cGlh41fQ6zYQtxw;
+	Wed,  3 Sep 2025 09:41:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B097A1A129D;
+	Wed,  3 Sep 2025 09:41:22 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAXYIy+nLdooxzRBA--.26887S3;
+	Wed, 03 Sep 2025 09:41:20 +0800 (CST)
+Subject: Re: [PATCH RFC v3 14/15] block: fix disordered IO in the case
+ recursive split
+To: Bart Van Assche <bvanassche@acm.org>, Yu Kuai <yukuai1@huaweicloud.com>,
+ hch@infradead.org, colyli@kernel.org, hare@suse.de, dlemoal@kernel.org,
+ tieren@fnnas.com, axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com,
+ song@kernel.org, kmo@daterainc.com, satyat@google.com, ebiggers@google.com,
+ neil@brown.name, akpm@linux-foundation.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
+ <20250901033220.42982-15-yukuai1@huaweicloud.com>
+ <e40b076d-583d-406b-b223-005910a9f46f@acm.org>
+ <0f7345dd-8c6b-a75c-c234-2bb09f842069@huaweicloud.com>
+ <7edded3f-1075-4c14-9db9-a62adc0a4aa3@acm.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <d23ba315-c197-0e3a-88a9-8e71a93637c0@huaweicloud.com>
+Date: Wed, 3 Sep 2025 09:41:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] mm: show_mem: show number of zspages in
- show_free_areas
-To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
- Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Zi Yan <ziy@nvidia.com>, Minchan Kim <minchan@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Yosry Ahmed <yosry.ahmed@linux.dev>, Nhat Pham <nphamcs@gmail.com>,
- SeongJae Park <sj@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-References: <20250902-show_mem_zspages-v2-1-545daaa8b410@igalia.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20250902-show_mem_zspages-v2-1-545daaa8b410@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <7edded3f-1075-4c14-9db9-a62adc0a4aa3@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXYIy+nLdooxzRBA--.26887S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJw47WFWkWw1kWw45WF4DArb_yoW5GrWxpr
+	WkKFyDtrWrGr1Sgw1vvayUtFyvyw4UXw4rGFy5Gay7Jr4DZr1qq3srXryvgryDAr48CryU
+	ZF1vgr9xua1DArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 2025/9/2 20:49, Thadeu Lima de Souza Cascardo wrote:
-> When OOM is triggered, it will show where the pages might be for each zone.
-> When using zram or zswap, it might look like lots of pages are missing.
-> After this patch, zspages are shown as below.
-> 
-> [   48.792859] Node 0 DMA free:2812kB boost:0kB min:60kB low:72kB high:84kB reserved_highatomic:0KB free_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB zspages:11160kB present:15992kB managed:15360kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
-> [   48.792962] lowmem_reserve[]: 0 956 956 956 956
-> [   48.792988] Node 0 DMA32 free:3512kB boost:0kB min:3912kB low:4888kB high:5864kB reserved_highatomic:0KB free_highatomic:0KB active_anon:0kB inactive_anon:28kB active_file:8kB inactive_file:16kB unevictable:0kB writepending:0kB zspages:916780kB present:1032064kB managed:978944kB mlocked:0kB bounce:0kB free_pcp:500kB local_pcp:248kB free_cma:0kB
-> [   48.793118] lowmem_reserve[]: 0 0 0 0 0
-> 
-> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Hi,
 
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+在 2025/09/03 9:12, Bart Van Assche 写道:
+> On 9/2/25 6:00 PM, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2025/09/03 1:20, Bart Van Assche 写道:
+>>> On 8/31/25 8:32 PM, Yu Kuai wrote:
+>>>> -void submit_bio_noacct_nocheck(struct bio *bio)
+>>>> +void submit_bio_noacct_nocheck(struct bio *bio, bool split)
+>>>>   {
+>>>>       blk_cgroup_bio_start(bio);
+>>>>       blkcg_bio_issue_init(bio);
+>>>> @@ -745,12 +745,16 @@ void submit_bio_noacct_nocheck(struct bio *bio)
+>>>>        * to collect a list of requests submited by a ->submit_bio 
+>>>> method while
+>>>>        * it is active, and then process them after it returned.
+>>>>        */
+>>>> -    if (current->bio_list)
+>>>> -        bio_list_add(&current->bio_list[0], bio);
+>>>> -    else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO))
+>>>> +    if (current->bio_list) {
+>>>> +        if (split && !bdev_is_zoned(bio->bi_bdev))
+>>>> +            bio_list_add_head(&current->bio_list[0], bio);
+>>>> +        else
+>>>> +            bio_list_add(&current->bio_list[0], bio);
+>>>
+>>> The above change will cause write errors for zoned block devices. As I
+>>> have shown before, also for zoned block devices, if a bio is split
+>>> insertion must happen at the head of the list. See e.g.
+>>> "Re: [PATCH 1/2] block: Make __submit_bio_noacct() preserve the bio 
+>>> submission order"
+>>> (https://lore.kernel.org/linux-block/a0c89df8-4b33-409c-ba43- 
+>>> f9543fb1b091@acm.org/)
+>>
+>> Do you mean we should remove the bdev_is_zoned() checking? I added this
+>> checking because I'm not quite sure about details in zone device, and
+>> this checking is aimed at prevent functional changes in zone device.
+> 
+> Yes, the bdev_is_zoned() check should be removed. I spent a significant
+> amount of time on root-causing and proposing fixes for write errors
+> caused by recursive bio splitting for zoned devices. What I learned by
+> analyzing these write errors is the basis for this feedback.
+> 
+>> So I don't think this change will cause write errors, the write errors
+>> should already exist before this set, right?
+> 
+> Agreed. Although I haven't checked this yet, if the bdev_is_zoned()
+> check is removed from this patch, this patch should fix the write errors
+> triggered by stacking a dm driver on top of a zoned block device if
+> inline encryption is enabled.
+> 
 
-Thanks!
+Ok, I'll remove the checking and mention this problem in the next formal
+version.
 
-> ---
-> v2:
-> - fix build when CONFIG_ZSMALLOC is not enabled
-> ---
->   mm/show_mem.c | 6 ++++++
->   1 file changed, 6 insertions(+)
+Thanks,
+Kuai
+
+> Thanks,
 > 
-> diff --git a/mm/show_mem.c b/mm/show_mem.c
-> index 41999e94a56d623726ea92f3f38785e8b218afe5..c563d9adfa87765a8736e91c1f68d824b03eaea8 100644
-> --- a/mm/show_mem.c
-> +++ b/mm/show_mem.c
-> @@ -310,6 +310,7 @@ static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_z
->   			" inactive_file:%lukB"
->   			" unevictable:%lukB"
->   			" writepending:%lukB"
-> +			" zspages:%lukB"
->   			" present:%lukB"
->   			" managed:%lukB"
->   			" mlocked:%lukB"
-> @@ -332,6 +333,11 @@ static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_z
->   			K(zone_page_state(zone, NR_ZONE_INACTIVE_FILE)),
->   			K(zone_page_state(zone, NR_ZONE_UNEVICTABLE)),
->   			K(zone_page_state(zone, NR_ZONE_WRITE_PENDING)),
-> +#if IS_ENABLED(CONFIG_ZSMALLOC)
-> +			K(zone_page_state(zone, NR_ZSPAGES)),
-> +#else
-> +			0UL,
-> +#endif
->   			K(zone->present_pages),
->   			K(zone_managed_pages(zone)),
->   			K(zone_page_state(zone, NR_MLOCK)),
+> Bart.
+> .
 > 
-> ---
-> base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-> change-id: 20250902-show_mem_zspages-d090ea0bd1d4
-> 
-> Best regards,
+
 
