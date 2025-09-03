@@ -1,178 +1,234 @@
-Return-Path: <linux-kernel+bounces-798237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F458B41AFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:03:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED2EB41AF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA1C25E3CF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:03:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93A2A3A4043
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51AA199252;
-	Wed,  3 Sep 2025 10:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9B42DAFB0;
+	Wed,  3 Sep 2025 10:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FRF2St+1"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="nby1tBEh"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023130.outbound.protection.outlook.com [40.107.44.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271D82E8886;
-	Wed,  3 Sep 2025 10:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756893822; cv=none; b=QJIi41cSlPE2RbcTDszDkpRTop+pN4GU0ynIAtYtTAT4uvN+MrH0uqagjHqhj5yzPl6hQkwEFSPCdiUPDfWx0NqHFxlaU4YvrHVyldcQF5YCYu90ofgUnR91qCKV7qyQ8FsDYtf4TimX6j96LFWFT1w0F0QlUyzre7kC/OB+AZM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756893822; c=relaxed/simple;
-	bh=0uWuXTsNAYjzbqYoQzNVvj7RBiv6ohyxenQTCDwv/kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oqvwq1gQ6mGaY0iwJ4HmS4ypKYYdOE5gFMnuEgRfW34g0Lvi8JQtL4HxStoKyeUAIu4RNgUVsKRBPuGIQDnRVGqqws3fhGcxC7fN6l2/yVuKkAvd05hyYu+9hoWWTMPbdH1RJvrrDJs/07m11kbZ7+PH1PitjiJYh0MqIU8ELck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FRF2St+1; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B99A840E01B0;
-	Wed,  3 Sep 2025 10:03:36 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mbvvz1Ld2akV; Wed,  3 Sep 2025 10:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756893812; bh=RhD68Pvtck0QIldCXY3sNMzubu+4+wpcGgj7x1SSY6Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FRF2St+1Zqs0y6yDHoEZU3szMqOaQ7fXb0VttHKT/GovMV2HK9XWUTZ3Zzvf5vm+2
-	 /wDdLcstHvYlZlzZhCwoNXKFGHXS9knz2ue//fF12RUDhJQVcdQFiXy70CWV/8W8vQ
-	 UTIjnMcoXRwfs0HoLMzZBcJEYbkhdsZadVXls9rmmQ0it91J44SpuFRuokSqUUEFW4
-	 cvqg7TKZmOnietsqQy7xD2EZLzWeHqFIUo9IuXoODxDETLjhTUyame29Uv8Ghv+QJn
-	 ckgzyzJHJJqymgj2XPOiDdBTqOzonvXXvZcPxXSnXOmSPI1ZPf4xLrxLa2MXFwYbgC
-	 /33pcDa8QMZfuoEUAK5NxoKrUqMbxrDQvLvjsrjLM4yvkeXBbfPQ3ssn5ydzO4tFWQ
-	 UvvR/zORIbANdnManoB4WmFTIR01GUdm86J1T2SLGgLPp6RtZn2gLDiUdHfkPYMEHt
-	 bbJofFjN+X+0lqxFLL6zou3TDGr38sMexNGQOkveoHbRu8zdqT/vr5vJdRzv9xY2XR
-	 8idP7++/TGx2pM8ENjO9AvlwoxTw6chTHoBNPdbdn5pzF2L7s8CM2tNMmyFZ6ugbNI
-	 tPewkDibdSJ/Glaz0y3a0BMGbFKz8N9vHMo0W9x9xhrhiQOeOGrwB03LdXBNvKSfUk
-	 7PXrbXVOvsJlLDNRt9I4NCUM=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 8667C40E01AC;
-	Wed,  3 Sep 2025 10:03:22 +0000 (UTC)
-Date: Wed, 3 Sep 2025 12:03:17 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	Smita.KoralahalliChannabasappa@amd.com,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v5 15/20] x86/mce/amd: Enable interrupt vectors once
- per-CPU on SMCA systems
-Message-ID: <20250903100317.GHaLgSZTPMDHrKbO7Q@fat_crate.local>
-References: <20250825-wip-mca-updates-v5-0-865768a2eef8@amd.com>
- <20250825-wip-mca-updates-v5-15-865768a2eef8@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72073277CA4;
+	Wed,  3 Sep 2025 10:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.130
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756893808; cv=fail; b=TFNFUdMKPPWVbqCPntmrd4cZCsVz/T9zrEU4D6FEI1Eiva6CQC+5+gd8TUOk77CKRHicpwmZMKnKCyN9cO4kU+VcTfRpF4JJIZu4r4KCWcJQHmBuDKmt4V7Od9gZLyF5yt70RvjvyxgZp3t466DEg56rSKmvA8C9qJ05/RFIKTs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756893808; c=relaxed/simple;
+	bh=ugMCFHNma89ssTYOCQkzJudE53kK724dAQWIj2HPmGg=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=t0hMShqcoult1xHJxd//51w0l18TF0qt3UkhMb6GOfwdTKbmiP7DErq1lZzMPpEgd+b8SYJKn7QznC8TjWilCUkVywnok//wysVKahrFKAjTYsgglTjht9R2bPYsnl79uJK4qEX1xLW0KAt6pLedEi1lvcWj27fXwO6dP9MfQ7w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=nby1tBEh; arc=fail smtp.client-ip=40.107.44.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=utRXIG6089znTb0Nq9ms5jEyatcar0jSaYFJ6v1gZ6wnKM3PG3I65AufYAaRvWevPGtM6Ma8t2gYIP3CnSOnU+O+mQzsfPcAfKFhd4vvB6AkfuVoYVuO23VU4DTGPXS4WfdM+YHcLw9H3SlN4iYk9YzNV02fwoJBW4SfPapW5hspA6N4cOrodOuUkggNTRvbYNlTW86gLPb5sYWlsQxMt3pvXd9KA5utx4Xt7qdxK2qf0ddvge0VuXUImLo1ZVkZGtU9ukLNvDWF0s2MeXW/ExRYTkfTCWdkL3e8BRm+j1aXH2suV8rtAVl6ccV3mtw3rCz6KegAGneQMKGRso+D0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=71x9m5mapiP6MS21U8NiHuy+f2aletcS4MFe2BT72T8=;
+ b=WHueFqhSRtmgi6+2eCdR2xnSmZ5F4gb2eGdtuRD1K5GbJxRqA/L9HNN9//AIxqvkzKKLHlNtNdXDnbLHMtw7a2pFrjHWgGWrXMsKbDdkf3/qtGPW52cQW7fktefaps7jxh/vMHjciypaSU8pqzBmRPYRcSAuSN4qTXkT2cGmj7JL5rRlKEvvGUvLwzZH477G98udlwwGVm5j4qoY7AogD81I5JCYj19MioszJXYWf+/jAtjQzk2vYUvh8PdtZEBCjFL35D4QTGJQjMl+72OIJzzvJkote2HDkHcIaY14epyD7np9kRJsPAVXE3u8aqM5XpOcjCZLdwxW5jigME1Uhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=71x9m5mapiP6MS21U8NiHuy+f2aletcS4MFe2BT72T8=;
+ b=nby1tBEhe1zobfaJvm9jPHuWIvdEq9zSi1krPW8leSWZzWfdmCTFO5BGBVahDXXGqPA9SOFYjsjGJSxSAL9kbLR9rX+OtJMSv4vgvO0OPfPByek3i9CRuaR7P2f5Du5QQmChUUy8nilvA08ylThEUlVIXyyeQi9tcPSRZROkMUxBfS3HSn68gIiHe5ivN0vtxctRO9Q5CKpbuqAWBug9dMp1ZvaVxVBEEj593QN1T241trlLkkY8Q5CCvu49FqoipUK7XwYvzW1ymS7065FJKKcWpUZlecigRktENuBq17K6cwwyafhYBydGH8em9TUb2eJqHWSIq+QESXul+AV39g==
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com (2603:1096:604:2b1::11)
+ by SG2PR06MB5382.apcprd06.prod.outlook.com (2603:1096:4:1d5::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Wed, 3 Sep
+ 2025 10:03:22 +0000
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11]) by OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11%5]) with mapi id 15.20.9094.016; Wed, 3 Sep 2025
+ 10:03:22 +0000
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Eddie James <eajames@linux.ibm.com>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew
+ Jeffery <andrew@codeconstruct.com.au>, Lee Jones <lee@kernel.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v2 1/4] irqchip/aspeed-scu-ic: Refactor driver to support
+ variant-based initialization
+Thread-Topic: [PATCH v2 1/4] irqchip/aspeed-scu-ic: Refactor driver to support
+ variant-based initialization
+Thread-Index: AQHcGh0ElAQPEfmbl0aYVcVcd6TuzbR/3bEAgAFYypA=
+Date: Wed, 3 Sep 2025 10:03:22 +0000
+Message-ID:
+ <OS8PR06MB75410181B488F905427AD1F7F201A@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20250831021438.976893-1-ryan_chen@aspeedtech.com>
+ <20250831021438.976893-2-ryan_chen@aspeedtech.com> <871pop2etv.ffs@tglx>
+In-Reply-To: <871pop2etv.ffs@tglx>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS8PR06MB7541:EE_|SG2PR06MB5382:EE_
+x-ms-office365-filtering-correlation-id: 9cf8a978-0f97-49a8-da11-08ddead11d95
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?sjWYSGd1RN9vYMOPOB7Ob8meVyGUJRS0lF3VWvedvyl7oQjEcQ0/8qNtksEo?=
+ =?us-ascii?Q?/YOOj5ntG/4JiLZFB+VIiFspdds2v3aZ64mhELgAwG3Ss3OimivjudkJMZXt?=
+ =?us-ascii?Q?sdpPRDYCt6UjFLssbIKG+jx0MjaWdOXgdA0KKGGga33nH9tJG5QTOtnsmrcX?=
+ =?us-ascii?Q?HYvplIRFK8wnnfLG5bc+Pe521MdkgWTabwSm14L43x3FkR9o8n1BhHoVpjv2?=
+ =?us-ascii?Q?K8IAJysPWRwi3d8z0Kk4vgsABwRZHatF0/v8rrzz/DxSjo9cH9P09OoYiuAj?=
+ =?us-ascii?Q?AKyRiHRWGlJllIrAAC3SaGLnLtvfBc2EjZXcTawe1c5ijdGeM/b8RfctnDEm?=
+ =?us-ascii?Q?mQqSotrgtQ5mLz7pmE2BvxfQ+pd0BCiA4qaklnQ2VTEOGtQGUnO7FWQT/Ihb?=
+ =?us-ascii?Q?qpjjT5ncSoqRxf1J7P9mMyDb1CSH5n577Uk99eDF9Kilk7RHFDtuzngxuTxE?=
+ =?us-ascii?Q?KTO1oaQ2DPiE7UAZX7hsQGqkXjd8HqV/etrKUQFavfSnzaGWSAoM/iSYes9y?=
+ =?us-ascii?Q?eUoqyUAYYDo2sYZwkFtPwxiE6LTAYEMPvALaHR9PYMkh3BFN8JyqA8qmweh6?=
+ =?us-ascii?Q?I3xvz1lsGmEoana4SEA9EwXKAHTbr/jlAk/7kJgNShQZ0+DifOiNIARq9pHL?=
+ =?us-ascii?Q?XH3jm4EH4SCG4efw7NqNqtwwHUMf64/Yd3Gu3jzKfY6PWTgO0TCJTvntypgc?=
+ =?us-ascii?Q?R/Vn2qEwFPiqcAvkgOZJP+M8M+Fnb7InU+uU0b0vbrNdOEnKMQqI4DEAWl66?=
+ =?us-ascii?Q?uwxztYu+NspjOkW5xjJJIgBwQ7GZ3UZNpxYgJPCw9ovCYW7SX8rhpEU6V8mj?=
+ =?us-ascii?Q?1QvIeosOsBP5KHudleD1gjNbT/0VoJAe5Bqe/22zl8pBzhpBSemf+erCEq8k?=
+ =?us-ascii?Q?25ky74arm9XA/ewiV7MavRchBIrdjfezH7GxNEzhx8c0T7gfFwqVzVpDr4Ve?=
+ =?us-ascii?Q?owzC+QhKR2qgl+uMJJjfliaxqPZX4DOzB4T+YazKm6KkTxSIoiJDlhPazlH+?=
+ =?us-ascii?Q?UFSNN3vYagdYII+ybXVtz/x95tXTJ2Ni2eNuWyMMSCQT7XJ8yf+g82RU+P2b?=
+ =?us-ascii?Q?ZqeSGgY3tSqp5hk6Mprm5Vd3LRyqKSuXdxH28/FpPDuDrs98JX3Fb0Zh1LdM?=
+ =?us-ascii?Q?LOVr/hWc4WA95fWbFUw/yNIZLqcLostA6pf6WVLpxnIe5npoVXxalGDDc01s?=
+ =?us-ascii?Q?aLYtSCGKPlkKM2i7dnh//1FGICtddQ1yXxVIKGBuRbSziBpu+Ix9/qxoDty3?=
+ =?us-ascii?Q?Q6L2dfwjbFHjXPvfLc5PsZs62AfODepIOmOz6xgd8PcOcxJ6rrdRwRaODr6/?=
+ =?us-ascii?Q?kBBt08OSSmjhfkTedT8sn93Zah8jGVJPgvdrb9mZ5v5mfq3q9uWnJueQ2VON?=
+ =?us-ascii?Q?OaH+oh19vo5XP1rc47NYTt1orP5btZVGjJn5o/crhyimqziyBRvgMz2CSPpt?=
+ =?us-ascii?Q?KVyQmtMkSs9wh8qf1pSh9UchvekTJSwRgzs6Ao6lQaRilYt93OqFrmFQtNa6?=
+ =?us-ascii?Q?tFjSFfH1Vr516BArlR7dKz2kD29T46AQ6Iwk?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS8PR06MB7541.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018)(921020);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?OceKOBnwOyPHzGL8mEyAMg/sGYhuaPjAOTrKeeLHX96GxF2vuuvLA7eRrR0C?=
+ =?us-ascii?Q?gFK1b2pr7j+Ve9jlN7sXaYRPPbTmqatHA4Bw4YpkoSSd20r0OLhuTUraJ3wv?=
+ =?us-ascii?Q?ZVRWZhM8NBvS3oM7+y28NvUvA7r+ksyeEuFRpJc2yPCq42PqGf1d/KBYEyGU?=
+ =?us-ascii?Q?u51MrUHxIe9D0/KCEkT8YQqmFLPcpab9oG1vxTHRZHdn0USZofHQkhz6KXpY?=
+ =?us-ascii?Q?fQuFSirtefX7dhjmZOq0n0SVHLtp1PsJBupnNYhf9Q2G8vAHOX9I5eDXnCPB?=
+ =?us-ascii?Q?ZdIy8PjcCvBIYSoDRJ7ih+zt2iGStL+aRzcGnIEAN2pwVPWO0rCFdf2icMrt?=
+ =?us-ascii?Q?dqb/nytbqLRQHpfdMihiW+3CTTuI9Rj8+AoW92z+ZUu7jdM9fOZhPPCmSya8?=
+ =?us-ascii?Q?K9QEYbWp1SVv8R9bmShnjFmOzJB7+3Us/mivj+DHw3xS1FpL41Jw7R8A3L0h?=
+ =?us-ascii?Q?rtNJVJlAq+ylEMH7BFvt6yCYqrrTZ/qs0PGD0o/8CuUN2h/RnmnHNhy/uuKp?=
+ =?us-ascii?Q?H/x+Pt+IwMPZ3zGRJYK2qsYXl7SneS5h044cOys9LMz7tKsDZXfzbe7N/Mp1?=
+ =?us-ascii?Q?5GFkCAhvyVkTRxIqhHS1NXJIH5MuFmbbkKhA9qXkyDL2HvEqynoaVJgLxEX8?=
+ =?us-ascii?Q?2d4pfXnfUIRNV+RWZ0n7U+QShFmbb286PxInCH5CwPE2RJJKH7OsCkVNvbUA?=
+ =?us-ascii?Q?eWOvvMmNoFqg/HcFEVt7PkWwHFwpRoxqNyNgnyywqWfdbsVZyYY9S/Hc7xck?=
+ =?us-ascii?Q?3FFqGEDmwwinERXj7Zrz4RsL/xja8Q9GFWtLukFWqnqB43UhcwI5jeoKpfI3?=
+ =?us-ascii?Q?GMForSD9PTBfdtTZtD1G1PKEbq7/UGW5vsbNPCOqmbXwrvOTV4jaJOkB2ypc?=
+ =?us-ascii?Q?S0x/yfqQBVTm23dp0BDF35ud9q1gWcKZ5Tq1SWH7z3E5IphHaLuZY2uCzvme?=
+ =?us-ascii?Q?l7X0nXXD2JvEaP4tZBo78Lzrgw8O1KnIaLF5P0VLr27Qu38VN6oER6Vh8Q/c?=
+ =?us-ascii?Q?mGaZTInyuW3YriJ++r1yE4ymtc5VihS8J6GyvXRLczhEHxeraKoq+wKPITK/?=
+ =?us-ascii?Q?LntlN6YaoJHgffDSq8whLclfNoQhXliqHZEWdcimS1/ZpE40javBgt8Ws6kj?=
+ =?us-ascii?Q?GmS069MbAcU9qKEKjr8MWGu/6apcxDIC13PFzoJdnCPnYDLhSZR+Z82bQnmz?=
+ =?us-ascii?Q?Yr7Wfe/JqM8wre5D51kGB0t4l0ZzYu68i9lcZI0ni8hXChBA35XtbrxrKVF+?=
+ =?us-ascii?Q?xUQrIZA2o4VM8OwMEvflbb8a4FpyEie9y7vVtXfoVGNnH7wVH0HsgRByoOXo?=
+ =?us-ascii?Q?KtVlrFlqyQWRB+kxiK9/vUVDymdXV4bIJDtX2cCLHVqiqgj2Qq/vhzCx+hV6?=
+ =?us-ascii?Q?0/YGGJUnFOAS4og+BB8aerphumhq5kLwf6IRYwbow0M7J4sx39lfOv4U9aOz?=
+ =?us-ascii?Q?mUts8ucsZrSXVOiYAwb3avT7zlOU415VsXkJXdLHJatNqngfFsgb+vaDxFjf?=
+ =?us-ascii?Q?UNIfV6utA8vx6JdmjWMdnZbIcCEBwJss2t6/IKNg7ENqrYwMznVgP3oTQcpw?=
+ =?us-ascii?Q?18dR0VEiGO4Oq2rJMWeeF0hmjmMN/SEmJ+XWZwJr?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250825-wip-mca-updates-v5-15-865768a2eef8@amd.com>
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS8PR06MB7541.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9cf8a978-0f97-49a8-da11-08ddead11d95
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2025 10:03:22.1243
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /bKtw7tRmQqMCisYTUoo86m6mlT1tGxR3qimBKXEieLXlK9Wb83Pc3RsdCPsABUoVhWogpfvIUERnIEpzWSiM95iZgKOOAXRQ1i7S+8MouU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB5382
 
-On Mon, Aug 25, 2025 at 05:33:12PM +0000, Yazen Ghannam wrote:
-> Scalable MCA systems have a per-CPU register that gives the APIC LVT
-> offset for the thresholding and deferred error interrupts.
-> 
-> Currently, this register is read once to set up the deferred error
-> interrupt and then read again for each thresholding block. Furthermore,
-> the APIC LVT registers are configured each time, but they only need to
-> be configured once per-CPU.
-> 
-> Move the APIC LVT setup to the early part of CPU init, so that the
-> registers are set up once. Also, this ensures that the kernel is ready
-> to service the interrupts before the individual error sources (each MCA
-> bank) are enabled.
-> 
-> Apply this change only to SMCA systems to avoid breaking any legacy
-> behavior. The deferred error interrupt is technically advertised by the
-> SUCCOR feature. However, this was first made available on SMCA systems.
-> Therefore, only set up the deferred error interrupt on SMCA systems and
-> simplify the code.
-> 
-> Guidance from hardware designers is that the LVT offsets provided from
-> the platform should be used. The kernel should not try to enforce
-> specific values. However, the kernel should check that an LVT offset is
-> not reused for multiple sources.
-> 
-> Therefore, remove the extra checking and value enforcement from the MCE
-> code. The "reuse/conflict" case is already handled in
-> setup_APIC_eilvt().
-> 
-> Tested-by: Tony Luck <tony.luck@intel.com>
-> Reviewed-by: Tony Luck <tony.luck@intel.com>
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Thaks the review.
 
-Some touchups ontop:
+> Subject: Re: [PATCH v2 1/4] irqchip/aspeed-scu-ic: Refactor driver to sup=
+port
+> variant-based initialization
+>=20
+> On Sun, Aug 31 2025 at 10:14, Ryan Chen wrote:
+> >  	scu_ic->irq_domain =3D irq_domain_create_linear(of_fwnode_handle(node=
+),
+> scu_ic->num_irqs,
+> > -						   &aspeed_scu_ic_domain_ops,
+> > -						   scu_ic);
+> > +						      &aspeed_scu_ic_domain_ops,
+> > +						      scu_ic);
+>=20
+> Please move scu_ic to the previous line.
 
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index c05d9c6f07d1..5722806ccaa5 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -54,8 +54,10 @@ static bool thresholding_irq_en;
- struct mce_amd_cpu_data {
- 	mce_banks_t     thr_intr_banks;
- 	mce_banks_t     dfr_intr_banks;
--	bool		thr_intr_en;
--	bool		dfr_intr_en;
-+
-+	u32		thr_intr_en: 1,
-+			dfr_intr_en: 1,
-+			__resv: 30;
- };
- 
- static DEFINE_PER_CPU_READ_MOSTLY(struct mce_amd_cpu_data, mce_amd_data);
-@@ -508,9 +510,8 @@ static u32 get_block_address(u32 current_addr, u32 low, u32 high,
- 	return addr;
- }
- 
--static int
--prepare_threshold_block(unsigned int bank, unsigned int block, u32 addr,
--			int offset, u32 misc_high)
-+static int prepare_threshold_block(unsigned int bank, unsigned int block, u32 addr,
-+				   int offset, u32 misc_high)
- {
- 	unsigned int cpu = smp_processor_id();
- 	struct threshold_block b;
-@@ -652,11 +653,11 @@ static void smca_enable_interrupt_vectors(void)
- 
- 	offset = (mca_intr_cfg & SMCA_THR_LVT_OFF) >> 12;
- 	if (!setup_APIC_eilvt(offset, THRESHOLD_APIC_VECTOR, APIC_EILVT_MSG_FIX, 0))
--		data->thr_intr_en = true;
-+		data->thr_intr_en = 1;
- 
- 	offset = (mca_intr_cfg & MASK_DEF_LVTOFF) >> 4;
- 	if (!setup_APIC_eilvt(offset, DEFERRED_ERROR_VECTOR, APIC_EILVT_MSG_FIX, 0))
--		data->dfr_intr_en = true;
-+		data->dfr_intr_en = 1;
- }
- 
- /* cpu init entry point, called from mce.c with preempt off */
-@@ -669,6 +670,7 @@ void mce_amd_feature_init(struct cpuinfo_x86 *c)
- 	amd_apply_cpu_quirks(c);
- 
- 	mce_flags.amd_threshold	 = 1;
-+
- 	smca_enable_interrupt_vectors();
- 
- 	for (bank = 0; bank < this_cpu_read(mce_num_banks); ++bank) {
+Will update in next version.
+        scu_ic->irq_domain =3D irq_domain_create_linear(of_fwnode_handle(no=
+de), scu_ic->num_irqs,
+                                                      &aspeed_scu_ic_domain=
+_ops, scu_ic);
+>=20
+> > +aspeed_scu_ic_find_variant(struct device_node *np)
+> >  {
+> > -	struct aspeed_scu_ic *scu_ic =3D kzalloc(sizeof(*scu_ic), GFP_KERNEL)=
+;
+> > -
+> > -	if (!scu_ic)
+> > -		return -ENOMEM;
+> > +	for (int i =3D 0; i < ARRAY_SIZE(scu_ic_variants); i++)
+> > +		if (of_device_is_compatible(np, scu_ic_variants[i].compatible))
+> > +			return &scu_ic_variants[i];
+>=20
+> the for loop wants curly brackets.
+>=20
+> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#bracke=
+t-
+> rules
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks.
+Will update
 
-https://people.kernel.org/tglx/notes-about-netiquette
+for (int i =3D 0; i < ARRAY_SIZE(scu_ic_variants); i++) {
+	if (of_device_is_compatible(np, scu_ic_variants[i].compatible))
+		return &scu_ic_variants[i];
+}
+>=20
+> > +	scu_ic->irq_enable    =3D variant->irq_enable;
+> > +	scu_ic->irq_shift     =3D variant->irq_shift;
+> > +	scu_ic->num_irqs      =3D variant->num_irqs;
+>=20
+> Please use a TAB not spaces when you want to align things.
+Thanks, will update
+>=20
+> > +IRQCHIP_DECLARE(ast2600_scu_ic0, "aspeed,ast2600-scu-ic0",
+> aspeed_scu_ic_of_init);
+> > +IRQCHIP_DECLARE(ast2600_scu_ic1, "aspeed,ast2600-scu-ic1",
+> aspeed_scu_ic_of_init);
+>=20
+> Stray TAB in the last line.
+Will remove tab
+>=20
+> Thanks,
+>=20
+>         tglx
 
