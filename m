@@ -1,110 +1,159 @@
-Return-Path: <linux-kernel+bounces-799548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 510D0B42D6E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8656FB42D6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CBFB5659F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:30:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D89F565962
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687222EA481;
-	Wed,  3 Sep 2025 23:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33BA2F39A4;
+	Wed,  3 Sep 2025 23:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kqMCSkDl"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CETVKolm"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42578288D6;
-	Wed,  3 Sep 2025 23:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4011459F7
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 23:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756942211; cv=none; b=FQs9A8axxzDm9EbmSfVDUN7gL3GpFVGaxVz2rqRhvi89HgJ1plJNnN/mF5iErKrFiUUWWWsdyCTVba6ke/t9En2suMTAVUYup4mxj/GBR7Dw9G2TdRAvBq+ZJCgevo7lv8tFuY1Fjb3vhW2PYtgrMz7Y+VtItXz5XB0w6+2DQwY=
+	t=1756942203; cv=none; b=dqBX8IRJ4Laad/O1tBpxTNdA4titq3wcqfLavDn/qCX8iaplk7GvuqeIK24kVyGYHyiP8ELFRQwRuoXw4tBQfQIcbVAvM4gUlJURZ0eR2k+dpL6pC2TcJlQCHvsqHw6n24dBIfo0H7hDZ4MpN79l814NVIvxhWEFrVXwfzHSHec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756942211; c=relaxed/simple;
-	bh=tOm1R75Zi2GL1DQGYVjsuIqlob093ahY7XWmOs55O34=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=biWAALc/zepZtE4TTyr6Ci1pZxfoyaNvG8tXSGrUWdqic9B5CtFj2UwxY/AGJTae8TNKPqWhidDMBm+AZ6C/aZb0k+1+UPK0h6d1nx28xjm76hEur1Opx1Ju3VIgMGxZ6npQ4Xc+66onJS53a9I1yh6gEufxkjEmf+9RdisBMIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kqMCSkDl; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3c68ac7e18aso337644f8f.2;
-        Wed, 03 Sep 2025 16:30:10 -0700 (PDT)
+	s=arc-20240116; t=1756942203; c=relaxed/simple;
+	bh=GNr7VFuJevqVS2hBqVOZK3r8mR73l9bbWq/xzZ2iqUk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E37nxbGYFxZanjAXavpXAlNi9n3Fa7/VRab8Ml7NtvwgYPFwK5TdkYmwyPuHYfna3wxuip16Kj/iHO/S6AITJxexH96vGqEzoJZ6pXTlgVPFci0Ip3hpc1/sfz92Dm4YPD8RFaQ1Q6A5NujdgM61xFMFMz0hUd/FxFEJVXNgafw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CETVKolm; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3f663225929so3146155ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 16:30:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756942208; x=1757547008; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tOm1R75Zi2GL1DQGYVjsuIqlob093ahY7XWmOs55O34=;
-        b=kqMCSkDlDqvtKnSWYKpawSVRWRzk7cqGx1fGp9B95WXvfUeTw/NrV4CFn+w/o0+ddf
-         Tex0lkAuk5jrwVVWUGXk8ioqHbZ3PD7XCHmc6La98UBqNnBG3n6PWSwH/SJwa0OTZIdh
-         /OAqgjgw7olL09VNCY0ZG0iqksRVYmByFnfn5zOaQOZ+PO7kZfeE5pS1U4WDfIJwULtT
-         vn+rJGBYxX6ALIZTfuBUiP7gyJKrV/ZP2RqMCrh3rZjhGQIgXjVgtx/ROMu3wIwhGs59
-         87ZGSI4hlQn1q7mb+lLMUJ6aXJa7Dn7ZMf/qhD38XY6wYczPnN+4GKZ3s1fSZM/u8r3Q
-         4TsQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1756942200; x=1757547000; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YvqGMPyp0FchAqYhsEWYsUXhRgyEZLtEOdipJAz6MGY=;
+        b=CETVKolmy87znVbk6iJqY3eDsDZ0h3twv4RoqNGsUyyIDxO4OEZVtYDKXp3uFz/jKD
+         UApC/7NWBsZGrFhbr+KyBgLg3Lx3mDVRkCoPBlpFcRcQEKkEMGGAlEW6iDxcUVOhL3AK
+         JA1KAeBFepn0XxR8VdNMS2/YURh4qM8cG574aPGE3cjyH6rJivGtNAnM99zlhKNL+D2B
+         707BV5H0CJjbMxtjZ3BlraLvtDg4Ki/eL8Wk1e9y9EmfgI4IdtQRQJx5EJNv/dwGdFqT
+         GAr8BB9cevE+tRI9t1Zx1yZW2Rky2N1JGYsxRsHEBNsGLjo7Eyc1DDSz3Y2mG9MJNWot
+         bykg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756942208; x=1757547008;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tOm1R75Zi2GL1DQGYVjsuIqlob093ahY7XWmOs55O34=;
-        b=ZEm8eDqoABgB8BYnVcpuZLfbMEyEJk75unMZWxRqnMX9HwBXXaIqWkAtryneaKnMck
-         KK2QFi+XlLbmROQ+/8nyTwXsX/zeht0323Ic/kCRx48rR6Aa03nXzeIPQ00u+iRotWgh
-         TCUqVBh6iZk3WA10qpge2Eogh6eoqSlsWY07M5rTWjyVVRdiFU1dQx44DEtNxLYNKk/N
-         1WIJVm33a6JAvb7eZylW49/Ule115b5r2PNH+Dxu+TRdnHau0vY7IXnPTU95UX2JuzS6
-         dRRn04gYYhHio0aO4ahH9zz9t0o861jl/ANXgIt5c5k/95BmVD+LfkCs8Qq+rmDXYsAV
-         HTcA==
-X-Forwarded-Encrypted: i=1; AJvYcCV30UfDgQaWPRU9czMatvZKHj5zOJqBXndJNQsZGm/cMiscvjhjBS83Us0Tm85IWqUaPu8qTiT/Fw2qHx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcyzY3QaTD+x89ECJE1Ki415LaGB9xYB6ML/QAnS2P4GEcSPSB
-	olc553S7c7PswcrROF0/9aNjengFgOtNOjlrhnHIsaociz7Wg9MPN7W5/SXgg7Hrt+zrJQn447l
-	JMtixHGQkV99wP0hxSmHYAyNwKaSGKCrcRA==
-X-Gm-Gg: ASbGncv39qDFzsTtgqkTPDE39IyuPPTP2/cRFjbfTE0H+PCZ/pWYzXHXpb5YoFsoccX
-	pi74mNkQkyLU+fgbyO7PPJgO1nkgKBCiXQalpOuRT+2omI6PxG10nEQb6PGewx0hZdoxkq1Quj2
-	T8w5eN5agW4LoFDOHd2ZI0uiJl+RfLBdlt9cPFPg1eue/e1YhxXrhHM1HmwHaDS01Ys4wHr5d4h
-	NfepmrMyJBoF7O/fawHKqGMQE0=
-X-Google-Smtp-Source: AGHT+IF8L+179v7vSkAjD+bromtswbvUOupCSyrcswKJhAD2VV08XKPi+T9IgPnIoqK8NoCe4YXPUlVRK2uAgChZMZg=
-X-Received: by 2002:a5d:5d02:0:b0:3d5:55c9:f210 with SMTP id
- ffacd0b85a97d-3d555c9f811mr11167080f8f.40.1756942208337; Wed, 03 Sep 2025
- 16:30:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756942200; x=1757547000;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YvqGMPyp0FchAqYhsEWYsUXhRgyEZLtEOdipJAz6MGY=;
+        b=Rn4u/VT2CiRaSqG0LBd60ov2FnrfW8ldqjEV9VFrEqZK1kccAAJYXSyXlmcakmTxg9
+         Nc2byl+yducmRUa+M1fCxjZSbxNOlPy6QYFUlMHlTmtQb94ywElGHG+jv7dYXjA8COC+
+         JX0kiT1kw/qlzEWWBZpVdQQ7AHDJXHs+pucei9xFuQoD4E4/LQg/AKGtOET6fUCrxDtZ
+         u92SFPskHhQESI0cxm6e2jPsSR7D0pwf3oHVWDfG31vUi/jZR10U5N0craOHSqe8KuPz
+         7J82FV2m1GPxxLtt3LCgjdDdBjrptPfntse0A9vGwpjgt/s4w7K45a8yv32QXfDIIkcU
+         zuLA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3RAksG629bVUrfeEN3ifxpAikBPvDuq5eckFJzOa4HwbOD7QfX9K8EQKOCMqhRcCqa+q5z/9BWPrypIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBJCWAhEEvFz7qPcwLaQHjqr+obky6nkwPcNjKxA5EFoe8oubW
+	BD/5gIp+XP24QvOGnDSusJoasFFZ9daLlx9rhJ5pwd82LPwaHxD0inTDmVB74s3836o=
+X-Gm-Gg: ASbGncuKbARMrakfzMDWjnpDx+ZD3JyXk2Qtceuhr0ogZLKQUQDdOn6vWPTXK86G8Um
+	xlZZ+mxwcnx7XWkCylbNcx7NZXFObI/ujE4kEw6DXY81DfD33gWn44MqboGxae3ZOvJA82QAbuJ
+	81VzHxbvMxHFzTd3g85s6osPJy6UJHowpiR9k0BbsMcXGbIV12SeZRBlOCrIuKQcAvKuzJnwCct
+	lPes/ByrS6IeleBir8axgxAdjNq/y0shYRoELB0SRRkYQgOpczgGr5+5VjIX1YJvcFoUB4F84k2
+	JuIUonUG/U9FM9RdOm1JTF+NkODqeIkGUXEjSM3GfW9zdBOoqpCjTUylwW/NJxwxnJKjwNHqze4
+	tZ3CZt6Zx2TOgMWOqn15eY4C7UwQT
+X-Google-Smtp-Source: AGHT+IHu4lmtN61kR+SUYR1vSljYZPLL/bhjVNR3pwIPbHq7Flpijoa8vuWAQObGbrdcYyjDn0HhKA==
+X-Received: by 2002:a92:c24b:0:b0:3e5:53da:3d7 with SMTP id e9e14a558f8ab-3f400097e47mr319540815ab.6.1756942200159;
+        Wed, 03 Sep 2025 16:30:00 -0700 (PDT)
+Received: from [172.20.0.68] ([70.88.81.106])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3f3e07ea071sm56727295ab.31.2025.09.03.16.29.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 16:29:59 -0700 (PDT)
+Message-ID: <26aa509e-3070-4f6b-8150-7c730e05951d@kernel.dk>
+Date: Wed, 3 Sep 2025 17:29:57 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903175841.232537-1-dwindsor@gmail.com>
-In-Reply-To: <20250903175841.232537-1-dwindsor@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 3 Sep 2025 16:29:57 -0700
-X-Gm-Features: Ac12FXwgCupOKB0mkWN2xGH5nrgWQIsf7aDXwPjHSZDu08GuMBC_E3mNaiTQHuA
-Message-ID: <CAADnVQLRhdLkZB8wFybofC8P8AP9sruMHzaYJbB4zUAKAv87dA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] kernel/bpf: Add BPF_MAP_TYPE_CRED_STORAGE map type
- and kfuncs
-To: David Windsor <dwindsor@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot ci] Re: io_uring: avoid uring_lock for
+ IORING_SETUP_SINGLE_ISSUER
+To: syzbot ci <syzbot+cibd93ea08a14d0e1c@syzkaller.appspotmail.com>,
+ csander@purestorage.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+References: <68b8b95f.050a0220.3db4df.0206.GAE@google.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <68b8b95f.050a0220.3db4df.0206.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 3, 2025 at 10:58=E2=80=AFAM David Windsor <dwindsor@gmail.com> =
-wrote:
->
-> All other bpf local storage is obtained using helpers which benefit from
-> RET_PTR_TO_MAP_VALUE_OR_NULL, so can return void * pointers directly to
-> map values. kfuncs don't have that, so return struct
-> bpf_local_storage_data * and access map values through sdata->data.
+On 9/3/25 3:55 PM, syzbot ci wrote:
+> syzbot ci has tested the following series
+> 
+> [v1] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
+> https://lore.kernel.org/all/20250903032656.2012337-1-csander@purestorage.com
+> * [PATCH 1/4] io_uring: don't include filetable.h in io_uring.h
+> * [PATCH 2/4] io_uring/rsrc: respect submitter_task in io_register_clone_buffers()
+> * [PATCH 3/4] io_uring: factor out uring_lock helpers
+> * [PATCH 4/4] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
+> 
+> and found the following issue:
+> WARNING in io_handle_tw_list
+> 
+> Full report is available here:
+> https://ci.syzbot.org/series/54ae0eae-5e47-4cfe-9ae7-9eaaf959b5ae
+> 
+> ***
+> 
+> WARNING in io_handle_tw_list
+> 
+> tree:      linux-next
+> URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next
+> base:      5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
+> arch:      amd64
+> compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> config:    https://ci.syzbot.org/builds/1de646dd-4ee2-418d-9c62-617d88ed4fd2/config
+> syz repro: https://ci.syzbot.org/findings/e229a878-375f-4286-89fe-b6724c23addd/syz_repro
+> 
+> ------------[ cut here ]------------
+> WARNING: io_uring/io_uring.h:127 at io_ring_ctx_lock io_uring/io_uring.h:127 [inline], CPU#1: iou-sqp-6294/6297
+> WARNING: io_uring/io_uring.h:127 at io_handle_tw_list+0x234/0x2e0 io_uring/io_uring.c:1155, CPU#1: iou-sqp-6294/6297
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 6297 Comm: iou-sqp-6294 Not tainted syzkaller #0 PREEMPT(full) 
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> RIP: 0010:io_ring_ctx_lock io_uring/io_uring.h:127 [inline]
+> RIP: 0010:io_handle_tw_list+0x234/0x2e0 io_uring/io_uring.c:1155
+> Code: 00 00 48 c7 c7 e0 90 02 8c be 8e 04 00 00 31 d2 e8 01 e5 d2 fc 2e 2e 2e 31 c0 45 31 e4 4d 85 ff 75 89 eb 7c e8 ad fb 00 fd 90 <0f> 0b 90 e9 cf fe ff ff 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 22 ff
+> RSP: 0018:ffffc900032cf938 EFLAGS: 00010293
+> RAX: ffffffff84bfcba3 RBX: dffffc0000000000 RCX: ffff888107f61cc0
+> RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000000000
+> RBP: ffff8881119a8008 R08: ffff888110bb69c7 R09: 1ffff11022176d38
+> R10: dffffc0000000000 R11: ffffed1022176d39 R12: ffff8881119a8000
+> R13: ffff888108441e90 R14: ffff888107f61cc0 R15: 0000000000000000
+> FS:  00007f81f25716c0(0000) GS:ffff8881a39f5000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000001b31b63fff CR3: 000000010f24c000 CR4: 00000000000006f0
+> Call Trace:
+>  <TASK>
+>  tctx_task_work_run+0x99/0x370 io_uring/io_uring.c:1223
+>  io_sq_tw io_uring/sqpoll.c:244 [inline]
+>  io_sq_thread+0xed1/0x1e50 io_uring/sqpoll.c:327
+>  ret_from_fork+0x47f/0x820 arch/x86/kernel/process.c:148
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>  </TASK>
 
-The commit log tells nothing about motivation for such "cred local storage"=
-.
-Technically it's doable, but sorry not going to.
-cred is not something that needs fast access and automatic lifetime
-management. Use hash map with 'struct cred *' as a key.
+Probably the sanest thing to do here is to clear
+IORING_SETUP_SINGLE_ISSUER if it's set with IORING_SETUP_SQPOLL. If we
+allow it, it'll be impossible to uphold the locking criteria on both the
+issue and register side.
 
-pw-bot: cr
+-- 
+Jens Axboe
 
