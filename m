@@ -1,177 +1,125 @@
-Return-Path: <linux-kernel+bounces-798034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1CEEB418A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:33:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB3AB418AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5FA3AEA4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:33:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6229320708A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2BB2E719C;
-	Wed,  3 Sep 2025 08:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE852EAD1C;
+	Wed,  3 Sep 2025 08:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gOidAohS"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7JR/Hja"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6F4EEC0
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2170B2E1C65;
+	Wed,  3 Sep 2025 08:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756888426; cv=none; b=pr+Ut9HoLrmL3VaqZAiNHXi88acCQ9CK5dR6yVLIpElw5mjUj1qIL+A8MAjXn8pRvh3S9Q4gy6vIFfrnlCI1xIXsUxqpGXbWfO6SD5TTqt4/yPmMCyxeD+b0iG5vTEY++Qmf66j2aoxaO6+m42LW8ve7iHCBtqkKRkfVq2XXyOo=
+	t=1756888551; cv=none; b=ptMd2EatStp44Z+Jah6z23aZEL5NY5hDWX/njKm2vnpyLej/c0B77/Ewm+mLJX6BF8UfzjHqDjXYFe1HLCyO3v5Cs7S4SFZA9mrADrILUsWQLRe3DfuNdZ2DFjuQDRbCa6Ql9mo54RXMQg/wPCDP4mhBRMJNTaBi+rD93/uHNv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756888426; c=relaxed/simple;
-	bh=5JjXs/rejxxYrw6K8OJPrjT2P7IUPezcjLzaibZ5qlE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TM6rzRQ29GpET9/+we6qZOtwErXeq6tu3YLCpSyHd/M2/hlc2OSLZMTWi1TvOmDxIutPPbtLQrr/ZGBmfakUxNGHo+zK0Gr3COSoHl+K/59JTgT7mw/PS8sWqgt/HdY8e3Tl/zt5JHEw+71f+INQh8QV9zZeYE8loM26ekxz2cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gOidAohS; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b046d1cd1fdso5197966b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:33:44 -0700 (PDT)
+	s=arc-20240116; t=1756888551; c=relaxed/simple;
+	bh=FXpJSaReT04wGYnyjEuW0itvPN0byZHu1d9vbckyoXY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pG6PdbsebBkkXSLIsPBS0Jjzlww7p/4HH/79xh5igOpbfRIdepIspiJnnxwxAj2R0Kbc0gtK/upHuEcpT05QAde1GPqv2k8etAy8yp5zM/6/AqRubntxY35vdnE755Dgd1okMZEmYC4J/fyPxOusGPWWznwTY4TAPxMs6KHRQ+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7JR/Hja; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45cb5c60ed3so748035e9.2;
+        Wed, 03 Sep 2025 01:35:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756888423; x=1757493223; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ACBHr8NfKb4KEMutVyQMnq5jr9ymWyUyWjylgBNBrHc=;
-        b=gOidAohSTiPc9mN1S0UtZnAFc/qAFHNGn3ZPrgr24p5X31Kwb2QovDMwl6JMkJcRQp
-         uNXf+opW2RpV4khHvZLN61PVoB3JnMs2nL2+T9H9lIE4IiR5RtgtgQy6N+tsIytAfXqP
-         HNnnXISNSAGAZdVSQAi/Qi2cO2P78a4AVpCE2CPCN57FdzG+YHCDOy7mGKbupeGyFhpX
-         KylEENeHmxbxhc68thnVjy8s52DHIpsoSZYgfst5pgTkJeXl/mUtjQBrjt33tFF0BfTV
-         OoyG1LTDM/AD4MEA9Y2sQD9kZrhnz4GSE4rTSBluPG++kjYCTQhXvTIeNSEfgLKx613S
-         JRhA==
+        d=gmail.com; s=20230601; t=1756888548; x=1757493348; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tBLclJ49GwXW6Sl/7GWX5bwphgDLjuO5JM0C91emygw=;
+        b=V7JR/HjaaeG0IvfXZ4y0MGKwyoOVlry/LZwt7hoBgn7JqREXWSWi7eqPMxCUUdjwJX
+         Oad3HmWOoeDY+R2bg/0EYViesa3reVHxXJQa9VQ5dgPYq8+yg8kJq9dvpA8Gr8OehVOW
+         U6J11s/a2upWuXv1cz4el95n6aRaPnaRGqapgsBh574ByDs+UQmu3yDGjy9y97Bzoo2n
+         YXhQDw4j5vbBb4Qo7ZIuPWvNKyMS7aLDNDuiCJi27ScjfB1KdfgiFkldVH5oifIR0J/v
+         cZzpL2XVYvBbYI/rYivF0pMlYBHG8AoK3iVKAqOuAHedNu1vEdUvc3mSdrGECkNC1/2l
+         mugg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756888423; x=1757493223;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1756888548; x=1757493348;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ACBHr8NfKb4KEMutVyQMnq5jr9ymWyUyWjylgBNBrHc=;
-        b=PjbxxFFp3HgydIPoTVBK1dG4llh2LDT4MfcARhrRqxkw1fh0xhelm+XK+G0MDzoXjU
-         QxI/7G/+jQQXdMyfJXZr5ooYtXIdJ9j0aCDE9zxdulAdduWKIvHm+8tU/Jf52wCSd5tH
-         HQQ4Uhn6qWjyFHdpPswxVfP2iGg+GxrSgLSZjCp7UPjqoHVhTqfU+RyUfdw0Wf58tTa8
-         G+yXNdJ4VZLfuiOWmOGVvkbFEXAJlTARY7iUfsLB9o31qZ5Jz4Xa+UujkMzoxqNmajFd
-         5nV3IU+rn/tUg5tI1XfdnljwruRGhhEpP9oLsvnFYozAEOHsSiSrYIXNX5JlDqI1REdT
-         jJUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVA2M+Phiu8sYG75LCgQXJRqnT2iZra2duCILoDYeIZrr46M4jGBQmajgMY5D2IENOQ9XFnQRLSOnIdDvg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTDpw89uZD11XEvwER8GRSrJjKzNu0ow2/ON87R2HYf+WJxsKU
-	iKrMG6fuA8CQUfKiE6zLT2v3q2eUc6PlktMf2PKMF0SmBcVEHjUJQBoDMwr2KXieTN8=
-X-Gm-Gg: ASbGnctF9vDm/0zGW6yMy3JVJuQqSMxOE7mABhs+8wedrwJrCR3Xd32e+x/Huc1B7m4
-	Lk/fzwBuiSBcRSEQvFxtSCbZW/E1Ib0eMS4NdKkNUihKch9zxJKoX91cw6v6iIIClKza3OIfKTu
-	85Fc2fPfDwzVh3X0DduH0hd4G6LKCvyihbMPAZqB9hwzIaOVbYOfQaDe/vIrpZFEy6OGx82AmI3
-	OCEPPd5yI4jYJ6N7EHwvzJgucY1U6ODgfMkoEIq67hm/IJh9VfNcJq5F9HcQM2p/sVc8AUrvm/s
-	1q5TewgsqVpAZeh5rsOU6X8SQ5Mrj/kbj5W7AzRWvJazQIFHngiKyDChaUdGvCUc3lUETlju1vB
-	vnvFnn2K5RptEVVbM4tb+F8eBAqHAe2tqzKzukbYpTDg=
-X-Google-Smtp-Source: AGHT+IEh6tjHeFfJIDCd8AKcwONOhnH25T4xzmJnYzxd49mM1RN2+9yjvTmGddLtFB3bt6z3KxaSrw==
-X-Received: by 2002:a05:6402:2105:b0:61c:1bb3:2473 with SMTP id 4fb4d7f45d1cf-61cfe999d10mr9232214a12.3.1756888423438;
-        Wed, 03 Sep 2025 01:33:43 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc231561sm11146936a12.23.2025.09.03.01.33.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 01:33:42 -0700 (PDT)
-Message-ID: <b50f9d10-88a3-4b1c-a75e-6c67b9d1504c@linaro.org>
-Date: Wed, 3 Sep 2025 10:33:41 +0200
+        bh=tBLclJ49GwXW6Sl/7GWX5bwphgDLjuO5JM0C91emygw=;
+        b=alzb2EmxJRXa1oYOajMtI6EeXKZJ+QomI/l/ppaTYrpFzrfS5Rn5HM5srUK09UHH1D
+         PV8FmCITay5zOJ6BdvZS3QdXq5pZWBr/5ILMNYCo/GglDVSTgQVUOq8iMMfmOmkj0D7W
+         EjBC13fQp5kQ+eB+kyjcaiXYAGO2C3rIW4cANJ24TvORbRfn1XjXuyzyFqFVAzn6gzw7
+         INjpcTTh7H8p+9gD3uigMg2B2X3biOWoGy9zGWN+dFIs5fe2gVSKpOaR0UBb2lyA8VnQ
+         mStMpKBo69KI63G+yP3ec8hAnqPlqQH1hJ4gC864lz2BeqINkML2VdDvFdjpfw058vo4
+         9gxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhAshcs0n7n50UtHDG1WpM+WuonpPZxjSKzQLjBW1JkMXY/ehJAL/eqzobkfbhTaIA8YXKztVZt3NTNuD0@vger.kernel.org, AJvYcCVhuTXbnz7i/OHHxjp91kxe88EhhBjhMktnlHvNU/sPAQVNFkNG86aHyHOSb3sf9y6386PF5QFE@vger.kernel.org, AJvYcCXqZjYRWSKUUipac70zkQOwZ8NUD1uYQgoCiS1/9t/wDpM5R4wWmUuP52kJw//QUn+jSWtz3BYo//Zz8I8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWFrnha6rs5RQxA97uHgMEN7Rh+9cWct/aNNLKzi+Ia+Y5T2xp
+	ou/WhCdZDvb0146BYmSqFgiIN864vtIUTNTxmNGh8QmIUiOnqfO6Dtd5
+X-Gm-Gg: ASbGncsQTZWdI8HFC5bKPf3m++LNsANXUbn3zlZRxd4rD+uSy23L71UprTrkwX82XSG
+	NMPFhy8WOaQd/TpPuAQcbhSCqWUvUHbbTPjtRt/A6dNn1TDvohFGMluZe31A3muMqV/eLsZaJfL
+	jaOBD6hqOD47LwKF618kIQAjLQ5Q4dGMHbNIbsggohKwW0BEY+K62kDIXYx0Ao/JnXuRvMLSvNG
+	x8NVtVLbtx/QHmcqKDR+D2QyKm5eVCpm8pkA/Dayf1noXSM/Ub6livyzU0o0PEe6CGd0d0jmPT9
+	mEH9GO0y81keee0fokchMoAFqKMeQ7xtbW8MpEVeXT54Ae015Grjir1e2bcFPAg4scBVqnUtrAU
+	TwG8UNfEpYv29XsbtPWc1pcJxI7NDu+G9nlm0jVoF/4qiHXu9Q6lNT4uypkN1nA==
+X-Google-Smtp-Source: AGHT+IFW9ALHmxwCXj4TL9k6+4FVJDaJACd/tV4951OuhZUxWmtj7iVAKFlPyglc3iIZQiAhzOjBKQ==
+X-Received: by 2002:a05:600c:3486:b0:45b:71fc:75cb with SMTP id 5b1f17b1804b1-45b802d2fa7mr81398485e9.5.1756888548145;
+        Wed, 03 Sep 2025 01:35:48 -0700 (PDT)
+Received: from thomas-precision3591.u-ga.fr ([2001:660:5301:24:6179:26f2:8797:e6a9])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45b87abc740sm164460585e9.7.2025.09.03.01.35.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 01:35:47 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	stable@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Nicolas Royer <nicolas@eukrea.com>,
+	=?UTF-8?q?Eric=20B=C3=A9nard?= <eric@eukrea.com>,
+	linux-crypto@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: atmel - Fix dma_unmap_sg() direction
+Date: Wed,  3 Sep 2025 10:34:46 +0200
+Message-ID: <20250903083448.621694-2-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: gadget: f_ecm: Fix ecm_opts->bound logic in bind
- path
-To: Kuen-Han Tsai <khtsai@google.com>, gregkh@linuxfoundation.org,
- prashanth.k@oss.qualcomm.com, Thinh.Nguyen@synopsys.com,
- s.hauer@pengutronix.de
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, stable@kernel.org
-References: <20250903083017.795065-1-khtsai@google.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+AhsD
- BQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmgXUEoF
- CRaWdJoACgkQG5NDfTtBYpudig/+Inb3Kjx1B7w2IpPKmpCT20QQQstx14Wi+rh2FcnV6+/9
- tyHtYwdirraBGGerrNY1c14MX0Tsmzqu9NyZ43heQB2uJuQb35rmI4dn1G+ZH0BD7cwR+M9m
- lSV9YlF7z3Ycz2zHjxL1QXBVvwJRyE0sCIoe+0O9AW9Xj8L/dmvmRfDdtRhYVGyU7fze+lsH
- 1pXaq9fdef8QsAETCg5q0zxD+VS+OoZFx4ZtFqvzmhCs0eFvM7gNqiyczeVGUciVlO3+1ZUn
- eqQnxTXnqfJHptZTtK05uXGBwxjTHJrlSKnDslhZNkzv4JfTQhmERyx8BPHDkzpuPjfZ5Jp3
- INcYsxgttyeDS4prv+XWlT7DUjIzcKih0tFDoW5/k6OZeFPba5PATHO78rcWFcduN8xB23B4
- WFQAt5jpsP7/ngKQR9drMXfQGcEmqBq+aoVHobwOfEJTErdku05zjFmm1VnD55CzFJvG7Ll9
- OsRfZD/1MKbl0k39NiRuf8IYFOxVCKrMSgnqED1eacLgj3AWnmfPlyB3Xka0FimVu5Q7r1H/
- 9CCfHiOjjPsTAjE+Woh+/8Q0IyHzr+2sCe4g9w2tlsMQJhixykXC1KvzqMdUYKuE00CT+wdK
- nXj0hlNnThRfcA9VPYzKlx3W6GLlyB6umd6WBGGKyiOmOcPqUK3GIvnLzfTXR5DOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCaBdQXwUJFpZbKgAKCRAbk0N9O0Fim07TD/92Vcmzn/jaEBcq
- yT48ODfDIQVvg2nIDW+qbHtJ8DOT0d/qVbBTU7oBuo0xuHo+MTBp0pSTWbThLsSN1AuyP8wF
- KChC0JPcwOZZRS0dl3lFgg+c+rdZUHjsa247r+7fvm2zGG1/u+33lBJgnAIH5lSCjhP4VXiG
- q5ngCxGRuBq+0jNCKyAOC/vq2cS/dgdXwmf2aL8G7QVREX7mSl0x+CjWyrpFc1D/9NV/zIWB
- G1NR1fFb+oeOVhRGubYfiS62htUQjGLK7qbTmrd715kH9Noww1U5HH7WQzePt/SvC0RhQXNj
- XKBB+lwwM+XulFigmMF1KybRm7MNoLBrGDa3yGpAkHMkJ7NM4iSMdSxYAr60RtThnhKc2kLI
- zd8GqyBh0nGPIL+1ZVMBDXw1Eu0/Du0rWt1zAKXQYVAfBLCTmkOnPU0fjR7qVT41xdJ6KqQM
- NGQeV+0o9X91X6VBeK6Na3zt5y4eWkve65DRlk1aoeBmhAteioLZlXkqu0pZv+PKIVf+zFKu
- h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
- vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20250903083017.795065-1-khtsai@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03/09/2025 10:30, Kuen-Han Tsai wrote:
-> The bound flag in ecm_opts is being set to true even if
-> gether_register_netdev() failed.
-> 
-> Set ecm_opts->bound to true only upon success.
-> 
-> Fixes: d65e6b6e884a ("usb: gadget: f_ecm: Always set current gadget in ecm_bind()")
-> Cc: stable@kernel.org
-> Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
-> ---
->  drivers/usb/gadget/function/f_ecm.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/gadget/function/f_ecm.c b/drivers/usb/gadget/function/f_ecm.c
-> index 027226325039..9f5ed6f32a62 100644
-> --- a/drivers/usb/gadget/function/f_ecm.c
-> +++ b/drivers/usb/gadget/function/f_ecm.c
-> @@ -690,13 +690,14 @@ ecm_bind(struct usb_configuration *c, struct usb_function *f)
->  
->  	if (!ecm_opts->bound) {
->  		status = gether_register_netdev(ecm_opts->net);
-> -		ecm_opts->bound = true;
->  	}
->  
->  	mutex_unlock(&ecm_opts->lock);
->  	if (status)
->  		return status;
->  
-> +	ecm_opts->bound = true;
+It seems like everywhere in this file, dd->in_sg is mapped with
+DMA_TO_DEVICE and dd->out_sg is mapped with DMA_FROM_DEVICE.
 
-Now it is outside of mutex, so this is raising questions you should have
-answered in commit msg.
+Fixes: 13802005d8f2 ("crypto: atmel - add Atmel DES/TDES driver")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+---
+ drivers/crypto/atmel-tdes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/crypto/atmel-tdes.c b/drivers/crypto/atmel-tdes.c
+index 098f5532f389..3b2a92029b16 100644
+--- a/drivers/crypto/atmel-tdes.c
++++ b/drivers/crypto/atmel-tdes.c
+@@ -512,7 +512,7 @@ static int atmel_tdes_crypt_start(struct atmel_tdes_dev *dd)
+ 
+ 	if (err && (dd->flags & TDES_FLAGS_FAST)) {
+ 		dma_unmap_sg(dd->dev, dd->in_sg, 1, DMA_TO_DEVICE);
+-		dma_unmap_sg(dd->dev, dd->out_sg, 1, DMA_TO_DEVICE);
++		dma_unmap_sg(dd->dev, dd->out_sg, 1, DMA_FROM_DEVICE);
+ 	}
+ 
+ 	return err;
+-- 
+2.43.0
+
 
