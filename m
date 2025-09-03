@@ -1,117 +1,292 @@
-Return-Path: <linux-kernel+bounces-799444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1197B42BD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:26:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF293B42BDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7279D1BC7600
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:26:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FDF34886C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6762EB5BF;
-	Wed,  3 Sep 2025 21:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA1F2EB5C1;
+	Wed,  3 Sep 2025 21:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LAMjJzOa"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AJ5QMHyv"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B7432F755
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 21:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D792EB5AC
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 21:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756934761; cv=none; b=P7S6xxWkaDqPuByVt3kWltrWltKfNS3jgN8765TxjnfWrsZmjwJjCuioCD2hXdbXLQGgajuP4Ae7O7mCio79JuQxEWZfeepHem+QrEdPmJ3YL5NIXAlT/oVUy92HqyhEacP/lU4wKJ7/xgv15PbiNgqz6gvXcsXxtnou3lAJ3B4=
+	t=1756934787; cv=none; b=Gqm7wKQLyXv0u3fEDq4lW3Q4kgY8jcZ80ewX9ywP0mIKBsiIS9OPYC9jtTZnn7v5M1afOk5x20lz1vZWEbUrlJ+Jfpvyv+O/jCMOTBUlMR6IqbidV4pB3IYruLBwgxQH161rRGZdV84LGAv4oTHYUhPGabkc/IrJXtIajDNP6Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756934761; c=relaxed/simple;
-	bh=jyHBAuDVftkRx0HBy4T7ggJt08EctxvHcJYcUPC2i88=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ErsXOu/K1H+ACoq3cBD9eGn149RNhb5N+VGE78OPK38KdIIqgEJMlaffbooi0iA4M5hmcUj5wbhfxLoXjgBAhh9H5llII6DZTTjGjRc33a7/WquqNiQoRNWCV6mJaA4VfRwiL4K46gpBQ211mRSFOlCCdoYK3x/c8fJScM9xsKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LAMjJzOa; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2489acda3bbso3394825ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 14:26:00 -0700 (PDT)
+	s=arc-20240116; t=1756934787; c=relaxed/simple;
+	bh=M33kH1V3bhnMJw3m4nRTDU3lB0zxC4Qc4fFgF5IA4WY=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=QA+HgETemSW86MSeCY7aK4yq52fQa/QGcJpqya62h4Jn1DjZjDZaEimxJyuPxTa/Tv/iys4IR3rkUsvKvxTLk/Ic7F5X8LlgRLkFsBWuiYbgH3CXjTrxNGBB9HQ5KDOmTlLc4IvvG2lw4Js5ZVA4rN3rIxlPvx9XzBghOZW1KR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AJ5QMHyv; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-70fa947a7acso983526d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 14:26:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756934759; x=1757539559; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2xEQt+L8Ho3n2dPxDKsBxoMXt7ItKZIAEGKvH+NsNm8=;
-        b=LAMjJzOaIqEdVaPpci6dJE/0TNuTZsAGTvvMEQIjmvg8KcLsUhZh+FMYJwrA9WQOX/
-         +kity5DCNVeabDifZU5MY17qNmUIxjY6Ph1l93uSbnUH3OXi2DazexyDePyNgK0ZKGzI
-         K2aF6QOFHvE9+LVYzQ/pC2+wVQrutGlsMFTORYfLwywOGps7blAP7X0Zzq15BjjamH8A
-         q+gopzWwI609s2g2CXKNprhdnMSX9oc4CXO+c4piuECJL7r/5T4CutbNfnmbzB1bkw6/
-         mGKEQnhCIz6gDW+VARtxIr2qijWAU6rUvmJ6oYcBIzTEwJ6Gzdcgrm93e8nOrwrsSbeP
-         5ADg==
+        d=paul-moore.com; s=google; t=1756934783; x=1757539583; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZKAFUEHK8OBYchmycuUbisd/bzFy1QHMzYkOvBvFOpA=;
+        b=AJ5QMHyvKING3BjPluB3ye0NMQAKeruFPXa6w2AHY1AyPZz4nZqoS2i/Hre48Tz3sf
+         al3j3k9PQlmnXKJn1XcFr4YVG47PczuSbk/YIlrLgokKqHBF9c6xkaSU+ChUsDYys0TX
+         EH/fiOWXvdbb4EnqeYmHfcoemFb7LhINf4LeR65gs5x3qcErdkEfpCeSo33ZVqHugGOD
+         BrWRY9mW1zqPxCh+T96a7ohNvcDUm9aYcuyGAjeJeQY7fMRUp4Vrat6RAS7TmzJzOeZk
+         8SD8qMCyvbJkLPZeVl5bXwk2hMa0AnFICIqc9s/1/teFwZWwlAYtYVpg8/nu4INQx/cu
+         nFow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756934759; x=1757539559;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2xEQt+L8Ho3n2dPxDKsBxoMXt7ItKZIAEGKvH+NsNm8=;
-        b=Y6AAeGmaVylz0+TvXqslaZYeEL/lYYxoTuHkcso++pEFKgMq4nmYzoAx/NPL+WXehC
-         6E5znaLft7kjC44M5uv6bxCOb3foDhzSALyrHRcSYslqcCWOUg8O6wGcR2OquXWyfg53
-         scqkv/URbTI4pHVm52z8mc00EYdRNC+diiYCKtzeyFiWF0Zln0FLznb6LXCGfieehjUl
-         84gvA0OKNnkcV/AIgjUjrvYb0WkEIn5m0zdiFjcOOSdcBoGt+QkGTM7NV7YbmIErXrSH
-         EGQstxmchWmfEugx+AIaSsI+GkjEjSrtY80Rybjv8GbN4rr2yA2+8Bt72TP9c/Cuic0m
-         Jgcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeVK/DxN59RZgAhj6u65BH8asXczC/p/ZwJJkZZc+qwXICNcfliVUyMMMuFUEIlE972G3LPDe8HmwWStM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznsABu4Eq+qI3h95X9vD66y+YVQcZukC4+jN2mpxkBih3+QtkG
-	O805pJMC2Oa20I54OL6ZZnNbJomcYSy4dXz8zKTL+YkiJHJ8not9RYeFLuK/nLuBb46CyFkSP3j
-	oAX8d4zFKbe8iQj6JuYABBMocwm1FsokoEAPx0AwS
-X-Gm-Gg: ASbGncs4KQxS5PYRgQ9f64avposnH9xpYR17lQm78rSnWwEMzpU6VpGkeXRwrbLFAaX
-	wT9Mzsq9GL321Na9tbz1L4twwtPXheYN7fsPTwolKMlC/MgKjn4s+a8V1iGUi9o9lhuew48AeqM
-	7758G2ur6dB4yDFQlftz7Q1sh/kaTJdp+y39dMXRNR0wHY/MIsxAowSYnnmvwouvc+xoBMCtiob
-	wGaSK9xww94y/85yvKO1yxldn9ksHwfJrhE4xaKQRzXSLER7BTkcVUfflySOkGNEg6jssa4mnFn
-	MquGbLdYOLU=
-X-Google-Smtp-Source: AGHT+IHRfpHto8LlfSXKfbZf0SFWi7fFWtwcv3b9CN/dPfI2rbOx8GpveZ1gaLb8oE0c41ec9Cq4gRO9FlgchlHavYg=
-X-Received: by 2002:a17:903:ac8:b0:248:75da:f791 with SMTP id
- d9443c01a7336-24944aed0c1mr217213335ad.47.1756934759252; Wed, 03 Sep 2025
- 14:25:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756934783; x=1757539583;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZKAFUEHK8OBYchmycuUbisd/bzFy1QHMzYkOvBvFOpA=;
+        b=ZYM/tL+hCCPffGqD4WThOfc3DGeWO9hqkkU0duUMMt1TNiKfPykJKyM8bLvChMkxdV
+         QDS5pfs1nif1CMfcVoJEOFyO3/5npTS7Fer/7luvmbY1pbch7Ju5htsesoC9gpY5VI0Y
+         xZ7P8u8gNzvE9dASdAK1XCOjw9LZoPOzpaV14aW+IWzIt2msvRR3wM+jw/xp3ST3LjlS
+         cpIZGltqTq1z63sL7mEsVcWpMtzwQRx4rwVCuaowLq5nvopBr7+urGgAP5nz95ybv5VG
+         2A+EJIr8Fn5JLnMcOSSgfIpu0Hy6ZkwrgwSP0i3NXwpv3bpVFm2p0ZjYHJ3hHBhjQZni
+         LXfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMX6Ihnx+qeAdvH9faxsx8oN+02FLaHw62bThvdqEu2OI3bB0D7M5egycd8WEXMcCFJVhYVeRGTcf1FG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9/Op9us8E3gDTiAoScW4IKXKBQBj+9HTrHESkm4baoxAA6nXu
+	DzjNAUBvzZtx4JlhS95gMOqZygfwc+r2EztWOxc8dsWY/fmOHqsLSl2QYB0EsJa+Hg==
+X-Gm-Gg: ASbGncvlWHM0aNioo4iMWvxIbmk7LQmnYjfSf/RuoNAAPdd+uX8Kf7w4kiJvp4hSgmX
+	warmW+gB/Hc588BUm+YJC03CiVVxFZfeYiMsUvB7ZGoH+cmvewScFyEmnMNQm/w7dm0oC7EQBF5
+	Dorwbtww9vvq5s1adBkQShNMyLf9ls2fPstF0wVCLfZ1RT2gRKoV7cvb5Ezm3RofOt93YdMUeLY
+	eEC1Q/k97kSMfzYKhl94/tEoEG0kKLkxd7FCTH0w2poa33PE+XqRlzNBdjyEoHhyRLzfiZRehgM
+	E0/gqeiK9Mw0AgmvgWl5ptDpkC+Egh//gUvKtKGuwRJuhmO5pvdeXkpc+IFYEWD4dwWJpVBPTR6
+	SndoO68zxhjxp3PhjJVy3EQHjc3bBsBW7mOaNlk9fgivfdLVXOAH6hTMeKHCIJjOki/1ptp5Otn
+	zaYSo=
+X-Google-Smtp-Source: AGHT+IGjeGVBk59qanrKojqKe1+ebv5QbBLUr+xq2vrJdB1gpx6C81S9JV5wN46o/dcj2HWmCycKCg==
+X-Received: by 2002:a05:6214:c65:b0:71d:478f:e0cd with SMTP id 6a1803df08f44-71d478fe49fmr118773496d6.26.1756934782933;
+        Wed, 03 Sep 2025 14:26:22 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-720b466614bsm34702456d6.38.2025.09.03.14.26.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 14:26:21 -0700 (PDT)
+Date: Wed, 03 Sep 2025 17:26:21 -0400
+Message-ID: <6afc91a9f5caef96b2ca335b6d143670@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250903-b4-tcp-ao-md5-rst-finwait2-v4-0-ef3a9eec3ef3@arista.com> <20250903-b4-tcp-ao-md5-rst-finwait2-v4-2-ef3a9eec3ef3@arista.com>
-In-Reply-To: <20250903-b4-tcp-ao-md5-rst-finwait2-v4-2-ef3a9eec3ef3@arista.com>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Wed, 3 Sep 2025 14:25:47 -0700
-X-Gm-Features: Ac12FXz2G10zJlTs9-Is9rvwM0S7wxPXm9bN1bbgkTiJ4ZOjmq8xmatzEdvjbDs
-Message-ID: <CAAVpQUCiaQ7yr+5xLYVaRp6E2pzNDwSiznEOkmd5wS-SAosUng@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 2/2] tcp: Free TCP-AO/TCP-MD5 info/keys
- without RCU
-To: dima@arista.com
-Cc: Eric Dumazet <edumazet@google.com>, Neal Cardwell <ncardwell@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Bob Gilligan <gilligan@arista.com>, Salam Noureddine <noureddine@arista.com>, 
-	Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250903_1645/pstg-lib:20250903_1606/pstg-pwork:20250903_1645
+From: Paul Moore <paul@paul-moore.com>
+To: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, James Morris <jmorris@namei.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, Hugh Dickins <hughd@google.com>, Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] memfd,selinux: call security_inode_init_security_anon
+References: <20250826031824.1227551-1-tweek@google.com>
+In-Reply-To: <20250826031824.1227551-1-tweek@google.com>
 
-On Wed, Sep 3, 2025 at 1:30=E2=80=AFPM Dmitry Safonov via B4 Relay
-<devnull+dima.arista.com@kernel.org> wrote:
->
-> From: Dmitry Safonov <dima@arista.com>
->
-> Now that the destruction of info/keys is delayed until the socket
-> destructor, it's safe to use kfree() without an RCU callback.
-> As either socket was yet in TCP_CLOSE state or the socket refcounter is
+On Aug 25, 2025 "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com> wrote:
+> 
+> Prior to this change, no security hooks were called at the creation of a
+> memfd file. It means that, for SELinux as an example, it will receive
+> the default type of the filesystem that backs the in-memory inode. In
+> most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
+> be hugetlbfs. Both can be considered implementation details of memfd.
+> 
+> It also means that it is not possible to differentiate between a file
+> coming from memfd_create and a file coming from a standard tmpfs mount
+> point.
+> 
+> Additionally, no permission is validated at creation, which differs from
+> the similar memfd_secret syscall.
+> 
+> Call security_inode_init_security_anon during creation. This ensures
+> that the file is setup similarly to other anonymous inodes. On SELinux,
+> it means that the file will receive the security context of its task.
+> 
+> The ability to limit fexecve on memfd has been of interest to avoid
+> potential pitfalls where /proc/self/exe or similar would be executed
+> [1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
+> similarly to the file class. These access vectors may not make sense for
+> the existing "anon_inode" class. Therefore, define and assign a new
+> class "memfd_file" to support such access vectors.
+> 
+> Guard these changes behind a new policy capability named "memfd_class".
+> 
+> [1] https://crbug.com/1305267
+> [2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.com/
+> 
+> Signed-off-by: Thiébaud Weksteen <tweek@google.com>
+> Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> ---
+> Changes since RFC:
+> - Remove enum argument, simply compare the anon inode name
+> - Introduce a policy capability for compatility
+> - Add validation of class in selinux_bprm_creds_for_exec
+> 
+>  include/linux/memfd.h                      |  2 ++
+>  mm/memfd.c                                 | 14 +++++++++--
+>  security/selinux/hooks.c                   | 27 ++++++++++++++++++----
+>  security/selinux/include/classmap.h        |  2 ++
+>  security/selinux/include/policycap.h       |  1 +
+>  security/selinux/include/policycap_names.h |  1 +
+>  security/selinux/include/security.h        |  5 ++++
+>  7 files changed, 46 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/memfd.h b/include/linux/memfd.h
+> index 6f606d9573c3..cc74de3dbcfe 100644
+> --- a/include/linux/memfd.h
+> +++ b/include/linux/memfd.h
+> @@ -4,6 +4,8 @@
+>  
+>  #include <linux/file.h>
+>  
+> +#define MEMFD_ANON_NAME "[memfd]"
+> +
+>  #ifdef CONFIG_MEMFD_CREATE
+>  extern long memfd_fcntl(struct file *file, unsigned int cmd, unsigned int arg);
+>  struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx);
+> diff --git a/mm/memfd.c b/mm/memfd.c
+> index bbe679895ef6..63b439eb402a 100644
+> --- a/mm/memfd.c
+> +++ b/mm/memfd.c
+> @@ -433,6 +433,8 @@ static struct file *alloc_file(const char *name, unsigned int flags)
+>  {
+>  	unsigned int *file_seals;
+>  	struct file *file;
+> +	struct inode *inode;
+> +	int err = 0;
+>  
+>  	if (flags & MFD_HUGETLB) {
+>  		file = hugetlb_file_setup(name, 0, VM_NORESERVE,
+> @@ -444,12 +446,20 @@ static struct file *alloc_file(const char *name, unsigned int flags)
+>  	}
+>  	if (IS_ERR(file))
+>  		return file;
+> +
+> +	inode = file_inode(file);
+> +	err = security_inode_init_security_anon(inode,
+> +			&QSTR(MEMFD_ANON_NAME), NULL);
+> +	if (err) {
+> +		fput(file);
+> +		file = ERR_PTR(err);
+> +		return file;
+> +	}
+> +
+>  	file->f_mode |= FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
+>  	file->f_flags |= O_LARGEFILE;
+>  
+>  	if (flags & MFD_NOEXEC_SEAL) {
+> -		struct inode *inode = file_inode(file);
+> -
+>  		inode->i_mode &= ~0111;
+>  		file_seals = memfd_file_seals_ptr(file);
+>  		if (file_seals) {
 
-Why either ?  Maybe I'm missing but is there a path where
-->unhash() is called without changing the state to TCP_CLOSE ?
+Hugh, Baolin, and shmem/mm folks, are you okay with the changes above? If
+so it would be nice to get an ACK from one of you.
 
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index c95a5874bf7d..429b2269b35a 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -93,6 +93,7 @@
+>  #include <linux/fanotify.h>
+>  #include <linux/io_uring/cmd.h>
+>  #include <uapi/linux/lsm.h>
+> +#include <linux/memfd.h>
+>  
+>  #include "avc.h"
+>  #include "objsec.h"
+> @@ -2366,9 +2367,12 @@ static int selinux_bprm_creds_for_exec(struct linux_binprm *bprm)
+>  	ad.type = LSM_AUDIT_DATA_FILE;
+>  	ad.u.file = bprm->file;
+>  
+> +	if (isec->sclass != SECCLASS_FILE && isec->sclass != SECCLASS_MEMFD_FILE)
+> +		return -EPERM;
 
-> zero and no one can discover it anymore, it's safe to release memory
-> straight away.
-> Similar thing was possible for twsk already.
->
-> Signed-off-by: Dmitry Safonov <dima@arista.com>
+In the interest of failing fast, this should probably be moved up in the
+function to just after where @isec is set.  There are also a number of
+checks that happen prior to this placement, but after the isec assignment.
+While I don't think any of those checks should be an issue, I'd rather
+not to have to worry about those and just fail the non-FILE/MEMFD_FILE
+case as soon as we can in selinux_bprm_creds_for_exec().
 
-Change itself looks good.
+>  	if (new_tsec->sid == old_tsec->sid) {
+> -		rc = avc_has_perm(old_tsec->sid, isec->sid,
+> -				  SECCLASS_FILE, FILE__EXECUTE_NO_TRANS, &ad);
+> +		rc = avc_has_perm(old_tsec->sid, isec->sid, isec->sclass,
+> +				  FILE__EXECUTE_NO_TRANS, &ad);
+>  		if (rc)
+>  			return rc;
+>  	} else {
+> @@ -2378,8 +2382,8 @@ static int selinux_bprm_creds_for_exec(struct linux_binprm *bprm)
+>  		if (rc)
+>  			return rc;
+>  
+> -		rc = avc_has_perm(new_tsec->sid, isec->sid,
+> -				  SECCLASS_FILE, FILE__ENTRYPOINT, &ad);
+> +		rc = avc_has_perm(new_tsec->sid, isec->sid, isec->sclass,
+> +				  FILE__ENTRYPOINT, &ad);
+>  		if (rc)
+>  			return rc;
+>  
+> @@ -2974,10 +2978,18 @@ static int selinux_inode_init_security_anon(struct inode *inode,
+>  	struct common_audit_data ad;
+>  	struct inode_security_struct *isec;
+>  	int rc;
+> +	bool is_memfd = false;
+>  
+>  	if (unlikely(!selinux_initialized()))
+>  		return 0;
+>  
+> +	if (name != NULL && name->name != NULL &&
+> +	    !strcmp(name->name, MEMFD_ANON_NAME)) {
+> +		if (!selinux_policycap_memfd_class())
+> +			return 0;
+> +		is_memfd = true;
+> +	}
+> +
+>  	isec = selinux_inode(inode);
+>  
+>  	/*
+> @@ -2996,6 +3008,13 @@ static int selinux_inode_init_security_anon(struct inode *inode,
+>  
+>  		isec->sclass = context_isec->sclass;
+>  		isec->sid = context_isec->sid;
+> +	} else if (is_memfd) {
+> +		isec->sclass = SECCLASS_MEMFD_FILE;
+> +		rc = security_transition_sid(
+> +			sid, sid,
+> +			isec->sclass, name, &isec->sid);
+> +		if (rc)
+> +			return rc;
+>  	} else {
+>  		isec->sclass = SECCLASS_ANON_INODE;
+>  		rc = security_transition_sid(
 
-Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
+We're duplicating the security_transition_sid() call which seems less
+than ideal, how about something like this?
+
+  if (context_inode) {
+    /* ... existing stuff ... */
+  } else {
+    if (is_memfd)
+      isec->sclass = SECCLASS_MEMFD_FILE;
+    else
+      isec->sclass = SECCLASS_ANON_INODE;
+    rc = security_transition_sid(...);
+    if (rc)
+      return rc;
+  }
+
+--
+paul-moore.com
 
