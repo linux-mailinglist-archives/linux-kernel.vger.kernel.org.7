@@ -1,144 +1,357 @@
-Return-Path: <linux-kernel+bounces-799247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4046EB428F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:45:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C078FB428FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78553682259
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:45:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5965E1BA51D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29308369320;
-	Wed,  3 Sep 2025 18:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E791F31AF2A;
+	Wed,  3 Sep 2025 18:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="i0qq2+0t"
-Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrn2lb3/"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456513629B3;
-	Wed,  3 Sep 2025 18:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1594F17A2F6;
+	Wed,  3 Sep 2025 18:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756925126; cv=none; b=XSs5vI2dBd5G8CouHwP/IaRjStuysC7UxZBRllhEppiNHv2JPdiJ/wGs2AOIli4aMQ0T8G4Zu5tMDephB0w9mkOpqVSfGjAjNBmyiuUj3FvcryvREbN9Zzm2Y3cW2ZafN+hwr7KoTmGDhqZPpR4gD+1GLDvMH6lkUx8GDUPALxU=
+	t=1756925292; cv=none; b=uO8lzg81xZyhcFpZEGLZqNdlu+GHcWxxRxNfyuhdpU51z4c9aQ00B2BvmOEZlneVJ5GMkDF2obG7nCncfnTYJr45Y9ZB+18W7l7fBfLYoGpnzTDqoGxj9/t/9ie3fv+ZP8+3JOHB9Ub+tn+qnFemDZI9EcrhaE4arr+CSkGjRzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756925126; c=relaxed/simple;
-	bh=yy8dNluZEt1F3hOJQ5JWTdfKQiHarz/++Lo+f/eAcgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SteAeT3nLIYSmTnAeBDx4/xx4EJC2yXzmMR6eocALCrVyiqN9zZsZthJTbeR+ARScUQzm0Yb0C3cB4QdMY5rhbI3/uJZ0mQWnMqlyXmP7PbiTZ9oLXsPvDyXn9gbQToU+nwbj4HgC2+8bnRkXk4sjhAw1ZH7a5skIHZ6IzImc0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=i0qq2+0t; arc=none smtp.client-ip=129.217.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
-Received: from [192.168.178.143] (pd9eaae6b.dip0.t-ipconnect.de [217.234.174.107])
-	(authenticated bits=0)
-	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 583IjK8r020038
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 3 Sep 2025 20:45:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
-	s=unimail; t=1756925121;
-	bh=yy8dNluZEt1F3hOJQ5JWTdfKQiHarz/++Lo+f/eAcgE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=i0qq2+0tvBdwa+QzPIEJbCMy5KEaX0T7nvssbjLUdhCV6PUJ4sh+0vkaI5ZNk4gjO
-	 i03wSSXFHB6tZuiMHczngkA6eQ9Q9Xe22uKWhAr7+rVMyxPtKA7VfSbWMQMpudm+Sq
-	 di/p8HWVRO7DHsEVT3hIczuIyoIwfl/o3hgDxcHg=
-Message-ID: <62ab3029-3089-430a-b80d-85d87ad7daae@tu-dortmund.de>
-Date: Wed, 3 Sep 2025 20:45:20 +0200
+	s=arc-20240116; t=1756925292; c=relaxed/simple;
+	bh=XMPVwIUY68ac0ldSTejHDT9vUAHy4cmll0lFIAHwuIA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ln3n9Ch7R/oiEInlSYZZLDi7uSX0eq5O9mvxGU4VlgLCBkBGa4/MeMisqu0yZaJExN0PGu88npkq66dk9AW7sG/5U1YvLMeK3dkrHE6zZBCjlNUJtagqW/33g3Zy0oixExGqzX/W/rDdKUv24dvewBAdG5oCqk5MWfPvdrV2KLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nrn2lb3/; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61caf8fc422so222883a12.2;
+        Wed, 03 Sep 2025 11:48:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756925288; x=1757530088; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pnEq9cYri7Yu6Xes2AYp1EmwTJ9D6Qx1Hfho2heu06I=;
+        b=nrn2lb3/kIGRS3x/iR48o/6UD/V4VQfXfKoG5wTPq+uVtO+I9sI/zME9QOwRRjc1TN
+         OAK6HYLAC17CdkuZWPkgXWjpArlDrHdP2/yJiyX0IriXb2oPXI1Hf2bK5Tcg+G/aFB+w
+         lvugeceDNpL5ETSO1HCr9fJ+au2Y0FkE3EwqRQhUjABhb38HRTIdwjaIAmuFnqY+H1VU
+         J16iFGmFsXfMZXF7eEsezuXcEJSPbC1IiGpt2L90WNzZNihzIG0L82Z9IwQhdsHCPjnH
+         DQKKoZd+sD0bZ+qI6BNJaZEi7cpK2wkj0///SNvejGNHh+PPi99zxA/HrzHbcsAW501J
+         Fdrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756925288; x=1757530088;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pnEq9cYri7Yu6Xes2AYp1EmwTJ9D6Qx1Hfho2heu06I=;
+        b=pQ85zc05BXsJxyiorg2j31HI9eATJ3Nh6tTB4l9CmC1LS8FfQBYvym3GCylL98pVmb
+         gohTjEToJJcGQpoIijDSNbBZD1/4RC2umI/XWc7hgr2JPEvJZGlhkrcqTeudNe7QF+us
+         FkyARHLxrAyhwaFMd0A4zeg602zCpcS9WBVDfPMz4iRC0TfPFc7wdlB7g4tSDIiebF7a
+         dVotxZAcfnIR9K70zUoWuBINlCwP7/fyglM30vlsbcAEd7BWLZnRVEayP39EvHeoHCz+
+         98o3mLfEg66C/LYT1yskrDwx/sJ4PKluDs1VCz9f4V8OgitxU7GIgDHOUhjWdLTZjtKT
+         JaGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6F/DDlcYi2v+WJb3ividAxqC1UiPuxdxIPrdnxm2UsTpHdY6zG9PJuD2ZL83J0nl8eP0q79klbTI+AWzn@vger.kernel.org, AJvYcCXTICoD/3YLv6bfn7q+3mcSY/ZFrN5TTlWiXlvxFbSOdu5jXEDEYfxcRCKRmSD5seLSRpwSkR9i2NYz5A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCiqJwQniJFlIPUoiOUyN/Xl/RTeK53llfUXUooBzehJSlPJLh
+	yOSsPQ4UhGu6tPn5V5ehARX2veiVYcShOm/Bw2qrchIejNNRvBm3SuaVor33ew==
+X-Gm-Gg: ASbGncvQdYlxdeEITaT+hEAgcKSE2lhAgAvRwfJ5T2QCB+opuWaOJ97ORINe9gS0VZk
+	2n0Gmta2ItK4Nz9O3ROvpbsIddeDRZoEcQa8gx9kVxrUZI9x71sb3bFaPkpvfl2/ehnv/9+LRcB
+	JEw8brvYiD0WOjxRYqV1X5Dn2qW9YnOac0QzLP+x2d5yrOYBftrDxLkI5+hjCYzdbj9gGtv78GM
+	wR1K0IEzTfDll+LC6quV75JNy6hIh8lgkIr8sVA149HOQJuRjclEUi+Ukh9i1/uGE8EylwWVAjf
+	xD/MoB6Ev+WLXRLiH8SRGntVUjPxK6zEjGRToR2VCidew9gWiDk84XPxNsLG2pY9kKpQt6eN1Wo
+	yXw4JRVQzTOvLhlZFjBviXCfRUpLO5evqKgu/2VubcMc=
+X-Google-Smtp-Source: AGHT+IHW1e82FTZpcbEFE0hvW5wWmnYWGg38OrG1PB8/7dTy0kCCNgAjX6+Bm7Tz8VrE5BbF3KipFQ==
+X-Received: by 2002:a05:6402:504b:b0:618:aed3:38a with SMTP id 4fb4d7f45d1cf-61d26ebbf9fmr13588130a12.31.1756925288153;
+        Wed, 03 Sep 2025 11:48:08 -0700 (PDT)
+Received: from puma.museclub.art ([2a00:6020:b3ea:9c00:26e7:b56a:5a2d:1d72])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc575b94sm11860457a12.53.2025.09.03.11.48.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 11:48:07 -0700 (PDT)
+From: Eugene Shalygin <eugene.shalygin@gmail.com>
+To: eugene.shalygin@gmail.com
+Cc: Michael Tandy <git@mjt.me.uk>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] hwmon: (asus-ec-sensors) sort declarations
+Date: Wed,  3 Sep 2025 20:47:36 +0200
+Message-ID: <20250903184753.5876-1-eugene.shalygin@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] netdev queue flow control for TUN
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com, eperezma@redhat.com,
-        stephen@networkplumber.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-        kvm@vger.kernel.org, Tim Gebauer <tim.gebauer@tu-dortmund.de>
-References: <20250902080957.47265-1-simon.schippers@tu-dortmund.de>
- <20250902080957.47265-3-simon.schippers@tu-dortmund.de>
- <20250903090723-mutt-send-email-mst@kernel.org>
-Content-Language: en-US
-From: Simon Schippers <simon.schippers@tu-dortmund.de>
-In-Reply-To: <20250903090723-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Michael S. Tsirkin wrote:
-> On Tue, Sep 02, 2025 at 10:09:55AM +0200, Simon Schippers wrote:
->> The netdev queue is stopped in tun_net_xmit after inserting an SKB into
->> the ring buffer if the ring buffer became full because of that. If the
->> insertion into the ptr_ring fails, the netdev queue is also stopped and
->> the SKB is dropped. However, this never happened in my testing. To ensure
->> that the ptr_ring change is available to the consumer before the netdev
->> queue stop, an smp_wmb() is used.
->>
->> Then in tun_ring_recv, the new helper wake_netdev_queue is called in the
->> blocking wait queue and after consuming an SKB from the ptr_ring. This
->> helper first checks if the netdev queue has stopped. Then with the paired
->> smp_rmb() it is known that tun_net_xmit will not produce SKBs anymore.
->> With that knowledge, the helper can then wake the netdev queue if there is
->> at least a single spare slot in the ptr_ring by calling ptr_ring_spare
->> with cnt=1.
->>
->> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
->> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
->> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
-> 
-> 
-> Oh you just want to know if produce will succeed?
-> Kind of a version of peek but for producer?
-> 
-> So all this cuteness of looking at the consumer is actually not necessary,
-> and bad for cache.
-> 
-> You just want this:
-> 
-> 
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> 
-> diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
-> index 551329220e4f..de25fe81dd4e 100644
-> --- a/include/linux/ptr_ring.h
-> +++ b/include/linux/ptr_ring.h
-> @@ -96,6 +96,14 @@ static inline bool ptr_ring_full_bh(struct ptr_ring *r)
->  	return ret;
->  }
->  
-> +static inline int __ptr_ring_produce_peek(struct ptr_ring *r)
-> +{
-> +	if (unlikely(!r->size) || r->queue[r->producer])
-> +		return -ENOSPC;
-> +
-> +	return 0;
-> +}
-> +
->  /* Note: callers invoking this in a loop must use a compiler barrier,
->   * for example cpu_relax(). Callers must hold producer_lock.
->   * Callers are responsible for making sure pointer that is being queued
-> @@ -103,8 +111,10 @@ static inline bool ptr_ring_full_bh(struct ptr_ring *r)
->   */
->  static inline int __ptr_ring_produce(struct ptr_ring *r, void *ptr)
->  {
-> -	if (unlikely(!r->size) || r->queue[r->producer])
-> -		return -ENOSPC;
-> +	int r = __ptr_ring_produce_peek(r);
-> +
-> +	if (r)
-> +		return r;
->  
->  	/* Make sure the pointer we are storing points to a valid data. */
->  	/* Pairs with the dependency ordering in __ptr_ring_consume. */
-> 
-> 
-> 
-> Add some docs, and call this, then wake.  No?
->
+From: Michael Tandy <git@mjt.me.uk>
 
-Yes, this looks great! I like that it does not need any further logic :)
-I will just call this method instead of my approach in wake_netdev_queue
-without taking any locks. It should be just fine since at this moment it
-is known that the producer stopped due to the stopped netdev queue.
+Sort all the declarations in the source file. Contributors are asked
+o insert new entries keeping alphabetical order, but the existing
+ones were not completely sorted.
+
+Signed-off-by: Michael Tandy <git@mjt.me.uk>
+Signed-off-by: Eugene Shalygin <eugene.shalygin@gmail.com>
+---
+ drivers/hwmon/asus-ec-sensors.c | 170 ++++++++++++++++----------------
+ 1 file changed, 85 insertions(+), 85 deletions(-)
+
+diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
+index 728e21fddae8..ecb058e8755b 100644
+--- a/drivers/hwmon/asus-ec-sensors.c
++++ b/drivers/hwmon/asus-ec-sensors.c
+@@ -384,6 +384,52 @@ struct ec_board_info {
+ 	enum board_family family;
+ };
+ 
++static const struct ec_board_info board_info_crosshair_viii_dark_hero = {
++	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
++		SENSOR_TEMP_T_SENSOR |
++		SENSOR_TEMP_VRM | SENSOR_SET_TEMP_WATER |
++		SENSOR_FAN_CPU_OPT | SENSOR_FAN_WATER_FLOW |
++		SENSOR_CURR_CPU | SENSOR_IN_CPU_CORE,
++	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
++	.family = family_amd_500_series,
++};
++
++static const struct ec_board_info board_info_crosshair_viii_hero = {
++	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
++		SENSOR_TEMP_T_SENSOR |
++		SENSOR_TEMP_VRM | SENSOR_SET_TEMP_WATER |
++		SENSOR_FAN_CPU_OPT | SENSOR_FAN_CHIPSET |
++		SENSOR_FAN_WATER_FLOW | SENSOR_CURR_CPU |
++		SENSOR_IN_CPU_CORE,
++	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
++	.family = family_amd_500_series,
++};
++
++static const struct ec_board_info board_info_crosshair_viii_impact = {
++	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
++		SENSOR_TEMP_T_SENSOR | SENSOR_TEMP_VRM |
++		SENSOR_FAN_CHIPSET | SENSOR_CURR_CPU |
++		SENSOR_IN_CPU_CORE,
++	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
++	.family = family_amd_500_series,
++};
++
++static const struct ec_board_info board_info_crosshair_x670e_gene = {
++	.sensors = SENSOR_TEMP_CPU | SENSOR_TEMP_CPU_PACKAGE |
++		SENSOR_TEMP_T_SENSOR |
++		SENSOR_TEMP_MB | SENSOR_TEMP_VRM,
++	.mutex_path = ACPI_GLOBAL_LOCK_PSEUDO_PATH,
++	.family = family_amd_600_series,
++};
++
++static const struct ec_board_info board_info_crosshair_x670e_hero = {
++	.sensors = SENSOR_TEMP_CPU | SENSOR_TEMP_CPU_PACKAGE |
++		SENSOR_TEMP_MB | SENSOR_TEMP_VRM |
++		SENSOR_SET_TEMP_WATER,
++	.mutex_path = ACPI_GLOBAL_LOCK_PSEUDO_PATH,
++	.family = family_amd_600_series,
++};
++
+ static const struct ec_board_info board_info_maximus_vi_hero = {
+ 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
+ 		SENSOR_TEMP_T_SENSOR |
+@@ -393,6 +439,22 @@ static const struct ec_board_info board_info_maximus_vi_hero = {
+ 	.family = family_intel_300_series,
+ };
+ 
++static const struct ec_board_info board_info_maximus_xi_hero = {
++	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
++		SENSOR_TEMP_T_SENSOR |
++		SENSOR_TEMP_VRM | SENSOR_SET_TEMP_WATER |
++		SENSOR_FAN_CPU_OPT | SENSOR_FAN_WATER_FLOW,
++	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
++	.family = family_intel_300_series,
++};
++
++static const struct ec_board_info board_info_maximus_z690_formula = {
++	.sensors = SENSOR_TEMP_T_SENSOR | SENSOR_TEMP_VRM |
++		SENSOR_SET_TEMP_WATER | SENSOR_FAN_WATER_FLOW,
++	.mutex_path = ASUS_HW_ACCESS_MUTEX_RMTW_ASMX,
++	.family = family_intel_600_series,
++};
++
+ static const struct ec_board_info board_info_prime_x470_pro = {
+ 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
+ 		SENSOR_TEMP_T_SENSOR | SENSOR_TEMP_VRM |
+@@ -417,6 +479,14 @@ static const struct ec_board_info board_info_prime_x670e_pro_wifi = {
+ 	.family = family_amd_600_series,
+ };
+ 
++static const struct ec_board_info board_info_pro_art_b550_creator = {
++	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
++		SENSOR_TEMP_T_SENSOR |
++		SENSOR_FAN_CPU_OPT,
++	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
++	.family = family_amd_500_series,
++};
++
+ static const struct ec_board_info board_info_pro_art_x570_creator_wifi = {
+ 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB | SENSOR_TEMP_VRM |
+ 		SENSOR_TEMP_T_SENSOR | SENSOR_FAN_CPU_OPT |
+@@ -441,14 +511,6 @@ static const struct ec_board_info board_info_pro_art_x870E_creator_wifi = {
+ 	.family = family_amd_800_series,
+ };
+ 
+-static const struct ec_board_info board_info_pro_art_b550_creator = {
+-	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
+-		SENSOR_TEMP_T_SENSOR |
+-		SENSOR_FAN_CPU_OPT,
+-	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
+-	.family = family_amd_500_series,
+-};
+-
+ static const struct ec_board_info board_info_pro_ws_wrx90e_sage_se = {
+ 	/* Board also has a nct6798 with 7 more fans and temperatures */
+ 	.sensors = SENSOR_TEMP_CPU_PACKAGE | SENSOR_TEMP_T_SENSOR |
+@@ -466,68 +528,6 @@ static const struct ec_board_info board_info_pro_ws_x570_ace = {
+ 	.family = family_amd_500_series,
+ };
+ 
+-static const struct ec_board_info board_info_crosshair_x670e_hero = {
+-	.sensors = SENSOR_TEMP_CPU | SENSOR_TEMP_CPU_PACKAGE |
+-		SENSOR_TEMP_MB | SENSOR_TEMP_VRM |
+-		SENSOR_SET_TEMP_WATER,
+-	.mutex_path = ACPI_GLOBAL_LOCK_PSEUDO_PATH,
+-	.family = family_amd_600_series,
+-};
+-
+-static const struct ec_board_info board_info_crosshair_x670e_gene = {
+-	.sensors = SENSOR_TEMP_CPU | SENSOR_TEMP_CPU_PACKAGE |
+-		SENSOR_TEMP_T_SENSOR |
+-		SENSOR_TEMP_MB | SENSOR_TEMP_VRM,
+-	.mutex_path = ACPI_GLOBAL_LOCK_PSEUDO_PATH,
+-	.family = family_amd_600_series,
+-};
+-
+-static const struct ec_board_info board_info_crosshair_viii_dark_hero = {
+-	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
+-		SENSOR_TEMP_T_SENSOR |
+-		SENSOR_TEMP_VRM | SENSOR_SET_TEMP_WATER |
+-		SENSOR_FAN_CPU_OPT | SENSOR_FAN_WATER_FLOW |
+-		SENSOR_CURR_CPU | SENSOR_IN_CPU_CORE,
+-	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
+-	.family = family_amd_500_series,
+-};
+-
+-static const struct ec_board_info board_info_crosshair_viii_hero = {
+-	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
+-		SENSOR_TEMP_T_SENSOR |
+-		SENSOR_TEMP_VRM | SENSOR_SET_TEMP_WATER |
+-		SENSOR_FAN_CPU_OPT | SENSOR_FAN_CHIPSET |
+-		SENSOR_FAN_WATER_FLOW | SENSOR_CURR_CPU |
+-		SENSOR_IN_CPU_CORE,
+-	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
+-	.family = family_amd_500_series,
+-};
+-
+-static const struct ec_board_info board_info_maximus_xi_hero = {
+-	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
+-		SENSOR_TEMP_T_SENSOR |
+-		SENSOR_TEMP_VRM | SENSOR_SET_TEMP_WATER |
+-		SENSOR_FAN_CPU_OPT | SENSOR_FAN_WATER_FLOW,
+-	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
+-	.family = family_intel_300_series,
+-};
+-
+-static const struct ec_board_info board_info_maximus_z690_formula = {
+-	.sensors = SENSOR_TEMP_T_SENSOR | SENSOR_TEMP_VRM |
+-		SENSOR_SET_TEMP_WATER | SENSOR_FAN_WATER_FLOW,
+-	.mutex_path = ASUS_HW_ACCESS_MUTEX_RMTW_ASMX,
+-	.family = family_intel_600_series,
+-};
+-
+-static const struct ec_board_info board_info_crosshair_viii_impact = {
+-	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
+-		SENSOR_TEMP_T_SENSOR | SENSOR_TEMP_VRM |
+-		SENSOR_FAN_CHIPSET | SENSOR_CURR_CPU |
+-		SENSOR_IN_CPU_CORE,
+-	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
+-	.family = family_amd_500_series,
+-};
+-
+ static const struct ec_board_info board_info_strix_b550_e_gaming = {
+ 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
+ 		SENSOR_TEMP_T_SENSOR | SENSOR_TEMP_VRM |
+@@ -645,6 +645,15 @@ static const struct ec_board_info board_info_strix_z790_i_gaming_wifi = {
+ 	.family = family_intel_700_series,
+ };
+ 
++static const struct ec_board_info board_info_tuf_gaming_x670e_plus = {
++	.sensors = SENSOR_TEMP_CPU | SENSOR_TEMP_CPU_PACKAGE |
++		SENSOR_TEMP_MB | SENSOR_TEMP_VRM |
++		SENSOR_TEMP_WATER_IN | SENSOR_TEMP_WATER_OUT |
++		SENSOR_FAN_CPU_OPT,
++	.mutex_path = ACPI_GLOBAL_LOCK_PSEUDO_PATH,
++	.family = family_amd_600_series,
++};
++
+ static const struct ec_board_info board_info_zenith_ii_extreme = {
+ 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB | SENSOR_TEMP_T_SENSOR |
+ 		SENSOR_TEMP_VRM | SENSOR_SET_TEMP_WATER |
+@@ -657,15 +666,6 @@ static const struct ec_board_info board_info_zenith_ii_extreme = {
+ 	.family = family_amd_500_series,
+ };
+ 
+-static const struct ec_board_info board_info_tuf_gaming_x670e_plus = {
+-	.sensors = SENSOR_TEMP_CPU | SENSOR_TEMP_CPU_PACKAGE |
+-		SENSOR_TEMP_MB | SENSOR_TEMP_VRM |
+-		SENSOR_TEMP_WATER_IN | SENSOR_TEMP_WATER_OUT |
+-		SENSOR_FAN_CPU_OPT,
+-	.mutex_path = ACPI_GLOBAL_LOCK_PSEUDO_PATH,
+-	.family = family_amd_600_series,
+-};
+-
+ #define DMI_EXACT_MATCH_ASUS_BOARD_NAME(name, board_info)                      \
+ 	{                                                                      \
+ 		.matches = {                                                   \
+@@ -685,14 +685,14 @@ static const struct dmi_system_id dmi_table[] = {
+ 					&board_info_prime_x570_pro),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("PRIME X670E-PRO WIFI",
+ 					&board_info_prime_x670e_pro_wifi),
++	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ProArt B550-CREATOR",
++					&board_info_pro_art_b550_creator),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ProArt X570-CREATOR WIFI",
+ 					&board_info_pro_art_x570_creator_wifi),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ProArt X670E-CREATOR WIFI",
+ 					&board_info_pro_art_x670E_creator_wifi),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ProArt X870E-CREATOR WIFI",
+ 					&board_info_pro_art_x870E_creator_wifi),
+-	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ProArt B550-CREATOR",
+-					&board_info_pro_art_b550_creator),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("Pro WS WRX90E-SAGE SE",
+ 					&board_info_pro_ws_wrx90e_sage_se),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("Pro WS X570-ACE",
+@@ -705,18 +705,18 @@ static const struct dmi_system_id dmi_table[] = {
+ 					&board_info_crosshair_viii_hero),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG CROSSHAIR VIII HERO (WI-FI)",
+ 					&board_info_crosshair_viii_hero),
+-	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG CROSSHAIR X670E HERO",
+-					&board_info_crosshair_x670e_hero),
++	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG CROSSHAIR VIII IMPACT",
++					&board_info_crosshair_viii_impact),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG CROSSHAIR X670E GENE",
+ 					&board_info_crosshair_x670e_gene),
++	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG CROSSHAIR X670E HERO",
++					&board_info_crosshair_x670e_hero),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG MAXIMUS XI HERO",
+ 					&board_info_maximus_xi_hero),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG MAXIMUS XI HERO (WI-FI)",
+ 					&board_info_maximus_xi_hero),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG MAXIMUS Z690 FORMULA",
+ 					&board_info_maximus_z690_formula),
+-	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG CROSSHAIR VIII IMPACT",
+-					&board_info_crosshair_viii_impact),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX B550-E GAMING",
+ 					&board_info_strix_b550_e_gaming),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX B550-I GAMING",
+-- 
+2.51.0
+
 
