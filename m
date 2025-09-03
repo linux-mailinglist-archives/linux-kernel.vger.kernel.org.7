@@ -1,124 +1,115 @@
-Return-Path: <linux-kernel+bounces-798424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658C8B41DB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:55:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D36CDB41DC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C39454891F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:55:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E22E9548C95
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1262FFDDB;
-	Wed,  3 Sep 2025 11:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="aW6MF1NT"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0759D3009ED;
+	Wed,  3 Sep 2025 11:51:50 +0000 (UTC)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DDC2FF66F;
-	Wed,  3 Sep 2025 11:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3831B2F8BC8;
+	Wed,  3 Sep 2025 11:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756900287; cv=none; b=VBG2o89vjm75bHRhKJ97mBaHxryk/1w73dyc2ffjgCLPmNX2wMDznB3Rhclb2AIB6DEsJi5Aa0btkw9jD5ZSENRXJmSItHZx7NtO4rO4MJxXw4+jL45lpwxngbUFDe6oLqAhovr85u8zrT1p3jjicksvBrrcdWgoY5Uv3Tgnn40=
+	t=1756900309; cv=none; b=WSAU4VgFSxq6Q+JlN+ohVUHCtMbFIq5TdiTIWW7jo68+N1MFnuCfMqmHFQVIbh3h1aKESv0aamYhRJ2/9VXUTRF1cefKlg/8+5Sly2spS8G9R/fUycSS7O0D723wW6fb++3li5IAYLUJYgsSDlBqzBgHX5cNM8TfjalKHdLDD6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756900287; c=relaxed/simple;
-	bh=nLBdBuaIf1/aVBs0fJxzcj9UY0fYGaAL/FzD81BuuFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hPh0lzM5rNsTy2dIrPts9w+DW3L1KLioCHbtiyH6cj299PQVMCS5F9qwmK0N4+L4IjuYkLVewcmwa4yzRgYuHCbKbKnbQjE9UDlWO+8FThsp9HzDl3RCvCw2P7Ny49JCln5ufocOYuzjSJX9Vn4fB47ZRc87SD17nzejnctSI+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=aW6MF1NT; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45b8b7ac427so20654675e9.2;
-        Wed, 03 Sep 2025 04:51:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1756900284; x=1757505084; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+poAW3AComNrsNKMjhX2QMWKG3Ybru0jXQ935AA12eE=;
-        b=aW6MF1NTjC9d1dWDldSIaPeoG2fOZSfoItwdlc5jbN317moKjJPeuhajktx8502DJw
-         B6RN2OslntIeXV2LQjWx5+1z5w+0RKyfNu/ByKZks9c1BRplfQrR5dJ3g7UBtg9DHvT6
-         +Wi4YC04O+eDjg4aMde1PlPi0eGWSqU1ojSkIx0jPwy0m/ArgTxONrro8K3ddkuhkpIS
-         zufOnNyuNlT8oL6G6+OxJC2NczT2SflmoKk9/UdApTT+49TBssKtg7CJhbIii346JknV
-         LtAjqpzqwzAGUBbkwTPUExDrlUGnM7RarstU3RIgghuCqCQsy8AUDt+/O7TlzcgByyP1
-         DBeA==
+	s=arc-20240116; t=1756900309; c=relaxed/simple;
+	bh=0NXeswWcFkSes/1u7HlPYfIoa8uwoRCkHcU+Hpz0TkA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CzLOGT5EYZu1rnRRdTdXVdhFX7vwV1c3O+c/cTKrVDx96S78fOQAEdkSsZy3F6KGuYhyEo1Dgi09cuxlC+NouXVTDtjgvAPrH7sqkMKJ7ujKMEx4at1wIeZVTYZMsSjRkgwRevE+quINKsLQH+GJ7LDOLVS5NTUaffAkCJ9zc1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-544aa9b536eso2512480e0c.3;
+        Wed, 03 Sep 2025 04:51:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756900284; x=1757505084;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+poAW3AComNrsNKMjhX2QMWKG3Ybru0jXQ935AA12eE=;
-        b=CYHan7Pq83pRAb1kguKxduYLkl4bjqTWDioNIxOyHcoEbZU/nry6Jn6rgHmftaMv9K
-         nRfThOwI0oemQfTSDTlgdOFVUDEK0s4o4Mn+4PA6TW28JDHLVxEB4PQ8ZI82xiWLgzni
-         lADGdosRnm/8PmaNG2g5wQLISjeIHIc+eRXPUm55QoxLmg8MpzM3gzbEtXABywfchhmd
-         uwwuZ2pxK0A3PjQeHMtLZnjI3nPyizF1Gx4bfLrtuF/sjTTSX+jzLe6vxblENrGnKG2k
-         TMFUswzkBHXwRAeqHbN2COd+k3Fx8Wa0Al8AteDJ7oox3u8XCo5JwxkF/O38IMKFf8od
-         FXpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXiksv54oJk3TQ5GvP0IVzsvOOcCuYAiuScoTjJKLjOYgXSzXDsM9JXqm0KKB8JYaZSjKjunUT@vger.kernel.org, AJvYcCXwMdJplX2ygP2RMSMy+8rJN2n0rqUUQUm2zG/q4TXnSg2sLJTURfikQJQAzu8xdRdrQi5W4AJgDlSy864=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7g6CfaTIigjpoVFRzoPv6TUyBMQ0zX0v2wUQIadDKr+Ow+Ezv
-	ELRfM0prcYJLfmU+/5NC8zn+MD3RlcBAKKpBe7iz2O0txXOyEqPWfpk=
-X-Gm-Gg: ASbGnctY3yqwvqOgMROnoY4305WS6EQcz6FZH9dOH9gv0lts6fnkXj8OXM5BbiSXxsg
-	gwXxNR0ZCnRr7jaBVabd88z7kuijWyt/wYqlLwX78BPUpq8of8S9S1eICxqShsO5P0XVk6HHoWV
-	XbVRi9X7o04cS6OspAXt3gkWVSCByrDcfFLshoVadYgP31rn12BQHc6iwR4KBmXHNdvl33rkByO
-	GLQqHk/2MGfEOwuowADOqLJjArB6dUg5G6QkHEmm8CWP6NZGz++1xI4q16NMw01LTsAsw1PiggE
-	8O9KDOT5vbDhT1GPwkPKwCVHwG2GnFghuC17VG60xoM9QuT8Qu2aXJmMM2iyQFy85/Tmbbx/XnZ
-	nsLB6Bau2VYijNhejfpwX7tU1nOCqEMXkkscK3QLu+kwmo93Ae+k/O7iEJ8PKZXOsrfmOuU32UA
-	==
-X-Google-Smtp-Source: AGHT+IH8KQaV6Ll+X0GX7vVi1QC4bMGUrCiEpULUwaoVTVKkkRFfOk03P6Y5OSqOIWzXBzBujnsLCg==
-X-Received: by 2002:a05:600c:1ca9:b0:45b:8c3f:7d5a with SMTP id 5b1f17b1804b1-45b8c3f7dc6mr90956135e9.4.1756900283871;
-        Wed, 03 Sep 2025 04:51:23 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b4f3e.dip0.t-ipconnect.de. [91.43.79.62])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45cb5693921sm30003685e9.0.2025.09.03.04.51.23
+        d=1e100.net; s=20230601; t=1756900307; x=1757505107;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=toCPkhyQcLa7UGoBW0B7LlcW/gOJN4+iEDFwyf7gIlE=;
+        b=t4BNbuRe86pT6o9EmtHvvxD49ZdwbeX+r/nbqCcJoWOTt6R5DrxGpR4tmpjBOUGwRU
+         hLSxn0iZXuX5Eq2836xlgELr/C6Ch1NRgMRI2nGLEbBDHX5DhrInq3wyfZlHD9ZsF6Pa
+         wilpyw8xBDTXeR9VTn/8FHgnke2Le3BCH9tDp4UFmo3+57kOl0HsMy5qWYka5omqeHdp
+         devwVoVp82d0EVQ6Z8k/aRfzLnkyJ73ONICc77bBp77bWhGbjxeEPvN/xJZbztzQwUhv
+         DRRl9oyUIX1ul+YNqk3bube3PMWNkxeuirrzSdfPMLvr1CJrRp5od3VO7j4Qf1H6Yez5
+         K+vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUG5fgnGyQ/+xDZpcP0Fy429719f4s+sjbGFPjlN+4aqd5eLMSM/FvPWkB9wq0FhET1ue/agf14R7v4u6Cd@vger.kernel.org, AJvYcCUdag6hZbMzYWD5hhyFoyekKM87Z5VK5qB9MM+mpAxfRrS+EtbBi/ZLhu4t2e3mQs/FIpkN60JcLLmU@vger.kernel.org, AJvYcCXptXLBMD9IQS+9S/nAe4adDWl3ABG2ld9rZcmm0Wf8ajScPYVE1z4bQZuBAtl1GjqnDVnHFDcQlQaIwtXLwwEZKG4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQt6Uob46fZ0bGNtjE6hxOCdHFC7b7i5tpqAqnfYWXf++4ZCwe
+	DeBQALY5HNoQip4MozuqL+rrgYj3MQKGQM8vlMk2lGJENHPV8CTpy4jKobG6bh1M
+X-Gm-Gg: ASbGnctOYl4q92rbFiw0TX67/C5F7hzb1BVHIX5683UBpnVVhGuDnb8PUMA572KLdt7
+	UpiRq1djjUdAqGhFaPtYfVPFmWArhY5NeksI8zJxO+htgWeBxt6Ya+Wf+KW8gWM/qR5TGyN/CNs
+	DkZnpvfzutKOJh5KVQ/yIhhbkXzNmPBNcbQROFxILKxjySksgA4MPtQksRPhisLCcRRsFKCiqo8
+	KMwkULpjM+Bkhsv7xKL0eH/eJEQL6rZYPJyAf0av4r1S/4g1oMIGyxMIY7VVh4+Xef+c7oC2qGX
+	rEGxp2x4EfIlQFV5doRiIn6qbicwFeQfBNeO065mhBOfCZ02/ZcQioUanVuVSMl/FfKbGEz3pkA
+	gk1ZMPK1rjTDXDpphnfa2pk53ZHDaXbvHUKJvffICvxdcXKttXpvak5K4A2zk7J7yFrm1kUs=
+X-Google-Smtp-Source: AGHT+IHJUQyyvtpnrglyyB3oGJfEotkpU59L6XoNRvv/c1YeXVKKdJx1IP4XqAfr3iZhhoiX9wFFqQ==
+X-Received: by 2002:a05:6122:554:b0:530:7ab8:49ab with SMTP id 71dfb90a1353d-5449ff8da92mr4910749e0c.0.1756900306873;
+        Wed, 03 Sep 2025 04:51:46 -0700 (PDT)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5449131bfabsm6618909e0c.12.2025.09.03.04.51.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 04:51:23 -0700 (PDT)
-Message-ID: <170ff207-cba5-44ce-9d93-75f7b711bba6@googlemail.com>
-Date: Wed, 3 Sep 2025 13:51:23 +0200
+        Wed, 03 Sep 2025 04:51:46 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-531fe8d4619so681464137.2;
+        Wed, 03 Sep 2025 04:51:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVfpQjxgjQpUJxV8O0Vklo3SSlHlO1q71e4o2dBI4n/hBiKRxbnAvBiHXX70g4868Wx+r3Iq5aFuKB6+L7O@vger.kernel.org, AJvYcCW9LDpUYsb95MbeIQ1HTAmeBZC5D5o2Rf73Pf5gv32GqoCj28rnYaDwXyxstWAe/46LWWM2mp0EFeIt@vger.kernel.org, AJvYcCWY4TIwpzqxptpdTpOwIvyvWstscoW1+t3J4U200qozOJOMFSL6X/T0QBuLk9wIHwa94IA3L1Qje6am4w9eQfflOv0=@vger.kernel.org
+X-Received: by 2002:a05:6102:6447:b0:524:1bc6:c80e with SMTP id
+ ada2fe7eead31-52b1ccb408cmr5305054137.35.1756900306497; Wed, 03 Sep 2025
+ 04:51:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 00/75] 6.6.104-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250902131935.107897242@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250902131935.107897242@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250820200659.2048755-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250820200659.2048755-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250820200659.2048755-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 3 Sep 2025 13:51:33 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXCSdLerSq8B5NYUumwG5btZji8dPLCvRkN6we1D+93ow@mail.gmail.com>
+X-Gm-Features: Ac12FXzLZJmboPTeikYmN3kcCRtNfEjmbUe7fbxyEeHHwhZLJJLD0XUgqO7zpoo
+Message-ID: <CAMuHMdXCSdLerSq8B5NYUumwG5btZji8dPLCvRkN6we1D+93ow@mail.gmail.com>
+Subject: Re: [PATCH v2 9/9] arm64: dts: renesas: rzt2h/rzn2h: Enable SD card slot
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Am 02.09.2025 um 15:20 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.104 release.
-> There are 75 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, 20 Aug 2025 at 22:07, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Enable SD card slot which is connected to SDHI0 on the RZ/T2H and
+> RZ/N2H EVKs.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2:
+> - Dropped sd0-sd-prefixes
+> - Dropped DATA4-7 from data-pins
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.18.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Gr{oetje,eeting}s,
 
-
-Beste Grüße,
-Peter Schneider
+                        Geert
 
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
