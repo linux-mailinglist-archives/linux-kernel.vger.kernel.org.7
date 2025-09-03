@@ -1,96 +1,152 @@
-Return-Path: <linux-kernel+bounces-798882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10A6B42436
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:00:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB42B4243C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80AE87B18AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:58:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786CF3B294F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B3230E829;
-	Wed,  3 Sep 2025 14:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OR6MKdFg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91DFD30ACEC;
-	Wed,  3 Sep 2025 14:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BBF30C341;
+	Wed,  3 Sep 2025 15:00:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02E61C862D;
+	Wed,  3 Sep 2025 15:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756911592; cv=none; b=PY/10Iv2HUXNJIKCVaYsva457nz74WXecu0W4LkgN9PuF8W4lBzpGM2jmtPAVfIAJ8JCCs5Z+xm55CG1llfhxBqIrzwTMeYJHevb+0xYnALEkKSEuQHxbzJq8NowUE62uZFJpMnZ4bRjGjveiYBmelhsVYw/1nTYkpVwwM7f9oU=
+	t=1756911632; cv=none; b=lWN4HhO8VzhXOWickQFXIOv0r91/IQIjd2gFDhFxxstRLaOUx5QmpwpGU1ApyUYf+/oqdq2PRHKmAxH/rN89qKEHiSLkOSgpiddXU9GMF0GRDo3lzn77AMPt9eI1KCrJKz1wPJy84IVwqweRWtpsKRKFLiMZmRXoqXciBKGt6Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756911592; c=relaxed/simple;
-	bh=txSRCShFHr3LUVNgVFtikONwwhg9swIbp+KxsjlKvho=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oHy9XEj6oDMA3yOE2CGtW0NWXl3D2QhCft1hHJFz0scpEA40FK3rSwOU7RhpU0wL0IYs4IUzzrf3eoqhAHY1dvqV8lzcLLcg/0J9otCFnr4Ym84rVUwDdPpvn0l13KOszpuLMs2UEqzvRxw7OFbliKZlapZnGx/LAsD9M1cOZg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OR6MKdFg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A90BC4CEE7;
-	Wed,  3 Sep 2025 14:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756911592;
-	bh=txSRCShFHr3LUVNgVFtikONwwhg9swIbp+KxsjlKvho=;
-	h=From:To:Cc:Subject:Date:From;
-	b=OR6MKdFgW5sovt5WrAlfdSX69XVFGuWoYxAtbLoHtZVJOo6/2iWBgvGB9nqQuP1WO
-	 qtO0kFLtav+DYQ7dHvvdBPfzhIjOqulQnFmOLehQGhkE0fdPPf0DIgBH/WNuXC6PU3
-	 +vlFRjVpxNH6HKtmxs7m++P+tC++LlmrQpoZSTqO1jNO5I8HmViMGW+lKWnQvULDiZ
-	 ZRv+P3f7V13YPtvwLlbYNt+GplAVue/3UKyL3GnoPlEgli+2DXF9mpOank5ZAws28t
-	 I/MJfoG4peFEzf5emAdJFGN3KSkFPsBWcwXC3Li7McBq/yvq4nDs2bv5Txvzjcuf1X
-	 aZaier/RyGSoQ==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Zihuan Zhang <zhangzihuan@kylinos.cn>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject:
- [PATCH v1] cpufreq: intel_pstate: Rearrange variable declaration involving
- __free()
-Date: Wed, 03 Sep 2025 16:59:47 +0200
-Message-ID: <2251447.irdbgypaU6@rafael.j.wysocki>
-Organization: Linux Kernel Development
+	s=arc-20240116; t=1756911632; c=relaxed/simple;
+	bh=x8JwYG7Wx55/A7NNAWh6A54TXGytTt6NVEtBbl/7w8E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D3M0yUkUkNLcU/IOlt6jULMsjNnVLOL2W3SlQGgZgEKvclHazLNJfiPUymsrLCmFGGgfP1PCYoWNBcDsGqAqbpda/+M1YgudbCQemBBQWQ8ankrr8ZJzNvQ2jPaFmaFAcUKlEdA9a1Yo29/igShjayJyGkVohKJW8wpOEp0N67E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65C9A1688;
+	Wed,  3 Sep 2025 08:00:21 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D89543F694;
+	Wed,  3 Sep 2025 08:00:25 -0700 (PDT)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: ryabinin.a.a@gmail.com,
+	glider@google.com,
+	andreyknvl@gmail.com,
+	dvyukov@google.com,
+	vincenzo.frascino@arm.com,
+	corbet@lwn.net,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	akpm@linux-foundation.org,
+	scott@os.amperecomputing.com,
+	jhubbard@nvidia.com,
+	pankaj.gupta@amd.com,
+	leitao@debian.org,
+	kaleshsingh@google.com,
+	maz@kernel.org,
+	broonie@kernel.org,
+	oliver.upton@linux.dev,
+	james.morse@arm.com,
+	ardb@kernel.org,
+	hardevsinh.palaniya@siliconsignals.io,
+	david@redhat.com,
+	yang@os.amperecomputing.com
+Cc: kasan-dev@googlegroups.com,
+	workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mm@kvack.org,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v7 0/2] introduce kasan.write_only option in hw-tags
+Date: Wed,  3 Sep 2025 16:00:18 +0100
+Message-Id: <20250903150020.1131840-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hardware tag based KASAN is implemented using the Memory Tagging Extension
+(MTE) feature.
 
-Follow cleanup.h recommendations and define and assign a variable
-in one statement when __free() is used.
+MTE is built on top of the ARMv8.0 virtual address tagging TBI
+(Top Byte Ignore) feature and allows software to access a 4-bit
+allocation tag for each 16-byte granule in the physical address space.
+A logical tag is derived from bits 59-56 of the virtual
+address used for the memory access. A CPU with MTE enabled will compare
+the logical tag against the allocation tag and potentially raise an
+tag check fault on mismatch, subject to system registers configuration.
 
-No intentional functional impact.
+Since ARMv8.9, FEAT_MTE_STORE_ONLY can be used to restrict raise of tag
+check fault on store operation only.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+Using this feature (FEAT_MTE_STORE_ONLY), introduce KASAN write-only mode
+which restricts KASAN check write (store) operation only.
+This mode omits KASAN check for read (fetch/load) operation.
+Therefore, it might be used not only debugging purpose but also in
+normal environment.
 
-Zhang, I said the code structure here was intentional, but that was before
-the cleanup.h recommendation was pointed out to me.
+This patch is based on v6.17-rc4.
 
----
- drivers/cpufreq/intel_pstate.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Patch History
+=============
+from v6 to v7:
+  - modify some comments on KASAN kunit test.
+  - rebased to v6.17-rc4.
+  - https://lore.kernel.org/all/20250901104623.402172-1-yeoreum.yun@arm.com/
 
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1502,9 +1502,7 @@ static void __intel_pstate_update_max_fr
- 
- static bool intel_pstate_update_max_freq(struct cpudata *cpudata)
- {
--	struct cpufreq_policy *policy __free(put_cpufreq_policy);
--
--	policy = cpufreq_cpu_get(cpudata->cpu);
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpudata->cpu);
- 	if (!policy)
- 		return false;
- 
+from v5 to v6:
+  - change macro name for KASAN kunit test.
+  - remove and restore useless line adding/removal.
+  - modify some comments on KASAN kunit test.
+  - https://lore.kernel.org/all/20250820071243.1567338-1-yeoreum.yun@arm.com/
+
+from v4 to v5:
+  - fix wrong allocation
+  - add small comments
+  - https://lore.kernel.org/all/20250818075051.996764-1-yeoreum.yun@arm.com/
+
+from v3 to v4:
+  - fix wrong condition
+  - https://lore.kernel.org/all/20250816110018.4055617-1-yeoreum.yun@arm.com/
+
+from v2 to v3:
+  - change MET_STORE_ONLY feature as BOOT_CPU_FEATURE
+  - change store_only to write_only
+  - move write_only setup into the place other option's setup place
+  - change static key of kasan_flag_write_only to static boolean.
+  - change macro KUNIT_EXPECT_KASAN_SUCCESS to KUNIT_EXPECT_KASAN_FAIL_READ.
+  - https://lore.kernel.org/all/20250813175335.3980268-1-yeoreum.yun@arm.com/
+
+from v1 to v2:
+  - change cryptic name -- stonly to store_only
+  - remove some TCF check with store which can make memory courruption.
+  - https://lore.kernel.org/all/20250811173626.1878783-1-yeoreum.yun@arm.com/
+
+Yeoreum Yun (2):
+  kasan/hw-tags: introduce kasan.write_only option
+  kasan: apply write-only mode in kasan kunit testcases
+
+ Documentation/dev-tools/kasan.rst  |   3 +
+ arch/arm64/include/asm/memory.h    |   1 +
+ arch/arm64/include/asm/mte-kasan.h |   6 +
+ arch/arm64/kernel/cpufeature.c     |   2 +-
+ arch/arm64/kernel/mte.c            |  18 +++
+ mm/kasan/hw_tags.c                 |  70 +++++++++-
+ mm/kasan/kasan.h                   |   7 +
+ mm/kasan/kasan_test_c.c            | 205 +++++++++++++++++++----------
+ 8 files changed, 240 insertions(+), 72 deletions(-)
 
 
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
 
