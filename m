@@ -1,177 +1,116 @@
-Return-Path: <linux-kernel+bounces-798117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169B6B419B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:13:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A85B419B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3C275E54B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:13:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96B0D560150
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4614D2F1FE4;
-	Wed,  3 Sep 2025 09:12:49 +0000 (UTC)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13D82F2911;
+	Wed,  3 Sep 2025 09:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNYk8X+A"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048D7279DA3;
-	Wed,  3 Sep 2025 09:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A972F28E2;
+	Wed,  3 Sep 2025 09:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756890768; cv=none; b=qBFF4mKfwLo5sIl95zf8QZeqIwlHOcpE7pSJVG6p3RBkLWipTR8Ui3XC2kbBQEYn0kpQKG2H/1yoWMS9hP8JtbWK5YoVb6SQIL2bQbsKh4TpsWmI+2FfCqw+tgUmsj9oQpHaShSrtawTszmMF2gp60t4gSxAHPAUCfXW821pL2c=
+	t=1756890771; cv=none; b=miMqM9lSSeMOiNA4GJ1vN+Lg/jIShBQH1sb05BkRQrdB0uIY9/MPoiG14r6O54aQ3k+e34Zl2Jt4JHJR3li+fTPEgjHFmp44691PQHT40inqd2FRIok863jrWIwE3Medcp2hnSZ9UP1eXhbe1Kg0HAsljF9uaYKmrZNti3kzd6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756890768; c=relaxed/simple;
-	bh=DIPaprV3eihxw50ifN2D91RMCfoQucJ7myFEvM9sGio=;
+	s=arc-20240116; t=1756890771; c=relaxed/simple;
+	bh=u1dUo+ncWnByrkiVnzOKVZT2Xjkh2cB3EGgl85trqm8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qLnz8ezsugFHpEgvbZjGETh5B7fd2cx2NVWnywSQ8+F13rOHbDSjLrxM4gWnZrMYxcrTRs0ME+bDs8+ffhN/ISYitczGaPfaJJR08DojFB1Y/8pNANyy9z6sCR7r1LzXzY56q6B9hGqgKB5M3Fbc6CPsyikLR5iZ0aPYgBHUtlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=iN1e8BWZ2DNl6QxgTO8tlnFbhrN+qe12C4chJhh0hNnR2kqt0VDWE7xTyESpd84I49F5lIoLGFAjC4n7jahs54UtrhErY5ik8m8mO+frVFGUIFZrUtjEnMfW4uvqNrk5rg23JuIV90gR4vlyQ+ArV0YjIrvEbBizdi/QbSS0efw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNYk8X+A; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-53042807be7so1300083137.3;
-        Wed, 03 Sep 2025 02:12:46 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24ca270d700so414445ad.0;
+        Wed, 03 Sep 2025 02:12:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756890769; x=1757495569; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u1dUo+ncWnByrkiVnzOKVZT2Xjkh2cB3EGgl85trqm8=;
+        b=jNYk8X+ANTyTPRZOQPNw1aFoWqog6BEEILMH3skLcNgtY0K8fn3AWwZHdsE19Hqmyl
+         Pfypr8WnVKbhn3I+bVndrO0FiHsqv1U/KIrnd8tLJ/nfUghGv/JlF9TLtQFzGifdUYz6
+         05vwvvDnUwDpLrS+bPCC+A9sDADhG0YiOfSDL+LvwkGOqIOmStedOomAATWMiz119RcM
+         oluwgydm0VPlIubZ8gyEk8xWYc1GMvRwvXt6tQP+9MUmKA4Gk7As035oaFqkCmiUshKX
+         Bpu2vkl4oEDT1Db7KtAIB4lW90yCa+nTX3HOuC6OtQUTfsT0JBf1euTNI+Q7Qu1rMYB6
+         Ziog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756890766; x=1757495566;
+        d=1e100.net; s=20230601; t=1756890769; x=1757495569;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nIDGYOWnJN960iS6MeVa//s0FaDx2mHxuzRZXe1C+FE=;
-        b=CxxtDeFAgCTQzwxHn3f0lPPsvb7Ieai3o/pPQxA8zYNYbkQxr4lhfyWt0YnemnApHU
-         RULmUmNEXfuzx2lm0AorY9ea/k4RSTeqRDeHvcf/UevTpYPkXr6fazjr1NKsVCq45REU
-         FmimuLogVZRuEID48Kg5/9JAbO+DeqPWqwhKq+P1YeDl9gJtKt8M6ESK2dS7HiP1p1tq
-         tGtcxLdu8NDIHGucKrFlfsi4N3rK6cxbgVtFvigZw82Y2wE6Z/Gz3Xbu7xD53E+USXk2
-         BYjKYnti1o9/N7H7Sd7FVeW+RGGiviLQ6M/qKnxENUfWmfwDapvkn8ZHtIoQEKFm4VTd
-         m+0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ6UnrcISoIUxrhMLb/YpfFs6I+GOAv7UYTOHxnXSQup9Dr/Qx3Sb3IK3kc8s3JhqBHWriWJSjH6DS4x8dGykF6js=@vger.kernel.org, AJvYcCUUTskgGzhPn/sdM3IckdbCX0eEI0Ez5alkK9CBKmVm5tg7xbASTyIA4qPBvyTTg0lsO4QIknB6SuJQ@vger.kernel.org, AJvYcCVTjxmuQwQi5BjAWNnjbsJY4WOCgUeXj31jn4WZU2tnvL+f1K0KKhFKKxwEzADMWd09l4DlU3ca@vger.kernel.org, AJvYcCW6+bf1FRXErcIzF601ehz9LH35Oz2mN9ITAQLb76n4Up1gDaVN0JKbqkcI+XgB/ZthezMSx6f0N4RMvu3U@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHp5jj09zpD4/VOzakWXUUcg9LlVnJPrY/VkdXJq6m6BCx0+QR
-	MivPS+bajFuKP6NMBagaOy6t6d9bbmIINMxwdgCPcun0tQ6Nx4wAKcKFMpDR+IXW
-X-Gm-Gg: ASbGnctYyDxCtTw/A2A7GhtqtSnMihBmUvb/96IEAaTfC2zZswgDjFlJBXab2Zh3hY9
-	aMWatRGiCsDK7Hbo7/JzvORKghSwIPJk8D+pi9GGoNimjaW9k2hXNv7AxEtLQGAJidTdyGWrFNW
-	sIvzToXgtPPZeG487p5UnJlITLCOfPvsFtRTuS62AArv7Ro0HaVju9hwi005DoA24YrwUpG90yr
-	c4NDhFjEX/37tK9A5r/zKFqaato56VUkBIEC89JT4/pWB7AwWa7kygqGtZq1WjFPjB+cJWT6S7D
-	+l0gKTzIhNJO3da8DxAX3MIgPAGNoSNB7GsauXqnrn4tPs4rIqfbXL/iA9Ce9gX1N/avMmw8HuA
-	X+imeOEE8VzIzDRzpUy95ea/w/l4S41TVIqwwTKJq7+mOr6D8QVfg+CkjcTa8
-X-Google-Smtp-Source: AGHT+IFwioAnY+g1zUDfQH455vJhNu6MADmtcBy2GolbEd/e1t61PUcDQcS98EGL14nSszH+aWumHg==
-X-Received: by 2002:a05:6102:2ac9:b0:4f3:1d:6b47 with SMTP id ada2fe7eead31-52b1b8fe837mr5535364137.25.1756890765707;
-        Wed, 03 Sep 2025 02:12:45 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8960ab19f6csm3054727241.8.2025.09.03.02.12.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 02:12:45 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5300b29615cso1521611137.0;
-        Wed, 03 Sep 2025 02:12:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUl4+iYMeG8Hnc3BFEJw/qUx9U2XD6omI8jmGFgOWKYS/rsqhouqz28Me3t1xmda0PyOopskBVS@vger.kernel.org, AJvYcCUp9Yhqw2xwOoEDor4CeRekqs+yOIsFzOzkoRmYjHcuyvmJWoV31DcJlvCHgz8COQKd6xg27uZGoPhwfWQhQ548KlA=@vger.kernel.org, AJvYcCXSrUYUC/ga3DR9tgWUs9rqMm2W5UwLM2gpOfLZI1VJfzR5HhT8zZKqahhALHbL5RP/WXnkWIdLALUX@vger.kernel.org, AJvYcCXhngspuIb8ehi4Df1xWCqCWBfPtY9WX74SHBZEAMq64x72KVBjzNdA3WaQI7CEVIW/x2m5LLgc4MJvvDY4@vger.kernel.org
-X-Received: by 2002:a05:6102:dcb:b0:4fa:25a2:5804 with SMTP id
- ada2fe7eead31-52b199544f5mr5403168137.10.1756890765101; Wed, 03 Sep 2025
- 02:12:45 -0700 (PDT)
+        bh=u1dUo+ncWnByrkiVnzOKVZT2Xjkh2cB3EGgl85trqm8=;
+        b=M07vQAsmFJ+OC3IZnb01xI98Cu/MRuD4ngTzZ7ujXOuS3SwcFASOMy18LXVDwu8rjp
+         BAEmhIwZyRXrDYeb72zPVNp8cKCFGqZlFgjC7OCl6TG3vtoAd1eXwuTZGKLGQFxHwedX
+         dGxOm2QnTJJDYc/ib9qqJ4onUAciQSNFAFXP7KYCNuPIbRBNCF/LWjMSK62cW89toJhA
+         zLY5I6KtYHNd5snk+N79q7DfjWDFSeOvJaudMEJlERr6bHYEm+ZUO9nWAYjJYTNqeALP
+         IuMULJT92OlDsU6VaBuF6Pl49Wv7XW/hnKnDAA873FLt4rvZlu8WcrWcvmqoqEH4Srge
+         /ZFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5NAcBVcJkFkdYVjZ8Lqy8lGVuP6hYXtzYB2r+IyTanO+ylGMc6onoKnveRBT3YJCnu2RA+F4mMJCkO1Mb@vger.kernel.org, AJvYcCWoEUmoYQItupAHVyO5QL8bK3/6C8uCw0s2/iwnj+gn+7OlXV4tws4bdUW/iUB5MG8pGsXMZz31KlmiY3h2Fnc=@vger.kernel.org, AJvYcCX1HVhvNvmqTxDt3ekzaI3fRFn+TKLGFYAWaIHKECZkef6ZUhHe12N0RXphktXUV2sHPTH7KLBw@vger.kernel.org, AJvYcCXa7EST1Nz+38YUUZQlY7/rfuSL3bAIdHeVwkmMQBkF4g7o0naV75rR5Jl3ltazmpkJpIOizWfbmYof2k0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP91y4xwQ5uY23yaQOMFsvjOHMBUqkEY5NyxfSkRaSgvqTkCYZ
+	VZQhDopg/ZE1YhekLOaG5nqtl61J1LBRA5InMxJ5ichsHxfZxvRiUb+2WK+4WMyF97VYFVR956A
+	4xcu+DLSKYYd5nErPdgdsFAaO2x/Xpe0=
+X-Gm-Gg: ASbGncsj5RHBfsr9QBEVfeENZbeSLXizutKcMTkz7ZonyQ9t6toyh+i8s9Xwant8xNP
+	RLIFLVsmA/UDgw7PyYk45ONG4zJ9HdVTnPAYiNFc7Ve5De6XfBjATmlOucbG0V1gxI982rTK9Lf
+	yQvatfYrrVsRlNZSTMv7wK34Pu5nL05HlR05H8dIEyVyGAYwXkbTyGyRQVxRI3ct2KE/nSpOzXT
+	b9L/eoOrxOJ/dYK/00AgceTFdJozJ55Oc32FvLhSHjs8SE1V9y9ijf49DTiDqtHxYFcBF60lZvT
+	Ie3TLcWycgSJhAytn3YR5fM3x6nrp7xZBA5p
+X-Google-Smtp-Source: AGHT+IFy+V9mXKNgGUInVKnO4rUD7VlssVnjx0POASZsCkyJ+rfepXrTHaYt+5C8DyDBAIFxdX2YSb9WPGAXKP6wep0=
+X-Received: by 2002:a17:903:41cf:b0:248:b43a:3ff with SMTP id
+ d9443c01a7336-2491f246be0mr103559945ad.8.1756890768748; Wed, 03 Sep 2025
+ 02:12:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901224327.3429099-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250901224327.3429099-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250902-enlightened-hidden-copperhead-4eefdf@kuoka> <CA+V-a8sSiNQ6W-ggmL8PP_G1sFq170DS1LJLFJs_WW0RC+XVEw@mail.gmail.com>
-In-Reply-To: <CA+V-a8sSiNQ6W-ggmL8PP_G1sFq170DS1LJLFJs_WW0RC+XVEw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 3 Sep 2025 11:12:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVT+VknkQzFDTpXdiDh0JMwgUPXK7muKv99H2k7pzzodw@mail.gmail.com>
-X-Gm-Features: Ac12FXyyoD4GKTQzybA_UZJlAFr10UqAQQrqR1L6lu-xvuDnZUEcM7VmVfWOBPc
-Message-ID: <CAMuHMdVT+VknkQzFDTpXdiDh0JMwgUPXK7muKv99H2k7pzzodw@mail.gmail.com>
-Subject: Re: [PATCH net-next 01/10] dt-bindings: net: pcs: renesas,rzn1-miic:
- Document RZ/T2H and RZ/N2H SoCs
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250408220311.1033475-1-ojeda@kernel.org> <20250901-shrimp-define-9d99cc2a012a@spud>
+In-Reply-To: <20250901-shrimp-define-9d99cc2a012a@spud>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 3 Sep 2025 11:12:35 +0200
+X-Gm-Features: Ac12FXzVStDccJZt9jg6LxgcDhbP5A9e31eO3h_DSesybX7nfJW90L6qE4tU3Nw
+Message-ID: <CANiq72=hD3No2R8-8znrOsL+AEs3rCVjNn3sn-d7qKSKZaGWvg@mail.gmail.com>
+Subject: Re: [PATCH] rust: kasan/kbuild: fix missing flags on first build
+To: Conor Dooley <conor@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	kasan-dev@googlegroups.com, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Matthew Maurer <mmaurer@google.com>, Sami Tolvanen <samitolvanen@google.com>, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
-
-Thanks for your patch!
-
-On Tue, 2 Sept 2025 at 14:17, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
-rote:
-> On Tue, Sep 2, 2025 at 9:45=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
-> > On Mon, Sep 01, 2025 at 11:43:14PM +0100, Prabhakar wrote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Extend the RZN1 MIIC device-tree binding schema to cover the RZ/T2H
-> > > and RZ/N2H SoCs. These SoCs have a MIIC converter similar to RZ/N1, b=
-ut
-> > > with some differences:
-> > >
-> > > - RZ/T2H has two reset lines; RZ/N1 has none.
-> > > - RZ/N1 supports 5 MIIC ports, whereas RZ/T2H supports 4 ports.
-> > > - On RZ/N1, MIIC ports can be mapped to various endpoints such as RTO=
-S
-> > >   MAC ports, switch ports, EtherCAT ports, SERCOS ports, HSR ports, o=
-r
-> > >   fixed PHY ports (covering PHY input indices 0-13). On RZ/T2H, ports
-> > >   can connect to EtherCAT slave ports, Ethernet switch ports, or GMAC
-> > >   ports (mapped to PHY input indices 0-8).
-> > > - There are register bit differences between the SoCs, and RZ/N1 has
-> > >   additional registers currently unused by the driver.
-> > > - On RZ/T2H, the switch is connected to GMAC0 whereas on RZ/N1 the
-> > >   switch can be connected to GMAC2/HW-RTOS GMAC.
-> > >
-> > > To accommodate these differences, a new generic compatible string
-> > > `renesas,rzt2h-miic` is introduced for both RZ/T2H and RZ/N2H variant=
-s.
-
-Until now, we didn't have any family-specific "renesas,rzt2h-*"
-compatible values.  Instead, we always used " renesas,r9a09g077-<foo>"
-as a fallback for "renesas,r9a09g087-<foo>".
-Is there any good reason to start deviating from this?
-
-> > >
-> > > The DT schema is updated to validate these differences and ensure pro=
-per
-> > > port and reset configurations per SoC.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+On Mon, Sep 1, 2025 at 7:46=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
+e:
 >
+> I'm not really sure what your target.json suggestion below is, so just
+> reporting so that someone that understands the alternative solutions can
+> fix this.
 
-> > > --- a/Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.yam=
-l
-> > > +++ b/Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.yam=
-l
-> > > @@ -4,13 +4,14 @@
-> > >  $id: http://devicetree.org/schemas/net/pcs/renesas,rzn1-miic.yaml#
-> > >  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >
-> > > -title: Renesas RZ/N1 MII converter
-> > > +title: Renesas RZ/{N1, N2H, T2H} MII converter
-> >
-> > Don't use regex here. RZ/N1, RZ/N2H and TZ/T2H....
-> >
-> Ok, I will use it as above (s/TZ/T2H/RZ/T2H).
+If you mean the last paragraph of the commit, then what I meant is
+that we could do the filter conditionally, so that `rustc-option`
+would work to test flags that require the `target.json` for those
+architectures that already do not use `target.json`.
 
-s@TZ/T2H@RZ/T2H@ ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Cheers,
+Miguel
 
