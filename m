@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-797807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AD18B41599
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:52:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3E5B4159A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C7D71B6224F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:52:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BB291B61FDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB592D8DD1;
-	Wed,  3 Sep 2025 06:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372602D8776;
+	Wed,  3 Sep 2025 06:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XQDvF9wB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="euQ2cGB/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6205C2D94BD
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 06:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6020B2D877A
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 06:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756882334; cv=none; b=BkxlPGkBCuuOOEtEkBgKOaZ2Y+epneaCRC/csF2xAB/Q8gLM+GBGQTXbcq8fwJL+5djle2AN3OoMSl3j8orClte1rhnlknxv5qK4DwOggVmihLRr73cZWAKV3tbey80wlyhAYAuurxJ6bokg8cvFGmm/sTTiHc9PWK6Vh3QkTYM=
+	t=1756882363; cv=none; b=PfxrwtNageM35a7NWpZV6XyP9SMVJ4+cmyvs6asjj5G5Q9k6/1728PkbkG6tNQlDacymjC6uNWA+HaA8aGRIY8Bu+m+dr6tBs5n0pGL7wvfldu5vrgAqEBHEzJxhFMf4GLhh/TB4aprV7y1mcIR2iFiP4dgQjKr8cr0GK26qaFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756882334; c=relaxed/simple;
-	bh=QHyI31iXOsXHQnr+3AzHnSOgkcOzBaLTCdzD2n8E34A=;
+	s=arc-20240116; t=1756882363; c=relaxed/simple;
+	bh=jOfd352FpnGe9nL5cCMGXhVqWxfoPIOhiHFwVrWPIlY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ft1KTO7YVZ5qZRqqiqgeBpuMo31NBbjJONRVmchHQq0ox7FfpuowCwngJ/wcpMtvO9btfdlm+lNx5p9pCo5mfq2KMokdCTptQpABvFShNlLKA4P4Ie7Qk+HSu8OApM2DOqGlAbEmhzzrRxqeGAmjyMTyT66GNElijXrqZSH9yEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XQDvF9wB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58329TWr019572
-	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 06:52:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Xh06HkTHgX0IXaOaZlgESddUPOj5qIUQ3p3Th2I8MiM=; b=XQDvF9wBcIRTT8MT
-	taZneGfSYagOEw1rJJoH5mmX5QrcgoreB0soLZy8sD5MUOfSxjTX1T31eN5AEVX/
-	+NHxZk+S5F79NA0oCyKMVT204r4n6BhI+PwQby2vZYRgiQy/ALq8N9OaJgwlCHST
-	fK1M9lHfFt0D7D6sTQTOkNmhJmuxRh5Jwu2Gy/GEurQDHx/ysMGEKY3juKDBGdXZ
-	sfN/eFWN7pb8MiAWY/UhfHEvh+6dFi84CAS/DYY4HuSPncblQM1nYissru2iOPYF
-	C9/yydygRHFnxWu8OWjWvTUX0aGvosXyYfXdEiJf5trDmXu7TKLTeXJljfKgKAUO
-	G+B6yQ==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urw02j7b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 06:52:11 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-772642f9fa3so621472b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 23:52:11 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=u4r2Us2Cnu3c3ScBOYKCE7sQCtjKqddf6UCo6EJ0WeJIPT6XW/wiDtubK6xcqlE6gbF9doIPqBKgAQxq4JE6iq2aUzQleiL67FXtuOUJXVrhhcQcd+09Un3kYpAhiRGjCtj5tgA1jxwoCzhMZ3N3t3NGj6KegC3d9WQ3L0ydrL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=euQ2cGB/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756882360;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XO0RI0g2PcjH/Mi0NTM9HS4GzVWZNGinRmDvcNi+eAg=;
+	b=euQ2cGB/ytnzRbbhdN8w9IJ+AwQv9Qk8yEbUNEeY0RE7CkHxgfRwAdhFIbduqh9s4OVCzl
+	h9t+QpQEPSGmKsVqVcKajqVQxWRRKDE8JvUe7f9ZtnVl7WEeXmiTZnfxNPwqqXiS/tVN0O
+	iKDInHOBb+eZxC9BkCBIoa+blXvAyys=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-16-SdtgTeSGMpuWXrVTKS9ong-1; Wed, 03 Sep 2025 02:52:38 -0400
+X-MC-Unique: SdtgTeSGMpuWXrVTKS9ong-1
+X-Mimecast-MFC-AGG-ID: SdtgTeSGMpuWXrVTKS9ong_1756882358
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b9912a07dso7931215e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 23:52:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756882330; x=1757487130;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xh06HkTHgX0IXaOaZlgESddUPOj5qIUQ3p3Th2I8MiM=;
-        b=H9yLcyGHZ0nrUNdI77zwov8aNaaDqPAjrsCQj3impeTiszfj2ueQxOCq1HS05Eahrp
-         vcLNpIyYeU4b3wyaXJxsJwRHxt3/UXxncHfAs1bdJKwfUfgB2/f2Pn51eovNNWsrYJR8
-         BnJ9U8/ff59A+hfx+8SVhZWH6kP49koFmITuseEXZheab6CXx+MQIrxoVUG3/CJR0HCI
-         ZsDxDrTZV+gz0s6WQFaP4eixXF331RnxwX26qblvBMC+4ATS1AOlNE2szhN2sCIWYhC1
-         0Xu/u9NAqxhnproNwacixLDYxIqC+t1yAq/t7cIv1953itQN2A7ghe3yfNuKiZVH/T1f
-         q11g==
-X-Forwarded-Encrypted: i=1; AJvYcCWoMo3cDHNT0GwdqHcj4sD4AP6wPd22ScoQ4/lnSLXZYL/EYNG9jB1NmURV6ia29jZf3Dr3jNW4eCZNbUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk6O+WU5Y35ufOst+7RsHlK0+pSa2TG0hBNpdKh46zk1k6V5cG
-	Zgo3EEaOwYUAyADbXi4DkzhODCxlMXHhjkUXaCrsFr4TQXw3UEqjjelOSUeeHCeAn2T8LWQl+s2
-	iUsCMGOOeOM67BlXaff9DT/P5994hautR1j1BEi4XhEd53L6RWiCziEPozC8w0xx/hpgTU+aT6m
-	k=
-X-Gm-Gg: ASbGnctEbpq5RELNmNN5ktxYs9uq9SWy/urFwDkiDGTOsWd0W7QRIEIDiT2x2yrXk5M
-	mvefpYEJty9TvPfA7kxYoD2gLVVCHXni2/+5XjV/hZVAt7raUTkmnuGKW9LseSyrSKZ5R6cKJ0x
-	zsQG1JoXJr9ZjLN40TlBuN9J3ZcpQWi508F9DxYD54C8kA9pTkj3Kpn07+9+JR1PhtoTF19w1xb
-	7pDgmdzrOc/Xek3u6YVqX3lm1lpK1jO4Lhs075d7N2hsHlxVVrNilazyS7pnFCmJPFmh5aaqAUn
-	Y1h8Wy0n+q8VQhQEfwzXZH8e01xaKzHBqUMRuWkdoqwEqmAm5tcYAHMEzMwnOxP6ZsZP
-X-Received: by 2002:a05:6a21:32a4:b0:240:cd0:b18f with SMTP id adf61e73a8af0-243d505ce60mr23025637637.4.1756882329654;
-        Tue, 02 Sep 2025 23:52:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFXajHBDkYe23FL7mguuC493CU9o4nYUdXepF1r/U+XRkTqaTve2Jr243ltR83czIWc5OLoOw==
-X-Received: by 2002:a05:6a21:32a4:b0:240:cd0:b18f with SMTP id adf61e73a8af0-243d505ce60mr23025569637.4.1756882328812;
-        Tue, 02 Sep 2025 23:52:08 -0700 (PDT)
-Received: from [10.218.10.142] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4f8a0a3948sm5981277a12.27.2025.09.02.23.52.06
+        d=1e100.net; s=20230601; t=1756882357; x=1757487157;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XO0RI0g2PcjH/Mi0NTM9HS4GzVWZNGinRmDvcNi+eAg=;
+        b=GdV01mQ7WSsGevO/qGLMzRY2uDe4AcxhkFGKuNVJO9El92kskFBwO/iZtcRq+sOaGo
+         sheNyGrRtzCdGUpBVrI9firMpNrLcNO8JrFFcjhjjV/NeBX0IFg/B+wCASdH2b3TRo5q
+         kjsztHeQrVWzGP9TERisCBUIjmXVtTlOP8++W2kQB+lUBEUju4SLYdxq3KDPO96ScAKo
+         uUTchmbQpqxay5uWj6lbM1m9SzzZPtYrcApFyjYT6vqDbRTNHzykTD9cBtcpvWHvmGqV
+         ztCl8dKGh3YIJzxkwNvHNFXi9UQ6ht0bWguVYSmWisB08YxNrMqIeR4+Sb3A7P3Vlakv
+         BaeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwb2JJdh9hWj1WVqyWhXb+6mH0UXp7TxOpEHLh5OHoMTBYQW8U2Jqp3SX3s8TEQH3pJfaK56XQw2bZJn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOfG3eXm6Jl6Y6owxt1f34kh007GENkQrzY8rTgqBg2ozYTTCH
+	uon135nSFCVc/FspGcbHJzW3QH9GtJA7YJxvhxpyrZpG34c//x4i3Ne+cFWgzMuDpAz+7n47Ps3
+	5T1p00QM8Zos/w1iNUbX1RBWTFB44cIMZlfYwHS9U0mhCtJMqGhDFJgaOBZk6Ved6Dw==
+X-Gm-Gg: ASbGnctKYIHQX5eRwA3ZPsNbj5QH26jYJ53csPJ4VSzmIPkcGmvOpCe8ohPvZoQRviv
+	Kz91yMMgTYR9UfUMNf78wBln3MEEzi9TZzkws2MS/NBvTZjHdCkUZIaYgDPDj3NpRurfkoqccDf
+	i6bhkw3AV8szrgqi2oTCtUVy6cL1n/vqd8Hb3QRcGJbVXhER3J1mNGoxAlH5BEgkoIHAS5w2rch
+	kboNJsN6iBGCLiqGhItt+/Xnnxh7DnJm7dTELpIAvbuQey8DXdxdtZsaScApteEICAghzvGOwMB
+	3nkTj3hNmKHdZAyzNWJp/5EbGWOEZcDyOmJQLCYC4cjnzB0Q5uu1dJMu5uUj4pyk18m5JWA=
+X-Received: by 2002:a05:600c:a45:b0:458:bf0a:6061 with SMTP id 5b1f17b1804b1-45b85598614mr134948815e9.24.1756882357487;
+        Tue, 02 Sep 2025 23:52:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG82XsrKBdBKXFiQ5caYIfv5UU9SJ+wvI5cP32dJdf+EaQZPmn3EUQKNyCx0iR71ou6s1l70Q==
+X-Received: by 2002:a05:600c:a45:b0:458:bf0a:6061 with SMTP id 5b1f17b1804b1-45b85598614mr134948575e9.24.1756882357056;
+        Tue, 02 Sep 2025 23:52:37 -0700 (PDT)
+Received: from [192.168.3.141] (p4fe0fbfb.dip0.t-ipconnect.de. [79.224.251.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf275d2722sm22600275f8f.19.2025.09.02.23.52.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 23:52:08 -0700 (PDT)
-Message-ID: <67329e66-2221-426b-88a4-eece06d694ec@oss.qualcomm.com>
-Date: Wed, 3 Sep 2025 12:22:03 +0530
+        Tue, 02 Sep 2025 23:52:36 -0700 (PDT)
+Message-ID: <e0f9754b-ef24-4821-8b41-acb8a1d842f3@redhat.com>
+Date: Wed, 3 Sep 2025 08:52:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,86 +88,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: dwc3: Log dwc3 instance name in traces
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250825114433.3170867-1-prashanth.k@oss.qualcomm.com>
- <20250828224852.ukelgargocektp3z@synopsys.com>
- <5b30f63a-5999-48f1-972f-93f02fcc0ec2@oss.qualcomm.com>
- <20250902234450.vdair2jjrtpmpdal@synopsys.com>
+Subject: Re: [PATCH 1/2] mm: Enable khugepaged to operate on non-writable VMAs
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, kas@kernel.org,
+ willy@infradead.org, hughd@google.com
+Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, baohua@kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250903054635.19949-1-dev.jain@arm.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Prashanth K <prashanth.k@oss.qualcomm.com>
-In-Reply-To: <20250902234450.vdair2jjrtpmpdal@synopsys.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250903054635.19949-1-dev.jain@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: nMe5AuVoP6gNB0XjkAEWLHEKDI5OWpsg
-X-Proofpoint-ORIG-GUID: nMe5AuVoP6gNB0XjkAEWLHEKDI5OWpsg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfX2eOcSCbHRt2Q
- CiLOwyyeAiwMfLSHYZyLDvbhZIlCUrJRHQ408q3oi4v3Z2yvOxdMa807ipikMALhWNVZ4wTfEBr
- tuU5/ixay9Cf45w6KBKEYFsqKspMWwYR91mDrFrbc8AEHPc9/voVepObyge5nyKALfXpuRhSmdJ
- A6nUJLKUczbFfpbpmQv7HsGlYBOlMNPYqwSMx3knsX1gWzACnUsK4jPIwB7faNdTAh1GgspFCeg
- TgKS4CH8UwoAykEub6auYLJ6ZqPF6BP0sY9+Mfyh0oHmUs71nWH4/+clIB0dudg8F2zYnAC8cqN
- Ph6z+5muLgFZNWV2+zp9FNrATqS+rVfIh6f/musFzCZsQlT4aU8u+1u9ollE/N3h+wGEaxP0PLZ
- 4VoO+XOr
-X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68b7e59b cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=k2XJ8v2PsYtg0y1r_vcA:9
- a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_02,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300027
 
-
-
-On 9/3/2025 5:14 AM, Thinh Nguyen wrote:
-> On Mon, Sep 01, 2025, Prashanth K wrote:
->>
->>
->> On 8/29/2025 4:18 AM, Thinh Nguyen wrote:
->>> Hi,
->>>
->>> On Mon, Aug 25, 2025, Prashanth K wrote:
->>>> When multiple DWC3 controllers are being used, trace events from
->>>> different instances get mixed up making debugging difficult as
->>>> there's no way to distinguish which instance generated the trace.
->>>>
->>>> Append the device name to trace events to clearly identify the
->>>> source instance.
->>>
->>> Can we print the base address instead of the device name? This will be
->>> consistent across different device names, and it will be easier to
->>> create filter.
->>>
->> Did you mean to print the iomem (base address) directly?
->> I think using device name is more readable, in most cases device name
->> would contain the base address also. Let me know if you are pointing to
->> something else.>>
+On 03.09.25 07:46, Dev Jain wrote:
+> Currently khugepaged does not collapse a region which does not have a
+> single writable page. This is wasteful since non-writable VMAs mapped by
+> the application won't benefit from THP collapse. Therefore, remove this
+> restriction and allow khugepaged to collapse a VMA with arbitrary
+> protections.
 > 
-> Yes, I mean the device base address. PCI devices won't have the base
-> address as part of the device name.
+> Along with this, currently MADV_COLLAPSE does not perform a collapse on a
+> non-writable VMA, and this restriction is nowhere to be found on the
+> manpage - the restriction itself sounds wrong to me since the user knows
+> the protection of the memory it has mapped, so collapsing read-only
+> memory via madvise() should be a choice of the user which shouldn't
+> be overriden by the kernel.
 > 
-But the base address (void __iomem *base) wouldn't be helpful.
-Using the base address, i guess we would be able to differentiate the
-traces when there are multiple instances, but it wouldn't help us
-identify which controller instance generated which trace.
+> On an arm64 machine, an average of 5% improvement is seen on some mmtests
+> benchmarks, particularly hackbench, with a maximum improvement of 12%.
+> 
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> ---
 
-And for PCI devices, i agree that it doesn't have  address in device
-name, but i think we should be able to identify the correct instance
-based on the bus/device numbers, right ?
+Acked-by: David Hildenbrand <david@redhat.com>
 
->>>> Example trace output,
->>>> before ->  dwc3_event: event (00000101): Reset [U0]
->>>> after  ->  dwc3_event: a600000.usb: event (00000101): Reset [U0]
->>>>
->>>> Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
+-- 
+Cheers
 
-Regards,
-Prashanth K
+David / dhildenb
+
 
