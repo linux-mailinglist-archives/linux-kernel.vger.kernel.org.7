@@ -1,134 +1,126 @@
-Return-Path: <linux-kernel+bounces-798604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6800B42060
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:07:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3894CB42053
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20D307BCBEF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:02:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F9F44E37A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1F2306D4A;
-	Wed,  3 Sep 2025 13:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A732130AACA;
+	Wed,  3 Sep 2025 13:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="JWDf6Kky"
-Received: from smtpout7.mo534.mail-out.ovh.net (smtpout7.mo534.mail-out.ovh.net [54.36.140.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pp8GIrmf"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A752E30506B;
-	Wed,  3 Sep 2025 13:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.36.140.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4400530AABC;
+	Wed,  3 Sep 2025 13:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756904475; cv=none; b=lRKhlNxAxm/F4tGm7D7IyKzO/fGXb9i6W7A21yidzjrtavUaX2neG4e3dOyneoWGuUHLwqialu7j1nQCwV9i5gX9it1w8WdvHeHIhu5qBIdtgIby9tEFzCiF+vtmMw21k2hUD78rlB9jZJGqp1bmM6JOMldSeh/SUr2G78SsW9M=
+	t=1756904516; cv=none; b=JFjP2ZvSJCiRRk5rW8XViPdUvjrFHYayqnCoPqSWfd8imElyO9bzAQKAxNdQmkHkB4m7KsgSvVhrrMJP35ZLC4I5ChFgTws+Ukf/p3Ns45SDF9Efv8JYFE3TSbKKYUdIOuRhiYRxzRL2oB9B93Edp7f/i/6e+7cik9atXYcU86o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756904475; c=relaxed/simple;
-	bh=p2F/eIS0QcEmDXwi51oLWoydhQyqbtmNUe1gVZQdqZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HfHmJEArwTxH1ks49+N3+drze1lhnwiFIn04xf+6ZNrWl3dKt/BYTSyoZaONiR5TZ2TUPDJ9+6wWF6D7NxG14mlb3g9oku15k2VUk0NMGOwk6EYvef7iBK7Nwdb2ulv+BrALRpRkzyjUXIJHvE882jgqa+OeWJ1nMdT4/aduCPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=JWDf6Kky; arc=none smtp.client-ip=54.36.140.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
-Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net [152.228.215.222])
-	by mo534.mail-out.ovh.net (Postfix) with ESMTPS id 4cH2mP475nz6G5w;
-	Wed,  3 Sep 2025 13:01:09 +0000 (UTC)
-Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net. [127.0.0.1])
-        by director3.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <brgl@bgdev.pl>; Wed,  3 Sep 2025 13:01:09 +0000 (UTC)
-Received: from mta11.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.109.254.114])
-	by director3.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4cH2mP2VpLz5wDH;
-	Wed,  3 Sep 2025 13:01:09 +0000 (UTC)
-Received: from orca.pet (unknown [10.1.6.10])
-	by mta11.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id 50ED69A3372;
-	Wed,  3 Sep 2025 13:01:08 +0000 (UTC)
-Authentication-Results:garm.ovh; auth=pass (GARM-102R00448deb2aa-b531-4c52-94ae-66cd8690eed4,
-                    FA25AB0AA1A9BF3DCBEBCC83EEB30DB7881EF5C4) smtp.auth=marcos@orca.pet
-X-OVh-ClientIp:79.117.41.176
-Message-ID: <1d4352b6-c27e-4946-be36-87765f3fb7c3@orca.pet>
-Date: Wed, 3 Sep 2025 15:01:08 +0200
+	s=arc-20240116; t=1756904516; c=relaxed/simple;
+	bh=XBRqaU6JjkLQfAETggfZAhadInNiJif1lTjL2TCXltQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HUuJELrSmG8TbZWP1LpluEfWOfb3q+gQFp9uI7VCngnNTfBR6J71v5H95AV2Eadh6TT7aI+P/VYP1YeHP4E9UwrsN08dURStLe7VOeyQptKNaj1Qk0ZHOt3AVwSzS47l4NPYI9yNyGTehzGM9RBvS9utiiZxtjg9dBHclBJ+tik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pp8GIrmf; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45b9c35bc0aso12475355e9.2;
+        Wed, 03 Sep 2025 06:01:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756904512; x=1757509312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rxOgjN7WdDoAv2rvG3Wc6cb+dOveWBvcqA5WgB2sqzo=;
+        b=Pp8GIrmfsPZUj0XWTLaeR0Ld4ZJezpp0CNTqgIDgmxQRW4WbhrT6pt/BjQw8NyRep4
+         hsXsosx5ve0Iu9ZSJ9/5bH23s2tchijY4gqKH7lmstnSCdLyLSwX8TrIfbbaHj+KG826
+         A+Axh14vTaVXRsIqnC8a7XJ/0zH1AU2yiuWIBsqowPo6uaXiaNHnXr6hrE49FiM6Daat
+         VmMBLM6+8M6yDy54+6WcX2w3DIP77cCbHYIZu8t/hmTsEixAERl9O0hC4U33qhNOhFOV
+         zILIqM1PMG5x00cgI4AHTURuwN2rso7lVwSqEMFgrGmXpRfU2OtwJ5NYfx4l9o4Uruxk
+         qwcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756904512; x=1757509312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rxOgjN7WdDoAv2rvG3Wc6cb+dOveWBvcqA5WgB2sqzo=;
+        b=SYuoXIKYPj/k6jZyZ9oKyVya6Wl5XnrKgvQMX82b3QMeDejrNATMalOXEDhZAn5N9x
+         hhkEYNMti6dlERZ7pjNjVIAge5VKzXaT4ZOZBj8wM7XXRu1BqfURf4XqTjVdatOcxKzW
+         9Y2aE3a1p3G5qf2svoXQh3M9LL2nEZtq4kmhCY3s5nM+rEh5wkOv/WYBnt3sjNFGu6q+
+         EBnvh7TDGK5lfbEnFydeNeAnpowTzLcyucHjO+fmnWHfn1SHsFfq02n4d54LQ8BQhbuL
+         YNArmKDWwqya4PD8qWmaGFM2of9ZA/5j2jXkU7WoPyK/kZLEFYqgJUQxsCZ2eabqDOoh
+         XX0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUj7Pd+8YkcOpp23yIgDZpAu4gTq/eWpeisbSx2uuTS87O4564EkBhrQ5EuBxELnh7mJCK/69TOapH1RQ==@vger.kernel.org, AJvYcCXe05QlNVAZZunhN9AvvTh9WrE7LeC1Umg4sNfUORVTLJ6wArmsJZrafqS2FLXPW5r4Hoy5hOF8sLoqCKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3smcodj+XsE94torL/1c1jNi2jcosY7uvi4kznOsj8KRcuGtn
+	DWCMS3H6kEwbPC9vvSWtxiuJc7aPNFB+8TLVJJqRrnLa/AT5OoFNyjDqwZhAzkcnUsx4ADBc1V3
+	JP48QzfSbQCwNYybnvoGO4M8a9vfQ5Yk=
+X-Gm-Gg: ASbGncurUMwjXjwSlRyHUgdcAaJqmhZ1/+xBnC8fyhLsu1QHZ3gLJtMNVKBEUi5HJHk
+	FEheottHuDxW9C5sxcmFLRLRzifOirpJAol9vNQxgrn1XN42TS9WQNde6nmYsQ1EAogIY3aPNVc
+	hukRNPDzjb00D0OI8lEQtV7m0ue5fL/MmlyF8H6HSNo1SvczLg2qvyIvBl6km6nvSYbR97N7Qz7
+	Lf9cO5d
+X-Google-Smtp-Source: AGHT+IHaI9QHXphQW4NL4BWXS0uWqM/wJHgXqqOYeELhPBU/zEzYKTUTZN/+1NM3wCGA2AyzOKaLxaL5ucEtc3zspBA=
+X-Received: by 2002:a5d:5d0a:0:b0:3dc:3b91:6231 with SMTP id
+ ffacd0b85a97d-3dc3b916271mr3074458f8f.12.1756904512228; Wed, 03 Sep 2025
+ 06:01:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] mfd: vortex: implement new driver for Vortex
- southbridges
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Michael Walle <mwalle@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org,
- linux-pci@vger.kernel.org
-References: <20250822135816.739582-1-marcos@orca.pet>
- <20250822135816.739582-4-marcos@orca.pet>
- <20250902151828.GU2163762@google.com>
- <45b84c38-4046-4fb0-89af-6a2cc4de99cf@orca.pet>
- <20250903072117.GY2163762@google.com>
-Content-Language: es-ES
-From: Marcos Del Sol Vives <marcos@orca.pet>
-In-Reply-To: <20250903072117.GY2163762@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 4329366619220956774
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefvddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduudejrdeguddrudejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepkedprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
- hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheefgegmpdhmohguvgepshhmthhpohhuth
-DKIM-Signature: a=rsa-sha256; bh=pIcdeBl1BsJ7Lz6IRl88IkXilGWBPO5XQGiMVh354tQ=;
- c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1756904469;
- v=1;
- b=JWDf6KkyiEx7fYs4PJBjFRlnibM6E4eDNBHH81HwR2FbVSjZYGG+tpsCDnyl1+sPx8SQbHGi
- LgH432kDEPPJBZNM3oMykDjzfFTn+9f49YV/lSaai8EDuk65R6heWYVv5aUmVCRMaiJrtNDy+xx
- vIyY9ETxMFOQCnoHrBgEIQgEaqx8mqS/j0hNEkOC/5RVV9ZjN+oB6ZOttKWb+XBq1HabCoN6+fr
- 2/1zi2kHslIK3Ai9Xihfk6bvUsHL3CmDngCoRxEipgAimHHECkL6xpB1Ocbjwg91BxANT200GbC
- QQngbFiHDqbYI2g8Q40xmQ4GGKbtLEeSv3mncYS6ufHCw==
+References: <20250810125746.1105476-1-snovitoll@gmail.com> <20250810125746.1105476-2-snovitoll@gmail.com>
+ <CA+fCnZdFp69ZHbccLSEKYH3i7g6r2WdQ0qzyf+quLnA0tjfXJg@mail.gmail.com>
+In-Reply-To: <CA+fCnZdFp69ZHbccLSEKYH3i7g6r2WdQ0qzyf+quLnA0tjfXJg@mail.gmail.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Wed, 3 Sep 2025 15:01:40 +0200
+X-Gm-Features: Ac12FXxqG38KSSLGvfY5HirQQyjqsvLS5blUVLw1nroWjuASE3O6kwm-RqaVNbQ
+Message-ID: <CA+fCnZdkHATBYG4RJ8rR8MciKmeV4QGwVwoQjkhc-O_igpUBTQ@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] kasan: introduce ARCH_DEFER_KASAN and unify static
+ key across modes
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Cc: ryabinin.a.a@gmail.com, christophe.leroy@csgroup.eu, bhe@redhat.com, 
+	hca@linux.ibm.com, akpm@linux-foundation.org, zhangqing@loongson.cn, 
+	chenhuacai@loongson.cn, davidgow@google.com, glider@google.com, 
+	dvyukov@google.com, alexghiti@rivosinc.com, alex@ghiti.fr, 
+	agordeev@linux.ibm.com, vincenzo.frascino@arm.com, elver@google.com, 
+	kasan-dev@googlegroups.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
+	linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-El 03/09/2025 a las 9:21, Lee Jones escribió:
->>>> +static const struct mfd_cell vortex_dx_sb_cells[] = {
->>>> +	{
->>>> +		.name		= "vortex-gpio",
->>>> +		.resources	= vortex_dx_gpio_resources,
->>>> +		.num_resources	= ARRAY_SIZE(vortex_dx_gpio_resources),
->>>> +	},
->>>> +};
->>>
->>> It's not an MFD until you have more than one device.
->>
->> Same as above.
-> 
-> It will not be accepted with only a single device (SFD?).
-> 
+On Wed, Sep 3, 2025 at 3:00=E2=80=AFPM Andrey Konovalov <andreyknvl@gmail.c=
+om> wrote:
+>
+> > +void __kasan_save_free_info(struct kmem_cache *cache, void *object);
+> > +static inline void kasan_save_free_info(struct kmem_cache *cache, void=
+ *object)
+> > +{
+> > +       if (kasan_enabled())
+> > +               __kasan_save_free_info(cache, object);
+> > +}
+>
+> What I meant with these __wrappers was that we should add them for the
+> KASAN hooks that are called from non-KASAN code (i.e. for the hooks
+> defined in include/linux/kasan.h). And then move all the
+> kasan_enabled() checks from mm/kasan/* to where the wrappers are
+> defined in include/linux/kasan.h (see kasan_unpoison_range() as an
+> example).
+>
+> kasan_save_free_info is a KASAN internal function that should need
+> such a wrapper.
 
-I've been working on making all the changes, except this one.
+... should _not_ need ...
 
-If you prefer, I can either implement the watchdog now, add it on this
-patch series and thus make it a proper MFD (at the cost of delaying
-even further the GPIO inclusion), or keep the struct mfd_cell array
-as a single-element array and implement the watchdog later on another
-merge request, using that very same array.
-
-I am however not okay with wasting my time rewriting that to bypass
-the MFD API for this, so I can waste even more time later
-implementing again the MFD API, just because linguistically
-one (right now) is technically not "multi".
-
-That seems very unreasonable, specially when it wouldn't be a first
-since at least these other devices are also using MFD with a single
-device:
-
-  - 88pm800
-  - 88pm805
-  - at91-usart
-  - stw481x
-  - vx855
-  - wm8400
-  - zynqmp (last changed in 2024, so certainly not legacy!)
-
-And probably others since I did not look too deep into it.
-
-Greetings,
-Marcos
-
+>
+> For now, to make these patches simpler, you can keep kasan_enabled()
+> checks in mm/kasan/*, where they are now. Later we can move them to
+> include/linux/kasan.h with a separate patch.
 
