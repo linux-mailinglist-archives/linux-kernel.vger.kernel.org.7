@@ -1,81 +1,114 @@
-Return-Path: <linux-kernel+bounces-798711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8346CB421CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:34:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E58B421E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43FD47C2A69
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:34:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DC5A1895808
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5963090EB;
-	Wed,  3 Sep 2025 13:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40913090D7;
+	Wed,  3 Sep 2025 13:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aCoM+M/i"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="OswDVRc0"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EC72FF160;
-	Wed,  3 Sep 2025 13:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A274E26463A;
+	Wed,  3 Sep 2025 13:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756906485; cv=none; b=p1N0XsIm2z/x33LI/8VaXdZFwShgG3rH31A7MnPQ/1LvwLZqz5ZcKGQ8gjDeUVkVHTf6BohSDhfq5iW9dXJpw4uAGy41mSJY5uZoujKqGkij83VEMBxwLpfyuRgl53bEpUuMjxiLH591z71RwEMy+1VUmzYn4QKiIHyaNikkftQ=
+	t=1756906604; cv=none; b=cmwmDpFk5OT3AoUfd1ZBUUd3IJBP819c/O8hstD9kHZaUZ00NCsq6cH2S42XCbcLgidp4Zj9AaZKlCWKN2cWEaY41VT0eMrN9HCadkRsEsD1/FFUYm5+EXzsxkeC53mknB83cfldI7B4KA4NgnOousYqgIS12FQoajw5/UALBCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756906485; c=relaxed/simple;
-	bh=7F6XOAzUhsDHmCI3/SCs3uVB95vrfC3f7t3UxCYkuGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oS+KCGYYDR9S47JUQ9hcgNXc7rB8AVm+EyZ0AxQZl0Nt4FMtagy4Krmp5YGWuHQGRLsh+gylKOmJuiQ0gNHUVc5Y953ccTl8Ul+1QHShvyt4p0nnxxEe2Yy0jmS/RRXnUSJKKL2Iv1FxU/HW/Vky2gfw5W5h50kV7nNLkuwjGQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aCoM+M/i; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=c/WRtC4WLl4+ChMSM11wBey1MNP5VSLO7LDcCYVKt0w=; b=aCoM+M/ixXSp6SCJUeLc1q1KwC
-	qnHd1CCJ4h+LcjUib+boUGHt5vi1QaXfY5NOTB3uRTJt20/lJVHeCIG6S7nSWOXHhdwE1PlSchAk0
-	ZQnyygZQntkUqXk8QlDKeafE2whZgfpza9IeLt5hKoP8z21tEGG0cilsHjqAyeCkjYsYLtJXjNIqp
-	MI/6Xq86k0nvXXVCzNQYOUyL74MpGOmWyVrzAhBh6qer1nKKpvMps3qw1aUoP+G6IsYLzR7cq/xl3
-	iQV9Usd4YSieGqh5+tkFI7L5U7B8WtoHQuMJIz4qgtL5G8swZxeJqHQdesjQwXIUW4Z432UltvVhj
-	GDYHLaHw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utndJ-00000006c6S-16b2;
-	Wed, 03 Sep 2025 13:34:41 +0000
-Date: Wed, 3 Sep 2025 06:34:41 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: hch@infradead.org, colyli@kernel.org, hare@suse.de, dlemoal@kernel.org,
-	tieren@fnnas.com, axboe@kernel.dk, tj@kernel.org,
-	josef@toxicpanda.com, song@kernel.org, kmo@daterainc.com,
-	satyat@google.com, ebiggers@google.com, neil@brown.name,
-	akpm@linux-foundation.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-raid@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
-	yangerkun@huawei.com, johnny.chenyi@huawei.com
-Subject: Re: [PATCH RFC v3 14/15] block: fix disordered IO in the case
- recursive split
-Message-ID: <aLhD8Vi-UwnwK93L@infradead.org>
-References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
- <20250901033220.42982-15-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1756906604; c=relaxed/simple;
+	bh=Y3gIGrF42jI+3IzuwOT5sPZFYcfgGiHCTqp57EkTB9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cRMzTpXGO3OTR7eDca0r0JrD++amsfwWtZ+ZeToyeQDqkGU/6zTp5kScY6gQwawTW9JwSK9rkOeSX17J1ClMMFmraa3BhnUkMsv8aQ/ENySH5Qa+DXidNcrBxNy77k80brFY4RAVZuzsXz7E1OBr9TsJq8YiLsDN5CotLltx7L8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=OswDVRc0; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583DWqw3022718;
+	Wed, 3 Sep 2025 15:36:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	bzHn34jeAFC+trUamzDM6dfK6EpwqtxxyQu4NkAXCys=; b=OswDVRc0fkrDCn+U
+	jX9Y6JwB7sKv9I9GTRnblCrimf8bCCzaFC3f1b+uFYAEXx6/574guT5BrAlfqg1T
+	PrWMo7cxoxMAkTaiYjUpKBkHTr3sfMklY/xnyHXWZyfGvPD5YTYsSuSyEZCRLqRw
+	I5zHZ507T90b1NGGwQSvuo5slo6I7Q/q9a7UgHQS24fchqokjpK66XnlEmg7UyyL
+	eG8m6eKen77x59fEljxL5h50lzGd+MZ2LXqtLAhaz5FekOi8b8KxAZZyyWPja/tD
+	reaKyH3dlFCXRvxHAQYTHdLWJ0nq3v9hOXTHThTsGo1C/QUXCp66FCoIvJ9p/fuB
+	NFd1tw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48vav2q0p7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Sep 2025 15:36:20 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id EA26D40049;
+	Wed,  3 Sep 2025 15:35:27 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6162A2B4B41;
+	Wed,  3 Sep 2025 15:34:53 +0200 (CEST)
+Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 3 Sep
+ 2025 15:34:52 +0200
+Message-ID: <9cfa9cb4-bf7e-4d48-b0cc-0726784b7462@foss.st.com>
+Date: Wed, 3 Sep 2025 15:35:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901033220.42982-15-yukuai1@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] arm64: dts: st: enable ethernet1 controller on
+ stm32mp257f-dk
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250903-mp2_ethernet-v1-0-4105b0ad2344@foss.st.com>
+ <20250903-mp2_ethernet-v1-2-4105b0ad2344@foss.st.com>
+ <5c49e94a-9267-459a-ba6c-70f3763f1a7b@lunn.ch>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <5c49e94a-9267-459a-ba6c-70f3763f1a7b@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_07,2025-08-28_01,2025-03-28_01
 
-Btw disordered IO sounds a bit odd to me.  I'm not a native english
-sepaker, but in the past we've used the term "I/O reordering" for
-issues like this.
 
-> +		if (split && !bdev_is_zoned(bio->bi_bdev))
 
-Why are zoned devices special cased here?
+On 9/3/25 14:21, Andrew Lunn wrote:
+>> +&ethernet1 {
+>> +	pinctrl-0 = <&eth1_rgmii_pins_b>;
+>> +	pinctrl-1 = <&eth1_rgmii_sleep_pins_b>;
+>> +	pinctrl-names = "default", "sleep";
+>> +	max-speed = <1000>;
+> 
+> RGMII naturally has a max-speed of 1G, so this line is pointless.
+> 
+> You only use max-speed when you need to restrict the system below what
+> it would normally use, for example if the PCB is badly designed and
+> the tracks don't support 1G, but can do 100Mbps
+> 
+> 	Andrew
 
+Right, I'll simply remove these lines.
+
+Gatien
 
