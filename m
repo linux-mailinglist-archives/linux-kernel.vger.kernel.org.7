@@ -1,97 +1,134 @@
-Return-Path: <linux-kernel+bounces-799476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B83EB42C41
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:56:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D44CB42C44
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D06F547E2A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:56:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B37381604FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71292ECE94;
-	Wed,  3 Sep 2025 21:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sNoOsf8a"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661582EE285;
+	Wed,  3 Sep 2025 21:55:46 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D28C2EA72B;
-	Wed,  3 Sep 2025 21:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1502EDD74
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 21:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756936533; cv=none; b=RCwe+X49USP5YQD2sKjEfogLshqCYmPQJr/wNxR2LSwd7rrXfiCjIcUwfzKLXKvEOic4SWC1H59esyxA7SJKxdTZXpdtBqj+cA+r8eBm0GXp//25VNZWi9wROxrIFd4mtK5xh+qMq36W0vj6wK++5yfOz25ang2Dgx4NIEJDg0g=
+	t=1756936545; cv=none; b=n0EFR8sC2pTJcBryHTb5izcO+cqyWLyM5LKV5mkdwsNclYNboX73dLjjU9Mnc4s0t+5+4rWAtTv0wuT0Rr/NILUHW5bFIe69PpF3JA1QzyYbCHzyZvSvSxDiZ0Of1P7ilQ2fE53zuZHOagO9DtBBhA7UNL4kivhaMUhyU5FUjJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756936533; c=relaxed/simple;
-	bh=qbgXaziuWpUIVTa4ZARCVmzQaaQ8YAeH29DbGRn3Eoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=emxVCnudN4GHjhg47fBxN7AoyhFM2d8Df5X1FNTjlLBxQoXkMJqZXUZhoj4nG4GW316l9tPHdcdxRHM4HfxdDP0ydqOpkZ6ZbG/z4JlWmkO7cAfwxS85+itTW0WDRJ3OcMkLrfPhf6ujIibiLFTnwJGKFaIp81Y4XRbqV4n3IoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=sNoOsf8a; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1756936521;
-	bh=U3GruG7NnNtODc61tr37LH/WCiD5v/QxymIz1hjqRWA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=sNoOsf8adjPZchsH+ltugWMgrOfwt72es35nHSS/2Xmzx3rfihdAnj5PDgCTxfYDe
-	 t8g+QsDCeJuotgC5Jl3/E8a6HgcOCH+ro/0qfbUx3S8RmRkB0GUR75bAuyNtgLewV5
-	 e5L3p8fsa9hxcm/MzpnLMrsFBZHTJrKw72Qczo1ijmTZFYMpUDL1COKgsoj8cPcZc+
-	 3Z3/S6sQhkwZ9friW4FVS7/J2KWr85TTmetLkD1uPAXC0n5U0DUOAOYAw1xqEJlxmx
-	 4bawejjiup65jLeeZNyGwZVjJ1/B4rg9uvbUDRb6MUHLG9EBP5O2buSAYXYYTdLXL2
-	 HZ3Z52XheiFHA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cHGcn02dJz4w9x;
-	Thu,  4 Sep 2025 07:55:20 +1000 (AEST)
-Date: Thu, 4 Sep 2025 07:55:20 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the broadcom tree
-Message-ID: <20250904075520.41151515@canb.auug.org.au>
+	s=arc-20240116; t=1756936545; c=relaxed/simple;
+	bh=2ndQEDCzUXx9yYy/WcdNCG32Pe+5P+tfbouij3eudSw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=mGw7rKtuJkKMhRyvDYVAXAV7wo+JuwGM4adN5wPr4u8dTG1VxMU3Lz6tW5M5A9BRT2lWfsJvoGGyo2IunxIm6VgzOqLGcp/pgrv38emINK0D6vmCar11qO6iTSA0De+T7zhzWRMcRcFH2l8JHD6Q7n3oZpfTRTRIfSQA4T9Ek6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ed0ba44c87so4648565ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 14:55:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756936543; x=1757541343;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s6wN9KeqqiOqxe44BHCxn1omR+bJwqOjbtDhTcJ5oPM=;
+        b=rQHBKtSDkKQuFJLQAvbBc1i91vnrEbUlTs5WpSpOkJc8oK9ZXopfTKFIXmpyDhg6yN
+         P0yA7GzD3eRKge2CgKwkWYp1sC6zbHJN4nTEUXaImpTh+WS+GkEn35uQ28pFXiZxxZZA
+         Oy6jlTIgJN9Z2V+UNZKchCnegUgYwCmx4L8F+3OQZ+ShuAYmFkY/WOeiWet/CESYTlFQ
+         MHKWTfFX2/u5PoGXN8hohPycu5xfyFcc/kPPK7/agForfNgNQfG5DfctYfFkT2dgALCi
+         YKPKTkkH6AEL081bzB9lsT4GQtgkIq6dy3xg0nGk8prjCUi7EdsEZBGFnn0cwKY0/54s
+         9lXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSRdgMAtVfn14e+ZqLmbDxTskWVSOCALeKOYIpzxAMTkKQhZb0UGj7tFmlfwM+NsGZPZO04I6vE5E6GjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz67zHZvc/+tQ7xhNBszZaDT2nPfvgGNtHEOJs0K81ZmBRaE3g
+	JHtZJqpW16y6njE0Rr2XpNrClPCtStTxrK40q6VUdNwWQEAFlB1KVYyLl0juW9RIDIfN8EmiDV7
+	Ru8DyIOszZnClorHSnW3xzikIEYFxw9QllZnDDMwhnhcXTmxIEF+ssHOHyZg=
+X-Google-Smtp-Source: AGHT+IGqRzrQxb2/qo9cxluGeSGc3ffRrYxJVeTFxOu68NAdqGwCBo9zqMCIguUWepMEvwLW5F+vKpL5rGv8Q98Bv/zrUKyvbg1L
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/b_IxqdZehLV5Eciwv+SCRMU";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Received: by 2002:a92:ca4c:0:b0:3f6:5d61:e6e7 with SMTP id
+ e9e14a558f8ab-3f65d61e8d5mr80856405ab.5.1756936543683; Wed, 03 Sep 2025
+ 14:55:43 -0700 (PDT)
+Date: Wed, 03 Sep 2025 14:55:43 -0700
+In-Reply-To: <20250903032656.2012337-1-csander@purestorage.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b8b95f.050a0220.3db4df.0206.GAE@google.com>
+Subject: [syzbot ci] Re: io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
+From: syzbot ci <syzbot+cibd93ea08a14d0e1c@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, csander@purestorage.com, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/b_IxqdZehLV5Eciwv+SCRMU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+syzbot ci has tested the following series
 
-Hi all,
+[v1] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
+https://lore.kernel.org/all/20250903032656.2012337-1-csander@purestorage.com
+* [PATCH 1/4] io_uring: don't include filetable.h in io_uring.h
+* [PATCH 2/4] io_uring/rsrc: respect submitter_task in io_register_clone_buffers()
+* [PATCH 3/4] io_uring: factor out uring_lock helpers
+* [PATCH 4/4] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
 
-Commit
+and found the following issue:
+WARNING in io_handle_tw_list
 
-  2f8428700036 ("clk: rp1: convert from round_rate() to determine_rate()")
+Full report is available here:
+https://ci.syzbot.org/series/54ae0eae-5e47-4cfe-9ae7-9eaaf959b5ae
 
-is missing a Signed-off-by from its committer.
+***
 
---=20
-Cheers,
-Stephen Rothwell
+WARNING in io_handle_tw_list
 
---Sig_/b_IxqdZehLV5Eciwv+SCRMU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+tree:      linux-next
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next
+base:      5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
+arch:      amd64
+compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+config:    https://ci.syzbot.org/builds/1de646dd-4ee2-418d-9c62-617d88ed4fd2/config
+syz repro: https://ci.syzbot.org/findings/e229a878-375f-4286-89fe-b6724c23addd/syz_repro
 
------BEGIN PGP SIGNATURE-----
+------------[ cut here ]------------
+WARNING: io_uring/io_uring.h:127 at io_ring_ctx_lock io_uring/io_uring.h:127 [inline], CPU#1: iou-sqp-6294/6297
+WARNING: io_uring/io_uring.h:127 at io_handle_tw_list+0x234/0x2e0 io_uring/io_uring.c:1155, CPU#1: iou-sqp-6294/6297
+Modules linked in:
+CPU: 1 UID: 0 PID: 6297 Comm: iou-sqp-6294 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:io_ring_ctx_lock io_uring/io_uring.h:127 [inline]
+RIP: 0010:io_handle_tw_list+0x234/0x2e0 io_uring/io_uring.c:1155
+Code: 00 00 48 c7 c7 e0 90 02 8c be 8e 04 00 00 31 d2 e8 01 e5 d2 fc 2e 2e 2e 31 c0 45 31 e4 4d 85 ff 75 89 eb 7c e8 ad fb 00 fd 90 <0f> 0b 90 e9 cf fe ff ff 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 22 ff
+RSP: 0018:ffffc900032cf938 EFLAGS: 00010293
+RAX: ffffffff84bfcba3 RBX: dffffc0000000000 RCX: ffff888107f61cc0
+RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000000000
+RBP: ffff8881119a8008 R08: ffff888110bb69c7 R09: 1ffff11022176d38
+R10: dffffc0000000000 R11: ffffed1022176d39 R12: ffff8881119a8000
+R13: ffff888108441e90 R14: ffff888107f61cc0 R15: 0000000000000000
+FS:  00007f81f25716c0(0000) GS:ffff8881a39f5000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b31b63fff CR3: 000000010f24c000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ tctx_task_work_run+0x99/0x370 io_uring/io_uring.c:1223
+ io_sq_tw io_uring/sqpoll.c:244 [inline]
+ io_sq_thread+0xed1/0x1e50 io_uring/sqpoll.c:327
+ ret_from_fork+0x47f/0x820 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi4uUgACgkQAVBC80lX
-0GzX3QgAhAB5RfJGMcG+IAVy5CvuO7Zvh6ik73GorU5zDQ/jqsTcmaBPPFUmpIk5
-VGAZO+EB8D/nbUNtkNPlO0WeoLUZIFpSVe2JAOfeZSP+JRbu7/DeuCeYLoOwwv3k
-Tv2u7bnsLTScMklPmR/I22HiDmsXThRSBUv5MWtsDex7EKFPukMia4t+utze7U3t
-VWcl1iAzpdvsEmNM5Kn/t4fxM2/VvhHjpVefuxdAy+DhoP3lKChVnXCRzzSw4Gmp
-K112+lho16+QsrbEz3cxM0kRT2qkxONKaC19jIcgvItYYEmBzuqLC+MqXRr80bwo
-xHmq1wVstR2rBSrn3jt8Wh9F5f9bUA==
-=T7nO
------END PGP SIGNATURE-----
 
---Sig_/b_IxqdZehLV5Eciwv+SCRMU--
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
