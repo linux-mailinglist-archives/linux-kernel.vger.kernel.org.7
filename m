@@ -1,353 +1,535 @@
-Return-Path: <linux-kernel+bounces-798636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ACE8B42097
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52D3AB42091
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BAC31BA3567
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:12:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1BA71BC0875
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2534730498E;
-	Wed,  3 Sep 2025 13:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03313302745;
+	Wed,  3 Sep 2025 13:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lBR8ji4x"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011019.outbound.protection.outlook.com [52.101.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="y16Bkrs5"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A496302CDA;
-	Wed,  3 Sep 2025 13:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756904890; cv=fail; b=PjXvdZJp9ULIbso3MPA6vWUpnBNbWgCz7RIwD4RYgfcYgajhYgg1pxdvJavlzYKQWmwC+kwembvksrdYCCmzToV18pz6x1rEnJ3TTXX2PcL9KnlNz63qaALGMHKcP3JhH6/nWKFx6BsaiIFCST9puZMBSfbZdk4KT1MuIE+UMvA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756904890; c=relaxed/simple;
-	bh=wYYD7dZs6cWfWFnzMiEZG0ZbZy+ZNcVuFT/lY5eDyjg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eUSgwRse99Os2ODbo+vTJ2r+6UBSgwCV3CAg69vgMCuINfpeN6rqeSQYqYScN1MA/qYNwCuJbLuBaF9k6ouJOTwsMNWDUkAxsWxnpjMP78XUV3i5AyJlbhUQWC3vkGus0Sp4ewzST6JO/X5eNE6AbA96gtwP5QOIDixgP3rAsaA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lBR8ji4x; arc=fail smtp.client-ip=52.101.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X5dFe2ZZipRlHBHqIPaQvHKizUi8XbYEKssULJ/UjM7WaNcGckOWfUiZYFG3lTJW2u7dEstxDiT3TE8GyQQ4WOuB+lYt+yTyaTcb0H9f3pQ/bIvh2abaJlbxH8+FXrXcDHaQ7AU2TC5iGWAWR/CnJlaX/PN93gpvCkt2s5JwFGpsFYDeaYCo4dcz4sdEtQPFYL0N8yEsWFrtAP5E51V+0y7o/PCVOtVHgmvA0tvEaI64+iA0JdZQkv5ToFmLpLAJSCurZKcv2JvHuzuGQYgeOWIOf7qZJvAgrtkXF8Sac8+rO89iEXZWLM9RS7F5ZHr5jAPVcwqOOHGg/MFuhxr8lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sRxR2sTpD8jSOCewme9oT5sImhXHVE9GxU/g2KKbdec=;
- b=jDSPQVjomZgCm6Msf8euc/HuR1Lf0+LmyVVUFeq4VmhgIm9O3MIS4Jh6VLFOjaxjBvZfnfyRhMH3dKET+2Wk2f8Ypcwv1Z/JwyZDb7j37ENbWGwIecRfoFlNBvQCjrWooufRdxKvKeLYnrcBFH+b5yB7p3Tg/57b679DTFFtLx3NCIY9am1cmDH8YRO5g7lalTupmK0TYxpiu3XRVtt2hqwCNIpymiYmwg02em8WyWkvnIC6KXV40fIkS+xB+PvlRq46y0ns7dKCes8UGTzrSX6evIsHIXpDdF2UecQwYPDooZ33qbdbPL0K3r3AYimC4RnpRvBhhkRKnB4SA/cEoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sRxR2sTpD8jSOCewme9oT5sImhXHVE9GxU/g2KKbdec=;
- b=lBR8ji4x4tv/cR1qtvQ56L4dROMJ1SjsuE6G8Ije1sACN6B+7p9florqVGOwdRsgNtD6GN26FcekhsbWOaecqYF5nQuu475tZa+wxnY4s6G5yXYkfQmbRhNE188ZxlkZib+V6mQV8UDF720X7SLLKhz4LROjzGp9fMZeCmoCs6FRmg+BT6C7tKYRT+Z8A2743xbcJUi7hR48dP3t4DrDgLKuDsrkQv3N5NQh/dV1yd9y4EIau7RfPraUN/cD8c9gcO1ARbvHSXjoXWRxXZ/a2OPNwvdGMWaDIBoH7a9TySHvvimtz0dBH6lxWcm7bL17Juf/i5H4NwtOVsz8oPrD2Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by PR3PR04MB7420.eurprd04.prod.outlook.com (2603:10a6:102:93::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Wed, 3 Sep
- 2025 13:08:05 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.9094.015; Wed, 3 Sep 2025
- 13:08:05 +0000
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: netdev@vger.kernel.org
-Cc: Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Ioana Ciornei <ioana.ciornei@nxp.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Luo Jie <quic_luoj@quicinc.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 6/6] net: phy: aquantia: support phy-mode = "10g-qxgmii" on NXP SPF-30841 (AQR412C)
-Date: Wed,  3 Sep 2025 16:07:30 +0300
-Message-Id: <20250903130730.2836022-7-vladimir.oltean@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250903130730.2836022-1-vladimir.oltean@nxp.com>
-References: <20250903130730.2836022-1-vladimir.oltean@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR4P281CA0245.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f5::9) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5115E301016
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756904884; cv=none; b=jgqx353yFh7s9Fk5EUTBDerjZUuft5PDrVbEjFZ5Q37BMHbjaeRsFfApaxp/byuxm+i2jGItVjcaxuLFZJXHaI5d4U9QDdyd8yJnQl49Qc4LbTPTzgY6kZic4joAOnHBpAQwjku+dXAJuCCV5rZ/iIFjGGgzFAJBwSGsMGrPR/Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756904884; c=relaxed/simple;
+	bh=Dx5Ici+OBjBTJLXmsFf15+Lxp4LfdyFzJMjM7AlRQEU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HDFufUpq77Bi+nKRZcco6fQ0PLl2gXsUfNOKo99vzbx4OtEP+Cjgexv1Dh0B+C0XQfYzcvDC1nMxFO7KvRnue8vgNikSlnuLVj1gerP/AP/ggrLhr3RVQ/eGSHRy3XgLJM0xoVAGUnWI4qGDXocvk5PO8lyaSx6avtVD37Dc5YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=y16Bkrs5; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-80cc99fe980so11836785a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 06:08:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1756904880; x=1757509680; darn=vger.kernel.org;
+        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
+         :from:subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dx5Ici+OBjBTJLXmsFf15+Lxp4LfdyFzJMjM7AlRQEU=;
+        b=y16Bkrs5LKwemEMm4SHO91xf9FGoYMR6TDpSFEkym7tvudUZvv6FiMQq7zGUoE6GpY
+         pNh+9ytYcYUauiyRVb+43OagFtgfDgaVO6pHKuWtHz1m+0jmCeyDLvzAeT5dI4pDLK8Y
+         gBu5vR4QBqkCd/7NLFvlVlHgG14L/5pjdZ55txjKAy80cXl0LkGedwifmRv9QYgL8H74
+         yJ4qxyTF1bcFsGcbDzobBzwE/w+LxqYRL3HVmzIqZWnxNlKgpIY0EoVWwBjjowse3Zjq
+         cDagn3qvdKWle8XGb/dF/dI1w0Zo8HlpLzuIX68AgL/w6gAZH0veFTrcujsjHtDXsafZ
+         rUYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756904880; x=1757509680;
+        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
+         :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dx5Ici+OBjBTJLXmsFf15+Lxp4LfdyFzJMjM7AlRQEU=;
+        b=uIIBP4nRoBUC6dSlq55cJjSdUG27L0qA8oxw+VHRkjtljgD4RGStX5tdVXxOX6NsPF
+         OHVKvSbNBcThmuLVKqEw2/WbppU6CMkF+OSAu7LKVFrggdZgYsLyVb3g7JFFIHbhU1sk
+         JGGpJCV4mgdKKqcHNaB6+j4LMGmer+21ckUzdthunQvNv7dkYHpeYzFUYlqyhxeGGucc
+         wf2RaMbVpayEi1XR/LVlsl5Yf6B1ZhF1dhfC3i0kHINu/t5sJADMoSpBxUGh1rcH71hN
+         ww4UkMC+xENFDrWr2jdpyQlGfhkV46jipy+cAM7xp3x2AwR2svhw3GbSb3QOMTx5Ibtp
+         WosA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxkgwvs9tBTq7eVwb4EWJY/qndw2VH4okdeqTlJYed9gErYjNLk64REGTHHNlFh/MeQ2pfYYZOsokXfLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxx5CjzaSfki2Woei2T+pxJpCeVJjHN5sPYAYcUFWecj1FbgcJ9
+	5kuCoEEF2hVDSGOGW3RPo0Au0betF8yd8R6I1ClPfkO93hJUGP4Y522lXsaFvv9JfvU=
+X-Gm-Gg: ASbGncuqZYJcgyn4c4Qh5fvg4aZIJHji3M3LN3A/Zy2M/RplRBm1YR6NNbOEqnoaVUk
+	3CXshRgQuRNWIzhTS7tt2q3NBXSc7Kvkncpni3LA98i1WV9nP33xmnDfNeLxszia1dFI4hZNhmL
+	aw8X2oqUM4N9zRshWcXbODE+egleZcOS+zK0EkE+pfQKr26WesM20MnC8aVNm6YoNVjOEZTVrsd
+	zmU2CSdxOWIWDoswtnUrLVycUeiX5Lm85rtkHT+4ycTbPxP8mNVHBqfE4pcHky9lNReTAdBzIF/
+	9yK1QSseA/cuXpZ002dqLeEbhp1dyNQ8PxXpKDOOczZOPVN+gfMLRvO8efs+/MzZilRZPmH2wZ6
+	Y2USiy8WuhYzGi50Z2Q71nIxvonE=
+X-Google-Smtp-Source: AGHT+IEZd6Wy7rXUueyIKYs7uS6PsB6R/0wQ2Eh6AdYJAFNUvucrxlH0mYG6F+aOMiBdXaPaoUV8tQ==
+X-Received: by 2002:a05:620a:400a:b0:7ef:38e6:5a3c with SMTP id af79cd13be357-7ff26eaabc5mr1790436985a.6.1756904879928;
+        Wed, 03 Sep 2025 06:07:59 -0700 (PDT)
+Received: from ?IPv6:2606:6d00:11:5a76::5ac? ([2606:6d00:11:5a76::5ac])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b48f76083fsm10865361cf.25.2025.09.03.06.07.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 06:07:59 -0700 (PDT)
+Message-ID: <be621717ee62c2ffda40d531dda15e0c9f28a858.camel@ndufresne.ca>
+Subject: Re: [PATCH RFC 0/5] Enable support for AV1 stateful decoder
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: DEEPA GUTHYAPPA MADIVALARA <deepa.madivalara@oss.qualcomm.com>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>, Vikash Garodia
+ <quic_vgarodia@quicinc.com>, Dikshita Agarwal	 <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>, Bryan O'Donoghue
+ <bryan.odonoghue@linaro.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org
+Date: Wed, 03 Sep 2025 09:07:57 -0400
+In-Reply-To: <20250902-rfc_split-v1-0-47307a70c061@oss.qualcomm.com>
+References: <20250902-rfc_split-v1-0-47307a70c061@oss.qualcomm.com>
+Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-lgRlMTk62Tz5+XvOiPcv"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PR3PR04MB7420:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34647a51-3732-4eec-9353-08ddeaeae9c4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|52116014|376014|366016|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1rUzHGBzG5e5mATo26GBJUBnOmF+vBzba9HudpmyYNuBiMBx8NFfuRhYylpt?=
- =?us-ascii?Q?VtBUNyRakuaioKZyB+bpUpLppWfTduoXUAc2tXO7xsgR+7DWgn/oT1xs6v8b?=
- =?us-ascii?Q?gU0OE/L91dXwzNQmwtOeb/Y+Fxl5J/Q9RB84xCuqLdC1ROr1bDA2beZNhzsK?=
- =?us-ascii?Q?5yngIVwPgEOcRhdZsd8Mhy1wf8cuMQ+YBSPhR98vqQPbfNaMVa6RWlonOSgu?=
- =?us-ascii?Q?otJSPd5Dzzrho//cIZiRJuxRZf9vdC/0O6prqn7HYt7h6W6okJu6KlT2hQvn?=
- =?us-ascii?Q?fb2H+iKVkXCbM9++dB7mETY+kDBFKFG27ps0GcDfZ3suMh4xnOyrIb+bLZLf?=
- =?us-ascii?Q?aeG0PNTRynIM6QGW2PlCM4T+ySM6jW8zuHjrXU72eTAknv6y1swOKUKnXJAt?=
- =?us-ascii?Q?MXdli85cqM4DnTxhLjaNnPhk1ej/arj37vusyt+J1MT7GqAYGjpdt3rfSRLl?=
- =?us-ascii?Q?xIyUgBbO3pN/KS+mu5HmkNOCuaU8ioNt4UWhosnEEsXVeVB9qole3jxJVJvc?=
- =?us-ascii?Q?4y16MLFa3bNLQtQIZXCplDE6oGX+5rspWSxbimTP1jhEe2+FARm3NbRvSCM5?=
- =?us-ascii?Q?bAdeV7+zcVaAE5Qxa3k0VlqAVWgtiJWTia7qjj1EC2n39rJHEORgwO+4YR1v?=
- =?us-ascii?Q?Kh57HLIOMJUK6zZwdkgdbtBc7P/YB80YFyaaDuhHp23MZOd3ZQBxrTgJFYCH?=
- =?us-ascii?Q?1Xv1ri+uoKbWR2yg7yPDDt3+WZbpbNttnJrcTr6T6POC1ksle2XEtjKYfgDR?=
- =?us-ascii?Q?BcO6D7eDWmuPvb+lWP3RZhWn/vRwYddX8dGtUOCTUm2gBAt53jkDgy8IJYzj?=
- =?us-ascii?Q?ABEUPl5QhdZv3zsRpvYW5s0Q+nzH2AVLQMVctrfHe2qmYg8Ol28kcPWulUUG?=
- =?us-ascii?Q?G/nq+rRDG5Azfe1mRjOP6MD9KeJSm3e7mfzLAwo9R2IlbHtaqyHf4sSsORXR?=
- =?us-ascii?Q?E190DQwV7tmjn47El1Swx/AycfRQiwHRyk7PsfVDqmpInQcqao8GqzyPyAbE?=
- =?us-ascii?Q?+TnDrVnjWJWziX38LmlFya3jeyors6OfPyUsGXkic/FfM+hPRcgBdqTlwnH4?=
- =?us-ascii?Q?E5zhOKQ/ZEErIqhBn3+/v9rPCehQsMLccJpveQWR1LBKj6WwWfe4Ao/c+yqq?=
- =?us-ascii?Q?3c91XUOqKug6mJCqAzTsk6QDEEulZJiPIDyqzxKCpHIRkhlT8FJYafLaMgwb?=
- =?us-ascii?Q?VUIPq9fmFwk7SR8m3hUGFeRMG9p2d1tLl9MHQ4rJS/5DnfRG2qhl4EFmTZuu?=
- =?us-ascii?Q?m1xCksAVYmLXEUvOxJZZFWiBts2Hl2F9eJYDQmODn4QMb42uTjMMRmwX9CCT?=
- =?us-ascii?Q?N0d4EjumKw4lsc0wTVV9kj9dtn3NugkrxQ5tH4OjtP2g8ox88W6dt1Z/m2nO?=
- =?us-ascii?Q?RaxJXVi1XogLiuMF3qFFcwooDeqeynGgt0VJFO1ftRDUgYQjDhR2ZtotJKDN?=
- =?us-ascii?Q?bnYtUCUIbx8FfhyZQ7OifXWJZR7TZyskxRafWK3BzAtvWr7NmvQ1wG+h7BlC?=
- =?us-ascii?Q?XMyKmoIPXhkVzp8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(376014)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?r+gofYVM7DxZIYOoSfSzQPCow1H4kLRgpug8MncOX4B9TbTUNZOJHS+cflJ8?=
- =?us-ascii?Q?Ithz8H/MAFyao5fiwXAwGNT9BveL1narN9+vEUM0kaEKzKaPRHsQJ25lB8G3?=
- =?us-ascii?Q?92FTN36EvAzOjG1xDmIpWleJxsMza4GhgwGbkwnIrJ7ir9E7KWwzFwsp5LqS?=
- =?us-ascii?Q?t08srKwac4phXuNc94dv5y+sMfJqGU10ePHRJDaGwQSomer0eGO2hMimdw+R?=
- =?us-ascii?Q?QY1yaUiGgmGJCa1GeGTk5BGBmICdVpT9K32AU6KnpCRpaVJuzdDmclZQGkY2?=
- =?us-ascii?Q?JtBQgpld/3kFiS+LSDoGtnhbDwZt1xgZmaBBHs69xP4MBK7iyQ6RqdyUgcOh?=
- =?us-ascii?Q?Dep52WVHe5Yh+ScJn7RiV71EU8ZFaa9PkZwzXYEPr0Vp8Od3l6uSGkMzl4Mc?=
- =?us-ascii?Q?akmu2pNKLgsro68ivzgIxyl2RbPmRQNS9Ykd6L2lLPY+5hODykgVkv4NKWKf?=
- =?us-ascii?Q?qcZETT3VCaR3wsoant5ILTArFnqddZUvzJMv9HDEQcKwcLLfAsow/7E18vwu?=
- =?us-ascii?Q?j+/gX4chWf+uqNoMos1FOUSkGRNqxViho72DYnafDypcaQLoQwMfoLfwVERW?=
- =?us-ascii?Q?QH4C1OpEFfGmbVZ2oHiOLXK+zUTtvSeeXi17a1u+Yl4rp1C17DXt/S89cyxS?=
- =?us-ascii?Q?W8AF+8Ne6dDC6m5VnL14JPxQlsZ/j2xyTygHzOoI7FwxgKyFRakUVK1360GC?=
- =?us-ascii?Q?aHKN2FMDaG2AfKB4cDaUIkvMxXzhowUhSLI6isZ5btbSDIzSZYtUci9ir1cK?=
- =?us-ascii?Q?3tpv/c6+KNvKaF/PJTUVTftKexHXD4DEZmxMt6++swZD564UYTYBlrTDL2Eq?=
- =?us-ascii?Q?imcgPTsYK64WokBdZHKwU/risNuqitmiwbFR3uk3UqbeuMZwLYWjYQtuFCef?=
- =?us-ascii?Q?CgLlRGRvauIQOLdYzG3S6iBnj99Z2CLy6ZVW2vgeGnlTgsVMQiBMTGKcqAk+?=
- =?us-ascii?Q?13OXnnnKitq2bsBM8SqbvH7o3WkR70C5l+CcEhRmSq3syuxjZhj/yzNIsKiV?=
- =?us-ascii?Q?Yc6YkgA0ZHJHJ5ghzEGUNmsayb4hzkH5zDPXNTV6iAdU5To48iQjJUeTvu6H?=
- =?us-ascii?Q?aQtJlY9J3vVSMUhylu2FoncGnqOo9IrQPLs/fbuwJi+VriDRUugQOA8Ft9k2?=
- =?us-ascii?Q?Hn2YFew4LWy4PxwJNa9KpUcHnFVl1Jtmw+2xsIEUW9SM2h86gTUuiNnKkjwn?=
- =?us-ascii?Q?2crVnn8ePalfBeq1MmUX+1VTsbboNf0PimZ/BnEyPNHGTy8Zur49Mn5VVWCE?=
- =?us-ascii?Q?XTGFVl1X0PMzmtU1rB5T9ZLilBbe/a7dXms4rUa+39MsNpslSUhVM7bIJjHb?=
- =?us-ascii?Q?pZjm+q7tn2KdTCBi7ZDVMwl9ae9cJpdtGZme+NkKdGHpvRZT5Yvk4Flh7K7/?=
- =?us-ascii?Q?Y7duMkfOLPBCRI5X+5DVdA2bk9qevihUs5RFZYg87uM0pswcR1JX0IABvuUs?=
- =?us-ascii?Q?/tidx2Ww+/WZ/+s6dn66McvC7ULyRVOjkeiLYka0EYfp+kRzz0BH1AIpPmW2?=
- =?us-ascii?Q?EMIz6GXXDjDjnYLyrRh0Nk0CJCgULVmD/AcxmUJtUAE//o6CtJgt8EWu4TIK?=
- =?us-ascii?Q?BXKv+EtuYfL4deBLGLl6OAWBQi+E1IfXv+iDO4Hn?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34647a51-3732-4eec-9353-08ddeaeae9c4
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 13:08:02.4034
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EGMDV0PPHDN5feP4/vkE+PB3ikSSH5vh+qqaVBf3J1+t3Z6VdOVmL6Ea0jAJOG45Jo1X/4C/9sBTlIJWQOFIpg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7420
 
-The quad port PHYs (AQR4*) have 4 system interfaces, and some of them,
-like AQR412C, can be used with a special firmware provisioning which
-multiplexes all ports over a single host-side SerDes lane. The protocol
-used over this lane is Cisco 10G-QXGMII feature, or "MUSX", as Aquantia
-seems to call it.
 
-One such example is the AQR412C PHY from the NXP SPF-30841 10G-QXGMII
-add-in card, which uses this firmware file:
-https://github.com/nxp-qoriq/qoriq-firmware-aquantia/blob/master/AQR-G3_v4.3.C-AQR_NXP_SPF-30841_MUSX_ID40019_VER1198.cld
+--=-lgRlMTk62Tz5+XvOiPcv
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There seems to be no disagreement, including from Marvell FAE, that
-10G-QXGMII is reported to the host over MDIO as USXGMII and
-indistinguishable from it. This includes the registers from the
-provisioning based on which the firmware configures a single system
-interface (lane C in the case of SPF-30841) to multiplex all ports -
-they are also only accessible from the firmware, or over I2C (?!).
+Le mardi 02 septembre 2025 =C3=A0 16:00 -0700, DEEPA GUTHYAPPA MADIVALARA a=
+ =C3=A9crit=C2=A0:
+> Hi all,
+>=20
+> This patch series adds initial support for the AV1 stateful
+> decoder codecs in iris decoder. Also it adds support for AV1
+> stateful decoder in V4l2. The objective of this work is to
+> extend the Iris decoder's capabilities to handle AV1 format
+> codec streams, including necessary format handling and buffer
+> management. I'm sharing this series as an RFC because conformance
+> testing and gstreamer testing are still in progress. While initial
+> functional tests show positive results, I would appreciate early
+> feedback on the design, implementation, and fixes before moving to
+> a formal submission. I plan to submit a formal patch series after
+> completing all the compliance checks. Meanwhile, any feedback or
+> suggestion to improve this work are very welcome and will be of
+> great help.
+>=20
+> Gstreamer testing:
+> Gstreamer MR for enabling AV1 stateful decoder:
+> https://gitlab.freedesktop.org/dmadival/gstreamer/-/merge_requests/1
+>=20
+> Thanks to Nicolas Dufresne for proving the MR=20
+> https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/9469
+>=20
+> However, Gst testing with parsebin is not resolving to av1parser as
+> below:
+> Ex:=C2=A0 With the following command parsebin is unable to resolve to
+> av1parser.
+> GST_DEBUG=3D*:2,parsebin:6 gst-launch-1.0 --no-fault=20
+> filesrc
+> location=3D/media/sd/fluster/fluster/resources/AV1-ARGON-PROFILE0-CORE-AN=
+NEX-B/
+> argon_coveragetool_av1_base_and_extended_profiles_v2.1/profile0_core/stre=
+ams/test10220.obu
+> ! parsebin ! v4l2av1dec ! video/x-raw ! videoconvert dither=3Dnone !
+> video/x-raw,format=3DI420
+> ! filesink location=3Dgst_decoder_output.yuv
 
-However, the Linux MAC and especially SerDes drivers may need to know if
-it is using 1 port per lane (USXGMII) or 4 ports per lane (10G-QXGMII).
+Be aware that Argon integration with fluster/GStreamer still needs some wor=
+k,
+see issue tracker:
 
-In the downstream Layerscape SDK we have previously implemented a
-simpler scheme where for certain PHY interface modes, we trust the
-device tree and never let the PHY driver overwrite phydev->interface:
-https://github.com/nxp-qoriq/linux/commit/862694a4961db590c4d8a5590b84791361ca773d
+https://github.com/fluendo/fluster/issues/222
 
-but for upstream, a nicer detection method is implemented, where
-although we can not distinguish USXGMII from 10G-QXGMII per se, we
-create a whitelist of firmware fingerprints for which USXGMII is
-translated into 10G-QXGMII. At the time of writing, it is expected that
-this should only happen for the NXP SPF-30841 card, although extending
-for more is trivial - just uncomment the phydev_dbg() in
-aqr_build_fingerprint().
+It is fine to proceed with testing the other (IVF or MKV based) test suites=
+.
+Feel free to report all wrongly identified files onto that issue, this will=
+ be
+addressed in GStreamer (and eventually in FFMPEG too if need be).
 
-An advantage of this method is that it doesn't strictly require updates
-to arch/arm64/boot/dts/freescale/fsl-ls1028a-qds-13bb.dtso, since the
-PHY driver will transition from "usxgmii" to "10g-qxgmii".
+>=20
+> 0:00:00.051674896=C2=A0=C2=A0 400 0xffff8c000b90 DEBUG
+> parsebin gstparsebin.c:2439:type_found:<parsebin0> typefind found caps
+> video/x-h263, variant=3D(string)itu
+>=20
+> The same test with the av1parse command parses correctly:
+> GST_DEBUG=3D*:2,av1parse:6 gst-launch-1.0 --no-fault
+> filesrc
+> location=3D/media/sd/fluster/fluster/resources/AV1-ARGON-PROFILE0-CORE-AN=
+NEX-B/
+> argon_coveragetool_av1_base_and_extended_profiles_v2.1/profile0_core/stre=
+ams/test10220.obu
+> ! av1parse ! v4l2av1dec ! video/x-raw ! videoconvert dither=3Dnone !
+> video/x-raw,format=3DI420
+> ! filesink location=3D/tmp/gst_decoder_output.yuv
+>=20
+> Got EOS from element "pipeline0".
+> Execution ended after 0:00:01.599088176
+> Setting pipeline to NULL ...
+> 0:00:03.580831249=C2=A0 1075=C2=A0=C2=A0=C2=A0=C2=A0 0x3354f960 DEBUG
+> av1parse gstav1parse.c:435:gst_av1_parse_stop:<av1parse0> stop
+>=20
+> Fluster testing:
+> As fluster.py is using parsebin for gstreamer, seeing the same issue as
+> described above for the following testsuites.
+> AV1-ARGON-PROFILE0-CORE-ANNEX-B
+> AV1-ARGON-PROFILE0-NON-ANNEX-B
+> AV1-ARGON-PROFILE0-NON-ANNEX-B
+>=20
+> Test suite: AV1-TEST-VECTORS=20
+> The result of fluster test on SM8550:
+> 134/242 testcases passed while testing AV1-TEST-VECTORS with
+> GStreamer-AV1-V4L2-Gst1.0
+> unsupported content, bit depth: a000a (66 tests)
+> Iris hardware decoder supports only 8bit NV12
+> av1-1-b10-00-quantizer-*=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=20
 
-All aqr_translate_interface() callers have also previously called
-aqr107_probe(), so dereferencing phydev->priv is safe.
+That is interesting, I believe there was no profile without 10bit, which wo=
+uld
+mean this is non-compliant hardware. Not a blocker, just a remark, and me b=
+eing
+surprised 10bit isn't supported on modern codec in 2025.
 
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
----
- drivers/net/phy/aquantia/aquantia.h      |  4 ++
- drivers/net/phy/aquantia/aquantia_main.c | 52 ++++++++++++++++++------
- 2 files changed, 44 insertions(+), 12 deletions(-)
+>=20
+> Unsupported resolution (36 tests).
+> Iris hardware decoder supports min resolution of 96x96
+> av1-1-b8-01-size-*
+>=20
+> Unsupported colorformat (1 test)
+> av1-1-b8-24-monochrome
 
-diff --git a/drivers/net/phy/aquantia/aquantia.h b/drivers/net/phy/aquantia/aquantia.h
-index 2911965f0868..a70c1b241827 100644
---- a/drivers/net/phy/aquantia/aquantia.h
-+++ b/drivers/net/phy/aquantia/aquantia.h
-@@ -171,6 +171,10 @@
- 	 FIELD_PREP(AQR_FW_FINGERPRINT_MISC_ID, misc_id) | \
- 	 FIELD_PREP(AQR_FW_FINGERPRINT_MISC_VER, misc_ver))
- 
-+/* 10G-QXGMII firmware for NXP SPF-30841 riser board (AQR412C) */
-+#define AQR_G3_V4_3_C_AQR_NXP_SPF_30841_MUSX_ID40019_VER1198 \
-+	AQR_FW_FINGERPRINT(4, 3, 0xc, 1, 40019, 1198)
+Fair enough.
+
+>=20
+> Crc mismatch: debug in progress (5tests)
+> av1-1-b8-03-sizeup=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=20
+> av1-1-b8-03-sizedown=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+
+These should be basic dynamic resolution changes cases, let me know what yo=
+u
+find.
+
+> av1-1-b8-16-intra_only-intrabc-extreme-dv
+
+No idea about this one.
+
+> av1-1-b8-22-svc-L2T1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+> av1-1-b8-22-svc-L2T2=C2=A0=20
+
+These two are spatial SVC. That means that some decode only frames are goin=
+g to
+be smaller in dimensions. Only the last frame of a TU is displayed. Both do=
+ have
+the optional sequence header announcing the maximum resolution though. On
+stateless side, these usually works by simply decoding the hidden frames in=
+to
+the much larger buffers. Dealing with firmware can be harder, since firmwar=
+e may
+silently drop the decode only frames, which leads to wrong timestamp matchi=
+ng,
+which could have side effect in frameworks.
+
+On stateful decoding, SVC have never been done, some documentation will lik=
+ely
+be needed. Strictly unsupported is the case the sequence header is not ther=
+e,
+which results in resolution change on non-keyframe. We now have the ability=
+ to
+allocate frames of different dimension at run-time, and free old unused fra=
+mes,
+but in stateful, decoders streamoff the capture queue, which currently resu=
+lts
+in lost of references.
+
+Let us know your progress, inter-frame resolution change is not a strict
+requirement, it is quite rare in real life.
+
+looking forward, there is nothing particularly alarming in this report. Tha=
+nks
+for the transparency.
+
+Nicolas
+
+>=20
+> Testsuite: CHROMIUM-8bit-AV1-TEST-VECTORS
+> 12/13 testcases passed while testing CHROMIUM-8bit-AV1-TEST-VECTORS with
+> GStreamer-AV1-V4L2-Gst1.0
+> Crc mismatch: debug in progress
+> av1-1-b8-03-sizeup.ivf=C2=A0=20
+>=20
+> Unsupported test suites:
+> Iris Hardware Decoder supports only
+> PROFILE0/V4L2_MPEG_VIDEO_AV1_PROFILE_MAIN
+> and 8 bit, 420 only
+> AV1-ARGON-PROFILE1-CORE-ANNEX-B
+> AV1-ARGON-PROFILE1-NON-ANNEX-B
+> AV1-ARGON-PROFILE1-STRESS-ANNEX-B
+> AV1-ARGON-PROFILE2-CORE-ANNEX-B
+> AV1-ARGON-PROFILE2-NON-ANNEX-B
+> AV1-ARGON-PROFILE2-STRESS-ANNEX-B
+> CHROMIUM-10bit-AV1-TEST-VECTORS
+>=20
+> Compliance test for iris_driver device /dev/video0:
+>=20
+> Driver Info:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver name=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 : iris_driver
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Card type=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 : Iris Decoder
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Bus info=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 : platform:aa00000.video-codec
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver version=C2=A0=C2=A0 : 6=
+.16.0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Capabilities=C2=A0=C2=A0=C2=A0=
+=C2=A0 : 0x84204000
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 Video Memory-to-Memory Multiplanar
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 Streaming
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 Extended Pix Format
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 Device Capabilities
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device Caps=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 : 0x04204000
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 Video Memory-to-Memory Multiplanar
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 Streaming
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 Extended Pix Format
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Detected Stateful Decoder
+>=20
+> Required ioctls:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_QUERYCAP: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test invalid ioctls: OK
+>=20
+> Allow for multiple opens:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test second /dev/video0 open: =
+OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_QUERYCAP: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G/S_PRIORITY: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test for unlimited opens: OK
+>=20
+> Debug ioctls:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_DBG_G/S_REGISTER: =
+OK (Not Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_LOG_STATUS: OK (No=
+t Supported)
+>=20
+> Input ioctls:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G/S_TUNER/ENUM_FRE=
+Q_BANDS: OK (Not Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G/S_FREQUENCY: OK =
+(Not Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S_HW_FREQ_SEEK: OK=
+ (Not Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_ENUMAUDIO: OK (Not=
+ Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G/S/ENUMINPUT: OK =
+(Not Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G/S_AUDIO: OK (Not=
+ Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Inputs: 0 Audio Inputs: 0 Tune=
+rs: 0
+>=20
+> Output ioctls:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G/S_MODULATOR: OK =
+(Not Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G/S_FREQUENCY: OK =
+(Not Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_ENUMAUDOUT: OK (No=
+t Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G/S/ENUMOUTPUT: OK=
+ (Not Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G/S_AUDOUT: OK (No=
+t Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Outputs: 0 Audio Outputs: 0 Mo=
+dulators: 0
+>=20
+> Input/Output configuration ioctls:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_ENUM/G/S/QUERY_STD=
+: OK (Not Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_ENUM/G/S/QUERY_DV_=
+TIMINGS: OK (Not Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_DV_TIMINGS_CAP: OK=
+ (Not Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G/S_EDID: OK (Not =
+Supported)
+>=20
+> Control ioctls:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_QUERY_EXT_CTRL/QUE=
+RYMENU: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_QUERYCTRL: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G/S_CTRL: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G/S/TRY_EXT_CTRLS:=
+ OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(UN)SUBSCRIBE_EVEN=
+T/DQEVENT: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G/S_JPEGCOMP: OK (=
+Not Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Standard Controls: 12 Private =
+Controls: 0
+>=20
+> Format ioctls:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_ENUM_FMT/FRAMESIZE=
+S/FRAMEINTERVALS: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G/S_PARM: OK (Not =
+Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G_FBUF: OK (Not Su=
+pported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G_FMT: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_TRY_FMT: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S_FMT: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G_SLICED_VBI_CAP: =
+OK (Not Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Cropping: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Composing: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Scaling: OK (Not Supporte=
+d)
+>=20
+> Codec ioctls:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(TRY_)ENCODER_CMD:=
+ OK (Not Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G_ENC_INDEX: OK (N=
+ot Supported)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(TRY_)DECODER_CMD:=
+ OK
+>=20
+> Buffer ioctls:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_REQBUFS/CREATE_BUF=
+S/QUERYBUF: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test CREATE_BUFS maximum buffe=
+rs: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_REMOVE_BUFS: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_EXPBUF: OK
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Requests: OK (Not Support=
+ed)
+> [65391.311675] qcom-iris aa00000.video-codec: invalid plane
+> [65395.340586] qcom-iris aa00000.video-codec: invalid plane
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test blocking wait: OK
+>=20
+> Total for iris_driver device /dev/video0: 48, Succeeded: 48, Failed: 0,
+> Warnings: 0
+>=20
+> V4l2-ctl Test verified for 2 streams as well.
+>=20
+> Thanks,
+> Deepa
+>=20
+> Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.=
+com>
+> ---
+> DEEPA GUTHYAPPA MADIVALARA (5):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: uapi: videodev2: Add support for AV=
+1 stateful decoder
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: v4l2: Add description for V4L2_PIX_=
+FMT_AV1 in v4l_fill_fmtdesc()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: iris: Add support for AV1 format in=
+ iris decoder
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: iris: Add internal buffer calculati=
+on for AV1 decoder
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: iris: Define AV1-specific platform =
+capabilities and properties
+>=20
+> =C2=A0drivers/media/platform/qcom/iris/iris_buffer.h=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0=C2=A0 2 +
+> =C2=A0drivers/media/platform/qcom/iris/iris_ctrls.c=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0=C2=A0 8 +
+> =C2=A0drivers/media/platform/qcom/iris/iris_hfi_common.h |=C2=A0=C2=A0 3 =
 +
- struct aqr107_hw_stat {
- 	const char *name;
- 	int reg;
-diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-index 5fbf392a84b2..41f3676c7f1e 100644
---- a/drivers/net/phy/aquantia/aquantia_main.c
-+++ b/drivers/net/phy/aquantia/aquantia_main.c
-@@ -512,8 +512,31 @@ static int aqr_gen1_read_rate(struct phy_device *phydev)
- 	return 0;
- }
- 
-+/* Quad port PHYs like AQR412(C) have 4 system interfaces, but they can also be
-+ * used with a single system interface over which all 4 ports are multiplexed
-+ * (10G-QXGMII). To the MDIO registers, this mode is indistinguishable from
-+ * USXGMII (which implies a single 10G port).
-+ *
-+ * To not rely solely on the device tree, we allow the regular system interface
-+ * detection to work as usual, but we replace USXGMII with 10G-QXGMII based on
-+ * the specific fingerprint of firmware images that are known to be for MUSX.
-+ */
-+static phy_interface_t aqr_translate_interface(struct phy_device *phydev,
-+					       phy_interface_t interface)
-+{
-+	struct aqr107_priv *priv = phydev->priv;
-+
-+	if (phy_id_compare(phydev->drv->phy_id, PHY_ID_AQR412C, phydev->drv->phy_id_mask) &&
-+	    priv->fingerprint == AQR_G3_V4_3_C_AQR_NXP_SPF_30841_MUSX_ID40019_VER1198 &&
-+	    interface == PHY_INTERFACE_MODE_USXGMII)
-+		return PHY_INTERFACE_MODE_10G_QXGMII;
-+
-+	return interface;
-+}
-+
- static int aqr_gen1_read_status(struct phy_device *phydev)
- {
-+	phy_interface_t interface;
- 	int ret;
- 	int val;
- 
-@@ -539,36 +562,38 @@ static int aqr_gen1_read_status(struct phy_device *phydev)
- 
- 	switch (FIELD_GET(MDIO_PHYXS_VEND_IF_STATUS_TYPE_MASK, val)) {
- 	case MDIO_PHYXS_VEND_IF_STATUS_TYPE_KR:
--		phydev->interface = PHY_INTERFACE_MODE_10GKR;
-+		interface = PHY_INTERFACE_MODE_10GKR;
- 		break;
- 	case MDIO_PHYXS_VEND_IF_STATUS_TYPE_KX:
--		phydev->interface = PHY_INTERFACE_MODE_1000BASEKX;
-+		interface = PHY_INTERFACE_MODE_1000BASEKX;
- 		break;
- 	case MDIO_PHYXS_VEND_IF_STATUS_TYPE_XFI:
--		phydev->interface = PHY_INTERFACE_MODE_10GBASER;
-+		interface = PHY_INTERFACE_MODE_10GBASER;
- 		break;
- 	case MDIO_PHYXS_VEND_IF_STATUS_TYPE_USXGMII:
--		phydev->interface = PHY_INTERFACE_MODE_USXGMII;
-+		interface = PHY_INTERFACE_MODE_USXGMII;
- 		break;
- 	case MDIO_PHYXS_VEND_IF_STATUS_TYPE_XAUI:
--		phydev->interface = PHY_INTERFACE_MODE_XAUI;
-+		interface = PHY_INTERFACE_MODE_XAUI;
- 		break;
- 	case MDIO_PHYXS_VEND_IF_STATUS_TYPE_SGMII:
--		phydev->interface = PHY_INTERFACE_MODE_SGMII;
-+		interface = PHY_INTERFACE_MODE_SGMII;
- 		break;
- 	case MDIO_PHYXS_VEND_IF_STATUS_TYPE_RXAUI:
--		phydev->interface = PHY_INTERFACE_MODE_RXAUI;
-+		interface = PHY_INTERFACE_MODE_RXAUI;
- 		break;
- 	case MDIO_PHYXS_VEND_IF_STATUS_TYPE_OCSGMII:
--		phydev->interface = PHY_INTERFACE_MODE_2500BASEX;
-+		interface = PHY_INTERFACE_MODE_2500BASEX;
- 		break;
- 	case MDIO_PHYXS_VEND_IF_STATUS_TYPE_OFF:
- 	default:
- 		phydev->link = false;
--		phydev->interface = PHY_INTERFACE_MODE_NA;
-+		interface = PHY_INTERFACE_MODE_NA;
- 		break;
- 	}
- 
-+	phydev->interface = aqr_translate_interface(phydev, interface);
-+
- 	/* Read rate from vendor register */
- 	return aqr_gen1_read_rate(phydev);
- }
-@@ -757,6 +782,7 @@ static int aqr_gen1_config_init(struct phy_device *phydev)
- 	    phydev->interface != PHY_INTERFACE_MODE_2500BASEX &&
- 	    phydev->interface != PHY_INTERFACE_MODE_XGMII &&
- 	    phydev->interface != PHY_INTERFACE_MODE_USXGMII &&
-+	    phydev->interface != PHY_INTERFACE_MODE_10G_QXGMII &&
- 	    phydev->interface != PHY_INTERFACE_MODE_10GKR &&
- 	    phydev->interface != PHY_INTERFACE_MODE_10GBASER &&
- 	    phydev->interface != PHY_INTERFACE_MODE_XAUI &&
-@@ -851,7 +877,7 @@ static int aqr_gen2_read_global_syscfg(struct phy_device *phydev)
- 			break;
- 		}
- 
--		syscfg->interface = interface;
-+		syscfg->interface = aqr_translate_interface(phydev, interface);
- 
- 		switch (rate_adapt) {
- 		case VEND1_GLOBAL_CFG_RATE_ADAPT_NONE:
-@@ -1091,7 +1117,8 @@ static unsigned int aqr_gen2_inband_caps(struct phy_device *phydev,
- 					 phy_interface_t interface)
- {
- 	if (interface == PHY_INTERFACE_MODE_SGMII ||
--	    interface == PHY_INTERFACE_MODE_USXGMII)
-+	    interface == PHY_INTERFACE_MODE_USXGMII ||
-+	    interface == PHY_INTERFACE_MODE_10G_QXGMII)
- 		return LINK_INBAND_ENABLE | LINK_INBAND_DISABLE;
- 
- 	return 0;
-@@ -1101,7 +1128,8 @@ static int aqr_gen2_config_inband(struct phy_device *phydev, unsigned int modes)
- {
- 	struct aqr107_priv *priv = phydev->priv;
- 
--	if (phydev->interface == PHY_INTERFACE_MODE_USXGMII) {
-+	if (phydev->interface == PHY_INTERFACE_MODE_USXGMII ||
-+	    phydev->interface == PHY_INTERFACE_MODE_10G_QXGMII) {
- 		u16 set = 0;
- 
- 		if (modes == LINK_INBAND_ENABLE)
--- 
-2.34.1
+> =C2=A0.../platform/qcom/iris/iris_hfi_gen2_command.c=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 109 ++++++++-
+> =C2=A0.../platform/qcom/iris/iris_hfi_gen2_defines.h=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 10 +
+> =C2=A0.../platform/qcom/iris/iris_hfi_gen2_response.c=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 22 ++
+> =C2=A0drivers/media/platform/qcom/iris/iris_instance.h=C2=A0=C2=A0 |=C2=
+=A0=C2=A0 1 +
+> =C2=A0.../platform/qcom/iris/iris_platform_common.h=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0 15 ++
+> =C2=A0.../media/platform/qcom/iris/iris_platform_gen2.c=C2=A0 | 156 +++++=
++++++++-
+> =C2=A0.../platform/qcom/iris/iris_platform_sm8250.c=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0 17 ++
+> =C2=A0drivers/media/platform/qcom/iris/iris_vdec.c=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 25 +-
+> =C2=A0drivers/media/platform/qcom/iris/iris_vidc.c=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> =C2=A0drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 255 ++++++++++=
+++++++++++-
+> =C2=A0drivers/media/platform/qcom/iris/iris_vpu_buffer.h | 105 +++++++++
+> =C2=A0drivers/media/v4l2-core/v4l2-ioctl.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> =C2=A0include/uapi/linux/videodev2.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> =C2=A016 files changed, 703 insertions(+), 28 deletions(-)
+> ---
+> base-commit: 88a6b4187eacb700a678296afb0c610eb3781e2f
+> change-id: 20250821-rfc_split-c3ff834bb2c9
+> prerequisite-change-id: 20250704-iris-video-encoder-b193350b487a:v3
+> prerequisite-patch-id: 8a566690da276da34430c10dbc2fe64c1d623a9c
+> prerequisite-patch-id: 1430a33603b425d0b142aab98befcda771fb885e
+> prerequisite-patch-id: 32024cd49d2445ff396e31f40739b32597be59a4
+> prerequisite-patch-id: 65b569952650647174e8221dc7adde9b000a7ae3
+> prerequisite-patch-id: da128980fab8538bf668f19016c5121fb03759c2
+> prerequisite-patch-id: 079823dffbe8b89990797bf7f7640b754382d8ce
+> prerequisite-patch-id: 6ce10e03d7b3b96b2391e26cda703b650bde7cd0
+> prerequisite-patch-id: b5950670ac5068a0c5b26651ebd433f7d3bbe6ca
+> prerequisite-patch-id: 4de7a934f6bdfe28c84e461f70495925aa98365e
+> prerequisite-patch-id: 07682a6d2530b5796122bf8763f94b5bc92949ec
+> prerequisite-patch-id: 72b7eba20f1a222908d41323f28be3ba84106759
+> prerequisite-patch-id: fd9e2e1b157112c39c69486799493ee99e6033a7
+> prerequisite-patch-id: ae0ad8a04a04dd3434a092d4c2bb3f493417c6e1
+> prerequisite-patch-id: 52631eec348735d1dc5f5804b573e3cf942550a0
+> prerequisite-patch-id: 4109c59edb1b757162db46297914c8f7c14408dc
+> prerequisite-patch-id: fc0b713eb4822047e8172d11fd4cd5a097ef23a5
+> prerequisite-patch-id: 20ac8e7307f1f852b2a43268b2474178fbc0b94c
+> prerequisite-patch-id: e8419d716573beb64ad89968f0074d6bddfa86d3
+> prerequisite-patch-id: bdc72f5876ceb2e981d594c86a45cb21a6264af3
+> prerequisite-patch-id: fc5d26d01cab94d229a00eab819ae80196f3f5d5
+> prerequisite-patch-id: 32a9fe1371fffc9abd9a862b2814050a144d1968
+> prerequisite-patch-id: 25184583b5de886f78ee0444a4a59d5f3c271ce5
+> prerequisite-patch-id: df3376b9de27b23ae81a4c7b7a8fe4b429c32423
+> prerequisite-patch-id: e68fbf7c82567d2e9f3fdd0fdf2e2911329d5ccd
+> prerequisite-patch-id: 580fa40de01a81a8685e56420f562d299bfc60fa
+> prerequisite-patch-id: 89548da6690681854ee1de992a491bed73202b83
+>=20
+> Best regards,
 
+--=-lgRlMTk62Tz5+XvOiPcv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHQEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLg9rQAKCRDZQZRRKWBy
+9DOMAQDcVGSt5eCrtxmW5GjbjKDZX4Mcu89liSvmkvsYrOLRvgD2P/Nnk1oo5A0D
++ncidLW5Cr0ZLsvpSWtdbWk3bHr2AQ==
+=3aMe
+-----END PGP SIGNATURE-----
+
+--=-lgRlMTk62Tz5+XvOiPcv--
 
