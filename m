@@ -1,91 +1,80 @@
-Return-Path: <linux-kernel+bounces-799466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892EBB42C2B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:53:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9226B42C2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 067C77B3D49
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:51:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90B535681AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494432ECEA8;
-	Wed,  3 Sep 2025 21:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BAE2ED85F;
+	Wed,  3 Sep 2025 21:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcdsHlb4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GCu5VNVF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D582ECE8A;
-	Wed,  3 Sep 2025 21:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D0E2AE77;
+	Wed,  3 Sep 2025 21:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756936374; cv=none; b=KLf2BYnWsZ/dQL33plHDQ0nfv/ZioGXEwkXvamg5AzkQwgfNOa/5uHJBhhoPA4Z+P3IKOCIoS5eKsVifd8kfIOhbbctY4nQsn0vdzywqggOLvYyYsZLt70Cd38bBokQKeUw2KgqhmSzagC/gusFRIRY95dSMtZBbrm97pbFutXo=
+	t=1756936381; cv=none; b=PcbglegFTi4U4pwTXMRj65IXANSBpgiol55Acv3zTtD0tss1m7oRBvtSiA+oVJuPtR4AEnZPTIGWuro646ehL8a3kebp18bK2o6Az0l9jJg6cSpdA9hU/24GqgRQf+IFWdcOq9WgwF9aGXlQ2SkvxYdlomc2WAl+n+ITowzNFsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756936374; c=relaxed/simple;
-	bh=/wn81mqtmLBAJqlog+Yyi1c/VENujPA4G3jxRsDqA8k=;
+	s=arc-20240116; t=1756936381; c=relaxed/simple;
+	bh=xIp9Re0oOmQ14h92t4+Z5fUJJqI80eHAryoMweGEamI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EEFxWUDjRww5OgYin2bK2PLLFWgkgLSShV4O0jH11QVQJQNVFKazUS7kwozMbyBn0XoRwF5wJ7fr5Qfnr007gYqyfk1NN5lQjSUZW62/cFKcfGl17u44fWW5wH5oB6vWDYOgU/dZe+5sds4bfeCZUXYipnSaFlc1eDx/qFyUUsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lcdsHlb4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62542C4CEF4;
-	Wed,  3 Sep 2025 21:52:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=g3X+sO6Q/dIaIXws86YlonYi1065DW72GJC5DikTBE8gHUgt6rtfkKD8VbEIvLZ4mzNE5Qq2mNJRMDV4o48HgxipzyBLdFZOy2cLbWn2epILR9v1HBrgQihTZysIJZyuvYyEAtXhsjdHRcg7bDULA/WmYfdAN6SrfYA6kgbEaVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GCu5VNVF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 772E4C4CEE7;
+	Wed,  3 Sep 2025 21:53:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756936374;
-	bh=/wn81mqtmLBAJqlog+Yyi1c/VENujPA4G3jxRsDqA8k=;
+	s=k20201202; t=1756936380;
+	bh=xIp9Re0oOmQ14h92t4+Z5fUJJqI80eHAryoMweGEamI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lcdsHlb4e8dDy4Xme/ZazoHxlJpj4zWu/9zPSTYGax78J6WN5gxLu7TfvtKvRyQta
-	 fxZZ7KTcUP17nyeHrLUZqt/egrOT0dt3OQoECrCNXjMmC4CoY3AyXWi/lcgSXx9o+E
-	 OtDoNbSAIV+x37VVxbd+xUmaeYSzAQoCq3kAPBYywQMwTDlloIzLDMpuEqqSDj259I
-	 7xHNSTOt/+XyO5+ImDRq7mCqk5Bp6qpdpMiYikjKyl32uXq1O1kGjrlsXnBcbLQPhI
-	 WwP5HS3lxiCxJ/Vpg3qQqWhOApY+LAIP9p0p02iZ2myfZ0/mvEP1H1BmP/0Dkffilb
-	 Hh03inIpFP6dA==
-Date: Wed, 3 Sep 2025 11:52:53 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: arighi@nvidia.com, void@manifault.com, linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev, changwoo@igalia.com, hodgesd@meta.com,
-	mingo@redhat.com, peterz@infradead.org, jake@hillion.co.uk
-Subject: Re: [PATCH v7 0/3] sched_ext: Harden scx_bpf_cpu_rq()
-Message-ID: <aLi4tSqsdF-CpF2R@slm.duckdns.org>
-References: <20250903212311.369697-1-christian.loehle@arm.com>
+	b=GCu5VNVFZNJ43YxR1dN14tLxpugbb3PMY4rryUv4l4GvS2Jvc4AUKC3I51W1OFQ9p
+	 5hMkrgqoq93j/VF67sWUYXzzUzaAHd54olEMsN9OQb72ccwp8foRqyXrDmM/57NeBE
+	 t/KgzkF9tZfvaGUYevgTw5o9OQmS72zJGfeUTgm23Ck2bHMbcj9O+fjffxSxkco3j5
+	 zEcSJ6ESOFmsuC4GNXNi2AUNNyVwOCVS1THK684wf555j/Ya5mwJMJqCHQLRav9a37
+	 DmZTEknoCXf9CeMGJdBkZH32ik/tSAYkOObqeGjSbCMGF5z3rXnGHx/D3NShfMuq2a
+	 Q3fZSq+IozbzQ==
+Date: Wed, 3 Sep 2025 16:52:57 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-mmc@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: mmc: sdhci-pxa: Add minItems to
+ pinctrl-names
+Message-ID: <175693637687.2903278.2157614494014372736.robh@kernel.org>
+References: <20250903-pxav3-uhs-fix-v1-1-9f56b0b54749@dujemihanovic.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250903212311.369697-1-christian.loehle@arm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250903-pxav3-uhs-fix-v1-1-9f56b0b54749@dujemihanovic.xyz>
 
-On Wed, Sep 03, 2025 at 10:23:08PM +0100, Christian Loehle wrote:
-> scx_bpf_cpu_rq() currently allows accessing struct rq fields without
-> holding the associated rq.
-> It is being used by scx_cosmos, scx_flash, scx_lavd, scx_layered, and
-> scx_tickless. Fortunately it is only ever used to fetch rq->curr.
-> So provide an alternative scx_bpf_cpu_curr() that doesn't expose struct rq
-> and provide a hardened scx_bpf_locked_rq() by ensuring we hold the rq lock.
-> Add a deprecation warning to scx_bpf_cpu_rq() that mentions the two alternatives.
-> 
-> This also simplifies scx code from:
-> 
-> rq = scx_bpf_cpu_rq(cpu);
-> if (!rq)
-> 	return;
-> p = rq->curr
-> /* ... Do something with p */
-> 
-> into:
-> 
-> p = scx_bpf_cpu_curr(cpu);
-> /* ... Do something with p */
 
-Applied 1-3 to sched_ext/for-6.18 (the last patch needed a bit of update to
-account for struct scx_sched defintion being moved to ext_internal.h).
+On Wed, 03 Sep 2025 12:51:39 +0200, Duje Mihanović wrote:
+> Some older boards only require a default pinctrl. Add a minItems
+> property so these don't cause dt-validate warnings.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202509030625.PBgLIAwG-lkp@intel.com/
+> Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
+> ---
+>  Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Thanks.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
--- 
-tejun
 
