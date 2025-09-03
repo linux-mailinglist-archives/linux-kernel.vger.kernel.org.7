@@ -1,139 +1,124 @@
-Return-Path: <linux-kernel+bounces-798771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC864B422BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:59:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4819B422B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2D51B2816A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:59:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A2BF7C5C4F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F6C311C19;
-	Wed,  3 Sep 2025 13:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E5F30DEB5;
+	Wed,  3 Sep 2025 13:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="dv+aGAmr"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="LPHOKILB"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35E430EF6D;
-	Wed,  3 Sep 2025 13:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF6F30EF6D;
+	Wed,  3 Sep 2025 13:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756907920; cv=none; b=LDzPpQ1SEsvUD2E4SwNdda1nm+xlP2Tp2r/q+zDI6p0/pzliNUb1v04I42GTfvKKcx9QaXqr1FXk+jN3rH71HXsof/W0x8Wz4XXm4t9VOdsAhpoyN1y1fxUzv51ykviTg6uXkYyX1momZ59A4y6rxVTKrvGfEYWH76+EjUDArdQ=
+	t=1756907890; cv=none; b=R+dMpckGXIellJYOf3/Mi7F3+lBOmvh0XiR2tfrmvTyR+sFQtIvPtOxPL7ZmGJrsQOrSSCrsgwFHN5C6CrlWKTUJRpFUxExDPkcf/6dMPPwJWMWEGoyDeQ8W++7AalQnP2RvfpTfNsYj6UZuYKkh3jCQOH+H4OipNYMzGfUsGrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756907920; c=relaxed/simple;
-	bh=x94k57n5g4szNvbim9+TTaaBYUxakxMIrHZ7n4YCMcU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RakVgCMc8TlSIN+0zTn/rcwfWNDid2UeFJgIbr5HZjY+u2mXsmU9h0Pt6YuSjAkPJTxzUasSty+C1Evt+BG99hAUsZNaJ/lCMUzxUIiXjhcEvzPROvudYJDd6smm3KgDvJHSv4mEqwSyUMNomn77GQGEsOgajYkslYIAKLRDoN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=dv+aGAmr; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583BRm9D016232;
-	Wed, 3 Sep 2025 15:58:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	4UlTu2YpLab0/pa6q4pnPYbb7UfqHxugcQ+IeQKpoe8=; b=dv+aGAmrdVz2+GR7
-	WbDwiJvebx2c1PJDxXNLuofMlIPs+uPWjzRncV3nJtg529P2gJ38/DUXZI5R9qSl
-	q8xEuxTcsC9GTw6bAT8OWdgHd3mqQU6mCLGHVvl0PL58yezEUoff4wlMfedUl7GQ
-	vC/SuSvFwhMjOZFIc1uHi8dyse+ZOpaGzp5Pa4DJNAQ1vdb0tKxq0S0/pWyKN15W
-	pyt+LdVjNuT6NCU6m/f5aKVTgN1ywevniL28nsQgnW/MkdlHiL+O1bqP5fR9QXOL
-	nb44vr2wn/jF/Z5r9DgZBr9Qg9YoPCRFChnxVQnDZ+wpd34L4sO44ppHbMbvgcad
-	k+rH0g==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48ur6frr2c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Sep 2025 15:58:30 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 44DEE40048;
-	Wed,  3 Sep 2025 15:57:35 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 64962399931;
-	Wed,  3 Sep 2025 15:56:57 +0200 (CEST)
-Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 3 Sep
- 2025 15:56:56 +0200
-Message-ID: <66a94f4b-2efa-4671-9668-71995a9c1ac4@foss.st.com>
-Date: Wed, 3 Sep 2025 15:56:56 +0200
+	s=arc-20240116; t=1756907890; c=relaxed/simple;
+	bh=qmI9uCirdKxPoEeerlkveAtQlZ30H8oH9WlpS31AYVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gz3qWaWYuSZjx1tS63HMki/mnlUXpPlXDRbHTEQ2mf2Pb7eme0aLaUZxNPUmfXkSN9tvNqCHn8R7OgCOqPIsaSOb/rBwmhcd917vCVZwmTxzOnADu4p0LHpZafihu3yvcsg3wG390w3tsOo5gexUdKayGtyZFXP3HbSfnD26EWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=LPHOKILB; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3c6abcfd142so3176026f8f.2;
+        Wed, 03 Sep 2025 06:58:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1756907887; x=1757512687; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wrqJd5FD6WGRiM2Koxprb9+2r6q/3m46cDuQvGJCImg=;
+        b=LPHOKILBRCU7mFQPtDlegXKs0VkkshcJegy9JWtkE5dpPMRkI2eD3VRcTiesPMEN00
+         1LKrNPdWF66VYD8aukx0P4Pl9elPRWuecEFJAZeptcBmTlx8sluwuO7bz+yzHkTGM4Ma
+         wNnooXUtfNnwUiOEryt9swWHxuesTWXFReGr8lrQS4hpVXh2dBOcdpCRyh2KkKJHFemM
+         fdbh9OyHXDn6SI23J9AIIQB+W5hv1TQZwnZoEz0Y+lEXh0DAycfEgQGdkYLGvwnSg7TK
+         DPVRRVafekdRIe/UG4+VuPykfrYlGIMPqBjXuNQ4/2IQ7FhDC3Hr3Ja+iVDSFyh1DRHL
+         K6GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756907887; x=1757512687;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wrqJd5FD6WGRiM2Koxprb9+2r6q/3m46cDuQvGJCImg=;
+        b=Z+l+Rv55eWkqpcjR6RyCLm2P7PJD1KHXlmhg47s6b7kndxreHRUifzqlKiMwji3Xer
+         eDmg2OfBpGouJ6XTxTdoJpu0AspJuNVJYSPDHt/uSgUNAyRC/mH4G6xkq6kT4rAlMkUW
+         AO9r8BL/3A2d/Wiyi+J+CgY0PRUDKVAHoS080qUtWzpwE6OXwZ31srPizVyuMj9w3a3d
+         pvBdb0Y1m2ZQ325p3u2Ly/CAbAhxhdNEu3A1TqeEdkoQ8Ub79C8gUNA7VTwcVxNUYdxx
+         U036vy/V2fa+0SDYKifjUmo/a5HPDR+HqYKpBH0ItDzTBYGJeYYqtP5he8il0M0LDS4Q
+         SmZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnjJJRwTh1lUu68r2sFCysa+QQiB4Gy4+q55mItcWH1lqOSt98kTwKBnEBzRlT9EgbCgAmw2g6@vger.kernel.org, AJvYcCW3covaXHvLc9Grp7L4BH9ztf/BGsnMggeIcO2r/KE/r85PdstvDBnkHB0h8BcVr93UtMLjMY+RLCMH+oA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQiUJDHNPsHz+PHMMDwQh8exDtZrpjqb93QucK+I5UM+h58L5t
+	u3Ep3D9xUaPOd9UR/UzYH08jF5oo4NX5LODtRWTUnuaR9w01baqVve4=
+X-Gm-Gg: ASbGncsXUjaNFgDGqVYAZOIixGcRew2ookck/vZ9GpttJCBhsk/AOS/46kXmBsiLYhg
+	g7F3WsSvSvwDsk2R3Z9kJ+F//Tk7jCUYm6AmKb78NYLOwqj7Tslq/gKbApulFH4gFrZ+EefKVDF
+	2iUbTLBjnWqwcVvyPHB5+sor6F8pfkersJttLl7bmoLjUAi7g9ceCSEbkwD9R5F/CaI5gv8yYSv
+	p6H7SjYZFxqe3gm6KxrtIROEa/vIbGljptq7PmudCBFyDoTHCY9j2TIbqVrvhfVRhmmfuQ1Psfm
+	Tmnv7jmU0dWs9Ae2ZbaxfeB4Zy+yV6mO4te8ofR/qD1cyfGuXSMTkcnDtlqRb9DrRTw0O19BZ5G
+	l8s/ojB8RVmPyQ4te86WkmcE4RHcMKizlPNnVyFDZk+Hk9iEQPrflZx2sopbr36CKE7rkTI48sC
+	gmxjBAfu27Cva/S/HV5jI=
+X-Google-Smtp-Source: AGHT+IEkQUc3AXEWirxMtaQehRuguWIkLYzGzZnyPoMRvYn4CXlpE1GuGBvel+XZFzm2O36gCn8Gqg==
+X-Received: by 2002:a05:6000:288b:b0:3b7:96e8:7596 with SMTP id ffacd0b85a97d-3d1e05b9583mr9467583f8f.57.1756907887009;
+        Wed, 03 Sep 2025 06:58:07 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4f3e.dip0.t-ipconnect.de. [91.43.79.62])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf3458a67esm23797305f8f.62.2025.09.03.06.58.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 06:58:06 -0700 (PDT)
+Message-ID: <7d5a9c50-66d1-4e54-a4b5-ba857c1fd6be@googlemail.com>
+Date: Wed, 3 Sep 2025 15:58:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v2 0/5] STM32 pinctrl: Add mux function RSVD
-To: Antonio Borneo <antonio.borneo@foss.st.com>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Fabien Dessenne
-	<fabien.dessenne@foss.st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250610152309.299438-1-antonio.borneo@foss.st.com>
-Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20250610152309.299438-1-antonio.borneo@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_07,2025-08-28_01,2025-03-28_01
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.12 00/95] 6.12.45-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250902131939.601201881@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250902131939.601201881@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Ciao Antonio
+Am 02.09.2025 um 15:19 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.12.45 release.
+> There are 95 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-On 6/10/25 17:23, Antonio Borneo wrote:
-> This v2 is a subset of the v1, split-out to simplify the review.
-> 
-> This subset:
-> - introduces the pinctrl mux function RSVD,
-> - adds two use cases requiring RSVD,
-> - minor re-format of the dt-bindings.
-> 
-> Changes v1 -> v2 subset:
-> - rebased on v6.16-rc1,
-> - added use cases of the new mux function RSVD,
-> - added Reviewed-by: on 2/5 (former 04/14 in v1),
-> - added commit to re-format the dt-bindings,
-> - Link to v1: https://lore.kernel.org/lkml/20241022155658.1647350-1-antonio.borneo@foss.st.com/
-> 
-> 
-> Antonio Borneo (3):
->    ARM: dts: stm32: Add pinmux for CM4 leds pins
->    ARM: dts: stm32: Add leds for CM4 on stm32mp15xx-ed1 and
->      stm32mp15xx-dkx
->    dt-bindings: pinctrl: stm32: Add missing blank lines
-> 
-> Fabien Dessenne (2):
->    pinctrl: stm32: Handle RSVD pin configuration
->    dt-bindings: pinctrl: stm32: Add RSVD mux function
-> 
->   .../bindings/pinctrl/st,stm32-pinctrl.yaml    | 25 +++++++++++++++++++
->   arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi   | 14 +++++++++++
->   arch/arm/boot/dts/st/stm32mp157c-ed1.dts      |  2 ++
->   arch/arm/boot/dts/st/stm32mp15xx-dkx.dtsi     |  2 ++
->   drivers/pinctrl/stm32/pinctrl-stm32.c         |  9 +++++++
->   drivers/pinctrl/stm32/pinctrl-stm32.h         |  3 ++-
->   include/dt-bindings/pinctrl/stm32-pinfunc.h   |  1 +
->   7 files changed, 55 insertions(+), 1 deletion(-)
-> 
-> 
-> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
 
-DT patches applied on stm32-next.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-Thanks!!
-Alex
+
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
