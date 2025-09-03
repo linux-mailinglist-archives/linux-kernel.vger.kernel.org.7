@@ -1,106 +1,180 @@
-Return-Path: <linux-kernel+bounces-797910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21258B41718
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:46:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1833FB41715
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E03F1889077
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:45:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB4E51721DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED832E040D;
-	Wed,  3 Sep 2025 07:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2922DFA24;
+	Wed,  3 Sep 2025 07:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="YDYXpmer"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NJ0M6B6Q";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MhMJwGEg";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NJ0M6B6Q";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MhMJwGEg"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DE32DFA46;
-	Wed,  3 Sep 2025 07:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C142DE6FC
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756885533; cv=none; b=ZHCUOqmKwR3M81qed1yRK70Lxr3cuR8dQlIOaHkuRxcye5dMtYruUXANY5Bajak4TO2GGIPv+IsltNiCmYMJOnGwzoQAESredMHK0fbe+piurWDSolKayUqzRmSHs0eelB7RJ1uxWGf1CmboCG6DngJ8GQVoykDVhcVe6pT/UOI=
+	t=1756885548; cv=none; b=hkQRXlVJzlT6vY8wFHNvCVDTVENsSkmSdaZrWBcu7DhfWsC9yV+RkBrTmkyAY1tBdajuvpsueXfmsijdPU1hfLLkwhqZVZfHA1c8J/Jsd0orS3fMC7YR+/qkZkJhsnK2mhHDa+3CS17K9/3L0QmnFYpF+QTr8OO/1gNNexR2dEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756885533; c=relaxed/simple;
-	bh=W8jUJ0ZdBW50Fci9MyTDVczGBHLQzeSVg3IJ2oh48ZQ=;
+	s=arc-20240116; t=1756885548; c=relaxed/simple;
+	bh=qrOB/jc2ipMFC5xCGMcQrYPG3nRsbvjLKzvNHLVcvLw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W28KfvrHTJnddsN6zmsa5m+s8/FKag49aOKFTjpySczf4yqBkUAjP6E/ocJQN1pLEIrNx8s9BoKz42PqixltGgXOCpRnnMDgAIFc1PiXdcUI0Fzdi5NkA9Swo89QjzjdeSnmmQQMLizc+hBdNVwUnzA4e9ZMCjzRyASrxvkf93w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=YDYXpmer; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6EEF410246D8B;
-	Wed,  3 Sep 2025 09:45:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1756885529; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=DIqWAG2HGLWxMY4IYF3FpYDCxuSJMzAGC+ogfpL2Mxw=;
-	b=YDYXpmeroAgToKvL3CbqRdMSCZl6ikDJo3jDHPPRP9TqEoVNpftSTXve/8dlGuQBjvr7pY
-	GylIfqp7Vo1+tiyQLwTHJdMVVkUsOf0XjJcsGHvdj1hmxh9Qcvwhvshe0xpFChj+OnRTdc
-	3G+DRrt7YYmjcet6bVR06OMsNRiQ2hKbYF1N3ChLN1oNIFZjvLnUQ2bO59e4FCEh3bbp3q
-	9/m+Qk7a1putzDCWU88m/IfxKxbRTq8wOpHS/83nDoIJsm/Msv5/vGaeWJ1pnp7mgPGMTg
-	jkDShbXk5yYFHE/RyhMC3HviNsaeVyeVDx/NafGhOo+bV6KUln6zP8OPqxkMwA==
-Date: Wed, 3 Sep 2025 09:45:23 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	achill@achill.org
-Subject: Re: [PATCH 5.10 00/34] 5.10.242-rc1 review
-Message-ID: <aLfyE4TI1KgeLF0V@duo.ucw.cz>
-References: <20250902131926.607219059@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p6sy/W3OTrNqfjVrC++fmQQ/7rtDfC3LybGjphKcauuFnhcO0jAxq4ctcxYNB7EiZplMMT4+8r9Y+HtLWKpZGt6GehtkgzStvYqgy2CuETDfQj6R/02AUOAnVj2hUPlcPcqvt+/MhQOL0IqysPxNfLYrw6dnQVx3KRe2e12DuzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NJ0M6B6Q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MhMJwGEg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NJ0M6B6Q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MhMJwGEg; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D2E3B1F770;
+	Wed,  3 Sep 2025 07:45:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756885538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gkgerhaz5WeBghIbK/W7t7V9qWszlyPc8fhNtRJ1gdg=;
+	b=NJ0M6B6QvmyaxvYs4SpXavcchxSq0xwCKFZSIRsexxUh4yY2HHp/blxk/92tZ+ahc7BzJZ
+	iquogK0OadI/HqfTfGTwfGZ0px6+e2VB2UxOKSLF1BHjHA4TWonWa0qoh+2gsycHyFjgS+
+	GvoNv946wVl4GYNVmOka3UWI3pAGMl4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756885538;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gkgerhaz5WeBghIbK/W7t7V9qWszlyPc8fhNtRJ1gdg=;
+	b=MhMJwGEgEme0OxeQNyV6Kq1MxiB2A9YMcF0ZAfFQfgKAAET1NIyznqG8F719cbtHol3hwG
+	fms6nT8Qrg4PLXAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756885538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gkgerhaz5WeBghIbK/W7t7V9qWszlyPc8fhNtRJ1gdg=;
+	b=NJ0M6B6QvmyaxvYs4SpXavcchxSq0xwCKFZSIRsexxUh4yY2HHp/blxk/92tZ+ahc7BzJZ
+	iquogK0OadI/HqfTfGTwfGZ0px6+e2VB2UxOKSLF1BHjHA4TWonWa0qoh+2gsycHyFjgS+
+	GvoNv946wVl4GYNVmOka3UWI3pAGMl4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756885538;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gkgerhaz5WeBghIbK/W7t7V9qWszlyPc8fhNtRJ1gdg=;
+	b=MhMJwGEgEme0OxeQNyV6Kq1MxiB2A9YMcF0ZAfFQfgKAAET1NIyznqG8F719cbtHol3hwG
+	fms6nT8Qrg4PLXAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BFB6B13A31;
+	Wed,  3 Sep 2025 07:45:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rElLLiLyt2jARQAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Wed, 03 Sep 2025 07:45:38 +0000
+Date: Wed, 3 Sep 2025 09:45:38 +0200
+From: Daniel Wagner <dwagner@suse.de>
+To: Hannes Reinecke <hare@suse.de>
+Cc: Daniel Wagner <wagi@kernel.org>, Keith Busch <kbusch@kernel.org>, 
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	James Smart <james.smart@broadcom.com>, Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>, 
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/4] nvme-fc: wait for initial connect attempt to
+ finish
+Message-ID: <58813044-1e6f-4267-bd10-70cc96348ecf@flourine.local>
+References: <20250829-nvme-fc-sync-v3-0-d69c87e63aee@kernel.org>
+ <20250829-nvme-fc-sync-v3-4-d69c87e63aee@kernel.org>
+ <e34b522c-a492-4d86-9fbd-1a667e26d884@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NVDqz0bT9lKZZHMQ"
-Content-Disposition: inline
-In-Reply-To: <20250902131926.607219059@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
-
-
---NVDqz0bT9lKZZHMQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <e34b522c-a492-4d86-9fbd-1a667e26d884@suse.de>
+X-Spamd-Result: default: False [-8.30 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -8.30
 
-Hi!
+On Tue, Sep 02, 2025 at 11:13:41AM +0200, Hannes Reinecke wrote:
+> > +	if (!opts->connect_async) {
+> > +		enum nvme_ctrl_state state;
+> > +
+> > +		wait_for_completion(&ctrl->connect_completion);
+> > +		state = nvme_ctrl_state(&ctrl->ctrl);
+> > +		nvme_fc_ctrl_put(ctrl);
+> > +
+> > +		if (state != NVME_CTRL_LIVE) {
+> > +			/* Cleanup is handled by the connect state machine */
+> > +			pr_info("%s:%d ctrl state %d\n", __func__, __LINE__, state);
+> > +			return ERR_PTR(-EIO);
+> 
+> We really should return the correct status (and not just -EIO).
+> Guess we'll need to introduce another variable in struct nvme_fc_ctrl
+> to hold the connect status...
 
-> This is the start of the stable review cycle for the 5.10.242 release.
-> There are 34 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+(forgot to remove the debug prints)
 
-CIP testing did not find any problems here:
+But this is what the current return value is if something goes wrong.
+The other transport map all status codes to -EIO or return the negative
+error code from the function which fails. I'd rather not change this in
+this series.
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-5.10.y
+> >   	dev_info(ctrl->ctrl.device,
+> >   		"NVME-FC{%d}: new ctrl: NQN \"%s\", hostnqn: %s\n",
+> >   		ctrl->cnum, nvmf_ctrl_subsysnqn(&ctrl->ctrl), opts->host->nqn);
+> > @@ -3895,6 +3928,7 @@ nvme_fc_delete_controllers(struct nvme_fc_rport *rport)
+> >   		dev_warn(ctrl->ctrl.device,
+> >   			"NVME-FC{%d}: transport unloading: deleting ctrl\n",
+> >   			ctrl->cnum);
+> > +		complete(&ctrl->connect_completion);
+> >   		nvme_fc_ctrl_put(ctrl);
+> >   	}
+> >   	spin_unlock(&rport->lock);
+> > 
+> 
+> And I wonder: what about the udev rules?
+> Do they need to be modified?
+> (IE: should we call udev with --connect-async or without?)
 
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Without changing user space, the old behavior will be used. It's an
+opt-in feature. I haven't finished the libnvme/nvme-cli changes but I
+expect for getting all working the udev rules need to be modified as
+well. My plan is to get the kernel bits finished up first before
+tackling all the user bits in detail, e.g. also creating blktests for
+this (in a way we have the first one which is nvme/041)
 
-Best regards,
-                                                                Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---NVDqz0bT9lKZZHMQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaLfyEwAKCRAw5/Bqldv6
-8mHfAJ4rL93aeNqHzZqR4j26e/gQnHt+vQCfa9LIYvZPS0u0PcMtgFf0RW56GvA=
-=l9Jf
------END PGP SIGNATURE-----
-
---NVDqz0bT9lKZZHMQ--
+I'll post those changes here as it needs wider review for sure.
 
