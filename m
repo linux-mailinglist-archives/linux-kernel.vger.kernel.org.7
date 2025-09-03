@@ -1,102 +1,127 @@
-Return-Path: <linux-kernel+bounces-799536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 878C9B42D4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:19:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 913EDB42D50
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BC665E53D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:19:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C68F97B8843
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04E6274FC1;
-	Wed,  3 Sep 2025 23:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91FD2D8798;
+	Wed,  3 Sep 2025 23:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WDIqPDO0"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="GAmlVTOx"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC6D1D88A4
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 23:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58B627380A
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 23:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756941574; cv=none; b=SoPltYKL2VSPur8fWfJFU1QJKTOQhywIQGqn+K2DVqi9w0LE6/7waYAZlsq19f5a72Ium/KgSDF/54tX5wmd1T+MdYgAuCnd6yteoWFZOp7nq3/4CK2MV6O3ChSCRYj2gn+0dYqfTOCjWaduPrCA8dx0kJQkdL6U1FAS2mc1lHs=
+	t=1756941781; cv=none; b=JofVjsZnBPXg1TQLuh1RfdGF/WbRosQbVvKsGdeUFZsTtiFE8ObmUsL70vfROjapF0wqCJDpbRAJAeogh3cQ0Jr6k+1ioJ8j8IWRgnOVe6mVR10J9wV/sxQ3YjoCDxjWLXFNCts7NZIrlztrbuSkILcXaMV05bVKT4Jg7N93PgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756941574; c=relaxed/simple;
-	bh=Z3tQCUxkEll0Mc9qQ5HNQGtre2iVUwoNuXuU8aKV3N0=;
+	s=arc-20240116; t=1756941781; c=relaxed/simple;
+	bh=r2tw/SXKsViGJosKPqa46gpirEWHmAwA16Ckt/uA5bg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o3ePsjw/DCdWKrRXDNPA6r+kF7VjpvR4nrVAJVP3tT2EvVx1CjtRUCt538qpYzowIgh5WQePVf97uUdkg4gDd2Eq7GY+RAn3Il2vp/X1GzAxN0c14IV2rrvJDMsMh2zpvuLg638gHjujsWyPMo812Mxr3I4XApGyi2EDm1xzgVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WDIqPDO0; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f646b1db8so409080e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 16:19:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=d8ltVswX3aDBt5VIhL5t/Il2baDVA0EESb5iAsPAT5IVf45vt0QNhcaf6RA24Wn7rNKWJvNSdr6aLCrgHuY/89CIxfh3roO2R4auLphy1LTni1FhT0lK+pgGRz1CBWtVlHREZnX6e0m5NcLp80qgcQlaehEo7xNsgJQf6AkfNuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=GAmlVTOx; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7722c8d2694so441413b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 16:22:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756941570; x=1757546370; darn=vger.kernel.org;
+        d=arista.com; s=google; t=1756941779; x=1757546579; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=29C8qKbyYbX4cfBdW9S4JuoBvyF+ovUmO0AWPsK2m7E=;
-        b=WDIqPDO0LwA/zU+CnRp+HcgMbP6qhHJLdkKmswnncFy/7hSVJMB417hH95SHWCYffU
-         FZqTa5kCRatdVYApK//mxIUmuF1xVpGBg112IIrUDXcu131JjAq6TCry04ZG974z8Kvz
-         En2XGQgy3FvusvTozQTmzROyDIIsC7Ql9hVuVgy1BjPpQstI2XACEQgvpEdPj2Ad92rH
-         t8JplPOIL0FMMW0YrKbx/JFvTt17BUh+2N26HO4pseAzpaB+XuXb2dpZ5XTypqg4nNJN
-         qMiacrjFCNYZJVslBMdsF7FIwofQhjsYrZbWfeINsDrgt1oEeYamEzfn5WUu98Ysko6C
-         xzog==
+        bh=e4XIWP4mz0mOkbzLcWDjXBPjad5L7kQQIgQS1CIcJ6w=;
+        b=GAmlVTOxtuWlDVWagPxBZGTlySkp96SH66DodT35+FwNqzOJp1mLmRCuHOiDR9JrQi
+         NAa8Haaz8dLtCwGcCu3N5TdeTDSaMb4F3ehwlsuAaioU4BwNIHg6WJ7IBbd2Qt7p9iUE
+         m8dyzwrHWiZvXF7FlNLWLqno9h95Dyktr9/O9Na6NkxC8tUXu3t2a+uNAB7Shn5ubzed
+         8jx3eLmgRO9su3SSW+se+o2AUtKc+B13/RXYuUHNMnixIvqeB229Hqe3V0WL3skSeJN8
+         3oorte4cgxHI2IoghR800+cVIZmgvudFnaVcxYMt5j7h+8ZSexPiR2dmMs1uA6US73YU
+         W9sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756941570; x=1757546370;
+        d=1e100.net; s=20230601; t=1756941779; x=1757546579;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=29C8qKbyYbX4cfBdW9S4JuoBvyF+ovUmO0AWPsK2m7E=;
-        b=h1iSmQdwwl11IktY/pK7ahjOxHqHsZb/E2BxLwfJX0iQu8L0JtUqshKag8dtmo8q1N
-         +MM7LcuslIE0Peu6EBZHFI+CLZ0MnuRlXTkUvRNogYtgEMSX9kHl1VXnEfgH6z46j1l0
-         4iFjCTBgN6rGIm1GYkZADZk5i6fRyPUkLJ4Vehv4YH6HgzvdUZenqVeYEz8YVNGT5jEV
-         3m11OyizNvKeAAMUTQm1NHbJ2vLzf9OjeQ9Amq4bXsijJ+7EYuSfbl/81mQGcvAIX6XT
-         WXpg3ck6nD1AewonMXv0mVCSy+7oHGCoPiB4GVnQpVyVQtBka8WnDV0z0yP+1CIdpGWX
-         u7+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXo9h1lBbKYexHBl6/dwVMfbszb+dA/FbPQ3KVS/xEZJjS03AfCAGKWva2ZEBBPG0Kri1GyxiYv4ZC/ObU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoyaL4bGLYfpd8W5184/9kSlXcBzS8X4D5CG51vXjHO2/vaToS
-	/+FhDHgtFZ/4c3GvQpr9Ncsd1Ds2tUNY7dSTrjqca2CziAAAb4ZQb8OJgyluJIunu8jMTnKLgZr
-	dYyq33yDxilQoToa9PCdN/R0AhUjiVFhZ7Md16rU=
-X-Gm-Gg: ASbGnctUSK4veMUyz/xweGdaY5R2Iz8KleyBjXI9A/1S0DPn84jbJJW5+d53hn9hMd4
-	spR1u3JNrIfL4n+hwu77fwM9Jaqwv9cCktQhyo2LZdXLtpqOPk0cDeD2NQR+fGFLEDyU8+bndaF
-	+q/SAyrlvi6rBwPAZ2YweGdRz7CdwgxmZ7sd4ytCWHvLnVGsuANhY87htBCeUecxuLxCdVNanTV
-	GhN9CckvxahKQ06IND2VriJWSakZwWhhdgi/2nI2upp33ZuUkRF
-X-Google-Smtp-Source: AGHT+IFJLxqirZBw/SxLKw2EWgcKpg9jKGRVkvOQcsda4E4g03fmTKsZyBAJsUO+7wIIixb23VB+1p1eKsDyzPgTxwY=
-X-Received: by 2002:a05:6512:b02:b0:560:8958:3e92 with SMTP id
- 2adb3069b0e04-56089584596mr1730314e87.17.1756941569677; Wed, 03 Sep 2025
- 16:19:29 -0700 (PDT)
+        bh=e4XIWP4mz0mOkbzLcWDjXBPjad5L7kQQIgQS1CIcJ6w=;
+        b=A5saIYSaU13mNlAz2rVNP20tcPEtB8+k5OGZDp0WIG4Vy06LqZ01VI7ibEojfnxaPR
+         39g4J3ELkGkWogL1bisI0Kj7laL9YrnWKiMnYp3AKWJUGsBV/3KlubKorx3Auiup5t+V
+         nCt7aE33SlLwfrKkn0rdtnT4ll5yL445k4jbgl/dQegdmKIS9fEEvZwsPLLtXjVlblMI
+         T5tL5u4Iu53M/3pzpKItWSswrWuyZTNKqKhapSFzcN7pFwtr2rKEKpElkNKqleDr6Cwc
+         o9lBuzkH2geusDryNutPUBkS4hlLGnx4Ixv1C3ZRUFmz8/ct0CjGdajNeyRsDigMd3/L
+         eK3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVjA7U9u7DhECEKqwiNnYK0fsZGlOqp8F9GuVstwD1LdlB5dDbKMT7RnQYki75T33/6ypv60WOhK4Oi4B0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE0uf5jhZk3z+4tzbQ6dlUYviVvdhmtHU8aINbpJUVyEjJRECs
+	XDQorEaOjMYRNRCoOiGA3WRfmfhHfneJcW28pxHhY6NKPWkLPkTQYaPLpZsA/LUjO5212NQ1L5W
+	7nE8CA5fkYb0JMXIozuDgi4nzC1VYTZmokxyMOYHu
+X-Gm-Gg: ASbGncsqjqDO4h/fmCVsoriknHBcIkcTEfdR58xfeNhDd8tmVGizDxbWbePl7QaOHFD
+	e63WsQFwp3muWBWliiavgcG2HSAXhDVFSiR1q/5dYbpn/4q6ncrTTKMOH4HI8/MJHhOnvvRLnRE
+	GlZGt9N8N+a9GBawKRa97OjEDbazzGZLxpXqo4+iqoChLZhVvdJtIJwRj70LU4Nz+1eEtiTn5eP
+	oKd11JskPBeziW0AAVHQ45G7ISlxGSka7Mflz2rg2PQfGS5jnvDq72isdG52RrQCr+PLBSI7wlG
+	q592gIjCUbfrJh5zqkiNUrsiNdvJ++Oj
+X-Google-Smtp-Source: AGHT+IH9MjGeox+wSgTiIMBeKsSu7LetRxaQTb6E/Q/TtqttUThhXc5gLE93MsmjwoVe3/bGA3nnvBy9ymVgyancptg=
+X-Received: by 2002:a05:6a20:2586:b0:24a:8315:7f2 with SMTP id
+ adf61e73a8af0-24a83150a75mr1841811637.49.1756941779042; Wed, 03 Sep 2025
+ 16:22:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825203425.796034-1-helgaas@kernel.org>
-In-Reply-To: <20250825203425.796034-1-helgaas@kernel.org>
-From: John Stultz <jstultz@google.com>
-Date: Wed, 3 Sep 2025 16:19:17 -0700
-X-Gm-Features: Ac12FXwqpJdaeTbT4kJoZERuCRgbAOjq9tnGiU34fW2VyCZOyzmS0miZRaBMpOs
-Message-ID: <CANDhNCr9Ay0PVCC6S+uT76MicVe6qk3_d4CErshOOSoYk+L=hg@mail.gmail.com>
-Subject: Re: [PATCH] jiffies: Remove obsolete SHIFTED_HZ comment
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org, 
-	Bjorn Helgaas <bhelgaas@google.com>
+References: <20250903-b4-tcp-ao-md5-rst-finwait2-v4-0-ef3a9eec3ef3@arista.com>
+ <20250903-b4-tcp-ao-md5-rst-finwait2-v4-2-ef3a9eec3ef3@arista.com> <CAAVpQUCiaQ7yr+5xLYVaRp6E2pzNDwSiznEOkmd5wS-SAosUng@mail.gmail.com>
+In-Reply-To: <CAAVpQUCiaQ7yr+5xLYVaRp6E2pzNDwSiznEOkmd5wS-SAosUng@mail.gmail.com>
+From: Dmitry Safonov <dima@arista.com>
+Date: Thu, 4 Sep 2025 00:22:47 +0100
+X-Gm-Features: Ac12FXzVdH0aYM16lsXXLkWflOvz9fPrPjqdH7hlsGgyEtSmdjfndIM56Q9g4_A
+Message-ID: <CAGrbwDQVeE=-gVNQhWZ_YqsMRTX=2B49O7k3j-FjVHCLrTWUnQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 2/2] tcp: Free TCP-AO/TCP-MD5 info/keys
+ without RCU
+To: Kuniyuki Iwashima <kuniyu@google.com>
+Cc: Eric Dumazet <edumazet@google.com>, Neal Cardwell <ncardwell@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Bob Gilligan <gilligan@arista.com>, Salam Noureddine <noureddine@arista.com>, 
+	Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 25, 2025 at 1:34=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> =
-wrote:
+On Wed, Sep 3, 2025 at 10:26=E2=80=AFPM Kuniyuki Iwashima <kuniyu@google.co=
+m> wrote:
 >
-> From: Bjorn Helgaas <bhelgaas@google.com>
+> On Wed, Sep 3, 2025 at 1:30=E2=80=AFPM Dmitry Safonov via B4 Relay
+> <devnull+dima.arista.com@kernel.org> wrote:
+> >
+> > From: Dmitry Safonov <dima@arista.com>
+> >
+> > Now that the destruction of info/keys is delayed until the socket
+> > destructor, it's safe to use kfree() without an RCU callback.
+> > As either socket was yet in TCP_CLOSE state or the socket refcounter is
 >
-> b3c869d35b9b ("jiffies: Remove compile time assumptions about
-> CLOCK_TICK_RATE") removed the last definition of SHIFTED_HZ but left
-> behind comments about it.  Remove the comments as well.
->
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Why either ?  Maybe I'm missing but is there a path where
+> ->unhash() is called without changing the state to TCP_CLOSE ?
 
-Acked-by: John Stultz <jstultz@google.com>
+Well, I meant "either" like in "*yet* in TCP_CLOSE or *already* there
+(being destroyed)". Let me rephrase that as I'm going to send v5 with
+your suggestions for Patch1.
+
+> > zero and no one can discover it anymore, it's safe to release memory
+> > straight away.
+> > Similar thing was possible for twsk already.
+> >
+> > Signed-off-by: Dmitry Safonov <dima@arista.com>
+>
+> Change itself looks good.
+>
+> Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
+
+Thanks,
+             Dmitry
 
