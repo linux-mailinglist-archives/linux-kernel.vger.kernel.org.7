@@ -1,247 +1,152 @@
-Return-Path: <linux-kernel+bounces-797914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 620EEB41724
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:48:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A00D0B4172E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE03818895CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:49:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4EA017CB74
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946EF2E0915;
-	Wed,  3 Sep 2025 07:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469A92E090B;
+	Wed,  3 Sep 2025 07:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ocF+Vy1/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oFYIfQ6F"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220512D4818;
-	Wed,  3 Sep 2025 07:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D762D8387;
+	Wed,  3 Sep 2025 07:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756885708; cv=none; b=Uv5jFOp8cRN/ikq7GB2msj3TqI9PILAI8CnSXYgmQ4cxZmeb/xLC9unJ6OQXXHOn+JqZHskjLXnhMmOHrIZip8luL87wSHeyTtOTp+R/C4aO3P0JuXi8/PJF03iQuEPN0OvZspHvtd8ciQfN6Cg53wQhHkoRIT3zI7aPukwvlrA=
+	t=1756885736; cv=none; b=tXgkLS0y9RJ+E2vTPRKaIrkoJ5493obvEppqXg/Gvgi82Qp6I17TSERV9obRKeZN4xkH2mOBrs+eZ3W4lUfbeO8BDAG3OFtMC8kyRNTaSr/7vC0qRj6bRkZSbq6CSKJBttzHwjkS0JXgHKk+rkJeT/2BHuG7h3BhW1Optn6dRNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756885708; c=relaxed/simple;
-	bh=bzrfZszG4bWxM9GMkcwDsX81/KwgJq05nciWmAOqocU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VEvoOQHt3NuSW6lisKkxgWXDYIyBAcyr9ZNKuonRf9SSuR01azEglIcewfHANkK+R/nWkQ0hc/SMqLeOLtbMLlYjSop2YfmAKHDW3AcaosEZHvljzxw9NZYqPhgaU4mHC37IsbuDfrzJZrkWBFi1dsBp1wGuSmXe2V1ADMBC8BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ocF+Vy1/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5832BE58023692;
-	Wed, 3 Sep 2025 07:48:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=e2Vs5uZsc+1
-	8PkOfpN7x032DmlsrIqdtYfMxYXx5G14=; b=ocF+Vy1/UiogLxacmrBJYL6kFPO
-	St7cW6isTQn/Vw7do0X6JYXFON+k0s7s6ce1VxW85/tCAscI7kH4NdPjkAxSUAUY
-	n06oxu8RfmJME68mpaqCYVJdGz8TVwQzapN6mDE4378vfH8W+iKUqedDGqpUtfSU
-	ooZz/G6/Jbli74oaK1VBb2eND7oMc59U+BJY3vh2AI1/l9A5GD8/VgYUT67GUwQ5
-	6bGUUCXElcTIUGAE7Svo/s0QliZhrdFbl8AzTvoL0g8XGZaTNOsGVIIp8BIKwgAb
-	Bruybk3m28ZPRYYvC09N7KOT5zIrpdFxgmc+jckCI2Oun7t0zOpZOzjsrcQ==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48upnpaun0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Sep 2025 07:48:22 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5837mIGd002102;
-	Wed, 3 Sep 2025 07:48:18 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 48utcm5cy7-1;
-	Wed, 03 Sep 2025 07:48:18 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5837mIFR002094;
-	Wed, 3 Sep 2025 07:48:18 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 5837mI0Z002087;
-	Wed, 03 Sep 2025 07:48:18 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
-	id CAFE861B87A; Wed,  3 Sep 2025 13:18:17 +0530 (+0530)
-From: Nitin Rawat <nitin.rawat@oss.qualcomm.com>
-To: mani@kernel.org, James.Bottomley@HansenPartnership.com,
-        martin.petersen@oracle.com
-Cc: krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nitin Rawat <quic_nitirawa@quicinc.com>
-Subject: [PATCH V4 2/2] ufs: ufs-qcom: Refactor MCQ register dump logic
-Date: Wed,  3 Sep 2025 13:18:15 +0530
-Message-ID: <20250903074815.8176-3-nitin.rawat@oss.qualcomm.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250903074815.8176-1-nitin.rawat@oss.qualcomm.com>
-References: <20250903074815.8176-1-nitin.rawat@oss.qualcomm.com>
+	s=arc-20240116; t=1756885736; c=relaxed/simple;
+	bh=/vAyQI/41Rz5KwRZEJ3cUsj9TI+/S+ibjVP2t/fY8pU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tkxQ39o8yPaT6uxWXmnJhQTHL5QeLhF5QxI2jfFp69ILkC5WPYccBis1urvz1r1MN8K0un/wO5wxXFpLIcpdxXx6XCpvoDfMMTxcdrSHiLgKSOWyIXikPS2DxYm2dGFHhFUgqwmLAs/ZlYLARp31aqfSK3syMGchErB8yo5VSxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oFYIfQ6F; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756885735; x=1788421735;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/vAyQI/41Rz5KwRZEJ3cUsj9TI+/S+ibjVP2t/fY8pU=;
+  b=oFYIfQ6FmTg9/ctd9MqM7571xqHkPr2HU5zvLwX0dP1oYQIWxUTDtnPZ
+   HiYFROegu/jKOB2vJbv1hUq05qelYsYJQEKKKWifI75ad6rG1VXnhcWrH
+   cyb488iLYua14WEjX5Z9fncIHKZe9K3PCjGCksmAT/TITKswmSzt7qfA6
+   iJ0xbFInUy6/IG6g83sdOmoo5cvRvjGrNKTB6OIoH/Db+KZNwL2Orgy2i
+   XCQvBlvfL7HSLOcGdrH1sPlNMDKHgnNrjlK+zl+Uq43c2Cxrqw+/AVqIY
+   qjGWT3X6c2XDoo65Wepx/ch0MLpuL1LuvYzf5g41iZe6BHHwCzJLRi6u8
+   w==;
+X-CSE-ConnectionGUID: smj6I1+ZR0m7tt/Ny9jGbQ==
+X-CSE-MsgGUID: EBZVObUdQmSxqC4l/Sijng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="58405849"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="58405849"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 00:48:54 -0700
+X-CSE-ConnectionGUID: EAHsTJkKTbG7ibMhD4OVNw==
+X-CSE-MsgGUID: RoVdC3gkRRGO/JoC7LT6RA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="170784201"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.204])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 00:48:52 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 9EDDD11F914;
+	Wed, 03 Sep 2025 10:48:48 +0300 (EEST)
+Date: Wed, 3 Sep 2025 10:48:48 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v7 10/10] media: i2c: ov9282: dynamic flash_duration
+ maximum
+Message-ID: <aLfy4MOOgHu2s1m-@kekkonen.localdomain>
+References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
+ <20250901-ov9282-flash-strobe-v7-10-d58d5a694afc@linux.dev>
+ <aLYNQ4W8f55G_7HP@kekkonen.localdomain>
+ <j4t7zyhf4zhn5t27os7yxi3chaux3m6bjlxe774crmdmzzm54f@dlk5s5ai7ehc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dV84zc8pQasd9xpi6LB0IBOuRog45g8V
-X-Authority-Analysis: v=2.4 cv=Jt/xrN4C c=1 sm=1 tr=0 ts=68b7f2c6 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=Vs7wVDfjhEDCw-gDrcsA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: dV84zc8pQasd9xpi6LB0IBOuRog45g8V
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAwMSBTYWx0ZWRfXxvPHC9AdlVCv
- 4HeDLkiDYI0Xb8YdLesIiBmN/K4RcAwK46BkXFWqpa6/Q1nZiAAGpNjCx+cKhtnTWV/AOnS7iAT
- axcXV6tSyFNqbS4CILtdKFznIjuKyvyqW7ckRRSIrhMItOKj1CgMl9cFzNzzEyDVzuni86uDvY2
- RgrEePUMf0gwbwcR+Fztpd/oP7QfUO7pE7of3/vUFj4FFn3fD9ln/Xw+PZxefoigyRjfmyTSfZJ
- 5myPVFdiHlvCSxWiLUMIoXXT9KDDr9rvOoUUtFklnEIYYFSNHTJC0BQkI8WwM37TAHXyQ8sVE6m
- 6j9XfvzphxOjVTr4h80qH/UP2TKpdGojUE88KmBuG78MZY7dS0JbOV7PlsRvsiuhZYcR2yFFnw3
- wkEWFVkf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 clxscore=1011 bulkscore=0 impostorscore=0
- spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <j4t7zyhf4zhn5t27os7yxi3chaux3m6bjlxe774crmdmzzm54f@dlk5s5ai7ehc>
 
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
+Hi Richard,
 
-Refactor MCQ register dump to align with the new resource mapping.
-As part of refactor, below changes are done:
+On Wed, Sep 03, 2025 at 09:13:35AM +0200, Richard Leitner wrote:
+> > > @@ -1491,8 +1510,11 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+> > >  	/* Flash/Strobe controls */
+> > >  	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
+> > >  
+> > > -	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+> > > -			  0, 13900, 1, 8);
+> > > +	exposure_us = ov9282_exposure_to_us(ov9282, OV9282_EXPOSURE_DEFAULT);
+> > > +	ov9282->flash_duration = v4l2_ctrl_new_std(ctrl_hdlr,
+> > > +						   &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+> > > +						   0, exposure_us,
+> > > +						   1, OV9282_FLASH_DURATION_DEFAULT);
+> > 
+> > Wrap this differently, please, e.g. after '='.
+> 
+> This is wrapped the same way as all other v4l2_ctrl_new_X() calls in
+> ov9282_init_controls(). Therefore I've chosen to do it this way here
+> too.
+> 
+> So if I'm going to change this one, IMHO all others should be changed
+> too (exp_ctrl, again_ctrl, vblank_ctrl, pixel_rate, link_freq_ctrl,
+> hblank_ctrl). Is this intended?
+> 
+> If so I'm wondering if this would be a suiteable approach?
+> 
+> ov9282->flash_duration =
+> 	v4l2_ctrl_new_std(ctrl_hdlr,
+> 			   &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+> 			   0, exposure_us,
+> 			   1, OV9282_FLASH_DURATION_DEFAULT);
+> 
+> It is fine for checkpatch, but introduces a newline for every ctrl and
+> tbh I'm not sure if it improves readability?
 
-- Update ufs_qcom_dump_regs() function signature to accept direct
-  base address instead of resource ID enum
-- Modify ufs_qcom_dump_mcq_hci_regs() to use hba->mcq_base and
-  calculated addresses from MCQ operation info
-- Replace enum ufshcd_res with direct memory-mapped I/O addresses
+I don't think it's worse at least. You can also rewrap the rest of the
+lines:
 
-Additionally Remove the ufshcd_res_info structure and associated
-enum ufshcd_res definitions from the UFS host controller header.
-These were previously used for MCQ resource mapping but are no
-longer needed following recent refactoring to use direct base
-addresses instead of multiple separate resource regions.
+	ov9282->flash_duration =
+		v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops,
+				  V4L2_CID_FLASH_DURATION, 0, exposure_us, 1,
+				  OV9282_FLASH_DURATION_DEFAULT);
 
-Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
----
- drivers/ufs/host/ufs-qcom.c | 34 +++++++++++++++++++---------------
- include/ufs/ufshcd.h        | 25 -------------------------
- 2 files changed, 19 insertions(+), 40 deletions(-)
+> > >  	ctrl = v4l2_ctrl_new_std_menu(ctrl_hdlr, &ov9282_ctrl_ops,
+> > >  				      V4L2_CID_FLASH_STROBE_SOURCE,
+> > > 
+> > 
+> > To me the set looks good but I wouldn't mind about having a bit more
+> > review.
+> 
+> Thanks for your continuous feedback! It improved the series a lot!
+> 
+> Is there anyhthing I can assists/help?
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 1383538b1ed8..52625b49029e 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -1742,7 +1742,7 @@ static void ufs_qcom_dump_testbus(struct ufs_hba *hba)
- }
+I asked Laurent if he could check this out, it'd be nice to get these to
+6.18.
 
- static int ufs_qcom_dump_regs(struct ufs_hba *hba, size_t offset, size_t len,
--			      const char *prefix, enum ufshcd_res id)
-+			      const char *prefix, void __iomem *base)
- {
- 	u32 *regs __free(kfree) = NULL;
- 	size_t pos;
-@@ -1755,7 +1755,7 @@ static int ufs_qcom_dump_regs(struct ufs_hba *hba, size_t offset, size_t len,
- 		return -ENOMEM;
+-- 
+Kind regards,
 
- 	for (pos = 0; pos < len; pos += 4)
--		regs[pos / 4] = readl(hba->res[id].base + offset + pos);
-+		regs[pos / 4] = readl(base + offset + pos);
-
- 	print_hex_dump(KERN_ERR, prefix,
- 		       len > 4 ? DUMP_PREFIX_OFFSET : DUMP_PREFIX_NONE,
-@@ -1766,30 +1766,34 @@ static int ufs_qcom_dump_regs(struct ufs_hba *hba, size_t offset, size_t len,
-
- static void ufs_qcom_dump_mcq_hci_regs(struct ufs_hba *hba)
- {
-+	struct ufshcd_mcq_opr_info_t *opr = &hba->mcq_opr[0];
-+	void __iomem *mcq_vs_base = hba->mcq_base + UFS_MEM_VS_BASE;
-+
- 	struct dump_info {
-+		void __iomem *base;
- 		size_t offset;
- 		size_t len;
- 		const char *prefix;
--		enum ufshcd_res id;
- 	};
-
- 	struct dump_info mcq_dumps[] = {
--		{0x0, 256 * 4, "MCQ HCI-0 ", RES_MCQ},
--		{0x400, 256 * 4, "MCQ HCI-1 ", RES_MCQ},
--		{0x0, 5 * 4, "MCQ VS-0 ", RES_MCQ_VS},
--		{0x0, 256 * 4, "MCQ SQD-0 ", RES_MCQ_SQD},
--		{0x400, 256 * 4, "MCQ SQD-1 ", RES_MCQ_SQD},
--		{0x800, 256 * 4, "MCQ SQD-2 ", RES_MCQ_SQD},
--		{0xc00, 256 * 4, "MCQ SQD-3 ", RES_MCQ_SQD},
--		{0x1000, 256 * 4, "MCQ SQD-4 ", RES_MCQ_SQD},
--		{0x1400, 256 * 4, "MCQ SQD-5 ", RES_MCQ_SQD},
--		{0x1800, 256 * 4, "MCQ SQD-6 ", RES_MCQ_SQD},
--		{0x1c00, 256 * 4, "MCQ SQD-7 ", RES_MCQ_SQD},
-+		{hba->mcq_base, 0x0, 256 * 4, "MCQ HCI-0 "},
-+		{hba->mcq_base, 0x400, 256 * 4, "MCQ HCI-1 "},
-+		{mcq_vs_base, 0x0, 5 * 4, "MCQ VS-0 "},
-+		{opr->base, 0x0, 256 * 4, "MCQ SQD-0 "},
-+		{opr->base, 0x400, 256 * 4, "MCQ SQD-1 "},
-+		{opr->base, 0x800, 256 * 4, "MCQ SQD-2 "},
-+		{opr->base, 0xc00, 256 * 4, "MCQ SQD-3 "},
-+		{opr->base, 0x1000, 256 * 4, "MCQ SQD-4 "},
-+		{opr->base, 0x1400, 256 * 4, "MCQ SQD-5 "},
-+		{opr->base, 0x1800, 256 * 4, "MCQ SQD-6 "},
-+		{opr->base, 0x1c00, 256 * 4, "MCQ SQD-7 "},
-+
- 	};
-
- 	for (int i = 0; i < ARRAY_SIZE(mcq_dumps); i++) {
- 		ufs_qcom_dump_regs(hba, mcq_dumps[i].offset, mcq_dumps[i].len,
--				   mcq_dumps[i].prefix, mcq_dumps[i].id);
-+				   mcq_dumps[i].prefix, mcq_dumps[i].base);
- 		cond_resched();
- 	}
- }
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index 30ff169878dc..2f0bbb196577 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -793,30 +793,6 @@ struct ufs_hba_monitor {
- 	bool enabled;
- };
-
--/**
-- * struct ufshcd_res_info_t - MCQ related resource regions
-- *
-- * @name: resource name
-- * @resource: pointer to resource region
-- * @base: register base address
-- */
--struct ufshcd_res_info {
--	const char *name;
--	struct resource *resource;
--	void __iomem *base;
--};
--
--enum ufshcd_res {
--	RES_UFS,
--	RES_MCQ,
--	RES_MCQ_SQD,
--	RES_MCQ_SQIS,
--	RES_MCQ_CQD,
--	RES_MCQ_CQIS,
--	RES_MCQ_VS,
--	RES_MAX,
--};
--
- /**
-  * struct ufshcd_mcq_opr_info_t - Operation and Runtime registers
-  *
-@@ -1126,7 +1102,6 @@ struct ufs_hba {
- 	bool lsdb_sup;
- 	bool mcq_enabled;
- 	bool mcq_esi_enabled;
--	struct ufshcd_res_info res[RES_MAX];
- 	void __iomem *mcq_base;
- 	struct ufs_hw_queue *uhq;
- 	struct ufs_hw_queue *dev_cmd_queue;
---
-2.50.1
-
+Sakari Ailus
 
