@@ -1,86 +1,111 @@
-Return-Path: <linux-kernel+bounces-799324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E08EDB42A10
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:39:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354A9B42A23
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 931B31B260BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:40:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A1F01BC8339
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97232369350;
-	Wed,  3 Sep 2025 19:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CAD36809B;
+	Wed,  3 Sep 2025 19:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gz6uxsup"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ewhac.org header.i=@ewhac.org header.b="uypimqPU"
+Received: from siberian.tulip.relay.mailchannels.net (siberian.tulip.relay.mailchannels.net [23.83.218.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41772C18A;
-	Wed,  3 Sep 2025 19:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756928390; cv=none; b=JUc1Zr8xyVhKXjnuk5gGVTWL5qW2AQvci0uYQ91XJSy5SrIeOJJ/Ur4bBSNh74iJvN12GgWCY6OCe58VNKINlzHjSX4opsiNox8au+dftFisQQGpgD8WjGak7nue5g5BUeshbX/ern4LGAwFsp7omMa418cn6myyAcvgJ4OLu7k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756928390; c=relaxed/simple;
-	bh=Pu+vu6g6LwE10wMxZrFW5TxKz0JITY2Crb4lMaPJ9SY=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7DD31AF1B;
+	Wed,  3 Sep 2025 19:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.246
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756928752; cv=pass; b=CB7A/KWpHDHYzmZbcf2zzziB2Ei1u9oUkTr7GUqYWl+gyF+XslaU+2Mnn9EG+DXuThfmPqp4gFenVxrAWgGB/QSkHD7cO2+/ySgHZSx1JiOrs9Uy5a8BhCgvjV5ckXZlCmDO11TVmOOzZygR2W9nJ/zL+1/Ecd33TSpWrxDo11k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756928752; c=relaxed/simple;
+	bh=/lqwBrT2KiKCY6VWpjadnR3Dl/NWttxU1QKnKxMWr9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YK3VgtLDSNwOeWbzfW+qQyM22GpNUttb9lkZ9C9lyKgpGl/HJSMkO9UB6vkABPLDjOxTqMEUc9RvvR2iRm7FTvl4cn3AcqZ8WRUVAJ4SVgCY3DRX6iM2t9nroUO+F1p9Iv1Om2gCoo6eGtvq2l6r/d8o8tFNysIXUGYjvxwit8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gz6uxsup; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6955FC4CEE7;
-	Wed,  3 Sep 2025 19:39:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756928389;
-	bh=Pu+vu6g6LwE10wMxZrFW5TxKz0JITY2Crb4lMaPJ9SY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gz6uxsup5NvrDysGKeMXZ44qZPYIGuzbclLbViCOP9MmigNiunGxpJvcdJnlmXqRe
-	 AvBU8YwMwhCvjlAHFoATnl84QP8uDsa4o5/G2NhtFJzt0BCNE56oil5QKBjz4Ql5N2
-	 E4pDBHs9enBiGj/gq1J1rHF0uh+0ZcV/MMTT9d7aeTnt/+LPqShw6YKXuL29ocn3HW
-	 4sg84FuqSg5Ty/PGCMeMCWkcmYiZ/KRSXV/BOVZAtgkck9rDjLsJvr4kGeQuvmgGwP
-	 eDgZRyMDXPjrWqCYLL5Ybug/VIq8TSxZb2Pyz8B5bRFd7JLQ4veEthmtrikmpPB4mw
-	 QmDw761qL8u6w==
-Date: Wed, 3 Sep 2025 22:39:25 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>, jasonmiu@google.com,
-	graf@amazon.com, changyuanl@google.com, dmatlack@google.com,
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org,
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
-	vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
-	witu@nvidia.com
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-Message-ID: <aLiZbb_F5R2x9-y2@kernel.org>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-30-pasha.tatashin@soleen.com>
- <20250826162019.GD2130239@nvidia.com>
- <aLXIcUwt0HVzRpYW@kernel.org>
- <mafs0ldmyw1hp.fsf@kernel.org>
- <aLbYk30V2EEJJtAf@kernel.org>
- <mafs0qzwnvcwk.fsf@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ldW+5GQHGKQ58tHu130MP45Ed/lj3ZyCd92Yletg5BjDLqv8bAJ6tt+NBz3iD/jYbDWyevvvexyCYcoa1fQ2GLzvUJ2dmYn9Vxmo2Yl1EXnACZV/MMNy8pPetwP6E6MsTpZhoRzKaYwYFHVxSISL6DQAuHRYbyb81FiYSOgVbf8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ewhac.org; spf=pass smtp.mailfrom=ewhac.org; dkim=pass (2048-bit key) header.d=ewhac.org header.i=@ewhac.org header.b=uypimqPU; arc=pass smtp.client-ip=23.83.218.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ewhac.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ewhac.org
+X-Sender-Id: dreamhost|x-authsender|ewhac@ewhac.org
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 36F954E6231;
+	Wed,  3 Sep 2025 19:39:28 +0000 (UTC)
+Received: from pdx1-sub0-mail-a231.dreamhost.com (trex-blue-1.trex.outbound.svc.cluster.local [100.101.142.254])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id C2C854E605D;
+	Wed,  3 Sep 2025 19:39:27 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1756928367; a=rsa-sha256;
+	cv=none;
+	b=WOnWJn50wifg30n3sgbnPsrubNeiWBRS8knOY2wiAvNVW+WP9d+k2UmJVdQ0LJ+iAK93Gj
+	2Sd2sHhAP3MM2XadCiYpFCZEPgxzpOzh4F4gS4X89FnF9F67Lyw7ZTH9keUlPcTMBRv1cj
+	XRzCm7FWMvGXtsqeCs14hzGAMDYFeB2rwyxsh6WD6sHv7owi5GpIP/cetUhUKhg1xKrkMr
+	qUPKzdyz20fNP4l+frabrgZAt10Y9nDq1fmKkZVixHb9gZI4qdEpTAuoxINulxcdsGoejm
+	4qQhh8HpiLMiU7rGfZBhYoXpNd+V1IepRsbBluP/T+TPr4xt7PxfvfZtlVhRgA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1756928367;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=32KmRQOubIZ7b2nXAt8ScB+j9QgEziPtpRpQD+wJ5MQ=;
+	b=iua//AcFPzWbXryvqYf2vJ5lydpg/NNpbEHQqHN/TiWiyZ6C2rEL1tfzyNN9IaZhtOYD5M
+	8kPKQeBmE2DeI4mT8HAsRh4/mbROMocQycMg7NZYfdxzO4P9SgiwVBb8bikmoZqlsMKeDp
+	9AO15zAl5bOH5yp5LAlqFqmPP8VT6j6+04aszQlr01hJsmjtnxGyBdWvRtbnzbN/ERdG7K
+	gEqBS5bYHGFpqbBsIJKw3Wr/OGNuSOcpDlhziP+0fMNHjflgQLD983+BtAJ9QgBZEqBXkt
+	EpkTxMQUIc8PJd+pzlcnIObJtpMLTbH+tqDpa6C1IzEfJ0Z9GIjU3ORlxaqKkw==
+ARC-Authentication-Results: i=1;
+	rspamd-c79647f57-fx57s;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=ewhac@ewhac.org
+X-Sender-Id: dreamhost|x-authsender|ewhac@ewhac.org
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|ewhac@ewhac.org
+X-MailChannels-Auth-Id: dreamhost
+X-Battle-Blushing: 10a48e7954cff760_1756928368042_1125601722
+X-MC-Loop-Signature: 1756928368042:2509648997
+X-MC-Ingress-Time: 1756928368042
+Received: from pdx1-sub0-mail-a231.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.101.142.254 (trex/7.1.3);
+	Wed, 03 Sep 2025 19:39:28 +0000
+Received: from ewhac.org (unknown [135.180.175.143])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ewhac@ewhac.org)
+	by pdx1-sub0-mail-a231.dreamhost.com (Postfix) with ESMTPSA id 4cHCbz4Y1Rz26;
+	Wed,  3 Sep 2025 12:39:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ewhac.org;
+	s=dreamhost; t=1756928367;
+	bh=32KmRQOubIZ7b2nXAt8ScB+j9QgEziPtpRpQD+wJ5MQ=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=uypimqPU7ZRv48Ccg2fqSUwAgOdjXaYmUQnAN7ZIKVsKVe65w2RO64UOqmmZ8DLnD
+	 5pLFe6NXV/pqfbcnh2pSqmwL6T6CwQB+PlI8jp+tNw5/wNrSlXPqvD7l2Xfba80fQW
+	 OxYwU1oF52s4O3anjF7WDabzJCGrf/w7WcUPxqjZ/pl3dC5xiMSi2T6LeHvDx6mjdS
+	 Eg1eY+Uaxl0P1AdxVI87JfheZSPdoVNTCogrGNFpyngIEZO6jGzChbv9addcns7Chv
+	 gLXXqqRfCLhK+WtuX+KnagPQNVn1gfie8ZDY5/KKTMKr2HN2ZRelSbzdMEK7d+9rDr
+	 pIP0iFGcSE+cA==
+Received: from ewhac by walkies with local (Exim 4.98.2)
+	(envelope-from <ewhac@ewhac.org>)
+	id 1uttKI-00000000aQO-3wFX;
+	Wed, 03 Sep 2025 12:39:26 -0700
+Date: Wed, 3 Sep 2025 12:39:26 -0700
+From: "Leo L. Schwab" <ewhac@ewhac.org>
+To: Hans de Goede <hansg@kernel.org>
+Cc: Kate Hsuan <hpa@redhat.com>, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] HID: lg-g15 - Add support for Logitech G13.
+Message-ID: <aLiZbkKgIC8jIqE9@ewhac.org>
+References: <20250814212641.197573-2-ewhac@ewhac.org>
+ <7d356834-5795-4979-9f51-0ffcec52ae1d@kernel.org>
+ <aLSntMknSv3lMarZ@ewhac.org>
+ <8ae2cc92-5dfe-466d-95fd-da74309d7244@kernel.org>
+ <2de88077-eb8d-44ad-a96a-5db889913cba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,49 +114,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <mafs0qzwnvcwk.fsf@kernel.org>
+In-Reply-To: <2de88077-eb8d-44ad-a96a-5db889913cba@kernel.org>
 
-Hi Pratyush,
+	For some reason, your replies aren't making it to me directly -- I
+had to find and scrape your reply off the LKML web site:
 
-On Wed, Sep 03, 2025 at 04:17:15PM +0200, Pratyush Yadav wrote:
-> On Tue, Sep 02 2025, Mike Rapoport wrote:
-> >
-> > As for porting kho_preserve_vmalloc() to kho_array, I also feel that it
-> > would just make kho_preserve_vmalloc() more complex and I'd rather simplify
-> > it even more, e.g. with preallocating all the pages that preserve indices
-> > in advance.
-> 
-> I think there are two parts here. One is the data format of the KHO
-> array and the other is the way to build it. I think the format is quite
-> simple and versatile, and we can have many strategies of building it.
-> 
-> For example, if you are only concerned with pre-allocating data, I can
-> very well add a way to initialize the KHO array with with a fixed size
-> up front.
-
-I wasn't concerned with preallocation vs allocating a page at a time, I
-though with preallocation the vmalloc code will become even simpler, but
-it's not :)
- 
-> Beyond that, I think KHO array will actually make kho_preserve_vmalloc()
-> simpler since it won't have to deal with the linked list traversal
-> logic. It can just do ka_for_each() and just get all the pages.
+On Tue, 2 Sep 2025 23:05:06 +0200, Hans de Goede wrote:
+> On 2-Sep-25 22:41, Leo L. Schwab wrote:
+>> 	This does not happen.  The G13 accepts and remembers backlight color
+>> settings even when the LEDs have been toggled off locally.
+>> [ ... ]
 >
-> We can also convert the preservation bitmaps to use it so the linked list
-> logic is in one place, and others just build on top of it.
+> I see, interesting.
+>
+> So what happens if you turn off the backlight with the toggle button on the G13
+> and then write 0 to brightness in sysfs and then press the toggle button again?
+>
+	It's a little difficult to see, but the backlight turns back on with
+minimal brightness.  To my eye, it looks like it's displaying #000001.
 
-I disagree. The boilerplate to initialize and iterate the kho_array will
-not make neither vmalloc nor bitmaps preservation simpler IMO.
+> Right it does seem that using cdev.brightness_hw_changed is valid in
+> this case.
+>
+> But the LED API is supposed to have the brightness attribute present
+> the actual current brightness of the device.
+>
+> I'm not sure how upower will react if the poll() on brightness_hw_changed
+> wakes upower up and then the reported brightness is unchanged...
+>
+> I need to think about this a bit and check the upower code, let me
+> get back to you on this in a day or 2 ...
+>
+	Certainly.
 
-And for bitmaps Pasha and Jason M. are anyway working on a different data
-structure already, so if their proposal moves forward converting bitmap
-preservation to anything would be a wasted effort.
+>> 	This prompts the question:  What is the full intensity calculation
+>> formula intended to be?  The docs appear to be rather quiet on this point.
+>> If we assume all intensity/brightness values (0-255) are essentially mapped
+>> to the range [0.0, 1.0], then it seems to me the calculation is:
+>>
+>> 	out = intensity * brightness * brightness_hw_changed
+>
+> The way the API is intended to work is that after a hw-brightness-changes
+> event brightness == brightness_hw_changed in sysfs.
+> [ ... ]
+> IOW the formula should always be:
+>
+>  	out = intensity * brightness
+>
+	Then this should be written down somewhere.  A quick ripgrep through
+the 6.16 source tree shows brightness_hw_changed is used in *very* few
+places so far, so it'd be good to get this clarified before too many other
+people start having competing interpretations.
 
-> -- 
-> Regards,
-> Pratyush Yadav
+> As mentioned before I need to think a bit about how to handle
+> this. [ ... ]
 
--- 
-Sincerely yours,
-Mike.
+	Fair enough.  I'll hold off on spinning a v6 until I hear from you.
+
+					Schwab
 
