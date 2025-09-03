@@ -1,62 +1,64 @@
-Return-Path: <linux-kernel+bounces-797814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66485B415AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:56:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45414B415AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13B7418930E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:57:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8940189B0C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1B82D8DC3;
-	Wed,  3 Sep 2025 06:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C542D8DD3;
+	Wed,  3 Sep 2025 06:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k8sZGatY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NaVn8QUr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824B61E2307;
-	Wed,  3 Sep 2025 06:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9D04F5E0;
+	Wed,  3 Sep 2025 06:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756882597; cv=none; b=kbbhragRI6S1ShsEvl7outAfT665VOVWnmBXCwEQRsZ+EOEuhVDOba4klBl87p+K3V/8HTlPfGctrjEmsewqtTVQTuMQKoWB3dR3RE6YjH29bduJI5niLzel6AcH7B2hztYlAe5PB+XAnduyeCAb/OiihVVgmG/vExwdzQulfcc=
+	t=1756882638; cv=none; b=Skj6kHHRG5MLpPr/VMGz+f3NprBEUswHucIjpe9rNOUS8DJvec1R0R55wHl6d1FfoR2kWJbzTIByrCrGZWH+XfiOBoztjHIpUlcqaeSq+OB7sBYQuNNdpgPkrbB4BOzJ6N1NBqMuyYpLUSuGh049Ym1DRt82H1BbSJkyF2yyJ5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756882597; c=relaxed/simple;
-	bh=2rAWH629rl76XImlLDLPDHuK8WZBa2LW1tWWTqbRllA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=j3owAYLay6fMlwlHeg9BdsSSNDRksqPxocYCUeUkUGynQIwcptJOJr4YiwLTkZAS2gVmK/wU1NrzCSZppiuyojZkbLsVCjIjBgjcMK3zJwJDx44E9T+69eh6svz736eXyA/utwF5eRSGnjBDyRlx1vDWY5QHKBHkTUp0NUGqlDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k8sZGatY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5832EwLa001379;
-	Wed, 3 Sep 2025 06:56:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VyEnSBBjTdBbkEycTIVxjeFThBtLY+79HWKX9Dyuypc=; b=k8sZGatYyxwqjqt+
-	GzHpevdVS28Gzb1y4uAYeSAV6GiPlfLclxvi6WLnfTC2SwQRXt9LIDx/gWkwYB+q
-	gdquWJhGRHjjR+N4c+G6IF/K26e2DnmbEugzn9gUdYe6/aFWzhEv7nr13sOtgt8+
-	rWg7riyIHfb6PKyfM8LjxP9VT0zD/V6RbiGH077TazNy/R+K4mgLapVM3AvlGGnB
-	1WWPrKBdr5lsrhaH37GyaFA+oYZ2B+Xmk8ujKdlmma9iaNug1ux3lyr4epnZD8xU
-	/k7G2n4q5D5F/kns7R7JEus9b5MZvSPHSGpbQ3tjDAB/cqVXNRG2UBrvOB2z4NJK
-	snPEjg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48w8wy6d55-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Sep 2025 06:56:14 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5836uDnn006086
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Sep 2025 06:56:13 GMT
-Received: from [10.239.105.140] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 2 Sep
- 2025 23:56:10 -0700
-Message-ID: <764e77e2-303f-4603-8819-ec3116c85c02@quicinc.com>
-Date: Wed, 3 Sep 2025 14:55:40 +0800
+	s=arc-20240116; t=1756882638; c=relaxed/simple;
+	bh=eowqacLwOBP8ZovJRY/OfNzgE9zhES1gAvD8OKkcrtY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MOk6Om0jpZBr0usRFp8pvH8tQf+1um4Nf69fZ8Hy1TsUceJ+ZPs9/Ku+OIXaHqvC4ZCJdyUZuWlkJwsWTeplsLXAsX96nf+5a1Z9mFQAeBL533qyRoZrdbJpmbjJ4RtqRa5bO3MAbyFb2I4tQCxmr48ShpmQuaJ354ZoOCcnYGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NaVn8QUr; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756882637; x=1788418637;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=eowqacLwOBP8ZovJRY/OfNzgE9zhES1gAvD8OKkcrtY=;
+  b=NaVn8QUrWsY0kn8dyrJWy1ykZkN8AZsL5rv8ETZqb4WIYzOokdYwxRem
+   CGqXRl/Ppa9C6mI/e4vwrXgKn0KMGd5MXki7nwRQfYi2azjAj1yIK5OUC
+   qLl5xlZ64LOMOISeyIOYrCtLtIUlUhrwpIoCwrdzmjymyneeXNn+3Apw9
+   yAVawZi3tKFL6xRQMNZkTDvgdvDGWwGpRvJNpx0LrzhgWXpQVWuJhViVE
+   YQKicRJ3STtrsYbd2MSbfG+MOVUWzLZxLxwr/wLGx2Of38pIr/Luoew8D
+   eYCD0EOdikS0lExM2coPOlsJnq3h7QJ9+0/bqLntgepbi21REUxVEVhjb
+   Q==;
+X-CSE-ConnectionGUID: 3Sn64sskQAi01n3bS8ZXNQ==
+X-CSE-MsgGUID: nwn6npJCQVKdqbJPFGLTAA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="69886570"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="69886570"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 23:57:16 -0700
+X-CSE-ConnectionGUID: TTpo1gpeRfelzkKSl9lc3A==
+X-CSE-MsgGUID: iVhNIXw/TDeBDNqfN98aRg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="175873851"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 23:57:10 -0700
+Message-ID: <ac774797-f82c-4717-9c40-8602e799e966@linux.intel.com>
+Date: Wed, 3 Sep 2025 14:57:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,113 +66,182 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] virtio-spi: Add virtio-spi.h
-To: "Michael S. Tsirkin" <mst@redhat.com>
-CC: <andriy.shevchenko@intel.com>, <harald.mommer@oss.qualcomm.com>,
-        <quic_msavaliy@quicinc.com>, <broonie@kernel.org>,
-        <virtio-dev@lists.linux.dev>, <viresh.kumar@linaro.org>,
-        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <hdanton@sina.com>, <qiang4.zhang@linux.intel.com>,
-        <alex.bennee@linaro.org>, <quic_ztu@quicinc.com>
-References: <20250820084944.84505-1-quic_haixcui@quicinc.com>
- <20250820084944.84505-3-quic_haixcui@quicinc.com>
- <20250821044351-mutt-send-email-mst@kernel.org>
- <1a63f5f9-add0-4a22-b01c-2f0c8d9efcec@quicinc.com>
- <20250828063350-mutt-send-email-mst@kernel.org>
+Subject: Re: [RFC PATCH v2 12/23] KVM: x86/mmu: Introduce
+ kvm_split_cross_boundary_leafs()
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, x86@kernel.org, rick.p.edgecombe@intel.com,
+ dave.hansen@intel.com, kas@kernel.org, tabba@google.com,
+ ackerleytng@google.com, quic_eberman@quicinc.com, michael.roth@amd.com,
+ david@redhat.com, vannapurve@google.com, vbabka@suse.cz,
+ thomas.lendacky@amd.com, pgonda@google.com, zhiquan1.li@intel.com,
+ fan.du@intel.com, jun.miao@intel.com, ira.weiny@intel.com,
+ isaku.yamahata@intel.com, xiaoyao.li@intel.com, chao.p.peng@intel.com
+References: <20250807093950.4395-1-yan.y.zhao@intel.com>
+ <20250807094358.4607-1-yan.y.zhao@intel.com>
 Content-Language: en-US
-From: Haixu Cui <quic_haixcui@quicinc.com>
-In-Reply-To: <20250828063350-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Ycq95xRf c=1 sm=1 tr=0 ts=68b7e68e cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
- a=kBQPIZexwyFoi4fVXFQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: WwvxrEx_Rhz5oGp7mLCNuRFvNTXVgrwV
-X-Proofpoint-ORIG-GUID: WwvxrEx_Rhz5oGp7mLCNuRFvNTXVgrwV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAxMDEwMSBTYWx0ZWRfXxtCXCHjAlBDE
- n1ctMdVtgKfNEY/HaoOnUme4ZuPhfXsDVf6DfNu+0tzSiYKMA9XWq0AzTamIqtGasmplgIvzzEZ
- VcpDTeut79QuGb4Az3XLPdhXyBkZDwfPWH9EUayU7L3y1a9bUk/oW05peEJoxDti7ngDDIgNks0
- S7AZVU0x3dSPjxbowAS8KA0duea8+7M1uBIfNIU4LferZNWRFmP+pRJRZDypoKNo8XM2YsZfIkJ
- aif7NFbJdOAY/hL7nb927ttymGtcE27CZ/upzwtHSJ9bU6RqgDrtXdZ65aTRFC99dbzvf571+h5
- 7bk8hq+AtymPbRnAg2BknKYIxAGDAtPjrL6mHXwJ/kb3sdVz9/jPvlB3AK5pKHaliYDCfLiMYTu
- BN14PJkZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_02,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 adultscore=0 phishscore=0 malwarescore=0
- bulkscore=0 suspectscore=0 impostorscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509010101
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250807094358.4607-1-yan.y.zhao@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-On 8/28/2025 6:34 PM, Michael S. Tsirkin wrote:
-> On Mon, Aug 25, 2025 at 05:19:03PM +0800, Haixu Cui wrote:
->>
->>
->> On 8/21/2025 4:45 PM, Michael S. Tsirkin wrote:
->>
->>
->>>> +
->>>> +/* Sample data on trailing clock edge */
->>>> +#define VIRTIO_SPI_CPHA			_BITUL(0)
->>>> +/* Clock is high when IDLE */
->>>> +#define VIRTIO_SPI_CPOL			_BITUL(1)
->>>> +/* Chip Select is active high */
->>>> +#define VIRTIO_SPI_CS_HIGH			_BITUL(2)
->>>> +/* Transmit LSB first */
->>>> +#define VIRTIO_SPI_MODE_LSB_FIRST		_BITUL(3)
->>>> +/* Loopback mode */
->>>> +#define VIRTIO_SPI_MODE_LOOP			_BITUL(4)
->>>
->>> It is generally preferable to have an enum with just bit
->>> numbers.
->>>
->>>
->>> E.g.
->>>
->>> enum {
->>> VIRTIO_SPI_F_CPHA = 0,
->>> }
->>>
->>>
->>> Userspace can add _BITUL wrappers itself if it
->>> wants.
->>>
->>>
->>
->> Hi Michael,
->>
->> Thank you for the suggestion regarding the bit definitions.
->>
->> Would it be acceptable to keep the current macro definitions with _BITUL()
->> because these macros are also used within the virtio SPI driver itself?
->>
->> Looking forward to your guidance.
->>
->> Best regards,
->> Haixu Cui
->>
-> 
-> 
-> move them to the .c file if you want them.
-> 
 
-Hi Michael,
-I've observed that other virtio drivers - such as virtio-i2c and 
-virtio-net - commonly define feature bits directly in their headers and 
-use them in their drivers.
+On 8/7/2025 5:43 PM, Yan Zhao wrote:
+> Introduce kvm_split_cross_boundary_leafs() to split huge leaf entries that
+> cross the boundary of a specified range.
+>
+> Splitting huge leaf entries that cross the boundary is essential before
+> zapping the range in the mirror root. This ensures that the subsequent zap
+> operation does not affect any GFNs outside the specified range. This is
+> crucial for the mirror root, as the private page table requires the guest's
+> ACCEPT operation after a GFN faults back.
+>
+> The core of kvm_split_cross_boundary_leafs() leverages the main logic from
+> tdp_mmu_split_huge_pages_root(). It traverses the specified root and splits
+> huge leaf entries if they cross the range boundary. When splitting is
+> necessary, kvm->mmu_lock is temporarily released for memory allocation,
+> which means returning -ENOMEM is possible.
+>
+> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> ---
+> RFC v2:
+> - Rename the API to kvm_split_cross_boundary_leafs().
+> - Make the API to be usable for direct roots or under shared mmu_lock.
+> - Leverage the main logic from tdp_mmu_split_huge_pages_root(). (Rick)
+>
+> RFC v1:
+> - Split patch.
+> - introduced API kvm_split_boundary_leafs(), refined the logic and
+>    simplified the code.
+> ---
+>   arch/x86/kvm/mmu/mmu.c     | 27 +++++++++++++++
+>   arch/x86/kvm/mmu/tdp_mmu.c | 68 ++++++++++++++++++++++++++++++++++++--
+>   arch/x86/kvm/mmu/tdp_mmu.h |  3 ++
+>   include/linux/kvm_host.h   |  2 ++
+>   4 files changed, 97 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 9182192daa3a..13910ae05f76 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -1647,6 +1647,33 @@ static bool __kvm_rmap_zap_gfn_range(struct kvm *kvm,
+>   				 start, end - 1, can_yield, true, flush);
+>   }
+>   
+> +/*
+> + * Split large leafs crossing the boundary of the specified range
+> + *
+> + * Return value:
+> + * 0 : success, no flush is required;
+> + * 1 : success, flush is required;
+> + * <0: failure.
+> + */
+> +int kvm_split_cross_boundary_leafs(struct kvm *kvm, struct kvm_gfn_range *range,
+> +				   bool shared)
+> +{
+> +	bool ret = 0;
+> +
+> +	lockdep_assert_once(kvm->mmu_invalidate_in_progress ||
+> +			    lockdep_is_held(&kvm->slots_lock) ||
+> +			    srcu_read_lock_held(&kvm->srcu));
+> +
+> +	if (!range->may_block)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (tdp_mmu_enabled)
+> +		ret = kvm_tdp_mmu_gfn_range_split_cross_boundary_leafs(kvm, range, shared);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_split_cross_boundary_leafs);
+> +
+>   bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
+>   {
+>   	bool flush = false;
+> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+> index ce49cc850ed5..62a09a9655c3 100644
+> --- a/arch/x86/kvm/mmu/tdp_mmu.c
+> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
+> @@ -1574,10 +1574,17 @@ static int tdp_mmu_split_huge_page(struct kvm *kvm, struct tdp_iter *iter,
+>   	return ret;
+>   }
+>   
+> +static bool iter_cross_boundary(struct tdp_iter *iter, gfn_t start, gfn_t end)
+> +{
+> +	return !(iter->gfn >= start &&
+> +		 (iter->gfn + KVM_PAGES_PER_HPAGE(iter->level)) <= end);
+> +}
+> +
+>   static int tdp_mmu_split_huge_pages_root(struct kvm *kvm,
+>   					 struct kvm_mmu_page *root,
+>   					 gfn_t start, gfn_t end,
+> -					 int target_level, bool shared)
+> +					 int target_level, bool shared,
+> +					 bool only_cross_bounday, bool *flush)
+s/only_cross_bounday/only_cross_boundary
 
-To maintain alignment with those drivers and ensure consistency in 
-usage, I’d prefer to retain the current macro-based approach for 
-defining feature bits.
+>   {
+>   	struct kvm_mmu_page *sp = NULL;
+>   	struct tdp_iter iter;
+> @@ -1589,6 +1596,13 @@ static int tdp_mmu_split_huge_pages_root(struct kvm *kvm,
+>   	 * level into one lower level. For example, if we encounter a 1GB page
+>   	 * we split it into 512 2MB pages.
+>   	 *
+> +	 * When only_cross_bounday is true, just split huge pages above the
+> +	 * target level into one lower level if the huge pages cross the start
+> +	 * or end boundary.
+> +	 *
+> +	 * No need to update @flush for !only_cross_bounday cases, which rely
+> +	 * on the callers to do the TLB flush in the end.
 
-Do you think this would be reasonable in this case?
+I think API wise, it's a bit confusing, although it's a local API.
+If just look at the API without digging into the function implementation, my
+initial thought is *flush will tell whether TLB flush is needed or not.
 
-thanks
+Just update *flush unconditionally? Or move the comment as the description for
+the function to call it out?
+
+I have thought another option to combine the two inputs, i.e., if *flush is a
+valid pointer, it means it's for only_cross_boundary. Otherwise, just passing
+NULL. But then I felt it was a bit risky to reply on the pointer to indicate the
+scenario.
+
+> +	 *
+>   	 * Since the TDP iterator uses a pre-order traversal, we are guaranteed
+>   	 * to visit an SPTE before ever visiting its children, which means we
+>   	 * will correctly recursively split huge pages that are more than one
+> @@ -1597,12 +1611,19 @@ static int tdp_mmu_split_huge_pages_root(struct kvm *kvm,
+>   	 */
+>   	for_each_tdp_pte_min_level(iter, kvm, root, target_level + 1, start, end) {
+>   retry:
+> -		if (tdp_mmu_iter_cond_resched(kvm, &iter, false, shared))
+> +		if (tdp_mmu_iter_cond_resched(kvm, &iter, *flush, shared)) {
+> +			if (only_cross_bounday)
+> +				*flush = false;
+>   			continue;
+> +		}
+>   
+>   		if (!is_shadow_present_pte(iter.old_spte) || !is_large_pte(iter.old_spte))
+>   			continue;
+>   
+> +		if (only_cross_bounday &&
+> +		    !iter_cross_boundary(&iter, start, end))
+> +			continue;
+> +
+>   		if (!sp) {
+>   			rcu_read_unlock();
+>   
+> @@ -1637,6 +1658,8 @@ static int tdp_mmu_split_huge_pages_root(struct kvm *kvm,
+>   			goto retry;
+>   
+>   		sp = NULL;
+> +		if (only_cross_bounday)
+> +			*flush = true;
+>   	}
+>   
+>   	rcu_read_unlock();
+[...]
 
