@@ -1,122 +1,120 @@
-Return-Path: <linux-kernel+bounces-798384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 103E8B41D25
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:36:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424D2B41D29
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A43997A9724
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:34:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E46EC1BA177E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE6F2F49E2;
-	Wed,  3 Sep 2025 11:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCCA2FABEB;
+	Wed,  3 Sep 2025 11:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jslQm9xS"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gyhv/EF+"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9351E2EB86D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 11:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CCF2FABE3
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 11:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756899354; cv=none; b=VrJOp48gyP1GFat/wQs7OWbpai5miaW1WtTOcO9vXyGC6hxjozbZQ02WFd1Y9986PNwXhGuvnaZgySkpTqZ4A8lKFi7ELM1LJTrHv8NKYzraWC2bf1PxUcoWjtn7V0QwWOhx5z33ZbcYjrzYRlrCQlETS1/sCXLBTM/4w3tlG7o=
+	t=1756899382; cv=none; b=E8NnLfd0REbxYe7hnzVsMijYaIi4uq517otmtkCO0VKLdea+nbTctuo8J24Rbi6P/PwhLkLrVJL2aW18wExNNjQ7ejOu0Q0kVCeODW/Blf2RXS3EiTSLjDn4X1TyiNH3oVekDYlRhIo577xh61J1uOYS++ILRPj+k/W6agBjZgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756899354; c=relaxed/simple;
-	bh=1GuhQU6rmPNaq01MPH+AT+4r/HIb7c4xgp69RvWDw50=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=WeD/OcS+8jRqGera2iOyMsbRNYpNeVD5TguoUdIJEDV6fXAm+pWqF8vlcVzOk+IIUfGoLeOOn6LERjGpYgVg+3OJJ81LP+6UYlwpsnaRH50wOt4DFEJh97zC2JrxMvS70Jd81PM2C83Cwbk2B3tCGTjY/cc59NrX5vmYaXJ8v+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jslQm9xS; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b04271cfc3eso410671366b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 04:35:51 -0700 (PDT)
+	s=arc-20240116; t=1756899382; c=relaxed/simple;
+	bh=1S0oCNu8oF/vMuMeRiEdBUA7z3A55yPQtE9fmoNeTcM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XjgA0l1SFziRQG+NpKsovl0gElh+jZl0e6jmxsAxXgc8TKmITJcBJKd9qYCwQ9JkY5A+q9JODH/bKZeHiKFJDvtxeTG9rhhwoYTOoSZVfQ/rKCUqSMUwr3/haim/AwbQrycadok6EcM4I6yqjk9niBX37zB6ck0GmZ6oGxkzAas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gyhv/EF+; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b490287648so10393361cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 04:36:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756899349; x=1757504149; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aiFX+1bcrG2cJ+aL9MnHcz50DNwLVBnWQmvyParhujo=;
-        b=jslQm9xSKgzUmz2pGPMixUnfndgeqkyPq4WJFEhIHdanfrKs0DAh4fZwHeBKb1U3Rf
-         EWHN0v0WrMNW8Q7yUrUc7T0b81YS77xnYZilg1EumhYuzf8ek0/NIq8txqOeWU0RhIqM
-         U5VpoOwibgTOhOosMEb1fcQOjVVwGz362HJg2dMJlaWydPiAB/Qd4Xr725hpQC7RyxQn
-         rdbiPDUiCciDS2lwqOcHPyR+nr+Wag0UotL0H8XptA5ZadZ1tnhopGK50xbOhw8cBGl9
-         ZztqW9EpfXjebXDomxad/SGAmcaxFg2hh/Utt+X3oM6TJqIB6SfX3G0+gLtK99U0DmNZ
-         7Ofw==
+        d=google.com; s=20230601; t=1756899380; x=1757504180; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=a3IW4gClMpsxg8pegPHxJ+hydJ79H7ht+ce7OmUzWyQ=;
+        b=Gyhv/EF+fGymevRyCu0EVkNBMQvLeQdRcexx1ZShr+sy0ozKNfLVd4thU1m/VRsY7d
+         fqczt8DKt1DxNSeb3b4QesHHzmBDZ3dUA1mYWprJvOGM4PrXoeJj88b/Ym76oEF27bT4
+         KIEUAPdr8UyuqEI5tO3ur3RSoipl9SMeEhbZnVGqxCkrKo0LIgV1BzCO+8eUij/ZKWrT
+         Y2MkmxH9XwG6LzhFCNpmhIZ52lqdx2V6EEBrm4lYK+aw87/An+rAbP7qDm9HtzybwA+7
+         DDLV7Z5AbnimY9uUOE7ZVcsWU964mrlWd3lPM+sKZBbN40Kxj8c+SHNXWdQzhJ9UIujr
+         5Lpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756899349; x=1757504149;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aiFX+1bcrG2cJ+aL9MnHcz50DNwLVBnWQmvyParhujo=;
-        b=P7ucNZPiIkJaEYGifC0LxH69N8Tlus2CU+8g0unGdpbK/ZeUL+uBwMBBXJAVXhQVwl
-         tLj3uUJVL6iaEZQmHNZZxVQ61P9fTrKMOakX+Qaxh/CmK/Cs7S1RmXswyYKyDSm7i5jn
-         gZF7Y2HjqkNwsW7QVFszpCYA64m0ZJ59OZQ/9thm0hInIMf1RfigB6zsstDRMh6Goadd
-         O6jj7cTQFzqbeOG+tMYiNv4CIUryvE7iqdpPd0sfVq0PkqeAE1GpBrxe9bQD+zIuyrap
-         36CYxB5adGdCa2MUwoDH7gfDBr3S3EbbuTqPBCXKQv/8iVpFqP76875xW/C9plb3eo2J
-         WFJg==
-X-Gm-Message-State: AOJu0YzY876k5fhB5as/ytM2a5hoe9kbdsCGeb4SzFHLsqa3IctIdl+J
-	31P1yRxQ+n+unfAP/1leY96ao+4OnCz4lBLShnVdoE4OkEQABDKtBUl+Mj33M7gmGNQSWm5QdvW
-	te+GfM+HYmi3aKIUyOe0BmHi24+CPVRetgYLl
-X-Gm-Gg: ASbGncv/Tw+P4++7WYnk+BuK9uxYdfwPz0T69g9YG1fo9b0k8h6Y12GMMsqHmtYZ+g9
-	ezJ+hb6XM8o9xzM/9EiMAuKBVcVCnW/CzJ1vk38R9M+YQTW9uBgouV0k21w3KlWjtQiENUVi079
-	MIXpUPgME8ZaB4KBa9RU2ID8SoG4sv6mLjrGeAtFmzj+MkomPa9uisIgg7VKmfj5bIaHpO6VM0i
-	+V9cuggMngqwSHaqnvGjqemLmBgfQ==
-X-Google-Smtp-Source: AGHT+IHauT/zoazXdaoY7RPrkk0JuNeFLRaDFb6v6jkHYSTkQsYNaoJjErOhvfO7toPNi2jkmd27XnD5bSxGrvv4hTA=
-X-Received: by 2002:a17:906:e86:b0:b04:155a:c139 with SMTP id
- a640c23a62f3a-b04155ac1fdmr970597666b.4.1756899349439; Wed, 03 Sep 2025
- 04:35:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756899380; x=1757504180;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a3IW4gClMpsxg8pegPHxJ+hydJ79H7ht+ce7OmUzWyQ=;
+        b=mVoqf5pX9+0Pmqd9H/0GfS9rZ7cssp/9paI7QSjKpOjWfNuSBIDgU2n2bZIMSdD+0s
+         r3RnyYPzthAc4zS8qkdItNK0b0e/ishXruWyuQrZMBgg7BBOU5fxalZyuEy14pA7gEBd
+         nW7v1u+k6UXtNs8bputbg+I1l9rQQA/TA0z6QQyX/Usn3W3Aa/6T+dFXEcLBPyeuVRwQ
+         pvjNS5vDY83eV8HH9mYOW/CSJO2AerCKW6JfWGjQUjh1A1DfQi2zfFhaeoBI3+fud2y5
+         VdBw01Wy8JxV7LfWXpTzU3/O93MQGLOXzCQD0zqvpbE47/X5f/WIGX46BNYFPtXSURjY
+         VlBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+sbQrIW/N22xMNbg75DiDo6CqWNTUJRlTyOCYXb6ZSMXdx/WHqRdZlOohHYEFSi/3mmtf9exBVSuQ+fs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfHWs1e0s88Kkm504ah5gqJJdTiS+DNZx6WSLnfoHvos71POlj
+	zpcALnSe6BMGs7G39Zg+fRCn/Oc8ziCX/6KeG7F19NZOEzCRnDX9f+KL3w4w3N/+Q2FhaaVXbE2
+	SuZ4Zux0SeyJ30/MOzpEWhX3h3ZSt8oYLZ94K9nGS
+X-Gm-Gg: ASbGncu2P0629NUDd7Bexfwl5NBlHfDuVlyq6eoNgKYDE1GAM3AzJ7nLyCx8qbSezdw
+	vVv8KMyUZ/qBXUDn1gesxIe8ICLGCagm4c0LRdZHjFWxG25cIaKhI9QyPhpdCHwCIwPD1IxMCeP
+	tFSgH4qTEVkkEheHMb/Q8kLy4UQCMD9pQFum1kuH34e276G9IPHexyvqBNodt4SK5Mgv599lU/k
+	O3O6nG2WmKL9vSK7s+fncqInuSe6RcevFN/FYiRvEA=
+X-Google-Smtp-Source: AGHT+IHt5Uf7f9hHKKGO4y+S7XWf9ByCdyBez8I/gMbmDbS05z3pOWgerpBal3i6mcnzy0T4lRXiKY79hwA2pscstuA=
+X-Received: by 2002:ad4:5aaf:0:b0:725:1fb:a6b6 with SMTP id
+ 6a1803df08f44-72501fbac03mr16948666d6.31.1756899379536; Wed, 03 Sep 2025
+ 04:36:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Sebastian Ramadan <slay.sebbeh@gmail.com>
-Date: Wed, 3 Sep 2025 21:35:35 +1000
-X-Gm-Features: Ac12FXymNZdVazZTI8Pws0DlCI8sV_E4pyUYcnUqMEdXyvrMpt53yxu-lvFmckg
-Message-ID: <CAPKFLCRwu8ZYGoBOvjFs_YaV3nqy=uRC1wfKmMXd2Q96MpGQdA@mail.gmail.com>
-Subject: re: [PATCH bpf-next v3 1/2] bpf: add bpf_strcasecmp kfunc
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250901164212.460229-1-ethan.w.s.graham@gmail.com> <20250901164212.460229-3-ethan.w.s.graham@gmail.com>
+In-Reply-To: <20250901164212.460229-3-ethan.w.s.graham@gmail.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Wed, 3 Sep 2025 13:35:41 +0200
+X-Gm-Features: Ac12FXyA87fTSQv-blZ3tbQBrKQAAZ9Bwbod18tXQa26iNm899ybg0GqU8LYCbA
+Message-ID: <CAG_fn=U+xi3zjr+g+PaT_41JHSca1W6J72xd5=c0dVrSy75XpA@mail.gmail.com>
+Subject: Re: [PATCH v2 RFC 2/7] kfuzztest: add user-facing API and data structures
+To: Ethan Graham <ethan.w.s.graham@gmail.com>
+Cc: ethangraham@google.com, andreyknvl@gmail.com, brendan.higgins@linux.dev, 
+	davidgow@google.com, dvyukov@google.com, jannh@google.com, elver@google.com, 
+	rmoar@google.com, shuah@kernel.org, tarasmadan@google.com, 
+	kasan-dev@googlegroups.com, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, dhowells@redhat.com, 
+	lukas@wunner.de, ignat@cloudflare.com, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, linux-crypto@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+> +       static ssize_t kfuzztest_write_cb_##test_name(struct file *filp, const char __user *buf, size_t len, \
+> +                                                     loff_t *off)                                           \
+> +       {                                                                                                    \
+> +               test_arg_type *arg;                                                                          \
+> +               void *buffer;                                                                                \
+> +               int ret;                                                                                     \
+> +                                                                                                             \
+> +               buffer = kmalloc(len, GFP_KERNEL);                                                           \
+> +               if (!buffer)                                                                                 \
+> +                       return -ENOMEM;                                                                      \
+> +               ret = simple_write_to_buffer(buffer, len, off, buf, len);                                    \
+> +               if (ret < 0)                                                                                 \
+> +                       goto out;                                                                            \
+> +               ret = kfuzztest_parse_and_relocate(buffer, len, (void **)&arg);                              \
+> +               if (ret < 0)                                                                                 \
+> +                       goto out;                                                                            \
+> +               kfuzztest_logic_##test_name(arg);                                                            \
+> +               ret = len;                                                                                   \
+> +out:                                                                                                         \
+> +               kfree(buffer);                                                                               \
+> +               return ret;                                                                                  \
+> +       }                                                                                                    \
+> +       static void kfuzztest_logic_##test_name(test_arg_type *arg)
 
-While reviewing the recent patch ([PATCH bpf-next v3 1/2] bpf: add
-bpf_strcasecmp kfunc), I noticed a small but important standards
-compliance issue regarding the use of tolower() with char variables:
-
-char c1, c2;
-// ...
-if (ignore_case) {
-    c1 = tolower(c1);
-    c2 = tolower(c2);
-}
-
-According to the ISO C standard, functions and macros in <ctype.h>
-(such as tolower()) are only defined for arguments that are either:
-1/ Representable as an unsigned char, or
-2/ Equal to the special value EOF.
-
-Passing a plain char that contains a negative value (other than EOF)
-results in undefined behavior. This can easily go unnoticed in
-environments where char defaults to unsigned (such as GCC on x86), but
-will break or behave unpredictably on platforms where char is signed.
-
-To ensure portable and defined behavior, it's typically recommended to
-cast to unsigned char before passing to tolower():
-
-c1 = tolower((unsigned char)c1);
-c2 = tolower((unsigned char)c2);
-
-This ensures compliance with the standard and avoids silent issues
-across different toolchains and architectures.
-
-While this may not cause immediate problems in the GNU-C ecosystem,
-implicitly relying on compiler-specific behavior can gradually reduce
-the kernel's portability. Keeping these cases in check helps maintain
-the kernel's long-standing goal of wide platform support.
-
-Thanks for your time, and for the ongoing work toward clean and
-portable kernel code.
-
-Regards, Sebastian Ramadan
+simple_write_to_buffer() may write less than len bytes if it hits a
+protected page.
+You should check that `ret == len` and return -EFAULT if they differ.
 
