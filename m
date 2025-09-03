@@ -1,138 +1,146 @@
-Return-Path: <linux-kernel+bounces-797693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C73BB413AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:52:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86C15B413B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 161BA547E5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:52:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9D3A5E52AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6052D4812;
-	Wed,  3 Sep 2025 04:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DCB2D4B57;
+	Wed,  3 Sep 2025 04:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVpUk7x8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cOCEQaR1"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0585428726D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 04:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DD02D4813;
+	Wed,  3 Sep 2025 04:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756875153; cv=none; b=GjzRhsAhgzF0sinHoeXKvOX+9BuHVqLqnkMfxENRSzbhOIAProZrT2igY9kpkfTlMDT7pwLCHKAScv9xTKGIGSSEv6QyIIW09C8k64KwffiBaqg0OiY+pJbg0j1LRjIwG9OnoPyPfHnYMTkWrnjvauk+J6/WYdt8aafymN/IhN0=
+	t=1756875170; cv=none; b=uY8dBf2Jslq6/7oMRCRzu0yHrdqqvlUVa+6CMUbjcyyGP9Xd+GBa91ZkLyEgEOxDf2T2RVh0cEEGyIKhzcrz9v2wRys2ecoY4o8JS4jWBMw2OXFUm2kv2uI3KHy8hBalGVQOnmepsIRvPqRLDleM9nA83cnzTzLZW2W9Y2kiXXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756875153; c=relaxed/simple;
-	bh=BCKzT7TXRkg20i227c4L6NJrd8ors1F/jJQkzbZEMoY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qwxQ9Kzro2HDTfNjd9UmTYQgRHISjmsRbY3XcYHqLIPCeOVkWB9AyYx2lNNaoXZtPRzYCTD8m4RSPe9xt2LM1tyBk57FGK/2R0sj+X0FRzCZMApYQ6YTF95mB3TuPKxhyegIgIlkX0ur/T6SNZn0pkckLGJJ4+MWQOptbK3XXCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVpUk7x8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D852C4CEF0;
-	Wed,  3 Sep 2025 04:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756875152;
-	bh=BCKzT7TXRkg20i227c4L6NJrd8ors1F/jJQkzbZEMoY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tVpUk7x8TMvHeqDGBZb3l6GYd6jNpNDxicfYPVhISAMZ6L11ocOSrJcxDT+FrFMCS
-	 sPlgPpHG12BO1uKIt8+1SzpNhJdKufGMhqvqbEbZhnn50nZL53UNQaHfgfqbf/vPBB
-	 OPAcFKDG/xaj9oXS3i03gUho4vHcH2vaFbWu991TODMNA7jVvWxGg9nuCL6F0IIAzk
-	 URxzG/vGtbY3qFzGAyxD/YvzXZnItGNcy/U4EMvnQ6C3n5VGgjXQTgNDgJebCmYSxh
-	 OLW4XMz6zrF2UIUDi1YLR6R62081Gfynb2InIV2jYsSORqD2/cSCRkDhyxwz0eMBBq
-	 UOwhPj8L7zI3g==
-Message-ID: <588626d9-eb27-4376-8741-a1cc2e2e17cf@kernel.org>
-Date: Tue, 2 Sep 2025 23:52:30 -0500
+	s=arc-20240116; t=1756875170; c=relaxed/simple;
+	bh=KyAtw1ROkQzmskX697stOWX20DsHTRWeC52X8SmVBqs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VTjsO1WTDUpIayHxbEdsllqnkn7HVpNvqlRgry3TyoGFS1YzcERaCmHY7helbYaiXTTKJTQl0N7IqOnhqT0AwBIkgzpgMDefwIjgwfzwVFhBKHnzidtHNIeAStsyPykdLIeVB/1W0c707emgN+2us5D2MpViO15J1WVdjelFap8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cOCEQaR1; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b49cf21320aso6558609a12.1;
+        Tue, 02 Sep 2025 21:52:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756875168; x=1757479968; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q7R3UA6dJinJ0I/6N9AH4Q+v9BW5iCYGVoJtMMc/Y28=;
+        b=cOCEQaR1NYJ1es1otQDAm5E4s6zSRbFd3BRNINSWJne7RTWm7ZnNnvsoboDk5ox0+G
+         UjwnwB6G8W8WiYFB/YySla9kZm7Uyesz88uLQhDAXw80Qwc8T5JvkJBkt6BOAJTzzeTQ
+         KPICARgW7Qa0WnTHqevdz+ZxpCO44LfU4ljr0uuw+81yMss9N/2dnNT3Uz/oi85D43kW
+         g4KgzVDv8XAkw/BlDDqrMxsrU6d1Brv28g+5mf4NObwQS7hTfKcKQKHXyFjl9WOkivFe
+         lTv/+ImZAwDEt5CMwi/8pGBltc+DCipMEBTw5OmNbxUpbeVHPP4tJi+MES85gu3lgmvi
+         G2RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756875168; x=1757479968;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q7R3UA6dJinJ0I/6N9AH4Q+v9BW5iCYGVoJtMMc/Y28=;
+        b=WUmT2/lX0dUg3tQQ1zkM0onfT9eyDRUTh5FSrmNIFrJ2Kh5adKG8/2QwhWEeLH1tPg
+         bmoV6UUrZ41Zv8MwJX0FIyK4V9sn5w6TB+LSzPMl2gqTIUbsEO7CEq1K23hC5w3QVEe+
+         dNrribcoSLu9/rRSXFHEK+eFnWd4drmGQRdsLcwOb5x1R87Qo1S1ZXbLHslTrKsxKQf7
+         KpPnHVM4KGcM8BZU3fY90wJTMaSRQ2to3CxLVxHurx5lA4/7sQQVkkPoHIYvoV3vF1C4
+         oESfU4GJTeKLWbQrT99WVbzPCbpnn0ro3iDsveKl5gkSiLBTFQOPDfxvzdfsIJCXhzbh
+         TFDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeG1Tws8zxvt54BkUqwmeppWyKvSfVdQDN9wUUrAl/JX+TRbvNZRs0CQw4Ahgd3hpXKsydmhzpSn7b5So=@vger.kernel.org, AJvYcCVEUnCeBYYG5TyLFBbaZ45vgy0rZwOjmBUXMO9MQ5zcL4sOttnvlweEkxhW2l8/rQTj162fAty+@vger.kernel.org, AJvYcCXW1lqFrI/6fswX7uoSGFgO/G6CIGFV3m/bEgc+z6sr7ZnZBddixQSVjo+OsSk/sPTiXHcyemU2Mn/nBpU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8n+fgUCs1r/KLa6ErjQeCQFcpECbxo/hKLc51aTjsaoToHmdA
+	OmlqmLn2+NGK6A4qWeZ0V4YvTcv6sgXp5aQ/v9OYCs/rw2Lo8m8tzSx3
+X-Gm-Gg: ASbGnctRx5NEcNujZngH3a86D/oH+ibgT/58bCbr6Plinr8xgVJ3VhMgDSwj0K38VKN
+	ul9IHgNSas2vRgdZgi1NMGB9GwhKW5wqZxc2qfaqVy98iIKsjwdEOfltSbqXsx6SZjGr7bguwWn
+	is/oiPq0W4wBCFTeRBkEwctTQCjSvPabQkVgNlkiLHA4LsanhePHgiDvhPjW6cYvqCtupTknsiK
+	s/iydqFyXUZaEmapqZkmr0om9QYCVX2qlWJeJ5GzQO2UQPOutr3DYdKm2bESQrv7wBli29HrWW3
+	lV8uHxw35U9PeYpR/gNTc9bWgj/BzV+6WLr9ib76C7FJY4N2yjHvJOIb+xDwPapIyXc2TIJgLcE
+	hr+vJUgKnq7XprDW8ga6Qv1SYBSbIjqd2Dt4dmrd6nykMwEASWRA4hiLnNZPfN8Ot8G9FLDbF11
+	JxKuiva/Of65o+rSMZ1s3lVcCPlcvKb2CIjx5Tx6T8fP+VhtEgtI+iIKWy
+X-Google-Smtp-Source: AGHT+IG/noxDbJ2ua4C+CLSewBamCxkllBE3NpGs19mktDiXa50Eu+evBczxnqDV+nDB2Up/ZpTxbA==
+X-Received: by 2002:a17:90b:2751:b0:312:e731:5a66 with SMTP id 98e67ed59e1d1-32815412c9emr18183834a91.3.1756875167828;
+        Tue, 02 Sep 2025 21:52:47 -0700 (PDT)
+Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.116.239.34])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3276fce1160sm21537553a91.22.2025.09.02.21.52.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 21:52:47 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: JC Kuo <jckuo@nvidia.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-phy@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] phy: tegra: xusb-tegra210: Fix reference leaks in tegra210_xusb_padctl_probe
+Date: Wed,  3 Sep 2025 12:52:40 +0800
+Message-Id: <20250903045241.2489993-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] drm: panel-backlight-quirks: Log applied panel
- brightness quirks
-To: Antheas Kapenekakis <lkml@antheas.dev>, amd-gfx@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- philm@manjaro.org, Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Robert Beckett <bob.beckett@collabora.com>
-References: <20250829145541.512671-1-lkml@antheas.dev>
- <20250829145541.512671-7-lkml@antheas.dev>
- <CAGwozwHaWPwy6_LTvTy4ybdrN27fEXc-GbhYEt4_cM88_VGYPA@mail.gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <CAGwozwHaWPwy6_LTvTy4ybdrN27fEXc-GbhYEt4_cM88_VGYPA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/29/2025 10:01 AM, Antheas Kapenekakis wrote:
-> On Fri, 29 Aug 2025 at 16:57, Antheas Kapenekakis <lkml@antheas.dev> wrote:
->>
->> Currently, when a panel brightness quirk is applied, there is no log
->> indicating that a quirk was applied. Unwrap the drm device on its own
->> and use drm_info() to log when a quirk is applied.
->>
->> Suggested-by: Mario Limonciello <mario.limonciello@amd.com>
->> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
->> ---
->>   .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c    | 16 +++++++++++++---
->>   1 file changed, 13 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> index 263f15f6fdea..2a3e17d83d6e 100644
->> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> @@ -3617,13 +3617,15 @@ static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
->>          struct drm_connector *conn_base;
->>          struct amdgpu_device *adev;
->>          struct drm_luminance_range_info *luminance_range;
->> +       struct drm_device *drm;
->>
->>          if (aconnector->bl_idx == -1 ||
->>              aconnector->dc_link->connector_signal != SIGNAL_TYPE_EDP)
->>                  return;
->>
->>          conn_base = &aconnector->base;
->> -       adev = drm_to_adev(conn_base->dev);
->> +       drm = conn_base->dev;
->> +       adev = drm_to_adev(drm);
->>
->>          caps = &adev->dm.backlight_caps[aconnector->bl_idx];
->>          caps->ext_caps = &aconnector->dc_link->dpcd_sink_ext_caps;
->> @@ -3659,12 +3661,20 @@ static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
->>          panel_backlight_quirk =
->>                  drm_get_panel_backlight_quirk(aconnector->drm_edid);
->>          if (!IS_ERR_OR_NULL(panel_backlight_quirk)) {
->> -               if (panel_backlight_quirk->min_brightness)
->> +               if (panel_backlight_quirk->min_brightness) {
->> +                       drm_info(drm,
->> +                                "Applying panel backlight quirk, min_brightness: %d\n",
->> +                                panel_backlight_quirk->min_brightness);
-> 
-> mmm, needs a -1 here
-> 
+Add missing of_node_put() and put_device() calls to release references.
 
-You may as well re-order it too so that you set caps->min_input_signal 
-and access it in this message.
+The function calls of_parse_phandle() and of_find_device_by_node()
+but fails to release the references.
+Both functions' documentation mentions that
+the returned references must be dropped after use.
 
->>                          caps->min_input_signal =
->>                                  panel_backlight_quirk->min_brightness - 1;
->> -               if (panel_backlight_quirk->brightness_mask)
->> +               }
->> +               if (panel_backlight_quirk->brightness_mask) {
->> +                       drm_info(drm,
->> +                                "Applying panel backlight quirk, brightness_mask: 0x%X\n",
->> +                                panel_backlight_quirk->brightness_mask);
->>                          caps->brightness_mask =
->>                                  panel_backlight_quirk->brightness_mask;
->> +               }
->>          }
->>   }
->>
->> --
->> 2.51.0
->>
->>
-> 
+Found through static analysis by reviewing the documentation and
+cross-checking their usage patterns.
+
+Fixes: 2d1021487273 ("phy: tegra: xusb: Add wake/sleepwalk for Tegra210")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/phy/tegra/xusb-tegra210.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+index ebc8a7e21a31..cbfca51a53bc 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -3164,18 +3164,23 @@ tegra210_xusb_padctl_probe(struct device *dev,
+ 	}
+ 
+ 	pdev = of_find_device_by_node(np);
++	of_node_put(np);
+ 	if (!pdev) {
+ 		dev_warn(dev, "PMC device is not available\n");
+ 		goto out;
+ 	}
+ 
+-	if (!platform_get_drvdata(pdev))
++	if (!platform_get_drvdata(pdev)) {
++		put_device(&pdev->dev);
+ 		return ERR_PTR(-EPROBE_DEFER);
++	}
+ 
+ 	padctl->regmap = dev_get_regmap(&pdev->dev, "usb_sleepwalk");
+ 	if (!padctl->regmap)
+ 		dev_info(dev, "failed to find PMC regmap\n");
+ 
++	put_device(&pdev->dev);
++
+ out:
+ 	return &padctl->base;
+ }
+-- 
+2.35.1
 
 
