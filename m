@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-799462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF6DCB42C22
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:49:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6FEB42C26
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95E811C20404
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:49:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88E101C21157
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89662ECD05;
-	Wed,  3 Sep 2025 21:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2718D2ECD17;
+	Wed,  3 Sep 2025 21:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyx4HTN5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PG0urmAA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5F9EEC0;
-	Wed,  3 Sep 2025 21:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8D82DFA2B;
+	Wed,  3 Sep 2025 21:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756936158; cv=none; b=QMe0NMsBJTpm5LTlMjkTJJ9Mi8SnvBS1O4ATw5IFBiNZEzLeFYnbqMtdFewOXUW9CgUqegaB8/Gy6c6pR8fQJ6HC2uDQrXCtathYOw9tlfM+fFfs4sA0PnQ3C9HSy7NTyN7INiR3+HuDIfWymofFC2r7h0b8wNJTD7OJaOMspmc=
+	t=1756936349; cv=none; b=E7TVBsO+l6A8CYobffBarkAG+ZGaKrELI74yM3AZy2OgO9+T9euNHcQ/zPEV/gdEmeRdjDKWxA4s3RfJfx27zgMeQO/qcqWbnhvKMAeReLim3KKS86WSfoFlgF1i2Yh4dcQIemTv/Vw9jxkCwKTOLztVNjlKfUO2Zc7ACPfNImo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756936158; c=relaxed/simple;
-	bh=6VfzY2+4HUpKgBaTRWzWc5N0wydqIEyHeC8AdzLrFk8=;
+	s=arc-20240116; t=1756936349; c=relaxed/simple;
+	bh=2DQiBmm5Wlo3Sk/HZKXiVgdNTuFCLUGmZBGgT5C7jYs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BKWgSpm7y5zVnja9bRwWlykNzPJJOFbR6DXJUigFj8h0iZPx2i3AAJhGuT1sStI8KekTTe951EipD/FAys1krustgrKpiNjUdEyAkzOsYl1j+qdXgwKc7cC0AB3c43ylqy8iQijY8A2Wr99DqUebP1ZguECRTTqN9EzTFx6zzSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyx4HTN5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F22CC4CEE7;
-	Wed,  3 Sep 2025 21:49:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fey/jBiZ1f5s6mlMTjRv1MDvbzaJUVeKCMl1acqA2gRtHYgAfueFpbs/WlhZqLL75mf6dcIo59q81vxHLQm+8vktoOAwwYY3hojKVmsNORzJ/07FYp7z/20iAbktzbQ+aHyq5tOHMMnhm61L85MsKvz/AnEBqPJDBM3b5X4NMUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PG0urmAA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8975FC4CEE7;
+	Wed,  3 Sep 2025 21:52:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756936156;
-	bh=6VfzY2+4HUpKgBaTRWzWc5N0wydqIEyHeC8AdzLrFk8=;
+	s=k20201202; t=1756936347;
+	bh=2DQiBmm5Wlo3Sk/HZKXiVgdNTuFCLUGmZBGgT5C7jYs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fyx4HTN5B0KuZovgTz9jxao4cwlwBM63PFxtuNokkr/d5qjEQO6NGE6CLW//Uk/0u
-	 Q4k3G3x1ibwKcfiGPVUPxxgwBLrbjAMOvi3dmL1LrpLHIo3lBnvbXfRh1JUJKY3qk4
-	 L6JSwQ7bkneS7zpq/UK50P/E3U/S+iVZe8S9A5mDtsX69ebX/+X4s4MKF91HWIvXN2
-	 bo7Ytq01XJ2O+hx+t/aIUzdtnw8kmCtSMjEmcHGkqbWYWTSsihb8CaEmN1lW6abq9h
-	 ecKkygu4mQwMbwc81WRXQg+UR85BLwkVy8QfmZs2Mk3/UJvwAc/ajBJssZGKTDbd8p
-	 A8r1UjkLywOnA==
-Date: Wed, 3 Sep 2025 11:49:15 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: sched-ext@lists.linux.dev, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH sched_ext/for-6.18] sched_ext: Use cgroup_lock/unlock()
- to synchronize against cgroup operations
-Message-ID: <aLi32yr7rh1MbyLj@slm.duckdns.org>
-References: <aLeANmpO03QiPgSX@slm.duckdns.org>
+	b=PG0urmAAF05aRJdLWTI3Cae9GCwJkKMe21J3lI79D0qeZS+72g/LXlOSppIlSYTPq
+	 WXrDEN+4ykJ8s2OpgjM2BALxy7o5l/h8Xzm8uZ29WXMSy1P150J6hIfY+Ud0qLD8Ok
+	 27H0uR1z3Ga3jfLIoCJYuGNvUZxvWRnOaZ30sLM2kJU/5EbnDnN/hfQWIZzp7r9Gh1
+	 pdrUAQe7i440ykjeazVAanizZ4qqTAN3SzcTrg9UCkLWjo8S+IIuEwZgf68ddDpzDd
+	 srXRd8yk/p3MOsVEsVP16QlWnAiiEGvCW6Ryp/3a/B6TUv53v8O1N2vMkoWMXwd1CG
+	 W0ISyW3H8w9lw==
+Date: Wed, 3 Sep 2025 16:52:25 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: krzk+dt@kernel.org, mbrugger@suse.com, conor+dt@kernel.org, s32@nxp.com,
+	chester62515@gmail.com, dlechner@baylibre.com,
+	devicetree@vger.kernel.org, jic23@kernel.org,
+	linux-kernel@vger.kernel.org, ghennadi.procopciuc@oss.nxp.com,
+	linux-iio@vger.kernel.org, nuno.sa@analog.com, andy@kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: Add the NXP SAR ADC for
+ s32g2/3 platforms
+Message-ID: <175693634467.2902578.11035954677902748188.robh@kernel.org>
+References: <20250903102756.1748596-1-daniel.lezcano@linaro.org>
+ <20250903102756.1748596-2-daniel.lezcano@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,35 +61,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aLeANmpO03QiPgSX@slm.duckdns.org>
+In-Reply-To: <20250903102756.1748596-2-daniel.lezcano@linaro.org>
 
-On Tue, Sep 02, 2025 at 01:39:34PM -1000, Tejun Heo wrote:
-> SCX hooks into CPU cgroup controller operations and read-locks
-> scx_cgroup_rwsem to exclude them while enabling and disable schedulers.
-> While this works, it's unnecessarily complicated given that
-> cgroup_[un]lock() are available and thus the cgroup operations can be locked
-> out that way.
-> 
-> Drop scx_cgroup_rwsem locking from the tg on/offline and cgroup [can_]attach
-> operations. Instead, grab cgroup_lock() from scx_cgroup_lock(). Drop
-> scx_cgroup_finish_attach() which is no longer necessary. Drop the now
-> unnecessary rcu locking and css ref bumping in scx_cgroup_init() and
-> scx_cgroup_exit().
-> 
-> As scx_cgroup_set_weight/bandwidth() paths aren't protected by
-> cgroup_lock(), rename scx_cgroup_rwsem to scx_cgroup_ops_rwsem and retain
-> the locking there.
-> 
-> This is overall simpler and will also allow enable/disable paths to
-> synchronize against cgroup changes independent of the CPU controller.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
 
-Applied to sched_ext/for-6.18.
+On Wed, 03 Sep 2025 12:27:55 +0200, Daniel Lezcano wrote:
+> The s32g2 and s32g3 NXP platforms have two instances of a Successive
+> Approximation Register ADC. It supports the raw, trigger and scan
+> modes which involves the DMA. Add their descriptions.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  .../bindings/iio/adc/nxp,s32g2-sar-adc.yaml   | 68 +++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/nxp,s32g2-sar-adc.yaml
+> 
 
-Thanks.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
--- 
-tejun
 
