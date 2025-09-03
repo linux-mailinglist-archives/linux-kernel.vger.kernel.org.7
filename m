@@ -1,250 +1,215 @@
-Return-Path: <linux-kernel+bounces-798640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00922B420FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76869B4209F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 958F37AF78B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:12:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 313533AFEAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8553002BE;
-	Wed,  3 Sep 2025 13:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859B2304BC4;
+	Wed,  3 Sep 2025 13:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hSog3uiY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NXCjeJi1"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2062.outbound.protection.outlook.com [40.107.237.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320682FDC43;
-	Wed,  3 Sep 2025 13:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756905039; cv=none; b=iHlC+fdpoJYJgzwVXrSSXWcqQru/44EnYSQ5Zop426EjRffBnT4JApOQ3UkDYScXABFY7nfxiUagUqJ+myyAkRmkGwpCsha8IOJzy/mNY7jT4cj7tpU8DV63zEusy/s1CgVROY1mGG+nZdTFECcoTpl0R8Jw2ueCij4M0ZHVwts=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756905039; c=relaxed/simple;
-	bh=nHX1WRBOQncfX88uycgall9DZu/Ouz7YqK7DwmLeBoM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oC8PhWogY4OwMH5hmFxfzJQA+LOk8L8s26iR9pRYHqh3MhmJP78G/7XAQvmbPMMiJP7YwDtzfd0329b7+8Y3XFRHiGxOilX13IlEsGXxg596zdRgKw1wbwk6JyKU2LpdU4v8WFPgzuj0XH6CTCAyNaw63omiNqnoV/K7Kj1I7R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hSog3uiY; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756905037; x=1788441037;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=nHX1WRBOQncfX88uycgall9DZu/Ouz7YqK7DwmLeBoM=;
-  b=hSog3uiYcV5QAzEQSiChDS/oohaiNGKqlGeUGsHegjHoTuQhn+sN5F3K
-   FWMGMxEMfaw3WmO2ZUF2yTzUTDeItJOqW0jvfxVi2F94LvHT0uJnUnmb+
-   JrW2I3pKoGUd+lnMtiGcpKOhDVnB1p0uwclBYXwM0yfjXjS5+bSgZg6K9
-   opROnP6URbw6AjYAXOkUPPjUkUAetPGxJhjVVW4d4Ut6bHhfjVv7ngnKj
-   P9/fDgQQ6dq9AHg4zLs3ke31dQgkPMPTHQd3gUnNTU5C3HFEE6u9bYo6e
-   Okip7y9bSDjt6sbQg9D5jlg0SQqbLNt9yfGzjY4OL7Oxgk4FL0t1jtKhB
-   Q==;
-X-CSE-ConnectionGUID: lxsrDTYnRcabB0tt0lM0kA==
-X-CSE-MsgGUID: PoxVpLbFSz+YTVxEb1GraA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="59153177"
-X-IronPort-AV: E=Sophos;i="6.18,235,1751266800"; 
-   d="scan'208";a="59153177"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 06:10:36 -0700
-X-CSE-ConnectionGUID: LY9ET8qESMWuL+dTWZmoDA==
-X-CSE-MsgGUID: xjOlT3UQRRKHKcE+zguqTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,235,1751266800"; 
-   d="scan'208";a="176866986"
-Received: from fdefranc-mobl3.igk.intel.com ([10.237.142.159])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 06:10:32 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: linux-cxl@vger.kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ALOK TIWARI <alok.a.tiwari@oracle.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Gregory Price <gourry@gourry.net>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Robert Richter <rrichter@amd.com>,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Subject: [PATCH v5] cxl: docs/driver-api/conventions resolve conflicts between CFMWS, Low memory Holes, Decoders
-Date: Wed,  3 Sep 2025 15:10:10 +0200
-Message-ID: <20250903131026.1462103-1-fabio.m.de.francesco@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BF4304BA0
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756905045; cv=fail; b=D6pX/p/PulQgXfkknzZS565LDxnAVSp9f5KYmZKuiBd4Z3TQKnY7eunK3fIJ+5wBZJq9j0wwCk8B2FD7Ub41omogJU6JDUSQhsikJEXHBmPU30PNv75Ye5rvxwjghaWgoAEGH4qxcAxZplWZLixC+6Ef59dpwuiye9N4QbFvOMI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756905045; c=relaxed/simple;
+	bh=n/DqPDcCjV002i4XtCzYgthEjVd8zV9lk/5mT05Am28=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=MDW37TFylkUrleEB59Y4DNEQisNwj9T6p86qFM7JvxufaftX8GnJlsvA6fO/H9vwmJgE+XMzrYs6RbLcgqF2jUa6mddPwiAavBomv4fNXmOENsbjWNwW0PRAgb3/MKGHovZDMLMy4kny7XBx8JvY5pVUz1BKpnrGo7Wjx7AApxM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NXCjeJi1; arc=fail smtp.client-ip=40.107.237.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=w5D3QjUy+w4BFc/v4wf3bHdrsuQrBbYJEaPZHCb08DM88yMs76RTl78+SEHIiUBpGN643uQS3fpBnuTWiHmqENQ67+bwpRMQs4mz+CzgZ7PTC7VCdkMQyr9uddJ96qLD7FpVtVVVI0VqHwSk7RrUsvNZklwSrt52HkzCU3DrG/sGCSFjmTn13fiAYeSlrhMdefSAgUhsXDPYkHaj1o9t/50BJsGS3Kl6dZAw4azAfOX874Ui4+APihFYxNpVeZ5pSQCvmiZYOOxO92rlmfQeIux6bc95ke3BOLUi70F3jz/QF6qE+GCqR0F3YppmhO8Jn7hpU8cdvceCtMwK8pWg1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hXGOh0kpy2fbSmViBAmrNexhLrWqbdSkM6I6mZB/EXo=;
+ b=nI8pnPaTo4mkl4ta3aR5TKHxALJj3/lKAhrZNIH4QgL849zV6GN5XHo2jI/ifw+UxG5S0aK1/qBK0ZV1/f0c/bWgBqA3V78N4VeH2GkInoMnd+Y8NY0Nj+ykyYCbrF4n/JTsAEpEzqvQzlKAsw4M/XZda3NRZmpk7RSdIwrAyZWUvYpNuKqI8OPo9b04c5c/XZy8N6/rJpjmQXDsXIQ1Kx3wTQoXCoj1nab4Loq8oM//vFYa6uzpzgrWy3cFnKn/FbRYg0az9Igh97DUYMiSxbdJSyw4jMcKCy1A5CWEwXGYni0kjcZVKFUyifiJ1+g4eC6j4+yJLyf9JFhFAHhYhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hXGOh0kpy2fbSmViBAmrNexhLrWqbdSkM6I6mZB/EXo=;
+ b=NXCjeJi1OCoMvtADhO9TR6RC0kJv4uZX+TINfSje8fU9GDC38XbZZLv5LYbmGy+GbQ5G6IVYCi3XoA7NxCqPAeoIxjElLPHPXgRyX2Q9a8wH2xzYs6tzF5JLzcpONvqQgWw9J00nu9O+3ILramx576iDHfbFzh8kzD8Bf+ncpSatQi7Rs0AnTnur/0VxzUQb4BFm1/kzDbn5AJs1HySIKu0EhLuOfO/katPtK8EVda/XZ4R0ayiV19O+n6mXf8IYgU7ADhvOXxm2B/ThHkI11NhBCDyLddquIR2sIXp+Lh9umA/0sLktUUF0zsO3iZE5+9my+ALTdQcKAYzMvb0t/g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CY8PR12MB7585.namprd12.prod.outlook.com (2603:10b6:930:98::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Wed, 3 Sep
+ 2025 13:10:39 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9052.027; Wed, 3 Sep 2025
+ 13:10:39 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 03 Sep 2025 22:10:35 +0900
+Message-Id: <DCJ6UUWUC9JI.MKBSK8M1E6J3@nvidia.com>
+Cc: <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
+ Hubbard" <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>,
+ "Timur Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, "Nouveau"
+ <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH 03/10] gpu: nova-core: gsp: Create wpr metadata
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Alexandre Courbot" <acourbot@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250827082015.959430-1-apopple@nvidia.com>
+ <20250827082015.959430-4-apopple@nvidia.com>
+ <DCHAPJRPKSSA.37QLQGAVCERCZ@nvidia.com>
+ <iyjecyybwyilem2ituw6esmufid72cximthc5qo2fgdpzz4fko@cb6n2vcrptb5>
+ <DCJ6G4DJ1JSY.1U6II6SNMZAZQ@nvidia.com>
+In-Reply-To: <DCJ6G4DJ1JSY.1U6II6SNMZAZQ@nvidia.com>
+X-ClientProxiedBy: TY4PR01CA0076.jpnprd01.prod.outlook.com
+ (2603:1096:405:36c::12) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CY8PR12MB7585:EE_
+X-MS-Office365-Filtering-Correlation-Id: 34a99fbe-62d6-4227-d07b-08ddeaeb474b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cVRudGpUL3FhemxEMzM0TnFPeExKYitzYmt1b3dWdHpWRWFja044Z1pQamNS?=
+ =?utf-8?B?WmlJbFl2YjlsL2J5NXU5SG9MbXM2bnJqT3l6K3doT3paajJjeXVwVjVpU3Rq?=
+ =?utf-8?B?cTVXS1c4RjdnNFBhbTE3eC9ySkwrZURFaFBLNERSYWMrNlVEVkhxTDVqa0t2?=
+ =?utf-8?B?S0RBb1lGdTUyK2lEbmxDUWtEby8wVkJNUFF1MUVGdzEvY1RuVUVGWllJTXlQ?=
+ =?utf-8?B?OTZ0ZVB1R0FVVk5vc2ZydldYeFdlOW5zYURQOEVLV00xUTVvVkFyVHV3UlZV?=
+ =?utf-8?B?VzVOQTVraU5mNGh2OEZncUpUSENHN29KWjc2cW1QRjRYM3YrSjEyQzlPN0Rq?=
+ =?utf-8?B?ZTN2QWtMOXZXdnpvNnVYVVdoLzA5OTFPdmpsWno3VGg2bzdZc1JPbXFTS1lH?=
+ =?utf-8?B?UWprQmhJL2F4RTV2SDlCMWtMSUdnbXFxMWxpSGU3bU9reStka1BuSy9qaTYy?=
+ =?utf-8?B?OGphNFRLdTRaYVh1VGxiZWZXSHFodWFmRWxSUW5KQU0wS3NtOTNUSHMwdExV?=
+ =?utf-8?B?ZS9MNUpESVVRNEFSSGF2THhGcGgvU0hEZkxVWVhwYTExUDFKMUxJM1N1a2NY?=
+ =?utf-8?B?WXFXQ1hQZjRRelF3SHZiNi9OZXZPOFM4ZjU5MDg5VUk0blZBT0U5ejllUnpo?=
+ =?utf-8?B?Z3NNMTBVOXJNV0ZCYml6UVVSdDJQSlJhVFFPNDhqREZlTFYvLzNMUlpuSXVK?=
+ =?utf-8?B?US9JSlNjUEV6bWhzUmNkbmNlZng5UUs5T1dvek9zeUxXZm1nMDJYY2pOeVor?=
+ =?utf-8?B?eGdLZzQ5VlZnUjQyQTRWWnE0emhGeGlXM2NCK0s4NDVxL1YvcjBMQkVnbU9E?=
+ =?utf-8?B?TW9GU1pDN1FydVJoUmU1U29LNTFkeEh6V1ByM1NtaDQvdWkvWlZibEVWNURT?=
+ =?utf-8?B?aVlEcFVibWNKSEFiQ3FCTjJrazArbzRLZGgvaXFwRG9rblB2UnFUU0tsd1VF?=
+ =?utf-8?B?c1NCV3JLZ3FTZEpsNUo4QUVNVmlhcUg5d0J1RUVSNWNDUFNDa05SdzJmdXFI?=
+ =?utf-8?B?RURHcTkzVzRyOFdzLzhKcUhlc253Qzh6TGcrZmluU2lOZGNIUmI4dmJHY0th?=
+ =?utf-8?B?TGpiZVdvQmkvVkp2ZGVQS3FpQjhWZUZsRlhXUHJoVFYxc1hlNEFGeiszbHVs?=
+ =?utf-8?B?TnZFT0o4RGtsNkFUVXZYZ2ZzcjdxZGg4WHpuUUxOd1FoR0s5QmN6Vjlwek12?=
+ =?utf-8?B?TmN6Qm52STByaE1vUHZERmEySjNLZDhuVkJTZDBJMkY3Rm9hbHc4OFV3Ujc0?=
+ =?utf-8?B?WlR1MGhzMGRIQjJjMFpLOEkvQ0hwdi8rQTdqdWNGYWd3dW45T0tmRlZoN1c1?=
+ =?utf-8?B?QVlQL2NyL21yU3BBQ1gxWTFTTkdHdXJ6a3Biclo1TXFnMkNCZjVjSDV1Mk1K?=
+ =?utf-8?B?MHFNdDhURTFLZ0JRN3AyTktxVUdSK2doZkliUTczYy9YV2ZuTUtGOHEybU9q?=
+ =?utf-8?B?ZkVmNi9WeHpVLytRdFhkRGpPRW5UTVNUcWt1enZtMlVjS2xLMXIvYk1NTjIz?=
+ =?utf-8?B?YlNDeHBqVXE5WkU2NzJoWkRWSmZnNko4ZDdoUStIUjdnWlc0U3JONXp0NTZk?=
+ =?utf-8?B?dWVjK0J1UVdxaHU2Z01JUVFTOWcrOTczMXozRzV0M1YwT3FCUE5GKzVLMSt2?=
+ =?utf-8?B?RS9SVE5mODJVcFozOXpnTi81ZWxYekNKNFFtaXZOUWlteldzUklCR2M5Z0Vp?=
+ =?utf-8?B?Z1VaenpDM3ZBNzE5L2h4S1hYWHVWN3BUUFRJT2RlSWxia0lZVkR1RTNjbzBu?=
+ =?utf-8?B?V3Q4cGt2a0pIYlEzbWUzdURsY2NFeWlZbENXSW9PcWN0NVJDMGM1SGlrcDR3?=
+ =?utf-8?B?UHJBMkZneFB4QTR0RXJBYXF5Z3ZXUUIrTytaVnkzTGNPNHR6T3NZRHVwL3Rp?=
+ =?utf-8?B?WmtQKzNDUURiazJ5Q0ppWlEzQU83T0JJMnJyZEhkMEE1TlpvMllQdlVJM3dR?=
+ =?utf-8?Q?jM6sffDB2LU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bDAxSDRlOTZ6Rm84Y3ZUMEpIVGVBbzVYU3VvbjlGUlJwSmRBK0IxOTJtUWFx?=
+ =?utf-8?B?bVRlMGh5RHl2VGtKZ2dRZjBGWTFld2hGeU0vR29UZCtsRndwLzlZM2lXV1gr?=
+ =?utf-8?B?b2lOSlp1WWFTcTZFZ2JxQ2ZVQlBqRG5qUHp0UUlYMHBaVFVGZFUrRFlWcmpW?=
+ =?utf-8?B?MTVyUTRqV29kdWU3ZW1xeTd2WHd2OGlMZHVVcFlHbnRPa0VUdDNaN1hJUmh0?=
+ =?utf-8?B?aTNoYTBMV0FBcjN6RmZ4TUszeHhZeEYvN21BOTBaRDIvODFvTDZvL2hwTFk4?=
+ =?utf-8?B?TWM5QUcyWlMvUm9VYXoyR1dTcncxT0I0YTF5UlVIMmZvVVluRG9WVGhORXJr?=
+ =?utf-8?B?bVdrNnlVYUJyU1lOajd3UGZNVGNlSjNCdjN4ZE5YNEdETnA2YVFvQ0g0U1hS?=
+ =?utf-8?B?aUJXSUZEL0RRazlvYmc2alBlTmRMRTZFWko4VG9qYlpaT1g0MWlEWXlzMHFz?=
+ =?utf-8?B?cG9yZWZnblMvckZQYWVJVjU5Zk5pRGNwdDhXK3pMOTFpZ0xIbFA1cWEzVmR6?=
+ =?utf-8?B?R3ZHTXdYdUsrZ0lJNEdHa05FcFhVRHZMQlZjN1hyejNEZWRhNUExOUVEYmNX?=
+ =?utf-8?B?eTdNR2JwbTF6QWowVFpNekhSeW52Z09MN2VoRmlUaXEyQkUzMXRxdDljMC9E?=
+ =?utf-8?B?VVNjZzNrNGR4K1NpV0pxTzZsSGcwYVRBVWR6eG9haTBjS2tndUYrQ1JyQzNm?=
+ =?utf-8?B?MTRWMm5Wa2JQcFNVeDBrQU1md3kycHVUSFVyYTV2d2dNRlRWbWJEdUN5eVdV?=
+ =?utf-8?B?YkZ1dnJPeklIajBWUC9XOXUwT3d2d0o4RjFiM0F3eEwyQ2NoUXE2My8xbitu?=
+ =?utf-8?B?M1Q1c3BWNHVHK2VxRjIzS3hud2loRktCeGUzZWNQWXkxMzhNL3JvMzdkUjAv?=
+ =?utf-8?B?bStxVEduMUtRb3FUS2pNNjJhK3VKaWZvcjVaT085TFFMTDYwekU1djFnLzhZ?=
+ =?utf-8?B?MHZ6eTJVRHMyQTJOZG1KZ0c2SkQvbm1FbjNjNDRidnRDK053RHA2Y0JXTUsv?=
+ =?utf-8?B?TklJWXdzbWJ2T0lvNG9kVnc4SVdrczBHN3lRRFhjVGdkRzhLKzBjNHJpazFn?=
+ =?utf-8?B?U3ZlMVNzUTRFSTlVaVRSMUREajRqYU1jTXNJNEJsME9MUkNLS1VrL3JRcS9Z?=
+ =?utf-8?B?U1RmTzNFZm1OQjYrNzZwUFZZbkFUQS9QVGtEQ2NhR2hLN055U09Lc1FuN1Rt?=
+ =?utf-8?B?czl5L2t5L2VFRW0zcEdERUZLRkZzZ2VuODBZQmhQeEpyNXRRbVg0UDVvZXdM?=
+ =?utf-8?B?K3Y1djhMbExuL2w2cnU2b0V5czhQRFpkTCtlZThpKzJxSWlZa0ZHck1HWEdR?=
+ =?utf-8?B?alJxaVVxZVlHUG9pb0w0eTZXa1RWTEFQTlNiYUxnN0t5SEdWQ25sWCtUVkhW?=
+ =?utf-8?B?K1NhRlNBZHFWd1VjaGovd2F6Q1RvNDVHdkN1b2s1VkVzMHhJN0dBYjZuWEp1?=
+ =?utf-8?B?bkJybDhJYmhDcmROOFZsSFd3dWxMRXZvSFZvR2ttVGxLV29aTDY0Ulh4MkNv?=
+ =?utf-8?B?R2w2K0UxTEtwdzdqNmpqQ3I3d0NqZFFNZ3NxK1d2Nnk4Y2ZOd2MwVVNMVFMv?=
+ =?utf-8?B?ZGNNa2RMbGZPeWJCQlZMdmNnME1sdUdObXlkVmFwdmVWK3hqWno5QWl5Q0gw?=
+ =?utf-8?B?bGRnT2VvVDQ4R2lQNFlsNlc1eUJJcGxGdkVLT1ZMOCt4RTduaWIwTDNIcm5U?=
+ =?utf-8?B?eHFGeUhidHN2NWs0N2JBL2RKSUpjYk1BVStxSDVkaVM1QjhOR2JjVmlYdTFY?=
+ =?utf-8?B?Znd1TmFoVml5ZGQwYkVlTHhvbHV4QThiREYyTXJpMXY5NVVwb2xGazZUOTFm?=
+ =?utf-8?B?VTNpWVpGUWhMNGljckxyY0xNeFBLTEg5ajN6T1FPUnZBeTlBRklyWjNrR3Vm?=
+ =?utf-8?B?ZWJuQ2plV1RLWnVPNi85aFZxZ2FIVGpsZzlJa3ZwR2pGbDBqTzlLL0RCdHM3?=
+ =?utf-8?B?TjBxU3dydFVoVmZRQWs0cDFBQnA3SWV6OU5xbTQvSkFmNVJDL01vSGlOeDBw?=
+ =?utf-8?B?aTdTdkJpV0p0UEU3MTFBelArQU5pSjNYc0VwWUZRbGJMTHV4T3hCR2dHWElG?=
+ =?utf-8?B?QlBVc3JXbnp6ZnhVRHRlRXZKT2VacUdTMjVzWXM2eXJZdlJOMlFJU2sxREtW?=
+ =?utf-8?B?VUp4ZmM4OUlndjFmZmdqWktkbEx0eDFTUy90SjEvb0FkRGNZTm4wYngrbm5n?=
+ =?utf-8?Q?nNOmYU+MVBR6PY5+igToAzns3NERi7v1n5aJyXOQ9MM5?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34a99fbe-62d6-4227-d07b-08ddeaeb474b
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 13:10:39.2194
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LbB1hBLD48lOQD9RMC8Z79sEw5zxq9qe5WzP2AHxZ4ebSOP4MQ9q1VcbWpxkWAE0zsOh2hUWY0RFOrxbfkMlAQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7585
 
-Add documentation on how to resolve conflicts between CXL Fixed Memory
-Windows, Platform Low Memory Holes, intermediate Switch and Endpoint
-Decoders.
+On Wed Sep 3, 2025 at 9:51 PM JST, Alexandre Courbot wrote:
+>> And it's all tightly coupled anyway - for example the Gsp boot arguments=
+ require some
+>> command queue offsets which are all pretty specific to the Gsp implement=
+ation.
+>> Ie. we can't define some nice public API in the Gsp crate for "getting a=
+rguments
+>> required for booting Gsp" without that just being "here is a struct cont=
+aining
+>> all the fields that must be packed into the Gsp arguments for this versi=
+on",
+>> which at that point may as well just be the actual struct itself right?
+>
+> Which particular structure are you refering to?
 
-Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
----
+Ah, I guess that was about `GspArgumentsCached` and the message queue's
+`get_cmdq_offsets` method. For this I guess we can just have a
 
-v4 -> v5: Fix grammar and syntactic errors (Dave)
-	  Spell out CXL, OSPM, on first use (Dave)
-	  Rewrite a few sentences for better clarity (Dave)
-	  Talk about SPA vs HPA and SPA's relationship to CFMWS (Dave)
-	  Adjust a table for htmldocs output (Bagas)
-	  Use bullet list (Bagas)
-	  Correct the CFMWS[1] HPA range to not overlap CFMWS[0] (Robert)
-	  Correct the CFMWS[1] HPA range to the NIW*256MB rule (Robert)
+    fn new(cmdq: &GspCmdq) -> Self
 
-v3 -> v4: Show and explain how CFMWS, Root Decoders, Intermediate
-	  Switch and Endpoint Decoders match and attach Regions in
-	  x86 platforms with Low Memory Holes (Dave, Gregory, Ira)
-	  Remove a wrong argument about large interleaves (Jonathan)
-
-v2 -> v3: Rework a few phrases for better clarity.
-	  Fix grammar and syntactic errors (Randy, Alok).
-	  Fix semantic errors ("size does not comply", Alok).
-	  Fix technical errors ("decoder's total memory?", Alok).
-	  
-v1 -> v2: Rewrite "Summary of the Change" section, 3r paragraph.
-
- Documentation/driver-api/cxl/conventions.rst | 118 +++++++++++++++++++
- 1 file changed, 118 insertions(+)
-
-diff --git a/Documentation/driver-api/cxl/conventions.rst b/Documentation/driver-api/cxl/conventions.rst
-index da347a81a237..f5ccb5c3b7b9 100644
---- a/Documentation/driver-api/cxl/conventions.rst
-+++ b/Documentation/driver-api/cxl/conventions.rst
-@@ -45,3 +45,121 @@ Detailed Description of the Change
- ----------------------------------
- 
- <Propose spec language that corrects the conflict.>
-+
-+
-+Resolve conflict between CFMWS, Platform Memory Holes, and Endpoint Decoders
-+============================================================================
-+
-+Document
-+--------
-+
-+CXL Revision 3.2, Version 1.0
-+
-+License
-+-------
-+
-+SPDX-License Identifier: CC-BY-4.0
-+
-+Creator/Contributors
-+--------------------
-+
-+- Fabio M. De Francesco, Intel
-+- Dan J. Williams, Intel
-+- Mahesh Natu, Intel
-+
-+Summary of the Change
-+---------------------
-+
-+According to the current Compute Express Link (CXL) Specifications (Revision
-+3.2, Version 1.0), the CXL Fixed Memory Window Structure (CFMWS) describes zero
-+or more Host Physical Address (HPA) windows associated with each CXL Host
-+Bridge. Each window represents a contiguous HPA range that may be interleaved
-+across one or more targets, including CXL Host Bridges.  Each window has a set
-+of restrictions that govern its usage. It is the Operating System-directed
-+configuration and Power Management (OSPM) responsibility to utilize each window
-+for the specified use.
-+
-+Table 9-22 of the current CXL Specifications states that the Window Size field
-+contains the total number of consecutive bytes of HPA this window describes.
-+This value must be a multiple of the Number of Interleave Ways (NIW) * 256 MB.
-+
-+Platform Firmware (BIOS) might reserve physical addresses below 4 GB where a
-+memory gap such as the Low Memory Hole for PCIe MMIO may exist. In such cases,
-+the CFMWS Range Size may not adhere to the NIW * 256 MB rule.
-+
-+The HPA represents the actual physical memory address space that the CXL devices
-+can decode and respond to, while the System Physical Address (SPA), a related
-+but distinct concept, represents the system-visible address space that users can
-+direct transaction to and so it excludes reserved regions.
-+
-+BIOS publishes CFMWS to communicate the active SPA ranges that, on platforms
-+with LMH's, map to a strict subset of the HPA. The SPA range trims out the hole,
-+resulting in lost capacity in the Endpoints with no SPA to map to that part of
-+the HPA range that intersects the hole.
-+
-+E.g, an x86 platform with two CFMWS and an LMH starting at 2 GB::
-+
-+ +--------+------------+-------------------+------------------+-------------------+------+
-+ | Window | CFMWS Base |    CFMWS Size     | HDM Decoder Base |  HDM Decoder Size | Ways |
-+ +========+============+===================+==================+===================+======+
-+ |   0    |   0 GB     |       2 GB        |      0 GB        |       3 GB        |  12  |
-+ +--------+------------+-------------------+------------------+-------------------+------+
-+ |   1    |   4 GB     | NIW*256MB Aligned |      4 GB        | NIW*256MB Aligned |  12  |
-+ +--------+------------+-------------------+------------------+-------------------+------+
-+
-+HDM decoder base and HDM decoder size represent all the 12 Endpoint Decoders of
-+a 12 ways region and all the intermediate Switch Decoders.  They are configured
-+by the BIOS according to the NIW * 256MB rule, resulting in a HPA range size of
-+3GB.
-+
-+The CFMWS Base and CFMWS Size are used to configure the Root Decoder HPA range
-+base and size. CFMWS cannot intersect Memory Holes, then the CFMWS[0] size is
-+smaller (2GB) than that of the Switch and Endpoint Decoders that make the
-+hierarchy (3GB).
-+
-+On that platform, only the first 2GB will be potentially usable, but Linux,
-+aiming to adhere to the current specifications, fails to construct Regions and
-+to attach Endpoint and intermediate Switch Decoders to them. The several points
-+of failure are due to the expectation that the Root Decoder HPA size, that is
-+equal to the CFMWS from which it is configured, has to be greater or equal to
-+the matching Switch and Endpoint HDM Decoders.
-+
-+In order to succeed with construction and attachment, Linux must construct a
-+Region with Root Decoder HPA range size, and then attach to that all the
-+intermediate Switch Decoders and Endpoint Decoders that belong to the hierarchy
-+regardless of their range sizes.
-+
-+Benefits of the Change
-+----------------------
-+
-+Without the change, the OSPM wouldn't match intermediate Switch and Endpoint
-+Decoders with Root Decoders configured with CFMWS HPA sizes that don't align
-+with the NIW * 256MB constraint, and so it leads to lost memdev capacity.
-+
-+This change allows the OSPM to construct Regions and attach intermediate Switch
-+and Endpoint Decoders to them, so that the addressable part of the memory
-+devices total capacity is made available to the users.
-+
-+References
-+----------
-+
-+Compute Express Link Specification Revision 3.2, Version 1.0
-+<https://www.computeexpresslink.org/>
-+
-+Detailed Description of the Change
-+----------------------------------
-+
-+The description of the Window Size field in table 9-22 needs to account for
-+platforms with Low Memory Holes, where SPA ranges might be subsets of the
-+endpoints HPA. Therefore, it has to be changed to the following:
-+
-+"The total number of consecutive bytes of HPA this window represents. This value
-+shall be a multiple of NIW * 256 MB.
-+
-+On platforms that reserve physical addresses below 4 GB, such as the Low Memory
-+Hole for PCIe MMIO on x86, an instance of CFMWS whose Base HPA range is 0 might
-+have a size that doesn't align with the NIW * 256 MB constraint.
-+
-+Note that the matching intermediate Switch Decoders and the Endpoint Decoders
-+HPA range sizes must still align to the above-mentioned rule, but the memory
-+capacity that exceeds the CFMWS window size won't be accessible.".
--- 
-2.50.1
+constructor for `GspArgumentsCached` which grabs the information it
+needs from the queue and initializes itself. You would need to have this
+code anyway, it's just a matter of where we put it - inside a function
+of `gsp.rs`, or as a reusable (and easily replacable) constructor.
 
 
