@@ -1,128 +1,168 @@
-Return-Path: <linux-kernel+bounces-798756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8396B42284
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:54:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FE8B42287
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CF5F5E09AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:53:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22BD81B25FC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F41330DECC;
-	Wed,  3 Sep 2025 13:53:54 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4CD30DEA0;
+	Wed,  3 Sep 2025 13:56:06 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4479C2E8E0F;
-	Wed,  3 Sep 2025 13:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69CA2FF150
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756907634; cv=none; b=q3nmsWO7hBZmZLK+ahEOcQwWk/tSz2vPU1NbFqcmpEsNZqC0hxkctIHRM1BJz/K0EcOBean2mCdIMpEh1t2KItjIk3LBWXPYqN5kyQS8ulziJgDJvD/QFuuA7sQGc5Vyp+C61uWp1lxLnaa+/y3ark/r1Rt27jHWX6fsezz6QVo=
+	t=1756907765; cv=none; b=C1GaYuB/lcVT1c/EdEZ0swARJPMzMgRzUb6vGCdBZq5TmBAYS4XLTX5p/GmLRkSFoRw+n17lLj+ZPwTGA/dYeBK93jVzeD1m+MbqVSVpoDpL48/EwsFbK2yeOeQj0ZnxZUbFeptU99S3l0ATKqzxNdpHwsJ0zBoOc65Qtg5HcFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756907634; c=relaxed/simple;
-	bh=j+kPGOFhynhpG0gp3DoKa1yVPSbzCmQcI8JJg2ZKe/0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TjvDk+ecjW1LRDEPSyY4+byXTHVgVsAG9P2wT9BRvsjA24xrNZMs2FPz83j26uLEsjpWASVndR9z0IdhMyfyvdrYwJCAj5wKQeao9sZeY9UZhKrem/7WIMcrB4iBfFalP7Yk9MNnSvL6nRRkfwAw4iKQkCPpcNxhq1AKeYJ/y+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from 7cf34ddaca59.ant.amazon.com (unknown [IPv6:2a01:e0a:3e8:c0d0:f888:35a:53a4:66b4])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id CDF154213E;
-	Wed,  3 Sep 2025 13:53:49 +0000 (UTC)
-Authentication-Results: Plesk;
-	spf=pass (sender IP is 2a01:e0a:3e8:c0d0:f888:35a:53a4:66b4) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=7cf34ddaca59.ant.amazon.com
-Received-SPF: pass (Plesk: connection is authenticated)
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
-To: alexei.starovoitov@gmail.com,
-	yonghong.song@linux.dev,
-	song@kernel.org
-Cc: andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev,
-	sdf@fomichev.me,
-	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	Arnaud Lecomte <contact@arnaud-lcm.com>
-Subject: [PATCH bpf-next v6 2/2] bpf: fix stackmap overflow check in
- __bpf_get_stackid()
-Date: Wed,  3 Sep 2025 15:53:48 +0200
-Message-Id: <20250903135348.97884-1-contact@arnaud-lcm.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250903135222.97604-1-contact@arnaud-lcm.com>
-References: <20250903135222.97604-1-contact@arnaud-lcm.com>
+	s=arc-20240116; t=1756907765; c=relaxed/simple;
+	bh=fTo/pKhkHizPHqoUnL2WzHA12NcPmmB+hWHggZRRSy0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gYtxmBTaNRzd7agkNjBDJRQUMDVbgrwdJW/8xJrCUIFTOnGgMEoUe//IferhcDRkwpC1G4GzJQ69MShPV+87lu5fsPMmqKp/iJdER2yP5ynZboYjkk8gCe0PFxmry0TG3M3ZMf97zoskRIvou+Vtn7amHnpGMdHnfo5CGywbBfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1utnxx-0007v9-36; Wed, 03 Sep 2025 15:56:01 +0200
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1utnxw-003ZMP-1v;
+	Wed, 03 Sep 2025 15:56:00 +0200
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.98.2)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1utnxw-000000034Tm-25PX;
+	Wed, 03 Sep 2025 15:56:00 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH v6 0/2] clk: add support for TI CDCE6214
+Date: Wed, 03 Sep 2025 15:55:44 +0200
+Message-Id: <20250903-clk-cdce6214-v6-0-b2cc0a6f282b@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175690763045.28809.1530218238142963216@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOBIuGgC/3XQTW7CMBCG4asgrzEaj//irnqPikVsj8EqSpBDI
+ xDK3euwaRTS5TvSPIvvyQYqmQb2sXuyQmMect/VMPsdC+e2OxHPsTZDQA0KGh4u3zzEQAaF4hC
+ sAiVjQGNZfbkWSvn+4r6Otc95uPXl8dJHMV//gUbBgfuoyILD1on0eaXu9HMrfZfvh0hs1kZcC
+ m4lYBUUeNTeIlLwm4JcCAJWgqxCtDIkl5KMDWwKaiHItVAX4S4JTVagaYPZFPSfYMR6Bz0LTja
+ +oQjeqTdhmqZfCdctOLUBAAA=
+X-Change-ID: 20250408-clk-cdce6214-0c74043dc267
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, kernel@pengutronix.de, 
+ Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+ =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
+ Sascha Hauer <s.hauer@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756907760; l=3397;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=fTo/pKhkHizPHqoUnL2WzHA12NcPmmB+hWHggZRRSy0=;
+ b=hL8uJrVr5lZfgRtcIAmFlgnVj2sE7TkxBrrqZYO9g9v53iUUxY4ipRd2Sye3dtS+A44xpoeoM
+ OPigN2nOBM3DM4J3jSoHVd35BWChit5Cwlc2XQhVbn8QqgAGGN2LK7/
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
-when copying stack trace data. The issue occurs when the perf trace
- contains more stack entries than the stack map bucket can hold,
- leading to an out-of-bounds write in the bucket's data array.
+The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
+Differential Outputs, Two Inputs, and Internal EEPROM.
 
-Changes in v2:
- - Fixed max_depth names across get stack id
+This series adds a common clk framework driver for this chip along with
+the dt-bindings document.
+
+The most controversial part of this series was the binding I introduced
+for configuring the pins of the CDCE6214. With v6 I have now integrated
+a pinctrl driver into the driver in the hope that this silences the
+discussion around the pins.
+
+Sascha
+
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+Changes in v6:
+- use pinctrl subsystem to configure pins
+- Link to v5: https://lore.kernel.org/r/20250618-clk-cdce6214-v5-0-9938b8ed0b94@pengutronix.de
+
+Changes in v5:
+- Reword commit message for binding patch (Krzysztof)
+- Make clock binding yaml simpler (Krzysztof)
+- add link to datasheet to driver code (Stephen)
+- Drop inclusion of linux/clk.h (Stephen)
+- Add missing #include <linux/bitfield.h> (Kernel test robot)
+- simplify cdce6214_clk_out0_get_parent() (Stephen)
+- Use divider_get_val() where appropriate (Stephen)
+- Add Rxx defines for registers (Stephen)
+- Add define for magic value 24 (Stephen)
+- introduce and use cdce6214_clk_psx_mask() (Stephen)
+- Use clamp() instead of open code (Stephen)
+- declare const arrays const (Stephen)
+- more use of dev_err_probe() (Stephen)
+- use determine_rate() instead of round_rate (Stephen)
+- split out pin configuration to separate patches
+- Link to v4: https://lore.kernel.org/r/20250430-clk-cdce6214-v4-0-9f15e7126ac6@pengutronix.de
 
 Changes in v4:
- - Removed unnecessary empty line in __bpf_get_stackid
+- add missing '>' modifier in include/dt-bindings/clock/ti,cdce6214.h
+- fix clocks maxItems should be 2
+- add missing license in include/dt-bindings/clock/ti,cdce6214.h
+- Fix checkpatch issues
+- Link to v3: https://lore.kernel.org/r/20250410-clk-cdce6214-v3-0-d73cf9ff3d80@pengutronix.de
 
-Changs in v6:
- - Added back trace_len computation in __bpf_get_stackid
+Changes in v3:
+- Use string properties instead of int for enums
+- Use units from property-units in dtschema
+- Link to v2: https://lore.kernel.org/r/20250409-clk-cdce6214-v2-0-40b25b722ecb@pengutronix.de
 
-Link to v5: https://lore.kernel.org/all/20250826212229.143230-1-contact@arnaud-lcm.com/
+Changes in v2:
+- Use consistent quotes in binding document
+- make clock-names an enum to make each clock fully optional
+- drop '|' in binding description where not needed
+- encode clock input mode into integer
+- encode clock output mode into integer
+- do not use defines for reg properties
+- support setting load capacity for the oscillator via device tree
+- support setting Bias current for the oscillator via device tree
+- support setting polarities of CMOS outputs via device tree
+- fix compatible string in driver
+- remove unused struct cdce6214_config
+- Link to v1: https://lore.kernel.org/r/20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de
 
-Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
-Fixes: ee2a098851bf ("bpf: Adjust BPF stack helper functions to accommodate skip > 0")
-Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
 ---
- kernel/bpf/stackmap.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Sascha Hauer (2):
+      dt-bindings: clock: add TI CDCE6214 binding
+      clk: add TI CDCE6214 clock driver
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 1ebc525b7c2f..8b2dcb8a6dc3 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -251,8 +251,9 @@ static long __bpf_get_stackid(struct bpf_map *map,
- {
- 	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
- 	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
-+	u32 hash, id, trace_nr, trace_len, i, max_depth;
- 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
--	u32 hash, id, trace_nr, trace_len, i;
-+	u32 elem_size = stack_map_data_size(map);
- 	bool user = flags & BPF_F_USER_STACK;
- 	u64 *ips;
- 	bool hash_matches;
-@@ -261,8 +262,12 @@ static long __bpf_get_stackid(struct bpf_map *map,
- 		/* skipping more than usable stack trace */
- 		return -EFAULT;
- 
-+	max_depth =
-+		stack_map_calculate_max_depth(map->value_size, elem_size, flags);
- 	trace_nr = trace->nr - skip;
-+	trace_nr = min_t(u32, trace_nr, max_depth - skip);
- 	trace_len = trace_nr * sizeof(u64);
-+
- 	ips = trace->ip + skip;
- 	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
- 	id = hash & (smap->n_buckets - 1);
+ .../devicetree/bindings/clock/ti,cdce6214.yaml     |  198 +++
+ drivers/clk/Kconfig                                |    7 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-cdce6214.c                         | 1620 ++++++++++++++++++++
+ include/dt-bindings/clock/ti,cdce6214.h            |   24 +
+ 5 files changed, 1850 insertions(+)
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250408-clk-cdce6214-0c74043dc267
+
+Best regards,
 -- 
-2.47.3
+Sascha Hauer <s.hauer@pengutronix.de>
+
 
