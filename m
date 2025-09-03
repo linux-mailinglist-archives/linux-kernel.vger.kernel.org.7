@@ -1,160 +1,138 @@
-Return-Path: <linux-kernel+bounces-798799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D313B4231F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:08:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A97B5B42321
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED1F41667C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:06:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B825717065D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42703101DB;
-	Wed,  3 Sep 2025 14:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aj0UB0W1"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86393126A0;
+	Wed,  3 Sep 2025 14:06:38 +0000 (UTC)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746761C84DF;
-	Wed,  3 Sep 2025 14:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15EB3112D3;
+	Wed,  3 Sep 2025 14:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908395; cv=none; b=CmyxSeXmCKGUBl0AWNk9SrA/PowNrruxprgQ52KiXYqVIFAHbI37nIOdJcFre6L9aQzayUqIg9oBzicGQkXs0fR3Kshoswz+85S6/LiRIyUOVhmY8LyKRDz7qVnUjyqlsdLYU976wUYJMP/+Ou89kZTpGnYybRbug79T5s1Nmas=
+	t=1756908398; cv=none; b=IL0e5AKGNAWuV/qGQSPPKWb5MJlBfdsX6gpXblff2hi3zxJN+q9EScMT8GXLApXoQGJ6U46ZhrWD+Ax7dDO95L/ACJZSG9d/K/gFfEMt/2lGETNOSdCJ8wS+ok1HJatMqngnf4959SWHsNKvxG4P8Z7oTAV0S5BJp2WJIrXGSFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908395; c=relaxed/simple;
-	bh=mcSj6sBducJtq3QFx+SZal1G+3uS/KNlrKO5HrQqiUo=;
+	s=arc-20240116; t=1756908398; c=relaxed/simple;
+	bh=R+oegdrig9NI1wlUpA4J1TzKNG85+kKuCAw4NvNUkD8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hWfARj3cumrsns9ySjt0Gg9ZtyE8tWF1Z6pChOxD1yUtsdKrP7NfQiflhlzuMBoHUSpN6vRxKArUqNAYX0yUOHgxoo1RZxY8ehAkqxFTvV7j9OyWHYuKE7B7C3g9nAJfAVWCwVQ/p5aBXdNpoG7x0lObDza+IYm83N0qYjTPPwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aj0UB0W1; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=Wl+3ucWPTDfZRc6Xwg11wTMkTu0K9mcq3je03vLJeILBDob58thy0c8J8mwFGVC5SnDfGaRM3Zl66k6w4HlK2e7b35Bhq/Z+o01oA32aQptBdLpHxnoH5YUktOpuLGbi+02ca+ZCEnx5QapxA/0LlGYfs87Aahg2uIbmlvUZM7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61e8fdfd9b4so2120495a12.1;
-        Wed, 03 Sep 2025 07:06:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756908392; x=1757513192; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mcSj6sBducJtq3QFx+SZal1G+3uS/KNlrKO5HrQqiUo=;
-        b=Aj0UB0W13COwkbj3JuklLGkEjYqu9fX1vGUHcQr9x1EMR7ITyBBZ7JIzFlXz14lVsV
-         06OKzClGjwy8tuXtCOUo98EMTLdlobotcNuVo/2/peP1748hTZaCtFYyNHN1iZ151hfF
-         EmQz8oW/8aSd8s00Y2QVmbBRuBldHfwWuBtnlohRbeQeehIRHv878zeFzyWHogFZPGKa
-         x5JYAetnkmWXDyHIAAXmHJ6nBsJZ1YTrAmddJzR6C75AK3KGdOc6IM0CDDlBxKd/kqb3
-         ooDH18YtbHF9N9C+SeNerZwL0Vv2CKjl+dB1rbg6rSg9faEmjruXc4y3AfzQd2LfzOGz
-         0PQA==
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-544af5b745cso2275815e0c.0;
+        Wed, 03 Sep 2025 07:06:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756908392; x=1757513192;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mcSj6sBducJtq3QFx+SZal1G+3uS/KNlrKO5HrQqiUo=;
-        b=nqGdGoQ8vIdZoRFRv08K2moUf8p+RONyJEkUdLPfsvLFLSM/YN9vDhkX697KRl2XLs
-         W7KkIGIABViFlB/7s6WyW723mXaaze/tF3agUkxSeyWKWCFVWZWQ9MtM88NIuyDmXZpW
-         Zu02BOOz9cSeFNZ7R9KJnNJn5NnG7KyzFbFZvi2kMz6kDyEjQaMPm9/RuG5JQYXV/dFL
-         X8V6C+4VNJliIF/syJ58341S1cjf2vMXWIk1pyLidorkLOc2moCO+/x1lGLo0E6u7lsU
-         lLitKJF70etiu6wi7m36F5ddLiyIENCUBjdi9sJBA9vxC91iaUpCujMf1wSgq5U62bpc
-         RvlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWq3OaPLBAnnjsNtksrBwi8xs+hCvlifgD9Bf5VoiRC3qZno3gzsHrVEPv4gsqW4Co60IRsoocFzo7o4/Pm@vger.kernel.org, AJvYcCWrS/oZKHhDZZGc2X7nfaWI9vgk9xZ/soEvYtyINjmuCRHwuvKo8z5gGFYJmf7RZq2HDCbHL4BsVgqorSrB@vger.kernel.org
-X-Gm-Message-State: AOJu0YziCtxBLp9atbiQ16iO3wRsm6f1CZk7d2QUGB6vWQ2ItSV/QZ11
-	LTNEo5OqPgmMOcWw7o5MHrrsDGMLcWjeejKgr3A0xv301wmXZSv+N0IUnF3MdNBzvhkPL+XQ4kI
-	RDG+u0m6H7p0SbKNLmCshTWcwf/9Z4Jc=
-X-Gm-Gg: ASbGnctVcUqFFHNsuFixf/fiffGHlBI54GJ3bu89hinRUm8+MpxeMrEfxgAN4rvkXma
-	uu9/MllS0wwKlMbsqAPjaJvCyXwnSX9Y7IpzLOcOZDUFvOE7NoaqEibFt98T76X1oC0NiHA+VcD
-	0Shkr+/hGx1LiQw3QQhujq4401Ep8+/W128wmc9Ez77A7VK70ODoV4+vydPaQcPM5XYjv1tyukp
-	4YqDjM=
-X-Google-Smtp-Source: AGHT+IGpjEpj1IJ6T8EHew5Nfz0x5tQL07YxgbZKRCSEna9fAUs8WjkIQrE9rKKag+kpN6af4bvomm64Arr/UlpvDKU=
-X-Received: by 2002:a05:6402:354e:b0:61c:90c:ee97 with SMTP id
- 4fb4d7f45d1cf-61d26882f04mr15587215a12.4.1756908391436; Wed, 03 Sep 2025
- 07:06:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756908396; x=1757513196;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bEa/xlIqNaJxbnsyQnbxr3RYm+/G4v1dUI/tOUK8/dU=;
+        b=ohUCpUXk7UYnFA7RLlyL8oMjhUPZDl4tr/doow60/KFN0QT9OySmXFsX6++hvMouG7
+         t9lunBdtQ+NL1RHqihCzgjOtbHHhnwdbwjB+T8yqoIXLY+6G4GJVV921sdUuRFlzEkN3
+         EZmm87IJqjrnqEZQnETRS5U40YuDMcoqmrT1jMcaR2y6Gor8GW2rrrAKU0eBwAwsT7mT
+         yie/U4/l9VA5fW1Peix86lHprXESucAg6ivs4+/i5mGTveucstNq5gKzMusjIrSzGjCb
+         c2WZ25WR7dpX/sf0EkiF6hRdYUtcVkOYaWbolMPsItA6YgKtjEb6ej3UvfdRsQ64j91l
+         rbKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVK0KIe3bmoJmRReszTFsmF7TT2qW0JwLM/NyGplBBwmN8g4SwSApCqgQd7aun2JrFakdkeJn3jgvWV@vger.kernel.org, AJvYcCXFhB3c0gkn8dtJfUiFwPE5m8ouR/EKOcUqAIfB2G63bfprNNuaCNXW2UBjyc4CECFZf0WxT+e1v8XrOPKryFXPjOs=@vger.kernel.org, AJvYcCXbIIaAcjr6++SSbTOSRyAE4I34x9uivDF75R24TCGi/mCNBz9Jlbxk8BDFC7Ntk0Txl2WGS9e/jR0+Vjzw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGYVuZltfQdnLonCklF+1Wi+9eZlk0j2QZ4tK8n7CoBUkwafCO
+	mqrQYPJndmE+ts9XMA2sHIkn2KU8gNboPgN0lXkIWRIJIZRNDpxjiwPXZUq4Rhsr
+X-Gm-Gg: ASbGncs6JbCurKDfHws98sKtX6iz8pNFm3GKaRtnLu/S8shKCKahGeQVyI6LeGw/Ffv
+	JcHFgrQypVc19WT6+hnC6Bch3uQVBdan2kXRVXiN6iAuRBgHdYcQcgPD+J8wuI03+492M8WsxgC
+	jX/6xmXYxxH7On0OYqkUBatMQ6vuWALeCvFenQF0SYihYYrIrfWwhvcav3xiJ9kk9/+VyUUNvRt
+	Nzbs5+C6aiTGmkMVfFplcSDcOCpfY9AonNqd8aJ9ul9oNsALpKHbigmqXSCRUdq8NXbeU+Q2RTk
+	AcOCc/LVnFOIqm8PrFf96gauki/xDdQ1xmoVLsop3QHRKwkI+5mOstZDao6YqhkIPCKaBPBBTts
+	G814xCSHRD10lcsx1XLwmL5dMydtbbEFLj4pSOvoeAelxecjHK1Kv0g9RQZhxyvbJrPDq+Go=
+X-Google-Smtp-Source: AGHT+IFha99fbYv7iB0T/Vc5C70rUq37greHZHQ2uNsJymJfDJCqJZE/23ur0YiM0Qz+G49Bw1twmg==
+X-Received: by 2002:a05:6122:1789:b0:530:5308:42ec with SMTP id 71dfb90a1353d-544a0192267mr5274979e0c.8.1756908393958;
+        Wed, 03 Sep 2025 07:06:33 -0700 (PDT)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544912c6d3bsm6928366e0c.6.2025.09.03.07.06.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 07:06:33 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-529f4770585so3516038137.1;
+        Wed, 03 Sep 2025 07:06:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVUYz8uBlXUUAc/w5YTCdXVliPcU0AHWUF0YLhl9xCNHCp8Nc355FMU5bXQSsgy5zdlF9XANubFX0LRZ+Lah6KwBus=@vger.kernel.org, AJvYcCWXESGpbqr98AftdwLq8zd3IZef+JT1ZIapGj+M7nNCaTuzAmUGr3+SyFwtUHiPpYZG5RPWclhOJHKn@vger.kernel.org, AJvYcCWozSfAyl8zCXn2qKwvTwCsNpofcfHSPBx4A55OShN8j7sPHqgjfvGJfj+OpIuZOXO14ippfp8hT1u31b7V@vger.kernel.org
+X-Received: by 2002:a67:e707:0:b0:52a:5fc6:e50 with SMTP id
+ ada2fe7eead31-52b1bd35203mr5661566137.30.1756908392815; Wed, 03 Sep 2025
+ 07:06:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903093413.3434-1-lidiangang@bytedance.com> <ownanwiqdhijstazux3j5jsawdyw6tcgjufk6zrejppnqyoy7d@hdqmfb4q7wpz>
-In-Reply-To: <ownanwiqdhijstazux3j5jsawdyw6tcgjufk6zrejppnqyoy7d@hdqmfb4q7wpz>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 3 Sep 2025 16:06:19 +0200
-X-Gm-Features: Ac12FXy_mNxEqcs6hMH0BU3mgcsLIjZNGOEJy8Qu4kjnWkk_XD_OjSFyEg0aVCQ
-Message-ID: <CAOQ4uxiDEwrNVLkwuuA84RWoUPovi--Xj4BRuL-5OEwiQyAFXQ@mail.gmail.com>
-Subject: Re: [RFC 0/1] fsnotify: clear PARENT_WATCHED flags lazily for v5.4
-To: Diangang Li <lidiangang@bytedance.com>
-Cc: stephen.s.brennan@oracle.com, changfengnan@bytedance.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, Greg KH <gregkh@linuxfoundation.org>
+References: <20250821161946.1096033-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250821161946.1096033-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250821161946.1096033-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 3 Sep 2025 16:06:20 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVxDcunZcqg65O3Ap9usJUTPnYh34AUk0pmB-pFqesHGw@mail.gmail.com>
+X-Gm-Features: Ac12FXzz9f6CU21COVuAICkFyE89VdTMB85kiDxU_owDPJDzcY9Xq-V_nPalX74
+Message-ID: <CAMuHMdVxDcunZcqg65O3Ap9usJUTPnYh34AUk0pmB-pFqesHGw@mail.gmail.com>
+Subject: Re: [PATCH 5/6] arm64: dts: renesas: r9a09g087: Add USB2.0 support
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 3, 2025 at 3:31=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+Hi Prabhakar,
+
+On Thu, 21 Aug 2025 at 18:19, Prabhakar <prabhakar.csengg@gmail.com> wrote:
 >
-> On Wed 03-09-25 17:34:12, Diangang Li wrote:
-> > Hi Amir, Jan, et al,
-> >
-> > Commit `41f49be2e51a71` ("fsnotify: clear PARENT_WATCHED flags lazily")
-> > has resolved the softlockup in `__fsnotify_parent` when there are milli=
-ons
-> > of negative dentries. The Linux kernel CVE team has assigned CVE-2024-4=
-7660
-> > to this issue[1]. I noticed that the CVE patch was only backported to t=
-he
-> > 5.10 stable tree, and not to 5.4. Is there any specific reason or analy=
-sis
-> > regarding the 5.4 branch? We have encountered this issue in our product=
-ion
-> > environments running kernel 5.4. After manually applying and deconflict=
-ing
-> > this patch, the problem was resolved.
-
-All this above would be nice to send Greg for context
-so he can distinguish your posting from AI bots posting backports without
-having tested them or without having encountered the issue ;)
-
-But IMO, it is more helpful to send these notes after the ---
-line in the patch notes rather than having a single path with a cover lette=
-r
-as a backport patch.
-
-> >
-> > Any comments or suggestions regarding this backport would be appreciate=
-d.
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> I don't have any objections against including this in 5.4-stable branch.
-> Probably it was not applied because of some patch conflict. Feel free to
-> send the backport to stable@vger.kernel.org, I believe Greg will gladly
-> pickup the patch.
+> Add EHCI, OHCI, PHY and HSUSB nodes to RZ/N2H (R9A09G087) SoC DTSI.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Also you need to fix some technical issues with your patch submission.
+Thanks for your patch!
 
-1. Subject:
-[RFC 1/1] fsnotify: clear PARENT_WATCHED flags lazily
-change to
-[PATCH 5.4] fsnotify: clear PARENT_WATCHED flags lazily
+> --- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
 
-to explain that this is a backport and the target stable branch.
+> +               hsusb: usb@92041000 {
+> +                       compatible = "renesas,usbhs-r9a09g087", "renesas,usbhs-r9a09g077";
+> +                       reg = <0 0x92041000 0 0x10000>;
 
-2. mainline reference:
-commit 172e422ffea2 ("fsnotify: clear PARENT_WATCHED flags lazily")
+"0x1000", as the region starting at 0x92043000 is marked reserved?
+I can fix that while applying.
 
-The common pattern used in stable tree is:
-commit 172e422ffea20a89bfdc672741c1aad6fbb5044e upstream.
+> +                       interrupts = <GIC_SPI 587 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 588 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 589 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&cpg CPG_MOD 408>;
+> +                       phys = <&usb2_phy 3>;
+> +                       phy-names = "usb";
+> +                       power-domains = <&cpg>;
+> +                       status = "disabled";
+> +               };
+> +
+>                 sdhi0: mmc@92080000  {
+>                         compatible = "renesas,sdhi-r9a09g087",
+>                                      "renesas,sdhi-r9a09g057";
 
-3. Signed-offs:
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Diangang Li <lidiangang@bytedance.com>
+The rest LGTM.
 
-Unless you are backporting a patch different that upstream version
-it is probably better to cherry-pick the commit from upstream without
-Sasha's signed-off.
-Not a big deal, but at least that's how Greg expects it:
-https://lore.kernel.org/stable/2025090200-uniquely-pumice-1afa@gregkh/
+Gr{oetje,eeting}s,
 
-and you may add:
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+                        Geert
 
-Thanks,
-Amir.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
