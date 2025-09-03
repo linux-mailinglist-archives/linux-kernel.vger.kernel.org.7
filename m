@@ -1,357 +1,271 @@
-Return-Path: <linux-kernel+bounces-798352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F23B41CC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:11:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A019B41CCD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F0BA189A980
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:11:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06D603A3C06
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4642F4A14;
-	Wed,  3 Sep 2025 11:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1432A2F6167;
+	Wed,  3 Sep 2025 11:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FJVmHUrc"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=topic.nl header.i=@topic.nl header.b="pPwgXAFw"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11021100.outbound.protection.outlook.com [52.101.65.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DA22DCF73;
-	Wed,  3 Sep 2025 11:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756897881; cv=none; b=WBHUYEOE4LZourM+jjmit3qUZdHtiFjgTLjPMgVnhSIAVXwRrRi3qh0wS1PpOYDlKpjVuSVHaBZlHhiF5RSVrOkB8jhTbCHIV0lKNbbKfv/ULSO2EZDMu9L/xb2TRw2y3Myxje3T8NDqwgVNHi6LM1e1vyaBloks5NT39TDxMCQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756897881; c=relaxed/simple;
-	bh=BTl7Ul1H7ObYXERCYqHj7raHnCo2HuMR5afc9ARTz3M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d2ADHGTeFArqi6JctztEWJExYohYGkOgi5CaGkkH5OgaDKAefcYmwVCd9mfK9I7FU4vmps0OvqUPOqcBS7Be67PZBK/82VAh1MY+UmZdI2k8F2TSC+E2bHhjdGuS+iU/Flkzbn+lopZGI6jcIliWfbVf7sE+PxyUnSpNIRyyR8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FJVmHUrc; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1756897874; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=hyxNaG6hnaqx4lIhRFM7XeK3Vg9++tSnE9rUBk2Oup4=;
-	b=FJVmHUrcVvbDIyR98VHSL17zWeoyN12V39F5TvN9kzhRbA4DakOb6ufbgwAXq2aZVHt5KqfI8pgtAMYPPdg2XCdRnmPin+3uZ+IjNPrEgC38RAAqtbBL/mHRUrZ9qTO1hjVkWi9F1ENb+oG33yLC5GADT/6al7YfyBtzBrPvhPs=
-Received: from localhost(mailfrom:escape@linux.alibaba.com fp:SMTPD_---0WnBdjdG_1756897874 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 03 Sep 2025 19:11:14 +0800
-From: Yi Tao <escape@linux.alibaba.com>
-To: tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cgroup: replace global percpu_rwsem with signal_struct->group_rwsem when writing cgroup.procs/threads
-Date: Wed,  3 Sep 2025 19:11:07 +0800
-Message-Id: <f460f494245710c5b6649d6cc7e68b3a28a0a000.1756896828.git.escape@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B555D252292;
+	Wed,  3 Sep 2025 11:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.100
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756897965; cv=fail; b=WFySbGCjoCc4Clnm6vYj8xW7ITNaYGkehPzv5+TkTyRgyi/6aNJNxFCK3xWBELliqb2hlq5JfmxMMBWkS3pwamU5PAM86UNJ9IgxTcx/mmTzAfHzBYVUWpX3cG0YDnJtAozcIUgOAmExeTEUDGdB1r69MOQAvbWDaAaGk+xQ5b8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756897965; c=relaxed/simple;
+	bh=FTeDUn8Z8UwqBe7843F6EATZLp4P+OQzTFk1vlYSE6c=;
+	h=Message-ID:Date:Subject:From:To:CC:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Mo+9nMz+L63oPnjOFgh/mPkDNW6G2CoKl/9ffRAWgQnqxOp2kkWg3W6IfoN9214KSYV38zy1InEIZWUq3mK6qtkpTq+JKcasdGlOWuzRr2MNr24pFTN9IHRpVDz1LLMHaP67+2d8CByNTWql2y+mpGR6Jl/0pG8z/ipZf5mOITY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=topic.nl; spf=pass smtp.mailfrom=topic.nl; dkim=pass (2048-bit key) header.d=topic.nl header.i=@topic.nl header.b=pPwgXAFw; arc=fail smtp.client-ip=52.101.65.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=topic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=topic.nl
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hTpoP+hF+TjMQlEOHkG1NrBMZIZgWpCzmu2EgEYXFJEueRlTgTKiIYw8rQpj/vVvL3dOpS1j+rOMA1yFrJ2wb2mMBIdeQ0PnMGaZFh4Dl6t3hJG35TPNX03T9jFHOAqNflsA3kz2ERBP8Yd6oimANeNKyU1TUUAH+Xxatqhom8Cky48qWIxmPHo/cuB6yNVTu3yYUJRu5swxyn6A1B4hFAR8T5BmPdyI4q0hDUIrcfZ+0532UQrwFZbhBSoQWErH4eHN6k/nBM3/iEtiD1q5zRmNyOVoqFGRW2NnwSfPvDYkXIhjCm4QpO3FpYNKz4Y1IU9/0SX6v/7xBRd6WPQixw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FTeDUn8Z8UwqBe7843F6EATZLp4P+OQzTFk1vlYSE6c=;
+ b=MlKyy2C4suxE3a7NgrKm1gcFJZRC9TUui6HbQiYJj7VPRLz4d0yEWTnMslqFzP166YowgIYnolvfumuLFIg2adD74GHTOqDs7SEs0zGwCBb9JmokuQwSEGzWFsBBF3HB54DgB2ekzWbe7h0TGaQtQRCLSHZpj6+jQjo2vmzoH4+WScgvwX1immDpsmxwW/wcSKyM9wc0A3l0WZYo2/gwrfsT6qlcSrriYlOToUqDEaSc5AMgaEU1lDpahI3VVxe45fqw1eW2NoPuFxsd+ARlj67NaIOASsTIcyBEob2uDJMPkf1la/8Ebb8gJAeWnmCdsmdSSCY2WXVsEQzvIKhFew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 20.93.157.195) smtp.rcpttodomain=kernel.org smtp.mailfrom=topic.nl;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=topic.nl; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=topic.nl; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FTeDUn8Z8UwqBe7843F6EATZLp4P+OQzTFk1vlYSE6c=;
+ b=pPwgXAFwySP7JCUJdu7eZgafef2URGqhWBKT0hcUlk5FSy1UwqqTPCUPiYCLbloRcnO7EshnFbTjziK9z2T9RRJ2b/6HhGv0Ngtc6ezgOKjmaYwN35hnsLVuyjtM1VBoqPaGX/G0enXysU2Dy/1xnWkDAaRt+6OxEAxcpkcyqvj/Ubuitt5Ks10sAnZYVTHWQUAkq3JF9UwkfZDUCE3piQiabJ5kkyzPqSK0lR1fK663yhw5wr/3Q7v5g4khyUWCWBXXshPfxjQAVUuUEcVtWt333ZeQmOyx1WA3Qx4xEOswNNBFLxh/Y53pvCSOm/jDze6F3jI98cZa3gAHyIyGbw==
+Received: from AM6P192CA0100.EURP192.PROD.OUTLOOK.COM (2603:10a6:209:8d::41)
+ by MRWPR04MB11517.eurprd04.prod.outlook.com (2603:10a6:501:77::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Wed, 3 Sep
+ 2025 11:12:37 +0000
+Received: from AM2PEPF0001C715.eurprd05.prod.outlook.com (2603:10a6:209:8d::4)
+ by AM6P192CA0100.outlook.office365.com (2603:10a6:209:8d::41) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.17
+ via Frontend Transport; Wed, 3 Sep 2025 11:12:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 20.93.157.195)
+ smtp.mailfrom=topic.nl; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=topic.nl;
+Received-SPF: Pass (protection.outlook.com: domain of topic.nl designates
+ 20.93.157.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=20.93.157.195; helo=westeu11-emailsignatures-cloud.codetwo.com;
+ pr=C
+Received: from westeu11-emailsignatures-cloud.codetwo.com (20.93.157.195) by
+ AM2PEPF0001C715.mail.protection.outlook.com (10.167.16.185) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.14 via Frontend Transport; Wed, 3 Sep 2025 11:12:37 +0000
+Received: from MRWPR03CU001.outbound.protection.outlook.com (40.93.69.26) by westeu11-emailsignatures-cloud.codetwo.com with CodeTwo SMTP Server (TLS12) via SMTP; Wed, 03 Sep 2025 11:12:36 +0000
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=topic.nl;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by PA1PR04MB10604.eurprd04.prod.outlook.com (2603:10a6:102:48e::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Wed, 3 Sep
+ 2025 11:12:34 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.9094.015; Wed, 3 Sep 2025
+ 11:12:34 +0000
+Message-ID: <4fa96259-5dfd-485f-ab41-c039f4a1f23c@topic.nl>
+Date: Wed, 3 Sep 2025 13:12:33 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dt-bindings: drm/bridge: ti-tmds181: Add TI
+ TMDS181 and SN65DP159 bindings
+From: Mike Looijmans <mike.looijmans@topic.nl>
+To: Maxime Ripard <mripard@kernel.org>
+CC: dri-devel@lists.freedesktop.org, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
+ Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+ Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250901142958.843678-1-mike.looijmans@topic.nl>
+ <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.edc18686-244f-441e-a6ac-0b62492b96c8@emailsignatures365.codetwo.com>
+ <20250901142958.843678-2-mike.looijmans@topic.nl>
+ <pml7rfbkerzkx5df26x7kxn3tk2o7oqrkqnx26tzikeg53djn5@islb4hlm4ks7>
+ <aa80b3c4-01b5-4d4c-9fe0-523cdb895eb3@topic.nl>
+Content-Language: nl, en-US
+Organization: TOPIC
+In-Reply-To: <aa80b3c4-01b5-4d4c-9fe0-523cdb895eb3@topic.nl>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: AS4P192CA0019.EURP192.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5e1::8) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-TrafficTypeDiagnostic:
+	AM8PR04MB7779:EE_|PA1PR04MB10604:EE_|AM2PEPF0001C715:EE_|MRWPR04MB11517:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4543362f-e459-4bf5-825f-08ddeadaca56
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?ZEtyQ1F5cEFkVDhCTEJtdnJ6UUlrK1hMZFI5WWdCVXhndVI1RlhSVXdOSDlH?=
+ =?utf-8?B?R1I4R05SYkRXdXRremM1TWR4aDF2UlJWTVpZRUxRUHIwWXU3anI5cnRsK0px?=
+ =?utf-8?B?R292RC81MER1dHFSSEEwbWtqRGRNbmwzaFJoTUY0R0pNdW1KWldvMXdZcVk2?=
+ =?utf-8?B?aWNHTGRja2FZSTN3UjAwZkhSaDRmb1dHWTloYjRrQ0U0SXBlN1FHUTlseVdE?=
+ =?utf-8?B?MFY4UFI0UXJzdFp2YlQzMlRqbUJpc3BpRnJTWlB0NEM1T0VYUG9mK3hGQWhn?=
+ =?utf-8?B?bHU4OFV0TXlodWlyZ0JzaTFBZEIvaWpueHZxQ2FCWlRJT3Yram1MOFI2cDdV?=
+ =?utf-8?B?VDFNeFhxeCs4T09xSGZnOE01WnhiVWZ4RE5KZjdRbi9ESVdQSW9mNkY1bmdE?=
+ =?utf-8?B?UWIxaVNjYy9CbDREcnVKSjJ0MjlHT0xmVDNOOWJVM1E3ekhXMGlRUlBTNHlz?=
+ =?utf-8?B?K0RRY2dybEpQS0hkNTQza24yV05lMm5RU1Q2bGx6Yy80bzdCektmVkVMUTFh?=
+ =?utf-8?B?d1hQemhKOHdKQzd4N09qdHEwVTJNY0V0aDk0ZzFwVFR5d1JUWG1mUXJTY1RP?=
+ =?utf-8?B?MTIyYnZJbm91RS9yTkNVOUtJU1lDREx4RnBHQXVXV1lUcVNzWmpkbXo3SVNZ?=
+ =?utf-8?B?Uy8yOGhLR3UrM0MyQTY4UHM5MDhDbnhGaGExYkRWRDZWSklyZVV2Yk9Ya3Fx?=
+ =?utf-8?B?UU04SmJtcmZBZmMzamNQSUxMNW54RUEraTRHQy80R0QyMmNSSWgxQXROdVFp?=
+ =?utf-8?B?RWo4NGFMdWI4bmVkRjRNaWJ4MVlPQnpWZUlMbXAyL0JyVmRrOVRKVXA1Y1FZ?=
+ =?utf-8?B?cUd6OEZ3U1dOWHB0NlJUOXJqbk5uSHNKSFBldDNVOWRPazJYYnl4TytJeXNL?=
+ =?utf-8?B?dEJGNDdBYm5ZSENVNElSUzZMQ21FclVWcEd1c3k3QzRDWHRhTHNuT09wWHF3?=
+ =?utf-8?B?YnR2YlBqN25FS251LzRWOUxlaGkvaFhpT2N1T09VTVZ0VWE2YlZiYXBxYjI1?=
+ =?utf-8?B?QlVMS0ZTL1FCVGRJTi91WFN2ZkNoMmJwMlc5M2RuTkJBMzVzKzNQdFJWRDVC?=
+ =?utf-8?B?UUN5bjVJTDE1bVNBcDU0Q0xiR1lqWUlVZGNJWXk0QitUUVo2Y29RVkVqM3V0?=
+ =?utf-8?B?cFcyS1NTS1NnQ292WW5kMjFHd0cxRkNhYUJrQVlnL290ZmNLcWlyeGMwd0F0?=
+ =?utf-8?B?MktjVW1QZ2psSEZlQmlaenduczdGRzlHdlRBMWViZ2tpdGM4a3FhOEd4Sk5G?=
+ =?utf-8?B?dU1yaU5UNU9hRWxUOERsMTRZMStLNjRnMzBwNUQ1VDRSdHd3MGFUQ202bkRM?=
+ =?utf-8?B?ODdEa05PMFVaZHErQ3dadzV4VlB5ZUJoNnpXS3JhRjRSKzRjSXhsWHBuWVY2?=
+ =?utf-8?B?WUplM0RSWkFIdkE3R2V6amRKQURBM1phdG45OUhSYW9xZ05yc1VsM0JFdGJW?=
+ =?utf-8?B?NG5ieWVaaXFSUW14Y3RRRDgvdnBpeDZkMFBBNk1veE1QR3ZCTUhNV2licHRN?=
+ =?utf-8?B?Mkhxd2NFa1kxRURIRVFQSkErNmgrREJRbzJHYnFZdGwxZzN3ejQ0RlBuTU95?=
+ =?utf-8?B?TkU0bWMvQUxBK3FzUzN3d0dsMUhyckxGUmNaaVBMNFE0dUNycS9ScEJjU1Jt?=
+ =?utf-8?B?ejJ0dWNFc0dmMnI5RStpZ3NqUDVnUmlCUFRDZnA0VVBGRlJMYW92SURQWTNz?=
+ =?utf-8?B?K3FHYXNSd2g0ZmFlVGV2REc4dWV6UnR6eXdzMVlMem1GMHhrMGRmR3RIamlz?=
+ =?utf-8?B?QjJXNGM5RDB3L3l0NHBNVFlQNkQwQkhaK3NDYkhjSU44c3BRbGdtbEk5c2tw?=
+ =?utf-8?B?VDRRbjVBQWthYjE1U3NyM0hlSWVTdWM1Y0xId2R4RHJBYUNDdWt5RGVUTWwz?=
+ =?utf-8?B?YmZaaSsvdVd5SUQ0bzFaSWRmdkNoOVQzVy9zUGtSazkrZ1kxWjkzSklVNnll?=
+ =?utf-8?Q?s9ILtKxEmwk=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10604
+X-CodeTwo-MessageID: 59346812-6113-4e1a-89a7-4541709b0935.20250903111236@westeu11-emailsignatures-cloud.codetwo.com
+X-CodeTwoProcessed: true
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM2PEPF0001C715.eurprd05.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	10ac28fc-120f-41b6-40e0-08ddeadac86b
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|35042699022|7416014|376014|36860700013|14060799003|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OThkazV0eE9lTkdRVnZCcjEyZjh2dWJBVUhxcmJFWENKWWNacVdzOTl6Wkg2?=
+ =?utf-8?B?cFJrak9DcjhIS3J4aTNxLzVqaWlxM3JXeDVjLzlxdStEeVZXU3RYWndDUHky?=
+ =?utf-8?B?b3Buc3VvNXhITDFQZkU2eEZiWGo3UTJrSlJCaHhTdFFISFJEU3dGMVRrWW42?=
+ =?utf-8?B?T09yNTV4eThlb0JPQnMwRjhBb05kb281dEo2NzFZTjR0T2gvd05hOSs3cW5r?=
+ =?utf-8?B?VzhLbEtrQThIcmp5TUlxanFLVkwzQkZ3TTdXc3VxTEhkNHZVaTNHNmhDYmcx?=
+ =?utf-8?B?MUZmUmE5NGp0YlBHVTVjMkloWlFGQ1dQM1FKRzRUWW1YVHB4bWJsWmZDMXNz?=
+ =?utf-8?B?K2NUZmRQUHNrMHhYQk84WTZRbXBMRzE3MFhMeVQrL2p1LzUzQzZmTzlFQjUv?=
+ =?utf-8?B?blNGazZpTGNwYWI5VjF4ZEZneVNhZXBKaHUzcUtob2tsZVlNRXhoMjhjMTd5?=
+ =?utf-8?B?czF5aWZrQ0IralFvTWJUMU1XODV1RzhPVE9YeityTURaUGw5VUpyUktwK1Vs?=
+ =?utf-8?B?TzNVOHl4SG11QUFZM1JjK1B0OCtnZUVYeW1qZ0VJZHc1bkhGSzNtT3AySTZC?=
+ =?utf-8?B?cTVrYXNnVEx4Wnh1cjRkMzU4a1VpTUJEeTRFZTA4bklnUitVdlZma3lmTU5w?=
+ =?utf-8?B?K2p6M2YyMnFFaXAyYWdUM3A3NFZaMlpzYWdxNU9yeG9nVCtWRld5NHFOdXl0?=
+ =?utf-8?B?ZWZGc2hSdVkzTHZXaXFjWWVvZE5VbzN2L3FTaFM5SDEvbGRTTEJ0ekdXVjJD?=
+ =?utf-8?B?WmNSa2ZERWJRakpkSzBNaVgwaVNwKzJLV1h6Yy9keklzR0dhNExubWVIUHhv?=
+ =?utf-8?B?Z0dZeFhMVWNzdnY3WmFnTzJZaHRraC9RYWFaQkJKLy8wZStsN2h5akpEL1pw?=
+ =?utf-8?B?RVl5dGxXRGlpTVVscXJNSlZMc0I1Um1VR2VaWUppbXM1UVQ4anowN0QwNzFt?=
+ =?utf-8?B?bFU4bFZtN2FWYUJnQU1manV6anYzMHJPWTAvbUlKUEYrSkE1dlVYTmUvRUQw?=
+ =?utf-8?B?QzRQdUVrYnV6TmkyL3YzbGNjREErUWhiSUladjFDckZCMDlDb0ZlTWhIcW8x?=
+ =?utf-8?B?OWpJZVN2RWsrS1ZnYk1HUjBiSTd1a09BWkpsTHA2QS9wK3l6YTZUV0ltTEx3?=
+ =?utf-8?B?TFdGOGtndmxYUHdnQW5vNW9VYkZYV2k1OUtTME41Yk16VzdGeFhMMmNMRDly?=
+ =?utf-8?B?bGYyZkFrV1M4RkV6d29peU80M1BKL25DbmdsRmVRR0hoWDlwZkdlaGt1ZEtx?=
+ =?utf-8?B?QnNxVTlOSnpCc0xZeCtReWlZb0dTT0dyM0NOTFZNV3FyYlNpNmU0NXd1bTBp?=
+ =?utf-8?B?SU9uWVFpK3hhZEF3Z1NxRCtUcEZRa2FINVJuckF5dWxkRnhYRkp5eGt2cDVC?=
+ =?utf-8?B?ekYwR1BPcE9GaUk5SXpuZS80N05xdmREcW44R29SUUpYNzh0ZFNraGdJRUtZ?=
+ =?utf-8?B?YWNQMks0c3haZGwzYjVmRld1VTgwbHNENkx5ZWxUSHI3eUlzRCtaeGo2WlRS?=
+ =?utf-8?B?RDB4NzhnOFNKM3E4QW9xaG1kcG1oTm5Wa2ttejQwNFpUSWhKUTJxOVEzTjcx?=
+ =?utf-8?B?S3R6TEJTRUhZcW5lcDhSSG1ybmZHTjM4amVPa01mR3pyUXgzd1ladXN0cjZC?=
+ =?utf-8?B?eFBwdmNzMWpWNStCcUVhL2dZTWFwTS83eGR1bXN2eVVPWU1EMytkMURQUXlH?=
+ =?utf-8?B?RCtZSitVR0M5V1R4R2UvL1p6VGdzenBlQUFLTUNyNU9VT2FSdzd6MjlLS1pD?=
+ =?utf-8?B?Q1lERDNMWnk1WDZNcmFZM0VYVkhpWjhWSURyZVBnanFFWjV5ejNZYzhHTVlh?=
+ =?utf-8?B?RGZwQis1enREUmo1N2NsS1VaVXR0Vy9waDlod2MxUmFOZm5wL2pLTW53YjEz?=
+ =?utf-8?B?R3NpankyTS9seGtOazg2d0FqYi9iRG1LVjFYRHY0eERXV3pnaElVamJFbzht?=
+ =?utf-8?B?b2E3NGRUTTJLUUFOdit0Nk9Gb09tQkd3dVhUOGhVL3A5TDdrb3o4dnJ3WjJ2?=
+ =?utf-8?B?QnZqK0psQmE5SE93Q0JFYTlzc2tEcUpqS00ram15ZEJ4L0pBanExeGFJTHJX?=
+ =?utf-8?Q?+NDAgT?=
+X-Forefront-Antispam-Report:
+	CIP:20.93.157.195;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:westeu11-emailsignatures-cloud.codetwo.com;PTR:westeu11-emailsignatures-cloud.codetwo.com;CAT:NONE;SFS:(13230040)(82310400026)(35042699022)(7416014)(376014)(36860700013)(14060799003)(1800799024);DIR:OUT;SFP:1102;
+X-OriginatorOrg: topic.nl
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 11:12:37.4334
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4543362f-e459-4bf5-825f-08ddeadaca56
+X-MS-Exchange-CrossTenant-Id: 449607a5-3517-482d-8d16-41dd868cbda3
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=449607a5-3517-482d-8d16-41dd868cbda3;Ip=[20.93.157.195];Helo=[westeu11-emailsignatures-cloud.codetwo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM2PEPF0001C715.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MRWPR04MB11517
 
-As computer hardware advances, modern systems are typically equipped
-with many CPU cores and large amounts of memory, enabling the deployment
-of numerous applications. On such systems, container creation and
-deletion become frequent operations, making cgroup process migration no
-longer a cold path. This leads to noticeable contention with common
-process operations such as fork, exec, and exit.
+On 03-09-2025 08:17, Mike Looijmans wrote:
+> On 02-09-2025 19:29, Maxime Ripard wrote:
+>> On Mon, Sep 01, 2025 at 04:29:01PM +0200, Mike Looijmans wrote:
+>>> +=C2=A0 ti,retimer-threshold-hz:
+>>> +=C2=A0=C2=A0=C2=A0 minimum: 25000000
+>>> +=C2=A0=C2=A0=C2=A0 maximum: 600000000
+>>> +=C2=A0=C2=A0=C2=A0 default: 200000000
+>>> +=C2=A0=C2=A0=C2=A0 description:
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Cross-over point. Up until this pixel c=
+lock frequency
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the chip remains in the low-power redri=
+ver mode. Above
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the threshold the chip should operate i=
+n retimer mode.
+>> Why should anyone want to tune this at the firmware level?
+>
+> It's a board property. You'd set this based on the hardware you've solder=
+ed=20
+> on. If your clock and serdes are good quality, there's no need for the ch=
+ip=20
+> to be in retimer mode (it will consume more power and actually make the=20
+> signal worse). At higher speeds, that situation may change, hence the nee=
+d=20
+> for a way to describe that. The chip has a similar function built in, but=
+=20
+> with only 2 choices of cross-over point.
+>
+> To tune these parameters (retimer, equalizer), you'll probably have to ta=
+ke=20
+> your equipment to a test facility (like we did). It's not something that=
+=20
+> end-users would want to tune themselves.
+>
+> Most of these settings can also be done using pin strapping. I guess it'd=
+ be=20
+> helpful if I added that to the description.
 
-To alleviate the contention between cgroup process migration and
-operations like process fork, this patch modifies lock to take the write
-lock on signal_struct->group_rwsem when writing pid to
-cgroup.procs/threads instead of holding a global write lock.
+Looking back at the datasheet - once you enable the I2C interface of the pi=
+n,=20
+many of the pinstrapping options are no longer available (such as slew-rate=
+,=20
+dvi/hdmi mode, equalizer and termination). The devicetree properties allow=
+=20
+these settings to be applied again.
 
-Cgroup process migration has historically relied on
-signal_struct->group_rwsem to protect thread group integrity. In commit
-<1ed1328792ff> ("sched, cgroup: replace signal_struct->group_rwsem with
-a global percpu_rwsem"), this was changed to a global
-cgroup_threadgroup_rwsem. The advantage of using a global lock was
-simplified handling of process group migrations. This patch retains the
-use of the global lock for protecting process group migration, while
-reducing contention by using per thread group lock during
-cgroup.procs/threads writes.
+> ...
+>
+M.
 
-The locking behavior is as follows:
 
-write cgroup.procs/threads  | process fork,exec,exit | process group migration
-------------------------------------------------------------------------------
-cgroup_lock()               | down_read(&g_rwsem)    | cgroup_lock()
-down_write(&p_rwsem)        | down_read(&p_rwsem)    | down_write(&g_rwsem)
-critical section            | critical section       | critical section
-up_write(&p_rwsem)          | up_read(&p_rwsem)      | up_write(&g_rwsem)
-cgroup_unlock()             | up_read(&g_rwsem)      | cgroup_unlock()
-
-g_rwsem denotes cgroup_threadgroup_rwsem, p_rwsem denotes
-signal_struct->group_rwsem.
-
-This patch eliminates contention between cgroup migration and fork
-operations for threads that belong to different thread groups, thereby
-reducing the long-tail latency of cgroup migrations and lowering system
-load.
-
-Signed-off-by: Yi Tao <escape@linux.alibaba.com>
----
- include/linux/cgroup-defs.h     |  2 ++
- include/linux/sched/signal.h    |  4 +++
- init/init_task.c                |  3 ++
- kernel/cgroup/cgroup-internal.h |  6 ++--
- kernel/cgroup/cgroup-v1.c       |  8 ++---
- kernel/cgroup/cgroup.c          | 56 ++++++++++++++++++++-------------
- kernel/fork.c                   |  4 +++
- 7 files changed, 55 insertions(+), 28 deletions(-)
-
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index 6b93a64115fe..8e0fdad8a440 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -838,6 +838,7 @@ struct cgroup_of_peak {
- static inline void cgroup_threadgroup_change_begin(struct task_struct *tsk)
- {
- 	percpu_down_read(&cgroup_threadgroup_rwsem);
-+	down_read(&tsk->signal->group_rwsem);
- }
- 
- /**
-@@ -848,6 +849,7 @@ static inline void cgroup_threadgroup_change_begin(struct task_struct *tsk)
-  */
- static inline void cgroup_threadgroup_change_end(struct task_struct *tsk)
- {
-+	up_read(&tsk->signal->group_rwsem);
- 	percpu_up_read(&cgroup_threadgroup_rwsem);
- }
- 
-diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index 1ef1edbaaf79..86fbc99a9174 100644
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -226,6 +226,10 @@ struct signal_struct {
- 	struct tty_audit_buf *tty_audit_buf;
- #endif
- 
-+#ifdef CONFIG_CGROUPS
-+	struct rw_semaphore group_rwsem;
-+#endif
-+
- 	/*
- 	 * Thread is the potential origin of an oom condition; kill first on
- 	 * oom
-diff --git a/init/init_task.c b/init/init_task.c
-index e557f622bd90..0450093924a7 100644
---- a/init/init_task.c
-+++ b/init/init_task.c
-@@ -27,6 +27,9 @@ static struct signal_struct init_signals = {
- 	},
- 	.multiprocess	= HLIST_HEAD_INIT,
- 	.rlim		= INIT_RLIMITS,
-+#ifdef CONFIG_CGROUPS
-+	.group_rwsem	= __RWSEM_INITIALIZER(init_signals.group_rwsem),
-+#endif
- 	.cred_guard_mutex = __MUTEX_INITIALIZER(init_signals.cred_guard_mutex),
- 	.exec_update_lock = __RWSEM_INITIALIZER(init_signals.exec_update_lock),
- #ifdef CONFIG_POSIX_TIMERS
-diff --git a/kernel/cgroup/cgroup-internal.h b/kernel/cgroup/cgroup-internal.h
-index b14e61c64a34..572c24b7e947 100644
---- a/kernel/cgroup/cgroup-internal.h
-+++ b/kernel/cgroup/cgroup-internal.h
-@@ -249,8 +249,10 @@ int cgroup_migrate(struct task_struct *leader, bool threadgroup,
- 
- int cgroup_attach_task(struct cgroup *dst_cgrp, struct task_struct *leader,
- 		       bool threadgroup);
--void cgroup_attach_lock(bool lock_threadgroup);
--void cgroup_attach_unlock(bool lock_threadgroup);
-+void cgroup_attach_lock(struct task_struct *tsk, bool lock_threadgroup,
-+			bool global);
-+void cgroup_attach_unlock(struct task_struct *tsk, bool lock_threadgroup,
-+			  bool global);
- struct task_struct *cgroup_procs_write_start(char *buf, bool threadgroup,
- 					     bool *locked)
- 	__acquires(&cgroup_threadgroup_rwsem);
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index 2a4a387f867a..3e5ead8c5bc5 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -68,7 +68,7 @@ int cgroup_attach_task_all(struct task_struct *from, struct task_struct *tsk)
- 	int retval = 0;
- 
- 	cgroup_lock();
--	cgroup_attach_lock(true);
-+	cgroup_attach_lock(NULL, true, true);
- 	for_each_root(root) {
- 		struct cgroup *from_cgrp;
- 
-@@ -80,7 +80,7 @@ int cgroup_attach_task_all(struct task_struct *from, struct task_struct *tsk)
- 		if (retval)
- 			break;
- 	}
--	cgroup_attach_unlock(true);
-+	cgroup_attach_unlock(NULL, true, true);
- 	cgroup_unlock();
- 
- 	return retval;
-@@ -117,7 +117,7 @@ int cgroup_transfer_tasks(struct cgroup *to, struct cgroup *from)
- 
- 	cgroup_lock();
- 
--	cgroup_attach_lock(true);
-+	cgroup_attach_lock(NULL, true, true);
- 
- 	/* all tasks in @from are being moved, all csets are source */
- 	spin_lock_irq(&css_set_lock);
-@@ -153,7 +153,7 @@ int cgroup_transfer_tasks(struct cgroup *to, struct cgroup *from)
- 	} while (task && !ret);
- out_err:
- 	cgroup_migrate_finish(&mgctx);
--	cgroup_attach_unlock(true);
-+	cgroup_attach_unlock(NULL, true, true);
- 	cgroup_unlock();
- 	return ret;
- }
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 312c6a8b55bb..4e1d80a2741f 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -2480,21 +2480,31 @@ EXPORT_SYMBOL_GPL(cgroup_path_ns);
-  * write-locking cgroup_threadgroup_rwsem. This allows ->attach() to assume that
-  * CPU hotplug is disabled on entry.
-  */
--void cgroup_attach_lock(bool lock_threadgroup)
-+void cgroup_attach_lock(struct task_struct *tsk,
-+			       bool lock_threadgroup, bool global)
- {
- 	cpus_read_lock();
--	if (lock_threadgroup)
--		percpu_down_write(&cgroup_threadgroup_rwsem);
-+	if (lock_threadgroup) {
-+		if (global)
-+			percpu_down_write(&cgroup_threadgroup_rwsem);
-+		else
-+			down_write(&tsk->signal->group_rwsem);
-+	}
- }
- 
- /**
-  * cgroup_attach_unlock - Undo cgroup_attach_lock()
-  * @lock_threadgroup: whether to up_write cgroup_threadgroup_rwsem
-  */
--void cgroup_attach_unlock(bool lock_threadgroup)
-+void cgroup_attach_unlock(struct task_struct *tsk,
-+				 bool lock_threadgroup, bool global)
- {
--	if (lock_threadgroup)
--		percpu_up_write(&cgroup_threadgroup_rwsem);
-+	if (lock_threadgroup) {
-+		if (global)
-+			percpu_up_write(&cgroup_threadgroup_rwsem);
-+		else
-+			up_write(&tsk->signal->group_rwsem);
-+	}
- 	cpus_read_unlock();
- }
- 
-@@ -2970,12 +2980,23 @@ int cgroup_attach_task(struct cgroup *dst_cgrp, struct task_struct *leader,
- struct task_struct *cgroup_procs_write_start(char *buf, bool threadgroup,
- 					     bool *threadgroup_locked)
- {
--	struct task_struct *tsk;
-+	struct task_struct *tsk, *tmp_tsk;
- 	pid_t pid;
- 
- 	if (kstrtoint(strstrip(buf), 0, &pid) || pid < 0)
- 		return ERR_PTR(-EINVAL);
- 
-+	rcu_read_lock();
-+	if (pid) {
-+		tsk = find_task_by_vpid(pid);
-+		if (!tsk) {
-+			tsk = ERR_PTR(-ESRCH);
-+			goto out_unlock_rcu;
-+		}
-+	} else {
-+		tsk = current;
-+	}
-+
- 	/*
- 	 * If we migrate a single thread, we don't care about threadgroup
- 	 * stability. If the thread is `current`, it won't exit(2) under our
-@@ -2986,18 +3007,9 @@ struct task_struct *cgroup_procs_write_start(char *buf, bool threadgroup,
- 	 */
- 	lockdep_assert_held(&cgroup_mutex);
- 	*threadgroup_locked = pid || threadgroup;
--	cgroup_attach_lock(*threadgroup_locked);
- 
--	rcu_read_lock();
--	if (pid) {
--		tsk = find_task_by_vpid(pid);
--		if (!tsk) {
--			tsk = ERR_PTR(-ESRCH);
--			goto out_unlock_threadgroup;
--		}
--	} else {
--		tsk = current;
--	}
-+	tmp_tsk = tsk;
-+	cgroup_attach_lock(tmp_tsk, *threadgroup_locked, false);
- 
- 	if (threadgroup)
- 		tsk = tsk->group_leader;
-@@ -3017,7 +3029,7 @@ struct task_struct *cgroup_procs_write_start(char *buf, bool threadgroup,
- 	goto out_unlock_rcu;
- 
- out_unlock_threadgroup:
--	cgroup_attach_unlock(*threadgroup_locked);
-+	cgroup_attach_unlock(tmp_tsk, *threadgroup_locked, false);
- 	*threadgroup_locked = false;
- out_unlock_rcu:
- 	rcu_read_unlock();
-@@ -3032,7 +3044,7 @@ void cgroup_procs_write_finish(struct task_struct *task, bool threadgroup_locked
- 	/* release reference from cgroup_procs_write_start() */
- 	put_task_struct(task);
- 
--	cgroup_attach_unlock(threadgroup_locked);
-+	cgroup_attach_unlock(task, threadgroup_locked, false);
- 
- 	for_each_subsys(ss, ssid)
- 		if (ss->post_attach)
-@@ -3119,7 +3131,7 @@ static int cgroup_update_dfl_csses(struct cgroup *cgrp)
- 	 * write-locking can be skipped safely.
- 	 */
- 	has_tasks = !list_empty(&mgctx.preloaded_src_csets);
--	cgroup_attach_lock(has_tasks);
-+	cgroup_attach_lock(NULL, has_tasks, true);
- 
- 	/* NULL dst indicates self on default hierarchy */
- 	ret = cgroup_migrate_prepare_dst(&mgctx);
-@@ -3140,7 +3152,7 @@ static int cgroup_update_dfl_csses(struct cgroup *cgrp)
- 	ret = cgroup_migrate_execute(&mgctx);
- out_finish:
- 	cgroup_migrate_finish(&mgctx);
--	cgroup_attach_unlock(has_tasks);
-+	cgroup_attach_unlock(NULL, has_tasks, true);
- 	return ret;
- }
- 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index af673856499d..5218f9b93c77 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1688,6 +1688,10 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
- 	tty_audit_fork(sig);
- 	sched_autogroup_fork(sig);
- 
-+#ifdef CONFIG_CGROUPS
-+	init_rwsem(&sig->group_rwsem);
-+#endif
-+
- 	sig->oom_score_adj = current->signal->oom_score_adj;
- 	sig->oom_score_adj_min = current->signal->oom_score_adj_min;
- 
--- 
-2.32.0.3.g01195cf9f
 
 
