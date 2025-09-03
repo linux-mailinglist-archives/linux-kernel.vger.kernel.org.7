@@ -1,55 +1,39 @@
-Return-Path: <linux-kernel+bounces-797899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9FFDB416EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:39:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 204C1B4167B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89F91BA312E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:39:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E881D16FC89
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34EFC2DE703;
-	Wed,  3 Sep 2025 07:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="BUY7TGzc"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AD82DA77D;
+	Wed,  3 Sep 2025 07:29:43 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E662DAFAF
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08C7253359
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756885155; cv=none; b=XskahBz+VnkoiS+nUqLMjaQp1CwdDXVmmauMoYD+plJIQWpRhSM0AlJVbJ4+wb87MjwRVq3BbHRAjAjqwI27AzspL/4OhHsUfrm1J8lcgDgCh6B7FD5ixyBL6GkPXuZmK0hFXTCnsdo2HQ1S2ieW+zbUXBqM04RsIF977RsthRk=
+	t=1756884582; cv=none; b=WdG58dqvSdP9WZnKlaGct/fpgVM0kk5/tUxwUBImBF4c9m5sBoht6pwptyicBt4KpRKqNsb5DIvYVziUQfzoeXrAA7kobxGCdjOa+T0Ga8TxZnGM1sJDOMKjozWWrSF8NoB+9mztaqGGvK1ZAVee48iHPK7eWs6gI9U/niH4WHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756885155; c=relaxed/simple;
-	bh=1Oc0Sp3Mx7FR/p2BZFbZfwf5PRZHut2haSGWT0WEc8M=;
+	s=arc-20240116; t=1756884582; c=relaxed/simple;
+	bh=1c7VonY6uj74XYLIJ7kALBLOnJcPEHxjT3fVSi4gc/8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SKmuGmnymlgvoQh/IvkmTafb7yJNxCT+AuMMrALu7gqOZiPOqRMSXdhsZw5CIHYT2vIiGY+H4A3eGcGD8s7khpvrbw4PT8polABqZFainKg7gH86YDsx+0Q9AVk3N9INRWuvggFjHn+UZYtfTRKSbXLJocCbESB33OHCcJH8ovs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=BUY7TGzc; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1756885151;
- bh=auDnTh/G9z3Y/t2W15bb+vq1E6EQIAIJTktRaItnI50=;
- b=BUY7TGzciFQ9/qPcSITc41HWklDtvWHn1Io9WA26Iy0MyO16eDXyBQfnr+J07PhMsMIkeulLB
- OFnDwzQKRzOX6z80vlne5NXux+AO/PqmdVbsdo5VAy+5QcJTAr91bItE/hQNTq2mGvc34WWzwhe
- mHE7VUrntlp/P8keO8sPJCYWuA1FW1fpnlkBKDmgMX/3p/PAwtGYEz7iGqPV684tN6sqFrWCT/J
- CZPLmKuENVjmH5d8zT3IHvnFqJpX+uFvKP+1WFa9e0NmfmpG+WvzHMI5Wj21l5v9f0vdckhomAf
- nhN3zKof5bZWQOidPUDybM2sl0UcWUKlzWAZd34Q9hQQ==
-X-Forward-Email-ID: 68b7ee2f3a2f2af95f29221d
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.2.11
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <8394c12a-1e1e-44fc-9bb5-92a464dfe410@kwiboo.se>
-Date: Wed, 3 Sep 2025 09:28:41 +0200
+	 In-Reply-To:Content-Type; b=mFFDQX9yGGAmR/aRyx3juhd5EdzSfQxLJin/+ERlheC+uJj1HHeYtW1cY6KqzAEYhBBOj/KnX6Gib8zsDrbpD47fI81U+MbUBBh8eWEqnJWBHIwIWVYCpvZKkMOeSLOAGYlLHqhAEq+oAHcSTS/M+ys1Xb9xW5ejvpQTeoAMLgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1uthvA-0003pQ-KJ; Wed, 03 Sep 2025 09:28:44 +0200
+Message-ID: <fa7e2cef-5242-4f3b-84ea-d77b959f6bdb@pengutronix.de>
+Date: Wed, 3 Sep 2025 09:28:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,106 +41,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] media: rkvdec: Add HEVC backend
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Alex Bee <knaerzche@gmail.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250810212454.3237486-1-jonas@kwiboo.se>
- <20250810212454.3237486-2-jonas@kwiboo.se>
- <432ab63698b27ca5bce3a7a30d630685aff782b6.camel@collabora.com>
+Subject: Re: [PATCH] ARM: dts: imx6ul-tx6ul: Switch away from deprecated
+ `phy-reset-gpios`
+To: =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <csokas.bence@prolan.hu>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
+ Csaba Buday <buday.csaba@prolan.hu>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20250815-b4-tx6ul-dt-phy-rst-v1-1-9b65e315d9d3@prolan.hu>
 Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <432ab63698b27ca5bce3a7a30d630685aff782b6.camel@collabora.com>
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <20250815-b4-tx6ul-dt-phy-rst-v1-1-9b65e315d9d3@prolan.hu>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Nicolas,
+Hello,
 
-On 8/29/2025 10:22 PM, Nicolas Dufresne wrote:
-> Le dimanche 10 août 2025 à 21:24 +0000, Jonas Karlman a écrit :
->> The Rockchip VDEC supports the HEVC codec with the Main and Main10
->> Profile up to Level 5.1 High tier: 4096x2304@60 fps.
->>
->> Add the backend for HEVC format to the decoder.
->>
->> Signed-off-by: Alex Bee <knaerzche@gmail.com>
->> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
->> Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
->> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> 
-> Re-reading myself, most of my comments were off or really "nitty". So let's move
-> forward and spare you the v3. Detlev is happy to rebase and work on top of your
-> series, so let's help everyone getting better RK codec support.
-> 
-> Tested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> 
-> Just to be transparent, during testing, it was notice that some concurrent
-> decoding resulted into failures. I tested Detlev port to structure registers,
-> and it didn't change anything (so probably not a stalled state, or one that we
-> control). This could easily be a HW issue with older chip. Since you have used
-> this for years without major issue reported, I happy to move on.
+On 15.08.25 17:17, Bence Csókás wrote:
+> The Ethernet PHY's reset GPIO should be specified in the node of the PHY
+> itself, instead of the MAC (`fec`). The latter is deprecated, and was an
+> i.MX-specific extension, incompatible with the new reset controller
+> subsystem.
 
-Thanks, I found some minor changes compared to the LibreELEC version
-that I am running some new tests on, plan to send out a v3 as soon as
-testing completes later today.
+One reason to do it this way is that the PHY is in reset when the OS starts
+and the external phy-reset-gpios allows MAC probe to get the PHY out of
+reset, so it can be probed after reading its vendor/device IDs.
 
-In LibreELEC version we enable some error detection,
-
-	// sw_cabac_error_e - cabac error enable
-	writel(0xfdfffffd, rkvdec->regs + RKVDEC_REG_STRMD_ERR_EN);
-	// slice end error enable = BIT(28)
-	// frame end error enable = BIT(29)
-	writel(0x30000000, rkvdec->regs + RKVDEC_REG_H264_ERR_E);
-
-and in this series it was fully disabled to closer match H264/VP9:
-
-	writel(0, rkvdec->regs + RKVDEC_REG_STRMD_ERR_EN);
-	writel(0, rkvdec->regs + RKVDEC_REG_H264_ERR_E);
-
-There is also an extra memset(0, ...) in rkvdec_hevc_start:
-
-	memset(priv_tbl, 0, sizeof(*priv_tbl));
-
-This should not really be needed and was removed in this series.
-
-Still unclear if any of these will result in a changed behavior. Enable
-of cabac/slice end/frame end error could possible activate some more
-states when block issue a self-reset, but I am only guessing.
-
-One thing to note for the flaky tests is that when they fail, they
-typically just end up with a different consistent checksum. I have not
-done any visual inspection of those frames, but will extract each frame
-and compare them both bitwise and visually.
-
-Regards,
-Jonas
+Does switching to this new binding address this scenario? If so, it should
+be noted in the commit message.
 
 > 
-> regards,
-> Nicolas
+> Co-developed-by: Csaba Buday <buday.csaba@prolan.hu>
+> Signed-off-by: Csaba Buday <buday.csaba@prolan.hu>
+> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+> ---
+>  arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
->> ---
->> Changes in v2:
->> - Use new_value in transpose_and_flatten_matrices()
->> - Add NULL check for ctrl->new_elems in rkvdec_hevc_run_preamble()
->> - Set RKVDEC_WR_DDR_ALIGN_EN for RK3328
->> ---
->>  .../media/platform/rockchip/rkvdec/Makefile   |    2 +-
->>  .../rockchip/rkvdec/rkvdec-hevc-data.c        | 1848 +++++++++++++++++
->>  .../platform/rockchip/rkvdec/rkvdec-hevc.c    |  817 ++++++++
->>  .../platform/rockchip/rkvdec/rkvdec-regs.h    |    2 +
->>  .../media/platform/rockchip/rkvdec/rkvdec.c   |   76 +
->>  .../media/platform/rockchip/rkvdec/rkvdec.h   |    1 +
->>  6 files changed, 2745 insertions(+), 1 deletion(-)
->>  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-data.c
->>  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
+> diff --git a/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi b/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
+> index f053358bc9317f8447d65013a18670cb470106b2..0a5e90704ea481b0716d6ff6bc6d2110914d4f31 100644
+> --- a/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
+> +++ b/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
+> @@ -246,7 +246,6 @@ &fec1 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pinctrl_enet1 &pinctrl_enet1_mdio &pinctrl_etnphy0_rst>;
+>  	phy-mode = "rmii";
+> -	phy-reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
+>  	phy-supply = <&reg_3v3_etn>;
+>  	phy-handle = <&etnphy0>;
+>  	status = "okay";
+> @@ -262,6 +261,13 @@ etnphy0: ethernet-phy@0 {
+>  			pinctrl-0 = <&pinctrl_etnphy0_int>;
+>  			interrupt-parent = <&gpio5>;
+>  			interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
+> +			/* Reset SHOULD be a PHY property */
 
-[snip]
+Comment belongs into commit message.
+
+> +			reset-names = "phy";
+> +			reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
+> +			reset-assert-us = <100>;
+> +			reset-deassert-us = <25000>;
+> +			/* Energy detect sometimes causes link failures */
+> +			smsc,disable-energy-detect;
+
+Unrelated change not described in the commit message.
+
+Cheers,
+Ahmad
+
+>  			status = "okay";
+>  		};
+>  
+> 
+> ---
+> base-commit: 0cc53520e68bea7fb80fdc6bdf8d226d1b6a98d9
+> change-id: 20250815-b4-tx6ul-dt-phy-rst-7afc190a6907
+> 
+> Best regards,
+
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
