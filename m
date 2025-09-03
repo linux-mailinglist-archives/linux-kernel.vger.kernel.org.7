@@ -1,167 +1,147 @@
-Return-Path: <linux-kernel+bounces-799217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF1AB4288A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:13:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03727B42891
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 039041BC3D32
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:13:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A183B686447
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984EA362082;
-	Wed,  3 Sep 2025 18:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7868C31B102;
+	Wed,  3 Sep 2025 18:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UT82xsgc"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rc1wyd6k"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715BE36207A
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 18:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF53299A8E
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 18:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756923186; cv=none; b=SQzJ/KbweMC5N/RNxMQegbQXuZLszkbELbxTjkA+VbXQmmPQuMITzV0scJlXeJ2hKaZmIatqmp9eiJQbNirQv6S38Oa2C/3yzPVlQ9l+Bp5UJ/iYIn2h8dF17HLEKvgc5UMmjW02J3Qp7DxW0jga/PsOqLDdwgFeLAxkbiO3+TI=
+	t=1756923555; cv=none; b=faRUoo4HHhVclqhp1o+yO+1kSPmJ+hePfDJffUeYA53D2OPRMz3Iy+koD1rp4ANzQ6gtjTlonU8gpQTEO1iakPr+Pzm2CXVhZb6bmMZv++1OQUYoREk2vXqEt8fiawP/Nn+zLZJJ9WPfj7dHR187J7Y54pD6DbxMcvx3GZPy/Uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756923186; c=relaxed/simple;
-	bh=cxC1p8FYtlSO+LoFRIzXrRFnuk+2qxP+Qxrw0cPtzss=;
+	s=arc-20240116; t=1756923555; c=relaxed/simple;
+	bh=QYFhiu/ew0TmuDG8UwlSI6xs7QLDAOSXfKu00N6uQSI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ju4fpwJrAdXRKunnYSPwQ9TSucuR8sozMNG+/Qh7Z0EDDavDIZAhYx2oFL2L5V6In2J47R0ieP8gmYJOQT+cybZ7qZ6dkit9/i0V7gqlHTVJPtJdbdrbdxSPeh07/uQbo2gRFufqNlDZmSp560+nQjtE8JIefpVkrIMR5sTiD5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UT82xsgc; arc=none smtp.client-ip=209.85.215.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=YWJAPXjwCrVQ0q9ISJwv78IATKAmOSX8ssKG9X27Hff8mcIQBYJf05C4GYNXWEPydc1Y0XvXWO9ZATfdRDSbr/8GMWVHxYzLT3uWHFgzQEfDH2LhNMSHVhBgGf0liCqD0z+e59PtEeg/SmUGlTXQTJ/V0veEuz31yzs3NYwbN8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rc1wyd6k; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b4f9d61e7deso70744a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 11:13:05 -0700 (PDT)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-32b7d165dc6so93828a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 11:19:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756923185; x=1757527985; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+V6XFpApnDR2sDMYgBfaHdUWcEUw96+ntmZdF92GSVU=;
-        b=UT82xsgcw58kV+kcxhnX6F7gf88qJ/lDYmTi92FlFY9OexGMFVxB9M3flhuVfo+zqC
-         2wuabbMjxUi+uvCvos/e+iJtNAFNFufvhAyTryFDrGOXqE1/pzQjyG2etkdyYSF7kinb
-         YJE58daZi188gMjmG+cVL8fPqS3xe3Bfwpd12NvDxl9CUBNVjE8EKWzPYRlrX1Ev8K8n
-         ZtxUf1w+/Gb9abzzp+iTTzPpREQpl+OSdYms6u9JLk9vnYxio8G7AtgmjMxTSLu8JQR0
-         rIQkfBcjrYHXXVhgUA1JhsWLFum2qMeDb0hYO3B208ngbN/CecTO7Vs1l9pChkV71a/0
-         OZEA==
+        d=gmail.com; s=20230601; t=1756923553; x=1757528353; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Ke0qcgAMsmvpnDPJypy8RuWNPArs8ss8xx0EE84J2oc=;
+        b=Rc1wyd6kw8Q6HAxPSsWkhu5oqrsFhZ1vo+Rx2onjH7wcgwuoNoJL8bvL+2RUdQiOnN
+         iOJ553TCSqUNEX+w96xGN6pEHfcEGlNetNkQ1IAH9+Nvn2IW1eqqXovWuXJRX+l+l0f5
+         70tC0HLb/cPZkl+zewjCcyCGudFkovzRh9Lcpx8qCg20R0cp2mMEMewdEwshTLLNMFLi
+         C1L+OHqGUxwjmd95QYBCf7B8CfBkEsUebeHzJPVg4PUBFpCXB/rMxG6/cfMXvg5typr3
+         QfXeWi8aXrLhfxTVgVGl2k4Zwf4s3OuZgc7ZcwxQMLGW/Vgi3XeqjBugWrTaQNogazDe
+         gWkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756923185; x=1757527985;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+V6XFpApnDR2sDMYgBfaHdUWcEUw96+ntmZdF92GSVU=;
-        b=asL5XyAeBrK6WJ9ENZU7zBdVlFPRP1JHi5zwXjwrGfYFCp3TBbKtv4hj/nRB3m7LRJ
-         zIF8jzOewlPwnv9qwvx3u8aRNnKP5dwU0IEn8nt5IxGhFFVqgpWSA4h48+1LonCpVQzB
-         8D3E/K1RArLVhzJG0a3GDEb19mdMwW/YHy7btAOE3tBK8aYIjM0RzhWeMi7sVFVR6BdA
-         vO5xHp2GEHTchsJRNmI5TCjWDL9jTq/2HQ7EQVYeBhPmgIGgFSaiPm8RU1XMGorGnchT
-         mnZx7GjGnkoyDFHfQXolCe3jwzxTUmd51V9oyIOvxFovT7tCDaMjeSV/QhAt/ThDwaj9
-         HWUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAItI+bdMXUDZKZRzjiV4o2YFoGEGOFacpTqwaFstbtmbq9kx0VhE6UTkWJb7p6Vm0BnC1a3UWrjKocg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/yksdLbsjyKmQ9BT53IakFZoXOwO7FGaMBg+KVvibe7EWWEH8
-	thTWf9Tixgq0Y0DGsL5SjMOT4DeEGr0hiFmnDlyMWtL4WpUto055Y1r4
-X-Gm-Gg: ASbGncvItaFGGAMIanMBUWuZEOfDjLR5PFzlXeMYZG7KJDQhOctH1B+83jlOkkxiAdp
-	VuQ1RknLrauvzv6mBkZ+wF6fsoHxATjfFp7GHqF7z4Ybsiw1Mejp11iQMzWntKeVrW82RwHvQod
-	A+NtwaQy4KiBJHPlzYY1XpoUMbJPH1gYNm3UlgqNHArMGHyrzpogtsmuhLTfeN+W+YJnPKEvJbv
-	gIuH9OTacrtfS4uFdI4slrYZhY1sgJRMM9K/oZuB5bL4z0snkjGrVcYLvdfiQdcP3BAVG3EKkfJ
-	mSkTbIc9HGG+T6wSNyFoQ2snuQn+SDIF3MDGvE5Cnwtv4C6pfs6DVrKi5qorrol3PDpYvISWOHO
-	SNGMqbrumJIZtui5hXQ9B/BRPU12j5UpHHgXDsXl0IfFajIGL57xqrA7umicDHzVz
-X-Google-Smtp-Source: AGHT+IE6mulAKwH9025m2RLHU5y+28A1brzX418uJFTC1AUjoGY+4HwHcSr68SSqgbcMg5wB5MJ6Wg==
-X-Received: by 2002:a17:902:f54d:b0:24a:9c83:e19f with SMTP id d9443c01a7336-24a9c83e357mr162442235ad.53.1756923184568;
-        Wed, 03 Sep 2025 11:13:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756923553; x=1757528353;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ke0qcgAMsmvpnDPJypy8RuWNPArs8ss8xx0EE84J2oc=;
+        b=JgMbccMzDNIbmx1oxISnvQKNqsJny4dGee0VsFkviXvyjjNEPQFO5f8vmCmeQ/w8X/
+         yzCPjezj/i0rTgm8ool97tq09OWIsU0UH76capFBYyYw7qe+Ho39Ve2d73L4HdXkV3xE
+         Pc9tXk6iW4Ox8BFSYenr8vbs0I3Aqk52PzOKJ3LvNB8fpjGzg/DP0XovaO3y9AlvWsUm
+         aaGCJ1wIWXBba5cRm55jQnnCdCQA9QbIWELx/JPZ/J7uVAjSwgx3NQAdfgelM1UuUWLz
+         NibS7CHF4mT0oXHKfl963rmqOhRVPfxW6eoTq91O1q8N5VlPHgrx0pRQNkHmfvYZCSnq
+         Rl0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUf9XSg1JMlIwRFpyNmvVcRSN/IFGEUBeZi96ouR3nCWU/qOA/um3sWrLofW375zfkaBh0sD5q8LH1RS6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYkYjX83QtAmK8aMKlTVOfk+wokCWpjwn6JXTVk40XLwQIrexx
+	d4KN/6ubi8bgVfdwPG4S6xxIJ0H4hFcSQdzQ4EiStbbpv/M+8gkiQQHg
+X-Gm-Gg: ASbGncuqcMjYWtuGqwrmHvln/aIdBcuhf0xvRCs7HIigLIzylyrtaUbhZ27tDcfg4u7
+	Vkn6jpjcFMZw9RyOdAr/imJLZgGZaqInNit0Flg4ZTLYx+yrHDzm+mTuiaYMcsi5F1WG+VU/OMH
+	ydGB/fQsuXncwuxqURpbEqoMRKmzUnQCqKmWlRY7FpvshbOtLZ+KqSg5+E9Op4NzuIlRtW0+O5O
+	W81eHQfMBpaBTNj3TfIaBoZYSTTlaXCHMMQDiF8akK0CXb+Pg6fnykDHCBDHbJBm3IDL7vn3tKM
+	pcea3e3cK7x8obbvSw8iKrH5keXbzUiX+ntsHOM5Xu/WNC5er50aFBwAKWpmQsl9JckitLNr4Rr
+	ej5wHBdccyUz0ycb//ccSCdpQEuXhjU9zhPGHDUR9QwraTI9B/tOTQw==
+X-Google-Smtp-Source: AGHT+IHba2WCf4ULzfzT96OFbGRW5hX0jYX6go5DXCzBh5B4HyqF6qJTJeBbjky+6wZFkd4r/CCdiw==
+X-Received: by 2002:a17:90b:3e8b:b0:329:d50e:2f10 with SMTP id 98e67ed59e1d1-329d51d739emr9569298a91.22.1756923552715;
+        Wed, 03 Sep 2025 11:19:12 -0700 (PDT)
 Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ca63c9e71sm18196285ad.95.2025.09.03.11.13.01
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd38610edsm14886181a12.54.2025.09.03.11.19.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 11:13:03 -0700 (PDT)
-Date: Wed, 3 Sep 2025 11:12:59 -0700
+        Wed, 03 Sep 2025 11:19:11 -0700 (PDT)
+Date: Wed, 3 Sep 2025 11:19:09 -0700
 From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
 To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Kees Cook <kees@kernel.org>, kernel test robot <lkp@intel.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH] mm: Fix kernel stack tagging for certain configs
-Message-ID: <aLiFK8sIgbfiK-v2@fedora>
-References: <20250902175903.1124555-1-vishal.moola@gmail.com>
- <f41383c3-913a-489a-82e6-d2c8d5519eed@redhat.com>
- <aLdOLQLjt-A1DBGi@fedora>
- <b0ed22cd-ebf9-41f7-b5fb-6fb078db593e@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] mm: tag kernel stack pages
+Message-ID: <aLiGnSHFJdaTpMc-@fedora>
+References: <20250820202029.1909925-1-vishal.moola@gmail.com>
+ <ea48bc1f-7ee7-48b4-b389-c3622fc4d3d1@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b0ed22cd-ebf9-41f7-b5fb-6fb078db593e@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ea48bc1f-7ee7-48b4-b389-c3622fc4d3d1@redhat.com>
 
-On Wed, Sep 03, 2025 at 09:46:44AM +0200, David Hildenbrand wrote:
-> On 02.09.25 22:06, Vishal Moola (Oracle) wrote:
-> > On Tue, Sep 02, 2025 at 08:23:06PM +0200, David Hildenbrand wrote:
-> > > On 02.09.25 19:59, Vishal Moola (Oracle) wrote:
-> > > > Commit 4ef905bda61f ("mm: tag kernel stack pages") began marking pages
-> > > > that were being used for the kernel stack.
-> > > > 
-> > > > There are 3 cases where kernel pages are allocated for kernel stacks:
-> > > > CONFIG_VMAP_STACK, THREAD_SIZE >= PAGE_SIZE, THREAD_SIZE < PAGE_SIZE.
-> > > > These cases use vmalloc(), alloc_pages() and kmem_cache_alloc()
-> > > > respectively.
-> > > > 
-> > > > In the first 2 cases, THREAD_SIZE / PAGE_SIZE will always be greater
-> > > > than 0, and pages are tagged as expected. In the third case,
-> > > > THREAD_SIZE / PAGE_SIZE evaluates to 0 and doesn't tag any pages at all.
-> > > > This meant that in those configs, the stack tagging was a no-op, and led
-> > > > to smatch build warnings.
-> > > > 
-> > > > We definitely have at least 1 page we want tagged at this point, so fix
-> > > > it by using a do {} while loop instead of a for loop.
-> > > > 
-> > > > Fixes: 4ef905bda61f ("mm: tag kernel stack pages")
-> > > > Reported-by: kernel test robot <lkp@intel.com>
-> > > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > > Closes: https://lore.kernel.org/r/202508300929.TrRovUMu-lkp@intel.com/
-> > > > Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-> > > > ---
-> > > 
-> > > You sent the patch on August 20 and I replied on August 21.
-> > > 
-> > > I did not receive any reply so far.
-> > 
-> > Ah sorry, I didn't mean to miss your reply.
-> > 
-> > I can't find your reply in my inboxes so I definitely missed it somehow.
-> > I'll go find it and respond.
-> 
-> I had a mail server config issue on one day last month (sending @redhat.com
-> through kernel.org :) ), let me check if that was on that problematic day
-> and it might have went straight into your spam folder due to dkim mismatch.
-> 
-> So the mailing list did not reject it:
-> 
-> https://lore.kernel.org/all/96148baf-f008-449b-988b-ea4f07d18528@redhat.com/
-> 
-> And yes, indeed, it was on that problemtic day, and there is:
-> 
-> 	Received: from smtp.kernel.org
-> 
-> So, problem on my side. Willy already replied, but let me resend that mail.
-> 
-> > 
-> > > And now I realize that this patch is not upstream yet and the commit id not
-> > > stable. So the Fixes/Closes etc. do not really apply.
-> > 
-> > Gotcha.
-> 
-> If there are bigger changes it usually makes sense to send a v2, or a simple
-> fixup as reply to the original patch (I prefer as inline reply).
+On Wed, Sep 03, 2025 at 09:49:06AM +0200, David Hildenbrand wrote:
+> [resending my original mail because it might have landed in the spam folder]
 
-Ok I'll keep that in mind for the future :). My mail client loves
-attaching the fixup patches as additional files, but I'll find a workflow
-for inlining them.
+Ah, indeed the original mail was found in my spam folder. Thanks for
+resending.
 
-> Of course, once it's in mm-stable or upstream, things get more tricky :)
+> On 20.08.25 22:20, Vishal Moola (Oracle) wrote:
+> > Currently, we have no way to distinguish a kernel stack page from an
+> > unidentified page. Being able to track this information can be
+> > beneficial for optimizing kernel memory usage (i.e. analyzing
+> > fragmentation, location etc.). Knowing a page is being used for a kernel
+> > stack gives us more insight about pages that are certainly immovable and
+> > important to kernel functionality.
+> 
+> It's a very niche use case. Anything that's not clearly a folio or a
+> special movable_ops page is certainly immovable. So we can identify
+> pretty reliable what's movable and what's not.
+> 
+> Happy to learn how you would want to use that knowledge to reduce
+> fragmentation. 🙂
+> 
+> So this reads a bit hand-wavy.
+
+My thoughts align with Matthew's response. If we decide "This doesn't add
+enough value to merge it upstream" thats fine by me.
+
+Otherwise if we think this is useful, I can respin this with your
+suggestion below.
+
+> But I wonder, if this should actually go to the actual place where we
+> alloc/free.
+> 
+> Now that it's no longer required to clear page types when freeing,
+> alloc_thread_stack_node() might be a better place to set it, and to
+> leave it set until freed.
+
+I think this would be a better place to implement it as well.
+
+> I'll leave Willy whether we actually want this type, cannot spot it
+> under [1], but if we have sufficient types available, why not.
+> 
+> BUT
+> 
+> staring at [1], we allocate from vmalloc, so I would assume that these
+> will be vmalloc-typed pages in the future and we cannot change the type
+> later.
+> 
+> 
+> [1] https://kernelnewbies.org/MatthewWilcox/Memdescs
+> 
 > 
 > -- 
 > Cheers
