@@ -1,163 +1,164 @@
-Return-Path: <linux-kernel+bounces-798982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB54B42584
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36A60B42581
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083404849D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:31:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C60F3BD0AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5342727F0;
-	Wed,  3 Sep 2025 15:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D97C2417E6;
+	Wed,  3 Sep 2025 15:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="apnG0CKT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJkHJfIl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C276823D287;
-	Wed,  3 Sep 2025 15:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64481240611
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756913373; cv=none; b=Ev9j0IvHht1cY36Lw2XqO1WHGQNrOxh97NDGF4fNruGTc0woQnP3txPz9YT4cqe0wEqvFO/axMpFF+XiT1fwPFyiGssXYQdl2Yyzyc2bPYTOOxki0aRrq5KL6SipOjmGLa8tGIGYNe7gGT+T4VyPMUarvWyRG3Qft+oN3g6jzS8=
+	t=1756913370; cv=none; b=lcSTrAVEWNS2qyfC+/snHf4mSqCZ/nG5wEYwmpO5hdKUu2VuPmOdb6lOFq9n+80BvIIw24gvKTVOhhxUpq6a7nZpVK4TA62XgLmsNXG6wkUkUoQt026M5XJbMWEmHE8bQSLaQTD4Jat6cPps2H0rZOjECjOSHDl/d5UlVpChLjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756913373; c=relaxed/simple;
-	bh=VIC3yESeSFavKGxbmPdXIWhH/KHmeXOIED4A31+ezvE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HQAn0YUg5oqDl4Ow3Ac3SPFsTpMGQajXNu+XkUOp5Cs78jZXeYxN+Z6UXswOM4+4thFMLqAaH1MCDDiWcFYmv56uSD5FIJa15EVo8ySW/Vk2cUl2+B4apoFsbqtCKbawTlkE9VCjqw1JQulYajfNu/xzFnfD40V8R2f8dp66oOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=apnG0CKT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F2FC4CEE7;
-	Wed,  3 Sep 2025 15:29:33 +0000 (UTC)
+	s=arc-20240116; t=1756913370; c=relaxed/simple;
+	bh=ztrictOOXdKIOkZOv0vYw2oH6HTP2dFEhJNp2iYtftY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fb9PbSrGaqbMGS5e8G2TVHamdyavkB1ZPy+VczOE04ddY4CcRztDdPblHMQBmQpySafTmqpHHHKtKdEiVdP3g6N7RkBn59p+pi8ypgBilFlbbmk6zfEsHQmH4BGrTRhabk5R+pPhdJwp6Yvg8TyWgesTrVNNlWDMeFLw/JHKuFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJkHJfIl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59403C4CEE7;
+	Wed,  3 Sep 2025 15:29:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756913373;
-	bh=VIC3yESeSFavKGxbmPdXIWhH/KHmeXOIED4A31+ezvE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=apnG0CKTdKsdZHcilpZah+9QTA9Pp8xfDSZM28TFW3A/lnYW/imlO23Yo30cBBGaJ
-	 FGaW8LjAN6LvwhElgRSMceeMZhJdfeQch20cEt+2eLyIYVIcWPKPhzis378GXOVOSM
-	 jZiRhphCsvLh/+yrR3YM5mGsSC7HH+IEl+AXnJIDJHknOwJdQfat/egCULhZnnLEUe
-	 tTRhCLKOwRFcv6zrXJeugd5cWol4mRcJv3i7ZPisLE331rl0JAm+ardoLSW1juW5Ns
-	 5n1yLqrkqufDz+9UnhKbMuf1iwzKDdbeM/RYv18Y6UiAX4k03p72QHiR/DCDZnjUVJ
-	 bl+uTgi5gThcQ==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61cebce2f78so12738138a12.1;
-        Wed, 03 Sep 2025 08:29:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVNTNAylWNhwXV8XNSetbLUI5pi+SUsYo40w4qmI3i1NuPOYfLdfNpYDWP85O0UCAd3d6oTwe5JI9QLrj0=@vger.kernel.org, AJvYcCWeOLpeVcaTjIKy3o1e6cRT2bHMu8DN69rLOsZs9DndK0aJ2+0sGJln4ieQ/peZDLJn4xfIlbmcUKQh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8hUtAi/Rgpwb+ILvRrQF4nPn/qWfKNgU7BoffB3BgyWElUPjO
-	Gaf1wpFLipctvSkHZCf5+bGm95cI5wkYbXDn/pq4tFotmTgck7EH44QaoGuNoF0aFj6RKRm4ndT
-	xkcHO2f08berAP4K4Kul0SvQP2onf3A==
-X-Google-Smtp-Source: AGHT+IHIZntuL2/Ac5u2OaDFAuRDB+LbG/bkyWkqoVLmP8JAXC3VGc5IAFp7aOeSXvXSi7KwhtkL+44jIjkwTuJse7Y=
-X-Received: by 2002:a05:6402:3594:b0:61e:49dc:171f with SMTP id
- 4fb4d7f45d1cf-61e49dc176fmr10199592a12.1.1756913371891; Wed, 03 Sep 2025
- 08:29:31 -0700 (PDT)
+	s=k20201202; t=1756913369;
+	bh=ztrictOOXdKIOkZOv0vYw2oH6HTP2dFEhJNp2iYtftY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tJkHJfIlL+zKnBEtSDv4HCm/ViYjPOBC8zlDC7w2Srb3VZIA2c0Z8ev4XTcN+TfnW
+	 IGYL3t7dn+F4Uj+pUrzRnJDy5QnsYQKS9bLPSppvDTFwjCrTdEt7g/6pdIp5OXOaMt
+	 bk1d2aniL4RBlyGafV3k5qOQsm+JcXMrhtpS+ZrqvrYgzHy1/OLBX3RXzUF9kieg4/
+	 v92qiGfbvefKM1DRSFR/Fxm8t6UczfgA75Hyd9/fjHi+XAmUhteNhsLVh/Sk8RcFBI
+	 FcuxaSxKaKvTZZq3YzxVXgmOo1f/sHCbeJGvRcmbYfjP4JT7xJFdv7DvFSAvMC9DHk
+	 0iXpPf8wd6TOw==
+Message-ID: <f5581961-2e47-4cd4-86e9-47ec37f71c06@kernel.org>
+Date: Wed, 3 Sep 2025 10:29:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902151543.147439-1-klaus.kudielka@gmail.com> <hiu2ouj4f7zak2ovtwtigf6fylz4c7fdyyqiqezsddoouzr4n5@bfs7kudjfnp5>
-In-Reply-To: <hiu2ouj4f7zak2ovtwtigf6fylz4c7fdyyqiqezsddoouzr4n5@bfs7kudjfnp5>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 3 Sep 2025 10:29:19 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLo8WbHMtjdbsauncusFh--OkNWXcN_pkpPxxT8xAmBNA@mail.gmail.com>
-X-Gm-Features: Ac12FXy3-NzR24Y_vWe7NkORfh2uesLtfRvYO0BBWxGtos2fLyE26nKGT2Xfr8k
-Message-ID: <CAL_JsqLo8WbHMtjdbsauncusFh--OkNWXcN_pkpPxxT8xAmBNA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: mvebu: Fix the use of the for_each_of_range() iterator
-To: Jan Palus <jpalus@fastmail.com>
-Cc: Klaus Kudielka <klaus.kudielka@gmail.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bjorn Helgaas <helgaas@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 6/6] drm: panel-backlight-quirks: Log applied panel
+ brightness quirks
+To: "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+ Antheas Kapenekakis <lkml@antheas.dev>,
+ "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "philm@manjaro.org" <philm@manjaro.org>,
+ "Koenig, Christian" <Christian.Koenig@amd.com>,
+ Robert Beckett <bob.beckett@collabora.com>
+References: <20250829145541.512671-1-lkml@antheas.dev>
+ <20250829145541.512671-7-lkml@antheas.dev>
+ <CAGwozwHaWPwy6_LTvTy4ybdrN27fEXc-GbhYEt4_cM88_VGYPA@mail.gmail.com>
+ <588626d9-eb27-4376-8741-a1cc2e2e17cf@kernel.org>
+ <BL1PR12MB5144E131D87B8B6584CF297DF701A@BL1PR12MB5144.namprd12.prod.outlook.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <BL1PR12MB5144E131D87B8B6584CF297DF701A@BL1PR12MB5144.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 3, 2025 at 7:44=E2=80=AFAM Jan Palus <jpalus@fastmail.com> wrot=
-e:
->
-> On 02.09.2025 17:13, Klaus Kudielka wrote:
-> > The blamed commit simplifies code, by using the for_each_of_range()
-> > iterator. But it results in no pci devices being detected anymore on
-> > Turris Omnia (and probably other mvebu targets).
-> >
-> > Analysis:
-> >
-> > To determine range.flags, of_pci_range_parser_one() uses bus->get_flags=
-(),
-> > which resolves to of_bus_pci_get_flags(). That function already returns=
- an
-> > IORESOURCE bit field, and NOT the original flags from the "ranges"
-> > resource.
-> >
-> > Then mvebu_get_tgt_attr() attempts the very same conversion again.
-> > But this is a misinterpretation of range.flags.
-> >
-> > Remove the misinterpretation of range.flags in mvebu_get_tgt_addr(),
-> > to restore the intended behavior.
-> >
-> > Signed-off-by: Klaus Kudielka <klaus.kudielka@gmail.com>
-> > Fixes: 5da3d94a23c6 ("PCI: mvebu: Use for_each_of_range() iterator for =
-parsing "ranges"")
-> > Reported-by: Bjorn Helgaas <helgaas@kernel.org>
-> > Closes: https://lore.kernel.org/r/20250820184603.GA633069@bhelgaas/
-> > Reported-by: Jan Palus <jpalus@fastmail.com>
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D220479
-> > ---
-> >  drivers/pci/controller/pci-mvebu.c | 14 ++------------
-> >  1 file changed, 2 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controlle=
-r/pci-mvebu.c
-> > index 755651f338..4e2e1fa197 100644
-> > --- a/drivers/pci/controller/pci-mvebu.c
-> > +++ b/drivers/pci/controller/pci-mvebu.c
-> > @@ -1168,9 +1168,6 @@ static void __iomem *mvebu_pcie_map_registers(str=
-uct platform_device *pdev,
-> >       return devm_ioremap_resource(&pdev->dev, &port->regs);
-> >  }
-> >
-> > -#define DT_FLAGS_TO_TYPE(flags)       (((flags) >> 24) & 0x03)
-> > -#define    DT_TYPE_IO                 0x1
-> > -#define    DT_TYPE_MEM32              0x2
-> >  #define DT_CPUADDR_TO_TARGET(cpuaddr) (((cpuaddr) >> 56) & 0xFF)
-> >  #define DT_CPUADDR_TO_ATTR(cpuaddr)   (((cpuaddr) >> 48) & 0xFF)
-> >
-> > @@ -1189,17 +1186,10 @@ static int mvebu_get_tgt_attr(struct device_nod=
-e *np, int devfn,
-> >               return -EINVAL;
-> >
-> >       for_each_of_range(&parser, &range) {
-> > -             unsigned long rtype;
-> >               u32 slot =3D upper_32_bits(range.bus_addr);
-> >
-> > -             if (DT_FLAGS_TO_TYPE(range.flags) =3D=3D DT_TYPE_IO)
-> > -                     rtype =3D IORESOURCE_IO;
-> > -             else if (DT_FLAGS_TO_TYPE(range.flags) =3D=3D DT_TYPE_MEM=
-32)
-> > -                     rtype =3D IORESOURCE_MEM;
-> > -             else
-> > -                     continue;
-> > -
-> > -             if (slot =3D=3D PCI_SLOT(devfn) && type =3D=3D rtype) {
-> > +             if (slot =3D=3D PCI_SLOT(devfn) &&
-> > +                 type =3D=3D (range.flags & IORESOURCE_TYPE_BITS)) {
-> >                       *tgt =3D DT_CPUADDR_TO_TARGET(range.cpu_addr);
-> >                       *attr =3D DT_CPUADDR_TO_ATTR(range.cpu_addr);
->
-> Thanks for the patch Klaus! While it does improve situation we're not
-> quite there yet. It appears that what used to be stored in `cpuaddr` var
-> is also very different from `range.cpu_addr` value so the results
-> in both `*tgt` and `*attr` are both wrong.
->
-> Previously `cpuaddr` had a value like ie 0x8e8000000000000 or
-> 0x4d0000000000000. Now `range.cpu_addr` is always 0xffffffffffffffff.
-> Luckily what used to be stored in `cpuaddr`:
+On 9/3/25 10:03 AM, Deucher, Alexander wrote:
+> [Public]
+> 
+>> -----Original Message-----
+>> From: Mario Limonciello <superm1@kernel.org>
+>> Sent: Wednesday, September 3, 2025 12:53 AM
+>> To: Antheas Kapenekakis <lkml@antheas.dev>; amd-gfx@lists.freedesktop.org
+>> Cc: dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org;
+>> philm@manjaro.org; Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig,
+>> Christian <Christian.Koenig@amd.com>; Robert Beckett
+>> <bob.beckett@collabora.com>
+>> Subject: Re: [PATCH v3 6/6] drm: panel-backlight-quirks: Log applied panel
+>> brightness quirks
+>>
+>> On 8/29/2025 10:01 AM, Antheas Kapenekakis wrote:
+>>> On Fri, 29 Aug 2025 at 16:57, Antheas Kapenekakis <lkml@antheas.dev> wrote:
+>>>>
+>>>> Currently, when a panel brightness quirk is applied, there is no log
+>>>> indicating that a quirk was applied. Unwrap the drm device on its own
+>>>> and use drm_info() to log when a quirk is applied.
+>>>>
+>>>> Suggested-by: Mario Limonciello <mario.limonciello@amd.com>
+>>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
 
-~0 is OF_BAD_ADDR which means we couldn't translate the address. Seems
-it is not needed here, but it should work. Can you define DEBUG in
-drivers/of/address.c and post the log?
+Besides the one thing you identified this looks fine to me.
 
-Rob
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+
+>>>> ---
+>>>>    .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c    | 16 +++++++++++++---
+>>>>    1 file changed, 13 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>>>> b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>>>> index 263f15f6fdea..2a3e17d83d6e 100644
+>>>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>>>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>>>> @@ -3617,13 +3617,15 @@ static void update_connector_ext_caps(struct
+>> amdgpu_dm_connector *aconnector)
+>>>>           struct drm_connector *conn_base;
+>>>>           struct amdgpu_device *adev;
+>>>>           struct drm_luminance_range_info *luminance_range;
+>>>> +       struct drm_device *drm;
+>>>>
+>>>>           if (aconnector->bl_idx == -1 ||
+>>>>               aconnector->dc_link->connector_signal != SIGNAL_TYPE_EDP)
+>>>>                   return;
+>>>>
+>>>>           conn_base = &aconnector->base;
+>>>> -       adev = drm_to_adev(conn_base->dev);
+>>>> +       drm = conn_base->dev;
+>>>> +       adev = drm_to_adev(drm);
+>>>>
+>>>>           caps = &adev->dm.backlight_caps[aconnector->bl_idx];
+>>>>           caps->ext_caps = &aconnector->dc_link->dpcd_sink_ext_caps;
+>>>> @@ -3659,12 +3661,20 @@ static void update_connector_ext_caps(struct
+>> amdgpu_dm_connector *aconnector)
+>>>>           panel_backlight_quirk =
+>>>>                   drm_get_panel_backlight_quirk(aconnector->drm_edid);
+>>>>           if (!IS_ERR_OR_NULL(panel_backlight_quirk)) {
+>>>> -               if (panel_backlight_quirk->min_brightness)
+>>>> +               if (panel_backlight_quirk->min_brightness) {
+>>>> +                       drm_info(drm,
+>>>> +                                "Applying panel backlight quirk, min_brightness: %d\n",
+>>>> +
+>>>> + panel_backlight_quirk->min_brightness);
+>>>
+>>> mmm, needs a -1 here
+>>>
+>>
+>> You may as well re-order it too so that you set caps->min_input_signal and access
+>> it in this message.
+>>
+> 
+> With that fixed up, the series is:
+> Acked-by: Alex Deucher <alexander.deucher@amd.com>
+> 
+> 
+
+I've added a manual fixup for that change in the last patch and pushed 
+the series to drm-misc-next.
+
+a3ae3384be770 (HEAD -> drm-misc-next, drm-misc/for-linux-next, 
+drm-misc/drm-misc-next) drm: panel-backlight-quirks: Log applied panel 
+brightness quirks
+bf0365b005d9a drm: panel-backlight-quirks: Add Steam Deck brightness quirk
+aef10b1138e99 drm: panel-backlight-quirks: Add brightness mask quirk
+f7033fab81d82 drm: panel-backlight-quirks: Add secondary DMI match
+6eee1ef9e5985 drm: panel-backlight-quirks: Convert brightness quirk to 
+generic structure
+9931e4be11f21 drm: panel-backlight-quirks: Make EDID match optional
 
