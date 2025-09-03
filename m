@@ -1,103 +1,96 @@
-Return-Path: <linux-kernel+bounces-799489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F9CB42C7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:05:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAAAB42C81
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1F2B7A7D4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:04:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AD6D7AFCF1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACEE2D6E69;
-	Wed,  3 Sep 2025 22:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7B32EBDF9;
+	Wed,  3 Sep 2025 22:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UfQc6slY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=thejpster.org.uk header.i=@thejpster.org.uk header.b="nVCbtHOf"
+Received: from outbound.qs.icloud.com (p-east3-cluster2-host5-snip4-6.eps.apple.com [57.103.87.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFA51917FB;
-	Wed,  3 Sep 2025 22:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3487F2ECEA6
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 22:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.87.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756937127; cv=none; b=t/vncAlJ5S8aXu0804TGLx/6cP9F3IRk3hLrS6xt3B5d4skePmSXWvfAw5PON4EdB/AXzO3FkJ8JV52y9S5eTSrbGH3DlVRi/piVI3DeMclGctgxhZcyO7nogE69kLR+s6z0MnXmFr6eMGM9WQaRWYvpecyoKAZjjJD24B0QxbQ=
+	t=1756937134; cv=none; b=FIvOSx7zT+9hY9WTyM7wXcD31tRjMFMile42QWkOZxMznL5ZbA5NrhCGpxGspeOnxBk5eQEzhG3YBcTPjLYDfx2FuXb82LXIjrisk5yZA7QTpDdb7ungw2aKYa0gyG1LdmDQ2566sMCyWtFUVgTBY7kRqDlAA51998EOyJvmxFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756937127; c=relaxed/simple;
-	bh=S41McUg1GFAepvjvdzi9iRrNDfEtYbm9E7tlVxwsJPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SOdE8Qq0/0xCjhbPwxi/88yzV43mkYfddiylSW6sGoHQwNAf95GjSs99ebxPmBF49YheGwX9PpeHMYJT+2CfVtPBKzDu2y3iBkUTRh9XNV/eaNu9NzchCpDvLw1Exibpv9hm5NpxTtute4OLQ4Q5uG3VuKEUsiAAxMU7IEMbZgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UfQc6slY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 319E1C4CEE7;
-	Wed,  3 Sep 2025 22:05:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756937126;
-	bh=S41McUg1GFAepvjvdzi9iRrNDfEtYbm9E7tlVxwsJPE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UfQc6slYfQMBnPCDJerK0cu0D0UtYR7zMy3L5n/6lWOD+Sm1nlPHteuz8rAkigjaF
-	 comQPogIFriNuqp28SylY2PCnNnIy76jfl06/XxXAFLwpMC9qs4I3OyNOcBHC4Snkj
-	 cNFu9m5ZloMwvN9aNNGWxFEZGhOLJl+9LIRBctf+PwcpTlzoIGY7e3cqH4sil+bIpi
-	 90ZOix9N0R0/IUpwDqZCxmv0boz1gKZQl84RpNT/VdGZk6oNZZHW0grkiKtowmbwxd
-	 mqeB8gJXLmRJG2FfpGwQIfU52mmFVfcc1wYU/opVJMhecFVQSx2jtoTW3fnuC1/cTO
-	 YL4QdfOsMj5aw==
-Date: Wed, 3 Sep 2025 19:05:23 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Zecheng Li <zecheng@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/10] perf dwarf-aux: Use signed variable types in
- match_var_offset
-Message-ID: <aLi7o0hB23v7wpJ9@x1>
-References: <20250825195412.223077-1-zecheng@google.com>
- <20250825195412.223077-2-zecheng@google.com>
- <aK_8kt5Yf9MDoPdu@google.com>
- <aLhjnex4_SXpV_8N@x1>
+	s=arc-20240116; t=1756937134; c=relaxed/simple;
+	bh=2E/5JEVhFZR3/+WLzz2blRAhy7RX6tr6Ohn3x6/Kmfk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=UcAG0ZbOcFAi3R3aeLL1thEDjz/BVMotTTE2CDh+qXjhK4b7rIxnGugxj00Nj6kxq/sd/MkqqhzQYDOGD6+KZM2xUzyOgXR3tXRuFtp/pNjuAhIJf+8R7haNFbZyeLurLFJyshu35DBZnxUUEwk2FOAnZWb1J92rUMEQce9HcNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thejpster.org.uk; spf=pass smtp.mailfrom=thejpster.org.uk; dkim=pass (2048-bit key) header.d=thejpster.org.uk header.i=@thejpster.org.uk header.b=nVCbtHOf; arc=none smtp.client-ip=57.103.87.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thejpster.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thejpster.org.uk
+Received: from outbound.qs.icloud.com (unknown [127.0.0.2])
+	by p00-icloudmta-asmtp-us-east-2d-60-percent-0 (Postfix) with ESMTPS id 6E0511800885;
+	Wed,  3 Sep 2025 22:05:28 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thejpster.org.uk; s=sig1; bh=BQbEpJDpXkVpL/d8jHcTCe0lFwB6CEZ2QFaQu3KuxQc=; h=Message-ID:Date:MIME-Version:To:Subject:From:Content-Type:x-icloud-hme; b=nVCbtHOfsesf3FuegByKBQckpIvTn6DpZfU45WGS2l2/9XjNNCUp5IeFfyp/84OZC/SOleVoJNBJX1fc9uY8TzFzj2k55nS4wTa3uog0hfTdSZigTU+4q56kZCHQsF2IYDbAVL7ax8roUpmR9EqfWff90airLGSDxcy8j1vVePF7xGvZeze0ZizdfSBODUtqpSRRcuY9EKfjjlppwqRbmzgSqOicXXYlWcyfOjEGAsEg2Df1n3/6WAZWu8wU5ZnRmxbrpPx0uuXLlcuUJUjx0OzZpYvKF5CAmQ5NyC0VOoVxar9aTxuOSuRidXHUC1U4kTeqPJrP4O4J/SsfDR1TxA==
+mail-alias-created-date: 1648742848683
+Received: from [192.168.50.27] (qs-asmtp-me-k8s.p00.prod.me.com [17.57.155.37])
+	by p00-icloudmta-asmtp-us-east-2d-60-percent-0 (Postfix) with ESMTPSA id 262A61800886;
+	Wed,  3 Sep 2025 22:05:27 +0000 (UTC)
+Message-ID: <89b55629-da5e-41a0-967d-12f6e0a90854@thejpster.org.uk>
+Date: Wed, 3 Sep 2025 23:05:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLhjnex4_SXpV_8N@x1>
+User-Agent: Mozilla Thunderbird
+To: kernel@mkarcher.dialup.fu-berlin.de
+Cc: andreas@gaisler.com, anthony.yznaga@oracle.com,
+ glaubitz@physik.fu-berlin.de, linux-kernel@vger.kernel.org,
+ sparclinux@vger.kernel.org
+References: <20250826160312.2070-2-kernel@mkarcher.dialup.fu-berlin.de>
+Subject: Re: [PATCH 1/4] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for UltraSPARC
+Content-Language: en-US
+From: Jonathan Pallant <jp@thejpster.org.uk>
+In-Reply-To: <20250826160312.2070-2-kernel@mkarcher.dialup.fu-berlin.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAzMDIyMiBTYWx0ZWRfX0HPLCNf9gtVS
+ YsPzKWJ7aMD8dFgW4sQ7tw8WuN/h2PkLsxYLo6MJR4kxxF7ONzvU1AUOb8iNp3LfMrteHhzlOMg
+ YC0+EHpykkQ2SW4OBW95Qs7as61Ba42O9LVETcI1Cr8hGdqEVUOM2xRKKWoUCTcAFs3jBvj9SN5
+ JPl+sacXMApDKTv/o32mwkrpja9P4HmlriL/2nJfEpSWQ/6GIny6vcLLG3MmPsCpYlPQZlFv+lw
+ vIoQz/p53xAEieEuSe933l2r5/Hwv8vqsG43TV26GoyqeOuE5duJt6WhHveOQAJYntsOENsnA=
+X-Proofpoint-ORIG-GUID: Ko1z_yd-ktEjKv28ecF7feEI2eFl_t1G
+X-Proofpoint-GUID: Ko1z_yd-ktEjKv28ecF7feEI2eFl_t1G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_10,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0
+ suspectscore=0 adultscore=0 mlxlogscore=534 spamscore=0 malwarescore=0
+ bulkscore=0 mlxscore=0 clxscore=1030 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.22.0-2506270000 definitions=main-2509030222
+X-JNJ: AAAAAAAB6wmTerPm9zUOnI5L584fG8O/swGXNVBk/G+9hht+8uNuAS1dwWvBaWbjD2SNXtfjQNDElZrOze1cI2nYC8ic6ebcJOSDygjOjAbsMVsmGPOccGbcODFJsFRzIACQn8AdWo2EO78hIfgmat2KvDOH+1KBy4oM7xXCS/QGMBkwW4TBPNINz0BaDuHAtM/iM+UKg96qJR+pJzOJHAXhNqoKO0RioKMMJ2pSR4dWPrGPgIpBHQiweaj+hq0O+8dGBufojs9ad+4yYyKMAGz0p4Aur8qZQSQI6nVF5J98pF7Sn3RzCCehCeDxnF+O/wn1n55BHf6Y91xyq2nQ81tjnUFWL1+J58xBm/0fJyqHajzGztaQiJUKtjYDGiKtdwPJdFfbKg/Osv0D7Wu9o7VCbp9nP/KUCtWsatOX1HQEf5CpfMWcxwchxMY4PV5DunqVsJZ9x1yZ/xerE8CmGWITlQF/rM8QcozTA+V1cE+THlTIo3awSeanJiCD7mUaj1JKMB4m8bISLJdQxIvUS4FNoAkmq7JWVzWpm+Lpy9TLlPmzdUJqB04GSo4pztIl/rWKBq/pc7Y6JnPQA9whCtS1O1pliaEtnU4DWMcrDq9jDV2SJfzwsitdjmMHPpFd+ZH605wfCDHOzOdvCDY+Qx4quYb2Fsvxp21A+SMRE2QkjvJHas/aoXI9C22PdQFxLKOuN49IMLBSyGiq/XI=
 
-On Wed, Sep 03, 2025 at 12:49:49PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Wed, Aug 27, 2025 at 11:52:02PM -0700, Namhyung Kim wrote:
-> > On Mon, Aug 25, 2025 at 07:54:03PM +0000, Zecheng Li wrote:
-> > > match_var_offset compares address offsets to determine if an access
-> > > falls within a variable's bounds. The offsets involved for those
-> > > relative to base registers from DW_OP_breg can be negative.
- 
-> > > The current implementation uses unsigned types (u64) for these offsets,
-> > > which rejects almost all negative values.
-  
-> > Right, I thought it cannot get negative offsets except for stack access
-> > (e.g. fbreg).  But it turns out that container_of() trick can generate
-> > them with optimizing compilers.
-  
-> > > Change the signature of match_var_offset to use signed types (s64). This
-> > > ensures correct behavior when addr_offset or addr_type are negative.
- 
-> > > Signed-off-by: Zecheng Li <zecheng@google.com>
-  
-> > I've confirmed it produced slightly better results on my test sets.
-  
-> > Reviewed-by: Namhyung Kim <namhyung@kernel.org>
- 
-> Cherry picked this first patch to make a bit of progress in the
-> perf-tools-next front.
+ > Fixes: cb736fdbb208 ("sparc64: Convert U1copy_{from,to}_user to 
+accurate exception reporting.")
+ > Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
 
-It is in perf-tools-next/perf-tools-next now (this first reviewed one):
+Hi all,
 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/?h=perf-tools-next
+I have a Sun Netra t1 (UltraSPARC-IIi at 440 MHz) which crashed a
+lot running Linux 6.1.0-9-sparc64 from Debian sid. It couldn't even
+complete an `apt-get upgrade` without locking up.
 
-- Arnaldo
+With glaubitz's assistance, I've now installed kernel
+6.12.3-sparc64 with this patch and the machine is working much
+better. I was able to install openssh-server and run a bunch of
+tools that simply didn't work on the previous kernel.
+
+Tested-by: Jonathan 'theJPster' Pallant <kernel@thejpster.org.uk> # on 
+Sun Netra t1 (UltraSPARC-IIi)
+
 
