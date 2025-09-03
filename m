@@ -1,112 +1,85 @@
-Return-Path: <linux-kernel+bounces-798309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C650B41C26
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:45:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE1AB41C28
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37839561285
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:45:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE2A1561498
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342512F2906;
-	Wed,  3 Sep 2025 10:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59AC2F39D4;
+	Wed,  3 Sep 2025 10:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i3QnUAL6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUPe8Rjp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333962F0C6D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF5C2F39A0;
+	Wed,  3 Sep 2025 10:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756896308; cv=none; b=UuhKf2F7G/MiyetgeJJkZN15bmktAUWKiKcONKoGNvEpKQYGUyMcfHOE2ZJqmcOtKeXopOqHtQBnGRIrISuIBgRkOtjStYvhEvTGiusw0fz7Dnw2Td6/shfc2WhtyIRfViZ4zBcX2mnoO83edM8dJEJbUkYwtPPWF9lJVnzFcNQ=
+	t=1756896310; cv=none; b=O3NE3nCMQ/N2jnYpjW4uC9zk780m9lEG6L+TriKrnOqKXe1Vhf7mH/4RJF5C/OGAYSiK+yojQMU26O5C/fkB0V16zTcFh4gOXXfylEapVWAXrbjYgaE12kKFVW0vrkxCGn9OYxiflFjmwDm90bfb3M0GAXC5eUBYpz92eWs12zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756896308; c=relaxed/simple;
-	bh=4UtO5nfHOeYxD/eO8raCJFgoEWhsx4yjbyMN+ZrOqoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=clMsr3NiQBifUfWq2+7yeSIZ0sAj9WMngSFrG9XUivtpM7EW6ERj54UwLKEX4FPTTVq1gv3WqQOTLtjMnxsA8yrlE0+9+Pb/J9SxW0mOa0SaTn8u2BwV7Vkla1Aw0wVO59PUn6XjUrM/IuqOx5V93LJLZ5Q0P/LhLmVT7nkvrBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i3QnUAL6; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756896307; x=1788432307;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4UtO5nfHOeYxD/eO8raCJFgoEWhsx4yjbyMN+ZrOqoI=;
-  b=i3QnUAL6j4rbNVIBF7Jp8ih/+5qvT5M2++GxltKc161IH7cmXeqhcqlu
-   QgrStB2dOqWaJxnuJZq8wNIKL+ZAD+M64pLMZI85DfKcgbYVxV30PgCn9
-   Db7GywaNpSDNynQAAyw1fRQsWXLTFpJ0ozeOjzSb23D1cAwtSKOkDr86f
-   ERtjNBduTRm7+s/UQBfCNBoHDKQszaxhzHWEUXtlHaZWFjM55tJGQjda8
-   KSvX+9gJBg9VqkkEfdbzl7guijwINuB2ZLU2TfJvWXeNdTDWOVm+40/HP
-   f+IYVg4y//NmNGZqedsZSaQrtVE1X4cf8nkFMfDvy4JvO9hI4j/BK434s
-   A==;
-X-CSE-ConnectionGUID: Q/2EzG3vRP+qZX2BgohOqA==
-X-CSE-MsgGUID: 9pVImyAfQBan2d5QkZcIUg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="70304014"
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="70304014"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:45:06 -0700
-X-CSE-ConnectionGUID: WEw+a88iR+SXrOKK+VQZfw==
-X-CSE-MsgGUID: 00t/2mvRSeK1s3MHE2PpkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="195183550"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:45:04 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1utkz8-0000000AxZU-0yDZ;
-	Wed, 03 Sep 2025 13:45:02 +0300
-Date: Wed, 3 Sep 2025 13:45:02 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: Peter Tyser <ptyser@xes-inc.com>, Lee Jones <lee@kernel.org>
-Subject: Re: [PATCH v1 2/2] mfd: lpc_ich: Convert to use resource_rebase()
-Message-ID: <aLgcLju74eF5V78-@smile.fi.intel.com>
-References: <20250903081414.1972179-1-andriy.shevchenko@linux.intel.com>
- <20250903081414.1972179-3-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1756896310; c=relaxed/simple;
+	bh=mEqfqIFN4bM6DV8MElBDJVLtVNf3iLrehirNhXZIsBk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=As6tlDcyNvxlMuzvp+5LH6xt4qVD00BrWCE6N8d68exQCkxYZR4Mx0DKP2AQB/27OWsIK/5xGv5nqm9AJTuTKzCMSODkawBbGU3U2PSUheBB8y9s3rp9uPNzQLQtpt4JfI0E2C5zA9lbLrjqdA22ilVVhI4iXeeIJTTuafcM99s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUPe8Rjp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE010C4CEF0;
+	Wed,  3 Sep 2025 10:45:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756896310;
+	bh=mEqfqIFN4bM6DV8MElBDJVLtVNf3iLrehirNhXZIsBk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=WUPe8RjpCcpBowXq0/+Ziajl57mWKTKeXJwmPRn+TZewubJLYLC8jGnOPXgGIaFMy
+	 XWJNs9OwNnCwE4RP5L3ISNHCOg8Ig4KizN2DiD4lkDlx3o1i5oj6P7EVHFpZ7e9IWc
+	 MfZgnZEQi6VCMu6j/ovD+Ltbs1yleN1K7bIuH0rVRgOLD/i19b+gQe2KlV8toJju6K
+	 uqwSQL9W25UPZULm8ofRVy3PuwRPJbtscxi86KB+eT3pwLvvzvEP/or2Rm68A5D/A6
+	 oxkwaG7N0Fc3MMzWNC+dU+CnvJ66xEo813WqJfcGFAfxSEsGXjCzFz71IFRqtjsWno
+	 pXYsUl6zNDYRA==
+From: Lee Jones <lee@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, 
+ Michael Walle <mwalle@kernel.org>
+Cc: jcormier@criticallink.com, Job Sava <jsava@criticallink.com>, 
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+In-Reply-To: <20250826134631.1499936-1-mwalle@kernel.org>
+References: <20250826134631.1499936-1-mwalle@kernel.org>
+Subject: Re: [PATCH v2 0/3] mfd: tps6594: add power button and power-off
+Message-Id: <175689630841.2597045.5125819314695096057.b4-ty@kernel.org>
+Date: Wed, 03 Sep 2025 11:45:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903081414.1972179-3-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
-On Wed, Sep 03, 2025 at 10:12:29AM +0200, Andy Shevchenko wrote:
-> Simplify the resource handling by converting to use resource_rebase().
-> No functional change intended.
+On Tue, 26 Aug 2025 15:46:28 +0200, Michael Walle wrote:
+> I took over the series from [1] since the original developer was an
+> intern and is no longer with their former company.
+> 
+> Changelog is in the individual patches. But the most prominent
+> change is that the pin mux config is now read from the chip itself
+> instead of having a DT property.
+> 
+> [...]
 
-...
+Applied, thanks!
 
->  	for (i = 0; i < info->nr_resources; i++) {
->  		struct resource *mem = info->resources[i];
-> -		resource_size_t offset = info->offsets[i];
->  
-> -		/* Fill MEM resource */
-> -		mem->start = base.start + offset;
-> -		mem->end = base.start + offset + INTEL_GPIO_RESOURCE_SIZE - 1;
-> -		mem->flags = base.flags;
-> +		/* Rebase MEM resource */
-> +		resource_rebase(mem, base.start);
->  	}
+[1/3] input: tps6594-pwrbutton: Add power button functionality
+      commit: 170031ff27dd7a07fdedee7f3710a19dcdf889bd
+[2/3] mfd: tps6594: add power button functionality
+      commit: d766ca01c208bdf0f36098607efe1e250ccf41c5
+[3/3] mfd: tps6594: Add board power-off support
+      commit: 2215a87b02ad8d353cd3edebd1bed01db2458986
 
-We may gain 3 LoC more by dropping temporary variable.
-
-But I will wait for the reviews in general before mocking up v2 of this.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+--
+Lee Jones [李琼斯]
 
 
