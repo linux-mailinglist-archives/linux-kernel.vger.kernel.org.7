@@ -1,197 +1,151 @@
-Return-Path: <linux-kernel+bounces-798872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8533B4241A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:54:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A9DB4241E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11EF248785B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:54:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 422297AE3DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF13C30C358;
-	Wed,  3 Sep 2025 14:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F95A3126C5;
+	Wed,  3 Sep 2025 14:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ElGRsFvJ"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cOYnk5FL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D3D30BB8D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8B13112C4;
+	Wed,  3 Sep 2025 14:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756911241; cv=none; b=staL8nlYtpM6R9vY4ZPIpQr+s37ShWsNqMkhY59iSIjZ75MoGUijj/9YVeqoqPxHZRr+03vYK+jLfb/qaNuEzzeNT+Yd1apUJZKX/qUhC7kYwpB3ZMKiBUTV6l8WiGkJaIAoFiyFdG8lmvQYL7gNVCtxyYmC6vBtarYIMEIJDbk=
+	t=1756911243; cv=none; b=TUSwO+vShVI3MVO79TFH2Rab87YaZPBLuP4uG+iOk7kXXq7vGFzAXC1J2RAsEo1XkgWTkAJ2rCiaIhqPZYflzeh4kqs30Sq4QGxyXdctD8Xkkn2CIB4RkAB7qx04yUN5+VELEhZypC48JgyPqW0EtDl73wYHur/qCcbsOpqDer8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756911241; c=relaxed/simple;
-	bh=unDqZyH1QB0AZnE+jIy/cbveVXnikGD65lmG99tqIe0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fCeSB6FsP6bAK6O6fQbfpV8rIgmrBrENd54Z4KFPWbCiGoC3XPLi2JO2N4cLY6vhkpBOWHEDNQJHckZ92uZqfrqivskjMxPtPDPzkKAX2aulbUC989yxercWMzSXWnZm6rYzbm308tCsP4iy9Y6tfHKGZPYJrWI/GX5FdX7z1T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ElGRsFvJ; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3cdc54cabb1so17828f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 07:53:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756911238; x=1757516038; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yoaNAmWhIibGu6l1WRy5RqFKcSEP315ehpRCdLHsl14=;
-        b=ElGRsFvJjKb6W+daOxlv/O2CFyeAtJ9hdLOWpcnFaGSxSPsuYAkaxMmOAg1MW9sP/G
-         vLzzNlbMhIlhOer4oDjNeEqtqVnfOO200OW9o9b9qbjgtypayBW2sIMiifggZFNwx14y
-         /ZMgdlaE7XoJVhotKXe9+KajSTPcCUWhvfiZJPnwDFRDLRjL4Wq8CS1ZIR6da0mjq7P9
-         apEVHzZtQVfRodptHAtsVTcT3/XqT0WDMG5oEnpkm0LRK3fmsw5n7npiV9aP3cKAPzQS
-         37F+atFcfecj2TJlaucd08UiTxlytYxBsairpQY68RtR5uBWiIztgvvEJ0a+61TDflWE
-         cQeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756911238; x=1757516038;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yoaNAmWhIibGu6l1WRy5RqFKcSEP315ehpRCdLHsl14=;
-        b=ZYX7mduC5OF7SamUOV/IjAp6U8780PiCIBka2r3yH93gFXDEN6Mwe1OMud17nFE43o
-         VnWGpbqB+PVv2RSsOMT33Q2h+y1t9DbxXLlB2V+NUt7n2Sl/ChXxCD6UWRYvsrqZjY9q
-         1dYteEYgObpo2KojKHkjyHRzev7szvCvUF/SIMhvOQkF8/I8E0eRbuhQ0vOm8WqbXuKO
-         ZVbtNV7NmmQunGhvoa/tDtQuksJIv3mcIg7aYNBM58QeDT5L3m4wGZgq8Mbis9LG6A/3
-         E4ui6Y2uvCmZHKnZyRytrYmdDoRxJlwSVwvVZooiP5yIcv//LfTGhboo3IeVDbzSR6DU
-         iRQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqlg8mEWEblhUW3T4uaPBLp1CGonHgtkTimVDA0DVxwcLfAsOygMePBtNfEGy8Yny63oT7g990ePPkXow=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymNwZuYudLyKco+ldbtzXILo6LdvtfrO0UNgnm49jcsf9U1nvK
-	ErBRmZHHVhRzSZfaeT36ArAyst/YHNanYCEJFr0bxAhsbryLeSn8Vvf3QiTBTNzQFZM=
-X-Gm-Gg: ASbGncsW8D0q7ooDuJN4s4PWU+w2mwaFpPm2Xyt2zZb1W0dTIeiUoF35ATbyeAB2cwc
-	XF05DZ1LRXWuIz+g/B5mRqnt0YnRgKzUwu3eRZbbdQeqAq4S1k3nQParRKZuqIryqiYOkrscttX
-	6z7uh5M8VmkpDUKEMOfzYFGFrHgqSUR273ls8mO6JGwSt5sD8461+f2OQJ74UQ7YNpjsmokMdea
-	yJimhbhz+/Q9B1gXM0M3YgKEOOSwI9pFVGUDecizL1eGb5rWNwBkghXaD69q4bAgyz/DH9RxmiL
-	Q0p5WzVE0ivcrysn23QSAGCXOA+yoFRJc71q1CtKyCGoNJu6MCcRYXSIgNL6qyeurH/HxilQ4L6
-	+N/bJm9gO8bh+tqWG0hzHuRvALnwRc2LsXPbH7WzGYLXgQ2A4bq6sHbA6M03HOgCI6zRn9jUw6W
-	7HQLvOJhazdkdbL4LoMD4eUIw=
-X-Google-Smtp-Source: AGHT+IHKfKTbLX6DEzjRIqHHgWQYsVAqnbGKlA7TGvZ37mdtddbwJKcqflssNkEpjctd+pomGp9Tmg==
-X-Received: by 2002:a05:6000:2908:b0:3d1:8d1e:906 with SMTP id ffacd0b85a97d-3d1e08a06aemr12584267f8f.59.1756911237655;
-        Wed, 03 Sep 2025 07:53:57 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:2a30:223c:d73b:565a? ([2a05:6e02:1041:c10:2a30:223c:d73b:565a])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45b940bbc0dsm89079915e9.2.2025.09.03.07.53.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 07:53:57 -0700 (PDT)
-Message-ID: <3659b492-c135-4fe1-9ffe-70877e4da0f5@linaro.org>
-Date: Wed, 3 Sep 2025 16:53:56 +0200
+	s=arc-20240116; t=1756911243; c=relaxed/simple;
+	bh=7dxGcjkVQEaBQwL4M7LziNmEIKiJ5GLHnlBKDFlV1x4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=bAn+53cwaWYOJ3eLdzlkvl7XvlZc9yOgMzPcbi2UUzHdhioETuJbxGw7hq3zxS2PvoLeM945p3NZIfc2XRxBue112R7y5srSNgFb0BPSFPkIUfwqrg+A1m7pNDCMHkkm3RonrPLt0K9Mwq8BaP2L6jjEdU7jI5WrGDjwE8Vf0cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cOYnk5FL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DED0C4CEF0;
+	Wed,  3 Sep 2025 14:53:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756911243;
+	bh=7dxGcjkVQEaBQwL4M7LziNmEIKiJ5GLHnlBKDFlV1x4=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=cOYnk5FLKNlwh9PbZjvvg9kqFbsgBfKkUoUjIFl87XE4B3zWld6UdRWlywX2SnV1/
+	 j4Quq4c2Mjixm6/oxIaFuMMm5KNp5Y+a3EtVEA3maIcpQtxmpo3IgDffU9l96ieClU
+	 s4nQW7A9gQjfBCdMV9gqLVd4igDUp0zIh9TCDdX1YfKj3qp7IQmUEGgbzNl2DkAE5Z
+	 8QNJ2AJuKi4js9nSBkrFMuenQ/ktrly/VMSdIs8bVVBqOhKJdgx9Lj0e6DOdLPnV2G
+	 PyvhG/4RqwBYiPOVP/pKhI+aYCGQMDwUIXsLjaDBfwBZoVvVOtPs95IeTTAhbqqQoW
+	 kaf5jPmxdl4ag==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] iio: adc: Add the NXP SAR ADC support for the
- s32g2/3 platforms
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>, jic23@kernel.org,
- dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
- conor+dt@kernel.org, krzk+dt@kernel.org
-Cc: linux-iio@vger.kernel.org, s32@nxp.com, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, chester62515@gmail.com, mbrugger@suse.com,
- ghennadi.procopciuc@oss.nxp.com
-References: <20250903102756.1748596-1-daniel.lezcano@linaro.org>
- <20250903102756.1748596-3-daniel.lezcano@linaro.org>
- <eedbfbfd1ba625b6750eb3ae20a69301b8bc3ef9.camel@gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <eedbfbfd1ba625b6750eb3ae20a69301b8bc3ef9.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 03 Sep 2025 16:53:57 +0200
+Message-Id: <DCJ9206YBEV2.1ICN4VILLM09J@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Joel
+ Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
+To: "Alexandre Courbot" <acourbot@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v3 02/11] gpu: nova-core: move GSP boot code out of
+ `Gpu` constructor
+References: <20250902-nova_firmware-v3-0-56854d9c5398@nvidia.com>
+ <20250902-nova_firmware-v3-2-56854d9c5398@nvidia.com>
+ <DCIKSL18GE9A.2R4BAGR56YVPF@kernel.org>
+ <DCIZ5VVLACXO.1L0QTYM5YVRQV@nvidia.com>
+ <DCJ0T81CZQ88.6IK6LG0E0R02@kernel.org>
+ <DCJ3R8YQUYK1.3K5BCWHMAEOL7@nvidia.com>
+ <DCJ46WGRUXR8.1GKGGL2568E1X@kernel.org>
+ <DCJ5ZOH6DO2S.8GGF9FABSVNT@nvidia.com>
+In-Reply-To: <DCJ5ZOH6DO2S.8GGF9FABSVNT@nvidia.com>
 
+On Wed Sep 3, 2025 at 2:29 PM CEST, Alexandre Courbot wrote:
+> To be honest I am not completely sure about the best layout yet and will
+> need more visibility to understand whether this is optimal. But
+> considering that we want to run the GSP boot process over a built `Gpu`
+> instance, we cannot store the result of said process inside `Gpu` unless
+> we put it inside e.g. an `Option`. But then the variant will always be
+> `Some` after `probe` returns, and yet we will have to perform a match
+> every time we want to access it.
+>
+> The current separation sounds reasonable to me for the time being, with
+> `Gpu` containing purely hardware resources obtained without help from
+> user-space, while `Gsp` is the result of running a bunch of firmwares.
+> An alternative design would be to store `Gpu` inside `Gsp`, but `Gsp`
+> inside `Gpu` is trickier due to the build order. No matter what we do,
+> switching the layout later should be trivial if we don't choose the
+> best one now.
 
-Hi Nuno,
+Gsp should be part of the Gpu object. The Gpu object represents the entire
+instance of the Gpu, including hardware ressources, firmware runtime state,=
+ etc.
 
-On 03/09/2025 13:20, Nuno Sá wrote:
-> On Wed, 2025-09-03 at 12:27 +0200, Daniel Lezcano wrote:
->> From: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+The initialization of the Gsp structure doesn't really need a Gpu structure=
+ to
+be constructed, it needs certain members of the Gpu structure, i.e. order o=
+f
+initialization of the members does matter.
+
+If it makes things more obvious we can always create new types and increase=
+ the
+hierarchy within the Gpu struct itself.
+
+The technical limitation you're facing is always the same, no matter the la=
+yout
+we choose: we need pin-init to provide us references to already initialized
+members.
+
+I will check with Benno in today's Rust call what's the best way to address
+this.
+
+> There is also an easy workaround to the sibling initialization issue,
+> which is to store `Gpu` and `Gsp` behind `Pin<KBox>` - that way we can
+> initialize both outside `try_pin_init!`, at the cost of two more heap
+> allocations over the whole lifetime of the device. If we don't have a
+> proper solution to the problem now, this might be better than using
+> `unsafe` as a temporary solution.
+
+Yeah, this workaround is much easier to implement when they're siblings (le=
+ss
+allocations temporarily), but let's not design things this way because of t=
+hat.
+
+As mentioned above, I will check with Benno today.
+
+> The same workaround could also be used for to `GspFirmware` and its page
+> tables - since `GspFirmware` is temporary and can apparently be
+> discarded after the GSP is booted, this shouldn't be a big issue. This
+> will allow the driver to probe, and we can add TODO items to fix that
+> later if a solution is in sight.
+>
 >>
->> The NXP S32G2 and S32G3 platforms integrate a successive approximation
->> register (SAR) ADC. Two instances are available, each providing 8
->> multiplexed input channels with 12-bit resolution. The conversion rate
->> is up to 1 Msps depending on the configuration and sampling window.
->>
->> The SAR ADC supports raw, buffer, and trigger modes. It can operate
->> in both single-shot and continuous conversion modes, with optional
->> hardware triggering through the cross-trigger unit (CTU) or external
->> events. An internal prescaler allows adjusting the sampling clock,
->> while per-channel programmable sampling times provide fine-grained
->> trade-offs between accuracy and latency. Automatic calibration is
->> performed at probe time to minimize offset and gain errors.
->>
->> The driver is derived from the BSP implementation and has been partly
->> rewritten to comply with upstream requirements. For this reason, all
->> contributors are listed as co-developers, while the author refers to
->> the initial BSP driver file creator.
->>
->> All modes have been validated on the S32G274-RDB2 platform using an
->> externally generated square wave captured by the ADC. Tests covered
->> buffered streaming via IIO, trigger synchronization, and accuracy
->> verification against a precision laboratory signal source.
->>
->> Co-developed-by: Alexandru-Catalin Ionita <alexandru-catalin.ionita@nxp.com>
->> Signed-off-by: Alexandru-Catalin Ionita <alexandru-catalin.ionita@nxp.com>
->> Co-developed-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
->> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
->> Co-developed-by: Radu Pirea (NXP OSS) <radu-nicolae.pirea@oss.nxp.com>
->> Signed-off-by: Radu Pirea (NXP OSS) <radu-nicolae.pirea@oss.nxp.com>
->> Signed-off-by: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
->> Co-developed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> ---
-> 
-> Hi David,
+>> I thought the intent was to keep temporary values local to start_gsp() a=
+nd not
+>> store them next to Gpu in the same allocation?
+>
+> It is not visible in the current patchset, but `start_gsp` will
+> eventually return the runtime data of the GSP - notably its log buffers
+> and command queue, which are needed to operate it. All the rest (notably
+> the loaded firmwares) will be local to `start_gsp` and discarded upon
+> its return.
 
-s/David/Daniel/ :)
-
-> Just some minor review for now...
-
-Whow, thanks for fast review !
-
-[ ... ]
-
->> +static int nxp_sar_adc_dma_probe(struct device *dev, struct nxp_sar_adc
->> *info)
->> +{
->> +	struct device *dev_dma;
->> +	int ret;
->> +	u8 *rx_buf;
->> +
->> +	info->dma_chan = devm_dma_request_chan(dev, "rx");
->> +	if (IS_ERR(info->dma_chan))
->> +		return PTR_ERR(info->dma_chan);
->> +
->> +	dev_dma = info->dma_chan->device->dev;
->> +	rx_buf = dma_alloc_coherent(dev_dma, NXP_SAR_ADC_DMA_BUFF_SZ,
->> +				    &info->rx_dma_buf, GFP_KERNEL);
->> +	if (!rx_buf)
->> +		return -ENOMEM;
->> +
-> 
-> The above needs some discussion at the very least. Have you considered the IIO
-> DMA buffer interface? It should be extendable to accommodate any particularity
-> of your usecase (or we should at least discuss it).
-> 
-> With it, you also gain a userspace interface where you can actually share DMA
-> buffers in a zero copy fashion. You can also share these buffers with USB
-> gadgets. For instance, with libiio, you would be able to fetch samples from your
-> host machine (through USB) in a very fast way (zero copy between IIO and USB).
-> 
-> Setting up DMA to then "having" to push it to a SW buffer and needing a syscall
-> to retrieve the data seems counter-productive.
-
-I'm not very used to dma. If there is a better implementation to put in 
-place I'll be glad to take any suggestion to understand the approach.
-
-Is there any driver using the IIO DMA buffer interface I can refer to ?
-
-[ ... ]
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Ok, that makes sense, but it should really be part of the Gpu structure.
 
