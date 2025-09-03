@@ -1,126 +1,113 @@
-Return-Path: <linux-kernel+bounces-799290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE808B4299D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40B92B4299F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A7203B5E3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:17:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D342C3B5E3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6282D8382;
-	Wed,  3 Sep 2025 19:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39397350D76;
+	Wed,  3 Sep 2025 19:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l3KayKP3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gS3mKbMF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29862D374A;
-	Wed,  3 Sep 2025 19:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE1F2D374A;
+	Wed,  3 Sep 2025 19:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756927052; cv=none; b=a76N/ycj+u2u7c3oYJU8O8jF19ikJvMZUjVrMTBbjDCRCUum4+uo4UePmW9HgNKYqZcUyPcO0e4vDa7uI3XQnDT3b+qXrC67yfGW2ZVRuopXLJWvBXvIYzhW4Y/tz7wOqyN3dl/PjTw5N+bR3ucHT/Ucd0Q7T0JDA2DrMpSIvtc=
+	t=1756927060; cv=none; b=JpZoG85biDGZl5knz7sYdwCU8MuYZG2F4AZuk9FDHQcgB7Yeep6kqIyqgwHZ8rqIsrbdyzEc0XBa7qr45N+XUstp2M1QQzb+/huBMe9/uM17Ujb6iyUXg3p/x5+2UL1ug52EFvtYHcDqXvEWA/klvT+pW10+zJ2xaZflEQcRx6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756927052; c=relaxed/simple;
-	bh=jcliH/w/a10uidu32SOmf201Z4fKoKFtR+/ALkAVbNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AqR2c3Uiht0mBgOCZ6fuBoEGxxDXHle8jCGrfsiNQC4/zjn6tDnUOpJL/v9HsjBWW3Ap7zJ024x9KnSRytg1MOvYBI9FsUPi5xgBnYtT01c06S8GGrGISLUSxwvkpZKcGgYG0G765sqOz0TUfevM7IKMm0eOouKxOgFN3nPnfvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l3KayKP3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CE7FC4CEE7;
-	Wed,  3 Sep 2025 19:17:31 +0000 (UTC)
+	s=arc-20240116; t=1756927060; c=relaxed/simple;
+	bh=g/Bz4I6EWjnXiglfW0xnAhMe1F3tQ/a9mgK7S6YMdN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lQBU1gXKQ69GXjL+6z4K2DX7hpBRCmh6EVl6IxS2+d9tMpWFgD8u6xudBYDO5po7m11K9HY0f/HU5cVmHy/89ShoPFeDx7kzvnmUNLkCGZiCty/8/tf91k0ybk5cf6TQ6BwneGevVmh9T7nAMGlGXkDsb5Ec9UN+4RlloFw5H0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gS3mKbMF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8135C4CEE7;
+	Wed,  3 Sep 2025 19:17:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756927052;
-	bh=jcliH/w/a10uidu32SOmf201Z4fKoKFtR+/ALkAVbNI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l3KayKP30VUp7HMTIBpFTDJv8yCdTfL63G+LkNamStVNqKqk7VoxJ78g91myKiup9
-	 IkZFtT333agNfrHIME6AXI9FbVsN3ocZevToMV692qqZ3ECLKEVytskR4NoB8eSpvF
-	 33mD/Rx9MtdKl9myd9ZwNn6geHeV7cDZPqJYG+3/NDM9l/wtZZQXFpyQ5ryejIyXqr
-	 xJT4XAG0garx1ubNQoplWpozn2AHaHnOn/OMq09e9kVFskLVPAyvukO4vLZOKEjkrw
-	 5aVqo+VLMvYpTBxfG/51hnu3QnamaII91wSQUn1gBCjeP8sxoNVMTfs11dituVLQaJ
-	 6WV/I2kmqX8pg==
-Date: Wed, 3 Sep 2025 12:17:29 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Peter Zijlstra <peterz@infradead.org>, 
-	Huacai Chen <chenhuacai@kernel.org>, Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] objtool/LoongArch: Fix fall through warning about
- efi_boot_kernel()
-Message-ID: <qvatvh7rixtdtaflqtgphlva7kkr47drijklkvmae3xh54vn6y@y5v75lwgjdyu>
-References: <20250901072156.31361-1-yangtiezhu@loongson.cn>
- <20250901072156.31361-2-yangtiezhu@loongson.cn>
- <20250901081616.GA4067720@noisy.programming.kicks-ass.net>
- <a59b3eaa-133d-88bf-f1f3-41328d023c4a@loongson.cn>
+	s=k20201202; t=1756927060;
+	bh=g/Bz4I6EWjnXiglfW0xnAhMe1F3tQ/a9mgK7S6YMdN0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gS3mKbMFFfM1sF+4vr4MZRsga3oIjgveJIbt4Gk2a7fjaU3DTtgliLwygscwY9+W9
+	 W9xDtE04f3+XxhzgOypXVCvK0cm8Rivq5m1jiZYE7oqD+Mu1VBWP+cxqEEn6DkaS0U
+	 16lTlkEeEkwmBA3VjM+EZiEnkNiEdUH7So1LAGfi8FeHreWDrBAKn2gnYuc+sPXG4F
+	 kBjLOeeeMJdf28QohPM5MwTSQLDzy/HSHJ8EhCdEhsJU7/8cDMeZmmQ5DSjxgOEU5X
+	 +VicOPrz1o0jh8PZn+0kIi3ys7l+GzcAfskb6LwKAJcHL2byyB6gUgqFxJAHUgxklT
+	 6wzSwd437uE3g==
+Date: Wed, 3 Sep 2025 21:17:35 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Linux Doc Mailing List
+ <linux-doc@vger.kernel.org>, =?UTF-8?B?QmrDtnJu?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Alice Ryhl
+ <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, Trevor Gross <tmgross@umich.edu>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] tools/docs: sphinx-* break documentation bulds
+ on openSUSE
+Message-ID: <20250903211735.5a541530@foz.lan>
+In-Reply-To: <76c552d4-878f-4ec4-a22c-c5b0f7903eba@infradead.org>
+References: <cover.1756916565.git.mchehab+huawei@kernel.org>
+	<29135db8c8094006f256e1fa0b64663c735737e7.1756916565.git.mchehab+huawei@kernel.org>
+	<76c552d4-878f-4ec4-a22c-c5b0f7903eba@infradead.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a59b3eaa-133d-88bf-f1f3-41328d023c4a@loongson.cn>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 01, 2025 at 04:31:36PM +0800, Tiezhu Yang wrote:
-> On 2025/9/1 下午4:16, Peter Zijlstra wrote:
-> > On Mon, Sep 01, 2025 at 03:21:54PM +0800, Tiezhu Yang wrote:
-> > > When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
-> > > the following objtool warning:
-> > > 
-> > >    vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
-> > >    falls through to next function __efistub_exit_boot_func()
-> > > 
-> > > This is because efi_boot_kernel() doesn't end with a return instruction
-> > > or an unconditional jump, then objtool has determined that the function
-> > > can fall through into the next function.
-> > > 
-> > > At the beginning, try to do something to make efi_boot_kernel() ends with
-> > > an unconditional jump instruction, but it is not a proper way.
-> > > 
-> > > After more analysis, one simple way is to ignore these EFISTUB functions
-> > > in validate_branch() of objtool since they are useless for stack unwinder.
-> > > 
-> > 
-> > This is drivers/firmware/efi/libstub/loongarch.c:efi_boot_kernel(),
-> > right?
-> > 
-> > Why not simply do something like:
-> > 
-> > diff --git a/drivers/firmware/efi/libstub/loongarch.c b/drivers/firmware/efi/libstub/loongarch.c
-> > index 3782d0a187d1..082611a5f1f0 100644
-> > --- a/drivers/firmware/efi/libstub/loongarch.c
-> > +++ b/drivers/firmware/efi/libstub/loongarch.c
-> > @@ -81,4 +81,5 @@ efi_status_t efi_boot_kernel(void *handle, efi_loaded_image_t *image,
-> >   	real_kernel_entry(true, (unsigned long)cmdline_ptr,
-> >   			  (unsigned long)efi_system_table);
-> > +	BUG();
-> >   }
-> 
-> At the beginning, I did the above change, but no effect.
-> 
-> The first thing is to remove the attribute __noreturn for
-> real_kernel_entry(), otherwise the compiler can not generate
-> instructions after that.
-> 
-> But there is an argument in the previous RFC [1]:
-> 
-> "From my point of view this is incorrect, this function is indeed a
-> noreturn function, and this modification makes LoongArch different to
-> other architectures."
-> 
-> Josh suggested to do something so that the EFI stub code isn't linked into
-> vmlinux.o [2], it needs to modify the link process and seems too
-> complicated and expensive for this warning to some extent.
-> 
-> So I did this change for objtool.
+Em Wed, 3 Sep 2025 10:41:12 -0700
+Randy Dunlap <rdunlap@infradead.org> escreveu:
 
-I don't like adding these workarounds to objtool.  Is it really that
-complicated to link efistub separately?  That seems like the proper
-design.  vmlinux.o should only have real kernel code.
+> On 9/3/25 9:24 AM, Mauro Carvalho Chehab wrote:
+> > Before this patch, building htmldocs on opensuseLEAP works
+> > fine:
+> > 
+> >     # make htmldocs
+> >     Available Python versions:
+> >       /usr/bin/python3.11
+> > 
+> >     Python 3.6.15 not supported. Changing to /usr/bin/python3.11
+> >     Python 3.6.15 not supported. Changing to /usr/bin/python3.11
+> >     Using alabaster theme
+> >     Using Python kernel-doc
+> > 
+> >     ...
+> > 
+> > As the logic detects that Python 3.6 is too old and recommends
+> > intalling python311-Sphinx. If installed, documentation builds
+> > work like a charm.
+> > 
+> > Yet, some develpers complained that running python3.11 instead
+> > of python3 should not happen. So, let's break the build to make
+> > them happier:
+> > 
+> >     $ make htmldocs
+> >     Python 3.6.15 not supported. Bailing out
+> >     You could run, instead:
+> >       /usr/bin/python3.11 /root/tools/docs/sphinx-build-wrapper htmldocs --sphinxdirs=. --conf=conf.py --theme= --css= --paper=  
+> 
+>                             /root
+> ??
 
--- 
-Josh
+heh, you got me :-D
+
+I ran it on an opensuse Leap container, created only to test builds.
+I didn't care enough to create any user on such test containers, just
+running everything there as root via lxc-attach, as, at the worse case
+scenario, I can just re-run the script to re-create it.
+
+
+Thanks,
+Mauro
 
