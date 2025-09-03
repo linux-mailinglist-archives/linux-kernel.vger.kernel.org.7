@@ -1,58 +1,69 @@
-Return-Path: <linux-kernel+bounces-799087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF016B426D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:24:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3CD2B426D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:24:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94FDA177478
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:24:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310E61889AB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF9D2EB5AF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEF92EF675;
 	Wed,  3 Sep 2025 16:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQs/gSS+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ChG+Pq3q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD2C2D0636;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C842D63E4;
 	Wed,  3 Sep 2025 16:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756916671; cv=none; b=U6KPZAoJda+E8yKtTkMkce46psbJnFPy/KdPu2Hm3GMTQeGT26XkFODT82RPsMpkeoEGrsqMvLGptf35uiMNZpAYhRfs86sU1PqPSHLX5u2ZxfN/vHvaDpq4/symPUFuaXy0PHdc+BoFQDE3HuQZ0qg04ypXapyQ6Fzhl7ieR5o=
+	t=1756916671; cv=none; b=ivGlkiadMQ4dm7Bkrhn4+fcRDi1EqK1tOMjnCsawNygHDsNYjhTBpiDK/1+fNKbE2rmi2EsJ9yxNh2cIkvdgDIszYZXCrARfRFXEzfnu0PuOPrHRdK+F3Ee5ZmNon3oqrZoxTohtfTE50zMvMWasCHXipw6+EWLUzf7Yvg03pLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756916671; c=relaxed/simple;
-	bh=GdJwj3d3TAyo2Nn7d6rWe+07TNA7IyqQabnELNUF9QU=;
+	bh=DL6QTWpxjep8S77vkYK54cGY5aTugS5u3x3ExCSFzJc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qA2YpBojyK99nj5r3ETqyFaT2KoBbATQlxc18F8uVv/XLYR5J2t48UUXTEh3BDbofGitHJm5OpaFbBvR6V/8syDF2qXJkJln+K0wxI8pZ/la8UqJp00JWqM5VGnX+vRbE34UQKpu+g6hJh6izo6ILWen0FTbYThuovV83Bzi1wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQs/gSS+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 940E8C4AF09;
+	 Content-Type:MIME-Version; b=oyDjURu+ff3TvgbPLd7zbLEl949gA7smaqHwLVugvg9liQJ+m08ka3v5bahe2K8Nw4xfvowxCCbHfZRaHhgp9WPDfhfZc8S7pN8odX+lUhWBLkh+YNUvqvgZBkyb3Cu5Gd4xbIR2LKljyezWEPo1WDZdvvgJtdir/7KtojjaUas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ChG+Pq3q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EEA7C4CEF7;
 	Wed,  3 Sep 2025 16:24:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1756916670;
-	bh=GdJwj3d3TAyo2Nn7d6rWe+07TNA7IyqQabnELNUF9QU=;
+	bh=DL6QTWpxjep8S77vkYK54cGY5aTugS5u3x3ExCSFzJc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OQs/gSS+7aITu9Cj48BCSgLcGOIt8jUSLQyKoxtCqMVlsmQcqsomIA4iJ4Gi8G1MD
-	 fcjuzy5hyaL+l5fBIzwyp5xalRuvw/vOTgGF8dMnu3qq30CUvh0KmekPE/n3I2Iyvz
-	 Fc+BBWkWgyNJyjWNCpoIxMwEk5PATmir7Zm6RAQYxFoS0YcYpLg0H/ri31Z1myFW21
-	 GatD11+YZ52rN+pxL087d7qeSCVMWSNnpWKc9OfcR+XTq0Q4reCnJhjhgtda8CKisL
-	 P4psGia7LPbVYeHvMSoH2XAqiVr/WS9sY5Tx3slFVRoCpnEwd24UfsMZsjxd72iy9i
-	 HYmd8qaV4SUBg==
+	b=ChG+Pq3qDcRC+nd4R6whFyaNia1iwrqnCqXksGoRITxD03ICyUn4RQpLKr7UHAkut
+	 HRog8JvEQ45l2VlKsVFoI9LC9sKQSL/HNK9SfFWeQoZbprCCTmfP84yQtFC9k30Lq4
+	 FoyU9CFEMGuHrjuHQ6UfINLNSNJ5hGot05u8Wf7hV6fkggnT0MF4KZvE7f/xR1BA7f
+	 asBYUj9eqs+WUq3QbfehrVWmUJ41gwf2LPp6p4eO7X8tL1RXU3fyOXAOhQd9+js6jg
+	 0yrCfVrD2RQLJCWa8Uhlrm9cyFCxj9zfO9OqYLzWH5bOnfUnYdfR45K2Fijj94GSlC
+	 DpZMs8XmcbIfg==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1utqHc-00000007Vor-3dKE;
+	id 1utqHc-00000007Vov-3kcx;
 	Wed, 03 Sep 2025 18:24:28 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <mchehab+huawei@kernel.org>,
+	Benno Lossin <mchehab+huawei@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Danilo Krummrich <mchehab+huawei@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] tools/docs: python_version: allow check for alternatives and bail out
-Date: Wed,  3 Sep 2025 18:24:15 +0200
-Message-ID: <6c2155e62b71e5e10fd4b17ecc33fb1187f7dca6.1756916565.git.mchehab+huawei@kernel.org>
+	Miguel Ojeda <mchehab+huawei@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: [PATCH v2 3/3] tools/docs: sphinx-* break documentation bulds on openSUSE
+Date: Wed,  3 Sep 2025 18:24:16 +0200
+Message-ID: <29135db8c8094006f256e1fa0b64663c735737e7.1756916565.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1756916565.git.mchehab+huawei@kernel.org>
 References: <cover.1756916565.git.mchehab+huawei@kernel.org>
@@ -66,97 +77,94 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-The caller script may not want an automatic execution of the new
-version. Add two parameters to allow showing alternatives and to
-bail out if version is incompatible.
+Before this patch, building htmldocs on opensuseLEAP works
+fine:
+
+    # make htmldocs
+    Available Python versions:
+      /usr/bin/python3.11
+
+    Python 3.6.15 not supported. Changing to /usr/bin/python3.11
+    Python 3.6.15 not supported. Changing to /usr/bin/python3.11
+    Using alabaster theme
+    Using Python kernel-doc
+
+    ...
+
+As the logic detects that Python 3.6 is too old and recommends
+intalling python311-Sphinx. If installed, documentation builds
+work like a charm.
+
+Yet, some develpers complained that running python3.11 instead
+of python3 should not happen. So, let's break the build to make
+them happier:
+
+    $ make htmldocs
+    Python 3.6.15 not supported. Bailing out
+    You could run, instead:
+      /usr/bin/python3.11 /root/tools/docs/sphinx-build-wrapper htmldocs --sphinxdirs=. --conf=conf.py --theme= --css= --paper=
+
+    Python 3.6.15 not supported. Bailing out
+    make[2]: *** [Documentation/Makefile:75: htmldocs] Error 1
+    make[1]: *** [/root/Makefile:1806: htmldocs] Error 2
+    make: *** [Makefile:248: __sub-make] Error 2
+
+It should be noticed that:
+
+1. after this change, sphinx-pre-install needs to be called
+   by hand:
+
+    $ /usr/bin/python3.11 tools/docs/sphinx-pre-install
+    Detected OS: openSUSE Leap 15.6.
+    Sphinx version: 7.2.6
+
+    All optional dependencies are met.
+    Needed package dependencies are met.
+
+2. sphinx-build-wrapper will auto-detect python3.11 and
+   suggest a way to build the docs using the parameters passed
+   via make variables. In this specific example:
+
+   /usr/bin/python3.11 /root/tools/docs/sphinx-build-wrapper htmldocs --sphinxdirs=. --conf=conf.py --theme= --css= --paper=
+
+3. As this needs to be executed outside docs Makefile, it won't run
+   the validation check scripts nor build Rust documentation if
+   enabled, as the extra scripts are part of the docs Makefile.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- tools/docs/lib/python_version.py | 43 ++++++++++++++++++++++++++------
- 1 file changed, 35 insertions(+), 8 deletions(-)
+ tools/docs/sphinx-build-wrapper | 3 ++-
+ tools/docs/sphinx-pre-install   | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/tools/docs/lib/python_version.py b/tools/docs/lib/python_version.py
-index 660bfe7d23fa..a9fda2470a26 100644
---- a/tools/docs/lib/python_version.py
-+++ b/tools/docs/lib/python_version.py
-@@ -85,10 +85,12 @@ class PythonVersion:
-         may need to update it one day, hopefully on a distant future.
-         """
-         patterns = [
--            "python3.[0-9]",
-             "python3.[0-9][0-9]",
-+            "python3.[0-9]",
-         ]
+diff --git a/tools/docs/sphinx-build-wrapper b/tools/docs/sphinx-build-wrapper
+index 932b1b675274..48e6e0a76aeb 100755
+--- a/tools/docs/sphinx-build-wrapper
++++ b/tools/docs/sphinx-build-wrapper
+@@ -719,7 +719,8 @@ def main():
  
-+        python_cmd = []
-+
-         # Seek for a python binary newer than min_version
-         for path in os.getenv("PATH", "").split(":"):
-             for pattern in patterns:
-@@ -96,12 +98,13 @@ class PythonVersion:
-                     if os.path.isfile(cmd) and os.access(cmd, os.X_OK):
-                         version = PythonVersion.get_python_version(cmd)
-                         if version >= min_version:
--                            return cmd
-+                            python_cmd.append((version, cmd))
+     args = parser.parse_args()
  
--        return None
-+        return sorted(python_cmd, reverse=True)
+-    PythonVersion.check_python(MIN_PYTHON_VERSION)
++    PythonVersion.check_python(MIN_PYTHON_VERSION, show_alternatives=True,
++                               bail_out=True)
  
-     @staticmethod
--    def check_python(min_version):
-+    def check_python(min_version, show_alternatives=False, bail_out=False,
-+                     success_on_error=False):
-         """
-         Check if the current python binary satisfies our minimal requirement
-         for Sphinx build. If not, re-run with a newer version if found.
-@@ -113,18 +116,42 @@ class PythonVersion:
+     builder = SphinxBuilder(venv=args.venv, verbose=args.verbose,
+                             n_jobs=args.jobs, interactive=args.interactive)
+diff --git a/tools/docs/sphinx-pre-install b/tools/docs/sphinx-pre-install
+index 663d4e2a3f57..698989584b6a 100755
+--- a/tools/docs/sphinx-pre-install
++++ b/tools/docs/sphinx-pre-install
+@@ -1531,7 +1531,8 @@ def main():
  
-         python_ver = PythonVersion.ver_str(cur_ver)
+     checker = SphinxDependencyChecker(args)
  
--        new_python_cmd = PythonVersion.find_python(min_version)
--        if not new_python_cmd:
-+        available_versions = PythonVersion.find_python(min_version)
-+        if not available_versions:
-             print(f"ERROR: Python version {python_ver} is not spported anymore\n")
-             print("       Can't find a new version. This script may fail")
-             return
+-    PythonVersion.check_python(MIN_PYTHON_VERSION)
++    PythonVersion.check_python(MIN_PYTHON_VERSION,
++                               bail_out=True, success_on_error=True)
+     checker.check_needs()
  
--        # Restart script using the newer version
-         script_path = os.path.abspath(sys.argv[0])
--        args = [new_python_cmd, script_path] + sys.argv[1:]
-+
-+        # Check possible alternatives
-+        if available_versions:
-+            new_python_cmd = available_versions[0][1]
-+        else:
-+            new_python_cmd = None
-+
-+        if show_alternatives:
-+            print("You could run, instead:")
-+            for _, cmd in available_versions:
-+                args = [cmd, script_path] + sys.argv[1:]
-+
-+                cmd_str = " ".join(args)
-+                print(f"  {cmd_str}")
-+            print()
-+
-+        if bail_out:
-+            msg = f"Python {python_ver} not supported. Bailing out"
-+            if success_on_error:
-+                print(msg, file=sys.stderr)
-+                sys.exit(0)
-+            else:
-+                sys.exit(msg)
- 
-         print(f"Python {python_ver} not supported. Changing to {new_python_cmd}")
- 
-+        # Restart script using the newer version
-+        args = [new_python_cmd, script_path] + sys.argv[1:]
-+
-         try:
-             os.execv(new_python_cmd, args)
-         except OSError as e:
+ # Call main if not used as module
 -- 
 2.51.0
 
