@@ -1,79 +1,83 @@
-Return-Path: <linux-kernel+bounces-798146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29BF5B419FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:29:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C02B41A01
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA1BA204104
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:29:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69983683A98
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D162A2F39BE;
-	Wed,  3 Sep 2025 09:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BAF2F3C18;
+	Wed,  3 Sep 2025 09:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zQdYIfra"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QWAJ+P6y"
 Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7912F0C70
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D592F0C70
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756891687; cv=none; b=FXblrFzlga489TmYJH+sTc3bM5pj5nYSi+0dVa/lR0D0ep3VegW8WUVLaVhW08x/rHfHnXvBaMjdl628Mhbie1MV/d9H4rHOHMGdnoWplUCeTgPl3dAM0quR0sLOsbrMhTB+zvLtqoKcsr7ErXc8qFxmMgGGcEjB7P4fkHD58UM=
+	t=1756891692; cv=none; b=RkdqUtlUgDSzNt5HOHbufVbtUd5lcBuxDsC0H7SXW+CrY6r7RjKpKzjaLpvYeIDL7qHxz2I0PaLLZgGK21LPqHcdP8dFrjFgES98vIu2TnCwA+ZtSY5gwA0q9ze9JFH2XOlv02xD1LMKcj7oP1ZjwXpRWdUdtqSMoBoMNZROBKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756891687; c=relaxed/simple;
-	bh=RDTKu9h7P2J8owWSAM18mx6quxofHLD1wpX6bUaKLbQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=X2QNw5OfkbCFxhqlklbq2DuAlV9k4ZV7npUPc0yEs4u6MRSed+N9Zuyg7v9hMZZaxaKfjsUl2c9fuyGP2zvenpKvmW0Xev9XkT1r+LqC0AruV1OQ2YPNthg7IJ3fuQj4nZYhMiDthYdxnWteLlbBkbaLo5UlwSpVDn53GxNFva8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zQdYIfra; arc=none smtp.client-ip=209.85.218.73
+	s=arc-20240116; t=1756891692; c=relaxed/simple;
+	bh=A5vcUWyTNwMbDp1MNbwQOdKbahZxhtxWOywqDTIsHvw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=HWEwvZhErDlI17JzrPOSo1ZhbCgMuQgBcXlP/eN7+hAH5Enzj6cKiMB1pKyYnxwHRF7b0u+w8t4xPpdS19rT8u+kghN2QZbKUH14Yia4a10d/tlLlQqsTG56RbFNctQ+uvo9ilinkSrtJ4pHtuYrD5IAEKIchDzLxgVbGywnyr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QWAJ+P6y; arc=none smtp.client-ip=209.85.218.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b0419841db9so208620866b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 02:28:05 -0700 (PDT)
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-afe73808e6cso575728466b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 02:28:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756891684; x=1757496484; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TiPNCvnjapcrlxfeGYfsAXzGtFUSy9Sla5QKQ86OmtE=;
-        b=zQdYIfrawp+Tqv86ghfr2nDkUq1UVAcpALUXaeG5DubS7s/2sU263H2at9WDyuNK/n
-         lUT79fIJRhUW3TdgKbMpAdkGsrMlbCuYgN2t8803x4CcQprG97I84T7NcgLRTnUosUk8
-         vgR085vkcCBf7q4krX1MnNRCettNMoOnG+TrtF5LIr2tKRMrjuj/V6GWb3WFjDuhJqlt
-         siuvsFiZCEZvZLMZ1TB/Yduvp+IWAdnZN0xcxRRlfCt/GKBQ6ZawsNyQT55cWQB++d3b
-         u5bmYOtXW9C7zwCvkeOazRHcPamUSF9lrE+q1WaWjer8byk4CCKQFizp/wj5W5UljFau
-         H9uw==
+        d=google.com; s=20230601; t=1756891689; x=1757496489; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KT71c78aJnytQMhNF1V9yN1z/KSnqChOn4nmn+TcdAw=;
+        b=QWAJ+P6ynAuTRHAlmO/vWX/elmZI6XZViaqk0tPvvZTbU7UM6Kk0McS9gCs+P5lCJb
+         z5AnWOkpitEyfRnwZ/ubmIf5tioB7wwL7kjVmFU7VEEfEdtwz4eZhVLlnAd/CwzC3sbG
+         c3nh+ZZoQ9F47fxo6OhoKPUVfpWCPDYnHLCvh8AQdiEGfDKjB20xjCeTMfc8Tqvn/i3R
+         JyvyiqT4KaQrOwT+OSalw29VyTBW4Ex6zfYMCSH5+M5LjSIj+DBqiu4X6ZicZRVtXeid
+         YJMaZgZrpxV47/ALBbr41J3tuWUo6q9tUF7BWiqVzYI838Bnvm+Pv5t+FsrPPUNPdGf5
+         q+CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756891684; x=1757496484;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TiPNCvnjapcrlxfeGYfsAXzGtFUSy9Sla5QKQ86OmtE=;
-        b=eMwmM7IX32UJbTJA9DsbrSaZNvX7EdspF+T0gQTqSR9mwqp3i8Dz1MgDohl5NnLXqj
-         gUauZZ9jjbDTMOv5AqcRCkfmkL+ynv8yvlE8PwXlcsZ24wQvfQC8mCvwT6gtbU4SFdYC
-         QrJLm+iGtyXSM2VtbMK6AujRo/KHOHyEj2IiIbkBC0lLEczWeNDnfQXTUE10t069ECPH
-         Vb5fQVPKlfRdP1WUujG9nqhmnxQBs0JcMIrnS0iklbeu25EEgfUpVlT2cSQjUkJqZ1CO
-         VNqD7sOBX7J5eCE+0Jm+osFP8DzgJa51c+V1n2vHfhX4TZcGyFo1rFVKYGlR1WCVk7G/
-         7RGw==
-X-Forwarded-Encrypted: i=1; AJvYcCURTYegt8IPOHRVp86V4cqJUNeofFQ6obycDwWLx4GVwmthwn4Vr44fI/JdXIXJcuzP9pUbUir13fJL5Vg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwufDf+91FKQ6p1EIOG46+vMbnfhueRp4s9QU+xRdGxPklp2qyW
-	XiYRgqDa+XrTqlJpLmDYf4bEBzqnJX6Rm857KAfbr4wExQMYyQAXOYb1pLNW7PFFMfjtWdQdxpG
-	beixJXFpkQw==
-X-Google-Smtp-Source: AGHT+IFH5XwKUXYHk/3S5VJI7dgKyWD/UZ8O7WJTKCucvA63LhSVX1nX4l6gGeMpjYHCtQk+b/SuYYxHvsCs
-X-Received: from ejclj9.prod.google.com ([2002:a17:907:1889:b0:b04:54de:8bcb])
- (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:9494:b0:afc:a18f:65e9
- with SMTP id a640c23a62f3a-b01d8c9018fmr1590592566b.27.1756891684064; Wed, 03
- Sep 2025 02:28:04 -0700 (PDT)
-Date: Wed,  3 Sep 2025 09:27:52 +0000
+        d=1e100.net; s=20230601; t=1756891689; x=1757496489;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KT71c78aJnytQMhNF1V9yN1z/KSnqChOn4nmn+TcdAw=;
+        b=HlvwhNX0GQ0FneucMVvEsY7bH0sO2rNQD4+hiC/Oc6nAQr1jJQy/5/0zcMnRwJEtK8
+         KknwnvWsG39WYY2aLh7qLy4tQ70DmGrjI0BpbuafTMS7faKaqOTObAl3ZrGiDgFhLrfN
+         AcppPeAq5gT3WP7dYtAXF8LfGT2JAAtpLHm20W1UNXCavWf6C/kYON4vHhUQ3ZEzMjEK
+         DVsxqfiabCH2uj7kpa4x5pOAIdzF9uyymVjL7atQEQCkQECMS0DTjWYOtjMNZgDRZZdC
+         gnoWIEaP6XYCVOXC3Io62KFBN8mwApDAMCo+kJBC49j/FY14h/LV+7nrGvzbf6rJ3Cds
+         QA4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXdJg1e926DTd3KiEMGTRBvVcaC/GksQ1jQXlNjQjcf2IFCZ9l/+Nz25sSZuIGZyqovt3gAdnYwKTgMCJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1EqrDpCpAQBVLT+Cvvqoh/3QVvIyWtdDdIC3CzPGrCD/MJkgV
+	haM+krPqpEKpcfMtOGlSwajqJti4pia4HpnCdfNWW3ePlphGfqy84PxhJF7F3Kj+JBMDCXxVCiX
+	mFTZU3KXwGQ==
+X-Google-Smtp-Source: AGHT+IG4wDv4iN79+PvNL0JjzGDy88GyRihU0bcbVv8rwThsva9C9fXSGG3sjrAuIStIyVDmt3DIgqVwN1pH
+X-Received: from ejchw16.prod.google.com ([2002:a17:907:a0d0:b0:b04:c21:7f49])
+ (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:2682:b0:afd:d9e4:51e7
+ with SMTP id a640c23a62f3a-b01f20bde04mr1591474166b.63.1756891689701; Wed, 03
+ Sep 2025 02:28:09 -0700 (PDT)
+Date: Wed,  3 Sep 2025 09:27:53 +0000
+In-Reply-To: <20250903092754.2751556-1-abarnas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250903092754.2751556-1-abarnas@google.com>
 X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
-Message-ID: <20250903092754.2751556-1-abarnas@google.com>
-Subject: [RFC PATCH v2 0/2] staging: media: atomisp: Refactor bit logic
- helpers in vmem.c
+Message-ID: <20250903092754.2751556-2-abarnas@google.com>
+Subject: [RFC PATCH v2 1/2] staging: media: atomisp: Change name to better
+ follow its behavior
 From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
 To: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
 	Sakari Ailus <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
@@ -84,24 +88,60 @@ Cc: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Refactor proposition for bit operation in vmem.c.
-* Previous name for function "inv_subword()" for me is not telling what
-function acctualy does - it clears bit specified by subword, so renamed
-to clear_subword()
-* Added a helper to create a proper bitmask for a subword, without using
-GENMASK(end-1, start) which was claimed to be unsafe
-* Simplified subword() and clear_subword() to be more readable.
+Change name to clearly states what function does.
+Signed-off-by: Adrian Barna=C5=9B <abarnas@google.com>
+---
+ .../atomisp/pci/hive_isp_css_common/host/vmem.c  | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Continuation of https://lore.kernel.org/linux-staging/20250902073841.233856=
-8-1-abarnas@google.com/=20
-
-Adrian Barna=C5=9B (2):
-  staging: media: atomisp: Change name to better follow its behavior
-  staging: media: atomisp: Simplify logic in vmem.c
-
- .../pci/hive_isp_css_common/host/vmem.c       | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vme=
+m.c b/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
+index 547cc480c105..a3fe03216389 100644
+--- a/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
++++ b/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
+@@ -22,9 +22,9 @@ subword(unsigned long long w, unsigned int start, unsigne=
+d int end)
+ 	return (w & (((1ULL << (end - 1)) - 1) << 1 | 1)) >> start;
+ }
+=20
+-/* inverse subword bits move like this: MSB[xxxx____xxxx]LSB -> MSB[xxxx00=
+00xxxx]LSB */
++/* clears subword bits like this: MSB[xxxx____xxxx]LSB -> MSB[xxxx0000xxxx=
+]LSB */
+ static inline unsigned long long
+-inv_subword(unsigned long long w, unsigned int start, unsigned int end)
++clear_subword(unsigned long long w, unsigned int start, unsigned int end)
+ {
+ 	return w & (~(((1ULL << (end - 1)) - 1) << 1 | 1) | ((1ULL << start) - 1)=
+);
+ }
+@@ -45,16 +45,16 @@ static void move_subword(unsigned long long *target, un=
+signed int target_bit,
+=20
+ 	if (subword_width + start_bit > uedge_bits) { /* overlap */
+ 		unsigned long long old_val1;
+-		unsigned long long old_val0 =3D inv_subword(target[start_elem],
+-							  start_bit, uedge_bits);
++		unsigned long long old_val0 =3D clear_subword(target[start_elem],
++							    start_bit, uedge_bits);
+=20
+ 		target[start_elem] =3D old_val0 | (src_subword << start_bit);
+-		old_val1 =3D inv_subword(target[start_elem + 1], 0,
+-				       subword_width + start_bit - uedge_bits);
++		old_val1 =3D clear_subword(target[start_elem + 1], 0,
++					 subword_width + start_bit - uedge_bits);
+ 		target[start_elem + 1] =3D old_val1 | (src_subword >> (uedge_bits - star=
+t_bit));
+ 	} else {
+-		unsigned long long old_val =3D inv_subword(target[start_elem], start_bit=
+,
+-							 start_bit + subword_width);
++		unsigned long long old_val =3D clear_subword(target[start_elem], start_b=
+it,
++							   start_bit + subword_width);
+=20
+ 		target[start_elem] =3D old_val | (src_subword << start_bit);
+ 	}
 --=20
 2.51.0.355.g5224444f11-goog
 
