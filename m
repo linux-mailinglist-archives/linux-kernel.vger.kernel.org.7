@@ -1,76 +1,136 @@
-Return-Path: <linux-kernel+bounces-799345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 184D2B42A4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:53:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39810B42A51
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:53:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C806C5E12AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:53:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC6305E36B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D5F36998B;
-	Wed,  3 Sep 2025 19:52:21 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF9336997E;
+	Wed,  3 Sep 2025 19:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YwOZ+rlM"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D594F2D6E6C;
-	Wed,  3 Sep 2025 19:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730DF36C06D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 19:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756929141; cv=none; b=uXUOulgIrUZABebMw88YsQ6SCH6+sSVCigbR/SJBeax3WPG/KGnD2xzjs8cCK0Lo+HrNwcbbPnPzqMjH5N6OdWioIpCjRX+UnM08sN2PeQ9KGyh05WFPbLLHIQmD/PTshS1RHNZYkmiLBPZQ6p2wESu1Mc41NbEmN2T9SZZ9dgo=
+	t=1756929166; cv=none; b=T3bmdGWGDabAZp4XVlUuE31Whr0jkVChA7DAxKH0cv8zlBeGyqwT/E/X0BCxh64v7tvY3BRmN904tUw7gxQ9wj0Ol5gDnKiuj/pwNjTtcmWInIZ7XW9DIYsZdh3PO5GM4tpo8AUzdkiufJHetsE0OgXSvrYbMvFGnYGGbWP/oFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756929141; c=relaxed/simple;
-	bh=0B6mSNJhF2OVJQLrYTy2yhKJ0LMoYfLhQ4g7lnSjS+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LtVW5zTMy+FhTHThwFE/+ITs2vZ8zKoj6dl8I8MvRBKTQmOzINdKZzWK77gUrRw5kjopHDTUlYsfZEiPnZTx7l14NCDNs+voUpfUw8/kAa9TW49CFR0k4UwPsreB0GDjpsstgNTch45gdJLX7mw/EA/BtJPsefTb810hR/Pwf8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 69526119966;
-	Wed,  3 Sep 2025 19:52:12 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id C5BF920029;
-	Wed,  3 Sep 2025 19:52:10 +0000 (UTC)
-Date: Wed, 3 Sep 2025 15:52:09 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Ryan Chung <seokwoo.chung130@gmail.com>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com, corbet@lwn.net,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH 0/2] trace: minor documentation fixes for clarity and
-Message-ID: <20250903155209.058e22d4@batman.local.home>
-In-Reply-To: <aLiH_zWPOsjMRs9V@gmail.com>
-References: <20250831101736.11519-1-seokwoo.chung130@gmail.com>
-	<20250902102831.134a26c1@batman.local.home>
-	<aLiH_zWPOsjMRs9V@gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756929166; c=relaxed/simple;
+	bh=xfQ1osEND/adCgoCa/Hw96I9E3HfyCuqMHFBC6Nm9so=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=L3wl4KZQoLPM1bgkCGoZC4iXFMRi7rXSmmPrsr1DaaiMwu7WvpkfnE5fsHsRsnHRge99/ww+fClaSUj5bq9OOqADeBUszwXS6cdvAeGIbG1YzZ27wFg3U6g4lvJgqAh9ohRas+k/RzQlvkkasW3oq2YQLACKeE+upPdVF2I6H1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YwOZ+rlM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756929162;
+	bh=xfQ1osEND/adCgoCa/Hw96I9E3HfyCuqMHFBC6Nm9so=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=YwOZ+rlMx3z3JPOd5ujeK9FPCcK4Fo9BggEEieTK14S1oy5PlJcuw92i/FhQsAm0S
+	 4GL53AtFknTfuHcl0vfhe//+1rdDMRzBwzDtMn0uGu9syDu1rLRezFRQgBgFl95utR
+	 LWElPCjTxWJM10JSPL78T6XUZNAgIowdxQP/GeoB6+UOnS2EutrFrnhe+SJ7B49ZcV
+	 3Zjz/GIiYkRAM1vl1neEeLODILGS7Azr0ZuODmXTOXxninpX14XgqcpLJE9JPgJJeD
+	 e7uPrauGbpNnR+qV+JPLkQXdeXxKE2sconu/0xc5an0sPFRUDtzuCGKs44K2FMggip
+	 fDrLmZW0kvR7g==
+Received: from [192.168.1.90] (unknown [82.79.138.60])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 75B8017E0DC8;
+	Wed,  3 Sep 2025 21:52:41 +0200 (CEST)
+Message-ID: <e030bed8-58d5-4a19-b81c-45193cb900d8@collabora.com>
+Date: Wed, 3 Sep 2025 22:52:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/6] Add HDMI CEC support to Rockchip RK3588/RK3576
+ SoCs
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+To: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Algea Cao <algea.cao@rock-chips.com>,
+ Derek Foreman <derek.foreman@collabora.com>,
+ Daniel Stone <daniels@collabora.com>
+References: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: C5BF920029
-X-Stat-Signature: 3ayb5ce7eyyj1m716bufqnjmq6141tc1
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19WoUis4MWxAUS9SHyNmyLXD9CD0LGRcXc=
-X-HE-Tag: 1756929130-121183
-X-HE-Meta: U2FsdGVkX1/FMbgB+w60NCtJuWx6XNJZNM0yQeFa55/DoDZU/gMH3Pl2XmzAjBXugt6bdQ2OJsvv1R3qugj93hobo6UPEvYR5Pbwf7/lBy7z5ZTdvTt9ime+qQ3aAUodToQAp3MoPA+/GkH1DdPog9JxU16BCkw3kz6igQ43DMzOtpeHjWoDf6iGGkKBRS1rP75pVBeF5+HdiURXlpcASLEmZ0niSmnXXdQfHlgCT+dmt++V+HMwdyjgjn+srA6f3poPqP9L7hjGu23C2SRCRseuQ8+gx6uWeiD+Wj3GHeUkqhKIh/ieyasjEQKpZ/T8uZU0kQydAIPi2MATPcuWdkXO1Dvmi1SD
 
-On Thu, 4 Sep 2025 03:25:03 +0900
-Ryan Chung <seokwoo.chung130@gmail.com> wrote:
+Hello Heiko,
 
-> Hi. Thank you for your comment. 
-> I will make sure to add the change log next time.
-> Please let me know if I should do it and make a v2. 
+On 9/3/25 9:50 PM, Cristian Ciocaltea wrote:
+> The first patch in the series implements the CEC capability of the
+> Synopsys DesignWare HDMI QP TX controller found in RK3588 & RK3576 Socs.
+> This is based on the downstream code, but rewritten on top of the CEC
+> helpers added recently to the DRM HDMI connector framework.
+> 
+> The second patch is needed for RK3576 in order to fixup the timer base
+> setup according to the actual reference clock rate, which differs
+> slightly from RK3588.
+> 
+> The following three patches setup platform data with the new information
+> expected by the HDMI QP transmitter library, while improving the error
+> handling in the probe path.
+> 
+> Please note the CEC helpers were affected by a resource deallocation
+> issue which could crash the kernel and freeze the system under certain
+> test conditions.  This has been already fixed in v6.17-rc1 via commit
+> 19920ab98e17 ("drm/display: hdmi-cec-helper: Fix adapter
+> unregistration").
+> 
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+> Changes in v4:
+> - Fixed the bisect-related issues reported by Daniel by implementing
+>   the following operations in dw_hdmi_qp_bind():
+>   * Disable CEC support when the related IRQ is not available
+>   * Set ref_clk_rate to vendor default in case it was not provided by
+>     the platform driver
+>   * In both scenarios, also print a warning message to highlight the
+>     need for fixing the platform driver
+> - Simplified dw_hdmi_qp_cec_init() a bit
+>   * Removed the now obsolete cec->irq validation test
+>   * Removed the superfluous error checking and logging around
+>     devm_request_threaded_irq() call (it already handles all that)
+> - Collected R-b tags from Daniel
+> - Rebased series onto next-20250903
 
-I already gave an ack. I'll let Jon decided if there should be a v2 or
-not.
+I forgot to mention that luckily there are no conflicts with the patches
+introducing the hw-specific bitfield operations in next-20250903, which this
+revision is based on.
 
--- Steve
+I verified the series still applies cleanly onto drm-misc-next, while commit
+ad24f6e10a5f ("drm/rockchip: dw_hdmi_qp: switch to FIELD_PREP_WM16 macro")
+responsible for the macro conversion can be further cherry-picked without
+issues on top of all that.  The resulting file content of
+drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c is identical to what's
+expected after applying this patch set onto next-20250903.
+
+Regards,
+Cristian
 
