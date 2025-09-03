@@ -1,140 +1,119 @@
-Return-Path: <linux-kernel+bounces-798614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03CB7B4205E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:06:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A966DB42062
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD1401BA81F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:07:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ADE06841E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A211B3002B6;
-	Wed,  3 Sep 2025 13:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D122D3009E0;
+	Wed,  3 Sep 2025 13:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="amW8gefT"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="alecCDLZ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568C42741DA;
-	Wed,  3 Sep 2025 13:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756904603; cv=none; b=KNCUfzY4NKplbzsx7azBqPopwG9ArUsGY6upamYlXOskZg3uO772kothNtchCU+rwYeujJE+ANz8gpLzsO+ULFJvZC/t4hmoUQoozZPx7bzfxLpxdh3xURWnnLx9VKzwsN32RNH9A13i9N2CzY3syC/cxCiBPbdpHFEY46Ul6es=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756904603; c=relaxed/simple;
-	bh=gQ03fBGAFuwsI9xFioKKjesvx+Gsro54JwhK1qlkHiE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mWhYhMExQsAhq3ZHkEsnNpklG58+CgAcaN432vYGTCuHEYI2zEmMOFHKG85JPU5p7ncWEuGf1wFo+AV1iyECNTdGu8KgM/fAIJ+WmeMui7YNCKcAZjeYeaphAWYqwmrkF6bRX7sVwhBBXUU+WV456dQqOluCL32dLuYxwSx3NfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=amW8gefT; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61cbfa1d820so13004138a12.3;
-        Wed, 03 Sep 2025 06:03:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756904600; x=1757509400; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wKsJK/zcx9q1MHyU7zTce4tdn70RAQrFC+vaQsPz40g=;
-        b=amW8gefT/WvSJ25yeFpHhMZj0Chpl17SWAaQQKO0zQl+Ndpm+FkuPlrnM38GTJoGRU
-         g6T0zNl52/+1iBvHKpjlBitT0zXEtBKISbvVyMAVG6Xg2bTvm7Kjtl7H9/ULWMSf/A2/
-         4Oq8pBN2+dDgmAae2hrP6EbocAsKvTiXTaYuE5fD0eeRvtvUnLvyKH8enAfQDuoJ9uWs
-         dnFueu7Z+9mN5Y211iXAgp9TbO8oyN0F/qkOZdGi94U9hrqBazV2HIrT/qBnmt8T5DYU
-         FUuJWaOz+SrkvwX8ogabtyCMDodBwadSKyLNcNeJTkSp6KftuXvLgCq9qPQWOScxVWcH
-         ZFuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756904600; x=1757509400;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wKsJK/zcx9q1MHyU7zTce4tdn70RAQrFC+vaQsPz40g=;
-        b=V5SmrgoUQfbfzKMl+diql0BO7NHLov1pe7T4drhD/+5NYfT/Dvlmu+uRrGWfVi/mnc
-         FDIXooqJuJKG4gSjQfx62G6Nl5M9npIf9igZRD6Y0DOqWVmLFRTM9w/pPenBzpIAqXeF
-         CrPqZZ8SkaAL/qcl4CQo5lt6S9vRuT7BDZDa2GkdxS2LiatddMABMI4NF9LGDwQE3Pud
-         cKNiYfhLXAo8LLc+GHyIG6bH8frU8VRP1S7xVnZs57IcELPpPnFJuI+nRmJNQBGBNFdu
-         EL7pBYGMovviODEym31wd93oH/41e4WPLyhzLuKDg23tWTzJ0ye9ekF0jpROSt2Xqaj1
-         IBQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0Kl/SVdBlvDfLlYz53mGdWnOqQ24olbFOE56K4KsuAcrCnbZFgVnhN1zn6yWC7c4dtG+jOENItGW7LSFB@vger.kernel.org, AJvYcCW05G33/HBLk9lhtOOaNdyy/LLxi/K58CmDgmyelLdqpscqmR+XRycNkxs95k5ADKBp7yu2IBYB+Hp2AF5W8mEuXxij@vger.kernel.org, AJvYcCX6i0PKSn96E3+8YuH1YevUghX99B6dPkTIhr4iQnFNfAPaXlw4eZCxbJBIdqdiqjPLIZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFmDg5TGeSRq5dJdhCkgZDc/+ctLDneMdXCIxsoQGEUhYhX3t7
-	soH/Ey83ZV6W7ugT+jVx/yuUm1McnW6fspyD1k9feE9BoAMboWUQDa1j
-X-Gm-Gg: ASbGncsq8LTPEcjJueAqNcal5Z7Pb4vQxyMKB7LIElMhwTbQ2S3q4LH9oARJJ7qjbIC
-	L6P6w3Ue/+yqQ7IrGmVB3ZQUvEQeIQiOSxFJvqLpBFt2ULruw1iWMxw805nSSi3/Xa/K7zgTDKT
-	AvFw8udZrxtADdtZVn5hCBSq8Ix9fAtRLWOvyrpORgNmTdXwYE+9hq9Hl9QcncAb8PRNiG1x87F
-	4i9ChTC6xdSft8uYLLdZ/pqhCARq0YdjojwbevuTOtmxVruIHhyzF7NOyXAcJXFaYdKgFHy7pVj
-	3YAFyN2iTi7oc5RNMis4FETmo46usYIQEW+fnTD2ZMKLJpbd104t7yzthIhcyP6zZuZfe/xWwfe
-	CIH8ybGFcf7xBjMXeuzaGnjvnhIJ66EJAsbyA6wExqDp81sjV6QM=
-X-Google-Smtp-Source: AGHT+IE5KLfq9A0AT22C59UYKF7lWBlAFa6e+YI5NMwM3b+a+9UnQafjvEz12kimp8MX81Ax28IwbA==
-X-Received: by 2002:a17:907:1c12:b0:b04:31c6:a41f with SMTP id a640c23a62f3a-b0431c6a7bamr887728266b.41.1756904599432;
-        Wed, 03 Sep 2025 06:03:19 -0700 (PDT)
-Received: from krava (ip-86-49-253-11.bb.vodafone.cz. [86.49.253.11])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0474be5e99sm29395366b.94.2025.09.03.06.03.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 06:03:18 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 3 Sep 2025 15:03:16 +0200
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH perf/core 03/11] perf: Add support to attach standard
- unique uprobe
-Message-ID: <aLg8lLgHdBhNeaOf@krava>
-References: <20250902143504.1224726-1-jolsa@kernel.org>
- <20250902143504.1224726-4-jolsa@kernel.org>
- <20250903115912.GD18799@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8851A9FAF;
+	Wed,  3 Sep 2025 13:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756904699; cv=pass; b=ABaxf0yRShINU6+MSp03mPaQx5D9xBF2LeCTxlPV8xkCJMyAjCAv2E3RGp4en1tWJJ1IN8zPikCYRVkh5fhPOEGO8/9HnB0h9QJUSs/AX3NCT5DIzBVxf1+m/0SRhEahIGmrqX3eH6g6SYZm0RIYn1T7MEbk7lllDjk8tlaHj9U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756904699; c=relaxed/simple;
+	bh=uiG9JxljEs1kyatFPvHD+V2jKizKib16PFXgVXUfJq8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=VQ9TvPkfv/FzX8GSZuMAp2qGW4argId1u2n/fkaBUuG36vKiSPn8PDIMn1PlyXfMRw3EitSEwVltdDfWFZ2qHv1Dmjb5s/c9FcsGJ62E/76+kUQebYgpsjkY4Rl9+Js4t0MYQpmvle8hw/STs/URxh3Miuzr41UyoaVDF0TwnT4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=alecCDLZ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756904660; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=NwZegBwOb9r0i0ScPYhQeFi74NajYLGElLGyWyfRVpZuT2S/rHMQI3TR6H/MrhL9wVKRIDawS1bzJ5vbrHVzPT3MmsDjtEBEDrdm7/kPXTVLHe+EgTCJ/eRuXofbLl/yiycKc8RJly++agWdXk20vdIYO98ZibOuRBbkK45yzz4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756904660; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=uiG9JxljEs1kyatFPvHD+V2jKizKib16PFXgVXUfJq8=; 
+	b=l0Vhm7eCDrWV5hrXnWvLMsr08RJDJagjnsHd+qZ/Q26La6yThcRmdOQIFPHcbJsYZCrZMUc7OJ9dbjxjd+LlGyhtbDYFe81eFmWL8L0fZqhLf642rGk3QyOkgdwVaJjHnekVPMhVZ/JABwOQrWtRhxpOGhyDB6RMzI4YzLZafDk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756904660;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=uiG9JxljEs1kyatFPvHD+V2jKizKib16PFXgVXUfJq8=;
+	b=alecCDLZa9tvD9O6WLvqsaqpXjZsnTnwGNf2BYZNCUivqhQZcZOwJ0mqRMYS7L1P
+	NCSYXnaqrPZ2s/WEC3HLBpJSkHTsTzArXxn+ZC5Ejvs+xGbQZF2qjcQP7oXwMeqsEIl
+	RElNDWSqeJlfT5H7Ni+dw79Q9gdzqcG+UlL47Q7Q=
+Received: by mx.zohomail.com with SMTPS id 1756904659009698.6031413704457;
+	Wed, 3 Sep 2025 06:04:19 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903115912.GD18799@redhat.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v5 0/3] rust: add `ww_mutex` support
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250903092422.37b29315@nimda.home>
+Date: Wed, 3 Sep 2025 10:04:03 -0300
+Cc: Benno Lossin <lossin@kernel.org>,
+ Lyude Paul <lyude@redhat.com>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ boqun.feng@gmail.com,
+ gary@garyguo.net,
+ a.hindborg@kernel.org,
+ aliceryhl@google.com,
+ tmgross@umich.edu,
+ dakr@kernel.org,
+ peterz@infradead.org,
+ mingo@redhat.com,
+ will@kernel.org,
+ longman@redhat.com,
+ felipe_life@live.com,
+ daniel@sedlak.dev,
+ bjorn3_gh@protonmail.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E0F8BE39-E2DE-450B-B915-59AEE3C7B10A@collabora.com>
+References: <20250621184454.8354-1-work@onurozkan.dev>
+ <20250724165351.509cff53@nimda.home>
+ <ec32fc5f5a8658c084f96540bd41f5462fa5c182.camel@gmail.com>
+ <20250806085702.5bf600a3@nimda.home>
+ <539d3e0da773c32a42b4ab5c9d4aa90383481ff6.camel@redhat.com>
+ <DBVLEGFYBWKE.2RW8J853CJHTY@kernel.org> <20250814141302.1eabda12@nimda.home>
+ <76D4D052-79B6-4D3F-AAA1-164FF7A41284@collabora.com>
+ <20250814185622.468aad30@nimda.home>
+ <182E916F-3B59-4721-B415-81C3CF175DA7@collabora.com>
+ <20250902195328.6293b5d4@nimda.home> <20250903092422.37b29315@nimda.home>
+To: Onur <work@onurozkan.dev>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Wed, Sep 03, 2025 at 01:59:13PM +0200, Oleg Nesterov wrote:
-> Slightly off-topic, but
-> 
-> On 09/02, Jiri Olsa wrote:
-> >
-> > @@ -11144,7 +11147,7 @@ static int perf_uprobe_event_init(struct perf_event *event)
-> >  {
-> >  	int err;
-> >  	unsigned long ref_ctr_offset;
-> > -	bool is_retprobe;
-> > +	bool is_retprobe, is_unique;
-> >  
-> >  	if (event->attr.type != perf_uprobe.type)
-> >  		return -ENOENT;
-> > @@ -11159,8 +11162,9 @@ static int perf_uprobe_event_init(struct perf_event *event)
-> >  		return -EOPNOTSUPP;
-> >  
-> >  	is_retprobe = event->attr.config & PERF_PROBE_CONFIG_IS_RETPROBE;
-> > +	is_unique = event->attr.config & PERF_PROBE_CONFIG_IS_UNIQUE;
-> >  	ref_ctr_offset = event->attr.config >> PERF_UPROBE_REF_CTR_OFFSET_SHIFT;
-> > -	err = perf_uprobe_init(event, ref_ctr_offset, is_retprobe);
-> > +	err = perf_uprobe_init(event, ref_ctr_offset, is_retprobe, is_unique);
-> 
-> I am wondering why (with or without this change) perf_uprobe_init() needs
-> the additional arguments besides "event". It can look at event->attr.config
-> itself?
-> 
-> Same for perf_kprobe_init()...
+Hi Onur,
 
-I think that's because we define enum perf_probe_config together
-with PMU_FORMAT_ATTRs and code for attr->config parsing, which
-makes sense to me
+>=20
+> There will be some changes to this API, I found some design issues on
+> it. Previously, lock_all was an individual function, I will
+> move it under `impl ExecContext` so that we can track more mutexes.
+>=20
+> I will send v6 in a day or two. To avoid confusion, please ignore the
+> previous mail and review v6 directly since there will be some
+> differences.
+>=20
+> Thanks,
+> Onur
+>=20
 
-otherwise I think we could pass perf_event_attr all the way to
-create_local_trace_[ku]probe 
+That=E2=80=99s fine. I liked it that you=E2=80=99ve included tests by =
+the way.
 
-jirka
+=E2=80=94 Daniel=
 
