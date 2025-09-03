@@ -1,138 +1,178 @@
-Return-Path: <linux-kernel+bounces-797762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A085DB41515
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:23:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA8A7B41518
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 303C47A78FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:21:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37D0F1BA021E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087482D660B;
-	Wed,  3 Sep 2025 06:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310E02D7DD5;
+	Wed,  3 Sep 2025 06:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mL+uVQb2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kUeIGv3W"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE892D9485;
-	Wed,  3 Sep 2025 06:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8AD2D781B;
+	Wed,  3 Sep 2025 06:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756880319; cv=none; b=hwg2/uoFM585/lVtXYp9pncbFVWl5XEsOowp5dVcYboZkDoJLExybZs/OwLWOczersz1o9dqKSOHLsxCeQuh771zO1uC4+SCQ7dsQFnGjh94uIDEmfQbyjZQwZOSYrYhHByrNmUNZkiTuV8h6+HN4QGIEXjUHNnoqVkruyXKHRc=
+	t=1756880357; cv=none; b=atqGwEONRbdJ9kR+9sWve9InKOsXBjkoCtp6a2Gf+0FqxYCs8Vzzm4PTCyeR9NLNjcc1ikIi1b2YZtHtpgKeMNEYCkP4m6wUiXy0RNqli5dpBiVHbuEM57RJDeEgCCfYRCw26LTyUOV2E7OjwRUcLCo083Q01nON7+PyoTk8Phc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756880319; c=relaxed/simple;
-	bh=oHD1nI1vPHFspW9ycjjPbvdzivA3JdL7B2Dq18hkaTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VqVBE2uWS5tEmehs3+6yrSBnG/kUo1Ri+Iu4UAOW5/NrmoOZWV1tqMNiMLappSI/rwA4G6Nh7Orsv3eFqXWk62xDo6ibtgSmqsWytQPjIrD6+mA/gEmaLci5lxcoIVmUdOKsNzJ2gm+K8f+5YbI4aGXv8R4HWBH6Z6J6p3xQB0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mL+uVQb2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BC6C4CEF0;
-	Wed,  3 Sep 2025 06:18:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756880318;
-	bh=oHD1nI1vPHFspW9ycjjPbvdzivA3JdL7B2Dq18hkaTY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mL+uVQb22ZO0+HiuyDtI9fXK3YI/RQCk/pN1aSFJP6XBnO36plQw+PeMhuJgfV97s
-	 TIQNu4kIAf2NJuQZJah+ymwhesyszHinQu9zRFpAsq4CVSySHJInS7x4UCOGh+pl8v
-	 5Qbei+/A/NavI3IqottYAGh6kv6q6jTqrp7RNGHJGvC+zZbbd9bjWBl/mzcQhFRtrT
-	 YoK+uKmgIqx5R/frOm245xGOmOCejoNBQsl71bsr69hsg/rFH03PivLWcnhO1SuPHK
-	 uAe/9SkRC/IcBFsdQbvNGMBI+oOMebtR6nmq27+jqBUhd2bmUeUiBMN2jW1qvLC8kw
-	 uerc7nxycs/0A==
-Message-ID: <691a9317-238e-487b-ae5a-6bb0d73e37dd@kernel.org>
-Date: Wed, 3 Sep 2025 08:18:34 +0200
+	s=arc-20240116; t=1756880357; c=relaxed/simple;
+	bh=k4Djx9gzZI0uItX5F6U8NOACJ0CiqvtEXulvh5L7zcM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dBm3rr6ZKpiCJfhEh+LBzsu6RrHSsfL0JopQNvGFMnJ4pIuVcfn4rOKw/ttDZtr5e5m+pMGaEZk1m+B7VYnSQP1VZQkrYMdPjhr8atCKjHIQpOurOmY2PClUDTgGTUBOzYIFd45XCBIZAAI3N6lcK+FesmU430Uzm9U19GWXGEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kUeIGv3W; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7722c88fc5fso4006046b3a.2;
+        Tue, 02 Sep 2025 23:19:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756880355; x=1757485155; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k6iyLT6U/SMFeXIY3WMF6/nHjn/xLgYLeb3rEUCa7ZA=;
+        b=kUeIGv3WYNIaQ9/lEyV982d+gDvRtQdZRg0cPj7W6xa5UkGULAAGJ6SVILYGYaDQ+P
+         NVguINpx9U7o7qW2qMCIj35LFuzGawspAiJJLLATrx6zfKe/GXBsaF2Ozg9sf6zpXoqq
+         ztPTNA/FUz7hizzl68eCULosWAelWgy0yl4NqTeh6EpcW5lvFxNCO3EQ/6jQq1Jpplag
+         wqimHOy+rsy5ofLNEUc3nOzXuanPOJvW4bLDC1i4PnmS7/YAiNODzoMOHG8GoVlbOMU0
+         MGMtBHFPRAPBMgH4jzVU/LzC8MK4PTZGia7FvaKEVYdgBQYrb8gTsN08Ww1487FKNHAr
+         qBcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756880355; x=1757485155;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k6iyLT6U/SMFeXIY3WMF6/nHjn/xLgYLeb3rEUCa7ZA=;
+        b=ajvoWFS0KyVo3zQKAuSt5mNvAx/Ucno4hrw8UAzoGusbciXje7jJpqXl312ODub1GC
+         AQP81VYGobXct+Poom0Yj3EkeuGNxtugJoxg+3RkwpJhE2beyDxZ8wEvtXVohbN1ziZw
+         qMJl4hIhqX9wCjvn33NRA2s9OpoMtuare82EOiT6yUWb7RVrvK8jtWXSrnPPK1X27rTc
+         EqoKhGsywQEZBAPK1XPGnXQ0zZowb31Yz2ifa/stWWREc51/hIUZ9kkSSp7tbKyQsolP
+         6I4g1HJuOcyrwNlmd76sJT6Tfu9deVUElykNzxvXwo1RaMeEQd3ymJ06QIE8ALGJO7oA
+         ZYXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLVDCvtfaGTqmwhSebIkSa40FAXcLUyD2Nd1QXWgIZADQTqfdCpwIWJm0a+Z6tpc0Sm02N8CnoY0ONxIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+YQ31v0tvscTCYZleQuVqg5D4UWPuMIdChI5uvZjkP12qDtOJ
+	rEvg9eVBvbAw3zdTqAllRVgxeH/eSUkiSK8mtj6UXWHjqBNyd+y5iDD24o3/ZMd9
+X-Gm-Gg: ASbGnct/6M4lVl9HYG66zSXEiWUZfNCs/ogJeHIvLJNc4Hzw1bEAutPHzAwVgnbJriv
+	eSz/LF+8NSeZRR6Q1XKwrlYygWwI2JtjZ62mj7ZAvccKCsnlqbs19+9+iwxmIQfwXt4E6sg4DY8
+	WqYQQetQcgrVdF5o0488VuXvn/6TONBvYR/5tfHzDG3L9hFXCZ/vs1qCYuctG/zSvH0vtW8uYdO
+	Xt0LXdQ4qP/++Pc/AfT6jW2wYxS3RE2CyzyXidHd1fp/fMevseOC0TKBhPLuTQQCFjsR+UqwYs3
+	E5TrnEfMhCT1m1XRw/XW+wQu+P0yWRqD6Lvcaq25Uj0iQVsaDHDFAJTa/nYg4WThlGufevnh00u
+	StXFbh3D6XdoBVYIPeoUQ9m+WlC0090U/pw==
+X-Google-Smtp-Source: AGHT+IEYBH8aqizGtqUI/QYZ5SP4z32Qsfox8obVDdoIf6zuZo3PvVTsce+pQuGu63/h0UZFAMQJXQ==
+X-Received: by 2002:a05:6a20:1592:b0:243:a373:a9e8 with SMTP id adf61e73a8af0-243d6f030bamr20166944637.38.1756880355075;
+        Tue, 02 Sep 2025 23:19:15 -0700 (PDT)
+Received: from ti-am64x-sdk.. ([14.98.178.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77285bb2614sm165999b3a.58.2025.09.02.23.19.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 23:19:14 -0700 (PDT)
+From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+To: rydberg@bitmath.org,
+	dmitry.torokhov@gmail.com
+Cc: linux-input@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	bhanuseshukumar@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH v2] Input: bcm5974 - Driver cleanup by replacing dprintk with dev_dbg
+Date: Wed,  3 Sep 2025 11:49:08 +0530
+Message-Id: <20250903061908.41910-1-bhanuseshukumar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] Support dynamic EMC frequency scaling on
- Tegra186/Tegra194
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
- <20250902-glittering-toucan-of-feminism-95fd9f@kuoka>
- <CALHNRZ_CNvq_srzBZytrO6ZReg81Z6g_-Sa+=26kBEHx_c8WQA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CALHNRZ_CNvq_srzBZytrO6ZReg81Z6g_-Sa+=26kBEHx_c8WQA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 02/09/2025 18:51, Aaron Kling wrote:
-> On Tue, Sep 2, 2025 at 3:23 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On Sun, Aug 31, 2025 at 10:33:48PM -0500, Aaron Kling wrote:
->>> This series borrows the concept used on Tegra234 to scale EMC based on
->>> CPU frequency and applies it to Tegra186 and Tegra194. Except that the
->>> bpmp on those archs does not support bandwidth manager, so the scaling
->>> iteself is handled similar to how Tegra124 currently works.
->>>
->>
->> Three different subsystems and no single explanation of dependencies and
->> how this can be merged.
-> 
-> The only cross-subsystem hard dependency is that patches 5 and 6 need
-> patches 1 and 2 respectively. Patch 5 logically needs patch 3 to
-> operate as expected, but there should not be compile compile or probe
-> failures if those are out of order. How would you expect this to be
-> presented in a cover letter?
+From: bhanuseshukumar <bhanuseshukumar@gmail.com>
 
-In whatever way you wish, but you must clearly express dependencies and
-any merge restrictions.
+Debug printk messages are converted to dev_dbg based logs
+for better control over debug messages using dynamic logging.
 
-Best regards,
-Krzysztof
+Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+---
+ Changes in V2
+ 1. Removed unnecessary module name(bcm5974) prefix in each dev_dbg logs.
+ 2. Removed unwanted variable declarations as pointed out in v1 review 
+ 3. Name is used in signed-off tag instead of email alias.
+ 
+ Note: This patch is tested for compilation.
+ v1 patch : https://lore.kernel.org/all/20250902164351.36828-1-bhanuseshukumar@gmail.com/
+
+ drivers/input/mouse/bcm5974.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/input/mouse/bcm5974.c b/drivers/input/mouse/bcm5974.c
+index dfdfb59cc8b5..03e112666c2e 100644
+--- a/drivers/input/mouse/bcm5974.c
++++ b/drivers/input/mouse/bcm5974.c
+@@ -156,13 +156,6 @@ MODULE_AUTHOR("Henrik Rydberg");
+ MODULE_DESCRIPTION("Apple USB BCM5974 multitouch driver");
+ MODULE_LICENSE("GPL");
+ 
+-#define dprintk(level, format, a...)\
+-	{ if (debug >= level) printk(KERN_DEBUG format, ##a); }
+-
+-static int debug = 1;
+-module_param(debug, int, 0644);
+-MODULE_PARM_DESC(debug, "Activate debugging output");
+-
+ /* button data structure */
+ struct bt_data {
+ 	u8 unknown1;		/* constant */
+@@ -550,8 +543,7 @@ static int report_bt_state(struct bcm5974 *dev, int size)
+ 	if (size != sizeof(struct bt_data))
+ 		return -EIO;
+ 
+-	dprintk(7,
+-		"bcm5974: button data: %x %x %x %x\n",
++	dev_dbg(&dev->intf->dev, "button data: %x %x %x %x\n",
+ 		dev->bt_data->unknown1, dev->bt_data->button,
+ 		dev->bt_data->rel_x, dev->bt_data->rel_y);
+ 
+@@ -688,7 +680,7 @@ static int bcm5974_wellspring_mode(struct bcm5974 *dev, bool on)
+ 		goto out;
+ 	}
+ 
+-	dprintk(2, "bcm5974: switched to %s mode.\n",
++	dev_dbg(&dev->intf->dev, "switched to %s mode.\n",
+ 		on ? "wellspring" : "normal");
+ 
+  out:
+@@ -718,7 +710,7 @@ static void bcm5974_irq_button(struct urb *urb)
+ 	}
+ 
+ 	if (report_bt_state(dev, dev->bt_urb->actual_length))
+-		dprintk(1, "bcm5974: bad button package, length: %d\n",
++		dev_dbg(&intf->dev, "bad button package, length: %d\n",
+ 			dev->bt_urb->actual_length);
+ 
+ exit:
+@@ -753,7 +745,7 @@ static void bcm5974_irq_trackpad(struct urb *urb)
+ 		goto exit;
+ 
+ 	if (report_tp_state(dev, dev->tp_urb->actual_length))
+-		dprintk(1, "bcm5974: bad trackpad package, length: %d\n",
++		dev_dbg(&intf->dev, "bad trackpad package, length: %d\n",
+ 			dev->tp_urb->actual_length);
+ 
+ exit:
+@@ -786,7 +778,7 @@ static int bcm5974_start_traffic(struct bcm5974 *dev)
+ 
+ 	error = bcm5974_wellspring_mode(dev, true);
+ 	if (error) {
+-		dprintk(1, "bcm5974: mode switch failed\n");
++		dev_dbg(&dev->intf->dev, "mode switch failed\n");
+ 		goto err_out;
+ 	}
+ 
+-- 
+2.34.1
+
 
