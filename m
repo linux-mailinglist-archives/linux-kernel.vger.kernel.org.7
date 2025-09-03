@@ -1,62 +1,80 @@
-Return-Path: <linux-kernel+bounces-798153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B49CB41A15
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:31:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A7B4B41A0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 816E11BA3665
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:32:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFE43189F727
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE7D284662;
-	Wed,  3 Sep 2025 09:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B73423D7E0;
+	Wed,  3 Sep 2025 09:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ojC2NFew"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z173pPFA"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727831EA6F;
-	Wed,  3 Sep 2025 09:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA51432F756
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756891882; cv=none; b=JsQbei9k4NMjAiY9uhwEVTXDTFrdtNpMYdtzup76F3dpeqeAikSgUYaaO5Y++e3KM4NhB/jfSU7Ma+hH5GlJujMQqgUlgeXYCaxRv5J9vwwEPF9xoCkL3Y59/rVTH14THwe4ec17HHhWsKyY6Joh1w/ge2shSrefemvfPZv0qbU=
+	t=1756891880; cv=none; b=CIroIk8vBYQeFBW47xihjbkFDx3q59EVJQP8/XN7pt5UZYwpXbsyjj75pfJgN2JI3wDW9XpxOHVWZW8f+Hy44Ub88vrWwZr/5b40rfsIwG/yEYQSQOJE/NfYGgNvIOdG6ZVgw8YmpX3WwH6+s8I76rrgZNEJ+uqyWv8RxYYao+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756891882; c=relaxed/simple;
-	bh=80QWw7mC1ItOpkdyNFhY3jIiUDUp8rlf6sbwCce786Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GKE/0F7cnRHyutv18geb7YzOmyws8s7QBt3t9HtjFlK+z39xI3Gsv/IqSQNIMbwtHTGmEjnfeu7Dear6+IButu0MdAI0qd5neRmjKWku8vBsZxnMSIPeRPVMf8Y8B1fICdVOZc5b1KgxbuUNFA/t2HGLzOj1ymUaS/+q/e3R4a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ojC2NFew; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5831hBS4018243;
-	Wed, 3 Sep 2025 09:31:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	73r4rsBoHH1UbJyDMMK0kg5EPnX2LBc0gzbnKBLicNA=; b=ojC2NFewbKfcEGWY
-	VrycA4r28/DyVmSCEaWDL18c0hwyk53xCV2o5LeuMhEjiVW3VsVxtphrhdFKvi3D
-	t8C0ba+Uw751iF7eWUCu77MF1BK199+MQzavl3pWibA9w27Z9LTOv4qcrl84Mb9q
-	3hDBk5HM5i04hD8tlFefGSeU3f49Ny5ODYoC0ZRL0MP9LiJIGcO4W08E9Y5R+N7T
-	Ka+eIwOQQoIVR+LgyK6R6UYcM4sV9tnh5VOQp2ipJ0+5iQ4IprykdnC5pYduvTv3
-	1EaRCS2irBmTjxHOkimoGRVOfupAPrxWzoL35j5VWdlbFmH7f9ZxEqjlj9bjiVV/
-	Vz4Fiw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48wqvwcraa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Sep 2025 09:31:14 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5839VEGJ003307
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Sep 2025 09:31:14 GMT
-Received: from [10.218.46.122] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 3 Sep
- 2025 02:31:07 -0700
-Message-ID: <1912d0f8-a87c-4f76-9a34-bfff870ede23@quicinc.com>
-Date: Wed, 3 Sep 2025 15:01:03 +0530
+	s=arc-20240116; t=1756891880; c=relaxed/simple;
+	bh=EI3s5FpMMZOIBSpCBCCR2+k3QU4MEpsJ5W6npNTJrqo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TTH7NfYjoN/J4cR60XrFvNUcUUbTN5ITwCrgz7NBcpek0JrzT4cUCyTNHG/Q/IM8AA8x6iB9m0Ra+PJwoakx3NY/U1DOgBmNqiEhUH9zjYue7HwT9RPE5QWFwp1q0R27j1Sr0ma4hdR+6mzGR0oLSnLTNd/+7H6+xJ4lF7iv1w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z173pPFA; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3dae49b117bso1377376f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 02:31:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756891877; x=1757496677; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3JERqtIgcAWYxTcLUucE5Blenbg8zXWgwZ0D8YaVejQ=;
+        b=Z173pPFAxkeYOs6JvlV0eDFafCH7ne7qxJDwAGFEd2mkaSmp6DMO+7XYlK2wfWCo3k
+         Rn7xOlGK1e4J/Hldki2Y/ACFBwCpLXFAMesy0VdgY/kZxZeDPFqxEqSqvIyWJPvNTvga
+         g5TFKxxV9iRPB3CIhGYJX5ZGuPw0w/aLB7+tTdBEQ9w+nBN5oPJHFMFR6FRAD54YSzTi
+         NrFH5/tfRC4jVthXW2VDqCxKBI/btoMwJZCpULGm7ZN6d8iL2qU/vU5rZTVDaPPeZa/0
+         J/rqv2YzEs6pnL16XzQqT+tHhJVV/X6ieOY8yJ1N4aCABeQeODwzbZEs+QVBgk9eukCp
+         aO7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756891877; x=1757496677;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3JERqtIgcAWYxTcLUucE5Blenbg8zXWgwZ0D8YaVejQ=;
+        b=f+Aw5oId4+ZNVF2ab/6/yC853CSwV3NuQU3U8a9mB8HOHdpMSzXKipKk+Vu+/0Hino
+         s5yfYNHjf0LnWsXFsCgH/vxSCYHObJ6PC2lh/V7C/MNG3YLtPCI5X8N7sI/iwdIaTLZf
+         LQDle+pLdhM25fX+SJwW1MqSrhmXb3UNFPB3aNyd7b+qGDn+YwRWA7oe+K5MhnQkSkfy
+         uYAuRdsp89N9lq0xCkpDhIxtNtHyko/x5fPKe8OGqkt5Dk2HhIDGkhdWPnDhkji9NpKe
+         OGk8z+ZpEAeXT6Y75R26bNBwyl3kHzT7BHXkTtg9j042hLA3g7Yf6X10OGovt8uH/3vF
+         s8ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUBwdKiVykK9SFHvDYp0edIutZOxxdPixLxRURKEBUp51SFs39zZfAOe1sQADbdZs1gNkxccXRpRHoyvsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkTbFlMP84uz7CX4XhvzqYo0hxdiiFYIIW4qicUv+zNh1aIs6F
+	yOc3kQcZnXFchS61AAwZNHXxSYiTXsk9fLlxb0Jqf4IUFIBuXyy68SL+
+X-Gm-Gg: ASbGncvOy4vsjptMU6xyMgJorYjAcGqEf5mnl+rLB4pu2s0fdiCzPpE6jjPYLb912eV
+	J/G7cvBVXFFO/q4Yjs+Ofu9RJuOU/1dox89GILjfIdHC83Ab8IjCqR3WmOeaDDZBGWqiYAEsBsv
+	TU8OVMP1wNIDKIdspXta63o6uz0iEv906RtrAQE0BahxdUt44GaYz85gamz3HZ/EosNvhTabk6y
+	TMzwaNOKVj5+QSuUQtXfOY3MQlrATjltcQwPeWTFUnMe2TkvB0M5KPK5/YdWz4i6nn5f3YhuE3s
+	XPIF6BJWOFjAcY7pwbQ74SkyoHId5Gye8YcTdLZRxpHaIRYr3ZWIog2CNEODA1jIATwknGHG5Fv
+	q+QnH1DYyNx329+65q2cK83lB+7gOLZtajC9xhUqGrlIL6EY1rI2flKRRgbFBVR/pRCFwvVrPrZ
+	ArXaSvJMmoMAHRHN06Og==
+X-Google-Smtp-Source: AGHT+IHg2hod8nukF0mnZNlawMmT+p3dWVTvWH+uV9p/eaiLcHW/vzr9TtixHzkgeaarvDlS1nLNjQ==
+X-Received: by 2002:a05:6000:2601:b0:3dc:29f8:979 with SMTP id ffacd0b85a97d-3dc29f8097fmr2085044f8f.39.1756891876890;
+        Wed, 03 Sep 2025 02:31:16 -0700 (PDT)
+Received: from ?IPV6:2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23? ([2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b9bcda91dsm54806295e9.6.2025.09.03.02.31.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 02:31:16 -0700 (PDT)
+Message-ID: <7f13fcb1-82d7-4464-8be8-770fc1a665cf@gmail.com>
+Date: Wed, 3 Sep 2025 10:31:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,227 +82,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/9] arm64: dts: qcom: qcs6490-audioreach: Add gpr node
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <kernel@oss.qualcomm.com>,
-        Mohammad Rafi Shaik
-	<mohammad.rafi.shaik@oss.qualcomm.com>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-References: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
- <20250821044914.710044-2-quic_pkumpatl@quicinc.com>
- <4yo7v7whxffebzhoxkbpm226vsj2twc56xuf7etwwcyfrf2lzh@x2udmlhvdiwu>
-Content-Language: en-US
-From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-In-Reply-To: <4yo7v7whxffebzhoxkbpm226vsj2twc56xuf7etwwcyfrf2lzh@x2udmlhvdiwu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH v2 2/2] mm/show_mem: Add trylock while printing alloc info
+Content-Language: en-GB
+To: Yueyang Pan <pyyjason@gmail.com>, Suren Baghdasaryan <surenb@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Michal Hocko <mhocko@suse.com>, Brendan Jackman <jackmanb@google.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+ Vishal Moola <vishal.moola@gmail.com>, Shakeel Butt <shakeel.butt@linux.dev>
+Cc: linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org
+References: <cover.1756827906.git.pyyjason@gmail.com>
+ <1491df0ac12a7626b7c9b00e26a6e10adb8c9045.1756827906.git.pyyjason@gmail.com>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <1491df0ac12a7626b7c9b00e26a6e10adb8c9045.1756827906.git.pyyjason@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAyMDAyNCBTYWx0ZWRfX20zQFMUzVb2e
- KviwgniQG5GYzVVlFK3VuyfZl+/mP6RLD0pA+MzoKfHOXPa2W6r5fDcAExmIdfaoWg5oEVESMTY
- PGF9ZkbyLIaynx/3pYOvtE0DgMGpIk8l50vMlofT+q09DUNVPLwCagfJwFt4E0TxnxVfkjPItgz
- Lb+npZRkl2BNQma+zVQsn3oyiyjUwboeqVY5OkkXkF8sYPz8Bvpp4yIeOkXKEW/w7qKTM2flb61
- UGNZvXk9dsDMaeVz4WVNef2tVmMPNYGE09qrTRsgoKwdMEjt8bz/09IqOxj5beXNNSkiQ2Pokcb
- VEq+Y/COoakDw/iw8vfmWY5Tuur/TQ7JquJX+NHCZfQ8J5L9ZwiUXggWbeqRpXs0efDEomy4G6P
- pE0Z2Lwb
-X-Authority-Analysis: v=2.4 cv=WKh/XmsR c=1 sm=1 tr=0 ts=68b80ae2 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=nHcloA6FLwVU0iwWzzsA:9 a=QEXdDO2ut3YA:10
- a=-_B0kFfA75AA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: gtnmW3gWs6Up2--LHuQ4MXy3jCI94MFH
-X-Proofpoint-ORIG-GUID: gtnmW3gWs6Up2--LHuQ4MXy3jCI94MFH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_05,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 adultscore=0
- spamscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509020024
 
 
 
-On 9/2/2025 8:13 PM, Bjorn Andersson wrote:
-> On Thu, Aug 21, 2025 at 10:19:06AM +0530, Prasad Kumpatla wrote:
->> From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+On 02/09/2025 16:57, Yueyang Pan wrote:
+> In production, show_mem() can be called concurrently from two
+> different entities, for example one from oom_kill_process()
+> another from __alloc_pages_slowpath from another kthread. This
+> patch adds a spinlock and invokes trylock before printing out the
+> kernel alloc info in show_mem(). This way two alloc info won't
+> interleave with each other, which then makes parsing easier.
 > 
-> Subject says "add gpr node", that sounds insignificant, but the patch
-> actually introduces the structure for how to model audioreach - and will
-> set a precedence that others will follow.
-> 
-> It must be clear from the commit message why this is a separate file, so
-> that others will understand, now and in the future.
-> 
->>
->> Add GPR(Generic Pack router) node along with
->> APM(Audio Process Manager) and PRM(Proxy resource
->> Manager) audio services.
-> 
-> https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
-> says to start your commit message with a problem statement, that makes
-> the reviewer understand which problem you're trying to solve. "Adding
-> GPR node" is not the problem, that is part of the solution, it should
-> come last.
-> 
->>
->> A new qcs6490-audioreach.dtsi file has been added to
->> update AudioReach specific device tree configurations.
-> 
-> "Has been added"? When?
-> 
->> The existing audio nodes in sc7280.dtsi, which were designed
->> for the ADSP Bypass solution.
-> 
-> Please complete this sentence.
-> 
->> The audio nodes now being updated
->> in qcs6490-audioreach.dtsi to support the ADSP-based AudioReach
->> architecture.
-> 
-> No, you're not updating qcs6490-audioreach.dtsi, you're adding that
-> file.
-> 
-> Please start your commit message with a description of what exists
-> today and why that doesn't fit your need, explain why we need a separate
-> file to carry these things. Make it clear why the bypass solution should
-> be kept in sc7280.dtsi (isn't that design only used in
-> sc7280-herobrine?).
-> 
-> Also, is qcs6490 the only variant of this SoC that comes with
-> AudioReach, what about QCM6490 and SM7325 devices?
+> Signed-off-by: Yueyang Pan <pyyjason@gmail.com>
 
-Sure, will update the commit text as per your recommendations.
+Acked-by: Usama Arif <usamaarif642@gmail.com>
 
-Thanks,
-Prasad
-
+> ---
+>  mm/show_mem.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
->>
->> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
->> Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
->> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
->> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->> ---
->>   .../boot/dts/qcom/qcs6490-audioreach.dtsi     | 54 +++++++++++++++++++
->>   arch/arm64/boot/dts/qcom/sc7280.dtsi          |  2 +-
->>   2 files changed, 55 insertions(+), 1 deletion(-)
->>   create mode 100644 arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
->> new file mode 100644
->> index 000000000000..282938c042f7
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
->> @@ -0,0 +1,54 @@
->> +// SPDX-License-Identifier: BSD-3-Clause
->> +/*
->> + * qcs6490 device tree source for Audioreach Solution.
-> 
-> That's pretty much what the file name says as well. It might make sense
-> to leave a comment here, but if so make it useful.
-> 
->> + * This file will configure and manage nodes from sc7280.dtsi to
->> + * support the AudioReach solution.
-> 
-> So far it's only adding things, not configuring and managing (which
-> isn't something DT does anyways).
-> 
-> Also "This file will" implies that in the future something will be added
-> here to deliver something. We don't communicate intent like this, and
-> once you add that thing you intend to add in the future this comment
-> won't be useful.
-> 
-> Something like this would be better:
-> "Common definitions for SC7280-based boards with AudioReach"
-> 
-> But I think that too can be derived from the file name. So, let's make
-> sure the commit message for the change that introduces the file has a
-> good explanation.
-> 
->> + *
->> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
-> 
-> I think this would look better above the comment. But please use the
-> right copyright statement.
-> 
-> Regards,
-> Bjorn
-> 
->> + */
->> +
->> +#include <dt-bindings/clock/qcom,lpass-sc7280.h>
->> +#include <dt-bindings/soc/qcom,gpr.h>
->> +#include <dt-bindings/sound/qcom,q6afe.h>
->> +#include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
->> +
->> +&remoteproc_adsp_glink {
->> +	/delete-node/ apr;
->> +
->> +	gpr {
->> +		compatible = "qcom,gpr";
->> +		qcom,glink-channels = "adsp_apps";
->> +		qcom,domain = <GPR_DOMAIN_ID_ADSP>;
->> +		qcom,intents = <512 20>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		q6apm: service@1 {
->> +			compatible = "qcom,q6apm";
->> +			reg = <GPR_APM_MODULE_IID>;
->> +			#sound-dai-cells = <0>;
->> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
->> +
->> +			q6apmdai: dais {
->> +				compatible = "qcom,q6apm-dais";
->> +				iommus = <&apps_smmu 0x1801 0x0>;
->> +			};
->> +
->> +			q6apmbedai: bedais {
->> +				compatible = "qcom,q6apm-lpass-dais";
->> +				#sound-dai-cells = <1>;
->> +			};
->> +		};
->> +
->> +		q6prm: service@2 {
->> +			compatible = "qcom,q6prm";
->> +			reg = <GPR_PRM_MODULE_IID>;
->> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
->> +
->> +			q6prmcc: clock-controller {
->> +				compatible = "qcom,q6prm-lpass-clocks";
->> +				#clock-cells = <2>;
->> +			};
->> +		};
->> +	};
->> +};
->> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
->> index 0dd6a5c91d10..18e959806a13 100644
->> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
->> @@ -3944,7 +3944,7 @@ remoteproc_adsp: remoteproc@3700000 {
->>   
->>   			status = "disabled";
->>   
->> -			glink-edge {
->> +			remoteproc_adsp_glink: glink-edge {
->>   				interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
->>   							     IPCC_MPROC_SIGNAL_GLINK_QMP
->>   							     IRQ_TYPE_EDGE_RISING>;
->> -- 
->> 2.34.1
->>
+> diff --git a/mm/show_mem.c b/mm/show_mem.c
+> index 51892ce2efc4..4c876ea2b66f 100644
+> --- a/mm/show_mem.c
+> +++ b/mm/show_mem.c
+> @@ -396,6 +396,7 @@ static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_z
+>  
+>  void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
+>  {
+> +	static DEFINE_SPINLOCK(mem_alloc_profiling_spinlock);
+>  	unsigned long total = 0, reserved = 0, highmem = 0;
+>  	struct zone *zone;
+>  
+> @@ -421,7 +422,7 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
+>  	printk("%lu pages hwpoisoned\n", atomic_long_read(&num_poisoned_pages));
+>  #endif
+>  #ifdef CONFIG_MEM_ALLOC_PROFILING
+> -	{
+> +	if (spin_trylock(&mem_alloc_profiling_spinlock)) {
+>  		struct codetag_bytes tags[10];
+>  		size_t i, nr;
+>  
+> @@ -449,6 +450,7 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
+>  						  ct->lineno, ct->function);
+>  			}
+>  		}
+> +		spin_unlock(&mem_alloc_profiling_spinlock);
+>  	}
+>  #endif
+>  }
 
 
