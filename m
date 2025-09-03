@@ -1,204 +1,250 @@
-Return-Path: <linux-kernel+bounces-798810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334E7B4233D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:13:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EA88B42342
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADA605E0C8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:13:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE0351B26762
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A8D30EF6B;
-	Wed,  3 Sep 2025 14:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE97310654;
+	Wed,  3 Sep 2025 14:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H6cFMZ51";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FoEcBgoY"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bKIg3FLB"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE832E92C3;
-	Wed,  3 Sep 2025 14:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D77130EF6B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908785; cv=none; b=Dh3BibmLF8Fod0KKkJlLR/+IlLUTFOl80ifpPEJtZaPvUtQN60Vuvlg5gRMWoF+PZt5Pj2x/jbP22rhaHj66/8oOi23JhqeqAeHZlUCqY+KsFgWZImbWyLidUt2JhB6xLzPYDrx+fe49Unr18rmO8leBuwkMKpcWRECQ8W7d7QM=
+	t=1756908805; cv=none; b=gIbnPaSiVSX/j/XMK/53wff6QNLptvahM9dP40DgxU4pKMroGWOXkc6N/ixZN3WESbLxykH9v6M4iTA6Sb1d0RslwYnGBPCRYuXufz93OWj42UMAgeBhntquCO2TWO5nMbnun5wSliSHO0uLXCUTO7emRmZrBh719tWmaVcXA3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908785; c=relaxed/simple;
-	bh=WCs89rxSemEi1SSxuhlOVtKDAs7bC0NQNI1afm2DB5U=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=XioDnbDtBgpY6AsXmVhuSS6FFtQerkVxKnVAYVxis6dWuUH2aT5uOl+neScECGr0bTPwPlLxLfdisrCG3/bSYxt/QUFeNt3JGCRyz2TyHYnTp6qOlw91KHoj+zloMZSQYCg589r9EHh3pfdklzfTWMjopzIFq+bFnzkBAg1alFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H6cFMZ51; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FoEcBgoY; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 03 Sep 2025 14:13:00 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756908782;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iRGZWv/2wP4LUgh1tY8GE2xU+mV9fWLP/4ChjZROVqs=;
-	b=H6cFMZ51+02Du9HwKLYhyMLrQSR9fZaUG5u5UxIZnHGNmk0D7nDO0PMrGbn9OLnhsVocsh
-	lK5l+eybQds8gPUCpBiU8Uk25x3mFCHaa7ZoWKtkZPtINRxy2/91C0PBfdQdmEXz/2CewL
-	19n9Ckj+VVfq+rbto/io+TIy6g5ER8qEGC4UU913tg9QWd8KllDi273L7OxvDhdJwXw2/w
-	ZVH8MubcF+rLFkSHP53nkdxPKRNVG8QgVYVyoUPsOjI5TO1fLb8nfJYUaS1oWCB7EVTjhR
-	aAoqQVHDaL1mzNYEb785lw/q7m6mrvc/DLxRA/SusCgOxx8BcIuzMdtDBRkE6g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756908782;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iRGZWv/2wP4LUgh1tY8GE2xU+mV9fWLP/4ChjZROVqs=;
-	b=FoEcBgoYbeApWZMwDW2EYNqBgqUWPpZvg7uhuwXCXq+/gftWOpReGgjvSubdV6cjdEEhTA
-	4RidkbZShn6TZQCA==
-From: "tip-bot2 for Wladislav Wiebe" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq: Add support for warning on long-running
- interrupt handlers
-Cc: Wladislav Wiebe <wladislav.wiebe@nokia.com>,
- Thomas Gleixner <tglx@linutronix.de>, Jiri Slaby <jirislaby@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20250804093525.851-1-wladislav.wiebe@nokia.com>
-References: <20250804093525.851-1-wladislav.wiebe@nokia.com>
+	s=arc-20240116; t=1756908805; c=relaxed/simple;
+	bh=jChr6ji3pFwXeMcSXw5YGcuHU7gFFFGKRuwiRoe9HFI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rEimxc4XFb7OHEslVo9Wg7PT4iiu8ATjz0VS76ZTfr8w0o5E/YQGdFCZ9k4Zvq0xg/4zj1YgjZMJ0Gu1iwVb/wm1VLggL/cMh/5Yq4K4fw5HUUTBGnR1BMfEVzHQWiuaQ5ihOpkVGb1ZTpnrcK6FHvK5z/PwxDxkZPLUHDqqbZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bKIg3FLB; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45b9853e630so17948975e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 07:13:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756908802; x=1757513602; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yBIcNf631ef2opWTzbk1POiusCMrfVUtghAbvI2Xsvg=;
+        b=bKIg3FLBvw/BtI9Me+i/2aZgCKhsJX+6gxBthc2f0F/DR+ulRLZh5JPcQTHtH7FkVJ
+         7FsTWhZMlMM1RIVGPuES7OPWgKvz2A3sojgigdFuUhqXZYtGUnWd1NXG8wGWIVgoxJYG
+         bJ4LObn6LZsfyYZMBueMMLktjUXIPiaOFQ2u1Bxu2Rl9CJsMCOra9z87zZC9/Yd3bTXU
+         kA6/sVo+bl2g5RBieqssXSTd9LjreaHmVuoCM6mb4EUb2wFyHWwWFOHUb3DMOeqQaLv3
+         P/8kUxOd1sUr9iYMKj62EOI3YX48r55bSP0aOFGZgt+to+RptngC2fxJKRt3jpxTtpve
+         K8Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756908802; x=1757513602;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yBIcNf631ef2opWTzbk1POiusCMrfVUtghAbvI2Xsvg=;
+        b=hN9AGL+3vBDkoKRsRUhANlAdea7Q6lE0fEfQiIv6C6PQNsYMmihXjR/FFz1ZNALsUS
+         127X+9f0bADMpkTnCJC3nfG6QhSd2SgroagSklvdR7kYDjtycZ9fk8yeggS1lcgrsDUA
+         ELvgTgdZM6wF3YxAKAYjT11DRli46XfDNiIcdaUdy8RATcLf7iF9FEnh2Rd0JIJi1PqX
+         sb9Vr0Zv+nyPJELEsHy2TyVHwraAZVlmmmb0xOs8YeIMyZp0fjCEDRdnnX1gLgk8Zn8Q
+         Wjno3aIbhXxyaz8LYa9PIN0KouI9SATM4iv8yPVffpr4E99Xxok4g8Pq+tBA72QlExnE
+         pThA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2PdEyr85T+2QmomCksGGAudLLDq8MVGv2vrFuuEKxlymaRYltZYn/O6nOrSs2G/1R9n6hlywMv9v0OAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1aolf6eWc+G8RsIbU8l2V/INYEp/Mll+bgQYXBvqPrM8sEmzw
+	e4qDKwa5uGgC2j/T/W82YRvNkAN/7m9GJabV5az0rab7b8ZCVSk/cQxVMwb7tkLOne8=
+X-Gm-Gg: ASbGnct39Izh+Fsgcks2heLisdT3r3vRWYojJuxSs4lOWPThwm1k2wB5qBlx3z+XJSe
+	Ec27nBmgX5c7JEpZo5EAnH3JdnHMDYnf5afNT8Y5d4bSIVWeea+qXYC2ldq2+ohWJr42sJl4niv
+	lu7zOwQ6k1ezN42IOiDSZ3xBpKz4mggAW2hZzgKS6LoZxA9Ux1L9xxPieB9IOW3BYj76x/vSEWf
+	vrpOUpBnjaEu+xR0t+HRSVKAleERgvOzTPiMt2YOFfkH70u+3XOHIc9cXwjXBvXwymuwogKZ1Gh
+	fJNXMmN3rvIXvBE9+mjbLhH4hG92W0YkdCSJTAyMPdehUm87ek/SOVMOBEg/ENr2132xz9LYIMz
+	aus+uajW8BAJoKU175NarTA28+y8GhgEd4ZigbyiXqrtp97PCy6L12E214fxw//ItPiRdUVTlmJ
+	fjJtvR8DnlZk6wEbP9Li4YuT9umwgrww==
+X-Google-Smtp-Source: AGHT+IGfAZzD09cWF5IbzY4R9+9G/lHAa3/pRj3XH1WFBEX6L966x/N8b0asy8I8FFb5vuyrdLwPlw==
+X-Received: by 2002:a05:600c:314d:b0:45b:8a92:6b14 with SMTP id 5b1f17b1804b1-45b8a926f9amr120090275e9.37.1756908801569;
+        Wed, 03 Sep 2025 07:13:21 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d95df59e50sm8541982f8f.23.2025.09.03.07.13.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 07:13:21 -0700 (PDT)
+Message-ID: <7a7c122f-50e1-476a-939e-9d76e34b1d6a@linaro.org>
+Date: Wed, 3 Sep 2025 15:13:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175690878044.1920.10260472737445670133.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/11] Peripheral Image Loader support for Qualcomm
+ SoCs running Linux host at EL2
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <660c2594-9a93-450e-9a2e-17ef6b4c696d@linaro.org>
+ <20250820112242.usd4sdd3avxdlcas@hu-mojha-hyd.qualcomm.com>
+ <f5582304-8f55-4c3b-b752-9cefa1e4df96@oss.qualcomm.com>
+ <b5a0ad0d-ceba-40d3-a111-0831c4538cea@linaro.org>
+ <2g3iwc2en6wh2ucrsth5ontzdwqr7tr6oplxjnfdjsy3lwyyfe@l76frwiadgru>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <2g3iwc2en6wh2ucrsth5ontzdwqr7tr6oplxjnfdjsy3lwyyfe@l76frwiadgru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the irq/core branch of tip:
+On 03/09/2025 15:02, Dmitry Baryshkov wrote:
+> On Wed, Sep 03, 2025 at 02:31:55PM +0100, Bryan O'Donoghue wrote:
+>> On 03/09/2025 12:56, Konrad Dybcio wrote:
+>>>> Can you try with this next-20250814 tag ?
+>>> You sent it on the 19th, so it's in your best interest to run a quick
+>>>
+>>> git rebase --onto linux-next/master $(git describe --abbrev=0)
+>>>
+>>> and giving the series a prompt re-test before sending, because there might have
+>>> been incompatible changes, whether ones that would prevent applying, or break
+>>> things functionally
+>>
+>> I can't even find that tag next-20250814 closets thing is
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tag/?h=next-20250814
+> 
+>>
+>> | * \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \   00062ea01d35e - Merge tag
+>> 'drm-xe-fixes-2025-08-14' of https://gitlab.freedesktop.org/drm/xe/kernel
+>> into drm-fixes (3 weeks ago)
+>>
+>> but patch #9 in this series stubbornly won't apply to any SHA I've tried.
+>>
+>> meh
+>>
+>> ---
+>> bod
+> 
 
-Commit-ID:     673f1244b3d47c9b41cda3473c062bec586387be
-Gitweb:        https://git.kernel.org/tip/673f1244b3d47c9b41cda3473c062bec586=
-387be
-Author:        Wladislav Wiebe <wladislav.wiebe@nokia.com>
-AuthorDate:    Mon, 04 Aug 2025 11:35:25 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 03 Sep 2025 16:10:40 +02:00
+Unfortunately that's not the right SHA though
 
-genirq: Add support for warning on long-running interrupt handlers
+git checkout -b next-20250814-test next-20250814 
 
-Introduce a mechanism to detect and warn about prolonged interrupt handlers.
-With a new command-line parameter (irqhandler.duration_warn_us=3D), users can
-configure the duration threshold in microseconds when a warning in such
-format should be emitted:
+Switched to a new branch 'next-20250814-test'
 
-"[CPU14] long duration of IRQ[159:bad_irq_handler [long_irq]], took: 1330 us"
-
-The implementation uses local_clock() to measure the execution duration of the
-generic IRQ per-CPU event handler.
-
-Signed-off-by: Wladislav Wiebe <wladislav.wiebe@nokia.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
-Link: https://lore.kernel.org/all/20250804093525.851-1-wladislav.wiebe@nokia.=
-com
-
+b4 shazam 
+20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-7-ce7a1a774803@oss.qualcomm.com
+Grabbing thread from 
+lore.kernel.org/all/20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-7-ce7a1a774803@oss.qualcomm.com/t.mbox.gz
+Checking for newer revisions
+Grabbing search results from lore.kernel.org
+   Added from v8: 12 patches
+   Added from v9: 12 patches
+Analyzing 60 messages in the thread
+Analyzing 163 code-review messages
+Will use the latest revision: v9
+You can pick other revisions using the -vN flag
+Checking attestation on all messages, may take a moment...
 ---
- Documentation/admin-guide/kernel-parameters.txt |  5 ++-
- kernel/irq/handle.c                             | 49 +++++++++++++++-
- 2 files changed, 53 insertions(+), 1 deletion(-)
+   ✓ [PATCH v9 1/11] tee: allow a driver to allocate a tee_device 
+without a pool
+   ✓ [PATCH v9 2/11] tee: add close_context to TEE driver operation
+   ✓ [PATCH v9 3/11] tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
+   ✓ [PATCH v9 4/11] tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
+   ✓ [PATCH v9 5/11] tee: increase TEE_MAX_ARG_SIZE to 4096
+   ✓ [PATCH v9 6/11] firmware: qcom: scm: add support for object invocation
+   ✓ [PATCH v9 7/11] firmware: qcom: tzmem: export shm_bridge create/delete
+   ✓ [PATCH v9 8/11] tee: add Qualcomm TEE driver
+   ✓ [PATCH v9 9/11] tee: qcom: add primordial object
+   ✓ [PATCH v9 10/11] tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
+   ✓ [PATCH v9 11/11] Documentation: tee: Add Qualcomm TEE driver
+   ---
+   ✓ Signed: DKIM/qualcomm.com (From: amirreza.zarrabi@oss.qualcomm.com)
+---
+Total patches: 11
+---
+  Base: using specified base-commit 33bcf93b9a6b028758105680f8b538a31bc563cf
+Applying: tee: allow a driver to allocate a tee_device without a pool
+Applying: tee: add close_context to TEE driver operation
+Applying: tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
+Applying: tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
+Applying: tee: increase TEE_MAX_ARG_SIZE to 4096
+Applying: firmware: qcom: scm: add support for object invocation
+Applying: firmware: qcom: tzmem: export shm_bridge create/delete
+Applying: tee: add Qualcomm TEE driver
+Applying: tee: qcom: add primordial object
+Applying: tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
+Applying: Documentation: tee: Add Qualcomm TEE driver
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/=
-admin-guide/kernel-parameters.txt
-index 747a55a..bdbc44f 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2606,6 +2606,11 @@
- 			for it. Intended to get systems with badly broken
- 			firmware running.
-=20
-+	irqhandler.duration_warn_us=3D [KNL]
-+			Warn if an IRQ handler exceeds the specified duration
-+			threshold in microseconds. Useful for identifying
-+			long-running IRQs in the system.
-+
- 	irqpoll		[HW]
- 			When an interrupt is not handled search all handlers
- 			for it. Also check all handlers each timer
-diff --git a/kernel/irq/handle.c b/kernel/irq/handle.c
-index 9489f93..e103451 100644
---- a/kernel/irq/handle.c
-+++ b/kernel/irq/handle.c
-@@ -136,6 +136,44 @@ void __irq_wake_thread(struct irq_desc *desc, struct irq=
-action *action)
- 	wake_up_process(action->thread);
- }
-=20
-+static DEFINE_STATIC_KEY_FALSE(irqhandler_duration_check_enabled);
-+static u64 irqhandler_duration_threshold_ns __ro_after_init;
-+
-+static int __init irqhandler_duration_check_setup(char *arg)
-+{
-+	unsigned long val;
-+	int ret;
-+
-+	ret =3D kstrtoul(arg, 0, &val);
-+	if (ret) {
-+		pr_err("Unable to parse irqhandler.duration_warn_us setting: ret=3D%d\n", =
-ret);
-+		return 0;
-+	}
-+
-+	if (!val) {
-+		pr_err("Invalid irqhandler.duration_warn_us setting, must be > 0\n");
-+		return 0;
-+	}
-+
-+	irqhandler_duration_threshold_ns =3D val * 1000;
-+	static_branch_enable(&irqhandler_duration_check_enabled);
-+
-+	return 1;
-+}
-+__setup("irqhandler.duration_warn_us=3D", irqhandler_duration_check_setup);
-+
-+static inline void irqhandler_duration_check(u64 ts_start, unsigned int irq,
-+					     const struct irqaction *action)
-+{
-+	u64 delta_ns =3D local_clock() - ts_start;
-+
-+	if (unlikely(delta_ns > irqhandler_duration_threshold_ns)) {
-+		pr_warn_ratelimited("[CPU%u] long duration of IRQ[%u:%ps], took: %llu us\n=
-",
-+				    smp_processor_id(), irq, action->handler,
-+				    div_u64(delta_ns, NSEC_PER_USEC));
-+	}
-+}
-+
- irqreturn_t __handle_irq_event_percpu(struct irq_desc *desc)
- {
- 	irqreturn_t retval =3D IRQ_NONE;
-@@ -155,7 +193,16 @@ irqreturn_t __handle_irq_event_percpu(struct irq_desc *d=
-esc)
- 			lockdep_hardirq_threaded();
-=20
- 		trace_irq_handler_entry(irq, action);
--		res =3D action->handler(irq, action->dev_id);
-+
-+		if (static_branch_unlikely(&irqhandler_duration_check_enabled)) {
-+			u64 ts_start =3D local_clock();
-+
-+			res =3D action->handler(irq, action->dev_id);
-+			irqhandler_duration_check(ts_start, irq, action);
-+		} else {
-+			res =3D action->handler(irq, action->dev_id);
-+		}
-+
- 		trace_irq_handler_exit(irq, action, res);
-=20
- 		if (WARN_ONCE(!irqs_disabled(),"irq %u handler %pS enabled interrupts\n",
+b4 shazam 20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com
+Grabbing thread from 
+lore.kernel.org/all/20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com/t.mbox.gz
+Checking for newer revisions
+Grabbing search results from lore.kernel.org
+Analyzing 70 messages in the thread
+Looking for additional code-review trailers on lore.kernel.org
+Analyzing 0 code-review messages
+Checking attestation on all messages, may take a moment...
+---
+   ✓ [PATCH v2 1/11] firmware: qcom_scm: Introduce PAS context 
+initialization helper
+   ✓ [PATCH v2 2/11] soc: qcom: mdtloader: Add context aware 
+qcom_mdt_pas_load() helper
+   ✓ [PATCH v2 3/11] firmware: qcom_scm: Add a prep version of 
+auth_and_reset function
+   ✓ [PATCH v2 4/11] firmware: qcom_scm: Simplify qcom_scm_pas_init_image()
+     + Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> (✗ 
+DKIM/linaro.org)
+   ✓ [PATCH v2 5/11] firmware: qcom_scm: Add shmbridge support to 
+pas_init/release function
+   ✓ [PATCH v2 6/11] remoteproc: Move resource table data structure to 
+its own header
+   ✓ [PATCH v2 7/11] firmware: qcom_scm: Add 
+qcom_scm_pas_get_rsc_table() to get resource table
+   ✓ [PATCH v2 8/11] soc: qcom: mdt_loader: Add helper functions to map 
+and unmap resources
+   ✓ [PATCH v2 9/11] remoteproc: pas: Extend parse_fw callback to parse 
+resource table
+   ✓ [PATCH v2 10/11] remoteproc: qcom: pas: Enable Secure PAS support 
+with IOMMU managed by Linux
+   ✓ [PATCH v2 11/11] media: iris: Enable Secure PAS support with IOMMU 
+managed by Linux
+   ---
+   ✓ Signed: DKIM/qualcomm.com (From: mukesh.ojha@oss.qualcomm.com)
+---
+Total patches: 11
+---
+Applying: firmware: qcom_scm: Introduce PAS context initialization helper
+Applying: soc: qcom: mdtloader: Add context aware qcom_mdt_pas_load() helper
+Applying: firmware: qcom_scm: Add a prep version of auth_and_reset function
+Applying: firmware: qcom_scm: Simplify qcom_scm_pas_init_image()
+Applying: firmware: qcom_scm: Add shmbridge support to pas_init/release 
+function
+Applying: remoteproc: Move resource table data structure to its own header
+Applying: firmware: qcom_scm: Add qcom_scm_pas_get_rsc_table() to get 
+resource table
+Applying: soc: qcom: mdt_loader: Add helper functions to map and unmap 
+resources
+Applying: remoteproc: pas: Extend parse_fw callback to parse resource table
+Patch failed at 0009 remoteproc: pas: Extend parse_fw callback to parse 
+resource table
+error: patch failed: drivers/soc/qcom/mdt_loader.c:22
+error: drivers/soc/qcom/mdt_loader.c: patch does not apply
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
+hint: When you have resolved this problem, run "git am --continue".
+hint: If you prefer to skip this patch, run "git am --skip" instead.
+hint: To restore the original branch and stop patching, run "git am 
+--abort".
+hint: Disable this message with "git config set advice.mergeConflict false"
+
 
