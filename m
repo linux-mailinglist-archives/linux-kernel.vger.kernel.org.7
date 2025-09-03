@@ -1,217 +1,242 @@
-Return-Path: <linux-kernel+bounces-798752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 106BBB42279
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:52:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 637C2B4227E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 427E61645BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E50971BA86B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5249530DED0;
-	Wed,  3 Sep 2025 13:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V6mqssND"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6230330DD31;
+	Wed,  3 Sep 2025 13:52:37 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DDB308F02;
-	Wed,  3 Sep 2025 13:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD5B2FCBE5;
+	Wed,  3 Sep 2025 13:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756907519; cv=none; b=ffvKM75vO6CZ2HQJLz2PhF34NVjeRyDfg5ERshyFENWJRc4v8zaeJjev5CicDJFtEOafOnUYGs8AhfW3piSDdzWzGlI5wNilgkxQnHA2EUBhFMCI+o31qLU+HI9dYMWVoem1M1oY1UeU8iFnz6+m2GbHVu05ybZ+YeRuAFd8Gt8=
+	t=1756907556; cv=none; b=p8xUGeYc5ki/Y4mYHj4fs1izZV8P9F0I6MMqgGiRS6X2+Y2j2J6ffq5rZ6T3YIF0B/UIRheyDdQf14NRjOM0AvlJW2CwvezkpXjbx55EaKbliQRSuSHKiT7kfqZVmBSClujZHWHAKZBcX91iV2mZ9yJDSzSfaSkfH5w9uANSWfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756907519; c=relaxed/simple;
-	bh=7C7Vprc6WxqGCYsdl0EetVroGpHV19XxLdEBnU9vA14=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=T7Gt/uptHiBsRP2N1b4Pn2cYHPJ0rmVc1+66bGNr97NKmI551xdh6O1toBRL8dboIoR88BUClap4t+B2fx6DxYVfXS46wT+cD2lKgTpQXVXme7iaehS/IeD3wEFpric3M2h7KNu9UZpJMcTsyiXMXw8276AJBDUfCXleloVGjNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V6mqssND; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7f6f367a248so571100585a.3;
-        Wed, 03 Sep 2025 06:51:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756907517; x=1757512317; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oPdtlv7HxzVylpclcQP0fll3az3xTGmJG0SNLO2peok=;
-        b=V6mqssNDj7gXkAgDGid9rgfECju6BO8jHITkLc28tlj4lyvoKS0okIK7pm9ieGH1sP
-         kPZFQ5geActg5CTUrjsA7/f9IFW4nHMCcpegS8JICb0hA6tqA8ypg920m7JKmPiaPcdM
-         7cA3yzQ4qwkS7YW+q0w47Ijoz4qefiBR+uG9INKw/VLlaf2Sm3L5MAdS8gX79F7eh3oV
-         K8ZgDxeSq6bIlX9PzBG7RMO2934UbvJK7HaUS5Z/94fBuxOQYlsWcY5BWYbLP8W07dHO
-         h9AKPI7QNvnBL04btI/SPGBCP8sAHZ0N4FCoZx+cctVTYcbNPmlUHgfA8PT1PqkO8iaS
-         2qrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756907517; x=1757512317;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oPdtlv7HxzVylpclcQP0fll3az3xTGmJG0SNLO2peok=;
-        b=Q0U99rsmTthWBrb1OGzg/w866SZi9NKZevtZPoftyyJ6oZgNtLxQ+LkRU7tQ3Cs4HR
-         UuMVncu9q9uH/M5XYVyiEAFfJve1QAnfen4mWai2lKuCldGbRt3dFTuSiNMX1v5m4vZC
-         Lzno1HQiq1LspuB7WVMZLocSVZmawerhYoU+e2seETTOgbzsZCBycSDWkuuYNDIgpNKi
-         3xlYKwn+5gRiMqhFbqrLV88LRMgRfK0gazZWj3Wc/jf8nrlmznMEQxoMQWswfN7Q2OFQ
-         5Kc6oWVTHqgDa0y7PJBz5bics7f2cZMaeOCL3e3ailBEu/Srg40LN9peIRMSwWrc8xVB
-         Vqvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaYpXp5SKsIrebVW5By+T50DXq9yXcJZS+JAH7h7eZoH8tH1XKkiYzQvd+y/8LpmB4Ln4=@vger.kernel.org, AJvYcCVREW1nUf8u3CVH8K3czEPl/IR/nhAsqtyYeT9XZwqrmQoECvGZiC9w1rpebfurog9wgrkTN2Y0@vger.kernel.org, AJvYcCWflvp6g36ZkIl1aJ2pWcddAFDB28iap0u6nFzWQHEgWFtxXgbPCYg+bioY3feZSA5gSc57GyAr040nHExA@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbJyRiBB6JRAfLqIGa/eHjxp+KKN0/V8EUELpBmN5BiBJJCnT/
-	B3CWPzQVmQ1txFJxxLpLjYPd9h4Cps3knXO05kxe6xPXOM+xkH9OmF0o
-X-Gm-Gg: ASbGnctwP/4oD9syq2gAj1zrOao/rEyNA9pkANLkTm3HvJEEKyUmY69sOMmHek6dhJD
-	4bPcRkoYl6angxi8+/dC7YEFqtofJEHP3XDWz8WIFeHQT2uZIx0LALmCuUbWaplXnfYVuxxIV3p
-	JlUl1oqbUPQ4rfvdF1d78GzrLQc5L5XK+LPZgZAvotH/7pZPPL8IxKmIB6xUMjaUEtu/uYG32d3
-	H7EA9UBg/JPqFzGI+HpU/mW1Q2uZNx3xlWSmoNrUgxKUM7WgZLpy1BiWjcO5PhhaLOq/qQEjz3z
-	y3nephMvYNLGTWN7/ZXZSk0e3+Nr5g+lWKgwwJ0EaSqx9XnbHBRmoThydAdIpzmdi1QxKdn8yfJ
-	DGhpc5KmuB1S8HT4i/fDAwPAHo4zY1BKYXMuGtFhAn1axVRuSGf2XoHt/l/NRHCGTSWRdLVcUj9
-	tgbNOqAxRGtYAT
-X-Google-Smtp-Source: AGHT+IHd5QO8rXHYKVepHmXV1bdJPpjQGcBtqXOELN9+bo/yCZVPywfEO7HQeg7wtxFmypA4bZ1CMQ==
-X-Received: by 2002:a05:620a:1a21:b0:7f3:62f3:32b1 with SMTP id af79cd13be357-7ff26eaadf7mr1574330785a.1.1756907516825;
-        Wed, 03 Sep 2025 06:51:56 -0700 (PDT)
-Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-80aa78f2affsm108414785a.30.2025.09.03.06.51.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 06:51:56 -0700 (PDT)
-Date: Wed, 03 Sep 2025 09:51:55 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Jason Wang <jasowang@redhat.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Simon Schippers <simon.schippers@tu-dortmund.de>, 
- mst@redhat.com, 
- eperezma@redhat.com, 
- stephen@networkplumber.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- virtualization@lists.linux.dev, 
- kvm@vger.kernel.org, 
- Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Message-ID: <willemdebruijn.kernel.372e97487ad8b@gmail.com>
-In-Reply-To: <CACGkMEshZGJfh+Og_xrPeZYoWkBAcvqW8e93_DCr7ix4oOaP8Q@mail.gmail.com>
-References: <20250902080957.47265-1-simon.schippers@tu-dortmund.de>
- <20250902080957.47265-5-simon.schippers@tu-dortmund.de>
- <willemdebruijn.kernel.251eacee11eca@gmail.com>
- <CACGkMEshZGJfh+Og_xrPeZYoWkBAcvqW8e93_DCr7ix4oOaP8Q@mail.gmail.com>
-Subject: Re: [PATCH 4/4] netdev queue flow control for vhost_net
+	s=arc-20240116; t=1756907556; c=relaxed/simple;
+	bh=lsfdW4D9gXb/VXmAPKoFZQs/ypqu6RtwOHYa6Kd2x/8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hhxL90KRviKuh64E7/QLBqjVJtdOlPrc6/VXwZqixfKNWTVwaCHN5e7oiiuHuY1fngGpDmUAZWGUGSwNw1Hm4LK52tlLAl38zGzbe9HzHfHGSpwML+9r75WTwfzgeMVPTLFEZfMD+ZnOaWMg1pF8C1WvqN49ZbHkP98qq3RByuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from 7cf34ddaca59.ant.amazon.com (unknown [IPv6:2a01:e0a:3e8:c0d0:f888:35a:53a4:66b4])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 15C72421AE;
+	Wed,  3 Sep 2025 13:52:26 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 2a01:e0a:3e8:c0d0:f888:35a:53a4:66b4) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=7cf34ddaca59.ant.amazon.com
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: alexei.starovoitov@gmail.com,
+	yonghong.song@linux.dev,
+	song@kernel.org
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	sdf@fomichev.me,
+	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com,
+	Arnaud Lecomte <contact@arnaud-lcm.com>
+Subject: [PATCH bpf-next v6 1/2] bpf: refactor max_depth computation in
+ bpf_get_stack()
+Date: Wed,  3 Sep 2025 15:52:22 +0200
+Message-Id: <20250903135222.97604-1-contact@arnaud-lcm.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175690754669.27234.17859007852092031063@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-Jason Wang wrote:
-> On Wed, Sep 3, 2025 at 5:31=E2=80=AFAM Willem de Bruijn
-> <willemdebruijn.kernel@gmail.com> wrote:
-> >
-> > Simon Schippers wrote:
-> > > Stopping the queue is done in tun_net_xmit.
-> > >
-> > > Waking the queue is done by calling one of the helpers,
-> > > tun_wake_netdev_queue and tap_wake_netdev_queue. For that, in
-> > > get_wake_netdev_queue, the correct method is determined and saved i=
-n the
-> > > function pointer wake_netdev_queue of the vhost_net_virtqueue. Then=
-, each
-> > > time after consuming a batch in vhost_net_buf_produce, wake_netdev_=
-queue
-> > > is called.
-> > >
-> > > Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-> > > Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-> > > Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
-> > > ---
-> > >  drivers/net/tap.c      |  6 ++++++
-> > >  drivers/net/tun.c      |  6 ++++++
-> > >  drivers/vhost/net.c    | 34 ++++++++++++++++++++++++++++------
-> > >  include/linux/if_tap.h |  2 ++
-> > >  include/linux/if_tun.h |  3 +++
-> > >  5 files changed, 45 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/drivers/net/tap.c b/drivers/net/tap.c
-> > > index 4d874672bcd7..0bad9e3d59af 100644
-> > > --- a/drivers/net/tap.c
-> > > +++ b/drivers/net/tap.c
-> > > @@ -1198,6 +1198,12 @@ struct socket *tap_get_socket(struct file *f=
-ile)
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(tap_get_socket);
-> > >
-> > > +void tap_wake_netdev_queue(struct file *file)
-> > > +{
-> > > +     wake_netdev_queue(file->private_data);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(tap_wake_netdev_queue);
-> > > +
-> > >  struct ptr_ring *tap_get_ptr_ring(struct file *file)
-> > >  {
-> > >       struct tap_queue *q;
-> > > diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> > > index 735498e221d8..e85589b596ac 100644
-> > > --- a/drivers/net/tun.c
-> > > +++ b/drivers/net/tun.c
-> > > @@ -3739,6 +3739,12 @@ struct socket *tun_get_socket(struct file *f=
-ile)
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(tun_get_socket);
-> > >
-> > > +void tun_wake_netdev_queue(struct file *file)
-> > > +{
-> > > +     wake_netdev_queue(file->private_data);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(tun_wake_netdev_queue);
-> >
-> > Having multiple functions with the same name is tad annoying from a
-> > cscape PoV, better to call the internal functions
-> > __tun_wake_netdev_queue, etc.
-> >
-> > > +
-> > >  struct ptr_ring *tun_get_tx_ring(struct file *file)
-> > >  {
-> > >       struct tun_file *tfile;
-> > > diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> > > index 6edac0c1ba9b..e837d3a334f1 100644
-> > > --- a/drivers/vhost/net.c
-> > > +++ b/drivers/vhost/net.c
-> > > @@ -130,6 +130,7 @@ struct vhost_net_virtqueue {
-> > >       struct vhost_net_buf rxq;
-> > >       /* Batched XDP buffs */
-> > >       struct xdp_buff *xdp;
-> > > +     void (*wake_netdev_queue)(struct file *f);
-> >
-> > Indirect function calls are expensive post spectre. Probably
-> > preferable to just have a branch.
-> >
-> > A branch in `file->f_op !=3D &tun_fops` would be expensive still as i=
-t
-> > may touch a cold cacheline.
-> >
-> > How about adding a bit in struct ptr_ring itself. Pahole shows plenty=
+A new helper function stack_map_calculate_max_depth() that
+computes the max depth for a stackmap.
 
-> > of holes. Jason, WDYT?
-> >
-> =
+Changes in v2:
+ - Removed the checking 'map_size % map_elem_size' from
+   stack_map_calculate_max_depth
+ - Changed stack_map_calculate_max_depth params name to be more generic
 
-> I'm not sure I get the idea, did you mean a bit for classifying TUN
-> and TAP? If this is, I'm not sure it's a good idea as ptr_ring should
-> have no knowledge of its user.
+Changes in v3:
+ - Changed map size param to size in max depth helper
 
-That is what I meant.
- =
+Changes in v4:
+ - Fixed indentation in max depth helper for args
 
-> Consider there were still indirect calls to sock->ops, maybe we can
-> start from the branch.
+Changes in v5:
+ - Bound back trace_nr to num_elem in __bpf_get_stack
+ - Make a copy of sysctl_perf_event_max_stack
+   in stack_map_calculate_max_depth
 
-What do you mean?
+Changes in v6:
+ - Restrained max_depth computation only when required
+ - Additional cleanup from Song in __bpf_get_stack
 
-Tangential: if indirect calls really are needed in a hot path, e.g.,
-to maintain this isolation of ptr_ring from its users, then
-INDIRECT_CALL wrappers can be used to avoid the cost.
+Link to v5: https://lore.kernel.org/all/20250826212229.143230-1-contact@arnaud-lcm.com/
 
-That too effectively breaks the isolation between caller and callee.
-But only for the most important N callers that are listed in the
-INDIRECT_CALL_? wrapper.
+Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
+Cc: Song Lui <song@kernel.org>
+---
+ kernel/bpf/stackmap.c | 58 ++++++++++++++++++++++++++++++-------------
+ 1 file changed, 41 insertions(+), 17 deletions(-)
+
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index 3615c06b7dfa..1ebc525b7c2f 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -42,6 +42,28 @@ static inline int stack_map_data_size(struct bpf_map *map)
+ 		sizeof(struct bpf_stack_build_id) : sizeof(u64);
+ }
+ 
++/**
++ * stack_map_calculate_max_depth - Calculate maximum allowed stack trace depth
++ * @size:  Size of the buffer/map value in bytes
++ * @elem_size:  Size of each stack trace element
++ * @flags:  BPF stack trace flags (BPF_F_USER_STACK, BPF_F_USER_BUILD_ID, ...)
++ *
++ * Return: Maximum number of stack trace entries that can be safely stored
++ */
++static u32 stack_map_calculate_max_depth(u32 size, u32 elem_size, u64 flags)
++{
++	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
++	u32 max_depth;
++	u32 curr_sysctl_max_stack = READ_ONCE(sysctl_perf_event_max_stack);
++
++	max_depth = size / elem_size;
++	max_depth += skip;
++	if (max_depth > curr_sysctl_max_stack)
++		return curr_sysctl_max_stack;
++
++	return max_depth;
++}
++
+ static int prealloc_elems_and_freelist(struct bpf_stack_map *smap)
+ {
+ 	u64 elem_size = sizeof(struct stack_map_bucket) +
+@@ -300,20 +322,17 @@ static long __bpf_get_stackid(struct bpf_map *map,
+ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+ 	   u64, flags)
+ {
+-	u32 max_depth = map->value_size / stack_map_data_size(map);
+-	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
++	u32 elem_size = stack_map_data_size(map);
+ 	bool user = flags & BPF_F_USER_STACK;
+ 	struct perf_callchain_entry *trace;
+ 	bool kernel = !user;
++	u32 max_depth;
+ 
+ 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
+ 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
+ 		return -EINVAL;
+ 
+-	max_depth += skip;
+-	if (max_depth > sysctl_perf_event_max_stack)
+-		max_depth = sysctl_perf_event_max_stack;
+-
++	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
+ 	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
+ 				   false, false);
+ 
+@@ -350,6 +369,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+ {
+ 	struct perf_event *event = ctx->event;
+ 	struct perf_callchain_entry *trace;
++	u32 elem_size, max_depth;
+ 	bool kernel, user;
+ 	__u64 nr_kernel;
+ 	int ret;
+@@ -371,11 +391,14 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+ 		return -EFAULT;
+ 
+ 	nr_kernel = count_kernel_ip(trace);
++	elem_size = stack_map_data_size(map);
+ 
+ 	if (kernel) {
+ 		__u64 nr = trace->nr;
+ 
+-		trace->nr = nr_kernel;
++		max_depth =
++			stack_map_calculate_max_depth(map->value_size, elem_size, flags);
++		trace->nr = min_t(u32, nr_kernel, max_depth);
+ 		ret = __bpf_get_stackid(map, trace, flags);
+ 
+ 		/* restore nr */
+@@ -388,6 +411,9 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+ 			return -EFAULT;
+ 
+ 		flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
++		max_depth =
++			stack_map_calculate_max_depth(map->value_size, elem_size, flags);
++		trace->nr = min_t(u32, trace->nr, max_depth);
+ 		ret = __bpf_get_stackid(map, trace, flags);
+ 	}
+ 	return ret;
+@@ -406,8 +432,8 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 			    struct perf_callchain_entry *trace_in,
+ 			    void *buf, u32 size, u64 flags, bool may_fault)
+ {
+-	u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
+ 	bool user_build_id = flags & BPF_F_USER_BUILD_ID;
++	u32 trace_nr, copy_len, elem_size, max_depth;
+ 	bool crosstask = task && task != current;
+ 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+ 	bool user = flags & BPF_F_USER_STACK;
+@@ -438,21 +464,20 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 		goto clear;
+ 	}
+ 
+-	num_elem = size / elem_size;
+-	max_depth = num_elem + skip;
+-	if (sysctl_perf_event_max_stack < max_depth)
+-		max_depth = sysctl_perf_event_max_stack;
++	max_depth = stack_map_calculate_max_depth(size, elem_size, flags);
+ 
+ 	if (may_fault)
+ 		rcu_read_lock(); /* need RCU for perf's callchain below */
+ 
+-	if (trace_in)
++	if (trace_in) {
+ 		trace = trace_in;
+-	else if (kernel && task)
++		trace->nr = min_t(u32, trace->nr, max_depth);
++	} else if (kernel && task) {
+ 		trace = get_callchain_entry_for_task(task, max_depth);
+-	else
++	} else {
+ 		trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
+-					   crosstask, false);
++			crosstask, false);
++	}
+ 
+ 	if (unlikely(!trace) || trace->nr < skip) {
+ 		if (may_fault)
+@@ -461,7 +486,6 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 	}
+ 
+ 	trace_nr = trace->nr - skip;
+-	trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
+ 	copy_len = trace_nr * elem_size;
+ 
+ 	ips = trace->ip + skip;
+-- 
+2.47.3
 
