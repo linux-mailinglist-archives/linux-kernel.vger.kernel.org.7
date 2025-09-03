@@ -1,84 +1,125 @@
-Return-Path: <linux-kernel+bounces-799491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15BB6B42C83
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:06:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B24EB42C84
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F86B485FB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:05:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4EC17AC1B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1BC2ECD14;
-	Wed,  3 Sep 2025 22:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B862E0927;
+	Wed,  3 Sep 2025 22:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="EKtv0c+v"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dfioB0GM"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000842EC081;
-	Wed,  3 Sep 2025 22:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706EB287508
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 22:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756937145; cv=none; b=jifDaF2Z+faQ3PaCFk+2yptjQ99e9IVtDrZPYs+qAvyN8OJkuX3vs6GE6xw19o1fpERTT9Gw0xDk3lSNQZ/CXDlLzO3kxBM4JSziF65Uhl+0AFwyeqlFYesySobEZ2uSZgXh669aBOz01V91ex3aR9rbI3jJL/wlMWnYwl8RSL8=
+	t=1756937237; cv=none; b=oWS46Fzu6+Mtc+11ZTZk3lXd8qQJTaxf1uqEyK/z87ISKiMl8rMUTdsErEDPyFRUimJN156jkQGq3JK5+LhhbMH9FlJvWj6bqhyE0xuTsX8ayyuv4E0Wx3vA6jHlhbPmjVCdwaIGL+9N1WEVCEnSY3K/3ejU+W0CsmRfmVa9KIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756937145; c=relaxed/simple;
-	bh=HNBIccmfGFoDop+biLBwd00oaJFfIZd9vYmyh7u3MUM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DYlEceyNZ51gotSMU+RB8AIruLMvNI67XUU5lnUfeUQ5NR7NGWlJryOABpEWXKo2WUjKY7cQ3CNtY5E33jjc+U3Zecd0eq+EPg0h6Vh0PDBBnyuqmVYvP0paAMdoZJ1xNPsr5KvcUGjSHz6PtIOFY8RWTNII7h8kWHeFN1XiQLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=EKtv0c+v; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E9F2940AE3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1756937143; bh=njql8TB2ZvWulJYRGHAS4pFfMer8bhPtqvBWQVe+nQM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=EKtv0c+vlmf+gfEthyCgcKkvSCLHKe3Zf0970KPcSEY3uHurDiDrKv6FgVz3KKnSE
-	 iBlU7OrEGkU0d+6Z8+SAgSIROL/SDj5LyUjIto56imxR10Bo1a88iixo+dU5afdA0v
-	 dsA0/de9Rs+T7X11H58UgJd9ibzQKA38wAPDKmfPeCsw+kO0518EFVBcr4iWUdo/dw
-	 HjNgIZrsW/nT0iKm2hy7+WA9u6m4NilWCni0935xjGoQ2Fe5zghiOkMor/qjn73/tr
-	 viybjll5kp6V+VQSl/uFE+PrKrDHC/sx9Tt9BsPZBj0zRVOeC22SryK/Ygg/tQ7ERb
-	 UrKWCpIZEFkuw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id E9F2940AE3;
-	Wed,  3 Sep 2025 22:05:42 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Baruch Siach
- <baruch@tkos.co.il>
-Subject: Re: [PATCH] doc: filesystems: proc: remove stale information from
- intro
-In-Reply-To: <cb4987a16ed96ee86841aec921d914bd44249d0b.1756294647.git.baruch@tkos.co.il>
-References: <cb4987a16ed96ee86841aec921d914bd44249d0b.1756294647.git.baruch@tkos.co.il>
-Date: Wed, 03 Sep 2025 16:05:42 -0600
-Message-ID: <87bjnrp4y1.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1756937237; c=relaxed/simple;
+	bh=col8Y7Eem9lM+HE0Ipmc8MDoWyA6faG97Wn640ziFi4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=n6JaWkC5kBGqNefMmpEIDYFfQnUpfd0Jm3w93Ydvg4onyVbEZCcd7JREoVQlSTf75WS8gNVt4/Yv1ETF6klvHYzI1l5xeZJXDo1Jqgk4ZL30NxPwXRXOzOCzBTJhjW/ikDdgZjFB8CsJ2qbXFts7hhDyhKX4eSf08tBYlNh8584=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dfioB0GM; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 583M6pVE2930104;
+	Wed, 3 Sep 2025 17:06:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756937211;
+	bh=col8Y7Eem9lM+HE0Ipmc8MDoWyA6faG97Wn640ziFi4=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To;
+	b=dfioB0GMQESOdByUWXjjzQqJmKpACXoBwvQHYek/MFGuDZQu9JZelDV3Xcn1iSQfz
+	 vVDciG9yFaPyn5ejGOQGjsIKlxLDCGQtIBYw+X+/CdnEI8WdezD72DQSXeG3x/+Cnv
+	 /b78jKLXZDSWSBozNz/rTa4bWleLHmoXxmilOiPw=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 583M6oaj3837597
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 3 Sep 2025 17:06:50 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 3
+ Sep 2025 17:06:50 -0500
+Received: from DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c]) by
+ DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c%18]) with mapi id
+ 15.01.2507.055; Wed, 3 Sep 2025 17:06:50 -0500
+From: "Ding, Shenghao" <shenghao-ding@ti.com>
+To: Takashi Iwai <tiwai@suse.de>
+CC: "broonie@kernel.org" <broonie@kernel.org>,
+        "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+        "13564923607@139.com" <13564923607@139.com>,
+        "13916275206@139.com"
+	<13916275206@139.com>,
+        "alsa-devel@alsa-project.org"
+	<alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "Xu, Baojun" <baojun.xu@ti.com>,
+        "Baojun.Xu@fpt.com" <Baojun.Xu@fpt.com>
+Subject: RE: [EXTERNAL] Re: [PATCH v2] ALSA: hda/tas2781: Fix the order of
+ TAS2781 calibrated-data
+Thread-Topic: [EXTERNAL] Re: [PATCH v2] ALSA: hda/tas2781: Fix the order of
+ TAS2781 calibrated-data
+Thread-Index: AQHcHIktAJvNMNT5vE+BhvDY5ZGSArSBgAoAgACC1lA=
+Date: Wed, 3 Sep 2025 22:06:50 +0000
+Message-ID: <d032c064b5324641b19b3c0b31dcd2e2@ti.com>
+References: <20250903041351.143-1-shenghao-ding@ti.com>
+ <875xdzx5nn.wl-tiwai@suse.de>
+In-Reply-To: <875xdzx5nn.wl-tiwai@suse.de>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-c2processedorg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
 
-Baruch Siach <baruch@tkos.co.il> writes:
-
-> Most of the information in the first paragraph of the
-> Introduction/Credits section is outdated.
->
-> Documentation update suggestions should go to documentation maintainers
-> listed in MAINTAINERS. Remove misleading contact information.
->
-> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
-> ---
->  Documentation/filesystems/proc.rst | 21 ---------------------
->  1 file changed, 21 deletions(-)
-
-I think this poor document needs a lot more love than this ... but it's
-a start, I guess, so I've applied it, thanks.
-
-jon
+DQpUaGFua3MgZm9ywqB5b3VyIHJlZiBjb2RlDQo+ID4gKy8qDQo+ID4gKyAqIFRoZSBvcmRlciBv
+ZiBjYWxpYnJhdGVkLWRhdGEgd3JpdGluZyBpcyBhIGJpdCBkaWZmZXJlbnQgZnJvbSB0aGUNCj4g
+PiArb3JkZXINCj4gPiArICogaW4gVUVGSS4gSGVyZSBpcyB0aGUgY29udmVyc2lvbiB0byBtYXRj
+aCB0aGUgb3JkZXIgb2YNCj4gPiArY2FsaWJyYXRlZC1kYXRhDQo+ID4gKyAqIHdyaXRpbmcuDQo+
+ID4gKyAqLw0KPiA+ICtzdGF0aWMgdm9pZCBjYWxpX2Nudih1bnNpZ25lZCBjaGFyICpkYXRhLCB1
+bnNpZ25lZCBpbnQgYmFzZSwgaW50DQo+ID4gK29mZnNldCkgew0KPiA+ICsJX19iZTMyIGJlZGF0
+YVtUQVNERVZfQ0FMSUJfTl07DQo+ID4gKwlpbnQgaTsNCj4gPiArDQo+ID4gKwkvKiByMF9yZWcg
+Ki8NCj4gPiArCWJlZGF0YVswXSA9IGNwdV90b19iZTMyKCoodWludDMyX3QgKikmZGF0YVtiYXNl
+XSk7DQo+ID4gKwkvKiByMF9sb3dfcmVnICovDQo+ID4gKwliZWRhdGFbMV0gPSBjcHVfdG9fYmUz
+MigqKHVpbnQzMl90ICopJmRhdGFbYmFzZSArIDhdKTsNCj4gPiArCS8qIGludnIwX3JlZyAqLw0K
+PiA+ICsJYmVkYXRhWzJdID0gY3B1X3RvX2JlMzIoKih1aW50MzJfdCAqKSZkYXRhW2Jhc2UgKyA0
+XSk7DQo+ID4gKwkvKiBwb3dfcmVnICovDQo+ID4gKwliZWRhdGFbM10gPSBjcHVfdG9fYmUzMigq
+KHVpbnQzMl90ICopJmRhdGFbYmFzZSArIDEyXSk7DQo+ID4gKwkvKiB0bGltaXRfcmVnICovDQo+
+ID4gKwliZWRhdGFbNF0gPSBjcHVfdG9fYmUzMigqKHVpbnQzMl90ICopJmRhdGFbYmFzZSArIDE2
+XSk7DQo+ID4gKw0KPiA+ICsJZm9yIChpID0gMDsgaSA8IFRBU0RFVl9DQUxJQl9OOyBpKyspDQo+
+ID4gKwkJbWVtY3B5KCZkYXRhW29mZnNldCArIGkgKiA0ICsgMV0sICZiZWRhdGFbaV0sDQo+ID4g
+KwkJCXNpemVvZihiZWRhdGFbaV0pKTsNCj4gPiArfQ0KPiANCj4gSU1PLCB0aGlzIGNhbiBiZSBt
+b3JlIHJlYWRhYmxlIHdoZW4geW91IHVzZSBzdHJ1Y3QgY2FsaWRhdGEsIGUuZy4NCj4gDQo+IHN0
+YXRpYyB2b2lkIGNhbGlfY252KHVuc2lnbmVkIGNoYXIgKmRhdGEsIHVuc2lnbmVkIGludCBiYXNl
+LCBpbnQgb2Zmc2V0KSB7DQo+IAlzdHJ1Y3QgY2FsaWRhdGEgcmVnOw0KPiANCj4gCXJlZy5yMF9y
+ZWcgPSAqKHUzMiAqKSZkYXRhW2Jhc2VdDQo+IAlyZWcucjBfbG93X3JlZyA9ICoodTMyICopJmRh
+dGFbYmFzZSArIDhdDQo+IAlyZWcuaW52cjBfcmVnID0gKih1MzIgKikmZGF0YVtiYXNlICsgNF0N
+Cj4gCXJlZy5wb3dfcmVnID0gKih1MzIgKikmZGF0YVtiYXNlICsgMTJdOw0KPiAJcmVnLnRsaW1p
+dF9yZWcgPSAqKHUzMiAqKSZkYXRhW2Jhc2UgKyAxNl0pOw0KPiANCj4gCWNwdV90b19iZTMyX2Fy
+cmF5KChfX2ZvcmNlIF9fYmUzMiAqKShkYXRhICsgb2Zmc2V0ICsgMSksICZyZWcsDQo+IAkJCSAg
+VEFTREVWX0NBTElCX04pOw0KPiB9DQo+IA0KPiAuLi4gb3IgZXZlbiBzaW1wbGVyIGxpa2U6DQo+
+IA0KPiBzdGF0aWMgdm9pZCBjYWxpX2Nudih1bnNpZ25lZCBjaGFyICpkYXRhLCB1bnNpZ25lZCBp
+bnQgYmFzZSwgaW50IG9mZnNldCkgew0KPiAJc3RydWN0IGNhbGlkYXRhIHJlZzsNCj4gDQo+IAlt
+ZW1jcHkoJnJlZywgZGF0YSwgc2l6ZW9mKHJlZykpOw0KPiAJLyogdGhlIGRhdGEgb3JkZXIgaGFz
+IHRvIGJlIHN3YXBwZWQgYmV0d2VlbiByMF9sb3dfcmVnIGFuZCBpbnYwX3JlZw0KPiAqLw0KPiAJ
+c3dhcChyZWcucjBfbG93X3JlZywgcmVnLmludnIwX3JlZyk7DQo+IA0KPiAJY3B1X3RvX2JlMzJf
+YXJyYXkoKF9fZm9yY2UgX19iZTMyICopKGRhdGEgKyBvZmZzZXQgKyAxKSwgJnJlZywNCj4gCQkJ
+ICBUQVNERVZfQ0FMSUJfTik7DQo+IH0NCkkgbGlrZSB0aGlzIGNvZGUgc28gbXVjaC4gSXQncyBl
+bGVnYW50IHNpbXBsaWNpdHkuDQoNClRoYW5rcywNClNoZW5naGFvIERpbmcNCg==
 
