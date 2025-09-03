@@ -1,292 +1,214 @@
-Return-Path: <linux-kernel+bounces-797822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A29DB415C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:03:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE52B415C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 300705E6299
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:03:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 081FE1B23B40
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFAC2D6E64;
-	Wed,  3 Sep 2025 07:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877492D8764;
+	Wed,  3 Sep 2025 07:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hCoeG5mA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IFIuHZgW"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBAA2D9EE4
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2B72D877A;
+	Wed,  3 Sep 2025 07:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756882986; cv=none; b=r8r8gtBXLImrYagCJ1uxbRZ85V85hk81ZhXLRrj+sXk01tr17cdCs/hUIMDKBzzpz8+VVXczKDSZpVpLlYXD/hAYbNvNphC8EJHMo60s0o4yv4cHtz1FpTBkPW74hypQpMwN3enytkLS7MK9oxh+G0b5BDyriqMwSezeEY6Ib7A=
+	t=1756883010; cv=none; b=NQw366h4zmezQ5klOIwEdb7s2N2O8wl5GhyqAMiGJhZRWflBDa12F6ZSGonpqmbPUxMO5M9wn2DizzW3LrgyE6AOD76FWmvkrz68fZ55MI/ow7qbjFzeanvdVOKhmhsgJShEXNuA6CDW3D0fhEY9jgPz/0Nd6Pbx0fbY/rLf/Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756882986; c=relaxed/simple;
-	bh=G6t/5pjet8mpzpHi5mysP4dTkQrjBmUPbnhJ0MhbR4s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A9X11fP6pA07CZVSdThTE73rFFmIANOl0d2wDKNJPtviKiJf9R9EPMg0fp8I5FfRaGNkjE204PvqTU7TxMR+jrmpylR0aR9b3g4Wgg4LzAYtZNBk38ZcEsBlu9VeCQqHTqWcYdfOf7G2oAv0Hnl/jx80qKPD1jmQK3TJULn6uM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hCoeG5mA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756882983;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J2sRWSVC6muW7v9K/79DawocgKSZMBM0YbSqQ+7W344=;
-	b=hCoeG5mA5hjjgc7oaXi8tTaV/Sdc4jzXcAxUmDbdN3tOyKNvQb8NJANvRaUpS5UUcgVIAq
-	qpdhlhhB1PM25bm/uMAWzIn1HgbeU7HUgDf6nihyGKIWbnqn5xSluNfwu/NIXxBslCkX1q
-	mC08J48NtpNJonrm7QVwtAiJO6QeDs8=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-314-RHe88CdvPri1ZoOVHosizA-1; Wed, 03 Sep 2025 03:03:00 -0400
-X-MC-Unique: RHe88CdvPri1ZoOVHosizA-1
-X-Mimecast-MFC-AGG-ID: RHe88CdvPri1ZoOVHosizA_1756882980
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3df3e935ec8so63086f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 00:03:00 -0700 (PDT)
+	s=arc-20240116; t=1756883010; c=relaxed/simple;
+	bh=twKg17NiiaX4b+nsPqQ7l1vh4UkOISR51Ac1/4E0fdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ACrmVZGe/hvsjnGhdJTRPA47scXI3QKsPY7x4PBzBW0f+OqKbfWam5gjypxnqyBJN9t2r3FsayyETCIT1/NDO9zJmYlNPq1N1xOrbCg6Y5D2DqA303gIsfsJpitez9wZhpbJmKiGULKiO4q0NoWNKS2Mv5CVNpPrH0Abl5IJVa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IFIuHZgW; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f720ffe34so902470e87.1;
+        Wed, 03 Sep 2025 00:03:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756883007; x=1757487807; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QqbTa59zKcp1kRY3+8ifl5pxub5gmL+oR4nSabqGse8=;
+        b=IFIuHZgWqq8XO2f8hU2hNfHMeuSNFWRtks3MfAiDX+ryNOdpdq0vqdw+ffYl95RGBg
+         Fwp6PpLvXVZ+DIdw6fPFukS/WhNwJ8AgH2ZgdgJcvm3n1re81BH06il2I4jHlRZrE6fM
+         IAlBLO7nW44Mwud8wbBjOs5Lfibms3ZkdeViQyu/dp7UeA/k2fFlXsTPwvTRYt6CiBDW
+         5tvTRnre8Nap/jMP1lX4iB/A0YGiZeJrtvAyAnpZqTeP8hPOPab8vbmOulyNYaPaKTow
+         x6GA3rXeiaHicxUowV0qvmgagyr88UKCyc8GJQk1+vN9s85dAYTiLR17WF7IFGnkLpCG
+         0tgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756882979; x=1757487779;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J2sRWSVC6muW7v9K/79DawocgKSZMBM0YbSqQ+7W344=;
-        b=AhIBdAfiDPvxL+F6CIB0L2095QQINe+I2AeRI6pmtzLB0MplpAeNOHzhw3x196qzVa
-         a8TJR451U+E25+UfhTxxzaBeJ9tWvIU6m6o2d6O+vp83WWLOYkGcK2B4u+ube92BfNDU
-         yAdcUIRPTnRSw/beLMbM+RNE4LOi4B8unsLqq61NZNDLr84Ul+HOsEVXytsZtDk1m7Fw
-         iwtVj6YzyvKnpD7wztw08IK1zUayv9PpiewRWpgW0fYQn6Hc5Z4l1DHTBDuyEca7Z1rU
-         1/4V1yLkJtQ578ZKp4QZti+rxetLXB3lre6lI4WK5LSPdtykkACHgBvy9SI3beyff0y8
-         T9WQ==
-X-Gm-Message-State: AOJu0YwAfYk6jmNMsmr38MR79Xk875gFp5sSfLUkmzWMy/5gEKM6VfnE
-	s+yFPx/8D0OPQUHDIVm1J/9rkeRAQjBCLQyJmeXmg6U21Ou4sSlBv6ivaD9lHDWVTqiVzlTy33P
-	Q2mbtlzrSno3WFb6aDV7RKL09SETnm135Ewt6h7Xw/xCVn4fCh5Y8HS3i9zGrBpV0Jid39Z0LlV
-	yL4gLwT3zu2MGOAvSR49MWSdFfEU1vg/Ac4ECBzvwywDt3og==
-X-Gm-Gg: ASbGncshOpM3F85To+mDs+AXlWWkujDChgmHs51MKXaVlazHQOzJ3aT4sB1zQCIsyUD
-	rcVDUBEoDu/lglrjECnnx3CR+TLm3+52lLBEMaAYbn14RIulcrOfSDLxGXTl8wCY9aqGKm+380v
-	dlM0CkIxj0xJRCsXtZBHH6ZGb5lX68u1rvr2mT2dUKNW1Az/pu0RGS5AR7U2CAE2tflsfv6TKrT
-	4IdjKCZAbqzjFeHLQuyHEZd12ChpxqSvL2bNjn9qY9pGx1/Fo10lgSF+ZrMLL0ZSOa/2It0cFnN
-	Hken3mDyVBkHqPab8HQLahgm/Rh4FA2K/FKP/4RxskaNcYOAEfOYVaDG7iViREqIK5lb4NekH/y
-	cVessEFOAGH5wRr8BhIYKs1zJ
-X-Received: by 2002:a05:6000:1789:b0:3dc:2136:7523 with SMTP id ffacd0b85a97d-3dc2136754amr1475813f8f.0.1756882979550;
-        Wed, 03 Sep 2025 00:02:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJPnLNL5I9w+xcg7OB1s/KttczlD4Bt2mn9lDViDhx6EVKHlJPHrKwqtJR3u79EyXcvnt/VA==
-X-Received: by 2002:a05:6000:1789:b0:3dc:2136:7523 with SMTP id ffacd0b85a97d-3dc2136754amr1475777f8f.0.1756882979050;
-        Wed, 03 Sep 2025 00:02:59 -0700 (PDT)
-Received: from localhost (p200300d82f099c0081732a94640ddd31.dip0.t-ipconnect.de. [2003:d8:2f09:9c00:8173:2a94:640d:dd31])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3d701622b92sm11105604f8f.58.2025.09.03.00.02.58
+        d=1e100.net; s=20230601; t=1756883007; x=1757487807;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QqbTa59zKcp1kRY3+8ifl5pxub5gmL+oR4nSabqGse8=;
+        b=DhklmfM6FC6I4PLjGzogfPL7jFDzPaDFEWqCkQ34g3rGhyTJKlmdj2sno2E24mSVBo
+         SwH+RKPk5gF/j+cg01kQBXnVromW/YVIn9UrzZYTla7wj5nkKmtJ+Kns4Fp1T/x2QUEF
+         6P25RvyC+G+JA+hj8ShbtTAml6qZWotCayac2CIz4Q4nVzZAClsi25jbZdNrrFViKUp+
+         6EL0XlCB10LLAZbB6lqmjQiV2E1i23wsg7VorJh8y18jpU8owHeJqD+oiQPRphC2Fnmm
+         iviEkr0hCd+XLejuYOSB0OqkuQl/8qlljJPLIVWyk98cBOtvFMzjjA6crbR6Y5LjvkJs
+         p7Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyT5hSBrS8FklrqnZ6kUaHyXCJv8Ue8zbt8Hn9ssQg2CcweanFoBViZO0JeaBnISl9KJZrFeAKIfgb@vger.kernel.org, AJvYcCV61G3lzhN1Lajb5NjyiGDFNKn3KPbwn2YIsgIs5RBGyfgNCPk6dQ01xlO0th1hVBw1KfOMyB7Jd0Lfeg==@vger.kernel.org, AJvYcCWUI0LfW1JIq1AtkZcsezE+I5zb+AhOXI2f1OorwoQjbrlNo4NxolrvbXkODMFflj3Io5KGtz4bVJsQ@vger.kernel.org, AJvYcCXm4pSWyOdo5Uz7ld+V3u7eIGk24+4UrrhfFiekxHdT8chhClvpP5KFgKcKWdr2M0UXGvJ6Plq9sYZ/fHwX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5l9lW8O6xsaa12IDvn94UAP4V6ttnxbw9KQc9TeianGnauGPc
+	R6tqTI2YiC1Dqbw7wm9otuyN4hAE7WYXIB3cP+R52CxDRvZItjFDp7gr
+X-Gm-Gg: ASbGncsofnQxiC/ZKe0LEvmvxx12FJUzfqLJuVRQqW92fNYqeQ9Rue5BAmNN230MZxN
+	W/jMmVxMP5LssIjpwp995szIWd2a/ouQ5nVkFhe8xSd0Z5MM+1rg7LNKFOcntQhjQvu8KiivNNn
+	j/OMlCvfA7ytmPIWkgUyBB1d6uSUHyw14SpphPHrDG8TZwKJs1mbI0vtTW6aXCGPMkMMObw8npv
+	zx0JrQ403+lOVGuinr782beoLjwoe+a6c9B7AtygfQ1fTqT0e//rgEvVrJvAGoUSnPCk5n7dUAC
+	Qzpf3nKYHRR1Bmj9HT3CIOgv+CKhyyjKjg8pxGLHiI3vdIpkPluRWBemLy0gvxFUqjGRP+ERF7U
+	MiRDWXtAWGeng5r1OG7GZ0ef3OGkbXLs6CLNGIgMJQfLLCo04/2gOSBT4nDAZuExx5dZiQnYNIY
+	MA+9bC
+X-Google-Smtp-Source: AGHT+IF0p3WcBP/JALbJd3F0HgYZLGRyq6GR53LXy15SNQwHDfi88vjTB+GOxRtGp/dyIU/NC667YA==
+X-Received: by 2002:ac2:5f72:0:b0:55f:552c:f731 with SMTP id 2adb3069b0e04-55f6f6b4c11mr3068666e87.7.1756883006453;
+        Wed, 03 Sep 2025 00:03:26 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608abc1fdesm327943e87.58.2025.09.03.00.03.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 00:02:58 -0700 (PDT)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Wei Yang <richard.weiyang@gmail.com>
-Subject: [PATCH v2 2/2] selftests/mm: split_huge_page_test: cleanups for split_pte_mapped_thp test
-Date: Wed,  3 Sep 2025 09:02:53 +0200
-Message-ID: <20250903070253.34556-3-david@redhat.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250903070253.34556-1-david@redhat.com>
-References: <20250903070253.34556-1-david@redhat.com>
+        Wed, 03 Sep 2025 00:03:25 -0700 (PDT)
+Message-ID: <b2650751-2f23-4508-9959-c55bc0530dfa@gmail.com>
+Date: Wed, 3 Sep 2025 10:03:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+To: David Lechner <dlechner@baylibre.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Tobias Sperling <tobias.sperling@softing.com>,
+ Antoniu Miclaus <antoniu.miclaus@analog.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>,
+ Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+ Hans de Goede <hansg@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+References: <cover.1756813980.git.mazziesaccount@gmail.com>
+ <08929460fe11dd0b749c50a72a634423f13f4104.1756813980.git.mazziesaccount@gmail.com>
+ <a6ae372e-e0c9-4874-8be1-8070ee3e880f@baylibre.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <a6ae372e-e0c9-4874-8be1-8070ee3e880f@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-There is room for improvement, so let's clean up a bit:
+On 02/09/2025 18:14, David Lechner wrote:
+> On 9/2/25 7:24 AM, Matti Vaittinen wrote:
+>> The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
+>> be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
+>>
+>> The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
+>> voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
+>> daisy-chain configuration) and maximum sampling rate is 1MSPS.
+>>
+>> The IC does also support CRC but it is not implemented in the driver.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>> ---
+>>   drivers/iio/adc/Kconfig        |  10 +
+>>   drivers/iio/adc/Makefile       |   1 +
+>>   drivers/iio/adc/rohm-bd79112.c | 542 +++++++++++++++++++++++++++++++++
+>>   3 files changed, 553 insertions(+)
+>>   create mode 100644 drivers/iio/adc/rohm-bd79112.c
+>>
+>> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+>> index e3d3826c3357..4b78929bb257 100644
+>> --- a/drivers/iio/adc/Kconfig
+>> +++ b/drivers/iio/adc/Kconfig
+>> @@ -1309,6 +1309,16 @@ config RN5T618_ADC
+>>   	  This driver can also be built as a module. If so, the module
+>>   	  will be called rn5t618-adc.
+>>   
+>> +config ROHM_BD79112
+>> +	tristate "Rohm BD79112 ADC driver"
+>> +	depends on I2C && GPIOLIB
+>> +	select REGMAP_I2C
+> 
+> I think you want SPI rather than I2C. :-)
 
-(1) Define "4" as a constant.
+Ouch! :) Well spotted! Thanks!
 
-(2) SKIP if we fail to allocate all THPs (e.g., fragmented) and add
-    recovery code for all other failure cases: no need to exit the test.
+> 
+>> +	select IIO_ADC_HELPER
+>> +	help
+>> +	  Say yes here to build support for the ROHM BD79112 ADC. The
+>> +	  ROHM BD79112 is a 12-bit, 32-channel, SAR ADC, which analog
+>> +	  inputs can also be used for GPIO.
+>> +
+> 
+> 
+> 
+>> +struct bd79112_data {
+>> +	struct spi_device *spi;
+>> +	struct regmap *map;
+>> +	struct device *dev;
+>> +	struct gpio_chip gc;
+>> +	unsigned long gpio_valid_mask;
+>> +	unsigned int vref_mv;
+>> +	struct spi_transfer read_xfer[2];
+>> +	struct spi_transfer write_xfer;
+>> +	struct spi_message read_msg;
+>> +	struct spi_message write_msg;
+>> +	/* 16-bit TX, valid data in high byte */
+>> +	u8 read_tx[2] __aligned(IIO_DMA_MINALIGN);
+>> +	/* 8-bit address followed by 8-bit data */
+>> +	u8 reg_write_tx[2] __aligned(IIO_DMA_MINALIGN);
+>> +	/* 12-bit of ADC data or 8 bit of reg data */
+>> +	__be16 read_rx __aligned(IIO_DMA_MINALIGN);
+> 
+> Usually, we only need one __aligned(IIO_DMA_MINALIGN) (on the first
+> field). Since these are only used for SPI messages and we can only
+> send one message at a time, there isn't a way for there to be a
+> problem that would require them to each need to be in their own
+> cache line.
 
-(3) Rename "len" to thp_area_size, and "one_page" to "thp_area".
+I was wondering about this and hoping to get a good comment explaining 
+it :) I noticed I don't really know how different SPI controllers handle 
+DMA or cache. Hence I just went with what felt like safest option - and 
+hoped to get a comment like yours if it wasn't needed ;) So, Thanks!
 
-(4) Allocate a new area "page_area" into which we will mremap the
-    pages; add "page_area_size". Now we can easily merge the two
-    mremap instances into a single one.
+> 
+>> +};
+>> +
+> 
+> 
+> 
+>> +static int bd79112_probe(struct spi_device *spi)
+>> +{
+> 
+> ...
+> 
+>> +	iio_dev->channels = cs;
+>> +	iio_dev->num_channels = ret;
+> 
+> This is quite far from where it is assigned. Better to have a dedicated
+> local variable for this.
 
-(5) Iterate THPs instead of bytes when checking for missed THPs after
-    mremap.
+Gah! I agree. Actually there is now a bug where the 
+iio_dev->num_channels is used before it is set. So, datasheet names 
+won't be assigned correctly. (I did some re-ordering of stuff in probe 
+to cover the 'all ADCs and all GPIOs cases. I must've messed this at 
+that point!).
 
-(6) Rename "pte_mapped2" to "tmp", used to verify mremap(MAP_FIXED)
-    result.
+Thanks! I feel like I owe you a beer :] Just remind me if we meet! ;)
 
-(7) Split the corruption test from the failed-split test, so we can just
-    iterate bytes vs. thps naturally.
-
-(8) Extend comments and clarify why we are using mremap in the first
-    place.
-
-Reviewed-by: Zi Yan <ziy@nvidia.com>
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- .../selftests/mm/split_huge_page_test.c       | 123 +++++++++++-------
- 1 file changed, 74 insertions(+), 49 deletions(-)
-
-diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
-index 72d6d8bb329ed..7731191cc8e9b 100644
---- a/tools/testing/selftests/mm/split_huge_page_test.c
-+++ b/tools/testing/selftests/mm/split_huge_page_test.c
-@@ -389,67 +389,92 @@ static void split_pmd_thp_to_order(int order)
- 
- static void split_pte_mapped_thp(void)
- {
--	char *one_page, *pte_mapped, *pte_mapped2;
--	size_t len = 4 * pmd_pagesize;
--	uint64_t thp_size;
-+	const size_t nr_thps = 4;
-+	const size_t thp_area_size = nr_thps * pmd_pagesize;
-+	const size_t page_area_size = nr_thps * pagesize;
-+	char *thp_area, *tmp, *page_area = MAP_FAILED;
- 	size_t i;
- 
--	one_page = mmap((void *)(1UL << 30), len, PROT_READ | PROT_WRITE,
-+	thp_area = mmap((void *)(1UL << 30), thp_area_size, PROT_READ | PROT_WRITE,
- 			MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
--	if (one_page == MAP_FAILED)
--		ksft_exit_fail_msg("Fail to allocate memory: %s\n", strerror(errno));
-+	if (thp_area == MAP_FAILED) {
-+		ksft_test_result_fail("Fail to allocate memory: %s\n", strerror(errno));
-+		return;
-+	}
- 
--	madvise(one_page, len, MADV_HUGEPAGE);
-+	madvise(thp_area, thp_area_size, MADV_HUGEPAGE);
- 
--	for (i = 0; i < len; i++)
--		one_page[i] = (char)i;
-+	for (i = 0; i < thp_area_size; i++)
-+		thp_area[i] = (char)i;
- 
--	if (!check_huge_anon(one_page, 4, pmd_pagesize))
--		ksft_exit_fail_msg("No THP is allocated\n");
-+	if (!check_huge_anon(thp_area, nr_thps, pmd_pagesize)) {
-+		ksft_test_result_skip("Not all THPs allocated\n");
-+		goto out;
-+	}
- 
--	/* remap the first pagesize of first THP */
--	pte_mapped = mremap(one_page, pagesize, pagesize, MREMAP_MAYMOVE);
--
--	/* remap the Nth pagesize of Nth THP */
--	for (i = 1; i < 4; i++) {
--		pte_mapped2 = mremap(one_page + pmd_pagesize * i + pagesize * i,
--				     pagesize, pagesize,
--				     MREMAP_MAYMOVE|MREMAP_FIXED,
--				     pte_mapped + pagesize * i);
--		if (pte_mapped2 == MAP_FAILED)
--			ksft_exit_fail_msg("mremap failed: %s\n", strerror(errno));
--	}
--
--	/* smap does not show THPs after mremap, use kpageflags instead */
--	thp_size = 0;
--	for (i = 0; i < pagesize * 4; i++)
--		if (i % pagesize == 0 &&
--		    is_backed_by_folio(&pte_mapped[i], pmd_order, pagemap_fd, kpageflags_fd))
--			thp_size++;
--
--	if (thp_size != 4)
--		ksft_exit_fail_msg("Some THPs are missing during mremap\n");
--
--	/* split all remapped THPs */
--	write_debugfs(PID_FMT, getpid(), (uint64_t)pte_mapped,
--		      (uint64_t)pte_mapped + pagesize * 4, 0);
--
--	/* smap does not show THPs after mremap, use kpageflags instead */
--	thp_size = 0;
--	for (i = 0; i < pagesize * 4; i++) {
--		if (pte_mapped[i] != (char)i)
--			ksft_exit_fail_msg("%ld byte corrupted\n", i);
-+	/*
-+	 * To challenge spitting code, we will mremap a single page of each
-+	 * THP (page[i] of thp[i]) in the thp_area into page_area. This will
-+	 * replace the PMD mappings in the thp_area by PTE mappings first,
-+	 * but leaving the THP unsplit, to then create a page-sized hole in
-+	 * the thp_area.
-+	 * We will then manually trigger splitting of all THPs through the
-+	 * single mremap'ed pages of each THP in the page_area.
-+	 */
-+	page_area = mmap(NULL, page_area_size, PROT_READ | PROT_WRITE,
-+			MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-+	if (page_area == MAP_FAILED) {
-+		ksft_test_result_fail("Fail to allocate memory: %s\n", strerror(errno));
-+		goto out;
-+	}
- 
--		if (i % pagesize == 0 &&
--		    !is_backed_by_folio(&pte_mapped[i], 0, pagemap_fd, kpageflags_fd))
--			thp_size++;
-+	for (i = 0; i < nr_thps; i++) {
-+		tmp = mremap(thp_area + pmd_pagesize * i + pagesize * i,
-+			     pagesize, pagesize, MREMAP_MAYMOVE|MREMAP_FIXED,
-+			     page_area + pagesize * i);
-+		if (tmp != MAP_FAILED)
-+			continue;
-+		ksft_test_result_fail("mremap failed: %s\n", strerror(errno));
-+		goto out;
-+	}
-+
-+	/*
-+	 * Verify that our THPs were not split yet. Note that
-+	 * check_huge_anon() cannot be used as it checks for PMD mappings.
-+	 */
-+	for (i = 0; i < nr_thps; i++) {
-+		if (is_backed_by_folio(page_area + i * pagesize, pmd_order,
-+				       pagemap_fd, kpageflags_fd))
-+			continue;
-+		ksft_test_result_fail("THP %zu missing after mremap\n", i);
-+		goto out;
- 	}
- 
--	if (thp_size)
--		ksft_exit_fail_msg("Still %ld THPs not split\n", thp_size);
-+	/* Split all THPs through the remapped pages. */
-+	write_debugfs(PID_FMT, getpid(), (uint64_t)page_area,
-+		      (uint64_t)page_area + page_area_size, 0);
-+
-+	/* Corruption during mremap or split? */
-+	for (i = 0; i < page_area_size; i++) {
-+		if (page_area[i] == (char)i)
-+			continue;
-+		ksft_test_result_fail("%zu byte corrupted\n", i);
-+		goto out;
-+	}
-+
-+	/* Split failed? */
-+	for (i = 0; i < nr_thps; i++) {
-+		if (is_backed_by_folio(page_area + i * pagesize, 0,
-+				       pagemap_fd, kpageflags_fd))
-+			continue;
-+		ksft_test_result_fail("THP %zu not split\n", i);
-+	}
- 
- 	ksft_test_result_pass("Split PTE-mapped huge pages successful\n");
--	munmap(one_page, len);
-+out:
-+	munmap(thp_area, thp_area_size);
-+	if (page_area != MAP_FAILED)
-+		munmap(page_area, page_area_size);
- }
- 
- static void split_file_backed_thp(int order)
--- 
-2.50.1
-
+Yours,
+	-- Matti
 
