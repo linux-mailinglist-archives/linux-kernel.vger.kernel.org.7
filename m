@@ -1,128 +1,119 @@
-Return-Path: <linux-kernel+bounces-798442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D377B41E15
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:00:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB516B41E21
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5CEE1BA6DA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:00:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52518160244
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07792FFDCF;
-	Wed,  3 Sep 2025 11:58:41 +0000 (UTC)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE259286428;
+	Wed,  3 Sep 2025 12:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D6v6y2my"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9CA2FF643;
-	Wed,  3 Sep 2025 11:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790C328466F
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756900721; cv=none; b=hpitx7V9k62zxrLQjFBkYfiWmf9XwJseZNj6XFtR8NTu/vFiBhglf70swja7Tz27rLgMN3Vt+nmMv+A0drZ4MCpYPaHJBCjNj3isLnpfdwvefKsuqSf0uVeIUuU4WyFQTon9k3A7putuTsZ5uqmTcZpXP//c8r65YU5dy03onjo=
+	t=1756900853; cv=none; b=UCTQeDbY243yT/nwAAcA1lZyhWDZ/M7NKTfEVewmYWNY0Y5okRQd1lDv6yDRzCPV3jcujfnyaxsLmEONs7jTN6OMB8n/orfO3KQLtJhklbQzURIxOo6yICCgy+kPnF8YDH8xSK7KG5CNpugtMvXZuDjDPHtyCQ6A8xx5eMFldxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756900721; c=relaxed/simple;
-	bh=yaJqh2VDrWQ1DxACW5SPoSFNNNkLbBmtgSRyoK7CgtU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OFbvuhXPpusFNuwwrVR2pk414OTIx/gSSJbTJH3N/7JrW75X8McKl+zi9WAK4rfvQUTI6FF4zumJuVhOOb8P5nYXAgafVfoLnZ5EQti5gYKV0K5jUXFB566vTeWWjPr4ODFA+zI77/TfErRwFjQy01XcmzXhcmcKTLtX62d9KRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-52e231e3d48so1135334137.1;
-        Wed, 03 Sep 2025 04:58:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756900718; x=1757505518;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c6WuE2oNiBPwI08RjkW+PWfEBaP/Xa6V6hhs3bRi3RQ=;
-        b=LtYiDUHfSWIVj9o2nBy0nihTCQlU1l2xIOqyvmXAcyvhs268CsUpsiMk8Vsi3DvsvH
-         WX8a407ubVtQBdXKAsk/4EhCmVdrODYQ+cDA33RbLPm/8uHhbmrE0SLeXnHDHTlepPra
-         QwnV6rJNpOfqHgf7rfQZSOUVCvjC8xki0xGUth+evG2p1IEWHOWdlz6ur7hiYJe6bCaw
-         1k66+5JWTZeSr1Q4tMM+7BW05MHUDbX+vbnVt5wFYGVXzVYuMJw8j/WYlmFoF4qPL4NE
-         s+hpOgDehdYnehichwofJnm8b3fI2ODMrBhySjY0HSpZjcknFN7zvxwPm0qImLgVmwuu
-         hUhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUi/TOtlxoMf+SC68/0DTdZmLJKDuEPOClvxQPiO2Q0Ni0l/X4OXPGTWTYe7sT5PTjTibnzfLW2j8OcLEN9@vger.kernel.org, AJvYcCV2X9gZPK8xNFAYwztxllbS7l+CdODN/MtEG1AXypRBMoPD4mqBP9TSVhbyWmikuo32jWgsrtcXZVPweUoikwfTXtw=@vger.kernel.org, AJvYcCXQaa4PG364EKtSjdJenAkexjMTsue1wLaD3GRXB8WhN1mmBS273L472qMXrbDdzJYUsvDDdJMGh14=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwulHsF/mZZjRk+ZQC3ELb/uH+B/bFrPtr9d43ztxZcJu+hWCBV
-	BYoHITSswMwbeosEC8RMhxi+QfqE3KO4kk4KmxaA4/s5pZAEP6opP9p4zfmTIAJ3
-X-Gm-Gg: ASbGnctScF06D4itjGTfjAiScdsges/pFYeS6+Y8HjrtvxnetpT6p0/uJouD/3hDfXA
-	TNma/cwGJReZGUWrBEWCPMkI8wJ6JQoZCG5XLvVN6ZNPYgruxxjvq45T3nkMBZGRjHwgxaBOQiA
-	lflCL08p2ta5rlH+NRdObZELNX2vZVb+2obvXWgQtMcCQIxEjwo4PQh6Y7yY/HltSsAJanpAny+
-	8x0ISwBD8DENiGjTzpUaY7TdanmQ75dsTVJcXVEU+Z7CLUoza+i+5KeYTYoxcFcwIn54YWQPXwg
-	wPSqWXWov2TjbOS675b1dpU4rClKmdqwWK5D5xk4bsPujUHj9dHohudHkWcgqzNtF9KCFH0UoL4
-	JV2ov1bTfsNQTYasMQVFpxX/i1NmBZ68bmofovorw9V2kDVGCJgh7jr+j+20V
-X-Google-Smtp-Source: AGHT+IHTl4Z+U0PfiyN7OkEeVFTA4s86J7o6OhMkJq37XtcmkSaz9nw5n8IJZNtgEMhjSeY/Q9b18g==
-X-Received: by 2002:a05:6102:2ac9:b0:529:4887:9f05 with SMTP id ada2fe7eead31-52b1be2a14cmr5041306137.27.1756900718607;
-        Wed, 03 Sep 2025 04:58:38 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8943b7c369asm5615632241.2.2025.09.03.04.58.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 04:58:38 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-52eb6872bd2so1308018137.3;
-        Wed, 03 Sep 2025 04:58:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVVAjWVb3VSzrO/fT7nOB/+XYHINCWsMsbE/8q/TQe+mJDYJRElHPH26yjltJ+rvdD8AvnJDQkot2TDO9I1@vger.kernel.org, AJvYcCVdZkCj0mohW3hDfWTVtZF8GW9nfnhsuebMc4LVmji3FsmcM28025zPFOpFSzfYMzA/4oXuLSY//eI=@vger.kernel.org, AJvYcCWCdRc/5QJq4q05FBpxpaR4xa87uF/NRxku1BbrDDKsLie6PDAE7R/5M6zYNBq8fP6fezi7DmYXOimzRc9Tr/A/ddo=@vger.kernel.org
-X-Received: by 2002:a05:6102:6a8f:b0:52a:daa1:87e2 with SMTP id
- ada2fe7eead31-52b19b5df5amr5404870137.11.1756900718060; Wed, 03 Sep 2025
- 04:58:38 -0700 (PDT)
+	s=arc-20240116; t=1756900853; c=relaxed/simple;
+	bh=+grVyZxAWtKNFWpbultXM2V6yd2mmR2F3jJF5AT5BFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BUHFmYgW+a+TSppsPRrSry5JQtokPxNrajc0+9+nk5N9JtDHgygkhbdybS4BQH92Tqcw5jFrfgSULqn8MKhJ5xo8qwhXwZXijvt/ZkEw3k8OeZTc8JLzOJvqltXzBwY1O8llqrjLRcnAlaiAtUi76rd9aFG0P6m5cECZ1moAaG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D6v6y2my; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756900850;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1nw6naDuPKKSADEwjZLNE9uKM8R6m9CFTff86lS75ms=;
+	b=D6v6y2myBsfYHOJWPkVGh1cmyrtwYl0+jSTXGzcWtQuYUPivOXCk/7lsqYJ343vduS8omS
+	teiiq27WMtH1wq5Mlc3XeO5WjkUgYfrCRxIQalgN1Fbr2yuskwC9SdEvQ+u3kp+sEeK6fi
+	ugApB7AcK8kQeMxfdNL0+GqBUGmuAxA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-5--AUOuqbjOgiGyYcAnxfZKQ-1; Wed,
+ 03 Sep 2025 08:00:48 -0400
+X-MC-Unique: -AUOuqbjOgiGyYcAnxfZKQ-1
+X-Mimecast-MFC-AGG-ID: -AUOuqbjOgiGyYcAnxfZKQ_1756900842
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9B7461800291;
+	Wed,  3 Sep 2025 12:00:41 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.52])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 446F31800446;
+	Wed,  3 Sep 2025 12:00:35 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  3 Sep 2025 13:59:19 +0200 (CEST)
+Date: Wed, 3 Sep 2025 13:59:13 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH perf/core 03/11] perf: Add support to attach standard
+ unique uprobe
+Message-ID: <20250903115912.GD18799@redhat.com>
+References: <20250902143504.1224726-1-jolsa@kernel.org>
+ <20250902143504.1224726-4-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903082757.115778-1-tommaso.merciai.xr@bp.renesas.com> <20250903082757.115778-5-tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <20250903082757.115778-5-tommaso.merciai.xr@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 3 Sep 2025 13:58:26 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWc+gJo35btt3D7mibq+JCnZh4OagFPtSgUELjAG1J9UA@mail.gmail.com>
-X-Gm-Features: Ac12FXzpl2KDgVFIaSoTGPqoQ-We8jzec3aA0Bomu7VEX-KNarpcbWQzd9HkGLY
-Message-ID: <CAMuHMdWc+gJo35btt3D7mibq+JCnZh4OagFPtSgUELjAG1J9UA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] clk: renesas: rzv2h: Simplify polling condition in __rzv2h_cpg_assert()
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902143504.1224726-4-jolsa@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hi Tommaso,
+Slightly off-topic, but
 
-On Wed, 3 Sept 2025 at 10:28, Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
-> Replace the ternary operator with a direct boolean comparison to improve
-> code readability and maintainability. The logic remains unchanged.
+On 09/02, Jiri Olsa wrote:
 >
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> @@ -11144,7 +11147,7 @@ static int perf_uprobe_event_init(struct perf_event *event)
+>  {
+>  	int err;
+>  	unsigned long ref_ctr_offset;
+> -	bool is_retprobe;
+> +	bool is_retprobe, is_unique;
+>  
+>  	if (event->attr.type != perf_uprobe.type)
+>  		return -ENOENT;
+> @@ -11159,8 +11162,9 @@ static int perf_uprobe_event_init(struct perf_event *event)
+>  		return -EOPNOTSUPP;
+>  
+>  	is_retprobe = event->attr.config & PERF_PROBE_CONFIG_IS_RETPROBE;
+> +	is_unique = event->attr.config & PERF_PROBE_CONFIG_IS_UNIQUE;
+>  	ref_ctr_offset = event->attr.config >> PERF_UPROBE_REF_CTR_OFFSET_SHIFT;
+> -	err = perf_uprobe_init(event, ref_ctr_offset, is_retprobe);
+> +	err = perf_uprobe_init(event, ref_ctr_offset, is_retprobe, is_unique);
 
-Thanks for your patch!
+I am wondering why (with or without this change) perf_uprobe_init() needs
+the additional arguments besides "event". It can look at event->attr.config
+itself?
 
-> --- a/drivers/clk/renesas/rzv2h-cpg.c
-> +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> @@ -867,7 +867,7 @@ static int __rzv2h_cpg_assert(struct reset_controller_dev *rcdev,
->         mask = BIT(monbit);
->
->         ret = readl_poll_timeout_atomic(priv->base + reg, value,
-> -                                       assert ? (value & mask) : !(value & mask),
-> +                                       assert == !!(value & mask),
->                                         10, 200);
+Same for perf_kprobe_init()...
 
-These two lines now fit on a single line.
+Oleg.
 
->         if (ret && !assert) {
->                 value = mask << 16;
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.18 with the above fixed.
-No need to resend.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
