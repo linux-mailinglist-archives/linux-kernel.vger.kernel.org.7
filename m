@@ -1,228 +1,127 @@
-Return-Path: <linux-kernel+bounces-799046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72DBBB42642
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:10:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A66B426A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14B1D3B391D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:10:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBD245E0404
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195E52BD587;
-	Wed,  3 Sep 2025 16:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D632BEFFF;
+	Wed,  3 Sep 2025 16:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uUnhmb59";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lQbHs7/a";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uUnhmb59";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lQbHs7/a"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iro.umontreal.ca header.i=@iro.umontreal.ca header.b="mAGl66lS"
+Received: from mailscanner.iro.umontreal.ca (mailscanner.iro.umontreal.ca [132.204.25.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896562BD01E
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 16:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5347C285C8D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 16:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=132.204.25.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756915830; cv=none; b=YoTb/SCrso+c3hHuGJ4e4TL5yT1GTP9t9U/mSgew6BcKyj+3HHWQh28TCM91LfOgNWgCpAOxpyyLfeCw8jf67Ij6+ByvJNMSChIhIhlL0JXcwW3fxsyt2203Xy4Z2W5Hgxl5fZbpLwa7xVM08wPF42P5rT2Lsgqg5iSitvt3FWY=
+	t=1756916410; cv=none; b=O4FXbvsqJxHkrXC7aArQmG79Xblk78adtdXgFGWnOYfIg1+Hy1dfrE40OMrtCY8dpgQIgo+X+hi/5xHbFaj9oQ8jt6dKtUnQaas5Pz4OP5EdNG8svgfLQEFL1Koc0wcjj6ix9+GDqgxchTvno/cADaCsLYQXNuSv8FWIS88vGII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756915830; c=relaxed/simple;
-	bh=Kk36VwaNEalTPbWrXX15E36PETVs5Xbqy6QkoFBz/0I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fuhPEinkl9OedY07g/P+TH1NDTrcX2YrFx/q/6y26rPkbGoo1hW++ckWi4FkWbXkhnCJpOIsn0ZizDn27PGdbzheF65Obo3Ozg2gfEEpP8qfnerzCAL4UICoGhr7lDBcjmRx80BpOlXG6sk/fRbb0rd6n3Nb3GQ+lvzHOcbgYQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uUnhmb59; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lQbHs7/a; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uUnhmb59; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lQbHs7/a; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8B41F211D4;
-	Wed,  3 Sep 2025 16:10:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756915826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=h97e+xHdu6d6LbXnSe4e6A6MWQJlLX6y/dA1iEDnMTg=;
-	b=uUnhmb5951oPr+lmOQkqf9TMWNBXHqh0GqJOAsJ9nD13Is+8ymMDEI8LyQRVNUh35zpona
-	EM3da9AuX3Fp+3v+B4inWjMzLUfU6SFxLCeCTji6wO+9/QBp95Mkads+kSJKLuTqFWEtjO
-	QA59T5sdzDuBg042i34Us7ZuI30yAxw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756915826;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=h97e+xHdu6d6LbXnSe4e6A6MWQJlLX6y/dA1iEDnMTg=;
-	b=lQbHs7/aPFGREwi6ClboaSdsHNgjEN7oCrj+2NKsGaQYYI8Sn0elYTdTFHAjPY73D74TFv
-	vXDaNWkFFy7nYVDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=uUnhmb59;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="lQbHs7/a"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756915826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=h97e+xHdu6d6LbXnSe4e6A6MWQJlLX6y/dA1iEDnMTg=;
-	b=uUnhmb5951oPr+lmOQkqf9TMWNBXHqh0GqJOAsJ9nD13Is+8ymMDEI8LyQRVNUh35zpona
-	EM3da9AuX3Fp+3v+B4inWjMzLUfU6SFxLCeCTji6wO+9/QBp95Mkads+kSJKLuTqFWEtjO
-	QA59T5sdzDuBg042i34Us7ZuI30yAxw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756915826;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=h97e+xHdu6d6LbXnSe4e6A6MWQJlLX6y/dA1iEDnMTg=;
-	b=lQbHs7/aPFGREwi6ClboaSdsHNgjEN7oCrj+2NKsGaQYYI8Sn0elYTdTFHAjPY73D74TFv
-	vXDaNWkFFy7nYVDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7345A13A31;
-	Wed,  3 Sep 2025 16:10:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jc3TG3JouGgFdgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 03 Sep 2025 16:10:26 +0000
-Message-ID: <960bcc7b-2d48-4709-b6c3-4048b32c46fe@suse.cz>
-Date: Wed, 3 Sep 2025 18:10:26 +0200
+	s=arc-20240116; t=1756916410; c=relaxed/simple;
+	bh=SUcQePGmeHCu/WKS3/JshufknJE7fwotww7qDUGYGro=;
+	h=From:To:Cc:Subject:In-Reply-To:Message-ID:Date:MIME-Version:
+	 Content-Type; b=VMXAERupV9BQsqcQHWu0Sou140cXWr3f1Tb1r8KuCWAOWWGClOaTnOq2x6TrrJum1ZMhOtONBma6m4XBV4skE/uRmvMYTFAtLyHucONB+javhqLLnDV+GoFfhaMCaYD1AvW5lP3GaQvwXU9p46P9F0UVZtThfs6ud3OIJBCC8Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iro.umontreal.ca; spf=pass smtp.mailfrom=iro.umontreal.ca; dkim=pass (2048-bit key) header.d=iro.umontreal.ca header.i=@iro.umontreal.ca header.b=mAGl66lS; arc=none smtp.client-ip=132.204.25.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iro.umontreal.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iro.umontreal.ca
+Received: from pmg3.iro.umontreal.ca (localhost [127.0.0.1])
+	by pmg3.iro.umontreal.ca (Proxmox) with ESMTP id B1D7E442386;
+	Wed,  3 Sep 2025 12:10:48 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iro.umontreal.ca;
+	s=mail; t=1756915847;
+	bh=SUcQePGmeHCu/WKS3/JshufknJE7fwotww7qDUGYGro=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:From;
+	b=mAGl66lS3OBF4EKW9BKFBr+HEHGlGgeoJ5oKeRu0YC1q2Y5rfIOwlIJ+gD7zyXxWn
+	 sK5TRkY6Cw5EjKrw3wp1iKAn44hT5PlGp13vHM+5dQjfZwKFTxKpH7NjSFWFDRVNJ0
+	 skTcbmj2wsDljPR4H+i09gv+ZYvSYHMJO2VcMLL9hkKxsG6+5ywsfmG8wctVj+TTza
+	 DEkC0LmH6U4uoD4csK/W6Ki7vRVSmc0aQcprzGGteeg7c5rxJS+kvTcP5EGqMEnkaU
+	 SBFDpzp7kMwf9fvQltPyeCEv2uKaHENIqBUy5apCLn8eX9WYbaT0/N7FHZCURextu4
+	 i+8FZb4z/tBQA==
+Received: from mail01.iro.umontreal.ca (unknown [172.31.2.1])
+	by pmg3.iro.umontreal.ca (Proxmox) with ESMTP id 34E2A442382;
+	Wed,  3 Sep 2025 12:10:47 -0400 (EDT)
+Received: from pastel (69-165-161-194.dsl.teksavvy.com [69.165.161.194])
+	by mail01.iro.umontreal.ca (Postfix) with ESMTPSA id 14A5212006C;
+	Wed,  3 Sep 2025 12:10:47 -0400 (EDT)
+From: Stefan Monnier <monnier@iro.umontreal.ca>
+To: Dongjin Kim <tobetter@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Change ethernet TXD timing delay
+ value
+In-Reply-To: <aKU2yYD+N2D1KuHk@anyang>
+Message-ID: <jwvseh3v8n5.fsf-monnier+@gnu.org>
+Date: Wed, 03 Sep 2025 12:10:46 -0400
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] mm/show_mem: Add trylock while printing alloc info
-Content-Language: en-US
-To: Yueyang Pan <pyyjason@gmail.com>, Suren Baghdasaryan <surenb@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Zi Yan <ziy@nvidia.com>, Vishal Moola <vishal.moola@gmail.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Usama Arif <usamaarif642@gmail.com>
-Cc: linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org
-References: <cover.1756897825.git.pyyjason@gmail.com>
- <4ed91296e0c595d945a38458f7a8d9611b0c1e52.1756897825.git.pyyjason@gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <4ed91296e0c595d945a38458f7a8d9611b0c1e52.1756897825.git.pyyjason@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,google.com,linux-foundation.org,suse.com,cmpxchg.org,nvidia.com,linux.dev];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 8B41F211D4
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
+Content-Type: text/plain
+X-SPAM-INFO: Spam detection results:  0
+	ALL_TRUSTED                -1 Passed through trusted hosts only via SMTP
+	AWL                    -0.286 Adjusted score from AWL reputation of From: address
+	BAYES_00                 -1.9 Bayes spam probability is 0 to 1%
+	DKIM_SIGNED               0.1 Message has a DKIM or DK signature, not necessarily valid
+	DKIM_VALID               -0.1 Message has at least one valid DKIM or DK signature
+	DKIM_VALID_AU            -0.1 Message has a valid DKIM or DK signature from author's domain
+	DKIM_VALID_EF            -0.1 Message has a valid DKIM or DK signature from envelope-from domain
+X-SPAM-LEVEL: 
 
-On 9/3/25 13:16, Yueyang Pan wrote:
-> In production, show_mem() can be called concurrently from two
-> different entities, for example one from oom_kill_process()
-> another from __alloc_pages_slowpath from another kthread. This
-> patch adds a spinlock and invokes trylock before printing out the
-> kernel alloc info in show_mem(). This way two alloc info won't
-> interleave with each other, which then makes parsing easier.
-> 
-> Signed-off-by: Yueyang Pan <pyyjason@gmail.com>
+Dongjin Kim wrote:
+> On Tue, Aug 19, 2025 at 06:03:47PM +0200, Andrew Lunn wrote:
+> > On Tue, Aug 19, 2025 at 01:50:17PM +0900, Dongjin Kim wrote:
+> > > Very poor network performance is observed on the ODROID-M1 Board
+> > > (REV 1.0 20220613) when running iperf3 (under 200Mbits/sec), and
+> > > this problem can be resolved after changing the value of TXD
+> > > timing to 0x35 from 0x4f.
+> > 
+> > How did you decide on 0x35?
+> > 
+> > ~/linux/arch/arm64$ grep -hr "tx_delay = " | sort | uniq -c
+> >       4 	tx_delay = <0x10>;
+> >       1 	tx_delay = <0x1a>;
+> >       1 	tx_delay = <0x21>;
+> >       2 	tx_delay = <0x22>;
+> >       4 	tx_delay = <0x24>;
+> >       2 	tx_delay = <0x26>;
+> >      14 	tx_delay = <0x28>;
+> >       1 	tx_delay = <0x2a>;
+> >       6 	tx_delay = <0x30>;
+> >       1 	tx_delay = <0x3a>;
+> >       3 	tx_delay = <0x3c>;
+> >       2 	tx_delay = <0x42>;
+> >       5 	tx_delay = <0x43>;
+> >       2 	tx_delay = <0x44>;
+> >       1 	tx_delay = <0x46>;
+> >       6 	tx_delay = <0x4f>;
+> > 
+> > The numbers are all over the place, but it is clear that 0x28 is the
+> > most popular for some reason. But since this delay values are magic,
+> > i've no idea why.
+> > 
+> >      Andrew
+> I do have more numbers in the Rockchip BSP kernel, and 0x35 is from
+> one of them that shows less retry counts when testing 'iperf3' while
+> testing with the batch of ODROID-M1. :)
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+FWIW, I had trouble with my Odroid-M1 whose outgoing ethernet bandwidth
+seemed to be limited to an average around 100kB/s, when I bumped into
+this thread.  I applied the patch and I can now download from that
+Odroid at >80MB/s.  So:
 
-> ---
->  mm/show_mem.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/show_mem.c b/mm/show_mem.c
-> index fd85a028a926..e9701d07549b 100644
-> --- a/mm/show_mem.c
-> +++ b/mm/show_mem.c
-> @@ -421,7 +421,9 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
->  	printk("%lu pages hwpoisoned\n", atomic_long_read(&num_poisoned_pages));
->  #endif
->  #ifdef CONFIG_MEM_ALLOC_PROFILING
-> -	{
-> +	static DEFINE_SPINLOCK(mem_alloc_profiling_spinlock);
-> +
-> +	if (spin_trylock(&mem_alloc_profiling_spinlock)) {
->  		struct codetag_bytes tags[10];
->  		size_t i, nr;
->  
-> @@ -448,6 +450,7 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
->  						  ct->lineno, ct->function);
->  			}
->  		}
-> +		spin_unlock(&mem_alloc_profiling_spinlock);
->  	}
->  #endif
->  }
+    Tested-by: Stefan Monnier <monnier@iro.umontreal.ca>
+
+Haven't tried the `rgmii-id` patch yet.
+
+
+        Stefan
 
 
