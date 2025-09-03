@@ -1,96 +1,96 @@
-Return-Path: <linux-kernel+bounces-798603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F14B42052
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:06:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE74B42045
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19A447BC97C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:02:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9991BA5EAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70E03054D8;
-	Wed,  3 Sep 2025 13:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A711F304BDD;
+	Wed,  3 Sep 2025 13:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Aoc32Y8K";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OcxShp2L";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Aoc32Y8K";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OcxShp2L"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="g/crOFhD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+sVatJLy";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="g/crOFhD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+sVatJLy"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91306304BD0
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D6C3043DC
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756904472; cv=none; b=lr8OZz3wVQGo45c38nngyR4MfVEp2974XeCO5VFfVSDQm+BlpKlU94cCI8gNX+ej+p881om4YfYsRrbrWw8Z7siG6H6ZiQ2x9w6Cptkg3J28CAXNfGJdQ0mes3wODEVZG2bSsBNKzfGRSAEH0z16dIvtJMWNM15saCkEiu9l4OA=
+	t=1756904470; cv=none; b=dssqhPhVQNAYm6G284Yp+JxVfnH3fKDzjOqoaqdxX3+AzjFIl1ev2ZNpCnOH4pXuI/whPt/XhKlTkk7HFlhI9X8GUeSaCLTJRdEEIpLHhqaSjo+b6X/8BGtlEvMJgQ8G07uLw+wvZr2U2W/5ye/TAJVH2iljrhROcKaNeX/rCc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756904472; c=relaxed/simple;
-	bh=zXygsHQ8M75ldUrzHX4v4b361hHPjjuRMUX5R7ROHQM=;
+	s=arc-20240116; t=1756904470; c=relaxed/simple;
+	bh=OcjndUE8gaQOpDzBjlFgvhR58KrlDl0vH/GNTgWNlFc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tGLvxAdFwrGmVx1Z/7vOkeeadtMZI+Uw/u7klNeaLElCinilxOqTazwvRZapXeNlw1FxsEHZn4XRdZ8BSKAQlloYeiF4huOyvT7lNooX1evboAMQBMeY1SLi3+e2+dvVptf+BJkxU2jMIVlS41fsNx7HK3ZxdL70Rh6l1FC0Nog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Aoc32Y8K; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OcxShp2L; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Aoc32Y8K; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OcxShp2L; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:To:Cc; b=MuQMCliJedZbyvjcfzTwr+GJbqbmNdJLVLGlTbMS41QQkmYd3D7xuJQRQuY4U7fRYBUHDFtNdp350dkW4apZKRQ2opWGD184MAQ7E3EDsYVSm6jre1+gCkVIc7HQ/d22e5S6sHnn6leaLvdC1QBqq6sfvMBEV5Q+Sm059YCOD3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=g/crOFhD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+sVatJLy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=g/crOFhD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+sVatJLy; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C8C432122A;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CDB631F747;
 	Wed,  3 Sep 2025 13:00:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1756904410; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GkJLUdth35DaRyhM3TWCLrM77sXSdG1lPON3otYkBww=;
-	b=Aoc32Y8K6z/D1jmhEZ0JziBmWP8l/NTAykVCv7X+avgX9sLROwv0cL8g6wou27QGhylw7v
-	d/dK3sDQAs8zGnhBNuwlWmrptUZnGqvAocyQ/u6G3JLk1jwg/zkB/vyBexwHZDDWmsSbsf
-	aDsIHwrULTDpOEyitOtk/62ADIkIfJQ=
+	bh=oVt3cZeiI6R/GA6oApyVXQ+OhlrdalPHGhvrN43p2wQ=;
+	b=g/crOFhD4na0C8rkDfdx8cUVpPT9jg4mfQfUrEEG4AJVIvPjBSHqVuQMjx53jybGO8wQv1
+	DWgjWKKW0nkBALpU4bUzjCI3zEvlwoWuUoE/GApq97pTKowgtq9dqLM59Kh0Ov/9ySkgTY
+	CFgYJ/oUj4EsO0+gbZKWXeBV7c/nkaU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1756904410;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GkJLUdth35DaRyhM3TWCLrM77sXSdG1lPON3otYkBww=;
-	b=OcxShp2LaA80zjS5jwgpwcQZbrYHyDrvFVkiNAtp5srKA8xy23EfU9tBfRv0hPzRSXL5GZ
-	x0Xk7Eqz/O/FhwDg==
-Authentication-Results: smtp-out1.suse.de;
+	bh=oVt3cZeiI6R/GA6oApyVXQ+OhlrdalPHGhvrN43p2wQ=;
+	b=+sVatJLyO7r62pCDRCB73fRH3sZeAriIa9SwQJzFj/GY9Z4x+DyRR3hpk8Usdnb5CGo5as
+	RkaYUntMqWg2EMAw==
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1756904410; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GkJLUdth35DaRyhM3TWCLrM77sXSdG1lPON3otYkBww=;
-	b=Aoc32Y8K6z/D1jmhEZ0JziBmWP8l/NTAykVCv7X+avgX9sLROwv0cL8g6wou27QGhylw7v
-	d/dK3sDQAs8zGnhBNuwlWmrptUZnGqvAocyQ/u6G3JLk1jwg/zkB/vyBexwHZDDWmsSbsf
-	aDsIHwrULTDpOEyitOtk/62ADIkIfJQ=
+	bh=oVt3cZeiI6R/GA6oApyVXQ+OhlrdalPHGhvrN43p2wQ=;
+	b=g/crOFhD4na0C8rkDfdx8cUVpPT9jg4mfQfUrEEG4AJVIvPjBSHqVuQMjx53jybGO8wQv1
+	DWgjWKKW0nkBALpU4bUzjCI3zEvlwoWuUoE/GApq97pTKowgtq9dqLM59Kh0Ov/9ySkgTY
+	CFgYJ/oUj4EsO0+gbZKWXeBV7c/nkaU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1756904410;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GkJLUdth35DaRyhM3TWCLrM77sXSdG1lPON3otYkBww=;
-	b=OcxShp2LaA80zjS5jwgpwcQZbrYHyDrvFVkiNAtp5srKA8xy23EfU9tBfRv0hPzRSXL5GZ
-	x0Xk7Eqz/O/FhwDg==
+	bh=oVt3cZeiI6R/GA6oApyVXQ+OhlrdalPHGhvrN43p2wQ=;
+	b=+sVatJLyO7r62pCDRCB73fRH3sZeAriIa9SwQJzFj/GY9Z4x+DyRR3hpk8Usdnb5CGo5as
+	RkaYUntMqWg2EMAw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0FE9613B05;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 29A3313B06;
 	Wed,  3 Sep 2025 13:00:10 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GLKgA9o7uGitOAAAD6G6ig
+	id GEjhCdo7uGitOAAAD6G6ig
 	(envelope-from <vbabka@suse.cz>); Wed, 03 Sep 2025 13:00:10 +0000
 From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 03 Sep 2025 14:59:54 +0200
-Subject: [PATCH v7 12/21] mm, vma: use percpu sheaves for vm_area_struct
- cache
+Date: Wed, 03 Sep 2025 14:59:55 +0200
+Subject: [PATCH v7 13/21] maple_tree: use percpu sheaves for
+ maple_node_cache
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,7 +99,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-slub-percpu-caches-v7-12-71c114cdefef@suse.cz>
+Message-Id: <20250903-slub-percpu-caches-v7-13-71c114cdefef@suse.cz>
 References: <20250903-slub-percpu-caches-v7-0-71c114cdefef@suse.cz>
 In-Reply-To: <20250903-slub-percpu-caches-v7-0-71c114cdefef@suse.cz>
 To: Suren Baghdasaryan <surenb@google.com>, 
@@ -111,8 +111,9 @@ Cc: Roman Gushchin <roman.gushchin@linux.dev>,
  linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
  maple-tree@lists.infradead.org, vbabka@suse.cz
 X-Mailer: b4 0.14.2
+X-Spam-Level: 
 X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	NEURAL_HAM_SHORT(-0.20)[-0.999];
 	MIME_GOOD(-0.10)[text/plain];
@@ -132,32 +133,44 @@ X-Spamd-Result: default: False [-4.30 / 50.00];
 	FROM_EQ_ENVFROM(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:mid,oracle.com:email]
 X-Spam-Flag: NO
-X-Spam-Level: 
 X-Spam-Score: -4.30
 
-Create the vm_area_struct cache with percpu sheaves of size 32 to
-improve its performance.
+Setup the maple_node_cache with percpu sheaves of size 32 to hopefully
+improve its performance. Note this will not immediately take advantage
+of sheaf batching of kfree_rcu() operations due to the maple tree using
+call_rcu with custom callbacks. The followup changes to maple tree will
+change that and also make use of the prefilled sheaves functionality.
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Reviewed-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 ---
- mm/vma_init.c | 1 +
- 1 file changed, 1 insertion(+)
+ lib/maple_tree.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/mm/vma_init.c b/mm/vma_init.c
-index 8e53c7943561e7324e7992946b4065dec1149b82..52c6b55fac4519e0da39ca75ad018e14449d1d95 100644
---- a/mm/vma_init.c
-+++ b/mm/vma_init.c
-@@ -16,6 +16,7 @@ void __init vma_state_init(void)
- 	struct kmem_cache_args args = {
- 		.use_freeptr_offset = true,
- 		.freeptr_offset = offsetof(struct vm_area_struct, vm_freeptr),
-+		.sheaf_capacity = 32,
- 	};
+diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+index b4ee2d29d7a962ca374467d0533185f2db3d35ff..a0db6bdc63793b8bbd544e246391d99e880dede3 100644
+--- a/lib/maple_tree.c
++++ b/lib/maple_tree.c
+@@ -6302,9 +6302,14 @@ bool mas_nomem(struct ma_state *mas, gfp_t gfp)
  
- 	vm_area_cachep = kmem_cache_create("vm_area_struct",
+ void __init maple_tree_init(void)
+ {
++	struct kmem_cache_args args = {
++		.align  = sizeof(struct maple_node),
++		.sheaf_capacity = 32,
++	};
++
+ 	maple_node_cache = kmem_cache_create("maple_node",
+-			sizeof(struct maple_node), sizeof(struct maple_node),
+-			SLAB_PANIC, NULL);
++			sizeof(struct maple_node), &args,
++			SLAB_PANIC);
+ }
+ 
+ /**
 
 -- 
 2.51.0
