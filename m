@@ -1,144 +1,168 @@
-Return-Path: <linux-kernel+bounces-797492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD39B41114
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:01:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 066D6B41117
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE0EB3A81BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:01:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 949297B5737
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF40A10942;
-	Wed,  3 Sep 2025 00:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6C03C01;
+	Wed,  3 Sep 2025 00:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WRKqu7Bq"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="VZhxHlt/"
+Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB47C38D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 00:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C21328F4
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 00:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756857666; cv=none; b=LxAdmo64rbkm8No+lhDXUUrHX0U5U1ZaDQnG+f63SfAKURb1ovVcf70O3FdP30vretKVgV81zqprVGXhMK6BDdpHDloviAVhLw5xteCQ+JrLKBr6ee1mCLbEwLii21tQbq6kc1EiV5S6ySd899qmvfRfjLctVsukppwksvKn/QE=
+	t=1756857804; cv=none; b=uQDbU3Z5QtjED06LEltpNZBusICogzu3S0NqtV6Og0L+Q1n2p+7fUevK/mXOlCSTS7uUG8yjJBK8q8nk7B0jBnf4XPe3hSM9mYLfISbKh7+EaXYCihkY2RMuiQgWA2sDHQVzNrWZS636Ch7hOFsMQlEqjezUJjHvvYj9G4EwVE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756857666; c=relaxed/simple;
-	bh=L6KzKFAj5KyI4xTHNVJ+Bav+TRut/F+RyFSESyEfLYI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WdKZXc3h7PYsSKo8onpQ9ueSmgnAPszJuUaGYVZ9xxpSHTAWg4VEHcR35bhuPTy3KoJfrznOpv+oSxqEHCtdbNGT4i4ZgZi7QBbuiDi/ZUM/PFukHF9hqsxSx0PawQnPVnKgLh0BK9+TTdzJmp8EpAhHZRaECpUjL/0lufmfceQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WRKqu7Bq; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b040df389easo585102966b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 17:01:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756857663; x=1757462463; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L6KzKFAj5KyI4xTHNVJ+Bav+TRut/F+RyFSESyEfLYI=;
-        b=WRKqu7BqJd0JDOMTzm8b7fLFJvdy3ax8ugQaVbDbRxhYlOEWyHbdo5zmVeFsopsFMe
-         pGyDuZjC/YOVhZOh2lcE3HPcq8NBtAO9p3A4Vmq004Ofgo9hExaXuwU6GC9UN934uBfg
-         OmmxLq3QZTrCNlcCz0v6JdU/rOPirGI/RISxw6EEjd/Gbc5bKPq5XSV7QS2TvlMRaY5H
-         s0RYdSCqgXkuYD2vnLefvTsvy08y1BDSO5dHAcSxKDjdW/4Cm6IG7JJVGoStngXGNrlQ
-         YL1Cn3qNOrkw0jRPg8sUAkp7tJBh9bq/iSd6pypXbEmdNlA7IwWKv2hK3TSc27HSZGCk
-         XfsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756857663; x=1757462463;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L6KzKFAj5KyI4xTHNVJ+Bav+TRut/F+RyFSESyEfLYI=;
-        b=kr5+L8cTWXsOp6pI7waGq3Ftw2CbBk4l6pnmDTvbqVuHKOpV9SWyJEuSvp4leuMueY
-         NhdR3hfFDIc0NCpAwC63dZ10amzpYlhTQQYZ8UQnnEQ0z1tqq7YlTXOSsr7ADvu0Yrd+
-         VElDWUztQdgW5Gxggo6Oqcbi02ZWruM+B9noLqTrOde8Ao9PCab46+34aHckT66eMA+w
-         +Rg2PSmPmrnKXOOdk2nngdhDg1r4u0BNToGYocIu5ar5anZVItI1GKbi9ytdMOYHa7YC
-         rWvLwUvuIr/Gt4fUGhJk7ETK4gtpnX/TGNoSltyxE0rtR/FpLcgdQQ1B8Z/w570Z4dn4
-         eB2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUxnhFR9a2+7BcNGbr8udUvMR1a6WjzA9IVY5bvIJS6MKHJhsZsZSIXtYEoCaco31jIDyAOUXfy9bPreM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWY+b4BYG+se315TUSBijXxlRaw21bHJ0DJYlatlmeKFN759lB
-	xZmdJik/IdVjdijQuyYAQnN3nZY64ZK2GLpPa+EjJPjMb4LFOAFY3uHsHv2b3wBQv+n5/v60/ry
-	4wU3gERzMSRZeEE3nI5eIcaWZRO7nno8=
-X-Gm-Gg: ASbGncuKra+XxdGEQ8ZpQ2F8xRRJLKjV1U1xy1mMJbFyPLmr1MTqNwKGwCFxW5tMLTM
-	yXAhAwWwbR4xiffXfJl2tW50jImAz+NkPnbcvPcf93CmE+SHzb+5/UZZwZs8KoCF8ZwbyaMK2mI
-	CHldGReBO/uUAoXgJ0gVFNSQd4fDesxIN3rpzBSe8qKmxANNStjKtyBOReur15GXQdiTbKIWz6Y
-	fyFr3EYERWdpkCgHElJV/+2vZzMjKeKBvZ05Q==
-X-Google-Smtp-Source: AGHT+IH6AhRllJP7mdg0MDSz8PEOPVrNJ8CX2CFL4+9ZpOzCDEs6FEzJQPkbG4z93klh4esHrxBxLEF4fpZ8sfSm4/8=
-X-Received: by 2002:a17:907:9444:b0:b04:53cc:4400 with SMTP id
- a640c23a62f3a-b0453cc4661mr420536966b.27.1756857662823; Tue, 02 Sep 2025
- 17:01:02 -0700 (PDT)
+	s=arc-20240116; t=1756857804; c=relaxed/simple;
+	bh=Ev/LFsIiKjcWSf5/uIWsoyRRfDo4cA2N34Q7h9i8brE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oL6qT9jrgtCeyneXxR2+lYvmL61PzYPwaUd8NxQwELAeO4eQsUppuxpj4vl1YodqljODUCwyntjAQoUEbtM6PEBZIass14VHdR3oeQYz1oM0C6dV3rvZrkV3gDnna2YA3nXAuW4vaLxRrgqMeXFkkhy9oivGRIMxKQiHKqtIfkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=VZhxHlt/; arc=none smtp.client-ip=178.154.239.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net [IPv6:2a02:6b8:c2d:7394:0:640:5a8a:0])
+	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id 30913C00BB;
+	Wed, 03 Sep 2025 03:01:29 +0300 (MSK)
+Received: from d-tatianin-lin.yandex-team.ru (unknown [2a02:6bf:8080:a32::1:3a])
+	by mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id H1TLoN3GnGk0-HbMySUgR;
+	Wed, 03 Sep 2025 03:01:28 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1756857688;
+	bh=1EoLTpc1aQVudCxr4NP5QmG79jqnIFauOSCGf/8PzCM=;
+	h=Message-Id:Date:Cc:Subject:To:From;
+	b=VZhxHlt/RtE8q9Nx5C6QCKyHlMdNbYWEFnE57oUqDoT+kvbZW81yrd1W4juYRBZ3e
+	 BOCDJy1FKXnaNm5GLsvyiJijHuz8F14FRfXxSih2a69Y7U9MCKYcigP4QnN9hWUP7l
+	 s2THWtc0rCq2UW49xcySwGzJssIO9DVsXY3PAgLg=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+From: Daniil Tatianin <d-tatianin@yandex-team.ru>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Daniil Tatianin <d-tatianin@yandex-team.ru>,
+	linux-kernel@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCH] printk_ringbuffer: don't needlessly wrap data blocks around
+Date: Wed,  3 Sep 2025 03:01:02 +0300
+Message-Id: <20250903000102.3744-1-d-tatianin@yandex-team.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902035211.2953174-1-alistair.francis@wdc.com> <2841bd1b7910bd0e1b263b393152f2cb13dd3ae3.camel@gmail.com>
-In-Reply-To: <2841bd1b7910bd0e1b263b393152f2cb13dd3ae3.camel@gmail.com>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Wed, 3 Sep 2025 10:00:36 +1000
-X-Gm-Features: Ac12FXzDj2HtYGSJ8MLBLRHiuUatNFdUj0151ogn2qRiA-uR8AUABjK4lxcy2Wo
-Message-ID: <CAKmqyKNtx-eq-dSgcJqoXjajX--QyBvqwfgKyfTfxiTiF-cFBA@mail.gmail.com>
-Subject: Re: [PATCH] nvme: Use non zero KATO for persistent discovery connections
-To: Martin George <martinus.gpy@gmail.com>
-Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, 
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Alistair Francis <alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 2, 2025 at 8:35=E2=80=AFPM Martin George <martinus.gpy@gmail.co=
-m> wrote:
->
-> On Tue, 2025-09-02 at 13:52 +1000, alistair23@gmail.com wrote:
-> > From: Alistair Francis <alistair.francis@wdc.com>
-> >
-> > The NVMe Base Specification 2.1 states that:
-> >
-> > """
-> > A host requests an explicit persistent connection ... by specifying a
-> > non-zero Keep Alive Timer value in the Connect command.
-> > """
-> >
-> > As such if we are starting a persistent connection to a discovery
-> > controller and the KATO is currently 0 we need to update KATO to a
-> > non
-> > zero value to avoid continuous timeouts on the target.
-> >
-> >
->
-> When would this ever happen? Won't nvme-cli & nvme/host/fabrics.c in
+Previously, data blocks that perfectly fit the data ring buffer would
+get wrapped around to the beginning for no reason since the calculated
+offset of the next data block would belong to the next wrap. Since this
+offset is not actually part of the data block, but rather the offset of
+where the next data block is going to start, there is no reason to
+include it when deciding whether the current block fits the buffer.
 
-It occurs if you perform a `nvme connect` to the discovery nqn of a
-Linux target.
+Signed-off-by: Daniil Tatianin <d-tatianin@yandex-team.ru>
+---
+ kernel/printk/printk_ringbuffer.c | 30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
 
-> the kernel ensure a PDC (persistent discovery controller) would always
-> have the KATO either default set to NVMF_DEF_DISC_TMO (i.e. 30s) or any
-> positive int value & not zero?
+diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+index d9fb053cff67..1ae4e93024ad 100644
+--- a/kernel/printk/printk_ringbuffer.c
++++ b/kernel/printk/printk_ringbuffer.c
+@@ -1002,6 +1002,18 @@ static bool desc_reserve(struct printk_ringbuffer *rb, unsigned long *id_out)
+ 	return true;
+ }
+ 
++static bool same_lpos_wraps(struct prb_data_ring *data_ring,
++						unsigned long begin_lpos, unsigned long next_lpos)
++{
++	/*
++	 * Subtract one from next_lpos since it's not actually part of this data
++	 * block. We do this to prevent perfectly fitting records from wrapping
++	 * around for no reason.
++	 */
++	return DATA_WRAPS(data_ring, begin_lpos) ==
++	       DATA_WRAPS(data_ring, next_lpos - 1);
++}
++
+ /* Determine the end of a data block. */
+ static unsigned long get_next_lpos(struct prb_data_ring *data_ring,
+ 				   unsigned long lpos, unsigned int size)
+@@ -1013,7 +1025,7 @@ static unsigned long get_next_lpos(struct prb_data_ring *data_ring,
+ 	next_lpos = lpos + size;
+ 
+ 	/* First check if the data block does not wrap. */
+-	if (DATA_WRAPS(data_ring, begin_lpos) == DATA_WRAPS(data_ring, next_lpos))
++	if (same_lpos_wraps(data_ring, begin_lpos, next_lpos))
+ 		return next_lpos;
+ 
+ 	/* Wrapping data blocks store their data at the beginning. */
+@@ -1081,7 +1093,7 @@ static char *data_alloc(struct printk_ringbuffer *rb, unsigned int size,
+ 	blk = to_block(data_ring, begin_lpos);
+ 	blk->id = id; /* LMM(data_alloc:B) */
+ 
+-	if (DATA_WRAPS(data_ring, begin_lpos) != DATA_WRAPS(data_ring, next_lpos)) {
++	if (!same_lpos_wraps(data_ring, begin_lpos, next_lpos)) {
+ 		/* Wrapping data blocks store their data at the beginning. */
+ 		blk = to_block(data_ring, 0);
+ 
+@@ -1125,7 +1137,7 @@ static char *data_realloc(struct printk_ringbuffer *rb, unsigned int size,
+ 		return NULL;
+ 
+ 	/* Keep track if @blk_lpos was a wrapping data block. */
+-	wrapped = (DATA_WRAPS(data_ring, blk_lpos->begin) != DATA_WRAPS(data_ring, blk_lpos->next));
++	wrapped = !same_lpos_wraps(data_ring, blk_lpos->begin, blk_lpos->next);
+ 
+ 	size = to_blk_size(size);
+ 
+@@ -1151,7 +1163,7 @@ static char *data_realloc(struct printk_ringbuffer *rb, unsigned int size,
+ 
+ 	blk = to_block(data_ring, blk_lpos->begin);
+ 
+-	if (DATA_WRAPS(data_ring, blk_lpos->begin) != DATA_WRAPS(data_ring, next_lpos)) {
++	if (!same_lpos_wraps(data_ring, blk_lpos->begin, next_lpos)) {
+ 		struct prb_data_block *old_blk = blk;
+ 
+ 		/* Wrapping data blocks store their data at the beginning. */
+@@ -1187,7 +1199,7 @@ static unsigned int space_used(struct prb_data_ring *data_ring,
+ 	if (BLK_DATALESS(blk_lpos))
+ 		return 0;
+ 
+-	if (DATA_WRAPS(data_ring, blk_lpos->begin) == DATA_WRAPS(data_ring, blk_lpos->next)) {
++	if (same_lpos_wraps(data_ring, blk_lpos->begin, blk_lpos->next)) {
+ 		/* Data block does not wrap. */
+ 		return (DATA_INDEX(data_ring, blk_lpos->next) -
+ 			DATA_INDEX(data_ring, blk_lpos->begin));
+@@ -1234,14 +1246,14 @@ static const char *get_data(struct prb_data_ring *data_ring,
+ 	}
+ 
+ 	/* Regular data block: @begin less than @next and in same wrap. */
+-	if (DATA_WRAPS(data_ring, blk_lpos->begin) == DATA_WRAPS(data_ring, blk_lpos->next) &&
+-	    blk_lpos->begin < blk_lpos->next) {
++	if (same_lpos_wraps(data_ring, blk_lpos->begin, blk_lpos->next) &&
++			    blk_lpos->begin < blk_lpos->next) {
+ 		db = to_block(data_ring, blk_lpos->begin);
+ 		*data_size = blk_lpos->next - blk_lpos->begin;
+ 
+ 	/* Wrapping data block: @begin is one wrap behind @next. */
+-	} else if (DATA_WRAPS(data_ring, blk_lpos->begin + DATA_SIZE(data_ring)) ==
+-		   DATA_WRAPS(data_ring, blk_lpos->next)) {
++	} else if (same_lpos_wraps(data_ring,
++		   blk_lpos->begin + DATA_SIZE(data_ring), blk_lpos->next)) {
+ 		db = to_block(data_ring, 0);
+ 		*data_size = DATA_INDEX(data_ring, blk_lpos->next);
+ 
+-- 
+2.43.0
 
-The kernel doesn't set a default for discovery controllers (hence this patc=
-h).
-
-nvme-cli will only set NVMF_DEF_DISC_TMO if the `--persistent`
-connection option is supplied to `nvme discover`. But it doesn't set a
-KATO for `nvme connect`, even though it's a persistent connection.
-
-Note, that I think that is a bug in nvme-cli and it should be setting
-a non zero KATO. I plan on patching that. At the same time if the
-kernel knows it's a persistent discovery connection it should also be
-setting a default KATO. The kernel is already using a default non-zero
-KATO for non discovery nqns (see nvmf_parse_options()). This just
-extends the default to apply to persistent discovery controllers.
-
->
-> Do you have a test log for the above scenario where the KATO ends up
-> being zero for a PDC?
-
-I do, it's just a lot of keep-alive timeout prints on the target
-
-Alistair
-
->
-> -Martin
 
