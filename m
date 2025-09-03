@@ -1,256 +1,346 @@
-Return-Path: <linux-kernel+bounces-797574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93183B41209
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:45:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A68B4120D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F845175C3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:45:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CBB75E850B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999A132F76C;
-	Wed,  3 Sep 2025 01:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75011DEFE9;
+	Wed,  3 Sep 2025 01:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BAmTMmeY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gcyeOIce"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF3E2E40B
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 01:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9141E4AB;
+	Wed,  3 Sep 2025 01:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756863924; cv=none; b=aKDb/aBkCuqVKi6FfB13yFs+LoH3iWDEWO2NZ6REwTaBgH/1Vk1yyWrjxcWVASEcbKH2ngiXV7rwcF9AAlHqRWeOTtXLZ1Nn/Z9wGGKNLzjpxbCsP6mo+kN9cSeQj8WOVSoP+VbmGafEpsOzEpX/1IC1MS1cuqq/Vl0sHIyC/jc=
+	t=1756864134; cv=none; b=PGqJcCREKivxjNQwA58vszWCQOupz19yjWuOpB2+3y+FRLN9UcZ8Bao192OQOPW0kp6pzPpvmOfgMUIFSyXHqoSOnwHPVkYRJ9lMFYiGjrKwCtHmP1/SImzOfKglhdtYAr89jhLRgbjzsUEmHKGDSFMSh00bhzCadiZcS4Bgnho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756863924; c=relaxed/simple;
-	bh=FwZLZxIxYTadK2Kduz15dFpZ/khEoBz4UzAbFb6JWcA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BWD2O0+1mQ6aSbw1AqXjjygOSQngmKaPVCggjBiTA7BrbaUG94ULg5eyqlg22rrP3Cx4pRIcSqamPwmKMwLyAFoR8B0yNBAxQspK1ZqqCFBjt1kFu5K/fVt7An8aeOA07YPhcuUYpJB8HLY/umdoSFx7ELHXEVISgP0D57w9qgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BAmTMmeY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582EqKEu019740
-	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 01:45:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vSKVIY6OYbeZ9o9Z+5cggaWcqnF8AUnxpa/ouOb+evY=; b=BAmTMmeYz/zLdI26
-	UdP/zJesx7wVFl//F4OTnvJ4Qt30IgchreDp84XnylpgCqegWdElUozRk4dlEUHp
-	meAMA8ilw6GORIgES7lMb1L/s7h0NoHpOJ0fm1l7YUtjL9qfe9J504KUS4toI2Ro
-	H9k+KlNTE6DZB3SDHDoSjEDtolMOGourju4JshBAohG8NlHMx3Z2UIv0R2hdLcA7
-	johUpBTRzkHWq6aJ24MsQl2P6/a3O2xnZ8is4kMzLrGJLOZzdyzGfYbbIzt9galJ
-	NzyzdiGxpEG7eNQSIOqxL0UZ/MziNK/xxrbFW+amR4bQGXLCFWtbwcntg2/9iU7K
-	3VO05g==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urw01ud7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:45:21 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b4d48818a04so3724395a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 18:45:21 -0700 (PDT)
+	s=arc-20240116; t=1756864134; c=relaxed/simple;
+	bh=ZnCjDt/xxTJ8WVNMGDipRAm1kFiiKXZtWA01pycrP0I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bKkq9FtLp73KcAMPc3kTDp2ZtcGL/ssQqnZkU+xbAB5a/ab/tEqFfMU3QkUoi0Fd7CmlOb4mlQQHps5sR9d6JCq8weWoZ1zaZJM11gLWhN0vjbbRbYhYH75XYJeIyosp1KLzDGZ4I+JlVPnjhqcXkufP4LTL1EsgiFaNjAXAEgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gcyeOIce; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24c7848519bso7986065ad.1;
+        Tue, 02 Sep 2025 18:48:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756864132; x=1757468932; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I5K5+6/E2TguN5jCxa+s4/alaOTKBjPVsyrGrnuZMwE=;
+        b=gcyeOIceN+l576zavfKe13dB7UW0cT1A/1rE3WtVyBmkPmAZnQAaYxG7NbJh4gks5c
+         xBAqiJNjNhwpiKYoNZkA8+V/2YkTlvfKVoQKxc/VQa3r2G7ENy1+qaCn13wWDkBOwZ/6
+         C/v8JiS1SsLw//8lRoY36vZhzIL2jmx9kTuSSTx9d2uEzqFhVIjy9F/j/j6fLnNSxqk9
+         LAXgRwEvmH53bxpt2gVATuKIWrYnCO6PZUWf8Gy75UrRufj4J1yQWJaoBYCI+M62ec1w
+         M/oNNZ9ALijrrgDnOxcBhnb+F4TtkYvudxkoq7TZX4R+/NJbwGoEDjHB5LwwRiCnhzlo
+         FGIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756863921; x=1757468721;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vSKVIY6OYbeZ9o9Z+5cggaWcqnF8AUnxpa/ouOb+evY=;
-        b=t+v4PjWeFgQPjT4qA1mv3EdiAt6Hrrvk7uFjyFha7RQdwZV2Hj60hbDxcIUD2IB6WG
-         ee+EM5n0KW8o1hua8YBowKlOmR/XELvab4wh870JCfn325FFT8C35ToljyPG3tKqow5s
-         Vb2yF/jN54s4GCQ5e5hTBJl8AzTiqt76+0moyhjayMz68Z2vtnXPUBMJVoF3H/epRdFc
-         XHImwle2s1UtorPog6ac+kwte+5PmhczYbqaCzbfy3AoqEbxPMsHU2GWusS82Zrh3H5A
-         FrOEJWyePU67Nl9PgtPeVHobS/MfcNwXbT1qvwdjmMeVUlhVlCeb1cnG9GK+lHeXICtc
-         O9BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWq2e6uUZzgmA6cZtTGQom+dWaCjUy+vmRLa7Hz8wncGwNmzbwqgNCD33wI6lRT39wNVUrAeNAcs3Plk4U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ/0VqpAguLkNtsAYBQQufv2QuDaWCx/TBVOVuVmfydW/h6Ko5
-	/WtvcAjCelx+ezzi9x/3XewYZLMxa/26wFyLeZymVtwSuGeTHr4NU9V1xXZi00keF8mcqBoMGpn
-	2eqhki81ytUSMMH4igR/q2LtUCiPRzmH0FIhuqeZYqX0X8LVn7jV+xTLTr3YLPLvZ0nU=
-X-Gm-Gg: ASbGncu6LyvnfkIv9wefmVosx5JlLxabLtCyJvj+imYJjdATbLDLM0wlyt+MyPSP04+
-	CfGyUpR/Z2pIJ4q7nYnD/7vI/WHut05kNxJ3g9e2XdIl8QKHVENxESlJDdBtVz6UO3JkDr/FZDw
-	R8Q/HhWkeiA533sxlCk+xFs0v7yAiYtlt8NgczWsGrfMYpZ7c6HG0uQLlfZlhXKS512jaiW1Mol
-	QhyjlpRYbpzNH0bdyT2voAbTOaphfZlFw30pgLzuX+elPbuGUdV3Ali4Xy/XnwycVIpJ4eKP16p
-	p0IwE+Q9o9nFEkEVC0/DbwCHimOKSMo1PxyCZQviTzKFpkif3WYD139Zzo2PErDRxdUwnEZkCjs
-	H6lNmXFfKebF5pA8fMAHxOVwT5s+wtD+wBus=
-X-Received: by 2002:a05:6a20:2447:b0:232:9530:2300 with SMTP id adf61e73a8af0-243d6e00b1cmr18787182637.18.1756863920617;
-        Tue, 02 Sep 2025 18:45:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGPcu7WQqWP/xkbBlXV4L0CiyF0ufiS+LD89LO/RgiStFAaC6nkWqXiyzMSSMmTsSRTo8KIkA==
-X-Received: by 2002:a05:6a20:2447:b0:232:9530:2300 with SMTP id adf61e73a8af0-243d6e00b1cmr18787140637.18.1756863920013;
-        Tue, 02 Sep 2025 18:45:20 -0700 (PDT)
-Received: from [10.249.10.141] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4f992d3de9sm2574010a12.14.2025.09.02.18.45.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 18:45:19 -0700 (PDT)
-Message-ID: <52c1f77a-b3b9-4c4f-90b8-1ff2ac042724@oss.qualcomm.com>
-Date: Wed, 3 Sep 2025 09:45:14 +0800
+        d=1e100.net; s=20230601; t=1756864132; x=1757468932;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I5K5+6/E2TguN5jCxa+s4/alaOTKBjPVsyrGrnuZMwE=;
+        b=BQYEDddA0R0vJnPVRWh3oWQdEBCHrrcaPs0xOkDH4VMY2fv9obZHOI9aflmvrIkCAf
+         Ku1LS/pWWS+ECeIylI0THn3aC6NNsSgEmmjIioHZ1z0QJN2ERqWnkMybitfqJbgc3/xW
+         mPg3MqTq5AX3xA7BLiOqyi7PskOHwA7vYhCTLVp88qzwth53AHtf3LWiDd7UYkIZFMcV
+         HMgBNMz07g+y/8s20bLubFqe06nLOjd6xdRwrMtwPdhvd3YvOxM5T0m0lTiy7ZbOqRC/
+         4wt7YXa8EhBlZwrOPzcFxPorqGy8oODl0hzkYoAOs8Y0C+05kJtH2wh0/D6P0kW/S+d4
+         QvzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4EHTd+UPGAHBHOzTMa5AJpRX9Ns51/eIvpS+cBnuv9asinQFbA1hwaNsG5qEY4Ma8n0KSYBtC@vger.kernel.org, AJvYcCVpNf3Vqlerz5KirBS/643nxttTm6v6uuymOmkq19tHhKaN0Aa96S4m1TsDxquzpptN6d+Vto9H2QlmAun7@vger.kernel.org, AJvYcCVpP5hhBNZpeUKoEfohUaMWWnRbo5D6CZOy/+F5Ii/m1jJxmhWVcX6O1EnkW5SgNqVc1O/ZnMWNzLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz/4M0Du52DR1DC4igdjwrIbI5ZNIeLAh9/bkmPijQuKBRdYAx
+	jL+rxyKXgV5G4scWGBLhHsRc7b+23LnPUleS8eY+WJ+zRNTu2wbJAVvc
+X-Gm-Gg: ASbGncshXku6Pa3vhQSqeSVXa7DE8GUNMc8PzGSo2C5h0eEXvjVCsOPHAtsSJBG0f7/
+	lMOQL710TeebtA0jzw0h+zl9K4UBCpiURp3vOl2ICc4dsyfMQEUKn5GWQd2shLowqZQss/CzXcn
+	pvAtq/M8vMuIg50MlY0Of9sKe3tH4rCLqiFN9S4CLktUgw1K6+vePKb9cjlSDchfBCJw9IKW7yn
+	8aHY2YuXrdtD8CjElAL6f5XYMV6wdgsU2w9LDLcm1oz7mAXkjazQ2sJs1FViig33DsGguqhcS7l
+	Ju15FuZp/jGHfwaXISnWyCzh2oI2U9NRkLWSGVykOPKzUTM4COXeayLcH3smWYrMeBFGhAovmZn
+	kdkZwEiapdx9P2hreZbPmwRTL6BQB9zXul6tX
+X-Google-Smtp-Source: AGHT+IGRZOLBXxfWgkvB4KXAx7D2vpFOgMQKicQCcFgaF/uJ0Bfv4GrX0PHrR2EsiBuYdopRl+7NAA==
+X-Received: by 2002:a17:902:e5d0:b0:24b:1766:cc70 with SMTP id d9443c01a7336-24b1766d2d6mr53722235ad.39.1756864132354;
+        Tue, 02 Sep 2025 18:48:52 -0700 (PDT)
+Received: from fedora ([159.196.5.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249037022d9sm145737495ad.23.2025.09.02.18.48.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 18:48:51 -0700 (PDT)
+From: Wilfred Mallawa <wilfred.opensource@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: horms@kernel.org,
+	corbet@lwn.net,
+	john.fastabend@gmail.com,
+	netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alistair.francis@wdc.com,
+	dlemoal@kernel.org,
+	sd@queasysnail.net,
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Subject: [PATCH v3] net/tls: support maximum record size limit
+Date: Wed,  3 Sep 2025 11:47:57 +1000
+Message-ID: <20250903014756.247106-2-wilfred.opensource@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/2] arm64: dts: qcom: Add display support for QCS615
- RIDE board
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xiangxu.yin@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        Li Liu <li.liu@oss.qualcomm.com>
-References: <20250827-add-display-support-for-qcs615-platform-v7-0-917c3de8f9ca@oss.qualcomm.com>
- <20250827-add-display-support-for-qcs615-platform-v7-2-917c3de8f9ca@oss.qualcomm.com>
- <yutyrfb73wbxlweoq3mc6ezyqr56snzmznw3k6mcbc56fpfayg@3h5jwymlo3ol>
- <0c2a4877-d63b-4650-b7d4-a06a2730c73c@oss.qualcomm.com>
- <zoogyjua4l6e2bgsvxx7w26n6v2hwnp2pvkizzzsds3c6cgaag@2bvqdl2z5ds6>
- <4913e937-3892-42ac-8145-cc9c2364242c@oss.qualcomm.com>
- <snery6acisgvxtofsrbbqtpoirh5ffyha64lz4zekg3kvwrsyv@tfyydedc7ddm>
- <ae4ef090-7edc-49f8-a964-090bb94ff097@oss.qualcomm.com>
- <7sd3rvvwnte7dub6vuywi6np7rig547ugfpu626ruufx7psrds@igqdchhianju>
-Content-Language: en-US
-From: Fange Zhang <fange.zhang@oss.qualcomm.com>
-In-Reply-To: <7sd3rvvwnte7dub6vuywi6np7rig547ugfpu626ruufx7psrds@igqdchhianju>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: NXm_7xfal6DPIeLNE6H-VHlE67qbCFjw
-X-Proofpoint-ORIG-GUID: NXm_7xfal6DPIeLNE6H-VHlE67qbCFjw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfXz4Rx9cZoGPmv
- I1V87StV2U/D7IEbRnxcnN2hyhpeX69xNUyLj6KVghtTBTGwgZsaTrEg8VBkL7p6E7Hexdab1mJ
- pbI+0+zMOEAxf51l/8jTCy458bQKS9iI67gZBzqlL9wBVFHglHNnmW9pz+e8Hkd9uu1DS6zO7vt
- 5x909UL1HuZGFifqRYIga+jlhKQX+hKbvaWEMvF85Gy/cmoA6LwxRHYpIAKqPwF3Mb+hFwQOqy6
- c9fmcYoxnfMInU59ArZ3dgUlUu4MITnO458EET9TFbezNK2K++GRIXBhsQ4Kq0qqzCCcTidAHOh
- Z0EOVLfK1Pg0k5fC5sNWxzrZIekE7ra0V0Q/zntEafFOvBU+90FYQ2frXH0VEMrfBhK3Pttycbi
- Lgp+mPBS
-X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68b79db2 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
- a=EUspDBNiAAAA:8 a=-S4KrNXkqzQhTUXETMwA:9 a=QEXdDO2ut3YA:10
- a=bFCP_H2QrGi7Okbo017w:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_09,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300027
+Content-Transfer-Encoding: 8bit
 
+From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
 
+During a handshake, an endpoint may specify a maximum record size limit.
+Currently, the kernel defaults to TLS_MAX_PAYLOAD_SIZE (16KB) for the
+maximum record size. Meaning that, the outgoing records from the kernel
+can exceed a lower size negotiated during the handshake. In such a case,
+the TLS endpoint must send a fatal "record_overflow" alert [1], and
+thus the record is discarded.
 
-On 9/2/2025 9:56 PM, Dmitry Baryshkov wrote:
-> On Mon, Sep 01, 2025 at 11:23:28AM +0800, Fange Zhang wrote:
->>
->>
->> On 8/28/2025 7:02 PM, Dmitry Baryshkov wrote:
->>> On Thu, Aug 28, 2025 at 01:12:14PM +0800, Fange Zhang wrote:
->>>>
->>>>
->>>> On 8/28/2025 12:41 PM, Dmitry Baryshkov wrote:
->>>>> On Thu, Aug 28, 2025 at 10:57:41AM +0800, Fange Zhang wrote:
->>>>>>
->>>>>>
->>>>>> On 8/28/2025 4:01 AM, Dmitry Baryshkov wrote:
->>>>>>> On Wed, Aug 27, 2025 at 09:08:39PM +0800, Fange Zhang wrote:
->>>>>>>> From: Li Liu <li.liu@oss.qualcomm.com>
->>>>>>>>
->>>>>>>> Add display MDSS and DSI configuration for QCS615 RIDE board.
->>>>>>>> QCS615 has a DP port, and DP support will be added in a later patch.
->>>>>>>>
->>>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->>>>>>>> Signed-off-by: Li Liu <li.liu@oss.qualcomm.com>
->>>>>>>> Signed-off-by: Fange Zhang <fange.zhang@oss.qualcomm.com>
->>>>>>>> ---
->>>>>>>>      arch/arm64/boot/dts/qcom/qcs615-ride.dts | 150 +++++++++++++++++++++++++++++++
->>>>>>>>      1 file changed, 150 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->>>>>>>> index e663343df75d59481786192cde647017a83c4191..f6e0c82cf85459d8989332497ded8b6ea3670c76 100644
->>>>>>>> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->>>>>>>> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->>>>>>>> @@ -39,6 +39,76 @@ xo_board_clk: xo-board-clk {
->>>>>>>>      		};
->>>>>>>>      	};
->>>>>>>> +	dp-dsi0-connector {
->>>>>>>> +		compatible = "dp-connector";
->>>>>>>> +		label = "DSI0";
->>>>>>>> +		type = "mini";
->>>>>>>> +
->>>>>>>> +		port {
->>>>>>>> +			dp_dsi0_connector_in: endpoint {
->>>>>>>> +				remote-endpoint = <&dsi2dp_bridge_out>;
->>>>>>>> +			};
->>>>>>>> +		};
->>>>>>>> +	};
->>>>>>>> +
->>>>>>>> +	vreg_12p0: vreg-12p0-regulator {
->>>>>>>
->>>>>>> I should be more carefull when doing reviews. I thought that it was
->>>>>>> pointed out already and didn't some of the obvious things...
->>>>>>>
->>>>>>> First of all, the nodes are sorted. By the name, not by the label.
->>>>>>> Second, there are already regulators in this file. Why are the new nodes
->>>>>>> not following the existing pattern and why are they not placed at a
->>>>>>> proper place?
->>>>>>
->>>>>> Initially, we referred to https://patchwork.kernel.org/project/linux-arm-msm/patch/20250604071851.1438612-3-quic_amakhija@quicinc.com/
->>>>>> as a reference, but its node ordering seems a bit unconventional.
->>>>>>
->>>>>> Would this revised ordering be acceptable?
->>>>>>
->>>>>> ...
->>>>>> + dp-dsi0-connector
->>>>>>
->>>>>> vreg_conn_1p8: regulator-conn-1p8
->>>>>> vreg_conn_pa: regulator-conn-pa
->>>>>> regulator-usb2-vbus
->>>>>
->>>>> So... Existing regulator nodes have the name of 'regulator-foo-bar'.
->>>>>
->>>>>>
->>>>>> + vreg_12p0: vreg-12p0-regulator
->>>>>> + vreg_1p0: vreg-1p0-regulator
->>>>>> + vreg_1p8: vreg-1p8-regulator
->>>>>> + vreg_3p0: vreg-3p0-regulator
->>>>>> + vreg_5p0: vreg-5p0-regulator
->>>>>
->>>>> While yours use 'vreg-baz-regulator'. Why? Don't blindly c&p data from
->>>>> other platforms.
->>>>
->>>> Got it, The revised format will be:
->>>>
->>>> + vreg_12p0: regulator-vreg-12p0
->>>> + vreg_1p0: regulator-vreg-1p0
->>>> + vreg_1p8: regulator-vreg-1p8
->>>> + vreg_3p0: regulator-vreg-3p0
->>>> + vreg_5p0: regulator-vreg-5p0
->>>>
->>>> Let me know if you have any further suggestions.
->>>
->>> What's the name of power rail in the schematics? vreg-Np0?
->>
->> I reviewed the Ride board schematics and found the following power rail
->> mappings:
->>
->> VREG_1P0 -> DSI0_DVDD10 / DSI0_AVDD10 -> ANX7625 AVDD10 / DVDD10
->> VREG_1P8 -> DSI0_AVDD18 -> ANX7625 AVDD18
->> VREG_S4A_1P8 -> DSI0_DVDD18 -> ANX7625 DVDD18
->> VIDEO_OUT_VREG_3P3 -> DSI0_AVDD30 -> ANX7625 AVDD30
-> 
-> Then it looks like regulator-vreg-NpM is okay
+Upcoming Western Digital NVMe-TCP hardware controllers implement TLS
+support. For these devices, supporting TLS record size negotiation is
+necessary because the maximum TLS record size supported by the controller
+is less than the default 16KB currently used by the kernel.
 
-Got it, I'll update v8 today following this format. Thanks!
+This patch adds support for retrieving the negotiated record size limit
+during a handshake, and enforcing it at the TLS layer such that outgoing
+records are no larger than the size negotiated. This patch depends on
+the respective userspace support in tlshd and GnuTLS [2].
 
-> 
->>
->> would the current approach also be acceptable?
->> or we need configure the power supplies strictly according to this mapping.
->> Appreciate your guidance.
->>
->>>
->>>
->>
-> 
+[1] https://www.rfc-editor.org/rfc/rfc8449
+[2] https://gitlab.com/gnutls/gnutls/-/merge_requests/2005
+
+Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+---
+V2 -> V3:
+ - Added crucial missing change to tls_sw_sendmsg_locked() that actually
+   enforces the record size limit.
+ - Added record size enforcement in tls_device.c 
+ - Changed `record_size_limit` -> `tx_record_size_limit` easier to see that it's
+   tx only.
+ - Added do_tls_getsockopt() support for TLS_TX_RECORD_SIZE_LIM
+ - tx_record_size_limit is set to TLS_MAX_PAYLOAD_SIZE in tls_init() and
+   updated when record size is specified by userspace.
+---
+ Documentation/networking/tls.rst |  7 ++++
+ include/net/tls.h                |  1 +
+ include/uapi/linux/tls.h         |  2 +
+ net/tls/tls_device.c             |  2 +-
+ net/tls/tls_main.c               | 65 +++++++++++++++++++++++++++++++-
+ net/tls/tls_sw.c                 |  2 +-
+ 6 files changed, 75 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/networking/tls.rst b/Documentation/networking/tls.rst
+index 36cc7afc2527..0232df902320 100644
+--- a/Documentation/networking/tls.rst
++++ b/Documentation/networking/tls.rst
+@@ -280,6 +280,13 @@ If the record decrypted turns out to had been padded or is not a data
+ record it will be decrypted again into a kernel buffer without zero copy.
+ Such events are counted in the ``TlsDecryptRetry`` statistic.
+ 
++TLS_TX_RECORD_SIZE_LIM
++~~~~~~~~~~~~~~~~~~~~~~
++
++During a TLS handshake, an endpoint may use the record size limit extension
++to specify a maximum record size. This allows enforcing the specified record
++size limit, such that outgoing records do not exceed the limit specified.
++
+ Statistics
+ ==========
+ 
+diff --git a/include/net/tls.h b/include/net/tls.h
+index 857340338b69..6db532d310d5 100644
+--- a/include/net/tls.h
++++ b/include/net/tls.h
+@@ -226,6 +226,7 @@ struct tls_context {
+ 	u8 rx_conf:3;
+ 	u8 zerocopy_sendfile:1;
+ 	u8 rx_no_pad:1;
++	u16 tx_record_size_limit;
+ 
+ 	int (*push_pending_record)(struct sock *sk, int flags);
+ 	void (*sk_write_space)(struct sock *sk);
+diff --git a/include/uapi/linux/tls.h b/include/uapi/linux/tls.h
+index b66a800389cc..3add266d5916 100644
+--- a/include/uapi/linux/tls.h
++++ b/include/uapi/linux/tls.h
+@@ -41,6 +41,7 @@
+ #define TLS_RX			2	/* Set receive parameters */
+ #define TLS_TX_ZEROCOPY_RO	3	/* TX zerocopy (only sendfile now) */
+ #define TLS_RX_EXPECT_NO_PAD	4	/* Attempt opportunistic zero-copy */
++#define TLS_TX_RECORD_SIZE_LIM	5	/* Maximum record size */
+ 
+ /* Supported versions */
+ #define TLS_VERSION_MINOR(ver)	((ver) & 0xFF)
+@@ -194,6 +195,7 @@ enum {
+ 	TLS_INFO_RXCONF,
+ 	TLS_INFO_ZC_RO_TX,
+ 	TLS_INFO_RX_NO_PAD,
++	TLS_INFO_TX_RECORD_SIZE_LIM,
+ 	__TLS_INFO_MAX,
+ };
+ #define TLS_INFO_MAX (__TLS_INFO_MAX - 1)
+diff --git a/net/tls/tls_device.c b/net/tls/tls_device.c
+index f672a62a9a52..bf16ceb41dde 100644
+--- a/net/tls/tls_device.c
++++ b/net/tls/tls_device.c
+@@ -459,7 +459,7 @@ static int tls_push_data(struct sock *sk,
+ 	/* TLS_HEADER_SIZE is not counted as part of the TLS record, and
+ 	 * we need to leave room for an authentication tag.
+ 	 */
+-	max_open_record_len = TLS_MAX_PAYLOAD_SIZE +
++	max_open_record_len = tls_ctx->tx_record_size_limit +
+ 			      prot->prepend_size;
+ 	do {
+ 		rc = tls_do_allocation(sk, ctx, pfrag, prot->prepend_size);
+diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
+index a3ccb3135e51..94237c97f062 100644
+--- a/net/tls/tls_main.c
++++ b/net/tls/tls_main.c
+@@ -544,6 +544,28 @@ static int do_tls_getsockopt_no_pad(struct sock *sk, char __user *optval,
+ 	return 0;
+ }
+ 
++static int do_tls_getsockopt_tx_record_size(struct sock *sk, char __user *optval,
++					    int __user *optlen)
++{
++	struct tls_context *ctx = tls_get_ctx(sk);
++	u16 record_size_limit = ctx->tx_record_size_limit;
++	int len;
++
++	if (get_user(len, optlen))
++		return -EFAULT;
++
++	if (len < sizeof(record_size_limit))
++		return -EINVAL;
++
++	if (put_user(sizeof(record_size_limit), optlen))
++		return -EFAULT;
++
++	if (copy_to_user(optval, &record_size_limit, sizeof(record_size_limit)))
++		return -EFAULT;
++
++	return 0;
++}
++
+ static int do_tls_getsockopt(struct sock *sk, int optname,
+ 			     char __user *optval, int __user *optlen)
+ {
+@@ -563,6 +585,9 @@ static int do_tls_getsockopt(struct sock *sk, int optname,
+ 	case TLS_RX_EXPECT_NO_PAD:
+ 		rc = do_tls_getsockopt_no_pad(sk, optval, optlen);
+ 		break;
++	case TLS_TX_RECORD_SIZE_LIM:
++		rc = do_tls_getsockopt_tx_record_size(sk, optval, optlen);
++		break;
+ 	default:
+ 		rc = -ENOPROTOOPT;
+ 		break;
+@@ -812,6 +837,31 @@ static int do_tls_setsockopt_no_pad(struct sock *sk, sockptr_t optval,
+ 	return rc;
+ }
+ 
++static int do_tls_setsockopt_tx_record_size(struct sock *sk, sockptr_t optval,
++					    unsigned int optlen)
++{
++	struct tls_context *ctx = tls_get_ctx(sk);
++	u16 value;
++
++	if (sockptr_is_null(optval) || optlen != sizeof(value))
++		return -EINVAL;
++
++	if (copy_from_sockptr(&value, optval, sizeof(value)))
++		return -EFAULT;
++
++	if (ctx->prot_info.version == TLS_1_2_VERSION &&
++	    value > TLS_MAX_PAYLOAD_SIZE)
++		return -EINVAL;
++
++	if (ctx->prot_info.version == TLS_1_3_VERSION &&
++	    value > TLS_MAX_PAYLOAD_SIZE + 1)
++		return -EINVAL;
++
++	ctx->tx_record_size_limit = value;
++
++	return 0;
++}
++
+ static int do_tls_setsockopt(struct sock *sk, int optname, sockptr_t optval,
+ 			     unsigned int optlen)
+ {
+@@ -833,6 +883,9 @@ static int do_tls_setsockopt(struct sock *sk, int optname, sockptr_t optval,
+ 	case TLS_RX_EXPECT_NO_PAD:
+ 		rc = do_tls_setsockopt_no_pad(sk, optval, optlen);
+ 		break;
++	case TLS_TX_RECORD_SIZE_LIM:
++		rc = do_tls_setsockopt_tx_record_size(sk, optval, optlen);
++		break;
+ 	default:
+ 		rc = -ENOPROTOOPT;
+ 		break;
+@@ -1022,6 +1075,7 @@ static int tls_init(struct sock *sk)
+ 
+ 	ctx->tx_conf = TLS_BASE;
+ 	ctx->rx_conf = TLS_BASE;
++	ctx->tx_record_size_limit = TLS_MAX_PAYLOAD_SIZE;
+ 	update_sk_prot(sk, ctx);
+ out:
+ 	write_unlock_bh(&sk->sk_callback_lock);
+@@ -1065,7 +1119,7 @@ static u16 tls_user_config(struct tls_context *ctx, bool tx)
+ 
+ static int tls_get_info(struct sock *sk, struct sk_buff *skb, bool net_admin)
+ {
+-	u16 version, cipher_type;
++	u16 version, cipher_type, tx_record_size_limit;
+ 	struct tls_context *ctx;
+ 	struct nlattr *start;
+ 	int err;
+@@ -1110,7 +1164,13 @@ static int tls_get_info(struct sock *sk, struct sk_buff *skb, bool net_admin)
+ 		if (err)
+ 			goto nla_failure;
+ 	}
+-
++	tx_record_size_limit = ctx->tx_record_size_limit;
++	if (tx_record_size_limit) {
++		err = nla_put_u16(skb, TLS_INFO_TX_RECORD_SIZE_LIM,
++				  tx_record_size_limit);
++		if (err)
++			goto nla_failure;
++	}
+ 	rcu_read_unlock();
+ 	nla_nest_end(skb, start);
+ 	return 0;
+@@ -1132,6 +1192,7 @@ static size_t tls_get_info_size(const struct sock *sk, bool net_admin)
+ 		nla_total_size(sizeof(u16)) +	/* TLS_INFO_TXCONF */
+ 		nla_total_size(0) +		/* TLS_INFO_ZC_RO_TX */
+ 		nla_total_size(0) +		/* TLS_INFO_RX_NO_PAD */
++		nla_total_size(sizeof(u16)) +   /* TLS_INFO_TX_RECORD_SIZE_LIM */
+ 		0;
+ 
+ 	return size;
+diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
+index bac65d0d4e3e..28fb796573d1 100644
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -1079,7 +1079,7 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
+ 		orig_size = msg_pl->sg.size;
+ 		full_record = false;
+ 		try_to_copy = msg_data_left(msg);
+-		record_room = TLS_MAX_PAYLOAD_SIZE - msg_pl->sg.size;
++		record_room = tls_ctx->tx_record_size_limit - msg_pl->sg.size;
+ 		if (try_to_copy >= record_room) {
+ 			try_to_copy = record_room;
+ 			full_record = true;
+-- 
+2.51.0
 
 
