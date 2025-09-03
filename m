@@ -1,161 +1,161 @@
-Return-Path: <linux-kernel+bounces-799267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7B4EB4292E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:56:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C77F6B42937
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 694611A86060
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:56:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 888F3541BC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97312369323;
-	Wed,  3 Sep 2025 18:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDD3369328;
+	Wed,  3 Sep 2025 18:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T8Ppfyv+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LteysHPW"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D251547C9;
-	Wed,  3 Sep 2025 18:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B810F322C78;
+	Wed,  3 Sep 2025 18:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756925789; cv=none; b=BFRwMftgj1qoBGG8DNXelQWs8rQhn72B4R4e6E5EPdLLResHIaptKfKQRBKzkcrzkCDOolBV3X9sVIVTyi39QZYej2UFIAPJR6H8bY5Ty+xv9ERbfN/Swl9wFIod9sPda5I3wuPceZDWlD2hYDobj8pUT0fj0BceJiaftiWOAFQ=
+	t=1756925976; cv=none; b=Pa+4O2d9I/gaDfbDmZRItMlVfdeNVCnI7pXkFW1cA5slR6K8Uh7Z2gCB6qdJtXoCDVPWXZUrWUZSWdL7q3f/s6j6bK53r75dkWdDOYhBfV+amQbpEPZE/Hr7T+lBnsLQA8bqudLuXaqKUkDJSH/UyAUS5CtsJG/k7rzcByyKXkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756925789; c=relaxed/simple;
-	bh=Di/kTCAveoUUjQoVNNWL0t0vFQa2mlSFvm1V0OlnA+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Qkyc2lYEOJy6ETAL42CzsyccZD8xnVCGp4/MzwtNUHOulREeGDAC2oC6QVYRVMLByGDp/7MgvGKjKoarBTONq/xVdyux7u6+qy0IsH3FDUzbdSGgWrrnVAvKR1tvyr9sUxi/JUhQOBF+q6Owit57L2+iDzDjR2d6JuBwDPiDoXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T8Ppfyv+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 264F4C4CEF4;
-	Wed,  3 Sep 2025 18:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756925787;
-	bh=Di/kTCAveoUUjQoVNNWL0t0vFQa2mlSFvm1V0OlnA+g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=T8Ppfyv+fQ4oge60ckzlsCSvW0CS+/8F/KblhmfNBNBDzbKqjG7GHTSmPj8+pbYSs
-	 mJZyGaAF+FSfRZJYUrRoY1RxsOJYKLbo7FUWl5LlNY9jkGZTtNi/QSLtW73ZanbFbf
-	 JPggwbng1Y4ppaHYCO3f8mvPWg94FyZZK/2fGBwBcfFUT2FeKfmJBtIfyKwsngOk/3
-	 S564EK9e3uTxJ8CeP6MfogFN2CJIBe1ksKCl8OAIJuMzW5ZbSWH0+xhQBwpzPW6Gs5
-	 ShvvfeiN2Ce2wFeeWi3NEq2gII1Sn07PzDp5WzIeNdJZE0KylQfjniN6JbvWBzRvoe
-	 BZvD5XS18d8Xw==
-Date: Wed, 3 Sep 2025 13:56:25 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	cros-qcom-dts-watchers@chromium.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com,
-	quic_mrana@quicinc.com, quic_vpernami@quicinc.com,
-	mmareddy@quicinc.com
-Subject: Re: [PATCH v8 2/5] PCI: dwc: Add support for ELBI resource mapping
-Message-ID: <20250903185625.GA1213441@bhelgaas>
+	s=arc-20240116; t=1756925976; c=relaxed/simple;
+	bh=CmRuSfLVesYC6zLMzuuR1yKrwX/yrIq9Ukf9DYSfjYI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SYVHPnlQkGxtCjcPsn2IXHSikzzRv7SMbVfFjbJHhPlurtPwJC6OUA5kjh868ue7aJFfKZCBGSx1QlQ6c6rxx19B3oqK/0SectxDciHh6fbHGOHLuuGr8TivK+s2NwU85MF/Lblt/bzx6E/IjiHoag17G0RpDj3Qk6Sj0Fil5xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LteysHPW; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-248d5074ff7so9497455ad.0;
+        Wed, 03 Sep 2025 11:59:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756925974; x=1757530774; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qZy30c40uMQ+C5mAmU5IprjDTVrN2KgzxusGEfWx0IE=;
+        b=LteysHPWigAK3EfnDMgvLdCW2Y63LMedgiShFfXhPMyyI3nnCi1YjB4Ub+Kfx2Tq4X
+         NR/1sA2Jtj6RDCuf9LnTjox65lLtFDsQvQYnsZ1Y4NsrZIut25cZSIT6AD8RG5zO3pdB
+         IcmtsRQYKRcgOh4Luft2QNXmKTvuQKf0D+blb0bFGsZGVRKRUsxSoUrJWy4eaZ29kbW7
+         d/FqZtKoMJKHUrkvX+KFqKxcbUCTO+w4hy9nwNt7xyGgCo2BPw3Z7UD6OhZFp69jYsTX
+         EDJT6L59C5QxGNLj4CeJYXCm/uvg4U5RJIe5qoTkc5HoSGtXN5Qjq5OYsTvafI+4rVbT
+         9iGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756925974; x=1757530774;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qZy30c40uMQ+C5mAmU5IprjDTVrN2KgzxusGEfWx0IE=;
+        b=GfAf1TguTbxCNijhZcqI9Ai4JTzw+ccgWRdP+XWQjkNwr6joLWWDipd5oQx8Bf9GIx
+         TjXknmm2/Nwn7EggCf4k7wE5dowYhwPa2yDmXuVj4bdqQ7y5036UcCz0RavAc0KYIR01
+         WXsyWmYMYrQ4TBTnldYdsAZ4DesUn/9lpjDNNpupJh2ZwoFuSLGTNUJamElcpLsKwOck
+         /HvD1L3mOVwYtY0XJeYwnQui6Tln5lX04U6IEt8/OEg1MWjaM6pzRJBRNLBwTVDnCxwb
+         gLGa9SqMgXRsE8e1VLTOPB7wLkvxFMlSbW/1rZ54CpFH1Fl6XpnhdDo3vTmPl8W6u8ic
+         hI0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVbt9cbEWYz7bjdsdkT+3o2PENkMf5w9IqGBa2mM5fp5kZyAJdu6W9B3xwnwiXredEsNoZKV1XRgCKxrg==@vger.kernel.org, AJvYcCXSraXu+g9jnx2SB/QYRUBuyT4T/sfvl7O00hdmmW1sy23+IOY6TWg/Xw4TpO3nuQGtA7qxUVIRTQ3z@vger.kernel.org
+X-Gm-Message-State: AOJu0YzisABAyE2V6cbB2NPR7SOStmsdLO4rfb0xvWvE9ytzZ0Xr2suq
+	1nPAfSWI7Yn89Eypcbs2nSY1a4Z00agi6SM+ek7xyu/F5lpk8Shp9B+Z
+X-Gm-Gg: ASbGnctoYf4SzLa0QrRnY11W1FARuUpavflqoSG5U0lpP7AnJ6AEDafMYjWdX+FqlN1
+	zKf3KH7e36Osm+VB69/843nclhvomJJVPeMmJ8MKLP/Vth1/oMXdzVqk53t7cCDLHF4ukd6b9ff
+	SOmez3YYKfRRKkh+y/rvOkug5WLQCrtziBd6wosKgmulB0SPX5I97vGTkUmNi/UcUhDjweT5USW
+	YxwUFqMsNS02KMhk+PQaUHBrW+Z+h3PQyDZH0KhwQgg/S1yfPqpPAr5k85O2K9i7lvvLeeaDcza
+	you961dQ1XHa2VEGgWNeiN/C6eIjj/2C1M8F7RaFg9B1gGKjvb/nIIC3CWoMKqRUCVe5MB5gK0Q
+	gFhDFxXkPBhUYN9wB/lI4OZV6rguvy5fForHg3JlVRgly/j5KwfnLPw==
+X-Google-Smtp-Source: AGHT+IGc1hOCFlrmhtuYXy2RF4eOcL1ED3xkJpQYquvPOenW1RGNO8PJflQF3KtC2IpnrJ0auNPnsg==
+X-Received: by 2002:a17:902:f642:b0:234:986c:66cf with SMTP id d9443c01a7336-24944ac387bmr203183595ad.16.1756925973872;
+        Wed, 03 Sep 2025 11:59:33 -0700 (PDT)
+Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-249065ab343sm169403475ad.126.2025.09.03.11.59.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 11:59:33 -0700 (PDT)
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-block@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	linux-efi@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+	Justin Sanders <justin@coraid.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	David Hildenbrand <david@redhat.com>
+Subject: [PATCH v3 0/7] Cleanup free_pages() misuse
+Date: Wed,  3 Sep 2025 11:59:14 -0700
+Message-ID: <20250903185921.1785167-1-vishal.moola@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <rijfzrfngdtfc2ckxarzrcyt3xx23mldmijdlx7efbkputhkxz@i4cvdsmtavge>
 
-On Mon, Sep 01, 2025 at 07:18:17PM +0530, Manivannan Sadhasivam wrote:
-> On Thu, Aug 28, 2025 at 01:04:23PM GMT, Krishna Chaitanya Chundru wrote:
-> > External Local Bus Interface(ELBI) registers are optional registers in
-> > DWC IPs having vendor specific registers.
-> > 
-> > Since ELBI register space is applicable for all DWC based controllers,
-> > move the resource get code to DWC core and make it optional.
-> 
-> As discussed offline, this changes also warrants switching the glue
-> drivers to use 'dw_pci::elbi' base instead of their own. So I've
-> ammended this commit to include those changes also while applying
-> (which was straightforward).
+free_pages() is supposed to be called when we only have a virtual address.
+__free_pages() is supposed to be called when we have a page.
 
-I'm glad if we can do this in the DWC core instead of individual
-drivers, but in the case of qcom, this changes the mapping from using
-devm_pci_remap_cfgspace() to using devm_ioremap_resource():
+There are a number of callers that use page_address() to get a page's
+virtual address then call free_pages() on it when they should just call
+__free_pages() directly.
 
-  qcom_pcie_ep_get_io_resources
-    platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi")
-    devm_pci_remap_cfg_resource
-      devm_pci_remap_cfgspace
-        pci_remap_cfgspace
-          ioremap_np                  # (except on arch/arm)
+Add kernel-docs for free_pages() to help callers better understand which
+function they should be calling, and replace the obvious cases of
+misuse.
 
-  dw_pcie_get_resources
-    platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi")
-    devm_ioremap_resource
-      __devm_ioremap_resource(..., DEVM_IOREMAP)
-        __devm_ioremap
-          switch (type)
-          case DEVM_IOREMAP: ioremap
+-----------------
+Based on mm-new, I intend to have all of these taken through the mm tree.
 
-I assume this change from ioremap_np() to ioremap() is fine, but
-please verify and update the commit log to mention this change and
-explain why it's ok.
+I've split the patches into separate subsystems to make it easier to
+resolve conflicts, but there aren't any functional changes.
 
-(I don't think the qcom changes were posted to the mailing list; you
-can see them here:
-https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/dwc-ecam&id=d39e0103e38f9889271a77a837b6179b42d6730d)
+v3:
+  - Collect some Reviewed-by Tags
+  - Replace remaining free_page() calls in patch 7 (all other patches
+    are unchanged from v2)
+  - Add all appropriate mailing lists that were missing from v2
 
-> > Suggested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-designware.c | 9 +++++++++
-> >  drivers/pci/controller/dwc/pcie-designware.h | 1 +
-> >  2 files changed, 10 insertions(+)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> > index 89aad5a08928cc29870ab258d33bee9ff8f83143..4684c671a81bee468f686a83cc992433b38af59d 100644
-> > --- a/drivers/pci/controller/dwc/pcie-designware.c
-> > +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> > @@ -167,6 +167,15 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
-> >  		}
-> >  	}
-> >  
-> > +	if (!pci->elbi_base) {
-> > +		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi");
-> > +		if (res) {
-> > +			pci->elbi_base = devm_ioremap_resource(pci->dev, res);
-> > +			if (IS_ERR(pci->elbi_base))
-> > +				return PTR_ERR(pci->elbi_base);
-> > +		}
-> > +	}
-> > +
-> >  	/* LLDD is supposed to manually switch the clocks and resets state */
-> >  	if (dw_pcie_cap_is(pci, REQ_RES)) {
-> >  		ret = dw_pcie_get_clocks(pci);
-> > diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> > index 00f52d472dcdd794013a865ad6c4c7cc251edb48..ceb022506c3191cd8fe580411526e20cc3758fed 100644
-> > --- a/drivers/pci/controller/dwc/pcie-designware.h
-> > +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> > @@ -492,6 +492,7 @@ struct dw_pcie {
-> >  	resource_size_t		dbi_phys_addr;
-> >  	void __iomem		*dbi_base2;
-> >  	void __iomem		*atu_base;
-> > +	void __iomem		*elbi_base;
-> >  	resource_size_t		atu_phys_addr;
-> >  	size_t			atu_size;
-> >  	resource_size_t		parent_bus_offset;
-> > 
-> > -- 
-> > 2.34.1
-> > 
-> 
-> -- 
-> மணிவண்ணன் சதாசிவம்
+v2:
+  - Reference __get_free_pages() instead of alloc_pages() in the
+  free_pages() kernel-doc
+  - Get some Reviewed-by tags
+  - cc the subsystem maintainers related to specific patches
+
+Vishal Moola (Oracle) (7):
+  mm/page_alloc: Add kernel-docs for free_pages()
+  aoe: Stop calling page_address() in free_page()
+  x86: Stop calling page_address() in free_pages()
+  riscv: Stop calling page_address() in free_pages()
+  powerpc: Stop calling page_address() in free_pages()
+  arm64: Stop calling page_address() in free_pages()
+  virtio_balloon: Stop calling page_address() in free_pages()
+
+ arch/arm64/mm/mmu.c                      | 2 +-
+ arch/powerpc/mm/book3s64/radix_pgtable.c | 2 +-
+ arch/riscv/mm/init.c                     | 4 ++--
+ arch/x86/mm/init_64.c                    | 2 +-
+ arch/x86/platform/efi/memmap.c           | 2 +-
+ drivers/block/aoe/aoecmd.c               | 2 +-
+ drivers/virtio/virtio_balloon.c          | 8 +++-----
+ mm/page_alloc.c                          | 9 +++++++++
+ 8 files changed, 19 insertions(+), 12 deletions(-)
+
+-- 
+2.51.0
+
 
