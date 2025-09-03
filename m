@@ -1,274 +1,199 @@
-Return-Path: <linux-kernel+bounces-798761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71698B4229B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:57:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6B9AB42295
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FEA81B2676D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:57:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BE891B266A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34E730FC33;
-	Wed,  3 Sep 2025 13:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD0D30EF6A;
+	Wed,  3 Sep 2025 13:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="TDW52rYP"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012003.outbound.protection.outlook.com [52.101.66.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wD7WCodY"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A7D1459F7;
-	Wed,  3 Sep 2025 13:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.3
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756907807; cv=fail; b=Syf33O1TMVmZ7Mu1yDrxykEoqgtdyYC7GihoTmTz0TKfVT+L8mkjd0GjM5YD4KwwbKgJ7Xbo0YXMytVZ17BESSjs3yqNrxu1dJCmSFpS1NUg4qiJrfUKx+3rp+AMapmlk4ghXpuzwXbvfuQF+LE+MkQj/9s+ZROIlEDFg0AV7zk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3315930DEC4
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756907807; cv=none; b=l5gkyAzRNOt/sFA4i+itOcfZ+Q7kGh9LpTQMlFXhX31tnETKAk0ynhp8lsS/DW5cT6tIr9SXwC9bgpL8ed4UpSuCDN2K8DDFwDpEeQQ0q9ZocHmGYUC3mkcqZc82tF3a7EF3g4TOgJmj8fQD5xBN8hwEI9LP2NTTmq3i7j6iT8k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756907807; c=relaxed/simple;
-	bh=9xqR1JO0Cj3akvUJHhD3bki46hhlRKFvku91NLOMFHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=S2NP/zfA+vNwOQdrea1vU4ju2KlpzjookNRfwwddoV5B+C8Fl3sA7NzvZcQpyxDpQbu+yYa0lg0MQVL02uaYqpWSjySmH3pdwKIMs22MBxOYwp1dh4eAXoA9kU1qk/xEGyYx2I+nXsAtGdbk2t+1PWqd5L8DgQ0H4XX9xfg/RQk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=TDW52rYP; arc=fail smtp.client-ip=52.101.66.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jFzEp1WLbrtZUWbOlDsgN3BpJNStZy2h7rbDp+6+EQknN9vLRYR/reg8lZwdTbhlf8rmkmJFO5d7DNuJxjQcG+0tPy2131ijW+WwlidTeCWxZWexE2DMkGBvC4QpRMG6L2cM9y9281f6hF+/TCh+kOXYBSUdu323b1bjEGAz8KxIi/2wCKCrlppD+1fvtPqV2t+F3RpVgBLEn2Yid0wrzDKUgeOIqLlzJCdE5oFyRHRlY8yp4dZ6C4diyE/zRtBmMJPW4i/BnI4TB4P/Z1+JRbe6J8toDf4FpeN/wZMxUz4/IqofPqbMwRGHvfwV7hSBJgiP0Flc5qHA6JpoO7a9xg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sNSwCTSE7ZJmDSnP0F1lFjJxCwM0PTlvzf5gVPH3t6w=;
- b=JT/nR//D/wG+3mp5KTZWSc7Gp7y92ZOyIA9eDWpHoNheYOS6Gstx6MGcaf84dmzUk1MCLHwrR4k8kXDC0Dkzd+u9CE5ntEubftdkeOaRGmMHhdycOYmObg1ZAQQBzrEJ3Z/axuxaw3rZfWTWllUyLG+jyTZHFxT2vrOWQxu78tUCV0fbBDaTtl7/pUhNjXgny+4rNgitgQVJ9lWu3BjxmnbI7KveW6KBIX81ZXOG+tGKEDE+a4cNuJ+3h3gAwsNZ6kpvlJARgX6ueXTF471DRcH6cZ45pvAHQDTGiWbkguTliyL0G/D1TSONt63kigQm985ysMRUHDdajsEukc3PIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sNSwCTSE7ZJmDSnP0F1lFjJxCwM0PTlvzf5gVPH3t6w=;
- b=TDW52rYPyEapf64KTucpD9Sse2GuRP/um0qwMaY/r8Bgi1teftbboiWesTP2JzijgDvzv7wlwGA2iMXTV408ZzPt/W02O07yD6wOqsSsnz/KHQt1DblZkKP21ZozrfigdB8z17r7zuqYPZvd610dmveJlFZ5JOEV59e+gg6fcC9hY4aozKRgFXx7WG+weTJ8IG6db4MNsN7Mj0CvAEMf0Zh6waNxCdVax1FHBdEvmqOTN06k2LZ/VcTDJDQ3A3fTXCVuSo+v8qy2xbVw/+bGawGnGWrKqXrntmVPYcXydzLJ1HKIn/Bdswl32w9WFnU2ntdij9X9MmxC16RSsRAdwA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by PA1PR04MB10914.eurprd04.prod.outlook.com (2603:10a6:102:480::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.29; Wed, 3 Sep
- 2025 13:56:41 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%7]) with mapi id 15.20.9094.015; Wed, 3 Sep 2025
- 13:56:41 +0000
-Date: Wed, 3 Sep 2025 09:56:29 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Alice Yuan <alice.yuan@nxp.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Robert Chiras <robert.chiras@nxp.com>,
-	Zhipeng Wang <zhipeng.wang_1@nxp.com>
-Subject: Re: [PATCH v4 0/5] media: imx8qxp: add parallel camera support
-Message-ID: <aLhJDXnz9HPGrWcp@lizhi-Precision-Tower-5810>
-References: <20250729-imx8qxp_pcam-v4-0-4dfca4ed2f87@nxp.com>
- <20250805010822.GC24627@pendragon.ideasonboard.com>
- <aLbcpEZXm5G1Onq7@lizhi-Precision-Tower-5810>
- <20250902123920.GM13448@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902123920.GM13448@pendragon.ideasonboard.com>
-X-ClientProxiedBy: BYAPR07CA0008.namprd07.prod.outlook.com
- (2603:10b6:a02:bc::21) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	bh=Mt2KpjzPULxrWRBMrQwI+fGFUPZG+amrTgGkb7YvIyw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BuVrz7G3lPPFB/F3i8MotZwmOdpfc9vz6Aj0ilQpC+2/kI3Pa5CYs6HJH6apun/lWUU5ir7bbEgSVbiioQxC3k450kqqz5iCjaYOscC8SLcGT9su50tkkrCt7xRySJ4lURs7y0xzWqIlnJSNOlR9FuUC+bzwb5JvuBvz3kedvKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wD7WCodY; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b883aa3c9so25294495e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 06:56:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756907803; x=1757512603; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7UyeZEfRakAOXRipKZZzHzlSyL5Gy818R1oSP4VasTw=;
+        b=wD7WCodYXch6E8TwZfWuqqT2nShA8slxn20kq88giwpLSyguhUKJDrSVNTyVPr0a79
+         0TLR2DTM8QHg5dhNwlePZqXPkEK8emtCSuoCF4RkMwdzvxYv9z6++xzDktx46NAbfr+P
+         Bxm5uVJ2RvUTMiSM2aFl0QVLZBD4ai+YK57YpBdwGg/izeMXOIn09Qqz/ObglZtQPZhe
+         N26QtkMpY2wz1vdRTDmJenM0DBapfHn50JKInogxysmzGmNHtlhKrQTgFTRV5Vwyeqi0
+         qq1samM7gj2lWFfWImuQZSwHfdZ2zF17ixkelp2xIS3yalq/7Bw3d+35GRECqMyM6SuQ
+         WFaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756907803; x=1757512603;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7UyeZEfRakAOXRipKZZzHzlSyL5Gy818R1oSP4VasTw=;
+        b=eG9rSIax4uw/RwbL2eXB7fqUDdFqG6I68GBS6Yb0++5/VFJCttTRUna9KYhXgQbumk
+         dNysipHhL3ujKuZ430t5W58LBmJ7/N+8Qpb6vs2hubQH8gPpjDwOFMZM1XYpSM4mpeVy
+         pEJjEF3zhsFdUBFWsx9UO1tDpFXJMroewopLEV+ktN/G+wvflp6t/iv+SG/rOUb2Rr0h
+         MekRGxaD9WEKa7ogdBRdd7LvQGfdiAFZg04L/drs781YV7j/uzT4IT2fj/2mx3Jc2Yoq
+         LIPeLAym/n2zzy/TOst7riIG1nMOFv7MFmn9Yg7d2dKIyKWGp6jJAT7Wv5GKVal5KY0I
+         5JwQ==
+X-Gm-Message-State: AOJu0YzNRePMkFDYsd72dwa22wM15j7Xi2c4UkjGEe6vUf2gofRl4Bg8
+	hO7Lczn7sq8LkXcArUWJA30Vc0AJ7AaHBr+TEj065HvawLnvhO6OReP8CDcahNv/o80=
+X-Gm-Gg: ASbGncvOfgspyjJNgCieUEyGjSARgrMhGnIl0btcGWd7GLMQPZvO6WXjOkqwQd2O0be
+	6LLAEqHoWqxZOqWQNqJjo9I8T1loUklYuigYwXYVVgXpbleRZMC+K0GD4vrSrDRsDDFAsguyiQX
+	YR2B8QJI8vrbNGOHZ6j0xRG94YFzWpF/gsQyzgtuu19rk+SsSJ3arE3OEk6hFB1T5z6Qx6jlgke
+	N/c1iv84V6MYLFKau6NvlhBy6MC9Zzy0TtxuQbMYRj197veMz6BQCb30cr9L10Q14Zkzl3OERxv
+	7JUUhuy8e+lfiks5pIntXpB8gzSmND74llwYumnFlNX0+VtpNN1Ru3RT1pqGKAgcwxPWH78Fed9
+	P9cWIfZWeIMRC4tvxdewPSZkFTligDXyXGRkCqUbzBDR/Uf0fMLF7TGE0Raj+t8OXldEtOoAq2z
+	+XTBTMS30zggt9
+X-Google-Smtp-Source: AGHT+IGAz13CW9qYdP4E1mRFLDKZhAD79+7ZMxCzGrpXuKeHY3BrVbbM+xV+kRrxmTmdkbjk2yyj+w==
+X-Received: by 2002:a05:600c:3ba8:b0:45b:6705:4fca with SMTP id 5b1f17b1804b1-45b8558b82amr147687525e9.31.1756907803419;
+        Wed, 03 Sep 2025 06:56:43 -0700 (PDT)
+Received: from ta2.c.googlers.com (219.43.233.35.bc.googleusercontent.com. [35.233.43.219])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b87632365sm197257135e9.16.2025.09.03.06.56.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 06:56:42 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v3 0/5] exynos-acpm: add DVFS protocol and clock driver
+Date: Wed, 03 Sep 2025 13:56:37 +0000
+Message-Id: <20250903-acpm-clk-v3-0-65ecd42d88c7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|PA1PR04MB10914:EE_
-X-MS-Office365-Filtering-Correlation-Id: 285dd11f-dd27-476e-0d47-08ddeaf1b569
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?MjlVgE1fozt6yuMDBU61NHU2pWshbqQTkHXsthT8xQVv5D5nEyWrUj42uaQX?=
- =?us-ascii?Q?nl+M5TRzv8UvE0UFP/2cIBOCPTmMoYhVj/T1UvLI+r/knXXt4agcVxinVQWV?=
- =?us-ascii?Q?FclB2J3uvNNzSMt8JXW4Ek7HMgXgt34kvds6Xefh5la5otoNB4Sf9yV/TwHw?=
- =?us-ascii?Q?kBrV9qg0OFW2EIglgt+JkLTTn1Rz6y7N57IeID4D3FMvC1YdCp86LMJED1Ky?=
- =?us-ascii?Q?zLmPqae38nKFqoqcIXS5Z0Qyuq/NUBzWP9zrV14hKVcv5xumvciy7e2HX020?=
- =?us-ascii?Q?2qPknN0g7a2WGh1k3ZGTykSvW6yEjilWvRU2M3EGWnALXw5FPNjnP5aCM6ni?=
- =?us-ascii?Q?KH9wea2vqj8vBixjGzVPz8vBQzaldkGGPMJ9B3FhSlZjRkGf4AjQj7d9XHUw?=
- =?us-ascii?Q?hEj98aUFFS8fZKLN0bH+uQExKwZpVIzPi7tCqzWWDzd5JBeCpbYQl0eE4Syp?=
- =?us-ascii?Q?fJ2ijeSp66PY6vD7HQpW7lrxnaBEg8MW6pM7Lq4NWvoiivI6ggnO3QesreaP?=
- =?us-ascii?Q?iKe+7nUpXazxQtp+yapXrDUvwYM/lkOsKFnyZzS5ZIlggZgv1DeIdx2G7Dmy?=
- =?us-ascii?Q?s2QK+uj+Pmd1f+MTk8zD+fs+vAY4GCa76YNqBK7YEB7acTd9ETQ1kclvFtYb?=
- =?us-ascii?Q?mHWdOnvxNmoMOetzu6W8fc0r/oMnO5EI8C1Wv41IkQd+VsyoXP4lq/ZjUnAA?=
- =?us-ascii?Q?6yR0zcKDYqWKsV52of0Mp06JJdxT2SBA1Zj79+cg5FCYdOwxCa2yQ3nV4dJg?=
- =?us-ascii?Q?6r3Orh2norAWPm0Lbh7pzM4KOz2ewMJN2rVx99grFIG9FshSLX1Xq2PphrkT?=
- =?us-ascii?Q?Z5Jv0zTObOI+4450ry5z9T+iUtCg+bpWTdF79CObIXxFrCvwLGtTXOaFuCSy?=
- =?us-ascii?Q?AsVqQJ7hZrXxHSu7YzSCfAkmUZJzsZ0P0CeH5fzFZ6tUdfn1PzNVkAij/DDb?=
- =?us-ascii?Q?vouqnr7/zCn0HV9rGWnSB3vAG03s09PTdY+wtwVla9yEGJbli7x96QBr0J40?=
- =?us-ascii?Q?xqwuG0+x8ujLQbGykUI9C2igUmm3gdYtM6L/Splyq4D7YFSC8k9dwaSv5TvA?=
- =?us-ascii?Q?CcYT6hBBJFcAMqznLJB/xZAoDCAn+JOBPexw0v9g5smJuRObWeUNbleeiIda?=
- =?us-ascii?Q?ZWDp1CgZireeGVF7TDB0Mb+YN6s3ilwDGSzImCNYQRZsUBofImXgVm1pBDeM?=
- =?us-ascii?Q?0j7Y/xkbQFXaxYJ55Mu3ylMgdnIDZCqlZwy1lzacj/Hz1CHAMRJb5M29ANcL?=
- =?us-ascii?Q?xpAhqzZEJ6vuYsVx2Yqn3CCgNVK+9SIMBKqHYx8DApKeNqvp26Pi0Pl8pUkk?=
- =?us-ascii?Q?UrFVW/P06x7VTQmhqzGgbr8345eGYc1y6j/F5eTRVhUzV+MEP6hKEhtNnQze?=
- =?us-ascii?Q?1OPnADQUmddFCiPbF/9wkGlHMUvAJagLD9hJvvVK1gjg7af5jE+dmw0QkPyh?=
- =?us-ascii?Q?rNlw81Gn1xta8fP8/W1jw3q8+emd8N0ESS3xNWJ+cTUCYJ9+CJhbRN/Wdaww?=
- =?us-ascii?Q?w6I/5UO6YK5yYbM=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?DmRqAn/FdNhSzHQGqaSlnXic32zTRSyG9+BXE5NWg81IM/ryzcXcXkUErbg8?=
- =?us-ascii?Q?brbP7tvuIcJlA/qaDdnjC3BljkwxmM8ESHSNBKcAITS70g/mu7uQtTg6gNO/?=
- =?us-ascii?Q?c8PYRBrKuxbuMuxPw91pLOQVk6YCE7ETmmmzeWyx0t1DQAzZQeUHvQWETrwd?=
- =?us-ascii?Q?/D/TgROZ8xDtqZNBwLqUNw+OESjDnBDWk2QmIz+5q1LnLD93psYWQTo8tmLu?=
- =?us-ascii?Q?1x52+14a5jjD59umomdmP5oamCI7bL9nyTObKnpE6YNxAGfjzfmoclhUdjNr?=
- =?us-ascii?Q?d9Gqz/zieqEUVtL4bO5j5nrvr6KcJJ+5lK2u5hKTR+N+An/AwOgQsy+S99JZ?=
- =?us-ascii?Q?P4ELhqk27VqxXKnTDXjVF63UfNJT+9OPUuC7B5YYCinqMK0HyPLLxm4KoaN2?=
- =?us-ascii?Q?UQE4a2hNJRXftl5L+Iidqmo6WTRn3ys8Ao3J2Vt5Ju6Dudl73bhCzQpvRfxW?=
- =?us-ascii?Q?q4EjUccbjuNagNE+LfFTCL/e7W4qXmZ6LtQHPiGN8R98AljTSKABqfX9qaA5?=
- =?us-ascii?Q?NJ6k7snHH4fjUhv8ETk15TU0/co4G9cvOyuKqwf3z15bBZ++tMC39M/Ve+hx?=
- =?us-ascii?Q?9Lw7Kk/Y2B32dmaGuhgzXy4/IubAf4IVw5IMi+XTIFFkeV5MvOqiJQlwGMfF?=
- =?us-ascii?Q?lYa5U0JzrsZFW8Tt/hSSDl5RiOA5oBClMkO9ji7bqB1zp5jWzCKDpr3GBQLt?=
- =?us-ascii?Q?ZXCYq+1/MlmxfJmSLSfpiCpoCMrVF1Mahk301j6VfhQQg8MNLBTEC/IUucaf?=
- =?us-ascii?Q?Hu1sGdQhykTn/EXQSjNKouw9l4xLVdcN2RsLS0gUcTPeu6cJX7TPFc9JCXpf?=
- =?us-ascii?Q?vDXBDcgnSyT0aQexVfr2RkPjWBqL3mr9YAGaEer/V2SdwRFTRc1RYy6z+Acj?=
- =?us-ascii?Q?U86Y6P9HsZgQ2/hJI0av8Gk19YKeTlPfJjkxUPO9mStbJlUZ9BRPzAavKNKy?=
- =?us-ascii?Q?iiQOX3NPu3iBRhFHvjTEWswdFAUwYFaUFj8D6xG4y/0O+DDDQQzSm9pKpY33?=
- =?us-ascii?Q?caZXRrMBLIwSgLbGQYvacy2JJdoa8+vHxeRSW2drM0wfdutzgZNFPpL7GAtA?=
- =?us-ascii?Q?m84LeOoIcjH/hDaZQqahUoqi43AdqsBq4Rl0Dfx3uHfHF6jC54s21DvuOw5x?=
- =?us-ascii?Q?mpTqPHHpXeE4K+nT7AdeyErR6r6QGJMNTG5OaRX5zvVnis3m1VROPfwled7m?=
- =?us-ascii?Q?onfpdOqsTWOlTg0cIRjAVZ1pXCLLTSIjBJKbyc5aViTU+Kxqq5hAB2cAPBtN?=
- =?us-ascii?Q?Cow5HDiCwQzr3JKP5fEgfYlSVqzz1Z/hrtQJguvaklpfMW6iTrI5d/adK8Ep?=
- =?us-ascii?Q?Qyupzx7CPKTOdjauvw2icPc8BTJQ9LZca3AxPOXKxT33aDpLiEYYppE555u1?=
- =?us-ascii?Q?hXkfS963yB2Mj5rn8ksggD/ouSeCMJ3/HIuRkg+k8ZQp5sloepuIsX8rx7fi?=
- =?us-ascii?Q?zZkCg3uUZyUG8xytSRe/VDwu+D2cmF3YdbPTNfFFZbJIpRJVFRA/2fDFRL3s?=
- =?us-ascii?Q?5Mrgt+9VW3iVNrlhKcHNhacaDTX5K3L7XHq667L8xK/PkqfVagBxFHpXCUbe?=
- =?us-ascii?Q?tZ4x6KK1vedDf0iLsh0=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 285dd11f-dd27-476e-0d47-08ddeaf1b569
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 13:56:41.1959
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JU/kf0EaeZOY1QW3t+stlt9oauGq/+7VD5LFiIUGuKtjrcn0NKDTUxJqDXsRYhXTMvWYGbazGn2NaCnqqu2wIQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10914
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABVJuGgC/22MTQ6DIBgFr2JYlwY+EdBV79F0wV+V1IqBhrQx3
+ r3oyiZdzsubWVBy0buEumpB0WWffJgK1KcKmUFNvcPeFkZAoCGStliZ+YnN+MAgLSghHamJQOU
+ +R3f37z11vRUefHqF+NnLmW7rn0immGCutW0FE4wLehn9pGI4h9ijrZLhYII4mFBM6xojuWat5
+ uzHXNf1C3fN1dHbAAAA
+X-Change-ID: 20250819-acpm-clk-28d2a78e0307
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756907802; l=3867;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=Mt2KpjzPULxrWRBMrQwI+fGFUPZG+amrTgGkb7YvIyw=;
+ b=DakkBlIHpn7tVePCz5oJ4zp5oD53iKk03icPlLMbc4NT51IpDoL/zCPk2pTUJ/MwmoE6lU8Ae
+ 7iEo8dy1mf+A1vb7kEC2c50vYYSwnyl6A0XAf8u2C8lCIsizEpn2dc4
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-On Tue, Sep 02, 2025 at 02:39:20PM +0200, Laurent Pinchart wrote:
-> Hi Frank,
->
-> On Tue, Sep 02, 2025 at 08:01:40AM -0400, Frank Li wrote:
-> > On Tue, Aug 05, 2025 at 04:08:22AM +0300, Laurent Pinchart wrote:
-> > > Hi Frank,
-> > >
-> > > Thank you for the patches.
-> > >
-> > > I've quite busy these days, and I don't believe I will have time to
-> > > review this series before coming back from OSS Europe at the beginning
-> > > of September. Let's see if anyone on CC could volunteer.
-> >
-> > Laurent Pincha
-> > 	I hope you have good time at OSS.
-> >
-> > 	Do you have chance to review this patch?
->
-> I'm going through my mail backlog, which is really big at the moment.
+Dependencies description:
+The acpm-clk driver (#3) depends on the bindings (#1) and on the
+ACPM DVFS ops (#2), thus I propose to have an immutable tag so that
+the clock subsystem to merge first 3 patches if it really needs the
+new clock driver. Patches #4 and #5 have no dependencies.
 
-Understand.
+The Alive CLock and Power Manager (ACPM) firmware exposes clocks that
+are variable and index based. These clocks don't provide an entire range
+of values between the limits but only discrete points within the range.
+The firmware also manages the voltage scaling appropriately with the
+clock scaling. Make the ACPM node a clock provider.
 
-> I'd like someone else to volunteer to review this series. It won't scale
-> if I have to review all NXP media patches in my spare time :-/
+Add support for the ACPM DVFS protocol. It translates clock frequency
+requests to messages that can be interpreted by the ACPM firmware.
+Add an ACPM clock driver to model the clocks exposed by the ACPM firmware.
 
-Yes, but none volunteer review this in passed months. Expecially key
-reviewer. I am reviewing i3c patches. but Not familiar v4l system yet. It
-need scalable solution. I can help filter some common and simple problem
-from beginning.
+Thanks,
+ta
 
-Frank
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+Changes in v3:
+- dt-bindings:
+  - move clock bindings to a new bindings header
+  - update commit's subject, s/add #clock-cells/add ACPM clocks.
+    It also suggests that the bindings are added.
+  - prepend "GS101_" on clocks binding name. The bindings name are the
+    same for GS201 and the acpm-clk driver will likely include both.
+  - collect Rob's R-b
+- clk-acpm:
+  - move clock definitions here instead of keeping them into the
+    ACPM protocol driver
+  - use platform_driver.id_table to differentiate device type
+  - fix Kconfig dependency, || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+  - update commit subject, s/dev/pdev
+- exynos-acpm:
+  - move clock definitions to clk-acpm
+  - use devm-action to unregister clk-acpm platform device
+- Link to v2: https://lore.kernel.org/r/20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org
 
->
-> > > On Tue, Jul 29, 2025 at 12:06:21PM -0400, Frank Li wrote:
-> > > > Add parallel camera support for i.MX8 chips.
-> > > >
-> > > > The below patch to add new format support to test ov5640 sensor
-> > > >    media: nxp: isi: add support for UYVY8_2X8 and YUYV8_2X8 bus codes
-> > > >
-> > > > The bindings and driver for parallel CSI
-> > > >    dt-bindings: media: add i.MX parallel csi support
-> > > >    media: nxp: add V4L2 subdev driver for parallel CSI
-> > > >
-> > > > DTS part need depend on previous MIPI CSI patches.
-> > > >   https://lore.kernel.org/imx/20250522-8qxp_camera-v5-13-d4be869fdb7e@nxp.com/
-> > > >
-> > > >   arm64: dts: imx8: add parellel csi nodes
-> > > >   arm64: dts: imx8qxp-mek: add parallel ov5640 camera support
-> > > >
-> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > > ---
-> > > > Changes in v4:
-> > > > - remove imx93 driver support since have not camera sensor module to do test now.
-> > > >   Add it later
-> > > > - Add new patch
-> > > >   media: v4l2-common: Add helper function v4l_get_required_align_by_bpp()
-> > > > - See each patche's change log for detail.
-> > > > - Link to v3: https://lore.kernel.org/r/20250708-imx8qxp_pcam-v3-0-c8533e405df1@nxp.com
-> > > >
-> > > > Changes in v3:
-> > > > - replace CSI with CPI.
-> > > > - detail change see each patch's change logs
-> > > > - Link to v2: https://lore.kernel.org/r/20250703-imx8qxp_pcam-v2-0-188be85f06f1@nxp.com
-> > > >
-> > > > Changes in v2:
-> > > > - remove patch media: nxp: isi: add support for UYVY8_2X8 and YUYV8_2X8 bus codes
-> > > >   because pcif controller convert 2x8 to 1x16 to match isi's input
-> > > > - rename comaptible string to fsl,imx8qxp-pcif
-> > > > - See each patches's change log for detail
-> > > > - Link to v1: https://lore.kernel.org/r/20250630-imx8qxp_pcam-v1-0-eccd38d99201@nxp.com
-> > > >
-> > > > ---
-> > > > Alice Yuan (2):
-> > > >       dt-bindings: media: add i.MX parallel CPI support
-> > > >       media: nxp: add V4L2 subdev driver for camera parallel interface (CPI)
-> > > >
-> > > > Frank Li (3):
-> > > >       media: v4l2-common: Add helper function v4l_get_required_align_by_bpp()
-> > > >       arm64: dts: imx8: add camera parallel interface (CPI) node
-> > > >       arm64: dts: imx8qxp-mek: add parallel ov5640 camera support
-> > > >
-> > > >  .../devicetree/bindings/media/fsl,imx93-pcif.yaml  | 126 ++++
-> > > >  MAINTAINERS                                        |   2 +
-> > > >  arch/arm64/boot/dts/freescale/Makefile             |   3 +
-> > > >  arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi     |  13 +
-> > > >  .../boot/dts/freescale/imx8qxp-mek-ov5640-cpi.dtso |  83 +++
-> > > >  arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi  |  27 +
-> > > >  drivers/media/platform/nxp/Kconfig                 |  11 +
-> > > >  drivers/media/platform/nxp/Makefile                |   1 +
-> > > >  drivers/media/platform/nxp/imx-parallel-cpi.c      | 728 +++++++++++++++++++++
-> > > >  include/media/v4l2-common.h                        |  30 +
-> > > >  10 files changed, 1024 insertions(+)
-> > > > ---
-> > > > base-commit: 37a294c6211bea9deb14bedd2dcce498935cbd4e
-> > > > change-id: 20250626-imx8qxp_pcam-d851238343c3
->
-> --
-> Regards,
->
-> Laurent Pinchart
+Changes in v2:
+- dt-bindings: clocks are not longer a child of ACPM protocol. Instead
+  make Alive Clock and Power Manager (ACPM) node a clock provider.
+  Update commit message.
+- firmware: exynos-acpm: register by hand the ACPM clocks dev (new
+  patch)
+- firmware: exynos-acpm: use defines intead of enum
+- acpm-clk:
+  - switch to determine_rate
+  - drop __init, __refdata, __initconst, this is a module, we need those
+    methods and data, after boot as well.
+  - fix the assumption that the clocks are defined by ID in ascending order.
+    There's still an assumption that the clk_id < nr_clks, but this is
+    now covered by a sanity check in the clock driver.
+- arm64: defconfig: enable Exynos ACPM clocks (add patch together with
+  this patch set) 
+- Link to v1: https://lore.kernel.org/r/20250819-acpm-clk-v1-0-6bbd97474671@linaro.org
+
+---
+Tudor Ambarus (5):
+      dt-bindings: firmware: google,gs101-acpm-ipc: add ACPM clocks
+      firmware: exynos-acpm: add DVFS protocol
+      clk: samsung: add Exynos ACPM clock driver
+      firmware: exynos-acpm: register ACPM clocks pdev
+      arm64: defconfig: enable Exynos ACPM clocks
+
+ .../bindings/firmware/google,gs101-acpm-ipc.yaml   |  11 ++
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/clk/samsung/Kconfig                        |  10 +
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-acpm.c                     | 203 +++++++++++++++++++++
+ drivers/firmware/samsung/Makefile                  |   4 +-
+ drivers/firmware/samsung/exynos-acpm-dvfs.c        |  83 +++++++++
+ drivers/firmware/samsung/exynos-acpm-dvfs.h        |  21 +++
+ drivers/firmware/samsung/exynos-acpm.c             |  26 +++
+ include/dt-bindings/clock/google,gs101-acpm.h      |  26 +++
+ .../linux/firmware/samsung/exynos-acpm-protocol.h  |  10 +
+ 11 files changed, 395 insertions(+), 1 deletion(-)
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250819-acpm-clk-28d2a78e0307
+
+Best regards,
+-- 
+Tudor Ambarus <tudor.ambarus@linaro.org>
+
 
