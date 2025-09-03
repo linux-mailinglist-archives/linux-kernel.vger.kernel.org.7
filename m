@@ -1,127 +1,101 @@
-Return-Path: <linux-kernel+bounces-798857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1932B423F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DF61B423F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 934DF1BC3243
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:45:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090981B246A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DA521A447;
-	Wed,  3 Sep 2025 14:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28ACB2D6604;
+	Wed,  3 Sep 2025 14:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V4Mnb8+Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="chLVbEXB"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955891C862D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9714213E90;
+	Wed,  3 Sep 2025 14:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756910675; cv=none; b=J+4TqjE9J8u/ucfLrFSCVxPXDjg7+XuvlP0sx1qZBgiV3Pq+nXWtQ/gm8If39AWuxQq0wkybW1abuvErWb32MpckzTu4444urI/o5u076P8j1hySe/LD2LGwODa3O5+I4AjrsRhARB+vHXxYskr2DGb50LvhgXN3+1KGPI+l6/s=
+	t=1756910735; cv=none; b=S33sGP6hxdcWlefjhqyVtbrihCkxsKd6Q+ti4cdlytvIqVU14dSPuSpdkGorIsXk/qpVuObmxRxYtLtUGWoURgeQTL2YSOEAcc7kNgsYGb2JDZ+d93v6MuX2LTE+7Sy0KfJv+9fKkvcErjIYt0CCqo1UlCqVzZZLg0wGOVYcj3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756910675; c=relaxed/simple;
-	bh=K1yuBMDpnPOt4/KeRFVE2CusvjBh1MGwKZHLk7xzD4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L3ETHcLPUgUL70WMU5QhTFjXnrXBh9twdyPS/RXmeNao3toSfZypYd1g9IkoKa2ZmFl1FScp44QtPWMt5J6ZkfHNuNKAae4TfD5MsL5LQiAckFa/VL8XbZh0oppcOPBGPqN/+4Q0VbRbavqnjY88E5ciidZaZTykpY0mp8ZgnLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V4Mnb8+Q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756910671;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hJy/79mHdukukK/k7N0QCn2psTcagRNxoMm4TPphiNQ=;
-	b=V4Mnb8+QfGMolnwkYgJnEZAdvY1uCo9FDDfds9MB/z+wm5XF7hB4SzhR25NHUS1GwaaeGa
-	h/J2yI2EzuP82xw96t4h2resTtJxG3T+lTnUEXKK/Zo9EXKFnNUHjtCWU4kt749tFmjPKM
-	gttt0cQkyYlJV1bui/A1uisgWJWtFf8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-685-4bfc_JWYOeyOy1cGgeSsSA-1; Wed, 03 Sep 2025 10:44:30 -0400
-X-MC-Unique: 4bfc_JWYOeyOy1cGgeSsSA-1
-X-Mimecast-MFC-AGG-ID: 4bfc_JWYOeyOy1cGgeSsSA_1756910669
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b467f5173so38425e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 07:44:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756910669; x=1757515469;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hJy/79mHdukukK/k7N0QCn2psTcagRNxoMm4TPphiNQ=;
-        b=gVNOsZSdAjS9v1e81ZpNSPVcPWzH/g4zl85S6j554W3HDohgYAh26iqFovSCkD4Unl
-         myYCeke1Nw927Ve25oSLNO1XV7tiQLO4iUhZnbBsR8L0D12nRELdSm+8EOy/uyl5bgpd
-         NIbe/GVuwZ0T4gHFp2URWYjDl34rHLcAzf8Ztdf67Fl88F+Sc9QZ2gnJLxnP4aAdc/gU
-         02vrT1PLKaTjLB7z+2+i6qzBDWSTvFsm6tScVcpjiGGAebRp6zmvK0U+furqLniaS7oy
-         8DHSkiYDmN2oK4MiVNalH76ya2SN5uJy4iy9pwdrLkVMENadwrAPw47jxpFPfjnKBOxu
-         jGqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgOcg2Frm5f2hr+0k+hBw9GL9RUGBkS3ux6/UpiiC9I6bN5BfbSee8dJ2RPnnxbjvCjA9fb75Y+7+6tK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCLaKejDnFln3D+gNy3DS0C3RSexPzYiulpUx6F/aKW1Y/y1cU
-	WpMNwwdlBQH1YZ0F76DVrpKOkZTYjCXvAv1fumLAc7oJvurwQUtdjetL4iC+/wqxmUX0NJC3Ewq
-	+kHka6zcRZpn7SKT/Jy9oxVwNhOXDQa+hRWhKJLlkrc3e7E2aGLMvbQBeTfxRF4v03w==
-X-Gm-Gg: ASbGncuM/dbafvoJdY6BXA67lofV/66qOx7jJ65ee6e0jtIKf/bBEhsdI0wcSBEwTHi
-	UxL6OLmnuIZ2bOXSfjNgqC9owsdhTYbZ/BJ5eKOyqMSfJrzNa2KjAgp4rDMB1UK6oWMllsYVsbo
-	66GqIay2tmWEYQlh3l1IqQ4bh57sYEvRM/+IuydaUo0k8PpTrZfSQyi+J8dg+pkTIFo3go2ulLC
-	f0g0ScaiOg5t7+DW6zapWzGRjwUTqQzyvIgvAGTotElJS9fFsGaQ+tNSUNFlFaWl0H9ZyYgCwQM
-	bO0N8egKkC7KUZsUwTE5fAgKbhXlq5Sg+chSsWzABUEI+lPH/XtVQaXWRME/QvKXGG6d5gU=
-X-Received: by 2002:a05:600c:1e87:b0:45b:47e1:f5fe with SMTP id 5b1f17b1804b1-45b855c0d3dmr110370935e9.34.1756910669125;
-        Wed, 03 Sep 2025 07:44:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFKbkCMZ4LvPme/EuBzwbZA95CEfK10pvDin+qYg4BSO4x2L+ewZWsEmuElBxgPinCjh7EOCw==
-X-Received: by 2002:a05:600c:1e87:b0:45b:47e1:f5fe with SMTP id 5b1f17b1804b1-45b855c0d3dmr110370615e9.34.1756910668723;
-        Wed, 03 Sep 2025 07:44:28 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.70.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7d2393sm242270935e9.3.2025.09.03.07.44.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 07:44:28 -0700 (PDT)
-Date: Wed, 3 Sep 2025 16:44:26 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/16] sched/deadline: Clear the defer params
-Message-ID: <aLhUSknzOOOU3lKJ@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250903095008.162049-1-arighi@nvidia.com>
- <20250903095008.162049-5-arighi@nvidia.com>
+	s=arc-20240116; t=1756910735; c=relaxed/simple;
+	bh=7+gB4wClHZLbOPv8Ga3IIMlxYPUuhv8wxQJ/4mVAIN8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XutQFxKi1ukPRL3MAWQG78w/xjod555hgT+tgRH1gY6nGYK6Dq8b8ohe/j3lW3jjl6f2r84titEa2OfV6nYZMX67G7VxYXAjK+Y2JrabP2KUz4x6+0IWyyjjhVZmPZ6vNXGFi/Wc+0LyOqpsBUIzxuZ5EfrCiL0op9xIRas54F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=chLVbEXB; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 583EjQ0h2853536;
+	Wed, 3 Sep 2025 09:45:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756910726;
+	bh=TfPaCBrR2tmIHJVvAad4MWUXwXE/O4PmaW4tn4Elrow=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=chLVbEXBKAXHKbMs+9MjMrL03jucvt1pGrGOOfxfKtp4VgAocT61sIveT2rZ8q98L
+	 3QRMm95QGE3rQ7JlTS9FSdEfW+IPj2BQRYp+c34IWykCUOF/5ClfzroVeU97v/00D0
+	 EHTMk+FzEGv3gFMH7bHP5QqXAb15U1GCn6c1F81M=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 583EjP8J3673568
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 3 Sep 2025 09:45:25 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 3
+ Sep 2025 09:45:25 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 3 Sep 2025 09:45:25 -0500
+Received: from [10.24.69.191] (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 583EjLpE1727136;
+	Wed, 3 Sep 2025 09:45:21 -0500
+Message-ID: <8de87cc4-c46b-4039-bcdd-48133fe3c694@ti.com>
+Date: Wed, 3 Sep 2025 20:15:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903095008.162049-5-arighi@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] crypto: ti - Enable compile testing for dthev2
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "David S . Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-crypto@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kamlesh Gurudasani <kamlesh@ti.com>,
+        Manorit
+ Chawdhry <m-chawdhry@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Praneeth
+ Bajjuri <praneeth@ti.com>, Vishal Mahaveer <vishalm@ti.com>,
+        Kavitha
+ Malarvizhi <k-malarvizhi@ti.com>
+References: <20250820092710.3510788-1-t-pratham@ti.com>
+ <aLK7vIQktZuJFAQd@gondor.apana.org.au>
+Content-Language: en-US
+From: T Pratham <t-pratham@ti.com>
+In-Reply-To: <aLK7vIQktZuJFAQd@gondor.apana.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi,
-
-On 03/09/25 11:33, Andrea Righi wrote:
-> From: Joel Fernandes <joelagnelf@nvidia.com>
+On 30/08/25 14:22, Herbert Xu wrote:
+> Allow ti dthev2 driver to be compile-tested.
 > 
-> The defer params were not cleared in __dl_clear_params. Clear them.
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 > 
-> Without this is some of my test cases are flaking and the DL timer is
-> not starting correctly AFAICS.
-> 
-> Fixes: a110a81c52a9 ("sched/deadline: Deferrable dl server")
-> Reviewed-by: Andrea Righi <arighi@nvidia.com>
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 
-Acked-by: Juri Lelli <juri.lelli@redhat.com>
+Acked-by: T Pratham <t-pratham@ti.com>
 
-Thanks!
-Juri
-
+-- 
+Regards
+T Pratham <t-pratham@ti.com>
 
