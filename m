@@ -1,389 +1,183 @@
-Return-Path: <linux-kernel+bounces-798587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E900FB4202C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:57:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD364B4202E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A496F3B97A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:57:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9824C3BEC6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1342FF17B;
-	Wed,  3 Sep 2025 12:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2092FCBE5;
+	Wed,  3 Sep 2025 12:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LHFu21Zn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="d6Iy2Wmh"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D97D78F58
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D6322172E
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756904220; cv=none; b=ZJ/Ve7GghzI4eGuPgFkXuIxvgPCgwwaWfdpWUGJACPo6/Gv9L007uJo1EY0JwOF46ilc0PPB9Nk6c27ts04ZBuHgh3fBtDpft6VLPwTFvlSra9slXqNeVIOts9335dnWhh0FDh/Q9AXcp0H4yP2c0cHEEYxVsq6efeIjxqU/fY8=
+	t=1756904305; cv=none; b=a14+0aYpflPEDntj2UCQ7VoqMhgVo9F5iVqIk8YJjx4WA84uh6vUW3MJPS36fL231mreWRp+sPtLoh+oGpi5biDUpF9gGjd5CznMFnw30tMXvUBexY5IxYSdv+NC9aBE/zzsyGkdhe8UMgfb3xR+czIQ5matsaG3Sqb9wlelnwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756904220; c=relaxed/simple;
-	bh=P7y4rxcEmnkPyvqalWo+DCK6I3OZbrNSHV44uG0z3aM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LZLDw/n6qyu01UsRJQfjVZe7w12vEsGMx+sSvH6V1JiKMsuok4Z9N1Ioa2VA0CJSSKLGcSWbjl2mHirOGFIOb4u+BYgTFkAy7JAfDMHU7sTnUq6jcYT1wf1O7AIEjMLtMhoxr4pG8jZEIjs/bBuGcaXzEVTkZwSQRJcI4uftPfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LHFu21Zn; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756904218; x=1788440218;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=P7y4rxcEmnkPyvqalWo+DCK6I3OZbrNSHV44uG0z3aM=;
-  b=LHFu21ZnfJ1azNBbELajAJuWv6+E/UWaM1jhzdnZQaPuspceKAdmNRkM
-   kmgqG5uZ5QKiyCYBdIFCkc1ZycjnUHFJDypGKvjNJkeuaZhupxaaV13eS
-   lr4GHwCVXatZPbD6JKSqMWmB00/I5joVRssnLAefw8JTn5GMcNYxwr4Gt
-   n3fo5cNSosJDwY1YuRfzl3EFrhr+bipYB/fMmvfSE+QAeOg4uko+yGxp8
-   vzQgSnwfVoFAsu9tuoiuqWItBDb+mQaSa8AXSUiA8ewrpsi2sSiagQqRj
-   KfifWX0V9rzL2OL5iPx9CJOqfSY5/oYblSCor0fUCuKm1xMk4Hf+NnQKv
-   A==;
-X-CSE-ConnectionGUID: RRFr6u7tSK2L88Ug6xNmgQ==
-X-CSE-MsgGUID: pv+Lz/lcQVGV3chrXSUy1g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="46789853"
-X-IronPort-AV: E=Sophos;i="6.18,235,1751266800"; 
-   d="scan'208";a="46789853"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 05:56:56 -0700
-X-CSE-ConnectionGUID: ECe5td89Suizr/8TBzjWNg==
-X-CSE-MsgGUID: GnUpQBeWRj2KsY7nFJI38g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,235,1751266800"; 
-   d="scan'208";a="171139910"
-Received: from abityuts-desk.ger.corp.intel.com (HELO [10.245.245.191]) ([10.245.245.191])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 05:56:54 -0700
-Message-ID: <1a47196a82c4d0644e2dae3af5d3f9f33bfc8fd8.camel@linux.intel.com>
-Subject: Re: [PATCH 1/6] mm/mmu_notifier: Allow two-pass struct
- mmu_interval_notifiers
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: intel-xe@lists.freedesktop.org
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Andrew Morton
- <akpm@linux-foundation.org>,  Simona Vetter <simona.vetter@ffwll.ch>, Dave
- Airlie <airlied@gmail.com>, Alistair Popple <apopple@nvidia.com>, 
-	dri-devel@lists.freedesktop.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Matthew Brost <matthew.brost@intel.com>, 
- Christian =?ISO-8859-1?Q?K=F6nig?=	 <christian.koenig@amd.com>
-Date: Wed, 03 Sep 2025 14:56:49 +0200
-In-Reply-To: <20250821114626.89818-2-thomas.hellstrom@linux.intel.com>
-References: <20250821114626.89818-1-thomas.hellstrom@linux.intel.com>
-	 <20250821114626.89818-2-thomas.hellstrom@linux.intel.com>
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1756904305; c=relaxed/simple;
+	bh=QZ/zEMcGCNpoIy5Q9gouZGLszY6dfQmCsP+PYCE0BVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GMDbG2bFqSVf7nbzXScUJarAdNyneLeuoKKql3/8jAbt+c+AqxlyiRxDhY7fTRuBslFlKH+U1P26Eo7dfgKIhiekeEk5jmuMKQLzzF827xIKTfnaPAGEKp+qGjcNe5NG2/07Z/O3rZqxbv5HQGZi6WJx7ZPd0W2Ks149CS5g5Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=d6Iy2Wmh; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45cb5e1adf7so5927225e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 05:58:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1756904300; x=1757509100; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MC77pG8YTMZbdsVNvsxb7MX4BGndC3HL8xv81scZppk=;
+        b=d6Iy2WmhNKtaCN/Qj4d6A1cxq1a9NnnbLZ1hf7s9ZrUSRDJ+xvy5V6V1hL99t6gfWp
+         2Obd11VYgPCp35gQovatkKk2FIf+SwhSbHR6zGZH6Sq+ZBxgFKtX+9ZQRaSXFiIO76/0
+         NaNTdWkOR/FOePrZgzmcRhOaudecW7Sn+XbTvTZA5SReHlA39+q3a8xqHTz1gfxwoZdQ
+         4Vogr70AxDVp9b7sSITd1AvZS1vZexGeaxBcy04IeI3orqTdMEd4tdunWYR2jlYicM8r
+         mPw+H5FB6xQeE78xGy8BqaVrjBK+14ImxjBkfJwb1iNaHJTnnSJmbpGq7U6y9xb71CWc
+         r36Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756904300; x=1757509100;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MC77pG8YTMZbdsVNvsxb7MX4BGndC3HL8xv81scZppk=;
+        b=Smkf8MfB/RXvdSTO2lw0CXMtipk53rHebu7Aensy3B5rmCYCxhL1836iq37nril6QR
+         1yQoq2laQBXWRV4HRTsGEY+gKU/X95BBYw1/AHqfXu3kgM7EhzRScGwKHxOz2nTUM3Yc
+         MXSI5L/Afz7f/c/MB60zRpq3KMV6g4JY3KoL/1yenCcJsKtm/EgOXx1t3I5l3vj3+CPm
+         5AVm9ZUUpEPDdO0JnrTXLwgsxFTjltqg/RRM3yl18/15T1GfLUN369mG3k1po2nbSvbx
+         LWvVJOsaOVzBZUbE1zvv7VQb9f09eBHlAaJr1eimMI82RB/Hely7Jzwbb6hM/wSIieH6
+         yIDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuVSyhEMDnsdo2wAGUA55WsnVggbhYUB3keOyEgLcxOB7+XEJ4AU7iBOSGDfH0w83n//SyMwX3E5PPhMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8GN3h5jsLHabfJIcMJQoasOLc+C7Jac7DHsYJEu4blY/g3gh1
+	2xw6rC4ogQ8uXtt6NTSZbCgEbImyp41OqMJuqg8868KWr5vNqZ0zMUBjRQxHrz/tW1M=
+X-Gm-Gg: ASbGncvz1WUs6pM5DnAvFyyQMV6qKh55j5Z0azljz6BbM++ZeHGo5S2JaKuNr1Zbco9
+	LNHPpesZspxGROrIdV2bl0yIpzy8IWNteH6KQ0vqCuLOugBbL7OWcHl6XpXIlsvD5jJKeY+F4pt
+	2T9xPKWuM4aO+4XOdhNqbDL8iRAsjZ6WVZiAU+34oHATNq+95NazNjnLEfXZheapJLFRk6xMqjT
+	xOIJ4FiurIZuPfJkG2QBEG7krFZgl/MPREwIFhKm/VuNXeRGNKRToO+OEQ1A7+mmFbBV05BBA7p
+	nGBjRhseqQA7jpzEjiFHBdUc4BEJyn38yksSfTAb9qKAnIVmejPGIcrTpwhYjocjqFoXbmNR2VO
+	z9E0G/mFzh58kdc3UqO5JXPRloVPhF8a4NZ3LRzEMgDkdSA==
+X-Google-Smtp-Source: AGHT+IGA/EYr9siPLdAQFtA01/sYfVZcSrreq7W5+wyFJ0oMa4bqky4nIByyFn+cR542vJGQDzatNQ==
+X-Received: by 2002:a05:600c:1394:b0:45a:236a:23ba with SMTP id 5b1f17b1804b1-45b85575801mr117379825e9.22.1756904299566;
+        Wed, 03 Sep 2025 05:58:19 -0700 (PDT)
+Received: from localhost (109-81-86-254.rct.o2.cz. [109.81.86.254])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b7e7f14bbsm245164425e9.8.2025.09.03.05.58.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 05:58:19 -0700 (PDT)
+Date: Wed, 3 Sep 2025 14:58:18 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: zhongjinji <zhongjinji@honor.com>
+Cc: rientjes@google.com, shakeel.butt@linux.dev, akpm@linux-foundation.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, liam.howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, surenb@google.com, liulu.liu@honor.com,
+	feng.han@honor.com
+Subject: Re: [PATCH v7 2/2] mm/oom_kill: The OOM reaper traverses the VMA
+ maple tree in reverse order
+Message-ID: <aLg7ajpko2j1qV4h@tiehlicka>
+References: <20250903092729.10611-1-zhongjinji@honor.com>
+ <20250903092729.10611-3-zhongjinji@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903092729.10611-3-zhongjinji@honor.com>
 
-Hi,
+On Wed 03-09-25 17:27:29, zhongjinji wrote:
+> Although the oom_reaper is delayed and it gives the oom victim chance to
+> clean up its address space this might take a while especially for
+> processes with a large address space footprint. In those cases
+> oom_reaper might start racing with the dying task and compete for shared
+> resources - e.g. page table lock contention has been observed.
+> 
+> Reduce those races by reaping the oom victim from the other end of the
+> address space.
+> 
+> It is also a significant improvement for process_mrelease(). When a process
+> is killed, process_mrelease is used to reap the killed process and often
+> runs concurrently with the dying task. The test data shows that after
+> applying the patch, lock contention is greatly reduced during the procedure
+> of reaping the killed process.
 
-@Jason, @Alistair, Gentle ping, could you have a look and R-B, Ack if
-OK?
+Thank you this is much better!
 
-Thanks,
-Thomas
+> Without the patch:
+> |--99.74%-- oom_reaper
+> |  |--76.67%-- unmap_page_range
+> |  |  |--33.70%-- __pte_offset_map_lock
+> |  |  |  |--98.46%-- _raw_spin_lock
+> |  |  |--27.61%-- free_swap_and_cache_nr
+> |  |  |--16.40%-- folio_remove_rmap_ptes
+> |  |  |--12.25%-- tlb_flush_mmu
+> |  |--12.61%-- tlb_finish_mmu
+> 
+> With the patch:
+> |--98.84%-- oom_reaper
+> |  |--53.45%-- unmap_page_range
+> |  |  |--24.29%-- [hit in function]
+> |  |  |--48.06%-- folio_remove_rmap_ptes
+> |  |  |--17.99%-- tlb_flush_mmu
+> |  |  |--1.72%-- __pte_offset_map_lock
+> |  |--30.43%-- tlb_finish_mmu
 
+Just curious. Do I read this correctly that the overall speedup is
+mostly eaten by contention over tlb_finish_mmu?
 
-On Thu, 2025-08-21 at 13:46 +0200, Thomas Hellstr=C3=B6m wrote:
-> GPU use-cases for mmu_interval_notifiers with hmm often involve
-> starting a gpu operation and then waiting for it to complete.
-> These operations are typically context preemption or TLB flushing.
->=20
-> With single-pass notifiers per GPU this doesn't scale in
-> multi-gpu scenarios. In those scenarios we'd want to first start
-> preemption- or TLB flushing on all GPUs and as a second pass wait
-> for them to complete.
->=20
-> One can do this on per-driver basis multiplexing per-driver
-> notifiers but that would mean sharing the notifier "user" lock
-> across all GPUs and that doesn't scale well either, so adding support
-> for multi-pass in the core appears to be the right choice.
->=20
-> Implement two-pass capability in the mmu_interval_notifier. Use a
-> linked list for the final passes to minimize the impact for
-> use-cases that don't need the multi-pass functionality by avoiding
-> a second interval tree walk, and to be able to easily pass data
-> between the two passes.
->=20
-> v1:
-> - Restrict to two passes (Jason Gunthorpe)
-> - Improve on documentation (Jason Gunthorpe)
-> - Improve on function naming (Alistair Popple)
->=20
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Simona Vetter <simona.vetter@ffwll.ch>
-> Cc: Dave Airlie <airlied@gmail.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> Cc: <dri-devel@lists.freedesktop.org>
-> Cc: <linux-mm@kvack.org>
-> Cc: <linux-kernel@vger.kernel.org>
->=20
-> Signed-off-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
+> Signed-off-by: zhongjinji <zhongjinji@honor.com>
+
+Anyway, the change on its own makes sense to me
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+Thanks for working on the changelog improvements.
+
 > ---
-> =C2=A0include/linux/mmu_notifier.h | 42 ++++++++++++++++++++++++
-> =C2=A0mm/mmu_notifier.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 63 ++++++++++++++++++++++++++++++----
-> --
-> =C2=A02 files changed, 96 insertions(+), 9 deletions(-)
->=20
-> diff --git a/include/linux/mmu_notifier.h
-> b/include/linux/mmu_notifier.h
-> index d1094c2d5fb6..14cfb3735699 100644
-> --- a/include/linux/mmu_notifier.h
-> +++ b/include/linux/mmu_notifier.h
-> @@ -233,16 +233,58 @@ struct mmu_notifier {
-> =C2=A0	unsigned int users;
-> =C2=A0};
-> =C2=A0
-> +/**
-> + * struct mmu_interval_notifier_finish - mmu_interval_notifier two-
-> pass abstraction
-> + * @link: List link for the notifiers pending pass list
-> + *
-> + * Allocate, typically using GFP_NOWAIT in the interval notifier's
-> first pass.
-> + * If allocation fails (which is not unlikely under memory
-> pressure), fall back
-> + * to single-pass operation. Note that with a large number of
-> notifiers
-> + * implementing two passes, allocation with GFP_NOWAIT will become
-> increasingly
-> + * likely to fail, so consider implementing a small pool instead of
-> using
-> + * kmalloc() allocations.
-> + *
-> + * If the implementation needs to pass data between the two passes,
-> + * the recommended way is to embed strct
-> mmu_interval_notifier_finish into a larger
-> + * structure that also contains the data needed to be shared. Keep
-> in mind that
-> + * a notifier callback can be invoked in parallel, and each
-> invocation needs its
-> + * own struct mmu_interval_notifier_finish.
-> + */
-> +struct mmu_interval_notifier_finish {
-> +	struct list_head link;
-> +	/**
-> +	 * @finish: Driver callback for the finish pass.
-> +	 * @final: Pointer to the mmu_interval_notifier_finish
-> structure.
-> +	 * @range: The mmu_notifier_range.
-> +	 * @cur_seq: The current sequence set by the first pass.
-> +	 *
-> +	 * Note that there is no error reporting for additional
-> passes.
+>  mm/oom_kill.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index 3caaafc896d4..540b1e5e0e46 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -516,7 +516,7 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
+>  {
+>  	struct vm_area_struct *vma;
+>  	bool ret = true;
+> -	VMA_ITERATOR(vmi, mm, 0);
+> +	MA_STATE(mas, &mm->mm_mt, ULONG_MAX, ULONG_MAX);
+>  
+>  	/*
+>  	 * Tell all users of get_user/copy_from_user etc... that the content
+> @@ -526,7 +526,13 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
+>  	 */
+>  	set_bit(MMF_UNSTABLE, &mm->flags);
+>  
+> -	for_each_vma(vmi, vma) {
+> +	/*
+> +	 * It might start racing with the dying task and compete for shared
+> +	 * resources - e.g. page table lock contention has been observed.
+> +	 * Reduce those races by reaping the oom victim from the other end
+> +	 * of the address space.
 > +	 */
-> +	void (*finish)(struct mmu_interval_notifier_finish *final,
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct mmu_notifier_range *=
-range,
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long cur_seq);
-> +};
-> +
-> =C2=A0/**
-> =C2=A0 * struct mmu_interval_notifier_ops
-> =C2=A0 * @invalidate: Upon return the caller must stop using any SPTEs
-> within this
-> =C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 range. This function can sleep. Return false only if
-> sleeping
-> =C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 was required but mmu_notifier_range_blockable(range)
-> is false.
-> + * @invalidate_start: Similar to @invalidate, but intended for two-
-> pass notifier
-> + *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 callbacks where the callto @i=
-nvalidate_start
-> is the first
-> + *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pass and any struct
-> mmu_interval_notifier_finish pointer
-> + *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 returned in the @fini paramet=
-er describes the
-> final pass.
-> + *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 If @fini is %NULL on return, =
-then no final
-> pass will be
-> + *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 called.
-> =C2=A0 */
-> =C2=A0struct mmu_interval_notifier_ops {
-> =C2=A0	bool (*invalidate)(struct mmu_interval_notifier
-> *interval_sub,
-> =C2=A0			=C2=A0=C2=A0 const struct mmu_notifier_range *range,
-> =C2=A0			=C2=A0=C2=A0 unsigned long cur_seq);
-> +	bool (*invalidate_start)(struct mmu_interval_notifier
-> *interval_sub,
-> +				 const struct mmu_notifier_range
-> *range,
-> +				 unsigned long cur_seq,
-> +				 struct mmu_interval_notifier_finish
-> **final);
-> =C2=A0};
-> =C2=A0
-> =C2=A0struct mmu_interval_notifier {
-> diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-> index 8e0125dc0522..fceadcd8ca24 100644
-> --- a/mm/mmu_notifier.c
-> +++ b/mm/mmu_notifier.c
-> @@ -260,6 +260,18 @@ mmu_interval_read_begin(struct
-> mmu_interval_notifier *interval_sub)
-> =C2=A0}
-> =C2=A0EXPORT_SYMBOL_GPL(mmu_interval_read_begin);
-> =C2=A0
-> +static void mn_itree_final_pass(struct list_head *final_passes,
-> +				const struct mmu_notifier_range
-> *range,
-> +				unsigned long cur_seq)
-> +{
-> +	struct mmu_interval_notifier_finish *f, *next;
-> +
-> +	list_for_each_entry_safe(f, next, final_passes, link) {
-> +		list_del(&f->link);
-> +		f->finish(f, range, cur_seq);
-> +	}
-> +}
-> +
-> =C2=A0static void mn_itree_release(struct mmu_notifier_subscriptions
-> *subscriptions,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0 struct mm_struct *mm)
-> =C2=A0{
-> @@ -271,6 +283,7 @@ static void mn_itree_release(struct
-> mmu_notifier_subscriptions *subscriptions,
-> =C2=A0		.end =3D ULONG_MAX,
-> =C2=A0	};
-> =C2=A0	struct mmu_interval_notifier *interval_sub;
-> +	LIST_HEAD(final_passes);
-> =C2=A0	unsigned long cur_seq;
-> =C2=A0	bool ret;
-> =C2=A0
-> @@ -278,11 +291,25 @@ static void mn_itree_release(struct
-> mmu_notifier_subscriptions *subscriptions,
-> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0 mn_itree_inv_start_range(subscriptions, =
-&range,
-> &cur_seq);
-> =C2=A0	=C2=A0=C2=A0=C2=A0=C2=A0 interval_sub;
-> =C2=A0	=C2=A0=C2=A0=C2=A0=C2=A0 interval_sub =3D mn_itree_inv_next(interv=
-al_sub, &range))
-> {
-> -		ret =3D interval_sub->ops->invalidate(interval_sub,
-> &range,
-> -						=C2=A0=C2=A0=C2=A0 cur_seq);
-> +		if (interval_sub->ops->invalidate_start) {
-> +			struct mmu_interval_notifier_finish *final =3D
-> NULL;
-> +
-> +			ret =3D interval_sub->ops-
-> >invalidate_start(interval_sub,
-> +								=C2=A0
-> &range,
-> +								=C2=A0
-> cur_seq,
-> +								=C2=A0
-> &final);
-> +			if (ret && final)
-> +				list_add_tail(&final->link,
-> &final_passes);
-> +
-> +		} else {
-> +			ret =3D interval_sub->ops-
-> >invalidate(interval_sub,
-> +							=C2=A0=C2=A0=C2=A0 &range,
-> +							=C2=A0=C2=A0=C2=A0
-> cur_seq);
-> +		}
-> =C2=A0		WARN_ON(!ret);
-> =C2=A0	}
-> =C2=A0
-> +	mn_itree_final_pass(&final_passes, &range, cur_seq);
-> =C2=A0	mn_itree_inv_end(subscriptions);
-> =C2=A0}
-> =C2=A0
-> @@ -430,7 +457,9 @@ static int mn_itree_invalidate(struct
-> mmu_notifier_subscriptions *subscriptions,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct mmu_notifier_r=
-ange
-> *range)
-> =C2=A0{
-> =C2=A0	struct mmu_interval_notifier *interval_sub;
-> +	LIST_HEAD(final_passes);
-> =C2=A0	unsigned long cur_seq;
-> +	int err =3D 0;
-> =C2=A0
-> =C2=A0	for (interval_sub =3D
-> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0 mn_itree_inv_start_range(subscriptions, =
-range,
-> &cur_seq);
-> @@ -438,23 +467,39 @@ static int mn_itree_invalidate(struct
-> mmu_notifier_subscriptions *subscriptions,
-> =C2=A0	=C2=A0=C2=A0=C2=A0=C2=A0 interval_sub =3D mn_itree_inv_next(interv=
-al_sub, range))
-> {
-> =C2=A0		bool ret;
-> =C2=A0
-> -		ret =3D interval_sub->ops->invalidate(interval_sub,
-> range,
-> -						=C2=A0=C2=A0=C2=A0 cur_seq);
-> +		if (interval_sub->ops->invalidate_start) {
-> +			struct mmu_interval_notifier_finish *final =3D
-> NULL;
-> +
-> +			ret =3D interval_sub->ops-
-> >invalidate_start(interval_sub,
-> +								=C2=A0
-> range,
-> +								=C2=A0
-> cur_seq,
-> +								=C2=A0
-> &final);
-> +			if (ret && final)
-> +				list_add_tail(&final->link,
-> &final_passes);
-> +
-> +		} else {
-> +			ret =3D interval_sub->ops-
-> >invalidate(interval_sub,
-> +							=C2=A0=C2=A0=C2=A0 range,
-> +							=C2=A0=C2=A0=C2=A0
-> cur_seq);
-> +		}
-> =C2=A0		if (!ret) {
-> =C2=A0			if
-> (WARN_ON(mmu_notifier_range_blockable(range)))
-> =C2=A0				continue;
-> -			goto out_would_block;
-> +			err =3D -EAGAIN;
-> +			break;
-> =C2=A0		}
-> =C2=A0	}
-> -	return 0;
-> =C2=A0
-> -out_would_block:
-> +	mn_itree_final_pass(&final_passes, range, cur_seq);
-> +
-> =C2=A0	/*
-> =C2=A0	 * On -EAGAIN the non-blocking caller is not allowed to call
-> =C2=A0	 * invalidate_range_end()
-> =C2=A0	 */
-> -	mn_itree_inv_end(subscriptions);
-> -	return -EAGAIN;
-> +	if (err)
-> +		mn_itree_inv_end(subscriptions);
-> +
-> +	return err;
-> =C2=A0}
-> =C2=A0
-> =C2=A0static int mn_hlist_invalidate_range_start(
+> +	mas_for_each_rev(&mas, vma, 0) {
+>  		if (vma->vm_flags & (VM_HUGETLB|VM_PFNMAP))
+>  			continue;
+>  
+> -- 
+> 2.17.1
+> 
 
+-- 
+Michal Hocko
+SUSE Labs
 
