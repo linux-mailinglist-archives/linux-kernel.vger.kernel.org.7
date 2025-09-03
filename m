@@ -1,77 +1,106 @@
-Return-Path: <linux-kernel+bounces-799406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57BE5B42B35
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:43:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19273B42B41
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DFD11A82753
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:44:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5C801A83914
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484CE31AF1C;
-	Wed,  3 Sep 2025 20:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59D02DFA2B;
+	Wed,  3 Sep 2025 20:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvJVPQ+H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+5+pB6d"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D27F2D46CB;
-	Wed,  3 Sep 2025 20:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CADE32F755;
+	Wed,  3 Sep 2025 20:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756932214; cv=none; b=iqPfSNLtrm6UCkvKtIh9ue+WO3CNz3dsfEGiBF1bIPM5BbNxBnY3ewFgS6hWquiEiBgSJET81zHvitmwHXRhQZ53llpozen0nBfdGszc6DTEbEtUYFLI0G0monJyInCYGZG/i8IWp8Ata+tl1kz2C0kjyq8W1M5Huw2dXfzjsDk=
+	t=1756932333; cv=none; b=f8PgRPfBR38MLP5c3HPFGqRgqY+OvvrBixHxnlNpXlNZEqyYMnwy03tXDDNWS8oGOGr1EtWAu5eltpF0BXBWgZizgmH4W5sMfxxQRlsaG/CPAmSSjgndNAHc4uwgrVMt0ffO1y33eOxM/asn1rLKwiksc5aoCr+Fi5ttaZcTui0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756932214; c=relaxed/simple;
-	bh=ZrWBzTUTC9WAJnOWtFKBqgBmqR3PSN/MgEY8CcIWquE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ro7E/cFYbwmAM/QSEC/mnqfzPfbG6TcU9TdJ+usU8kv/2tI4/6Bi2a4cF+16L126t6DkxaMwXRzIo8fpGCNCQZudtYKdkDMnEhDf1AvbG6AJ1OzxmdcXN0PxZzKzxkZzwX0KNxf7Hz11fMaPmrWOlE4zzi1MAV/ehuzneR/FYo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TvJVPQ+H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB5E0C4CEE7;
-	Wed,  3 Sep 2025 20:43:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756932214;
-	bh=ZrWBzTUTC9WAJnOWtFKBqgBmqR3PSN/MgEY8CcIWquE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TvJVPQ+HQ/rwtKiosl4LwntAXSfNwkXfqX1dGopbUp7W1REtiKer5OaqMuzAD15WM
-	 QN0Whv2F9y9QSIQwGBaVFwmOLhhw3+5C2x2uvdVSgxmfLbojk7hG1fB2DLdPXQsN8r
-	 VoAB2qJO2XXzWHHtzH6mf3+Jp6Vxu57TCED4bQZgLqnBQiVVhu4jazenSk7SxNENrx
-	 oybCGHLnpntuWEvbT/MTJj5CHsuU0hzYfvhjHKAHBTsqAPfZ+wbKcYvfQiiTnhGlma
-	 xGFKUP7XKMy9btc04i0W7N1+Ee7kOdmn7RCU6sq4w8FYuZQHdnYE0X0WrmzMmu7aLs
-	 quW5rmAQThpxw==
-Date: Wed, 3 Sep 2025 15:43:31 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Conley Lee <conleylee@foxmail.com>
-Cc: linux-sunxi@lists.linux.dev, edumazet@google.com,
-	linux-kernel@vger.kernel.org, mripard@kernel.org,
-	devicetree@vger.kernel.org, andrew+netdev@lunn.ch,
-	netdev@vger.kernel.org, wens@csie.org, davem@davemloft.net,
-	kuba@kernel.org
-Subject: Re: [PATCH] dt-bindings: net: sun4i-emac: add dma support
-Message-ID: <175693221068.2743688.18419126286062022173.robh@kernel.org>
-References: <tencent_4E434174E9D516431365413D1B8047C6BB06@qq.com>
+	s=arc-20240116; t=1756932333; c=relaxed/simple;
+	bh=8Xv16h2KiIDyhQTLlmsUgVfIu/PAOnLcttZccG8gp+o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DT/FGyQBbDIJCc2SK0Bep4Evp5EpUkxe4DQONMoSKjcQ+wJ6+oBuo5aXp7FGOv04oiVTd9Q9dqwCpMt3k512jqkooWPYD6GLUSt/p0bizAzlufyQBm81a/T4AAmXbfLgD16jV9rTXdFhD86RKhi2iaTWmRpNHVXRT/4t2Bggm9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+5+pB6d; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45cb6180b60so2499535e9.0;
+        Wed, 03 Sep 2025 13:45:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756932330; x=1757537130; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NNSJ4OFuc0qJzJtggAMFVjTd+/JDhBon9pakUv8hWp8=;
+        b=f+5+pB6d8S4uc2HzgSzo9b6ebQ7LcGEpgIz2EzFdpzm3MNIXNrAhHKmTbV27aF/Ozt
+         1/YxXrI45apZCf0gYtGqu69UcZY+ttyopEGP26HwUEdpr641ZOrLTt6WGXDk2rZBRUOn
+         oFRtAQcHRF+KBfjy2hvQDBuNw+Qs6sNYxCQiKs76Q7fyCJAHdYOeJuRbp6bTSmhila4F
+         Yp6LsNTPk/84mrRaQGuKwADTraxoJ6y8g9vSG5N6pTTu1hKkyr+ERb3F2RZm7dqqcN2D
+         GEhO3nNwhVj57jfvApJNubyhJfjQhJDXVaS05wWQ2IgyEgTHJBxHeuD2lI7WvGaCWFY1
+         Q1JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756932330; x=1757537130;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NNSJ4OFuc0qJzJtggAMFVjTd+/JDhBon9pakUv8hWp8=;
+        b=n3p3S2AfGNB0y04tQFEq340Zfv6ypfTzsWcw7S8e0OEFoFbrfBjQWmot6NGqRozOqH
+         dI2eXDtFxaxl0Xhue0mi44B5OWU+zfYQp8cZhwMP64LQ4ZwM90qKqBbRcHe1Zl9q7c9x
+         m1lCaLAxU0jq+ni6Y8VpJhFoEzGCcSgm1NuX4stsciqegGIcYvlklEt3fMLPHEcLbDVO
+         KWmPLKXhTO2WwcMRhTna1OeUv8C3tcz8wsKdr+nr2suJ98kuXUWP0X/MAI0sLN7hzcnJ
+         IGIPtuGD3KfuVN8zfto2fKdkr6zh6nC9RMhsIihctFCaKT6DjMhJKXz0SItB0P1G0mPl
+         hiDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaj6k7e9pfvqMInXTF+KVt19RP7GXaoUjEgYNnalRdKkPz7ZE+yXJsnm0R2h+qWuPVseFNmTFBn8E1az7R@vger.kernel.org, AJvYcCVOxNo29UOPKHEm7prcfKxRe5qZfWtuyLeBhBcnd/wjwbbPLlVhzpZdpRq7x44Xe2nQQjl/Kx/2kAg+GirHbJGb@vger.kernel.org, AJvYcCVXAeUR9N7Qs61AQ8BrmxYwD8XEX+rO5VT3S/ivN0mrG/4v9xcWQGBHZ2o/MTfwsSwLGLU=@vger.kernel.org, AJvYcCWH/hwK9Yb8wy85X9eYfDxlUXRMMMMHcuC3NQEYy9GUPMabOgt5oivI44doclXBlTH0hBEAlIikGfAJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgWyxMOdxOdzDGaanufnCzhxgOL/d/T4ZOP4errl/w1HTsErEw
+	8FOIvpUMcTB8xGVgRXC/W6hkQiFMjhmbIcjGgAloNWq+q+u123WhQNeOxf9ITY+XqTVTAAbNqGN
+	eTMHLKw0T8vMdSavZNc6XXHaIqyZRUtNdhw==
+X-Gm-Gg: ASbGncvrbyrhjXhh6k4yiDsIg/gH27pMv5hCZ2HNjlJ8FQZB7cqKiZK+sVUIBV4zYOW
+	7HS4AmYObj5vOcRijdMrVDN5HGnsHl0/x/qVGybOXxTx1+qHNT5g7oI02Ziqsi7ZFAQzfoCxo4g
+	dLNlW1SGxxKYl5rRlpZ++DBuBCCyTwCktrBXArGELjkWbJRH3PeX4PUyM30e7LCsXJQpf1nENdD
+	NY05ABXtpYk4p0q4hEzMS0=
+X-Google-Smtp-Source: AGHT+IFE6dL5bgcnUBgZBuqjo8JoRtUZkDDFJozb02kFPQw9snoXc2ZWcJRHOBTqspVuwWDDx9KoVetSpoJG8erm9fI=
+X-Received: by 2002:a05:600c:1d10:b0:45b:891f:afcf with SMTP id
+ 5b1f17b1804b1-45b891fb24dmr111536585e9.27.1756932329553; Wed, 03 Sep 2025
+ 13:45:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_4E434174E9D516431365413D1B8047C6BB06@qq.com>
+References: <20250903203805.1335307-1-tom.hromatka@oracle.com>
+In-Reply-To: <20250903203805.1335307-1-tom.hromatka@oracle.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 3 Sep 2025 13:45:16 -0700
+X-Gm-Features: Ac12FXwNBTZEH4i39M2Lvsx2-HjuxmuNitFFC744jhe5v33rhJFQsMivvhBTsdI
+Message-ID: <CAADnVQLve3KgrqNqSqVrmL-wz6Jj1QUdjAcE5P26Z4wvh9e4HA@mail.gmail.com>
+Subject: Re: [PATCH] seccomp: Add SECCOMP_CLONE_FILTER operation
+To: Tom Hromatka <tom.hromatka@oracle.com>
+Cc: Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
+	Sargun Dhillon <sargun@sargun.me>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Sep 3, 2025 at 1:38=E2=80=AFPM Tom Hromatka <tom.hromatka@oracle.co=
+m> wrote:
+>
+> +
+> +       spin_lock_irq(&current->sighand->siglock);
+> +       spin_lock_irq(&task->sighand->siglock);
+> +
+> +       if (atomic_read(&task->seccomp.filter_count) =3D=3D 0) {
+> +               spin_unlock_irq(&task->sighand->siglock);
+> +               spin_unlock_irq(&current->sighand->siglock);
 
-On Wed, 03 Sep 2025 16:22:38 +0800, Conley Lee wrote:
-> The sun4i EMAC supports DMA for data transmission,
-> so it is necessary to add DMA options to the device tree bindings.
-> 
-> Signed-off-by: Conley Lee <conleylee@foxmail.com>
-> ---
->  .../bindings/net/allwinner,sun4i-a10-emac.yaml           | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-
+did you copy this pattern from somewhere ?
+It's obviously buggy.
 
