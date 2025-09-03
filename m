@@ -1,559 +1,199 @@
-Return-Path: <linux-kernel+bounces-798494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE20B41EC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:21:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92259B41EC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB3A71A82F06
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:21:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14826188D645
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725362E7F20;
-	Wed,  3 Sep 2025 12:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5211D19E81F;
+	Wed,  3 Sep 2025 12:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E2BUIRFc"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ORlmjq0A"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013002.outbound.protection.outlook.com [52.101.127.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5887F2EC56E
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756902032; cv=none; b=VAAOczrX9FDvIMvhbvOfcYrOAr85ZH2ib64pJlYi8dOqfwdysstBXhyv3ryaxDH7wgPOltU2IqZbdFoIFaWaoQNW7FKsCTlFrRPeQ5PJNQQRakv5mnbQhOTGfkIcabNZLJGMGj2p+ZxzxuWj78DZyEg8nq/tJunyz40hAnLYkP0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756902032; c=relaxed/simple;
-	bh=DMS+L1UI2+AaDvh06QFnmQrUOlt/xv8fknb66fGsjWc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bSieY4jdbaLKiJLZSSoNU+X9I0wb/e4z0x9a3GkSIPhOZC4/D5Lzk9C7AbXSm2fVp2BobbqTF3bnCnQpPRIhntEwcNBRqzS1HgZTSc2y1wY+RDIOy0obdz1pSj6LLXrKz5+NYu5dceyuMJZIp1vLdUHpnkDtynTNLY+sydQGqlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E2BUIRFc; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b8b7ac427so20864465e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 05:20:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756902028; x=1757506828; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vjOHoBDrxLne+CmDC5Zf81XAMoxX7SzZlF6Hrs5ImNM=;
-        b=E2BUIRFcBTiaHfK4TL5fhRvwlA2sx3f7WxdBOE4epjUI79XOuenBbS8aAVPzHvAJyP
-         tDOXLeURF0ttZ1JmyVDTEMMrZtz4tGIERDQ7vPGKdVIv7hDq/tBL9R9cWe3ucYNGaknh
-         8MrRjEvp22NO3XRCohwrTY3dR3Wc0pfzDvLSawtmDyjcoMIZlF0NgrDc4tPS7c3SWKDF
-         1iOCyecvywxnYufD4PSR1E40FoTx9vPIuTAG+WPiBOXb/b4lD0ttX0ByeMRVE5mwoenx
-         WsG5cQzsYzuIKCPAV5f4DOgzC2pM0Vl+HEAxEUclOpnUteFfarGAHznNmTSqJEnlD/Gu
-         5Yow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756902028; x=1757506828;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vjOHoBDrxLne+CmDC5Zf81XAMoxX7SzZlF6Hrs5ImNM=;
-        b=nUgDigMO0viWB5V7qbm5E7oQcSnFgRz5DXlxTFkrViGuByjj/1RyVA9jEivSHEDzhb
-         UWb3XVgtuyL5GKCajQbs/7U8aAW652FoEaYJpqxqusABonbSZadu9Be+7LW7R2eSb99K
-         A/ldHIEkb+rMQg0T7YVnj83Q7ZJyCbtHUiGY9GPx1w2TY0cOiyrdeUWiqaSJPN19lUw5
-         4RkrqgVc/XyCDGNnZZN6dTIYGRVBHm56OLbYBO8j3Ks9JMmNy+Ya4dVXQEgAH11sAixu
-         jXL9X932A0zVjWdtkNOGHjKw/uR532Z8rVfxfbgcdYVO8KQxMCAx7yb5ViRd6t1aAORm
-         ykkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUVDkLd1IV/t9xG8YQJssLauUuvJKlu9aNwwtsw7/ih+KFvus205qsJrNLU8GvT2spsJxIhoepov9+Rjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPcmBWe3OP+qZgxRlzlGdnb+WGBXIuvb4bHRWdeSPgTc4khHYf
-	sAmndyHBd6ZYSahKBYdydR7c6Bb2bfhnHXSYjwrpy1hWOGwU+ZpyEtB5
-X-Gm-Gg: ASbGncuhhjTTG6NOo+MMLe9gwGUlcasT11i9Lb6FmLkkgj/XN2cP91cs6IZKUMmNdwd
-	EajmarSToIy0JGUjJ8d0zNB4euiC4NHB6Pb08qWFSBdpg0ExCuil/9lnw4y+W6DZ4ktJD/lzQW9
-	3qWLPEyMASmFFVO4eszPgqF2Kn361M9ah63zbXbnAgsBWB7xp5pLSUPQaki75LWdoL3YjBBePmX
-	aSsy52G1EwkPHFMUfmzGBz75nhQWVZK6Fao4lmn8m+8x2cGwlJJJ9ZBKOjwgKwJqqG9MyVOz3Ry
-	MMawQvrB3y78bKGOsNSoGywfLuDH5U+2v+4dtbtHc2LTvlnLEKUb++t5xREoljGaGVeCkPTUU2/
-	/81+vRemjt1AQiyeClXY=
-X-Google-Smtp-Source: AGHT+IEg2Dg1/WLYV+LPj6DCk2gP4qLW1JsEXmcwthaIea4NgDdi6SD20j3Q6htb5nAqbdaYcitdUA==
-X-Received: by 2002:a05:600c:4ece:b0:45b:97e0:22ad with SMTP id 5b1f17b1804b1-45d5160105bmr1495875e9.24.1756902027951;
-        Wed, 03 Sep 2025 05:20:27 -0700 (PDT)
-Received: from pc.. ([102.208.164.46])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f306c22sm325019885e9.13.2025.09.03.05.20.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 05:20:27 -0700 (PDT)
-From: Erick Karanja <karanja99erick@gmail.com>
-To: tony.luck@intel.com,
-	reinette.chatre@intel.com
-Cc: julia.lawall@inria.fr,
-	Dave.Martin@arm.com,
-	james.morse@arm.com,
-	linux-kernel@vger.kernel.org,
-	Erick Karanja <karanja99erick@gmail.com>
-Subject: [PATCH] fs/resctrl: Convert lock to guard
-Date: Wed,  3 Sep 2025 15:20:15 +0300
-Message-ID: <20250903122017.1331877-1-karanja99erick@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163262EACF3
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756902094; cv=fail; b=j5oWuyCyEpZNtD4AV4K3/DUmmgmioJvQz2wAaocecxg7wRTHsi/Z0C89XqyucwbuQTxfP98Tmwj+jhhVLqpfV/5B+B9++ZBqTNa54PkrOjf+WG1vXlrQ/ZbMMPhYe/9sdu9DfGw6Eg3yV/uOBO3+9jdYYkkfO+5BkQuqUFbcaY8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756902094; c=relaxed/simple;
+	bh=u9L0P3jxyVugmyYMNaRyloV9mvkNWV7ii1a8DtU18+U=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=AsVl3DX6RhP3DmM3vgvBaCZHbNaY7XZ9fRU1nOxpHeGVtDY1ewlWAHxGwHkIL7Akp3ui8prarFKnet0es9+cH7XciVVvitUH925lxVAPWhXMxiFV/WZbiaJ7XLX+dVPn3ncBTAUr15DNeQazqo5nbV+eCx2MASHxMMjf/xk75YI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ORlmjq0A; arc=fail smtp.client-ip=52.101.127.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fAtXmPsYOUlgGfBt6Q2kQG4anE2qayi6CUShEVvHgT4whPVbGflxcyq5FEEgvsCiIK/pnbiqFIUuw5hbKtylKcmdc6cF7Fxed6kiwCOk4y4GCpGG3fl08UtnFGFRV8MQA9Zb8uwbqzE+g9LHrVXJGHOJ0GEN4LcLcwrkHJkljlf/UFcTiYMcVJgmL7RzLrDV0h46lbz0WVZqpp+ISmJX+H4cpTuoZapGwzkcvQu36IxWdpgL52MNbH7ls71C8c7VlfifdYSy5VDNINQkvPNyquxtdJ5ugwZUI/eWLERajX48HJohS7dq9F0u/wfsRIoVAnBa7Rv1PIX6nKt2ZvE3Ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=to3RoU90KK2h2Ggab2qRNm2WDeb+59XSSVnxTHNHWmE=;
+ b=xpTqFCpHjUgphEoDF5AIpmL4lKp8NmLKzUB/oaKx1K4ySVMIuamHO9Zv99fZLHYRITd7sh9RbbN1CRTaiykLMHI6TAjPr1VneHOCKZ5xxjRho6i72kClzMCJaaitP0bxmDG/V8ubwOUqgxWxMO5Ap/+wvTdCKSq6Z68rx9uEvhEzWqruoOaQO/ZiJjKgpHF9vGFwQDtT/rzbLIiWbS+cFeQeuP+O33uudqOAD11Oo8MQ9DK/hXIwexTOtgxIafefK9x0D8SlkQPwjxYuz8OsruEHWNiTZ3L1JeSiQUnGgcYhCXeJ+24kvaozgL1SU61I8nkHvHFDkBu8XRlw1FEjbg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=to3RoU90KK2h2Ggab2qRNm2WDeb+59XSSVnxTHNHWmE=;
+ b=ORlmjq0Aljhwi2FGx6O9ZMupmg4vh8cXXU/WhPlZcMH5/9Rp1lCyIuRKFyEk5cDXJDC7HLqZUCWHGwLY3lmAltJc7ZKFxhTH4aJs5pWuoxWSV2gMutan4mK3Lvit1YcOQMqJbk8Q+YVwRW/8dAI8xt5dhPVY0HIjL3NgYKhDXPJv/ClTA0sVjlGx4ObzBqWazrQaJ787NiGPRsTDKa7wFY+UqtnkWZ+L7F7e5tYFNaohrP3uLXrmeBbKGRUKydj0LP03+Z43uwnt3ZxwcRl2sGX5l19/aj/ds8hGmbcJwUO8meJTFPeR95awOeuQEQYg8ZVYhSrfUpxDsQzqectMIw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ SEZPR06MB6255.apcprd06.prod.outlook.com (2603:1096:101:e8::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.27; Wed, 3 Sep 2025 12:21:26 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9073.026; Wed, 3 Sep 2025
+ 12:21:26 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH] drm/radeon/ci_dpm: Use int type to store negative error codes
+Date: Wed,  3 Sep 2025 20:21:10 +0800
+Message-Id: <20250903122110.389182-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0115.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:29c::19) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEZPR06MB6255:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8240b0b4-8e67-4021-93d3-08ddeae4676d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WluV4iHTWCIc5BFTdCgxr9C1e8C5iawsfiXarVx88g9n68rJcSKQm20miPs/?=
+ =?us-ascii?Q?6Jt3XLzjQnffukoNmuy7OrMke+MsWvzwZgcD1/LgiH2taA6Eb/0yBiOZz/3y?=
+ =?us-ascii?Q?CdusrRt6ygiSsOeHTFoY4ZoEpT3fX4B6GnD+WlptKqVe/T4kVQWBMNUYz/74?=
+ =?us-ascii?Q?bbk4HhT0cfT0pAfvHUEVoGVarwFRRcKqpIrMDHNsgwjoAL0wuygkfYg4u63t?=
+ =?us-ascii?Q?S/kmVKaul04dht+equSOR8EaZVi+Bfh6dgp+Q0tfCIVnIyeGEqCOEVUXbVyn?=
+ =?us-ascii?Q?zId1uzKXgsowijn3sXPRqWWuBB/zWtIIDD0ZW/8fOsHm2SnmEKhlwgSMoLna?=
+ =?us-ascii?Q?c+c4KQLb+hEPFr86Tjpoup//dS3HXepwzSF45pIvKE9IoA0OeOGS+gkmmldJ?=
+ =?us-ascii?Q?8aFEpq6QfWHPnG4XvqQr2H1CUG/sgflnk8Z8bzpmpi13S+CnpAwCoFwkWAsE?=
+ =?us-ascii?Q?5DfRN+1wF7+kxlE/R6OcUI36X7BSaCFN31XDE8+tSGQyzzeGzC6JhzkW3fZs?=
+ =?us-ascii?Q?bWrfKd9Qhb2kqpTMjSoJuht5rIvtl3JGnNSsRQ8/P8q5I1RxZcZGJd5FwQf/?=
+ =?us-ascii?Q?MTY652SHiRcCQLbHZ/61waDVGGfAYz9IZO4/A9i6du3iV1TveCxGunPCGEgd?=
+ =?us-ascii?Q?do1+G+0+8L9rEWfMFc8I4hz+7HuTzU6L2wqc6h7cBzVKCdtcqvjt+pEn8cRZ?=
+ =?us-ascii?Q?MFBRjfTNLGul03cGZsJOiaml1xyRoZQMxExcS+V/1M9WnZXnMhrN749umaWy?=
+ =?us-ascii?Q?BdLieK9ewqecPNjjYYSo3SoKW+BB3bOjsQYnwG04FvUssiyoH8PTpVcxc1Uc?=
+ =?us-ascii?Q?v5cToS+4E+C0qjE5wyRFzMeDQ5da2SX5OknTn9ESam0dm1u3kwePL6CiVBlD?=
+ =?us-ascii?Q?LfDWjq18W8u3iH3U2y4ghtPvQopMWIQImEBnupOXcdTuAGMyHRhVpq0EjUPb?=
+ =?us-ascii?Q?95AaFQBoWfIZjebf0TcmnFBGZQ6cPFkhlwzSBGe7NZ5mkAyOBfR9VnS3jzD8?=
+ =?us-ascii?Q?aA0vqUDrWzy0xFHRStPgvgp966X00xcZiDs2UBuI7W001Vak+ZQYfxLmnBRN?=
+ =?us-ascii?Q?Mpw2vVlqIYC8kjYxIRTbuUJB1NKQAYS10a05SDuzVNyxHVXsee6Kvii5ikZ1?=
+ =?us-ascii?Q?ZLpZqY9Dz9YXsOy4k9w8wZ42x+xG9dKKGbs65Y/RdCW9OCG2T0WdWv+9vxaM?=
+ =?us-ascii?Q?FfWSh00CazSkIGGQnnuQO1LIJflO8cxNCjEIZAoVpgO6PeKwM0fjgux1cjC3?=
+ =?us-ascii?Q?keYVRSgfoLNV8hp2baCbrWi3V652Og5JI2a4tfg1KnQGRXJdYuQ1ZNo+X/UI?=
+ =?us-ascii?Q?CfekalyyBJm7N/oa83GNcWtDPpQzSpafSYkoB3tZR1Jii75OPW4ox0hG49bq?=
+ =?us-ascii?Q?40e/miQbEHCHYO35AuT1lEnHYcCGqJSCh7LCLdLHZnITSA9Ok1bSWF+4lO5I?=
+ =?us-ascii?Q?gPFSFp3TgukZLLkXFSSrIWL161KXgmlSkdVJLDMFBJwhtyIStEG4yg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BBRBiBvjCYAItsEcHmMFJZQRUItM2tzT8z0+ia40sBudvm9eX9KjV/WrmEvd?=
+ =?us-ascii?Q?aT9xM/Uy+raHZs6LF2COvmnPCgB/1fj4F5B0yrUCVR5Dx7jdNcH02URpbb+c?=
+ =?us-ascii?Q?/xWdXQUSgr1YqexOXE+Z2hQWfHzzybFXpO1Jk5/CDDr4kUO4D9WUaKH8Tdm7?=
+ =?us-ascii?Q?X/WRpw9wQMrfApsbI7GE1eSl+3Jbq6tjdRUWWHoiW1qndNCzNq8ktjR/OHEZ?=
+ =?us-ascii?Q?dl2Jk24o48aJNOQ+B1ft18/dEGlyxF2iKcCXhq3mH8alRs+yNYaGDEFzUhL6?=
+ =?us-ascii?Q?EDEcNeLVidDlbcODUdfffp78KGJ5IDrFCu/kwvm/Avzx8WlZJCSzgRAYtaUV?=
+ =?us-ascii?Q?W3VZRSYQlJ4x7r9j4jCYEab8fT0uLRvLRMm+g72tnJ2cHH6L/KguZKQObcaZ?=
+ =?us-ascii?Q?UPV0u5V5564HzgXdVyJJ3BX2WdXInJkFVrp0jfx3eb2khnrr6ACOPUjPnqrV?=
+ =?us-ascii?Q?U00Cbv6v6LYXEssxa9cvrP7vtwLbJkw/c5RowbeD3L4/h13yaragtGBsmoaO?=
+ =?us-ascii?Q?sE5Ea874ZS21wvsdhUdVQ5NZoNtwRtQuYE8MGBSbiwdvzCSvVxvlB48yRTTo?=
+ =?us-ascii?Q?9VfwcVdHCuAvJLT9n9WofAiGwaI8vUuwDO8PZqaT4j6a51+vXykD7hvqHXP0?=
+ =?us-ascii?Q?b3fR5xPOIEV0RBk4XYgR4t9PLROfry1gZqLDBPsnz8AGdd11SjzvGRU+Xjb7?=
+ =?us-ascii?Q?9zP5K+QI30lYmNL3w0mUCiOAe0/C/LRJQA6x4WLaD5gs+UqsZhPgBDbhSLEe?=
+ =?us-ascii?Q?RzVqqyWEwLXcgZDsY8ZCs6o1GkQlWIH73U8S3LvN/xrAfzpexxgzdDqluJX1?=
+ =?us-ascii?Q?zMsuOF7Bk0ivH6ZADINd7ecSXZg3svkQplAWrwNNdHp39I8D3muJ47Cb4Ess?=
+ =?us-ascii?Q?R7XtAE3GPiOUuRP0nGCpRppmJ6rHFuhT1W6kBfcOYn635/xx9tnAdHJ6gMiK?=
+ =?us-ascii?Q?AVDifYXCCTJ7yFvUjG8XemcG9pF54aXo1shOvabG1tkv0+btK6Ehly3EVkvI?=
+ =?us-ascii?Q?FRBWFQT7QR19QEYxd0+WRo/9GU1csxNrCJ6yvvA/sf9FCnymIRpiKL0WawbY?=
+ =?us-ascii?Q?sumMS2lVTSMWc7ehXWtWpth9uaX5UQFLdTnLlNejvcJrOMCqB+H41eZIjcw7?=
+ =?us-ascii?Q?6oxH9QqO1Pes+67y+kKhOVv7MCxtMeTfaPN5dth8hB65K2rfdgVob7vwHRfY?=
+ =?us-ascii?Q?IpA4aTTGPOtI4+ztpKWcH2juJ4xPjeEZCJvnJASg5LRIKnYLxWbuBzsAhnnA?=
+ =?us-ascii?Q?/wKZJc2AXFD5nr60TVUsqD8+/w2TBux5kfEEjFfNuRuLcCoBDp41miCcCG7O?=
+ =?us-ascii?Q?hLG3o/DrZM/7hO0oHz6N8BBc9pY1ADIp15sbqmxqbLQ+82Uba1dx61vZE9bT?=
+ =?us-ascii?Q?5JXFBoPTMiNVIqURKH/B3eUhEtRNQbKfTei4galYQoxucqNXGb/BhMsgqLPK?=
+ =?us-ascii?Q?l9ovPetuc2h0GZ9zH6cQ0dAjgNHQpSDQb58OunREXEBR4VBG2FjQpXxDM86M?=
+ =?us-ascii?Q?gZV0Vp0j8FaLsHjGEABWc2EY2odw/T5Zb5QUEvaGx6drcAq1Mh3e6yos1gQG?=
+ =?us-ascii?Q?iAZgFZTVgFGRzw04WUni4ugxx+j7tiOrNXY/zirg?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8240b0b4-8e67-4021-93d3-08ddeae4676d
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 12:21:26.7129
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: biqFOeVfOxc/Q7bDmSgprgZxEUYXwx/hosL5jCah9kimtWYT0Wf+OF/e5lyyR0RJMI0WtD1X9mJ2lOT47liPRQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6255
 
-Convert manual lock/unlock calls to guard and tidy up the code.
+Change the 'ret' variable in ci_populate_all_graphic_levels()
+and ci_populate_all_memory_levels() from u32 to int, as it needs to store
+either negative error codes or zero returned by other functions.
 
-Generated-by: Coccinelle SmPL
+Storing the negative error codes in unsigned type, doesn't cause an issue
+at runtime but can be confusing.  Additionally, assigning negative error
+codes to unsigned type may trigger a GCC warning when the -Wsign-conversion
+flag is enabled.
 
-Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+No effect on runtime.
+
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 ---
- fs/resctrl/rdtgroup.c | 249 +++++++++++++++++++-----------------------
- 1 file changed, 113 insertions(+), 136 deletions(-)
+ drivers/gpu/drm/radeon/ci_dpm.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index 77d08229d855..3c81f1535dbb 100644
---- a/fs/resctrl/rdtgroup.c
-+++ b/fs/resctrl/rdtgroup.c
-@@ -916,14 +916,13 @@ int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
- 		      struct pid *pid, struct task_struct *tsk)
- {
- 	struct rdtgroup *rdtg;
--	int ret = 0;
+diff --git a/drivers/gpu/drm/radeon/ci_dpm.c b/drivers/gpu/drm/radeon/ci_dpm.c
+index 7c3a960f486a..1f9f4424055a 100644
+--- a/drivers/gpu/drm/radeon/ci_dpm.c
++++ b/drivers/gpu/drm/radeon/ci_dpm.c
+@@ -3238,7 +3238,8 @@ static int ci_populate_all_graphic_levels(struct radeon_device *rdev)
+ 	u32 level_array_size = sizeof(SMU7_Discrete_GraphicsLevel) *
+ 		SMU7_MAX_LEVELS_GRAPHICS;
+ 	SMU7_Discrete_GraphicsLevel *levels = pi->smc_state_table.GraphicsLevel;
+-	u32 i, ret;
++	int ret;
++	u32 i;
  
--	mutex_lock(&rdtgroup_mutex);
-+	guard(mutex)(&rdtgroup_mutex);
+ 	memset(levels, 0, level_array_size);
  
- 	/* Return empty if resctrl has not been mounted. */
- 	if (!resctrl_mounted) {
- 		seq_puts(s, "res:\nmon:\n");
--		goto unlock;
-+		return 0;
- 	}
+@@ -3285,7 +3286,8 @@ static int ci_populate_all_memory_levels(struct radeon_device *rdev)
+ 	u32 level_array_size = sizeof(SMU7_Discrete_MemoryLevel) *
+ 		SMU7_MAX_LEVELS_MEMORY;
+ 	SMU7_Discrete_MemoryLevel *levels = pi->smc_state_table.MemoryLevel;
+-	u32 i, ret;
++	int ret;
++	u32 i;
  
- 	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
-@@ -952,17 +951,13 @@ int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
- 			break;
- 		}
- 		seq_putc(s, '\n');
--		goto unlock;
-+		return 0;
- 	}
- 	/*
- 	 * The above search should succeed. Otherwise return
- 	 * with an error.
- 	 */
--	ret = -ENOENT;
--unlock:
--	mutex_unlock(&rdtgroup_mutex);
--
--	return ret;
-+	return -ENOENT;
- }
- #endif
- 
-@@ -971,13 +966,12 @@ static int rdt_last_cmd_status_show(struct kernfs_open_file *of,
- {
- 	int len;
- 
--	mutex_lock(&rdtgroup_mutex);
-+	guard(mutex)(&rdtgroup_mutex);
- 	len = seq_buf_used(&last_cmd_status);
- 	if (len)
- 		seq_printf(seq, "%.*s", len, last_cmd_status_buf);
- 	else
- 		seq_puts(seq, "ok\n");
--	mutex_unlock(&rdtgroup_mutex);
- 	return 0;
- }
- 
-@@ -1062,66 +1056,66 @@ static int rdt_bit_usage_show(struct kernfs_open_file *of,
- 	u32 ctrl_val;
- 
- 	cpus_read_lock();
--	mutex_lock(&rdtgroup_mutex);
--	hw_shareable = r->cache.shareable_bits;
--	list_for_each_entry(dom, &r->ctrl_domains, hdr.list) {
--		if (sep)
--			seq_putc(seq, ';');
--		sw_shareable = 0;
--		exclusive = 0;
--		seq_printf(seq, "%d=", dom->hdr.id);
--		for (i = 0; i < closids_supported(); i++) {
--			if (!closid_allocated(i))
--				continue;
--			ctrl_val = resctrl_arch_get_config(r, dom, i,
--							   s->conf_type);
--			mode = rdtgroup_mode_by_closid(i);
--			switch (mode) {
--			case RDT_MODE_SHAREABLE:
--				sw_shareable |= ctrl_val;
--				break;
--			case RDT_MODE_EXCLUSIVE:
--				exclusive |= ctrl_val;
--				break;
--			case RDT_MODE_PSEUDO_LOCKSETUP:
--			/*
--			 * RDT_MODE_PSEUDO_LOCKSETUP is possible
--			 * here but not included since the CBM
--			 * associated with this CLOSID in this mode
--			 * is not initialized and no task or cpu can be
--			 * assigned this CLOSID.
--			 */
--				break;
--			case RDT_MODE_PSEUDO_LOCKED:
--			case RDT_NUM_MODES:
--				WARN(1,
--				     "invalid mode for closid %d\n", i);
--				break;
-+	scoped_guard (mutex, &rdtgroup_mutex) {
-+		hw_shareable = r->cache.shareable_bits;
-+		list_for_each_entry(dom, &r->ctrl_domains, hdr.list) {
-+			if (sep)
-+				seq_putc(seq, ';');
-+			sw_shareable = 0;
-+			exclusive = 0;
-+			seq_printf(seq, "%d=", dom->hdr.id);
-+			for (i = 0; i < closids_supported(); i++) {
-+				if (!closid_allocated(i))
-+					continue;
-+				ctrl_val = resctrl_arch_get_config(r, dom, i,
-+								   s->conf_type);
-+				mode = rdtgroup_mode_by_closid(i);
-+				switch (mode) {
-+				case RDT_MODE_SHAREABLE:
-+					sw_shareable |= ctrl_val;
-+					break;
-+				case RDT_MODE_EXCLUSIVE:
-+					exclusive |= ctrl_val;
-+					break;
-+				case RDT_MODE_PSEUDO_LOCKSETUP:
-+				/*
-+				 * RDT_MODE_PSEUDO_LOCKSETUP is possible
-+				 * here but not included since the CBM
-+				 * associated with this CLOSID in this mode
-+				 * is not initialized and no task or cpu can be
-+				 * assigned this CLOSID.
-+				 */
-+					break;
-+				case RDT_MODE_PSEUDO_LOCKED:
-+				case RDT_NUM_MODES:
-+					WARN(1,
-+					     "invalid mode for closid %d\n", i);
-+					break;
-+				}
- 			}
-+			for (i = r->cache.cbm_len - 1; i >= 0; i--) {
-+				pseudo_locked = dom->plr ? dom->plr->cbm : 0;
-+				hwb = test_bit(i, &hw_shareable);
-+				swb = test_bit(i, &sw_shareable);
-+				excl = test_bit(i, &exclusive);
-+				psl = test_bit(i, &pseudo_locked);
-+				if (hwb && swb)
-+					seq_putc(seq, 'X');
-+				else if (hwb && !swb)
-+					seq_putc(seq, 'H');
-+				else if (!hwb && swb)
-+					seq_putc(seq, 'S');
-+				else if (excl)
-+					seq_putc(seq, 'E');
-+				else if (psl)
-+					seq_putc(seq, 'P');
-+				else /* Unused bits remain */
-+					seq_putc(seq, '0');
-+				}
-+				sep = true;
- 		}
--		for (i = r->cache.cbm_len - 1; i >= 0; i--) {
--			pseudo_locked = dom->plr ? dom->plr->cbm : 0;
--			hwb = test_bit(i, &hw_shareable);
--			swb = test_bit(i, &sw_shareable);
--			excl = test_bit(i, &exclusive);
--			psl = test_bit(i, &pseudo_locked);
--			if (hwb && swb)
--				seq_putc(seq, 'X');
--			else if (hwb && !swb)
--				seq_putc(seq, 'H');
--			else if (!hwb && swb)
--				seq_putc(seq, 'S');
--			else if (excl)
--				seq_putc(seq, 'E');
--			else if (psl)
--				seq_putc(seq, 'P');
--			else /* Unused bits remain */
--				seq_putc(seq, '0');
--		}
--		sep = true;
-+		seq_putc(seq, '\n');
- 	}
--	seq_putc(seq, '\n');
--	mutex_unlock(&rdtgroup_mutex);
- 	cpus_read_unlock();
- 	return 0;
- }
-@@ -1625,24 +1619,24 @@ static int mbm_config_show(struct seq_file *s, struct rdt_resource *r, u32 evtid
- 	bool sep = false;
- 
- 	cpus_read_lock();
--	mutex_lock(&rdtgroup_mutex);
-+	scoped_guard (mutex, &rdtgroup_mutex) {
- 
--	list_for_each_entry(dom, &r->mon_domains, hdr.list) {
--		if (sep)
--			seq_puts(s, ";");
-+		list_for_each_entry(dom, &r->mon_domains, hdr.list) {
-+			if (sep)
-+				seq_puts(s, ";");
- 
--		memset(&mon_info, 0, sizeof(struct resctrl_mon_config_info));
--		mon_info.r = r;
--		mon_info.d = dom;
--		mon_info.evtid = evtid;
--		mondata_config_read(&mon_info);
-+			memset(&mon_info, 0, sizeof(struct resctrl_mon_config_info));
-+			mon_info.r = r;
-+			mon_info.d = dom;
-+			mon_info.evtid = evtid;
-+			mondata_config_read(&mon_info);
- 
--		seq_printf(s, "%d=0x%02x", dom->hdr.id, mon_info.mon_config);
--		sep = true;
--	}
--	seq_puts(s, "\n");
-+			seq_printf(s, "%d=0x%02x", dom->hdr.id, mon_info.mon_config);
-+			sep = true;
-+		}
-+		seq_puts(s, "\n");
- 
--	mutex_unlock(&rdtgroup_mutex);
-+	}
- 	cpus_read_unlock();
- 
- 	return 0;
-@@ -1763,15 +1757,15 @@ static ssize_t mbm_total_bytes_config_write(struct kernfs_open_file *of,
- 		return -EINVAL;
- 
- 	cpus_read_lock();
--	mutex_lock(&rdtgroup_mutex);
-+	scoped_guard (mutex, &rdtgroup_mutex) {
- 
--	rdt_last_cmd_clear();
-+		rdt_last_cmd_clear();
- 
--	buf[nbytes - 1] = '\0';
-+		buf[nbytes - 1] = '\0';
- 
--	ret = mon_config_write(r, buf, QOS_L3_MBM_TOTAL_EVENT_ID);
-+		ret = mon_config_write(r, buf, QOS_L3_MBM_TOTAL_EVENT_ID);
- 
--	mutex_unlock(&rdtgroup_mutex);
-+	}
- 	cpus_read_unlock();
- 
- 	return ret ?: nbytes;
-@@ -1789,15 +1783,15 @@ static ssize_t mbm_local_bytes_config_write(struct kernfs_open_file *of,
- 		return -EINVAL;
- 
- 	cpus_read_lock();
--	mutex_lock(&rdtgroup_mutex);
-+	scoped_guard (mutex, &rdtgroup_mutex) {
- 
--	rdt_last_cmd_clear();
-+		rdt_last_cmd_clear();
- 
--	buf[nbytes - 1] = '\0';
-+		buf[nbytes - 1] = '\0';
- 
--	ret = mon_config_write(r, buf, QOS_L3_MBM_LOCAL_EVENT_ID);
-+		ret = mon_config_write(r, buf, QOS_L3_MBM_LOCAL_EVENT_ID);
- 
--	mutex_unlock(&rdtgroup_mutex);
-+	}
- 	cpus_read_unlock();
- 
- 	return ret ?: nbytes;
-@@ -2786,7 +2780,7 @@ static void rdt_move_group_tasks(struct rdtgroup *from, struct rdtgroup *to,
- {
- 	struct task_struct *p, *t;
- 
--	read_lock(&tasklist_lock);
-+	guard(read_lock)(&tasklist_lock);
- 	for_each_process_thread(p, t) {
- 		if (!from || is_closid_match(t, from) ||
- 		    is_rmid_match(t, from)) {
-@@ -2812,7 +2806,6 @@ static void rdt_move_group_tasks(struct rdtgroup *from, struct rdtgroup *to,
- 				cpumask_set_cpu(task_cpu(t), mask);
- 		}
- 	}
--	read_unlock(&tasklist_lock);
- }
- 
- static void free_all_child_rdtgrp(struct rdtgroup *rdtgrp)
-@@ -2959,22 +2952,22 @@ static void rdt_kill_sb(struct super_block *sb)
- 	struct rdt_resource *r;
- 
- 	cpus_read_lock();
--	mutex_lock(&rdtgroup_mutex);
-+	scoped_guard (mutex, &rdtgroup_mutex) {
- 
--	rdt_disable_ctx();
-+		rdt_disable_ctx();
- 
--	/* Put everything back to default values. */
--	for_each_alloc_capable_rdt_resource(r)
--		resctrl_arch_reset_all_ctrls(r);
-+		/* Put everything back to default values. */
-+		for_each_alloc_capable_rdt_resource(r)
-+			resctrl_arch_reset_all_ctrls(r);
- 
--	resctrl_fs_teardown();
--	if (resctrl_arch_alloc_capable())
--		resctrl_arch_disable_alloc();
--	if (resctrl_arch_mon_capable())
--		resctrl_arch_disable_mon();
--	resctrl_mounted = false;
--	kernfs_kill_sb(sb);
--	mutex_unlock(&rdtgroup_mutex);
-+		resctrl_fs_teardown();
-+		if (resctrl_arch_alloc_capable())
-+			resctrl_arch_disable_alloc();
-+		if (resctrl_arch_mon_capable())
-+			resctrl_arch_disable_mon();
-+		resctrl_mounted = false;
-+		kernfs_kill_sb(sb);
-+	}
- 	cpus_read_unlock();
- }
- 
-@@ -4008,7 +4001,7 @@ static void rdtgroup_destroy_root(void)
- 
- static void rdtgroup_setup_default(void)
- {
--	mutex_lock(&rdtgroup_mutex);
-+	guard(mutex)(&rdtgroup_mutex);
- 
- 	rdtgroup_default.closid = RESCTRL_RESERVED_CLOSID;
- 	rdtgroup_default.mon.rmid = RESCTRL_RESERVED_RMID;
-@@ -4016,8 +4009,6 @@ static void rdtgroup_setup_default(void)
- 	INIT_LIST_HEAD(&rdtgroup_default.mon.crdtgrp_list);
- 
- 	list_add(&rdtgroup_default.rdtgroup_list, &rdt_all_groups);
--
--	mutex_unlock(&rdtgroup_mutex);
- }
- 
- static void domain_destroy_mon_state(struct rdt_mon_domain *d)
-@@ -4029,17 +4020,15 @@ static void domain_destroy_mon_state(struct rdt_mon_domain *d)
- 
- void resctrl_offline_ctrl_domain(struct rdt_resource *r, struct rdt_ctrl_domain *d)
- {
--	mutex_lock(&rdtgroup_mutex);
-+	guard(mutex)(&rdtgroup_mutex);
- 
- 	if (supports_mba_mbps() && r->rid == RDT_RESOURCE_MBA)
- 		mba_sc_domain_destroy(r, d);
--
--	mutex_unlock(&rdtgroup_mutex);
- }
- 
- void resctrl_offline_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d)
- {
--	mutex_lock(&rdtgroup_mutex);
-+	guard(mutex)(&rdtgroup_mutex);
- 
- 	/*
- 	 * If resctrl is mounted, remove all the
-@@ -4064,8 +4053,6 @@ void resctrl_offline_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d
- 	}
- 
- 	domain_destroy_mon_state(d);
--
--	mutex_unlock(&rdtgroup_mutex);
- }
- 
- /**
-@@ -4116,15 +4103,13 @@ int resctrl_online_ctrl_domain(struct rdt_resource *r, struct rdt_ctrl_domain *d
- {
- 	int err = 0;
- 
--	mutex_lock(&rdtgroup_mutex);
-+	guard(mutex)(&rdtgroup_mutex);
- 
- 	if (supports_mba_mbps() && r->rid == RDT_RESOURCE_MBA) {
- 		/* RDT_RESOURCE_MBA is never mon_capable */
- 		err = mba_sc_domain_allocate(r, d);
- 	}
- 
--	mutex_unlock(&rdtgroup_mutex);
--
- 	return err;
- }
- 
-@@ -4132,11 +4117,11 @@ int resctrl_online_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d)
- {
- 	int err;
- 
--	mutex_lock(&rdtgroup_mutex);
-+	guard(mutex)(&rdtgroup_mutex);
- 
- 	err = domain_setup_mon_state(r, d);
- 	if (err)
--		goto out_unlock;
-+		return err;
- 
- 	if (resctrl_is_mbm_enabled()) {
- 		INIT_DELAYED_WORK(&d->mbm_over, mbm_handle_overflow);
-@@ -4156,18 +4141,14 @@ int resctrl_online_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d)
- 	if (resctrl_mounted && resctrl_arch_mon_capable())
- 		mkdir_mondata_subdir_allrdtgrp(r, d);
- 
--out_unlock:
--	mutex_unlock(&rdtgroup_mutex);
--
- 	return err;
- }
- 
- void resctrl_online_cpu(unsigned int cpu)
- {
--	mutex_lock(&rdtgroup_mutex);
--	/* The CPU is set in default rdtgroup after online. */
--	cpumask_set_cpu(cpu, &rdtgroup_default.cpu_mask);
--	mutex_unlock(&rdtgroup_mutex);
-+	scoped_guard (mutex, &rdtgroup_mutex)
-+		/* The CPU is set in default rdtgroup after online. */
-+		cpumask_set_cpu(cpu, &rdtgroup_default.cpu_mask);
- }
- 
- static void clear_childcpus(struct rdtgroup *r, unsigned int cpu)
-@@ -4202,7 +4183,7 @@ void resctrl_offline_cpu(unsigned int cpu)
- 	struct rdt_mon_domain *d;
- 	struct rdtgroup *rdtgrp;
- 
--	mutex_lock(&rdtgroup_mutex);
-+	guard(mutex)(&rdtgroup_mutex);
- 	list_for_each_entry(rdtgrp, &rdt_all_groups, rdtgroup_list) {
- 		if (cpumask_test_and_clear_cpu(cpu, &rdtgrp->cpu_mask)) {
- 			clear_childcpus(rdtgrp, cpu);
-@@ -4211,7 +4192,7 @@ void resctrl_offline_cpu(unsigned int cpu)
- 	}
- 
- 	if (!l3->mon_capable)
--		goto out_unlock;
-+		return;
- 
- 	d = get_mon_domain_from_cpu(cpu, l3);
- 	if (d) {
-@@ -4225,9 +4206,6 @@ void resctrl_offline_cpu(unsigned int cpu)
- 			cqm_setup_limbo_handler(d, 0, cpu);
- 		}
- 	}
--
--out_unlock:
--	mutex_unlock(&rdtgroup_mutex);
- }
- 
- /*
-@@ -4338,9 +4316,8 @@ void resctrl_exit(void)
- 	cpus_read_lock();
- 	WARN_ON_ONCE(resctrl_online_domains_exist());
- 
--	mutex_lock(&rdtgroup_mutex);
--	resctrl_fs_teardown();
--	mutex_unlock(&rdtgroup_mutex);
-+	scoped_guard (mutex, &rdtgroup_mutex)
-+		resctrl_fs_teardown();
- 
- 	cpus_read_unlock();
+ 	memset(levels, 0, level_array_size);
  
 -- 
-2.43.0
+2.34.1
 
 
