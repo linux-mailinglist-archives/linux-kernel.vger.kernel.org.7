@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-798248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F5AB41B2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:08:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0993AB41B35
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1041D174261
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:08:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 817F11BA5743
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC50B2E8B6C;
-	Wed,  3 Sep 2025 10:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCB82E8B90;
+	Wed,  3 Sep 2025 10:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall.org header.i=@blackwall.org header.b="Hl2C5Hct"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KbRuNGhh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C80535957
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD052E9EC0;
+	Wed,  3 Sep 2025 10:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756894112; cv=none; b=QvvngAWpTUTHDM//atcZGEeGE3XXmoHckMYAiyB/CUzHBoXJp4WodzrY1/V8xe3QBAYLOq3s6u+mqcDPhnE5xCTlNy1i5VxAcPA9AMnkfRsXELnqm5TkQOU40qFZvawqUq19H4CkwA6p5Yk9TcvR08QMchPR4/to8Tvg+MpoDXI=
+	t=1756894113; cv=none; b=E/9Z4zqtuErjqt6YlXAnlV94+k8gmXSrsmh+14Z3+H+ka9CtDZNuaxN8/YFadj5nDAuKcVvEm8epDu+lkRAgJUzdsgaRkRtUcvX9rTnk7kL+Te+TaOTsKsZk2jViowu0nOqqw1ygGj2NgcSNi/NaRWigbaTWJ8D7c2htjQLdHOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756894112; c=relaxed/simple;
-	bh=qJtX9JrzHUfYr86Q6dN6NST8Wdm1ij9B+wmXyqKJpBM=;
+	s=arc-20240116; t=1756894113; c=relaxed/simple;
+	bh=sZ3IkoCP7O9lq9+deKs5Gw4NshL3+xtAL3axUnXJHmo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=in/L0+Rq2HedsKq03Y5wZ+PgywuGKrhHBKsaelrzw5Ea/sp4ERB7XoFlqo2tg/Oyqmp0anr8EO85D5BqIL5+eU0RPkkCq0jaTRPiaP0lgVIxTdvVXPYOlJFHkOSMR6+lUSWHyzkuAwzC5eGFI6aoitV1DSWVKcKABhajZBlsfns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall.org header.i=@blackwall.org header.b=Hl2C5Hct; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f6f434c96so4154566e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 03:08:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall.org; s=google; t=1756894108; x=1757498908; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LgxSLuacOSiAliVBo9T6UoRFjla5an5sZrNTYabGCaM=;
-        b=Hl2C5HctOlxi2vtdHe7nvLpyUSA7Yqw2DLgKMvCIEJf/B+rG8o18JXomC/pKJ5aYnq
-         WL2QoxnKduqom3mG1M7jdFxEsP8xwZ4BYEkrcDdUccmZ3yKCxZoUoa6v3SuqMlWjjMp7
-         teiVtRQirfK7+oWc6cEqwDj+f4Lob8Wg9KMavaFPcsEWMpcJUf3/NXaP82QauGFxVKxh
-         bCcl/Jw9t3k6qtiLOTaODHE80So6qMa2vk9z1AXhvkyYvxoLhB+c0UOmgZPWqGQtqvJT
-         iU9Ft82l6MM5nhVSeba99PKqafHwmThqxJhdOt1X5VKV5b9VpzETj5G6oSgNkVaUyaMM
-         RyDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756894108; x=1757498908;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LgxSLuacOSiAliVBo9T6UoRFjla5an5sZrNTYabGCaM=;
-        b=K7ces/4YBzsN9wqj31MpMoJzgFgKQ36zrAolawO0gIZqXP6OO+TCZgBkI5HbdH6IBF
-         mX6Oz7hhAkgcPIpObFO0B3JvJTC5GsuK3BfimVfCumw9tiE4e3tj5FwOSOKq7bmqDqtY
-         gMT7SmY8S3FbzXb80U6eid89/syRGowrY0BD7S9kfUiK/t+OurSGEAamOOn+xkMD7JRw
-         fm7UcRA4UxSQQJY2+/EKNinzg+FoqJ1iKU9DaqjY8QFDNI7kVaJ9UlDEodZYo1gRT9TZ
-         tDaTye/EauDR7cs7TbbVnyY/6gykoxCxjYzNjYKokWFNTMOmmZDKrGsDEqLGrcKkOe9j
-         Y+IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSiSdupRW+/lGDG6/mhLL1QOFbqZ5iQl3Ai6lSeIkOmb7sdQ9TTJxMbT50AgVIQw/0XAHq4e5m21sx9tQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIttflGld0W69e55cN0VV6NqaMk2s5dpxB6uukqVffbRCPJG2O
-	1N8amGtJVu6tOhfjKrEF/+lySGxQW7ae9NhJTyXRnpL6p3sM2F83zwa/3mXc0OdXFIk=
-X-Gm-Gg: ASbGncstE3TAWQFt46VJHmPYyNgJx5PfScpUPE07MyWSV+0bAK5FBmRxgXNXowbh9UC
-	0OMfCI8gOcXGxKnNJvgxMZdMv86rtuWRw3ULVLEqM5DkgA6qDjColRuHtquX1EV/wGYjOwslN8L
-	jTGQy4IYZnyYjJNfjcGI5/GHdpXg6UZq/q2YDsQgUsX8v93yBlJ0TmmGPr6HnEb698rY7ceauYr
-	g5i3b4Ebz5vFGtLOTN19CV+VT7Ijpp4iXzwoPleicU6pkz4ocvFxT2V+DjBBBzIwOYEsVSsgIfc
-	S/pDA9URiuhh6N7OgW2Cdcf3fXtkNd0bbxsD6fsPHUkaLWkE0simZ8Ddlef31prXh8kGueYyQ6z
-	trRHqFV+FrJwnzjcbb44bfnLA65R34qLIxWrpwaMck9tefY/CLqqdxilaNJKcQD0YVjI=
-X-Google-Smtp-Source: AGHT+IHXf+8BRUc9VKztwBDE44uJbCq8HfDYm4XkzCGHzVKe8cY4jFi8CRi3pEVvkXEvbG51NW6TZg==
-X-Received: by 2002:a05:6512:689:b0:55f:54a8:9ec with SMTP id 2adb3069b0e04-55f709b6857mr4930716e87.52.1756894106967;
-        Wed, 03 Sep 2025 03:08:26 -0700 (PDT)
-Received: from [100.115.92.205] (176.111.185.210.kyiv.nat.volia.net. [176.111.185.210])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ad1351bsm411401e87.121.2025.09.03.03.08.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 03:08:26 -0700 (PDT)
-Message-ID: <c1964582-a96a-4b46-afb7-0cdfa8208ef6@blackwall.org>
-Date: Wed, 3 Sep 2025 13:08:24 +0300
+	 In-Reply-To:Content-Type; b=aCU8ucLcgk2t6yPVLHf6vT9Ujvnxx5114Jfq3Dehz5ao6gE1h+Q44BHsiAO4dRczxGPdBXVP4az3JytIK+EM7XCPDhNsQR4I39VvEtVvet6RirL6ACPT+C3BZDIcvN8lTcYNuMQpwBI/F+aatiH7HlePeys0kbHl3+uz+UXK9rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KbRuNGhh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CD00C4CEF0;
+	Wed,  3 Sep 2025 10:08:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756894113;
+	bh=sZ3IkoCP7O9lq9+deKs5Gw4NshL3+xtAL3axUnXJHmo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KbRuNGhh/Dru+pjeSpfjsHmgtvan1AEmeME3RqGOktqfakYfRcpOnt2FqfCHA6KyK
+	 dWvwO4WMc9S36f5LQTXcq4IbRODAM2xRF8E8xIIvpJz0tdo9V7GSmT6G2S3dBjhxmd
+	 nXyNyh0bfm2JQjuL0hJrZsD1amXWPBoYEYrSSNYrNQd0ap+CCE3bzjJiW1rpAUr9ev
+	 uYky504lzC3W1A114e629/XAKo/xIjxnIzM3LKnUN/HIecQeApgbA10HWpW/G/Cuvy
+	 NaBGLgaRcMbuNKSSCrLNrCaPJ54rkCwJ1ppWksIJ+ZbIrOXeQryZsGNi2ISoKHfXbl
+	 jgxrI+mcSWQPg==
+Message-ID: <bdfb09a2-0053-4a07-85d6-5e15b8bc126a@kernel.org>
+Date: Wed, 3 Sep 2025 12:08:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,131 +49,190 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/9] net: bridge: reduce multicast checks in fast path
-To: =?UTF-8?Q?Linus_L=C3=BCssing?= <linus.luessing@c0d3.blue>
-Cc: Jakub Kicinski <kuba@kernel.org>, bridge@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ido Schimmel <idosch@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Simon Horman <horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Eric Dumazet <edumazet@google.com>, "David S . Miller"
- <davem@davemloft.net>, Kuniyuki Iwashima <kuniyu@google.com>,
- Stanislav Fomichev <sdf@fomichev.me>, Xiao Liang <shaw.leon@gmail.com>
-References: <20250829085724.24230-1-linus.luessing@c0d3.blue>
- <20250829084747.55c6386f@kernel.org>
- <bfb11627-64d5-42a0-911e-8be99e222396@blackwall.org>
- <aLdQhJoViBzxcWYE@sellars>
+Subject: Re: [PATCH v5 1/2] dt-bindings: pinctrl: qcom: Add Glymur pinctrl
+ bindings
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>, andersson@kernel.org,
+ linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, rajendra.nayak@oss.qualcomm.com
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250813065533.3959018-1-pankaj.patil@oss.qualcomm.com>
+ <20250813065533.3959018-2-pankaj.patil@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <aLdQhJoViBzxcWYE@sellars>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250813065533.3959018-2-pankaj.patil@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 9/2/25 23:16, Linus Lüssing wrote:
-> Hi Nik, thanks for the suggestions and review again!
-> 
-> 
-> On Fri, Aug 29, 2025 at 07:23:24PM +0300, Nikolay Aleksandrov wrote:
->>
->> a few notes for v2:
->> - please use READ/WRTE_ONCE() for variables that are used without locking
-> 
-> Just to understand the issue, otherwise the data path would assume
-> an old inactive or active state for a prolonged time after toggling?
-> Or what would happen?
->
-> 
+On 13/08/2025 08:55, Pankaj Patil wrote:
+> Add DeviceTree binding for Glymur SoC TLMM block
 
-It's more about marking these as used without locking so KCSAN won't flag them and also
-to clearly show people that intent.
-
->> - please make locking symmetric, I saw that br_multicast_open() expects the lock to be already held, while
->>    __br_multicast_stop() takes it itself
-> 
-> I think that's what I tried before submitting. Initially wanted
-> to have the locking inside, but then it would deadlock on
-> br_multicast_toggle()->br_multicast_open()->... as this is the one
-> place where br_multicast_open() is called with the multicast spinlock
-> already held.
-> 
-> On the other hand, moving the spinlock out of / around
-> __br_multicast_stop() would lead to a sleeping-while-atomic bug
-> when calling timer_delete_sync() in there. And if I were to change
-> these to a timer_delete() I guess there is no way to do the sync
-> part after unlocking? There is no equivalent to something like the
-> flush_workqueue() / drain_workqueue() for workqueues, but for
-> simple timers instead, right?
-> 
-> I would also love to go for the first approach, taking the
-> spinlock inside of __br_multicast_open(). But not quite sure how
-> to best and safely change br_multicast_toggle() then.
-> 
-> 
-
-Well, this is not an easy one to solve, would require more thought and
-changes to get the proper locking, but it certainly shouldn't be left
-asymmetric - having one take the lock, and expecting that it's already taken
-for the other, that is definitely unacceptable. Please spend more time on this
-and think about how it can be changed. Right now I don't have the time to dig
-in and make a proper proposal, but I'm happy to review and discuss proposed
-solutions.
-
->> - is the mcast lock really necessary, would atomic ops do for this tracking?
-> 
-> Hm, not sure. We'd be checking multiple variables before toggling
-> the new brmctx->ip{4,6}_active. As the checked variables can
-> change from multiple contexts couldn't the following happen then?
-> 
-> 
-> Start: ip*_active = false, snooping_enabled = false,
->         vlan_snooping_enabled = true, vlan{id:42}->snooping_enabled = false
-> 
-> Thread A)                     Thread B)
-> --------------------------------------------------------------------------
->                                br_multicast_toggle(br, 1, ...)
-> 			      -> loads vlan{id:42}->snooping_enabled: false
-> --------------------------------------------------------------------------
-> br_multicast_toggle_one_vlan(vlan{id:42}, true)
-> -> vlan->priv_flags: set per-vlan-mc-snooping to true
-> -> br_multicast_update_active()
->     checks snooping_enabled: false
->     -> keeping vlan's ip*_active at false
-> --------------------------------------------------------------------------
->                                -> sets snooping_enabled: true
->                                -> br_multicast_update_active()
-> 			         -> checks vlan{id:42}->snooping_enabled:
-> 				    false (from earlier load above)
->                                   -> keeping vlan's ip*_active at false
-> 
-> Result: vlan's ip*_active is still false even though it should be
-> true now?
-> 
-> .o(Or were netlink and sysfs handlers somehow ensured to never run in
-> parallel?)
-> 
-
-They are, netlink and sysfs are supposed to take the same locks so they
-cannot run in parallel changing options.
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
 > 
-> I'm not that versed with atomic's and explicit memory barriers,
-> could that prevent something like that even if multiple variables
-> are involved? Only used lockless atomic_t's for atomic_inc()/_dec() so far.
-> And otherwise used explicit locking.
-> 
-> 
-> 
->> - can you provide the full view somewhere, how would this tracking be used? I fear
->>    there might still be races.
-> 
-> My original switchdev integration plan so far was roughly still the same
-> as in the previous pull-request:
-> 
-> https://patchwork.kernel.org/project/netdevbpf/patch/20250522195952.29265-5-linus.luessing@c0d3.blue/
-> 
-> And using it in rtl83xx in OpenWrt like this:
-> https://github.com/openwrt/openwrt/pull/18780/commits/708bbc4b73bc90cd13839c613e6634aa5faeeace#diff-b5c9a9cc66e207d77fea5d063dca2cce20cf4ae3a28fc0a5d5eebd47a024d5c3
-> 
-> But haven't updated these yet onto this PR, will do that later.
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+> ---
+> Changes in v5:
+> Rebased on top of v6.17-rc1
 
-Thanks.
+
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,glymur-tlmm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  gpio-reserved-ranges:
+> +    minItems: 1
+> +    maxItems: 119
+
+124, I guess
+
+
+> +
+> +  gpio-line-names:
+> +    maxItems: 250
+> +
+> +patternProperties:
+> +  "-state$":
+> +    oneOf:
+> +      - $ref: "#/$defs/qcom-glymur-tlmm-state"
+> +      - patternProperties:
+> +          "-pins$":
+> +            $ref: "#/$defs/qcom-glymur-tlmm-state"
+> +        additionalProperties: false
+> +
+> +$defs:
+> +  qcom-glymur-tlmm-state:
+> +    type: object
+> +    description:
+> +      Pinctrl node's client devices use subnodes for desired pin configuration.
+> +      Client device subnodes use below standard properties.
+> +    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      pins:
+> +        description:
+> +          List of gpio pins affected by the properties specified in this
+> +          subnode.
+> +        items:
+> +          oneOf:
+> +            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9])$"
+> +            - enum: [ ufs_reset, sdc2_clk, sdc2_cmd, sdc2_data ]
+> +        minItems: 1
+> +        maxItems: 36
+> +
+> +      function:
+> +        description:
+> +          Specify the alternative function to be configured for the specified
+> +          pins.
+> +        enum: [ gpio, resout_gpio_n, aoss_cti, asc_cci, atest_char, atest_usb,
+> +                audio_ext_mclk0, audio_ext_mclk1, audio_ref_clk, cam_asc_mclk4,
+> +                cam_mclk, cci_async_in, cci_i2c_scl, cci_i2c_sda, cci_timer,
+> +                cmu_rng, cri_trng, dbg_out_clk, ddr_bist_complete,
+> +                ddr_bist_fail, ddr_bist_start, ddr_bist_stop, ddr_pxi,
+> +                edp0_hot, edp0_lcd, edp1_lcd, egpio, eusb0_ac_en, eusb1_ac_en,
+> +                eusb2_ac_en, eusb3_ac_en, eusb5_ac_en, eusb6_ac_en, gcc_gp1,
+> +                gcc_gp2, gcc_gp3, host2wlan_sol, i2c0_s_scl, i2c0_s_sda,
+> +                i2s0_data, i2s0_sck, i2s0_ws, i2s1_data, i2s1_sck, i2s1_ws,
+> +                ibi_i3c, jitter_bist, mdp_vsync_out, mdp_vsync_e, mdp_vsync_p,
+> +                mdp_vsync_s, pcie3a_clk, pcie3a_rst_n, pcie3b_clk,
+> +                pcie4_clk_req_n, pcie5_clk_req_n, pcie6_clk_req_n, phase_flag,
+> +                pll_bist_sync, pll_clk_aux, pmc_oca_n, pmc_uva_n, prng_rosc,
+> +                qdss_cti, qdss_gpio, qspi, qup0_se0, qup0_se1, qup0_se2,
+> +                qup0_se3_l0, qup0_se3, qup0_se4, qup0_se5, qup0_se6, qup0_se7,
+> +                qup1_se0, qup1_se1, qup1_se2, qup1_se3, qup1_se4, qup1_se5,
+> +                qup1_se6, qup1_se7, qup2_se0, qup2_se1, qup2_se2, qup2_se3,
+> +                qup2_se4, qup2_se5, qup2_se6, qup2_se7, qup3_se0, qup3_se1,
+> +                sd_write_protect, sdc4_clk, sdc4_cmd, sdc4_data, smb_acok_n,
+> +                sys_throttle, tb_trig_sdc2, tb_trig_sdc4, tmess_prng,
+> +                tsense_pwm, tsense_therm, usb0_dp, usb0_phy_ps, usb0_sbrx,
+> +                usb0_sbtx, usb0_tmu, usb1_dbg, usb1_dp, usb1_phy_ps, usb1_sbrx,
+> +                usb1_sbtx, usb1_tmu, usb2_dp, usb2_phy_ps, usb2_sbrx, usb2_sbtx,
+> +                usb2_tmu, vsense_trigger_mirnat, wcn_sw, wcn_sw_ctrl ]
+> +
+> +    required:
+> +      - pins
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    tlmm: pinctrl@f100000 {
+> +        compatible = "qcom,glymur-tlmm";
+> +        reg = <0x0f100000 0xf00000>;
+> +        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        interrupt-controller;
+> +        #interrupt-cells = <2>;
+> +        gpio-ranges = <&tlmm 0 0 249>;
+> +        wakeup-parent = <&pdc>;
+> +        gpio-reserved-ranges = <4 4>, <10 2>, <33 3>, <44 4>;
+
+Blank line
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+
+Best regards,
+Krzysztof
 
