@@ -1,126 +1,139 @@
-Return-Path: <linux-kernel+bounces-798999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0CE3B425AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:38:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56341B425B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B35CE567A5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:38:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D11E17A193C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA39027FD78;
-	Wed,  3 Sep 2025 15:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47AD283CA7;
+	Wed,  3 Sep 2025 15:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B0HiDuSB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="V0fsfZg9"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F47F24679F
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E898527FD78;
+	Wed,  3 Sep 2025 15:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756913889; cv=none; b=ApN7X3K1CYCiZgH6t/pHDT7NNPfnpyWzMDKA4IsRtyK1iP3K+uE60SBPnzmaiNu8jWq+p2XMo1/qo7omSlJJFw3BhsnOzt4M9jUpjq4+s9bBCBtuMtwJ4ZsXZyCPXA8gH1l5BCvwBzSgvO4ky8mv+QVxEwz6+aj+hYI1DtWVses=
+	t=1756913997; cv=none; b=rz2NXSxp+yKowf1ksjzQNOsJSnEBfrpDQVijVrfWNaiGTr8FzJ3lhTUDq16H21nXPCH7+eKQmXxQGE+eqwuBC/j5YQT6YJR2+g86zS/ULC2Q16231h0Nuc50q4VyzGkqSsQGdla8e1LJP+DOI/rHgGsab48oQEAJEOBuOOqCGi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756913889; c=relaxed/simple;
-	bh=kPZ/HOC3SKupxm3BQU2AcDhJjHorr5M7H7D+uIJksLM=;
+	s=arc-20240116; t=1756913997; c=relaxed/simple;
+	bh=yEra3lMBgmntkeYUtl49sYAEYjq84wZRgNOZiqJ9768=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H6cSXxcc/LBVkocvHWzapmndxCYnfQGQ8018wo4zOPIM2UM8w1VVVDq2sK9MmMo3aLZQ++AKK052sOpGcgc96ZTtgk+q33eValGOYgQb3EsHH4o8QdLJsFOs/OmZAzPPPkgTlfx1l6SH6Zu9AbICZ3P+B9YDtouQMD2GZtnOJi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B0HiDuSB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E73FDC4CEE7;
-	Wed,  3 Sep 2025 15:38:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756913888;
-	bh=kPZ/HOC3SKupxm3BQU2AcDhJjHorr5M7H7D+uIJksLM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=UvxnmS+yh7QJVwx0k3WURSr7Pvt44pon3oZ+0MfBoof5sDDkbTQPPNIhgbQdMoDvfi2KU2wpIG9ORgxGMRMK/hkwhgRqIFAvtQ4Ph1VgR7yQeiHIld3cRAU4gWAn5sKMOk45lUNQjPY0vNt2EqhM/z5IgDgsClhlRlljL1gW92I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=V0fsfZg9; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 776F940E016E;
+	Wed,  3 Sep 2025 15:39:36 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id IFeAcDB9JgAz; Wed,  3 Sep 2025 15:39:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756913972; bh=gZt5S953FuMmLNd9xFknMXERSFx/tD6LVwgV8tqL03A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B0HiDuSBWD6RKvzMmsTgK0+L/QNoNUgURaef943FSpHKL181/qC/AAadQ1B+rFsgs
-	 bwFMu4c8jwYCeyd+Fe+h2ZSm0HaPkWxMk850oIpz+Tn44thrU730jQE7Xup+QiRPXc
-	 omi5lR254h3+m2tM/5haS2LtmkQi8QxwD+6XKlU81wmasOw6Gz7U6QCsG35fqnPCEA
-	 FnH4Eqwg5SHGWjtKVULPk5EwlN0utT1jiOOKyQURj0czHTrIGS+iuhH+A4zeOB8tCl
-	 rEwfZ1D3rZymmU/+l5QGmboLmcPDfdrmcafF6vaDmvA/bsnItmFaGjM7jVHmnRRObD
-	 7J1vbX8rxRI9g==
-Date: Wed, 3 Sep 2025 18:38:00 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>,
-	Changyuan Lyu <changyuanl@google.com>, Chris Li <chrisl@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Pratyush Yadav <pratyush@kernel.org>, kexec@lists.infradead.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] kho: add support for preserving vmalloc allocations
-Message-ID: <aLhg2Jli0KUe-CXC@kernel.org>
-References: <20250903063018.3346652-1-rppt@kernel.org>
- <20250903063018.3346652-2-rppt@kernel.org>
- <20250903125620.GG470103@nvidia.com>
+	b=V0fsfZg9Rq1IOx868l07KxQeyuox7KJK6b3pVNfQHznEIsGmw2Qp9CstZMV4bc34G
+	 5PvMuKPidFkWXp+2ZApGgZHKfaTzjmYswHBSRMDzS44Q2QBa+CJi6n+EdB8cfFZIws
+	 ov+u03D6WoD5drG4GjKuhnHeks6Xrj18gStgMXV+E76Y7j2E1k2ww18qeF+K/gJThX
+	 zH3SzcMvfcEwPQNElPzMnUYK1+DPmTejy/+I78THP22ZJgTq0yLrT9AaBhQqFiWkQC
+	 oUe+CLSVwEV620vpJTUuyJMd6ZySIQgVkhHeiqN+Lm2GK9xLJdNmtPjqCsqW3xyu9l
+	 lI7uX5lCPBEi7TRyBCa/DFePnBCEEHh+Mv4dvM4jLKK0TEFPK1WdW7Jsx/P8KflY2u
+	 9M1NtnQguansyJZ0AZh8MKHk5rz+4u5jPt+i37BfB4oLxCJcETsotrXeSzt3ZvIaRP
+	 /UHaSKvlNFIVaftxJEGZQHbxm/rrwtwfN3AeuBUZZNgLjwylVEmxEXWt6Fx0BtfC/R
+	 kC66Pe2hb7Jxbvkczp/A6xLnNv9rbz5wQCP8CzG/ffalkBgQixmp81UZKhzBHDsi+v
+	 nA/HtfxYKXzpyogiCA+6QYoRu1oG0fvzo6kxHwL4l7b+c7PgbqbzF1oikW28p+kJJn
+	 5faB4IUAVCH47Q/9cavJF++U=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 6282440E00DE;
+	Wed,  3 Sep 2025 15:39:22 +0000 (UTC)
+Date: Wed, 3 Sep 2025 17:39:16 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+	Smita.KoralahalliChannabasappa@amd.com,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v5 15/20] x86/mce/amd: Enable interrupt vectors once
+ per-CPU on SMCA systems
+Message-ID: <20250903153916.GCaLhhJHHK7oY-PTqz@fat_crate.local>
+References: <20250825-wip-mca-updates-v5-0-865768a2eef8@amd.com>
+ <20250825-wip-mca-updates-v5-15-865768a2eef8@amd.com>
+ <20250903100317.GHaLgSZTPMDHrKbO7Q@fat_crate.local>
+ <20250903140022.GA835@yaz-khff2.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250903125620.GG470103@nvidia.com>
+In-Reply-To: <20250903140022.GA835@yaz-khff2.amd.com>
 
-On Wed, Sep 03, 2025 at 09:56:20AM -0300, Jason Gunthorpe wrote:
-> On Wed, Sep 03, 2025 at 09:30:17AM +0300, Mike Rapoport wrote:
-> > +int kho_preserve_vmalloc(void *ptr, phys_addr_t *preservation)
-> > +{
-> > +	struct kho_vmalloc_chunk *chunk, *first_chunk;
-> > +	struct vm_struct *vm = find_vm_area(ptr);
-> > +	int err;
-> > +
-> > +	if (!vm)
-> > +		return -EINVAL;
-> > +
-> > +	/* we don't support HUGE_VMAP yet */
-> > +	if (get_vm_area_page_order(vm))
-> > +		return -EOPNOTSUPP;
-> 
-> This is a compatability problem.. Should have some way to indicate
-> that future kernels have an incompatible serialization so restore can
-> fail..
+On Wed, Sep 03, 2025 at 10:00:22AM -0400, Yazen Ghannam wrote:
+> But any reason to use u32? Why not u8? Alignment or something?
 
-We can add version or flags to kho_vmalloc_chunk, e.g. make it
+Struct padding:
 
-struct kho_vmalloc_hdr {
-	DECLARE_KHOSER_PTR(next, struct kho_vmalloc_chunk *);
-	unsigned int total_pages;	/* only valid in the first chunk */
-	unsigned short version;		/* only valid in the first chunk */
-	unsigned short num_elms;
+$ pahole --header elf64_hdr vmlinux
+
+...
+
+struct mce_amd_cpu_data {
+        mce_banks_t                thr_intr_banks;       /*     0     8 */
+        mce_banks_t                dfr_intr_banks;       /*     8     8 */
+        u8                         thr_intr_en:1;        /*    16: 0  1 */
+        u8                         dfr_intr_en:1;        /*    16: 1  1 */
+        u8                         __resv:6;             /*    16: 2  1 */
+ 
+        /* size: 24, cachelines: 1, members: 5 */
+        /* padding: 7 */
+	^^^^^^^^^^^
+
+        /* last cacheline: 24 bytes */
 };
 
-I'm thinking about actually adding support for HUGE_VMAP for the next
-resping, but version/flags seems useful anyway.
+vs
 
-> > +	chunk = new_vmalloc_chunk(NULL);
-> > +	if (!chunk)
-> > +		return -ENOMEM;
-> > +	first_chunk = chunk;
-> > +	first_chunk->hdr.total_pages = vm->nr_pages;
-> > +
-> > +	for (int i = 0; i < vm->nr_pages; i++) {
-> > +		phys_addr_t phys = page_to_phys(vm->pages[i]);
-> > +
-> > +		err = kho_preserve_phys(phys, PAGE_SIZE);
-> 
-> Don't call kho_preserve_phy if you already have a page!
+struct mce_amd_cpu_data {
+        mce_banks_t                thr_intr_banks;       /*     0     8 */
+        mce_banks_t                dfr_intr_banks;       /*     8     8 */
+        u32                        thr_intr_en:1;        /*    16: 0  4 */
+        u32                        dfr_intr_en:1;        /*    16: 1  4 */
+        u32                        __resv:30;            /*    16: 2  4 */
+ 
+        /* size: 24, cachelines: 1, members: 5 */
+        /* padding: 4 */
+	^^^^^^^^^^
 
-Ok, I'll add kho_preserve_page() ;-P.
+        /* last cacheline: 24 bytes */
+};
 
-Now seriously, by no means this is a folio, so it's either
-kho_preserve_phys() or __kho_preserve_order(). I don't mind switching to
-latter, but I really see no point doing it.
+The end result is the same unless your do __packed.
 
-> We should be getting rid of kho_preserve_phys() :(
+But you might as well use the u32 in the distant case you need more flags
+- you never know with our RAS folks.
 
-How do you suggest to preserve memblock?
-
-> Jason
+:-P
 
 -- 
-Sincerely yours,
-Mike.
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
