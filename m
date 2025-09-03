@@ -1,130 +1,146 @@
-Return-Path: <linux-kernel+bounces-799150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E3F2B427BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:15:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A589B427BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1184F4E4F27
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:15:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBD2C1755F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1013A242925;
-	Wed,  3 Sep 2025 17:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067BA2C21E1;
+	Wed,  3 Sep 2025 17:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="NkSbxP55"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NmXuuKxh"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112132868B4
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 17:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1FC242925;
+	Wed,  3 Sep 2025 17:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756919731; cv=none; b=FR+b/PwLTbIu8fe1jlI5TDM5r/fWPex7ZX/dTYKAkCS2kEsOHpBUH6e7YVUUFMK0Z8K/JGTsjqqPB2Krn147cG5i5gP0f46q/zuSAitdysbRO4eg63shn6LNm0N0bpVkC4sLt6y8drAM0NlScH4rPsrghPd/WG6QLiPuhUK5na8=
+	t=1756919814; cv=none; b=tQyD954w44snsdQepVf9CI2jXlf05quCRQ32hRPhJXKpG/RQ6KXd+76OdZmbLZcb7UAECpaS/QH6P8QAfE/IdsunKlY3iKdLFjfDvOWfZ4m8mivnZFt6eccJQU1cwkJB84/fT7tSwx3HT6Tocf1/guwFe71IQc0N4ysbf44eG3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756919731; c=relaxed/simple;
-	bh=jZUDx1Mx2eH40Dx2kMrnVR0J5IZIorEjpObTIAfvjDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=omeDq60J63xMrzzuiiksZ2lyP6N8WTgzq5sTIU+fKmmkB740/XURNC5kflZQNjbHVdpt/3uVUJZqa0eBsOnauQtJ63dEw9Y0B/7xUGXMBuVyoVM98gUVLNvbvjVGWN3aTFPt4OtCgjraIRyL2MAH/h4zqnifd1xVdlmGhRAbyYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=NkSbxP55; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=78O4
-	dHWxeY4/54KjN6f8Acl6SIpWxsx4E4dnQG9eWXI=; b=NkSbxP55flzuHp/ecStL
-	LIgl8x0F4bWQXeT5/YQ3ovJNl4iWzZcrMflOy8YtFqhnfsfHINDL/r7VO82D8S4B
-	grhJ0U1FFzpVuJS4devnYCjYrW5y5LZC5LrhyOnBBySoUUXwm0V64LbM8cRZmR+B
-	j+Gkyskdrz4Kr+vFL492bihQQcojluhUTDswlU5gwTxv2qeeB7US0K18i55qnKV7
-	1FKuxY8WXon26Udh7GPBdj6dJ+oV7q8KQVSoasJ2QRSAjA+UlYlw6ASMPF1f7RV/
-	fGN/JNYbmwR9HYTA7kZrgWZ/cdDcFlkMbhxqG0g/+8pZC4fC/cJO8T2xSqNkIZHA
-	Qg==
-Received: (qmail 3373530 invoked from network); 3 Sep 2025 19:15:26 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Sep 2025 19:15:26 +0200
-X-UD-Smtp-Session: l3s3148p1@H9wowOg9GC9tKPO7
-Date: Wed, 3 Sep 2025 19:15:25 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Cezar Chiru <chiru.cezar.89@gmail.com>, peda@axentia.se,
-	jdelvare@suse.com, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: Main i2c-*.c files and algos/ subdirectory : Fix
- errors and warnings generated by checkpatch
-Message-ID: <aLh3rVYItYZ3CYpq@shikoro>
-References: <20250830093016.160753-1-chiru.cezar.89@gmail.com>
- <fkiu64vdlndg5lvuaktao2vmvmn5al7xcpksrjmxrr4ldz5ssn@dolroldcknpd>
+	s=arc-20240116; t=1756919814; c=relaxed/simple;
+	bh=ZJ6DzOKUfHZ5IofQc/gAACB4SYGhZXU7IbTqulvb4aw=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=COa+wAtdiVTVmef6pXDKTjmhNGsJYhm09KJFy+qeAtrZqEJazPMrNrCARAJeqP6nICVA+V8u0F/QBX3pT00WaJ97cJKmCOmcuCjWKkxWZiiaGoC/BmIh9imdV0FvDCkoIYKgSeGx94Fv3/H+vgYNNZqD5fJ8jMXWCfLxualDFEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NmXuuKxh; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b109c482c8so2583331cf.3;
+        Wed, 03 Sep 2025 10:16:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756919812; x=1757524612; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AWlwFBgNWMjfUe6WnDjCIuuCR2uq0Rac7cIQSEflAow=;
+        b=NmXuuKxhFkweiPk5+yXt54el5zR9EtBHlAiAxYS+JlCphP8hNLuirLG7xw6rdL0Gnk
+         6UHrOcCfM2xBZhekHdDt4f3A5kD2d8cOm0kO2PE3ryUvCOeVZrqf001uuWxzEQ8mNdYU
+         6Y8l9QK1qs+3+lVcnJgv8897p27TfOHWvGMmLU0aaNaxMetOi3xmmCs4rvh42H2QGM1d
+         D5Dr/Fq6B+kRHwXg6C8PnEwWc8WJxMYKXjB48/WkT7CW9hLAMcsqNC6WyEvVIOLCjwGD
+         Xkto36k4g3oeJntbO+TkqQikiM9sYJa1cqlPsmPAhF9jYeP3NIWphUbmywg0YIhxEgsp
+         NbYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756919812; x=1757524612;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AWlwFBgNWMjfUe6WnDjCIuuCR2uq0Rac7cIQSEflAow=;
+        b=IzMX5WmyO3FRr52oHZUfMA9XjzZInxHA8wfr1QCyuKF6V6W/Kh8DVFtcDVhgOucnvq
+         USQXL6vCJiNrxLnplQNa5/Pzx3tjX6go6Bhes3Jfuiqr/LaoVa2fyyc8ztS/OoHgogic
+         7Hk1zU3ADp67FCnu99LUSBJ8mSfmQVYMLhWr9Qy7ePhLOlU2Isv82J1Il4V+f0EoRvV4
+         /ZRUzi4jXirqxj2okS+++wo3t9MZE2kFzhf1aetzt42gmA3GKdOJTrt0cS4cmcnt1Lb+
+         CAlLel1VLP27qi4nbECkc7WreDUIG/sx6KFxVlqBPfWsPqxIkFb8xVmSP5KOuv4jIANv
+         g5GA==
+X-Forwarded-Encrypted: i=1; AJvYcCVld4nMEH3oniKRLqN2fdQSY5Sb5j0sMKSmP8EwZnvBonvu6fE4WdZlVErMgI69kixT9OJdygyx1CZrdKU=@vger.kernel.org, AJvYcCXawkslCsPN+yfc/E2izHk/p89/Tw71Xx5qhYaIz0q7kyhgrEvJPVc65yRUFzG9B3+SGvibEBu9@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKXJoOYnynQbkY3SPkkBYLgdNL6PK8QAi9MQFIsoGIztverxT6
+	DrtnWQjEeiVuoE0/YgLIDmrApDs02FEgL2MTIRCG7pw/7hO//ttCB/TZ
+X-Gm-Gg: ASbGncuqm220zHd/GWhSKmS5gsF+vFNODumofI9rWYF8WAGE/Ty4ORVyvmYgXIU7Wbk
+	LEGFB2pFP/wO1DzCcTrGKU//nWKvuUpiADXPhvuCHP/NlVDVkGx8Vi6pkRtDr5mQ+UJD+ySgNph
+	+1NF/laInAaIhJzxGJ0ALZ6m39uBn6j8SaTIhJK0JToQRrJwRwFbweDQX6TTZKfj+jzmi247tvo
+	46TPvjZIPIHVGZcrNlzTOlki8t70LmFrHII2gbttrX0U8ANPvB/J5gulyTt3MPOh+Mw3cDC05SE
+	OxwflIGLktm1kANbQFV+Za7JFlqZdh2vKr5RNvM1d1WWfi4pm/dkfkinobs8hAWzYQSvwSvJig6
+	HWbGfu64XRHRyRASDDV8WQH+k3h1KQjQTGDArwZUmopPEM9UW4NLyj3CizTMt7KeetZOKISeQn+
+	8Tfg==
+X-Google-Smtp-Source: AGHT+IHQeEGvElRE3Z4ZiEhlcG0xfeqMhZUV+xEqkDaUsSNp4u1kO2SKqlQm+fAc1bfWx9X2QI3Egw==
+X-Received: by 2002:ac8:5fcb:0:b0:4b4:9773:586c with SMTP id d75a77b69052e-4b49782a0ccmr25315751cf.66.1756919811605;
+        Wed, 03 Sep 2025 10:16:51 -0700 (PDT)
+Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4b5d57c6cc0sm1491041cf.53.2025.09.03.10.16.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 10:16:51 -0700 (PDT)
+Date: Wed, 03 Sep 2025 13:16:50 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Breno Leitao <leitao@debian.org>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+ Clark Williams <clrkwllms@kernel.org>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ linux-rt-devel@lists.linux.dev, 
+ kernel-team@meta.com, 
+ efault@gmx.de, 
+ calvin@wbinvd.org
+Message-ID: <willemdebruijn.kernel.3093d8d8e5831@gmail.com>
+In-Reply-To: <v4bz7lyzs6f6mlfhvgy3p34sihu6sojwntbev3hz2sz425j76i@wanin427lov6>
+References: <20250902-netpoll_untangle_v3-v1-0-51a03d6411be@debian.org>
+ <20250902-netpoll_untangle_v3-v1-4-51a03d6411be@debian.org>
+ <willemdebruijn.kernel.9ee65133b4b7@gmail.com>
+ <v4bz7lyzs6f6mlfhvgy3p34sihu6sojwntbev3hz2sz425j76i@wanin427lov6>
+Subject: Re: [PATCH 4/7] netpoll: Export zap_completion_queue
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8rdk36Ry1vinCQMD"
-Content-Disposition: inline
-In-Reply-To: <fkiu64vdlndg5lvuaktao2vmvmn5al7xcpksrjmxrr4ldz5ssn@dolroldcknpd>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
+Breno Leitao wrote:
+> On Tue, Sep 02, 2025 at 06:50:25PM -0400, Willem de Bruijn wrote:
+> > Breno Leitao wrote:
+> > >  include/linux/netpoll.h | 1 +
+> > >  net/core/netpoll.c      | 5 ++---
+> > >  2 files changed, 3 insertions(+), 3 deletions(-)
+> > > 
+> ....
+> > > -static void zap_completion_queue(void)
+> > > +void zap_completion_queue(void)
+> > >  {
+> > >  	unsigned long flags;
+> > >  	struct softnet_data *sd = &get_cpu_var(softnet_data);
+> > > @@ -267,6 +265,7 @@ static void zap_completion_queue(void)
+> > >  
+> > >  	put_cpu_var(softnet_data);
+> > >  }
+> > > +EXPORT_SYMBOL_GPL(zap_completion_queue);
+> > 
+> > consider EXPORT_SYMBOL_NS_GPL(zap_completion_queue, "NETDEV_INTERNAL");
+> 
+> Thanks for the suggestion. First time I've heard about the export by
+> Namespace. I suppose then I need to have
+> `MODULE_IMPORT_NS("NETDEV_INTERNAL");` called at the caller side, right?
 
---8rdk36Ry1vinCQMD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That's right.
 
-On Wed, Sep 03, 2025 at 06:56:12PM +0200, Andi Shyti wrote:
-> Hi Cezar,
->=20
-> On Sat, Aug 30, 2025 at 12:30:15PM +0300, Cezar Chiru wrote:
-> > Fixed some coding style errors and warnings plus some minor changes
-> > in code as reported by checkpatch script. The busses/ and muxes/
-> > subfolders will be dealt with another commit. Main changes were done
-> > to comments, defines of 'if' statement, swapping 'unsigned' with
-> > 'unsigned int' and other minor changes.
-> >=20
-> > Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
-> > ---
-> >  drivers/i2c/Kconfig              |  2 +-
-> >  drivers/i2c/algos/i2c-algo-bit.c | 29 +++++++++------
-> >  drivers/i2c/algos/i2c-algo-pca.c | 25 +++++++++----
-> >  drivers/i2c/algos/i2c-algo-pcf.c | 61 ++++++++++++++++++++++----------
-> >  drivers/i2c/algos/i2c-algo-pcf.h | 10 +++---
-> >  drivers/i2c/i2c-boardinfo.c      |  2 +-
-> >  drivers/i2c/i2c-core-base.c      | 59 +++++++++++++++++++-----------
-> >  drivers/i2c/i2c-dev.c            | 47 ++++++++++++++----------
-> >  drivers/i2c/i2c-mux.c            |  1 +
-> >  drivers/i2c/i2c-slave-eeprom.c   |  2 +-
-> >  drivers/i2c/i2c-smbus.c          |  2 +-
-> >  drivers/i2c/i2c-stub.c           | 29 +++++++--------
-> >  12 files changed, 170 insertions(+), 99 deletions(-)
->=20
-> first of all, thanks for your patch, but I can't accept it.
-> Please split your patch in several smaller patches with single
-> changes.
->=20
-> Granularity is very important for reviews and git blame.
+The feature is fairly new. I don't think we have clear guidelines what
+is and what isn't in scope yet.
 
-Same comment as previous patch: describe testing please
+In this case, it seems clear to me that this API is not intended for
+broad use, so falls well within the area. More context in
+Documentation/networking/netdevices.rst
 
-
---8rdk36Ry1vinCQMD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmi4d60ACgkQFA3kzBSg
-KbYXHg/9GBXdVMFSHY1j6XfTKPGqNfmPBwuaje7q67ae9chO9Ib22fC3p6NyQTke
-WTCL3DqRtAWhy96xZ2uq7Qgh8PnzOWRRO6Ea3tQvRLojJufFLt8v8oj2qRFdM9vq
-dbPwp5nreFu/KvegEhrbNywkpGAdzxDYILa2Q4QVqLPFY1n8LPH18V+E2rIdRcnq
-QrcSpj6UloeV4QT0zfdnPa8LTAGOk8NHQN3LsP/qFLUGRLebZTKmgcFRrRtetmwN
-CBiaOYimobaqEP8gqo+PzL+UKI0AIYWRpYIOSOplPELdhXDY2uDHM8TxzhSPR+bK
-XgzwrFUxE64cWEgjuSRezpmir7KIa+YY2PN0a6HADLqAo0AKuuy0toT1a3eQuB9V
-o6kj3czOC8Vrlw0yhVFqT5nut9Wi+2DYsZRriik4jGV8a3gjAPMfUF1pMnV1QCNm
-uIfwSrKXaVTt0JL51RSrcgnRuI7FR6QDmbYy2KmF1qWbHqKHACwerpMNAW+pHey5
-ekhXPN0vmXllDYfsHb4vHXTQa6sUg67Mth6a850LUiAZ6dM2oUooABLnuQ0zQYBG
-eZ6pRnsERjh3bpOt4NGxWssFNJCSqiqChJpXjb1kr6okJfJxFHJe2QgWQT9Jc3pP
-iPL7H4rsRa+XCyVr/tpGveCUKmD2chKBOCTu6dtBIqcbJQj+li8=
-=rNMb
------END PGP SIGNATURE-----
-
---8rdk36Ry1vinCQMD--
 
