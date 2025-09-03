@@ -1,204 +1,193 @@
-Return-Path: <linux-kernel+bounces-798041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A85B418B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:37:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831EBB4197C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EACF3B5715
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:37:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4FF33B42E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7CB2EBDDC;
-	Wed,  3 Sep 2025 08:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE232EBDF2;
+	Wed,  3 Sep 2025 08:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pbarker.dev header.i=@pbarker.dev header.b="dkh0b5Iu";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BbRGkPk6"
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ty205/DU"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013017.outbound.protection.outlook.com [52.101.83.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843C82EACFB;
-	Wed,  3 Sep 2025 08:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756888671; cv=none; b=XWF+3Sa3kNxKcC9bPeIUXU3GNq5RQMgNhrKu3dMSHugS/VLcNzM6CbpFk8g+1DDuDz/y18BwYHWsDM1SBhdrGrqxH+x88M+YdPI+du1ktntVNWT/cLIXtqqdXZQrMA2weDY27GzhStoGUTTpLOq5agcgXAxFXuZD/cajAHtO3OI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756888671; c=relaxed/simple;
-	bh=HRJL63K+pt60xVYH2OwXL9cway+602AapnU1/G+3GW4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jkkZmrt9NQdxT6c+aJ9fULRLOd3FRb/jd5cN14S220uI/5ww5wd71XRnIlvJLD/V902H8kNpkQoXTJEB882PtZJyAndkHbOquKbqaEyOpagcE/55yjE7Ki+cCWM0Q0Ev3CcqHOc+8MBKNqW/ksfTkYdMA0M/ah3Fky37BisdYj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pbarker.dev; spf=pass smtp.mailfrom=pbarker.dev; dkim=pass (2048-bit key) header.d=pbarker.dev header.i=@pbarker.dev header.b=dkh0b5Iu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BbRGkPk6; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pbarker.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pbarker.dev
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 52D7D7A02A3;
-	Wed,  3 Sep 2025 04:37:47 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Wed, 03 Sep 2025 04:37:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1756888667; x=1756975067; bh=US1cagWNYL
-	+QRlqKfTeyuWIXRO8VusLp8zQHX2qwJkE=; b=dkh0b5Iuu7zD3ncB3AIHzgByoC
-	xIIClIUl7j7gTS8f+438mL9SPXFL96ZxiDlKdRsrlmTNFMZrlIPOJ5jLtnQ6eG1l
-	poKhp8NG9lf7U8kJ67IAnmk4VIoYqsZhD6dzYu+ytdpkxNBAmlwDokbppSo4tL98
-	DycL8yJG+g6vy3sWLVkjlYh3I2SP09BC3wPzVA5BjOP1BWadQh7Mc6Yotv1ZUiOg
-	zM/kKExPsHQPIPZPHCoSGlC+FHSXEan5c4WYFpZLlHAIk+2pCmpn/Bj1lOG9SnGP
-	qurRvCbq4JR7gB1fc4/WEm+Edstz/15/9lLszcCQMZyJqYy3VsSnA+/nOxOg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1756888667; x=1756975067; bh=US1cagWNYL+QRlqKfTeyuWIXRO8VusLp8zQ
-	HX2qwJkE=; b=BbRGkPk6xBwNelfFTn6sCy9ES1eVCq3Iup2vFO6TelDqOf2t0CR
-	TRNCCChnZiYHOd0CQkseec/2H0sqjL1oG3OnI95CHDuqf+fJ5yJWLWC5ETDVUFwG
-	5DEtxUnysDESR/Z007JYJQb4vaIjCWbI3/m6G4Ap/tq9ms8uvrtVY371oHojW/s8
-	UBN+zOzIPfC7hoAyYdDDkvrnJ8DWykfW8H0hhycHtyZEmp+zlcyLc68cY3SiKXV3
-	CChSu1zH2cKDsKXDxspX+X8fYfBFKW5P+/ZICNQhE5nYCOW2mw8SgmLAnPm0NIVq
-	WQonGeAEF3+V115/u8thNy7vMaluZf3KLbQ==
-X-ME-Sender: <xms:Wv63aAB9RPiEpsd0LZeNmjfUsPtrNqRJCiSLftFnmA0W7BYSXHW71g>
-    <xme:Wv63aAeBsM_Lyz3blsGXuP6aWxaoZWf-VkPzX45MIjH3Yntz-7iVkgsWzOA1VxJq_
-    5xHEQWegUqYX7o4MeY>
-X-ME-Received: <xmr:Wv63aF57-P0Et6eGud5HfQZZFbXW3zdxJ1XkUxjUnbtkynYEtq8Sq6PDmV2nW5tdmdGv8ESwiDTxfFXvvTYw1DRn0JXwIg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvieekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    epkffuhffvveffjghftggfggesghdtreertderjeenucfhrhhomheprfgruhhluceurghr
-    khgvrhcuoehprghulhesphgsrghrkhgvrhdruggvvheqnecuggftrfgrthhtvghrnhepve
-    ejkeekvddugfeileegvefggefghefgjeetffduheduudfhleeigfejfedviefhnecuffho
-    mhgrihhnpehgihhthhhusgdrtghomhdphihusghitghordgtohhmpdhprhhothgvtghtih
-    hnghdqtghouggvqdhinhhtvghgrhhithihrdhmugenucevlhhushhtvghrufhiiigvpedt
-    necurfgrrhgrmhepmhgrihhlfhhrohhmpehprghulhesphgsrghrkhgvrhdruggvvhdpnh
-    gspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepkhhonhhs
-    thgrnhhtihhnsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheptg
-    horhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepfihorhhkfhhlohifshesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdguohgtsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Wv63aLVVDumImbMBoKXTqM4clhURfQD80cZOVU3jLI1lOgkg4kbncw>
-    <xmx:Wv63aM6L5Pigk3cDUluhK3hELmYf7a5dJHkadgKJMDEn9esHjai1Lw>
-    <xmx:Wv63aOppSDuQeyTsmoDsEq6E3bOncz0VNaaPwjbzioqVmvgbxR6_tQ>
-    <xmx:Wv63aHlz5Wuy5Y9PIn9aq-DtAkx5By22vM6akMWa0qmaDpCceMNj6Q>
-    <xmx:W_63aOBIH7kAIT60mjV94UQDJF9sr0Dvm7la7swZwCnTZSYtKr-JQFAG>
-Feedback-ID: i51494658:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Sep 2025 04:37:46 -0400 (EDT)
-Message-ID: <9fbb364c46d4affdadec7702c4c0e8987f7dae03.camel@pbarker.dev>
-Subject: Re: [PATCH] Documentation: update maintainer-pgp-guide for latest
- best practices
-From: Paul Barker <paul@pbarker.dev>
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>, Jonathan Corbet
-	 <corbet@lwn.net>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 03 Sep 2025 09:37:28 +0100
-In-Reply-To: <20250902-pgp-guide-updates-v1-1-62ac7312d3f9@linuxfoundation.org>
-References: 
-	<20250902-pgp-guide-updates-v1-1-62ac7312d3f9@linuxfoundation.org>
-Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
- keydata=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
- ep0k17xg==
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-EB9gnekdljQv8zsDx1AE"
-User-Agent: Evolution 3.56.1-1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891CD1BC9E2;
+	Wed,  3 Sep 2025 08:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756889942; cv=fail; b=JD0HRE+kg8C3bZ6Q5BOt+T+V1a8YmFmFyBET6zzdnaCP3kO6c/cMYeLOCNCx+q6aEo1TOWo9p8g+J0TKKIRPuHOwOIEbuUXyAbWGZaz/Br3PaP+PEnU7aNxX0CP4K+Nhz1n5dCN/krrkoVctoFSfNp4az791/m23wqOrpEmn8I4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756889942; c=relaxed/simple;
+	bh=jra34+85nAU8B9ckEjizTu/Ip3ZALxq20qgAA/xtPtI=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=CPXrupygxVY1RZh4cxMdeUKWqn4R2R7JFfywGifTd7N1LlD7mjmytGz6a8/cec3iSkacx2FYYbKKO5unvfoRHI3TqM9UURpWVXEv8bS6150PUWWCgkz0rswYzyxApn64ARIBLZ07BTm3AzRBswosPQZwwZj1RgBjXfHh2zXs64Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ty205/DU; arc=fail smtp.client-ip=52.101.83.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q2fKHH1kuFFXfcdYmjd/0tE72AE6ZoyINWTTXpC/AqlDPZoq1Adsuo11XNDZ048tge/m60vfrkyNKX/SbN/DGGVtNeCUjtJgOBS3mCfqAGzN8OENeDvAu6qi9MeHGEd4I5d9w3EjcJNa3ZL9EROhUtvB/GTfAQz+OlGpiThsIJMrEu/bNLd16JMAnhN64otPtLB/U54h9g6AK4zylxEXH5VK6/EWCpQUtVzdZRwYcBN1oC4fQWcwJqcgFKYz3Gek7k/IchlLDQDefmXkivlON2if7tCPFxZ6VG5Y5mN2mmSDjF49XSFNpaax4Ra4Qh3jBiuicx+S8/XdBAXW/WTWdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rbKUh4rDtzbjG2qFlDf/7rIZszNNmLsVfJ1ClUpiCfw=;
+ b=O7Uu/XAJXX5UrwdhGLYpmG1vtykyZHU5bpQI3yIE4Z07UXpXvB2jTCVLwe6KKyRYAs4U09WPEJU62kUVuxvBxw1yiUV1jfyyeBI7FIlwL2S24NYDqNrfsNDJm5VKKOyUnQEQQyL7dt9LHtYt1kjCCkzEyJQy/6GH6fQWhpeq+dubq4Jezqet3KsG+1ZGKX0NnLErktaCVb0ACCmDnR4p1vn10hCeYrRCYQHVZCSrxegpnyg2twPwO8bbsShJJZneSYAR3U2mrfAqYjnEdZYRKhm5jI8Gvw0hJbypcj5QqnbtAmV3fx0/uoXEhS/5d4doPGaOcXUo9pvnmZ479vmLkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rbKUh4rDtzbjG2qFlDf/7rIZszNNmLsVfJ1ClUpiCfw=;
+ b=Ty205/DUJyt3+BqBR1x/HPdkGlkQUs9Ezc7nvly9kYcR3SVny4UGXrCsNr2jRc+3BZ0sKmZqxGw/nNFAj1oNcdno+xxJ5uUJYnqUwuHkgQV+zbh5alYcbx6OO0PDMAgya5e/29g2kYo6fpgz9ac6PGm8s9rP7WbUzZnfa2oavWIWvD+bNFBwYNORlO20l+/NHrUNqP9muE2LCtD8JgqkAJHEtn5jkM3snzIBA1OjoQSgRGvDg9n0JrHRBqlv2X50bws/vW99uouHtGKTIhceAdFX928IibtA4DS6tYDgbPys8Pij0rhLMclAMuW4HVtiTYDFWB3G7j4Pqde2lHa7Pw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by GV2PR04MB11190.eurprd04.prod.outlook.com (2603:10a6:150:278::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.15; Wed, 3 Sep
+ 2025 08:58:54 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.9094.015; Wed, 3 Sep 2025
+ 08:58:54 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: richardcochran@gmail.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	vladimir.oltean@nxp.com,
+	xiaoning.wang@nxp.com,
+	Frank.Li@nxp.com,
+	yangbo.lu@nxp.com,
+	christophe.leroy@csgroup.eu
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev
+Subject: [PATCH net-next 0/3] ptp: add pulse signal loopback support for debugging
+Date: Wed,  3 Sep 2025 16:37:46 +0800
+Message-Id: <20250903083749.1388583-1-wei.fang@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2P153CA0026.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:190::18) To PAXPR04MB8510.eurprd04.prod.outlook.com
+ (2603:10a6:102:211::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|GV2PR04MB11190:EE_
+X-MS-Office365-Filtering-Correlation-Id: b147246e-8109-467d-a4fa-08ddeac81bb4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|19092799006|1800799024|366016|52116014|376014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hS2w8XAOgAHZd70oFS45eKq6UXuWbtuJnfgkMS+K3t3GiNSz5nhtqw23kmJG?=
+ =?us-ascii?Q?6dRol2nqUH20I8uqonorMwBH+IRh7VU8GTVHwGQcBRYSVh1DYj3+4zxVJ0AX?=
+ =?us-ascii?Q?blyO8ul+4lDj5tbPQDjEkNqUx1UnEFMbsR/Np6Y6LH9xRTOYVLWjJu/NyYLc?=
+ =?us-ascii?Q?lO6+MxE/b+c9cwAPw+1gLwjaOyFqFMXk2hFfwEVzBvRPUuAjyYTeZNAzSGPp?=
+ =?us-ascii?Q?OUH6uj6QnAx9jHyVropTcshMplcgo4YpIhaR0v5y7Vc9O+BiU/l2a8VCo7td?=
+ =?us-ascii?Q?o2b9Tkca7g3+kbOn4UTVlMo0J2kD0mGA8uOgmu1IkbomHXb2P5IfqM0I/AmQ?=
+ =?us-ascii?Q?yae2TYIBwfiWPajVuk3gLWtYi3kDHqi5nBj/TsPbpbXyYqbCCFhjgIPPZAvo?=
+ =?us-ascii?Q?ddLP6haAW6BqsDgTlbpKCq7/O8U15DoUVxljhacib/q5oOZzLG8fPAv085qK?=
+ =?us-ascii?Q?5YkFkpfqMDJebgdY0FS4LNtOY6Iu9PxOonXdJ0W3c3fkaOx6dG819Zo5TdaL?=
+ =?us-ascii?Q?QsAkZSR1fjsMVdFcebpkJ5Bwtqey10lyMgn1/S1WjVC8bZxeHlDcGJPf4Ia7?=
+ =?us-ascii?Q?4kyQErT0FYpfUO1GXKmBARAGEOFXiFtXJxnum5scB5A8sQRhVg3SOV+54/G0?=
+ =?us-ascii?Q?svoq7rE3RqdEivZWm1roc2lsNFam58wGHjqj1eC75jy0MNI4nwEDkSwsydYS?=
+ =?us-ascii?Q?Ildbo3Jry2FAVEfF4lh3aUzZPT9T6IbkpwUww2AbqHH3EJwJn5rVhnbe1wyB?=
+ =?us-ascii?Q?+nptSDv9vGDWtnf8hiUcOA3qR1owzUwlAfJqSUDj87gKaEpSNWSQzLd93XDj?=
+ =?us-ascii?Q?kdZiV3bnhsj6IXyMM5DFxfwnlgHJ4R/8/LZEDgSreO88UQCbCwhzdgk2rF44?=
+ =?us-ascii?Q?/KDTvqEgD+Z3pqdoo/iuQPxb8AWDuXefKNtZa9IivY5yGZzX1EZnwXjOLKBy?=
+ =?us-ascii?Q?BR8uu8xxT/gsAAK/NRk+m+i2I8LKBOSVrLHGvDPpTrMm/vp8R1sdlOEUyFVc?=
+ =?us-ascii?Q?nA2Wb4qsns3rsfrVAKgO8tvCKcXAj4jYkqUPPmZXOWtdmSNEWSVbySfnQtil?=
+ =?us-ascii?Q?RAMRfNai6jBnFz+cYrjhhXO5xY/4LrQcqj2+2cP9bXJcy65FkDcwmhK7haQu?=
+ =?us-ascii?Q?PwhMGVppbOLIznyFBb3IQeBxw+VPx6ztq4qWaWWhLmDDJU7JGVi9o43cW8gq?=
+ =?us-ascii?Q?OEQ0NCiR4kt/xiz4POH7SDIKKEsDh/0VKw0jBrjrjwA1VScSFFWDUSR9P2aM?=
+ =?us-ascii?Q?+5aNLrYuH5DaV+/RvhVFwfitFor9iXLgfLH51gNU7KQlZ4OvyQEmUKamV8Ux?=
+ =?us-ascii?Q?cnSSx7K4FFneUBY40h0Ks8y/8qqeRjkE1IQvgRXip4dy6KbVqpYJyLRvJLJY?=
+ =?us-ascii?Q?wYrD118ajTygmr2dbOY55bOf4QkOeSilK7hI64t7Hycv3nkOdC0CcohTuUKg?=
+ =?us-ascii?Q?tjZRjgefSqRWMDcfB9JxClqHQKTEzRk4EEyM3TbN1jujsym9vhDHWbzMp44T?=
+ =?us-ascii?Q?O1cvqeZOLfaLqVx2aesJ7/AdHks3W0I1+0Cw?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(19092799006)(1800799024)(366016)(52116014)(376014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/0Ybr4MHFLelmRM8Ikc4gBpheMpBUjxsNxzleEB8FD7x09b4Gg7m3WSrK8Xk?=
+ =?us-ascii?Q?Tuc9IO8IjGUe63s0mhKhIIMFueIdg6KL0ULu8k/158JkbUlky7Db21Wmc2dl?=
+ =?us-ascii?Q?Bxp1bPUMTPhQRA+Ym4TCRJ56y8cEuQ26M72KC6NoxBK8k7wHsodn6VjJzHcS?=
+ =?us-ascii?Q?It4WwDMYszzr7174yV/e+vWsKb+K8qOQCsE3l6PBFxJNWSnwK//Qp4Ygx5H2?=
+ =?us-ascii?Q?hYssMZZ+sJzdX9j04q/5gaNhKeg60B0gRMUbP10m34crSWGEHBqRTRWuTv9h?=
+ =?us-ascii?Q?CP6Htqt823UedJKhQ/BMV2THnmPFM02yRFb+cfP4oDPajSwb0tORXkEK5K/g?=
+ =?us-ascii?Q?x534UBt0seqy64QTykWZoh75zXuwgLOH0u/n6a8t0sSsuMrxcSd4fLxstGNP?=
+ =?us-ascii?Q?l+HvD2ds41ts4NcMyvPQIzNpJBbWGRiEfwWLMXNmVHjJmK8ayy9NjSH4Coi1?=
+ =?us-ascii?Q?/F8Wj7yz6F1pOR7bdThJNsdkuOmPtVEknCDB/Y0YXsUgrf3osLNP2xhtfiLi?=
+ =?us-ascii?Q?gXREFP27VSFMPfK5yQDBiLq0GmXvDLK3zCptn/7qOFbss6Dq/fZMAM+v+uoB?=
+ =?us-ascii?Q?4zFsmXzHoCGPODp/VK2l2jJrEM2Q64Obaw6tNjR7zzpHEBxjN/MyxESpXI8o?=
+ =?us-ascii?Q?3fkWZP7epj+OI/vNdtaXlo6dG4EAaZAfNHg32BLGM0C1cDVYgNeP33pv9b+T?=
+ =?us-ascii?Q?i3cqSfwQ+alz0+4gqx0byZGz9GAJFiacjnYVhV5CKBBUCip75OodvfeinReY?=
+ =?us-ascii?Q?+QJAE7p2wXUfsejHGptICLYonSUT8j/DZDKk5hNGhmEy6qiUPxNbKVIk1ixv?=
+ =?us-ascii?Q?/FR1L1AX9Bw16e0awJexnm4OmeRCswLz1aG2DYm7nHQpc7kpq7mB2apmoDHx?=
+ =?us-ascii?Q?kSzB4vCHtjq5IJKjEBeiEJGEmGYi7IzKc3rFdkbU30PstnpM4RdqXu0oVFgh?=
+ =?us-ascii?Q?ISDeVAhlNI5EyaQqtnZZgDRcJzo+Dkl+vJGuTz7CeJz6H0LHOY2dHwPPF6EW?=
+ =?us-ascii?Q?cvusxqEZY6W60og+k2rJUh9AwSKLiAdgTVFHwpLcd7gqTZ/pAgiz3/uxBp+3?=
+ =?us-ascii?Q?jcI1hntmBhBNlK+ODJY3oncVMjAikKOzMsfvmej/yC0gOQv81HyDb9kt1qWc?=
+ =?us-ascii?Q?mn/T1pINdf9w9qaanlmvlMVb3tGRmDjklHN3vPH//AZ56fQuVRihb0zF1VFa?=
+ =?us-ascii?Q?RLqAYstHkn/A8+GR9deHb3pdS1s09D0sxqf8WZ0rJhd7XtIsgO/ED+P6nYZP?=
+ =?us-ascii?Q?P8IxCkEfn47iG5hBe5vAASxAfW9JRRAGayng3fzU6FAqZHo9H5elHERA3xIy?=
+ =?us-ascii?Q?2rp9gUa/2FtU7tTjWmmi71OaueGYCz/7/lGqIsG1RyRMO59zD1b7cFqdxdk6?=
+ =?us-ascii?Q?QUwBUCbIcQqwlbU8RQ6gXrU8FigCdEIMHtlhYh3VLXFJObzFEehGt5oCSs6J?=
+ =?us-ascii?Q?gg7qlDn0COdPlE2u8zfpQ3yJKRCAmdOooK70xzuMwFBC7qT6HqFzoWibPMK8?=
+ =?us-ascii?Q?S376lSrXvbfYWBHcw0bYWXs07vnWTgNJzJxuupXomYL2MuakfQZZsi5mYtv1?=
+ =?us-ascii?Q?znAVIkGM0bi4wt0CObEDOxG4er7TVrfL7B+lWCgb?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b147246e-8109-467d-a4fa-08ddeac81bb4
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 08:58:54.0658
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CYOc+qcE/I9HNI5Wp96I00A0/64HIPOwNvTdhIIwr2XVpZyiMAFqrJAO4ooqWS6eBIjAB4V3lVe/S2o5sugTNA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB11190
 
+Some PTP devices support looping back the periodic pulse signal for
+debugging, so add the generic debugfs interfaces to the ptp_clock
+driver. The first two patch are separated from the previous patch
+set [1]. The third patch is new added.
 
---=-EB9gnekdljQv8zsDx1AE
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+[1]: https://lore.kernel.org/imx/20250827063332.1217664-1-wei.fang@nxp.com/ #patch 3 and 9
 
-On Tue, 2025-09-02 at 11:44 -0400, Konstantin Ryabitsev wrote:
-> Freshen up the maintainer PGP guide:
->=20
-> - Bump minimum GnuPG version requirement from 2.2 to 2.4, since 2.2 is
->   no longer maintained
-> - All major hardware tokens now support Curve25519, so remove outdated
->   ECC support callouts
-> - Update hardware device recommendations (Nitrokey Pro 2 -> Nitrokey 3)
-> - Broaden backup media terminology (USB thumb drive -> external media)
-> - Update wording to follow vale's linter recommendations
-> - Various minor wording improvements for clarity
->=20
-> Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Wei Fang (3):
+  ptp: add debugfs interfaces to loop back the periodic output signal
+  ptp: netc: add the periodic output signal loopback support
+  ptp: qoriq: covert to use generic interfaces to set loopback mode
 
-In the last couple of months I moved my private keys onto a new Yubikey dev=
-ice,
-mostly following the kernel maintainer PGP guide. I read through the guide,=
- and
-some other sources [1] [2] [3], in detail before I started. So I think I'm =
-well
-placed to review these changes. They LGTM!
+ MAINTAINERS                      |   1 -
+ drivers/ptp/Kconfig              |   2 +-
+ drivers/ptp/Makefile             |   4 +-
+ drivers/ptp/ptp_clock.c          |  66 ++++++++++++++++++++
+ drivers/ptp/ptp_netc.c           |  25 ++++++++
+ drivers/ptp/ptp_qoriq.c          |  24 +++++++-
+ drivers/ptp/ptp_qoriq_debugfs.c  | 101 -------------------------------
+ include/linux/fsl/ptp_qoriq.h    |  10 ---
+ include/linux/ptp_clock_kernel.h |  10 +++
+ 9 files changed, 125 insertions(+), 118 deletions(-)
+ delete mode 100644 drivers/ptp/ptp_qoriq_debugfs.c
 
-Reviewed-by: Paul Barker <paul@pbarker.dev>
+-- 
+2.34.1
 
-[1]: https://github.com/drduh/YubiKey-Guide
-[2]: https://support.yubico.com/hc/en-us/articles/360013790259-Using-Your-Y=
-ubiKey-with-OpenPGP
-[3]: https://github.com/lfit/itpol/blob/master/protecting-code-integrity.md
-
---=20
-Paul Barker
-
---=-EB9gnekdljQv8zsDx1AE
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCaLf+SBEccGF1bEBwYmFy
-a2VyLmRldgAKCRCrY1Tsnbr0boc6AQDkoJFNqcEdpNfARXGZRqp0DVgZKTnh7oMZ
-TFjEtpcSwgEA1la9yaRFnzOVaf52f4flhFWTORyZaMDvCs5yfzdAHwQ=
-=takW
------END PGP SIGNATURE-----
-
---=-EB9gnekdljQv8zsDx1AE--
 
