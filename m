@@ -1,137 +1,111 @@
-Return-Path: <linux-kernel+bounces-798681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E757B42145
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:24:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4B6B4216C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BC517C1647
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:23:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CE2BB604F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98D53043B4;
-	Wed,  3 Sep 2025 13:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E68302770;
+	Wed,  3 Sep 2025 13:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRP85kCV"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AveaWb2x"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758782FFDE6
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE8A1FBC8E
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756905749; cv=none; b=DbAt6EnG9AUu1mJNUZh0jug36HMqJ/NvHhTl88CVEbxchxuiRhokFY+vh89l1b6MwELiNdiNlAD9xaV4sndL05xnVsk9Cb4g/UfZPEGij9AIJgz5iiBQrt/trajdTsVFERgA2iw+leldnNpNIyCMnz9pWop1ZpZPy5/wbFwIFMM=
+	t=1756905847; cv=none; b=o2CnsXtN048PYTVAo4AFKG81WKRtW10oMBv5ol5mcEeAV/cjsR76cr3q3NbAGWpQ3kjGoBNfRJNHoNZJ9sP4okfyCFkE3DUpEwCqKHSa2RcG34xJz4ttbwHmnY744JMnPghHhs+Bh8wX7fe8nbTazg3IDVbcnYcDsaO9Ocldfu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756905749; c=relaxed/simple;
-	bh=+3/FvEb2tmp04THrfe7Q6R4Z9tV9DSLFC8M+VKKCGW8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=puIukc4MjPx9ccO/drEU+H7nhT5o66pY6WQpuGs53jdti9GzsFmqc+mpB4jC4mKSQeTlLNw/eY1DIgxM2yp8M2fqKtZlIuPoTAp1q2dYSHI0OoQQjXrjl+mVJqRrENlMmaDDYoXv6yKlH9j8G5kBGENkce5CZwHdQ436Esfc5ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dRP85kCV; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso41727605e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 06:22:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756905746; x=1757510546; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+3/FvEb2tmp04THrfe7Q6R4Z9tV9DSLFC8M+VKKCGW8=;
-        b=dRP85kCV8Jzgp4u56cxurk/9qIs7dxp6kIjAsEeuE8o4HDJbEdo1U30O7KqWdgMYhV
-         KxNAcdSQiV8Joomp1lS6I4AB9JvfwnvfY25XDAQlIC70zUwxWQ2JxWkdDdoVkckFcia6
-         RGNnbP3n6luxOyDuhDM/UFfsJ9A6Dnn4CK4SlPQByU106uqHGKDTwMb/Z9Old1cUHbO3
-         7LVGILDk0vN0F2hNbqXshbRBaGqatHm+PzaQUQzuPi8XHBedROtdz9ovjkeczYfIECWW
-         7IcNlk5gmhmSukJU0c/k+Sku2xnN16wmtG7y7/FOHM9CmhZGAilqGGwa7GZS6cpy6SoJ
-         rcOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756905746; x=1757510546;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+3/FvEb2tmp04THrfe7Q6R4Z9tV9DSLFC8M+VKKCGW8=;
-        b=Jn4IQSbYD1i2jEdi0zCNTs81BI/XD4695v6YsDbkrDh2htHavNDMNdt9EUxxvwWX/c
-         bPJqUGG+4DVaF5S1/awwjtDUIjYxicWXwY/+rsJzMLO5gWaWrznOlovQwAhFBFq3N8lc
-         95MFwyN6dLLv5ejOT2TEP6L4bhEqCbc+EeMUpisyDOe2ANu/GgwRtfXWxz0+fDQNypbX
-         7dpNsvkZPaExR1vhQnYKUDRuDkjU+ZWYBFh3XnPvhtmvsr/4k2VRSHwyRmXj56g7R+zh
-         DXxp64vgm8kd3keYVAqqrLQZFOwKo3c6fBJ1FjXHk4xFZCOfomOdkjnLijzye3w8ad1g
-         nXzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBZ+kI9W5oCdTikVbEm1zBZydSXWJLcA9p2sqoAJgJUWO57tX9oo6GOiKsoBoaFMzLevDCcqi9jSe54ys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO7DNb4VRpBck8PxTXkF3xMwAFnIjKFQCcfqf+j03rsh+tePkB
-	q7ESO3y4rEe0TsXZikl8KKzHav8v/mAUvb/qkRaTM+/c0IJJVDf66/Cwlp5IwtCRuTC83xMjqSM
-	ix5bmvCnh23EcFo4feUUk8dN5lCM1uJKWvXxtoTk=
-X-Gm-Gg: ASbGncuRkEIbdz23bF25g57PX8eGgH4N6V5O0Xhzw984O0qilCUCmSD1BiKXLY5oM1Z
-	JSTW9pa+wxSI5cFPEKeCRw1eT1UXqSJxTOi7khAWiIXzUOU4psgyPy8GkLLFJR9mr3j1SgxFKG3
-	k+mbBh8rMPEYOIuDVLocCO1r9o7hPLC0IxkoFMhn1byiBXUvOlMkXih31515q4mQfgf6fVupzoJ
-	oK9kRpT
-X-Google-Smtp-Source: AGHT+IHTlltZP/PiYSefk4BiHHXMLghkkMyukGhjP2TxeCsHmSWWTRuInnnO1putZr6sen4D8zESFOr8o1LvNPk4oE8=
-X-Received: by 2002:a05:600c:c8f:b0:45b:7ce0:fb98 with SMTP id
- 5b1f17b1804b1-45b85528677mr134028325e9.5.1756905745452; Wed, 03 Sep 2025
- 06:22:25 -0700 (PDT)
+	s=arc-20240116; t=1756905847; c=relaxed/simple;
+	bh=jzIteg6avMtpEuBBHIFZYlXNRMKt8IW7AEhql563AnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q1ubRD82FMnHbuWQ70V0iha04MXpY5bXMBKeFB7YlsMp3V1Ysb7WdiM+kwMSTk6BbW9RvK55KXgm0G7+4101/ZaJER5DPwrT6gX9uxx63v0TqzA/yM01c5CDB4cXU0HziY4uVFPtczkZAm5Ao8w839J9LE0V+kkG6Lf8QN/6J40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AveaWb2x; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756905845;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jzIteg6avMtpEuBBHIFZYlXNRMKt8IW7AEhql563AnA=;
+	b=AveaWb2xnlCQEGEfWARTfhVUhazHCABxUsI2lxJBb+ktt/JgFMcR2aXTxS0JmFVaIq67UZ
+	cpNhZl7Oa/rxic1jr/ekfaS14ThF6kbL/KuR0BXLv+CcNxcq5dLEe2koXQky4N5Nsp7qqR
+	SU+PuLnaIPFFGNUyHu+JKqhCukiinFI=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-353-rYNH-XEqPi2Wy7BrFLnPAA-1; Wed,
+ 03 Sep 2025 09:24:01 -0400
+X-MC-Unique: rYNH-XEqPi2Wy7BrFLnPAA-1
+X-Mimecast-MFC-AGG-ID: rYNH-XEqPi2Wy7BrFLnPAA_1756905835
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8DC6C180035C;
+	Wed,  3 Sep 2025 13:23:55 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.52])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B313E1955F19;
+	Wed,  3 Sep 2025 13:23:50 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  3 Sep 2025 15:22:33 +0200 (CEST)
+Date: Wed, 3 Sep 2025 15:22:27 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH perf/core 03/11] perf: Add support to attach standard
+ unique uprobe
+Message-ID: <20250903132226.GE18799@redhat.com>
+References: <20250902143504.1224726-1-jolsa@kernel.org>
+ <20250902143504.1224726-4-jolsa@kernel.org>
+ <20250903115912.GD18799@redhat.com>
+ <aLg8lLgHdBhNeaOf@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820053459.164825-1-bhe@redhat.com>
-In-Reply-To: <20250820053459.164825-1-bhe@redhat.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Wed, 3 Sep 2025 15:22:14 +0200
-X-Gm-Features: Ac12FXx6JqZw2o7u1Ppz_iF81kfxsSp5T4xMMmvHYDtA-FZpsjtY5aXsfqZMrYM
-Message-ID: <CA+fCnZdfv+D7sfRtWgbbFAmWExggzC2by8sDaK7hXfTS7viY8w@mail.gmail.com>
-Subject: Re: [PATCH v3 00/12] mm/kasan: make kasan=on|off work for all three modes
-To: Baoquan He <bhe@redhat.com>, glider@google.com, dvyukov@google.com, elver@google.com
-Cc: linux-mm@kvack.org, ryabinin.a.a@gmail.com, vincenzo.frascino@arm.com, 
-	akpm@linux-foundation.org, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org, sj@kernel.org, 
-	lorenzo.stoakes@oracle.com, snovitoll@gmail.com, christophe.leroy@csgroup.eu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLg8lLgHdBhNeaOf@krava>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Wed, Aug 20, 2025 at 7:35=E2=80=AFAM Baoquan He <bhe@redhat.com> wrote:
+On 09/03, Jiri Olsa wrote:
 >
-> Currently only hw_tags mode of kasan can be enabled or disabled with
-> kernel parameter kasan=3Don|off for built kernel. For kasan generic and
-> sw_tags mode, there's no way to disable them once kernel is built.
-> This is not convenient sometime, e.g in system kdump is configured.
-> When the 1st kernel has KASAN enabled and crash triggered to switch to
-> kdump kernel, the generic or sw_tags mode will cost much extra memory
-> for kasan shadow while in fact it's meaningless to have kasan in kdump
-> kernel.
+> On Wed, Sep 03, 2025 at 01:59:13PM +0200, Oleg Nesterov wrote:
+> >
+> > I am wondering why (with or without this change) perf_uprobe_init() needs
+> > the additional arguments besides "event". It can look at event->attr.config
+> > itself?
+> >
+> > Same for perf_kprobe_init()...
 >
-> So this patchset moves the kasan=3Don|off out of hw_tags scope and into
-> common code to make it visible in generic and sw_tags mode too. Then we
-> can add kasan=3Doff in kdump kernel to reduce the unneeded meomry cost fo=
-r
-> kasan.
+> I think that's because we define enum perf_probe_config together
+> with PMU_FORMAT_ATTRs and code for attr->config parsing, which
+> makes sense to me
 
-Continuing the discussion on the previous version: so the unwanted
-extra memory usage is caused by the shadow memory for vmalloc
-allocations (as they get freed lazily)? This needs to be explained in
-the commit message.
+Ah, and "enum perf_probe_config" is not exported...
 
-If so, would it help if we make the kasan.vmalloc command-line
-parameter work with the non-HW_TAGS modes (and make it do the same
-thing as disabling CONFIG_KASAN_VMALLOC)?
+Thanks, please forget then.
 
-What I don't like about introducing kasan=3Doff for non-HW_TAGS modes is
-that this parameter does not actually disable KASAN. It just
-suppresses KASAN code for mapping proper shadow memory. But the
-compiler-added instrumentation is still executing (and I suspect this
-might break the inline instrumentation mode).
+Oleg.
 
-Perhaps, we could instead add a new kasan.shadow=3Don/off parameter to
-make it more explicit that KASAN is not off, it's just that it stops
-mapping shadow memory.
-
-Dmitry, Alexander, Marco, do you have any opinion on kasan=3Doff for
-non-HW_TAGS modes?
-
-On a side note, this series will need to be rebased onto Sabyrzhan's
-patches [1] - those are close to being ready. But perhaps let's wait
-for v7 first.
-
-[1] https://lore.kernel.org/all/20250810125746.1105476-1-snovitoll@gmail.co=
-m/
 
