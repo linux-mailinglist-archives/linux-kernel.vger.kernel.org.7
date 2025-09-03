@@ -1,35 +1,36 @@
-Return-Path: <linux-kernel+bounces-798754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 637C2B4227E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:52:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A54B1B42281
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:53:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E50971BA86B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:53:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA4448736F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6230330DD31;
-	Wed,  3 Sep 2025 13:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B220930DEB4;
+	Wed,  3 Sep 2025 13:53:30 +0000 (UTC)
 Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD5B2FCBE5;
-	Wed,  3 Sep 2025 13:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD2A2EC570;
+	Wed,  3 Sep 2025 13:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756907556; cv=none; b=p8xUGeYc5ki/Y4mYHj4fs1izZV8P9F0I6MMqgGiRS6X2+Y2j2J6ffq5rZ6T3YIF0B/UIRheyDdQf14NRjOM0AvlJW2CwvezkpXjbx55EaKbliQRSuSHKiT7kfqZVmBSClujZHWHAKZBcX91iV2mZ9yJDSzSfaSkfH5w9uANSWfU=
+	t=1756907610; cv=none; b=JcDYMURjY+fFAC2eXhOadyJ9ZZYZZhkEAY1L/IpZ/MqvTYD2eiFj6Hq5HLLzbFxlWnawQ6Prp1ve9rDu+LnsicCMrGe8yRrbprg0TEU5V0U8zZMjUoiEjzVqedNQbOBfI1lqgpMcZS6M1vwaM7YyCeMgVongkCC+O5Lq93skNYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756907556; c=relaxed/simple;
+	s=arc-20240116; t=1756907610; c=relaxed/simple;
 	bh=lsfdW4D9gXb/VXmAPKoFZQs/ypqu6RtwOHYa6Kd2x/8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hhxL90KRviKuh64E7/QLBqjVJtdOlPrc6/VXwZqixfKNWTVwaCHN5e7oiiuHuY1fngGpDmUAZWGUGSwNw1Hm4LK52tlLAl38zGzbe9HzHfHGSpwML+9r75WTwfzgeMVPTLFEZfMD+ZnOaWMg1pF8C1WvqN49ZbHkP98qq3RByuQ=
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=o5lVLHRDgaG+EDDaDzOMukkB3jXWQNP9RP7BEht1w0Se0hOeVuxWkZxE94b5tHVuDpbxsOsylw4rRGZQJizY1889C8tt7Nb0RDSdLDzsoBDjbO5LHLyN/Ui8ekuDKtnntPEW52Ysavl+aHfBcdFpy5ImCtlbl4blJ+n66dyBc50=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
 Received: from 7cf34ddaca59.ant.amazon.com (unknown [IPv6:2a01:e0a:3e8:c0d0:f888:35a:53a4:66b4])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 15C72421AE;
-	Wed,  3 Sep 2025 13:52:26 +0000 (UTC)
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id D6B88405A2;
+	Wed,  3 Sep 2025 13:53:25 +0000 (UTC)
 Authentication-Results: Plesk;
 	spf=pass (sender IP is 2a01:e0a:3e8:c0d0:f888:35a:53a4:66b4) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=7cf34ddaca59.ant.amazon.com
 Received-SPF: pass (Plesk: connection is authenticated)
@@ -54,9 +55,11 @@ Cc: andrii@kernel.org,
 	Arnaud Lecomte <contact@arnaud-lcm.com>
 Subject: [PATCH bpf-next v6 1/2] bpf: refactor max_depth computation in
  bpf_get_stack()
-Date: Wed,  3 Sep 2025 15:52:22 +0200
-Message-Id: <20250903135222.97604-1-contact@arnaud-lcm.com>
+Date: Wed,  3 Sep 2025 15:53:23 +0200
+Message-Id: <20250903135323.97847-1-contact@arnaud-lcm.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250903135222.97604-1-contact@arnaud-lcm.com>
+References: <20250903135222.97604-1-contact@arnaud-lcm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,7 +67,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175690754669.27234.17859007852092031063@Plesk>
+X-PPP-Message-ID: <175690760649.28174.2302454827272099020@Plesk>
 X-PPP-Vhost: arnaud-lcm.com
 
 A new helper function stack_map_calculate_max_depth() that
