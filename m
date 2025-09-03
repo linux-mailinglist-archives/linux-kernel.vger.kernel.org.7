@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-797689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F8AB4139F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:43:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F31EB413A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CA5068014B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:43:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EE7C7A1672
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5472D46B6;
-	Wed,  3 Sep 2025 04:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCA92D46AC;
+	Wed,  3 Sep 2025 04:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjFXhU0c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yd18gZvb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90F22D3EF6;
-	Wed,  3 Sep 2025 04:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAE02D3EEA;
+	Wed,  3 Sep 2025 04:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756874579; cv=none; b=RyRMmx+RYwWNTxF2fVaInkns8fb+YyFimaS9G6pdWIf+LMQsTzb0zVH3Z9Eoe3goWtZSbCLWanmpO9bYMnNtCjSGiBvj2eN84f3EBEwZnEytYCBcpJ2OaS1V9z+tk3QGfinV0NKtwzFBUO0geY1aUT6Q3dk5ofZIePF49O/BlT0=
+	t=1756874609; cv=none; b=Vq/MKXAPlPX1OoS4VU1Diba4ZviEZuHNt+e+lKhv7FLjCA7nPRgMCjoJS6xnRMXT8FHOpLbY625xTZXIfqfPF4weh3Cr0v9vuRoWQjnZozgDyQApa3gQ24g6kB2BwgE4jInX21nVczWzwzh9U5KXeaPKhyTloi9NKFTVvLS55p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756874579; c=relaxed/simple;
-	bh=aWz5MDl+vUp3tC2LaOmVwlwThf5DJzTm0+LvRWNW0BU=;
+	s=arc-20240116; t=1756874609; c=relaxed/simple;
+	bh=kKlPpwYXj/FU8DbfmlUchGL3G72piEGC7w1RbGsV98M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HoyiMtgQL2/zhKYyD1ISj7WBvpfa6YSAF6spdP+sc9AVb1VXCUvT9oeFn0yZRRG7uuYFUiEdaEMN8lMIsD1lfsthHaOIObFSLK1t+VvO+MvhSE4XJjW1sOxG6F4mgTvITGbh19vfE1aE1HtED8h1DPm8GznYrbzzOxuQdOcvWGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjFXhU0c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC1AC4CEF0;
-	Wed,  3 Sep 2025 04:42:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756874579;
-	bh=aWz5MDl+vUp3tC2LaOmVwlwThf5DJzTm0+LvRWNW0BU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CjFXhU0cO5IsSRZTwXpbGzZrNsCGG3WbO57KNfS3fpMcQ6VCmn0L76qI2+Scs931C
-	 kMMPcYyiw3RPL6gj0gkM/dfrL+33sX9He6/18ykz5xBTZp7QVg1PYJ3ELRLitwB/qE
-	 8ctu6g6/+eo+OsuoggDLPxRpR0NgJz7HjpiHNKqOj2ts8se92yJitpiEF9w/AnQkiv
-	 WyVAgHzzJqKqNOhe4e8IKfqWXaALmAuzlXRif9C8UM5S4oBeGeDLTVp4CBCiIh2zQ4
-	 ewx0NUjbKG+3psobCjDMIdr2unEij/Y3e1gImlSEGCn3ksoyJ5CoOHim7SDgk2oAZ4
-	 X8goCEB0EbShA==
-Message-ID: <4e3d62bb-11de-4538-a244-251bd7d0d52e@kernel.org>
-Date: Tue, 2 Sep 2025 23:42:57 -0500
+	 In-Reply-To:Content-Type; b=iCrhF9yay+H+40jp3GDaNbA35lt6frb17LeKqA0pY0KgulUG5KXjPyCPR9ZrC8OAAEz2RLRTWIUkAE0baOYJ1Ig7niszRr/KY/Fq0dkdZP8a0wd64y4wGfJI1dh+TtkHH3CmIe+xO+o0llowcdo2mE5cT71Zet4IP0CEW+YU4tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yd18gZvb; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756874607; x=1788410607;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=kKlPpwYXj/FU8DbfmlUchGL3G72piEGC7w1RbGsV98M=;
+  b=Yd18gZvbFGU2yGRBshCgcpi44r/rr8yjy5cVOZ6Xr2eBno5Sf+Y+WYA/
+   iIFIv9MDqFrxIZWB8+kMzFwb+eSvhmcwfbA3m2WQvXWYJ2V1Vw6+PUg70
+   oBkNLhNVtgHdFgrEa4pINmM6OuFqrxW8deO2j4sP6z4cHScY+Ye0yOBhh
+   S+2MxIN4xybiRX3zhUTsofjh5+MlQr3Hra83I0rLDco1S0UFostcbe+qV
+   ydUYXrNzWFqGhdcz6WQUWDlRm8PvczRpLk2zq0+EtaqWm9xYlwMs1+c+m
+   LLpUb35nwgFlDjhX/R94407HnMsT+m7xuoNTq8Sd1+rdZASf3osr/h6Uf
+   Q==;
+X-CSE-ConnectionGUID: lhUS0+MCTaS7pBDRWf8mhA==
+X-CSE-MsgGUID: 0NhzJO2BQdqbqR5qMB3Tew==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63010671"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63010671"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 21:43:26 -0700
+X-CSE-ConnectionGUID: 9XCavLGVQbS/An0CGJq/2A==
+X-CSE-MsgGUID: X6dvOUlqQMCKj1HFPmoZeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="195120614"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 21:43:24 -0700
+Message-ID: <76499c2e-8ca9-4e5f-9a34-96eec19a5f6d@intel.com>
+Date: Wed, 3 Sep 2025 12:43:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,98 +66,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 0/4] Adjust fbcon console device detection
-To: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
- Daniel Dadap <ddadap@nvidia.com>
-References: <20250811162606.587759-1-superm1@kernel.org>
+Subject: Re: [PATCH v3 4/6] KVM: x86: Add support for RDMSR/WRMSRNS w/
+ immediate on Intel
+To: Sean Christopherson <seanjc@google.com>
+Cc: Xin Li <xin@zytor.com>, Binbin Wu <binbin.wu@linux.intel.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>
+References: <20250805202224.1475590-1-seanjc@google.com>
+ <20250805202224.1475590-5-seanjc@google.com>
+ <424e2aaa-04df-4c7e-a7f9-c95f554bd847@intel.com>
+ <849dd787-8821-41f1-8eef-26ede3032d90@linux.intel.com>
+ <c4bc61da-c42c-453d-b484-f970b99cb616@zytor.com>
+ <fbdcca61-e9c4-47fc-b629-7a46ad35cd24@intel.com>
+ <aLcEMCMDRCEZnmdH@google.com>
 Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20250811162606.587759-1-superm1@kernel.org>
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <aLcEMCMDRCEZnmdH@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/11/2025 11:26 AM, Mario Limonciello (AMD) wrote:
-> Systems with more than one GPU userspace doesn't know which one to be
-> used to treat as primary.  The concept of primary is important to be
-> able to decide which GPU is used for display and  which is used for
-> rendering.  If it's guessed wrong then both GPUs will be kept awake
-> burning a lot of power.
+On 9/2/2025 10:50 PM, Sean Christopherson wrote:
+> On Mon, Sep 01, 2025, Xiaoyao Li wrote:
+>> On 9/1/2025 3:04 PM, Xin Li wrote:
+>>> On 8/31/2025 11:34 PM, Binbin Wu wrote:
+>>>>> We need to inject #UD for !guest_cpu_has(X86_FEATURE_MSR_IMM)
+>>>>>
+>>>>
+>>>> Indeed.
+>>>
+>>> Good catch!
+>>>
+>>>>
+>>>> There is a virtualization hole of this feature for the accesses to the
+>>>> MSRs not intercepted. IIUIC, there is no other control in VMX for this
+>>>> feature. If the feature is supported in hardware, the guest will succeed
+>>>> when it accesses to the MSRs not intercepted even when the feature is not
+>>>> exposed to the guest, but the guest will get #UD when access to the MSRs
+>>>> intercepted if KVM injects #UD.
+>>>
+>>> hpa mentioned this when I just started the work.  But I managed to forget
+>>> it later... Sigh!
+>>>
+>>>>
+>>>> But I guess this is the guest's fault by not following the CPUID,
+>>>> KVM should
+>>>> still follow the spec?
+>>>
+>>> I think we should still inject #UD when a MSR is intercepted by KVM.
 > 
-> Historically it would use the "boot_vga" attribute but this isn't
-> present on modern GPUs.
-> 
-> This series started out as changes to VGA arbiter to try to handle a case
-> of a system with 2 GPUs that are not VGA devices and avoid changes to
-> userspace.  This was discussed but decided not to overload the VGA arbiter
-> for non VGA devices.
-> 
-> Instead move the x86 specific detection of framebuffer resources into x86
-> specific code that the fbcon can use to properly identify the primary
-> device. This code is still called from the VGA arbiter, and the logic does
-> not change there. To avoid regression default to VGA arbiter and only fall
-> back to looking up with x86 specific detection method.
-> 
-> In order for userspace to also be able to discover which device was the
-> primary video display device create a new sysfs file 'boot_display'.
-> 
-> A matching userspace implementation for this file is available here:
-> Link: https://gitlab.freedesktop.org/xorg/lib/libpciaccess/-/merge_requests/39
-> Link: https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2038
-> 
-> Dave Airlie has been pinged for a comment on this approach.
-> Dave had suggested in the past [1]:
-> 
-> "
->   But yes if that doesn't work, then maybe we need to make the boot_vga
->   flag mean boot_display_gpu, and fix it in the kernel
-> "
-> 
-> This was one of the approached tried in earlier revisions and it was
-> rejected in favor of creating a new sysfs file (which is what this
-> version does).
-> 
-> As the dependendent symbols are in 6.17-rc1 this can merge through
-> drm-misc-next.
-> 
-> Link: https://gitlab.freedesktop.org/xorg/lib/libpciaccess/-/merge_requests/37#note_2938602 [1]
-> 
-> ---
-> v10:
->   * Add patches that didn't merge to v6.17-rc1 in
->   * Move sysfs file to drm ownership
-> 
-> Mario Limonciello (AMD) (4):
->    Fix access to video_is_primary_device() when compiled without
->      CONFIG_VIDEO
->    PCI/VGA: Replace vga_is_firmware_default() with a screen info check
->    fbcon: Use screen info to find primary device
->    DRM: Add a new 'boot_display' attribute
-> 
->   Documentation/ABI/testing/sysfs-class-drm |  8 +++++
->   arch/parisc/include/asm/video.h           |  2 +-
->   arch/sparc/include/asm/video.h            |  2 ++
->   arch/x86/include/asm/video.h              |  2 ++
->   arch/x86/video/video-common.c             | 25 +++++++++++++-
->   drivers/gpu/drm/drm_sysfs.c               | 41 +++++++++++++++++++++++
->   drivers/pci/vgaarb.c                      | 31 +++--------------
->   7 files changed, 83 insertions(+), 28 deletions(-)
->   create mode 100644 Documentation/ABI/testing/sysfs-class-drm
-> 
-> 
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> Hmm, no, inconsistent behavior (from the guest's perspective) is likely worse
+> than eating with the virtualization hole.  
 
-Bjorn,
+Then could we document this design decision somewhere?
 
-Any feedback for this series?
+I believe people won't stop wondering why not inject #UD when no guest 
+CPUID, when reading the code.
 
-Thanks,
+> Practically speaking, the only guest
+> that's going to be surprised by the hole is a guest that's fuzzing opcodes, and
+> a guest that's fuzzing opcodes at CPL0 isn't is going to create an inherently
+> unstable environment no matter what.
+> 
+> Though that raises the question of whether or not KVM should emulate WRMSRNS and
+> whatever the official name for the "RDMSR with immediate" instruction is (I can't
+> find it in the SDM).  
+
+do you mean because guest might be able to use immediate form of MSR 
+access even if the CPUID doesn't advertise it, should KVM emulate it on 
+platform doesn't support it, to make sure immediate form of MSR access 
+is always supported?
+
+> I'm leaning "no", because outside of forced emulation, KVM
+> should only "need" to emulate the instructions if Unrestricted Guest is disabled,
+> the instructions should only be supported on CPUs with unrestricted guest, there's
+> no sane reason (other than testing) to run a guest without Unrestricted Guest,
+> and using the instructions in Big RM would be quite bizarre.  On the other hand,
+> adding emulation support should be quite easy...
+> 
+> Side topic, does RDMSRLIST have any VMX controls?
+> 
+>> For handle_wrmsr_imm(), it seems we need to check
+>> guest_cpu_cap_has(X86_FEATURE_WRMSRNS) as well, since immediate form of MSR
+>> write is only supported on WRMSRNS instruction.
+>>
+>> It leads to another topic, do we need to bother checking the opcode of the
+>> instruction on EXIT_REASON_MSR_WRITE and inject #UD when it is WRMSRNS
+>> instuction and !guest_cpu_cap_has(X86_FEATURE_WRMSRNS)?
+>>
+>> WRMSRNS has virtualization hole as well, but KVM at least can emulate the
+>> architectural behavior when the write on MSRs are not pass through.
 
 
