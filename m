@@ -1,133 +1,110 @@
-Return-Path: <linux-kernel+bounces-799542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC71B42D5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:27:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C86B42D60
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 398D77C5045
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:27:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FD421BC6F42
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDF62ED17C;
-	Wed,  3 Sep 2025 23:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801112ED17C;
+	Wed,  3 Sep 2025 23:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eop4KtGu"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ldlah4M3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A601B27146A;
-	Wed,  3 Sep 2025 23:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58731459F7;
+	Wed,  3 Sep 2025 23:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756942039; cv=none; b=NJd3+4lUpRMmlIJHTrrQ9vrT/64DAbGQZuUAbYbjnD9oOdLzy/k5ShS5PPTQXMd4vw0kzRSybOcXahJR7MMqDcbvIgZN6iSkdp6MD329LCZT5ONWbDWNyfrlRxY2bkBEOAT9ZIHEiACy7xpgUkDQhx1kO8QxagKkqpTd1Slw+IA=
+	t=1756942064; cv=none; b=pxh/C4ogpp/TQEzAFown9/9HsbDqaveH0GkMo66d6ZwLWDLBFFt7TgkTbqJGrWgCiaaY7sM91fowMgB1JGHqMDgSG4z9W9OirMu7hGcasOPCLvZb4aOWxlUSlLvqmE0qiETDrm5mtlw0q39pWptRxhh5FZg1C1xfl2OYIvwbk3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756942039; c=relaxed/simple;
-	bh=agSZSZe+tQVZN8rhVQvwRsToQCPpFg14KIdGBgQcrtA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qCJxMXh7YlfAO0sQNoKXpuOCbCVpxC42ORib+LCj8XIrgzK1Tt5AeuL7ZCcBfs4YIlI3M/EmrqcXsXCOTTnwvPRNdive9ezZXI716XQbkukye/gVD+u9IpbIgbuT2cUtlCSHx9z7ZA4d2zOJsyeMAnoZXjCWsd8WwPbO9vElLwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eop4KtGu; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-248f2da72edso715755ad.2;
-        Wed, 03 Sep 2025 16:27:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756942036; x=1757546836; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=agSZSZe+tQVZN8rhVQvwRsToQCPpFg14KIdGBgQcrtA=;
-        b=eop4KtGumZHYT8GIYnOX77iqoFnbZZg44Y/ySZ3LHOgba7h23uZXSJYALSX10KB3i8
-         KXBbKrCM9zabW3sMI3/6vxjTJadHxIsp65ufvChQ+vb3NMceZK2u+F2D5Ndj1T5ZgpTb
-         uvNMLUHMldnhPzr6tgfXzdVcOWLOtUstMNk09MiHT+2OM1RgxTrSTji6c3+M3joNkpX3
-         JRpLUlIDoGskI861rYQRH5Cy5F0/AWQP2llLoWQBLNK4DpVyXbBW5UiIAfl27EnNedQq
-         +SGA4jIk3B5sMXvdwf+JLAnm/Ccl5QM39mr1L/xIEo3MxOiOSkJ5AbFVlR/c4ZNcQAjz
-         JdgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756942036; x=1757546836;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=agSZSZe+tQVZN8rhVQvwRsToQCPpFg14KIdGBgQcrtA=;
-        b=SfviyHCf5DqIMC5gYyOvLkHpxB0PG+l8sg3L/k6Rtqy1eGhQT78CNpIueXSrgyE1gc
-         pmjNy5gV1o7OoAmDCgGTXPVqJznPQ1KyuheGGhJFGetUBv4ncG+kA/SUAhr1YBSQRT4A
-         383b7ndFnKhctYggptEh00qNQLaiX6pa2a1QljGkyTpKMLThCYFaQ41fsnFOjOcix9eZ
-         q1vtyb399aAK4gioqLLXFbtwS1yihhM0COrmu6v3/jVseDaGeUrv+CqLm4Xpfo6swK/P
-         FNDkUbuSOoKYQ/MWtE1/DF9EM3JMNaLL4/nFinU29Ay1PsDI2H9aFg1toClglkORQZN6
-         nviw==
-X-Forwarded-Encrypted: i=1; AJvYcCUj9INyaBcivVUovcYOZtJLUE06YzjkL3x4nriswKo5hIbN+YHH6yu2UuOOMyv4MrjfOlS6PcDHmdUfbIbTSAE=@vger.kernel.org, AJvYcCVT6OrA1WRR+pdBwPRI+T9AKzRuoOIKCb2dKmYn/1zzs2u1/x0pdWkPuew4W+TxLuLGwPoXHgtVWrY=@vger.kernel.org, AJvYcCWgwSSQ5EpgE2W1mGjQ+j9ozka2vOl6ZyoTagNx56Ojs55dGEIWBclTyGQzFCNz1kaxa7r365YLBWfsUMPm@vger.kernel.org, AJvYcCXsV8q4kQFaZJsrI4WuhCd3mS5bhmTBmBNf5G3w9K3ycIJs2wvIfISchrBLOlJGo8KUYiG73vH0hq0VN0R2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4sOb9xThWniDpJ1N7kTM0GgBCXco3Odg1suuuWkdes3i7BS8C
-	bXmyGsVbCFVnTs9ta6WbtF80QydrslkxO6mqG4j/zG16fZ0JIte1gBl+VHqz5fBbSkMvOusclAR
-	few6wt2lVBOCnel/vPeXNRdPF+veDvvg=
-X-Gm-Gg: ASbGncvIo73J97VvqUPn1pBf8mlXUvg4R1JzrgA2mG8i1kKFRQaqp9UjKyHehbLBGwE
-	lJ59Z8jxWgt/3VKwBhEHwc6fnmWb6MR13wsdDnAD2bn4mk+Dg4zVFP1qMVsLWEChmXdfUSf9CFo
-	DXZg/Lh9VOljnQIzdKW0AdD6Ng/JbsadUcjgWguWqy1CqyADgmnBcau8CGJIigvYvvLkd01b+iv
-	wZgbCzEjptVbVZ2Ens1bgBfzX4QSiylRR6NOdBn0nf54FntBFwU+/kJcRNn3JxhwSuqU8im9YjJ
-	S6lNGAy1MklAgSPGNRcyq0zGhS7k/sDcp4ze
-X-Google-Smtp-Source: AGHT+IHTidnBVrl9x28IZyAbFtRyk1faHWra3cfcqzPBbplLrvafS2wCVDCjldwrmyF+S5C53slJRXjDIWwmfw6CDg4=
-X-Received: by 2002:a17:90b:4a8c:b0:329:cc8e:247c with SMTP id
- 98e67ed59e1d1-329cc8e278cmr7164799a91.8.1756942035722; Wed, 03 Sep 2025
- 16:27:15 -0700 (PDT)
+	s=arc-20240116; t=1756942064; c=relaxed/simple;
+	bh=AEj1ut4nnqnWq24GOBtJDcvtfSaWbvakcSXdhfDlddc=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=sqW20m9uOUWDwJLgHFLg+toC4Kl9OMv0P2oCPf4bMFbt6jamrFzYiaQ+gxR1Awwc20/cpbAvfRt8jQUx+snLIssk2rJEOBe9NOVErv+jaq1oO3/wQO+jXx34Mk1QEoyHsFK0ddLXQ3nqcXSFE9L1Ed8XhUAZT4KH05SR7QljNd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ldlah4M3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18FE8C4CEE7;
+	Wed,  3 Sep 2025 23:27:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756942064;
+	bh=AEj1ut4nnqnWq24GOBtJDcvtfSaWbvakcSXdhfDlddc=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Ldlah4M3xYRMQ13HGwDjqjTnbdq1rH2Hf83aVgmMBJE2e8SBpBNadUH74xRZY+n2Q
+	 naR8MdrqP1CJVqRxVjpaPUC+zz3b5qovCMnK8sC1Rh2LgjoVSuEcfOd+0bk8lvE4ir
+	 IkMSbVk+DoWBx8Si/PCGMy8mfXyVKclVwdASCUvZgZcy3LStrtBOtEZwv0Ewoq3r4H
+	 VMhHkGCmIz3qFTZcdN1yenEcvyW/M6mTjUpTsrO2IaITxcsUiHygyI6dCSoCJ17s2X
+	 mnPFQQLu+hdhlYQVZ4G/59Llwy+MHfG+V/djLSD45qIVp3iCNAXQ8vOhSsrl/HA1m/
+	 ppZf8LnETO2yQ==
+Date: Wed, 03 Sep 2025 18:27:42 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250830-cheesy-prone-ee5fae406c22@spud> <20250903190806.2604757-1-SpriteOvO@gmail.com>
- <20250903190806.2604757-2-SpriteOvO@gmail.com>
-In-Reply-To: <20250903190806.2604757-2-SpriteOvO@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 4 Sep 2025 01:27:03 +0200
-X-Gm-Features: Ac12FXzLAKLE3bvYxnCEro37dgST78_dgCYHlfdxLKDH7Bk_32DLgZHXXdMAE08
-Message-ID: <CANiq72=FJSRwOPNG4ZFeoex3MssTjmhozp5Xd++PTCCSJaJ3hA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] RISC-V: re-enable gcc + rust builds
-To: Asuna Yang <spriteovo@gmail.com>
-Cc: Conor Dooley <conor@kernel.org>, Jason Montleon <jmontleo@redhat.com>, 
-	Han Gao <rabenda.cn@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Tejun Heo <tj@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Matthew Maurer <mmaurer@google.com>, Jeff Xu <jeffxu@chromium.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jan Hendrik Farr <kernel@jfarr.cc>, 
-	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Christian Brauner <brauner@kernel.org>, Brian Gerst <brgerst@gmail.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kbuild@vger.kernel.org, llvm@lists.linux.dev, 
-	rust-for-linux <rust-for-linux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, 
+ Guenter Roeck <linux@roeck-us.net>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>
+To: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+In-Reply-To: <20250903-gunyah_watchdog-v1-1-3ae690530e4b@oss.qualcomm.com>
+References: <20250903-gunyah_watchdog-v1-0-3ae690530e4b@oss.qualcomm.com>
+ <20250903-gunyah_watchdog-v1-1-3ae690530e4b@oss.qualcomm.com>
+Message-Id: <175694204303.3260042.16528672909501752752.robh@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: Add binding for gunyah watchdog
 
-On Wed, Sep 3, 2025 at 9:08=E2=80=AFPM Asuna Yang <spriteovo@gmail.com> wro=
-te:
->
-> Commit 33549fcf37ec ("RISC-V: disallow gcc + rust builds") disabled GCC
-> + Rust builds for RISC-V due to differences in extension handling
-> compared to LLVM.
->
-> Add a Kconfig non-visible symbol to ensure that all important RISC-V
-> specific flags that will be used by GCC can be correctly recognized by
-> Rust bindgen's libclang, otherwise config HAVE_RUST will not be
-> selected.
 
-I think the commit message should try to explain each the changes here
-(or to split them).
+On Wed, 03 Sep 2025 19:33:59 +0000, Hrishabh Rajput wrote:
+> The Gunyah Hypervisor applies a devicetree overlay providing the
+> pretimeout interrupt for the Gunyah Watchdog that it will be using to
+> notify watchdog's pretimeout event. Add the DT bindings that Gunyah
+> adheres to for the hypervisor and watchdog.
+> 
+> Signed-off-by: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+> ---
+>  .../bindings/watchdog/qcom,gh-watchdog.yaml        | 76 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 77 insertions(+)
+> 
 
-e.g. it doesn't mention the other config symbols added, nor the extra
-flag skipped, nor the `error` call.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Cc'ing the rust-for-linux list.
+yamllint warnings/errors:
 
-Thanks!
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/watchdog/qcom,gh-watchdog.example.dts:37.3-38.1 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/watchdog/qcom,gh-watchdog.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1519: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
 
-Cheers,
-Miguel
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250903-gunyah_watchdog-v1-1-3ae690530e4b@oss.qualcomm.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
