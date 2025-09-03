@@ -1,239 +1,153 @@
-Return-Path: <linux-kernel+bounces-798023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A4B8B41883
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:29:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1878B41887
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D4B254074F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:29:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C00E547A5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2B32EC085;
-	Wed,  3 Sep 2025 08:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DzM+dLsM"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43102ED166;
+	Wed,  3 Sep 2025 08:28:59 +0000 (UTC)
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.54.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722D52EC574
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552DA2ECEB8
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.54.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756888132; cv=none; b=fH1HxmjXxDKnwFBcHXgT/LQcosadzurNJGe/RZfRSTHGtWKwLDyu8F5gMwQmM/wbu6Njdfs/M2Lrm8EWBYNdBRuJddGg7Jr4RXoWctsAXjAXPJJI0efJ+cYTZQ5giNDrJd1QLdLPFcsUijTeQgycAMrGyuSXfnQU2GiEH9svJHg=
+	t=1756888139; cv=none; b=oz9Ix9QjdB3sDFr0NN/KiCIy/HV56pXAYRkbUsFOSZeR3fiRdWiwVE7OQHa5Gf8oRB1Et33rv7CQfvUngcq8ilI15fqRsSsALPboZCHg/MQadGd2WAsDeEHlefCjhbgiCIWMUQQdVl1pzkBliISFYh3RF6FLPYOcAW90Ge2EUW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756888132; c=relaxed/simple;
-	bh=1Wym7Nu8boFhEFpKuUAnQJFtOt+aiYW99MGI9WjtyNI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AdY89EXbtETlWzvIGmF4h48WBSJgIkDtt0IsdhVn9MUXK3h1PgOlXQsN1SfYyWHjDKKsWpzjKLeR5u3QJ/v/Ht3KVwmL5Z8uE+dIeqF+zm8zN9k51WifVWKST8MxMArUIEB9HW/rAw0EyX37EEmdOdxIXj52YImimitt01yWAJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DzM+dLsM; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24c784130e6so14178335ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:28:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756888130; x=1757492930; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XLdFeYJfsJKqx9nSy+skvh05dFulDLtOnZYFfC/PFRM=;
-        b=DzM+dLsMY90/KjFeqqt22otWyWpAjsnj1Z1JEMnzZ5d2ZFeIE9dLVflw7VHEU0HxOb
-         B+gexaodksBYEz9aI2srPCDvSgcM620lab/SBURIlJf8qUxiFWxsXaIsKPRKLm4xM2j3
-         62BeSger8wlvGPtbUy3Jst/abAtxMMEQooGT4xlwmvytu/DN56WAXbwklepE8TN8iNNY
-         dv/nw+fKjHZuLtZAh3zEEbYrRuxb4iA/mc3ESTUfjYFhMbZWYPjvzza66Wmj1KlBH52Q
-         h+juutuO5ReDRMS0JOEo/t9VJdK9tbF7KU8aGZVlnTTS7VXHkPkLvUbGHRPvWRW2f8YI
-         Plug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756888130; x=1757492930;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XLdFeYJfsJKqx9nSy+skvh05dFulDLtOnZYFfC/PFRM=;
-        b=aETgeY7sKIsT8MCmiqPVlVfHamINcf2ClJam/rMo3pALq3FSH7sdTNIw3Lz6OEth6e
-         mUf8njGSl8fzyojrT/HqH1tX/Dw83IfrLOzjWGCFiEf0ydVJsSkkx9u0FK0Id7y74+eO
-         bB538M/WoYspKAUSCUE6wkQtVyFBoyUJOYfxsGAgML/r0tA8C22ts1JukkioWpkczgDC
-         0WxKeSr1+s9CrmvOgiBha9UapMcJg5oelifMVP/fS4GDxs0/Vsyvxe0irOTNle4cNd2J
-         jfPZNLDcNOWiZn84W23QcxUGsbXD+TMpx382qd0cz8slO6cOIWFpiPdgIvZqd4SO9jJp
-         vL3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXiIfjtHuSlzU56O59OjJkw43h05B11wQ5AdZBRbKYjWMYG+bfprkWiVq9wsryx4Iet2yNOCikhVOfNbUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoSr4dah8j21buqQO6rUGCs2+S2Oq/k/Otv8ItM5nyhmFs7qNQ
-	98eTHo6Ickhl9lUz8sseylaiOZlMOUXAsRZ45XT1HyVKdUl4UExjh4KeYIfJzjUqqDXFL1RGber
-	aNF4KcZbPVuJTmWyfYJYexoXadPFQCg2EQWatiyDtkg==
-X-Gm-Gg: ASbGncufzaQdjVpYIM36rwv0+MuAZRONBJiKYVPJL7ZS/XQK3JHZO+Q2WsC6bh00cKj
-	abF7zL3J0WWsl3DHuDofdhkaFsWvvJbFEWiZ9OQvNtUPbAV6DeMC0P50nkV4Z8qIEuhZc6AXykV
-	pkLPACRYLkgWlL1OBMmANDMCFtHsU4JJvv2EYJfc4gBzgCO+Hn8g5GhOIT3wrOjpvomoUmsfUUr
-	FpC3iFAAFpCGNkx5mGkTGRorJrZWHdhlXZC2f6LgGgjgTdfN4c=
-X-Google-Smtp-Source: AGHT+IFa+3oFduUGstIxVZlUPFivKo6G2a3ngt5XNcSYKiNIJHejXq4G+jm39VsJCLYhYa1GOPB0rsCi1WwOgIqzKgQ=
-X-Received: by 2002:a17:903:987:b0:24c:180b:d103 with SMTP id
- d9443c01a7336-24c180bdb6emr52728045ad.15.1756888129560; Wed, 03 Sep 2025
- 01:28:49 -0700 (PDT)
+	s=arc-20240116; t=1756888139; c=relaxed/simple;
+	bh=NINH+7RW+iIpNTyQMVL/D0TplY6oTWE3aNOfI4gj8H8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OpXaoAxMnR65fy+ejlrAJrxHulXc6IXiq1G44Gm5wIoLWg4VQZNrlwwwVfiUDNF3pkVe1TSo0QxXVO7Dwh57n5l+JxkpIzgi2Tl9hh2JLFwRqQz/kJGJbIVRxeR+zAXc6Nm9nIdVdM0MsAkarCn12k/DgeAmwq+v4QiPqSkrxjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=43.154.54.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip3t1756888125t2bf0b974
+X-QQ-Originating-IP: hNMMUBWBZAMjlucA+xBTHqWVycX+g2+pxJSCJlsVS4I=
+Received: from [IPV6:240f:10b:7440:1:81b2:3bee ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 03 Sep 2025 16:28:40 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13612785056484846069
+Message-ID: <57969F385B5AF318+653dac83-8227-4987-84c6-f3e08b10085c@radxa.com>
+Date: Wed, 3 Sep 2025 17:28:39 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902131935.107897242@linuxfoundation.org>
-In-Reply-To: <20250902131935.107897242@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 3 Sep 2025 13:58:37 +0530
-X-Gm-Features: Ac12FXx9HCXftwKC32N7kq9QfFr14TNGWUGwqxvrn45DLYReD-NSj3e0oV3dW2s
-Message-ID: <CA+G9fYuKHWwz60jKchZ5cTZVt0p+kg_DLFqHchrrdkUbSCdC6w@mail.gmail.com>
-Subject: Re: [PATCH 6.6 00/75] 6.6.104-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, achill@achill.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/3] Add Radxa CM5 module and IO board dts
+To: Joseph Kogut <joseph.kogut@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Jimmy Hon <honyuenkwun@gmail.com>
+Cc: Steve deRosier <derosier@cal-sierra.com>, devicetree@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250617-rk3588s-cm5-io-dts-upstream-v5-0-8d96854a5bbd@gmail.com>
+Content-Language: en-US
+From: FUKAUMI Naoki <naoki@radxa.com>
+In-Reply-To: <20250617-rk3588s-cm5-io-dts-upstream-v5-0-8d96854a5bbd@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OEujKQTXCsr9xOLb3rsDiN5M07As5KSTMarFNZ02KICgUtoEM1FaTkSU
+	AoS/OnefB2apHcRVbSwWZqny7OF4SddNHsQdplI//V2unRW6Ob7+dmzcgUo6KXqQgl/xdEH
+	P7xjAOX2W1EnYE7oU8ZbSg9rIsAYhcFiEs4dy9zZv3HYRaojgWZ0Hefph3gIOO8Xd0jc8Ae
+	IfkrMUsvxDqS/Ml7PS6bAro1k4DpgVPISjF4ebuWXRWQs+w8EzB+Ts0A0RX92se+zceGRJV
+	SMPr4Q7DMx1tF5mjr0wtvDmKURVL2iNlW4DhhHWBJ32qLNIfDLErWJASRIdNPDZZQyYsHKi
+	DqV7TvCbrRPelofe2i8qdt1N7hMNi68Cg18Pdbt9W5IrM8LVHivWA7HU21R3Y/Olva/6Gmy
+	j1w+zloot9eT+Ut5jRf8Wv5RG82LhWNmOwJGJgHk0VrAhZlitr0fLSSuNA57c3+RHFkRv/z
+	NlFw/0O+QTCysOXAGDTRJUK6R5CnecS/WSiAvuMrQBsAj0RLJMoXUQwoGw7eiqcpMwNdaMJ
+	6jK84wDhX4GQSgJO1HgEGS4qqUy4MMEt8KXUN1e1sXJ87nQ3qU0quAlanvkcmjjk7fXEkHj
+	sq51KlogpBAJfiohbIACIQChZEjUiaGSeuWAXck8bZzTNaVvOUMMXOuRS4sqwBqVI8BgO7Q
+	b5DhD0MTgW6hhWIv3X+eacNEC81lTpS1jKqrrl/TonSkf29KsFI1pLXkXpWhXDtt95vUnaG
+	boXJwfv8vvFB31ZLKozraaiicnk7pZZzbu1dp7aGIfatTD8OnOAhAXgBlV0Hym0n/p4fAm6
+	S/4Boe+sjA47CH4JHUHRfHMMz4uB8IBX3bs3IUj9rw/5ewltQDvd/mzEu0b8fZRI//VsG5E
+	wa2scbKGoviFFRFOVJ4T/ULHfQMsAnpkygXJpGli85MRXEcV0m5zhr0RbbtZsbcN7InxjtJ
+	ejnhPg/k4b81T7SeWUQI3yPbfeSJq5VLRq8UvwHHPQwOMvDwyomIrwvtXaUlzLmf/1GbJCW
+	xcc68ynWf19xEiKL76wJNL5PGjckHwcthNRuIFtLY6CLEfXf6BCBikqjKlkYNLBPtWl9lMH
+	uXW37rjueHdk8HWpCgwgiMMUKbowDkUwQ==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-SPAM: true
+X-QQ-RECHKSPAM: 3
 
-On Tue, 2 Sept 2025 at 19:07, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.104 release.
-> There are 75 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.104-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi Joseph,
 
+I'm thinking of continuing your work, so if you've already done 
+something, please let me know.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 6.6.104-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 12cf6be144d1470c08fbb5844926e5b617dfde95
-* git describe: v6.6.103-76-g12cf6be144d1
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.1=
-03-76-g12cf6be144d1
-
-## Test Regressions (compared to v6.6.102-588-gdd454ff512a6)
-
-## Metric Regressions (compared to v6.6.102-588-gdd454ff512a6)
-
-## Test Fixes (compared to v6.6.102-588-gdd454ff512a6)
-
-## Metric Fixes (compared to v6.6.102-588-gdd454ff512a6)
-
-## Test result summary
-total: 276426, pass: 257769, fail: 6102, skip: 12184, xfail: 371
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 129 total, 129 passed, 0 failed
-* arm64: 44 total, 44 passed, 0 failed
-* i386: 23 total, 23 passed, 0 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 32 total, 31 passed, 1 failed
-* riscv: 15 total, 15 passed, 0 failed
-* s390: 14 total, 13 passed, 1 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 7 total, 7 passed, 0 failed
-* x86_64: 37 total, 36 passed, 1 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* modules
-* perf
-* rcutorture
+Best regards,
 
 --
-Linaro LKFT
-https://lkft.linaro.org
+FUKAUMI Naoki
+Radxa Computer (Shenzhen) Co., Ltd.
+
+On 6/18/25 07:11, Joseph Kogut wrote:
+> This patch series adds initial device tree support for the Radxa CM5 SoM
+> and accompanying IO board.
+> 
+> V4 -> V5:
+>    Patch (2/3), per Jimmy:
+>    - Alias eMMC to mmc0
+>    - Remove unused sdio alias
+>    - Move gmac, hdmi0 nodes to carrier board dts
+> 
+>    Patch (3/3), per Jimmy:
+>    - Enable hdmi0_sound and i2s5_8ch
+>    - Remove redundant enablement of sdhci
+>    - Enable usb_host2_xhci
+> 
+>    - Tested HDMI audio
+> 
+> V3 -> V4:
+>    - Fixed XHCI initialization bug by changing try-power-role from source
+>      to sink
+> 
+> V2 -> V3:
+>    - Addressed YAML syntax error in dt binding (per Rob)
+>    - Fixed whitespace issue in dts reported by checkpatch.pl
+>    - Split base SoM and carrier board into separate patches
+>    - Added further details about the SoM and carrier to the commit
+>      messages
+> 
+> V1 -> V2:
+>    - Added copyright header and data sheet links
+>    - Removed non-existent property
+>    - Sorted alphabetically
+>    - Removed errant whitespace
+>    - Moved status to the end of each node
+>    - Removed pinctrl-names property from leds (indicated by CHECK_DTBS)
+>    - Removed delays from gmac with internal delay
+> 
+> - Link to v4: https://lore.kernel.org/r/20250605-rk3588s-cm5-io-dts-upstream-v4-0-8445db5ca6b0@gmail.com
+> 
+> Signed-off-by: Joseph Kogut <joseph.kogut@gmail.com>
+> ---
+> Joseph Kogut (3):
+>        dt-bindings: arm: rockchip: Add Radxa CM5 IO board
+>        arm64: dts: rockchip: Add rk3588 based Radxa CM5
+>        arm64: dts: rockchip: Add support for CM5 IO carrier
+> 
+>   .../devicetree/bindings/arm/rockchip.yaml          |   7 +
+>   arch/arm64/boot/dts/rockchip/Makefile              |   1 +
+>   .../boot/dts/rockchip/rk3588s-radxa-cm5-io.dts     | 486 +++++++++++++++++++++
+>   .../arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi | 135 ++++++
+>   4 files changed, 629 insertions(+)
+> ---
+> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+> change-id: 20250605-rk3588s-cm5-io-dts-upstream-f4d1e853977e
+> 
+> Best regards,
+
 
