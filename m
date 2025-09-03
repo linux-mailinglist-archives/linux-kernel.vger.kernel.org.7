@@ -1,180 +1,218 @@
-Return-Path: <linux-kernel+bounces-797911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1833FB41715
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:45:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB80B4171A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB4E51721DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FC2818858F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2922DFA24;
-	Wed,  3 Sep 2025 07:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70362D8387;
+	Wed,  3 Sep 2025 07:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NJ0M6B6Q";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MhMJwGEg";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NJ0M6B6Q";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MhMJwGEg"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZWtjDNvd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C142DE6FC
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D492D8385
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756885548; cv=none; b=hkQRXlVJzlT6vY8wFHNvCVDTVENsSkmSdaZrWBcu7DhfWsC9yV+RkBrTmkyAY1tBdajuvpsueXfmsijdPU1hfLLkwhqZVZfHA1c8J/Jsd0orS3fMC7YR+/qkZkJhsnK2mhHDa+3CS17K9/3L0QmnFYpF+QTr8OO/1gNNexR2dEQ=
+	t=1756885611; cv=none; b=iu8ZIcihihOXexINm1ZevzoY9beJCrqDaHCGzhfYCF1NK8oc41kspVhSAE8SWj2GEzH4scI1DgzwffgS8fYV16K8tNhbsOt9t2ic0kYRmYT/2aZl3n4adz1rgp3DuX/x+0TY1jsCRGauc6OCURfhyUNGl8IqCv1OsWDOEXXc70o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756885548; c=relaxed/simple;
-	bh=qrOB/jc2ipMFC5xCGMcQrYPG3nRsbvjLKzvNHLVcvLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p6sy/W3OTrNqfjVrC++fmQQ/7rtDfC3LybGjphKcauuFnhcO0jAxq4ctcxYNB7EiZplMMT4+8r9Y+HtLWKpZGt6GehtkgzStvYqgy2CuETDfQj6R/02AUOAnVj2hUPlcPcqvt+/MhQOL0IqysPxNfLYrw6dnQVx3KRe2e12DuzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NJ0M6B6Q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MhMJwGEg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NJ0M6B6Q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MhMJwGEg; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D2E3B1F770;
-	Wed,  3 Sep 2025 07:45:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756885538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gkgerhaz5WeBghIbK/W7t7V9qWszlyPc8fhNtRJ1gdg=;
-	b=NJ0M6B6QvmyaxvYs4SpXavcchxSq0xwCKFZSIRsexxUh4yY2HHp/blxk/92tZ+ahc7BzJZ
-	iquogK0OadI/HqfTfGTwfGZ0px6+e2VB2UxOKSLF1BHjHA4TWonWa0qoh+2gsycHyFjgS+
-	GvoNv946wVl4GYNVmOka3UWI3pAGMl4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756885538;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gkgerhaz5WeBghIbK/W7t7V9qWszlyPc8fhNtRJ1gdg=;
-	b=MhMJwGEgEme0OxeQNyV6Kq1MxiB2A9YMcF0ZAfFQfgKAAET1NIyznqG8F719cbtHol3hwG
-	fms6nT8Qrg4PLXAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756885538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gkgerhaz5WeBghIbK/W7t7V9qWszlyPc8fhNtRJ1gdg=;
-	b=NJ0M6B6QvmyaxvYs4SpXavcchxSq0xwCKFZSIRsexxUh4yY2HHp/blxk/92tZ+ahc7BzJZ
-	iquogK0OadI/HqfTfGTwfGZ0px6+e2VB2UxOKSLF1BHjHA4TWonWa0qoh+2gsycHyFjgS+
-	GvoNv946wVl4GYNVmOka3UWI3pAGMl4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756885538;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gkgerhaz5WeBghIbK/W7t7V9qWszlyPc8fhNtRJ1gdg=;
-	b=MhMJwGEgEme0OxeQNyV6Kq1MxiB2A9YMcF0ZAfFQfgKAAET1NIyznqG8F719cbtHol3hwG
-	fms6nT8Qrg4PLXAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BFB6B13A31;
-	Wed,  3 Sep 2025 07:45:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rElLLiLyt2jARQAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Wed, 03 Sep 2025 07:45:38 +0000
-Date: Wed, 3 Sep 2025 09:45:38 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Daniel Wagner <wagi@kernel.org>, Keith Busch <kbusch@kernel.org>, 
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	James Smart <james.smart@broadcom.com>, Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>, 
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] nvme-fc: wait for initial connect attempt to
- finish
-Message-ID: <58813044-1e6f-4267-bd10-70cc96348ecf@flourine.local>
-References: <20250829-nvme-fc-sync-v3-0-d69c87e63aee@kernel.org>
- <20250829-nvme-fc-sync-v3-4-d69c87e63aee@kernel.org>
- <e34b522c-a492-4d86-9fbd-1a667e26d884@suse.de>
+	s=arc-20240116; t=1756885611; c=relaxed/simple;
+	bh=VohJYPQSn/qDfeZzY91QyNv1p6HI9UaC6T22BC67i5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BmyOUpmdx3bxd4eEinFXABvIq0QMik5VstcyiN4+w6/JbM55D9/G3i/sxMGP9SK11vL3aBgwwNCy6DUW25Uzu1xzoa2cfOwSRJK3BH73q7UJR+Ioa+HzPiCh/OhSYm7OEWbGGtQJkEo9MD/CgfYm+aA6lkjOADwrDNLgk3lAlzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZWtjDNvd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756885609;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=aShlhK0M5I/4dFVaTyFFcCXOwiHo3P/PmXViFObtfNA=;
+	b=ZWtjDNvd0KDnXiEQrcWgdp16KgNDXk80TIXrkaISZtnfqlAeQs5ezMKU76VxgPQWrpgYXm
+	JelOER1D76XcPcLpAa7nlcso8KVRxjd3c8X6b9VlLUI7fuIpAQ7NNmEYoYLpXjUQz9U/3X
+	JA9UvFXcPuVk6Hr96lyMlL6wQmZpZNo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-501-DqJjxesWMJarUbldZLioRA-1; Wed, 03 Sep 2025 03:46:47 -0400
+X-MC-Unique: DqJjxesWMJarUbldZLioRA-1
+X-Mimecast-MFC-AGG-ID: DqJjxesWMJarUbldZLioRA_1756885607
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b920e0c25so16217325e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 00:46:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756885606; x=1757490406;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aShlhK0M5I/4dFVaTyFFcCXOwiHo3P/PmXViFObtfNA=;
+        b=K4n128bushoISBSLIuTuM9C1XTzFpkkMoIf4rax8EFx+VzvEW2MofQLAXtzq5S+F4a
+         248gT9gotEEYncrpFy6kSr8pKSR0YJ946Jac5NVY7+gI2gWkQw1O74HDHWuLyYZe6TUq
+         JNMKm0CZe+0SAXR46iZ7oeU69YF8yfz+v/4WEryhj0e2WsB4WI82QlPrVQ+RXhy0x9y2
+         5KsUCaLWOMsewaTuHUQgJv7LgXO8SLuFmUaCOTFe5p+fqYtYJ9+UZimbyart2AP8BpQs
+         EcKL86pFdh0uE+CFtxmkZSLwU2EpSpzCYzbkMnBn0/rCd3cqXjAtPDnwlyBnmtZNV45m
+         qaQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWVlOJ78CShP/ewjmHBKr9KviqO2kWmXPxe1WgHwH8d5wp/paFzX2doPP6VNT071PCx6JCTkJ6KbuGYG5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH3mZ83zFj3B348hH2PMBU7Z05izbjNBGFK0AeAJxIrlPlK40g
+	mbNIVfffDUQqLemtxT81aLMib7FaALp3BOsLQsI5AOap0zO6ZKFc+842HxuxDFXAyNmzRQo39B9
+	tqzPKYVryzn/62bziNnbO37DlZyCuEenZYaqgD3xjtOwmUU0VPw6lBZ6MOdy/A5YTBw==
+X-Gm-Gg: ASbGncs15vGMinj00mH1IDDC/ui+bWqIf2Pb0UOuthyReAxpcDnOwc8h8zk6e6SpaKG
+	wNswxE4tqhGHE6sEvPATnO7HsxbnOJK3zURNYtvsPUV+nU+hBNAWCb2OijToNPW3n3B+9rDYorr
+	iSZqwsSXJLu/GF35LPY8hG1Bun3Ha3+i+VOhXL9F4mb2l+YeyTVm3Gfiav+rcBI1CEdbZue/o4B
+	53+ODrWnNRx1aNhCt+MKQLzry0F6swfZ/R55ILtiLSC70AUcxpcOzvPIJT5GXk0STCSAVjkE3jy
+	cRXtofVVotG98xPEiG/mUdrETDZ/Zrqr7DHRH+cg92lcYIgANTXmaTSZMWyZo18VtHNokjmgfcl
+	8N+teyEpqiyqO+Ylmfb1yJ4e9/C6HObQhFA+EcyMKDJfI86LI+QmaMYwbdCioEm+drTc=
+X-Received: by 2002:a05:600c:4f08:b0:45b:6b0f:caf3 with SMTP id 5b1f17b1804b1-45b8843e109mr99804515e9.4.1756885606516;
+        Wed, 03 Sep 2025 00:46:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHcK11Fj01Y4VYea50OLhr0MjERaXU7HBpVg+QX6sa8pEoH5KpraGIdHQTkUtzFV9er9RgALg==
+X-Received: by 2002:a05:600c:4f08:b0:45b:6b0f:caf3 with SMTP id 5b1f17b1804b1-45b8843e109mr99804165e9.4.1756885605992;
+        Wed, 03 Sep 2025 00:46:45 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f09:9c00:8173:2a94:640d:dd31? (p200300d82f099c0081732a94640ddd31.dip0.t-ipconnect.de. [2003:d8:2f09:9c00:8173:2a94:640d:dd31])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e8879cesm227680705e9.12.2025.09.03.00.46.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 00:46:45 -0700 (PDT)
+Message-ID: <b0ed22cd-ebf9-41f7-b5fb-6fb078db593e@redhat.com>
+Date: Wed, 3 Sep 2025 09:46:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e34b522c-a492-4d86-9fbd-1a667e26d884@suse.de>
-X-Spamd-Result: default: False [-8.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -8.30
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: Fix kernel stack tagging for certain configs
+To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Kees Cook <kees@kernel.org>,
+ kernel test robot <lkp@intel.com>, Dan Carpenter <dan.carpenter@linaro.org>
+References: <20250902175903.1124555-1-vishal.moola@gmail.com>
+ <f41383c3-913a-489a-82e6-d2c8d5519eed@redhat.com> <aLdOLQLjt-A1DBGi@fedora>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <aLdOLQLjt-A1DBGi@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 02, 2025 at 11:13:41AM +0200, Hannes Reinecke wrote:
-> > +	if (!opts->connect_async) {
-> > +		enum nvme_ctrl_state state;
-> > +
-> > +		wait_for_completion(&ctrl->connect_completion);
-> > +		state = nvme_ctrl_state(&ctrl->ctrl);
-> > +		nvme_fc_ctrl_put(ctrl);
-> > +
-> > +		if (state != NVME_CTRL_LIVE) {
-> > +			/* Cleanup is handled by the connect state machine */
-> > +			pr_info("%s:%d ctrl state %d\n", __func__, __LINE__, state);
-> > +			return ERR_PTR(-EIO);
+On 02.09.25 22:06, Vishal Moola (Oracle) wrote:
+> On Tue, Sep 02, 2025 at 08:23:06PM +0200, David Hildenbrand wrote:
+>> On 02.09.25 19:59, Vishal Moola (Oracle) wrote:
+>>> Commit 4ef905bda61f ("mm: tag kernel stack pages") began marking pages
+>>> that were being used for the kernel stack.
+>>>
+>>> There are 3 cases where kernel pages are allocated for kernel stacks:
+>>> CONFIG_VMAP_STACK, THREAD_SIZE >= PAGE_SIZE, THREAD_SIZE < PAGE_SIZE.
+>>> These cases use vmalloc(), alloc_pages() and kmem_cache_alloc()
+>>> respectively.
+>>>
+>>> In the first 2 cases, THREAD_SIZE / PAGE_SIZE will always be greater
+>>> than 0, and pages are tagged as expected. In the third case,
+>>> THREAD_SIZE / PAGE_SIZE evaluates to 0 and doesn't tag any pages at all.
+>>> This meant that in those configs, the stack tagging was a no-op, and led
+>>> to smatch build warnings.
+>>>
+>>> We definitely have at least 1 page we want tagged at this point, so fix
+>>> it by using a do {} while loop instead of a for loop.
+>>>
+>>> Fixes: 4ef905bda61f ("mm: tag kernel stack pages")
+>>> Reported-by: kernel test robot <lkp@intel.com>
+>>> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+>>> Closes: https://lore.kernel.org/r/202508300929.TrRovUMu-lkp@intel.com/
+>>> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+>>> ---
+>>
+>> You sent the patch on August 20 and I replied on August 21.
+>>
+>> I did not receive any reply so far.
 > 
-> We really should return the correct status (and not just -EIO).
-> Guess we'll need to introduce another variable in struct nvme_fc_ctrl
-> to hold the connect status...
-
-(forgot to remove the debug prints)
-
-But this is what the current return value is if something goes wrong.
-The other transport map all status codes to -EIO or return the negative
-error code from the function which fails. I'd rather not change this in
-this series.
-
-> >   	dev_info(ctrl->ctrl.device,
-> >   		"NVME-FC{%d}: new ctrl: NQN \"%s\", hostnqn: %s\n",
-> >   		ctrl->cnum, nvmf_ctrl_subsysnqn(&ctrl->ctrl), opts->host->nqn);
-> > @@ -3895,6 +3928,7 @@ nvme_fc_delete_controllers(struct nvme_fc_rport *rport)
-> >   		dev_warn(ctrl->ctrl.device,
-> >   			"NVME-FC{%d}: transport unloading: deleting ctrl\n",
-> >   			ctrl->cnum);
-> > +		complete(&ctrl->connect_completion);
-> >   		nvme_fc_ctrl_put(ctrl);
-> >   	}
-> >   	spin_unlock(&rport->lock);
-> > 
+> Ah sorry, I didn't mean to miss your reply.
 > 
-> And I wonder: what about the udev rules?
-> Do they need to be modified?
-> (IE: should we call udev with --connect-async or without?)
+> I can't find your reply in my inboxes so I definitely missed it somehow.
+> I'll go find it and respond.
 
-Without changing user space, the old behavior will be used. It's an
-opt-in feature. I haven't finished the libnvme/nvme-cli changes but I
-expect for getting all working the udev rules need to be modified as
-well. My plan is to get the kernel bits finished up first before
-tackling all the user bits in detail, e.g. also creating blktests for
-this (in a way we have the first one which is nvme/041)
+I had a mail server config issue on one day last month (sending 
+@redhat.com through kernel.org :) ), let me check if that was on that 
+problematic day and it might have went straight into your spam folder 
+due to dkim mismatch.
 
-I'll post those changes here as it needs wider review for sure.
+So the mailing list did not reject it:
+
+https://lore.kernel.org/all/96148baf-f008-449b-988b-ea4f07d18528@redhat.com/
+
+And yes, indeed, it was on that problemtic day, and there is:
+
+	Received: from smtp.kernel.org
+
+So, problem on my side. Willy already replied, but let me resend that mail.
+
+> 
+>> And now I realize that this patch is not upstream yet and the commit id not
+>> stable. So the Fixes/Closes etc. do not really apply.
+> 
+> Gotcha.
+
+If there are bigger changes it usually makes sense to send a v2, or a 
+simple fixup as reply to the original patch (I prefer as inline reply).
+
+Of course, once it's in mm-stable or upstream, things get more tricky :)
+
+-- 
+Cheers
+
+David / dhildenb
+
 
