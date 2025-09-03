@@ -1,367 +1,128 @@
-Return-Path: <linux-kernel+bounces-797697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B18D2B41410
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:59:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D644DB4144C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21FC6176B0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:59:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E92A3BBF0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A992D5400;
-	Wed,  3 Sep 2025 04:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHRNFLhQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D9C2D4B4E;
-	Wed,  3 Sep 2025 04:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777432D540D;
+	Wed,  3 Sep 2025 05:20:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222471C6FF6;
+	Wed,  3 Sep 2025 05:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756875499; cv=none; b=thOBBgjuXZc5/bDmzWd+brSk7o5VJr9UTfrNfN+MeSvdHDXwoFjd7+BQYunAol2AbVo5Rk/RFNfzM9Y0NJMHwLxbqPszdzZQ516tkDbZPRFcmmUkCXGg3PUmm/kTc97222BX+FGgeRCDIF8MOiU4xdGCkBtUeOfGpyPdsn05VtI=
+	t=1756876837; cv=none; b=JzoQLNgHda4ol0HVsQkqPwlI0rhkytV9iryRv93iok6pIFUdYM2goahGQB8jHL8fTLW0Y8WC7bW20HGnkoC8IRneMZN1Culi7v55ny77D+oSSJi4SDulOAYBo6DpKVeVP1jNtoB3miimkyZ/ZNrfIsLxboaj9MugWjiOw8OzU0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756875499; c=relaxed/simple;
-	bh=6YJvO7PqsDrEvLx2JteHA5sSPVycN44jl8SxtQBZTHw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=gFnKLTwecZBlwShlvoqwYUz7sHY6xarARy4kHYQL2uh7am7gnoPQ4CLOO740HjbvprGwcxWWRlwU4wKZs/1ulruPhXp0E6PY0rKdnq67Nw1J7LREC8KYxeUadiKto2oHChJwFaZVDKVDWT//UalO0/WuZiwXny9k1MKJyBptPHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHRNFLhQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04C8CC4CEF0;
-	Wed,  3 Sep 2025 04:58:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756875498;
-	bh=6YJvO7PqsDrEvLx2JteHA5sSPVycN44jl8SxtQBZTHw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RHRNFLhQh+CxZitPcxGq0MmzpR0gHMbqTumPkFZKSLS1jgT5b0kVXbXhWc/Pvdxsq
-	 RsNZjGr70W6P93yRbsaOro7UK+llD/EXQ0e3fIWkdW/OUAV0zkpkUGIuXPtAC1XQSr
-	 aZn3ox+K9cek1H/kDmIg6KLBhcslnlqdT/TxpqOcok4yzPr65Ji4pHjSkJB6CioEIZ
-	 mTiHxFltJ3QvXv5hIi3YkbFtWGl9DH/Gm0EcblCyeNRf6pEEq7Ayj69TfR8wcV/+9Q
-	 RrJKVnC8aON60DMRGR3DyEKleqf27d0g9yduDWZ0WbzKRr0N6dJH8gJqc3MJc3bco5
-	 cj1PJVVYYGJlg==
-Date: Wed, 3 Sep 2025 13:58:14 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
- linux-trace-kernel@vger.kernel.org, maz@kernel.org, oliver.upton@linux.dev,
- joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
- kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- jstultz@google.com, qperret@google.com, will@kernel.org,
- aneesh.kumar@kernel.org, kernel-team@android.com,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v6 12/24] tracing: selftests: Add trace remote tests
-Message-Id: <20250903135814.57c4ec19de536032c640b755@kernel.org>
-In-Reply-To: <20250821081412.1008261-13-vdonnefort@google.com>
-References: <20250821081412.1008261-1-vdonnefort@google.com>
-	<20250821081412.1008261-13-vdonnefort@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756876837; c=relaxed/simple;
+	bh=cQsd9f3pz0GvlDgstoKvbSwGB9vpxc0Tul+ZBHwCask=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GO2wum26iRFH0leQYhEmG224Q2jYxPDDDyGLizVh9YKHq3gm7alX07vv6MJvaYWsv9JzMhyY9X2Z5SJUvM3FNBT8mI7s2xybCCW2Nr4aCmOHKBD9VEeQLU8v3YYwC+nVLMeR/3zOnQRS+Z1HyVHpejzYzKxcV+iuf3bHFLx2fMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cGr3X4MGDz9sSC;
+	Wed,  3 Sep 2025 06:58:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id UqXfjTzkKbXw; Wed,  3 Sep 2025 06:58:32 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cGr3X3cvPz9sRs;
+	Wed,  3 Sep 2025 06:58:32 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 665ED8B764;
+	Wed,  3 Sep 2025 06:58:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id HhVS512OWuWk; Wed,  3 Sep 2025 06:58:32 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D82298B763;
+	Wed,  3 Sep 2025 06:58:31 +0200 (CEST)
+Message-ID: <646c8a39-c78e-4c2c-b820-d7d57e0a85fc@csgroup.eu>
+Date: Wed, 3 Sep 2025 06:58:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/7] dt-bindings: soc: fsl: qe: Convert QE GPIO to DT
+ schema
+To: Rob Herring <robh@kernel.org>
+Cc: Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+References: <cover.1756727747.git.christophe.leroy@csgroup.eu>
+ <48b4e7b25878b94dcb738f8239c815be484cf9c9.1756727747.git.christophe.leroy@csgroup.eu>
+ <20250902212458.GA1184537-robh@kernel.org>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250902212458.GA1184537-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 21 Aug 2025 09:14:00 +0100
-Vincent Donnefort <vdonnefort@google.com> wrote:
+Hi Rob,
 
-> Exercise the tracefs interface for trace remote with a set of tests to
-> check:
+Le 02/09/2025 à 23:24, Rob Herring a écrit :
+> On Mon, Sep 01, 2025 at 02:05:13PM +0200, Christophe Leroy wrote:
+>> Convert QE QPIO devicetree binding to DT schema.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>> ---
+>> v5: New
+>> ---
 > 
->   * loading/unloading (unloading.tc)
->   * reset (reset.tc)
->   * size changes (buffer_size.tc)
->   * event integrity (trace_pipe)
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - enum:
+>> +          - fsl,chip-qe-pario-bank
+>> +      - const: fsl,mpc8323-qe-pario-bank
+>> +
+
+snip
+
 > 
-> Cc: Shuah Khan <skhan@linuxfoundation.org>
-> Cc: linux-kselftest@vger.kernel.org
-> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+>> +        compatible = "fsl,mpc8360-qe-pario-bank", "fsl,mpc8323-qe-pario-bank";
 > 
-> diff --git a/tools/testing/selftests/ftrace/test.d/remotes/buffer_size.tc b/tools/testing/selftests/ftrace/test.d/remotes/buffer_size.tc
-> new file mode 100644
-> index 000000000000..60bf431ccc91
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/remotes/buffer_size.tc
-> @@ -0,0 +1,24 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +# description: Test trace remote buffer size
+> Doesn't match the schema.
+> 
 
-I think this test requires `remotes/`. If so, please add
-
-# requires: remotes
-
-Then this test will be skipped if it is not enabled.
-
-> +
-> +. $TEST_DIR/remotes/functions
-> +
-> +test_buffer_size()
-> +{
-> +    echo 0 > tracing_on
-> +    assert_unloaded
-> +
-> +    echo 4096 > buffer_size_kb
-> +    echo 1 > tracing_on
-> +    assert_loaded
-> +
-> +    echo 0 > tracing_on
-> +    echo 7 > buffer_size_kb
-> +}
-> +
-> +if [ -z "$SOURCE_REMOTE_TEST" ]; then
-> +    set -e
-> +    setup_remote_test
-> +    test_buffer_size
-> +fi
-> diff --git a/tools/testing/selftests/ftrace/test.d/remotes/functions b/tools/testing/selftests/ftrace/test.d/remotes/functions
-> new file mode 100644
-> index 000000000000..504a495b3b1b
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/remotes/functions
-> @@ -0,0 +1,33 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +setup_remote()
-> +{
-> +	local name=$1
-> +
-> +	[ -e $TRACING_DIR/remotes/$name/write_event ] || exit_unresolved
-> +
-> +	cd remotes/$name/
-> +	echo 0 > tracing_on
-> +	clear_trace
-> +	echo 7 > buffer_size_kb
-> +	echo 0 > events/enable
-> +	echo 1 > events/$name/selftest/enable
-> +	echo 1 > tracing_on
-> +}
-> +
-> +setup_remote_test()
-> +{
-> +	[ -d $TRACING_DIR/remotes/test/ ] || modprobe remote_test || exit_unresolved
-> +
-> +	setup_remote "test"
-> +}
-> +
-> +assert_loaded()
-> +{
-> +	grep -q "(loaded)" buffer_size_kb
-> +}
-> +
-> +assert_unloaded()
-> +{
-> +	grep -q "(unloaded)" buffer_size_kb
-> +}
-> diff --git a/tools/testing/selftests/ftrace/test.d/remotes/reset.tc b/tools/testing/selftests/ftrace/test.d/remotes/reset.tc
-> new file mode 100644
-> index 000000000000..93d6eb2a807f
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/remotes/reset.tc
-> @@ -0,0 +1,105 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +# description: Test trace remote reset
-
-Ditto.
-
-> +
-> +. $TEST_DIR/remotes/functions
-> +
-> +get_cpu_ids()
-> +{
-> +    sed -n 's/^processor\s*:\s*\([0-9]\+\).*/\1/p' /proc/cpuinfo
-> +}
-> +
-> +dump_trace()
-> +{
-> +    output=$(mktemp /tmp/remote_test.XXXXXX)
-
-For the test-local temporary working directory, can you use $TMPDIR
-instead of /tmp ? That directory is removed after running each test.
-
-> +    cat trace_pipe > $output &
-> +    pid=$!
-> +    sleep 1
-> +    kill -1 $pid
-> +
-> +    echo $output
-> +}
-> +
-> +check_reset()
-> +{
-> +    write_event_path="write_event"
-> +    taskset=""
-> +
-> +    clear_trace
-> +
-> +    # Is the buffer empty?
-> +    output=$(dump_trace)
-> +    test $(wc -l $output | cut -d ' ' -f1) -eq 0
-> +
-> +    if $(echo $(pwd) | grep -q "per_cpu/cpu"); then
-> +        write_event_path="../../write_event"
-> +        cpu_id=$(echo $(pwd) | sed -e 's/.*per_cpu\/cpu//')
-> +        taskset="taskset -c $cpu_id"
-> +    fi
-> +    rm $output
-> +
-> +    # Can we properly write a new event?
-> +    $taskset echo 7890 > $write_event_path
-> +    output=$(dump_trace)
-> +    test $(wc -l $output | cut -d ' ' -f1) -eq 1
-> +    grep -q "id=7890" $output
-> +    rm $output
-> +}
-> +
-> +test_global_interface()
-> +{
-> +    output=$(mktemp /tmp/remote_test.XXXXXX)
-> +
-> +    # Confidence check
-> +    echo 123456 > write_event
-> +    output=$(dump_trace)
-> +    grep -q "id=123456" $output
-> +    rm $output
-> +
-> +    # Reset single event
-> +    echo 1 > write_event
-> +    check_reset
-> +
-> +    # Reset lost events
-> +    for i in $(seq 1 10000); do
-> +        echo 1 > write_event
-> +    done
-> +    check_reset
-> +}
-> +
-> +test_percpu_interface()
-> +{
-> +    [ "$(get_cpu_ids | wc -l)" -ge 2 ] || return 0
-> +
-> +    for cpu in $(get_cpu_ids); do
-> +        taskset -c $cpu echo 1 > write_event
-> +    done
-> +
-> +    check_non_empty=0
-> +    for cpu in $(get_cpu_ids); do
-> +        cd per_cpu/cpu$cpu/
-> +
-> +        if [ $check_non_empty -eq 0 ]; then
-> +            check_reset
-> +            check_non_empty=1
-> +        else
-> +            # Check we have only reset 1 CPU
-> +            output=$(dump_trace)
-> +            test $(wc -l $output | cut -d ' ' -f1) -eq 1
-> +            rm $output
-> +        fi
-> +        cd -
-> +    done
-> +}
-> +
-> +test_reset()
-> +{
-> +    test_global_interface
-> +    test_percpu_interface
-> +}
-> +
-> +if [ -z "$SOURCE_REMOTE_TEST" ]; then
-> +    set -e
-> +    setup_remote_test
-> +    test_reset
-> +fi
-> diff --git a/tools/testing/selftests/ftrace/test.d/remotes/trace_pipe.tc b/tools/testing/selftests/ftrace/test.d/remotes/trace_pipe.tc
-> new file mode 100644
-> index 000000000000..f4bd2b3655e0
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/remotes/trace_pipe.tc
-> @@ -0,0 +1,57 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +# description: Test trace remote trace_pipe
-
-Ditto.
-
-> +
-> +. $TEST_DIR/remotes/functions
-> +
-> +test_trace_pipe()
-> +{
-> +    echo 0 > tracing_on
-> +    assert_unloaded
-> +
-> +    echo 1024 > buffer_size_kb
-> +    echo 1 > tracing_on
-> +    assert_loaded
-> +
-> +    output=$(mktemp /tmp/remote_test.XXXXXX)
-> +
-> +    cat trace_pipe > $output &
-> +    pid=$!
-> +
-> +    for i in $(seq 1 1000); do
-> +        echo $i > write_event
-> +    done
-> +
-> +    echo 0 > tracing_on
-> +    sleep 1
-> +    kill $pid
-> +
-> +    prev_ts=0 # TODO: Init with proper clock value
-> +    prev_id=0
-> +
-> +    # Only keep <timestamp> <id>
-> +    sed -i -e 's/\[[0-9]*\]\s*\([0-9]*.[0-9]*\): [a-z]* id=\([0-9]*\)/\1 \2/' $output
-> +
-> +    IFS=$'\n'
-
-This fails checkbashisms test. Can you use printf for this?
-
-IFS=$(printf "\n")
+Can you be more explicit ? Is it the 'mpc8360' ? It is the 'chip'.
 
 
-> +    for line in $(cat $output); do
-> +        ts=$(echo $line | cut -d ' ' -f 1)
-> +        id=$(echo $line | cut -d ' ' -f 2)
-> +
-> +        test $(echo "$ts>$prev_ts" | bc) -eq 1
-> +        test $id -eq $((prev_id + 1))
-> +
-> +        prev_ts=$ts
-> +        prev_id=$id
-> +    done
-> +
-> +    test $prev_id -eq 1000
-> +
-> +    rm $output
-> +}
-> +
-> +if [ -z "$SOURCE_REMOTE_TEST" ]; then
-> +    set -e
-> +
-> +    setup_remote_test
-> +    test_trace_pipe
-> +fi
-> diff --git a/tools/testing/selftests/ftrace/test.d/remotes/unloading.tc b/tools/testing/selftests/ftrace/test.d/remotes/unloading.tc
-> new file mode 100644
-> index 000000000000..99f97e100fde
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/remotes/unloading.tc
-> @@ -0,0 +1,40 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +# description: Test trace remote unloading
+bindings/soc/fsl/cpm_qe/qe/par_io.txt was saying:
 
-Here, please add "requires: remotes" line.
+   - compatible : should be "fsl,<chip>-qe-pario-bank", 
+"fsl,mpc8323-qe-pario-bank".
 
-Thank you,
+Which I first translated in yaml as :
 
+   properties:
+     compatible:
+       items:
+         - enum:
+           - fsl,<chip>-qe-pario-bank
+         - const: fsl,mpc8323-qe-pario-bank
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+But 'make dt_binding_check' complained about the < > around 'chip' so I 
+removed them.
+
+How should it be described ?
+
+Thanks
+Christophe
 
