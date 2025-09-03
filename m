@@ -1,128 +1,130 @@
-Return-Path: <linux-kernel+bounces-798189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C266B41A7A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:48:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3E9B41A7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 222BC1BA4C3A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:48:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A74C83BDA29
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2279225F96D;
-	Wed,  3 Sep 2025 09:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC78274FDB;
+	Wed,  3 Sep 2025 09:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vEpkRS8e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ukCtmWii"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D3321A425;
-	Wed,  3 Sep 2025 09:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F9421A425;
+	Wed,  3 Sep 2025 09:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756892895; cv=none; b=kJlYJfhYZpZpdDGsvDVw9kE6iT4kfZmS3w1qCIdcCVlAijCwV+Pa5VZfImeCHvPgjygCu1Eh0RllYwYzd15eKipD38nXXVfMNIgvUKVFnlApL9QAk2ZwdGunpuQb5YNWQBDjx2BJBDfOku6tQzl5POzkNifd1zen3TPR0Ujdu1U=
+	t=1756892919; cv=none; b=A0Qfm8RMOZe+54cyXUhJLdIR3nixUX9lzynM3Qyx8ExfDeLnK+dMXv8caCCqhvldakswTUiCuNzqRpjOp/yiZfvDZ/pqIzFu3qKGv7diNIIWMgiOL4W5OQ58aR37Wq0+9DFIhKxwoKi3nA/jDU0O1zETRt985IQPckotOyfD9hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756892895; c=relaxed/simple;
-	bh=bMCZYJzX4r1caQDY+4LLdVSIBbbsh6amHV8lHquVp1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GaqCTqfHn5gVQSTEsnyc6uI5mmI0aNLZdaSHIH84bs2AILRumVPXTshZEAHJbnqrBQMkUiu2l25EEITJfS278eoDDv9eOym9mSg6mz+MWCNbPYr+C03upQt5OEGUw/AoxAa//SgLRvmSDB+1GHhF80dOo7GmWuJjVaG7W6lIJyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vEpkRS8e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C0CFC4CEF1;
-	Wed,  3 Sep 2025 09:48:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756892894;
-	bh=bMCZYJzX4r1caQDY+4LLdVSIBbbsh6amHV8lHquVp1U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vEpkRS8ep6J0XdI2ePyO0Jn8LI59zyV42pu0BySpJ5arERSo6pTQc/QEcrkaEoogC
-	 sdnI9h5eN8VfuJ6pJ6v+6OFdyp8PqPQRn1R8KNWdH+cKT9Ribn3OtBnM7LQbuSFCFJ
-	 lQaDRtXmrPksc8lx1Yo8JVnN4P/MARyDX0Q8aRno=
-Date: Wed, 3 Sep 2025 11:48:11 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	achill@achill.org, Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-	clang-built-linux <llvm@lists.linux.dev>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH 5.4 00/23] 5.4.298-rc1 review
-Message-ID: <2025090317-envelope-professed-b38a@gregkh>
-References: <20250902131924.720400762@linuxfoundation.org>
- <CA+G9fYtoKARW00i0ct=M+-1OAWoQhE_rvsS6RJPPQ7YEcZ4C1w@mail.gmail.com>
+	s=arc-20240116; t=1756892919; c=relaxed/simple;
+	bh=+ed/dJSYvBNttB1YXH5+Dx5Mb0K6Uf7RIbFi2PpJ8OQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Byqoj4d0ZKZXzFOT4P3Fd+E2OFPIuRWwIUOTXYWGb1JHyot0qgprufhpbIJnB/8MrqVRq4vP7pCHZg8HKfONn42z5DeTVOV5lyIqp6Pb79MWu1j6ctEnBaq0gkd+1jrv5wfn1sy8SVOQrsRg9e5t/i1aa9+fLvNhbrcZTodn7HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ukCtmWii; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15309C4CEF1;
+	Wed,  3 Sep 2025 09:48:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756892918;
+	bh=+ed/dJSYvBNttB1YXH5+Dx5Mb0K6Uf7RIbFi2PpJ8OQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ukCtmWiiRSoDX3lMFtM5OnASsCEsi1m8qs65hiSTW4FxsupWI76vmynHxiKgYWhYv
+	 rkZiYjYnpy8O8Jy0rUAaxPIXRzOHZ0EDRnJrrPW44NCkQcW+ifmhAli1C1KhuSXBXA
+	 NNIMNvMlU0aV85Bf0DnlGhj7obZ1DbN1Y0GmdamWxnyRFUb+//zj/Gi5Ou8iHWCBQN
+	 GyKqWU7EnKne4W5PpcNSZokWk/y/JjVVxfFoj5JonwrokrWfTTYVZwBTRBKEU7eq7k
+	 rCCf5WCo3aGjhMpdYBtZLS4FAWMFqpO2FTrJF0Da6YKkGsLLXAsw+y/re7pGfN/Jqb
+	 x+KJXi5SYQpeA==
+Message-ID: <fbf6708e-a902-451e-94a4-9f100f7b61a4@kernel.org>
+Date: Wed, 3 Sep 2025 11:48:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYtoKARW00i0ct=M+-1OAWoQhE_rvsS6RJPPQ7YEcZ4C1w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: hamoa-iot-evk: enable video
+To: Wangao Wang <quic_wangaow@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Qiwei Liu <quic_qiweil@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250903-add_iris_for_x1e80100-v1-0-410e9e6c79f0@quicinc.com>
+ <20250903-add_iris_for_x1e80100-v1-3-410e9e6c79f0@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250903-add_iris_for_x1e80100-v1-3-410e9e6c79f0@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 03, 2025 at 03:11:26PM +0530, Naresh Kamboju wrote:
-> On Tue, 2 Sept 2025 at 19:17, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 5.4.298 release.
-> > There are 23 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.298-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
+On 03/09/2025 10:27, Wangao Wang wrote:
+> Enable Iris video codec on the hamoa-iot-evk board.
 > 
-> 
-> The following build warnings / errors were noticed on powerpc cell_defconfig
-> and mpc83xx_defconfig with clang-20 toolchain on stable-rc 5.4.298-rc1.
-> 
-> But the gcc-12 build passed.
-> 
-> * powerpc, build
->   - clang-20-cell_defconfig
->   - clang-20-mpc83xx_defconfig
->   - clang-nightly-cell_defconfig
->   - clang-nightly-mpc83xx_defconfig
-> 
-> Regression Analysis:
-> - New regression? yes
-> - Reproducibility? yes
-> 
-> First seen on 5.4.298-rc1
-> Bad: 5.4.298-rc1
-> Good: v5.4.297
-> 
-> Build regression: stable-rc 5.4.298-rc1 powerpc/boot/util.S:44: Error:
-> junk at end of line, first unrecognized character is `0'
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> Signed-off-by: Wangao Wang <quic_wangaow@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Known issue, patch already submitted:
-	https://lore.kernel.org/r/20250902235234.2046667-1-nathan@kernel.org
+There is no such file!
 
-Will queue that up for the next round of releases, using clang-20 on
-5.4.y is brave :)
+Really, again you send something completely out of the blue, untestable,
+unmergeable, without ANY explanation in cover letter.
 
-thanks,
+We already gave feedback on this two weeks ago!
 
-greg k-h
+Best regards,
+Krzysztof
 
