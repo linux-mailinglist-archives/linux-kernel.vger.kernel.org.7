@@ -1,82 +1,62 @@
-Return-Path: <linux-kernel+bounces-798116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE0DB419AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:13:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA58B419B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87039189431B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26858188D94D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9872F0C6B;
-	Wed,  3 Sep 2025 09:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6D92E7BBC;
+	Wed,  3 Sep 2025 09:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/ZN/Xai"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0GD9JZj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484E52750FB;
-	Wed,  3 Sep 2025 09:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E1F17BA6;
+	Wed,  3 Sep 2025 09:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756890766; cv=none; b=U2CQ9PPwGej0X+3wyXA0ZLCLREJWo8szrM+201g/uKlzk0iU7XzrVBdNRM8aWsqEQ/d9VBqujXRVvdovtKIXBPoihQEEJ9m6tj3czjevFjSowFjzHXhKWdkwO7zfyUr+7xx8R5CC98VnyM5FF8A0zfZBwHcYeYV2/j1kG06YDdk=
+	t=1756890882; cv=none; b=N2SqXSdXWJLt4F+7TRvmHdf91tmsp+/f0FXxHNZKAXSXj6OaZ3sIzm8ecWUGBdAUiuYgRdZgWE+KDtE6swHH2V+4PN7UdvBKKZett5t8XMmoA+CRD1/6cG9ffsrisqu/CknZLGnD24Q20XgQi4WLDoTKxuPzhea9n71ikGQlkU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756890766; c=relaxed/simple;
-	bh=+glFduAWUwmDlkTPqNVlgdJlQ8XcOblvWP9ZWTbnSXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=C5xfIl03h+VPW8mqMUaPBKmDtj+a67SHjEklNxAEHOS/vT+yf3kKMaOozV253cu83q/lISwqq5Vy4P2V7YszlQpnYydFTWTgkei+fxv7AqO8bYJSoZxeLMNIt3xHOKb8EGxzDcxGYOxZPacNNOI1mdhUE34Fz6v+MDBp99YXzNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/ZN/Xai; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55f78e3cdf9so4093898e87.1;
-        Wed, 03 Sep 2025 02:12:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756890763; x=1757495563; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FfWJvVu+lMxgUSVTziwE9HcaeMXDr9NnCCkw+M+7Z/s=;
-        b=T/ZN/XaiTDDL7VodqViIBgf4SE7VfqbyMZ8iwhRrAR0wXAVmG5HnDIk52aUo16ZpGd
-         vZbTujOzXdQ5nXop0xzBlZK6F1Y0HdBcCOcyCJrfzkPWG8ch9u8rKDMG2yu6bNp4ldOu
-         HvBU/sm+2NsUZHHVg/I34AEuigjVWXs8lxQSdAR48nUD0msvK/5sYilNjDl6gj9l8vzh
-         1s+GwMZhvmAuAdV38SII05dsbEv56AkFxwmInsiiyQN/pnznMY1A0TVEO+r6x3BrcD1K
-         P7RQxpSBRWBKMytRRAyqI1em7Az71M/RfZN50U3D/u5lmHDdUV/T6aCDzWMDeIvBLas1
-         NO5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756890763; x=1757495563;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FfWJvVu+lMxgUSVTziwE9HcaeMXDr9NnCCkw+M+7Z/s=;
-        b=a6jyOf9QSRWl1Az0S7n/bczgoce1TjJIDwyd1GTT9HvT+kZXxYJ00GsJbDsxllIHbD
-         26QB5mc79AxaWTaJxQouGkbWa85bMhXFUvJp5cg2jbI1mX7kXVpxslQHKmhmADkS6ogP
-         bs/j6mOy/ASUl/EMDfuKFT0Z2JKIKAVOXeSSEeF+upE0MCgP2LKvx7fYz2KsvIto76U/
-         J3YxT4qpkLfQa4V6g6QLNuvj3T1wv6U6XdfwoYxCf2kgRblxSZD0WQou2Gv505xOFMQA
-         EvzRwdvqlFrXAIPwrzaq89wBTmirrvnJclWCVcmP/hW42utHvhpchs6HvL7umqSFRcrW
-         YO+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVuGQFscFuXtO5aUvkempGfL9Y9/PHkN5g4t1vNhFjeN7OthQiaE33iFceOygxWzo021DPgNNOiv/ICUciv@vger.kernel.org, AJvYcCWqZL7JNuccAhI4Ri0PsO9Gwc4UXZRYwOQponPbMaMGqWKA0O+4oWFqZUvb6QV3hD5HfKUc/f3Gpy0MhPH4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFEEDOqd6xg7ZEMZdhlytLWpkeJPyV656pxGFlt6LFuPkvxwCf
-	UeY+4q3R0zKc/rFDjYlepT+vZ4NfnToGjlL5qGa+ZwoPwuMHXuSGY64mt6XB
-X-Gm-Gg: ASbGncvrJJdwnbiJ437An7EGRTegcYEwpZ/Y7i5PB+4pj0hpADKAxdH/OwLjVZix/+v
-	LwkS8cLigDqqvM2n4HwJnKLUkNDX3mXaZMtta05bdfoSHa5O1xqNtAv0EWhgcSTXcwo5Nr9666w
-	j44Z70eidseH4CSUTCj90jQb+EFIDKIE8YSjURi/GddB7cJW1lb9o7gav3TeP29x+goeOLsUm6c
-	iDM61L3nUNef/ZyiuhGLVPZD8DdZuSh95UESxdjoNdV6JRlo5eezK9uWZM4NJw6G54p67ZWFB5x
-	68D00oEwuDixUk8Ghxci7Jw49P8EASoT+SKPJx7N6QZrUMbKdJOMLB1kkCkP41VOz8c5GHQaWi6
-	RRYbUAxbkMQ8LJieXThPJ
-X-Google-Smtp-Source: AGHT+IHTqE1Jvi/eop3BhXHBqQzhh8YWtRvPXLLl1ePgYd5EZnn8hZeB0aq359Ob/HRYHtVdI46SUQ==
-X-Received: by 2002:a05:6512:3b20:b0:553:518d:8494 with SMTP id 2adb3069b0e04-55f709b7a33mr4516315e87.54.1756890762956;
-        Wed, 03 Sep 2025 02:12:42 -0700 (PDT)
-Received: from p183 ([46.53.254.161])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ad4e680sm377397e87.150.2025.09.03.02.12.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 02:12:42 -0700 (PDT)
-Date: Wed, 3 Sep 2025 12:13:17 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/proc/base.c: Fix the wrong format specifier
-Message-ID: <454cb73e-a1f8-4824-9fe1-2b55a4dd99e3@p183>
+	s=arc-20240116; t=1756890882; c=relaxed/simple;
+	bh=sceKBbEjuX10A+AkYDSZ/1ERhAyghC9G3UJ1z+F65x0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QLU1VmslpqeHf6V3nQE2y7MfGnZ3xhT3qI7MoF8wWzPOvXspca1ik98gmrWc5WMJlmF7pvblGtdgIggMBUPaLaXseyty3IMfz3koMRttpRjQLhZRJEeKHDBuyKbIlpdgEpN9XESk8pHTyWA8DPkOpGlnfF58HBkJAzdNGgUaPl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0GD9JZj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B1A9C4CEF0;
+	Wed,  3 Sep 2025 09:14:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756890882;
+	bh=sceKBbEjuX10A+AkYDSZ/1ERhAyghC9G3UJ1z+F65x0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R0GD9JZjjefoWeI3TbF79xIHLv8wuFwc9BCe+YuMZ4NQJ+IhGu0DVKZJnms7NU5wk
+	 fj0RMGdssIHdVWJTwyNqDGV8oo5O8miB+wS3VRybTtoaS/hvS/OiGUHoTawa8zqZy7
+	 1UnUI98gRVNtUaxxWSCWdRFWgo1Hxod2qeNyCiaK1Vk8bEkOaBFnbGufpbYmqVFIe3
+	 r9deubPalAMiVQ2EjLlzB9sSPKu4TmIZOoqv18LN0g+BKuijRajtIAwcmsZFXqudky
+	 fswPb4GxTnOX742c7AMF5ufi0CtZW1W37xgmo+dMMIIofMiZq9zOzzUiPesuaq/iEh
+	 mhmhqQFf5X6wg==
+Date: Wed, 3 Sep 2025 10:14:37 +0100
+From: Lee Jones <lee@kernel.org>
+To: Marcos Del Sol Vives <marcos@orca.pet>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Michael Walle <mwalle@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] mfd: vortex: implement new driver for Vortex
+ southbridges
+Message-ID: <20250903091437.GF2163762@google.com>
+References: <20250822135816.739582-1-marcos@orca.pet>
+ <20250822135816.739582-4-marcos@orca.pet>
+ <20250902151828.GU2163762@google.com>
+ <45b84c38-4046-4fb0-89af-6a2cc4de99cf@orca.pet>
+ <20250903072117.GY2163762@google.com>
+ <4057768b-82f3-4b5b-b301-afae30bd5bca@orca.pet>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,13 +65,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4057768b-82f3-4b5b-b301-afae30bd5bca@orca.pet>
 
->-		len = snprintf(name, sizeof(name), "%u", tid);
-> +		len = snprintf(name, sizeof(name), "%d", tid);
+On Wed, 03 Sep 2025, Marcos Del Sol Vives wrote:
 
-Ehh, no.
+> El 03/09/2025 a las 9:21, Lee Jones escribió:
+> >> vortex_dx_sb are "struct vortex_southbridge" type, not raw MFD API data.
+> > 
+> > I like your style, but nope!
+> > 
+> > vortex_southbridge contains MFD data and shouldn't exist anyway.
+> 
+> I'm not sure if I follow.
+> 
+> You're suggesting not using driver_data at all and using a big "if" instead,
+> matching manually myself on the correct cells to register against the PCI
+> device ID, instead of relying on PCI matching giving me already the cells
+> structure inside driver_data?
 
-%u is correct because "tid" can't be negative.
+Yes.
 
-	%alexey
+> That seems to increase code size and be more error prone for no reason.
+
+It may make sense for your use-case, but believe me, I've seen some
+crazy implementations of this.  I found it's easier just to have a no
+cross contamination of early init APSs rule and call it a day.
+
+-- 
+Lee Jones [李琼斯]
 
