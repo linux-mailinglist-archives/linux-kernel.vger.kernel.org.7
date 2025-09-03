@@ -1,122 +1,118 @@
-Return-Path: <linux-kernel+bounces-797643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FA6EB412DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:23:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A89A2B412DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D4775E63B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:23:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FEE41751E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493F02C237F;
-	Wed,  3 Sep 2025 03:23:32 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414E02C234E;
+	Wed,  3 Sep 2025 03:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="cf7yh58G"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084752C187;
-	Wed,  3 Sep 2025 03:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB731E833D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 03:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756869811; cv=none; b=ZeEamtX8wIkJ1yPebzvjnTvjHxBAeT5mJpu+seVzpS2vjbNTdhZk7fV54O8XZocYBiTpD9BoBcv+KyPCF+xhM1jFjV4T6FPb7cuVHjQTD3Z8hGe3cWhHfg1CZSHN7nTLqyw4s+fwY/SMJu/MyDCuUdslAlGL62fuQr5EqSfpkaI=
+	t=1756869980; cv=none; b=FDhrTfswFr3IfmT2XLWT7AiXq21F69I3bIsazb2AdILyVTjnca10v2xsJ+NaT4IAyIjV1QjDSAx9KQCnMwHm7mXzgRdySGKWJHGKLRIwkSiDOJMTJ+JHWAH2hkz52t3x9PTdOwcFRvdF2CRm8SYp00tiJ0A1PBmHfUfeKXUs9zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756869811; c=relaxed/simple;
-	bh=jtBor+0N+XLsoAEgxlwnVEOgxrlLnu7Ksl5pxr2bZ54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R6lqfdIJNTubUcepkOqlhUF6Gsutig9ORPFsG9Lnq1PTMkOG8n+yNaVjOtjDlP9W19ZRLzWerZ+oDFbHqXx50WG0srJY2iKsN8/2+fLu6cixdISAm8qbo2W1kyJdOFi8iRc7rwuyY7VkjidNMXtOYiRbAU4GZzyNIqL+iPBVhQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cGnxj5mltzYQvBX;
-	Wed,  3 Sep 2025 11:23:21 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 500E31A1932;
-	Wed,  3 Sep 2025 11:23:20 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgDXIY6ltLdoMErZBA--.46215S3;
-	Wed, 03 Sep 2025 11:23:18 +0800 (CST)
-Message-ID: <f95856f8-117a-9b4a-f417-d65f951931c5@huaweicloud.com>
-Date: Wed, 3 Sep 2025 11:23:17 +0800
+	s=arc-20240116; t=1756869980; c=relaxed/simple;
+	bh=dsbUMuchkxY+FLUfTdYfuMURRQP7Su+CBv4AO+D6HWU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mHOwhoPbPJyHwAxMLlzC5hA4y+6dov83DHXmxtz6+81ub8n9rrdtB7q6KhDstSIylU5D/0mip7xZ2BZkJ3ZdbHJM7HSJkVVDKSW1Ya1k0Yg5/4NMG9o0Hj1klTRBYcumJ+eya30/KrEQ+z3QcJuCXmHsvYhnxQGLhwznfcufNZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=cf7yh58G; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b47174b335bso680215a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 20:26:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1756869977; x=1757474777; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dsbUMuchkxY+FLUfTdYfuMURRQP7Su+CBv4AO+D6HWU=;
+        b=cf7yh58G3TDdu75szOII6O4Jdoo5jPDQcnohAM9ZAFXPur6FLaxubFN/Aae8PgvTcV
+         yCgq9bJQiXz69cO8YVysZq53MS5CbgUpYIWFik+klzQz85Kl/rTpnbFF0xubzRvLQeHu
+         72DeQmN7mQlAaBKLAa6Gb462kaKZjCxvT5y0HLotqEk4RQ5xo/hhntWDNQHrCLNZU2R3
+         YyjimRTlyk1H6R/EVZsvVjWppHnw17ANKKQbm3/AKNwG49JCBXUph9KOAY6FwlS3jAev
+         5B9ncwsr/u8AOrW9BIth+H0WcJLroG+YUYuNBKB2eUYNuq7zfK57R4yXbO2ZR1faD0mM
+         XAHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756869977; x=1757474777;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dsbUMuchkxY+FLUfTdYfuMURRQP7Su+CBv4AO+D6HWU=;
+        b=WwBF3uRf+l0JixluFdVpYoA2kDYM1rle8pHKsuZL/d5ywjbkCJ03Gqcbq1MXGbeBdG
+         SsjyisIXmEFaZ4vMecHEdcn2dZSd27K3ONvPUiYgt8L91/2rNwDST+aQNukGbludxMNI
+         rz9ZeikRjnC/YHVxXyy7f6zzJmitt0EhcrOYjEgr17+JpALIAQDBOTpOdHYa6Gbs3RdA
+         ed+hlmwQRhwQYe3xIuNP01+q0H5EZWPnZ/CXBt6TfEVbjfrhf5zx+/U1dFuCsKvnxXSc
+         4+9I2BRICPD0NKy4UvJGqB4aMMarfyB2h5oSZFjvIjF0gkBGrBb+rQWNyyRih4zJpbhN
+         i40A==
+X-Gm-Message-State: AOJu0YyAuKUKMy+W01hh1UcUvc01FWzZ7kJQviAMhvLqOlDnR6YrUjYw
+	S5mlaeBekiCItyYhylKsxNuJ95aGgxjA0AT1OoEIiVE0rvqkV7EWeNdiBBC7avmf5qNWNPQxnJM
+	D1fYCLV3GhECgMKYe3qvMLFx7UfhhTvcEXjZMINZ53w==
+X-Gm-Gg: ASbGncv+SylJRU7xphhOGqObV+JHInhSvijFqmmW4BU0qmMPFmkzZyix18KTTEglAh1
+	AX2yJXlLLFdjzHg3Z6WgFJT9CbVpp4fpkbQEZHF9RJBoZC4ubIVCCncvvZtzwrpJcS4j6nE4qWz
+	Mj6sP9SB2jOnXnOceqjPJgbOJuiQfpzbMQUyw/3XLsaJSEb3T1Qa+L2QxvN98fw/O9DSz+nZcgr
+	8kv+wMggxW3C94Wk9zJ0Zo=
+X-Google-Smtp-Source: AGHT+IGatbds6HWDknLWZ1L2O9lbrf08fg7bDuv3l8OWOfTUkDBu4wRr1pqOf4LQlR3uGt3Sz1bSIecBZn5z+/FVqKA=
+X-Received: by 2002:a17:90b:4a8c:b0:329:cc8e:247c with SMTP id
+ 98e67ed59e1d1-329cc8e278cmr4685225a91.8.1756869977391; Tue, 02 Sep 2025
+ 20:26:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] md/raid1: fix data lost for writemostly rdev
-To: Yu Kuai <yukuai1@huaweicloud.com>, song@kernel.org,
- ian@beware.dropbear.id.au
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com
-References: <20250903014140.3690499-1-yukuai1@huaweicloud.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <20250903014140.3690499-1-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXIY6ltLdoMErZBA--.46215S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF48Kr4DJF47Xr18ZFy8AFb_yoW8GrWkpa
-	1kW34Y93yrCry7Ca4DZa9ruFyrZ3WjqryfurWaqryj9ry2vFy5W3yjgFZ5KrykZFWrCFyU
-	Xrn0y347Xay5Xa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
-	xwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI4
-	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
-	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
-	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20E
-	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
-	AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUOmhFUUUUU
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+References: <20250902220803.1932692-1-csander@purestorage.com>
+ <97fbbd68-cdd1-49fa-82d3-e3714ca70eeb@kernel.dk> <0be5cd99-9b0d-494a-8648-d767e06eb02d@kernel.dk>
+In-Reply-To: <0be5cd99-9b0d-494a-8648-d767e06eb02d@kernel.dk>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 2 Sep 2025 20:26:06 -0700
+X-Gm-Features: Ac12FXwY7iwtSXSH-lZN7TuzuGT7q6EjXtOBj4URTE5m60ZmkzahpiwrRPL_290
+Message-ID: <CADUfDZrwQD8zUoigukvHhZYX7eR6uh1RB-VhmDUH9Hws_NG88Q@mail.gmail.com>
+Subject: Re: [PATCH 0/4] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Sep 2, 2025 at 6:29=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 9/2/25 7:28 PM, Jens Axboe wrote:
+> > On 9/2/25 4:07 PM, Caleb Sander Mateos wrote:
+> >> As far as I can tell, setting IORING_SETUP_SINGLE_ISSUER when creating
+> >> an io_uring doesn't actually enable any additional optimizations (asid=
+e
+> >> from being a requirement for IORING_SETUP_DEFER_TASKRUN).
+> >
+> > Indeed. It was supposed to enable future optimizations, but they
+> > didn't quite materialize.
+> >
+> >> This series leverages IORING_SETUP_SINGLE_ISSUER's guarantee that only
+> >> one task submits SQEs to skip taking the uring_lock mutex in the
+> >> submission and task work paths.
+> >
+> > Interesting, would indeed be great to kill the lock/unlock for each
+> > submit and local work run. I'll take a closer look at this tomorrow.
+>
+> I just noticed that you forgot to CC io-uring@vger.kernel.org on
+> this posting. Would you mind re-sending and doing that? LKML isn't
+> really useful, for anything really, the key list to CC is the
+> io_uring one.
 
+Oops, I accidentally copied the wrong list address. Thanks for catching tha=
+t.
 
-在 2025/9/3 9:41, Yu Kuai 写道:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> If writemostly is enabled, alloc_behind_master_bio() will allocate a new
-> bio for rdev, with bi_opf set to 0. Later, raid1_write_request() will
-> clone from this bio, hence bi_opf is still 0 for the cloned bio. Submit
-> this cloned bio will end up to be read, causing write data lost.
-> 
-> Fix this problem by inheriting bi_opf from original bio for
-> behind_mast_bio.
-> 
-> Fixes: e879a0d9cb08 ("md/raid1,raid10: don't ignore IO flags")
-> Reported-and-tested-by: Ian Dall <ian@beware.dropbear.id.au>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220507
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   drivers/md/raid1.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index f8434049f9b1..f391fd56d67f 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -1225,7 +1225,7 @@ static void alloc_behind_master_bio(struct r1bio *r1_bio,
->   	int i = 0;
->   	struct bio *behind_bio = NULL;
->   
-> -	behind_bio = bio_alloc_bioset(NULL, vcnt, 0, GFP_NOIO,
-> +	behind_bio = bio_alloc_bioset(NULL, vcnt, bio->bi_opf, GFP_NOIO,
->   				      &r1_bio->mddev->bio_set);
->   
->   	/* discard op, we don't support writezero/writesame yet */
-
-LGTM
-
-Reviewed-by: Li Nan <linan122@huawei.com>
--- 
-Thanks,
-Nan
-
+Best,
+Caleb
 
