@@ -1,127 +1,214 @@
-Return-Path: <linux-kernel+bounces-799537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 913EDB42D50
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:23:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE912B42D53
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C68F97B8843
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:21:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A97364861D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91FD2D8798;
-	Wed,  3 Sep 2025 23:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882912EA479;
+	Wed,  3 Sep 2025 23:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="GAmlVTOx"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P1RnlPRZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58B627380A
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 23:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43F527464F;
+	Wed,  3 Sep 2025 23:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756941781; cv=none; b=JofVjsZnBPXg1TQLuh1RfdGF/WbRosQbVvKsGdeUFZsTtiFE8ObmUsL70vfROjapF0wqCJDpbRAJAeogh3cQ0Jr6k+1ioJ8j8IWRgnOVe6mVR10J9wV/sxQ3YjoCDxjWLXFNCts7NZIrlztrbuSkILcXaMV05bVKT4Jg7N93PgQ=
+	t=1756941790; cv=none; b=g7Q8eMRoCE2zRLoqieSS4kmnwmkDdB4/HxV63YpW41zFQqNVeTnXviGXlaCuyto6vTW7tCugB+X6HQbeVBqhJDyztb+eX8A1wngkG4dqB5Wb6oF4TGTIqXKV2cpFBuQs/Pwws7wEBOHFDrBDwH6xJrcoi6LuuGM5HkSgVueRL2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756941781; c=relaxed/simple;
-	bh=r2tw/SXKsViGJosKPqa46gpirEWHmAwA16Ckt/uA5bg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d8ltVswX3aDBt5VIhL5t/Il2baDVA0EESb5iAsPAT5IVf45vt0QNhcaf6RA24Wn7rNKWJvNSdr6aLCrgHuY/89CIxfh3roO2R4auLphy1LTni1FhT0lK+pgGRz1CBWtVlHREZnX6e0m5NcLp80qgcQlaehEo7xNsgJQf6AkfNuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=GAmlVTOx; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7722c8d2694so441413b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 16:22:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=google; t=1756941779; x=1757546579; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e4XIWP4mz0mOkbzLcWDjXBPjad5L7kQQIgQS1CIcJ6w=;
-        b=GAmlVTOxtuWlDVWagPxBZGTlySkp96SH66DodT35+FwNqzOJp1mLmRCuHOiDR9JrQi
-         NAa8Haaz8dLtCwGcCu3N5TdeTDSaMb4F3ehwlsuAaioU4BwNIHg6WJ7IBbd2Qt7p9iUE
-         m8dyzwrHWiZvXF7FlNLWLqno9h95Dyktr9/O9Na6NkxC8tUXu3t2a+uNAB7Shn5ubzed
-         8jx3eLmgRO9su3SSW+se+o2AUtKc+B13/RXYuUHNMnixIvqeB229Hqe3V0WL3skSeJN8
-         3oorte4cgxHI2IoghR800+cVIZmgvudFnaVcxYMt5j7h+8ZSexPiR2dmMs1uA6US73YU
-         W9sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756941779; x=1757546579;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e4XIWP4mz0mOkbzLcWDjXBPjad5L7kQQIgQS1CIcJ6w=;
-        b=A5saIYSaU13mNlAz2rVNP20tcPEtB8+k5OGZDp0WIG4Vy06LqZ01VI7ibEojfnxaPR
-         39g4J3ELkGkWogL1bisI0Kj7laL9YrnWKiMnYp3AKWJUGsBV/3KlubKorx3Auiup5t+V
-         nCt7aE33SlLwfrKkn0rdtnT4ll5yL445k4jbgl/dQegdmKIS9fEEvZwsPLLtXjVlblMI
-         T5tL5u4Iu53M/3pzpKItWSswrWuyZTNKqKhapSFzcN7pFwtr2rKEKpElkNKqleDr6Cwc
-         o9lBuzkH2geusDryNutPUBkS4hlLGnx4Ixv1C3ZRUFmz8/ct0CjGdajNeyRsDigMd3/L
-         eK3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVjA7U9u7DhECEKqwiNnYK0fsZGlOqp8F9GuVstwD1LdlB5dDbKMT7RnQYki75T33/6ypv60WOhK4Oi4B0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE0uf5jhZk3z+4tzbQ6dlUYviVvdhmtHU8aINbpJUVyEjJRECs
-	XDQorEaOjMYRNRCoOiGA3WRfmfhHfneJcW28pxHhY6NKPWkLPkTQYaPLpZsA/LUjO5212NQ1L5W
-	7nE8CA5fkYb0JMXIozuDgi4nzC1VYTZmokxyMOYHu
-X-Gm-Gg: ASbGncsqjqDO4h/fmCVsoriknHBcIkcTEfdR58xfeNhDd8tmVGizDxbWbePl7QaOHFD
-	e63WsQFwp3muWBWliiavgcG2HSAXhDVFSiR1q/5dYbpn/4q6ncrTTKMOH4HI8/MJHhOnvvRLnRE
-	GlZGt9N8N+a9GBawKRa97OjEDbazzGZLxpXqo4+iqoChLZhVvdJtIJwRj70LU4Nz+1eEtiTn5eP
-	oKd11JskPBeziW0AAVHQ45G7ISlxGSka7Mflz2rg2PQfGS5jnvDq72isdG52RrQCr+PLBSI7wlG
-	q592gIjCUbfrJh5zqkiNUrsiNdvJ++Oj
-X-Google-Smtp-Source: AGHT+IH9MjGeox+wSgTiIMBeKsSu7LetRxaQTb6E/Q/TtqttUThhXc5gLE93MsmjwoVe3/bGA3nnvBy9ymVgyancptg=
-X-Received: by 2002:a05:6a20:2586:b0:24a:8315:7f2 with SMTP id
- adf61e73a8af0-24a83150a75mr1841811637.49.1756941779042; Wed, 03 Sep 2025
- 16:22:59 -0700 (PDT)
+	s=arc-20240116; t=1756941790; c=relaxed/simple;
+	bh=E2DDIUm1Asuy7g+z0r5szUHglM8b3qs8abA9+8SByI0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jCY9Vh6+tNu3wkdZCndR44tHrTPNxE8uJXfg8cKtXNujWuCN7D1O7q+k/aVviUbOr8FG/j8ToocuGJdoH8dOHJTen4KKWg5Ye/IP21SCHHDWoA/CFaVOa40VAEtZmLodU7/k51EHKl06xawH8C81hhlmUzHUeG2qrS7NMoP/7os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P1RnlPRZ; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756941789; x=1788477789;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=E2DDIUm1Asuy7g+z0r5szUHglM8b3qs8abA9+8SByI0=;
+  b=P1RnlPRZ5GY7cFZJA1t3I3D6oj7S6zlOHb7wXsrEWduB5Ej2rCw8eEUY
+   y2JkJeeCHmnSADgZYe1eneRADgg7HNB1j9QszaOqypxTKHbI4V8YpnGWt
+   CZLUDUD1bk4xHCZOTGF1Bn2nmDWUD1aawTBjFmkh02QTwfDNI4JqCMluw
+   Rf0xpaPCuFfrHOg8PUbV6IEk6ycyXgjBcugqQxbXE3ztUyywz28v4zVGP
+   fc2HXAD/c2ye4aw8hzwt5o7M0js+P5ToovN32yZ6c57t9HTaULVUskZDD
+   T3NX5DIg4E1iRKJLsYhI4Or3nc80NZd2WtE/CSgL07TDvx6sLBviOsb+/
+   Q==;
+X-CSE-ConnectionGUID: aCfXDoXoRHCmPW1WHluawQ==
+X-CSE-MsgGUID: vuHTShJ8RwWtdyc94tcCEA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59187377"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59187377"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 16:23:08 -0700
+X-CSE-ConnectionGUID: DsbL7M/nSva5tMJZ76VbIw==
+X-CSE-MsgGUID: gepGdxWgQRuIgo689NopRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
+   d="scan'208";a="171284106"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.109.251]) ([10.125.109.251])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 16:23:05 -0700
+Message-ID: <c175d39d-699e-4e1b-b6c0-089eda74432c@intel.com>
+Date: Wed, 3 Sep 2025 16:23:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903-b4-tcp-ao-md5-rst-finwait2-v4-0-ef3a9eec3ef3@arista.com>
- <20250903-b4-tcp-ao-md5-rst-finwait2-v4-2-ef3a9eec3ef3@arista.com> <CAAVpQUCiaQ7yr+5xLYVaRp6E2pzNDwSiznEOkmd5wS-SAosUng@mail.gmail.com>
-In-Reply-To: <CAAVpQUCiaQ7yr+5xLYVaRp6E2pzNDwSiznEOkmd5wS-SAosUng@mail.gmail.com>
-From: Dmitry Safonov <dima@arista.com>
-Date: Thu, 4 Sep 2025 00:22:47 +0100
-X-Gm-Features: Ac12FXzVdH0aYM16lsXXLkWflOvz9fPrPjqdH7hlsGgyEtSmdjfndIM56Q9g4_A
-Message-ID: <CAGrbwDQVeE=-gVNQhWZ_YqsMRTX=2B49O7k3j-FjVHCLrTWUnQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 2/2] tcp: Free TCP-AO/TCP-MD5 info/keys
- without RCU
-To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: Eric Dumazet <edumazet@google.com>, Neal Cardwell <ncardwell@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Bob Gilligan <gilligan@arista.com>, Salam Noureddine <noureddine@arista.com>, 
-	Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 22/23] CXL/PCI: Enable CXL protocol errors during CXL
+ Port probe
+To: Terry Bowman <terry.bowman@amd.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
+ ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
+ rrichter@amd.com, dan.carpenter@linaro.org,
+ PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
+ Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
+ linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20250827013539.903682-1-terry.bowman@amd.com>
+ <20250827013539.903682-23-terry.bowman@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250827013539.903682-23-terry.bowman@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 3, 2025 at 10:26=E2=80=AFPM Kuniyuki Iwashima <kuniyu@google.co=
-m> wrote:
->
-> On Wed, Sep 3, 2025 at 1:30=E2=80=AFPM Dmitry Safonov via B4 Relay
-> <devnull+dima.arista.com@kernel.org> wrote:
-> >
-> > From: Dmitry Safonov <dima@arista.com>
-> >
-> > Now that the destruction of info/keys is delayed until the socket
-> > destructor, it's safe to use kfree() without an RCU callback.
-> > As either socket was yet in TCP_CLOSE state or the socket refcounter is
->
-> Why either ?  Maybe I'm missing but is there a path where
-> ->unhash() is called without changing the state to TCP_CLOSE ?
 
-Well, I meant "either" like in "*yet* in TCP_CLOSE or *already* there
-(being destroyed)". Let me rephrase that as I'm going to send v5 with
-your suggestions for Patch1.
 
-> > zero and no one can discover it anymore, it's safe to release memory
-> > straight away.
-> > Similar thing was possible for twsk already.
-> >
-> > Signed-off-by: Dmitry Safonov <dima@arista.com>
->
-> Change itself looks good.
->
-> Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
+On 8/26/25 6:35 PM, Terry Bowman wrote:
+> CXL protocol errors are not enabled for all CXL devices after boot. These
+> must be enabled inorder to process CXL protocol errors.
+> 
+> Introduce cxl_unmask_proto_interrupts() to call pci_aer_unmask_internal_errors().
+> pci_aer_unmask_internal_errors() expects the pdev->aer_cap is initialized.
+> But, dev->aer_cap is not initialized for CXL Upstream Switch Ports and CXL
+> Downstream Switch Ports. Initialize the dev->aer_cap if necessary. Enable AER
+> correctable internal errors and uncorrectable internal errors for all CXL
+> devices.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-Thanks,
-             Dmitry
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> 
+> ---
+> Changes in v10->v11:
+> - Added check for valid PCI devices in is_cxl_error() (Terry)
+> - Removed check for RCiEP in cxl_handle_proto_err() and
+>   cxl_report_error_detected() (Terry)
+> ---
+>  drivers/cxl/core/ras.c | 26 +++++++++++++++++++++++++-
+>  drivers/pci/pci.h      |  2 --
+>  include/linux/aer.h    |  2 ++
+>  3 files changed, 27 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
+> index 3da675f72616..90ea0dfb942f 100644
+> --- a/drivers/cxl/core/ras.c
+> +++ b/drivers/cxl/core/ras.c
+> @@ -122,6 +122,21 @@ static DECLARE_WORK(cxl_cper_prot_err_work, cxl_cper_prot_err_work_fn);
+>  static pci_ers_result_t cxl_handle_ras(struct device *dev, u64 serial, void __iomem *ras_base);
+>  static void cxl_handle_cor_ras(struct device *dev, u64 serial, void __iomem *ras_base);
+>  
+> +static void cxl_unmask_proto_interrupts(struct device *dev)
+> +{
+> +	struct pci_dev *pdev __free(pci_dev_put) =
+> +		pci_dev_get(to_pci_dev(dev));
+> +
+> +	if (!pdev->aer_cap) {
+> +		pdev->aer_cap = pci_find_ext_capability(pdev,
+> +							PCI_EXT_CAP_ID_ERR);
+> +		if (!pdev->aer_cap)
+> +			return;
+> +	}
+> +
+> +	pci_aer_unmask_internal_errors(pdev);
+> +}
+> +
+>  #ifdef CONFIG_CXL_RCH_RAS
+>  static void cxl_dport_map_rch_aer(struct cxl_dport *dport)
+>  {
+> @@ -418,7 +433,10 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host)
+>  
+>  		cxl_dport_map_rch_aer(dport);
+>  		cxl_disable_rch_root_ints(dport);
+> +		return;
+>  	}
+> +
+> +	cxl_unmask_proto_interrupts(dport->dport_dev);
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_dport_init_ras_reporting, "CXL");
+>  
+> @@ -429,8 +447,12 @@ static void cxl_uport_init_ras_reporting(struct cxl_port *port,
+>  
+>  	map->host = host;
+>  	if (cxl_map_component_regs(map, &port->uport_regs,
+> -				   BIT(CXL_CM_CAP_CAP_ID_RAS)))
+> +				   BIT(CXL_CM_CAP_CAP_ID_RAS))) {
+>  		dev_dbg(&port->dev, "Failed to map RAS capability\n");
+> +		return;
+> +	}
+> +
+> +	cxl_unmask_proto_interrupts(port->uport_dev);
+>  }
+>  
+>  void cxl_switch_port_init_ras(struct cxl_port *port)
+> @@ -466,6 +488,8 @@ void cxl_endpoint_port_init_ras(struct cxl_port *ep)
+>  	}
+>  
+>  	cxl_dport_init_ras_reporting(parent_dport, cxlmd->cxlds->dev);
+> +
+> +	cxl_unmask_proto_interrupts(cxlmd->cxlds->dev);
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_endpoint_port_init_ras, "CXL");
+>  
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 0c4f73dd645f..090b52a26862 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -1169,12 +1169,10 @@ static inline void cxl_rch_enable_rcec(struct pci_dev *rcec) { }
+>  #endif
+>  
+>  #ifdef CONFIG_CXL_RAS
+> -void pci_aer_unmask_internal_errors(struct pci_dev *dev);
+>  bool is_internal_error(struct aer_err_info *info);
+>  bool is_cxl_error(struct pci_dev *pdev, struct aer_err_info *info);
+>  void cxl_forward_error(struct pci_dev *pdev, struct aer_err_info *info);
+>  #else
+> -static inline void pci_aer_unmask_internal_errors(struct pci_dev *dev) { }
+>  static inline bool is_internal_error(struct aer_err_info *info) { return false; }
+>  static inline bool is_cxl_error(struct pci_dev *pdev, struct aer_err_info *info) { return false; }
+>  static inline void cxl_forward_error(struct pci_dev *pdev, struct aer_err_info *info) { }
+> diff --git a/include/linux/aer.h b/include/linux/aer.h
+> index 751a026fea73..4e2fc55f2497 100644
+> --- a/include/linux/aer.h
+> +++ b/include/linux/aer.h
+> @@ -82,11 +82,13 @@ int cxl_proto_err_kfifo_get(struct cxl_proto_err_work_data *wd);
+>  void cxl_register_proto_err_work(struct work_struct *work);
+>  void cxl_unregister_proto_err_work(void);
+>  bool cxl_error_is_native(struct pci_dev *dev);
+> +void pci_aer_unmask_internal_errors(struct pci_dev *dev);
+>  #else
+>  static inline int cxl_proto_err_kfifo_get(struct cxl_proto_err_work_data *wd) { return 0; }
+>  static inline void cxl_register_proto_err_work(struct work_struct *work) { }
+>  static inline void cxl_unregister_proto_err_work(void) { }
+>  static inline bool cxl_error_is_native(struct pci_dev *dev) { return false; }
+> +static inline void pci_aer_unmask_internal_errors(struct pci_dev *dev) { }
+>  #endif
+>  
+>  void pci_print_aer(struct pci_dev *dev, int aer_severity,
+
 
