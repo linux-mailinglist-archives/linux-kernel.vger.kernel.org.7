@@ -1,56 +1,55 @@
-Return-Path: <linux-kernel+bounces-798565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6529B41FDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:51:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 141A7B41FCD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3D1A3AB459
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:50:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDCA654048F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9264F307AC3;
-	Wed,  3 Sep 2025 12:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FA63054EB;
+	Wed,  3 Sep 2025 12:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PKdUv+R8"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MDKetlJE"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F712FB63C
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B962E3009FE;
+	Wed,  3 Sep 2025 12:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756903681; cv=none; b=OipLAzGjwVTIjEigvCSr7im71RpMGJ95n17R6VfRcQpqZL7GmgmMsC2Ph3quY8PtHDPTPAJGfgu8EBNfYHZYWytL1XQnUh8weHqodGvFwroe+vlwxcFBWtlhYpjTNCg8GoCCWrhlYg4l4iR8FJJM9i6Kc7NHi7XgH7J3bPZ2Rts=
+	t=1756903682; cv=none; b=EBGChezN8dGNQHeeSIAL7DGzQr+QuOzz7P4idpvTe/EMzgipaIUEPRqXceQo8NfIAl0Vh1hbHq8T8iE6yKsheVpLcxCAfrahpbkOPKfpsmC7dXJ8OkevMvdAsIvUNRaIl0l1vDADNHu8X0qB3nVrd9AF3O9/MCnV+5hZ9PTf4GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756903681; c=relaxed/simple;
-	bh=8rmzqvfR/jLcrU3Ww14o338baqPR0EMUTSwyH3c+BkM=;
+	s=arc-20240116; t=1756903682; c=relaxed/simple;
+	bh=t9Cj2vsk9A2IypF0ZbhgnScvYQTKAJSuu1sLgL93Sw0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QhDO3tRULAaIhZR6ACTmRtTqDdhfRl/+BYV3nIkqWjymt0igfWOM/8644L0gY7w6qJM7o9yPCXkt7kVqR60MX9/RUbHKa/PNYEm1mk/K3v1emI//ESE+2w61YlP3YCt+R2gN27MZryMV+DdBff+ZynAnvjVRBTZYsJf6KwIxyAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PKdUv+R8; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=TrtN6P4htfyHBIGYzVXquymiYBDEdXkMcNfuti0SmSY7PDULztwGl8s4n0eZ5VWFoi2td7lPHWAD2iVHSrXobDFKFnF+ESMDyRV/Obc/tcYNERhDLISN9tL2reMbCz7dOwcns7GPWoKSBXwgHMW89HRK4rAQT3WGK/U+D2TX/dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MDKetlJE; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id D66F94E40C0A;
-	Wed,  3 Sep 2025 12:47:54 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 99B581A08CE;
+	Wed,  3 Sep 2025 12:47:57 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id AFE56606C3;
-	Wed,  3 Sep 2025 12:47:54 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4EE471C22A4EA;
-	Wed,  3 Sep 2025 14:47:52 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 72788606C3;
+	Wed,  3 Sep 2025 12:47:57 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 100511C228A5D;
+	Wed,  3 Sep 2025 14:47:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756903673; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1756903675; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=12E/BElr5gCYI8YsYwHlrC7l4pZjCd49Xorz7J+azFg=;
-	b=PKdUv+R8aFTvVO0OQ3WlDQproDTLqPa1so9i7de2hVOQC3W7lsrpqdcJWFoIn4pxE0O4C3
-	Qi8O8smdxUARN2ZFzHRVheGxed4P/uUchwEKSfs+9he9GbvKErT2jVlQy69+mnmr7sCTu2
-	oRLzHv85R6ADboqYZKwd8Tg4EqpRXf/kcN34FJ3uqPVzpQbtNflMyxoCxpA0W1ld7O2qon
-	aRy/IXjcaJy+9TkWBImuYAiMqVE7rHX4pfBLSUDd67+X6D4KlZVEJ8HZVRKCESOQsYckgR
-	FyCYdtDq/2mxmNmh3JuHSiOHARGLAm0WyHQYEvM5cM1QxY989n4I756iOkyl0g==
+	bh=cG4E+ChNi7Pq9aaCdZ3+CMHo9z6hvO9a8YfEiX5GW9w=;
+	b=MDKetlJEgtj5kCgTTIDxg7bUP//0qIPgaS2Y99jXiJ4vb9v0pATsiERS2r8tFnY4Ifxnry
+	gQV58rNFDRbX9gxdlPbOzhvdYV3NyoV5oCbRAfyaoYbbDc7MtrXjnEn4Xqrdt/NThvfLvf
+	Q/XNBsp3z5m4PCrtPo54D315K+lmO4zjzaDY57JR8ObJ9ujozEUo74UjEyTtL/A0v8C6JS
+	ixFPTehfn7wlegKeOtmTc78AcIGLHGkrvAZOKDCnTfhLZAEKStzdcuZ8pruJBnIyEnPmCM
+	pJnKCpbxiLEy5SK0Nvgia3I8Xcr28Xe88lonYnKtmXvK3017XH4And8R5UjiwA==
 From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Wed, 03 Sep 2025 14:47:17 +0200
-Subject: [PATCH 10/19] clk: eyeq: skip post-divisor when computing pll
- divisor
+Date: Wed, 03 Sep 2025 14:47:18 +0200
+Subject: [PATCH 11/19] clk: eyeq: rename the parent field to parent_idx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250903-clk-eyeq7-v1-10-3f5024b5d6e2@bootlin.com>
+Message-Id: <20250903-clk-eyeq7-v1-11-3f5024b5d6e2@bootlin.com>
 References: <20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com>
 In-Reply-To: <20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
@@ -79,28 +78,121 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 X-Mailer: b4 0.14.2
 X-Last-TLS-Session-Version: TLSv1.3
 
-The output of the pll is routed before the post-divisor so ignore it
-when computing the frequency of the pll, functional change is
-implemented to reflect how the clock signal is wired internally.
+Make some room for introducing a new field to refer to the parent clock
+by its name for divisors and fixed factors.
+
+No functional code change in this patch, this is a rename only.
 
 Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 ---
- drivers/clk/clk-eyeq.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/clk/clk-eyeq.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/clk/clk-eyeq.c b/drivers/clk/clk-eyeq.c
-index 8fbc8eb31185a9e82216a38a81dfbdaa1a700858..cbba4a21cca47efb8ab554ecf7322e47437c9c6a 100644
+index cbba4a21cca47efb8ab554ecf7322e47437c9c6a..89e0782b5cbe16a7c2010d9d441ace139fd0deb5 100644
 --- a/drivers/clk/clk-eyeq.c
 +++ b/drivers/clk/clk-eyeq.c
-@@ -177,8 +177,6 @@ static int eqc_pll_parse_registers(u32 r0, u32 r1, unsigned long *mult,
+@@ -83,7 +83,7 @@ struct eqc_pll {
+ struct eqc_div {
+ 	unsigned int	index;
+ 	const char	*name;
+-	unsigned int	parent;
++	unsigned int	parent_idx;
+ 	unsigned int	reg;
+ 	u8		shift;
+ 	u8		width;
+@@ -94,7 +94,7 @@ struct eqc_fixed_factor {
+ 	const char	*name;
+ 	unsigned int	mult;
+ 	unsigned int	div;
+-	unsigned int	parent;
++	unsigned int	parent_idx;
+ };
  
- 	*mult = FIELD_GET(PCSR0_INTIN, r0);
- 	*div = FIELD_GET(PCSR0_REF_DIV, r0);
--	if (r0 & PCSR0_FOUTPOSTDIV_EN)
--		*div *= FIELD_GET(PCSR0_POST_DIV1, r0) * FIELD_GET(PCSR0_POST_DIV2, r0);
+ struct eqc_match_data {
+@@ -269,11 +269,11 @@ static void eqc_probe_init_divs(struct device *dev, const struct eqc_match_data
+ 	for (i = 0; i < data->div_count; i++) {
+ 		div = &data->divs[i];
+ 		reg = base + div->reg;
+-		parent = cells->hws[div->parent];
++		parent = cells->hws[div->parent_idx];
  
- 	/* Fractional mode, in 2^20 (0x100000) parts. */
- 	if (r0 & PCSR0_DSM_EN) {
+ 		if (IS_ERR(parent)) {
+ 			/* Parent is in early clk provider. */
+-			parent_data.index = div->parent;
++			parent_data.index = div->parent_idx;
+ 			parent_data.hw = NULL;
+ 		} else {
+ 			/* Avoid clock lookup when we already have the hw reference. */
+@@ -301,12 +301,12 @@ static void eqc_probe_init_fixed_factors(struct device *dev,
+ 
+ 	for (i = 0; i < data->fixed_factor_count; i++) {
+ 		ff = &data->fixed_factors[i];
+-		parent_hw = cells->hws[ff->parent];
++		parent_hw = cells->hws[ff->parent_idx];
+ 
+ 		if (IS_ERR(parent_hw)) {
+ 			/* Parent is in early clk provider. */
+ 			hw = clk_hw_register_fixed_factor_index(dev, ff->name,
+-					ff->parent, 0, ff->mult, ff->div);
++					ff->parent_idx, 0, ff->mult, ff->div);
+ 		} else {
+ 			/* Avoid clock lookup when we already have the hw reference. */
+ 			hw = clk_hw_register_fixed_factor_parent_hw(dev, ff->name,
+@@ -522,7 +522,7 @@ static const struct eqc_div eqc_eyeq5_divs[] = {
+ 	{
+ 		.index = EQ5C_DIV_OSPI,
+ 		.name = "div-ospi",
+-		.parent = EQ5C_PLL_PER,
++		.parent_idx = EQ5C_PLL_PER,
+ 		.reg = 0x11C,
+ 		.shift = 0,
+ 		.width = 4,
+@@ -597,7 +597,7 @@ static const struct eqc_div eqc_eyeq6h_south_divs[] = {
+ 	{
+ 		.index = EQ6HC_SOUTH_DIV_EMMC,
+ 		.name = "div-emmc",
+-		.parent = EQ6HC_SOUTH_PLL_PER,
++		.parent_idx = EQ6HC_SOUTH_PLL_PER,
+ 		.reg = 0x070,
+ 		.shift = 4,
+ 		.width = 4,
+@@ -605,7 +605,7 @@ static const struct eqc_div eqc_eyeq6h_south_divs[] = {
+ 	{
+ 		.index = EQ6HC_SOUTH_DIV_OSPI_REF,
+ 		.name = "div-ospi-ref",
+-		.parent = EQ6HC_SOUTH_PLL_PER,
++		.parent_idx = EQ6HC_SOUTH_PLL_PER,
+ 		.reg = 0x090,
+ 		.shift = 4,
+ 		.width = 4,
+@@ -613,7 +613,7 @@ static const struct eqc_div eqc_eyeq6h_south_divs[] = {
+ 	{
+ 		.index = EQ6HC_SOUTH_DIV_OSPI_SYS,
+ 		.name = "div-ospi-sys",
+-		.parent = EQ6HC_SOUTH_PLL_PER,
++		.parent_idx = EQ6HC_SOUTH_PLL_PER,
+ 		.reg = 0x090,
+ 		.shift = 8,
+ 		.width = 1,
+@@ -621,7 +621,7 @@ static const struct eqc_div eqc_eyeq6h_south_divs[] = {
+ 	{
+ 		.index = EQ6HC_SOUTH_DIV_TSU,
+ 		.name = "div-tsu",
+-		.parent = EQ6HC_SOUTH_PLL_PCIE,
++		.parent_idx = EQ6HC_SOUTH_PLL_PCIE,
+ 		.reg = 0x098,
+ 		.shift = 4,
+ 		.width = 8,
+@@ -790,7 +790,7 @@ static void __init eqc_early_init(struct device_node *np,
+ 
+ 	for (i = 0; i < early_data->early_fixed_factor_count; i++) {
+ 		const struct eqc_fixed_factor *ff = &early_data->early_fixed_factors[i];
+-		struct clk_hw *parent_hw = cells->hws[ff->parent];
++		struct clk_hw *parent_hw = cells->hws[ff->parent_idx];
+ 		struct clk_hw *hw;
+ 
+ 		hw = clk_hw_register_fixed_factor_parent_hw(NULL, ff->name,
 
 -- 
 2.51.0
