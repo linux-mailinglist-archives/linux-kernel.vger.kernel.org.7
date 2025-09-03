@@ -1,139 +1,127 @@
-Return-Path: <linux-kernel+bounces-797928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB6D3B41745
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:53:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452B0B41744
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CCD72051C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:52:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CF3E1BA30D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1822E2DFA;
-	Wed,  3 Sep 2025 07:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3AE2E336F;
+	Wed,  3 Sep 2025 07:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gTX4NkmG"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="botaCraU"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205472E6CA2;
-	Wed,  3 Sep 2025 07:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA42D2E266E;
+	Wed,  3 Sep 2025 07:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756885929; cv=none; b=IH7bz7fBBnDUlelfR/1Pz5AUxFyYbbra6bYT9vfPcKcQz4J4cPFBt5GSJVj2k1p3/0PvESbHSidyZ4brn/vYPlPdbfAe5m/FzXR7rex5RnasGfMniraTFCQjqvgfHW15UCPyACBpvDCplwPfdr1XaDEub8ldACwoUahV7gdUHx0=
+	t=1756885941; cv=none; b=gX8Kwkc1wX0/HKXSX6Fm31A8VErDBEZEYsB9e1dFIOtyLvISrZgcOjUcjXlvxA0sr1NRWNYQEebcCNTRTss+cbZ/MNPd39I5nclk6+4DF723nzSK7jpjib+wghdiGg1Wgar5l9eKR7gnL/lX3F/2bazx3ZgTLFNyFLL6Rgga/C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756885929; c=relaxed/simple;
-	bh=ijv3XrZLm2/TJnChmh37riflNbEO0YahbExZZisEp2M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GnHqt836ExISGAIpvrPY2wvdCwmP1BJrv2FK+LasbvgHDFjzRFQB2ZmsS0beKW6r4Wz0AAE30/BWgr/7V8FweJphSdjp/6S34jCcLFBYRsbUNGCI1BMoGcySfy4soEptGGO70Ql8ZGlvc6WeSusWymZs2TuCsRIccxCihqpO+rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gTX4NkmG; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e97021a3695so4872283276.3;
-        Wed, 03 Sep 2025 00:52:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756885927; x=1757490727; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WevYTlCPqTL1WxoQFVrzF+MsCB7RWtW+mPaqKFqA5Z0=;
-        b=gTX4NkmGUgeebsu6zyqtV3UC07/2YEMzS1HOc1+njJdUiEFdySHjA3/0EbIdpKCDUB
-         IUM+iZ1XI+zJsXtfZQVWiNZ504/DCxDt/iuGUV/iglJZM86h0lMfHnEMN4sdSx2kh111
-         ahyzK38gjaafDgC4agMJe84JysFNUDmTqhpHVcToF3YK1DuYkJ96iUatw7HkMjrlOGqT
-         5kyC1zbUSrgSUpJavcw8qnRSHo9k6iD0Q4mxD/bvecphv2jj7mCvts3AhP4Ku2wq0HC2
-         gQkoH/RvT2mmYy0n7UCp8pJxdE6TSAy3yjsq6CadkrPkIvKOPGHcyUc1Tau+Z91Olg0Q
-         /oCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756885927; x=1757490727;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WevYTlCPqTL1WxoQFVrzF+MsCB7RWtW+mPaqKFqA5Z0=;
-        b=OuJTZp1iKNYYOiKGcqadIggchbtBZpibLnJuB5xZI447CZTeR7hEkP/iD4xO2ByYb8
-         2bDsEz2SnpOIZna5rYDht1ySsiqg4vFLnZXhFwMTJUgpP4gyv8payhOOwa1cc6nM3lj4
-         YU0WBjPLsa1LarNKMw4/qronQWY4qXHv1a2tu8NFBHPZTeCQySho8/mrWU9NeQCvBXcA
-         zU5ZvdEkALuF0omB1PkUeW14byNhXRO63hZ6AJsmJ+kxriJg0gU1EsFT/LzIry1gN8e1
-         JBEQNhS5b44vBuFSbL2ihWjAnaEiIA7S+Amw8etOTO52mFYlSXicdKHDJ3C1IEbQprTT
-         LaMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeE1MjssGhDzXAoJogFvcpe4DL9CP13nGS/Tyuf3pFKVId25AqaUPYbVDjAmG+rqDBpT9zBGtjeKVtkTqTMSQO@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeB/qPDAuPES0rb4YOZjCkuODk79hXcvzQ9rGxF/6VhvRz5eic
-	Gd0fVoNw9UomlAZirXiem59cprxYvrLPFDfhwM7ij3H0tN8qykchiI7Y
-X-Gm-Gg: ASbGncse8GcLYzkCQXPcdI2ZHE3AwfuGTsVkTuw+xpr1S3q5WruWV/5UzxD4HH34u5L
-	oU/ozKqfWE10qDwSpNgGGU4/dJRDGqTrMt3WWC39nuz8taejKUt84bwXYWh7AZ23WXDVUBori4g
-	vzGmE3figuF1xX00QDuyLaEXmgpqXuI8SDcSqocSrxSEs+HS+A9uCIDQSLtKGs1fgAsRf5lzxRo
-	ZBp6c2nfvRKQriQfmt0MVziPtA4UKwMPEGLSKHeCde19cFP5I18nclAhVlhIpOVihPEAamJUVnR
-	aMhoMUFMeLeHfwvdme+qaviLAxKDoz2WtYGDR2wTGs6oSXO60QosybVUWGjMr8TEX6f11/yjC7a
-	hpB5Z+NLJiU2XUN5jiRR7hlQA0kXmOZt8
-X-Google-Smtp-Source: AGHT+IFR6m7sMRYq60YYdiwNHcTGZgBDSJvdiB2hyzS/2PlASgOEutBAVhyy9tEnlPYj2g+a/4aHxQ==
-X-Received: by 2002:a05:6902:18d3:b0:e93:3a40:8d49 with SMTP id 3f1490d57ef6-e98a5839762mr14591292276.40.1756885927052;
-        Wed, 03 Sep 2025 00:52:07 -0700 (PDT)
-Received: from localhost.localdomain ([2a12:a301:1000::20f3])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e9bbe08c80bsm1288391276.29.2025.09.03.00.52.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 00:52:06 -0700 (PDT)
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Jinchao Wang <wangjinchao600@gmail.com>
-Subject: [PATCH 3/3] perf/hw_breakpoint: Skip modify_bp_slot() if slot index unchanged
-Date: Wed,  3 Sep 2025 15:51:40 +0800
-Message-ID: <20250903075144.3722848-3-wangjinchao600@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250903075144.3722848-1-wangjinchao600@gmail.com>
-References: <20250903075144.3722848-1-wangjinchao600@gmail.com>
+	s=arc-20240116; t=1756885941; c=relaxed/simple;
+	bh=zDBrq12AtON0ruZfOWH7E085iZXOR09Angr/19+M6OI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fznMhqrC/yR8escA0jpoFFUzY59hEGvTNN/ZTC709zP+iALN+3AEP9DqtfLsgvWyr1eSJ4NVQkXNPGiZZhwEFV3cNWxYrPFp3JuAjzz8b7tQG5Gg0ZjlDohta3CqVn2EBo3jE1ZJbr5aFdkWAKNmqL28jrmwLFxy+h5WEmGc2GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=botaCraU; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 26FCDC6D;
+	Wed,  3 Sep 2025 09:51:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756885864;
+	bh=zDBrq12AtON0ruZfOWH7E085iZXOR09Angr/19+M6OI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=botaCraUS4M0XPXyK6JsSZ9sOpdaS03eNRWMSYuv2cArgNkYQDHyDMaenJ4IzsnRx
+	 PBrsrYN6ouskZnQ8IJNiAyPgXUGu/n1bNcSaTb0ZaVW/UXMNDaXIc7RzwVmSnJC6Du
+	 9D9Q0MD8riBT7iWRH1z7MXFr76QiwpomZ3su+lao=
+Date: Wed, 3 Sep 2025 09:51:52 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "Du, Bin" <bin.du@amd.com>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
+	sakari.ailus@linux.intel.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sultan@kerneltoast.com, pratap.nirujogi@amd.com,
+	benjamin.chan@amd.com, king.li@amd.com, gjorgji.rosikopulos@amd.com,
+	Phil.Jawich@amd.com, Dominic.Antony@amd.com,
+	mario.limonciello@amd.com, richard.gong@amd.com, anson.tsao@amd.com,
+	Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
+Subject: Re: [PATCH v3 1/7] media: platform: amd: Introduce amd isp4 capture
+ driver
+Message-ID: <20250903075152.GA13448@pendragon.ideasonboard.com>
+References: <20250828100811.95722-1-Bin.Du@amd.com>
+ <20250902124932.GN13448@pendragon.ideasonboard.com>
+ <2464e531-6ef3-4d27-8053-5e4874a15b8c@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2464e531-6ef3-4d27-8053-5e4874a15b8c@amd.com>
 
-Only call modify_bp_slot() when the old and new breakpoint types map to
-different slot indices.
+On Wed, Sep 03, 2025 at 11:22:27AM +0800, Du, Bin wrote:
+> Thanks Laurent Pinchart
+> 
+> On 9/2/2025 8:49 PM, Laurent Pinchart wrote:
+> > Hi Bin,
+> > 
+> > Could you please provide the v4l2-compliance report (please use the
+> > very latest version of v4l2-compliance), as well as the output of
+> > `media-ctl -p -d /dev/media0` (replacing media0 with the appropriate
+> > device) ?
+> > 
+> > Generally speaking, you should include a cover letter in patch series,
+> > and that information can be included in the cover letter.
+> > 
+> 
+> Yes, there is a cover letter for the patch series 
+> https://lore.kernel.org/linux-media/20250828084507.94552-1-Bin.Du@amd.com/, 
+> because of some server issue, the cover letter and left patches are sent 
+> separately, really sorry for the confusing. It does contain 
+> v4l2-compliance report, but the media-ctl output is missing, many thanks 
+> for the guide, will include it either in the next patch
 
-This avoids unnecessary release/reserve operations and improves efficiency.
+My bad, I even replied to that cover letter, but then forgot about it.
 
-Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
----
- kernel/events/hw_breakpoint.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+> > On Thu, Aug 28, 2025 at 06:08:05PM +0800, Bin Du wrote:
+> >> AMD isp4 capture is a v4l2 media device which implements media controller
+> >> interface. It has one sub-device (AMD ISP4 sub-device) endpoint which can
+> >> be connected to a remote CSI2 TX endpoint. It supports only one physical
+> >> interface for now. Also add ISP4 driver related entry info into the
+> >> MAINTAINERS file
+> >>
+> >> Co-developed-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
+> >> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
+> >> Signed-off-by: Bin Du <Bin.Du@amd.com>
+> >> ---
+> >>   MAINTAINERS                              |  13 +++
+> >>   drivers/media/platform/Kconfig           |   1 +
+> >>   drivers/media/platform/Makefile          |   1 +
+> >>   drivers/media/platform/amd/Kconfig       |   3 +
+> >>   drivers/media/platform/amd/Makefile      |   3 +
+> >>   drivers/media/platform/amd/isp4/Kconfig  |  13 +++
+> >>   drivers/media/platform/amd/isp4/Makefile |   6 ++
+> >>   drivers/media/platform/amd/isp4/isp4.c   | 121 +++++++++++++++++++++++
+> >>   drivers/media/platform/amd/isp4/isp4.h   |  24 +++++
+> >>   9 files changed, 185 insertions(+)
+> >>   create mode 100644 drivers/media/platform/amd/Kconfig
+> >>   create mode 100644 drivers/media/platform/amd/Makefile
+> >>   create mode 100644 drivers/media/platform/amd/isp4/Kconfig
+> >>   create mode 100644 drivers/media/platform/amd/isp4/Makefile
+> >>   create mode 100644 drivers/media/platform/amd/isp4/isp4.c
+> >>   create mode 100644 drivers/media/platform/amd/isp4/isp4.h
 
-diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-index 1db2c5e24d0e..6fed9521baf2 100644
---- a/kernel/events/hw_breakpoint.c
-+++ b/kernel/events/hw_breakpoint.c
-@@ -752,6 +752,7 @@ modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *a
- {
- 	struct arch_hw_breakpoint hw = { };
- 	int err;
-+	enum bp_type_idx old_type_idx, new_type_idx;
- 
- 	err = hw_breakpoint_parse(bp, attr, &hw);
- 	if (err)
-@@ -766,7 +767,9 @@ modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *a
- 			return -EINVAL;
- 	}
- 
--	if (bp->attr.bp_type != attr->bp_type) {
-+	old_type_idx = find_slot_idx(bp->attr.bp_type);
-+	new_type_idx = find_slot_idx(attr->bp_type);
-+	if (old_type_idx != new_type_idx) {
- 		err = modify_bp_slot(bp, bp->attr.bp_type, attr->bp_type);
- 		if (err)
- 			return err;
 -- 
-2.43.0
+Regards,
 
+Laurent Pinchart
 
