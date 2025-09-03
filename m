@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-797499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC58CB41131
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:10:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CCECB41136
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8162A546B61
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:10:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5171A702631
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466F23FB31;
-	Wed,  3 Sep 2025 00:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963571465B4;
+	Wed,  3 Sep 2025 00:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxVbCRsZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lr5Va/Ml"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98766139D;
-	Wed,  3 Sep 2025 00:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0ED1400C;
+	Wed,  3 Sep 2025 00:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756858208; cv=none; b=oL2z1V9TOOfGYdc1kcalkoSZoUFIOZG6VRpShl77Q6xjtF/LgfIQbaO5Dqjk9c4HoSN+Qb9+RkiN05i4zSKdiSYfFuYODrmqiMn0cex6tYrF7WY6q5S/gUdJSe5TO0W/nIA/Z6EOJLWhv5xJ8th5611/ibNSLyiEGTYPNZuCHvo=
+	t=1756858216; cv=none; b=g6reTWvqm97aBMGlUkY6wyrh8byapjcMGkJeFFNiSf5dqQpLfJkfa0l+I7Dqjlhc1TyNYP47euEDZbhV9uhNKao+2PBnJ31/2rPCGGIXoezwYrDWh4pBZtBkXKDPK3s/tZzXQMLkvGc8K5QdYnhpw8uHKciDHrCexBVxCucUhHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756858208; c=relaxed/simple;
-	bh=7t65t+pa0YCFZd4Pjv7Dvwx9VGOTWFpmCGuJMooS0dE=;
+	s=arc-20240116; t=1756858216; c=relaxed/simple;
+	bh=kqCBITBvvTPGrJDwgG++T2WdoRqclM08P2bV1oYwrJ8=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=QL3VL5kCt8WNEoMD7fVlj0yTHBJZoY9qAHSgtiYCkKCs342sNr7VDQnh6M33AO8U3Ue7sUrl1l91LngiSLjaHjEeYsK4CfZ27mEDzRfWqLGp+OPvAZGgZmIhG5eNZ5zg2t69DPwvrcm/bl0jgK0dH+L2/0962y9CVXyDvt45jEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxVbCRsZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2376FC4CEF4;
-	Wed,  3 Sep 2025 00:10:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756858208;
-	bh=7t65t+pa0YCFZd4Pjv7Dvwx9VGOTWFpmCGuJMooS0dE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=XxVbCRsZ7p/Yq8bkR185s2W40whHBXVAFkH4l0zS1I7Kl8jBB0Bp9TghItnURgX5K
-	 dddfmREkkGmjkHmu7tvFhICb2ORI0ziB2AQZ8mORArSEpJjPYBmOU2t8jVS6Va/mp7
-	 7GVhnLTWdko91VGsxq3AQ+BYYVCITQj8OxM/X0ivkZlDX7ULblwq9PY08dlqjLX9GT
-	 ezMHg6U1ft3pZl+TFltTHhUdtuTDOd3bJloJIjNI9cYes9m2ryiPMVdnBlWdp7H5LD
-	 h8qElq05nYerxMWafcj9DVB5s88Z61o0BpbfUO8Kd2XYtopdawl1PwhyuDosRJPq+S
-	 CMc8Z6W9i0iRw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDCD383BF64;
+	 In-Reply-To:To:Cc; b=uqBiuMC3HwaQ5EiSuPNkcfVWmLMLXy8DuIQclc/FHSE0I0/jW5+AUEbS8r0iek6hgRzc76+G9PAr1x3ZRD0OBaOCgIt85q761lHkhaG1hcn/eM5AAs/8nB7phVyCKJEMhaWWOcg07gcOZ0A8E2iEXBLVJAmz8TFzfP1zXxWmfNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lr5Va/Ml; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63BEAC4CEED;
 	Wed,  3 Sep 2025 00:10:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756858214;
+	bh=kqCBITBvvTPGrJDwgG++T2WdoRqclM08P2bV1oYwrJ8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Lr5Va/MlszG/kzHdrbfw7ZIore6ay2TLyHokqsZk6WYtvXgTTBOY4tKeyyYHLs3xe
+	 lIJyRkx9duG+GFjkGEsIFynh8FyLkupksunvqWpExXQpPIUaazfP5XF8eslRVGh7WR
+	 mYCsVExLSC3TVheBeaJu7T8nEW5sJYH0NlbUzxraicvFBF+08ZrfgAJ+OX31kUIxro
+	 4dl10Tgytt7hSoT+l5tWDj1fzO9R1QLrhQ3/U1KFCZVH0M5Z9yr/8pQHFIQOWWnckA
+	 aYtrYZFRQiSv2vgj/BYh8Sxig21qy/EDZdp3UBwSOqzU9FDwLBF+4usrrzZpVSWQDv
+	 kX4ULh0wduxAw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EACAA383BF64;
+	Wed,  3 Sep 2025 00:10:20 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -55,8 +55,8 @@ Subject: Re: [PATCH v3 net-next 0/2] ipv6: improve rpl_seg_enabled sysctl
  handling
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175685821323.475224.6132941673804776469.git-patchwork-notify@kernel.org>
-Date: Wed, 03 Sep 2025 00:10:13 +0000
+ <175685821973.475224.13168377571393825684.git-patchwork-notify@kernel.org>
+Date: Wed, 03 Sep 2025 00:10:19 +0000
 References: <20250901123726.1972881-1-yuehaibing@huawei.com>
 In-Reply-To: <20250901123726.1972881-1-yuehaibing@huawei.com>
 To: Yue Haibing <yuehaibing@huawei.com>
@@ -66,7 +66,7 @@ Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
 
 Hello:
 
-This series was applied to netdev/net.git (main)
+This series was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
 On Mon, 1 Sep 2025 20:37:24 +0800 you wrote:
@@ -81,9 +81,9 @@ On Mon, 1 Sep 2025 20:37:24 +0800 you wrote:
 
 Here is the summary with links:
   - [v3,net-next,1/2] ipv6: annotate data-races around devconf->rpl_seg_enabled
-    https://git.kernel.org/netdev/net/c/3a5f55500f3e
-  - [v3,net-next,2/2] ipv6: Add sanity checks on ipv6_devconf.rpl_seg_enabled
     (no matching commit)
+  - [v3,net-next,2/2] ipv6: Add sanity checks on ipv6_devconf.rpl_seg_enabled
+    https://git.kernel.org/netdev/net-next/c/3d95261eeb74
 
 You are awesome, thank you!
 -- 
