@@ -1,172 +1,149 @@
-Return-Path: <linux-kernel+bounces-798245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 512A8B41B26
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:07:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0812B41B29
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 901E14E3158
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:07:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 854A216B1FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707592E8DF4;
-	Wed,  3 Sep 2025 10:06:57 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35ADE2E8B65;
+	Wed,  3 Sep 2025 10:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jadq0HF3"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFFB284662;
-	Wed,  3 Sep 2025 10:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3693129CE1;
+	Wed,  3 Sep 2025 10:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756894016; cv=none; b=H6TxdPV/79yTF4PxzkX7pwpUVgolHbdyzlxuuJXopEjzUC5tUjHwrQI4TVGDhwEBE8FTrX2sXBW8G6ULFHdgEJ7vYokL6aSJNK3lLQX/GQE/zUEAW5mbGgOIHMCrZD/6XRN3AE4Owy80Od3qTgMG0IGHDhskM0up16JySuzzReY=
+	t=1756894064; cv=none; b=YAX54DLTZx+3KPd26vvrZXcT7GjypIPnYnX1JDcxxOxobZGlhg1JSaAKjJP1Pp2Eko4BI+04xC148mDCUWRXHZhz0oCbfQkXJHaaCpPFvFpC9vK5qhNUUI1diUanJ/vJJ+7pRVWsNglyYGgfgYCsjOKG4GqU/2LUGtUTBcaTltU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756894016; c=relaxed/simple;
-	bh=w3rrRgxL8XX4w+Qn1VTb5bjSpAfsAzv2+cSbOQIjKA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kD0vBEGucI+kXi9PYRo23RBdFO8bwg4qyNO2oP+d0VGQZQa5BJ4Zu3Kg5CFC3+qEqCp72pqM1RABnuhm+xm5azUdR1XiuhY5PKCxH7J+kK/gOc3qP0xI07FmlFKXH+GGaVnpZbecBlsLkLBZYNkg5etvHrVt0uWrp2CeHDVytts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4cGywS61WXz2nGNL;
-	Wed,  3 Sep 2025 18:07:52 +0800 (CST)
-Received: from kwepemp200004.china.huawei.com (unknown [7.202.195.99])
-	by mail.maildlp.com (Postfix) with ESMTPS id EB87B18005F;
-	Wed,  3 Sep 2025 18:06:44 +0800 (CST)
-Received: from [10.174.186.66] (10.174.186.66) by
- kwepemp200004.china.huawei.com (7.202.195.99) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 3 Sep 2025 18:06:43 +0800
-Message-ID: <1e3ec8c3-631d-4193-b039-15bcf911fd16@huawei.com>
-Date: Wed, 3 Sep 2025 18:06:43 +0800
+	s=arc-20240116; t=1756894064; c=relaxed/simple;
+	bh=KULc0f1h5IpWpu9btYuP8kZbCawgVeRxelmFTcI224E=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=AEIhGZyoMIrMw24ekFkSB362jxopgjrB6MEPUL+5xzAROhisaN658a159z/oaAtfVFey20v05e6HMiVWfKrgHYqktR1zgWixxmKHngWV5tdp/Qcu9C9j/daf9t2a3BdyMYIv/ZKWCkxvQQqCtZWK2uHXxRQScixYixAP6UyeIhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jadq0HF3; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24879ed7c17so48327225ad.1;
+        Wed, 03 Sep 2025 03:07:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756894062; x=1757498862; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rVGauGfhr6mvYXp8kJfDTCcj8ZL0niSipeV+OayO1is=;
+        b=jadq0HF3C9qt4/uC8E28yEYHuZ9GrYzcpYGEb54iihPVz+V1YAR6bkxy8Gt+p30PAA
+         O8V6PUaYbfLTCMoGCneqVFcDUGJ7/DQH/TDUs9CSe6OjQ/NTURFkEUJYolht243rZwuM
+         Xc8pYxQHEYzYxETk5BufEOjjTXsCRDAaNm6VULxko1H77RfjTAl0kOJ+SM+SdfXPRC1w
+         uGF2uNS8B8EsjuIe3I0cKeEzPqbvyFDkcA/oSIybJVeits7c+x8JVoHlBJyRZfBBYWkn
+         ZTY7ZDgAaXXcLGROUbEyshTGws5FfVRTjZwYunIuDifGwsynLCcCBTLn1kr3mz5oAQHr
+         TFKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756894062; x=1757498862;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rVGauGfhr6mvYXp8kJfDTCcj8ZL0niSipeV+OayO1is=;
+        b=GX1D4l7Xp7rMe1wD8z24s9rPoBQ0lES2vt+j62TQjnuiCID3ADVe8H3ir9H7poppLj
+         MLEyrA6R0VAA2xK4up3KjkTePnGJghBOXvSQy4hFrR6gg0/Gdez0lqygZa0g1/BOC6bo
+         nWiYoGCBSR8bGBOBkGH7boSiBPTO0pP5m1HABnn3jBR3k40WyXsRN4yW3vqV8weI7RXO
+         71Fegw+T8lSmmCp8/VVgYgFykiPvzd5uY+5DaG3lc8K06FMdLOPtuC1nqftod0ERXM9L
+         zzLhhHGhdP5HovHTbaaXQuhd7szO7zb7DL+a2TGhv7PN6zuR/HqmFSdBp8qRZpqL0NKn
+         FrZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVy3LECwmfoSEk4ONwSbmxTRdNCpmWXIWuphiVaaDbhJn3r4SU+y0s5t4QAt07z83hthrqna47o@vger.kernel.org, AJvYcCX3NkOBW45iTK+VRWMIN0+2hT5iJWgE4Xy1mthvqKBRpJ7iSybaTwv27X6P6FemXC6TSKUCQrBr25Pj@vger.kernel.org, AJvYcCXZdNQVnMcBYgh6bLerrEuJWg4+oA0If3hJEgMEc1FxQa1VqVgx2F3fFAKsvYTQAtc5u2X2KGCJzmB8Khk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVK5To/JLV7GkuDzXGdl5IvUkJ7vZl/EnajWflqsMBSlYO/JMX
+	QroJoFldSeK8WPhFCwwTC1uocOoLHdXJEoBii1+REudILU9A9iSgr5i2
+X-Gm-Gg: ASbGncsetg9mOiiv6gPiBg5la8elAb0mDgMJm4TJzlm5jCyURj3ZXcz8nS+rSXGrQzU
+	SR0CGe8QgMlj8orUv+i8Ok1bafQZcibKroAWeF0YVo/q+F7bYTcprln34JTfMnnE/nG4q00IA0i
+	cuN8HP8M+869XeT6mkLHx2MsZlUxjoAcrk9jTvEdqQB5kwQftRWpnlZ6gATmqVFScNCxNBuwipr
+	yHItGk7A4q3db2Ugk/Yp/N13qelbqD75B01ERwhHbzkbM+1Wf/l3zEmK243eirtsjP+J8dLNk00
+	XHwoPVRJDebjLeM8E1Bpe/VS/Hz3oseFUk+WTGZpPvmTuJOl1HnIhrlyIE5lcncH/mP+y6pUCeT
+	YWOpRpxzH/Md0tBo=
+X-Google-Smtp-Source: AGHT+IECmCXdKsrRf8TTrVO+be6VDrPYPEsyD7JjfR5byeiaPewWqXxQFtt2BMdS2cQf1GYZWxYKpA==
+X-Received: by 2002:a17:902:d485:b0:248:cd0b:343f with SMTP id d9443c01a7336-24944871f85mr192467405ad.11.1756894062225;
+        Wed, 03 Sep 2025 03:07:42 -0700 (PDT)
+Received: from gmail.com ([223.166.84.173])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24903702354sm158993365ad.19.2025.09.03.03.07.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 03:07:41 -0700 (PDT)
+From: Qingfang Deng <dqfext@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Paul Mackerras <paulus@ozlabs.org>,
+	Matt Domsch <Matt_Domsch@dell.com>,
+	Andrew Morton <akpm@osdl.org>,
+	Brice Goglin <Brice.Goglin@ens-lyon.org>,
+	linux-ppp@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] ppp: fix memory leak in pad_compress_skb
+Date: Wed,  3 Sep 2025 18:07:26 +0800
+Message-ID: <20250903100726.269839-1-dqfext@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nfsd: remove long-standing revoked delegations by force
-To: Li Lingfeng <lilingfeng@huaweicloud.com>, Benjamin Coddington
-	<bcodding@redhat.com>
-CC: Jeff Layton <jlayton@kernel.org>, <chuck.lever@oracle.com>,
-	<neil@brown.name>, <okorniev@redhat.com>, <Dai.Ngo@oracle.com>,
-	<tom@talpey.com>, <linux-nfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yukuai1@huaweicloud.com>,
-	<houtao1@huawei.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>
-References: <20250902022237.1488709-1-lilingfeng3@huawei.com>
- <a103653bc0dd231b897ffcd074c1f15151562502.camel@kernel.org>
- <1ece2978-239c-4939-bb16-0c7c64614c66@huawei.com>
- <BF48C6D1-ED2E-4B9C-A833-FF48D9ACC044@redhat.com>
- <7bf4275d-a7a0-4dab-8e5f-eb7b6e965377@huawei.com>
- <efc327e3-5956-4c61-bca5-e41f1e7c3e78@huaweicloud.com>
-From: "zhangjian (CG)" <zhangjian496@huawei.com>
-In-Reply-To: <efc327e3-5956-4c61-bca5-e41f1e7c3e78@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemp200004.china.huawei.com (7.202.195.99)
 
+If alloc_skb() fails in pad_compress_skb(), it returns NULL without
+releasing the old skb. The caller does:
 
+    skb = pad_compress_skb(ppp, skb);
+    if (!skb)
+        goto drop;
 
-On 2025/9/3 14:45, Li Lingfeng wrote:
-> Hi,
-> 
-> 在 2025/9/3 11:46, zhangjian (CG) 写道:
->> Hello every experts.
->>
->> If we can see all delegations on hard-mounted nfs client, which are also
->> on server cl_revoked list, changed from
->> NFS_DELEGATION_RETURN_IF_CLOSED|NFS_DELEGATION_REVOKED|
->> NFS_DELEGATION_TEST_EXPIRED
->> to NFS_DELEGATION_RETURN_IF_CLOSED|NFS_DELEGATION_REVOKED, can we give
->> some hypothesis on this problem ?
->>
->> By the way, this problem can be cover over by decreasing file count on
->> server.
->>
->> Thanks,
->> zhangjian
-> I think NFS_DELEGATION_TEST_EXPIRED is cleared as follows:
-> nfs4_state_manager
->  nfs4_do_reclaim
->   nfs4_reclaim_open_state
->    __nfs4_reclaim_open_state // get nfs4_state from sp->so_states
->     nfs41_open_expired // status = ops->recover_open
->      nfs41_check_delegation_stateid
->       test_and_clear_bit // NFS_DELEGATION_TEST_EXPIRED
-> After the bug in [1] is triggered, although the delegation is no longer on
-> server->delegations, it can still be obtained by traversing sp->so_states.
-> However, I cannot find the connection between the number of files on the
-> server and this issue.
-> 
-> Thanks,
-> Lingfeng
-> 
-Thanks a lot.
+drop:
+    kfree_skb(skb);
 
-NFS_DELEGATION_TEST_EXPIRED can only be set when
-delegation->stateid.type != NFS4_INVALID_STATEID_TYPE. But when
-NFS_DELEGATION_REVOKED is set, delegation->stateid.type will be
-NFS4_INVALID_STATEID_TYPE in nfs_mark_delegation_revoked.
-This implies the order could be like:
-1. Deleg A is in server cl_revoked list
-2. Deleg B is marked as NFS_DELEGATION_TEST_EXPIRED in client
-3. Deleg B is revoked by server callback procedure and server meet [1].
-deleg B is added to cl_revoked list
-4. Deleg B is marked as NFS_DELEGATION_REVOKED in client
+When pad_compress_skb() returns NULL, the reference to the old skb is
+lost and kfree_skb(skb) ends up doing nothing, leading to a memory leak.
 
-Why the first deleg A is in server cl_revoked list? Is [1] only
-condition? Why this can only happen when file count is large.
-I used to see 700 delegations in server but 40w+ delegations in client.
-May this give some clue on the problem?
->>
->> On 2025/9/2 20:43, Benjamin Coddington wrote:
->>> On 2 Sep 2025, at 8:10, Li Lingfeng wrote:
->>>
->>>> Our expected outcome was that the client would release the abnormal
->>>> delegation via TEST_STATEID/FREE_STATEID upon detecting its invalidity.
->>>> However, this problematic delegation is no longer present in the
->>>> client's server->delegations list—whether due to client-side
->>>> timeouts or
->>>> the server-side bug [1].
->>> How does the client timeout TEST_STATEID - are you mounting with 'soft'?
->>>
->>> We should find the server-side bug and fix it rather than write code to
->>> paper over it.  I do think the synchronization of state here is a bit
->>> fragile and wish the protocol had a generation, sequence, or marker for
->>> setting SEQ4_STATUS_ bits..
->>>
->>>>> Should we instead just administratively evict the client since it's
->>>>> clearly not behaving right in this case?
->>>> Thanks for the suggestion. While administratively evicting the
->>>> client would
->>>> certainly resolve the immediate delegation issue, I'm concerned that
->>>> approach
->>>> might be a bit heavy-handed.
->>>> The problematic behavior seems isolated to a single delegation.
->>>> Meanwhile,
->>>> the client itself likely has numerous other open files and active
->>>> state on
->>>> the server. Forcing a complete client reconnect would tear down all
->>>> that
->>>> state, which could cause significant application disruption and be
->>>> perceived
->>>> as a service outage from the client's perspective.
->>>>
->>>> [1] https://lore.kernel.org/all/de669327-c93a-49e5-a53b-
->>>> bda9e67d34a2@huawei.com/
->>> ^^ in this thread you reference v5.10 - there was a knfsd fix for a
->>> cl_revoked leak "3b816601e279", and there have been 3 or 4 fixes to fix
->>> problems and optimize the client walk of delegations since then.  Jeff
->>> pointed out that there have been fixes in these areas.  Are you
->>> finding this
->>> problem still with all those fixes included?
->>>
->>> Ben
->>>
->>>
-> 
+Align pad_compress_skb() semantics with realloc(): only free the old
+skb if allocation and compression succeed.  At the call site, use the
+new_skb variable so the original skb is not lost when pad_compress_skb()
+fails.
+
+Fixes: b3f9b92a6ec1 ("[PPP]: add PPP MPPE encryption module")
+Signed-off-by: Qingfang Deng <dqfext@gmail.com>
+---
+ drivers/net/ppp/ppp_generic.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
+index 65795d099166..f9f0f16c41d1 100644
+--- a/drivers/net/ppp/ppp_generic.c
++++ b/drivers/net/ppp/ppp_generic.c
+@@ -1744,7 +1744,6 @@ pad_compress_skb(struct ppp *ppp, struct sk_buff *skb)
+ 		 */
+ 		if (net_ratelimit())
+ 			netdev_err(ppp->dev, "ppp: compressor dropped pkt\n");
+-		kfree_skb(skb);
+ 		consume_skb(new_skb);
+ 		new_skb = NULL;
+ 	}
+@@ -1845,9 +1844,10 @@ ppp_send_frame(struct ppp *ppp, struct sk_buff *skb)
+ 					   "down - pkt dropped.\n");
+ 			goto drop;
+ 		}
+-		skb = pad_compress_skb(ppp, skb);
+-		if (!skb)
++		new_skb = pad_compress_skb(ppp, skb);
++		if (!new_skb)
+ 			goto drop;
++		skb = new_skb;
+ 	}
+ 
+ 	/*
+-- 
+2.43.0
 
 
