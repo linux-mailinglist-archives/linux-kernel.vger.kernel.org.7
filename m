@@ -1,121 +1,133 @@
-Return-Path: <linux-kernel+bounces-798791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB8DB42305
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:05:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA6EB4230A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3A1B3A2942
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:04:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47BD33A10C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F2730E859;
-	Wed,  3 Sep 2025 14:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4A23126A0;
+	Wed,  3 Sep 2025 14:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D2CH0amq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W8dEcRC7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRQcU94k"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932D11DEFE9
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26C830F52B;
+	Wed,  3 Sep 2025 14:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908291; cv=none; b=Yjourr3/0unCaNfgg60ScggGHKihtKjYv8rqILwQZNGm4DyehUsoo5zYieKTYCUQ7xemg+1mRhtPN/kfpUIv3wP14ehsPY5+4t5T07GVdzrnsAbgF61JnsII02ZJS6CmBHgT9kKq/4DjADrIhYCai1hxy0mFhHqheTgK2jhiHCc=
+	t=1756908294; cv=none; b=NuuGHtJomQUg/eovX4KkBNBZmVuhvi1/xh8zTyR5oveH0kmc01l+rlQ16PG1pWBGd0fxRxJyBl/LTIXhyccl/ZxH6LSm2EsGt7XeaqwsTqBLAtyXgvxWMxZhawNhCMeIfGHYlJ/q0nCfeZZVgxJNNmWFtTLzT3hUHpnazuGyvIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908291; c=relaxed/simple;
-	bh=c4jxF5VsWGE8/NaAHmTFJpAckQ+TbS1bG7M/90SDduA=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=i0JTM/aRFe0AxYFyAOc4wkRzROV7G1r+a7m11n5/2WP82KlSl+oInX4LulULvYBnlKKS93XdvNaXuxGuDb2g3UagIxVid3XT2dNRAIU+nCD1wpiJMmj45F0riFljH+AugWTE4rHyWmQ0OSI6hn2ZWQbzO5jJoHlBq2Z2YvrcWOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D2CH0amq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W8dEcRC7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250903135433.380783272@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756908287;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=EGz2zaDvFdXeRQqyZacdGqCCxPU+HkhYjz1f6Tjk9Zw=;
-	b=D2CH0amqrrIFspcFMiKihYVYafh06VAR3Mu0YLa4UBuXNXq9Sd4wyxh80PNXOLdrRQ1UEI
-	2U6Bwx1mBJSqKedsi3fVR8ZWNlYAHzPzKddvRrKzHJ+4uvJFx+EEo8KVmpilZJMoVpcOhc
-	iW5iKwFMSptIhFNinMQFnE4qBAmDkTge9RUhzUUrwfGdZ/dSlzj5xIpHMvGnJSQCgHBOEr
-	R94nysbKn1Gz9HU7a0hAXyPXLoz/s29LcNugbii8s/kw8kF4zPLtWOvBZ0EfwX875eVJBG
-	evaZKf9Fq5hlxBLYR5EsTWDY5+JlLLiAWJSmE5yzvArP7QF2Wng0103bSUNy6g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756908287;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=EGz2zaDvFdXeRQqyZacdGqCCxPU+HkhYjz1f6Tjk9Zw=;
-	b=W8dEcRC7O+enCPD6meNEx9Iulvn0Y4mvwWxwEhj8rkA7A5vwnWgf58JZSIdyJUk/hotp7D
-	DoA3pzWKPJ0tmrBQ==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>
-Subject: [patch 1/2] irqchip/msi-lib: Honor the MSI_FLAG_PCI_MSI_MASK_PARENT
- flag
-References: <86o6vjelw2.wl-maz@kernel.org>
- <87ecv1ob9q.ffs@tglx>
- <20250903134437.863638669@linutronix.de>
+	s=arc-20240116; t=1756908294; c=relaxed/simple;
+	bh=WlYdqytM/Vj98qRczF+ba6NXkIY9WaVkU2I4vOVFzvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ftRfdfKhmvMSvCTVjczelr25LVgnE2ako1amOmx3A6z/q8YxhDXhyisztPw76GBru2L/doVko1d3KMkA3m+gCabR9vN513PZzCs9euUugyametxa72ws/ozmAPeowmDncxp4md89Tfa8afEy5M5dS67EhL5PSv2F6gNlgik2UyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RRQcU94k; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aff0365277aso166767266b.1;
+        Wed, 03 Sep 2025 07:04:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756908291; x=1757513091; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=elJSkPEBBVngQQj4aVEZfKL8gC/PHjpdX2yIo3pkLZE=;
+        b=RRQcU94k5M+1MscYvHVGcyKw/dOYWPa97HJMzSdGGn+Q9syho4hHlv6k26VqZFbrD7
+         7iyAoNBjkouMb90sTSMxfSKeWI3p9bw0LyOFGx3LQpTz8J3YHQSL56KoMNbS6TH7sHOp
+         8xJgWOicPTLjXtkp9ZMH5OTMaGkwh5n/Q+jODLt2fT2pK/yBp3GNV0Sjl1vf0seYq/3d
+         JIbXR+b8CoVF3YKHWBrDFHFqdEEGg1xi1zhFOk6TMHzV/zScdHGcHFhns2Psqhp1lM4g
+         b/SdaIqLt08lH59gZiiKJhCgXn06JHXGW1/cytbFirWsLQOCMHsAu2vF7ZkmlUF0cJMM
+         E9Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756908291; x=1757513091;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=elJSkPEBBVngQQj4aVEZfKL8gC/PHjpdX2yIo3pkLZE=;
+        b=Efo4QJKHXT0TQSlwCfBa7ckyTS+x9kW3CGvENw+r6wb/optJA88wZ8ubOsmJKBNhcY
+         9WcaF7HWR4Z7GCLT+Qb6c10frPcOmijfg9WAVx3jGsY+4F6fToUIDIgmtvWWxbOgG6qS
+         Wa1VG7jPsFNTCccHhtkv5Odk6+YcuTaICvjaqK9Xx3pZtWaZHT10GF90HrIIs2lHNUn/
+         8wa8ZjJY/ghcomAGWcXfollieICljWQOTgmypLS7zq3GqB9+jWkZEAbMHSETrWZ8l0Zx
+         nNRp9iEUmxQM3TlaKNIO4syOVIFxDTapdbsAofmcXMpmX+WVT1tE6EgRvQcIMg8E9+tT
+         5aQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJIaY3Nfc+KxWo8lcaHzSjMj9q8DozflFH12P0Wuy29VMELwZeRY9mS8Ks1qiN5jtRUahzJTun2ZDDkQA=@vger.kernel.org, AJvYcCXAyz+LnIrXMb7OA0hGM9lrC2IZ2qZq4EEg6rlBe/OlPrmflgU7+HMg2ur65UgwaC5M3UqSHE1KQ/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmDThxOdmjXTZf6lBuapMO3v6IcPyUD/Q26CAbuCRCog2mlsjr
+	KJxK7MEEEAY300CwKQLqwXun2c9IxljVHM1wSfI4HRRYvBRGyu1WIg48
+X-Gm-Gg: ASbGncvAQtUDqRgRt7Z5sw26CJ0cTG8OduWxTq8kPRpxhYPY9nwtW4TLOHLcj10l1Wd
+	LCg366KupKMzhLTXKjzguBcPFGSMz0tNM3LCpXlv4siM0HFs42Y0pdwN6CXk5nfYABmvWq8W/zS
+	F2VmIONn6du6bsCFcgR2ylqUMQftzABYkVMK/dvovy0gQJcptmLe7sVOVxwgARDGZ2gcpHMK9cL
+	3Gh1xXCURh4jG0L/SOxPJBFkLqjqTSNhl3bZPybOSsz7/NZWHRi9ynE3XRE8C0PUwb7EdGC3o0Q
+	KS9MmDMigdrD5Vv+ReUcAwbFD56j6qLm6CBlytavwfkSxyVPtQ2hOdRDu3Oj6Ij3c2oWC4zwOdV
+	i+CG9xPg9CF5aspBvQCQ70+9ERnf/lBbyRhva7/J9J3Z/oiumL3G7a96Nm8cXBj2NIpzP180iee
+	mjA0Dl
+X-Google-Smtp-Source: AGHT+IH9sChVGEdo1pXaN7DIDwBJVmaRZi8ChKV/MLQ8N2XXlJDN/wp+PCoVDTfqcuNcGwkyxzlkAw==
+X-Received: by 2002:a17:907:7207:b0:b04:5888:7a7d with SMTP id a640c23a62f3a-b0458887c81mr462554166b.22.1756908290474;
+        Wed, 03 Sep 2025 07:04:50 -0700 (PDT)
+Received: from osama ([2a02:908:1b0:afe0:f7e0:2e82:8677:dae8])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61ec74de341sm3124045a12.4.2025.09.03.07.04.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 07:04:49 -0700 (PDT)
+Date: Wed, 3 Sep 2025 16:04:47 +0200
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] thermal: hwmon: replace deprecated strcpy() with
+ strscpy()
+Message-ID: <aLhK_zMvtkdCtsHR@osama>
+References: <20250901150653.166978-1-osama.abdelkader@gmail.com>
+ <CAJZ5v0hrKBNxDeZOKpUXyuZV7LRUX4ov4ifEGDtNMrA8km6uOA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Wed,  3 Sep 2025 16:04:46 +0200 (CEST)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0hrKBNxDeZOKpUXyuZV7LRUX4ov4ifEGDtNMrA8km6uOA@mail.gmail.com>
 
-From: Marc Zyngier <maz@kernel.org>
+On Wed, Sep 03, 2025 at 01:50:03PM +0200, Rafael J. Wysocki wrote:
+> On Mon, Sep 1, 2025 at 5:06 PM Osama Abdelkader
+> <osama.abdelkader@gmail.com> wrote:
+> >
+> > strcpy() is deprecated; use strscpy() instead.
+> 
+> So why is it better to use strscpy() in this particular case?
 
-For systems that implement interrupt masking at the interrupt controller
-level, the MSI library offers MSI_FLAG_PCI_MSI_MASK_PARENT.  It indicates
-that it isn't enough to only unmask the interrupt at the PCI device level,
-but that the interrupt controller must also be involved.
+Thanks for the review. Technically, there is no change since both have const buf size,
+it's just for consistency with other drivers.
 
-However, the way this is currently done is less than optimal, as the
-masking/unmasking is done on both sides, always. It would be far cheaper to
-unmask both at the start of times, and then only deal with the interrupt
-controller mask, which is cheaper than a round-trip to the PCI endpoint.
+Regards,
+Osama
 
-Now that the PCI/MSI layer implements irq_startup() and irq_shutdown()
-callbacks, which [un]mask at the PCI level and honor the request to
-[un]mask the parent, this can be trivially done.
-
-Overwrite the irq_mask/unmask() callbacks of the device domain interrupt
-chip with irq_[un]mask_parent() when the parent domain asks for it.
-
-[ tglx: Adopted to the PCI/MSI changes ]
-
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- drivers/irqchip/irq-msi-lib.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
---- a/drivers/irqchip/irq-msi-lib.c
-+++ b/drivers/irqchip/irq-msi-lib.c
-@@ -112,6 +112,20 @@ bool msi_lib_init_dev_msi_info(struct de
- 	 */
- 	if (!chip->irq_set_affinity && !(info->flags & MSI_FLAG_NO_AFFINITY))
- 		chip->irq_set_affinity = msi_domain_set_affinity;
-+
-+	/*
-+	 * If the parent domain insists on being in charge of masking, obey
-+	 * blindly. The interrupt is un-masked at the PCI level on startup
-+	 * and masked on shutdown to prevent rogue interrupts after the
-+	 * driver freed the interrupt. Not masking it at the PCI level
-+	 * speeds up operation for disable/enable_irq() as it avoids
-+	 * getting all the way out to the PCI device.
-+	 */
-+	if (info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT) {
-+		chip->irq_mask		= irq_chip_mask_parent;
-+		chip->irq_unmask	= irq_chip_unmask_parent;
-+	}
-+
- 	return true;
- }
- EXPORT_SYMBOL_GPL(msi_lib_init_dev_msi_info);
-
+> 
+> > Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
+> > ---
+> >  drivers/thermal/thermal_hwmon.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/thermal/thermal_hwmon.c b/drivers/thermal/thermal_hwmon.c
+> > index 0ecccd4d8556..64cc3ab949fe 100644
+> > --- a/drivers/thermal/thermal_hwmon.c
+> > +++ b/drivers/thermal/thermal_hwmon.c
+> > @@ -96,7 +96,7 @@ thermal_hwmon_lookup_by_type(const struct thermal_zone_device *tz)
+> >
+> >         mutex_lock(&thermal_hwmon_list_lock);
+> >         list_for_each_entry(hwmon, &thermal_hwmon_list, node) {
+> > -               strcpy(type, tz->type);
+> > +               strscpy(type, tz->type);
+> >                 strreplace(type, '-', '_');
+> >                 if (!strcmp(hwmon->type, type)) {
+> >                         mutex_unlock(&thermal_hwmon_list_lock);
+> > --
+> > 2.43.0
+> >
 
