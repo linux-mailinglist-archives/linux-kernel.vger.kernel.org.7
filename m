@@ -1,151 +1,182 @@
-Return-Path: <linux-kernel+bounces-798006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D12CB41851
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:23:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00FABB41854
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:25:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E449C5E6CF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:22:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E20123A2D28
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945D82C21DA;
-	Wed,  3 Sep 2025 08:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lB9EZuYE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C542E3AEA;
+	Wed,  3 Sep 2025 08:24:53 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DBC2E8B9B;
-	Wed,  3 Sep 2025 08:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93FD1D6DA9;
+	Wed,  3 Sep 2025 08:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756887769; cv=none; b=c/S+2pavMUgSUUQtvui8t6URM3ZpxrokZzIv4DfK5up5MUwxx9Abm10wLNH7nyFfjW1KRm9AW/6hNsArYG4RfnSrOn60PXdpBVTfDU1D1bUvmyoRUMLAjN6rUDUFHgkRueIkRR6/RS5Nq9EFP5tL2jr6j3zQEhTaUnETGpMy3QU=
+	t=1756887893; cv=none; b=nQ6KRMTqNgfXjm2IuLJ0dyrgM8MwqGf8d8BMzLMUhwd8WpMhK6WZwADXNUv/CdJrDGgSEvptUpZF5sg4tt25FzNfFEsWTrm44Y5p2+Sbwi+OMWdpmqrWMO5bOp3s+r5WH/W0aWSPVCBZinOwfHCkx8CdcdAGhuLk84LxSAfnL6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756887769; c=relaxed/simple;
-	bh=HoMVBzEmKGKW2zMWJFN/uBgQSPMN+nDzXwtMvU8NC2w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H6ykI0Cflh4zkPYh8umjngTSiMyapGW534LOt0Uwh4AX3GyeA1Qk9JWOP3omwi9r28yQUdSTn5YS9IaOE659MALuvzXoR/Agd7pR0pu/P+oEsUfDuSfWXyLoQ/Tq7JxDqUP5hDYBkcp4VwJ7bql75bXWRiZPUZQIjFYtxTELWTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lB9EZuYE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7D6FC4CEF0;
-	Wed,  3 Sep 2025 08:22:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756887769;
-	bh=HoMVBzEmKGKW2zMWJFN/uBgQSPMN+nDzXwtMvU8NC2w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lB9EZuYE7Co11enlzm0LQGMJ3HV2nnlO4wOoVAZUeQiOjwapzv0hig57hSHhDi+Ic
-	 YmR5a1C8BAyJXsQTLTBOZjTnvBTbqhkshOqovhhidY0fIrGSmKoNgFQddZjKk/hl5W
-	 FuL/M8uO1D+MaQ5WByEU3Lwpz1ylRx7dk2eROkcsbBZFBsrjToHcsUPTlIXJpuUyCZ
-	 XObWwxkE31DMp20cquS+Wux+b5Iy915km9/s8BLgG7ZPmZRqA6zb7tNjT6Gev/hwAY
-	 yPabnc4P0H609QusGATCghbIyngm7YgxSgDG61AIsLgOlqv1HwpQw+BcXceUeu0c5j
-	 ho3NBGUhYF9fQ==
-Message-ID: <8ab42fc2-8a41-458a-92b4-9bcf3842f0e6@kernel.org>
-Date: Wed, 3 Sep 2025 10:22:43 +0200
+	s=arc-20240116; t=1756887893; c=relaxed/simple;
+	bh=2guZtEvZRRqsDYQoh3OzZoqBnT1rV39dxbVBeNeB88Q=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=rKSl1hU3YW01HvOfqdq+4eS5oUQD9zebO2/HKxbR1ZGVq7upg2LUkQLIr2QcPXWqx+mrWmqwRvysO2cIQ5nENEA9w/RUpqa9SK2w9LyM8PbhkUGrgTBRPZQM8ZqePImazT0Li2FTDSRCFpt046pRK/RYU0nK1UYJU+CXxxOpRRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cGwdW2PVCzKHMhG;
+	Wed,  3 Sep 2025 16:24:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 392061A0CA2;
+	Wed,  3 Sep 2025 16:24:47 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgB3wY1N+7doM1TxBA--.52838S3;
+	Wed, 03 Sep 2025 16:24:47 +0800 (CST)
+Subject: Re: [PATCH] blk-throttle: check policy bit in blk_throtl_activated()
+To: Liang Jie <buaajxlj@163.com>, yukuai1@huaweicloud.com
+Cc: axboe@kernel.dk, fanggeng@lixiang.com, gj.han@foxmail.com,
+ hailan@yukuai.org.cn, hanguangjiang@lixiang.com, liangjie@lixiang.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangchen11@lixiang.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <c60c0768-2b1b-a26b-db7d-340fd29ff688@huaweicloud.com>
+ <20250903072112.3432190-1-buaajxlj@163.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <f17231f5-61a0-8d2d-eef5-f9b838caad34@huaweicloud.com>
+Date: Wed, 3 Sep 2025 16:24:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 2/4] dt-bindings: mmc: controller: Add
- max-sd-hs-frequency property
-To: Sarthak Garg <quic_sartgarg@quicinc.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
- quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
- quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com
-References: <20250903080404.3260135-1-quic_sartgarg@quicinc.com>
- <20250903080404.3260135-3-quic_sartgarg@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250903080404.3260135-3-quic_sartgarg@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20250903072112.3432190-1-buaajxlj@163.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB3wY1N+7doM1TxBA--.52838S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZry7JFWUXw1rAF13KF4xCrg_yoW5CF1DpF
+	WUCa4Ykw4UXrZ7J3W2qr10kryF9w4fCw45Jr1rJryfAw1qgr1fZr1UKw15Ca1fZFsaka4U
+	Z3Z0qwsxuF1YyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 03/09/2025 10:04, Sarthak Garg wrote:
-> Some platforms may require limiting the maximum frequency used in SD
-> High-Speed (HS) mode due to board-level hardware constraints. For
-> example, certain boards may include level shifters or other components
-> that cannot reliably operate at the default 50 MHz HS frequency.
-> 
-> Introduce a new optional device tree property max-sd-hs-frequency to
-> limit the maximum frequency (in Hz) used for SD cards operating in
-> High-Speed (HS) mode.
-> 
-> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
-> ---
->  .../devicetree/bindings/mmc/mmc-controller-common.yaml    | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml b/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
-> index 9a7235439759..d6b785cb2bd9 100644
-> --- a/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
-> @@ -93,6 +93,14 @@ properties:
->      minimum: 400000
->      maximum: 384000000
->  
-> +  max-sd-hs-hz:
-> +    description: |
-> +      Maximum frequency (in Hz) to be used for SD cards operating in
-> +      High-Speed (HS) mode. This is useful for board-specific limitations,
-> +      such as level shifters or others where the card cannot reliably
-> +      operate at the default 50 MHz HS frequency.
-> +    default: 50000000
+Hi,
 
-no minimum/maximum? If 50 MHz is default, isn't it also an actual max?
+在 2025/09/03 15:21, Liang Jie 写道:
+> On Wed, 3 Sep 2025 14:03:37 +0800, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+> 
+>> 在 2025/09/03 10:55, Han Guangjiang 写道:
+>>> Hi Kuai,
+>>>
+>>>> Instead of add checking from hot path, do you consider delaying setting q->td
+>>>> until policy is activated from the slow path? I think this is better solution.
+>>>
+>>> Thank you for your review. You're absolutely right that performance
+>>> considerations in the hot path are important.
+>>>
+>>> We actually considered delaying the setting of q->td until after policy
+>>> activation, but we found that q->td is needed by blkcg_activate_policy()
+>>> during its execution, so it has to be set before calling
+>>> blkcg_activate_policy().
+>>
+>> That's not hard to bypass, q->td is used to initialze tg->td in
+>> throtl_pd_init(), actually you can just remove it, and add a helper
+>> tg_to_td() to replace it;
+>>
+>> struct throtl_data *tg_to_td(struct throtl_grp *tg)
+>> {
+>> 	return tg_to_blkg(tg)->q->td;
+>> }
+> 
+> Hi Kuai,
+> 
+> Thanks for the suggestion. Just a quick note: in throtl_pd_init(), q->td is not
+> only used to init tg->td, it’s also needed for sq->parent_sq:
+> 
+>   - sq->parent_sq = &td->service_queue;
+> 
+> So if we remove tg->td and delay q->td, throtl_pd_init() won’t have a valid td
+> to set parent_sq.
 
-Best regards,
-Krzysztof
+Yes, however, this can be fixed very similar:
+
+Set sq->parent_sq to NULL here, and add a helper parent_sq(q, sq):
+
+if (sq->parent_sq)
+	return sq->parent_sq;
+
+td_sq = &q->td->service_queue;
+return sq == td_sq ? NULL : td_sq;
+
+And sq_to_tg() need to be changed as well. So far, I'm not sure how many
+code changes are required this way. We of course want a simple fix for
+stable backport, but we definitely still want this kind of fix in future
+release.
+
+Thanks,
+Kuai
+
+> 
+>>
+>> Meanwhile, please remove the comment about freeze queue, turns out it
+>> can't protect blk_throtl_bio() becasue q_usage_coutner is not grabbed
+>> yet while issuing bio.
+> 
+> You’re right. We’ll remove that comment in patch v2.
+> 
+> Thanks,
+> Liang Jie
+> 
+>>
+>> Thanks,
+>> Kuai
+>>
+>>>
+>>> We explored several alternative approaches:
+>>>
+>>> 1) Adding a dedicated flag like 'throttle_ready' to struct request_queue:
+>>>      - Set this flag at the end of blk_throtl_init()
+>>>      - Check this flag in blk_throtl_activated() to determine if policy
+>>>        loading is complete
+>>>      - However, this requires adding a new bool variable to the struct
+>>>
+>>> 2) Reusing the q->td pointer with low-order bit flags:
+>>>      - Use pointer low-order bits to mark initialization completion status
+>>>      - This would avoid adding new fields but requires careful handling
+>>>        and additional processing
+>>>
+>>> Given these constraints, we chose the current approach of checking the
+>>> policy bit in blk_throtl_activated() as it:
+>>> - Doesn't require struct changes
+>>> - Provides a clean, atomic check
+>>> - Aligns with the existing policy activation mechanism
+>>>
+>>> We would appreciate your suggestions on how to better handle this
+>>> initialization race condition.
+>>>
+>>> Thanks,
+>>> Han Guangjiang
+>>>
+> 
+> .
+> 
+
 
