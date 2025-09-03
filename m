@@ -1,112 +1,178 @@
-Return-Path: <linux-kernel+bounces-798089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79456B41957
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:57:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E05B41961
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F24067B1DCA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:55:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8CF566CF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899A82ED86F;
-	Wed,  3 Sep 2025 08:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC42B2F0C63;
+	Wed,  3 Sep 2025 08:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CuL7ZXrT"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIpTPaTz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D702ED860
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365892E229E;
+	Wed,  3 Sep 2025 08:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756889752; cv=none; b=dwLeqy9inVdSxy2W3P4Dk3bkslZ6FykNhi0kv96FgvsuW1CATH/nPnCKvt0XYzPR8qd2+75+hRwClAL/+H6LdDhtqHQ+Q3Ku2MCNzD+YvJXv3fGe4Yqpx/uF1cpgHBVWmu7OUiWZxXBw5GoYUSw8uZ+tPf7LAXsq/oqI9zIGPqQ=
+	t=1756889775; cv=none; b=Na+wLEajqgGv79WQ+YTnwaRPbzc6pqKa793/2jcpq6HA7480Vu8NoQzoJ6f/8lWorRpe3FaxhORh5FCOPcUzI3/2wpa/KU5woQ5XlbAy0Am1WHYnpaH9GV6MACuMbHtEKfodHxNc+BSnec6I117fK8+D9rnWbbDd+lX1pF5/+6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756889752; c=relaxed/simple;
-	bh=GYN9iaw7rAier/pATCqUnEp3Xj8mNzeugHEcM8SbDPo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bk5WXdQsUd3viUJ0HYa85l9uV22MRsozKr1r9PoOD4LTCZyyhp4GKGGvugrTwFje+7QdbFZ9y1jRO0vba584BCCQgiiG5VdVkH4eJoPLN3tPCZjL4ZTgSP6Shfz2MV1FlCV6VCqOOb933q9ZXnGc1YDVzAMHlMnw1aXWUNE9GB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CuL7ZXrT; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45cb6428c46so3027235e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:55:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756889749; x=1757494549; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5cV4mqPmxW1tPyF9dbost7ZwM2Dt79PTTYDkgTZFQBo=;
-        b=CuL7ZXrTmUjw1fvqBh2MDozJxPqXGHzfp42WV0RZO25tFjW6Of4f+cmHZp4G9SNDcw
-         lzQvQWzpjG3WxsaQ3/yBBKhel4crElo1Cuulw5rp2XnPCaYhpTRmW9FVnE6TMNeLHNi5
-         jsnr0DVomD/nC7JMLm/4EtJpx+rrL6qn552W/6qaqteNjNczWV4QKftJz6jGNIUOlwGy
-         JCfVCOvTl8WAhPWpNOhfVcKAk3gRaYfTGk/yOqimqIaUPg1yjRz3ePcDvltIdfAXk38B
-         Xl5QLahdypr3pjj33m+ALNBpNtewEVCx4uhpZZ3+J70HWipFTdvWh3x5y2gdqi5RiGMo
-         UwJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756889749; x=1757494549;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5cV4mqPmxW1tPyF9dbost7ZwM2Dt79PTTYDkgTZFQBo=;
-        b=vC8NC0sE0a5lGNF6iBS2dPVgBRY6XNNz+m/HnKegUqLUEs+zf1BIXI/mgSLzoWYbpT
-         grZ2RZ9l+QXGyZbBX/TY5ik+5KElzMcJe5SARxpvEQjqU1xmVgMzBHev7DqViytw0v1B
-         DbQZy2SkKZJS/y4sWMbbVC28qsJ2qzR1HYYKv5+lC0tgk8B4+T+SZIscwM0C7ZDMf3CS
-         iK5njbSuHBVmtTV3HvciGSk3ExoO1qc1ViiVX2EERCDdWBlqO9u0BSI5dU1sbgApaGYS
-         a4vG/Ahzgg4pnkY0XcyN4M4JHft8qEQAM1R+L7Xw7aGBkGoBj+yEMtpNIxcfIC5jzBe2
-         adFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXD/b75pIrfWL4N4j5KEcWv3XBG4kzb3Pv+u/ALjsCCqi1/0BrofMzvYYl/1obABG9ZDcwuoUP3Ku+wuxA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8BpKrIMhGfW77aELUcY2ZwCDYB0gRR4m4AReDbvtanIGR0zE7
-	3JqohESU3zKSUy15F+BD/FIr2PGJaMCpccx7eJXjvoD7GU+z7JZOZ46GHQkuLsr4++g=
-X-Gm-Gg: ASbGncv5x560+klvlxV1WSY+ewi69ghJHscJbjnBzTg0v35nsYJra8lw1kfLmH2W2MZ
-	Uo/8NT59ygklM2/DG5EpebiHSnYpv4k8Lyw3Rb1EPspFBtvlyVd5BacZ3DId7TF3FPQxjU3Zkcu
-	5icDV8zTpHchKJpVCJX4PcY4jjrqz0a2CUIpzFRr+mzatgnAvo8g+8UAD14Nfx9oM6Km3Udonxl
-	tBA/GLPj4YasG96T9oaw/lOIjnVbMNszNSjmDEglVt0raTtMU66Tk7YrGzyj1WzD+YFMzvL+5l5
-	/2ygAfUx58jvZFrZc/KQCzHIxCwTVdewZEp1H4kJd3JGL9mf9YPNbG4Gn/XIjH/gJjdRLoyytDe
-	HODZr+rBBD6Chsp9xCpbCbE/oVKGx6wXjXMcrWg==
-X-Google-Smtp-Source: AGHT+IH/I5haMU97rwsp/23eXdJD7jSFORVKYid/zP+DHP9530edfSTunocGOnjSttPgmZD8RbnDJg==
-X-Received: by 2002:a05:600c:1f1a:b0:45b:47e1:ef76 with SMTP id 5b1f17b1804b1-45b8559849bmr123014385e9.37.1756889748976;
-        Wed, 03 Sep 2025 01:55:48 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3decf936324sm1205616f8f.9.2025.09.03.01.55.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 01:55:48 -0700 (PDT)
-Date: Wed, 3 Sep 2025 11:55:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Colin Ian King <colin.i.king@gmail.com>,
-	Shaoyun Liu <shaoyun.liu@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/amd/amdgpu: Fix a less than zero check on a
- uint32_t struct field
-Message-ID: <aLgCkRO8jkzwuxW5@stanley.mountain>
-References: <20250903082018.2702769-1-colin.i.king@gmail.com>
+	s=arc-20240116; t=1756889775; c=relaxed/simple;
+	bh=q0tHz+BMppn+t5zOxfWZIctQRwVYHLuE0UcrNZZKdo4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JVYMzxlpITKu8ZlvEvOhBszwFZhdRgXXK1zPtjBmtS465hXJsMQTyVwd3Z5d+MRaL98j8POYU8nmY2nnTvsmHxK+3BKawnXuWVIdLLlw1WgH5SAZz5LCMGmq/1lSeBh5ZYxHOMwBx/V/EsB/OZQz5l70jPpdFTzDQMFjy47h+EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIpTPaTz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 10859C4CEF0;
+	Wed,  3 Sep 2025 08:56:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756889775;
+	bh=q0tHz+BMppn+t5zOxfWZIctQRwVYHLuE0UcrNZZKdo4=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=NIpTPaTzzHX7kB1f8K503erRMyypAXp1ExsDMwEhyLo+dF1be4OFKtlwDQVfIIahP
+	 ESEMMz41sEaWtoKNZ03tJ9d9IJ0MiI6QaSzTeo8avGezs+TtC5yI5a30t4d4BB6v/6
+	 O70WUoRIcXFhUmhrDmBDs88a/69IwmCC65sslg6afBp+/xZyXD8e2qAuXVJyWEsxrx
+	 CXYDyRL8LpCA4/AYREoiSV59XCl7Br2dG/n1P6aqY+OtupCCehxq1SbsjnPAu0OFKq
+	 jVjETpWA9H//y/7Wx7qZHhKDGss7GCsWGMKJCFiO0ekZAQdNIo4sEMed3DvDWI/WB4
+	 mycw0vDRbpR5A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F03F0CA1009;
+	Wed,  3 Sep 2025 08:56:14 +0000 (UTC)
+From: Anthony Brandon via B4 Relay <devnull+anthony.amarulasolutions.com@kernel.org>
+Date: Wed, 03 Sep 2025 10:56:13 +0200
+Subject: [PATCH v4] dmaengine: xilinx: xdma: Fix regmap max_register
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903082018.2702769-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250903-xdma-max-reg-v4-1-894721175025@amarulasolutions.com>
+X-B4-Tracking: v=1; b=H4sIAKwCuGgC/33OywqDMBCF4VeRrJuSycVLV32P0sVooga0KYmKR
+ Xz3RleloMv/wHzMQoLx1gRySxbizWSDda8Y8pKQqsVXY6jVsQlnXLGCAZ11j7THmXrTUEhlUaV
+ SFULlJJ68vantvHOPZ+zWhsH5z65PsK0H0AQUaJkikyoFo0u4Y49+7DC4bhziT+FauZ5s5sTPH
+ B6dGkXGBWaQV/rEEb8O/3NEdNQGlbnmJagDZ13XL3+nWz9DAQAA
+X-Change-ID: 20250901-xdma-max-reg-1649c6459358
+To: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>, 
+ Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, 
+ Vinod Koul <vkoul@kernel.org>, Michal Simek <michal.simek@amd.com>
+Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Anthony Brandon <anthony@amarulasolutions.com>, 
+ Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3123;
+ i=anthony@amarulasolutions.com; h=from:subject:message-id;
+ bh=L9Jh4ojlLzKIglwK2lLLxgJIk6sX82XB7wh+bXhzPgA=;
+ b=owGbwMvMwCUWIi5b4HjluATjabUkhowdTGuXbz2h8O6vR9h7l8sJXDd2xeuveNJvuSdM7f7co
+ LlBt/jiO0pZGMS4GGTFFFnKdeR5PZTrypVmPjGGmcPKBDKEgYtTACayiJHhn8qiHF9TpoxqOeMV
+ 03eG+W0RdGx0+/VCIXcmz4H1iZdzmxgZnspOWb3hmObTayGdPPNCuJXqK/8y2R1pOFGZv0JJr9i
+ bEwA=
+X-Developer-Key: i=anthony@amarulasolutions.com; a=openpgp;
+ fpr=772C1F0D48237E772299E43354171D7041D4C718
+X-Endpoint-Received: by B4 Relay for anthony@amarulasolutions.com/default
+ with auth_id=505
+X-Original-From: Anthony Brandon <anthony@amarulasolutions.com>
+Reply-To: anthony@amarulasolutions.com
 
-Are you editing your CC list?  The get_maintainer.pl script gives me a
-longer list.  The most important thing is that you've left off Shaoyun Liu
-from the Fixes tag.  Added.
+From: Anthony Brandon <anthony@amarulasolutions.com>
 
-The kbuild-bot did report this bug on Friday so the AMD folks likely have
-a patch kicking around on their end, but just haven't sent it out
-publicly yet?
-https://lore.kernel.org/all/202508290749.ti6u3cLL-lkp@intel.com/
+The max_register field is assigned the size of the register memory
+region instead of the offset of the last register.
+The result is that reading from the regmap via debugfs can cause
+a segmentation fault:
 
-Anyway, the patch is fine.
+tail /sys/kernel/debug/regmap/xdma.1.auto/registers
+Unable to handle kernel paging request at virtual address ffff800082f70000
+Mem abort info:
+  ESR = 0x0000000096000007
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x07: level 3 translation fault
+[...]
+Call trace:
+ regmap_mmio_read32le+0x10/0x30
+ _regmap_bus_reg_read+0x74/0xc0
+ _regmap_read+0x68/0x198
+ regmap_read+0x54/0x88
+ regmap_read_debugfs+0x140/0x380
+ regmap_map_read_file+0x30/0x48
+ full_proxy_read+0x68/0xc8
+ vfs_read+0xcc/0x310
+ ksys_read+0x7c/0x120
+ __arm64_sys_read+0x24/0x40
+ invoke_syscall.constprop.0+0x64/0x108
+ do_el0_svc+0xb0/0xd8
+ el0_svc+0x38/0x130
+ el0t_64_sync_handler+0x120/0x138
+ el0t_64_sync+0x194/0x198
+Code: aa1e03e9 d503201f f9400000 8b214000 (b9400000)
+---[ end trace 0000000000000000 ]---
+note: tail[1217] exited with irqs disabled
+note: tail[1217] exited with preempt_count 1
+Segmentation fault
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Fixes: 17ce252266c7 ("dmaengine: xilinx: xdma: Add xilinx xdma driver")
+Signed-off-by: Anthony Brandon <anthony@amarulasolutions.com>
+Reviewed-by: Lizhi Hou <lizhi.hou@amd.com>
+Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+---
+Changes in v4:
+- Reorder Reviewed-by
+- Link to v3: https://lore.kernel.org/r/20250902-xdma-max-reg-v3-1-5fa37b8d2b15@amarulasolutions.com
 
-regards,
-dan carpenter
+Changes in v3:
+- Add Fixes tag
+- Link to v2: https://lore.kernel.org/r/20250901-xdma-max-reg-v2-1-fa3723a718cd@amarulasolutions.com
+
+Changes in v2:
+- Define new constant XDMA_MAX_REG_OFFSET and use that.
+- Link to v1: https://lore.kernel.org/r/20250901-xdma-max-reg-v1-1-b6a04561edb1@amarulasolutions.com
+---
+ drivers/dma/xilinx/xdma-regs.h | 1 +
+ drivers/dma/xilinx/xdma.c      | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/dma/xilinx/xdma-regs.h b/drivers/dma/xilinx/xdma-regs.h
+index 6ad08878e93862b770febb71b8bc85e66813428e..70bca92621aa41b0367d1e236b3e276344a26320 100644
+--- a/drivers/dma/xilinx/xdma-regs.h
++++ b/drivers/dma/xilinx/xdma-regs.h
+@@ -9,6 +9,7 @@
+ 
+ /* The length of register space exposed to host */
+ #define XDMA_REG_SPACE_LEN	65536
++#define XDMA_MAX_REG_OFFSET	(XDMA_REG_SPACE_LEN - 4)
+ 
+ /*
+  * maximum number of DMA channels for each direction:
+diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
+index 0d88b1a670e142dac90d09c515809faa2476a816..5ecf8223c112e468c79ce635398ba393a535b9e0 100644
+--- a/drivers/dma/xilinx/xdma.c
++++ b/drivers/dma/xilinx/xdma.c
+@@ -38,7 +38,7 @@ static const struct regmap_config xdma_regmap_config = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
+-	.max_register = XDMA_REG_SPACE_LEN,
++	.max_register = XDMA_MAX_REG_OFFSET,
+ };
+ 
+ /**
+
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250901-xdma-max-reg-1649c6459358
+
+Best regards,
+-- 
+Anthony Brandon <anthony@amarulasolutions.com>
+
+
 
