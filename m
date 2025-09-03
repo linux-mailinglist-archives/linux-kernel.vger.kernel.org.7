@@ -1,115 +1,94 @@
-Return-Path: <linux-kernel+bounces-799450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FA08B42BF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:30:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCECAB42BE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 111171BC75C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:30:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4C7170004
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D172F2EB86C;
-	Wed,  3 Sep 2025 21:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4343E2EB5DC;
+	Wed,  3 Sep 2025 21:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="anAcspD2";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="pqNva9nI"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIm/iPg6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC252E03FF;
-	Wed,  3 Sep 2025 21:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9944A2EB5B7
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 21:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756934996; cv=none; b=WuarSM5J00q4/ftlkbyuXFX36XFSNoODOPre914qfxVR2r3UMYe0VAYpYYnvNW7Y3JPVzuUrCkGK7vLrFRnDMUWnlwsUCSjX3weWZCiXcKivqTLgZdNdJj7RYqiay46OsATQgTNASqD6vYoo3g6JM4B1qezFliXVaZSEiqhCzJQ=
+	t=1756934861; cv=none; b=sOYSsTnXpvnCbfJk8ifdbXdyWvVUMWa3OZg5PNi4XxBNIhYrvMvaSCLvy/52njKK/KSvCllnHPXhhKD2uRGDmjYAF0JI/ayWtkswCJCEJYpG/Dt0dPh6AjxKzDevN6zwJ/GbqGUJ04ocSu1DThhitjVtCNWnrnfJ7pOcH807W90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756934996; c=relaxed/simple;
-	bh=Pm72KJkyOx20dJkg1/oHOJ+b8z/476MTARgoZvT6Kko=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WqWCAEV5X/8g4euaAIO3Ey/qQPlJnmSwsoOL1MFtjVblbcqoOo4z/Qh1uwhpJ4BkimtpO1O/LyL3SwOOl9/hVqQLErv1gPwPYZyva+PcL59R8NxzXw9eM28ON08xHDCWyfL1De+JNUi9hXmxX58EDJ/5J3STO6LvCYG53Y7Ch20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=anAcspD2; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=pqNva9nI; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1756934856; bh=KWG1lKRUoYbRab1ldXHp7em
-	ZA3hhQoPTXfqyJ/dofyE=; b=anAcspD2TR1NSE4GORNByPsFoFmmZh9N4ZRwfas5cB2Fs+6s18
-	utAbAfhbhOkoGcq3F5QrY4KhKeAITnsDfeXFMkOWqLGPFZ9i+ida1kidConVIbhZxiR6wrpo0zl
-	Q9d2jMGe0VBoXE0yCxgMN0ScP79GuGuubSoysPHiic7LKx1qqBIl9pU100v6J4n+4dBYLcaqVSo
-	4eGYtVpkJKwPud1F00n07K89X4EcSw/C1XMi0veqWx+hrGg/8MyCFumRGC9jxZxpgvQ0da5Vbdq
-	9bWE7VywZA/Z9wt+Nf7Tanjx8SMGntoGMcxFzZ3h0HdUDgZAcqDXwnGUoy0hA+OeqGw==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1756934856; bh=KWG1lKRUoYbRab1ldXHp7em
-	ZA3hhQoPTXfqyJ/dofyE=; b=pqNva9nIU9A+d2o7h6gM74nzifXEx6oZ2iZBDwwUfPl99wCDFM
-	LQFTpXSMeeIK1VeLCiFaMJ1ID/9fIt89wiBQ==;
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Wed, 03 Sep 2025 23:27:33 +0200
-Subject: [PATCH v2] arm64: dts: qcom: msm8953-xiaomi-daisy: fix cd-gpios
+	s=arc-20240116; t=1756934861; c=relaxed/simple;
+	bh=LDEavBgpdf6sYM/MgH8ENkdlyZyknViZWzX3GHBJMuc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=nxubSTPu/ThKFIjIumyNRp0ypE9Jz8ioYNOW/1rgsADu6rNzBxb3dAXIJhMoaPAUDQvweDhrIRExNIqJqmYwfu+INY3rHg+kjFHOja+oViD9GNzvw+rHJzfdARFXJxCS0PCS23dhMjEacu4zDvJngaE/LOLESo1ssBp7pPkLAm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIm/iPg6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 544CDC4CEE7;
+	Wed,  3 Sep 2025 21:27:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756934861;
+	bh=LDEavBgpdf6sYM/MgH8ENkdlyZyknViZWzX3GHBJMuc=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=KIm/iPg6kx16gIafv7f0CtiOtExR8gU89IBmCE0vnx0Xvs0u3xOEPCjGOrdE6+ahW
+	 3lR/UkRwtu8eEAFVhXHvWkOFeHGw1hWmRJ1oNr6bkdyIgX9avxrPIbaKp2lw1hs+6e
+	 1tY4zESTXlnp78HD0gJmNPgwua6kuwREysr0H98J5/DWOpsof2Rjoyu9kfXgVPZ0y1
+	 rUI3sZkmeC0EUFvHxqpU9zj4QCgLQmYRFjKqDE3soOJe7C+N2x5eDxkn5cC4SBs3Fh
+	 0dt1yvFaIY3jN493HvP8hhxJJqhCHgYvZ7UkzmsSTVzcBUdzxC0e9pajfv7tXdKUkV
+	 SQLF1h/RVIcuw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250903-daisy-sd-fix-v2-1-e08c50f3be57@mainlining.org>
-X-B4-Tracking: v=1; b=H4sIAMSyuGgC/3WMQQ7CIBAAv9Ls2TVAVdCT/zA9YFnpJgoNGGLT8
- Hexd48zycwKmRJThku3QqLCmWNooHYdjJMNnpBdY1BCHYXpBTrLecHs8MEfFFKOqj+cDCkLLZk
- TNb3tbkPjifM7pmW7F/mzf0ZFokStNJneno2+m+vLcnhy4OD3MXkYaq1fCb7Ovq0AAAA=
-X-Change-ID: 20250830-daisy-sd-fix-011c23468e2a
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alejandro Tafalla <atafalla@dnyon.com>, 
- Luca Weiss <luca@lucaweiss.eu>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756934856; l=1448;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=Pm72KJkyOx20dJkg1/oHOJ+b8z/476MTARgoZvT6Kko=;
- b=spjJ8/o1wszYQYfWdN0OlEkMr5Iy/iURdUV18eYwxwctOkz4dAEUbdslorYf1a5057gPB6ymH
- ibY4rwWRiHnD1EiYlJi//WON2mkrxq8vVZg/6UNcXGtxc8JN1FVqqaM
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 03 Sep 2025 23:27:37 +0200
+Message-Id: <DCJHFF0AEDB6.6JMTQPQA5800@kernel.org>
+Subject: Re: [PATCH v2] Revert "drm/nouveau: Remove waitque for sched
+ teardown"
+Cc: "Lyude Paul" <lyude@redhat.com>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Sumit Semwal"
+ <sumit.semwal@linaro.org>, =?utf-8?q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, <dri-devel@lists.freedesktop.org>,
+ <nouveau@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+To: "Philipp Stanner" <phasta@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250901083107.10206-2-phasta@kernel.org>
+In-Reply-To: <20250901083107.10206-2-phasta@kernel.org>
 
-SD detection was not working because cd-gpios flag
-was wrongly configured, according to downstream sources
-device is using GPIO_ACTIVE_HIGH.
-Fix SD detection with change cd-gpios from GPIO_ACTIVE_LOW
-to GPIO_ACTIVE_HIGH.
+On Mon Sep 1, 2025 at 10:31 AM CEST, Philipp Stanner wrote:
+> This reverts:
+>
+> commit bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
+> commit 5f46f5c7af8c ("drm/nouveau: Add new callback for scheduler teardow=
+n")
+>
+> from the drm/sched teardown leak fix series:
+>
+> https://lore.kernel.org/dri-devel/20250710125412.128476-2-phasta@kernel.o=
+rg/
+>
+> The aforementioned series removed a blocking waitqueue from
+> nouveau_sched_fini(). It was mistakenly assumed that this waitqueue only
+> prevents jobs from leaking, which the series fixed.
+>
+> The waitqueue, however, also guarantees that all VM_BIND related jobs
+> are finished in order, cleaning up mappings in the GPU's MMU. These jobs
+> must be executed sequentially. Without the waitqueue, this is no longer
+> guaranteed, because entity and scheduler teardown can race with each
+> other.
+>
+> Revert all patches related to the waitqueue removal.
+>
+> Fixes: bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
+> Suggested-by: Danilo Krummrich <dakr@kernel.org>
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-Fixes: 38d779c26395 ("arm64: dts: qcom: msm8953: Add device tree for Xiaomi Mi A2 Lite")
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
-Changes in v2:
-- Reword the commit.
-- Link to v1: https://lore.kernel.org/r/20250830-daisy-sd-fix-v1-1-727e83a987b8@mainlining.org
----
- arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts b/arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts
-index 336b916729e4721b5ba8f4f7e368d0d838aa54ab..ddd7af616794290aa1f06228a95cfa1d42b006e6 100644
---- a/arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts
-@@ -296,7 +296,7 @@ &sdhc_2 {
- 	vmmc-supply = <&pm8953_l11>;
- 	vqmmc-supply = <&pm8953_l12>;
- 
--	cd-gpios = <&tlmm 133 GPIO_ACTIVE_LOW>;
-+	cd-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
- 
- 	pinctrl-names = "default", "sleep";
- 	pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on &sdc2_data_on &sdc2_cd_on>;
-
----
-base-commit: 5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
-change-id: 20250830-daisy-sd-fix-011c23468e2a
-
-Best regards,
--- 
-Barnabás Czémán <barnabas.czeman@mainlining.org>
-
+Applied to drm-misc-fixes, thanks!
 
