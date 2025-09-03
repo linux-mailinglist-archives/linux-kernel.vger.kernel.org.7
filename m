@@ -1,135 +1,135 @@
-Return-Path: <linux-kernel+bounces-797525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93208B41193
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E588B41197
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F873BF216
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:59:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75FAA485BCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A961A9F88;
-	Wed,  3 Sep 2025 00:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJFllUxT"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889B61C3F36;
+	Wed,  3 Sep 2025 01:00:51 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3ED198A11;
-	Wed,  3 Sep 2025 00:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D851F92E;
+	Wed,  3 Sep 2025 01:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756861180; cv=none; b=VAqPpZ0QBkb4OCCbMwTGRPSawVF7VUDROIgcemkFDWtS/skfpVNmt+KIZSPNHgMmpcD8iyXHjT0Cfi7Ge/JYKgcgldIu7cYYchU144fBAv9gWyUQXXlGTPhE2JEcsXAsvkLNspYH6VwzbmhZx7SdX2/L6ng4qwxPcNncwebi6JY=
+	t=1756861251; cv=none; b=NXNmJN/qql5Voqkxo7O8EuElW+rgSycSOWJe0h7NQ2hFhNDfFOBLMAxCZwsZn+DpW+RZUzKeSHygbJ4tikH3b6vTls+bS8amLJufjIS6FN9gSiCmw66HOHVjOu+cnrzJ20CBtS7Xo5kcnTZAkSnksafK/e1oDA3nSDIJ9AFg6jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756861180; c=relaxed/simple;
-	bh=xC3e9ZFLnNKv0UU6Iqr/JW7Nbmjud41nuXXb5wnvBGw=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=C6qFmQliCMAR6z9u8j69m5TYJ3FV8bLtc/P6x8nvldH6lF+deEv4o2SoznBquR+dfPY245jRugmpE1z0yEeDGvDUCMyTaTR158CNJ9XUW4d48ned8hLNbkb0Iri/f8hvwIFmdGbnXScwYhvYmyPh3Bk+AOPiFnwwMTD24RMafVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IJFllUxT; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e96f14a6e97so5454079276.2;
-        Tue, 02 Sep 2025 17:59:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756861178; x=1757465978; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8Y06vxPv1L9jWLGnaFGjZfi9MLlAl9lDUxU0w0jvdhE=;
-        b=IJFllUxTRpgCiT7Pxmt/3YRG83X7WOTNgFcsprXmI7j0Zg+SoSi4T0TQT2GqrqLr91
-         ugUP/gdoZZRkFcktfytoFkAjCs0i/iSmYps8ddsvDD2RvKZ67/UbrKSLogNqBzuJAKKr
-         nqrgBfDv3oWjqdr8WooflCOZqLXQ3LqH0j6bIAGPohxTwstFPk18DY/usIl3nFVD8NFk
-         l6TmUe3vp4ch/4vihXrcOG6OuMdOBhoZ9GDmkrrkic/HXzH0ABqLONtY09K7/R9U+Pwy
-         ldvgt2L8wHT/EH0bO1vnhWeF/2tB6/T9gj5Xz1ZVc0v3V4B7/docY4HOnMOcyoNhWTsj
-         zLDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756861178; x=1757465978;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Y06vxPv1L9jWLGnaFGjZfi9MLlAl9lDUxU0w0jvdhE=;
-        b=mMsmMr0o7zWl2cufMz6Ve718SOUz3DIKraRBJuVqwJoTDeelr2N0CzZOJXBcoiTQ9V
-         ZfM5DP23ZSPyWGnUgz7BZAV/TQCeaAFuZ8+lg7BIokDJU6Aa2qGnKugW7sokz/3EP/Kh
-         E13oeaI+Z0RhRh5C7Olf5tVFe9fW+sujzGs5R7/3GlR477z2rlqann3bzj0OzeGX0QvF
-         muim8z6kGw7rnqWqccrMeR0vIfuu5S4uBeX1odG7u4gyjTqxnaqIBuEQcYk9/A5qjrAV
-         lxwbvY8mVyJedKKVQT6v/TkLnwNYyj7LftJ6xYGUuwbJ8OZQR2sRG3zTENIaW2SBROwO
-         oJzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqxfMQKn7za6rxjRkbhaLBTbeZBVI7vZiaKDs88OAvUV3+NpsTfdCk3FxrxsdW4kRIfCCTf6rlejicVwo=@vger.kernel.org, AJvYcCXSYITMSSXCuQZJJ8jewc2xggW1Pu9157rpCUz9qBtNOOU9dT3zFBdjeJKGJMTan1+tZw+agd5ArZKis87dlXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGjMg06tYM3a01I6Xrzqqjec+sEylhUuIH/w9QvLk72F28pRK8
-	pPlhyJEqcmhk7F1k6TiQRVm2S2e9qUUcxbBJDQ7VePeqLQvbUhwtFWff
-X-Gm-Gg: ASbGncuDPgqSn+EJMh4rE0H9KGVQlN5Lvmqz1m2Pl2/eKvMpigPAUHJZtmBDsL6c6lV
-	xSRJnIl+gwR54jNhmcuvs/7/8wavouEQmKRQym96g3cvI5zVKm876ZcYBFaYQISW4/m42U4QdGs
-	oTrSq2X1auuYuA+FS+bvTpokCE0vIHbyWQBN0b9GPP0EhwN2rh2OHeY4HCpAVKsRqh4cx91acqF
-	i7jfGunONNCzMumeqnLx/ZLqS2pR6Jr/GZjarLa8A5fo/Rx4qeRySu1w6z1ke0x4nqx+YU4iNx2
-	Ioh/1X6VZku//wNNtoLrJLzIOTJVVYPaMhkQiLkxpgVeFQ9Z3v3O+IICqbh01l3CqPWaNza/XMC
-	7+P0lWk5WjOYiiZRX7ZW8c0rl4BggquiG+B5WdmJWj7FHT1w6YNbgM9UIxjExzYOR7GWLiLW4Bw
-	==
-X-Google-Smtp-Source: AGHT+IEDe9TR4LaoFnfze7nZ8Z1pjnS+aIG/ZELW7ocNHanWUV2XSZY9wPTHficq3aOCAX7mED9jJQ==
-X-Received: by 2002:a05:6902:2b83:b0:e96:f63c:9a1a with SMTP id 3f1490d57ef6-e98a5839e52mr14421464276.43.1756861177454;
-        Tue, 02 Sep 2025 17:59:37 -0700 (PDT)
-Received: from [192.168.1.209] (74.211.99.176.16clouds.com. [74.211.99.176])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e9bbdf57cc0sm1043893276.13.2025.09.02.17.59.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 17:59:37 -0700 (PDT)
-From: Asuna <spriteovo@gmail.com>
-X-Google-Original-From: Asuna <SpriteOvO@gmail.com>
-Message-ID: <e48699fb-287d-42a9-ba6c-5edad86965f4@gmail.com>
-Date: Wed, 3 Sep 2025 08:59:29 +0800
+	s=arc-20240116; t=1756861251; c=relaxed/simple;
+	bh=hQh1J0LcqjC2SJyZ1/8npbmIMuyYk3vZKuIX5mGK+D0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=eHQaHUtGkbnXisq9V4NrBLq9WBaGS2QRY9wVthRKKuXl+oYTHRkTrB8/AQmROddv7M/bqIX+gnF9dKfqgFV9ZWzRoVEugO8KGyRyz5kWIYbXx0GjbKIXe5og6AkMF2sulzss5D+wdAp1SbEsTCi0WXkvlgD8T9WKmvc2j7pEzfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cGknC1Z3LzYQv67;
+	Wed,  3 Sep 2025 09:00:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id AD6251A1102;
+	Wed,  3 Sep 2025 09:00:45 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAXYIw6k7doI9_NBA--.26156S3;
+	Wed, 03 Sep 2025 09:00:44 +0800 (CST)
+Subject: Re: [PATCH RFC v3 14/15] block: fix disordered IO in the case
+ recursive split
+To: Bart Van Assche <bvanassche@acm.org>, Yu Kuai <yukuai1@huaweicloud.com>,
+ hch@infradead.org, colyli@kernel.org, hare@suse.de, dlemoal@kernel.org,
+ tieren@fnnas.com, axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com,
+ song@kernel.org, kmo@daterainc.com, satyat@google.com, ebiggers@google.com,
+ neil@brown.name, akpm@linux-foundation.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
+ <20250901033220.42982-15-yukuai1@huaweicloud.com>
+ <e40b076d-583d-406b-b223-005910a9f46f@acm.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <0f7345dd-8c6b-a75c-c234-2bb09f842069@huaweicloud.com>
+Date: Wed, 3 Sep 2025 09:00:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: RISC-V: Re-enable GCC+Rust builds
-To: Conor Dooley <conor@kernel.org>
-Cc: Jason Montleon <jmontleo@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <68496eed-b5a4-4739-8d84-dcc428a08e20@gmail.com>
- <20250830-cheesy-prone-ee5fae406c22@spud>
- <20250901-lasso-kabob-de32b8fcede8@spud>
- <b1734c45-42ec-46c7-9d4c-2677044aacab@gmail.com>
- <20250901-unseemly-blimp-a74e3c77e780@spud>
-Content-Language: en-US
-In-Reply-To: <20250901-unseemly-blimp-a74e3c77e780@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <e40b076d-583d-406b-b223-005910a9f46f@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXYIw6k7doI9_NBA--.26156S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw4DtFyDur1xArW8tw4xJFb_yoW8Aw1kpr
+	WkKryDtrWrGF1Sgw40yFW7KFy0yrWUXw4rGr15Gay7Jr4UZr1qq347XryvgryUCr48CryU
+	Zr1vgrnruw4DArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRiSdgUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-> That particular one might be a problem not because of -mstack-protector-guard itself, but rather three options get added at once:
-> 	$(eval KBUILD_CFLAGS += -mstack-protector-guard=tls		  \
-> 				-mstack-protector-guard-reg=tp		  \
-> 				-mstack-protector-guard-offset=$(shell	  \
-> 			awk '{if ($$2 == "TSK_STACK_CANARY") print $$3;}' \
-> 				$(objtree)/include/generated/asm-offsets.h))
-> and the other ones might be responsible for the error.
+Hi,
 
+在 2025/09/03 1:20, Bart Van Assche 写道:
+> On 8/31/25 8:32 PM, Yu Kuai wrote:
+>> -void submit_bio_noacct_nocheck(struct bio *bio)
+>> +void submit_bio_noacct_nocheck(struct bio *bio, bool split)
+>>   {
+>>       blk_cgroup_bio_start(bio);
+>>       blkcg_bio_issue_init(bio);
+>> @@ -745,12 +745,16 @@ void submit_bio_noacct_nocheck(struct bio *bio)
+>>        * to collect a list of requests submited by a ->submit_bio 
+>> method while
+>>        * it is active, and then process them after it returned.
+>>        */
+>> -    if (current->bio_list)
+>> -        bio_list_add(&current->bio_list[0], bio);
+>> -    else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO))
+>> +    if (current->bio_list) {
+>> +        if (split && !bdev_is_zoned(bio->bi_bdev))
+>> +            bio_list_add_head(&current->bio_list[0], bio);
+>> +        else
+>> +            bio_list_add(&current->bio_list[0], bio);
+> 
+> The above change will cause write errors for zoned block devices. As I
+> have shown before, also for zoned block devices, if a bio is split
+> insertion must happen at the head of the list. See e.g.
+> "Re: [PATCH 1/2] block: Make __submit_bio_noacct() preserve the bio 
+> submission order"
+> (https://lore.kernel.org/linux-block/a0c89df8-4b33-409c-ba43-f9543fb1b091@acm.org/) 
+> 
 
-I still don't understand the problem here. `bindgen_skip_c_flags` in 
-`rust/Makefile` contains a pattern `-mstack-protector-guard%`, the % at 
-the end enables it to match all those 3 options at the same time, and 
-`filter-out` function removes them before passing to Rust bindgen's 
-libclang. Am I missing something here?
+Do you mean we should remove the bdev_is_zoned() checking? I added this
+checking because I'm not quite sure about details in zone device, and
+this checking is aimed at prevent functional changes in zone device.
 
+So I don't think this change will cause write errors, the write errors
+should already exist before this set, right?
 
-> Similarly, something like -Wno-unterminated-string-initialization could cause a problem if gcc supports it but not libclang.
+Thanks,
+Kuai
 
+> 
+> Thanks,
+> 
+> Bart.
+> .
+> 
 
-Yes. However, this option is only about warnings, not architecture 
-related and does not affect the generated results, so simply adding it 
-into `bindgen_skip_c_flags` patterns should be enough, I think.
-
-> I think you're mostly better off catching that sort of thing in Kconfig, where possible and just make incompatible mixes invalid. What's actually incompatible is likely going to depend heavily on what options are enabled.
-
-Sounds better, I'll go down that path.
 
