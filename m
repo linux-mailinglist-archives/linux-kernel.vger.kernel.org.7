@@ -1,228 +1,117 @@
-Return-Path: <linux-kernel+bounces-798839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63DD1B423AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:29:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA68B423B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0D40566FBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:28:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D03734E4F24
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BA33126C8;
-	Wed,  3 Sep 2025 14:28:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305D23112C5;
+	Wed,  3 Sep 2025 14:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="pCQMjQNM"
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RN6UJGkp"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE6C311C39
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE1830AAB1;
+	Wed,  3 Sep 2025 14:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756909706; cv=none; b=Y1UPcnJ1HGHsEYZzbH6V8a7I1zf5vYF4COqsJVSD0aVgL6/HPAMiLP43eeeS56XTxhA2ZrdGi3p9ozbSl6Rz4sYGVOgs5fTkUSez0I5mcc85HL2R9CKByZpsmu4RNW+flEhHuQIaQAD5avwctaQP/McKjGUGBSc2Aj9lBhfdrCI=
+	t=1756909725; cv=none; b=a7bjpFblfGgGY91L1kfw06Bc51fnalbeallBll/+ZCFACZI1XLvf3s5A27ErgJz7rHe/RPyB+syDbNHsPmPA3weHjbIGldv3fGaX9HJbNXyT90uKwL785pM4aWY8OAs7jCgtKkN9EuVMTKpc6YZjLovfZGV4dHF0aJ9Fgdat6So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756909706; c=relaxed/simple;
-	bh=01fhlad7Sny1+XuY2/4ETk3iQQ94e+mlkjWPm0k07Ng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZTYdkU4iMIf7EecLeje/SuhbOMRgCp1AGilUVkhRi22SFZaLwzO/4ZkpeFC7menexQZ6kdaUEMUI5FymVglA0lxN1bwrJo9hAOk/mhnLf47y51XyWhgJEn+PKVgqV5cdJx/oC0+FJ5H+njcXKWZdYi0D+MRGn6TtumhiGOUw9aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=pCQMjQNM; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
-Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 649121010F7B
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 19:58:21 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 649121010F7B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1756909701; bh=01fhlad7Sny1+XuY2/4ETk3iQQ94e+mlkjWPm0k07Ng=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pCQMjQNMs1JXU/yElscJEHgWtFni9y5lBozutFrQ55H65Z9snI6UvY51ywN6UqQum
-	 J+0g8suZBXBHl9S6CwoMMHr7WmR5F84G875DSg0PxMaixg25Kb6itu7frp/3nbjSNr
-	 RhbTMvUG6aBChVkzKqojebZUclIDOF299+nC38Fc=
-Received: (qmail 741 invoked by uid 510); 3 Sep 2025 19:58:21 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
- Clear:RC:1(10.200.1.25):SA:0(0.8/7.0):. Processed in 3.493614 secs; 03 Sep 2025 19:58:21 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
-  by ldns2.iitb.ac.in with SMTP; 3 Sep 2025 19:58:17 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns2.iitb.ac.in (Postfix) with ESMTP id 30DDB3414F0;
-	Wed,  3 Sep 2025 19:58:17 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id BFFCD1E8143E;
-	Wed,  3 Sep 2025 19:58:16 +0530 (IST)
-Date: Wed, 3 Sep 2025 19:58:11 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: alexandre.belloni@bootlin.com, krzk+dt@kernel.org, robh@kernel.org,
-	conor+dt@kernel.org
-Cc: skhan@linuxfoundation.org, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	akhileshpatilvnit@gmail.com
-Subject: [PATCH 7/7] rtc: m41t93: Add watchdog support
-Message-ID: <694706ad8577a36ef8948e0d9ca7ea561900fbc2.1756908788.git.akhilesh@ee.iitb.ac.in>
-References: <cover.1756908788.git.akhilesh@ee.iitb.ac.in>
+	s=arc-20240116; t=1756909725; c=relaxed/simple;
+	bh=R8Z/vTHYGiiLDO3hc+BgMAtvCLuPBsOEFxV9eeUb2RQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ocf/+QM+fhpV3bk9x2/VpONRqynflakChuTSFiTmRuj+5tVUPfQ6or/L3cr8zHfTPEcuSGF+y0xDWnyRYrxS7AL56lBZAE28qKNqRBcJaqw28v6Zg4J/ImRoDpOAqoNbx2f32oJoVItZcJWidBkE4TcZcVIgCqet+2lXavtJ2oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RN6UJGkp; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24b14d062acso2395ad.1;
+        Wed, 03 Sep 2025 07:28:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756909723; x=1757514523; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cOhxeIFjpjrMf7aOEWMhCzpTvgFLShuhckx1Q3/cIMk=;
+        b=RN6UJGkpYMMQEyDGEB2Dt+1J4QGief/seDn/StRlTxeEInL94P2VlkJzyMuOh5vWOw
+         TnCl6aPM5ygbLsHycJjkxhXpWJlCcGFGpsq26FJ+EEoYHK7LJrH377xiTBdYC1xj+IBJ
+         f3GKTuT4U6iPw8VYMV/J26jKakb+HOTRlkWcoqiICPvoIknN4fmKvERP0FQ6cwQvX6KL
+         9EVf66dPM3VpJqEwM2ejYc69msgdqFiMqYAOeG9ms6iKjsrmEDV2oH1VkslEC7MqUT4H
+         JNJI2dLBMCl6ImZjSdfagVV8I2flnq1p8oYa6WHsJxpCBZ4/43DIv6rekb59CByEgUer
+         hXYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756909723; x=1757514523;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cOhxeIFjpjrMf7aOEWMhCzpTvgFLShuhckx1Q3/cIMk=;
+        b=sacVApq+uSADRApZltQpqaNrJw1xCqMVDMWY7XikErGCgAGov4hGlnd7GlRYVFaJwe
+         t/+14tX99+16PB4yk/6/8KhWqnWSZnWvLxkyJd4Y28bE+1vaQZ5sMCvkv+O92L97it3/
+         RSueuF7Pt91msG/6edzcmDk30Gk0wr7flSnyoc14lcGT5FpsEZYCsggANc6hf/B5Z4kR
+         VM4JMOaExUPHTsANPb8il0/8kMFpOgQfNKo7r8q2gFNRKIabdPEkO0cLJUwODzA9XDq2
+         EuJRjGTqM7MfK0s70DwVpJ4yESx4LHRSG4vfhnRaS2Y0lqJtzNIhHEKyYcNBRLawi12f
+         XNbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVStarEY3blMNy8F2LCrznU1lQHe9Ue8EJDYTBSSlwGv1bSC7MlRGQo2x+CxV5lm++trGU6BEX2q4aVcwU5@vger.kernel.org, AJvYcCXO6KlMYnIYqE/pOMOEiaBjEdFcig7fT7qnQizv/odVjdIN5A4m9ByPSebWKXk+8xVUHIdK3mCf8G5iVpjRebo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVSGDlY/0j7SN8H1QBrQn+6UcYLzifIIXENpp7u/TOU9gCFCdu
+	V8ZdE2PpwyQ+34X0OfT6d8v2AgE3uv0Rw3U57s1Sxm/wRO0ycZUEq12Av9SoW0Pj2GbnPBU72Ap
+	yHKKMX+izgNOnBnyNxzTlxBfxpbEsjS4=
+X-Gm-Gg: ASbGnctrkgRfXYYLY9fxgLRj82rgP8O9qLz7GoHVEt2WMq9X1rFduuv8brVo0HTNU8X
+	gR7Bgy7ihP4TsMlRPZ6s/8KgUBCvLe5ch0KTiZWubfFJ7DtnVqq7YJrf9dAXVkWW7bMqhPDvc/5
+	raCCD5/FkHAMc0myR4QNybpjG178VoE+ccponlCvv1RDJlQhQHQV8S/rLC+sOIJYZs/kiVQ62wX
+	3vG0QekdTW4Jnb+Vw==
+X-Google-Smtp-Source: AGHT+IFOnePYb4ywz6jf96HTmrHkdNDdlN7uSd1l6wzq/vofzodwjrS28jTK2c5zjv4zLJIFlbc42+Ai0y70GGbGTP4=
+X-Received: by 2002:a17:902:db03:b0:246:e1ff:b223 with SMTP id
+ d9443c01a7336-2491f1393cemr133123155ad.6.1756909723377; Wed, 03 Sep 2025
+ 07:28:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1756908788.git.akhilesh@ee.iitb.ac.in>
+References: <20250903082018.2702769-1-colin.i.king@gmail.com> <aLgCkRO8jkzwuxW5@stanley.mountain>
+In-Reply-To: <aLgCkRO8jkzwuxW5@stanley.mountain>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 3 Sep 2025 10:28:30 -0400
+X-Gm-Features: Ac12FXwZEbcPUl-6-Rnd5XZji0oaUsIwWztfkSuPcJ4GcwF8j6e-YBXz3n9gNeg
+Message-ID: <CADnq5_Pkbpezj9p1b335Civb90fGxojyciExZgfAndRF1rUTmQ@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amd/amdgpu: Fix a less than zero check on a
+ uint32_t struct field
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Colin Ian King <colin.i.king@gmail.com>, Shaoyun Liu <shaoyun.liu@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Implement watchdog feature driver for m41t93 rtc with 1s resolution and
-alarm only mode. Define start, stop, ping, and set_timeout callbacks
-as needed by watchdog framework.
+Applied.  Thanks!
 
-Tested by observing IRQ pin(12) going low after intentionally not pinging
-watchdog.
+Alex
 
-Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
----
- drivers/rtc/rtc-m41t93.c | 93 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
-
-diff --git a/drivers/rtc/rtc-m41t93.c b/drivers/rtc/rtc-m41t93.c
-index 83cc34c4baae..e549c5f1e11a 100644
---- a/drivers/rtc/rtc-m41t93.c
-+++ b/drivers/rtc/rtc-m41t93.c
-@@ -14,6 +14,7 @@
- #include <linux/spi/spi.h>
- #include <linux/regmap.h>
- #include <linux/clk-provider.h>
-+#include <linux/watchdog.h>
- 
- #define M41T93_REG_SSEC			0
- #define M41T93_REG_ST_SEC		1
-@@ -36,6 +37,10 @@
- #define M41T93_SQW_RS_MASK		0xf0
- #define M41T93_SQW_RS_SHIFT		4
- #define M41T93_BIT_SQWE			BIT(6)
-+#define M41T93_REG_WATCHDOG		0x9
-+#define M41T93_WDT_RB_MASK		0x3
-+#define M41T93_WDT_BMB_MASK		0x7c
-+#define M41T93_WDT_BMB_SHIFT		2
- 
- 
- #define M41T93_REG_ALM_HOUR_HT		0xc
-@@ -52,6 +57,7 @@ struct m41t93_data {
- #ifdef CONFIG_COMMON_CLK
- 	struct clk_hw clks;
- #endif
-+	struct watchdog_device wdd;
- };
- 
- static int m41t93_set_time(struct device *dev, struct rtc_time *tm)
-@@ -409,6 +415,90 @@ static int rtc_m41t93_clks_register(struct device *dev, struct m41t93_data *m41t
- }
- #endif
- 
-+static int m41t93_wdt_ping(struct watchdog_device *wdd)
-+{
-+	u8 resolution, mult;
-+	u8 val = 0;
-+	int ret;
-+	struct m41t93_data *m41t93 = watchdog_get_drvdata(wdd);
-+
-+	/*  Resolution supported by hardware
-+	 *  0b00 : 1/16 seconds
-+	 *  0b01 : 1/4 second
-+	 *  0b10 : 1 second
-+	 *  0b11 : 4 seconds
-+	 */
-+	resolution = 0x2; /* hardcode resolution to 1s */
-+	mult = wdd->timeout;
-+	val = resolution | (mult << M41T93_WDT_BMB_SHIFT &  M41T93_WDT_BMB_MASK);
-+
-+	ret = regmap_write_bits(m41t93->regmap, M41T93_REG_WATCHDOG,
-+				 M41T93_WDT_RB_MASK | M41T93_WDT_BMB_MASK, val);
-+
-+	return ret;
-+}
-+
-+static int m41t93_wdt_start(struct watchdog_device *wdd)
-+{
-+	return m41t93_wdt_ping(wdd);
-+}
-+
-+static int m41t93_wdt_stop(struct watchdog_device *wdd)
-+{
-+	struct m41t93_data *m41t93 = watchdog_get_drvdata(wdd);
-+
-+	/* Write 0 to watchdog register */
-+	return regmap_write_bits(m41t93->regmap, M41T93_REG_WATCHDOG,
-+				  M41T93_WDT_RB_MASK | M41T93_WDT_BMB_MASK, 0);
-+}
-+
-+static int m41t93_wdt_set_timeout(struct watchdog_device *wdd,
-+				   unsigned int new_timeout)
-+{
-+	wdd->timeout = new_timeout;
-+
-+	return 0;
-+}
-+
-+static const struct watchdog_info m41t93_wdt_info = {
-+	.identity = "m41t93 rtc Watchdog",
-+	.options = WDIOF_ALARMONLY,
-+};
-+
-+static const struct watchdog_ops m41t93_watchdog_ops = {
-+	.owner = THIS_MODULE,
-+	.start = m41t93_wdt_start,
-+	.stop = m41t93_wdt_stop,
-+	.ping = m41t93_wdt_ping,
-+	.set_timeout = m41t93_wdt_set_timeout,
-+};
-+
-+static int m41t93_watchdog_register(struct device *dev, struct m41t93_data *m41t93)
-+{
-+	int ret;
-+
-+	m41t93->wdd.parent = dev;
-+	m41t93->wdd.info = &m41t93_wdt_info;
-+	m41t93->wdd.ops = &m41t93_watchdog_ops;
-+	m41t93->wdd.min_timeout = 0;
-+	m41t93->wdd.max_timeout = 10;
-+	m41t93->wdd.timeout = 3; /* Default timeout is 3 sec */
-+	m41t93->wdd.status = WATCHDOG_NOWAYOUT_INIT_STATUS;
-+
-+	watchdog_set_drvdata(&m41t93->wdd, m41t93);
-+
-+	ret = devm_watchdog_register_device(dev, &m41t93->wdd);
-+	if (ret) {
-+		dev_warn(dev, "Failed to register watchdog\n");
-+		return ret;
-+	}
-+
-+	/* Disable watchdog at start */
-+	ret = m41t93_wdt_stop(&m41t93->wdd);
-+
-+	return ret;
-+}
-+
- static struct spi_driver m41t93_driver;
- 
- static const struct regmap_config regmap_config = {
-@@ -470,6 +560,9 @@ static int m41t93_probe(struct spi_device *spi)
- 	if (ret)
- 		dev_warn(&spi->dev, "Unable to register clock\n");
- #endif
-+	ret = m41t93_watchdog_register(&spi->dev, m41t93);
-+	if (ret)
-+		dev_warn(&spi->dev, "Unable to register watchdog\n");
- 
- 	return 0;
- }
--- 
-2.34.1
-
+On Wed, Sep 3, 2025 at 7:24=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> Are you editing your CC list?  The get_maintainer.pl script gives me a
+> longer list.  The most important thing is that you've left off Shaoyun Li=
+u
+> from the Fixes tag.  Added.
+>
+> The kbuild-bot did report this bug on Friday so the AMD folks likely have
+> a patch kicking around on their end, but just haven't sent it out
+> publicly yet?
+> https://lore.kernel.org/all/202508290749.ti6u3cLL-lkp@intel.com/
+>
+> Anyway, the patch is fine.
+>
+> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+>
+> regards,
+> dan carpenter
 
