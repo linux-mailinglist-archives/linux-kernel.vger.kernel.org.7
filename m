@@ -1,512 +1,216 @@
-Return-Path: <linux-kernel+bounces-798749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66656B4226D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C1F0B42273
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C7481BA7955
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:51:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB2511BA8409
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7170B30DD02;
-	Wed,  3 Sep 2025 13:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0444630DD30;
+	Wed,  3 Sep 2025 13:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jWweAxY/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="Ypv4NANb"
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010017.outbound.protection.outlook.com [52.101.228.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6732C2FDC57;
-	Wed,  3 Sep 2025 13:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756907457; cv=none; b=hVpd4lwBV0N3ZnjMf37T1nNPAgRvuz+cj3L/AVHlceStjMaydKDl7hmfQXWWlUT0g9p3rlzAcZ8xG1nvmA9X9iuLWUV2rL/4+9bfK4Fqz7jIBRFzUPJ+LI5oprxVhWNXdn4BRCXjGj5p4ae+SZ0GW6/fyedoqGOGmvY32Czoz08=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756907457; c=relaxed/simple;
-	bh=TmMoN3jaJXkCxT3acTPJatmykuSFe/MeK6yjMiaO8ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KsV1mAz1/0n4/LKGUGIIddbVwBWlgjUQh97WdElyD1aL0Hoqxtfb+mRRRzDBV6h9IuuEtQPluPPfNglwp1pb8vuJER8TkYhEVS7YojQnBwQvcP6ENCO/AW51sHOcr1MczC5iZw9h/bXKsnzKemc89HkCJsgiWELpofjdHPKYFyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jWweAxY/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E036C4CEE7;
-	Wed,  3 Sep 2025 13:50:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756907457;
-	bh=TmMoN3jaJXkCxT3acTPJatmykuSFe/MeK6yjMiaO8ic=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jWweAxY/HYLraUnpWYsClLhoIr4Lq4/tkq4Lh9r+OJysO54au9kPL4cN5EVIJKrkh
-	 HY5eb914/FMAzaIQrj4IpSV08mi31Wp1DnOJlazCR1FhXiR4dRMfURWy22/tem0EdY
-	 8MwiyFTFLKOwXa/v4YXFFFVB0N7yXNgZpBD96xYNOeqLhQip8c4C28PXxEVptJ25Yx
-	 Wk3ezOKcbe5njTfKqwOEP0ZQMof1JIs+Yhvmp2PuOfFj+QApRg1Xouv9LSGlI6XyJf
-	 kRMitGSvRZAWwoUYargwclqMnTgiX4OsJPwbFQYXET20CXdDzr8KMJRVEbFJCZlbQx
-	 N8HX2GuSdrlNw==
-Date: Wed, 3 Sep 2025 10:50:53 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Tianyou Li <tianyou.li@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, wangyang.guo@intel.com,
-	pan.deng@intel.com, zhiguo.zhou@intel.com, jiebin.sun@intel.com,
-	thomas.falcon@intel.com, dapeng1.mi@intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf tools c2c: Add annotation support to perf c2c
- report
-Message-ID: <aLhHvWTnxGA-_6Ew@x1>
-References: <20250801075158.218441-1-tianyou.li@intel.com>
- <20250819080014.515277-1-tianyou.li@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB22830DD0D;
+	Wed,  3 Sep 2025 13:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756907493; cv=fail; b=P326WmeNA4+8N4ucT1tJGUm/Met2kyCMawc3Q33KPtWiFQwR4YduFAjlBIVnlWNoreXP8lDsiFowsaJonNmsimPyC53f2dp+tsdqpVHCZcrlOTVeJdr3hYCH7bkfJwcd04rFSHffprhI9v1LLxlopxJOYLQgBpx4XufYqtiq75A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756907493; c=relaxed/simple;
+	bh=f8B9epuvYYKGeCabj90von2lCPP5j9XUnwhZacs4y3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YU3ubAHR6NTWJopYInGjFJxlGH3zLCFaSDL1GoMXWJQECjQJWU2RwgkyX/x4rN3D7OtY95PigE8wtKS6TagMkYNoxc2mp9Mv0zCw9sFCLWiIYi1HeAIVz7qsRawixyE6o/KbPW+GwkqLJqxCn4ItBUPAAYue6/cg2D6kjx8qLHk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=Ypv4NANb; arc=fail smtp.client-ip=52.101.228.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iVcD6ceRs6m9N25dWF3gV0/BI+zmiXQDZRqgEwxTSG6dGzHmuTyYZ9CP0Pkqgb1gxyn7awrNqGIrQmUyVdMDxxi30Yw4YG6j4eng0pq9PDnXBo/VNz2BgXJ8pe2+o73sC5KcUwmpwvF96BFKJp4GfZtHidMWyT8GfRhTQkveDc4bVFQuSvMTf+naSyvS3O4cAAFd9f/dRR8knSKF7sfnBJQbtJbvMr9qHEnWzDK/gJKAZR0r1hDgVJ7bEyvyI4p4FdrEw/fx8LYGF7bxrG/BeCY15eG10Krc+BWWGaaCFLMXY7vJ80p2grnxDn1ZI6w/veonMgfkv6IakkCnXsLn3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Dr9hEGRS2wWsuz777yUpxBAinNOVGLbqCCV+XTSVjjo=;
+ b=no2lktbCDM+miQ6OApzA0GXWWwccQIHqHU39qtMtZdSzkxpECAYPOfT2UbroVFBS1gD1IBc1oNop+jxPvjFJRaqvp+7diz5ZUXl52rL05qFxLpvBQrmc/vkFza4A/r2ttJLJnZfWPkIPRESmQm2bf1PnFwS+X7U2Zlr/O7tQqd+4R6/XXAn7NsEZMYcI+8GellsXOlC3Wdovj1k4rtDzt/dXsoju/KiwBq+RZnwy+gfD7FvK+iGbnlYO82q5kk0KltXAC+kUoqVh7OxVZdSehNybdd/WlPgiVccwcSDbB5okW1yeh+RaLuHhas7NqJ3JcQQJL79eoX0eJg9uhxwoTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Dr9hEGRS2wWsuz777yUpxBAinNOVGLbqCCV+XTSVjjo=;
+ b=Ypv4NANbm1OXle+XBHiyTmwGYnVH6qjuM6HHHDaBHbwR0i5mf40a3bpb5LBa0Fnc4hIMkAEeRR3x06k8TBVsvXe7/LTA4r4WA0dBGW01FD3onoVxSzDPkefsCUy8mxvSldecsBYD4GlmtkuajYBzqPafKF7YJX58qPK80LMmDTU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
+ by TY4PR01MB15891.jpnprd01.prod.outlook.com (2603:1096:405:2af::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Wed, 3 Sep
+ 2025 13:51:24 +0000
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::63d8:fff3:8390:8d31]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::63d8:fff3:8390:8d31%5]) with mapi id 15.20.9073.026; Wed, 3 Sep 2025
+ 13:51:24 +0000
+Date: Wed, 3 Sep 2025 15:51:11 +0200
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+	biju.das.jz@bp.renesas.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] clk: renesas: rzv2h: Simplify polling condition
+ in __rzv2h_cpg_assert()
+Message-ID: <aLhHz5K3NHrQ1FCX@tom-desktop>
+References: <20250903082757.115778-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250903082757.115778-5-tommaso.merciai.xr@bp.renesas.com>
+ <CAMuHMdWc+gJo35btt3D7mibq+JCnZh4OagFPtSgUELjAG1J9UA@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWc+gJo35btt3D7mibq+JCnZh4OagFPtSgUELjAG1J9UA@mail.gmail.com>
+X-ClientProxiedBy: MR2P264CA0121.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:500:30::13) To TYCPR01MB11947.jpnprd01.prod.outlook.com
+ (2603:1096:400:3e1::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819080014.515277-1-tianyou.li@intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TY4PR01MB15891:EE_
+X-MS-Office365-Filtering-Correlation-Id: cef86ad1-2d2a-4500-0e82-08ddeaf0f8c6
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MXedVmyXL9PDXH+jsaL58sUJQ8Lx0S7Q0/vUGZQJHzS9WxHyRnNm9Wo9ifPz?=
+ =?us-ascii?Q?YQ5VaZNLwvWbgYvFcXlW3H1zn40CN4W4YACCuidtngscsxCbZRinhb4tzw13?=
+ =?us-ascii?Q?FYuj7KYo5CzXjnJB9jJFDimQqfYWzzINOgNaR1gxyG5gu+6QCFlJu+d6vyLZ?=
+ =?us-ascii?Q?rTvaZdVhXxhAHZnMuOHxYe365JOLSYeM5wI4BtHBNczKQaAGjH8oYxuzeX5W?=
+ =?us-ascii?Q?gdBgKAVdh+sr0obnubdt+r+p3i+YnUoDW8iBMf2F2TTcu5eNo+WMDpDro9iW?=
+ =?us-ascii?Q?dls/T/KTkHRHd7gvLY+oGAcvaElh2WCBN4Us/n8dbuIGH8fGLzIx/wIl9V5L?=
+ =?us-ascii?Q?pUbtPqlzcUggg0x5C3+Ax23mJPQhLbC/6FM8UHxD9xP741Sicvykfd2ZuJta?=
+ =?us-ascii?Q?I6wcoZ147YYWvnDw2r+Nct6dK3jrAtuE+pkCvtKv8Lb/czj/6koDRyEO63jO?=
+ =?us-ascii?Q?ETlY8Pu3bh3ySxEsujpYrex/ufr3qYF0VZUmfKXJ5ZizwMg/jb2Jra8oqZ2T?=
+ =?us-ascii?Q?1sVAPsv24+88LBp3gzfmBKQ8usWTT2bINy7ot5mwe7NKGe5WUOVEOANdcMcJ?=
+ =?us-ascii?Q?gHRR7z4E9l2HuGlZT8bxbbTKQigvHeeSQY39gorpA/5DNtFuZq20gbRgfHG6?=
+ =?us-ascii?Q?6RhxYOWOxpiN++giIM+Ci2o6TuI+H2EMl/8PVSwzYdzvLX9tmF6HKbVVLBN/?=
+ =?us-ascii?Q?VA/vm0zKU8ulY5nZ0aPkVCKYdXQALX/vXNkza2HUfQOJChO6ws4Ib1Az+jnt?=
+ =?us-ascii?Q?Rh3zsGGIseis08WTnPV3vFMQDr6Wj63bolHaVTY8Kiikj+I0SZVt8vP/y5Gh?=
+ =?us-ascii?Q?KYYiy3+u0jCXd+2WauC8bokkWXoxq8SdSOZRfFYAMcuqtP0pxa7GfWqLFLja?=
+ =?us-ascii?Q?FFCvV2dDWylmi9NtRAaQpbkUEtC7fx3ZxdKUDDiap3IwnUTBmWt/s9sRzE0c?=
+ =?us-ascii?Q?DY24RxL7frBFARdvBTN1FqFkbH04e4mgVQ0s9mvHOPWXCD2S6LKvuWFZ/7wR?=
+ =?us-ascii?Q?glw9AfNQiDK7WDJU5RZ17MMu4jMXKgCx0vfl8r4Yv01EpDF4F9mkpa+Sf6zh?=
+ =?us-ascii?Q?icM0r2iAv+likW8mes1GSSu40dUXdasJc4V6ZEiUwrI8bl0JMWZSBUFFnnDi?=
+ =?us-ascii?Q?pZekcJiobxyx/6FaGjEegDQ7TVPt5/y5VMfaGY3SMObeWmHLXTe0AJCFNyj3?=
+ =?us-ascii?Q?Q0v20NjPEBfYzcso4LusiJewQa4rS0eDTSuNZ3pSFHb0hoUB796jCFis39WQ?=
+ =?us-ascii?Q?lWCAyBQS4jIylVl+S82dHSmMlKzaxLB8yyga+pvl5AmsCseUEWco1u/Co9o6?=
+ =?us-ascii?Q?ulM0YoB6gusmTbpfyoXScBUGox0b34WdqA8g/lspA7EHdKzlAzc8UjzGIpC/?=
+ =?us-ascii?Q?+U+llPMEIzI6juF1w4OU4SXZAxdPcbrjYoBNNyclMowyF8KC12jTihdVYvKg?=
+ =?us-ascii?Q?Om0ZfWBri2Qy4xoMjD9oObdbmehSTBI3+UeRIqfQIpulBN14Hyt4Aw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DyNppsFsrDun0LqMuVv5hvVbRHF4eTP80mM/TRjS9mOavkLMLsxtb4i3XyDU?=
+ =?us-ascii?Q?67/9cihCkaSkd/gsmWo2rq/zVFScScFze7f1lOQJxTWFOm7nkzGD/Dkbdsmf?=
+ =?us-ascii?Q?/FaliaBH5jIaOCIEvOd9MvyPjAm1NySOacxrkaNtJAyEqSDSfqi/dZVDRa6N?=
+ =?us-ascii?Q?wamKZQUbCnm6pjXNC5MFfsnSoRU4jexgMbcWjIp2MmNFnCNvWXK05ZDQ40qV?=
+ =?us-ascii?Q?2PpKlfh7m+xnk16d06dmVfNey932A2Yt8yamnUXvF66C4NUhybQEVIUBwIpA?=
+ =?us-ascii?Q?RSX81hNm5jqc2nzdb36R6a4/O0Pkut6EojTjTmjbyrV9baTVT1FclqNg1ghe?=
+ =?us-ascii?Q?4S8xqcMy0m3TrzvT41rQamadx1U5ucZ0Dvyr2p0HtJw8f1enoXpJqA5PkYNK?=
+ =?us-ascii?Q?SZtd6A/DxlyUFAEiBIL2tn+NESo26ueU36ONdnB2WcUHCmcIIb5d3WnbCXI6?=
+ =?us-ascii?Q?tDKodJ5cDXTVOZkaIJ/1k7e+pLv6Ornvebe25mEEbIytD4mi7ZLM86Nkbyhz?=
+ =?us-ascii?Q?kY093FPhEs7nDqvNIafJd9PwUnX0pFddSg5RUCFo4wnOP6BmTHQ9KoSw1ZOI?=
+ =?us-ascii?Q?4+nYreoWZNcIMP6JfZWU4IJFr6456WWKTjyrm7bs5bJOBXpIdp8/q5rJ7ZlR?=
+ =?us-ascii?Q?ZRQj1U0oDyrVbkYE/oJtea+S7I/YzXlawwI5xACyEpE31kxVOxA8FwU+W9F9?=
+ =?us-ascii?Q?IAI8rnKp+ZI/PsSZjob04lnvzVQ42VJ7hPv4VeabbJFAlHtQYaYNIr4/m3vu?=
+ =?us-ascii?Q?cKuhLKvfbuysNLiW2eyhLd1gy7taTOrRwmFGCHybGPkP+eW2yiEhJLLzXoFS?=
+ =?us-ascii?Q?WgY+e+s/Al88CEz7T2JcZspcaknM1qg+sZm1BZVC8rve9AKgfJ1uMOgTfRsn?=
+ =?us-ascii?Q?KOWIiZOOTpsgy8CVKaJWR5jRQcodhL2mb4ZfEuByLanGRt5t5yHMpo6OTaZA?=
+ =?us-ascii?Q?j5atq10Fo/q/h73DmzPxhf3OmqwiaY79u2T5DShWDRhT1GelFVpZpKGFd4dm?=
+ =?us-ascii?Q?VNP0XewJCOybsWb16Ot5mFkuWeC6qrIRHkZCNfVAKjZD/AKDuELjcjeQCOdh?=
+ =?us-ascii?Q?y914Huya9Si5936j7Ck2+2o3NWuaO7AFKVnoAoJLYtW052y3ikpj3swISBCL?=
+ =?us-ascii?Q?IsFbQYPd446pPjaNut5EiIqBnHzARIEenpbzYHCrvRqx7yqNnRcgPWYI7u7q?=
+ =?us-ascii?Q?ctqHGkwbUBL5tMR4WdY3l50uiSTMHBicI4ITILu2pzWR7L9f9qC2OJ/Y6RWF?=
+ =?us-ascii?Q?BRu4XkN3ctTmFAq/LtgdKppwfj19oZ/X7LTq5f1oPS4ft5GWM3IoYqBvq2J6?=
+ =?us-ascii?Q?mYuV9l8hdT90snCs1nDIlij0zRuIGw6Xg4Mu/T0OXoe0gSoQan+vHC0xqr3H?=
+ =?us-ascii?Q?aHZ3DwFLAUM3XT9M8fEepHoZWgXdKxqGI9ySU3bHPEqagtnUM2UZ9UsifZwH?=
+ =?us-ascii?Q?e4TFXOEPxnj9R8agXTc/ZWmFyCr9WQuHFFkQiPEnH20WqGDWokBBlcoOmGyI?=
+ =?us-ascii?Q?x68F5fJ+AUXDcSFZ0D+bPUZF2IsugaBy4X3w0xCDVqC1uAzan1aSXzN7kCOc?=
+ =?us-ascii?Q?gkiZAhGVQsIKE9CcjV4F/nriNmZc9hBwxa4Jpp33V3yCyDAlI3UMxUg2RWES?=
+ =?us-ascii?Q?ymKAWEt6dAbxK51gah9Z4F4=3D?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cef86ad1-2d2a-4500-0e82-08ddeaf0f8c6
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 13:51:24.6524
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 435KeZUKP4zm6O8bYlYpsXLR4qWvqQirWCa1mOROiawS47e0kTjAozLC77NlYpX2h3UWmM4LOicWnammiCwalDX5zTpU10BogCufLR5ngD90w2Gi4lb97pyTGgOPAJdO
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB15891
 
-On Tue, Aug 19, 2025 at 04:00:14PM +0800, Tianyou Li wrote:
-> Perf c2c report currently specified the code address and source:line
-> information in the cacheline browser, while it is lack of annotation
-> support like perf report to directly show the disassembly code for
-> the particular symbol shared that same cacheline. This patches add
-> a key 'a' binding to the cacheline browser which reuse the annotation
-> browser to show the disassembly view for easier analysis of cacheline
-> contentions. By default, the 'TAB' key navigate to the code address
-> where the contentions detected.
+Hi Geert,
 
-There were changes in that codebase recently, can you please consider
-rebasing your work?
-
-This is something I really want to see in place, almost did it myself at
-some point :-)
-
-Please use what is in:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/?h=tmp.perf-tools-next
-
-- Arnaldo
- 
-> Signed-off-by: Tianyou Li <tianyou.li@intel.com>
-> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> Reviewed-by: Thomas Falcon <thomas.falcon@intel.com>
-> Reviewed-by: Jiebin Sun <jiebin.sun@intel.com>
-> Reviewed-by: Pan Deng <pan.deng@intel.com>
-> Reviewed-by: Zhiguo Zhou <zhiguo.zhou@intel.com>
-> Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
-> ---
->  tools/perf/builtin-annotate.c     |   2 +-
->  tools/perf/builtin-c2c.c          | 124 ++++++++++++++++++++++++++++--
->  tools/perf/ui/browsers/annotate.c |  30 ++++++--
->  tools/perf/ui/browsers/hists.c    |   2 +-
->  tools/perf/util/annotate.c        |   2 +-
->  tools/perf/util/annotate.h        |   4 +-
->  tools/perf/util/hist.h            |   6 +-
->  7 files changed, 153 insertions(+), 17 deletions(-)
+On Wed, Sep 03, 2025 at 01:58:26PM +0200, Geert Uytterhoeven wrote:
+> Hi Tommaso,
 > 
-> diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-> index 5d57d2913f3d..8c896fbe76b7 100644
-> --- a/tools/perf/builtin-annotate.c
-> +++ b/tools/perf/builtin-annotate.c
-> @@ -519,7 +519,7 @@ static void hists__find_annotations(struct hists *hists,
->  			/* skip missing symbols */
->  			nd = rb_next(nd);
->  		} else if (use_browser == 1) {
-> -			key = hist_entry__tui_annotate(he, evsel, NULL);
-> +			key = hist_entry__tui_annotate(he, evsel, NULL, NO_INITIAL_IP);
->  
->  			switch (key) {
->  			case -1:
-> diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-> index 9e9ff471ddd1..f753ec50b967 100644
-> --- a/tools/perf/builtin-c2c.c
-> +++ b/tools/perf/builtin-c2c.c
-> @@ -45,6 +45,8 @@
->  #include "pmus.h"
->  #include "string2.h"
->  #include "util/util.h"
-> +#include "util/symbol.h"
-> +#include "util/annotate.h"
->  
->  struct c2c_hists {
->  	struct hists		hists;
-> @@ -62,6 +64,7 @@ struct compute_stats {
->  
->  struct c2c_hist_entry {
->  	struct c2c_hists	*hists;
-> +	struct evsel		*evsel;
->  	struct c2c_stats	 stats;
->  	unsigned long		*cpuset;
->  	unsigned long		*nodeset;
-> @@ -225,6 +228,12 @@ he__get_c2c_hists(struct hist_entry *he,
->  	return hists;
->  }
->  
-> +static void c2c_he__set_evsel(struct c2c_hist_entry *c2c_he,
-> +				struct evsel *evsel)
-> +{
-> +	c2c_he->evsel = evsel;
-> +}
-> +
->  static void c2c_he__set_cpu(struct c2c_hist_entry *c2c_he,
->  			    struct perf_sample *sample)
->  {
-> @@ -334,6 +343,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
->  
->  	c2c_he__set_cpu(c2c_he, sample);
->  	c2c_he__set_node(c2c_he, sample);
-> +	c2c_he__set_evsel(c2c_he, evsel);
->  
->  	hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
->  	ret = hist_entry__append_callchain(he, sample);
-> @@ -371,6 +381,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
->  
->  		c2c_he__set_cpu(c2c_he, sample);
->  		c2c_he__set_node(c2c_he, sample);
-> +		c2c_he__set_evsel(c2c_he, evsel);
->  
->  		hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
->  		ret = hist_entry__append_callchain(he, sample);
-> @@ -2606,6 +2617,28 @@ c2c_cacheline_browser__new(struct hists *hists, struct hist_entry *he)
->  	return browser;
->  }
->  
-> +static int perf_c2c__toggle_annotation(struct hist_browser *browser)
-> +{
-> +	struct hist_entry *he = browser->he_selection;
-> +	struct symbol *sym = NULL;
-> +	struct c2c_hist_entry *c2c_he = NULL;
-> +
-> +	if (!he) {
-> +		ui_browser__help_window(&browser->b, "No entry selected for annotation");
-> +		return 0;
-> +	}
-> +	sym = (&he->ms)->sym;
-> +
-> +	if (sym == NULL) {
-> +		ui_browser__help_window(&browser->b, "Can not annotate, no symbol found");
-> +		return 0;
-> +	}
-> +
-> +	symbol__hists(sym, 0);
-> +	c2c_he = container_of(he, struct c2c_hist_entry, he);
-> +	return hist_entry__tui_annotate(he, c2c_he->evsel, NULL, he->ip);
-> +}
-> +
->  static int perf_c2c__browse_cacheline(struct hist_entry *he)
->  {
->  	struct c2c_hist_entry *c2c_he;
-> @@ -2617,6 +2650,7 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
->  	" ENTER         Toggle callchains (if present) \n"
->  	" n             Toggle Node details info \n"
->  	" s             Toggle full length of symbol and source line columns \n"
-> +	" a             Toggle annotation view \n"
->  	" q             Return back to cacheline list \n";
->  
->  	if (!he)
-> @@ -2651,6 +2685,9 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
->  			c2c.node_info = (c2c.node_info + 1) % 3;
->  			setup_nodes_header();
->  			break;
-> +		case 'a':
-> +			perf_c2c__toggle_annotation(browser);
-> +			break;
->  		case 'q':
->  			goto out;
->  		case '?':
-> @@ -2989,6 +3026,11 @@ static int setup_coalesce(const char *coalesce, bool no_source)
->  	return 0;
->  }
->  
-> +static bool perf_c2c__has_annotation(void)
-> +{
-> +	return use_browser == 1;
-> +}
-> +
->  static int perf_c2c__report(int argc, const char **argv)
->  {
->  	struct itrace_synth_opts itrace_synth_opts = {
-> @@ -3006,6 +3048,8 @@ static int perf_c2c__report(int argc, const char **argv)
->  	const char *display = NULL;
->  	const char *coalesce = NULL;
->  	bool no_source = false;
-> +	const char *disassembler_style = NULL, *objdump_path = NULL, *addr2line_path = NULL;
-> +
->  	const struct option options[] = {
->  	OPT_STRING('k', "vmlinux", &symbol_conf.vmlinux_name,
->  		   "file", "vmlinux pathname"),
-> @@ -3033,6 +3077,12 @@ static int perf_c2c__report(int argc, const char **argv)
->  	OPT_BOOLEAN(0, "stitch-lbr", &c2c.stitch_lbr,
->  		    "Enable LBR callgraph stitching approach"),
->  	OPT_BOOLEAN(0, "double-cl", &chk_double_cl, "Detect adjacent cacheline false sharing"),
-> +	OPT_STRING('M', "disassembler-style", &disassembler_style, "disassembler style",
-> +		   "Specify disassembler style (e.g. -M intel for intel syntax)"),
-> +	OPT_STRING(0, "objdump", &objdump_path, "path",
-> +		   "objdump binary to use for disassembly and annotations"),
-> +	OPT_STRING(0, "addr2line", &addr2line_path, "path",
-> +		   "addr2line binary to use for line numbers"),
->  	OPT_PARENT(c2c_options),
->  	OPT_END()
->  	};
-> @@ -3040,6 +3090,12 @@ static int perf_c2c__report(int argc, const char **argv)
->  	const char *output_str, *sort_str = NULL;
->  	struct perf_env *env;
->  
-> +	annotation_options__init();
-> +
-> +	err = hists__init();
-> +	if (err < 0)
-> +		goto out;
-> +
->  	argc = parse_options(argc, argv, options, report_c2c_usage,
->  			     PARSE_OPT_STOP_AT_NON_OPTION);
->  	if (argc)
-> @@ -3052,6 +3108,36 @@ static int perf_c2c__report(int argc, const char **argv)
->  	if (c2c.stats_only)
->  		c2c.use_stdio = true;
->  
-> +	/**
-> +	 * Annotation related options
-> +	 * disassembler_style, objdump_path, addr2line_path
-> +	 * are set in the c2c_options, so we can use them here.
-> +	 */
-> +	if (disassembler_style) {
-> +		annotate_opts.disassembler_style = strdup(disassembler_style);
-> +		if (!annotate_opts.disassembler_style) {
-> +			err = -ENOMEM;
-> +			pr_err("Failed to allocate memory for annotation options\n");
-> +			goto out;
-> +		}
-> +	}
-> +	if (objdump_path) {
-> +		annotate_opts.objdump_path = strdup(objdump_path);
-> +		if (!annotate_opts.objdump_path) {
-> +			err = -ENOMEM;
-> +			pr_err("Failed to allocate memory for annotation options\n");
-> +			goto out;
-> +		}
-> +	}
-> +	if (addr2line_path) {
-> +		symbol_conf.addr2line_path = strdup(addr2line_path);
-> +		if (!symbol_conf.addr2line_path) {
-> +			err = -ENOMEM;
-> +			pr_err("Failed to allocate memory for annotation options\n");
-> +			goto out;
-> +		}
-> +	}
-> +
->  	err = symbol__validate_sym_arguments();
->  	if (err)
->  		goto out;
-> @@ -3126,6 +3212,38 @@ static int perf_c2c__report(int argc, const char **argv)
->  	if (err)
->  		goto out_mem2node;
->  
-> +	if (c2c.use_stdio)
-> +		use_browser = 0;
-> +	else
-> +		use_browser = 1;
-> +
-> +	/*
-> +	 * Only in the TUI browser we are doing integrated annotation,
-> +	 * so don't allocate extra space that won't be used in the stdio
-> +	 * implementation.
-> +	 */
-> +	if (perf_c2c__has_annotation()) {
-> +		int ret = symbol__annotation_init();
-> +
-> +		if (ret < 0)
-> +			goto out_mem2node;
-> +		/*
-> +		 * For searching by name on the "Browse map details".
-> +		 * providing it only in verbose mode not to bloat too
-> +		 * much struct symbol.
-> +		 */
-> +		if (verbose > 0) {
-> +			/*
-> +			 * XXX: Need to provide a less kludgy way to ask for
-> +			 * more space per symbol, the u32 is for the index on
-> +			 * the ui browser.
-> +			 * See symbol__browser_index.
-> +			 */
-> +			symbol_conf.priv_size += sizeof(u32);
-> +		}
-> +		annotation_config__init();
-> +	}
-> +
->  	if (symbol__init(env) < 0)
->  		goto out_mem2node;
->  
-> @@ -3135,11 +3253,6 @@ static int perf_c2c__report(int argc, const char **argv)
->  		goto out_mem2node;
->  	}
->  
-> -	if (c2c.use_stdio)
-> -		use_browser = 0;
-> -	else
-> -		use_browser = 1;
-> -
->  	setup_browser(false);
->  
->  	err = perf_session__process_events(session);
-> @@ -3210,6 +3323,7 @@ static int perf_c2c__report(int argc, const char **argv)
->  out_session:
->  	perf_session__delete(session);
->  out:
-> +	annotation_options__exit();
->  	return err;
->  }
->  
-> diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-> index 183902dac042..7eb659c76b53 100644
-> --- a/tools/perf/ui/browsers/annotate.c
-> +++ b/tools/perf/ui/browsers/annotate.c
-> @@ -557,7 +557,7 @@ static bool annotate_browser__callq(struct annotate_browser *browser,
->  	target_ms.map = ms->map;
->  	target_ms.sym = dl->ops.target.sym;
->  	annotation__unlock(notes);
-> -	symbol__tui_annotate(&target_ms, evsel, hbt);
-> +	symbol__tui_annotate(&target_ms, evsel, hbt, NO_INITIAL_IP);
->  	sym_title(ms->sym, ms->map, title, sizeof(title), annotate_opts.percent_type);
->  	ui_browser__show_title(&browser->b, title);
->  	return true;
-> @@ -814,6 +814,11 @@ static int annotate_browser__run(struct annotate_browser *browser,
->  
->  	annotate_browser__calc_percent(browser, evsel);
->  
-> +	if (browser->curr_hot == NULL && browser->selection) {
-> +		disasm_rb_tree__insert(browser, browser->selection);
-> +		browser->curr_hot = rb_last(&browser->entries);
-> +	}
-> +
->  	if (browser->curr_hot) {
->  		annotate_browser__set_rb_top(browser, browser->curr_hot);
->  		browser->b.navkeypressed = false;
-> @@ -1033,27 +1038,28 @@ static int annotate_browser__run(struct annotate_browser *browser,
->  }
->  
->  int map_symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
-> -			     struct hist_browser_timer *hbt)
-> +			     struct hist_browser_timer *hbt, u64 init_ip)
->  {
-> -	return symbol__tui_annotate(ms, evsel, hbt);
-> +	return symbol__tui_annotate(ms, evsel, hbt, init_ip);
->  }
->  
->  int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
-> -			     struct hist_browser_timer *hbt)
-> +			     struct hist_browser_timer *hbt, u64 init_ip)
->  {
->  	/* reset abort key so that it can get Ctrl-C as a key */
->  	SLang_reset_tty();
->  	SLang_init_tty(0, 0, 0);
->  	SLtty_set_suspend_state(true);
->  
-> -	return map_symbol__tui_annotate(&he->ms, evsel, hbt);
-> +	return map_symbol__tui_annotate(&he->ms, evsel, hbt, init_ip);
->  }
->  
->  int symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
-> -			 struct hist_browser_timer *hbt)
-> +			 struct hist_browser_timer *hbt, u64 init_ip)
->  {
->  	struct symbol *sym = ms->sym;
->  	struct annotation *notes = symbol__annotation(sym);
-> +	struct disasm_line *dl = NULL;
->  	struct annotate_browser browser = {
->  		.b = {
->  			.refresh = annotate_browser__refresh,
-> @@ -1093,6 +1099,18 @@ int symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
->  		}
->  	}
->  
-> +	/*
-> +	 * If init_ip is set, it means that there should be a line
-> +	 * intentionally selected, not based on the percentages
-> +	 * which caculated by the event sampling. In this case, we
-> +	 * convey this information into the browser selection, where
-> +	 * the selection in other cases should be empty.
-> +	 */
-> +	if (init_ip != NO_INITIAL_IP) {
-> +		dl = find_disasm_line(sym, init_ip, false);
-> +		browser.selection = &dl->al;
-> +	}
-> +
->  	ui_helpline__push("Press ESC to exit");
->  
->  	browser.b.width = notes->src->widths.max_line_len;
-> diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-> index d9d3fb44477a..eec1b5c12a28 100644
-> --- a/tools/perf/ui/browsers/hists.c
-> +++ b/tools/perf/ui/browsers/hists.c
-> @@ -2484,7 +2484,7 @@ do_annotate(struct hist_browser *browser, struct popup_action *act)
->  	else
->  		evsel = hists_to_evsel(browser->hists);
->  
-> -	err = map_symbol__tui_annotate(&act->ms, evsel, browser->hbt);
-> +	err = map_symbol__tui_annotate(&act->ms, evsel, browser->hbt, NO_INITIAL_IP);
->  	he = hist_browser__selected_entry(browser);
->  	/*
->  	 * offer option to annotate the other branch source or target
-> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> index 0dd475a744b6..682100196134 100644
-> --- a/tools/perf/util/annotate.c
-> +++ b/tools/perf/util/annotate.c
-> @@ -2544,7 +2544,7 @@ int annotate_get_insn_location(struct arch *arch, struct disasm_line *dl,
->  	return 0;
->  }
->  
-> -static struct disasm_line *find_disasm_line(struct symbol *sym, u64 ip,
-> +struct disasm_line *find_disasm_line(struct symbol *sym, u64 ip,
->  					    bool allow_update)
->  {
->  	struct disasm_line *dl;
-> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-> index 8b5131d257b0..c4c897745698 100644
-> --- a/tools/perf/util/annotate.h
-> +++ b/tools/perf/util/annotate.h
-> @@ -170,6 +170,8 @@ static inline struct disasm_line *disasm_line(struct annotation_line *al)
->  	return al ? container_of(al, struct disasm_line, al) : NULL;
->  }
->  
-> +struct disasm_line *find_disasm_line(struct symbol *sym, u64 ip,
-> +					    bool allow_update);
->  /*
->   * Is this offset in the same function as the line it is used?
->   * asm functions jump to other functions, for instance.
-> @@ -473,7 +475,7 @@ int hist_entry__tty_annotate2(struct hist_entry *he, struct evsel *evsel);
->  
->  #ifdef HAVE_SLANG_SUPPORT
->  int symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
-> -			 struct hist_browser_timer *hbt);
-> +			 struct hist_browser_timer *hbt, u64 init_ip);
->  #else
->  static inline int symbol__tui_annotate(struct map_symbol *ms __maybe_unused,
->  				struct evsel *evsel  __maybe_unused,
-> diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-> index 70438d03ca9c..aca1e3151bcc 100644
-> --- a/tools/perf/util/hist.h
-> +++ b/tools/perf/util/hist.h
-> @@ -713,11 +713,13 @@ struct block_hist {
->  #include "../ui/keysyms.h"
->  void attr_to_script(char *buf, struct perf_event_attr *attr);
->  
-> +#define NO_INITIAL_IP 0
-> +
->  int map_symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
-> -			     struct hist_browser_timer *hbt);
-> +			     struct hist_browser_timer *hbt, u64 init_ip);
->  
->  int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
-> -			     struct hist_browser_timer *hbt);
-> +			     struct hist_browser_timer *hbt, u64 init_ip);
->  
->  int evlist__tui_browse_hists(struct evlist *evlist, const char *help, struct hist_browser_timer *hbt,
->  			     float min_pcnt, struct perf_env *env, bool warn_lost_event);
+> On Wed, 3 Sept 2025 at 10:28, Tommaso Merciai
+> <tommaso.merciai.xr@bp.renesas.com> wrote:
+> > Replace the ternary operator with a direct boolean comparison to improve
+> > code readability and maintainability. The logic remains unchanged.
+> >
+> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> 
+> Thanks for your patch!
+> 
+> > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> > @@ -867,7 +867,7 @@ static int __rzv2h_cpg_assert(struct reset_controller_dev *rcdev,
+> >         mask = BIT(monbit);
+> >
+> >         ret = readl_poll_timeout_atomic(priv->base + reg, value,
+> > -                                       assert ? (value & mask) : !(value & mask),
+> > +                                       assert == !!(value & mask),
+> >                                         10, 200);
+> 
+> These two lines now fit on a single line.
+> 
+> >         if (ret && !assert) {
+> >                 value = mask << 16;
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-clk for v6.18 with the above fixed.
+> No need to resend.
+
+Thank you for taking care of this!
+Same for PATCH 1/5.
+
+Kind Regards,
+Tommaso
+
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 > -- 
-> 2.47.1
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 > 
 
