@@ -1,267 +1,157 @@
-Return-Path: <linux-kernel+bounces-798906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 757BEB42487
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:11:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7524B42478
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5C0C189894E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:10:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3D9F2054CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0024C31354F;
-	Wed,  3 Sep 2025 15:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE373203BF;
+	Wed,  3 Sep 2025 15:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NFRUAu5k"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="c7zz34nU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBB9320A15
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D751F31354A
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756912191; cv=none; b=hVg7Rl3bkVff/SdfFx7LxSEfu4TTyJ6JR3+Om35ehTuA8GppEuAfHpBf7dDhYmgVoW4XA43+sx9W8WJ4K2N7Kf97mcVSt0UwjUrGHdO98PXL6wBiXLjFsD0zukwXP9p1lfjfuJRhAHLPsKo5NK9a1rRZkwFIExYJ9TFEMJMoPHQ=
+	t=1756912125; cv=none; b=Zo8RNZWuhURo/KNOiTe6SsT8P8iu65vz8AbmK6XxCQc818DXEzqY/otC9bHqB3YgS5PFfWbnorIWO3+sGG/z3MRABvMcXII4ITnegpb655yPbuyhuIlxckLwRfqZxyS425bhvGX9t4OXL2OS6vF42PphUpd4h5v3tFivLXv8eYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756912191; c=relaxed/simple;
-	bh=qLecQka6HFxLzOrBlZFfGTh062nsD3HVcEENONBoVb0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SBKRFrossFDbwtwTyz7v6+mHsx1BrHikzIa8QDAdqH2nXtcJZVh2uwU7hIEu+qO2cDvXKMNb3gDbOfOPbwdKlGmKRkbprx1y4bd2KULTwg+/hic7nnhln7C3n5rDuNg2/4lcHIH1i80uXfSRg0R4X0MtoXjW9wq4u7cr41nlz0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NFRUAu5k; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756912185;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=z8AV0OJds+fFH71HcwghCBdJfs0C/HrPFWiOzLPMsfE=;
-	b=NFRUAu5kkMaTQEbhf78td4dSfU4W0yom7HwQz5aOchScrzZ7DYNhqRHsifdS/4vELbSb6z
-	dIRpSYU8ZxKtjBNFyLSvmGpeq/xzsXDIj/v/VgPW3ihbZmsiqcYOuRlCcJP+B8Mn4cjkdE
-	fU49pe616WukmMiSgEmHWLaTIkjGPCk=
-From: Yajun Deng <yajun.deng@linux.dev>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	Yajun Deng <yajun.deng@linux.dev>
-Subject: [PATCH] sched/rt: pass rq and task_struct pointers to update_stats functions
-Date: Wed,  3 Sep 2025 15:08:24 +0000
-Message-ID: <20250903150824.16960-1-yajun.deng@linux.dev>
+	s=arc-20240116; t=1756912125; c=relaxed/simple;
+	bh=PEIi8D0ILG9jAGxoIJMBRZSWEk2VBd2QP0UtYPalGGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CLYgycx8Au2WWorShFLUISJPSTzk5lxg4KYtmNiWDlQASodG7j4ciX//kdU0S6FJeAHcMUSPmdM/loT1er+FVEN9JHFefdrfPmA1RgYQ+1UAYR4v8As5d+SxkDSJ0mEtvIifkMiHlapopwyNoQU7pvmZcbryczbmBoeS9Yfo1sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=c7zz34nU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583Dx0BR021011
+	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 15:08:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SoH3YrDUa+bqYy/B2DvJjbGT8HAhLxpc8jLwcSCRwOE=; b=c7zz34nUkwhhp/Eq
+	Mdzh+jIjmrvNfvg2XDP9A6GiLYwcb70u1CPkEEPQWqWUlSR4yA3rJsiYVVZX/+oy
+	FPFf2QVrEoMzhJQtj8fOWntauHfzkGH2g0lRgfhTxvRsh2TJ7+KY/gk1Pxp5BvMu
+	zYfBzx422kavaKCTuORYKPi8Nj6sKGrMLTt04onUqcE0HRdL2+yPHsWrXJKBIEjN
+	z98FHOAmD5EtQuteeua8/prVTBeS9o2R03Dc2Z+zL3pgUKpzRdO/1wWS9aqt6kz9
+	cNyinp9j2oDWkLqn5rEAV6BrZM5s6VGeL7zdIfubBK+RyS7+ctzgYkUb5NB+avMx
+	ZriPpg==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ut2fm1mg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 15:08:42 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7725c995dd0so3121673b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 08:08:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756912122; x=1757516922;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SoH3YrDUa+bqYy/B2DvJjbGT8HAhLxpc8jLwcSCRwOE=;
+        b=b6Rffj7Ndo/q+21v2wNCcd62LaaTbvuyuUhLS497MJIX/L6h3E9Eofia8qRRqfpMJs
+         K2I4+F57iZEryNNAcdu9vXXjYuMVAJmJicD8GNX0uJC75AGwoUKdODISnah9myNM28NM
+         VvB+64qWHDF9jbDO+SBy/C3akVt24S0zKWdFHk0tv5IjSLHKOtGtLof/Ciji9q3otU2C
+         qh76Chk3IBrTm8P+Ai/sMpsFWVgvMMT+FX2UNVFHerqZabo14je5LnD7PajYH8+d6MqZ
+         eATQpqovL+9+U8AED1WAJml3fr+Ks06gsmu7GY6svq1WZlciWMTF2w6CepZNRzkKiHPx
+         Wd+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUO4KLkrQTKPI3WtSLaL0NppII5o9inqz6E+oVJAGAHCGsWTGa9Cmlqx7hyQUALiVenBvBgE0N1x4m5iM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzairefuaynH8D9ujIxLzaP93Fs5EBIBgsc5vaU6fQ5Lr/rksXi
+	e/gzz1VyyEFvquDw+j7bO2adDGTtmaeFx3e+MDtSe+Nt8Bt/PM+ZJltkpEEkClILUCYaViM8roA
+	O6xwGpJT/7kLr8QZovbDfanxa3xwv9kmiM3elonJ0pJhVPzXuDWhfLNWwjlqGugGaLjw=
+X-Gm-Gg: ASbGnctBqjqVBS/88+WKQUTIHPc0OjuWE1Mc+EG0uqX3FHEJZsS6uUOzpjElAt3ZyWf
+	ldUiptYlq035bpAWguVZ/ppIY4cfnp1br19ICeip54hsCSTzw9ZqQWEtD/eUD+ID3810hLwy/h6
+	t5oIOioIDAMk47fMvkqVo5fLoitQWAHJjhuMFS/OZK/93g9wSfmHCr6WNd3oyRX3nYyD8ZpGhFO
+	kS22nLx+lBptUvhTkUiADPW29wmXwHEkQu1TqgrhEs8OFrHyrRcUDoGIGvD06ZvR+2EVvR+hu9N
+	ZDbr+SWmilGV4p6+DFJSqL0tDg0LEaYWCEW1MfENldT2c1JpLtrSDCnfZKtYgfh3mFOj
+X-Received: by 2002:aa7:8895:0:b0:771:fab2:83ca with SMTP id d2e1a72fcca58-7723e21e641mr21760174b3a.4.1756912121952;
+        Wed, 03 Sep 2025 08:08:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHoo21E/5aDqRCm9BjpK6u1Ze7qpiyckB+Jd3+cAAsY5ZXnVugKuxKFWIjKzAdwtxx5J+LzRw==
+X-Received: by 2002:aa7:8895:0:b0:771:fab2:83ca with SMTP id d2e1a72fcca58-7723e21e641mr21760127b3a.4.1756912121469;
+        Wed, 03 Sep 2025 08:08:41 -0700 (PDT)
+Received: from hu-wasimn-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4e3fa1sm16546097b3a.83.2025.09.03.08.08.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 08:08:40 -0700 (PDT)
+Date: Wed, 3 Sep 2025 20:38:33 +0530
+From: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>, kernel@oss.qualcomm.com,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        netdev@vger.kernel.org, Monish Chunara <quic_mchunara@quicinc.com>
+Subject: Re: [PATCH v2 04/13] arm64: dts: qcom: lemans-evk: Add nvmem-layout
+ for EEPROM
+Message-ID: <aLhZ8VpI4/fzo9h8@hu-wasimn-hyd.qualcomm.com>
+References: <20250903-lemans-evk-bu-v2-0-bfa381bf8ba2@oss.qualcomm.com>
+ <20250903-lemans-evk-bu-v2-4-bfa381bf8ba2@oss.qualcomm.com>
+ <39c258b4-cd1f-4fc7-a871-7d2298389bf8@oss.qualcomm.com>
+ <aLhMkp+QRIKlgYMx@hu-wasimn-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <aLhMkp+QRIKlgYMx@hu-wasimn-hyd.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzOCBTYWx0ZWRfX6uadduZq5+xJ
+ 7XtccYdg9H7KSyGldv5630EqyVuigKsz2J32lvkFaEr0/cHMsQ/TVt2yZZGDnRXLPSEInUhIFmO
+ d5vPV0rQHvj0+357spri2MMkkNcULIbOYRe4aaGox+vhcfQGcJdCf/zfiV2sF+TYn08IGKcJhok
+ n0yu0/XV7O9R9nq+iDtHdfpVyHJaswG38i8Y0JeumbrEK79pSMzIYGl8igBrxm//nEAOGUBuWhD
+ DlyIucwBUmSfXq0YIUjO/mFZtEUh//C/apMtjw6O9/jHpC8++055TxOogE1GELB2LJP1SWxpWx5
+ NiYchVyu5EfQnuB6R0zeX33u1A0mLGwIX6GZxfymBCIdBrv93QP5OsOQ6vyP4EaU7W2B1zjDbx6
+ clTzLLzV
+X-Proofpoint-ORIG-GUID: NVUJ9nl6e0wwX8XM46065-Woqa7hDWMw
+X-Proofpoint-GUID: NVUJ9nl6e0wwX8XM46065-Woqa7hDWMw
+X-Authority-Analysis: v=2.4 cv=U7iSDfru c=1 sm=1 tr=0 ts=68b859fb cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=aoA1JJJOD3z3MUMqd-EA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
+ a=zc0IvFSfCIW2DFIPzwfm:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_07,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 clxscore=1015 impostorscore=0 suspectscore=0
+ malwarescore=0 priorityscore=1501 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300038
 
-These __update_stats functions only require the rq and task_struct
-parameters. All update_stats functions convert the rt_rq to rq and the
-rt_se to task_struct. And all callers of update_stats will get the
-rt_rq from the rq and the rt_se from the task_struct.
+On Wed, Sep 03, 2025 at 07:41:30PM +0530, Wasim Nazir wrote:
+> On Wed, Sep 03, 2025 at 02:29:11PM +0200, Konrad Dybcio wrote:
+> > On 9/3/25 1:47 PM, Wasim Nazir wrote:
+> > > From: Monish Chunara <quic_mchunara@quicinc.com>
+> > > 
+> > > Define the nvmem layout on the EEPROM connected via I2C to enable
+> > > structured storage and access to board-specific configuration data,
+> > > such as MAC addresses for Ethernet.
+> > 
+> > The commit subject should emphasize the introduction of the EEPROM
+> > itself, with the layout being a minor detail, yet the description of
+> > its use which you provided is important and welcome
+> > 
+> 
+> Thanks, Konrad, for pointing this out. I’ll update it in the next
+> series.
 
-The rq_of_rt_rq() always returns the top-level rq, which is unique for
-each CPU. The rt_task_of() is only available for the task_struct. They
-are doing the convering and being converted. However, these conversions
-don't change anything.
+Moreover, I notice that compatible definition is missing for this
+EEPROM. I will add it in next series.
 
-Just pass the rq and task_struct pointers to these update_stats functions.
-If it don't have a task_struct pointer, call rt_entity_is_task() to ensure
-the task isn't NULL.
-
-Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
----
- kernel/sched/rt.c | 91 ++++++++++-------------------------------------
- 1 file changed, 18 insertions(+), 73 deletions(-)
-
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 390f3d08abbe..feef4508efca 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1212,107 +1212,56 @@ static void __delist_rt_entity(struct sched_rt_entity *rt_se, struct rt_prio_arr
- 	rt_se->on_list = 0;
- }
- 
--static inline struct sched_statistics *
--__schedstats_from_rt_se(struct sched_rt_entity *rt_se)
--{
--	/* schedstats is not supported for rt group. */
--	if (!rt_entity_is_task(rt_se))
--		return NULL;
--
--	return &rt_task_of(rt_se)->stats;
--}
--
- static inline void
--update_stats_wait_start_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se)
-+update_stats_wait_start_rt(struct rq *rq, struct task_struct *p)
- {
--	struct sched_statistics *stats;
--	struct task_struct *p = NULL;
--
- 	if (!schedstat_enabled())
- 		return;
- 
--	if (rt_entity_is_task(rt_se))
--		p = rt_task_of(rt_se);
--
--	stats = __schedstats_from_rt_se(rt_se);
--	if (!stats)
--		return;
--
--	__update_stats_wait_start(rq_of_rt_rq(rt_rq), p, stats);
-+	__update_stats_wait_start(rq, p, &p->stats);
- }
- 
- static inline void
--update_stats_enqueue_sleeper_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se)
-+update_stats_enqueue_sleeper_rt(struct rq *rq, struct task_struct *p)
- {
--	struct sched_statistics *stats;
--	struct task_struct *p = NULL;
--
- 	if (!schedstat_enabled())
- 		return;
- 
--	if (rt_entity_is_task(rt_se))
--		p = rt_task_of(rt_se);
--
--	stats = __schedstats_from_rt_se(rt_se);
--	if (!stats)
--		return;
--
--	__update_stats_enqueue_sleeper(rq_of_rt_rq(rt_rq), p, stats);
-+	__update_stats_enqueue_sleeper(rq, p, &p->stats);
- }
- 
- static inline void
--update_stats_enqueue_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se,
--			int flags)
-+update_stats_enqueue_rt(struct rq *rq, struct task_struct *p, int flags)
- {
--	if (!schedstat_enabled())
--		return;
--
- 	if (flags & ENQUEUE_WAKEUP)
--		update_stats_enqueue_sleeper_rt(rt_rq, rt_se);
-+		update_stats_enqueue_sleeper_rt(rq, p);
- }
- 
- static inline void
--update_stats_wait_end_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se)
-+update_stats_wait_end_rt(struct rq *rq, struct task_struct *p)
- {
--	struct sched_statistics *stats;
--	struct task_struct *p = NULL;
--
- 	if (!schedstat_enabled())
- 		return;
- 
--	if (rt_entity_is_task(rt_se))
--		p = rt_task_of(rt_se);
--
--	stats = __schedstats_from_rt_se(rt_se);
--	if (!stats)
--		return;
--
--	__update_stats_wait_end(rq_of_rt_rq(rt_rq), p, stats);
-+	__update_stats_wait_end(rq, p, &p->stats);
- }
- 
- static inline void
--update_stats_dequeue_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se,
--			int flags)
-+update_stats_dequeue_rt(struct rq *rq, struct task_struct *p, int flags)
- {
--	struct task_struct *p = NULL;
- 
- 	if (!schedstat_enabled())
- 		return;
- 
--	if (rt_entity_is_task(rt_se))
--		p = rt_task_of(rt_se);
--
- 	if ((flags & DEQUEUE_SLEEP) && p) {
- 		unsigned int state;
- 
- 		state = READ_ONCE(p->__state);
- 		if (state & TASK_INTERRUPTIBLE)
--			__schedstat_set(p->stats.sleep_start,
--					rq_clock(rq_of_rt_rq(rt_rq)));
-+			__schedstat_set(p->stats.sleep_start, rq_clock(rq));
- 
- 		if (state & TASK_UNINTERRUPTIBLE)
--			__schedstat_set(p->stats.block_start,
--					rq_clock(rq_of_rt_rq(rt_rq)));
-+			__schedstat_set(p->stats.block_start, rq_clock(rq));
- 	}
- }
- 
-@@ -1392,7 +1341,8 @@ static void enqueue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flags)
- {
- 	struct rq *rq = rq_of_rt_se(rt_se);
- 
--	update_stats_enqueue_rt(rt_rq_of_se(rt_se), rt_se, flags);
-+	if (rt_entity_is_task(rt_se))
-+		update_stats_enqueue_rt(rq, rt_task_of(rt_se), flags);
- 
- 	dequeue_rt_stack(rt_se, flags);
- 	for_each_sched_rt_entity(rt_se)
-@@ -1404,7 +1354,8 @@ static void dequeue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flags)
- {
- 	struct rq *rq = rq_of_rt_se(rt_se);
- 
--	update_stats_dequeue_rt(rt_rq_of_se(rt_se), rt_se, flags);
-+	if (rt_entity_is_task(rt_se))
-+		update_stats_dequeue_rt(rq, rt_task_of(rt_se), flags);
- 
- 	dequeue_rt_stack(rt_se, flags);
- 
-@@ -1429,7 +1380,7 @@ enqueue_task_rt(struct rq *rq, struct task_struct *p, int flags)
- 		rt_se->timeout = 0;
- 
- 	check_schedstat_required();
--	update_stats_wait_start_rt(rt_rq_of_se(rt_se), rt_se);
-+	update_stats_wait_start_rt(rq_of_rt_se(rt_se), p);
- 
- 	enqueue_rt_entity(rt_se, flags);
- 
-@@ -1631,12 +1582,9 @@ static void wakeup_preempt_rt(struct rq *rq, struct task_struct *p, int flags)
- 
- static inline void set_next_task_rt(struct rq *rq, struct task_struct *p, bool first)
- {
--	struct sched_rt_entity *rt_se = &p->rt;
--	struct rt_rq *rt_rq = &rq->rt;
--
- 	p->se.exec_start = rq_clock_task(rq);
- 	if (on_rt_rq(&p->rt))
--		update_stats_wait_end_rt(rt_rq, rt_se);
-+		update_stats_wait_end_rt(rq, p);
- 
- 	/* The running task is never eligible for pushing */
- 	dequeue_pushable_task(rq, p);
-@@ -1702,11 +1650,8 @@ static struct task_struct *pick_task_rt(struct rq *rq)
- 
- static void put_prev_task_rt(struct rq *rq, struct task_struct *p, struct task_struct *next)
- {
--	struct sched_rt_entity *rt_se = &p->rt;
--	struct rt_rq *rt_rq = &rq->rt;
--
- 	if (on_rt_rq(&p->rt))
--		update_stats_wait_start_rt(rt_rq, rt_se);
-+		update_stats_wait_start_rt(rq, p);
- 
- 	update_curr_rt(rq);
- 
 -- 
-2.25.1
-
+Regards,
+Wasim
 
