@@ -1,154 +1,175 @@
-Return-Path: <linux-kernel+bounces-798087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D8DCB41955
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:56:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE8AB4195B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C620F1745BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:56:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B119317A670
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917452F0C7C;
-	Wed,  3 Sep 2025 08:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B5B2DAFBA;
+	Wed,  3 Sep 2025 08:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b2gdwhgB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LMS1nsiF"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2FA2DECCD;
-	Wed,  3 Sep 2025 08:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDFC2F1FC9;
+	Wed,  3 Sep 2025 08:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756889713; cv=none; b=ZbDAs6v/NNaFs0eovuHcG686YslnZ+4QS0tWrC/iJT09vhVZqA5aq/RDGCRV7ut+6gRk0agmi0mCjYOj28w9nQXM7Azg7ljDgMbpj+KnZbL8De0i0xvDi3yeivpF+zwmLG3sUxqHjOSiMOdDA8q+EIKXoULSdCuj7VTWFUlAsDk=
+	t=1756889716; cv=none; b=XmFS+AlTi80edmPWl0+PhGfV7pK1BBkeQJ47BpKrY1JUJmhUqx4XGKeF7zQ07JDiC5lXVkBn1ocvjNsI2vF6yQj9IwFIai6bPqq7o3IrJ0dNusKbqz1y5zKJUu2baVVtLrI4ozSN2VAJqZasc7oko1Xevb1GbDNHgZ9BrlZTg0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756889713; c=relaxed/simple;
-	bh=QJZYo7ZQ9g2xKBpzXbwpfs2kloqCuHIgsgfUp5oSlA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E3QnuC1BW5I9Ow1XrpA3zHuyrk54SAa/IU34FYo8Jv2ImuZrB8WXsljPiEr+0TCmSxIobIyjjaFN4XB4ctTPipZKOyYYdSLkhL8OclsxWfLadoS/2qs/ZG6adxsds+Zo+epPgHGQ7JnyF2mB09krbbFwS2KKBI37Z8w5snHmXJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b2gdwhgB; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756889712; x=1788425712;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QJZYo7ZQ9g2xKBpzXbwpfs2kloqCuHIgsgfUp5oSlA4=;
-  b=b2gdwhgBfWzQY3sYPSN6E5dVZ5NqFYRgVExvYkdxO3aH+4JnGbraKUU7
-   lzlEZhGeM9cfRyI/vFsdZrh4z7YLgIkTTkw5AklFDhfOR90L1IST209C0
-   FCqao5BqKqtdOc7+1ECyy7E/MY08QaAH8UTamOoJLdm5U51KkZi2sLIq9
-   xhVQGhXNYw/lu3ZNDS9Ya8sx4uWjQeAPIf4RLJ4uxZI1HPGxNh4193/Xv
-   ffRNLk/ShMNn730qxX13cq6fidLGtSGKLrlu4i7DcLuoGDCXV+9bJJDsG
-   bgbTz4bAg7yGEMTFVQhhKdglx71hDeg8RW0gjZRqmh8xEmsO8swwi4CGD
-   g==;
-X-CSE-ConnectionGUID: W+GC0lEuTCmS5VhWt+O7qg==
-X-CSE-MsgGUID: mUgNOlp3Qn20u2SpG3LAHg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81781871"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="81781871"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 01:55:11 -0700
-X-CSE-ConnectionGUID: ZaK051PcQx+vKyGQbEEBHg==
-X-CSE-MsgGUID: kgai7r3VSHer/FCjZGRyjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="195165041"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.204])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 01:55:06 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id D316611FC49;
-	Wed, 03 Sep 2025 11:55:02 +0300 (EEST)
-Date: Wed, 3 Sep 2025 11:55:02 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
-Subject: Re: [PATCH v7 10/10] media: i2c: ov9282: dynamic flash_duration
- maximum
-Message-ID: <aLgCZi6ET0PvC95q@kekkonen.localdomain>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
- <20250901-ov9282-flash-strobe-v7-10-d58d5a694afc@linux.dev>
- <aLYNQ4W8f55G_7HP@kekkonen.localdomain>
- <j4t7zyhf4zhn5t27os7yxi3chaux3m6bjlxe774crmdmzzm54f@dlk5s5ai7ehc>
- <aLfy4MOOgHu2s1m-@kekkonen.localdomain>
- <xaejexfyvesftglbdyllzrz5nlibzcj3poddczgrqhrm7ugh3l@tysxjhoksvz7>
+	s=arc-20240116; t=1756889716; c=relaxed/simple;
+	bh=O8PBWQwNJ/F70vGI+AS1o/jEY4knrQJnMWmH+oxAvwE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Kab+8Co4p6jEiRsXG+1P8wY9emwxLYBOeilIFQlKfv5qXJzVv3VWBg3I+l4iSTXDDPDlWC6gvorbbXbsUACLkKZyXSIKIsOkQ5WH0/5i0icjhKmLZiFz861hfKkYdcoV8IzDok8AIborDHH4mXcmWmfAyu8m+OqlLe6xiJHyArI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LMS1nsiF; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso5437323b3a.1;
+        Wed, 03 Sep 2025 01:55:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756889714; x=1757494514; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eE9Dqk+BGhLOvtAd8CSQOddrMc+lxDEGcDsD3ik0RG4=;
+        b=LMS1nsiFSVY6G2szAflndyQRKyE1IuysiHgcKfeEHMSBqT3ToEm6Wf3JExUCXzMM/H
+         yBKGChI3utTylSPSPqqWOJ7Lhzgpu8D7RVyM6dtWBU+cr1izMGmRq7YUk1t1dg6N0A8a
+         lrPBlgLPfK44IIEU/1vmzzREFmoTAOBT6ILFo7Hshk8+A4Nxl7CR3JKyhzLFo9VBLnFB
+         PkVxlefs1vHZkZsMjObOihOy1qPf8UvZIsT+Gyn2ZM6GPzUkLdhbvN21LZEpG5RMvSKJ
+         mAesCtMEMseXOUbaNoiKaQ1r2pirgcLUJTlLv6M031GEPDHg8M0YlI6whSMKNxCshPh0
+         /+9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756889714; x=1757494514;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eE9Dqk+BGhLOvtAd8CSQOddrMc+lxDEGcDsD3ik0RG4=;
+        b=KtOji+QNL3WLk4cB64En8kk+oLQLUEZKFT2XY9+A0z9axOdgznXDWKaVW/BGgZzkaL
+         ulY8lF4XU8+uXQl160cyvDQrtxjq5mNDQ63S3hi4WU3rpO8kjiCfPDYcMYvZ71rwpIu5
+         Y4K8E6zTYB2kD44mi1YGPwPc3IDlePmhQNSDvKx07mF2LZf4yvPhom7MxESCuAILqQKJ
+         yf7x7x0L+8kqt+cZnXHonJIofJlpEvEsSiaILt+eGizWtbG7GnqJ2R8tlmJXExfRkzVg
+         v0vAlNKVOnPXasAIQqoZZ0GMuxLIxuXX8PInnc5Md94WL63pxxt66bl9m8T+KQlZRtH1
+         zucA==
+X-Forwarded-Encrypted: i=1; AJvYcCXC7iPkMh01ueTW24UdNY4yfmtAmLSK+5h5cS4fCxBtFkyc+xuXE8B/T8zjVPZDFgkYoMX4KUbTU0LVorg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbeIsC3vivAfdC8c8QVC/gspLgfTMaDAKAmfl59ly7JGCGSUtt
+	+apjR31r8Nls5h111P++4b8jtumMkChmxKQ8zFM6jU42cdq8vvvp64NX
+X-Gm-Gg: ASbGnctnS16IM6L0er8ibH96YxpGeidgSm3tAoEi244WtGNOKgFHjBX51d7uhM2KnpK
+	sPPyUDztIDuSzsFgzwj8VnpSFjcOAF0gPcStleY1fgfHZMvvzCLm4leXsyMek+OPE9GPOPc+Ch5
+	yHUJncHmzrmSK8u+8/jgnFxb6fhbdO12EEpl1CBkRkbh1iv4u8hiSBQ9285CRJVWJodbHDhMmbE
+	/4ssvaMUqRIRrpQ/ObbjFzV5Coc4g8UBcDlVIB7UdoPMhHQGdNvrr5R4npygvdG3i6VDsNb/u/D
+	X5vSroD1/7L5uw9t3ZmYjo2VXxyZRaCSyWeGwYO21jorjSp4Rw3//NKb2tfajjbKg5GbLJwixVT
+	E1fcKv507UbzPOm5VzJRDqYIz+mmm8/9g7b6oTeYz82YG
+X-Google-Smtp-Source: AGHT+IGP3LVDegg2t/sYFf09FF4PFWosWBV1+BXW4mpRYyHpfiHD5ESfphLo+ZvGdzOuFsNDR6KwAQ==
+X-Received: by 2002:a05:6a20:918f:b0:246:d43a:3856 with SMTP id adf61e73a8af0-246d449839amr3046338637.22.1756889713564;
+        Wed, 03 Sep 2025 01:55:13 -0700 (PDT)
+Received: from ti-am64x-sdk.. ([14.98.178.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7726c1ed65bsm5419068b3a.45.2025.09.03.01.55.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 01:55:13 -0700 (PDT)
+From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+To: rydberg@bitmath.org,
+	dmitry.torokhov@gmail.com
+Cc: linux-input@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	bhanuseshukumar@gmail.com
+Subject: [PATCH v3] Input: bcm5974 - Driver cleanup by replacing dprintk with dev_dbg
+Date: Wed,  3 Sep 2025 14:25:06 +0530
+Message-Id: <20250903085506.6042-1-bhanuseshukumar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xaejexfyvesftglbdyllzrz5nlibzcj3poddczgrqhrm7ugh3l@tysxjhoksvz7>
+Content-Transfer-Encoding: 8bit
 
-Hi Richard,
+Debug printk messages are converted to dev_dbg based logs
+for better control over debug messages using dynamic logging.
 
-On Wed, Sep 03, 2025 at 10:24:46AM +0200, Richard Leitner wrote:
-> Hi Sakari,
-> 
-> On Wed, Sep 03, 2025 at 10:48:48AM +0300, Sakari Ailus wrote:
-> > Hi Richard,
-> > 
-> > On Wed, Sep 03, 2025 at 09:13:35AM +0200, Richard Leitner wrote:
-> > > > > @@ -1491,8 +1510,11 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> > > > >  	/* Flash/Strobe controls */
-> > > > >  	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
-> > > > >  
-> > > > > -	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
-> > > > > -			  0, 13900, 1, 8);
-> > > > > +	exposure_us = ov9282_exposure_to_us(ov9282, OV9282_EXPOSURE_DEFAULT);
-> > > > > +	ov9282->flash_duration = v4l2_ctrl_new_std(ctrl_hdlr,
-> > > > > +						   &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
-> > > > > +						   0, exposure_us,
-> > > > > +						   1, OV9282_FLASH_DURATION_DEFAULT);
-> > > > 
-> > > > Wrap this differently, please, e.g. after '='.
-> > > 
-> > > This is wrapped the same way as all other v4l2_ctrl_new_X() calls in
-> > > ov9282_init_controls(). Therefore I've chosen to do it this way here
-> > > too.
-> > > 
-> > > So if I'm going to change this one, IMHO all others should be changed
-> > > too (exp_ctrl, again_ctrl, vblank_ctrl, pixel_rate, link_freq_ctrl,
-> > > hblank_ctrl). Is this intended?
-> > > 
-> > > If so I'm wondering if this would be a suiteable approach?
-> > > 
-> > > ov9282->flash_duration =
-> > > 	v4l2_ctrl_new_std(ctrl_hdlr,
-> > > 			   &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
-> > > 			   0, exposure_us,
-> > > 			   1, OV9282_FLASH_DURATION_DEFAULT);
-> > > 
-> > > It is fine for checkpatch, but introduces a newline for every ctrl and
-> > > tbh I'm not sure if it improves readability?
-> > 
-> > I don't think it's worse at least. You can also rewrap the rest of the
-> > lines:
-> > 
-> > 	ov9282->flash_duration =
-> > 		v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops,
-> > 				  V4L2_CID_FLASH_DURATION, 0, exposure_us, 1,
-> > 				  OV9282_FLASH_DURATION_DEFAULT);
-> > 
-> 
-> Ok. Fine with me ;)
-> 
-> So I will adapt this patch and add a new patch which changes the wrapping
-> for all remaining v4l2_ctrl_new_X() calls in ov9282_init_controls() to the
-> series and send a v8? Or should I wait for feedback from Laurent for v8?
+Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+---
+ Changes in V3
+ 1. Name in the from tag & signed-off tag are matched.
+ 
+ Note: This patch is tested for compilation.
+ v1 patch : https://lore.kernel.org/all/20250902164351.36828-1-bhanuseshukumar@gmail.com/
+ v2 patch : https://lore.kernel.org/all/20250903061908.41910-1-bhanuseshukumar@gmail.com/ 
 
-Let's wait for Laurent to review this first. The changes I asked for are
-minor.
+ drivers/input/mouse/bcm5974.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/input/mouse/bcm5974.c b/drivers/input/mouse/bcm5974.c
+index dfdfb59cc8b5..03e112666c2e 100644
+--- a/drivers/input/mouse/bcm5974.c
++++ b/drivers/input/mouse/bcm5974.c
+@@ -156,13 +156,6 @@ MODULE_AUTHOR("Henrik Rydberg");
+ MODULE_DESCRIPTION("Apple USB BCM5974 multitouch driver");
+ MODULE_LICENSE("GPL");
+ 
+-#define dprintk(level, format, a...)\
+-	{ if (debug >= level) printk(KERN_DEBUG format, ##a); }
+-
+-static int debug = 1;
+-module_param(debug, int, 0644);
+-MODULE_PARM_DESC(debug, "Activate debugging output");
+-
+ /* button data structure */
+ struct bt_data {
+ 	u8 unknown1;		/* constant */
+@@ -550,8 +543,7 @@ static int report_bt_state(struct bcm5974 *dev, int size)
+ 	if (size != sizeof(struct bt_data))
+ 		return -EIO;
+ 
+-	dprintk(7,
+-		"bcm5974: button data: %x %x %x %x\n",
++	dev_dbg(&dev->intf->dev, "button data: %x %x %x %x\n",
+ 		dev->bt_data->unknown1, dev->bt_data->button,
+ 		dev->bt_data->rel_x, dev->bt_data->rel_y);
+ 
+@@ -688,7 +680,7 @@ static int bcm5974_wellspring_mode(struct bcm5974 *dev, bool on)
+ 		goto out;
+ 	}
+ 
+-	dprintk(2, "bcm5974: switched to %s mode.\n",
++	dev_dbg(&dev->intf->dev, "switched to %s mode.\n",
+ 		on ? "wellspring" : "normal");
+ 
+  out:
+@@ -718,7 +710,7 @@ static void bcm5974_irq_button(struct urb *urb)
+ 	}
+ 
+ 	if (report_bt_state(dev, dev->bt_urb->actual_length))
+-		dprintk(1, "bcm5974: bad button package, length: %d\n",
++		dev_dbg(&intf->dev, "bad button package, length: %d\n",
+ 			dev->bt_urb->actual_length);
+ 
+ exit:
+@@ -753,7 +745,7 @@ static void bcm5974_irq_trackpad(struct urb *urb)
+ 		goto exit;
+ 
+ 	if (report_tp_state(dev, dev->tp_urb->actual_length))
+-		dprintk(1, "bcm5974: bad trackpad package, length: %d\n",
++		dev_dbg(&intf->dev, "bad trackpad package, length: %d\n",
+ 			dev->tp_urb->actual_length);
+ 
+ exit:
+@@ -786,7 +778,7 @@ static int bcm5974_start_traffic(struct bcm5974 *dev)
+ 
+ 	error = bcm5974_wellspring_mode(dev, true);
+ 	if (error) {
+-		dprintk(1, "bcm5974: mode switch failed\n");
++		dev_dbg(&dev->intf->dev, "mode switch failed\n");
+ 		goto err_out;
+ 	}
+ 
 -- 
-Sakari Ailus
+2.34.1
+
 
