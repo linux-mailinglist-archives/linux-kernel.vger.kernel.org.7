@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-798624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1080BB42079
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:08:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0210DB42095
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D18D9565439
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:08:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A62B7BDE9B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91BF30748B;
-	Wed,  3 Sep 2025 13:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F8C309DCE;
+	Wed,  3 Sep 2025 13:06:30 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA74304BC4
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1024E3054D6
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756904788; cv=none; b=jBrhNZXv1pq9BDujoDECa6I+E2lMzHkLLVb3D2icirrPssRm/b7Lo67/vWuysMwNuPHNzqY2D8NoJ+c3ntiTryAipEv8GXYr25mKkcGcR0peynYrHVkScGLTAT1zQKhXrC+bfJNBzzwvGQdeaeTVbhe2lB75J9TCvWUTwAzcRHY=
+	t=1756904789; cv=none; b=D2esa2lnkNgjE5nhWD943uAqk/GnRCqowCHRT4Grch3OGSI6i3Q+t+NJfkG0RVlEvPm9ASEJDVIjGFAPAYSi+OGB7hT7Rh2CHOgkmHchx/YfFqCvSlkC2krsNu5xltagubzB7sAw+7E+srXxwISyGI5q3qRLYVn/lwcsi2EdT40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756904788; c=relaxed/simple;
-	bh=dO5AouNWL4aNepxpem6zpAWY9cfFLUMSDdsjvpTHUbY=;
+	s=arc-20240116; t=1756904789; c=relaxed/simple;
+	bh=XDKPHV75wgIjXXUhw4V5YtDkPybmhaqtXj422XNlmpk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NtVG9omP7IwVAWFWjMnv5oHLN2tS3d8sp9M3OqVIInRI7QI92ThyqivPGtemXH432GhQ26WtwLugtBSaga64/cyT2Jp2Dg2OqFw/2TRX8F1Ek4uWiQHqf8b/ylHFDP5l+d0rSRZXfIDDrLCb09AKSFb/Bjqf8uf0jIY+hIEJLCQ=
+	 In-Reply-To:To:Cc; b=i7TWyyds3hFVGGjIU6hbW1wI5TKRgwjxE6+A2UunT8o8ZbSNcdoWvVxHHi2d9fz4WsM7Mv7mM/3MbnhCdxD0kdcfiacN2PVL1oiytuIdVs5Nc9vT9fu2zC2gD0Xfg37/1Oo8Rpg3grxFVnOmJZxetv45MC4BkudoZqptcDZV2yE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <m.felsch@pengutronix.de>)
-	id 1utnBl-00006Z-Vo; Wed, 03 Sep 2025 15:06:13 +0200
+	id 1utnBm-00006Z-1K; Wed, 03 Sep 2025 15:06:14 +0200
 From: Marco Felsch <m.felsch@pengutronix.de>
-Date: Wed, 03 Sep 2025 15:06:17 +0200
-Subject: [PATCH 09/11] dmaengine: add support for device_link
+Date: Wed, 03 Sep 2025 15:06:18 +0200
+Subject: [PATCH 10/11] dmaengine: imx-sdma: drop remove callback
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,7 +43,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-v6-16-topic-sdma-v1-9-ac7bab629e8b@pengutronix.de>
+Message-Id: <20250903-v6-16-topic-sdma-v1-10-ac7bab629e8b@pengutronix.de>
 References: <20250903-v6-16-topic-sdma-v1-0-ac7bab629e8b@pengutronix.de>
 In-Reply-To: <20250903-v6-16-topic-sdma-v1-0-ac7bab629e8b@pengutronix.de>
 To: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
@@ -59,45 +59,65 @@ X-SA-Exim-Mail-From: m.felsch@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Add support to create device_links between dmaengine suppliers and the
-dma consumers. This shifts the device dep-chain teardown/bringup logic
-to the driver core.
+The whole driver was converted to the devm APIs except for this last
+for-loop. This loop is buggy due to three reasons:
+ 1) It removes the channels without removing the users first. This can
+    lead to very bad situations.
+ 2) The loop starts at 0 and which is channel0 which is a special
+    control channel not registered via vchan_init(). Therefore the
+    remove() always Oops because of NULL pointer exception.
+ 3) sdma_free_chan_resources() disable the clks unconditional without
+    checking if the clks are enabled. This is done for all
+    MAX_DMA_CHANNELS which hang the system if there is at least one unused
+    channel.
 
-Moving this to the core allows the dmaengine drivers to simplify the
-.remove() hooks and also to ensure that no dmaengine driver is ever
-removed before the consumer is removed.
+Since the dmaengine core supports devlinks we already addressed the
+first issue.
+
+The devlink support also addresses the third issue because during the
+consumer teardown phase each requested channel is dropped accordingly so
+the dmaengine driver doesn't need to this.
+
+The second issue is fixed by not doing anything on channel0.
+
+To sum-up, all issues are fixed by dropping the .remove() callback and
+let the frameworks do their job.
 
 Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 ---
- drivers/dma/dmaengine.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/dma/imx-sdma.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index 758fcd0546d8bde8e8dddc6039848feeb1e24475..a50652bc70b8ce9d4edabfaa781b3432ee47d31e 100644
---- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -817,6 +817,7 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
- 	struct fwnode_handle *fwnode = dev_fwnode(dev);
- 	struct dma_device *d, *_d;
- 	struct dma_chan *chan = NULL;
-+	struct device_link *dl;
+diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+index 6c6d38b202dd2deffc36b1bd27bc7c60de3d7403..c31785977351163d6fddf4d8b2f90dfebb508400 100644
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -2405,25 +2405,11 @@ static int sdma_probe(struct platform_device *pdev)
+ 	return 0;
+ }
  
- 	if (is_of_node(fwnode))
- 		chan = of_dma_request_slave_channel(to_of_node(fwnode), name);
-@@ -858,6 +859,13 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
- 	/* No functional issue if it fails, users are supposed to test before use */
- #endif
+-static void sdma_remove(struct platform_device *pdev)
+-{
+-	struct sdma_engine *sdma = platform_get_drvdata(pdev);
+-	int i;
+-
+-	/* Kill the tasklet */
+-	for (i = 0; i < MAX_DMA_CHANNELS; i++) {
+-		struct sdma_channel *sdmac = &sdma->channel[i];
+-
+-		sdma_free_chan_resources(&sdmac->vc.chan);
+-	}
+-}
+-
+ static struct platform_driver sdma_driver = {
+ 	.driver		= {
+ 		.name	= "imx-sdma",
+ 		.of_match_table = sdma_dt_ids,
+ 	},
+-	.remove		= sdma_remove,
+ 	.probe		= sdma_probe,
+ };
  
-+	dl = device_link_add(dev, chan->device->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
-+	if (!dl) {
-+		dev_err(dev, "failed to create device link to %s\n",
-+			dev_name(chan->device->dev));
-+		return ERR_PTR(-EINVAL);
-+	}
-+
- 	chan->name = kasprintf(GFP_KERNEL, "dma:%s", name);
- 	if (!chan->name)
- 		return chan;
 
 -- 
 2.47.2
