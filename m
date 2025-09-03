@@ -1,154 +1,99 @@
-Return-Path: <linux-kernel+bounces-797860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54AE8B41659
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:22:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F8A8B4165B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29B281BA1E87
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:23:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9C591BA164F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692342D9ED9;
-	Wed,  3 Sep 2025 07:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503AE2DA740;
+	Wed,  3 Sep 2025 07:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="q2xg5Ai9";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fJDSx4IY";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="q2xg5Ai9";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fJDSx4IY"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CvztLMZU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32C62D97BE
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E2F27FB2A;
+	Wed,  3 Sep 2025 07:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756884150; cv=none; b=AnfL0RP9J+fnylvzmO5o/BK4nQWtt5OdO/fo4OAav5Qf5NPt+88vFPqP5AEOhH2mjFUrg5eYegzy9FG+pL6mn4QAYFS7Nl5/j0epCp+Z7EsiJFNVgXvbGneI4jaNo270WFpg+qxPmFDV0Utr0otFa+6PBk3XzIJSP0/zVL9OVzM=
+	t=1756884186; cv=none; b=FwaUHZ6D2q0mfKtlUpfNBWgVSYmoYTEpJDv/hE3HBzVAvZ5omHREDJwkyh8+HUAWvLBNfItxiAI6w3/i6Hb/JxMRGBngK1HOrQk9Ph04pyJH7kAPrUWgnTb3FAePrFvylqWYxpt+IoUNY47w5K5jwB5Zx3hOsekyCMjDDV11r2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756884150; c=relaxed/simple;
-	bh=85voRKOwt5SBYOvHayKAYqSYvXM1fkLxDWz/alZ6fGo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oA90V2i11VsgDifL39mkKFHo1Sc85LSFDcTAjC+gufLW4Ay8TDCg9v/UuWjvzO5u4lpVAagBFRyBT3MM0Ix6XCpyf1QLQ3PGjvAa6LryxuXaSieGCISmhAEK+Odpb/AUj77OlER/X4ZY1y5vKMIzaGzRGtgjMsPKrQv5izD9Nuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=q2xg5Ai9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fJDSx4IY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=q2xg5Ai9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fJDSx4IY; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3B61421292;
-	Wed,  3 Sep 2025 07:22:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756884146; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3p31lyz0IhvCppuWlLlJpYeddqb30IJRqKNWWfsBUls=;
-	b=q2xg5Ai9yEfDZs53NzO5bPVOlteleqzOWJBdLTsv0gXUjKw7ieNYn2QDSgZHLdml9Xi8PY
-	XQ87yd9ckhyHdol4kFziW3rSxLZGPJR6ejTUxnwZaTddp9VLiOWJHOPrkAxtDjohj5BZ8j
-	6XJtgu4W0oUIRiVsq3BAV0NX7W+/PMY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756884146;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3p31lyz0IhvCppuWlLlJpYeddqb30IJRqKNWWfsBUls=;
-	b=fJDSx4IYJIvOtGGiqdNsogoKCBPaJsInCIVbP1FbJ6XKDjXxONJ7QNTu8IRRxy5depPps4
-	BR66cIt+JZOXgUCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=q2xg5Ai9;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=fJDSx4IY
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756884146; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3p31lyz0IhvCppuWlLlJpYeddqb30IJRqKNWWfsBUls=;
-	b=q2xg5Ai9yEfDZs53NzO5bPVOlteleqzOWJBdLTsv0gXUjKw7ieNYn2QDSgZHLdml9Xi8PY
-	XQ87yd9ckhyHdol4kFziW3rSxLZGPJR6ejTUxnwZaTddp9VLiOWJHOPrkAxtDjohj5BZ8j
-	6XJtgu4W0oUIRiVsq3BAV0NX7W+/PMY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756884146;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3p31lyz0IhvCppuWlLlJpYeddqb30IJRqKNWWfsBUls=;
-	b=fJDSx4IYJIvOtGGiqdNsogoKCBPaJsInCIVbP1FbJ6XKDjXxONJ7QNTu8IRRxy5depPps4
-	BR66cIt+JZOXgUCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EF38413888;
-	Wed,  3 Sep 2025 07:22:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PRkqObHst2i4PQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 03 Sep 2025 07:22:25 +0000
-Date: Wed, 03 Sep 2025 09:22:25 +0200
-Message-ID: <87bjnsvw3y.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] ALSA: rme32: Fix serialization in snd_rme32_capture_adat_open()
-In-Reply-To: <aLfXmIQRFTXr5h8O@stanley.mountain>
-References: <aLfXmIQRFTXr5h8O@stanley.mountain>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1756884186; c=relaxed/simple;
+	bh=i8YViYCLv0G5HWt+WwVcqnR5OfAuwswwP8Ni9nzI9xk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W4sKLe5hWnPMpK7Z4JwqVL5o4jSwdO9OaXago77M0w75UQSPXfEGBffEk+OAaGreESrC9jYwpCo/L+eDkF9Lc/FCeTX8p8dEWS+CmVSy16X4A73N6cM7Md8cXr1MsjSAmQaAwevYeyW9OLsNl6OiksDQ76hFRdaooZjj59OiiKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CvztLMZU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7072C4CEF0;
+	Wed,  3 Sep 2025 07:23:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756884186;
+	bh=i8YViYCLv0G5HWt+WwVcqnR5OfAuwswwP8Ni9nzI9xk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CvztLMZUOgGBrIYsh5cn0NG/ZBk1o+0TNOTDgYrnAgHgGXReGBzdFckiiDW5wTGTn
+	 LzB8cRxhs7lXljN5fwMRdNapmxI0nGpde/BlCyxZ/F3YfJN+/QO/6Ss8oNOAFKaL27
+	 eDlIIs7KzBIhqyKKPQPy6N7zdYsb4gNrbKzBMKwo6IgsOcWDXSPpKEAg4+gPNbffvK
+	 diJZqyBEDPPCsymf89lShIPuRaPZPcI6tZbBDWuPnlMINwTAAjoQoJvK3Ys4iYNY5B
+	 FFHYpTSOn9ju6UYXwQZrAbEhwSLW6yjG5tKqCLWcWHlZ3t9eRn31xkltJTk25ViNb0
+	 maxJwEK6z9ZuQ==
+Date: Wed, 3 Sep 2025 08:23:01 +0100
+From: Lee Jones <lee@kernel.org>
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Brown <broonie@kernel.org>, arnd@arndb.de, mchehab@kernel.org,
+	lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+	linux-media@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Remove the wl1273 FM Radio
+Message-ID: <20250903072301.GZ2163762@google.com>
+References: <20250625133258.78133-1-linux@treblig.org>
+ <20250808154903.GB23187@pendragon.ideasonboard.com>
+ <20250902103249.GG2163762@google.com>
+ <20250902113527.GB1694@pendragon.ideasonboard.com>
+ <88042d72-b428-442e-ba3c-b15e587e12a7@sirena.org.uk>
+ <20250902121015.GI13448@pendragon.ideasonboard.com>
+ <aLcuHnj_h3Xf7DiK@gallifrey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 3B61421292
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aLcuHnj_h3Xf7DiK@gallifrey>
 
-On Wed, 03 Sep 2025 07:52:24 +0200,
-Dan Carpenter wrote:
+On Tue, 02 Sep 2025, Dr. David Alan Gilbert wrote:
+
+> * Laurent Pinchart (laurent.pinchart@ideasonboard.com) wrote:
+> > On Tue, Sep 02, 2025 at 12:47:39PM +0100, Mark Brown wrote:
+> > > On Tue, Sep 02, 2025 at 01:35:27PM +0200, Laurent Pinchart wrote:
+> > > 
+> > > > Patch 1/4 has been queued in the media tree and should be in linux-next
+> > > > as commit 103b0cfc9ab6. It is based straight on v6.17-rc1. Patch 2/4 is
+> > > > also in linux-next, but is based on other ALSA patches. The simplest
+> > > > course of action would be for you to merge 3/4 for v6.18, and 4/4 for
+> > > > v6.19.
+> > > 
+> > > Or given that it's a driver removal we could just get a rebase of the
+> > > series against the meda tree applied?  The conflicts with ASoC should be
+> > > trivial to resolve.
+> > 
+> > I don't mind either way. I know Linus doesn't like having the same patch
+> > merged with different commit IDs, but I don't know how strict the rule
+> > is, especially when git should be able to resolve the conflict
+> > transparently.
 > 
-> We accidentally deleted the wrong line of code when we did the
-> conversion to guard() locks.  If the rme32->capture_substream has
-> already been set we should return -EBUSY.
-> 
-> Fixes: 8bb75ae244c5 ("ALSA: rme32: Use guard() for spin locks")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> I still think the easiest thing is to leave 1/4 and 2/4 as you currently
+> have them; and let Lee take 3/4 and 4/4 next time around.
 
-Thanks, applied now.
+It's more disjointed than I like.  But it's okay.  Remind me later.
 
-
-Takashi
+-- 
+Lee Jones [李琼斯]
 
