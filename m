@@ -1,114 +1,78 @@
-Return-Path: <linux-kernel+bounces-797935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39445B41757
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:56:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4331CB4175A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 555FE189754A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:56:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26F991B25845
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3922E1730;
-	Wed,  3 Sep 2025 07:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4B72E54C8;
+	Wed,  3 Sep 2025 07:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="nJrENByL"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CR/k8E0B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14E61E98E6;
-	Wed,  3 Sep 2025 07:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694241E98E6;
+	Wed,  3 Sep 2025 07:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756886158; cv=none; b=qE+nFRmdAdgk8KeW5BfkFdYX4q4IWLztPzJBDNyHwVMAElbuAsEdpfviphu9hBdmikQRry3ZV762k1vs7aHunyzaPL8aSvGFc3FLwOeheMMAUzcjH30SW0Odm3qvMUdV1mZAodEL2Juj9IIP4FArjrNNMq1koFEBa8BFkkRRKfI=
+	t=1756886162; cv=none; b=PdMRftb60KozEBYjmk30b4TbMRppTTOLleuIdabfTTyGCvN2A+HefUvPrv5dd37yM8Z3dxXn9eBnTPlUEKZTfEoDjD2wsuRYA4kkZF7TZckfp2JBK6pK8zDyLJmsWvTJmB5I/O/GeVA9zKfvPyp2bvcT/i7XKeunUnMSMwBzpu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756886158; c=relaxed/simple;
-	bh=s56ODqA+peudh7JXuPiVnjfNCTTLMukqjkCKX1xnu3Q=;
+	s=arc-20240116; t=1756886162; c=relaxed/simple;
+	bh=WmhHqUUx+HVECDShxhT+FGRZ6haAnZle3DlNSAyxg3M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k0o/EIfsl7kSPuthPNPHW5T9ibt9Sbi71axNLMCqKme9ij72+brZEzyDV9/rW3UNOmoJqPjVhbCM6FCcsYj6TfJzPhhiiuPkK+NnLOcBji0jDsoyfV96rTOCU+FU0760DfmHQXLHpg032DVma6ei9eAeEJqC2mPV0Q6jeSbl1Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=nJrENByL; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=hxpC5vy7Hx8U7Nfsd9dimVqBCq+OqiehMFxgIJnMKBk=; b=nJrENByL+pAsQDNf3yUh/Tt8KL
-	XEtmfGPJoz/YRme8YYEoyO9/ZSPUXREsNr+N/K8VNmqOzMYUAKisthVa7m1INPcq9w8KTUS+Clmhd
-	ZYi1G/1RofSDFYx0MOK0iWQBY11SR7iMXN4uurBtKuIDtEMgKGydOrrRI9aCJlRhup0rlAYIa53sI
-	5+/FcUB234SidsXXhGmRLseHEp0B70OPGfTKCwCRv27WjWu4XTymUUcGDq0lxPt+oOJnYNJk9+VDo
-	0zaFofn45/1B7Yt4uluKRCVTOpuKY+TkcUe3E1O+oIPDnv7MrIK9U+Qb18uBZf3E4VGGrNvMbRQXZ
-	bUxJDrCw==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1utiLB-0065FM-Bm; Wed, 03 Sep 2025 09:55:37 +0200
-Date: Wed, 3 Sep 2025 08:55:36 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "409411716@gms.tku.edu.tw" <409411716@gms.tku.edu.tw>,
-	"visitorckw@gmail.com" <visitorckw@gmail.com>,
-	Xiubo Li <xiubli@redhat.com>,
-	"idryomov@gmail.com" <idryomov@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Subject: Re: [PATCH] ceph: optimize ceph_base64_encode() with block processing
-Message-ID: <aLf0eJcvCj9zcn-g@igalia.com>
-References: <20250830132822.7827-1-409411716@gms.tku.edu.tw>
- <fce1adab2b450097edbcea3ec83420257997ec00.camel@ibm.com>
- <aLdcNhKrPXxaEUtm@visitorckw-System-Product-Name>
- <f4f33ae461e0f1cf2f28d1c22546bd67cd9c4da3.camel@ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FFMfb2D9ZX8ExVzEAGInRBtXfSvmHvIA7M8LxEfXJ6Q5fVJaglGHYIRXkJT8GHmcX71Wjdy3LyLkGZpncN0VOn9ZSVgfN8dusvlvfmT+Gtcae1f0LYCZMWHN9PKjb0LRaDOO5RxyddZAGXkElklEA3POmcAgMAm3zukcQ1Ti/HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CR/k8E0B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 412DFC4CEF0;
+	Wed,  3 Sep 2025 07:56:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756886161;
+	bh=WmhHqUUx+HVECDShxhT+FGRZ6haAnZle3DlNSAyxg3M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CR/k8E0Bgtqr0iYlE5Mn9gViyYbEPJ2AoDTF1Zcyn6uDsoL/ezKaHF0fzzg6JvS/0
+	 ynKAyIAAYK5c5Cl2zkKISeTboUC2S4qoFo33CNuaUWOd+xymIn2kFbTRs/5YRq4V7N
+	 teh5hmgMO8q3aFS8V7zBkkQbVFf4vIRY+8ZUJMcSRyGcGaNtEft8UuH1LgnYZtHikP
+	 uPWi/Qdrgb0iPAv/TWM8n+ivVbeInTi18KP435JdpxT9hKRnT7JLyhELX4OedDTjUf
+	 ZRPh7x35IBa5pJqdcSh21WQ+4aHtEkUa5zASX9Baes+5nZpGQpful7ZSgCVquHyQOf
+	 7lfGkP5fk6gYw==
+Date: Wed, 3 Sep 2025 09:55:59 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Cc: srini@kernel.org, broonie@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz, tiwai@suse.com, 
+	linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] ASoC: dt-bindings: qcom,sm8250: Add glymur sound card
+Message-ID: <20250903-sociable-corgi-of-grandeur-d1dc76@kuoka>
+References: <20250902140044.54508-1-srinivas.kandagatla@oss.qualcomm.com>
+ <20250902140044.54508-3-srinivas.kandagatla@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f4f33ae461e0f1cf2f28d1c22546bd67cd9c4da3.camel@ibm.com>
+In-Reply-To: <20250902140044.54508-3-srinivas.kandagatla@oss.qualcomm.com>
 
-On Tue, Sep 02, 2025 at 09:21:14PM +0000, Viacheslav Dubeyko wrote:
-> On Wed, 2025-09-03 at 05:05 +0800, Kuan-Wei Chiu wrote:
-> > On Tue, Sep 02, 2025 at 07:37:22PM +0000, Viacheslav Dubeyko wrote:
-> > > On Sat, 2025-08-30 at 21:28 +0800, Guan-Chun Wu wrote:
-> > > > Previously, ceph_base64_encode() used a bitstream approach, handling one
-> > > > input byte at a time and performing extra bit operations. While correct,
-> > > > this method was suboptimal.
-> > > > 
-> > > 
-> > > Sounds interesting!
-> > > 
-> > > Is ceph_base64_decode() efficient then?
-> > > Do we have something in crypto library of Linux kernel? Maybe we can use
-> > > something efficient enough from there?
-> > > 
-> > Hi Viacheslav,
-> > 
-> > FYI, we already have base64 encode/decode implementations in
-> > lib/base64.c. As discussed in another thread [1], I think we can put
-> > the optimized version there and have users switch to call the library
-> > functions.
-> > 
-> > [1]: https://lore.kernel.org/lkml/38753d95-8503-4b72-9590-cb129aa49a41@t-8ch.de/  
-> > 
-> > 
+On Tue, Sep 02, 2025 at 03:00:40PM +0100, Srinivas Kandagatla wrote:
+> Document the bindings for the glymur sound card which is
+> audioreach based architecture.
 > 
-> Sounds great! Generalized version of this algorithm is much better than
-> supporting some implementation in Ceph code.
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/sound/qcom,sm8250.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-Please note that ceph can not use the default base64 implementation because
-it uses the '_' character in the encoding, as explained in commit
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-  64e86f632bf1 ("ceph: add base64 endcoding routines for encrypted names")
+Best regards,
+Krzysztof
 
-That's why it implements it's own version according to an IMAP RFC, which
-uses '+' and ',' instead of '-' and '_'.
-
-Cheers,
---
-Luis
 
