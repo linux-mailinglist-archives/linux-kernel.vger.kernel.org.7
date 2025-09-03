@@ -1,198 +1,478 @@
-Return-Path: <linux-kernel+bounces-797812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AAAEB415A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:55:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6756BB415A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88C193AE9F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:55:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B47D3A33FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E844D2D948A;
-	Wed,  3 Sep 2025 06:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852BB2D8DB9;
+	Wed,  3 Sep 2025 06:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xKPAlruC"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KbE19xsi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A332D877A
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 06:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B6842A80
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 06:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756882500; cv=none; b=Hb/twiM05NB/+fzi4JgRDMbovS7bYSLTLUJp8RxQL5ZfenZiDxNEQkS2692MS1pz6JWdE5m5BY2PlMfNAkvnflPO7+SUb67zqlnQV+Dec0Ng//+DNVo3v8qKk8l2TA0Gox810iehtXvdX7Ab8Ptb9sRJbnMTW5Ih1O7/lpwT4bo=
+	t=1756882497; cv=none; b=lPWZd2MdL7x34Eo5RkPe2aN9iHCozRFkThSHQ4wM7IikiLcMP9BGCXPmzdqVOKzAyTTM9Ysv4XpQcF26/1ZpVXqYto/m04BSP9ebuAotV7TuE54xHyXJzP4g0xWaQZmBwFZkygSnwFTS8bYY1bwDbHed3nYXVP1oai1lyx1QJD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756882500; c=relaxed/simple;
-	bh=fx9m8I+bnFu6YFqFIx8UzjaVPlzpct3IdUYNb8nf/uU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kUl1gbkDriUbXRpRCeCgKH9WW6uGc+HlIJAS7AjGRtpU2PMSQFxZjHTGXVjwBTD+8Mk3IYEf2xrU9UrRfRUpM5vVpOGNgJXIODw7dAT4EIjpRHmRXvqguoUt29QV5hrCTWr7cxsAJDVNb88IYndQ4YcV5vF7gbqKAhmGq1nqsPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xKPAlruC; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 3 Sep 2025 08:54:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756882485;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4jFDaRtvJdeG/8DPwr/WLJ5E2a7HLkN/FvmStdNByxk=;
-	b=xKPAlruCZjj2Mj1AUXwCnLy195uqzzKwiHsPQRsCw3LOYQMrOqW3jxIAaEDYsVw6eTFp9c
-	afwPlHF8zwt3lqrtZzTL4tcJnvXxXIE+N42gHWpcwiD2UJjiWMMWbTJZYtH9h7sj96xeLB
-	2YrsStw+6mj/lLJIsqtaPM1D2e4QkhU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
-	Hans Verkuil <hverkuil@kernel.org>
-Subject: Re: [PATCH v7 07/10] media: i2c: ov9282: add strobe_duration v4l2
- control
-Message-ID: <uzgdukvgqkpg5koehz6kzxg6dfjes7p5ntd5oyqgqpr7gz5otd@ykwax6c2bo6x>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
- <20250901-ov9282-flash-strobe-v7-7-d58d5a694afc@linux.dev>
- <aLYISb07ziGDmFGS@kekkonen.localdomain>
+	s=arc-20240116; t=1756882497; c=relaxed/simple;
+	bh=/KabusmJ2I+nXIJ3VMNkKCJsumf0ygb7oTQrD+l17mE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UOUOsVvrPEECZdD2dGV2Fd+8iCWwPJqEETWSyJOr+2xVXpWaIOO8NsB6hTbRmgeRzKUhv0NRvjCkQVAN74Ja7K1ConpE8l23Pih5ODmcYNEQNSoUSuFH2R/AY1yoUjbLsYYPF0d1ovDIHPbOl4JcI6M89jo9+XuZ5DRXDxIz1js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KbE19xsi; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756882495; x=1788418495;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/KabusmJ2I+nXIJ3VMNkKCJsumf0ygb7oTQrD+l17mE=;
+  b=KbE19xsi7gUwRvQ+Kw3BRgUvzvlby/y52YhjXatLJoTQRKlMqIM1CQHn
+   lui/fqED3MByKqQbR60dVETYzPUjoCL7tay+K2XGzbt1S8Pz1H9sZ7Kw+
+   I+linVICAnNCixkEv5bLs57plHWQ2fhqjHBfQIerGcLGf9zFaHhuybFZc
+   mM8rBD7NjPb+OKeQClEZZgL6Bk38UJ5hhveM6OqUwERmG3lkUVmTX32y1
+   7TO5WutovBHnIdSEGeLFM10lMFVxXF9wmvRctn9McT3E23buyhDt5jLG5
+   tW1eHp1YlZwzHlFuFHKhcfMyoUICXBPiVcMyJCoVtNW46UPHi3oVv1Ecm
+   g==;
+X-CSE-ConnectionGUID: c3/9gEHWSG6qW+FyNYNAjw==
+X-CSE-MsgGUID: 0CpmKha1Q8y255P3Q3LLHw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="58883805"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="58883805"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 23:54:54 -0700
+X-CSE-ConnectionGUID: QNRvLVyWSdeDLHlfeNRPcA==
+X-CSE-MsgGUID: Pudycf2xQYiJKYFGpzciIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="202457774"
+Received: from mfalkows-mobl.ger.corp.intel.com (HELO [10.245.121.109]) ([10.245.121.109])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 23:54:52 -0700
+Message-ID: <d7e57a9e-ace3-4f92-b421-fa3a3b1ab276@linux.intel.com>
+Date: Wed, 3 Sep 2025 08:54:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aLYISb07ziGDmFGS@kekkonen.localdomain>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4] accel/amdxdna: Add ioctl DRM_IOCTL_AMDXDNA_GET_ARRAY
+To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
+ quic_jhugo@quicinc.com, jacek.lawrynowicz@linux.intel.com,
+ dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com,
+ mario.limonciello@amd.com, Mario Limonciello <superm1@kernel.org>
+References: <20250903053402.2103196-1-lizhi.hou@amd.com>
+Content-Language: en-US
+From: "Falkowski, Maciej" <maciej.falkowski@linux.intel.com>
+In-Reply-To: <20250903053402.2103196-1-lizhi.hou@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Sakari,
+Reviewed-by: Maciej Falkowski <maciej.falkowski@linux.intel.com>
 
-thanks again for the review :)
-
-On Mon, Sep 01, 2025 at 11:55:37PM +0300, Sakari Ailus wrote:
-> Hi Richard,
-> 
-> On Mon, Sep 01, 2025 at 05:05:12PM +0200, Richard Leitner wrote:
-> > Add V4L2_CID_FLASH_DURATION support using the "strobe_frame_span"
-> > feature of the sensor. This is implemented by transforming the given µs
-> > value by an interpolated formula to a "span step width" value and
-> > writing it to register PWM_CTRL_25, PWM_CTRL_26, PWM_CTRL_27,
-> > PWM_CTRL_28 (0x3925, 0x3926, 0x3927, 0x3928).
-> > 
-> > The maximum control value is set to the period of the current default
-> > framerate.
-> > 
-> > All register values are based on the OV9281 datasheet v1.53 (jan 2019)
-> > and tested using an ov9281 VisionComponents module.
-> > 
-> > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > ---
-> >  drivers/media/i2c/ov9282.c | 31 ++++++++++++++++++++++++++++++-
-> >  1 file changed, 30 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> > index ff0f69f0dc3a2d0518806b9ea65c1b520b5c55fb..c405e3411daf37cf98d5af3535702f8321394af5 100644
-> > --- a/drivers/media/i2c/ov9282.c
-> > +++ b/drivers/media/i2c/ov9282.c
-> > @@ -97,6 +97,10 @@
-> >  #define OV9282_REG_MIPI_CTRL00	0x4800
-> >  #define OV9282_GATED_CLOCK	BIT(5)
-> >  
-> > +/* Flash/Strobe control registers */
-> > +#define OV9282_REG_FLASH_DURATION	0x3925
-> > +#define OV9282_FLASH_DURATION_DEFAULT	0x0000001a
-> > +
-> >  /* Input clock rate */
-> >  #define OV9282_INCLK_RATE	24000000
-> >  
-> > @@ -687,6 +691,25 @@ static int ov9282_set_ctrl_flash_hw_strobe_signal(struct ov9282 *ov9282, bool en
-> >  				current_val);
-> >  }
-> >  
-> > +static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
-> > +{
-> > +	/*
-> > +	 * Calculate "strobe_frame_span" increments from a given value (µs).
-> > +	 * This is quite tricky as "The step width of shift and span is
-> > +	 * programmable under system clock domain.", but it's not documented
-> > +	 * how to program this step width (at least in the datasheet available
-> > +	 * to the author at time of writing).
-> > +	 * The formula below is interpolated from different modes/framerates
-> > +	 * and should work quite well for most settings.
-> > +	 */
-> > +	u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
-> > +
-> > +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION, 1, (val >> 24) & 0xff);
-> > +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 1, 1, (val >> 16) & 0xff);
-> > +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 2, 1, (val >> 8) & 0xff);
-> > +	return ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 3, 1, val & 0xff);
-> 
-> The bitwise and operation is redundant.
-
-True. Thanks for the catch!
-
-> 
-> Could you do this in a single write?
-
-I've implemented this in single byte writes due to some "special
-behaviour" of the vision components ov9281 modules. On those modules
-single byte interactions seem broken in some cases. Maybe Laurent knows
-more about this and the current state, as he was/is in contact with VC.
-
-See also: https://lore.kernel.org/all/918ce2ca-55ff-aff8-ea6c-0c17f566d59d@online.de/
-
-Nonetheless, thanks for the pointer. I haven't documented this
-accordingly. I will try to reproduce the issue again and either change
-this to a single write or add a describing comment.
-
-> 
-> Also error handling is (largely) missing.
-
-Good catch. Thanks.
-
-> 
-> > +}
-> > +
-> >  /**
-> >   * ov9282_set_ctrl() - Set subdevice control
-> >   * @ctrl: pointer to v4l2_ctrl structure
-> > @@ -756,6 +779,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
-> >  	case V4L2_CID_FLASH_HW_STROBE_SIGNAL:
-> >  		ret = ov9282_set_ctrl_flash_hw_strobe_signal(ov9282, ctrl->val);
-> >  		break;
-> > +	case V4L2_CID_FLASH_DURATION:
-> > +		ret = ov9282_set_ctrl_flash_duration(ov9282, ctrl->val);
-> > +		break;
-> >  	default:
-> >  		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
-> >  		ret = -EINVAL;
-> > @@ -1346,7 +1372,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> >  	u32 lpfr;
-> >  	int ret;
-> >  
-> > -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 11);
-> > +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 12);
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > @@ -1414,6 +1440,9 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> >  	/* Flash/Strobe controls */
-> >  	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
-> >  
-> > +	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
-> > +			  0, 13900, 1, 8);
-> > +
-> >  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
-> >  	if (!ret) {
-> >  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
-> > 
-> 
-> -- 
-> Regards,
-> 
-> Sakari Ailus
-
-regards;rl
+On 9/3/2025 7:34 AM, Lizhi Hou wrote:
+> Add interface for applications to get information array. The application
+> provides a buffer pointer along with information type, maximum number of
+> entries and maximum size of each entry. The buffer may also contain match
+> conditions based on the information type. After the ioctl completes, the
+> actual number of entries and entry size are returned. (see [1], used by
+> driver runtime library)
+>
+> [1] https://github.com/amd/xdna-driver/blob/main/src/shim/host/platform_host.cpp#L337
+>
+> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+> ---
+>   drivers/accel/amdxdna/aie2_pci.c        | 116 ++++++++++++++++++------
+>   drivers/accel/amdxdna/amdxdna_pci_drv.c |  27 ++++++
+>   drivers/accel/amdxdna/amdxdna_pci_drv.h |   1 +
+>   include/uapi/drm/amdxdna_accel.h        | 111 +++++++++++++++++++++++
+>   4 files changed, 229 insertions(+), 26 deletions(-)
+>
+> diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
+> index 7a3449541107..87c425e3d2b9 100644
+> --- a/drivers/accel/amdxdna/aie2_pci.c
+> +++ b/drivers/accel/amdxdna/aie2_pci.c
+> @@ -785,11 +785,12 @@ static int aie2_get_clock_metadata(struct amdxdna_client *client,
+>   
+>   static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void *arg)
+>   {
+> -	struct amdxdna_drm_query_hwctx *tmp __free(kfree) = NULL;
+> -	struct amdxdna_drm_get_info *get_info_args = arg;
+> -	struct amdxdna_drm_query_hwctx __user *buf;
+> +	struct amdxdna_drm_hwctx_entry *tmp __free(kfree) = NULL;
+> +	struct amdxdna_drm_get_array *array_args = arg;
+> +	struct amdxdna_drm_hwctx_entry __user *buf;
+> +	u32 size;
+>   
+> -	if (get_info_args->buffer_size < sizeof(*tmp))
+> +	if (!array_args->num_element)
+>   		return -EINVAL;
+>   
+>   	tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
+> @@ -802,14 +803,23 @@ static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void *arg)
+>   	tmp->num_col = hwctx->num_col;
+>   	tmp->command_submissions = hwctx->priv->seq;
+>   	tmp->command_completions = hwctx->priv->completed;
+> -
+> -	buf = u64_to_user_ptr(get_info_args->buffer);
+> -
+> -	if (copy_to_user(buf, tmp, sizeof(*tmp)))
+> +	tmp->pasid = hwctx->client->pasid;
+> +	tmp->priority = hwctx->qos.priority;
+> +	tmp->gops = hwctx->qos.gops;
+> +	tmp->fps = hwctx->qos.fps;
+> +	tmp->dma_bandwidth = hwctx->qos.dma_bandwidth;
+> +	tmp->latency = hwctx->qos.latency;
+> +	tmp->frame_exec_time = hwctx->qos.frame_exec_time;
+> +	tmp->state = AMDXDNA_HWCTX_STATE_ACTIVE;
+> +
+> +	buf = u64_to_user_ptr(array_args->buffer);
+> +	size = min(sizeof(*tmp), array_args->element_size);
+> +
+> +	if (copy_to_user(buf, tmp, size))
+>   		return -EFAULT;
+>   
+> -	get_info_args->buffer += sizeof(*tmp);
+> -	get_info_args->buffer_size -= sizeof(*tmp);
+> +	array_args->buffer += size;
+> +	array_args->num_element--;
+>   
+>   	return 0;
+>   }
+> @@ -817,23 +827,24 @@ static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void *arg)
+>   static int aie2_get_hwctx_status(struct amdxdna_client *client,
+>   				 struct amdxdna_drm_get_info *args)
+>   {
+> +	struct amdxdna_drm_get_array array_args;
+>   	struct amdxdna_dev *xdna = client->xdna;
+> -	struct amdxdna_drm_get_info info_args;
+>   	struct amdxdna_client *tmp_client;
+>   	int ret;
+>   
+>   	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
+>   
+> -	info_args.buffer = args->buffer;
+> -	info_args.buffer_size = args->buffer_size;
+> -
+> +	array_args.element_size = sizeof(struct amdxdna_drm_query_hwctx);
+> +	array_args.buffer = args->buffer;
+> +	array_args.num_element = args->buffer_size / array_args.element_size;
+>   	list_for_each_entry(tmp_client, &xdna->client_list, node) {
+> -		ret = amdxdna_hwctx_walk(tmp_client, &info_args, aie2_hwctx_status_cb);
+> +		ret = amdxdna_hwctx_walk(tmp_client, &array_args,
+> +					 aie2_hwctx_status_cb);
+>   		if (ret)
+>   			break;
+>   	}
+>   
+> -	args->buffer_size = (u32)(info_args.buffer - args->buffer);
+> +	args->buffer_size -= (u32)(array_args.buffer - args->buffer);
+>   	return ret;
+>   }
+>   
+> @@ -877,6 +888,58 @@ static int aie2_get_info(struct amdxdna_client *client, struct amdxdna_drm_get_i
+>   	return ret;
+>   }
+>   
+> +static int aie2_query_ctx_status_array(struct amdxdna_client *client,
+> +				       struct amdxdna_drm_get_array *args)
+> +{
+> +	struct amdxdna_drm_get_array array_args;
+> +	struct amdxdna_dev *xdna = client->xdna;
+> +	struct amdxdna_client *tmp_client;
+> +	int ret;
+> +
+> +	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
+> +
+> +	array_args.element_size = min(args->element_size,
+> +				      sizeof(struct amdxdna_drm_hwctx_entry));
+> +	array_args.buffer = args->buffer;
+> +	array_args.num_element = args->num_element * args->element_size /
+> +				array_args.element_size;
+> +	list_for_each_entry(tmp_client, &xdna->client_list, node) {
+> +		ret = amdxdna_hwctx_walk(tmp_client, &array_args,
+> +					 aie2_hwctx_status_cb);
+> +		if (ret)
+> +			break;
+> +	}
+> +
+> +	args->element_size = array_args.element_size;
+> +	args->num_element = (u32)((array_args.buffer - args->buffer) /
+> +				  args->element_size);
+> +
+> +	return ret;
+> +}
+> +
+> +static int aie2_get_array(struct amdxdna_client *client,
+> +			  struct amdxdna_drm_get_array *args)
+> +{
+> +	struct amdxdna_dev *xdna = client->xdna;
+> +	int ret, idx;
+> +
+> +	if (!drm_dev_enter(&xdna->ddev, &idx))
+> +		return -ENODEV;
+> +
+> +	switch (args->param) {
+> +	case DRM_AMDXDNA_HW_CONTEXT_ALL:
+> +		ret = aie2_query_ctx_status_array(client, args);
+> +		break;
+> +	default:
+> +		XDNA_ERR(xdna, "Not supported request parameter %u", args->param);
+> +		ret = -EOPNOTSUPP;
+> +	}
+> +	XDNA_DBG(xdna, "Got param %d", args->param);
+> +
+> +	drm_dev_exit(idx);
+> +	return ret;
+> +}
+> +
+>   static int aie2_set_power_mode(struct amdxdna_client *client,
+>   			       struct amdxdna_drm_set_state *args)
+>   {
+> @@ -926,15 +989,16 @@ static int aie2_set_state(struct amdxdna_client *client,
+>   }
+>   
+>   const struct amdxdna_dev_ops aie2_ops = {
+> -	.init           = aie2_init,
+> -	.fini           = aie2_fini,
+> -	.resume         = aie2_hw_resume,
+> -	.suspend        = aie2_hw_suspend,
+> -	.get_aie_info   = aie2_get_info,
+> -	.set_aie_state	= aie2_set_state,
+> -	.hwctx_init     = aie2_hwctx_init,
+> -	.hwctx_fini     = aie2_hwctx_fini,
+> -	.hwctx_config   = aie2_hwctx_config,
+> -	.cmd_submit     = aie2_cmd_submit,
+> +	.init = aie2_init,
+> +	.fini = aie2_fini,
+> +	.resume = aie2_hw_resume,
+> +	.suspend = aie2_hw_suspend,
+> +	.get_aie_info = aie2_get_info,
+> +	.set_aie_state = aie2_set_state,
+> +	.hwctx_init = aie2_hwctx_init,
+> +	.hwctx_fini = aie2_hwctx_fini,
+> +	.hwctx_config = aie2_hwctx_config,
+> +	.cmd_submit = aie2_cmd_submit,
+>   	.hmm_invalidate = aie2_hmm_invalidate,
+> +	.get_array = aie2_get_array,
+>   };
+> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+> index 8ef5e4f27f5e..569cd703729d 100644
+> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
+> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+> @@ -26,6 +26,13 @@ MODULE_FIRMWARE("amdnpu/17f0_10/npu.sbin");
+>   MODULE_FIRMWARE("amdnpu/17f0_11/npu.sbin");
+>   MODULE_FIRMWARE("amdnpu/17f0_20/npu.sbin");
+>   
+> +/*
+> + * 0.0: Initial version
+> + * 0.1: Support getting all hardware contexts by DRM_IOCTL_AMDXDNA_GET_ARRAY
+> + */
+> +#define AMDXDNA_DRIVER_MAJOR		0
+> +#define AMDXDNA_DRIVER_MINOR		1
+> +
+>   /*
+>    * Bind the driver base on (vendor_id, device_id) pair and later use the
+>    * (device_id, rev_id) pair as a key to select the devices. The devices with
+> @@ -164,6 +171,23 @@ static int amdxdna_drm_get_info_ioctl(struct drm_device *dev, void *data, struct
+>   	return ret;
+>   }
+>   
+> +static int amdxdna_drm_get_array_ioctl(struct drm_device *dev, void *data,
+> +				       struct drm_file *filp)
+> +{
+> +	struct amdxdna_client *client = filp->driver_priv;
+> +	struct amdxdna_dev *xdna = to_xdna_dev(dev);
+> +	struct amdxdna_drm_get_array *args = data;
+> +
+> +	if (!xdna->dev_info->ops->get_array)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (args->pad || !args->num_element || !args->element_size)
+> +		return -EINVAL;
+> +
+> +	guard(mutex)(&xdna->dev_lock);
+> +	return xdna->dev_info->ops->get_array(client, args);
+> +}
+> +
+>   static int amdxdna_drm_set_state_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
+>   {
+>   	struct amdxdna_client *client = filp->driver_priv;
+> @@ -195,6 +219,7 @@ static const struct drm_ioctl_desc amdxdna_drm_ioctls[] = {
+>   	DRM_IOCTL_DEF_DRV(AMDXDNA_EXEC_CMD, amdxdna_drm_submit_cmd_ioctl, 0),
+>   	/* AIE hardware */
+>   	DRM_IOCTL_DEF_DRV(AMDXDNA_GET_INFO, amdxdna_drm_get_info_ioctl, 0),
+> +	DRM_IOCTL_DEF_DRV(AMDXDNA_GET_ARRAY, amdxdna_drm_get_array_ioctl, 0),
+>   	DRM_IOCTL_DEF_DRV(AMDXDNA_SET_STATE, amdxdna_drm_set_state_ioctl, DRM_ROOT_ONLY),
+>   };
+>   
+> @@ -218,6 +243,8 @@ const struct drm_driver amdxdna_drm_drv = {
+>   	.fops = &amdxdna_fops,
+>   	.name = "amdxdna_accel_driver",
+>   	.desc = "AMD XDNA DRM implementation",
+> +	.major = AMDXDNA_DRIVER_MAJOR,
+> +	.minor = AMDXDNA_DRIVER_MINOR,
+>   	.open = amdxdna_drm_open,
+>   	.postclose = amdxdna_drm_close,
+>   	.ioctls = amdxdna_drm_ioctls,
+> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/amdxdna/amdxdna_pci_drv.h
+> index b6b3b424d1d5..72d6696d49da 100644
+> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
+> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
+> @@ -58,6 +58,7 @@ struct amdxdna_dev_ops {
+>   	int (*cmd_submit)(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job, u64 *seq);
+>   	int (*get_aie_info)(struct amdxdna_client *client, struct amdxdna_drm_get_info *args);
+>   	int (*set_aie_state)(struct amdxdna_client *client, struct amdxdna_drm_set_state *args);
+> +	int (*get_array)(struct amdxdna_client *client, struct amdxdna_drm_get_array *args);
+>   };
+>   
+>   /*
+> diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
+> index ce523e9ccc52..a1fb9785db77 100644
+> --- a/include/uapi/drm/amdxdna_accel.h
+> +++ b/include/uapi/drm/amdxdna_accel.h
+> @@ -34,6 +34,7 @@ enum amdxdna_drm_ioctl_id {
+>   	DRM_AMDXDNA_EXEC_CMD,
+>   	DRM_AMDXDNA_GET_INFO,
+>   	DRM_AMDXDNA_SET_STATE,
+> +	DRM_AMDXDNA_GET_ARRAY = 10,
+>   };
+>   
+>   /**
+> @@ -455,6 +456,112 @@ struct amdxdna_drm_get_info {
+>   	__u64 buffer; /* in/out */
+>   };
+>   
+> +#define AMDXDNA_HWCTX_STATE_IDLE	0
+> +#define AMDXDNA_HWCTX_STATE_ACTIVE	1
+> +
+> +/**
+> + * struct amdxdna_drm_hwctx_entry - The hardware context array entry
+> + */
+> +struct amdxdna_drm_hwctx_entry {
+> +	/** @context_id: Context ID. */
+> +	__u32 context_id;
+> +	/** @start_col: Start AIE array column assigned to context. */
+> +	__u32 start_col;
+> +	/** @num_col: Number of AIE array columns assigned to context. */
+> +	__u32 num_col;
+> +	/** @hwctx_id: The real hardware context id. */
+> +	__u32 hwctx_id;
+> +	/** @pid: ID of process which created this context. */
+> +	__s64 pid;
+> +	/** @command_submissions: Number of commands submitted. */
+> +	__u64 command_submissions;
+> +	/** @command_completions: Number of commands completed. */
+> +	__u64 command_completions;
+> +	/** @migrations: Number of times been migrated. */
+> +	__u64 migrations;
+> +	/** @preemptions: Number of times been preempted. */
+> +	__u64 preemptions;
+> +	/** @errors: Number of errors happened. */
+> +	__u64 errors;
+> +	/** @priority: Context priority. */
+> +	__u64 priority;
+> +	/** @heap_usage: Usage of device heap buffer. */
+> +	__u64 heap_usage;
+> +	/** @suspensions: Number of times been suspended. */
+> +	__u64 suspensions;
+> +	/**
+> +	 * @state: Context state.
+> +	 * %AMDXDNA_HWCTX_STATE_IDLE
+> +	 * %AMDXDNA_HWCTX_STATE_ACTIVE
+> +	 */
+> +	__u32 state;
+> +	/** @pasid: PASID been bound. */
+> +	__u32 pasid;
+> +	/** @gops: Giga operations per second. */
+> +	__u32 gops;
+> +	/** @fps: Frames per second. */
+> +	__u32 fps;
+> +	/** @dma_bandwidth: DMA bandwidth. */
+> +	__u32 dma_bandwidth;
+> +	/** @latency: Frame response latency. */
+> +	__u32 latency;
+> +	/** @frame_exec_time: Frame execution time. */
+> +	__u32 frame_exec_time;
+> +	/** @txn_op_idx: Index of last control code executed. */
+> +	__u32 txn_op_idx;
+> +	/** @ctx_pc: Program counter. */
+> +	__u32 ctx_pc;
+> +	/** @fatal_error_type: Fatal error type if context crashes. */
+> +	__u32 fatal_error_type;
+> +	/** @fatal_error_exception_type: Firmware exception type. */
+> +	__u32 fatal_error_exception_type;
+> +	/** @fatal_error_exception_pc: Firmware exception program counter. */
+> +	__u32 fatal_error_exception_pc;
+> +	/** @fatal_error_app_module: Exception module name. */
+> +	__u32 fatal_error_app_module;
+> +	/** @pad: Structure pad. */
+> +	__u32 pad;
+> +};
+> +
+> +#define DRM_AMDXDNA_HW_CONTEXT_ALL	0
+> +
+> +/**
+> + * struct amdxdna_drm_get_array - Get information array.
+> + */
+> +struct amdxdna_drm_get_array {
+> +	/**
+> +	 * @param:
+> +	 *
+> +	 * Supported params:
+> +	 *
+> +	 * %DRM_AMDXDNA_HW_CONTEXT_ALL:
+> +	 * Returns all created hardware contexts.
+> +	 */
+> +	__u32 param;
+> +	/**
+> +	 * @element_size:
+> +	 *
+> +	 * Specifies maximum element size and returns the actual element size.
+> +	 */
+> +	__u32 element_size;
+> +	/**
+> +	 * @num_element:
+> +	 *
+> +	 * Specifies maximum number of elements and returns the actual number
+> +	 * of elements.
+> +	 */
+> +	__u32 num_element; /* in/out */
+> +	/** @pad: MBZ */
+> +	__u32 pad;
+> +	/**
+> +	 * @buffer:
+> +	 *
+> +	 * Specifies the match conditions and returns the matched information
+> +	 * array.
+> +	 */
+> +	__u64 buffer;
+> +};
+> +
+>   enum amdxdna_drm_set_param {
+>   	DRM_AMDXDNA_SET_POWER_MODE,
+>   	DRM_AMDXDNA_WRITE_AIE_MEM,
+> @@ -519,6 +626,10 @@ struct amdxdna_drm_set_power_mode {
+>   	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_SET_STATE, \
+>   		 struct amdxdna_drm_set_state)
+>   
+> +#define DRM_IOCTL_AMDXDNA_GET_ARRAY \
+> +	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_GET_ARRAY, \
+> +		 struct amdxdna_drm_get_array)
+> +
+>   #if defined(__cplusplus)
+>   } /* extern c end */
+>   #endif
 
