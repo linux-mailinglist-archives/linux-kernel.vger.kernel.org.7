@@ -1,258 +1,148 @@
-Return-Path: <linux-kernel+bounces-798484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E97AB41EA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:16:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8368EB41EA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E77333B3FB4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:15:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A63B7A46E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF5D1A3BD7;
-	Wed,  3 Sep 2025 12:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADACE2D131D;
+	Wed,  3 Sep 2025 12:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dH2DKnyC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jy5pIQk0"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40452EA47C;
-	Wed,  3 Sep 2025 12:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7583283FE7
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756901720; cv=none; b=oL0Vl6Y2HjsK8szW06nfyrm3NpE7PQkS5buNLvTCvyYxr0Qsk6tp+cMHESbp/iYYB0Gc9e8eJPs43woC1vEXelm+h1kBKNvvHa4DEPEk9wCVk+BdM/QhVQuF6j4HBjFnO080WdYoooESmpjyTtMsqwXYFDvj40xSlHhQ1ndphss=
+	t=1756901797; cv=none; b=XhUpKrCLSuNKZeLEdIBqrOyG6w733GKuH7ypXzn7/z90igora95W2xmTiMzw8irWlQ4zLNGIi/qgrl2PUCE1l1i+DLqvVcnxf4F3jgVg8z/0HLJfMabe4nMng86h9LMiMkP6IAfWSs2A2yWJ1k0WQ6aM9OtcLjHRktU88XFL+xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756901720; c=relaxed/simple;
-	bh=RstKJcmAVnx14GdBD7LLbE76faK90zQc80sElX+VrcI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Yb5NgQ0s5IgibvM83pSCzapyAL4KwRns4DAF7tyZdVYbWI1YqKN9xbcmZeCG4WLIXsF+RSVyiuydmbag0rnUsvzr7fbwQDgn9Uhc2PdjIj7qd7ZpQWOiJIVHlDUg4DLtoXLGy9U4+disCCEPPkvQgilfmJ60CzWG2d+YsRoiqIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dH2DKnyC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B2EAC4CEF0;
-	Wed,  3 Sep 2025 12:15:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756901718;
-	bh=RstKJcmAVnx14GdBD7LLbE76faK90zQc80sElX+VrcI=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=dH2DKnyCRMrRfrXV+8mElBox2nKQHIrmWAQUM0/dXnyiWdXUqzOogJ0W6CJCJXJp0
-	 83mZS03+edPWOPlFZrKQFchclhpYxaoR+Zu7hAY2L+97Bg2YWEb3cXZBKLRmkL2cXq
-	 cWrh82WdVdHAA7+ci/MuORgyKfBXHGKWUO/OJytPZBur8qZXj+XOHmX7gsUDjejXO+
-	 f4pMDxUaS4Y3tCwL53vZ5XDd3he3iAeitNcwl2omzjf6sPjuADh/v9J2Am0z1U2Aut
-	 4z1rRSNaBDcSKVqj9fksBgDRV47gp3bquaPVajLnq/v+nQDtW1LJcyQqvA+wxj6lvO
-	 VN9DktoWHBDXw==
-Message-ID: <837da22b428e5a7cbda1f56868cbfe23e89dccf7.camel@kernel.org>
-Subject: Re: [PATCH v2] nfsd: remove long-standing revoked delegations by
- force
-From: Jeff Layton <jlayton@kernel.org>
-To: Li Lingfeng <lilingfeng3@huawei.com>, chuck.lever@oracle.com, 
-	neil@brown.name, okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com, 
-	yangerkun@huawei.com, lilingfeng@huaweicloud.com, zhangjian496@huawei.com, 
-	bcodding@redhat.com
-Date: Wed, 03 Sep 2025 08:15:16 -0400
-In-Reply-To: <20250903115918.788159-1-lilingfeng3@huawei.com>
-References: <20250903115918.788159-1-lilingfeng3@huawei.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1756901797; c=relaxed/simple;
+	bh=cC0aiuuE0E+2DpdlvkGHD3ARHOLa7nVcin05l3IEh7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=twkXGDbnIeU8FkIGz00iw4itmGXdlbSMBElH81THmar+uUrLiRnDwYS0CHqyZAv28lUb6FCV/FuUZWSJr/YoqlaC2JJQDpp3IBR9X5zKiukJsXVqksdHNrrWKqA4fa7pXItIaa8ftUYNn7p7tfOGMAvBGgbdkRVLh8Pv+zalzs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jy5pIQk0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583BEus4004899
+	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 12:16:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+vn4mwhUMj9kw47ypZhCXah1sPzLur+fBXwYhZMjbZk=; b=jy5pIQk0rhPvXaY+
+	cCha0zTkTY+5Qr19y0ccl/29FzoPuVV2vfq0FxWpzPg1KNH2fP728pAB5ctzTq02
+	Vd2QqOSZw+OyxcGv9oXyvBuqS5jEBMx7mPQFRT6WfgECu2n/Gr/LQ3l2XJCO8APB
+	lPxljbQDVVnLf1c/6VBvlZFk9fEdXJ3qGKGsGXvaKSFeMCPgZguN3UDaWih7EdT7
+	ndTQqdUgquq43MAd/dErWh4lxVji4a9Xeu6iazj1z/QLEvBJIyeWms1enFwFmjpl
+	bUR8jspl2hiz0wxIyLTfnVjgvmcp1ujUpxAQTORNakBhdZHnChVZ+Ey7379aYUXk
+	vxKe+w==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ur8s3nqe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 12:16:34 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-71ce3c952c1so6617946d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 05:16:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756901793; x=1757506593;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+vn4mwhUMj9kw47ypZhCXah1sPzLur+fBXwYhZMjbZk=;
+        b=pRofSCDsFgvdRKp8H00oniCs6YMLSPdve8z8xjsa8CL4Czd+worlWmToQjK1K07CxX
+         woQj6Oe5brsf0g+Pla+tgzEwUXRx/yl26A5ktjjoyhON0rAzAILYyLHgC99YfKHHmsqE
+         I65z/DwnKQrQNPXY29aCRQ6kpogV8o4bzTs3S+OfUKX8QgX7EnTGB1NWXx9PFqweWX/N
+         Wa5MdPTvhePpkvCeYZG2Z+hioGyfYwS1JkMlT/Uo9bKHJBvBMkg+kNH0NlB51dNwtEtO
+         n2z6rdD91eXi8+3KYG3diFlRS3Lt8LOzW3rqNsJw9mZ+2GrO8eUP/Vgr62M6xlKTemPI
+         kIDg==
+X-Gm-Message-State: AOJu0YyxPY7EM8kmjCALHqwlzQ5ZTTk8UnSgOR41cGDKgsZtAtRgrjDv
+	Q6tDkmF+5GSTp/GSD6bfpRbwh/EQHI6KVsuM+fESrsBENq7OH5PrFkXYe9zbIIaUqoW4P4t5hZl
+	OnUIhcSJFz0IfBk3j6dwMsn4we+yKvYh8RTrQ731isKkVyGEFELbLXp1+SiKkXdhjHl4=
+X-Gm-Gg: ASbGncs2/Yhs0iPzZ0jbhUVVxEoCt+j9RKskTC8ZRKEtVKBcq4Dex+JSoFsBwWQ32qa
+	mIEu4Qoh7DwfsAT+xsnC0iiohR33DxqKtwM4QUSIGlWysRFUF+8qZ3RFKmE4CnpSwWdTSYtKOz8
+	mQ0MpGbqrnBXtYZHz8K7mWEgZioXb3TkWsbL/TIdBH1W0ciF79UJYEW2qR2kmAUnu+g4yD47ZSa
+	m7cv18LZHq/58ERrPgTQ+AqY+Plq2ehCzYgaUyXiV6SPkK/B+xzSn2GuBWXHaWP0RzbyfNmnevL
+	mywxLUYYryHIoVzNQw1BIDCqXvsRFNxkUalB5DzBI8g63YJJX8nZUc8oFgWAFdBXROnDeq7dxd2
+	JBrgdM5cIMbXv8gGuFPJmJw==
+X-Received: by 2002:a05:6214:509c:b0:70d:e7e1:840f with SMTP id 6a1803df08f44-70fa1dada4emr132004946d6.3.1756901793452;
+        Wed, 03 Sep 2025 05:16:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFsHxz+3HO2KA7aO0WYCcwzAJIdCm+RcRd6sRVZbTR8qPcb7vM9trhlNh+9aPhNhIf6qPjJxQ==
+X-Received: by 2002:a05:6214:509c:b0:70d:e7e1:840f with SMTP id 6a1803df08f44-70fa1dada4emr132004686d6.3.1756901792919;
+        Wed, 03 Sep 2025 05:16:32 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc1c7ed1sm12115926a12.1.2025.09.03.05.16.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 05:16:32 -0700 (PDT)
+Message-ID: <d40c5ab2-2195-462f-9fd4-8c519a43f032@oss.qualcomm.com>
+Date: Wed, 3 Sep 2025 14:16:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] media: qcom: camss: tpg: Add TPG support for
+ SA8775P and QCS8300
+To: Wenmeng Liu <quic_wenmliu@quicinc.com>, Robert Foss <rfoss@kernel.org>,
+        Todor Tomov <todor.too@gmail.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20250822-camss_tpg-v3-0-c7833a5f10d0@quicinc.com>
+ <20250822-camss_tpg-v3-3-c7833a5f10d0@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250822-camss_tpg-v3-3-c7833a5f10d0@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAxOSBTYWx0ZWRfX0NJNUogIatKN
+ jjjN+bZWZF6t4GSGdulh8I6Q7jpNKaLpnONmOPTUJOL9iDIT8DdukK3eXkTXLy8tpL0FFbbset5
+ N9Um4T2pSIhSRRiKTkI1gYHmlngPhVwYLZw9c/QVl2WDo3QKaHUFDf0LnQf+0mmgAN6Po0tOx3y
+ Nt6eaXAnMWyFNuQd0BYOQqvCYVdTVIoYwh4Y4VDfo+YxW8ncj51HhyAzfJDBIxqLGg3dqaAHONf
+ z+zJi/PDE3gF7sYtzKh5dy/jMa+gR7dJ62Q/Tn8A2YD2QrYybFjQkscevkXOankjLCw+WApdZ/P
+ /+Fs0JeVE+GaCHtIjLzd3QCSHimiYaRSwkgI/6pNF1QTWuMWIG19Qpd/WS8bqm9hLW5D++3e1HT
+ EuWyfmVT
+X-Proofpoint-GUID: -VhJd6C_hszRuBDUavlmtxJb8pjliymX
+X-Proofpoint-ORIG-GUID: -VhJd6C_hszRuBDUavlmtxJb8pjliymX
+X-Authority-Analysis: v=2.4 cv=PNkP+eqC c=1 sm=1 tr=0 ts=68b831a2 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=McB9vphyiCVPsmp0I2cA:9
+ a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_06,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
+ suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300019
 
-On Wed, 2025-09-03 at 19:59 +0800, Li Lingfeng wrote:
-> When file access conflicts occur between clients, the server recalls
-> delegations. If the client holding delegation fails to return it after
-> a recall, nfs4_laundromat adds the delegation to cl_revoked list.
-> This causes subsequent SEQUENCE operations to set the
-> SEQ4_STATUS_RECALLABLE_STATE_REVOKED flag, forcing the client to
-> validate all delegations and return the revoked one.
->=20
-> However, if the client fails to return the delegation like this:
-> nfs4_laundromat                       nfsd4_delegreturn
->  unhash_delegation_locked
->  list_add // add dp to reaplist
->           // by dl_recall_lru
->  list_del_init // delete dp from
->                // reaplist
->                                        destroy_delegation
->                                         unhash_delegation_locked
->                                          // do nothing but return false
->  revoke_delegation
->  list_add // add dp to cl_revoked
->           // by dl_recall_lru
->=20
-> The delegation will remain in the server's cl_revoked list while the
-> client marks it revoked and won't find it upon detecting
-> SEQ4_STATUS_RECALLABLE_STATE_REVOKED.
-> This leads to a loop:
-> the server persistently sets SEQ4_STATUS_RECALLABLE_STATE_REVOKED, and th=
-e
-> client repeatedly tests all delegations, severely impacting performance
-> when numerous delegations exist.
->=20
-> Since abnormal delegations are removed from flc_lease via nfs4_laundromat
-> --> revoke_delegation --> destroy_unhashed_deleg -->
-> nfs4_unlock_deleg_lease --> kernel_setlease, and do not block new open
-> requests indefinitely, retaining such a delegation on the server is
-> unnecessary.
->=20
-> Reported-by: Zhang Jian <zhangjian496@huawei.com>
-> Fixes: 3bd64a5ba171 ("nfsd4: implement SEQ4_STATUS_RECALLABLE_STATE_REVOK=
-ED")
-> Closes: https://lore.kernel.org/all/ff8debe9-6877-4cf7-ba29-fc98eae0ffa0@=
-huawei.com/
-> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+On 8/22/25 2:09 PM, Wenmeng Liu wrote:
+> Add support for TPG found on SA8775P and QCS8300.
+> 
+> Signed-off-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
 > ---
->   Changes in v2:
->   1) Set SC_STATUS_CLOSED unconditionally in destroy_delegation();
->   2) Determine whether to remove the delegation based on SC_STATUS_CLOSED=
-,
->      rather than by timeout;
->   3) Modify the commit message.
->  fs/nfsd/nfs4state.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->=20
-> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index 88c347957da5..bb9e1df4e41f 100644
-> --- a/fs/nfsd/nfs4state.c
-> +++ b/fs/nfsd/nfs4state.c
-> @@ -1336,6 +1336,11 @@ static void destroy_delegation(struct nfs4_delegat=
-ion *dp)
-> =20
->  	spin_lock(&state_lock);
->  	unhashed =3D unhash_delegation_locked(dp, SC_STATUS_CLOSED);
-> +	/*
-> +	 * Unconditionally set SC_STATUS_CLOSED, regardless of whether the
-> +	 * delegation is hashed, to mark the current delegation as invalid.
-> +	 */
-> +	dp->dl_stid.sc_status |=3D SC_STATUS_CLOSED;
->  	spin_unlock(&state_lock);
->  	if (unhashed)
->  		destroy_unhashed_deleg(dp);
-> @@ -4326,6 +4331,8 @@ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd4=
-_compound_state *cstate,
->  	int buflen;
->  	struct net *net =3D SVC_NET(rqstp);
->  	struct nfsd_net *nn =3D net_generic(net, nfsd_net_id);
-> +	struct list_head *pos, *next;
-> +	struct nfs4_delegation *dp;
-> =20
 
-nit: These could be moved inside the if statement below.
+[...]
 
->  	if (resp->opcnt !=3D 1)
->  		return nfserr_sequence_pos;
-> @@ -4470,6 +4477,19 @@ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd=
-4_compound_state *cstate,
->  	default:
->  		seq->status_flags =3D 0;
->  	}
+> +#define TPG_HW_VERSION		0x0
+> +#define		HW_VERSION_STEPPING		0
+> +#define		HW_VERSION_REVISION		16
+> +#define		HW_VERSION_GENERATION		28
 
-I wouldn't mind a comment here that explains why we have to do this.
-This is the sort of thing that will have us all scratching our heads in
-a few years.
+Please use GENMASK for defining bitfields, avoid tabs (just a space
+is fine, perhaps add one in front of #define to denote bitfields) and
+use FIELD_PREP/FIELD_GET accessors
 
-> +	if (!list_empty(&clp->cl_revoked)) {
-> +		spin_lock(&clp->cl_lock);
-> +		list_for_each_safe(pos, next, &clp->cl_revoked) {
-> +			dp =3D list_entry(pos, struct nfs4_delegation, dl_recall_lru);
-> +			if (dp->dl_stid.sc_status & SC_STATUS_CLOSED) {
-> +				list_del_init(&dp->dl_recall_lru);
-> +				spin_unlock(&clp->cl_lock);
-> +				nfs4_put_stid(&dp->dl_stid);
-> +				spin_lock(&clp->cl_lock);
-> +			}
-> +		}
-> +		spin_unlock(&clp->cl_lock);
-> +	}
-
-nit: I'd move the if statement below inside the above if statement. No
-need to check list_empty() twice if it was empty the first time. Maybe
-the compiler papers over this and only does it once?
-
->  	if (!list_empty(&clp->cl_revoked))
->  		seq->status_flags |=3D SEQ4_STATUS_RECALLABLE_STATE_REVOKED;
->  	if (atomic_read(&clp->cl_admin_revoked))
-
-Otherwise, this looks great. Thanks for the patch!
-
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Konrad
 
