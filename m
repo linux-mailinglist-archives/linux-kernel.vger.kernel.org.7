@@ -1,130 +1,142 @@
-Return-Path: <linux-kernel+bounces-798062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A640B4191C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:50:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88982B41926
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D0815614C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:50:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 014EE681B21
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AF92EBDD0;
-	Wed,  3 Sep 2025 08:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B825D2ECE86;
+	Wed,  3 Sep 2025 08:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="Y2QpXu1L"
-Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxbzOgwj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DD42868AF
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3752EC56B;
+	Wed,  3 Sep 2025 08:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756889407; cv=none; b=kapyF/HDyqjBLCXwSE4vH45lEJYo178mzCQp5Mn82NOekJ3hrOoRldt0FYVQIQCeRT72r5imVT3jOe35k0r3WgsVDCz2PxGSu3H82vvpcC7Q8etVUIDWyaKamwyRJPUt734SLU0FNBvHWmLN0DpZyUCo7Lgg/k5NMPRXXTZjz1c=
+	t=1756889521; cv=none; b=TzXYOCND7g04FWHqH6/IImsGFx7bzpPzIeHGw0qMQ+NPoXx+3Ab1NaxmU7a8yPmwLawu7v35999kd0Hiu3jHZzArxZMjQDWXx04om8cIy1RbH8NAeqJy5+KXitcIehyhLWzLDEYD1h9vURF9lTr1heMfFgToIadc+amd9FunEAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756889407; c=relaxed/simple;
-	bh=MiQin4cOn2+EGynYYK3FaJfsn+MBsVtWGk2cEA+ArL0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HynuFJpn69wkN5W+spZdnUArKnsiH3WVraOFPEoCBkbuxiGsa34Ja6CmQLCh/ygGcUzJXp1gJi2ysaqzsf3hIlvoDYe5oMdJfGNhUI+C67KfgIf4vUEcSysXo3e3IpS+U8s2AgxZNKBE7I8BQcrhQTcksYh3T7RXNPalPiP0nKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=Y2QpXu1L; arc=none smtp.client-ip=35.89.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5002b.ext.cloudfilter.net ([10.0.29.226])
-	by cmsmtp with ESMTPS
-	id thjQufK0bLIlMtjBruaCv1; Wed, 03 Sep 2025 08:50:03 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id tjBquG4vohlUktjBqucs9i; Wed, 03 Sep 2025 08:50:03 +0000
-X-Authority-Analysis: v=2.4 cv=O4M5vA9W c=1 sm=1 tr=0 ts=68b8013b
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=wQHQzwf_Hs2TCVCgcZgA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=XPE36onuc2rycoyaawl/cY1/M6tjYkM6CJTTl/mMhZ4=; b=Y2QpXu1L9g3lgPlxnk3LVCJ2Ss
-	6nEb16TLl8qPx0QiC6TWZ9vDA5KjXa4tM1sYKtCBoIjKhgqCI4g9Tdm5r4wSgzaKbJ9NPDsENloNl
-	LRHNynOR6ySpHkV1LAmg0brf6AUgIwnoWOh/sVyA1GJ11rzPZdC7PMaZSdBn4K4rxANNBuTbmkSDJ
-	yPTyZs4CNIVMyl9nU2CS+iTVoa7WNrAIHJIBe7gHfLcExfUrIrLFcZNjJ2Za77F0oMQ9lT9GZkow1
-	RNiK2lLkGjQyz3B23e2O0mpLzEY6Ue7FSaHzm9imkGFPfG2A7P13fiF7sqd3B6CiIfxz/+fn05+6p
-	PIdwmoZg==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:48696 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1utjBp-00000000ge4-2qI5;
-	Wed, 03 Sep 2025 02:50:01 -0600
-Message-ID: <e63d2a07-56ff-46c4-b957-7375a9fddf44@w6rz.net>
-Date: Wed, 3 Sep 2025 01:49:59 -0700
+	s=arc-20240116; t=1756889521; c=relaxed/simple;
+	bh=T88mFb7sQ3TDbgKtkbXsmLV//5AWUv8klMda8U+nd2Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=KGsq2d6gMXf+uyIGQm3/qOTEDaTDTzzcKjC+ZGpoE7HMWL/xtTGxCHdeeG3ZdvvO+FzXDJrrLmiwJjsYNWW+TMPlJ6QscSWK/IFrbPZUek0K3Frw/YDKg1qN+8icuCeDviaLf4GdiJ+4g+LhsZ7H59duj03RMPn8ZRGrTyphjLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxbzOgwj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFDC1C4CEF7;
+	Wed,  3 Sep 2025 08:51:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756889521;
+	bh=T88mFb7sQ3TDbgKtkbXsmLV//5AWUv8klMda8U+nd2Q=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=kxbzOgwjqgyizeKkkC9Dr7gZwyr9On/c/ihcqcGybW8z8aQHI2faImptvejS75jLS
+	 5BHfuAwx4gc92zTkfKqsQmoI4iocSrDXofVyDrqsPkv01SJXkRx6agJNKfI1z0FuZG
+	 6cF8fDL3/IqxZ2U09Kqgkp313NN/8oIo2B2DjcFr1tkkgWPyw9+mjn1EOK5pLdOOdk
+	 5/s7D5iZFGY9b2eQDBsSvPFcUnBwGN9d/3AsInEZ8Tbq8SMD1wzMqzfdcfS0RqgsnY
+	 KQeV0PF7jvT5qSH3v3P/+ouSEWC9aDuRRzyFF09yMHLkatb1A8r2u3fFtHn/SAAc4w
+	 AZ+Rs9ouC9udA==
+From: Vincent Mailhol <mailhol@kernel.org>
+Date: Wed, 03 Sep 2025 17:50:00 +0900
+Subject: [PATCH 01/21] can: dev: move struct data_bittiming_params to
+ linux/can/bittiming.h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.16 000/142] 6.16.5-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250902131948.154194162@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250902131948.154194162@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1utjBp-00000000ge4-2qI5
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:48696
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 17
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfKbxFG5ia0VxCJamfKyqmI6yaVuSOYPJ5SSeCZpQpDE6LeAK2cIT4hXce0DFFZryIw0Bv3sawGdenRegqudBwP8dIXFXm6io0vkqA52wGYT950ZwAFkG
- 0H0uUQ6qA/+GH0CSrvWvTAkSIrIv7G1KYSY+9cNqkhv1iKCeDQoDUWTkTm3rCDvblk8nwnDsN3J8l+tiUaH/ymTNhYxBxSThk+o=
+Message-Id: <20250903-canxl-netlink-prep-v1-1-904bd6037cd9@kernel.org>
+References: <20250903-canxl-netlink-prep-v1-0-904bd6037cd9@kernel.org>
+In-Reply-To: <20250903-canxl-netlink-prep-v1-0-904bd6037cd9@kernel.org>
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: Vincent Mailhol <mailhol@kernel.org>, 
+ =?utf-8?q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>, 
+ Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>, 
+ Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2460; i=mailhol@kernel.org;
+ h=from:subject:message-id; bh=T88mFb7sQ3TDbgKtkbXsmLV//5AWUv8klMda8U+nd2Q=;
+ b=owGbwMvMwCV2McXO4Xp97WbG02pJDBk7GIs2vbvMy3O/M6ntgk7lRZXFT1bOkI27eXD+t9w7R
+ l8mf7Z51FHKwiDGxSArpsiyrJyTW6Gj0Dvs0F9LmDmsTCBDGLg4BWAiuv8YGb5sq+SuYOFbv+TP
+ hnthzQ9tzB1q6+etsr4stj/8tZx+fAXD/2iJ9RxTfifckHNmmSV+nXHGfdY7x9+633kat3s7/5a
+ UZE4A
+X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
+ fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
 
-On 9/2/25 06:18, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.16.5 release.
-> There are 142 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.5-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+In commit b803c4a4f788 ("can: dev: add struct data_bittiming_params to
+group FD parameters"), struct data_bittiming_params was put into
+linux/can/dev.h.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+This structure being a collection of bittiming parameters, on second
+thought, bittiming.h is actually a better location. This way, users of
+struct data_bittiming_params will not have to forcefully include
+linux/can/dev.h thus removing some complexity and reducing the risk of
+circular dependencies in headers.
 
-Tested-by: Ron Economos <re@w6rz.net>
+Move struct data_bittiming_params from linux/can/dev.h to
+linux/can/bittiming.h.
+
+Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
+---
+ include/linux/can/bittiming.h | 11 +++++++++++
+ include/linux/can/dev.h       | 11 -----------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/include/linux/can/bittiming.h b/include/linux/can/bittiming.h
+index 5dfdbb63b1d54f3dc02170b10b73dbb9c2242851..6572ec1712ca2df8db7fe1453ae5a4d5699712b1 100644
+--- a/include/linux/can/bittiming.h
++++ b/include/linux/can/bittiming.h
+@@ -114,6 +114,17 @@ struct can_tdc_const {
+ 	u32 tdcf_max;
+ };
+ 
++struct data_bittiming_params {
++	const struct can_bittiming_const *data_bittiming_const;
++	struct can_bittiming data_bittiming;
++	const struct can_tdc_const *tdc_const;
++	struct can_tdc tdc;
++	const u32 *data_bitrate_const;
++	unsigned int data_bitrate_const_cnt;
++	int (*do_set_data_bittiming)(struct net_device *dev);
++	int (*do_get_auto_tdcv)(const struct net_device *dev, u32 *tdcv);
++};
++
+ #ifdef CONFIG_CAN_CALC_BITTIMING
+ int can_calc_bittiming(const struct net_device *dev, struct can_bittiming *bt,
+ 		       const struct can_bittiming_const *btc, struct netlink_ext_ack *extack);
+diff --git a/include/linux/can/dev.h b/include/linux/can/dev.h
+index 9a92cbe5b2cb7ccdfca3121718856d096e9ecfa6..76022f48a97673d81676c39c697eadc6d7063ff7 100644
+--- a/include/linux/can/dev.h
++++ b/include/linux/can/dev.h
+@@ -38,17 +38,6 @@ enum can_termination_gpio {
+ 	CAN_TERMINATION_GPIO_MAX,
+ };
+ 
+-struct data_bittiming_params {
+-	const struct can_bittiming_const *data_bittiming_const;
+-	struct can_bittiming data_bittiming;
+-	const struct can_tdc_const *tdc_const;
+-	struct can_tdc tdc;
+-	const u32 *data_bitrate_const;
+-	unsigned int data_bitrate_const_cnt;
+-	int (*do_set_data_bittiming)(struct net_device *dev);
+-	int (*do_get_auto_tdcv)(const struct net_device *dev, u32 *tdcv);
+-};
+-
+ /*
+  * CAN common private data
+  */
+
+-- 
+2.49.1
 
 
