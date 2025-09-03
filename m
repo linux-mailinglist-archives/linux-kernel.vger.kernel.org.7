@@ -1,194 +1,126 @@
-Return-Path: <linux-kernel+bounces-798537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019ABB41F73
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:43:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD9ADB41F7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27B1C1BA8290
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:42:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53F193B0E1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8572FE587;
-	Wed,  3 Sep 2025 12:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9202FC87A;
+	Wed,  3 Sep 2025 12:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0XinekcA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rOLV+Quj";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0XinekcA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rOLV+Quj"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iIAG0WhX"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC7684039
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FB02FCBF3
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756903338; cv=none; b=gh6lZLzgFlK6IVy9Q1CiKkPoqTvavXDB2CB1G9zOKWG2AwQfRQ8PZNMtqTGamkvU+N0c2hwU4K44foDcimV39bK5Jc6RyWsoZGIpEiHMh4CILzI0se55J2qbSUlDiJbWEAFNaPWz259W9ce72qzWlZziXPLB8IJ3rMVaz2b9HYo=
+	t=1756903400; cv=none; b=CYyQj3oeZnQM8NmladQ6BkgnCOxawVRJgtUx6YCRr1Fl+vRIAkKHT0/H/ypU17H4Wp8ROIUP0VwQgLOPc6T0j6gf6pZ0XZ74uSaXcED0FumBRnrhp3Xra8bgiq/BXutNJ0J5UizvJi47nPggefYLPTWh/tamS/IFDNXM38OcKxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756903338; c=relaxed/simple;
-	bh=ZwD2K02kgnEXLqi6lq5OPz8a+xK0+swNo3Gv/I81cI0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sdzxQH/+6jg1I87CU8nv3fvSN6aq4ARU+ss06ev5X+tf9trCZ6UVt3NcKRUywCMR4eZUKWWOvqqDoPEZfaxmA9anju6N1xL9WWRrzWwiK5UIi4fKfxjBuAjguSrcOajpuIMfLmeEX/JYE5qJOy5Ad/1kjx3c4/a/pCCjKIUCKcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0XinekcA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rOLV+Quj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0XinekcA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rOLV+Quj; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 53BA31F38A;
-	Wed,  3 Sep 2025 12:42:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756903335; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1756903400; c=relaxed/simple;
+	bh=HQ3VMbDjr7VjvTfjTlzDn4O+W5z0G3h8J21Loi+EOCA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RmXrPZ1ML+KDaD5E2uDJMSNyrXSXHCiEyeSmngBTNCmqMT1p4nYUufRLmKEcxxN7DjmpteysiIBDlID/DfLM9EBXdX2+snBaXE/5f/pl0s8ks64tGMwPYleN+/tKByJb9sQ93G+7vd67EP9ptQ+dp0BBeZ0HzaHc8FSzc4N2VRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iIAG0WhX; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <861c5b23-2d51-40b1-8363-67e666431251@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756903386;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xIgaM36KJeIX4j/P65jhT8FLAdsH3bur2uN5IZqRt1U=;
-	b=0XinekcA5PGjWvzu5dKGsXcQT7L4bpSixC77gbR5vEAZRsXvd+prJA7H97aXMyub5lPq1S
-	KO139GLFKGqJxlCXysAdE4E7b1HzcFD7iqZVtW2AwhraSGESQKXMe8x5HEwZjaQMZiUIn5
-	SqXoizG3/7dZ1DNA5ym/bhw1xl0NlIo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756903335;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xIgaM36KJeIX4j/P65jhT8FLAdsH3bur2uN5IZqRt1U=;
-	b=rOLV+QujrozXuF7co4MMb3R3fAcYJ1LJg4LnT+5RliXi3TdvA9TjNXaSb2cU6wdFBgfD7J
-	zGLD5c6md+MZrJBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=0XinekcA;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=rOLV+Quj
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756903335; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xIgaM36KJeIX4j/P65jhT8FLAdsH3bur2uN5IZqRt1U=;
-	b=0XinekcA5PGjWvzu5dKGsXcQT7L4bpSixC77gbR5vEAZRsXvd+prJA7H97aXMyub5lPq1S
-	KO139GLFKGqJxlCXysAdE4E7b1HzcFD7iqZVtW2AwhraSGESQKXMe8x5HEwZjaQMZiUIn5
-	SqXoizG3/7dZ1DNA5ym/bhw1xl0NlIo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756903335;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xIgaM36KJeIX4j/P65jhT8FLAdsH3bur2uN5IZqRt1U=;
-	b=rOLV+QujrozXuF7co4MMb3R3fAcYJ1LJg4LnT+5RliXi3TdvA9TjNXaSb2cU6wdFBgfD7J
-	zGLD5c6md+MZrJBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 42BB013A31;
-	Wed,  3 Sep 2025 12:42:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fTJHEKc3uGirMgAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Wed, 03 Sep 2025 12:42:15 +0000
-Date: Wed, 3 Sep 2025 14:42:10 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Aaron Tomlin <atomlin@atomlin.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Costa Shulyupin <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>, Ming Lei <ming.lei@redhat.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, 
-	storagedev@microchip.com, virtualization@lists.linux.dev, 
-	GR-QLogic-Storage-Upstream@marvell.com
-Subject: Re: [PATCH v7 01/10] lib/group_cpus: Add group_masks_cpus_evenly()
-Message-ID: <f4ed094f-7370-4121-9df6-454411452751@flourine.local>
-References: <20250702-isolcpus-io-queues-v7-0-557aa7eacce4@kernel.org>
- <20250702-isolcpus-io-queues-v7-1-557aa7eacce4@kernel.org>
- <2b70fbd3-d63d-4bd3-8500-e14c41fc64b9@oracle.com>
+	bh=OAUWIxBkjWta2hnn76FZubOcaNeLcydHbkTxSsCe2sc=;
+	b=iIAG0WhX1/Er6AZv5EKBUQHsRBDPvraJRUWVdvX8FUwQWOozJhIUxBl8EgwQoIqcG1Rjth
+	J3PXEuJvevnbiIOZSw5E6zFlE1lPmQB9MtUBrIsxfbhA63hhvWhF7sVgc2zx4d9188/aPc
+	jp9lQc5YnCGcYu74vfO2990TBFbuL6k=
+Date: Wed, 3 Sep 2025 13:43:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2b70fbd3-d63d-4bd3-8500-e14c41fc64b9@oracle.com>
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL71uuc3g3e76oxfn4mu5aogan)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 53BA31F38A
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+Subject: Re: [PATCH net-next v10 3/5] net: rnpgbe: Add basic mbx ops support
+To: Yibo Dong <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+ gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+ danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com, lorenzo@kernel.org,
+ geert+renesas@glider.be, Parthiban.Veerasooran@microchip.com,
+ lukas.bulwahn@redhat.com, alexanderduyck@fb.com, richardcochran@gmail.com,
+ kees@kernel.org, gustavoars@kernel.org, rdunlap@infradead.org,
+ netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250903025430.864836-1-dong100@mucse.com>
+ <20250903025430.864836-4-dong100@mucse.com>
+ <be2b4af0-838e-4c7c-bae1-e74c027ad8fe@linux.dev>
+ <9156A3C8F1EFA452+20250903111237.GA967815@nic-Precision-5820-Tower>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <9156A3C8F1EFA452+20250903111237.GA967815@nic-Precision-5820-Tower>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Jul 11, 2025 at 09:28:12AM +0100, John Garry wrote:
-> > +/**
-> > + * group_mask_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
-> > + * @numgrps: number of groups
+On 03/09/2025 12:12, Yibo Dong wrote:
+> On Wed, Sep 03, 2025 at 11:53:17AM +0100, Vadim Fedorenko wrote:
+>> On 03/09/2025 03:54, Dong Yibo wrote:
+>>> Initialize basic mbx function.
+>>>
+>>> Signed-off-by: Dong Yibo <dong100@mucse.com>
+>>> ---
+>>>    drivers/net/ethernet/mucse/rnpgbe/Makefile    |   3 +-
+>>>    drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  16 +
+>>>    .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |   3 +
+>>>    .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c    | 393 ++++++++++++++++++
+>>>    .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h    |  25 ++
+>>>    5 files changed, 439 insertions(+), 1 deletion(-)
+>>>    create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
+>>>    create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h
+>>>
+>>> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+>>> index 179621ea09f3..f38daef752a3 100644
+>>> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+>>> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+>>> @@ -1,8 +1,11 @@
+>>>    // SPDX-License-Identifier: GPL-2.0
+>>>    /* Copyright(c) 2020 - 2025 Mucse Corporation. */
+>>> +#include <linux/string.h>
+>>
+>> I don't see a reason to have string.h included into rnpgbe_chip.c
+>>
 > 
-> this comment could be a bit more useful
+> You are right, I should add it when it is used.
 > 
-> > + * @cpu_mask: CPU to consider for the grouping
+>>> +
+>>>    #include "rnpgbe.h"
+>>>    #include "rnpgbe_hw.h"
+>>> +#include "rnpgbe_mbx.h"
+>>
+>> I believe this part has to be done in the previous patch.
+>> Please, be sure that the code can compile after every patch in the
+>> patchset.
+>>
 > 
-> this is a CPU mask, and not a specific CPU index, right?
+> You mean 'include "rnpgbe_mbx.h"'? But 'rnpgbe_mbx.h' is added in this patch.
 
-Yes, I've updated the documentation to:
+Ok, so what's in rnpgbe_chip.c which needs rnpgbe_mbx.h to be included?
+If the change is introduced later in patch 5, the move this include to
+it as well.
 
-/**
- * group_mask_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
- * @numgrps: number of cpumasks to create
- * @mask: CPUs to consider for the grouping
- * @nummasks: number of initialized cpusmasks
- *
- * Return: cpumask array if successful, NULL otherwise. Only the CPUs
- * marked in the mask will be considered for the grouping. And each
- * element includes CPUs assigned to this group. nummasks contains the
- * number of initialized masks which can be less than numgrps. cpu_mask
- *
- * Try to put close CPUs from viewpoint of CPU and NUMA locality into
- * same group, and run two-stage grouping:
- *	1) allocate present CPUs on these groups evenly first
- *	2) allocate other possible CPUs on these groups evenly
- *
- * We guarantee in the resulted grouping that all CPUs are covered, and
- * no same CPU is assigned to multiple groups
- */
-struct cpumask *group_mask_cpus_evenly(unsigned int numgrps,
-				       const struct cpumask *mask,
-				       unsigned int *nummasks)
-
-> > +	ret = __group_cpus_evenly(0, numgrps, node_to_cpumask, cpu_mask, nmsk,
-> > +				  masks);
+> I had compiled every patch before submission for this series. And as you
+> remind, I will keep check this in the future.
 > 
-> maybe it's personal taste, but I don't think that it's a good style to
-> always pass through 'fail' labels, even if we have not failed in some
-> step
+> Thanks for your feedback.
+> 
 
-I'd rather leave it as it is, because it matches the existing code in
-group_cpus_evenly. And there is also alloc_node_to_cpumask which does
-the same. Consistency wins IMO.
 
