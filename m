@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-798571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24EBAB41FEF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:51:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7C1B41FFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43B856527E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:51:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92A023A9935
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39572302CB4;
-	Wed,  3 Sep 2025 12:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D9530BF6D;
+	Wed,  3 Sep 2025 12:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oEn+P8eU"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="1AqA+bm6"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA95309DDF;
-	Wed,  3 Sep 2025 12:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A8D30AAC0;
+	Wed,  3 Sep 2025 12:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756903691; cv=none; b=ZYsKaU83XbQDTpMh4TgGfKQ7WPkqQd+xs2OyeAifCtkfwj0mw1dBD0y5DqIPMzdoqKlXW3WDcp1w/wJwfb+w3PzyN7ZawAkKfY/ot1aUfnJ5sETN1ythq2izyVfyFhJSe7nBXKEZp/CHP5J8pZxTykh0N8TttDmY2oGgJRGdEsI=
+	t=1756903693; cv=none; b=SfIO3TWFsTahIMeaZ4WZhzyipted9Vta5+Y4qM3SwXKFglcnW1C9omiFkERLd/FnnbqWsJZmgbLr/pov4NttcH9XPNuoJm2neavXhJpMOkUXEnijRRoRR5kOeZPKKgSN5P3mwAd9tE/Afx9Mb+3R3dQg5B5TeapPzBsoqjgXKk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756903691; c=relaxed/simple;
-	bh=W4Ta+ycjb4QCLgW02FiMWVfiz5MCgzdDYWA7YCly94w=;
+	s=arc-20240116; t=1756903693; c=relaxed/simple;
+	bh=4bNNkHVC2aJNVXLs/K85UFMmabtxOabApbEO1pdUgyQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PF0DdVJPwsgH9rd1mJULpSwfVuTRcKtegvlVd3DnTa0GtOH61S0Bcd/Ci6rj3tua4uPIsKjIkT7N0BQyXhOy+empOu9X4BEq6K70p7wUSoR/j4Vh+XsyjRHSkjSVuu0hmhy3+buBBa/mdOMO76QvI1ynRi5i7GaIKgPqCMeuAgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oEn+P8eU; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=rkLAFwAjHnjN8Y1fFl0yvF6VVR5vVosPiASQrswloSZZZitUxZn0LBnpRfBY+FS3GaG/6vsqhbcs66xq1rHE/gEZcx3faCBk7pJdCrFpnhxjTR50FZosgIR/q596uWP3kQ4PW8lXT9drLbV2WCJPJ7GqZa6G1KihsgWV35jZq10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=1AqA+bm6; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 458FF4E40C0A;
-	Wed,  3 Sep 2025 12:48:08 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 052E31A08CE;
+	Wed,  3 Sep 2025 12:48:10 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 1E6ED606C3;
-	Wed,  3 Sep 2025 12:48:08 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 031EA1C22C3F8;
-	Wed,  3 Sep 2025 14:48:04 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D2335606C3;
+	Wed,  3 Sep 2025 12:48:09 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 318081C22A4EA;
+	Wed,  3 Sep 2025 14:48:07 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756903686; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1756903688; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=0wxZt/suAs12evWL3lnT9+Z1yeWU0cypzlWRzlgafgY=;
-	b=oEn+P8eUGsBESsg/56v4rbCZsIviEdBIhoCdgmr/qkSZR8gDDQZvm6aGdAc0GG7pGB2Pjt
-	+Rddl84zplPWl4wzW6JGryHtbreCd71fc1GVQhuyvem0I0BjCjkBML9JogBIfJQbRsMm9j
-	9L8w3ukRyRFzaatPkECaheWuRWzY1H75jHCaIoTVyJ5fp41cnGlEbpNWZPxo/Jqzzr7oNU
-	uMYjjOMMopj9P4Yu9d0cdjs+RrSrw3HO54dvtxriRZLm5QwsdwuvGYQaq9NX+kSTRTdhFe
-	tudDhOIA1uqO90sE7l1CFJKu5NvIXlu7AP9ctpPOyXO0nOavH39ZXRG2C58v/A==
+	bh=OAZYQK1WvsUmQL4WZLsOwmlchJWna6XIMMIb+V5JjQ8=;
+	b=1AqA+bm6fjtkmWg6FVcdHY6BVRtDDm2azATuHi2QE4Ad76X4ABZ4JIi4eiNtIfvLEuX4bZ
+	i5imFE2FAJMyeUR6nAm8VK3ckz3Opg7HtjHv+CLTTMcykWNvLCi6Xso/1Z42BLDG2E3bFJ
+	mNK0OcS9Wc9OXZZyz5LVorDC3I9MkSUgbCLmFng2SwZFEZ+OQSz9/zz82r4sXWPq2L8sOJ
+	wd8UscwQ1Rm+yiop55x+GdzhSjHnjDhdsLHYGeCq/U3k3xA8/Lsze56rUf+9iVoJ9D3y09
+	M6V11Vm3zj2FEETL2zVjrTbdfRgmmb5bgk7wA9ugJfxwua0s1aZLFbHG1dmpbg==
 From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Wed, 03 Sep 2025 14:47:23 +0200
-Subject: [PATCH 16/19] clk: eyeq: add two PLL types
+Date: Wed, 03 Sep 2025 14:47:24 +0200
+Subject: [PATCH 17/19] clk: eyeq: add a parent field to the pll
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250903-clk-eyeq7-v1-16-3f5024b5d6e2@bootlin.com>
+Message-Id: <20250903-clk-eyeq7-v1-17-3f5024b5d6e2@bootlin.com>
 References: <20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com>
 In-Reply-To: <20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
@@ -78,162 +78,67 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 X-Mailer: b4 0.14.2
 X-Last-TLS-Session-Version: TLSv1.3
 
-Add the handling of the two types of PLL found in the eyeQ7H OLB.
+Allow setting the parent of a pll. If NULL, use the same "ref" clock as
+before. If non-NULL, the name is looked up in the "clock-names" passed
+in the device tree and if found it is used as the fw_name, similar to
+how "ref" was used previously.
 
-The JFRACR PLL have similar properties as the FRACG PLL, but its
-configuration is spread on three registers instead of two.
-
-The AINTP PLL does not support spread spectrum and uses a single
-register.
+If not found, the name is used as the parent_name when registering the
+clock with clk_hw_register_fixed_factor_with_accuracy. This last case
+is used to refer to a clock registered in early init and used by the
+same OLB during probe while avoiding a dependency cycle.
 
 Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 ---
- drivers/clk/clk-eyeq.c | 117 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 117 insertions(+)
+ drivers/clk/clk-eyeq.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/clk-eyeq.c b/drivers/clk/clk-eyeq.c
-index 07a205fefd93eed8f9c2c6b88fbf5b8b6a39a92c..cf745671d86a5fc770ec3599561eb3468e13bd58 100644
+index cf745671d86a5fc770ec3599561eb3468e13bd58..a6260c38393776afab60e994c99008cfeecf6bc3 100644
 --- a/drivers/clk/clk-eyeq.c
 +++ b/drivers/clk/clk-eyeq.c
-@@ -70,8 +70,44 @@
- #define FRACG_PCSR1_DOWN_SPREAD			BIT(11)
- #define FRACG_PCSR1_FRAC_IN			GENMASK(31, 12)
- 
-+#define JFRACR_PCSR0_BYPASS			BIT(0)
-+#define JFRACR_PCSR0_PLL_EN			BIT(1)
-+#define JFRACR_PCSR0_FOUTVCO_EN			BIT(2)
-+#define JFRACR_PCSR0_FOUTPOSTDIV_EN		BIT(3)
-+#define JFRACR_PCSR0_POST_DIV1			GENMASK(6, 4)
-+#define JFRACR_PCSR0_POST_DIV2			GENMASK(9, 7)
-+#define JFRACR_PCSR0_REF_DIV			GENMASK(15, 10)
-+#define JFRACR_PCSR0_FB_DIV			GENMASK(27, 16)
-+#define JFRACR_PCSR0_VCO_SEL			GENMASK(29, 28)
-+#define JFRACR_PCSR0_PLL_LOCKED			GENMASK(31, 30)
-+
-+#define JFRACR_PCSR1_FRAC_IN			GENMASK(23, 0)
-+#define JFRACR_PCSR1_FOUT4PHASE_EN		BIT(24)
-+#define JFRACR_PCSR1_DAC_EN			BIT(25)
-+#define JFRACR_PCSR1_DSM_EN			BIT(26)
-+/* Bits 31..27 are reserved */
-+#define JFRACR_PCSR2_RESET			BIT(0)
-+#define JFRACR_PCSR2_DIS_SSCG			BIT(1)
-+#define JFRACR_PCSR2_DOWN_SPREAD		BIT(2)
-+#define JFRACR_PCSR2_SSGC_DIV			GENMASK(7, 4)
-+#define JFRACR_PCSR2_SPREAD			GENMASK(12, 8)
-+/* Bits 31..13 are reserved */
-+
-+#define AINTP_PCSR_BYPASS			BIT(0)
-+#define AINTP_PCSR_PLL_EN			BIT(1)
-+#define AINTP_PCSR_FOUTVCO_EN			BIT(2)
-+#define AINTP_PCSR_FOUTPOSTDIV_EN		BIT(3)
-+#define AINTP_PCSR_POST_DIV1			GENMASK(6, 4)
-+#define AINTP_PCSR_POST_DIV2			GENMASK(9, 7)
-+#define AINTP_PCSR_REF_DIV			GENMASK(15, 10)
-+#define AINTP_PCSR_FB_DIV			GENMASK(27, 16)
-+#define AINTP_PCSR_VCO_SEL			GENMASK(29, 28)
-+#define AINTP_PCSR_PLL_LOCKED			GENMASK(31, 30)
-+
- enum eqc_pll_type {
- 	EQC_PLL_FRACG,
-+	EQC_PLL_JFRACR,
-+	EQC_PLL_AINTP,
+@@ -115,6 +115,7 @@ struct eqc_pll {
+ 	const char		*name;
+ 	unsigned int		reg;
+ 	enum eqc_pll_type	type;
++	const char		*parent_name;
  };
  
- struct eqc_pll {
-@@ -236,12 +272,93 @@ static int eqc_pll_parse_fracg(void __iomem *base, unsigned long *mult,
- 	return 0;
- }
- 
-+static int eqc_pll_parse_jfracr(void __iomem *base, unsigned long *mult,
-+				unsigned long *div, unsigned long *acc)
-+{
-+	u64 val;
-+	u32 r0, r1, r2;
-+	u32 spread;
-+
-+	val = readq(base);
-+	r0 = val;
-+	r1 = val >> 32;
-+	r2 = readl(base + 8);
-+
-+	if (r0 & JFRACR_PCSR0_BYPASS) {
-+		*mult = 1;
-+		*div = 1;
-+		*acc = 0;
-+		return 0;
-+	}
-+
-+	if (!(r0 & JFRACR_PCSR0_PLL_LOCKED))
-+		return -EINVAL;
-+
-+	*mult = FIELD_GET(JFRACR_PCSR0_FB_DIV, r0);
-+	*div = FIELD_GET(JFRACR_PCSR0_REF_DIV, r0);
-+
-+	if (r1 & JFRACR_PCSR1_DSM_EN) {
-+		*div *= (1ULL << 20);
-+		*mult = *mult * (1ULL << 20) + FIELD_GET(JFRACR_PCSR1_FRAC_IN, r1);
-+	}
-+
-+	if (!*mult || !*div)
-+		return -EINVAL;
-+
-+	if (r2 & (JFRACR_PCSR2_RESET | JFRACR_PCSR2_DIS_SSCG)) {
-+		*acc = 0;
-+		return 0;
-+	}
-+
-+	spread = FIELD_GET(JFRACR_PCSR2_SPREAD, r2);
-+	*acc = spread * 500000;
-+
-+	if (r2 & JFRACR_PCSR2_DOWN_SPREAD) {
-+		*mult *= 2000 - spread;
-+		*div *= 2000;
-+		eqc_pll_downshift_factors(mult, div);
-+	}
-+
-+	return 0;
-+}
-+
-+static int eqc_pll_parse_aintp(void __iomem *base, unsigned long *mult,
-+			       unsigned long *div, unsigned long *acc)
-+{
-+	u32 r0;
-+
-+	/* no spread spectrum */
-+	*acc = 0;
-+
-+	r0 = readl(base);
-+	if (r0 & AINTP_PCSR_BYPASS) {
-+		*mult = 1;
-+		*div = 1;
-+		return 0;
-+	}
-+
-+	if (!(r0 & AINTP_PCSR_PLL_LOCKED))
-+		return -EINVAL;
-+
-+	*mult = FIELD_GET(AINTP_PCSR_FB_DIV, r0);
-+	*div = FIELD_GET(AINTP_PCSR_REF_DIV, r0);
-+
-+	if (!*mult || !*div)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static int eqc_parse_one_pll(void __iomem *base, enum eqc_pll_type type, unsigned long *mult,
- 			     unsigned long *div, unsigned long *acc)
+ /*
+@@ -366,8 +367,10 @@ static int eqc_parse_one_pll(void __iomem *base, enum eqc_pll_type type, unsigne
+ static void eqc_probe_init_plls(struct device *dev, const struct eqc_match_data *data,
+ 				void __iomem *base, struct clk_hw_onecell_data *cells)
  {
- 	switch (type) {
- 	case EQC_PLL_FRACG:
- 		return eqc_pll_parse_fracg(base, mult, div, acc);
-+	case EQC_PLL_JFRACR:
-+		return eqc_pll_parse_jfracr(base, mult, div, acc);
-+	case EQC_PLL_AINTP:
-+		return eqc_pll_parse_aintp(base, mult, div, acc);
- 	}
- 	return -EINVAL;
- }
++	struct device_node *np = dev->of_node;
+ 	unsigned long mult, div, acc;
+ 	const struct eqc_pll *pll;
++	const char *fw_name;
+ 	struct clk_hw *hw;
+ 	unsigned int i;
+ 	int ret;
+@@ -382,8 +385,20 @@ static void eqc_probe_init_plls(struct device *dev, const struct eqc_match_data
+ 			continue;
+ 		}
+ 
+-		hw = clk_hw_register_fixed_factor_with_accuracy_fwname(dev,
+-				dev->of_node, pll->name, "ref", 0, mult, div, acc);
++		if (!pll->parent_name)
++			fw_name = "ref";
++		else if (of_property_match_string(np, "clock-names", pll->parent_name) >= 0)
++			fw_name = pll->parent_name;
++		else
++			fw_name = NULL;
++
++		if (fw_name)
++			hw = clk_hw_register_fixed_factor_with_accuracy_fwname(dev,
++					np, pll->name, fw_name, 0, mult, div, acc);
++		else
++			hw = clk_hw_register_fixed_factor_with_accuracy(dev,
++					pll->name, pll->parent_name, 0, mult, div, acc);
++
+ 		cells->hws[pll->index] = hw;
+ 		if (IS_ERR(hw))
+ 			dev_warn(dev, "failed registering %s: %pe\n", pll->name, hw);
 
 -- 
 2.51.0
