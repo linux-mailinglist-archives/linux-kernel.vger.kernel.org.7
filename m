@@ -1,122 +1,148 @@
-Return-Path: <linux-kernel+bounces-798860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA07B423F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:46:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37B1B423FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AD1620192B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:46:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2153BDEAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9852C21E1;
-	Wed,  3 Sep 2025 14:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE831EA7E4;
+	Wed,  3 Sep 2025 14:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="3d9aSZPs"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RpoJeYYf"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC6A1EA7E4;
-	Wed,  3 Sep 2025 14:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1CF4D8D1;
+	Wed,  3 Sep 2025 14:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756910810; cv=none; b=rRFQ1jg503QpJTivRqVLzPbfuAuvJO067hhXLZUnWx+rgTksAqpLmAuE+i5G7M9lN+sNgZbylKgmsZeCyfcHQTqPMf04mx3ixaF/uFuQKr4ZM09dyE9GfzhSrtn6pflXAH6X/qDFzq4bMOYfW+Qz2TUDSvrp4hro1YFISs03tDQ=
+	t=1756910863; cv=none; b=XDUsxj6biAZeACXuhFS1UmJ15SVtBMBso+6aaBpqP49VRSozAzne4A1jmwjYiEUN6T5A/lkhLOZZB/TG5TqWibggTXw+9Fb4xXUyjLrK2l/+OF/K3ABbwH1vQJgfdOGAddTZm0SzTpsusj/ozcDbRemQAdgdz7nINP/2SzmNZRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756910810; c=relaxed/simple;
-	bh=J1PKNIgZOCKgEUdO8M5JDkq4fiPls0L34C3HgSWF9pI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ex2MxdLN3/dbjpmX/lo+cxTCA+r1ujPSqNZhOp8uvme7hwvAo8YV76GTH5eKdp+WH4UdjvmRZXSHBiaP/2FdAsLlED75twshAe0PI+REIbfyP/TMDYXAMpUYjOmBujOdQ3NUWlRfqfO0ESN4tHZMGv+EzW09UnqaygyDL6pJv1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=3d9aSZPs; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=fj3F4CR220kgIik6Toc/cmZCKNEv2XOOqIQqcF1ImAs=; b=3d9aSZPs3YmAbFASAiHJJcRzGD
-	fl2yMQ8DmjfTp6BbqLH7rIT2d77qfEB5Z+Y3/TvVDjT6wUAtXu/ENwN6EG2X//C4oeWM/kjAdgfxL
-	A694dMtmMqBNIb8h0atjUe70ar36QSdcZGS2V7lVdWAhrq/ScnBLUi3G/rdz/Vs4Ojj/3MbHG320S
-	ZRrjHpfBqZtlgfWGJBUaKIHpb6URoYypOkt4AYTv/24i82Ubg9uaXxpMpVw/4TTofxGQ15mggaxe0
-	BuFsZMXnY/HvCX/NBQPB2UnAzG31UmQZCKP7YdTXyJCqScWP+DXLeNLysRPnEhCaCLpypNh/VCOzx
-	J06xky9g==;
-Date: Wed, 3 Sep 2025 16:46:43 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-Cc: lee@kernel.org, krzk+dt@kernel.org, robh@kernel.org,
- conor+dt@kernel.org, ukleinek@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, shuah@kernel.org
-Subject: Re: [PATCH v5] dt-bindings: mfd: twl: Add missing sub-nodes for
- TWL4030 & TWL603x
-Message-ID: <20250903164643.0d0d2144@akair>
-In-Reply-To: <CANBuOYrcdzDytx0f=ZbpMujcNGn8RLGZwOJBE8FzPsGtt1y9iQ@mail.gmail.com>
-References: <20250902212921.89759-1-jihed.chaibi.dev@gmail.com>
-	<20250903000804.689a0a06@akair>
-	<CANBuOYrcdzDytx0f=ZbpMujcNGn8RLGZwOJBE8FzPsGtt1y9iQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756910863; c=relaxed/simple;
+	bh=uIiHVfgXcBHll4tp5RO1iUvvwxGAS287ADmVmicJIzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VHhn27Jjjl88uaYJNEeH4C9hUgcySQYWcwIsBRIQFY8OV1RcBWVVwjJKhaghbqa0Sw9GndFurS1xsSBSL8I3B9OAnXaUHJfUoLJwlPaQ2uS/jdNu2trF2PPygZzgm3P/qIeK2rBZR1f8wCtmP0mLcvKhHcsYsn38W36Fpm/3u1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RpoJeYYf; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 6F08FC8EC77;
+	Wed,  3 Sep 2025 14:47:21 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 80808606C3;
+	Wed,  3 Sep 2025 14:47:36 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1BC6A1C22D933;
+	Wed,  3 Sep 2025 16:47:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756910855; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=ujR0yYZ5vFQl06mtsamsbnkJePIHaLtqM3Tp5y6BL2U=;
+	b=RpoJeYYf/ZHQRw1WFqCDTpBR6Tqg5/1v1LPVh9t0KkpFMj6ZUT+1o1EB987g4ZG6jaF5NZ
+	Dm0I6Cdw8RRBspPKZ+ihoaeGMqbkoLI26dcFg6h9Y+3IAMpgrMUPipQnHNPRy+qfKbf42O
+	wksiz8pIqvPkYuIz67rDkTvvUZMqu62Drro8GVFdbJhSo8DasJhqHsWE+DQ68I8pFNT6zT
+	HbSjAJqnVcpPP5MMY5rLxU8dm+GBQewjQ2ClnRzN8B8NxkYNdjyT3XjoONXIS2d3TyyN8z
+	cq3jekRx+zTS95mLK+Y8UY5pk4/XqCSXhRhZuhOqLiH5Yd1+/cG/tILaT4om7Q==
+Date: Wed, 3 Sep 2025 16:47:23 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+Cc: krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org,
+	skhan@linuxfoundation.org, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akhileshpatilvnit@gmail.com
+Subject: Re: [PATCH 5/7] rtc: m41t93: fix device connection/detection logic
+ during probe
+Message-ID: <2025090314472377b79cdf@mail.local>
+References: <cover.1756908788.git.akhilesh@ee.iitb.ac.in>
+ <c3deec9e679cd4e4a49a2cc1cba340c552faefdc.1756908788.git.akhilesh@ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c3deec9e679cd4e4a49a2cc1cba340c552faefdc.1756908788.git.akhilesh@ee.iitb.ac.in>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Am Wed, 3 Sep 2025 00:55:25 +0200
-schrieb Jihed Chaibi <jihed.chaibi.dev@gmail.com>:
-
-> > > +                  - ti,twl4030-power-idle-osc-off  
-> >
-> > this allows quite weird combinations like
-> >  "ti,twl4030-power-idle", "ti,twl4030-power-idle".
-> > I would propose to rather clean this up to things used in
-> > twl4030-power.c and at the same time available in dts, also
-> > taking the brush in the dts. I do not expect that these specific
-> > compatibles are in use anywhere. I looked around earlier.
-> >
-> > Regards,
-> > Andreas  
+On 03/09/2025 19:57:21+0530, Akhilesh Patil wrote:
+> Fix the incorrect assumption about WDAY register (0x4) bits 3 to 7
+> being 0 after initial power-on to test response from device during probe
 > 
-> Hi Andreas,
+> Do not expect these bits to be 0 after power on as datasheet does not
+> explicitly mention these power on defaults but recommends software to
+> clear these bits during operation. Refer section 3.15 for initial
+> power-on default bits.
 > 
-> Thank you for the feedback. I've done a deeper investigation into
-> the 'power:compatible' strings to see if the schema could be made
-> stricter.
+> Fix the random probe failures after power on by removing this condition
+> check. Add alternate response check logic which performs write, read,
+> compare check on device SRAM register to check device connection.
 > 
-> While cleaning up the list, I found an existing DTSI file
-> (logicpd-torpedo-som.dtsi) that uses the combination:
-> 'compatible = "ti,twl4030-power-idle-osc-off", "ti,twl4030-power-idle";'
+> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+> ---
+>  drivers/rtc/rtc-m41t93.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
 > 
-> Since this "idle, idle" combination is already in use, it seems we
-> cannot make the schema stricter without breaking this existing
-> board.
+> diff --git a/drivers/rtc/rtc-m41t93.c b/drivers/rtc/rtc-m41t93.c
+> index 8cc179e08a4a..902797070246 100644
+> --- a/drivers/rtc/rtc-m41t93.c
+> +++ b/drivers/rtc/rtc-m41t93.c
+> @@ -30,6 +30,7 @@
+>  #define M41T93_BIT_A1IE                 BIT(7)
+>  #define M41T93_BIT_ABE			BIT(5)
+>  #define M41T93_FLAG_AF1                 BIT(6)
+> +#define M41T93_SRAM_BASE		0x19
+>  
+>  
+>  #define M41T93_REG_ALM_HOUR_HT		0xc
+> @@ -290,17 +291,25 @@ static int m41t93_probe(struct spi_device *spi)
+>  		return PTR_ERR(m41t93->regmap);
+>  	}
+>  
+> -	ret = regmap_read(m41t93->regmap, M41T93_REG_WDAY, &res);
+> -	if (ret < 0) {
+> +	ret = regmap_write(m41t93->regmap, M41T93_SRAM_BASE, 0xA5);
+
+Nope, probe is not called at RTC power on but when linux starts. The
+whole point of the RTC is to survive Linux. Writing to this register is
+breaking functionnality.
+
+> +	if (ret) {
+>  		dev_err(&spi->dev, "IO error\n");
+>  		return -EIO;
+>  	}
+>  
+> -	if (res < 0 || (res & 0xf8) != 0) {
+> -		dev_err(&spi->dev, "not found 0x%x.\n", res);
+> +	ret = regmap_read(m41t93->regmap, M41T93_SRAM_BASE, &res);
+> +	if (ret) {
+> +		dev_err(&spi->dev, "IO error\n");
+> +		return -EIO;
+> +	}
+> +
+> +	if (res != 0xA5) {
+> +		dev_err(&spi->dev, "No valid response from device 0x%x.\n", res);
+>  		return -ENODEV;
+>  	}
+>  
+> +	dev_notice(&spi->dev, "m41t93 device response success\n");
+> +
+
+This is too verbose.
+
+>  	spi_set_drvdata(spi, m41t93);
+>  
+>  	m41t93->rtc = devm_rtc_device_register(&spi->dev, m41t93_driver.driver.name,
+> -- 
+> 2.34.1
 > 
-well the only maybe fallback line  I see here is
-ti,twl4030-power-idle-osc-off -> ti,twl4030-power-idle ->
-ti,twl4030-power.
-But you allow "twl,twl4030-power-idle", "ti,twl4030-power-idle"
-That absolutely makes no sense.
 
-Then the question is whether there is the need for fallback compatibles.
-They are needed if there is one piece of software which does only know
-the fallback and can use the hardware in some limited mode, e.g.
-u-boot using some mmc controller only without some high speed mode.
-Looking around, I do not find anything in u-boot or barebox for the
-twl4030-power compatibles.
-
-And if we define "ti,twl4030-power-idle" as a fallback for
-"ti,twl4030-power-idle-osc-off", then it is a fallback for everyone
-using "ti,twl4030-power-idle-osc-off", so then the dts would need to be
-corrected.
-
-There is one exception: "ti,twl4030-power-omap3-evm" is still used but
-not everybody knows it (e.g. pm34xx.c), so there is a reason for a
-fallback compatible:"ti,twl4030-power-idle"
-
-And the rest, time for the brush and lets not totally mess up
-ti,twl.yaml.
-
-Regards,
-Andreas
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
