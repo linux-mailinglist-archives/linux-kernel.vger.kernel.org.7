@@ -1,102 +1,106 @@
-Return-Path: <linux-kernel+bounces-797888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC2DB416BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A884BB416C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52C301BA2C1A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:35:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81ADB1BA2C3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185332DCF6A;
-	Wed,  3 Sep 2025 07:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939412DCF56;
+	Wed,  3 Sep 2025 07:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="dmzzi2Kp"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M73gP3w1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8891F948;
-	Wed,  3 Sep 2025 07:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C4E2D1F5E;
+	Wed,  3 Sep 2025 07:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756884898; cv=none; b=huzxE+Bhez655CwrTSXxFSm4u6Tgajw6WXqNriejpBbX5FY8RHKLqfL/GYUmI4q1w3ca+fOllGcH+X2uJQomXzAxBNJT9rLuCEl9au1beTG8ir6ZGJ6ZgB4iL/apalYjLHUfEXcqr0VgnbPoMq54CiiopFf+CzbjXuOJw5nuqVs=
+	t=1756884912; cv=none; b=EQr0+zlVTpwtPp3hCr1FpiPtKzh3WhdEBHi7Ivl+BJIaQaPZUtMMhVj7cJKOLNWKXn5axSgPwhp7dZ2pDf2/A7lVo+G4nEewdERr7G8Wz9LTePeAxwibvvTsyVUKEmWZrJ0FwGIZMwb8oXZvG2WdXklxTLB6u/TYy+DAZTUce0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756884898; c=relaxed/simple;
-	bh=hlOdXw+ISIywpkvToyJYiZzHeIdj7F5rcjWuwqDVRio=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cwdHgXGlPQdTjWmwB0gdVJLS1heQza+EWita1z+Fq9Y6JOG6ZJgB6+E7AV7NPMH/bE5oUbjmd1rcQJUDu2iR8n61vUhPJFQiZReVvG0I7b1sanI2usk+c+rtiq5a29A4IfBxI+vz+XqZIVi68sF8aONm+sHYQevZZFZP5vIaHEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=dmzzi2Kp; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1756884893;
-	bh=hlOdXw+ISIywpkvToyJYiZzHeIdj7F5rcjWuwqDVRio=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=dmzzi2Kp6RTs8aKKrSBqzCoN6AN9vADV8PaTGya2qoXKuD78s3Bo+Fd/rL8amHJ/z
-	 1pHoRKGTX9vBvc2HxD6qRwBa/GZB9emEuNReOzTO03d5gjuOuwDuNa4REPEi0Vd//F
-	 AQqXpXrY6jguDJqwxKQ1RhDZ5ciMn/szQHeH9T3tfT0QnRYMJbkkt09KuwfFITpvYf
-	 oUsZch4g5cr19pCaL+714RL43oqs7ff+yNCSa5GNyhRepG6jmVnR9/D49n3cALr5OZ
-	 SYE34xFUpHKvNWtJKbt5KFlUOUQnRjbsgWN8N6nrhlS9hq0H+6/RlgN0+SgoLILFUM
-	 s6JnUkppUhXMQ==
-Received: from [10.209.99.88] (unknown [180.150.112.213])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id C62656445D;
-	Wed,  3 Sep 2025 15:34:51 +0800 (AWST)
-Message-ID: <9e7c8819159b3d2782ea63f9431ed208c31bf328.camel@codeconstruct.com.au>
-Subject: Re: [PATCH RESEND v2 0/2] NPCM845 reset and clock device tree
- updates
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Tomer Maimon <tmaimon77@gmail.com>, robh+dt@kernel.org, 
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- avifishman70@gmail.com,  tali.perry1@gmail.com, joel@jms.id.au,
- venture@google.com, yuenn@google.com,  benjaminfair@google.com
-Cc: openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 03 Sep 2025 17:04:50 +0930
-In-Reply-To: <20250901132426.3081648-1-tmaimon77@gmail.com>
-References: <20250901132426.3081648-1-tmaimon77@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1756884912; c=relaxed/simple;
+	bh=8C3xjebS5A1uXK6PAJoBtn+sEHJWk+k90S1IcWEwjIA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Sta/TAg2uHOFatbp/dOwx29n2sQ6MRF//OFA17n/Mnz0MlapieCq21GSL33bkwzFEUIM4ktebNiJh7MyOp2K7VA41PKDec1Mb+a11Kc69BJw7afiUWxqN7ilS77OzqdQGYS7991rtCp4QivFGlu/W9kpqFIaOvdCil27+Son2CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M73gP3w1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AC3CC4CEF1;
+	Wed,  3 Sep 2025 07:35:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756884911;
+	bh=8C3xjebS5A1uXK6PAJoBtn+sEHJWk+k90S1IcWEwjIA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=M73gP3w1W942MyxGPW01eX6vsT8OmQh3y23c5PTiaE+RaIv38yilqSRlEaMYQKisS
+	 YPdKyJmmD9bnCNvETJSIsXUAZGH52h91XwQkJJQrcgFxmDXzLKckKLQXZALgPEo+OQ
+	 nAng21hE2oG2216hOXxbcdI0y9pEaDwXOqhWlNC+GD4JrOm2eFbNv3iSS+QTkv040m
+	 6SASxWlOltZNjIwKIOuxAXYvVYg430sLqYlXJ7OFX2KySajblgm3sxfhB/wkncPO9z
+	 hdDQmpHAQ0ivmz2DeRoTJuEBxcWr8c0knan/GO3i1Xm5opx5zj19pjPkra2g4EnXYv
+	 N0/Naf28FshuA==
+From: Lee Jones <lee@kernel.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Benson Leung <bleung@chromium.org>, 
+ Guenter Roeck <groeck@chromium.org>, Tim Harvey <tharvey@gateworks.com>, 
+ Pengyu Luo <mitltlatltl@gmail.com>, Michael Walle <mwalle@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Jean Delvare <jdelvare@suse.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee@kernel.org>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Cheng-Yi Chiang <cychiang@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Nikita Travkin <nikita@trvn.ru>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Tinghan Shen <tinghan.shen@mediatek.com>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
+ linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-sound@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Mathew McBride <matt@traverse.com.au>
+In-Reply-To: <20250825081201.9775-2-krzysztof.kozlowski@linaro.org>
+References: <20250825081201.9775-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH v3] dt-bindings: mfd: Move embedded
+ controllers to own directory
+Message-Id: <175688490483.2489808.1034690962892116559.b4-ty@kernel.org>
+Date: Wed, 03 Sep 2025 08:35:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
-Hi Tomer,
+On Mon, 25 Aug 2025 10:12:02 +0200, Krzysztof Kozlowski wrote:
+> Move several embedded controller bindings (like ChromeOS EC, Gateworks
+> System Controller and Kontron sl28cpld Board Management) to new
+> subdirectory "embedded-controller" matching their purpose.
+> 
+> An embedded controller (EC) is a discrete component that contains a
+> microcontroller (i.e. a small CPU running a small firmware without
+> operating system) mounted into a larger computer system running
+> a fully fledged operating system that needs to utilize the embedded
+> controller as part of its operation.
+> 
+> [...]
 
-On Mon, 2025-09-01 at 16:24 +0300, Tomer Maimon wrote:
-> This series updates the NPCM845 device tree for the integrated reset and
-> clock controller using the auxiliary device framework.
-> Patch 1 combines the reset and clock nodes into nuvoton,npcm845-reset.
-> Patch 2 adds a 25 MHz refclk and updates peripherals to use it.
->=20
-> Tested on NPCM845 evaluation board.
->=20
-> Changes since version 1:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0- Tested in version 6.17.=
-rc1.
->=20
-> Tomer Maimon (2):
-> =C2=A0 arm64: dts: nuvoton: combine NPCM845 reset and clk nodes
-> =C2=A0 arm64: dts: nuvoton: add refclk and update peripheral clocks for
-> =C2=A0=C2=A0=C2=A0 NPCM845
->=20
-> =C2=A0.../dts/nuvoton/nuvoton-common-npcm8xx.dtsi=C2=A0=C2=A0 | 20 ++++++=
-++-----------
-> =C2=A0.../boot/dts/nuvoton/nuvoton-npcm845-evb.dts=C2=A0 |=C2=A0 6 ++++++
-> =C2=A02 files changed, 14 insertions(+), 12 deletions(-)
->=20
+Applied, thanks!
 
-The changes are already applied and on their way into mainline:
+[1/1] dt-bindings: mfd: Move embedded controllers to own directory
+      commit: e19df0d928a7d4a6dda919bb486e1ac2251f384f
 
-https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/commit/?h=3Dsoc=
-/dt&id=3D1b8086f1729b8f22e60ba93676602174a3b0a4fc
+--
+Lee Jones [李琼斯]
 
-Thanks,
-
-Andrew
 
