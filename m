@@ -1,220 +1,104 @@
-Return-Path: <linux-kernel+bounces-797942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD722B4177A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:59:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9928CB41786
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7A2C7A7CD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:57:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CE214E48F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D13C2E54C8;
-	Wed,  3 Sep 2025 07:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F9D2E1F03;
+	Wed,  3 Sep 2025 07:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jWWKC4RN"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KFkwY3uI"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BAB2E1F00;
-	Wed,  3 Sep 2025 07:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF912E1730
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756886331; cv=none; b=AEhoSy/uTi1UlZvSiKAUPdoVuTQu+Nle8m45W+FIuBDtuvJzJHoTI8sh809CUb6sJE8CMxeO/df2oVYAWG4NAKZEnu6wLXXrqE2j1DpjsImn8y4ULDjZbjowy9ZcjXr7pIwuVqlK1HGlkzUBGwJaBPzjktxW44UCXcVngsGoRrk=
+	t=1756886391; cv=none; b=aNIjXzmfLsuX+VK8ggsNqQEEaiaR0k1m1NQkh+vD6W/xtdNpqRszrjgqUbk0Ys/9W5lPhnr8XhVhNffNUZHyls3HHSx5a5KqIrObxiEUr/qLzGC0mS9eXPZIfA37atCXc6nCpSSAyMO4h2ZtrRruhOzZvJ8R63rdeA9tSuLRpvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756886331; c=relaxed/simple;
-	bh=9M40q4YTpAKUWWKOZk3yBp2AmAuBG+AtGIsqw9nrZb8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U7ywnJcXQ6k2ygvoxECrp39WBltFL1wAyWUwS6VPbjwdOJRTAkJzBM2VKSeoGTF6X58fAzWB8Ov7HpTZAArdun09d9/plDrkLn73k6a0DFnyiRTVtsNSyv5P36i6/R+snAvcxI6qyqTFGmEGbDfIYx2DBGxQ1c62nVZq6rNATKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jWWKC4RN; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-723ae0bb4e4so15505227b3.1;
-        Wed, 03 Sep 2025 00:58:49 -0700 (PDT)
+	s=arc-20240116; t=1756886391; c=relaxed/simple;
+	bh=NuJ5kczUaPyxRvxC+f1VoCqxCsu6DO+7M/ERWYPz9t4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qrOrMEzKRrspcK0U9GWqKVWxhzuOisWZYgOFDNH/Si/W/2RGlMxmYDHrRpg6glvnITbtUKsFrtZTg5CgoFJdReteri2loczM+XAoUHQPlSPrgEI3mMpBoCcMqrIf123cVPOxiy7tu+i7d+GH/nJP/cgtoZQvrtDiuKeHoLQveKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KFkwY3uI; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32326e8005bso6213341a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 00:59:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756886329; x=1757491129; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yhAVnScp5EkAabs+130F6qkoMdoZHl96tw+d3Qg0Q1c=;
-        b=jWWKC4RNg6pAg+iElWooEo5fw4BYP4jDH/V9MK6dTv9jkm83mNT38ZkXYsCm6nNJkp
-         zeWr4zbD3iXgkUIqyGwqYm7a2fax9I3UBEGtzl34Gyvc/QvbYI229B3TeT8GzWBBGdvO
-         q0u2AckBJdbQ/QKCx5pZ5NZuPGmDOgfx69ZPHA3p11gIT+oGYNx1sf+buHwcsTqySn/f
-         PMTJbTjY9y8cv70TKRhmG6O6LnM0BVATevQHtmREOAqKfwN+mZLEY1aV5sOZh8P9dvxe
-         h++38DoZrpteoRWxuxJi5Ija0sNJ+kBrtCDfsqF+YUKVz5qkEXUAkLLWWkccGON07G7S
-         aGCQ==
+        d=linaro.org; s=google; t=1756886388; x=1757491188; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BxaxPrhxXUKCJIvoF2szrtMVwxxmWJYC9qzjgklL7VI=;
+        b=KFkwY3uIBwEznFBSHoIiuTXmc21MjuXj+J2YC6IuK+YWWLbFnZEkoq/wcExbpDfLMU
+         p0MpCLm5oaiIssydCRoLB8SnV8Rb8xEnegNEYsIRfSeTKEZDjk/32PcN9FIYeOxrGyVL
+         R8NApop+63gUtk5ojnP4NvX6lA3uy8P9M0SVxfXP2JOdruZFvkmpI3c0xTUAQyWnlb73
+         FpXWtHMYfdbKTMTWL6KCQMpZ3Gz49/VwOL0MLlQgd06deVyeyrkf6skL4+m+6bTXkyad
+         p39L8QM2qkmmja+lhvgW+mVvTKZhmkSowemBHhxCWRy7NBrH4MuKaQLQXh2GCRPQ11zj
+         jWMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756886329; x=1757491129;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yhAVnScp5EkAabs+130F6qkoMdoZHl96tw+d3Qg0Q1c=;
-        b=g0pMf2BpS5GxARGRxssH/YFJvkCVz8N9mz4GP0NIbfffpFRWFGCRJLGswln7uajkzz
-         fNqBQYAY08eSplKs+xNtsFMpjS/5iqOY4k94XIZdsB6+80C51WZBlFbgqjTRNLbKJu5D
-         C+lnFT74EfgTX83KJqlUJ0jhru3QGmQ0IYNCEmOgliz7q6xbXuc/rFMB7vX7MKOu4mPq
-         5B9yKAutqa88vU6lrOysjZLsADiknITj1hO46Vz8D1CQuK7lk4ShRZWkokUQhkhDDeCn
-         0JSNQC44hFGnQjvK7cKJZReQEYWSDCFkq7KG2Ob4NMaDGjl9Gbk01Aij2QTL0ajCyhS/
-         CoIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjmCOr+rMcmYdUuS6Kk8+NplOyGRCi5hF0xP7mXvz9hzbWqYIm6K3pnHOOjbnItIh9O+HqxFWUhQOHu5A=@vger.kernel.org, AJvYcCXKt2R6zh5+K+5PcatDUWE2glcvDwgIRYZ4oE345gwv2F/Yt5761Ky1oJ4JsAHuy0boAKnzFVst+d3Zbzp08N0o7jQc@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrcMeZ1uQmwc2ZvQChW8cETvqil/0NJMHzuXhPjA8qM9jL0K89
-	o3dmHFh3CvaKmKkyCPhomfHOcAjOUwYKzhYbwZYKEUN+5l/qQAHssSQuhopGX5UGjgw1Bg==
-X-Gm-Gg: ASbGncsOX5V9Ctwa3daEzpKQJZ0EjPUGslmpTpnrxMuBRURxB9WHc44BhIMktJVhzlX
-	M3UVck9TpQk3HK/2OnB76xtF/JPlyCp8mUMXBEliMiCrH/z+3e4FkvIDZ5EF4X10UGvHn+d0NDZ
-	F8TdLjBduawfHwsBcdkcJ0tJ7EIGD3mkEyR4wv0FePoBDbbwDe7cX1h/Dd1vaEQuu3Wo/4ghS3l
-	JGxoaUJ4PKv/ZA6pLfiwgNHDXAulGKb05aF0Lz8LsIRox9Ok6nb32lTpbo9WmyiaEAPe0CKaiS4
-	Fctt2TEzrstnfGMmJsG6jx6Yjs6obIiKpZR/+FBVep5tBl7Gmmflzc7LRu5uTjZW5KpQfMOLMBb
-	O4JmUCnL6w2R3MU6957kUAGz+1blQdw==
-X-Google-Smtp-Source: AGHT+IEx4yv1FTXUxNGpW0sEZ9ARp8JFX0NW96PCFD5SvnuIG7mMycDbU9MFc55AdRFLd4MlHcYEOA==
-X-Received: by 2002:a05:690c:688b:b0:722:6a42:5cab with SMTP id 00721157ae682-7227635cb7cmr150931017b3.3.1756886328733;
-        Wed, 03 Sep 2025 00:58:48 -0700 (PDT)
-Received: from [127.0.0.1] ([2a12:a301:1000::20f3])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a8510229sm11638517b3.37.2025.09.03.00.58.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 00:58:48 -0700 (PDT)
-Message-ID: <5a6dde06-11ee-4ce7-9cb5-f0b8096e42ed@gmail.com>
-Date: Wed, 3 Sep 2025 15:58:44 +0800
+        d=1e100.net; s=20230601; t=1756886388; x=1757491188;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BxaxPrhxXUKCJIvoF2szrtMVwxxmWJYC9qzjgklL7VI=;
+        b=AYVKY+D7dFn4hS+5YCLveNoO8kn/AokLusiRZsoa4ppzFNmSlsrpgM8RaBO9VQ266f
+         S6tveamiykM7jlGni+0crr4JGYZvTw6MwM3B5r9lZjHiqtV+2ZvT1n/R6HH2Wd8TQzjI
+         eGx12FZqYAvfzKJ1zaBviXOPT4FTbklZ/9F4TyS5Nkkjg6RD5KrGGxFNxqKdGFt7COlu
+         nbaqoUSt/jCfKEjeutosJ+klzy9SanZi2+GMNqbTNWzEhefTzMUWUbQvm0QfEnM9TJJM
+         78LnYcdHpNAZ/YCwFVCRCNs0X7kbSZKB8J6UzMyCBECJrIlXzimEmxorTEm/S4B/j5L5
+         uv1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWKN4zBQT0cKRGjMfluSqdjiejBns0erX+PI04GGIWBk/eBlXaHAfKfuCXl94G7dx9We+hO7YrC3Pp4JtU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4QvrX15BvLfy13An5D2/xyYHApGXilg/EQaZGc/+A8MeGcgM7
+	GTDS0slNbrH3bYjyI59fU+2EABxuV4LJDWWTFyrHNvQGaXBiarj+L/GGNni1B1qj12E=
+X-Gm-Gg: ASbGnctczAGWBoOq7LxNj+7RObnkzKUUXwn19dJ3ZMGQTcxuds+1Yq6g5h7WSjhGF3a
+	ElqAegC7dysEbnTGs/6q3QX8LCT6aON4HBIzxU104WtZt0B73oiawgBtRpd7Px7I1G9ecetl/Qf
+	4s5/CMD9e9iM04h+AdU5kh30fcBUL66OX/7sScyHnd1mHXORgmYiHLkulGFjQOQ3MYOZ5QH5DMj
+	uYvX+jvoQdJICyvc5idR6SDuSVJRrW+ep0fHoh5Aw7MyDQANlYbGuqgmWvVuAv+aA5mvi7TVrhH
+	88uLdauiH6RQFmt808c/YzcGzro5JRPRDa1q1ZybZ0C3qqFFkWKchtKqM1IsPwWeJOPkKsPWJEJ
+	hleEkCrKZmAvGUd8N8Y5KYwLm
+X-Google-Smtp-Source: AGHT+IEP2QMbg0XCTQEpNBhuxFDoLswUh1fE6Y3EcWpzAAZ5uDLhKBYJuBQLyDeR7XebXktTSScoSg==
+X-Received: by 2002:a17:90b:38c2:b0:327:e67d:6595 with SMTP id 98e67ed59e1d1-328156cc9c0mr18377152a91.25.1756886387791;
+        Wed, 03 Sep 2025 00:59:47 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd007026esm13828115a12.9.2025.09.03.00.59.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 00:59:47 -0700 (PDT)
+Date: Wed, 3 Sep 2025 13:29:40 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: powernow: Remove redundant 'ret' variable in
+ powernow_decode_bios()
+Message-ID: <20250903075940.wftjq2uq7tginq2q@vireshk-i7>
+References: <20250903072936.4067-1-rongqianfeng@vivo.com>
+ <20250903073702.g755d3xtjlkkdbfs@vireshk-i7>
+ <4c7249a4-d4fb-402a-b958-e862b6eb04fc@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 02/13] x86/HWBP: Add arch_reinstall_hw_breakpoint()
- for atomic updates
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: akpm@linux-foundation.org, naveen@kernel.org, davem@davemloft.net,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <20250818122720.434981-1-wangjinchao600@gmail.com>
- <20250818122720.434981-2-wangjinchao600@gmail.com>
- <20250818122720.434981-3-wangjinchao600@gmail.com>
- <20250901160602.e25f0107e7b0ef4af1078fb7@kernel.org>
- <284d5eef-447f-4e12-a121-3742d708c96f@gmail.com>
- <20250902231152.442041a74774d888cec39201@kernel.org>
-Content-Language: en-US
-From: Jinchao Wang <wangjinchao600@gmail.com>
-In-Reply-To: <20250902231152.442041a74774d888cec39201@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4c7249a4-d4fb-402a-b958-e862b6eb04fc@vivo.com>
 
-On 9/2/25 22:11, Masami Hiramatsu (Google) wrote:
-> On Mon, 1 Sep 2025 18:23:44 +0800
-> Jinchao Wang <wangjinchao600@gmail.com> wrote:
-> 
->> On 9/1/25 15:06, Masami Hiramatsu (Google) wrote:
->>> Hi Jinchao,
->>>
->> Hi Masami,
->>
->>> On Mon, 18 Aug 2025 20:26:07 +0800
->>> Jinchao Wang <wangjinchao600@gmail.com> wrote:
->>>
->>>> Add arch_reinstall_hw_breakpoint() to enable atomic context modification
->>>> of hardware breakpoint parameters without deallocating and reallocating
->>>> the breakpoint slot.
->>>>
->>>> The existing arch_install_hw_breakpoint() allocates a new debug register
->>>> slot, while arch_uninstall_hw_breakpoint() deallocates it. However, some
->>>> use cases require modifying breakpoint parameters (address, length, type)
->>>> atomically without losing the allocated slot, particularly when operating
->>>> in atomic contexts where allocation might fail or be unavailable.
->>>>
->>>> This is particularly useful for debugging tools like kstackwatch that
->>>> need to dynamically update breakpoint targets in atomic contexts while
->>>> maintaining consistent hardware state.
->>>>
->>>
->>> I'm also trying to find this interface for my wprobe. So the idea is good.
->>> But this looks hacky and only for x86. I think the interface should be
->>> more generic and do not use this arch internal function directly.
->>>
->>
->> I agree with your point about the architectural dependency. I have been
->> considering this problem not only for the hardware breakpoint
->> reinstallation,
->> but also for other related parts of the series, such as canary finding and
->> stack address resolving. These parts also rely on arch-specific code.
-> 
-> Yes, even though, the hw-breakpoint is an independent feature.
-> Directly using arch_*() functions (which are expected to be used
-> internally) introduces a hidden dependency between these two
-> components and looses maintainability.
+On 03-09-25, 15:54, Qianfeng Rong wrote:
+> I see you have already added the Acked tag to this patch-do I still
+> need to send a V4 version with a detailed description of changes in
+> each version?
 
-Yes, I am trying to improve this in the v3 series.
-
-> 
->>> It seems that the slot is allocated by "type", thus, if this reinstall
->>> hwbp without deallocate/allocate slot, it must NOT change the type.
->>> See __modify_bp_slot. Also, provide CONFIG_HAVE_... option for checking
->>> whether the architecture support that interface.
->>>
->> Regarding the slot allocation, I would like to clarify my point. I
->> believe the
->> event->attr.type should not be changed when reinstalling a hardware
->> breakpoint, as this defines the fundamental nature of the event. The type
->> must always be PERF_TYPE_BREAKPOINT.
->>
->> The event->attr.bp_type, however, can be changed. For example, from a
->> HW_BREAKPOINT_W to a HW_BREAKPOINT_RW without needing to deallocate and
->> reallocate the slot. This is useful for future applications, even though the
->> current use case for KStackWatch only requires HW_BREAKPOINT_W.
-> 
-> I understand your point, so it also needs another wrapper which checks
-> the type is compatible on the architecture.
-> 
-
-I think the wrapper should handle the type by type_slot, something like[1]:
-
-diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-index 1db2c5e24d0e..6fed9521baf2 100644
---- a/kernel/events/hw_breakpoint.c
-+++ b/kernel/events/hw_breakpoint.c
-@@ -752,6 +752,7 @@ modify_user_hw_breakpoint_check(struct perf_event 
-*bp, struct perf_event_attr *a
-  {
-  	struct arch_hw_breakpoint hw = { };
-  	int err;
-+	enum bp_type_idx old_type_idx, new_type_idx;
-
-  	err = hw_breakpoint_parse(bp, attr, &hw);
-  	if (err)
-@@ -766,7 +767,9 @@ modify_user_hw_breakpoint_check(struct perf_event 
-*bp, struct perf_event_attr *a
-  			return -EINVAL;
-  	}
-
--	if (bp->attr.bp_type != attr->bp_type) {
-+	old_type_idx = find_slot_idx(bp->attr.bp_type);
-+	new_type_idx = find_slot_idx(attr->bp_type);
-+	if (old_type_idx != new_type_idx) {
-  		err = modify_bp_slot(bp, bp->attr.bp_type, attr->bp_type);
-  		if (err)
-  			return err;
-
-For kernel breakpoints, we might also consider introducing a
-modify_kernel_hw_breakpoint() helper, similar to
-modify_user_hw_breakpoint(), to encapsulate the kernel-specific case.
-
-[1]https://lore.kernel.org/all/20250903075144.3722848-3-wangjinchao600@gmail.com/
-
->>
->> By the way, I have sent an updated series.
->> https://lore.kernel.org/all/20250828073311.1116593-1-wangjinchao600@gmail.com/
-> 
-> Yeah, OK, let me review the series. Thanks for update!
-> 
->>
->> Thank you again for your valuable review.
->> -- 
->> Best regards,
->> Jinchao
-> 
-> 
-
+No, its okay now. Don't resend.
 
 -- 
-Best regards,
-Jinchao
+viresh
 
