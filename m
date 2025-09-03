@@ -1,120 +1,151 @@
-Return-Path: <linux-kernel+bounces-798234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68213B41AF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:02:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41341B41AEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 210283A4E7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:02:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA10A1890A55
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E60F2D7DE1;
-	Wed,  3 Sep 2025 10:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEA429CE1;
+	Wed,  3 Sep 2025 10:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b="eD1cM3jH"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gLOjMkmo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270911D54E3
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB691217F2E;
+	Wed,  3 Sep 2025 10:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756893717; cv=none; b=PxhEESTnjxMBqJbG1tACNN9hjoGac0EswN0a5eK6HsqLXHdtFahvpBlHD+fxYx3H4etRLmbknWoW7bNFE4laXOTweFuJ0C42yH6thunA1BT5FM3bHlLBaUIcp7Qmrw1KK1HyMpcOJ3/zqex98vGw2Hmt7Zh+qwtxV5V7M1EkhV8=
+	t=1756893675; cv=none; b=Vt3ITliL45kxyxbpltW6KxVrQcnSCu3Ebu0/ItWKdJ45zvPqthSUJw6fKahnmq1UaXgdEZfLEjgrFxqgxzDH+NKi5ALhez9I77LjTvFG4jXQqZrojQS9JehNVRQ1h61Iu8mu3biNCNLv2vHNjYtxzaapvAthudJ/+vbV79jk/5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756893717; c=relaxed/simple;
-	bh=kHulDodA6XjjDXaF8f3RTdeG+b7HsT9DN9fR8XCqMLU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ppHKlPwv+oTpVxvbrLeZ5eKinZzTK7APy/gOwUh3PSs1qIG8vJlGBmUPvec5P3A0xzRBuJ4xqmrXvrX3QAz/OHql/y5fntlmAcf8hgIEolK02EvO2HM8CtZp7c3qbjf5dz8rx1j7pkMZbyNjbdrRkUNVp/3mNPEterd4XNAM+dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be; spf=fail smtp.mailfrom=hammernet.be; dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b=eD1cM3jH; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=hammernet.be
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3df726ecff3so161098f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 03:01:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hammernet-be.20230601.gappssmtp.com; s=20230601; t=1756893712; x=1757498512; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LJ9qYB7I/+26Ck84iyosBQZh4d5xKjRCMcgtP0AqugE=;
-        b=eD1cM3jHmhyyUQHGCI0l0yLMSM15MBoT9JvOWeMLaN/2Fxks8AYctLv0eRLW2hhLyx
-         pClPrVdZs5nc8fg4LxDpG6JjlbkG2ZLV6pk2QoQEC2QffzfTpqMy0Fbv8LIYlP/F0iFR
-         IdiMH+v6PIwM95jRMCBVS68Xs0JpTRLV7QKuKKFNNK28lNbHG47Uey9YXDYn0CoJWkbN
-         aGANAcK/Nq9LBOxOnzOvOfS5Z9RhFcx4qkPIeoA0W37CZ/MKceJ7GbsledamJLKR04JD
-         D+pAX/38JX8SJkmwSvIe9k6s8GH9x2k+jVqr0fhOiyMuQ767Vt0rO4ZA8w5MYZOAbxsg
-         3tvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756893712; x=1757498512;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LJ9qYB7I/+26Ck84iyosBQZh4d5xKjRCMcgtP0AqugE=;
-        b=ODKMn+Q61r5JruVfun1/NQitSASUrV6JOawGt2x7z3taUQgJyjW8c5Yej3K8klScGZ
-         LH4ZISKo04r77sqiDi/zLI7AE9367icdEoktgLK8713LPofRpNstmTxS44k0MOkdpCpX
-         GKCc5ezq1eMrGnZ3wK8S2Kc81JGkwTU1HcnFIFL0QnbCZAKqfWQUWgBTHPRWe6LOGYmK
-         yEHzkwDn4l5Vhnv9vSOaz46/O1nME53LgKG+GausNx1e1eZLvhPqDgg/CHyrjfGGIStz
-         rj2hLfB4e/GNXVpicm/tqFcBoFIs5AkjYsVRBxytmH6tC4Tx/UUYP01fMjcJF54hhuuJ
-         0CFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqb0BbRdUIuozRxAuueGLHP9G4sM1PXuTEA8GN8L1vtFfNTkWrMw1OFEbxLOHdIi4NAqlywTFflRYTOh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCeZUg7TU1CHR2q2DBTlihNnuKkkeIno0BT29O0iHCAr20UQus
-	xSTCKeWeLuEM96wIWhwxHYXhX1/tgEBqStfZFIII9BARIzmIbyNK7GKkQwM6xbMP+d0=
-X-Gm-Gg: ASbGncs70QenX4UDWmEX/BmMDW5lbx1WnJy8HCip8MEi3w3+9pui6ZFdPw392q3UHSE
-	GpzGlvroYLoPjmzIFZUA9jcAHO8pbrQVczXNqeg25YNp/A2DBTtO/ClnpZ0r+ffldVyIJdEIUgR
-	jVeigamAj0eSqnOHL2ejar2hOxpFZ4yyay3P5AGo74f+HPBZvaEBwTYMpS+Xn8HARRVMZVqGp2F
-	+wdKj9BPPcbWNFZ/jXHHHrIOVRNPy7Ke1fDf+qv1z7iVsYYN+id1Hm6xRV67kfie0pFMInYBdhV
-	080OI9rU8AynMPaXAVNYaVY8mEX9Ii0OMG/zZLRDGSk86wkXVsDFoolIfPChq1qRkdoYsq1D4uv
-	VeXMzvVjjmFydp4GZDgIx8SZxLORMtK+G116vBCbymAmNl4Bi
-X-Google-Smtp-Source: AGHT+IFlZq5oArcxA6dWnPr6LijEjpa+jLN9n3zA6K+uDuCGQ1hNKxqSyhK3P1G01ko5LeH0BDMpxg==
-X-Received: by 2002:a05:6000:26c5:b0:3c8:29eb:732e with SMTP id ffacd0b85a97d-3d1df539ea3mr11440863f8f.59.1756893712086;
-        Wed, 03 Sep 2025 03:01:52 -0700 (PDT)
-Received: from pop-os.telenet.be ([2a02:1807:2a00:3400:7e45:593:64fd:6612])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d729a96912sm10945323f8f.8.2025.09.03.03.01.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 03:01:51 -0700 (PDT)
-From: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-To: linus.walleij@linaro.org,
-	dlan@gentoo.org
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-gpio@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Subject: [PATCH] pinctrl: spacemit: fix typo in PRI_TDI pin name
-Date: Wed,  3 Sep 2025 12:01:04 +0200
-Message-ID: <20250903100104.360637-1-hendrik.hamerlinck@hammernet.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756893675; c=relaxed/simple;
+	bh=B2Q577TjWIcrbRtvx74l8SXwGWVA4w1sbot6JtJZjS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UIafrF+4nL3sd44KNkTx0H525p0amga3cYzx4ZfiHxOo1DbB22wmtKco9AZWW1SdpbyFmBq+mlY84j8LIt5QWUVe/9ImIZnhK5VZrBJdRy6ixKIrp4IrsInEDE1svgWa78jj9yg1Ve6KCLJz0IlOXqboa5rGEgBiJCRTFTFddOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gLOjMkmo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4474C4CEF0;
+	Wed,  3 Sep 2025 10:01:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756893674;
+	bh=B2Q577TjWIcrbRtvx74l8SXwGWVA4w1sbot6JtJZjS4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gLOjMkmo/owD/Budlyh5wYJThLnMn6Oc+mNBx/6h+lMaxJAhXK2YtKvZ/Qx9xVVvt
+	 iT94G7hLxfaZPGa1ROxPEc0G7Jo5NG3P7olkLPb1aBKXr9XC6cBBl2UQw5xT2OKo4f
+	 uNwC4RQwJz+ibnbIbs6cqzyowpYopCL5Tg4Dk7aWZjtXFw4E8hmG1kFQnzkFq8hrpg
+	 mzfsNRX8GE4EN+ue4nnPV6rVwXbKmlHlTBv/nZqXFEdTGieij3Z+Kqw/mCXjujf4fC
+	 cekee4TG2gdT2sjdWRJSvyqehMrQ1sjrNlGIiPAHIPDOHCdj+zqfYV6LXUoYFSCEMD
+	 qbZ2bd3kNWKLQ==
+Date: Wed, 3 Sep 2025 11:01:05 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	Will Deacon <will@kernel.org>, jannh@google.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v20 4/8] fork: Add shadow stack support to clone3()
+Message-ID: <734e4c2c-a478-4019-86f7-4965c2b042e1@sirena.org.uk>
+References: <20250902-clone3-shadow-stack-v20-0-4d9fff1c53e7@kernel.org>
+ <20250902-clone3-shadow-stack-v20-4-4d9fff1c53e7@kernel.org>
+ <aLdbT67auUpaOj2T@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="9vEWHDJml80AW6hw"
+Content-Disposition: inline
+In-Reply-To: <aLdbT67auUpaOj2T@arm.com>
+X-Cookie: You were s'posed to laugh!
 
-The datasheet lists this signal as PRI_TDI, not PRI_DTI.
-Fix the pin name to match the documentation and JTAG naming
-convention (TDI = Test Data In).
 
-Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
----
- drivers/pinctrl/spacemit/pinctrl-k1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--9vEWHDJml80AW6hw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/pinctrl/spacemit/pinctrl-k1.c b/drivers/pinctrl/spacemit/pinctrl-k1.c
-index 9996b1c4a07e..a3f433b611f7 100644
---- a/drivers/pinctrl/spacemit/pinctrl-k1.c
-+++ b/drivers/pinctrl/spacemit/pinctrl-k1.c
-@@ -847,7 +847,7 @@ static const struct pinctrl_pin_desc k1_pin_desc[] = {
- 	PINCTRL_PIN(67, "GPIO_67"),
- 	PINCTRL_PIN(68, "GPIO_68"),
- 	PINCTRL_PIN(69, "GPIO_69"),
--	PINCTRL_PIN(70, "GPIO_70/PRI_DTI"),
-+	PINCTRL_PIN(70, "GPIO_70/PRI_TDI"),
- 	PINCTRL_PIN(71, "GPIO_71/PRI_TMS"),
- 	PINCTRL_PIN(72, "GPIO_72/PRI_TCK"),
- 	PINCTRL_PIN(73, "GPIO_73/PRI_TDO"),
--- 
-2.43.0
+On Tue, Sep 02, 2025 at 10:02:07PM +0100, Catalin Marinas wrote:
+> On Tue, Sep 02, 2025 at 11:21:48AM +0100, Mark Brown wrote:
 
+> > +	mm = get_task_mm(p);
+> > +	if (!mm)
+> > +		return -EFAULT;
+
+> In theory, I don't think we need the get_task_mm() -> mmget() since
+> copy_mm() early on already did this and the task can't disappear from
+> underneath while we are creating it.
+
+mmget() will only have been done in the CLONE_VM case, if we're in the
+!CLONE_VM case we do a dup_mm() but that also returns with a reference.
+I didn't know if people would be happier with the reference clearly
+taken by the code using things or not, the general pattern is that
+whenever we're doing anything with remote VMs we take a reference.
+
+> > +	mmap_read_lock(mm);
+> > +
+> > +	addr = untagged_addr_remote(mm, args->shadow_stack_token);
+> > +	page = get_user_page_vma_remote(mm, addr, FOLL_FORCE | FOLL_WRITE,
+> > +					&vma);
+
+> However, I wonder whether it makes sense to use the remote mm access
+> here at all. Does this code ever run without CLONE_VM? If not, this is
+> all done within the current mm context.
+
+Yes, userspace can select if it wants CLONE_VM or not so we should
+handle that case.  We discussed this on prior versions and we felt that
+while we couldn't immediately see the use case for !CLONE_VM there
+wasn't a good reason to restrict the creativity of userspace developers,
+and given that you can specify the regular stack in these cases it seems
+logical that you'd also be able to specify the shadow stack.
+
+> I can see the x86 shstk_alloc_thread_stack() returns early if !CLONE_VM.
+> Similarly on arm64. I think the behaviour is preserved with this series
+> but I'm not entirely sure from the contextual diff (I need to apply the
+> patches locally).
+
+That is all for the case where the kernel allocates and manages the
+shadow stack, it's the behaviour that this series allows userspace to
+override.
+
+--9vEWHDJml80AW6hw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi4EeAACgkQJNaLcl1U
+h9C9iAf8CfCzzwiQJ36masHVjY8H/SDctzkmeaMnXiIjH732CjftOeKNoRPZ34ol
+CKFnvEZkggURFZsZuKo9c3hQMhp+u+OO+5oomf9iAW2Pa8ApmUryW3Nfqy+nUqHe
+H10R6RH4qUvxmVNKVZ5zJEQzqNMuotibH4JgXj37AUswWB1Rc7Q0g4RIcYs/yAUp
+1/lM83ad8OzpakfhhTqipogrUWchOLxnFvDoWomOAmwlg5pvQTAmfAiX2QZNThj/
+bBCrHAftwe9Gy7RdYwINEgcLEFmip48YDuhEoBAk5yO+HQtJ0oEnKAZoggEUKM4L
+I1UziLq0GrtZG9TfyvDE4OlF5Yq2jQ==
+=p7O0
+-----END PGP SIGNATURE-----
+
+--9vEWHDJml80AW6hw--
 
