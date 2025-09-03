@@ -1,188 +1,116 @@
-Return-Path: <linux-kernel+bounces-799112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E15BCB42729
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:44:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 981D5B4272D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FC571BC3181
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:44:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7283A3BB25D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3415530AAD0;
-	Wed,  3 Sep 2025 16:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EiuUavT9"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A167530ACEC;
+	Wed,  3 Sep 2025 16:44:36 +0000 (UTC)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA868303C88;
-	Wed,  3 Sep 2025 16:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9BB304971;
+	Wed,  3 Sep 2025 16:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756917842; cv=none; b=BCgPG6yr4j1WzG8A5bG2D+Ljm8++rrR3HxdiN6S38F2jGAamm7FVGjN16S4wbKhVngFhaQGeOe6dAHxmJMZ1Y+L3xkOpe2WVz+EDVDFxMTKkMrETimdtpOqM5NekSDieZPuD6vbNnwgNLQoJImfUtP5oOx1oRzVAgE2TrWlyfL4=
+	t=1756917876; cv=none; b=UITIU8MtjdOuzMSxjSRkDsbor64fAmkSrsyleJ5fxYN9Khg0S2oBMvnyOR4XAAs8WqBUPxYSLJHeNJ0AXZnNMR2wkPklGjoLgdFKh7LbkCrZs6AZEo2kGynmXel6IwZ/3ZAATKhPdrk4wo9tScA7lyxAJeUcqriDw/Ign2SPmXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756917842; c=relaxed/simple;
-	bh=ZEpEo0HqQ+7TROEllZ65s3PKRSyeUgAHYsJL0nuS9SQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=gxtS7tSWp04zQcqVgjf4wCJKeKqAcvzArD+xTL8UqwjTMfPvYdyv7N+Cv9EVOmXLeuLpEkXdB2zncVIfMj3UG/jZEus6UacMk23jxCKrvy8tie5rKt5ticlOTTcTzsMP0hs/59dK1RCDQJkgiEDO5Z5trXD80oQiIG3yXu+qbSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EiuUavT9; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1756917876; c=relaxed/simple;
+	bh=ariY+FcwAGaGYyROXJ//ip+a+qed9bzuJqi587Emzwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mWp5Tzmz9TkIBpWrMPmuYdpnnc23M/eahLFgS7WNwspHiOsAP/MPKgXzZpYKFxP7mNrDAPT02enD3hDyuYDtkFJGnHmHZfxRQOHIBBD5j8v/RkWTVibBIUDdRjeI36+4mgvqqNGSTy+KzPZj23mkYt5E/GK8SI2dxR9gYZ+Xv0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-805a1931a15so14294585a.1;
-        Wed, 03 Sep 2025 09:44:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756917840; x=1757522640; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=CPFA+L4AzTHvY63w8wb2OR/q6TIxMx2RwJU0a3Nq7Dc=;
-        b=EiuUavT96aY0+s1zso1+uYSRj0dXoHkIJPDeUZKbQgvY18/qX+C078D8U03UKctNWV
-         GY9PuQpSbf114o2XKTNbPLRk4nVNH2+hbdWRA/lkK3OA4d1iXqMPyLdxXVg8kWhvUyJ2
-         pAbYTqLXtgjYuvvlilQYkTEPbl1/4hzT2sYY/RHdE9mwYE7+IgwUZwENoeoX10aQDxS/
-         VDagvTlPDrsc4noLqfaUM8B1OYOkdeowWkjvG+BN7+g4yILJPytmST2CwNofSH9WNPSz
-         2q58KJ8R6j/+VL/ed4tOwGIKzMlU/7Wnx89Sth+56ZpTAtjrvAHRw/ieeLajGIVa/31P
-         /KEw==
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61e8fe26614so61197a12.1;
+        Wed, 03 Sep 2025 09:44:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756917840; x=1757522640;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CPFA+L4AzTHvY63w8wb2OR/q6TIxMx2RwJU0a3Nq7Dc=;
-        b=YosXo3+wFOAhDSh6cF6XiHSkiCUFVgVdjbFL4JB6LiMpZpQ/xfpncKGuVwBk864Kg1
-         6sspPY9bZ6lshOPJJug5KDn9i/ub9alN0f2kqjfbSsYrSJmSREzfx15dmN9puPO52Mw6
-         WvjdG0aknWr4D+QeWlxYpLLLQgtjnkDHJvB2r94Tlc+7HTktVlDvKCRE9x2nurjXqAIw
-         GOa2P4FZUvcisP6ox9Q/bp2OqD3rcCSrnowrwKUSoPoXwQaSBFDyUG6SYvVoqqMpD0dX
-         eeN6na+B53MduyCqeGhiuhHOzA4RQLO/ioxi+E0dVzepNrUOfG9lEUecENCscAsqrOMS
-         WT0g==
-X-Forwarded-Encrypted: i=1; AJvYcCW8eTUh0Ms1Q+5RWcHYYVwa1cQaepE3ZT3R4xpPtZf57nKiQBLf9r4tVCQw7AcKdSVZaEi2i6/LpcX7@vger.kernel.org, AJvYcCWWfYg8ow97tjtwBPkYuoDTnoTGj8zQQXsRzxCSU4JlxjF3ouCs9NA935N9Bxu7sOrtnS6fqK3bF3BPP3Lm@vger.kernel.org, AJvYcCXUulx1XfvAxpY6E2mF1Dm3YuyJFd7/xNRswSecZgzG7/77hIovH0UQUzgmfMmtQV63xILrBEpWrQNC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw0IO0exV5+ZxWrznX8jNj2/5aXWKu1otBfkotGulQhJl2So/R
-	TH8KqkgBDpPHSuRRCQi/MrGBNaHpCnS4Djwjq8AsuYBILLTv4fHf4l2i/fccFzcX
-X-Gm-Gg: ASbGncszcrnX80Una1W10lJJwQGg9unUHHA8GGd18Iz2FDxgTo3F3gpVCWLWBDTRT3S
-	Ce9MZhgQZezg091C94JrBGHJYBmacm/5h4Zbjv5xXOdDf5BO2k3Co2km/bVHRO3WGO0uXNbkw08
-	xX79M78yS9WyBoILojTQY89tEp0wWA8yYcdNoTV4NxUnnky9MIjKAyiNILUO5m+uA7IZevtFFeA
-	sQm/3uNimYipOFb+qHHpSgfq3IL0bacJPaHl9Plm20IdutGzLzPGQi/uwcJIEwixx18kYRdEsji
-	/7ZVmyIOH59OZZSzbTiuJ7wMcAPp4495INg6kElnqNhPrC5cXiZaiY/4VBA7dz+5Swve2zkbps/
-	jIAT4F5zNbMCWXjvpjUOOS216nE5LPytyZ/ItlMCtsE8arr1cP7Wduuq0Ibl5GDULnhVCgvUHxn
-	E70Tus9Q==
-X-Google-Smtp-Source: AGHT+IHckZcXoO7/1/111Zg60YwNmiw3Ew6cMklTHyBH+w/ECAe0Nt0q8YEQ6Zs+U9xpoUMuXP9NBg==
-X-Received: by 2002:a05:620a:a514:b0:7ff:f2ea:d378 with SMTP id af79cd13be357-7fff2ead728mr1498046285a.55.1756917839586;
-        Wed, 03 Sep 2025 09:43:59 -0700 (PDT)
-Received: from ehlo.thunderbird.net (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-80aa6e497a7sm133468985a.17.2025.09.03.09.43.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 09:43:59 -0700 (PDT)
-Date: Wed, 03 Sep 2025 12:43:56 -0400
-From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v4_1/2=5D_device_property=3A_A?=
- =?US-ASCII?Q?dd_scoped_fwnode_child_node_iterators?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <aLhAKJBUNQVH1Vmf@kekkonen.localdomain>
-References: <20250902190443.3252-1-jefflessard3@gmail.com> <20250902190443.3252-2-jefflessard3@gmail.com> <aLhAKJBUNQVH1Vmf@kekkonen.localdomain>
-Message-ID: <C883B982-5984-4714-B322-BB8205B47D6E@gmail.com>
+        d=1e100.net; s=20230601; t=1756917873; x=1757522673;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t9FL6tV8n13zlBvWYA3e3xfxYg9pjFXyRGdxyyVqxgY=;
+        b=bbXFH0FVl/pQx5GEvDg864XUfVolmy5QOnHAKYX7kHhRYLK1Ple3ppuvf/brX4NRDH
+         5TsAAIk4TcNIoEU/FV7MZqRqlUv9yKJNKQI3q8T6vFjHli8KFGAqddoxLNWLecuqm5il
+         d+VaoeUE8O3fcqLsFdPmZ30Lzk7w35coDLek8Y0gcaHD3YatH3ITENxB5emhhOi0Fh8T
+         z2alWqkqKXL7N0wNI+r9rg4XwwgVSrlWouYLwK3Ymfyc5ZO4un7Algmp1aqRbhEp9d+O
+         ic4rjth0Xxsp6jx6f27omJLkZQjGT1yPtoIj3RrrARAxXKVwH7KJzvMZNvdC/JMlp3tq
+         9b3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUi9CrIR6d8MVFobzqleMksP3bL5AR9IB8m7yQygNTYWkgeZjvLgV4n3uxS73GKLb6h8hijC1FWsybwRGE=@vger.kernel.org, AJvYcCXQWC7SH6uVxkuRMtH8XIsozkxy7RdlvoEJnYl1VaRit81eBpx2nb2p2oVZ/TOegdA6tapVSUV6@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzOqa3Qor8leQ51+RAnQphQrKWkpdZtVIB3WsOJU3NoRArt3io
+	8jw6WoDAps8qsnqkmq7RN8wvptJ6rCgGnTz0WTW0ollgM6tmkrns9iBE
+X-Gm-Gg: ASbGncu5qlUqvgrEr64Y2AptVFqYY5WOyhw5mPyzVKLx9F8FqsRTaIe2ibXAbIaYKsu
+	KMPU1l/LrjzVTuHelZvhYN8ATL+qSmvV++vGhS4DWKFVbRLpUSNqbnEzDJ0FAzxbkoOyKYjAGFB
+	3w1+Q4Agr78x3x6YTkKcgymp6YTcacj6V3X0nNiC9qtcJC4aRmTF8NuvMGivMoGfA+KxPOQO1NS
+	NjVUAsjwN3Q8aw/iDa6q0VVjcNWPszL5NAp50Nv8VXouC4kaEISb6TOJiErbXGPjhBK/iYsfmyN
+	1Z1sOqfNYVu8xEhVjZrUr1KiWI/V0J3kCmHVZB4ldUmXEBoEa91lje9tcfjAyk3uS1U6R1CNCtf
+	rLq1jd79T0eB2
+X-Google-Smtp-Source: AGHT+IHfDVVrl1wHNyJKDwCmpxOKb3QmVNSXv+pI7nurrc1BarqU4QHmNG3rluy6cGrnQiIAHjnrBA==
+X-Received: by 2002:a17:906:5909:b0:b04:1b90:8d7a with SMTP id a640c23a62f3a-b041b908f01mr1209368966b.27.1756917872692;
+        Wed, 03 Sep 2025 09:44:32 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:1::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b01af44a01fsm1099042866b.23.2025.09.03.09.44.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 09:44:32 -0700 (PDT)
+Date: Wed, 3 Sep 2025 09:44:29 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rt-devel@lists.linux.dev, kernel-team@meta.com, efault@gmx.de, calvin@wbinvd.org
+Subject: Re: [PATCH 3/7] netpoll: Move netpoll_cleanup implementation to
+ netconsole
+Message-ID: <vxad5ijytxk66i2rja2uzmueajzpbccy3xcc4nokfnc6chapqb@j2kxvpyb63rh>
+References: <20250902-netpoll_untangle_v3-v1-0-51a03d6411be@debian.org>
+ <20250902-netpoll_untangle_v3-v1-3-51a03d6411be@debian.org>
+ <willemdebruijn.kernel.2c7a6dc71163b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <willemdebruijn.kernel.2c7a6dc71163b@gmail.com>
 
-Hi Sakari,
+On Tue, Sep 02, 2025 at 06:49:26PM -0400, Willem de Bruijn wrote:
+> Breno Leitao wrote:
+> > Shift the definition of netpoll_cleanup() from netpoll core to the
+> > netconsole driver, updating all relevant file references. This change
+> > centralizes cleanup logic alongside netconsole target management,
+> > 
+> > Given netpoll_cleanup() is only called by netconsole, keep it there.
+> > 
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> 
+> What's the rationale for making this a separate patch, as the
+> previous patch also moves the other netconsole specific code from
+> netpoll.c to netconsole.c?
 
-Le 3 septembre 2025 09 h 18 min 32 s HAE, Sakari Ailus <sakari=2Eailus@lin=
-ux=2Eintel=2Ecom> a =C3=A9crit=C2=A0:
->Hi Jean-Fran=C3=A7ois,
->
->On Tue, Sep 02, 2025 at 03:04:39PM -0400, Jean-Fran=C3=A7ois Lessard wrot=
-e:
->> Add scoped versions of fwnode child node iterators that automatically
->> handle reference counting cleanup using the __free() attribute:
->>=20
->> - fwnode_for_each_child_node_scoped()
->> - fwnode_for_each_available_child_node_scoped()
->>=20
->> These macros follow the same pattern as existing scoped iterators in th=
-e
->> kernel, ensuring fwnode references are automatically released when the
->> iterator variable goes out of scope=2E This prevents resource leaks and
->> eliminates the need for manual cleanup in error paths=2E
->>=20
->> The implementation mirrors the non-scoped variants but uses
->> __free(fwnode_handle) for automatic resource management, providing a
->> safer and more convenient interface for drivers iterating over firmware
->> node children=2E
->>=20
->> Signed-off-by: Jean-Fran=C3=A7ois Lessard <jefflessard3@gmail=2Ecom>
->> ---
->>=20
->> Notes:
->>     checkpatch reports false positives that are intentionally ignored:
->>     MACRO_ARG_REUSE, MACRO_ARG_PRECEDENCE
->>     This is a standard iterator pattern following kernel conventions=2E
->>=20
->>  include/linux/property=2Eh | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>=20
->> diff --git a/include/linux/property=2Eh b/include/linux/property=2Eh
->> index 82f0cb3ab=2E=2E862e20813 100644
->> --- a/include/linux/property=2Eh
->> +++ b/include/linux/property=2Eh
->> @@ -176,6 +176,16 @@ struct fwnode_handle *fwnode_get_next_available_ch=
-ild_node(
->>  	for (child =3D fwnode_get_next_available_child_node(fwnode, NULL); ch=
-ild;\
->>  	     child =3D fwnode_get_next_available_child_node(fwnode, child))
->> =20
->> +#define fwnode_for_each_child_node_scoped(fwnode, child)		\
->> +	for (struct fwnode_handle *child __free(fwnode_handle) =3D	\
->> +		fwnode_get_next_child_node(fwnode, NULL);		\
->> +	     child; child =3D fwnode_get_next_child_node(fwnode, child))
->> +
->> +#define fwnode_for_each_available_child_node_scoped(fwnode, child)	\
->> +	for (struct fwnode_handle *child __free(fwnode_handle) =3D	\
->> +		fwnode_get_next_available_child_node(fwnode, NULL);	\
->> +	     child; child =3D fwnode_get_next_available_child_node(fwnode, ch=
-ild))
->> +
->
->Do we really need the available variant?
->
->Please see
-><URL:https://lore=2Ekernel=2Eorg/linux-acpi/Zwj12J5bTNUEnxA0@kekkonen=2El=
-ocaldomain/>=2E
->
->I'll post a patch to remove fwnode_get_next_available_child_node(), too=
-=2E
->
+I just tried to isolate the changes in small patches as possible.
+previous functions needed to go all together, given it was they were in
+a chain.
 
-Thanks for the link to the discussion=2E
+this one netpoll_cleanup() is more independent, so, I decided to
+separate it, making the patches smaller individually.
 
-I see you're planning to remove fwnode_get_next_available_child_node()=20
-entirely=2E In that context, adding a scoped version doesn't make sense=2E
+> And/or consider updating prefix from netpoll_.. to netconsole_..
 
-For my driver use case, I can handle the status checking manually if=20
-the _available_ variant is being deprecated=2E
+Good point, and I agree with the feedback.
 
-Should I drop the _available_ variant and submit v5 with only=20
-fwnode_for_each_child_node_scoped()?
+In cases like this, should I rename the function while moving, or,
+adding an additional patch to rename them?
 
->>  struct fwnode_handle *device_get_next_child_node(const struct device *=
-dev,
->>  						 struct fwnode_handle *child);
->> =20
->
-
+Thanks for the review,
+--breno
 
