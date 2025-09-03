@@ -1,172 +1,92 @@
-Return-Path: <linux-kernel+bounces-798978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAFCEB42572
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:30:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB64DB4257B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A02A586854
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:30:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 866AD3B3071
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57C9253B5C;
-	Wed,  3 Sep 2025 15:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F284263F2D;
+	Wed,  3 Sep 2025 15:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q+DkxYys"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="fu87r0cU"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3FD1A3165
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACC32609D9;
+	Wed,  3 Sep 2025 15:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756913192; cv=none; b=mEA63zTMN7nFn3Wo+nrXxbu8BfiWgyMtsLORmsLBJIlci83S5am7xRxDzxJFwOU1w3G8Pzkh7x/EdvXu1ODVJqFZ+PI33KwO2yeh+PTvZgWHlee9O735zT1fIUfmn38aCJ5cYgy6HyCvnoFVh0Gtb7N/DOztMKjEpYMiZUgcF6U=
+	t=1756913204; cv=none; b=dCGcsef10ilGZtVATA7Zk30XyJoUr0XLRpXs/8JfMj/HVcx+fo8E+MNzyNjviTkQt/FX8bPW9qgWYo0X3gk4Ax/ScuFfAzUCld6Vm+o2j1AcWV6UovdYYBWPvEWGXX/JB7eTMzoabMEU9kE4O5sMadjauTyM48wCWW6I9Tl6cKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756913192; c=relaxed/simple;
-	bh=b5KF24PioFT9bG43Xm15ktTrj3yZUBBhV9mrwRN+cnQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TzVN4XjHv78PztOL0okNbtmjxkOcv2ec7ERBvFIu40wbudrYQ/12EW+21R7mXLb8V/jwHXS02ibjfCkdgYl0J8WlnmdOhSn3kwhY1n+tpERfZlPPk3oR1lJpnxUEgdSyrtDRVmkwL7c71gkitbtRSH9Tmvb/Jm5tARIln3pRaR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q+DkxYys; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756913190; x=1788449190;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=b5KF24PioFT9bG43Xm15ktTrj3yZUBBhV9mrwRN+cnQ=;
-  b=Q+DkxYysdTvrj16aJvR/bBolD3CpLH4Saiu645uP4JCvhvwLmKHv7HNn
-   DDFeJEXCRsm3DS/VNYjvyffcIksl4YGIRAPvumVXdVF3TZXYSZ+TfXzaO
-   Su578AQGRmZke1t5QXKFF25Ne5NfZ/AeuFWv+prgnuwZrIriS9vfR36z/
-   QbXQIDQTMMbiGtGU4h4J199wq8fIjL8zxEH57jGfY4NDK0mX8oj/J4iA1
-   oYMuZ4KaJCj9aIBPhXr362EJo+1ZtXURFS7sLu1vRQYLrey7ybwHsPRJJ
-   bKGkZ/jw0Tqb4cEP2+kmpUMKc2cQcWIDeT6TCzTqJQXxzzfDg77o44e8a
-   Q==;
-X-CSE-ConnectionGUID: NG4ZdGvVR/qXLKlIMvQ56Q==
-X-CSE-MsgGUID: fadBoWluS1uMcJQxbnqrNA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="46805013"
-X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
-   d="scan'208";a="46805013"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 08:26:30 -0700
-X-CSE-ConnectionGUID: pZw52fH8QumqUcG7EMa9pg==
-X-CSE-MsgGUID: 5azvJawbTme5+kT/ZE9A9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
-   d="scan'208";a="171561645"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.118.90]) ([10.247.118.90])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 08:26:27 -0700
-Message-ID: <f755b775-b87a-4a3f-b7b9-f37cdadf21e3@intel.com>
-Date: Wed, 3 Sep 2025 08:26:21 -0700
+	s=arc-20240116; t=1756913204; c=relaxed/simple;
+	bh=FtnarChabRbjN/eAsXGGEa3ZDi6iTJ3YN1f2gls4cM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i+WY8mmg9+sSwJ8JISPbW5mfjdKtcdMEmEan/RuoI6ZqGbpBnguGi1wXYUihkkB/KUYoWmF585tYm75YcgroIiTzQtbZ+ZPtzH+p0ZyXojxqf2nZFY6o6DPwhB3+Egx1RKlQtcDMNAbImzrdmjkIX8PsbO1b28o6fYQGGMmdgd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=fu87r0cU; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=DpewNfBwL/DylheUDqzo8Y5cWg7w9pSgpdI04ZxbrGE=; b=fu87r0cU6UbKLZ63R1igqI47iH
+	Ep9dtTU5+PQXTIYPbcODrjppN8YHE/cXISREFL3CKA8dze6RXH2Ctj90bPApE6XZzWdAQrLs21gkc
+	c8ztq6cWNEaaoAQkZJZeIAckjcTyqAc2anlV68KOkDyGoECfReegSTIVgEKF0351MJSmnMn6cRyKw
+	8bN0APjS7ScOHsU97VfBXU1C5wN618g7nCm/MgzefWMWIj4xgpJd9gxl7uNPTa4f/iVVQJP9dbOb/
+	T4gWqlKzUhAvtkS251GQk6wlnt+dlgalil1rxjJIO9cd1P2WyhhyUBjPKvXZm6E4hfC/suF9EYn0P
+	yD2kiImw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:53874)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1utpNe-000000000iO-1aQM;
+	Wed, 03 Sep 2025 16:26:38 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1utpNb-000000000ds-41F1;
+	Wed, 03 Sep 2025 16:26:36 +0100
+Date: Wed, 3 Sep 2025 16:26:35 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 net 1/2] net: phylink: add lock for serializing
+ concurrent pl->phydev writes with resolver
+Message-ID: <aLheK_1pYbirLe8R@shell.armlinux.org.uk>
+References: <20250903152348.2998651-1-vladimir.oltean@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ntb: Add mutex to make link_event_callback executed
- linearly.
-To: yuanli fu <fuyuanli0722@gmail.com>
-Cc: jdmason@kudzu.us, allenbh@gmail.com, ntb@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <aKwpnFtdtBlDv69O@didi-ThinkCentre-M930t-N000>
- <483cc0f8-6caa-4124-a724-433ff0d798fa@intel.com>
- <CABbqxmc+jkpgiHrWb5UH2FRZtaNpe4754qis=cPKtidW6+Vj6Q@mail.gmail.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <CABbqxmc+jkpgiHrWb5UH2FRZtaNpe4754qis=cPKtidW6+Vj6Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903152348.2998651-1-vladimir.oltean@nxp.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
+On Wed, Sep 03, 2025 at 06:23:47PM +0300, Vladimir Oltean wrote:
+> @@ -2305,6 +2314,7 @@ void phylink_disconnect_phy(struct phylink *pl)
+>  
+>  	phy = pl->phydev;
+>  	if (phy) {
+> +		mutex_lock(&pl->phy_lock);
 
+If we can, I think it would be better to place this a couple of lines
+above and move the unlock.
 
-On 9/2/25 7:20 PM, yuanli fu wrote:
-> Dave Jiang <dave.jiang@intel.com> 于2025年8月25日周一 23:06写道：
->>
->>
->>
->> On 8/25/25 2:15 AM, fuyuanli wrote:
->>> Since the CPU selected by schedule_work is uncertain, multiple link_event
->>> callbacks may be executed at same time. For example, after peer's link is
->>> up, it is down quickly before local link_work completed. If link_cleanup
->>> is added to the workqueue of another CPU, then link_work and link_cleanup
->>> may be executed at the same time. So add a mutex to prevent them from being
->>> executed concurrently.
->>>
->>> Signed-off-by: fuyuanli <fuyuanli@didiglobal.com>
->>
->> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> 
-> Hi Dave,
-> 
-> Hope you are doing well.
-> 
-> Just wanted to gently follow up on this patch which you had acked
-> before. Is there
-> anything else I can do to help get this merged? Perhaps it needs a rebase on a
-> different tree?
-
-Jon will merge it when he has a chance.
-
-> 
-> Thanks for your time and all your work!
-> 
-> Best regards,
-> Yuanli Fu
-> 
-> 
->>
->>> ---
->>> v2:
->>> 1) use guard() instead of lock & unlock functions.
->>>
->>> v1:
->>> Link: https://lore.kernel.org/all/aKiBi4ZDlbgzed%2Fz@didi-ThinkCentre-M930t-N000/
->>> ---
->>>  drivers/ntb/ntb_transport.c | 7 +++++++
->>>  1 file changed, 7 insertions(+)
->>>
->>> diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
->>> index 4f775c3e218f..eb875e3db2e3 100644
->>> --- a/drivers/ntb/ntb_transport.c
->>> +++ b/drivers/ntb/ntb_transport.c
->>> @@ -59,6 +59,7 @@
->>>  #include <linux/slab.h>
->>>  #include <linux/types.h>
->>>  #include <linux/uaccess.h>
->>> +#include <linux/mutex.h>
->>>  #include "linux/ntb.h"
->>>  #include "linux/ntb_transport.h"
->>>
->>> @@ -241,6 +242,9 @@ struct ntb_transport_ctx {
->>>       struct work_struct link_cleanup;
->>>
->>>       struct dentry *debugfs_node_dir;
->>> +
->>> +     /* Make sure workq of link event be executed serially */
->>> +     struct mutex link_event_lock;
->>>  };
->>>
->>>  enum {
->>> @@ -1024,6 +1028,7 @@ static void ntb_transport_link_cleanup_work(struct work_struct *work)
->>>       struct ntb_transport_ctx *nt =
->>>               container_of(work, struct ntb_transport_ctx, link_cleanup);
->>>
->>> +     guard(mutex)(&nt->link_event_lock);
->>>       ntb_transport_link_cleanup(nt);
->>>  }
->>>
->>> @@ -1047,6 +1052,8 @@ static void ntb_transport_link_work(struct work_struct *work)
->>>       u32 val;
->>>       int rc = 0, i, spad;
->>>
->>> +     guard(mutex)(&nt->link_event_lock);
->>> +
->>>       /* send the local info, in the opposite order of the way we read it */
->>>
->>>       if (nt->use_msi) {
->>
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
