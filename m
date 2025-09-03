@@ -1,85 +1,156 @@
-Return-Path: <linux-kernel+bounces-797787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C325CB4155F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:44:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CBE9B41562
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EC981881A14
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:45:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4C94540449
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A722D876F;
-	Wed,  3 Sep 2025 06:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gv7wPx7+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1447C2D7DC6;
+	Wed,  3 Sep 2025 06:45:52 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21CD1FBEB9;
-	Wed,  3 Sep 2025 06:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0EC231A23;
+	Wed,  3 Sep 2025 06:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756881877; cv=none; b=ipptZtIudmU3PrV4JFtSCBpK94DtteBS4Gm551gFzo0rZsgR7JuOIs75BfBuBUvoxhnpVHopfGW4olx/J1LCbrhjPTaT7wkp2wHEkJhGV0ZGgMu9EhkXsoyXLKOIbohN74M7hwXSseHs2hoBD0aN3KdYteRxDWmZIw2UTABgU4c=
+	t=1756881951; cv=none; b=csy/CJuOJwUVQa5mcECVijlxdSi0j+Q4abb7d2Iw8fqHn/HRY13povPnLM/qO+m7oVdV9Sp8E5PyXdq6GfDCcvC7oHxJFKwlQSwnNeGYhYrLIDXSeXnPKlRRKKq/NpOVdfkjOKrNW15QWMB5TksH4B1o4VO1ON02QiGZR9M40DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756881877; c=relaxed/simple;
-	bh=Zwr9IIXnV40wO6P6KjOHxt6dvUvQanzuoguq6G06ZAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uqqw1x0MoucujmLDtHDiWG8UUwM3SrTVspfOgRframwvq0w/hmgKaRbfOTFS8d9BH34Wdo0Qs2xdkvCfejZgpD7FLj/Y0Go6oYMPsasXwNMfn3fE/8RNQajISOwdn0GHQEKaAJ9s5lXvgUrOyx/Ztq5LSjzvA2NI841n4yoy/V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gv7wPx7+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFCBAC4CEF0;
-	Wed,  3 Sep 2025 06:44:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756881876;
-	bh=Zwr9IIXnV40wO6P6KjOHxt6dvUvQanzuoguq6G06ZAY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gv7wPx7+ULsQFf93hMfnS/BUrXoBUQDheaEOEV5fIu3jyQ2QKVxdE79rIJM/ptYLS
-	 vla7yPEp/Ml2yHJklTe8a17uBFHyvkujY93p9acJ+KyVpmkRYI9WBfvOqtIbO+c36X
-	 tf7winVfJd6z+ncg8bJwr2X0Nb275TK9PU32ZSqZQAs6owkutiit9r1NiCMhyE+xV2
-	 ZF9dMugQ9vWRTLgpDi6WzekZlmIQOO+1OUT5q2oAy8lmgr9RFDHZWBC1jTJb06FXwW
-	 tTW/bbVWL8lcboTVfoV8DX2kHHDJfCEb1CFIBIJkwbF1W0xyOrsxKEoiboID2MQSAC
-	 ILftzF2TbRoQg==
-Date: Wed, 3 Sep 2025 08:44:33 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-Cc: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, mani@kernel.org, 
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH V5 1/4] ufs: dt-bindings: Document gear and rate limit
- properties
-Message-ID: <20250903-sincere-brass-rhino-19f61a@kuoka>
-References: <20250902164900.21685-1-quic_rdwivedi@quicinc.com>
- <20250902164900.21685-2-quic_rdwivedi@quicinc.com>
+	s=arc-20240116; t=1756881951; c=relaxed/simple;
+	bh=0G/x6Yyu8MbTFDsbTF+XG7Xg1cnw/exxi5uvAKalT1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DGTUjdSoE6Ws1Kk6X3oxcCmtstTEsha+qzkIOMimeIHFjsSj+nEAIkRSdO6lTbKvdhhTADJYHLsU8Cuep8lpnOewGu79msJDUywMJZhJDUFhNNTHyiCXfAA1550b7OpMKuawWcA0xMVjyvU+6Xn8UslV1YRiYUZlOf84r/joK3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cGtRG34svzYQvrd;
+	Wed,  3 Sep 2025 14:45:46 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E77981A0F86;
+	Wed,  3 Sep 2025 14:45:44 +0800 (CST)
+Received: from [10.174.179.155] (unknown [10.174.179.155])
+	by APP4 (Coremail) with SMTP id gCh0CgAXYIwU5LdoMmXpBA--.32590S3;
+	Wed, 03 Sep 2025 14:45:42 +0800 (CST)
+Message-ID: <efc327e3-5956-4c61-bca5-e41f1e7c3e78@huaweicloud.com>
+Date: Wed, 3 Sep 2025 14:45:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250902164900.21685-2-quic_rdwivedi@quicinc.com>
+User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
+Subject: Re: [PATCH] nfsd: remove long-standing revoked delegations by force
+To: "zhangjian (CG)" <zhangjian496@huawei.com>,
+ Benjamin Coddington <bcodding@redhat.com>,
+ Li Lingfeng <lilingfeng3@huawei.com>
+Cc: Jeff Layton <jlayton@kernel.org>, chuck.lever@oracle.com,
+ neil@brown.name, okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com,
+ yangerkun@huawei.com
+References: <20250902022237.1488709-1-lilingfeng3@huawei.com>
+ <a103653bc0dd231b897ffcd074c1f15151562502.camel@kernel.org>
+ <1ece2978-239c-4939-bb16-0c7c64614c66@huawei.com>
+ <BF48C6D1-ED2E-4B9C-A833-FF48D9ACC044@redhat.com>
+ <7bf4275d-a7a0-4dab-8e5f-eb7b6e965377@huawei.com>
+From: Li Lingfeng <lilingfeng@huaweicloud.com>
+In-Reply-To: <7bf4275d-a7a0-4dab-8e5f-eb7b6e965377@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXYIwU5LdoMmXpBA--.32590S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF4rXr1kJr45WFyDCFW3Jrb_yoW5CF15pF
+	ZakF4UKw4DXr1xA392y3WkAryFyrs3Wr4UGr98Gr10yFs8ZFyY9a4q9FWYkFy8Wr4kGr4j
+	9an0grZxZ3y5AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
 
-On Tue, Sep 02, 2025 at 10:18:57PM +0530, Ram Kumar Dwivedi wrote:
-> Add optional "limit-hs-gear" and "limit-rate" properties to the
-> UFS controller common binding. These properties allow limiting
-> the maximum HS gear and rate.
-> 
-> This is useful in cases where the customer board may have signal
-> integrity, clock configuration or layout issues that prevent reliable
-> operation at higher gears. Such limitations are especially critical in
-> those platforms, where stability is prioritized over peak performance.
-> 
-> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-> ---
->  .../devicetree/bindings/ufs/ufs-common.yaml      | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+Hi,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+在 2025/9/3 11:46, zhangjian (CG) 写道:
+> Hello every experts.
+>
+> If we can see all delegations on hard-mounted nfs client, which are also
+> on server cl_revoked list, changed from
+> NFS_DELEGATION_RETURN_IF_CLOSED|NFS_DELEGATION_REVOKED|NFS_DELEGATION_TEST_EXPIRED
+> to NFS_DELEGATION_RETURN_IF_CLOSED|NFS_DELEGATION_REVOKED, can we give
+> some hypothesis on this problem ?
+>
+> By the way, this problem can be cover over by decreasing file count on
+> server.
+>
+> Thanks,
+> zhangjian
+I think NFS_DELEGATION_TEST_EXPIRED is cleared as follows:
+nfs4_state_manager
+  nfs4_do_reclaim
+   nfs4_reclaim_open_state
+    __nfs4_reclaim_open_state // get nfs4_state from sp->so_states
+     nfs41_open_expired // status = ops->recover_open
+      nfs41_check_delegation_stateid
+       test_and_clear_bit // NFS_DELEGATION_TEST_EXPIRED
+After the bug in [1] is triggered, although the delegation is no longer on
+server->delegations, it can still be obtained by traversing sp->so_states.
+However, I cannot find the connection between the number of files on the
+server and this issue.
 
-Best regards,
-Krzysztof
+Thanks,
+Lingfeng
+
+>
+> On 2025/9/2 20:43, Benjamin Coddington wrote:
+>> On 2 Sep 2025, at 8:10, Li Lingfeng wrote:
+>>
+>>> Our expected outcome was that the client would release the abnormal
+>>> delegation via TEST_STATEID/FREE_STATEID upon detecting its invalidity.
+>>> However, this problematic delegation is no longer present in the
+>>> client's server->delegations list—whether due to client-side timeouts or
+>>> the server-side bug [1].
+>> How does the client timeout TEST_STATEID - are you mounting with 'soft'?
+>>
+>> We should find the server-side bug and fix it rather than write code to
+>> paper over it.  I do think the synchronization of state here is a bit
+>> fragile and wish the protocol had a generation, sequence, or marker for
+>> setting SEQ4_STATUS_ bits..
+>>
+>>>> Should we instead just administratively evict the client since it's
+>>>> clearly not behaving right in this case?
+>>> Thanks for the suggestion. While administratively evicting the client would
+>>> certainly resolve the immediate delegation issue, I'm concerned that approach
+>>> might be a bit heavy-handed.
+>>> The problematic behavior seems isolated to a single delegation. Meanwhile,
+>>> the client itself likely has numerous other open files and active state on
+>>> the server. Forcing a complete client reconnect would tear down all that
+>>> state, which could cause significant application disruption and be perceived
+>>> as a service outage from the client's perspective.
+>>>
+>>> [1] https://lore.kernel.org/all/de669327-c93a-49e5-a53b-bda9e67d34a2@huawei.com/
+>> ^^ in this thread you reference v5.10 - there was a knfsd fix for a
+>> cl_revoked leak "3b816601e279", and there have been 3 or 4 fixes to fix
+>> problems and optimize the client walk of delegations since then.  Jeff
+>> pointed out that there have been fixes in these areas.  Are you finding this
+>> problem still with all those fixes included?
+>>
+>> Ben
+>>
+>>
 
 
