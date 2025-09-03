@@ -1,182 +1,146 @@
-Return-Path: <linux-kernel+bounces-798007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00FABB41854
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:25:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA303B4185C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E20123A2D28
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:24:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F8634841FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C542E3AEA;
-	Wed,  3 Sep 2025 08:24:53 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8048F2EB5B3;
+	Wed,  3 Sep 2025 08:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wuRn9cO+"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93FD1D6DA9;
-	Wed,  3 Sep 2025 08:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C4C2D63E3
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756887893; cv=none; b=nQ6KRMTqNgfXjm2IuLJ0dyrgM8MwqGf8d8BMzLMUhwd8WpMhK6WZwADXNUv/CdJrDGgSEvptUpZF5sg4tt25FzNfFEsWTrm44Y5p2+Sbwi+OMWdpmqrWMO5bOp3s+r5WH/W0aWSPVCBZinOwfHCkx8CdcdAGhuLk84LxSAfnL6g=
+	t=1756887907; cv=none; b=czKVU1dwAvMt4EU4EGyFhozvQtBwMyaMVZvJXgoDVvPYBwB/IcCTBbBIMjqZhLW7THya3vmG2gWn1WG5rrH0I7iI6L0khnZb1QkL6ysqXmYN7HMMIGO91RtGQLwwnu2O6b6Gk+P+dXP4q3+FzJ5UD7+6PzpfDxHdLJABfzLFll8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756887893; c=relaxed/simple;
-	bh=2guZtEvZRRqsDYQoh3OzZoqBnT1rV39dxbVBeNeB88Q=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=rKSl1hU3YW01HvOfqdq+4eS5oUQD9zebO2/HKxbR1ZGVq7upg2LUkQLIr2QcPXWqx+mrWmqwRvysO2cIQ5nENEA9w/RUpqa9SK2w9LyM8PbhkUGrgTBRPZQM8ZqePImazT0Li2FTDSRCFpt046pRK/RYU0nK1UYJU+CXxxOpRRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cGwdW2PVCzKHMhG;
-	Wed,  3 Sep 2025 16:24:47 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 392061A0CA2;
-	Wed,  3 Sep 2025 16:24:47 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgB3wY1N+7doM1TxBA--.52838S3;
-	Wed, 03 Sep 2025 16:24:47 +0800 (CST)
-Subject: Re: [PATCH] blk-throttle: check policy bit in blk_throtl_activated()
-To: Liang Jie <buaajxlj@163.com>, yukuai1@huaweicloud.com
-Cc: axboe@kernel.dk, fanggeng@lixiang.com, gj.han@foxmail.com,
- hailan@yukuai.org.cn, hanguangjiang@lixiang.com, liangjie@lixiang.com,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangchen11@lixiang.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <c60c0768-2b1b-a26b-db7d-340fd29ff688@huaweicloud.com>
- <20250903072112.3432190-1-buaajxlj@163.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <f17231f5-61a0-8d2d-eef5-f9b838caad34@huaweicloud.com>
-Date: Wed, 3 Sep 2025 16:24:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1756887907; c=relaxed/simple;
+	bh=DjHRnWaffhiQNzrhs0HZOnYXvEtKg8njyQjCwtp8OGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HJ2VGs7wvJUG7g3URkL8Q/aCJ/40Q4+3EpooiWp6ZxMWqHK+GZgNMTwOrU/Tj050iKBa0ypxvrQL2L4RWLwb3dMGLEQRpQJF4y/uagJddt7OYrhNCoHSPBDFv1qK5OWjNWlJgssdT5somn0I44T4GC0urCmb9Y1eA0yNLiZmw6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wuRn9cO+; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 3 Sep 2025 10:24:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756887900;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u3QNaDkcDaoIdSNYl9mWixP4E6/AXP2pNYf1Shjkib4=;
+	b=wuRn9cO+SrMffuemf5XcscKqtvggSOG+Z0tWNBrgYk5jTjf8jhDHZBR9PAe2FCwHcj55Pa
+	jDyESf/GQl62TQzZuWmOJU8yiRgZbLWbBdOpxyr1KMn4fzfrANeBpWsv/99vboWhxpAOqA
+	4fJSyIOUeIRjRrpqlI0P0ql+aILUcr8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v7 10/10] media: i2c: ov9282: dynamic flash_duration
+ maximum
+Message-ID: <xaejexfyvesftglbdyllzrz5nlibzcj3poddczgrqhrm7ugh3l@tysxjhoksvz7>
+References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
+ <20250901-ov9282-flash-strobe-v7-10-d58d5a694afc@linux.dev>
+ <aLYNQ4W8f55G_7HP@kekkonen.localdomain>
+ <j4t7zyhf4zhn5t27os7yxi3chaux3m6bjlxe774crmdmzzm54f@dlk5s5ai7ehc>
+ <aLfy4MOOgHu2s1m-@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250903072112.3432190-1-buaajxlj@163.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3wY1N+7doM1TxBA--.52838S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZry7JFWUXw1rAF13KF4xCrg_yoW5CF1DpF
-	WUCa4Ykw4UXrZ7J3W2qr10kryF9w4fCw45Jr1rJryfAw1qgr1fZr1UKw15Ca1fZFsaka4U
-	Z3Z0qwsxuF1YyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLfy4MOOgHu2s1m-@kekkonen.localdomain>
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+Hi Sakari,
 
-在 2025/09/03 15:21, Liang Jie 写道:
-> On Wed, 3 Sep 2025 14:03:37 +0800, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+On Wed, Sep 03, 2025 at 10:48:48AM +0300, Sakari Ailus wrote:
+> Hi Richard,
 > 
->> 在 2025/09/03 10:55, Han Guangjiang 写道:
->>> Hi Kuai,
->>>
->>>> Instead of add checking from hot path, do you consider delaying setting q->td
->>>> until policy is activated from the slow path? I think this is better solution.
->>>
->>> Thank you for your review. You're absolutely right that performance
->>> considerations in the hot path are important.
->>>
->>> We actually considered delaying the setting of q->td until after policy
->>> activation, but we found that q->td is needed by blkcg_activate_policy()
->>> during its execution, so it has to be set before calling
->>> blkcg_activate_policy().
->>
->> That's not hard to bypass, q->td is used to initialze tg->td in
->> throtl_pd_init(), actually you can just remove it, and add a helper
->> tg_to_td() to replace it;
->>
->> struct throtl_data *tg_to_td(struct throtl_grp *tg)
->> {
->> 	return tg_to_blkg(tg)->q->td;
->> }
+> On Wed, Sep 03, 2025 at 09:13:35AM +0200, Richard Leitner wrote:
+> > > > @@ -1491,8 +1510,11 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+> > > >  	/* Flash/Strobe controls */
+> > > >  	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
+> > > >  
+> > > > -	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+> > > > -			  0, 13900, 1, 8);
+> > > > +	exposure_us = ov9282_exposure_to_us(ov9282, OV9282_EXPOSURE_DEFAULT);
+> > > > +	ov9282->flash_duration = v4l2_ctrl_new_std(ctrl_hdlr,
+> > > > +						   &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+> > > > +						   0, exposure_us,
+> > > > +						   1, OV9282_FLASH_DURATION_DEFAULT);
+> > > 
+> > > Wrap this differently, please, e.g. after '='.
+> > 
+> > This is wrapped the same way as all other v4l2_ctrl_new_X() calls in
+> > ov9282_init_controls(). Therefore I've chosen to do it this way here
+> > too.
+> > 
+> > So if I'm going to change this one, IMHO all others should be changed
+> > too (exp_ctrl, again_ctrl, vblank_ctrl, pixel_rate, link_freq_ctrl,
+> > hblank_ctrl). Is this intended?
+> > 
+> > If so I'm wondering if this would be a suiteable approach?
+> > 
+> > ov9282->flash_duration =
+> > 	v4l2_ctrl_new_std(ctrl_hdlr,
+> > 			   &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+> > 			   0, exposure_us,
+> > 			   1, OV9282_FLASH_DURATION_DEFAULT);
+> > 
+> > It is fine for checkpatch, but introduces a newline for every ctrl and
+> > tbh I'm not sure if it improves readability?
 > 
-> Hi Kuai,
+> I don't think it's worse at least. You can also rewrap the rest of the
+> lines:
 > 
-> Thanks for the suggestion. Just a quick note: in throtl_pd_init(), q->td is not
-> only used to init tg->td, it’s also needed for sq->parent_sq:
-> 
->   - sq->parent_sq = &td->service_queue;
-> 
-> So if we remove tg->td and delay q->td, throtl_pd_init() won’t have a valid td
-> to set parent_sq.
-
-Yes, however, this can be fixed very similar:
-
-Set sq->parent_sq to NULL here, and add a helper parent_sq(q, sq):
-
-if (sq->parent_sq)
-	return sq->parent_sq;
-
-td_sq = &q->td->service_queue;
-return sq == td_sq ? NULL : td_sq;
-
-And sq_to_tg() need to be changed as well. So far, I'm not sure how many
-code changes are required this way. We of course want a simple fix for
-stable backport, but we definitely still want this kind of fix in future
-release.
-
-Thanks,
-Kuai
-
-> 
->>
->> Meanwhile, please remove the comment about freeze queue, turns out it
->> can't protect blk_throtl_bio() becasue q_usage_coutner is not grabbed
->> yet while issuing bio.
-> 
-> You’re right. We’ll remove that comment in patch v2.
-> 
-> Thanks,
-> Liang Jie
-> 
->>
->> Thanks,
->> Kuai
->>
->>>
->>> We explored several alternative approaches:
->>>
->>> 1) Adding a dedicated flag like 'throttle_ready' to struct request_queue:
->>>      - Set this flag at the end of blk_throtl_init()
->>>      - Check this flag in blk_throtl_activated() to determine if policy
->>>        loading is complete
->>>      - However, this requires adding a new bool variable to the struct
->>>
->>> 2) Reusing the q->td pointer with low-order bit flags:
->>>      - Use pointer low-order bits to mark initialization completion status
->>>      - This would avoid adding new fields but requires careful handling
->>>        and additional processing
->>>
->>> Given these constraints, we chose the current approach of checking the
->>> policy bit in blk_throtl_activated() as it:
->>> - Doesn't require struct changes
->>> - Provides a clean, atomic check
->>> - Aligns with the existing policy activation mechanism
->>>
->>> We would appreciate your suggestions on how to better handle this
->>> initialization race condition.
->>>
->>> Thanks,
->>> Han Guangjiang
->>>
-> 
-> .
+> 	ov9282->flash_duration =
+> 		v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops,
+> 				  V4L2_CID_FLASH_DURATION, 0, exposure_us, 1,
+> 				  OV9282_FLASH_DURATION_DEFAULT);
 > 
 
+Ok. Fine with me ;)
+
+So I will adapt this patch and add a new patch which changes the wrapping
+for all remaining v4l2_ctrl_new_X() calls in ov9282_init_controls() to the
+series and send a v8? Or should I wait for feedback from Laurent for v8?
+
+> > > >  	ctrl = v4l2_ctrl_new_std_menu(ctrl_hdlr, &ov9282_ctrl_ops,
+> > > >  				      V4L2_CID_FLASH_STROBE_SOURCE,
+> > > > 
+> > > 
+> > > To me the set looks good but I wouldn't mind about having a bit more
+> > > review.
+> > 
+> > Thanks for your continuous feedback! It improved the series a lot!
+> > 
+> > Is there anyhthing I can assists/help?
+> 
+> I asked Laurent if he could check this out, it'd be nice to get these to
+> 6.18.
+
+Nice. Thanks! Yeah, that would be nice, indeed :)
+
+> 
+> -- 
+> Kind regards,
+> 
+> Sakari Ailus
+
+regards;rl
 
