@@ -1,161 +1,82 @@
-Return-Path: <linux-kernel+bounces-798879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EB9DB42428
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:56:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ADE0B42433
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14CFA5E748E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:56:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 162315E085F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DA63054D2;
-	Wed,  3 Sep 2025 14:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABD930AAB8;
+	Wed,  3 Sep 2025 14:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CR0Exwn5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YvdESYoT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zZ0pLElK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CE4213E6D;
-	Wed,  3 Sep 2025 14:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06483074A6
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756911369; cv=none; b=baDV3tSxsYKBmJmFv+OHEsquTKhL7Xjxhi1fIZDaXithV1uRyT6fivNjQu0iPEmRPsYtawh/UnjKjkExAohJCcOpWi4rl7397uJzRMMK+pKi9+e3Ejn5y35i/l19+aUi2F4qIkksgImzj+N+/1yeFNM2cJPYispQgUKH0RtWYe8=
+	t=1756911550; cv=none; b=u0itozC2dVUmf3tecZH8gTJD/XFZt591HYgIDLnNBjH57W73Nd+Whkvqnf8D6VV5vQiGXpnXeg0w7RayuCb0KvUJmUCf/MLTmTT5yP663SC/R7oh0IAUuUJclmPLHmOU4oQbjj2SNtfq+AY/qQfR7NfFfxgrM75kZKdAqDr4rms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756911369; c=relaxed/simple;
-	bh=fyT8F1OdM5Im8IxoGeyk6V0vUNEhI+uFQ3mu15FZr98=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E68BReJC+S+GZ4y+ldofGTf/ZnKFAvNGEVa021N30JtDVsytNeZryF7w8dT331paTev0VCjFbeW+/S1Melmf5W4+qiOAnKpLB25/W8MJThCjTdHn1HBDR0+jLbVfKWyTo9rflT5C0swueZIPRpD3aVkiPH0BTrIzMzs/xWHhAkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CR0Exwn5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C1EC4CEE7;
-	Wed,  3 Sep 2025 14:56:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756911369;
-	bh=fyT8F1OdM5Im8IxoGeyk6V0vUNEhI+uFQ3mu15FZr98=;
-	h=From:To:Cc:Subject:Date:From;
-	b=CR0Exwn5abVZ3SLaiL1Fks0DMyZweqUobY4ouS1FKSSqB1jsQSxNyZS+LiGgrbIQE
-	 vILuGfJfU/DhvdDecvSbn2sUUZo/DYFhom35YB5S+C+lopGVN72S9oXLn28zNIO1Fx
-	 +PtBTBylyZ9fGmXs3pzIbxYBzGfl73oD92aWgynpdK5TNdnmkwr49FXL8bFstDOL9v
-	 WvLfgmTmROOmPWr33Cx6i4gSy6F6bAvqD4y+P5tiTsiVRMDJLRoH28b8vbrsYFYC22
-	 KNtloPgcimwzVNC7PWrzSeH2S8i3w0+D9XJs0DRZ4wbjUhxVq0s3lAh/tmw0RpGbGR
-	 K32bYfiuf2hkA==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Zihuan Zhang <zhangzihuan@kylinos.cn>
-Subject:
- [PATCH v1] cpufreq: core: Rearrange variable declarations involving __free()
-Date: Wed, 03 Sep 2025 16:56:04 +0200
-Message-ID: <4691667.LvFx2qVVIh@rafael.j.wysocki>
-Organization: Linux Kernel Development
+	s=arc-20240116; t=1756911550; c=relaxed/simple;
+	bh=PW6jHR9+zX+ViK7Tgdt+U7jJMoIyJN4sK1F2Xz5gU24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X8ikU3dcVsESvWyrw4d09jZOBwvzx8cFgCWMAbQ6S/dy4j4tCAA+DdqSXCWy0eukoaxAAqkNk2iNC0rnQuGwcjW/6QYfS6jl32LQn4O0qLWZDqnJEiwOx/b2gpEWEa+mA+H1Zb7GGYByycQqHDC+1/8ZnuwG/COhuRIWizyd4PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YvdESYoT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zZ0pLElK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 3 Sep 2025 16:59:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756911546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/CVut3AfTWRze481ZKUx7S7RslYpJDeo5SsE7cVwThM=;
+	b=YvdESYoTT5Mm4wZor3Nr4g8iEb52Rrus+e9kGSkubEBvg4fsF5GB7BhO6G8TA0aifMxfdq
+	+96vultzFsMh34kvQJ8sPmqi3LXf9P7sHyfprn6ZzoV2i0j1kf3uee2RltgIJrZPmxzO5t
+	NYt5kbQJ6cw213JvmzsMNKXOhD+VKt3goacWJXhvhvKWYzTUIdmB1lDc2a5LDA8Wls2ErK
+	3HC+22zP96omAj1cQTzrP5v7sYXBrDu1Lb0l818oGa9+3SrgPhwdwhlOWwcu9PhKiXWE5y
+	FK2ADKOIRk5a+2sZT3q28tEd/Jv9tukuv6/IEhLozsIfDNcB7s9e+7OAlegoqQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756911546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/CVut3AfTWRze481ZKUx7S7RslYpJDeo5SsE7cVwThM=;
+	b=zZ0pLElKAksFr0Gof+otXBlIQsZS+nSMK8jUr2J/DDyNVNKGUL88A7z70fmr1kjwJJndIt
+	E9PnQH/NLpVj2hDg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Hillf Danton <hdanton@sina.com>
+Cc: syzbot <syzbot+10b4363fb0f46527f3f3@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [sound?] possible deadlock in __snd_pcm_lib_xfer (2)
+Message-ID: <20250903145905.r7Ak4Wya@linutronix.de>
+References: <68b269e9.a00a0220.1337b0.001f.GAE@google.com>
+ <20250830065638.6116-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250830065638.6116-1-hdanton@sina.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 2025-08-30 14:56:37 [+0800], Hillf Danton wrote:
+> > syz.0.46/6843 is trying to acquire lock:
+> > ffff8880b8823d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
+> > ffff8880b8823d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: __local_bh_disable_ip+0x264/0x400 kernel/softirq.c:168
+> > 
+> Given softirq_ctrl is percpu, this report is false positive.
 
-Follow cleanup.h recommendations and always define and assign variables
-in one statement when __free() is used.
+No. This can happen on a single CPU.
 
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpufreq/cpufreq.c |   27 +++++++--------------------
- 1 file changed, 7 insertions(+), 20 deletions(-)
-
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -1845,7 +1845,6 @@ static unsigned int cpufreq_verify_curre
-  */
- unsigned int cpufreq_quick_get(unsigned int cpu)
- {
--	struct cpufreq_policy *policy __free(put_cpufreq_policy) = NULL;
- 	unsigned long flags;
- 
- 	read_lock_irqsave(&cpufreq_driver_lock, flags);
-@@ -1860,7 +1859,7 @@ unsigned int cpufreq_quick_get(unsigned
- 
- 	read_unlock_irqrestore(&cpufreq_driver_lock, flags);
- 
--	policy = cpufreq_cpu_get(cpu);
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
- 	if (policy)
- 		return policy->cur;
- 
-@@ -1876,9 +1875,7 @@ EXPORT_SYMBOL(cpufreq_quick_get);
-  */
- unsigned int cpufreq_quick_get_max(unsigned int cpu)
- {
--	struct cpufreq_policy *policy __free(put_cpufreq_policy);
--
--	policy = cpufreq_cpu_get(cpu);
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
- 	if (policy)
- 		return policy->max;
- 
-@@ -1894,9 +1891,7 @@ EXPORT_SYMBOL(cpufreq_quick_get_max);
-  */
- __weak unsigned int cpufreq_get_hw_max_freq(unsigned int cpu)
- {
--	struct cpufreq_policy *policy __free(put_cpufreq_policy);
--
--	policy = cpufreq_cpu_get(cpu);
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
- 	if (policy)
- 		return policy->cpuinfo.max_freq;
- 
-@@ -1920,9 +1915,7 @@ static unsigned int __cpufreq_get(struct
-  */
- unsigned int cpufreq_get(unsigned int cpu)
- {
--	struct cpufreq_policy *policy __free(put_cpufreq_policy);
--
--	policy = cpufreq_cpu_get(cpu);
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
- 	if (!policy)
- 		return 0;
- 
-@@ -2751,9 +2744,7 @@ static void cpufreq_policy_refresh(struc
-  */
- void cpufreq_update_policy(unsigned int cpu)
- {
--	struct cpufreq_policy *policy __free(put_cpufreq_policy);
--
--	policy = cpufreq_cpu_get(cpu);
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
- 	if (!policy)
- 		return;
- 
-@@ -2770,9 +2761,7 @@ EXPORT_SYMBOL(cpufreq_update_policy);
-  */
- void cpufreq_update_limits(unsigned int cpu)
- {
--	struct cpufreq_policy *policy __free(put_cpufreq_policy);
--
--	policy = cpufreq_cpu_get(cpu);
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
- 	if (!policy)
- 		return;
- 
-@@ -3054,9 +3043,7 @@ static int __init cpufreq_core_init(void
- 
- static bool cpufreq_policy_is_good_for_eas(unsigned int cpu)
- {
--	struct cpufreq_policy *policy __free(put_cpufreq_policy);
--
--	policy = cpufreq_cpu_get(cpu);
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
- 	if (!policy) {
- 		pr_debug("cpufreq policy not set for CPU: %d\n", cpu);
- 		return false;
-
-
-
+Sebastian
 
