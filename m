@@ -1,66 +1,82 @@
-Return-Path: <linux-kernel+bounces-798092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7902B4195D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:57:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 270D5B41965
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 895CD7A5CB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:56:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9651541B1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7970C2ECD3F;
-	Wed,  3 Sep 2025 08:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2AC2ECD15;
+	Wed,  3 Sep 2025 08:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="oP4oJUu8"
-Received: from omta033.useast.a.cloudfilter.net (omta033.useast.a.cloudfilter.net [44.202.169.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MveOr1EK"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72302EBDE9
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CA42DCF73
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756889786; cv=none; b=iC7LKCyvYaqpezbHRq8fcLyg92vKQEBUO4WKnMtPHZZv7aXJN65u4BrBeTuV5gnOSm6dq0VBT8+csLg9sf+fycwW/Y0+WUZIKDFcHfDLfSdf8i2wv8BEElxRMtl7Y/ZNyDOus5ViJaz5fXwQGjOcXzvivDC36AnakZfHHK+RIuQ=
+	t=1756889850; cv=none; b=EhDs56DNX+zPGzefjGxvVyMxF9wo+UykTgPeCzvAQNQNv0QbV8rV4Dj06sPZR6WM4xyPtiolkrKPwsCpdZ9raiRskSeGIH2fPFV9U0IpVkPOjMRW0TZ73dthgFn9O73GAKkb60Jas301rWHyRYIqCXV+6juRJUQD3x2VT8BK6vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756889786; c=relaxed/simple;
-	bh=8wcxB9gsKzgfR+hJwpbQcWLa/crjgWboYQytgv0SKVM=;
+	s=arc-20240116; t=1756889850; c=relaxed/simple;
+	bh=GLWbVZsCvv8vncq22iwaF1jZGEskxbZI97+7rz86n7s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qDTGWGVOHnHLFmX4kvaAXPoQFv/NUSS8GHPiPvINChzDbwiqmhyhrNnhgFyPNXute1vlXuCYYDuZF0bLrQ2/jjpQJE8IwVeflVTz664vCOWouHVz7mHcTIu9MHpmIhN4gMzvq+L5yLa0eI1n1BbmyCP9lJbO7hPIOqJTJt3v7Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=oP4oJUu8; arc=none smtp.client-ip=44.202.169.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6004b.ext.cloudfilter.net ([10.0.30.210])
-	by cmsmtp with ESMTPS
-	id tfbHu2xZtU1JTtjHyuzBf7; Wed, 03 Sep 2025 08:56:23 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id tjHyuNVBh6yOitjHyuBjQd; Wed, 03 Sep 2025 08:56:22 +0000
-X-Authority-Analysis: v=2.4 cv=OduYDgTY c=1 sm=1 tr=0 ts=68b802b6
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=wQHQzwf_Hs2TCVCgcZgA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=aeeKAF3PBFlKS0N1RC3x8dkcm9vxicJpkuKAZH7nWGg=; b=oP4oJUu82D18ifLiihjSYQKRqs
-	NfTBNNCRcKVOGprX6m2AjBMbsFQ43ZAjPHokA1R/+PhE0gfQIkhjI4mi9Y2FBMUe+vSMtqOlWoZ7s
-	RpVYFF7E2kTtdUgsTLnatQhM0Dc7sILeIgaXEfMhK1gj2JVWXV2MiZSBu7ipOQIvQ9NZUI40f3NhD
-	o8+miJ+PNPy0lSyvTGe8CLjX8o42vUdXZgc/Lg2yGouU/ow4nTbze+BkOPZpNv5clT6QayPPjBpeg
-	Nm9lGVkC/5IljvNVsyJssGSe/5svw+/7wnXNlOaqbVwFUShFYirzB8IjbYwYeblNOmhmi7zlfMBli
-	57tYERdg==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:59458 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1utjHx-00000000ire-1j36;
-	Wed, 03 Sep 2025 02:56:21 -0600
-Message-ID: <c50b8153-7e14-49bc-8d54-d4f3f58892cb@w6rz.net>
-Date: Wed, 3 Sep 2025 01:56:19 -0700
+	 In-Reply-To:Content-Type; b=bVJgHys4f+Qqg+bdMPjX/ZvosMiNlrGqUdkcq+aKOGeRpy5g7jRKQ915+yDoWC4Tn1ZCfBkMhd9Y6MWgTxKP10KkTJQgXXRentT2wx/mPauwb019qeXhRWUCAgJfT7M+cPcY0dAodIQQN3uVbE0g8JjXQGANsMxduJTewCeTjDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MveOr1EK; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45b86157e18so22213935e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:57:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756889846; x=1757494646; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:reply-to:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NZXnBg/mkHQOpJsBzXAst/yraqBTJNw0ejzOcm9xd1g=;
+        b=MveOr1EKUPtN0656SFus7PFC/9IHUowbJrjsKdTCoMTYgXNGvholySIhl/P6gPjFJ9
+         Cs4edynHRHPkZeo4RBv3VYDY8SlhHFKAp28Bjv/ZgIF2P8Cm1PJl1fFTiqxIHbbbZ6sJ
+         dG2PfCitUXKgRJOPnyol/DWa6MR8HeNLQH+7CkftzUszzFdEdgWOc/sLGpGtq9eAPfgq
+         i5VEJ04qCMCnzy/lZNeHhcSBNHtGswKruO3E0X/IfTmNxQzIF+8ULGhQKlGrwMLKNlH9
+         NcxwEYiwf5c2qX6IwjDMu52QDWYvbRvicjbsv2d0DNwpCW8rFtXvZn+sIBzlqyeC2dA6
+         LwQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756889846; x=1757494646;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:reply-to:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NZXnBg/mkHQOpJsBzXAst/yraqBTJNw0ejzOcm9xd1g=;
+        b=CeeJrdmGFC1Su6hvi+EHz7KEUg9yPwThtGt2EVudGJbczv9jtqn0PrhScek7e0xr0T
+         3N9cEVYhpV0eglXPiVkEjZa7o48vKBnZRUAnVVoGKwKRxRHYxcium4FDRtu2P1RFZads
+         UH9a4gWb+eseoRtAo4ZmASNVsR27cazft2FXrEzQ3SsriYOtfKNinSZCgJWf0zlKNlBa
+         ulsSofXNdPHTGlZRT1S5pnLhuHo8MOL/n8aqBhh3QUTQwWUWV7Ge2pK31b9M1L5gKmFC
+         N1PD8T+0KQFh83TzwSa2s7HGYBZURXup+dtMmQM3tsVJ7Gm2dutVtaZfFiMvBLhhrBV+
+         tvTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvx+Pd4LO/6VI6UFdQmAOJwkPD79pqrQZg4A7JRwyJ30UI+S7okykmYDIpsqW/P5fbA38tce9cMyhRHVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvBFp22fJLbCLTEuLvkO1VV/lVcHO3UgqZ59Rx6U1n/YlJnxdM
+	3SloH5vR/PP2UVChhE/YOpMVdWJzTYR0TV0CLUrg7wWQ2jJbugrMAIaHQJSOtWUuafY=
+X-Gm-Gg: ASbGncuiYWdy6NHye1z0POWwNIXMFl+VoZS27ZZ7ivQg54NkTx+8FOCjwa3skESEauw
+	eSP23/XE/PNe1mrSyKHpA5L4xzep0GrDyf5mjxLrqaRy+xsyW0h0v2tjmG0uLWxCHRI82VhsNOk
+	lYcLtvC42zDdhtsAGWTtBK7Yufeys9Fcxmz7x3CUs0ekusUdX/33n+ZJ/QmgTxjpM8RlSpYQ6Vx
+	ivcF85P9pp71IjuB2Kz6BaHT6vrWHKIlmzBIWhee5ayV+OtzF9/RgRrxlK/h5ND/1J5Xz/rPsns
+	0LqtXEc15WaTP7fNEm+SPV3KA5diEBX0WChLT5XIe4iq9K34X8N6HtIfbTO3V1GvQS04Ok2rjdj
+	oPNQrM41LOmBA+yimbqfSubCP0OgVknnu4dYHkeO4AsM1SWjnHnoJPgQ3MP2tyJ6lu3GFV/Wl8c
+	LPnTfFSww=
+X-Google-Smtp-Source: AGHT+IGJsXe7hI4qIXZIQeEagPDzvSXyS8iIUXps68CwO0+m0YToGuFjxtslM86YEyC6Gj/p441gZA==
+X-Received: by 2002:a05:600c:1c10:b0:45c:a955:4578 with SMTP id 5b1f17b1804b1-45ca955460emr17517005e9.21.1756889846249;
+        Wed, 03 Sep 2025 01:57:26 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:431c:dad5:266c:f97? ([2a01:e0a:3d9:2080:431c:dad5:266c:f97])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3db72983560sm4253257f8f.1.2025.09.03.01.57.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 01:57:25 -0700 (PDT)
+Message-ID: <437b6676-0669-410b-ae77-ec22aa0f66db@linaro.org>
+Date: Wed, 3 Sep 2025 10:57:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,63 +84,144 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 00/95] 6.12.45-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250902131939.601201881@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250902131939.601201881@linuxfoundation.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v3 0/8] power: supply: Add several features support in
+ qcom-battmgr driver
+To: fenglin.wu@oss.qualcomm.com, Sebastian Reichel <sre@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
+ David Collins <david.collins@oss.qualcomm.com>,
+ =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ kernel@oss.qualcomm.com, devicetree@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <20250826-qcom_battmgr_update-v3-0-74ea410ef146@oss.qualcomm.com>
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250826-qcom_battmgr_update-v3-0-74ea410ef146@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1utjHx-00000000ire-1j36
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:59458
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 37
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfPiLDlZtsHqaDPgoHAcPJQPr48ysBdYxFDr25i4918+aUeYLjJdcayn8iP7uys77272Rnsv/r5wQWF3EXmj0oSnsB7YvltQK5JYmX545OTyDY92TAGDC
- 1tZkQetq7HMg42cAGPkMQzm3rGI7mzanle6WWOOLpa3rxIL1f00yZ0Z8FQHLNQd8i10eRkM7r6j8r7HvPhSiOiRg2zoxaQLn3ec=
 
-On 9/2/25 06:19, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.45 release.
-> There are 95 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.45-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi,
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+On 26/08/2025 09:18, Fenglin Wu via B4 Relay wrote:
+> Add following features in qcom-battmgr drivers as the battery management
+> firmware has provided such capabilities:
+>   - Add resistance power supply property in core driver and qcom-battmgr
+>     driver to get battery resistance
+>   - Add state_of_health power supply property in core driver and
+>     qcom-battmgr driver to get battery health percentage
+>   - Add charge control start/end threshold control by using
+>     charge_control_start_threshold and charge_control_end_threshold power
+>     supply properties
+> 
+> The changes have been tested on QRD8650 and X1E80100-CRD devices based on
+> qcom/linux.git for-next commit a679f3f6931cdb0c2ef5dc0c26f895ae3f6c1ddc.
 
-Tested-by: Ron Economos <re@w6rz.net>
+Gnome sets the properties and they are correctly loaded back at reboot.
+
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on Thinkpad T14S OLED
+
+Thanks,
+Neil
+
+> 
+> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+> ---
+> Changes in v3:
+> - Change power supply property "RESISTANCE" to "INTERNAL_RESISTANCE" and
+>    update the ABI document accordingly.
+> - Update the ABI document for "STATE_OF_HEALTH" property to explain it
+>    better.
+> - Drop following patches, as they were made due to my misunderstanding of
+>    the compats fallback behavior. Thank you to Krzysztof for the correction
+>    with patience.
+>      [PATCH v2 6/8] dt-bindings: soc: qcom: pmic-glink: Move X1E80100 out of fallbacks
+>      [PATCH v2 7/8] usb: typec: ucsi_glink: Add UCSI quirk for X1E80100 platform
+>      [PATCH v2 8/8] arm64: dts: qcom: x1*: Remove qcom,sm8550-pmic-glink fallback
+> - Addressed several comments in [PATCH v2 5/8]:
+>     - Separated the compat string addition change
+>     - Fixed the coding style issues in several places to address this
+>       checkpatch error:
+>         "CHECK: Alignment should match open parenthesis"
+>     - Add logic to read charge control thresholds from SDAM registers in driver
+>       probe. It addresses the issue on X1E80100, where there is no interface
+>       to retrieve the thresholds from the battery management firmware after
+>       boot-up.
+> - Add a DT binding change for charge_limit_xx "nvmem" DT properties.
+> - Add a DT change to specifiy charge_limit_xx "nvmem" properties for X1E80100
+>    devices.
+> - Link to v2: https://lore.kernel.org/r/20250530-qcom_battmgr_update-v2-0-9e377193a656@oss.qualcomm.com
+> 
+> Changes in v2:
+> - Corrected "qcom-battmgr" to "qcom_battmgr" in the commit subject of
+>    patch 4/5.
+> - Added charge control support for X1E80100 platform in patch 5.
+> - X1E80100 is no longer a fallback of SM8550 in pmic-glink battmgr support,
+>    hence added patch 6 in the pmic-glink binding to move X1E80100 out of the
+>    fallbacks.
+> - Added patch 7 in glink-ucsi driver to include UCSI quirk for X1E80100
+>    platform
+> - Added patch 8 to remove "qcom,sm8550-pmic-glink" compatible string in
+>    x1* board files.
+> - Rebased the changes on qcom/linux.git for-next commit 44ef9ab4baaf496d227ab98d368016700f0b9300.
+> - Link to v1: https://lore.kernel.org/r/20250523-qcom_battmgr_update-v1-0-2bb6d4e0a56e@oss.qualcomm.com
+> 
+> ---
+> Fenglin Wu (8):
+>        power: supply: core: Add resistance power supply property
+>        power: supply: core: Add state_of_health power supply property
+>        power: supply: qcom_battmgr: Add resistance power supply property
+>        power: supply: qcom_battmgr: Add state_of_health property
+>        power: supply: qcom_battmgr: update compats for SM8550 and X1E80100
+>        dt-bindings: soc: qcom,pmic-glink: Add charge limit nvmem properties
+>        power: supply: qcom_battmgr: Add charge control support
+>        arm64: dts: qcom: x1e80100-crd: Add charge limit nvmem
+> 
+>   Documentation/ABI/testing/sysfs-class-power        |  31 ++
+>   .../bindings/soc/qcom/qcom,pmic-glink.yaml         |  14 +
+>   arch/arm64/boot/dts/qcom/x1-crd.dtsi               |   2 +
+>   arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi       |  20 ++
+>   drivers/power/supply/power_supply_sysfs.c          |   2 +
+>   drivers/power/supply/qcom_battmgr.c                | 316 ++++++++++++++++++++-
+>   include/linux/power_supply.h                       |   2 +
+>   7 files changed, 378 insertions(+), 9 deletions(-)
+> ---
+> base-commit: abbf1025002e4966bfcbf8a069234e485d49edf1
+> change-id: 20250520-qcom_battmgr_update-3561dc526c05
+> 
+> Best regards,
 
 
