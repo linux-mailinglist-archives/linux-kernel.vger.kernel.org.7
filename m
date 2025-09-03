@@ -1,44 +1,59 @@
-Return-Path: <linux-kernel+bounces-797516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB8E7B41177
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:51:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F02B4117C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BAF01B21D82
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:51:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340B216D0A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22BE14EC73;
-	Wed,  3 Sep 2025 00:51:11 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECB6165F1A;
+	Wed,  3 Sep 2025 00:51:28 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22F313D8A4;
-	Wed,  3 Sep 2025 00:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB6013D8A4;
+	Wed,  3 Sep 2025 00:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756860671; cv=none; b=T2RA/e1nzoxzFuhMa0N7k47ST0gx6mQzAJH0tVWYNTZuUlLot5hrGk5abY1VP6iG/yWJd677KhAge0hVt8z7XpTRwmzKP26f5wIkvLyiBF2U7MUgFmL5vNax13i1dyWyqdK3Coa5s6OpT2vhhSIT7UWaz8NQaXeM34wIEHLVM0E=
+	t=1756860688; cv=none; b=RR2iNL1MoatBeFcuVhoQy8nIudinRkk+8d5DeYOxU/tIFnf0hYNNWaK1Q/hsrEBKN6QGR0PV39wZDF+194N/A7DxfVwZ2KVowmnfajrCH0fkNq4e+iUZhLggT1BUdv98g9T/jUvgfj4+Y8gVLBrffwqvrzv8UkWoeQJKohevP+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756860671; c=relaxed/simple;
-	bh=C3cZzaStfc/7OYgj3ybp5ir4kuijBqq8oHaxOoVLGKM=;
+	s=arc-20240116; t=1756860688; c=relaxed/simple;
+	bh=SWn2YoMWlNMEPB8MPyZq3aGVAkzLGIwvqZCBCqopq50=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T+20UnBullZBwz7di2MTA82feByXTVzY5H75ilhsqBsWxeOPmrcyUfl2duklejcMqXwa4VwPF26iobR5dJjB0wBMv8ltBpXGTXY2OnMxhgN/AxPQhTin872gZOaaIrFPjouU/aZOJzg/vKOkTudUoZn8SZuOTV6coFAvNgfu+SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cGkZ23NbbzKHMW3;
-	Wed,  3 Sep 2025 08:51:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 51EC01A0D1D;
-	Wed,  3 Sep 2025 08:51:06 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP4 (Coremail) with SMTP id gCh0CgAXYY34kLdoYBnNBA--.25852S2;
-	Wed, 03 Sep 2025 08:51:06 +0800 (CST)
-Message-ID: <5a8b0ebe-95a5-4144-a1d5-b1a96c2312b9@huaweicloud.com>
-Date: Wed, 3 Sep 2025 08:51:04 +0800
+	 In-Reply-To:Content-Type; b=GW6RtB6MlDJ9htREGdIJgqvhIKFRdlP424Nz5dBiuPYhaBEZmJfR0hD0WFiASDpejpJabmN7qAcI+eQlad9fZZegB7B+xOSkZC7gHJIwNB5iwKaEro4v6DOtPFsb+Spc1QRyq5rBLuaoCMPvCHpDDdbrnwUG6mi1UB/NXf26Otg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 1864b9c6886011f0b29709d653e92f7d-20250903
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:149e317a-1aff-43d6-90c9-1a5d04dd57b0,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:461f970947de3929c2a541614ce8e229,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 1864b9c6886011f0b29709d653e92f7d-20250903
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1164660955; Wed, 03 Sep 2025 08:51:15 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 22D4BE008FA3;
+	Wed,  3 Sep 2025 08:51:15 +0800 (CST)
+X-ns-mid: postfix-68B79102-9412696
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 28EDFE008FA2;
+	Wed,  3 Sep 2025 08:51:07 +0800 (CST)
+Message-ID: <40706b1f-e23c-417b-b3e1-2dc839828588@kylinos.cn>
+Date: Wed, 3 Sep 2025 08:51:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,154 +61,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC 09/11] cpuset: refactor partition_cpus_change
-To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250828125631.1978176-1-chenridong@huaweicloud.com>
- <20250828125631.1978176-10-chenridong@huaweicloud.com>
- <632cd2ab-9803-4b84-8dd9-cd07fbe73c95@redhat.com>
- <031d83b6-bc67-4941-8c49-e1d12df74062@huaweicloud.com>
- <2a6759fa-841a-4185-ae94-b8215c93daf5@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <2a6759fa-841a-4185-ae94-b8215c93daf5@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXYY34kLdoYBnNBA--.25852S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxtr15Gr43Jr4xKrWDCF1kuFg_yoW7WryDpF
-	1kJFWUJrW5Jr1rKw12qr1UWr9xtr1DJ3Zrtrn7X3WrJFy2yFnFgF1jqwn09r1xJr4xJr1U
-	XF1jqrZruFy3ArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUotCzDUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Subject: Re: [PATCH v3 03/12] cpufreq: intel_pstate: Use scope-based cleanup
+ helper
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
+ Ben Horgan <ben.horgan@arm.com>, zhenglifeng <zhenglifeng1@huawei.com>,
+ Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
+ <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
+ Sumit Gupta <sumitg@nvidia.com>,
+ Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+ Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
+ linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250901085748.36795-1-zhangzihuan@kylinos.cn>
+ <20250901085748.36795-4-zhangzihuan@kylinos.cn>
+ <CAJZ5v0hu48NrMr6Vkjn_UyHywJMx7F5N6yWf2LiXxykZF79EKA@mail.gmail.com>
+ <29890791-4ddf-49c7-a4f2-0ac83e6d53c6@kylinos.cn>
+ <CAJZ5v0jvOKeLRkjWoKR5eVKZ-hib7c8D-VOBvtCvs1+HGfPUiQ@mail.gmail.com>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <CAJZ5v0jvOKeLRkjWoKR5eVKZ-hib7c8D-VOBvtCvs1+HGfPUiQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
 
-
-On 2025/9/2 21:30, Waiman Long wrote:
-> On 8/29/25 10:01 PM, Chen Ridong wrote:
+=E5=9C=A8 2025/9/2 19:47, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> On Tue, Sep 2, 2025 at 12:33=E2=80=AFPM Zihuan Zhang <zhangzihuan@kylin=
+os.cn> wrote:
 >>
->> On 2025/8/30 4:32, Waiman Long wrote:
->>> On 8/28/25 8:56 AM, Chen Ridong wrote:
->>>> From: Chen Ridong <chenridong@huawei.com>
+>> =E5=9C=A8 2025/9/1 23:17, Rafael J. Wysocki =E5=86=99=E9=81=93:
+>>> On Mon, Sep 1, 2025 at 10:58=E2=80=AFAM Zihuan Zhang <zhangzihuan@kyl=
+inos.cn> wrote:
+>>>> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+>>>> annotation for policy references. This reduces the risk of reference
+>>>> counting mistakes and aligns the code with the latest kernel style.
 >>>>
->>>> Refactor the partition_cpus_change function to handle both regular CPU
->>>> set updates and exclusive CPU modifications, either of which may trigger
->>>> partition state changes. This generalized function will also be utilized
->>>> for exclusive CPU updates in subsequent patches.
+>>>> No functional change intended.
 >>>>
->>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>>>> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
 >>>> ---
->>>>    kernel/cgroup/cpuset.c | 59 ++++++++++++++++++++++++++----------------
->>>>    1 file changed, 36 insertions(+), 23 deletions(-)
+>>>>    drivers/cpufreq/intel_pstate.c | 8 +++-----
+>>>>    1 file changed, 3 insertions(+), 5 deletions(-)
 >>>>
->>>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->>>> index 75ad18ab40ae..e3eb87a33b12 100644
->>>> --- a/kernel/cgroup/cpuset.c
->>>> +++ b/kernel/cgroup/cpuset.c
->>>> @@ -2447,6 +2447,41 @@ static int acpus_validate_change(struct cpuset *cs, struct cpuset *trialcs,
->>>>        return retval;
->>>>    }
->>>>    +/**
->>>> + * partition_cpus_change - Handle partition state changes due to CPU mask updates
->>>> + * @cs: The target cpuset being modified
->>>> + * @trialcs: The trial cpuset containing proposed configuration changes
->>>> + * @tmp: Temporary masks for intermediate calculations
->>>> + *
->>>> + * This function handles partition state transitions triggered by CPU mask changes.
->>>> + * CPU modifications may cause a partition to be disabled or require state updates.
->>>> + */
->>>> +static void partition_cpus_change(struct cpuset *cs, struct cpuset *trialcs,
->>>> +                    struct tmpmasks *tmp)
->>>> +{
->>>> +    if (cs_is_member(cs))
->>>> +        return;
->>>> +
->>>> +    invalidate_cs_partition(trialcs);
->>>> +    if (trialcs->prs_err)
->>>> +        cs->prs_err = trialcs->prs_err;
->>>> +
->>>> +    if (is_remote_partition(cs)) {
->>>> +        if (trialcs->prs_err)
->>>> +            remote_partition_disable(cs, tmp);
->>>> +        else
->>>> +            remote_cpus_update(cs, trialcs->exclusive_cpus,
->>>> +                       trialcs->effective_xcpus, tmp);
->>>> +    } else {
->>>> +        if (trialcs->prs_err)
->>>> +            update_parent_effective_cpumask(cs, partcmd_invalidate,
->>>> +                            NULL, tmp);
->>>> +        else
->>>> +            update_parent_effective_cpumask(cs, partcmd_update,
->>>> +                            trialcs->effective_xcpus, tmp);
->>>> +    }
->>>> +}
->>>> +
->>>>    /**
->>>>     * update_cpumask - update the cpus_allowed mask of a cpuset and all tasks in it
->>>>     * @cs: the cpuset to consider
->>>> @@ -2483,29 +2518,7 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
->>>>         */
->>>>        force = !cpumask_equal(cs->effective_xcpus, trialcs->effective_xcpus);
->>>>    -    invalidate_cs_partition(trialcs);
->>>> -    if (trialcs->prs_err)
->>>> -        cs->prs_err = trialcs->prs_err;
->>>> -
->>>> -    if (is_partition_valid(cs) ||
->>>> -       (is_partition_invalid(cs) && !trialcs->prs_err)) {
->>>> -        struct cpumask *xcpus = trialcs->effective_xcpus;
->>>> -
->>>> -        if (cpumask_empty(xcpus) && is_partition_invalid(cs))
->>>> -            xcpus = trialcs->cpus_allowed;
->>> This if statement was added in commit 46c521bac592 ("cgroup/cpuset: Enable invalid to valid local
->>> partition transition") that is missing in your new partition_cpus_change() function. Have you run
->>> the test_cpuset_prs.sh selftest with a patched kernel to make sure that there is no test failure?
->>>
->>> Cheers,
->>> Longman
->> Thank you Longman,
+>>>> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_=
+pstate.c
+>>>> index f366d35c5840..4abc1ef2d2b0 100644
+>>>> --- a/drivers/cpufreq/intel_pstate.c
+>>>> +++ b/drivers/cpufreq/intel_pstate.c
+>>>> @@ -1502,9 +1502,8 @@ static void __intel_pstate_update_max_freq(str=
+uct cpufreq_policy *policy,
+>>>>
+>>>>    static bool intel_pstate_update_max_freq(struct cpudata *cpudata)
+>>>>    {
+>>>> -       struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>>>> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D=
+ cpufreq_cpu_get(cpudata->cpu);
+>>>>
+>>>> -       policy =3D cpufreq_cpu_get(cpudata->cpu);
+>>>>           if (!policy)
+>>>>                   return false;
+>>> The structure of the code is intentional here and there's no reason t=
+o
+>>> change it.
 >>
->> I did run the self-test for every patch, and I appreciate the test script test_cpuset_prs.sh you
->> provided.
+>> Got it. Thanks for clarifying.
 >>
->> The trialcs->effective_xcpus will be updated using compute_trialcs_excpus, which was introduced in
->> Patch 4. The corresponding logic was then added in Patch 5:
->>
->> -    cpumask_and(excpus, user_xcpus(trialcs), parent->effective_xcpus);
->> +    /* trialcs is member, cpuset.cpus has no impact to excpus */
->> +    if (cs_is_member(cs))
->> +        cpumask_and(excpus, trialcs->exclusive_cpus,
->> +                parent->effective_xcpus);
->> +    else
->> +        cpumask_and(excpus, user_xcpus(trialcs), parent->effective_xcpus);
->> +
->>
->> Therefore, as long as excpus is computed correctly, I believe this implementation can handle the
->> scenario appropriately.
-> 
-> It will be helpful to put down a note in the commit log that the missing logic will be re-introduced
-> in a subsequent patch.
-> 
-> Thanks,
-> Longman
+>> So for this case the current structure is intentional -
+> Note that I'm talking about this particular change only.  The other
+> change in the $subject patch is fine.
+>
+>> should I also avoid similar changes in other drivers?
+> That depends on who maintains them, which is why I wanted you to split
+> the patch into smaller changes in the first place.
+>
+> My personal view is that code formatting changes, which effectively is
+> what this particular one is, are pointless unless they make the code
+> much easier to follow.
 
-Thank you Longman,
 
-I will update the commit message.
-
--- 
-Best regards,
-Ridong
+UnderStood, Thanks!
 
 
