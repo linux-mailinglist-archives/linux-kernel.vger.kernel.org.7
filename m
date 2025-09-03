@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-797768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE166B41526
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:25:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0325B41528
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88C24173F18
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:25:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 592F17B58C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC772D5934;
-	Wed,  3 Sep 2025 06:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163F72D7DD2;
+	Wed,  3 Sep 2025 06:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="E9G3saOg"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wHm5jQxN"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DFF33991;
-	Wed,  3 Sep 2025 06:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19121C8611;
+	Wed,  3 Sep 2025 06:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756880733; cv=none; b=HlFgN9/ZIPL7eV451ZXdMwPckDRRUK43MjjE2QRK5/59Q1gSofJxW7dEu+qFhxmM0CYsk2SuNWGcpRjhsT4bZ92bEYLkTmVRMzGfitIXYKpK9B9Qf7kykP4bocNJRvgguAiP+DEZYyyj25eUPyCKMyTf136eHJtqeLwcICJHwMg=
+	t=1756880734; cv=none; b=If35j0vYsBvl/utsWsnK1MLxj7zmASlR74w3fiQIFy/lGPnuwoefVbrR8Zr6BPU64jMcHSbBJtNcn9b7fbn60uy047ZRaaNgsQol+n/6FbULw3bA5eswymdTDPQSNB3SUaXmPwa9rRb50acerjyGt+M47O9Wv3hYYbL/5pR+34c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756880733; c=relaxed/simple;
-	bh=i6LCcIRSvAuT7iUlLN37HnrnlPGfEuzO4Rr9CeIQdxE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fudbuVFEReTJP0vUna88d+qIuISOQB5+AISU/jN/W2gNU49onEph3MSHxsbEKkx5lE4XzmKDx+AiHTI0SkOUmzf2bEjGCn1yt3lndXh1AE5qlNm6HRQX3BNaxrgJDl7VPt20AfXp68EAFUrXDKn1VznKYx7hyTiaZMoA2aF+4jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=E9G3saOg; arc=none smtp.client-ip=198.47.23.234
+	s=arc-20240116; t=1756880734; c=relaxed/simple;
+	bh=dv1D0+8u7XvNsA1GCnn3RcGqe49QNmvyNC7OO8voAUo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VDLw+wjQjBgR9N0M7YUH6RJSEA6h4fcbeJDBnh1ML91tFSSefOODJw9UKzS1hyyv4riFO4EksfXR74M7rF/cIE+qZNBOkRBURmU9eVtnLx8kcSXMz05o9PrtbhJEi2bRLpPjsHajorZdG+BArGodStqOo5ZJckaxj/+/gtwLpbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wHm5jQxN; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5836PIXg2766070;
-	Wed, 3 Sep 2025 01:25:18 -0500
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5836PLUA3161908;
+	Wed, 3 Sep 2025 01:25:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756880718;
-	bh=FLLuPDMDoXGdW5biy5c1UWsZe2pTqclSdI7bjGJ1gJE=;
-	h=From:To:CC:Subject:Date;
-	b=E9G3saOgStPL2LW0i9/Yi8ddwJffVLrFjeBARLv4RpcEn9bo+JQ6JIF04rM90xAyy
-	 00Uv83g6zMhyJ/cPc/mtHPYtR2yEBKEaRlJRg9nD2sTeev/Y5jpM+JCv3VmMlPHLMR
-	 WPk4nRCtSpXVLsdUBg8l3huJJIACZFo+VCSQirhA=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5836PIJj4066360
+	s=ti-com-17Q1; t=1756880721;
+	bh=LmY9DUK5RkcdEZJ8Yi/upFZ9xXuOGPE9LZUfMrKallU=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=wHm5jQxNq8oOokqf2CPxE9OH4grQ4dLNGaDz1fjezfUo68QgBBOA+ETvo/kgVYowg
+	 IhHRHyZXdfeqqR+oni9cBYxzA3Iq5O0IsJf4lp3CmETnAj/vJxELLyxxx+FXExYN+Y
+	 Lp7C+M7ryd3u/dTLJJsNCFEscuiteU2JPXHFTBQ8=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5836PLNN3315610
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 3 Sep 2025 01:25:18 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+	Wed, 3 Sep 2025 01:25:21 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 3
- Sep 2025 01:25:18 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2025 01:25:20 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 3 Sep 2025 01:25:18 -0500
+ Frontend Transport; Wed, 3 Sep 2025 01:25:20 -0500
 Received: from localhost (ula0502350.dhcp.ti.com [172.24.233.249])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5836PH7d829213;
-	Wed, 3 Sep 2025 01:25:17 -0500
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5836PJwc1116011;
+	Wed, 3 Sep 2025 01:25:20 -0500
 From: Paresh Bhagat <p-bhagat@ti.com>
 To: <nm@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>
 CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
@@ -61,10 +62,12 @@ CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <khasim@ti.com>, <v-singh1@ti.com>, <afd@ti.com>, <bb@ti.com>,
         <devarsht@ti.com>, <s-vadapalli@ti.com>
-Subject: [PATCH v3 0/2] Add USB support for AM62D2
-Date: Wed, 3 Sep 2025 11:55:11 +0530
-Message-ID: <20250903062513.813925-1-p-bhagat@ti.com>
+Subject: [PATCH v3 1/2] arm64: dts: ti: k3-am62a-main: Fix main padcfg length
+Date: Wed, 3 Sep 2025 11:55:12 +0530
+Message-ID: <20250903062513.813925-2-p-bhagat@ti.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250903062513.813925-1-p-bhagat@ti.com>
+References: <20250903062513.813925-1-p-bhagat@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,42 +78,39 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-This patch series introduces following changes:
+From: Vibhore Vardhan <vibhore@ti.com>
 
-* Patch 1 fixes the main pad length in main_pmx/padconfig for AM62D
- and AM62A. This also fixes "i2c 0-003f: deferred probe pending".
+The main pad configuration register region starts with the register
+MAIN_PADCFG_CTRL_MMR_CFG0_PADCONFIG0 with address 0x000f4000 and ends
+with the MAIN_PADCFG_CTRL_MMR_CFG0_PADCONFIG150 register with address
+0x000f4258, as a result of which, total size of the region is 0x25c
+instead of 0x2ac.
 
-* Patch 2 enables USB support for AM62D2-EVM by adding pinmux and device
- tree nodes.
+Reference Docs
+TRM (AM62A) - https://www.ti.com/lit/ug/spruj16b/spruj16b.pdf
+TRM (AM62D) - https://www.ti.com/lit/ug/sprujd4/sprujd4.pdf
 
-Change Log:
+Fixes: 5fc6b1b62639c ("arm64: dts: ti: Introduce AM62A7 family of SoCs")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
+Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	v2->v3:
-		- Update commit description for first patch.
-
-	v1->v2:
-		- Added fixes and Cc tag for Patch 1.
-		- Dropped two patches for OPP (applied).
-
-v2-https://lore.kernel.org/all/20250823032304.1085775-1-p-bhagat@ti.com/
-v1-https://lore.kernel.org/all/20250820083331.3412378-1-p-bhagat@ti.com/
-
-Boot Logs-
-https://gist.github.com/paresh-bhagat12/e29d33c3fd92ff17580edf1441ece9f9
-
-Tech Ref Manual-https://www.ti.com/lit/pdf/sprujd4
-Schematics Link-https://www.ti.com/lit/zip/sprcal5
-
-Paresh Bhagat (1):
-  arm64: dts: ti: k3-am62d2-evm: Enable USB support
-
-Vibhore Vardhan (1):
-  arm64: dts: ti: k3-am62a-main: Fix main padcfg length
-
- arch/arm64/boot/dts/ti/k3-am62a-main.dtsi |  2 +-
- arch/arm64/boot/dts/ti/k3-am62d2-evm.dts  | 21 +++++++++++++++++++++
- 2 files changed, 22 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
+index 9cad79d7bbc1..260279702c01 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
+@@ -267,7 +267,7 @@ secure_proxy_sa3: mailbox@43600000 {
+ 
+ 	main_pmx0: pinctrl@f4000 {
+ 		compatible = "pinctrl-single";
+-		reg = <0x00 0xf4000 0x00 0x2ac>;
++		reg = <0x00 0xf4000 0x00 0x25c>;
+ 		#pinctrl-cells = <1>;
+ 		pinctrl-single,register-width = <32>;
+ 		pinctrl-single,function-mask = <0xffffffff>;
 -- 
 2.34.1
 
