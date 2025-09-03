@@ -1,158 +1,113 @@
-Return-Path: <linux-kernel+bounces-798447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1AD2B41E1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:01:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F6DB41E18
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E987118904E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:01:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF018566915
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C8B283FF4;
-	Wed,  3 Sep 2025 12:00:08 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9C32FD1D7;
+	Wed,  3 Sep 2025 11:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDnB6jqQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F072FD7A7;
-	Wed,  3 Sep 2025 12:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A122F83C1;
+	Wed,  3 Sep 2025 11:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756900808; cv=none; b=k2XB12I3KmVpiCe5eEhFoNaB1O3CF6f1ziTh+fJO89jtS1UbIsEpVQABlijkvY9jVO2CuADPOgAuxvGh994lgNIzbSZ2gttKgmsxjwCb+K842zoO4MrtHUhrcBPewuF1rW4iG0UtLyxpacWX7RiOxN7na7ixA4yzRH2R2NYugCY=
+	t=1756900771; cv=none; b=N8ydhRNEztAWWMBac+NOxx6U0Y3bmk3qAkZGDA1fVkQvsTZrai1k6C7oRUGxUncGeZUrIsJxqZRePuecUbVmQW8MdgPAwLG/ObnS03hA/xPAwOaB0JWGRD/f+kJD3bD6dy4/buS/6etW2aKpkz5DZauIcv0xAHuD2rpfRca2iBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756900808; c=relaxed/simple;
-	bh=45SFBCX7ymFr1NNsVrJRsAAdN4WtgrdDrn+YDV+in/E=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S3kxRrq1HBhKEL/Ao4GDJ2weicY88KBdyDzdRAbu0n3ZG/E29xistbzKSgzcHKRsbf6WkMTp8rs43V0/XevRv8cH7DsUNnj6WVHT2HXhCLspCFMOB/WTRqUQLOljpfTJSb6LMFSlVWMPguCGH5EgCRWDom8zdUOJMFHI32oh4GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4cH1RB5cs9z2wB80;
-	Wed,  3 Sep 2025 20:01:10 +0800 (CST)
-Received: from kwepemj200013.china.huawei.com (unknown [7.202.194.25])
-	by mail.maildlp.com (Postfix) with ESMTPS id DF8DC140155;
-	Wed,  3 Sep 2025 20:00:02 +0800 (CST)
-Received: from huawei.com (10.50.85.155) by kwepemj200013.china.huawei.com
- (7.202.194.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 3 Sep
- 2025 20:00:02 +0800
-From: Li Lingfeng <lilingfeng3@huawei.com>
-To: <chuck.lever@oracle.com>, <jlayton@kernel.org>, <neil@brown.name>,
-	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
-	<linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
-	<lilingfeng3@huawei.com>, <zhangjian496@huawei.com>, <bcodding@redhat.com>
-Subject: [PATCH v2] nfsd: remove long-standing revoked delegations by force
-Date: Wed, 3 Sep 2025 19:59:18 +0800
-Message-ID: <20250903115918.788159-1-lilingfeng3@huawei.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1756900771; c=relaxed/simple;
+	bh=wPHLMdV5oA5M8MmpYNrhTmi8f8b71/Fuso90AaoTd+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/yn86c5zhK0ysgHzhdwx7o96FB5thD/qbWYDvHTOTn7F11KC2dsSFJK+yt8sz32pjMsKjYcw0fFXSyj7cUfpN55s4VsWGVptO2jbeaP3JoJzgOyPNvITLRCHPaqm8u2ur5cm2uH/k7WEm3vENFZJ/HA2IZYGpy9RkNjXDUcxXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CDnB6jqQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42191C4CEF0;
+	Wed,  3 Sep 2025 11:59:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756900770;
+	bh=wPHLMdV5oA5M8MmpYNrhTmi8f8b71/Fuso90AaoTd+Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CDnB6jqQQSTSHqmj+E0Q7PrtFxoSdRJWfQsYR1eVkxtP81za7Y1/YpzmERhlud/0H
+	 McgyRha/daqC4SyS1U5MRbneNj102JKPvQkLapZGVS222QUSKIc5bXXHNsraGwSwYs
+	 jqsls5IfIcCAmL7I+GWudp/fDAAyoyM+pD3/hYRSFh+S/qhl9dNsBWS98CvSqoPzbo
+	 7V3tsafkUPP4ZdhAxbxJhYRhRdgFtdNqYxLEJUOQX/M0Wt7PlZCeuMv1jBsThnjLIN
+	 Gp2EQpYaTUcWm7besy1uaRigc/Jyi8bEGRgMSCkLz6Qowz0dPJSOsVwP0h2Sn9mvoK
+	 70vbsVgl4MEfw==
+Date: Wed, 3 Sep 2025 12:59:25 +0100
+From: Lee Jones <lee@kernel.org>
+To: Alexander Kurz <akurz@blala.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Dzmitry Sankouski <dsankouski@gmail.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 8/9] leds: mc13783: use fsl,led-control as node name
+Message-ID: <20250903115925.GM2163762@google.com>
+References: <20250823144441.12654-1-akurz@blala.de>
+ <20250823144441.12654-9-akurz@blala.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemj200013.china.huawei.com (7.202.194.25)
+In-Reply-To: <20250823144441.12654-9-akurz@blala.de>
 
-When file access conflicts occur between clients, the server recalls
-delegations. If the client holding delegation fails to return it after
-a recall, nfs4_laundromat adds the delegation to cl_revoked list.
-This causes subsequent SEQUENCE operations to set the
-SEQ4_STATUS_RECALLABLE_STATE_REVOKED flag, forcing the client to
-validate all delegations and return the revoked one.
+Did you actually test this?
 
-However, if the client fails to return the delegation like this:
-nfs4_laundromat                       nfsd4_delegreturn
- unhash_delegation_locked
- list_add // add dp to reaplist
-          // by dl_recall_lru
- list_del_init // delete dp from
-               // reaplist
-                                       destroy_delegation
-                                        unhash_delegation_locked
-                                         // do nothing but return false
- revoke_delegation
- list_add // add dp to cl_revoked
-          // by dl_recall_lru
+> According to fsl,mc13xxx.yaml, the node name for led-control is
+> vendor prefixed. Change it accordingly.
 
-The delegation will remain in the server's cl_revoked list while the
-client marks it revoked and won't find it upon detecting
-SEQ4_STATUS_RECALLABLE_STATE_REVOKED.
-This leads to a loop:
-the server persistently sets SEQ4_STATUS_RECALLABLE_STATE_REVOKED, and the
-client repeatedly tests all delegations, severely impacting performance
-when numerous delegations exist.
+According to what, now?  I see:
 
-Since abnormal delegations are removed from flc_lease via nfs4_laundromat
---> revoke_delegation --> destroy_unhashed_deleg -->
-nfs4_unlock_deleg_lease --> kernel_setlease, and do not block new open
-requests indefinitely, retaining such a delegation on the server is
-unnecessary.
+% find . -name fsl,mc13xxx.yaml
+<no results>
 
-Reported-by: Zhang Jian <zhangjian496@huawei.com>
-Fixes: 3bd64a5ba171 ("nfsd4: implement SEQ4_STATUS_RECALLABLE_STATE_REVOKED")
-Closes: https://lore.kernel.org/all/ff8debe9-6877-4cf7-ba29-fc98eae0ffa0@huawei.com/
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
----
-  Changes in v2:
-  1) Set SC_STATUS_CLOSED unconditionally in destroy_delegation();
-  2) Determine whether to remove the delegation based on SC_STATUS_CLOSED,
-     rather than by timeout;
-  3) Modify the commit message.
- fs/nfsd/nfs4state.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+% git grep fsl,led-control
+<no results>
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 88c347957da5..bb9e1df4e41f 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -1336,6 +1336,11 @@ static void destroy_delegation(struct nfs4_delegation *dp)
- 
- 	spin_lock(&state_lock);
- 	unhashed = unhash_delegation_locked(dp, SC_STATUS_CLOSED);
-+	/*
-+	 * Unconditionally set SC_STATUS_CLOSED, regardless of whether the
-+	 * delegation is hashed, to mark the current delegation as invalid.
-+	 */
-+	dp->dl_stid.sc_status |= SC_STATUS_CLOSED;
- 	spin_unlock(&state_lock);
- 	if (unhashed)
- 		destroy_unhashed_deleg(dp);
-@@ -4326,6 +4331,8 @@ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 	int buflen;
- 	struct net *net = SVC_NET(rqstp);
- 	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
-+	struct list_head *pos, *next;
-+	struct nfs4_delegation *dp;
- 
- 	if (resp->opcnt != 1)
- 		return nfserr_sequence_pos;
-@@ -4470,6 +4477,19 @@ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 	default:
- 		seq->status_flags = 0;
- 	}
-+	if (!list_empty(&clp->cl_revoked)) {
-+		spin_lock(&clp->cl_lock);
-+		list_for_each_safe(pos, next, &clp->cl_revoked) {
-+			dp = list_entry(pos, struct nfs4_delegation, dl_recall_lru);
-+			if (dp->dl_stid.sc_status & SC_STATUS_CLOSED) {
-+				list_del_init(&dp->dl_recall_lru);
-+				spin_unlock(&clp->cl_lock);
-+				nfs4_put_stid(&dp->dl_stid);
-+				spin_lock(&clp->cl_lock);
-+			}
-+		}
-+		spin_unlock(&clp->cl_lock);
-+	}
- 	if (!list_empty(&clp->cl_revoked))
- 		seq->status_flags |= SEQ4_STATUS_RECALLABLE_STATE_REVOKED;
- 	if (atomic_read(&clp->cl_admin_revoked))
+% git grep led-control | grep -v led-controller
+Documentation/devicetree/bindings/mfd/mc13xxx.txt:  "led-control". Number of register depends of used IC, for MC13783 is 6,
+Documentation/devicetree/bindings/mfd/mc13xxx.txt:			led-control = <0x000 0x000 0x0e0 0x000>;
+Documentation/netlink/specs/rt-link.yaml:        name: coupled-control
+arch/arm/boot/dts/nxp/imx/imx27-phytec-phycore-som.dtsi:			led-control = <0x001 0x000 0x000 0x000 0x000 0x000>;
+arch/arm/boot/dts/nxp/imx/imx51-zii-rdu1.dts:			led-control = <0x0 0x0 0x3f83f8 0x0>;
+arch/arm/boot/dts/nxp/imx/imx51-zii-scu2-mezz.dts:			led-control = <0x0 0x0 0x3f83f8 0x0>;
+arch/arm/boot/dts/nxp/imx/imx51-zii-scu3-esb.dts:			led-control = <0x0 0x0 0x3f83f8 0x0>;
+drivers/leds/leds-mc13783.c:	ret = of_property_read_u32_array(parent, "led-control",
+
+> Signed-off-by: Alexander Kurz <akurz@blala.de>
+> ---
+>  drivers/leds/leds-mc13783.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
+> index e22f09d13798..11add1fd24ce 100644
+> --- a/drivers/leds/leds-mc13783.c
+> +++ b/drivers/leds/leds-mc13783.c
+> @@ -127,7 +127,7 @@ static struct mc13xxx_leds_platform_data __init *mc13xxx_led_probe_dt(
+>  	if (!parent)
+>  		return ERR_PTR(-ENODATA);
+>  
+> -	ret = of_property_read_u32_array(parent, "led-control",
+> +	ret = of_property_read_u32_array(parent, "fsl,led-control",
+>  					 pdata->led_control,
+>  					 leds->devtype->num_regs);
+
 -- 
-2.46.1
-
+Lee Jones [李琼斯]
 
