@@ -1,108 +1,151 @@
-Return-Path: <linux-kernel+bounces-799532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC9EB42D37
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:10:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D430B42D3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F6223B2425
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:10:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C9047B76C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57612F066A;
-	Wed,  3 Sep 2025 23:10:20 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD53F304BB4;
+	Wed,  3 Sep 2025 23:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JRxOlfiH"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5FF2C0F7E
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 23:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06372BDC1D;
+	Wed,  3 Sep 2025 23:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756941020; cv=none; b=uhb9shGnYXxvqBlGsM7Xtoisat7UurgWmeRHU4JZ2Vg5u3njL58J6yqyPO9VG/2p9724Ak1zaID4/boaiRND/Si1dyyCPVbe+GhsltknLNCRDJDoE6rWWc9V0G3gruDPeAXqNF82ffRRuQJTF8eygvkmqtSw3dlx0Eg9/e3zVds=
+	t=1756941178; cv=none; b=IBBkfhFYTUX9UMN1QBYv4/dkpXSbDC6BbIMIwTFtXGcPF1TqE+25oPtfeA8NkYVZblNvO6gaJ8VbcMNNNw77eMtGWXDLwNqk0Q159GOHDgHGm7gAQj0faJR5IM18MydHTV05wRBl32JjPCzC7vo7uB4jz1PaFITD6mF9+3jbsaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756941020; c=relaxed/simple;
-	bh=zF0rpYQcropjs/QHVgLpXTyYqcX8FR6+GfZCmWuGNyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OS1KFqiUJiYUfoTbqaMgdg6qyed+1+U99V+Qdo05mQCl/8w+pdzSw7kB3tKqYgdredsodYARVDGrqtmkwpgI0OREHbDHIK8U/qBdoN0Dp76LVuoy9VLESMg+mSZZFOvzNUiYUb0uqlsAfiFM4s3Jag6kR8fJz22gDXg1i/QJWfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1utwcA-0003ct-05; Thu, 04 Sep 2025 01:10:06 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1utwc9-003dGy-1b;
-	Thu, 04 Sep 2025 01:10:05 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1utwc9-0008y1-13;
-	Thu, 04 Sep 2025 01:10:05 +0200
-Date: Thu, 4 Sep 2025 01:10:05 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Matthias Kaehlcke <mka@chromium.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH v3 3/4] dt-bindings: usb: microchip,usb2514: add support
- for port vbus-supply
-Message-ID: <20250903231005.jblajn7yxihsgfpp@pengutronix.de>
-References: <20250821-v6-16-topic-usb-onboard-dev-v3-0-6d2b38a5d818@pengutronix.de>
- <20250821-v6-16-topic-usb-onboard-dev-v3-3-6d2b38a5d818@pengutronix.de>
- <20250822-maize-elk-of-growth-2a30bb@kuoka>
- <20250822103005.c7ba7dclbgdadyw7@pengutronix.de>
- <dc4046e5-7912-4942-b313-20f29213773c@kernel.org>
+	s=arc-20240116; t=1756941178; c=relaxed/simple;
+	bh=7Nluk1zrxvjw8V2VyZPB8fuv98T1UivfeQbKQNgU1ok=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=foMB6r5cbl6F9NUxKcVjjQlxO02jhbA/caVaHjZ1Z4L/M4880xlLmTfdN8lllSC1dq/HDlnLhbAkxkA8O51ENWJ53hJ3k8pdCvuxsqJgMpacEHwc+LCfTDanuiyvzJfYRV8Wyk4ckSOZaRcmUVzSe6jYslQe+xqcXqrPcvKodjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JRxOlfiH; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2489acda3bbso3886145ad.1;
+        Wed, 03 Sep 2025 16:12:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756941173; x=1757545973; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=It0e2JrH3ZFKYa+3DcELj8Z5oxYFVPHQ8lvRREkQ5Mw=;
+        b=JRxOlfiHYB+O1iyfN5G5pJ1mATmW9HBpyWrOP3i+ziTkg60Fl1trWb8F+jmRbvbcBT
+         jjqfySzsJcUL+37nXYqOVkn6++/j1gIpatbWoIzu/n6DLXjck/WFRku1JaDpn7f9cPIm
+         SKa8ZwdJWpEOSMDrHieBXMOWpKsR3lnjg7pO122i/aAaaCuHDYjyO7nspM8A2b1FJ+z4
+         QIuhUmKuRPLtOBti4CsqKbeogeARbbCLiTxT9DgFpnC+V/8lZ3xy6KLYCv4qigQr9KfT
+         9RvHvub2cnvQcFb2LT9mMMBy6joT54CJif5U06dCiXEmhgU8WV/LMix1PtCk/+97PutA
+         TJdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756941173; x=1757545973;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=It0e2JrH3ZFKYa+3DcELj8Z5oxYFVPHQ8lvRREkQ5Mw=;
+        b=Of77DUCsEtRCU0aqfBXihfGNgvmBYerJC2L5KT98TYyBr8Ug27E4kgzT37XGyizj6R
+         FlsEKobQFtIaSDPBAFWQkBq466IAma/THZG31NcCtT3ResR+mRUSYIOOOpRYGEZp3Nle
+         1LYX8yNS0X4UhLCnBT7QGdI0jscc5GVZllJKkJJB5k8Yak34Qv74zsf6eiyTfJgFbGa5
+         5cewWT9TU8IFM0LzujKjb8Z5uJ2s+3GZuUKyrLqdUR6JZiOilbTwLfAKiHGMv/uTbswu
+         RXWaKsifgYKN3M65LGasdk7MHDzoWjj2AxN7HNzxILKN/xhKGCOtnq76a1UNc9Kob4pS
+         /Mdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKnah3MVUcUYDPG6SgoZulYcHevVt4GaL7Nz1LlXnWNmpwWFON/lJfAPYBSFR8+H2Gp/r9azl00RsWlw+i@vger.kernel.org, AJvYcCXeFj8SDu8HLajrLE/UOGV85HynyLxFZTykjhFzVN1P7QVJZjAfjwudaCySmwKQD3+Xn5M=@vger.kernel.org, AJvYcCXpp8tdQRfO/zvJwnqm+17g4oGIho0hTPcCccT8C480gNCapaPzSzcjFOm0WIDX99iRezhb6uPTP9RdIBwC3RAbZlss@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6H8/TAnqqQXMZl3dXPZM42D85HEpdYpv1o19vUoUW15Kq8Dgz
+	z2YOhrtR3T/UfGDPYLevXS7JpbSw6gX3xaOBx4BEd3U7PCGa/4cpZTVUXTtlPcch3m26m0Yg/O+
+	/gayj7kLSojtAqthJ8PKvPDX9fcnUtrg=
+X-Gm-Gg: ASbGncvDdQ7XQB1rW9HMewCAZYtryOfQ8NE+m1hw+2lD2v54HFlZWgMvrYoncFkRXPb
+	jrkObRzLG0RjbPn0gg3vOHwyi/0tjk/Gady9A7xecm+Q2M/dnrb1lcLswWoVEN0K816ypu4sZUQ
+	hCS4J/u7GCKN19LiH80icnjmlc78dJz1+C93is4CYErtLPNZd510AY6BS1EWEnw7hEPb8keojwH
+	5/art5vz7MRtEYSvEkR4NM=
+X-Google-Smtp-Source: AGHT+IHg6YdmCGOkFZDj+ngDvMe3gELnPnahcq0/S2zwKwB7gDpYCReU64s3GLtiHUKRxPc7YPlJCg8iUuX6U3MVxTQ=
+X-Received: by 2002:a17:903:1ab0:b0:246:76ed:e25d with SMTP id
+ d9443c01a7336-24944b15b8cmr209445105ad.50.1756941173012; Wed, 03 Sep 2025
+ 16:12:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dc4046e5-7912-4942-b313-20f29213773c@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20250720112133.244369-1-jolsa@kernel.org> <20250720112133.244369-10-jolsa@kernel.org>
+ <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
+ <aLirakTXlr4p2Z7K@krava> <20250903210112.GS4067720@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250903210112.GS4067720@noisy.programming.kicks-ass.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 3 Sep 2025 16:12:37 -0700
+X-Gm-Features: Ac12FXxfFG0VC2mv82k-Eyv4Nse4_KEUPqQBdCPeUV8pfy3v3M8bUeEFsmZ36pI
+Message-ID: <CAEf4Bza-5u1j75YjvMdfgsEexv2W8nwikMaOUYpScie6ZWDOsg@mail.gmail.com>
+Subject: Re: [PATCHv6 perf/core 09/22] uprobes/x86: Add uprobe syscall to
+ speed up uprobe
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25-08-24, Krzysztof Kozlowski wrote:
-> On 22/08/2025 12:30, Marco Felsch wrote:
-> >> The binding does not list ports now, but lists hard-wired devices, so my
-> >> question is now: is this per hard-wired device or per port (even if port
-> >> is hot-pluggable)?
-> > 
-> > Sorry but I don't get you. The binding lists the regulators required to
-> > enable/disable the hub downstream port VBUS. These regulators are
-> 
-> Is the port an external facing connector or a hard-wired USB device
-> (please read the binding)?
+On Wed, Sep 3, 2025 at 2:01=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
+> wrote:
+>
+> On Wed, Sep 03, 2025 at 10:56:10PM +0200, Jiri Olsa wrote:
+>
+> > > > +SYSCALL_DEFINE0(uprobe)
+> > > > +{
+> > > > +       struct pt_regs *regs =3D task_pt_regs(current);
+> > > > +       struct uprobe_syscall_args args;
+> > > > +       unsigned long ip, sp;
+> > > > +       int err;
+> > > > +
+> > > > +       /* Allow execution only from uprobe trampolines. */
+> > > > +       if (!in_uprobe_trampoline(regs->ip))
+> > > > +               goto sigill;
+> > >
+> > > Hey Jiri,
+> > >
+> > > So I've been thinking what's the simplest and most reliable way to
+> > > feature-detect support for this sys_uprobe (e.g., for libbpf to know
+> > > whether we should attach at nop5 vs nop1), and clearly that would be
+> > > to try to call uprobe() syscall not from trampoline, and expect some
+> > > error code.
+> > >
+> > > How bad would it be to change this part to return some unique-enough
+> > > error code (-ENXIO, -EDOM, whatever).
+> > >
+> > > Is there any reason not to do this? Security-wise it will be just fin=
+e, right?
+> >
+> > good question.. maybe :) the sys_uprobe sigill error path followed the
+> > uprobe logic when things go bad, seem like good idea to be strict
+> >
+> > I understand it'd make the detection code simpler, but it could just
+> > just fork and check for sigill, right?
+>
+> Can't you simply uprobe your own nop5 and read back the text to see what
+> it turns into?
 
-It's completely irrelevant isn't it? The host is in charge of enabling
-the VBUS supply via a dedicated GPIO (e.g. a I2C GPIO expander). If the
-VBUS is off, no device appear, if it is on, the device gets powered and
-appears within the system. If no device is plugged yet and the VBUS is
-enabled, the device gets enumerated immediatly.
+Sure, but none of that is neither fast, nor cheap, nor that simple...
+(and requires elevated permissions just to detect)
 
-Normally the VBUS supplies are controlled by the HUB control signals,
-but unfortunately our design didn't used these and yes in my case it's a
-hard-wired device.
+Forking is also resource-intensive. (think from libbpf's perspective,
+it's not cool for library to fork some application just to check such
+a seemingly simple thing as whether to
 
-Generally speaking I don't see how this will make a difference for
-hard-wired or hot-pluggable devices.
-
-Regards,
-  Marco
+The question is why all that? That SIGILL when !in_uprobe_trampoline()
+is just paranoid. I understand killing an application if it tries to
+screw up "protocol" in all the subsequent checks. But here it's
+equally secure to just fail that syscall with normal error, instead of
+punishing by death.
 
