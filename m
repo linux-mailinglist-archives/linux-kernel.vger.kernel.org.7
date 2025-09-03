@@ -1,174 +1,155 @@
-Return-Path: <linux-kernel+bounces-797921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 259BAB41735
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:50:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17F7B41739
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E78DE5631C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:50:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48B19189BC01
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5922DE718;
-	Wed,  3 Sep 2025 07:50:24 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7EE2E1C65;
+	Wed,  3 Sep 2025 07:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+hT7NRv"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06C22DF135
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4328C2DA777
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756885823; cv=none; b=Hn+ietDZMcEkM8bg42t77s0aeaqRVgesRjcgMiJi2d/FvW77VNF6rMPSL9QYZ3E10iRczCkmu9E146iLIGReMJgWNx3J+IkG08AVermKftZwcGANVBtKHEJpvcH8cQk2gE9xIOQHny1VM0CbkMWrdsnED9C0yOEss7DrXpQ3HyA=
+	t=1756885886; cv=none; b=t0tzekryPQlQmL+lmWHwAr55aBuFrCAkSoJDHG6hJjzBDx9ZKI2UwqBhmzQcEy5n/suiZ01mOlRu+PG8GWM0tizV6FJkf2+PoSBLH4qoOU/3y358ZhmD0IPwUclOWM1BIUdWCulQf4lzjbJ12DeUlTk5EdMid8g1+iO1V1AKY30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756885823; c=relaxed/simple;
-	bh=TuBgFCVN80P4zt0j6ecpb8b24JTC+uS9IYg1hpSa7Uc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DNnQH2TI/jOlTwd587tj/j6sg8DSNWFwAd2RY5Z/ufiXjvsG/7FKD1yGtn+k3te9ZMwe4yjwm2ancM7tBwx8EIq7Zw+KzmGCrKAAC5kB8h6HcrUujA5/guUUNdLQoyHL8fRC9KbHgqiGa6XpX0ywnFFgOk2rUiJxl2TOkkv2s/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1utiFt-0008Ru-6M; Wed, 03 Sep 2025 09:50:09 +0200
-Message-ID: <1bf75411-4a51-4103-b314-a8a7253bafca@pengutronix.de>
-Date: Wed, 3 Sep 2025 09:50:08 +0200
+	s=arc-20240116; t=1756885886; c=relaxed/simple;
+	bh=Y0q0fONd4lqXADhnM4Y10plGfPCzTrgC7f6K8GHH+4o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tXA2srF5nnQroboAjeQLngjLVDi64FdDaHtbSqk7mgGmjFZpYvJRQwbBvKah2dGFEuTq217tgyAGV9kCOmIIfj6wZj7QJxOZiJcLufYbDsWvaigEZQbCBNFXlq2ElBl4Z+68Izq69X/XJA+61P2HBb8cYL/n36oeiwW1LzGDchc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B+hT7NRv; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7e870689dedso375508385a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 00:51:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756885884; x=1757490684; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y0q0fONd4lqXADhnM4Y10plGfPCzTrgC7f6K8GHH+4o=;
+        b=B+hT7NRvupwUQ9eC45NXFSOpyMcU4AydzNcfZBJisvjcT6m/HzwDAoK+a2oL+T0EKI
+         4vTBoosgVXBxU9esPjRQavlTXwSQ0QMaW74DyrwFqxwPzx3hJMgM1Jc64hFPBz8WUj6K
+         /Zibrh1BRyJKhP6Cr3vaiuMel4APFJ6fCPbZX+pOAmGziWZWGCdfo3K74RMbs/xDf0B6
+         tG2tq4WTSaFZDeNu2MtX5swckf0WVlxDelxzhBv97BPiso7DjwKNDZUT9Kkdschbrsxe
+         oNJfZbOwbDNez2n7VRZBm2S71/LviCQyKY3IYPfmFvPRTP812PCoqn0gByduz3MjFQBP
+         PZUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756885884; x=1757490684;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y0q0fONd4lqXADhnM4Y10plGfPCzTrgC7f6K8GHH+4o=;
+        b=cZY8n3+uLr+3WNu2eUs6q0tyH7IjDubjL9Yztxi5RC/uQ9NKB8Xyu1hKlpAsg/wFgt
+         4PFC7nCwszM0yjkob7qCBWe/0fUBqtmD8W18F6T78pKZkH/UKPpyHfW2Uomz5zoi3iv/
+         BzpvMo7ydL8YC9/kllycCSK0bwYFQ4iVTaCiRtNOs2B180OwfimknXaB7FBmhhmFMe1O
+         2GxUODtJ30SqbRhvsVVkVA+FOBP7Qhuf1uSgNxcPnJeaLj78MR6WRXcj4eOnqvaCPM8o
+         9ty2sjBHvFDotLVc9IaTzp70PSd372lokLFQF4mSWj3M+OyISderS2cvDAkiU+kJ2CNT
+         9uRg==
+X-Forwarded-Encrypted: i=1; AJvYcCX618XGzepdHAwrzXrI4B9hPsP6VrxRXDQeWTDwMsvgoNGK7gDe0NzJ5WKEL4iz7RT7E3emGWP7WZ0xw74=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd+5WNBjeqFhRl4jDxDSMZKrV5nAG88yKqQH+iXarV4Abpmo2K
+	qD82XDbMqXpzvwoq/xc68ZTFRBg75QaDOZi7+HVP/EiizSN5JcH91BCC4LpTsaVlIWLzzUsEtL7
+	1BqRL9tczjxIUGJuXbYBP5iY8btbdW1U=
+X-Gm-Gg: ASbGncs5IHe1gR+gtGdS0WBIqOzyKZC/ugkqlIrFYxMUTXW+rk4VT7/S8oYRGmwhran
+	zXtuAgcJGSnixHVSqbEV5bfKC8k2OgUq1wtF/X/5cdR5nrkcXOb6E8vdlFQlKt3Fv8viytqL/GL
+	ZDtt8rDTDQtzi1eANQa0yG+bnZpVrTBrLD2rSkbZKRNuDZgNw//o1CpY6mbXTwG4KXzZaqRdPrp
+	EHMTAENkDZ/ss5wB/grnrnKTTh6PlItdEVMoiLx40vgQa47rsaJ4KzT67O0/rnW/DYpO+5KFrJi
+	cqCl8Q4=
+X-Google-Smtp-Source: AGHT+IEqNirH6vnwrl45TL8m5PwLZsCvxgQzO3JS6HhkTWqWtA8GP+qDAQbgFGcl8U4L7If7ena+psWtw7l4ahcanrc=
+X-Received: by 2002:a05:620a:3704:b0:7fa:aea2:24f8 with SMTP id
+ af79cd13be357-7ff27b2249fmr1730675385a.23.1756885883986; Wed, 03 Sep 2025
+ 00:51:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: imx6ul-tx6ul: Switch away from deprecated
- `phy-reset-gpios`
-To: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
- Csaba Buday <buday.csaba@prolan.hu>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250815-b4-tx6ul-dt-phy-rst-v1-1-9b65e315d9d3@prolan.hu>
- <fa7e2cef-5242-4f3b-84ea-d77b959f6bdb@pengutronix.de>
- <c85a94ee-59e1-47d6-8200-813bb434caf2@prolan.hu>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <c85a94ee-59e1-47d6-8200-813bb434caf2@prolan.hu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20250901163811.963326-1-bigeasy@linutronix.de>
+ <20250901163811.963326-2-bigeasy@linutronix.de> <CAJhGHyBaqn_HOoHX+YinKW5YSy1rncfbvYXktkEtmFgK44E9wg@mail.gmail.com>
+ <20250902111740.hwMmUu4T@linutronix.de> <CAJhGHyD7x9QLJ+uoRnbh4qOhphdxJU4c384D1Ph2tn5ktR_=kw@mail.gmail.com>
+ <20250902155634.enTifVKX@linutronix.de>
+In-Reply-To: <20250902155634.enTifVKX@linutronix.de>
+From: Lai Jiangshan <jiangshanlai@gmail.com>
+Date: Wed, 3 Sep 2025 15:51:12 +0800
+X-Gm-Features: Ac12FXxWehpghM_pE5-NdHiYQXidnzDtI6Lr5vtrO0rP3JX776WmpjHyFdBBDhk
+Message-ID: <CAJhGHyD3XQoxHph4pqTXjJQYovCsfvzCrg2UJ_G9v6MFGrQ77A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] workqueue: Provide a handshake for canceling BH workers
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Clark Williams <clrkwllms@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Sep 2, 2025 at 11:56=E2=80=AFPM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
 
-On 03.09.25 09:43, Csókás Bence wrote:
-> Hi,
-> 
-> On 2025. 09. 03. 9:28, Ahmad Fatoum wrote:
->> Hello,
->>
->> On 15.08.25 17:17, Bence Csókás wrote:
->>> The Ethernet PHY's reset GPIO should be specified in the node of the PHY
->>> itself, instead of the MAC (`fec`). The latter is deprecated, and was an
->>> i.MX-specific extension, incompatible with the new reset controller
->>> subsystem.
->>
->> One reason to do it this way is that the PHY is in reset when the OS starts
->> and the external phy-reset-gpios allows MAC probe to get the PHY out of
->> reset, so it can be probed after reading its vendor/device IDs.
->>
->> Does switching to this new binding address this scenario? If so, it should
->> be noted in the commit message.
-> 
-> Yes, but after it has been reset, if the platform supports Power Management, the PHY's clock will be turned off, which some PHYs (in our case the LAN8710) don't tolerate. This has been reported many times, just search LKML for "lan8710 reset".
-> 
-> So we want a more general solution [1] where the PHY subsystem resets them before enumerating. However, if the MAC driver claims the GPIO, then it can't be used by the PHY.
-
-I agree that it makes sense for a PHY reset to be associated with the PHY
-device and controlled by the PHY driver. I am wary of regressions though,
-which is why I wanted the commit message to clearly spell out the implications.
-
-> I will clarify the commit msg with this in mind.
-
-Thanks.
-
-> [1] https://lore.kernel.org/lkml/20250709133222.48802-4-buday.csaba@prolan.hu/
-
-Is this mainline yet?
-
-Cheers,
-Ahmad
-
-> 
->>>
->>> Co-developed-by: Csaba Buday <buday.csaba@prolan.hu>
->>> Signed-off-by: Csaba Buday <buday.csaba@prolan.hu>lan8710 reset
->>> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
->>> ---
->>>   arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi | 8 +++++++-
->>>   1 file changed, 7 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi b/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
->>> index f053358bc9317f8447d65013a18670cb470106b2..0a5e90704ea481b0716d6ff6bc6d2110914d4f31 100644
->>> --- a/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
->>> +++ b/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
->>> @@ -246,7 +246,6 @@ &fec1 {
->>>       pinctrl-names = "default";
->>>       pinctrl-0 = <&pinctrl_enet1 &pinctrl_enet1_mdio &pinctrl_etnphy0_rst>;
->>>       phy-mode = "rmii";
->>> -    phy-reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
->>>       phy-supply = <&reg_3v3_etn>;
->>>       phy-handle = <&etnphy0>;
->>>       status = "okay";
->>> @@ -262,6 +261,13 @@ etnphy0: ethernet-phy@0 {
->>>               pinctrl-0 = <&pinctrl_etnphy0_int>;
->>>               interrupt-parent = <&gpio5>;
->>>               interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
->>> +            /* Reset SHOULD be a PHY property */
->>
->> Comment belongs into commit message.
-> 
-> Agreed.
-> 
->>> +            reset-names = "phy";
->>> +            reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
->>> +            reset-assert-us = <100>;
->>> +            reset-deassert-us = <25000>;
->>> +            /* Energy detect sometimes causes link failures */
->>> +            smsc,disable-energy-detect;
->>
->> Unrelated change not described in the commit message.
-> 
-> Oh, this has accidentally made it into here from our DT. Thanks for spotting it!
-> 
->> Cheers,
->> Ahmad
->>
->>>               status = "okay";
->>>           };
->>>  
->>> ---
->>> base-commit: 0cc53520e68bea7fb80fdc6bdf8d226d1b6a98d9
->>> change-id: 20250815-b4-tx6ul-dt-phy-rst-7afc190a6907
->>>
->>> Best regards,
->>
->>
-> 
-> Bence
-> 
-> 
+>
+> That interface is actually implementing that boosting for users which
+> don't use it directly. By "it" I mean the proper rtmutex.
+>
+> This is used by the PI/ futex code where a rtmutex is created as a
+> substitute for the lock that is held by the user in userland. The lock
+> is acquired in userland without kernel's doing. So in case of contention
+> the user goes to kernel and creates a rtmutex as a representation of the
+> userland lock in the kernel and assign it to the task that is holding
+> the userland lock. Now you can block on the lock and userland tasks is
+> forced to go to the kernel for unlocking.
+>
+> For RCU, as far as I remember, a task within an RCU can get preempted
+> and in that case it adds itself to a list during schedule() so it can be
+> identified later on. There can be more than one task which is preempted
+> within a RCU section and so block a GP. The boost mutex is assigned to
+> the first task currently blocking the GP and then next one if needed.
+> A poor substitute would be something like taking a lock during
+> schedule() and having a list of all those locks in case boosting is
+> needed so it be acquired one by one.
+>
 
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Well explained why a =E2=80=9Cproxy=E2=80=9D lock is needed in these two ca=
+ses =E2=80=94 thanks a lot.
+
+
+>
+> Right. So you would avoid taking the cb_lock in bh_worker(). Instead you
+> would need to assign the "acquired" lock to the bh_work() task in
+> __flush_work() and then block on that lock in __flush_work(). In order
+> to figure out which task it is, you need some bookkeeping for it. And a
+> lock to synchronise adding/ removing tasks on that list (bookkeeping) as
+> well as accessing the lock itself in case of "contention".
+> So given all this, that approach looks slightly more complicated. You
+> would avoid the need to acquire the lock in bh_worker() but you would
+> also substitute it with bookkeeping and its locking elsewhere. So I am
+> not sure it is worth it.
+>
+> On !RT you can have only one running softirq at a time. On RT with the
+> removal of the lock in local_bh_disable() (patch #3) there can be
+> multiple softirqs instances in parallel on the same CPU. The primary
+> goal is avoid center bottleneck and make it possible to have one NIC
+> doing throughput and another NIC doing low latency packets and allowing
+> the low latency NIC preempt the throughput NIC in the middle of sending/
+> receiving packets instead of waiting for NAPI doing a handover.
+>
+
+The bookkeeping isn=E2=80=99t necessarily complicated. For bh_worker() on
+PREEMPT_RT, it could be done in worker_leave_idle(worker) with
+pool->lock already held. worker->task could be repurposed to record
+the task running bh_worker(), which I think would also be useful for
+debugging even on !RT.
+
+That said, since a proxy lock isn=E2=80=99t appropriate here, let=E2=80=99s=
+ just leave it aside.
 
