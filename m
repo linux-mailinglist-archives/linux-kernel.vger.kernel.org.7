@@ -1,193 +1,135 @@
-Return-Path: <linux-kernel+bounces-798750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC67B42270
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:51:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 450CAB4227B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 337CF3ABACE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:51:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B6DC1BA86EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730DB30DD23;
-	Wed,  3 Sep 2025 13:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB04930EF77;
+	Wed,  3 Sep 2025 13:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dpd8hw/M"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBbP/PXl"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0004A303CAC
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AE730E83D;
+	Wed,  3 Sep 2025 13:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756907489; cv=none; b=XN1TVUsEyi275yrC3oeWzyKvuRLJ2YUl2JkBgQfuZC7JAzXhuy9B2/xlQ+oXzpB1nX3qsmpcPjV2PbvQHG1wdpAx5X1N2NKI2aHZ4BlBnsDVJ1AH6iGwZbktZEJ0yssUZTJAgkDKbunhu3CiBAXzlP9x/RRSTgm39SRL1L7SQT4=
+	t=1756907523; cv=none; b=GHeQSXS0PDuYgnxU4wVH+6z5sgZsQGFAmdHnUeOh5lcRuJ4nbiWMG8GPQquaqoaMP6wtEk9vjC/lObXLHbWGfXl+dO4axXG+sTM6wWIOw1nJ9g0hSbUqf0XeL+DcuXphKlpQeduQl3crYpt+u4xSPT48mJCz/9xGiHiHV7XG/jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756907489; c=relaxed/simple;
-	bh=n8Ihtdnse3VN/XbE/VuoI9w327s4Ffs6XQa/1KWmmzs=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Q7dt4AI/n18sOSItMvmsaTBkmBItryjXo8+a8eWulnuJmRzRmdalhPIiGHy/ZdktHwTxuKPUmHC/0CQ3KIBAqGwUbqGS04wI0rr8uEc1mHNHxoRsd240zSL43vCwZ5t+QZZw7YPUYsJ3t0ejyNXCYZ/+AXtneNY8uG2kITqwYjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dpd8hw/M; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250903135124epoutp019cb6ae003711780f1d9cabc8c065db84~hygyJ-SXp0389103891epoutp01P
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:51:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250903135124epoutp019cb6ae003711780f1d9cabc8c065db84~hygyJ-SXp0389103891epoutp01P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756907484;
-	bh=dBdIdnKI53kzwYZV6kySizOPUkzoS2PQD2DaHLLIqVs=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=dpd8hw/MupKTr0qtPO77S41WAB8tiH6YV/1JhHJBPEo3/4hwDwHHPHeAglXSEuURo
-	 yrsKiwkV5fuDTfYvShVDeCmIhmZwr3zd5ozvD/HAnDR2qhXqhLQzKTGYAWG8J8xYnR
-	 AAPqLNsh5LFGngoS6smBXAW7X5xHYz4x7z5ER3yM=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250903135124epcas5p18fa26f5f659e6fee887eb66d26da80c4~hygxjFWjW3191731917epcas5p1g;
-	Wed,  3 Sep 2025 13:51:24 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cH3tM1dWgz2SSKY; Wed,  3 Sep
-	2025 13:51:23 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250903135122epcas5p33bc7da2841b332773bceb3535f368af2~hygwEAZGf2373223732epcas5p3U;
-	Wed,  3 Sep 2025 13:51:22 +0000 (GMT)
-Received: from INBRO002520 (unknown [107.122.1.191]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250903135121epsmtip12fd955463311b1f218dd2bddb5a961ad~hyguqdbwg1911719117epsmtip1h;
-	Wed,  3 Sep 2025 13:51:20 +0000 (GMT)
-From: "Devang Tailor" <dev.tailor@samsung.com>
-To: "'Alexandre Belloni'" <alexandre.belloni@bootlin.com>
-Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<alim.akhtar@samsung.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-	<faraz.ata@samsung.com>
-In-Reply-To: <20250903122342a2996825@mail.local>
-Subject: RE: [PATCH v2 0/3] On-chip RTC support for ExynosAutov9
-Date: Wed, 3 Sep 2025 19:21:19 +0530
-Message-ID: <001a01dc1cd9$d52c1830$7f844890$@samsung.com>
+	s=arc-20240116; t=1756907523; c=relaxed/simple;
+	bh=T/KSTrSwcf413M6648OAvY3x0y9kavIDZn2ShtBOwsk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LjasHx301ScyBt9JzkKWydKlCwEUPslicQ39houftBN12ifcmKbmVbAqWj81AJoMZZMFd3DDGDJAE6ACKhezqehgt5U6nBP0Jm9jJkQG0hmGRjyGwLTifwLdLWzzlMDCm/c1xMQwD21pgwRwqNYF6rVc8Ojp5uWX0LEHAY1pLOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBbP/PXl; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-24c89867a17so8836315ad.1;
+        Wed, 03 Sep 2025 06:52:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756907520; x=1757512320; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=31pvuPyzmxy7Nu/xNQn3+yYnNi6oTH3Hxdcf+kkmhtw=;
+        b=KBbP/PXl6FUAYyZqD+q2Z+ypSDdXz/9LPHFut40fgaOUxQzKVl+HaO8luSY27uCfL+
+         PMgiN/WL6FQDIFMiEuGML5kjZUdswGt3KB8dDIMOpeBPaGvsUnLahqH+NWzuCcUnJ65y
+         28nXzfMWBiqcQRUsTvP18Ut3+5P3UEFBsDXlNUQvA4xQoUSsmXybuI7/VKJIWfeYhEpc
+         neLgpqeNZrFe+WcE2V3rUHh2r0YfgkVvRf7XB3YQP9PLH4Yf09BsIonVWSt5DQWPgwP0
+         w0rEI55qJJZibmFRsJjwz4xao7tq+DPBArs93lHrBAPKxw/SV2Tmc4sB2xlfeM7mV8ss
+         kXrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756907520; x=1757512320;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=31pvuPyzmxy7Nu/xNQn3+yYnNi6oTH3Hxdcf+kkmhtw=;
+        b=CY2ORhXpoJjmb3lbbrBcRyWOpiu0vFViQ/nENBN7E7hqs6zA3fApwkkGwiQUWGeHnq
+         lBDe9iSVSaoEdFNcpVsRGAyoBPxYknQLoXBL7g5gUL3FS+uogaTODQra7RnsIIvzgN+b
+         hzuQuy8QxWkIokW8NsmyF6l21ykBR4AB9FASG0qMOkeHPSylhkvt0fq5OFZSzbnBF0nv
+         8vcZKWZCf+DjMMecwJ08c3WVQXzRYy8FV7fMYzSHRmwxmr2R4dGC9nPcoYAOrhvGvUuo
+         lFvMHGTl8gP3opxdsi83jVH6RPagKMmHg5zy9u9/gZ8lRjhxp1Q54K1eUtRfdH1dWHWo
+         u6Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9tio98wbUg9NjmV1XnaZB7Skzyo8myR8gEI8WDtuPDKE8iJ4Ve9pOVDODOmODFJFis9hP7nWHALyo@vger.kernel.org, AJvYcCXa/XhXM5Rcu7gat9hpP+yvQ+tWwAj4p6Y8fg21121MymHZpvCkpJyNzAKF2YzkCy+f+i4D5IximxTlcRQ=@vger.kernel.org, AJvYcCXs+ZlgkvSj5gDZksr9Lom1jL6rCDeHOZlkFET+n6tOpEcK4zZqIAYBcNmIFtM7i38YclsN7by/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqxcarDttghajvFAJcA/g1v33jvNVcEBb78uo5Z64w/AtPp2CI
+	Mwl9I1BLcOTy2/XjyrobH+ALtC4r/KoUiIdAzK9xpDjWSHXSXgk1lI9a
+X-Gm-Gg: ASbGncvKhWngz1PBQm4/jqhlbnadGPwe/1smZ0S/YpoRgRIBQDeklF+RFhwrjR1VQas
+	vfgy4TReP9Fj271cg6hAbUpDRqPelLaM4Zgs47X2Xxp3Ro7P/sR7igNPjLwWVxSZedaODFnnZBB
+	91s3vRPf12EaHC68oRH1x775rK4AnqDgf60XtipwOU5rdlwezlyIKOacIAjEOph8NfXrftcNO2D
+	kT2ksev7qhH4Fxoj3UYNnKIu2yFWC7CILrQyJaJUZ70gF1HK9cQR+U79ytnTTFJk2Ji8CmyY1zT
+	Br/hZ2rcWf0tTW1ZK3nw2RDoilviNgzCOXgHDlkAYT5yzyp7UBAavKCYjkqXRyEtiSZtckgHXtb
+	mxe3JxHg62GQPS8le0ActYKHNKe6Vpes56h2a7rDYrsQn8FFesPS+HtEuFVSg8Zs8dtlhYC6yHd
+	1fiixm/SAm65kz1/oJxRi5ZQn79jrd2jpfjtehq3/cb9ztyxxGEFLT+Jc=
+X-Google-Smtp-Source: AGHT+IGPXxKq1vceqgwEfnjmmFK1BX/HaS7d7j+fXNMkyGVFiTc/r6Px77JsUZgpTvhRMqRYHCDxOg==
+X-Received: by 2002:a17:903:350d:b0:24b:299a:a8c8 with SMTP id d9443c01a7336-24b299aab5fmr68322845ad.20.1756907519733;
+        Wed, 03 Sep 2025 06:51:59 -0700 (PDT)
+Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.22.11.163])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-24b2a5852a9sm40585005ad.150.2025.09.03.06.51.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 06:51:59 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Trent Piepho <tpiepho@impinj.com>,
+	linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] PCI: imx: fix device node reference leak in imx_pcie_probe
+Date: Wed,  3 Sep 2025 21:51:50 +0800
+Message-Id: <20250903135150.2527259-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJ8w0UJjWiHDR7+9bjoByRdFpd+nAMc6yo9AXLNbhMBpryuBbMOciLw
-Content-Language: en-in
-X-CMS-MailID: 20250903135122epcas5p33bc7da2841b332773bceb3535f368af2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf
-References: <CGME20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf@epcas5p1.samsung.com>
-	<20250710083434.1821671-1-dev.tailor@samsung.com>
-	<000001dc1cc7$6bfee9d0$43fcbd70$@samsung.com>
-	<20250903122342a2996825@mail.local>
+Content-Transfer-Encoding: 8bit
 
+As the doc of of_parse_phandle() states:
+"The device_node pointer with refcount incremented.  Use
+ * of_node_put() on it when done."
+Add missing of_node_put() after of_parse_phandle() call to properly
+release the device node reference.
 
-Hi Alexandre,
+Found via static analysis.
 
+Fixes: 1df82ec46600 ("PCI: imx: Add workaround for e10728, IMX7d PCIe PLL failure")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/pci/controller/dwc/pci-imx6.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> -----Original Message-----
-> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Sent: 03 September 2025 17:54
-> To: Devang Tailor <dev.tailor@samsung.com>
-> Cc: robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> alim.akhtar@samsung.com; devicetree@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-rtc@vger.kernel.org; faraz.ata@samsung.com
-> Subject: Re: [PATCH v2 0/3] On-chip RTC support for ExynosAutov9
-> 
-> On 03/09/2025 17:09:32+0530, Devang Tailor wrote:
-> >
-> > Hi,
-> >
-> >
-> > > -----Original Message-----
-> > > From: Devang Tailor <dev.tailor@samsung.com>
-> > > Sent: 10 July 2025 14:05
-> > > To: robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> > > alim.akhtar@samsung.com; alexandre.belloni@bootlin.com;
-> > > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > > linux- samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > linux- rtc@vger.kernel.org; faraz.ata@samsung.com
-> > > Cc: Devang Tailor <dev.tailor@samsung.com>
-> > > Subject: [PATCH v2 0/3] On-chip RTC support for ExynosAutov9
-> > >
-> > > Enable on-chip RTC support. The on-chip RTC of this SoC is similar
-> > > to the previous versions of Samsung SoC. So re-use the existing RTC
-> > > driver with applicable call-backs for initialization and IRQ handling.
-> > > Add a separate call-back for disabling RTC since existing '.disable'
-> > > call-backs updates additional bit not valid for RTC of ExynosAutov9.
-> > >
-> > > Setting and getting hardware clock has been tested using 'hwclock'
-> > > and 'date' utilities.
-> > >
-> > > Alarm interrupt has been checked with incrementing interrupt count
-> > > via "cat /proc/interrupts | grep rtc" for 10sec wakeup time via
-> > > "echo +10 > /sys/class/rtc/rtc0/wakealarm"
-> > >
-> > > changelog
-> > > ---
-> > > Changes in v2:
-> > > - Fixed the review comment of v1 for mis-aligmnent & asymmetry bit
-> logic.
-> > > - link for v1 :
-> > > https://lore.kernel.org/linux-rtc/20250702052426.2404256-1-
-> > > dev.tailor@samsung.com/
-> > >
-> >
-> > Reminder!
-> > Can you please help to identify if anything is pending in this patch
-series ? I
-> see all three patches are reviewed.
-> >
-> 
-> You have actions after those reviews:
-> 
->
-https://lore.kernel.org/all/20250711-shapeless-adorable-lobster-d2efbf@krzk-
-> bin/
-> 
-
-Thanks for the pointer. I had given the explanation for that,
-https://lore.kernel.org/all/188001dbf249$831afd00$8950f700$@samsung.com/
-after which I didn't get any feedback.
-
-As per my understanding I have addressed the review comment given in V1 for
-[PATCH 2/3] (without ignoring any).
-So I am not getting what I have missed. Would you help to point out what was
-left ?
-
-> > >
-> > > Devang Tailor (3):
-> > >   dt-bindings: rtc: s3c-rtc: add compatible for exynosautov9
-> > >   rtc: s3c: support for exynosautov9 on-chip RTC
-> > >   arm64: dts: exynosautov9: add RTC DT node
-> > >
-> > >  .../devicetree/bindings/rtc/s3c-rtc.yaml       |  1 +
-> > >  .../boot/dts/exynos/exynosautov9-sadk.dts      |  4 ++++
-> > >  arch/arm64/boot/dts/exynos/exynosautov9.dtsi   | 10 ++++++++++
-> > >  drivers/rtc/rtc-s3c.c                          | 18
-++++++++++++++++++
-> > >  4 files changed, 33 insertions(+)
-> > >
-> > >
-> > > base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
-> > > --
-> > > 2.34.1
-> >
-> >
-> 
-> --
-> Alexandre Belloni, co-owner and COO, Bootlin Embedded Linux and Kernel
-> engineering https://protect2.fireeye.com/v1/url?k=62b10b19-03cce365-
-> 62b08056-74fe485cc33c-bc602ba9f8c455fd&q=1&e=14890047-79c7-46fe-
-> 85a0-48fc7c9b3d91&u=https%3A%2F%2Fbootlin.com%2F
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index 80e48746bbaf..618bc4b08a8b 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -1636,6 +1636,7 @@ static int imx_pcie_probe(struct platform_device *pdev)
+ 		struct resource res;
+ 
+ 		ret = of_address_to_resource(np, 0, &res);
++		of_node_put(np);
+ 		if (ret) {
+ 			dev_err(dev, "Unable to map PCIe PHY\n");
+ 			return ret;
+-- 
+2.35.1
 
 
