@@ -1,187 +1,199 @@
-Return-Path: <linux-kernel+bounces-798655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41434B420C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:18:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB30B4216E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E21D61BC0858
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:18:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A7C97B912E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B821922FB;
-	Wed,  3 Sep 2025 13:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AA8301489;
+	Wed,  3 Sep 2025 13:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="qwZaEznn"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="eEa5MPx9"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010035.outbound.protection.outlook.com [52.101.69.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967471917F4
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756905480; cv=none; b=OKkLvhpi5HiVGqc26sc4x9+RwzwtPCWmsHGOOnJ6UZdlIr3WUJevgzMYEYJulAl6BeFwJ8tDjQ4blylZ9ihQ4CSlHvL7q/xZgk4odLXDHfAcrx1Zfa9JAbR5GVbZtwbfEa1Wz2k4NpkdHPYAkwQdGnqG7zDX6oe319wR7S1HUjI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756905480; c=relaxed/simple;
-	bh=o2R6EH8vVq8X64twREcl5yX+6UbYAOvw2Vop10923lI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=W0NdqcMeveFRwinfI7ft6bUaAOix64Zd/3uSwJEZ0a30+i76LiRQeRQp/3ZW/Vr8DmKJrY848yRsxcxw3AEVnv94otI105ks3kTCQyp86stn3ZFhXyeE/emibMYeH5WMFbej3sgdpIGMjKDodc9zhVe+ce20hv/0bIKGoRZcjD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=qwZaEznn; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b32384e586so30159201cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 06:17:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1756905477; x=1757510277; darn=vger.kernel.org;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=VvvntKQFWg167uBf7XgNWPpBloVxjgYOfN9r2LJ5PDA=;
-        b=qwZaEznnPmy22VcZrNaQ6y4LCsddK50qDoA23YX9JKNdAQUijrLw+JvpcEng7YXnF2
-         NwWoZkcZg7p3+Fg7ISTzyLlYhfdtLpo7+dfhH+uOoUOhjcFJiUc2BRIUfGoLdB87xisu
-         vRnapFeFVcCr4P+eYV8gOF8lrME0fvLUTsEI1xo8SRxH7J+wn1VbXcXI2OBNILfbD390
-         SCReF+POScrtv5LmUlGylVX5RJCSxhY76EPp+0evwLt6lTK8PxR+cb2GLZqMPJsOYakS
-         u6VKYAA/0n7eaZArumviZi7ygIgvNIYqhWEX/7sralHv7x54rlKI6WjfF81jND6sfv2a
-         +aNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756905477; x=1757510277;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VvvntKQFWg167uBf7XgNWPpBloVxjgYOfN9r2LJ5PDA=;
-        b=wd3KX82ejgjsHTCR6JuVKz4NkBbcHH5IXqXuCTSV9yHQnxFbx6oyLW4VmXd0zE7Oqe
-         LU9tNU4gJ3/R9O6vVixMuyo4PCsWcWe6jiI+drdoc0D/aCpTI+U2W+A60CyTxApf1IAT
-         hr2MgW+L8PrAkmxhivcBG/LyJ6WaNWv3UUxTNvZf7kJudT98+cQ4tTZpzPpPvz1xfDhy
-         rtIlE/2tiYxSSTErelfTVYkeoIu5fn/eFyQEOFSFcYAsnZRvRBCqntQLuxGAUkQxDcQY
-         /uBtGdZs/JoKcrpizKkElbtX0XCFlY7J6jqBCmSP7JAaZq0hENiCD1y0soGej6iE9Uov
-         5Xgw==
-X-Forwarded-Encrypted: i=1; AJvYcCX68YmN6GGbFF54SpioK0XYUXkuaaHFfiLLSDls1je58KhMx56jqay1LZdnZuOELNZ3EShZu26jz0GDyYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAeL34BGNsAVbuI5wG+BAwv6CPxNb4hATdUELLh7dsfcCzjZcl
-	LzT8A0THargR8Wfp12Oxro+WMAl4yLYhbM31iu6fDiLO3rQzfM2CoLnbbu/qhCSkT+E=
-X-Gm-Gg: ASbGncvGoOIzs7yO0lVBaVJSy4k/ETbSfsT3TWv07fsG3UCS2fheb4FNdAt85JCDLMI
-	C7+b3ASwhLY/APlaRqZDVZ/GHuUDZgkKXA2aE7/s02uOcfGpv6MmfSPEiso/jmolduTbXE5Sq98
-	AvgLNWhNUNYJPa/IHknI5rrM+0H3e1mGgYvNiOBljqHAvePruCtyer/082L7vHAQnVy1SChGn0q
-	/3yednm8q794DBQ99WebQaiKviXlu3O7xFmH20VtFwYMAqjS15BVU8/jpkpF9vm5J3gvtrsjfqE
-	x2k0dpTBF+K7oSZtkAlzgnrx3fqbtFOhC65Kzl9NugRPrOuD23WLgyovP9D0oUuePQhP7qmNR8f
-	XdCoggqqIv7QqikUXCjM0mEEN0H0=
-X-Google-Smtp-Source: AGHT+IGvqixI2JJ9vMEi9zexOfvg59/aFmfGuKseEK7+mWZiCf6UPKvrAFywYKNIMyyJLkPSZvlDfw==
-X-Received: by 2002:ac8:5ac9:0:b0:4b2:fd60:61e7 with SMTP id d75a77b69052e-4b31d875830mr147326121cf.37.1756905477391;
-        Wed, 03 Sep 2025 06:17:57 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:11:5a76::5ac? ([2606:6d00:11:5a76::5ac])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-80aaacfe7e1sm105779585a.44.2025.09.03.06.17.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 06:17:56 -0700 (PDT)
-Message-ID: <35ec43df37131904dae9a0c10502348461269af0.camel@ndufresne.ca>
-Subject: Re: [PATCH RFC 1/5] media: uapi: videodev2: Add support for AV1
- stateful decoder
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: DEEPA GUTHYAPPA MADIVALARA <deepa.madivalara@oss.qualcomm.com>, Mauro
- Carvalho Chehab <mchehab@kernel.org>, Vikash Garodia
- <quic_vgarodia@quicinc.com>, Dikshita Agarwal	 <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>, Bryan O'Donoghue
- <bryan.odonoghue@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org
-Date: Wed, 03 Sep 2025 09:17:55 -0400
-In-Reply-To: <20250902-rfc_split-v1-1-47307a70c061@oss.qualcomm.com>
-References: <20250902-rfc_split-v1-0-47307a70c061@oss.qualcomm.com>
-	 <20250902-rfc_split-v1-1-47307a70c061@oss.qualcomm.com>
-Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-yYZtNSI9AXNjeG3trwZC"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B339F3002BF;
+	Wed,  3 Sep 2025 13:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756905495; cv=fail; b=GHlF784l8yojKgQX025Ig7/soBCmiiL6SYuyzOtevFnznt8KfUURgmv7KjW19/8AKE5xANs73Am3mO1U6cSDKZ9UWCEmhqzapeKcYcPEuLN0UBCMNUQGAqD9r9liEYsXONGmio/cPpXY75hxXMmoZ1E9+gYPMeTVbE80Kk392Io=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756905495; c=relaxed/simple;
+	bh=8VD6j4T7khWoi7FgxPLZumgNg+DlUnRoKt2J7DTSJyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=AAGoRtN/MFyrJacZjaj3Hq7v0GCwIrANdz8KgT9NyaNlgqmFJlCfrlce2ui2UhsywjU/MIAQ2gqYcHR4Y+Xq4AuGfwuPvauM98TptFbAcFis0xowsXX/JwfOlTFYZbS5J9BnKj7DbOpWDoex4F/DJ40peU84QSYTCiwh1w4Lp8U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=eEa5MPx9; arc=fail smtp.client-ip=52.101.69.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RluKRzFeACmYcHrPAE+1KrgfSsGsIz5LdQGg20nghS5SvwDNfebgFFJqTRP60mzFiszdEBvamB88FIMdnIzHJzDCYSroLwu1EJsq9Cfhqxu2Cxpzh40aeOsnYXlIUHdnfX3DqbBUFMmznwQacTTw9QJ58IyIihxIW4/FFCoIgPtOzPhgeBMaXDMEt8EE3g55Cx/3FaQMs3/iwwwr91h6Vvtf1uEVs7pQ9egrO9mQgfQTf8ek94YWpdtXfQ1Xhv+xv6s9JK0NLqanqhF6N2wvNPYYZTXVsUX+F8GzdhVXpWdvBBoGCzunJ9SBE/gY60kpp7KY9X68TQqkiEgTqyl24g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z0UcQVLV/+ZpMicp0TeK/Mqy4t1CcsZvUq/FzFB5vYI=;
+ b=v2ysaX1pdPWicDHPv7jVQyfPkrNHKa2cfYwtFlHhnD3b5qajk67nmKB6pteSEqF3D3VwwYlpWyOMx0CZ4c+Qu34g5o74K7DpjGZq1KZELHnswpH98QZOTdlRpwCoBIblJjDIVXhpUshkmdxr6QmbdHLTQaMLGqEzZqDzbzbSLrX0E6lBWSzCO1RsqF1BpxjTLJazCaO98PigH2/RLHC+jrMVI2HmMQw4gNtQt52wXds3lQ82jmyA28pV0ZPeRAWLFh66/cIl1iqtEzmuN3/a6d9BOm7m1qZ11oisnxeiL0gGylxLOyscRvt6RzDyzichgAZBMTse2TRIevKzxSw+tg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z0UcQVLV/+ZpMicp0TeK/Mqy4t1CcsZvUq/FzFB5vYI=;
+ b=eEa5MPx9b2VSIR+LmV1IR8zC2rjYb6KU7v0Na92J4KJvTAHc40envohg2fLfJWSA8YvjxGTsuLQU5KHgYZ/Jv1b/44W5lDUZrB5j8h6baVb+1Y6ci7s3SPB68DDAGqecRuUNfuH2sJfBsHdaPuvy8bWow/V/fHSCMm8eHEPK9Q7MLDQUQYAx+QRmQQHVybeWZ8h5zlQHHUSwCi3A3RUK9YRocSh2ooozFWdJ8g0ADJbrOJmk1zgmML/4RNUp414ozFX6/LP+gdngo5c25uQB6iycy9RfT3srlT3cvECQfh4o0YDBGYGqgJ3jwKh9hJZukgjOgKAhd2MQaKDwVAZCYw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by DU2PR04MB8871.eurprd04.prod.outlook.com (2603:10a6:10:2e2::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Wed, 3 Sep
+ 2025 13:18:10 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.9094.015; Wed, 3 Sep 2025
+ 13:18:10 +0000
+Date: Wed, 3 Sep 2025 16:18:07 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Larisa Grigore <larisa.grigore@nxp.com>,
+	Frank Li <Frank.li@nxp.com>, Christoph Hellwig <hch@lst.de>,
+	linux-spi@vger.kernel.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/7] spi: spi-fsl-dspi: Target mode improvements
+Message-ID: <20250903131807.cou3u7wa3e266yn7@skbuf>
+References: <20250902-james-nxp-spi-dma-v6-0-f7aa2c5e56e2@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902-james-nxp-spi-dma-v6-0-f7aa2c5e56e2@linaro.org>
+X-ClientProxiedBy: BE1P281CA0198.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:89::6) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|DU2PR04MB8871:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4131018a-a990-475b-c543-08ddeaec5407
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|10070799003|19092799006|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BSzjjlp3kHTokaFfle0eEQE748f2GuL7Tn84UkfblNQiOIvRNMEn10HQPTeo?=
+ =?us-ascii?Q?OMtMWLE21lToNC/PsHn/yodbvndfdx4/QW4j7+TVErMqvRF5oUribUcULrQq?=
+ =?us-ascii?Q?WIBALtDnRhYGItC5q3nvId5Bl+uV50NY5adsiZu4vrPCYG5XejjIzROdC4G2?=
+ =?us-ascii?Q?kpuXPVI8FwwypyS5Hh7fqoQxw13ILWDHV8WZPDWE5qmsF+6zEkWs717KYGBu?=
+ =?us-ascii?Q?+3c7UaeJrOWKtC5Wp7HJFq9GiXeyiF87yO6kJYOszgvvwC3ArLXqpTO/9Jh+?=
+ =?us-ascii?Q?pGQfXAgAArGaakyjzP2xvGai2g1jRZTKLt6ZyJyprI/rGGJTmEUAoZerIc/B?=
+ =?us-ascii?Q?5zL/7ALlS/lGLnHTlveqrWO27GqIScPa2PV+VZyZMJ2qBTCRtKTSMHBdYtx2?=
+ =?us-ascii?Q?26Q4ctFndF0uvD6t0WPkEzlFEOy1n+tC8DtJqabbB7FuiKshX19fN+ukb9qn?=
+ =?us-ascii?Q?YLMCjLjwIdhih4C2/0b5PM5UFosmCc6isJbbmc/Imd1rpAUaZNEdbBAdRYAI?=
+ =?us-ascii?Q?Vc9e6JHpB9bBXv5mw1eZxbwbOkmLRxvaRKdXYyD85Mb1Jh/8pInaQ5t7hqMS?=
+ =?us-ascii?Q?TUVQ4YIMZEH3YOiZLw9U6V2VDPmSuwwrdGD5EMRdQ31uJxBMfVlzBtrBj1yZ?=
+ =?us-ascii?Q?0N1egHXb59MJUg4ZUwor/ROj2shJdwZxozO4IGsagFKD+w2FIukRA08XGTPh?=
+ =?us-ascii?Q?wNmLdT3K98zed7Zl4vd9+AiLgisY1cDjUGMnODGoHRB7zZZKmROEa4VNFeIJ?=
+ =?us-ascii?Q?kSTQqDnPzMpKAFrC6msJ7wqnlSPZ9p6dGutkeNpizJTPtAxtQFIwfRiiZhr5?=
+ =?us-ascii?Q?Y+ldWNMa1g8H04MdYD+eT7j4V2eLXadTKDSTciE154n6xW84GvzZVWYXO6JE?=
+ =?us-ascii?Q?SCikx+ZDxYe2H/F+/FL6pXSbVuupiPi6JIYYhvQW52ErYtTFETcVsg1FUFtW?=
+ =?us-ascii?Q?9Oft40uDKXBQQEIx0DfJ5xa0X2zq7ucXGTjkp7SplHHWkXVpXbFj5vN5Xp6r?=
+ =?us-ascii?Q?Qt/nsWTcmBlu7RQVHAOlPu2JdMtvnGws2rjsyoeucZPE2hF/67PRlMHbZSXU?=
+ =?us-ascii?Q?Pmo0uRPscq1vZSm5hF90kNxcpzkzEuOSkT20sGrgo4skXVc7Ay02xZzSQtIE?=
+ =?us-ascii?Q?DMuFkP2Gsje/FT550YkmpInmK5wSWGrbt1+bZnC0Da777WcSCrN5rhiKrwS/?=
+ =?us-ascii?Q?j/4VbX6jgheuO60uvzyGTGmC3LHLEDhEjkh7BK3X0ZOGOUzhTkWNWTjc48Yq?=
+ =?us-ascii?Q?VCcLDpgmCwE1m3ca6IThPbNb8UVE/DHKZNG/iPmexnKFIz0Ez6CRLmNoeJlg?=
+ =?us-ascii?Q?XTaGBD9IaLX6W84TjxBL7C7EF3Mqz43sb4QTVyi9TQjPZid7osHkEoHathoo?=
+ =?us-ascii?Q?d/+V8iGeQS5KBZsbwhOIiV3IudZGtHOI/1BnG0bu+n2cg7wUWizBtl363Gna?=
+ =?us-ascii?Q?0rWuUtcbNT0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(19092799006)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?66wP/i3Dgdz9jgTIBJO89hm7beE9jtjfu0Xtytl+xdm7ERRaGqvfoSl4zpfM?=
+ =?us-ascii?Q?ac/qNuq1B/30+6CTXyjXRtN1aSjeg0lpPtrsRBSulXw5CEs7dYq9ZZdWB3WH?=
+ =?us-ascii?Q?s1uINlDan2WBx1hz+0xRtxq8C+EuKA6XQ3oHniJEJsrC4c7nwg4ke5i+4FAZ?=
+ =?us-ascii?Q?utBp3wEOVHayCb3yUL/NRWOWUdBYF5v+q+EfG19mr1y7gCXR5SiWc4wFh39+?=
+ =?us-ascii?Q?iCxVNmu/tIiOLxd7tuB73rdvBz+P42Ou9rk6Gwa+DPJejukzirGcU0lzgXhY?=
+ =?us-ascii?Q?Wfjpmi6Pg7KlYFpEdbdwxJHQOw95CwnM2bsobtERcdtBm47SUy2oJ1xM5Dbt?=
+ =?us-ascii?Q?knT3ucXgDUZVWOCe3HHeuIG+TAgQs8S5KWiIwop2UtMWLGlVCL622abEMSkk?=
+ =?us-ascii?Q?xSIm2qi9foNzFrxbJD0/zwaTlA7xLb1sn+P+yE3v23lx95GCkv6JucwDcGog?=
+ =?us-ascii?Q?O4RoGcwnDjG9vaxw3E0oHLB+ku4Yf65xVF2FYwMa3DuwA537nJYRIffjJHbw?=
+ =?us-ascii?Q?eQExVjFmSSlNyLsOoSxxnzlFXY6eyILpNioTHeMWgxBkvttyBLKV7cS8/pLk?=
+ =?us-ascii?Q?c5QcSUpTJBD8OkIXdpQEaStzT0mjxsoc9+4F2p4B21tydObUwdONAF2iihwC?=
+ =?us-ascii?Q?tEx8u4pw/mDIW5zSve4He687Er17kP7NM6Xa1+Rf0lE2XJ5Id522SfPWjb9I?=
+ =?us-ascii?Q?hulMZAAYnCAnKKcT6Wg+zn5eNzzqNexwXIbYuaf7baeR6C1Ihdwdi5LopJTZ?=
+ =?us-ascii?Q?l4W6qMdVb/SlXFf9An4S/MIQYAK50H7AUyjHTTFY2G5PlC0DpvS6PaO3fhls?=
+ =?us-ascii?Q?NYjZ2Ie1+3nOZHb/BowHQdAnADrcCvrKlzIFEfY7aNNI/79Cq52vhs3+V49L?=
+ =?us-ascii?Q?cVIS5BEXlw2x7dTcpl8kEZchwyqGiFYPqoERUqIGVxVJFBVnnhvXEoR6yqVi?=
+ =?us-ascii?Q?sKqxzBY23vYFT0s7sJS1gSIFvfHrPy3KGxHnQfjOxheIHyWsSavtOSm7AKZi?=
+ =?us-ascii?Q?B6/luSBUWIaE0bFwhP+p0K9+kr/yjBhezA2heBkuHZfNLUs9btFviWERfAjy?=
+ =?us-ascii?Q?QhTvM9jFatzoCY24T/o2Z62pQAy2QRGYg3Lx8joDz61qzepFJQBHxku7+YxX?=
+ =?us-ascii?Q?4KbaE06+0oyDkbSl0yxzEnH9QgkZBi6yTtA3kpyVDPErj2Vq6Vax+VqBLRSW?=
+ =?us-ascii?Q?6e22nZdy0vKik81oZ1epXMS7kmwePqyrLvJjEzCUF7SO5Iuveylu1Nur+eG2?=
+ =?us-ascii?Q?0rHfS57pG/zwJMlkbrAe+EhhGiaHVWYEa7lQq2JqRvVmY8AlNeTYCH2ttexY?=
+ =?us-ascii?Q?cr7ygUueoPT/Yq/ICIavHZOYSo0UKCh6IzxJsOZXY9Pql7A5H3yzNG5fLrFF?=
+ =?us-ascii?Q?2Tx+CGNSkWjmaFhbC5kromceVtK3uX3K7P2PQt0JjIMf1Q7b9sIGnyuoa221?=
+ =?us-ascii?Q?aVF4bFN0KFFbM12pUp6NNMbP1g/9wMgy8Q0sdmnfFvkOlFd2uQOD0Zvjs5E2?=
+ =?us-ascii?Q?kBTN32+bwm/6HsbGW/tUQZO59nGLdPGDpLiH645eEW+j0/em34K+cRk3N2fX?=
+ =?us-ascii?Q?T2wvaNdPKy9v1SWUsKCFzksGFq8JWL+4GPUQ4196RgbuNwRiK4LqglV2qtMG?=
+ =?us-ascii?Q?T0pnzhMdasjRHtybpRFj3I/opGnDg3dSRqLtijKNMZtTRFW2YGR6D3HF/BYk?=
+ =?us-ascii?Q?U51GHQ=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4131018a-a990-475b-c543-08ddeaec5407
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 13:18:10.1569
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: muw0dClIor9RyGzimgcKwXP5UBSgOO23lU3UTyeVYxUkIlag7IcKm51GiUA0JFeridxKirUeIxQ3NnudG+cidA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8871
 
-
---=-yYZtNSI9AXNjeG3trwZC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Le mardi 02 septembre 2025 =C3=A0 16:00 -0700, DEEPA GUTHYAPPA MADIVALARA a=
- =C3=A9crit=C2=A0:
-> Introduce a new pixel format, V4L2_PIX_FMT_AV1, to the
-> Video4Linux2(V4L2) API. This format is intended for AV1
-> bitstreams in stateful decoding/encoding workflows.
-> The fourcc code 'AV10' is used to distinguish
-> this format from the existing V4L2_PIX_FMT_AV1_FRAME,
-> which is used for stateless AV1 decoder implementation.
->=20
-> Signed-off-by: DEEPA GUTHYAPPA MADIVALARA <deepa.madivalara@oss.qualcomm.=
-com>
+On Tue, Sep 02, 2025 at 01:44:52PM +0100, James Clark wrote:
+> Improve usability of target mode by reporting FIFO errors and increasing
+> the buffer size when DMA is used. While we're touching DMA stuff also
+> switch to non-coherent memory, although this is unrelated to target
+> mode.
+> 
+> With the combination of the commit to increase the DMA buffer size and
+> the commit to use non-coherent memory, the host mode performance figures
+> are as follows on S32G3:
+> 
+>   # spidev_test --device /dev/spidev1.0 --bpw 8 --size <test_size> --cpha --iter 10000000 --speed 10000000
+> 
+>   Coherent (4096 byte transfers): 6534 kbps
+>   Non-coherent:                   7347 kbps
+> 
+>   Coherent (16 byte transfers):    447 kbps
+>   Non-coherent:                    448 kbps
+> 
+> Just for comparison running the same test in XSPI mode:
+> 
+>   4096 byte transfers:            2143 kbps
+>   16 byte transfers:               637 kbps
+> 
+> These tests required hacking S32G3 to use DMA in host mode, although
+> the figures should be representative of target mode too where DMA is
+> used. And the other devices that use DMA in host mode should see similar
+> improvements.
+> 
+> Signed-off-by: James Clark <james.clark@linaro.org>
 > ---
-> =C2=A0include/uapi/linux/videodev2.h | 1 +
-> =C2=A01 file changed, 1 insertion(+)
->=20
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev=
-2.h
-> index 3dd9fa45dde1066d52a68581625a39e7ec92c9b7..bff42a71c67b3f4b570dd6f3d=
-250f1bb482ec8ae 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -775,6 +775,7 @@ struct v4l2_pix_format {
-> =C2=A0#define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* =
-H264 parsed slices */
-> =C2=A0#define V4L2_PIX_FMT_HEVC_SLICE v4l2_fourcc('S', '2', '6', '5') /* =
-HEVC parsed slices */
-> =C2=A0#define V4L2_PIX_FMT_AV1_FRAME v4l2_fourcc('A', 'V', '1', 'F') /* A=
-V1 parsed frame */
-> +#define V4L2_PIX_FMT_AV1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 v4l2_fourcc('A', =
-'V', '1', '0') /* AV1 (stateful) */
+> Changes in v6:
+> - Indentation fix
+> - Fix trailers in first commit
+> - Explain reasoning for "spi: spi-fsl-dspi: Stub out DMA functions"
+> - Link to v5: https://lore.kernel.org/r/20250829-james-nxp-spi-dma-v5-0-3246957a6ea9@linaro.org
 
-You also need to update Documentation/userspace-api/media/v4l/pixfmt-
-compressed.rst. Mistakes were made in the past leading to great confusion, =
-AV1
-can be wrapped in different forms and with different alignments. Here's few
-question that should be answered in the RST documentation:
+For the entire set:
 
-- Should we pass complete time units to the decoder ?
-- If not
-   - How is the timestamp going to be interpreted and transferred ?
-   - Should userspace pass complete frame (with leading headers) ? or can i=
-t=20
-     pass OBUs ?
-- Is that format meant to be OBU streams or Annex B (not to confused with H=
-.264
-annex B, it groups the TUs for faster skipping) ? (I bet the first :-D)
-
-cheers,
-Nicolas
-
-> =C2=A0#define V4L2_PIX_FMT_SPK=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 v4l2_fourcc(=
-'S', 'P', 'K', '0') /* Sorenson Spark */
-> =C2=A0#define V4L2_PIX_FMT_RV30=C2=A0=C2=A0=C2=A0=C2=A0 v4l2_fourcc('R', =
-'V', '3', '0') /* RealVideo 8 */
-> =C2=A0#define V4L2_PIX_FMT_RV40=C2=A0=C2=A0=C2=A0=C2=A0 v4l2_fourcc('R', =
-'V', '4', '0') /* RealVideo 9 & 10 */
-
---=-yYZtNSI9AXNjeG3trwZC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLhAAwAKCRDZQZRRKWBy
-9CvuAPsEUt+GPSGe3xTULuQEsO/qPdCGqiqWNEXf61UR09ODYgD+KVKmXTUYkoNO
-OJpzALKdYRe5jhV5QzQ44fqbkTjIQw8=
-=u4SA
------END PGP SIGNATURE-----
-
---=-yYZtNSI9AXNjeG3trwZC--
+Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 
