@@ -1,104 +1,108 @@
-Return-Path: <linux-kernel+bounces-799511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21A8B42CF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:50:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC6CDB42CFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0739C1892979
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94C7A581225
 	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5664F2EA179;
-	Wed,  3 Sep 2025 22:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24242ED87E;
+	Wed,  3 Sep 2025 22:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OD9JtDHE"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Z7n89/IJ"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E79719C560
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 22:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB482EC088;
+	Wed,  3 Sep 2025 22:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756939801; cv=none; b=TpEo+fTC/JRuERF561ju0lLqAqZq6Woc+PqAu0Bx7+wmd+/Uj9/WzbUKjBDpA+8tS+DrAT78viBoVTSNHQziI6a4krWUBzqkDLqmnT21H6U7esE/5lSD8xah0tFmoHi7mht7GBdcRKVJPOQmoow3UFdunRMp1UWcvZSZ/NVLXBE=
+	t=1756939822; cv=none; b=rIJAxm8hZpZXhtnqZuXygUfX9AdDArz30/jW3BqRLNoT98MFEHst8Ovnb9WNzmwwjoBv4vsh2MeDF9iH1paaD6CFDmWrfrL+Jp1O0Inoyhd5T8f0Vd1zRDODoabUtBI+TxakR/3l7EghoOCA3wuJcMlI3XJz2LvsInhM85y1RDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756939801; c=relaxed/simple;
-	bh=5zxZbULTDjBJNqwOYWJcqyxdFdAB7xODm4RLQ8h9b7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=izetCwVxHYua9XzfHCh+p4htGs4jsi9sUmPsraKiHCGLL2qJZry+7eJ41eIaR7ozdKm8KoHuUQdwqPE5Ni/kzH7bF3RijhLvId0oELvcxwLMiKif5VHr6rhAKMNlMlnr2pFxzO6F0DT5UpBn2tjdxYdcnZbBiuB1UUY8sHsPi+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OD9JtDHE; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756939787;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=v8J4btAAPddn3JaQV4f8n+Z/XZPSOT+Xr10bO/NP8/o=;
-	b=OD9JtDHENpogOeIIYgpnD4Q8s4HpIxtkZbL7K5q9riCkemeP5c98YpOkTYFANTE7BnOIcu
-	3FhYMSoRIurNI9mNF3f1qh4Tsn1LykHnJsFkggG+hZx5h4DuFTd3i3BAp7e6AvYhq99rzW
-	QsrqGCIUEPtS3rGT4aO0+QYUa+VVKIY=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shuai Xue <xueshuai@linux.alibaba.com>,
-	Len Brown <lenb@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ACPI: APEI: Remove redundant assignments in erst_dbg_{ioctl|write}()
-Date: Thu,  4 Sep 2025 00:49:11 +0200
-Message-ID: <20250903224913.242928-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1756939822; c=relaxed/simple;
+	bh=mkiGvLk02qtQgOqRBzKCxDfgS3qMK2s2BhcKdBmvNBk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NEriXEzlLfagwX54FMb8XaIrzIo0HinvVwr9sdDzx48lBuMmdTnJ2nK9kRNdUPPFON/kDKqyAkv7pKE6/7gndbyq1IBha55PO5sSsD+ydp+sL6sd+hlRw1XN7KT8BMQ0K85Ii5sZ70QFZPxxEmPSgUSv324GdMnNwJRmd2LwOdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Z7n89/IJ; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0B7A440AE3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1756939816; bh=lFN1fJFly6KNTiZkgwEYEyOUtp9KsRdAxKVxfq2rRJo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Z7n89/IJlW2sk9Ncm54HOXPyVbXY1tSnGGVp1a8ybxr/+r+QyhYdGQhXQOM+cLwi9
+	 i03cQ5VGkA6n80aEV+GQXIVcp97LuXlyCAoGk/d6kw9tOng7ak5fLZ+LRR7LAhOlza
+	 B+wCC0zy5hvr45Imv9/d4OdVzODpo0Q7szZA90olBYYqy9dxaVYrrUG0SyavbePGSG
+	 wZ2abOs2h2aTfuPzvhH/zJ9smdYaPHnv0JJ6++9rTY6vVsXd1C0q4pjHGFsm5m0ViG
+	 VspElDv2lb3EaesncQIh4IkmcGPT50u0zOTt3rHpYmkTVqWEoRVxF78OHtz/Tp5xvF
+	 i+reFYMRHAY0g==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 0B7A440AE3;
+	Wed,  3 Sep 2025 22:50:15 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v3 00/15] Split sphinx call logic from docs Makefile
+In-Reply-To: <cover.1756740314.git.mchehab+huawei@kernel.org>
+References: <cover.1756740314.git.mchehab+huawei@kernel.org>
+Date: Wed, 03 Sep 2025 16:50:14 -0600
+Message-ID: <873493p2vt.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-Use the result of copy_from_user() directly instead of assigning it to
-the local variable 'rc' and then overwriting it in erst_dbg_write() or
-immediately returning from erst_dbg_ioctl().
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/acpi/apei/erst-dbg.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+> This series does a major cleanup at docs Makefile by moving the
+> actual doc build logic to a helper script (scripts/sphinx-build-wrapper).
+>
+> Such script was written in a way that it can be called either
+> directly or via a makefile. When running via makefile, it will
+> use GNU jobserver to ensure that, when sphinx-build is
+> called, the number of jobs will match at most what it is
+> specified by the "-j" parameter.
 
-diff --git a/drivers/acpi/apei/erst-dbg.c b/drivers/acpi/apei/erst-dbg.c
-index 246076341e8c..ff0e8bf8e97a 100644
---- a/drivers/acpi/apei/erst-dbg.c
-+++ b/drivers/acpi/apei/erst-dbg.c
-@@ -60,9 +60,8 @@ static long erst_dbg_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
- 
- 	switch (cmd) {
- 	case APEI_ERST_CLEAR_RECORD:
--		rc = copy_from_user(&record_id, (void __user *)arg,
--				    sizeof(record_id));
--		if (rc)
-+		if (copy_from_user(&record_id, (void __user *)arg,
-+				   sizeof(record_id)))
- 			return -EFAULT;
- 		return erst_clear(record_id);
- 	case APEI_ERST_GET_RECORD_COUNT:
-@@ -175,8 +174,7 @@ static ssize_t erst_dbg_write(struct file *filp, const char __user *ubuf,
- 		erst_dbg_buf = p;
- 		erst_dbg_buf_len = usize;
- 	}
--	rc = copy_from_user(erst_dbg_buf, ubuf, usize);
--	if (rc) {
-+	if (copy_from_user(erst_dbg_buf, ubuf, usize)) {
- 		rc = -EFAULT;
- 		goto out;
- 	}
--- 
-2.51.0
+So I've been playing with these a bit more, still trying to wrap my head
+around them.  I do wish that we were somehow ending up with something
+simpler than the status quo, but perhaps the problem domain just isn't
+that simple.
 
+> The first 3 patches do a cleanup at scripts/jobserver-exec
+> and moves the actual code to a library. Such library is used
+> by both the jobserver-exec command line and by sphinx-build-wrappper.
+
+These three seem OK, anyway, and could probably go in anytime.
+
+> The change also gets rid of parallel-wrapper.sh, whose
+> functions are now part of the wrapper code.
+>
+> I added two patches at the end adding an extra target: "mandocs".
+> The patches came from a series I sent in separate with 2 patches.
+
+As for the rest, a couple of notes from where I am so far:
+
+- The separation of the comments into their own patch is ... a bit
+  strange and makes the patches harder to review.  I plan to spend some
+  time looking at the end product, but still ...
+
+- Acting on a hint from Akira, I note that "make O=elsewhere htmldocs"
+  no longer works - the output goes into Documentation/output
+  regardless.  That, I think, needs to be fixed.
+
+Thanks,
+
+jon
 
