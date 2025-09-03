@@ -1,166 +1,258 @@
-Return-Path: <linux-kernel+bounces-797771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D7B6B41530
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:28:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CBC3B41532
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 509C75613F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:28:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CACA5613F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D172D781B;
-	Wed,  3 Sep 2025 06:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D322D77F6;
+	Wed,  3 Sep 2025 06:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JWyEQKEx"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C1mCi6Rt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1C82561AE;
-	Wed,  3 Sep 2025 06:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352BB2D3A91
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 06:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756880917; cv=none; b=iQWJXnbmWpUHF7uEm4zA2fOnVNei4vogtQn5b2WVt5OGr6bp1Uj5/w/277iWbGneWpneVFQJUp9gh5RinvuPnilKBvKgEnXKPEI2EtYnTEN+WXblPwigsVVQcmpksRmQvgoSkM1J2GwZMwBnNFIemCY1mnbzDztt7M34rAUE+wo=
+	t=1756880962; cv=none; b=FmjqbW9U3IiM8HSdvD9nCg5ehIvGNVFi9Vo9eLqQ+OD0mn7HZ3onldIfFFHydQjfp3DMhytzA3KGlUJQoGM+bgi2m6nSch2UFLMdxz/ZAREZcAPbXlEKyiBhz/wbQbMstZyKWDqlW2i1jicq8EiYFy80ZQqu72Ruawu+VGbKhuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756880917; c=relaxed/simple;
-	bh=ij/QXfN1kKwJYwEAT05HHDEgKLuPf+ygQcf6xhSZVLo=;
+	s=arc-20240116; t=1756880962; c=relaxed/simple;
+	bh=pGbpg0BmJRUvc6KvG1Ilb26CiHzHZOFqNiXsUxuHNeY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A6RNaVzQa/rYb6uab3Pchwslq6MRSjlAC/zmGoaWtsDMr7ZWkdzakMcFXLsO/35AMhKQh5I9YrmOizTuQzMMMdOtK2h9aRHAcWzMQ28LOoLHAzXySTvlMGbjLECwHdBVRWQ2K/kkMB4E3mcsNA7etJzP5bUfNqbq7clXNDphZ6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JWyEQKEx; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f69cf4b77so4605999e87.2;
-        Tue, 02 Sep 2025 23:28:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756880914; x=1757485714; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3HxYHkd68488h2anRBu62BK4MJ/g3dsFXlJW5VdZ9/A=;
-        b=JWyEQKExR8MGz75dNQioKHQNMPSoBGfQwr4NYQKvPSAuWLPoo86n5bHRh1MhYbgqz4
-         btoSz+jZIWFqBNg4Pempcee8l4pQ4OnlVjynM/PO4FDnQt3/hSdb53/I2Z8eKhxlRKs5
-         iBYAgsXyhvjxhwYjn3FACSepC61xjN6V554HRYdFNMz9b1G8yWh3+dE8yhJVE8PleqtV
-         iev/HwIEwDKBAyFl6zepVsXMN+thqL5c0bp78G7rnPPVlJIMcRGIn8ArPLO58jgq5Enr
-         aysuJroJ24iJVZbhtp4tPdJoTL553PzAJTUjG357g+/xA9YL6Wlnj2K66hWTCS2nxZ89
-         0sLQ==
+	 To:Cc:Content-Type; b=USpFeMFokCpaCws9cOX8eIUB2G/HvuLjvSY4VOtAyupP7JHiJlpVHvzvwNvIaXOFY6MeS1URHQSvCtN4GqmRJOuhxoM4KxYvXUAnplN39PaQiPfVa530+FYxQiWnKUKRcRP7DRgZDQyoJroqxJ/6j31jWLV3gQbeGt/CM8MLE+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C1mCi6Rt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756880958;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1wk5onf0Lc6eDN5svJ057sVPvmD+2qqP9+k7WVILdVY=;
+	b=C1mCi6RtTCsFux9ZJuqLGJnTSbtftctuTGn/6pt0PY/flK8E3zwSJ40cvdJeZM7rbO2VX+
+	S70LPk5J8MLGVk0TE0tC93cN8uYpzP31Ei+tlMffu5otjZuH3PBgVSsCLQ0Gc2hwCBSkBo
+	llPut8nUumUWrS4YzCj6GNQfLzMuY00=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-145-4dnWliSkPJaKJdtmB81-jw-1; Wed, 03 Sep 2025 02:29:16 -0400
+X-MC-Unique: 4dnWliSkPJaKJdtmB81-jw-1
+X-Mimecast-MFC-AGG-ID: 4dnWliSkPJaKJdtmB81-jw_1756880956
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-77250c660d3so3132299b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 23:29:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756880914; x=1757485714;
+        d=1e100.net; s=20230601; t=1756880955; x=1757485755;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3HxYHkd68488h2anRBu62BK4MJ/g3dsFXlJW5VdZ9/A=;
-        b=ndaD+86US3N9xQj6aR5memOl37WHSOXgQbGfoKCoTJr7xMC+Aoz8BUW+wLZW/qXNT3
-         cSuxZl67N7ITiPO8brkjWAP4k0aTwI6QTlgqxusMRsQaYlUYripz2wDzobHhdOeDBknK
-         j4vjIdUh2z6omL7e77nuePbu65wD9MIM/uaZGyB4tOYh3m1qE5IsEW9nRLpbZ750K9la
-         SrTaFFYs6o73sPO5zg/ks4Hwfl5xDL05DCHUaP1lyqHROfQoYFO5DPs3TN57EgPwCFLq
-         xODPlR3NIyCQsGRG+fIVXaXEqP7hiR3OnrkSgn431AF2UHKm7+nPbsVxQB/VUWCcBzho
-         8XMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLF9KCDBurAUqSgZjsciKwqT/LzXH0V1lYGISB4vRScwllaaqWiBH0//Rr4A+mbeUIg0jLfpE9tmf4ogGD@vger.kernel.org, AJvYcCWLY8KtKViWIDi3ogIybIgpMZm/7Lo1HPXmmtLX/nt9kqd9a+Qbt3THo683Hjj9TzTdm23Nrc97v3AY@vger.kernel.org, AJvYcCWQRrJnfT3MQNO1CCHL9VaMTuADKGfiVsiGbRX8RAGbrmmYj8sFE3KxJiZq3atLZPR5wPx0IqtLMb0+6c4=@vger.kernel.org, AJvYcCX/1mQrWPUvntQgNbvQShBRxakTeTtU8dFBhr8Cz092HL+PmGFrUjNL0MxI9Az+pvTpqQIFiBgEGuFb@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD6l1PyHbZoB2LJph/68rgdt2BwrI2jJYtcIOLf9fk8kWEtQfG
-	/IVQxPREe25kbqa4j8jdVRoduS2sR9LbTe1WSVwyeChdEmEaOY0DOy+5Eae5P5U2PS597ImDVjr
-	T7BIIBJP3UHth+0lvFolcUn+vgqOLilE=
-X-Gm-Gg: ASbGncu2uJNRl0LR5viXgcXScc+JyFzOibLNJB+M/7s85quaZy0vdONg8y/5CfAnroV
-	NtEPq7x13ZbH36aavigN4y3rL3ilr+4/Dbh0zcZ8m8butdsFrFuxj6hdWmfZY+Yqr1W6Iz31i4A
-	W8Hr+OGxC7pRoUJDfc8z8SEpZmejtIh+f5Zl4fKnmEfwqfucQ6i4LPm1LGCdiSxO+gEOg1fh9RB
-	5+ikimmuBWBKTllcNBJ70Z9be7N
-X-Google-Smtp-Source: AGHT+IHCmhofwlum7RFsnzuG4SHG4MeClK25bYbk2c4ht0BmcwZGzCXnbngPnfN9hvzdP6/iledHLIE7saArquEgICo=
-X-Received: by 2002:a05:6512:3b9e:b0:55c:e95e:cd63 with SMTP id
- 2adb3069b0e04-55f708ecf1dmr4037546e87.30.1756880913401; Tue, 02 Sep 2025
- 23:28:33 -0700 (PDT)
+        bh=1wk5onf0Lc6eDN5svJ057sVPvmD+2qqP9+k7WVILdVY=;
+        b=vGVBJVyyCEF6xMogV/2px+b9HcScUcX+HD120VYQDPSGD8jGmRXaVc6B8GECBk6P6t
+         8ti9QSRkQRrHW8Jk2jrFANzMIpVIDMUghA3vL9OZY3NTIkSKOwu+zp/5tlLDJbKPkn7m
+         SVMMybu9kVNopMw/N3fclx7d5ERyd+9nmWxNxK0hvEM1vkScxpWlP/sUDLYmaAeZ0Rs2
+         J+mfC08LVESgCdTKrGFPGgzkkZB2Yb++pGP1SIpzKo6UFuYQi2DU3WRE0VQ/cLDt2Bjz
+         i8W5D67zwhSxXEogFn/bla7CaojzHnEL8cvVQshMUh4GdNs+i/00lco+hXF5qwEkd/aS
+         +Meg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnHWPiDoc3iUc83OMNy1ck+UL6yrDYFrhihB7WsMr+5fMWjRpjSiAs5gfHdC4Yljl4GyThqyy/nJBUzr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMEI/GMIjnK7s1dRP4rbwyu9FtKrzYkU6BSTaET6dyYBhhxuaj
+	5rcRMxFvEalcoXn/xbf6+Zv5CqzxU82iq0UmlJZbT9ez2GK6jOFbHlmwqlKwjIaZGb2XzpSSoS/
+	Uiq4q6QXVsf3Gb0wZ+juNbhTKz5THxpFGxVl+g71S03z5DjG49h3HmBfruUev0jlcqdDXL9WktT
+	XbARhEX3sYGNCNb9J/IcI2WJ5C+Wxp22CrJnnwi0PN
+X-Gm-Gg: ASbGncunRR8ASN/4/rBcNIKnaK6ifFCa1OkteLpKN0Ah6ZcIUkjNDje1p+Mh+EbzFBA
+	sxCik8dpNP8UA3oE9kpGhJQ15K3Gh5sizj14tcHuFFNyzSGTQjD+myYIrww0iO2r+U+rI3M8L9x
+	82mUtskT5d47orvG1vi9o=
+X-Received: by 2002:a05:6a20:6d86:b0:245:fb85:ef58 with SMTP id adf61e73a8af0-245fb85f249mr5550444637.40.1756880955575;
+        Tue, 02 Sep 2025 23:29:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFefGuHLsv/EWzPpQf8BSjk6/+l2dG9MzdaGkYP/Y+xWaIQ7lJ4mDu7Y+42nT8uVrPK7luUivN3EMQ6Le5veUI=
+X-Received: by 2002:a05:6a20:6d86:b0:245:fb85:ef58 with SMTP id
+ adf61e73a8af0-245fb85f249mr5550419637.40.1756880955151; Tue, 02 Sep 2025
+ 23:29:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
- <20250816-tegra210-speedo-v1-5-a981360adc27@gmail.com> <7006329.Sb9uPGUboI@senjougahara>
-In-Reply-To: <7006329.Sb9uPGUboI@senjougahara>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Wed, 3 Sep 2025 01:28:22 -0500
-X-Gm-Features: Ac12FXw2NcR6-NwMJb8C9rmUUCR9BBm4abWT_dAL6lr3X3AYd7Jjy0NyEvmTgdU
-Message-ID: <CALHNRZ8pn9shfq6PdeVe+CEzbq9wu-Vv6UDvD19=MsFrZQsBKg@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: tegra: Limit max cpu frequency on P3450
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Joseph Lo <josephl@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thierry Reding <treding@nvidia.com>
+References: <20250826112709.1051172-1-eperezma@redhat.com> <20250826112709.1051172-3-eperezma@redhat.com>
+ <CACGkMEvd9w_ijpf=+re8oUxUWfq6Q_0HaDM==_e65df3439k7w@mail.gmail.com>
+ <CAJaqyWeHLw9CUEkH1KF8np2zJMC-zMRU6AFRJEhczzuF7MNU8A@mail.gmail.com> <CACGkMEsUjfPadVi8Qr8L723mbQ_21WG7e07mDd79KDHFNn_AFw@mail.gmail.com>
+In-Reply-To: <CACGkMEsUjfPadVi8Qr8L723mbQ_21WG7e07mDd79KDHFNn_AFw@mail.gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 3 Sep 2025 08:28:38 +0200
+X-Gm-Features: Ac12FXxnnZiJmIiOC2xmB9jwOMlwBOIg9tY4JYpVGfceMoCdCMGFuruFuGdWpGk
+Message-ID: <CAJaqyWejgnBngjrnuzefTVAhdjRcDOzAJfe5b0aE65uxON=G5w@mail.gmail.com>
+Subject: Re: [PATCH 2/6] vduse: add vq group support
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
+	Stefano Garzarella <sgarzare@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Laurent Vivier <lvivier@redhat.com>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Yongji Xie <xieyongji@bytedance.com>, 
+	Maxime Coquelin <mcoqueli@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 3, 2025 at 12:50=E2=80=AFAM Mikko Perttunen <mperttunen@nvidia.=
-com> wrote:
->
-> On Saturday, August 16, 2025 2:53=E2=80=AFPM Aaron Kling via B4 Relay wro=
+On Wed, Sep 3, 2025 at 5:58=E2=80=AFAM Jason Wang <jasowang@redhat.com> wro=
 te:
-> > From: Aaron Kling <webgeek1234@gmail.com>
+>
+> On Mon, Sep 1, 2025 at 4:40=E2=80=AFPM Eugenio Perez Martin <eperezma@red=
+hat.com> wrote:
 > >
-> > P3450's cpu is only rated for 1.4 GHz while the CVB table it uses tries
-> > to scale to 1.5 GHz. Set an appropriate limit on the maximum scaling
-> > frequency.
+> > On Mon, Sep 1, 2025 at 3:59=E2=80=AFAM Jason Wang <jasowang@redhat.com>=
+ wrote:
+> > >
+> > > On Tue, Aug 26, 2025 at 7:27=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@=
+redhat.com> wrote:
+> > > >
+> > > > This allows sepparate the different virtqueues in groups that share=
+s the
+> > > > same address space.  Asking the VDUSE device for the groups of the =
+vq at
+> > > > the beginning as they're needed for the DMA API.
+> > > >
+> > > > Allocating 3 vq groups as net is the device that need the most grou=
+ps:
+> > > > * Dataplane (guest passthrough)
+> > > > * CVQ
+> > > > * Shadowed vrings.
+> > > >
+> > > > Future versions of the series can include dynamic allocation of the
+> > > > groups array so VDUSE can declare more groups.
+> > > >
+> > > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > > > ---
+> > > > v1: Fix: Remove BIT_ULL(VIRTIO_S_*), as _S_ is already the bit (Max=
+ime)
+> > > >
+> > > > RFC v3:
+> > > > * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to a l=
+ower
+> > > >   value to reduce memory consumption, but vqs are already limited t=
+o
+> > > >   that value and userspace VDUSE is able to allocate that many vqs.
+> > > > * Remove the descs vq group capability as it will not be used and w=
+e can
+> > > >   add it on top.
+> > > > * Do not ask for vq groups in number of vq groups < 2.
+> > > > * Move the valid vq groups range check to vduse_validate_config.
+> > > >
+> > > > RFC v2:
+> > > > * Cache group information in kernel, as we need to provide the vq m=
+ap
+> > > >   tokens properly.
+> > > > * Add descs vq group to optimize SVQ forwarding and support indirec=
+t
+> > > >   descriptors out of the box.
+> > > > ---
+> > > >  drivers/vdpa/vdpa_user/vduse_dev.c | 51 ++++++++++++++++++++++++++=
+++--
+> > > >  include/uapi/linux/vduse.h         | 21 +++++++++++-
+> > > >  2 files changed, 68 insertions(+), 4 deletions(-)
+> > > >
+> > > > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa=
+_user/vduse_dev.c
+> > > > index e7bced0b5542..0f4e36dd167e 100644
+> > > > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> > > > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> > > > @@ -58,6 +58,7 @@ struct vduse_virtqueue {
+> > > >         struct vdpa_vq_state state;
+> > > >         bool ready;
+> > > >         bool kicked;
+> > > > +       u32 vq_group;
+> > > >         spinlock_t kick_lock;
+> > > >         spinlock_t irq_lock;
+> > > >         struct eventfd_ctx *kickfd;
+> > > > @@ -114,6 +115,7 @@ struct vduse_dev {
+> > > >         u8 status;
+> > > >         u32 vq_num;
+> > > >         u32 vq_align;
+> > > > +       u32 ngroups;
+> > > >         struct vduse_umem *umem;
+> > > >         struct mutex mem_lock;
+> > > >         unsigned int bounce_size;
+> > > > @@ -592,6 +594,13 @@ static int vduse_vdpa_set_vq_state(struct vdpa=
+_device *vdpa, u16 idx,
+> > > >         return 0;
+> > > >  }
+> > > >
+> > > > +static u32 vduse_get_vq_group(struct vdpa_device *vdpa, u16 idx)
+> > > > +{
+> > > > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > > > +
+> > > > +       return dev->vqs[idx]->vq_group;
+> > > > +}
+> > > > +
+> > > >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 i=
+dx,
+> > > >                                 struct vdpa_vq_state *state)
+> > > >  {
+> > > > @@ -678,6 +687,28 @@ static u8 vduse_vdpa_get_status(struct vdpa_de=
+vice *vdpa)
+> > > >         return dev->status;
+> > > >  }
+> > > >
+> > > > +static int vduse_fill_vq_groups(struct vduse_dev *dev)
+> > > > +{
+> > > > +       /* All vqs and descs must be in vq group 0 if ngroups < 2 *=
+/
+> > > > +       if (dev->ngroups < 2)
+> > > > +               return 0;
+> > > > +
+> > > > +       for (int i =3D 0; i < dev->vdev->vdpa.nvqs; ++i) {
+> > > > +               struct vduse_dev_msg msg =3D { 0 };
+> > > > +               int ret;
+> > > > +
+> > > > +               msg.req.type =3D VDUSE_GET_VQ_GROUP;
+> > > > +               msg.req.vq_group.index =3D i;
+> > > > +               ret =3D vduse_dev_msg_sync(dev, &msg);
+> > > > +               if (ret)
+> > > > +                       return ret;
+> > > > +
+> > > > +               dev->vqs[i]->vq_group =3D msg.resp.vq_group.group;
+> > > > +       }
+> > > > +
+> > > > +       return 0;
+> > > > +}
+> > > > +
+> > > >  static void vduse_vdpa_set_status(struct vdpa_device *vdpa, u8 sta=
+tus)
+> > > >  {
+> > > >         struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > > > @@ -685,6 +716,11 @@ static void vduse_vdpa_set_status(struct vdpa_=
+device *vdpa, u8 status)
+> > > >         if (vduse_dev_set_status(dev, status))
+> > > >                 return;
+> > > >
+> > > > +       if (((dev->status ^ status) & VIRTIO_CONFIG_S_FEATURES_OK) =
+&&
+> > > > +           (status & VIRTIO_CONFIG_S_FEATURES_OK))
+> > > > +               if (vduse_fill_vq_groups(dev))
+> > > > +                       return;
+> > >
+> > > I may lose some context but I think we've agreed that we need to
+> > > extend the status response for this instead of having multiple
+> > > indepdent response.
+> > >
+> >
+> > My understanding was it is ok to start with this version by [1]. We
+> > can even make it asynchronous on top if we find this is a bottleneck
+> > and the VDUSE device would need no change, would that work?
 >
-> Looking at downstream, from what I can tell, the CPU's maximum frequency =
-is indeed 1.55GHz under normal conditions. However, at temperatures over 90=
-C, its voltage is limited to 1090mV. Reference:
+> I think I need to understand why we can not defer this to get_group_asid(=
+) call.
 >
-> static struct dvfs_therm_limits
-> tegra210_core_therm_caps_ucm2[MAX_THERMAL_LIMITS] =3D {
->         {86, 1090},
->         {0, 0},
-> };
-> (rel-32 kernel-4.9/drivers/soc/tegra/tegra210-dvfs.c)
->
-> Here the throttling is set at 86C, I suppose to give some margin.
->
-> 1090mV perfectly matches the 1.479GHz operating point defined in the upst=
-ream kernel. So it seems to me that rather than setting a maximum frequency=
-, we would need temperature dependent DVFS. Or, at least as a first step, w=
-e could have the driver just always limit the maximum frequency so it fits =
-under the thermal cap voltage -- the temperature limit is rather high, afte=
-r all.
->
-> If you have other information, please do tell.
 
-I am basing on this line in the downstream porg dt repo:
+Because we need to know the vq_groups->asid mapping in other calls
+like set_group_asid or get_vq_group.
 
-nvidia,dfll-max-freq-khz =3D <1479000>;
-(tegra-l4t-r32.7.6_good kernel-dts/tegra210-porg-p3448-common.dtsi)
+We could add a boolean on each virtqueue to track if we know its
+virtqueue group and then only ask VDUSE device it if needed, would
+that work?
 
-Which in the downstream dfll driver limits the max frequency it will use:
-
-        max_freq =3D fcpu_data->cpu_max_freq_table[speedo_id];
-        if (!of_property_read_u32(pdev->dev.of_node, "nvidia,dfll-max-freq-=
-khz",
-                                  &f))
-                max_freq =3D min(max_freq, f * 1000UL);
-(tegra-l4t-r32.7.6_good drivers/clk/tegra/clk-tegra124-dfll-fcpu.c)
-
-If I read the commit history correctly, it does appear that this limit
-was set because the always-on use case was failing thermal tests. I
-couldn't say if it was intentional that this throttling was applied to
-all use cases or not, but that is what appears to have happened. Hence
-trying to replicate here in an effort to squash stability issues.
-
-> Incidentally, some of the CVB tables in the upstream kernel seem to ignor=
-e speedo (I assume they are conservative) while rel-32 has different tables=
-. So the upstream kernel is probably running at slightly unnecessarily high=
- voltages.
-
-This is worrying as well, though most of those tables cannot currently
-be used as the fuse driver never assigns those cpu speedo ids. All I
-checked in this series was that the correct cpu speedo id was picked
-and the appropriate CVB table was applied to p2371-2180, p3450-0000,
-and p3541-0000. I haven't yet researched what the speedo values mean
-and do. There's many other sku's missing as well. Such as the one's
-used by the shield tv's. I have as of yet been unable to boot to
-userspace on p2571-0930/1 or p2894-0050, so I haven't determined which
-sku(s) are used by those to add them here. I'm in the process of
-getting uart access to continue that endeavour.
-
-Aaron
 
