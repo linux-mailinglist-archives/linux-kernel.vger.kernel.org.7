@@ -1,114 +1,113 @@
-Return-Path: <linux-kernel+bounces-798350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10B3EB41CC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:10:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF33B41CB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F59E3A2DC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:10:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B6911BA6866
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C022F7449;
-	Wed,  3 Sep 2025 11:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF692F659F;
+	Wed,  3 Sep 2025 11:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="pzmGJUW5"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41D52F6180;
-	Wed,  3 Sep 2025 11:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fSymEeh6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0272F5305;
+	Wed,  3 Sep 2025 11:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756897787; cv=none; b=Sp4Z6sXCfT4RVEWFfvpC/7m/W74D3Vonz4/GQc8R9S//fOqJfxBHkXcOMdQygXjC+BpQA/KHemB5CJRnm4R5iBoLRFajjOfYvFrBH0JGYa7EmICUxz4Ff5CP6MDjKtTQdLrnE1Hv0M2ZOIQuQwuuvPVxV9ml8EAjEhNNj4XIKu8=
+	t=1756897668; cv=none; b=WlermTuKefV3s8mG+xTVhjCPy7vvnWCJCN2mc9wNtGj4SgpkuoRu1MrXzGczNhQatq8/hvH8vLWH9zQR9UeVzC0wF8aWRQTq8qn0FLmvSA/joAfdbZ5MVq5QVxLhIH73PGktuPDQtzP4TFUXkTx2O2xHFSJTEeOfPqcBesHMVnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756897787; c=relaxed/simple;
-	bh=5JuM+zVZonADMosGAewf0MPciwlPQvws9ZO+aeqWtgo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Oi3nw0dMGl0NGE4yUn3btwrLdLO3q9p46yfQJS72Z5yj74yZAUYZN0wd9338BmadMBGGduPSvhdNEp0aoRjVxhMviZFFspoTJGPhoWjQUgZ3EMdv42BUZ6yQgFEM5+7FnMnvD+SeqOrzER3difTjUyOKxNPSWZxRrzOmvcknZFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=pzmGJUW5; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=c0
-	/SBiSXOOl6HFr+JmOjCWEmu3pstjSyRziH55Av6WA=; b=pzmGJUW5GsUD0zajgM
-	1dLJ5xfepWw+5r6dKHs8FqtSnbSrW6yE4YGJJgieet+W9uNB1cCZPLY2cMlHAziF
-	CeAW/sq3nKyZtSTjyQ6nN4BdM4UVJOfciEZrD2to83lqxyMEtbXujEgp3CHn79sV
-	nTWuDvNnkqHafHOXA5tRWUOXE=
-Received: from ProDesk.. (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wC3ZLuqIbhoXAZsFw--.3268S4;
-	Wed, 03 Sep 2025 19:08:34 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: dmitry.baryshkov@oss.qualcomm.com,
-	heiko@sntech.de
-Cc: mripard@kernel.org,
-	neil.armstrong@linaro.org,
-	andrzej.hajda@intel.com,
-	jernej.skrabec@gmail.com,
-	jonas@kwiboo.se,
-	Laurent.pinchart@ideasonboard.com,
-	maarten.lankhorst@linux.intel.com,
-	rfoss@kernel.org,
-	simona@ffwll.ch,
-	tzimmermann@suse.de,
-	knaerzche@gmail.com,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v7 2/2] MAINTAINERS: Add entry for Innosilicon hdmi bridge library
-Date: Wed,  3 Sep 2025 19:07:39 +0800
-Message-ID: <20250903110825.776807-3-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250903110825.776807-1-andyshrk@163.com>
-References: <20250903110825.776807-1-andyshrk@163.com>
+	s=arc-20240116; t=1756897668; c=relaxed/simple;
+	bh=Rn4oGXhbcrYs2K3Dha2QKPcBreQzKeMaMsXQQ1ZcJxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ggM+QWgtS9rRzlUcDXhgpCacaw1iAyfzN4L1Rmio5OAEB+A8zOxiaqa4hyWVfZV1wcvLA6fraKLxdyF9a8rdwPlZEzgY3WliXB039QSq1nmY988lgKJdKWvtaMx3YvBvrpvqqTOoOwRHhVY2hQsrMpjnZyML/PBcTb8zrbu5ikA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fSymEeh6; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756897667; x=1788433667;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Rn4oGXhbcrYs2K3Dha2QKPcBreQzKeMaMsXQQ1ZcJxE=;
+  b=fSymEeh6q9+yomzEK00V2A2STE5xeVawpr7uRBXcsIVj0fmw7XcSmRyw
+   lPZm+1CMKPdWcIE3uLktyr31riA4aPPnBNgON4Dq4d0CMefYJuRaVrnCG
+   rHLzzFVfz7wYIjSzLd6KoHU1Ph36fizd+yWijxpE/+ZNdwRrat4sLNqZg
+   QVpmtFZwQvoxe2oxYczpaHm0blB6lET6NmUv8bgYoYl2JmdXPFnbgiU3M
+   +5kGHAXwKb8qYNTSfim5ZioFjErIT+gFauuUwgrOKYhrTjtnH7c72+0l/
+   JO3pNDsBdBzXjUw7gY+a5fagBqMc9fCErqe/A/TjiGvMrQr1/hKHjoJ8g
+   Q==;
+X-CSE-ConnectionGUID: ztHMNzPgQIeh91idjpiDTQ==
+X-CSE-MsgGUID: ggBM6V77Qf6A88YqgrYtyA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="69819902"
+X-IronPort-AV: E=Sophos;i="6.18,235,1751266800"; 
+   d="scan'208";a="69819902"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 04:07:46 -0700
+X-CSE-ConnectionGUID: pJpnTF79Qe2LcM4SPRGO/Q==
+X-CSE-MsgGUID: uPX+WvPSRCe46Fqk+1Cs9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,235,1751266800"; 
+   d="scan'208";a="171129834"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 04:07:44 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1utlL2-0000000Axra-1OMv;
+	Wed, 03 Sep 2025 14:07:40 +0300
+Date: Wed, 3 Sep 2025 14:07:40 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
+Cc: Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [RFC PATCH v2 0/2] staging: media: atomisp: Refactor bit logic
+ helpers in vmem.c
+Message-ID: <aLghfGH1ATFQT-9P@smile.fi.intel.com>
+References: <20250903092754.2751556-1-abarnas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wC3ZLuqIbhoXAZsFw--.3268S4
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GFy8uFyxCFy5Kr17Zr48tFb_yoWfGrX_GF
-	18JrW8Zr4jkFWjy397Ca1fX3sIkw4xtF1fXFn5tws7Jwn8AryDJwn2gryIgr15CF1xGayq
-	qayUXF9Ikr13WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0iqXJUUUUU==
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBEAO9Xmi4H7lLfwAAsy
+In-Reply-To: <20250903092754.2751556-1-abarnas@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-From: Andy Yan <andy.yan@rock-chips.com>
+On Wed, Sep 03, 2025 at 09:27:52AM +0000, Adrian Barnaś wrote:
+> Refactor proposition for bit operation in vmem.c.
+> * Previous name for function "inv_subword()" for me is not telling what
+> function acctualy does - it clears bit specified by subword, so renamed
+> to clear_subword()
+> * Added a helper to create a proper bitmask for a subword, without using
+> GENMASK(end-1, start) which was claimed to be unsafe
+> * Simplified subword() and clear_subword() to be more readable.
+> 
+> Continuation of https://lore.kernel.org/linux-staging/20250902073841.2338568-1-abarnas@google.com/ 
 
-Add entry for Innosilicon hdmi bridge library
+Thanks for the effort, but I think it's just a tip of the iceberg.
+What we really need is to completely rewrite hive_sim_wide_unpack()
+and hive_sim_wide_pack(). If we want to preserve arbitrary bit numbers
+we ought to use bitmap API rather than that custom approach.
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
----
-
-(no changes since v1)
-
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 88851907b6725..d4b5eea84cb9f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12085,6 +12085,14 @@ M:	Samuel Holland <samuel@sholland.org>
- S:	Maintained
- F:	drivers/power/supply/ip5xxx_power.c
- 
-+INNOSILICON HDMI BRIDGE DRIVER
-+M:	Andy Yan <andy.yan@rock-chips.com>
-+L:	dri-devel@lists.freedesktop.org
-+S:	Maintained
-+T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
-+F:	drivers/gpu/drm/bridge/inno-hdmi.c
-+F:	include/drm/bridge/inno_hdmi.h
-+
- INOTIFY
- M:	Jan Kara <jack@suse.cz>
- R:	Amir Goldstein <amir73il@gmail.com>
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
