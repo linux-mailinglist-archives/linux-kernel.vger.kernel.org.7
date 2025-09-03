@@ -1,120 +1,106 @@
-Return-Path: <linux-kernel+bounces-797718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A55D8B41471
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:45:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E969BB4147F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AB817A65FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:43:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7036542561
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7B82D6629;
-	Wed,  3 Sep 2025 05:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HnsZhvlX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40012D73B1;
+	Wed,  3 Sep 2025 05:47:05 +0000 (UTC)
+Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D8A28DC4;
-	Wed,  3 Sep 2025 05:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7572D7812
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 05:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756878296; cv=none; b=K2Ny7hwtqLreFZ10J6QtaVZB2L0dFFQpTAiR+RrCsjV2CfT/6kiMkOWb+t/o6OhFgFLtC79vxkA4ZE/RlUG6/wvuSZQRgEfSgOgpcM9MX7XcYoY4Of1qeibTfsbGkkzbf+4H9VPB23IRD5/Q7p52Xwa4y9KyZUzuouxXk5V+2cM=
+	t=1756878425; cv=none; b=bqm4IgCxk9XLoxYf10EjbPbt4+OJiZ+xno8eKc7IB/11O+Nxc/AKQnXVKxUuFrdOzKZy0MB62AQgPOTYRtcJLuJSx3NJpC6APB6ukKfmQF/I7fqy2RUmY7+ymXz9DFDegeFk46tlmr+ABY7ZZTolz2i/RRBJfIZfQaS0HSI2CuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756878296; c=relaxed/simple;
-	bh=dnt2MEmrIvJF7XGPO77ZR3yS3QcXQoAMCyOD6LOtEyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LirpdeFDmp992EQM2XcjZMVhDJwQU3L/U0Byq3SR1GIois8Msx8lRFxv48g1D8n5uKZQE2m3mDFZqBaW/o3XUCT6XyaVj0jsGuzREU9zxnhPYQ08/nHiMmOxZW7GbZiK3L6+CyMsvypxnIhGihtqdYB6C8c0zGjHDZAwXPrptn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HnsZhvlX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9116C4CEF0;
-	Wed,  3 Sep 2025 05:44:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756878296;
-	bh=dnt2MEmrIvJF7XGPO77ZR3yS3QcXQoAMCyOD6LOtEyM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HnsZhvlXjEUg/xA8oKDrQ2oXrPsjRPW02FH4w7k2teyUJYQnHLYmmkBMxVJDtZWuZ
-	 LKfMqoV4fmonLDmBJ2n6dJm4QCebGCPLC1z5Vx538TBZ2/LloTAyu0fS2VUjO2ewgw
-	 mWFAvkqkBaD4bY8KedRTDK2ecpNNA6ymTcJQiKqU=
-Date: Wed, 3 Sep 2025 07:44:52 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: bhanuseshukumar <bhanuseshukumar@gmail.com>
-Cc: rydberg@bitmath.org, dmitry.torokhov@gmail.com,
-	linux-input@vger.kernel.org, skhan@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] Input: bcm5974 - Driver cleanup by replacing dprintk
- with dev_dbg
-Message-ID: <2025090307-oversight-amaretto-4adc@gregkh>
-References: <20250902164351.36828-1-bhanuseshukumar@gmail.com>
+	s=arc-20240116; t=1756878425; c=relaxed/simple;
+	bh=UtqEZnPKmkjhxwGxiPB+6zaJYg6zzmzrZLQWRMKXxIU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fqLM6K6IX8MCCLr0iG4ps88nzxUCmCEITlOgucPn2ugAmU7dgJ1nP/heTjkFudfMZlBzfqUobWnufVPyNbNiXxLeXWRFtSJTHCz83xnBM/81eb1AJb1Le5CyCF5MJsziMoeouAkxu+0Mpx2bOH4TWXNSweZiFtegq3mcSr/S+60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201602.home.langchao.com
+        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202509031346473286;
+        Wed, 03 Sep 2025 13:46:47 +0800
+Received: from localhost.localdomain.com (10.94.10.238) by
+ jtjnmail201602.home.langchao.com (10.100.2.2) with Microsoft SMTP Server id
+ 15.1.2507.57; Wed, 3 Sep 2025 13:46:47 +0800
+From: chuguangqing <chuguangqing@inspur.com>
+To: <tzimmermann@suse.de>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <airlied@gmail.com>, <simona@ffwll.cc>
+CC: <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	chuguangqing <chuguangqing@inspur.com>
+Subject: [PATCH v2 0/1] [DRIVER] gpu: drm: add support for Yhgc ZX1000 soc chipset
+Date: Wed, 3 Sep 2025 13:45:32 +0800
+Message-ID: <20250903054533.68540-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <086d09a9-680e-48bd-8624-2d3400a57222@suse.de>
+References: <086d09a9-680e-48bd-8624-2d3400a57222@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902164351.36828-1-bhanuseshukumar@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+tUid: 2025903134647c97faec2c4897fbdff081ed5fe2aaf10
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Tue, Sep 02, 2025 at 10:13:51PM +0530, bhanuseshukumar wrote:
-> 	Debug printk messages are converted to dev_dbg based logs
-> 	for better control over debug messages using dynamic logging.
+1. Delete unnecessary comments
+2. Delete unnecessary branch
+3. Use drm_atomic_helper_check_plane_state
+4. remove the alpha formats form this list.
+5. use w,h rather than x, y
+7. delete type casting
+8. use a simple call to drm_atomic_helper_shutdown()
+9. delete yhgch_load function
+10. delete vblanking code
+11. delete unneeded i2c type 
 
-Why is this indented?
+Some other hardware-related issues cannot be confirmed for the time being, but the current code has passed the test.
 
-> Signed-off-by: bhanuseshukumar <bhanuseshukumar@gmail.com>
+chuguangqing (1):
+  [DRIVER] gpu: drm: add support for Yhgc ZX1000 soc chipset
 
-Please use your name, not your email alias.
+ MAINTAINERS                                   |   5 +
+ drivers/gpu/drm/Kconfig                       |   2 +
+ drivers/gpu/drm/Makefile                      |   1 +
+ drivers/gpu/drm/yhgch/Kconfig                 |   3 +
+ drivers/gpu/drm/yhgch/Makefile                |   1 +
+ drivers/gpu/drm/yhgch/yhgch-drm/Kconfig       |  12 +
+ drivers/gpu/drm/yhgch/yhgch-drm/Makefile      |   5 +
+ .../gpu/drm/yhgch/yhgch-drm/yhgch_drm_de.c    | 428 ++++++++++++++++++
+ .../gpu/drm/yhgch/yhgch-drm/yhgch_drm_drv.c   | 324 +++++++++++++
+ .../gpu/drm/yhgch/yhgch-drm/yhgch_drm_drv.h   |  54 +++
+ .../gpu/drm/yhgch/yhgch-drm/yhgch_drm_i2c.c   | 108 +++++
+ .../gpu/drm/yhgch/yhgch-drm/yhgch_drm_regs.h  | 209 +++++++++
+ .../gpu/drm/yhgch/yhgch-drm/yhgch_drm_vdac.c  | 110 +++++
+ 13 files changed, 1262 insertions(+)
+ create mode 100644 drivers/gpu/drm/yhgch/Kconfig
+ create mode 100644 drivers/gpu/drm/yhgch/Makefile
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch-drm/Kconfig
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch-drm/Makefile
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch-drm/yhgch_drm_de.c
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch-drm/yhgch_drm_drv.c
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch-drm/yhgch_drm_drv.h
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch-drm/yhgch_drm_i2c.c
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch-drm/yhgch_drm_regs.h
+ create mode 100644 drivers/gpu/drm/yhgch/yhgch-drm/yhgch_drm_vdac.c
 
-> ---
->  drivers/input/mouse/bcm5974.c | 21 ++++++++-------------
->  1 file changed, 8 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/input/mouse/bcm5974.c b/drivers/input/mouse/bcm5974.c
-> index dfdfb59cc8b5..2791fe0c1932 100644
-> --- a/drivers/input/mouse/bcm5974.c
-> +++ b/drivers/input/mouse/bcm5974.c
-> @@ -156,13 +156,6 @@ MODULE_AUTHOR("Henrik Rydberg");
->  MODULE_DESCRIPTION("Apple USB BCM5974 multitouch driver");
->  MODULE_LICENSE("GPL");
->  
-> -#define dprintk(level, format, a...)\
-> -	{ if (debug >= level) printk(KERN_DEBUG format, ##a); }
-> -
-> -static int debug = 1;
-> -module_param(debug, int, 0644);
-> -MODULE_PARM_DESC(debug, "Activate debugging output");
-> -
->  /* button data structure */
->  struct bt_data {
->  	u8 unknown1;		/* constant */
-> @@ -547,11 +540,12 @@ static void setup_events_to_report(struct input_dev *input_dev,
->  /* report button data as logical button state */
->  static int report_bt_state(struct bcm5974 *dev, int size)
->  {
-> +	struct usb_interface *intf = dev->intf;
+-- 
+2.43.5
 
-No need for this variable.
-
-> +
->  	if (size != sizeof(struct bt_data))
->  		return -EIO;
->  
-> -	dprintk(7,
-> -		"bcm5974: button data: %x %x %x %x\n",
-> +	dev_dbg(&intf->dev, "bcm5974: button data: %x %x %x %x\n",
-
-As you are using dev_dbg(), the prefix "bcm5974:" everywhere is not
-needed at all.  Just get rid of that.
-
-As proof, look in the kernel log, now you have much more information
-than before, right?
-
-Same for the other changes in this patch, drop the prefix.
-
-thanks,
-
-greg k-h
 
