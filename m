@@ -1,68 +1,75 @@
-Return-Path: <linux-kernel+bounces-797736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3135B414A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:04:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6160FB414A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D8E67A5DFA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:02:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 216651B27B37
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83172D73B6;
-	Wed,  3 Sep 2025 06:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0IhduU68"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054B22D7398;
+	Wed,  3 Sep 2025 06:04:16 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EB92D7398;
-	Wed,  3 Sep 2025 06:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354FD2D77F6
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 06:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756879452; cv=none; b=e2GlixjbJwKCvdChADPAeQQAAinfQCj0T01Goi5bTxAHNKSoi/bC3zlMqjqZBaAlHR6ycU56sNiwGy4xZJlAmmdKNLMli8KrM9AuUJwDpi7rXV0to0sCmCeOc3NsqmJGIkCtqIbdCVKbuXd7/Lo6qzPL1yGWrkUuW7CLJDvXDBQ=
+	t=1756879455; cv=none; b=mQjef1uZKW39yjiq3AmDVsIU8hnAMfycZWfa9QGhyZZKZ5XqQ/o40yKz5b/58UvMYzlMJHAvsDJtEg/cs4bQ7Mqtod7qICON44e8ihtMfKW+ue5sHgM9VkEML9PoIHQwyvQAM9jffQOZEWBf3nBOAhcWgRvUkQS+/xKZln/Le84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756879452; c=relaxed/simple;
-	bh=IRo7a+nxcjuvrsKtxlNoqN9R/9Jaa9ywStnefdyYtEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PmhUO7U+ztpRUvjhfMnADF07YsBF0OC29cTUdlNo25Aoo4G+5l9wTYnt+4LDzhIdxS5bhdhq1aMFxZjrjE5ewXBOJry3T/Qh2ynmOBbYORyN/kDWv2lld7Jc6mQG0W55CEiSJ62CyaJ96nGIMLLr3N/fo0JNHGag3mxcfsieohg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0IhduU68; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IRo7a+nxcjuvrsKtxlNoqN9R/9Jaa9ywStnefdyYtEo=; b=0IhduU68+VwEZSkpU29K9RJcPF
-	gg/3ZnneuJOuEctugEC+hrdr9Oiql/voPkBLXaRasIoOiRL3U0i71G/+ApmqbrEoOFO5GqHr4iGV9
-	TDGuMthvfvn4E9WyJBYocyd9r4PzKgMoX5INDcl13KCQQbq+EJQav2hmBqXG2SebOLWJj6heVoXnE
-	nq3cCIOR/JyjNOB6EZTFD4gptzv5MJfZS1gI38ipoJiC9F5UgfFXqeDHodA1icKw0vsX34g+zir/m
-	0XAQjYttmMY3IWrWVlPWDvC2ofYtJ4VOZtKcQhNamXNtviDxCLiF7LS6dGAh8LFKXjFeqB7Y01F5o
-	Ji6Cl1Ew==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utgbK-00000004Rjf-01kI;
-	Wed, 03 Sep 2025 06:04:10 +0000
-Date: Tue, 2 Sep 2025 23:04:09 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: syzbot <syzbot+ab02e4744b96de7d3499@syzkaller.appspotmail.com>
-Cc: cem@kernel.org, hch@infradead.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] WARNING in xfs_trans_alloc
-Message-ID: <aLfaWUYaqDk1d85i@infradead.org>
-References: <68a28720.050a0220.e29e5.0080.GAE@google.com>
- <68b33cf4.a00a0220.1337b0.0025.GAE@google.com>
+	s=arc-20240116; t=1756879455; c=relaxed/simple;
+	bh=pwP5ewIrHo3p9vhx09GxG9320nyXHCTGwSq1UycDJEY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=a8lc0qZinmpjIghe0XGixhnm33eOaUFsVQrqyscc0bDdUPDGkbpaYjRqZZb88DKwg0d8gboBK8KWn7T4CGT4mqIj/0HCMDJ7cDJq64+K7pDHX1uviKdRHkVIkxfhHQYD54w5X/bCL/GbG5mNsu/WIgyhqc5QfGlwFpF9xQug5hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ed9502b6b3so72967225ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 23:04:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756879453; x=1757484253;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pwP5ewIrHo3p9vhx09GxG9320nyXHCTGwSq1UycDJEY=;
+        b=JTLiwwnF0jdRv2wLvNqwNlwy+5+AD3/0k6qMscsNJL9YNdyzlZ6vENqi0+XneL+zZV
+         OlrmtOjK/57fwJYRltUuxfmlJ2CZb25PPImJ1L/j+ixv7jfABoHIkP/YATJ7eZdV4dyF
+         U7FB9buFaH65UID+UZP6nWaIlwyGSv8gENmICbnffwrK9582yiaN2c6PKQe91ABqIUi+
+         05nGr0Xk0ifEbXjOqvTXgmq+JW1jM7+BFJq/djyCp6+LiAY8kQjBRmtV4TKHUiF9rxyA
+         /W26G4ibzEsocxD6dlUTpLsEx36CujB9qwKs4koGugHriPmBzELXzIhNGyyMh3rxzy7U
+         AORg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZtvfgCR76nHeb32RkSQUmP0ta2DKkPcJHVq//Yu61yrsRXpbnCni7iyn5ERaMiASuw0EmsVyuVE2uvlQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0xGGtzTne90Zfcc54LUcqhghqaTSyxwfmTdind0yuDScbj8B4
+	dQu0+qmwjupSWaMlmQopiU0ONT7ca0kcvIw4ExG+zExTeSK2IJRjPvZQsnx2kWuyRCSEsQbMnhG
+	s9sYhotTPERt8V3RaVG6MNDDvHe/N5O2iZ5hFwfAQ8KQZV81ev42oFxcPpsY=
+X-Google-Smtp-Source: AGHT+IEt6ZqiWWXxUWxDmlgK0/HVBVIHLncOIb0H6+F+B6N+xFAkygcb5Aaby3CE0mrnU2dZfc/kxoUv4gE8ixOJmMChKqZoxTS2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68b33cf4.a00a0220.1337b0.0025.GAE@google.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Received: by 2002:a05:6e02:2504:b0:3eb:f2eb:6037 with SMTP id
+ e9e14a558f8ab-3f400286788mr250289885ab.12.1756879453388; Tue, 02 Sep 2025
+ 23:04:13 -0700 (PDT)
+Date: Tue, 02 Sep 2025 23:04:13 -0700
+In-Reply-To: <aLfaWUYaqDk1d85i@infradead.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b7da5d.050a0220.3db4df.01e7.GAE@google.com>
+Subject: Re: [syzbot] [xfs?] WARNING in xfs_trans_alloc
+From: syzbot <syzbot+ab02e4744b96de7d3499@syzkaller.appspotmail.com>
+To: hch@infradead.org
+Cc: cem@kernel.org, hch@infradead.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-#syz test v6.17-rc4
+> #syz test v6.17-rc4
 
+want either no args or 2 args (repo, branch), got 1
+
+>
 
