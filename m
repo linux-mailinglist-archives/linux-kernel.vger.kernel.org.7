@@ -1,107 +1,121 @@
-Return-Path: <linux-kernel+bounces-798212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D636B41ABA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:55:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F32B41AD3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499711884232
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:55:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03BCB7B7ABF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000A92EA483;
-	Wed,  3 Sep 2025 09:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A212F6587;
+	Wed,  3 Sep 2025 09:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EZJFfu2D"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="0aB6pQrO"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9451A2E9ECE;
-	Wed,  3 Sep 2025 09:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5862E8B8F;
+	Wed,  3 Sep 2025 09:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756893174; cv=none; b=XzkmbipFw+wbZE3tjdErccIMhtwl3efSoioVJoPhh2m3hHlbXgCM77fSXkq0uxV896A9/xw0KTTetMdGGQVdP4alg9zt15BX4UL8B8d6WrUCHBMrR9wkVFUbUTtFbbMEbH/RBY9Vj60pvxIxRM8B//nhCirgWHX/43osdZPzRDk=
+	t=1756893283; cv=none; b=ISoQrK7/+HGZPizEbgPee6wC+k4pQNf3oHFiNiDfmstSDSiHU/8yGenee1c/rMZ0KMOgTra7NwQFzuCscjBjNPLSaIOIg0XZO92h7mRU8OM2lpbm8pK1lCpH6NhxPvEZUohfBGDyGwETKzYDOT2Txu7F62ogab+VpYp8i0SJo9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756893174; c=relaxed/simple;
-	bh=F8Tu6zXPg4ssFQqHChLUNXEw5QwPVsS4RpFArqdk8l4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IyEilzuFAudLdn4NTuXf6I3KvAdTMdQUrK2thLip5SJt64jMowAol4MUxfrAU1hSyUgtxyS1gCQEhNhq2rnbplGTzdWLlzLmabxNUzPqNKQiE578rSbJDZXpsXgtvnwjttEv/i4LTo5Y/oQVFiz+rmM9aKmIEsVIctqY5wGVYIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EZJFfu2D; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5839qlnB3236541;
-	Wed, 3 Sep 2025 04:52:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756893167;
-	bh=MjGeDQJzxnXd8m1pIJ6GNIDiTH2Wa1YICtpm3j0RxX4=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=EZJFfu2Din84QWVQd4CeC7AEySaoz1CCOw3Qda0+r34RHjKuHo6AT9rqluagfvO86
-	 zzrJZVm2yySq0IvxuN3+6qDG7HtLLvT2GnvvT4WbWRWPdUwu4zCUVuoHZcy1EuD5NP
-	 AImybWnCiITMHDFWHnD+s6echUu/16ORBfz7+Sug=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5839qlkn3435497
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 3 Sep 2025 04:52:47 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 3
- Sep 2025 04:52:46 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 3 Sep 2025 04:52:46 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [172.24.231.84])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5839qj8C1092983;
-	Wed, 3 Sep 2025 04:52:46 -0500
-Date: Wed, 3 Sep 2025 15:22:44 +0530
-From: s-vadapalli <s-vadapalli@ti.com>
-To: Hrushikesh Salunke <h-salunke@ti.com>
-CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <s-vadapalli@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <danishanwar@ti.com>
-Subject: Re: [PATCH v2 0/4] arm64: dts: ti: Add bootph-all tag to USB PHY
- controller
-Message-ID: <b870f831-a560-4dfa-a339-7ef95fee9f38@ti.com>
-References: <20250902053009.1732607-1-h-salunke@ti.com>
+	s=arc-20240116; t=1756893283; c=relaxed/simple;
+	bh=kF6Argx9w5nzPf+4SlGfZyIdGcheV8jZifsKP/T5d8g=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=m0ElO8n/5gCNUrLDpdsyaOQXcJhnABHKWX6d10qkFio+m4gPtAxST0JHBWYqUW0UApK4iwufF/iZ9dGl82KDCZ1uTEhoFphfz6IdmVxlHrt7yYttLYlIGkj0URN+686pweMg2movclNVpvfBIfrCl9aDjtC6LJV1IDza8OB/Iqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=0aB6pQrO; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5839hvmm022675;
+	Wed, 3 Sep 2025 11:54:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=VtDIXnB6jguTha2nuJ2+4g
+	YyBFOqAKGNF3LBQOKc0iI=; b=0aB6pQrODfKgQg6egCwF3PoX/a/6K4garsVZB+
+	k7P/j+/z4fdmr4SfAEXy5hV0/exkc6+WdQh/LutqxPlsQD5KWbMihgoY7ycxbMuV
+	goVfv2JAtnzw9lYMODuRH+PXn8ceSROTkgVqyVj+jKsrg1YXsTvfMJRGCNE5qKeZ
+	dFClyT1QRgJ68AZyTysttTlJE+WpXGoC8k5PniDRkfxYn/8eeEQNBKDYkPXyOx4W
+	Yt9B3Uw8fcjOpZdq0PgBHoQFS2Nzh8VVTRlPr8sw54WT04UmO2oWkKjczLbeN0iV
+	6xplLEswwJnpAxI7uIeEd6d/9ARG7/3dZKK9AO+KqYHiOYRw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48upe7g1n3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Sep 2025 11:54:30 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1ECFB40048;
+	Wed,  3 Sep 2025 11:53:41 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 417292BBC04;
+	Wed,  3 Sep 2025 11:53:12 +0200 (CEST)
+Received: from localhost (10.48.87.141) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 3 Sep
+ 2025 11:53:12 +0200
+From: Gatien Chevallier <gatien.chevallier@foss.st.com>
+Subject: [PATCH 0/4] arm64: dts: st: add ethernet1 controller support on
+ stm32mp23/25 boards
+Date: Wed, 3 Sep 2025 11:53:01 +0200
+Message-ID: <20250903-mp2_ethernet-v1-0-4105b0ad2344@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250902053009.1732607-1-h-salunke@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP0PuGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSwMj3dwCo/jUkozUorzUEl1L85SUlFQDizRLA2MloJaCotS0zAqwcdG
+ xtbUA8Lec4F4AAAA=
+X-Change-ID: 20250902-mp2_ethernet-97ddde08f903
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Gatien Chevallier <gatien.chevallier@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_05,2025-08-28_01,2025-03-28_01
 
-On Tue, Sep 02, 2025 at 11:00:05AM +0530, Hrushikesh Salunke wrote:
-> This patch series adds the bootph-all property to USB0 PHY controller
-> nodes across multiple TI SoCs (AM62, AM62A, AM62P, J722S).
+All of the current stm32mp2x boards embed an ethernet1 SNPS GMAC5.x
+controller.
 
-I believe that you are referring to boards rather than SoCs based on the
-changes made in the patches which address Nishanth's feedback on the v1
-series.
+Add the support for it on stm32mp235f-dk, stm32mp257f-dk and
+stm32mp257f-ev1 boards and default enable it.
 
-> 
-> The bootph-all tag ensures that these USB PHY controller nodes are 
-> available during all boot phases, which is required for USB DFU 
-> (Device Firmware Upgrade) boot functionality.
-> 
-> Changes sice v1:
-> Updated patch series to add "bootph-all" tag to board specific file
-> instead of SoC file.
-> Rebased on current next.
-> 
-> This series is based on commit:
-> 33bcf93b9a6b Add linux-next specific files for 20250901
+On the stm32mp257f-ev1 board, we choose to keep the ethernet1
+controller as a standalone ethernet controller instead of using
+the TSN capable switch.
 
-For the series,
+Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+---
+Gatien Chevallier (4):
+      arm64: dts: st: add eth1 pins for stm32mp2x platforms
+      arm64: dts: st: enable ethernet1 controller on stm32mp257f-dk
+      arm64: dts: st: enable ethernet1 controller on stm32mp257f-ev1
+      arm64: dts: st: enable ethernet1 controller on stm32mp235f-dk
 
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+ arch/arm64/boot/dts/st/stm32mp235f-dk.dts     |  24 +++++
+ arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi | 126 ++++++++++++++++++++++++++
+ arch/arm64/boot/dts/st/stm32mp257f-dk.dts     |  24 +++++
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    |  25 +++++
+ 4 files changed, 199 insertions(+)
+---
+base-commit: 4952fb7f53d4c9f007147ffb250c04ed40c959f7
+change-id: 20250902-mp2_ethernet-97ddde08f903
 
-Regards,
-Siddharth.
+Best regards,
+-- 
+Gatien Chevallier <gatien.chevallier@foss.st.com>
+
 
