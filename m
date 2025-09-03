@@ -1,73 +1,92 @@
-Return-Path: <linux-kernel+bounces-799301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCE38B429C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:22:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6838AB429C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91091683D9E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:22:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E77131BC628D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248F53629B2;
-	Wed,  3 Sep 2025 19:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19A3362099;
+	Wed,  3 Sep 2025 19:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZOIgM5jz"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="absLc8px"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDC22D94BB;
-	Wed,  3 Sep 2025 19:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75AE42D9789;
+	Wed,  3 Sep 2025 19:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756927329; cv=none; b=Y589zaXYifA84kwcEahgoMEkoXJuOsCbsqQVgu7QXa6SsM8qwf0yAMmBNXhKHu/Y9qxC5qPKWfUdtU4biVvuHfktaBlf1Zll9J3xHYzVFUu1WmFfA77E2ffwAjTJbI+501r1GuhEtFEMVWn5fXWkZmtDlGi44e5m/HJCWLkfSt4=
+	t=1756927339; cv=none; b=SHV8VN6kJNT1fnaBzw+XJI1Y84UmlqfYh+BHJ9HR9pkJS1RcRg0rS2ZduLe++4pj3vg9SjoCIcutM2VYHpz3l4dMfKH4iuAHjpxWMgDmZSskyqzNuJ5Z9JgADJFJer70H6YsgU56rMXSRk6KQ76/tLhaz0wEVFpji6vK9QiHGPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756927329; c=relaxed/simple;
-	bh=1XkDG//kNC9pcHdUsnMMluOmThV+nzlV6FDY6msTIcE=;
+	s=arc-20240116; t=1756927339; c=relaxed/simple;
+	bh=rykkV+aIo0HAPne2/nU2ZujvLiZiMYmAcJynKMLa6gE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izUBmVScTnVFaB56aAYcFkZf5M/PEzFebiZlAd3d021/2uMMeqz4rdIw1Lo+bV+rP0QPrZrXsV7Kn+lamChkP4tX3AH8CZ0KI5EQsmYlqtQcL754XZG2ZUUmcbS+yUf8q04Uzt3AQrFBdJOYwScXx0Y6Zjoyp5KFHBtpP6H9hVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZOIgM5jz; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 0A2428CB;
-	Wed,  3 Sep 2025 21:20:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756927256;
-	bh=1XkDG//kNC9pcHdUsnMMluOmThV+nzlV6FDY6msTIcE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZOIgM5jzXL81DqRvttrGC0d7U5b7m1zy0HRlJ4Ok+6JHs0REcK/P5dqWi0U5gUceg
-	 NdWsv15iOcIUlISDchNKHNGr/bqD0iTvWm49or2gWxfqz8GOuu+YU6B+5bjebXJdMU
-	 BbgT9Lmh49OgVDVnE5/qw5rnrYuW82jfiHCWMRWI=
-Date: Wed, 3 Sep 2025 21:21:43 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Frank Li <Frank.li@nxp.com>, Guoniu Zhou <guoniu.zhou@nxp.com>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/4] media: dt-bindings: nxp,imx8mq-mipi-csi2: Add
- i.MX8ULP compatible string
-Message-ID: <20250903192142.GA10637@pendragon.ideasonboard.com>
-References: <20250901-csi2_imx8ulp-v5-0-67964d1471f3@nxp.com>
- <20250901-csi2_imx8ulp-v5-1-67964d1471f3@nxp.com>
- <20250901154610.GB13448@pendragon.ideasonboard.com>
- <aLZMQ7c8qr5XO88d@lizhi-Precision-Tower-5810>
- <20250902083554.GD13448@pendragon.ideasonboard.com>
- <7c461931-3b04-4354-a892-52f469511c5a@kernel.org>
- <20250902123524.GK13448@pendragon.ideasonboard.com>
- <647fdf8a-835b-44d1-b0b8-a3d253a14787@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eZZeadYLS85aHaaHxL1modGl6XTNoAUq+50Q85MnzFSwErFRw4GSRat0YmpMOyMF1EXSAIXTtnGS2tNZZR6r+dZf5mrTlnIbgCT82glVeWhMcJMrzX6tpQazVmBUAA167Pw5SuYA73pFtjnlhBeor1/2Mnotc4CVUdZ6mYNAh90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=absLc8px; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b03fa5c5a89so35409566b.2;
+        Wed, 03 Sep 2025 12:22:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756927336; x=1757532136; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=L5hErnfofMrsL0rvB3tnJy6h2xcJ8CpBYIwMkGlraO4=;
+        b=absLc8px06Tj7Hp3gv+pu6wMMleS2iw15b43UKwfSJBYWSHQouVkxd40mQlbyQG4I9
+         oRLVEH8Jryv2dm7yqgikRgNlKeK80XpHei3uPQyc0ONmT5GcGnxhxxk4um6ugqyb0Yrp
+         rDtoMksUmC7MF74z8pw6eolpLKwFT5GaIo4DnMBe0s7yRAz7Ip0UVMh/bEWlHSKU6ndi
+         d3+OhL9RPTpjs6P4SNo4yEW8cQKKZpiBODxJ+J0z63uSBkQpkJucSNkeGXirKl6sPvrS
+         2Y7cFkMwyYopf9psm86cxcjkjbXBw5uaBGO8qxWAbJv7CWgpGURcouNGkhWT2jI8WxQw
+         2gSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756927336; x=1757532136;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L5hErnfofMrsL0rvB3tnJy6h2xcJ8CpBYIwMkGlraO4=;
+        b=Ct5kIftZEOgq+noq49hR0QWKEss2SjVjpTeu1t/HI8Dp7rklPXwCLPpFBrRvImETMv
+         vBZpZuUXkDKAeLklVPfaNjx774yGSHWdexAYRCvhlC/RJ6A0qbeOFlq35EBJLHuvL5zr
+         w2jpdUZVMHGkrzxbJV50fS/zSf+DA71udyKy/lyQGcvi5pJtPrrFPDyjqxS4m6Pvv1hN
+         zWUREUcwwlZuca5cBQsUWfCf/5zFzsLUjES06tOVZtvrf+/ikEeweKGgqcIyBpKSpthJ
+         aqMSZSd8zJqJNVDx74I4jaMALX/78VOwxNkHgsj7gsCbolrxeZnn7BHegQ+Lg2KTiPm9
+         Noxg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJqxgPYhT+2MAEb5K3UrlGakpgcetXzDGexZGhjAsUKYpvnkJwjJBUNXv2sx/ihqJUOsm+n4S4DKSe2bI=@vger.kernel.org, AJvYcCWrO8enkIkm8wAV9qTsDHCNqkMBMpjMTidygOOvexewVpswKDDMf473LqY0/2ZF0j1nB1IIr4Tk6OI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO9VK7RUYVxPm6kJGbuRELjsqvUw+7WQIJ2Z8DBiXQxwU0mT5A
+	MczHDAk65V0Ver4cRbHTNK2YIvR+FuI2W0G2H1Wb+ZAxKQU11PMh6Gj0u+cYTLUm6NY=
+X-Gm-Gg: ASbGncuaH632rgr3KDmtvae/fbKw0E+++Uv+0LRzgC+POXqN0ycOITQrNEAs00vcwVx
+	XdSFiTBVZ1O4y8z5oonlOpCTGp5rTfuLpNSwjSTL6d2BE6PI7rlnj3ma9rqxCWKyckMB9+haVjy
+	fLQM9hudnl7K/mc/9GWtFuHFQTDfC7HmxIDWNsaBtUyfbfirAJVYYCU8mXbq6h1mRkJQqYl92Lo
+	OamZl78Lw14FseSYqh6y875nYRED1UyJqupk/3/sutXfmXT4WXup2SYwgEdSy0o69dvPRbPaxB6
+	0f3QIpnX5X+a8ejVC09xFVZd9jbfuibtWrdZwPSeA3DoeorAFNjpulaokjIoyK3SgO4thAxpYox
+	kcVWPTD0r/wC5d6MAohtBEo4Z2SUaAjd0sCpqSOEAVHu41iwtEXilPQsuR2ljcbOZ0Zs2EvuWFY
+	a1FSLZr8Gw6nhe
+X-Google-Smtp-Source: AGHT+IEeezqUr9fOV+VRXNcpCXANoGRtDZemK7RiaVtFwKS2NCo0HPyPFOYQoPA/+YXkdSPf0kSpHg==
+X-Received: by 2002:a17:907:7245:b0:b04:76ed:3ff5 with SMTP id a640c23a62f3a-b0476ed442bmr148672566b.40.1756927335680;
+        Wed, 03 Sep 2025 12:22:15 -0700 (PDT)
+Received: from XPS ([2a02:908:1b0:afe0:5d6b:7d4c:ed7e:88a9])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b02152cc1b8sm1147287666b.36.2025.09.03.12.22.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 12:22:15 -0700 (PDT)
+Date: Wed, 3 Sep 2025 21:22:13 +0200
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] thermal: hwmon: replace deprecated strcpy() with
+ strscpy()
+Message-ID: <aLiVZWY9J1vdp0CD@XPS>
+References: <20250901150653.166978-1-osama.abdelkader@gmail.com>
+ <CAJZ5v0hrKBNxDeZOKpUXyuZV7LRUX4ov4ifEGDtNMrA8km6uOA@mail.gmail.com>
+ <aLhK_zMvtkdCtsHR@osama>
+ <CAJZ5v0j2ooBwnPWKjXGyYOOBtjs6zbAh-+jaUaV5u7sBi87+Rw@mail.gmail.com>
+ <aLh62dIWcHtWv2uj@osama>
+ <CAJZ5v0jpAm-KrS0k4be523ygbRMPjSDGgNas7ipwpd9kKacqKg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,127 +95,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <647fdf8a-835b-44d1-b0b8-a3d253a14787@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0jpAm-KrS0k4be523ygbRMPjSDGgNas7ipwpd9kKacqKg@mail.gmail.com>
 
-On Tue, Sep 02, 2025 at 05:53:39PM +0200, Krzysztof Kozlowski wrote:
-> On 02/09/2025 14:35, Laurent Pinchart wrote:
-> > On Tue, Sep 02, 2025 at 02:26:53PM +0200, Krzysztof Kozlowski wrote:
-> >> On 02/09/2025 10:35, Laurent Pinchart wrote:
-> >>>>>>          compatible:
-> >>>>>>            contains:
-> >>>>>>              enum:
-> >>>>>> -              - fsl,imx8qxp-mipi-csi2
-> >>>>>> +              - fsl,imx8ulp-mipi-csi2
-> >>>>>> +    then:
-> >>>>>> +      properties:
-> >>>>>> +        reg:
-> >>>>>> +          minItems: 2
-> >>>>>> +        resets:
-> >>>>>> +          minItems: 2
-> >>>>>> +          maxItems: 2
-> >>>>>> +        clocks:
-> >>>>>> +          minItems: 4
-> >>>>>> +        clock-names:
-> >>>>>> +          minItems: 4
-> >>>>>
-> >>>>> But according to this, the ULP version requires more clocks than the QXP
-> >>>>> version.
-> >>>>
-> >>>> If only clock number difference, generally, it is still compatible and can
-> >>>> be fallback, especialy driver use devm_bulk_clk_get_all().
-> >>>
-> >>> That's a driver-specific implementation decision, so I don't think it
-> >>> should be taken into account to decide on compatibility.
-> >>
-> >> The clock inputs do not restrict compatibility. If Linux can use
-> >> fallback to bind and operate properly, then it's a strong indication
-> >> devices are compatible.
-> >>
-> >> Imagine exactly the same registers, so same programming interface, but
-> >> one device takes one more clock which just needs to be enabled through
-> >> its lifetime. Such devices are fully compatible, even though clock
-> >> inputs differ.
-> > 
-> > That's only the case if someone enables the clock, isn't it ? From a DT
-> > binding point of view, how can we know that the extra clock will be
+On Wed, Sep 03, 2025 at 08:36:19PM +0200, Rafael J. Wysocki wrote:
+> On Wed, Sep 3, 2025 at 7:29 PM Osama Abdelkader
+> <osama.abdelkader@gmail.com> wrote:
+> >
+> > On Wed, Sep 03, 2025 at 04:21:35PM +0200, Rafael J. Wysocki wrote:
+> > > On Wed, Sep 3, 2025 at 4:04 PM Osama Abdelkader
+> > > <osama.abdelkader@gmail.com> wrote:
+> > > >
+> > > > On Wed, Sep 03, 2025 at 01:50:03PM +0200, Rafael J. Wysocki wrote:
+> > > > > On Mon, Sep 1, 2025 at 5:06 PM Osama Abdelkader
+> > > > > <osama.abdelkader@gmail.com> wrote:
+> > > > > >
+> > > > > > strcpy() is deprecated; use strscpy() instead.
+> > > > >
+> > > > > So why is it better to use strscpy() in this particular case?
+> > > >
+> > > > Thanks for the review. Technically, there is no change since both have const buf size,
+> > > > it's just for consistency with other drivers.
+> > >
+> > > $ cd linux-kernel-source
+> > > $ git grep strcpy | wc -l
+> > > 1187
+> > >
+> > > What kind of consistency do you mean?
+> >
+> > I mean in thermal subsystem, it's only this one.
 > 
-> We talk about software using the binding in this particular case. Can
-> the software use fallback? Yes, it can.
+> So please add this information to the patch changelog.
 
-The Linux kernel driver, in its current implementation, can, yes. No
-disagreement about that.
+Sure, I just sent v2.
 
-> > enabled by a component separate from the driver (in this case by the
-> > fact that the devm_bulk_clk_get_all() function gets all clocks) ?
-> 
-> If you go that way, only 100% identical devices are compatible.
-> 
-> >> I also wanted to express exactly that case on my slides from OSSE -
-> >> slide 28:
-> >> https://osseu2025.sched.com/event/25Vsl/dts-101-from-roots-to-trees-aka-devicetree-for-beginners-krzysztof-kozlowski-linaro
-> > 
-> > Quoting that slide, you wrote
-> > 
-> > "Two devices are compatible when the new device works with Linux drivers
-> > bound via fallback (old) compatible".
-> > 
-> > That is clearly the case here for the existing *Linux* driver. But what
-> > if the driver called devm_bulkd_clk_get() with a device-specific list of
-> > clocks ? Or what if the same DT bindings are used on an OS that has no
-> > clk_get_all() equivalent ? This is my concern with declaring those two
-> > devices as compatible: they may be from the point of view of the current
-> > implementation of the corresponding Linux kernel driver, but DT bindings
-> > are not Linux-specific.
-> 
-> It seems you think of compatibility as new device is compatible with old
-> kernel, e.g. one not requesting that clock. We don't talk about such case.
-
-No no, I'm considering compatibility in the same sense as you. Sorry if
-that wasn't clear.
-
-> > Or do DT bindings assume that drivers have to always enable all clocks
-> > declared in DT, even if they don't know what those clocks are ? That
-> > seems error-prone, in quite a few cases drivers need to handle separate
-> > clocks in a device-specific way, with for instance a particular
-> > ordering, preventing them from using devm_bulk_clk_get_all(). If all
-> > drivers are required to manage all clocks declared in DT, this would get
-> > messy quite quickly.
-> 
-> I don't really want to dive into such specifics, because it is
-> impossible to create a generic rule of out.
-
-We're on the same page there :-)
-
-Compatible strings model compatibility with software. As DT bindings are
-not OS-specific, they should be designed based on the concept of a
-driver, and not on a particular driver implementation. As a conceptual
-generic driver can't be precisely defined, we will always have edge
-cases.
-
-In this specific case, I think that devm_bulk_clk_get_all() is too much
-of a Linux-specific concept to consider that devices with different
-clocks are compatible. Even considering Linux only, a driver that needs
-to handle at least one of the clocks in a particular way (for instance
-to guarantee a device-specific clock sequencing requirement, or to
-retrieve or set the frequency of a particular clock) will need to get
-clocks by their names, making fully generic handling of all clocks not
-possible. For such drivers, difference in clocks will preclude
-considering two devices as compatible.
-
-As this is somewhat of an edge case someone will need to make a
-decision, and I won't fight tooth and nail over it.
-
-> We decide here about
-> programming interface mostly. Can Linux use the one from fallback-device
-> to properly operate the new one? Can the same driver bind to fallback
-> and operate the new device?
-> 
-> If you enable clock by clock for whatever reason, e.g. very specific
-> programming power up sequence, then answer would be: no, Linux cannot
-> use fallback because handling clocks differ.
-
--- 
-Regards,
-
-Laurent Pinchart
+Thanks,
+Osama
 
