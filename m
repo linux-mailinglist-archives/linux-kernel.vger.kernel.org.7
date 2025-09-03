@@ -1,98 +1,223 @@
-Return-Path: <linux-kernel+bounces-798269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6645AB41B7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:16:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D088B41B77
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38BA716D1D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:16:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B42B818821FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39F32853E0;
-	Wed,  3 Sep 2025 10:15:32 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16902E92C3;
+	Wed,  3 Sep 2025 10:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="QbG6lPvz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VZu2ISvU"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6003D2EC554;
-	Wed,  3 Sep 2025 10:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD29B2D6607;
+	Wed,  3 Sep 2025 10:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756894532; cv=none; b=ddqzeMJuKYr7dvwh+6FPkJqBAipa8izkrD9PEQSgtYdG0jvh5YIy0Tc/R8BJYqok3HpdoZzJ6JsHGDgY8TTz5poXoZN2Htq9LT7p20wG6GmheUcKeGPN9xupz8tdBl0daFaEv9vvFumw9gcKWP/AFlKXtsdgBWh6Xb0j9IlHNCc=
+	t=1756894478; cv=none; b=oc/aqZzcMFR/WSoQsAGhMH9iMwXz2CU1RPNCAgkYw6mSmUiZQ9L0B8GPj5KJbeIRYWv1c21J5KlR2JwKuFFq/4Vm+Gk1GVi95zdz0YneLZPbmE4NqgEknRcL2in80twND8Tl/lhBGUotoP52EoUsx+RA5B5LfSrp6QrDcD6Dl4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756894532; c=relaxed/simple;
-	bh=YbsbZ5iVBfwCaU9Y03wZ09bGfbPqggyKRE4e3K58+B4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AAfKrZnSPujvtOygAyOeIJJ3daVbtk93NiuiMpQPulLW5lpTeUksVYh11CEJOjhiNlX8UOMe+g+q0cFlbYZRIJQ/39QZ0tuKAFJPjAqXJczAtOifKXzs+z+eDzfqKOYwfG1jTxpidGPLQNIhMNg67fqx8Qsxsd/g9PoCgMw2jGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from hay.lan (unknown [IPv6:2605:59c0:2078:cf00:6ecf:39ff:fe00:8375])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id EADEFB22029D;
-	Wed,  3 Sep 2025 12:15:25 +0200 (CEST)
-From: E Shattow <e@freeshell.de>
-To: Conor Dooley <conor@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	E Shattow <e@freeshell.de>,
-	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v1 2/2] riscv: dts: starfive: jh7110-common: drop mmc post-power-on-delay-ms
-Date: Wed,  3 Sep 2025 03:13:36 -0700
-Message-ID: <20250903101346.861076-3-e@freeshell.de>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250903101346.861076-1-e@freeshell.de>
-References: <20250903101346.861076-1-e@freeshell.de>
+	s=arc-20240116; t=1756894478; c=relaxed/simple;
+	bh=hlNJJ1G1+WNeeg0idSskM8WMibWqKJQhvR2nOpoOetc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SxwN+2PqT0UIszlBDhfkF59iPZsSuiIZxdLXjGJuNpDanyDjegDDhAWqFq8qJJc3wjg02kzwl2G5NVhdOQtPyaW86duCaYUb+EOboHRVlBOhFHSHN1CG86xX5kOPjOZDuShqnVeFidZEafCS54H97n44tZ5wOkAELOi+a7FZxdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=QbG6lPvz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VZu2ISvU; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id ACD29140040F;
+	Wed,  3 Sep 2025 06:14:34 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Wed, 03 Sep 2025 06:14:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1756894474; x=
+	1756980874; bh=oJuMg/CtAgpONPrIwJ9LStLAGu5PdybtBuhkGLCzAmk=; b=Q
+	bG6lPvzJYcwQG418ETq2b97m+hlxfdAoUP5JPMAupm172i/UsXJnHWktoOs8a/pv
+	8zIrgLzvQfZ4xONUBNXEs7R+HMSwy9OOsI0enwjJHmn4HxzXjt5ksjE6uN7nHx1o
+	vvEZZ726NSSMzhkT1bH9F6pkGuq/qKVNVMTs1cz19LcWgvXE+mSQ9diPHocfAiFe
+	eBHGX6FvXcGzLBTpxwGaxEI58HDuFDv2A7+Hs9IFbuaa41lfDtSWAYN9pT94mUBd
+	CsymewpHEW0Do+qikSbIJgoR46yNzS27sAG/hXGqcodlb5YhAyFujWDiJ+oxLuRy
+	MCFNuXFBxc9TuKONhtOjA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1756894474; x=1756980874; bh=oJuMg/CtAgpONPrIwJ9LStLAGu5PdybtBuh
+	kGLCzAmk=; b=VZu2ISvUdQorLiXIJIICz5mEaQaZsIciadVzXt5gZeyFqZ6qn+p
+	oFZtxXJ+4FdpOgw9DUkkydjb1BBYaEIyX2KAxn38FqJ/y9C++iQsjf6pXLXHyw7o
+	HZGMrajbEuRfLUQVnoGSKsN/Rhyy0YljC+oZK5CC1y3hmpVniy++grfA8Y5R4ByI
+	/mnNZR+RSiwMKtoPDmmE8uDYUTbDVlQSw2qkHY9oO97ZVo2QcHGNrmWDOwfC6Icr
+	ybMjIWUZVXyUKZUpftwTaeN18E3LeFFiCqK82z768R26Jxc6nYgj5xNoclxoN0n6
+	r1etLObVf24BhmyaZYJd10VcfdID2jKMoJQ==
+X-ME-Sender: <xms:ChW4aCEiu6KFgYPU5JPyISDJW_s-IohWvZcf9W7MZFMVxvwVfLJgFg>
+    <xme:ChW4aH7BPmHjesKbc63hGI1xKsMalV39FWM5rjqg2nKr1VSUgGfk2-FIJpXZ2mLGn
+    6SRRkCrmfD1AFnDWe4>
+X-ME-Received: <xmr:ChW4aJQWmK7GdEFst2QgsKCQ3vD2oE6kIW2lKxG6kexUh2vaTocfG9BLyHb0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvkeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomhepufgrsghrihhnrgcu
+    ffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrfgrth
+    htvghrnhepuefhhfffgfffhfefueeiudegtdefhfekgeetheegheeifffguedvuefffefg
+    udffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsh
+    gusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopedugedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepfihilhhfrhgvugdrohhpvghnshhouhhrtggvse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgv
+    thdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtoh
+    epkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughh
+    rghtrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepjhhohhhnrdhfrghsthgr
+    sggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:ChW4aC4mNmbndpE4ETOzphb3H3ZkvoOYV-XpP8JEFvzufYGTfqWAQA>
+    <xmx:ChW4aGSq-MiMaQmAIfnPZSFqEr5J5Bg_cdesPtimy9rg0IgUUJyqvA>
+    <xmx:ChW4aHkE7XONpN1fnbvpPX6Rp9FKh9L_tM9viiel-1m4lmNkU4QxMw>
+    <xmx:ChW4aKTB4nZ9rLLc5ZpZc3AAlEozTWEA7gVkmrR-H_kCKGHfUI099Q>
+    <xmx:ChW4aMaK6iJx6oeBXD-1B8tpoT0r_JBLKvbMltlUepdlXJ7lSszJrL1J>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 3 Sep 2025 06:14:33 -0400 (EDT)
+Date: Wed, 3 Sep 2025 12:14:32 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Wilfred Mallawa <wilfred.opensource@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+	john.fastabend@gmail.com, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alistair.francis@wdc.com, dlemoal@kernel.org,
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Subject: Re: [PATCH v3] net/tls: support maximum record size limit
+Message-ID: <aLgVCGbq0b6PJXbY@krikkit>
+References: <20250903014756.247106-2-wilfred.opensource@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250903014756.247106-2-wilfred.opensource@gmail.com>
 
-Drop post-power-on-delay-ms from mmc0 mmc1 interfaces. There is no
-known reason for these properties to continue, testing appears to be fine
-without them [1].
+note: since this is a new feature, the subject prefix should be
+"[PATCH net-next vN]" (ie add "net-next", the target tree for "new
+feature" changes)
 
-1: https://lore.kernel.org/lkml/NT0PR01MB1312E0D9EE9F158A57B77700E63D2@NT0PR01MB1312.CHNPR01.prod.partner.outlook.cn/
+2025-09-03, 11:47:57 +1000, Wilfred Mallawa wrote:
+> diff --git a/Documentation/networking/tls.rst b/Documentation/networking/tls.rst
+> index 36cc7afc2527..0232df902320 100644
+> --- a/Documentation/networking/tls.rst
+> +++ b/Documentation/networking/tls.rst
+> @@ -280,6 +280,13 @@ If the record decrypted turns out to had been padded or is not a data
+>  record it will be decrypted again into a kernel buffer without zero copy.
+>  Such events are counted in the ``TlsDecryptRetry`` statistic.
+>  
+> +TLS_TX_RECORD_SIZE_LIM
+> +~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +During a TLS handshake, an endpoint may use the record size limit extension
+> +to specify a maximum record size. This allows enforcing the specified record
+> +size limit, such that outgoing records do not exceed the limit specified.
 
-Signed-off-by: E Shattow <e@freeshell.de>
-Tested-by: Hal Feng <hal.feng@starfivetech.com>
----
- arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+Maybe worth adding a reference to the RFC that defines this extension?
+I'm not sure if that would be helpful to readers of this doc or not.
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-index 4fa77ffd54e3..5dc15e48b74b 100644
---- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-@@ -285,7 +285,6 @@ &mmc0 {
- 	mmc-ddr-1_8v;
- 	mmc-hs200-1_8v;
- 	cap-mmc-hw-reset;
--	post-power-on-delay-ms = <200>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
- 	vmmc-supply = <&vcc_3v3>;
-@@ -302,7 +301,6 @@ &mmc1 {
- 	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
- 	disable-wp;
- 	cap-sd-highspeed;
--	post-power-on-delay-ms = <200>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc1_pins>;
- 	status = "okay";
+
+> diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
+> index a3ccb3135e51..94237c97f062 100644
+> --- a/net/tls/tls_main.c
+> +++ b/net/tls/tls_main.c
+[...]
+> @@ -1022,6 +1075,7 @@ static int tls_init(struct sock *sk)
+>  
+>  	ctx->tx_conf = TLS_BASE;
+>  	ctx->rx_conf = TLS_BASE;
+> +	ctx->tx_record_size_limit = TLS_MAX_PAYLOAD_SIZE;
+>  	update_sk_prot(sk, ctx);
+>  out:
+>  	write_unlock_bh(&sk->sk_callback_lock);
+> @@ -1065,7 +1119,7 @@ static u16 tls_user_config(struct tls_context *ctx, bool tx)
+>  
+>  static int tls_get_info(struct sock *sk, struct sk_buff *skb, bool net_admin)
+>  {
+> -	u16 version, cipher_type;
+> +	u16 version, cipher_type, tx_record_size_limit;
+>  	struct tls_context *ctx;
+>  	struct nlattr *start;
+>  	int err;
+> @@ -1110,7 +1164,13 @@ static int tls_get_info(struct sock *sk, struct sk_buff *skb, bool net_admin)
+>  		if (err)
+>  			goto nla_failure;
+>  	}
+> -
+> +	tx_record_size_limit = ctx->tx_record_size_limit;
+> +	if (tx_record_size_limit) {
+
+You probably meant to update that to:
+
+    tx_record_size_limit != TLS_MAX_PAYLOAD_SIZE
+
+Otherwise, now that the default is TLS_MAX_PAYLOAD_SIZE, it will
+always be exported - which is not wrong either. So I'd either update
+the conditional so that the attribute is only exported for non-default
+sizes (like in v2), or drop the if() and always export it.
+
+> +		err = nla_put_u16(skb, TLS_INFO_TX_RECORD_SIZE_LIM,
+> +				  tx_record_size_limit);
+> +		if (err)
+> +			goto nla_failure;
+> +	}
+
+[...]
+> diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
+> index bac65d0d4e3e..28fb796573d1 100644
+> --- a/net/tls/tls_sw.c
+> +++ b/net/tls/tls_sw.c
+> @@ -1079,7 +1079,7 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
+>  		orig_size = msg_pl->sg.size;
+>  		full_record = false;
+>  		try_to_copy = msg_data_left(msg);
+> -		record_room = TLS_MAX_PAYLOAD_SIZE - msg_pl->sg.size;
+> +		record_room = tls_ctx->tx_record_size_limit - msg_pl->sg.size;
+
+If we entered tls_sw_sendmsg_locked with an existing open record, this
+could end up being negative and confuse the rest of the code.
+
+    send(MSG_MORE) returns with an open record of length len1
+    setsockopt(TLS_INFO_TX_RECORD_SIZE_LIM, limit < len1)
+    send() -> record_room < 0
+
+
+Possibly not a problem with a "well-behaved" userspace, but we can't
+rely on that.
+
+
+Pushing out the pending "too big" record at the time we set
+tx_record_size_limit would likely make the peer close the connection
+(because it's already told us to limit our TX size), so I guess we'd
+have to split the pending record into tx_record_size_limit chunks
+before we start processing the new message (either directly at
+setsockopt(TLS_INFO_TX_RECORD_SIZE_LIM) time, or the next send/etc
+call). The final push during socket closing, and maybe some more
+codepaths that deal with ctx->open_rec, would also have to do that.
+
+I think additional selftests for
+    send(MSG_MORE), TLS_INFO_TX_RECORD_SIZE_LIM, send
+and
+    send(MSG_MORE), TLS_INFO_TX_RECORD_SIZE_LIM, close
+verifying the received record sizes would make sense, since it's a bit
+tricky to get that right.
+
 -- 
-2.50.0
-
+Sabrina
 
