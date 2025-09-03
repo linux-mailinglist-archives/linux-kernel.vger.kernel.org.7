@@ -1,198 +1,346 @@
-Return-Path: <linux-kernel+bounces-798986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56894B42595
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B3AB42594
 	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 681A61BC7882
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:32:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89C083A4CC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A9D25E824;
-	Wed,  3 Sep 2025 15:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Z6CmRzRa"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011030.outbound.protection.outlook.com [52.101.70.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6070267AF6;
+	Wed,  3 Sep 2025 15:32:32 +0000 (UTC)
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658D52405F8;
-	Wed,  3 Sep 2025 15:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756913489; cv=fail; b=fiuZgxGATFZULD7ShjLveDTXK9fAppKRobF0zWDELpTXqljFijqHHjhwIwXSsEtWupQH1DLaXzfndpMuq9KoUpJzp137Gr77mlAl2KUfjjcUr/ELfsBhlFKDQtEdXe9D1f1zN68x5ug8PCGJyODIBTTXvQEq0xInAPCkbXrNXzg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756913489; c=relaxed/simple;
-	bh=TcfcNWcZ4jTN45ilq7k8M/QEozrCJfo9CF84CThcaKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=fTQYrqC3fZUazQfKZ1sxp6jv0szAQkJFwyZp985YEBLeVu4bYNpt8Le36cL+f7iGrxzkqpQcJ82w8AnKoO0epN8icmffxoBR6oIKJltNN7LOA9z4+05s9N2xZszMuVQhHM9whmwOpEpgXkgqEY9u56UYfuD632LD/lgRdocSynA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Z6CmRzRa; arc=fail smtp.client-ip=52.101.70.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MvekWoc6WR8UZnGwsN5Nz3nnbH9YBUljIV5VPKMKypQq0Ig7u0wnYYn4QTsXnBlMacTVRgB2D6Sf2aTHeB8rWmaVm4KQvBBAJkA4JsBZvgzgDDjbsLS8D5xINuLF765x+dbxMR7cACCF/NHR/PO127wg7idSZDxmQmSEOtczCwe+fEcVi1EkyB/2xxiXIO7SCtnuX418p5qav9PdmyABC3SNxoY5ZQoGNYOHvx7tRxr3m4K6pKybQgplyzwxRQct9BDnyOctPHGSvfVk38p1h8aHHzzJVi5b2VbdE7MOedHgnx8aKF36yLbjCenikocy0u7U+oD4TT/oZq6OSKzLDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kgXelX63jYL9QILO6v7DzmvMnEjFrRsJZbWaINLxoyY=;
- b=JEPtwO/dgcqPiN7CcMAp5RDi5w3Qv5jevz67HF87t61pISAX9MLL9EAW5T3hUNZaf0HLYll+uEANfCWn/1PXD79Sh92dvc6v447BObJ/tofDhzNNKbtrUWunLOvKt78V5OZDCkfl+DWAaCwWunLlzbLImP5Um9MhQJCUrwC4IaSQsmoYugHslVOE2UZK3ICbSYE9Wdg1DxBDqBL7wzpi3u015gwCpla/HZDUwfk70GDQrETAChy8cmCsF0Ew5coJMjeHpVGr5N9M9hu0HHYQMVJeGZcdm8+2mNGBXo0t0zvXknArQ38JUkPkdPiO2qbgOEulkANWU5pbgRPD7xMQUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kgXelX63jYL9QILO6v7DzmvMnEjFrRsJZbWaINLxoyY=;
- b=Z6CmRzRawTbrjmfRL8rjuF0WWpdqfsvSqwmC7LoAxdJf9N7OPnzIgIf8cOSDUG/2qj9xmuKzmpIXhniwgRTY3qHUvgfYVmK3CVmRSGaifwMiaWkACj+znpFwiYziqnDG/PpCAbqEo5LqxHB9VtW1zXz3ZcXMyRVJey/yuALSWt77HulR2h5UNCLTwVZy8njTGlYZIBGGA6u78OvVkiY5yLswD5XeC3vm1nGoXi1Aqpf7ftGEsCegDsyVGqF8X+eK4lmWoSJYndve/p8tYsM3NiOKTKBjHCt7beVuopOZ0Uxc37Z5ePcdc83jlu6Ch1W/mD7LLLVY6x+to2bUqk+ttA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by VI1PR04MB7054.eurprd04.prod.outlook.com (2603:10a6:800:12d::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Wed, 3 Sep
- 2025 15:31:24 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.9094.015; Wed, 3 Sep 2025
- 15:31:23 +0000
-Date: Wed, 3 Sep 2025 18:31:20 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 net 1/2] net: phylink: add lock for serializing
- concurrent pl->phydev writes with resolver
-Message-ID: <20250903153120.4oiwyz6bxfj3fuuv@skbuf>
-References: <20250903152348.2998651-1-vladimir.oltean@nxp.com>
- <aLheK_1pYbirLe8R@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLheK_1pYbirLe8R@shell.armlinux.org.uk>
-X-ClientProxiedBy: VI1PR07CA0242.eurprd07.prod.outlook.com
- (2603:10a6:802:58::45) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CAC239562
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756913552; cv=none; b=cUBc48haH0jMoNNe7BMiU4JgiludiCnwYIw/gYmH+wJe4AZlqkUYA7aMZCpYVQNsBCyy5AsKq0FYHLG67BNpM/BkGCQOxZR6rJXBQzhGwZEyXiLi4WLxQ65cWYZM7G6s8MnBIT7KA7s565QX31vVguUj7ztFW7tZSSZNLoShypw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756913552; c=relaxed/simple;
+	bh=cHBQ8j6RxUC9Ms6/bHBFv1Ch4/EE2YLkhPSpWOTu/Ro=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qz9pOTEfaKDIiD2bVmt1JZQAiXRCy7rxGySPmjZLD2D61nkuTrWc0Gdb0vyW9ncVHKc5s1IU2QcAxThtY3KE9xlJ6QTn0/Skz09Z9wsOLi70ZZvv+X2NwQVxwzERQarG8wOVz35kFNRck3YCJfBdYQOik2zPODcXxrKr1yOBwJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=carnegierobotics.com; spf=pass smtp.mailfrom=douglass.dev; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=carnegierobotics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=douglass.dev
+Feedback-ID: 3578:1022:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -360649041;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Wed, 03 Sep 2025 15:31:50 +0000 (UTC)
+From: Woodrow Douglass <wdouglass@carnegierobotics.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Woodrow Douglass <wdouglass@carnegierobotics.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v3 0/2] regulator: pf530x: NXP PF530x regulator driver
+Date: Wed,  3 Sep 2025 11:31:36 -0400
+Message-Id: <20250902-pf530x-v3-0-4242e7687761@carnegierobotics.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250902-pf530x-v2-0-f105eb073cb1@carnegierobotics.com>
+References: <20250902-pf530x-v2-0-f105eb073cb1@carnegierobotics.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|VI1PR04MB7054:EE_
-X-MS-Office365-Filtering-Correlation-Id: 61f6931e-4799-47bb-e5b5-08ddeafef0ae
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|19092799006|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1j/gwHRBi3mvikZhf6HI8OqcW2T2rj/syaRS02N3CldgY5Wg3msO/tNujsoj?=
- =?us-ascii?Q?lnnEUg7wAdK7HzJd2eOOUYx5ItCQwiqxbMpsnXFriK/IfT5Px5yraE0ckG3o?=
- =?us-ascii?Q?pDDqNBUNcJ0m/J3ZI0+EelbqB4sZfNhQRFTd+r8vu/mA+2tqSfwECIkH7M3Q?=
- =?us-ascii?Q?8FyKONAuVAcpZFnkvuJJouGmM5SVLzBdwdjb51zGl6KR3oP4UdttLIy7v7xC?=
- =?us-ascii?Q?DhW0bEA/WfuK1/Htt6BLKfecYD464K7Zt6cfFvp0FqAXTwfFqKhZkXaklmj9?=
- =?us-ascii?Q?V5EZ802lXjXFL0lhLaagXyjK/JLdnHcywHPF8MRuxx5t6V+3lvoY0Z3cagox?=
- =?us-ascii?Q?4/vIjkyc2OuogdPtSVl707NqkKofKfEqRbeCOPQVtpIZpL9qWnJPS9hGshf2?=
- =?us-ascii?Q?mN9+SiezAU/JWhfUKn4TVowkfg8cFkEx4ueDW20wlQ/ziAhpJF8o05BMIgX6?=
- =?us-ascii?Q?wUYWmPal4DAkFh/tlKOgD4Wzu3ynRJRDUPoKt+5EJSlfy1M4qUbEB+6e1qPl?=
- =?us-ascii?Q?PfsiOyH1kPFMcnQ3VEVnpdm5BNzEACcnG3gXUrHq29hdDn0cRkbrnk38r/ao?=
- =?us-ascii?Q?TDFy3HJOcLh++NF2zDwsXm2lxgDEY1hOohUXEGn34KbI4v4bIMXrtvbBL3fs?=
- =?us-ascii?Q?jTAKfn8yF3dSeylQBN7M6u0IXDl2alfNJnarHJCdw0G0yXS9WEhOyLTDTK0A?=
- =?us-ascii?Q?x53dQN63Djk1iXceqk9uaptBvYSkigx6HZAXH2Njniqi5asJN3Yte7DyYS8A?=
- =?us-ascii?Q?Eo19NqBJPiLFjld9S+4+3aThkquygTgU9Sw4RsAgfHLxyCzKCoWyfwaeEV2f?=
- =?us-ascii?Q?teEdsvEAarqxr33OkgH2dKcpYOzchJeUMNsQmREhbwV1VTQkLOWa+Yb79OW8?=
- =?us-ascii?Q?zIO3svUlwJQJGDPHDFzdVkokj7kp5mBIQlqxfczn5Q+v7Puft4GrirjppAGl?=
- =?us-ascii?Q?MTXk7FLZY54hTi+zAXc3BHSTHnTr2m4pXOdtdCH7M/JSeHZ0Dvw1wR2UZqkJ?=
- =?us-ascii?Q?A5ThK45J8F+de/924lzLwTfOfzwRK48AJqJYusCxOWgx/wHZvfplDceP4xV3?=
- =?us-ascii?Q?KIv6sHz56gpZuC1FXT0OgbE3iF1thTMBISQYb3fnPryqjkFx5QgLFwA4q40n?=
- =?us-ascii?Q?fFDIbXNAu2eTipL3MFEAfwqsf3KwGVUDcBR5e2gPLz+mW2GG2riFuXhNQHHl?=
- =?us-ascii?Q?kU3UJtb/6xW6mfyOEY826rYkK/bu/9v2vG2IOA9gIsx0jkyav3Me2h3F4VNu?=
- =?us-ascii?Q?1LzW7/utydl6E9xG0PBqF897/671Bn15DYvgM3i6FhliPSREPYBxPzHOxfgT?=
- =?us-ascii?Q?Fb9nX9P2ZiK4R+CqwdaINZQz2ODHAYkjyDIM9TRHIp4ur7iczAUIHclpaLhI?=
- =?us-ascii?Q?UkUt1CaoXjCZi+fcBWeqqGdMRpqmOipQyf9jBLBrxmLiMUoelo2ZnLjMBQch?=
- =?us-ascii?Q?buGfTH8wKgs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(19092799006)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YrlRpiyod22x8Pu0j66Ra/olTo60MknC0PQJq2e7pkuBSJ3+8yQvnG0PY7dY?=
- =?us-ascii?Q?H8BCVR07vjYTW+eeAPJaoXA+qMmX0yvvxbUT1zVbRAN9bSmWx+k8ObExR9uQ?=
- =?us-ascii?Q?LAHhhXyDvnrLZvUYLTf+10WvnKRpQ36rKs/xKFKtT2cCRyuf3Y2LJ+USPKb8?=
- =?us-ascii?Q?zpsOl1/w8KoMVTRxlO3+jsJ08n5ejQ03B6NI1y5lP6Qf4oUOylCfsO/qGvy/?=
- =?us-ascii?Q?UjEszt+yGIkLCvzD6MNuc3qY1AWqrIu2thdws7xiVyWzjZ2eaw/YH7QzkRO6?=
- =?us-ascii?Q?yyoioKDoCZb11XT2xHusejZjnY/vi4bMPhzMqj5dRibME2R5ZV53vvN9Ircu?=
- =?us-ascii?Q?aiTcfjIsjD/mQPYkSPLNZPIk+A3m1WoNfUsLK4XFuSsJQ4uo5R9F8UwIA6hy?=
- =?us-ascii?Q?G8d58+eQN8QR9l1qgx9OKNbiUiGNuIzex6CYVicJSNKLiVndvtk9T8yZyfxc?=
- =?us-ascii?Q?UMC1wmpHz3QQxzegYSBerGPs0Y0sQ1L0io5Q4JtUFC/tmNRVbkX9a3nxm03z?=
- =?us-ascii?Q?6Fbo9blWSlsFgJ5Fn8H446VS0hlgYVFrOY+eupCrOhd8NjJIGMa2PUjdKOCt?=
- =?us-ascii?Q?ffLgqHXaVJUKjBFMFYH27YDjnnEUmO9VrQWkWMIZ3EKihlb4wjCjnJGwOy8B?=
- =?us-ascii?Q?HCycwiNqmUU9ypWflA3LtEMrFhcIxiotUgVFUAHf44nspmB05HJ++Ajjm7hb?=
- =?us-ascii?Q?qD+18zjakyrXfGtkIm6ZDHn48DCGwxXkqWgFCaSGvnDZrEx2YM2r84rxMO8X?=
- =?us-ascii?Q?YGTUNbjd3dTRcG77YyYuxBhTf1xZl5sUeboVoydjnI7eGx7SSWpA0x9L2Z0E?=
- =?us-ascii?Q?MSwQ/p3SgiALMeBdbXzEkWpC9W+wN3a38wcL8HbkAUjEilb1oR49eE1UAt2w?=
- =?us-ascii?Q?Tw2aI73c1Ixr4G53WzN1YvgGL7YlmYI0esPJVkGl1cLfaMzGkUDtp/zm97kH?=
- =?us-ascii?Q?p5a0aCcQKvcszeK+g2Eg+WxeZ7fwXXPwBiEajPQrvebZynUDnsxK4Su1DHPj?=
- =?us-ascii?Q?pMreZVKderaM4oa3b1Oh46I7aKpYUUD6rcbWo7O8zy2vjlheAFg3g1DrGfoi?=
- =?us-ascii?Q?72Qc4wB/EG131QIoyQu9L+RF60XHLBX/6ytgAUqJZM2p/BpQ3GYxzXaPyAyQ?=
- =?us-ascii?Q?8tSHz07nLjwfkEkiaz7HkZLul0fl2spQADcFKepT+5ehD+NNDUxboIi/36QT?=
- =?us-ascii?Q?hDKdZtc/F0LQcES5HcUZab34j6YxLXwJtzdHQ6BqiqOTvQh9ZLXFPMZOHTvp?=
- =?us-ascii?Q?8hgtUKn3FasMLLL28jB81BGbVugU7WU9VqBThyiXJRqLn4q/DFwM+3naVlOt?=
- =?us-ascii?Q?cZaHoTVZU6j7u3oYryK2PRBq7XskfvMHnpuf9FcG2a61oUg8N1ErxtRpnNEu?=
- =?us-ascii?Q?kjfzPED3OR6bb3us/wNvyO0FSOTK3isQj07agfmqJf/oM7YSiB6rvFRRvTqG?=
- =?us-ascii?Q?Z+EBx3vsFwK5azlY+ct+tCfrimTcbZBNcGQF71tY7x1CV5loD6qw40I/wJJ1?=
- =?us-ascii?Q?j5P1p8EsAv7SCo86XuKe8y2CHSfgMQJepyVmq2zMoiBKHpzOvQpiabnmhqqh?=
- =?us-ascii?Q?HmkSgpMH6J9P4wVMl44DmvK0NmImUiVGzCiMdzPgBfo6AO1YCsPaF9yiPHPo?=
- =?us-ascii?Q?2HvUFDOQ7vU4NUNyne+OK5mtr2eZOsaTHOFVvMMPMRofJAv69ySRTGoT/Zue?=
- =?us-ascii?Q?28yNkg=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61f6931e-4799-47bb-e5b5-08ddeafef0ae
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 15:31:23.8638
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: esVwcUqU6v+Y9jqJNOkhEjXxV4rDw9+JTCNfRjB10yk7CyXPq29M1MpP2ILGsuiR42mlLDj/WgdbrSLf7dxYag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7054
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10306; i=wdouglass@carnegierobotics.com; h=from:subject:message-id; bh=cHBQ8j6RxUC9Ms6/bHBFv1Ch4/EE2YLkhPSpWOTu/Ro=; b=owEBbQGS/pANAwAKAewLuLlPNh4UAcsmYgBouF1WMr8aaHwci3yi+f39tl9JXpr94miUUKVaO pTbVsoAQCiJATMEAAEKAB0WIQSIUqjrbDLQw0mgxHLsC7i5TzYeFAUCaLhdVgAKCRDsC7i5TzYe FPoqB/9Wizw/HyOyX64gNzv+o+QcZl3W0qOyqyP0Y1ga0q6NuupaK4xTsk4Mib5xP35FFzS+Mcu Xfe8qNqUv4atpiwLdU2UddSocfmQbrxF2ajad68Xg+7fkZUvber2XMX7R5Wvcl7q0BMWMs46gEg iWmkcPjTupM+5+1qNkJmIbojDxNfbU+LKqGkfpGODwdThobwBUdh/dWn51Q1T4X9QSHjX72X+zn LaTXTWwl5PB9shyJeW3Vu9HYd6IXiy5S8/2N6FK3zZvKrOu4voEaE9EGrMMInSn+ySw7Y/52qc0 fr7rBLqd31LD7JPIqWMCATmGZM3awmiejvkphn2l4YaGQuvk
+X-Developer-Key: i=wdouglass@carnegierobotics.com; a=openpgp; fpr=8852A8EB6C32D0C349A0C472EC0BB8B94F361E14
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 03, 2025 at 04:26:35PM +0100, Russell King (Oracle) wrote:
-> On Wed, Sep 03, 2025 at 06:23:47PM +0300, Vladimir Oltean wrote:
-> > @@ -2305,6 +2314,7 @@ void phylink_disconnect_phy(struct phylink *pl)
-> >  
-> >  	phy = pl->phydev;
-> >  	if (phy) {
-> > +		mutex_lock(&pl->phy_lock);
+All,
+
+Sorry for resubmitting the original patches, i thought that's what was
+wanted. I'm trying very hard not to break ettiquite here. Below are
+some responses to your earlier comments. Thank you.
+
+On 9/2/25 11:08, Mark Brown wrote:
+> On Tue, Sep 02, 2025 at 10:21:33AM -0400, Woodrow Douglass wrote:
 > 
-> If we can, I think it would be better to place this a couple of lines
-> above and move the unlock.
+>>  obj-$(CONFIG_REGULATOR_PALMAS) += palmas-regulator.o
+>>  obj-$(CONFIG_REGULATOR_PCA9450) += pca9450-regulator.o
+>>  obj-$(CONFIG_REGULATOR_PF9453) += pf9453-regulator.o
+>> +obj-$(CONFIG_REGULATOR_PF530X) += pf530x-regulator.o
+>>  obj-$(CONFIG_REGULATOR_PF8X00) += pf8x00-regulator.o
+>>  obj-$(CONFIG_REGULATOR_PFUZE100) += pfuze100-regulator.o
+>>  obj-$(CONFIG_REGULATOR_PV88060) += pv88060-regulator.o
+> 
+> I'd say please keep this sorted but there's some cleanup needed here
+> already so whatever, let's deal with that separately.
+> 
+>> +static const struct regmap_config pf530x_regmap_config = {
+>> +       .reg_bits = 8,
+>> +       .val_bits = 8,
+>> +       .max_register = PF530X_OTP_MODE,
+>> +       .cache_type = REGCACHE_RBTREE,
+>> +};
+> 
+> In general it's better to use _MAPLE register caches unless you've got a
+> good reason not to, the data structure is more modern.
+> 
+>> +static int pf530x_is_enabled(struct regulator_dev *rdev)
+>> +{
+>> +	//first get mode
+> 
+> Usual comment style would have a space after the //.
+>
 
-Sorry for potentially misunderstanding, do you mean like this?
+this exact comment got lost in the fallout of the regmap changes below, but
+i've fixed this issue elsewhere in the file, thanks.
 
-	mutex_lock(&pl->phy_lock);
-	phy = pl->phydev;
-	if (phy) {
-		mutex_lock(&phy->lock);
-		mutex_lock(&pl->state_mutex);
-		pl->phydev = NULL;
-		pl->phy_enable_tx_lpi = false;
-		pl->mac_tx_clk_stop = false;
-		mutex_unlock(&pl->state_mutex);
-		mutex_unlock(&phy->lock);
-		mutex_unlock(&pl->phy_lock);
-		flush_work(&pl->resolve);
+>> +static int pf530x_get_status(struct regulator_dev *rdev)
+>> +{
+> 
+> I would have expected this function to check INT_SENSE1/2 for current
+> error statuses and report those.
 
-		phy_disconnect(phy);
-	} else {
-		mutex_unlock(&pl->phy_lock);
-	}
+I have added the INT_SENSE1 bits to the REGULATOR_STATUS_ERROR return value. I'm
+not sure how to properly represent the thermal bits in INT_SENSE2 here -- this
+part can safely run at high temperatures, some of those bits are just
+informational in some designs (including the board I'm working on now)
 
-move the unlock where? because flush_work(&pl->resolve) needs to happen
-unlocked, otherwise we'll deadlock with phylink_resolve().
+> 
+>> +static int pf530x_get_error_flags(struct regulator_dev *rdev, unsigned int *flags)
+> 
+> I see INT_STATUS2 has thermal warning/error interrupts in it as well.
+> Not essential but it'd be nice to also check those.  These statuses are
+> also clear on write so I'd expect a write to clear them, even though the
+> device lacks an actual interrupt line so it's all somewhat ornamantal
+> ATM :/  I suppse we ought to implement some core thing to do polling for
+> non-interrupting regulators, but that's definitely out of scope for this
+> driver.
+> 
+>> +static const struct regulator_ops pf530x_regulator_ops = {
+>> +	.enable = regulator_enable_regmap,
+>> +	.disable = regulator_disable_regmap,
+>> +	.is_enabled = pf530x_is_enabled,
+> 
+> The custom is_enabled() operation doesn't seem to line up with the
+> generic regmap enable/disable operations, and we don't seem to have
+> enable_val or disable_val in the regulator_desc which the generic ops
+> expect.  The whole connection with the modes seems a bit odd, the
+> standby voltages look like they'd more naturally map to the regulator
+> API's suspend mode but perhaps these devices are not usually integrated
+> in that way and this would be controlled separately to system suspend.
 
-Additionally, dereferincing pl->phydev under rtnl_lock() is already safe,
-and doesn't need the secondary clock.
+I agree, I was misguided here. I've added enable_reg, enable_mask, enable_val,
+and disable_val to the regulator_desc initializer, and moved to the regmap
+function from helpers.c. I'm moving the "suspend mode" settings too here. The
+board i'm working with has the suspend pin grounded, so I can't really test
+suspend mode -- supporting that may have to wait for a future patchset.
+
+> 
+>> +static int pf530x_identify(struct pf530x_chip *chip)
+>> +{
+> 
+>> +	dev_info(chip->dev, "%s Regulator found.\n", name);
+> 
+> It wouldn't hurt to read and log the data in REV, EMREV and PROG_ID too
+> (it can be helpful when debugging).
+
+I've added REV and PROG_ID, EMREV is listed as "Reserved for NXP Internal Use"
+on page 95 of the datasheet, and  -- I can include those bits here but i'm not
+sure they're very useful; if you'd like me to include those bits anyway i will
+
+On 9/2/25 15:19, Krzysztof Kozlowski wrote:
+> On 02/09/2025 16:21, Woodrow Douglass wrote:
+>> Bindings for the pf530x series of voltage regulators
+>>
+>> Signed-off-by: Woodrow Douglass <wdouglass@carnegierobotics.com>
+>> ---
+>>  .../regulator/nxp,pf530x-regulator.yaml       | 74 +++++++++++++++++++
+> 
+> <form letter>
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC. It might happen, that command when run on an older
+> kernel, gives you outdated entries. Therefore please be sure you base
+> your patches on recent Linux kernel.
+> 
+> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> people, so fix your workflow. Tools might also fail if you work on some
+> ancient tree (don't, instead use mainline) or work on fork of kernel
+> (don't, instead use mainline). Just use b4 and everything should be
+> fine, although remember about `b4 prep --auto-to-cc` if you added new
+> patches to the patchset.
+> 
+> You missed at least devicetree list (maybe more), so this won't be
+> tested by automated tooling. Performing review on untested code might be
+> a waste of time.
+> 
+> Please kindly resend and include all necessary To/Cc entries.
+> </form letter>
+> 
+> 
+>>  1 file changed, 74 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/regulator/nxp,pf530x-regulator.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/regulator/nxp,pf530x-regulator.yaml b/Documentation/devicetree/bindings/regulator/nxp,pf530x-regulator.yaml
+>> new file mode 100644
+>> index 000000000000..f1065b167491
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/regulator/nxp,pf530x-regulator.yaml
+> 
+> 
+> Filename should match compatible, so nxp,pf5300.yaml.
+> 
+>> @@ -0,0 +1,74 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/regulator/nxp,pf530x-regulator.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: NXP PF5300/PF5301/PF5302 PMIC regulators
+>> +
+>> +maintainers:
+>> +  - Woodrow Douglass <wdouglass@carnegierobotics.com>
+>> +
+>> +description: |
+>> +  The PF5300, PF5301, and PF5302 integrate high-performance buck converters, 12 A, 8 A,
+>> +  and 15 A, respectively, to power high-end automotive and industrial processors. With adaptive
+>> +  voltage positioning and a high-bandwidth loop, they offer transient regulation to minimize capacitor
+>> +  requirements.
+> 
+> Wrap according to Linux coding style.
+> 
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - nxp,pf5300
+>> +      - nxp,pf5301
+>> +      - nxp,pf5302
+> 
+> Your driver clearly suggests these are compatible, so express it (see
+> example schema).
+>
+
+I'm not sure I understand this comment. The difference in these parts is
+only the current limit, so the software interface is compatible -- should I
+only have a single "compatible" string (nxp,pf5300) and ignore the other
+two variants? Seems like it would limit searchability for future users of
+the driver, but maybe i'm not understanding what you're asking for here?
+I was following nxp,pf8x00-regulator.yaml as an example (I am also using
+that regulator in this design) and i guess it must be a bit dated.
+
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  regulators:
+> 
+> No need for this node.
+> 
+>> +    type: object
+>> +    description: |
+>> +      list of regulators provided by this controller
+>> +
+>> +    properties:
+>> +      SW1:
+> 
+> No need, drop the node.
+> 
+>> +        type: object
+>> +        $ref: regulator.yaml#
+>> +        description:
+>> +          Properties for the regulator.
+>> +
+>> +        properties:
+>> +          regulator-name:
+>> +            pattern: "^SW1$"
+> 
+> No, drop entirely regulator-name. Just embed the properties in parent node.
+> 
+>> +            description:
+>> +              Name of the single regulator
+>> +
+>> +    additionalProperties: false
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - regulators
+>> +
+
+I have removed the regulators node (and refactored the driver to
+not require it)
+
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    i2c1 {
+> 
+> i2c
+> 
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +
+>> +        vddi_0_75@28 {
+> 
+> Node names should be generic. See also an explanation and list of
+> examples (not exhaustive) in DT specification:
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+> If you cannot find a name matching your device, please check in kernel
+> sources for similar cases or you can grow the spec (via pull request to
+> DT spec repo).
+> 
+> See also DTS coding style.
+> 
+>
+
+I have updated this example to be more generic.
+
+> 
+> Best regards,
+> Krzysztof
+> 
+
+Thanks again,
+Woodrow Douglass
+
+--
+2.39.5
+
+---
+Changes in v3:
+- Replaced REGCACHE_RBTREE with REGCACHE_MAPLE
+- Replaced pf530x_is_enabled function with regulator_is_enabled_regmap
+- Added status bits from INT_SENSE1 to pf530x_get_status function
+- Added extra context to info print upon chip identification
+- Reworked devtree to not require nested "regulators" subnode
+- Some minor reformatting of comment style and long lines
+- Link to v2: https://lore.kernel.org/r/20250902-pf530x-v2-0-f105eb073cb1@carnegierobotics.com
+
+---
+Woodrow Douglass (2):
+      regulator: pf530x: Add a driver for the NXP PF5300 Regulator
+      regulator: pf530x: dt-bindings: nxp,pf530x-regulator
+
+ .../devicetree/bindings/regulator/nxp,pf5300.yaml  |  52 +++
+ MAINTAINERS                                        |   6 +
+ drivers/regulator/Kconfig                          |  12 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/pf530x-regulator.c               | 359 +++++++++++++++++++++
+ 5 files changed, 430 insertions(+)
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250902-pf530x-6db7b921120c
+
+Best regards,
+-- 
+Woodrow Douglass <wdouglass@carnegierobotics.com>
+
 
