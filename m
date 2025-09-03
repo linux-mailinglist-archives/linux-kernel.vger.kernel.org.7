@@ -1,70 +1,85 @@
-Return-Path: <linux-kernel+bounces-797786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD75BB41559
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:41:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C325CB4155F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DDAF1892E06
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:41:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EC981881A14
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E4F2C2AA5;
-	Wed,  3 Sep 2025 06:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A722D876F;
+	Wed,  3 Sep 2025 06:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OV6nFWG/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gv7wPx7+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA8619DF4F;
-	Wed,  3 Sep 2025 06:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21CD1FBEB9;
+	Wed,  3 Sep 2025 06:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756881661; cv=none; b=daNagusF1oIxQ31prGzIOQsLrvcaZCuaVE9RxVYTPtfWrx6FWB/py3/gjF2DueVwrsmKMENc/FsV9UHxwnY9Yz48SCnzNmSqGyz5tWxd+JhQ4A0t5wyQWVwIKihCGaCcrGqRIxnAbLUO+U1X4JCoB80W4X3Vk2PGpSl/SixXp64=
+	t=1756881877; cv=none; b=ipptZtIudmU3PrV4JFtSCBpK94DtteBS4Gm551gFzo0rZsgR7JuOIs75BfBuBUvoxhnpVHopfGW4olx/J1LCbrhjPTaT7wkp2wHEkJhGV0ZGgMu9EhkXsoyXLKOIbohN74M7hwXSseHs2hoBD0aN3KdYteRxDWmZIw2UTABgU4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756881661; c=relaxed/simple;
-	bh=LgGp13SDlt6Ivvmn8YGd1v3TpCceWjDtQMhF5H6UTRw=;
+	s=arc-20240116; t=1756881877; c=relaxed/simple;
+	bh=Zwr9IIXnV40wO6P6KjOHxt6dvUvQanzuoguq6G06ZAY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eKaweLiKaUS1GL1np7qz+qpE7mMgtwDkNa/6CBzBxOQ976EmBB1MJLjTXoN/JwaiZZJ3W2ZmrfwLr/XNOGzkFkqwR0oW3RWEDWAeA1mmfLIrx8FAKTDsuYsh6Af+diL64NH65hVzGDVSCcJD4h1XGv5A3CfCkoIngEs5GXl421s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OV6nFWG/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87B21C4CEF0;
-	Wed,  3 Sep 2025 06:41:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756881660;
-	bh=LgGp13SDlt6Ivvmn8YGd1v3TpCceWjDtQMhF5H6UTRw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uqqw1x0MoucujmLDtHDiWG8UUwM3SrTVspfOgRframwvq0w/hmgKaRbfOTFS8d9BH34Wdo0Qs2xdkvCfejZgpD7FLj/Y0Go6oYMPsasXwNMfn3fE/8RNQajISOwdn0GHQEKaAJ9s5lXvgUrOyx/Ztq5LSjzvA2NI841n4yoy/V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gv7wPx7+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFCBAC4CEF0;
+	Wed,  3 Sep 2025 06:44:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756881876;
+	bh=Zwr9IIXnV40wO6P6KjOHxt6dvUvQanzuoguq6G06ZAY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OV6nFWG/tx1n4lMA44G9BjByryO8PCvPp7ANmWCmBuLDpMvQdQJVzZKnF4UDIq3VG
-	 XxrWYJ6IgU677ZpTZuhr0UftSd+NbatVsDuAUs+E3hb/UWJrFHknUUAqxXNAvuE0NW
-	 Mcjk4uzsAdShFJoOnAdGw6VpE4Rv3vQmhqX0wzPA=
-Date: Wed, 3 Sep 2025 08:40:55 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-Cc: rydberg@bitmath.org, dmitry.torokhov@gmail.com,
-	linux-input@vger.kernel.org, skhan@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v2] Input: bcm5974 - Driver cleanup by replacing dprintk
- with dev_dbg
-Message-ID: <2025090330-unruffled-slip-86a1@gregkh>
-References: <20250903061908.41910-1-bhanuseshukumar@gmail.com>
+	b=Gv7wPx7+ULsQFf93hMfnS/BUrXoBUQDheaEOEV5fIu3jyQ2QKVxdE79rIJM/ptYLS
+	 vla7yPEp/Ml2yHJklTe8a17uBFHyvkujY93p9acJ+KyVpmkRYI9WBfvOqtIbO+c36X
+	 tf7winVfJd6z+ncg8bJwr2X0Nb275TK9PU32ZSqZQAs6owkutiit9r1NiCMhyE+xV2
+	 ZF9dMugQ9vWRTLgpDi6WzekZlmIQOO+1OUT5q2oAy8lmgr9RFDHZWBC1jTJb06FXwW
+	 tTW/bbVWL8lcboTVfoV8DX2kHHDJfCEb1CFIBIJkwbF1W0xyOrsxKEoiboID2MQSAC
+	 ILftzF2TbRoQg==
+Date: Wed, 3 Sep 2025 08:44:33 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+Cc: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, mani@kernel.org, 
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V5 1/4] ufs: dt-bindings: Document gear and rate limit
+ properties
+Message-ID: <20250903-sincere-brass-rhino-19f61a@kuoka>
+References: <20250902164900.21685-1-quic_rdwivedi@quicinc.com>
+ <20250902164900.21685-2-quic_rdwivedi@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250903061908.41910-1-bhanuseshukumar@gmail.com>
+In-Reply-To: <20250902164900.21685-2-quic_rdwivedi@quicinc.com>
 
-On Wed, Sep 03, 2025 at 11:49:08AM +0530, Bhanu Seshu Kumar Valluri wrote:
-> From: bhanuseshukumar <bhanuseshukumar@gmail.com>
+On Tue, Sep 02, 2025 at 10:18:57PM +0530, Ram Kumar Dwivedi wrote:
+> Add optional "limit-hs-gear" and "limit-rate" properties to the
+> UFS controller common binding. These properties allow limiting
+> the maximum HS gear and rate.
 > 
-> Debug printk messages are converted to dev_dbg based logs
-> for better control over debug messages using dynamic logging.
+> This is useful in cases where the customer board may have signal
+> integrity, clock configuration or layout issues that prevent reliable
+> operation at higher gears. Such limitations are especially critical in
+> those platforms, where stability is prioritized over peak performance.
 > 
-> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> ---
+>  .../devicetree/bindings/ufs/ufs-common.yaml      | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 
-Does not match your "From:" line :(
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
 
