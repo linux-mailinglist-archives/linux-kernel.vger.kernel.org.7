@@ -1,117 +1,72 @@
-Return-Path: <linux-kernel+bounces-799514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BEF2B42CFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:51:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6E7B42D00
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842F3A001EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:50:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12FC03AF010
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B982ECE85;
-	Wed,  3 Sep 2025 22:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0BD2EDD5F;
+	Wed,  3 Sep 2025 22:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="tj6yAb73"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XK/cN8af"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450FD266B56;
-	Wed,  3 Sep 2025 22:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29602E7BAE;
+	Wed,  3 Sep 2025 22:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756939847; cv=none; b=jD2F108eRENNEtV9aEu5R7nbrWE2kBLgEF1cR/8b/LpC2jMaKr/09uOUxwm9VR8cJLZIK1pqfn4SgoAT4n3SpDhUUjfugHSqy3JHSuCUHTlcE4gkmCgY0spD2Aw6JI8gB/m3i/v19KyRogKXj/SRMwAoBPl0vXQi370dhZ237cY=
+	t=1756939891; cv=none; b=N8hjTt5QJIUKfbSpfcjgULLC8ZbgZd1kS/Nhd0KegVI5+zZL7XC95mZ4RoGg4YyQTc1/woElC7zzmprXUH4uz1mhXmuaMS7/Yb3529kKD31jng6mkVWt2LX87Q16Oj8LxrfvqnQ0fni6COZjFqOPFiX5CCbmL5XfEHj0lL8BBGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756939847; c=relaxed/simple;
-	bh=pbdquukSnGS+wF5QF8MilgjIYNJenjTo1pFIRO4nz7w=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=sG+c5Qk+QzOBRBtd4LjWGyj0hf2VYh3ROGSF0GNZvbsP3N6jRAFlMrpbQvyQQdvkfj3qxt4aBDrNzSi7APPPpUWKXHV0vzFSDBfRHR54sQ6eTGGUrYM6MmisUYpF93PvJIUpeat2vkfwzqgD0w/P4FKfKyevneZjj7Tmrk7ULio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=tj6yAb73; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FBCFC4CEE7;
-	Wed,  3 Sep 2025 22:50:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1756939846;
-	bh=pbdquukSnGS+wF5QF8MilgjIYNJenjTo1pFIRO4nz7w=;
+	s=arc-20240116; t=1756939891; c=relaxed/simple;
+	bh=nuLAQXUJOzgMOKAOlWlPexVEsUs3b+Bdwfmn9KR08I4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oBy8iGC5Bf3XfgPsEinlfvq0/CN7oU0qdBM4Ck0gOJ6Mzix0N5vzJdsj7U25HUjbL1abceKJVxrxdwPHOGCE51IRNY4yFESzp0LnH2PulymfWK0HE4gg7sQwMA+NHVdf9vGm4AY/wXlcOJdVRBNoWOSKHpMw5MdQf1wSPVbwoQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XK/cN8af; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFB6BC4CEE7;
+	Wed,  3 Sep 2025 22:51:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756939891;
+	bh=nuLAQXUJOzgMOKAOlWlPexVEsUs3b+Bdwfmn9KR08I4=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tj6yAb73B0+cXYAia7kJ0XU6KHNEqIRkke4BZtr7R8O3us7SWoXS68AcMqQ5L0hpG
-	 BmXM1jzeqpYF1icn0sEmvoQNczqPpgLGcyzhDPUPeLtnMlScyq5/FqV42gRzdDgUrV
-	 ENGoguY3Pv2qLi4Nn8AB7DOzFJn1HN7+BvDWtq7o=
-Date: Wed, 3 Sep 2025 15:50:46 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Youling Tang <youling.tang@linux.dev>
-Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, chizhiling@163.com, Youling Tang
- <tangyouling@kylinos.cn>, Chi Zhiling <chizhiling@kylinos.cn>
-Subject: Re: [PATCH] mm/filemap: Align last_index to folio size
-Message-Id: <20250903155046.bd82ae87ab9d30fe32ace2a6@linux-foundation.org>
-In-Reply-To: <afff8170-eed3-4c5c-8cc7-1595ccd32052@linux.dev>
-References: <20250711055509.91587-1-youling.tang@linux.dev>
-	<jk3sbqrkfmtvrzgant74jfm2n3yn6hzd7tefjhjys42yt2trnp@avx5stdnkfsc>
-	<afff8170-eed3-4c5c-8cc7-1595ccd32052@linux.dev>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=XK/cN8afZn60GsrJNNrLbXqm96rIPnpewnrYPSr+JwWF8vVRKxchCFbS72dQ2pI8u
+	 mOjcZzxfxwji+jXo5K9ecGZdRc9I4PTgzEJ5uJyY8t4eXmvxEhOlMjcZvabUk5YLfp
+	 rB+tH/7BCXUGe0AsQPCGte2Qxy7+0rjqOpSz0lvNR95hfzdsgVvx2J46C+PC0xUoKu
+	 Uc8BA/cAt6YEUF2PaWNf4APHeWiFrx99MW2ibdvPlyvPApourbzPk86KaIqWUJyUC6
+	 yLArVq4IBex1sThHeRGqOa015IoDD/lnxYTi3CjPwlrMhFCb6EUUKbt8CoEx8bmI4M
+	 l06szAPH3fVWA==
+Date: Wed, 3 Sep 2025 15:51:30 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Wilfred Mallawa <wilfred.opensource@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ horms@kernel.org, corbet@lwn.net, john.fastabend@gmail.com,
+ netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alistair.francis@wdc.com, dlemoal@kernel.org,
+ sd@queasysnail.net, Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Subject: Re: [PATCH v3] net/tls: support maximum record size limit
+Message-ID: <20250903155130.3ce51167@kernel.org>
+In-Reply-To: <20250903014756.247106-2-wilfred.opensource@gmail.com>
+References: <20250903014756.247106-2-wilfred.opensource@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 12 Aug 2025 17:08:53 +0800 Youling Tang <youling.tang@linux.dev> wrote:
+On Wed,  3 Sep 2025 11:47:57 +1000 Wilfred Mallawa wrote:
+> Upcoming Western Digital NVMe-TCP hardware controllers implement TLS
+> support. For these devices, supporting TLS record size negotiation is
+> necessary because the maximum TLS record size supported by the controller
+> is less than the default 16KB currently used by the kernel.
 
-> Hi, Jan
-> On 2025/7/14 17:33, Jan Kara wrote:
-> > On Fri 11-07-25 13:55:09, Youling Tang wrote:
-> >> From: Youling Tang <tangyouling@kylinos.cn>
->
-> ...
->
-> >> --- a/mm/filemap.c
-> >> +++ b/mm/filemap.c
-> >> @@ -2584,8 +2584,9 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
-> >>   	unsigned int flags;
-> >>   	int err = 0;
-> >>   
-> >> -	/* "last_index" is the index of the page beyond the end of the read */
-> >> -	last_index = DIV_ROUND_UP(iocb->ki_pos + count, PAGE_SIZE);
-> >> +	/* "last_index" is the index of the folio beyond the end of the read */
-> >> +	last_index = round_up(iocb->ki_pos + count, mapping_min_folio_nrbytes(mapping));
-> >> +	last_index >>= PAGE_SHIFT;
-> > I think that filemap_get_pages() shouldn't be really trying to guess what
-> > readahead code needs and round last_index based on min folio order. After
-> > all the situation isn't special for LBS filesystems. It can also happen
-> > that the readahead mark ends up in the middle of large folio for other
-> > reasons. In fact, we already do have code in page_cache_ra_order() ->
-> > ra_alloc_folio() that handles rounding of index where mark should be placed
-> > so your changes essentially try to outsmart that code which is not good. I
-> > think the solution should really be placed in page_cache_ra_order() +
-> > ra_alloc_folio() instead.
-> >
-> > In fact the problem you are trying to solve was kind of introduced (or at
-> > least made more visible) by my commit ab4443fe3ca62 ("readahead: avoid
-> > multiple marked readahead pages"). There I've changed the code to round the
-> > index down because I've convinced myself it doesn't matter and rounding
-> > down is easier to handle in that place. But your example shows there are
-> > cases where rounding down has weird consequences and rounding up would have
-> > been better. So I think we need to come up with a method how to round up
-> > the index of marked folio to fix your case without reintroducing problems
-> > mentioned in commit ab4443fe3ca62.
-> Yes, I simply replaced round_up() in ra_alloc_folio() with round_down()
-> to avoid this phenomenon before submitting this patch.
-> 
-> But at present, I haven't found a suitable way to solve both of these 
-> problems
-> simultaneously. Do you have a better solution on your side?
-> 
-
-fyi, this patch remains stuck in mm.git awaiting resolution.
-
-Do we have any information regarding its importance?  Which means do we
-have any measurement of its effect upon any real-world workload?
-
-Thanks.
-
+Just to be clear -- the device does not require that the records align
+with TCP segments, right?
 
