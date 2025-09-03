@@ -1,150 +1,117 @@
-Return-Path: <linux-kernel+bounces-799024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E766B425FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:52:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3FD8B425FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5593A5D63
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:52:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 357021610D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2C9289E17;
-	Wed,  3 Sep 2025 15:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ZMCt5Am0"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1476A21D5B3;
-	Wed,  3 Sep 2025 15:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01ECF28A72B;
+	Wed,  3 Sep 2025 15:53:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2121C28980E
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756914736; cv=none; b=pXiG5o6HGjGxWAoWKw6ZT+TlFhw4d/eVsL25iuOMxdFpT206+fGw3rTTZaMel/u6ONGKg9dA9+5YY5IwVlcQo/kXG3QHmOhDr5G0Ot8Jjfilxzq0nU7324kcjYlj0btcZRGVTuKwp+s6EQR18JeKQyN9OhSfnjvX/GVgyJcTID0=
+	t=1756914786; cv=none; b=O4vTtaTFhK3U2Rs8o4TyuVAy0iYsqYVkxUNBvlpScc7rVpGaNChoeQOToJUWjgwnFZ0KQ+sXHr4R+s9w+5GaVixge+8b84UC/r2DMQLiZBi07hwloDtzEXa1x9OYKzOs8haTkKDoO8jcO38hXlPYqJjVOaCp/NfxYna1SSfFwlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756914736; c=relaxed/simple;
-	bh=a1yA4jUQ5l1E5iJTp9AQgTYYm687vZMk3gU+OqtM9Qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B3QbB8yeeBtDL1Q2wUYsc05t0OweYWtyPSEuEHVo8GS64725aIwloEmf/z41S2Mb135/V5NbtAJ6kAzW2SvozYRAaTl3BZGKCS/4u9TrJWIHPu8AmikivdUzMY3iqNE44tgF/hSowRgUfIVBBUTE0F0kBJZDDBheh8KTbPbNaA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ZMCt5Am0; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=UO8sfqFJi/fVejE+Tg3iYyOh3DnadUFH30obltVdUHc=; b=ZMCt5Am0uW7ZzyWprCxlWsJBlI
-	IRytku73GtWFO5o1WFmDNqzFdJlYjQz8kCrMDWr7T1AFIEB4QMaQEtbgRRGH0Nw5PTPO4654Q8puI
-	lx4Vh+Id7lLGELyH8zSMhPIAOyX9h+4g1zPhbsi6ucu2OGp82HADyV5YeiRb8qr8JFqVBrNkrzbLS
-	kQKi0w9X+YH0ibESholcPALDcUSuAFkUtyq+SX6YtbEz6zra/8bNBfQsGZwW20EqnF6GTwCAVWzTG
-	k5i6cXGDTPXtSOPUvOzjdTAL5wrlzMlBM/2GgvlaTMLlpEWzqoyG0EPJykx4ftjHtyaKsc0qijLPo
-	8MSfz1Tw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44846)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1utpmN-000000000kl-0biF;
-	Wed, 03 Sep 2025 16:52:11 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1utpmL-000000000f5-17Dg;
-	Wed, 03 Sep 2025 16:52:09 +0100
-Date: Wed, 3 Sep 2025 16:52:09 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 net 1/2] net: phylink: add lock for serializing
- concurrent pl->phydev writes with resolver
-Message-ID: <aLhkKVsbrkXmFbgK@shell.armlinux.org.uk>
-References: <20250903152348.2998651-1-vladimir.oltean@nxp.com>
- <aLheK_1pYbirLe8R@shell.armlinux.org.uk>
- <20250903153120.4oiwyz6bxfj3fuuv@skbuf>
+	s=arc-20240116; t=1756914786; c=relaxed/simple;
+	bh=LSfa6DzbqGFUD28nz8DdDe1ftCjoEodE6uzNdLpv65E=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kSS+SZ6vkRjc0bf0i9NHmKLM/h/Z2KcoXVc3dbBLX1/j9KKIoIrvxs37Dw5YGt8B7fWt397KMMo4JeeZrvGOj0x1aeRvljh6nxbRY4bWFckH2WvriuAJdSbzJTf9gNaw4oCQ2HxkgCgdJZrshOEmJ2vsgRQO8bSfN9RYcQd91KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CBFA113E;
+	Wed,  3 Sep 2025 08:52:55 -0700 (PDT)
+Received: from [10.1.28.62] (e127648.arm.com [10.1.28.62])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F003B3F6A8;
+	Wed,  3 Sep 2025 08:53:02 -0700 (PDT)
+Message-ID: <9037ef51-441c-4868-932a-8b618382a4d5@arm.com>
+Date: Wed, 3 Sep 2025 16:53:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903153120.4oiwyz6bxfj3fuuv@skbuf>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] smp: Fix smp_call_function_any() if no CPU online
+From: Christian Loehle <christian.loehle@arm.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ yury.norov@gmail.com
+Cc: Rik van Riel <riel@surriel.com>
+References: <e381fd4b-fb90-41ae-a480-0dad1ce2aa9f@arm.com>
+Content-Language: en-US
+In-Reply-To: <e381fd4b-fb90-41ae-a480-0dad1ce2aa9f@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 03, 2025 at 06:31:20PM +0300, Vladimir Oltean wrote:
-> On Wed, Sep 03, 2025 at 04:26:35PM +0100, Russell King (Oracle) wrote:
-> > On Wed, Sep 03, 2025 at 06:23:47PM +0300, Vladimir Oltean wrote:
-> > > @@ -2305,6 +2314,7 @@ void phylink_disconnect_phy(struct phylink *pl)
-> > >  
-> > >  	phy = pl->phydev;
-> > >  	if (phy) {
-> > > +		mutex_lock(&pl->phy_lock);
-> > 
-> > If we can, I think it would be better to place this a couple of lines
-> > above and move the unlock.
+On 8/28/25 23:40, Christian Loehle wrote:
+> smp_call_function_any() used to handle a mask without any online
+> CPUs just fine, but when switching to use sched_numa_find_nth_cpu()
+> a previous check for online CPUs was removed.
+> smp_call_function_single() handles invalid CPUs just fine, so
+> just add the check back before calling sched_numa_find_nth_cpu().
 > 
-> Sorry for potentially misunderstanding, do you mean like this?
+> An observed issue was when initializing PMUs on HMP if all CPUs
+> were offline (e.g. by booting with maxcpus):
 > 
-> 	mutex_lock(&pl->phy_lock);
-> 	phy = pl->phydev;
-> 	if (phy) {
-> 		mutex_lock(&phy->lock);
-> 		mutex_lock(&pl->state_mutex);
-> 		pl->phydev = NULL;
-> 		pl->phy_enable_tx_lpi = false;
-> 		pl->mac_tx_clk_stop = false;
-> 		mutex_unlock(&pl->state_mutex);
-> 		mutex_unlock(&phy->lock);
-> 		mutex_unlock(&pl->phy_lock);
-> 		flush_work(&pl->resolve);
+> [    1.192642] Call trace:
+> [    1.192868]  sched_numa_find_nth_cpu+0xc0/0x170 (P)
+> [    1.193323]  smp_call_function_any+0xc8/0xd0
+> [    1.193724]  armv8_pmu_init+0x58/0x27c
+> [    1.194079]  armv8_cortex_a72_pmu_init+0x20/0x2c
+> [    1.194507]  arm_pmu_device_probe+0x1e4/0x5e8
+> [    1.194911]  armv8_pmu_device_probe+0x1c/0x28
+> [    1.195316]  platform_probe+0x5c/0xac
+> [    1.195658]  really_probe+0xbc/0x298
+> [    1.195995]  __driver_probe_device+0x78/0x12c
+> [    1.196399]  driver_probe_device+0xdc/0x160
+> [    1.196787]  __driver_attach+0x94/0x19c
+> [    1.197146]  bus_for_each_dev+0x74/0xd4
+> [    1.197503]  driver_attach+0x24/0x30
+> [    1.197838]  bus_add_driver+0xe4/0x208
+> [    1.198187]  driver_register+0x60/0x128
+> [    1.198546]  __platform_driver_register+0x24/0x30
+> [    1.198974]  armv8_pmu_driver_init+0x28/0x4c
+> [    1.199372]  do_one_initcall+0x44/0x25c
+> [    1.199729]  kernel_init_freeable+0x1dc/0x3bc
+> [    1.200134]  kernel_init+0x20/0x1d8
+> [    1.200466]  ret_from_fork+0x10/0x20
+> [    1.200809] Code: 4b020264 eb04007f 54000129 51000402 (f860d825)
+> [    1.201355] ---[ end trace 0000000000000000 ]---
 > 
-> 		phy_disconnect(phy);
-> 	} else {
-> 		mutex_unlock(&pl->phy_lock);
-> 	}
+> Fixes: 5f295519b42f ("smp: Improve locality in smp_call_function_any()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> ---
+>  kernel/smp.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> move the unlock where? because flush_work(&pl->resolve) needs to happen
-> unlocked, otherwise we'll deadlock with phylink_resolve().
-> 
-> Additionally, dereferincing pl->phydev under rtnl_lock() is already safe,
-> and doesn't need the secondary clock.
+> diff --git a/kernel/smp.c b/kernel/smp.c
+> index 56f83aa58ec8..cbce9699ced6 100644
+> --- a/kernel/smp.c
+> +++ b/kernel/smp.c
+> @@ -759,7 +759,9 @@ int smp_call_function_any(const struct cpumask *mask,
+>  
+>  	/* Try for same CPU (cheapest) */
+>  	cpu = get_cpu();
+> -	if (!cpumask_test_cpu(cpu, mask))
+> +	if (!cpumask_intersects(mask, cpu_online_mask))
+> +		cpu = nr_cpu_ids;
+> +	else if (!cpumask_test_cpu(cpu, mask))
+>  		cpu = sched_numa_find_nth_cpu(mask, 0, cpu_to_node(cpu));
+>  
+>  	ret = smp_call_function_single(cpu, func, info, wait);
 
-The reason I'm making the suggestion is for consistency. If the lock
-is there to ensure that reading pl->phydev is done safely, having one
-site where we read it and then take the lock makes it look confusing.
-I've also been thinking that it should be called pl->phydev_mutex
-(note that phylink uses _mutex for mutexes.)
-
-To avoid it looking weird, what about this:
-
-	mutex_lock(&pl->phy_lock);
-	phy = pl->phydev;
-	if (phy) {
-		mutex_lock(&phy->lock);
-		mutex_lock(&pl->state_mutex);
-		pl->phydev = NULL;
-		pl->phy_enable_tx_lpi = false;
-		pl->mac_tx_clk_stop = false;
-		mutex_unlock(&pl->state_mutex);
-		mutex_unlock(&phy->lock);
-	}
-	mutex_unlock(&pl->phy_lock);
-
-	if (phy) 
- 		flush_work(&pl->resolve);
- 
- 		phy_disconnect(phy);
- 	}
-
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Please disregard in favor of
+https://lore.kernel.org/lkml/1ae868cf-470b-44d8-bda3-20a64dedd8b8@arm.com/
+as sched_numa_find_nth_cpu() should've handled this case.
 
