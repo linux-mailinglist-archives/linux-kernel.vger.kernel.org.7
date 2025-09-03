@@ -1,165 +1,174 @@
-Return-Path: <linux-kernel+bounces-798642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68C4B420B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:16:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92ABDB420E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D17617BFA75
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:12:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 256847B1E54
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6383074AB;
-	Wed,  3 Sep 2025 13:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70657307AF7;
+	Wed,  3 Sep 2025 13:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mrPTe9PE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fOU9V8+F"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976C930100C
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE2E301483
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756905061; cv=none; b=iDy+yGWsmle5h/wbiSOmErSKDnAKvfn79MbbJcfr+xl6xSr7LzH4uUXU26ksv9lKNaHuVUX4qjQIRusMp9MR5fzsopBF7A3v6HMdgGaSb+dQm4BYhGRsMmWnuc1US838jZ/jfqMHBdsqu0IVPpcs0QpaIIPeKm8EGSBkLLvRbrg=
+	t=1756905064; cv=none; b=Pwq4yLCFKGgXYLtLuC+Ihxym+aREkIBiqBADsgnwyvbyxJViP0UVERvg8HlmMmGPxS/RmyZWhifSMD5XgHp8jffKXqZFLcyJ4vheE8Q2voUYNitC7L+32ii+TrAoWmoaLGQDwJDEwfxubofRVgj5QWj0RF3MU/JWJ1TA9Wz6gpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756905061; c=relaxed/simple;
-	bh=W4WCBxQvaUYibDVSr+aUaJpoOgC+JIgx9GXzLqZgHeg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C/aXTysSUeqXvs/iwOZVa4fmGTXDX+hQq028rmQs+LuijAUYOh64lx1KVbLjCoZcSLE4KK9iDEyLBmkkq8bcjL99SxBp+aBhqRiggOUsR6n9g5ChC0Q/HrWEP86rFg0Jn+x9utpjg8F0KbIzj2ohJaDMz0ZuVNFQmVlXT97wbhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mrPTe9PE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583BZu5C024816
-	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 13:10:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aY1HJAFmHMKDRbWr8GRd/t9G74v0xkZNHeYMb6/rGks=; b=mrPTe9PEaGy6DzLS
-	9fSmuqz9PMF9rTCLTiGZvaaDz7w8eC3xYRiw082XJV6Z8hgbqtm3iyLPYpj5jbAB
-	+jBryTIJF0X6NXQxDyIqCwSVbjYfnlbS/HTO7iGskh4ExGNbESoeaa375AHCrwNR
-	R+bPCxAlD1oF6BBpGGC0R7DwLK6/5r9+qeXMrkg4YqBsdXgijQehkyVEPLM3GeHr
-	RAj8nke/okN1tZJxcyxjydYBwNlFvLkcURlgn/4aYpYDUgzPhi7wGbNwsuGhp8DC
-	Aezt6w6kxgxe5Zl5JWeMdLbiSfJYHv6zKdFniEoSUdPdUflCXu+FsSPipJb0ignV
-	CAu0NQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48xmxj0a34-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 13:10:58 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b307e1bef2so17590461cf.0
+	s=arc-20240116; t=1756905064; c=relaxed/simple;
+	bh=Y/X2fWSGYvLP2GbzQgVsXw6QemqhTogGncbWhT+ee+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GlQSUe5RfPhq21rQsXpvFC7vrc/sMnHHu4DAUZru08lOKsabzxcZ944YtmLw3kj6LIQTSiH+V5sdxQF6HoDgf2pA78mFYhys58n+vAy4y2y4MKjrrg9+wbZ5B++R7vo7jK96hYraSMORDztH97FE0f6tqBQacM52k7L0T+SeXHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fOU9V8+F; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756905061;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fu1nRMO4mP7hG3XcSYcXuE1KvbxzA7CKEO6dC9YqXJc=;
+	b=fOU9V8+Fy/wuJ8EREoBTDv6Sx64l6GmuBDDEFGhP0h67yPhjGC126t/Xmjd98kCKkXmxvL
+	L6hx3JpVHFpt22X9UEQCIUFpNVekgA3MG+FLZ9YucYreLwrib8aRfy4u0N8u3q/UoQKJ/m
+	GQAzLKCzmtZAooBtEooEGlIz04aEeUA=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-345-qAEQp7ktOCieP9Tlpu_LlA-1; Wed, 03 Sep 2025 09:10:59 -0400
+X-MC-Unique: qAEQp7ktOCieP9Tlpu_LlA-1
+X-Mimecast-MFC-AGG-ID: qAEQp7ktOCieP9Tlpu_LlA_1756905057
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b87609663so22659915e9.3
         for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 06:10:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1756905057; x=1757509857;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aY1HJAFmHMKDRbWr8GRd/t9G74v0xkZNHeYMb6/rGks=;
-        b=R6Yc55CKT78jt9oKqkqESB1BClQtyLkDlkl1v4tHb8yPxRUD/1qsY712Z2nBFrJdo0
-         9zLM/WJkfDVQ1LreK1JYd/eT1q7rMZ4y+JoH0n9fjRhXlUzXLs61gjaqfkM/LlZLU8KO
-         Ux7HwTNxJQekyeaQbrc39NYk9UrrpIS1quZimjN5zd4Q2Wq2FbwVVxUCxDhuMKOZQdas
-         PS/DuLBrKy03WC+WsE91AYbsoE8jcHq+aOm2tVHp/HhdSNH0PF8okCfpoij8al/Najm7
-         927KhMjYSUR19agGEo4zB5N11p3yK50XYZl0wkjOoqxLySY22STght1qqFaC9c+FdSiW
-         cdUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXo3OzPaQKb8Y8DuWG7bG873vJqWfDTOxAjNna00tOkqw3czhguEVvCwy3Cb0Ty/UGCx7bBbqK0tisN2jo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC+RihPc7G+gJtHywA7rSIMqk9/UJIGySHC2QS8zp7VFHQVb0+
-	AYDfWESvd6EkLqZRoVqkpFxlzcAzjeZRQy5w347N/31mRbTVFDsQRBpwzSJ3sI0DiU7Jg/04PQs
-	UVtcnKS/pnbsSQjoJOXb3PA53xTP399srIzUGbCxw75+0Vka6Gx99Re8TPiWhz7fT7as=
-X-Gm-Gg: ASbGncs2HZFa/1ng/yVIEFxtllzQ3qySOhPXSZyJekf17HaxZ/Q0YzQ8U2xxniVu4iB
-	asKkyifabXVvF6vpqc+RJQ1EoasSTa1oUAoBuBy8bIlV8oal5BmsezQ8qNk8c6wWmOS+H+pu5YE
-	btGBl8yjO+CvYBrCKAozOM2uCewi01KSwsuLDfndZZRfVUQv1vWDkqxKyhaseEkbuLR/P0e6NKp
-	ejwvOzVdS3JE/zWjnzhc5B1LA9BDoY3Pxsc+go2O5KE4/IdfIZUl8AQLz9+3tsRCn2K1uaFGgSH
-	H2vMvGO7QrpU7u3Pb9s4fkLldAtVP4gJlszOq9Y9YG9MWuJPWCjAB1AcflAZyddH3D4zYp0m5/3
-	TuNj6rNvGZs/JqoivrvDmcg==
-X-Received: by 2002:a05:622a:15d4:b0:4b2:d8e5:b6e3 with SMTP id d75a77b69052e-4b313dfd74dmr144315161cf.1.1756905057268;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fu1nRMO4mP7hG3XcSYcXuE1KvbxzA7CKEO6dC9YqXJc=;
+        b=FF8FIvHa6QWLJff7AjLt/0h/5+guHVkyOZ0O8OonTnNl5rvqEw5CtG9TzbEUKEOXdg
+         5CZ2knAUv4/QahH2Knkt2T/fxJeavj3DlfkRJLPuAOTX1WJhyUnDii8lI05CgSW1+wMl
+         WOH7afNy3iBoigb/k7oFY02Eq+4SXN5MeIi+brDPcBEWpD7DgFGULaDcf3DeafmBeAwD
+         YJt+tLa4tgleWyF1TG0qH3lL/KMrowwVQQSAdmT7DV+xs3xdVb2QuNFUogvvJQCTQI/l
+         cyjptHg7wqzCsL5RxRe7eT6eHsP+ayvYkNUI0MsUny2RpwGLCqbFvio8Mrbf0gz2qI9Q
+         cENQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9Ha7gHPkVFGY/pHo3Jd7Gk69zhXLjcHcDzFrQPH84xxJ6ZY71OP0kuyjCkRXzxIdhknXRfuuK33dIMJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHqDZkIsv3hRpsIith17+WUV/o/AhIeVig3uZudYIhptp+wHF/
+	Nf6NVG89QnyX/vAZnmAl2DPlDYtmyLvr3F9LGnguSs4m69CpunCfXh/TdOJWamkE3FLA7GcbJ4c
+	7I8/nWzzxR+j7UqPgv+/igDSMwlVbAhyahSTtmnkbhbDVIvA/myt907o5IVz6LzRD3Q==
+X-Gm-Gg: ASbGncvY4q+GlFgtD7jexdNOzzld5TLvZaqe3zEDj0idIjyzbWdhYBym/3PmXMzZ5fR
+	wCPx0UeOGCNc4BPi8TW8LCwPWncYdjSFB3Xsy8/o6BleJ3RP2bfhg2IAA+qimermNwENoyVkDLX
+	7HkyaRVSWhgsNJXHv+gcZRiqEjMx44OamDzWKaZm1ObINpO3ZW0TiNuSvxTr2nVKuLWPcI2l9/i
+	ulSCWXEZ3dzlAYjuiKvdqZm4GptUtyFLElEe+ff75ueVu+srWOTdUnN8k4CrI8v5fAC/l93TseE
+	chs6YOnjsv+tHl3hJ5Xn/giNA0OxUA==
+X-Received: by 2002:a05:6000:3110:b0:3cc:29e8:d52f with SMTP id ffacd0b85a97d-3d1dea86a76mr12153279f8f.38.1756905057056;
         Wed, 03 Sep 2025 06:10:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHlbX86OkDHQrtRozUIs6RfA1kZEBTsuPTQJYPGvCUDsHeOmLvCYNbgn6D4FeDhxE4MBDNULg==
-X-Received: by 2002:a05:622a:15d4:b0:4b2:d8e5:b6e3 with SMTP id d75a77b69052e-4b313dfd74dmr144314681cf.1.1756905056546;
+X-Google-Smtp-Source: AGHT+IFb0624kVbYkja7DUsEoelJ71o6GXCbvgslVOj9fGNi28SVeur6o32uG23Fh/vV7MnRvsF1pw==
+X-Received: by 2002:a05:6000:3110:b0:3cc:29e8:d52f with SMTP id ffacd0b85a97d-3d1dea86a76mr12153241f8f.38.1756905056517;
         Wed, 03 Sep 2025 06:10:56 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0474be5e99sm30772166b.94.2025.09.03.06.10.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+Received: from redhat.com ([2a0e:41b:f000:0:c4d3:2073:6af0:f91d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e92a42asm237242065e9.20.2025.09.03.06.10.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 03 Sep 2025 06:10:56 -0700 (PDT)
-Message-ID: <99820dc6-942a-4aca-911e-cc68834e41f0@oss.qualcomm.com>
-Date: Wed, 3 Sep 2025 15:10:52 +0200
+Date: Wed, 3 Sep 2025 09:10:54 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Simon Schippers <simon.schippers@tu-dortmund.de>
+Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
+	eperezma@redhat.com, stephen@networkplumber.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev, kvm@vger.kernel.org,
+	Tim Gebauer <tim.gebauer@tu-dortmund.de>
+Subject: Re: [PATCH 2/4] netdev queue flow control for TUN
+Message-ID: <20250903090723-mutt-send-email-mst@kernel.org>
+References: <20250902080957.47265-1-simon.schippers@tu-dortmund.de>
+ <20250902080957.47265-3-simon.schippers@tu-dortmund.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: dt-bindings: qcom,sm8550-iris: Do not reference
- legacy venus properties
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250823155349.22344-2-krzysztof.kozlowski@linaro.org>
- <20250825113734.iekrgyvctamhb5y7@hu-mojha-hyd.qualcomm.com>
- <a3325bf1-2a3f-416a-ba2a-4fb1e9f85e61@linaro.org>
- <05d40a3b-cc13-b704-cac7-0ecbeea0e59d@quicinc.com>
- <46f5d11d-8bed-4d01-9151-35a24cdacfa5@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <46f5d11d-8bed-4d01-9151-35a24cdacfa5@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAzMDExNyBTYWx0ZWRfX+lmzmfJv89zH
- tS9lqYtztZ346y+IHf8OQMlMj7kW/xCxyrMunXJzWsD2Yoxfh5bgonpp5QSFL+kOliLDLbJyqE1
- LMM5jkeeohQvR2XCEXdf587PiCMTGbNNtfwxfXiycsbmJ/Th7AGGaAv3Kb/5GzV8Gmw8yYa26Qe
- LeN0KBC4D2qpJYjMF8x7+UsbcnxXprZyvTzi8TqmRSj3oZ89TeqlqAGgISdJwo73UXuzqytiqZf
- dAiyG8aTYAQNyjITaIBVi5H+V4qszB7/JPFQdeiK9UsRUeEDZqaABX4qUAsXWirrk+SMniWrqiW
- CkDt1lRpElARIJog4dVrEmDfbAwz5AyIuM6RXTQWqaVNkA4y9Jzh3wgJcGbCSUnSTXocq2FSoLM
- Qb4M4qLH
-X-Authority-Analysis: v=2.4 cv=a5cw9VSF c=1 sm=1 tr=0 ts=68b83e62 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=PnLdOiXTK5e15ukaaVEA:9
- a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-GUID: FWraa6mjdnfONoskD83T1Hetw8wnJ8zh
-X-Proofpoint-ORIG-GUID: FWraa6mjdnfONoskD83T1Hetw8wnJ8zh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_07,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 clxscore=1015 bulkscore=0 priorityscore=1501
- phishscore=0 impostorscore=0 adultscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509030117
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902080957.47265-3-simon.schippers@tu-dortmund.de>
 
-On 8/28/25 3:57 PM, Krzysztof Kozlowski wrote:
-> On 28/08/2025 15:49, Vikash Garodia wrote:
->>>>
->>>> Whether removing will not break any ABI as initial binding enables the IRIS
->>>> related code to use video-firmware, now we are removing it.
->>>> I believe, removing binding always break ABI ? or is it depend on driver
->>>> code not using it ?
->>>
->>> There is no single user of this, out of tree (I briefly checked) and
->>> in-tree, so there is no ABI impact. I am changing the documentation of
->>> the ABI, but there is no actual ABI break because impact is 0.
->>>
->>
->> My understanding here is that the interface "video-firmware" is already defined
->> in the binding. There could be possible out-of-tree users of it, might not be
+On Tue, Sep 02, 2025 at 10:09:55AM +0200, Simon Schippers wrote:
+> The netdev queue is stopped in tun_net_xmit after inserting an SKB into
+> the ring buffer if the ring buffer became full because of that. If the
+> insertion into the ptr_ring fails, the netdev queue is also stopped and
+> the SKB is dropped. However, this never happened in my testing. To ensure
+> that the ptr_ring change is available to the consumer before the netdev
+> queue stop, an smp_wmb() is used.
 > 
-> There are no such.
+> Then in tun_ring_recv, the new helper wake_netdev_queue is called in the
+> blocking wait queue and after consuming an SKB from the ptr_ring. This
+> helper first checks if the netdev queue has stopped. Then with the paired
+> smp_rmb() it is known that tun_net_xmit will not produce SKBs anymore.
+> With that knowledge, the helper can then wake the netdev queue if there is
+> at least a single spare slot in the ptr_ring by calling ptr_ring_spare
+> with cnt=1.
+> 
+> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
 
-I believe the confusion here comes from the requirement that was set out
-for the iris driver to support existing (venus-supported) platforms without
-binding alterations
 
-Bindings for SM8550 Iris (as in, the hardware block) only came out with the
-iris driver, so there was no legacy to support in this case
+Oh you just want to know if produce will succeed?
+Kind of a version of peek but for producer?
 
-Konrad
+So all this cuteness of looking at the consumer is actually not necessary,
+and bad for cache.
+
+You just want this:
+
+
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+
+diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
+index 551329220e4f..de25fe81dd4e 100644
+--- a/include/linux/ptr_ring.h
++++ b/include/linux/ptr_ring.h
+@@ -96,6 +96,14 @@ static inline bool ptr_ring_full_bh(struct ptr_ring *r)
+ 	return ret;
+ }
+ 
++static inline int __ptr_ring_produce_peek(struct ptr_ring *r)
++{
++	if (unlikely(!r->size) || r->queue[r->producer])
++		return -ENOSPC;
++
++	return 0;
++}
++
+ /* Note: callers invoking this in a loop must use a compiler barrier,
+  * for example cpu_relax(). Callers must hold producer_lock.
+  * Callers are responsible for making sure pointer that is being queued
+@@ -103,8 +111,10 @@ static inline bool ptr_ring_full_bh(struct ptr_ring *r)
+  */
+ static inline int __ptr_ring_produce(struct ptr_ring *r, void *ptr)
+ {
+-	if (unlikely(!r->size) || r->queue[r->producer])
+-		return -ENOSPC;
++	int r = __ptr_ring_produce_peek(r);
++
++	if (r)
++		return r;
+ 
+ 	/* Make sure the pointer we are storing points to a valid data. */
+ 	/* Pairs with the dependency ordering in __ptr_ring_consume. */
+
+
+
+Add some docs, and call this, then wake.  No?
+
+-- 
+MST
+
 
