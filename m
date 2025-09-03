@@ -1,197 +1,172 @@
-Return-Path: <linux-kernel+bounces-798243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2701AB41B21
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:06:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 512A8B41B26
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A26911897733
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:06:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 901E14E3158
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B357E23D7DF;
-	Wed,  3 Sep 2025 10:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EK60wmpc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707592E8DF4;
+	Wed,  3 Sep 2025 10:06:57 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EB329CE1;
-	Wed,  3 Sep 2025 10:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFFB284662;
+	Wed,  3 Sep 2025 10:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756893973; cv=none; b=nHJ6DyMLjB7l8uu/DsfKZt0pd2egPUBoHMyzvxXW24GnGIQqTQbmwAkbmIpaVFftRglDUJQWD3MFDyhwAEcgCnBmprjDDcBjZAWTrxQgzLXjpf86KKeB6k37B6yVo6lqkoK43IZhKa8QkUgWbDxTMcBAYBw9MlkKXMm41eCBc8k=
+	t=1756894016; cv=none; b=H6TxdPV/79yTF4PxzkX7pwpUVgolHbdyzlxuuJXopEjzUC5tUjHwrQI4TVGDhwEBE8FTrX2sXBW8G6ULFHdgEJ7vYokL6aSJNK3lLQX/GQE/zUEAW5mbGgOIHMCrZD/6XRN3AE4Owy80Od3qTgMG0IGHDhskM0up16JySuzzReY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756893973; c=relaxed/simple;
-	bh=EwLFEsEv6yhgm8roM6ERGbY+3d4evTqZa8IKRPdc3Wo=;
+	s=arc-20240116; t=1756894016; c=relaxed/simple;
+	bh=w3rrRgxL8XX4w+Qn1VTb5bjSpAfsAzv2+cSbOQIjKA8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gykyz1a4W8PG8G8zjkiAiNOnIkGBEeZ6uNghfpSGkRd9tYWvh39f+0M6WEFoYOx0B5dXw7GnVc1qY23cQegxH6ECOphfiFFekoHAXxtEPN9grYQ2cKr+LKOmX9rhr+me99bpI9XimWGb+JhIBpn8/T3kRPx0H3ttzRe37k/UNFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EK60wmpc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5832HQkC019818;
-	Wed, 3 Sep 2025 10:06:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VkFi+n7aMI1KT4RdaNh0sDzTdO6poYEtqn1r8C+ztrI=; b=EK60wmpcRHtcfbDs
-	oyT0NFypXWLp39atw72V2BiOBfMtTqpclTkpu6uqKaiZhS6h1X4AlQVkAdll6388
-	SnKuUXiASMibyfGCNeI0eiv/K/M+xlqFGznsiwYeeJHegjyX+29j1yj5EaoG2ICI
-	0Vs9aqaxlqmBz2qDV4lH8PcntT1y1evKz9SHyAYwiRTSdLTGucYuO5lOk4uNL2/W
-	vLD+kEC3p6sQEBRw/vBdbYg71sFak3CENPRb2tssiGcxUWjyYiH5BWiHqsJu4qW7
-	vOBb4roaeLohDHFIC94ZUjDyYtnkKhuHCYvM1umqjjnN4aftyx6ZaF4IYWVn0Xni
-	MgyJcA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urw0371g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Sep 2025 10:06:07 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 583A66Ub023849
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Sep 2025 10:06:06 GMT
-Received: from [10.216.53.8] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 3 Sep
- 2025 03:06:00 -0700
-Message-ID: <26faedb2-63ca-e2e0-aad6-49575a8c49bf@quicinc.com>
-Date: Wed, 3 Sep 2025 15:35:54 +0530
+	 In-Reply-To:Content-Type; b=kD0vBEGucI+kXi9PYRo23RBdFO8bwg4qyNO2oP+d0VGQZQa5BJ4Zu3Kg5CFC3+qEqCp72pqM1RABnuhm+xm5azUdR1XiuhY5PKCxH7J+kK/gOc3qP0xI07FmlFKXH+GGaVnpZbecBlsLkLBZYNkg5etvHrVt0uWrp2CeHDVytts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4cGywS61WXz2nGNL;
+	Wed,  3 Sep 2025 18:07:52 +0800 (CST)
+Received: from kwepemp200004.china.huawei.com (unknown [7.202.195.99])
+	by mail.maildlp.com (Postfix) with ESMTPS id EB87B18005F;
+	Wed,  3 Sep 2025 18:06:44 +0800 (CST)
+Received: from [10.174.186.66] (10.174.186.66) by
+ kwepemp200004.china.huawei.com (7.202.195.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 3 Sep 2025 18:06:43 +0800
+Message-ID: <1e3ec8c3-631d-4193-b039-15bcf911fd16@huawei.com>
+Date: Wed, 3 Sep 2025 18:06:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: Add Monaco EVK initial board
- support
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Umang Chheda
-	<umang.chheda@oss.qualcomm.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Richard Cochran
-	<richardcochran@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Rakesh Kota
-	<rakesh.kota@oss.qualcomm.com>,
-        Nirmesh Kumar Singh
-	<quic_nkumarsi@quicinc.com>,
-        Viken Dadhaniya
-	<viken.dadhaniya@oss.qualcomm.com>,
-        Mohd Ayaan Anwar
-	<quic_mohdayaa@quicinc.com>,
-        Arun Khannna <quic_arkhanna@quicinc.com>,
-        "Monish Chunara" <quic_mchunara@quicinc.com>,
-        Swati Agarwal
-	<swati.agarwal@oss.qualcomm.com>
-References: <20250826181506.3698370-1-umang.chheda@oss.qualcomm.com>
- <20250826181506.3698370-3-umang.chheda@oss.qualcomm.com>
- <ao3nb3xkeutqetqx7amlfbqtvhuyojfvzm4prsze2mhgb2rpnc@s2bsigcrlxzo>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <ao3nb3xkeutqetqx7amlfbqtvhuyojfvzm4prsze2mhgb2rpnc@s2bsigcrlxzo>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nfsd: remove long-standing revoked delegations by force
+To: Li Lingfeng <lilingfeng@huaweicloud.com>, Benjamin Coddington
+	<bcodding@redhat.com>
+CC: Jeff Layton <jlayton@kernel.org>, <chuck.lever@oracle.com>,
+	<neil@brown.name>, <okorniev@redhat.com>, <Dai.Ngo@oracle.com>,
+	<tom@talpey.com>, <linux-nfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yukuai1@huaweicloud.com>,
+	<houtao1@huawei.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>
+References: <20250902022237.1488709-1-lilingfeng3@huawei.com>
+ <a103653bc0dd231b897ffcd074c1f15151562502.camel@kernel.org>
+ <1ece2978-239c-4939-bb16-0c7c64614c66@huawei.com>
+ <BF48C6D1-ED2E-4B9C-A833-FF48D9ACC044@redhat.com>
+ <7bf4275d-a7a0-4dab-8e5f-eb7b6e965377@huawei.com>
+ <efc327e3-5956-4c61-bca5-e41f1e7c3e78@huaweicloud.com>
+From: "zhangjian (CG)" <zhangjian496@huawei.com>
+In-Reply-To: <efc327e3-5956-4c61-bca5-e41f1e7c3e78@huaweicloud.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ENJGJNe3HScFvRWRKsHHwgixtFHhjpmX
-X-Proofpoint-ORIG-GUID: ENJGJNe3HScFvRWRKsHHwgixtFHhjpmX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfXyx2B8ONB2Fbz
- P2+dLydudzqBsFk4o52GUr54gfuxswgi+/aLlrbpRRBXzqDR+Vhk3JnsC9Uk51Mh2RT1FhXQ8Od
- RXk0HMSA3fmWYqtFLV73gehtfFm7HCtozueoB3kGTe7iX4m5sNc4B0EQmd1iEblU6zDwNkGgbYp
- 93mT29PWUef0vQqACHJloKQgYdKgIxzyjYdQ71re6CGytfFOGQbgE/o7H5g/Cqi0b9LgHii3ain
- 84tGiQOl4NubGtIu4wUYTWKhnGDfE/OaDqIxeTVka0fHpaU3V68uFHZtuYJMduTVdYVRa0Z+kbG
- JMHKlbt5LxlbmL6uRgHUNYXuE6qDmZNNI2j2rDw7UwNy7nuYR5Sp/HRMlU8v6xCcRCnZ3kEujHa
- zLmG+LRl
-X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68b8130f cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8
- a=COk6AnOGAAAA:8 a=Kz4NcLxJwtD7h-qgfgQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_05,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300027
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemp200004.china.huawei.com (7.202.195.99)
 
 
-On 8/27/2025 7:12 AM, Dmitry Baryshkov wrote:
-> On Tue, Aug 26, 2025 at 11:45:06PM +0530, Umang Chheda wrote:
->> Add initial device tree support for Monaco EVK board, based on
->> Qualcomm's QCS8300 SoC.
->>
->> Monaco EVK is single board supporting these peripherals:
->>   - Storage: 1 × 128 GB UFS, micro-SD card, EEPROMs for MACs,
->>     and eMMC.
->>   - Audio/Video, Camera & Display ports.
->>   - Connectivity: RJ45 2.5GbE, WLAN/Bluetooth, CAN/CAN-FD.
->>   - PCIe ports.
->>   - USB & UART ports.
->>
->> On top of Monaco EVK board additional mezzanine boards can be
->> stacked in future.
->>
->> Add support for the following components :
->>   - GPI (Generic Peripheral Interface) and QUPv3-0/1
->>     controllers to facilitate DMA and peripheral communication.
->>   - TCA9534 I/O expander via I2C to provide 8 additional GPIO
->>     lines for extended I/O functionality.
->>   - USB1 controller in device mode to support USB peripheral
->>     operations.
-> 
-> Is it actually peripheral-only?
-> 
->>   - Remoteproc subsystems for supported DSPs such as Audio DSP,
->>     Compute DSP and Generic DSP, along with their corresponding
->>     firmware.
->>   - Configure nvmem-layout on the I2C EEPROM to store data for Ethernet
->>     and other consumers.
->>   - QCA8081 2.5G Ethernet PHY on port-0 and expose the
->>     Ethernet MAC address via nvmem for network configuration.
->>     It depends on CONFIG_QCA808X_PHY to use QCA8081 PHY.
->>   - Support for the Iris video decoder, including the required
->>     firmware, to enable video decoding capabilities.
-> 
-> I don't see firmware being declared here.
 
-It would pick the default firmware from driver monaco platform data.
+On 2025/9/3 14:45, Li Lingfeng wrote:
+> Hi,
 > 
+> 在 2025/9/3 11:46, zhangjian (CG) 写道:
+>> Hello every experts.
 >>
->> Co-developed-by: Rakesh Kota <rakesh.kota@oss.qualcomm.com>
->> Signed-off-by: Rakesh Kota <rakesh.kota@oss.qualcomm.com>
->> Co-developed-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
->> Signed-off-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
->> Co-developed-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
->> Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
->> Co-developed-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
->> Signed-off-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
->> Co-developed-by: Arun Khannna <quic_arkhanna@quicinc.com>
->> Signed-off-by: Arun Khannna <quic_arkhanna@quicinc.com>
->> Co-developed-by: Monish Chunara <quic_mchunara@quicinc.com>
->> Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
->> Co-developed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
->> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
->> Co-developed-by: Swati Agarwal <swati.agarwal@oss.qualcomm.com>
->> Signed-off-by: Swati Agarwal <swati.agarwal@oss.qualcomm.com>
->> Signed-off-by: Umang Chheda <umang.chheda@oss.qualcomm.com>
->> ---
->>  arch/arm64/boot/dts/qcom/Makefile       |   1 +
->>  arch/arm64/boot/dts/qcom/monaco-evk.dts | 463 ++++++++++++++++++++++++
->>  2 files changed, 464 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/qcom/monaco-evk.dts
+>> If we can see all delegations on hard-mounted nfs client, which are also
+>> on server cl_revoked list, changed from
+>> NFS_DELEGATION_RETURN_IF_CLOSED|NFS_DELEGATION_REVOKED|
+>> NFS_DELEGATION_TEST_EXPIRED
+>> to NFS_DELEGATION_RETURN_IF_CLOSED|NFS_DELEGATION_REVOKED, can we give
+>> some hypothesis on this problem ?
 >>
+>> By the way, this problem can be cover over by decreasing file count on
+>> server.
+>>
+>> Thanks,
+>> zhangjian
+> I think NFS_DELEGATION_TEST_EXPIRED is cleared as follows:
+> nfs4_state_manager
+>  nfs4_do_reclaim
+>   nfs4_reclaim_open_state
+>    __nfs4_reclaim_open_state // get nfs4_state from sp->so_states
+>     nfs41_open_expired // status = ops->recover_open
+>      nfs41_check_delegation_stateid
+>       test_and_clear_bit // NFS_DELEGATION_TEST_EXPIRED
+> After the bug in [1] is triggered, although the delegation is no longer on
+> server->delegations, it can still be obtained by traversing sp->so_states.
+> However, I cannot find the connection between the number of files on the
+> server and this issue.
 > 
+> Thanks,
+> Lingfeng
+> 
+Thanks a lot.
+
+NFS_DELEGATION_TEST_EXPIRED can only be set when
+delegation->stateid.type != NFS4_INVALID_STATEID_TYPE. But when
+NFS_DELEGATION_REVOKED is set, delegation->stateid.type will be
+NFS4_INVALID_STATEID_TYPE in nfs_mark_delegation_revoked.
+This implies the order could be like:
+1. Deleg A is in server cl_revoked list
+2. Deleg B is marked as NFS_DELEGATION_TEST_EXPIRED in client
+3. Deleg B is revoked by server callback procedure and server meet [1].
+deleg B is added to cl_revoked list
+4. Deleg B is marked as NFS_DELEGATION_REVOKED in client
+
+Why the first deleg A is in server cl_revoked list? Is [1] only
+condition? Why this can only happen when file count is large.
+I used to see 700 delegations in server but 40w+ delegations in client.
+May this give some clue on the problem?
+>>
+>> On 2025/9/2 20:43, Benjamin Coddington wrote:
+>>> On 2 Sep 2025, at 8:10, Li Lingfeng wrote:
+>>>
+>>>> Our expected outcome was that the client would release the abnormal
+>>>> delegation via TEST_STATEID/FREE_STATEID upon detecting its invalidity.
+>>>> However, this problematic delegation is no longer present in the
+>>>> client's server->delegations list—whether due to client-side
+>>>> timeouts or
+>>>> the server-side bug [1].
+>>> How does the client timeout TEST_STATEID - are you mounting with 'soft'?
+>>>
+>>> We should find the server-side bug and fix it rather than write code to
+>>> paper over it.  I do think the synchronization of state here is a bit
+>>> fragile and wish the protocol had a generation, sequence, or marker for
+>>> setting SEQ4_STATUS_ bits..
+>>>
+>>>>> Should we instead just administratively evict the client since it's
+>>>>> clearly not behaving right in this case?
+>>>> Thanks for the suggestion. While administratively evicting the
+>>>> client would
+>>>> certainly resolve the immediate delegation issue, I'm concerned that
+>>>> approach
+>>>> might be a bit heavy-handed.
+>>>> The problematic behavior seems isolated to a single delegation.
+>>>> Meanwhile,
+>>>> the client itself likely has numerous other open files and active
+>>>> state on
+>>>> the server. Forcing a complete client reconnect would tear down all
+>>>> that
+>>>> state, which could cause significant application disruption and be
+>>>> perceived
+>>>> as a service outage from the client's perspective.
+>>>>
+>>>> [1] https://lore.kernel.org/all/de669327-c93a-49e5-a53b-
+>>>> bda9e67d34a2@huawei.com/
+>>> ^^ in this thread you reference v5.10 - there was a knfsd fix for a
+>>> cl_revoked leak "3b816601e279", and there have been 3 or 4 fixes to fix
+>>> problems and optimize the client walk of delegations since then.  Jeff
+>>> pointed out that there have been fixes in these areas.  Are you
+>>> finding this
+>>> problem still with all those fixes included?
+>>>
+>>> Ben
+>>>
+>>>
+> 
+
 
