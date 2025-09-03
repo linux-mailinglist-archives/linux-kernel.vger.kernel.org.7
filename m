@@ -1,40 +1,49 @@
-Return-Path: <linux-kernel+bounces-798143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE37AB419F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:28:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 677DAB419F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A62A81BA3853
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:28:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2228F680B02
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7CA02F1FE2;
-	Wed,  3 Sep 2025 09:27:44 +0000 (UTC)
-Received: from mta20.hihonor.com (mta20.honor.com [81.70.206.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AEE2853F7;
+	Wed,  3 Sep 2025 09:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="cQw7X1Jq"
+Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B042D221DB0
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2890221DB0
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756891664; cv=none; b=pTnjEfP0os0I7oTww702KfPv2HIQ09f7j/ebUJEwS17dAOfeBUnzDpyYFQY1uUviqyM8s5y7jSep67Xb3ZWxJ20vEm6ho2todBqxdt9iKCo/EVVRifh6rHAGwCFgxfwwPgJTaADdHtNSINVf0WAgph5CBh6cGhZODm28FGrDHmc=
+	t=1756891658; cv=none; b=hgpWznWvjaUWegR+r3jUID7+OMwNXORnbT3sdk1FpgxYpehoc2xWUG5EdQgBVMm+v3+Bjk52q8OFx+RhemVtA+8NHJHp6H2wrDypaKyXF5GC6dOhLOZC9sDkQ9GQf+Dv5TDyUmAJsHkhVh+LL4c9c7zQrjT3lbqS2RmkobQG7q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756891664; c=relaxed/simple;
-	bh=2TDTI2DLCHGnqpyU8fQGydM2aIdUyXchqVmxGSuJAKs=;
+	s=arc-20240116; t=1756891658; c=relaxed/simple;
+	bh=qgbsyweIz0AfflDUBDRZEvg2PL8Y2IvPqdgBGb0n6Zw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mCtepFtn3JZpcBE1gWFjAJE9b+RVlH9S/7zj1qZCNgn6xWbzR12r1gcZeaxJV1L72IYc2FH105ZKdsXbU4u8tBZLvFNxyQssVmG08H5RzD4EAJKHYohJQhrQSPKqUwxw6eGxO7eI/0Ed6iPmmpK53ZM8wuDsDyQCKQD/SboPqG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+	 MIME-Version:Content-Type; b=s8+ZqVExQA73WPUL4K9xAm1qJeZhyvGGvBYqFBmk/grWMljuut0fEf+CJMISR46OBRN67JwZmlAT3fK0tCp7JKyqh/Ii1H7LDH8un3shkJlHtccI0SGhlHY7CAqVPkL7GtpMM+Ag17NJaJRvdKAKMHwZQlZSt/Ey/nbh64jkuWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=cQw7X1Jq; arc=none smtp.client-ip=81.70.192.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w001.hihonor.com (unknown [10.68.25.235])
-	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4cGy1X44FPzYlBd5;
-	Wed,  3 Sep 2025 17:27:12 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w001.hihonor.com
- (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
+dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=To:From;
+	bh=r/uDUbzgtgsxWzj8Cop4+zLnEzwH2RYL27BPHIa6ZCs=;
+	b=cQw7X1Jq2Xu+J4D6Zyt/8T0P6nCWF3oej7qVCUJgXulRFneyvMt5DR7J9q1t7nYhpz2Wm9EBP
+	6gG0WS87WbWdNEYsQyIc42Zg052Z5ZThHtm32MGNDnQxj1RmzoeYVNKu1otjb8W4WmimcZcD/7+
+	Cq7kReGDau7TK7hFwkUtTM8=
+Received: from w012.hihonor.com (unknown [10.68.27.189])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4cGy1g4kKqzYnw7d;
+	Wed,  3 Sep 2025 17:27:19 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w012.hihonor.com
+ (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 3 Sep
- 2025 17:27:33 +0800
+ 2025 17:27:34 +0800
 Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
  (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 3 Sep
@@ -46,9 +55,9 @@ CC: <rientjes@google.com>, <shakeel.butt@linux.dev>,
 	<linux-kernel@vger.kernel.org>, <tglx@linutronix.de>,
 	<liam.howlett@oracle.com>, <lorenzo.stoakes@oracle.com>, <surenb@google.com>,
 	<liulu.liu@honor.com>, <feng.han@honor.com>, <zhongjinji@honor.com>
-Subject: [PATCH v7 1/2] mm/oom_kill: Thaw victim on a per-process basis instead of per-thread
-Date: Wed, 3 Sep 2025 17:27:28 +0800
-Message-ID: <20250903092729.10611-2-zhongjinji@honor.com>
+Subject: [PATCH v7 2/2] mm/oom_kill: The OOM reaper traverses the VMA maple tree in reverse order
+Date: Wed, 3 Sep 2025 17:27:29 +0800
+Message-ID: <20250903092729.10611-3-zhongjinji@honor.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250903092729.10611-1-zhongjinji@honor.com>
 References: <20250903092729.10611-1-zhongjinji@honor.com>
@@ -62,60 +71,73 @@ Content-Type: text/plain
 X-ClientProxiedBy: w003.hihonor.com (10.68.17.88) To a018.hihonor.com
  (10.68.17.250)
 
-OOM killer is a mechanism that selects and kills processes when the system
-runs out of memory to reclaim resources and keep the system stable.
-However, the oom victim cannot terminate on its own when it is frozen,
-because __thaw_task() only thaws one thread of the victim, while
-the other threads remain in the frozen state.
+Although the oom_reaper is delayed and it gives the oom victim chance to
+clean up its address space this might take a while especially for
+processes with a large address space footprint. In those cases
+oom_reaper might start racing with the dying task and compete for shared
+resources - e.g. page table lock contention has been observed.
 
-This change will thaw the entire victim process when OOM occurs,
-ensuring that the oom victim can terminate on its own.
+Reduce those races by reaping the oom victim from the other end of the
+address space.
+
+It is also a significant improvement for process_mrelease(). When a process
+is killed, process_mrelease is used to reap the killed process and often
+runs concurrently with the dying task. The test data shows that after
+applying the patch, lock contention is greatly reduced during the procedure
+of reaping the killed process.
+
+Without the patch:
+|--99.74%-- oom_reaper
+|  |--76.67%-- unmap_page_range
+|  |  |--33.70%-- __pte_offset_map_lock
+|  |  |  |--98.46%-- _raw_spin_lock
+|  |  |--27.61%-- free_swap_and_cache_nr
+|  |  |--16.40%-- folio_remove_rmap_ptes
+|  |  |--12.25%-- tlb_flush_mmu
+|  |--12.61%-- tlb_finish_mmu
+
+With the patch:
+|--98.84%-- oom_reaper
+|  |--53.45%-- unmap_page_range
+|  |  |--24.29%-- [hit in function]
+|  |  |--48.06%-- folio_remove_rmap_ptes
+|  |  |--17.99%-- tlb_flush_mmu
+|  |  |--1.72%-- __pte_offset_map_lock
+|  |--30.43%-- tlb_finish_mmu
 
 Signed-off-by: zhongjinji <zhongjinji@honor.com>
 ---
- mm/oom_kill.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ mm/oom_kill.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 25923cfec9c6..3caaafc896d4 100644
+index 3caaafc896d4..540b1e5e0e46 100644
 --- a/mm/oom_kill.c
 +++ b/mm/oom_kill.c
-@@ -747,6 +747,19 @@ static inline void queue_oom_reaper(struct task_struct *tsk)
- }
- #endif /* CONFIG_MMU */
- 
-+static void thaw_oom_process(struct task_struct *tsk)
-+{
-+	struct task_struct *t;
-+
-+	/* protects against  __exit_signal() */
-+	read_lock(&tasklist_lock);
-+	for_each_thread(tsk, t) {
-+		set_tsk_thread_flag(t, TIF_MEMDIE);
-+		__thaw_task(t);
-+	}
-+	read_unlock(&tasklist_lock);
-+}
-+
- /**
-  * mark_oom_victim - mark the given task as OOM victim
-  * @tsk: task to mark
-@@ -772,12 +785,12 @@ static void mark_oom_victim(struct task_struct *tsk)
- 		mmgrab(tsk->signal->oom_mm);
+@@ -516,7 +516,7 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
+ {
+ 	struct vm_area_struct *vma;
+ 	bool ret = true;
+-	VMA_ITERATOR(vmi, mm, 0);
++	MA_STATE(mas, &mm->mm_mt, ULONG_MAX, ULONG_MAX);
  
  	/*
--	 * Make sure that the task is woken up from uninterruptible sleep
-+	 * Make sure that the process is woken up from uninterruptible sleep
- 	 * if it is frozen because OOM killer wouldn't be able to free
- 	 * any memory and livelock. freezing_slow_path will tell the freezer
--	 * that TIF_MEMDIE tasks should be ignored.
-+	 * that TIF_MEMDIE threads should be ignored.
+ 	 * Tell all users of get_user/copy_from_user etc... that the content
+@@ -526,7 +526,13 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
  	 */
--	__thaw_task(tsk);
-+	thaw_oom_process(tsk);
- 	atomic_inc(&oom_victims);
- 	cred = get_task_cred(tsk);
- 	trace_mark_victim(tsk, cred->uid.val);
+ 	set_bit(MMF_UNSTABLE, &mm->flags);
+ 
+-	for_each_vma(vmi, vma) {
++	/*
++	 * It might start racing with the dying task and compete for shared
++	 * resources - e.g. page table lock contention has been observed.
++	 * Reduce those races by reaping the oom victim from the other end
++	 * of the address space.
++	 */
++	mas_for_each_rev(&mas, vma, 0) {
+ 		if (vma->vm_flags & (VM_HUGETLB|VM_PFNMAP))
+ 			continue;
+ 
 -- 
 2.17.1
 
