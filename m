@@ -1,301 +1,115 @@
-Return-Path: <linux-kernel+bounces-798329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75911B41C5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:55:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11831B41C4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90454561467
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:55:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C3801A870B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738142F49F0;
-	Wed,  3 Sep 2025 10:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126F82F3604;
+	Wed,  3 Sep 2025 10:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZtZFcIYS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="kLQwdTEy"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C64B2F39D3;
-	Wed,  3 Sep 2025 10:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487A52EA14A;
+	Wed,  3 Sep 2025 10:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756896773; cv=none; b=aGzSTAvIEMPvYOZP9cQSrehD02QRm3dcvltJGtCIfr2X0djneKmuwzl6j9AC1Kw8EZORx9MTlfUqsWXibAaHLBrfKqtPt4KKOzv30m9hjku0isudwekdie73aupNWvDCnfhhBrogfeVvT4QgQqXQTTVOfQTD6lZ2D4UByCT6XKI=
+	t=1756896722; cv=none; b=CbZicAh34IWdPkRa0JLpoTcJFQQsrvOv1ZhPkDlIUxxkU66lEPIFGshqfr+16oGx+v1EY+5LJnk6WmS/F4xtqyCHmd/7DVEzKH57gTY1vhafKojfLuPOIfZB2WDdiKKbvD74vEiz1FejWHrSH65mQcTyvqA+J69k47b6RPpTGcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756896773; c=relaxed/simple;
-	bh=HGjnf8eVllcIUSL3TnUPNDJIjvbpjCLHddwGD9q4Uzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X8/uetctbpRNy4ad3AnpUJIsmVN4cRwKLn/WpYhv+INDa7vztk1VqHK20VR/9IDcabDLHaCfkxlsthvzn3hZf2+beqyORNLRJDOJy++9va2L2MK6Ly74jBY0+KkpdWmmckY+U3N9+R4Y4E4lWlbp/x/xvT4+XaYL0kN8Uwi8nFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZtZFcIYS; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756896772; x=1788432772;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HGjnf8eVllcIUSL3TnUPNDJIjvbpjCLHddwGD9q4Uzc=;
-  b=ZtZFcIYSzR0CYRBkd2HnSV3xsBMJdqPobDNlDNrT1NM+2wccwMd1R3bZ
-   UlBtac5/g8jRYZ56I86pu5Yy3V7h54GCfXm+Ryvt7mG9ShhjukL5/6YLG
-   Vqx/3FVXXtDM8A8Iqq5yvz6cNPL99G9iDnh5bQ63UL7mWhjdi0tVWCFGk
-   ZcqIQde/c+kY5oY1aYuVznYCcgJJjdkYehVjSkhO+qwZT9H6LLj8eRvTY
-   /X/WgX3LW03pRcYJW0yU4lpa9mLBiLLPzNoZ+TDGMA3NxIXai0it/xnWk
-   9utHHGujBT30G65cftQyMRM/x9LPYg/RayjCR+5OH6VFH44hTAwhju5oD
-   A==;
-X-CSE-ConnectionGUID: NuQ5+UKtSi6n13m4Za9MNg==
-X-CSE-MsgGUID: Bw48pVLWRNmMv4kqEPrwnQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="76806445"
-X-IronPort-AV: E=Sophos;i="6.18,235,1751266800"; 
-   d="scan'208";a="76806445"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:52:31 -0700
-X-CSE-ConnectionGUID: 8GSnf1gKQ16GwFnFpq3bKQ==
-X-CSE-MsgGUID: 2dz0rNFeQAuUw/Pkn4bkQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="171701529"
-Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 03 Sep 2025 03:51:34 -0700
-Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1utl4b-0003l5-10;
-	Wed, 03 Sep 2025 10:51:04 +0000
-Date: Wed, 3 Sep 2025 18:50:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	David Ahern <dsahern@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Stanislav Fomichev <sdf@fomichev.me>,
-	Mina Almasry <almasrymina@google.com>,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next 2/2] net: devmem: use niov array for token
- management
-Message-ID: <202509031855.54vuvsX1-lkp@intel.com>
-References: <20250902-scratch-bobbyeshleman-devmem-tcp-token-upstream-v1-2-d946169b5550@meta.com>
+	s=arc-20240116; t=1756896722; c=relaxed/simple;
+	bh=hWym8Ap263GZ8e4z0xKA+SGAt1iKVrfDxtT/njgoYg4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sT874OCKp/2g24hkoCfWUJKTny8jf7ahCuyWLUyD103XlxreJ1iS9ecYoklfVN1LYvJ2r4VIwhvZaA88VA/Frrl7Kn39YgHgEh0gslkW4gd9+2KLvLRydkA43HEV5dyXWOIHjZfd5ovHDB8qaz8ZvswrXDz+fMYRFt+xush8iu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=kLQwdTEy; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=0on4xOX2K5ILgOCUPYmbuMMVUeGL2/VT+pvfoCLeTuY=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:Message-Id:Message-Id:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1756896703; v=1; x=1757328703;
+ b=kLQwdTEyesW782KMERVIzGVpibhXskQDqr1DqcwdF3qPHeieHaOYlzYO6CR6n5KGO7XaVAf8
+ 1DgaqvDacuZ6DTZ1H/GzbCjZBy4+CXf7agbg1LQhYJ+3LZ4gnoRBNgSre9opJ6gRHhN5pNRbPzG
+ 1BJcmp+CLMEG/4vQhdr5K5ryOKCYlvAxGxlpXXGFNnfSNjs/+/NpnIH2IvJXmf8eN4sMw4dW4NR
+ uuRWgx/QKy5pJ2ZuZ4JT9De8RbYb3Ccmd/ZQx9veJ+JDKi5bhkbQCApko0GdPn2ihwbksY/+2q/
+ c+LczYLubpdxxNeKyd+5EMZn7xUK2beyyuff+wuuo7vhw==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id 270f79bd; Wed, 03 Sep 2025 12:51:43 +0200
+From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Date: Wed, 03 Sep 2025 12:51:39 +0200
+Subject: [PATCH] dt-bindings: mmc: sdhci-pxa: Add minItems to pinctrl-names
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902-scratch-bobbyeshleman-devmem-tcp-token-upstream-v1-2-d946169b5550@meta.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250903-pxav3-uhs-fix-v1-1-9f56b0b54749@dujemihanovic.xyz>
+X-B4-Tracking: v=1; b=H4sIALoduGgC/x2MMQqAMAwAvyKZDaQVB/2KONQaNYuWFkuh9O8Gx
+ zu4q5A4CieYuwqRsyR5bgXTd+Avd5+MsiuDJTvSRAOG4vKA75XwkIKT3/yxW/a0GdAmRFb9/5a
+ 1tQ9jkY0MXwAAAA==
+X-Change-ID: 20250903-pxav3-uhs-fix-9cbcfd2ec0b1
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+ =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1295;
+ i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
+ bh=hWym8Ap263GZ8e4z0xKA+SGAt1iKVrfDxtT/njgoYg4=;
+ b=owGbwMvMwCW21nBykGv/WmbG02pJDBk7ZPevvnu7dHJb+9IN4ROVNqUdkxBay362+iL//Znzp
+ /mpXJx1pqOUhUGMi0FWTJEl97/jNd7PIlu3Zy8zgJnDygQyhIGLUwAm8vIbI8OaO0pXX85JDd/+
+ cfdB07mT83Y+f/NjGmM5T4W49YGAhfvyGf6HCzTabUz8b39rx46fpst+X7VVtHKed24W1621LWt
+ je7ZxAwA=
+X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
+ fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
 
-Hi Bobby,
+Some older boards only require a default pinctrl. Add a minItems
+property so these don't cause dt-validate warnings.
 
-kernel test robot noticed the following build errors:
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202509030625.PBgLIAwG-lkp@intel.com/
+Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
+---
+ Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-[auto build test ERROR on cd8a4cfa6bb43a441901e82f5c222dddc75a18a3]
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml b/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml
+index fba1cc50fdf07cc25d42f45512c385a9b8207b9b..186ce8ff4626a1eb07633e08aeb6322ae2eb25a8 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml
++++ b/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml
+@@ -44,6 +44,7 @@ allOf:
+           items:
+             - const: default
+             - const: state_cmd_gpio
++          minItems: 1
+ 
+         pinctrl-1:
+           description:
+@@ -61,6 +62,7 @@ allOf:
+           items:
+             - const: default
+             - const: state_uhs
++          minItems: 1
+ 
+         pinctrl-1:
+           description:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bobby-Eshleman/net-devmem-rename-tx_vec-to-vec-in-dmabuf-binding/20250903-054553
-base:   cd8a4cfa6bb43a441901e82f5c222dddc75a18a3
-patch link:    https://lore.kernel.org/r/20250902-scratch-bobbyeshleman-devmem-tcp-token-upstream-v1-2-d946169b5550%40meta.com
-patch subject: [PATCH net-next 2/2] net: devmem: use niov array for token management
-config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20250903/202509031855.54vuvsX1-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250903/202509031855.54vuvsX1-lkp@intel.com/reproduce)
+---
+base-commit: 5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
+change-id: 20250903-pxav3-uhs-fix-9cbcfd2ec0b1
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509031855.54vuvsX1-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   net/ipv4/tcp.c: In function 'tcp_recvmsg_dmabuf':
->> net/ipv4/tcp.c:2502:41: error: implicit declaration of function 'net_devmem_dmabuf_binding_get'; did you mean 'net_devmem_dmabuf_binding_put'? [-Werror=implicit-function-declaration]
-    2502 |                                         net_devmem_dmabuf_binding_get(binding);
-         |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                         net_devmem_dmabuf_binding_put
-   cc1: some warnings being treated as errors
-
-
-vim +2502 net/ipv4/tcp.c
-
-  2390	
-  2391	/* On error, returns the -errno. On success, returns number of bytes sent to the
-  2392	 * user. May not consume all of @remaining_len.
-  2393	 */
-  2394	static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
-  2395				      unsigned int offset, struct msghdr *msg,
-  2396				      int remaining_len)
-  2397	{
-  2398		struct dmabuf_cmsg dmabuf_cmsg = { 0 };
-  2399		unsigned int start;
-  2400		int i, copy, n;
-  2401		int sent = 0;
-  2402		int err = 0;
-  2403	
-  2404		do {
-  2405			start = skb_headlen(skb);
-  2406	
-  2407			if (skb_frags_readable(skb)) {
-  2408				err = -ENODEV;
-  2409				goto out;
-  2410			}
-  2411	
-  2412			/* Copy header. */
-  2413			copy = start - offset;
-  2414			if (copy > 0) {
-  2415				copy = min(copy, remaining_len);
-  2416	
-  2417				n = copy_to_iter(skb->data + offset, copy,
-  2418						 &msg->msg_iter);
-  2419				if (n != copy) {
-  2420					err = -EFAULT;
-  2421					goto out;
-  2422				}
-  2423	
-  2424				offset += copy;
-  2425				remaining_len -= copy;
-  2426	
-  2427				/* First a dmabuf_cmsg for # bytes copied to user
-  2428				 * buffer.
-  2429				 */
-  2430				memset(&dmabuf_cmsg, 0, sizeof(dmabuf_cmsg));
-  2431				dmabuf_cmsg.frag_size = copy;
-  2432				err = put_cmsg_notrunc(msg, SOL_SOCKET,
-  2433						       SO_DEVMEM_LINEAR,
-  2434						       sizeof(dmabuf_cmsg),
-  2435						       &dmabuf_cmsg);
-  2436				if (err)
-  2437					goto out;
-  2438	
-  2439				sent += copy;
-  2440	
-  2441				if (remaining_len == 0)
-  2442					goto out;
-  2443			}
-  2444	
-  2445			/* after that, send information of dmabuf pages through a
-  2446			 * sequence of cmsg
-  2447			 */
-  2448			for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
-  2449				skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
-  2450				struct net_devmem_dmabuf_binding *binding;
-  2451				struct net_iov *niov;
-  2452				u64 frag_offset;
-  2453				size_t size;
-  2454				u32 token;
-  2455				int end;
-  2456	
-  2457				/* !skb_frags_readable() should indicate that ALL the
-  2458				 * frags in this skb are dmabuf net_iovs. We're checking
-  2459				 * for that flag above, but also check individual frags
-  2460				 * here. If the tcp stack is not setting
-  2461				 * skb_frags_readable() correctly, we still don't want
-  2462				 * to crash here.
-  2463				 */
-  2464				if (!skb_frag_net_iov(frag)) {
-  2465					net_err_ratelimited("Found non-dmabuf skb with net_iov");
-  2466					err = -ENODEV;
-  2467					goto out;
-  2468				}
-  2469	
-  2470				niov = skb_frag_net_iov(frag);
-  2471				if (!net_is_devmem_iov(niov)) {
-  2472					err = -ENODEV;
-  2473					goto out;
-  2474				}
-  2475	
-  2476				end = start + skb_frag_size(frag);
-  2477				copy = end - offset;
-  2478	
-  2479				if (copy > 0) {
-  2480					copy = min(copy, remaining_len);
-  2481	
-  2482					frag_offset = net_iov_virtual_addr(niov) +
-  2483						      skb_frag_off(frag) + offset -
-  2484						      start;
-  2485					dmabuf_cmsg.frag_offset = frag_offset;
-  2486					dmabuf_cmsg.frag_size = copy;
-  2487	
-  2488					binding = net_devmem_iov_binding(niov);
-  2489	
-  2490					if (!sk->sk_user_frags.binding) {
-  2491						sk->sk_user_frags.binding = binding;
-  2492	
-  2493						size = binding->dmabuf->size / PAGE_SIZE;
-  2494						sk->sk_user_frags.urefs = kzalloc(size,
-  2495										  GFP_KERNEL);
-  2496						if (!sk->sk_user_frags.urefs) {
-  2497							sk->sk_user_frags.binding = NULL;
-  2498							err = -ENOMEM;
-  2499							goto out;
-  2500						}
-  2501	
-> 2502						net_devmem_dmabuf_binding_get(binding);
-  2503					}
-  2504	
-  2505					if (WARN_ONCE(sk->sk_user_frags.binding != binding,
-  2506						      "binding changed for devmem socket")) {
-  2507						err = -EFAULT;
-  2508						goto out;
-  2509					}
-  2510	
-  2511					token = net_iov_virtual_addr(niov) >> PAGE_SHIFT;
-  2512					binding->vec[token] = niov;
-  2513					dmabuf_cmsg.frag_token = token;
-  2514	
-  2515					/* Will perform the exchange later */
-  2516					dmabuf_cmsg.dmabuf_id = net_devmem_iov_binding_id(niov);
-  2517	
-  2518					offset += copy;
-  2519					remaining_len -= copy;
-  2520	
-  2521					err = put_cmsg_notrunc(msg, SOL_SOCKET,
-  2522							       SO_DEVMEM_DMABUF,
-  2523							       sizeof(dmabuf_cmsg),
-  2524							       &dmabuf_cmsg);
-  2525					if (err)
-  2526						goto out;
-  2527	
-  2528					atomic_inc(&sk->sk_user_frags.urefs[token]);
-  2529	
-  2530					atomic_long_inc(&niov->pp_ref_count);
-  2531	
-  2532					sent += copy;
-  2533	
-  2534					if (remaining_len == 0)
-  2535						goto out;
-  2536				}
-  2537				start = end;
-  2538			}
-  2539	
-  2540			if (!remaining_len)
-  2541				goto out;
-  2542	
-  2543			/* if remaining_len is not satisfied yet, we need to go to the
-  2544			 * next frag in the frag_list to satisfy remaining_len.
-  2545			 */
-  2546			skb = skb_shinfo(skb)->frag_list ?: skb->next;
-  2547	
-  2548			offset = offset - start;
-  2549		} while (skb);
-  2550	
-  2551		if (remaining_len) {
-  2552			err = -EFAULT;
-  2553			goto out;
-  2554		}
-  2555	
-  2556	out:
-  2557		if (!sent)
-  2558			sent = err;
-  2559	
-  2560		return sent;
-  2561	}
-  2562	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Duje Mihanović <duje@dujemihanovic.xyz>
+
 
