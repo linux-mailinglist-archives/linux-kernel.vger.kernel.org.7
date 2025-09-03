@@ -1,149 +1,123 @@
-Return-Path: <linux-kernel+bounces-797858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE684B41657
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:22:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE28DB41652
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C10DF3BCE06
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:22:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F03821BA0509
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FA02DAFB7;
-	Wed,  3 Sep 2025 07:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB892DAFDB;
+	Wed,  3 Sep 2025 07:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HvdezB8q"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617D82D97B8;
-	Wed,  3 Sep 2025 07:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJBJ0wnC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CC92D97BE;
+	Wed,  3 Sep 2025 07:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756884110; cv=none; b=QVQcHUKD+ZirVbNvCjn1tC9Q8JEzRk9dN71A38cnpIQ3TsWcQzAIazgvcytYzgDXv2JuTobYoYrruyF+XFAMf6QsV9HkxYtcB/cYuCJVITrxgOHz4tr9PawoIJ5zU8tALs4bzTZkYhrZO4xJmq+08+MJbcHoGaCfW05Eo4yTUOc=
+	t=1756884083; cv=none; b=kO7r6FcVC73HbZzLbQi2lsPiaxVj0DWFdQqeVpTxnkGXWcBNDBLv11sRL9B0t056amZH2sazkUHGhKVprp2wX60FUweI8I3KG/ipX8AKrBcTFN+3Y7hlkkNxuDCYc6/X2O5POitN3TJwpVGgC6q+PKRZNLYNOwZ4vvI4JO7mcPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756884110; c=relaxed/simple;
-	bh=lIad0XRh+CKtul0n/eDT+BWn9ujleiGAkIdBf4PZyv4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sz5i2cpYB27NMh9O7pZEtPKmhc1ppEq/CH7VbxHuTw73yGouzO2UfZuZvcc+eqUqhvB7Y2Jl+zk/BgWzeMGuWJfRIXg+WHdi0WodIwioZoG42asLmT8JjiVMeoL0S2UTvv08tFW7ii4d1wXBzOCTcCkGknT+x2301ygeIsXZl44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HvdezB8q; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=kib6b3BkE4UQ52b83A7vFe86p8T0suLWIALRUAfdtu0=;
-	b=HvdezB8qDv/XV1QD8BJyNXvAAznUrx83XdmLpj7k18nxccrE0bu9wr2YMyNf7C
-	V7JFXrko+EZd9Xlw5aaY5cCrxmllG2p0UtG/iXhaYzS+W/N6vPquqvkk/zr5SPjk
-	6C36NCA5s4Ta5dndsYrHySz2NvvGboapwg5K8fOXT44dI=
-Received: from hello.company.local (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDXfFNo7LdoZmPwFw--.20150S2;
-	Wed, 03 Sep 2025 15:21:13 +0800 (CST)
-From: Liang Jie <buaajxlj@163.com>
-To: yukuai1@huaweicloud.com
-Cc: axboe@kernel.dk,
-	fanggeng@lixiang.com,
-	gj.han@foxmail.com,
-	hailan@yukuai.org.cn,
-	hanguangjiang@lixiang.com,
-	liangjie@lixiang.com,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yangchen11@lixiang.com,
-	yukuai3@huawei.com
-Subject: Re: [PATCH] blk-throttle: check policy bit in blk_throtl_activated()
-Date: Wed,  3 Sep 2025 15:21:12 +0800
-Message-Id: <20250903072112.3432190-1-buaajxlj@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <c60c0768-2b1b-a26b-db7d-340fd29ff688@huaweicloud.com>
-References: <c60c0768-2b1b-a26b-db7d-340fd29ff688@huaweicloud.com>
+	s=arc-20240116; t=1756884083; c=relaxed/simple;
+	bh=aE2wSHWhtqpiMKHN7D3PfY7xel2VdPYw5MsWLRepx7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BA27WSXRIZakLiUUNktmn0Ap7f4slFeYpE9PSTbbgOuYf78IkWOXZfjFgJ/UIVdRZueETXgkbGjiV4vC3Iojy7tgCjnVfnfr4F9/wc2QAzDzjv12wppvV/PqFyFXY0QaXUWumdl4Q1xfMEdZIAvjjdCyhVqm/dbtks4n048vAW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJBJ0wnC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB26EC4CEF1;
+	Wed,  3 Sep 2025 07:21:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756884082;
+	bh=aE2wSHWhtqpiMKHN7D3PfY7xel2VdPYw5MsWLRepx7k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cJBJ0wnCkJ1bai4763J4Y9QBfj8wXwSGJY+gHPqNW3l/BcjWmpT/KdbNwOVh2P+uY
+	 8Wsw+b/URVuxPr4VH6ak4gHXuYNmZwgy2c5lHjASKjt4OiUSUykSbIo1i/JaE1LC3p
+	 HDV1L/b2Wgw+BPwU4RqakGu5lNpkmfSOsJCAY7AL/jh8I1qN6rSZMBqIUdfJtEt/gC
+	 MVP4jCj9RMgo0XWs0DjJZSCPWO8ZEhHRyyaQ+pHqmyICGm9/LFGKmbIHTbHAybqKzU
+	 5YaZm9MYrtURfao8cI2299LvtUG34wLHV+u0VmKVoo2DqEXAgj43KiJnCZWKrvQjAl
+	 xIOCjRs6V/APg==
+Date: Wed, 3 Sep 2025 08:21:17 +0100
+From: Lee Jones <lee@kernel.org>
+To: Marcos Del Sol Vives <marcos@orca.pet>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Michael Walle <mwalle@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] mfd: vortex: implement new driver for Vortex
+ southbridges
+Message-ID: <20250903072117.GY2163762@google.com>
+References: <20250822135816.739582-1-marcos@orca.pet>
+ <20250822135816.739582-4-marcos@orca.pet>
+ <20250902151828.GU2163762@google.com>
+ <45b84c38-4046-4fb0-89af-6a2cc4de99cf@orca.pet>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXfFNo7LdoZmPwFw--.20150S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Zw18Zry8CrWUXw4kKw4rZrb_yoW5JF1xpF
-	W7u3yjkw4UXrZ7Jay2vr1vkFySvw4xCay5Jr1rJr1fAw1qgwnaqw1UKw15CayfXFsaka4x
-	Z3Z0qws8Z3WYyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uov3nUUUUU=
-X-CM-SenderInfo: pexdtyx0omqiywtou0bp/1tbioAi3IGiwUJJggAABsE
+In-Reply-To: <45b84c38-4046-4fb0-89af-6a2cc4de99cf@orca.pet>
 
-On Wed, 3 Sep 2025 14:03:37 +0800, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+On Tue, 02 Sep 2025, Marcos Del Sol Vives wrote:
 
->在 2025/09/03 10:55, Han Guangjiang 写道:
->> Hi Kuai,
->> 
->>> Instead of add checking from hot path, do you consider delaying setting q->td
->>> until policy is activated from the slow path? I think this is better solution.
->> 
->> Thank you for your review. You're absolutely right that performance
->> considerations in the hot path are important.
->> 
->> We actually considered delaying the setting of q->td until after policy
->> activation, but we found that q->td is needed by blkcg_activate_policy()
->> during its execution, so it has to be set before calling
->> blkcg_activate_policy().
->
->That's not hard to bypass, q->td is used to initialze tg->td in
->throtl_pd_init(), actually you can just remove it, and add a helper
->tg_to_td() to replace it;
->
->struct throtl_data *tg_to_td(struct throtl_grp *tg)
->{
->	return tg_to_blkg(tg)->q->td;
->}
+> El 02/09/2025 a las 17:18, Lee Jones escribió:
+> >> +
+> >> +struct vortex_southbridge {
+> >> +	const struct mfd_cell *cells;
+> >> +	int n_cells;
+> >> +};
+> > 
+> > Why is this needed?
+> > 
+> 
+> To have a variable amount of cells. Currently I am only implementing the
+> GPIO device because it's the most critical (required for device shutdown),
+> but I plan on implementing once this gets merged at least also the watchdog,
+> which is provided by the same southbridge.
+> 
+> Adding support for this is should make adding that simpler.
 
-Hi Kuai,
+You don't need it.  Please find another way to achieve your goal.
 
-Thanks for the suggestion. Just a quick note: in throtl_pd_init(), q->td is not
-only used to init tg->td, it’s also needed for sq->parent_sq:
+> >> +static const struct mfd_cell vortex_dx_sb_cells[] = {
+> >> +	{
+> >> +		.name		= "vortex-gpio",
+> >> +		.resources	= vortex_dx_gpio_resources,
+> >> +		.num_resources	= ARRAY_SIZE(vortex_dx_gpio_resources),
+> >> +	},
+> >> +};
+> > 
+> > It's not an MFD until you have more than one device.
+> 
+> Same as above.
 
- - sq->parent_sq = &td->service_queue;
+It will not be accepted with only a single device (SFD?).
 
-So if we remove tg->td and delay q->td, throtl_pd_init() won’t have a valid td
-to set parent_sq.
+> >> +static const struct pci_device_id vortex_sb_table[] = {
+> >> +	/* Vortex86DX */
+> >> +	{ PCI_DEVICE_DATA(RDC, R6031, &vortex_dx_sb) },
+> > 
+> > We're not passing one initialisation API's data (MFD) through another (PCI).
+> 
+> Unless I understood you incorrectly, you mean I should not pass MFD cells/
+> data as private data?
 
->
->Meanwhile, please remove the comment about freeze queue, turns out it
->can't protect blk_throtl_bio() becasue q_usage_coutner is not grabbed
->yet while issuing bio.
+Right.
 
-You’re right. We’ll remove that comment in patch v2.
+> vortex_dx_sb are "struct vortex_southbridge" type, not raw MFD API data.
 
-Thanks,
-Liang Jie
+I like your style, but nope!
 
->
->Thanks,
->Kuai
->
->> 
->> We explored several alternative approaches:
->> 
->> 1) Adding a dedicated flag like 'throttle_ready' to struct request_queue:
->>     - Set this flag at the end of blk_throtl_init()
->>     - Check this flag in blk_throtl_activated() to determine if policy
->>       loading is complete
->>     - However, this requires adding a new bool variable to the struct
->> 
->> 2) Reusing the q->td pointer with low-order bit flags:
->>     - Use pointer low-order bits to mark initialization completion status
->>     - This would avoid adding new fields but requires careful handling
->>       and additional processing
->> 
->> Given these constraints, we chose the current approach of checking the
->> policy bit in blk_throtl_activated() as it:
->> - Doesn't require struct changes
->> - Provides a clean, atomic check
->> - Aligns with the existing policy activation mechanism
->> 
->> We would appreciate your suggestions on how to better handle this
->> initialization race condition.
->> 
->> Thanks,
->> Han Guangjiang
->> 
+vortex_southbridge contains MFD data and shouldn't exist anyway.
 
+-- 
+Lee Jones [李琼斯]
 
