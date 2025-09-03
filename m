@@ -1,348 +1,275 @@
-Return-Path: <linux-kernel+bounces-798167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7506EB41A38
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:39:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E1DB41A3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E42CF1BA3FDB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:39:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3B868383B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6461F2EC0BF;
-	Wed,  3 Sep 2025 09:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D5F2F1FCA;
+	Wed,  3 Sep 2025 09:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c8jo8zh8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TVS4zLyU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0B31B3935;
-	Wed,  3 Sep 2025 09:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756892345; cv=fail; b=KKZvWC0ALJUDerMd0sPLxUhK40IQFLISbT9vbU6CDw5PKeimhOpX2lsQHcQW/2SUX65vBu3m1MNIZNmM7NZ4hK30wjtUjRIgROsrs00cC3FZGk5+eixxN45TYWywqlgtsbAakidMyCKpj42oQPZzzQ57HXl1YvvRHyYT/KMT7fo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756892345; c=relaxed/simple;
-	bh=/lyPUu1MQUtxFyajW+RsUav75hocHhSBFKB8UrAIKn8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eSpoLZ/vZ9e0mKFOsE/HbAjwMtkrgwQksPQ8u/Af7of6H7b9cfm3jLT203Et83+5z0OVB0RgNlg67NFoOOaf9u/7FEabWUanW6Zbsql/U3wGMe7jo6eXCnpKjNN+npt7gccfAl88n3Xjzi0i/3XKtN4QdMSXAlo1qL05rWbIlro=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c8jo8zh8; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756892343; x=1788428343;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=/lyPUu1MQUtxFyajW+RsUav75hocHhSBFKB8UrAIKn8=;
-  b=c8jo8zh8ka0aJ7MhuJdjuBa2xEUvjetBNDT8+mMp1bCIUfSt5YJzGNN7
-   obRiXmspttcBuMo/b/oz0EIwnKTpYMx67j+60BNvlKBixUn1MhSqdV4wl
-   1PW7wGcQteKUQR4gbTjtlIt9V2rMXgzOT7AA8Lx+dNWk66OUyRliGe2A1
-   5lWeofmD3R3+3ZwDATQ0Dd021eyQcz0+tHYIUcp0tsXLMxRNHumCFWeBn
-   +25tndj/L5sci0B/aSHJEGwuV+B2y1NH2hOyc9eVvsYqWpBlNqIWPz4SM
-   j0XK5k2FNkBQK2TtZ5lBvAiPUzd4VI6BHJaeuv56fbRfu5Rsj4h6sg0fq
-   g==;
-X-CSE-ConnectionGUID: ZC8tDAgiTIyLGGf9VCQtZw==
-X-CSE-MsgGUID: r0OEjLGBTiuZJaCFe7YIvg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="70577169"
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="70577169"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 02:39:02 -0700
-X-CSE-ConnectionGUID: aGpNaaXuTGaWde4uEQBMSg==
-X-CSE-MsgGUID: mAkLmR2OSMa1xvsxMH2VWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="171690044"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 02:39:02 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 3 Sep 2025 02:39:01 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Wed, 3 Sep 2025 02:39:01 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (40.107.96.85) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 3 Sep 2025 02:39:01 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FK65ABhtqLY1aXE5qB1ONPdtVR8ZOhxbv4ifuPy4Epa6m0hT695TU4JnKWB+rA6IE47vEAQY2rGtVjPEx8EqjrCa8c6ED6/Pk6qa/cjIBYyJzfo88VQTYkr8pZ6DQxQSm6mMg8C/zQieZJWnnDSx4ipQDUzEi3e7fKvG4WB0ybytCVxFeDu2cADPSRkwQyX0UwHUqN3iPC7S1+6lXmlShc4OwLP/ljD+4q8G+D+v6kJE7rw7d1Je5KyVnFEwO58PlVA73UEy5vFKAxfx4BgZ/1wjUbC5qx7K9LnXStEP0nBsikyI8nIIshDPaOSzRbHMzbjVngxInLrgnG+hw4upng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H3irkBId7UNWvyA1QBEdwA36YVKQVIePNP/3aIllJVQ=;
- b=iGWqUd5aHgBpYPZ0P2f41iGIjOW0z6UUfGRuQfcsnNCb+wiErSNJIxjjoj/iR5qZqqyGXNk8OlsUGotn8WJuebFuNivM3MEf9Dq/g0zizDbKKKegtIwlG3JeNYWcGafFnYw95rgV7Q8hxXhQyIgbxHF4B4VxfT0COd3+vabEUtLnrMkBNFX7yoRJ3U3YZjl52UDMeoAcA+N3k49jFjj3BOfBOfBoK4dndjr1WWYpuYlNesSPkrIdHDIe7JJecFm8+4aMb4FKBFjLSSzdUzOGoB83zL7/W7brUa+aQtXr9AUKj0djihFADUBj2eOVYO/d86UR3TlQgpucYJqhNmkkcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- CY8PR11MB7316.namprd11.prod.outlook.com (2603:10b6:930:9f::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9073.27; Wed, 3 Sep 2025 09:38:58 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%7]) with mapi id 15.20.9073.026; Wed, 3 Sep 2025
- 09:38:57 +0000
-Date: Wed, 3 Sep 2025 17:37:59 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-CC: <pbonzini@redhat.com>, <seanjc@google.com>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, <x86@kernel.org>,
-	<rick.p.edgecombe@intel.com>, <dave.hansen@intel.com>, <kas@kernel.org>,
-	<tabba@google.com>, <ackerleytng@google.com>, <quic_eberman@quicinc.com>,
-	<michael.roth@amd.com>, <david@redhat.com>, <vannapurve@google.com>,
-	<vbabka@suse.cz>, <thomas.lendacky@amd.com>, <pgonda@google.com>,
-	<zhiquan1.li@intel.com>, <fan.du@intel.com>, <jun.miao@intel.com>,
-	<ira.weiny@intel.com>, <isaku.yamahata@intel.com>, <xiaoyao.li@intel.com>,
-	<chao.p.peng@intel.com>
-Subject: Re: [RFC PATCH v2 14/23] KVM: TDX: Split and inhibit huge mappings
- if a VMExit carries level info
-Message-ID: <aLgMd6X1qINCjozy@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20250807093950.4395-1-yan.y.zhao@intel.com>
- <20250807094423.4644-1-yan.y.zhao@intel.com>
- <ce8da923-ae46-4c8d-9efe-a43fd29749a4@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ce8da923-ae46-4c8d-9efe-a43fd29749a4@linux.intel.com>
-X-ClientProxiedBy: SI2PR01CA0007.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::11) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECA42DE1E3;
+	Wed,  3 Sep 2025 09:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756892355; cv=none; b=sRE2Y4TnO9KhdnszYb/EKX2nc7cJP0Uei3OBfHWNY40RHOHdNfU62gDDXhLL54FzXsdlNQhTlqlM5daVWEFvh0KzU2NaUkan52O4HpYAdC+gDORckJEVThDxFSDXQxwjdcX46HWSB8XtQ7mX0QP1gKUJx8l2fEzr4PNhYBQ8wTY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756892355; c=relaxed/simple;
+	bh=7OawBoLIQEMzrlHO4ZNFwoSx6OWh4gl2EizXy1qKCbc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qOPJA3OoF06+bDUwp+ed9BWrABmMWINhekRQENZPT9vYnD0Pcc79TNrWSn5wFny1h4dpGW6Uy4npl4W+w9F3kGYejLZip8aDkZzW4VmGy9aNdCaV632WRH4SCBWy8nj8TVpreg9lpcpOOFi5niLCDYf60AD/XVikMtANr8WFuEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TVS4zLyU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58324FYe012188;
+	Wed, 3 Sep 2025 09:39:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YpBeBKaMIbKCX8B6pXuPCjDC5QIq23QMb0HxaWwyRSc=; b=TVS4zLyU9MsqUgA1
+	e+sQoNKO0gDEkbY0VWFXZmb1Q+w4yWG8OXt4t4vHZpC+M8lqmieXE1xn3CdkvQZg
+	UFXp3gHRVMEyE2uJ+nfTKlippZyKe3pYsezpOtCzdAHITGkEpmHyLgOL5dnhjnU1
+	lfVsQcl7LB3MdPvMfQyW+eec6U9DEMs3XSEztJxPy7SgJprJdiOAvYK9x1gUkwOw
+	RkT6a7deDDS4PnigNA2cLetla3pQvO9G/LNdGWuYYq5zkbyiM97SY1uuBunlOu+h
+	t8wJgszxDRpU7DHoDBOT8VU+oCfZzC3MqFXiaRY+2MB6UXT+03smoULFK7I0m3L/
+	SeyfwQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ut2fjy90-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Sep 2025 09:39:09 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5839d8ft009476
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 3 Sep 2025 09:39:08 GMT
+Received: from [10.218.46.122] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 3 Sep
+ 2025 02:39:02 -0700
+Message-ID: <56df6a16-152f-40af-8798-a9ef7bb3705d@quicinc.com>
+Date: Wed, 3 Sep 2025 15:08:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|CY8PR11MB7316:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f09c111-896d-4a2b-fe5c-08ddeacdb478
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?NWmns9sTc4An4G/4/o/qAs3At90OQvYPRjZU9+Pjgh3wny3ucRJTCextsOsx?=
- =?us-ascii?Q?CKwwKHkS96ZGHOIE7OPkdZgeeKjVcz6/eB2r6TJksLrKBvBZHXA2z42OyGml?=
- =?us-ascii?Q?TcfWrI6ONUh7OI8pGPtP0qjw4Q9wyKaMxojiW/kHJoHNfGO1M9B2r5Gx4mQJ?=
- =?us-ascii?Q?boS4jfQ301RLoTpm0UROEAxQawne7f5nFkeSnpxiaSgkpwqYYqejZ9h/3oDG?=
- =?us-ascii?Q?BOexXu1tlJHDzDrtR7a+x+4QvnvUFkS7yL0/DR+uOevbyuYIvcAnMHqBaIJg?=
- =?us-ascii?Q?jkYXt8jEgMy0UMkMEYsH2o6EySsWwExUiCX1l0keI3i/y+X5j0qgzvo2ofrR?=
- =?us-ascii?Q?/vf7T95KUGdCedENTvco+PT7+DUZfOSs6Wm4gOJHXVS66WEYrhPqzIVtmv0O?=
- =?us-ascii?Q?F3PJaYV+Qlk80sUSKA/XWMTJEMfELTM6oVSAdPmFym8EIFzt1oDQLEOhU4FK?=
- =?us-ascii?Q?XcxI2007fTDPiCjgVBr3DyfZ47/u6PEJzbXeyK3kDFnvfHajvtdCl9BiHoOm?=
- =?us-ascii?Q?8fLQJBDe2cMMkw5HYj82otYCLKPnpqcqbDD/Xr7jz1gDdW8RazO0IyCqdoRK?=
- =?us-ascii?Q?jHhfI9CvO3HekQFJA4xLhUA+x9WWHnOmz7yeQxORiRC9+UoA/sj5MAClfyjS?=
- =?us-ascii?Q?HRF3JdLSO7R/liFQOSUxbUAfxHqCLnXjTrPNWywKUBPYRtNTd4tZdbwlV7KW?=
- =?us-ascii?Q?mdqqGehJoJ117U2NzlNyYWAreOz5nbCKGBjf9BVH6v+i82lStu2AfYWSNr7Q?=
- =?us-ascii?Q?a6e/hHj9MwLns6dg9rDFfT+68ABWsQJX3NA28WFH19/NAE7LhmfL9r+FhfTk?=
- =?us-ascii?Q?gM5pV0eShsXD3vB8UzNPv8qZ5u11RGwuR0NpOXMgCyjyzrVI2KIlR3kgYlp4?=
- =?us-ascii?Q?Wc0Q4g+nWktndDEwALmnBtAofEfYFEzhMQAgcQ9cPkBWKEjYLr+2tuXXYHw8?=
- =?us-ascii?Q?OeBp9eLb7Wwv8bEb6n7CMc3RItMwIk3EMAhqkSjopWlMpDPfyUld3DA88K8B?=
- =?us-ascii?Q?L8U8e02mzNGDuqwvU13EhBLNgzvOLO8qSJ+tMFudYEkkWcAyjBjjqdSuIesS?=
- =?us-ascii?Q?q3h8med0QpOa2NeIjNZIbBDgfs30IUJemD/DQERFyqlK1/aypizXq5/SvuDl?=
- =?us-ascii?Q?JMJcXqZ24d2Pp5hSj/C0oiFeaLD+z8HJepuphPEnwGsFEMGwJzSFzcAU9Fu3?=
- =?us-ascii?Q?MBimxUXCHnMSnfjhriMWQL8Bj4B2JUKvnDviJ9TzAW+10PyIZLO8Zf5vm8v2?=
- =?us-ascii?Q?OvtzNFeuWRxPoWazLJifLnQiPTwXXcBXuI4pT/2KfykE2uTXjClSMLFfYgL4?=
- =?us-ascii?Q?DqRSlfYZXkCuzwQVBCLJWuUL7TM7Mg8drL3Vdka0lX1xYEvLiqJspi9JiGGF?=
- =?us-ascii?Q?4l/fPOg=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?y/1+JRPT2G8408z8uLBS51ytA7q3NKRUPHvs0+uYNNOntzaWXRqwvOni8u2t?=
- =?us-ascii?Q?7TdMvh5LXkX+lEMe9ROwvf19Sq7s9lAUV9+jAe7SCUKX9gAUK4LbSvbW4JyP?=
- =?us-ascii?Q?9jM6MvYJnvSmJtk5lc4XO3wbKJSSr+Ebm1MbAj/spUu6WKnQJSyknYAPVFTi?=
- =?us-ascii?Q?FLSytKbfyKupCoSyRcCCEhMOWAKCBqRLK0cT69A5uxHuJmGIwFvSBgRNq8Eh?=
- =?us-ascii?Q?pEbPTgDO4FNL+OARGL9I/TMeUBJwrjG+ugW04HrUtv49FqwvnKcKwS7whojz?=
- =?us-ascii?Q?F9x9ErtnkoPz6hAUlUAeX6CQ8SUGixdUiCqHKFDM7D0t/v5pEhuS+YqRBXzw?=
- =?us-ascii?Q?x9hnu9yfoskIZigqEcyMJ3lBBEG8IqeEDg6VboYRWbOwm1GjDymcanjl6TKd?=
- =?us-ascii?Q?VZn94kiB2/HQ0Sih/+3QP/iEu7up96A7XP0pmpVsmXaV2LY+IACYp2eq8CBd?=
- =?us-ascii?Q?R1uDfo7/42Kv25jpk4Lana0hvrwm7rjpCOVg8IK+rY+yB7lQDC+MooI1UAKs?=
- =?us-ascii?Q?lNzjFRSlNNUF14Cm6EoZ8hHXh/fM6UZUMsy0/GYMJsjAWKzdxxMO/cREmbAC?=
- =?us-ascii?Q?Hcwg8sjWrRykgrR7/wPoMBFEKl37aL97sccvNnGeqVW/8IsCOQkxVDQT9Dtr?=
- =?us-ascii?Q?p57GHF0c8nuBIW86nWY4jRNxojx3ljwh4ofjCyCy3hlID8RyCe4m5lwk9P8L?=
- =?us-ascii?Q?rjOVJt5N6w9DjNnC/MoxoL20b31uiR0nHGpjtzZOiDdNC4EUb7u4h5yAqwhn?=
- =?us-ascii?Q?CW+AjVzIB5UfXvYxOVQnvABHmDo710noSl29BCKMrPfW3LCF9MT3tvNWn1/a?=
- =?us-ascii?Q?CW3wSqvpHRh/jBjcSvgYct7ebN9pJdhBPA66F2VyYYfcx4VTt1giF1iZ18bB?=
- =?us-ascii?Q?jManBNUKpKGxSDsxwGamGA6Os1H9F9xNPZ3An5QX3x78pm7UQH4wMz21ep13?=
- =?us-ascii?Q?o6BG9tN+n7r7J8ZqNxj837Km5pk/68FsKI+WbE9BYoDozWPXM5vit1mhf4oD?=
- =?us-ascii?Q?k43+JpFEjGUIXuoxk8d6qb0bgCFwj8OZmEZSzeV9Mz+hRw0gRamb0lioPAnQ?=
- =?us-ascii?Q?+LgStZkycIolOJi6SzhmN2MgXeHYKL4Eg8j91R3ACI6l07+l1mbhmWJAIhVC?=
- =?us-ascii?Q?HjorOTO51uH+7dMDDycEdNEoTk1cDsxP7iq2QFnq95khU3F/4blNLWbUPsQ0?=
- =?us-ascii?Q?gbSTLVZJ2utzsc3I/no9h6H/qet8/bMSXptOaV2Hn6WZcFP1emWjvTMmUuBP?=
- =?us-ascii?Q?/3ouiIalvVuYn9WNzSUDDFP92l1EaQ42e+M03ZuwGtc7oLfE3vPAl8z/DL+C?=
- =?us-ascii?Q?KjphKKoBS/HLGrqtindcJbgwP5sG4Ca4IayCdZOqf3kGFqHhc8wyZ4fKAMRX?=
- =?us-ascii?Q?mi/SgKdvqTE+2yrMZlt5Bs+Gk9Izy4HJDb0ooZXsop12lI2leBpHKKw+ZJsg?=
- =?us-ascii?Q?N5zRfZ004Ses535TH0yhCDewyat6mdhJIdwVGDmg/XcHB1Gs5GwcLWTTNqiz?=
- =?us-ascii?Q?TqEMgV2hVNtRo33x8TUG98LQrnn9QGfzc7gUoyqZcPed5vhj/zLA4A7IcD6s?=
- =?us-ascii?Q?MP6t3eeOyZjyWCtRXRZA9oIqdg+SczjTev9RYAiB?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f09c111-896d-4a2b-fe5c-08ddeacdb478
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 09:38:57.5435
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tuq06Ww2593CXv89RJ/1wDkKFUU3r4Rc5hl6gxt638fxQU5T/MKb0aeClpFfopx1BTQtaWHswTTmSUqOtcqnig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7316
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 6/9] arm64: dts: qcom: qcs6490-rb3gen2: Add WSA8830
+ speakers amplifier
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        <cros-qcom-dts-watchers@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <kernel@oss.qualcomm.com>,
+        Mohammad Rafi Shaik
+	<mohammad.rafi.shaik@oss.qualcomm.com>
+References: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
+ <20250821044914.710044-7-quic_pkumpatl@quicinc.com>
+ <arjgotmhd6b3ip2cvyvl74nanapqxleeeyxg63m6ike7osrjw7@gqp44che72gn>
+Content-Language: en-US
+From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+In-Reply-To: <arjgotmhd6b3ip2cvyvl74nanapqxleeeyxg63m6ike7osrjw7@gqp44che72gn>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzOCBTYWx0ZWRfX2qrw963AyNoO
+ 8jxdadQ8HNe613VN5WNbmsU9wkNz8OoEKiaueVxM+JkXtQmLotdyM14YSfkETmmcB9ohA9eo+p9
+ f4XvYvA+xRV8TW9WK9Bi45iI94KtU99EOZgBqOUtiE9VqMOQfxq2zZiz2morU5NIrGZljhOXR69
+ S1F4Lky4UFkY34Jh5k49nKI+rpax7Cx/0qc/wEx1tLo/+pKDdQ0zxhBimNfPnnRuxZhA9C+xQYs
+ +hAFLyn0X/gVW+4GsNWI1xOpJVnuj02N8mCtk3fzx6BSJyQrHKETadVS/EYTFwjbbGn89Y9GuF5
+ /uH9aD7W+flKAmm5c0n4s4D72GA1ZBsTcU/WziBMpH4bgwN16aakX76Fv2nXVkjqrRjJTGamB2l
+ DVXkuLOs
+X-Proofpoint-ORIG-GUID: zkxN1jI--fTQSintpulFt8zOVB8p1Zc6
+X-Proofpoint-GUID: zkxN1jI--fTQSintpulFt8zOVB8p1Zc6
+X-Authority-Analysis: v=2.4 cv=U7iSDfru c=1 sm=1 tr=0 ts=68b80cbd cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8
+ a=COk6AnOGAAAA:8 a=w648W8wVgDTgWg8gngwA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_05,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 clxscore=1015 impostorscore=0 suspectscore=0
+ malwarescore=0 priorityscore=1501 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300038
 
-On Wed, Sep 03, 2025 at 03:36:49PM +0800, Binbin Wu wrote:
+
+
+On 9/2/2025 8:21 PM, Bjorn Andersson wrote:
+> On Thu, Aug 21, 2025 at 10:19:11AM +0530, Prasad Kumpatla wrote:
+>> From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+>>
+>> Add nodes for WSA8830 speakers amplifier on qcs6490-rb3gen2 board.
+>>
+>> Enable lpass_wsa and lpass_va macros along with pinctrl settings
+>> for audio.
+>>
+>> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+>> Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+>> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+>> ---
+>>   .../boot/dts/qcom/qcs6490-audioreach.dtsi     |  6 ++++
+>>   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  | 35 +++++++++++++++++++
+>>   arch/arm64/boot/dts/qcom/sc7280.dtsi          |  8 +++++
+>>   3 files changed, 49 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
+>> index 6d3a9e171066..078936237e20 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
+>> @@ -58,6 +58,12 @@ &lpass_va_macro {
+>>   	clock-names = "mclk",
+>>   		      "macro",
+>>   		      "dcodec";
+>> +
+>> +	pinctrl-0 = <&lpass_dmic01_clk>, <&lpass_dmic01_data>,
+>> +		    <&lpass_dmic23_clk>, <&lpass_dmic23_data>;
 > 
+> Does all QCS6490 boards with AudioReach have these two (4?) DMICs? Is
+> this board-specific or generic?
+
+yes, all QCS6490 boards are with default 4-DMICs.
+
+
 > 
-> On 8/7/2025 5:44 PM, Yan Zhao wrote:
-> > TDX requires guests to accept S-EPT mappings created by the host KVM. Due
-> > to the current implementation of the TDX module, if a guest accepts a GFN
-> > at a lower level after KVM maps it at a higher level, the TDX module will
-> > emulate an EPT violation VMExit to KVM instead of returning a size mismatch
-> > error to the guest. If KVM fails to perform page splitting in the VMExit
-> > handler, the guest's accept operation will be triggered again upon
-> > re-entering the guest, causing a repeated EPT violation VMExit.
-> > 
-> > The TDX module thus enables the EPT violation VMExit to carry the guest's
-> > accept level when the VMExit is caused by the guest's accept operation.
-> > 
-> > Therefore, in TDX's EPT violation handler
-> > (1) Set the guest inhibit bit in the lpage info to prevent KVM MMU core
-> >      from mapping at a higher a level than the guest's accept level.
-> > 
-> > (2) Split any existing huge mapping at the fault GFN to avoid unsupported
-> >      splitting under the shared mmu_lock by TDX.
-> > 
-> > Use write mmu_lock to pretect (1) and (2) for now. If future KVM TDX can
-> > perform the actual splitting under shared mmu_lock with enhanced TDX
-> > modules, (1) is possible to be called under shared mmu_lock, and (2) would
-> > become unnecessary.
+>> +	pinctrl-names = "default";
+>> +
+>> +	qcom,dmic-sample-rate = <4800000>;
+>>   };
+>>   
+>>   &lpass_wsa_macro {
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> index 7509c27bd3f8..09e2cb9053a6 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> @@ -19,6 +19,7 @@
+>>   #include "pm7325.dtsi"
+>>   #include "pm8350c.dtsi"
+>>   #include "pmk8350.dtsi"
+>> +#include "qcs6490-audioreach.dtsi"
+>>   
+>>   /delete-node/ &ipa_fw_mem;
+>>   /delete-node/ &rmtfs_mem;
+>> @@ -765,6 +766,14 @@ redriver_usb_con_sbu: endpoint {
+>>   	};
+>>   };
+>>   
+>> +&lpass_va_macro {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&lpass_wsa_macro {
+>> +	status = "okay";
+>> +};
+>> +
+>>   &mdss {
+>>   	status = "okay";
+>>   };
+>> @@ -1039,6 +1048,32 @@ &sdhc_2 {
+>>   	status = "okay";
+>>   };
+>>   
+>> +&swr2 {
+>> +	status = "okay";
+>> +
+>> +	left_spkr: speaker@0,1 {
+>> +		compatible = "sdw10217020200";
+>> +		reg = <0 1>;
+>> +		reset-gpios = <&tlmm 158 GPIO_ACTIVE_LOW>;
+>> +		#sound-dai-cells = <0>;
+>> +		sound-name-prefix = "SpkrLeft";
+>> +		#thermal-sensor-cells = <0>;
+>> +		vdd-supply = <&vreg_l18b_1p8>;
+>> +		qcom,port-mapping = <1 2 3 7>;
+>> +	};
+>> +
+>> +	right_spkr: speaker@0,2 {
+>> +		compatible = "sdw10217020200";
+>> +		reg = <0 2>;
+>> +		reset-gpios = <&tlmm 158 GPIO_ACTIVE_LOW>;
+>> +		#sound-dai-cells = <0>;
+>> +		sound-name-prefix = "SpkrRight";
+>> +		#thermal-sensor-cells = <0>;
+>> +		vdd-supply = <&vreg_l18b_1p8>;
+>> +		qcom,port-mapping = <4 5 6 8>;
+>> +	};
+>> +};
+>> +
+>>   &tlmm {
+>>   	gpio-reserved-ranges = <32 2>, /* ADSP */
+>>   			       <48 4>; /* NFC */
+>> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>> index c51c38cf147a..d472de18296b 100644
+>> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>> @@ -3001,21 +3001,29 @@ lpass_tlmm: pinctrl@33c0000 {
+>>   			lpass_dmic01_clk: dmic01-clk-state {
+>>   				pins = "gpio6";
+>>   				function = "dmic1_clk";
+>> +				drive-strength = <8>;
+>> +				bias-disable;
 > 
-> The description for (1) and (2) reversed?
-No.
-After supporting splitting under shared mmu_lock,
-- setting guest inhibit bit can be performed under shared mmu_lock. (*)
-- splitting existing huge mapping under write mmu_lock here would be unnecessary.
+> Does these settings belong in the SoC description? Are they fixed for
+> all targets of sc7280, or are there any board-specific variations? Any
+> variations based on which audio solution the board implements?
 
-(*) is still required to convey the info of which max level the guest requires.
-    (as explained in "Open 1: How to pass guest's ACCEPT level info" in the
-    cover letter).
+yes, these configs are fixed for all the variants of sc7280. These are 
+on-SoC configs and don't change with variants.
 
+Thanks,
+Prasad
 
-> > As an optimization, this patch calls hugepage_test_guest_inhibit() without
-> > holding the mmu_lock to reduce the frequency of acquiring the write
-> > mmu_lock. The write mmu_lock is thus only acquired if the guest inhibit bit
-> > is not already set. This is safe because the guest inhibit bit is set in a
-> > one-way manner while the splitting under the write mmu_lock is performed
-> > before setting the guest inhibit bit.
-> > 
-> > Link: https://lore.kernel.org/all/a6ffe23fb97e64109f512fa43e9f6405236ed40a.camel@intel.com
-> > Suggested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> > Suggested-by: Sean Christopherson <seanjc@google.com>
-> > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> > ---
-> > RFC v2
-> > - Change tdx_get_accept_level() to tdx_check_accept_level().
-> > - Invoke kvm_split_cross_boundary_leafs() and hugepage_set_guest_inhibit()
-> >    to change KVM mapping level in a global way according to guest accept
-> >    level. (Rick, Sean).
-> > 
-> > RFC v1:
-> > - Introduce tdx_get_accept_level() to get guest accept level.
-> > - Use tdx->violation_request_level and tdx->violation_gfn* to pass guest
-> >    accept level to tdx_gmem_private_max_mapping_level() to detemine KVM
-> >    mapping level.
-> > ---
-> >   arch/x86/kvm/vmx/tdx.c      | 50 +++++++++++++++++++++++++++++++++++++
-> >   arch/x86/kvm/vmx/tdx_arch.h |  3 +++
-> >   2 files changed, 53 insertions(+)
-> > 
-> > diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> > index 035d81275be4..71115058e5e6 100644
-> > --- a/arch/x86/kvm/vmx/tdx.c
-> > +++ b/arch/x86/kvm/vmx/tdx.c
-> > @@ -2019,6 +2019,53 @@ static inline bool tdx_is_sept_violation_unexpected_pending(struct kvm_vcpu *vcp
-> >   	return !(eq & EPT_VIOLATION_PROT_MASK) && !(eq & EPT_VIOLATION_EXEC_FOR_RING3_LIN);
-> >   }
-> > +static inline int tdx_check_accept_level(struct kvm_vcpu *vcpu, gfn_t gfn)
-> > +{
-> > +	struct kvm_memory_slot *slot = gfn_to_memslot(vcpu->kvm, gfn);
-> > +	struct vcpu_tdx *tdx = to_tdx(vcpu);
-> > +	struct kvm *kvm = vcpu->kvm;
-> > +	u64 eeq_type, eeq_info;
-> > +	int level = -1;
-> > +
-> > +	if (!slot)
-> > +		return 0;
-> > +
-> > +	eeq_type = tdx->ext_exit_qualification & TDX_EXT_EXIT_QUAL_TYPE_MASK;
-> > +	if (eeq_type != TDX_EXT_EXIT_QUAL_TYPE_ACCEPT)
-> > +		return 0;
-> > +
-> > +	eeq_info = (tdx->ext_exit_qualification & TDX_EXT_EXIT_QUAL_INFO_MASK) >>
-> > +		   TDX_EXT_EXIT_QUAL_INFO_SHIFT;
-> > +
-> > +	level = (eeq_info & GENMASK(2, 0)) + 1;
-> > +
-> > +	if (level == PG_LEVEL_4K || level == PG_LEVEL_2M) {
-> > +		if (!hugepage_test_guest_inhibit(slot, gfn, level + 1)) {
-> > +			gfn_t base_gfn = gfn_round_for_level(gfn, level);
-> > +			struct kvm_gfn_range gfn_range = {
-> > +				.start = base_gfn,
-> > +				.end = base_gfn + KVM_PAGES_PER_HPAGE(level),
-> > +				.slot = slot,
-> > +				.may_block = true,
-> > +				.attr_filter = KVM_FILTER_PRIVATE,
-> > +			};
-> > +
-> > +			scoped_guard(write_lock, &kvm->mmu_lock) {
-> > +				int ret;
-> > +
-> > +				ret = kvm_split_cross_boundary_leafs(kvm, &gfn_range, false);
-> > +				if (ret)
-> > +					return ret;
 > 
-> kvm_split_cross_boundary_leafs() calls kvm_tdp_mmu_gfn_range_split_cross_boundary_leafs(), which could return flush as 1 if any of the huge page crossing boundary is split, return directly when ret is non-zero seems not right. Also, the TLB flush should also be taken care because in kvm_tdp_mmu_gfn_range_split_cross_boundary_leafs(), TLB flush is only done for negative return value.
-Oh, good catch!
-
-I forgot about the 2 facts. Will fix them.
-
-> > +
-> > +				hugepage_set_guest_inhibit(slot, gfn, level + 1);
-> > +				if (level == PG_LEVEL_4K)
-> > +					hugepage_set_guest_inhibit(slot, gfn, level + 2);
-> > +			}
-> > +		}
-> > +	}
-> > +	return 0;
-> > +}
-> > +
-> >   static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
-> >   {
-> >   	unsigned long exit_qual;
-> > @@ -2044,6 +2091,9 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
-> >   		 */
-> >   		exit_qual = EPT_VIOLATION_ACC_WRITE;
-> > +		if (tdx_check_accept_level(vcpu, gpa_to_gfn(gpa)))
-> > +			return RET_PF_RETRY;
-> > +
-> >   		/* Only private GPA triggers zero-step mitigation */
-> >   		local_retry = true;
-> >   	} else {
-> > diff --git a/arch/x86/kvm/vmx/tdx_arch.h b/arch/x86/kvm/vmx/tdx_arch.h
-> > index a30e880849e3..af006a73ee05 100644
-> > --- a/arch/x86/kvm/vmx/tdx_arch.h
-> > +++ b/arch/x86/kvm/vmx/tdx_arch.h
-> > @@ -82,7 +82,10 @@ struct tdx_cpuid_value {
-> >   #define TDX_TD_ATTR_PERFMON		BIT_ULL(63)
-> >   #define TDX_EXT_EXIT_QUAL_TYPE_MASK	GENMASK(3, 0)
-> > +#define TDX_EXT_EXIT_QUAL_TYPE_ACCEPT  1
-> >   #define TDX_EXT_EXIT_QUAL_TYPE_PENDING_EPT_VIOLATION  6
-> > +#define TDX_EXT_EXIT_QUAL_INFO_MASK	GENMASK(63, 32)
-> > +#define TDX_EXT_EXIT_QUAL_INFO_SHIFT	32
-> >   /*
-> >    * TD_PARAMS is provided as an input to TDH_MNG_INIT, the size of which is 1024B.
-> >    */
+> Regards,
+> Bjorn
 > 
+>>   			};
+>>   
+>>   			lpass_dmic01_data: dmic01-data-state {
+>>   				pins = "gpio7";
+>>   				function = "dmic1_data";
+>> +				drive-strength = <8>;
+>> +				bias-pull-down;
+>>   			};
+>>   
+>>   			lpass_dmic23_clk: dmic23-clk-state {
+>>   				pins = "gpio8";
+>>   				function = "dmic2_clk";
+>> +				drive-strength = <8>;
+>> +				bias-disable;
+>>   			};
+>>   
+>>   			lpass_dmic23_data: dmic23-data-state {
+>>   				pins = "gpio9";
+>>   				function = "dmic2_data";
+>> +				drive-strength = <8>;
+>> +				bias-pull-down;
+>>   			};
+>>   
+>>   			lpass_rx_swr_clk: rx-swr-clk-state {
+>> -- 
+>> 2.34.1
+>>
+
 
