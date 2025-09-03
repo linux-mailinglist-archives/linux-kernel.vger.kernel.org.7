@@ -1,110 +1,83 @@
-Return-Path: <linux-kernel+bounces-799239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97012B428DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:38:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40CA3B428E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F51116BA29
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:38:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F6EF6807F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4929D368095;
-	Wed,  3 Sep 2025 18:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D9F36809D;
+	Wed,  3 Sep 2025 18:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XXPwPwgR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hU18Pl8w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEFD1547C9;
-	Wed,  3 Sep 2025 18:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEC824CEEA;
+	Wed,  3 Sep 2025 18:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756924711; cv=none; b=WyocOiIFx2jstJeGNDP//t+6twIcElhBvIOC8jabDdllf/7+FeYctKwGhL16Evem2MhtW4IkBMFQwK3Xakwhw3TVKXysXDSmmVF/Bilwm/zf7sQZ5qL30XVAfwx+pnbGaGNFeF2TZa4Ts5hroRFgdx+xpgyzlqY/ZHstkTR0btM=
+	t=1756924851; cv=none; b=AxIaBJQLA6wM/46+iQisUTxsTQ66bM3i+z1kb2pHHP/BHcLLlYFdp4lvK8Iyoa2Bbg9WoCM/EVg04v2oF4zah64eRl5jQuCoGx7U+2KUQTQASLgwfN41bhz8xWw+lW0rxWpf3OWx7P9S3k/61sJE9xyPMpAC6WkZKg80GNe0hds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756924711; c=relaxed/simple;
-	bh=hT/13VpZ1L33ft/+Oneh5aL8bCF1WIaI1EMCHmI0p94=;
+	s=arc-20240116; t=1756924851; c=relaxed/simple;
+	bh=unVLEo78qaEbXXswkqZwTH79e5LWyUFWR6RCl804SoI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MV4XJ9QpCAB+lgayW9dHqLypGW26MOpf1TR5mugQQcspYLRU30bPG7bu2MSbu+fQ13n08ZTw6jcPaEN/xQ/vIDejWEOGaVQELMwmKBRiisri5zzD1pya3wTP1434udZ5j+fuBHSlRoUzwvPcWZXgbU3IKx11tteYhqf/sLU17n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XXPwPwgR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03892C4CEE7;
-	Wed,  3 Sep 2025 18:38:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jw91PjMXsMUhvl25CBJZm6fBTONYhicuiO5q7BN0+07UOudJ6tVN56+/AXmWMYQHypQTQFGJzZrAcLggNn+GpCJzyDO7L10QoGj6OioRWQEee3DWNeb0uKZLyhNStWpjd6jNKkeuznrG5NCnmU+f5x5VFywUee7ICk7rVtSeIbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hU18Pl8w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 403E9C4CEE7;
+	Wed,  3 Sep 2025 18:40:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756924711;
-	bh=hT/13VpZ1L33ft/+Oneh5aL8bCF1WIaI1EMCHmI0p94=;
+	s=k20201202; t=1756924850;
+	bh=unVLEo78qaEbXXswkqZwTH79e5LWyUFWR6RCl804SoI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XXPwPwgRPwoDsevudNAw0+zxbSTtBcZDgVe4ZrEVAaHKrSgQ9jy3dkRfD6Nm7wUfs
-	 yzgCdEGlTWrwzx1c6+ALCQ/bBaUAkRziE+p8+y9UJtIgS5xoZCnXHeDOZJ0E6bEM10
-	 J4VjH5xqsNx2d+GzAJGn5Yhh7vlWYGn7lMQLycYkrHxXAwffXrdiGHncPlmA1jFnnR
-	 yueCyjbtrtkvxDwHk7ziDWzchl+62DrvrDkThaD2LzqOILlygElR61utO2TNC5DFQl
-	 et+TdXoFK1nEABTETMEO57LU0OLPKerWlc2ymXTS2K3YGU/mE8Zk/XGjJJitDU1Gdn
-	 52fDBeGqKvBYw==
-Date: Wed, 3 Sep 2025 08:38:30 -1000
+	b=hU18Pl8wDQ23KbdDDn4dIlDFKPrCKQP/9ZxzNnZgpEELscJS3EDxCn9U+/9hV4VK7
+	 qkS+h3TehtSABSBKKrtHiskOMUI2spHWbMSwJdeA8QYMCGEAyAnvjAOZvpjY6MKhxu
+	 AMLDvliuKnhLuUGNT4MDTlVRaCq8WdMuDjBZdFQc9IXMxyRDhkpmDf3YPdVRgLRp7I
+	 kwTI6ibwb91zh/U1tn0yIR9avwzl/Dme7zXYDDPjkX/zJ3oHQcCsaGRmg6FOc7UB+Q
+	 WAstgo2TgrgdxkfwMy/sITXhR+zbz+4EDhc1NYCXEafbHv8NhWrCzoxRVOypiFaSd9
+	 +OxF5zsk4yvYA==
+Date: Wed, 3 Sep 2025 08:40:49 -1000
 From: Tejun Heo <tj@kernel.org>
-To: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Clark Williams <clrkwllms@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 1/3] workqueue: Provide a handshake for canceling BH
- workers
-Message-ID: <aLiLJh4n80iKWzRe@slm.duckdns.org>
-References: <20250901163811.963326-1-bigeasy@linutronix.de>
- <20250901163811.963326-2-bigeasy@linutronix.de>
- <CAJhGHyDrKzG2n77UXh4WBhufFK+crjoHbYUdQ40TGvDcDXugOQ@mail.gmail.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ashay Jaiswal <quic_ashayj@quicinc.com>,
+	Chen Ridong <chenridong@huawei.com>
+Subject: Re: [PATCH] cgroup/cpuset: Prevent NULL pointer access in
+ free_tmpmasks()
+Message-ID: <aLiLsQsM2oxk8Cko@slm.duckdns.org>
+References: <20250902181537.833102-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJhGHyDrKzG2n77UXh4WBhufFK+crjoHbYUdQ40TGvDcDXugOQ@mail.gmail.com>
+In-Reply-To: <20250902181537.833102-1-longman@redhat.com>
 
-On Wed, Sep 03, 2025 at 03:30:08PM +0800, Lai Jiangshan wrote:
-> On Tue, Sep 2, 2025 at 12:38 AM Sebastian Andrzej Siewior
-> <bigeasy@linutronix.de> wrote:
+On Tue, Sep 02, 2025 at 02:15:37PM -0400, Waiman Long wrote:
+> Commit 5806b3d05165 ("cpuset: decouple tmpmasks and cpumasks freeing in
+> cgroup") separates out the freeing of tmpmasks into a new free_tmpmask()
+> helper but removes the NULL pointer check in the process. Unfortunately a
+> NULL pointer can be passed to free_tmpmasks() in cpuset_handle_hotplug()
+> if cpuset v1 is active. This can cause segmentation fault and crash
+> the kernel.
 > 
-> > @@ -4222,17 +4251,18 @@ static bool __flush_work(struct work_struct *work, bool from_cancel)
-> >                     (data & WORK_OFFQ_BH)) {
-> >                         /*
-> >                          * On RT, prevent a live lock when %current preempted
-> > -                        * soft interrupt processing or prevents ksoftirqd from
-> > -                        * running by keeping flipping BH. If the BH work item
-> > -                        * runs on a different CPU then this has no effect other
-> > -                        * than doing the BH disable/enable dance for nothing.
-> > -                        * This is copied from
-> > -                        * kernel/softirq.c::tasklet_unlock_spin_wait().
-> > +                        * soft interrupt processing by blocking on lock which
-> > +                        * is owned by the thread invoking the callback.
-> >                          */
-> >                         while (!try_wait_for_completion(&barr.done)) {
-> >                                 if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
-> > -                                       local_bh_disable();
-> > -                                       local_bh_enable();
-> > +                                       struct worker_pool *pool;
-> > +
-> > +                                       mutex_lock(&wq_pool_mutex);
-> > +                                       pool = get_work_pool(work);
-> > +                                       if (pool)
-> > +                                               workqueue_callback_cancel_wait_running(pool);
-> > +                                       mutex_unlock(&wq_pool_mutex);
+> Fix that by adding the NULL pointer check to free_tmpmasks().
 > 
-> The goal is to avoid using a potentially sleeping function in
-> __flush_work() for BH work items on PREEMPT_RT, but
-> mutex_lock(&wq_pool_mutex) is not appropriate in this context.
-> 
-> To obtain the pool of a work item, the preferred approach is to use
-> rcu_read_lock() together with get_work_pool(work), as is done in
-> start_flush_work().
+> Fixes: 5806b3d05165 ("cpuset: decouple tmpmasks and cpumasks freeing in cgroup")
+> Reported-by: Ashay Jaiswal <quic_ashayj@quicinc.com>
+> Closes: https://lore.kernel.org/lkml/20250902-cpuset-free-on-condition-v1-1-f46ffab53eac@quicinc.com/
+> Signed-off-by: Waiman Long <longman@redhat.com>
 
-Yeah, Sebastian, can you please switch it to rcu_read_lock()?
+Applied to cgroup/for-6.18.
 
 Thanks.
 
