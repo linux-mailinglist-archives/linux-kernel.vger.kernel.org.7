@@ -1,216 +1,608 @@
-Return-Path: <linux-kernel+bounces-798786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C66B42332
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:11:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9116FB42323
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ED607BD03E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:01:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C19F5E65F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4487431197D;
-	Wed,  3 Sep 2025 14:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732842FE587;
+	Wed,  3 Sep 2025 14:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="I90r8IFb"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2080.outbound.protection.outlook.com [40.107.243.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JiMT3VUX"
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061B830E859
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908103; cv=fail; b=kBeYgEocTy5IOt2a3u0uZDogZOMGFLKn8ZQXbc19g5ni/eJasge2wJk86PYcAmftGNUpQgHeHYnWH6y5W97rbpKZLgovfKgJ2jdzRhc6xyQXFlqhLlJoGUgagTGhX7WbjrDGil+q8LMSOiTb3Q48llVLiL8Y27m/44X1kceFvic=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908103; c=relaxed/simple;
-	bh=axvEzM8uX0vNaXrSOUwaTAgX46Ab0El2cOxOpxi4jLM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=JI2mBmuWm3llR7yYYbBvVZT1CcLnuKUsE0bPDCWWYzbMsohFyJvzqXTWx1Nosm2syM9F67mVa71Jn8ZSBGhmEevYz5Pqcu5SwnpV79Hn3GcyT6DJIID6YGJ9Rw+ucjMQXSrWnfFoIrhvKE45g6ytwHZH1fxhWQilVsmH2HKtSXw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=I90r8IFb; arc=fail smtp.client-ip=40.107.243.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mBe7YIgpEVkqaHLDyGX4DSce+M06mql8MWvZz4bbgT7u2z03rxKfbVwhS4JlVVIxKmDj4PyVHuEhbMRgmhEUJ+zByGL85J+q+KPxU+NBr4Jr4EWwHKtysqHvtgnwDRxoFgGt2fnOLF7A4TQG4diQJG2QKwbkLyfSJP/zEst+UEPjuAOary8MKolezY4mfzx5qyAAfNrUljXpqh62K7M3kykv+puFrbNDiuh6nDKhgbedetFXDrVxp/ucvdzZ7ETWfGXegqNXy/23jWb5gOfe5VGJ1IH9sipVAAXgD7iX99LwCBaiP+EiliveZa70KWG5GvKQ33etQmcQMiH35vnTQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e3ZU34ScHjDppS3jFMXq6El24hP6FOyJh34xQFMxl5I=;
- b=QFG98kH+ABNhdE3wDwrRHWBm4iAhpGQ0+1LwuTbTpHpm6oAfrZ44ctmKK+h7WIsDwJg5mivLJ/PXsVEbBWw8luVZ9aJ0YdF4+50QhLi2EgL9EWBVvM85GnYB1CP1ZnCkk6pPs2caSjGjy1t6KswiFlH6kyRBz74YwxivnFRS+sz6gWnDUbxLxKJFilIMfkRmo5R/ODKuyT3qxznMR+1LUnjyf03S9U+bN3V1CezKb8tteMxQugR64n6XbLudxgJsp+f61MT67yUhzzmUc+YkbjaVhaTuxW0Sz6ZdqvUwpXbn9dmyPoEp6C5AcoP5JHX1JGTbO9x220QHdSjURK9BzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e3ZU34ScHjDppS3jFMXq6El24hP6FOyJh34xQFMxl5I=;
- b=I90r8IFbXv6YHIKetCZe1huwN4oUP2lwgWN4LRUj1i5a2TF/oKMFFqrA2gqHZCbqAB0U7gEIFx0DK9oZbFC0JHBE2UmtG5bvGMwIHk5fxIZzrRbusa6UXEtZOIeupFo/ZNQT+Q78T+Y49FageLSzz+GlPl4JFN9FL3/IvN1jriU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5969.namprd12.prod.outlook.com (2603:10b6:208:398::7)
- by DM4PR12MB5986.namprd12.prod.outlook.com (2603:10b6:8:69::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Wed, 3 Sep
- 2025 14:01:39 +0000
-Received: from BL1PR12MB5969.namprd12.prod.outlook.com
- ([fe80::1ac7:adec:34f4:86d1]) by BL1PR12MB5969.namprd12.prod.outlook.com
- ([fe80::1ac7:adec:34f4:86d1%5]) with mapi id 15.20.9094.016; Wed, 3 Sep 2025
- 14:01:39 +0000
-Message-ID: <8f4fda7e-38a4-440d-9464-3facb10742a2@amd.com>
-Date: Wed, 3 Sep 2025 16:01:35 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 11/11] drm: xlnx: zynqmp: Add support for XVUY2101010
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Michal Simek <michal.simek@amd.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Pekka Paalanen <ppaalanen@gmail.com>
-References: <20250425-xilinx-formats-v5-0-c74263231630@ideasonboard.com>
- <20250425-xilinx-formats-v5-11-c74263231630@ideasonboard.com>
-From: "Sagar, Vishal" <vishal.sagar@amd.com>
-Content-Language: en-US
-In-Reply-To: <20250425-xilinx-formats-v5-11-c74263231630@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DB8P191CA0028.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:130::38) To BL1PR12MB5969.namprd12.prod.outlook.com
- (2603:10b6:208:398::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00184286892
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756908557; cv=none; b=fsbgLaDIQJLBkuMB7bHrCelOn1T0rdVQ2RpBH7PCPP2s5iZB63RFzFoGIXwE7gUXKkEOMijk8sZ6vDHW5nemm9UwqJb8ULG3NUmVAVYQbpN2d9OOLKT2OlxX9iNvRpU0qPMLeSxw1pJ8Gp1lBeoyDCK4GE+R06ccc7hE4Z7lzzw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756908557; c=relaxed/simple;
+	bh=nkc/c31mZfPdhwHe1GveJFK3jZ7GozQHmAxHK+NlS/A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZYoIUQjyBbt+gZcgoC4r702Y9nzGCHfNMiAvehEyIdGPt5NhsD7fkYezW+MCyihwwQziv3uZHMEKdMa83a/f61sEhsTklEbuy6n+zCFN82mGBpXIHLt92WZ7xeMtQ/Tn7R++JLfONItFFm9uXmlSCgWjo1AQ1bPgH9C6hYlK5iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JiMT3VUX; arc=none smtp.client-ip=209.85.218.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-b02c719a117so541421966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 07:09:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756908551; x=1757513351; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ci3zFdc0OM48ntlKWbbId5lHIPc2tj57KRiLLEADz4=;
+        b=JiMT3VUXLTDqUyz20u6cgh0DJIoGYlPWSzzg+sbXkr4nOlIDZM/vMXNQ+/B1y2x7ID
+         2SiqgJw1W8O7VZfu8Ka54LDOnbcNYoSu1F9rIOoM2PQhyIZMbl3mh6FkMlo4tA1VIfgL
+         r/i/QXiG+jYgdyZ0oFmJVTc7GFE6q6cCTXlWg0PVYe+vkXGDSlX+8lRlQZwgZCL0SIr7
+         NFlTKE21xYuIuILVPvZmKWIpJIsXWQbRyLmWUUZXp+cm2mR9Onh0A/CXbXehVhsLhQIB
+         RmCPqqxYVwVqduocpEQITxip3ieYy+2IHikj+ZvHS98EXdbafD0XabPCBWdXJsfeEK0m
+         4scg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756908551; x=1757513351;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/ci3zFdc0OM48ntlKWbbId5lHIPc2tj57KRiLLEADz4=;
+        b=sJ5v8kZPd3msSgAuCtJYkDv2M8ogy6Rdgam17uUFoGqLiLhbtmsATekQsT4S41ulrX
+         esXwd8BviAmInXVPYwKjfZivAAMBSS6KfUpdxZX8Vd7MsvNLC1a8oWmxICU8ayTTvKx2
+         tRFSlMBJaB44UZDY8z9HnpodhJTM+yYQdftM6B49RhE1KBXpNR2N4w/7OBh8nm6UnUJK
+         pXNpeahO5F+4iRi8HvgwrUZ+cZ7X9+Dqurkz9nXK1S5lw++XscQHkvtF3ziEtgY6gVy0
+         I+5WU1CdNBqTl4kd3gBh32MajfEOujhQlwhFQyo4dHHrDPYcoxB3IK+Cx3uX4dBN4Wc0
+         yxbA==
+X-Gm-Message-State: AOJu0YwtQM3om2uNUMjFmZnUsN0dUmiytQ9pCdAI8zgVyDkgGJ+1ueXU
+	OhtZe2A3wIgDq3RxTmIigZ+oeR2wZbhEbBqcKVguTZO/xswo3AqbcgoCS7z2VQYZ
+X-Gm-Gg: ASbGncvRS/Lz8cVcIH6YQ7tTBRJq9CPPSias9d6LurSAPCf0pW0sU0LkMxNKFUr1VsJ
+	zQZy4ZBcatB4taRmT+iDQLVEDBUu9Ce3nj3kEpwaFJgQVFRzSMj9x+emcEB95mSafrW+yN+7LBY
+	KAG4g2NC9ewcA8EOlqRW4arFspXKblY9oA83H73t/FVFwZuTHJOp0EFUWsRJycacnNxfdiUcPcn
+	2+8HpSF1zIqji3qlhnsytdEMY/4Gerq+AE1vQN+8NI0IBN0vC5YVGsl23O3Q3SR5AycIPgHIhhT
+	lhDJXuBx+Dp/Wo2G7VcnyzD1sfMwuq//JVFzh2xUCE6rWef7THY5w3unFURJN1mIWCb7v9k29Fo
+	Pi9SWTLYc/ojtn4lTWKV2uniZfGtikveTb2J3Qr/CYUwAfpFZlQ==
+X-Google-Smtp-Source: AGHT+IH6glCPwSo8TF9wjtOuSGx4fH0NRLJhjMtTQrWNH9Tcy94tcSbjKNDsUHsk+2ipTRoqmq9U1Q==
+X-Received: by 2002:a17:907:1ca8:b0:aff:321:c31d with SMTP id a640c23a62f3a-b01d8a277c5mr1584363466b.7.1756908550620;
+        Wed, 03 Sep 2025 07:09:10 -0700 (PDT)
+Received: from Al-Qamar ([2a00:f29:348:d0f:ed4a:2775:c4b1:9fde])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b046d420e02sm130842366b.39.2025.09.03.07.09.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 07:09:10 -0700 (PDT)
+From: Fidal <palamparambilfidal089@gmail.com>
+To: kgdb-bugreport@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	dianders@chromium.org,
+	Fidal <palamparambilfidal089@gmail.com>,
+	Your Name <you@example.com>
+Subject: [PATCH] kdb: Fix race condition and improve keyboard handling
+Date: Wed,  3 Sep 2025 18:01:58 +0400
+Message-ID: <20250903140158.1345-1-palamparambilfidal089@gmail.com>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5969:EE_|DM4PR12MB5986:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34caa164-90b6-4531-e5f1-08ddeaf266fe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M1FMdkdKZkdnQk1BY09FdGd3VTJMN2tVL3VnUFRmUFBoeTMvdkQ1MnRtVFVO?=
- =?utf-8?B?S29yS3NDVWZzOXpuUkpUYW1nOEd4dXFPbVkxVjd3M1I0Y2IrbGlzVVQxNVc5?=
- =?utf-8?B?ZEFPaG0wV21vOExVQzhDU1ZzTk12K1o3aC9TZFRxMGp0eUYrMUdtMWI5TjJY?=
- =?utf-8?B?WEVxbFMyeEFZemF5UUF3eSs0aGo1a2lyMlNwbFp2UUpLK0tEcXZrQmEwb05E?=
- =?utf-8?B?cHJCU1VZRnNZcmtVMnphblh2MTlqNEhnZlVQdDJPeGh0YnRPc2l5S0tESzd6?=
- =?utf-8?B?TFBRUmVNOWpZNkVmR1lrUG5lT2tUUGIyUzkzZklLekZWdGt1VXhEZGRVNWRI?=
- =?utf-8?B?TDRoeEhCK016WjhkZVpKc1VJNWI1VTVweVhUNU5sRkZvMlhic1R6a09tckhD?=
- =?utf-8?B?M1owOVZVaEJyV1I4QkMyaXhWOHJUNTAwd054SkN0SEFwNWRzNkE4VStSNWx2?=
- =?utf-8?B?YUczclhiMDFEWEh2WjN1dUVlUCt3eVF6dVFGQlJvUmZyS0VtUTdjdTF3UHZp?=
- =?utf-8?B?aEFlbHBkcSt1OEtKS1F5a09DaHB3NGt6UFdOTnFud0RJQmVnRFlxQmhrdTBx?=
- =?utf-8?B?U1FGb3JlREhSUUszOEtrZE9oSmdEeGIzOEJuMDhrMnQxRW9KYUxvek5ucjMx?=
- =?utf-8?B?Wk41U1Z0anJ1b1N5Q0VvN2t2c1lPWmVjWWQzVVZKdjdxZnZRZ3k1NlJNeTFK?=
- =?utf-8?B?U3ZuMGFXdnZXU0RCeW9RTEp4c3BMZ2JpZVZxRUx4b0tWN3FIcWxNZmxxVjh6?=
- =?utf-8?B?NXNIb25La1ZwVVZta2ZpbnNaRFRXUUlLcS9wUzBxRFdreHhQOWdBWjcvejFG?=
- =?utf-8?B?NFJoREZPejRLWHBKYUcvWkJYdzkzaFdMUlRrL3VoN0t3YUg1KzdmWEdiWWo4?=
- =?utf-8?B?U3VQbUZYV081czAzS1d2M29uUjFKdGhrb2tLYW5RaWc4dWNGQzV2YUN1MkE5?=
- =?utf-8?B?d3NDbWVNTldsRENjQjBHZjRzMEMveTVwekxqdktCMGwxWjU5QzFBZjZQbXo2?=
- =?utf-8?B?dzB5RjlXSU5TSmF0Smt6NzQyWXRmZUxaMHFEU01sVEwyUFhWU3pQRmJnb1ly?=
- =?utf-8?B?SmYyamN6TnREQk5QcHNMWEYzRlhvUkhIR1dNeEE1NEM1ZGRwYk9kaG5TMDF2?=
- =?utf-8?B?dHB1S0NRWm9ZU3U3bDRkNGFqOHhXMTVhbEdnTFRrZkhndGVTZHJvd0I0SSty?=
- =?utf-8?B?MUNMeVJWZ3BRdWd6S3c0eVgreXpxb1RwNzJKTTU1UU80NXFBWFBZQjNDdGlz?=
- =?utf-8?B?QWJlQzZGQjJKMzVBd2N2Z3doS0ordWowc001VWFDSjNwUThVOHFIZGEyNGIv?=
- =?utf-8?B?VnFYUHVXSHo3amY3UERYZVAzMExTRjYraWVESGRUNWxYUC9FZE1KcC9WNHNu?=
- =?utf-8?B?SklTcjl0QzR0dDYzSEUzeTMyQ1o4dElOdllTbnc1YnUyNmozWFJycU1VMlJD?=
- =?utf-8?B?LzNLUkR4NjZlaTErZTZPNTBwSUlWdzNpSHBxYXF4M3hobmhQRU9XS0t3SzZ3?=
- =?utf-8?B?QzlYaytNakdsZVVpTmtoWVNvclRhbDVQUUFzL2ZzcXRXUTN0RlRRclZFL2JH?=
- =?utf-8?B?V2lBelNvalZVRldTYS91M3V5VHlQQ1B1TFFJQVhVOUdxOTB5UTJTcG1VUFVC?=
- =?utf-8?B?Y0o3UHlxd3VEb2JTTmdENHRvb2FLNDJmU2xSdXgyV3JXdkE3dCtsL0pnNFRM?=
- =?utf-8?B?YUVCKzhta2x0c2pzZFdtUXZ4SDRjSmdNUWk1cFRXYzFRcmhmQVlLNUsrZlha?=
- =?utf-8?B?ZWI0UVllb0QxOEU1QU9kcGhtSXcvUnVGZUNUUDdZM2p5MHM0RXkrRWZjNzFa?=
- =?utf-8?B?NDBQMER0Q201VXQ5WHVxVzlrc1RFbXJVeVdzN1NVaXozVGlsZjJqQ2V3YWNw?=
- =?utf-8?B?KzhqUm4weVJxTXBlY0xIUDJCeVdiWEl3YXlWbnNKcVFKb3FJK0lOTG93YUxh?=
- =?utf-8?Q?Pifb+YATUSw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5969.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?R09YTE5YUEozcGFVSnVtYUxna2ZHdGVaeGJsVXZJdTIxU1RQL0RWdDQ4bUs3?=
- =?utf-8?B?OGpabElNdUJkMEdLTFl3cEpTMS9oSlNrdnJBN0Foc2lyL3VFVlBuR2RudzBN?=
- =?utf-8?B?dUI0WkFQaGxNWU5JY3ZnaDllRDMybnFYajA2VGFpVXk0MlI4dkIwb3JVN0VT?=
- =?utf-8?B?OGpBaXRabktETEN5TGtDcEhlVzZnbEp2ZGFrOXQ0bStzM0oreFlEUUYrdStm?=
- =?utf-8?B?M3pjVnhUUStRcU1PcEhrZnIzcElOVFlwU0dld3ZnRndiU2xCMUNRcGQrazBK?=
- =?utf-8?B?Ymo2a0lpNG5pL1BvUGl3ZDgzSFlGWHY2Z1JpQkVNZ1p4RlJHREhzSE9ZQ1RL?=
- =?utf-8?B?aDVKSXpOd3p2ek9tUzJmQ3hxbEdrV2NPamRJRFhiY0JRbWdMMExKaXBKc2E0?=
- =?utf-8?B?YkRhQVhtZ1JzWHd1M1RBVmJaZXRkVk5HSlVsYmtvL3E3My92M01pT3ZlZk44?=
- =?utf-8?B?ZFp2cnFUbzBma2dyc002dGZlbzVBMkRQRHBiajNtQ2UvUUdKUFZYRzdyaStU?=
- =?utf-8?B?LzNVWmtuVDVOVmRObG1NdlJmbHRDUllWWVZqSTNxbW01dExhRUJyLzExTVVq?=
- =?utf-8?B?WVl0NXRKL0ZVTG1OSk9ERFJ1emJFMGdlU0hKcGFzNUxXaUNndkp6RmYzNkht?=
- =?utf-8?B?TmVIWWpiN2lJMmlZOGVXVzUrOVJ2WExWRDgwRnQ4TlhtRHBlNjFPTGFvVTg0?=
- =?utf-8?B?RFlPREVjRU1wdkZFOW5pL3ZRSm04aVk3K0YxOWlTeHhkblJORkt2eDZZSWVO?=
- =?utf-8?B?cllFU2k3L25paVFqbEVPNS9JejR1SUhqNi9qekd6eEpQd1QwTVFNNjRUMFV0?=
- =?utf-8?B?WnRYTGZyZmFTcHpPTXMwRUJ4M05iSDdJRXVncmJKQ1NCdEV0bGd1dTFRd09C?=
- =?utf-8?B?REh2aVJqNTZZMlplYVUzb2d2UVEwS01YSGpldmkxVktLLzhDczA0bXVSVHl1?=
- =?utf-8?B?VWtWTFQwakM4dXBPOGlISVR2VnBxeEpTcVdaa2tUYy9PWFNMRW82b1ZXVHhP?=
- =?utf-8?B?azhKRGxzaG9INUt2VTBwYXA3OG8xVGFLOTdkdkl0Z3FNM1ZJT055aTNMejBN?=
- =?utf-8?B?WTZpSUtGMGpvMzU4VG1xalR5VmRuTXRKN2E5cnJOZDBHRnh0MFUzdkFLc3NN?=
- =?utf-8?B?V2ZFWE4rZ2orVm9TTCtCTGV2THEySVRhZ3hkU0liVUgvbDFtR3dEVHVFY2lt?=
- =?utf-8?B?d2UyZU84VU9sMHF6Z2ZaZis4ZzFEVTlaeERtZXFrczBmY2hMYXFhbkVEUGZD?=
- =?utf-8?B?aDJpMkFHTSt1djRoNnN6M0hHK011bUlBMnFHT21kd3E3OEg3WFZxWkFYemly?=
- =?utf-8?B?R2t2TzYybi82WnFOTDBDdTk1VzRuV05MdHBicHNMenF1SkNlUGRydytDQm5j?=
- =?utf-8?B?OHNCaEVlTFYxWTJIa010TW1YQW90OGRMdTJCbDRqVWp4QnZOMjZlR3ZOSzQ2?=
- =?utf-8?B?c3ZNeDRlejFGRU5SeENYQzBoM0ZoRjVlcjgwSHlDZHRPODBvVTRWa093dlpC?=
- =?utf-8?B?RmxOaXVoQ1ZhbTQ5UXhjcjJ1WTQxd25Da0hnWFhCZmNWRHRRUXJkY2dsdXd1?=
- =?utf-8?B?enhhZmdqbUVNS0w4UGlaaG91ZG9PZHJDTWFYbmh5cXdyZnRjRnZTeHl0cjZS?=
- =?utf-8?B?RHAyc0l3Ty9EUE9tZEtIdG91NU1rWkZBWVZlZFVuclJRS3BNZi8zSFZDWlZV?=
- =?utf-8?B?d2Z2YlZsaEUyRmxnTHJFNWV6WS9jMktjNTNHYzVDUGozalVyWkhzZjgwaHhO?=
- =?utf-8?B?dnZlQ3BGdFdiMUJXNitKYU1FZFFKb2I2RGtBRnVVK1ZFdnp4YjNaYjllemZD?=
- =?utf-8?B?d0pFSklBWjVCUFFWUVRmMFB0cHZRRWhybDMxRTREVUsyS0p5UWxnNVR5NE16?=
- =?utf-8?B?QXZMaFBSVnM4UE92VWw2dHo3NkdLZHA5RkJSWmMxditDclQrYzJiOGd2K0Q0?=
- =?utf-8?B?MDlRa3dwYkZoUExUTHJZMWRiTnlNcHlWa1hHVXRpTHpMT0Q1NmVicjh6eXU4?=
- =?utf-8?B?Y29YZnVCU0xRclZ4b1JvQ0RHRWU0VzZDdUc1dnZxU29USTQ3OERVS1Y2UENy?=
- =?utf-8?B?bHJyMXp4ZENSNkxRT01ETmZ3R3Y2cy9XWm1YNVVqZkRsSWpoVWI5Rm5hb2RE?=
- =?utf-8?Q?MqGPU6n9QGqgVpds2fA+56A/U?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34caa164-90b6-4531-e5f1-08ddeaf266fe
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5969.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 14:01:39.0379
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: r9JuMfUyhwzbv4/4ol0hBMob/zUOYfUCs4TqIrsTaLlV5tjBhhSo0OgYTML5I1YP
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5986
+Content-Transfer-Encoding: 8bit
 
-Hi Tomi,
+- Fix race reading KBD_STATUS_REG and KBD_DATA_REG
+- Add bounds/null checks for keymap access
+- Handle Japanese keyboard layout quirks
+- Ensure keychar is always initialized
+- Improve handling of special scancodes
 
-On 4/25/2025 1:01 PM, Tomi Valkeinen wrote:
-> Add support for XVUY2101010 format.
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> ---
->   drivers/gpu/drm/xlnx/zynqmp_disp.c | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/xlnx/zynqmp_disp.c b/drivers/gpu/drm/xlnx/zynqmp_disp.c
-> index b7cc7a7581ad..f548f375750e 100644
-> --- a/drivers/gpu/drm/xlnx/zynqmp_disp.c
-> +++ b/drivers/gpu/drm/xlnx/zynqmp_disp.c
-> @@ -322,6 +322,11 @@ static const struct zynqmp_disp_format avbuf_vid_fmts[] = {
->   		.buf_fmt	= ZYNQMP_DISP_AV_BUF_FMT_NL_VID_YV24_10,
->   		.swap		= false,
->   		.sf		= scaling_factors_101010,
-> +	}, {
-> +		.drm_fmt	= DRM_FORMAT_XVUY2101010,
-> +		.buf_fmt	= ZYNQMP_DISP_AV_BUF_FMT_NL_VID_YUV444_10,
-> +		.swap		= false,
-> +		.sf		= scaling_factors_101010,
->   	},
->   };
->   
-> 
+Signed-off-by: Your Name <you@example.com>
+---
+ .../uapi/linux/netfilter/xt_CONNMARK.h        |  44 +++
+ .../include/uapi/linux/netfilter/xt_DSCP.h    |  29 ++
+ .../linux/netfilter/net/netfilter/xt_TCPMSS.c |   1 +
+ include/uapi/linux/netfilter/xt_tcpmss.c      | 272 ++++++++++++++++++
+ kernel/debug/kdb/kdb_keyboard.c               |  49 +++-
+ 5 files changed, 381 insertions(+), 14 deletions(-)
+ create mode 100644 include/uapi/linux/netfilter/include/uapi/linux/netfilter/xt_CONNMARK.h
+ create mode 100644 include/uapi/linux/netfilter/include/uapi/linux/netfilter/xt_DSCP.h
+ create mode 100644 include/uapi/linux/netfilter/net/netfilter/xt_TCPMSS.c
+ create mode 100644 include/uapi/linux/netfilter/xt_tcpmss.c
 
-Reviewed-by: Vishal Sagar <vishal.sagar@amd.com>
+diff --git a/include/uapi/linux/netfilter/include/uapi/linux/netfilter/xt_CONNMARK.h b/include/uapi/linux/netfilter/include/uapi/linux/netfilter/xt_CONNMARK.h
+new file mode 100644
+index 000000000000..0640d7521431
+--- /dev/null
++++ b/include/uapi/linux/netfilter/include/uapi/linux/netfilter/xt_CONNMARK.h
+@@ -0,0 +1,44 @@
++/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
++/* Copyright (C) 2002,2004 MARA Systems AB <https://www.marasystems.com>
++ * by Henrik Nordstrom <hno@marasystems.com>
++ */
++
++#ifndef _XT_CONNMARK_H
++#define _XT_CONNMARK_H
++
++#include <linux/types.h>
++
++enum {
++	XT_CONNMARK_SET = 0,
++	XT_CONNMARK_SAVE,
++	XT_CONNMARK_RESTORE
++};
++
++enum {
++	D_SHIFT_LEFT = 0,
++	D_SHIFT_RIGHT,
++};
++
++struct xt_connmark_tginfo1 {
++	__u32 ctmark;
++	__u32 ctmask;
++	__u32 nfmask;
++	__u8  mode;
++};
++
++struct xt_connmark_tginfo2 {
++	__u32 ctmark;
++	__u32 ctmask;
++	__u32 nfmask;
++	__u8  shift_dir;
++	__u8  shift_bits;
++	__u8  mode;
++};
++
++struct xt_connmark_mtinfo1 {
++	__u32 mark;
++	__u32 mask;
++	__u8  invert;
++};
++
++#endif /* _XT_CONNMARK_H */
+diff --git a/include/uapi/linux/netfilter/include/uapi/linux/netfilter/xt_DSCP.h b/include/uapi/linux/netfilter/include/uapi/linux/netfilter/xt_DSCP.h
+new file mode 100644
+index 000000000000..ee285201944e
+--- /dev/null
++++ b/include/uapi/linux/netfilter/include/uapi/linux/netfilter/xt_DSCP.h
+@@ -0,0 +1,29 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/* x_tables module for matching the IPv4/IPv6 DSCP field
++ *
++ * (C) 2002 Harald Welte <laforge@gnumonks.org>
++ * Licensed under GNU GPL v2.
++ * See RFC2474 for DSCP field.
++ */
++
++#ifndef _XT_DSCP_H
++#define _XT_DSCP_H
++
++#include <linux/types.h>
++
++#define XT_DSCP_MASK   0xfc  /* 11111100 */
++#define XT_DSCP_SHIFT  2
++#define XT_DSCP_MAX    0x3f  /* 00111111 */
++
++struct xt_dscp_info {
++	__u8 dscp;
++	__u8 invert;
++};
++
++struct xt_tos_match_info {
++	__u8 tos_mask;
++	__u8 tos_value;
++	__u8 invert;
++};
++
++#endif /* _XT_DSCP_H */
+diff --git a/include/uapi/linux/netfilter/net/netfilter/xt_TCPMSS.c b/include/uapi/linux/netfilter/net/netfilter/xt_TCPMSS.c
+new file mode 100644
+index 000000000000..853b0877b33d
+--- /dev/null
++++ b/include/uapi/linux/netfilter/net/netfilter/xt_TCPMSS.c
+@@ -0,0 +1 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
+diff --git a/include/uapi/linux/netfilter/xt_tcpmss.c b/include/uapi/linux/netfilter/xt_tcpmss.c
+new file mode 100644
+index 000000000000..bde5b8e945cd
+--- /dev/null
++++ b/include/uapi/linux/netfilter/xt_tcpmss.c
+@@ -0,0 +1,272 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/* Kernel module for matching and modifying TCP MSS values/packets.
++ *
++ * Copyright (C) 2000 Marc Boucher <marc@xxxxxxx>
++ * Portions (C) 2005 Harald Welte <laforge@xxxxxxxxxxxxx>
++ * Copyright (C) 2007 Patrick McHardy <kaber@xxxxxxxxx>
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/module.h>
++#include <linux/skbuff.h>
++#include <linux/ip.h>
++#include <linux/ipv6.h>
++#include <linux/tcp.h>
++#include <linux/netfilter/x_tables.h>
++#include <linux/netfilter/xt_tcpudp.h>
++#include <linux/netfilter/xt_tcpmss.h>
++#include <linux/netfilter_ipv4/ip_tables.h>
++#include <linux/netfilter_ipv6/ip6_tables.h>
++#include <net/dst.h>
++#include <net/flow.h>
++#include <net/route.h>
++#include <net/tcp.h>
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Marc Boucher <marc@xxxxxxx>");
++MODULE_DESCRIPTION("Xtables: TCP Maximum Segment Size (MSS) adjustment and match");
++MODULE_ALIAS("ipt_tcpmss");
++MODULE_ALIAS("ip6t_tcpmss");
++MODULE_ALIAS("ipt_TCPMSS");
++MODULE_ALIAS("ip6t_TCPMSS");
++MODULE_ALIAS("xt_TCPMSS");
++
++static inline unsigned int optlen(const u8 *opt, unsigned int offset)
++{
++    return opt[offset] <= TCPOPT_NOP || opt[offset + 1] == 0 ? 1 : opt[offset + 1];
++}
++
++static u32 tcpmss_reverse_mtu(struct net *net, const struct sk_buff *skb, unsigned int family)
++{
++    struct flowi fl = { 0 };
++    struct rtable *rt = NULL;
++    u32 mtu = ~0U;
++
++    if (family == PF_INET) {
++        fl.u.ip4.daddr = ip_hdr(skb)->saddr;
++    } else {
++        fl.u.ip6.daddr = ipv6_hdr(skb)->saddr;
++    }
++
++    nf_route(net, (struct dst_entry **)&rt, &fl, false, family);
++    if (rt) {
++        mtu = dst_mtu(&rt->dst);
++        dst_release(&rt->dst);
++    }
++    return mtu;
++}
++
++static int tcpmss_mangle_packet(struct sk_buff *skb, const struct xt_action_param *par,
++                                unsigned int in_mtu, unsigned int tcphoff, unsigned int minlen)
++{
++    const struct xt_tcpmss_info *info = par->targinfo;
++    struct tcphdr *tcph;
++    unsigned int len, tcp_hdrlen;
++    unsigned int i;
++    __be16 oldval;
++    u16 newmss;
++    u8 *opt;
++
++    if (par->fragoff != 0)
++        return 0;
++
++    if (skb_ensure_writable(skb, skb->len))
++        return -1;
++
++    len = skb->len - tcphoff;
++    if (len < sizeof(*tcph))
++        return -1;
++
++    tcph = (struct tcphdr *)(skb_network_header(skb) + tcphoff);
++    tcp_hdrlen = tcph->doff * 4;
++    if (len < tcp_hdrlen)
++        return -1;
++
++    newmss = info->mss == XT_TCPMSS_CLAMP_PMTU ?
++             min(in_mtu, dst_mtu(skb_dst(skb))) - minlen : info->mss;
++
++    for (i = sizeof(*tcph); i <= tcp_hdrlen - TCPOLEN_MSS; i += optlen((u8*)tcph, i)) {
++        if (tcph[i] == TCPOPT_MSS && tcph[i+1] == TCPOLEN_MSS) {
++            u16 oldmss = (tcph[i+2] << 8) | tcph[i+3];
++            if (oldmss <= newmss)
++                return 0;
++
++            tcph[i+2] = (newmss >> 8) & 0xff;
++            tcph[i+3] = newmss & 0xff;
++            inet_proto_csum_replace2(&tcph->check, skb, htons(oldmss), htons(newmss), false);
++            return 0;
++        }
++    }
++
++    if (len > tcp_hdrlen || tcp_hdrlen >= 15 * 4)
++        return 0;
++
++    if (skb_tailroom(skb) < TCPOLEN_MSS &&
++        pskb_expand_head(skb, 0, TCPOLEN_MSS - skb_tailroom(skb), GFP_ATOMIC))
++        return -1;
++
++    tcph = (struct tcphdr *)(skb_network_header(skb) + tcphoff);
++    skb_put(skb, TCPOLEN_MSS);
++
++    if (par->family == NFPROTO_IPV4)
++        newmss = min(newmss, (u16)536);
++    else
++        newmss = min(newmss, (u16)1220);
++
++    opt = (u8*)tcph + sizeof(*tcph);
++    memmove(opt + TCPOLEN_MSS, opt, len - sizeof(*tcph));
++    inet_proto_csum_replace2(&tcph->check, skb, htons(len), htons(len + TCPOLEN_MSS), true);
++    opt[0] = TCPOPT_MSS; opt[1] = TCPOLEN_MSS;
++    opt[2] = (newmss >> 8) & 0xff;
++    opt[3] = newmss & 0xff;
++    inet_proto_csum_replace4(&tcph->check, skb, 0, *(__be32*)opt, false);
++
++    oldval = ((__be16*)tcph)[6];
++    tcph->doff += TCPOLEN_MSS / 4;
++    inet_proto_csum_replace2(&tcph->check, skb, oldval, ((__be16*)tcph)[6], false);
++
++    return TCPOLEN_MSS;
++}
++
++static unsigned int tcpmss_tg4(struct sk_buff *skb, const struct xt_action_param *par)
++{
++    struct iphdr *iph = ip_hdr(skb);
++    int ret = tcpmss_mangle_packet(skb, par,
++                                   tcpmss_reverse_mtu(skb, PF_INET),
++                                   iph->ihl * 4,
++                                   sizeof(*iph) + sizeof(struct tcphdr));
++    if (ret < 0)
++        return NF_DROP;
++
++    if (ret > 0) {
++        __be16 newlen = htons(ntohs(iph->tot_len) + ret);
++        csum_replace2(&iph->check, iph->tot_len, newlen);
++        iph->tot_len = newlen;
++    }
++
++    return XT_CONTINUE;
++}
++
++#if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
++static unsigned int tcpmss_tg6(struct sk_buff *skb, const struct xt_action_param *par)
++{
++    struct ipv6hdr *ipv6h = ipv6_hdr(skb);
++    u8 nexthdr; __be16 oldlen, newlen; int tcphoff;
++    struct net *net = xt_net(par);
++    int ret;
++
++    ret = ipv6_skip_exthdr(skb, sizeof(*ipv6h), &nexthdr, &tcphoff);
++    if (ret < 0) return NF_DROP;
++
++    ret = tcpmss_mangle_packet(skb, par,
++                               tcpmss_reverse_mtu(net, skb, PF_INET6),
++                               tcphoff,
++                               sizeof(*ipv6h) + sizeof(struct tcphdr));
++    if (ret < 0) return NF_DROP;
++
++    if (ret > 0) {
++        oldlen = ipv6h->payload_len;
++        newlen = htons(ntohs(oldlen) + ret);
++        if (skb->ip_summed == CHECKSUM_COMPLETE)
++            skb->csum = csum_add(skb->csum, newlen - oldlen);
++        ipv6h->payload_len = newlen;
++    }
++
++    return XT_CONTINUE;
++}
++#endif
++
++static inline bool find_syn_match(const struct xt_entry_match *m)
++{
++    const struct xt_tcp *tcpinfo = (const struct xt_tcp *)m->data;
++    return strcmp(m->u.kernel.match->name, "tcp") == 0 &&
++           (tcpinfo->flg_cmp & TCPHDR_SYN) &&
++           !(tcpinfo->invflags & XT_TCP_INV_FLAGS);
++}
++
++static int tcpmss_tg4_check(const struct xt_tgchk_param *par)
++{
++    const struct xt_tcpmss_info *info = par->targinfo;
++    const struct xt_entry_match *ematch;
++
++    if (info->mss == XT_TCPMSS_CLAMP_PMTU &&
++        (par->hook_mask & ~((1<<NF_INET_FORWARD)|(1<<NF_INET_LOCAL_OUT)|(1<<NF_INET_POST_ROUTING))) != 0) {
++        pr_info_ratelimited("MSS clamping only supported in FORWARD, OUTPUT, and POSTROUTING hooks\n");
++        return -EINVAL;
++    }
++    if (par->nft_compat) return 0;
++    xt_ematch_foreach(ematch, par->entryinfo)
++        if (find_syn_match(ematch)) return 0;
++    pr_info_ratelimited("Only works on TCP SYN packets\n");
++    return -EINVAL;
++}
++
++#if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
++static int tcpmss_tg6_check(const struct xt_tgchk_param *par)
++{
++    const struct xt_tcpmss_info *info = par->targinfo;
++    const struct xt_entry_match *ematch;
++
++    if (info->mss == XT_TCPMSS_CLAMP_PMTU &&
++        (par->hook_mask & ~((1<<NF_INET_FORWARD)|(1<<NF_INET_LOCAL_OUT)|(1<<NF_INET_POST_ROUTING))) != 0) {
++        pr_info_ratelimited("MSS clamping only supported in FORWARD, OUTPUT, and POSTROUTING hooks\n");
++        return -EINVAL;
++    }
++    if (par->nft_compat) return 0;
++    xt_ematch_foreach(ematch, par->entryinfo)
++        if (find_syn_match(ematch)) return 0;
++    pr_info_ratelimited("Only works on TCP SYN packets\n");
++    return -EINVAL;
++}
++#endif
++
++static struct xt_target tcpmss_tg_reg[] __read_mostly = {
++    {
++        .family     = NFPROTO_IPV4,
++        .name       = "TCPMSS",
++        .checkentry = tcpmss_tg4_check,
++        .target     = tcpmss_tg4,
++        .targetsize = sizeof(struct xt_tcpmss_info),
++        .proto      = IPPROTO_TCP,
++        .me         = THIS_MODULE,
++    },
++#if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
++    {
++        .family     = NFPROTO_IPV6,
++        .name       = "TCPMSS",
++        .checkentry = tcpmss_tg6_check,
++        .target     = tcpmss_tg6,
++        .targetsize = sizeof(struct xt_tcpmss_info),
++        .proto      = IPPROTO_TCP,
++        .me         = THIS_MODULE,
++    },
++#endif
++};
++
++static int __init tcpmss_init(void)
++{
++    int ret;
++
++    ret = xt_register_targets(tcpmss_tg_reg, ARRAY_SIZE(tcpmss_tg_reg));
++    if (ret < 0) return ret;
++#if defined(CONFIG_NETFILTER_XT_MATCH_TCPMSS)
++    extern struct xt_match tcpmss_mt_reg[];
++    ret = xt_register_matches(tcpmss_mt_reg, ARRAY_SIZE(tcpmss_mt_reg));
++    if (ret < 0)
++        xt_unregister_targets(tcpmss_tg_reg, ARRAY_SIZE(tcpmss_tg_reg));
++#endif
++    return ret;
++}
++
++static void __exit tcpmss_exit(void)
++{
++#if defined(CONFIG_NETFILTER_XT_MATCH_TCPMSS)
++    extern struct xt_match tcpmss_mt_reg[];
++    xt_unregister_matches(tcpmss_mt_reg, ARRAY_SIZE(tcpmss_mt_reg));
++#endif
++    xt_unregister_targets(tcpmss_tg_reg, ARRAY_SIZE(tcpmss_tg_reg));
++}
++
++module_init(tcpmss_init);
++module_exit(tcpmss_exit);
+diff --git a/kernel/debug/kdb/kdb_keyboard.c b/kernel/debug/kdb/kdb_keyboard.c
+index 3a74604fdb8a..6e24e2dcea6b 100644
+--- a/kernel/debug/kdb/kdb_keyboard.c
++++ b/kernel/debug/kdb/kdb_keyboard.c
+@@ -6,6 +6,13 @@
+  *
+  * Copyright (c) 1999-2006 Silicon Graphics, Inc.  All Rights Reserved.
+  * Copyright (c) 2009 Wind River Systems, Inc.  All Rights Reserved.
++ *
++ * PATCH:
++ * - Fixed race condition on reading KBD_STATUS_REG and KBD_DATA_REG.
++ * - Added bounds and null checks to keymap access.
++ * - Ensure 'keychar' is always initialized before use.
++ * - Improved code readability and robustness.
++ * - Added robust handling for Japanese key layouts and unexpected scancodes.
+  */
+ 
+ #include <linux/kdb.h>
+@@ -16,13 +23,11 @@
+ #include "kdb_private.h"
+ 
+ /* Keyboard Controller Registers on normal PCs. */
+-
+ #define KBD_STATUS_REG		0x64	/* Status register (R) */
+ #define KBD_DATA_REG		0x60	/* Keyboard data register (R/W) */
+ 
+ /* Status Register Bits */
+-
+-#define KBD_STAT_OBF 		0x01	/* Keyboard output buffer full */
++#define KBD_STAT_OBF		0x01	/* Keyboard output buffer full */
+ #define KBD_STAT_MOUSE_OBF	0x20	/* Mouse output buffer full */
+ 
+ #define CTRL(c) ((c) - 64)
+@@ -41,23 +46,28 @@ int kdb_get_kbd_char(void)
+ 	static int shift_lock;	/* CAPS LOCK state (0-off, 1-on) */
+ 	static int shift_key;	/* Shift next keypress */
+ 	static int ctrl_key;
+-	u_short keychar;
++	u_short keychar = 0; /* PATCH: Initialize to a safe default */
++	u8 status, data;     /* PATCH: Cache register reads */
++
++	/* PATCH: Read both registers once to avoid a race condition */
++	status = inb(KBD_STATUS_REG);
++	data = inb(KBD_DATA_REG);
+ 
+ 	if (KDB_FLAG(NO_I8042) || KDB_FLAG(NO_VT_CONSOLE) ||
+-	    (inb(KBD_STATUS_REG) == 0xff && inb(KBD_DATA_REG) == 0xff)) {
++	    (status == 0xff && data == 0xff)) {
+ 		kbd_exists = 0;
+ 		return -1;
+ 	}
+ 	kbd_exists = 1;
+ 
+-	if ((inb(KBD_STATUS_REG) & KBD_STAT_OBF) == 0)
++	if ((status & KBD_STAT_OBF) == 0)
+ 		return -1;
+ 
+ 	/*
+-	 * Fetch the scancode
++	 * Fetch the scancode from our cached data
+ 	 */
+-	scancode = inb(KBD_DATA_REG);
+-	scanstatus = inb(KBD_STATUS_REG);
++	scancode = data;
++	scanstatus = inb(KBD_STATUS_REG); /* Read status again for mouse check */
+ 
+ 	/*
+ 	 * Ignore mouse events.
+@@ -127,7 +137,7 @@ int kdb_get_kbd_char(void)
+ 
+ 	/* Translate special keys to equivalent CTRL control characters */
+ 	switch (scancode) {
+-	case 0xF: /* Tab */
++	case 0x0F: /* Tab */
+ 		return CTRL('I');
+ 	case 0x53: /* Del */
+ 		return CTRL('D');
+@@ -158,6 +168,17 @@ int kdb_get_kbd_char(void)
+ 	else if (scancode == 0x7d)
+ 		scancode = 0x7c;
+ 
++	/* PATCH: Critical safety checks before accessing key maps */
++	if (scancode >= NR_KEYS) {
++		kdb_printf("Scancode %d out of bounds\n", scancode);
++		return -1;
++	}
++
++	if (!key_maps[0]) {
++		kdb_printf("Keymap not initialized\n");
++		return -1;
++	}
++
+ 	if (!shift_lock && !shift_key && !ctrl_key) {
+ 		keychar = plain_map[scancode];
+ 	} else if ((shift_lock || shift_key) && key_maps[1]) {
+@@ -165,7 +186,7 @@ int kdb_get_kbd_char(void)
+ 	} else if (ctrl_key && key_maps[4]) {
+ 		keychar = key_maps[4][scancode];
+ 	} else {
+-		keychar = 0x0020;
++		keychar = 0x0020; /* Space */
+ 		kdb_printf("Unknown state/scancode (%d)\n", scancode);
+ 	}
+ 	keychar &= 0x0fff;
+@@ -189,11 +210,11 @@ int kdb_get_kbd_char(void)
+ 
+ 		if (isprint(keychar))
+ 			break;		/* printable characters */
+-		fallthrough;
++		/* fall through */
+ 	case KT_SPEC:
+ 		if (keychar == K_ENTER)
+ 			break;
+-		fallthrough;
++		/* fall through */
+ 	default:
+ 		return -1;	/* ignore unprintables */
+ 	}
+@@ -276,4 +297,4 @@ void kdb_kbd_cleanup_state(void)
+ 
+ 		return;
+ 	}
+-}
++}
+\ No newline at end of file
+-- 
+2.50.1.windows.1
 
-Regards
-Vishal Sagar
 
