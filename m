@@ -1,96 +1,84 @@
-Return-Path: <linux-kernel+bounces-799490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DAAAB42C81
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:05:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15BB6B42C83
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AD6D7AFCF1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:04:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F86B485FB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7B32EBDF9;
-	Wed,  3 Sep 2025 22:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1BC2ECD14;
+	Wed,  3 Sep 2025 22:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thejpster.org.uk header.i=@thejpster.org.uk header.b="nVCbtHOf"
-Received: from outbound.qs.icloud.com (p-east3-cluster2-host5-snip4-6.eps.apple.com [57.103.87.177])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="EKtv0c+v"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3487F2ECEA6
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 22:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.87.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000842EC081;
+	Wed,  3 Sep 2025 22:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756937134; cv=none; b=FIvOSx7zT+9hY9WTyM7wXcD31tRjMFMile42QWkOZxMznL5ZbA5NrhCGpxGspeOnxBk5eQEzhG3YBcTPjLYDfx2FuXb82LXIjrisk5yZA7QTpDdb7ungw2aKYa0gyG1LdmDQ2566sMCyWtFUVgTBY7kRqDlAA51998EOyJvmxFY=
+	t=1756937145; cv=none; b=jifDaF2Z+faQ3PaCFk+2yptjQ99e9IVtDrZPYs+qAvyN8OJkuX3vs6GE6xw19o1fpERTT9Gw0xDk3lSNQZ/CXDlLzO3kxBM4JSziF65Uhl+0AFwyeqlFYesySobEZ2uSZgXh669aBOz01V91ex3aR9rbI3jJL/wlMWnYwl8RSL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756937134; c=relaxed/simple;
-	bh=2E/5JEVhFZR3/+WLzz2blRAhy7RX6tr6Ohn3x6/Kmfk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=UcAG0ZbOcFAi3R3aeLL1thEDjz/BVMotTTE2CDh+qXjhK4b7rIxnGugxj00Nj6kxq/sd/MkqqhzQYDOGD6+KZM2xUzyOgXR3tXRuFtp/pNjuAhIJf+8R7haNFbZyeLurLFJyshu35DBZnxUUEwk2FOAnZWb1J92rUMEQce9HcNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thejpster.org.uk; spf=pass smtp.mailfrom=thejpster.org.uk; dkim=pass (2048-bit key) header.d=thejpster.org.uk header.i=@thejpster.org.uk header.b=nVCbtHOf; arc=none smtp.client-ip=57.103.87.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thejpster.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thejpster.org.uk
-Received: from outbound.qs.icloud.com (unknown [127.0.0.2])
-	by p00-icloudmta-asmtp-us-east-2d-60-percent-0 (Postfix) with ESMTPS id 6E0511800885;
-	Wed,  3 Sep 2025 22:05:28 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thejpster.org.uk; s=sig1; bh=BQbEpJDpXkVpL/d8jHcTCe0lFwB6CEZ2QFaQu3KuxQc=; h=Message-ID:Date:MIME-Version:To:Subject:From:Content-Type:x-icloud-hme; b=nVCbtHOfsesf3FuegByKBQckpIvTn6DpZfU45WGS2l2/9XjNNCUp5IeFfyp/84OZC/SOleVoJNBJX1fc9uY8TzFzj2k55nS4wTa3uog0hfTdSZigTU+4q56kZCHQsF2IYDbAVL7ax8roUpmR9EqfWff90airLGSDxcy8j1vVePF7xGvZeze0ZizdfSBODUtqpSRRcuY9EKfjjlppwqRbmzgSqOicXXYlWcyfOjEGAsEg2Df1n3/6WAZWu8wU5ZnRmxbrpPx0uuXLlcuUJUjx0OzZpYvKF5CAmQ5NyC0VOoVxar9aTxuOSuRidXHUC1U4kTeqPJrP4O4J/SsfDR1TxA==
-mail-alias-created-date: 1648742848683
-Received: from [192.168.50.27] (qs-asmtp-me-k8s.p00.prod.me.com [17.57.155.37])
-	by p00-icloudmta-asmtp-us-east-2d-60-percent-0 (Postfix) with ESMTPSA id 262A61800886;
-	Wed,  3 Sep 2025 22:05:27 +0000 (UTC)
-Message-ID: <89b55629-da5e-41a0-967d-12f6e0a90854@thejpster.org.uk>
-Date: Wed, 3 Sep 2025 23:05:25 +0100
+	s=arc-20240116; t=1756937145; c=relaxed/simple;
+	bh=HNBIccmfGFoDop+biLBwd00oaJFfIZd9vYmyh7u3MUM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DYlEceyNZ51gotSMU+RB8AIruLMvNI67XUU5lnUfeUQ5NR7NGWlJryOABpEWXKo2WUjKY7cQ3CNtY5E33jjc+U3Zecd0eq+EPg0h6Vh0PDBBnyuqmVYvP0paAMdoZJ1xNPsr5KvcUGjSHz6PtIOFY8RWTNII7h8kWHeFN1XiQLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=EKtv0c+v; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E9F2940AE3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1756937143; bh=njql8TB2ZvWulJYRGHAS4pFfMer8bhPtqvBWQVe+nQM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=EKtv0c+vlmf+gfEthyCgcKkvSCLHKe3Zf0970KPcSEY3uHurDiDrKv6FgVz3KKnSE
+	 iBlU7OrEGkU0d+6Z8+SAgSIROL/SDj5LyUjIto56imxR10Bo1a88iixo+dU5afdA0v
+	 dsA0/de9Rs+T7X11H58UgJd9ibzQKA38wAPDKmfPeCsw+kO0518EFVBcr4iWUdo/dw
+	 HjNgIZrsW/nT0iKm2hy7+WA9u6m4NilWCni0935xjGoQ2Fe5zghiOkMor/qjn73/tr
+	 viybjll5kp6V+VQSl/uFE+PrKrDHC/sx9Tt9BsPZBj0zRVOeC22SryK/Ygg/tQ7ERb
+	 UrKWCpIZEFkuw==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id E9F2940AE3;
+	Wed,  3 Sep 2025 22:05:42 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Baruch Siach
+ <baruch@tkos.co.il>
+Subject: Re: [PATCH] doc: filesystems: proc: remove stale information from
+ intro
+In-Reply-To: <cb4987a16ed96ee86841aec921d914bd44249d0b.1756294647.git.baruch@tkos.co.il>
+References: <cb4987a16ed96ee86841aec921d914bd44249d0b.1756294647.git.baruch@tkos.co.il>
+Date: Wed, 03 Sep 2025 16:05:42 -0600
+Message-ID: <87bjnrp4y1.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: kernel@mkarcher.dialup.fu-berlin.de
-Cc: andreas@gaisler.com, anthony.yznaga@oracle.com,
- glaubitz@physik.fu-berlin.de, linux-kernel@vger.kernel.org,
- sparclinux@vger.kernel.org
-References: <20250826160312.2070-2-kernel@mkarcher.dialup.fu-berlin.de>
-Subject: Re: [PATCH 1/4] sparc: fix accurate exception reporting in
- copy_{from_to}_user for UltraSPARC
-Content-Language: en-US
-From: Jonathan Pallant <jp@thejpster.org.uk>
-In-Reply-To: <20250826160312.2070-2-kernel@mkarcher.dialup.fu-berlin.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAzMDIyMiBTYWx0ZWRfX0HPLCNf9gtVS
- YsPzKWJ7aMD8dFgW4sQ7tw8WuN/h2PkLsxYLo6MJR4kxxF7ONzvU1AUOb8iNp3LfMrteHhzlOMg
- YC0+EHpykkQ2SW4OBW95Qs7as61Ba42O9LVETcI1Cr8hGdqEVUOM2xRKKWoUCTcAFs3jBvj9SN5
- JPl+sacXMApDKTv/o32mwkrpja9P4HmlriL/2nJfEpSWQ/6GIny6vcLLG3MmPsCpYlPQZlFv+lw
- vIoQz/p53xAEieEuSe933l2r5/Hwv8vqsG43TV26GoyqeOuE5duJt6WhHveOQAJYntsOENsnA=
-X-Proofpoint-ORIG-GUID: Ko1z_yd-ktEjKv28ecF7feEI2eFl_t1G
-X-Proofpoint-GUID: Ko1z_yd-ktEjKv28ecF7feEI2eFl_t1G
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_10,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0
- suspectscore=0 adultscore=0 mlxlogscore=534 spamscore=0 malwarescore=0
- bulkscore=0 mlxscore=0 clxscore=1030 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.22.0-2506270000 definitions=main-2509030222
-X-JNJ: AAAAAAAB6wmTerPm9zUOnI5L584fG8O/swGXNVBk/G+9hht+8uNuAS1dwWvBaWbjD2SNXtfjQNDElZrOze1cI2nYC8ic6ebcJOSDygjOjAbsMVsmGPOccGbcODFJsFRzIACQn8AdWo2EO78hIfgmat2KvDOH+1KBy4oM7xXCS/QGMBkwW4TBPNINz0BaDuHAtM/iM+UKg96qJR+pJzOJHAXhNqoKO0RioKMMJ2pSR4dWPrGPgIpBHQiweaj+hq0O+8dGBufojs9ad+4yYyKMAGz0p4Aur8qZQSQI6nVF5J98pF7Sn3RzCCehCeDxnF+O/wn1n55BHf6Y91xyq2nQ81tjnUFWL1+J58xBm/0fJyqHajzGztaQiJUKtjYDGiKtdwPJdFfbKg/Osv0D7Wu9o7VCbp9nP/KUCtWsatOX1HQEf5CpfMWcxwchxMY4PV5DunqVsJZ9x1yZ/xerE8CmGWITlQF/rM8QcozTA+V1cE+THlTIo3awSeanJiCD7mUaj1JKMB4m8bISLJdQxIvUS4FNoAkmq7JWVzWpm+Lpy9TLlPmzdUJqB04GSo4pztIl/rWKBq/pc7Y6JnPQA9whCtS1O1pliaEtnU4DWMcrDq9jDV2SJfzwsitdjmMHPpFd+ZH605wfCDHOzOdvCDY+Qx4quYb2Fsvxp21A+SMRE2QkjvJHas/aoXI9C22PdQFxLKOuN49IMLBSyGiq/XI=
+Content-Type: text/plain
 
- > Fixes: cb736fdbb208 ("sparc64: Convert U1copy_{from,to}_user to 
-accurate exception reporting.")
- > Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+Baruch Siach <baruch@tkos.co.il> writes:
 
-Hi all,
+> Most of the information in the first paragraph of the
+> Introduction/Credits section is outdated.
+>
+> Documentation update suggestions should go to documentation maintainers
+> listed in MAINTAINERS. Remove misleading contact information.
+>
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+> ---
+>  Documentation/filesystems/proc.rst | 21 ---------------------
+>  1 file changed, 21 deletions(-)
 
-I have a Sun Netra t1 (UltraSPARC-IIi at 440 MHz) which crashed a
-lot running Linux 6.1.0-9-sparc64 from Debian sid. It couldn't even
-complete an `apt-get upgrade` without locking up.
+I think this poor document needs a lot more love than this ... but it's
+a start, I guess, so I've applied it, thanks.
 
-With glaubitz's assistance, I've now installed kernel
-6.12.3-sparc64 with this patch and the machine is working much
-better. I was able to install openssh-server and run a bunch of
-tools that simply didn't work on the previous kernel.
-
-Tested-by: Jonathan 'theJPster' Pallant <kernel@thejpster.org.uk> # on 
-Sun Netra t1 (UltraSPARC-IIi)
-
+jon
 
