@@ -1,327 +1,543 @@
-Return-Path: <linux-kernel+bounces-798296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A8BB41BF6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:34:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47221B41BF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA59684BA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:34:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCCAD1895F0C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA232ED17B;
-	Wed,  3 Sep 2025 10:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C372EA483;
+	Wed,  3 Sep 2025 10:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SoYaIonv"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2060.outbound.protection.outlook.com [40.107.243.60])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ToJSGGmV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D361E5206;
-	Wed,  3 Sep 2025 10:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756895686; cv=fail; b=X4t88Zt3trTGVrs0rCkQkecE8F/ps47/jzU8B5034mBUr9C4FIay1deTFFIgEQV9itm5+T3Wmry74+h71vE9ogZ0+cBNEOB4RqCa8hwWaFlF9NR18tUFdDj/F7jH4G2ZruNyTurE5PzKlgO+Qy5dKSmbLo8q1m1/l/iAkKReAbo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756895686; c=relaxed/simple;
-	bh=gQqwxMYfldMxFSFSnyLtpJIeM1Gk30STDDPr0D/iIMM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=QfREi197GuaW88UZDi7xob/2gcJvxJsh6iEK2L+MKK6t1An/AqUoghgnL72i+hQdamqsd+GeP2qvR3hw/ux+WRQLrNS/I/MvVrwufJa7NFiEw6xS26taaoKauncHfMwzhys5h4FDVct8Y8dqBbw7UeOCRoPT004RFtsO6nkaDE4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SoYaIonv; arc=fail smtp.client-ip=40.107.243.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UeXcwojO3cSJCfsLasda0wOZepthdrAS1GiEaKPBu29Ysr2849f6SyMMwi7eGRM6eTcgOETAiKj008LnLfs0vE/3rDw+5BNZyvt5bPp+kcoHz/j5+CMG1RhbyZXJX0trPKbA9zmRlbqGPEAY2PpSCIQYxQZC34qrNTm3uYA3LvD51qiLi4Y5yupucvvHAEebvD83FEV0NbE/GkWOOU81foK/e/rDSbDdjLYyI7GonWZMBS5iKMsV5qI1bMbUHA5QTRrSK4VhRU+z6k4hUJJg3plSWKWs+CmCzk/baHzjijwewsdeTlf8Exxm9rTG7yLXb112gBqvQMCjPVQeAexqYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NvD0x0jTh5FUeeTOWPSm9N9JzfzwLTUbmEYd/G29GXw=;
- b=tWrXZbsbv6rtK5T6fCLTtCcezVxIesKT1i5hPTv8D+xvEZIqdWKo4IacLtY+d8UQK3tH5XjAbvCDxETEsjw+yEMFoPzq7VNyuFV+rwKqfvvAS1PK77h3UZu/vrVLyd+59ZEMQAbAFr0wg6x0JAE/df4X31Q+SkPKyJFXimRnPhx+ONbriWE0jGAsXpsQwFzBxcFKSIlA1T2mwgo36hzPryCe4g6sj1SHXkNODGccN+YOlPBmD4FHriewy85lXVhfrdFVhdF0klUX42LdZM040RNkqy289FWihe8gbFs3ozCt6icKhsR6n7ygfq3SvBXLHwAn+eP9JYM2Dba+D0z+3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NvD0x0jTh5FUeeTOWPSm9N9JzfzwLTUbmEYd/G29GXw=;
- b=SoYaIonvsskg+XSbUyRZzEC0+ljcKzSyR5OHJM9TXagDTqH1h3sv3uF/pIwdsf4gDlIHwCOngaoZiAsp4FunKJVLrNJZVPGu5mkoErIcYzb1Ykx93H/Zd9eKONxMrlvwuARa3mjtk0EbMFQDriS0a5m+Pnv6NoK0nqK8HlgxEHU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
- by PH7PR12MB9076.namprd12.prod.outlook.com (2603:10b6:510:2f6::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Wed, 3 Sep
- 2025 10:34:42 +0000
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7%4]) with mapi id 15.20.9073.026; Wed, 3 Sep 2025
- 10:34:41 +0000
-Message-ID: <ffa33e53-3d65-49cc-8af6-bb3152dd1006@amd.com>
-Date: Wed, 3 Sep 2025 18:34:32 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/7] Documentation: add documentation of AMD isp 4
- driver
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
- sakari.ailus@linux.intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- sultan@kerneltoast.com, pratap.nirujogi@amd.com, benjamin.chan@amd.com,
- king.li@amd.com, gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
- Dominic.Antony@amd.com, mario.limonciello@amd.com, richard.gong@amd.com,
- anson.tsao@amd.com, Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-References: <20250828100811.95722-1-Bin.Du@amd.com>
- <20250828100811.95722-7-Bin.Du@amd.com>
- <20250903100424.GB13448@pendragon.ideasonboard.com>
-Content-Language: en-US
-From: "Du, Bin" <bin.du@amd.com>
-In-Reply-To: <20250903100424.GB13448@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SGXP274CA0019.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::31)
- To PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725D6279DA3;
+	Wed,  3 Sep 2025 10:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756895739; cv=none; b=EZKCBPk2gr1gekDXf3rL1qeJv2R2ItTAWjFVvEHCQYbjsawGS+puOVDJ2OvveEVH4vQlgIFC5ZZe7KHCTZt+HeA8XtyBDvRHRoOF4er90SxOkrvjDBAm4AFRu20dlV+BDlkq4YssEq7c1bcAfgYDDRtqRaeWkngRnlXkFBcAN48=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756895739; c=relaxed/simple;
+	bh=gL6AvQPC9+9jBlpbHtpalgqXvtE8JR2+VkB9KwbH6XI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kz8DiNc/moTRFxFNBXIbWhMNC6oBVQJmFX+ww5NJiSuKEOOTkK2b0A/Xlu1BCFW0v8Sftmh6OuydSbXT3syIrc3t1A4cbGJUmbKxFLj7MoaFFJTHjXkGnD27IEmP7b73yycKQ3xeOJSR7Kgkf4XqaXQsckYxGI2XlJO/1QvYTh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ToJSGGmV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40701C4CEF0;
+	Wed,  3 Sep 2025 10:35:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756895738;
+	bh=gL6AvQPC9+9jBlpbHtpalgqXvtE8JR2+VkB9KwbH6XI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ToJSGGmV3QT40JN6LJ9Xrl3bPy8NdsQXbb5bcaZ32xMSoS6DL2Z1atBBNdoFoojSN
+	 +Ih9cbV+VukwWsJBVG0UrVeXjjpPnsT/HTkmbzSGrCTlIJqS8bgJzxl/FRBwPk1bZi
+	 nBUXJ251jFRHA+KBmwbPekEpsy5+D42MII3Xu5pZR1/DGVGc11EbklNcaxbHC3v6yw
+	 aaM+4Kzv6mKPY5Eer9NLfSzJnDXRGs8p/5u/IQZ52RF3HnpFKwiNBmSsNkXrmB6ooc
+	 oCUhgmsmfvyjX0Lhtf9ijtzjwT3uk73arNbk9Rr7gRUYAJyCjEIkNqYHrj60LyVvb6
+	 PCtHeoUFkK+CA==
+Date: Wed, 3 Sep 2025 11:35:33 +0100
+From: Lee Jones <lee@kernel.org>
+To: Binbin Zhou <zhoubb.aaron@gmail.com>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Corey Minyard <minyard@acm.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net, jeffbai@aosc.io,
+	kexybiscuit@aosc.io, wangyao@lemote.com,
+	Chong Qiao <qiaochong@loongson.cn>,
+	Corey Minyard <corey@minyard.net>
+Subject: Re: [PATCH v10 2/3] mfd: ls2kbmc: Add Loongson-2K BMC reset function
+ support
+Message-ID: <20250903103533.GH2163762@google.com>
+References: <cover.1755853480.git.zhoubinbin@loongson.cn>
+ <8c67ace6b4b49725b0a2a7345e3683dbdf65e21c.1755853480.git.zhoubinbin@loongson.cn>
+ <20250902144630.GS2163762@google.com>
+ <CAMpQs4KdzjhUe5NbrGS5SkuBJ3TUU3QpuMSANBzQKsdR+TD_HQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|PH7PR12MB9076:EE_
-X-MS-Office365-Filtering-Correlation-Id: 48851191-b631-4991-ad56-08ddead57dcc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ejVuSnovZG5FNkZDb1JoQ1U0VkFjTDNFeUNNa2ZOa0w5cFBvQ3p0SDdiMjFP?=
- =?utf-8?B?UG5oNEhnbXZkT1REenlxUzk1YnNZVUlCZmppd1NmL1ZJOXpQVnJuM1hQa0Rl?=
- =?utf-8?B?ZkdHc0NKMmkxNnFDSEthWEtaUFNRL3BQUzF5LytZb1h0Wk1PWktwMU95aXo4?=
- =?utf-8?B?SGNsRHpEeGxya2o3SzdhdTJCY000NzhONkwxUXUxS1crLytDV1lKYUhCM3dZ?=
- =?utf-8?B?L1N5b1NoelkvSTBxcWZpcXB3YzB5ZVJnSW1wTVNqSS82SDR2eWg3ekN3U29H?=
- =?utf-8?B?dVowRWxVaVNwNVIyNFpCcC9aTVFBelpydFpmQjFXNTc5Q0xJRThjbXJ1VXBY?=
- =?utf-8?B?UUE0UWNEMlpjcXltMEZYTEhmV1ZqR3VRZ3JRVitpd2JPSnVvVVhBNnU3dVpR?=
- =?utf-8?B?bXBUWGFRUWxmRUFvdEF4TFJiZW4wdzU4ZXlpNTV1TDB5eXgxTFF3U09CZUZ2?=
- =?utf-8?B?YURRWWJhVG9ZeHVJL2J3UGdvRjUyOXh0RmtIQ051bmhDUURtb2pnQUtCVEth?=
- =?utf-8?B?Qll0Y0F2Vk1LRHpKRlFxWTUrT2QwUDVSRGljelEwQzFGM09LQk55UTloTG1v?=
- =?utf-8?B?TWFwMVZpWDFnT3RCcXpLNU9zS2xGeDFHb2RNdXNncGI5Ull3UG1qK2hOR1hO?=
- =?utf-8?B?dGZYa0RrSjFGRDZvMmxZalIzTUNDanZsVmhabUxKWGJlRTE5QTNsOU5WbmtV?=
- =?utf-8?B?OTk4YytMdkZQRlYvdTZhQXUxL2Mrb01JaW1FMmFYbzloVHZlYXJMVnlBNjEv?=
- =?utf-8?B?eWFsNlhmcXdvNWFBYVBrQUk1L3d4VzB0SmJUNjVHd0J5QlYwbzVsL2dBMTNu?=
- =?utf-8?B?NDlaYkg4cktRSDNPYWtTTkd3bzFmbVVEZE1rOVU4V2dPR2xqanFDemQ1WTFR?=
- =?utf-8?B?VTExZGVaTFNZMVd5OE9pcHVYdnp5aEtjZEFlc2VBQ1lrTTExOVRjMW9DdW9Q?=
- =?utf-8?B?RUtQK0o0OVFkQlhMTmVVYlBXWS9PNFFNZnVZcmk1ZGR3TlQ4UURGYUNXb3hL?=
- =?utf-8?B?RHVUeDExRXF5OW9JMmJXeUcrNDJ2S3RmcmViTXIvSllDdVk1d3M3QXVqeUVN?=
- =?utf-8?B?c1ZXVFZVTWxCVDBITUtvYUI1aThMV0VmWUdob29sNllFd2pUNzRpNjlUL3VN?=
- =?utf-8?B?Y3ZPUE01MDFpUU9UL012enBaZ3FXVk80VDIxaUFKZTZKUDdaeStQQjhqcmFl?=
- =?utf-8?B?cEo0VjJlbVpiR3ljWE9keVRObjgwa3NVeS9rRnZKTU9uTW1xWVlibGFPQmhr?=
- =?utf-8?B?eXYxM3dzUnVHK2FFS0xhUk94enBLWFJUM2dDaXlJS3Q1eTQxTzU2YWtIdXB3?=
- =?utf-8?B?dktaendYUGVEb3VMVVpvNmNmUlFNcG85R1NUOWQwMEhTVndwUFJySFN5SFc4?=
- =?utf-8?B?Q2kwWG9JZCsxZTJBRUp0SVVPRmRUeWhxb3Z2MXc3VnB1V2FoVGdoSWdqOHpu?=
- =?utf-8?B?SHFPZHUrTm9Qc1JPTXRwdkpaL2JNMHNEYU13NFJaVWFZc21Cc2RrSGdXaXYz?=
- =?utf-8?B?c2kxQmJOdzhGc3VlNXdBOVgwYjl1VExTREw4M2htaFZiNmw2WWNHcXJEajdD?=
- =?utf-8?B?OFAzdFZCZGQ3SnpVWU1Kbk5UaTlidlpTL29iZEpPa25kQkVvYXgrWStQRFVF?=
- =?utf-8?B?Wmo1WDB4ZGpQZEZ3ZjhEVWQrQjc4cmZ1MXN2cTlzQWxxL2tqR05DTnpPRThk?=
- =?utf-8?B?ZVFydEZJaHVhd0ZDWWIxOGpOMjNjTkxWZ05QbHpUcmJ0bi9wVUU0Y3RQYXVz?=
- =?utf-8?B?UWJZaXZ0NTBFV2tqSDVuaWY1a2srdzMxdTVkZlVSV2JMUm10Z3hIS2ZOSXpZ?=
- =?utf-8?B?MDhRbTJhMGlnTjJRTVlXOVBTZDlWaG11ckh2eis5UVRqZnVjUll1UkEwTWVF?=
- =?utf-8?B?amQ5TjkyK0Q5eFZTWGUyeFV5STFtOXIzMm5XS01uMXpZZ2c9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?V0xjWUwrL2kvQUc0c0M2TEZ5YWlqdVpiSHpsdzQ3MDN5Kzd6T0cyYyt6TzUr?=
- =?utf-8?B?VTFDZ0ZFNExrV2VGVVBOd1JyS1lxTzc2NWJIQTlUU0tKeE4rNHRZOWtHei9k?=
- =?utf-8?B?VDNFU3dPbXN5WlYvYWNreVZkS1Q3a2Zud1JlR1dhMVB4cEcrcjg4bGZjWW1J?=
- =?utf-8?B?Y0NDQlFUL0xpN3NCTUlndmptNUppL1lhTWdYUEVUcUhzZFFjbGVvejJydEJ0?=
- =?utf-8?B?RHpvdmF0VFZhZDZ2ZXdhaXI5UWpGVy9uVUlrU0pXeUFrVThqMWgzR2VGeENi?=
- =?utf-8?B?KzdsTVhGeStBTi85TGhac3h5bTcrcEdIeTVZWXYxQ1htNm5aMlVZRGxlUThJ?=
- =?utf-8?B?dnVVN1NLV21HZWRqcnJEeHp5Z241VngzTExydlplVk0zVzdmblFIQitKTFFo?=
- =?utf-8?B?b1pXeFROQ2htb2JHM2hqNVNlZjUvdk5aN0Vrckw2cUtXdnE3Uy92cFpYbWxY?=
- =?utf-8?B?RC9GWVk2Rlgwd2lpOHhKdXBUMVJoRitsYWM2ckFlT0VpWGtXOEVSaCt1U2xW?=
- =?utf-8?B?YjVYWFdRdzUvVEZKY2Y4OUdOTWRibHhOWDBITk1aajlNaGtrM3dnNFZBU3Ey?=
- =?utf-8?B?ZkU4ZHVqZmE0VGRuc09wMUovMjlsTW1pdHRvTTBCNHVyWE1SVHJ6NXNSS3dT?=
- =?utf-8?B?OWFYOWlBMmlmWE9pa1Z5SlV5NmRiYmtSZHJhVkRrWXgyVkRoN2l0MWt6Sk10?=
- =?utf-8?B?MGJjb1Y1QllNaXhmVUd5MHhBQUVUOU9TTlJzWCtKWDZnV0FBSVdzamhXY3d2?=
- =?utf-8?B?RERGbmczUWFIUmFoay8vY2I5aUhWY2EzclVUSzZXc04rNDJ5d1NaV2RodDg1?=
- =?utf-8?B?T1hBUER6TldvdVZKWHlnSGF3Mk5KYjlkb2pxbXRYOUdYL1lTaFpkd2c1d01D?=
- =?utf-8?B?OFVnZUcxWTYycVByRVI2QlJTSDZ5SDRCZG1sMkNWbUtCRXFVV2FWVnFkaG9D?=
- =?utf-8?B?eFFFWmp3NHpxNFVWQkk4RDRLeFZLQXRTS1FmTDlGOUNINlJ3c01ndDhoNStS?=
- =?utf-8?B?eXJLUStOZEdHQmpkenFiQ2V3YTBaL2VmOGxBWW1HSkd2cGx0YVpEYnYyRVpP?=
- =?utf-8?B?cG10bW9SdVlqa3dnTElDSzVKbnpGYlR0cURnUWowYXZJNGxIWFBWTjh1Y0tp?=
- =?utf-8?B?ajlMdVpuT0lXT2JiazMwL0w4cGZrc1RxYUovQ1dFRmU3MVUzeG9wWmVmM2VS?=
- =?utf-8?B?ZlN5UVNVbFhDKzF0cmV0YzlHWFhqS01Cdm9Gc1lxei9sZ3p0NlFqai9LcVZz?=
- =?utf-8?B?ZDZSaVFkZWlIZnMyS0htaEY2cDhtUXRTNEEwWHBIeE5qSERVcEZvaTIzekZX?=
- =?utf-8?B?Tk5LS0FaSElaY2UwL3RHSzA2OWZTZitEcnJlL296RWN6S0thQ2w3bDlLUytP?=
- =?utf-8?B?eWd4ZGQyMldxOGg4OHpyQTFEUjY4RFVTeXBKUm14OVowaFRzdFBWcVhqUkNh?=
- =?utf-8?B?Yi9WRDZObmphR2FwL3B1Z0FJNENNenp0SEVzVW5nZnZocFVVVExZVVJqVzNi?=
- =?utf-8?B?azVlalA1Y1NtZ2FhREpnMlQzL2V5bDlTV3RReTJ6YW1aVHpwd3NkV25nV3Rm?=
- =?utf-8?B?SGdCZzRjdjRRdHpYZEJlaG5kbEhQOEFLTzR3TUdOSWZ5emRJNkpNWWIrMUdq?=
- =?utf-8?B?TUg0WHExZEFsQU40Sy9uSG1HVG5TbkljajJzaVJuVXo5ZWoySXFBMm01ckFh?=
- =?utf-8?B?M0Jxc2o1NEVuaHR2THB3SDRKdGdJYUhNZFBBOTJpWENzVDh0QitoOTZmcVg2?=
- =?utf-8?B?YktHOUJCNU1QaUtUVzk0WmVycjBicHZBU1lSNncrMzd1UkFheks1bFo1QmFy?=
- =?utf-8?B?dktKWE02Y0grOVM4M1pqOW16ZGNhYk9rYUpmbEE4SS91SEtvSThMSW5EM3Vl?=
- =?utf-8?B?K3FUbTlHZ1RESG52QnVYcHE2OGh5T2RlNmRFNnBlWFMyV1VEYyt2bThLNXNV?=
- =?utf-8?B?bnkzWk00T0lZemxrcUFaUnREUEI3TEV1SmlrVldNV3ZQRXFiMHp1VStOcGhV?=
- =?utf-8?B?RnZrTmtUSEtzVEpYSUZYUTA5b3NybDBGZk91VkxMM3pwdHRwb01hUTY5S1B3?=
- =?utf-8?B?THV2RmxkSEhqTExzd1JVQXp3RFg4T2EzRmJ6UXdHWmIwMEJuVUZBUEJ3TWlj?=
- =?utf-8?Q?Q4rs=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 48851191-b631-4991-ad56-08ddead57dcc
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 10:34:41.8549
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NtWZP7zxNa5nX1QEKp1ZcPFwHAY82Se0GNPdEZMEHVwKkY3nJSx62X6Oe7v8amHG
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9076
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMpQs4KdzjhUe5NbrGS5SkuBJ3TUU3QpuMSANBzQKsdR+TD_HQ@mail.gmail.com>
 
-Thanks Laurent Pinchart for your careful review.
+On Wed, 03 Sep 2025, Binbin Zhou wrote:
 
-On 9/3/2025 6:04 PM, Laurent Pinchart wrote:
-> Hi Bin,
+> Hi Lee:
 > 
-> Thank you for the patch.
+> Thanks for your reply.
 > 
-> On Thu, Aug 28, 2025 at 06:08:11PM +0800, Bin Du wrote:
->> Add documentation for AMD isp 4 and describe the main components
->>
->> Co-developed-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
->> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
->> Signed-off-by: Bin Du <Bin.Du@amd.com>
->> ---
->>   Documentation/admin-guide/media/amdisp4-1.rst | 66 +++++++++++++++++++
->>   Documentation/admin-guide/media/amdisp4.dot   |  8 +++
->>   .../admin-guide/media/v4l-drivers.rst         |  1 +
->>   MAINTAINERS                                   |  2 +
->>   4 files changed, 77 insertions(+)
->>   create mode 100644 Documentation/admin-guide/media/amdisp4-1.rst
->>   create mode 100644 Documentation/admin-guide/media/amdisp4.dot
->>
->> diff --git a/Documentation/admin-guide/media/amdisp4-1.rst b/Documentation/admin-guide/media/amdisp4-1.rst
->> new file mode 100644
->> index 000000000000..a5ed78912d0f
->> --- /dev/null
->> +++ b/Documentation/admin-guide/media/amdisp4-1.rst
->> @@ -0,0 +1,66 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +
->> +.. include:: <isonum.txt>
->> +
->> +====================================
->> +AMD Image Signal Processor (amdisp4)
->> +====================================
->> +
->> +Introduction
->> +============
->> +
->> +This file documents the driver for the AMD ISP4 that is part of
->> +AMD Ryzen AI Max 385 SoC.
->> +
->> +The driver is located under drivers/media/platform/amd/isp4 and uses
->> +the Media-Controller API.
->> +
->> +Topology
->> +========
->> +
->> +.. _amdisp4_topology_graph:
->> +
->> +.. kernel-figure:: amdisp4.dot
->> +     :alt:   Diagram of the media pipeline topology
->> +     :align: center
->> +
->> +
->> +
->> +The driver has 1 sub-device:
->> +
->> +- isp: used to resize and process bayer raw frames in to yuv.
->> +
->> +The driver has 1 video device:
->> +
->> +- capture video device: capture device for retrieving images.
->> +
->> +
->> +  - ISP4 Image Signal Processing Subdevice Node
->> +
->> +-----------------------------------------------
->> +
->> +The isp4 is represented as a single V4L2 subdev, the sub-device does not
->> +provide interface to the user space. The sub-device is connected to one video node
->> +(isp4_capture) with immutable active link. The isp entity is connected
->> +to sensor pad 0 and receives the frames using CSI-2 protocol. The sub-device is
->> +also responsible to configure CSI2-2 receiver.
->> +The sub-device processes bayer raw data from the connected sensor and output
->> +them to different YUV formats. The isp also has scaling capabilities.
->> +
->> +  - isp4_capture - Frames Capture Video Node
->> +
->> +--------------------------------------------
->> +
->> +Isp4_capture is a capture device to capture frames to memory.
->> +This entity is the DMA engine that write the frames to memory.
->> +The entity is connected to isp4 sub-device.
->> +
->> +Capturing Video Frames Example
->> +==============================
->> +
->> +.. code-block:: bash
->> +
->> +         # set the links
->> +
->> +         # start streaming:
->> +         v4l2-ctl "-d" "/dev/video0" "--set-fmt-video=width=1920,height=1080,pixelformat=NV12" "--stream-mmap" "--stream-count=10"
->> diff --git a/Documentation/admin-guide/media/amdisp4.dot b/Documentation/admin-guide/media/amdisp4.dot
->> new file mode 100644
->> index 000000000000..a4c2f0cceb30
->> --- /dev/null
->> +++ b/Documentation/admin-guide/media/amdisp4.dot
->> @@ -0,0 +1,8 @@
->> +digraph board {
->> +	rankdir=TB
->> +	n00000001 [label="{{<port0> 0} | amd isp4\n | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
->> +	n00000001:port1 -> n00000004 [style=bold]
->> +	n00000004 [label="Preview\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
->> +	n0000000a [label="{{} | ov05c10 22-0010\n/dev/v4l-subdev0 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
+> On Tue, Sep 2, 2025 at 10:46 PM Lee Jones <lee@kernel.org> wrote:
+> >
+> > On Fri, 22 Aug 2025, Binbin Zhou wrote:
+> >
+> > > Since the display is a sub-function of the Loongson-2K BMC, when the
+> > > BMC reset, the entire BMC PCIe is disconnected, including the display
+> > > which is interrupted.
+> > >
+> > > Quick overview of the entire LS2K BMC reset process:
+> > >
+> > > There are two types of reset methods: soft reset (BMC-initiated reboot
+> > > of IPMI reset command) and BMC watchdog reset (watchdog timeout).
+> > >
+> > > First, regardless of the method, an interrupt is generated (PCIe interrupt
+> > > for soft reset/GPIO interrupt for watchdog reset);
+> > >
+> > > Second, during the interrupt process, the system enters bmc_reset_work,
+> > > clears the bus/IO/mem resources of the LS7A PCI-E bridge, waits for the BMC
+> > > reset to begin, then restores the parent device's PCI configuration space,
+> > > waits for the BMC reset to complete, and finally restores the BMC PCI
+> > > configuration space.
+> > >
+> > > Display restoration occurs last.
+> > >
+> > > Co-developed-by: Chong Qiao <qiaochong@loongson.cn>
+> > > Signed-off-by: Chong Qiao <qiaochong@loongson.cn>
+> > > Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+> > > Acked-by: Corey Minyard <corey@minyard.net>
+> > > Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
+> > > ---
+> > >  drivers/mfd/ls2k-bmc-core.c | 336 ++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 336 insertions(+)
+> >
+> > Couple of nits to finish up:
+> >
+> > > diff --git a/drivers/mfd/ls2k-bmc-core.c b/drivers/mfd/ls2k-bmc-core.c
+> > > index 39cc481d9ba1..fa7f1a822076 100644
+> > > --- a/drivers/mfd/ls2k-bmc-core.c
+> > > +++ b/drivers/mfd/ls2k-bmc-core.c
+> > > @@ -10,8 +10,12 @@
+> > >   */
+> > >
+> > >  #include <linux/aperture.h>
+> > > +#include <linux/bitfield.h>
+> > > +#include <linux/delay.h>
+> > >  #include <linux/errno.h>
+> > >  #include <linux/init.h>
+> > > +#include <linux/iopoll.h>
+> > > +#include <linux/kbd_kern.h>
+> > >  #include <linux/kernel.h>
+> > >  #include <linux/mfd/core.h>
+> > >  #include <linux/module.h>
+> > > @@ -19,6 +23,8 @@
+> > >  #include <linux/pci_ids.h>
+> > >  #include <linux/platform_data/simplefb.h>
+> > >  #include <linux/platform_device.h>
+> > > +#include <linux/stop_machine.h>
+> > > +#include <linux/vt_kern.h>
+> > >
+> > >  /* LS2K BMC resources */
+> > >  #define LS2K_DISPLAY_RES_START               (SZ_16M + SZ_2M)
+> > > @@ -29,6 +35,48 @@
+> > >  #define LS2K_IPMI3_RES_START         (LS2K_IPMI2_RES_START + LS2K_IPMI_RES_SIZE)
+> > >  #define LS2K_IPMI4_RES_START         (LS2K_IPMI3_RES_START + LS2K_IPMI_RES_SIZE)
+> > >
+> > > +#define LS7A_PCI_CFG_SIZE            0x100
+> > > +
+> > > +/* LS7A bridge registers */
+> > > +#define LS7A_PCIE_PORT_CTL0          0x0
+> > > +#define LS7A_PCIE_PORT_STS1          0xC
+> > > +#define LS7A_GEN2_CTL                        0x80C
+> > > +#define LS7A_SYMBOL_TIMER            0x71C
+> > > +
+> > > +/* Bits of LS7A_PCIE_PORT_CTL0 */
+> > > +#define LS2K_BMC_PCIE_LTSSM_ENABLE   BIT(3)
+> > > +
+> > > +/* Bits of LS7A_PCIE_PORT_STS1 */
+> > > +#define LS2K_BMC_PCIE_LTSSM_STS              GENMASK(5, 0)
+> > > +#define LS2K_BMC_PCIE_CONNECTED              0x11
+> > > +
+> > > +#define LS2K_BMC_PCIE_DELAY_US               1000
+> > > +#define LS2K_BMC_PCIE_TIMEOUT_US     1000000
+> > > +
+> > > +/* Bits of LS7A_GEN2_CTL */
+> > > +#define LS7A_GEN2_SPEED_CHANG                BIT(17)
+> > > +#define LS7A_CONF_PHY_TX             BIT(18)
+> > > +
+> > > +/* Bits of LS7A_SYMBOL_TIMER */
+> > > +#define LS7A_MASK_LEN_MATCH          BIT(26)
+> > > +
+> > > +/* Interval between interruptions */
+> > > +#define LS2K_BMC_INT_INTERVAL                (60 * HZ)
+> > > +
+> > > +/* Maximum time to wait for U-Boot and DDR to be ready with ms. */
+> > > +#define LS2K_BMC_RESET_WAIT_TIME     10000
+> > > +
+> > > +/* It's an experience value */
+> > > +#define LS7A_BAR0_CHECK_MAX_TIMES    2000
+> > > +
+> > > +#define LS2K_BMC_RESET_GPIO          14
+> > > +#define LOONGSON_GPIO_REG_BASE               0x1FE00500
+> > > +#define LOONGSON_GPIO_REG_SIZE               0x18
+> > > +#define LOONGSON_GPIO_OEN            0x0
+> > > +#define LOONGSON_GPIO_FUNC           0x4
+> > > +#define LOONGSON_GPIO_INTPOL         0x10
+> > > +#define LOONGSON_GPIO_INTEN          0x14
+> > > +
+> > >  enum {
+> > >       LS2K_BMC_DISPLAY,
+> > >       LS2K_BMC_IPMI0,
+> > > @@ -95,6 +143,281 @@ static struct mfd_cell ls2k_bmc_cells[] = {
+> > >       },
+> > >  };
+> > >
+> > > +/* Index of the BMC PCI configuration space to be restored at BMC reset. */
+> > > +struct ls2k_bmc_pci_data {
+> > > +     u32 pci_command;
+> > > +     u32 base_address0;
+> > > +     u32 interrupt_line;
+> > > +};
+> > > +
+> > > +/* Index of the parent PCI configuration space to be restored at BMC reset. */
+> > > +struct ls2k_bmc_bridge_pci_data {
+> > > +     u32 pci_command;
+> > > +     u32 base_address[6];
+> > > +     u32 rom_addreess;
+> > > +     u32 interrupt_line;
+> > > +     u32 msi_hi;
+> > > +     u32 msi_lo;
+> > > +     u32 devctl;
+> > > +     u32 linkcap;
+> > > +     u32 linkctl_sts;
+> > > +     u32 symbol_timer;
+> > > +     u32 gen2_ctrl;
+> > > +};
+> > > +
+> > > +struct ls2k_bmc_pdata {
+> >
+> > Drop the pdata part completely.
+> >
+> > pdata is something else.
 > 
-> Does the driver still have a subdev for the sensor, or is that a
-> leftover ? Looking at the source code, I don't see where the sensor
-> would be handled.
-> 
+> Emm...
+> How about rename it as ls2k_bmc_priv? Otherwise, using ls2k_bmc as a
+> structure name seems a bit odd.
 
-Yes, you are definitely correct, no sensor subdev anymore. My fault, i 
-forgot to sync the document to the latest one, will update in the next 
-version, really sorry for that.
+Either ls2k_bmc or ls2k_bmc_ddata would do.  Both are common
+nomenclature choices and we know what both of them mean.
 
->> +	n0000000a:port0 -> n00000001:port0 [style=bold]
->> +}
->> diff --git a/Documentation/admin-guide/media/v4l-drivers.rst b/Documentation/admin-guide/media/v4l-drivers.rst
->> index 3bac5165b134..6027416e5373 100644
->> --- a/Documentation/admin-guide/media/v4l-drivers.rst
->> +++ b/Documentation/admin-guide/media/v4l-drivers.rst
->> @@ -9,6 +9,7 @@ Video4Linux (V4L) driver-specific documentation
->>   .. toctree::
->>   	:maxdepth: 2
->>   
->> +	amdisp4-1
->>   	bttv
->>   	c3-isp
->>   	cafe_ccic
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 7724620896e7..72ef7c77d881 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -1139,6 +1139,8 @@ M:	Nirujogi Pratap <pratap.nirujogi@amd.com>
->>   L:	linux-media@vger.kernel.org
->>   S:	Maintained
->>   T:	git git://linuxtv.org/media.git
->> +F:	Documentation/admin-guide/media/amdisp4-1.rst
->> +F:	Documentation/admin-guide/media/amdisp4.dot
->>   F:	drivers/media/platform/amd/Kconfig
->>   F:	drivers/media/platform/amd/Makefile
->>   F:	drivers/media/platform/amd/isp4/Kconfig
+> > > +     struct device *dev;
+> > > +     struct work_struct bmc_reset_work;
+> > > +     struct ls2k_bmc_pci_data bmc_pci_data;
+> > > +     struct ls2k_bmc_bridge_pci_data bridge_pci_data;
+> > > +};
+> > > +
+> > > +static bool ls2k_bmc_bar0_addr_is_set(struct pci_dev *pdev)
+> > > +{
+> > > +     u32 addr;
+> > > +
+> > > +     pci_read_config_dword(pdev, PCI_BASE_ADDRESS_0, &addr);
+> > > +
+> > > +     return addr & PCI_BASE_ADDRESS_MEM_MASK ? true : false;
+> > > +}
+> > > +
+> > > +static bool ls2k_bmc_pcie_is_connected(struct pci_dev *parent, struct ls2k_bmc_pdata *ddata)
+> > > +{
+> > > +     void __iomem *base;
+> > > +     int val, ret;
+> > > +
+> > > +     base = pci_iomap(parent, 0, LS7A_PCI_CFG_SIZE);
+> > > +     if (!base)
+> > > +             return false;
+> > > +
+> > > +     val = readl(base + LS7A_PCIE_PORT_CTL0);
+> > > +     writel(val | LS2K_BMC_PCIE_LTSSM_ENABLE, base + LS7A_PCIE_PORT_CTL0);
+> > > +
+> > > +     ret = readl_poll_timeout_atomic(base + LS7A_PCIE_PORT_STS1, val,
+> > > +                                     (val & LS2K_BMC_PCIE_LTSSM_STS) == LS2K_BMC_PCIE_CONNECTED,
+> > > +                                     LS2K_BMC_PCIE_DELAY_US, LS2K_BMC_PCIE_TIMEOUT_US);
+> > > +     if (ret) {
+> > > +             pci_iounmap(parent, base);
+> > > +             dev_err(ddata->dev, "PCI-E training failed status=0x%x\n", val);
+> > > +             return false;
+> > > +     }
+> > > +
+> > > +     pci_iounmap(parent, base);
+> > > +     return true;
+> > > +}
+> > > +
+> > > +static void ls2k_bmc_restore_bridge_pci_data(struct pci_dev *parent, struct ls2k_bmc_pdata *ddata)
+> > > +{
+> > > +     int base, i = 0;
+> > > +
+> > > +     pci_write_config_dword(parent, PCI_COMMAND, ddata->bridge_pci_data.pci_command);
+> > > +
+> > > +     for (base = PCI_BASE_ADDRESS_0; base <= PCI_BASE_ADDRESS_5; base += 4, i++)
+> >
+> > Define 4.
+> >
+> > > +             pci_write_config_dword(parent, base, ddata->bridge_pci_data.base_address[i]);
+> > > +
+> > > +     pci_write_config_dword(parent, PCI_ROM_ADDRESS, ddata->bridge_pci_data.rom_addreess);
+> > > +     pci_write_config_dword(parent, PCI_INTERRUPT_LINE, ddata->bridge_pci_data.interrupt_line);
+> > > +
+> > > +     pci_write_config_dword(parent, parent->msi_cap + PCI_MSI_ADDRESS_LO,
+> > > +                            ddata->bridge_pci_data.msi_lo);
+> > > +     pci_write_config_dword(parent, parent->msi_cap + PCI_MSI_ADDRESS_HI,
+> > > +                            ddata->bridge_pci_data.msi_hi);
+> > > +     pci_write_config_dword(parent, parent->pcie_cap + PCI_EXP_DEVCTL,
+> > > +                            ddata->bridge_pci_data.devctl);
+> > > +     pci_write_config_dword(parent, parent->pcie_cap + PCI_EXP_LNKCAP,
+> > > +                            ddata->bridge_pci_data.linkcap);
+> > > +     pci_write_config_dword(parent, parent->pcie_cap + PCI_EXP_LNKCTL,
+> > > +                            ddata->bridge_pci_data.linkctl_sts);
+> > > +
+> > > +     pci_write_config_dword(parent, LS7A_GEN2_CTL, ddata->bridge_pci_data.gen2_ctrl);
+> > > +     pci_write_config_dword(parent, LS7A_SYMBOL_TIMER, ddata->bridge_pci_data.symbol_timer);
+> > > +}
+> > > +
+> > > +static int ls2k_bmc_recover_pci_data(void *data)
+> > > +{
+> > > +     struct ls2k_bmc_pdata *ddata = data;
+> > > +     struct pci_dev *pdev = to_pci_dev(ddata->dev);
+> > > +     struct pci_dev *parent = pdev->bus->self;
+> > > +     u32 i;
+> > > +
+> > > +     /*
+> > > +      * Clear the bus, io and mem resources of the PCI-E bridge to zero, so that
+> > > +      * the processor can not access the LS2K PCI-E port, to avoid crashing due to
+> > > +      * the lack of return signal from accessing the LS2K PCI-E port.
+> > > +      */
+> > > +     pci_write_config_dword(parent, PCI_BASE_ADDRESS_2, 0);
+> > > +     pci_write_config_dword(parent, PCI_BASE_ADDRESS_3, 0);
+> > > +     pci_write_config_dword(parent, PCI_BASE_ADDRESS_4, 0);
+> > > +
+> > > +     /*
+> > > +      * When the LS2K BMC is reset, the LS7A PCI-E port is also reset, and its PCI
+> > > +      * BAR0 register is cleared. Due to the time gap between the GPIO interrupt
+> > > +      * generation and the LS2K BMC reset, the LS7A PCI BAR0 register is read to
+> > > +      * determine whether the reset has begun.
+> > > +      */
+> > > +     for (i = LS7A_BAR0_CHECK_MAX_TIMES; i > 0 ; i--) {
+> > > +             if (!ls2k_bmc_bar0_addr_is_set(parent))
+> > > +                     break;
+> > > +             mdelay(1);
+> > > +     };
+> > > +
+> > > +     if (i == 0)
+> > > +             return false;
+> > > +
+> > > +     ls2k_bmc_restore_bridge_pci_data(parent, ddata);
+> > > +
+> > > +     /* Check if PCI-E is connected */
+> > > +     if (!ls2k_bmc_pcie_is_connected(parent, ddata))
+> > > +             return false;
+> > > +
+> > > +     /* Waiting for U-Boot and DDR ready */
+> > > +     mdelay(LS2K_BMC_RESET_WAIT_TIME);
+> > > +     if (!ls2k_bmc_bar0_addr_is_set(parent))
+> > > +             return false;
+> > > +
+> > > +     /* Restore LS2K BMC PCI-E config data */
+> > > +     pci_write_config_dword(pdev, PCI_COMMAND, ddata->bmc_pci_data.pci_command);
+> > > +     pci_write_config_dword(pdev, PCI_BASE_ADDRESS_0, ddata->bmc_pci_data.base_address0);
+> > > +     pci_write_config_dword(pdev, PCI_INTERRUPT_LINE, ddata->bmc_pci_data.interrupt_line);
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static void ls2k_bmc_events_fn(struct work_struct *work)
+> > > +{
+> > > +     struct ls2k_bmc_pdata *ddata = container_of(work, struct ls2k_bmc_pdata, bmc_reset_work);
+> > > +
+> > > +     /*
+> > > +      * The PCI-E is lost when the BMC resets, at which point access to the PCI-E
+> > > +      * from other CPUs is suspended to prevent a crash.
+> > > +      */
+> > > +     stop_machine(ls2k_bmc_recover_pci_data, ddata, NULL);
+> > > +
+> > > +     if (IS_ENABLED(CONFIG_VT)) {
+> > > +             /* Re-push the display due to previous PCI-E loss. */
+> > > +             set_console(vt_move_to_console(MAX_NR_CONSOLES - 1, 1));
+> > > +     }
+> > > +}
+> > > +
+> > > +static irqreturn_t ls2k_bmc_interrupt(int irq, void *arg)
+> > > +{
+> > > +     struct ls2k_bmc_pdata *ddata = arg;
+> > > +     static unsigned long last_jiffies;
+> > > +
+> > > +     if (system_state != SYSTEM_RUNNING)
+> > > +             return IRQ_HANDLED;
+> > > +
+> > > +     /* Skip interrupt in LS2K_BMC_INT_INTERVAL */
+> > > +     if (time_after(jiffies, last_jiffies + LS2K_BMC_INT_INTERVAL)) {
+> > > +             schedule_work(&ddata->bmc_reset_work);
+> > > +             last_jiffies = jiffies;
+> > > +     }
+> > > +
+> > > +     return IRQ_HANDLED;
+> > > +}
+> > > +
+> > > +/*
+> > > + * Saves the BMC parent device (LS7A) and its own PCI configuration space registers
+> > > + * that need to be restored after BMC reset.
+> > > + */
+> > > +static void ls2k_bmc_save_pci_data(struct pci_dev *pdev, struct ls2k_bmc_pdata *ddata)
+> > > +{
+> > > +     struct pci_dev *parent = pdev->bus->self;
+> > > +     int base, i = 0;
+> > > +
+> > > +     pci_read_config_dword(parent, PCI_COMMAND, &ddata->bridge_pci_data.pci_command);
+> > > +
+> > > +     for (base = PCI_BASE_ADDRESS_0; base <= PCI_BASE_ADDRESS_5; base += 4, i++)
+> > > +             pci_read_config_dword(parent, base, &ddata->bridge_pci_data.base_address[i]);
+> > > +
+> > > +     pci_read_config_dword(parent, PCI_ROM_ADDRESS, &ddata->bridge_pci_data.rom_addreess);
+> > > +     pci_read_config_dword(parent, PCI_INTERRUPT_LINE, &ddata->bridge_pci_data.interrupt_line);
+> > > +
+> > > +     pci_read_config_dword(parent, parent->msi_cap + PCI_MSI_ADDRESS_LO,
+> > > +                           &ddata->bridge_pci_data.msi_lo);
+> > > +     pci_read_config_dword(parent, parent->msi_cap + PCI_MSI_ADDRESS_HI,
+> > > +                           &ddata->bridge_pci_data.msi_hi);
+> > > +
+> > > +     pci_read_config_dword(parent, parent->pcie_cap + PCI_EXP_DEVCTL,
+> > > +                           &ddata->bridge_pci_data.devctl);
+> > > +     pci_read_config_dword(parent, parent->pcie_cap + PCI_EXP_LNKCAP,
+> > > +                           &ddata->bridge_pci_data.linkcap);
+> > > +     pci_read_config_dword(parent, parent->pcie_cap + PCI_EXP_LNKCTL,
+> > > +                           &ddata->bridge_pci_data.linkctl_sts);
+> > > +
+> > > +     pci_read_config_dword(parent, LS7A_GEN2_CTL, &ddata->bridge_pci_data.gen2_ctrl);
+> > > +     ddata->bridge_pci_data.gen2_ctrl |= FIELD_PREP(LS7A_GEN2_SPEED_CHANG, 0x1)
+> > > +                                     | FIELD_PREP(LS7A_CONF_PHY_TX, 0x0);
+> > > +
+> > > +     pci_read_config_dword(parent, LS7A_SYMBOL_TIMER, &ddata->bridge_pci_data.symbol_timer);
+> > > +     ddata->bridge_pci_data.symbol_timer |= LS7A_MASK_LEN_MATCH;
+> > > +
+> > > +     pci_read_config_dword(pdev, PCI_COMMAND, &ddata->bmc_pci_data.pci_command);
+> > > +     pci_read_config_dword(pdev, PCI_BASE_ADDRESS_0, &ddata->bmc_pci_data.base_address0);
+> > > +     pci_read_config_dword(pdev, PCI_INTERRUPT_LINE, &ddata->bmc_pci_data.interrupt_line);
+> > > +}
+> > > +
+> > > +static int ls2k_bmc_pdata_initial(struct ls2k_bmc_pdata *ddata)
+> >
+> > What are you actually doing here exactly.
+> >
+> > I don't think "pdata_initial" describes it.
 > 
+> Indeed, as the function expands, its name should be updated.
+> It now handles multiple tasks, such as GPIO initialization and
+> interrupt registration. Overall, it initializes the ls2k BMC device.
+> 
+> How about renaming it to ls2k_bmc_device_request()?
+
+ls2k_bmc_init() is common.
+
+> > > +{
+> > > +     struct pci_dev *pdev = to_pci_dev(ddata->dev);
+> > > +     int gsi = 16 + (LS2K_BMC_RESET_GPIO & 7);
+> >
+> > Define 16.
+> >
+> > > +     void __iomem *gpio_base;
+> > > +     int irq, ret, val;
+> > > +
+> > > +     ls2k_bmc_save_pci_data(pdev, ddata);
+> > > +
+> > > +     INIT_WORK(&ddata->bmc_reset_work, ls2k_bmc_events_fn);
+> > > +
+> > > +     ret = devm_request_irq(&pdev->dev, pdev->irq, ls2k_bmc_interrupt,
+> > > +                            IRQF_SHARED | IRQF_TRIGGER_FALLING, "ls2kbmc pcie", ddata);
+> > > +     if (ret) {
+> > > +             dev_err(ddata->dev, "Failed to request LS2KBMC PCI-E IRQ %d.\n", pdev->irq);
+> > > +             return ret;
+> > > +     }
+> > > +
+> > > +     /*
+> > > +      * Since gpio_chip->to_irq is not implemented in the Loongson-3 GPIO driver,
+> > > +      * acpi_register_gsi() is used to obtain the GPIO IRQ. The GPIO interrupt is a
+> > > +      * watchdog interrupt that is triggered when the BMC resets.
+> > > +      */
+> > > +     irq = acpi_register_gsi(NULL, gsi, ACPI_EDGE_SENSITIVE, ACPI_ACTIVE_LOW);
+> > > +     if (irq < 0)
+> > > +             return irq;
+> > > +
+> > > +     gpio_base = ioremap(LOONGSON_GPIO_REG_BASE, LOONGSON_GPIO_REG_SIZE);
+> > > +     if (!gpio_base) {
+> > > +             ret = -ENOMEM;
+> > > +             goto acpi_failed;
+> > > +     }
+> > > +
+> > > +     /* Disable GPIO output */
+> > > +     val = readl(gpio_base + LOONGSON_GPIO_OEN);
+> > > +     writel(val | BIT(LS2K_BMC_RESET_GPIO), gpio_base + LOONGSON_GPIO_OEN);
+> > > +
+> > > +     /* Enable GPIO functionality */
+> > > +     val = readl(gpio_base + LOONGSON_GPIO_FUNC);
+> > > +     writel(val & ~BIT(LS2K_BMC_RESET_GPIO), gpio_base + LOONGSON_GPIO_FUNC);
+> > > +
+> > > +     /* Set GPIO interrupts to low-level active */
+> > > +     val = readl(gpio_base + LOONGSON_GPIO_INTPOL);
+> > > +     writel(val & ~BIT(LS2K_BMC_RESET_GPIO), gpio_base + LOONGSON_GPIO_INTPOL);
+> > > +
+> > > +     /* Enable GPIO interrupts */
+> > > +     val = readl(gpio_base + LOONGSON_GPIO_INTEN);
+> > > +     writel(val | BIT(LS2K_BMC_RESET_GPIO), gpio_base + LOONGSON_GPIO_INTEN);
+> > > +
+> > > +     ret = devm_request_irq(ddata->dev, irq, ls2k_bmc_interrupt,
+> > > +                            IRQF_SHARED | IRQF_TRIGGER_FALLING, "ls2kbmc gpio", ddata);
+> > > +     if (ret)
+> > > +             dev_err(ddata->dev, "Failed to request LS2KBMC GPIO IRQ %d.\n", irq);
+> > > +
+> > > +     iounmap(gpio_base);
+> > > +
+> > > +acpi_failed:
+> > > +     acpi_unregister_gsi(gsi);
+> > > +     return ret;
+> > > +}
+> > > +
+> > >  /*
+> > >   * Currently the Loongson-2K BMC hardware does not have an I2C interface to adapt to the
+> > >   * resolution. We set the resolution by presetting "video=1280x1024-16@2M" to the BMC memory.
+> > > @@ -134,6 +457,7 @@ static int ls2k_bmc_parse_mode(struct pci_dev *pdev, struct simplefb_platform_da
+> > >  static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device_id *id)
+> > >  {
+> > >       struct simplefb_platform_data pd;
+> > > +     struct ls2k_bmc_pdata *ddata;
+> > >       resource_size_t base;
+> > >       int ret;
+> > >
+> > > @@ -141,6 +465,18 @@ static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device_id *id)
+> > >       if (ret)
+> > >               return ret;
+> > >
+> > > +     ddata = devm_kzalloc(&dev->dev, sizeof(*ddata), GFP_KERNEL);
+> > > +     if (IS_ERR(ddata)) {
+> > > +             ret = -ENOMEM;
+> > > +             goto disable_pci;
+> > > +     }
+> > > +
+> > > +     ddata->dev = &dev->dev;
+> > > +
+> > > +     ret = ls2k_bmc_pdata_initial(ddata);
+> > > +     if (ret)
+> > > +             goto disable_pci;
+> > > +
+> > >       ret = ls2k_bmc_parse_mode(dev, &pd);
+> > >       if (ret)
+> > >               goto disable_pci;
+> > > --
+> > > 2.47.3
+> > >
+> >
+> > --
+> > Lee Jones [李琼斯]
+> 
+> --
+> Thanks.
+> Binbin
 
 -- 
-Regards,
-Bin
-
+Lee Jones [李琼斯]
 
