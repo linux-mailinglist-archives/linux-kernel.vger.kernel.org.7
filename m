@@ -1,88 +1,95 @@
-Return-Path: <linux-kernel+bounces-798133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8829EB419DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:26:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE38BB419E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D0685622F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:26:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA20C564DBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7512EFDB5;
-	Wed,  3 Sep 2025 09:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7B12F39C9;
+	Wed,  3 Sep 2025 09:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VsczgInH"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CYrPLbeW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="McADqQm4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="r6o3bBqm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="C4tR98NC"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B892F0666
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C63E2F39BE
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756891557; cv=none; b=KOxihIy0ejuvtkJm9awaP19AoaU4C9MHvSUsH3EQKhtdifm8IUapFFXXZ775YaPUweXTTJ0qw5W5Cct/zRZJLW4GsBCZ0gOPqGueGzY+Y4aTTh6vOJ0ZhPeipM0+339KgA00lsn2g/V32dKAWHLsEe68iJ82PAexFNb+I5Fz/N4=
+	t=1756891566; cv=none; b=Sebz/kQTXo2uDuCKaOmM7STV6wq9xCIH4Thm9xRagqLsVfM4Beto4Q2MqtDQ8j1AKguA8nkvPVVtkI+8Ji+n6MOlWrszqg7dZPUJu1uXo7EET+oynk8j+BFZnZhftFyZbDtHg7MM/JRY1a80I6CFEiGDEFPwu2lCMRWZLnRgumY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756891557; c=relaxed/simple;
-	bh=tQi2QB0QE+ylzKAWeOhCAaWxxpDIYV9un1Qgsckd9hQ=;
+	s=arc-20240116; t=1756891566; c=relaxed/simple;
+	bh=Xnb69NOw/MIKR0T/tVzvX59lwFCGDquCXbYhPMHzdiE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ae+K44rFWlml5w5P9mvXXVGVYK1UGz9taFe748UuexXE/vT0CWiinMTfM67NWw8IA3YPq3293kL2THpP4soAA+ol2iynYISZ5d32spGgIqcE4DcKPaxAdURnfmHabeGU0ILYtCjRzO4ANfL+XQVUvUJ+Z6Xi+jtBmNCbnDVtZHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VsczgInH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5831vc2O021832
-	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 09:25:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	V8xcTnmvm8vaCs5GzeHhTc9j2HG7qNwDmT3oTLQQlSE=; b=VsczgInHphxWEvck
-	od5TCtrl9ghVLbLTHWdb0twQmaBhz6ybE47LtAXoOdfY9++I8DJYxKsiud5Xn55O
-	vfkjfXP7jf/+n9Q6rxnluj9I9cPujwDFDSC0Pr171/rktCL7xfvGMvZpEUv/qEyo
-	6Lh6EcvbFpcbMqwoCfAJRc8kPR22oA2yUuu9MYDEwZ8f90Py1i3848QbbqgrXSF/
-	QjcPKVSflYpDj++vKFOvi467eEmg2eoISAXepz9skJQrqWPgB4+pLHDTLqQecBuL
-	fYY4Ha8IpO7bvph/u9CawZB0Z9dbRZaG0m97e6Y77SVYnikut8A7jZ3m9sORz9FJ
-	ISXUSA==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ur8s33gh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 09:25:55 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b307e1bef2so17002861cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 02:25:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756891554; x=1757496354;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V8xcTnmvm8vaCs5GzeHhTc9j2HG7qNwDmT3oTLQQlSE=;
-        b=XUh7Jo3I/ql1H/kjVKqZyYg7fu2SwVMdudYHhwC79j3VLF2QhEBfKaWU+2AmSkroNe
-         /f5nGsY+qIgCU6DZglR1vKDKgmPxS8LGRCt9sQWYwdbmcgIBNvWsHp5dRIrOb8DOPozl
-         uvuGSXN6YfY96bG6dOvOi8+8sPtdAe7I2JBrdSj6xJkzKeoYjAt6vSL2VAGhA7gG4l43
-         efcWWJO5AiqxVwxU5xrEqFJCum/xj3Zr+jVRGaO641i7cm4eRdxlkI3bgPQ3SwCV7PWR
-         FQgkANHD1yD1uH5iGrKH8UFheuPpqlwquzj24IFbitJY5FajVWqduATW1xfvMMciUypK
-         muaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXUs8ViCmsBQK7KyElt15JkIJ7PYHaeMNBpLa/ZDb0GPHiL7PwzVwZymkOzT0mOfkLrHfaYRJx1jp6ARA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMvC6T24JCl0aZG8VPWQYDWieGkMfG69D9vHmRrimKNqLsFSjU
-	/zqYT7b96eL2hnUPo7jo7e0fRFKRLq54gQz8ifGJyAbQoPcIVFrlO0FIOvdLaM/gel14wxOURBd
-	ShhON7ZSXoiWR7lvN/Qn9US16XdzOUKvMi4U+IGx6gbezzBSPcZPR7irJLd+aur9XtQ3E28lGpE
-	k=
-X-Gm-Gg: ASbGnctpwdERy3cc/wrAuXqbeMoMbSugG+HG298dovVquzyyRZ9BtNE+RUO9TCweNb5
-	W8LAADnNeagKfxhOq3E5KVzLyVgNXZVbwwwGE8N3sRjytRcX8SPjYC2XhnEaXNc0DA3HPAbWDH4
-	n9k+fDoT+kp05tYqIVGe3M8qOVnh/lmG08pt7YWDb4hhQj4iLQbujqmRS+xBorit0KCtx2FpmMQ
-	rOuVp0oaGZwDtDRXVGEKlA1DVDXWpf0qihF4aMXQEFqbVzpbngsp99mIoMy5x9VpREYKwMhq8C6
-	e02GSwXz1KmI2MqYzK45LsGXX8H9jSbBzwdzE4xnWW6nANtmfOIpf+q+0msT0dm2RVWH7Ob2Qg/
-	mW0ouXx4nKIksSdEYqnSgaQ==
-X-Received: by 2002:a05:622a:15d4:b0:4b2:d8e5:b6e3 with SMTP id d75a77b69052e-4b313dfd74dmr139717881cf.1.1756891553762;
-        Wed, 03 Sep 2025 02:25:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFtzVlVNKODIar3OKV1Dpdt4jlT/5/HUDsUa/mjebH6AoF7OB+QsQV0PuV0R4ZhtiSsPcI5mg==
-X-Received: by 2002:a05:622a:15d4:b0:4b2:d8e5:b6e3 with SMTP id d75a77b69052e-4b313dfd74dmr139717631cf.1.1756891553148;
-        Wed, 03 Sep 2025 02:25:53 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b046af12536sm102654566b.100.2025.09.03.02.25.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 02:25:52 -0700 (PDT)
-Message-ID: <b7a1b89b-54dd-4d02-afcd-0144df5a6d57@oss.qualcomm.com>
-Date: Wed, 3 Sep 2025 11:25:49 +0200
+	 In-Reply-To:Content-Type; b=L4Y/bw+5KRM874X/GyRKnX55+HL3BZ0DyVYPo74l0iUv5xCBEIJIBpdlslzYkY4F0nwuYIulrU5Tw13/Z82P+EpWgGSb6bg5sY3dTG730z98Td9pNBMBkpWaej9DmKd9Hn/2k3uRksQptOLdL27wGUj7Aw28DUrtqf00rva3bx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CYrPLbeW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=McADqQm4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=r6o3bBqm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=C4tR98NC; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 05A741F456;
+	Wed,  3 Sep 2025 09:26:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756891563; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=A8T8Nj21cWCWy/GFruQ0Nkz1WCXXils8q9OhLNNO9rc=;
+	b=CYrPLbeWfpZSWiwyQYT7m46mVFVtOsT28U+oyY0mCxKVMbAonZbojs1NmqUfc9U06WfltO
+	Dz2tZrUgST7qXEJJ9UMld5Kv48glvj2vIKnyev2Si/hoN1TgLHAxkdawrG3UYNiNu3vkv5
+	Py9HNi9KKJS0IsJNLkB0JM02/vH2YEI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756891563;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=A8T8Nj21cWCWy/GFruQ0Nkz1WCXXils8q9OhLNNO9rc=;
+	b=McADqQm4Uqrs+CdQshzDZD66nG0ezO+E+DSC/ZYcMIlxHhw0CfBquIzc5yFdsLLyeMcYPw
+	L+c5joNrfy1zROAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=r6o3bBqm;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=C4tR98NC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756891562; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=A8T8Nj21cWCWy/GFruQ0Nkz1WCXXils8q9OhLNNO9rc=;
+	b=r6o3bBqmRpHj2PnhXyQi5U6dh68FbAnsIG6Hd9oG2fHUX4NMN71tsgyX4u0741/KyuA4B7
+	LPvkBcSCVRxAimUjlC90RPL4Jc/Ng6fbJ+rUDH1mjjkSCzglT+CuAMmbZLdPjRK1whzGJK
+	4uLN6QHBqTenZ+2GYf2LjGMJ5mJ51wk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756891562;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=A8T8Nj21cWCWy/GFruQ0Nkz1WCXXils8q9OhLNNO9rc=;
+	b=C4tR98NCb+yuVKREUWl/1P6ZyR9UOh8hHBGCdC9eef7sA9iOS40zrpNENyNeHnAGAstdoZ
+	bXb4wI1lXKqSnTDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DEC4013888;
+	Wed,  3 Sep 2025 09:26:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TVSvNakJuGioZgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 03 Sep 2025 09:26:01 +0000
+Message-ID: <ef1b79ab-15cb-4720-ab05-d77617143a26@suse.cz>
+Date: Wed, 3 Sep 2025 11:26:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,68 +97,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] drm/msm/adreno: Add a modparam to skip GPU
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov
- <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Jordan Crouse <jordan@cosmicpenguin.net>,
-        Jonathan Marek
- <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20250902-assorted-sept-1-v1-0-f3ec9baed513@oss.qualcomm.com>
- <20250902-assorted-sept-1-v1-3-f3ec9baed513@oss.qualcomm.com>
- <a701e4f9-57b7-46cc-b42f-f1a4a902fbbb@oss.qualcomm.com>
- <zmaphb3douzah5m447naluu7cjrwieb36uznjb7uamblxduira@xhtklqmy22tu>
+Subject: Re: [PATCH v2 1/2] mm/show_mem: Dump the status of the mem alloc
+ profiling before printing
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <zmaphb3douzah5m447naluu7cjrwieb36uznjb7uamblxduira@xhtklqmy22tu>
+To: Yueyang Pan <pyyjason@gmail.com>, Suren Baghdasaryan <surenb@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
+ Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Zi Yan <ziy@nvidia.com>, Vishal Moola <vishal.moola@gmail.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Usama Arif <usamaarif642@gmail.com>
+Cc: linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org
+References: <cover.1756827906.git.pyyjason@gmail.com>
+ <8dc71d31de53afa4c0bb25234807b1e6ead5ba55.1756827906.git.pyyjason@gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <8dc71d31de53afa4c0bb25234807b1e6ead5ba55.1756827906.git.pyyjason@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAxOSBTYWx0ZWRfX3DdXVQJpM+vc
- 5rPZ54LAZZwp7DKszb6nWtYTsdWU6x1Y4F/Otb0VsNhETKxox+dn3t7p0FN4H9AOdYnFwYCycT1
- +mISrwm2dnCBqlLFdsS3hpd+kjxm2mFjLf0XJ2xuyAB7kqnQjQ+S2Whx35GgdREy1K+geSiw/rg
- IhboMHgGN5VpIb0KzJeyULLHApcB/A94hRBj851v7MgpmKNY0xyI87oZH8CXCSeIhCPnG96S1h6
- pe8GQK/gDMy7p/owbM/gwmiH5tnW8jy0cYpjR166psS/Q159hOqYxIcaCpkIxWDGlOTw9FMmV3W
- qHdAtga0oBZY0frrMsTx+AAXUFhS5AWvaTRNuyi0+B5b2w4ug0Nmt9uC2lw42SHMx0XHroeVIe+
- 6SAnnKrB
-X-Proofpoint-GUID: yVKTZzNGhOdAvi8jT8a04M8ml7V_rqbd
-X-Proofpoint-ORIG-GUID: yVKTZzNGhOdAvi8jT8a04M8ml7V_rqbd
-X-Authority-Analysis: v=2.4 cv=PNkP+eqC c=1 sm=1 tr=0 ts=68b809a3 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=q_ebNChVWJ_O0X_IP0EA:9
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_05,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
- suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300019
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com,google.com,linux-foundation.org,suse.com,cmpxchg.org,nvidia.com,linux.dev];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 05A741F456
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
-On 9/2/25 3:02 PM, Dmitry Baryshkov wrote:
-> On Tue, Sep 02, 2025 at 02:30:48PM +0200, Konrad Dybcio wrote:
->> On 9/2/25 1:50 PM, Akhil P Oommen wrote:
->>> During bringup of a new GPU support, it is convenient to have knob to
->>> quickly disable GPU, but keep the display support. This helps to
->>> fallback to 'kms_swrast' in case of bootup issues due to GPU. Add a
->>> modparam to support this.
->>
->> I'm not entirely opposed, but slapping a // in front of the compatible
->> in the dt works just as well
+On 9/2/25 17:57, Yueyang Pan wrote:
+> This patch prints the status of the memory allocation profiling
+> before __show_mem actually prints the detailed allocation info.
+> This way will let us know the `0B` we saw in allocation info is
+> because the profiling is disabled or the allocation is actually
+> 0B.
 > 
-> Which requires rebuilding and reprovisioning
+> Signed-off-by: Yueyang Pan <pyyjason@gmail.com>
+> ---
+>  mm/show_mem.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/mm/show_mem.c b/mm/show_mem.c
+> index ecf20a93ea54..51892ce2efc4 100644
+> --- a/mm/show_mem.c
+> +++ b/mm/show_mem.c
+> @@ -427,6 +427,8 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
+>  
+>  		nr = alloc_tag_top_users(tags, ARRAY_SIZE(tags), false);
+>  		if (nr) {
+> +			pr_notice("Memory alloction profiling is turned %s\n",
 
-Fair
+There's a typo "alloction".
 
-Konrad
+> +				mem_alloc_profiling_enabled() ? "on" : "off");
+>  			pr_notice("Memory allocations:\n");
+
+But I think the message would be more obvious if it said e.g.:
+
+"Memory allocations (profiling is currently [on/off]):"
+
+>  			for (i = 0; i < nr; i++) {
+>  				struct codetag *ct = tags[i].ct;
+
 
