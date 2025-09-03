@@ -1,190 +1,160 @@
-Return-Path: <linux-kernel+bounces-797591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE6AB4123A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:13:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B800B41240
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1B631A8813E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:14:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49CBC54465C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9E31E5B72;
-	Wed,  3 Sep 2025 02:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7975A1C84BC;
+	Wed,  3 Sep 2025 02:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+gpid+7"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AgN98ydm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399CA1E6DC5
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 02:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8EB2AF00
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 02:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756865627; cv=none; b=GjGCENOSy/pGhscUhnmG+s13pUjmKwNQg2/UMvIZHQyBqGagiMkD6aNoNQvU461BFyjP8n/IKiCn53j/WOzsMZpncMWcN4hoBTMO/wMZqEJFJiG7qYYh+cZbMZS/zJH8lE7FJloidilxziZXGonhuiztyHvHUUZmq9sRp8Y5mfk=
+	t=1756865798; cv=none; b=nC+iig+ettEZLeYnyPzgD95vSUmyl8Eg6xjKCGQGqnGSGYuGbW8SQnm7CNDW9EGZapd3h7zlrziPvf+KpphpJoy6nXqtc9nzBU0OdESgu4pgobwfh7T8pG6q8hFVgtPnGB7r0Y8bA2roYjcM8nzgaBxXzVwzUFKshemBbmgDKQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756865627; c=relaxed/simple;
-	bh=gENk5oy3VPH1iTtwOCQdC87R/NjbhqCM6vXEQKfriYA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OKn46hjSXzbxPUoVzP5QdyIKXkt+/YGAmwOTxUn/Q8HoII/f8f1WsG8CmeA9yvf9VpRziBmhOrz74OGOL7FoVcJEMw/uGJRBXknSV+5oufdNRtNnE0KHsxDgljyP2G+9u3lcSY4GIGAPlk+CbXck5tHi+dd8JSuDBQnhJ/jjvVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+gpid+7; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61e425434bbso4744171a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 19:13:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756865623; x=1757470423; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gENk5oy3VPH1iTtwOCQdC87R/NjbhqCM6vXEQKfriYA=;
-        b=g+gpid+7msCF6p3Jnmtt9Z7uFLi4GgaQmoddDOiew7iunDuwCIniKqAmNLXyzGhL1i
-         dTMEwCx6wLriYjRnJ5vh284o34p56S5IQfW2HlUoBl7mjl2JTABzfKLE+pehbc3HyhBR
-         AhK3gE5OKk2I15Z51PHWLKkvnBhbleNx3wgKXfPuMdKZy+i0JZ1CvvkO6G23JjFELzQc
-         vmsD/ONxB3JTTkF+9xMNXbZIkf4ljNFq+ksXYVU9CyYgTJAJi4YGT6w1QxsV0qRrGoNy
-         ZZkulyp171JcZ1Bk/EjNldoUkipemLWrqDaQaKeTrDej2TljFWzInh0wUfzMZhg8TfoM
-         4y5Q==
+	s=arc-20240116; t=1756865798; c=relaxed/simple;
+	bh=v9zS6j9T98yNyfjNeGOWdW3vrw4eq89d9I5wRlLVeWM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hcyEUzRVKU9pfsBtVOaHAs5bJ7uKZ3bURqe1ORwIQ0CBneQIvbeC4+bo7yT0afJW9kVwudhA6RdVFfEqKdF4ZvUNlPtJBvvNAq0Yw2AZEwa/QwOBtophbqJkYQk5KPy/UoSSHR8Xv9iF+RPaRZAeT+wweKp9nb8GhkbIj5SZUJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AgN98ydm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5832EE6T018266
+	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 02:16:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	v9zS6j9T98yNyfjNeGOWdW3vrw4eq89d9I5wRlLVeWM=; b=AgN98ydm4gYvt7nB
+	l9MYyadPaUTYUvFUVU9zZB0ns+g80ToOn8/+yPoceO9rYRbQ4DZuZCqe4KBmtP+E
+	yN7SRhYjyFYa078gPdpYmTs4q7Os4P1xBATPDLTOPaBDG29Q7dvmCQQSlFWdqOUQ
+	mUs8CCxq11+ML76qCOBaL09QYU0Rmsexa9b6mzeYBIiCxvpJ2Yd+8hl7ET4CQtLk
+	7Or06L9LYQbo8mFnG4gOZKygS+jmm0iTvsFzad5viwRcg861q3nXHXVYIvyyhm6p
+	gFe1w4eJYHWQNpByN1dMskGHMO8lnL7FbPea33tHY9g1oO5DPh+flFFrsI3hO3rb
+	w0MxIQ==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48wqvwbkcp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 02:16:36 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b4c1aefa8b7so4859884a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 19:16:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756865623; x=1757470423;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gENk5oy3VPH1iTtwOCQdC87R/NjbhqCM6vXEQKfriYA=;
-        b=iYD6TxUfaA2heFpeqscRNxOc5gz/NEo33lyjgd5ljX8a04PnPBMuJbgcK4UwAVkSwE
-         2mjzCcwIrvZADCm4oU05/8ShD9bScFS7zp5F2ryvruAt5HDTxa09DEQbVZG11q9NmSPW
-         u7Z7+NMQzsPdcLf4A6TVwHMkXT/FtjD3SKGqKtTVXLpMX/kESjGiOUDMnJ8JU2DT3j+m
-         Z2kXJ99BGRAHn0cY1j9L5RoIEllOeL0P41iO5jggvwOqPB3yK79s+by7GI/G3fsTDMyj
-         6NgPy4KZecMmSNYViUl45aoWLfAok7+rew9f7lrsi6DyogKdO9ygWBq/nv3H+yy5pY+p
-         5aGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcFvIyvrmnRyIo+Lbtj1znG7YmN7mLsuOtCPktlCZJWGMNn06qouMOpJ2h1Vn9s5DpWw+JSjPM6GvJYyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0M7/Hh+kNQmhW5tqLnj7gZECFO1YsranzPhSS3ACRK3+uCYj/
-	ZOuw8TCl2qwyyeo0/uk9/TXys2wVCGFKhupp5qtiBoXFiDP+wN8oD8b8HhBmSmD3GzezscJjA4Q
-	a/9wqq5KA3TgHlBHWcMUaQzo6TUoKkJY=
-X-Gm-Gg: ASbGnctUD11XFEkulf186JaGGZnePP97IE7Y/AN7zFeknVIJtNKajZ8EsAlC1KGJQXC
-	2Gy9CY+G3SapveJzyCdN/WrEr7F/9f28tsthsBe55H2Ane/M7PVKeDFkNj9iwuzbDmW0XlXMGGt
-	t90Yv4nkpXC5t7L7NUI053TEfzhVsgDGFxB5TzTxeD9xNc/DRqq/qDXWjy5oaZuXXfWGzH2bxMs
-	mCfVg0mvzA=
-X-Google-Smtp-Source: AGHT+IG6d+Qs7jEfLV+2GlfeM2NxgKykyZEZ8CaSTEyS6WNoJKY3VPzhv/tG8RqTorogqedmIV3bT8045r74TvWBm88=
-X-Received: by 2002:a05:6402:40ce:b0:61d:cd5:8b6e with SMTP id
- 4fb4d7f45d1cf-61d260cc220mr12247397a12.0.1756865623431; Tue, 02 Sep 2025
- 19:13:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756865796; x=1757470596;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v9zS6j9T98yNyfjNeGOWdW3vrw4eq89d9I5wRlLVeWM=;
+        b=oNfVCH5kMdFmdXAZ6nwyZbUB9CC7wsP1uri85VMQba6iLkgu+KMACGtBJg+bfDIPoo
+         lG2d4T9dLUeEGSCyzIbMrZSkkpsqSW5QsepIfFItlb9OKC/8JjkazviCR4NTeZQjBVUw
+         EiHrWd1Jw2d2dSTGLZyg2gF78qZgzODqpjnE6Fozx91/McFiyQyl1twTNNDKowDpu/IW
+         QiaXtasmEFe5Huj92tc9SZNAFpwdrP+V6dmGEhSInmmoMWdkPA54MLZB0/kiIPRRJUJT
+         HihBuDE2n45L+COP2noZQY6KJSgr+F5kJAnEDfpwfYyTtE56x+HNRYDTz75kFWg38P31
+         GTEg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1TODbsy/4xlF6s8VZyk/c28LQuBEif8pBG3giTFIimlg8SlX+4yj7YHo22vpexB9wKluLaZQc4btsLDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnbUQRnwCa1DJ005cvFQJiz+BmNH6YA7Snnq5ztRtrxxRn789J
+	Eo2zreDtuUdtODc7XTq0CzwggGQ/9cRD2CaXyt/fG4FveRhON/Ejt5DsuFmfYbFpK/xBQglqer7
+	P9VpwzMGT1OE3o8jEwRzeZToVFJZAWYDggmhyWEQMIGMrU/ECXIi1RzC1mBHLzm378uo=
+X-Gm-Gg: ASbGncuQQf3KLSe+ECHwM7RCFeTgun4RAr7sR3V+o0IBr3aiLqp55odUZn0RAu3Mo+t
+	W2Xs+2rBIsEb31/kzeEbnE77Ay2McWUq7/qjF6GLJmSe8VOtgpL4kyN3pyZgurjrjZuOwmOrjcT
+	u5yhtn+gBteBsFdarudDF/9dvOYwc45kDDUFKx0WAzF9h9UhxTFlb0AibR41IyeT5mul6ngX3wz
+	OIiqSBxIHcjkBpE3paEZiw3WDL7caiKxE8WASylVDez7jvSnoAhYMY8suIu8r4FCope9OvhZBee
+	P8gmFaYG6elbXAtp4aueC4VYRz3PxUD6vxHloQq6O1QWVX2Q20HJG81azTetBS9bJ6E0kRIcYt2
+	OdLJ1KL1x0EnNMD8=
+X-Received: by 2002:a05:6a20:5483:b0:238:f875:6261 with SMTP id adf61e73a8af0-243d6e0100amr17326298637.23.1756865795886;
+        Tue, 02 Sep 2025 19:16:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFn3oKdkiywXs7I27qdf2yUwn9EW1s0qdzWAjlJxUt+zYeJZsSbpJFkobFdywABWGuVgSjbzw==
+X-Received: by 2002:a05:6a20:5483:b0:238:f875:6261 with SMTP id adf61e73a8af0-243d6e0100amr17326268637.23.1756865795446;
+        Tue, 02 Sep 2025 19:16:35 -0700 (PDT)
+Received: from [10.110.3.132] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4edf7ed519sm9565518a12.28.2025.09.02.19.16.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 19:16:35 -0700 (PDT)
+Message-ID: <bec3a42d-317d-4758-924e-ac53f5dcfc10@oss.qualcomm.com>
+Date: Wed, 3 Sep 2025 10:16:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-9-ryncsn@gmail.com>
- <CAGsJ_4xON7fYg1VvcjLOsgBb_Wp4ruC+vdA4Q496GH1jXunU1A@mail.gmail.com>
- <CACePvbUVK45uRPVoO3ubDfQHikebSHFNQOsMTMvJ91QQZH2HwQ@mail.gmail.com> <CAGsJ_4we4ZfNqJ+v7+=0hjNKLakJ-s8qtRsGo_kp0R_th7Xvkw@mail.gmail.com>
-In-Reply-To: <CAGsJ_4we4ZfNqJ+v7+=0hjNKLakJ-s8qtRsGo_kp0R_th7Xvkw@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Wed, 3 Sep 2025 10:13:07 +0800
-X-Gm-Features: Ac12FXw1AUa6fSBq5i5DCUWbpe7DiaS0JIvFp0rfOypSx71p22kxXjov0LKnUyI
-Message-ID: <CAMgjq7Apnxx2GbTG5_dA+Vy1wGaxMHuS9APp0nny8tNURX8jDA@mail.gmail.com>
-Subject: Re: [PATCH 8/9] mm, swap: implement dynamic allocation of swap table
-To: Barry Song <21cnbao@gmail.com>
-Cc: Chris Li <chrisl@kernel.org>, linux-mm <linux-mm@kvack.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 1/5] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
+ Update pcie phy bindings for qcs8300
+To: Vinod Koul <vkoul@kernel.org>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+        bhelgaas@google.com, johan+linaro@kernel.org, kishon@kernel.org,
+        neil.armstrong@linaro.org, abel.vesa@linaro.org, kw@linux.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com
+References: <20250826091205.3625138-1-ziyue.zhang@oss.qualcomm.com>
+ <20250826091205.3625138-2-ziyue.zhang@oss.qualcomm.com>
+ <aLWW-izvybTo52VN@vaman>
+Content-Language: en-US
+From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+In-Reply-To: <aLWW-izvybTo52VN@vaman>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAyMDAyNCBTYWx0ZWRfX522O7xJ1ip94
+ 0IU78LdMVhUvzOhR/OF+foEkryBXzi/CZewmDTEUGRcIzqDtqx8rslFD8tB9xBeQfkPf5iC24ic
+ jZre8QIHFGtBd+QJQ+ZZy9vFSvjfV7J7Iw1n0rgP/rw6gqD14OrEqpy4H0DjAYJlnMIXe26mMF1
+ rJsyk/9mNg6c7XNTt4ymxH6U9tIH4q80eXKnjySuyeC1JkIB24ujWH0dfcscOjk102syGjyopxI
+ EEOMi1IM+leJ5tJbgSUyfcJF59W8OPfcRUHMK2aC8sVF8HTQi/f80wjvexPdYvQSOLrnqkec9TV
+ s9GiPnvgcgA5xPsc5pDVSiueVcXMc7LoHDIh7o7HcImevVukuFH8M5cP3ulW9hiv62ZUHkUTZUk
+ KTxO2QyP
+X-Authority-Analysis: v=2.4 cv=WKh/XmsR c=1 sm=1 tr=0 ts=68b7a504 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=buFmA9CyAF0SDTxNqVIA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-GUID: Abr1oxnCcGuurpjMS5m-jEE5wLBW3u7m
+X-Proofpoint-ORIG-GUID: Abr1oxnCcGuurpjMS5m-jEE5wLBW3u7m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_01,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 adultscore=0
+ spamscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509020024
 
-Barry Song <21cnbao@gmail.com> =E4=BA=8E 2025=E5=B9=B49=E6=9C=883=E6=97=A5=
-=E5=91=A8=E4=B8=89 08:03=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Wed, Sep 3, 2025 at 1:17=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote=
-:
-> >
-> > On Tue, Sep 2, 2025 at 4:15=E2=80=AFAM Barry Song <21cnbao@gmail.com> w=
-rote:
-> > >
-> > > On Sat, Aug 23, 2025 at 3:21=E2=80=AFAM Kairui Song <ryncsn@gmail.com=
-> wrote:
-> > > >
-> > > > From: Kairui Song <kasong@tencent.com>
-> > > >
-> > > > Now swap table is cluster based, which means free clusters can free=
- its
-> > > > table since no one should modify it.
-> > > >
-> > > > There could be speculative readers, like swap cache look up, protec=
-t
-> > > > them by making them RCU safe. All swap table should be filled with =
-null
-> > > > entries before free, so such readers will either see a NULL pointer=
- or
-> > > > a null filled table being lazy freed.
-> > > >
-> > > > On allocation, allocate the table when a cluster is used by any ord=
-er.
-> > > >
-> > >
-> > > Might be a silly question.
-> > >
-> > > Just curious=E2=80=94what happens if the allocation fails? Does the s=
-wap-out
-> > > operation also fail? We sometimes encounter strange issues when memor=
-y is
-> > > very limited, especially if the reclamation path itself needs to allo=
-cate
-> > > memory.
-> > >
-> > > Assume a case where we want to swap out a folio using clusterN. We th=
-en
-> > > attempt to swap out the following folios with the same clusterN. But =
-if
-> > > the allocation of the swap_table keeps failing, what will happen?
-> >
-> > I think this is the same behavior as the XArray allocation node with no=
- memory.
-> > The swap allocator will fail to isolate this cluster, it gets a NULL
-> > ci pointer as return value. The swap allocator will try other cluster
-> > lists, e.g. non_full, fragment etc.
->
-> What I=E2=80=99m actually concerned about is that we keep iterating on th=
-is
-> cluster. If we try others, that sounds good.
->
-> > If all of them fail, the folio_alloc_swap() will return -ENOMEM. Which
-> > will propagate back to the try to swap out, then the shrink folio
-> > list. It will put this page back to the LRU.
-> >
-> > The shrink folio list either free enough memory (happy path) or not
-> > able to free enough memory and it will cause an OOM kill.
-> >
-> > I believe previously XArray will also return -ENOMEM at insert a
-> > pointer and not be able to allocate a node to hold that ponter. It has
-> > the same error poperation path. We did not change that.
->
-> Yes, I agree there was an -ENOMEM, but the difference is that we
-> are allocating much larger now :-)
->
-> One option is to organize every 4 or 8 swap slots into a group for
-> allocating or freeing the swap table. This way, we avoid the worst
-> case where a single unfreed slot consumes a whole swap table, and
-> the allocation size also becomes smaller. However, it=E2=80=99s unclear
-> whether the memory savings justify the added complexity and effort.
->
-> Anyway, I=E2=80=99m glad to see the current swap_table moving towards mer=
-ge
-> and look forward to running it on various devices. This should help
-> us see if it causes any real issues.
 
-Thanks for the insightful review.
-
-I do plan to implement a shrinker to compact the swap table of idle /
-full clusters when under pressure. It will be done at the very end.
-Things will be much cleaner by then so it's easier to do. And
-currently it seems the memory usage is quite good already.
-
+On 9/1/2025 8:52 PM, Vinod Koul wrote:
+> On 26-08-25, 17:12, Ziyue Zhang wrote:
+>> The gcc_aux_clk is not required by the PCIe PHY on qcs8300 and is not
+>> specified in the device tree node. Hence, move the qcs8300 phy
+>> compatibility entry into the list of PHYs that require six clocks.
 >>
-> Thanks
-> Barry
+>> Removed the phy_aux clock from the PCIe PHY binding as it is no longer
+>> used by any instance.
+> This does not apply for me
 >
+>> Fixes: e46e59b77a9e ("dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the QCS8300 QMP PCIe PHY Gen4 x2")
+> Not sure why is this deemed a fix, also no empty lines here
+
+Hi Vinod
+
+As per Johan’s suggestion in v7, it might be good to include a fix tag.
+
+This patch resolves the issue where the QCS8300 PHY was previously
+
+configured to require only 6 clocks instead of 7.
+
+BRs
+
+Ziyue
+
 
