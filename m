@@ -1,199 +1,124 @@
-Return-Path: <linux-kernel+bounces-798425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93558B41DC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:56:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 658C8B41DB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 020041BA6AB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:55:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C39454891F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E64E2F83D4;
-	Wed,  3 Sep 2025 11:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1262FFDDB;
+	Wed,  3 Sep 2025 11:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZomjYUrG"
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="aW6MF1NT"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97E12FFDC9;
-	Wed,  3 Sep 2025 11:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DDC2FF66F;
+	Wed,  3 Sep 2025 11:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756900288; cv=none; b=BgrBJezbcKeAfhe42yGfaJrrgAv9DDOmkVd2MbB5Ojyp7UgW/Lv5L2NLa/A3LQ8F7H0iKHC6J6JHKvBI9O72bAji2eGt3g+2jU0/LK8HYZAOcUJpREH5sC9Km8R5SCRWnF25hc844OVvofka+uHke1EQZy7YPpNKuvS8BrB5PSs=
+	t=1756900287; cv=none; b=VBG2o89vjm75bHRhKJ97mBaHxryk/1w73dyc2ffjgCLPmNX2wMDznB3Rhclb2AIB6DEsJi5Aa0btkw9jD5ZSENRXJmSItHZx7NtO4rO4MJxXw4+jL45lpwxngbUFDe6oLqAhovr85u8zrT1p3jjicksvBrrcdWgoY5Uv3Tgnn40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756900288; c=relaxed/simple;
-	bh=1Z8SZEncw7tBGbQStmROPc1U7TqEyR8wI4U8vcoMmpE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z1094daSVCTEH4aKVrUYP1563ozLU+3nlcYdXKbwC6fCQq3B8CAeV6Qi/ybmZ1+w8vfHCb8dLW5oTi63h3QR4k8F8ffJr5aoBukHAaeyaTMaW7m2DDWrnnjletBqzjWhDu3pZl7JKR5Uw8CtM7mLRIXtOwlHXB/6H/1Z2x4ElsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZomjYUrG; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5449432a9d7so2039399e0c.3;
-        Wed, 03 Sep 2025 04:51:26 -0700 (PDT)
+	s=arc-20240116; t=1756900287; c=relaxed/simple;
+	bh=nLBdBuaIf1/aVBs0fJxzcj9UY0fYGaAL/FzD81BuuFE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hPh0lzM5rNsTy2dIrPts9w+DW3L1KLioCHbtiyH6cj299PQVMCS5F9qwmK0N4+L4IjuYkLVewcmwa4yzRgYuHCbKbKnbQjE9UDlWO+8FThsp9HzDl3RCvCw2P7Ny49JCln5ufocOYuzjSJX9Vn4fB47ZRc87SD17nzejnctSI+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=aW6MF1NT; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45b8b7ac427so20654675e9.2;
+        Wed, 03 Sep 2025 04:51:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756900285; x=1757505085; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KG/GG5WI92QmsMWA+qAHX/u6m8W8YnChxIQMgYM9v3s=;
-        b=ZomjYUrGlShA20wkRXUNTNyS2q5miCD0xm9pHVHAlAaFf3yvWzElpTk5k9SRjlxmOq
-         IORmZzWun3sdSY1/X6KFUbjLGU+PYxPSqv/niCx9pBGBlV4JAuj9+WpW2+ek1FMDFsj+
-         jAOcohmUblm6Jiiba4nX3j5Kd9PwtHE33djtuX5bJmSrTDGvLuXu5kx8wqv0G85qnEHq
-         N1WLX3V7QbAaoA40W7mXyrAKqXxD1geb0RRIjV1crctBvwcQnadzEKWANSoyjWCK3cEl
-         ok4AUpzkp0L0yZOC2T9UcHZi6LeSb20PeI8uiiDk1BI2Ct2GdfY1J7othhOpkUA0z6S5
-         QjDw==
+        d=googlemail.com; s=20230601; t=1756900284; x=1757505084; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+poAW3AComNrsNKMjhX2QMWKG3Ybru0jXQ935AA12eE=;
+        b=aW6MF1NTjC9d1dWDldSIaPeoG2fOZSfoItwdlc5jbN317moKjJPeuhajktx8502DJw
+         B6RN2OslntIeXV2LQjWx5+1z5w+0RKyfNu/ByKZks9c1BRplfQrR5dJ3g7UBtg9DHvT6
+         +Wi4YC04O+eDjg4aMde1PlPi0eGWSqU1ojSkIx0jPwy0m/ArgTxONrro8K3ddkuhkpIS
+         zufOnNyuNlT8oL6G6+OxJC2NczT2SflmoKk9/UdApTT+49TBssKtg7CJhbIii346JknV
+         LtAjqpzqwzAGUBbkwTPUExDrlUGnM7RarstU3RIgghuCqCQsy8AUDt+/O7TlzcgByyP1
+         DBeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756900285; x=1757505085;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KG/GG5WI92QmsMWA+qAHX/u6m8W8YnChxIQMgYM9v3s=;
-        b=KudmwmVnHoY216q4srBGZDoTkFOeVoShsI4w04pFXOLvE6LwAHOzwOQPJ93Ly/MBg7
-         mPH98ku+nJtFzmKOJOErQpZoE0PAdvaGPZApLdDp2eBRJP++TOsoU52kk/uQ3ll873//
-         vceb4a2qb1vzbOqsMxBQYsYGG1+5NMh9Sr42fp2JeVvPh5eIO5y2eNN5klQ4VvYzBME3
-         gH8k4+Ghtjh/CsIZ74ahMPSss79KpPqepW5RDQOomFSg0/O8hmNjR5u95vSMLPtIV25f
-         eNUCU5azW+yQHFtlKrkncAzpWNuBYINPVY9aB9ILFBuAw4X410L3u2KzCc5kBQEgeiqV
-         01HA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQtKkOTtGwlnHVi11p+v6IQcY3IleV6RQLmKsmlQTyNAr+vtC1idFCOZIkbo0i7UJMxwOVuFIm3XttHLY=@vger.kernel.org, AJvYcCVnt82opgQkV6jEXol/wyPGQ9S4olwamA4nzomu3DNFdaxDhEyItDDCrlTPASuD3x5rccIItNm6JT6H@vger.kernel.org, AJvYcCW0RyQYVAOKaEW/oHjBk+ilEDFjwaljBpa6KJmQ3QPcCyZmAHbEXhxRRV8FojqDOxDtvR9fdwQraHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+ts7dowTUpzCSfBvYfcVTvT7hviSKEulxStfV/xJXAjR8sF/s
-	Q5elc3PmwLoGjrr1dMVvhyPQWo/10bsyO52Gr2zl0JHKlV2iOe5sXQqUSCx4avlk3doMR8NmlxS
-	aXA7cwCny4AHwAFB49W2223H7kbOHYw7aKVVRSa+WCQ==
-X-Gm-Gg: ASbGncu1epnIbA3KRAzoTaJny5gDcDTCmX7NKj+WixFS3rIj43USpWN+beOW77Iy3FR
-	MCxtVmqaH0hqY+rt3ggjwmb67LIqNG214qmGbcXy6JYe/zvRK3u6eKBOVDg/twR4+D92pGOUVYG
-	EIZHKbKFsVJ6/P2878XN3d3DxExwt/dOKr0Wb31LI5dHnoE7MO0s8BgKfX3YeN88RgX+lv1z4Bx
-	phqgfKRqvsqouZy/7GAHYg=
-X-Google-Smtp-Source: AGHT+IHuEs81FFipYz0jk66WrkA0VYYvXxkKkQVbbDcC/pneAy6OjYjnwENV4Q47x2+EkdGNRr/7NiTZNltZ3pTRRNQ=
-X-Received: by 2002:a05:6122:2217:b0:543:c44d:c1ed with SMTP id
- 71dfb90a1353d-544a0255f04mr4790044e0c.10.1756900285565; Wed, 03 Sep 2025
- 04:51:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756900284; x=1757505084;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+poAW3AComNrsNKMjhX2QMWKG3Ybru0jXQ935AA12eE=;
+        b=CYHan7Pq83pRAb1kguKxduYLkl4bjqTWDioNIxOyHcoEbZU/nry6Jn6rgHmftaMv9K
+         nRfThOwI0oemQfTSDTlgdOFVUDEK0s4o4Mn+4PA6TW28JDHLVxEB4PQ8ZI82xiWLgzni
+         lADGdosRnm/8PmaNG2g5wQLISjeIHIc+eRXPUm55QoxLmg8MpzM3gzbEtXABywfchhmd
+         uwwuZ2pxK0A3PjQeHMtLZnjI3nPyizF1Gx4bfLrtuF/sjTTSX+jzLe6vxblENrGnKG2k
+         TMFUswzkBHXwRAeqHbN2COd+k3Fx8Wa0Al8AteDJ7oox3u8XCo5JwxkF/O38IMKFf8od
+         FXpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXiksv54oJk3TQ5GvP0IVzsvOOcCuYAiuScoTjJKLjOYgXSzXDsM9JXqm0KKB8JYaZSjKjunUT@vger.kernel.org, AJvYcCXwMdJplX2ygP2RMSMy+8rJN2n0rqUUQUm2zG/q4TXnSg2sLJTURfikQJQAzu8xdRdrQi5W4AJgDlSy864=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7g6CfaTIigjpoVFRzoPv6TUyBMQ0zX0v2wUQIadDKr+Ow+Ezv
+	ELRfM0prcYJLfmU+/5NC8zn+MD3RlcBAKKpBe7iz2O0txXOyEqPWfpk=
+X-Gm-Gg: ASbGnctY3yqwvqOgMROnoY4305WS6EQcz6FZH9dOH9gv0lts6fnkXj8OXM5BbiSXxsg
+	gwXxNR0ZCnRr7jaBVabd88z7kuijWyt/wYqlLwX78BPUpq8of8S9S1eICxqShsO5P0XVk6HHoWV
+	XbVRi9X7o04cS6OspAXt3gkWVSCByrDcfFLshoVadYgP31rn12BQHc6iwR4KBmXHNdvl33rkByO
+	GLQqHk/2MGfEOwuowADOqLJjArB6dUg5G6QkHEmm8CWP6NZGz++1xI4q16NMw01LTsAsw1PiggE
+	8O9KDOT5vbDhT1GPwkPKwCVHwG2GnFghuC17VG60xoM9QuT8Qu2aXJmMM2iyQFy85/Tmbbx/XnZ
+	nsLB6Bau2VYijNhejfpwX7tU1nOCqEMXkkscK3QLu+kwmo93Ae+k/O7iEJ8PKZXOsrfmOuU32UA
+	==
+X-Google-Smtp-Source: AGHT+IH8KQaV6Ll+X0GX7vVi1QC4bMGUrCiEpULUwaoVTVKkkRFfOk03P6Y5OSqOIWzXBzBujnsLCg==
+X-Received: by 2002:a05:600c:1ca9:b0:45b:8c3f:7d5a with SMTP id 5b1f17b1804b1-45b8c3f7dc6mr90956135e9.4.1756900283871;
+        Wed, 03 Sep 2025 04:51:23 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4f3e.dip0.t-ipconnect.de. [91.43.79.62])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45cb5693921sm30003685e9.0.2025.09.03.04.51.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 04:51:23 -0700 (PDT)
+Message-ID: <170ff207-cba5-44ce-9d93-75f7b711bba6@googlemail.com>
+Date: Wed, 3 Sep 2025 13:51:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+zupgwnbt=5Oh28Chco=YNt9WwKzi2J+0hQ04nqyZG_7WUAYg@mail.gmail.com>
- <CAPwe5RMpdG1ziRAwDhqkxuzHX0x=SdFQRFUbPCVuir1OgE90YQ@mail.gmail.com>
- <5d692b81-6f58-4e86-9cb0-ede69a09d799@rowland.harvard.edu>
- <CAJZ5v0jQpQjfU5YCDbfdsJNV=6XWD=PyazGC3JykJVdEX3hQ2Q@mail.gmail.com>
- <20250829004312.5fw5jxj2gpft75nx@synopsys.com> <e3b5a026-fe08-4b7e-acd1-e78a88c5f59c@rowland.harvard.edu>
- <CAJZ5v0gwBvC-y0fgWLMCkKdd=wpXs2msf5HCFaXkc1HbRfhNsg@mail.gmail.com>
- <f8965cfe-de9a-439c-84e3-63da066aa74f@rowland.harvard.edu>
- <CAJZ5v0g9nip2KUs2hoa7yMMAow-WsS-4EYX6FvEbpRFw10C2wQ@mail.gmail.com>
- <CAJZ5v0gzFWW6roYTjUFeL2Tt8kKJ_g5Q=tp2=s87dy05x-Hvww@mail.gmail.com> <38b706cc-5966-4766-9165-51935fdcd790@rowland.harvard.edu>
-In-Reply-To: <38b706cc-5966-4766-9165-51935fdcd790@rowland.harvard.edu>
-From: ryan zhou <ryanzhou54@gmail.com>
-Date: Wed, 3 Sep 2025 19:51:14 +0800
-X-Gm-Features: Ac12FXwm_mD1EWV17Y1ti0MZVGTnd5WtTf1pA6MdY1yndiDiEw7TDEB6M03beKc
-Message-ID: <CAPwe5RM85di_ibJtt3Da+CUW9ZS_GhkXqdEgJssu_k+xjMSdmw@mail.gmail.com>
-Subject: Re: [PATCH] drvier: usb: dwc3: Fix runtime PM trying to activate
- child device xxx.dwc3 but parent is not active
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Roy Luo <royluo@google.com>, 
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.6 00/75] 6.6.104-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250902131935.107897242@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250902131935.107897242@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Alan Stern <stern@rowland.harvard.edu> =E4=BA=8E2025=E5=B9=B49=E6=9C=882=E6=
-=97=A5=E5=91=A8=E4=BA=8C 10:41=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Mon, Sep 01, 2025 at 10:40:25PM +0200, Rafael J. Wysocki wrote:
-> > Of course, the driver of B may also choose to leave the device in
-> > runtime suspend in its system resume callback.  This requires checking
-> > the runtime PM status of the device upfront, but the driver needs to
-> > do that anyway in order to leave the device in runtime suspend during
-> > system suspend, so it can record the fact that the device has been
-> > left in runtime suspend.  That record can be used later during system
-> > resume.
->
-> As a general rule, I think this is by default the best approach.  That
-> is, since B was in runtime suspend before the system sleep, you should
-> just keep it in runtime suspend after the system sleep unless you have
-> some good reason not to.  In other words, strive to leave the entire
-> system in the same state that it started in, as near as possible.
->
-Alan, I fully concur with your perspective. Specifically, I maintain that t=
-he
-device's runtime status should remain consistent before and after
-system deep sleep.
-To keep parent runtime-active during child wake, use device_link_add
-create a link between them. Then dwc3_resume's pm_runtime_set_active
-forces parent wake-up first.
-However, for the dwc3 driver, both Rafael 's two solutions and
-My aforementioned solution introduces new issues. When USB performs
-deep sleep wake-up, the USB PHYS fails to initialize properly because
-deep sleep wake-up executes runtime resume first, leaving the PHYS
-initialized with per-sleep configurations. This ignores Type-C interface
-requirements to reconfigure PHYS based on plug orientation.
+Am 02.09.2025 um 15:20 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.6.104 release.
+> There are 75 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-> One good reason not to would obviously be if B is the source of a wakeup
-> signal...
->
-> > The kind of tricky aspect of this is when the device triggers a system
-> > wakeup by generating a wakeup signal.  In that case, it is probably
-> > better to resume it during system resume, but the driver should know
-> > that it is the case (it has access to the device's registers after
-> > all).
->
-> Not necessarily.  Suppose that C is a child of B, and C is the wakeup
-> source.  B's driver might decide to keep B in runtime suspend
-> since B wasn't the wakeup source -- but then C's driver would have to
-> make the same decision and would not have access to C's registers.
->
-> >  It may, for example, use runtime_resume() for resuming the
-> > device (and its parent etc) then.
->
-> Consider this as a possible heuristic for B's ->resume callback, in the
-> case where B was in runtime suspend throughout the system sleep:
->
->         If B's parent A is not in runtime suspend, test whether B
->         has a wakeup signal pending.  If it does, do a runtime
->         resume.  If not (or if A is in runtime suspend), leave B
->         in runtime suspend.
->
-Following your suggestion, I conducted verification. If the child device
-is in a runtime suspended state, the suspend and resume callback should
-not be invoked. The proposed solution is as follows:
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 20945cad29a1..642bf4b5d3c4 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -2687,6 +2687,9 @@ int dwc3_pm_resume(struct dwc3 *dwc)
-        struct device *dev =3D dwc->dev;
-        int             ret =3D 0;
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
 
-+        if (pm_runtime_suspended(dev))
-+            return ret;
-+
-        pinctrl_pm_select_default_state(dev);
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-        pm_runtime_disable(dev);
 
-> At first glance I think that will work fairly well.  Even if B is kept
-> in runtime suspend when it shouldn't be, the normal runtime wakeup
-> signalling mechanism should kick in without too much of a delay.
->
-> The big problem is that this issue applies to all subsystems and
-> devices.  It would be better if we had a uniform solution that could be
-> implemented in the PM core, not in every single subsystem or device
-> driver.
->
-> Here's another possibility, one that can be implemented in the PM core
-> during the ->resume, ->resume_early, or ->resume_noirq phase of system
-> wakeup:
->
->         If A and B are both in runtime suspend, do not invoke B's
->         ->resume callback.  (Or maybe don't invoke it if A's ->resume
->         callback wasn't invoked.)
->
-It is preferable for the PM core to maintain the runtime status
-between parent and child devices,
-where feasible. Could you advise on the most effective approach to
-settle this issue?
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
