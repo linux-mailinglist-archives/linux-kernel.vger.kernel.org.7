@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-799733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B81AB42F9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:17:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2F2B42F9B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D79566F13
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:17:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3D3D1C23F01
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD7722129B;
-	Thu,  4 Sep 2025 02:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6FB266568;
+	Thu,  4 Sep 2025 02:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fL3bxp2p"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HmiEJ1NL"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C328226CF4
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 02:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A96B223335
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 02:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756952122; cv=none; b=QrgMyB8zRylAo8Z+NYBYZoAGte/o5BRvv54R3OSlOz4qidsSCcgx/rTV+HWDwNah7GRsGwXTs1NHN3Kp+BadGSHtZfHkXngLFHzrsQV+pHl7VhdxQQk0zEZyuDbyBANnQiw1Zqtw06MD4kIMFe+/F67kPQZxmWH7DGQ+GvVn/rk=
+	t=1756952123; cv=none; b=UJDZ7Jo2HjY8CTMyCt2H92MvrZsLNQLhqnjK7EqB5WvHvQhFK+QDnU/hfiq66RaEHrppDKpcjdwk8q8C47TC90RvU3anwzk/9idHFPpW4ZRiQ6ckr4A5SBNV50kIl5uL7kR8Vt+7G8sPPmCkavglkMqb6nw/FF+n54gQafelpRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756952122; c=relaxed/simple;
-	bh=4O6K2p+TRWmMSjZhkegRQtZOjebtpRx1fOy4QMy15Wk=;
+	s=arc-20240116; t=1756952123; c=relaxed/simple;
+	bh=d/a/06MRexX8jkafOM3Tb1PqFQuAWBAEPNY/pLIaUXY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DHPzg9xGcHqOyukw3q8qKoX4OY1WL5Wo7PMOCJ7n9hvqx0EmKCeGIImiiUl09jTog630kHDVvky2Ihd+8uLkA7maJNTxzo6lhj+psmGAgjNG9Nakm8Kd0fh4xWA7eiNLd+f2+vNUEZN5FsrYXwhRrfSXATnkrBHcDSEqylumk/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fL3bxp2p; arc=none smtp.client-ip=209.85.219.43
+	 MIME-Version; b=sV4wKwvGTYlYnNFNTXElmIMVMV/9YBpQCVcpzZd3fqEHFMcQDk0lNnPqviNTeLpNNZvNA5heNeBpppKIrUJbmfjDVyVK3yY+0r0XxBfbghxQG2+/67WpXt7XDPs0wwb2+QdS1kJB7zVcvLc9VWMihOdprH15IIq+76wA31HS7kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HmiEJ1NL; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-7211b09f639so5893146d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 19:15:20 -0700 (PDT)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-726dec342bbso5135486d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 19:15:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756952119; x=1757556919; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756952120; x=1757556920; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bYRXyWLfRH1eL49TjUg//MlDi5BSYCOb1YaJi8/zpww=;
-        b=fL3bxp2pHL/91AoKEKq5KyiC9Om3LXdz5+0Zf33jzf3V+Lc6W6qrr+c0Sjotnd4sGU
-         vlNH9dJB1WIP2k75NYyKTqZxN2QlZ2m1+zK2dACnmVYtgeXD17k2HHQWOdjIFUsE1F3I
-         wCQDmImF7R4DOekfPnMz56FMBqtNL05Uo3NWf3XqhWF3kjzUkzzFzx1grCVV8VeIKFaq
-         nBsb1aCElDcNFuj+4wmlBJR+9BcBOP+j4VQ7e5h8eflTfBciS4jRbQrRL1ox7aU3vNZZ
-         XbrkkWvR7Xj2HPpdNNwefJUUEolPYV4ebQoeBPvxVnNO+SwuobZGS3XIkoVv8yZ9SeGS
-         xSlg==
+        bh=rVxRP/gHP4MJ/VTDLOIdadmwOEyVTedNOpSakKUHi5Q=;
+        b=HmiEJ1NLr5VjFbCoPxofKAQkR8iRCamNLOzNtwE4Tjc/Nf2KnlqAivIvZjzt1LcteW
+         pC8ATWila/pjWqZ8Z1i1Na1aJPi6Fkj/M0lTZ/XzA1U/2o9S3vJ/YZ+j4CAQFdxU/V41
+         J9//1Vf/gTxLlWhPZ6qtQq+IdcboDIwV3+lI/kRoZX7BTciFjt6jD7xZlfhWV2KdjgNl
+         eed9yXWHkoaThZnHdmpCkls8iw0G/Vh+bAQTsXy314tkI/9XwF4r09E1wdwjDZkdRfDr
+         zFooLoXe6Oy6ByPQKOc0KED6GBAskaNliiUBqqiDudgc1jyAJ5EOE/cyhxsBJgkk3Ya5
+         aKdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756952119; x=1757556919;
+        d=1e100.net; s=20230601; t=1756952120; x=1757556920;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bYRXyWLfRH1eL49TjUg//MlDi5BSYCOb1YaJi8/zpww=;
-        b=WGU9CpeDQI/41jZVXcb3XccrTGdxc2fKj5srLHAWfCqoo9twfX0rqvB2i1x4nkcCiV
-         kXutOUPFC0J4m+zgEd7wYSC4P0JPSzMFjbi4878U7fgJYTu8BU87DPoiayO7b+kk/vB2
-         14ulemh5LXa+W+MIeZpA8erP33k3XEV5RKbigEXOKRL5TDZAM1oT6nCT/y/NqAcBvstj
-         TWk9Yp2rk8iHKB2q3M9q3op2VkUZ5E1TbJZzZRYUPFDPMngVHtCmabiPb+Y+1Sxku+qJ
-         sls5leM1vOTCc6ZqBTBScSZJpEM+9h7VULSE4c0Osqkvf9f6iJH9KW/uoGArwqqn6Pj8
-         Cs/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWkXUi+peNy3lyQwf2Xln0v+s1UVAgs9E4/+3Z0x+ntKxfRRF6GE2MvT15cGTvss3ui9sUWNPvwZWz4xLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywmuqVSKKZkQfivz9KcRxAFrRewpu1SqvCIpa2vGytx5kX2oj5
-	jZXF8I8NSHn2ksAgvmPus5yH5CLziv3815657g7PivuBsaLbeAdLuILM
-X-Gm-Gg: ASbGncurgSxIWedZapudOPgvaB1wazcyi15OF7WYzV7vjYRArGDtBlrszMLm9m5306F
-	QAAYwwtHovlCX3PaBBhbBaPvcKtl2RPjhR+b1bQKIYngGEXb3uUcC5bcUyyh3eFle1CGGFBVF2Y
-	Mfwr5t3ijG8SoRqnnd1pzZW4Auq5X+8zxkS0k3s5FViUJ5i8N6R6q6m9F1c+oYnm0E5waN3Up71
-	0GLi3DJPDlwxTExuolBPgkxuJ1DcddLOnxXU+mxA//qQjkALAg/ijLWs6vc3yHRW2G2W3mgv7q7
-	YGwWT25wa1YVXHXkverg3F2sQ64ZAb0VDYEmfpE7GH/BX5nT45zaKPrxEDw1BnaC9/RwBniVG3T
-	Fo5dIYIwlGjnMPx8uwMMGMmgZdJstII4VCocWRiPf1M4kNrzrjE7gppZaCWnQuNCtNtzNJDji
-X-Google-Smtp-Source: AGHT+IFNUhoFvVgPo5tuhX1Rvc3EenlIpbeOVZGp3S+WhPDOXrsTsP9ogT1y019z5zNXkfFQfr+zuQ==
-X-Received: by 2002:a05:6214:491:b0:70d:bcbe:4e87 with SMTP id 6a1803df08f44-70fac70188amr174020156d6.8.1756952119247;
-        Wed, 03 Sep 2025 19:15:19 -0700 (PDT)
+        bh=rVxRP/gHP4MJ/VTDLOIdadmwOEyVTedNOpSakKUHi5Q=;
+        b=R5nv7CwKHJI+bGaGSOQde5zv/FAIfqdpwekCxpha8hpOR4EMiRfOi6Jrh5i1FIyWzu
+         uwv7K/gO1mlIAd7tcKDSyWuJTXy+zxYB2MpR5Zem22dDW/eW6WnUzQUO+74Nnf1Onqg3
+         JeUITQMRNLwBl8ebEtliOa1ogW2haIGoTzuNzsiReq/LNfp7GFmQo/9uo7PK2M49T3bs
+         ItB69Y+GMKQboPLfiVP3wHDCYecZ3tgRBHXuNxsBd8Jum9HAd2momUChTkC60Frtomx/
+         r6vn2PlbG8VMF6Yhd9tjUhxVaf21cI+PpOOb4kCRFhWi0C4ZRUShubbEVuqrQB7aLGJq
+         Td6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUqWx7UBfvJozdY3ZyieIYZOxw7VMGOo8DDt9Z33zAsTjubXDaOmavCLtQMjffVXNX4hQyI3/aToXWq+yQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9AyIHrEx1UoxqPUyU6haymc7C3r8Bjn+WDxoPKwO504O0orq4
+	0/lUaS+cp3T6dpD6WnfTjyVgFs3sNRAZuFQmBcu0uSCqQS4MIr2XFy+D
+X-Gm-Gg: ASbGncsURjKHuExlRnb0fXqf0snUwWv8QyARfnPb7TxaVgo2TQElz0Z+nAKPM4Ok1gn
+	WbmZhFaYY7+z83qHJDSQSuOQ6j8Q0+oNVOQoDuULKkU5Hx86Lrm9A8tnMsZ1YoOqBz7DjrrbVD7
+	wmhRRkZ8ev0upIT/RSABzLnB9nxgiLPy9kpfdoU7PY6eLhAlC/DdAiEtHQy8gQR2OlfuPaXSgWn
+	h7iHzTSIe55+wU5pOuWThdiXsUS3w9dki88Ojpof86uZ0NQND83Bg/3ShpFNTOPQ9lILNQHpZ0U
+	kUDzFBI2YvAo20sXj8dEuuQ5OlDAFJydgLn81COjRhLHulOzDwyCoN5/8CFCDcURoU8XQo0o/Ga
+	+ZzOGWXVRNwK98e5/V3yccLR0h9Nf1F32PD5gc836uLAz9kDnFsQ=
+X-Google-Smtp-Source: AGHT+IEVebM5qnAmzI7cnZAlWknRkgW85d9n6X104TWupLULP8QJNQ+sporW6oExm0LIDSZeVRhUyg==
+X-Received: by 2002:a05:6214:3007:b0:70f:a347:a9a9 with SMTP id 6a1803df08f44-70fac86f022mr241292036d6.36.1756952120162;
+        Wed, 03 Sep 2025 19:15:20 -0700 (PDT)
 Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720ad2cb78csm37714076d6.19.2025.09.03.19.15.17
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720ad2cb78csm37714076d6.19.2025.09.03.19.15.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 19:15:18 -0700 (PDT)
+        Wed, 03 Sep 2025 19:15:19 -0700 (PDT)
 From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-Subject: [PATCH v2 13/16] staging: rtl8723bs: add braces to all arms of conditional statement
-Date: Thu,  4 Sep 2025 02:14:45 +0000
-Message-Id: <20250904021448.216461-14-vivek.balachandhar@gmail.com>
+Subject: [PATCH v2 14/16] staging: rtl8723bs: fix line ending with '('
+Date: Thu,  4 Sep 2025 02:14:46 +0000
+Message-Id: <20250904021448.216461-15-vivek.balachandhar@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250904021448.216461-1-vivek.balachandhar@gmail.com>
 References: <20250904021448.216461-1-vivek.balachandhar@gmail.com>
@@ -91,37 +91,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add braces consistently to all branches of conditional statements to
-prevent potential future errors when modifying or extending logic.
-This aligns with kernel coding style recommendations for clarity and
-maintainability.
+Adjust formatting to avoid a line ending with an opening parenthesis,
+in compliance with kernel coding style.
 
 No functional changes.
 
 Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 27be46c11b65..25f333bb0816 100644
+index 25f333bb0816..2c34b68f1d60 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -1667,11 +1667,11 @@ void rtw_mlme_reset_auto_scan_int(struct adapter *adapter)
- 	struct mlme_ext_priv *pmlmeext = &adapter->mlmeextpriv;
- 	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
+@@ -1112,8 +1112,7 @@ static void rtw_joinbss_update_network(struct adapter *padapter,
+ 	 * ptarget_wlan->network.phy_info.signal_strength instead (has scaled)
+ 	 */
+ 	padapter->recvpriv.rssi =
+-	translate_percentage_to_dbm(
+-		ptarget_wlan->network.phy_info.signal_strength);
++	translate_percentage_to_dbm(ptarget_wlan->network.phy_info.signal_strength);
  
--	if (pmlmeinfo->VHT_enable) /* disable auto scan when connect to 11AC AP */
-+	if (pmlmeinfo->VHT_enable) { /* disable auto scan when connect to 11AC AP */
- 		mlme->auto_scan_int_ms = 0;
--	else if (adapter->registrypriv.wifi_spec && is_client_associated_to_ap(adapter) == true)
-+	} else if (adapter->registrypriv.wifi_spec && is_client_associated_to_ap(adapter) == true) {
- 		mlme->auto_scan_int_ms = 60 * 1000;
--	else if (rtw_chk_roam_flags(adapter, RTW_ROAM_ACTIVE)) {
-+	} else if (rtw_chk_roam_flags(adapter, RTW_ROAM_ACTIVE)) {
- 		if (check_fwstate(mlme, WIFI_STATION_STATE) && check_fwstate(mlme, _FW_LINKED))
- 			mlme->auto_scan_int_ms = mlme->roam_scan_int_ms;
- 	} else {
+ 	rtw_set_signal_stat_timer(&padapter->recvpriv);
+ 
 -- 
 2.39.5
 
