@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-799747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63B8B42FC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:32:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E16EBB42FCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7199C1B217EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:32:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B18A7AC5AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7961F63D9;
-	Thu,  4 Sep 2025 02:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6B01F8728;
+	Thu,  4 Sep 2025 02:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sakjn+pl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QsWMoWjO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0125F18E377;
-	Thu,  4 Sep 2025 02:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903B41F4262;
+	Thu,  4 Sep 2025 02:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756953143; cv=none; b=RBTfLsimsdyYNn+h7aPsInPCKZQkDBWisvr+yET4kKo7gkLX74jgWAvzqC/oRle9SeQw5qT0NpWtZHsNuKOmQeaZ++DWOUFojxr4mh5U2S2ax/qW+wteW2UcKLuWhzOhneB+oS1FqoQijtp/u9kzm0HvHJA7HXTlsciCZoVtCh4=
+	t=1756953381; cv=none; b=eMcDw3gWazXkotq33CHG9t+/Tk/9NCvehRR1vUDRItLE4bH7VPpt7I/ITyDgWuemCHXZxL0RwyU3nGDU90bftYMstlSu2XVsabsv8++w7G3ADUzpJNfjaOC6y9ULctq9WFueLWpzInNXShpdWkATfiO40jGK21uhH3C9dthkR6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756953143; c=relaxed/simple;
-	bh=d1HX5kbdii01Il8BhF3SgrCUJovaRc+a+uD95Y4ZCNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LvW/F4JC2ohd7ofpyx/uny6J76bY8pjpTUj7PcmW74+KSD6ELPKor4ajIp/jJ15PMfzavZPTlGynQpiGVXfXveeIcb7WYoi3zEgEAIHUZb5DQLOmRIxi8qq0UPTepBp4FSYIGSdQo62PEmTPmx+glQ77Yj77IpxhZ5YtDvjhT8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sakjn+pl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 619ACC4CEE7;
-	Thu,  4 Sep 2025 02:32:20 +0000 (UTC)
+	s=arc-20240116; t=1756953381; c=relaxed/simple;
+	bh=OCrUYJXkvkyovxowtckM4Zja0dS+w8lV4H+Wl8gjzdA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XxAMoiwGeWasd4HoTQy8Gl+/I0UsUkhmHsh/PhUd3zpvUywgpQGdwMW6s1QRZYuRZfc4lWlrXGwH1N2hmvcF0Y0reWBocwdAYW2S+etacP35DeBfenfa4o/e7S6jAOAkRTD+eJukqKGKJ2LCoezgmz0pludU5TipnSqtLvRlnHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QsWMoWjO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EC99C4CEE7;
+	Thu,  4 Sep 2025 02:36:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756953140;
-	bh=d1HX5kbdii01Il8BhF3SgrCUJovaRc+a+uD95Y4ZCNQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sakjn+pllfL0vg0o8Vgx2SKyf0chSnFJW0yZNCX0qGlCj/oXndkOb/DUbxs6WwDqm
-	 ZoBP5dzYiFlCFXS2EVuyqkyDWBU5tXuq+DKDXumW3apn/LlJFf+Z4hNRuAE1gYMz8c
-	 bOfevbI2dVjvv58zfJ1USfobSqJvt5Xzxj7FgWo1O8aggJTjBIZkPjF+C13mqMP+sB
-	 +4yHOf+dPHpPn2Dc2yJwFcIuzO2CVi1RI+LVTqHuOTAveWEIa0CZT11PKbiZHj8dFq
-	 pen71qiCbb6mKTZpVcwTKDt/VAPt69YRM2s9HHFXl37E52g5MvwvYW1L4Tnzj12xdS
-	 KxErBZ3kR5bIA==
-Date: Wed, 3 Sep 2025 19:31:10 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: ceph-devel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-	Xiubo Li <xiubli@redhat.com>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] libceph: Use HMAC-SHA256 library instead of crypto_shash
-Message-ID: <20250904023110.GB1345@sol>
-References: <20250731190227.16187-1-ebiggers@kernel.org>
+	s=k20201202; t=1756953380;
+	bh=OCrUYJXkvkyovxowtckM4Zja0dS+w8lV4H+Wl8gjzdA=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=QsWMoWjObXNYZ+GbfeWR45l2yqhnSRs1fCo9DGb1mZ0qaw5iTly6pKjcJ3aMYuRQm
+	 umfIzx4kKJjZzX3SJPbviduvrPa7ejKRzIYCxiid28UiADkRHOFw/cB+i0Ye00O0fP
+	 zf4aTTKcYEb6oncgS9fAibGfwq5FgKk+nqsa3ueLxznwQWMQHBNntBSt2lnUe0aK/R
+	 Jg/xdfmpf609GgCCIOQkhUXCqSGIuHYIc801l/tU+zwEwsisXtX38+uL03ChkTp7Ul
+	 d0iGg/2XEu6P40nXFil3jrgq4vek3wG/Bqed4uZ3pzEpbvOWJMjmqmtAlBZJzfiagn
+	 gYPq8IZCcncaQ==
+Message-ID: <b0c67c9a-d364-4840-8e76-cdfc66889ac2@kernel.org>
+Date: Thu, 4 Sep 2025 11:33:20 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250731190227.16187-1-ebiggers@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] elevator: avoid redundant conditions
+To: Liao Yuanhong <liaoyuanhong@vivo.com>, Jens Axboe <axboe@kernel.dk>,
+ "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250903121405.386483-1-liaoyuanhong@vivo.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250903121405.386483-1-liaoyuanhong@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 31, 2025 at 12:02:27PM -0700, Eric Biggers wrote:
-> Use the HMAC-SHA256 library functions instead of crypto_shash.  This is
-> simpler and faster.
+On 9/3/25 9:14 PM, Liao Yuanhong wrote:
+> While 'if (i < 0) ... else if (i >= 0) ...' is technically equivalent to
+> 'if (i < 0) ... else ...', the latter is vastly easier to read because
+> it avoids writing out a condition that is unnecessary. Let's drop such
+> unnecessary conditions.
 > 
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> ---
->  include/linux/ceph/messenger.h |  4 +-
->  net/ceph/Kconfig               |  3 +-
->  net/ceph/messenger_v2.c        | 77 ++++++++++------------------------
->  3 files changed, 26 insertions(+), 58 deletions(-)
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 
-Looks like this patch hasn't been applied yet.  Can it be taken through
-the ceph tree?  Thanks,
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-- Eric
+-- 
+Damien Le Moal
+Western Digital Research
 
