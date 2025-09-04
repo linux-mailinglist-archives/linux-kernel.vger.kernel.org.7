@@ -1,112 +1,129 @@
-Return-Path: <linux-kernel+bounces-801831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B421B44A81
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:41:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB0BB44A80
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B62E17588E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:41:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC41116E620
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E1F2F90D4;
-	Thu,  4 Sep 2025 23:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E3D2F747F;
+	Thu,  4 Sep 2025 23:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mcbridemail.com header.i=@mcbridemail.com header.b="uDsIAzcP"
-Received: from mail-05.mail-europe.com (mail-05.mail-europe.com [85.9.206.169])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGFEfNiS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33422882C8
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 23:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.206.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE122F60D1;
+	Thu,  4 Sep 2025 23:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757029291; cv=none; b=j3vfoZdKGSlAdiqlBeyN3voTKavb9gnQaik2V8anXjWBRuTxHczpa83L2whG9t5kPyloB5JUKt3BvtZ6rvOgFReZh+MLckqj0qW5U0O5FuyJ87rJ40obVPyS7KfCo0rXxZUcQXkQOO22vVjwx9Uz2GEmNlJN1f7xtbEnpi9pJ5g=
+	t=1757029289; cv=none; b=OG5HE6AHKVNUwuihW2cU5kaMMkSMDQPOyg866X5Vv2+U7DWDGPn9Gj7rt6ExljYIeq8ZR714OVil+HOR4t4FPXPZ70yCuy5d7MBI8yTLeKd8i9yvFD22RxQBm4rAVD/Z+yBD1agL3EZEMgfnepZAYF4RLuoU10qMeLgmAEXv/4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757029291; c=relaxed/simple;
-	bh=LFbIKM8j4M9g/fcCcVVVRJnzocvfkIzRKWElyt6Oha8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T4zX6S04GQShfC2JVsrTesodegsySFM4SDKpjv2RcM/EYazilYPNIKuuS/wY+v3W8oSy5nVeq+JPM9qF8o+Sn0evUE/zPPiZ4bunrAMlu/Z14lNP8Wqq//t66CUGCm63B/XHf9OILRxzOaE3vooWcEBtf4zBaYhYW2NQN4d8SYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcbridemail.com; spf=pass smtp.mailfrom=mcbridemail.com; dkim=pass (2048-bit key) header.d=mcbridemail.com header.i=@mcbridemail.com header.b=uDsIAzcP; arc=none smtp.client-ip=85.9.206.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcbridemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mcbridemail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mcbridemail.com;
-	s=protonmail; t=1757029278; x=1757288478;
-	bh=PvkD4sYAUcc7H3PsgqKK7mZCcx4fpxzEJ/vRxP1AZio=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=uDsIAzcPsIcRKoq5QwwojpV8tBpeU2vrNKCcY+F1qN8bA/qq9ZBpQPotGZ1dQmihv
-	 KkguBe8DxvoB2ZY6oHlc8Ppc/mm76bMe+yS6ipi4DczV6Up0VbkuLitpn4ztZu/960
-	 IxPk26yY2E5vxEAhsPVStYjoyN2DtD3SRhp1HCT434wK9BF6OxjZVOPfYOTcdh7h34
-	 z+R0ndGe5k7RUfYQKrbRYHSrIkywoAmPuGfw8NpsizYUw2uGWrbyxfFcg/vh5TtpjV
-	 gQ7N2ZxlqK/74DjcX4rkgPlcsq28bOkWeRZkS1oiJdMujkXXSAthQqzqVQpAQvow89
-	 2TvtIpNiCkH4g==
-Date: Thu, 04 Sep 2025 23:41:12 +0000
-To: Al Viro <viro@zeniv.linux.org.uk>
-From: Blake McBride <blake@mcbridemail.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, Colby Wes McBride <colbym84@gmail.com>
-Subject: Re: [RFC] View-Based File System Model with Program-Scoped Isolation
-Message-ID: <nPMV5WRZT62Eq5Cu84Q0NMH2CgxAuisCAMQ4XfuG7kb6OdEOgY9UMi5sVx3CV0kSVcEBoDDz1w5btWaT1CfOCC_4jkCDrIoYk866FO9bZVo=@mcbridemail.com>
-In-Reply-To: <20250904230846.GR39973@ZenIV>
-References: <Oa1N9bTNjTvfRX39yqCcQGpl9FJVwfDT2fTq-9NXTT8HqTIqG2Y-Gy0f7QHKcp2-TIv7NZ3bu_YexmKiGuo9FBTeCtRnVzABBVnhx5EiShk=@mcbridemail.com> <20250904220650.GQ39973@ZenIV> <DHMURiMioUDX6Ggo4Qy8C43EUoC_ltjjS52i2kgC9tl6GhjGuJXOwyf9Nb-WkI__cM0NXECZw_HdKeIUmwShKkAmP7PwqZcmGz-vBrdWYL8=@mcbridemail.com> <20250904230846.GR39973@ZenIV>
-Feedback-ID: 30086830:user:proton
-X-Pm-Message-ID: 584adc3b8567c8ef078a37bca4435820c1ddcfdb
+	s=arc-20240116; t=1757029289; c=relaxed/simple;
+	bh=FXSCx6Zola7pSIKISL/TTWzUvg3jHW6dDupjOWBR9lE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DOi97P6+Pe+6xfvDusBZnXPU6f02TbicBGE5sTH0usqQuqj9SflTG3QXF3V9juBBMXMJUSy/aH2ksDXo+JAoirzW6wUZhh1SF1iaXD1qVLLRjVGTVZZRqkm6Siw0T5H6IBF8QEHTbMXX8FB51E0ZP9KGPg1WxWOUMIOsI63QHmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dGFEfNiS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A26EC4CEF0;
+	Thu,  4 Sep 2025 23:41:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757029289;
+	bh=FXSCx6Zola7pSIKISL/TTWzUvg3jHW6dDupjOWBR9lE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dGFEfNiSpDwfJ33AtkShNPM078gopMDZtzNhmg6Vx1TpHFUOEvHE+k+nQY+CIaWt5
+	 ldWncxa93/0mE3j+f0i1Zf9yrOAJ+75RyW+J1YwN9tXAIyt16lM0sjyPFDPMbSNME9
+	 iAWsaSqDPvNGQEzmBsNdR6uepNSln8tH6NyayMc2Hs5KL//qxSgb18Q53qhXSKKTs6
+	 m1as719tex5fuOBePlRAFY6+mm5bWvyJ9wGVFmA8ooOZOzSAGKCmC9nu1o09XoeMOK
+	 dHazGYMYzfoQcWMEFYNS67lV9mMee8b+DdnvMtqZmWlNl7GJ16FSdXhv+Mq5nHvjJE
+	 LI6S0TEtEv4Xg==
+Date: Thu, 4 Sep 2025 23:41:27 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org, loongarch@lists.linux.dev,
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-hyperv@vger.kernel.org, rcu@vger.kernel.org,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	Mukesh R <mrathor@linux.microsoft.com>
+Subject: Re: [PATCH v2 0/7] Drivers: hv: Fix NEED_RESCHED_LAZY and use common
+ APIs
+Message-ID: <aLojpyTwAMdb1z6D@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <20250828000156.23389-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250828000156.23389-1-seanjc@google.com>
 
-On Thursday, September 4th, 2025 at 6:09 PM, Al Viro <viro@zeniv.linux.org.=
-uk> wrote:
+On Wed, Aug 27, 2025 at 05:01:49PM -0700, Sean Christopherson wrote:
+> Fix a bug where MSHV root partitions (and upper-level VTL code) don't honor
+> NEED_RESCHED_LAZY, and then deduplicate the TIF related MSHV code by turning
+> the "kvm" entry APIs into more generic "virt" APIs.
+> 
+> This version is based on
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git hyperv-next
+> 
+> in order to pickup the VTL changes that are queued for 6.18.  I also
+> squashed the NEED_RESCHED_LAZY fixes for root and VTL modes into a single
+> patch, as it should be easy/straightforward to drop the VTL change as needed
+> if we want this in 6.17 or earlier.
+> 
+> That effectively means the full series is dependent on the VTL changes being
+> fully merged for 6.18.  But I think that's ok as it's really only the MSHV
+> changes that have any urgency whatsoever, and I assume that Microsoft is
+> the only user that truly cares about the MSHV root fix.  I.e. if the whole
+> thing gets delayed, I think it's only the Hyper-V folks that are impacted.
+> 
+> I have no preference what tree this goes through, or when, and can respin
+> and/or split as needed.
+> 
+> As with v1, the Hyper-V stuff and non-x86 architectures are compile-tested
+> only.
+> 
+> v2:
+>  - Rebase on hyperv-next.
+>  - Fix and converge the VTL code as well. [Peter, Nuno]
+> 
+> v1: https://lore.kernel.org/all/20250825200622.3759571-1-seanjc@google.com
+> 
 
->=20
->=20
-> On Thu, Sep 04, 2025 at 10:58:12PM +0000, Blake McBride wrote:
->=20
-> > Off the cuff, I'd say it is an mv option. It defaults to changing all o=
-ccurrences, with an option to change it only in the current view.
->=20
->=20
-> Huh? mv(1) is userland; whatever it does, by definition it boils down
-> to a sequence of system calls.
+I dropped the mshv_vtl changes in this series and applied the rest
+(including the KVM changes) to hyperv-next.
 
-
-Yes.  This is what is intended.  All of userland would just operate on the =
-view the same as if that was your real hierarchy.
-
-
->=20
-> If those "views" of yours are pasted together subtrees of the global
-> forest, you already can do all of that with namespaces; if they are not,
-> you get all kinds of interesting questions about coherency.
-
-
-These views are not pasted together subtrees.  Each view can have utterly d=
-ifferent layouts of the same set of files.
-
-
-
-
-
->=20
-> Which one it is? Before anyone can discuss possible implementations
-> and relative merits thereof, you need to define the semantics of
-> what you want to implement...
->=20
-> And frankly, if you are thinking in terms of userland programs (file
-> manglers, etc.) you are going the wrong way - description will have
-> to be on the syscall level.
-
-I did not specify the implementation, just the user experience.  All of use=
-rland would "appear" to function as it does now.  The same with the syscall=
-s that are made by the application code.  They all effect the current view =
-as if it was the real hierarchy.
-
---blake
-
+Thanks,
+Wei
 
