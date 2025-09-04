@@ -1,258 +1,223 @@
-Return-Path: <linux-kernel+bounces-801156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA57B44098
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:28:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D25AB440A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:29:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 614467B63EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:26:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A492E3AC5DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93C3246790;
-	Thu,  4 Sep 2025 15:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC115266B56;
+	Thu,  4 Sep 2025 15:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cG9uYC4n"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2051.outbound.protection.outlook.com [40.107.96.51])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JykgU5gr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406CD1CEAB2;
-	Thu,  4 Sep 2025 15:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756999692; cv=fail; b=YdXa6IKHFb4dHONs6QU4jcESzeaKIsBAd8p1MQkRwd7nvX6oJnQNPouAUoNqeX5AFUpN1Ss1AqJhvK49okYVuL7r04hmoOFjVRvsgmo7tzHbm58RWyxTMlUbmwm6vpbqtDYgAxQb7+UMjTDnP/UtQkZWM61nJwHdmBWxSEko3YA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756999692; c=relaxed/simple;
-	bh=I9VhiPxt0yZjBqnpZ6HodCl+7AVKLxKUbHTTIMoMzHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=mbFykjfQpwfAiWgJeSSIz4bAQfobZneNUnGVBo6+sQQg9wPZ6/+q748/0W7oZ1uYDmLu+tJ9fFTzBxFGsW7mevTcElG3epYgwTYERitdKNJiVz0aWg0AgdbdUoposyBIZjmNEF8mTMWaHqviVcy8o6K0zLOmDA86jtKrDdQRZi8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cG9uYC4n; arc=fail smtp.client-ip=40.107.96.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oKUKnNdan0EGnc1FPbFXEGDw9liQn7R/QqHIDP5MeMuDfKsIcp64xmUMcW0Yq+we2gLBMIU3RMT5OzodlzFJFLS2fj3Ml0VljgxnxydQEnuNu1nWcZUns1lZKkPi/5KYVOjlbYwbf1f1sIKUJV8AJpAvLG81tXIhHup6hJqqWn4k/Qa7gBL5dGAQqTBYAv/4tHQe5E/q/8OTdLWuBbGP71HOdSJkFUcy/RjjPw3wv6ko+DDdtcZlawO2dUhvylLSR+I4yPdZbgZvh2kZzN25QgA7BBlxX95Z1yFnS8RL1ZgAOvu4oCNU114hYZld9G4s+uGrl/2bzMeDL+1AYBFEjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8Z3WycfbwWxWFLzrIghzqpo0gUOgXonexeIJAt1TBWo=;
- b=WltRJ5yEAxSpUqroL3hYM1/hDy4WNTQy/aGibu9Ptl0D63tRBMSrrLaQliojLUna/G7IvPYsOwtGjQcCLJBFKHQAzbky5fV+GqzE8mpY7kGex7vTiDL2q3yoGsuZebmC8q5/VYMRSxvmHwStiYqEnZ3yxGnYwVmTppHBWZLMDWUzsGRtYHse3ei8Vy10VjejcV80KhhkLuVZqNFEo3kik+Mq8ngU9nL87W8jKd1xwBZK4LmDJs6NVsUFHGwY8hbnqu8jw2tXllRiak5FyBUFJ/UsCnTRSNhCg61RBYXr7mxnSV+xpd3dT0S4efqF8wqjFN3X5yha1+Qp642VBi/RXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8Z3WycfbwWxWFLzrIghzqpo0gUOgXonexeIJAt1TBWo=;
- b=cG9uYC4njALBAea1dqFe1m95wIjpUiVeGJjQ83Yiq2owM0hblLje6mYg3LS/tpNgtJ4aNWg2qCwFrtFb1msL4P1kJs0oroilYIUGn0itWa4BIW7gBlub9oq4zPOHTKMdUk9iAQzAaBPzRJya1QE3Mbz29lxT4TCFRkluYPbPDS4ySJsLYGuH7XTCQBGFh3SqMEp2JlA4Jztb5Hdv/35XaksDuyASm7QqhdZBjo2FyOvh/OwOvc3PG3dkYqmVwWQSRXSiCrBjw3gbAquYZJD6/GC6r4loGYZNNxQBY2RPryvBchw9X2VlqRb6weHItBWdWx3R/FkO9+X3EUdDXmOs4g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by DM6PR12MB4332.namprd12.prod.outlook.com (2603:10b6:5:21e::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Thu, 4 Sep
- 2025 15:28:08 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.9073.021; Thu, 4 Sep 2025
- 15:28:08 +0000
-Date: Thu, 4 Sep 2025 11:28:06 -0400
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v3 02/11] gpu: nova-core: move GSP boot code out of `Gpu`
- constructor
-Message-ID: <20250904152646.GA1967049@joelbox2>
-References: <20250902-nova_firmware-v3-0-56854d9c5398@nvidia.com>
- <20250902-nova_firmware-v3-2-56854d9c5398@nvidia.com>
- <DCIKSL18GE9A.2R4BAGR56YVPF@kernel.org>
- <DCIZ5VVLACXO.1L0QTYM5YVRQV@nvidia.com>
- <DCJ0T81CZQ88.6IK6LG0E0R02@kernel.org>
- <DCJ3R8YQUYK1.3K5BCWHMAEOL7@nvidia.com>
- <DCJ46WGRUXR8.1GKGGL2568E1X@kernel.org>
- <DCJ5ZOH6DO2S.8GGF9FABSVNT@nvidia.com>
- <DCJ9206YBEV2.1ICN4VILLM09J@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DCJ9206YBEV2.1ICN4VILLM09J@kernel.org>
-X-ClientProxiedBy: BN9PR03CA0200.namprd03.prod.outlook.com
- (2603:10b6:408:f9::25) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85B52367C9
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756999763; cv=none; b=n6OQLehNEOTPKIkW0QTaJN6MFRsDYhW7O0IljGY0N8j2+stvqYITrq6m0CatUbTIDM1tEjn08tY3LwG/33tsGAztgD5PJRh6sOvy3F5pQWMmVOKjgc3avhn4TZH303Qm/OYuIaTqoFHaYPwrriDQ2HW41kPq1+1UJXVin6A+cq0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756999763; c=relaxed/simple;
+	bh=EUUOJm8+pqfJE0C02BV4F6cE3SBmlMX62RiOmXxnlyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f8Z+C6GNpYf+hWo5KLav5rWoi+f+KjDyiVyVX/7k/FL4hTr92u4T+OMhC6K3Pw4S/fzcvpOHxt10Vtuy/9zs1yYDB8Rhgk+HXAEv3e3QZ/3xyjyzHpb9iK04IWE8d+Y6x4pCWS6CFtcr1LO3SpS4BqrxEzHECHtR9Nbs8/4wclk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JykgU5gr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5849X9VX008136
+	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 15:29:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aCKrmPJEFXGT0WYbXHZg3VTYOIhYkJFe7iTrbDkI7Yg=; b=JykgU5grP0LzChRS
+	jo5fMTmzga1W8yeVxF9tViRBvkFXCJtHR7aVYgmLnoqxhr9ttxNTxlGbZsS4LdRN
+	kpsDb53P3r3X5KkbWDFxac815aVm1cUa1fLkD+NMSL3FOGhM9YAkXrkyeUJ6g3r3
+	go9383tqDVDZUo6MbK/JJTuRcmNg1ikvHWaGxgVpgdiWVZtxFlqnPTviuC+i6zOb
+	orDfQhNzgKA3FudfFzcbgNh+zFlz7oubp3DMwkUV0jJ773Z7HdaX0J8xPyo1ow8k
+	K3nxAlgQPa+EMv+QseXkgHtUGVQYJJTg5oHDfA744/Dzy+cff7TLAMoZHK2yoRJS
+	uYvHtQ==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urmjqwbj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 15:29:18 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-32bbacf6512so59250a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 08:29:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756999757; x=1757604557;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aCKrmPJEFXGT0WYbXHZg3VTYOIhYkJFe7iTrbDkI7Yg=;
+        b=m9Py/YkYaIqap5gbE2wo6jSNZLX9rPdvh4WyNnSOazM1i5HkHVW+9M7wfUtl0IqOrB
+         f4j9LUaKr+Rv8YtX3zo+Yj+lOPwRTC2VM+QRsrhf6UjVFGkL1ktwcm5DDyAKNlivEKes
+         krqiJfEEpX0ohLiV84fgwWXAkOdwHi6OXuRrVuxnpfGFOpYg36eq3+KpQlJhjV/2Ti9T
+         ePGKcIrUi4D3xWfoqL1LIDNmHIflDBV3gN1KhNfq904/Fp0E4Hk7DjxF3fzY/0Dp5PoU
+         cLuzCLHf6nXr2OLxrENImID1IwZ088QFgmttI8blyV7lEguA5w/vQRQyaDUIO8M4wSD0
+         uHEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQBilEmtUtyphqZw3R6UlTV5P37Ei/L4YvZBF9SY02YCkwjHZpvEclPhcLAzjfuiu3FMgBSSndgx/PQio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcIlUYTA+w+K6kP1ieKmZiBJwLlfxMKCF438nE72a6L8Zy+ltu
+	xbpYldQA+HribhJoc53pItJI/u+r7FZArmXjtx5X9ixVrmXL8SskHEPDvnKApfNOYBgSbHhyZhf
+	D2UQTYuR+TR06zAsrSfDBR2YiXG/H88hAkCjqKyB2rSdrUtkxSOIsRuFFHGnkgrZxaKY=
+X-Gm-Gg: ASbGncvMX/waihLP81jImYSSWLHCL6FtSlYqyTKlZlVbFWnMBGTxfflC0zZZVpAR5yY
+	vXFrlIqqSPm+3ZHL6MRiikt4Qslgkbs5OCV/7ihf+8uX2k7W9xzD5TgtdDN9krp+AbqjFTKEmn4
+	2xSVgJbN1WfMJnh/RqP1ZlVMXUAFYhKLNXOVjaeimbO+p/mB213WEbvKqA1+xM9nWfNIFCwLTRk
+	eTNsrlNCWwmqt2zLXehaDULujBGCuEzgcb1p+o7sCLIBj8Mt0v/PQwfL2JWaGgAQBgmFyh8me4s
+	D24fMQLTBxtk2wBTejgGWwdsLFjnPNMd41wlbxqfJSJvX0UcpYeTDAEKoVDwVJcuBeM+
+X-Received: by 2002:a17:902:d4c1:b0:24c:92b5:2175 with SMTP id d9443c01a7336-24c92b5262fmr76675995ad.24.1756999757440;
+        Thu, 04 Sep 2025 08:29:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE4JhBNWdG2V+TxgIDesrLMeTY0t0q4ahoJ30jB1TKaWOy2/eOV1xvyNkelIVpDUVQxYmrVWg==
+X-Received: by 2002:a17:902:d4c1:b0:24c:92b5:2175 with SMTP id d9443c01a7336-24c92b5262fmr76675745ad.24.1756999756970;
+        Thu, 04 Sep 2025 08:29:16 -0700 (PDT)
+Received: from hu-wasimn-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327c5fc5055sm22049502a91.14.2025.09.04.08.29.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 08:29:16 -0700 (PDT)
+Date: Thu, 4 Sep 2025 20:59:09 +0530
+From: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>, kernel@oss.qualcomm.com,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        netdev@vger.kernel.org, Monish Chunara <quic_mchunara@quicinc.com>
+Subject: Re: [PATCH 2/5] arm64: dts: qcom: lemans: Add SDHC controller and
+ SDC pin configuration
+Message-ID: <aLmwRSROlgXxw3bI@hu-wasimn-hyd.qualcomm.com>
+References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
+ <20250826-lemans-evk-bu-v1-2-08016e0d3ce5@oss.qualcomm.com>
+ <rxd4js6hb5ccejge2i2fp2syqlzdghqs75hb5ufqrhvpwubjyz@zwumzc7wphjx>
+ <c82d44af-d107-4e84-b5ae-eeb624bc03af@oss.qualcomm.com>
+ <aLhssUQa7tvUfu2j@hu-wasimn-hyd.qualcomm.com>
+ <tqm4sxoya3hue7mof3uqo4nu2b77ionmxi65ewfxtjouvn5xlt@d6ala2j2msbn>
+ <3b691f3a-633c-4a7f-bc38-a9c464d83fe1@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DM6PR12MB4332:EE_
-X-MS-Office365-Filtering-Correlation-Id: b76e11a8-ec36-47ea-81bc-08ddebc7a657
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?EI3fX4CCBC94b7juJ0G2ThUwsnr3O2oTeXQ5TaVqehMgXX1h7Jzg2yd7Z8LU?=
- =?us-ascii?Q?ypW/Hr9jUEzMBai6MBKObhxANjlJHq+uXcJd6kHLR1eytDfFklWZ0Yuphwj8?=
- =?us-ascii?Q?3Gct5JwLIWMwnoxz16ltCzwfx8sgfAmxM5JKpc4B5WgZoyPHbsfKOx0K7B6o?=
- =?us-ascii?Q?6U3UddYA5oPlJywcGpKSzePsmL5apEPaE7h5vNIGt/yVeJiJz3y/llEaXQCJ?=
- =?us-ascii?Q?YSECknLkptTT0quRAW9dBZvYwNYOzpOJ9Ukh+gnYY/buL6L/bqBDMZc8Qke+?=
- =?us-ascii?Q?vAh3N2zL265vZdkAj/jikFt9GF8hOnWZILrj8aU2qSEWZky2EPx5NTzyG1d6?=
- =?us-ascii?Q?rFmZxZuFoXvuPjSEL0n5wvBbT+C8TR8xt4I6KUWwZEOcVE6BPzrv+pTxd4ul?=
- =?us-ascii?Q?c2b0wEVoVNi1QSYzQDy09BIKdXNoOw2c6O446Vte2reSORXdhfhJ2ZF9z6IS?=
- =?us-ascii?Q?tibsvSsDz0gCtEL6fjhofHByb5dCNmi6B2+Hj6Irt8AgA2QiHWW3PqGzUpmI?=
- =?us-ascii?Q?OTNdhVYqEgd6RA4nMbOn/zmbHRqKTBO1OVLwhdLX1WN7hlUoJwPD7M8yy6Se?=
- =?us-ascii?Q?O4tsNYyoEU72qt99UTIu1aRSZokOHUMl0dJTNW4Th5pz0l4D/szt0b3AUtcJ?=
- =?us-ascii?Q?z39KmUVLZ4z4QMjHUn/KNDty9YFpNXWsc28wqBnfWwMh4rOuK952tl4eu2CY?=
- =?us-ascii?Q?0C/TboDNLwgCMhvFxmFz68+WbRa5vjXSbbA2zlzcwNw0+/y5j070bLuUh0jk?=
- =?us-ascii?Q?waOHhwan6n3uNDpTlhszolizS1ha6KU7OayYcyiti2iqwzufW6mUWC2bCQbG?=
- =?us-ascii?Q?KUrBMYFW/PPkl4/WXlp2yUBDkjApM38eIndc6Wx+SV7mQkkadM4HEfat+cw5?=
- =?us-ascii?Q?RcfbUVwIJA+4q8dWblkt332MEmovbIFWBetiKRIjdNyOAe4GM+LxzH+Go+b/?=
- =?us-ascii?Q?Zp7ZodLngkfW+QSpIkHzgtp1S3d87D/kKmgry1E4IfTmnhNCVbqBgGO7/sML?=
- =?us-ascii?Q?VEg8WZ2w9uHuMbqxsbn/4GliUQrmdO3Ng5NdMpDDpTbHqAkKXCAycIERfO5h?=
- =?us-ascii?Q?xohdJTNAmEyLFwwUtT+1ZzVLsxZsJcNEgu1E3wFft90IUiOX+qV31TYjfHlG?=
- =?us-ascii?Q?lJY4Kv9kgM/IPsCC0C0s3rHzzaQdq4G1iX22CBO3elI9JzHgp1w/vwgZ80nB?=
- =?us-ascii?Q?x+/BsoelIXoHH+3tzFEYuzkKnG3aq3qByrrcorryecYq+CPbJUI2QNcRFn/Z?=
- =?us-ascii?Q?Re3hitoiMXBLXBq30zh93YsHGjRwgFHQK56LcAQcHUr+jd3rN7DbesbCJVJq?=
- =?us-ascii?Q?CCvKwXqvm1cTjnshJXfAN3Hd7etYXXfePp0RRkQerDpeMzdaBpwwkXul1n0M?=
- =?us-ascii?Q?FhKDOWfzkAJuUc8sag2iprGp0PTnD6dP22hdXBFe3qsghY8DiyBRkw0cjWQh?=
- =?us-ascii?Q?XUWty+WNQTY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4OFLt9A9TGUt3nJ4y64++e46NkDIzqubMYT8mnxXBZAQUWSeeH5Zssaci0bi?=
- =?us-ascii?Q?BSlLUZqsWu78QghrBM8F66YjIJG74KixDc+HYFVRrOT87y9hQudUHvGlflPI?=
- =?us-ascii?Q?Z77dq/hCfeNEaUSOSwkXG0am42wbfBX8I/L/eHahSiSUrl7N46DkXK9pxQni?=
- =?us-ascii?Q?DKtbZa0kZLJcSp4Z+rAbBftLBk1SHHjnmo8XG9Q9h/NLeQKhbQEzymmMXAQk?=
- =?us-ascii?Q?egl0VWUTBnLrvZDm2+O+FwLapXiz4ZrKN4xsifDr6HUagyW9+9/LjCMU2e6i?=
- =?us-ascii?Q?u4KRhB0h0GmNUndMm31G05o8agJPy3dlb21kCxWbDkX+hgi5lSdZEAyKBCLN?=
- =?us-ascii?Q?mvnBSAsgP6jfh43Yz7GZcIUC7Bz9XiUq0LVObL2BNiISGE01sI4jddQ8ksXk?=
- =?us-ascii?Q?UfXpkcn4xVgko8M9ns0kvAjTwsBIxt0ZBFE9s5CuVTa0l0+WnfgmQPbho53W?=
- =?us-ascii?Q?cLO6D86G7vJVVscSTg+G21kTMHz5qfdmbYLN827nwTFIGMqeelkZ18nXXeBY?=
- =?us-ascii?Q?jq6dQXjp5pfmIyQHD7h3nZIHfbputjU5yMX8g84e1i+vtoZNHoPriZslYUNb?=
- =?us-ascii?Q?hXWD117+nT3ejETlTH7/2gTGTHi39TeO/Dyne5wcXOsMv2VSllHbnmuCnOBO?=
- =?us-ascii?Q?zfqwkfrnDGKzk2YfwQSCu1pO8tJYv6Mh8Kn4/twZPl9uPIgEpIQSufMlSIXW?=
- =?us-ascii?Q?L9nOv+gNoRXaR+saBlw5xksY1g354m9m1ZviG/11PImwIGYcPHS/+d32s3jv?=
- =?us-ascii?Q?NE3DW4s3cM+ryWhEevIUSwVWkxWsp0fyaGk8BK3/J6ynzW9L6s0y9CnbMVrn?=
- =?us-ascii?Q?LtzdrOExCg9KdpfNML7Gy+RLZDrBuGHHAmsm2zWgvsc/FqTvqonvSFU65rRy?=
- =?us-ascii?Q?EQUznZk7sYlB+Y6F1Xc8PJL68a1XLlhcXmC6fhfngDfs17z9kTAUrIlmanjl?=
- =?us-ascii?Q?5634Iqd+s1nfxHbd6dvPZ7Q9l9D7vs+pswCI1sEp2NTWtJNXbYoOp8dN11UK?=
- =?us-ascii?Q?4RE7D820oX/KNnUilIAtwnzkpNruj+Fgk1DIaFGLYCJuC7uqU1n9cUVXKfN+?=
- =?us-ascii?Q?qe4hZkfs2sWJp86Js3xv3RdLEynfuATY3MBRAKXLoaLNseI8SPhneqhETTjx?=
- =?us-ascii?Q?fIRZQS3yD6tt3pucntMxz0D9RfFDLzvOQqBQkzWCpXtWm/3SpRGuWeBBZXLn?=
- =?us-ascii?Q?Q/c8mm9wABEHpumeUjdR6zK+LkAwHsS3LSREmgIkX7+jhEJknsEpofMQ8Ho+?=
- =?us-ascii?Q?aXG64hzCf8ZVDvLuC24xXor20QESnYUchkyx+FvXXq5ewL+20aXnbq/7cALT?=
- =?us-ascii?Q?uakwdx27B+oSb76GhgQDgFaPLZxAU92V0cEZjTkhFvlnLkBY8V4nvUv2g644?=
- =?us-ascii?Q?HqlznX42bq302ywUiIx6VqgbGCA+IHg/60IZM/+hDcuHyfy6BeMIhmhjITXr?=
- =?us-ascii?Q?tvVXV3VIQ3dcXr2JbG+vEyWaWBg6cF4YQWpCmeCJxvXJpZ8JN9PYcuxj9FBD?=
- =?us-ascii?Q?DnE5ZCzDq4BpHGfca6FqG2mtLOdA2h86N4LMItDVR2a6US/ZPMSo5lEBtDle?=
- =?us-ascii?Q?3/Zuz19ijGESZL8yA6ajL9bGokzjAmh6IDhQPJCQ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b76e11a8-ec36-47ea-81bc-08ddebc7a657
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 15:28:07.9999
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TezZokajs2aoMnXAMez0bLIT4ZXtNySQjZ5UH4Ys+TsUq+2QysAf4fOpWmQ3uUNlKy6I343AE/xI0VMo65aTow==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4332
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3b691f3a-633c-4a7f-bc38-a9c464d83fe1@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=OemYDgTY c=1 sm=1 tr=0 ts=68b9b04e cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=7jlciowUQMUDIi_Z8n8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=iS9zxrgQBfv6-_F4QbHw:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 4oGLf9XvW6rwbCt4wjdyn5zsGktY8b5b
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNCBTYWx0ZWRfX5WTBf3qWGYUz
+ l01NFyJEd0gCN/LlBx1b+9QPQz/J28Tldod3HZwOVlYxnEyYo9yW6ZwC8KR8DyxyoUofOKlbxhV
+ BMe3GcA5o7U/K5q2aNot/Xn4ih6UwCsO8rA+DK1Hr+up5jf9ZBHh16myIgpOtr9uPKdICsx9Gz5
+ 6ObZ0jAwx8QR7Ub4wIVKIfwwLkuk3vwrF2hD95FT0M+iMeXhqio3GbPkaHBU3v8g6WAT1O4maug
+ 7/05VWDUrY2lNb+VZk+I0m8KxPtGq0v2apwGP3ub+D61wSW1bZ+ttxZpf44Z3pzRn4sORl2d/1U
+ 70YZad2XUo1nfP3JH+nrQviEihWSreyhm9zQJRSi5EGdHHmbanuEPUai0ybh4rdnAzDP5S79vhC
+ 1bYwj/pQ
+X-Proofpoint-ORIG-GUID: 4oGLf9XvW6rwbCt4wjdyn5zsGktY8b5b
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_05,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300024
 
-Hi Danilo,
-
-On Wed, Sep 03, 2025 at 04:53:57PM +0200, Danilo Krummrich wrote:
-> On Wed Sep 3, 2025 at 2:29 PM CEST, Alexandre Courbot wrote:
-> > To be honest I am not completely sure about the best layout yet and will
-> > need more visibility to understand whether this is optimal. But
-> > considering that we want to run the GSP boot process over a built `Gpu`
-> > instance, we cannot store the result of said process inside `Gpu` unless
-> > we put it inside e.g. an `Option`. But then the variant will always be
-> > `Some` after `probe` returns, and yet we will have to perform a match
-> > every time we want to access it.
-> >
-> > The current separation sounds reasonable to me for the time being, with
-> > `Gpu` containing purely hardware resources obtained without help from
-> > user-space, while `Gsp` is the result of running a bunch of firmwares.
-> > An alternative design would be to store `Gpu` inside `Gsp`, but `Gsp`
-> > inside `Gpu` is trickier due to the build order. No matter what we do,
-> > switching the layout later should be trivial if we don't choose the
-> > best one now.
-> 
-> Gsp should be part of the Gpu object.
-
-Just checking, if Gsp is a part of Gpu as you mentioned, and start_gsp() is
-called from within Gpu::new(), does that not avoid the problem of referring
-to fields of pin-initialized structs entirely, at least for this usecase for
-nova?  Or is there any nova-related usecase where this is problematic?
-
-thanks,
-
- - Joel
-
-
-
-[...]
-
-> The Gpu object represents the entire
-> instance of the Gpu, including hardware ressources, firmware runtime state, etc.
-> 
-> The initialization of the Gsp structure doesn't really need a Gpu structure to
-> be constructed, it needs certain members of the Gpu structure, i.e. order of
-> initialization of the members does matter.
-> 
-> If it makes things more obvious we can always create new types and increase the
-> hierarchy within the Gpu struct itself.
-> 
-> The technical limitation you're facing is always the same, no matter the layout
-> we choose: we need pin-init to provide us references to already initialized
-> members.
-> 
-> I will check with Benno in today's Rust call what's the best way to address
-> this.
-> 
-> > There is also an easy workaround to the sibling initialization issue,
-> > which is to store `Gpu` and `Gsp` behind `Pin<KBox>` - that way we can
-> > initialize both outside `try_pin_init!`, at the cost of two more heap
-> > allocations over the whole lifetime of the device. If we don't have a
-> > proper solution to the problem now, this might be better than using
-> > `unsafe` as a temporary solution.
-> 
-> Yeah, this workaround is much easier to implement when they're siblings (less
-> allocations temporarily), but let's not design things this way because of that.
-> 
-> As mentioned above, I will check with Benno today.
-> 
-> > The same workaround could also be used for to `GspFirmware` and its page
-> > tables - since `GspFirmware` is temporary and can apparently be
-> > discarded after the GSP is booted, this shouldn't be a big issue. This
-> > will allow the driver to probe, and we can add TODO items to fix that
-> > later if a solution is in sight.
-> >
+On Thu, Sep 04, 2025 at 04:34:05PM +0200, Konrad Dybcio wrote:
+> On 9/4/25 3:35 PM, Dmitry Baryshkov wrote:
+> > On Wed, Sep 03, 2025 at 09:58:33PM +0530, Wasim Nazir wrote:
+> >> On Wed, Sep 03, 2025 at 06:12:59PM +0200, Konrad Dybcio wrote:
+> >>> On 8/27/25 3:20 AM, Dmitry Baryshkov wrote:
+> >>>> On Tue, Aug 26, 2025 at 11:51:01PM +0530, Wasim Nazir wrote:
+> >>>>> From: Monish Chunara <quic_mchunara@quicinc.com>
+> >>>>>
+> >>>>> Introduce the SDHC v5 controller node for the Lemans platform.
+> >>>>> This controller supports either eMMC or SD-card, but only one
+> >>>>> can be active at a time. SD-card is the preferred configuration
+> >>>>> on Lemans targets, so describe this controller.
+> >>>>>
+> >>>>> Define the SDC interface pins including clk, cmd, and data lines
+> >>>>> to enable proper communication with the SDHC controller.
+> >>>>>
+> >>>>> Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
+> >>>>> Co-developed-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+> >>>>> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+> >>>>> ---
+> >>>>>  arch/arm64/boot/dts/qcom/lemans.dtsi | 70 ++++++++++++++++++++++++++++++++++++
+> >>>>>  1 file changed, 70 insertions(+)
+> >>>>>
+> >>>>> diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
+> >>>>> index 99a566b42ef2..a5a3cdba47f3 100644
+> >>>>> --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
+> >>>>> +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
+> >>>>> @@ -3834,6 +3834,36 @@ apss_tpdm2_out: endpoint {
+> >>>>>  			};
+> >>>>>  		};
+> >>>>>  
+> >>>>> +		sdhc: mmc@87c4000 {
+> >>>>> +			compatible = "qcom,sa8775p-sdhci", "qcom,sdhci-msm-v5";
+> >>>>> +			reg = <0x0 0x087c4000 0x0 0x1000>;
+> >>>>> +
+> >>>>> +			interrupts = <GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH>,
+> >>>>> +				     <GIC_SPI 521 IRQ_TYPE_LEVEL_HIGH>;
+> >>>>> +			interrupt-names = "hc_irq", "pwr_irq";
+> >>>>> +
+> >>>>> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
+> >>>>> +				 <&gcc GCC_SDCC1_APPS_CLK>;
+> >>>>> +			clock-names = "iface", "core";
+> >>>>> +
+> >>>>> +			interconnects = <&aggre1_noc MASTER_SDC 0 &mc_virt SLAVE_EBI1 0>,
+> >>>>> +					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_SDC1 0>;
+> >>>>> +			interconnect-names = "sdhc-ddr", "cpu-sdhc";
+> >>>>> +
+> >>>>> +			iommus = <&apps_smmu 0x0 0x0>;
+> >>>>> +			dma-coherent;
+> >>>>> +
+> >>>>> +			resets = <&gcc GCC_SDCC1_BCR>;
+> >>>>> +
+> >>>>> +			no-sdio;
+> >>>>> +			no-mmc;
+> >>>>> +			bus-width = <4>;
+> >>>>
+> >>>> This is the board configuration, it should be defined in the EVK DTS.
+> >>>
+> >>> Unless the controller is actually incapable of doing non-SDCards
+> >>>
+> >>> But from the limited information I can find, this one should be able
+> >>> to do both
+> >>>
 > >>
-> >> I thought the intent was to keep temporary values local to start_gsp() and not
-> >> store them next to Gpu in the same allocation?
-> >
-> > It is not visible in the current patchset, but `start_gsp` will
-> > eventually return the runtime data of the GSP - notably its log buffers
-> > and command queue, which are needed to operate it. All the rest (notably
-> > the loaded firmwares) will be local to `start_gsp` and discarded upon
-> > its return.
+> >> It’s doable, but the bus width differs when this controller is used for
+> >> eMMC, which is supported on the Mezz board. So, it’s cleaner to define
+> >> only what’s needed for each specific usecase on the board.
+> > 
+> > `git grep no-sdio arch/arm64/boot/dts/qcom/` shows that we have those
+> > properties inside the board DT. I don't see a reason to deviate.
 > 
-> Ok, that makes sense, but it should really be part of the Gpu structure.
+> Just to make sure we're clear
+> 
+> I want the author to keep bus-width in SoC dt and move the other
+> properties to the board dt
+> 
+
+I'll move the no-sdio and no-mmc properties to the board-specific device
+tree file, and keep the bus-width configuration in the SoC-level file.
+
+
+-- 
+Regards,
+Wasim
 
