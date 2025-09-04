@@ -1,224 +1,241 @@
-Return-Path: <linux-kernel+bounces-800535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2023B438F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:38:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B46BEB438EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 755D816E0B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:38:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 552C71889472
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09392FB60D;
-	Thu,  4 Sep 2025 10:38:16 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A65E2ECD14;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712032EC0A7;
 	Thu,  4 Sep 2025 10:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="C5KBTlMo";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rYzdZRGQ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rQ3/syLW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oVQyoGe+"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176AA7081F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756982296; cv=none; b=QsPF9tYokEemUGTPPTwZFxKKur8Y8Wn7LoQ3+bKj4X2Hl+S8dFgjGLo2sFQ4VLOBiQdkGBzdfOX/4lzxE66dkft8L5GizMWE6iwtsp5Ysn+fE8agCZZzR8Js8lOVBPy8m4PUs7Vk0zHtZCUXCz772fAnBqF+MHjfZeGIu8pn1nA=
+	t=1756982290; cv=none; b=Ynxczk53Wp8RwAocauBayBNEPGAqbFYVqzxHdtwzPapE1N1n7xPuy2UE6dNClAHZRHXi0BqrLeS6lUyjYulKA4dOms44B2YnZmjNWSu4yZ+HumQHYlqYPyiFjFc417SRKFOZdwCZXUT0RtbgeHpAjXsa/z3UrVyEzYfgx61YicE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756982296; c=relaxed/simple;
-	bh=ix2eo8p54Z5LDsEgINjDis0MKy5IFDdJCHvTNdJdftw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oWxiF3YjJLfjNDPg0S9OFrNcYi0VTlQ/4FVLIviXr1a5yWS4+08Uv3wnPI0YRnacZMpm7FCueOah4TcXQcOyJNBNc9Dk8nFw+6V8H1UEGRAH14KB7zb9XDvtxAcbRQ3CWpszTSkiMN5zrEBAzZ82JR2T+Kqo8jm2nfxBZifch/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 3d5fbc1e897b11f0b29709d653e92f7d-20250904
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:300f2fa7-17a5-4d38-96a3-11fd4189ac0a,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:8818228a5c537eaf9504e99b0c50a8d8,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 3d5fbc1e897b11f0b29709d653e92f7d-20250904
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1160067433; Thu, 04 Sep 2025 18:38:05 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 93A19E008FA5;
-	Thu,  4 Sep 2025 18:38:04 +0800 (CST)
-X-ns-mid: postfix-68B96C0C-3265371312
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 0174FE008FA2;
-	Thu,  4 Sep 2025 18:37:54 +0800 (CST)
-Message-ID: <52e322e5-2dd4-488c-a98e-3a4018f0c323@kylinos.cn>
-Date: Thu, 4 Sep 2025 18:37:54 +0800
+	s=arc-20240116; t=1756982290; c=relaxed/simple;
+	bh=zFCZNR0/Oeq4eFVi6ZSGlqzw+Q5YIQwiZXjHXrX0gHs=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g0NHupxx4yflnzz5pQx3yRQGNJEdL4ED7Visa3cL95v8WawV+DZMTxcGkKpaU8Aiw0GBfUAV66TtmSbt6SoFh7+iOD3jFbGJ+l++NX6NFj0WHJtdoRP8pdmmaxcIsVMUOFos9cD64ZT7j1yGBMO1dtLW2CPX0jqRGJ1o7/NchNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=C5KBTlMo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rYzdZRGQ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rQ3/syLW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oVQyoGe+; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D6D5E345EC;
+	Thu,  4 Sep 2025 10:38:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756982287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+InWK3Nnj7T4EtajtVLj1+qSvSr8bKWoN+ZdTos14s0=;
+	b=C5KBTlMo9rJ1n8ZMCPiYMWZlE6G12nKvVnAiny0FmHNax9WMA0Uf10lScgfox6BGOtTjmC
+	dYJyt08raElEl1EJYm8cULL+VpyaHYbn+NJa8Je2hJqQMx2KiXahEa8vR3EV4Ylrg8HoY5
+	9ypEG1s/P95ykKe5UUYKfuJCuuVMvOE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756982287;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+InWK3Nnj7T4EtajtVLj1+qSvSr8bKWoN+ZdTos14s0=;
+	b=rYzdZRGQbIKQyr24VqIlhFkSou7mMxLUyPTQ8+ms6YVhr6+6Eq9tuNUk/o8VVpdPLRgUOl
+	CVG7foXi3fJWVRDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="rQ3/syLW";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=oVQyoGe+
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756982285; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+InWK3Nnj7T4EtajtVLj1+qSvSr8bKWoN+ZdTos14s0=;
+	b=rQ3/syLWAem0gPtH3oJsso2xmzHRm3yT68kxNERSnzs0k+m6wv1gQJvppgggMup755lbPh
+	WoTi4DVmEaPtft6CQYgebnVt4U9wNkYfUA+yVKkQ2EARIjNEroGgfGQiVT3l0uVC8FuWI0
+	hP0Axz2l3VU7OrER+Xro2z48I3QJWVA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756982285;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+InWK3Nnj7T4EtajtVLj1+qSvSr8bKWoN+ZdTos14s0=;
+	b=oVQyoGe+BAnuazjPADKf84Zrx+1V79lBEojAN3AtclWwX8j0JE49ZgUzTzFgq0IlMcqDmC
+	Rrb+PqvlupzrNDDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7C96B13675;
+	Thu,  4 Sep 2025 10:38:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Vz4jHQ1suWiHMQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 04 Sep 2025 10:38:05 +0000
+Date: Thu, 04 Sep 2025 12:38:05 +0200
+Message-ID: <878qiutsdu.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: syzbot <syzbot+10b4363fb0f46527f3f3@syzkaller.appspotmail.com>,
+	tglx@linutronix.de,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	mingo@redhat.com,
+	perex@perex.cz,
+	syzkaller-bugs@googlegroups.com,
+	tiwai@suse.com,
+	x86@kernel.org
+Subject: Re: [syzbot] [sound?] possible deadlock in __snd_pcm_lib_xfer (2)
+In-Reply-To: <20250904102056.YCByXJXj@linutronix.de>
+References: <68b1f3ab.a70a0220.f8cc2.00f0.GAE@google.com>
+	<68b2406a.a00a0220.1337b0.001e.GAE@google.com>
+	<20250904102056.YCByXJXj@linutronix.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/10] powercap: dtpm_cpu: Use scope-based cleanup
- helper
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Krzysztof Kozlowski
- <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
- Ben Horgan <ben.horgan@arm.com>, zhenglifeng <zhenglifeng1@huawei.com>,
- Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
- <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
- Sumit Gupta <sumitg@nvidia.com>,
- Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
- Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
- linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250903131733.57637-1-zhangzihuan@kylinos.cn>
- <20250903131733.57637-8-zhangzihuan@kylinos.cn>
- <CAJZ5v0hirWzWZiLbAXPWB58SQv3CAW95iHLnsqs=i2twVCcmwg@mail.gmail.com>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <CAJZ5v0hirWzWZiLbAXPWB58SQv3CAW95iHLnsqs=i2twVCcmwg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-1.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,suse.de:mid,suse.de:dkim];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[10b4363fb0f46527f3f3];
+	DKIM_TRACE(0.00)[suse.de:+];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: D6D5E345EC
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -1.01
+
+On Thu, 04 Sep 2025 12:20:56 +0200,
+Sebastian Andrzej Siewior wrote:
+> 
+> On 2025-08-29 17:06:02 [-0700], syzbot wrote:
+> > syzbot has bisected this issue to:
+> > 
+> > commit d2d6422f8bd17c6bb205133e290625a564194496
+> > Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > Date:   Fri Sep 6 10:59:04 2024 +0000
+> > 
+> >     x86: Allow to enable PREEMPT_RT.
+> > 
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12db5634580000
+> > start commit:   07d9df80082b Merge tag 'perf-tools-fixes-for-v6.17-2025-08..
+> > git tree:       upstream
+> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=11db5634580000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=16db5634580000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=10b4363fb0f46527f3f3
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10307262580000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17110242580000
+> > 
+> > Reported-by: syzbot+10b4363fb0f46527f3f3@syzkaller.appspotmail.com
+> > Fixes: d2d6422f8bd1 ("x86: Allow to enable PREEMPT_RT.")
+> 
+> This is unfortunate. There is nothing that sound did wrong, it is rather
+> special softirq handling in this case. We don't see this often because
+> it requires that a timer is cancelled at the time it is running.
+> The assumption made by sound is that spin_lock_irq() also disables
+> softirqs. This is not the case on PREEMPT_RT.
+> 
+> The hunk below avoids the splat. Adding local_bh_disable() to
+> spin_lock_irq() would cure it, too. It would also result in random
+> synchronisation points across the kernel leading to something less
+> usable.
+> The imho best solution would to get rid of softirq_ctrl.lock which has
+> been proposed
+> 	https://lore.kernel.org/all/20250901163811.963326-4-bigeasy@linutronix.de/
+> 
+> Comments?
+
+Thank you for the detailed analysis!  It enlightened me.
+
+It'd be appreciated if this gets fixed in the softirq core side.
+If nothing else flies, we can take your workaround, sure...
 
 
-=E5=9C=A8 2025/9/3 21:45, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> On Wed, Sep 3, 2025 at 3:18=E2=80=AFPM Zihuan Zhang <zhangzihuan@kylino=
-s.cn> wrote:
->> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
->> annotation for policy references. This reduces the risk of reference
->> counting mistakes and aligns the code with the latest kernel style.
->>
->> No functional change intended.
->>
->> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
->> ---
->>   drivers/powercap/dtpm_cpu.c | 30 +++++++++++-------------------
->>   1 file changed, 11 insertions(+), 19 deletions(-)
->>
->> diff --git a/drivers/powercap/dtpm_cpu.c b/drivers/powercap/dtpm_cpu.c
->> index 99390ec1481f..f76594185fa2 100644
->> --- a/drivers/powercap/dtpm_cpu.c
->> +++ b/drivers/powercap/dtpm_cpu.c
->> @@ -144,19 +144,17 @@ static int update_pd_power_uw(struct dtpm *dtpm)
->>   static void pd_release(struct dtpm *dtpm)
->>   {
->>          struct dtpm_cpu *dtpm_cpu =3D to_dtpm_cpu(dtpm);
->> -       struct cpufreq_policy *policy;
->>
->>          if (freq_qos_request_active(&dtpm_cpu->qos_req))
->>                  freq_qos_remove_request(&dtpm_cpu->qos_req);
->>
->> -       policy =3D cpufreq_cpu_get(dtpm_cpu->cpu);
->> -       if (policy) {
->> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D
->> +               cpufreq_cpu_get(dtpm_cpu->cpu);
->> +
->> +       if (policy)
->>                  for_each_cpu(dtpm_cpu->cpu, policy->related_cpus)
->>                          per_cpu(dtpm_per_cpu, dtpm_cpu->cpu) =3D NULL=
-;
->>
->> -               cpufreq_cpu_put(policy);
->> -       }
->> -
->>          kfree(dtpm_cpu);
->>   }
->>
->> @@ -192,7 +190,6 @@ static int cpuhp_dtpm_cpu_online(unsigned int cpu)
->>   static int __dtpm_cpu_setup(int cpu, struct dtpm *parent)
->>   {
->>          struct dtpm_cpu *dtpm_cpu;
->> -       struct cpufreq_policy *policy;
->>          struct em_perf_state *table;
->>          struct em_perf_domain *pd;
->>          char name[CPUFREQ_NAME_LEN];
->> @@ -202,21 +199,19 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm=
- *parent)
->>          if (dtpm_cpu)
->>                  return 0;
->>
->> -       policy =3D cpufreq_cpu_get(cpu);
->> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D
->> +               cpufreq_cpu_get(cpu);
->> +
->>          if (!policy)
->>                  return 0;
->>
->>          pd =3D em_cpu_get(cpu);
->> -       if (!pd || em_is_artificial(pd)) {
->> -               ret =3D -EINVAL;
->> -               goto release_policy;
->> -       }
->> +       if (!pd || em_is_artificial(pd))
->> +               return -EINVAL;
->>
->>          dtpm_cpu =3D kzalloc(sizeof(*dtpm_cpu), GFP_KERNEL);
->> -       if (!dtpm_cpu) {
->> -               ret =3D -ENOMEM;
->> -               goto release_policy;
->> -       }
->> +       if (!dtpm_cpu)
->> +               return -ENOMEM;
->>
->>          dtpm_init(&dtpm_cpu->dtpm, &dtpm_ops);
->>          dtpm_cpu->cpu =3D cpu;
->> @@ -239,7 +234,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *=
-parent)
->>          if (ret < 0)
->>                  goto out_dtpm_unregister;
-> So this change kind of goes against another recommendation given in cle=
-anup.h:
->
->   * Lastly, given that the benefit of cleanup helpers is removal of
->   * "goto", and that the "goto" statement can jump between scopes, the
->   * expectation is that usage of "goto" and cleanup helpers is never
->   * mixed in the same function. I.e. for a given routine, convert all
->   * resources that need a "goto" cleanup to scope-based cleanup, or
->   * convert none of them.
+Takashi
 
-
-Should I replace all the memory allocation cleanups here with `__free`?
-That would allow us to drop all the `goto`s, but since this function has
-quite a few of them, I=E2=80=99m concerned it might introduce new issues.=
- What=E2=80=99s
-your recommendation?
-
-Thanks!
-
->> -       cpufreq_cpu_put(policy);
->>          return 0;
->>
->>   out_dtpm_unregister:
->> @@ -251,8 +245,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *=
-parent)
->>                  per_cpu(dtpm_per_cpu, cpu) =3D NULL;
->>          kfree(dtpm_cpu);
->>
->> -release_policy:
->> -       cpufreq_cpu_put(policy);
->>          return ret;
->>   }
->>
->> --
+> 
+> diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+> --- a/sound/core/pcm_native.c
+> +++ b/sound/core/pcm_native.c
+> @@ -84,19 +84,24 @@ void snd_pcm_group_init(struct snd_pcm_group *group)
+>  }
+>  
+>  /* define group lock helpers */
+> -#define DEFINE_PCM_GROUP_LOCK(action, mutex_action) \
+> +#define DEFINE_PCM_GROUP_LOCK(action, bh_lock, bh_unlock, mutex_action) \
+>  static void snd_pcm_group_ ## action(struct snd_pcm_group *group, bool nonatomic) \
+>  { \
+> -	if (nonatomic) \
+> +	if (nonatomic) { \
+>  		mutex_ ## mutex_action(&group->mutex); \
+> -	else \
+> -		spin_ ## action(&group->lock); \
+> +	} else { \
+> +		if (IS_ENABLED(CONFIG_PREEMPT_RT) && bh_lock)	\
+> +			local_bh_disable();			\
+> +		spin_ ## action(&group->lock);			\
+> +		if (IS_ENABLED(CONFIG_PREEMPT_RT) && bh_unlock)	\
+> +			local_bh_enable();			\
+> +	}							\
+>  }
+>  
+> -DEFINE_PCM_GROUP_LOCK(lock, lock);
+> -DEFINE_PCM_GROUP_LOCK(unlock, unlock);
+> -DEFINE_PCM_GROUP_LOCK(lock_irq, lock);
+> -DEFINE_PCM_GROUP_LOCK(unlock_irq, unlock);
+> +DEFINE_PCM_GROUP_LOCK(lock, 0, 0, lock);
+> +DEFINE_PCM_GROUP_LOCK(unlock, 0, 0, unlock);
+> +DEFINE_PCM_GROUP_LOCK(lock_irq, 1, 0, lock);
+> +DEFINE_PCM_GROUP_LOCK(unlock_irq, 0, 1, unlock);
+>  
+>  /**
+>   * snd_pcm_stream_lock - Lock the PCM stream
+> 
+> 
+> Sebastian
 
