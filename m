@@ -1,244 +1,242 @@
-Return-Path: <linux-kernel+bounces-801214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA7EEB4422F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:06:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF47B44222
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF726A611C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:06:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7E613B41A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6CA2D8376;
-	Thu,  4 Sep 2025 16:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D31A2EFDA5;
+	Thu,  4 Sep 2025 16:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOeKKfIP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XbT8dyBA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092891F4262;
-	Thu,  4 Sep 2025 16:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757001963; cv=none; b=sdnVrIZyM13aTnUczeKYtSk+XdqQWNbzKX0n6vsVHbt9X+H5XkasUZf8Q/ftr0A2u62MJ3aipvnXJ80KTEHk14T/5Qbd7ckHRxLHhmsDKQsSCYgTC4G1ZsVM0BvotC/Mf+bD1yKeI+TqA8FoMu6RoEQBexHZ4z90LciWoA8E760=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757001963; c=relaxed/simple;
-	bh=d4for+WQoYCCURZaNQO+bUjSv8L423bE+qzlhaNgZ+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=OS2gcLQgWVUeVA/VGukPvvjJB1HkpTlWF44g8tbWhnu5glPpKFnXH97RAgbYOOv0ktIFBhQ8Hpuxvc/En2bcOTuWOvxOk6uxKGUI4+4Fvwtg9us25sTKVTZeImVXBhEwQMu487Nl5nFGSk6BeyvDhl7BGeBe1UgADLkIWKprg0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOeKKfIP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E1F6C4CEF0;
-	Thu,  4 Sep 2025 16:06:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757001962;
-	bh=d4for+WQoYCCURZaNQO+bUjSv8L423bE+qzlhaNgZ+w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=TOeKKfIPisHwrw2KCfdrPm36Vdx/JsF1wSupeYOSSEq/io9Mtuc/867lhZAqhY5Vr
-	 vy8SYOGiUC/YRPg2Y9h/21mmkfwJjREdTWBcpSF67/cx2afwEDX74AcOQnOGZOqReS
-	 /ZDm9wSDcY6cjFBkwBfuV2JqvIZAWs9S1jNDrJ49V8Eo1mjK2BveDg3TwoDyIF/CPR
-	 KsbOhakBtoIwJsmq3FaSe0WZ1JkjRNv5n2los27EPzLMr2yyPDQhBEPuKobggnCGFJ
-	 VxdGEA7CHKf1fjYPAp5Hl2/qF4kyVL1xxmOD9mp820Z2MZOeXtV8Zj22voC1kX7Ozj
-	 jVHFWNNCDMixQ==
-Date: Thu, 4 Sep 2025 11:06:00 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: zhangsenchuan@eswincomputing.com
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
-	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de, johan+linaro@kernel.org,
-	quic_schintav@quicinc.com, shradha.t@samsung.com, cassel@kernel.org,
-	thippeswamy.havalige@amd.com, mayank.rana@oss.qualcomm.com,
-	inochiama@gmail.com, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: eic7700: Add Eswin eic7700 PCIe
- host controller
-Message-ID: <20250904160600.GA1264982@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B542367DC;
+	Thu,  4 Sep 2025 16:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757001883; cv=fail; b=V/F2imGGluXCMZsrRU2wP8aGZNs0SwnE3we5WiVa9MPSoS1ZW7L3ud7kDjbjO4aXq5YxIYnVl2xgjBoMMyBAcbo1wulHJwFhrOH3Nx2AOiwDptWVMffUKC11po46XSiBFdvulncmuaTiP/5YoOvYG9v+iSfdG7CHqtxTD8vZXDs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757001883; c=relaxed/simple;
+	bh=8GsrYfgglpfb81+q+m9g6Rf+LdRw9TllTpI1pAhfz3A=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=s2Mz1KRyBy3zXnDvbDt5jKhzokCo9Ec4Rxwl+TSjbL2yYo2ROUyMa1uv8ZqvDbssweY6h3gGtwlIEj7rW3I4l4AN5iZYxhwiAR0J7fILAOFt2HM9h0wHfvDkQLavw16SpKRGEtHx51bmcInoDYjt4a/Gygzih9UTBYWjzwuVfL4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XbT8dyBA; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757001881; x=1788537881;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=8GsrYfgglpfb81+q+m9g6Rf+LdRw9TllTpI1pAhfz3A=;
+  b=XbT8dyBAp00dVnrc5e3ZK4TLr6VfllEzg9q6Zemmyh3JxR3kZt5snMzP
+   CSvU1uThwiDtZIDtMkrdjJhIhk6n6wrAk5u1k2T7yZG/CWezY9gv9M7Ky
+   ES64Yp3bfGW4yZZLGUkUEpyhRpxJotTCgD22TfpZpvH5NZrKpN5rVt+9g
+   EQFvjh6dMIDvUYML0qBaert6r0wLeV0VPQjLYh/Ds7RS6ZqW5xSIbxY6u
+   BmAN2f02I5MS+M0veDF4xbUQIe89syniibWcoaPygWGauNRkOgQyKmB3F
+   LQLZe9bzW6DzrB7QOYrhx+23N3Fl04lhVDQxahjtVQQeAPDBzCEOgpn6W
+   w==;
+X-CSE-ConnectionGUID: SDR19KRvQBurvq6uaizbig==
+X-CSE-MsgGUID: 9jrVV29fRnWTLwcscPWhYQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="63171428"
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="63171428"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:04:40 -0700
+X-CSE-ConnectionGUID: /gcMzpuITQWaK2d+EZJXjw==
+X-CSE-MsgGUID: 9fL+Y+60R2WNtH8qMxj/ig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="171874963"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:04:39 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 4 Sep 2025 09:04:39 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Thu, 4 Sep 2025 09:04:38 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.42) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 4 Sep 2025 09:04:38 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bdM5DVt/4ksTzLxnROsBDsfsF45zzklwCQAgFXFL5E0hm4hc6mJjyJR0MEPT3u4jBfuT0xINwZIfG+lfaUeLWD9+h/pOf6n4wzbGR38/oT8Vn2kKS9xlA8ddFo3hv7sh6tY4wUIs7ycOIrXLlIZZeYJOBBE9o7q5Tg1CnDwvI1on0VoM2R7Mm7u72iQC5rH4+N/hc1wPucWBmZlsoH3cPsQfisVZFa/qMtWaU406CsSiRRyZd9uyIai06rBn6E+mwuQEbm3QRtPAyHXyA2rMMpvRwl+vHiXic3E8mycsRjV1szUkD2pMnKhNWaHKDviH8CNIxqaHqx1Msc6tqkLJ9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zQlGuwyDTl53wNxJFT3Qygts1LOBtbekmj5y/ZV5UdU=;
+ b=m74mJH30vcPiWKdDgWIoV8UQYNWb9ZACYP1CP5mtkTrswMYXwIrKROeFZWKzorguHhx4U3i5/mlddh+byAKeO0ZUTLfu9iiews7jGgZvtWYhKiHQJcqNA02rEVsP4StgP/GMFp54jFWpXzn0dg7PPVqZ4/8sLuh3z1t5/1F2tSTQIQFo3bAnxSW1S+7njBoonxINlyYmaIb336/QNbDlY0xHEvLoBxuouxmehxqoeE7x3ua4p+SWHrcEbnIcGoEGbHslIeqP9PLCZxIunTtYpaD3PVMtYLWUEWzvTL2zmnHZsQ/BiTW31BzSztPFuiu5MsPJTx5wAyNSTME57i5SNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c) by SA2PR11MB5017.namprd11.prod.outlook.com
+ (2603:10b6:806:11e::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Thu, 4 Sep
+ 2025 16:04:31 +0000
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::bbd5:541c:86ba:3efa]) by PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::bbd5:541c:86ba:3efa%7]) with mapi id 15.20.9094.017; Thu, 4 Sep 2025
+ 16:04:31 +0000
+Date: Thu, 4 Sep 2025 11:06:21 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Colin Ian King
+	<colin.i.king@gmail.com>, Dan Williams <dan.j.williams@intel.com>, Dave Jiang
+	<dave.jiang@intel.com>
+CC: Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	Len Brown <lenb@kernel.org>, Jia He <justin.he@arm.com>,
+	<nvdimm@lists.linux.dev>, <linux-acpi@vger.kernel.org>,
+	<kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] ACPI: NFIT: Fix incorrect ndr_desc being
+ reportedin dev_err message
+Message-ID: <68b9b8fdb0443_70a18294b1@iweiny-mobl.notmuch>
+References: <20250902114518.2625680-1-colin.i.king@gmail.com>
+ <CAJZ5v0je-10aKyA0zeDZbqTXzjxNb7yTfsWkt_-a-7uwqYdmcA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0je-10aKyA0zeDZbqTXzjxNb7yTfsWkt_-a-7uwqYdmcA@mail.gmail.com>
+X-ClientProxiedBy: MW4PR03CA0231.namprd03.prod.outlook.com
+ (2603:10b6:303:b9::26) To PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829082237.1064-1-zhangsenchuan@eswincomputing.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|SA2PR11MB5017:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8322d540-a96c-4fe8-ba86-08ddebccbbaf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?YkZ3cm5ncGpiWHVBbC9CWXQveWxBT2pFemc0RzAvWEFlOEdVVlUwd2ljZWpm?=
+ =?utf-8?B?STdqK2lqakxaa25rSDVWbFFNaWl1Z3Z1ZStWVkFXZzY2N0lZOWlSdnVkbkVl?=
+ =?utf-8?B?UXpkckNnTDdFSlF4b0FicnRQbHFBU2d6QlhWWmlOY2xrUlladERHbEpYcWVZ?=
+ =?utf-8?B?QWk4bHJHZzVQNkFFaFZqNUJpaGt1amtrQTI3UUF1bldVZ1hKY2JGOUlMbmNz?=
+ =?utf-8?B?K0l3ZmVmWWQxSDAvVWZzcHdXVzVUNk91Mnd4cUo2cmRsOUh6VVhjQ3RJNlVG?=
+ =?utf-8?B?MUZtYW8yL1hvWDM3Y1MzUUgyQ0tobGd4SEhQMy9QSDVlMlJwNXdYWGNkeHRn?=
+ =?utf-8?B?WXhTME5waEN0N2RUY256elp4b2JCWEFpWUozYXh6UnFPZjVJS1M4b3phdFNz?=
+ =?utf-8?B?OU94WktnOUxobjN0cVB2SFFvbTlUa1R3ekM4cEhadG0rMjBzd1NOczFKRHdm?=
+ =?utf-8?B?aXJtNmZCZmZKK21NTVhBb3hsSm15YzFlbTRXZnJ1K2dGakMxWC9DNWJ6TTZm?=
+ =?utf-8?B?aUd0YXJGNHBTR3JxMXpUZDBaVlpEZTR5Y0pzNlY2dkhGOVNRMWNjWGFycEh4?=
+ =?utf-8?B?K1VvOHVzOW1UV2dxekdJbUhOaVNRcDMyVlJlTWZFVkgvOGxPdjVMbHhqVVVo?=
+ =?utf-8?B?VUYwdnFXT2ZGa0hKZXlIZmtaU01jbHozQnA1Z3NDZ0hWa2g1TVJtNS9xU04r?=
+ =?utf-8?B?cWtUQWovNU5uVEdJYzE0VFA3REs5dnVTWEtJQ2NIbTdVV29LVmRWZ2xvV2Rs?=
+ =?utf-8?B?eklPU1p0bWJRVXZTV0dQdlpOWFl4Y2grQkdMbmZidDhMTFczQmIzZmdIRjAz?=
+ =?utf-8?B?UmhDbmkvZjlhZU9NVENPRUV2QXIva01aVnBVYUJ1UmxGS0I5VzFKQUl3Wmx6?=
+ =?utf-8?B?TEw1cjRHTkhxYi9rN2NWaityMEVmY3ZJdHJTdHJMblRYSmI2bzR5a0ZIL21I?=
+ =?utf-8?B?OWNra0o1aUZxVnpLSHR6NEhYZDlMWm56TndXMEg2N0hGaVdsZHBxM3RHT3NU?=
+ =?utf-8?B?dDErY2ZBQUhCMkNjL3VFUHIrNm1DdjFzMzFzQzlyYmhFWW1FT1JITXhxejRs?=
+ =?utf-8?B?NGZQenpZYXJCaStjZ1ZreXdudStCNUVITEdLQnBMcm0rSDBxSURneGZxWkFW?=
+ =?utf-8?B?TVNLMlhxaFBpSEV3TkRyM0FZbjcxaURiNExLWS85eENIV0dmeVlQTXI3eTIr?=
+ =?utf-8?B?dFc0SDhDZkpPNE9nK1hNOC9mdFdvY0Ruck1PSlZWYjlBMUx3dkFscjg3SldV?=
+ =?utf-8?B?YlJFMVVsT3dvczQ3RGI5Y2U1V0JDV1RhM21rSzhydlZuQjBwbGl4eFFPeGg0?=
+ =?utf-8?B?ZXI1Szg1QldaNldKNlV4YUpSN211TnU4dXV0Z3Mya05DZlZHSjFjVmZIZHZ1?=
+ =?utf-8?B?MkV0WFEzcG5CRWwzc3Awd0JiM2xOcnk0a0FOZFFwMEk5TE93WDNxVXdDbGgv?=
+ =?utf-8?B?ZTVEOWtaRFJHSzhNRGlDZDR1b0YyOERndWpMSDBBSGFUZXJwdURoN29QLzNq?=
+ =?utf-8?B?UG1JZ0I0Q1g3eXI5MHo3UmNBTnMwdUljaWwwcm1VUDdPb2FOZFFSdll3eVJ2?=
+ =?utf-8?B?VXNRemV2dERCdjlPSVJ6bHJIUGdxQnVjUDFSYUxqSFF2MDA5ZEFpVWVMREhW?=
+ =?utf-8?B?bUVqVk1PZ2hONmdQSDRaSXFyc1hJcHdNcWhHeVNkYmwxWmFheUttSFBwZTJK?=
+ =?utf-8?B?NlZmRkl3dWpMdVpMNTJaZy9ycUJ4Q3RVUjc0ODFWblg4V00wUHVsRWx3MFNT?=
+ =?utf-8?B?WDB1Qk1jVHZWTFlFYTRsT2Q1eDhxMWN2b2o3WU15WG52ZUx5c3U2ajE4YUda?=
+ =?utf-8?B?ekdFbGVTcEcwRWliUGlkUW5sdDNUSHdGYU9lVXRhK1UzZ0lEd2JwNTkxc0cx?=
+ =?utf-8?B?amkwNm1KcFRPV0p4RFlYaUlDdGp6QjhLQ0l4OGhlTklRYXc9PQ==?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RzFNVHVNMDNaT0pObFJtNzlwWGpCRldnc25IUnhhYmNYSXVpaHMzK1RPUWZ4?=
+ =?utf-8?B?cVFveDVGZ3FPaDQ1OThrRGN0dWo5MHorSnhOWWovYk0rc0dac3R0R2FMSUJT?=
+ =?utf-8?B?emZrR2c2WVhjeFpFTEQ1bXhhcTcvWFBvNEZzdlUrT2lTcU5IL0gvWUt0TTE3?=
+ =?utf-8?B?c08xeGlWbTVsWFMwdUNHRkdJVk1DT24yQlIvUEFMZld6NTZZUHcweWRTSi9S?=
+ =?utf-8?B?VmloNGtKK0UzMXN4OGdndFhiSWdpMUNONS96cDI5eWYxVSs3UG40dXRHMEVk?=
+ =?utf-8?B?K0ozY2kwTkcralpoQTIrclJ3TnF4ZUJUN3dKKzJUb05iT2RYT0w0OU8wdjVh?=
+ =?utf-8?B?SjhXa3pXdUZHclFLcU1vdkErUjd6LzgwazZQTTY5N3kxNGszLzRZL3dGZ2VQ?=
+ =?utf-8?B?UERVakVHTXRzYS9Wb1V2ZGlRSXU0SkNHVDhzL2FGeTR2YVA3dkZrY3kvc0Rz?=
+ =?utf-8?B?YXRPWEJOMHJaQjNoR2dRZC9WbHRsWnk1MVJsbWZnZ25jd2IvUmV0NEhjMEpa?=
+ =?utf-8?B?V2JGT3RVbFVvUElkVXZCcDIwcTVZelB6SHV4akJGaWRRc0N5QzdMQ2lKbmlY?=
+ =?utf-8?B?L2N0ZXJ6STV4VURkbDZTeXlub3ErQ1BJRGR3d1JGb2tMbzdOTlJ1WXJseHJ0?=
+ =?utf-8?B?ZG1mcWpqbjZKdkFJU2k5Uk0xNEdrdXllc21BSDc5ZDJFMWdCblgvTVVIdGxV?=
+ =?utf-8?B?a1JaZUVFYjROVklIeVpyWk9GbnNzeGlKYmhhdG82U0NwNllHNlF5empzVmdx?=
+ =?utf-8?B?V2MyWVYrVVJJUGhacDU0bTgwdWFoVWFYeWhFbUVzdm5mamYrOGtYaVJqUEdr?=
+ =?utf-8?B?dUc3SlBYczg5ekh2OVc4TFhFV25OUlp2T3grK1l3YmtCMnhodGR3L2NyOHNQ?=
+ =?utf-8?B?MEN6NGJ2a3NZZzlVdm5kbmEwVGhZNUVqVG9ISlMrd0pOMnVWR0IrQmpnOXZD?=
+ =?utf-8?B?cGVHOGRHL1d5LzJ3TElIV0xFMEFkUEJqZDc2ZG9Oa1RyaFo5ZlhUQ1Q5Qmds?=
+ =?utf-8?B?M25ibURSMGtIN083TnBYdjZlZnF3end2NHVZaCtuNFFwTmh2cFhlWW0zeGdC?=
+ =?utf-8?B?Z0pTQzlGcXBHL25rV2xJMWpaaUlLZjJtWXB2cWhHemdCUDlTcWI0eUNMa2Zp?=
+ =?utf-8?B?aitWUVdXaWZFTlYrc1h3OEJlSENBSkplSnRzeWl3dzlxN0tWR3ZPUFBYUHdn?=
+ =?utf-8?B?T0laWGxYb2Nsb0oyV3YrY3FabTd6SEN4eW5kK3I0UHpOTlFWNitzMUlXV3Er?=
+ =?utf-8?B?M0EraG1VaHowSnBuY3lFWlpFZFBlbHYzNkRBeVZUaWJHdGorQ1NiQThGZnNC?=
+ =?utf-8?B?THhCcFg1Ukc4bjhpS1dBd2c0NXczcTBPQUdtV29HVnh2SHdZYzQ5aVc2L255?=
+ =?utf-8?B?dE91VVEvdVdCaXdIdjZ2YjNKbGE4ZCtBNWZZU0xFWFpCMHRjcTFPRkZrUXpp?=
+ =?utf-8?B?ZVNoQzhuaS9GajQ3VGlyWTJLOGJxTEc1Q1VLWE4rTXNha2ZQV3lCN2xZWDh4?=
+ =?utf-8?B?RHJVcTZ3NXdLbjhtb0c4NlU0NERORUljZkdVOHVrTXFJRUFqdmsycWJnSzM5?=
+ =?utf-8?B?T2FwVDdjMnU4NDhqeThKeDBVZEJkdmVvNW9hOW9JMjNoS3phVExUQVExOGM2?=
+ =?utf-8?B?NEk4eCtlQmd0WS9oakJ5RndWRmdYU2tIR1c4TEdvN1dZaTJDUEU0d1llVnZw?=
+ =?utf-8?B?VGovMG0yN08zMysvNlpNajVvZERWQU02TDdZSU5PWEJDY1BrMDUyeERnZVY2?=
+ =?utf-8?B?Q3JTSEFKTmxYS2xFQm0yMmcvOGNLUkdORnI5TDhubUpwZEtjV0V6UGpPc1dN?=
+ =?utf-8?B?N210NDJCVDJCUGdZaVhrWHZybmptVFQ5MCsvR0c0aXY0dHRlaWhFSHkwdWx3?=
+ =?utf-8?B?bnVMTFA2QmUzUkMvU2tnc3BTSGZYVGJsbCtmNjdKM1RQTk1xaVNXVVhHMG1P?=
+ =?utf-8?B?QnJzMUVzd3pvaktKbkdvdG1LNjJyUVhZeXkyejhhbGdkYytmdS80ZmFwZGl4?=
+ =?utf-8?B?VlNHMmthWElwVVl2TVFyRlBHNnNJMHlXeWtIMVlLSEtneXo5ajg0YzVYS3Fm?=
+ =?utf-8?B?d0R1SG1yN3BNVytHWjlVZ3R6OE1DbTdYMnJQZG13YkRnSXloakVneDljNEU0?=
+ =?utf-8?Q?utGSaEZwcoTQ6GL2LPpfzjojM?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8322d540-a96c-4fe8-ba86-08ddebccbbaf
+X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 16:04:31.2967
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4+Akx8tuqlOKZueVgpaqZO1SkXwQh2CZlSXChOXuoNTu9wVu5hOx9n3Su1JWEFX3spc4Nq5utXPfdM+9cpxUVw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5017
+X-OriginatorOrg: intel.com
 
-On Fri, Aug 29, 2025 at 04:22:37PM +0800, zhangsenchuan@eswincomputing.com wrote:
-> From: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+Rafael J. Wysocki wrote:
+> On Tue, Sep 2, 2025 at 1:46 PM Colin Ian King <colin.i.king@gmail.com> wrote:
+> >
+> > There appears to be a cut-n-paste error with the incorrect field
+> > ndr_desc->numa_node being reported for the target node. Fix this by
+> > using ndr_desc->target_node instead.
+> >
+> > Fixes: f060db99374e ("ACPI: NFIT: Use fallback node id when numa info in NFIT table is incorrect")
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> > ---
+> >  drivers/acpi/nfit/core.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+> > index ae035b93da08..3eb56b77cb6d 100644
+> > --- a/drivers/acpi/nfit/core.c
+> > +++ b/drivers/acpi/nfit/core.c
+> > @@ -2637,7 +2637,7 @@ static int acpi_nfit_register_region(struct acpi_nfit_desc *acpi_desc,
+> >         if (ndr_desc->target_node == NUMA_NO_NODE) {
+> >                 ndr_desc->target_node = phys_to_target_node(spa->address);
+> >                 dev_info(acpi_desc->dev, "changing target node from %d to %d for nfit region [%pa-%pa]",
+> > -                       NUMA_NO_NODE, ndr_desc->numa_node, &res.start, &res.end);
+> > +                       NUMA_NO_NODE, ndr_desc->target_node, &res.start, &res.end);
+> >         }
+> >
+> >         /*
+> > --
 > 
-> Add Device Tree binding documentation for the ESWIN EIC7700
-> PCIe controller module,the PCIe controller enables the core
-> to correctly initialize and manage the PCIe bus and connected
-> devices.
-> 
-> Signed-off-by: Yu Ning <ningyu@eswincomputing.com>
-> Signed-off-by: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-> ---
->  .../bindings/pci/eswin,eic7700-pcie.yaml      | 142 ++++++++++++++++++
->  1 file changed, 142 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml b/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
-> new file mode 100644
-> index 000000000000..65f640902b11
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
-> @@ -0,0 +1,142 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/eswin,eic7700-pcie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Eswin EIC7700 PCIe host controller
-> +
-> +maintainers:
-> +  - Yu Ning <ningyu@eswincomputing.com>
-> +  - Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-> +
-> +description:
-> +  The PCIe controller on EIC7700 SoC.
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: eswin,eic7700-pcie
-> +
-> +  reg:
-> +    maxItems: 3
-> +
-> +  reg-names:
-> +    items:
-> +      - const: dbi
-> +      - const: config
-> +      - const: mgmt
-> +
-> +  ranges:
-> +    maxItems: 3
-> +
-> +  num-lanes:
-> +    const: 4
-> +
-> +  '#interrupt-cells':
-> +    const: 1
-> +
-> +  interrupts:
-> +    maxItems: 9
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: msi
-> +      - const: inta
-> +      - const: intb
-> +      - const: intc
-> +      - const: intd
-> +      - const: inte
-> +      - const: intf
-> +      - const: intg
-> +      - const: inth
-> +
-> +  interrupt-map:
-> +    maxItems: 4
-> +
-> +  interrupt-map-mask:
-> +    items:
-> +      - const: 0
-> +      - const: 0
-> +      - const: 0
-> +      - const: 7
-> +
-> +  clocks:
-> +    maxItems: 4
-> +
-> +  clock-names:
-> +    items:
-> +      - const: mstr
-> +      - const: dbi
-> +      - const: pclk
-> +      - const: aux
-> +
-> +  resets:
-> +    maxItems: 3
-> +
-> +  reset-names:
-> +    items:
-> +      - const: cfg
-> +      - const: powerup
-> +      - const: pwren
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - ranges
-> +  - num-lanes
-> +  - interrupts
-> +  - interrupt-names
-> +  - interrupt-map-mask
-> +  - interrupt-map
-> +  - '#interrupt-cells'
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        pcie@54000000 {
-> +            compatible = "eswin,eic7700-pcie";
-> +            reg = <0x0 0x54000000 0x0 0x4000000>,
-> +                  <0x0 0x40000000 0x0 0x800000>,
-> +                  <0x0 0x50000000 0x0 0x100000>;
-> +            reg-names = "dbi", "config", "mgmt";
-> +            #address-cells = <3>;
-> +            #size-cells = <2>;
-> +            #interrupt-cells = <1>;
-> +            ranges = <0x81000000 0x0 0x40800000 0x0 0x40800000 0x0 0x800000>,
-> +                     <0x82000000 0x0 0x41000000 0x0 0x41000000 0x0 0xf000000>,
-> +                     <0xc3000000 0x80 0x00000000 0x80 0x00000000 0x2 0x00000000>;
-> +            bus-range = <0x0 0xff>;
-> +            clocks = <&clock 562>,
-> +                     <&clock 563>,
-> +                     <&clock 564>,
-> +                     <&clock 565>;
-> +            clock-names = "mstr", "dbi", "pclk", "aux";
-> +            resets = <&reset 8 (1 << 0)>,
-> +                     <&reset 8 (1 << 1)>,
-> +                     <&reset 8 (1 << 2)>;
-> +            reset-names = "cfg", "powerup", "pwren";
-> +            interrupts = <220>, <179>, <180>, <181>, <182>, <183>, <184>, <185>, <186>;
-> +            interrupt-names = "msi", "inta", "intb", "intc", "intd",
-> +                              "inte", "intf", "intg", "inth";
-> +            interrupt-parent = <&plic>;
-> +            interrupt-map-mask = <0x0 0x0 0x0 0x7>;
-> +            interrupt-map = <0x0 0x0 0x0 0x1 &plic 179>,
-> +                            <0x0 0x0 0x0 0x2 &plic 180>,
-> +                            <0x0 0x0 0x0 0x3 &plic 181>,
-> +                            <0x0 0x0 0x0 0x4 &plic 182>;
-> +            device_type = "pci";
-> +            num-lanes = <0x4>;
+> Dan, Dave, are you guys going to take this one, or should I take care of it?
 
-num-lanes and perst are per-Root Port items.  Please put anything
-related specifically to the Root Port in its own stanza to make it
-easier to support multiple Root Ports in future versions of the
-hardware.
+Apologies, I should have said I'm taking this one.  It is queued up.
 
-See
-https://lore.kernel.org/linux-pci/20250625221653.GA1590146@bhelgaas/
-for examples of how to do this.
-
-> +        };
-> +    };
-> --
-> 2.25.1
-> 
+Thanks for the ping,
+Ira
 
