@@ -1,111 +1,80 @@
-Return-Path: <linux-kernel+bounces-799696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747B0B42F3B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:54:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59ED1B42F3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D9D1698F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:54:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC67C7C4A4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C442D1EDA2B;
-	Thu,  4 Sep 2025 01:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19A81E3DF2;
+	Thu,  4 Sep 2025 01:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JbWlcnWC"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="HxAwEdPJ"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B9E1EA7CB;
-	Thu,  4 Sep 2025 01:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4656537F8
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 01:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756950693; cv=none; b=JHT7JHN/9URQFzvsh3xA7OrBbwRoHhdVpg3LU0479xSJNiGjm+eKfweCSNsDOBh6VxiHErWrf7MOkPkHUz0XhLlvhp8GuaqZSXRLNAS4KmyD9hvTo1eweFKsEinVi6NO5RdrW9hWlfuyFteYE5feY7cSuWipp8KUxOHiTC/tzGc=
+	t=1756950737; cv=none; b=ksq81dbzGsxYv/oz8U9PQPgZl8O5tUB8KbrCIlpYn7As6j8Ri0UcDO5bUUuThELLbAel5WWi9Y+Rw+7vaRcyjCZltsqGaNVxNjlcnc0vdce+1aRuB59qr31hqTbHcmKnb7e+u81j/hET18GqFhpGWzz+xybzAnSW+/LH5mrb/2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756950693; c=relaxed/simple;
-	bh=490XaeJOSXOPOipAwlaja6D50/cNV+4mssGhLZMnMJo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=K4rsBw4NQqTlELfyS+lZapSIEm/MVPw7r0zBdFHo50Gbr5dPJvRkpghvQO98ybHNkKjRAj0vIw0CXdj9jn/bI4xrtJUJjY6Rp9kQSTp1xTD/O/tDzu+DSoYc7iGNkmxpq76VEpRBDo88TE1VEMy3lYq4DtII2++AHMha9Rw5Q5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JbWlcnWC; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3297a168470so429498a91.3;
-        Wed, 03 Sep 2025 18:51:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756950691; x=1757555491; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GgDT8yas3IcACX8dpF1Z+jTHl5S85Xg0OLjTZ81TkYA=;
-        b=JbWlcnWCLZGG5b2wC9blY3/pvPEPhQF6OlBjd781i2EUnieNLpU5T08vu/buyc1nwb
-         y2vcuY7A1szPjxKDu/zPJpO9mhwXM2E5jmFUcNHp9Eh9Fgc+uIkwkJlJskXUc6Y6PmDH
-         O48u1U9F7j8WJccvvm6x0R/2oh29O5qkReqHvJ/ZtbNPL9ovl+WXmb/jfOOCgxTB5Zo0
-         hXWX1EkhGUMxp9ZyUW/+mfpr7ZErZ6avWOFCh1I3sRVLvhaNXnxE8CHeAGN0wMI2fV7w
-         G8/6/yfQvdS12ka8tCE/SZ71LbRwzf/XRGScVKkq9cLTxTn1YgDdOSRg/H25HSDRjTw5
-         NQkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756950691; x=1757555491;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GgDT8yas3IcACX8dpF1Z+jTHl5S85Xg0OLjTZ81TkYA=;
-        b=XDld8QGdPABiuUXaOLFVimYOqrZgabi9vaRYVf9x0jDER7hR1arbGWz2Al5fYnwXPx
-         xVZ10wvcFTlqPx3X4FrX0k7hJKNzB93dmkJUjPGei9uEW0tgz3/7JJ0sYYLqNVpTPOx3
-         k9E7dVrGUzsSjQbbB0D90s+s9AMyct9BctYHtghAwSTCAUriiD1TuRuOrIVjQUYJ91wp
-         j2RUweLlFJOwGIfEdpJHYKekiPZj0jH30unSj9YmPFUOVvAfyoJaw8vVRJuRz+IRDpnr
-         n1N9Lm+fErLNUMsRru8heg2iuPaUN4DGlrOx+IVKpqK9HXY067pXXjfdKptqW1jbZ+Wt
-         nk/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUAaASiEX7uXdBB491rDXFh6SkQ3TSlWZs9ijOH8rpOSG0j+JllUwfnINGTnp29DIgpHWpiFOxtr/qSYw==@vger.kernel.org, AJvYcCV6elvXDhzKk7nU+jeUBPTaSAx2WYMPVtMVpb1YXOUmetXj4wbI0N5r2Xtj7ZFdGYfBCl60R3ogYN6QJ5A=@vger.kernel.org, AJvYcCV71gG74k4tYyHe7BBfotp+WRZSsW2M58kjFTFQZrGKY2SEsidMH8bqYeJxEqPqH83yTUCN9DLt@vger.kernel.org, AJvYcCVGxOIJTBLTlS3ijjvbAN5tOiWXJrq4XVDEJlJyoETtG7dPsU/fkOA9szv92CivF2Yo6fsxUkForvGf@vger.kernel.org, AJvYcCVU2RzMtPj4/R/Zff+vnxrPh/wouhnTscJ+YzkaHhgbHDiB/UIoZvUsvrXJMpX7gg8DAvezIM6WNos=@vger.kernel.org, AJvYcCW7DyT3LrI8Q/g3zUWoIjMyeCWCN7Cl5oUkbE+q/0GuFr/PbVjo/QuJfVPjNS4xUFshTHBq8AL1eSue@vger.kernel.org, AJvYcCXlPLUHBminz6HDvETzd7lqDLPUbtw1stCOXfeVDbni9qhjeKjqoNpxPgHSghYyi/kdMGTHUfGsJdHb@vger.kernel.org, AJvYcCXnaQlJMf2f8kOhqr0RcM3okWZBrAkbIYlHFKDosioZdO9Sq4TLavPRzqv3tPcfNP8cepqblh+aFojmnna9hrY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztm0iSxqakXbPjuX5N25YVugeZUmYEAfFf4dWnSR1MdrEoA4Qh
-	X2hgqjqvD1KwTKg6N6Tv0nONCWftBwHwUiquYXfmYCmPcz4bL5BPIdBk
-X-Gm-Gg: ASbGncuguNgr9wEol79+hAb6kj778uSO4Q6PJils04ffuH8AvqtWWxhqwCet2vtFY+g
-	mtk6qD87T0z34UCg7Ou5yN5XgISQEXoYzJ/vR2QN95ARa+QKw6tAyzvZ3waZNxbF5koDho/HaOQ
-	4WlLqxnUkhPbs0J4VatZihEQ/IKVztB7lIHIVmabdyWULirjJRLDckOIILHq0n3O0CgjCCu61uz
-	Qp08uoN666FktSH+mn7WOZzfTFfahh9iuQnaAa1p0/sqQu6Aj08GAnyuxsIhvLISKSk2h2jIyWk
-	Z7zC+ymozlNpX1o8SjIhTc9gacY7Z+W/ao/GcX3nREG9abW8lCSX9XB9IaseEzLgnFEVURznwGy
-	0Rt12bXGUt1TuOcMHNyJnrOW2TrFkkNuncOVgq9aBm408XZX6hn+CD8aYU9Zuxco3vMpOReHl9L
-	1am68+NUHA7GE=
-X-Google-Smtp-Source: AGHT+IHHGAsQymzfwZbqXSo9KeT0ANvCpXtZV/5yXUahATQNdz4R9tIeTKD8XgEjSyeUKrwTYEAohA==
-X-Received: by 2002:a17:90b:1d03:b0:320:fda8:fabe with SMTP id 98e67ed59e1d1-328156ba3b0mr19428738a91.22.1756950690388;
-        Wed, 03 Sep 2025 18:51:30 -0700 (PDT)
-Received: from hcdev-d520mt2.. (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-329dcc0af56sm7080205a91.24.2025.09.03.18.51.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 18:51:29 -0700 (PDT)
-From: a0282524688@gmail.com
-To: tmyu0@nuvoton.com,
-	lee@kernel.org,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	andi.shyti@kernel.org,
-	mkl@pengutronix.de,
-	mailhol.vincent@wanadoo.fr,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	wim@linux-watchdog.org,
-	linux@roeck-us.net,
-	jdelvare@suse.com,
-	alexandre.belloni@bootlin.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Ming Yu <a0282524688@gmail.com>
-Subject: [PATCH RESEND v14 7/7] rtc: Add Nuvoton NCT6694 RTC support
-Date: Thu,  4 Sep 2025 09:50:48 +0800
-Message-Id: <20250904015048.1801451-8-a0282524688@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250904015048.1801451-1-a0282524688@gmail.com>
-References: <20250904015048.1801451-1-a0282524688@gmail.com>
+	s=arc-20240116; t=1756950737; c=relaxed/simple;
+	bh=8uVrH3E9ZUTKlf+Fmwzqtu76wRGDK/8H1yi+H9t3Hqw=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=ciOVZs5bzvnL0QRYBuAcLfiiUEfCRvt31KIAPN3B+gaY2PWejxumXSCVg/57KrBTZhfX4N6zuUVlcg8L4VyTwtthk549q0gVuVpWVaHtcc7hIlh9wXAiTcBo5Cd6t62mIH6vwm852kclWp6gusxRKrSNlH2LBHqsbgwDq6DdxG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=HxAwEdPJ; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1756950728;
+	bh=m3lqxD14iC8h790ABV4eqgcozXfZnxK6eiaK1KAMMyw=;
+	h=From:To:Cc:Subject:Date;
+	b=HxAwEdPJFOkPBDH6oPZIUV9fh6iIm9ipFAbPyAFoLIyU3zImibYhMJGbbGs93/Pmg
+	 t7u+xQNJUdZrDgdIpz3yADdxAR6rBHOA76Zi6Igd4Fe/hq/RYgNKghcoNUN+OuV6Vb
+	 AnU2m5vozlZrY+6B9Lxx660HODC1Hyy4jk9u80XM=
+Received: from SSOC3-SH.company.local ([58.33.109.195])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id CF81B0EB; Thu, 04 Sep 2025 09:51:56 +0800
+X-QQ-mid: xmsmtpt1756950716tvspqs74q
+Message-ID: <tencent_3177343A3163451463643E434C61911B4208@qq.com>
+X-QQ-XMAILINFO: M2SvzgchpLqfDKUhPk/DzKNaoI17qaXQHyvmMMyNRZsHfRCwA/UZW0tEKKjL1w
+	 2DfFJ66U2vuDDPNCDzb9l8/Jh/20ffTbwprEfUZp8xC7BHEewLfaypjx3vtrwD+QcTFbBSucVovL
+	 OUoSrjA1JKDQ0VpxiurxZwDOIjsDiIqYcV8lL1t8DfxIOcggVquiR9DeUqFr22DwXYsd3o+9IFV1
+	 +fIYwJ+EYuMIWVGvIC0MykZBk7DvC/ppspo3NjL9e2IOW+6ocyizjq1/YzhUGudvYNHLbJ0FPLWE
+	 csYzSHcOnUiV9sew7wR+PBWE2w6o5BMrYPWRCQYbUe7F4x0rwJP2TCasv09/CDpogyEsXj0CJfSv
+	 g0HxDq047FQ4yjfVCdjf975ETldYxRZWI3SiYowxsAuW2yl/fVqcOCHbAFCI+p9dOMRDMXOeyXfq
+	 +RMJsSnOfBdPDfLnQpWuIUlzZpSfYU7E4jcwz/+bqtEGU2ZTAgJAaKIzy/EBV1sFOtXZpHaHNTdZ
+	 nGGDMr+5FE2Hrm6LMNG0WWCuR0TzzSZz3kyTlSOW8v5b5j1jY8QFxzDtTSlg4mMV8uR3LdAdf0hX
+	 SUAQgeSUsrnGsbb3Eayxw+CI86xzfVTBRhR5ZgG1Ym5rF0LG7fAID3PbJQ69FgvqBylKqOMXeLeY
+	 z7Whbhof3dSmuYLRycE5LHMjSbw4BfXONiQ60K1n+kt3AssoVZKF8roYrKHhtxq1He9sJf62GZIS
+	 f2xJLYeqyIH1QoSRk7QvAkKhKD6CA2WP9N78j0RpBFGdVy6fyISV9R5ZLPs83kj9Du5x1TjqZHEu
+	 Qoiw+2cil/3Rzca/2faD/arN2pyqzo3gz3rEILKpPShASKvHoBpgRHS1G4oG7fCpiwPyuRUEFqDy
+	 Yl6J645lnyfWM0Ww9QLDO/zn3Uo0OzpIn26guMycZSNtl6dBzuFOYbm/4vKXxg3rH3DcQ2bliTJv
+	 m6sodyBSUy6G7Q6aJbZeYLKSeunZhIYxiQ+SAOk0f71MzyN0Kd8ETTxmgfewh4mIj294smoKi92g
+	 lLbIDblKUnoQ2lj0tYnMNSX9ZRcMaKPl7gSazmhPo6CnqJNKp1
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Han Guangjiang <gj.han@foxmail.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org (open list:SCHEDULER)
+Cc: hanguangjiang@lixiang.com,
+	fanggeng@lixiang.com,
+	yangchen11@lixiang.com
+Subject: [PATCH] sched/fair: Fix DELAY_DEQUEUE issue related to cgroup throttling
+Date: Thu,  4 Sep 2025 09:51:50 +0800
+X-OQ-MSGID: <20250904015151.2606425-1-gj.han@foxmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -114,414 +83,129 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Ming Yu <a0282524688@gmail.com>
+From: Han Guangjiang <hanguangjiang@lixiang.com>
 
-This driver supports RTC functionality for NCT6694 MFD device
-based on USB interface.
+When both CPU cgroup and memory cgroup are enabled with parent cgroup
+resource limits much smaller than child cgroup's, the system frequently
+hangs with NULL pointer dereference:
 
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Ming Yu <a0282524688@gmail.com>
+Unable to handle kernel NULL pointer dereference
+at virtual address 0000000000000051
+Internal error: Oops: 0000000096000006 [#1] PREEMPT_RT SMP
+pc : pick_task_fair+0x68/0x150
+Call trace:
+ pick_task_fair+0x68/0x150
+ pick_next_task_fair+0x30/0x3b8
+ __schedule+0x180/0xb98
+ preempt_schedule+0x48/0x60
+ rt_mutex_slowunlock+0x298/0x340
+ rt_spin_unlock+0x84/0xa0
+ page_vma_mapped_walk+0x1c8/0x478
+ folio_referenced_one+0xdc/0x490
+ rmap_walk_file+0x11c/0x200
+ folio_referenced+0x160/0x1e8
+ shrink_folio_list+0x5c4/0xc60
+ shrink_lruvec+0x5f8/0xb88
+ shrink_node+0x308/0x940
+ do_try_to_free_pages+0xd4/0x540
+ try_to_free_mem_cgroup_pages+0x12c/0x2c0
+
+The issue can be mitigated by increasing parent cgroup's CPU resources,
+or completely resolved by disabling DELAY_DEQUEUE feature.
+
+SCHED_FEAT(DELAY_DEQUEUE, false)
+
+With CONFIG_SCHED_DEBUG enabled, the following warning appears:
+
+WARNING: CPU: 1 PID: 27 at kernel/sched/fair.c:704 update_entity_lag+0xa8/0xd0
+!se->on_rq
+Call trace:
+ update_entity_lag+0xa8/0xd0
+ dequeue_entity+0x90/0x538
+ dequeue_entities+0xd0/0x490
+ dequeue_task_fair+0xcc/0x230
+ rt_mutex_setprio+0x2ec/0x4d8
+ rtlock_slowlock_locked+0x6c8/0xce8
+
+The warning indicates se->on_rq is 0, meaning dequeue_entity() was
+entered at least twice and executed update_entity_lag().
+
+Root cause analysis:
+In rt_mutex_setprio(), there are two dequeue_task() calls:
+1. First call: dequeue immediately if task is delay-dequeued
+2. Second call: dequeue running tasks
+
+Through debugging, we observed that for the same task, both dequeue_task()
+calls are actually executed. The task is a sched_delayed task on cfs_rq,
+which confirms our analysis that dequeue_entity() is entered at least
+twice.
+
+Semantically, rt_mutex handles scheduling and priority inheritance, and
+should only dequeue/enqueue running tasks. A sched_delayed task is
+essentially non-running, so the second dequeue_task() should not execute.
+
+Further analysis of dequeue_entities() shows multiple cfs_rq_throttled()
+checks. At the function's end, __block_task() updates sched_delayed
+tasks to non-running state. However, when cgroup throttling occurs, the
+function returns early without executing __block_task(), leaving the
+sched_delayed task in running state. This causes the unexpected second
+dequeue_task() in rt_mutex_setprio(), leading to system crash.
+
+We initially tried modifying the two cfs_rq_throttled() return points in
+dequeue_entities() to jump to the __block_task() condition check, which
+resolved the issue completely.
+
+This patch takes a cleaner approach by moving the __block_task()
+operation from dequeue_entities() to finish_delayed_dequeue_entity(),
+ensuring sched_delayed tasks are properly marked as non-running
+regardless of cgroup throttling status.
+
+Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
+Signed-off-by: Han Guangjiang <hanguangjiang@lixiang.com>
 ---
-Changes since version 13:
+ kernel/sched/fair.c | 21 ++++++---------------
+ 1 file changed, 6 insertions(+), 15 deletions(-)
 
-Changes since version 12:
-- Use same email address in the signature
-
-Changes since version 11:
-
-Changes since version 10:
-
-Changes since version 9:
-- Add devm_add_action_or_reset() to dispose irq mapping
-
-Changes since version 8:
-- Modify the signed-off-by with my work address
-- Add irq_dispose_mapping() in the error handling path and in the remove
-  function
-
-Changes since version 7:
-
-Changes since version 6:
-
-Changes since version 5:
-- Modify the module name and the driver name consistently
-
-Changes since version 4:
-- Modify arguments in read/write function to a pointer to cmd_header
-- Modify all callers that call the read/write function
-
-Changes since version 3:
-- Modify array buffer to structure
-- Fix defines and comments
-- Drop private mutex and use rtc core lock
-- Modify device_set_wakeup_capable() to device_init_wakeup()
-
-Changes since version 2:
-- Add MODULE_ALIAS()
-
-Changes since version 1:
-- Add each driver's command structure
-- Fix platform driver registration
-- Drop unnecessary logs
-- Fix overwrite error return values
-- Modify to use dev_err_probe API
-
- MAINTAINERS               |   1 +
- drivers/rtc/Kconfig       |  10 ++
- drivers/rtc/Makefile      |   1 +
- drivers/rtc/rtc-nct6694.c | 297 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 309 insertions(+)
- create mode 100644 drivers/rtc/rtc-nct6694.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bbacc9d48a83..442f24a408a6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18090,6 +18090,7 @@ F:	drivers/hwmon/nct6694-hwmon.c
- F:	drivers/i2c/busses/i2c-nct6694.c
- F:	drivers/mfd/nct6694.c
- F:	drivers/net/can/usb/nct6694_canfd.c
-+F:	drivers/rtc/rtc-nct6694.c
- F:	drivers/watchdog/nct6694_wdt.c
- F:	include/linux/mfd/nct6694.h
- 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 64f6e9756aff..4a8dc8d0a4b7 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -416,6 +416,16 @@ config RTC_DRV_NCT3018Y
- 	   This driver can also be built as a module, if so, the module will be
- 	   called "rtc-nct3018y".
- 
-+config RTC_DRV_NCT6694
-+	tristate "Nuvoton NCT6694 RTC support"
-+	depends on MFD_NCT6694
-+	help
-+	  If you say yes to this option, support will be included for Nuvoton
-+	  NCT6694, a USB device to RTC.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b173a059315c..d6c2a604358f 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5373,6 +5373,12 @@ static inline void finish_delayed_dequeue_entity(struct sched_entity *se)
+ 	clear_delayed(se);
+ 	if (sched_feat(DELAY_ZERO) && se->vlag > 0)
+ 		se->vlag = 0;
 +
-+	  This driver can also be built as a module. If so, the module will
-+	  be called rtc-nct6694.
++	if (entity_is_task(se)) {
++		struct task_struct *p = task_of(se);
 +
- config RTC_DRV_RK808
- 	tristate "Rockchip RK805/RK808/RK809/RK817/RK818 RTC"
- 	depends on MFD_RK8XX
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index 789bddfea99d..610a9ee5fd33 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -119,6 +119,7 @@ obj-$(CONFIG_RTC_DRV_MXC)	+= rtc-mxc.o
- obj-$(CONFIG_RTC_DRV_MXC_V2)	+= rtc-mxc_v2.o
- obj-$(CONFIG_RTC_DRV_GAMECUBE)	+= rtc-gamecube.o
- obj-$(CONFIG_RTC_DRV_NCT3018Y)	+= rtc-nct3018y.o
-+obj-$(CONFIG_RTC_DRV_NCT6694)	+= rtc-nct6694.o
- obj-$(CONFIG_RTC_DRV_NTXEC)	+= rtc-ntxec.o
- obj-$(CONFIG_RTC_DRV_OMAP)	+= rtc-omap.o
- obj-$(CONFIG_RTC_DRV_OPAL)	+= rtc-opal.o
-diff --git a/drivers/rtc/rtc-nct6694.c b/drivers/rtc/rtc-nct6694.c
-new file mode 100644
-index 000000000000..35401a0d9cf5
---- /dev/null
-+++ b/drivers/rtc/rtc-nct6694.c
-@@ -0,0 +1,297 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Nuvoton NCT6694 RTC driver based on USB interface.
-+ *
-+ * Copyright (C) 2025 Nuvoton Technology Corp.
-+ */
-+
-+#include <linux/bcd.h>
-+#include <linux/irqdomain.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/nct6694.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/rtc.h>
-+#include <linux/slab.h>
-+
-+/*
-+ * USB command module type for NCT6694 RTC controller.
-+ * This defines the module type used for communication with the NCT6694
-+ * RTC controller over the USB interface.
-+ */
-+#define NCT6694_RTC_MOD		0x08
-+
-+/* Command 00h - RTC Time */
-+#define NCT6694_RTC_TIME	0x0000
-+#define NCT6694_RTC_TIME_SEL	0x00
-+
-+/* Command 01h - RTC Alarm */
-+#define NCT6694_RTC_ALARM	0x01
-+#define NCT6694_RTC_ALARM_SEL	0x00
-+
-+/* Command 02h - RTC Status */
-+#define NCT6694_RTC_STATUS	0x02
-+#define NCT6694_RTC_STATUS_SEL	0x00
-+
-+#define NCT6694_RTC_IRQ_INT_EN	BIT(0)	/* Transmit a USB INT-in when RTC alarm */
-+#define NCT6694_RTC_IRQ_GPO_EN	BIT(5)	/* Trigger a GPO Low Pulse when RTC alarm */
-+
-+#define NCT6694_RTC_IRQ_EN	(NCT6694_RTC_IRQ_INT_EN | NCT6694_RTC_IRQ_GPO_EN)
-+#define NCT6694_RTC_IRQ_STS	BIT(0)	/* Write 1 clear IRQ status */
-+
-+struct __packed nct6694_rtc_time {
-+	u8 sec;
-+	u8 min;
-+	u8 hour;
-+	u8 week;
-+	u8 day;
-+	u8 month;
-+	u8 year;
-+};
-+
-+struct __packed nct6694_rtc_alarm {
-+	u8 sec;
-+	u8 min;
-+	u8 hour;
-+	u8 alarm_en;
-+	u8 alarm_pend;
-+};
-+
-+struct __packed nct6694_rtc_status {
-+	u8 irq_en;
-+	u8 irq_pend;
-+};
-+
-+union __packed nct6694_rtc_msg {
-+	struct nct6694_rtc_time time;
-+	struct nct6694_rtc_alarm alarm;
-+	struct nct6694_rtc_status sts;
-+};
-+
-+struct nct6694_rtc_data {
-+	struct nct6694 *nct6694;
-+	struct rtc_device *rtc;
-+	union nct6694_rtc_msg *msg;
-+	int irq;
-+};
-+
-+static int nct6694_rtc_read_time(struct device *dev, struct rtc_time *tm)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_time *time = &data->msg->time;
-+	static const struct nct6694_cmd_header cmd_hd = {
-+		.mod = NCT6694_RTC_MOD,
-+		.cmd = NCT6694_RTC_TIME,
-+		.sel = NCT6694_RTC_TIME_SEL,
-+		.len = cpu_to_le16(sizeof(*time))
-+	};
-+	int ret;
-+
-+	ret = nct6694_read_msg(data->nct6694, &cmd_hd, time);
-+	if (ret)
-+		return ret;
-+
-+	tm->tm_sec = bcd2bin(time->sec);		/* tm_sec expect 0 ~ 59 */
-+	tm->tm_min = bcd2bin(time->min);		/* tm_min expect 0 ~ 59 */
-+	tm->tm_hour = bcd2bin(time->hour);		/* tm_hour expect 0 ~ 23 */
-+	tm->tm_wday = bcd2bin(time->week) - 1;		/* tm_wday expect 0 ~ 6 */
-+	tm->tm_mday = bcd2bin(time->day);		/* tm_mday expect 1 ~ 31 */
-+	tm->tm_mon = bcd2bin(time->month) - 1;		/* tm_month expect 0 ~ 11 */
-+	tm->tm_year = bcd2bin(time->year) + 100;	/* tm_year expect since 1900 */
-+
-+	return ret;
-+}
-+
-+static int nct6694_rtc_set_time(struct device *dev, struct rtc_time *tm)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_time *time = &data->msg->time;
-+	static const struct nct6694_cmd_header cmd_hd = {
-+		.mod = NCT6694_RTC_MOD,
-+		.cmd = NCT6694_RTC_TIME,
-+		.sel = NCT6694_RTC_TIME_SEL,
-+		.len = cpu_to_le16(sizeof(*time))
-+	};
-+
-+	time->sec = bin2bcd(tm->tm_sec);
-+	time->min = bin2bcd(tm->tm_min);
-+	time->hour = bin2bcd(tm->tm_hour);
-+	time->week = bin2bcd(tm->tm_wday + 1);
-+	time->day = bin2bcd(tm->tm_mday);
-+	time->month = bin2bcd(tm->tm_mon + 1);
-+	time->year = bin2bcd(tm->tm_year - 100);
-+
-+	return nct6694_write_msg(data->nct6694, &cmd_hd, time);
-+}
-+
-+static int nct6694_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_alarm *alarm = &data->msg->alarm;
-+	static const struct nct6694_cmd_header cmd_hd = {
-+		.mod = NCT6694_RTC_MOD,
-+		.cmd = NCT6694_RTC_ALARM,
-+		.sel = NCT6694_RTC_ALARM_SEL,
-+		.len = cpu_to_le16(sizeof(*alarm))
-+	};
-+	int ret;
-+
-+	ret = nct6694_read_msg(data->nct6694, &cmd_hd, alarm);
-+	if (ret)
-+		return ret;
-+
-+	alrm->time.tm_sec = bcd2bin(alarm->sec);
-+	alrm->time.tm_min = bcd2bin(alarm->min);
-+	alrm->time.tm_hour = bcd2bin(alarm->hour);
-+	alrm->enabled = alarm->alarm_en;
-+	alrm->pending = alarm->alarm_pend;
-+
-+	return ret;
-+}
-+
-+static int nct6694_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_alarm *alarm = &data->msg->alarm;
-+	static const struct nct6694_cmd_header cmd_hd = {
-+		.mod = NCT6694_RTC_MOD,
-+		.cmd = NCT6694_RTC_ALARM,
-+		.sel = NCT6694_RTC_ALARM_SEL,
-+		.len = cpu_to_le16(sizeof(*alarm))
-+	};
-+
-+	alarm->sec = bin2bcd(alrm->time.tm_sec);
-+	alarm->min = bin2bcd(alrm->time.tm_min);
-+	alarm->hour = bin2bcd(alrm->time.tm_hour);
-+	alarm->alarm_en = alrm->enabled ? NCT6694_RTC_IRQ_EN : 0;
-+	alarm->alarm_pend = 0;
-+
-+	return nct6694_write_msg(data->nct6694, &cmd_hd, alarm);
-+}
-+
-+static int nct6694_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
-+{
-+	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
-+	struct nct6694_rtc_status *sts = &data->msg->sts;
-+	static const struct nct6694_cmd_header cmd_hd = {
-+		.mod = NCT6694_RTC_MOD,
-+		.cmd = NCT6694_RTC_STATUS,
-+		.sel = NCT6694_RTC_STATUS_SEL,
-+		.len = cpu_to_le16(sizeof(*sts))
-+	};
-+
-+	if (enabled)
-+		sts->irq_en |= NCT6694_RTC_IRQ_EN;
-+	else
-+		sts->irq_en &= ~NCT6694_RTC_IRQ_EN;
-+
-+	sts->irq_pend = 0;
-+
-+	return nct6694_write_msg(data->nct6694, &cmd_hd, sts);
-+}
-+
-+static const struct rtc_class_ops nct6694_rtc_ops = {
-+	.read_time = nct6694_rtc_read_time,
-+	.set_time = nct6694_rtc_set_time,
-+	.read_alarm = nct6694_rtc_read_alarm,
-+	.set_alarm = nct6694_rtc_set_alarm,
-+	.alarm_irq_enable = nct6694_rtc_alarm_irq_enable,
-+};
-+
-+static irqreturn_t nct6694_irq(int irq, void *dev_id)
-+{
-+	struct nct6694_rtc_data *data = dev_id;
-+	struct nct6694_rtc_status *sts = &data->msg->sts;
-+	static const struct nct6694_cmd_header cmd_hd = {
-+		.mod = NCT6694_RTC_MOD,
-+		.cmd = NCT6694_RTC_STATUS,
-+		.sel = NCT6694_RTC_STATUS_SEL,
-+		.len = cpu_to_le16(sizeof(*sts))
-+	};
-+	int ret;
-+
-+	rtc_lock(data->rtc);
-+
-+	sts->irq_en = NCT6694_RTC_IRQ_EN;
-+	sts->irq_pend = NCT6694_RTC_IRQ_STS;
-+	ret = nct6694_write_msg(data->nct6694, &cmd_hd, sts);
-+	if (ret) {
-+		rtc_unlock(data->rtc);
-+		return IRQ_NONE;
++		__block_task(task_rq(p), p);
 +	}
-+
-+	rtc_update_irq(data->rtc, 1, RTC_IRQF | RTC_AF);
-+
-+	rtc_unlock(data->rtc);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void nct6694_irq_dispose_mapping(void *d)
-+{
-+	struct nct6694_rtc_data *data = d;
-+
-+	irq_dispose_mapping(data->irq);
-+}
-+
-+static int nct6694_rtc_probe(struct platform_device *pdev)
-+{
-+	struct nct6694_rtc_data *data;
-+	struct nct6694 *nct6694 = dev_get_drvdata(pdev->dev.parent);
-+	int ret;
-+
-+	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->msg = devm_kzalloc(&pdev->dev, sizeof(union nct6694_rtc_msg),
-+				 GFP_KERNEL);
-+	if (!data->msg)
-+		return -ENOMEM;
-+
-+	data->irq = irq_create_mapping(nct6694->domain, NCT6694_IRQ_RTC);
-+	if (!data->irq)
-+		return -EINVAL;
-+
-+	ret = devm_add_action_or_reset(&pdev->dev, nct6694_irq_dispose_mapping,
-+				       data);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_device_init_wakeup(&pdev->dev);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to init wakeup\n");
-+
-+	data->rtc = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(data->rtc))
-+		return PTR_ERR(data->rtc);
-+
-+	data->nct6694 = nct6694;
-+	data->rtc->ops = &nct6694_rtc_ops;
-+	data->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-+	data->rtc->range_max = RTC_TIMESTAMP_END_2099;
-+
-+	platform_set_drvdata(pdev, data);
-+
-+	ret = devm_request_threaded_irq(&pdev->dev, data->irq, NULL,
-+					nct6694_irq, IRQF_ONESHOT,
-+					"rtc-nct6694", data);
-+	if (ret < 0)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to request irq\n");
-+
-+	return devm_rtc_register_device(data->rtc);
-+}
-+
-+static struct platform_driver nct6694_rtc_driver = {
-+	.driver = {
-+		.name	= "nct6694-rtc",
-+	},
-+	.probe		= nct6694_rtc_probe,
-+};
-+
-+module_platform_driver(nct6694_rtc_driver);
-+
-+MODULE_DESCRIPTION("USB-RTC driver for NCT6694");
-+MODULE_AUTHOR("Ming Yu <tmyu0@nuvoton.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:nct6694-rtc");
+ }
+ 
+ static bool
+@@ -7048,21 +7054,6 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+ 	if (unlikely(!was_sched_idle && sched_idle_rq(rq)))
+ 		rq->next_balance = jiffies;
+ 
+-	if (p && task_delayed) {
+-		WARN_ON_ONCE(!task_sleep);
+-		WARN_ON_ONCE(p->on_rq != 1);
+-
+-		/* Fix-up what dequeue_task_fair() skipped */
+-		hrtick_update(rq);
+-
+-		/*
+-		 * Fix-up what block_task() skipped.
+-		 *
+-		 * Must be last, @p might not be valid after this.
+-		 */
+-		__block_task(rq, p);
+-	}
+-
+ 	return 1;
+ }
+ 
 -- 
-2.34.1
+2.25.1
 
 
