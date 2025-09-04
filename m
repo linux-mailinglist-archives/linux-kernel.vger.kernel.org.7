@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-801005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5567B43EB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A038B43EBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6A11C87B7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:26:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31D861C87E7E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583543074AB;
-	Thu,  4 Sep 2025 14:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F38030AAB0;
+	Thu,  4 Sep 2025 14:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z4GiKnMZ"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IHuBMNeE"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCC630CD88
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F7D3090E6
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756995848; cv=none; b=RQjR1z/JQVMEleAKbA0ExlqOx2qICsJCoYHW/uKkQRopNnpXnk7tpuvHRe6NU/bdiuspPdEXRnAmlI7wIkqOI4Qi+ovRKC/2lnb/aOlzCeC2EEbey+i3IB8S7xJ7XdcwkNxI50ASBMW8rTNiIm9bKn5e54HzTRzx6aeGMIMjBME=
+	t=1756995898; cv=none; b=DoDBepCpOV7LK8YxmGbKlBWgRVyOMGrTD36KkPa0oDI1cu18novUuWQC0K5iPOaujmDjJlByjyPxFVgr+gdZ0yHDmrVnxYPXjhERd3KcXvtUzp5knpOrYJ8YGfm39RGPsvBUHJwcLHJt3ICdwuHwYStrzPaxT2vbF6yo/RmOiQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756995848; c=relaxed/simple;
-	bh=rJbB3QOAsoTaxqo4Kd4lB6HXlcCx0S/pVRiVTjcef5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bvnCLy29G6VoNIgbaW1pR1y5Rbz15mENKwCbcotUakKuPAG1dLUBkun+O+LNWQfOnaWWNr84hXXTcFyPzfejKYZFIR/1WThnz1rsJctX2gkHFAoXpqb7ZQm/6ruyseq/qwIYOZOp4ED/LzicTY1ZGPRAVanR3W54ktoe2hfbNQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z4GiKnMZ; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b046d1cd1fdso17845566b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 07:24:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756995845; x=1757600645; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nNrC/NOuBDqAGWreYEfGfKmUPRa1ls8wWMOF4jMHuN4=;
-        b=z4GiKnMZMMu1zzObHvLfmCx1l4/xxGUcIAzJhBdFSaSGzQYmNIDGc0iNy6u/bORsCN
-         /PrJ4tZ5Xbf5PVZVLfE/1O+SYXU1xSzxvGf3Jtd7p7BqYZAPCO8v0ELDwqE/fkFqWypY
-         VjKnlbAqeY8+c1c19hno1YV1U65o/cLtcU0pCabl6WwgDXDbU7U8FFMzOkq8d7vaFQyG
-         Cx80Y3ciY23YVlilYElxrjG8nOHnjhw2K5u6Cf8C8jvvFwPXbHakFpQxxu4AUMBE46lb
-         9dXW/LgUYKWCTgl78bcql8C+nWdsUIT2Wq55pvFj2Fg9E6onDrngxKzT+KTSNU8N2QXo
-         1MkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756995845; x=1757600645;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nNrC/NOuBDqAGWreYEfGfKmUPRa1ls8wWMOF4jMHuN4=;
-        b=LrR3VGyY8WbJ2BDoWBug4wHAKSdAJiBgbzNL8M4jV8KZmUf3aqTbBdHazlA0vXurce
-         w9Etnr4YYswuSGZiqVxhiZzmALSa6694FWxhGpXbmVPlrn8sbZP939rBWeSx2c3ns0DQ
-         BhPgjWZESjYAjcCRU1gk4sxXB2Mnv/nMGM0rwyLtbaDVZMbOrUaLr4kh86+DruRiBm5d
-         J630CchumvQUXUBb6Qc83Vbf8biS6Bd5tLcrIcmn535izI1EDBfBaReJm+0oLSyu4D0U
-         QCMKwIBkGHoz0XIdeFbpfG4N06veZafShUGRC6NaTxieANdEXPAtlKF+9CxW/EFXcj6T
-         XRdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYKkHztIwGDGwkXoDgujVS+Cz8reK/U6Dg3k+wwUNV8fdYwFL9JereFJKWY8Z/s7GmPdFT576+UqC8tjI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpGSBAKxD8xc+oFt6MVoSj9Ro5ceO7VUdUYGCC4K0un5dv3Glk
-	dQxwDuJGHiy8WqEE8EEFQLqzPIpT2J2fxztKFroJXY+jkC3OKeQ9wffuEtWotBiRLcI=
-X-Gm-Gg: ASbGncuWUY34Nq6+PMEvcnJkU1xR/ciOyh+vkGMGNFEpqte57pJqIOPp11aMm13VZ3L
-	YGfn4obTNVafQILfGZvRVL+plznXLSuFItvbrnrdICzDksuZCBuGXBhvSOqIS4jzXiZOibUcNKU
-	txreeDsnHXAPVUZyt+1tXsIGOGZBIs+P0f/IwlfMSxLV0DGdFLwcJ1U8a8J9VT+EfHA0RzbdJnX
-	VMCWYlvd6VkazdZ+L2OZC26LWwRooRAG6ysoJu+sABhq8+TgwvY23XB0t73f8jzwdjCd4uujagQ
-	qpOg2GD+X8YVmQQAu6dclBNzcXO0LDD/QHRVeJPtJVY9+1kZ+4mIiyxHm7j8ZYJGpWVcolLt8B2
-	pQOBmPVw6RTXPXXtUBejF1f5k7Xjh3pZliQ==
-X-Google-Smtp-Source: AGHT+IGNV50jro7uMtgoJhjjvwjyznKhwM82NWrwa4sUItnPrV/V66x4nrLpTFqOJQAebi57nfUbBQ==
-X-Received: by 2002:a17:907:2d8c:b0:b04:83f1:afaa with SMTP id a640c23a62f3a-b0483f1c682mr121328466b.6.1756995844599;
-        Thu, 04 Sep 2025 07:24:04 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b046f888b95sm347059866b.34.2025.09.04.07.24.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 07:24:03 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] docs: dt: writing-schema: Describe defining properties in top-level
-Date: Thu,  4 Sep 2025 16:24:01 +0200
-Message-ID: <20250904142400.179955-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1756995898; c=relaxed/simple;
+	bh=rXizUaMeeJHGRgDHEsOcoN4pKpjy1oo22NgyBntIbd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=mUq7iTNIGnLUQFsQs6u8BV5Gv/kkzF27oTsZxuJHGKPAgNoOFu+OGRoUnY0AAQ6WfsDy60RbicwrNuHp8PPI9Q2AeHR1euTAUpz6h22qKgEnY5Tuz03xbyAMhkKDkosBhOT8Kw+97XaIkD6m+v29ckeBnmZo2CCrZzMRlM3BseU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IHuBMNeE; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250904142454epoutp0181290a05d79ebccddea8cc03648f422f~iGnUgc0jH0556505565epoutp01V
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:24:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250904142454epoutp0181290a05d79ebccddea8cc03648f422f~iGnUgc0jH0556505565epoutp01V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756995895;
+	bh=qoiDptdgyUFjz3gdoq09yJAfTI36DqUH1Pp0hibVgZo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IHuBMNeEcINrHdhSripTCvGxoHZEKtO/KAosiJ2fqIaCVtuEF8xOfUEOegHALH+md
+	 CA/WEAqCzAExGwCQc4BLachzV1exysnd1igIKileA6aXHIhki9ILbnqkF/AU0qww8l
+	 CE29mXhk7wMIJUcakLWrQXzicw1h/UulZdjjoL7o=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250904142454epcas5p12ac962b94580190e5a3f6600c08ed63d~iGnUEGH7R0053600536epcas5p1V;
+	Thu,  4 Sep 2025 14:24:54 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.93]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cHhZY4BGwz6B9m6; Thu,  4 Sep
+	2025 14:24:53 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250904142452epcas5p40047078323fae682cca73f6dc99028aa~iGnSP93N83180031800epcas5p4p;
+	Thu,  4 Sep 2025 14:24:52 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250904142451epsmtip259cd7272a4eb456ae1007c891cc2b754~iGnRAO_-r1019010190epsmtip2p;
+	Thu,  4 Sep 2025 14:24:51 +0000 (GMT)
+Date: Thu, 4 Sep 2025 19:54:45 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V2 07/20] nvdimm/namespace_label: Update namespace
+ init_labels and its region_uuid
+Message-ID: <20250904142445.gohwsacmtuuqb6uu@test-PowerEdge-R740xd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1506; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=rJbB3QOAsoTaxqo4Kd4lB6HXlcCx0S/pVRiVTjcef5E=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBouaEArq2qphlBSq9K0XZCXbcEVoS1cOy3asNZC
- zTHFKmK/CGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLmhAAAKCRDBN2bmhouD
- 10EpEACA1X1JRpjg8VvtinjyTBdJez0NF64yxJwGekQgBE+wmrFBua4jQ83FWULPiQOOEZzAnyZ
- UnLA/RJC0jdL8OcfA2NtSAs9BzK6zS+y5bav820hZ/YWyDSZDhOgbaTOeTTD3m3Yqk3f89JY+WC
- MCNU/AN9Bq5oNys7xnX6EHCWDhairD1ALUQj9/i1Xg0CCdwCB6KwNEWSK0oP26tEBkqme9FkYrh
- KSy9nPhS9xF1OPc+D+YZSl1eVqaal8CttoxTr9RXb2Wh5jcWySC3sSYo6SOnv+2mfI+JxGszJWq
- Zwj77axeHWrOfEaeXZOQvxDIy1G0Nz+HyM40G7YeYYZh1KMDUZaj03uEiPgqTJ9WLCZsrDKvtCQ
- oQerSB6s0AJIc9LC97kqx3xUv85UGIcYm/BiB29utXUXiwq2Z68TOfv1fX4edcbatCf+BQBeOJb
- Ciqz3frq5zTxiF5kyY/RNapbkUAK1IjkTrR1kYVRCCpnilByXYn6LbIZeLfvO+wOwIJhAGgQeQY
- lqR+EC9o9TyO/QPeYd/FjSlA/U6BylXkCBA793Xft/rff/pNckD3g3u8Vd2TlNC/TL3eqDTrRpF
- VtK2Kc8+sjnN1Wb6z1FZz1LPMeOWA7Xw6K8cWCmYM8l3EC6GGrzteTxi3LtzeePvg5G/LNCS+Bf zR3t9h5T6Sgnf/Q==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250813155802.00003f3d@huawei.com>
+X-CMS-MailID: 20250904142452epcas5p40047078323fae682cca73f6dc99028aa
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e2696_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250730121231epcas5p2c12cb2b4914279d1f1c93e56a32c3908
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121231epcas5p2c12cb2b4914279d1f1c93e56a32c3908@epcas5p2.samsung.com>
+	<20250730121209.303202-8-s.neeraj@samsung.com>
+	<20250813155802.00003f3d@huawei.com>
 
-Document established Devicetree bindings maintainers review practice:
-Properties having differences per each device in the binding, e.g.
-different constraints for lists or different allowed values, should
-still be defined in top-level 'properties' section and only customized
-in 'if:then:'.
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e2696_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/writing-schema.rst | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On 13/08/25 03:58PM, Jonathan Cameron wrote:
+>On Wed, 30 Jul 2025 17:41:56 +0530
+>Neeraj Kumar <s.neeraj@samsung.com> wrote:
+>
+>> nd_mapping->labels maintains the list of labels present into LSA.
+>> init_labels() prepares this list while adding new label into LSA
+>> and updates nd_mapping->labels accordingly. During cxl region
+>> creation nd_mapping->labels list and LSA was updated with one
+>> region label. Therefore during new namespace label creation
+>> pre-include the previously created region label, so increase
+>> num_labels count by 1.
+>>
+>> Also updated nsl_set_region_uuid with region uuid with which
+>> namespace is associated with.
+>
+>Any reason these are in the same patch?  I'd like to have
+>seen a bit more on why this 'Also' change is here and a separate
+>patch might make that easier to see.
 
-diff --git a/Documentation/devicetree/bindings/writing-schema.rst b/Documentation/devicetree/bindings/writing-schema.rst
-index 470d1521fa17..e0859094575d 100644
---- a/Documentation/devicetree/bindings/writing-schema.rst
-+++ b/Documentation/devicetree/bindings/writing-schema.rst
-@@ -165,6 +165,14 @@ The YAML Devicetree format also makes all string values an array and scalar
- values a matrix (in order to define groupings) even when only a single value
- is present. Single entries in schemas are fixed up to match this encoding.
- 
-+When bindings cover multiple similar devices that differ in some properties,
-+those properties should be constrained for each device. This usually means:
-+
-+ * In top level 'properties' define the property with the broadest constraints.
-+ * In 'if:then:' blocks, further narrow the constraints for those properties.
-+ * Do not define the properties within an 'if:then:' block (note that
-+   'additionalItems' also won't allow that).
-+
- Coding style
- ------------
- 
--- 
-2.48.1
+I will create separate commit to update region_uuid and will remove
+'Also' part from commit message. Yes both hunks are not associated,
+I just added both to avoid extra commit.
 
+
+Regards,
+Neeraj
+
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e2696_
+Content-Type: text/plain; charset="utf-8"
+
+
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e2696_--
 
