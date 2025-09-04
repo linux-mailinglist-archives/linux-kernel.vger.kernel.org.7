@@ -1,59 +1,71 @@
-Return-Path: <linux-kernel+bounces-800926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E211B43DCA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 626BAB43DCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00525A05607
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:53:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85048A05507
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933BF2FFDD2;
-	Thu,  4 Sep 2025 13:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA912FE04B;
+	Thu,  4 Sep 2025 13:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmmetCR0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="T1aDiM3l"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11012FC882;
-	Thu,  4 Sep 2025 13:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC4118A956;
+	Thu,  4 Sep 2025 13:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756993998; cv=none; b=r5c5pfVE8WLX/AvOwC86275HhrsdFOqd4SQ7mkXL0DTUoEpQEStKAG2bR4DToLMRG7vHX8JdynqNrGPz3cJLGQw5u/0dNgeSuZg4/Z4n0G2XjxXbVrpj4ILN0Mmm8Qmc6cHadPNdponWNF/sbydYr7rPotdgULI2z3zjK/FJhpw=
+	t=1756994027; cv=none; b=TTIK2yUdR8aPKiWcOM0HMn7GzV8+LB+XUOImtlSp5Z7ySvkwG1YEs7+N2kvvZVNeBpthzNRFf8Us4V7E9iaN0I1ncDzenoTzsiWqnTVImHlKefrCHUUAsDUz5JDv+GxvEVcY006hDoqOgYfZwfevMuo3p61C6yyBKEGya5ng8Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756993998; c=relaxed/simple;
-	bh=uOos5RCK838XZxaPCeWihHvrPLkipPebSmrQNTvBjUo=;
+	s=arc-20240116; t=1756994027; c=relaxed/simple;
+	bh=3JWvrSxs/VkPUPd7kJ+RfqaI4eUIer0kevDCwWpa1H4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H8vazFrWR0SQZnW7Z16ukUSHGk08qBF3kqI2UYfMW9SKKPrSwzITX1huQM+41Zu9eZInxL0GDCqK2nUPMCA5aSs+GF07SjHnM12H1Pr0YEkQdMmHoCVVXHha/xOpp36m7YNnahDLuDQQxpkv7Ye0Q1j41Qa/K8mcihSyklJN1nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmmetCR0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F629C4CEF1;
-	Thu,  4 Sep 2025 13:53:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756993997;
-	bh=uOos5RCK838XZxaPCeWihHvrPLkipPebSmrQNTvBjUo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rmmetCR0xcSvmfWa31P74Rurrq+iF+pBF+csmUjDb1Agv/lho2EemEzsQlUedwRw4
-	 Sl9e+9xPRBOH9irwkpTr1KsHFaXoq1eBiDTivkCgY2YcKV8rmsdUEt0lOSNpuHa2+N
-	 9Rzb29Yf5cYoBz9aXAqQ65c8VnPPjs3WuMy/NUYNvkV3YECC1xwPCDVSGACdV2UoyL
-	 UaRRc8DHHYPd6FlgFKiakYznOS3WgjI/kSeIxZdJfn1d+FKARP0hGLMQjtIH514GsB
-	 ZbkSKZVLWfu0Efc5gOP7XKQmtkXZWm1SIckAdcAjsKFxaswrXtNlHhQi2mk2ZxB7Bz
-	 8o+UDms+hrqZA==
-Date: Thu, 4 Sep 2025 08:53:14 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	hrishabh.rajput@oss.qualcomm.com, Konrad Dybcio <konradybcio@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Add support for Gunyah Watchdog
-Message-ID: <qd22epqcu7sdza6jrl3tj7pceohqh3clsywv44uau5bvszux54@ajqseswmwf6x>
-References: <20250903-gunyah_watchdog-v1-0-3ae690530e4b@oss.qualcomm.com>
- <a3af076b-ca0b-4d5e-8294-2bf5a9814959@linaro.org>
- <ec0dc13a-30f7-44a0-9a4a-5f44eccd3933@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XrnGKV+krKK4CHGGekVpA9/pXjP8lcoyzR4rtIt/x9HyKEtY1iByj0dRkUyC/nudIupADb/wi0lCNnuZDlBq6mC0MjKFzJ+lZ6Upq6FHITLperlGC3rLnP+KH7+lozYVHR8I7ru++yIesYQvyEivyxivumTYH/5m5H1Xu1QVKWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=T1aDiM3l; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=WVRx4ACMo3uPYzrq8ZZJI3V5oxK2CXBawgeB+ZsH1pA=; b=T1aDiM3lt4WfZ820xv8tBd7nKM
+	9lA48fWmw79ddq94FECn4nNnQRedKa+j/kx6Kb+W3smuRxFewf8nszQbU/kYOjQi6QzbyBNsJy+fJ
+	t7SjAl96c4DUOF5cXbZtjYmKDTVi+8/R0eZxVuOsRFTrkFmRTtvdqX2LcqSon27TDcWqMu/wbHpAG
+	wSk/P1qepEDTd+BVAFNAObzH+mRboC29sPhxHhL8/JgA2gHyuWSEXrUZnaGHU8poyIqimJJ6ZNtCp
+	Y5lTFhnDRd5XjbiUJsno6OcXZwcLfMEaplYCbkBxBttQwpnaedYoDWjYNjGekkYmIuNBjsy772Md4
+	Wy59nTQA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54242)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uuAPG-0000000025f-2k6Y;
+	Thu, 04 Sep 2025 14:53:42 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uuAPF-000000001Zx-1GKJ;
+	Thu, 04 Sep 2025 14:53:41 +0100
+Date: Thu, 4 Sep 2025 14:53:41 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 net 2/2] net: phy: transfer phy_config_inband()
+ locking responsibility to phylink
+Message-ID: <aLmZ5Ry8lPHf2Qvg@shell.armlinux.org.uk>
+References: <20250904125238.193990-1-vladimir.oltean@nxp.com>
+ <20250904125238.193990-2-vladimir.oltean@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,48 +74,127 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ec0dc13a-30f7-44a0-9a4a-5f44eccd3933@quicinc.com>
+In-Reply-To: <20250904125238.193990-2-vladimir.oltean@nxp.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, Sep 04, 2025 at 02:48:03PM +0530, Pavan Kondeti wrote:
-> On Thu, Sep 04, 2025 at 09:13:23AM +0200, Neil Armstrong wrote:
-> > On 03/09/2025 21:33, Hrishabh Rajput via B4 Relay wrote:
-> > > Gunyah is a Type-I hypervisor which was introduced in the patch series
-> > > [1]. It is an open source hypervisor. The source repo is available at
-> > > [2].
-> > > 
-> > > The Gunyah Hypervisor doesn't allow its Virtual Machines to directly
-> > > access the MMIO watchdog. It either provides the fully emulated MMIO
-> > > based watchdog interface or the SMC-based watchdog interface depending
-> > > on the hypervisor configuration.
-> > > The SMC-based watchdog follows ARM's SMC Calling Convention (SMCCC)
-> > > version 1.1 and uses Vendor Specific Hypervisor Service Calls space.
-> > > 
-> > > This patch series adds support for the SMC-based watchdog interface
-> > > provided by the Gunyah Hypervisor. The driver supports start/stop
-> > > operations, timeout and pretimeout configuration, pretimeout interrupt
-> > > handling and system restart via watchdog.
-> > > 
-> > > This series is tested on SM8750 platform.
-> > 
-> > Would this driver work on older platforms like SM8550 & SM8650 ?
-> > 
+On Thu, Sep 04, 2025 at 03:52:38PM +0300, Vladimir Oltean wrote:
+> Problem description
+> ===================
 > 
-> This driver should work on 8550 and 8650 too as long as the hypervisor
-> overlay is applied to the device tree which happens in the bootloader.
+> Lockdep reports a possible circular locking dependency (AB/BA) between
+> &pl->state_mutex and &phy->lock, as follows.
 > 
-
-You have easy access to 8550 and 8650 MTP/QRD devices, please give us a
-definitive answer.
-
-Regards,
-Bjorn
-
-> I remember porting some hypercalls to 8550 upstream kernel to induce the
-> watchdog bite in panic to collect the dumps. one of the biggest benefit
-> w/ this driver is that we can collect dumps upon kernel panic. since we
-> won't be able to pet the watchdog upon panic, the bite would eventually
-> happens and device enters dump collection mode.
+> phylink_resolve() // acquires &pl->state_mutex
+> -> phylink_major_config()
+>    -> phy_config_inband() // acquires &pl->phydev->lock
 > 
-> Thanks,
-> Pavan
+> whereas all the other call sites where &pl->state_mutex and
+> &pl->phydev->lock have the locking scheme reversed. Everywhere else,
+> &pl->phydev->lock is acquired at the top level, and &pl->state_mutex at
+> the lower level. A clear example is phylink_bringup_phy().
+> 
+> The outlier is the newly introduced phy_config_inband() and the existing
+> lock order is the correct one. To understand why it cannot be the other
+> way around, it is sufficient to consider phylink_phy_change(), phylink's
+> callback from the PHY device's phy->phy_link_change() virtual method,
+> invoked by the PHY state machine.
+> 
+> phy_link_up() and phy_link_down(), the (indirect) callers of
+> phylink_phy_change(), are called with &phydev->lock acquired.
+> Then phylink_phy_change() acquires its own &pl->state_mutex, to
+> serialize changes made to its pl->phy_state and pl->link_config.
+> So all other instances of &pl->state_mutex and &phydev->lock must be
+> consistent with this order.
+> 
+> Problem impact
+> ==============
+> 
+> I think the kernel runs a serious deadlock risk if an existing
+> phylink_resolve() thread, which results in a phy_config_inband() call,
+> is concurrent with a phy_link_up() or phy_link_down() call, which will
+> deadlock on &pl->state_mutex in phylink_phy_change(). Practically
+> speaking, the impact may be limited by the slow speed of the medium
+> auto-negotiation protocol, which makes it unlikely for the current state
+> to still be unresolved when a new one is detected, but I think the
+> problem is there. Nonetheless, the problem was discovered using lockdep.
+> 
+> Proposed solution
+> =================
+> 
+> Practically speaking, the phy_config_inband() requirement of having
+> phydev->lock acquired must transfer to the caller (phylink is the only
+> caller). There, it must bubble up until immediately before
+> &pl->state_mutex is acquired, for the cases where that takes place.
+> 
+> Solution details, considerations, notes
+> =======================================
+> 
+> This is the phy_config_inband() call graph:
+> 
+>                           sfp_upstream_ops :: connect_phy()
+>                           |
+>                           v
+>                           phylink_sfp_connect_phy()
+>                           |
+>                           v
+>                           phylink_sfp_config_phy()
+>                           |
+>                           |   sfp_upstream_ops :: module_insert()
+>                           |   |
+>                           |   v
+>                           |   phylink_sfp_module_insert()
+>                           |   |
+>                           |   |   sfp_upstream_ops :: module_start()
+>                           |   |   |
+>                           |   |   v
+>                           |   |   phylink_sfp_module_start()
+>                           |   |   |
+>                           |   v   v
+>                           |   phylink_sfp_config_optical()
+>  phylink_start()          |   |
+>    |   phylink_resume()   v   v
+>    |   |  phylink_sfp_set_config()
+>    |   |  |
+>    v   v  v
+>  phylink_mac_initial_config()
+>    |   phylink_resolve()
+>    |   |  phylink_ethtool_ksettings_set()
+>    v   v  v
+>    phylink_major_config()
+>             |
+>             v
+>     phy_config_inband()
+> 
+> phylink_major_config() caller #1, phylink_mac_initial_config(), does not
+> acquire &pl->state_mutex nor do its callers. It must acquire
+> &pl->phydev->lock prior to calling phylink_major_config().
+> 
+> phylink_major_config() caller #2, phylink_resolve() acquires
+> &pl->state_mutex, thus also needs to acquire &pl->phydev->lock.
+> 
+> phylink_major_config() caller #3, phylink_ethtool_ksettings_set(), is
+> completely uninteresting, because it only calls phylink_major_config()
+> if pl->phydev is NULL (otherwise it calls phy_ethtool_ksettings_set()).
+> We need to change nothing there.
+> 
+> Other solutions
+> ===============
+> 
+> The lock inversion between &pl->state_mutex and &pl->phydev->lock has
+> occurred at least once before, as seen in commit c718af2d00a3 ("net:
+> phylink: fix ethtool -A with attached PHYs"). The solution there was to
+> simply not call phy_set_asym_pause() under the &pl->state_mutex. That
+> cannot be extended to our case though, where the phy_config_inband()
+> call is much deeper inside the &pl->state_mutex section.
+> 
+> Fixes: 5fd0f1a02e75 ("net: phylink: add negotiation of in-band capabilities")
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+
+Thanks!
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
