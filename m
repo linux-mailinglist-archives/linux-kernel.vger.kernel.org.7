@@ -1,97 +1,79 @@
-Return-Path: <linux-kernel+bounces-801222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8BB8B44255
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:10:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49401B44287
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A13A2173F2D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:10:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3DC054E5EAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F993009EF;
-	Thu,  4 Sep 2025 16:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBA622D4DC;
+	Thu,  4 Sep 2025 16:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZExgXj1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="hJ4ukgyj"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0E32FDC27;
-	Thu,  4 Sep 2025 16:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50741DE3DB
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757002213; cv=none; b=U167+CqOiIzRppywS33i2E/hty2udQEO0Q3dPewe7SAtTxfLobeVkmOhOrTqnJ93kjlVll2FSYXFNLq+k0jM+j47hGyPicrH0qWoNnm6iH+PMalW+GHt3TtAkIimAkZBPPdoUP7EY7oGFaZ/HaUvDr1rSYRzIqoaUwceYIpSX9Y=
+	t=1757002723; cv=none; b=HepfYnN6EsQ0aSsiCF8ouzWg4i1QyeloPD8soMzysAKAjWiY53lqAdPrxuvU7aQl5pSkxcPhi9agLaAnN8lphRiJI6hwC6+5duvHXY4Jga4F+4FhhlkEFLT7u8MIeE99vlEqiaoxw26hP22Xigaz6pAyWIl/nZXtMs1T1vwFmtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757002213; c=relaxed/simple;
-	bh=s1giyZx/blD4q7nHsz0e0ugtoCgL2LdPT+lWMuBz2pU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=XncVE705SVkZICPB8nURtbK3pGJEwqHjamiOfyuSJI3ntTJWaI0NrB26cuUiQz4vQ3aLdU0hM/RXRq7Drvv6wXjeJMJecTfXGAzeQytDvgKAFbevBrO7vJBN1EZteytFv4x6SPOaB6SJII1DOWwOyjE4+102CmQ4Ju4jydNmKYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZExgXj1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1B81C4CEF6;
-	Thu,  4 Sep 2025 16:10:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757002213;
-	bh=s1giyZx/blD4q7nHsz0e0ugtoCgL2LdPT+lWMuBz2pU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=BZExgXj1N8ZDmBnHeXU3wO4wkWg1WEnus6T9ca77T7n4XrsQ7qWy69gcjT5J1ZFIo
-	 8Q/BlwJTIBBMRiSsQHTAhswriGOQLPQQhSiBFSDMnfX83drANBSvPzlsZWoHowMc/r
-	 kDmJ7HrmnfBG8H1Icp+NmF7izyEkca/V97SgdSzRynOqQtFx1EpbM3eqJJAM04WCTx
-	 mV1XSC+IZjvf90Q89GgqvRSrStQjyKYEc90N2eSN+PsaneQUq/zWTdCZDRY5ZTInaE
-	 jspjwYb0QouH2kOvj0a8hg1gnAWlMYFy6Kmb+6XfS5IIMqwrXPtKLiVGglMMEZX/MP
-	 W8ZAMZcZTsfbA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADB7383BF69;
-	Thu,  4 Sep 2025 16:10:18 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1757002723; c=relaxed/simple;
+	bh=VBG9/vXIBN3fb0FxBRHUarFNSspP4Y/C7S3ncp+ntPI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=S92OKbpKb5WUV6Xf/wVhxgm0k79HZkWXVIatm23kIVQtFhgsGlIAMyGgBi7euCM9PiAui9fi0vtg9Jrj3pKKiY5P3pwpaVB3ZunPYWNrEWUgM7VzGBDWRPlo54RtlG4rmqe4eQAsHLMJAX+/WQj89IupSE9EMhi2YWH5WFyBBXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=hJ4ukgyj; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1757002229;
+	bh=VBG9/vXIBN3fb0FxBRHUarFNSspP4Y/C7S3ncp+ntPI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=hJ4ukgyjKj+6XBN7ep1dUFgMkR7BWom3Vr2Wfnish4GvZTPdMjQjULEEqiciJiMLe
+	 I/tDll/S6S8chXwfR37Ghr01ALt6mooeq2oP6c7D6GfKzTJwP/gpf3Wf1yIBJvssN1
+	 Bu/oVVaYyEgP1k/ofP2gq2yJYcuCkNdxE1gDWrUY=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id C633F40196; Thu,  4 Sep 2025 09:10:29 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id C4DF740195;
+	Thu,  4 Sep 2025 09:10:29 -0700 (PDT)
+Date: Thu, 4 Sep 2025 09:10:29 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+cc: Adam Li <adamli@os.amperecomputing.com>, anna-maria@linutronix.de, 
+    tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org, 
+    juri.lelli@redhat.com, vincent.guittot@linaro.org, vschneid@redhat.com, 
+    dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+    mgorman@suse.de, linux-kernel@vger.kernel.org, patches@amperecomputing.com
+Subject: Re: [PATCH RESEND 1/2] tick/nohz: Fix wrong NOHZ idle CPU state
+In-Reply-To: <aLm4wRwKBMGkekkT@localhost.localdomain>
+Message-ID: <6f14ff5c-cddb-f450-b4bb-fcc995b5ce5b@gentwo.org>
+References: <20250821042707.62993-1-adamli@os.amperecomputing.com> <20250821042707.62993-2-adamli@os.amperecomputing.com> <aLm4wRwKBMGkekkT@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v4 1/2] bpf: add bpf_strcasecmp kfunc
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175700221751.1866840.15214120196740713686.git-patchwork-notify@kernel.org>
-Date: Thu, 04 Sep 2025 16:10:17 +0000
-References: <tencent_292BD3682A628581AA904996D8E59F4ACD06@qq.com>
-In-Reply-To: <tencent_292BD3682A628581AA904996D8E59F4ACD06@qq.com>
-To: Rong Tao <rtoax@foxmail.com>
-Cc: yonghong.song@linux.dev, andrii@kernel.org, ast@kernel.org,
- vmalik@redhat.com, rongtao@cestc.cn, daniel@iogearbox.net,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 
-Hello:
+On Thu, 4 Sep 2025, Frederic Weisbecker wrote:
 
-This series was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
+> The current state is indeed broken and some people have already tried to fix it.
+> The thing is nohz_full don't want dynamic isolation because it is deemed to run a
+> single task. Therefore those tasks must be placed manually in order not to break
+> isolation guarantees by accident.
+>
+> In fact nohz_full doesn't make much sense without isolcpus (or isolated cpuset
+> v2 partitions) and I even intend to make nohz_full depend on domain isolation
+> in the long term.
 
-On Wed,  3 Sep 2025 07:47:10 +0800 you wrote:
-> From: Rong Tao <rongtao@cestc.cn>
-> 
-> bpf_strcasecmp() function performs same like bpf_strcmp() except ignoring
-> the case of the characters.
-> 
-> Signed-off-by: Rong Tao <rongtao@cestc.cn>
-> 
-> [...]
-
-Here is the summary with links:
-  - [bpf-next,v4,1/2] bpf: add bpf_strcasecmp kfunc
-    https://git.kernel.org/bpf/bpf-next/c/19559e844184
-  - [bpf-next,v4,2/2] selftests/bpf: Test kfunc bpf_strcasecmp
-    https://git.kernel.org/bpf/bpf-next/c/abc8a952d4aa
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+I have never used isolcpus with nohz_full. AFAICT isolcpus is depreciated
+and cpusets are unnecessary complex overhead.
 
 
