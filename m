@@ -1,296 +1,212 @@
-Return-Path: <linux-kernel+bounces-801509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66441B445EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:57:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9D3B445F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 401CB1CC3986
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:57:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB8FB3AE4C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED01267733;
-	Thu,  4 Sep 2025 18:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7ED26F2A0;
+	Thu,  4 Sep 2025 18:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dCFCNbGD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="syv7a1z9"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2062.outbound.protection.outlook.com [40.107.223.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51672641EE
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757012214; cv=none; b=PMRk3hKLeJuT7DrsRYlDGkKQb56tQV+j57l9CUh3wRf8uJsoXAej1vmLNLABmgcm+T606yy8xmCDba5BfPEEZ6MiTjK3OTvSKkogbR3s14uB+uuWpEWy2h/L9zaTmsyqJOAg1nyM9sN3x7WTezy3ry7Hy0sQQ+RrRMLJ17X/8zc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757012214; c=relaxed/simple;
-	bh=xarvoNYWqZncjjHZQkHn4mAe8i3NYFJpOF5stI5Hcbk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MjXRoBWSEJrrOzsAMCYhMuoCQ7PWf5anBXeSN8RQXySXc7C8UMzYXXc4SWLBcGZ+de6z4OKb61vMWE84an0wQnjxlyWyKWZJddquxNFSj0jOStbCAF9CPwrJRAyGQDawKI5wmctCjuthsD9xBcK7zfgB8pZbXob1kIng3Tcg7AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dCFCNbGD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757012211;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=//wY+wiCi15t97+fQ+FMBl1p8QkU5s+6Pz+y0f6tnSE=;
-	b=dCFCNbGDw8IQR/b2l7hUmhKu0+reHaJ2mCdzCITCB44DBQ9qjvFDvS2iEBDSq25APZ8s4g
-	HNsIDXZy9ouda/iyf9i13QNS8w4tuw4zC13o5+gvuzmG1iWxTEqCEiNX0gDqNxfAbL15j0
-	gjja3iUtiXxEvGNzl3hWl9LX99tsAXo=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-367-eEAZK_kNO7uHcWUA8ljSpQ-1; Thu, 04 Sep 2025 14:56:50 -0400
-X-MC-Unique: eEAZK_kNO7uHcWUA8ljSpQ-1
-X-Mimecast-MFC-AGG-ID: eEAZK_kNO7uHcWUA8ljSpQ_1757012209
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b9c1b74d0so7366325e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 11:56:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757012209; x=1757617009;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=//wY+wiCi15t97+fQ+FMBl1p8QkU5s+6Pz+y0f6tnSE=;
-        b=npG1CXS4Eue1ewb8DRlXFLzqPgM08dafmu6Z0/wMJ8a0umLaTuPv5HYsfXeXSoMJge
-         CuE1ayjp2w0+F1CW8G0UxKCrSip+59V+fGxD1fqkHUz0+lcJO44vcXW7gUdgzmUtd6RE
-         P/JIStZwdPmxJcacmQtYy3Sdhp9otYN1/EF21rvuYv1Xa0FdSk5X1igc16lGLF8tHysl
-         I/ju81xZofRWmH4At2WLQXSi8JChGPDwGOSb/XD8Npkn2rtLxpv4ohnBHpEm5JXaGhK2
-         lozctfR309VdZk4N9AgvtzAhdQt7EOI0BDHkN1GzAQJ+Z5+56Y54BwMqEipi0rCY3033
-         ohcA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPSNNz9HmOUk9teqz8a3UwYHDVUj6i9/Mb8xyLvqu7/SD9RbSUSYW76DepvRq/uEu6r8O3wCmxxAnhiYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRA2pMuynf0nez9NVAish+n7GqkYIyklt8Z7qme8TcFYjnErDW
-	sbhjz5pPLdDNUx2//ue/icm4CqJSGfEhWQrOqOO7q+c6H+PXth3+QUMLkzyW9DznklqOyQAUnEi
-	Jp/LKp/vPioAqcjQt3svH377QiY3ThDt/psTBT02xAthvGTp+mGKKc6WUQ1fU9vWFDw==
-X-Gm-Gg: ASbGncuhTHRRaSdb7IM+HH+P+7yPB9vrb0JlzzrRBQ2ZB0PyHGikvNXQ16+s9k5ZyuZ
-	gRqe5fM3ubo2H8eTLe0wm6w8AmrMawBdkG/FnOSoNzHRS3GBY2cJZlbqz5bKJDFod4WjRl57g8K
-	uQR+ypRKt8FLfVkSy5UfcnobI/dHSRUP0cUvgZ4OWxd20s+tQcAN3mtYipeq408gniCEsK1tA8V
-	v+eapDqiHHknOxXAeaBNuxnR/BAi2sKmmkHz/vcv3jqZMiCoHXs/MlhEzOwTceYh68VUW6UgMCu
-	3RqrHYg/+uQLWaizTffXx2NLt7BsjsNQJhvuWi6iH58yuz7GYpXx9zp8immCKTcvt8M0HdHf/yI
-	kHJTRgIwzWp1oGk7M33y3Jdd+SWjwa034QG8paNJ4alGFbY0cDQJVXOuz8McRo9oy
-X-Received: by 2002:a05:600c:1d0c:b0:456:1b93:76b with SMTP id 5b1f17b1804b1-45b85528632mr169110895e9.4.1757012208933;
-        Thu, 04 Sep 2025 11:56:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEeNuNqOEHJCDLrWhEXGuSOxXZHwBD+OGhZztGaw1PGcxtN9h6/v7McFNFlb90ZhXi09IhDLQ==
-X-Received: by 2002:a05:600c:1d0c:b0:456:1b93:76b with SMTP id 5b1f17b1804b1-45b85528632mr169110445e9.4.1757012208416;
-        Thu, 04 Sep 2025 11:56:48 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f25:1e00:ce4c:be3:97b3:6587? (p200300d82f251e00ce4c0be397b36587.dip0.t-ipconnect.de. [2003:d8:2f25:1e00:ce4c:be3:97b3:6587])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0d32a2sm415142505e9.9.2025.09.04.11.56.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 11:56:47 -0700 (PDT)
-Message-ID: <26e6828e-78f7-4454-abaa-334257a8f8c2@redhat.com>
-Date: Thu, 4 Sep 2025 20:56:45 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5912D2586C8
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757012337; cv=fail; b=SXorTIhs5wkJ+UyTZddIBCTMvdgm65UpsssLY0V4tGHwNLMidtybzw2HZaQNYAiDCq/Oa2/WIALJIpvXoAOL8h9Q0lFWLHdItgn615yAGKzx9SV6EDzc4uO/13t58vJRephMjzvGsvpUlOj35sY9bbOSwcBEjQIm4LGBgrWQ94M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757012337; c=relaxed/simple;
+	bh=1juqyfBlf07l0ZsAjn5CmgPSSVhrfkzHy1iQDrkWaM0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=VWXWN3HCm6iN0qlorP3o+lQfRPn2QijoPbZm7Xw/oKfpuPxvR06Arm+9I1jNNlo93M1uTrjXRtN+foMKQNkWHgus28xOOD1b9tPjwuz+tkTVtGYtwgfD0Wn5kWfJa+eyc3a116eH03FnlmMWVVl+QJpcKa7lFo2PFNOY/xDk3K8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=syv7a1z9; arc=fail smtp.client-ip=40.107.223.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cmJWKXPxWyBSGU34cqMZaDF4gRy6Sr5HphvS+mekNUTV7QQMXFdsIb8A1dj6+whVQIZy9/Ftg9AcLcszIn04VC41NTwfNwuqDkvI9+XS2lDirg1rj+BtfbGkNPisHoPFtzqbnuTTVfnOTManOQpBvnvjsUuqGKVjoJSPl+dGLPqTpasoBRXCPDBOQwruqp/Mr4cj/tiLVWPwSN4ImTFlsdDdg60U9hoFol33AOgRtIXvVakNf7IXRa6QQehWGv1XJsmxH/cjpaKitqFwfVWtKP1TgVo4K85adjhBk8BrPnyrgKU3vMjnODcMu9Dao7bkffSxIWmcXSm9Edghom4ahg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0/PSrsqeUHk2om4Oeg0+fOsB4oyC5pPGSXwsWRyoC3I=;
+ b=R5s8gYC4y/LtHuImIo+OdLynBqicNCDTNSXbH+ySIkActymAUgMsofMsfq/yvXgxuWe6a+H30wvfSFEi9stLExIVnDzabL6aDsavAOnMBwK6IQhU5+Aqh2HY+Pzt5gxbqiCr2Kc6HExkL94AkAKR8clEjb1otfp7s9BBSk7gWaG2M5wPlHENyKrzlPZQa2LNtzJ2gyGnsc0c57iS5Bd+BYty+wLkR6uyKPcNqW6HDmWkZ6TiUCQCA/E7ZJRUX9AZ7morFcmGghajLJbssSyJEtzn2eneyaBnS9SZZqVqhD6A5HmX2iWn2hs9KucvkxXkRiDHu8wFRserLJtTKdjOHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0/PSrsqeUHk2om4Oeg0+fOsB4oyC5pPGSXwsWRyoC3I=;
+ b=syv7a1z9Wuoj8ap1ujvP+WQypbrA79jjWFmg/a7D1ZL5/JLccyosK5I5MYsiWCjIJVGPjMhlJIu0WzayxRxfHAvT06yczp2KeEHntZwHUkJGpv0uB4oHoptmoy7fIrhfOETlxWJYim/DLUhpostj9r2KTKakdF4SPKyl9buLjpM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BN9PR12MB5115.namprd12.prod.outlook.com (2603:10b6:408:118::14)
+ by DM4PR12MB6397.namprd12.prod.outlook.com (2603:10b6:8:b4::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Thu, 4 Sep
+ 2025 18:58:48 +0000
+Received: from BN9PR12MB5115.namprd12.prod.outlook.com
+ ([fe80::9269:317f:e85:cf81]) by BN9PR12MB5115.namprd12.prod.outlook.com
+ ([fe80::9269:317f:e85:cf81%4]) with mapi id 15.20.9052.027; Thu, 4 Sep 2025
+ 18:58:48 +0000
+Message-ID: <3e705c13-4913-45ec-a32c-deed2f96a5ba@amd.com>
+Date: Thu, 4 Sep 2025 14:58:46 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/amdkfd: Fix error code sign for EINVAL in svm_ioctl()
+To: Alex Deucher <alexdeucher@gmail.com>,
+ Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Philip Yang <Philip.Yang@amd.com>, Alex Sierra <alex.sierra@amd.com>,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250904123646.464028-1-rongqianfeng@vivo.com>
+ <CADnq5_N=hQH9OGp2GfdPeOq7V2B_UX0VCDQ-XcTDroy-WHRmyQ@mail.gmail.com>
+Content-Language: en-US
+From: "Kuehling, Felix" <felix.kuehling@amd.com>
+In-Reply-To: <CADnq5_N=hQH9OGp2GfdPeOq7V2B_UX0VCDQ-XcTDroy-WHRmyQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: YQZPR01CA0107.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:83::19) To BN9PR12MB5115.namprd12.prod.outlook.com
+ (2603:10b6:408:118::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 00/13] khugepaged: mTHP support
-To: Nico Pache <npache@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, ziy@nvidia.com,
- baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, corbet@lwn.net, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
- peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
- sunnanyong@huawei.com, vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
- anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
- will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com
-References: <20250819134205.622806-1-npache@redhat.com>
- <e971c7e0-70f0-4ce0-b288-4b581e8c15d3@lucifer.local>
- <38b37195-28c8-4471-bd06-951083118efd@arm.com>
- <0d9c6088-536b-4d7a-8f75-9be5f0faa86f@lucifer.local>
- <CAA1CXcCqhFoGBvFK-ox2sJw7QHaFt+-Lw09BDYsAGKg4qc8nSw@mail.gmail.com>
- <CAA1CXcAXTL811VJxqyL18CUw8FNek6ibPr6pKJ_7rfGn-ZU-1A@mail.gmail.com>
- <5bea5efa-2efc-4c01-8aa1-a8711482153c@lucifer.local>
- <CAA1CXcBDq9PucQdfQRh1iqJLPB6Jn6mNy28v_AuHWb9kz1gpqQ@mail.gmail.com>
- <d110a84a-a827-48b4-91c5-67cec3e92874@lucifer.local>
- <CAA1CXcBVR=L5_6x5FGeR693AB_YqEF=4KAX7_2fRgGNa1j1j9A@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CAA1CXcBVR=L5_6x5FGeR693AB_YqEF=4KAX7_2fRgGNa1j1j9A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN9PR12MB5115:EE_|DM4PR12MB6397:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9c524240-6aea-4f61-5f75-08ddebe51484
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MVFHdDFuOVoyejQwaUQ5RVowQXBrNUl2dzVDazVxNFJveUJUOHpDaDlIc2xp?=
+ =?utf-8?B?d1VWcngxVW5GZmIxSCtDbW1uaVJsT1BPck84dDh1YnN4K3lnaDVMSTVBcE5m?=
+ =?utf-8?B?Y1ludzYycHgyVlNheEFoRExDbm5LSkpiQy9qcmg4Z1REV0FZcUF6ZG1VVUFm?=
+ =?utf-8?B?Y2lQTHI3Q1NraEI5UHQzNkVWeG1FdFFLWkRDTVhnbWU4VjBQUjNkc0UzbUU2?=
+ =?utf-8?B?b2FHYy9tM25Ic29wZGZldWFTelhjQXhVK3QzNzlSeU1jQ0lrNUY2K2lVdk9Q?=
+ =?utf-8?B?aW1DdHFUam5UdkxaNEFnNXIrZXhhcnpFczk1d1FUSys3VE1ucTRhb05ybVQr?=
+ =?utf-8?B?VXpFMmM0YmJEM3cxMERGaWdqRHJWVkhlZWhCcmFDTkZrOE53WS9ZeDhaaXVZ?=
+ =?utf-8?B?bUg1R2d4Skg4cWxTKzBqM0pFem5ram9ONGZRQlJnVGhsSFVib2J2U1VnMkNL?=
+ =?utf-8?B?dE1VYWJrT2IyMG5KQXhydUZlTkFyUkI2Rm9RNUNNb3diSU1ycGxuZ1RwcW8y?=
+ =?utf-8?B?enFLRFVQRjlBSHh4M2lLeWwwbGZXMTN3Tk56ZndPdEF5YnZtK2xmdWZkbUFD?=
+ =?utf-8?B?U0NsZkgvejZkTlBsSlRqN0lUVUg3Qlk4NWp0ZWtmYVhkTnc4NWpDVExFMFlW?=
+ =?utf-8?B?QlRDc3R0M3dKaEtZN2Ivb083OTlUTk9oQktCWjFPOUNXb0E3NVdBS3ZnWTJl?=
+ =?utf-8?B?TE0rcmZnTGtTMFhNV29GWHdKRittWkxEU1NONWFNZUJTT1hNVUk5V3ZPa0sz?=
+ =?utf-8?B?eHZ2U0J4SXdqdkg2UGZuL29HaHpsbDBPSFFhZHpFTXFsY0o0b1VmelZvZ0RR?=
+ =?utf-8?B?TkFnOEpGdzNPNWIrM1c0WTVlZ2JOU3d2UEZlUnlRNVE2M2JLc3RzQ3d0VTJK?=
+ =?utf-8?B?eTFXZ0QxNEZzR2xmYTRkL3VJZnN0MDZTSVVnb3pnV0puMlFTYkY0dW9uZFd0?=
+ =?utf-8?B?dk5PNmhCdStiOFVTQUQ5QjhxbHgyZGczL3pKMC9YYzNrU2JpRGJYc21QTjFt?=
+ =?utf-8?B?NG01SFFYMk1nZXNrVkZHcjhIeFYyK3ZTbUVBdWdQQTRFbkFtQzBKYW1xRk9S?=
+ =?utf-8?B?K2ZRTEN6V0ZxSk1ISXMyYjRJcDI4V2NpTUZCRzVKNEVBSWxPUUhDU1c2NHYy?=
+ =?utf-8?B?UUVaTjdXWkRqT042ak5oN3VUd0kvWndBR2lBRGlXSU91UGZaK3ZRQlZqSGgr?=
+ =?utf-8?B?RndhNU1BOFFGVEpLTE5XVlAzSnNtVjdPTnMxbjFQYTNxK2JlN1orQkdJYjBm?=
+ =?utf-8?B?NmtaMUc5cFZUYnRTajJYR2lzL2NWckxGS01HdlJRTUFBNStyemVxVCtoZm85?=
+ =?utf-8?B?MVJ2cm8xVC9lQjl0NHRaOXN4UTZwZVFBVGQzRHdwalo4QUw2RGtYbzJPZW9H?=
+ =?utf-8?B?QW9lUG9Nem9qZTl6aTlubVVwdHE5L2ZSWkFhdlgrdlBOWnJHblk0VENzK1dV?=
+ =?utf-8?B?YVAyR0RFaitpNklveGhkTHg3eGlNdUFOSUcyYmtKRnBqVlJiS3ZZYzhuVGFO?=
+ =?utf-8?B?aVRvZnRtR2dMV1QxcHdzNFQzM1VoTjI2enNqakQwd2w2QXlidFdENGcySEFP?=
+ =?utf-8?B?clkxN1R0c292NVBpYnZMVVVWMnU5M1pRbER0VVN2MEQzbXViNFFtQ0Jmbzd2?=
+ =?utf-8?B?V052aDRQbXBvR0NaM2pTcUFva25kRUVtS0k3WlhheVd2MlY5TlJPcDl6Tm5h?=
+ =?utf-8?B?TWtHOFp1NGRPNkZlSkxLQ2JRbHRIZ1dQMFI5ZXAvMnBvQ3NyU2E2bk9XMmhF?=
+ =?utf-8?B?bEtpSnpydFpEdnF5UTdodG5uSnk5c2tTNERlMFI4SzlFTG9vNWpqRWlPaHQr?=
+ =?utf-8?B?aXZVK2QxY2ZsU1B3bzVmanNic2VPTzRnT0lKTXJBeG80UDNMM0JCOFZQeDlk?=
+ =?utf-8?B?QlcrMzhITGpUVU9pVHg0b0pubXhCclI0RFRoOHdQNE1IMmc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5115.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RHFSQ0NvWUxtVEtsd0dsTzBUbXRTUzFIVHZDRFdnNElvcXYyVDhkZCtxMThH?=
+ =?utf-8?B?bE1NRjhBQzNUTVp1U0c0NUFRTkxkVjl2dU5NYmxxdkFZV2Yzb0tRUldIN0RR?=
+ =?utf-8?B?ZWp1OEJzOEYzRjFTL082UWoyU1FFdGgrdGVNejRhQThrOUJmZ2o3VWdHa05v?=
+ =?utf-8?B?MnVOYzJFS2liTVJwSWJEYmxZbCtEUndlc0xyZk45eitwT3VPelJNbGl3bk5n?=
+ =?utf-8?B?S3JvSENwV1lScDB1Mzk3dkUwbTdGREN0Wk5nOVhMQ1lTRmo1QXZHbllmK2JB?=
+ =?utf-8?B?N3R0THVrY3lKbjgyS0JzbU9qaHFUYkhBeWlmZlQ5U2k0VmNnQjZMRHFYckdP?=
+ =?utf-8?B?cHZTcGo4TzYxME9RZEpQODlkM2VTY0tHTE5FZlZnWndDaW1ralB4NHlMMERE?=
+ =?utf-8?B?ZFc0azl2U2V0TEJDWGl4V21FazRpUEQ1bUNqMEZWWWViQThMTnhaNzI2OUl6?=
+ =?utf-8?B?N2dEZ25BTFdYcHRqcHdlMXZQMURtakZqR2VUbW5tMTh0Y0FkYU1tUk95S3Jn?=
+ =?utf-8?B?eEU3RDZvd3Y0R2tiUE1wZDcwc09xL1B2UW1SRThsSTdRN2pCcDFtaGVJMllV?=
+ =?utf-8?B?SENWU25JNGRpakUwaUFOOUc1Sk03azF1TE41aUdRcGMxMWpJZ1JYL1hyZzVo?=
+ =?utf-8?B?YVBJeWdSa1c3aW5kMmtyS09nRmdQcTlzMDR1eG1zSnlaYjdzMktlZENnTi93?=
+ =?utf-8?B?bmJyWlRrMnpqZytzWldjWlo5azVCc1BrcmtteHFwK044QkJtWS9lOTdIYXRo?=
+ =?utf-8?B?TnNQWTZXNGM0VENRV29RTERGZU9sWUlLaDdjVzVTT2c2aGZ3ZDh5ZVk0WE8y?=
+ =?utf-8?B?ZlY2ZW9BODdhNjdUT2w0U1JranhpMFFrT1VEUlMyY2o4aHRXck90ZnVYaWN2?=
+ =?utf-8?B?Y0NHYkFVZE5JMFpFUWYrMWl1MUNIaXBmL29hQjRodllGM2U0WDErWEpaeTV3?=
+ =?utf-8?B?dnFNTkFSK3dNYzNhSDlaOEgyaWRCcDY0UzJzTnpNVUVOQU4rcnFvUmJOSjVZ?=
+ =?utf-8?B?UTRZV1VOdUNyOWNZNlpRMFIzUnM5ZWd3ZE1oUSsvTWZCQ1FWdDYzbzN1Z2hM?=
+ =?utf-8?B?ZHhZWFF5ajBERHZTQ2w3bm5icmsrMFlQZEpwaHEzMVQyL3ZRWWtLM0pJYWtY?=
+ =?utf-8?B?ZFNrSnJ3SE5ONU9hT0tPUHUrOU5xMm03ZHZjenVlOVZjbFE3dWIrUTQ3WFU0?=
+ =?utf-8?B?elUwbTByRytVVFpqcWx0R0c3YmVRVThmQ1NLaUVHcTFzUmVUQjhPSFlielYz?=
+ =?utf-8?B?TEJpWUxQUDdUYm5rNEt1ZnMvcUVGODA1Y2JQNnFzNHhiWVJPVllQY2JtVTBC?=
+ =?utf-8?B?RmdsMFp0aXg4SFlXeVArYndKeERsamtBcy9WRTY0YmRjYXFvWkYrYkRESmN1?=
+ =?utf-8?B?OVZHeDdHTFNhYW01bkgyaTVpdjJQRFh5em9takxncGoxUVgrZFlkTWVvbklQ?=
+ =?utf-8?B?NTFzSGEwZnlENERqNW5ETWdpSEluWWgyN3lBS3RObjRVdGRvNEpqK3BDYVUy?=
+ =?utf-8?B?U0xPNDBLbktUb2ZnOFhVOTRGL1VmUlY1a3luVzZmcG5IMDZ5aE13djE3cXFu?=
+ =?utf-8?B?dXpOV0YrTmJ5THU1b0YxMTlCNnFJazlUZ1VjQkN6aDVrRXJaUnZkay9ma1Qx?=
+ =?utf-8?B?OEFKRG9oVkUyZnJmbDZ3WWExZmJFazkxYzRRNG0vc1JxQ0lXZXdNYno0VUtI?=
+ =?utf-8?B?YW9kNkdOL1JnR0luVTEyT1dFenM5TDAzcTQvQkIyVmI1NEZabm12dG15bm91?=
+ =?utf-8?B?MytOY3JTV0ZjMGZOdXVsVEVVMUhzUDdyNnBiWUc1am0zMFRJV3QybFVlWHdF?=
+ =?utf-8?B?SzdEUEVPdTNiWXBGLzZPU01ZdFpqbk9nOFQ5WjNPRFFIUStMV3ZubXZHL0RN?=
+ =?utf-8?B?Qnk0YWFZKythUlp0QmNwak1HRVlYU2JhaENTV0pMTFFCaEs3dmdhQzFHWFph?=
+ =?utf-8?B?MFZvWEs0THlrbjEzWms5SW9jZ3B4UHV1b1NLZWNlWllLb3VKdU9oUDBCeEVF?=
+ =?utf-8?B?aVo3OW05OENwL1FxWGJLWlpvcGNkNnd0UzhTSFg2S0hOZ096UE4rVUVyamhJ?=
+ =?utf-8?B?TWpXQnVCZjlNYVdvdUMwSk5waDFXM3hvN2svY2R4d0o3blZTU2xOYnFIOCtJ?=
+ =?utf-8?Q?Rfjq2bk0Y7wxBNSroDtbA8UyV?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c524240-6aea-4f61-5f75-08ddebe51484
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5115.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 18:58:48.3055
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NA2dtM0AO2KEtxzQJaf1EWa45R33aoKCeUpZT1CFzgpiEPcZ/vul8SjFta747AhO4xT4F6YmiOS76Rm85SP0Ew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6397
 
-On 04.09.25 04:44, Nico Pache wrote:
-> On Thu, Aug 21, 2025 at 10:55 AM Lorenzo Stoakes
-> <lorenzo.stoakes@oracle.com> wrote:
+On 2025-09-04 10:07, Alex Deucher wrote:
+> Applied.  Thanks!
+
+Thank you, Alex!
+
+
+>
+> Alex
+>
+> On Thu, Sep 4, 2025 at 8:54 AM Qianfeng Rong <rongqianfeng@vivo.com> wrote:
+>> Use negative error code -EINVAL instead of positive EINVAL in the default
+>> case of svm_ioctl() to conform to Linux kernel error code conventions.
 >>
->> On Thu, Aug 21, 2025 at 10:46:18AM -0600, Nico Pache wrote:
->>>>>>> Thanks and I"ll have a look, but this series is unmergeable with a broken
->>>>>>> default in
->>>>>>> /sys/kernel/mm/transparent_hugepage/khugepaged/mthp_max_ptes_none_ratio
->>>>>>> sorry.
->>>>>>>
->>>>>>> We need to have a new tunable as far as I can tell. I also find the use of
->>>>>>> this PMD-specific value as an arbitrary way of expressing a ratio pretty
->>>>>>> gross.
->>>>>> The first thing that comes to mind is that we can pin max_ptes_none to
->>>>>> 255 if it exceeds 255. It's worth noting that the issue occurs only
->>>>>> for adjacently enabled mTHP sizes.
->>>>
->>>> No! Presumably the default of 511 (for PMDs with 512 entries) is set for a
->>>> reason, arbitrarily changing this to suit a specific case seems crazy no?
->>> We wouldn't be changing it for PMD collapse, just for the new
->>> behavior. At 511, no mTHP collapses would ever occur anyways, unless
->>> you have 2MB disabled and other mTHP sizes enabled. Technically at 511
->>> only the highest enabled order always gets collapsed.
->>>
->>> Ive also argued in the past that 511 is a terrible default for
->>> anything other than thp.enabled=always, but that's a whole other can
->>> of worms we dont need to discuss now.
->>>
->>> with this cap of 255, the PMD scan/collapse would work as intended,
->>> then in mTHP collapses we would never introduce this undesired
->>> behavior. We've discussed before that this would be a hard problem to
->>> solve without introducing some expensive way of tracking what has
->>> already been through a collapse, and that doesnt even consider what
->>> happens if things change or are unmapped, and rescanning that section
->>> would be helpful. So having a strictly enforced limit of 255 actually
->>> seems like a good idea to me, as it completely avoids the undesired
->>> behavior and does not require the admins to be aware of such an issue.
->>>
->>> Another thought similar to what (IIRC) Dev has mentioned before, if we
->>> have max_ptes_none > 255 then we only consider collapses to the
->>> largest enabled order, that way no creep to the largest enabled order
->>> would occur in the first place, and we would get there straight away.
->>>
->>> To me one of these two solutions seem sane in the context of what we
->>> are dealing with.
->>>>
->>>>>>
->>>>>> ie)
->>>>>> if order!=HPAGE_PMD_ORDER && khugepaged_max_ptes_none > 255
->>>>>>        temp_max_ptes_none = 255;
->>>>> Oh and my second point, introducing a new tunable to control mTHP
->>>>> collapse may become exceedingly complex from a tuning and code
->>>>> management standpoint.
->>>>
->>>> Umm right now you hve a ratio expressed in PTES per mTHP * ((PTEs per PMD) /
->>>> PMD) 'except please don't set to the usual default when using mTHP' and it's
->>>> currently default-broken.
->>>>
->>>> I'm really not sure how that is simpler than a seprate tunable that can be
->>>> expressed as a ratio (e.g. percentage) that actually makes some kind of sense?
->>> I agree that the current tunable wasn't designed for this, but we
->>> tried to come up with something that leverages the tunable we have to
->>> avoid new tunables and added complexity.
->>>>
->>>> And we can make anything workable from a code management point of view by
->>>> refactoring/developing appropriately.
->>> What happens if max_ptes_none = 0 and the ratio is 50% - 1 pte
->>> (ideally the max number)? seems like we would be saying we want no new
->>> none pages, but also to allow new none pages. To me that seems equally
->>> broken and more confusing than just taking a scale of the current
->>> number (now with a cap).
->>>
->>>
+>> Fixes: 42de677f7999 ("drm/amdkfd: register svm range")
+>> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+>> ---
+>>   drivers/gpu/drm/amd/amdkfd/kfd_svm.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> The one thing we absolutely cannot have is a default that causes this
->> 'creeping' behaviour. This feels like shipping something that is broken and
->> alluding to it in the documentation.
-> Ok I've put a lot of thought and time into this and came up with a solution.
-> 
-> Here is what I currently have tested and would like to proposing:
-> 
-> - Expand bitmap to HPAGE_PMD_NR (512)*, this increases the accuracy of
-> the max_pte_none handling, and removes a lot of inaccuracies caused by
-> the compression into 128 bits that was being done. This also makes the
-> code a lot easier to understand.
-
-That sounds good to me. Should make the code easier as well.
-
-> 
-> - When attempting mTHP level collapses cap max_ptes_none to 255 to
-> prevent the creep issue
-
-I guess the documentation would then state something like
-
-* When collapsing smaller THPs, "max_ptes_none" is scaled proportional
-   to the THP size.
-* When collapsing smaller THPs, "max_ptes_none" may be internally
-   capped at 255 if it exceeds 255 but is not set to the default (511).
-
-Not 100% a fan of all of that, but maybe the only option when wanting to 
-avoid other toggles.
-
-The only alternative would really be respecting only 0/511 for mTHP, and 
-not doing any scaling. That would obviously make the documentation 
-easier and would allow us to revisit that later. The documentation would be:
-
-* When collapsing smaller THPs, "max_ptes_none" may be interpreted as
-   "0"  when set to a value different to the default (511). This behavior
-   might change in the future.
-
-> 
-> Ive tested this and found this performs better than my previous
-> version, allows for more granular control via max_ptes_none, and
-> prevents the creep issue without any admin knowledge needed.
-
-How would this interact with the shrinker once extended to mTHP? Would 
-your RFC patch be sufficient for that or would we actually also want to 
-cap? I haven't; fully thought this through yet. I'd assume we would not 
-want to cap here. Which makes the doc weird as well, lol.
-
--- 
-Cheers
-
-David / dhildenb
-
+>> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
+>> index 521c14c7a789..68ba239b2e5d 100644
+>> --- a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
+>> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
+>> @@ -4261,7 +4261,7 @@ svm_ioctl(struct kfd_process *p, enum kfd_ioctl_svm_op op, uint64_t start,
+>>                  r = svm_range_get_attr(p, mm, start, size, nattrs, attrs);
+>>                  break;
+>>          default:
+>> -               r = EINVAL;
+>> +               r = -EINVAL;
+>>                  break;
+>>          }
+>>
+>> --
+>> 2.34.1
+>>
 
