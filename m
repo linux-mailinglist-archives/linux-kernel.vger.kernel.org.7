@@ -1,106 +1,85 @@
-Return-Path: <linux-kernel+bounces-801457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805F3B44529
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:15:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A3FB4452A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55DC45846C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:15:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89505543021
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF527342CAF;
-	Thu,  4 Sep 2025 18:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4992FFDC6;
+	Thu,  4 Sep 2025 18:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Z2fRMd3C"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvrz0CiI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AED342C90
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0B72BD03
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757009711; cv=none; b=JhikN/mOoeatpCmt1KMVbga0aL/5MUoiEjlqWD0Qjx+uhnNAx957frc4m885Cs+0GUT1n/dzTbTsjYQZGsWLPiJgtQHlLpiZbVr5eOIcU4v7wfZ0xwaiC9mvHwZ1cJ4oRorBN3OL+oK46HrXFAAkAeyicRILTMrUckAaaeXAeco=
+	t=1757009805; cv=none; b=ReYGNy1BIXyC4eQWVSTKw0Kagb+B5uUfdkaBQEj5vg4RmBPD7X5zehq3bhO5NCKa0DTsnPOBdQy56MPlDRzDAaLcNi8FiW5EeNDsZcG7iFrmXsxdlns8zoBL+zB2JCw8gVZasL0Qm3wYoSXNPT1eAlgB+H05BzLk3E7jZvipnQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757009711; c=relaxed/simple;
-	bh=Z+VK5U/Oi1LA6fb/D9V1KAbU7wRtydG7tfKSYqBTU7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KzS1Uwt2g4v0ikk9Zh7nmz51ahUBXpf1/WOohMKRtd9gjzO/pmf5hwadHeAEHld8+tpXI2JhfOncem6ejWpeSopP1LnYa/tz488pyrTdN6/94iasDUZYLLV6YnFLV/M50glfDyPmgcYbuH6um06wulqvyguy1v2GyArd5kRNVRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Z2fRMd3C; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-Message-ID: <53482f3f-bd87-4980-ada7-c2c771a0c2b2@manjaro.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1757009707;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RYXeUIKu52g0HlpWQIX4EGbvIx92SbpoHy5tYhxk2Sg=;
-	b=Z2fRMd3CO9KuuxljJ+Wo6/u+e7sMWhQTl34ciHFHH8JdD68N/r17s4hV6hxOIDx1oPi8nh
-	cnQtTJQ1Rfmfxh7daU+otZ/oUA9q/vj5B3x+drnKhNd8QlFS3Hw11TKX0RhdaDaEkNcbuA
-	eMqUqGWrUTp1fvqw4Grfxb7FlRQVooCFDLbVnNowYPdJKvl7OBkfEC7rbT89SIEmIKUqK2
-	Be4L7HJJPJO2g8GxOh5wL2HcbguI3bCp7EFZYF71ULmb9VCj3as2lrsyP8OsbB8JEuqZyy
-	UhHYYHohLeymXo4U3ArxLzkoZatMIFsuzSZ+7DkfkxHdohGuf2bTVsozFikT5A==
-Date: Thu, 4 Sep 2025 20:15:06 +0200
+	s=arc-20240116; t=1757009805; c=relaxed/simple;
+	bh=QKt4HUZt3Xzmmkzkk5AcnkXfi7gRQ+D2WMregxN1t+I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k0LQ/ROzVXepLe/OeLWRLgX/oaOiRzhw9COvUYbgKzaU9O6akdQYWCS1AJ0+9li87h0Zz/EtNCTgODbd/bz5IUL8urnyvupM50lsuOzVZweihuRi0v7p5KorH5MLMIs8HT1I3PWEzCgLxm5FBzbSbvMBEzJFAQWyxVpqAlif/d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvrz0CiI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64209C4CEF0;
+	Thu,  4 Sep 2025 18:16:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757009804;
+	bh=QKt4HUZt3Xzmmkzkk5AcnkXfi7gRQ+D2WMregxN1t+I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lvrz0CiIPp64pem1tmSx3BDWIMCftEu3EiJ1VdFvDjVDNFO8LNF1sX5mKQ1iLc9Ea
+	 cb7ytPVt7DVNFpLSEnA3ifpChNEvE9t/ABGE60diJQAH/X4LeP9/lK2xRe0JE+aTkg
+	 +UPz1M+kkjcS7b6emWZHDNJ+PZE8c7Nox3xeKrgWCJBbFZSa4Gtu8mw7u5t1ZbLiSw
+	 qDYs50hPMEH/yBbjbjZXzxLOtF1vRV07TBl689o+hw5pYjFPG6wEgntIcxcSFYA9sY
+	 vEcjJFmveC8H2vP5ytXdsO9vG7un7P8/nxhOUvH/skQOzvI5457Q+GmAyOr7HRg318
+	 rXDbSAZv946UA==
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: merge FUA command with the existing writes
+Date: Thu,  4 Sep 2025 18:16:42 +0000
+Message-ID: <20250904181642.3879283-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1 03/10] drm: panel-orientation-quirks: Add Ayaneo 3
-To: Antheas Kapenekakis <lkml@antheas.dev>, dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-References: <20250904175025.3249650-1-lkml@antheas.dev>
- <20250904175025.3249650-4-lkml@antheas.dev>
-Content-Language: en-US
-From: =?UTF-8?Q?Philip_M=C3=BCller?= <philm@manjaro.org>
-Organization: Manjaro Community
-In-Reply-To: <20250904175025.3249650-4-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=philm@manjaro.org smtp.mailfrom=philm@manjaro.org
 
-On 9/4/25 19:50, Antheas Kapenekakis wrote:
-> The Ayaneo 3 comes with two panels, an OLED right side up 1080p panel
-> and an IPS landscape 1080p panel. However, both have the same DMI data.
-> This quirk adds support for the portrait OLED panel.
-> 
-> As the landscape panel is 1920x1080 and the right side up panel is
-> 1080x1920, the width and height arguments are used to differentiate
-> the panels.
-> 
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->   drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> index d724253407af..0ea06f928f79 100644
-> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> @@ -209,6 +209,12 @@ static const struct dmi_system_id orientation_data[] = {
->   		  DMI_MATCH(DMI_PRODUCT_NAME, "AYANEO 2"),
->   		},
->   		.driver_data = (void *)&lcd1200x1920_rightside_up,
-> +	}, {	/* AYANEO 3 */
-> +		.matches = {
-> +		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AYANEO"),
-> +		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "AYANEO 3"),
-> +		},
-> +		.driver_data = (void *)&lcd1080x1920_rightside_up,
->   	}, {	/* AYA NEO 2021 */
->   		.matches = {
->   		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AYADEVICE"),
+FUA writes can be merged to the existing write IOs.
 
-Reviewed-by: Philip Müller <philm@manjaro.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7961e0ddfca3..30cb2f230690 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -733,9 +733,11 @@ static bool page_is_mergeable(struct f2fs_sb_info *sbi, struct bio *bio,
+ static bool io_type_is_mergeable(struct f2fs_bio_info *io,
+ 						struct f2fs_io_info *fio)
+ {
++	blk_opf_t mask = ~(REQ_PREFLUSH | REQ_FUA);
++
+ 	if (io->fio.op != fio->op)
+ 		return false;
+-	return io->fio.op_flags == fio->op_flags;
++	return (io->fio.op_flags & mask) == (fio->op_flags & mask);
+ }
+ 
+ static bool io_is_mergeable(struct f2fs_sb_info *sbi, struct bio *bio,
 -- 
-Best, Philip
+2.51.0.355.g5224444f11-goog
+
 
