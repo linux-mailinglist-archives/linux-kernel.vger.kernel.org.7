@@ -1,175 +1,251 @@
-Return-Path: <linux-kernel+bounces-800247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB11BB43542
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:15:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3486BB43546
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B6BF7C423D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:14:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6A71883618
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0E22C0292;
-	Thu,  4 Sep 2025 08:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA472C1580;
+	Thu,  4 Sep 2025 08:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q2mdcnj6"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZOdbtJe2"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CB8284686
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABC42C11DA;
+	Thu,  4 Sep 2025 08:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756973602; cv=none; b=q0fJzSPfzPgz5rX7gRNyqDhHO2B8qsWWxq1+kSaanDztm8Ua6z9+cb79cjPH3LMsSUqBLawyE+3G6oUv59Xk8x6Q5kez/71pMLdJCCBTJ2ebbLBQotHqKnDWVsvVYYoQehWQylh1WHj920y8AFtUeTNaXWunR2tEyI9mL67rrhw=
+	t=1756973611; cv=none; b=TdxAW8M93sVeYuL2HefeRPdFdHsLvTsM9F/6U1s+6RUKsLA9ij8WLCRpd0Ra2WNqhWdBFVYD1YCxZwUvvlTNj7ODC6NCSFUa65YfVBayhChsEpPIC3tx36BXbg/rUYrkzbpgh7oF3IRBcxB/6VgHS73cRq/5tMIJksXHPrJJdag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756973602; c=relaxed/simple;
-	bh=2se763cyXxUA85a5kgio0PHDykWLnZ/sM/ejk8tiXqI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hjOO2iqbkKQ/hT+fXD+0my+sIiF230huBofAlF3UdmUzleqTfL1Y7OYUElZbLdykhesk/393iu98Mfqrcz2PXG6SXkyT/CO47mgwd6RqJo6brD8y3AFW6JsyG494fF29JBSdWHoS+jtg94aWrHB8vXuzECpXrow9S3hqhOizcZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q2mdcnj6; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3df2f4aedc7so425580f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 01:13:19 -0700 (PDT)
+	s=arc-20240116; t=1756973611; c=relaxed/simple;
+	bh=XRpCUoD4UAjouJyJFRmHopRdWaXs20rEUHQAUKtu5po=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LYuLKefq2IwLwERrj4G9v9FHqmFdvFB9htK8+InaV8b09Xw3XwYjZTizN/LCOV1//Mq8IMsAfDQHtD0VE9g99IezP6Zc9+2T2+iT+Pfdqho7N2de3/qkkm+vwybfc21fq/I4Oy8wZSdfdiujUz3M15ao0XpPxpCcMjgw7fvVWLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZOdbtJe2; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61e8fe26614so1296082a12.1;
+        Thu, 04 Sep 2025 01:13:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756973598; x=1757578398; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vnPQ7nqOyWUOT0hq3p2yjSq1xxnP283bqe7zwqaPt/w=;
-        b=Q2mdcnj6YUGlqnwQYSOSTvyGrUYFEWoEFVssVfyd7aOXpgofrot1MSoGdziw1hKzIN
-         zEm2f5hGN+zUWKcV+kuVhh8tXUKFKFwf9JvHtvMDgpeoaURz9r7lE20vuFtapsoYSyCZ
-         hViSQyTemZN/v8iTGIh24TmjgYqF4RQIHwgEFmmFV+bbzht2Rw4/+uFk9+kwlLXqrdu7
-         ls76tMkXGI44twDquu4OepxL5CaVMsyU1g1/n1GDxWtl2gALsSuqkrXjnKABXWfHOgRc
-         nekGmnabhXfB2QonmYNkcauiGmadw8Is8GP4GJwSR6kU+ZQvrCIqtiGPuV6v1Nr0EXtd
-         owdQ==
+        d=gmail.com; s=20230601; t=1756973608; x=1757578408; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gk2IkarqCdhrMgqm5sGbGYy9DmoyWdUrUsjr7Ufc8Vs=;
+        b=ZOdbtJe2pYevHin6nGBniOuCuAu2VpENlgvrRwwK91jYu5+PGB81JohPEprTGFV88X
+         iNmEp1abnBox8v3hi5YhJrfUBZgy5V4di/8IdDFB+fugt+QAvyso3sD6PLjhRFFNOohH
+         gL2UImzUBtR+4Rtxglo4vN5aRCbqBQKhqsyUtl9U4R+kmfpSUkpOZcOQzd4pWs/SZAub
+         T8Hdc/ccy2MlVdKjrxRN38MJTqYlgG8d7UdPC/9PiF+TuECNpXNMU8Jzl/KYUx5gp9F2
+         rFA2zvro1kt8fvTpw80SFMRlG88Z+kmihlTHBwTy8SPRXP0mzZ39Ae1iu5SxkQVBy9pP
+         UHeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756973598; x=1757578398;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1756973608; x=1757578408;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vnPQ7nqOyWUOT0hq3p2yjSq1xxnP283bqe7zwqaPt/w=;
-        b=tT7d70O11Iqq1EzRDnzamFjQJqJT7nGyaww03B/nPBq3TCnBk4NKIp68knSSwaa/Nz
-         rCzu1vJrh0XiZCw83h519SG64VRWvdUS9XLrI4AW7eYCFG3CZaXZPZ48guuyoyShZTSn
-         10BG7S8wsnVYQnPZn3/+5ApUvXt+/6e6YSX9+BAbwW2Wu67EW0Blsl8mSNPysI+OB+so
-         1tDpCc8dg+PpQz9tC5G1jWqAWmEu8Wh7lmDs76z6C2N5r8ifp2VAk1RNhedsFi4wP72y
-         kAYL8X936OP9o/OLrE0y5Q/7NAuxgOBueTV7t52/pcdXOR2+OBin6Xg49By1GK9P1xXi
-         gFSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXv6Dm6Tet0qUH0GBPViztJiDWk6+FmdSYqth4/hczSbXwn58xq7nIHTLSGPRJmV9qe8E17eWmc/2HB2vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh7KSA0GI/XdrBzpuOfBH0V/nXGYa7W+mTB7TDPemZYT5JtZ4D
-	zktLgryX1qvW3Vzu7yf9PDb2cxLdgm558Iv0ixcHac0OZtY/6NOr/GQoULM2e82eK/g=
-X-Gm-Gg: ASbGncsXyeQNAxpGEGM5Ed53tlBKk+mrFHViXnWNtOX4ruuvXyNsKvIYE7V9fSaWp1F
-	iUV4Tpkj8E7+3O01Az7953LPQULbxBTq+5IiXII+9ZukQWCaNtS3NC8JZurRIVP3/kswKEEks6s
-	ibu74tFo3OyGHVYmUJGcDsJreqb1smGT2zjPAqz8B++am0JwvyNgtKlH6Ec3xhg5ZMsTRrxKopu
-	vQDmbpoeyCmGb1fOaXQurtOPpqZAGtSmY09VytRoUqf8PCdwVRz7tXuY1Ggv0aEWsX/lvJYTlef
-	zjgaYT3OSNgLaDYEwoa2WCAr3afmF2CpRl0nkKFHX4tqXd2EvoTHklX68tKN65l4N9nO6xhl26t
-	err3bPbb69XaVmVo37V56Z53b997z+HB3ZDkOKw==
-X-Google-Smtp-Source: AGHT+IEF8QOYZSIHPnwRasNclZ6imAXznYUdTmrhdUGp7g6Bljyot5Lqz2FzM6HRPxGZRFyyfN3hFg==
-X-Received: by 2002:a5d:5f88:0:b0:3d7:618b:2923 with SMTP id ffacd0b85a97d-3d7618b32e5mr10065575f8f.48.1756973598366;
-        Thu, 04 Sep 2025 01:13:18 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45d468dbf48sm37800865e9.11.2025.09.04.01.13.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 01:13:17 -0700 (PDT)
-Message-ID: <70bd9eea-905a-4fa9-8265-f84ab9894b12@linaro.org>
-Date: Thu, 4 Sep 2025 09:13:16 +0100
+        bh=gk2IkarqCdhrMgqm5sGbGYy9DmoyWdUrUsjr7Ufc8Vs=;
+        b=P51lNQiz6n7c2/2wW7dQUQs2WlXsLhDAHchPsNX55Z08kSagvGs82wQQlVoXa4XLY8
+         f3xzD3dX+gEqY837Vkxd16IBe66khQF5ZKkbqCiynsZAEjxDf8gYRIqhVMAgKIG9PZS8
+         PUihAjhsyAzo7goSiwGDzqwPI+mdwTOE3h2xp8OyUmo/i0GpGJqNRZ0cmAEtJ1HtzGKj
+         wfWHI1zIeckBM2ubc3Y4eX8vI760bu4jGEjCfJrN3e/W3ECldtGOGfS4qTC3raHf9Azd
+         7lX9KZtzBySVJWmO78ZOFa4lSHR0raczgzJwGUnsU9IpEnbT+Vu1Cxs1xPVYdwS145FH
+         92rw==
+X-Forwarded-Encrypted: i=1; AJvYcCVoCFAwlZhMWXZ/7LYwfSMUYsXlk4KRYXZQq/eVSHzslCvh87k93yWh9QPzp+uvKbY7vKY=@vger.kernel.org, AJvYcCXGrkhd/Pu9rZtdlqMTgbSiuDsfg0v4PKUrYJtkKKULtzUFePhaKsnu0Duv9Sn6/geYcRwz5Hrw6DIbC+lviRUSwOlj@vger.kernel.org, AJvYcCXVjNyeINa6ONHhuEJ6E4prVLFTuS/QWfmP75KJw02dc6zAmO5MUOJAm38G7FvIOl7zauT4SEyrwTfUfOkk@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHm+1TuVxret4XNWUa3jsU3GpzxRiZsw5ujszj4tqodiNfgJ86
+	Rm28HXuwM+xxgwyl7h/Od0nKIZVqKQyvehLDmw0syY0B8XzMY2BMhqMI
+X-Gm-Gg: ASbGncug++9N4RUjlFXDznw3QcGYQtMtDxhZu1IxDiRMUIb5SG/609amfZ5oMIV/GvI
+	4Q17gNQ1brl0d0XnXof80ag5ZlhImPQx7VKYQRbSJxX566DFdpLqN3mtg9uQo/haf1lVCOq6agc
+	TOuD8icjWMtnYH1SuKIadaPCNr8owxUodNIwlnoorK0xYr9TE2i0ttDftIyktfdgEw03v0n+tLy
+	b6y6VixMkjnoMlkL1jC25frOD2x8xf56xzCvCzNTfJvo3KaiIp5X3lpD2KHe65XyEKTU8/pOdSB
+	Y2ObbB+h3r4waXAWRhOw0dLHXP5P8eUEgfEDv2/dOtTmOrVAGjcQ+L8jEPI/gyofwrOi//vZrk6
+	+rw08tdnwZH4=
+X-Google-Smtp-Source: AGHT+IG8xmaXEuDZOpVGSHKr/SMcqcydkRBn5cWfzP30z/Rkh8zQfFp53MFYNBJNfBHq+RQqRtjVwQ==
+X-Received: by 2002:a05:6402:51ca:b0:61e:8fe5:31c4 with SMTP id 4fb4d7f45d1cf-61e8fe533bcmr13056099a12.8.1756973607740;
+        Thu, 04 Sep 2025 01:13:27 -0700 (PDT)
+Received: from krava ([176.74.159.170])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc575b94sm13117992a12.53.2025.09.04.01.13.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 01:13:27 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 4 Sep 2025 10:13:25 +0200
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCHv6 perf/core 09/22] uprobes/x86: Add uprobe syscall to
+ speed up uprobe
+Message-ID: <aLlKJWRs5etuvFuK@krava>
+References: <20250720112133.244369-1-jolsa@kernel.org>
+ <20250720112133.244369-10-jolsa@kernel.org>
+ <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] perf symbols: Fix HAVE_LIBBFD_BUILDID_SUPPORT build
-To: Ian Rogers <irogers@google.com>, Sam James <sam@gentoo.org>,
- rbernon@codeweavers.com
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Leo Yan <leo.yan@arm.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250903-james-perf-read-build-id-fix-v1-0-6a694d0a980f@linaro.org>
- <20250903-james-perf-read-build-id-fix-v1-2-6a694d0a980f@linaro.org>
- <CAP-5=fWHGFBaCgiRcj8zVy196OE07F8jnSUbjvsO_HerdqeyTg@mail.gmail.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <CAP-5=fWHGFBaCgiRcj8zVy196OE07F8jnSUbjvsO_HerdqeyTg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
 
-
-
-On 03/09/2025 5:07 pm, Ian Rogers wrote:
-> On Wed, Sep 3, 2025 at 8:15 AM James Clark <james.clark@linaro.org> wrote:
->>
->> read_build_id() now has a blocking argument, but libbfd uses fopen()
->> internally which doesn't support O_NONBLOCK. Fix the build by adding the
->> argument and ignoring it:
->>
->>    util/symbol-elf.c:964:8: error: too many arguments to function ‘read_build_id’
->>      964 |  err = read_build_id(filename, bid, block);
->>
->> Fixes: 2c369d91d093 ("perf symbol: Add blocking argument to filename__read_build_id")
->> Signed-off-by: James Clark <james.clark@linaro.org>
+On Wed, Sep 03, 2025 at 11:24:31AM -0700, Andrii Nakryiko wrote:
+> On Sun, Jul 20, 2025 at 4:23 AM Jiri Olsa <jolsa@kernel.org> wrote:
+> >
+> > Adding new uprobe syscall that calls uprobe handlers for given
+> > 'breakpoint' address.
+> >
+> > The idea is that the 'breakpoint' address calls the user space
+> > trampoline which executes the uprobe syscall.
+> >
+> > The syscall handler reads the return address of the initial call
+> > to retrieve the original 'breakpoint' address. With this address
+> > we find the related uprobe object and call its consumers.
+> >
+> > Adding the arch_uprobe_trampoline_mapping function that provides
+> > uprobe trampoline mapping. This mapping is backed with one global
+> > page initialized at __init time and shared by the all the mapping
+> > instances.
+> >
+> > We do not allow to execute uprobe syscall if the caller is not
+> > from uprobe trampoline mapping.
+> >
+> > The uprobe syscall ensures the consumer (bpf program) sees registers
+> > values in the state before the trampoline was called.
+> >
+> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
+> >  arch/x86/kernel/uprobes.c              | 139 +++++++++++++++++++++++++
+> >  include/linux/syscalls.h               |   2 +
+> >  include/linux/uprobes.h                |   1 +
+> >  kernel/events/uprobes.c                |  17 +++
+> >  kernel/sys_ni.c                        |   1 +
+> >  6 files changed, 161 insertions(+)
+> >
+> > diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+> > index cfb5ca41e30d..9fd1291e7bdf 100644
+> > --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> > +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> > @@ -345,6 +345,7 @@
+> >  333    common  io_pgetevents           sys_io_pgetevents
+> >  334    common  rseq                    sys_rseq
+> >  335    common  uretprobe               sys_uretprobe
+> > +336    common  uprobe                  sys_uprobe
+> >  # don't use numbers 387 through 423, add new calls after the last
+> >  # 'common' entry
+> >  424    common  pidfd_send_signal       sys_pidfd_send_signal
+> > diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+> > index 6c4dcbdd0c3c..d18e1ae59901 100644
+> > --- a/arch/x86/kernel/uprobes.c
+> > +++ b/arch/x86/kernel/uprobes.c
+> > @@ -752,6 +752,145 @@ void arch_uprobe_clear_state(struct mm_struct *mm)
+> >         hlist_for_each_entry_safe(tramp, n, &state->head_tramps, node)
+> >                 destroy_uprobe_trampoline(tramp);
+> >  }
+> > +
+> > +static bool __in_uprobe_trampoline(unsigned long ip)
+> > +{
+> > +       struct vm_area_struct *vma = vma_lookup(current->mm, ip);
+> > +
+> > +       return vma && vma_is_special_mapping(vma, &tramp_mapping);
+> > +}
+> > +
+> > +static bool in_uprobe_trampoline(unsigned long ip)
+> > +{
+> > +       struct mm_struct *mm = current->mm;
+> > +       bool found, retry = true;
+> > +       unsigned int seq;
+> > +
+> > +       rcu_read_lock();
+> > +       if (mmap_lock_speculate_try_begin(mm, &seq)) {
+> > +               found = __in_uprobe_trampoline(ip);
+> > +               retry = mmap_lock_speculate_retry(mm, seq);
+> > +       }
+> > +       rcu_read_unlock();
+> > +
+> > +       if (retry) {
+> > +               mmap_read_lock(mm);
+> > +               found = __in_uprobe_trampoline(ip);
+> > +               mmap_read_unlock(mm);
+> > +       }
+> > +       return found;
+> > +}
+> > +
+> > +/*
+> > + * See uprobe syscall trampoline; the call to the trampoline will push
+> > + * the return address on the stack, the trampoline itself then pushes
+> > + * cx, r11 and ax.
+> > + */
+> > +struct uprobe_syscall_args {
+> > +       unsigned long ax;
+> > +       unsigned long r11;
+> > +       unsigned long cx;
+> > +       unsigned long retaddr;
+> > +};
+> > +
+> > +SYSCALL_DEFINE0(uprobe)
+> > +{
+> > +       struct pt_regs *regs = task_pt_regs(current);
+> > +       struct uprobe_syscall_args args;
+> > +       unsigned long ip, sp;
+> > +       int err;
+> > +
+> > +       /* Allow execution only from uprobe trampolines. */
+> > +       if (!in_uprobe_trampoline(regs->ip))
+> > +               goto sigill;
 > 
-> Libbfd should go away:
-> https://lore.kernel.org/lkml/20250823003216.733941-14-irogers@google.com/
-> but I can imagine that currently this is hit in a build test - sorry
-> for missing that and thanks for the fix!
+> Hey Jiri,
 > 
+> So I've been thinking what's the simplest and most reliable way to
+> feature-detect support for this sys_uprobe (e.g., for libbpf to know
+> whether we should attach at nop5 vs nop1), and clearly that would be
 
-Yeah just one of the build tests, I'm not actually using it.
+wrt nop5/nop1.. so the idea is to have USDT macro emit both nop1,nop5
+and store some info about that in the usdt's elf note, right?
 
-Remi are you still using this? To be fair the addition for PE support is 
-fairly recent and even includes a binary for testing it so I'm not sure 
-if we should be so quick to remove it.
+libbpf will read usdt record and in case it has both nop1/nop5 and if
+the sys_uprobe is detected, we will adjust usdt address to nop1 or nop5
 
-Having said that, it is a bit weird that it's basically not compiled in 
-anywhere. And the current array of supported disassemblers etc is 
-completely bewildering and hard to maintain.
+I recall you said you might have an idea where to store this flag
+in elf note.. or are we bumping the usdt's elf note n_type ?
 
-> We should probably honor the blocking argument (use fdopen) as the
-> probe perf tests will invoke perf record system wide with data pages
-> and predictably hang on this for files like mmap-ed in sound devices.
-> That said, maybe this hanging will serve as an indication not to use
-> the deprecated libbfd code. From the sounds of things this will break
-> gentoo :-(
-> https://lore.kernel.org/lkml/87ldnacz33.fsf@gentoo.org/
+thanks,
+jirka
 
-If it's just going to be a test issue we can probably live with it. I'm 
-not sure how to honor the blocking argument, I did have a look into 
-libbfd but it didn't seem possible after looking for a few minutes. 
-Probably not worth spending any more time on it until we decide whether 
-it's staying or not.
 
+> to try to call uprobe() syscall not from trampoline, and expect some
+> error code.
 > 
-> Thanks,
-> Ian
+> How bad would it be to change this part to return some unique-enough
+> error code (-ENXIO, -EDOM, whatever).
 > 
->> ---
->>   tools/perf/util/symbol-elf.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
->> index 033c79231a54..e0d6ff7d0acf 100644
->> --- a/tools/perf/util/symbol-elf.c
->> +++ b/tools/perf/util/symbol-elf.c
->> @@ -873,7 +873,8 @@ static int elf_read_build_id(Elf *elf, void *bf, size_t size)
->>
->>   #ifdef HAVE_LIBBFD_BUILDID_SUPPORT
->>
->> -static int read_build_id(const char *filename, struct build_id *bid)
->> +static int read_build_id(const char *filename, struct build_id *bid,
->> +                        bool block __maybe_unused)
->>   {
->>          size_t size = sizeof(bid->data);
->>          int err = -1;
->>
->> --
->> 2.34.1
->>
-
+> Is there any reason not to do this? Security-wise it will be just fine, right?
+> 
+> > +
+> > +       err = copy_from_user(&args, (void __user *)regs->sp, sizeof(args));
+> > +       if (err)
+> > +               goto sigill;
+> > +
+> > +       ip = regs->ip;
+> > +
+> 
+> [...]
 
