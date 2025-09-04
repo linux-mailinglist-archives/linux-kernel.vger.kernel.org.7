@@ -1,157 +1,149 @@
-Return-Path: <linux-kernel+bounces-800223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D7CB434D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:59:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41BB5B434DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F321C81F26
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:59:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11151177AC6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047D92BEFF0;
-	Thu,  4 Sep 2025 07:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D872C0265;
+	Thu,  4 Sep 2025 07:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RSayuYH+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ooXCt7hh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A052BE652;
-	Thu,  4 Sep 2025 07:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07AA2BEC43;
+	Thu,  4 Sep 2025 07:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756972745; cv=none; b=Lf8kl7adteZSVbyF5ii2zLcwx7PE0tyPP0EJE1uIy6gbCArmUAOhLR+xOCR+GLT6fAEWPeEAGPBXC/tnCbdwj0AH7LV6A+nPTDfOoeWBN3pldly5mrWAmVbNvI/M1x7PBaP6HoONH+hYEi1zswmXBRpGXo23RnMG2QTPLGgyJWw=
+	t=1756972779; cv=none; b=ToPSjcyPtagWiTt1+AGXNWWp4HP53GkSFqcuVGvxqjVLVKIcr/s4KXONa/jZRogbx3cWO9pWaOrBPBbqV5ih2FWTuwutVISi7YEOIotlq5Dx0AFDxuiiZKy1o/FyV5Mc2KR577ZrQEkZJLieqOy6J9OlSyL6FL4uocqw/18hk2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756972745; c=relaxed/simple;
-	bh=aBuEluC+86E34BYUv5Oa47sk/w75PmXicZuwfYiSDcM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kDsU2zi3xCynJYi0OSlJJlEkdPz1CJH3wRMC2n/jHLaeU6BqwAkXcG/JXJm+HjQm+gg0JC2p0taFlCforRUzMpfhtvC5fq+Md9hfjUa7O1gHcTpMoCMTYQWu8htgABg99jFPPyM4wCjqjgAFEg6sjaFs9AE+EGPVfAbk7Rl7sVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RSayuYH+; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756972744; x=1788508744;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=aBuEluC+86E34BYUv5Oa47sk/w75PmXicZuwfYiSDcM=;
-  b=RSayuYH+xgkMOysHOpl3kxO96rcDTxBeCL3QLjjUCXcZxC1yUeVExbs9
-   arQ20+ZYV0t6MdMK9kzy7ctKIQVbz7aXeLSvhAqXc8oICzTDtSOTXUSHL
-   vvHhfArvrPyo1vtsyU7xti0HqiO5tStNjbjAwzSEINscbw1RFoSd3Ggt3
-   WUaPaHtg41FD6YnMEQ3qvPKcPX/gdDj9zXFZUiRXNuhRMU5oBFMFwSZPp
-   EjMCqcIvg9l6HujnsCiJmrblgWgFYPWGxlZxile7UKvR3SD++l4Mzn6HY
-   KPVE9CtZnwQFMW1OnznsfXd+MBL+9yHAx1soGGX75xUD4tUug3fwfPw/J
-   w==;
-X-CSE-ConnectionGUID: fLx1pzDISBiRL/L5jMEWAA==
-X-CSE-MsgGUID: gANneA5eSmmWL3Y2RFXAwQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59217879"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="59217879"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 00:59:04 -0700
-X-CSE-ConnectionGUID: cK68dvTjQOWIr9ZUxNgrkA==
-X-CSE-MsgGUID: hHmZT+vfQqu3I+274QjcUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="175950505"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 00:58:57 -0700
-Message-ID: <6b61cee4-0405-4967-afee-af934df34c5f@linux.intel.com>
-Date: Thu, 4 Sep 2025 15:58:54 +0800
+	s=arc-20240116; t=1756972779; c=relaxed/simple;
+	bh=qr1V071kjlRjsRCmHcuB3ihXSJkt/phuzQie/Q1MiZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jaPkD0J4n9X12VPRJHE95URIbdM27rwbUScJ7H2cHb9DOix4E3Rzg2NW4JfYlEa+6XMnwXN0G+QG2f0IODBODhErkFfFDZhRHcG6Pzv9yfKmpboPTdkaTVrRfHenNh3/Tg/KE+1J3FbbbLJVa7DBew6oy/hwOfcF2xGntoLscr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ooXCt7hh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC4AFC4CEF1;
+	Thu,  4 Sep 2025 07:59:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756972779;
+	bh=qr1V071kjlRjsRCmHcuB3ihXSJkt/phuzQie/Q1MiZg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ooXCt7hhW4NMrwAjO7gPOLnLZI7xsHoYmdJepFhj62ONTqa6O7U78jJlEolZJFTeb
+	 SEaqRG9H2nu8UH4g1THcNbD90ssj//+E1fGFMVU1/zpzXwtGkbyMt9f30SKIKv0G+3
+	 bwG/TLFdU2Ct5JbPvWJEqeuM2eTxyPbKmZdvtwAIvO3SipW7NbdHUt/Nmram6KmbmE
+	 LRzJjXoNmF5C3/jukRpA66VKlkLRSGunAExp4E+Ny4nbRS1YgBbbtOGAmG2PcJNCtn
+	 wmCQtPGXg32OMvsx1xv1Z7Qyf7rzpArlYodOGDNKfttA/xGG/0iszppNrFryEwsO8M
+	 9Vew+ag+ROmfA==
+Date: Thu, 4 Sep 2025 09:59:36 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Shin Son <shin.son@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: thermal: samsung: Add tmu-name and
+ sensor-index-ranges properties
+Message-ID: <20250904-chocolate-kangaroo-of-order-2cced3@kuoka>
+References: <20250903073634.1898865-1-shin.son@samsung.com>
+ <CGME20250903073653epcas2p4cb25058c97aab9a30c7e68ef5f10fb91@epcas2p4.samsung.com>
+ <20250903073634.1898865-2-shin.son@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 17/23] KVM: guest_memfd: Split for punch hole and
- private-to-shared conversion
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, x86@kernel.org, rick.p.edgecombe@intel.com,
- dave.hansen@intel.com, kas@kernel.org, tabba@google.com,
- ackerleytng@google.com, quic_eberman@quicinc.com, michael.roth@amd.com,
- david@redhat.com, vannapurve@google.com, vbabka@suse.cz,
- thomas.lendacky@amd.com, pgonda@google.com, zhiquan1.li@intel.com,
- fan.du@intel.com, jun.miao@intel.com, ira.weiny@intel.com,
- isaku.yamahata@intel.com, xiaoyao.li@intel.com, chao.p.peng@intel.com
-References: <20250807093950.4395-1-yan.y.zhao@intel.com>
- <20250807094503.4691-1-yan.y.zhao@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250807094503.4691-1-yan.y.zhao@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250903073634.1898865-2-shin.son@samsung.com>
 
+On Wed, Sep 03, 2025 at 04:36:32PM +0900, Shin Son wrote:
+> The exynosautov920 TMU requires per-sensor interrupt enablement
+> for its critical trip points.
+> Add a DT property to the Samsung thermal bindings
+> to support this requirement:
 
+That's pretty redundant sentence.
+> 
+> - **samsung,hw-sensor-indices**: Defines the sensors currently
+>                                  mapped to the TMU hardware.
+> 				 Indices not listed are absent or fused off
 
-On 8/7/2025 5:45 PM, Yan Zhao wrote:
-[...]
->   
-> @@ -514,6 +554,8 @@ static int kvm_gmem_convert_should_proceed(struct inode *inode,
->   					   struct conversion_work *work,
->   					   bool to_shared, pgoff_t *error_index)
->   {
-> +	int ret = 0;
-> +
->   	if (to_shared) {
->   		struct list_head *gmem_list;
->   		struct kvm_gmem *gmem;
-> @@ -522,19 +564,24 @@ static int kvm_gmem_convert_should_proceed(struct inode *inode,
->   		work_end = work->start + work->nr_pages;
->   
->   		gmem_list = &inode->i_mapping->i_private_list;
-> +		list_for_each_entry(gmem, gmem_list, entry) {
-> +			ret = kvm_gmem_split_private(gmem, work->start, work_end);
-> +			if (ret)
-> +				return ret;
-> +		}
->   		list_for_each_entry(gmem, gmem_list, entry)
-> -			kvm_gmem_unmap_private(gmem, work->start, work_end);
-> +			kvm_gmem_zap(gmem, work->start, work_end, KVM_FILTER_PRIVATE);
->   	} else {
->   		unmap_mapping_pages(inode->i_mapping, work->start,
->   				    work->nr_pages, false);
->   
->   		if (!kvm_gmem_has_safe_refcount(inode->i_mapping, work->start,
->   						work->nr_pages, error_index)) {
-> -			return -EAGAIN;
-> +			ret = -EAGAIN;
->   		}
+Don't write here any code, but concise prose dxescribing hardware.
 
-Not from this patch.
-When if statement breaks into two lines, are curly braces needed?
+If sensors are fused out, you certainly can read their status from efuse, no?
 
+This is really vague description of hardware. I don't understand why you
+are changing sensor-cells, why older variants of tmu gets now cells=1
+(missing constraints?).
 
->   	}
->   
-> -	return 0;
-> +	return ret;
->   }
->   
-[...]
-> @@ -1906,8 +1926,14 @@ static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *fol
->   	start = folio->index;
->   	end = start + folio_nr_pages(folio);
->   
-> -	list_for_each_entry(gmem, gmem_list, entry)
-> -		kvm_gmem_invalidate_begin_and_zap(gmem, start, end);
-> +	/* The size of the SEPT will not exceed the size of the folio */
-To me, the comment alone without the context doesn't give a direct expression that
-split is not needed. If it's not too wordy, could you make it more informative?
+Why older variants also get that property for sensors? It does not make
+sense there, because they have one-to-one mapping between TMU and
+sensor.
 
+> 
+> Additionally, add myself to the bindings' maintainers list, as I plan
+> to actively work on the exynosautov920 TMU support and handle further
+> updates in this area.
+> 
+> Signed-off-by: Shin Son <shin.son@samsung.com>
+> ---
+>  .../bindings/thermal/samsung,exynos-thermal.yaml | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+> index 29a08b0729ee..abd89902d33a 100644
+> --- a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+> @@ -8,6 +8,7 @@ title: Samsung Exynos SoC Thermal Management Unit (TMU)
+>  
+>  maintainers:
+>    - Krzysztof Kozlowski <krzk@kernel.org>
+> +  - Shin Son <shin.son@samsung.com>
+>  
+>  description: |
+>    For multi-instance tmu each instance should have an alias correctly numbered
+> @@ -27,6 +28,7 @@ properties:
+>        - samsung,exynos5420-tmu-ext-triminfo
+>        - samsung,exynos5433-tmu
+>        - samsung,exynos7-tmu
+> +      - samsung,exynosautov920-tmu
+>  
+>    clocks:
+>      minItems: 1
+> @@ -62,11 +64,22 @@ properties:
+>      minItems: 1
+>  
+>    '#thermal-sensor-cells':
+> -    const: 0
+> +    enum:
+> +      - 0
+> +      - 1
+>  
+>    vtmu-supply:
+>      description: The regulator node supplying voltage to TMU.
+>  
+> +  samsung,hw-sensor-indices:
+> +    description: |
 
-> +	list_for_each_entry(gmem, gmem_list, entry) {
-> +		enum kvm_gfn_range_filter filter;
-> +
-> +		kvm_gmem_invalidate_begin(gmem, start, end);
-> +		filter = KVM_FILTER_PRIVATE | KVM_FILTER_SHARED;
-> +		kvm_gmem_zap(gmem, start, end, filter);
-> +	}
->   
->   	/*
->   	 * Do not truncate the range, what action is taken in response to the
+Drop |
+
+> +      List of hardware sensor indices that are physically present and usable
+> +      in this TMU instance. Indices not listed are either unmapped or unused.
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    minItems: 1
+> +    maxItems: 16
+> +    uniqueItems: true
+
+Best regards,
+Krzysztof
 
 
