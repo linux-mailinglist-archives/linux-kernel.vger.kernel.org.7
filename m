@@ -1,337 +1,356 @@
-Return-Path: <linux-kernel+bounces-801186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93B5B440EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:47:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8929BB440EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A325E17BCEF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:47:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C39017749F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12EA2D59EF;
-	Thu,  4 Sep 2025 15:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFD829D291;
+	Thu,  4 Sep 2025 15:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RrIe1z6J"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010029.outbound.protection.outlook.com [52.101.69.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ormsN1Pv"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6C22857C1;
-	Thu,  4 Sep 2025 15:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757000677; cv=fail; b=W0aMx3FOs9hUyPSJ/b1HYcaTG2OmFYIrgJVazmQFzzEA++33uNXKmYkChnZQEQeM39+sX0A8n5S/dPfs26n/Sde2GXUMdqaMfUwBKgTe5jQ/H3SDmreEkH8AJ0W2sU3PQjuElyirrT8m9Ns1ecKOujPsZt7Ja5toNTHsWnHxPXs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757000677; c=relaxed/simple;
-	bh=W/2DYoPSOtqQkeoK+Eg22PINwXU4yUQuBl6zjHzkfZs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PuTBfmDEIDxBtAbkrWNwqar/+6iahPQ9JlPsUSiQWhoMWbzZK88gK2pTC3BlsXOzA+ZkVM5wxrDjolLaWei1Al92d9H9S1c1s8I9VV2KkWZzVlt2vqNiLe8xOJbnR768tNTMi3SMGo8df8Qg35u7RtzxtdjUlECEdRJdXe6Orw0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RrIe1z6J; arc=fail smtp.client-ip=52.101.69.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QGF097sOXy/IPLP92/QALZ60RbPC/hQsuqWmu5zmU7NhEbKLjAcOQjVfYYkOYRIoPlaOyHkk9u6t7TOzfJ08zuWQrfedOCb+B7cr3p0ZM1mxHx7TxAq+DUnN+WrGXChu7UHnbKj8TFTMFSulEUm1WYecr/ffQNktVFVswIVCyoel8VvyOwOTgmqoyStTcb1etxRGh8ihxDk92tkXigxAJbSZb1LLcjKad0XezYgi1W39XJtSmGrncXB/ho33E7cBXCQCgnuzhS5YkFkPi6yCs1+TDeAlG207WDjhRCsyoI4Jf/9n8oB2s4rj82geBqotkDiDQTbAuEA8U5fPnWzV6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jFfnmJ/ZnbtgMyoO1qKYPTH4RqSNYZ3QCzDU5lKpP1w=;
- b=tLTm+BBZfBwc/xdkiSZIxio7iQypUgsGZANEk1U1TbY7QuFoTxQhkzs+21bI6Xo0Frd+YzK2oA8Xx3woMj0BlaJBg6LylkDrsaRnVM1gnnEauVt8O0JZaiZfqW9Muw05qJRV2Dh2HwRQfVLT7kfAD6L4bfCSiiP+gfe8iiULpOTSxv0AGCyFAKgih0Dl3xICQVtu0TNiHHVGUVjv/GHzVxnlou9ns2Jp6K+8kmzXJyATx+NkWTnya1D5UeSbE3H3f+a0fsGmRelvPnkM2F76M5CaH/qr4oR3vsm71sSjWkI2ztA21rUPr/UFDENZHevuLGCoKkobDMWmr6Cp4sQ1Cw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jFfnmJ/ZnbtgMyoO1qKYPTH4RqSNYZ3QCzDU5lKpP1w=;
- b=RrIe1z6JifZ1huPcUJvaa5Ar9ZMmlajigVYph5frjB6+gYJh88yvMW6bixKOwWetMM4en6ePueWg+xa9Qdy0GbhuCESjaU2G0VfmWDMobi8SmDIfb8jQjY4fhX738Ao5D1lyEv/wNHr9jKes8aw06/tthj/bq/sePG0PwhUjgfhbiulUYjgf8eZxe796Q6HSkfk0wdnFSu5iqc08RZfc9UKJ6ISM8NdPtSY1uD98jIS/jqhOAgIjOnQIXHhwXK8GfORgBPR/CnJwqqVamsCnFTyd16troRCt+gXLrFh0KbDNLqekTAT1AEb/Iz6LN4g0OrRZNBuBvekQFj0JcZ8TRA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by AM9PR04MB7635.eurprd04.prod.outlook.com (2603:10a6:20b:285::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Thu, 4 Sep
- 2025 15:44:21 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.9094.016; Thu, 4 Sep 2025
- 15:44:21 +0000
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: linux-phy@lists.infradead.org
-Cc: Ioana Ciornei <ioana.ciornei@nxp.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH phy 14/14] phy: lynx-28g: probe on per-SoC and per-instance compatible strings
-Date: Thu,  4 Sep 2025 18:44:02 +0300
-Message-Id: <20250904154402.300032-15-vladimir.oltean@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250904154402.300032-1-vladimir.oltean@nxp.com>
-References: <20250904154402.300032-1-vladimir.oltean@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AM0PR03CA0060.eurprd03.prod.outlook.com (2603:10a6:208::37)
- To AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8465628153D
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757000698; cv=none; b=CK2kjabJf3rAZ5E2T2hTroDUZifqCNei1+CXXU5AmdnvJYlawFBKvO8VmVLcpYQl9xL60HvZaWxdQ9QTeNHKSPTCEzbonCHRTnq280q4GOwFVKiXbUpT52n6H1Gfj8eKHa1OhkPGk45d9dcp2TxZvOWyOKXke44p3+FSJuoCqHk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757000698; c=relaxed/simple;
+	bh=za/FMiQ/hrpNWhQeSF++BbIPhItA+YemcLYTLk5VdTs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NEH4cOOSXhsMS8JKERwi74kSon7hnlJaPXJsxK2WH+exzkt1KhR8XMIJPGqhJfhptk1JJbzzkPp3vovh8CsbZF66p8SfPGmUI+TYOsgNvIBLx9vYJwKGabi0rKc7avkZdze1DvAcwZerEsYI0sHR/1hIcgJeB2yl9k1T4/GwLVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ormsN1Pv; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-71d6059f490so12161277b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 08:44:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757000695; x=1757605495; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=w2+tlcyWq8T/KHaJV31sRbGd0JRKtIIi6oR1Re9mq0U=;
+        b=ormsN1PvwzscMmI1TpiLAJEyyv52eIqWMv4F+QDbCg2HKKAxK/JVriu1yJ0MlQ9Rut
+         qovFTyHo2QdsrkwoGCwnrXWY/5t765o1KtgO5h5eJQgK3BLazKYsLWAZDjC2Smxq1U6B
+         ZJBdzxxeGcfsync4Ew/7URwYcUt/nwllKRMNxp4GqpAtRbQzaTU0fJB0IDX0R3PlFiwv
+         Hh0AZs+RehWUB++z3YNStxsM14ZAALR1TgpDvSGjUnbIEOje09mHDCmQ4r9hFXUVvul8
+         6c3uKVDPEuHKFuZYXjUUvJXcFcvEIjw9PCRFIbl7ixl8UrYH/VrXEMouesMAJo3jEA+e
+         WwTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757000695; x=1757605495;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w2+tlcyWq8T/KHaJV31sRbGd0JRKtIIi6oR1Re9mq0U=;
+        b=lCdBre94T56wFprTbcI332apRA8xmfUwPiSitEmXD6vtfdA7Xeip0XHWoS1NFRpoY7
+         HeOyPO6lmxTegrvbVInDkmS6wqL/gqeiTefxQavLHqJVwpYdUXOjwXE3pObXxg8rDzrE
+         KAD6xb5hos8KmqjZqvlUOgVIc+UzkVomet6oS1qQWmmX9Mue7lIP5sdAdXVZMtxbzBfz
+         2ssJBRn8W5YM1OLD+BgSuxhJNohMynzlN2hZwc+pkUGi8GihDoNEX4fWzll1ASpq5Sln
+         1Pj5S0tCb2Sli0NfNOLLENN9N623icmopypnWRI9Y1OnOtk/tZzqyrPzW2p+EHb0iBIH
+         nCkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQl/GtIwfMB3H9K7PaUT5c7EDDvTNBwCLlgJv98KUiGUoU+JljvpxBOjfrO0Zt6thOTCL6sBvpC97GWpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzibTaaQst6thyuquppLR9OPC2DJawusmedxTIReefiDrvao/2o
+	0hBuqDDktmaX9noGEKuYqIoZQt2g7x4kYrdDdIGU5iUlilTCecp3bg45j13WCZ4Z5Dia2cdjajB
+	n34Gi0B51CYtLVqCp4RRSdzk+CdS9crAucy62t1D5cg==
+X-Gm-Gg: ASbGncuSNicL8M2YiorAKwLnODYuUZgsYdm8ewfikJr0pwEOLW5/PoPfAIFAteEDPYq
+	ODCTFmnUKGHVoBVvod0plMhJ0brUN2IV/mhsnIxn3xjN09b6u9GUhJ0On6lClbDVrswHfV0HCb4
+	GaDngUUrizG4zXPlGRf6dNaK6FYSe4T9StQskHxxl4SXBDQhmtZ0Pk0kjVNpXrKe6Ttd56iDBH4
+	qMV3ofZ
+X-Google-Smtp-Source: AGHT+IF5yg3THOmLr52f+Mb5IMiiVxDSJvgG/pjXHtGs/D1ZpA/dULwb5bjzrsVPTTLbrDXBjm00C3Fn/D3DeSqJZI8=
+X-Received: by 2002:a05:690c:4512:b0:71a:42a3:7b47 with SMTP id
+ 00721157ae682-722761340fdmr208616477b3.0.1757000695183; Thu, 04 Sep 2025
+ 08:44:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AM9PR04MB7635:EE_
-X-MS-Office365-Filtering-Correlation-Id: d99ab2df-2f57-4412-990e-08ddebc9ea4a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|19092799006|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hCfSH2TKIoyJZvb9hEgzc5eMScbnI2Zd738O//HW2qJPGNL0cntrZ4LsY1Qt?=
- =?us-ascii?Q?5j6YceWNEwKk0D2tu3YdsOLGUlbnra3QJgPUoUgMvucLbM5r+PoQDQb8CEgn?=
- =?us-ascii?Q?XA4vJHrb8kZWtQLwJinURRlYun2DsxCb2n6W582TuKMTrNBXbBRDNpIWY9uh?=
- =?us-ascii?Q?Zw2f7MITuGr1W7tdOaoxESgvuQ46wxQN2LpxBpIZI39t4XrXmik5qgVAiNOt?=
- =?us-ascii?Q?8dQXvl+UgoYCUU+QON01sI6oUOZfHZA8RdUXleYN+5GnpiRn4Uz0tcnx0VjT?=
- =?us-ascii?Q?Hc+b0lLwkZWpg06kcHBWR71/xz65HkEYMBfzgmQQDM/HBt6b0DXWaFz9bZcr?=
- =?us-ascii?Q?ZBt26a3hrNADZ+V71xNW7mwcJPfSwj95XXcWDLBsefWB0MtZgEerGLS5MsqP?=
- =?us-ascii?Q?dlNj4qMyuDsrDitb9+ZBOoNyhJrwTKLmN3GRev6CsYE21QYAemYGRSMpG0My?=
- =?us-ascii?Q?wi7V+WmWN4k21GaE/pPupgqmRBs5nHOTuEGxcU8gPnO2rJ2T+VfLmjCc3Cwr?=
- =?us-ascii?Q?gKZLOK0OudBxNYDkuLfmDiEuMI8Ht+bqKMsAPkG3NBK2/rbELw7CWQBR+ceE?=
- =?us-ascii?Q?zUArtFSYI7hUj8WdAxrC8ffAWLYhfIK4Cimrce768Xs9u/isxePap8UqzsgY?=
- =?us-ascii?Q?hdl2QzuvHcwoH6x+cjjGbf37jF/HZQ+eIOUi5S6p+bD90BRj6oZQd2cfD7/3?=
- =?us-ascii?Q?M7UzVkweV8K5VG+CGqvYMh9D6ucy1OM7O32U1z3mfdJgHpNTuRj6lZwh3jQi?=
- =?us-ascii?Q?yCHAoXpES5pR6hpxgUDIGIbw79E402Ll3DuciUbQFwX0s7ECf0ZbR14MvHiW?=
- =?us-ascii?Q?ApwEqq0h1SuT79d6P4YsC/KpJt3jl474dPLU+q9LxCNKuomO5Aw4+1Q6GBA7?=
- =?us-ascii?Q?VDU9IKOy+9mizPgJrSuPQGNr+LFZ7lIrajYnxSxqghwbww97bBcFP8OuZfca?=
- =?us-ascii?Q?ug0RXf0NQQk+kDXDxt6YA3JIb5pVFH5oUItsR1VHeus+efZ8njxdk2W7GD4h?=
- =?us-ascii?Q?SPbtns6j7FWuIHLhxBscsT+V/uSQdzMSDs91cTUxbNeorL/SHMUS3olchutP?=
- =?us-ascii?Q?+8OmOm8kKeTsMumLqpiIoRkJqw47fvh+yc4c10oRwYZYRn42QBx2rZUusIqj?=
- =?us-ascii?Q?KKOv5GS9kD2CDWunKRkMyhAVTuGo9bujrwlC4RLbTPf+3h5JlC3nzA/fbY3E?=
- =?us-ascii?Q?AMXulx71QBrDs0gPutmjDSlYU5OidU9MWKP6VG2eUIntkiFatpkfat1CCaFt?=
- =?us-ascii?Q?P7EMNjQHGzJOhTjV/s31EUwypEA1+RzyzYzmIUctUqr6yizqn0zZnSwbOpUe?=
- =?us-ascii?Q?Qd7Ww+fdwY6eEy8CoL7909VMc7bP5mCaAa87e5fylSoa7S12ZE4Vp/uonnRx?=
- =?us-ascii?Q?DH2ZsLTM2NUc4vZRBHl3eMl4TY9gxA432E38pw6ZxMc00qUYtJ0nZOZbxS9X?=
- =?us-ascii?Q?tmBZIkU5jL7ILZpKUv4ED78J4lErAKtqZxFBzhlzf7TVLjZt1x0kgw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(19092799006)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ETgnD5UT86fZYqGmQflcRPSrgoPBgaJPOz4Z141vRB11R669UoKP9NXBNt76?=
- =?us-ascii?Q?wr5BGaiQFGo6HmR57icLkWZ4iQc9Q6JNHIM1zxvBw6TLNoK09pdYmm1fK9F2?=
- =?us-ascii?Q?fMuVrrV/hhkFe+cGsnqEwj58kjJOuFV0TnlOdb0i5E0m4SyvH27o5/W3X3jU?=
- =?us-ascii?Q?3lxONHr3kgDmIMKLUkkdTTiSy7gVZWPJ81hkurfU7yZ60GvnibL7+Ypvw+oy?=
- =?us-ascii?Q?aKDG7ee1EPckZBAfpGTL07WWQ5He6NmZzRum2IzhS5MJpH4D1kV6p8QNhZ3o?=
- =?us-ascii?Q?wH0jHuuT3vcKs2GoPSq83/2VjaCTHW2V+/v7c8f+y3ctdSqkvtAkAvQIeMOL?=
- =?us-ascii?Q?z5WWpBYRTe/Gn6KKluEWUtGc3LNrfO532+htLDfe+ALpIaXJ/dd247cLm4pm?=
- =?us-ascii?Q?lpIQpxUldv5+xnGwAHCJcZnbmwevzalyLPfo09VB2SCc6q6dqxVmzFs0RiOc?=
- =?us-ascii?Q?aTFuaGhjKn23Trl+wU9MScsy7nK4v/PwBeT4rVJQq9b4kZxMIqNkR6cWieUG?=
- =?us-ascii?Q?u4f76N5SZIXIW80ZgHSJxDVYbEoxVDsazDJHSMPcn9Ox9Kuy/26ChW24B0dq?=
- =?us-ascii?Q?aHrjvZ9FIGwW8uzWc+kcxfDPowtl/5KTljczI8TgZ7XMIa7hSzNbVYC+QbIm?=
- =?us-ascii?Q?AcZmLhK/68Ypsykc2yrxeNL0xbbHpIqfNt+3+9CcIubA4jMdULHALYgjgCHt?=
- =?us-ascii?Q?+6cy02RQ0aphKXUvd/S5uaT5njoWN5gX3EJkoCMUbBtTi2rJkfJAxAEWFQCa?=
- =?us-ascii?Q?WWmLYxMyKDRaFgPAZm23hpDGVb6eEPat50FR55NyLiRh9d5u2MWjWNRuVeXs?=
- =?us-ascii?Q?spFvZ0mxW0kF+NtW7oZDxRtXdUGr+0JQhTicF21+WC6zc9zRTf+yj8Y/EQpW?=
- =?us-ascii?Q?7kBaOXcD2IELPnhaw/2vwQqEmNNAGVtMhltPTorypjnicrVFeZRGz/i69HS6?=
- =?us-ascii?Q?VynkYBiRabfy5SnU4ljA2LDoY8OY9U8RxV7PrCu5qjRsjq3iCaqVyfHPOdsq?=
- =?us-ascii?Q?ZbXto7J0zlQUUJ2v7ovkPxseK7ejxTr0P3pj0tymqhKT6hq3HLnomvDt1qI4?=
- =?us-ascii?Q?SalWrd5Sx7vtRPIh0eBjYZc1JVjq9vxMUzapmmztDtfIWpc5jnVstpwB+6Qc?=
- =?us-ascii?Q?impDo2ACBRrq9K5pRD6n741I+n8nYlREvqsZxUIXULyx8LD7JtHJHSZjz23g?=
- =?us-ascii?Q?1DDFH7vhMXjtgPegHFwi9r4suthUv3o1cUCmerlaohOGBB/v3lYqZYad6uJY?=
- =?us-ascii?Q?+5IlH7GbamF9j/mCb4iEYuMHfQerhhHV6Htr0FmY8uDPIeqzr85iZu+OCubo?=
- =?us-ascii?Q?wlQj6V2aL6zwSRybbjvY65LIeJCDUsHNX9dhO40WriBq3o1hH8xJpvafh/FH?=
- =?us-ascii?Q?qIcJO1OWdInSnt4u16o9fet6pyG7zQh3TpVr80QTNJmnBeJB8k6rNtI6Gi83?=
- =?us-ascii?Q?QFzAewiAZYzrS9u80UCk9lszILwPe/iML1YOSKj3y0XWKuehXyiGOi9BvEhO?=
- =?us-ascii?Q?66RMgEBim6wEf4L9yBVNHKaYmoVI6mpSgoQ1pqy9InHIktKVzw+6b+G6cIhm?=
- =?us-ascii?Q?zfoXClYUKK0ir6kytL+rgN3Cch0vCXWcyfg6MIM3PdJvTdjC0nRYqGmMl9qN?=
- =?us-ascii?Q?1A=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d99ab2df-2f57-4412-990e-08ddebc9ea4a
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 15:44:20.9507
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3wBPQJc1MqHc/pMNWMt6lQ5z40eY4bstOViQ/jRAU70xO+AMhZYrxV/UQwnM73JTL17pE+cGRQ+W3VPEt8fZJQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7635
+References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+ <CAPDyKFr=u0u2ijczExkntHK1miWZ6hRrEWBMiyUwShS3m6c29g@mail.gmail.com>
+ <CAMuHMdX1BacUfqtmV8g7NpRnY9aTdL=fh+jC7OryMLz4ijaOCg@mail.gmail.com>
+ <CAPDyKFqANQZmGXd8ccA5qWiGrCor2N=W_7dmV+OK8hMd_+zmmw@mail.gmail.com>
+ <CAMuHMdVrkr56XsRsbG7H-tLHVzmP+g-7=5Nrv9asC25ismwiYA@mail.gmail.com>
+ <CAPDyKFq7z9e9hEC9QWiYcaU=t+Gs_GgRurmK-+cNYp4xkhr5Ow@mail.gmail.com>
+ <CAMuHMdU7W+f3nZ_ckHOFsmmK6V9HzK0-fNtcu8kgjTSeU89AqQ@mail.gmail.com>
+ <CAPDyKFr-mVbGo62Wp+othcs+cWR6Wn9bz==ZB5hSpyKgkGtqHg@mail.gmail.com> <CAMuHMdUAhsZMbkUzwb=XnCNyvA3aOvuhkKL4=1nOPQ0w0if-HA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUAhsZMbkUzwb=XnCNyvA3aOvuhkKL4=1nOPQ0w0if-HA@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 4 Sep 2025 17:44:19 +0200
+X-Gm-Features: Ac12FXwVls7vb6lB0gSoy-5SLukvLoftJ9gYC6D8h2w17T4ACoTGb-y-2NvXtd4
+Message-ID: <CAPDyKFrWv3ObciCtrb4YE_K6to5xxx79DGcPv0=nP9LR60=xYA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/24] pmdomain: Add generic ->sync_state() support to genpd
+To: Saravana Kannan <saravanak@google.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Hiago De Franco <hiago.franco@toradex.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-There are 3 SerDes blocks on LX2160A and 2 on LX2162A, and they differ
-in some aspects, namely in the number of lanes per SerDes and in the
-protocol converters instantiated per lane.
+On Thu, 4 Sept 2025 at 14:41, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Ulf,
+>
+> On Thu, 14 Aug 2025 at 17:50, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > On Wed, 13 Aug 2025 at 13:58, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > On Tue, 12 Aug 2025 at 12:01, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > > On Thu, 7 Aug 2025 at 11:38, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > > On Wed, 30 Jul 2025 at 12:29, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > > > > On Wed, 30 Jul 2025 at 11:56, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > > > > On Wed, 9 Jul 2025 at 13:31, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > > > > > > On Tue, 1 Jul 2025 at 13:47, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > > > > > > > Changes in v3:
+> > > > > > > > >         - Added a couple of patches to adress problems on some Renesas
+> > > > > > > > >         platforms. Thanks Geert and Tomi for helping out!
+> > > > > > > > >         - Adressed a few comments from Saravanna and Konrad.
+> > > > > > > > >         - Added some tested-by tags.
+> > > > > > > >
+> > > > > > > > I decided it was time to give this a try, so I have queued this up for
+> > > > > > > > v6.17 via the next branch at my pmdomain tree.
+> > > > > > > >
+> > > > > > > > If you encounter any issues, please let me know so I can help to fix them.
+> > > > > > >
+> > > > > > > Thanks for your series!  Due to holidays, I only managed to test
+> > > > > > > this very recently.
+> > > > > > >
+> > > > > > > Unfortunately I have an issue with unused PM Domains no longer being
+> > > > > > > disabled on R-Car:
+> > > > > > >   - On R-Car Gen1/2/3, using rcar-sysc.c, unused PM Domains are never
+> > > > > > >     disabled.
+> > > > > > >   - On R-Car Gen4, using rcar-gen4-sysc.c, unused PM Domains are
+> > > > > > >     sometimes not disabled.
+> > > > > > >     At first, I noticed the IOMMU driver was not enabled in my config,
+> > > > > > >     and enabling it did fix the issue.  However, after that I still
+> > > > > > >     encountered the issue in a different config that does have the
+> > > > > > >     IOMMU driver enabled...
+> > > > > > >
+> > > > > > > FTR, unused PM Domains are still disabled correctly on R/SH-Mobile
+> > > > > > > (using rmobile-sysc.c) and on BeagleBone Black. Note that these use
+> > > > > > > of_genpd_add_provider_simple(), while all R-Car drivers use
+> > > > > > > of_genpd_add_provider_onecell().  Perhaps there is an issue with
+> > > > > > > the latter?  If you don't have a clue, I plan to do some more
+> > > > > > > investigation later...
+> > > > >
+> > > > > of_genpd_add_provider_onecell() has:
+> > > > >
+> > > > >     if (!dev)
+> > > > >             sync_state = true;
+> > > > >     else
+> > > > >             dev_set_drv_sync_state(dev, genpd_sync_state);
+> > > > >
+> > > > >     for (i = 0; i < data->num_domains; i++) {
+> > > > >             ...
+> > > > >             if (sync_state && !genpd_is_no_sync_state(genpd)) {
+> > > > >                     genpd->sync_state = GENPD_SYNC_STATE_ONECELL;
+> > > > >                     device_set_node(&genpd->dev, fwnode);
+> > > > >                     sync_state = false;
+> > > > >                     ^^^^^^^^^^^^^^^^^^^
+> > > > >             }
+> > > > >             ...
+> > > > >     }
+> > > > >
+> > > > > As the R-Car SYSC drivers are not platform drivers, dev is NULL, and
+> > > > > genpd->sync_state is set to GENPD_SYNC_STATE_ONECELL for the first PM
+> > > > > Domain only.  All other domains have the default value of sync_state
+> > > > > (0 = GENPD_SYNC_STATE_OFF).  Hence when genpd_provider_sync_state()
+> > > > > is called later, it ignores all but the first domain.
+> > > > > Apparently this is intentional, as of_genpd_sync_state() tries to
+> > > > > power off all domains handled by the same controller anyway (see below)?
+> > > >
+> > > > Right, this is intentional and mainly because of how fw_devlink works.
+> > > >
+> > > > fw_devlink is limited to use only the first device - if multiple
+> > > > devices share the same fwnode. In principle, we could have picked any
+> > > > of the devices in the array of genpds here - and reached the same
+> > > > result.
+> > >
+> > > OK, just like I already assumed...
+> > >
+> > > > > > > BTW, the "pending due to"-messages look weird to me.
+> > > > > > > On R-Car M2-W (r8a7791.dtsi) I see e.g.:
+> > > > > > >
+> > > > > > >     genpd_provider ca15-cpu0: sync_state() pending due to e6020000.watchdog
+> > > > > > >     renesas-cpg-mssr e6150000.clock-controller: sync_state() pending
+> > > > > > > due to e6020000.watchdog
+> > > > > > >
+> > > > > > > ca15-cpu0 is the PM Domain holding the first CPU core, while
+> > > > > > > the watchdog resides in the always-on Clock Domain, and uses the
+> > > > > > > clock-controller for PM_CLK handling.
+> > > > >
+> > > > > Unfortunately the first PM Domain is "ca15-cpu0", which is blocked on
+> > > > > these bogus pending states, and no PM Domain is powered off.
+> > > >
+> > > > I see, thanks for the details. I am looking closer at this.
+> > > >
+> > > > In any case, this is the main issue, as it prevents the ->sync_state()
+> > > > callback to be called. Hence the "genpd->stay_on" will also *not* be
+> > > > cleared for any of the genpd's for the genpd-provider.
+> > >
+> > > I was under the impression there is a time-out, after which the
+> > > .sync_state() callback would be called anyway, just like for probe
+> > > deferral due to missing optional providers like DMACs and IOMMUs.
+> > > Apparently that is not the case?
+> >
+> > The behaviour is configurable, so it depends. The current default
+> > behaviour does *not* enforce the ->sync_state() callbacks to be
+> > called, even after a time-out.
+> >
+> > You may set CONFIG_FW_DEVLINK_SYNC_STATE_TIMEOUT to achieve the above
+> > behavior or use the fw_devlink command line parameters to change it.
+> > Like setting "fw_devlink.sync_state=timeout".
+> >
+> > I guess it can be debated what the default behaviour should be.
+> > Perhaps we should even allow the default behaviour to be dynamically
+> > tweaked on a per provider device/driver basis?
+>
+> The domains are indeed powered off like before when passing
+> "fw_devlink.sync_state=timeout", so that fixes the regression.
+> But it was not needed before...
 
-All of this justifies introducing compatible strings for each SerDes and
-some driver structures for figuring out the differences. The
-"fsl,lynx-28g" compatible string is kind of the "maximal configuration".
-It corresponds to SerDes 1 of LX2160A. If we were to treat all SerDes
-blocks like this one, we would access lanes which do not exist (0-3) and
-we would fail to reject lane modes which don't work.
+Right, the default behavior in genpd has changed. The approach was
+taken as we believed that original behavior was not correct.
 
-Cc: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
----
- drivers/phy/freescale/phy-fsl-lynx-28g.c | 97 +++++++++++++++++++++++-
- 1 file changed, 93 insertions(+), 4 deletions(-)
+Although, the current situation isn't good as it causes lot of churns for us.
 
-diff --git a/drivers/phy/freescale/phy-fsl-lynx-28g.c b/drivers/phy/freescale/phy-fsl-lynx-28g.c
-index 91a3b3928ab4..991587c453df 100644
---- a/drivers/phy/freescale/phy-fsl-lynx-28g.c
-+++ b/drivers/phy/freescale/phy-fsl-lynx-28g.c
-@@ -479,9 +479,18 @@ struct lynx_28g_lane {
- 	enum lynx_lane_mode mode;
- };
- 
-+struct lynx_info {
-+	int (*get_pccr)(enum lynx_lane_mode lane_mode, int lane,
-+			struct lynx_pccr *pccr);
-+	int (*get_pcvt_offset)(int lane, enum lynx_lane_mode mode);
-+	bool (*lane_supports_mode)(int lane, enum lynx_lane_mode mode);
-+	int first_lane;
-+};
-+
- struct lynx_28g_priv {
- 	void __iomem *base;
- 	struct device *dev;
-+	const struct lynx_info *info;
- 	/* Serialize concurrent access to registers shared between lanes,
- 	 * like PCCn
- 	 */
-@@ -800,6 +809,79 @@ static int lynx_28g_get_pcvt_offset(int lane, enum lynx_lane_mode lane_mode)
- 	}
- }
- 
-+static bool lx2160a_serdes1_lane_supports_mode(int lane,
-+					       enum lynx_lane_mode mode)
-+{
-+	return true;
-+}
-+
-+static bool lx2160a_serdes2_lane_supports_mode(int lane,
-+					       enum lynx_lane_mode mode)
-+{
-+	switch (mode) {
-+	case LANE_MODE_1000BASEX_SGMII:
-+		return true;
-+	case LANE_MODE_USXGMII:
-+	case LANE_MODE_10GBASER:
-+		return lane == 6 || lane == 7;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool lx2160a_serdes3_lane_supports_mode(int lane,
-+					       enum lynx_lane_mode mode)
-+{
-+	/*
-+	 * Non-networking SerDes, and this driver supports only
-+	 * networking protocols
-+	 */
-+	return false;
-+}
-+
-+static bool lx2162a_serdes1_lane_supports_mode(int lane,
-+					       enum lynx_lane_mode mode)
-+{
-+	return true;
-+}
-+
-+static bool lx2162a_serdes2_lane_supports_mode(int lane,
-+					       enum lynx_lane_mode mode)
-+{
-+	return lx2160a_serdes2_lane_supports_mode(lane, mode);
-+}
-+
-+static const struct lynx_info lynx_info_lx2160a_serdes1 = {
-+	.get_pccr = lynx_28g_get_pccr,
-+	.get_pcvt_offset = lynx_28g_get_pcvt_offset,
-+	.lane_supports_mode = lx2160a_serdes1_lane_supports_mode,
-+};
-+
-+static const struct lynx_info lynx_info_lx2160a_serdes2 = {
-+	.get_pccr = lynx_28g_get_pccr,
-+	.get_pcvt_offset = lynx_28g_get_pcvt_offset,
-+	.lane_supports_mode = lx2160a_serdes2_lane_supports_mode,
-+};
-+
-+static const struct lynx_info lynx_info_lx2160a_serdes3 = {
-+	.get_pccr = lynx_28g_get_pccr,
-+	.get_pcvt_offset = lynx_28g_get_pcvt_offset,
-+	.lane_supports_mode = lx2160a_serdes3_lane_supports_mode,
-+};
-+
-+static const struct lynx_info lynx_info_lx2162a_serdes1 = {
-+	.get_pccr = lynx_28g_get_pccr,
-+	.get_pcvt_offset = lynx_28g_get_pcvt_offset,
-+	.lane_supports_mode = lx2162a_serdes1_lane_supports_mode,
-+	.first_lane = 4,
-+};
-+
-+static const struct lynx_info lynx_info_lx2162a_serdes2 = {
-+	.get_pccr = lynx_28g_get_pccr,
-+	.get_pcvt_offset = lynx_28g_get_pcvt_offset,
-+	.lane_supports_mode = lx2162a_serdes2_lane_supports_mode,
-+};
-+
- static int lynx_pccr_read(struct lynx_28g_lane *lane, enum lynx_lane_mode mode,
- 			  u32 *val)
- {
-@@ -1202,7 +1284,7 @@ static void lynx_28g_cdr_lock_check(struct work_struct *work)
- 	u32 rrstctl;
- 	int i;
- 
--	for (i = 0; i < LYNX_28G_NUM_LANE; i++) {
-+	for (i = priv->info->first_lane; i < LYNX_28G_NUM_LANE; i++) {
- 		lane = &priv->lane[i];
- 
- 		mutex_lock(&lane->phy->mutex);
-@@ -1258,7 +1340,8 @@ static struct phy *lynx_28g_xlate(struct device *dev,
- 	struct lynx_28g_priv *priv = dev_get_drvdata(dev);
- 	int idx = args->args[0];
- 
--	if (WARN_ON(idx >= LYNX_28G_NUM_LANE))
-+	if (WARN_ON(idx >= LYNX_28G_NUM_LANE ||
-+		    idx < priv->info->first_lane))
- 		return ERR_PTR(-EINVAL);
- 
- 	return priv->lane[idx].phy;
-@@ -1275,6 +1358,7 @@ static int lynx_28g_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 	priv->dev = &pdev->dev;
-+	priv->info = of_device_get_match_data(dev);
- 
- 	priv->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->base))
-@@ -1282,7 +1366,7 @@ static int lynx_28g_probe(struct platform_device *pdev)
- 
- 	lynx_28g_pll_read_configuration(priv);
- 
--	for (i = 0; i < LYNX_28G_NUM_LANE; i++) {
-+	for (i = priv->info->first_lane; i < LYNX_28G_NUM_LANE; i++) {
- 		struct lynx_28g_lane *lane = &priv->lane[i];
- 		struct phy *phy;
- 
-@@ -1322,7 +1406,12 @@ static void lynx_28g_remove(struct platform_device *pdev)
- }
- 
- static const struct of_device_id lynx_28g_of_match_table[] = {
--	{ .compatible = "fsl,lynx-28g" },
-+	{ .compatible = "fsl,lx2160a-serdes1", .data = &lynx_info_lx2160a_serdes1 },
-+	{ .compatible = "fsl,lx2160a-serdes2", .data = &lynx_info_lx2160a_serdes2 },
-+	{ .compatible = "fsl,lx2160a-serdes3", .data = &lynx_info_lx2160a_serdes3 },
-+	{ .compatible = "fsl,lx2162a-serdes1", .data = &lynx_info_lx2162a_serdes1 },
-+	{ .compatible = "fsl,lx2162a-serdes2", .data = &lynx_info_lx2162a_serdes2 },
-+	{ .compatible = "fsl,lynx-28g", .data = &lynx_info_lx2160a_serdes1 }, /* fallback */
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, lynx_28g_of_match_table);
--- 
-2.34.1
+>
+> I could add "select FW_DEVLINK_SYNC_STATE_TIMEOUT" to the SYSC_RCAR
+> and SYSC_RCAR_GEN4 Kconfig options, but that would play badly with
+> multi-platform kernels.  As the fw_devlink_sync_state flag is static,
+> the R-Car SYSC drivers can't just auto-enable the flag at runtime.
+>
+> Any other options? Perhaps a device-specific flag to be set by the PM
+> Domain driver, and to be checked by fw_devlink_dev_sync_state()?
 
+Something along those lines seems reasonable to me too.
+
+However, the remaining question though, is what should be the default
+behavior in genpd for this. Due to all the churns, we may want
+something that is closer to what we had *before*, which means to
+always use the timeout option, unless the genpd provider driver
+explicitly requests to not to (an opt-out genpd config flag).
+
+Saravana, it would be nice to get some thoughts from you are around
+this? Does it make sense?
+
+>
+> > > > > If I remove the "sync_state = false" above, genpd_provider_sync_state()
+> > > > > considers all domains, and does power down all unused domains (even
+> > > > > multiple times, as expected).
+> > > >
+> > > > I think those are getting called because with the change above, there
+> > > > is no device_link being tracked. As stated above, fw_devlink is
+> > > > limited to use only one device - if multiple devices share the same
+> > > > fwnode.
+> > >
+> > > Indeed.
+> > >
+> > > > In other words, the ->sync_state() callbacks are called even if the
+> > > > corresponding consumer devices have not been probed yet.
+> > >
+> > > Hence shouldn't there be a timeout, as the kernel may not even have
+> > > a driver for one or more consumer devices?
+> >
+> > See above.
+> >
+> > > > > Upon closer look, all "pending due to" messages I see claim that the
+> > > > > first (index 0) PM Domain is pending on some devices, while all of
+> > > > > these devices are part of a different domain (usually the always-on
+> > > > > domain, which is always the last (32 or 64) on R-Car).
+> > > > >
+> > > > > So I think there are two issues:
+> > > > >   1. Devices are not attributed to the correct PM Domain using
+> > > > >      fw_devlink sync_state,
+> > > > >   2. One PM Domain of a multi-domain controller being blocked should
+> > > > >      not block all other domains handled by the same controller.
+> > > >
+> > > > Right, that's a current limitation with fw_devlink. To cope with this,
+> > > > it's possible to enforce the ->sync_state() callback to be invoked
+> > > > from user-space (timeout or explicitly) for a device.
+>
+> That needs explicit handling, which was not needed before.
+>
+> Perhaps the fw_devlink creation should be removed again from
+> of_genpd_add_provider_onecell(), as it is not correct, except for
+> the first domain?
+
+There is nothing wrong with it, the behavior is correct, unless I
+failed to understand your problem. To me the problem is that it is
+just less fine grained, compared to using
+of_genpd_add_provider_simple(). All PM domains that is provided by a
+single power-domain controller that uses #power-domain-cells = <1>,
+requires all consumers of them to be probed, to allow the sync_state
+callback to be invoked.
+
+If we could teach fw_devlink to take into account the
+power-domain-*id* that is specified by the consumer node, when the
+provider is using #power-domain-cells = <1>, this could potentially
+become as fine-grained as of_genpd_add_provider_simple().
+
+Saravana, do think we can extend fw_devlink to take this into account somehow?
+
+>
+> > > > Another option would be to allow an opt-out behavior for some genpd's
+> > > > that are powered-on at initialization. Something along the lines of
+> > > > the below.
+> > > >
+> > > > From: Ulf Hansson <ulf.hansson@linaro.org>
+> > > > Date: Tue, 29 Jul 2025 14:27:22 +0200
+> > > > Subject: [PATCH] pmdomain: core: Allow powered-on PM domains to be powered-off
+> > > >  during boot
+> > >
+> > > [...]
+> > >
+> > > I gave this a try (i.e. "| GENPD_FLAG_NO_STAY_ON" in rcar-sysc.c), but
+> > > this doesn't make any difference.  I assume this would only work when
+> > > actively calling genpd_power_off() (i.e. not from of_genpd_sync_state()
+> > > or genpd_provider_sync_state())?
+> >
+> > Right. Thanks for testing!
+> >
+> > So, we may need to restore some part of the genpd_power_off_unused()
+> > when CONFIG_PM_GENERIC_DOMAINS_OF is set. Without clearing
+> > "genpd->stay_on".
+> >
+> > I can extend the patch, if you think it would make sense for you?
+>
+> I would applaud anything that would fix these regressions.
+> Thanks!
+
+While being mostly silent from my side for a while, I have been
+continuing to evolve my test suite for sync_state tests. Wanted to
+make sure I cover additional new corner cases that you have pointed
+out for Renesas platforms.
+
+That said, I have not observed any issues on my side, so it looks like
+we are simply facing new behaviors that you have pointed out to be a
+problem. In this regards, I think it's important to note that we are
+currently only seeing problems for those genpds that are powered-on
+when the provider driver calls pm_genpd_init(). Another simple option
+is to power-off those PM domains that we know is not really needed to
+be powered-on. Also not perfect, but an option.
+
+Another option is something along the lines of what I posted, but
+perhaps extending it to let the late_initcall_sync to try to power-off
+the unused PM domains.
+
+I will work on updating the patch so we can try it out - or perhaps
+what you suggested above with a device-specific flag taken into
+account by fw_devlink_dev_sync_state() would be better/sufficient you
+think?
+
+Kind regards
+Uffe
 
