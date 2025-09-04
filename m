@@ -1,164 +1,251 @@
-Return-Path: <linux-kernel+bounces-799760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40164B42FF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:45:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B7EEB42FF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E13443A6726
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:45:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6ED83B8E4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B84F1FDA89;
-	Thu,  4 Sep 2025 02:44:53 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D911F7098;
-	Thu,  4 Sep 2025 02:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0826520296C;
+	Thu,  4 Sep 2025 02:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SJdnReFx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DCC207DE2
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 02:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756953893; cv=none; b=OT785qLonvy9ix+qYwa1w44iwp7ySyO9qRKaTRrPotPgQDAMwmnWyYQA3DAMci1t2mjT8SBCShiRbYbyv2bIHkN+NqSiWd45RNs7P3sj31I8z9w2EyR+liH9G9MgUwjUS+4B2CTvAZulkNIEfQGmOyE47vtFtoZ+WNeetQv/c0g=
+	t=1756953921; cv=none; b=N1y7/9AQsuOuBId2G2tqsCjztW1HH/e4Bx8g+pPC+nyyNukUgRFGCLfBhrlslcftCGbQB42LR6atR1JiR2+0v5yxez2eL094AUc+rZlcXhwg7vQbQEq/DI9CukZ5bLeyXgcTh6Sug8m/AUHwxqCmrGE8nZ7EV6iVq1PZ/MtX17Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756953893; c=relaxed/simple;
-	bh=KRCGlopRUnMqp26El2EZ35VBypuAVZXu6UPeUAuaLe0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=pkSYozcmojka7dPnbdlo+b4Pi8xhAqwxhY8nwOGWuBUpSXXs48/+IYK0ooBET8lJVHLY2gHB2b5MRjjpvVJRU25s4S07tukFAUrgbEmccKaLOBg3Q6N3JtDv3To8Rlu3QRyWumA6NcKk04MwiwetljObkjomOpIIdelj85AP8i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.75.44.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Thu, 4 Sep 2025 10:44:36 +0800 (GMT+08:00)
-Date: Thu, 4 Sep 2025 10:44:36 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?6JGj57uq5rSL?= <dongxuyang@eswincomputing.com>
-To: p.zabel@pengutronix.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: [PATCH v6 0/2] Add driver support for ESWIN eic7700 SoC reset
- controller
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <20250826110610.1338-1-dongxuyang@eswincomputing.com>
-References: <20250826110610.1338-1-dongxuyang@eswincomputing.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1756953921; c=relaxed/simple;
+	bh=Qt/MtTPWhMw/1QKOuqGpt5nL8j9h6axJ33IZXIYIFXQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UIP+/42dHQI+FKL1TYclaUPj8syA58BUQ6V/vMUwbGR+2gzUUlMU9Z1FM4jamHz0oCv5Ilpo/Mgc/lb8cv+YEnzvaP/rigJnW4TUcd71lOqgmP74efCTgMkAFiCfbZ09RxtDGtBM+RkqEwzPWcol786XN6FQwN/lCjvgh1oI8q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SJdnReFx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756953918;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vPxCu9vKoeVGljjV+zdc6Z80QMxQJE+zOXw3nyK4sH4=;
+	b=SJdnReFxsihB86lcgM9AhtSILlkBG23jmhdrCP9/TPLN1BSIfwit0MuqyapHSYeARBOR+C
+	cFufv1mYpcXnf0+2dYQRLPh0rApRU0II4ULqBqhYWyp/qVP/6uU0jOTwcfK5pJZL/BsEqE
+	vgMahXdkOwifwblp/e7KY2+pYy6BVfM=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-690-M-8ty-QqPZiftn22NvNpng-1; Wed, 03 Sep 2025 22:45:16 -0400
+X-MC-Unique: M-8ty-QqPZiftn22NvNpng-1
+X-Mimecast-MFC-AGG-ID: M-8ty-QqPZiftn22NvNpng_1756953916
+Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-e9bdc2582e1so1082593276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 19:45:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756953916; x=1757558716;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vPxCu9vKoeVGljjV+zdc6Z80QMxQJE+zOXw3nyK4sH4=;
+        b=VaCUtDtCimgan46UPj+2C8/GYz5dF6IGPuZo0U4wJNO79F6QBTdZNLrnlnnFiaYzEU
+         ZjUjCxZZtul0ODU48ChOY48lEp5uJIHOSxyA1zFU9uq1sE3cVoCg8csuScxNrhiTmJ6t
+         OzNEAppVQjq8wvTJLEqt+LBRrKzdLm7cDvP9vIsztCQ3wIBcekxGR5AbYW3hChiYDngk
+         gGqrgGdi0YrnQzfMzWg1RdAii+wPSqTXD9C+1ZbaM93ZbOWt4gKPqgHHlZ/vGZCyrnkO
+         xUp+7ux3deZTjTNjSVcKFLkB/zQ9nEnWrun6dAJ32nTnMvX5w07Zhq2Bb/64mOJ0POSZ
+         fvLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUye14sJ9/Ue+zi2zjAl9huT6cdR9x58ANvVP7VpRrX2TUy6lIxSxkpc7A4f50k4ZjCiO/kGllIvM0Pvnk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP8Ot7IGZjG2Ay/CRWuWKaq3sPSM5+XJXusBePGFKfajrkQ1qV
+	4Dh2k6TWxnqf9l60eMg3d7oK4ni9AS5vvtqFqSYa1MpDZUwCpqWUbYmjMIpL2Slz/jVX5G8Jr6t
+	OpdZFiaXbvRUx9uP7cPYOeJTNkN7qjyybUKEF1MO5cMhtsLXqjDW9rY0vlEyjyfKoYUrnkyPlUV
+	+UNZk0qVXPO/v7vxmUxkcw5T3ZwiZsft/s29ISnuTE
+X-Gm-Gg: ASbGnctTImplVYSYxpZMSXZ3bPsSR8iyMf4KW7jQ/xQrrycoVRXNqUJ5OGjk9HkhXIE
+	IdsRBxZEWclPF2tn7UWAkL+fxknardliiXK5aPEu8Qi/FOWbF8hhZITW7wfvZhIJHBxEpPnbXWw
+	8qqWvnExNozMtf+RwgorJmSH7VakyQuSHsrJA=
+X-Received: by 2002:a05:690e:2505:10b0:604:3ec3:621f with SMTP id 956f58d0204a3-6043ec3697fmr1929432d50.11.1756953915876;
+        Wed, 03 Sep 2025 19:45:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGGX0I7zxt7UAjC+8zhaIcnRAoNKfZBZRVzfF1SdLbX7NsNViAzDXLJ8goQlVtnL8b6l8mfbAHDzM/108cubFk=
+X-Received: by 2002:a05:690e:2505:10b0:604:3ec3:621f with SMTP id
+ 956f58d0204a3-6043ec3697fmr1929398d50.11.1756953915472; Wed, 03 Sep 2025
+ 19:45:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <5f0dfba0.c4f.199129c978f.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgDHZpUU_bho7SjIAA--.24298W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEPAmi4bdEKs
-	wABsa
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWDJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+References: <20250819134205.622806-1-npache@redhat.com> <e971c7e0-70f0-4ce0-b288-4b581e8c15d3@lucifer.local>
+ <38b37195-28c8-4471-bd06-951083118efd@arm.com> <0d9c6088-536b-4d7a-8f75-9be5f0faa86f@lucifer.local>
+ <CAA1CXcCqhFoGBvFK-ox2sJw7QHaFt+-Lw09BDYsAGKg4qc8nSw@mail.gmail.com>
+ <CAA1CXcAXTL811VJxqyL18CUw8FNek6ibPr6pKJ_7rfGn-ZU-1A@mail.gmail.com>
+ <5bea5efa-2efc-4c01-8aa1-a8711482153c@lucifer.local> <CAA1CXcBDq9PucQdfQRh1iqJLPB6Jn6mNy28v_AuHWb9kz1gpqQ@mail.gmail.com>
+ <d110a84a-a827-48b4-91c5-67cec3e92874@lucifer.local>
+In-Reply-To: <d110a84a-a827-48b4-91c5-67cec3e92874@lucifer.local>
+From: Nico Pache <npache@redhat.com>
+Date: Wed, 3 Sep 2025 20:44:49 -0600
+X-Gm-Features: Ac12FXzRQLYo9kZFI3Qk7n_u81yp4P3AXqlGuLWUAY0EAnPSUHNRv8g5odcdF08
+Message-ID: <CAA1CXcBVR=L5_6x5FGeR693AB_YqEF=4KAX7_2fRgGNa1j1j9A@mail.gmail.com>
+Subject: Re: [PATCH v10 00/13] khugepaged: mTHP support
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
+	Liam.Howlett@oracle.com, ryan.roberts@arm.com, corbet@lwn.net, 
+	rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
+	akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org, 
+	peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com, 
+	sunnanyong@huawei.com, vishal.moola@gmail.com, 
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
+	kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com, 
+	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de, 
+	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, 
+	jglisse@google.com, surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
+	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgYWxsLAoKR2VudGxlIHBpbmcuCgpUaGFua3MsClh1eWFuZyBEb25nCgo+IAo+IFRoaXMgc2Vy
-aWVzIGRlcGVuZHMgb24gdGhlIHZlbmRvciBwcmVmaXggWzFdIGFuZCBjb25maWcgb3B0aW9uIHBh
-dGNoIFsyXS4KPiAKPiBbMV0gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tl
-cm5lbC9naXQvbmV4dC9saW51eC1uZXh0LmdpdC9jb21taXQvP2g9bmV4dC0yMDI1MDgyNSZpZD1h
-YzI5ZTQ0ODdhYTIwYTIxYjdjM2ZhY2JkMWYxNGY1MDkzODM1ZGM5Cj4gWzJdIGh0dHBzOi8vbG9y
-ZS5rZXJuZWwub3JnL2FsbC8yMDI1MDgyNTEzMjQyNy4xNjE4MDg5LTMtcGlua2VzaC52YWdoZWxh
-QGVpbmZvY2hpcHMuY29tLwo+IAo+IFVwZGF0ZXM6Cj4gCj4gICBkdC1iaW5kaW5nczogcmVzZXQ6
-IGVzd2luOiBEb2N1bWVudGF0aW9uIGZvciBlaWM3NzAwIFNvQwo+ICAgdjUgLT4gdjY6Cj4gICAg
-IEFkZCBkZXBlbmRlbmNpZXMgb2YgdmVuZG9yIHByZWZpeCBhbmQgY29uZmlnIG9wdGlvbiBwYXRj
-aCBpbiBjb3Zlci1sZXR0ZXIuCj4gICAgIExpbmsgdG8gdjU6IGh0dHBzOi8vbG9yZS5rZXJuZWwu
-b3JnL2FsbC8yMDI1MDcyNTA5MzI0OS42NjktMS1kb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNv
-bS8KPiAKPiAgIHY0IC0+IHY1Ogo+ICAgICAxLiBEcm9wcGVkIEVJQzc3MDBfUkVTRVRfTUFYIGZy
-b20gYmluZGluZ3MuCj4gICAgIDIuIEFkZCAiUmV2aWV3ZWQtYnkiIHRhZyBvZiAiS3J6eXN6dG9m
-IEtvemxvd3NraSIgZm9yIFBhdGNoIDEuCj4gICAgIDMuIENvcnJlY3RlZCB0aGUgbGluayB0byBw
-cmV2aW91cyB2ZXJzaW9ucy4KPiAgICAgTGluayB0byB2NDogaHR0cHM6Ly9sb3JlLmtlcm5lbC5v
-cmcvYWxsLzIwMjUwNzE1MTIxNDI3LjE0NjYtMS1kb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNv
-bS8KPiAKPiAgIHYzIC0+IHY0Ogo+ICAgICAxLiBSZW1vdmUgcmVnaXN0ZXIgb2Zmc2V0cyBpbiBk
-dC1iaW5kaW5ncy4KPiAgICAgMi4gVGhlIGNvbnN0IHZhbHVlIG9mICIjcmVzZXQtY2VsbCIgd2Fz
-IGNoYW5nZWQgZnJvbSAyIHRvIDEuCj4gICAgICAgIEJlY2F1c2UgdGhlIG9mZnNldHMgd2VyZSBy
-ZW1vdmVkIGZyb20gZHQtYmluZGluZ3MuIFRoZXJlIGFyZQo+ICAgICAgICBvbmx5IElEcy4gQW5k
-IHJlbW92ZWQgdGhlIGRlc2NyaXB0aW9uIG9mIGl0Lgo+ICAgICAzLiBNb2RpZnkgY29weXJpZ2h0
-IHllYXIgZnJvbSAyMDI0IHRvIDIwMjUuCj4gICAgIDQuIFJlZGVmaW5lZCB0aGUgSURzIGluIHRo
-ZSBkdC1iaW5kaW5ncyBhbmQgdXNlZCB0aGVzZSB0byBidWlsZCBhCj4gICAgICAgIHJlc2V0IGFy
-cmF5IGluIHJlc2V0IGRyaXZlci4gRW5zdXJlIHRoYXQgdGhlIHJlc2V0IHJlZ2lzdGVyIGFuZAo+
-ICAgICAgICByZXNldCB2YWx1ZSBjb3JyZXNwb25kaW5nIHRvIHRoZSBJRHMgYXJlIGNvcnJlY3Qu
-Cj4gICAgIExpbmsgdG8gdjM6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI1MDYxOTA3
-NTgxMS4xMjMwLTEtZG9uZ3h1eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20vCj4gCj4gICB2MiAtPiB2
-MzoKPiAgICAgMS4gRHJvcCBzeXNjb24gYW5kIHNpbXBsZS1tZmQgZnJvbSB5YW1sIGFuZCBjb2Rl
-LCBiZWNhdXNlIHRoZXNlIGFyZQo+ICAgICAgICBub3QgbmVjZXNzYXJ5Lgo+ICAgICAyLiBVcGRh
-dGUgZGVzY3JpcHRpb24gdG8gaW50cm9kdWNlIHJlc2V0IGNvbnRyb2xsZXIuCj4gICAgIDMuIEFk
-ZCByZXNldCBjb250cm9sIGluZGljZXMgZm9yIGR0LWJpbmRpbmdzLgo+ICAgICA0LiBLZWVwIHRo
-ZSByZWdpc3RlciBvZmZzZXRzIGluIGR0LWJpbmRpbmdzLgo+ICAgICBMaW5rIHRvIHYyOiBodHRw
-czovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNTA2MTkwNzU4MTEuMTIzMC0xLWRvbmd4dXlhbmdA
-ZXN3aW5jb21wdXRpbmcuY29tLwo+IAo+ICAgdjEgLT4gdjI6Cj4gICAgIDEuIENsZWFyIHdhcm5p
-bmdzL2Vycm9ycyBmb3IgdXNpbmcgIm1ha2UgZHRfYmluZGluZ19jaGVjayIuCj4gICAgIDIuIFVw
-ZGF0ZSBleGFtcGxlLCBjaGFuZ2UgcGFyZW50IG5vZGUgZnJvbSBzeXMtY3JnIHRvIHJlc2V0LWNv
-bnRyb2xsZXIKPiAgICAgICAgZm9yIHJlc2V0IHlhbWwuCj4gICAgIDMuIERyb3AgdGhlIGNoaWxk
-IG5vZGUgYW5kIGFkZCAnI3Jlc2V0LWNlbGxzJyB0byB0aGUgcGFyZW50IG5vZGUuCj4gICAgIDQu
-IERyb3AgdGhlIGRlc2NyaXB0aW9uLCBiZWNhdXNlIHN5cy1jcmcgYmxvY2sgaXMgY2hhbmdlZCB0
-byByZXNldC0KPiAgICAgICAgY29udHJvbGxlci4KPiAgICAgNS4gQ2hhbmdlIGhleCBudW1iZXJz
-IHRvIGRlY2ltYWwgbnVtYmVycyBnb2luZyBmcm9tIDAsIGFuZCBkcm9wIHRoZQo+ICAgICAgICBu
-b3QgbmVlZGVkIGhhcmR3YXJlIG51bWJlcnMuCj4gICAgIExpbmsgdG8gdjE6IGh0dHBzOi8vbG9y
-ZS5rZXJuZWwub3JnL2FsbC8yMDI1MDYxOTA3NTgxMS4xMjMwLTEtZG9uZ3h1eWFuZ0Blc3dpbmNv
-bXB1dGluZy5jb20vCj4gCj4gICByZXNldDogZXN3aW46IEFkZCBlaWM3NzAwIHJlc2V0IGRyaXZl
-cgo+ICAgdjUgLT4gdjY6Cj4gICAgIDEuIFJlbW92ZWQgcGxhdGZvcm1fc2V0X2RydmRhdGEoKSBm
-dW5jdGlvbi4KPiAgICAgMi4gSW4gcHJvYmUgZnVuY3Rpb24sIGRlZmluZWQgc3RydWN0IGRldmlj
-ZSAqZGV2ID0gJnBkZXYtPmRldi4KPiAgICAgICAgTW9kaWZpZWQgJnBkZXYtPmRldiB0byBkZXYu
-Cj4gICAgIExpbmsgdG8gdjU6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI1MDcyNTA5
-MzI0OS42NjktMS1kb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbS8KPiAKPiAgIHY0IC0+IHY1
-Ogo+ICAgICAxLiBUaGUgdmFsdWUgb2YgLm1heF9yZWdpc3RlciBpcyAweDdmZmZjLgo+ICAgICAy
-LiBDb252ZXJ0ZWQgInRvX2Vzd2luX3Jlc2V0X2RhdGEiIGZyb20gbWFjcm8gdG8gaW5saW5lIGZ1
-bmN0aW9uLgo+ICAgICAzLiBNb2RpZmllZCBFSUM3NzAwX1JFU0VUX09GRlNFVCB0byBFSUM3NzAw
-X1JFU0VUIGFuZCBlaWM3NzAwXwo+ICAgICAgICByZWdpc3Rlcl9vZmZzZXQgdG8gZWljNzcwMF9y
-ZXNldC4KPiAgICAgNC4gU2luY2UgRUlDNzcwMF9SRVNFVF9NQVggaXMgZHJvcHBlZCwgdXNlZCBl
-aWM3NzAwX3Jlc2V0W10gd2l0aG91dAo+ICAgICAgICBFSUM3NzAwX1JFU0VUX01BWC4KPiAgICAg
-NS4gUmVtb3ZlZCBmdW5jdGlvbiBlc3dpbl9yZXNldF9zZXQsIGFuZCBwdXQgcmVnbWFwX2NsZWFy
-X2JpdHMgaW4KPiAgICAgICAgZXN3aW5fcmVzZXRfYXNzZXJ0IGFuZCByZWdtYXBfc2V0X2JpdHMg
-aW4gZXN3aW5fcmVzZXRfZGVhc3NlcnQuCj4gICAgIDYuIEFkZGVkIHVzbGVlcF9yYW5nZSBpbiBm
-dW5jdGlvbiBlc3dpbl9yZXNldF9yZXNldCB3aGljaCB3YXMgbWlzc2VkLgo+ICAgICA3LiBVc2Vk
-IEFSUkFZX1NJWkUoZWljNzcwMF9yZXNldCkgZm9yIGRhdGEtPnJjZGV2Lm5yX3Jlc2V0cy4KPiAg
-ICAgOC4gVXNlIGJ1aWx0aW5fcGxhdGZvcm1fZHJpdmVyLCBiZWNhdXNlIHJlc2V0IGRyaXZlciBp
-cyBhIHJlc2V0Cj4gICAgICAgIGNvbnRyb2xsZXIgZm9yIFNvQy4gUmVtb3ZlZCBlc3dpbl9yZXNl
-dF9pbml0IGZ1bmN0aW9uLgo+ICAgICA5LiBNb2RpZmllZCBlc3dpbl9yZXNldF8qIHRvIGVpYzc3
-MDBfcmVzZXRfKi4KPiAgICAgTGluayB0byB2NDogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxs
-LzIwMjUwNzE1MTIxNDI3LjE0NjYtMS1kb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbS8KPiAK
-PiAgIHYzIC0+IHY0Ogo+ICAgICAxLiBBZGQgJ2NvbnN0JyBmb3IgdGhlIGRlZmluaXRpb24uIEl0
-IGlzICdjb25zdCBzdHJ1Y3Qgb2ZfcGhhbmRsZV8KPiAgICAgICAgYXJncyAqcmVzZXRfc3BlYyA9
-IGRhdGE7Jy4KPiAgICAgMi4gTW9kaWZ5IGNvcHlyaWdodCB5ZWFyIGZyb20gMjAyNCB0byAyMDI1
-Lgo+ICAgICAzLiBJbmNsdWRlZCAiZXN3aW4sZWljNzcwMC1yZXNldC5oIiBpbiByZXNldCBkcml2
-ZXIuCj4gICAgIDQuIEFkZGVkIG1hcHBpbmcgdGFibGUgZm9yIHJlc2V0IElEcy4KPiAgICAgNS4g
-UmVtb3ZlZCBvZl94bGF0ZSBhbmQgaWRyIGZ1bmN0aW9ucyBhcyB3ZSBhcmUgdXNpbmcgSURzIGZy
-b20gRFRTLgo+ICAgICA2LiBSZW1vdmVkIC5yZW1vdmUgZnVuY3Rpb24uCj4gICAgIExpbmsgdG8g
-djM6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI1MDYxOTA3NTgxMS4xMjMwLTEtZG9u
-Z3h1eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20vCj4gCj4gICB2MiAtPiB2MzoKPiAgICAgMS4gQ2hh
-bmdlIHN5c2Nvbl9ub2RlX3RvX3JlZ21hcCgpIHRvIE1NSU8gcmVnbWFwIGZ1bmN0aW9ucywgYmVj
-YXVzZQo+ICAgICAgICBkcm9wcGVkIHN5c2Nvbi4KPiAgICAgMi4gQWRkIEJJVCgpIGluIGZ1bmN0
-aW9uIGVzd2luX3Jlc2V0X3NldCgpIHRvIHNoaWZ0IHRoZSByZXNldAo+ICAgICAgICBjb250cm9s
-IGluZGljZXMuCj4gICAgIDMuIFJlbW92ZSBmb3JjZWQgdHlwZSBjb252ZXJzaW9ucyBmcm9tIGZ1
-bmN0aW9uIGVzd2luX3Jlc2V0X29mXwo+ICAgICAgICB4bGF0ZV9sb29rdXBfaWQoKS4KPiAgICAg
-TGluayB0byB2MjogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUwNjE5MDc1ODExLjEy
-MzAtMS1kb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbS8KPiAKPiAgIHYxIC0+IHYyOgo+ICAg
-ICAxLiBNb2RpZnkgdGhlIGNvZGUgYWNjb3JkaW5nIHRvIHRoZSBzdWdnZXN0aW9ucy4KPiAgICAg
-Mi4gVXNlIGVzd2luX3Jlc2V0X2Fzc2VydCgpIGFuZCBlc3dpbl9yZXNldF9kZWFzc2VydCBpbiBm
-dW5jdGlvbgo+ICAgICAgICBlc3dpbl9yZXNldF9yZXNldCgpLgo+ICAgICAzLiBQbGFjZSBSRVNF
-VF9FSUM3NzAwIGluIEtjb25maWcgYW5kIE1ha2VmaWxlIGluIG9yZGVyLgo+ICAgICA0LiBVc2Ug
-ZGV2X2Vycl9wcm9iZSgpIGluIHByb2JlIGZ1bmN0aW9uLgo+ICAgICBMaW5rIHRvIHYxOiBodHRw
-czovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNTA2MTkwNzU4MTEuMTIzMC0xLWRvbmd4dXlhbmdA
-ZXN3aW5jb21wdXRpbmcuY29tLwo+IAo+IFh1eWFuZyBEb25nICgyKToKPiAgIGR0LWJpbmRpbmdz
-OiByZXNldDogZXN3aW46IERvY3VtZW50YXRpb24gZm9yIGVpYzc3MDAgU29DCj4gICByZXNldDog
-ZXN3aW46IEFkZCBlaWM3NzAwIHJlc2V0IGRyaXZlcgo+IAo+ICAuLi4vYmluZGluZ3MvcmVzZXQv
-ZXN3aW4sZWljNzcwMC1yZXNldC55YW1sICAgfCAgNDIgKysKPiAgZHJpdmVycy9yZXNldC9LY29u
-ZmlnICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDEwICsKPiAgZHJpdmVycy9yZXNldC9NYWtl
-ZmlsZSAgICAgICAgICAgICAgICAgICAgICAgIHwgICAxICsKPiAgZHJpdmVycy9yZXNldC9yZXNl
-dC1laWM3NzAwLmMgICAgICAgICAgICAgICAgIHwgNDI4ICsrKysrKysrKysrKysrKysrKwo+ICAu
-Li4vZHQtYmluZGluZ3MvcmVzZXQvZXN3aW4sZWljNzcwMC1yZXNldC5oICAgfCAyOTggKysrKysr
-KysrKysrCj4gIDUgZmlsZXMgY2hhbmdlZCwgNzc5IGluc2VydGlvbnMoKykKPiAgY3JlYXRlIG1v
-ZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9yZXNldC9lc3dpbixl
-aWM3NzAwLXJlc2V0LnlhbWwKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvcmVzZXQvcmVz
-ZXQtZWljNzcwMC5jCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdzL3Jl
-c2V0L2Vzd2luLGVpYzc3MDAtcmVzZXQuaAo+IAo+IC0tCj4gMi4xNy4xCg==
+On Thu, Aug 21, 2025 at 10:55=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Thu, Aug 21, 2025 at 10:46:18AM -0600, Nico Pache wrote:
+> > > > > > Thanks and I"ll have a look, but this series is unmergeable wit=
+h a broken
+> > > > > > default in
+> > > > > > /sys/kernel/mm/transparent_hugepage/khugepaged/mthp_max_ptes_no=
+ne_ratio
+> > > > > > sorry.
+> > > > > >
+> > > > > > We need to have a new tunable as far as I can tell. I also find=
+ the use of
+> > > > > > this PMD-specific value as an arbitrary way of expressing a rat=
+io pretty
+> > > > > > gross.
+> > > > > The first thing that comes to mind is that we can pin max_ptes_no=
+ne to
+> > > > > 255 if it exceeds 255. It's worth noting that the issue occurs on=
+ly
+> > > > > for adjacently enabled mTHP sizes.
+> > >
+> > > No! Presumably the default of 511 (for PMDs with 512 entries) is set =
+for a
+> > > reason, arbitrarily changing this to suit a specific case seems crazy=
+ no?
+> > We wouldn't be changing it for PMD collapse, just for the new
+> > behavior. At 511, no mTHP collapses would ever occur anyways, unless
+> > you have 2MB disabled and other mTHP sizes enabled. Technically at 511
+> > only the highest enabled order always gets collapsed.
+> >
+> > Ive also argued in the past that 511 is a terrible default for
+> > anything other than thp.enabled=3Dalways, but that's a whole other can
+> > of worms we dont need to discuss now.
+> >
+> > with this cap of 255, the PMD scan/collapse would work as intended,
+> > then in mTHP collapses we would never introduce this undesired
+> > behavior. We've discussed before that this would be a hard problem to
+> > solve without introducing some expensive way of tracking what has
+> > already been through a collapse, and that doesnt even consider what
+> > happens if things change or are unmapped, and rescanning that section
+> > would be helpful. So having a strictly enforced limit of 255 actually
+> > seems like a good idea to me, as it completely avoids the undesired
+> > behavior and does not require the admins to be aware of such an issue.
+> >
+> > Another thought similar to what (IIRC) Dev has mentioned before, if we
+> > have max_ptes_none > 255 then we only consider collapses to the
+> > largest enabled order, that way no creep to the largest enabled order
+> > would occur in the first place, and we would get there straight away.
+> >
+> > To me one of these two solutions seem sane in the context of what we
+> > are dealing with.
+> > >
+> > > > >
+> > > > > ie)
+> > > > > if order!=3DHPAGE_PMD_ORDER && khugepaged_max_ptes_none > 255
+> > > > >       temp_max_ptes_none =3D 255;
+> > > > Oh and my second point, introducing a new tunable to control mTHP
+> > > > collapse may become exceedingly complex from a tuning and code
+> > > > management standpoint.
+> > >
+> > > Umm right now you hve a ratio expressed in PTES per mTHP * ((PTEs per=
+ PMD) /
+> > > PMD) 'except please don't set to the usual default when using mTHP' a=
+nd it's
+> > > currently default-broken.
+> > >
+> > > I'm really not sure how that is simpler than a seprate tunable that c=
+an be
+> > > expressed as a ratio (e.g. percentage) that actually makes some kind =
+of sense?
+> > I agree that the current tunable wasn't designed for this, but we
+> > tried to come up with something that leverages the tunable we have to
+> > avoid new tunables and added complexity.
+> > >
+> > > And we can make anything workable from a code management point of vie=
+w by
+> > > refactoring/developing appropriately.
+> > What happens if max_ptes_none =3D 0 and the ratio is 50% - 1 pte
+> > (ideally the max number)? seems like we would be saying we want no new
+> > none pages, but also to allow new none pages. To me that seems equally
+> > broken and more confusing than just taking a scale of the current
+> > number (now with a cap).
+> >
+> >
+>
+> The one thing we absolutely cannot have is a default that causes this
+> 'creeping' behaviour. This feels like shipping something that is broken a=
+nd
+> alluding to it in the documentation.
+Ok I've put a lot of thought and time into this and came up with a solution=
+.
+
+Here is what I currently have tested and would like to proposing:
+
+- Expand bitmap to HPAGE_PMD_NR (512)*, this increases the accuracy of
+the max_pte_none handling, and removes a lot of inaccuracies caused by
+the compression into 128 bits that was being done. This also makes the
+code a lot easier to understand.
+
+- When attempting mTHP level collapses cap max_ptes_none to 255 to
+prevent the creep issue
+
+Ive tested this and found this performs better than my previous
+version, allows for more granular control via max_ptes_none, and
+prevents the creep issue without any admin knowledge needed.
+
+I think this is a good middle ground between completely disabling the
+fine tune control, and doing a better job at mitigating
+misconfiguration.
+
+**Baolin actually also expands the bitmap to 512 in his khugepaged
+collapse file mTHP support patchset
+
+Does this sound reasonable to you?
+
+-- Nico
+>
+> I spoke to David off-list and he gave some insight into this and perhaps
+> some reasonable means of avoiding an additional tunable.
+>
+> I don't want to rehash what he said as I think it's more productive for h=
+im
+> to reply when he has time but broadly I think how we handle this needs
+> careful consideration.
+>
+> To me it's clear that some sense of ratio is just immediately very very
+> confusing, but then again this interface is already confusing, as with mu=
+ch
+> of THP.
+>
+> Anyway I'll let David respond here so we don't loop around before he has =
+a
+> chance to add his input.
+>
+> Cheers, Lorenzo
+>
+
 
