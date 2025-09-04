@@ -1,176 +1,180 @@
-Return-Path: <linux-kernel+bounces-800359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A691B436BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:13:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BA20B436C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67A717BAE24
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:12:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 917A51C22F35
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A522E370E;
-	Thu,  4 Sep 2025 09:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551392E22AA;
+	Thu,  4 Sep 2025 09:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYIz2Cfk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PY6KtGhR"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B873A2DFA5C;
-	Thu,  4 Sep 2025 09:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3ED623506F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756977200; cv=none; b=mt1lPq5Od3VL5XN+YLdxDRUfYFUUHix/UkPpg3bpD0eo4EknZplmRnjgdqDVXsqoYj4EWVV/6syC6dwoWEVRYhC4hEdb/NvGr7f/tZYcJO21rge+/AIs/BY/BNvUt0bPavaDNoHfSC6NspLtaEVMPRgNpRb4ZyvWmqQMPFVVgY4=
+	t=1756977243; cv=none; b=Wh2ZSojLCBWvUSR9V90oq8jyJsr+2YAZ3LVAMwpKPAscIiDsrd8JfxQ5h6CKoVHTefkvvxj9vHgedMr71c9VPfqLZUVmlP1CnR+fdMmVgU1W+sGb6kfPKU55fGHIaEN854ksfWem1VX/1fKZLWVlXxNQJMk6kCUkC42KY7yvghc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756977200; c=relaxed/simple;
-	bh=YWs124h50QsnlAzsLxV+1+ek9G9jWfNKu3Q0CLQIH1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DIX6EPQ6ubRRlf9SQoWcX/cvWIYUZ8WkhP7OYSBEZZ+xkaX754GVJRfgfwacTQ75oPTPUgBkwuNs0awVwwiUUYWcW0hVmKEuBHQL4JzqWsMZFTQuBC5y9qeQGxUVmJJVneB5ywEwgbWsKhCbSc0F6RoKcQ50HJ9AtGH36Cgaltg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYIz2Cfk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D1F4C4CEF0;
-	Thu,  4 Sep 2025 09:13:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756977200;
-	bh=YWs124h50QsnlAzsLxV+1+ek9G9jWfNKu3Q0CLQIH1s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WYIz2Cfk1CY+u0nZdgXpFoMkvx02jTRnaFbblTwv6Rx5VBNwqlIwoS9RT/tDGtier
-	 grFdVdXgZyMfwTYk3bN2Wwg5oAQ8kEjjhZTjfZPiKXVjDzP0Hc/47MxmhbN+3x53HH
-	 7VMUB4qXr1fztPZl4JeHRU7muK9miMwI1xVq6kswLBhn2T4LusZ9B68LpFrE+u6tOP
-	 wDPPrYnJG2TD6uhiQQlw2qGyhGuOmNfpScLdGk/UFoTtKJt1/lsUnvL9TY/m1XOyBq
-	 GEeLDXTf339uD6S0nwQEibu15CRaZR4SZsUpX4fIojH5eOPbL/bp+2boVyInOX1MRb
-	 YQXVUg8vpnc6g==
-Date: Thu, 4 Sep 2025 10:13:15 +0100
-From: Simon Horman <horms@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] virtio_net: Fix alignment and avoid
- -Wflex-array-member-not-at-end warning
-Message-ID: <20250904091315.GB372207@horms.kernel.org>
-References: <aLiYrQGdGmaDTtLF@kspp>
+	s=arc-20240116; t=1756977243; c=relaxed/simple;
+	bh=0KMAEfR0V0VEYFiwcgqzkiMZLifpuJMqRR7bm2KR/yw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=jfSsu0XBgL/MBEZGxVngVoWGSdtVn2+xbl1UPk1GMIYFI9qXiyJ4+TyuY7qDUKEDD0Z/KZMYEY602NXcL9nJTA9wfhCqKCToW+cqey1o/AxEAn5BD2DaMw9NC0phuh8cQsyArQXZoOxdv3J9y1/Eb4RK95LanzRasXihoxHye1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PY6KtGhR; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250904091354epoutp03867e19627dbecb12e1ce29c4287f8874~iCXxMrtrb1667616676epoutp03Z
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:13:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250904091354epoutp03867e19627dbecb12e1ce29c4287f8874~iCXxMrtrb1667616676epoutp03Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756977234;
+	bh=tXT+xGg463hwxHQkaysDNXj3DgmwgfCfpZCPDlCDOkA=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=PY6KtGhRlxGmDpbtwOHdwsBtnAee65iHDPBNo8OP9IwKDtoubFDbc/B7e+PLYta/C
+	 nzzO8EzKXMfHdMzxjZUkFSNZcOW5Ln+XRpDC4AdyblmK5aY4ls/83WfvDJTe2sg/Ha
+	 JmSHBpekeoKCEuAtxSP1R2Yd5O5pPC9/xECZViu0=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250904091353epcas5p1583257065573710b90d66d7dfa6604f9~iCXwt45ny2104021040epcas5p1h;
+	Thu,  4 Sep 2025 09:13:53 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cHYgh4ZL4z6B9mB; Thu,  4 Sep
+	2025 09:13:52 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904091351epcas5p12b672a06d35140266c02c2038c580f7c~iCXu3-r_91514515145epcas5p1w;
+	Thu,  4 Sep 2025 09:13:51 +0000 (GMT)
+Received: from INBRO002520 (unknown [107.122.1.191]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250904091349epsmtip274097b068a5ef332a9676265ad6c52ec~iCXtVRBrG1708017080epsmtip2D;
+	Thu,  4 Sep 2025 09:13:49 +0000 (GMT)
+From: "Devang Tailor" <dev.tailor@samsung.com>
+To: "'Henrik Grimler'" <henrik@grimler.se>
+Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<alim.akhtar@samsung.com>, <alexandre.belloni@bootlin.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-rtc@vger.kernel.org>, <faraz.ata@samsung.com>
+In-Reply-To: <20250903192046.GA4126@l14.localdomain>
+Subject: RE: [PATCH v2 2/3] rtc: s3c: support for exynosautov9 on-chip RTC
+Date: Thu, 4 Sep 2025 14:43:48 +0530
+Message-ID: <000001dc1d7c$3ac93f90$b05bbeb0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLiYrQGdGmaDTtLF@kspp>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQMc6yo9jRPgA4nZ2IiZrgLtyBFMygKSVtdMAw5/R1ICS4saWrHBuvVQ
+Content-Language: en-in
+X-CMS-MailID: 20250904091351epcas5p12b672a06d35140266c02c2038c580f7c
+X-Msg-Generator: CA
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250710082536epcas5p4f9dcd50ff474066562b2cbd40199d2d9
+References: <20250710083434.1821671-1-dev.tailor@samsung.com>
+	<CGME20250710082536epcas5p4f9dcd50ff474066562b2cbd40199d2d9@epcas5p4.samsung.com>
+	<20250710083434.1821671-3-dev.tailor@samsung.com>
+	<20250903192046.GA4126@l14.localdomain>
 
-On Wed, Sep 03, 2025 at 09:36:13PM +0200, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> Use the new TRAILING_OVERLAP() helper to fix the following warning:
-> 
-> drivers/net/virtio_net.c:429:46: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> This helper creates a union between a flexible-array member (FAM)
-> and a set of members that would otherwise follow it (in this case
-> `u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];`). This
-> overlays the trailing members (rss_hash_key_data) onto the FAM
-> (hash_key_data) while keeping the FAM and the start of MEMBERS aligned.
-> The static_assert() ensures this alignment remains, and it's
-> intentionally placed inmediately after `struct virtnet_info` (no
-> blank line in between).
-> 
-> Notice that due to tail padding in flexible `struct
-> virtio_net_rss_config_trailer`, `rss_trailer.hash_key_data`
-> (at offset 83 in struct virtnet_info) and `rss_hash_key_data` (at
-> offset 84 in struct virtnet_info) are misaligned by one byte. See
-> below:
-> 
-> struct virtio_net_rss_config_trailer {
->         __le16                     max_tx_vq;            /*     0     2 */
->         __u8                       hash_key_length;      /*     2     1 */
->         __u8                       hash_key_data[];      /*     3     0 */
-> 
->         /* size: 4, cachelines: 1, members: 3 */
->         /* padding: 1 */
->         /* last cacheline: 4 bytes */
-> };
-> 
-> struct virtnet_info {
-> ...
->         struct virtio_net_rss_config_trailer rss_trailer; /*    80     4 */
-> 
->         /* XXX last struct has 1 byte of padding */
-> 
->         u8                         rss_hash_key_data[40]; /*    84    40 */
-> ...
->         /* size: 832, cachelines: 13, members: 48 */
->         /* sum members: 801, holes: 8, sum holes: 31 */
->         /* paddings: 2, sum paddings: 5 */
-> };
-> 
-> After changes, those members are correctly aligned at offset 795:
-> 
-> struct virtnet_info {
-> ...
->         union {
->                 struct virtio_net_rss_config_trailer rss_trailer; /*   792     4 */
->                 struct {
->                         unsigned char __offset_to_hash_key_data[3]; /*   792     3 */
->                         u8         rss_hash_key_data[40]; /*   795    40 */
->                 };                                       /*   792    43 */
->         };                                               /*   792    44 */
-> ...
->         /* size: 840, cachelines: 14, members: 47 */
->         /* sum members: 801, holes: 8, sum holes: 35 */
->         /* padding: 4 */
->         /* paddings: 1, sum paddings: 4 */
->         /* last cacheline: 8 bytes */
-> };
-> 
-> As a last note `struct virtio_net_rss_config_hdr *rss_hdr;` is also
-> moved to the end, since it seems those three members should stick
-> around together. :)
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
-> 
-> This should probably include the following tag:
-> 
-> 	Fixes: ed3100e90d0d ("virtio_net: Use new RSS config structs")
-> 
-> but I'd like to hear some feedback, first.
 
-I tend to agree given that:
+Hi,
 
-On the one hand:
 
-1) in virtnet_init_default_rss(), netdev_rss_key_fill() is used
-   to write random data to .rss_hash_key_data
+> -----Original Message-----
+> From: Henrik Grimler <henrik=40grimler.se>
+> Sent: 04 September 2025 00:51
+> To: Devang Tailor <dev.tailor=40samsung.com>
+> Cc: robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org;
+> alim.akhtar=40samsung.com; alexandre.belloni=40bootlin.com;
+> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-
+> rtc=40vger.kernel.org; faraz.ata=40samsung.com
+> Subject: Re: =5BPATCH v2 2/3=5D rtc: s3c: support for exynosautov9 on-chi=
+p RTC
+>=20
+> Hi Devang,
+>=20
+> On Thu, Jul 10, 2025 at 02:04:33PM +0530, Devang Tailor wrote:
+> > The on-chip RTC of this SoC is almost similar to the previous versions
+> > of SoC. Hence re-use the existing driver with platform specific change
+> > to enable RTC.
+>=20
+> Could you please describe what the differences are to previous SoCs?
+> You write almost similar, please elaborate in what way in commit message.
 
-2) In virtnet_set_rxfh() key data written to .rss_hash_key_data
+Ok. I will add in V3.
 
-While
+>=20
+> > This has been tested with 'hwclock' & 'date' utilities
+> >
+> > Signed-off-by: Devang Tailor <dev.tailor=40samsung.com>
+> > ---
+> >
+> >  drivers/rtc/rtc-s3c.c =7C 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> >
+> > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c index
+> > 5dd575865adf..8db24b6360b8 100644
+> > --- a/drivers/rtc/rtc-s3c.c
+> > +++ b/drivers/rtc/rtc-s3c.c
+> > =40=40 -384,6 +384,15 =40=40 static void s3c6410_rtc_disable(struct s3c=
+_rtc
+> *info)
+> >  	writew(con, info->base + S3C2410_RTCCON);  =7D
+> >
+> > +static void exynosautov9_rtc_disable(struct s3c_rtc *info) =7B
+> > +	unsigned int con;
+> > +
+> > +	con =3D readb(info->base + S3C2410_RTCCON);
+> > +	con &=3D =7ES3C2410_RTCCON_RTCEN;
+> > +	writeb(con, info->base + S3C2410_RTCCON); =7D
+>=20
+> Rather than adding a new rtc_disable variant I think this could be handle=
+d
+in
+> existing s3c24xx_rtc_disable (and I think that is what Krzysztof meant).
+How
+> about adding a new bool to rtc_data that describes if S3C2410_TICNT reg i=
+s
+> supported or not, and checking it in s3c24xx_rtc_disable?
 
-3) In virtnet_commit_rss_command() virtio_net_rss_config_trailer,
-   including the contents of .hash_key_data based on the length of
-   that data provided in .hash_key_length is copied.
-
-It seems to me that step 3 will include 1 byte of uninitialised data
-at the start of .hash_key_data. And, correspondingly, truncate
-.rss_hash_key_data by one byte.
-
-It's unclear to me what the effect of this - perhaps they key works
-regardless. But it doesn't seem intended. And while the result may be
-neutral, I do  suspect this reduces the quality of the key. And I more
-strongly suspect it doesn't have any positive outcome.
-
-So I would lean towards playing it safe and considering this as a bug.
-
-Of course, other's may have better insight as to the actual effect of this.
-
-...
+Ok. I will add bool 'use_s3c2410_ticnt=B4=20to=20differentiate=20if=20any=
+=20variant=20uses=0D=0ATICNT=20or=20not,=20making=20it=0D=0A'true'=20for=20=
+existing=20RTC=20variants=20which=20are=20using=20s3c24xx_rtc_disable().=0D=
+=0A=0D=0A>=20=0D=0A>=20Best=20regards,=0D=0A>=20Henrik=20Grimler=0D=0A>=20=
+=0D=0A>=20>=20=20static=20void=20s3c_rtc_remove(struct=20platform_device=20=
+*pdev)=20=20=7B=0D=0A>=20>=20=20=09struct=20s3c_rtc=20*info=20=3D=20platfor=
+m_get_drvdata(pdev);=20=40=40=20-574,6=20+583,12=0D=0A>=20>=20=40=40=20stat=
+ic=20struct=20s3c_rtc_data=20const=20s3c6410_rtc_data=20=3D=20=7B=0D=0A>=20=
+>=20=20=09.disable=09=09=3D=20s3c6410_rtc_disable,=0D=0A>=20>=20=20=7D;=0D=
+=0A>=20>=0D=0A>=20>=20+static=20const=20struct=20s3c_rtc_data=20exynosautov=
+9_rtc_data=20=3D=20=7B=0D=0A>=20>=20+=09.irq_handler=09=09=3D=20s3c6410_rtc=
+_irq,=0D=0A>=20>=20+=09.enable=09=09=09=3D=20s3c24xx_rtc_enable,=0D=0A>=20>=
+=20+=09.disable=09=09=3D=20exynosautov9_rtc_disable,=0D=0A>=20>=20+=7D;=0D=
+=0A>=20>=20+=0D=0A>=20>=20=20static=20const=20__maybe_unused=20struct=20of_=
+device_id=20s3c_rtc_dt_match=5B=5D=20=3D=20=7B=0D=0A>=20>=20=20=09=7B=0D=0A=
+>=20>=20=20=09=09.compatible=20=3D=20=22samsung,s3c2410-rtc=22,=20=40=40=20=
+-590,6=20+605,9=20=40=40=0D=0A>=20static=0D=0A>=20>=20const=20__maybe_unuse=
+d=20struct=20of_device_id=20s3c_rtc_dt_match=5B=5D=20=3D=20=7B=0D=0A>=20>=
+=20=20=09=7D,=20=7B=0D=0A>=20>=20=20=09=09.compatible=20=3D=20=22samsung,ex=
+ynos3250-rtc=22,=0D=0A>=20>=20=20=09=09.data=20=3D=20&s3c6410_rtc_data,=0D=
+=0A>=20>=20+=09=7D,=20=7B=0D=0A>=20>=20+=09=09.compatible=20=3D=20=22samsun=
+g,exynosautov9-rtc=22,=0D=0A>=20>=20+=09=09.data=20=3D=20&exynosautov9_rtc_=
+data,=0D=0A>=20>=20=20=09=7D,=0D=0A>=20>=20=20=09=7B=20/*=20sentinel=20*/=
+=20=7D,=0D=0A>=20>=20=20=7D;=0D=0A>=20>=20--=0D=0A>=20>=202.34.1=0D=0A>=20>=
+=0D=0A>=20>=0D=0A=0D=0A
 
