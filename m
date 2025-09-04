@@ -1,343 +1,152 @@
-Return-Path: <linux-kernel+bounces-800489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53E91B43859
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:16:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44254B43813
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EEB8188EBAD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:16:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13920189DDA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854A0308F26;
-	Thu,  4 Sep 2025 10:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3A12F998A;
+	Thu,  4 Sep 2025 10:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="E0hR3N4A"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VyzLLZMp"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CF3307AD3;
-	Thu,  4 Sep 2025 10:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20C22F83DC
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756980718; cv=none; b=ggQDBHC9FK0FPTKnS6j1DM7b0wq63xrS36F+MbMrrXQ5i4ZNruXJQNiiLrLJGvEzhFYYKzeICxs2FAak+FyL6VbfuHla5Q8S+1uc5j7MJt51glMWVbXSMvSEGfr3iKnuttZ4UyYd1aggloIAGdDcXgf/XLTH1SVTvYjhzI92XEY=
+	t=1756980644; cv=none; b=LvSJK7dcmcGc0MH4VDqc0hCpPQx3ZZ3LbTuvdeC470Y3TNDa1JQ1dKNIXxthcx6UyACiMYX2/3HQvqCBXxmJ2yio+ZvRofmtTf3KcrUohEgszbOQ5+0H/WfzLeSTGoKwsENU/AsYLQZz+uiUhPoeeYTvOZV82F6g1Rsm1pOkATA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756980718; c=relaxed/simple;
-	bh=PMt2uO6UeQRaR3haWcdZa7nGacOF6eHp/N7/6UpD1GE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D4oNum686ElgyW3T7dWTfu4dQ999p+XZibj1FZKhcfB40h2UK+J0vOL7GLWmLUJGbwQn25dOpFmU0+M84iG9opnWKHFbZuYiiQI3FCvJhhS7B7JwNZWEbQSYEiT7mT+/IUDg+LEef54Aivv7VS2CKbn6V7YLFrbg9QkjTYVjkww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=E0hR3N4A; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 516341A0D64;
-	Thu,  4 Sep 2025 10:11:55 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 2A27C606BB;
-	Thu,  4 Sep 2025 10:11:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2DC401C22D9F6;
-	Thu,  4 Sep 2025 12:11:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756980713; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=/UBLfqCcIISrW8jCas/f1ZnRrmJywX30arPGEkmFDDQ=;
-	b=E0hR3N4AEa8+LZlTcd2/YGCHeEN74ogeW0ONCbM7jItnZHdPKwSuUyXsL4ZPy1M5hssf/m
-	PNfrm5EXXnWVKqdpGcCZXDWqg5yzf/bR33ah7DBEF2I2MOsQrBOIuDtROc54counfZdLel
-	Og/9nPQVU7aNMK/mklqM1XJT9RYYsld6wrYAuC3Gq5oooh8Ejyhj9ZK0CbfjZpQHY2oaML
-	tFFDid0V/RZQmOFBC4fYiVkwa2bh8NgGXtR6tMzqqwW2jKjTi/+z2ytrc1X7QLP3KsJyHv
-	HDI0UrjN0ij7Sf9vCoEjfF2VaO15hDpYCfJGehegsj2Nft60sM9Emyfjh90C+g==
-From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Date: Thu, 04 Sep 2025 12:10:29 +0200
-Subject: [PATCH bpf-next v3 14/14] selftests/bpf: test_xsk: Integrate
- test_xsk.c to test_progs framework
+	s=arc-20240116; t=1756980644; c=relaxed/simple;
+	bh=WYAkuhBUkyGeNAMuzRFafeVQCBzyUp43MM/5ay7OtGs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sr9VE7rgODQfJOBGsnNjnH45FHIQjloNPsPOR5fM3zU4GE38zKbvvFBRaSJN2a1sP2issmr7y4bLLlIQWjWgaIj+mgxPUuHKS22nr/oGciURotSVUNFCcAZBn/U8tqfUlfyeAtkqU/VFhBxZrvHshPgl30sQVPxzDJuzxNiXcjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VyzLLZMp; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32326e09f58so939554a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 03:10:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756980642; x=1757585442; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mzz9fRqkvT5uX5MoAuPEzgbckQvhFxni4jRgfGvmtgU=;
+        b=VyzLLZMp3UNgdhNA6DQN1XU3hwLiP0Y6siHsplNNRRQau09GUmkpNu/ip8r8GqJzxw
+         GRFAITtwzHxpZmui8tGibE60xuQd0/UAPOCv9fecYw2HSsyOwWXEJjffTrcKdMm3erxj
+         d0ivxGTqqBjdbQpF4DU2QfCsVaunjTDAMw01Pd7a+2lUd+IhpgxS+zLaJz716xkxO7Bg
+         E6HMbBQVXbt/tb9gqAYyRdk67Od2RRCI02bIRNI8UoE3E61KdaYHz3oHclBOk3OyRTnY
+         w4b8e+n8N7p1+4BzkxY8rZ3PK+/hGawVZvOepnZop4tAAFNPglhwGly2qraQY5l76cgi
+         4AmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756980642; x=1757585442;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mzz9fRqkvT5uX5MoAuPEzgbckQvhFxni4jRgfGvmtgU=;
+        b=joQ/l31QnOPueD+/pWA9dED98VKmQww1oWDyIJEXCPNjGSx7s/Dd/AnaLHKWof7Gzr
+         bPqGzXugPcN874cHPimKllPCPcjRV5eWpedgF+aw5N78nHdH8K3Jy8k2/N7/VK8DATN8
+         YKTRw9lOBDTDVQwZSiKYrDZN7nGzWlpj/+5Wes4+aVR9DnM+IECs22eRBOSa8uoPDg8e
+         bVee/IBwWcEmdUo31T/hGf3tpyfcbcVPWGAWCA/rk00s2u9RWWDWbN0p7cxw37P0ruCE
+         s2l15cEGWMk0w51Hi3SHO839qeZl5PMi+5UXhLmns4gnXR7jzX2Z01zKZ4f1Cx9FiGB/
+         sFLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpKnNIKnZOZVr/QMjeGNexB2wSTqvZWxwPeddppF40jOchpQGp8eROkoB9lKV+A6v/fp97UW9uyj5Y7eQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIOKlyNP2sssAzbt/zRMMh1DywgyhdJsO0V1MIsTovjYnBw5Or
+	w6mAxYE37s/B5Rq3dVPTZ977JYiMpn6QxjywHhxhSnqhDTZPJjhEEcCoMGnZ8C+71d/L/MLH+Kf
+	G0ANcESJza4/Vs0GUaxMn2euJRwV1JBM=
+X-Gm-Gg: ASbGncvn7PIyU46irwrLqOsmGToG48Ai+FpTIoBi5hO7hq1/NjYGw6r7g6/GR9BmAwu
+	3CssAyvRggO2d/o7yUNM+lWhJqHCSUjWJ5nxsyHaiGVQS4JMYbVsRG+ji8lV8Ajc6Z3AgxWc6xp
+	7/kuntcvUdmvb/qMQo1ORGkGQxRFArXGK6RtXvUZJ8X28tJFaWuxpcDBMGPrOeqKaf5TCsDo2QL
+	2yD17p74zTzHDJl
+X-Google-Smtp-Source: AGHT+IEcr6S5zr86X7JbbP5sYJWvgrw9FGbOqdwNbxj9i0AU+TbarxyEOKi8uBCwkBmAEckqzOKfKywVq1s6p5aN8Pk=
+X-Received: by 2002:a17:90b:2252:b0:327:edde:609e with SMTP id
+ 98e67ed59e1d1-3281543caffmr28305888a91.12.1756980641893; Thu, 04 Sep 2025
+ 03:10:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-xsk-v3-14-ce382e331485@bootlin.com>
-References: <20250904-xsk-v3-0-ce382e331485@bootlin.com>
-In-Reply-To: <20250904-xsk-v3-0-ce382e331485@bootlin.com>
-To: =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
- Magnus Karlsson <magnus.karlsson@intel.com>, 
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
- Jonathan Lemon <jonathan.lemon@gmail.com>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org, 
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20250904002924.2bc63b73@minigeek.lan>
+In-Reply-To: <20250904002924.2bc63b73@minigeek.lan>
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+Date: Thu, 4 Sep 2025 12:10:30 +0200
+X-Gm-Features: Ac12FXy-UNDQKQzOziQWMNs3hr0MwNpnD0zv9eFEeEfrnSbWD3LfsO0NbySuusI
+Message-ID: <CAH9NwWepSZnBP7tot9it_bDEbSC14PrMePz+fBtHfHz4ikLDYA@mail.gmail.com>
+Subject: Re: drm/etnaviv: detecting disabled Vivante GPU?
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>, 
+	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, 
+	linux-sunxi <linux-sunxi@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-test_xsk.c isn't part of the test_progs framework.
+Hi
 
-Integrate the tests defined by test_xsk.c into the test_progs framework
-through a new file : prog_tests/xsk.c. ZeroCopy mode isn't tested in it
-as veth peers don't support it.
+>
+> the Allwinner A523/A527/T527 family of SoCs feature a Vivante
+> "VIP9000"(?) NPU, though it seems to be disabled on many SKUs.
+> See https://linux-sunxi.org/A523#Family_of_sun55iw3 for a table, the
+> row labelled "NPU" indicates which model has the IP. We suspect it's
+> all the same die, with the NPU selectively fused off on some packages.
+>
+> Board vendors seem to use multiple SKUs of the SoC on the same board,
+> so it's hard to say which particular board has the NPU or not. We
+> figured that on unsupported SoCs all the NPU registers read as 0,
+> though, so were wondering if that could be considered as a bail-out
+> check for the driver?
+> At the moment I get this, on a SoC with a disabled NPU:
+> [    1.677612] etnaviv etnaviv: bound 7122000.npu (ops gpu_ops)
+> [    1.683849] etnaviv-gpu 7122000.npu: model: GC0, revision: 0
+> [    1.690020] etnaviv-gpu 7122000.npu: Unknown GPU model
+> [    1.696145] [drm] Initialized etnaviv 1.4.0 for etnaviv on minor 0
+> [    1.953053] etnaviv-gpu 7122000.npu: GPU not yet idle, mask: 0x0000000=
+0
+>
+> Chen-Yu got this on his board featuring the NPU:
+>     etnaviv-gpu 7122000.npu: model: GC9000, revision: 9003
+>
+> If I get the code correctly, then etnaviv_gpu_init() correctly detects
+> the "unsupported" GPU model, and returns -ENXIO, but load_gpu() in
+> etnaviv_drv.c then somewhat ignores this, since it keeps looking for more
+> GPUs, and fails to notice that *none* showed up:
+> /sys/kernel/debug/dri/etnaviv/gpu is empty in my case.
+>
 
-Move test_xsk{.c/.h} to prog_tests/.
+Looks fine to me - no wrong behavior.
 
-Add the find_bit library to test_progs sources in the Makefile as it is
-is used by test_xsk.c
+> Quick questions:
+> - Is reading 0 from VIVS_HI_CHIP_IDENTITY (or any other of the ID
+>   registers) an invalid ID, so we can use that to detect those disabled
+>   NPUs? If not, can any other register used to check this? The whole
+>   block seems to be RAZ/WI when the NPU is disabled.
+>
+> - Would it be acceptable to change the logic to error out of the
+>   driver's init or probe routine when no GPU/NPU has been found, at
+>   best with a proper error message? As it stands at the moment, the
+>   driver is loaded, but of course nothing is usable, so it keeps
+>   confusing users.
+>
 
-Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
----
- tools/testing/selftests/bpf/Makefile               |  13 +-
- .../selftests/bpf/{ => prog_tests}/test_xsk.c      |   0
- .../selftests/bpf/{ => prog_tests}/test_xsk.h      |   0
- tools/testing/selftests/bpf/prog_tests/xsk.c       | 146 +++++++++++++++++++++
- tools/testing/selftests/bpf/xskxceiver.c           |   2 +-
- 5 files changed, 158 insertions(+), 3 deletions(-)
+From an application standpoint, it=E2=80=99s not confusing since there is n=
+o etnaviv
+device to interact with. The user might wonder about the kernel messages,
+but that=E2=80=99s actually caused by an incorrect device tree. If the SoC =
+doesn=E2=80=99t
+have an NPU, it shouldn=E2=80=99t be enabled in the DTS.
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 4bb4f3ee822c1adce0fbd82725b40983695d38b9..1af7d4b9fe54b777131bce0cbb8ca328c885c23a 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -541,6 +541,8 @@ TRUNNER_TEST_OBJS := $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.test.o,	\
- 				 $$(notdir $$(wildcard $(TRUNNER_TESTS_DIR)/*.c)))
- TRUNNER_EXTRA_OBJS := $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.o,		\
- 				 $$(filter %.c,$(TRUNNER_EXTRA_SOURCES)))
-+TRUNNER_LIB_OBJS := $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.o,		\
-+				 $$(filter %.c,$(TRUNNER_LIB_SOURCES)))
- TRUNNER_EXTRA_HDRS := $$(filter %.h,$(TRUNNER_EXTRA_SOURCES))
- TRUNNER_TESTS_HDR := $(TRUNNER_TESTS_DIR)/tests.h
- TRUNNER_BPF_SRCS := $$(notdir $$(wildcard $(TRUNNER_BPF_PROGS_DIR)/*.c))
-@@ -672,6 +674,10 @@ $(TRUNNER_EXTRA_OBJS): $(TRUNNER_OUTPUT)/%.o:				\
- 	$$(call msg,EXT-OBJ,$(TRUNNER_BINARY),$$@)
- 	$(Q)$$(CC) $$(CFLAGS) -c $$< $$(LDLIBS) -o $$@
- 
-+$(TRUNNER_LIB_OBJS): $(TRUNNER_OUTPUT)/%.o:$(TOOLSDIR)/lib/%.c
-+	$$(call msg,LIB-OBJ,$(TRUNNER_BINARY),$$@)
-+	$(Q)$$(CC) $$(CFLAGS) -c $$< $$(LDLIBS) -o $$@
-+
- # non-flavored in-srctree builds receive special treatment, in particular, we
- # do not need to copy extra resources (see e.g. test_btf_dump_case())
- $(TRUNNER_BINARY)-extras: $(TRUNNER_EXTRA_FILES) | $(TRUNNER_OUTPUT)
-@@ -685,6 +691,7 @@ $(OUTPUT)/$(TRUNNER_BINARY): | $(TRUNNER_BPF_OBJS)
- 
- $(OUTPUT)/$(TRUNNER_BINARY): $(TRUNNER_TEST_OBJS)			\
- 			     $(TRUNNER_EXTRA_OBJS) $$(BPFOBJ)		\
-+			     $(TRUNNER_LIB_OBJS)			\
- 			     $(RESOLVE_BTFIDS)				\
- 			     $(TRUNNER_BPFTOOL)				\
- 			     $(OUTPUT)/veristat				\
-@@ -718,6 +725,7 @@ TRUNNER_EXTRA_SOURCES := test_progs.c		\
- 			 json_writer.c 		\
- 			 flow_dissector_load.h	\
- 			 ip_check_defrag_frags.h
-+TRUNNER_LIB_SOURCES := find_bit.c
- TRUNNER_EXTRA_FILES := $(OUTPUT)/urandom_read				\
- 		       $(OUTPUT)/liburandom_read.so			\
- 		       $(OUTPUT)/xdp_synproxy				\
-@@ -755,6 +763,7 @@ endif
- TRUNNER_TESTS_DIR := map_tests
- TRUNNER_BPF_PROGS_DIR := progs
- TRUNNER_EXTRA_SOURCES := test_maps.c
-+TRUNNER_LIB_SOURCES :=
- TRUNNER_EXTRA_FILES :=
- TRUNNER_BPF_BUILD_RULE := $$(error no BPF objects should be built)
- TRUNNER_BPF_CFLAGS :=
-@@ -776,8 +785,8 @@ $(OUTPUT)/test_verifier: test_verifier.c verifier/tests.h $(BPFOBJ) | $(OUTPUT)
- 	$(Q)$(CC) $(CFLAGS) $(filter %.a %.o %.c,$^) $(LDLIBS) -o $@
- 
- # Include find_bit.c to compile xskxceiver.
--EXTRA_SRC := $(TOOLSDIR)/lib/find_bit.c
--$(OUTPUT)/xskxceiver: $(EXTRA_SRC) test_xsk.c test_xsk.h xskxceiver.c xskxceiver.h $(OUTPUT)/network_helpers.o $(OUTPUT)/xsk.o $(OUTPUT)/xsk_xdp_progs.skel.h $(BPFOBJ) | $(OUTPUT)
-+EXTRA_SRC := $(TOOLSDIR)/lib/find_bit.c prog_tests/test_xsk.c prog_tests/test_xsk.h
-+$(OUTPUT)/xskxceiver: $(EXTRA_SRC) xskxceiver.c xskxceiver.h $(OUTPUT)/network_helpers.o $(OUTPUT)/xsk.o $(OUTPUT)/xsk_xdp_progs.skel.h $(BPFOBJ) | $(OUTPUT)
- 	$(call msg,BINARY,,$@)
- 	$(Q)$(CC) $(CFLAGS) $(filter %.a %.o %.c,$^) $(LDLIBS) -o $@
- 
-diff --git a/tools/testing/selftests/bpf/test_xsk.c b/tools/testing/selftests/bpf/prog_tests/test_xsk.c
-similarity index 100%
-rename from tools/testing/selftests/bpf/test_xsk.c
-rename to tools/testing/selftests/bpf/prog_tests/test_xsk.c
-diff --git a/tools/testing/selftests/bpf/test_xsk.h b/tools/testing/selftests/bpf/prog_tests/test_xsk.h
-similarity index 100%
-rename from tools/testing/selftests/bpf/test_xsk.h
-rename to tools/testing/selftests/bpf/prog_tests/test_xsk.h
-diff --git a/tools/testing/selftests/bpf/prog_tests/xsk.c b/tools/testing/selftests/bpf/prog_tests/xsk.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..7ce5ddd7d3fc848df27534f00a6a9f82fbc797c5
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/xsk.c
-@@ -0,0 +1,146 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <net/if.h>
-+#include <stdarg.h>
-+
-+#include "network_helpers.h"
-+#include "test_progs.h"
-+#include "test_xsk.h"
-+#include "xsk_xdp_progs.skel.h"
-+
-+#define VETH_RX "veth0"
-+#define VETH_TX "veth1"
-+#define MTU	1500
-+
-+int setup_veth(bool busy_poll)
-+{
-+	SYS(fail,
-+	"ip link add %s numtxqueues 4 numrxqueues 4 type veth peer name %s numtxqueues 4 numrxqueues 4",
-+	VETH_RX, VETH_TX);
-+	SYS(fail, "sysctl -wq net.ipv6.conf.%s.disable_ipv6=1", VETH_RX);
-+	SYS(fail, "sysctl -wq net.ipv6.conf.%s.disable_ipv6=1", VETH_TX);
-+
-+	if (busy_poll) {
-+		SYS(fail, "echo 2 > /sys/class/net/%s/napi_defer_hard_irqs", VETH_RX);
-+		SYS(fail, "echo 200000 > /sys/class/net/%s/gro_flush_timeout", VETH_RX);
-+		SYS(fail, "echo 2 > /sys/class/net/%s/napi_defer_hard_irqs", VETH_TX);
-+		SYS(fail, "echo 200000 > /sys/class/net/%s/gro_flush_timeout", VETH_TX);
-+	}
-+
-+	SYS(fail, "ip link set %s mtu %d", VETH_RX, MTU);
-+	SYS(fail, "ip link set %s mtu %d", VETH_TX, MTU);
-+	SYS(fail, "ip link set %s up", VETH_RX);
-+	SYS(fail, "ip link set %s up", VETH_TX);
-+
-+	return 0;
-+
-+fail:
-+	return -1;
-+}
-+
-+void delete_veth(void)
-+{
-+	SYS_NOFAIL("ip link del %s", VETH_RX);
-+	SYS_NOFAIL("ip link del %s", VETH_TX);
-+}
-+
-+int configure_ifobj(struct ifobject *tx, struct ifobject *rx)
-+{
-+	rx->ifindex = if_nametoindex(VETH_RX);
-+	if (!ASSERT_OK_FD(rx->ifindex, "get RX ifindex"))
-+		return -1;
-+
-+	tx->ifindex = if_nametoindex(VETH_TX);
-+	if (!ASSERT_OK_FD(tx->ifindex, "get TX ifindex"))
-+		return -1;
-+
-+	tx->shared_umem = false;
-+	rx->shared_umem = false;
-+
-+
-+	return 0;
-+}
-+
-+static void test_xsk(const struct test_spec *test_to_run, enum test_mode mode)
-+{
-+	struct ifobject *ifobj_tx, *ifobj_rx;
-+	struct test_spec test;
-+	int ret;
-+
-+	ifobj_tx = ifobject_create();
-+	if (!ASSERT_OK_PTR(ifobj_tx, "create ifobj_tx"))
-+		return;
-+
-+	ifobj_rx = ifobject_create();
-+	if (!ASSERT_OK_PTR(ifobj_rx, "create ifobj_rx"))
-+		goto delete_tx;
-+
-+	if (!ASSERT_OK(setup_veth(false), "setup veth"))
-+		goto delete_rx;
-+
-+	if (!ASSERT_OK(configure_ifobj(ifobj_tx, ifobj_rx), "conigure ifobj"))
-+		goto delete_veth;
-+
-+	ret = get_hw_ring_size(ifobj_tx->ifname, &ifobj_tx->ring);
-+	if (!ret) {
-+		ifobj_tx->hw_ring_size_supp = true;
-+		ifobj_tx->set_ring.default_tx = ifobj_tx->ring.tx_pending;
-+		ifobj_tx->set_ring.default_rx = ifobj_tx->ring.rx_pending;
-+	}
-+
-+	if (!ASSERT_OK(init_iface(ifobj_rx, worker_testapp_validate_rx), "init RX"))
-+		goto delete_veth;
-+	if (!ASSERT_OK(init_iface(ifobj_tx, worker_testapp_validate_tx), "init TX"))
-+		goto delete_veth;
-+
-+	test_init(&test, ifobj_tx, ifobj_rx, 0, &tests[0]);
-+
-+	test.tx_pkt_stream_default = pkt_stream_generate(DEFAULT_PKT_CNT, MIN_PKT_SIZE);
-+	if (!ASSERT_OK_PTR(test.tx_pkt_stream_default, "TX pkt generation"))
-+		goto delete_veth;
-+	test.rx_pkt_stream_default = pkt_stream_generate(DEFAULT_PKT_CNT, MIN_PKT_SIZE);
-+	if (!ASSERT_OK_PTR(test.rx_pkt_stream_default, "RX pkt generation"))
-+		goto delete_veth;
-+
-+
-+	test_init(&test, ifobj_tx, ifobj_rx, mode, test_to_run);
-+	ret = test.test_func(&test);
-+	if (ret != TEST_SKIP)
-+		ASSERT_OK(ret, "Run test");
-+	pkt_stream_restore_default(&test);
-+
-+	if (ifobj_tx->hw_ring_size_supp)
-+		hw_ring_size_reset(ifobj_tx);
-+
-+	pkt_stream_delete(test.tx_pkt_stream_default);
-+	pkt_stream_delete(test.rx_pkt_stream_default);
-+	xsk_xdp_progs__destroy(ifobj_tx->xdp_progs);
-+	xsk_xdp_progs__destroy(ifobj_rx->xdp_progs);
-+
-+delete_veth:
-+	delete_veth();
-+delete_rx:
-+	ifobject_delete(ifobj_rx);
-+delete_tx:
-+	ifobject_delete(ifobj_tx);
-+}
-+
-+void test_ns_xsk_skb(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(tests); i++) {
-+		if (test__start_subtest(tests[i].name))
-+			test_xsk(&tests[i], TEST_MODE_SKB);
-+	}
-+}
-+
-+void test_ns_xsk_drv(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(tests); i++) {
-+		if (test__start_subtest(tests[i].name))
-+			test_xsk(&tests[i], TEST_MODE_DRV);
-+	}
-+}
-+
-diff --git a/tools/testing/selftests/bpf/xskxceiver.c b/tools/testing/selftests/bpf/xskxceiver.c
-index 0d8e240864c747253d72319efeecd46f0fdeff03..4c8b931d9e3d5b5723df87922551d1b5b97293b1 100644
---- a/tools/testing/selftests/bpf/xskxceiver.c
-+++ b/tools/testing/selftests/bpf/xskxceiver.c
-@@ -90,7 +90,7 @@
- #include <sys/mman.h>
- #include <sys/types.h>
- 
--#include "test_xsk.h"
-+#include "prog_tests/test_xsk.h"
- #include "xsk_xdp_progs.skel.h"
- #include "xsk.h"
- #include "xskxceiver.h"
+--=20
+greets
+--
+Christian Gmeiner, MSc
 
--- 
-2.50.1
-
+https://christian-gmeiner.info/privacypolicy
 
