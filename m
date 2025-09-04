@@ -1,141 +1,158 @@
-Return-Path: <linux-kernel+bounces-800082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33A08B43330
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:02:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF964B4325F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:27:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ABAE5E5526
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:00:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78B703A5ECF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02F42C0289;
-	Thu,  4 Sep 2025 06:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F38264F9C;
+	Thu,  4 Sep 2025 06:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="dbfK9a5M";
-	dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="LfO3RmLV"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fx8As2OA"
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C726286412;
-	Thu,  4 Sep 2025 06:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.166
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756968943; cv=pass; b=Ozdb6NHaeO0zowUVmte2M2WwDhEqDtTiuypo657MZX6jrNlTZTiJOHKTKNnhxTct8Ka/r6bV+SHCI2ErG9dQArGhmtTVFBwEAch1lrQUVrqCse2VgAoeIvPe/tSso6SQW5Zn+2vdMB/rD3uGh3bE3sV7xM5xp+vpSSTg0SwKXek=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756968943; c=relaxed/simple;
-	bh=bCInGNafFosv2/EfM0snbVd+AWphjz5RaQRvz2HRRWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jHukFFz/70uYr76Q4TQFMnSP6gJT8utkCUbZCNSMkAFI+7IUfHoANOSoD3nMKAB8NKkF1glyt2Amu5DkCTDQequCW7aazmeZek6A5KTeg42jSiiuGnB4O4vrIumNWezyGVcYkwb71nWOD0FA3NKXMsnhzsV6VjckCvx8y4JSSKA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net; spf=pass smtp.mailfrom=hartkopp.net; dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=dbfK9a5M; dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=LfO3RmLV; arc=pass smtp.client-ip=81.169.146.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hartkopp.net
-ARC-Seal: i=1; a=rsa-sha256; t=1756967139; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=jhq13UGEQj+UVTk+FWkawpup0vWB4vRosIpcfSqaHJGKkk+Dhe0og8uhEFj4d6JneY
-    e+bjNgmNs4dO27TjhMBlijH9o3muPliKutXtBtJas2EHGbIXCEUE+39i0hKfkeM8GvoB
-    WFxaCyW4EeWT1H2zqGlYGrZUxNoJ1P/J3f49h6P61fACrTouQG3zQQylHQ3BLjkM7ebV
-    xlDkHAm5ZkT1zZMb7WwVMCPsIwVfbO6klyFMfeiYtdYydgrQSSTvcpslAuloVRrAuBM+
-    K+G5Tih4IhRcnRjJ8bjdnaLmUSFcumNL/heDZDnONfJmRYt+oC1GyX4mh0Xp0WdxoTnY
-    zuBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1756967139;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=Et1a3Y43DomKtCR9LncztA0z4+5TKf95ey/BMZttA8Y=;
-    b=YJ7Zq4RffSAYvQ4PAcODpZPt/IguDM1sVSWYL5sbpbtRhwiqmZOyjVeuTxRuyGgMPf
-    xH73WxLHA+b1d1Hwy4xTDUALSA0TBosFv5ZNrvAgWJ1AOkPsKhVBxMmzR5pmluT+K83+
-    lEMAZa9el1uPH8lK8FU5cbT6r+UIO9/dPbQB5yAVDj53dylYRHATUAJYGPamn34EPJeb
-    Zp33XZ4ID18Fu4isdsdTFFKcDhL0fQl+l2Uq2hZ4n6POfxbw0nveNz4d8Ff1T+fnomPu
-    DsviOJPSZOPpJI3fCHQ1V0rhuMDEnracpCtWPadiNVk0Qr2rDBzsgCEGSkQmctPhr/Fy
-    +uMw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1756967139;
-    s=strato-dkim-0002; d=hartkopp.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=Et1a3Y43DomKtCR9LncztA0z4+5TKf95ey/BMZttA8Y=;
-    b=dbfK9a5Mgo+loiwoQD9/Qn2XvVKcsbBEDCo8BQtzhJhC4Ik7MrAdQ0BPbfVsvrcom5
-    VQavMhKiJJ1BVZ3rymEhPjG+uVHMigPqBvIvy4wuNqqq5Qx9v+63vxB1WFw8wPbaF6Oc
-    SeyGfQwuSF6qcllQYX04K1Eo7XB2GvCJL4ts+JkO+DGrPs9KQxwpWA3YMhgFxRYnIR8D
-    cVxXpVX+FbIzpIdHnFley9eEy5qvAPp4RtJk+z94ewfgEePHRou2g2OU6y+y3l/mwWLd
-    GAoODfCCXqE3xpYIrBIvNTQTsVae2czBtsq9cV/3lTxKFUEvMfhOSacEFKdUZwxfv14U
-    iImA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1756967139;
-    s=strato-dkim-0003; d=hartkopp.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=Et1a3Y43DomKtCR9LncztA0z4+5TKf95ey/BMZttA8Y=;
-    b=LfO3RmLVCHeKqxyFq05BCUkJ+hEc08nOhAClgxTWDjRJj0w87El7mpFbFrL1j5Jmw0
-    yXbDCD9J9xtU/Mle0kBQ==
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjH4JKvMdQv2tTUsMrZpkO3Mw3lZ/t54cFxeEQ7s8bGWj0Q=="
-Received: from [IPV6:2a00:6020:4a38:6810::9f3]
-    by smtp.strato.de (RZmta 52.1.2 AUTH)
-    with ESMTPSA id K5d3611846PcLfl
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Thu, 4 Sep 2025 08:25:38 +0200 (CEST)
-Message-ID: <a7c707b7-61e1-4c40-8708-f3331da96d34@hartkopp.net>
-Date: Thu, 4 Sep 2025 08:25:32 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602721D6DA9;
+	Thu,  4 Sep 2025 06:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756967258; cv=none; b=Zwf7y6fLZcREMg4YvIRlChrwTwPNMhIGX7TPMyhxVJbTfnZTm/DBjc43BN19uYM/1Ok/G+zh+ViA61E62TnzKazoEFFNEJORNdDK+wCgD56F0dApg60elzc9ecsVBCD2ZQkvXa93yHxGeOHTAQUo90ss9l8zP93e6rvIx/nHvp4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756967258; c=relaxed/simple;
+	bh=qOoQqzPhHA7l7oQFCN5z160cyXP59PoS/2n9Sqlsw0w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Df3rQbdv2WW0NVZzC13LARv8rtDBCA6UQW6jaBJ34HcS9IqJojHnMUIVLm0WefIeeRkaS+UZ/6y4iwcJUs/QXQFacShfG7hLWw4lIEy99aVq43062If5+pSCzNUqifwOVa5Lqpdzg6NPrx2boWrOzMst/zxeOQ95+M4z4G5k+KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fx8As2OA; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-24c89867a17so7434205ad.1;
+        Wed, 03 Sep 2025 23:27:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756967256; x=1757572056; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1qOSN4kCmnmr6woSnWWSU8/9jXudpqtML0uUdQZcKdA=;
+        b=fx8As2OAjVmtlXuyJ8HBCrzV+J6/lX4m1tjZUbYenZbQAKATW5YaWmVohXnZySXX1l
+         652OQP7fgvNF6NDroATGaiHZjvUyyOJ/XYB4kFmMMcFZjiQZNHAUFQbNIsTiXbp73yGP
+         nq6pc+daXZ2jJxcljQWziVTQeBR1kZy1/Vn8swDQyej14uE/VmSXY2ylz2kQomnk9OLN
+         TJfO4ef0UEhCQPjZ56vF21O7mpg6u0ihxqc5xBZEpSub9/Vj+ZfZLubvP5ynIVK3wC0m
+         c3K40A5mLwtT4v8HsnKAIfl7EBNVAIAZF6Vro3gOy/e9qEjJrzHNdt5fl4/tV9q6XRTD
+         S1rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756967256; x=1757572056;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1qOSN4kCmnmr6woSnWWSU8/9jXudpqtML0uUdQZcKdA=;
+        b=iscQXJVsGpekG83lWjL86vuVYi39TZbARoVgoC8DuVepXUg9MHeBoWYJYoPfR2dAix
+         FhqyiEUDbltCl9ik52AmDnkxi3po54mU5Z/mjSNY/V0TF+NCVQVn3gd48OtOtbFKrxQi
+         hR5daF9d9fPtaEQ/PqX/YkWP1kL1Tb2D+NVFSzWIrHVzArNenKKPtPIBcbdKkdNxWQh0
+         ugXOkG6115cRgpjVCHSfzOzFxayBGW6i8EsQMbWdDncyIp2JXd2B/sIR3Zkfq/J9ERvq
+         /J3Z1M5q2DnmmsC1LPcXjrfHxP76ha20qf6ADpviX4eQ9wDQa1di4Bdhb2XOhLjccwek
+         MAWg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4BMdIFIQuwNkNppx4wW+WmvEfqCiq5lPWVpYPRVzgGgCujz+rwEhtA11aiF/CSpksnPbpL6K/i9keTipgBm+/TRpM@vger.kernel.org, AJvYcCXi0/b8Ik+yBvYSDRqKo42LSMkYZdjY+H83x7GoEdVQsU/ufSQSwBce4jduVss/JXVy3817sxAcUJuXJpk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtHaIDDSZrCqTwllQzF+cqyNSEAbzMAhNjDcopQu1/wlEXA6Hf
+	4bZpI+bphiO0rKYHXQLRvLyDENT8ObN8rv8UvfJtXZiB+PO+U64xdxz8
+X-Gm-Gg: ASbGnctbzf2ErZ8p5kC8c1vKvLY62EVQeh0aEbm8KpSUOyF4IH9IXUXMa1sxzeFBDsk
+	CRakA6MOXtBLGSJBB5cRkyRJj/AEz69uNEqykK0XJxfpQzrUZOni5vyPQzAKdjW2Smj+YHIJ9yH
+	Srjri9IWh5jQfibbtBSqPrq2q0IzpJb81kyD/syVJb0cgKgxWlXbeHiQ31+TYo36gwoJT2b8vNM
+	U6az/oGFi1dzftv29LTtkopEtVQgWriN+qmIJc8uL7r/1+Ya+NuuTnbxCCCclDsJnKqmjtxHLrx
+	B6rYpWCWFXNaVjo1F10/VqD9jXQt3iJgZtS5yeOne34XEYfLTMwc4A9CPXIr5Nc3zOYyTaTHogA
+	Z6Tfb5jlmqnn3ecynnjadfSZ3MfgYWdelhA==
+X-Google-Smtp-Source: AGHT+IFnwKIjS0BSLTsgBA1i8cQ/1rxTC5iKDDrbTHPxatrjhRdlRWcMwvNS67YAhvCoTCa9DvR4lQ==
+X-Received: by 2002:a17:902:ebc9:b0:246:7711:87e with SMTP id d9443c01a7336-249448f3188mr227495115ad.21.1756967255486;
+        Wed, 03 Sep 2025 23:27:35 -0700 (PDT)
+Received: from 7940hx ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c7bdfe9edsm48003905ad.141.2025.09.03.23.27.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 23:27:35 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: mhiramat@kernel.org
+Cc: rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v2] tracing: fprobe: fix suspicious rcu usage in fprobe_entry
+Date: Thu,  4 Sep 2025 14:27:29 +0800
+Message-ID: <20250904062729.151931-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] docs: networking: can: change bcm_msg_head frames
- member to support flexible array
-To: Alex Tran <alex.t.tran@gmail.com>
-Cc: mkl@pengutronix.de, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- linux-can@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250904031709.1426895-1-alex.t.tran@gmail.com>
-Content-Language: en-US
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-In-Reply-To: <20250904031709.1426895-1-alex.t.tran@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+rcu_read_lock() is not needed in fprobe_entry, but rcu_dereference_check()
+is used in rhltable_lookup(), which causes suspicious RCU usage warning:
 
+  WARNING: suspicious RCU usage
+  6.17.0-rc1-00001-gdfe0d675df82 #1 Tainted: G S
+  -----------------------------
+  include/linux/rhashtable.h:602 suspicious rcu_dereference_check() usage!
+  ......
+  stack backtrace:
+  CPU: 1 UID: 0 PID: 4652 Comm: ftracetest Tainted: G S
+  Tainted: [S]=CPU_OUT_OF_SPEC, [I]=FIRMWARE_WORKAROUND
+  Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.1.1 10/07/2015
+  Call Trace:
+   <TASK>
+   dump_stack_lvl+0x7c/0x90
+   lockdep_rcu_suspicious+0x14f/0x1c0
+   __rhashtable_lookup+0x1e0/0x260
+   ? __pfx_kernel_clone+0x10/0x10
+   fprobe_entry+0x9a/0x450
+   ? __lock_acquire+0x6b0/0xca0
+   ? find_held_lock+0x2b/0x80
+   ? __pfx_fprobe_entry+0x10/0x10
+   ? __pfx_kernel_clone+0x10/0x10
+   ? lock_acquire+0x14c/0x2d0
+   ? __might_fault+0x74/0xc0
+   function_graph_enter_regs+0x2a0/0x550
+   ? __do_sys_clone+0xb5/0x100
+   ? __pfx_function_graph_enter_regs+0x10/0x10
+   ? _copy_to_user+0x58/0x70
+   ? __pfx_kernel_clone+0x10/0x10
+   ? __x64_sys_rt_sigprocmask+0x114/0x180
+   ? __pfx___x64_sys_rt_sigprocmask+0x10/0x10
+   ? __pfx_kernel_clone+0x10/0x10
+   ftrace_graph_func+0x87/0xb0
 
-On 04.09.25 05:17, Alex Tran wrote:
-> The documentation of the 'bcm_msg_head' struct does not match how
-> it is defined in 'bcm.h'. Changed the frames member to a flexible array,
-> matching the definition in the header file.
-> 
-> See commit 94dfc73e7cf4 ("treewide: uapi: Replace zero-length arrays with
-> flexible-array members")
-> 
-> Bug 217783 <https://bugzilla.kernel.org/show_bug.cgi?id=217783>
-> 
-> Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+As we discussed in [1], fix this by using guard(rcu)() in fprobe_entry()
+to protect the rhltable_lookup() and rhl_for_each_entry_rcu() with
+rcu_read_lock and suppress this warning.
 
-Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Link: https://lore.kernel.org/all/20250829021436.19982-1-dongml2@chinatelecom.cn/ [1]
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202508281655.54c87330-lkp@intel.com
+Fixes: dfe0d675df82 ("tracing: fprobe: use rhltable for fprobe_ip_table")
+Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+---
+v2:
+- use guard(rcu)() instead of rcu_read_lock()
+---
+ kernel/trace/fprobe.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks Alex!
-
-> ---
->   Documentation/networking/can.rst | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/networking/can.rst b/Documentation/networking/can.rst
-> index bc1b585355f7..7650c4b5be5f 100644
-> --- a/Documentation/networking/can.rst
-> +++ b/Documentation/networking/can.rst
-> @@ -742,7 +742,7 @@ The broadcast manager sends responses to user space in the same form:
->               struct timeval ival1, ival2;    /* count and subsequent interval */
->               canid_t can_id;                 /* unique can_id for task */
->               __u32 nframes;                  /* number of can_frames following */
-> -            struct can_frame frames[0];
-> +            struct can_frame frames[];
->       };
->   
->   The aligned payload 'frames' uses the same basic CAN frame structure defined
+diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+index fb127fa95f21..6a205903b1ed 100644
+--- a/kernel/trace/fprobe.c
++++ b/kernel/trace/fprobe.c
+@@ -269,6 +269,7 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+ 	if (WARN_ON_ONCE(!fregs))
+ 		return 0;
+ 
++	guard(rcu)();
+ 	head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
+ 	reserved_words = 0;
+ 	rhl_for_each_entry_rcu(node, pos, head, hlist) {
+-- 
+2.51.0
 
 
