@@ -1,186 +1,214 @@
-Return-Path: <linux-kernel+bounces-800770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8360B43BCC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:38:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04206B43BCE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C675A003CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:37:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94DA35A3373
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C83E2FE074;
-	Thu,  4 Sep 2025 12:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F072FDC3F;
+	Thu,  4 Sep 2025 12:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="GV6j6M/m"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013056.outbound.protection.outlook.com [40.107.44.56])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="moQ2N8/Z"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEAE2FDC3F
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756989421; cv=fail; b=VqPRySx3OcfRw+DjfDQ9BANYboSAK7aqkQGck5TuVqyG21CwPyiRTdxUmzEgUfqHN2NtnPySYIKjGcRJlpBtPDs9jXAD+/O//uhjwp4zB/PvFLo6xlGoyWTfaLDf0aVc2pfstIMu+5aQZ0/m7k+ky267AcbDGQympan3oh5/dog=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756989421; c=relaxed/simple;
-	bh=neODtvQd2Ri9epG3wa8iHNw4Vr0gNC144A/Zp4TNVaQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=g7lBLkrSz1B65IjZwD1wb0U37oIa/fwXaEGKgzbpsPerQFZWexHt/FDkS22lof6nqwwuoKFc7y14pl3HQnz4+EnGcswdph35hzqz8WTb+6JkuGKcAeV+E6OnmHML034G+KlCn5R1tSjUbUJU7ppJXmMOlRkK7mDVsgX4bn8H2bE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=GV6j6M/m; arc=fail smtp.client-ip=40.107.44.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wKOdLK14yrlKIIQj8eYuKzHqfmbBIKXQDaj+bJ+UzvXS4ep0h5m7VvdGNhNzsaQeuNxy6O301E+E+I0NA5CIe7cZTz7cd4HdKPDKXD1iP9sSdVnf9wKdJ4ikxw4N6Qn+nAyJmihPu2GmpM4YouQfumF4anMoMNVE5/P6HBzUUP1tDf12D1LKKR4wzNto81mnk7TIJquDPdfwKaSnoURF3+VSkn4ASv2je1COLFi+PaPrvQ51HRmT5noy8WqT2qASp2+En8Q0vYP+r3UyW6mIPcQw6NSAVfSrC5ex6QO4GXmqSira/A57Xn7MvOh/9rz3jUMA/OZhEq6dCCuCdMwR3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=06TFSUO/2S/BCeA732LX7xVRcqaRcj5HL+oHeCIT+m0=;
- b=mbMqxBuO/NoFe8zhAUdZmvzYWL3n4zIcRg300twwheXlIvo/XC2QZcmJ5fcrdz+zZP//yCgZ+k5jkkMir/ZTmL3j8hXFesCUZSH/oEKranEqkMf12fakw+NtIZNe/CmvQWiT2XRzNojONwOCJOb2nFyBkRuQ2OVocae1hQQbCN3MlTj+XFlf9qwWUqkx7qPd3p8zsdCB66WUSR0yUzeB6dyIBVQ3lyzRLW4OD+mWekjrD9QVuMaY0jFm0DAEt63VxOZPJFryHSG5sCY+hB1+wJ0xBpIkA6h304mBnA5mNxVO1dbcwxA01O8qyGDwpoiN1AzZIzElOO5syNqujImIig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=06TFSUO/2S/BCeA732LX7xVRcqaRcj5HL+oHeCIT+m0=;
- b=GV6j6M/m9hDMiCbt1XQIZfxpy2Btkt3U0wfMpGo/0ak3pwkI5QXZoveJiKSiqAIueNEN9TCaNJO+XVqPX3A4OCGqceDRNgf3vo/M+LxRAKL0bTDkDaHbR8OabxLXZYcfvuYStEagJ+p8AE3zyM29ijxZ+7j/pc9/5DayEQKpMQgphqsginyJmLGrrz+pY83VFSWIpQOldsaLYG9781FS3+e410uvtzsjSH8lPcZWHH+nzqSa/QzgzfVrpMtjRUMyOVrqikorTzYbzIxCyQ8jF1JlDdAlS5trKlSnhvl5gY0j5pN+Ptifv0BMe+BpwkbqxiFfSuQTjcsN/J+Mt43OcQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- PUZPR06MB5885.apcprd06.prod.outlook.com (2603:1096:301:110::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Thu, 4 Sep
- 2025 12:36:56 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9094.017; Thu, 4 Sep 2025
- 12:36:56 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Felix Kuehling <Felix.Kuehling@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Philip Yang <Philip.Yang@amd.com>,
-	Alex Sierra <alex.sierra@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [PATCH] drm/amdkfd: Fix error code sign for EINVAL in svm_ioctl()
-Date: Thu,  4 Sep 2025 20:36:46 +0800
-Message-Id: <20250904123646.464028-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0029.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::20) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049282FE579;
+	Thu,  4 Sep 2025 12:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756989426; cv=none; b=qS5y/mLOfA7HIdUTTjtPGV6+GVLRuSQwLtzuyELQZoDh6jBI6WeUVrVTMFvPys/M+Dv14XBI/Hm9LuNHuHNuE676ZkfOn8/gIZaa7snF4I30REcvbhxAM1SgcMar+P6UovvnPhgc2TLNn9goWS5/JHD5gDzDG0q8L0ikqqhHbYs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756989426; c=relaxed/simple;
+	bh=87SSrBtww/3Pcfse+37WJqauf4idj91HKOfl0CAMHQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iM2odDq4vAs86bavLtiIvGjdI1OSiE1uPbkJu+VPYqC6PZCCDa3zD4NUwAyKxg/0tVPBpwarEaOLqJXAn+0LhtSZswm2E6RUBPQMcHDVG4WvIc6txJ+EUorZpgpCljWUdaJxpeewqwYMZ1d1mY47aVqNCkJLD5GIy0ZFDtfiQck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=moQ2N8/Z; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 584Cau9e3011381;
+	Thu, 4 Sep 2025 07:36:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756989416;
+	bh=gvh/3eEZ++3Ko3LDIH91uXfAa26Cotcf789oGrJXSt4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=moQ2N8/Zf4xkfaLe82on02puG2f9bkEoDei5IEdZeZ9yfpuFopmQrf6QzTBS01Ym4
+	 iuWYPS80PgYKgudL/UxAg4dGW4QJagLx147SG8EPIwigriVbdZJm2idzf8eKxaIFyU
+	 Vtv5VSgOXnh5lI3SIMsCvHMolIk0sx7vCBjlR5sA=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 584Cau3e115570
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 4 Sep 2025 07:36:56 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 4
+ Sep 2025 07:36:56 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 4 Sep 2025 07:36:56 -0500
+Received: from [10.250.148.210] ([10.250.148.210])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 584CapOh2969517;
+	Thu, 4 Sep 2025 07:36:51 -0500
+Message-ID: <f2e60ec2-5a1f-4cff-a8ee-c2555d835946@ti.com>
+Date: Thu, 4 Sep 2025 18:06:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|PUZPR06MB5885:EE_
-X-MS-Office365-Filtering-Correlation-Id: 99324071-0d21-467e-8da2-08ddebafbc07
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|7416014|1800799024|376014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LC7ZTiQpNdi3iIcTjUfsWJHeR+KMn0g2OaTl3Ojjqy2bgyQXYaRjU+XRrsxK?=
- =?us-ascii?Q?VqMCD18pL/OMA83udrfwyTEgc2E8wS54F36I1df8mh7UZhp/Wqt5j3f9mS/g?=
- =?us-ascii?Q?fpH8ConfilxevBcituu1dJYJwgHBbrU9dzVO7t7jdHu1wHj0kwyet7w9E4kF?=
- =?us-ascii?Q?qbRSyn8VGd4uf40+efmXCP63TP6QGQj04IJ4Sy2DrFiES3UMrL7pXK+5gtRq?=
- =?us-ascii?Q?BrkyG8dwkemcgUc8KFVUobCm+raiSOvaEHfsV61Ap8iWX8+3OUbEmpElF+Zk?=
- =?us-ascii?Q?6HaBtqY2HQCMSM6btHTRVMuBY68m8XZjogBaCbWfWNKofnhiUHKyKdbq9TCg?=
- =?us-ascii?Q?mVXiouPz8kVHZetdEeFPKVZQBQOpwcc5iEkBcOcI1+vCal3/bYaH7SLt/cwV?=
- =?us-ascii?Q?XN4R2BUD6Y3C0gGrM4bjn+Nerwj49OfUwiHbSciLj4ZX37ZJI2l/YPReLJJy?=
- =?us-ascii?Q?8X3iHvi9fWWpmu+/2aJUNgWFN6ogyle3+f7rM4KjBmUtEEgQLENbjGJ0IJIO?=
- =?us-ascii?Q?pdPdf1bFVZpNCtRf/Pblkaw8b1Z8Qv8BbanpAGFevj4zYRXtBpV9QIhM/5kW?=
- =?us-ascii?Q?nXI7FdqTbEFqPwgsXQ1udrKr9J2RXkjgC0dCvherSlHC1Lnkpnnx/9amAwSi?=
- =?us-ascii?Q?EnpSqpXLF0xSYpbX7sG7KLPxqXZsahEeiQco8HV3d8LvR2IPFS2+KWExlUwd?=
- =?us-ascii?Q?5UHABEHHe2Uwki2WGTR2vA/5wYKJKTpoGtx3kvZoQv3HyYyMV4WEX6bi6/ri?=
- =?us-ascii?Q?DtDf26BOxkv4E8izGYhN7k5CfzqDgpIxIOBH3MsQSuYtYEM0BzygIgR1Dsjv?=
- =?us-ascii?Q?CpXjeTw9iZ4LrljalH/Z1DWB3AW+9NbqfkwFKJg0Ap+5l8B4Z/AHbBXJ/ltC?=
- =?us-ascii?Q?zPCxFYxOZ5QAPVCi2tMV5Lo7E3XIRCrUqqvUJhzm2idl+PdFQq/0H3Mvk6pX?=
- =?us-ascii?Q?e5HYTm+mtfFpmUSjbzAZvXwtR0TyHe8LnIvHfh2LOUtS9ZmoqFk2MSmY3C13?=
- =?us-ascii?Q?1zIpxZ6k9+vHFl9U70mgYYbu+RzVUGoxR71Z7Rd/tnmdpeRou6Y+hgPIzlcn?=
- =?us-ascii?Q?LyUmwgQq70vuShNaSBT4+UcG4avLl3R+tEdlVnqH0g2XzPgtgUjLvKSOue9o?=
- =?us-ascii?Q?jVpvTvKLBIviEvKrdq0YNxn2hF+L2TSC49cm/wlBxCc3ellvftuYbxTHgu0n?=
- =?us-ascii?Q?ghhCiXHWNL35szPol2KE74NYDPMVBXqQE5WqjL4GZreePxCMfWavtYl6hVDN?=
- =?us-ascii?Q?GhbH+5RmSC3ykJt+gnw2lpMxTE+Ny78lhOG1nc0+mIFoJ+FOHpUYdhdFesky?=
- =?us-ascii?Q?2IYstw2fQCvIMsYqGAzUX9MGTglmmBuEdj7lz3P09eI6Hz2IS4UDGNENazgF?=
- =?us-ascii?Q?ecAt2vyPEjbw/QO8Q0HfTeJyYxYv110wi6AfCV4yiPuBgICFwOgWlhl2W9Fz?=
- =?us-ascii?Q?VAZdmA9LP7UDsMJhwJqU5rbFu0gm4ih0yeQC44VH5eN6bJmZWt/lB3GDj0os?=
- =?us-ascii?Q?KZT8QmaobgGctTA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(7416014)(1800799024)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YCEBpbeGUDO3JJ8Kl7l6SM1lJJPv7WFritmvwCjCIGRhq1xmQpmfpD/WNfHY?=
- =?us-ascii?Q?m56Wr90a9EEbjpFqE326IaFaGaZhCLn0WpEwdmWCjQZAkF2OOHO42rFFy3oP?=
- =?us-ascii?Q?qgUuOYohjCANA9YLXezcAWjU9jSp0PY+MnK0Uj7uzfKFL+0DnL/lHNXmNBmP?=
- =?us-ascii?Q?LlqJNppSVtPvJOu8WK3uVMVtU2b+ao4YlyqKqOIvFQ3QcPW6byTug4K8zV6Q?=
- =?us-ascii?Q?nZWOrUBRxOQ+NE8GW9p/TekSnCiYB3yH0rlgldgA6cF4xZ1lnroX7lrsdoO2?=
- =?us-ascii?Q?aklEPbh1fZAdZ41rWb2mRBr/RJZGIEPDX/Gs6b1XeHgDkKB4bXNXes0Swv88?=
- =?us-ascii?Q?sJ8orv7CVrCp+tctmATvUf8Fke1PsJiWK2WNFu5f7vV5yPBNPbL6REiFWjEW?=
- =?us-ascii?Q?5ao1g33NoskydKGaORvHy+Y4HrLIojU8wkpAtNKSH9HVBk072xsVJ+rAkeU4?=
- =?us-ascii?Q?zqfpuG6mSz3ECHyZ9miOOrgGDufglxQF2J0c0ORoJP/P7z12wovDN7rDBBwh?=
- =?us-ascii?Q?tVK7RItcFDCucQUvw156f+D3uheLfrjWx4cFlgm3aPEiTG7btgM7/7/jp2tc?=
- =?us-ascii?Q?FeKzsQC4kjFS5bF2GAuchHdL9xpQSiOks0y0C5zCjV5DPOB/SMDL+bX+dVpg?=
- =?us-ascii?Q?yDLuYGrxzoKchvNceSVsDY8MaQxWq9XDJEYqHS/kVxUMf8QDRe8xxVmMICX9?=
- =?us-ascii?Q?4BMQTueUF2EiYoB67LizPzgsdOS0dzugBgIMlLIic35CxGxOAD5HuHtSCj1E?=
- =?us-ascii?Q?PcTvfaS1eHtNeF7NteMCEGf9nl5W9pbuig9nwXM5VJSXic3vJnCBShfCeexV?=
- =?us-ascii?Q?QSQ6RorCpXgZ/zmEqGNC3YYO9J3cM4YUJAo5zk2we7qgg1VwPv8Zftb8ekAk?=
- =?us-ascii?Q?qmtT7uUAw1bH5yUiqYLmnJBCu3yAt7jGtFZZO1dX58jmC8NZrIFNyNkJbJu3?=
- =?us-ascii?Q?wfvQgH8ja0Jrb2e6iX9vciio0PgteXIpJ2aZuiRmX6IFmzniT3UOcXM3ZZEu?=
- =?us-ascii?Q?2cZILFEg7SPpJF3b4P8BjeMD6rGpOC/uHrs7SJG3V/0VzkZ8LOUmnxXPT6rL?=
- =?us-ascii?Q?8Hol33z8SHrB8xjmslcCXeTEk23A4q5d3SY9p3lt9zL8FS0s+cP6jDoa/ASI?=
- =?us-ascii?Q?mGrpwtmznj7+uIeq8pBmiSuxg7Y3HACHCMcMBWuCO04+t+ka2fIOtHzK+oW6?=
- =?us-ascii?Q?CSQnUun/6l/McxJBeJ83mW/PT1+tFtV9mq3rmqC3CN75n4yGfqDGkXToTQMz?=
- =?us-ascii?Q?isHv35BMIuqwoCAqU5OVbPBev/frZaAg063KPLPBqIr8suQ5FNxlLt9RbqSo?=
- =?us-ascii?Q?3rRiKxG9TcNmC990YF7JmN5oCRnap1AUJGLcfejGDd1eoO/0aPhOKcXW3ha6?=
- =?us-ascii?Q?RKxnpmuJUnEVMdPexWXOc+1qaNf03eNXEwTrYmueR1cSny4JGmxTt4cZWclP?=
- =?us-ascii?Q?qqpPBHc8BcwP5I9Lprz3Jl5Aneinn1aTFhueSR1dUH8/5EOjTb0Xw7uFGME3?=
- =?us-ascii?Q?Nli+ODBq0+b0P9U9D7Sd0O2maNPqDwBBhUco8iH2avnlGnUdDZTpog9IvT5K?=
- =?us-ascii?Q?KMgfRxKFqau74c0VbvjhDe6MmOBmEAisq9W+htN6?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99324071-0d21-467e-8da2-08ddebafbc07
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 12:36:56.5547
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jI2GDMh5WTtVYWF9TzEjFckK0dMbRVbVZYuVSdwWyKVSLoUAeJUQrxB/caCUx/TMoC/UA9sUyXAknoh6DY2D5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5885
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] arm64: dts: ti: k3-pinctrl: Add the remaining
+ macros
+To: Akashdeep Kaur <a-kaur@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <afd@ti.com>, <vigneshr@ti.com>, <d-gole@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <vishalm@ti.com>, <sebin.francis@ti.com>, <u-kumar1@ti.com>
+References: <20250902071917.1616729-1-a-kaur@ti.com>
+ <20250902071917.1616729-4-a-kaur@ti.com>
+ <b946af38-abf9-4b34-bf44-3ba9bc64bff7@ti.com>
+ <b0ccb51f-14f4-43c9-9646-296d6e9d559c@ti.com>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <b0ccb51f-14f4-43c9-9646-296d6e9d559c@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Use negative error code -EINVAL instead of positive EINVAL in the default
-case of svm_ioctl() to conform to Linux kernel error code conventions.
 
-Fixes: 42de677f7999 ("drm/amdkfd: register svm range")
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
----
- drivers/gpu/drm/amd/amdkfd/kfd_svm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 9/4/2025 5:09 PM, Akashdeep Kaur wrote:
+> Hi Udit,
+>
+> On 04/09/25 14:27, Kumar, Udit wrote:
+>> Hello Akashdeep,
+>>
+>> On 9/2/2025 12:49 PM, Akashdeep Kaur wrote:
+>>> Add the drive stregth, schmitt trigger enable macros to pinctrl file.
+>>> Add the missing macros for DeepSleep configuration control referenced
+>>> from "Table 14-6172. Description Of The Pad Configuration Register 
+>>> Bits"
+>>> in AM625 TRM[0].
+>>> Add some DeepSleep macros to provide combinations that can be used
+>>> directly in device tree files example PIN_DS_OUTPUT_LOW that
+>>> configures pin to be output and also sets its value to 0.
+>>>
+>>> [0] https://www.ti.com/lit/ug/spruiv7b/spruiv7b.pdf
+> ...
+>>>   #define PULLTYPESEL_SHIFT    (17)
+>>>   #define RXACTIVE_SHIFT        (18)
+>>> +#define DRV_STR_SHIFT           (19)
+>>
+>> referring to above TRM mentioned in commit message
+>>
+>> Bit 20-19 are for DRV_STR, and description says
+>>
+>> 0 - Default
+>> 1 - Reserved
+>> 2 - Reserved
+>> 3 - Reserved
+>>
+>> Not sure, is there some additional document to be referred for 
+>> PIN_DRIVE_STRENGTH
+>
+> This information will be updated in TRM in coming cycles.
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
-index 521c14c7a789..68ba239b2e5d 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
-@@ -4261,7 +4261,7 @@ svm_ioctl(struct kfd_process *p, enum kfd_ioctl_svm_op op, uint64_t start,
- 		r = svm_range_get_attr(p, mm, start, size, nattrs, attrs);
- 		break;
- 	default:
--		r = EINVAL;
-+		r = -EINVAL;
- 		break;
- 	}
- 
--- 
-2.34.1
 
+Sorry ,
+
+can not ack before TRM update
+
+
+
+>>
+>>
+>>> +#define DS_ISO_OVERRIDE_SHIFT   (22)
+>>> +#define DS_ISO_BYPASS_EN_SHIFT  (23)
+>>
+>> Please follow same convention as for rest of bit fields
+>
+> Updated.
+>
+>>
+>> DS_ISO_OVERRIDE_SHIFT  to ISO_OVR_SHIFT and
+>> DS_ISO_BYPASS_EN_SHIFT to ISO_BYP_SHIFT
+>>
+>>
+>>
+>>>   #define DEBOUNCE_SHIFT        (11)
+>>>   #define FORCE_DS_EN_SHIFT    (15)
+>>>   #define DS_EN_SHIFT        (24)
+>>> @@ -19,6 +24,7 @@
+>>>   #define DS_OUT_VAL_SHIFT    (26)
+>>>   #define DS_PULLUD_EN_SHIFT    (27)
+>>>   #define DS_PULLTYPE_SEL_SHIFT    (28)
+>>> +#define WKUP_EN_SHIFT           (29)
+>>>   /* Schmitt trigger configuration */
+>>>   #define ST_DISABLE        (0 << ST_EN_SHIFT)
+>>> @@ -33,6 +39,26 @@
+>>>   #define INPUT_EN        (1 << RXACTIVE_SHIFT)
+>>>   #define INPUT_DISABLE        (0 << RXACTIVE_SHIFT)
+>>> +#define DS_PULL_DISABLE         (1 << DS_PULLUD_EN_SHIFT)
+>>> +#define DS_PULL_ENABLE          (0 << DS_PULLUD_EN_SHIFT)
+>>
+>> what is purpose of shifting zero,
+> This is added for consistency across the entire file.
+>>
+>>
+>>> +
+>>> +#define DS_PULL_UP              (1 << DS_PULLTYPE_SEL_SHIFT | 
+> ...
+>>> +#define PIN_DS_OUT_DISABLE DS_INPUT_EN
+>>>   #define PIN_DS_OUT_VALUE_ZERO        (0 << DS_OUT_VAL_SHIFT)
+>>>   #define PIN_DS_OUT_VALUE_ONE        (1 << DS_OUT_VAL_SHIFT)
+>>>   #define PIN_DS_PULLUD_ENABLE        (0 << DS_PULLUD_EN_SHIFT)
+>>>   #define PIN_DS_PULLUD_DISABLE        (1 << DS_PULLUD_EN_SHIFT)
+>>>   #define PIN_DS_PULL_DOWN        (0 << DS_PULLTYPE_SEL_SHIFT)
+>>>   #define PIN_DS_PULL_UP            (1 << DS_PULLTYPE_SEL_SHIFT)
+>>> +#define PIN_DS_ISO_BYPASS               (1 << DS_ISO_BYPASS_EN_SHIFT)
+>>> +#define PIN_DS_ISO_BYPASS_DISABLE       (0 << DS_ISO_BYPASS_EN_SHIFT)
+>>> +
+>>> +#define DS_STATE_VAL                    (1 << DS_EN_SHIFT)
+>>> +#define ACTIVE_STATE_VAL                (0 << DS_EN_SHIFT)
+>>> +
+>>
+>> Please do not mix PIN_x #define with other internal defines
+>
+> Moved these to appropriate location.
+>
+>>
+>>> +#define PIN_DS_OUTPUT_LOW (DS_STATE_VAL | DS_INPUT_DISABLE | 
+>>> DS_OUT_VALUE_ZERO)
+>>> +#define PIN_DS_OUTPUT_HIGH              (DS_STATE_VAL | 
+>>> DS_INPUT_DISABLE | DS_OUT_VALUE_ONE)
+>>> +#define PIN_DS_INPUT                    (DS_STATE_VAL | DS_INPUT_EN 
+>>> | DS_PULL_DISABLE)
+>>> +#define PIN_DS_INPUT_PULLUP             (DS_STATE_VAL | DS_INPUT_EN 
+>>> | DS_PULL_UP)
+>>> +#define PIN_DS_INPUT_PULLDOWN           (DS_STATE_VAL | DS_INPUT_EN 
+>>> | DS_PULL_DOWN)
+>>> +
+>>> +#define PIN_WKUP_EN_EDGE                (WKUP_ENABLE | WKUP_ON_EDGE)
+>>> +#define PIN_WKUP_EN_LEVEL_LOW           (WKUP_ENABLE | 
+>>> WKUP_ON_LEVEL | WKUP_LEVEL_LOW)
+>>> +#define PIN_WKUP_EN_LEVEL_HIGH          (WKUP_ENABLE | 
+>>> WKUP_ON_LEVEL | WKUP_LEVEL_HIGH)
+>>> +#define PIN_WKUP_EN                     WKUP_EN_EDGE
+>>
+>> what is difference between PIN_WKUP_EN_EDGE and PIN_WKUP_EN
+> Combined the macros to have default wakeup on edge
+>>
+>>
+>>>   /* Default mux configuration for gpio-ranges to use with pinctrl */
+>>>   #define PIN_GPIO_RANGE_IOPAD    (PIN_INPUT | 7)
+>
+> Regards,
+> Akashdeep Kaur
 
