@@ -1,168 +1,453 @@
-Return-Path: <linux-kernel+bounces-800728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9AA6B43B39
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:12:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50ABBB43B3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D50BF1C81039
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:12:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71705685F19
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235D52C2361;
-	Thu,  4 Sep 2025 12:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA472DE701;
+	Thu,  4 Sep 2025 12:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PYEj229U"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="jMMy9td9"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676F12ECE9C
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756987902; cv=none; b=H+BkZhUEC8u0xpXs/Ax1+3dlDyyG1dj2iIWETo0rTwQ+bcOiHnmvTT0VmWZV7fsDMkn60n/m7OqjS2PxJCvrBJCcCcGV/ILK7tf9F1hEQ6CW1G9e0PMpGDpnkh/GUIagkkXHh+fAGXg+0kC4wQ3KuTtYJ6PGyIjAprGeu5jtxls=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756987902; c=relaxed/simple;
-	bh=zydhTe8gN6sFNO/q1H4Gf7hszjD67Iz9ZJKdkVlHEps=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=pkJpumxIzjf93kXvGY9kMQqCovXQvBeOU/9r+ejZntRkj7Ci60+tP9hv9LBM2wSTIJgPBMDo9GvNiOhiAsKlVReYbCCcJYBWjkE6/xNtf0LNQRscL5PZJDzqtS568mqP4cytbWSxhsGOZ6Ft1IvW0PIJfMGq1QqLrUpAgnF0HN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PYEj229U; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45cb6180b60so6236925e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 05:11:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756987899; x=1757592699; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UYoM3cK9vBeAs2c1rKLSFJjbhLQMxUGOsX7iDRX0aTM=;
-        b=PYEj229U2xa4GIjKeq+/6vWxNV9Kyq+SCqkZ3V2bQdeXt9vEGbZaCPPkz0gPD6qQmZ
-         8RPUoPs2AFvD/J32KBj+FL4eyN/YYeSGH/3H0zfOmX1oRlmhC0kx9ySwjwSsmaFl0tJn
-         d0PdmDmngwfpzVnzktTyU2IJMwIVA6xiHdXAANshh5qRDgPgzBNX2Z99GRhxOjGulZaV
-         2if/U8dw6tUriHDD+fXLVaRY9D2NE4N/dhTCX3S99QlvsQ6utmzhCjH7iXzJ+mPybDLf
-         H12Y3/yj4isXlOXCOBybQBpx25V8jiYGpNx0GSESwNBqaC+KqQTelldM5ih+/ht8hTGV
-         ko7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756987899; x=1757592699;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UYoM3cK9vBeAs2c1rKLSFJjbhLQMxUGOsX7iDRX0aTM=;
-        b=tRjlEjCLhjqO1nUweY8ddd5X2Rm6nrAfBwww9NT3k8q4vE/vDMKp7rHLPJEewrjArt
-         58pdhTe9xeqNwhSbntOLv3CaVuf2LFM6pVe4u3ef8YG0i1Y3tg2dEvfMaul/AYiOlM40
-         E8BAKc6hlYzF4aoF1Znpfrh3WfZs92UPOgGuzStIBBQLi5OagKK8DTiiPWM9ioxGbgOv
-         hfmlIemnvcYo1h/Oi8wOuTboZE46Z80Wpw2P30FImkfi+CF1MnkHjlorH2DnJwp0GnT/
-         vYEK1V+0JLJZRpO0ZLtXVM0lp2Rm7/wTFpt0uT7pifeyqs/p7Go0MSPHioLcZVZVK7NA
-         9mcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuHhtNQ7/tWYHLeZ1Ra42iQ3eIhH7Bqtg19jWrca84t0NlR8pVFMX8Ct+MQSSj31JiTFnEg3SsvzyWgN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUKjvvx08DPorwhhZ1+XJIs3rPVcy/cvAkocsil7FljC2OIy9l
-	lWQ4qX8qMXo+mRBOAtEQOD4/to2Ul+ZwAkaLZKJuIayMr6DKbjsLO5G+0g1W5mmhKRU=
-X-Gm-Gg: ASbGncumKWjHPkcyThUbLOYf8addibg1spMeRfsQc8zXssMLo2hCHBWzxrBhc2tD3jV
-	IRTMNzf4/4qqCCJxjc9m3qYYbiFtECMgLfepfP7bqCC3yL0nYbOOe/ICvOu7UCAVD/588tGxTE0
-	nC26y8fO8z33vLA/OjHZ1KEdlXROUUXPNmwgUObPM4yklJyuIrIr2XG2xkMWzK61KW9fy1+CLor
-	Jc5HtNsKaXYchApCqLAUE9ukhQPHYRaevQwwruldTQC8bmt/fI9Z//wAyOJfHcnlzSCpy1tMUc3
-	Fx2dm1IeRQtXT/7UM46rLzsLWYt2c4WwCBnWBfHIz3Bd2wOJq24kLqYiH5GG528Kkz8UILRgPms
-	yYwWxwRkpa8MPF4wXv2FbaclOUaALYXkrbdvr6A==
-X-Google-Smtp-Source: AGHT+IHQdXm8jC8e/msUJOyKC0lFFG5gg0CFfpvTp2PimVT6WH5aqg4j0JgEmA/4HZ8s1gbZTUkx4Q==
-X-Received: by 2002:a05:600c:4e44:b0:45b:80e4:4e1a with SMTP id 5b1f17b1804b1-45b855fe92bmr149416845e9.26.1756987898546;
-        Thu, 04 Sep 2025 05:11:38 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7d1319sm312836545e9.5.2025.09.04.05.11.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 05:11:38 -0700 (PDT)
-Message-ID: <20cec516-1589-4fc5-ac07-06029f2dc143@linaro.org>
-Date: Thu, 4 Sep 2025 13:11:37 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FAA2C21C0;
+	Thu,  4 Sep 2025 12:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756987974; cv=pass; b=Ox39zJhkP/DFGhlvnLqLR+A7M4r6L/mM9knlSs/EZevtH8nGz4mT/Y3m8XGO9ifD5Wny0Vy9xZd6lbCYPuiJmYjMxqf46osSkpGXotHUklDgf1BwjnhXWgigFBDa+fFbiYYaCigzR3J8lXf+Nz/aq09SNqVRhtsuTBWbj+lATt4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756987974; c=relaxed/simple;
+	bh=L9UY9fY8S78Td4d+Nvcnh5r45q+r3aH+TFNj1euUELg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ps18spP5DNeTShDq26S0RUxGYs+VHSuUKUl2hXi3DU6b0o3TahmpQxvEgx5VenmrCpqo3OieFbCiUXVFz5X49UHe65IVTLSX3bm3RrMr5mrZSAeluMiYEAQiohUWCtUkxtMKjZzXt7TkYDtnwZrcRSmPqE5HVAIJiYNJZG+sL6c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=jMMy9td9; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756987933; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TvKirX4c74x7jqN1tg6isOyPPEnZPs+fy4zd55xvA2Kog/pOh5jVY0IcNm9uvILjpgYC/MaPYRGnKJmj6emAOPNvfL6poMD5v2dfWX/9qzmd0ehQ9uSM3qC+f+60JaSmFHkv/tLJ/rpoTSizkvC4oMCVXcw1DHVZdmp2Qhcg0LA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756987933; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Kg+imjEAl3CXmIfEbHlp4v245YFguRUUK5TRAGFXJso=; 
+	b=dzP89dQ+z49VzlwEan2/Yl6RWm+w2nhq3AinO5RmzyLWd2Ev4fXVrVwJRSctuJrHnVmSYy1lXZWe3w051TJ2xg1lugn/OrukxfXwJmtVmnTPKZ3cCfv2q8k2DptnOCrkh984LLdEdTMfvZIv0Kysj3Nh0fo0U/BGqaJ+WrZCZLo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756987933;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=Kg+imjEAl3CXmIfEbHlp4v245YFguRUUK5TRAGFXJso=;
+	b=jMMy9td9dP/h8xOOi6g/kSvcUIBDwA2A4iqcDR8bGLQRHpUv3G2kd2ywqfhKg/GL
+	UsoBC55q5otWRoNIjhW+guh3cuuc0GLY6Bwz4q4cQfdDWlKY9gRKt5L13DD6cyhmjuf
+	B/unwPc5DkYdxBlEBcWaQTAUDGhe2V4kPBdaidww=
+Received: by mx.zohomail.com with SMTPS id 1756987929589959.508568434057;
+	Thu, 4 Sep 2025 05:12:09 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] coresight: perf: Fix pointer check with IS_ERR_OR_NULL()
-From: James Clark <james.clark@linaro.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Tamas Zsoldos <tamas.zsoldos@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <20250904-cs_etm_auxsetup_fix_error_handling-v1-1-ecc5edf282a5@arm.com>
- <5f24d286-629c-404f-8e0f-aa01e27bcb80@linaro.org>
-Content-Language: en-US
-In-Reply-To: <5f24d286-629c-404f-8e0f-aa01e27bcb80@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v3 01/14] rust: drm: gem: Simplify use of generics
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250829224116.477990-2-lyude@redhat.com>
+Date: Thu, 4 Sep 2025 09:11:51 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Danilo Krummrich <dakr@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Asahi Lina <lina+kernel@asahilina.net>,
+ "open list:DRM DRIVER FOR NVIDIA GPUS [RUST]" <nouveau@lists.freedesktop.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <662189D6-44B2-4880-971D-A3D2D748542D@collabora.com>
+References: <20250829224116.477990-1-lyude@redhat.com>
+ <20250829224116.477990-2-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
+Hi Lyude,
 
+> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> Now that my rust skills have been honed, I noticed that there's a lot =
+of
+> generics in our gem bindings that don't actually need to be here. =
+Currently
+> the hierarchy of traits in our gem bindings looks like this:
+>=20
+>  * Drivers implement:
+>    * BaseDriverObject<T: DriverObject> (has the callbacks)
+>    * DriverObject (has the drm::Driver type)
+>  * Crate implements:
+>    * IntoGEMObject for Object<T> where T: DriverObject
+>      Handles conversion to/from raw object pointers
+>    * BaseObject for T where T: IntoGEMObject
+>      Provides methods common to all gem interfaces
+>=20
+>  Also of note, this leaves us with two different drm::Driver =
+associated
+>  types:
+>    * DriverObject::Driver
+>    * IntoGEMObject::Driver
+>=20
+> I'm not entirely sure of the original intent here unfortunately (if =
+anyone
+> is, please let me know!), but my guess is that the idea would be that =
+some
+> objects can implement IntoGEMObject using a different ::Driver than
+> DriverObject - presumably to enable the usage of gem objects from =
+different
+> drivers. A reasonable usecase of course.
+>=20
+> However - if I'm not mistaken, I don't think that this is actually how
+> things would go in practice. Driver implementations are of course
+> implemented by their associated drivers, and generally drivers are not
+> linked to each-other when building the kernel. Which is to say that =
+even in
+> a situation where we would theoretically deal with gem objects from =
+another
+> driver, we still wouldn't have access to its drm::driver::Driver
+> implementation. It's more likely we would simply want a variant of gem
+> objects in such a situation that have no association with a
+> drm::driver::Driver type.
+>=20
+> Taking that into consideration, we can assume the following:
+> * Anything that implements BaseDriverObject will implement =
+DriverObject
+>  In other words, all BaseDriverObjects indirectly have an associated
+>  ::Driver type - so the two traits can be combined into one with no
+>  generics.
+> * Not everything that implements IntoGEMObject will have an associated
+>  ::Driver, and that's OK.
+>=20
+> And with this, we now can do quite a bit of cleanup with the use of
+> generics here. As such, this commit:
+>=20
+> * Removes the generics on BaseDriverObject
+> * Moves DriverObject::Driver into BaseDriverObject
+> * Removes DriverObject
+> * Removes IntoGEMObject::Driver
+> * Add AllocImpl::Driver, which we can use as a binding to figure out =
+the
+>  correct File type for BaseObject
+>=20
+> Leaving us with a simpler trait hierarchy that now looks like this:
+>=20
+>  * Drivers implement: BaseDriverObject
+>  * Crate implements:
+>    * IntoGEMObject for Object<T> where T: DriverObject
+>    * BaseObject for T where T: IntoGEMObject
+>=20
+> Which makes the code a lot easier to understand and build on :).
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>=20
+> ---
+> V2:
+> * Don't refer to Object<T> in callbacks, as this would result in =
+drivers
+>  getting the wrong gem object type for shmem gem objects once we add
+>  support for those. Instead, we'll just add a type alias to clean this
+>  part up.
+> V3:
+> * Fix nova compilation
+> * Also, add an associated driver type to AllocImpl - as we still need =
+the
+>  current driver accessible from BaseObject so that we can use the =
+driver's
+>  various associated types, like File
+> V4:
+> * Add missing Object =3D Self constraint to type bounds for =
+create_handle,
+>  lookup_handle. I forgot that if drivers can have private gem objects =
+with
+>  a different data layout, we can only guarantee gem objects with =
+handles
+>  are of the same gem object type as the main one in use by the driver.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> drivers/gpu/drm/nova/gem.rs |  8 ++--
+> rust/kernel/drm/driver.rs   |  3 ++
+> rust/kernel/drm/gem/mod.rs  | 77 ++++++++++++++++---------------------
+> 3 files changed, 40 insertions(+), 48 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/nova/gem.rs b/drivers/gpu/drm/nova/gem.rs
+> index cd82773dab92c..2760ba4f3450b 100644
+> --- a/drivers/gpu/drm/nova/gem.rs
+> +++ b/drivers/gpu/drm/nova/gem.rs
+> @@ -16,16 +16,14 @@
+> #[pin_data]
+> pub(crate) struct NovaObject {}
+>=20
+> -impl gem::BaseDriverObject<gem::Object<NovaObject>> for NovaObject {
+> +impl gem::DriverObject for NovaObject {
+> +    type Driver =3D NovaDriver;
+> +
+>     fn new(_dev: &NovaDevice, _size: usize) -> impl PinInit<Self, =
+Error> {
+>         try_pin_init!(NovaObject {})
+>     }
+> }
+>=20
+> -impl gem::DriverObject for NovaObject {
+> -    type Driver =3D NovaDriver;
+> -}
+> -
+> impl NovaObject {
+>     /// Create a new DRM GEM object.
+>     pub(crate) fn new(dev: &NovaDevice, size: usize) -> =
+Result<ARef<gem::Object<Self>>> {
+> diff --git a/rust/kernel/drm/driver.rs b/rust/kernel/drm/driver.rs
+> index fe7e8d06961aa..dae0f4d1bbe3c 100644
+> --- a/rust/kernel/drm/driver.rs
+> +++ b/rust/kernel/drm/driver.rs
+> @@ -86,6 +86,9 @@ pub struct AllocOps {
+>=20
+> /// Trait for memory manager implementations. Implemented internally.
+> pub trait AllocImpl: super::private::Sealed + drm::gem::IntoGEMObject =
+{
+> +    /// The [`Driver`] implementation for this [`AllocImpl`].
+> +    type Driver: drm::Driver;
+> +
+>     /// The C callback operations for this memory manager.
+>     const ALLOC_OPS: AllocOps;
+> }
+> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
+> index b71821cfb5eaa..31c5799d995c5 100644
+> --- a/rust/kernel/drm/gem/mod.rs
+> +++ b/rust/kernel/drm/gem/mod.rs
+> @@ -15,31 +15,31 @@
+> use core::{mem, ops::Deref, ptr::NonNull};
+>=20
+> /// GEM object functions, which must be implemented by drivers.
+> -pub trait BaseDriverObject<T: BaseObject>: Sync + Send + Sized {
+> +pub trait DriverObject: Sync + Send + Sized {
+> +    /// Parent `Driver` for this object.
+> +    type Driver: drm::Driver;
+> +
+>     /// Create a new driver data object for a GEM object of a given =
+size.
+> -    fn new(dev: &drm::Device<T::Driver>, size: usize) -> impl =
+PinInit<Self, Error>;
+> +    fn new(dev: &drm::Device<Self::Driver>, size: usize) -> impl =
+PinInit<Self, Error>;
+>=20
+>     /// Open a new handle to an existing object, associated with a =
+File.
+>     fn open(
+> -        _obj: &<<T as IntoGEMObject>::Driver as drm::Driver>::Object,
+> -        _file: &drm::File<<<T as IntoGEMObject>::Driver as =
+drm::Driver>::File>,
+> +        _obj: &<Self::Driver as drm::Driver>::Object,
+> +        _file: &drm::File<<Self::Driver as drm::Driver>::File>,
+>     ) -> Result {
+>         Ok(())
+>     }
+>=20
+>     /// Close a handle to an existing object, associated with a File.
+>     fn close(
+> -        _obj: &<<T as IntoGEMObject>::Driver as drm::Driver>::Object,
+> -        _file: &drm::File<<<T as IntoGEMObject>::Driver as =
+drm::Driver>::File>,
+> +        _obj: &<Self::Driver as drm::Driver>::Object,
+> +        _file: &drm::File<<Self::Driver as drm::Driver>::File>,
+>     ) {
+>     }
+> }
+>=20
+> /// Trait that represents a GEM object subtype
+> pub trait IntoGEMObject: Sized + super::private::Sealed + =
+AlwaysRefCounted {
+> -    /// Owning driver for this type
+> -    type Driver: drm::Driver;
+> -
+>     /// Returns a reference to the raw `drm_gem_object` structure, =
+which must be valid as long as
+>     /// this owning object is valid.
+>     fn as_raw(&self) -> *mut bindings::drm_gem_object;
+> @@ -74,25 +74,15 @@ unsafe fn dec_ref(obj: NonNull<Self>) {
+>     }
+> }
+>=20
+> -/// Trait which must be implemented by drivers using base GEM =
+objects.
+> -pub trait DriverObject: BaseDriverObject<Object<Self>> {
+> -    /// Parent `Driver` for this object.
+> -    type Driver: drm::Driver;
+> -}
+> -
+> -extern "C" fn open_callback<T: BaseDriverObject<U>, U: BaseObject>(
+> +extern "C" fn open_callback<T: DriverObject>(
+>     raw_obj: *mut bindings::drm_gem_object,
+>     raw_file: *mut bindings::drm_file,
+> ) -> core::ffi::c_int {
+>     // SAFETY: `open_callback` is only ever called with a valid =
+pointer to a `struct drm_file`.
+> -    let file =3D unsafe {
+> -        drm::File::<<<U as IntoGEMObject>::Driver as =
+drm::Driver>::File>::from_raw(raw_file)
+> -    };
+> -    // SAFETY: `open_callback` is specified in the AllocOps structure =
+for `Object<T>`, ensuring that
+> -    // `raw_obj` is indeed contained within a `Object<T>`.
+> -    let obj =3D unsafe {
+> -        <<<U as IntoGEMObject>::Driver as drm::Driver>::Object as =
+IntoGEMObject>::from_raw(raw_obj)
+> -    };
+> +    let file =3D unsafe { drm::File::<<T::Driver as =
+drm::Driver>::File>::from_raw(raw_file) };
+> +    // SAFETY: `open_callback` is specified in the AllocOps structure =
+for `DriverObject<T>`,
+> +    // ensuring that `raw_obj` is contained within a =
+`DriverObject<T>`
+> +    let obj =3D unsafe { <<T::Driver as drm::Driver>::Object as =
+IntoGEMObject>::from_raw(raw_obj) };
+>=20
+>     match T::open(obj, file) {
+>         Err(e) =3D> e.to_errno(),
+> @@ -100,26 +90,21 @@ extern "C" fn open_callback<T: =
+BaseDriverObject<U>, U: BaseObject>(
+>     }
+> }
+>=20
+> -extern "C" fn close_callback<T: BaseDriverObject<U>, U: BaseObject>(
+> +extern "C" fn close_callback<T: DriverObject>(
+>     raw_obj: *mut bindings::drm_gem_object,
+>     raw_file: *mut bindings::drm_file,
+> ) {
+>     // SAFETY: `open_callback` is only ever called with a valid =
+pointer to a `struct drm_file`.
+> -    let file =3D unsafe {
+> -        drm::File::<<<U as IntoGEMObject>::Driver as =
+drm::Driver>::File>::from_raw(raw_file)
+> -    };
+> +    let file =3D unsafe { drm::File::<<T::Driver as =
+drm::Driver>::File>::from_raw(raw_file) };
+> +
+>     // SAFETY: `close_callback` is specified in the AllocOps structure =
+for `Object<T>`, ensuring
+>     // that `raw_obj` is indeed contained within a `Object<T>`.
+> -    let obj =3D unsafe {
+> -        <<<U as IntoGEMObject>::Driver as drm::Driver>::Object as =
+IntoGEMObject>::from_raw(raw_obj)
+> -    };
+> +    let obj =3D unsafe { <<T::Driver as drm::Driver>::Object as =
+IntoGEMObject>::from_raw(raw_obj) };
+>=20
+>     T::close(obj, file);
+> }
+>=20
+> impl<T: DriverObject> IntoGEMObject for Object<T> {
+> -    type Driver =3D T::Driver;
+> -
+>     fn as_raw(&self) -> *mut bindings::drm_gem_object {
+>         self.obj.get()
+>     }
+> @@ -141,10 +126,12 @@ fn size(&self) -> usize {
+>=20
+>     /// Creates a new handle for the object associated with a given =
+`File`
+>     /// (or returns an existing one).
+> -    fn create_handle(
+> -        &self,
+> -        file: &drm::File<<<Self as IntoGEMObject>::Driver as =
+drm::Driver>::File>,
+> -    ) -> Result<u32> {
+> +    fn create_handle<D, F>(&self, file: &drm::File<F>) -> Result<u32>
+> +    where
+> +        Self: AllocImpl<Driver =3D D>,
+> +        D: drm::Driver<Object =3D Self, File =3D F>,
+> +        F: drm::file::DriverFile,
 
-On 04/09/2025 1:00 pm, James Clark wrote:
-> 
-> 
-> On 04/09/2025 11:53 am, Leo Yan wrote:
->> The returned pointer from .alloc_buffer() callback can be an error, if
->> only checking NULL pointer the driver cannot capture errors. The driver
->> will proceed even after failure and cause kernel panic.
->>
->> Change to use IS_ERR_OR_NULL() check for capture error cases.
->>
->> Fixes: 0bcbf2e30ff2 ("coresight: etm-perf: new PMU driver for ETM 
->> tracers")
->> Reported-by: Tamas Zsoldos <tamas.zsoldos@arm.com>
->> Signed-off-by: Leo Yan <leo.yan@arm.com>
->> ---
->>   drivers/hwtracing/coresight/coresight-etm-perf.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/ 
->> drivers/hwtracing/coresight/coresight-etm-perf.c
->> index 
->> f677c08233ba1a28b277674662c6e6db904873dd..440d967f5d0962df187a81b0dd69a7d82a8b62ba 100644
->> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
->> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
->> @@ -198,7 +198,7 @@ static void free_sink_buffer(struct etm_event_data 
->> *event_data)
->>       cpumask_t *mask = &event_data->mask;
->>       struct coresight_device *sink;
->> -    if (!event_data->snk_config)
->> +    if (IS_ERR_OR_NULL(event_data->snk_config))
->>           return;
->>       if (WARN_ON(cpumask_empty(mask)))
->> @@ -450,7 +450,7 @@ static void *etm_setup_aux(struct perf_event 
->> *event, void **pages,
->>       event_data->snk_config =
->>               sink_ops(sink)->alloc_buffer(sink, event, pages,
->>                                nr_pages, overwrite);
->> -    if (!event_data->snk_config)
->> +    if (IS_ERR_OR_NULL(event_data->snk_config))
->>           goto err;
-> 
-> I think the bug is in TRBE. It's the only one that returns an error 
-> pointer, but only for -ENOMEM which would normally be NULL for alloc 
-> type functions anyway.
-> 
-> Also it's assigned to event_data->snk_config which is later NULL checked 
-> rather than IS_ERR_OR_NULL in free_sink_buffer(). Maybe that path 
-> doesn't happen, but all instances should be updated anyway.
+Shouldn=E2=80=99t this be F: drm::file::DriverFile<Driver =3DD>?
 
-Oh sorry I was only looking at the update to etm_setup_aux() so both 
-functions are covered. But the other points still apply.
+As you said in the commit message, I don=E2=80=99t see where exactly we =
+would have
+two competing drm::Driver types when calling this function, but we =
+should
+perhaps enforce this bound anyways.
 
-> 
-> It's much easier to keep it as NULL and make the fix in TRBE. It also 
-> wouldn't need to be backported as far.
-> 
->>   out:
->>
->> ---
->> base-commit: fa71e9cb4cfa59abb196229667ec84929bdc18fe
->> change-id: 20250904-cs_etm_auxsetup_fix_error_handling-cb7e07ed9adf
->>
->> Best regards,
-> 
+> +    {
+>         let mut handle: u32 =3D 0;
+>         // SAFETY: The arguments are all valid per the type =
+invariants.
+>         to_result(unsafe {
+> @@ -154,10 +141,12 @@ fn create_handle(
+>     }
+>=20
+>     /// Looks up an object by its handle for a given `File`.
+> -    fn lookup_handle(
+> -        file: &drm::File<<<Self as IntoGEMObject>::Driver as =
+drm::Driver>::File>,
+> -        handle: u32,
+> -    ) -> Result<ARef<Self>> {
+> +    fn lookup_handle<D, F>(file: &drm::File<F>, handle: u32) -> =
+Result<ARef<Self>>
+> +    where
+> +        Self: AllocImpl<Driver =3D D>,
+> +        D: drm::Driver<Object =3D Self, File =3D F>,
+> +        F: drm::file::DriverFile,
 
+Same here?
+
+> +    {
+>         // SAFETY: The arguments are all valid per the type =
+invariants.
+>         let ptr =3D unsafe { =
+bindings::drm_gem_object_lookup(file.as_raw().cast(), handle) };
+>         if ptr.is_null() {
+> @@ -212,8 +201,8 @@ impl<T: DriverObject> Object<T> {
+>=20
+>     const OBJECT_FUNCS: bindings::drm_gem_object_funcs =3D =
+bindings::drm_gem_object_funcs {
+>         free: Some(Self::free_callback),
+> -        open: Some(open_callback::<T, Object<T>>),
+> -        close: Some(close_callback::<T, Object<T>>),
+> +        open: Some(open_callback::<T>),
+> +        close: Some(close_callback::<T>),
+>         print_info: None,
+>         export: None,
+>         pin: None,
+> @@ -296,6 +285,8 @@ fn deref(&self) -> &Self::Target {
+> }
+>=20
+> impl<T: DriverObject> AllocImpl for Object<T> {
+> +    type Driver =3D T::Driver;
+> +
+>     const ALLOC_OPS: AllocOps =3D AllocOps {
+>         gem_create_object: None,
+>         prime_handle_to_fd: None,
+> --=20
+> 2.50.0
+>=20
+
+With the DriverFile comment sorted out:
+
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
 
