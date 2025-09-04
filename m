@@ -1,139 +1,120 @@
-Return-Path: <linux-kernel+bounces-799876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333CCB43118
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:29:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03903B4311A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8B6E17FA7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:29:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B430A543856
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C4221767C;
-	Thu,  4 Sep 2025 04:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DAE23909C;
+	Thu,  4 Sep 2025 04:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KcAdNLfg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQHGUQYe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D374437A;
-	Thu,  4 Sep 2025 04:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096E94437A;
+	Thu,  4 Sep 2025 04:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756960175; cv=none; b=CJPCGlPRznehrxvHly6ApuQ6sTjkq4TG6Ta9uSj7e9pdM3NpXCDkYzJXsbkVQuPDMrfYIecyEYgLHcix2XAbtiaIGlbTtVs3zgKY4XVrycqsByzFXHx0UJ+D2k0FpsJZCtGxDUh8QqWzzXv28i1wAjkOv1JudItInecbLyiEOMk=
+	t=1756960181; cv=none; b=JbSy3nqKTkb/0rxULrjqfHDGtqJcLOLR2lZZ8KjbcGYvg19pxk/zZ4I710YjDDm0dhw/4LUPXQ9w/0D5ZrzpLn8dJA2o4duRymjm9VakqEx3fW+3IRQIW/lNb8hcHGwBkXDAdcT/V249K5xzt/sLfPJL1TFBc+qjpmeYvQF2ugw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756960175; c=relaxed/simple;
-	bh=wfmMCtQkYy7kMMCYDDyBRhhKXRcmqUlls5+MC/y169w=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=pkzW2EGfFMBPG4tVCp42hgAe9Nek3S0BItuiXB79O5x4JBJWXpWH1ecv2v187YVdUYkVEQ0omHzyc9tBneT8tZk7s6JUH564EBGbG7Vd+FZjdlowgNPMrleH8OGnIp6HwIw/sfAPEKWPNtwriwnv8NwV7w8I8vc9MPnoBwB+UJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KcAdNLfg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C2A0C4CEF0;
-	Thu,  4 Sep 2025 04:29:33 +0000 (UTC)
+	s=arc-20240116; t=1756960181; c=relaxed/simple;
+	bh=KFa9onPVephR8PGCicN6xc6Tz14/6IW8a75/xOowp3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UKPxZX/89JWNz8hYk5ZXeWKi1S+vE5HU8vTYptxeIrzaAPUXAAFTfCX0kCHFeffCIZmwnJjDTBoQDxXcZA3swAzhqNBihOHRpMstNV2p+Ve9JdbRDX6X+tjpwRJrx+9fL1aHrtkgnjlf9OO2RENwDCQJvPVndT8Q7uLG5wvBLEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQHGUQYe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A021C4CEF0;
+	Thu,  4 Sep 2025 04:29:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756960174;
-	bh=wfmMCtQkYy7kMMCYDDyBRhhKXRcmqUlls5+MC/y169w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KcAdNLfgTd4f07sAiJkYgN2ebk8yr2J7uTlWiRj5VmxTz0qjCyhydrcrBArRkBxmE
-	 y+f28hQRHx/WgMfptcxJh1Ro0ciDYZuiAyQMJfVPtMrJu75yvJbrXW+6lgkQvTKOMV
-	 1mHcddZivLSq7I9olniDRXakZ8VAKQQKTZJpNY6mqJaweAfGqaNB3dyT269EBwZsbO
-	 qVA9e2JYh0B9CqsPuM+yCnChWfuymGDl3ZIH96ycCXcL+WGI3a/7P+CVvsWSZEVCp2
-	 pniuAxh6su+LeZ61+G0GnbxD1kOWC4wlct2BTvllQhhKc8FC8bcF1Vb5cIYi8T08v2
-	 hqbfvsK3iip8A==
-Date: Thu, 4 Sep 2025 13:29:31 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Menglong Dong <menglong.dong@linux.dev>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, mhiramat@kernel.org,
- rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- oliver.sang@intel.com
-Subject: Re: [PATCH] tracing: fprobe: fix suspicious rcu usage in
- fprobe_entry
-Message-Id: <20250904132931.8c46a011b2fa1743fc87def4@kernel.org>
-In-Reply-To: <5038598.31r3eYUQgx@7940hx>
-References: <aLa2D4It1Zxc7bs0@gondor.apana.org.au>
-	<3005966.e9J7NaK4W3@7940hx>
-	<aLfCa1FkLc3T4QI3@gondor.apana.org.au>
-	<5038598.31r3eYUQgx@7940hx>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1756960180;
+	bh=KFa9onPVephR8PGCicN6xc6Tz14/6IW8a75/xOowp3s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FQHGUQYefrjRpE3p8AxYollaDC9tlVwEl0FZgz0QbaQKvempYAOsI+N1u+87VuT3A
+	 riUjJJ4kWaW/6vF8Qz/shEGlBkWD+MF5tFN1bV+Nw9NHGOK4TyVQ/Amj75zCC/MhLj
+	 KOaVuOzixmE8osD0uMtC/TVR1N8F2R/AAsuMxHV3OFgS5B4w9J9Rn5tXO1IJCJGClO
+	 y0RyXZTciCCMCEtMephZhczjVwESXgenPn4iwahU3ohYAU+ACIep3kapH2T31t47wb
+	 /bbI9RGZZGeK7m3N1auZtdnCt167xvAr2KxaQ0I8kBTFQ4uIq3V/5ohxeTh4JPHQEa
+	 VEfYPPzl1PiDA==
+Date: Wed, 3 Sep 2025 21:29:40 -0700
+From: Kees Cook <kees@kernel.org>
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: bhelgaas@google.com, ojeda@kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, arnd@arndb.de,
+	dan.carpenter@linaro.org, benjamin.copeland@linaro.org,
+	Linux Kernel Functional Testing <lkft@linaro.org>
+Subject: Re: [PATCH] drivers/pci: Fix FIELD_PREP compilation error with gcc-8
+Message-ID: <202509032125.F41E71AF19@keescook>
+References: <20250828101237.1359212-1-anders.roxell@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250828101237.1359212-1-anders.roxell@linaro.org>
 
-On Thu, 04 Sep 2025 11:37:35 +0800
-Menglong Dong <menglong.dong@linux.dev> wrote:
+On Thu, Aug 28, 2025 at 12:12:37PM +0200, Anders Roxell wrote:
+> Commit cbc654d18d37 ("bitops: Add __attribute_const__ to generic
+> ffs()-family implementations") causes a compilation failure on ARM
+> footbridge_defconfig with gcc-8:
+> 
+>   FIELD_PREP: value too large for the field
+> 
+> The error occurs in pcie_set_readrq() at:
+>   v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
+> 
+> With __attribute_const__, gcc-8 now performs wrong compile-time
+> validation in FIELD_PREP and cannot guarantee that ffs(rq) - 8 will
+> always produce values that fit in the 3-bit PCI_EXP_DEVCTL_READRQ field.
 
-> On 2025/9/3 12:22 Herbert Xu <herbert@gondor.apana.org.au> write:
-> > On Tue, Sep 02, 2025 at 05:50:32PM +0800, menglong.dong@linux.dev wrote:
-> > > On 2025/9/2 17:17 Herbert Xu <herbert@gondor.apana.org.au> write:
-> > > > Menglong Dong <dongml2@chinatelecom.cn> wrote:
-> > > > >
-> > > > > diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> > > > > index fb127fa95f21..fece0f849c1c 100644
-> > > > > --- a/kernel/trace/fprobe.c
-> > > > > +++ b/kernel/trace/fprobe.c
-> > > > > @@ -269,7 +269,9 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-> > > > >        if (WARN_ON_ONCE(!fregs))
-> > > > >                return 0;
-> > > > > 
-> > > > > +       rcu_read_lock();
-> > > > >        head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
-> > > > > +       rcu_read_unlock();
-> > > > >        reserved_words = 0;
-> > > > >        rhl_for_each_entry_rcu(node, pos, head, hlist) {
-> > > > >                if (node->addr != func)
-> > > > 
-> > > > Actually this isn't quite right.  I know that it is a false-positive
-> > > > so that it's actually safe, but if you're going to mark it with
-> > > > rcu_read_lock, it should cover both the lookup as well as the
-> > > > dereference which happens in the loop rhl_for_each_entry_rcu.
-> > > 
-> > > Yeah, I understand. The rcu_read_lock() here is totally used to
-> > > suppress the suspicious rcu usage warning, not for the protection.
-> > > So I used it just for the rhltable_lookup() to reduce the impact.
-> > > Maybe I should add some comment for it.
-> > 
-> > My point is that after a lookup you will be doing some sort of a
-> > dereference on the RCU pointer.  That would cause exactly the same
-> > splat that rhltable_lookup itself generated.
-> > 
-> > For example, rhl_for_each_entry_rcu should have created the same
-> > warning, but it doesn't because for some reason it is using
-> > rcu_dereference_raw.  I'll need to dig up the history of this
-> > to see if there is a good reason for it to not warn.
-> 
-> Yeah, I understand what you mean. I noticed this, and that's why
-> I added the rcu_read_lock() for rhashtable_lookup() only.
-> 
-> Maybe it is to obtain better performance? Just guess ;)
-> And hlist_for_each_entry_rcu() also uses rcu_dereference_raw().
+Thanks for examining this! It seems rather alarming -- why did it
+work before?
 
-Hi Menglong, if you update the patch to use guard(rcu)() because
-head is used repeatedly in fprobe_entry(), I can replace it.
+> Avoid FIELD_PREP entirely by using direct bit manipulation. Replace
+> FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8) with the equivalent
+> manual bit operations: ((ffs(rq) - 8) << 12) & PCI_EXP_DEVCTL_READRQ.
+> 
+> This bypasses the compile-time validation while maintaining identical
+> runtime behavior and functionality.
 
-Thank you,
+Did you dig into why this happened? It seems like a fragile situation,
+so I'm worried we'll see more of these pop up.
 
+> Fixes: cbc654d18d37 ("bitops: Add __attribute_const__ to generic ffs()-family implementations")
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> Closes: https://lore.kernel.org/linux-pci/CA+G9fYuysVr6qT8bjF6f08WLyCJRG7aXAeSd2F7=zTaHHd7L+Q@mail.gmail.com/T/#u
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
+>  drivers/pci/pci.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Thanks!
-> Menglong Dong
-> > 
-> > Cheers,
-> > -- 
-> > Email: Herbert Xu <herbert@gondor.apana.org.au>
-> > Home Page: http://gondor.apana.org.au/~herbert/
-> > PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
-> > 
-> 
-> 
-> 
-> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index e698278229f2..9f9607bd9f51 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5893,7 +5893,8 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
+>  			rq = mps;
+>  	}
+>  
+> -	v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
+> +	/* Ideally we would used FIELD_PREP() but this is a work around for gcc-8 */
+> +	v = ((ffs(rq) - 8) << 12) & PCI_EXP_DEVCTL_READRQ;
+>  
+>  	if (bridge->no_inc_mrrs) {
+>  		int max_mrrs = pcie_get_readrq(dev);
 
+If you're sure this is okay, I'll take it with the series, but I feel
+like we should justify it better. :)
+
+-Kees
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Kees Cook
 
