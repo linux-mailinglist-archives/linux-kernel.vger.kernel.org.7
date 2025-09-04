@@ -1,145 +1,144 @@
-Return-Path: <linux-kernel+bounces-801684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA78B448BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:44:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1B8AB448C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D47F8A01855
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:44:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A0E1BC2B7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C675B2C3245;
-	Thu,  4 Sep 2025 21:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DBD296BBE;
+	Thu,  4 Sep 2025 21:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yg6CPl8I"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3n/qL+w"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7912C15B1;
-	Thu,  4 Sep 2025 21:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358F1BA4A;
+	Thu,  4 Sep 2025 21:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757022260; cv=none; b=ruWw4PNpWzsCeQ4GDDjlmQ1tlzrW1uhHziwPobpT5XUMGtgha3wvcwc2nbArvTuSDCx5JrYY9CR55RiY2RK8/SDNEanoHVNTb1HjEVQ+Bxn0uu02EnSpjVXo8Oi5evsQpICvKpKcWqz95JmU9530qhcJZd2akXOdHNs+vQy5qyw=
+	t=1757022367; cv=none; b=T5u9Hcp7JlYMOjxYS8OUuHoETZfebgpCSeRvBL3XJ/PF/EGFQTnnR+y2ziG4Jc8uJk7CY4WrvyJbhSdB/GoGzTJ4+eDiNcxnBsWdozjovVsL5VSzRb2eudgap+WOH+D4mEdNGOjK5e+qTmKM9w4vElo+rXdB1p2De2Zos+vy1lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757022260; c=relaxed/simple;
-	bh=syKMR/AOpfxpzqwbxyMg4ORMN7HXCh2N+iOystaCzP8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PW/5ojID9vszzhQAkSVB3K4bdHiHver6DqkB/0GslVxfsnCyU2ztv/gfeTOz3P2cp1ACg5rnriqsQODQx0x0hUFbWFyHagkROxv+/WSJz69ojhMToahmAWJbpNCV5gV/n5c/CXJKSNBXuyj/IAA9Gp+r4c/FzH+bldtT/hswJ2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yg6CPl8I; arc=none smtp.client-ip=209.85.215.179
+	s=arc-20240116; t=1757022367; c=relaxed/simple;
+	bh=Y4WScoMBSoQ0K3o9GeRyrWn+v8aRfgQG6RE84ONiSK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r0vbEjr9oNMnJ3Z6Ldj1IfKa9a0hOB3wjiS8yb4UNrKV5Pfnb5iQyTTBnLbMCr2B5tJFkOHujl/5SmnucvYhAOFjkhDNZaPfEmnGjOY0GagBQRH+/hNLlqm5ByQ7CNIbcYL/0pRHEKcjYHBxF3zJ3m99OD8Ny97I93uHQPSv6Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3n/qL+w; arc=none smtp.client-ip=209.85.128.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b47173749dbso981584a12.1;
-        Thu, 04 Sep 2025 14:44:18 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-723bc91d7bbso18358997b3.3;
+        Thu, 04 Sep 2025 14:46:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757022258; x=1757627058; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MmlAIj2yK6cLKVpKdW/BVsPqFHfKYJLh109GFYuJvxQ=;
-        b=Yg6CPl8I77pFnEEBlwibUPZpjnsk2rnX6K2wB8bW2vK3Bz60s4S++fX1l+nq4Cu88+
-         Zaf2EVOawH715/N1NyVLjLCo8oifvjtRjVY+lYJmAM/0wQXVKi+MRaJD/cOGGy85Q/eF
-         VMeF4yERYNA0WGk2m57aojz07xRmYYG1VGmd0WHM4DMNPSABYMSa87UqSnpcyLb8K7rb
-         LB0Sjwf1nqEu98G8o18ZJqABB1GodVD9iox1ZbDqRjXBjcJ9S9qgknMy58U6YxsZi4DI
-         /EjKflL7/ks01lWRimA0vk0LyRowDrL1KQfbBVBxlm1+Pxw0To3uNarhRb2kRzb8UJ7N
-         lTsw==
+        d=gmail.com; s=20230601; t=1757022365; x=1757627165; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2dxmIK87Es6+ed8yKW7yiT6uue3ZfsQixPgvt43/STU=;
+        b=E3n/qL+wMeQL86+qrOQk2v0pDhEUY9554RJnKywfh47UFev2RoECbqL+t+weTF5bRd
+         1mnGA3yrVGrwj6mrHeAcKR9AQZiXwKjN2tbHszaLfi5qm4EfPZD8nMSonEan3W3mzNrd
+         bl9c93/Rn7YTRT/oCIeCSLQz2TtHdKg32oFJyq7So5JVX/9pWiqxCbghS/5jmyfC9nWj
+         9LOfT7D3lb8AyudeD/8EGMN6R2V2rJWzVesGYz9OeFZ3SHq/oOGSqkFchMdfJif+5F+5
+         VPEu4EnrvQm9ynGmVBvnxxUgU3MGsYURHhd8j67del494TanuOk8JqOBodKQKqUsqavX
+         VnCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757022258; x=1757627058;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MmlAIj2yK6cLKVpKdW/BVsPqFHfKYJLh109GFYuJvxQ=;
-        b=XiAbf/BeJLmNbbHPufEnRw1NdnNSbH/wNnsnbk6pYDP+vA0wTNxx9l77XfPVTkurCT
-         CXYqmhz9AI1/56/lXKpb4UNIOBFO8q1+t5jM7YVSE8qDNvgnw7xjPMyzlV0QwDzk7dPH
-         cuLBfeESKnzuTM73l4gQ6Ey7UrzK/DdshFEANqfGpd2bSY4cf95LeyClugoXx7Zm+Cdu
-         +3PWpAStEbciAQmEI3ug0QeiCq3EmfNe2bWoOetF8nl+T0ASrkTOowPKWUR4ICKDMN25
-         T+HG+BZZCLEdfr9QtIxrhz7+AC5QSXnQtrmoiEuQQRM0GSjHk2bZ5xGPdkgB6RPvInHJ
-         W4tA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDmxJPTFi5Xk2EgT6cLIVlRU785HlVN2ZpZ6YighQXb7unVmpjAI0tpj7RIoPK7C+eXEdLk71JIaYBlIaimB4RTof6@vger.kernel.org, AJvYcCUwtrmPHP0qsvqSz9Domijy4h1mEKM/00U0dKb6sJlFSAwHbZBY33G8WRiA0QB25ekruBDp4UbXGml1K2NN@vger.kernel.org, AJvYcCVs5diR1tYz0aDSq6UIfp/LgLgbWA7wtbCgv9lPdQrwreegkyuHfELFsSWBln1pwmlmQ8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjApc4wi6GkLrgUjAy3O22vwjRU6zeR0cN5gIwvj7sas4QnkbW
-	vC9PlhgnZurEIkyHYLQ87RgNOpb6WBMBMt83EcF9ZZSafnEl669t4eVApsbUfGtOw0v8YaY+kIp
-	aryqQvBU//soI6TXn2ecNiv+6ksplRvM=
-X-Gm-Gg: ASbGncvBzNlaoQi9RxYxsiuE+GG2g99uzaM6a68BvxeWnqPjBxRhsfsjYdtgKSC8khL
-	UyPwm+bRRyDoqtRdXL5d/LBvMlJmY+TVGaepE7Q4MHUUqpnbmoHBg+CJxRDPN5Gn1kSmhA3MW5y
-	gKSOJNiJ77tvZaAEL1eAfNdU5Y5FY0HHMmQuMj77TV91QqnGfXlvCi1V/VmQlj+RUpOX8po6xQI
-	ssS3rLLo1PSCC6VVzYhS/E=
-X-Google-Smtp-Source: AGHT+IH3KqHLuBG2Y256PEStaOVthJXQjQF2/yui+Ba8eDmHMQ3zWe/xVpIla0AjUjTi47HwKQn8CNjiK9rDiPGEOiA=
-X-Received: by 2002:a17:90b:4e8f:b0:32b:b342:48aa with SMTP id
- 98e67ed59e1d1-32bb3424accmr2799651a91.17.1757022257796; Thu, 04 Sep 2025
- 14:44:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757022365; x=1757627165;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2dxmIK87Es6+ed8yKW7yiT6uue3ZfsQixPgvt43/STU=;
+        b=iRwmRAyiZcMkV3xENQ6ISSG5vHf6fQX9rmeQ2tQUmNf6lf540x02RYk1qt1kQv4X4q
+         nd3QJwr1myFWn0IzDaO1joWo3Iz3SZQEq423H8T0mIhlXBi6n+z6+M8MhsfvwlWIb2nW
+         bgcASZuhvD7DUOX2LMhd5yeQqh+4dbYo505N69yn93lQAnKD0wr+uM3kMX8g6mPnYF10
+         cEB8qM2NhgGAlpd7JFnT5oKfSDXIBPOve01pcdPJmWZ1z7iUq/zQdcwL8oFzJI+wbEe2
+         sPHGgcCnBDCsW2deONoMT5UMKu2/b44xSj2rWh8r7bGjjUaUu/o5eDIG//dMWzhLRL/o
+         Y4Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCWU8deC84Ca4e7uAEd4Y46VnoyQgG98hafI4GgH4wl2RTYXLUXKoSVIkl6kD3bE+3L1AOb5ZX5TacXfIeQ=@vger.kernel.org, AJvYcCXauzQJbBuQ5COdM4shEfyVwrRKOZxL1ojQxguJas6iqpYWZ3UBMMKD+oo0YTbg0tJkp7qZspbrTo2UItu9n70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnX4Pg+MSkJMbVkZtcTZDTWPWTK55uMUy97m81+k98++aqcurL
+	TAb4/fAxDKuFZFk+fvTPsICBxqAcyy1ZQvvxbCUU9TQ155FJjie04HzM
+X-Gm-Gg: ASbGnct1VMgIlwmu8C6MiFHBjJB3LuwksIpIraWSCM8o8jPstixbyOUbeqm2TkB5Tyb
+	JWzIfGzDnGXn7u9dprv34TCHXfWFNDazgANi44LArLZSnDeoYcC0Y8O36IDgDyq1oTRHRdq4jBI
+	Zf++AHQhdF+GTlPdgIwGGpSH4wKOHXs+Ko/CT4twGUU+f7KbQueIsXfd10UlOvT+8S4XKIBDgNQ
+	3pY4Q8nu9+vsnZTF1ccajpg+bTl+f0Hbzs7WbeqXfIUmreIYwdIzezxZG88oIsKtFKCSMDXzNgw
+	XSFXbqA1+0yviTFbh61N58U0KOZgLpSChbEoazR5uNKK3Pc2LGxZHgX8NBJesoJp7FkrBKMmKLq
+	hb9uyEdxpbpAtuPY6w7fG80sDGlKREYFoRenXdMoOtMU=
+X-Google-Smtp-Source: AGHT+IFMi8TYlY3AfynFMyr7MO2wBtRPKgDfu06foXlotOWPPhYh6f2Czm6tvqNfbPzn8j5BUU9pJw==
+X-Received: by 2002:a05:690c:61c6:b0:721:5b31:54d7 with SMTP id 00721157ae682-7227635bbcfmr192690397b3.7.1757022365134;
+        Thu, 04 Sep 2025 14:46:05 -0700 (PDT)
+Received: from localhost ([2601:347:100:5ea0:1218:85e4:58ab:e67f])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-609d205c24dsm632727d50.0.2025.09.04.14.46.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 14:46:04 -0700 (PDT)
+Date: Thu, 4 Sep 2025 17:46:03 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Mitchell Levy <levymitchell0@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Benno Lossin <lossin@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v3 5/7] rust: percpu: Support non-zeroable types for
+ DynamicPerCpu
+Message-ID: <aLoIm94aP6Er0Gn8@yury>
+References: <20250828-rust-percpu-v3-0-4dd92e1e7904@gmail.com>
+ <20250828-rust-percpu-v3-5-4dd92e1e7904@gmail.com>
+ <aLi-7W21N45fBGJk@yury>
+ <68b9f5e2.170a0220.1224d9.5d3d@mx.google.com>
+ <aLn4bopPt8uS4d1O@yury>
+ <68b9ff1c.050a0220.35de1d.11b7@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250720112133.244369-1-jolsa@kernel.org> <20250720112133.244369-10-jolsa@kernel.org>
- <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
- <aLlKJWRs5etuvFuK@krava> <CAEf4BzYUyOP_ziQjXshVeKmiocLjtWH+8LVHSaFNN1p=sp2rNg@mail.gmail.com>
- <20250904203511.GB4067720@noisy.programming.kicks-ass.net>
- <CAEf4BzZ6xSc7cFy7rF=G2+gPAfK+5cvZ0eDhnd5eP5m1t9EK-A@mail.gmail.com> <20250904205210.GQ3245006@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250904205210.GQ3245006@noisy.programming.kicks-ass.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 4 Sep 2025 14:44:03 -0700
-X-Gm-Features: Ac12FXwCznCAhdjb_-bJHRE1YiUIOhT03TbKi4SvEU6vWxyS7b5MpYG7YEJ_eRU
-Message-ID: <CAEf4BzY216jgetzA_TBY7_jSkcw-TGCj64s96ijoi3iAhcyHuw@mail.gmail.com>
-Subject: Re: nop5-optimized USDTs WAS: Re: [PATCHv6 perf/core 09/22]
- uprobes/x86: Add uprobe syscall to speed up uprobe
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
-	Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68b9ff1c.050a0220.35de1d.11b7@mx.google.com>
 
-On Thu, Sep 4, 2025 at 1:52=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
-> wrote:
->
-> On Thu, Sep 04, 2025 at 01:49:49PM -0700, Andrii Nakryiko wrote:
-> > On Thu, Sep 4, 2025 at 1:35=E2=80=AFPM Peter Zijlstra <peterz@infradead=
-.org> wrote:
-> > >
-> > > On Thu, Sep 04, 2025 at 11:27:45AM -0700, Andrii Nakryiko wrote:
-> > >
-> > > > > > So I've been thinking what's the simplest and most reliable way=
- to
-> > > > > > feature-detect support for this sys_uprobe (e.g., for libbpf to=
- know
-> > > > > > whether we should attach at nop5 vs nop1), and clearly that wou=
-ld be
-> > > > >
-> > > > > wrt nop5/nop1.. so the idea is to have USDT macro emit both nop1,=
-nop5
-> > > > > and store some info about that in the usdt's elf note, right?
-> > >
-> > > Wait, what? You're doing to emit 6 bytes and two nops? Why? Surely th=
-e
-> > > old kernel can INT3 on top of a NOP5?
-> > >
-> >
-> > Yes it can, but it's 2x slower in terms of uprobe triggering compared
-> > to nop1.
->
-> Why? That doesn't really make sense.
->
+> > 
+> >         for_each_possible_cpu(cpu) {
+> >                 let remote_ptr = unsafe { ptr.get_remote_ptr(cpu) };
+> >                 unsafe { (*remote_ptr).write(val.clone()); }
+> >                 let arc = Arc::new(alloc, flags).ok()?;
+> >                 Some(Self { alloc: arc })
+> >         }
+> > 
+> > Is it possible to do the above in rust?
+> 
+> Ah, I see.
+> 
+> The syntax would be slightly different, probably something like
+> 
+>         use cpu::for_each_possible_cpu;
+> 
+>         for_each_possible_cpu(|&cpu| {
+>                 let remote_ptr = unsafe { ptr.get_remote_ptr(cpu) };
+>                 // ...
+>         })
+> 
+> it *might* also be possible to use a macro and dispense with the need for
+> a closure, though I'm not familiar enough with proc macros to say for
+> sure. That would probably look like
+> 
+>         for_each_possible_cpu!(cpu) {
+>                 let remote_ptr = unsafe { ptr.get_remote_ptr(cpu) };
+>                 // ...
+>         }
+> 
+> though personally I think the first one is better (simpler
+> implementation without too much syntactic overhead, especially since
+> closures are already used some within R4L).
 
-Of course it's silly... It's because nop5 wasn't recognized as one of
-the emulated instructions, so was handled through single-stepping.
-
-> I realize its probably to late to fix the old kernel not to be stupid --
-> this must be something stupid, right? But now I need to know.
-
-Jiri fixed this, but as you said, too late for old kernels. See [0]
-for the patch that landed not so long ago.
-
-  [0] https://lore.kernel.org/all/20250414083647.1234007-1-jolsa@kernel.org=
-/
+Sure, #1 is OK if you prefer it.
 
