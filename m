@@ -1,98 +1,91 @@
-Return-Path: <linux-kernel+bounces-800525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B950DB438C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:33:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF13B438F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65C00682CDB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:33:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AF371898D20
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACB12BF3F4;
-	Thu,  4 Sep 2025 10:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYAnwlqw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0D62F90D3;
+	Thu,  4 Sep 2025 10:39:13 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3E65661;
-	Thu,  4 Sep 2025 10:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848477081F;
+	Thu,  4 Sep 2025 10:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756981986; cv=none; b=mwUlwZnTa4UoJXOaEgaqxJJkcN0TuFExT3zDsGazqEwrj/AH0a+MxGeqcOA+3WnzjHSmx4NR0o7yROPv/iq83BC0LD+ek81io44WWuLLl4mdEReHXP7dS1ONwY6ZMr3pYFELEP3cvuScxgL/90P5HvcMlhO6ZKvdwx8xCAR58yU=
+	t=1756982353; cv=none; b=XLAHsnIbxMD5tlXXS4oItlCWPqvbBioDEWsVdl5Z3CJW6OlaWUpCar7747mzLEq74C/gGwR5QmaWNxUWTDugoSebSV2O6EK5HNNngKKwyyaALeanEccjZM4xGLHcbTR8qTD0sCBPij76VneaYyD8klRga4ttaSn98Pcu0qPUKOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756981986; c=relaxed/simple;
-	bh=w5U7iTCeKoek0KyThv+JByD+nMze6+Bs9QJCk18phks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uajb0PvnZzYsEWMiKm+RmgRJah25aaoahXyiCZ6IFvDAdCu6Dvo37JCEf2VaEBmAiNPgjxq8lN1DXP++3Ne0FM3hCDNMaiNLJDwHQWMRrP8zFcnkVDNUi3evMK6Xr3/bOXJ5WI3+q38oUXOegDpXg5S90ujqv2JwMXqjMR/uaRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYAnwlqw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B959C4CEF0;
-	Thu,  4 Sep 2025 10:33:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756981984;
-	bh=w5U7iTCeKoek0KyThv+JByD+nMze6+Bs9QJCk18phks=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AYAnwlqwGbdT7u3Vg/YVPMzg2rtqnmgdtQAOZjzcs2SDlHg/w4937tLASqmUG/OAK
-	 9IYRchGfIKstWELzYMBGcEyRB3aPnhXekEIAEAgunlnaWBcem7odA/OInJAq/oMJLg
-	 ptVmo1PJb+e0eABHZcCznvhQydzyBCserF8P4ani4fs5Uyw5Z9wug1ErRp+675uNK4
-	 NstAFiuEl6TcOfy9WuZ9VdMkkIWBh/H0z3uZ70RNMmYfL1odaF9iLrkgrmmGeirm14
-	 FcB1Ow+QjsVXr/UT1McAIi+2KYMms3YASly9LSt7TUpuIPlfMrVl8odRddjkRYYqPO
-	 6ZY7Hrx1CmSFw==
-Date: Thu, 4 Sep 2025 12:33:01 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev, Xianglai Li <lixianglai@loongson.cn>
-Subject: Re: [PATCH v2 1/2] tick: Remove unreasonable detached state set in
- tick_shutdown()
-Message-ID: <aLlq3Um6y5Ez07ak@localhost.localdomain>
-References: <20250904071732.3513694-1-maobibo@loongson.cn>
- <20250904071732.3513694-2-maobibo@loongson.cn>
+	s=arc-20240116; t=1756982353; c=relaxed/simple;
+	bh=m9KZifQbl2hwXaQWg/lWRnYIPXZP38z0b5trFu3qDSg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eglRS7BHAu8MyS6T8sQlTYdvbd4abPMMTzOGJVUG0LankJ/DOgeKY31nFuoGWRAsOxbf1UbQDtyjvhFa9yQ3ff7qHSnzgEh268xywIzC7g/8I1wJialCdgAFSJn1xdAviLjWsg3y5TmhB67ID9CMIVxSo1jVpwC9gxHp+pdoWbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 4 Sep
+ 2025 18:34:01 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Thu, 4 Sep 2025 18:34:01 +0800
+From: Billy Tsai <billy_tsai@aspeedtech.com>
+To: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <joel@jms.id.au>, <andrew@codeconstruct.com.au>,
+	<linus.walleij@linaro.org>, <brgl@bgdev.pl>, <billy_tsai@aspeedtech.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<openbmc@lists.ozlabs.org>, <linux-gpio@vger.kernel.org>,
+	<BMC-SW@aspeedtech.com>
+Subject: [PATCH v2 0/4] Add pinctrl support for AST2700 SoC
+Date: Thu, 4 Sep 2025 18:33:57 +0800
+Message-ID: <20250904103401.88287-1-billy_tsai@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250904071732.3513694-2-maobibo@loongson.cn>
+Content-Type: text/plain
 
-Le Thu, Sep 04, 2025 at 03:17:31PM +0800, Bibo Mao a écrit :
-> Function clockevents_switch_state() will check whether it has already
-> switched to specified state, do nothing if it has.
-> 
-> In function tick_shutdown(), it will set detached state at first and
-> call clockevents_switch_state() in clockevents_exchange_device(). The
-> function clockevents_switch_state() will do nothing since it is already
-> detached state. So the tick timer device will not be shutdown when CPU
-> is offline. In guest VM system, timer interrupt will prevent vCPU to
-> sleep if vCPU is hot removed.
-> 
-> Here remove state set before calling clockevents_exchange_device(),
-> its state will be set in function clockevents_switch_state() if it
-> succeeds to do so.
-> 
-> Fixes: bf9a001fb8e4 ("clocksource/drivers/timer-tegra: Remove clockevents shutdown call on offlining")
-> Fixes: cd165ce8314f ("clocksource/drivers/qcom: Remove clockevents shutdown call on offlining")
-> Fixes: 30f8c70a85bc ("clocksource/drivers/armada-370-xp: Remove clockevents shutdown call on offlining")
-> Fixes: ba23b6c7f974 ("clocksource/drivers/exynos_mct: Remove clockevents shutdown call on offlining")
-> Fixes: 15b810e0496e ("clocksource/drivers/arm_global_timer: Remove clockevents shutdown call on offlining")
-> Fixes: 78b5c2ca5f27 ("clocksource/drivers/arm_arch_timer: Remove clockevents shutdown call on offlining")
-> Fixes: 900053d9eedf ("ARM: smp_twd: Remove clockevents shutdown call on offlining")
-> 
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Document and add the pinctrl driver for AST2700 SoC.
 
-Thanks a lot!
+Changes since v1:
+- Update pinctrl aspeed binding files.
+- Update the commit message for pinctrl binding patch.
+
+Billy Tsai (4):
+  dt-bindings: mfd: aspeed,ast2x00-scu: Support ast2700 pinctrl
+  dt-bindings: pinctrl: aspeed: Add support for AST27xx
+  pinctrl: aspeed: Add AST2700 pinmux support
+  arm64: dts: add AST27xx pinctrl configuration nodes
+
+ .../bindings/mfd/aspeed,ast2x00-scu.yaml      |    2 +
+ .../pinctrl/aspeed,ast2700-soc0-pinctrl.yaml  |  115 +
+ .../pinctrl/aspeed,ast2700-soc1-pinctrl.yaml  |  435 +++
+ .../boot/dts/aspeed/aspeed-g7-pinctrl.dtsi    | 1359 +++++++++
+ drivers/pinctrl/aspeed/Kconfig                |    8 +
+ drivers/pinctrl/aspeed/Makefile               |    1 +
+ .../pinctrl/aspeed/pinctrl-aspeed-g7-soc0.c   |  503 ++++
+ .../pinctrl/aspeed/pinctrl-aspeed-g7-soc1.c   | 2523 +++++++++++++++++
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c       |   47 +
+ drivers/pinctrl/aspeed/pinctrl-aspeed.h       |   11 +-
+ drivers/pinctrl/aspeed/pinmux-aspeed.h        |   35 +-
+ 11 files changed, 5034 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinctrl.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc1-pinctrl.yaml
+ create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7-pinctrl.dtsi
+ create mode 100644 drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc0.c
+ create mode 100644 drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc1.c
 
 -- 
-Frederic Weisbecker
-SUSE Labs
+2.25.1
+
 
