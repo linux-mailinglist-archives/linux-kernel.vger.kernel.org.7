@@ -1,165 +1,93 @@
-Return-Path: <linux-kernel+bounces-801625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9263B447D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:56:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64934B447DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97C625A22C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:56:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B83B5A2432
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E83A288C25;
-	Thu,  4 Sep 2025 20:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F7128934D;
+	Thu,  4 Sep 2025 20:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QwkSruKp"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QD4zl1Vp"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E3F27BF7C;
-	Thu,  4 Sep 2025 20:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2832874F3;
+	Thu,  4 Sep 2025 20:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757019406; cv=none; b=nNrji5ebYq19gpULkeqy9Q18tIjcmWPE1z39ntp6S2Uk9GTdfQ9n8Dq2Ofp68Vq6LTYF6aa91y23kPZ05DyKvlqKTJyNRJBvX4ka8IBNE+cLiwA0R6AJwSnemna1St4sZ5Y145QE8HPqeyLhd25r0TjEaWY1b6Pa7Zxj4tIOzrU=
+	t=1757019445; cv=none; b=kYsyPeVKsYTwjOq9raNNANMEEb6miB6zdJVE04Jc7TRfna1x8w2IQhy1GKoEzoaqoFLfg7i++pWrr96Fr3+2CjuA5BMQr81nk8uxDqzGgVH91djg10bTA4DLPBaD+2pzgy375lcckMPeI12Co8TX3z/wjqaHQcnKMmf5N2SYgGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757019406; c=relaxed/simple;
-	bh=0+JAO72bgTdLrUiNHlhx77p8w8ALu96O4sPB5B0ft8A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VOO6deL7tV4aGBqw9ViRtPa6s4lPyV/RTNTHwMpZjUYXwj4px623ZAhf+4I7PHrGwuEEEnKeMDJ3VL4GbrqNZYv9zM5penu6/6tMUW/f6ITxACWu2T5dy1uUYM9HQQ/0oQaJLFEfwU9lY95Dg4n6KiMzXftDnVp4OnlZgMhZUXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QwkSruKp; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584DXQ8M031307;
-	Thu, 4 Sep 2025 20:56:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=TC7gQc
-	Jf7E1ELsGNLmFdV3fkZDlgqOqQ0M6PqkwBgTI=; b=QwkSruKpnr61Jjw1xo3JIf
-	oLXFIDiyZJjGNFQFzFdEwlfAwFn/2+3M0H6/X0eTN9wPcN/r8bMMHDDyB0Th6Bvt
-	9ZkYvLSJxeILMRAv2qOjoz1m6re7uM6CM8qfZT7j9eufNHOfSprcYWkxVDAFx/in
-	RoKliKmUkPeLa5avQe8c25dDOAl/akuUmnjqpSgswoHx+XLI1RT+1R7QVmEhEM2Y
-	d6+BtYw+R7WP/pWA+iLxGyJXJ+XnTpuv15EJ+nY8oJOb0KBq1LyRu+AytSGsqgpe
-	Nm2WjcU6+QyB5DKWlhS7n1jM5G+GqaMUYwInj691b6MzfKKxu0ncVn7LwawoOl9w
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usurcnqg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Sep 2025 20:56:37 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 584JEVC0021205;
-	Thu, 4 Sep 2025 20:56:36 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48vcmpxdr0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Sep 2025 20:56:36 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 584KuZE946661974
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 4 Sep 2025 20:56:35 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3A31958054;
-	Thu,  4 Sep 2025 20:56:35 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5F2A55804E;
-	Thu,  4 Sep 2025 20:56:33 +0000 (GMT)
-Received: from [9.61.17.116] (unknown [9.61.17.116])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  4 Sep 2025 20:56:33 +0000 (GMT)
-Message-ID: <f9e38796-bb97-4846-8f4c-b92421cadc2f@linux.ibm.com>
-Date: Thu, 4 Sep 2025 16:56:32 -0400
+	s=arc-20240116; t=1757019445; c=relaxed/simple;
+	bh=f8+iL5gQnDX1s4LI1Xnci4IXy1UZaGhmZ08Thk269BQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/9btlYxHO+EzksWqCP8xL0H6bDZaz3pXIRMjQyF5c1CJilHW7S5IJnM0PJ1Ad34IsqYzdVm7tADx43ziPlSLQ+Xz/rPMER/gunJdCnYM8CGMIprlVihkOrayYC0spwQ4OVbpT7AruD+Jt5yF90DcZ5UYWBujA7s1J2un+NEMlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QD4zl1Vp; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=nPy5DuiAk2Jhf0wGN+ozpIwohwHzDCdHscEPPNtyJIU=; b=QD4zl1VpDTuQ8WYXHBaS0g/eRP
+	RJDue2I1xROI6/7V9oCbfkD5MM10oP44w7Hjm5Rfn+LVOsmUzWLZdcOvomlq3Y8Oo3Wr1dJSc7w9e
+	N0WtyxzqdF04au5Hx5A/uQAcTLUDoFNlr6Yp+j1mdImLPf/S3WqW0fdCF/PzPjPw/nxk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uuH19-007Guh-LR; Thu, 04 Sep 2025 22:57:15 +0200
+Date: Thu, 4 Sep 2025 22:57:15 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next v2 9/9] net: pcs: rzn1-miic: Add RZ/T2H MIIC
+ support
+Message-ID: <bb17b506-89ea-4a7e-8c15-ed4f35dae5dd@lunn.ch>
+References: <20250904114204.4148520-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250904114204.4148520-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/s390: Make attach succeed when the device was
- surprise removed
-To: Niklas Schnelle <schnelle@linux.ibm.com>, Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Gerd Bayer <gbayer@linux.ibm.com>, Farhan Ali <alifm@linux.ibm.com>,
-        Benjamin Block <bblock@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20250904-iommu_succeed_attach_removed-v1-1-e7f333d2f80f@linux.ibm.com>
-Content-Language: en-US
-From: Matthew Rosato <mjrosato@linux.ibm.com>
-In-Reply-To: <20250904-iommu_succeed_attach_removed-v1-1-e7f333d2f80f@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMCBTYWx0ZWRfX3wXbKAEgOvtZ
- n64Hm2mRAa2fRoaLqIzK/YwmScqF3TMX780tnWyXvF2kQg5WvGW0WndoNE+951a8+/chXjfkofz
- ovYOr6THy6y5U5e0Bnsteo6+WxxV4YtwRl4ACWNOuk69Fjqr8DQJtTLw5LtL8xDD2F6EStAj67d
- y0C/BRQ0AVS8fMngssn2R4DyGt7Ul9rRKV+u8i6TYBS2bB5hJZDPADojr5AK8KztuqrelD47Hm+
- 1fT/napTgVSCglUMkP4IeZXELlZTJMxOpsVujGJqoyFuTI/mFg3sG6D1w9fqNai/p2s4gNz2XxC
- g/RETt5sBjED7zytDryUGSYpMRCtPBrWprLslupUranxhOdiMX+vE5j2pgdy1pwNkk+FNbOromt
- YBhBo0FS
-X-Proofpoint-GUID: 8clwZ2gKz53G0an8e24FueLFNBCkizo_
-X-Proofpoint-ORIG-GUID: 8clwZ2gKz53G0an8e24FueLFNBCkizo_
-X-Authority-Analysis: v=2.4 cv=Ao/u3P9P c=1 sm=1 tr=0 ts=68b9fd06 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=9jRdOu3wAAAA:8
- a=VnNF1IyMAAAA:8 a=f94wAlES5zcTxHjwagAA:9 a=QEXdDO2ut3YA:10
- a=ZE6KLimJVUuLrTuGpvhn:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-04_07,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 impostorscore=0 priorityscore=1501 spamscore=0
- suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300030
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904114204.4148520-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 9/4/25 4:59 AM, Niklas Schnelle wrote:
-> When a PCI device is removed with surprise hotplug, there may still be
-> attempts to attach the device to the default domain as part of tear down
-> via (__iommu_release_dma_ownership()), or because the removal happens
-> during probe (__iommu_probe_device()). In both cases zpci_register_ioat()
-> fails with a cc value indicating that the device handle is invalid. This
-> is because the device is no longer part of the instance as far as the
-> hypervisor is concerned.
-> 
-> Currently this leads to an error return and s390_iommu_attach_device()
-> fails. This triggers the WARN_ON() in __iommu_group_set_domain_nofail()
-> because attaching to the default domain must never fail.
-> 
-> With the device fenced by the hypervisor no DMAs to or from memory are
-> possible and the IOMMU translations have no effect. Proceed as if the
-> registration was successful and let the hotplug event handling clean up
-> the device.
-> 
-> This is similar to how devices in the error state are handled since
-> commit 59bbf596791b ("iommu/s390: Make attach succeed even if the device
-> is in error state") except that for removal the domain will not be
-> registered later. This approach was also previously discussed at the
-> link.
-> 
-> Handle both cases, error state and removal, in a helper which checks if
-> the error needs to be propagated or ignored. Avoid magic number
-> condition codes by using the pre-existing, but never used, defines for
-> PCI load/store condition codes and rename them to reflect that they
-> apply to all PCI instructions.
-> 
-> Cc: stable@vger.kernel.org # v6.2
-> Link: https://lore.kernel.org/linux-iommu/20240808194155.GD1985367@ziepe.ca/
-> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
->  arch/s390/include/asm/pci_insn.h | 10 +++++-----
->  drivers/iommu/s390-iommu.c       | 26 +++++++++++++++++++-------
->  2 files changed, 24 insertions(+), 12 deletions(-)
->
+>  /**
+>   * struct miic - MII converter structure
+>   * @base: base address of the MII converter
+> @@ -203,11 +255,24 @@ static inline void miic_unlock_regs(struct miic *miic)
+>  	writel(0x0001, miic->base + MIIC_PRCMD);
+>  }
+>  
+> +static inline void miic_lock_regs(struct miic *miic)
 
-Makes sense to me.
+Here as well.
 
-Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
+	Andrew
 
