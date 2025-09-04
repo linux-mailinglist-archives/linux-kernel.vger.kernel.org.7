@@ -1,123 +1,109 @@
-Return-Path: <linux-kernel+bounces-801666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38DEDB4488B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:32:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D94FB4488F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E0D9AA1567
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:32:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC1C41CC14B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9472C0F84;
-	Thu,  4 Sep 2025 21:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0C12C1580;
+	Thu,  4 Sep 2025 21:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mxrBSiCf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ScDE3p/Z"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fWRsPJY4"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2293C21FF44
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 21:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCA72C032C;
+	Thu,  4 Sep 2025 21:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757021502; cv=none; b=ElITA0UAWl0w5bh1t1sFVDw5qV6bD/GivSvCLmdL7kw+NcD6juAgeUCYCLIvKJ3mJc3P9El1hSUa0IUjsHdNgoXPsIUxa9O+LqFVN2SerKk2XTzu+WvOMgCkL1iW5MjHVcSA80PctqJpzbDTNoxAp+ph1cQ2CIH84RPMarpHfxE=
+	t=1757021562; cv=none; b=cf2krwfYx1Xde7/6WvNkaq+Fq7fR77dw1RN1sMgHkAESAK9WJ+8okfPdRXrXB5hsB0dwQa3KMkLdX/O2+jlrKU1lOr+wMvHhUmukYosNjYRhXMvkzHrZqvCtNAr9csMVpNqxyf463sTljJZZCYBLcSqaH+CiI04m0LKf/ecxtJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757021502; c=relaxed/simple;
-	bh=X6LW2z4rIHXnyHPqJYA2fPIy/IMEEZxyfyveG1alPvw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UW9fEUimzxJT3IOvoX3fvxCu+cHS/mJj7FTFw9uCpz/CeNgrjsReWCvuGZ/itb0GPHz7FvbrTyi5jCs++wYfwcYJvvOGfCIjZTQVjR/wyd7ykdlufKsgaVAiNkIMfDr3+ukrGeMT5MyZHFte3GUA9XyL4SsC5l4EMBrC9Z/KIIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mxrBSiCf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ScDE3p/Z; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757021497;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PkPLqHlNHIOzdPNXBNA5/AITal0+0nC6rlhB7IKQDeE=;
-	b=mxrBSiCf5SeteuQifmQvJthwM/s9uzXKgV+kls4Prk6ViCMmSlBgcSe84aWaBWeQGVEh1E
-	q7sepVWTIboT1ylqqeamt4AQSRDARWe9b2TLsJBD3Js4SQF9fbIuxI/mX9sEUseqPqjvcn
-	ztES9WkKHVGlssILnaws1Nhkng2okJAZoiQKDvT0fK7RdDsvSiB0cVn0dfu+kuSZMfPR5g
-	JRHhzhGMNzI0ycpcJW4AWY8+NUKDW5Yp/redQa/OY2fxn7YsxqiIJ+6NnUTuxfeYRQB2S9
-	6K1j668scvVippRQYZPJ9CFFl9shBWKTNLfLxGEP36L8RSsdCqq6NyUuMwRK4w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757021497;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PkPLqHlNHIOzdPNXBNA5/AITal0+0nC6rlhB7IKQDeE=;
-	b=ScDE3p/ZGl54jyocd1pfbD3GwmU9jdDjc64eRPIAMdm1mwcwxeAICGWnZSLyhKHCUbgQpK
-	597ECWZD3/5n6rDg==
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
- <linux-kernel@vger.kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng
- <boqun.feng@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, Sean
- Christopherson <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>, Dexuan
- Cui <decui@microsoft.com>, x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
- Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Huacai
- Chen <chenhuacai@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [patch V2 28/37] rseq: Switch to fast path processing on exit
- to user
-In-Reply-To: <a5eaf7fb-bf09-4d66-90c7-03cc5803ff68@efficios.com>
-References: <20250823161326.635281786@linutronix.de>
- <20250823161655.063205235@linutronix.de>
- <bf216d3c-9d9a-45e4-b7a6-64c0c3cbe6ed@efficios.com>
- <02e74cef-f2fe-4590-8921-ef4df2b24786@efficios.com> <87iki0zooo.ffs@tglx>
- <a5eaf7fb-bf09-4d66-90c7-03cc5803ff68@efficios.com>
-Date: Thu, 04 Sep 2025 23:31:36 +0200
-Message-ID: <877bydykef.ffs@tglx>
+	s=arc-20240116; t=1757021562; c=relaxed/simple;
+	bh=CA9EDGEzGCJYmRbDXuxEzAFjkmDo9CGBZukFU6Qlcy0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dwbql9C9+lEn0xGzv4a17jF/irM6AU/9zDwfNvJ2rCpSV7aNrtxk/azA3Ed22IZkPdl9qLcu+Uf9TxF1jBS6eVeLHkuBz0T3pSWJ74SIPAoX44DtoEtxKqBSUlbliq2rUVmre13oA7X8buiJL+ydneAViq08qQaDzSME5RnnywI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fWRsPJY4; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-80bdff6d1e4so162952085a.3;
+        Thu, 04 Sep 2025 14:32:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757021559; x=1757626359; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KiQlGZ/C9rse9ilBfNrRdO+ytUNlHw4XOon1PrdZMm4=;
+        b=fWRsPJY4vsUHbafX3/+05/GZ69kDavbILMBcjgHdVWijd+cDbUUzjpzjaj/iDLsU1m
+         ymyAlpwF08A94lC4vLewImNkrf2y6Z8zlGbYo8PBL9ztFfKFDzszB7viMWf1rUKQgeqg
+         qBhGnQxsT0LZWph88GOjQyUFFRVxfky+IeuuwvyTcyEARQJ99SHa3G71gLBlECChBIVr
+         ImPdSTE8PXBAUiVuhxH7/ejflhxafhsVYFSIOx2GpLJ46WpqeBJBPkKsLm26sl1eayZf
+         nhyEKtkvx1EiXKitBfywrj1aig/mKdfdOpyIk0RbXJ5nEVya8sVIZZ30ZQC6bt9P1Uvm
+         gq+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757021559; x=1757626359;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KiQlGZ/C9rse9ilBfNrRdO+ytUNlHw4XOon1PrdZMm4=;
+        b=ISXy6ro5CmNDCupsiGMRu1HPFrTCA+SEULZw4RwJ3YLUY4Yb62KzApN5L6yimB2EV3
+         0FYV6znrOccg9KKKaoGZoZoddK7giEJSjXLuFZEqBUmOoirFXs0NM/XM8wAVTl4rX4L4
+         uoPQIT/HK4XiaKLHeGDu7++9v8eDE7f0x/sLR/U8js6iz380mxTo/5gpTgsvjTlOACBb
+         sxw/z4sGXHoLSG5w4Y1vw8WmJdkR4xp53jw0NJwEA+yUfE4npNfgh0lsNZAmzVPMnON5
+         3EZgMNA7uHH4LlWPDaLbv1wFSP/R5wXNiLvXGywBxYYsXZDwZCGWSzd4nUUcQ9q2DAR+
+         JsnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0R9nsZCkTi9E5Q3kyBmVUJu7KWCP+j4oDm2VG9L9KwJ5Vc8WWPrRZxSh8J+VrfILpvZfhDk0HdbLzLdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFtpkMv7ir1uPSWun+UPkFQwwLD+aeT0jCyibAgYHsaELqWW74
+	P85qyuXJ020D47jrVl37h1vkA8Ez2wv5qMG6FpxAq8P65LgKTveD4Sre87HKog==
+X-Gm-Gg: ASbGncuyU3ZvpiCR6BRkDos7fnNiGMbCdUNy3Q8fDvMMrrkDBTsSE6jz8EannL7ed3J
+	EXt29iXZZHF7T96EZw1K4RHXChuoeIYrrAeZjAZSDkBy+keP0RdTm9JfWz4V23ddNCTpNuZs+3r
+	RERKUPgs+XZufM3Ngf93z9mrrcXO/5cpfMdjYj8aqp2bz79O4vqyodFX35ML7mDFDytnGxlzxkJ
+	TiGib4RIPuNcr7U0Xo4r9IeS7VL1v23ADt5y1zmOytTS4PsIjGzUVa1wsDnTfI5fTBiooeP75T3
+	N9cQiGZS5sSo4CZYy19xko26OoqX9caxe6kVAWjI7PoRggDcBJrYiMQ/iiR5W1e9UgyVdSH2vms
+	zEqz0qKvstxbZc9VreIuNISoIBjo40QMwsqISEJXY1tgCmtBUj3ePFftDT6D77Qm9lYg7npQ=
+X-Google-Smtp-Source: AGHT+IEX9DX3HrEdBrePkobi7MjVYIUxvz0xv/s17E/klLNvnS90SGZ7neelcaD/b0IshyGCidEOrg==
+X-Received: by 2002:a05:620a:3189:b0:80b:4b83:5fae with SMTP id af79cd13be357-80b4b83643dmr863293385a.44.1757021559248;
+        Thu, 04 Sep 2025 14:32:39 -0700 (PDT)
+Received: from archlinux ([2601:644:8200:acc7::9ec])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b48f635cbesm35473501cf.5.2025.09.04.14.32.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 14:32:38 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Sunil Goutham <sgoutham@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/CAVIUM THUNDER NETWORK DRIVER),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCHv2 net-next 0/2] net: thunder_bgx: convert fwnode to OF
+Date: Thu,  4 Sep 2025 14:32:26 -0700
+Message-ID: <20250904213228.8866-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 04 2025 at 13:54, Mathieu Desnoyers wrote:
-> On 2025-09-02 14:36, Thomas Gleixner wrote:
->
-> All that being said, I'm perfectly fine with your improvements, but
-> I just want to clarify what should be considered as relevant metrics
-> that justify future optimization efforts and orient future optimization
-> vs code complexity trade offs.
+NVMEM support addition and fwnode removals in favor of OF
 
-I understand that.
+v2: split up patch
 
-Though my main objective was to optimize for the 'nothing to see here'
-case, which is hit both in a kernel compile and also in the stress test
-suite as the numbers show.
+Rosen Penev (2):
+  net: thunder_bgx: check for MAC probe defer
+  net: thunder_bgx: use OF loop instead of fwnode
 
-I definitely was not optizing for the actual handling of critical
-sections in the first place. That this turned out to be slightly more
-efficient is mostly a byproduct of the main goal as I just integrated
-stuff more tightly.
+ .../net/ethernet/cavium/thunder/thunder_bgx.c | 24 ++++++++-----------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
 
-So the actual benchmark code which will only rarely hit that path is not
-that interesting. I ran the benchmark script out of curiosity
-nevertheless. Here you go:
-
-Before:
-      27.883787661 seconds time elapsed
-    2983.093796000 seconds user                                                                                                                                      4.227902000 seconds sys                                                                                                                                
-
-After:
-      27.908213568 seconds time elapsed
-    2994.785114000 seconds user
-       2.555690000 seconds sys
-
-The times have quite some variance across multiple runs on both kernels,
-but the trend of spending significantly less kernel cycles is very
-consistent.
-
-Thanks,
-
-        tglx
+-- 
+2.51.0
 
 
