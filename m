@@ -1,130 +1,205 @@
-Return-Path: <linux-kernel+bounces-801278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBEB1B442F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:38:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04778B442FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11D16A05EED
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:37:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD3DDA03973
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232C12F3C39;
-	Thu,  4 Sep 2025 16:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2712FC86F;
+	Thu,  4 Sep 2025 16:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkRDPCwc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6UxRI+f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4A6260580;
-	Thu,  4 Sep 2025 16:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491492F3C38;
+	Thu,  4 Sep 2025 16:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757003837; cv=none; b=PFQPSnLwKuxSms5ZKmP5KAw/QVnCMAV58mlBVh6QOGCkNIeGEMcmjUbL2C+BgT0LtCCGbb9YWWtUS5WKZTdsyVRKGqDd2PP05f5uWzUC6C2BaJCVENQJrjsfjZo9vbb/yMPjU1OeW4EPFook5mIMPCpZ3LE+Y1J29gQPwWMXErc=
+	t=1757003887; cv=none; b=uMrvdn674Lp9YGEU7AkZu1D088puqH+PDWRw1UppHHFiBHRBavRZ4P9i39CZZk84ipE05jR0e6YfKKp9ek9W4wld8F5aEH58RKomM72X61YpLW+d5Da3AiwG0s9Cnutu79bQtjl6xE9fNukArwHq0dPmo880FufvQb0OFNTTMww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757003837; c=relaxed/simple;
-	bh=ktaFNYGOy663BwK6rfV/ONBV11uoyQrRziv09fSFQ1A=;
+	s=arc-20240116; t=1757003887; c=relaxed/simple;
+	bh=GM8BVc/lCUz3JRvFBhTmIBDA+zKVOyBTKFKiYcWAtQY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=siu2oTl+s7ROMotrWVaIRSYrmztMJPQUXKHDa5tQ3GamggDGHTcTncaaCKbBuh+M5BIC0tW/6manYJcdR5gtutI9wDJjUOFPgTTGPtXeIBSl22EPj/KiM+YtQJ7GFN0cOf0A/19BTBsb6OeJs6HtisUWAx4LAwVvaSezO8/lSoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hkRDPCwc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B87D8C4CEF0;
-	Thu,  4 Sep 2025 16:37:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NEGconv1KCcejJKsLKpiFD6bmugX6BD/2rSFxLGOcVikYQVnL0KJXyB2HeuDOgRa5Bx5UnmqBgCuPFsb1NAoiaroGIXaAojiRNC9eao+0z0iDeLochpelTvtBDxiiL3V8J7dXEq/R8htmCmUDSCEfoIjarA9WyudzUxX92AW+K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6UxRI+f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE1EEC4CEF0;
+	Thu,  4 Sep 2025 16:38:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757003834;
-	bh=ktaFNYGOy663BwK6rfV/ONBV11uoyQrRziv09fSFQ1A=;
+	s=k20201202; t=1757003886;
+	bh=GM8BVc/lCUz3JRvFBhTmIBDA+zKVOyBTKFKiYcWAtQY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hkRDPCwcgpV8W/82FQ58Hd5lN+OM+10trpdtVo186jo1w+T6Sew0RKJ/4TY/RX2Ip
-	 r200ZrHL354DiFKrwms7xBmVqu08JXVvLuE4NErIdKRHDGruat+xbl3SHNKLxHP+Hz
-	 2/WSWuM5/y1bZJZUAm39JvLJzGixYRvMVE6a8VVY+F5r9Hi65LJpnWGBwz1ehPZwj6
-	 B8r2LYhfLODBKHBqtiyERC74r87xZITyQ8hJ0JE7fK8OpjHuW+RUNRMV3BKI9ySJcD
-	 CToGmN2fu60jEhJ6XbgicYPHuEjgzHP2Ww9lFQhmlX4HgTFwgMQkOh4COZI1fTKdBI
-	 6xyRidT+lU2Sw==
-Date: Thu, 4 Sep 2025 09:37:14 -0700
-From: Kees Cook <kees@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Marco Elver <elver@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Ramon de C Valle <rcvalle@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	x86@kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 0/9] kcfi: Prepare for GCC support
-Message-ID: <202509040933.06AF02E714@keescook>
-References: <20250904033217.it.414-kees@kernel.org>
- <20250904070410.GX4067720@noisy.programming.kicks-ass.net>
+	b=O6UxRI+fgNAd2wy+m9iIzJ7lycQIEDH0R6sDvZmDJNttg0I8+hO4a6T/GWHExgqvZ
+	 HmwvPTeyO+K0OY8heQ7LC+LdBM+4tNQ4fOOYLbZUzgEN3eVT3w0h/FHlDsWHfJMS+v
+	 hbsMQIsEhPgdoAaZwcyGpwLBJJ1Xvb2RreyirE36/rHrReRVmov0Jm5J8WGIoszPLD
+	 bgonwrTevIDpAtvv18gwnztq3XE6JqNESmzaRjL2D9Rj4IRogNJkRNID/+LYrnIl2S
+	 q5Z5R+QV0iEBCN2W7ukqilJvJ5SQqiQYkd1KOgDe1cMALW2HLblTVnrWajNfVd0Wem
+	 h2MtuzzWIHdew==
+Date: Thu, 4 Sep 2025 13:38:03 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Tomas Glozar <tglozar@redhat.com>, KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	James Clark <james.clark@linaro.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/6] perf auxtrace: Support AUX pause and resume with
+ BPF
+Message-ID: <aLnAazxkczTFSMcL@x1>
+References: <20250725-perf_aux_pause_resume_bpf_rebase-v3-0-9fc84c0f4b3a@arm.com>
+ <fd7c39d2-64b4-480e-8a29-abefcdc7d10a@intel.com>
+ <20250730182623.GE143191@e132581.arm.com>
+ <0a0ed9d4-6511-4f0b-868f-22a3f95697f8@intel.com>
+ <20250808114734.GB3420125@e132581.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250904070410.GX4067720@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250808114734.GB3420125@e132581.arm.com>
 
-On Thu, Sep 04, 2025 at 09:04:10AM +0200, Peter Zijlstra wrote:
-> On Wed, Sep 03, 2025 at 08:46:39PM -0700, Kees Cook wrote:
-> 
-> > Kees Cook (9):
-> >   compiler_types.h: Move __nocfi out of compiler-specific header
-> >   x86/traps: Clarify KCFI instruction layout
-> >   x86/cfi: Document the "cfi=" bootparam options
-> >   x86/cfi: Standardize on common "CFI:" prefix for CFI reports
-> >   x86/cfi: Add "debug" option to "cfi=" bootparam
-> >   x86/cfi: Remove __noinitretpoline and __noretpoline
-> 
-> So I can take these first 6 patches (and edit that debug patch to
-> un-annoy myself ;-), but I'm thinking this Kconfig stuff:
+On Fri, Aug 08, 2025 at 12:47:34PM +0100, Leo Yan wrote:
+> On Tue, Aug 05, 2025 at 10:16:29PM +0300, Adrian Hunter wrote:
+> > On 30/07/2025 21:26, Leo Yan wrote:
+> > > On Mon, Jul 28, 2025 at 08:02:51PM +0300, Adrian Hunter wrote:
+> > >> On 25/07/2025 12:59, Leo Yan wrote:
+> > >>> This series extends Perf for fine-grained tracing by using BPF program
+> > >>> to pause and resume AUX tracing. The BPF program can be attached to
+> > >>> tracepoints (including ftrace tracepoints and dynamic tracepoints, like
+> > >>> kprobe, kretprobe, uprobe and uretprobe).
 
-Sure, yeah. Do you want a v3 for the debug stuff that uses your proposed
-helper?
+> > >> Using eBPF to pause/resume AUX tracing seems like a great idea.
 
-> >   kconfig: Add transitional symbol attribute for migration support
-> >   kcfi: Rename CONFIG_CFI_CLANG to CONFIG_CFI
-> 
-> Should perhaps go through the kbuild tree? A
+> > >> AFAICT with this patch set, there is just support for pause/resume
+> > >> much like what could be done directly without eBPF, so I wonder if you
+> > >> could share a bit more on how you see this evolving, and what your
+> > >> future plans are?
 
-I had chatted offline with Nathan about this series, and he'd suggested
-the kconfig change could go with it's first user (the rename). So if you
-don't want to put it in -tip, I can take it in the hardening tree.
-(There's no dependencies between these 2 and the first 6.)
+> > > IIUC, here you mean the tool can use `perf probe` to firstly create
+> > > probes, then enable tracepoints as PMU event for AUX pause and resume.
 
-> Leaving this:
-> 
-> >   ARM: traps: Implement KCFI trap handler for ARM32
-> 
-> Can that go independently through the arm tree, or are there
-> dependencies?
+> > Yes, like:
 
-I can take this too, assuming ARM folks don't want to snag it. I may,
-however, wait on it, just to avoid implementing the kernel support
-before the GCC folks are happy with the arm32 KCFI backend and its UDF
-encoding, etc.
+> > $ sudo perf probe 'do_sys_openat2 how->flags how->mode'
+> > Added new event:
+> >   probe:do_sys_openat2 (on do_sys_openat2 with flags=how->flags mode=how->mode)
 
-Thanks for looking at these! :)
+> > You can now use it in all perf tools, such as:
 
--Kees
+> >         perf record -e probe:do_sys_openat2 -aR sleep 1
 
--- 
-Kees Cook
+> > $ sudo perf probe do_sys_openat2%return
+> > Added new event:
+> >   probe:do_sys_openat2__return (on do_sys_openat2%return)
+
+> > You can now use it in all perf tools, such as:
+
+> >         perf record -e probe:do_sys_openat2__return -aR sleep 1
+
+> > $ sudo perf record --kcore -e intel_pt/aux-action=start-paused/k -e probe:do_sys_openat2/aux-action=resume/ --filter='flags==0x98800' -e probe:do_sys_openat2__return/aux-action=pause/ -- ls
+
+> Thanks a lot for sharing the commands. I was able to replicate them
+> using CoreSight.
+
+> Given that we can achieve the same result without using BPF, I am not
+> sure how useful this series is. It may give us a base for exploring
+> profiling that combines AUX trace and BPF, but I am fine with holding
+> on until we have clear requirements for it.
+
+> I would get suggestion from you and maintainers before proceeding
+> further.
+
+Maybe retrofit this for starting stopping profiling non HW tracing
+sections?
+
+We have now:
+
+⬢ [acme@toolbx perf-tools-next]$ perf record -h switch
+
+ Usage: perf record [<options>] [<command>]
+    or: perf record [<options>] -- <command> [<options>]
+
+        --switch-events   Record context switch events
+        --switch-max-files <n>
+                          Limit number of switch output generated files
+        --switch-output[=<signal or size[BKMG] or time[smhd]>]
+                          Switch output when receiving SIGUSR2 (signal) or cross a size or time threshold
+        --switch-output-event <switch output event>
+                          switch output event selector. use 'perf list' to list available events
+
+⬢ [acme@toolbx perf-tools-next]$
+
+That will dump a snapshot when some event takes place, but that is done
+with a sideband thread, from 'man perf-record':
+
+--switch-output-event::
+Events that will cause the switch of the perf.data file, auto-selecting
+--switch-output=signal, the results are similar as internally the side band
+thread will also send a SIGUSR2 to the main one.
+
+Uses the same syntax as --event, it will just not be recorded, serving only to
+switch the perf.data file as soon as the --switch-output event is processed by
+a separate sideband thread.
+
+This sideband thread is also used to other purposes, like processing the
+PERF_RECORD_BPF_EVENT records as they happen, asking the kernel for extra BPF
+information, etc.
+
+----------------------
+
+And in perf-report we have:
+
+----
+
+--switch-on EVENT_NAME::
+        Only consider events after this event is found.
+
+        This may be interesting to measure a workload only after some initialization
+        phase is over, i.e. insert a perf probe at that point and then using this
+        option with that probe.
+
+--switch-off EVENT_NAME::
+        Stop considering events after this event is found.
+
+--show-on-off-events::
+        Show the --switch-on/off events too. This has no effect in 'perf report' now
+        but probably we'll make the default not to show the switch-on/off events
+        on the --group mode and if there is only one event besides the off/on ones,
+        go straight to the histogram browser, just like 'perf report' with no events
+        explicitly specified does.
+
+----
+
+If we had it in 'perf record' then we would have reduced perf.data
+files.
+
+I.e. we would have something like '-e {cycles,instructions}/action=start-paused/k' -e probe:do_sys_openat2/action=resume/ --filter='flags==0x98800' -e probe:do_sys_openat2__return/action=pause/
+
+- Arnaldo
 
