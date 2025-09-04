@@ -1,152 +1,145 @@
-Return-Path: <linux-kernel+bounces-800046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72CEB432C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:46:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B287FB432C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7085517285C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:46:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DD736806B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D512028466D;
-	Thu,  4 Sep 2025 06:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B0A28468B;
+	Thu,  4 Sep 2025 06:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avFzIVsN"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WzA82SHo"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB78227FB30
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A383E27FB30;
+	Thu,  4 Sep 2025 06:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756968398; cv=none; b=XY+uTCiq34jq66CBqltQSlphxLi+TCgaHFIeYC8uquqNPsXDVMIjXnvh6Pmt2SAYBluLPPvotYjyMAf5LqmbPU/Ol9pHSH57NTA33xG0QCP0/fjrkCisWkU7Ew8r+ReTXll9HNMsHczER2tfoO6gWri++k0XKKYJVVNu3seBa7s=
+	t=1756968439; cv=none; b=nzBaqvQHvqbzHOzRwez7RS+DbMeBYIbVUCEFZOAY/0y3wlWOS99Q692SVyQPspI/hd/BQCEI1x6N7k4IMG7K0iXIp14C5q5SBfXS89C8TiQkr/FevIOD04VGJqjaF78yPswFpx6U35E6E0r/9MKpz88uHFNkIklKkmvHUabp+uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756968398; c=relaxed/simple;
-	bh=lJSvInSeUQW1SnN8lY1JMpupjUu9RsxmM24J2NhIGfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kcJH4Gjk7Rw//GQmZx2QwKpa06/0IbebJmiFweFwWJRHo5YK8VzO59ta3NJBzBxxbhFoyEusmejudvL2fJhbBzJZTyZIXuhVuc5yqrPETCxC+WN7Y1aB5Q5mNv91qmwLPQZPaoWhGvLFOwTQIjsso6i2GBId4Xy2jSvk0+8bQL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=avFzIVsN; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24b157ba91bso1425255ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 23:46:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756968396; x=1757573196; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o2eG0cp/psHFj43Kk8cgZo/jfowPJyGr/xhcWREGoSQ=;
-        b=avFzIVsNW6297i5MmcLAph41c43tvwqPiMnHbRSJ9QaxE0u0focJzNMlixvnU00L7j
-         MqjkYU4tZuBVgL4LYkpV3Woph5tkzcvFgcdTYln5nt2PdyqXnTIhM/Ic6Ict14zGZ7fV
-         ZSK8XtcyOhqTpaqgq3GzDeUNPLqMnQKsxXkNL3uVtVAIfgFtYhsW0g7CmLN6PxOnhvbI
-         ZCW3w/8OrZhbAbKzA7M4n+3xfig5rycN9CQHDVRjkI6KQmH8u+aP/AbnKmxfB3AnmiiD
-         4TfUk3CucMnQwvSIgIizoufaNIB/s92zGwmYOh55xRlMERNjqooXttvmiRRowUX0vjmK
-         HtoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756968396; x=1757573196;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o2eG0cp/psHFj43Kk8cgZo/jfowPJyGr/xhcWREGoSQ=;
-        b=fjCc/AHB0RAZQwwfWLCwF9j+GM75hVybQ8slbhxREArd1gfSSAlMVzKZcYyggCczMA
-         DgpBxdwizbZNIlVs/+VDEleWr/2ps8EAWHY4s4cxVVgrSyS4g3abUIdW2cBLOYAISptB
-         RlSZgp1Q3kyXzZkaGoC4MW57XwC030xb0JmqSf+TsoPYLY02qL9KsdBYGGNBISpN3VS7
-         l+wrLgfJGDOSkFTTuB8MuUC0VqaPzNslZO1DK2hxioyhf4h97To3TkkNSycRqklBbptR
-         Favkw/NaWmDVtqgRuEMpTAvSn3jBQ+DZBtt/xBd8ntebzfAIVXlT5MnxK34RlHcqlP8A
-         L97Q==
-X-Gm-Message-State: AOJu0YxHmcf2fA3fTxApzDTCnbIUj/JlJeKSxWvrkC8e6Zf/ZsTLr47g
-	4QvINs93KvowckoLvF15gU3l58LewM/X0odyhCzypqfPJ7L1Sebh2cWHrhOadjX0
-X-Gm-Gg: ASbGncvuw9LxQXvrARUxYy4B43ZqI72DW9+i/HJSlBKeBF0q0703bAznRN9DfdGOhoC
-	93+7wJy94cy5pu04cYB2SGBnEB7e1Pqx+BLWlvFot1pLLSWXVB8MuimNbUIR6QuQ4kmxy0DKMpU
-	9pAZ1EEQO6dsvQpVoK0JrhE52rw0CVbD3WZX8dEDOs+o+xOA9W67kb81n/F7ANEIHCVSLTp3Zek
-	/3GLlj4Kdc8zNegurFgOUmBLgTfYUEGa96cWdlKFaNvuSpsP9RtlkVRrlwfWXbz+OhNVR49/byT
-	fDC72ZqXYumHZNpZNvkWVOG3IPQB7Zav/8CkZ1Am6/49qA21nsZsiedDcDKwLLiJkeRJghjIsOg
-	qfZc1L8YOYdxq+sRmnGpZXS+XFAPI9N4=
-X-Google-Smtp-Source: AGHT+IFclv4NiXp9FbGogUUf1GeeupNytVlkU6Odib54NEEYIdfA6qp3hjHR2VZ9Kz6lEd/nz9L/IQ==
-X-Received: by 2002:a17:902:db03:b0:246:e1ff:b223 with SMTP id d9443c01a7336-2491f1393cemr154002715ad.6.1756968395591;
-        Wed, 03 Sep 2025 23:46:35 -0700 (PDT)
-Received: from hobbes ([2600:70ff:f833:0:8e07:c9e8:902c:6ffa])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24cb28c3110sm20635085ad.120.2025.09.03.23.46.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 23:46:34 -0700 (PDT)
-Date: Wed, 3 Sep 2025 20:46:29 -1000
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Kees Cook <kees@kernel.org>, 
-	Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: [PATCH] fork: simplify overcomplicated if conditions
-Message-ID: <357638f71edc7f1d9814b1851a64e09a8895bffc.1756968204.git.joeypabalinas@gmail.com>
+	s=arc-20240116; t=1756968439; c=relaxed/simple;
+	bh=V+KbhRiHSS3Yw9mT+RFbahEQhxzLIfxKllFZYhhIOX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oY9JSxAEwC2BroE5CzrfbGVmg3vbLtgKF9qzlHd/IOg4GGTJCUhjTfyAIGJgpLy30L1eNMq6GLozqKvDZd7K836pAj7TzKUZCW2ZCtmXN+3KiDlSifsqBPglDt7lkW0+0z014LllYy7BoNC3QEZ9bvCsUKqfEshvBUxVqd7Bo9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WzA82SHo; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=efyhR8wHhw8uesblYSnLgPQBPUNCW7rCVpcxJ83V5M0=; b=WzA82SHoMRi9yVKB7fE7LAuc1c
+	jsspskezLL1ajqArYYKzI6cX4WAwNcIkBBMtuGNUrV7io6kKfesya8FJMYYysXDzhT5ImjOLY6LFV
+	248MTKZQHUNmlfu2GDFS/rdAZg0ZwzLMpkBnhkCCu548qhVx0yqSkFrCciRhTe05ZA4D36cQAIgAF
+	uSGincVkuMSsYe6AEzciEecgQynn8iCwaWTJrIk4o8qLMnj04bDec49lcxdEb4sUGgOY8xHaRUya2
+	SrO/LvCDU13jdZ3xoZf3iSRb8Uw1HdzRWYccGJKRwrny/suwG+mF2+B1WfIwU77Mz+0C+q3L0/MR+
+	dw+7hO0w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uu3kK-00000004IX4-0HP9;
+	Thu, 04 Sep 2025 06:47:00 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 91B3F3002BF; Thu, 04 Sep 2025 08:46:59 +0200 (CEST)
+Date: Thu, 4 Sep 2025 08:46:59 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jinchao Wang <wangjinchao600@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"Naveen N . Rao" <naveen@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, linux-perf-users@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 07/18] mm/ksw: add atomic watch on/off operations
+Message-ID: <20250904064659.GV4067720@noisy.programming.kicks-ass.net>
+References: <20250904002126.1514566-1-wangjinchao600@gmail.com>
+ <20250904002126.1514566-8-wangjinchao600@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zoii5ckt5ukh55ig"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250904002126.1514566-8-wangjinchao600@gmail.com>
 
+On Thu, Sep 04, 2025 at 08:21:04AM +0800, Jinchao Wang wrote:
 
---zoii5ckt5ukh55ig
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: [PATCH] fork: simplify overcomplicated if conditions
-MIME-Version: 1.0
+> +static DEFINE_PER_CPU(call_single_data_t,
+> +		      watch_csd) = CSD_INIT(ksw_watch_on_local_cpu,
+> +					    &watch_info);
+> +
 
-Since `((a & (b|c)) =3D=3D (b|c))` is the same thing as `(a & (b|c))`, use
-the second version which is simpler.
+> +int ksw_watch_on(u64 watch_addr, u64 watch_len)
+> +{
+> +	unsigned long flags;
+> +	int cpu;
+> +
+> +	if (!watch_addr) {
+> +		pr_err("KSW: watch with invalid address\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	spin_lock_irqsave(&watch_lock, flags);
+> +
+> +	/*
+> +	 * check if already watched
+> +	 */
+> +	if (watch_info.addr != 0 && // not uninit
+> +	    watch_info.addr != (unsigned long)&watch_holder && // installed
+> +	    watch_addr != (unsigned long)&watch_holder) { //not restore
+> +		spin_unlock_irqrestore(&watch_lock, flags);
+> +		return -EBUSY;
+> +	}
+> +
+> +	watch_info.addr = watch_addr;
+> +	watch_info.len = watch_len;
+> +
+> +	spin_unlock_irqrestore(&watch_lock, flags);
+> +
+> +	if (watch_addr == (unsigned long)&watch_holder)
+> +		pr_debug("KSW: watch off starting\n");
+> +	else
+> +		pr_debug("KSW: watch on starting\n");
+> +
+> +	for_each_online_cpu(cpu) {
+> +		if (cpu == raw_smp_processor_id()) {
+> +			ksw_watch_on_local_cpu(&watch_info);
+> +		} else {
+> +			call_single_data_t *csd = &per_cpu(watch_csd, cpu);
+> +
+> +			smp_call_function_single_async(cpu, csd);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
 
-Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
----
- kernel/fork.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+What do you think happens when two ksw_watch_on() instances run
+concurrently?
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index af673856499dcaa35e..cb49f25e30e69edaa5 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1930,14 +1930,14 @@ __latent_entropy struct task_struct *copy_process(
-=20
- 	/*
- 	 * Don't allow sharing the root directory with processes in a different
- 	 * namespace
- 	 */
--	if ((clone_flags & (CLONE_NEWNS|CLONE_FS)) =3D=3D (CLONE_NEWNS|CLONE_FS))
-+	if (clone_flags & (CLONE_NEWNS|CLONE_FS))
- 		return ERR_PTR(-EINVAL);
-=20
--	if ((clone_flags & (CLONE_NEWUSER|CLONE_FS)) =3D=3D (CLONE_NEWUSER|CLONE_=
-FS))
-+	if (clone_flags & (CLONE_NEWUSER|CLONE_FS))
- 		return ERR_PTR(-EINVAL);
-=20
- 	/*
- 	 * Thread groups must share signals as well, and detached threads
- 	 * can only be started up within the thread group.
---=20
-Cheers,
-Joey Pabalinas
-
---zoii5ckt5ukh55ig
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEx6b1SGGPTKxTmPDYqoHu9CTxowIFAmi5NcUACgkQqoHu9CTx
-owLeNw//RtKFfg6M05Wc2B+EejqcACdFpV7ikpBe/Y0ip72QbXbcqF11LwyZeOCs
-W7Utk9hFPb6HekYUI3o2xRMbfWjv5+NyiXUE5SBg4U0xQ7klO6oihnBI5SKyX7Wc
-BxgR6Qe/+Rx4oEaE3XSBl0bNAIsQMxSQaYDHPuGzmPKsV0UVpqN4VGWdhPt2H4Ro
-ap04G4VjU4Bjx+BQrzNYIwrTS4+end3rp2nYalisYFzWdPdPGxXf8Y5arNM81ZRV
-1rWaLz2L5PrqHqIQBjfkxoRsCQGW8xWGZWcf9jcN2E5tC56ouAqojIsV5Q1JtGMi
-+1zMLSRVRvCR9h1V9BXbUsS2Qu/xZtJfKDOjdyFgThQdAZqFeh956AAW0CxWwyIT
-tNn3dJNa1ZEK82MpRDLhuLjSgjFwahYnKJgF+iXUFwp90+OUK3JhPOdewFfOWKto
-O3h2z5PqznRddO4cwSUnsBWfjgLHKpN49X2g7ErKLd6m2xtKGh7H6PaotxomE3Bs
-NEmBgdev1ID9i1XUGbjq+oAlAaaMMeIhwtbh6cbFotIlxsKtNWbeWLcZsHWzw8in
-MDVx81zbCojqUjCp5fL+FyESAVnQbmG9eMBCRUchZrOUfRSpSExl7h4u/XryAQ1/
-dE5VhaHbYE22ui/lDNVUGkAGHY/Vkvwz/XhMXH0msVo4amsB9k0=
-=+ZzT
------END PGP SIGNATURE-----
-
---zoii5ckt5ukh55ig--
+What happens if a CPU comes online/offline concurrently with
+ksw_watch_on()?
 
