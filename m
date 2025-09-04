@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-799965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EA8FB431B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:44:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CEFB431BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B26D1C2390A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:45:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4854565B68
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48576242D62;
-	Thu,  4 Sep 2025 05:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F08243954;
+	Thu,  4 Sep 2025 05:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QoubimvR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAU4//LJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A99224B03;
-	Thu,  4 Sep 2025 05:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517D1242D60;
+	Thu,  4 Sep 2025 05:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756964678; cv=none; b=obIcPP/l2qRGXj4+ouXjcZfLu1izsg7mRkr9LqtoU5kU6gNXIvrtnlssl4kaVEu0P7alHTn8S3yllUQO/673inIUnSTu7EJIc825yplkd16HXz1lxv5c3RJB6BoAsnXBBujz4keGyNBbjD/rXJfO2aAewNXOJm254oBwZW0mw74=
+	t=1756964702; cv=none; b=aAjpO0N+bq0b6NqJDYZYst5Tg5Qyc61hIdYNdNDP0jvtU4EmKRaL7oGNcLAeEKn0JxdBXxukbAvIb27u11/gsCmTl/IoGhr5kvQEC/EZi3oXjLjLwqi9DwTDx7ep3oMg91eeqqBEWZIQjy79SJBcP/hZfeB5wa/m8Z/ap9cGE7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756964678; c=relaxed/simple;
-	bh=IkypIjiZkV8g6vnDD0lxifjqxhali/hvZxf3C1VNQDc=;
+	s=arc-20240116; t=1756964702; c=relaxed/simple;
+	bh=pDTzAePEeMkFvRiXo18qfy6QW3oH9kcy3ifm7gnJ/qU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZmNSaFU/Jaw/6QFSd5NVsDxZXZlXtdVpmZeSZWNXU3Boimwb9WHWfcx7l7I71jXO1UoEgIFPKTUYS+veLITxZyCmaXVT/3lzVKaJLZC+n2VSu95z/SZhMrQOdcHB53+XjqrksJD3j+V3C9II/3NTBm+aFAsuKxktzbck8sgywzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QoubimvR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF6DC4CEF0;
-	Thu,  4 Sep 2025 05:44:35 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=s+/+N39Ntgf3HBJP6P8LKkXuW1RkqlCR2LwUuqyn/l0hfyzZfuT7E1YhRlQjMcLOGbJ3+Es7RRmS0LgDLMne7wpGIPUdlnRsOTST0JNekrGPBgfrFJOqo4Hk0Hl3Qk6AtodHQa+TW3drVHcGjsd4QIOQS7fK/pVG7nNymqgWClk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAU4//LJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61398C4CEF0;
+	Thu,  4 Sep 2025 05:44:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756964678;
-	bh=IkypIjiZkV8g6vnDD0lxifjqxhali/hvZxf3C1VNQDc=;
+	s=k20201202; t=1756964701;
+	bh=pDTzAePEeMkFvRiXo18qfy6QW3oH9kcy3ifm7gnJ/qU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QoubimvRNDH21fqoixIiqSNDgGdrqTd7D+nkJEOQMaXwYoljZ6NDK22wAwQATuLH7
-	 aiHzh9+C/cCK/HqKl0/iODgi5re8sBtWV1oecsnqjjhLZVA4qEqrQQ9CIKx2XSfpB3
-	 WWHJtzdEO/0n+RDrpownp4neKuevkTcuV4fADA6zPbs/J0bCsyRldVn3L7ejpuKGuf
-	 WSRP03D6e1RJZZSyMn/9kaI2LqIQFHWCrMAc9ysRgZyQXRylDLUuCq/I9BjPXMVdcu
-	 NyGwpY0m7vdKYzkFt0zwt9xQBscjcNxiJ0m1E3AUVgoJxCjsSvgYYEMDk1EgHS9DUk
-	 xSJoMb1b2ZHdQ==
-Message-ID: <b893b98a-59f8-4b0a-b42a-66046bfa7435@kernel.org>
-Date: Thu, 4 Sep 2025 07:44:33 +0200
+	b=SAU4//LJfUPB3b44jl3mWGanzbCrpP+XEznnFg+3mtRG8LLiBhRKJJ9eTWu3wO57x
+	 /Cm9wnf2bo6gpyfYhcNQM1OfzYc1zJ1kUITIFtz7l04htbD9b2HZpp0XAnQsn8G4eV
+	 Mqd0Dgec0Ol8z3jVlyyxHFjEqU+/vrh20d30cFjxJvkiopEUROUYP6HprmBFU82622
+	 Y3iq5NeP9+xeFSezZixcZlj9zCukDVwQw1fnQM03+khUqTy9jc26+v0tv+jSFRD7fG
+	 HHuAjmnsDjf4Ig3k48DiCYlySRbBT3dFS5xsP0EcITVgTAGRMYD72d2QWXPvTWtUoc
+	 39l04bLBxND2Q==
+Message-ID: <997eb50b-db3e-4c0e-be29-0d04fef73ccf@kernel.org>
+Date: Thu, 4 Sep 2025 07:44:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] regulator: pf530x: Add a driver for the NXP PF5300
- Regulator
+Subject: Re: [PATCH v4 2/2] regulator: pf530x: dt-bindings:
+ nxp,pf530x-regulator
 To: Woodrow Douglass <wdouglass@carnegierobotics.com>,
  Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 References: <20250902-pf530x-v4-0-4727f112424e@carnegierobotics.com>
- <20250902-pf530x-v4-1-4727f112424e@carnegierobotics.com>
+ <20250902-pf530x-v4-2-4727f112424e@carnegierobotics.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,42 +103,51 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250902-pf530x-v4-1-4727f112424e@carnegierobotics.com>
+In-Reply-To: <20250902-pf530x-v4-2-4727f112424e@carnegierobotics.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 03/09/2025 22:03, Woodrow Douglass wrote:
-> This driver allows reading some regulator settings and adjusting
-> output voltage. It is based on information from the datasheet
-> at https://www.nxp.com/docs/en/data-sheet/PF5300.pdf
+> Bindings for the pf530x series of voltage regulators
 > 
 > Signed-off-by: Woodrow Douglass <wdouglass@carnegierobotics.com>
 > ---
->  MAINTAINERS                          |   6 +
->  drivers/regulator/Kconfig            |  12 ++
->  drivers/regulator/Makefile           |   1 +
->  drivers/regulator/pf530x-regulator.c | 378 +++++++++++++++++++++++++++++++++++
->  4 files changed, 397 insertions(+)
+>  .../devicetree/bindings/regulator/nxp,pf5300.yaml  | 52 ++++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6dcfbd11efef..2c2d165a40ff 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18291,6 +18291,12 @@ F:	Documentation/devicetree/bindings/clock/*imx*
->  F:	drivers/clk/imx/
->  F:	include/dt-bindings/clock/*imx*
->  
-> +NXP PF5300/PF5301/PF5302 PMIC REGULATOR DEVICE DRIVER
-> +M:	Woodrow Douglass <wdouglass@carnegierobotics.com>
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/regulator/nxp,pf530x-regulator.yaml
-There is no such file at this stage.... but if you fix order, it would
-be. Anyway, please be sure your patchsets are properly bisectable.
+> diff --git a/Documentation/devicetree/bindings/regulator/nxp,pf5300.yaml b/Documentation/devicetree/bindings/regulator/nxp,pf5300.yaml
+> new file mode 100644
+> index 000000000000..26cba1f1af62
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/nxp,pf5300.yaml
+> @@ -0,0 +1,52 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/regulator/nxp,pf530x-regulator.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP PF5300/PF5301/PF5302 PMIC regulators
+> +
+> +maintainers:
+> +  - Woodrow Douglass <wdouglass@carnegierobotics.com>
+> +
+> +description: |
+> +  The PF5300, PF5301, and PF5302 integrate high-performance buck converters,
+> +  12 A, 8 A, and 15 A, respectively, to power high-end automotive and industrial
+> +  processors. With adaptive voltage positioning and a high-bandwidth loop, they
+> +  offer transient regulation to minimize capacitor requirements.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nxp,pf5300
+> +      - nxp,pf5301
+> +      - nxp,pf5302
 
-Please organize the patch documenting compatible (DT bindings) before
-their user.
-See also:
-https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/devicetree/bindings/submitting-patches.rst#L46
+Still compatibility not expressed.
+
+Please respond to comments.
 
 Best regards,
 Krzysztof
