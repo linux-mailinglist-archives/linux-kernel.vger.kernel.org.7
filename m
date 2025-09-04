@@ -1,172 +1,123 @@
-Return-Path: <linux-kernel+bounces-800370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E92AB436E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:19:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F81BB436E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDBEE1C24D29
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:19:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7B8B3AE4F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D1723506F;
-	Thu,  4 Sep 2025 09:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l/96Upit"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BD22EF662;
+	Thu,  4 Sep 2025 09:19:57 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53D42DFA26;
-	Thu,  4 Sep 2025 09:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049362DFA26;
+	Thu,  4 Sep 2025 09:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756977546; cv=none; b=Da/60sUpwTYp++I7AcQu8HC7l9LG9empx+8a68TX00oA+COIOsbgaJoePWAZMJHN9LGGRRlwNS6To39T3gxt1tLTFy4dZt7Naz1F6d3rXaJHnp8HVCAQqGooy4ryvYf02kHD3CprXy17kvoyQR4wHNMhMaEZHNqI5rjfbKS85g4=
+	t=1756977597; cv=none; b=IbyI0DfUtkjJo3TJhaPXsHbbAHCi320mdsZhh0QCru580OH78sdzS8z6qv1bPe0lHgCKYRKBoA4jnbYnjqGNqJQIVHs56oB4DVpN/pUU3CiT61ZPpPizR8wVtmXhSqbYQmCyoJvKAVanXgOZLAjSFuLWh9Kj/2OUj3Nv+tqwJ34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756977546; c=relaxed/simple;
-	bh=pOtCgn/R5R30ybiZxFxw8oEKZ031yya84xjSg0TOgrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Owa0vnDagDwBvJIdgHz7JzFEaU6bxpvbltZgw184LG6mG2+yMRQGphCqTDu+kv3Svv8khFTbejqRw06KiRurg1tSjthpp6JkVondqMmUthJVTlW3fwIJGrlS5qB4zjQIjLEAHZ6+Nrtk30WKz/n2bRrvMfuZZu4A6qeaVyyczf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l/96Upit; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5841mNP9004991;
-	Thu, 4 Sep 2025 09:18:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	baoKJWLvfk5vZCL5Lo+mCicXEHDPlRdfFPrnWUAdlV8=; b=l/96UpitUBFhZyhu
-	aw9nTg3a5tN8qH0YwcQHjKZu5AuvtFHioKyDDbBu6kHMWP18sLliM6/cajbslDOH
-	Ink3RWSKdSKo9vqF3QJiFWxrj29Xf54Iy/+UiUGIKa9WyVfHbcCQef0oYha2kMol
-	L9j1YStjZdTam9QURNCR80scnOaGabMkb3E2JK5LMG5q1Os1BB25/phFBn57mQh2
-	WolMINnCW7vP2jERgYWQZ/QDyexRgsYK+BmvKrvDXF4AjIB1MW6McV9VGQU5+yqT
-	54i3dL5GWPks4Fro2tjJmKQvZezB+pQvICG12XQZG4MwJ4mAdlrYa/YxlvqSqlZy
-	4LpohA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ur8s70h7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Sep 2025 09:18:51 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5849Ioqj027240
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 4 Sep 2025 09:18:50 GMT
-Received: from [10.217.199.111] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 4 Sep
- 2025 02:18:43 -0700
-Message-ID: <2735afb0-96ba-4efb-818d-0a7b342b7145@quicinc.com>
-Date: Thu, 4 Sep 2025 14:48:39 +0530
+	s=arc-20240116; t=1756977597; c=relaxed/simple;
+	bh=gcxK35ct7x68sSLxRnUL8USHJPcYxUnjSbIyvrRLSPU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BPUt/gJ1i9GLbFNTcrU8r964OJRsNqr0MQ5fktj1KZxuCyPtzkbn+WHKQV2ZBuxe7EqNmsPLGTrVviLZRmfzFfdZ7eu9Gna6wg2wyT2rP+fxmvINILq185+i4Mqxsla10ZXTGWa8T2yazlFvrjem9MwUJcGq9wqtLgiT2w1X/30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cHYpX5x5dzYQvHT;
+	Thu,  4 Sep 2025 17:19:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 4FAC11A058E;
+	Thu,  4 Sep 2025 17:19:47 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgB3wY2xWblocc9nBQ--.16239S3;
+	Thu, 04 Sep 2025 17:19:47 +0800 (CST)
+Message-ID: <e4da9027-abb4-76d1-04df-fff9798baae1@huaweicloud.com>
+Date: Thu, 4 Sep 2025 17:19:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/6] arm64: dts: qcom: lemans: Add GPU cooling
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Akhil P Oommen
-	<akhilpo@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>, Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Marijn
- Suijten" <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Connor Abbott <cwabbott0@gmail.com>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Rob Clark
-	<robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20250822-a663-gpu-support-v4-0-97d26bb2144e@oss.qualcomm.com>
- <20250822-a663-gpu-support-v4-4-97d26bb2144e@oss.qualcomm.com>
- <4ac0ff3d-38db-44cc-9e36-44f9e819e96d@oss.qualcomm.com>
-Content-Language: en-US
-From: Gaurav Kohli <quic_gkohli@quicinc.com>
-In-Reply-To: <4ac0ff3d-38db-44cc-9e36-44f9e819e96d@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v7 md-6.18 11/11] md/md-llbitmap: introduce new lockless
+ bitmap
+To: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, xni@redhat.com,
+ colyli@kernel.org, corbet@lwn.net, agk@redhat.com, snitzer@kernel.org,
+ mpatocka@redhat.com, song@kernel.org, yukuai3@huawei.com, hare@suse.de
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com, hailan@yukuai.org.cn
+References: <20250829080426.1441678-1-yukuai1@huaweicloud.com>
+ <20250829080426.1441678-12-yukuai1@huaweicloud.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <20250829080426.1441678-12-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAxOSBTYWx0ZWRfX5EQpLzs7wFrs
- cC5KQJ/Qgxtm76RRZlGCjb7joFFWqqziKCj97/71EtxV6YEvyO4/fflEM3ezJ6fuUoZdDn+scDV
- dZ7EMTKicO27xWqtZ/4PSv297cVonRUL/gacBiT3JrCtn/8p7XlKkIlLOSZzvxwGz3h7mr7g3br
- Ft+XyX7KcMtsYS+hf1JjfELonjGEVAEv/sqDCpnM6kBtIDijuMjQOtQKH2CgTrq6aS5he0D3jtx
- MhGeU0uav+igxOMnY8CZKSBq0PrIWXooInxpBbVILGLUSgW/4+skPn2xSFoq1P0i4iQu0pSnqmu
- L06t4ZiGIFVi7+5oVMUJT32X8oZ0rBxoTx75a4kDupgtBu44m4om8qSwaI6zZ3VC3F6RxKORmI5
- kItkk8dC
-X-Proofpoint-GUID: r3AiJCyyTwPoA44C1DZF2D46RO5W0qtj
-X-Proofpoint-ORIG-GUID: r3AiJCyyTwPoA44C1DZF2D46RO5W0qtj
-X-Authority-Analysis: v=2.4 cv=PNkP+eqC c=1 sm=1 tr=0 ts=68b9597b cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
- a=EUspDBNiAAAA:8 a=Tnv4r2qD--CattBqy9UA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-04_03,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1011
- suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300019
+X-CM-TRANSID:gCh0CgB3wY2xWblocc9nBQ--.16239S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF48ZFyUuF1DuFykCFW7Arb_yoW8JFWkpF
+	Z7K398CrZ8Ar4fuw1xJrWxZa4rZrWkZr1fKrWrt347Zr98Grn3WF1xKa1FgFyvyryxWF9I
+	vr4UKryrGr90kaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
+	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
+	AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wr
+	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRB
+	Vb9UUUUU=
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
 
 
-On 9/3/2025 5:48 PM, Konrad Dybcio wrote:
-> On 8/21/25 8:55 PM, Akhil P Oommen wrote:
->> From: Gaurav Kohli <quic_gkohli@quicinc.com>
->>
->> Unlike the CPU, the GPU does not throttle its speed automatically when it
->> reaches high temperatures.
->>
->> Set up GPU cooling by throttling the GPU speed
->> when reaching 105°C.
->>
->> Signed-off-by: Gaurav Kohli <quic_gkohli@quicinc.com>
->> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
->> ---
->>   arch/arm64/boot/dts/qcom/lemans.dtsi | 67 +++++++++++++++++++++++++++++-------
->>   1 file changed, 55 insertions(+), 12 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
->> index 8eac8d4719db9230105ad93ac22287850b6b007c..b5d4d07b2fd9c14a6f1cc462c695e864394cade2 100644
->> --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
->> @@ -20,6 +20,7 @@
->>   #include <dt-bindings/power/qcom,rpmhpd.h>
->>   #include <dt-bindings/power/qcom-rpmpd.h>
->>   #include <dt-bindings/soc/qcom,rpmh-rsc.h>
->> +#include <dt-bindings/thermal/thermal.h>
->>   
->>   / {
->>   	interrupt-parent = <&intc>;
->> @@ -6816,13 +6817,20 @@ trip-point1 {
->>   			};
->>   		};
->>   
->> -		gpuss-0-thermal {
->> +		gpuss0_thermal: gpuss-0-thermal {
+在 2025/8/29 16:04, Yu Kuai 写道:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> You don't need labels for the thermal zones, just the trip points below
-
-Sure, will update.
-
+> Redundant data is used to enhance data fault tolerance, and the storage
+> method for redundant data vary depending on the RAID levels. And it's
+> important to maintain the consistency of redundant data.
 > 
-> Konrad
+> Bitmap is used to record which data blocks have been synchronized and which
+> ones need to be resynchronized or recovered. Each bit in the bitmap
+> represents a segment of data in the array. When a bit is set, it indicates
+> that the multiple redundant copies of that data segment may not be
+> consistent. Data synchronization can be performed based on the bitmap after
+> power failure or readding a disk. If there is no bitmap, a full disk
+> synchronization is required.
 > 
+> Due to known performance issues with md-bitmap and the unreasonable
+> implementations:
+> 
+>   - self-managed IO submitting like filemap_write_page();
+>   - global spin_lock
+> 
+> I have decided not to continue optimizing based on the current bitmap
+> implementation, this new bitmap is invented without locking from IO fast
+> path and can be used with fast disks.
+> 
+> For designs and details, see the comments in drivers/md-llbitmap.c.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+
+LGTM
+
+Reviewed-by: Li Nan <linan122@huawei.com>
+
+-- 
+Thanks,
+Nan
 
 
