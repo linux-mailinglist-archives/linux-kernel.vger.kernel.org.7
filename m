@@ -1,61 +1,56 @@
-Return-Path: <linux-kernel+bounces-801813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A055DB44A3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:09:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04E65B44A40
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A55816F7E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:09:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AE5B3AA042
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F2F2F6571;
-	Thu,  4 Sep 2025 23:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993AA2EE297;
+	Thu,  4 Sep 2025 23:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="iWtduqVj"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqQpLC5g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891072EBDC8;
-	Thu,  4 Sep 2025 23:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA162EDD74;
+	Thu,  4 Sep 2025 23:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757027331; cv=none; b=dBMiYQCtK8T71vJvWq6rscrO80KCW9HLf/fyEBCv2zy82X8aUzJwrY9eAYCdpOgSPyg08vaREWblLy7bKgg5v78mkJva9R1P4zKUgJeWS30fxDCMN4+SJYxhvs6c1WUb9WewGtXTrSUxaVad3bKJkiCvpi/+q1LeYa1U0+c9PL8=
+	t=1757027402; cv=none; b=FOtcUrqAk3y0xOZ274oLWyKv8zASWhihX5hCiVvn18kJtuhYLMle5bUN4QYXQxn5oiWpwcg8x39eH9buX/60WDEYtt8ByPojz1TLU+Zqi05rh2vc8C2ZoMYy/ZxR74wS1cVbmuthJYyz4sARo02bMf02JHx5yVb1h7tGK347e6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757027331; c=relaxed/simple;
-	bh=wSaWmZNf1saynh+Yxr0LF+dQuis6OBX7oJn2/NuWmpo=;
+	s=arc-20240116; t=1757027402; c=relaxed/simple;
+	bh=nRXYhdvV9X7pGCfmYVRPVRuRkgA/vzwdfCJZ+7uzFf4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ij/DwlSaXk3HyoogffhhFjZpuFDGhDA/aGt5OJia0B/Nejb0BAn5MxSbHzgD8EdDwWEK2FsVn7sFOKSKBk6a/ehEnOFNasNBQrseSDxyv6HNuKFtAmswud3y3wFeKSxx0CU8UKeKOWYZ5pa5OX1xv2z8Z3ravEvGhiX+hFQujos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=iWtduqVj; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IGIvEoAqtuDkRSXpRU77mzhbTzcg6YFarifGx8dUVnA=; b=iWtduqVjwtYURYzGgXJycqlxlF
-	it+u/9BLmB2JKqUpvN5G8QMMTKRttfhPNSKcSEY0wLHMhg1IA87oSHQku6yq5Aq1K25006np8GJyi
-	LAhrKmgjFUc4sHTWi9x5O7Fh6hKteHyux3YYrana889kN14YrjuV35CqSW8OQOZCKLLnvrwpz15rf
-	9UbLdUpyackW7rxOiPnmW06fqO7Kn4vOWdHm3xkjBDJ/TaWvelbQ+SWqZSOotOhaJdmDl0K4q5lIF
-	Oltkbu4PPtnrBZ/0q3/b3Dti4JY33GUvSocYKbg4rJSn3BxBG+o4laQpbhXA6++wdGzp1mjTQSGUQ
-	tYDyDUSA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uuJ4Q-00000009hsf-1a5t;
-	Thu, 04 Sep 2025 23:08:46 +0000
-Date: Fri, 5 Sep 2025 00:08:46 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Blake McBride <blake@mcbridemail.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	Colby Wes McBride <colbym84@gmail.com>
-Subject: Re: [RFC] View-Based File System Model with Program-Scoped Isolation
-Message-ID: <20250904230846.GR39973@ZenIV>
-References: <Oa1N9bTNjTvfRX39yqCcQGpl9FJVwfDT2fTq-9NXTT8HqTIqG2Y-Gy0f7QHKcp2-TIv7NZ3bu_YexmKiGuo9FBTeCtRnVzABBVnhx5EiShk=@mcbridemail.com>
- <20250904220650.GQ39973@ZenIV>
- <DHMURiMioUDX6Ggo4Qy8C43EUoC_ltjjS52i2kgC9tl6GhjGuJXOwyf9Nb-WkI__cM0NXECZw_HdKeIUmwShKkAmP7PwqZcmGz-vBrdWYL8=@mcbridemail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VTiv1Fz+sWp1ZqiBVVEaX8lnDj7IKzKi+norcUjAjsWETCS+z/zuXbFyCNbugkG+iK5EyTKHL73g6V/Wpvqy1FsyWp3/OBMnHLdP+KGx5omDkCxENxFlpj++JTsoznq10HxUK8lGwos4O4YQdN/X2aP0YnEdvlSGY1vPE+spSBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QqQpLC5g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AAB2C4CEF0;
+	Thu,  4 Sep 2025 23:10:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757027401;
+	bh=nRXYhdvV9X7pGCfmYVRPVRuRkgA/vzwdfCJZ+7uzFf4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QqQpLC5g7kZmmh+ivfeE38jsBcwOxfj89VuT6yEawWyET7Mbd6IOrre1Zm2CA3paW
+	 Qbzn3hOZxzUL1Hh9eQNE4icUm7UmjEIIgoEH8+V//UB+oTg7E58Rr8OXO2UrYBlWag
+	 RZ1zAiROpjsdHXvycYOCaH+Ycmq7WnclPPLqC+HWZoOKIVM5qq+z9gw4p/JYlXHkuS
+	 4ZD3V2ZfBF+vAdxOwB++R54R/EOM16AmzKqRY+r5e1efCiFtVqUYBMdR/D0E0iyNif
+	 /YLGFnqxKyrF0BDJHOIwM/dGZS6bVAHuxGFSFhppdX/QUoVZKuHNr2smUmK5pBWTyk
+	 L1rYeWwqmxcXQ==
+Date: Thu, 4 Sep 2025 23:10:00 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Abhishek Tiwari <abhitiwari@linux.microsoft.com>
+Cc: abhitiwari@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+	wei.liu@kernel.org, decui@microsoft.com,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ssengar@microsoft.com
+Subject: Re: [PATCH v2] Drivers: hv: util: Cosmetic changes for
+ hv_utils_transport.c
+Message-ID: <aLocSEnPCCiNLaTj@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <1756728000-8324-1-git-send-email-abhitiwari@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,24 +59,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DHMURiMioUDX6Ggo4Qy8C43EUoC_ltjjS52i2kgC9tl6GhjGuJXOwyf9Nb-WkI__cM0NXECZw_HdKeIUmwShKkAmP7PwqZcmGz-vBrdWYL8=@mcbridemail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <1756728000-8324-1-git-send-email-abhitiwari@linux.microsoft.com>
 
-On Thu, Sep 04, 2025 at 10:58:12PM +0000, Blake McBride wrote:
-> Off the cuff, I'd say it is an mv option. It defaults to changing all occurrences, with an option to change it only in the current view.
+On Mon, Sep 01, 2025 at 05:00:00AM -0700, Abhishek Tiwari wrote:
+> Fix issues reported by checkpatch.pl script for hv_utils_transport.c file 
+> - Update pr_warn() calls to use __func__ for consistent logging context. 
+> - else should follow close brace '}'
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Abhishek Tiwari <abhitiwari@linux.microsoft.com>
+> Reviewed-by: Naman Jain <namjain@linux.microsoft.com>
 
-Huh?  mv(1) is userland; whatever it does, by definition it boils down
-to a sequence of system calls.
-
-If those "views" of yours are pasted together subtrees of the global
-forest, you already can do all of that with namespaces; if they are not,
-you get all kinds of interesting questions about coherency.
-
-Which one it is?  Before anyone can discuss possible implementations
-and relative merits thereof, you need to define the semantics of
-what you want to implement...
-
-And frankly, if you are thinking in terms of userland programs (file
-manglers, etc.) you are going the wrong way - description will have
-to be on the syscall level.
+Applied. Thanks.
 
