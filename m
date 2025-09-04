@@ -1,68 +1,65 @@
-Return-Path: <linux-kernel+bounces-801844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8358B44A9C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:58:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943D2B44A9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7265716F86A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:58:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67D681C8562C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAA62F067C;
-	Thu,  4 Sep 2025 23:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2132D2EFD8A;
+	Thu,  4 Sep 2025 23:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IP0RW6nO"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oon6Ebtf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10DB2ED166
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 23:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469572ECD14;
+	Thu,  4 Sep 2025 23:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757030277; cv=none; b=SZzE1QQVzUZCaZhLg7Tjwa40S4kwC3POiGUFokY6nhB4abq+LnaPWPx+4kUBuhYnQdlhdaBk75laRyzuhM3pFVMz3p4ynYnX8KFtnYcPO2Ayc2A69i8tTSGcPG2QG0x35+jZyZAB/OtVW8UhHgrVBT7eLf+9GxpwgtG27+s8OPA=
+	t=1757030270; cv=none; b=KJuRNntI3kb+VkbI7AvLJICd5kL0dFePPd4pCeFyjo4ZxB9XFdCUTp5kQIywR9Zm7ja0LsW5KJHCL7aRNh0cfp9uZirKr/nQuRT6yuQftt86RJsAyBnfXW3WP4mKJDwCiun5xgYarrQfr7h7wkAA+rGCOPiIrcsMl6lwS1jUoC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757030277; c=relaxed/simple;
-	bh=LTpvAMDx3l9YQ4vjyMBE5VmJ/wSw9l3B25wX8G92ELE=;
+	s=arc-20240116; t=1757030270; c=relaxed/simple;
+	bh=P+DXnz/Q91LWFyoKcdy3SDCmvxkhSnhDsa8wj5qsVZY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HdsNrMVALUUl0hnTUsXAvONLvwdq4o+dRQpOmrRILWMMLWlyHobo0CtI9/31HbXq05DrJ6mNmG9LVimENpxGW8hl9wMXQBQp8cNLgadszS9596myAgpNr22/Of4YTeKCpYwL0wHb6oYgierIL08lZTzYYjPuvMWPUGC48wpKa/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IP0RW6nO; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 4 Sep 2025 16:57:41 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757030273;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+1JF9ABm23/crB5M2qXk95TNoGCZqy9JAAct0jdXudM=;
-	b=IP0RW6nOGMgFPd9nXUCLLw0ahXL7zYDkVP5hnRPsxGQbC8r6JZ+o1Mki8k8IcUbBMSSfVP
-	xY8GEJOkCrT/t5Yv8dVOu0RgPaxIbveuBbRwhK8/wNymTsDGEyJCvlxxw9KVMEtAQMbhqn
-	6n6bXsZWN1E+SIRU+boROe3lY/qrCas=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com, 
-	yuanchu@google.com, willy@infradead.org, hughd@google.com, mhocko@suse.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	vishal.moola@gmail.com, linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, 
-	deller@gmx.de, agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, 
-	hca@linux.ibm.com, gor@linux.ibm.com, borntraeger@linux.ibm.com, 
-	svens@linux.ibm.com, davem@davemloft.net, andreas@gaisler.com, 
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net, 
-	jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	weixugc@google.com, baolin.wang@linux.alibaba.com, rientjes@google.com, 
-	thuth@redhat.com, broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com, 
-	mpe@ellerman.id.au, nysal@linux.ibm.com, linux-arm-kernel@lists.infradead.org, 
-	linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 00/12] mm: establish const-correctness for pointer
- parameters
-Message-ID: <ue3oriedwzzfhvnobtetuyjvcypbvl4dboqmpvdededzaj3amq@5k6vk44ae3fu>
-References: <20250901205021.3573313-1-max.kellermann@ionos.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HQkeyhuFSXnduXQ0DhuoRqKLBMcgf6swwFsfd9NAA750PQErWRJtS/dAGkJH6J8MlvH3gGq/vhZxJrCAkKHoJm7LsKN8znx0w3IV9cpWE7TYfLal59T6b30jfDIsSQQWdWRw/1Z+O6hcle5YulFU3EO5R/Onow/koEjf0mZa+Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oon6Ebtf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C758AC4CEF0;
+	Thu,  4 Sep 2025 23:57:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757030270;
+	bh=P+DXnz/Q91LWFyoKcdy3SDCmvxkhSnhDsa8wj5qsVZY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Oon6EbtfSg5qSY14zgUxJd5zQzs174FUC7b/dnL/uHkj41ZpYOn3CYn0eLrmZ0+JS
+	 ac4RN2j7in8rdy5CB8SbU35MFZXvyiG98yf8SD8G1jZ2MKYDdgfvz1/FFIzE7CqOUP
+	 5ow+QW+Bkw9mZ6vkDV+kuZ1toMsDE1puCuEV0b+WCbMyIqqOtLjZ7l6Va1YV5eCSBy
+	 PNaJsPdShMsVI6IPIkYq5MR4xdSx0I4Y/qL3uB8azZi1dTKTA6+TNywtv9EWzaodbv
+	 C7OmdbX0Jibr34cgm7N6ZCeKsnCJBnT6y3XNDMzcMSW55PULoJu96VBY/VXFkDXZzZ
+	 us5nt/mB6syQQ==
+Date: Thu, 4 Sep 2025 23:57:48 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	Nam Cao <namcao@linutronix.de>,
+	"K . Y . Srinivasan" <kys@microsoft.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] x86/hyperv: Switch to
+ msi_create_parent_irq_domain()
+Message-ID: <aLonfMzpIF6FZVM5@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <cover.1752868165.git.namcao@linutronix.de>
+ <45df1cc0088057cbf60cb84d8e9f9ff09f12f670.1752868165.git.namcao@linutronix.de>
+ <0105fb29-1d42-49cb-8146-d2dfcb600843@linux.microsoft.com>
+ <87o6rqy1yk.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,26 +68,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250901205021.3573313-1-max.kellermann@ionos.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <87o6rqy1yk.ffs@tglx>
 
-On Mon, Sep 01, 2025 at 10:50:09PM +0200, Max Kellermann wrote:
-> For improved const-correctness in the low-level memory-management
-> subsystem, which provides a basis for further const-ification further
-> up the call stack (e.g. filesystems).
+On Thu, Sep 04, 2025 at 11:57:39AM +0200, Thomas Gleixner wrote:
+> On Wed, Sep 03 2025 at 12:40, Nuno Das Neves wrote:
+> > On 7/18/2025 12:57 PM, Nam Cao wrote:
+> >> Move away from the legacy MSI domain setup, switch to use
+> >> msi_create_parent_irq_domain().
+> >> 
+> >> While doing the conversion, I noticed that hv_irq_compose_msi_msg() is
+> >> doing more than it is supposed to (composing message content). The
+> >> interrupt allocation bits should be moved into hv_msi_domain_alloc().
+> >> However, I have no hardware to test this change, therefore I leave a TODO
+> >> note.
+> >> 
+> >> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> >> ---
+> >>  arch/x86/hyperv/irqdomain.c | 111 ++++++++++++++++++++++++------------
+> >>  drivers/hv/Kconfig          |   1 +
+> >>  2 files changed, 77 insertions(+), 35 deletions(-)
+> >
+> > Tested on nested root partition.
+> >
+> > Looks good, thanks.
+> >
+> > Tested-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> > Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 > 
-> This patch series splitted into smaller patches was initially posted
-> as a single large patch:
+> I assume this goes through the hyper-V tree.
 > 
->  https://lore.kernel.org/lkml/20250827192233.447920-1-max.kellermann@ionos.com/
-> 
-> I started this work when I tried to constify the Ceph filesystem code,
-> but found that to be impossible because many "mm" functions accept
-> non-const pointer, even though they modify nothing.
-> 
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> Acked-by: Thomas Gleixner <tglx@linutronix.de>
 
-For the series:
+No problem -- applied to hyperv-next.
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+Thank you Nam and Thomas.
 
