@@ -1,149 +1,100 @@
-Return-Path: <linux-kernel+bounces-800225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BB5B434DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:00:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70BECB43543
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11151177AC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:00:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 462E8580D54
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D872C0265;
-	Thu,  4 Sep 2025 07:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ooXCt7hh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A522264B1;
+	Thu,  4 Sep 2025 08:15:31 +0000 (UTC)
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07AA2BEC43;
-	Thu,  4 Sep 2025 07:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF5D279781;
+	Thu,  4 Sep 2025 08:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756972779; cv=none; b=ToPSjcyPtagWiTt1+AGXNWWp4HP53GkSFqcuVGvxqjVLVKIcr/s4KXONa/jZRogbx3cWO9pWaOrBPBbqV5ih2FWTuwutVISi7YEOIotlq5Dx0AFDxuiiZKy1o/FyV5Mc2KR577ZrQEkZJLieqOy6J9OlSyL6FL4uocqw/18hk2Q=
+	t=1756973731; cv=none; b=j4Rf8016ESH/eFIcl4w5QyciWz80Tzrk5FKSEZkHb5hdex0jePaFpS69jCGBtieu6QEOJeGsWhTkfWS/jMcx/X+ZnHo4Y7dxfw0D38/cjpO4iZcFPSZCaKHnp1v12gSTDI/5lwZ44gjZ73qzdiCeEyRS2NAp7yBDKYvPajjPhUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756972779; c=relaxed/simple;
-	bh=qr1V071kjlRjsRCmHcuB3ihXSJkt/phuzQie/Q1MiZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jaPkD0J4n9X12VPRJHE95URIbdM27rwbUScJ7H2cHb9DOix4E3Rzg2NW4JfYlEa+6XMnwXN0G+QG2f0IODBODhErkFfFDZhRHcG6Pzv9yfKmpboPTdkaTVrRfHenNh3/Tg/KE+1J3FbbbLJVa7DBew6oy/hwOfcF2xGntoLscr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ooXCt7hh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC4AFC4CEF1;
-	Thu,  4 Sep 2025 07:59:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756972779;
-	bh=qr1V071kjlRjsRCmHcuB3ihXSJkt/phuzQie/Q1MiZg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ooXCt7hhW4NMrwAjO7gPOLnLZI7xsHoYmdJepFhj62ONTqa6O7U78jJlEolZJFTeb
-	 SEaqRG9H2nu8UH4g1THcNbD90ssj//+E1fGFMVU1/zpzXwtGkbyMt9f30SKIKv0G+3
-	 bwG/TLFdU2Ct5JbPvWJEqeuM2eTxyPbKmZdvtwAIvO3SipW7NbdHUt/Nmram6KmbmE
-	 LRzJjXoNmF5C3/jukRpA66VKlkLRSGunAExp4E+Ny4nbRS1YgBbbtOGAmG2PcJNCtn
-	 wmCQtPGXg32OMvsx1xv1Z7Qyf7rzpArlYodOGDNKfttA/xGG/0iszppNrFryEwsO8M
-	 9Vew+ag+ROmfA==
-Date: Thu, 4 Sep 2025 09:59:36 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Shin Son <shin.son@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: thermal: samsung: Add tmu-name and
- sensor-index-ranges properties
-Message-ID: <20250904-chocolate-kangaroo-of-order-2cced3@kuoka>
-References: <20250903073634.1898865-1-shin.son@samsung.com>
- <CGME20250903073653epcas2p4cb25058c97aab9a30c7e68ef5f10fb91@epcas2p4.samsung.com>
- <20250903073634.1898865-2-shin.son@samsung.com>
+	s=arc-20240116; t=1756973731; c=relaxed/simple;
+	bh=wHgAp1bPS67y9L/pNxvKgZMwcYuvEFp49cXyVS+95h4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eArs3r7kmBma0hiUU5az5QyvhWHhGSJRKNdl8FA3EyXNlwnt/bZRpXTCpuiNpXueqrO3ECWQGpHUXPywX7PiE4U59cUOhOeGQad6GNDeogSffOrX9Bljl7gFS5bA0Ya1jH2m60ZKFaI2jIktpJIrQRihhOl7pGHKv7jACWB02oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id 8A79F5846D7;
+	Thu,  4 Sep 2025 07:59:57 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DA75643CB6;
+	Thu,  4 Sep 2025 07:59:46 +0000 (UTC)
+Message-ID: <ca18ee32-db74-4ec7-a6e2-805ac7abdee6@ghiti.fr>
+Date: Thu, 4 Sep 2025 09:59:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250903073634.1898865-2-shin.son@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] riscv: Do not handle break traps from kernel as nmi
+To: Peter Zijlstra <peterz@infradead.org>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Guo Ren <guoren@kernel.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>, Palmer Dabbelt <palmer@rivosinc.com>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250903-dev-alex-break_nmi_v1-v1-1-4a3d81c29598@rivosinc.com>
+ <20250903202803.GQ4067720@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250903202803.GQ4067720@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehgeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeetieeitefghfeuvddvjeeiudehheeiffffgeeviedtleehgeffgfdtveekteehudenucffohhmrghinhepihhnfhhrrgguvggrugdrohhrghenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeekheeftgemfegrfhegmegvfhegheemsggvudejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeekheeftgemfegrfhegmegvfhegheemsggvudejpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeekheeftgemfegrfhegmegvfhegheemsggvudejngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrlhgvgihghhhithhisehrihhvohhsihhntgdrtghomhdprhgtphhtthhop
+ ehrohhsthgvughtsehgohhoughmihhsrdhorhhgpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehguhhorhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghjohhrnhesrhhivhhoshhinhgtrdgtohhm
+X-GND-Sasl: alex@ghiti.fr
 
-On Wed, Sep 03, 2025 at 04:36:32PM +0900, Shin Son wrote:
-> The exynosautov920 TMU requires per-sensor interrupt enablement
-> for its critical trip points.
-> Add a DT property to the Samsung thermal bindings
-> to support this requirement:
+Hi Peter,
 
-That's pretty redundant sentence.
-> 
-> - **samsung,hw-sensor-indices**: Defines the sensors currently
->                                  mapped to the TMU hardware.
-> 				 Indices not listed are absent or fused off
+On 9/3/25 22:28, Peter Zijlstra wrote:
+> On Wed, Sep 03, 2025 at 07:54:29PM +0000, Alexandre Ghiti wrote:
+>> kprobe has been broken on riscv for quite some time. There is an attempt
+>> [1] to fix that which actually works. This patch works because it enables
+>> ARCH_HAVE_NMI_SAFE_CMPXCHG and that makes the ring buffer allocation
+>> succeed when handling a kprobe because we handle *all* kprobes in nmi
+>> context. We do so because Peter advised us to treat all kernel traps as
+>> nmi [2].
+>>
+>> But that does not seem right for kprobe handling, so instead, treat
+>> break traps from kernel as non-nmi.
+> You can put a kprobe inside: local_irq_disable(), no? Inside any random
+> spinlock region in fact. How is the probe then not NMI like?
 
-Don't write here any code, but concise prose dxescribing hardware.
 
-If sensors are fused out, you certainly can read their status from efuse, no?
+Yes yes, in that case that will be NMI-like, sorry this patch is coarse 
+grain. The ideal solution would be to re-enable the interrupts if they 
+were enabled at the moment of the trap. In that case, would that make 
+sense to you?
 
-This is really vague description of hardware. I don't understand why you
-are changing sensor-cells, why older variants of tmu gets now cells=1
-(missing constraints?).
+Thanks,
 
-Why older variants also get that property for sensors? It does not make
-sense there, because they have one-to-one mapping between TMU and
-sensor.
+Alex
 
-> 
-> Additionally, add myself to the bindings' maintainers list, as I plan
-> to actively work on the exynosautov920 TMU support and handle further
-> updates in this area.
-> 
-> Signed-off-by: Shin Son <shin.son@samsung.com>
-> ---
->  .../bindings/thermal/samsung,exynos-thermal.yaml | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-> index 29a08b0729ee..abd89902d33a 100644
-> --- a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-> @@ -8,6 +8,7 @@ title: Samsung Exynos SoC Thermal Management Unit (TMU)
->  
->  maintainers:
->    - Krzysztof Kozlowski <krzk@kernel.org>
-> +  - Shin Son <shin.son@samsung.com>
->  
->  description: |
->    For multi-instance tmu each instance should have an alias correctly numbered
-> @@ -27,6 +28,7 @@ properties:
->        - samsung,exynos5420-tmu-ext-triminfo
->        - samsung,exynos5433-tmu
->        - samsung,exynos7-tmu
-> +      - samsung,exynosautov920-tmu
->  
->    clocks:
->      minItems: 1
-> @@ -62,11 +64,22 @@ properties:
->      minItems: 1
->  
->    '#thermal-sensor-cells':
-> -    const: 0
-> +    enum:
-> +      - 0
-> +      - 1
->  
->    vtmu-supply:
->      description: The regulator node supplying voltage to TMU.
->  
-> +  samsung,hw-sensor-indices:
-> +    description: |
 
-Drop |
-
-> +      List of hardware sensor indices that are physically present and usable
-> +      in this TMU instance. Indices not listed are either unmapped or unused.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 1
-> +    maxItems: 16
-> +    uniqueItems: true
-
-Best regards,
-Krzysztof
-
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
