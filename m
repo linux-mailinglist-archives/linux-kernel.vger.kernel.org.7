@@ -1,177 +1,86 @@
-Return-Path: <linux-kernel+bounces-801800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF1DFB44A0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:01:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB98EB44A44
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 159B4541E67
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:54:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AD6E7B29BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42832F4A1D;
-	Thu,  4 Sep 2025 22:53:51 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98252F5306;
+	Thu,  4 Sep 2025 22:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DMHDWDXS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71594273D6C;
-	Thu,  4 Sep 2025 22:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9E42E8B87;
+	Thu,  4 Sep 2025 22:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757026431; cv=none; b=iZtcBuVpTPiOmf0MlziSKKh9XTvaAkOOkgaFAkShXRdQ4GeJdey+n80myhyhGUSYwZcsHRFlXobBr+b861DaGJlZQUUJCJhfMt9ZudNSyxOuj1PHGx7vpQurquI/jRRsVtjtqwVrnYMIKXRVtGzDybh+Z4LcSKfGgutFoPBdhng=
+	t=1757026519; cv=none; b=Zq4oO8rXuoUvYhwdisrGoDGdHBp/uY+jj3EmeTaGX3zYzd7m4wjgsyf0AjEjfsZzahnqtI8wCyDYgJpkcYFvf7KgcZs6zn73KW3uJqgW2hcK/wvarALOZ5F19KgM54kHz/bx8/aT/aWTGJpwPRJZ5T3TTt7q/VPs2iV+Gx9fBDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757026431; c=relaxed/simple;
-	bh=qbNI5VHkpI3jZWTclCz4prtW+t8aTKNshNzePv2EdU8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HUefEX+LUTKBX5Nm5TtrfuRcPGtRzxHL6GAEifs/EV0LxOUePPDqGNjJ4qgBPUTrmBBGYKLPLySj7myiw63gmcY6rPeNYjIHI/KeV1EPSVCeeMJ0R6oF7HZqJ1p5QI/pSF/3zYDgR1gQZvgr1PHc29AySpeDlsPaU+vq/CxfTqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from [IPV6:2a01:e0a:3e8:c0d0:74c4:9b58:271e:cbdf] (unknown [IPv6:2a01:e0a:3e8:c0d0:74c4:9b58:271e:cbdf])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 3391A41E6B;
-	Thu,  4 Sep 2025 22:53:47 +0000 (UTC)
-Authentication-Results: Plesk;
-        spf=pass (sender IP is 2a01:e0a:3e8:c0d0:74c4:9b58:271e:cbdf) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a01:e0a:3e8:c0d0:74c4:9b58:271e:cbdf]
-Received-SPF: pass (Plesk: connection is authenticated)
-Message-ID: <090dcc3c-f9a6-4ff8-873f-e0725329a94d@arnaud-lcm.com>
-Date: Fri, 5 Sep 2025 00:53:46 +0200
+	s=arc-20240116; t=1757026519; c=relaxed/simple;
+	bh=QO4RwRkXhrHS5NwMcdJkydHqPamAsGH4fQN6yhVT/hc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=m3W5mFXBSKnq6tTTFTv8qorCIJ4LKBLqaUQmPAmfGOedicBijWEZAs6HBFH3vIOMJ3xmCgGIzNgr1XuqyZ57/DzTIZhmHkjOeHw/T/xOrwVAW18hfJmqAmMQKBHP9Ia2hqqjhVe/nB95hINLRFzj1+MM8bkf6eEFsHMpfHCl8YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DMHDWDXS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E92BC4CEF0;
+	Thu,  4 Sep 2025 22:55:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1757026518;
+	bh=QO4RwRkXhrHS5NwMcdJkydHqPamAsGH4fQN6yhVT/hc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DMHDWDXSll9gFxKCUy8pBUDwrnJ+TnOf6UwPdUDhv5Kwhyq05D/2tkBjyU2Xi7ObJ
+	 4xKgcjNvFiy375wYMVGF6BQUNKS+GqJ3qHNDkFJa/bfuDRd1iKRpEPUiSVjItdTdr3
+	 18DrmxdJ/iJYABmBeq6TjtK675PerUaHFV0BCerA=
+Date: Thu, 4 Sep 2025 15:55:17 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: wangzijie <wangzijie1@honor.com>
+Cc: <brauner@kernel.org>, <viro@zeniv.linux.org.uk>, <adobriyan@gmail.com>,
+ <jirislaby@kernel.org>, <sbrivio@redhat.com>,
+ <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Brad
+ Spengler <spender@grsecurity.net>
+Subject: Re: [PATCH] proc: fix type confusion in pde_set_flags()
+Message-Id: <20250904155517.d623a254e8c25027c41e8e41@linux-foundation.org>
+In-Reply-To: <20250904135715.3972782-1-wangzijie1@honor.com>
+References: <20250904135715.3972782-1-wangzijie1@honor.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v7 3/3] bpf: fix stackmap overflow check in
- __bpf_get_stackid()
-To: Song Liu <song@kernel.org>, alexei.starovoitov@gmail.com,
- yonghong.song@linux.dev
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
- john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
- linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
- syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <20250903234052.29678-1-contact@arnaud-lcm.com>
- <20250903234325.30212-1-contact@arnaud-lcm.com>
- <f6e9710a-a5bf-4af9-8c0d-d81d28c3040c@kernel.org>
-Content-Language: en-US
-From: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
-In-Reply-To: <f6e9710a-a5bf-4af9-8c0d-d81d28c3040c@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175702642777.31109.3208251421253869888@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Thu, 4 Sep 2025 21:57:15 +0800 wangzijie <wangzijie1@honor.com> wrote:
 
-On 05/09/2025 00:45, Song Liu wrote:
->
-> On 9/3/25 4:43 PM, Arnaud Lecomte wrote:
->> Syzkaller reported a KASAN slab-out-of-bounds write in 
->> __bpf_get_stackid()
->> when copying stack trace data. The issue occurs when the perf trace
->>   contains more stack entries than the stack map bucket can hold,
->>   leading to an out-of-bounds write in the bucket's data array.
->>
->> Changes in v2:
->>   - Fixed max_depth names across get stack id
->>
->> Changes in v4:
->>   - Removed unnecessary empty line in __bpf_get_stackid
->>
->> Changs in v6:
->>   - Added back trace_len computation in __bpf_get_stackid
->>
->> Link to v6: 
->> https://lore.kernel.org/all/20250903135348.97884-1-contact@arnaud-lcm.com/
->>
->> Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
->> Fixes: ee2a098851bf ("bpf: Adjust BPF stack helper functions to 
->> accommodate skip > 0")
->> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
->> Acked-by: Yonghong Song <yonghong.song@linux.dev>
->
-> For future patches, please keep the "Changes in vX.." at the end of
-Good to know, thanks !
->
-> your commit log and after a "---". IOW, something like
->
->
-> Acked-by: Yonghong Song <yonghong.song@linux.dev>
->
-> ---
->
-> changes in v2:
->
-> ...
->
-> ---
->
-> kernel/bpf/stackmap.c | 8 ++++++++
->
->
-> In this way, the "changes in vXX" part will be removed by git-am.
->
->> ---
->>   kernel/bpf/stackmap.c | 8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
->> index 9f3ae426ddc3..29e05c9ff1bd 100644
->> --- a/kernel/bpf/stackmap.c
->> +++ b/kernel/bpf/stackmap.c
->> @@ -369,6 +369,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct 
->> bpf_perf_event_data_kern *, ctx,
->>   {
->>       struct perf_event *event = ctx->event;
->>       struct perf_callchain_entry *trace;
->> +    u32 elem_size, max_depth;
->>       bool kernel, user;
->>       __u64 nr_kernel;
->>       int ret;
->> @@ -390,11 +391,15 @@ BPF_CALL_3(bpf_get_stackid_pe, struct 
->> bpf_perf_event_data_kern *, ctx,
->>           return -EFAULT;
->>         nr_kernel = count_kernel_ip(trace);
->> +    elem_size = stack_map_data_size(map);
->>         if (kernel) {
->>           __u64 nr = trace->nr;
->>             trace->nr = nr_kernel;
->
-> this trace->nr = is useless.
->
->> +        max_depth =
->> +            stack_map_calculate_max_depth(map->value_size, 
->> elem_size, flags);
->> +        trace->nr = min_t(u32, nr_kernel, max_depth);
->>           ret = __bpf_get_stackid(map, trace, flags);
->>             /* restore nr */
->> @@ -407,6 +412,9 @@ BPF_CALL_3(bpf_get_stackid_pe, struct 
->> bpf_perf_event_data_kern *, ctx,
->>               return -EFAULT;
->>             flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
->> +        max_depth =
->> +            stack_map_calculate_max_depth(map->value_size, 
->> elem_size, flags);
->> +        trace->nr = min_t(u32, trace->nr, max_depth);
->>           ret = __bpf_get_stackid(map, trace, flags);
->
-> I missed this part earlier. Here we need to restore trace->nr, just 
-> like we did
+> Commit 2ce3d282bd50 ("proc: fix missing pde_set_flags() for net proc files")
+> missed a key part in the definition of proc_dir_entry:
+> 
+> union {
+> 	const struct proc_ops *proc_ops;
+> 	const struct file_operations *proc_dir_ops;
+> };
+> 
+> So dereference of ->proc_ops assumes it is a proc_ops structure results in
+> type confusion and make NULL check for 'proc_ops' not work for proc dir.
+> 
+> Add !S_ISDIR(dp->mode) test before calling pde_set_flags() to fix it.
+> 
+> Fixes: 2ce3d282bd50 ("proc: fix missing pde_set_flags() for net proc files")
 
->
-> in the "if (kernel)" branch.
->
-Make sense, thanks !
-> Thanks,
->
-> Song
->
->>       }
->>       return ret;
->
-Thanks,
-Arnaud
+2ce3d282bd50 had cc:stable, so I added cc:stable to this patch.
+
+> Reported-by: Brad Spengler <spender@grsecurity.net>
+> Signed-off-by: wangzijie <wangzijie1@honor.com>
+
+A link to Brad's report would be helpful please, if available.  We
+typically use Closes: for such things.
+
 
