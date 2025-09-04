@@ -1,111 +1,140 @@
-Return-Path: <linux-kernel+bounces-800577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E3FB4397F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:05:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0161B43982
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046651B277AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:06:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B7085A1309
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2852FC00F;
-	Thu,  4 Sep 2025 11:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1921C2FC01B;
+	Thu,  4 Sep 2025 11:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="HP6SOgLB"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKZZiKq3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BFC2D060C;
-	Thu,  4 Sep 2025 11:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5411B2FC001;
+	Thu,  4 Sep 2025 11:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756983930; cv=none; b=X++/n38m7NA/d6xpycjAll4C72KvEGLJxK9ltfeOgVc9Hr70XjoxqqW4wsEV4DPevGANH2QJ2jgTmbnETDMyi2BI7yhbU/Nl+MI2JPoHiXGMkiC3GqZ42bqNhoFKqjbXlMB1zmx391ZPGfJhFmMGLNnjE/16VXy6FxYwd7oHJrU=
+	t=1756983947; cv=none; b=UC9ZnkvrGd8fc43OQ47oWbdBP+AMIjYmhQrO8xVOEBTHy78HXgSfsEuu/mVzDf+SunIealHXDzejJCgdhfKup/RcEp46CqHwGM9UwcF6rlLIXmATeirLBzCADflxgnaXHMtNGug+lXLjERlwez5ZhfYJwVQuvLOG9Par/YqH9+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756983930; c=relaxed/simple;
-	bh=Gq4KK+DL4/6/PRowWsDzwgVo5Z+T+vaBBB89gBy5UIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MMCKhtrU3RqT0IXMH4IO97vxwu+zia0EzJ8Z2ova6hY/L/NCiTyBQG1t/c6CVlxIKLnkqgmn7ZPyAHlwDRqjr/rbW2UUHfR2RTdBJdtX8lnDVuxnZwPryByERghpwErVFrl1FxMWmw8yBGujN9FcSEj/mNMDtiK4d42auUfwDyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=HP6SOgLB; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=PrZXrE8m4b6VE58jUKKj5WGOEJfOjU7pp7prPNE0Z9Y=; b=HP6SOgLB686PBk0qc6hRAnXjUl
-	oPUd/osUYYtpYBh5wkx/Rfzj6j9ZinhRXVFxvPPYqhvXiolj2mhJRuRoehEWoowWGTrGM3TiOHV38
-	c5ZVuOH8GhNJaiyknBgBhWrHz9HDxW0aZp7QzPzUZYluQWqgV4f2f5WzenHosRWXBBpf840z3gee6
-	6pHV291CkgIU6+BzO2B+LSnW7XYPgFRsc96fcTTFqITKaD2WHoy4NDVJSFiiuDhUJlyQHn9LfmcL3
-	rte8Tjwko4kcKaL4feZNoElphViui4rHHlfyVxYOm9zWw6EtBUjf9xTx8h2UIjVqtD2Simm5b576W
-	fVnviNVA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33562)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uu7mL-000000001rr-0hSY;
-	Thu, 04 Sep 2025 12:05:21 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uu7mJ-000000001SE-17WY;
-	Thu, 04 Sep 2025 12:05:19 +0100
-Date: Thu, 4 Sep 2025 12:05:19 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-Cc: Yao Zi <ziyao@disroot.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH net] net: stmmac: dwmac-rk: Ensure clk_phy doesn't
- contain invalid address
-Message-ID: <aLlyb6WvoBiBfUx3@shell.armlinux.org.uk>
-References: <20250904031222.40953-3-ziyao@disroot.org>
- <aLlwv3v8ACha8b-3@shell.armlinux.org.uk>
- <b5fbeb3f-9962-444d-85b3-3b8a11f69266@rock-chips.com>
+	s=arc-20240116; t=1756983947; c=relaxed/simple;
+	bh=ERfmAvwGnsR9Noz+SlGnHy31HmeyJzY7rdvaAAcGjMc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rGWGfgpakKa9QOZXtd6oeCWfRhCkwdHnIhXOzNPPpFR2kvdG9WhE2VQP4NgelWV4u8KxgJe3aRForpqRRMuD9gV3MXfq7922UqrqWKwGKtr9jKnMm3WY8A+cHMY/oFIqZPxGjC0J8pj/e6GiZE7+3hXwaIsIVLlbnSGwzI0ZavM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKZZiKq3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52CFCC4CEF0;
+	Thu,  4 Sep 2025 11:05:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756983946;
+	bh=ERfmAvwGnsR9Noz+SlGnHy31HmeyJzY7rdvaAAcGjMc=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=QKZZiKq3M1IpJbcnyjTf2PJJkFW/J68fAJ78LCRzFusWHpWiSenY0rfiD9xC2zEa1
+	 MbQ24RgKLqoZpOUp5ftSsDRCVAxzB2Iv9GQ+LLUhAX8ZMbrcCIuLrcTTGbvPwTxYU/
+	 gNsE+POWGhlOsEpgIFDUY4m7qTQFvjQtwKgnHCVX4KgxTH5oxsLSbDngSUMS0QiB85
+	 76uo3nQ1KKuGEeZtxFcIU+RM4pOvLYxHXqxvmCBb0o20EjlgVwi5hCeVWvU/DiGU5o
+	 LhWwYyvYWUR9GUs1Xy/7wc8oRU96cw1w6T7xGOLLVauoWL1+2jnJuj6bDV5rEQvY32
+	 EK5eZRluNhsjQ==
+Message-ID: <f7bb0739-3161-4d70-87e5-8c978a023361@kernel.org>
+Date: Thu, 4 Sep 2025 13:05:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b5fbeb3f-9962-444d-85b3-3b8a11f69266@rock-chips.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] arm64: dts: broadcom: rp1: Add USB nodes
+To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, devicetree@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, iivanov@suse.de, svarbanov@suse.de,
+ mbrugger@suse.com, Jonathan Bell <jonathan@raspberrypi.com>,
+ Phil Elwell <phil@raspberrypi.com>
+References: <4e026a66001da7b4924d75bd7bee158cbb978eed.1756387905.git.andrea.porta@suse.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <4e026a66001da7b4924d75bd7bee158cbb978eed.1756387905.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 04, 2025 at 07:03:10PM +0800, Chaoyi Chen wrote:
+On 28/08/2025 15:50, Andrea della Porta wrote:
+> The RaspberryPi 5 has RP1 chipset containing two USB host controller,
+> while presenting two USB 2.0 and two USB 3.0 ports to the outside.
 > 
-> On 9/4/2025 6:58 PM, Russell King (Oracle) wrote:
-> > On Thu, Sep 04, 2025 at 03:12:24AM +0000, Yao Zi wrote:
-> > >   	if (plat->phy_node) {
-> > >   		bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
-> > >   		ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
-> > > -		/* If it is not integrated_phy, clk_phy is optional */
-> > > +		/*
-> > > +		 * If it is not integrated_phy, clk_phy is optional. But we must
-> > > +		 * set bsp_priv->clk_phy to NULL if clk_phy isn't proivded, or
-> > > +		 * the error code could be wrongly taken as an invalid pointer.
-> > > +		 */
-> > I'm concerned by this. This code is getting the first clock from the DT
-> > description of the PHY. We don't know what type of PHY it is, or what
-> > the DT description of that PHY might suggest that the first clock would
-> > be.
-> > 
-> > However, we're geting it and setting it to 50MHz. What if the clock is
-> > not what we think it is?
+> Add the relevant USB nodes to the devicetree.
 > 
-> We only set integrated_phy to 50M, which are all known targets. For external PHYs, we do not perform frequency settings.
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>  arch/arm64/boot/dts/broadcom/rp1-common.dtsi | 28 ++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/broadcom/rp1-common.dtsi b/arch/arm64/boot/dts/broadcom/rp1-common.dtsi
+> index 5002a375eb0b..116617fcb1eb 100644
+> --- a/arch/arm64/boot/dts/broadcom/rp1-common.dtsi
+> +++ b/arch/arm64/boot/dts/broadcom/rp1-common.dtsi
+> @@ -39,4 +39,32 @@ rp1_gpio: pinctrl@400d0000 {
+>  			     <1 IRQ_TYPE_LEVEL_HIGH>,
+>  			     <2 IRQ_TYPE_LEVEL_HIGH>;
+>  	};
+> +
+> +	rp1_usb0: usb@40200000 {
+> +		reg = <0x00 0x40200000  0x0 0x100000>;
+> +		compatible = "snps,dwc3";
+Please order properties and nodes according to DTS coding style.
 
-Same question concerning enabling and disabling another device's clock
-that the other device should be handling.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Best regards,
+Krzysztof
 
