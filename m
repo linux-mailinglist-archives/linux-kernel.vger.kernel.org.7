@@ -1,345 +1,219 @@
-Return-Path: <linux-kernel+bounces-801122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 090E3B44017
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:12:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 492CAB4401A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66A95A4406A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:12:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEF625A3B61
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43EF30BBB9;
-	Thu,  4 Sep 2025 15:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nrGQB3Hv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD033126D1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1F33126D2;
 	Thu,  4 Sep 2025 15:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E34311C3D;
+	Thu,  4 Sep 2025 15:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756998658; cv=none; b=PXo8HgE2rdG5R3JJ6DNCjgIyqrsxEESSxn6DNirjTT+/lAFK0jAs7SHWADyXtfXrhOw5ukzCOXBLdTnVlVW7XNcDO36dGtuNDgPQiUWZwOnRqDQxJpUDBPg3nemuoq7DARXT9pvgPl0eN1mSsMwXlcQq/bQ0EP5+1f84qhOA6ug=
+	t=1756998657; cv=none; b=N4IQf9tnz81dxuhov1T59Hm1rK/M3CDCcTEF9C4Tj1myMMIV/gDBH0H6WvQm5U0VLVc6ybNdRwpDmlrJ5ki7dW4k8k6tRJPOuirqFtgDVgOTgdDz65hm4J5KCNVl5KN9jL8ly/y0F8kkI5Pqzs5+AZlCTV2Cgd9ZVUxwiaa1dUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756998658; c=relaxed/simple;
-	bh=s6V5DssxxrjBAke7IgsivDDbbaZqczvmKPe8MqV5cgI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LVgGQEvsj9AixSFixU6oKjEW+dCR3/6ruWy+FkKgudOnLOgko4CWoRT2ffWb4XITl/lJdPbDdZI78W3XOZSraAUw8t3OTf6prNU1j6eqrVz7EN6r/kAcmavScmsmdECv+A4JnNsXeLoruBuM6xIzvMfVublIeVD5CzNEA7+gt9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nrGQB3Hv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C24D7C4CEF0;
-	Thu,  4 Sep 2025 15:10:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756998658;
-	bh=s6V5DssxxrjBAke7IgsivDDbbaZqczvmKPe8MqV5cgI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nrGQB3HvpUDAgecQPLLvnLbSeq+EbGOaeJhNwzYw6kJerZ0DGrqMtiqFDvfSN4Sxt
-	 wVnMA2vki/Hu7lWE4eHEJqJA0WsreU5C36eqvdEhVKCrMUb9aVQ9CS4Z0NCx1IpchC
-	 Bw9t7uoiszGAkKGa+IQbBwA2Ii9VRbsUIBI56JJw=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	torvalds@linux-foundation.org,
-	stable@vger.kernel.org
-Cc: lwn@lwn.net,
-	jslaby@suse.cz,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Linux 6.6.104
-Date: Thu,  4 Sep 2025 17:10:41 +0200
-Message-ID: <2025090442-rewire-elliptic-52ed@gregkh>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756998657; c=relaxed/simple;
+	bh=bhH2AyFUyHikeeMORo6a6QvtJeEJ/W2ZFeXSLE2jsIk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZkFrzkHNAkvPHiCHDYuPqFsggTfKwyIdhqhJFQIlKJ5nMkmB9YB1Q0CHyUzB1zfCqtoYRWZa+MQotlnBU6O8UbszzVBeVzILrWrKUG/U+c3dWdyUJwdzAFpqKhe8InMhSvi/G3Uc1BASjuPfnTZ/MYdNpBvZ4fFqeOwnTBam9fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-5290c67854eso805775137.3;
+        Thu, 04 Sep 2025 08:10:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756998654; x=1757603454;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ShVXHKQVye5fMTAxZ5zJX/qsFUcoskhsDFahgVPvGhA=;
+        b=kRlq4VUZuI5uJcRSf/f+lUx2+h9wS6gUhRtpEgYy8ItPg4bIsniNAZsiFOy5OG6P5e
+         RxY/xRLZJf36BrqpkY8VaqPTRsvbwXrPLKRyLfe9LfNyJNbAIjlAA51B0/ABtjOnpv0K
+         dKUwxX5EVJOeMb2eoGiXSRWi7L31vYDh93rAUL1to31grCRoWHcRdDL0O2T3BjcwkVcT
+         9lcinOVLRmnYzRdK3zfDo8/qNxbSFO2e5Vc43PQIGFjWOzFLVZEYK9SIj9SllHyjEmgA
+         YZnBsYmFF8X8h2RR3SfL1dsJ+MVF8W7NOY4ngDrCrs+8pmBm76uzxEupALYAZWkybwgp
+         6Bow==
+X-Forwarded-Encrypted: i=1; AJvYcCUwW6lQYIrjGlsXoeFHy72WugGGD/FDrX6/PNDssN/+f9jyhC5EAvdPvbsioFqWBqKtMaVCFrukfX66P2vS@vger.kernel.org, AJvYcCWg/3O83Qht9OPLmlaWedCp8JS6TucRWFJgzk9NvXFJiSBlZIH6QJbRleDWi+Ym4+rXrbps18jJdzD5@vger.kernel.org, AJvYcCWjWlddnqG/99qSrIKnXqt8FNwKeVbOWcKvsTmjXXORsuMSHWKD8UNaFuoy2363MCKn7UjzdSz9wiUBSV7dpebgtwA=@vger.kernel.org, AJvYcCXpVWp+SnqrztxeYHWdIR71gG1CmTmectXuq3sXBhm3UoNeH4emV7tbeJzmTWTKjaO/U5qedzX6cUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPKlrpcTsdIHrSzVdjD9AQdrHU1fpBwvIPQWq24U5wBXLjcO9W
+	bOXuEScEhsZP2gLTqI5X8MNzwtkwlTA6oGu/OSRfW7iyeika1Ct7lzkMAE/FOVNW
+X-Gm-Gg: ASbGncs8uqBEKe8DdtLOLvFTsttdu95mAOUDmaPTD5xaJCazxS7kfNXrDou1bDcItfg
+	OMXmX8oYC+04mOJSITOajvsr+XiaJWeBnKtvkU3XqLtF84dA73O59Cs+zLF0W7/8avU3InsL812
+	wHX1U+dy5mwLDaclc6PlckocZEyZkB4cpxowmeRF0d6x23qkWvQsyrVyFsQgxoyUZayMb3sHBwF
+	nm754RdClgCIkwKq2oMvpD36WqM0StBmsMpIb3X+yjjsAsuN5iy5LImfK0mErgr0Yec49rHtZhh
+	xdqwmqC5dX3+PyUg49FOXfDKms/yNGLA9LHjGXiCa+c5f2vA4HboduPYvTBk9xyTNmBLVpVLZMj
+	OYTNnhNIG3+O5VjnjYS5h24Ws8s2PGgHG8WMKs/C6V0FEf9JJhsHzEoPFGPAd965PuVyJEkg=
+X-Google-Smtp-Source: AGHT+IEsxG86HODGDOanb5//d4RWdlKZyyT2m8Le0Xtsonu5Y1+WQrJy0KDp60WK1TN883DRvDu0HA==
+X-Received: by 2002:a05:6102:5cc2:b0:525:5f21:caa6 with SMTP id ada2fe7eead31-52b19c6cce0mr6824800137.9.1756998653788;
+        Thu, 04 Sep 2025 08:10:53 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-895fba9791dsm5362460241.16.2025.09.04.08.10.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 08:10:53 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5357f3e2520so955643137.1;
+        Thu, 04 Sep 2025 08:10:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU5b5/sRIgXRG09YrP8rvPE7UhWQ9Hn9r+L7FHKCY1mzc/eZQ5GSoMwPA4bzvnG+ttwRVkmaeGuKYVTc5wOSSN6st4=@vger.kernel.org, AJvYcCURzy7BRVTjP1wV3bpWoUd3VFL5KJkGkIpkaiKMGJCico8V/93MUe7YeOLlhbbSP0Wqkuk0m8ycMOjaxB6d@vger.kernel.org, AJvYcCUbwkQM3KQK3YTVqLTkiU7bNk8Q58LckSaKRPAjwsjN59PdclMdyHDA5ShGYpaU8KPaupVkAxH1S48/@vger.kernel.org, AJvYcCXdtXdEFqVPl+1/nr7+PrHRv3ANRIkC9FR31eWbNmy+pkE/janWH7/PrULIcUxEVybZVu9Dp+OSEaA=@vger.kernel.org
+X-Received: by 2002:a05:6102:2ac9:b0:524:e102:31c7 with SMTP id
+ ada2fe7eead31-52b1b6fbde7mr5902911137.19.1756998652710; Thu, 04 Sep 2025
+ 08:10:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250903082757.115778-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250903082757.115778-6-tommaso.merciai.xr@bp.renesas.com>
+ <CAMuHMdU8WQsA_tXTpDvv0HQ1j=mawyJ2sMk3nuJJXgJxHOTeoA@mail.gmail.com> <aLmp5ILqhiWYJrw5@tom-desktop>
+In-Reply-To: <aLmp5ILqhiWYJrw5@tom-desktop>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 4 Sep 2025 17:10:41 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVn1NHdD=23wfpXQHaR48kcZwiDzb4xQhuCENqL3X_EDw@mail.gmail.com>
+X-Gm-Features: Ac12FXzCFPajoLB2EaIzkwV-YphAQypY6LFRt6AY-eQh1OyA06W4gKsSz-v4crI
+Message-ID: <CAMuHMdVn1NHdD=23wfpXQHaR48kcZwiDzb4xQhuCENqL3X_EDw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] dmaengine: sh: rz-dmac: Add runtime PM support
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dmaengine@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-I'm announcing the release of the 6.6.104 kernel.
+Hi Tommaso,
 
-All users of the 6.6 kernel series must upgrade.
+On Thu, 4 Sept 2025 at 17:02, Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
+> On Wed, Sep 03, 2025 at 02:17:53PM +0200, Geert Uytterhoeven wrote:
+> > On Wed, 3 Sept 2025 at 10:28, Tommaso Merciai
+> > <tommaso.merciai.xr@bp.renesas.com> wrote:
+> > > Enable runtime power management in the rz-dmac driver by adding suspend and
+> > > resume callbacks. This ensures the driver can correctly assert and deassert
+> >
+> > This is not really what this patch does: the Runtime PM-related changes
+> > just hide^Wmove reset handling into the runtime callbacks.
+>
+> Agreed.
+>
+> > > the reset control and manage power state transitions during suspend and
+> > > resume. Adding runtime PM support allows the DMA controller to reduce power
+> >
+> > (I assume) This patch does fix resuming from _system_ suspend.
+> >
+> > > consumption when idle and maintain correct operation across system sleep
+> > > states, addressing the previous lack of dynamic power management in the
+> > > driver.
+> >
+> > The driver still does not do dynamic power management: you still call
+> > pm_runtime_resume_and_get() from the driver's probe() .callback, and
+> > call pm_runtime_put() only from the .remove() callback, so the device
+> > is powered all the time.
+> > To implement dynamic power management, you have to change that,
+> > and call pm_runtime_resume_and_get() and pm_runtime_put() from the
+> > .device_alloc_chan_resources() resp. .device_free_chan_resources()
+> > callbacks (see e.g. drivers/dma/sh/rcar-dmac.c).
+>
+> Thanks for the hints!
+> So following your hints we need to:
+>
+>  - call pm_runtime_get_sync() from rz_dmac_alloc_chan_resources()
+>  - call pm_runtime_put() from rz_dmac_free_chan_resources()
+>
+> With that then we can remove pm_runtime_put() from the remove function
+> and add this at the end of the probe function.
+>
+> > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> >
+> > > --- a/drivers/dma/sh/rz-dmac.c
+> > > +++ b/drivers/dma/sh/rz-dmac.c
+> > > @@ -437,6 +437,17 @@ static int rz_dmac_xfer_desc(struct rz_dmac_chan *chan)
+> > >   * DMA engine operations
+> > >   */
+> > >
+> > > +static void rz_dmac_chan_init_all(struct rz_dmac *dmac)
+> > > +{
+> > > +       unsigned int i;
+> > > +
+> > > +       rz_dmac_writel(dmac, DCTRL_DEFAULT, CHANNEL_0_7_COMMON_BASE + DCTRL);
+> > > +       rz_dmac_writel(dmac, DCTRL_DEFAULT, CHANNEL_8_15_COMMON_BASE + DCTRL);
+> > > +
+> > > +       for (i = 0; i < dmac->n_channels; i++)
+> > > +               rz_dmac_ch_writel(&dmac->channels[i], CHCTRL_DEFAULT, CHCTRL, 1);
+> > > +}
+> > > +
+> > >  static int rz_dmac_alloc_chan_resources(struct dma_chan *chan)
+> > >  {
+> > >         struct rz_dmac_chan *channel = to_rz_dmac_chan(chan);
+> > > @@ -970,10 +981,6 @@ static int rz_dmac_probe(struct platform_device *pdev)
+> > >                 goto err_pm_disable;
+> > >         }
+> > >
+> > > -       ret = reset_control_deassert(dmac->rstc);
+> > > -       if (ret)
+> > > -               goto err_pm_runtime_put;
+> > > -
+> > >         for (i = 0; i < dmac->n_channels; i++) {
+> > >                 ret = rz_dmac_chan_probe(dmac, &dmac->channels[i], i);
+> > >                 if (ret < 0)
+> > > @@ -1028,8 +1035,6 @@ static int rz_dmac_probe(struct platform_device *pdev)
+> > >                                   channel->lmdesc.base_dma);
+> > >         }
+> > >
+> > > -       reset_control_assert(dmac->rstc);
+> > > -err_pm_runtime_put:
+> > >         pm_runtime_put(&pdev->dev);
+> > >  err_pm_disable:
+> > >         pm_runtime_disable(&pdev->dev);
+> > > @@ -1052,13 +1057,50 @@ static void rz_dmac_remove(struct platform_device *pdev)
+> > >                                   channel->lmdesc.base,
+> > >                                   channel->lmdesc.base_dma);
+> > >         }
+> > > -       reset_control_assert(dmac->rstc);
+> > >         pm_runtime_put(&pdev->dev);
+> > >         pm_runtime_disable(&pdev->dev);
+> > >
+> > >         platform_device_put(dmac->icu.pdev);
+> > >  }
+> > >
+> > > +static int rz_dmac_runtime_suspend(struct device *dev)
+> > > +{
+> > > +       struct rz_dmac *dmac = dev_get_drvdata(dev);
+> > > +
+> > > +       return reset_control_assert(dmac->rstc);
+> >
+> > Do you really want to reset the device (and thus loose register state)
+> > each and every time the device is runtime-suspended?  For now it doesn't
+> > matter much, but once you implement real dynamic power management,
+> > it does.
+> > I think the reset handling should be moved to the system suspend/resume
+> > callbacks.
+>
+> Agreed. With above changes maybe we can move all into
+> NOIRQ_SYSTEM_SLEEP_PM_OPS(rz_dmac_suspend, rz_dmac_resume)
+> With your suggested changes I'm not sure if pm_runtime_ops are really needed.
 
-The updated 6.6.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-6.6.y
-and can be browsed at the normal kernel.org git web browser:
-	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
+After these changes, you indeed no longer need any pm_runtime_ops.
 
-thanks,
+Gr{oetje,eeting}s,
 
-greg k-h
+                        Geert
 
-------------
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml |    1 
- Makefile                                                     |    2 
- arch/mips/boot/dts/lantiq/danube_easy50712.dts               |    5 
- arch/mips/lantiq/xway/sysctrl.c                              |   10 
- arch/powerpc/kernel/kvm.c                                    |    8 
- arch/x86/kernel/cpu/microcode/amd.c                          |   22 +
- arch/x86/kvm/lapic.c                                         |    2 
- arch/x86/kvm/x86.c                                           |    7 
- drivers/acpi/ec.c                                            |    6 
- drivers/atm/atmtcp.c                                         |   17 
- drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c                      |    4 
- drivers/gpu/drm/display/drm_dp_helper.c                      |    2 
- drivers/gpu/drm/msm/msm_gem_submit.c                         |   14 
- drivers/gpu/drm/nouveau/dispnv50/wndw.c                      |    4 
- drivers/gpu/drm/nouveau/nvkm/falcon/gm200.c                  |   15 
- drivers/hid/hid-asus.c                                       |    8 
- drivers/hid/hid-ids.h                                        |    3 
- drivers/hid/hid-input-test.c                                 |   10 
- drivers/hid/hid-input.c                                      |   51 +-
- drivers/hid/hid-logitech-dj.c                                |    4 
- drivers/hid/hid-logitech-hidpp.c                             |    2 
- drivers/hid/hid-mcp2221.c                                    |   71 ++--
- drivers/hid/hid-multitouch.c                                 |    8 
- drivers/hid/hid-ntrig.c                                      |    3 
- drivers/hid/hid-quirks.c                                     |    2 
- drivers/hid/wacom_wac.c                                      |    1 
- drivers/net/ethernet/dlink/dl2k.c                            |    2 
- drivers/net/ethernet/intel/ice/ice_txrx.c                    |   94 +++--
- drivers/net/ethernet/intel/ice/ice_txrx.h                    |   19 -
- drivers/net/ethernet/intel/ice/ice_txrx_lib.h                |   53 ---
- drivers/net/ethernet/mellanox/mlx5/core/devlink.c            |    2 
- drivers/net/ethernet/mellanox/mlx5/core/en/port_buffer.c     |    3 
- drivers/net/ethernet/mellanox/mlx5/core/en/port_buffer.h     |   12 
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c            |   19 +
- drivers/net/ethernet/mellanox/mlx5/core/fw_reset.c           |  190 +++++++----
- drivers/net/ethernet/mellanox/mlx5/core/fw_reset.h           |    1 
- drivers/net/ethernet/mellanox/mlx5/core/main.c               |    3 
- drivers/net/ethernet/mellanox/mlx5/core/sf/devlink.c         |   87 ++---
- drivers/net/ethernet/mellanox/mlx5/core/sf/sf.h              |    6 
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c            |    8 
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c          |   13 
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c           |    9 
- drivers/net/ethernet/stmicro/stmmac/hwif.h                   |    8 
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c            |   12 
- drivers/net/phy/mscc/mscc.h                                  |    4 
- drivers/net/phy/mscc/mscc_main.c                             |    4 
- drivers/net/phy/mscc/mscc_ptp.c                              |   34 +
- drivers/net/usb/qmi_wwan.c                                   |    3 
- drivers/of/dynamic.c                                         |   29 -
- drivers/of/of_private.h                                      |    1 
- drivers/of/overlay.c                                         |   11 
- drivers/of/unittest.c                                        |   12 
- drivers/pinctrl/Kconfig                                      |    1 
- drivers/scsi/scsi_sysfs.c                                    |    4 
- drivers/vhost/net.c                                          |    9 
- fs/efivarfs/super.c                                          |    4 
- fs/erofs/zdata.c                                             |   13 
- fs/nfs/pagelist.c                                            |   86 ----
- fs/nfs/write.c                                               |  146 +++++---
- fs/smb/client/cifsfs.c                                       |   14 
- fs/smb/client/inode.c                                        |   34 +
- fs/smb/client/smb2inode.c                                    |    7 
- fs/xfs/libxfs/xfs_attr_remote.c                              |    7 
- fs/xfs/libxfs/xfs_da_btree.c                                 |    6 
- include/linux/atmdev.h                                       |    1 
- include/linux/mlx5/mlx5_ifc.h                                |   11 
- include/linux/nfs_page.h                                     |    2 
- include/net/bluetooth/hci_sync.h                             |    2 
- include/net/rose.h                                           |   18 -
- kernel/dma/pool.c                                            |    4 
- kernel/trace/trace.c                                         |    4 
- net/atm/common.c                                             |   15 
- net/bluetooth/hci_event.c                                    |   20 +
- net/bluetooth/hci_sync.c                                     |    6 
- net/bluetooth/mgmt.c                                         |    5 
- net/ipv4/route.c                                             |   10 
- net/rose/af_rose.c                                           |   13 
- net/rose/rose_in.c                                           |   12 
- net/rose/rose_route.c                                        |   62 ++-
- net/rose/rose_timer.c                                        |    2 
- net/sctp/ipv6.c                                              |    2 
- sound/soc/codecs/lpass-tx-macro.c                            |    2 
- 82 files changed, 890 insertions(+), 553 deletions(-)
-
-Aleksander Jan Bajkowski (2):
-      mips: dts: lantiq: danube: add missing burst length property
-      mips: lantiq: xway: sysctrl: rename the etop node
-
-Alex Deucher (1):
-      Revert "drm/amdgpu: fix incorrect vm flags to map bo"
-
-Alexei Lazar (3):
-      net/mlx5e: Update and set Xon/Xoff upon MTU set
-      net/mlx5e: Update and set Xon/Xoff upon port speed set
-      net/mlx5e: Set local Xoff after FW update
-
-Alexey Klimov (1):
-      ASoC: codecs: tx-macro: correct tx_macro_component_drv name
-
-Antheas Kapenekakis (1):
-      HID: quirks: add support for Legion Go dual dinput modes
-
-Borislav Petkov (AMD) (1):
-      x86/microcode/AMD: Handle the case of no BIOS microcode
-
-Chris Mi (1):
-      net/mlx5: SF, Fix add port error handling
-
-Christoph Hellwig (1):
-      nfs: fold nfs_page_group_lock_subrequests into nfs_lock_and_join_requests
-
-Damien Le Moal (1):
-      scsi: core: sysfs: Correct sysfs attributes access rights
-
-Dan Carpenter (1):
-      of: dynamic: Fix use after free in of_changeset_add_prop_helper()
-
-Dmitry Baryshkov (1):
-      dt-bindings: display/msm: qcom,mdp5: drop lut clock
-
-Eric Dumazet (2):
-      sctp: initialize more fields in sctp_v6_from_sk()
-      net: rose: fix a typo in rose_clear_routes()
-
-Eric Sandeen (1):
-      xfs: do not propagate ENODATA disk errors into xattr code
-
-Fabio Porcedda (1):
-      net: usb: qmi_wwan: add Telit Cinterion LE910C4-WWX new compositions
-
-Greg Kroah-Hartman (1):
-      Linux 6.6.104
-
-Hamish Martin (2):
-      HID: mcp2221: Don't set bus speed on every transfer
-      HID: mcp2221: Handle reads greater than 60 bytes
-
-Horatiu Vultur (1):
-      phy: mscc: Fix when PTP clock is register and unregister
-
-Imre Deak (1):
-      Revert "drm/dp: Change AUX DPCD probe address from DPCD_REV to LANE0_1_STATUS"
-
-James Jones (1):
-      drm/nouveau/disp: Always accept linear modifier
-
-Jiri Pirko (3):
-      net/mlx5: Call mlx5_sf_id_erase() once in mlx5_sf_dealloc()
-      net/mlx5: Use devlink port pointer to get the pointer of container SF struct
-      net/mlx5: Convert SF port_indices xarray to function_ids xarray
-
-José Expósito (2):
-      HID: input: rename hidinput_set_battery_charge_status()
-      HID: input: report battery status changes immediately
-
-Junli Liu (1):
-      erofs: fix atomic context detection when !CONFIG_DEBUG_LOCK_ALLOC
-
-Kuniyuki Iwashima (1):
-      atm: atmtcp: Prevent arbitrary write in atmtcp_recv_control().
-
-Larysa Zaremba (1):
-      ice: Introduce ice_xdp_buff
-
-Li Nan (1):
-      efivarfs: Fix slab-out-of-bounds in efivarfs_d_compare
-
-Lizhi Hou (1):
-      of: dynamic: Fix memleak when of_pci_add_properties() failed
-
-Ludovico de Nittis (2):
-      Bluetooth: hci_event: Treat UNKNOWN_CONN_ID on disconnect as success
-      Bluetooth: hci_event: Mark connection as closed during suspend disconnect
-
-Luiz Augusto von Dentz (1):
-      Bluetooth: hci_event: Detect if HCI_EV_NUM_COMP_PKTS is unbalanced
-
-Maciej Fijalkowski (2):
-      ice: gather page_count()'s of each frag right before XDP prog call
-      ice: stop storing XDP verdict within ice_rx_buf
-
-Madhavan Srinivasan (1):
-      powerpc/kvm: Fix ifdef to remove build warning
-
-Matt Coffin (1):
-      HID: logitech: Add ids for G PRO 2 LIGHTSPEED
-
-Michal Kubiak (1):
-      ice: fix incorrect counter for buffer allocation failures
-
-Minjong Kim (1):
-      HID: hid-ntrig: fix unable to handle page fault in ntrig_report_version()
-
-Moshe Shemesh (5):
-      net/mlx5: Reload auxiliary drivers on fw_activate
-      net/mlx5: Add device cap for supporting hot reset in sync reset flow
-      net/mlx5: Add support for sync reset using hot reset
-      net/mlx5: Fix lockdep assertion on sync reset unload event
-      net/mlx5: Nack sync reset when SFs are present
-
-Nikolay Kuratov (1):
-      vhost/net: Protect ubufs with rcu read lock in vhost_net_ubuf_put()
-
-Oscar Maes (1):
-      net: ipv4: fix regression in local-broadcast routes
-
-Paulo Alcantara (2):
-      smb: client: fix race with concurrent opens in unlink(2)
-      smb: client: fix race with concurrent opens in rename(2)
-
-Pavel Shpakovskiy (1):
-      Bluetooth: hci_sync: fix set_local_name race condition
-
-Ping Cheng (1):
-      HID: wacom: Add a new Art Pen 2
-
-Qasim Ijaz (2):
-      HID: asus: fix UAF via HID_CLAIMED_INPUT validation
-      HID: multitouch: fix slab out-of-bounds access in mt_report_fixup()
-
-Randy Dunlap (1):
-      pinctrl: STMFX: add missing HAS_IOMEM dependency
-
-Rob Clark (1):
-      drm/msm: Defer fd_install in SUBMIT ioctl
-
-Rob Herring (1):
-      of: Add a helper to free property struct
-
-Rohan G Thomas (3):
-      net: stmmac: xgmac: Do not enable RX FIFO Overflow interrupts
-      net: stmmac: xgmac: Correct supported speed modes
-      net: stmmac: Set CIC bit only for TX queues with COE
-
-Serge Semin (1):
-      net: stmmac: Rename phylink_get_caps() callback to update_caps()
-
-Shanker Donthineni (1):
-      dma/pool: Ensure DMA_DIRECT_REMAP allocations are decrypted
-
-Shuhao Fu (1):
-      fs/smb: Fix inconsistent refcnt update
-
-Steve French (1):
-      smb3 client: fix return code mapping of remap_file_range
-
-Takamitsu Iwai (3):
-      net: rose: split remove and free operations in rose_remove_neigh()
-      net: rose: convert 'use' field to refcount_t
-      net: rose: include node references in rose_neigh refcount
-
-Tengda Wu (1):
-      ftrace: Fix potential warning in trace_printk_seq during ftrace_dump
-
-Thijs Raymakers (1):
-      KVM: x86: use array_index_nospec with indices that come from guest
-
-Timur Tabi (2):
-      drm/nouveau: remove unused increment in gm200_flcn_pio_imem_wr
-      drm/nouveau: remove unused memory target test
-
-Trond Myklebust (1):
-      NFS: Fix a race when updating an existing write
-
-Werner Sembach (1):
-      ACPI: EC: Add device to acpi_ec_no_wakeup[] qurik list
-
-Yeounsu Moon (1):
-      net: dlink: fix multicast stats being counted incorrectly
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
