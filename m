@@ -1,326 +1,431 @@
-Return-Path: <linux-kernel+bounces-799630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0085B42E52
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:39:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C64B42E2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76A785E788A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:39:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60E63582CB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7384E19309C;
-	Thu,  4 Sep 2025 00:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D521885A5;
+	Thu,  4 Sep 2025 00:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eN2QfXZJ"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r5IrSAnD"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55FB15D3;
-	Thu,  4 Sep 2025 00:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A1112CD88
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 00:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756946335; cv=none; b=ZZMm4i6xDWliIqJOhw4E8pL1WJvPCyged5hrLmsvhthak2OKNwHI/J9EMmNCPNNvdTf5G8rtzLsJRnrnBMwIvIWxDmZ7lRq1btiskyc8ZXOYf5SUAawewTbEDtFIk0quaP/0CI77Umf3MpHDRTQQN5hdOHFkZ5I9iqaM1kxK14k=
+	t=1756945624; cv=none; b=s5YKz7Dy4Rj7kD+Pqs7Yf8Pgj0JABOFie+FjNQHmmYFCjSNVjuCgPLxJgF96r0PCEXe/4OCK5Rw0FYTDMbPheVB57s8ppAXMlmv81sAuOLvS4xwHTMnWV8kAb4i3ZSqObn4pmUcH38auhqCQj4LyrnNPLn3eMw5IdXRpOMGTjxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756946335; c=relaxed/simple;
-	bh=0U0Dsem90VQQK0B/tIbI+8P9Ceh8zzg7qRZcpK9Fp/0=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=Us1vVqRG4eMaGjP2X8FUsEXskfQwnDHDQOb3D9jqJ12e2RU77D4Z5tPtBSL06glXXEo6HAOIu7I1dhWNCrrZw5IFLf98V4byGkWSOtxGVj+gszvOeGIcPrRMnAiGaabelN+AzAMzlf7PUYeukGagzuRoZse8N1WjqjjkONaNfnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eN2QfXZJ; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4717543ed9so245867a12.3;
-        Wed, 03 Sep 2025 17:38:53 -0700 (PDT)
+	s=arc-20240116; t=1756945624; c=relaxed/simple;
+	bh=9HLxXHMECannWVd48fSAK1SHVP7Ro6BVnGM7wtpM6ko=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GOqdwdoPQaWsLsQ+afWd1S5XRWF+ObraDI/S8GGcof+UT5z/CrA0Flj9x+0UxguBwgHsFujBsClHbj1kZN6wfeLBVex9fAF//SdcOALoLdyWvfek2fWZEcfVdqgkRl4fbt3e4DIaaGm2XZVOmboXV5q6YAzXvqJjon9QTnFFeu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r5IrSAnD; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-77283b2b5f7so811085b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 17:27:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756946333; x=1757551133; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=M9wjahpjajRVdLTvLPg2jmwGdR+YAWepelf042yY0AY=;
-        b=eN2QfXZJfv9zJ7QipqbfOn1DWD2byrkUgXk+EfVv8bvK4cN2oVx6WXQdrVhjPQsRoT
-         kk0VU+eueSD5EASHjEB3Ry90GqyzWVq7FeI8qZubVHrWD+hv+eyuM4qLggImY8Hh1mgi
-         AzlofWySunR3RALVlGAf9HcYkBJU10JtXQE2trfLZkGVY4hERJKY7EhouNZa82qBwpOE
-         IsYWTGC9Yx1kDurMSR/eZodYeQonl6I7+FHiks6+Se3TZ1TU4hWyWSSPcz5XFpuElxVj
-         +6fIKw04b698ExrVCfBkzYH3/YG8Qd17qF8bWga5intDkidfonsb7wZa1ZRjRf86XHJD
-         T4JQ==
+        d=google.com; s=20230601; t=1756945621; x=1757550421; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yvDVQLK04ab40q5EtK+feiNVb9JDEu/1QPl7bniWoyA=;
+        b=r5IrSAnDECeIb6N2L+PXE5hbr2SXk9hfzN1w9acQIxKquQsevedGXBdeZecGN8uvDk
+         77aufiybgAhVo3RAi259CCv2izQl0YrXS8rxPc/XKO9+5qnRc2gKBEC9m4SXg/QcoF82
+         rHIrqrdsj2FeO0jVeMhQDAkgShPPt85OLJKL1/daIYNPfrGVyMdWahF9mRJSqYIWLb+a
+         /K+UaeKGvBrhpkokVNxmu7zg5thmYUzLScT50hnUjDHgyb65wDlJDyUeYIOkQ31oMZml
+         62MM7MDloAkNgPigu2vI7unhM1whZWm1W6sJ6E8kDahgJRM8pcDb7EKFYpNHzr5OIKfO
+         1G6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756946333; x=1757551133;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M9wjahpjajRVdLTvLPg2jmwGdR+YAWepelf042yY0AY=;
-        b=sk2331/w5Be6xJKndG+qEcynyDM8zK82iJ/lQzuNQtbgB6WVRVJ5lizo3YyQa2XguK
-         rQMM6rn+671jSV/xn6vnVT3Hh0hQmsGlfU4TeSj92GsTLJcNE6dWXoC1OJsf85jzvePV
-         8IGkbgH0BE215vhk34b2zVUhiN+5xPd1l00rfVLXNfQLMNU8RmxwXS5NQknUlDEME1ld
-         tM1iCWdcxtml0archo68WQXSKbrnokcOmMMYk3oSB4xdWZ0iM5TFScNlWjxqmBUYDZns
-         Xq04BeclQaR/nvVs0Y0Ba3uy+wzSJyyB19Hi428dF2apNBiwXnt01F0T6bHJuYv0Xwam
-         58LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAfbvcsUB3etZfa+3es25bSVaNurT3QBvfF5kQ9jyKjvHgsnFMZXrYmuGmcsnbUzSx4tLObQG5QBtmmw==@vger.kernel.org, AJvYcCXl6wUYvmXYIJqZrVwEDgrV1pk3vXg47g9l3NEEFtwtFY+xpO51F0Jj3Do2KPPvL9T/o/bwO7tOshdp8DM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrjWR/tAqXSmX5u3HXdvj4EGlX+6DYouyz95TMFHpDRJm4LzEw
-	kaoetoiMqlrY1xlDmtfTs16SKs+RFAbH9qkmXz78qyddxdMbnzLLIihv
-X-Gm-Gg: ASbGncumNlb8V8SxpGfnELG+9kkkLNv06KoGqua3CT8Jtumx66TmCxaGslX1v/rQiwz
-	rN4EdiAw9QCSXnDIMu8rcOogOzMAoPg6AMLvHdaAZM70fs0f2Xc9qCc6ZC02cWfd6Z1uSMVeVrl
-	KHPLLJMyHwd68ycXoIvPX2HNOZBCL1B8Gs1Ojo1SKOwjFqMoEFnG41DZ27taF2BAsjL5dd8Anuh
-	eCZot2dsaX4AaHmpMSOTDcLagM2w3Cezar65a9wAMyeTwfmfIGFECctG1eLa5buCZjqRGg8rGKO
-	5bm4jedfxGvTLaU4ZQqB52kyMhwcNkNV8pRRUL5Ry1YLuV3kLv87ywtCE0a7SU3GFVnQfVE0Wt8
-	9AymsOqsJFsws+BrEq3tAl0w=
-X-Google-Smtp-Source: AGHT+IF8fWb/70JgPLh7N7Xn466vomeY7twFDDtFD6ID6JfG4YJmNgXkQZrYmfFbnlzFyM4OYAuWoQ==
-X-Received: by 2002:a17:90b:3811:b0:32b:6145:fa63 with SMTP id 98e67ed59e1d1-32b614601acmr4849866a91.4.1756946333006;
-        Wed, 03 Sep 2025 17:38:53 -0700 (PDT)
-Received: from dw-tp ([171.76.85.3])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4fb98f9f6asm1185841a12.8.2025.09.03.17.38.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 17:38:52 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, ryabinin.a.a@gmail.com, christophe.leroy@csgroup.eu, bhe@redhat.com, hca@linux.ibm.com, andreyknvl@gmail.com, akpm@linux-foundation.org, zhangqing@loongson.cn, chenhuacai@loongson.cn, davidgow@google.com, glider@google.com, dvyukov@google.com, alexghiti@rivosinc.com
-Cc: alex@ghiti.fr, agordeev@linux.ibm.com, vincenzo.frascino@arm.com, elver@google.com, kasan-dev@googlegroups.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org, snovitoll@gmail.com
-Subject: Re: [PATCH v6 1/2] kasan: introduce ARCH_DEFER_KASAN and unify static key across modes
-In-Reply-To: <20250810125746.1105476-2-snovitoll@gmail.com>
-Date: Thu, 04 Sep 2025 05:54:04 +0530
-Message-ID: <87ldmv6p5n.ritesh.list@gmail.com>
-References: <20250810125746.1105476-1-snovitoll@gmail.com> <20250810125746.1105476-2-snovitoll@gmail.com>
+        d=1e100.net; s=20230601; t=1756945621; x=1757550421;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yvDVQLK04ab40q5EtK+feiNVb9JDEu/1QPl7bniWoyA=;
+        b=fP8bQHxQg7eOfBwNN5adEAj855fUgIluGl0z8wNfQrt7ZGB8YxrImidFbvLs2KBFZ/
+         Sm5pbyyYf/rI8gTKPINSa5LnJFMwptf80z/AcB7kQslIisIMkQ5UdkvfiKjDSV0l5RWt
+         mLvNPDaA1gDv2/d399ALXTYi16TCV580RtGkciwUV93uwkHrDneXbZX35QtsMvOcHr/U
+         8OPDqlfk9iWzd24nbMcU/yllUjI+6KEgAgWynCkK1lz7cbjbJXGBzd1xkmeYQZERL7cd
+         jm7zqyJF+mR8rkuj0Z4SwI0UeCyaWcV1lBfPziC0AlMo41syx+g+rxpyMkjueRk9uCUV
+         wZEQ==
+X-Gm-Message-State: AOJu0YxntPH5DZNHZj3LK2REpNVV2Xu8jbG2W1x+NGeoYowaxfTgFTsp
+	lly7Biglx6h+WYpKM9FSKprZX/UeDvJ5dDM8s2O7wrXixOnluf+9xFvhP0XcnZtpZm7lUAYlPIg
+	EU7QHKSV8YBoTrhsBuM2QocHgxH+TWs25kWZfAMDbEcgA8t87fLnY7OnLP+hUF/Qvs2grbFsWQg
+	tuBXlmAxyNJbrEacD73hZLWP1IdyvCh2iGcMVMLUdWJU66gkze
+X-Google-Smtp-Source: AGHT+IFovU9GBH8kw8DAxkVYm0/vx5mdwpbRvIsRe+wCjjnO2ynIsO/VWDRC5MIL+zNlPxwQpd5HDA4ISeTY
+X-Received: from pfnn22.prod.google.com ([2002:a05:6a00:2b96:b0:772:38cc:6145])
+ (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:4b56:b0:74e:ab93:422b
+ with SMTP id d2e1a72fcca58-7723e21a5femr25206372b3a.4.1756945620636; Wed, 03
+ Sep 2025 17:27:00 -0700 (PDT)
+Date: Thu,  4 Sep 2025 00:26:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
+Message-ID: <20250904002658.974593-1-jstultz@google.com>
+Subject: [RESEND x2][PATCH 1/3] test-ww_mutex: Extend ww_mutex tests to test
+ both classes of ww_mutexes
+From: John Stultz <jstultz@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: John Stultz <jstultz@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-Sabyrzhan Tasbolatov <snovitoll@gmail.com> writes:
+Currently the test-ww_mutex tool only utilizes the wait-die
+class of ww_mutexes, and thus isn't very helpful in exercising
+the wait-wound class of ww_mutexes.
 
-> Introduce CONFIG_ARCH_DEFER_KASAN to identify architectures [1] that need
-> to defer KASAN initialization until shadow memory is properly set up,
-> and unify the static key infrastructure across all KASAN modes.
->
-> [1] PowerPC, UML, LoongArch selects ARCH_DEFER_KASAN.
->
-> The core issue is that different architectures haveinconsistent approaches
-> to KASAN readiness tracking:
-> - PowerPC, LoongArch, and UML arch, each implement own
->   kasan_arch_is_ready()
-> - Only HW_TAGS mode had a unified static key (kasan_flag_enabled)
-> - Generic and SW_TAGS modes relied on arch-specific solutions or always-on
->     behavior
->
-> This patch addresses the fragmentation in KASAN initialization
-> across architectures by introducing a unified approach that eliminates
-> duplicate static keys and arch-specific kasan_arch_is_ready()
-> implementations.
->
-> Let's replace kasan_arch_is_ready() with existing kasan_enabled() check,
-> which examines the static key being enabled if arch selects
-> ARCH_DEFER_KASAN or has HW_TAGS mode support.
-> For other arch, kasan_enabled() checks the enablement during compile time.
->
-> Now KASAN users can use a single kasan_enabled() check everywhere.
->
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217049
-> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-> ---
-> Changes in v6:
-> - Added more details in git commit message
-> - Fixed commenting format per coding style in UML (Christophe Leroy)
-> - Changed exporting to GPL for kasan_flag_enabled (Christophe Leroy)
-> - Converted ARCH_DEFER_KASAN to def_bool depending on KASAN to avoid
->         arch users to have `if KASAN` condition (Christophe Leroy)
-> - Forgot to add __init for kasan_init in UML
->
-> Changes in v5:
-> - Unified patches where arch (powerpc, UML, loongarch) selects
->     ARCH_DEFER_KASAN in the first patch not to break
->     bisectability
-> - Removed kasan_arch_is_ready completely as there is no user
-> - Removed __wrappers in v4, left only those where it's necessary
->     due to different implementations
->
-> Changes in v4:
-> - Fixed HW_TAGS static key functionality (was broken in v3)
-> - Merged configuration and implementation for atomicity
-> ---
->  arch/loongarch/Kconfig                 |  1 +
->  arch/loongarch/include/asm/kasan.h     |  7 ------
->  arch/loongarch/mm/kasan_init.c         |  8 +++----
->  arch/powerpc/Kconfig                   |  1 +
->  arch/powerpc/include/asm/kasan.h       | 12 ----------
->  arch/powerpc/mm/kasan/init_32.c        |  2 +-
->  arch/powerpc/mm/kasan/init_book3e_64.c |  2 +-
->  arch/powerpc/mm/kasan/init_book3s_64.c |  6 +----
->  arch/um/Kconfig                        |  1 +
->  arch/um/include/asm/kasan.h            |  5 ++--
->  arch/um/kernel/mem.c                   | 13 ++++++++---
->  include/linux/kasan-enabled.h          | 32 ++++++++++++++++++--------
->  include/linux/kasan.h                  |  6 +++++
->  lib/Kconfig.kasan                      | 12 ++++++++++
->  mm/kasan/common.c                      | 17 ++++++++++----
->  mm/kasan/generic.c                     | 19 +++++++++++----
->  mm/kasan/hw_tags.c                     |  9 +-------
->  mm/kasan/kasan.h                       |  8 ++++++-
->  mm/kasan/shadow.c                      | 12 +++++-----
->  mm/kasan/sw_tags.c                     |  1 +
->  mm/kasan/tags.c                        |  2 +-
->  21 files changed, 106 insertions(+), 70 deletions(-)
->
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 93402a1d9c9f..4730c676b6bf 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -122,6 +122,7 @@ config PPC
->  	# Please keep this list sorted alphabetically.
->  	#
->  	select ARCH_32BIT_OFF_T if PPC32
-> +	select ARCH_NEEDS_DEFER_KASAN		if PPC_RADIX_MMU
->  	select ARCH_DISABLE_KASAN_INLINE	if PPC_RADIX_MMU
->  	select ARCH_DMA_DEFAULT_COHERENT	if !NOT_COHERENT_CACHE
->  	select ARCH_ENABLE_MEMORY_HOTPLUG
-> diff --git a/arch/powerpc/include/asm/kasan.h b/arch/powerpc/include/asm/kasan.h
-> index b5bbb94c51f6..957a57c1db58 100644
-> --- a/arch/powerpc/include/asm/kasan.h
-> +++ b/arch/powerpc/include/asm/kasan.h
-> @@ -53,18 +53,6 @@
->  #endif
->  
->  #ifdef CONFIG_KASAN
-> -#ifdef CONFIG_PPC_BOOK3S_64
-> -DECLARE_STATIC_KEY_FALSE(powerpc_kasan_enabled_key);
-> -
-> -static __always_inline bool kasan_arch_is_ready(void)
-> -{
-> -	if (static_branch_likely(&powerpc_kasan_enabled_key))
-> -		return true;
-> -	return false;
-> -}
-> -
-> -#define kasan_arch_is_ready kasan_arch_is_ready
-> -#endif
->  
->  void kasan_early_init(void);
->  void kasan_mmu_init(void);
-> diff --git a/arch/powerpc/mm/kasan/init_32.c b/arch/powerpc/mm/kasan/init_32.c
-> index 03666d790a53..1d083597464f 100644
-> --- a/arch/powerpc/mm/kasan/init_32.c
-> +++ b/arch/powerpc/mm/kasan/init_32.c
-> @@ -165,7 +165,7 @@ void __init kasan_init(void)
->  
->  	/* At this point kasan is fully initialized. Enable error messages */
->  	init_task.kasan_depth = 0;
-> -	pr_info("KASAN init done\n");
-> +	kasan_init_generic();
->  }
->  
->  void __init kasan_late_init(void)
-> diff --git a/arch/powerpc/mm/kasan/init_book3e_64.c b/arch/powerpc/mm/kasan/init_book3e_64.c
-> index 60c78aac0f63..0d3a73d6d4b0 100644
-> --- a/arch/powerpc/mm/kasan/init_book3e_64.c
-> +++ b/arch/powerpc/mm/kasan/init_book3e_64.c
-> @@ -127,7 +127,7 @@ void __init kasan_init(void)
->  
->  	/* Enable error messages */
->  	init_task.kasan_depth = 0;
-> -	pr_info("KASAN init done\n");
-> +	kasan_init_generic();
->  }
->  
->  void __init kasan_late_init(void) { }
-> diff --git a/arch/powerpc/mm/kasan/init_book3s_64.c b/arch/powerpc/mm/kasan/init_book3s_64.c
-> index 7d959544c077..dcafa641804c 100644
-> --- a/arch/powerpc/mm/kasan/init_book3s_64.c
-> +++ b/arch/powerpc/mm/kasan/init_book3s_64.c
-> @@ -19,8 +19,6 @@
->  #include <linux/memblock.h>
->  #include <asm/pgalloc.h>
->  
-> -DEFINE_STATIC_KEY_FALSE(powerpc_kasan_enabled_key);
-> -
->  static void __init kasan_init_phys_region(void *start, void *end)
->  {
->  	unsigned long k_start, k_end, k_cur;
-> @@ -92,11 +90,9 @@ void __init kasan_init(void)
->  	 */
->  	memset(kasan_early_shadow_page, 0, PAGE_SIZE);
->  
-> -	static_branch_inc(&powerpc_kasan_enabled_key);
-> -
->  	/* Enable error messages */
->  	init_task.kasan_depth = 0;
-> -	pr_info("KASAN init done\n");
-> +	kasan_init_generic();
->  }
->  
+So extend the test to exercise both classes of ww_mutexes for
+all of the subtests.
 
-Only book3s64 needs static keys here because of radix v/s hash mode
-selection during runtime. The changes in above for powerpc looks good to
-me. It's a nice cleanup too.
+Signed-off-by: John Stultz <jstultz@google.com>
+---
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@kernel.org>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Suleiman Souhlal <suleiman@google.com>
+Cc: kernel-team@android.com
+---
+ kernel/locking/test-ww_mutex.c | 114 +++++++++++++++++++++------------
+ 1 file changed, 73 insertions(+), 41 deletions(-)
 
-So feel free to take:
-Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com> #powerpc
+diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
+index bcb1b9fea5880..20f509ca17e16 100644
+--- a/kernel/locking/test-ww_mutex.c
++++ b/kernel/locking/test-ww_mutex.c
+@@ -13,7 +13,8 @@
+ #include <linux/slab.h>
+ #include <linux/ww_mutex.h>
+ 
+-static DEFINE_WD_CLASS(ww_class);
++static DEFINE_WD_CLASS(wd_class);
++static DEFINE_WW_CLASS(ww_class);
+ struct workqueue_struct *wq;
+ 
+ #ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+@@ -54,16 +55,16 @@ static void test_mutex_work(struct work_struct *work)
+ 	ww_mutex_unlock(&mtx->mutex);
+ }
+ 
+-static int __test_mutex(unsigned int flags)
++static int __test_mutex(struct ww_class *class, unsigned int flags)
+ {
+ #define TIMEOUT (HZ / 16)
+ 	struct test_mutex mtx;
+ 	struct ww_acquire_ctx ctx;
+ 	int ret;
+ 
+-	ww_mutex_init(&mtx.mutex, &ww_class);
++	ww_mutex_init(&mtx.mutex, class);
+ 	if (flags & TEST_MTX_CTX)
+-		ww_acquire_init(&ctx, &ww_class);
++		ww_acquire_init(&ctx, class);
+ 
+ 	INIT_WORK_ONSTACK(&mtx.work, test_mutex_work);
+ 	init_completion(&mtx.ready);
+@@ -106,13 +107,13 @@ static int __test_mutex(unsigned int flags)
+ #undef TIMEOUT
+ }
+ 
+-static int test_mutex(void)
++static int test_mutex(struct ww_class *class)
+ {
+ 	int ret;
+ 	int i;
+ 
+ 	for (i = 0; i < __TEST_MTX_LAST; i++) {
+-		ret = __test_mutex(i);
++		ret = __test_mutex(class, i);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -120,15 +121,15 @@ static int test_mutex(void)
+ 	return 0;
+ }
+ 
+-static int test_aa(bool trylock)
++static int test_aa(struct ww_class *class, bool trylock)
+ {
+ 	struct ww_mutex mutex;
+ 	struct ww_acquire_ctx ctx;
+ 	int ret;
+ 	const char *from = trylock ? "trylock" : "lock";
+ 
+-	ww_mutex_init(&mutex, &ww_class);
+-	ww_acquire_init(&ctx, &ww_class);
++	ww_mutex_init(&mutex, class);
++	ww_acquire_init(&ctx, class);
+ 
+ 	if (!trylock) {
+ 		ret = ww_mutex_lock(&mutex, &ctx);
+@@ -177,6 +178,7 @@ static int test_aa(bool trylock)
+ 
+ struct test_abba {
+ 	struct work_struct work;
++	struct ww_class *class;
+ 	struct ww_mutex a_mutex;
+ 	struct ww_mutex b_mutex;
+ 	struct completion a_ready;
+@@ -191,7 +193,7 @@ static void test_abba_work(struct work_struct *work)
+ 	struct ww_acquire_ctx ctx;
+ 	int err;
+ 
+-	ww_acquire_init_noinject(&ctx, &ww_class);
++	ww_acquire_init_noinject(&ctx, abba->class);
+ 	if (!abba->trylock)
+ 		ww_mutex_lock(&abba->b_mutex, &ctx);
+ 	else
+@@ -217,23 +219,24 @@ static void test_abba_work(struct work_struct *work)
+ 	abba->result = err;
+ }
+ 
+-static int test_abba(bool trylock, bool resolve)
++static int test_abba(struct ww_class *class, bool trylock, bool resolve)
+ {
+ 	struct test_abba abba;
+ 	struct ww_acquire_ctx ctx;
+ 	int err, ret;
+ 
+-	ww_mutex_init(&abba.a_mutex, &ww_class);
+-	ww_mutex_init(&abba.b_mutex, &ww_class);
++	ww_mutex_init(&abba.a_mutex, class);
++	ww_mutex_init(&abba.b_mutex, class);
+ 	INIT_WORK_ONSTACK(&abba.work, test_abba_work);
+ 	init_completion(&abba.a_ready);
+ 	init_completion(&abba.b_ready);
++	abba.class = class;
+ 	abba.trylock = trylock;
+ 	abba.resolve = resolve;
+ 
+ 	schedule_work(&abba.work);
+ 
+-	ww_acquire_init_noinject(&ctx, &ww_class);
++	ww_acquire_init_noinject(&ctx, class);
+ 	if (!trylock)
+ 		ww_mutex_lock(&abba.a_mutex, &ctx);
+ 	else
+@@ -278,6 +281,7 @@ static int test_abba(bool trylock, bool resolve)
+ 
+ struct test_cycle {
+ 	struct work_struct work;
++	struct ww_class *class;
+ 	struct ww_mutex a_mutex;
+ 	struct ww_mutex *b_mutex;
+ 	struct completion *a_signal;
+@@ -291,7 +295,7 @@ static void test_cycle_work(struct work_struct *work)
+ 	struct ww_acquire_ctx ctx;
+ 	int err, erra = 0;
+ 
+-	ww_acquire_init_noinject(&ctx, &ww_class);
++	ww_acquire_init_noinject(&ctx, cycle->class);
+ 	ww_mutex_lock(&cycle->a_mutex, &ctx);
+ 
+ 	complete(cycle->a_signal);
+@@ -314,7 +318,7 @@ static void test_cycle_work(struct work_struct *work)
+ 	cycle->result = err ?: erra;
+ }
+ 
+-static int __test_cycle(unsigned int nthreads)
++static int __test_cycle(struct ww_class *class, unsigned int nthreads)
+ {
+ 	struct test_cycle *cycles;
+ 	unsigned int n, last = nthreads - 1;
+@@ -327,7 +331,8 @@ static int __test_cycle(unsigned int nthreads)
+ 	for (n = 0; n < nthreads; n++) {
+ 		struct test_cycle *cycle = &cycles[n];
+ 
+-		ww_mutex_init(&cycle->a_mutex, &ww_class);
++		cycle->class = class;
++		ww_mutex_init(&cycle->a_mutex, class);
+ 		if (n == last)
+ 			cycle->b_mutex = &cycles[0].a_mutex;
+ 		else
+@@ -367,13 +372,13 @@ static int __test_cycle(unsigned int nthreads)
+ 	return ret;
+ }
+ 
+-static int test_cycle(unsigned int ncpus)
++static int test_cycle(struct ww_class *class, unsigned int ncpus)
+ {
+ 	unsigned int n;
+ 	int ret;
+ 
+ 	for (n = 2; n <= ncpus + 1; n++) {
+-		ret = __test_cycle(n);
++		ret = __test_cycle(class, n);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -384,6 +389,7 @@ static int test_cycle(unsigned int ncpus)
+ struct stress {
+ 	struct work_struct work;
+ 	struct ww_mutex *locks;
++	struct ww_class *class;
+ 	unsigned long timeout;
+ 	int nlocks;
+ };
+@@ -443,7 +449,7 @@ static void stress_inorder_work(struct work_struct *work)
+ 		int contended = -1;
+ 		int n, err;
+ 
+-		ww_acquire_init(&ctx, &ww_class);
++		ww_acquire_init(&ctx, stress->class);
+ retry:
+ 		err = 0;
+ 		for (n = 0; n < nlocks; n++) {
+@@ -511,7 +517,7 @@ static void stress_reorder_work(struct work_struct *work)
+ 	order = NULL;
+ 
+ 	do {
+-		ww_acquire_init(&ctx, &ww_class);
++		ww_acquire_init(&ctx, stress->class);
+ 
+ 		list_for_each_entry(ll, &locks, link) {
+ 			err = ww_mutex_lock(ll->lock, &ctx);
+@@ -570,7 +576,7 @@ static void stress_one_work(struct work_struct *work)
+ #define STRESS_ONE BIT(2)
+ #define STRESS_ALL (STRESS_INORDER | STRESS_REORDER | STRESS_ONE)
+ 
+-static int stress(int nlocks, int nthreads, unsigned int flags)
++static int stress(struct ww_class *class, int nlocks, int nthreads, unsigned int flags)
+ {
+ 	struct ww_mutex *locks;
+ 	struct stress *stress_array;
+@@ -588,7 +594,7 @@ static int stress(int nlocks, int nthreads, unsigned int flags)
+ 	}
+ 
+ 	for (n = 0; n < nlocks; n++)
+-		ww_mutex_init(&locks[n], &ww_class);
++		ww_mutex_init(&locks[n], class);
+ 
+ 	count = 0;
+ 	for (n = 0; nthreads; n++) {
+@@ -617,6 +623,7 @@ static int stress(int nlocks, int nthreads, unsigned int flags)
+ 		stress = &stress_array[count++];
+ 
+ 		INIT_WORK(&stress->work, fn);
++		stress->class = class;
+ 		stress->locks = locks;
+ 		stress->nlocks = nlocks;
+ 		stress->timeout = jiffies + 2*HZ;
+@@ -635,57 +642,82 @@ static int stress(int nlocks, int nthreads, unsigned int flags)
+ 	return 0;
+ }
+ 
+-static int __init test_ww_mutex_init(void)
++static int __init run_tests(struct ww_class *class)
+ {
+ 	int ncpus = num_online_cpus();
+ 	int ret, i;
+ 
+-	printk(KERN_INFO "Beginning ww mutex selftests\n");
+-
+-	prandom_seed_state(&rng, get_random_u64());
+-
+-	wq = alloc_workqueue("test-ww_mutex", WQ_UNBOUND, 0);
+-	if (!wq)
+-		return -ENOMEM;
+-
+-	ret = test_mutex();
++	ret = test_mutex(class);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = test_aa(false);
++	ret = test_aa(class, false);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = test_aa(true);
++	ret = test_aa(class, true);
+ 	if (ret)
+ 		return ret;
+ 
+ 	for (i = 0; i < 4; i++) {
+-		ret = test_abba(i & 1, i & 2);
++		ret = test_abba(class, i & 1, i & 2);
+ 		if (ret)
+ 			return ret;
+ 	}
+ 
+-	ret = test_cycle(ncpus);
++	ret = test_cycle(class, ncpus);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = stress(16, 2*ncpus, STRESS_INORDER);
++	ret = stress(class, 16, 2*ncpus, STRESS_INORDER);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = stress(16, 2*ncpus, STRESS_REORDER);
++	ret = stress(class, 16, 2*ncpus, STRESS_REORDER);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = stress(2046, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
++	ret = stress(class, 2046, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
+ 	if (ret)
+ 		return ret;
+ 
+-	printk(KERN_INFO "All ww mutex selftests passed\n");
+ 	return 0;
+ }
+ 
++static int __init run_test_classes(void)
++{
++	int ret;
++
++	pr_info("Beginning ww (wound) mutex selftests\n");
++
++	ret = run_tests(&ww_class);
++	if (ret)
++		return ret;
++
++	pr_info("Beginning ww (die) mutex selftests\n");
++	ret = run_tests(&wd_class);
++	if (ret)
++		return ret;
++
++	pr_info("All ww mutex selftests passed\n");
++	return 0;
++}
++
++static int __init test_ww_mutex_init(void)
++{
++	int ret;
++
++	prandom_seed_state(&rng, get_random_u64());
++
++	wq = alloc_workqueue("test-ww_mutex", WQ_UNBOUND, 0);
++	if (!wq)
++		return -ENOMEM;
++
++	ret = run_test_classes();
++
++	return ret;
++}
++
+ static void __exit test_ww_mutex_exit(void)
+ {
+ 	destroy_workqueue(wq);
+-- 
+2.51.0.338.gd7d06c2dae-goog
 
-However I have few comments below...
-
-...
-> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-> index 9142964ab9c9..e3765931a31f 100644
-> --- a/mm/kasan/common.c
-> +++ b/mm/kasan/common.c
-> @@ -32,6 +32,15 @@
->  #include "kasan.h"
->  #include "../slab.h"
->  
-> +#if defined(CONFIG_ARCH_DEFER_KASAN) || defined(CONFIG_KASAN_HW_TAGS)
-> +/*
-> + * Definition of the unified static key declared in kasan-enabled.h.
-> + * This provides consistent runtime enable/disable across KASAN modes.
-> + */
-> +DEFINE_STATIC_KEY_FALSE(kasan_flag_enabled);
-> +EXPORT_SYMBOL_GPL(kasan_flag_enabled);
-> +#endif
-> +
->  struct slab *kasan_addr_to_slab(const void *addr)
->  {
->  	if (virt_addr_valid(addr))
-> @@ -246,7 +255,7 @@ static inline void poison_slab_object(struct kmem_cache *cache, void *object,
->  bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
->  				unsigned long ip)
->  {
-> -	if (!kasan_arch_is_ready() || is_kfence_address(object))
-> +	if (is_kfence_address(object))
-
-For changes in mm/kasan/common.c.. you have removed !kasan_enabled()
-check at few places. This seems to be partial revert of commit [1]:
-  
-  b3c34245756ada "kasan: catch invalid free before SLUB reinitializes the object" 
-
-Can you please explain why this needs to be removed? 
-Also the explaination of the same should be added in the commit msg too.
-
-[1]: https://lore.kernel.org/all/20240809-kasan-tsbrcu-v8-1-aef4593f9532@google.com/
-
->  		return false;
->  	return check_slab_allocation(cache, object, ip);
->  }
-> @@ -254,7 +263,7 @@ bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
->  bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init,
->  		       bool still_accessible)
->  {
-> -	if (!kasan_arch_is_ready() || is_kfence_address(object))
-> +	if (is_kfence_address(object))
->  		return false;
->  
->  	/*
-> @@ -293,7 +302,7 @@ bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init,
->  
->  static inline bool check_page_allocation(void *ptr, unsigned long ip)
->  {
-> -	if (!kasan_arch_is_ready())
-> +	if (!kasan_enabled())
->  		return false;
->  
->  	if (ptr != page_address(virt_to_head_page(ptr))) {
-> @@ -522,7 +531,7 @@ bool __kasan_mempool_poison_object(void *ptr, unsigned long ip)
->  		return true;
->  	}
->  
-> -	if (is_kfence_address(ptr) || !kasan_arch_is_ready())
-> +	if (is_kfence_address(ptr))
->  		return true;
->  
->  	slab = folio_slab(folio);
-
--ritesh
 
