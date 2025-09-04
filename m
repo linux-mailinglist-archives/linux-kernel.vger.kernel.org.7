@@ -1,118 +1,440 @@
-Return-Path: <linux-kernel+bounces-800709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04858B43AD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:55:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D654B43ADF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC093189E744
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:56:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 160FA4E593B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA3D2FD1C2;
-	Thu,  4 Sep 2025 11:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE1C2FCC10;
+	Thu,  4 Sep 2025 11:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6mjvK+4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uwp8XcfD"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2084.outbound.protection.outlook.com [40.107.237.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5A31E7C08;
-	Thu,  4 Sep 2025 11:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756986933; cv=none; b=OJJuBAVqQVnHtCUb+ZAWHK++o+xOzgW6fSJ7xTiWIY4V+gYEQyGBCvRPMB3GyGMyS0pfITvwZkl/WKR940yumql119235jqPkUaOsDQo73toRobuzq26xWT5MsGw3piGXP7ob4n0RunLPASO1p0+Tx7cL/WefQ5Zm6wwkvtMUQQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756986933; c=relaxed/simple;
-	bh=L9cH6bNwYJRlk6FzxhgqsLMYSpGTEmwCEBwi3x9KT/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t4dJPBCBYFAKaPVCGQe4YQf/R6l3VdLITSTeWcr8n1hUWRBXiyEvYFofZykpAZwN0dDF5TkGESSwgZw3BtLasjdOocS4KlwxGvhz4Ga/4WT5hWK0K4Gfp14VUK4/o92sOqpe0cbRVWOxdYeJtzGtkz4u6JjGk+ivPEPkDkGInuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a6mjvK+4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43A6DC4CEF0;
-	Thu,  4 Sep 2025 11:55:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756986932;
-	bh=L9cH6bNwYJRlk6FzxhgqsLMYSpGTEmwCEBwi3x9KT/I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a6mjvK+469qhzIL3ZY7OLkZG43jt44zcrcpC0SLg+x90jVrWCN4wHiXo7MpMy7adT
-	 rFtCuOtKzPv3SCl+1a8iA9VpOzMBrPDZJJ1d9Vgu/n0MZO+y/Z28JeLMsddhB0cWea
-	 RleDBDLnf3OLJlwClV84wBgTsGkZkS81LNVCy38Ye4/7nOnd4gE/t0eSwIeO5ttp3B
-	 H+owTOKY2NwyL6jQxgmnOxrwFpmn6Ou6pQwbhAXkR9KUmS6EjJSZ5jPtIfC8BuANMa
-	 8R3iX32k2EwaEj3QR0QO5ZPrGtPX/z8LW7tiqgfBgjIhl4xmzLimlzEm30SP6ANOKo
-	 kaDVgda/8+bIA==
-Date: Thu, 4 Sep 2025 14:55:21 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	linux-efi@vger.kernel.org, virtualization@lists.linux.dev,
-	Justin Sanders <justin@coraid.com>, Jens Axboe <axboe@kernel.dk>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH v3 0/7] Cleanup free_pages() misuse
-Message-ID: <aLl-Kd4nmgSEr8WV@kernel.org>
-References: <20250903185921.1785167-1-vishal.moola@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2411E7C08
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756987017; cv=fail; b=BSpbLz6uv6q53cCo8XqiAiGCN9iAlu7fMyiiQDtvJ8ousiCKGUXWtaZyUrhmYdZ8+6Pntjpoi/HoI36kjXFiCr2fB0EZZEz7sYheS89iHApEzjMabXVh7RFOwAvhFjntd7SDOnk1Ei3MZe57LJo/pN/YP4ZFhVkKAoid9vGDHWw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756987017; c=relaxed/simple;
+	bh=ytiOG15l4at8qIgq/A6fENNEs2cK7yOFfOD7drmDktI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=uakO9BC96UUL8mOL6geZM9q5KpO14gc+hNAZiG2qmSgEQJDa+9y2ASHoouK9sT/J7P7MnKCxIPNmeqIzfCXYqW2AjhTMybbuJCPGcL4be8D/xsqxIFIdhWyuGXb5eY4SmcMrRbr5ZctBoSz/uEVo2XOPFkfQzzEXVoxlEXHGPZg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uwp8XcfD; arc=fail smtp.client-ip=40.107.237.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bWSWiSrhCChChfMgrBIE3Z2GWiX5G5+dYt0Zgkx1sOjVHlQnJ7SLWA/L3AotcoHznj2zUQf0W1lJ+ouBPgftscvvUKNGOkiaG2irD6Uxb4HyOTW5LXWhaapuE+JySAINxxCnC0LOJH23qOtbeWf6UzZxjbrZA0M+uzNLBC7tISjmR97eIlNt6YaqtP24sQDJPxQk1cik4HNudG1KadZ7q1v6G4OnDmJvr8tfpD5oeqRiX/0uB9is+hZazfweeIjmC7Nm4Amu56Ix0yuGavyjK5B/H0Pdg4X1yAKGYKMMdcsqRsDR3Z8SM5rxRHCNyiwJmxx15RfbhpzypLzH48Zx9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bd939eV9s+qNo3yQfcoDQd3lYpW696VfitMMaWlVTpY=;
+ b=FJFnmZWnDK41SOfWxqQqsH8KdDtK3MtW+eynbcp7hkK9xlJpeUlLXjEJm7jKARamoCi0udz89OWWrxJdML9bRqrBFJuMGfZgGBHx16OLjK4uf+Y5isQ42TuU2XsAGJqLTOGH9HLeh3kSB32P0SIzdtPvtvgd8+tY5Ok2EDUHVXewaRKhyBnpTc6UNZF4L1PLR1DezY9i0BHzQy4ObQglb5+nga9fxwZTKKfZKFuY4uBVvg2mMoIJY6vIuPdI1hepEIqVzs9oc/5IwGs1Xz4dZ3/21Lbchah5zYT96cbp0erUqepvN/GQ6/kXvU4THZZDPXpE0Ztjy+3dRBrWrReqTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bd939eV9s+qNo3yQfcoDQd3lYpW696VfitMMaWlVTpY=;
+ b=uwp8XcfDSm8DoMJkkMNeJGRtWT8bpA+l5zreQjcmfhVFf1HnF4vfuZ0h0/AaEBPYBHsBhs+cSDHvIqJvg8IqiigKsU2rjs+1KbkOqql73RXhLCwRcBg/qOGi4+LtsYxZ2RF1v5tbrO6K2Vs7rmHCV5VYb8UI9ECEMpluAidn6k8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by CY8PR12MB8268.namprd12.prod.outlook.com (2603:10b6:930:6c::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Thu, 4 Sep
+ 2025 11:56:51 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.9094.017; Thu, 4 Sep 2025
+ 11:56:51 +0000
+Message-ID: <53ec7656-d5d7-460e-a245-0c9598a71f26@amd.com>
+Date: Thu, 4 Sep 2025 13:56:47 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Revert "drm/nouveau: Remove waitque for sched
+ teardown"
+To: phasta@kernel.org, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250901083107.10206-2-phasta@kernel.org>
+ <3407fd9d-68e0-4c45-9761-98ede450bb25@amd.com>
+ <b35506de99be38f560709660b10667ca9f386181.camel@mailbox.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <b35506de99be38f560709660b10667ca9f386181.camel@mailbox.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0312.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f6::19) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903185921.1785167-1-vishal.moola@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CY8PR12MB8268:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53a2232e-3f60-4c69-e8e8-08ddebaa2298
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VStCZGNGN1dUVXRQUHZVK05CUGNlbmlYYmdiNklhWmpmT0VQeUQ2d1Z0N05E?=
+ =?utf-8?B?MVozZS9GcG00RG9xWGNKWjRWTUdBZHVZb3Zzc1BuN3VNTHhyd1RpOTVLaElQ?=
+ =?utf-8?B?Ym52UVlXNDBtRGhWeVV4Z2E2d0xHeHRRMy91RVBTU2FlUlVDV0h5a1pXU01x?=
+ =?utf-8?B?Y2JBazY5ZmN1RFBOREtnOGNFTnQxODRVNVlzU2Q1ZWV6Sk1FUmlkV1AxdHF2?=
+ =?utf-8?B?K0l3M2pzdG5ibnMxN2szdWx2dWRYVnJKajJUcFFDVDhQMkVuSFZjdEJHVURB?=
+ =?utf-8?B?NjRQOEUrSEEzK0lhQlcwd1J0cVZueGdlOFpGRVlTZ2ZpOXE2ZVRjcEsyQXg2?=
+ =?utf-8?B?SURSSVY4bVhxbFNSa1pUVGcvMGVCYkxFTWoxVGFOc0p5VDhiNzVjWEdyM0ZD?=
+ =?utf-8?B?Qkx0eXNVSE9td3dTMmx2aWRsOW10ckFNVVZkblZmQUFPNnNDWkpEZWozZHdF?=
+ =?utf-8?B?SXQ2TmpaclVYNXQ5c3ZyczRrMllWQVhyZEt3WlhBakNva0FoQWhwTVl2SXpo?=
+ =?utf-8?B?NXlFekEyZ0RlOXRHMDVkdkhHbTliZkNqWHo4djBVMVZ1Ni9tWnZtY2g5VzNN?=
+ =?utf-8?B?SmFOWmJCaml6dW40ZUtlRFZBQkt5OVp4QmhXTkwwbVNST0VFT09zdVRTcXBi?=
+ =?utf-8?B?bXFxWDZSK2lxeE5CUjhkeDV0WWk0TnJmTmsrQWs2S3pNY0swZTNOc2I4Mi9U?=
+ =?utf-8?B?UUF5aDV0YXMwN0E2RGE4QkF6Uk4rVm9rYkRRb0V1b252V1VrcG9IeFVzSXl5?=
+ =?utf-8?B?ZUNjYUFFVFUwd1NReXhteW9nb0s2TU1kdFZaQnZWQ1E0NHNPRzZLUENUdSt4?=
+ =?utf-8?B?T3p2dHhReVZEODcyVklvWjNaM1lTOWV0Zmw4Nit4Z1M0OFpJQk5pa1daNFg2?=
+ =?utf-8?B?bGdkTmRtdTlKUDJMZXFFWnVycFpTbTRpQjhjY2dlTUZLYXEyTFVveldJa1Rh?=
+ =?utf-8?B?TGl4Mlg1dnd3M0w1M09uOTcxamF2Z1JjbFErMk5lbXYxS0pYazRLUDJjTXlO?=
+ =?utf-8?B?aTBrWWIvV0g4T2FLUEVVdDZ1UTNTMTBKMS9nTUdycmhsSWZhVW9wcm03R3d4?=
+ =?utf-8?B?QXFiaVdGbGF2cm5kUGlkOVZ5UTFJdkxCaGJGRmNCYTUxZ09TWlhDeVArQjdR?=
+ =?utf-8?B?NFYrV3gxREY0aHF2b3hnVUlRNU9vMXo0R3Y5MGpkM2hBQW5MR1VtL0VrSGxl?=
+ =?utf-8?B?Zm92MGwvVjhzOGwxYm1aUlpQWFRXU1Q0TGVDbGU2VmY3L2E1cXFWYVNzNkRl?=
+ =?utf-8?B?Q1BJeE9FQjhPeUJFK2dBeWtWQ0hFb0d4N2VBWDdSVm9uMEJJN0dyNnc3Y1lP?=
+ =?utf-8?B?Ri9hTnhSNkxYWm5ubVBXdlVKamtUYXB0VW9rYXJYQWFyUU5WNlZtSmFicEVQ?=
+ =?utf-8?B?Y3U5YWtwZEdFMTZnRk1UZEl4UG5iMm56UittN0xoZndXTDBDcmhPVEo3K0t3?=
+ =?utf-8?B?MEpvSWVCc2l0RktGQjgvQ3g1VldRd2YxU052RVMydWtGYWtjSnJRRUd1SndU?=
+ =?utf-8?B?L2VGaE01L1pHbWpEOTZPa3EvNnQ0WlVrenlHVUdoZmo3aThRWXk4VldKckY3?=
+ =?utf-8?B?WGUxRGprSTJCbXk1dElPVnhZb3o3Y0hvTytyY1l4KyszbDBHb3BkUTJBWkg1?=
+ =?utf-8?B?TWRWRkpBT0N2bzZ3UEN0VjVReFdOOTNkV1BjMHpUcDlNdThGNnlQTWZCVEN4?=
+ =?utf-8?B?cHVHS0ZFeDVFU0RWUGpjMUx3WXZsQ0dVSW5jM2dpcW1jMWFZUnZWNkFyVjB6?=
+ =?utf-8?B?dDhkSzZOZEd4a244K0Rjdm84UWF0Q1hDT25lU0tGVDI1SWJocERCdHQ3Z25G?=
+ =?utf-8?B?a3pjTklCaDIyRHhkaDJmbXhrUEx1ZEpaWmExa3RCb1BOL3pieThaMVBPSzZT?=
+ =?utf-8?B?L2N4VkZReU1vUnl0ODlLN2NtM1pCcXdPMW1Xb1V1bzVnWkYrYjY2cnFUcmxt?=
+ =?utf-8?Q?jrTLzpgMY10=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MDV2b0p2NjhmUWhoWVZJclg1NGF0d3FKOGVXRUhvTWs3SVZadGZjaUdIdTVN?=
+ =?utf-8?B?M2pDMXVDNzJXU1pxd3RGRHpxOENBSlFtaVBrMU9YRFRjV1ZuTjFENFM1N1JL?=
+ =?utf-8?B?L09mZmpTR0Roc3FZeTQ5MXhsaXNnNElLRVgrcjkxU2xidWNtaEFwR2dEY2Mr?=
+ =?utf-8?B?RktuSEs3RWpJNjRENDhJSVVRWFhEMFJxemh3eHVOeUdRbG1tcHZnT0F4c1Yx?=
+ =?utf-8?B?Y1pXRTRtcFp6R0NxdXlZRmRxR0RaNGFKaFd1LzFoR25LZXhDZ2xIcHVKWVJT?=
+ =?utf-8?B?MnAzMTViWG16Zk5hS0tmM1Foa0FaLy8zTVhjSy9SVGVMR0MvN2w1L1Bld2kz?=
+ =?utf-8?B?bldCTmtNUDdvVnJKalp1eERTckZqUTFHSjJTK3VwamRwL0dmaDFIN3NPMVIy?=
+ =?utf-8?B?amk5SUpOZ2g4ZEFrTXhiUmpqNU4wd0MwNjV4VDh1S3ZjSU1XNkdNYVZWOXZK?=
+ =?utf-8?B?VEtNVjBvenMxL1plQXRJU2VXTEMvRHNJek84MjVhVmd2M3k5SEhraENZWTZ2?=
+ =?utf-8?B?TmY0R3hIY240aTVzdDh4NjJUd2Z6cVo5REZvRm0xS1ZZNGlwWlkyQWNOZC92?=
+ =?utf-8?B?NGpMT2lLcVNMaVVqcFczd1hmKy83R2o0YmZ4MXIrNHVLR29YY3NhTEk4a1NZ?=
+ =?utf-8?B?OEJRNDBzZ0hpaWFMZHFCRUZlWVVvRGI2akxFb3hkZnVIZFNNeEZGL2tnSVVU?=
+ =?utf-8?B?RG1Hb0JYT2QvZytXbkkzQlRkQ3lsSWhabHEweTRHcWJPcXB5eFZGaklrSHJB?=
+ =?utf-8?B?ZEpwWGxqM1N3NXJPQndBQ3ErNkx3Sk9WZEdWRDNveThpV0hMSWIxRTB3Z1R5?=
+ =?utf-8?B?Y1FaZ1BHbWFnbzNVZmhZbEgyWkpTMU9kWEFVNmhzVjNOMlVmZHFkYmp0MGNn?=
+ =?utf-8?B?NWE4UEhPb0QrL1pnR242WXNVN3MyNW1QTTlGQ1hEQUlIWDhWbnRRTFBVRVRJ?=
+ =?utf-8?B?UWVDdnZOd2MxYkJqclRWVzZsbjBza3VhV2o2a3BoU1JqMmtBb3p2RkNZL2Rm?=
+ =?utf-8?B?VWcyb08zWkR6MVIzMHlIVEozcGdUNmdabkRyWllaYVZKNjkyM0dFZzFEUnFZ?=
+ =?utf-8?B?ZnRwSSt0WU9BRWZaN0MvRjNJdkF4SVhQZEgzeFJMRVhXcnRZcGJJMFN5RkJ4?=
+ =?utf-8?B?OGVTYVh0SG5kNmxmSVhYN00vWGdZcll2ZHYvMmEyaVlVcnkwV2RZdlRxeGZr?=
+ =?utf-8?B?M2tETUNibzFubGNoWEZQNGswOHk5UjlONXBVNWxobktTdVl3YWprQnIycmp5?=
+ =?utf-8?B?OC9IdXBsTUVmdG40T0NENXRqbncxMmZrb0sydStiUU5sOGNDTTA2dHoxRXdH?=
+ =?utf-8?B?cWFxelhlZWdtQTBibnhWUDRFSjYyNmMxajR1amQweTVxM2tlKzU3d3pkc1RK?=
+ =?utf-8?B?UFd2L3VDdGpDN05HRzBaZEVpa0xXelZEOE5WNm9UaktBYURDaXNlS3BBWHVj?=
+ =?utf-8?B?YU1EZUp6KzRyb2JicTlpNnkyYTUwUWVtczR2bk5tUDc1a052MGpmaDZwQXdE?=
+ =?utf-8?B?ajl2cTRXRGNRQXZ5elJ1UlpRVk5KQUd2VFU2NGlURUdZRWZjODhwcXNXVlhy?=
+ =?utf-8?B?U0ZKUkZsMENqczFueEYyckFaa0s0YnVUNFhoN0ZiTkZtMkdSWlBsNVpYSys5?=
+ =?utf-8?B?aTIxSHUxYmE0dmhkaVJOL2gwdk1LZ0JNTWl1MFk4U014bnVPbXJ4SFB5Vk1L?=
+ =?utf-8?B?a0V3WU9Fc29Yc1RhanBSbjVXcmRhQTIvMjF2RmV0ZXFsbE1LZnBIK1pQZmJ3?=
+ =?utf-8?B?dXFwOTFpOWxicmVaWlBEVGYzR3lVc1paV2Nnb3VrTExKYjhiSFFkdzM1OEpw?=
+ =?utf-8?B?QTd1KzZueEg1UDhLKzFWbzNvOEhxWXV3Y2tYYkc4WUNHV2tZb1l3MFFwMWh5?=
+ =?utf-8?B?cEUxQkdJTnJyNE5uTHFieHNVTzBnUHhHWWY5UktsQ0Njc0JWdERQS1N3WE1p?=
+ =?utf-8?B?NFg0cVd2VHE1dnBPazJpeXVDNkR3dFdzcDRYcE5zT1FlUk90TTBYZ1NkRVBI?=
+ =?utf-8?B?N1YrdjF2dUx4QnFSd1BRU2t2d3NKVThYZHJxMDczYUViYlVuMHUyOFVQNVR6?=
+ =?utf-8?B?Z1lUN0Nkd2tLeWNKSE5rclV1REFQMnBLamtEZXlaVU95VWZ6NklCR1RRVXJv?=
+ =?utf-8?Q?rGG8dltg5wIrXHl2PDIlsUtXO?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53a2232e-3f60-4c69-e8e8-08ddebaa2298
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 11:56:51.5310
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: w17+xAZmwwvwF0AtaFRz/izR4F/ao6A8k+O80NVfdjLtiLOnz3F5+9sVC18GGLLN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8268
 
-On Wed, Sep 03, 2025 at 11:59:14AM -0700, Vishal Moola (Oracle) wrote:
-> free_pages() is supposed to be called when we only have a virtual address.
-> __free_pages() is supposed to be called when we have a page.
+On 04.09.25 13:12, Philipp Stanner wrote:
+> On Thu, 2025-09-04 at 12:27 +0200, Christian König wrote:
+>> On 01.09.25 10:31, Philipp Stanner wrote:
+>>> This reverts:
+>>>
+>>> commit bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
+>>> commit 5f46f5c7af8c ("drm/nouveau: Add new callback for scheduler teardown")
+>>>
+>>> from the drm/sched teardown leak fix series:
+>>>
+>>> https://lore.kernel.org/dri-devel/20250710125412.128476-2-phasta@kernel.org/
+>>>
+>>> The aforementioned series removed a blocking waitqueue from
+>>> nouveau_sched_fini(). It was mistakenly assumed that this waitqueue only
+>>> prevents jobs from leaking, which the series fixed.
+>>>
+>>> The waitqueue, however, also guarantees that all VM_BIND related jobs
+>>> are finished in order, cleaning up mappings in the GPU's MMU. These jobs
+>>> must be executed sequentially. Without the waitqueue, this is no longer
+>>> guaranteed, because entity and scheduler teardown can race with each
+>>> other.
+>>
+>> That sounds like exactly the kind of issues I tried to catch with the recent dma_fence changes.
 > 
-> There are a number of callers that use page_address() to get a page's
-> virtual address then call free_pages() on it when they should just call
-> __free_pages() directly.
-> 
-> Add kernel-docs for free_pages() to help callers better understand which
-> function they should be calling, and replace the obvious cases of
-> misuse.
-> 
-> Vishal Moola (Oracle) (7):
->   mm/page_alloc: Add kernel-docs for free_pages()
->   aoe: Stop calling page_address() in free_page()
->   x86: Stop calling page_address() in free_pages()
->   riscv: Stop calling page_address() in free_pages()
->   powerpc: Stop calling page_address() in free_pages()
->   arm64: Stop calling page_address() in free_pages()
->   virtio_balloon: Stop calling page_address() in free_pages()
+> Link? :)
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+dma-buf: add warning when dma_fence is signaled from IOCTL
 
->  arch/arm64/mm/mmu.c                      | 2 +-
->  arch/powerpc/mm/book3s64/radix_pgtable.c | 2 +-
->  arch/riscv/mm/init.c                     | 4 ++--
->  arch/x86/mm/init_64.c                    | 2 +-
->  arch/x86/platform/efi/memmap.c           | 2 +-
->  drivers/block/aoe/aoecmd.c               | 2 +-
->  drivers/virtio/virtio_balloon.c          | 8 +++-----
->  mm/page_alloc.c                          | 9 +++++++++
->  8 files changed, 19 insertions(+), 12 deletions(-)
 > 
-> -- 
-> 2.51.0
+>>
+>> Going to keep working on that and potentially using this here as blueprint for something it should catch.
 > 
+> This is more like a nouveau-specific issue. The problem is that
+> unmapping mappings in the GPU's MMU must be done in a specific order,
+> and all the unmappings must be performed, not canceled.
+> 
+> For EXEC jobs, it's perfectly fine to cancel pending jobs, remove the
+> waitqueue and just rush through drm_sched_fini().
+> 
+> I don't know the issue you're describing, but I don't think a feature
+> in dma_fence could help with that specific Nouveau problem. dma_fence
+> can't force the driver to submit jobs in a specific order or to wait
+> until they're all completed.
+
+Well the updates are represented by a dma_fence, aren't they?
+
+So the dma_fence framework could potentially warn if a fence from the same context signals out of order.
+
+Regards,
+Christian.
+
+> 
+> Grüße
+> P.
+> 
+>>
+>> Regards,
+>> Christian.
+>>
+>>>
+>>> Revert all patches related to the waitqueue removal.
+>>>
+>>> Fixes: bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
+>>> Suggested-by: Danilo Krummrich <dakr@kernel.org>
+>>> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+>>> ---
+>>> Changes in v2:
+>>>   - Don't revert commit 89b2675198ab ("drm/nouveau: Make fence container helper usable driver-wide")
+>>>   - Add Fixes-tag
+>>> ---
+>>>  drivers/gpu/drm/nouveau/nouveau_fence.c | 15 -----------
+>>>  drivers/gpu/drm/nouveau/nouveau_fence.h |  1 -
+>>>  drivers/gpu/drm/nouveau/nouveau_sched.c | 35 ++++++++++---------------
+>>>  drivers/gpu/drm/nouveau/nouveau_sched.h |  9 ++++---
+>>>  drivers/gpu/drm/nouveau/nouveau_uvmm.c  |  8 +++---
+>>>  5 files changed, 24 insertions(+), 44 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/nouveau/nouveau_fence.c
+>>> index 9f345a008717..869d4335c0f4 100644
+>>> --- a/drivers/gpu/drm/nouveau/nouveau_fence.c
+>>> +++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
+>>> @@ -240,21 +240,6 @@ nouveau_fence_emit(struct nouveau_fence *fence)
+>>>  	return ret;
+>>>  }
+>>>  
+>>> -void
+>>> -nouveau_fence_cancel(struct nouveau_fence *fence)
+>>> -{
+>>> -	struct nouveau_fence_chan *fctx = nouveau_fctx(fence);
+>>> -	unsigned long flags;
+>>> -
+>>> -	spin_lock_irqsave(&fctx->lock, flags);
+>>> -	if (!dma_fence_is_signaled_locked(&fence->base)) {
+>>> -		dma_fence_set_error(&fence->base, -ECANCELED);
+>>> -		if (nouveau_fence_signal(fence))
+>>> -			nvif_event_block(&fctx->event);
+>>> -	}
+>>> -	spin_unlock_irqrestore(&fctx->lock, flags);
+>>> -}
+>>> -
+>>>  bool
+>>>  nouveau_fence_done(struct nouveau_fence *fence)
+>>>  {
+>>> diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.h b/drivers/gpu/drm/nouveau/nouveau_fence.h
+>>> index 9957a919bd38..183dd43ecfff 100644
+>>> --- a/drivers/gpu/drm/nouveau/nouveau_fence.h
+>>> +++ b/drivers/gpu/drm/nouveau/nouveau_fence.h
+>>> @@ -29,7 +29,6 @@ void nouveau_fence_unref(struct nouveau_fence **);
+>>>  
+>>>  int  nouveau_fence_emit(struct nouveau_fence *);
+>>>  bool nouveau_fence_done(struct nouveau_fence *);
+>>> -void nouveau_fence_cancel(struct nouveau_fence *fence);
+>>>  int  nouveau_fence_wait(struct nouveau_fence *, bool lazy, bool intr);
+>>>  int  nouveau_fence_sync(struct nouveau_bo *, struct nouveau_channel *, bool exclusive, bool intr);
+>>>  
+>>> diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/nouveau/nouveau_sched.c
+>>> index 0cc0bc9f9952..e60f7892f5ce 100644
+>>> --- a/drivers/gpu/drm/nouveau/nouveau_sched.c
+>>> +++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
+>>> @@ -11,7 +11,6 @@
+>>>  #include "nouveau_exec.h"
+>>>  #include "nouveau_abi16.h"
+>>>  #include "nouveau_sched.h"
+>>> -#include "nouveau_chan.h"
+>>>  
+>>>  #define NOUVEAU_SCHED_JOB_TIMEOUT_MS		10000
+>>>  
+>>> @@ -122,9 +121,11 @@ nouveau_job_done(struct nouveau_job *job)
+>>>  {
+>>>  	struct nouveau_sched *sched = job->sched;
+>>>  
+>>> -	spin_lock(&sched->job_list.lock);
+>>> +	spin_lock(&sched->job.list.lock);
+>>>  	list_del(&job->entry);
+>>> -	spin_unlock(&sched->job_list.lock);
+>>> +	spin_unlock(&sched->job.list.lock);
+>>> +
+>>> +	wake_up(&sched->job.wq);
+>>>  }
+>>>  
+>>>  void
+>>> @@ -305,9 +306,9 @@ nouveau_job_submit(struct nouveau_job *job)
+>>>  	}
+>>>  
+>>>  	/* Submit was successful; add the job to the schedulers job list. */
+>>> -	spin_lock(&sched->job_list.lock);
+>>> -	list_add(&job->entry, &sched->job_list.head);
+>>> -	spin_unlock(&sched->job_list.lock);
+>>> +	spin_lock(&sched->job.list.lock);
+>>> +	list_add(&job->entry, &sched->job.list.head);
+>>> +	spin_unlock(&sched->job.list.lock);
+>>>  
+>>>  	drm_sched_job_arm(&job->base);
+>>>  	job->done_fence = dma_fence_get(&job->base.s_fence->finished);
+>>> @@ -392,23 +393,10 @@ nouveau_sched_free_job(struct drm_sched_job *sched_job)
+>>>  	nouveau_job_fini(job);
+>>>  }
+>>>  
+>>> -static void
+>>> -nouveau_sched_cancel_job(struct drm_sched_job *sched_job)
+>>> -{
+>>> -	struct nouveau_fence *fence;
+>>> -	struct nouveau_job *job;
+>>> -
+>>> -	job = to_nouveau_job(sched_job);
+>>> -	fence = to_nouveau_fence(job->done_fence);
+>>> -
+>>> -	nouveau_fence_cancel(fence);
+>>> -}
+>>> -
+>>>  static const struct drm_sched_backend_ops nouveau_sched_ops = {
+>>>  	.run_job = nouveau_sched_run_job,
+>>>  	.timedout_job = nouveau_sched_timedout_job,
+>>>  	.free_job = nouveau_sched_free_job,
+>>> -	.cancel_job = nouveau_sched_cancel_job,
+>>>  };
+>>>  
+>>>  static int
+>>> @@ -458,8 +446,9 @@ nouveau_sched_init(struct nouveau_sched *sched, struct nouveau_drm *drm,
+>>>  		goto fail_sched;
+>>>  
+>>>  	mutex_init(&sched->mutex);
+>>> -	spin_lock_init(&sched->job_list.lock);
+>>> -	INIT_LIST_HEAD(&sched->job_list.head);
+>>> +	spin_lock_init(&sched->job.list.lock);
+>>> +	INIT_LIST_HEAD(&sched->job.list.head);
+>>> +	init_waitqueue_head(&sched->job.wq);
+>>>  
+>>>  	return 0;
+>>>  
+>>> @@ -493,12 +482,16 @@ nouveau_sched_create(struct nouveau_sched **psched, struct nouveau_drm *drm,
+>>>  	return 0;
+>>>  }
+>>>  
+>>> +
+>>>  static void
+>>>  nouveau_sched_fini(struct nouveau_sched *sched)
+>>>  {
+>>>  	struct drm_gpu_scheduler *drm_sched = &sched->base;
+>>>  	struct drm_sched_entity *entity = &sched->entity;
+>>>  
+>>> +	rmb(); /* for list_empty to work without lock */
+>>> +	wait_event(sched->job.wq, list_empty(&sched->job.list.head));
+>>> +
+>>>  	drm_sched_entity_fini(entity);
+>>>  	drm_sched_fini(drm_sched);
+>>>  
+>>> diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.h b/drivers/gpu/drm/nouveau/nouveau_sched.h
+>>> index b98c3f0bef30..20cd1da8db73 100644
+>>> --- a/drivers/gpu/drm/nouveau/nouveau_sched.h
+>>> +++ b/drivers/gpu/drm/nouveau/nouveau_sched.h
+>>> @@ -103,9 +103,12 @@ struct nouveau_sched {
+>>>  	struct mutex mutex;
+>>>  
+>>>  	struct {
+>>> -		struct list_head head;
+>>> -		spinlock_t lock;
+>>> -	} job_list;
+>>> +		struct {
+>>> +			struct list_head head;
+>>> +			spinlock_t lock;
+>>> +		} list;
+>>> +		struct wait_queue_head wq;
+>>> +	} job;
+>>>  };
+>>>  
+>>>  int nouveau_sched_create(struct nouveau_sched **psched, struct nouveau_drm *drm,
+>>> diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+>>> index d94a85509176..79eefdfd08a2 100644
+>>> --- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+>>> +++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+>>> @@ -1019,8 +1019,8 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
+>>>  	u64 end = addr + range;
+>>>  
+>>>  again:
+>>> -	spin_lock(&sched->job_list.lock);
+>>> -	list_for_each_entry(__job, &sched->job_list.head, entry) {
+>>> +	spin_lock(&sched->job.list.lock);
+>>> +	list_for_each_entry(__job, &sched->job.list.head, entry) {
+>>>  		struct nouveau_uvmm_bind_job *bind_job = to_uvmm_bind_job(__job);
+>>>  
+>>>  		list_for_each_op(op, &bind_job->ops) {
+>>> @@ -1030,7 +1030,7 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
+>>>  
+>>>  				if (!(end <= op_addr || addr >= op_end)) {
+>>>  					nouveau_uvmm_bind_job_get(bind_job);
+>>> -					spin_unlock(&sched->job_list.lock);
+>>> +					spin_unlock(&sched->job.list.lock);
+>>>  					wait_for_completion(&bind_job->complete);
+>>>  					nouveau_uvmm_bind_job_put(bind_job);
+>>>  					goto again;
+>>> @@ -1038,7 +1038,7 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
+>>>  			}
+>>>  		}
+>>>  	}
+>>> -	spin_unlock(&sched->job_list.lock);
+>>> +	spin_unlock(&sched->job.list.lock);
+>>>  }
+>>>  
+>>>  static int
+>>
 > 
 
--- 
-Sincerely yours,
-Mike.
 
