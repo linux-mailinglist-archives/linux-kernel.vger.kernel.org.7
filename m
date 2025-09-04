@@ -1,103 +1,115 @@
-Return-Path: <linux-kernel+bounces-800035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE9FB432AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:40:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481BCB432AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E918F5E3B4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:40:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BEBF7B2EF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A55275B0D;
-	Thu,  4 Sep 2025 06:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9DE278161;
+	Thu,  4 Sep 2025 06:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SkTao/ti"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QcCwCcTL"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26AB275B0A;
-	Thu,  4 Sep 2025 06:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674F8275B0D
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756968041; cv=none; b=qfZY1e3bOZrJ8huvOhoGZW3l9YoaKvDexG3g0JaZKbIrirLLsWM2sIgseuSUO2/aF7F1/tfFfRbBDmV3HDFbWO9j5VYFjX4XPkOGM1FhfCq+O7zr5Ts/ALAXqiczTt9rnIF+XSnBAgLxtRfoNznKfjnbmBaH5m2/osULh7kQ1Ac=
+	t=1756968053; cv=none; b=JX9wudDkxAAdnQQHRpadwbN/H9HMrxiQKKHwr3k+Bg46XHdb5pRnqaMoLUNju5p510yr2RdbkvjeGk0L9JQ+VlHQTLJxP+1ePdHYxZ8GGFKyENxGpKyGSCAkTtaH7KZDFPiH+BPs8yOdeDJUgrGsikYj/jNJYfyUYqQIo9ueKGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756968041; c=relaxed/simple;
-	bh=wjML3rLUMwDf/UURtvF9qJv/sPvKxmCgLFcoPZD4WqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=N9Yzpt/MqqZ0Fas671y41HIskPpMm5TSFGr8crhSOEaNpWytM8bmXmo6jEwSnIp4jrnpp02tIGPp0CS5UFearOhh3HHWQfmCNbeOXnlvoWtlHxbZS3BOiT5sAHH3ukf3Lr6ztxzare+lGqvTjqVgkfR5gL7fGbxVRMY24CFR93U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=SkTao/ti; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1756968036;
-	bh=W7aifaZb3tH1xScDg2DHXYElZXWWTbT2gv/ttOD28xI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=SkTao/tiWiN9PPac6rJYnRZywvhi2jP+hRp4hiKc8WBZ8dAdNsns/LDm5fmnnSthU
-	 SdUZg6OHTqZ/piA35CoaxXgMqAZk6C8pGmJORJXluQnfuQbr9rl/R5L69jk6TOdwfu
-	 mLGe/M9CGLviFvSnfoswHBzWG8mhmI98+ndLYSKQw8HpvPn5zwTfXVUb/qncurTaAd
-	 zNs13uBkgCf0/GCE5JuB1wqJ1ZARndRz/YULkcZGQpEpeOWrC7DHesNpkCq6PaGkUD
-	 AVtYS5iEVfIKx/BVCW6oW9HCrTxTz9SAwgFjK4XHsZxOriGMO5YZ34M2Nx4l1Hm038
-	 US8BCRSPAYpUw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cHVGr2lJ1z4w2J;
-	Thu,  4 Sep 2025 16:40:36 +1000 (AEST)
-Date: Thu, 4 Sep 2025 16:40:35 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the vfs tree
-Message-ID: <20250904164035.2a12f3c9@canb.auug.org.au>
+	s=arc-20240116; t=1756968053; c=relaxed/simple;
+	bh=rGwELpiIkEXKasOo4ZGjIOtJc4NrTEJzdYZs619kaC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=p/clOebk8HJ/UZLB7W8nQMfhsRRuDBHRJ8PZ8LEKtz+Gxo2x/rMNWY0BIZlbsLWnINZLg+IdchnjQ4C2qP4Gi7/i5uUOpX25I+u/pNqIRMjaKQiVRKmMo/POe1ZpplKqO+83U7aCJmR7xHV3VOES2X1V+hYXa3DX8sJJUzwufYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QcCwCcTL; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250904064044euoutp02090a8945b26194cfbc866d0f4e67119b~iASC2Hi561768917689euoutp02k
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:40:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250904064044euoutp02090a8945b26194cfbc866d0f4e67119b~iASC2Hi561768917689euoutp02k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756968044;
+	bh=A/yDGtDHqTHoPVxQFOAkkIfF4zIy3UZ0vUKDgsqqVOc=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=QcCwCcTLjQhAJBgjfcjHoBleYj4ltUDCEaUZJOMVDss/gKJSWYHjYpNOWQAVkJiVc
+	 jwhEHY1qQfXL/ywyJ/C47pdoWEkGIt8ea2MbcgYn1yBHUsd5cOwEnItFQFZCfKh4FG
+	 9jmQa351xLqb/mMwR47RWNj2RqqZzqnX9Mg0+8Bk=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904064044eucas1p1903e2408a311a9a88aa7459c078f0ca3~iASCdUNGL3162431624eucas1p1k;
+	Thu,  4 Sep 2025 06:40:44 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904064042eusmtip130798f35ba17f7345464a545efd3511c~iASBRoIaA0826508265eusmtip1S;
+	Thu,  4 Sep 2025 06:40:42 +0000 (GMT)
+Message-ID: <532937cb-fa69-4010-b2cf-cba9a2e6c730@samsung.com>
+Date: Thu, 4 Sep 2025 08:40:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/B+jmqCyqA+7_NA_WinjHHzC";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v3 3/3] drm/bridge: sii9234: use extcon cable detection
+ logic to detect MHL
+To: Henrik Grimler <henrik@grimler.se>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Andrzej Hajda
+	<andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej
+	Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+	linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+	replicant@osuosl.org, linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250903193231.GA5526@l14.localdomain>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250904064044eucas1p1903e2408a311a9a88aa7459c078f0ca3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250824111745eucas1p20e336aecd501200bdd035bfc30ce1e63
+X-EPHeader: CA
+X-CMS-RootMailID: 20250824111745eucas1p20e336aecd501200bdd035bfc30ce1e63
+References: <20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se>
+	<CGME20250824111745eucas1p20e336aecd501200bdd035bfc30ce1e63@eucas1p2.samsung.com>
+	<20250824-exynos4-sii9234-driver-v3-3-80849e716a37@grimler.se>
+	<ac222017-d4e2-4fa7-beed-cc6b73042a73@samsung.com>
+	<20250903193231.GA5526@l14.localdomain>
 
---Sig_/B+jmqCyqA+7_NA_WinjHHzC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 03.09.2025 21:32, Henrik Grimler wrote:
+> On Mon, Aug 25, 2025 at 04:16:50PM +0200, Marek Szyprowski wrote:
+>> On 24.08.2025 13:16, Henrik Grimler wrote:
+>>> To use MHL we currently need the MHL chip to be permanently on, which
+>>> consumes unnecessary power. Let's use extcon attached to MUIC to enable
+>>> the MHL chip only if it detects an MHL cable.
+>>>
+>>> Signed-off-by: Henrik Grimler <henrik@grimler.se>
+>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>
+>> On Trats2 board the status of HDMI connector is no properly reported as
+>> disconnected when no cable is attached.
+> Thanks for testing (again)!
+>
+> In what way is it not properly reported as disconnected, are you
+> checking some sysfs property, or with some userspace tool?
 
-Hi all,
+Huh, my typo. It should be 'connector is *now* properly reported', 
+that's why I gave my 'tested-by' tag.
 
-After merging the vfs tree, today's linux-next build (htmldocs) produced
-these warnings:
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-Documentation/filesystems/porting.rst:1296: ERROR: Unexpected indentation. =
-[docutils]
-Documentation/filesystems/porting.rst:1297: WARNING: Block quote ends witho=
-ut a blank line; unexpected unindent. [docutils]
-
-Introduced by commit
-
-  8be3d7ffafe4 ("change the calling conventions for vfs_parse_fs_string()")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/B+jmqCyqA+7_NA_WinjHHzC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi5NGMACgkQAVBC80lX
-0GxjgAgAnfjf4c6+dvBju71hJ35kTQmhZ2UhpwaF7UN5pPsGY5Anf8gdJmEJVC8r
-rNW4L8UmOaofd8OoOCa5Gl3raxkW6heZhcA1jWEb9J1YXkWtw/UZkL7cafW+kyeu
-F2V1h114n9AMY3coDeS0nBkFfFLkktkMwlg2uDNASbEkiqaBIJemVj5V8J7shHfU
-hHZZH8pLZDtL7oI+cBOQY3Q5Sgx6Po91hKuO1WbgGZQ7d9sq2bMszWnFwBNWIXN6
-IdZObV2vF5k7DPaWKSotQQ83+L2LaGy4vesGD03hBBuRUCKfhu0QJAM73HBXfImy
-2osOEn5fiXr1nIA90bhQuQwqJr7UdQ==
-=bhZN
------END PGP SIGNATURE-----
-
---Sig_/B+jmqCyqA+7_NA_WinjHHzC--
 
