@@ -1,486 +1,265 @@
-Return-Path: <linux-kernel+bounces-801382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 361B3B44474
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:34:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 795E9B44475
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E98A95A597B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:34:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 383255A5A9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570BB3126C5;
-	Thu,  4 Sep 2025 17:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C857B30DD06;
+	Thu,  4 Sep 2025 17:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snAYkkSc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="olWrsWD7";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="fWgVimgD"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FD723278D;
-	Thu,  4 Sep 2025 17:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757007243; cv=none; b=GaOo1Iwtu8tEFgCSGQZVPskNfelJklTzmzN6j6mvFjdHtmRLsXQUdjEoNO2qWO2CRyDC4H6cJBiner7luRRb0Cui35/78gmg6bdjhp2Ia0UJdqmeupJNAwbKrgBkvPVcKVcDKoCThpGLnHMEgwxeCuI76Ahq58BIntPeKRO+IyY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757007243; c=relaxed/simple;
-	bh=N0Rlj8n3HzJmcOjut15w2D46KZ0U3HPBWFbUforq2gk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CItCSMeTkMbZYE02/Lslw0o1H+gAki1oOt4p0LKBQ8UUb2zfJTltoJxSGBOTLMGe9dsZ9kl7wJUJ0zPMVOukk1gI2KoOyKzPp+oR2qX9vi+Ea5VOhqGJHwkx8omHz4p4fMipFrkq0g5vw9lTwEGjoeFfv9tGg2lYV8spBtMa/Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snAYkkSc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DBE48C4CEF1;
-	Thu,  4 Sep 2025 17:34:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757007242;
-	bh=N0Rlj8n3HzJmcOjut15w2D46KZ0U3HPBWFbUforq2gk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=snAYkkSca756CaqOckdtXALBmwIUHQhoF0W/xFz8fvbjOKch7X+LfWfzkdVJRw0rV
-	 jSviSnR+MKwysjDG+qC7MG1kkk1AGE9YDHPuv/TrSbgOru4Q6tkZN3m5T3UTkbI91g
-	 XXaPdtCBAd5wfezX2BOAvNvd3xGICRZOQfAcmSAILDbjjhRr19x+jbPkYscH5SmkK3
-	 v+UuBRBur77zKeQ8sAAsmKgldhPQPNMTFC+Zj77VADvRmMG8Hnccj/MQZCYdX37SmM
-	 KEta68izZ/FtYGUOw1DNsgzGaTOVUbr+WcXF/CAEYkgc88Gq2GLGKguBGzO4SDs47w
-	 nifyspnMAe7Tw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF21DCA1015;
-	Thu,  4 Sep 2025 17:34:02 +0000 (UTC)
-From: Gregory Fuchedgi via B4 Relay <devnull+gfuchedgi.gmail.com@kernel.org>
-Date: Thu, 04 Sep 2025 10:33:45 -0700
-Subject: [PATCH v3 2/2] hwmon: (tps23861) add class restrictions and
- semi-auto mode support
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F14823278D
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 17:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757007251; cv=fail; b=VOPYXbRIHvSpB3Q87E7w0BHXqO++WSlATfG9uAp754/uCrjv/3ShrCoXvma2SfkwnnmvPLyiivi5wZqeApHMyI4vAy2NR/gu61Xbte4lBOi9nqma8GAPthZW06ELPDnUMuQkhlIRtExDlryJ+2AZ9SvQmXk1zY09yvrnO2BppG0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757007251; c=relaxed/simple;
+	bh=pBNMoX70EijI9euqJN8HWfsjkpML8kWC1YxSpmKsLVU=;
+	h=Date:From:To:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hBnJO1z5fuXSEmS67tmfqI/WoViSk9qn4MBQ1n8q6ab0yo09rg7S5R40KgoHMnPSP8Kj32jbHfIBQj0r/o2C/rH0OVU+E/NhEGuUqPVVkDfIAz2vH7AH0MNftoFlBnQ3k9FShNU3jpOY+39S26jS/kdfEdm/MG6i++ihBOgcd88=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=olWrsWD7; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=fWgVimgD; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584HTwP0007843;
+	Thu, 4 Sep 2025 17:33:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=BrVWFtzDekW66iL9oa
+	Kw3dbdkU1PLtdBDTfnKfp/8s4=; b=olWrsWD7pQB+Ba1fnHMALXm3yyJhhuLIBl
+	/wtMRDADRfUIznjnqn+O+huEO1nJQpdgSjGl2aYYawVEIOa8z7b7FoV6R8365iU8
+	mUufmu63YSVWnsDVUvB+fwN83zBQZnlICDiIl1FHyQy9eGstwpVR9leT/p20pyJz
+	dLVl7Gxfz92NP4IdJj47lhBPbpHsfnAJmTbyUygVkwvkFEmKjD2/u2BW5M2a/kFC
+	/txF0A9G5bxNOhg8B65v+GtNJTTCKHA0jrwp0j9DB85g6Zcd4bZvUIiADvuc4RvU
+	uDK4dS9ke6raUe5+pP0UV7XkepKRGuLOcg/ohatT2XHmMXNqiDGw==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48yf7b009u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 04 Sep 2025 17:33:53 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 584HNXIi040063;
+	Thu, 4 Sep 2025 17:33:51 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2059.outbound.protection.outlook.com [40.107.92.59])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48uqrhwryp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 04 Sep 2025 17:33:51 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lXKQd0wvSYLZvYBGRBuj/C3BLnDdakMxz5ZAoRMbChJOut2egDvqnLGdCw8IXgEjUe+lFV3xPkIj7vS0jBqoqsGOP9UCXFz3IFh9VdvZVEreUc5VSSno0Mene6WC4p+Xjo0Z778OfvVNf6ey5wkkB8RVF4nJLs6BU8blbpN/LP5DUQQXhav1ofMkniqfspz/bMZLw5LFi+agIf8NwhBalePdxSDO/ZKsJ1ITsyRkGgpQPH8kXvvBqzMe5+PMfB5kQrZxrEhCEU0qpm9rbiXTonbznBxLj19pM0EBrdQvZ3QMFalslSrUoH/Jv85OjeeWc92MepjXzrCOth/H4ibYFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BrVWFtzDekW66iL9oaKw3dbdkU1PLtdBDTfnKfp/8s4=;
+ b=Wx+M1/vlzPuPiQC/2pAx/7MEgeErb8DBiH8EQHJKTgZu90rmhWx2hyaJKNnaV9zb9yRcr9QddryJ+QJmr41dUd+sUU9qr3ThVltH++YRMp3R1L9GRNw4TBLQKhft/IaPkVVQm186JUdvYLXi/H24FNOYfaC6pgbnew6Uk5UaH+CKA2Yz9jFZcAcQ5E3QXOKasSyxVXt8asAdwIdyiIEd7rlJNUBKqJCfoMYdA3c8524JRGjChqINnDZ2XBpEqMAdVqqlKV5XuoVA5zPW7DFxRaPt6YkOR8Fs8SHETslj4BMcOn4imhsGMxOGDh4I4MIAG1k6qaB5DHXifL1Se3vpIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BrVWFtzDekW66iL9oaKw3dbdkU1PLtdBDTfnKfp/8s4=;
+ b=fWgVimgD0QvHCSR+f0++nq8DVU4MFgryxAlvW7Ss45OYA1BocbNFdrae9uI9EeVUvAbPa2vIMu/jNlx53147WFfeF0wFkb3S8Rco0d0U4UcBcedeeqmddMNkDyYFrdwY/hdIL51QXV5kUyAckOr2cnusCF/9+TrZORgFYJ81wp4=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by DM3PPF5F5663669.namprd10.prod.outlook.com (2603:10b6:f:fc00::c2b) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Thu, 4 Sep
+ 2025 17:33:49 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9094.016; Thu, 4 Sep 2025
+ 17:33:49 +0000
+Date: Thu, 4 Sep 2025 18:33:46 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Kalesh Singh <kaleshsingh@google.com>, akpm@linux-foundation.org,
+        minchan@kernel.org, kernel-team@android.com, android-mm@google.com,
+        David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: centralize and fix max map count limit checking
+Message-ID: <413ee338-1795-433c-b3d4-72c870488d95@lucifer.local>
+References: <20250903232437.1454293-1-kaleshsingh@google.com>
+ <827c844f-7106-4f62-a108-1f83544aa56e@lucifer.local>
+ <43ryds7hzhs5bpaxznco7fppmakdb4f46agwtsc5erudqfoz2x@7y4jgbtft7jj>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <43ryds7hzhs5bpaxznco7fppmakdb4f46agwtsc5erudqfoz2x@7y4jgbtft7jj>
+X-ClientProxiedBy: MM0P280CA0026.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:190:a::25) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-hwmon-tps23861-add-class-restrictions-v3-2-b4e33e6d066c@gmail.com>
-References: <20250904-hwmon-tps23861-add-class-restrictions-v3-0-b4e33e6d066c@gmail.com>
-In-Reply-To: <20250904-hwmon-tps23861-add-class-restrictions-v3-0-b4e33e6d066c@gmail.com>
-To: Robert Marko <robert.marko@sartura.hr>, 
- Luka Perkov <luka.perkov@sartura.hr>, Jean Delvare <jdelvare@suse.com>, 
- Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Gregory Fuchedgi <gfuchedgi@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757007242; l=14027;
- i=gfuchedgi@gmail.com; s=20250811; h=from:subject:message-id;
- bh=uEEJhtco22XR9vWCDdxLHrPxqD55wHrJqx5SHjzRZ5g=;
- b=Ylg/s3OmMeKm9dRwkWbnLFL9yX9Y+dZvEMOwb1RXRU2sqUfJGgoLNpZ113LupDgDSRH6BJwgd
- JhCgfrJTjnmBwvRwXh+tYFqfPNTEWnFhNEqF1ANcAjvmJOOdz82l5F9
-X-Developer-Key: i=gfuchedgi@gmail.com; a=ed25519;
- pk=J3o48+1a2mUIebH8K4S3SPuR5bmamUvjlsf8onoIccA=
-X-Endpoint-Received: by B4 Relay for gfuchedgi@gmail.com/20250811 with
- auth_id=484
-X-Original-From: Gregory Fuchedgi <gfuchedgi@gmail.com>
-Reply-To: gfuchedgi@gmail.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DM3PPF5F5663669:EE_
+X-MS-Office365-Filtering-Correlation-Id: f036076f-4888-42c8-6451-08ddebd93552
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?pAUfzyobG9yukRRBFgce22u6+vdfvfVqHjXfFP8FzXqdYXN9BneC7IJjninK?=
+ =?us-ascii?Q?4sqBaL7ip5Ks7fiYFTgsffXeqm0LTa+GUVl28HIhC1Z0mNr9mmUKn1eV29Qi?=
+ =?us-ascii?Q?qkoyBScjt6esZ+GL81PZbVwcf8McI51Rp21i97648YGNuIPYHRu1nm1sk/KJ?=
+ =?us-ascii?Q?ZqU5iVrOqi6x6RS9o1KzJX4ib9MB80f3loeXfQwiPOVKYzVc/Pozj+FWdcXt?=
+ =?us-ascii?Q?x48r0DzGMZFNmBcCNP3EQDgPaxDNztZYeRt85F2sFeUkHw/+iB1TtWmRS1hr?=
+ =?us-ascii?Q?6v3WQRoG/CbQ+J607vcIgD+1PVmx5CZUUayn5zFprVDX+NICpUYMyu45z3I0?=
+ =?us-ascii?Q?qCtOJIgdze6xvQmMKdQfj/HEyNOIqb0MeJ+++EbL2MisG0BxPgilg3spf1ru?=
+ =?us-ascii?Q?T34GrJj5C/on8V1Waw0MVb7waSVcea8ARUceTtqMgtiDe3s51GL5mEhp4/fr?=
+ =?us-ascii?Q?16nU7cy8kBSbYza55/ewI1eKOVdrmlru66dSM3C1VgYwenZDvwMsphUuS+Vi?=
+ =?us-ascii?Q?xlKs0w+sgFKzyYHuAB2BkAam+GqgjJndMtbwU0XstJrHFv2Nl0pRgL45qLhp?=
+ =?us-ascii?Q?wdtF6zr5pWX+l+1dxxHg2zGuTYjtsefN1TL5DPDa31E7OJVMedr6C/ZnryIm?=
+ =?us-ascii?Q?jSDoXPGaHDsiehGNysm6Ns0o18uyVkpTxhoS0de1o1uwSt8X7OMbPeS64dSH?=
+ =?us-ascii?Q?NVO+xzjF0cz9LNerN/J5IiPKO5+m0+beOLB973QmiI1Bk3cGCRN2XC3d2gCj?=
+ =?us-ascii?Q?ej1h+IdaAwGwoOmW+CZWd21Tz1C9Q4pmcaEBS5FyA450HbFMxZ6XrOtlFtIm?=
+ =?us-ascii?Q?XxUxkCCqO3Tn+goYEV3CIdWKWlDihKOodbYRty63dW96v7791bJu8en081m3?=
+ =?us-ascii?Q?zyZbfuA3DDTKKVUVOwz9VBUJCjVNGKALcIdTv3DyqLqCfivl4Kf/05XZ0K4y?=
+ =?us-ascii?Q?ZGOmOY9FURSRqPVbgKngDRHm1b+b4rgdXQm+ttyDFw+9e7t+zh29Up+EySQU?=
+ =?us-ascii?Q?Nt5A1M0IOLKTxr7rhOixgnP74Rjdov7ae5xdBNHPI+WVWhuY+YSz34vLwoII?=
+ =?us-ascii?Q?UiKyJ4ahMiKiBwx46iOBMVZ9r76YaF8ZV4Er5j0mR88W7sGI5zratran/fGQ?=
+ =?us-ascii?Q?LE9KlbWt6nxPHejRgl5y7qnR1A0Z9nBp+xrvwnK1bdXw5JlS0CrS937CchNO?=
+ =?us-ascii?Q?qB2SOkJNJXlWd7rbTdR8gwMV8FaeKTF0avSiittoslutNbAeqQz9gk0IUet9?=
+ =?us-ascii?Q?HTltcmmd3dCv4vP5W6cTuZmiAWt7/VfOcdSuctaHt6hhOzt+nqf8TQRyXDXo?=
+ =?us-ascii?Q?a4Ii0pkC3c+mX4YuolmPGELOdXJhqnSr7fuv4uZwEfwnxVb9Fv13lFh6IKfH?=
+ =?us-ascii?Q?pqfwWnQurWmtEypxuTOEcuzT6I7cuXeYJ4mLsPuxPGySDLnPQg6gDPUlDYlf?=
+ =?us-ascii?Q?UKEuZZslGFceLmFOuZyul/IdfyLBY9389XsBtIlIx+YfvtlzH4mkbg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5Eq6JNzhTzyKghvmGmco3Yvm5oSemfXVGP0FSOLbcARONjJIgI0o2Ds66vS5?=
+ =?us-ascii?Q?PgZory/Ak5UrKmF15ZVnqOQd/EJRmqS57YIQQdFOteyju9hTCRcIKUkrIKx/?=
+ =?us-ascii?Q?ep3GkZ+mM8DuNvumuDD3W0O7uBvJq6VqF1RtvT2tNnGEMWTxuUZXcAcMIpYE?=
+ =?us-ascii?Q?Wvp5McnaTGlkV8r6trN2fQO1lmp1NIVT8YOlvJZ8V7N5X3odxSkadrJNCG9O?=
+ =?us-ascii?Q?VRaqzfQrXhLH4Ylp9jfqQ1ETDF8rYuFHxyr0CD6FOqv4ss3pEUSR9QUOJt3W?=
+ =?us-ascii?Q?PL2Iz5kL4maiHeOMwTyfsqiyEmVmidTKHmXZxQKI1PaLS9TvUCpeGeSMvKp0?=
+ =?us-ascii?Q?RxV/6QsuTDny7WhviZpxVBTVFbvKW0D92+uphMAv6JT8FqSTlNOpzi8s/HZi?=
+ =?us-ascii?Q?31DF80SwGTZulQmfsxB5RAyKJS1+eg9ulwV8UhcaDTBv1EELPURa1hPelKH7?=
+ =?us-ascii?Q?YaSXVKiEjvOjjbCZmbSc9gGNh6Msfz04bQasS9wxgYMIwm5Vv2PjVuV6rTCT?=
+ =?us-ascii?Q?x2K51LI3W/zo1rtPIgPbMkNN/OXEZrq4h6LbthG03y6C3y77To8xjT9uMMWT?=
+ =?us-ascii?Q?qWjkVG2D2dVROQ03bRtEAWaw1fZqxQPzj0UMrrNP/vKdPvUUJZ8gvkcPSPOc?=
+ =?us-ascii?Q?TbHvbRQCWsr3Yg385QLtdSc5kTvVCvOkJ9/u1NqlDEqjiQ7i8Oxnhqhlr214?=
+ =?us-ascii?Q?Y5Xm8yKaOH/WUiVfuTxl1qA1lvL02pFyQyoDjni6/cQj4IbsTjauMwxtsO6M?=
+ =?us-ascii?Q?LcYMbhguAo2fByHY2BCBTojzPOKYTo7V/MU++Wiut5OQEXspVzLJx6FRaPX6?=
+ =?us-ascii?Q?mKNTbS2ax4hbQb4GDafpTqdbWlnFfwsDAeLGBL/hG7aHs02fKaUlCYdw3xYU?=
+ =?us-ascii?Q?xEIa+BtavFlANGHclwdOAuMPsYoYpTjbje3/CUlH0OpdX9mZqkR0P3cCqIaz?=
+ =?us-ascii?Q?QxeAMPgPT6EUwX+n3kvKELnd1ep2R/VMjonvhfXpKzHLu3x3uPGaWuI1qyN8?=
+ =?us-ascii?Q?1R4oo5ZdTJifjOvUcqrq+hPk5XF0YR1kruzKLqBtGapzM8ZWnwvBtqcF83z/?=
+ =?us-ascii?Q?dHoc9kPp2KNx4nmXWp4Qlcu9F+RTGtPJ//Xshp3eCWLYf+VhY15b1AbVCoQe?=
+ =?us-ascii?Q?jRXwczFqLAet6Swxa6gOIU1nzmf06twhrX1y89tADldNBT8vV7G8nXSKP/1d?=
+ =?us-ascii?Q?D9hxktdN+R8vRPl5gFRuuXP/lHrQCUA0ShJcMrqaCiOrAVrvGjHHj+EmjH5G?=
+ =?us-ascii?Q?0xjRwRxyaShFXGT1S/O2pwPX0sY9+w19UQg/VrUYUK8wF6z7YbrpHbM3/866?=
+ =?us-ascii?Q?x2dDURfGksLVKfqxIT8LG1IMFsViOSlnljHFi8misF4rLgEqqENfnooBfX2V?=
+ =?us-ascii?Q?WwlFM1gmSVu5TcrRky4B5uj0RbyEPKtDu9vS8Qg4mYjHCFNaPdP123YKK097?=
+ =?us-ascii?Q?dhaRwQgj7LOJw66eSUY394Z3syKuJVSE8uNWcjw4lgKz9zUcf4R7MNfLIsIE?=
+ =?us-ascii?Q?T/bFR/2m6N7raANcbmQcHQhgG1l/CTb8mq8Cl1fwFcFHT7A1fTY4sS02rpMQ?=
+ =?us-ascii?Q?qnHDycVyMCqBS8tLHRcXdY3CQH+KJm4Oe6djBoe/uKntF5TnXbbix8rXHIT1?=
+ =?us-ascii?Q?zA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	kzwdfxxyFvo+mgUc9LX2z8XAKJ6kk5f9jNwDxutkVmMXiXlzy/aEMIEVNikvQTljb9M0C6RrwzPuLeO3dcXh+9HH3/55qT/tIsw5uimUB9KnKNDROnBgflv1eW6WMrPYCzlZsbnOZPHXaG0kdgHGZfc2m02LMeVmldS6HtsrwDbMkUxj/C7qIzRUhe9ntWrZUWQ/LYv/0hOoXktNgO+26acEj7yuS0C8xOTFq55J5GmJSVkchlb4tHc81rQoTI+OZhiCp+1FBiVuOeM3EY6iTOLtcudZ6NL7SKPUv7cIDo9CLyk4f50z77wrc0WWlJBWbuU7u/ATvuz2Of7DlfF+WapIpamqe+bGTbXAoRpRIzYAOHH42A9TzVqouCDQrHBx1nxZs0SNCQiH5jWuqtUVPYFhOQpnSTWBA8qyEgWEULW7YS9snI0FnQEmMAjP7QqUskvovoz1rVUW6+k6FUhi3xU4k/3I/4bV+a08qY8Meo1Kz9cOcRiIXtpN+5ehGbMEn2JyapEwQ16TAzwou6v5eVyYrM6G1RmXRyQMNmDK/zd2ynypHN8HE+M8wr21W/RCOgKg85EZSl29744QvNStWf9OPnapZ1yuSBCs4vo8uGg=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f036076f-4888-42c8-6451-08ddebd93552
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 17:33:49.2225
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Qt/e2AtLY2rt1AS3UH4PjmCpANK3dUrZVX662OVBUvl12xHsrqvAhmo7U2wkchJleHLCjS4uO9SfHKhCj5HHvVUsZC5J32xTRCmzkGyUXYQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPF5F5663669
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_06,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0 bulkscore=0
+ adultscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509040173
+X-Authority-Analysis: v=2.4 cv=Qule3Uyd c=1 sm=1 tr=0 ts=68b9cd81 b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=kYCJdZcMpDcPJNhWyLkA:9
+ a=CjuIK1q_8ugA:10 cc=ntf awl=host:12068
+X-Proofpoint-ORIG-GUID: fvXMnTyZza0WOOCS5LYD4EQuxOX5kVM7
+X-Proofpoint-GUID: fvXMnTyZza0WOOCS5LYD4EQuxOX5kVM7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA0MDE3MiBTYWx0ZWRfXzQqIxtTFgz3F
+ lSuOeAOSJCOP0mFUC5uDrrC/dO4T+XWibOJTbKbD7SpIdsyJN74mdhzD9IJhxy37IQhuXuRGBRD
+ git5q+xJXXVqNQRJ6WHSuH0Kzpz0rugixuaFBb1yB8cxgHtotMCC/003s7F6b8f+3DhoDmSLdOQ
+ NrSOvtourAOMWBdtUIv+5aWBx6pFi2SdPY2mEXcTznGkxsYnVyDjHrJfHxNUELl9StW5KHJiY55
+ 9gcDgBBxdBk0izjdmm/ffOjx714OTDUCeZg4m4c/5BMCUC+8PjDMhlO6pDYoJ2yWSSBsaADF8Wb
+ jszmWVAEn1chLpl9j5FH0fMjgMh99fldOKAbjqylY3ySBpZ5eOLLPMzPopJ5BSyw6yQrFjOw90K
+ ngLzoH6Q7Bz6gF621udZO8BysfKPkw==
 
-From: Gregory Fuchedgi <gfuchedgi@gmail.com>
+On Thu, Sep 04, 2025 at 01:22:51PM -0400, Liam R. Howlett wrote:
+> > > diff --git a/mm/mremap.c b/mm/mremap.c
+> > > index e618a706aff5..793fad58302c 100644
+> > > --- a/mm/mremap.c
+> > > +++ b/mm/mremap.c
+> > > @@ -1040,7 +1040,7 @@ static unsigned long prep_move_vma(struct vma_remap_struct *vrm)
+> > >  	 * We'd prefer to avoid failure later on in do_munmap:
+> > >  	 * which may split one vma into three before unmapping.
+> > >  	 */
+> > > -	if (current->mm->map_count >= sysctl_max_map_count - 3)
+> > > +	if (exceeds_max_map_count(current->mm, 4))
+> > >  		return -ENOMEM;
+> >
+> > In my version this would be:
+> >
+> > 	if (map_count_capacity(current->mm) < 4)
+> > 		return -ENOMEM;
+> >
+>
+> Someone could write map_count_capacity(current->mm) <= 4 and reintroduce
+> what this is trying to solve.  And with the way it is written in this
+> patch, someone could pass in the wrong number.
 
-This commit adds optional individual per-port device tree nodes, in which
-ports can be:
-  - restricted by class. For example, ti,class = <2> for a port would only
-    enable power if class 1 or class 2 were negotiated. Requires interrupt
-    handler to be configured if class != 4 (max supported). This is because
-    hardware cannot be set with acceptable classes in advance. So the
-    driver would enable Semi-Auto mode and in the interrupt handler would
-    check negotiated class against device tree config and enable power only
-    if it is acceptable class.
-  - fully disabled. For boards that do not use all 4 ports. This would put
-    disabled ports in Off state and would hide corresponding hwmon files.
-  - off by default. The port is kept disabled, until enabled via
-    corresponding in_enable in sysfs.
+Right, but I think 'capacity' is pretty clear here, if the caller does something
+silly then that's on them...
 
-The driver keeps current behavior of using Auto mode for all ports if no
-per-port device tree nodes given.
+>
+> I'm not sure this is worth doing.  There are places we allow the count
+> to go higher.
 
-This commit also adds optional reset and ti,ports-shutdown pin support:
-  - if reset pin is configured the chip will be reset in probe.
-  - if both reset and shutdown pins are configured the driver would keep
-    ports shut down while configuring the tps23861 over i2c. Having both
-    shutdown and reset pins ensures no PoE activity happens while i2c
-    configuration is happening.
+...But yeah, it's kinda borderline as to how useful this is.
 
-Tested with hw poe tester:
- - Auto mode tested with no per-port DT settings as well as explicit port
-   DT ti,class=4. Tested that no IRQ is required in this case.
- - Semi-Auto mode with class restricted to 0, 1, 2 or 3. IRQ required.
- - Tested current cut-offs in Semi-Auto mode.
- - On/off by default setting tested for both Auto and Semi-Auto modes.
- - Tested fully disabling the ports in DT.
- - Tested with both reset and ti,ports-shutdown gpios defined, as well as
-   with reset only, as well as with neither reset nor shutdown.
+I _do_ however like the 'put map count in one place statically' rather than
+having a global, so a minimal version of this could be to just have a helper
+function that gets the sysctl_max_map_count, e.g.:
 
-Signed-off-by: Gregory Fuchedgi <gfuchedgi@gmail.com>
----
- Documentation/hwmon/tps23861.rst |   6 +-
- drivers/hwmon/tps23861.c         | 249 ++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 249 insertions(+), 6 deletions(-)
+if (current->mm->mmap_count >= max_map_count() - 3)
 
-diff --git a/Documentation/hwmon/tps23861.rst b/Documentation/hwmon/tps23861.rst
-index 46d121ff3f316d977ab3d1ab4e0d7b7736a57c60..5d14f683d0de11091f4a845a78a613604cbde4cc 100644
---- a/Documentation/hwmon/tps23861.rst
-+++ b/Documentation/hwmon/tps23861.rst
-@@ -22,9 +22,13 @@ and monitoring capabilities.
- 
- TPS23861 offers three modes of operation: Auto, Semi-Auto and Manual.
- 
--This driver only supports the Auto mode of operation providing monitoring
-+This driver supports Auto and Semi-Auto modes of operation providing monitoring
- as well as enabling/disabling the four ports.
- 
-+Ports that do not have associated child device tree entry or do not restrict poe
-+class to 3 or lower will operate in Auto mode. Otherwise the port will port will
-+operate in Semi-Auto mode and require an interrupt pin.
-+
- Sysfs entries
- -------------
- 
-diff --git a/drivers/hwmon/tps23861.c b/drivers/hwmon/tps23861.c
-index 4cb3960d51704f6ad4106adc927f213d090c0f9a..c43c667c5d7e6f7813f8ac6bc5267cb8fe562f9c 100644
---- a/drivers/hwmon/tps23861.c
-+++ b/drivers/hwmon/tps23861.c
-@@ -10,13 +10,26 @@
- #include <linux/bitfield.h>
- #include <linux/debugfs.h>
- #include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/hwmon-sysfs.h>
- #include <linux/hwmon.h>
- #include <linux/i2c.h>
-+#include <linux/interrupt.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_irq.h>
- #include <linux/regmap.h>
- 
-+#define MAX_SUPPORTED_POE_CLASS		4
-+#define INTERRUPT_STATUS		0x0
-+#define INTERRUPT_ENABLE		0x1
-+#define INTERRUPT_CLASS			BIT(4)
-+#define DETECTION_EVENT			0x5
-+#define POWER_STATUS			0x10
-+#define PORT_1_ICUT			0x2A
-+#define PORT_1_ICUT_MASK		GENMASK(2, 0)
-+#define RESET				0x1a
-+#define RESET_CLRAIN			0x80
- #define TEMPERATURE			0x2c
- #define INPUT_VOLTAGE_LSB		0x2e
- #define INPUT_VOLTAGE_MSB		0x2f
-@@ -102,6 +115,12 @@
- #define TPS23861_GENERAL_MASK_1		0x17
- #define TPS23861_CURRENT_SHUNT_MASK	BIT(0)
- 
-+#define TPS23861_TIME_RESET_US		5
-+#define TPS23861_TIME_RESET_US_MAX	1000
-+
-+#define TPS23861_TIME_POWER_ON_RESET_MS 23
-+#define TPS23861_TIME_I2C_MS		20
-+
- #define TEMPERATURE_LSB			652 /* 0.652 degrees Celsius */
- #define VOLTAGE_LSB			3662 /* 3.662 mV */
- #define SHUNT_RESISTOR_DEFAULT		255000 /* 255 mOhm */
-@@ -110,10 +129,28 @@
- #define RESISTANCE_LSB			110966 /* 11.0966 Ohm*/
- #define RESISTANCE_LSB_LOW		157216 /* 15.7216 Ohm*/
- 
-+struct tps23861_port_data { // From DT.
-+	const char *label;
-+	/* Maximum class accepted by the port. The hardware cannot be
-+	 * preconfigured to accept certain class only, so classification
-+	 * interrupt handler is required to for power-on decision if class is
-+	 * not MAX_SUPPORTED_POE_CLASS.
-+	 */
-+	u32 class;
-+	/* true if the port is disabled in the DT */
-+	bool fully_disabled;
-+	/* true if the port shouldn't be enabled on driver init */
-+	bool off_by_default;
-+};
-+
- struct tps23861_data {
- 	struct regmap *regmap;
- 	u32 shunt_resistor;
- 	struct i2c_client *client;
-+	struct gpio_desc *reset_gpio;
-+	struct gpio_desc *shutdown_gpio;
-+	int irq;
-+	struct tps23861_port_data ports[TPS23861_NUM_PORTS];
- };
- 
- static const struct regmap_config tps23861_regmap_config = {
-@@ -205,13 +242,19 @@ static int tps23861_port_enable(struct tps23861_data *data, int channel)
- 	regval |= BIT(channel);
- 	regval |= BIT(channel + 4);
- 	err = regmap_write(data->regmap, DETECT_CLASS_RESTART, regval);
--
--	return err;
-+	if (err)
-+		return err;
-+	return regmap_write(data->regmap, RESET, RESET_CLRAIN);
- }
- 
--static umode_t tps23861_is_visible(const void *data, enum hwmon_sensor_types type,
-+static umode_t tps23861_is_visible(const void *input_data, enum hwmon_sensor_types type,
- 				   u32 attr, int channel)
- {
-+	const struct tps23861_data *data = input_data;
-+
-+	/* Channel may be >=TPS23861_NUM_PORTS for common Input voltage */
-+	if (channel < TPS23861_NUM_PORTS && data->ports[channel].fully_disabled)
-+		return 0;
- 	switch (type) {
- 	case hwmon_temp:
- 		switch (attr) {
-@@ -325,10 +368,15 @@ static int tps23861_read_string(struct device *dev,
- 				enum hwmon_sensor_types type,
- 				u32 attr, int channel, const char **str)
- {
-+	struct tps23861_data *data = dev_get_drvdata(dev);
-+
- 	switch (type) {
- 	case hwmon_in:
- 	case hwmon_curr:
--		*str = tps23861_port_label[channel];
-+		if (channel < TPS23861_NUM_PORTS)
-+			*str = data->ports[channel].label;
-+		else
-+			*str = tps23861_port_label[channel];
- 		break;
- 	case hwmon_temp:
- 		*str = "Die";
-@@ -502,17 +550,155 @@ static int tps23861_port_status_show(struct seq_file *s, void *data)
- 
- DEFINE_SHOW_ATTRIBUTE(tps23861_port_status);
- 
-+static inline bool tps23861_auto_mode(struct tps23861_port_data *port)
-+{
-+	return port->class == MAX_SUPPORTED_POE_CLASS;
-+}
-+
-+static irqreturn_t tps23861_irq_handler(int irq, void *dev_id)
-+{
-+	struct tps23861_data *data = (struct tps23861_data *)dev_id;
-+	struct tps23861_port_data *ports = data->ports;
-+	struct device *dev = &data->client->dev;
-+
-+	unsigned int intr_status, status, class, i;
-+	unsigned int det_status = 0;
-+	int ret;
-+
-+	ret = regmap_read(data->regmap, INTERRUPT_STATUS, &intr_status);
-+	if (ret || intr_status == 0)
-+		return IRQ_NONE;
-+	if (intr_status & INTERRUPT_CLASS) {
-+		regmap_read(data->regmap, DETECTION_EVENT, &det_status);
-+		for (i = 0; i < TPS23861_NUM_PORTS; i++) {
-+			if (tps23861_auto_mode(ports + i))
-+				continue;
-+			if (!(det_status & BIT(i + 4)))
-+				continue;
-+			ret = regmap_read(data->regmap, PORT_1_STATUS + i, &status);
-+			if (ret)
-+				continue;
-+			class = FIELD_GET(PORT_STATUS_CLASS_MASK, status);
-+			if (class == PORT_CLASS_0) {
-+				/* class 0 is same power as class 3, change 0 to
-+				 * 3 for easy comparison
-+				 */
-+				class = 3;
-+			}
-+			if (class == PORT_CLASS_UNKNOWN ||
-+			    class > MAX_SUPPORTED_POE_CLASS)
-+				continue;
-+			if (class > ports[i].class) {
-+				dev_info(dev, "%s class mismatch: got %d, want <= %d",
-+					 ports[i].label, class, ports[i].class);
-+				continue;
-+			}
-+			regmap_read(data->regmap, POWER_STATUS, &status);
-+			if (status & BIT(i))
-+				continue; /* already enabled */
-+			/* Set ICUT and poe+ according to class. Values in ICUT table happen
-+			 * to match class values, so just set class.
-+			 */
-+			regmap_update_bits(data->regmap,
-+					   PORT_1_ICUT + i / 2,
-+					   PORT_1_ICUT_MASK << ((i % 2) * 4),
-+					   class << ((i % 2) * 4));
-+			regmap_update_bits(data->regmap, POE_PLUS,
-+					   BIT(i + 4),
-+					   class > 3 ? BIT(i + 4) : 0);
-+			dev_info(dev, "%s class %d, enabling power",
-+				 ports[i].label, class);
-+			regmap_write(data->regmap, POWER_ENABLE, BIT(i));
-+		}
-+	}
-+	regmap_write(data->regmap, RESET, RESET_CLRAIN);
-+	return IRQ_HANDLED;
-+}
-+
-+static int tps23861_reset(struct i2c_client *client)
-+{
-+	struct tps23861_data *data = i2c_get_clientdata(client);
-+	unsigned int val;
-+
-+	if (data->reset_gpio) {
-+		gpiod_direction_output(data->reset_gpio, true);
-+		/* If shutdown pin is defined, use it to keep ports off, while
-+		 * turning the chip on for i2c configuration.
-+		 */
-+		if (data->shutdown_gpio)
-+			gpiod_direction_output(data->shutdown_gpio, true);
-+		usleep_range(TPS23861_TIME_RESET_US, TPS23861_TIME_RESET_US_MAX);
-+		gpiod_set_value_cansleep(data->reset_gpio, false);
-+		msleep(TPS23861_TIME_POWER_ON_RESET_MS);
-+		if (data->shutdown_gpio)
-+			gpiod_set_value_cansleep(data->shutdown_gpio, false);
-+		msleep(TPS23861_TIME_I2C_MS);
-+	}
-+
-+	/* Check the device is responsive */
-+	return regmap_read(data->regmap, OPERATING_MODE, &val);
-+}
-+
-+static void tps23861_init_ports(struct i2c_client *client)
-+{
-+	struct tps23861_data *data = i2c_get_clientdata(client);
-+	struct tps23861_port_data *ports = data->ports;
-+	unsigned int i, mode;
-+
-+	for (i = 0; i < TPS23861_NUM_PORTS; i++) {
-+		mode = ports[i].fully_disabled	     ? OPERATING_MODE_OFF :
-+		       tps23861_auto_mode(&ports[i]) ? OPERATING_MODE_AUTO :
-+						       OPERATING_MODE_SEMI;
-+		regmap_update_bits(data->regmap, OPERATING_MODE,
-+				   OPERATING_MODE_PORT_1_MASK << (2 * i),
-+				   mode << (2 * i));
-+		if (ports[i].fully_disabled)
-+			continue;
-+		if (ports[i].off_by_default)
-+			tps23861_port_disable(data, i);
-+		else
-+			tps23861_port_enable(data, i);
-+	}
-+}
-+
- static int tps23861_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
- 	struct tps23861_data *data;
-+	struct tps23861_port_data *ports;
- 	struct device *hwmon_dev;
-+	struct gpio_desc *gpio;
-+	struct device_node *child;
- 	u32 shunt_resistor;
-+	int ret;
-+	unsigned int i;
-+	bool need_irq = false;
-+	const char *hwmon_name = client->name;
- 
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
-+	ports = data->ports;
-+	for (i = 0; i < TPS23861_NUM_PORTS; i++) {
-+		ports[i].label = tps23861_port_label[i];
-+		ports[i].class = MAX_SUPPORTED_POE_CLASS;
-+	}
-+
-+	gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_ASIS);
-+	if (IS_ERR(gpio)) {
-+		devm_kfree(dev, data);
-+		return -EPROBE_DEFER;
-+	}
-+	data->reset_gpio = gpio;
-+
-+	gpio = devm_gpiod_get_optional(dev, "ti,ports-shutdown", GPIOD_ASIS);
-+	if (IS_ERR(gpio)) {
-+		devm_kfree(dev, data);
-+		return -EPROBE_DEFER;
-+	}
-+	data->shutdown_gpio = gpio;
-+
- 	data->client = client;
- 	i2c_set_clientdata(client, data);
- 
-@@ -521,6 +707,55 @@ static int tps23861_probe(struct i2c_client *client)
- 		dev_err(dev, "failed to allocate register map\n");
- 		return PTR_ERR(data->regmap);
- 	}
-+	ret = tps23861_reset(client);
-+	if (ret)
-+		return -ENODEV;
-+	for_each_child_of_node(dev->of_node, child) {
-+		ret = of_property_read_u32(child, "reg", &i);
-+		if (ret || i >= TPS23861_NUM_PORTS) {
-+			dev_err(dev, "node %s must define 'reg' < %d\n",
-+				child->name, TPS23861_NUM_PORTS);
-+			continue;
-+		}
-+		if (!of_device_is_available(child)) {
-+			ports[i].fully_disabled = true;
-+			continue;
-+		}
-+		ports[i].off_by_default = of_property_read_bool(child, "ti,off-by-default");
-+		of_property_read_string(child, "label", &ports[i].label);
-+		of_property_read_u32(child, "ti,class", &ports[i].class);
-+		if (ports[i].class > MAX_SUPPORTED_POE_CLASS) {
-+			dev_err(dev, "%s invalid class, disabling\n", ports[i].label);
-+			ports[i].fully_disabled = true;
-+			continue;
-+		}
-+		if (ports[i].class == 0) {
-+			/* class 0 is same power as class 3, change 0 to 3 for
-+			 * easy comparison
-+			 */
-+			ports[i].class = 3;
-+		}
-+		need_irq = need_irq || !tps23861_auto_mode(&ports[i]);
-+		dev_info(dev, "%s: max class: %d, %s by default\n",
-+			 ports[i].label, ports[i].class,
-+			 ports[i].off_by_default ? "off" : "on");
-+	}
-+	if (need_irq) {
-+		data->irq = irq_of_parse_and_map(dev->of_node, 0);
-+		if (!data->irq) {
-+			dev_err(dev, "failed to configure irq\n");
-+			return -EINVAL;
-+		}
-+		ret = devm_request_threaded_irq(dev, data->irq, NULL,
-+						tps23861_irq_handler,
-+						IRQF_TRIGGER_FALLING,
-+						"tps23861_irq", data);
-+		if (ret) {
-+			dev_err(dev, "failed to request irq %d\n", data->irq);
-+			return ret;
-+		}
-+		regmap_write(data->regmap, INTERRUPT_ENABLE, INTERRUPT_CLASS);
-+	}
- 
- 	if (!of_property_read_u32(dev->of_node, "shunt-resistor-micro-ohms", &shunt_resistor))
- 		data->shunt_resistor = shunt_resistor;
-@@ -536,7 +771,11 @@ static int tps23861_probe(struct i2c_client *client)
- 				TPS23861_GENERAL_MASK_1,
- 				TPS23861_CURRENT_SHUNT_MASK);
- 
--	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name,
-+	of_property_read_string(dev->of_node, "label", &hwmon_name);
-+
-+	tps23861_init_ports(client);
-+
-+	hwmon_dev = devm_hwmon_device_register_with_info(dev, hwmon_name,
- 							 data, &tps23861_chip_info,
- 							 NULL);
- 	if (IS_ERR(hwmon_dev))
+etc. etc.
 
--- 
-2.43.0
+>
+> Certainly fix the brk < to be <= and any other calculations, but the
+> rest seem okay as-is to me.  The only real way to be sure we don't cause
+> a bug in the future is to have better testing.
 
+Speaking of testing - Kalesh - do make sure to test the VMA tests to make sure
+this doesn't break those - they live in tools/testing/vma and you just have to
+do make && ./vma
 
+Cheers!
+
+>
+> Thanks,
+> Liam
 
