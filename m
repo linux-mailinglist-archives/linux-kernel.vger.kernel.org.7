@@ -1,133 +1,188 @@
-Return-Path: <linux-kernel+bounces-800006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154E9B4325B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:25:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D34AB4325A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17AFB188C211
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:25:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82C7C567ECE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE22270569;
-	Thu,  4 Sep 2025 06:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9C1265CB2;
+	Thu,  4 Sep 2025 06:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nEDX2+/3"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="Vzl3F4bU"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851E727702D
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517C22641C6
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756967019; cv=none; b=KkoCkHvnCJXtkErqwDsubGptjDa+lTBIhYDDQN+crfB0i3wAqMmSzPWlQ94LQ8KXFXx374eMgCPBXrqP8iB7q2laCDzd4YTHV94sNrE3a/PxJwZ3t+97HoEQSmnZ5vvY421OgFdU8yx/fyWesHn26nexb8JIW5+nJPcJt0nc4gQ=
+	t=1756967078; cv=none; b=gJtTrHuPyP0Eqz/L0ruT644rPrd5nBfaDHdJ2NOClya4RQtowQg1tvkR4IypgVDrWSq7FO1vBEbmyPKvm3T56BlspebVIeDMF4fW8aeCvqWELWD4k5jALiLIU8HkV8uQhsRNHlFMT4qylmGAcYkqjUm0N7TeZSVbVhco8+end2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756967019; c=relaxed/simple;
-	bh=/EnJgE7OJBZX59ejos7JhFpHDpm1x9yOWxaC8UYxIp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cdjWv+K4PTM8/ew2B434TSGRkV/A537bgJYvFKHSQSiunDoJzG+9GEDZnGFu93SklZLjresVXLh+Uyk9g79lCzUq2u8wws2SQPU+uZqR7xpbAKh0edIdYj0Q3GGm14t7g0e8qHl8jmjcThIe/HkG/STUCcjhOYPga2+hXdbSOBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nEDX2+/3; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b4fb8d5dad0so52741a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 23:23:37 -0700 (PDT)
+	s=arc-20240116; t=1756967078; c=relaxed/simple;
+	bh=LvqlNJOB/Ojq07ZIUiyWSozLdIuF8+1QdzHpWK2mEnY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S94Fqro5oPiT+4mUFx4i26EQc7Rss9hiYxwol4/Z5/sCQBNB8tFnaISDQjrGghha4GFQVH4QcnG6OBS1/SwV8x2LVVc7IAR0oShi0hnPxw2U5LwQbEIOy1TXnhkywvNd4rCco8gRjSo+AhFUEgrJJXf24sywlxprcMZ2SXYaUsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=Vzl3F4bU; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b4c29d2ea05so1302288a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 23:24:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756967016; x=1757571816; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=rivosinc.com; s=google; t=1756967075; x=1757571875; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MpJy0SmFfEmeoeaFkzFs+WVa2Vc5JdK+bPJTBjQhA74=;
-        b=nEDX2+/3w6o88I1/2zC/XpxuU2gaC6xdL+klCPa6s70Zht9mP/9n7kqxkl7DbutD33
-         TrSwS5rWj5xfHS8Pdts01JTrn3IpXmeMGGdO9AaGp/Bdybxo2pfQ793UaZzYPqSgRJM8
-         3WYxy9KlJhsWbBu2smAVKGGt4RsPfxBZgO9nppnJacrAaih0K0cFWxIkdtZKwtl+VbvL
-         jelQregH5bqPNh6OePYtBzl0hUF8o59mrhyX0rKEb3V+q4uOQdgsUxyDBhnsfDi7EOKj
-         4bqAa6mFx919+1sqcHfRAo8Amwqe1LOdBGXi6ZiXMBI2EO986C2PHuR9WfzyfjLbw21R
-         9iYg==
+        bh=d7qTV76ULDduJGVAW5YsdUFJhj9UbsymbqAIaKqb9Ys=;
+        b=Vzl3F4bUO3BAeSqcpf2xjVAms48+M4wOsasIPxWQAmjsyLtpdze8jvlyN8xUX4xCei
+         2G2b78d2dxBrx8mOJeiUcS7H2QU4k1s2V3ERX6aOfm1KyH+9O4c4f4i4/zauS/bFK3DW
+         fBUX0/Nb8q6PQwGvJlCru8NDugncXCWxhna+T077hoNGn8iGVK5mCRcsYCoxxaOizkHZ
+         1HPcviPDlL0FKt6C4h+4cubDclQ8JeVugC12o8/9jRzxD+uwxnssuy3OcfbS9ouD08pj
+         nZ56nKALdaLHAZ/ltCRw/yKyMGjc9QdRNFHv1hjbLTVAFaZNqG1LyI4sJ+3VXp/HfHe8
+         NLKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756967016; x=1757571816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756967075; x=1757571875;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MpJy0SmFfEmeoeaFkzFs+WVa2Vc5JdK+bPJTBjQhA74=;
-        b=E1UAe54eVakr9TgInZibKaSRJ/FWoVaNvTaSxjchhgB+O1V02lavo1urWW1+8eWaHz
-         zV5xtAoV7Qs4NrmOh+VbXTWSAHx3iAmoSbzemRKoCjS4ICbvzw9asxxRDWnd9NPAcxci
-         KpMk1ZnvRfanzKv2irs1O46ID05rdGpPrJJZfDHUK/gYH4fa/yWEI5EGJADTNJvx5gk6
-         TXA6JTmMFAKA1QleeH5lphxzSqC4kZOGDt0O6v/ZM2g8+eG4n3gljkwMYNAsS7ThYB12
-         r6UtVU1jTCnCnCgrGErZy0HlLXEHLv4Be+jZ/u04XChtHoACP8t5O3sZKsU7R4pZzuVx
-         rfXQ==
-X-Gm-Message-State: AOJu0YzeOaC5ZXleBBAxg7OFqUzsW6QMf7bKm4KwoAyUFvvju1/7R5qs
-	Jv9P6/1XitQh2N0HX0iS3ofsIfa6iwnQ4UXnjGp9XdJYr54om05wj6TAKWXq2nQt
-X-Gm-Gg: ASbGncvUPo107iXLA5T4BRFcraviRRC1fUjdNS6eQBZoekOMwJ9YKA0UJD6LBuq9M+T
-	AfgFw/5tXbByxWwKPCE0KqOiThZsFgUvjClILD07ZEGMTtYv6YYIoVroNcMy/P+wFDeDW9VGvN1
-	LhJGvbWdy9yrc3WyS9Q2pXH3ZMGvq088Nkw9XlBku/Srqt2UBbVtlbzzlRCE3fK7/pj5FOJijeA
-	RI7y++IzriCOHL49Rzr0QPIQlxX4i9gns3d7i47lqK27MW02jN2dx1HNL9Pb09sizb+RG8Hoy6t
-	ZxhsxO/ovZ1g94bg3RxxTs2R+uaCJBrJ8p/vGfdlu+0dmXpSisIMAzTqSlEepgZq35npQLq8I+8
-	O9rnSoPQ/erp6M2a1ceAuKroPoU5OiKsWzABiIzZ+sqqqcpxC
-X-Google-Smtp-Source: AGHT+IEBJZvQVehY2sHFoniuE6A9P1WB/bX16Yql21Kl7/uCiWvYj5gVnHq0ENPDwr3ALXi69eZlZA==
-X-Received: by 2002:a05:6a00:1c:b0:772:39db:fa09 with SMTP id d2e1a72fcca58-77239dbfb77mr9444420b3a.5.1756967016264;
-        Wed, 03 Sep 2025 23:23:36 -0700 (PDT)
-Received: from hobbes.T-mobile.com ([2600:70ff:f833:0:8e07:c9e8:902c:6ffa])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7725f0c4008sm10198397b3a.35.2025.09.03.23.23.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 23:23:35 -0700 (PDT)
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-hexagon@vger.kernel.org,
-	linux-mm@kvack.org,
-	Brian Cain <bcain@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: [PATCH 2/2] fork: change "a mm_struct" to "an mm_struct" in comment
-Date: Wed,  3 Sep 2025 20:23:26 -1000
-Message-ID: <1c468cd846ba6839fea08df36d8d6e9718625661.1756966290.git.joeypabalinas@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1756966290.git.joeypabalinas@gmail.com>
-References: <cover.1756966290.git.joeypabalinas@gmail.com>
+        bh=d7qTV76ULDduJGVAW5YsdUFJhj9UbsymbqAIaKqb9Ys=;
+        b=M8b5AOnYB6a6yDdgr1KhBWnTVdy/z/D8gnNbIps7SkTMLOUhsz97wMUQtp2KXT1Ipl
+         79IaWsave7bVsTzgquGWQbskvG+IOqktvw35PIs7EwhOvGMQqKt3cmwaRTjv8UU2zsqU
+         Guj6eDLdz5iFMGnYgcdVce53GyUkvKKrwhaXwIrLY+zPjgWJNauVshvo10ckLy9+KEkS
+         JsyahLGeLSbTQhDeCjiKbq8/0nbqd+8aX3mzme79PsosMYjk1EH/1PuktAtgMjno9Dyn
+         PKPxGgPj6OJhw1D/no83fSH4qaafzfhZx7NEAmK3bfLDFwdfvRTODch4D8xUGjY7Gt1/
+         OCyw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwi6y/AGGfJuejhlGzOXoIJwASj8GWVmw4oewnv21fsfk+YMHdpeHi9q9wJP2GvgAYJoo/aToNXpwc3oc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLDNg7a9LHNTYzkkRg7NIeTFRbUAnDEUrVs1TTXAwAccd3ubKS
+	DCGf3x9ZAo7o72K31qyOzNHp3cL9M3z+n7RgCq9gVGGmJx9ntS/+kHGiktwB+zuScAIpnoKICA8
+	Vy6TJL0mSgIlYPHyw6h3vL9UkJmb7GR0MRzp9IE67JA==
+X-Gm-Gg: ASbGncsEZN/pvjCktPT4IVc96nC0INJk4EfNw2Oxfl2IkBXIoKXtTpPw7VzYF7/1sxL
+	6FAScpEploKCslxEft3R7bbfbafa/6QdEjFBovyAxANOhtLFPhHFwOZkiY91vxhHkCGZX+mwBQA
+	148XqA20GFtLqZ46o2VmW4HeqjBrSKyDBK9GsPO7tiO06HtEjonmzoIWLMxcGjSr7EXisHbApdb
+	ayF4D1GXQbgrXlD7FRs
+X-Google-Smtp-Source: AGHT+IHoFdxbuDjv07lVFMl22mnM/aIaMh25mvdbBCgh16ExZRzUOIBxo9SxO6MD4xOcEcTHtD3JYnMx67qXTku5mb0=
+X-Received: by 2002:a17:902:d50c:b0:248:a642:eeeb with SMTP id
+ d9443c01a7336-2493ef4dc88mr252425775ad.15.1756967075366; Wed, 03 Sep 2025
+ 23:24:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250829-pmu_event_info-v5-0-9dca26139a33@rivosinc.com>
+ <20250829-pmu_event_info-v5-6-9dca26139a33@rivosinc.com> <aLIR3deQPxVI2VrE@google.com>
+In-Reply-To: <aLIR3deQPxVI2VrE@google.com>
+From: Atish Kumar Patra <atishp@rivosinc.com>
+Date: Wed, 3 Sep 2025 23:24:24 -0700
+X-Gm-Features: Ac12FXyqcoq544W7rcjvkJ9YZPU7FqUqKJEMd-35Lr5ym4GwFkYYv0iByho1HQ4
+Message-ID: <CAHBxVyHFkNtFdX-vciPvYnTOH=GXvHVW7hjFrLA4MFr9wqWVvQ@mail.gmail.com>
+Subject: Re: [PATCH v5 6/9] KVM: Add a helper function to check if a gpa is in
+ writable memselot
+To: Sean Christopherson <seanjc@google.com>
+Cc: Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Mayuresh Chitale <mchitale@ventanamicro.com>, 
+	linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The correct english is "an mm_struct" which is used everywhere else
-in the kernel.
+On Fri, Aug 29, 2025 at 1:47=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Fri, Aug 29, 2025, Atish Patra wrote:
+> > The arch specific code may need to know if a particular gpa is valid an=
+d
+> > writable for the shared memory between the host and the guest. Currentl=
+y,
+> > there are few places where it is used in RISC-V implementation. Given t=
+he
+> > nature of the function it may be used for other architectures.
+> > Hence, a common helper function is added.
+> >
+> > Suggested-by: Sean Christopherson <seanjc@google.com>
+> > Signed-off-by: Atish Patra <atishp@rivosinc.com>
+> > ---
+> >  include/linux/kvm_host.h | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > index 15656b7fba6c..eec5cbbcb4b3 100644
+> > --- a/include/linux/kvm_host.h
+> > +++ b/include/linux/kvm_host.h
+> > @@ -1892,6 +1892,14 @@ static inline bool kvm_is_gpa_in_memslot(struct =
+kvm *kvm, gpa_t gpa)
+> >       return !kvm_is_error_hva(hva);
+> >  }
+> >
+> > +static inline bool kvm_is_gpa_in_writable_memslot(struct kvm *kvm, gpa=
+_t gpa)
+> > +{
+> > +     bool writable;
+> > +     unsigned long hva =3D gfn_to_hva_prot(kvm, gpa_to_gfn(gpa), &writ=
+able);
+> > +
+> > +     return !kvm_is_error_hva(hva) && writable;
+>
+> I don't hate this API, but I don't love it either.  Because knowing that =
+the
+> _memslot_ is writable doesn't mean all that much.  E.g. in this usage:
+>
+>         hva =3D kvm_vcpu_gfn_to_hva_prot(vcpu, shmem >> PAGE_SHIFT, &writ=
+able);
+>         if (kvm_is_error_hva(hva) || !writable)
+>                 return SBI_ERR_INVALID_ADDRESS;
+>
+>         ret =3D kvm_vcpu_write_guest(vcpu, shmem, &zero_sta, sizeof(zero_=
+sta));
+>         if (ret)
+>                 return SBI_ERR_FAILURE;
+>
+> the error code returned to the guest will be different if the memslot is =
+read-only
+> versus if the VMA is read-only (or not even mapped!).  Unless every read-=
+only
+> memslot is explicitly communicated as such to the guest, I don't see how =
+the guest
+> can *know* that a memslot is read-only, so returning INVALID_ADDRESS in t=
+hat case
+> but not when the underlying VMA isn't writable seems odd.
+>
+> It's also entirely possible the memslot could be replaced with a read-onl=
+y memslot
+> after the check, or vice versa, i.e. become writable after being rejected=
+.  Is it
+> *really* a problem to return FAILURE if the guest attempts to setup steal=
+-time in
+> a read-only memslot?  I.e. why not do this and call it good?
+>
 
-Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
----
- kernel/fork.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Reposting the response as gmail converted my previous response as
+html. Sorry for the spam.
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index af673856499dcaa35e..9a783cd46d097a2d68 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1397,18 +1397,18 @@ static int wait_for_vfork_done(struct task_struct *child,
- 	put_task_struct(child);
- 	return killed;
- }
- 
- /* Please note the differences between mmput and mm_release.
-- * mmput is called whenever we stop holding onto a mm_struct,
-+ * mmput is called whenever we stop holding onto an mm_struct,
-  * error success whatever.
-  *
-- * mm_release is called after a mm_struct has been removed
-+ * mm_release is called after an mm_struct has been removed
-  * from the current process.
-  *
-  * This difference is important for error handling, when we
-- * only half set up a mm_struct for a new process and need to restore
-+ * only half set up an mm_struct for a new process and need to restore
-  * the old one.  Because we mmput the new mm_struct before
-  * restoring the old one. . .
-  * Eric Biederman 10 January 1998
-  */
- static void mm_release(struct task_struct *tsk, struct mm_struct *mm)
--- 
-Cheers,
-Joey Pabalinas
+From a functionality pov, that should be fine. However, we have
+explicit error conditions for read only memory defined in the SBI STA
+specification[1].
+Technically, we will violate the spec if we return FAILURE instead of
+INVALID_ADDRESS for read only memslot.
 
+TBH, I don't save much duplicate code with the new generic API now.
+If you don't see if the generic API will be useful in other cases, I
+can drop that patch and changes in the steal time code.
+
+[1] https://github.com/riscv-non-isa/riscv-sbi-doc/blob/master/src/ext-stea=
+l-time.adoc#table_sta_steal_time_set_shmem_errors
+>         if (!kvm_is_gpa_in_memslot(vcpu->kvm, shmem >> PAGE_SHIFT))
+>                 return SBI_ERR_INVALID_ADDRESS;
+>
+>         ret =3D kvm_vcpu_write_guest(vcpu, shmem, &zero_sta, sizeof(zero_=
+sta));
+>         if (ret)
+>                 return SBI_ERR_FAILURE;
 
