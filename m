@@ -1,170 +1,231 @@
-Return-Path: <linux-kernel+bounces-801671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19370B44895
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:33:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF20B44897
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB97B7BDD64
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:31:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E0991CC169A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6493B2D0C89;
-	Thu,  4 Sep 2025 21:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705A629A30E;
+	Thu,  4 Sep 2025 21:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZ7eF6Si"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xp/KtA/e"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA322C21F7;
-	Thu,  4 Sep 2025 21:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F3A2C032E
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 21:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757021565; cv=none; b=st58q5Aq5Vl+IJiFrXqKRkT0kX8nNsJd+J6+NJ9wUY6DghHbADEQS5cnPpSEeS/BdekZ1WU//SeCXPyYJ/ec/1e8ktz+P7v7KyZsfFuoRP30TehWp5mh7K01P2KcO6tKxTsy6WAMrz+BgWDPMNOi2K8EPEZV5m+bPLNf5Ge0uwA=
+	t=1757021587; cv=none; b=CK7xAzwvxDUbOKUdG5LXoXUBWyYDyDE8rOmKkmbcHx4Cli8lvainBXbaMXsrLCo0YhQOYZ/lCYH2dXSx0edyBuzbh6l3n8/wed1zN4q//VFpJQ/lZYDx0KZNAZfHEvLO7p/OgjzJj5hHQq38K3KdVDKYkuLcPmN3o+sPLRnI69w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757021565; c=relaxed/simple;
-	bh=mskh1ca0IFsv+ws5kBUC/1IZ+qrxNgix4I2UcawkYxE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DW5/S9IBit5NFJo5tS44rqGBM02iUi5X+Ma/e8RyXS2/+v6E7kMCzfGEESh8y7WYN55MuWNtGYaIQkiTvyiT02azZY2G3Odu9nse06eSNmL34AZ9Eu6lMAYg5TJC0/wB2ieouZtYPT+BgO3LlKZqYcvuFuCwnZSE2TkeIpOw3ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jZ7eF6Si; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-809f849bdd6so162206985a.0;
-        Thu, 04 Sep 2025 14:32:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757021563; x=1757626363; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SP//4Q+uImYUL6/+8qHx67kUOU4MQKI9owsJGMxhBGo=;
-        b=jZ7eF6SiQzp/asAtTns5X1fZy2N360g+HLZt5tMpONZZtOjos3T//ZaJZeubERlGg0
-         /Gn6DsP4/0hR5T6iOrjYDPS52rRC3yoIplMHhESiAihWpvxHMCr8SRVCw7zYCnLk54+n
-         ZxRTLAaKDKULuKbQNormcfwVjbkTMe3mubQYNiicplLMBYpWYDhhqaMEAmXcOxjQWWZX
-         S08NNkVCMnLc7l31M+ja2hs16PhGbcm9TLBls+N2eO/XzQO6EpPkDmvSW3guTEfOWinW
-         bTLKWFI1zuSOrnxdyrsco5Rz/8sgosFt2a0kgQqleXQBWeQyKWfMrHauwFDyHBguZWXx
-         ieTQ==
+	s=arc-20240116; t=1757021587; c=relaxed/simple;
+	bh=9MiI5ZvuCO1wq15mMD/fHkYQx414pGpbtnQ0zoGU7d8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nMKVGrsZCcloJxkRMgzJhMCPd5QRRXODKBZpaeW5Gkp2fpgGc1Q/dKY3Y144R/eH5cJIjkHBXUy5hIvUFxqQLFFbsVEGGC0ItY+FUjbheYIWJc3WtBkIa57x1pmJFRyDMHNwVT/pk3XVGCLWpnIHP/Mg39am8lJq7OrqYAA/e74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xp/KtA/e; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757021585;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G12ZvoIGncdc5q9Oz1isjoS1D9PWqRfwj3EJGyQfxdc=;
+	b=Xp/KtA/eyk3YDRLcUOr5SnITUMJzCWutnkLG7kPdjGAR++Kl5AqHcSLKsTNysctANVBU0z
+	DIMEUKU7cKXT/xxmY5+vnYuepxrnG5RuKVUbn9HzwGzzT7qEUGDLIUp6UfFoJtazDO4CVu
+	NpsuSj3LorBFuh0CVIEkHLKHMXfXUZA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-630-KQfXbXJaP_68DDBX-vmtYQ-1; Thu, 04 Sep 2025 17:33:03 -0400
+X-MC-Unique: KQfXbXJaP_68DDBX-vmtYQ-1
+X-Mimecast-MFC-AGG-ID: KQfXbXJaP_68DDBX-vmtYQ_1757021582
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3dabec38299so889255f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 14:33:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757021563; x=1757626363;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SP//4Q+uImYUL6/+8qHx67kUOU4MQKI9owsJGMxhBGo=;
-        b=Fk8ZcpMLJYUIbdyYO27dWaM1erWjvPdghSF7Xb71EK2cY23T7+eVLEtU0/qXJdb5DY
-         GiF568jPpT2s/ic1eHdP4NJdGliT3fXqtw7gVsbt37npQaMGRS2pWvgtATKB8BAqWlyZ
-         x0uFvPxQTM6dcd5GbAJcN1uqnU08+xhW4Q0mUiWFm/UfhFJpJ4v74+r28jkPrAfpKzWJ
-         KBNuUX6nikczh8fMfNiswQB11Nh1Y9jhnRGlaQJJn1oBw97tv1L40WYMhDrdoZvXqgac
-         +eznkcgelIeFWsKQGr0hU1TkuZ/UDO/QsGyGQcS9qDWYiOT7YcPV1d1Z30DSvwtjASE/
-         TAzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZdvvTbjtpG8emu2pc9gSskr3Pm5/BNJbH5xC25SIPNbuxYDteh8/dJ6ef83rMb0YbVPBnt1L3Ca6TBMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgrkIXXx0OgnFAXCNNy1yr7Ql8IcrWzaNkDenkkvp9SCL8BhIe
-	M5aUt6FR93mGCBE9Nr/DjnKkMUktOms0JhKh5Qpf5dn1GyYkfyzRVwKrRjfT9A==
-X-Gm-Gg: ASbGncuT0wDL7xUBjfNMVn5d7vc4Sdu5rpO8feYmA6+/zi3slyKHvV7GxEV8wCvjNoK
-	oK5GC5eZE13JaqW0G74Udspyg8oDjARMHqKklkaEjOSpiKvVn9P9lVso4rApuq6tTR3N/xosdpm
-	BxT5RDL3ayDyteoht1D6Arfwbn6MDMH1gtgirxqvu6/nZrw9kY/tq9Fb0dNXfEXQZGeN+cBzPU2
-	j21voa2OwpgwcIDeEtrjUJBaHYZhmKlj89LNrnx1Yy8gfunj9zCVEiXrXX5Xj/jE6HJwQWuepDp
-	nhDVP87rklpSobIgYBg19Jba5k7Z2ymJLQ/cuSBkeBsnYAb5N/kC9VcNd6Vtjw1GukBQyOwF40j
-	fe1jAHxKdaa+dZsl108JjsgpYilDpshk3xwG5QGkAJhZduCR7v5u+/yRfKz8JPMt6e9ouXpE=
-X-Google-Smtp-Source: AGHT+IEqs7POj69pxkvZDjE95U6KYOVuVkDeoyFsTxqhrP/MM9ePnYC09WI0Yur0q2gFyWQ0dNfZrw==
-X-Received: by 2002:a05:620a:461e:b0:7fc:797a:942a with SMTP id af79cd13be357-7ff2b0d77d8mr2309803585a.45.1757021562704;
-        Thu, 04 Sep 2025 14:32:42 -0700 (PDT)
-Received: from archlinux ([2601:644:8200:acc7::9ec])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b48f635cbesm35473501cf.5.2025.09.04.14.32.41
+        d=1e100.net; s=20230601; t=1757021582; x=1757626382;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G12ZvoIGncdc5q9Oz1isjoS1D9PWqRfwj3EJGyQfxdc=;
+        b=A++xga00aAUp+GfSCJsiJIedYgujpQEic6dbY2iMqc11DQ9R26gMzjPIEG5BOcD2Um
+         pdCr3lnCQSc8jG1mtIE6jaJeUBJH3am+zzs4p4sRRt6B9MpMLiCMZj0Lfloij49RIh0F
+         5uT1bPnYk8JUasb418snA2iKfJIe5ENBes4h732iVsg3pDyyhELDznQYx+PxaI9TnEu+
+         PEn3g0EFw50vD/+4BqQPUaFZRjBfWZcoW1z5CdIggh5I4WLJyQ4FOgrMZgvClDn50Q98
+         KbybIvHCI39oRS9S9ntuoimouFCItuCqr/fUyC2ED75YKIvb5DpSzP5c8aEasaeDa8Ql
+         QPwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRfoMRL4geN1jJnghX+LJSzP8g0SIN5w9S6BshP5uIS5ar47UMMy8SFKqPTgUaXTqASOxnVhNkrwwKxi8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSclgphiPke137BiyMURgpPh7uAf4hgkatYzYg2KpEmwLxvRkx
+	Ns5F/aoXyODqT7CU/K6dSDE5dsm6nCj4tDTOhI8AwViOAmPiMLIRaGKcWGswKFVyA3QEXkMdaj8
+	1zz97fICgRrcwS8f8nMJN6O/HqRpKBVWmne5wn0b+/Zs0WwyeBgai815CoHIaBGjZyA==
+X-Gm-Gg: ASbGncuoY3UKz5IHdPOgzzE9y2lvBHFgtdUY0+M3lcFSimQ71wCn1Iel+wK591ixzA5
+	U4IxEjVVnbphm7sQ9pdIhO61hcRS7xKlElqkXVMWe8086vyPoVf7x9CtmrhomNnulA6lCjHt42g
+	XwRFqQEPr6A023lOiuXlXO4Cgk8UZu/HAZk2X800VQ5aRijUPna2nV8RZrBKccwr14LKPnc/vD8
+	uRrR2SIZlbqfZZt7axF4mavla+JHwwG+HkxUPk7J6RM6KtcKWzvCkMvc0bYdbBYTGReKijWD985
+	rmBmjq7uM7G3iDnjCRDaf09Qtk4I1t4m9xsD+Mrp3FDwqoKknhiun7l5r14YHhBIzw==
+X-Received: by 2002:a05:6000:2703:b0:3d3:6525:e35a with SMTP id ffacd0b85a97d-3d36525e8edmr9572274f8f.4.1757021581606;
+        Thu, 04 Sep 2025 14:33:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFfw63CZFozF8s+C6cWdSgHCPxbPiLm75XGfmKwvUvkmtLdSrYut8mMraqSLccxduV85Qv9AQ==
+X-Received: by 2002:a05:6000:2703:b0:3d3:6525:e35a with SMTP id ffacd0b85a97d-3d36525e8edmr9572266f8f.4.1757021581097;
+        Thu, 04 Sep 2025 14:33:01 -0700 (PDT)
+Received: from redhat.com (93-51-222-138.ip268.fastwebnet.it. [93.51.222.138])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e50e30asm302706375e9.24.2025.09.04.14.33.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 14:32:42 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Sunil Goutham <sgoutham@marvell.com>,
+        Thu, 04 Sep 2025 14:33:00 -0700 (PDT)
+Date: Thu, 4 Sep 2025 17:32:58 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
 	Andrew Lunn <andrew+netdev@lunn.ch>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/CAVIUM THUNDER NETWORK DRIVER),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCHv2 net-next 2/2] net: thunder_bgx: use OF loop instead of fwnode
-Date: Thu,  4 Sep 2025 14:32:28 -0700
-Message-ID: <20250904213228.8866-3-rosenp@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250904213228.8866-1-rosenp@gmail.com>
-References: <20250904213228.8866-1-rosenp@gmail.com>
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] virtio_net: Fix alignment and avoid
+ -Wflex-array-member-not-at-end warning
+Message-ID: <20250904173150-mutt-send-email-mst@kernel.org>
+References: <aLiYrQGdGmaDTtLF@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLiYrQGdGmaDTtLF@kspp>
 
-This is implemented under CONFIG_OF_MDIO, which already assumes an OF
-node. Also the loop already checks to see if of_node is NULL before
-proceeding.
+On Wed, Sep 03, 2025 at 09:36:13PM +0200, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Use the new TRAILING_OVERLAP() helper to fix the following warning:
+> 
+> drivers/net/virtio_net.c:429:46: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> This helper creates a union between a flexible-array member (FAM)
+> and a set of members that would otherwise follow it (in this case
+> `u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];`). This
+> overlays the trailing members (rss_hash_key_data) onto the FAM
+> (hash_key_data) while keeping the FAM and the start of MEMBERS aligned.
+> The static_assert() ensures this alignment remains, and it's
+> intentionally placed inmediately after `struct virtnet_info` (no
+> blank line in between).
+> 
+> Notice that due to tail padding in flexible `struct
+> virtio_net_rss_config_trailer`, `rss_trailer.hash_key_data`
+> (at offset 83 in struct virtnet_info) and `rss_hash_key_data` (at
+> offset 84 in struct virtnet_info) are misaligned by one byte. See
+> below:
+> 
+> struct virtio_net_rss_config_trailer {
+>         __le16                     max_tx_vq;            /*     0     2 */
+>         __u8                       hash_key_length;      /*     2     1 */
+>         __u8                       hash_key_data[];      /*     3     0 */
+> 
+>         /* size: 4, cachelines: 1, members: 3 */
+>         /* padding: 1 */
+>         /* last cacheline: 4 bytes */
+> };
+> 
+> struct virtnet_info {
+> ...
+>         struct virtio_net_rss_config_trailer rss_trailer; /*    80     4 */
+> 
+>         /* XXX last struct has 1 byte of padding */
+> 
+>         u8                         rss_hash_key_data[40]; /*    84    40 */
+> ...
+>         /* size: 832, cachelines: 13, members: 48 */
+>         /* sum members: 801, holes: 8, sum holes: 31 */
+>         /* paddings: 2, sum paddings: 5 */
+> };
+> 
+> After changes, those members are correctly aligned at offset 795:
+> 
+> struct virtnet_info {
+> ...
+>         union {
+>                 struct virtio_net_rss_config_trailer rss_trailer; /*   792     4 */
+>                 struct {
+>                         unsigned char __offset_to_hash_key_data[3]; /*   792     3 */
+>                         u8         rss_hash_key_data[40]; /*   795    40 */
+>                 };                                       /*   792    43 */
+>         };                                               /*   792    44 */
+> ...
+>         /* size: 840, cachelines: 14, members: 47 */
+>         /* sum members: 801, holes: 8, sum holes: 35 */
+>         /* padding: 4 */
+>         /* paddings: 1, sum paddings: 4 */
+>         /* last cacheline: 8 bytes */
+> };
+> 
+> As a last note `struct virtio_net_rss_config_hdr *rss_hdr;` is also
+> moved to the end, since it seems those three members should stick
+> around together. :)
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+> 
+> This should probably include the following tag:
+> 
+> 	Fixes: ed3100e90d0d ("virtio_net: Use new RSS config structs")
+> 
+> but I'd like to hear some feedback, first.
+> 
+> Thanks!
+> 
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- .../net/ethernet/cavium/thunder/thunder_bgx.c | 23 +++++++------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-index a68dccb7c2da..06ca305de1b4 100644
---- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-+++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-@@ -1468,30 +1468,23 @@ static int bgx_init_acpi_phy(struct bgx *bgx)
- 
- static int bgx_init_of_phy(struct bgx *bgx)
- {
--	struct fwnode_handle *fwn;
--	struct device_node *node = NULL;
-+	struct device_node *node = bgx->pdev->dev.of_node;
-+	struct device_node *child;
- 	u8 lmac = 0;
--	int err;
- 
--	device_for_each_child_node(&bgx->pdev->dev, fwn) {
-+	for_each_child_of_node(node, child) {
- 		struct phy_device *pd;
- 		struct device_node *phy_np;
-+		int err;
- 
--		/* Should always be an OF node.  But if it is not, we
--		 * cannot handle it, so exit the loop.
--		 */
--		node = to_of_node(fwn);
--		if (!node)
--			break;
--
--		err = of_get_mac_address(node, bgx->lmac[lmac].mac);
-+		err = of_get_mac_address(child, bgx->lmac[lmac].mac);
- 		if (err == -EPROBE_DEFER)
- 			goto defer;
- 
- 		SET_NETDEV_DEV(bgx->lmac[lmac].netdev, &bgx->pdev->dev);
- 		bgx->lmac[lmac].lmacid = lmac;
- 
--		phy_np = of_parse_phandle(node, "phy-handle", 0);
-+		phy_np = of_parse_phandle(child, "phy-handle", 0);
- 		/* If there is no phy or defective firmware presents
- 		 * this cortina phy, for which there is no driver
- 		 * support, ignore it.
-@@ -1511,7 +1504,7 @@ static int bgx_init_of_phy(struct bgx *bgx)
- 
- 		lmac++;
- 		if (lmac == bgx->max_lmac) {
--			of_node_put(node);
-+			of_node_put(child);
- 			break;
- 		}
- 	}
-@@ -1528,7 +1521,7 @@ static int bgx_init_of_phy(struct bgx *bgx)
- 			bgx->lmac[lmac].phydev = NULL;
- 		}
- 	}
--	of_node_put(node);
-+	of_node_put(child);
- 	return -EPROBE_DEFER;
- }
- 
--- 
-2.51.0
+I would add:
+
+as a result, the RSS key passed to the device is shifted by 1
+byte: the last byte is cut off, and instead a (possibly uninitialized) byte
+is added at the beginning.
+
+>  drivers/net/virtio_net.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 975bdc5dab84..f4964a18a214 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -425,9 +425,6 @@ struct virtnet_info {
+>  	u16 rss_indir_table_size;
+>  	u32 rss_hash_types_supported;
+>  	u32 rss_hash_types_saved;
+> -	struct virtio_net_rss_config_hdr *rss_hdr;
+> -	struct virtio_net_rss_config_trailer rss_trailer;
+> -	u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];
+>  
+>  	/* Has control virtqueue */
+>  	bool has_cvq;
+> @@ -493,7 +490,16 @@ struct virtnet_info {
+>  	struct failover *failover;
+>  
+>  	u64 device_stats_cap;
+> +
+> +	struct virtio_net_rss_config_hdr *rss_hdr;
+> +
+> +	/* Must be last --ends in a flexible-array member. */
+> +	TRAILING_OVERLAP(struct virtio_net_rss_config_trailer, rss_trailer, hash_key_data,
+> +		u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];
+> +	);
+>  };
+> +static_assert(offsetof(struct virtnet_info, rss_trailer.hash_key_data) ==
+> +	      offsetof(struct virtnet_info, rss_hash_key_data));
+>  
+>  struct padded_vnet_hdr {
+>  	struct virtio_net_hdr_v1_hash hdr;
+> -- 
+> 2.43.0
 
 
