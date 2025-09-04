@@ -1,178 +1,235 @@
-Return-Path: <linux-kernel+bounces-800655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB615B43A25
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:31:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE73B43A3A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3A701716EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:30:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3C3B3BF5CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5454C2FC01B;
-	Thu,  4 Sep 2025 11:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F322FA0C7;
+	Thu,  4 Sep 2025 11:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="gB9Jmmog"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012050.outbound.protection.outlook.com [52.101.126.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="eSV3rtrM"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102EF2FAC19;
-	Thu,  4 Sep 2025 11:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756985451; cv=fail; b=BxWiOinpsqqq7Gwlmbj1zZaXGCAMZvzyPHxQqW63PJhVHVC9+RVsR46z45KCyHuBOg7KfYvcjiegsv+DdCPAvJN5xySSOWepsc7c+ClVEOUmNYQS/lPVkWZxfDKmAYJPvJ1IVXTLLhi95Cl8oQqMz0DMn7Ni+eQ4kMwdeHZ4Sgo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756985451; c=relaxed/simple;
-	bh=h20Hntyp1DfdS4M/d10gCkiuEOAit/155vvNc9U1Jas=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=jVtpFPTArnAXaKYa33Iaxe/2czaXFJy93Sq+Sq4TkjEYofGDF4dYRfeWFdtAfUNKqdAj+tDBJZoF/ASsZ8HfMYRlIe4NuXGYJEdgEtcEZU5gN+wx7IZAD0c1G6oJGGF8+7wFRQKX2LDBRJ6z4ACctLrHuycv9vQbCQyuQBIRSAo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=gB9Jmmog; arc=fail smtp.client-ip=52.101.126.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xlyZ87ffPG9NGPik3ackGBjHpH2Nq3LcD3fpFvBrgLlKUkKMlPu1RIoaCgp8t4fxa9xJ74U3sKp3RsW3qkxuk0hvxD9dXvAGTquIqRh5f+lvaCsyQ04++vci0gBxh4OHAb28nZvXnQofnpzks3vQ5ZHgDDXPl+UOhdvyaL8+ipYIkDTnhtNXsHa5ZGaj7NG68hcqoST6/UMc+cFh2Q6xP0LGAWZ4B4jiyWyLL+co8tfTV8aWhgsGjJCICcr+6FYYpLzkqQkHx4JMe/J9dsLbqm+5RpDEg1PcU4Jx/Y+TWHMpdl7MU6JiCJWyuYXuR94eoPAohOblWTVbYdfPgb9lWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3rTcIawNW2r4H7pMxJPXEXwDlVYGltRashIn0Bhvj3c=;
- b=qdF6BQuwvAmKjnXwJX/5sG+C4aCe6QntKiCFAj8T0MyB2pTO+5yNGWLpxWPo/8kLz3Bie0zNRSc3q/su2fN38+5+CCb7Ds5mAAyazkrE/jizD0/vczL0kUS3CNJ+ajydAt4HHL2Mbf0ijtQJekNj8uadt1aOZn/Rt/gpjqIfVi932twMIJ3aqhWOFsksSme25Lw7far1vGnSB4o5CT8I/iMdLgj0q1ejH/m/yJ+16zMKDwHReEeVd8/8ApKoRuzzXFcbmH9IiHFC1OlY6Qh8e8PvrRVoIfOPPpIQ2n16NjJRkZgJDnHeA2EAyORp+5smlcUgZMsblyazfzHa1P4R8w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3rTcIawNW2r4H7pMxJPXEXwDlVYGltRashIn0Bhvj3c=;
- b=gB9JmmogpNIxICvEfUoVTGgtpOZEKF82DqD8tHLSoBGNqsUQ1ul8claYB0/XT3L2hneOhbceUqM9DtvMh5GY8zkNggTUYy01fOUUnlpbuqrmNSRE396NCfSKLefIfgyR/f5jRtrOHpOsfNDo37cjAs2LQF2tvTATuNTzF1tDIGNluL93kfT3v/XWFkWKEM+pxohGH4xYCv2/UbjWPzJFIKO16WvqQlE7FKzDlmLad1/BdhvBO/j0OPTBSUsJ900sQxB0tYbGlu1luBk8PUbkAeikhelO75oAS4vIj65RrJL010R9BklmiQ97awb1oHEYD8r0Jndcm6Timkb/6yIoHw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by TY0PR06MB5753.apcprd06.prod.outlook.com (2603:1096:400:271::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Thu, 4 Sep
- 2025 11:30:47 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9094.016; Thu, 4 Sep 2025
- 11:30:47 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org (open list:SIANO DVB DRIVER),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH] [media] siano: remove redundant ternary operators
-Date: Thu,  4 Sep 2025 19:30:34 +0800
-Message-Id: <20250904113036.351870-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP301CA0073.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7d::11) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC602F617D
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756985459; cv=none; b=rX9miCu1LApS1NiOKhDy+HZ23tYFwUMCeBOTxsYajOe66zQcEv+cF5aW85Jhu/0pdPfIBngvPQ0HoVU/FxM3ZvYCUewPFG51LV6imizDeT2rSFFmFr/Gc83E7hIlHRRFPqMv53gkswnZ/9s2MrszdrJdykfKj8/TCIUNFO1r3lU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756985459; c=relaxed/simple;
+	bh=Hp9BDo08+ttjouqdhSm6RM9IRbBsVBQU3hXMzM5d7e8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=exNksXjtaGz7fItfLzjTL4AMH7yVU+ke1FlVUUCmwoZXENJ3wxucBDvwU2BD9WPylHmRAOWx+yFf2LkkRFrjnJbotp1wfGxWwDkUSIFB7oncIFgqSASBuOGbJDaM25tDFBt46+LmlVll7dQwoGfvCgtcvaL2rU/Wls4H7dP2sq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=eSV3rtrM; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-249406d5878so9951745ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 04:30:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1756985457; x=1757590257; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2wpehmCZuPhVMi3yNUgYoiWqJkgOsf1rJIADIvoHRns=;
+        b=eSV3rtrMkZA7LhtnVe5s+RMfAGfsCZ7gBPkf5eT3MgaW4YmZN1NQjWNrQ0a9xXy1vS
+         E+0XuhVuR9eWb2mz9L8HE4fszRlzWQjE2hiWjnRaLIZ5e/n4O6EHFhQlWiJRgsamRiPA
+         6YEqwX8nisCLbcLcgFkDtEieii0DtsmYfTd+8NZKmNU9V2O9FilQFSeF97WmrNb+xOwA
+         PwC+sZlTW9k2xkUo0C703njWJWd1Y4Js20CXva/Ytrx+4GCPkS+qLs/BQdx7vUe/hf7a
+         8GH6mu9iXR67eZXAcGw/pyu14br757kRjlKF+Luu6+CVou3n4MtJr8+mFUW69rCy+JC0
+         aT7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756985457; x=1757590257;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2wpehmCZuPhVMi3yNUgYoiWqJkgOsf1rJIADIvoHRns=;
+        b=ecQpdQ4xak7o3Hgvr+g2OySQV2e3zmwZ4J/EFFXrDPKNanTbwMSFlckI8d/DgyXNy0
+         J2/EnR6zLbbPuvvj88eXblHkfRnGIzj7xpOxYRCo1mj509TAn5kFrmI71fnyhSGPuhnp
+         +0lsjW/yqW03c+VcYPBb0hEXOnYa4g8Xqnz5aTLfNVHxSnOY3DqeHA9bENP11Pq7aqLJ
+         JSpRA/qwU9tL1EUXEWBiIgceb/RONBOyVx25BGxKWnenZXzzOeLuBTZk3NnOqoQHebeP
+         aJYBy7EJKxiyMGJs2o5XebXuVZW9uN2BoDC/vAnILWgcZFgvzQ80GQsAA1hHhqAtZ0Gx
+         uarA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmNNvsLm0lHnIMnKa870LMmh5PNmj0hFSZv/jb9oGdnf2BuW+v0TXiwRSEYAiS57jIOWpJpDuksUbsgyQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT0bNEi2Jv6/Wd+X4uVde92GCpBOdi6OMqaYU36myZ0l7AXud5
+	4+b/pd9GFn+vDX24rK95NCB+pipyZodyw8TondHbqxVVjMJa7l3SEEv1IAR6uLxtZg==
+X-Gm-Gg: ASbGncu5Pw3vYeduGlhVdP3gz79hqsGVou9q28Nxc9HTDwrO0xjSaP2RJ4ZOFMOsrKY
+	ZDFrGbGXIG6YTOqIcdN4Epiyf/fIWYcvIR7IiCohWKVUcjVJCXIp8vnzaTohHfX+CQTnsyroPib
+	qWSHp5sXqBcVQQ5nS3/7RPCDbbhmi2hk2F3bVrzHMVJAPNCAUKMGDkOEtHnITTjjeW1WgOxFH3O
+	rmo3IPnmOihAgxfXj2Wq0Fp6gmV2ii6S4ovdhtXCoXo3+8ustD7sDncQXhgiKhSbW0eiuQu857t
+	6d0RcMOryPf1FV3kDfOwf0X0r7jUD960suzKnqND9RjWLxLmAx/+qi+HfqwWdShzzSpswSgjuL+
+	LdhlFRjPF5sFuYdhN+/QbbxL813JNZtyLX+y1fRUSpXrrWfHHJl5AEGD/vExq
+X-Google-Smtp-Source: AGHT+IEpg2qRwwbYVHn2CXlndjE4SjY1ah3J+t0Cq+9ilg7JkQLLAI+QPnGQf+vNl2uwWzzkYp16vw==
+X-Received: by 2002:a17:903:2cf:b0:248:9e56:e806 with SMTP id d9443c01a7336-24944870a36mr280342425ad.12.1756985456857;
+        Thu, 04 Sep 2025 04:30:56 -0700 (PDT)
+Received: from bytedance ([61.213.176.55])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24906390e6bsm188203085ad.96.2025.09.04.04.30.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 04:30:56 -0700 (PDT)
+Date: Thu, 4 Sep 2025 19:30:45 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Benjamin Segall <bsegall@google.com>
+Cc: Valentin Schneider <vschneid@redhat.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Matteo Martelli <matteo.martelli@codethink.co.uk>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH v4 3/5] sched/fair: Switch to task based throttle model
+Message-ID: <20250904113045.GI42@bytedance>
+References: <20250829081120.806-1-ziqianlu@bytedance.com>
+ <20250829081120.806-4-ziqianlu@bytedance.com>
+ <xm26jz2ftfw7.fsf@google.com>
+ <20250904112610.GH42@bytedance>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TY0PR06MB5753:EE_
-X-MS-Office365-Filtering-Correlation-Id: 623a8e32-510d-4543-9af9-08ddeba67e23
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zp2kxpJMlV2A0nzbUivMFK80r3hzVb7PZIZXaEQrlkW6B9FGNTUQihrfYFR9?=
- =?us-ascii?Q?RRLXfc+qJe4sXLIl+Uuld/yVR2ifbHcW7c0REFDxb1pvrsAtHKbVhtCHD5fR?=
- =?us-ascii?Q?AVLxV9ZNhiMXb/CV/o/b+7isYHEuU0XJ4U4+nMTE3PQ6F7UTuu7Zok9Xq8B7?=
- =?us-ascii?Q?nvfT88rtVpNa2SNcrbrw6fCo3FN4EtGyesUiSUa7t2Pm66oKPI84+OxTFXzL?=
- =?us-ascii?Q?zWyI5xD4tZGT/fXo0Bzl5sq9itJqzsRLl+yMc9JUmv7Et9x1jvUmMSd2cf/y?=
- =?us-ascii?Q?uCV0peTt0obGqyDx+1PzI/ByGpZSvReC9OgonlExX4/rt2o5qiYeTLZRkq6w?=
- =?us-ascii?Q?0eTZi1LY2Vyw8zwCTq3nimpLAGS8PldtdP5IChv3HmuBCTigYAfZ7X8bJfOS?=
- =?us-ascii?Q?HPyyitj1daLu5SI/fTlXKlV0Lvzkwvw1XNEpCSU9eafbdY84xbKgwb37jllw?=
- =?us-ascii?Q?O/tID6nCrB/XcE/wwftcy8hPTuoL4kUno6xQN+nEg2/uIO+vQyVrGmsX5EL3?=
- =?us-ascii?Q?msSS1MGammmWZqwnBUP5S0YAq5Eb38WaZofKTRfBsH7uGbj3pv7lkZM1fBNw?=
- =?us-ascii?Q?7LGeB0C1CrB70Q+vLxaNkdCEEc+m7wrsMVT2UIGLHzy9xctZosgbfYS+O5Yg?=
- =?us-ascii?Q?QE5OkQ81c5tS4fBH+MPYI2RMIs0Xi1nHCqzRpjjkoKqD0NmvkjlUh4QnMEcv?=
- =?us-ascii?Q?q9dSQb9wRQ8sZa2Go2cTIOYlRmhbZWy/3KsNx6eUC/XU67yPQzKeNyHvUk2K?=
- =?us-ascii?Q?DG/BrwKlBeZaOd9P40JMp+5w3vdARQCbGCGfa1SmIo+bQgfWmEcCrw0K4K76?=
- =?us-ascii?Q?1L5274Dxf1mfDhoLxIBChbd4TYLiVAsfx7ynvxleQqYmtX4D4UuYCgjIgjgJ?=
- =?us-ascii?Q?P1FEN55yZaxPpN05qGCm+ZBW0/yKrsleF0+iPjUTHPoJcdK/i8iSOlv2UsRB?=
- =?us-ascii?Q?EjOFG1OspFh23eyPRqVcaNVpCisreSIsngziGBRo2xpGWoKIXP1CPl3DSHct?=
- =?us-ascii?Q?lct3XZfIxG9sRXWU/FO0ITxlt73R4QhUFsEJ/Frb8/8HF0R4E1O9+PWaR+Bs?=
- =?us-ascii?Q?+Cc8IU2dPyOREfPyDfkh0GpPhNEXCwAc66+bGQdj2bkiYMpOOjbESxihO4DB?=
- =?us-ascii?Q?UEIrB6A6w2q0TqWKdRbi4c6HFd2swj8AxATkNQs7+wuAUeKSDZZRarf0j326?=
- =?us-ascii?Q?GPMO4iRhkZialQMmUzeB1rdhUiOjLeZo3rJCe+WMvrWOM1nBLwa7YT1DmT5n?=
- =?us-ascii?Q?saRYfHJ3ui8pu7wCm3aOVgX2YbsjHCwKd4KXMneFIJzHO2LHYL9K2igA6oeR?=
- =?us-ascii?Q?Oxdge7huYpYmYjHQqBr4rAdazTThrPZIcDhch5BI262W3OyILvDsuTsfVriI?=
- =?us-ascii?Q?p0op7R6xfTahiZ9dCr29FT6IKLe9duFX8ME9cqC8QrgN62LExEEswEsRL0zV?=
- =?us-ascii?Q?0boaoSJ+ehMhP8UFFXn70MTSw466z53DpFxKO8mXPLxcFL8VB6oRFQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bzJTgVpch/BXuBy/xai4DppHX2Bbx6dKW19VR/01STTHm0/TSDbGLdAXCgMF?=
- =?us-ascii?Q?o0+Wwm3HhsfrFZ8qRa/1HgX7rmpXL6lzsuLPlu9RfBtiY2/6YF8WqGi/ka86?=
- =?us-ascii?Q?ePZMHOHEBBmUFIfbfuzXx+KFURtVd4LFwWzgRvpFolDmLGC/pPvlcwfo7k+l?=
- =?us-ascii?Q?MtkW4eKqeRaqk9rXm21cRn9v+SbuVihsg3/vCHqJ71tyhGdNCVbDzJuwx9ps?=
- =?us-ascii?Q?dtIeg7bjVrN5Fmpzbq8G20pvzYKjJBTT0mksWh4PcpI1mh7I6aSAnD5Pd508?=
- =?us-ascii?Q?NKuX8brTF/EeZfcCVU32A63TzFwX9utvq9yJSr9U2zrl1qZdb1GWES7m+Wyj?=
- =?us-ascii?Q?kAJ7uOF2aIu7/Nf2Io9uM9S/KM2EXafIrmDAnkGdjL24pn9Z2Gckg02xYDSA?=
- =?us-ascii?Q?+R/RZbg+v4QoDY4iOJZCgfYtqp4kP48Y8uHoCJmGbl5mFg+fc4od/wXIXmVu?=
- =?us-ascii?Q?k7ljS5y6tJ7mAy+omsM1VjXgEjHe+0xGZJyevtgGrlRx72//+3GVi7FeJCoV?=
- =?us-ascii?Q?NKJxB3eUJ7GNEjU3gfe3lUZ+jyf9HTVRMaqb9YFmUBkFaCW+o5hHc6DzUvNP?=
- =?us-ascii?Q?5WtJWdwERNUxbJpGy2D5yy33yDZkvfd65HuwgNYRQVzKNBjPYho7ohWRe16/?=
- =?us-ascii?Q?r5zK59YOWjkC7SfdvoOteeljvOJZ0z1wjofFKr334PrmMdmaPGj6dLyKxYzY?=
- =?us-ascii?Q?/IaBBIe2k32JQHvCSuYjNkpM3bgvZ3iqk1L64yYg8q/OPsdHWtJtt4muNwvS?=
- =?us-ascii?Q?jIaq3ptMfc1WfqX0Ba84ZhmyNlUUGt5w6H2xkAfLPUJERAikzlBzDHRfC/gq?=
- =?us-ascii?Q?+bJ4JA8RkT1GyRbSSBro4uObbO2fqf02f90VqD7kHoCQh0vldaRpG4eRhPfk?=
- =?us-ascii?Q?pu0H4RvA/2bDvrooh8PEV6peNtMOufEXGBLquT7/riTQ5Kc4zXye7K2DzVUE?=
- =?us-ascii?Q?9xVgb0zOF+ZOU2/ANUfeTHcSvIUSnU9qAfAOmLc1oAq0c9fH4gtzq4E7xSDr?=
- =?us-ascii?Q?3XoHzt2OQTLLCUtxGBdIc8gv3qd2lbz+y15Xp1EzuykqTsQ7BoQbOoYxSBIW?=
- =?us-ascii?Q?RK1psnVTFmwvR94M5rWuWE+bzXbiswXty1DEvVsCitc6SCI4i1vWHO7cPsmf?=
- =?us-ascii?Q?ILBfGufRG6BeIq48Ubpk2PLZJEnm7s9KS9vHxQGAvHFjJE6sL79B6XMbxKX6?=
- =?us-ascii?Q?X8ss4Nymdufm4PXAFyAKZQoq6h+BCtYOzEGX1P1duNXNWkRfECa2OxpsoXU1?=
- =?us-ascii?Q?b/6CoHurbO0kpYajWsHc9Wy+iERrk8ujE5TvyoMgwqV+hS9/9tuMZZSse4ed?=
- =?us-ascii?Q?jUu6CY6YaCzEmi4Vyae7xknLIUpo+xupqBtIxBjYCd1BWR9SMXUs7eAdDl5z?=
- =?us-ascii?Q?9OYSETriH0VhKddvxg/UVZwosbOYvSW6faJq9NA3jtR5vXDONgp+Zb92WUNz?=
- =?us-ascii?Q?0Wz0YUq5xTUjKO+se44TGc04lTi6v7Kwn924++ebv7Op/9Nmg8RMnihsJ5sG?=
- =?us-ascii?Q?VD2PBIZHtVjxBPhoN7BE4J61zQRV0CPVxqOpMD8uuycjAYXR58fWONSq8NWB?=
- =?us-ascii?Q?QooV9JyjKECV88oUprG6gOYq6jOmynkL8b0nXANG?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 623a8e32-510d-4543-9af9-08ddeba67e23
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 11:30:47.2078
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: idRDzBZp03UvKBohMX1Ded8EWOp/tzVK2nEi5cDgdDlnVDuvmW2kDUABwMujo2AAxVrj2E91zvcgLwmfoEP8vQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5753
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904112610.GH42@bytedance>
 
-For ternary operators in the form of "a ? false : true", if 'a' itself
-returns a boolean result, the ternary operator can be omitted. Remove
-redundant ternary operators to clean up the code.
+On Thu, Sep 04, 2025 at 07:26:10PM +0800, Aaron Lu wrote:
+> On Wed, Sep 03, 2025 at 01:55:36PM -0700, Benjamin Segall wrote:
+> > Aaron Lu <ziqianlu@bytedance.com> writes:
+> > 
+> > > +static bool enqueue_throttled_task(struct task_struct *p)
+> > > +{
+> > > +	struct cfs_rq *cfs_rq = cfs_rq_of(&p->se);
+> > > +
+> > > +	/* @p should have gone through dequeue_throttled_task() first */
+> > > +	WARN_ON_ONCE(!list_empty(&p->throttle_node));
+> > > +
+> > > +	/*
+> > > +	 * If the throttled task @p is enqueued to a throttled cfs_rq,
+> > > +	 * take the fast path by directly putting the task on the
+> > > +	 * target cfs_rq's limbo list.
+> > > +	 *
+> > > +	 * Do not do that when @p is current because the following race can
+> > > +	 * cause @p's group_node to be incorectly re-insterted in its rq's
+> > > +	 * cfs_tasks list, despite being throttled:
+> > > +	 *
+> > > +	 *     cpuX                       cpuY
+> > > +	 *   p ret2user
+> > > +	 *  throttle_cfs_rq_work()  sched_move_task(p)
+> > > +	 *  LOCK task_rq_lock
+> > > +	 *  dequeue_task_fair(p)
+> > > +	 *  UNLOCK task_rq_lock
+> > > +	 *                          LOCK task_rq_lock
+> > > +	 *                          task_current_donor(p) == true
+> > > +	 *                          task_on_rq_queued(p) == true
+> > > +	 *                          dequeue_task(p)
+> > > +	 *                          put_prev_task(p)
+> > > +	 *                          sched_change_group()
+> > > +	 *                          enqueue_task(p) -> p's new cfs_rq
+> > > +	 *                                             is throttled, go
+> > > +	 *                                             fast path and skip
+> > > +	 *                                             actual enqueue
+> > > +	 *                          set_next_task(p)
+> > > +	 *                    list_move(&se->group_node, &rq->cfs_tasks); // bug
+> > > +	 *  schedule()
+> > > +	 *
+> > > +	 * In the above race case, @p current cfs_rq is in the same rq as
+> > > +	 * its previous cfs_rq because sched_move_task() only moves a task
+> > > +	 * to a different group from the same rq, so we can use its current
+> > > +	 * cfs_rq to derive rq and test if the task is current.
+> > > +	 */
+> > > +	if (throttled_hierarchy(cfs_rq) &&
+> > > +	    !task_current_donor(rq_of(cfs_rq), p)) {
+> > > +		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
+> > > +		return true;
+> > > +	}
+> > > +
+> > > +	/* we can't take the fast path, do an actual enqueue*/
+> > > +	p->throttled = false;
+> > > +	return false;
+> > > +}
+> > > +
+> > 
+> > Is there a reason that __set_next_task_fair cannot check p->se.on_rq as
+> > well as (or instead of) task_on_rq_queued()? All of the _entity parts of
+> > set_next/put_prev check se.on_rq for this sort of thing, so that seems
+> > fairly standard. And se.on_rq should exactly match if the task is on
+> > cfs_tasks since that add/remove is done in account_entity_{en,de}queue.
+> 
+> Makes sense to me.
+> 
+> Only thing that feels a little strange is, a throttled/dequeued task is
+> set as next now. Maybe not a big deal. I booted a VM and run some tests,
+> didn't notice anything wrong but I could very well miss some cases.
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
----
- drivers/media/common/siano/smsir.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sorry, I should have added: the above test was done with following diff:
 
-diff --git a/drivers/media/common/siano/smsir.c b/drivers/media/common/siano/smsir.c
-index d85c78c104b9..af07fed21ae1 100644
---- a/drivers/media/common/siano/smsir.c
-+++ b/drivers/media/common/siano/smsir.c
-@@ -28,7 +28,7 @@ void sms_ir_event(struct smscore_device_t *coredev, const char *buf, int len)
- 	for (i = 0; i < len >> 2; i++) {
- 		struct ir_raw_event ev = {
- 			.duration = abs(samples[i]),
--			.pulse = (samples[i] > 0) ? false : true
-+			.pulse = samples[i] <= 0
- 		};
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index cb93e74a850e8..7a6782617c0e8 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5836,38 +5836,8 @@ static bool enqueue_throttled_task(struct task_struct *p)
+ 	 * If the throttled task @p is enqueued to a throttled cfs_rq,
+ 	 * take the fast path by directly putting the task on the
+ 	 * target cfs_rq's limbo list.
+-	 *
+-	 * Do not do that when @p is current because the following race can
+-	 * cause @p's group_node to be incorectly re-insterted in its rq's
+-	 * cfs_tasks list, despite being throttled:
+-	 *
+-	 *     cpuX                       cpuY
+-	 *   p ret2user
+-	 *  throttle_cfs_rq_work()  sched_move_task(p)
+-	 *  LOCK task_rq_lock
+-	 *  dequeue_task_fair(p)
+-	 *  UNLOCK task_rq_lock
+-	 *                          LOCK task_rq_lock
+-	 *                          task_current_donor(p) == true
+-	 *                          task_on_rq_queued(p) == true
+-	 *                          dequeue_task(p)
+-	 *                          put_prev_task(p)
+-	 *                          sched_change_group()
+-	 *                          enqueue_task(p) -> p's new cfs_rq
+-	 *                                             is throttled, go
+-	 *                                             fast path and skip
+-	 *                                             actual enqueue
+-	 *                          set_next_task(p)
+-	 *                    list_move(&se->group_node, &rq->cfs_tasks); // bug
+-	 *  schedule()
+-	 *
+-	 * In the above race case, @p current cfs_rq is in the same rq as
+-	 * its previous cfs_rq because sched_move_task() only moves a task
+-	 * to a different group from the same rq, so we can use its current
+-	 * cfs_rq to derive rq and test if the task is current.
+ 	 */
+-	if (throttled_hierarchy(cfs_rq) &&
+-	    !task_current_donor(rq_of(cfs_rq), p)) {
++	if (throttled_hierarchy(cfs_rq)) {
+ 		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
+ 		return true;
+ 	}
+@@ -13256,7 +13226,7 @@ static void __set_next_task_fair(struct rq *rq, struct task_struct *p, bool firs
+ {
+ 	struct sched_entity *se = &p->se;
  
- 		ir_raw_event_store(coredev->ir.dev, &ev);
--- 
-2.34.1
-
+-	if (task_on_rq_queued(p)) {
++	if (se->on_rq) {
+ 		/*
+ 		 * Move the next running task to the front of the list, so our
+ 		 * cfs_tasks list becomes MRU one.
 
