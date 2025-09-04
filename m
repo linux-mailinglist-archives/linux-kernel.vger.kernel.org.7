@@ -1,173 +1,142 @@
-Return-Path: <linux-kernel+bounces-800719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D268AB43B00
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:05:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A2C3B43B06
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FE4717DF6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:05:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 586357C0F38
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E292DFA40;
-	Thu,  4 Sep 2025 12:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451752BE7D2;
+	Thu,  4 Sep 2025 12:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LbWttJF1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nh5P79LU"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC3527A469;
-	Thu,  4 Sep 2025 12:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F89E2D46CB;
+	Thu,  4 Sep 2025 12:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756987513; cv=none; b=CvN0k7vHW9zkYLpxOMd6sMj3I6dy5O+CHo1JrGLyWJMtWKyhy2CUTfaHfE7GOHZUCmEtYW9Q/BXvXfoCiJDY7mTC4anr7gd6OkGGpqgSRJTUaCSxLSmG80+4urow2iCVTyrAmp350Z40avUz863GHs0XSWYcQPoIJoh6HM5xsks=
+	t=1756987608; cv=none; b=kJnsugm6Ua7MQ/mYzsDE1BPlQy3Uh3i4aTdJTR6i/bEV556Y9uLxKzz7SuNMYvztUASJxtof2CLZeZjR4n76N6bbPq31VWO6Q2Oz2XnUBxhnZ+zRoHraXVWoqnW/hYaBftAeNXCgnRanfjRHQ3iq1rZ1JB2cYWMteoio/0lY+5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756987513; c=relaxed/simple;
-	bh=13BOPU+7OAPKTnYNAO+wiCO8MYkbV3q62X00Giano/A=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=EWcweWt+T+tqaSWHD1mg1B464RAJKAJ2GXf1aW+s1Mt26ClJpYDOqMGGnKd+lt9uWUzNVTyCyb2Ahds+S9b4vuEMb+KyQyf6dVUwyX4GcTwAqOeICVnUcyAzAxaCOmqrzZaE7Iy08B/6q8d+HzNa3QrSyVyliR/oqoDJNSF/2ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LbWttJF1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7156EC4CEF0;
-	Thu,  4 Sep 2025 12:05:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756987512;
-	bh=13BOPU+7OAPKTnYNAO+wiCO8MYkbV3q62X00Giano/A=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=LbWttJF1sUXLDHN5KJorsUknmbIr4HkYcANOJ3lsoM+NcL2qpe+atXDS8QmjnL+Q4
-	 LPvM+Yj2xepCaHa58ARltxT0y2IBh6Gpo8I2uINd0qotpV95uaZ96yfOHRGCjeMXgS
-	 +Lb5A01VTPwewbLWFkI31zZwH5mpr3H1ctxV5emM/W+d/+MRrewdypklfuiBnrkE6P
-	 qP7rQYvrVHcC3rquKIDee6mJSbAkf/ulBfFnNKOU0SzSxnes4TbiwapAvA3Jbfd1w6
-	 yHYUEt+y/lBlGWVBAN/tlHTxF6CrQIAAJhh6M5fuQpG6UsD1wHl4JTKB2VsqovenX+
-	 lYjJ/Z8TWokDw==
-Message-ID: <e89de497-9c6e-4a4c-8f66-019d349c171b@kernel.org>
-Date: Thu, 4 Sep 2025 14:05:08 +0200
+	s=arc-20240116; t=1756987608; c=relaxed/simple;
+	bh=zm6TgX3Aox2Z8s6DkfbhHOfphs227t+gV7W3lLhyTH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cGR9KTm1hQmYcA4s+fmwKelB79pySQtIj6EQyblM9NEtHpRPK1xl8A18NdN46rPvwIz4PckvmehhaM5w1dymU14YG+Y6J7ih0G6AEVJx22NlXWWV+ssENR2GPmXWWmUrr9IQ1qWK28Ki/K7R1L9LN81TLI9OSj7lsUEDn763vHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nh5P79LU; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Q6zB9wLfiY9Hs3Un4C3qmCTS/PiHSKuEFiLPwa5uEto=; b=nh5P79LUM5K7UPQrw9Fspa9Okw
+	rgLr8cre0Zx9XGUMocgS+OYS6ryui6WQs/46bg7gPHs5fninFgGY+P5texlmXQaLZWoEcL/PEYn9p
+	fSD2nXW4ZR5E2lGKH53mpj+FKT4nWXja2XiF9yONXdOlX5xrqkWIOVG/2Fac5LZAERe8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uu8j0-007Ciq-0Z; Thu, 04 Sep 2025 14:05:58 +0200
+Date: Thu, 4 Sep 2025 14:05:57 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yibo Dong <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
+	gustavoars@kernel.org, rdunlap@infradead.org,
+	vadim.fedorenko@linux.dev, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v10 3/5] net: rnpgbe: Add basic mbx ops support
+Message-ID: <908e4c95-81cb-4a95-9235-2d2c8c80d80c@lunn.ch>
+References: <20250903025430.864836-1-dong100@mucse.com>
+ <20250903025430.864836-4-dong100@mucse.com>
+ <659df824-7509-4ffe-949b-187d7d44f69f@lunn.ch>
+ <AF92025D9CBFCF3B+20250904031948.GA1022066@nic-Precision-5820-Tower>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: leds: add generic LED consumer
- documentation
-From: Hans de Goede <hansg@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Aleksandrs Vinarskis <alex@vinarskis.com>
-Cc: robh@kernel.org, bryan.odonoghue@linaro.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, krzk+dt@kernel.org, lee@kernel.org,
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, pavel@kernel.org
-References: <20250902182114.GA965402-robh@kernel.org>
- <20250903235615.134520-1-alex@vinarskis.com>
- <20250904-brave-zippy-quoll-fcb054@kuoka>
- <daf442a6-b4d6-4213-8ec0-10397d682cc4@kernel.org>
- <fdc68c54-a499-4ba6-8788-70c7ea515f2d@kernel.org>
- <691f72aa-6d3e-47a1-9efe-a5f7a61ecb72@kernel.org>
- <9c536e24-ab5a-454a-93af-6d4c51d4e1ce@kernel.org>
- <ece22424-ea6f-4d6e-8964-3418853dba2f@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <ece22424-ea6f-4d6e-8964-3418853dba2f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AF92025D9CBFCF3B+20250904031948.GA1022066@nic-Precision-5820-Tower>
 
-Hi Krzysztof,
-
-On 4-Sep-25 1:47 PM, Hans de Goede wrote:
-> Hi Krzysztof,
+On Thu, Sep 04, 2025 at 11:19:48AM +0800, Yibo Dong wrote:
+> On Thu, Sep 04, 2025 at 12:24:17AM +0200, Andrew Lunn wrote:
+> > >  struct mucse_mbx_info {
+> > > +	struct mucse_mbx_stats stats;
+> > > +	u32 timeout;
+> > > +	u32 usec_delay;
+> > > +	u16 size;
+> > > +	u16 fw_req;
+> > > +	u16 fw_ack;
+> > > +	/* lock for only one use mbx */
+> > > +	struct mutex lock;
+> > >  	/* fw <--> pf mbx */
+> > >  	u32 fw_pf_shm_base;
+> > >  	u32 pf2fw_mbox_ctrl;
+> > 
+> > > +/**
+> > > + * mucse_obtain_mbx_lock_pf - Obtain mailbox lock
+> > > + * @hw: pointer to the HW structure
+> > > + *
+> > > + * This function maybe used in an irq handler.
+> > > + *
+> > > + * Return: 0 if we obtained the mailbox lock or else -EIO
+> > > + **/
+> > > +static int mucse_obtain_mbx_lock_pf(struct mucse_hw *hw)
+> > > +{
+> > > +	struct mucse_mbx_info *mbx = &hw->mbx;
+> > > +	int try_cnt = 5000;
+> > > +	u32 reg;
+> > > +
+> > > +	reg = PF2FW_MBOX_CTRL(mbx);
+> > > +	while (try_cnt-- > 0) {
+> > > +		mbx_ctrl_wr32(mbx, reg, MBOX_PF_HOLD);
+> > > +		/* force write back before check */
+> > > +		wmb();
+> > > +		if (mbx_ctrl_rd32(mbx, reg) & MBOX_PF_HOLD)
+> > > +			return 0;
+> > > +		udelay(100);
+> > > +	}
+> > > +	return -EIO;
+> > > +}
+> > 
+> > If there is a function which obtains a lock, there is normally a
+> > function which releases a lock. But i don't see it.
+> > 
 > 
-> On 4-Sep-25 12:47 PM, Krzysztof Kozlowski wrote:
->> On 04/09/2025 12:29, Hans de Goede wrote:
->>> Hi Krzysztof,
->>>
->>> On 4-Sep-25 11:45 AM, Krzysztof Kozlowski wrote:
->>>> On 04/09/2025 09:26, Hans de Goede wrote:
->>>>>>>>> +maintainers:
->>>>>>>>> +  - Aleksandrs Vinarskis <alex@vinarskis.com>
->>>>>>>>> +
->>>>>>>>> +description:
->>>>>>>>> +  Some LED defined in DT are required by other DT consumers, for example
->>>>>>>>> +  v4l2 subnode may require privacy or flash LED.
->>>>>>>>> +
->>>>>>>>> +  Document LED properties that its consumers may define.
->>>>>>>>
->>>>>>>> We already have the trigger-source binding for "attaching" LEDs to 
->>>>>>>> devices. Why does that not work here?
->>>>>>>
->>>>>>> I have not actually considered this, as the existing privacy-led solution
->>>>>>> from the original series is not trigger based. At least one of the reasons
->>>>>>> for that is that trigger source can be rather easily altered from user
->>>>>>> space, which would've been bad for this use case. If v4l2 acquires control
->>>>>>> over the LED it actually removes triggers and disables sysfs on that LED.
->>>>>>
->>>>>> So does that mean that v4l2 solves the problem of "trigger source can be
->>>>>> rather easily altered from user space"?
->>>>>
->>>>> Yes, currently the v4l2-core already does:
->>>>
->>>> Thanks, I understand that it solves the problem described in the patch,
->>>> so the patch can be dropped.
->>>
->>> I'm a bit confused now, do you mean that this dt-bindings patch can
->>> be dropped ?
->>
->> Yes.
->>
->> Alex's explanation to Rob felt confusing, so I asked for clarification.
->> You clarfiied that that v4l2 solves the problem, therefore there is no
->> problem to be solved.
->>
->> If there is no problem to be solved, this patch is not needed.
->>
->> If this patch is needed, just describe the problem accurately.
->>
->>>
->>> The existing v4l2-core code solves getting the privacy-LED on ACPI/x86_64,
->>> on DT there is no official bindings-docs for directly getting a LED with
->>
->> There are and Rob pointed to them. If Rob's answer is not enough, make
->> it explicit.
->>
->> Really, there are here some long explanations which do not really
->> explain this in simple terms. Simple term is: "existing property foo
->> does not work because <here goes the reason>".
+> The lock is relased when send MBOX_CTRL_REQ in mucse_write_mbx_pf:
 > 
-> The existing trigger-source binding for "attaching" LEDs to 
-> devices does not work because:
+> mbx_ctrl_wr32(mbx, ctrl_reg, MBOX_CTRL_REQ);
 > 
-> 1. It depends on the Linux specific LED trigger mechanism where as
->    DT should describe hw in an OS agnostic manner
+> Set MBOX_PF_HOLD(bit3) to hold the lock, clear bit3 to release, and set
+> MBOX_CTRL_REQ(bit0) to send the req. req and lock are different bits in
+> one register. So we send the req along with releasing lock (set bit0 and
+> clear bit3).
+> Maybe I should add comment like this?
 > 
-> 2. It puts the world upside down by giving possible event-sources 
->    for the (again) Linux specific trigger rather then allowing
->    specifying e.g. specific privacy and flash LEDs as part
->    of a camera dts node. IOW it makes the LED DT note point to
->    the camera, while the LED is a part of the camera-module.
->    not the other way around. So it does not properly allow
->    describing the composition of the camera.
-> 
->    Note that Rob actually put "" around attaching because this
->    property really is not proper attaching / composition as
->    we would normally do in dt.
-> 
-> IMHO 1. alone (this being Linux specific) warrants a new better
-> binding for this.
+> /* send the req along with releasing the lock */
+> mbx_ctrl_wr32(mbx, ctrl_reg, MBOX_CTRL_REQ);
 
-And:
+As i said, functions like this come in pairs. obtain/release,
+lock/unlock. When reading code, you want to be able to see both of the
+pair in a function, to know the unlock is not missing. The kernel even
+has tools which will validate all paths through a function releasing
+locks. Often error paths get this wrong.
 
-3. There already are bindings using a leds = phandle-array property in:
-Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
+So please make this a function, give it a name which makes it obvious
+it is the opposite of mucse_obtain_mbx_lock_pf().
 
-So we already have this as another and IMHO much clenaer way to tie
-a LED to a device.
-
-The suggest generic leds = phandle-array property description added
-in this new binding just adds a leds-names to give names to the
-various indexes in the array which is a very common design-pattern
-in dt-bindings.
-
-Regards,
-
-Hans
-
-
+	Andrew
 
