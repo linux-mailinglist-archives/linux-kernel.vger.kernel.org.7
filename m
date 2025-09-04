@@ -1,126 +1,129 @@
-Return-Path: <linux-kernel+bounces-800970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB3CB43E54
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B65E8B43E56
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3499B3B9E35
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:14:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D90E3B9AFE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662522EBDCA;
-	Thu,  4 Sep 2025 14:14:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E01220408A
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0FC2D374A;
+	Thu,  4 Sep 2025 14:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="FdESnBTl"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1D82EBDCA;
+	Thu,  4 Sep 2025 14:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756995248; cv=none; b=kzCTuU4sz2pLWtZ5cyER3JTNLWNehK2yQUqpkhrVf8fYM8hIYcSiGyXXqd9LJCLFBK9GCOwc0kVZeNHu65x+GfVgIeEnAkfI2F6I2YWQjtH0NSNpDsifBgzKJSFIz/v4nXJc86Q3zdl6nk/IbdpTQE6ab/YykI+zGV43XtVonqk=
+	t=1756995264; cv=none; b=Xb43r5wlXRJY/IF5MLDLKlVZnpx5l9TUXaGfyt3JKZ4yEg4+ET5RbN7Oay1j00ISlD5CzCwk3qrH5BCaLpkvKvtwFqYkns9Ancq4zwuVGfMsng2q6LBGJ1/inWkG5PZ02TWM592I5k7xGt9yobn76IheA7xQndZCyx1yWVnbLzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756995248; c=relaxed/simple;
-	bh=g1Fb62DfXIZHZG4UIGOigbgf49jhagB+MS0+w+reNYs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=K2dkcfE5wA8PSdrrn23T7MnalYbHzUc8zs7otMRGjXotgGwmeXZXPmpSXe6WMkjf3ZK3BgO0OVvcqFJDVzmDzrlO+cJzEB8nzBU233qEoZBC04QPsHB4ZmNlKcNXl7iY8J6FJdYQauovxtRG6Od7xVHUkuJdp0dMEMU/ZV9eGrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 654551596;
-	Thu,  4 Sep 2025 07:13:56 -0700 (PDT)
-Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3E33D3F63F;
-	Thu,  4 Sep 2025 07:14:03 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-Date: Thu, 04 Sep 2025 15:13:52 +0100
-Subject: [PATCH v2] coresight: trbe: Return NULL pointer for allocation
- failures
+	s=arc-20240116; t=1756995264; c=relaxed/simple;
+	bh=FhTdXIaBQCU6Q68h7sv0jDnLrax/XaudLHmL1DeOxzI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=WWklDBRUkgD5hgQ90ajZ0dcXPT0DBpuyKSaw9X6o2ldoh/d1xhlc+QX+49AJeni78am7tn8u0G1oQ9L2Vpo28AUDjNzEtUxl4RP5Jw+zjwT9xCcCoPPu+LsDybGsblR9YtOJt8x+vnLEOy5S1W3ECaJTkVWuKr+kEt67iX437Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=FdESnBTl; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=Content-Transfer-Encoding:Content-Type:In-Reply-To
+	:References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:From:Reply-To:
+	Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=YzG5W1s80ebmb7PswHz7RU4tZyKa/eKiXqvToJN8x+8=; t=1756995262;
+	x=1757600062; b=FdESnBTluKZmlkpsiS4FYoG3m3qJeX0MAKdRYiaEnh0FatpSrjCeTzdB8V2vi
+	5Fohlb7zZfjULVh2SReRBzyVLcCkW+XLoqv+0nkRAJXgJxW8Dygwtrvv3StJAKYl5HD5k/wVrYFy1
+	FyVytPD0cn05KGIu03NL/YSLVYEwl+AGJv0AK46CCzstS9K/K2CEVh38Db84W9SHmmG3TphTxlb0z
+	jW8Gq2Q55Z7ape07NwPRjCXnH0y+agU6I+5zYLucUr9BO421zxs5M6W8lnPqHV+Q37okatRbHstQh
+	QYcgR3NKzvREnV9uzwz/+cWOXO5uX+g/MzaUNkfbFqv6xRJqIw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <mkarcher@zedat.fu-berlin.de>)
+          id 1uuAjD-000000038mE-3FZm; Thu, 04 Sep 2025 16:14:19 +0200
+Received: from 89-103-142-46.pool.kielnet.net ([46.142.103.89] helo=[192.168.0.39])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_128_GCM_SHA256
+          (envelope-from <kernel@mkarcher.dialup.fu-berlin.de>)
+          id 1uuAjD-00000000Vr1-2Rm0; Thu, 04 Sep 2025 16:14:19 +0200
+Message-ID: <5dff8bff-4b36-4766-9da5-385aeb304474@mkarcher.dialup.fu-berlin.de>
+Date: Thu, 4 Sep 2025 16:14:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-cs_etm_auxsetup_fix_error_handling-v2-1-a502d0bafb95@arm.com>
-X-B4-Tracking: v=1; b=H4sIAJ+euWgC/5WNQQqDMBBFryKzbkoMDdaueg+RkCajDlQjEw0W8
- e5NvUGX7/N5b4eITBjhUezAmChSmDKoSwFusFOPgnxmUFJpWcubcNHgMhq7bhGXdTYdbQaZA5t
- 892+aeuFeFcoKfW19B1k0M+bXGWnazAPFJfDnbKbyt/6lT6UoBTqn0Xfqrqx+Wh6vLozQHsfxB
- T5ZpvLSAAAA
-X-Change-ID: 20250904-cs_etm_auxsetup_fix_error_handling-cb7e07ed9adf
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
- Anshuman Khandual <anshuman.khandual@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Tamas Zsoldos <tamas.zsoldos@arm.com>, 
- Leo Yan <leo.yan@arm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756995243; l=2077;
- i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
- bh=g1Fb62DfXIZHZG4UIGOigbgf49jhagB+MS0+w+reNYs=;
- b=JTCG2rHM8KtlbUkkR4xcwj0A9r4Rl+TvqXelMpCDRjaREDVAI7DSqz+13qxsXNE7eUoVsSt1D
- rvOHYrBkxSjArip8+dGvDw1sowHALm2LC8rKm+uXXFOWy76w6ROdW7J
-X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
- pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
+User-Agent: Mozilla Thunderbird
+From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+Subject: Re: [PATCH 2/4] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for UltraSPARC III
+To: Andreas Larsson <andreas@gaisler.com>,
+ Anthony Yznaga <anthony.yznaga@oracle.com>, linux-kernel@vger.kernel.org
+Cc: sparclinux@vger.kernel.org,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
+ <20250826160312.2070-3-kernel@mkarcher.dialup.fu-berlin.de>
+ <528a5d4b-1e07-4379-afd6-7e58d423e713@oracle.com>
+ <C90C7694-C913-499B-8426-8DEC42137066@mkarcher.dialup.fu-berlin.de>
+ <8403ac15-bb3a-4e88-97ef-6eaff26cc8db@gaisler.com>
+In-Reply-To: <8403ac15-bb3a-4e88-97ef-6eaff26cc8db@gaisler.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Original-Sender: kernel@mkarcher.dialup.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-When the TRBE driver fails to allocate a buffer, it currently returns
-the error code "-ENOMEM". However, the caller etm_setup_aux() only
-checks for a NULL pointer, so it misses the error. As a result, the
-driver continues and eventually causes a kernel panic.
+Am 04.09.2025 um 16:05 schrieb Andreas Larsson:
+> On 2025-08-30 10:35, Michael Karcher wrote:
+>>> I think there should be a little more text about the nature of the failure. Maybe:
+>> I will add something like that in v2 of the series.
+>> Do you think it is useful to add the message ID
+>> b14f55642207e63e907965e209f6323a0df6dcee.camel@physik.fu-berlin.de
+>> as well, or an abbreviated backtrace from that message?
+>> I suppose, that is the BUG_ON you are referring to.
+> If that is the message referred to, I think it is a good idea to refer
+> to it, in addition to a description. If so, please do it on the form of
+> a lore link, like this:
+>
+> https://lore.kernel.org/r/<message-id>
 
-Fix this by returning a NULL pointer from arm_trbe_alloc_buffer() on
-allocation failures. This allows that the callers can properly handle
-the failure.
+My current draft for v2 has this text, including the link.
 
-Fixes: 3fbf7f011f24 ("coresight: sink: Add TRBE driver")
-Reported-by: Tamas Zsoldos <tamas.zsoldos@arm.com>
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
-Changes in v2:
-- Fix TRBE driver instead of changing coresight-etm-perf.c.
-- Link to v1: https://lore.kernel.org/r/20250904-cs_etm_auxsetup_fix_error_handling-v1-1-ecc5edf282a5@arm.com
----
- drivers/hwtracing/coresight/coresight-trbe.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> Anthony Yznaga tracked down that a BUG_ON in ext4 code with large folios
+> enabled resulted from copy_from_user() returning impossibly large values
+> greater than the size to be copied. This lead to __copy_from_iter()
+> returning impossible values instead of the actual number of bytes it was
+> able to copy.
+>
+> The BUG_ON has been reported in
+> https://lore.kernel.org/r/b14f55642207e63e907965e209f6323a0df6dcee.camel@physik.fu-berlin.de
+>
+> Fixes: ee841d0aff64 ("sparc64: Convert U3copy_{from,to}_user to accurate exception reporting.")
+> Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
+> Tested-by: René Rebe <rene@exactcode.com> # UltraSparc III+ and UltraSparc IIIi
+> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
 
-diff --git a/drivers/hwtracing/coresight/coresight-trbe.c b/drivers/hwtracing/coresight/coresight-trbe.c
-index 10f3fb401edf6a00b24b38cdaa7c2865e7a191ac..8f9bbef71f236b327d35a288689df9b0dd8ff3f4 100644
---- a/drivers/hwtracing/coresight/coresight-trbe.c
-+++ b/drivers/hwtracing/coresight/coresight-trbe.c
-@@ -748,12 +748,12 @@ static void *arm_trbe_alloc_buffer(struct coresight_device *csdev,
- 
- 	buf = kzalloc_node(sizeof(*buf), GFP_KERNEL, trbe_alloc_node(event));
- 	if (!buf)
--		return ERR_PTR(-ENOMEM);
-+		return NULL;
- 
- 	pglist = kcalloc(nr_pages, sizeof(*pglist), GFP_KERNEL);
- 	if (!pglist) {
- 		kfree(buf);
--		return ERR_PTR(-ENOMEM);
-+		return NULL;
- 	}
- 
- 	for (i = 0; i < nr_pages; i++)
-@@ -763,7 +763,7 @@ static void *arm_trbe_alloc_buffer(struct coresight_device *csdev,
- 	if (!buf->trbe_base) {
- 		kfree(pglist);
- 		kfree(buf);
--		return ERR_PTR(-ENOMEM);
-+		return NULL;
- 	}
- 	buf->trbe_limit = buf->trbe_base + nr_pages * PAGE_SIZE;
- 	buf->trbe_write = buf->trbe_base;
+I will add a short explanation to the other commits, possibly this text
 
----
-base-commit: fa71e9cb4cfa59abb196229667ec84929bdc18fe
-change-id: 20250904-cs_etm_auxsetup_fix_error_handling-cb7e07ed9adf
+> copy_from_user and copy_to_user use exception handlers on user-space access
+> instructions that return from the respective function and calculate the
+> remaining bytes left to copy from the current register contents. This commit
+> fixes a couple of bad calculations. This will fix the return value of
+> copy_from_user and copy_to_user in the faulting case. The behaviour of
+> memcpy stays unchanged.
 
-Best regards,
--- 
-Leo Yan <leo.yan@arm.com>
+That text will be pasted into all the commits, and if only loads or only stores
+need to be fixed, it will only mention copy_from_user or copy_to_user.
+
+Thanks for your feedback and kind regards
+   Michael Karcher
 
 
