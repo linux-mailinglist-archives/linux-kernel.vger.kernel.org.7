@@ -1,54 +1,74 @@
-Return-Path: <linux-kernel+bounces-800334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD11CB4366A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:59:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDFA8B43673
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 995127C1948
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:59:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B32F3A4F10
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F3B2D1F7B;
-	Thu,  4 Sep 2025 08:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903252D29A9;
+	Thu,  4 Sep 2025 09:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QxzxqLn3"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lSCecDel"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1018A2D061E;
-	Thu,  4 Sep 2025 08:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42482BDC09;
+	Thu,  4 Sep 2025 09:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756976387; cv=none; b=NRswE/uhk8lkGQsIbx//UPeY5FvDiDr9h/gMiCcidb/9xyodg3IzAfh8NQ6HR5C5GzRjeaXZJVJh7bVrpCTdzplzgGwDaKE7rPjPX7dxW8WlFFwL2sg1pu/uwGGGuABKXn5CeYTT4pWalqciIIHElkBmfzE0uimA4/QYOJmTav8=
+	t=1756976414; cv=none; b=UXggxHUXIR5vvx+rkgsY7L5WoDUIjFBNCcYITRjyVuAUiju4y3n8kjcmkSQlMsVBITizGzDXMgB+AKrLPkrTPe9FHHfOtiK5ie076xf9Be5q13lSh6KR5jaddnqeauHa/hCwLrQANA4xQFvkYQQfSvkOCKcJECiSc5u4uvjW9W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756976387; c=relaxed/simple;
-	bh=ga7tmV4L0ISGRZ0jJ6UfxKx8Es4klai04+hvgsgpbIg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uPLbGZwHvRoXI0RUHMX4d7ILZt6VnCWLSYllLyUssrb18Hp9i+JmGS/gpiwgThDqgY9WJ0tqWzp1tFMvR/COqbrWZAWH+i0KyC931KrCmeZArrp/rIjbx2SN19fafJNH1KUjED0U2/YqEFwKIsJFSNCFEW4VVbz/TXou+MW26Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QxzxqLn3; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 322E01A0984;
-	Thu,  4 Sep 2025 08:59:42 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 026D8606BB;
-	Thu,  4 Sep 2025 08:59:42 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0200D1C22A241;
-	Thu,  4 Sep 2025 10:59:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756976381; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=5oXliwhksVRoXJFSBUuq81uC4pWKGDKz3WEBub+fLxc=;
-	b=QxzxqLn3jynq+8kdugI9MMK7psIjpv7iUv3DCmfxgo0jldRXoE6p5Hj3FFYwLs/bei5ijZ
-	f3ubzOTOtWHHH2qdxWZqyl1qbxWt95aqa7+a2eXtDjJWtk8Id9/mnQCl9bcMMuWK/anNJZ
-	4UBhN3EQkwVpMHfL3EsNl71W2rK3wQAqsasvg8C6PP4xNI6MaEkEFRMP57WWOin373VEQF
-	4eUP+N6UQZf91yELZEdMQzDJ/Vgt1K28yJYrFs3WUNkXZHalbL2unaN7BugXfUC0kzy08e
-	Vlz1PiiuNFQy/cx20hNTYiF1RCnEKr+kv+Maq50v3Q2QV2x2xDcMQzWbWHoWqg==
-From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Thu, 04 Sep 2025 10:59:24 +0200
-Subject: [PATCH] i2c: designware: use dev_err_probe when probing platform
- device
+	s=arc-20240116; t=1756976414; c=relaxed/simple;
+	bh=TFFfUvhxqaFd/gHshGEFwVzVNLWfQjKnfIqWkvKbeR8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PFZH3ykAMTfKtXKqsRd50P0KiFy3JbktRs7eM1m5g28oQQgz04NLc7ksg6PQF8b+TKivlB+1YAX2+Y17/Wobdq6Pedo8zgNwhqw079BAVt6xGZvfUkIRrOqCjX7YtpOMTtzdCyHbkYM8caAWv9po87Gi3BUqJSkDqhnUWHrzTdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lSCecDel; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5846NAg7001901;
+	Thu, 4 Sep 2025 09:00:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=uYuPVU7lYcVijx2HbOhM3ji35lRz
+	A7nkC0yf5H9kA+c=; b=lSCecDelzYx64ptOHQH9CfRY0pmDIp8o50hmY7PuiKox
+	7iuCxt2J0QvbfCRkvj4vtzggjQXswQRvJA2hztNMu7Sy/GC2GoyOIP5SenVa99Ku
+	76iXeemRcf/lgOVStp0hT1D/0zpb5bFxqQod9ACSLPX15B/LESGQMkx/6+JiXryj
+	GebQVaWqGcdcs37xD1q9boy3IXj6lwcKNdd2pCn3n2zQ0cLznUAd6m54Jqfzo57q
+	Q4MrzpyFD2lfJI7mXG6n+GQzeMry2WLZjXCExPgHQ5nF6Bw4pZCnrxsu/GhJWBHE
+	RxhDcQvtCa9FYOs6e0tB7AKmUO58oVHAolBgveOQ2A==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usua8p5e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Sep 2025 09:00:04 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5848jK9e014145;
+	Thu, 4 Sep 2025 09:00:03 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48veb3kdfx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Sep 2025 09:00:03 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 584902q427591346
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 4 Sep 2025 09:00:02 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 947DD58051;
+	Thu,  4 Sep 2025 09:00:02 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0E0035805A;
+	Thu,  4 Sep 2025 09:00:00 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  4 Sep 2025 08:59:59 +0000 (GMT)
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+Date: Thu, 04 Sep 2025 10:59:49 +0200
+Subject: [PATCH] iommu/s390: Make attach succeed when the device was
+ surprise removed
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,141 +76,175 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250904-i2c-dw-dev-err-probe-v1-1-acca6ffd122e@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAOtUuWgC/x3MwQpAQBCH8VfRnE0xKLyKHNj9L3NBs4WSd7c5/
- g7f91CEKSL12UOGU6PuW0KZZ+TWaVvA6pNJCmmKVoRVHPuLPU6GGR+2z2BMoZsdKoTaUUoPQ9D
- 73w7j+35s2pkSZgAAAA==
-X-Change-ID: 20250822-i2c-dw-dev-err-probe-eaf9bce3ef4c
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Mika Westerberg <mika.westerberg@linux.intel.com>, 
- Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-i2c@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250904-iommu_succeed_attach_removed-v1-1-e7f333d2f80f@linux.ibm.com>
+X-B4-Tracking: v=1; b=H4sIAARVuWgC/x3MQQrDIBAF0KuEWVewoov0KqXIMP4kszAWTUIg5
+ O6VLt/mXdRQFY1ew0UVhzYta8fzMZAsvM4wmrrJWRfsaL3RkvMe2y4CpMjbxrLEilwOJDOJd8x
+ BfPCJevGtmPT89+/Pff8AvUhMc24AAAA=
+X-Change-ID: 20250904-iommu_succeed_attach_removed-fc42aa5c454d
+To: Matthew Rosato <mjrosato@linux.ibm.com>, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>, Farhan Ali <alifm@linux.ibm.com>,
+        Benjamin Block <bblock@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+        Niklas Schnelle <schnelle@linux.ibm.com>
 X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4693;
+ i=schnelle@linux.ibm.com; h=from:subject:message-id;
+ bh=TFFfUvhxqaFd/gHshGEFwVzVNLWfQjKnfIqWkvKbeR8=;
+ b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGDJ2hvJvZ/zl9Lzws1LNuc/TTeZv/NkRyv3FqzuldlN/s
+ uTyvvfNHaUsDGJcDLJiiiyLupz91hVMMd0T1N8BM4eVCWQIAxenAEzES5CRYVHPTI2cWQ7zNzDe
+ EJ4QEVhsY8Ph3/NfOCWj7d7O3oCfixj+O0seOCrWEb1UbmGtdNvUi7u3WBulHnUMkdVtue+rej6
+ PDQA=
+X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
+ fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: rAYiH5mYImII8-LPi44ai9mGwCaOvHd_
+X-Authority-Analysis: v=2.4 cv=U6uSDfru c=1 sm=1 tr=0 ts=68b95514 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=9jRdOu3wAAAA:8
+ a=VnNF1IyMAAAA:8 a=AK43WZpHVXGhaup9WPQA:9 a=QEXdDO2ut3YA:10
+ a=ZE6KLimJVUuLrTuGpvhn:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzNCBTYWx0ZWRfX/EGk2+i49h/v
+ l6oC57Nd1f4rUCAjs21Tv+Ug/C4mJ3GRxnF043mF2xUjG4nTH/wNHJlvXx2eu4MUDd9u7K9N8wD
+ SeR4ybKOfEtD+M6jYkKo22zgjuP6qTwB3FVEGtlJFedbeR01Fon1K0mM5YJreLMwIzIIyiChBu2
+ S5HRy7YK+HyVKAFpeeTqHmGYRgLPPU/eqMvW8Vb+DtCFjHyFn2WuSZAOkmvUDtlAFq4SlkUi4s3
+ M5fBvTr6MntEuyAPcHqMCqHEMb4VmgZh6f8cOk/8iPpFESDwBbVT249Rj5aTkRBXqDGF8K/Mj6J
+ +yViBRfyCt7tPL8RBCHPg+zsER7RdV9aTDUc4TbWVA7M003YdE2XBKbEoeJPxeOoUOFCRXS1+BQ
+ PsB+T1ji
+X-Proofpoint-ORIG-GUID: rAYiH5mYImII8-LPi44ai9mGwCaOvHd_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_03,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 adultscore=0 clxscore=1015 suspectscore=0
+ priorityscore=1501 spamscore=0 bulkscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300034
 
-Add calls to dev_err_probe on error paths that can return -EPROBE_DEFER
-when probing platform device. Namely when requesting the reset controller,
-when probing for lock support and when requesting the clocks.
+When a PCI device is removed with surprise hotplug, there may still be
+attempts to attach the device to the default domain as part of tear down
+via (__iommu_release_dma_ownership()), or because the removal happens
+during probe (__iommu_probe_device()). In both cases zpci_register_ioat()
+fails with a cc value indicating that the device handle is invalid. This
+is because the device is no longer part of the instance as far as the
+hypervisor is concerned.
 
-In i2c_dw_probe_master and i2c_dw_probe_slave, called by the platform
-probe from i2c_dw_probe, replace the call to dev_err by dev_err_probe
-when failing to acquire the IRQ.
+Currently this leads to an error return and s390_iommu_attach_device()
+fails. This triggers the WARN_ON() in __iommu_group_set_domain_nofail()
+because attaching to the default domain must never fail.
 
-PCI device probing already use dev_err_probe.
+With the device fenced by the hypervisor no DMAs to or from memory are
+possible and the IOMMU translations have no effect. Proceed as if the
+registration was successful and let the hotplug event handling clean up
+the device.
 
-Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
+This is similar to how devices in the error state are handled since
+commit 59bbf596791b ("iommu/s390: Make attach succeed even if the device
+is in error state") except that for removal the domain will not be
+registered later. This approach was also previously discussed at the
+link.
+
+Handle both cases, error state and removal, in a helper which checks if
+the error needs to be propagated or ignored. Avoid magic number
+condition codes by using the pre-existing, but never used, defines for
+PCI load/store condition codes and rename them to reflect that they
+apply to all PCI instructions.
+
+Cc: stable@vger.kernel.org # v6.2
+Link: https://lore.kernel.org/linux-iommu/20240808194155.GD1985367@ziepe.ca/
+Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
 ---
-I recently spend some time debugging a case where the i2c controller
-never showed up. In the end it was caused by a missing reset controller
-due to a typo in the device tree.
+ arch/s390/include/asm/pci_insn.h | 10 +++++-----
+ drivers/iommu/s390-iommu.c       | 26 +++++++++++++++++++-------
+ 2 files changed, 24 insertions(+), 12 deletions(-)
 
-While this has nothing to do with the i2c designware driver, not having
-any hint about why the device stays in deferred probe state does not
-help.
-
-The patch add dev_err_probe in the error paths that can return
--EPROBE_DEFER to aid in debugging such case.
----
- drivers/i2c/busses/i2c-designware-master.c  |  9 ++++-----
- drivers/i2c/busses/i2c-designware-platdrv.c | 11 ++++++-----
- drivers/i2c/busses/i2c-designware-slave.c   |  9 ++++-----
- 3 files changed, 14 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-index cbd88ffa561010ff2d29086836d9119da5b8885c..c7a72c28786c2b59a249a768d43a7954119bc018 100644
---- a/drivers/i2c/busses/i2c-designware-master.c
-+++ b/drivers/i2c/busses/i2c-designware-master.c
-@@ -1068,11 +1068,10 @@ int i2c_dw_probe_master(struct dw_i2c_dev *dev)
- 	if (!(dev->flags & ACCESS_POLLING)) {
- 		ret = devm_request_irq(dev->dev, dev->irq, i2c_dw_isr,
- 				       irq_flags, dev_name(dev->dev), dev);
--		if (ret) {
--			dev_err(dev->dev, "failure requesting irq %i: %d\n",
--				dev->irq, ret);
--			return ret;
--		}
-+		if (ret)
-+			return dev_err_probe(dev->dev, ret,
-+					     "failure requesting irq %i: %d\n",
-+					     dev->irq, ret);
+diff --git a/arch/s390/include/asm/pci_insn.h b/arch/s390/include/asm/pci_insn.h
+index e5f57cfe1d458276a14a5c54409fba4c43962a3a..025c6dcbf893310b473423ab9f5a21b6eaf8c623 100644
+--- a/arch/s390/include/asm/pci_insn.h
++++ b/arch/s390/include/asm/pci_insn.h
+@@ -16,11 +16,11 @@
+ #define ZPCI_PCI_ST_FUNC_NOT_AVAIL		40
+ #define ZPCI_PCI_ST_ALREADY_IN_RQ_STATE		44
+ 
+-/* Load/Store return codes */
+-#define ZPCI_PCI_LS_OK				0
+-#define ZPCI_PCI_LS_ERR				1
+-#define ZPCI_PCI_LS_BUSY			2
+-#define ZPCI_PCI_LS_INVAL_HANDLE		3
++/* PCI instruction condition codes */
++#define ZPCI_CC_OK				0
++#define ZPCI_CC_ERR				1
++#define ZPCI_CC_BUSY				2
++#define ZPCI_CC_INVAL_HANDLE			3
+ 
+ /* Load/Store address space identifiers */
+ #define ZPCI_PCIAS_MEMIO_0			0
+diff --git a/drivers/iommu/s390-iommu.c b/drivers/iommu/s390-iommu.c
+index 9c80d61deb2c0bba4fae59129323cc90f998693d..f04de62288a8f0e9d640f9f2032f961c4135bc42 100644
+--- a/drivers/iommu/s390-iommu.c
++++ b/drivers/iommu/s390-iommu.c
+@@ -612,6 +612,23 @@ static u64 get_iota_region_flag(struct s390_domain *domain)
  	}
+ }
  
- 	ret = i2c_dw_init_recovery_info(dev);
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index a35e4c64a1d46f43aa2d37c0d20fbbd4bc1ff600..07efe4b529e29b52b9e4e439c4b154b467a24fda 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -238,7 +238,7 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
++static bool reg_ioat_propagate_error(int cc, u8 status)
++{
++	/*
++	 * If the device is in the error state the reset routine
++	 * will register the IOAT of the newly set domain on re-enable
++	 */
++	if (cc == ZPCI_CC_ERR && status == ZPCI_PCI_ST_FUNC_NOT_AVAIL)
++		return false;
++	/*
++	 * If the device was removed treat registration as success
++	 * and let the subsequent error event trigger tear down.
++	 */
++	if (cc == ZPCI_CC_INVAL_HANDLE)
++		return false;
++	return cc != ZPCI_CC_OK;
++}
++
+ static int s390_iommu_domain_reg_ioat(struct zpci_dev *zdev,
+ 				      struct iommu_domain *domain, u8 *status)
+ {
+@@ -696,7 +713,7 @@ static int s390_iommu_attach_device(struct iommu_domain *domain,
  
- 	dev->rst = devm_reset_control_get_optional_exclusive(device, NULL);
- 	if (IS_ERR(dev->rst))
--		return PTR_ERR(dev->rst);
-+		return dev_err_probe(device, PTR_ERR(dev->rst), "failed to acquire reset\n");
+ 	/* If we fail now DMA remains blocked via blocking domain */
+ 	cc = s390_iommu_domain_reg_ioat(zdev, domain, &status);
+-	if (cc && status != ZPCI_PCI_ST_FUNC_NOT_AVAIL)
++	if (reg_ioat_propagate_error(cc, status))
+ 		return -EIO;
+ 	zdev->dma_table = s390_domain->dma_table;
+ 	zdev_s390_domain_update(zdev, domain);
+@@ -1123,12 +1140,7 @@ static int s390_attach_dev_identity(struct iommu_domain *domain,
  
- 	reset_control_deassert(dev->rst);
- 
-@@ -247,21 +247,22 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
- 		goto exit_reset;
- 
- 	ret = i2c_dw_probe_lock_support(dev);
--	if (ret)
-+	if (ret) {
-+		ret = dev_err_probe(device, ret, "failed to probe lock support\n");
- 		goto exit_reset;
+ 	/* If we fail now DMA remains blocked via blocking domain */
+ 	cc = s390_iommu_domain_reg_ioat(zdev, domain, &status);
 -
-+	}
- 	i2c_dw_configure(dev);
+-	/*
+-	 * If the device is undergoing error recovery the reset code
+-	 * will re-establish the new domain.
+-	 */
+-	if (cc && status != ZPCI_PCI_ST_FUNC_NOT_AVAIL)
++	if (reg_ioat_propagate_error(cc, status))
+ 		return -EIO;
  
- 	/* Optional interface clock */
- 	dev->pclk = devm_clk_get_optional(device, "pclk");
- 	if (IS_ERR(dev->pclk)) {
--		ret = PTR_ERR(dev->pclk);
-+		ret = dev_err_probe(device, PTR_ERR(dev->pclk), "failed to acquire pclk\n");
- 		goto exit_reset;
- 	}
- 
- 	dev->clk = devm_clk_get_optional(device, NULL);
- 	if (IS_ERR(dev->clk)) {
--		ret = PTR_ERR(dev->clk);
-+		ret = dev_err_probe(device, PTR_ERR(dev->clk), "failed to acquire clock\n");
- 		goto exit_reset;
- 	}
- 
-diff --git a/drivers/i2c/busses/i2c-designware-slave.c b/drivers/i2c/busses/i2c-designware-slave.c
-index b936a240db0a9308f005148cdf4c4f9fd512be05..6eb16b7d75a6d059c7abcead609258f9d514d012 100644
---- a/drivers/i2c/busses/i2c-designware-slave.c
-+++ b/drivers/i2c/busses/i2c-designware-slave.c
-@@ -266,11 +266,10 @@ int i2c_dw_probe_slave(struct dw_i2c_dev *dev)
- 
- 	ret = devm_request_irq(dev->dev, dev->irq, i2c_dw_isr_slave,
- 			       IRQF_SHARED, dev_name(dev->dev), dev);
--	if (ret) {
--		dev_err(dev->dev, "failure requesting IRQ %i: %d\n",
--			dev->irq, ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev->dev, ret,
-+				     "failure requesting IRQ %i: %d\n",
-+				     dev->irq, ret);
- 
- 	ret = i2c_add_numbered_adapter(adap);
- 	if (ret)
+ 	zdev_s390_domain_update(zdev, domain);
 
 ---
 base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-change-id: 20250822-i2c-dw-dev-err-probe-eaf9bce3ef4c
+change-id: 20250904-iommu_succeed_attach_removed-fc42aa5c454d
 
 Best regards,
 -- 
-Benoît Monin, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Niklas Schnelle
 
 
