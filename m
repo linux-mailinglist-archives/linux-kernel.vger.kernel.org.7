@@ -1,64 +1,87 @@
-Return-Path: <linux-kernel+bounces-800384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95FB5B43714
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:28:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C14E7B43716
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7F5173EF6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:28:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62B181C281EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97D32F5305;
-	Thu,  4 Sep 2025 09:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B82A2F60B2;
+	Thu,  4 Sep 2025 09:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b1mky/tm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JiNys9ep"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3480277CB4;
-	Thu,  4 Sep 2025 09:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9232D2F549A
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756978073; cv=none; b=PL63Fqy4MNkV3R0iwBCN7NF4EPaNQV/mS2/K/ZVlOAWaplVyKBYoAEAo/Dvlbj9gJ4E2dLyoK2so8naN5s9s2N+/iCs2gt6ha31PQ5KhkGFTcjdql5Rm7FbE/yc3LMnQCYbT7HSi3XTESARoV7Yep0x/rprUF+8HmvNDitgXJnM=
+	t=1756978111; cv=none; b=dGMMe/HAks4LTuooRsGpWTRfmPlUh/6MuVuEAzxy+mk4HbpjEMLW4Usa8f2YW6wWG0ADbHRcSjg7zm9coMqH+JdM2YKrzdHj2rtTSA2dOQIMxxaIT+uGL/h8G9tmBkEDAwsSQDaJf48MYa1sHppP4Fru8o280Ah6yp5iXmnaD2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756978073; c=relaxed/simple;
-	bh=3vmcO3IDLVqiIgvWlLZTNLw6ISoWbnTQAzKUb0u3ILk=;
+	s=arc-20240116; t=1756978111; c=relaxed/simple;
+	bh=RjQ15hYpYJFqtL0XN7PebA4MBoAWIMYdscOdhdKr1oU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AY9FvpfbepdE5HdTy1405J+uvBoZjyObSrxBLmm8DYw9MWKW+7jhu+2VWahRmng+IYPppJ9e0z0O6XTwaK7fIxQc0LK6LpXyHnEEVjM+Gqe+0hpBkwZloja1OJZ86vjlHwnODDTUblOpL5LM2snIIwZ5uQ9ckRlKMbHdV8/+mn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b1mky/tm; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756978072; x=1788514072;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=3vmcO3IDLVqiIgvWlLZTNLw6ISoWbnTQAzKUb0u3ILk=;
-  b=b1mky/tmPhOHLK1kWPV1MQR5+zFwuFfLc+Lw0Zff42ob3FM4ODKxiXf/
-   uWH7QqcOEz4mkoazlmS20LnTSayphcYsAqPpi/GWTao/LM7Wp+7I7nDwT
-   1cW/YxknPRmONch1x+WJHH8J7rNkMxG8aMazfJT7dLwDoyS5Ue7eD7x+X
-   IDKA2DFcOql5E1ywLtjPjejWS2ijJlhZrs/R2msb6yT2Kbt1dCeY4VJVt
-   TErvcfWDTliSx/DcR8UrEIk5EBQ7rbxTrp+mGNn9OYL0Wmle49oTJ4XFu
-   bYblwhUf/U1O9ednK8Bpk3t/5sdWH6qpnet7Jc8Rm99fcV+WlXPmj4ZMa
-   Q==;
-X-CSE-ConnectionGUID: RHe/RclLR8Ku7DfT59fbqw==
-X-CSE-MsgGUID: Rjgn2z/KQm+K2YGtJ2gMJw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="62951487"
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="62951487"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 02:27:51 -0700
-X-CSE-ConnectionGUID: wlcGnxx/Su2kFT5/P2TcRg==
-X-CSE-MsgGUID: RjDfgkfRS/unBfaFd0oW5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="195501501"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 02:27:46 -0700
-Message-ID: <9247e150-800c-4e95-a5e9-e0032dc7d3ed@linux.intel.com>
-Date: Thu, 4 Sep 2025 17:27:44 +0800
+	 In-Reply-To:Content-Type; b=myFETy09AiG+X1iK2wSCXEbN/ePTanFrg06jbiyTYh/wrvEaVGoPO0w1Jkw1IE2w1szYJNK6RiXcQKA5erGbSzlb1fkZ7pDCmwQlvw+TXXRwYqqeaFnTpejMBBtMRwQByFEVXLwZpd+ut56ReemSmbJR1njpaFWGxEB4RUbZvQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JiNys9ep; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756978107;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rqtVp+dWESwWsztacKgmL2rUMUmFFYmojnDpgO2tdkE=;
+	b=JiNys9epNiYevvMizoilLaFkqjQ6IX3y1POh7NDCAdP+AbTF4eEMBVCvPNybnyJt7AaMLL
+	+3PioFHOfVW2dhWw8N7uE7d68sMLFj2iz1/As54yoDYsHILfSai7N+54OIJCh20x+UyUQD
+	b8+Y9UPHdEro5adnuu2DFSgXCqqVUJU=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-98-DGNutcATMC-rGCv9BcTQJw-1; Thu, 04 Sep 2025 05:28:25 -0400
+X-MC-Unique: DGNutcATMC-rGCv9BcTQJw-1
+X-Mimecast-MFC-AGG-ID: DGNutcATMC-rGCv9BcTQJw_1756978105
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3db4cfcc23eso396026f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 02:28:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756978104; x=1757582904;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rqtVp+dWESwWsztacKgmL2rUMUmFFYmojnDpgO2tdkE=;
+        b=LWDV/a+axMkTtEA+9Zkv8QKuhM2843oaMaSeeGGeiCaZTQkhXQCeqj/kruZgW0UA10
+         rFGgJJDdD1XOrPWNnZ1JtRNQqm1jvHErASj7c4DQ7yRmJ8nHLJ4dmnghWPLN4Xm3ocUY
+         Xlt90VSx9YtpQ6NEkb6uUCAEcoaBgKqbL2S0GdRDoLqduqmCT02/4HKP2/Npj9TX8pAd
+         1ZyXWHAPSIeQDmIaxw8rX8WlBF33ByB0kMpeAIs3FRZMsnY0kw47HjcuPmr0/VIVQpWJ
+         Z+EEEHsrRo84KTIxOPXy1eQ8r+U0Cg7jY/A1SlPVgHLR3TGoeRH9rQ0XEJaLimQzQluS
+         Q6ig==
+X-Forwarded-Encrypted: i=1; AJvYcCXOhsS5wcZvpI4fVkk27bDi2zILaWLhf91tw3EORCVUO3WHmnNklQpKpNKBJgPdnuBU/yXuKBeTZrUgpkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxiiaosAI3ZJD7UFBg3hOnPmbP99R2lrT8oa21W8NFcrvgEIo6
+	af8g9dyQPilCtlNQ30uN6xJQRT7vOhyuReWoeDxfbf6HZbOKMLBpg7kMD9LEEyGcf9mOL1OKsEr
+	Gby9BlmsKm9Br6i2QuHAiRhnM82aeyoofBw7q6vxw6T7CjI5tScIRHCkKYndiR71EVg==
+X-Gm-Gg: ASbGnctcL+ndIYyhgnGSjEQfV3ySePGBE4TNJYMYptUcvxBJLszfkrV9xbTA97nRPbq
+	rTbpRK80/KF8Qug3S7rZmcemsWN8iUjDhIfWh+xBw4m/BTtMRTBtVzs3hhwwktAeDOO+gm6bekC
+	15bBJdyangt1CIm7iyvhj7M8DbVYyN74koHqxcs/ITjX9oR2L+9faw0SxblOwh1ZCnsyWgZ9s5h
+	QM/3pA0H2+VNf8oSq19lWeRPm6FO+Rylzz2HCuNqx7gQr3ThscnIkmJWSzEzmgqQrYwgROHQjmC
+	h3V373e3Nv5B4L+KaWKrnOROtET78GyZ/XO8eB6+HqxQjxKFBIJp/6jtOHo6e7zHLu/+zZ3YswO
+	YLLUWA89XbfD2jdJCjwXJy5xprU8YNKH45hJWBpfZsXkU3m5dp7MTdV3hrXcFXxbZ
+X-Received: by 2002:a05:6000:178f:b0:3d6:fe34:1178 with SMTP id ffacd0b85a97d-3d6fe3416c6mr10383636f8f.27.1756978104553;
+        Thu, 04 Sep 2025 02:28:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHPjjpCqdHOizCp1x9jFe7gjDg5+srRLP3tm8qElUsk9XFS3CXOS6UY0v+F/eqM7CoYz+ymVQ==
+X-Received: by 2002:a05:6000:178f:b0:3d6:fe34:1178 with SMTP id ffacd0b85a97d-3d6fe3416c6mr10383620f8f.27.1756978104124;
+        Thu, 04 Sep 2025 02:28:24 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:1e00:ce4c:be3:97b3:6587? (p200300d82f251e00ce4c0be397b36587.dip0.t-ipconnect.de. [2003:d8:2f25:1e00:ce4c:be3:97b3:6587])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3df4fd372ccsm4936283f8f.32.2025.09.04.02.28.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 02:28:23 -0700 (PDT)
+Message-ID: <21b8a9a7-b737-4ed6-9690-dfe07ee233b5@redhat.com>
+Date: Thu, 4 Sep 2025 11:28:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,105 +89,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 03/21] KVM: selftests: Expose function to allocate
- guest vCPU stack
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
- Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-References: <20250904065453.639610-1-sagis@google.com>
- <20250904065453.639610-4-sagis@google.com>
+Subject: Re: [PATCH 6/9] mm, swap: use the swap table for the swap cache and
+ switch API
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
+ Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>,
+ Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>,
+ Kemeng Shi <shikemeng@huaweicloud.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ linux-kernel@vger.kernel.org
+References: <20250822192023.13477-1-ryncsn@gmail.com>
+ <20250822192023.13477-7-ryncsn@gmail.com>
+ <c492b99e-b6fb-4da8-8055-1e93c6141a12@redhat.com>
+ <CAMgjq7DAbMMmPVPqiGg_-2vghpPc9Jn8rkVNDFgq3reFx6CZtw@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250904065453.639610-4-sagis@google.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <CAMgjq7DAbMMmPVPqiGg_-2vghpPc9Jn8rkVNDFgq3reFx6CZtw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>> index 2a47cd3bb649..209580d395a1 100644
+>>> --- a/mm/huge_memory.c
+>>> +++ b/mm/huge_memory.c
+>>> @@ -3721,7 +3721,7 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>>>        /* Prevent deferred_split_scan() touching ->_refcount */
+>>>        spin_lock(&ds_queue->split_queue_lock);
+>>>        if (folio_ref_freeze(folio, 1 + extra_pins)) {
+>>> -             struct address_space *swap_cache = NULL;
+>>> +             struct swap_cluster_info *swp_ci = NULL;
+>>
+>> I'm wondering if we could also perform this change upfront, so we can ...
+> 
+> This one seems not very doable on itsown since the cluster idea wasn't
+> used out side of swap before this patch..
 
+I think there might be a way, but it's not that trivial. Anyhow, long 
+story short, try to move as much as you that logically makes sense can 
+out of this patch.
 
-On 9/4/2025 2:54 PM, Sagi Shahar wrote:
-> TDX guests' registers cannot be initialized directly using
-> vcpu_regs_set(), hence the stack pointer needs to be initialized by
-> the guest itself, running boot code beginning at the reset vector.
->
-> Expose the function to allocate the guest stack so that TDX
-> initialization code can allocate it itself and skip the allocation in
-> vm_arch_vcpu_add() in that case.
->
-> Signed-off-by: Sagi Shahar <sagis@google.com>
+-- 
+Cheers
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-
-> ---
->   .../selftests/kvm/include/x86/processor.h        |  2 ++
->   tools/testing/selftests/kvm/lib/x86/processor.c  | 16 +++++++++++-----
->   2 files changed, 13 insertions(+), 5 deletions(-)
->
-> diff --git a/tools/testing/selftests/kvm/include/x86/processor.h b/tools/testing/selftests/kvm/include/x86/processor.h
-> index f610c09cadf4..8e75df5e6bc9 100644
-> --- a/tools/testing/selftests/kvm/include/x86/processor.h
-> +++ b/tools/testing/selftests/kvm/include/x86/processor.h
-> @@ -1109,6 +1109,8 @@ static inline void vcpu_clear_cpuid_feature(struct kvm_vcpu *vcpu,
->   	vcpu_set_or_clear_cpuid_feature(vcpu, feature, false);
->   }
->   
-> +vm_vaddr_t kvm_allocate_vcpu_stack(struct kvm_vm *vm);
-> +
->   uint64_t vcpu_get_msr(struct kvm_vcpu *vcpu, uint64_t msr_index);
->   int _vcpu_set_msr(struct kvm_vcpu *vcpu, uint64_t msr_index, uint64_t msr_value);
->   
-> diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
-> index 83efcf48faad..82369373e843 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/processor.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
-> @@ -658,12 +658,9 @@ void vcpu_arch_set_entry_point(struct kvm_vcpu *vcpu, void *guest_code)
->   	vcpu_regs_set(vcpu, &regs);
->   }
->   
-> -struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
-> +vm_vaddr_t kvm_allocate_vcpu_stack(struct kvm_vm *vm)
->   {
-> -	struct kvm_mp_state mp_state;
-> -	struct kvm_regs regs;
->   	vm_vaddr_t stack_vaddr;
-> -	struct kvm_vcpu *vcpu;
->   
->   	stack_vaddr = __vm_vaddr_alloc(vm, DEFAULT_STACK_PGS * getpagesize(),
->   				       DEFAULT_GUEST_STACK_VADDR_MIN,
-> @@ -684,6 +681,15 @@ struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
->   		    "__vm_vaddr_alloc() did not provide a page-aligned address");
->   	stack_vaddr -= 8;
->   
-> +	return stack_vaddr;
-> +}
-> +
-> +struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
-> +{
-> +	struct kvm_mp_state mp_state;
-> +	struct kvm_regs regs;
-> +	struct kvm_vcpu *vcpu;
-> +
->   	vcpu = __vm_vcpu_add(vm, vcpu_id);
->   	vcpu_init_cpuid(vcpu, kvm_get_supported_cpuid());
->   	vcpu_init_sregs(vm, vcpu);
-> @@ -692,7 +698,7 @@ struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
->   	/* Setup guest general purpose registers */
->   	vcpu_regs_get(vcpu, &regs);
->   	regs.rflags = regs.rflags | 0x2;
-> -	regs.rsp = stack_vaddr;
-> +	regs.rsp = kvm_allocate_vcpu_stack(vm);
->   	vcpu_regs_set(vcpu, &regs);
->   
->   	/* Setup the MP state */
+David / dhildenb
 
 
