@@ -1,89 +1,84 @@
-Return-Path: <linux-kernel+bounces-799717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5DEDB42F82
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:13:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394FAB42F88
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51F911BC886A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:14:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A11F3B7AD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0541E3DF2;
-	Thu,  4 Sep 2025 02:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2C51F0E26;
+	Thu,  4 Sep 2025 02:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZIy48jA"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yw/wnIry"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5E01DF75A;
-	Thu,  4 Sep 2025 02:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F60B1EDA0B
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 02:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756952025; cv=none; b=H0WHza/3OWGZ6RZOqx7xdRxypgK/D6iQh5tTTaN7MrceTbSNY8S+8xxELvD0kwdZFLnp6dEEG/4fFWfl4GjcJ93trROYDYlFAr0GW94zvIZdhNa9HYW9QybyR9u+ydkqHgwpFPpkIehamB0TmY72+KDjVHW783LOPXvKb2flP+Y=
+	t=1756952107; cv=none; b=SM6wJNw66Dinp4Ejk7ri4eKa+3mucP7DGuge3iYVPoG3X1sRenHZM4WsnEufb4wmbUI/r19Y8K24KvzfxkQNMaaReqEDeKge8Ad6SV7DFoxIWMghTmxtTVDKEraelAT6GD4xhlzKinXRbimgEu9PSWX7P/8rlo3x7bYzj774XNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756952025; c=relaxed/simple;
-	bh=3g7cY+03XIWLWUoKFNp3F/aqlhRv74KCmVg2qDPm5W0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TnQeabAG9ZGHoevG1q9ysyI1VkE7pZ3wftLqiKl0Is5Ryx7usYJk06XTObVcZGT+uigpVX6dGWOEEfDPlYQ1vFJ7ItaHEJYAB3o29QVJlKM8Ln+fGJ0Fu40FJiU5gYBnhoC7aLgIq+itvnpAt6SORmqtB6F7W8CZErUtZLPndbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZIy48jA; arc=none smtp.client-ip=209.85.210.172
+	s=arc-20240116; t=1756952107; c=relaxed/simple;
+	bh=dr1NHuHnEvzKxM4NCMXIbI6L7kEzlrhuduejp3z9nr4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aHQXpzHKejx//VcC58obyQ5EiEoluzKnY6ENg7MsN3fLyFvYoNF98Ts/5isn971zgweDjeW27FzZmr5MhyJ+l1NA/kLqcRZYyh1oaMPLkowUWli1o+WVyC/RtZ6rLeqRvLHY1KUnNxbbp1n8zj4FkJEJMEJ+ffjRFb/i6RBDJWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yw/wnIry; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7722c88fc5fso536904b3a.2;
-        Wed, 03 Sep 2025 19:13:44 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b338d7a540so8283681cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 19:15:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756952024; x=1757556824; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756952105; x=1757556905; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3hUrML5WljsUlFCqa+ikOvh0WLrz2uOx6fHEzlvAb34=;
-        b=eZIy48jAwE8HH1RiA7UVfduIZLUZNNw6CKg/7vTQHCp4fuxrSNLiEJPMCYzIB/Oy4s
-         1uCog4SktbYruZzVwhtfoTGmpa4xRkE9sGgmea6HrmrynfmH2/ea5uNuCxLxnVeRQWxo
-         Q3P6d7Hxs2p2gy0P0BEsEgCx8OYKy1DdmfKvLS7CfZ/avLAbhgPWJevYhjle9nZlnpnt
-         NaZbsyGPvU5gE4oH2Sl7G/mrYYsSLE93BwMwUAvRb79oNkUUWfL+OmzguXhWAqO5MKDF
-         +2ZSzk7QlNS9UbNPANsnBkwmIG8rOpr6HarFxnpWkV3344J+6kadDZfSj2xpIIIR73lq
-         ZWLA==
+        bh=ZjLPKVYL2fqcNwsEtvoyIStMoXdYJapAZuhAuAsk5ek=;
+        b=Yw/wnIrypXvT704vE1QwUo/pNiZXXgc44oHHwREqKrqQKC6+Vr74+EFS3YQtm1ZSsN
+         kOZrJl/NTtBFywGbHPO9J61XqQhj398B1WnpQ/bU8RiTwBAYHoFFGlRo8c8vIcIcDS1a
+         5pWjJb3PbU8Ks9483PPShwsY/JUBy0y2tLurLX4X/BzSIboScQclUn4rV8mymzzaBgU6
+         SUCjrZxE/38fpVOOOON/MngIMzYbL6lYZ9zAhUu8L8o4bk3+073pNT8IDoRIsMu2HZoz
+         Watki5JBLItl/iP+0u4Po2wTF6x+585Lfc4mY+OVvkHz2DOdg3RTfglLAYanI/1RpSlt
+         l7hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756952024; x=1757556824;
+        d=1e100.net; s=20230601; t=1756952105; x=1757556905;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=3hUrML5WljsUlFCqa+ikOvh0WLrz2uOx6fHEzlvAb34=;
-        b=naprSQbuKfijn/AlONLSt4UYbovM5J0jf7T99Nh74VnmxhW8XNhIF0BrZwIXOaqQ/6
-         B+J3FlPABO0Lakz+1my6JyJBGOxVgrv4HEnMdYKBbMVDsvPg33DbQ7HT8/pmjzxT+p2H
-         RTvcyHkWsK2TXQ+OzKqnU3qCdbsi9Niwm+ZuLn/4gvS/zKT5FRR0j6YQT0L7Ar/xWq2e
-         4KmjXLqXuMIvsWucsXY9J4enctYX0wd3k5t5555HF8tS+WZE7Mp5V14Ax3col4/RF3Hd
-         SfNiB2YPqX+2NIhJ73wwKQ71VrvyODZ/lr6DB7cSiO/8mDjiBHBOlOuAnltLci+nFH4s
-         SITw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLt73kchFckVwE3v1vJgHJ79GhZLKyxi3ltgEz0GMGTztOM6X5g+gutfVvUoljFm3feA5uDKGZ@vger.kernel.org, AJvYcCVamgXcNCvxmGgSP7ryGPF7K+Oh/DlrGskqUKyIUqBuHfoLiyforWMG6CxalyaRKWv8eHed1xke9fm9@vger.kernel.org, AJvYcCWAHUTE1xWW7RlS+6r91s5PNsDdMt1m9CUjVvHD9gq2QTtys+XzWudIy76+cI1wwelxyL4tnkEYfbCLSJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya4D+GHy7IYf+TSL5xOC9deuH4YbDi8aVurqMUwha5rNndByuc
-	oETtI3Mlovmtjp/afN2n+mq2Bldy6Me0Ce2IB+6XLccOdJQTyp7i1Ize
-X-Gm-Gg: ASbGnctOdaE8TFPfNqwbyoZam94v6+3IqWJPu/cEaikIJpFG7IEN322ni1h0/JPYLDR
-	8fj3ny/wa0toO8DOQ6ABMcwNKCrxLZCOaHDJj5asgGrGCBcPfXN6Jx6AagLAd9vNHr1TnHyWgBd
-	pk/3CvFBrCYe12J/H5A9exuvzrG2r0hscPX+tsZ2v+hrYHgcqH7cJWRvkMU4k+o4D/D7nPKNwap
-	YuEbHCCZNWN7sdjOeh+IwMbtjYhPDPjH+19SY2eseZGdntd4LWMJOPQiimCpHlRtNDKx5dgaVOC
-	WRvEs0AZr/9VVnTVbgVib/v1HLqncyhjxXmped1zC+Ug0Iq3ejl1N6C2qM7A1PvK5DzLF03DUNa
-	qeiDZQCFWXy0PceNWVfTlKQFZ
-X-Google-Smtp-Source: AGHT+IF9X57LhT2xyoyX21PxzcP6C6ovW9Qg3hf6aWtPbtciUJUmtB+wCBsuYJCDRZwrBWc/16R0/g==
-X-Received: by 2002:a05:6a00:114b:b0:76e:8e95:1382 with SMTP id d2e1a72fcca58-7723e1f466cmr17967981b3a.5.1756952023447;
-        Wed, 03 Sep 2025 19:13:43 -0700 (PDT)
-Received: from gmail.com ([223.166.84.15])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77241f08b45sm13976803b3a.22.2025.09.03.19.13.37
+        bh=ZjLPKVYL2fqcNwsEtvoyIStMoXdYJapAZuhAuAsk5ek=;
+        b=Fz17Cvy+7Hl9crlST0OC2rVXPiRUe2/EFrw2+7/peXflUOBbN34uEoHFmSovnCFHC8
+         v3D3pOQhUDJqiE3yYwDC3Y9qmqrMPureeO9hPyvxtrkffsEduORP3b3Jwh1J5WcqNlAV
+         Ep3JlpzkL6gYxmHRA8aJyPoqwXCLLDKHzTWGCxVjmNlOA4sH19SBj6rAZeclidwCX9IW
+         s9sNKxKhz95L88GZZSQ78N3ke/PxgZlloLH7ZS2K8ZmMwzYYBx+/D5lM2h/nGNYrYmI8
+         yZToX8/+j7+NPNIaYs22xshGutbh7tOiWNPCB/V+ts1HaM6LYfj4/GQDi/5IXaz46GrT
+         WC7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWywYP623N9UJyEbOLKDi1WAZqNjFLbiiCN62EMSQpp5SBVqruifCfrtMmKXFCxibHbJufEU1aSevqubic=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvZJ7ODbqqbE38SfeEvVLMCkg8WEvFopeiMNx8phmNKW3L8vQu
+	5Jk01wWJPE0yxSw8UTNHJuYFo0WTdN5xMhPJrtErzI/N92+aXvhHtGTW
+X-Gm-Gg: ASbGncsc6lqI3/7IcXq/tgbmHp9kQ5qX38RmTgALO9mg+USL+aFYD01baXa1+yxQqgb
+	XMzla+2ENeyffJ5M2aU8hlkroAdusmXJBUW72edZ0cwVngxpFLeNU2oX2WE8Df7iuUclPhGtqit
+	8J/Nw1scnhkmPtLXaIpZ8HhXVItDekiEIZdshSC3Wj6VWG8w7jhlVMYSOtGL5LiwMF4bUS1iZZD
+	WPK/KalZK3p6R8nZwlMCD9GKYOE02PkJC1DhAy+JmOondenTtOIuiCi+clF+ziBKn/hzTfcqkDn
+	k5/5MSDblN/HuGXG8ZFefg5Zi1MNo9z2yZNbfn+gaIPiQFGpDnIJupIB++Kn58SQ5hFgCwPWNMg
+	oH4mAEQxek640phMR2OhrysqdBWde02unMftj/WkjowTzhZTm+ZiIXkeM4JGZ5g==
+X-Google-Smtp-Source: AGHT+IHHZwqjGBH+gVrv1uqdsL5o0HYi0fqBPQZogImnszYScoLfA/gc+M4UxD3AhjbaRC/XGpVSbA==
+X-Received: by 2002:a05:622a:124a:b0:4b3:ea6:e0ef with SMTP id d75a77b69052e-4b31d845107mr219283871cf.12.1756952105135;
+        Wed, 03 Sep 2025 19:15:05 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720ad2cb78csm37714076d6.19.2025.09.03.19.15.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 19:13:43 -0700 (PDT)
-From: Qingfang Deng <dqfext@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-ppp@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Felix Fietkau <nbd@nbd.name>
-Subject: [RFC PATCH net-next] ppp: enable TX scatter-gather
-Date: Thu,  4 Sep 2025 10:13:28 +0800
-Message-ID: <20250904021328.24329-1-dqfext@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Wed, 03 Sep 2025 19:15:04 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+Subject: [PATCH v2 00/16] rtl8723bs: cleanup and style improvements for better readability
+Date: Thu,  4 Sep 2025 02:14:32 +0000
+Message-Id: <20250904021448.216461-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,78 +87,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When chan->direct_xmit is true, and no compressors are in use, PPP
-prepends its header to a skb, and calls dev_queue_xmit directly. In this
-mode the skb does not need to be linearized.
-Enable NETIF_F_SG and NETIF_F_FRAGLIST if chan->direct_xmit is true, so
-the networking core can transmit non-linear skbs directly. The
-compressors still require a linear buffer so call skb_linearize() before
-passing skb->data to them.
-This is required to support PPPoE GSO.
+This patch series includes 16 commits that clean up and improve
+the style and formatting of the rtl8723bs driver in the staging tree.
+The changes address spacing issues, indentation, comment formatting,
+blank lines, and minor code clarity improvements.
 
-Signed-off-by: Qingfang Deng <dqfext@gmail.com>
----
-RFC:
- This depends on a pending fix:
-  https://lore.kernel.org/netdev/20250903100726.269839-1-dqfext@gmail.com/
- There are also alternative approaches:
- - set SG and FRAGLIST unconditionally, and use skb_linearize()
-   on !chan->direct_xmit paths.
- - don't use skb_linearize(), instead fix the compressors to handle
-   non-linear sk_buffs.
- - conditionally set SG and FRAGLIST based on whether compressors are
-   in use.
+No functional changes are introduced. All commits adhere to the Linux kernel
+coding style guidelines to enhance code readability and maintainability.
 
- drivers/net/ppp/ppp_generic.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+The patches have been tested and are ready for review.
 
-diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-index f9f0f16c41d1..3bf37871a1aa 100644
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -1710,6 +1710,12 @@ pad_compress_skb(struct ppp *ppp, struct sk_buff *skb)
- 		ppp->xcomp->comp_extra + ppp->dev->hard_header_len;
- 	int compressor_skb_size = ppp->dev->mtu +
- 		ppp->xcomp->comp_extra + PPP_HDRLEN;
-+	/* Until we fix the compressor need to make sure data portion is
-+	 * linear.
-+	 */
-+	if (skb_linearize(skb))
-+		return NULL;
-+
- 	new_skb = alloc_skb(new_skb_size, GFP_ATOMIC);
- 	if (!new_skb) {
- 		if (net_ratelimit())
-@@ -1797,6 +1803,12 @@ ppp_send_frame(struct ppp *ppp, struct sk_buff *skb)
- 	case PPP_IP:
- 		if (!ppp->vj || (ppp->flags & SC_COMP_TCP) == 0)
- 			break;
-+		/* Until we fix the compressor need to make sure data portion
-+		 * is linear.
-+		 */
-+		if (skb_linearize(skb))
-+			goto drop;
-+
- 		/* try to do VJ TCP header compression */
- 		new_skb = alloc_skb(skb->len + ppp->dev->hard_header_len - 2,
- 				    GFP_ATOMIC);
-@@ -3516,10 +3528,13 @@ ppp_connect_channel(struct channel *pch, int unit)
- 		ret = -ENOTCONN;
- 		goto outl;
- 	}
--	if (pch->chan->direct_xmit)
-+	if (pch->chan->direct_xmit) {
- 		ppp->dev->priv_flags |= IFF_NO_QUEUE;
--	else
-+		ppp->dev->features |= NETIF_F_SG | NETIF_F_FRAGLIST;
-+	} else {
- 		ppp->dev->priv_flags &= ~IFF_NO_QUEUE;
-+		ppp->dev->features &= ~(NETIF_F_SG | NETIF_F_FRAGLIST);
-+	}
- 	spin_unlock_bh(&pch->downl);
- 	if (pch->file.hdrlen > ppp->file.hdrlen)
- 		ppp->file.hdrlen = pch->file.hdrlen;
+Changes in v2:
+- Resent series as one properly threaded batch
+- No content changes
+
+Vivek BalachandharTN (16):
+  staging: rtl8723bs: fix spacing around operators
+  staging: rtl8723bs: remove unnecessary space after type cast
+  staging: rtl8723bs: fix overlong lines to conform with kernel coding
+    style
+  staging: rtl8723bs: align asterisk in block comment to fix formatting
+  staging: rtl8723bs: fix logical continuation style by moving to
+    previous line
+  staging: rtl8723bs: fix indentation to align with open parenthesis
+  staging: rtl8723bs: adding asterisks in multi-line block comments
+  staging: rtl8723bs: remove space before semicolon
+  staging: rtl8723bs: fix excessive indentation in nested if statement
+  staging: rtl8723bs: fix unbalanced braces around conditional blocks
+  staging: rtl8723bs: remove unnecessary parentheses in conditional
+  staging: rtl8723bs: remove unnecessary braces for single statement
+    blocks
+  staging: rtl8723bs: add braces to all arms of conditional statement
+  staging: rtl8723bs: fix line ending with '('
+  staging: rtl8723bs: place constant on right side of comparison
+  staging: rtl8723bs: merge nested if conditions for clarity and tab
+    problems
+
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 421 +++++++++++++---------
+ 1 file changed, 252 insertions(+), 169 deletions(-)
+
+
+base-commit: 5141ae32d4b8971d7b689854fd47a200e695bda3
 -- 
-2.43.0
+2.39.5
 
 
