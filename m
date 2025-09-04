@@ -1,89 +1,119 @@
-Return-Path: <linux-kernel+bounces-800010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD33B43262
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:29:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE15B43265
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93CE0188E116
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:29:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35BC01C20DF8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3275B2673AF;
-	Thu,  4 Sep 2025 06:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6CC267733;
+	Thu,  4 Sep 2025 06:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRTJ7WpU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="I+xNl/gz"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4951DE4EF;
-	Thu,  4 Sep 2025 06:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F53013E898;
+	Thu,  4 Sep 2025 06:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756967368; cv=none; b=VZhNcUXI3X50kibhT+um1rGgSRH5cFv23gTg1NBAXNTTeFCjc3xhgmhTmsK5W5uq1X/T9zxM/nGFaa7GqYfL5TxzF2reDpFfFXb7GwTsjB7FnRqPM1EBq3SBf8fILwZ83tulzsm3bciCDiYEOPBXVE8AUutR0PRs01zBil724uc=
+	t=1756967398; cv=none; b=RS554By1XSZ9Tvl4DH7W8Vp9lAKYPe1DS+8eiPhF2vwFCFSNaM114TFAVUsALs1ff8ZiZjYwitWGFCB3WSNmIuTZHgeL953roa6ggQ2UM/+R8/k1suO+0Ergwguyu3jBm5SacqilSl9nVrfpSJZM/C/xPK+kptdwPqBcfOt/iBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756967368; c=relaxed/simple;
-	bh=Cm1nfbweuODePUoeyta314ZQ44Xg43nKAoLw+2/YGaE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VBakO/9Iil6VBPV/RQJuTrg8p/dQRcbfenh1rkNarGbTniKTvH+8//bLe4yV9+YIXkXu7ywTVvO40BEBvh0ubgTI3FVSh2ko1VElbkwRj/7sOkn/hH1Fr9yrA6wQEekV43zVeB7dLnT7DGD0PNXKHivylDCyAsDQ+rW7pt2ZEl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pRTJ7WpU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09686C4CEF7;
-	Thu,  4 Sep 2025 06:29:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756967368;
-	bh=Cm1nfbweuODePUoeyta314ZQ44Xg43nKAoLw+2/YGaE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pRTJ7WpUsJvxX2CDbCWqgQeZm66JxA1uUklJIt+wsDdt4c+3wRO5PrCk+0mW/zEqr
-	 xroW3LQXQelR4FDVYyQkQUNstlXsvtWlAjEjfCBsCQtPB+jCPjciHaq9jhepkX6l2G
-	 6oHSuA5npB8Kwxvt4a3fKz4cG5IHYJNZ5h1Md6lCSCAE0mqKEilQqZsVaekSapPTAG
-	 xrSgkc17ZPz4AScbw0a1G9uEgt648+fhnQmJz2r/Wdot7QPpgANEPMVTzK2Dd89ybW
-	 r3AmutXJ0gU91YS4a0L6Y4ZN9UP9/+Jh+imY6H81ebVzSsK4nHZFCMRSpy++jzeLv/
-	 YlwRXXSvEC54A==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f6507bd53so701110e87.3;
-        Wed, 03 Sep 2025 23:29:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVL0KsZzWAyKWsYgYbLwLT+QnVR9AWMauE/g5+DwPB+Zf7bf7WWdfgni8zg8phA2gxKOt7KR6iXt9773T6l@vger.kernel.org, AJvYcCWXSSEnk9xK47ryz6uwU3tRMDbJQ1xl5MFd0Adxq9tZ6g0L9T+JUY5lNsEBN0WD0AYnXbsWkwpGIvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyar3lCGlwnyDqy3U51SkmI7ncS/1/iBEPEOgLEeu57UE+czqU2
-	mmSVTzXUghHAHudZp/3+H/2iU0wNVAN4z/ZibgeWDLBqOupEjeQFqqX3VGpIuaHAs40BmPvTSoo
-	XyzSWVi6NFrbcOwjjOLuj/n8yeoFuYkk=
-X-Google-Smtp-Source: AGHT+IEin5zziIBrILihnKQAmq+TjAaoGyz7Un9p07Y7iCns+HvzLeA8Na4wn5bK1bSXOroLCm8HGKhljNEv/UW6YrU=
-X-Received: by 2002:a05:6512:4608:b0:55f:61de:5359 with SMTP id
- 2adb3069b0e04-55f708bcd00mr4426469e87.24.1756967366381; Wed, 03 Sep 2025
- 23:29:26 -0700 (PDT)
+	s=arc-20240116; t=1756967398; c=relaxed/simple;
+	bh=4czrmzMSLDZz9viX00RqnyuaxWvciCiyNyWN2NZMdaA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CLQWRD5Ar5CT2bENRLhuG2biUqtrt/e8inQlUoQv+Lg6y9jYo/ZGf2btQDtYfyztp+nxajrdrXAr25rtIG+B6tUFxKVSY8LK0nLCDSujhBDsbKVwHIOQySZ23eyiY7n0zNeuA9V9+Zk9xjh4yJUKg2Jh/uZ8b0h0sGCn2crI8sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=I+xNl/gz; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1756967393;
+	bh=/IfI4aUxxzPIGU6x5F6FwaHaumw0fBrBLP2BK0P5mUs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=I+xNl/gzG53KeIwqo7yHwLWPpfu/HX5lSMM565R3U6XmuVbf8pbnIoCtr4tJO94SE
+	 25giOPSKQbT/fmgNoKH8DQrE1RTHSg00qR/RpVKy8I1UWApS94tEnGcVfr/HPN9z0J
+	 9rk7uHejOr6sVplLWRRrQGhy1k9+Bad/26QO3RWLmDDRet76XsjVMTFNwtZTKgOMeD
+	 3ehVVJ8q7KRuzo0y4xyq2hF625CeypMzXkUGnfvKBbe1x/chlheBZi+7L9hStQvg8+
+	 7hvUSKjE1Lmy4uBuvWR8vlKvmceCZip+LfLhASaM11YetyQ3vCh6BBa5rI/nhYXoFN
+	 jWDTu2SZkUSpw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cHV2S4b27z4wB1;
+	Thu,  4 Sep 2025 16:29:52 +1000 (AEST)
+Date: Thu, 4 Sep 2025 16:29:51 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: "Liam R. Howlett" <Liam.Howlett@Oracle.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Subject: linux-next: manual merge of the slab tree with the mm-unstable tree
+Message-ID: <20250904162951.365fa2ea@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828102202.1849035-24-ardb+git@google.com> <20250903162200.GIaLhrKOJeL6ThYHa1@fat_crate.local>
-In-Reply-To: <20250903162200.GIaLhrKOJeL6ThYHa1@fat_crate.local>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 4 Sep 2025 08:29:15 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXG2VVtZsrVAi4DhFbS3ymqd3xZoY9VTuRgfHP=pXFQZow@mail.gmail.com>
-X-Gm-Features: Ac12FXxGrb-Lx6UrWJrEnCAaeWAMBlOgbHm3-QzwOp3zp3Ev44riq2ANPN5KGhU
-Message-ID: <CAMj1kXG2VVtZsrVAi4DhFbS3ymqd3xZoY9VTuRgfHP=pXFQZow@mail.gmail.com>
-Subject: Re: [PATCH v7 00/22] x86: strict separation of startup code
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ard Biesheuvel <ardb+git@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, 
-	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, Kevin Loughlin <kevinloughlin@google.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Nikunj A Dadhania <nikunj@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/oYqV1IYTlMqEE7LTHPXVo=s";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, 3 Sept 2025 at 18:22, Borislav Petkov <bp@alien8.de> wrote:
->
-> On Thu, Aug 28, 2025 at 12:22:03PM +0200, Ard Biesheuvel wrote:
-> > Changes since v6:
-> > - Rebase onto latest tip/master which incorporates v6.17-rc1a
->
-> ...
->
-> So, due to the interactions with the Secure AVIC stuff, I've been doing some
-> patch tetris. Two patches: the first one goes ontop of x86/apic and the second
-> one goes ontop of this set.
->
+--Sig_/oYqV1IYTlMqEE7LTHPXVo=s
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Looks straight-forward enough ...
+Hi all,
+
+FIXME: Add owner of second tree to To:
+       Add author(s)/SOB of conflicting commits.
+
+Today's linux-next merge of the slab tree got a conflict in:
+
+  tools/testing/vma/vma_internal.h
+
+between commit:
+
+  da018ebb7157 ("tools/testing/vma: clean up stubs in vma_internal.h")
+
+from the mm-unstable tree and commits:
+
+  cbb6a30df135 ("tools/testing/vma: Implement vm_refcnt reset")
+  6602bcbdfbad ("tools/testing: Add support for changes to slab for sheaves=
+")
+
+from the slab tree.
+
+I fixed it up (I used the latter version) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/oYqV1IYTlMqEE7LTHPXVo=s
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi5Md8ACgkQAVBC80lX
+0GxnwwgAgR6n+0Q9X971emDrVe74htmI9fO2fdhmHeTDOwNSJdgAYFJOIgQuRq3f
+KsX/vGNLPOyVW2pYQFvFvwOfjD3NfE+sYloBrxzrKvtjz5mrUb6CZlICDMkax8M6
++D/OI0rfBsqDZFn+JWTmYX+oYS05Tcihf/pwT23wQeQZXKZU2hyGXImwdJ0RzIrm
+FhvqIUaMDNCvKZ70TNWHBGC5Yf7gHXYZuYg6vOGtFK7U85X+wTtNqNonYPGmUjt/
+R9WWkwccVkzhBtYP4pgKfkn6Lj/pHtgdlUi/qiIZaQPdAKSKjzctOyQSSK1ux4iK
+9Z60rrQB2ZzD3kPdrcR7aZkFZX3Uow==
+=MxWw
+-----END PGP SIGNATURE-----
+
+--Sig_/oYqV1IYTlMqEE7LTHPXVo=s--
 
