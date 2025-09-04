@@ -1,111 +1,89 @@
-Return-Path: <linux-kernel+bounces-800901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BAFB43D83
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:44:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E18B43D9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:47:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 55F0E4E5936
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:44:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 287131C853B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173D03054C4;
-	Thu,  4 Sep 2025 13:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD660307AF7;
+	Thu,  4 Sep 2025 13:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SfLBNwul"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IJ3qQ178"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10FC14AA9
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42F4307486
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756993439; cv=none; b=puGIfqKIFz8a0+8V76/qrMKe00qkQsJpWgVMAAzy9GwK/G/dLfMaTLG/KaVNX8bJ7hYhA/kCiCSHeOP9ReQ+m8zLTYn6hdHzomTpS+W32qL9YZb2ByGB6ERgHyPRNb6//2Yjh1KG5QRy4uDbEup63IBmA6PFWurwsYzgn+7h0kk=
+	t=1756993580; cv=none; b=ohFgBYP0KCIPu5MGQAbcG8qHJrqrYyCXqsv627Gh9ONmE1zuNb0EBEVuAQuDgNad5iJHLMjwYp1WQUfLW4mOliTR010EiNrsBDPdlY2zW704/WdO1UyMmbgDUlXQkbgfutgDgzuAFrrtroowZZkwTEB234O23xSyKuzXxBsQzqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756993439; c=relaxed/simple;
-	bh=pY+0hMoVoBUn8oqRetqFYduNjO9W+fhU6E5VEvndFN4=;
+	s=arc-20240116; t=1756993580; c=relaxed/simple;
+	bh=Jpx4yFoiRQ4AV7GXYy1EkLPU4nZnRgkoSoHCGfbgou4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mWYf1zgfrxme5dlSRC79yfazX+kCavm3Vng0kBkhL48lt/qkcRLJN71wCXFyAJMI8mRAioz4Ef1Tkb4hrFKppkvfNDfkGWci1GUdhN41zzHOZ3nBVHuafxd90WSIxaH+C2riSGLJGlfnnYZKNW4x6rk2tlP+H35m8/T5Ed1sNVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SfLBNwul; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5849X8b1008129
-	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 13:43:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=2glEwf25BhBn22EfU2RgmB2K
-	pr+UPvjpjFbd0WLfYLk=; b=SfLBNwulePti93rH0/aneWsCdnYXKsLO6rjNRc3a
-	l296k5oxt2aEN724wrVb3e3YyMKdw7rqbuEmEyaDn4kIitFBuv5DNIbjywYVoTOi
-	o6Kt/Ev5RGQtuLn5rTcIoG3AJZCWWP9f/HSfWlu+TAI8xxTyaAKEdejbi17hNp7h
-	dguK3cZNUKWyfbE58+O60e7x6ghUMes7H9Eg3Bj7iWx95qJ+eS9UkUnPa1g72+AD
-	FyCh5Is+I5tB3OPZ0q1zQtbCtALUCL2ITkPlyLuvkslaOYnlkSjDvzQYRF2j4G8t
-	xD6e8XawIvSEig2bPgVjks3vMZ1PyYNc+0gXlGIiSFJB0w==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urmjqkja-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 13:43:56 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b30d6ed3a4so20992501cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 06:43:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756993436; x=1757598236;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2glEwf25BhBn22EfU2RgmB2Kpr+UPvjpjFbd0WLfYLk=;
-        b=PhumISdDn08Wl4bqODewT2I2lD4FodP45HQpN/g9Zs/OllfYLBrGkx1WLM8uhPeEEQ
-         gp+ChkN3k25H8G0E7lfUDvOOsCZyRzZyit6c8rjPlpvo0sb1UuLSr2vfwQPsKlBZjsmQ
-         fvZs2l8uFs0SL5c0LvWW81RNBZBQ6wdM0E8tKt0bx4IN0Ygp+aVZBe57Lm229WsxgezK
-         PrWlBZ2yaV0Mfs0EzOeQU6VTG/FIk+oZnLAFmr0kgg68tyeBSkyrtrufi2KbB6qcpyib
-         PisPkHcDedk3imJL596jIT5lvU0298NCgbvhv6cgVvp8xxJYSQlP5L8wnCwA69A7Mnzl
-         tbvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwJ6vqUicJV5L+iKocBxXxxdClRk5HjY56X8A3YPFS2+1RHTS17h0cO0OF830DL3l7o6unMxMShD1HXlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySJXy7WsYhilTFiDXzbSw/oyjOxEtHUbBm+eW3OGVqsILsPHlW
-	aDC75JYSzsKFa9NosWlMdbEt6kMiPhJsyEYQxwFYn45nTlasUFLsa3H8vFkKgIZeesq04+ZcimB
-	5d0qBTfyZU4I2krHdYf2CuyYax+w4RC4uaCgYa4aycuk5e4DAvEYO9XIHC5xtYYDLhRQ=
-X-Gm-Gg: ASbGncuxZpk3tvd++i/h62dbIB2uCCSXIzdv56P/zfD8fq3SjofXQpxCEh5VBi/Ynb2
-	9WFqnaiBt5XC6N+w10ozA41SOaFk7XlFVhw2lvC6ws3HfKOWZLPweEDEGvWxp8taVZUEexQplRy
-	cg0i2XWMJDu3vbBc8eX5VapWfXPMEHn/I1Gkh5AhxRdpg3BqkYIwW1TDlCEopiHpV3MV4m8DNp7
-	W/uQzIDBLkbEPeDaRBR9KsUUWeLVaHV6R7xLJ90XyO1w9vjuUfRP99xR2Gsy8qMdWZWLVA+PsOv
-	qP1ndnBrtfrGgqdfb3V5zYy6iGWEyAQto3UEPgtbEXVHOOurVVHphpNUChVvyD72Nytry7JCxT3
-	9CdDxatKCzOE5wDYxVQrRCd7UC7CYBCd7ciyd3h7RwqWTqPHGa4KM
-X-Received: by 2002:a05:622a:8c9:b0:4b2:a8d9:8683 with SMTP id d75a77b69052e-4b31dcd66e8mr252983201cf.53.1756993435716;
-        Thu, 04 Sep 2025 06:43:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH390JIg6ufBo3mdh8M7wnVIbtdqeUgFOXqUz/fvQ0dn7b22yTZGY91BOUB7sk585pcqQx+eA==
-X-Received: by 2002:a05:622a:8c9:b0:4b2:a8d9:8683 with SMTP id d75a77b69052e-4b31dcd66e8mr252982531cf.53.1756993434991;
-        Thu, 04 Sep 2025 06:43:54 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ace81a7sm1199096e87.74.2025.09.04.06.43.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 06:43:54 -0700 (PDT)
-Date: Thu, 4 Sep 2025 16:43:52 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 2/6] dt-bindings: display/msm: dp-controller:
- document QCS8300 compatible
-Message-ID: <p2okyfwfl23bip65koaqezlvhyo3z47bnugojcieuspr37xc7b@s3qwgbqmts4l>
-References: <20250904-qcs8300_mdss-v11-0-bc8761964d76@oss.qualcomm.com>
- <20250904-qcs8300_mdss-v11-2-bc8761964d76@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=phtHeYJa1Z9NcU5v3O89d+FKHcDcbQcykcPM7BGuZ84pK8bRa0eK7n5zkNSpvbiSnFGlG6qNlo021P8e4HJV07HU89QNboqfxD6BEQCQREJ1w6xLMGM+2EOchoEFyE8+2KVbK+qzr8qqDEiWShUDEE0ngSc11L+aB2YJyVPjoe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IJ3qQ178; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756993577;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jpx4yFoiRQ4AV7GXYy1EkLPU4nZnRgkoSoHCGfbgou4=;
+	b=IJ3qQ178T4Dla5AkAKqls/mrvg5Ys/jNJ2WmJ9ZZtN/kuzyeTazrwk1ie8dr1vN84CU5RY
+	iTgV/JfoPNFkuMJ3aPuHmixL+P8Xefm2cvmZ1oqTC56XN6/DjYIye3BkNnNU7W2xDDc6Bv
+	yFuWeDeY8N5fLZh6GmIpHuUHglycXQc=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-671-hYIjsfd1Nn2sGwIrL3aTZw-1; Thu,
+ 04 Sep 2025 09:46:10 -0400
+X-MC-Unique: hYIjsfd1Nn2sGwIrL3aTZw-1
+X-Mimecast-MFC-AGG-ID: hYIjsfd1Nn2sGwIrL3aTZw_1756993568
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CB3221800452;
+	Thu,  4 Sep 2025 13:46:07 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.52])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id BA74E1800451;
+	Thu,  4 Sep 2025 13:46:02 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu,  4 Sep 2025 15:44:45 +0200 (CEST)
+Date: Thu, 4 Sep 2025 15:44:39 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "debug@rivosinc.com" <debug@rivosinc.com>,
+	"mingo@kernel.org" <mingo@kernel.org>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"broonie@kernel.org" <broonie@kernel.org>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"Mehta, Sohil" <sohil.mehta@intel.com>,
+	"x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH v2 0/5] x86/fpu: don't abuse x86_task_fpu(PF_USER_WORKER)
+ in .regset_get() paths
+Message-ID: <20250904134438.GA23718@redhat.com>
+References: <20250822192101.GA31721@redhat.com>
+ <b483759593fb83ec977c318d02ea1865f4052eb7.camel@intel.com>
+ <20250825134706.GA27431@redhat.com>
+ <2491b7c6ce97bc9f16549a5dfd15e41edf17d218.camel@intel.com>
+ <20250827145159.GA9844@redhat.com>
+ <4249e18ffed68e8038624021aa3a6f06b64eeb85.camel@intel.com>
+ <20250829150605.GA6035@redhat.com>
+ <e653fb9cab51ed2d0ea71f9d322c55420a83a4f5.camel@intel.com>
+ <20250903095436.GA18799@redhat.com>
+ <78d2f583a0d3008c7d0e2b0e6b70a1b3258cc659.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -114,98 +92,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250904-qcs8300_mdss-v11-2-bc8761964d76@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=OemYDgTY c=1 sm=1 tr=0 ts=68b9979c cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=EGIftIUl1-O6pfvt0j4A:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-GUID: ltWoARjqPOBcDy2Mk1y7LDhBScKN3jpb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNCBTYWx0ZWRfX1OZilldjsX/P
- PS1hRQ5NBrK8pYitZhUamB/eV/t7/6VPbxxSlhUUGR8qL1dMJnT24Awoek6kVg5Gao8SD4YdpfT
- tISQrsMhJKGlZESJtQ6VbFV3cmVQwxK7pha4aLoq6wRTXSl2l1007xl/M7VPgvBu5xge/vhhGDO
- Y5fbYDVA3UBblSIFqpyG++TWxtbdba2wopTIHzmtPy1y7j1+enFjkKiKOnw41VKxzl/HYJJwK2n
- 7kYb+PrXSADov5HiHi6QuLho99MJHZt8PzTD9WlDcW5SatoVmG5V8lQWb2yy5ng8KjzwZDGX4Si
- t3FaogBb3WR21ly59VesHJrT5YNd9GoZnmSihR2RAgb0KTayj4t/6hpVC+C5+DKVk6jFwAaJyC6
- AFmGqqPZ
-X-Proofpoint-ORIG-GUID: ltWoARjqPOBcDy2Mk1y7LDhBScKN3jpb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-04_04,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300024
+In-Reply-To: <78d2f583a0d3008c7d0e2b0e6b70a1b3258cc659.camel@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, Sep 04, 2025 at 03:22:37PM +0800, Yongxing Mou wrote:
-> Add compatible string for the DisplayPort controller found on the
-> Qualcomm QCS8300 SoC.
-> 
-> The Qualcomm QCS8300 platform comes with one DisplayPort controller
-> that supports 4 MST streams.
-> 
-> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> ---
->  .../bindings/display/msm/dp-controller.yaml        | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> index aeb4e4f36044a0ff1e78ad47b867e232b21df509..ad08fd11588c45698f7e63ecc3218a749fc8ca67 100644
-> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> @@ -18,6 +18,7 @@ properties:
->    compatible:
->      oneOf:
->        - enum:
-> +          - qcom,qcs8300-dp
+On 09/03, Edgecombe, Rick P wrote:
+>
+> On Wed, 2025-09-03 at 11:54 +0200, Oleg Nesterov wrote:
+> > > Hmm, I actually do see a potential concrete issue...
+> > >
+> > > fpu_clone() will wipe out the FPU state for PF_USER_WORKER, which means if
+> > > xsaves decides to use the init optimization for CET, "get_xsave_addr(xsave,
+> > > XFEATURE_CET_USER)" could return NULL and trigger a warning.
+> >
+> > Even if get_xsave_addr() returns a valid pointer, what is the point to try to
+> > report cetregs->user_ssp which doesn't match the reality?
+> > Again, update_fpu_shstk() was not called, ->user_ssp can't be correct.
+>
+> I think it would be better to have less special cases in the FPU.
 
-Can we use fallback to qcom,sa8775p-dp instead of declaring a completely
-new one?
+Agreed,
 
->            - qcom,sa8775p-dp
->            - qcom,sc7180-dp
->            - qcom,sc7280-dp
-> @@ -195,6 +196,7 @@ allOf:
->            compatible:
->              contains:
->                enum:
-> +                - qcom,qcs8300-dp
->                  - qcom,sa8775p-dp
->                  - qcom,x1e80100-dp
->        then:
-> @@ -295,6 +297,26 @@ allOf:
->            minItems: 6
->            maxItems: 8
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              # QCS8300 only has one DP controller that supports 4
-> +              # streams MST.
-> +              - qcom,qcs8300-dp
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 9
-> +          maxItems: 9
-> +        clocks:
-> +          minItems: 8
-> +          maxItems: 8
-> +        clocks-names:
-> +          minItems: 8
-> +          maxItems: 8
-> +
->  additionalProperties: false
->  
->  examples:
-> 
-> -- 
-> 2.34.1
-> 
+> I'm not sure
+> what you mean by "correct". As above, it gets zeroed in fpu_clone(). I guess you
+> want it to be something else.
 
--- 
-With best wishes
-Dmitry
+Well. I think that if copy_thread() path allocate the shadow stack, then
+ssp_get() should report the value returned by shstk_alloc_thread_stack().
+If the thread runs without shstk/ARCH_SHSTK_SHSTK ssp_get() should return
+-ENODEV. Regardless of PF_USER_WORKER.
+
+Now lets recall that my actual motivation is "don't abuse x86_task_fpu(PF_USER_WORKER)",
+and we also have ssp_set(). Without this patch which clears ARCH_SHSTK_SHSTK
+ssp_set() -> x86_task_fpu(PF_USER_WORKER) has to return a "real" FPU state.
+
+Oleg.
+
 
