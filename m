@@ -1,122 +1,85 @@
-Return-Path: <linux-kernel+bounces-801042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31D9B43F05
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:37:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A9FDB43F26
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 867C05838E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:37:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEFFC3A7C30
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DE9308F36;
-	Thu,  4 Sep 2025 14:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D541430AD04;
+	Thu,  4 Sep 2025 14:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HmtWJS6N"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="caxBkIhM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885A71C6B4;
-	Thu,  4 Sep 2025 14:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5B630AAC7;
+	Thu,  4 Sep 2025 14:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756996415; cv=none; b=nUq2egIXp5T/TkBIqcvAXPO2fryItITuBHish361+ziuswDbYFh+KBXF7Pr31cj9I6tVtxnpD0ipN11yn67IqNzmnbIjEAtnwcjNpqMjvvEaC+08da4K66U2/NBw+nV9HjDbZF3/0MySs3QsFMpmdHBBCRboNraFiQYwb0ZGItk=
+	t=1756996425; cv=none; b=Yb8j/N52c7JqG7+CefJ31RNChJq7yXJr+xqkV5Po8vxpk2Z6k6cmzqnLpRLJv3eoqsKIMklQQWIh8AgdKrNpC5vLjGHY1gszLEQjr4TDAkiD2vFosTXi0obLidp6NdKdijzKX93nsSUooyt9tNI2DzNWOovNkc0f0czCKROYNys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756996415; c=relaxed/simple;
-	bh=CQqjUVu5trE6dpsmbJAfD1hwuOiRBQjUEFPaOuht6vw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=REVjEoNVJ7Gn6fy62ZP9lTGonoSaNcIs2TbldWomny12ewPNp8BedGZwiR9gWf4zc9ofpEo6QwCgLYTz+vc6JXGCCNoinJ78oNmA1xiXuOVBOxxcTxI+QNMG3tzmGs4PxJ92jE/w9gegMv0rPW9SWMkWNgSHzSOWq8ykly7CU2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HmtWJS6N; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b476c67c5easo740905a12.0;
-        Thu, 04 Sep 2025 07:33:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756996414; x=1757601214; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4+1JbGw0fGpmxtwsSOst12cbU1swEnfv/zomaJdL8Ys=;
-        b=HmtWJS6NLuytzbnKeVyeOr0yyAxjMVw75nbOG0SRivfeSwaKndl5XyftrzzPI0TW1B
-         jjuZsp6xbq4JJ+8nrnS4/i39lhEp/G4uehB8WxsX7nUDkh8fvj06WLiyrdZXAhPmQNH1
-         tV7KrFTfV7RdfvtVg4PCkdfziy3IckSRfC9KxXJlqJurzVRuQNEf7U/BqSncD/pX752q
-         3gu/Zx0jL9jXV0A2Pse70Uy9ygPDEIWaraeX/01lVvPLhMwpoRAlQB+wQD4rAIYrPCPb
-         c3SoaRbLWKLJ5SJin20h8rkSak2lJRrFAm0+HZMWv9RZXH5P6PBzMz4mkyZfe/3Eg+X1
-         OZqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756996414; x=1757601214;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4+1JbGw0fGpmxtwsSOst12cbU1swEnfv/zomaJdL8Ys=;
-        b=BlzlebB9S2mwhWaG/b/cMLVbYw40iTa5g6/yr9WF4QxYtjOWE95rJ74ZtyHj9zxi3v
-         GcDVKS5X59kUXucGti9wKMdZ3dJjgRzV5m2ZwOKUQrJeVy4XdiBCZAalSygM8HAIqleH
-         LxUEDo7DwiL3nBEt+Hly0SH8ezgaVJhcD+9/mlCkrQQ1bMGKDKwcsp7IZfu4t61402u/
-         8Jfygrgr44wJR7R5mJXo2ezbfCMOql8tJVbPVDtSLJ3J0yGG3Y09cTkanVaooKWmuKMO
-         Ve9px23jWkxLcXHJsOst8XAGYetIHn1k0FIMzAEqULCNAxUT9OcXQDSZyh7DBGIpIboK
-         DSIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyXHrJ6RvNqVA+r/z8zgJeHuwcDCAQUXbB5CpsS3pzCui+QCPgBElTPIE063pws+6hFpnsklfZKLeWpHs=@vger.kernel.org, AJvYcCW2il9gT2KhYDZi0Y76ZBdd7yQuNnxckV5vaJoBf4RjCOE8boKiZ94Gax7FpQadpwu4TYMHXbeATdbF@vger.kernel.org, AJvYcCW5O2F2zwabQMgqMs18sbseHP1HKL+fS904xtI8nMsP+H0p++MMS0oR5A6xXR8oJvxAf9USC/tv8HAeUWCp@vger.kernel.org, AJvYcCXFgfID5mmFPDN7tNpYNWPmf2Rihvr8ypgu0lsaJiiMMdDWeoTE8T4cBehO1ACe+oAXu8l8Hrb+BLkkxpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXTz7Q/gAWiV81V5hebK4OK3ahEl2H9iR7aJN/kc+1IY/3byQB
-	GU0Qfqbeuisna+1Wlg+8oiQmaVcymml28qvyp6M7tZggWrBiz5FOSaWXTaS7kdjC
-X-Gm-Gg: ASbGnct7vSAYwI15eu4ORlFDaoUngbJFawO7hWLVtXWZK4No6yQ/jGha+X/qaV9Iv7i
-	l7Qm6LwVEoYnn+IF6Ll/81GSrxhXP7XAek+3hK31v1Dx7n5PMaTMOB6PYnEE3yTOXuD2gnfPUqp
-	gwyBYaWFmSfYzmf+5GWTjyGuxb8htqXojUX307/g/tdF5hOVFzF1LP4mVs8BKxSczfJG/FDbvrW
-	AQ4NCjzJ8eD+lmk5YkMK8Olm8OHVPlRFWbmW7HboSPxxT4BSzym9qd0iLKBx6UPCprGRHWfF3Gp
-	Qu6mvHEkWW6UJXuDPsfNhLxPmEKXpZRdqhj9tYQlkb5QKtx+ZyvFO/ZazGJfUddTpebKiInTmXH
-	wSWq0QlEoxkMbmnAQJDW3JyY=
-X-Google-Smtp-Source: AGHT+IEvA5/WDKDSgUCUGgs9+T+B+p4SGxVG84q25Rng25L/tfZ509AI7QBBg7Y+27zKK3A3L3aQ4A==
-X-Received: by 2002:a17:902:db01:b0:24c:cdc0:52a7 with SMTP id d9443c01a7336-24ccdc054dbmr29353105ad.24.1756996413792;
-        Thu, 04 Sep 2025 07:33:33 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:463b:8ef9:3432:4c09])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24cac814a10sm33364705ad.133.2025.09.04.07.33.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 07:33:33 -0700 (PDT)
-Date: Thu, 4 Sep 2025 07:33:30 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>, 
-	Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, phone-devel@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: input: touchscreen: imagis: add missing
- minItems
-Message-ID: <23olm2vbdiuliejmwfzhr75xyj3na2mczztvno4rkbi4mdl7xr@uu3br7ucdydp>
-References: <20250824-imagis-minitems-v1-1-cea9db55e87f@dujemihanovic.xyz>
- <20250825-capillary-viral-b7448ca6a57e@spud>
- <5917367.DvuYhMxLoT@radijator>
- <20250826-yippee-tamper-5439f104769b@spud>
+	s=arc-20240116; t=1756996425; c=relaxed/simple;
+	bh=aF9kWeDpl3fpdV6dkQuM0f9fEHlPUWDVl9sB8BjZwjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o5sXZFUHpwnHk57+OpLNwEsnlmbPBWyaaECdE2Q/tazE4NBMOA35J9WGseiEOsgyNZ/H1FAnEs+M5IDWOk5Y6StyfK/m+sC39aPmrF2aL2WXbUcZ17mFXfcbqyXPi9IIGMCVABntPayko3NReO2yOn/r1JeVC12qKRNZOLP6Lg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=caxBkIhM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DB8DC4CEF6;
+	Thu,  4 Sep 2025 14:33:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756996424;
+	bh=aF9kWeDpl3fpdV6dkQuM0f9fEHlPUWDVl9sB8BjZwjo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=caxBkIhMIC4FS5w3ScigznHa5TVb7eRgEn6nOsIk096Ye0DuPFIGbsVfxnn5zPd2i
+	 gPv8su2LOd0tZk5hqCUxu9/t3FEZHdcWlAdtyRvneRIhQLIYLe9ooHUiIXq4rIQe/y
+	 byfiaJ6l6q504oPccnTeWKUsPOYVwON/tEEL3bQ2Et5BBpEdH2o0I/6Y4PUrWmsxXb
+	 AEr5dHZGZ+qITWzJ7BX1sAOt6WBFPsyudOY1sklnYkcJrId5lc6D40WfA2TC/9BecP
+	 94qXvXfLQScWDapKcMN73homgB2w+akRHaeUVIj4Bu7d1+aWi2GmsL+l5c+fcM/xH1
+	 HjV1UwDc24JrA==
+Date: Thu, 4 Sep 2025 07:33:43 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Haakon Bugge <haakon.bugge@oracle.com>
+Cc: Allison Henderson <allison.henderson@oracle.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Santosh Shilimkar
+ <ssantosh@kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>, OFED mailing list
+ <linux-rdma@vger.kernel.org>, "rds-devel@oss.oracle.com"
+ <rds-devel@oss.oracle.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net v2] rds: ib: Remove unused extern definition
+Message-ID: <20250904073343.1138ce24@kernel.org>
+In-Reply-To: <44A12092-5DA9-4A3C-ACBC-FF1AACB03BD3@oracle.com>
+References: <20250904115345.3940851-1-haakon.bugge@oracle.com>
+	<20250904065502.13d94569@kernel.org>
+	<44A12092-5DA9-4A3C-ACBC-FF1AACB03BD3@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250826-yippee-tamper-5439f104769b@spud>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 26, 2025 at 06:38:05PM +0100, Conor Dooley wrote:
-> On Mon, Aug 25, 2025 at 08:57:57PM +0200, Duje Mihanović wrote:
-> > On Monday, 25 August 2025 18:42:38 Central European Summer Time Conor Dooley wrote:
-> > > On Sun, Aug 24, 2025 at 06:12:05PM +0200, Duje Mihanović wrote:
-> > > > The binding currently expects exactly 5 keycodes, which matches the
-> > > > chip's theoretical maximum but probably not the number of touch keys on
-> > > > any phone using the IST3032C. Add a minItems value of 2 to prevent
-> > > > dt-validate complaints.
-> > > 
-> > > Does this mean that there are devicetrees in the wild that use < 5
-> > > keycodes?
-> > 
-> > Indeed.
+On Thu, 4 Sep 2025 14:22:02 +0000 Haakon Bugge wrote:
+> Sorry if I have mis-interpreted the collateral. From [1], I quote:
 > 
-> oke, Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> "A Fixes: tag indicates that the patch fixes an issue in a previous
+> commit." As such, it is an "issue" and I reference the offending
+> commit.
 
-Applied, thank you.
+You're not the first one to misinterpret it, I guess we should fix the
+doc :$
 
--- 
-Dmitry
+> As to "Cc: stable", you're quite right. My bad. You want a v3 or are
+> you (and stable) able to handle it?
+
+Please repost this one without the extra tags, and if you want it to go
+via netdev the subject tag should be net-next in this case (it will end
+up in 6.18)
 
