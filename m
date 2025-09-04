@@ -1,105 +1,82 @@
-Return-Path: <linux-kernel+bounces-800091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611DCB4334C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:04:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C01ACB4334A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 296A4165D36
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:04:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51893A28C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29723288522;
-	Thu,  4 Sep 2025 07:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EE52877C7;
+	Thu,  4 Sep 2025 07:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="l422uGLn"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IteBtjsd"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC452877CF
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 07:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31208286430;
+	Thu,  4 Sep 2025 07:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756969461; cv=none; b=fnHxOELB7JWQqaRycEMPuQt0D7jQuMs/EhzQbB94rjiEc2F6mNeCG3ZxGVl6e4j+jBbnc4A+BSYdtOgV7WQOuRinOxy3SpU8zzjcBudCNIQk0HECq7Fx1nfntKm8ThccW2CIKTBHAfm8U2ecYQ30otd/AqeNoVSRSyf1HjytLdE=
+	t=1756969458; cv=none; b=O47PfU+ke0UkeOmYoEtpD4YWOfKZP5ptQJ3DCHrN4xht6e3a7xkbWBlrmySsZCLZTrL9BYzy+ElUM9L9AJKAAaCZMi4kQxEecAoREfYGeaAFgdUXTnbyHf/kEUrPlV6PDVxOT69/7jlCSc8nBr7Tlwsdff1BnHI42NJx408q04M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756969461; c=relaxed/simple;
-	bh=r1hX7Z+yhoBaMjfcMdMHqZZ9ywVADNhx4XJ4GCKQntY=;
+	s=arc-20240116; t=1756969458; c=relaxed/simple;
+	bh=ml3RfzjZZoN0n8xd0iYomIvyBUmOngtEkbLSoEbPCws=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=skAAFi17qBnJvrEg6ClBKk3MZvLZBiQN4mumoFsPXuNj+LcT9OVOQLCLoLYdKadVpYLAYNCXW7oGJ+vqeTmK5S49hbHnjpLEM9cDRVrhQCoxTjtLFeiAdx3yuMNmJqM3PPea9MnzWc7KECtAcNMNniWNBortFw4e44PRy+K32Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=l422uGLn; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b47052620a6so1350812a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 00:04:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756969458; x=1757574258; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XShcqAeI8UkKWl2bpcgPi0BFlmvYm+zIID/2XctmDfg=;
-        b=l422uGLnDEtv0qhiAmAufDAqhOE9jOExH8dgcp82KK+YeM4vgrkZo2tI0dItgGayHC
-         TFwphJR9s91Yre7Zs7V2vSPzy3kfhtkoWiFYoM9HkB89U1vHaxn6ZkAx3I7jB3x2HQXH
-         2t6CMS9GCQw0G/+In0lQJbDxD5Js50K0sixK5rPxACFtEH7lszS3WzTGW4l41Q/gWh05
-         7RBZ4lo0VjCv4YaT3qBUK3dPMiUgJh0joj7szsYP3V/6U2B0OuRfAafupX2uPW5QB9xa
-         OfUM2b17KIxdRRcsbyoNsBqJGHZvnvR8dclRVGup0uuwf8458j1TqiEFC7VpP8fYaMNh
-         Xi6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756969458; x=1757574258;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XShcqAeI8UkKWl2bpcgPi0BFlmvYm+zIID/2XctmDfg=;
-        b=bWigqzst2ggN9kyML0j9SMlo/1mqpejcE+irgCTNd4t7xvLXWv+jyXSB8TNMdtMXxN
-         g2PG5KUi7NAeEWKg4XktHYjVYokjoWsr9oQjSbONsSfZAUNYddoRKj2UK1za4WS7GOwZ
-         ebvMFRVOwWWFSBaMGKyqYp2hj5llO8lQs3Qn+9KRa/UFf12v1YqwL0zTGbNXCC7hcO3X
-         u1ThcAbXcir5U7Ai6WyH5MfnvGqgx9Yh8KHK7XEZpF4ROqEwl5d3pNuoRs/IAE8YAvc5
-         DJA8Xj73StCyzQdzzzwRAQiAcBBpLVjEjl1YpYCxPJNMbI2Td9H5TZv7BDB8zIYqNroO
-         m3ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4VrSqoHY993tav8Oy/My9V1TYzQLboBz9h/ZTfuEb6pTeJvCX5BJjbV7fncLJreyw8BR58ekHVtJgjQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPQKZvh2YU58jJx4hLTJqayEBf6jGe43JaWB10Ws/uvud/4nON
-	HLdyAj1LzvpU+Oc0C/WgcycOzCenF7JfRblW5/sqJvQG6kkDJE+i8OYMDpBgFoko0A==
-X-Gm-Gg: ASbGncs2pL8Lkt4xdYdSHlZCgXjkKawch+JD6xP2fmow1dSn4S1ck+LAW5u80v0y05k
-	1MnVBJBppAdbveolnyAYcSJsNuJVqT2fIR6gh2MLjDWV+h74vZoulbGyV8VAzk9LL7vLpgtsmf2
-	1JgTFbs16g4W8Ep2UZU0X3qB/sqvTjKimp/ojcijY2o6MOZ+Hd8g4iKy+F5cLLhVdE4BaCaTEWs
-	MP3ksShk2/p/YBHrIP4didO6GZ1VhXFHw0YgZxvrxgaphzFqIg2uC7au5vN7eICuspcFA8XPNtl
-	bsuD07ppeywcXRbVQB/VjXmODqoEL8Yvi7Fvti9eYpzdFS/RBy51iJNjy4Hp3Uvs3EFm1PzHVd0
-	vRlPO+ARpAVvyUB7NSkuzw22pFlTLzknICVBRS0LFjj2h4gUuqXIslznmhjNK
-X-Google-Smtp-Source: AGHT+IFlEKlycn8KOjk3U96gCkrdFJeZYxhvgM1MF9G7HXAMCMILyu2eDuCNwDb/BecIunADp/tMAQ==
-X-Received: by 2002:a17:902:d506:b0:24c:8263:cda8 with SMTP id d9443c01a7336-24c8263d033mr84843515ad.22.1756969458347;
-        Thu, 04 Sep 2025 00:04:18 -0700 (PDT)
-Received: from bytedance ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ccc79a345sm7566695ad.132.2025.09.04.00.04.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 00:04:17 -0700 (PDT)
-Date: Thu, 4 Sep 2025 15:04:07 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Matteo Martelli <matteo.martelli@codethink.co.uk>,
-	Michal Koutn?? <mkoutny@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v4 3/5] sched/fair: Switch to task based throttle model
-Message-ID: <20250904070407.GD42@bytedance>
-References: <20250829081120.806-1-ziqianlu@bytedance.com>
- <20250829081120.806-4-ziqianlu@bytedance.com>
- <20250903145124.GM4067720@noisy.programming.kicks-ass.net>
- <14be66aa-e088-4267-ac10-d04d600b1294@amd.com>
- <20250903202703.GP4067720@noisy.programming.kicks-ass.net>
- <ddd2f979-43d5-43e8-a95c-37a1654189e5@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qPVBZNuUnBdSOvRF5u224SECxMTLcUl9irgVyX+Ei/ASNaKKB4UET/73uqADyJlLTnV8Vc9wFRbjvp6nSRP7053ao9yrwPgOB8dTYOaDR+t8rFbuWSwTXw9zf8C0AtMoiDOO38699tL7Wwztij8ZRVU9ObUQVVdxP8oMnf6BeGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IteBtjsd; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=M/3H362ZqzDMF6P12e3Tww4DK9Jo6Vxhu+wfYy+W3Aw=; b=IteBtjsdCqf/NNkwVs98V72txm
+	X2dxVpk7yeyfhAe6TcfgmX/coExBsMMH0B4plQ9d52jz2ip3Yi1bmD9WEflJJH+vivbdEKhk6fSHJ
+	jJGKsG37c75uykk591oTp9bnSDl8ybXLHUzNNopFngN1DOzGq+AWKourId73hhnCjcKrAs8QpjUvU
+	o9jIjXNtwJEBuFNblNhIUPwFjdT4hGh1ERCx7aYekVwL6pGcTBYjSi5bnhn638Y6nmadkTMKjXLVG
+	7mqy/DSrntQYdnutGj0/tHqAkX4xp7kP95zC9UhAIXEOSDMacIfo4B7NxGNR3a4Ze1Eq3jRL3ww9v
+	r0ZDw3lA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uu40w-0000000EXWv-0FTE;
+	Thu, 04 Sep 2025 07:04:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 429CF3002BF; Thu, 04 Sep 2025 09:04:10 +0200 (CEST)
+Date: Thu, 4 Sep 2025 09:04:10 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	David Woodhouse <dwmw2@infradead.org>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Marco Elver <elver@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Ramon de C Valle <rcvalle@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	x86@kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 0/9] kcfi: Prepare for GCC support
+Message-ID: <20250904070410.GX4067720@noisy.programming.kicks-ass.net>
+References: <20250904033217.it.414-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,96 +85,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ddd2f979-43d5-43e8-a95c-37a1654189e5@amd.com>
+In-Reply-To: <20250904033217.it.414-kees@kernel.org>
 
-On Thu, Sep 04, 2025 at 11:14:31AM +0530, K Prateek Nayak wrote:
-> On 9/4/2025 1:57 AM, Peter Zijlstra wrote:
-> > So this is mostly tasks leaving/joining the class/cgroup. And its
-> > purpose seems to be to remove/add the blocked load component.
-> > 
-> > Previously throttle/unthrottle would {de,en}queue the whole subtree from
-> > PELT, see how {en,de}queue would also stop at throttle.
-> > 
-> > But now none of that is done; PELT is fully managed by the tasks
-> > {de,en}queueing.
-> > 
-> > So I'm thinking that when a task joins fair (deboost from RT or
-> > whatever), we add the blocking load and fully propagate it. If the task
-> > is subject to throttling, that will then happen 'naturally' and it will
-> > dequeue itself again.
-> 
-> That seems like the correct thing to do yes. Those throttled_cfs_rq()
-> checks in propagate_entity_cfs_rq() can be removed then.
->
+On Wed, Sep 03, 2025 at 08:46:39PM -0700, Kees Cook wrote:
 
-Not sure if I understand correctly, I've come to the below code
-according to your discussion:
+> Kees Cook (9):
+>   compiler_types.h: Move __nocfi out of compiler-specific header
+>   x86/traps: Clarify KCFI instruction layout
+>   x86/cfi: Document the "cfi=" bootparam options
+>   x86/cfi: Standardize on common "CFI:" prefix for CFI reports
+>   x86/cfi: Add "debug" option to "cfi=" bootparam
+>   x86/cfi: Remove __noinitretpoline and __noretpoline
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 3e927b9b7eeb6..97ae561c60f5b 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5234,6 +5234,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 
- static void check_enqueue_throttle(struct cfs_rq *cfs_rq);
- static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
-+static inline int cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq);
- 
- static void
- requeue_delayed_entity(struct sched_entity *se);
-@@ -5729,6 +5730,11 @@ static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
- 	return cfs_bandwidth_used() && cfs_rq->throttled;
- }
- 
-+static inline int cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
-+{
-+	return cfs_bandwidth_used() && cfs_rq->pelt_clock_throttled;
-+}
-+
- /* check whether cfs_rq, or any parent, is throttled */
- static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
- {
-@@ -6721,6 +6727,11 @@ static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
- 	return 0;
- }
- 
-+static inline int cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
-+{
-+	return 0;
-+}
-+
- static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
- {
- 	return 0;
-@@ -13154,10 +13165,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
- {
- 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
- 
--	if (cfs_rq_throttled(cfs_rq))
--		return;
--
--	if (!throttled_hierarchy(cfs_rq))
-+	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
- 		list_add_leaf_cfs_rq(cfs_rq);
- 
- 	/* Start to propagate at parent */
-@@ -13168,10 +13176,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
- 
- 		update_load_avg(cfs_rq, se, UPDATE_TG);
- 
--		if (cfs_rq_throttled(cfs_rq))
--			break;
--
--		if (!throttled_hierarchy(cfs_rq))
-+		if (!cfs_rq_pelt_clock_throttled(cfs_rq))
- 			list_add_leaf_cfs_rq(cfs_rq);
- 	}
- }
+So I can take these first 6 patches (and edit that debug patch to
+un-annoy myself ;-), but I'm thinking this Kconfig stuff:
 
-So this means when a task left/joined a cfs_rq, we will do propagate
-immediately, no matter if the cfs_rq is throttled or has its pelt clock
-stopped or not; if cfs_rq still has pelt clock running, it will be added
-to leaf cfs_rq list to make sure its load can be decayed. If cfs_rq's
-pelt clock is stopped, it will be added to leaf cfs_rq list if necessary
-by enqueue_task_fair() or when it's unthrottled.
+>   kconfig: Add transitional symbol attribute for migration support
+>   kcfi: Rename CONFIG_CFI_CLANG to CONFIG_CFI
+
+Should perhaps go through the kbuild tree? A
+
+Leaving this:
+
+>   ARM: traps: Implement KCFI trap handler for ARM32
+
+Can that go independently through the arm tree, or are there
+dependencies?
 
