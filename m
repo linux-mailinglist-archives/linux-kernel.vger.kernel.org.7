@@ -1,160 +1,206 @@
-Return-Path: <linux-kernel+bounces-800550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C624B43920
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:46:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC0E7B43922
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C92E268790E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:46:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AA8117754F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC002F90E2;
-	Thu,  4 Sep 2025 10:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C882F658E;
+	Thu,  4 Sep 2025 10:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DCE6VIp+"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tYNoP2qn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="c7U2KoOE";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xCFEZysu";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ReEa+1d1"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2A472629;
-	Thu,  4 Sep 2025 10:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B524C2ECEA6
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756982796; cv=none; b=NHS8eaiWynCARtEcGCbGZIHrzjnjhqYEzS/LxoBEZIUnIliSrBfWKLYlxEbyp6uGYAZClOoZj6b3SPkDPbosquNkz8wN/oqAIxlvsg9Idi2+4nRLsbIUiXfUaODHSNLGQeBP+zRiR41bQmFhNcERCjiMvQt7xPkOanWGZmMztFE=
+	t=1756982814; cv=none; b=ixnrDF48rg9tMIS2yuB6QD53GZKMf4is5ei5HsgHlKq6CNcVCAKkQPwGSDitlLdqnV11v7Ki79bigXeBHnLFvZBVNGWIFhTA7mUaaexnucsq/TvjkOMks1wdW4P5PRW0IAQ8xX4F+SompHXdFl8MOpVLDnJC0/w2RMNmp7/ZCNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756982796; c=relaxed/simple;
-	bh=t7jhEFWu/vL/nffTlTXgSrADqDago8gdgl9cPR+Pi2o=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xl25waemFlhMPQgqupXsTK9VvZmfgibbh/OzKZfSkkGqj4ZJ/br5Kdlh/GkMWKZF4sqinjZRlsenORCmntcv8Xuwg6Tqn0TrfjUj01BkLwgUm7vnv0T2bmBUldgrkQ2KTxpUS3P4aunZ3ujHzAR2O//km1BINndDUUFxpYMeljc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DCE6VIp+; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61d143aa4acso1293837a12.2;
-        Thu, 04 Sep 2025 03:46:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756982793; x=1757587593; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=v/6MCHmVs/INco1rBZwPhEs0od+L81/1d00TkL5c64U=;
-        b=DCE6VIp+KFjtVo2zuxUq1CFdhffi+0fvDvJZQ9+Q1brEeLGbQ53BIfcxRn4+aWCAhU
-         Pa58YEMF15RVfOIyaOhj1IxEQ3CB6wcGAl+Rq9puOY4eeGcPUM2h7cKNKxkN1g6REsSz
-         l2NCBU+BAgdkkR6/3UHGytxzd5zag6Nm64UUcDCliPCTHI/mFjjLwL45rmLWA0whDrbI
-         +hsnWDMLz1uvO+gaj+DPmm2VJM/qS5Jqi9XXLt+wY1WAk4XudcrKPr+z8/BUXB1CHRRn
-         ClBhquHrijfbFIODWmUin8Uh574WVobyTxu18tclAWURfvXBa0o55uEuKZBjcINh2BRq
-         Q9rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756982793; x=1757587593;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v/6MCHmVs/INco1rBZwPhEs0od+L81/1d00TkL5c64U=;
-        b=fspTrS3GjtQfV2K0tSsEk9xvXRZhtM1rE2hpc4Exb4mex7vIXkWgtZdJvQGMZac59F
-         Mq7L5cuU3GzUXnfWs9bTpTgcZQQmWvpww8FCpfr4KJZe/JZsOF6elcbxw/4vLdaHZgkK
-         D6ypuZkZRo4KGr1be8mH3ENk5kdYFukgWKtyq8yjPSBMN6r5yf2nP7xnsAgfOzj28mrU
-         jQGqQveN22qjWdiPTWAKWHj3KcjyleMUDkl1Zx4oXyiHSkQYIfIPilAe+6r9g33c/UXZ
-         d580TAMa6e11IPHO2B8jjrmG/zYtPVsSXeNWU8i9EL31+9AZL+LDbs8E8BaeAXFVSUsi
-         ePAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUI5y9fkJBVEHB8Ha4XxLDnSKaUt+AGyVEI6pLoIwnRW1O0PW5Qsi9aGxzpqj0fRCjQGyM=@vger.kernel.org, AJvYcCXq7TXE4lenJU1mevyUDdAHXGZrEPLuNxLWw+vOs2epnjojOXje+oHf/sAXcjPSG862GKiIWZ0dS1Gqc37lIibV1Gc3@vger.kernel.org, AJvYcCXs6iR2xSxIc8CnneIsAOCjgIjs80ctryotlOScvdlRLw3yTPggdBMFXUdBrawe39fRJc/9iLzCJ6ALJwT8@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAQFiS3JukDKxYJkojSWXInmI4MaSSJLDCt7ho9lFcpDQRfmGT
-	AlM+lBF4VwiVRf63ybzWfVsgJAn2dwqv6wN/X0svZ+I8vYuXUa29iZwy
-X-Gm-Gg: ASbGncubnUA3uVALkGGNq6UMGegmnRv5+3Q8XWHcHTZ2+schrsYuRZYj/xBOveO/2pA
-	TjIbsPsQDJ112uOtz8urTTZAenxKTGyNngqHpd/zfr/AiQYC89EZBfzXn07re1XrjJw5G6fqPfo
-	9hpHXnFi7pTTlfJ5T/N5rWT6D+6+PecLlFUbXUJdybxzOb++tGWybxmnWkmZTrSM7NKfWY8rzEc
-	HYuGxRcQ/DastVS5AQ3OOksPplTYrMsWH2t5CenNSJYjXk9ZbldliUMG7TmxwxO/sD1P5n2GhFA
-	s9aaShm989jRiXM4LRErC6i5898SCyA9GrTQYnBma7+SUL4O0yqcf5TNzwvA79M3qFCVUNHPyU6
-	OewIeg9E=
-X-Google-Smtp-Source: AGHT+IF2BbXiznN72q968yvBy6zKn2zLuchEHAzxeMcnRqvSKT6buqhPOlQiBdzDdyf17ZN1MJI/1Q==
-X-Received: by 2002:a17:907:6d18:b0:afe:ba8e:7378 with SMTP id a640c23a62f3a-b01d979d03dmr2024143466b.48.1756982793072;
-        Thu, 04 Sep 2025 03:46:33 -0700 (PDT)
-Received: from krava ([2a02:8308:a00c:e200::31e0])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b017e4b9ed7sm1308898266b.90.2025.09.04.03.46.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 03:46:32 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 4 Sep 2025 12:46:31 +0200
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH perf/core 02/11] uprobes: Skip emulate/sstep on unique
- uprobe when ip is changed
-Message-ID: <aLluB1Qe6Y9B8G_e@krava>
-References: <20250902143504.1224726-1-jolsa@kernel.org>
- <20250902143504.1224726-3-jolsa@kernel.org>
- <20250903112648.GC18799@redhat.com>
- <aLicCjuqchpm1h5I@krava>
- <20250904084949.GB27255@redhat.com>
+	s=arc-20240116; t=1756982814; c=relaxed/simple;
+	bh=X/b5ldQKTc7ACyM58uW4SbsI5A0s6ciJwclAFiR/EiE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=GP+G/da1pFCmc/XomOD6GoH8HpSFSC7Zt3AsZslv0pvQNEN6DOYskUZp85hzG3lTay8dDIR61o4NCJ9A6LcztN59LZLuwRjSNFiZ2PwG70azmPpw//1zZs6tjjhIFPWZvgj5T4FTYnlrswUGwOvDLjztoDBEYciwys5i6lM4598=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tYNoP2qn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=c7U2KoOE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xCFEZysu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ReEa+1d1; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DB0F834686;
+	Thu,  4 Sep 2025 10:46:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756982810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6b/BmwCHo3DYuUf45IMBYRttwgcEiOlqLTxtBwVnepE=;
+	b=tYNoP2qnZiSBl30cMkXM7/dfO96kCHMPVpDcyEmy9w4dWuPVGv0Q+UwppVH3Qoc5NqujDE
+	JkUievBTc5YuI8z+GBNZ0LIRvQ9hdAbQgBqrPhGZ6C5I+p8yc9N2AVHokS3CfaONNuMK2W
+	1iBuxPvbYUr/Xugowj6rluLFDHBgsW4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756982810;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6b/BmwCHo3DYuUf45IMBYRttwgcEiOlqLTxtBwVnepE=;
+	b=c7U2KoOErjsy3w0mCFjHQwE4NKy7dyAxbHmy7a/T75FGQ2bUDRgsZsfpbFEkvcBAdJ4+6M
+	HMUiGPrkzkHaO1BA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756982809; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6b/BmwCHo3DYuUf45IMBYRttwgcEiOlqLTxtBwVnepE=;
+	b=xCFEZysu+ba84tPub0epTpg0jqBQ2T/QV0U4EKlnW5zRHPExlqysts7CEKV9jhJhGOdpbv
+	+aP0kcaoZAC5sKZ9FS2jXm2pEXC0U4biVAsjvioZzsTguczPedYFO24SJZKhMQHbjq5N8v
+	jHpC80mPAmnAjFix2fm3rwMpUJtRMEU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756982809;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6b/BmwCHo3DYuUf45IMBYRttwgcEiOlqLTxtBwVnepE=;
+	b=ReEa+1d15fQxlC+zjJ8/sNG+3py6SgBN3tzxpmAow/ICwl5xhnc5mwKL6VeBfDHvruuDzp
+	Q6N+g+mexFEL68Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B542213675;
+	Thu,  4 Sep 2025 10:46:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kD0FKRhuuWhBNAAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Thu, 04 Sep 2025 10:46:48 +0000
+Message-ID: <50b59b27-cdf9-4af8-b31d-d5ccc68c73fd@suse.de>
+Date: Thu, 4 Sep 2025 13:46:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904084949.GB27255@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] arm64: dts: broadcom: rp1: Add USB nodes
+To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, devicetree@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, iivanov@suse.de, svarbanov@suse.de,
+ mbrugger@suse.com, Jonathan Bell <jonathan@raspberrypi.com>,
+ Phil Elwell <phil@raspberrypi.com>
+References: <4e026a66001da7b4924d75bd7bee158cbb978eed.1756387905.git.andrea.porta@suse.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <4e026a66001da7b4924d75bd7bee158cbb978eed.1756387905.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[dt];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-On Thu, Sep 04, 2025 at 10:49:50AM +0200, Oleg Nesterov wrote:
-> On 09/03, Jiri Olsa wrote:
-> >
-> > On Wed, Sep 03, 2025 at 01:26:48PM +0200, Oleg Nesterov wrote:
-> > > On 09/02, Jiri Olsa wrote:
-> > > >
-> > > > If user decided to take execution elsewhere, it makes little sense
-> > > > to execute the original instruction, so let's skip it.
-> > >
-> > > Exactly.
-> > >
-> > > So why do we need all these "is_unique" complications? Only a single
-> > > is_unique/exclusive consumer can change regs->ip, so I guess handle_swbp()
-> > > can just do
-> > >
-> > > 	handler_chain(uprobe, regs);
-> > > 	if (instruction_pointer(regs) != bp_vaddr)
-> > > 		goto out;
-> >
-> > hum, that's what I did in rfc [1] but I thought you did not like that [2]
-> >
-> > [1] https://lore.kernel.org/bpf/20250801210238.2207429-2-jolsa@kernel.org/
-> > [2] https://lore.kernel.org/bpf/20250802103426.GC31711@redhat.com/
-> >
-> > I guess I misunderstood your reply [2], I'd be happy to drop the
-> > unique/exclusive flag
+Hi Andrea,
+
+Thank you for the patch!
+
+On 8/28/25 4:50 PM, Andrea della Porta wrote:
+> The RaspberryPi 5 has RP1 chipset containing two USB host controller,
+> while presenting two USB 2.0 and two USB 3.0 ports to the outside.
 > 
-> Well, but that rfc didn't introduce the exclusive consumers, and I think
-> we agree that even with these changes the non-exclusive consumers must
-> never change regs->ip?
+> Add the relevant USB nodes to the devicetree.
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>  arch/arm64/boot/dts/broadcom/rp1-common.dtsi | 28 ++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/broadcom/rp1-common.dtsi b/arch/arm64/boot/dts/broadcom/rp1-common.dtsi
+> index 5002a375eb0b..116617fcb1eb 100644
+> --- a/arch/arm64/boot/dts/broadcom/rp1-common.dtsi
+> +++ b/arch/arm64/boot/dts/broadcom/rp1-common.dtsi
+> @@ -39,4 +39,32 @@ rp1_gpio: pinctrl@400d0000 {
+>  			     <1 IRQ_TYPE_LEVEL_HIGH>,
+>  			     <2 IRQ_TYPE_LEVEL_HIGH>;
+>  	};
+> +
+> +	rp1_usb0: usb@40200000 {
+> +		reg = <0x00 0x40200000  0x0 0x100000>;
+> +		compatible = "snps,dwc3";
+> +		dr_mode = "host";
+> +		interrupts = <31 IRQ_TYPE_EDGE_RISING>;
+> +		usb3-lpm-capable;
+> +		snps,dis_rxdet_inp3_quirk;
+> +		snps,parkmode-disable-ss-quirk;
+> +		snps,parkmode-disable-hs-quirk;
+> +		snps,tx-max-burst = /bits/ 8 <8>;
+> +		snps,tx-thr-num-pkt = /bits/ 8 <2>;
+> +		status = "disabled";
+> +	};
+> +
 
-ok, got excited too soon.. so you meant getting rid of is_unique
-check only for this patch and have just change below..  but keep
-the unique/exclusive flag from patch#1
+I'd order the generic properties first and then vendor specific.
+Something like this:
 
-IIUC Andrii would remove the unique flag completely?
+rp1_usb0: usb@40200000 {
+	compatible = "snps,dwc3";
+	reg = <0x00 0x40200000 0x0 0x100000>;
+	interrupts = <31 IRQ_TYPE_EDGE_RISING>;
+	dr_mode = "host";
+        ....
+}
 
-jirka
+> +	rp1_usb1: usb@40300000 {
+> +		reg = <0x00 0x40300000  0x0 0x100000>;
+> +		compatible = "snps,dwc3";
+> +		dr_mode = "host";
+> +		interrupts = <36 IRQ_TYPE_EDGE_RISING>;
+> +		usb3-lpm-capable;
+> +		snps,dis_rxdet_inp3_quirk;
+> +		snps,parkmode-disable-ss-quirk;
+> +		snps,parkmode-disable-hs-quirk;
+> +		snps,tx-max-burst = /bits/ 8 <8>;
+> +		snps,tx-thr-num-pkt = /bits/ 8 <2>;
+> +		status = "disabled";
+> +	};
+>  };
 
-
---
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index b9b088f7333a..1baf5d2792ff 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -2791,6 +2791,9 @@ static void handle_swbp(struct pt_regs *regs)
- 
- 	handler_chain(uprobe, regs);
- 
-+	if (instruction_pointer(regs) != bp_vaddr)
-+		goto out;
-+
- 	/* Try to optimize after first hit. */
- 	arch_uprobe_optimize(&uprobe->arch, bp_vaddr);
- 
 
