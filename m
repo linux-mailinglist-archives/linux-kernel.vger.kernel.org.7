@@ -1,188 +1,205 @@
-Return-Path: <linux-kernel+bounces-800375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B223CB436F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:23:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E435BB43701
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BDF3548A1B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:23:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EA781C27618
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10AD2EFDBE;
-	Thu,  4 Sep 2025 09:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136E32F066C;
+	Thu,  4 Sep 2025 09:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R6RV3lkL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LyDIgMvd"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA192EF662;
-	Thu,  4 Sep 2025 09:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597F72EFD98
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756977803; cv=none; b=tqxfYdDS11YtI1hYTsFdzBE67E3ksyPYg7pHD7PS99BYyLgVsV+kvcQGIIL/2qQSdlAB0uvQKxHAK/H5xAOTLqvCTQuVgC3H2+p/EC9XDg1r9KWfz1HBsSHQEwGdx9u8e9FsBc7W6Py1Ku8eupna5NnZeM1xSZOgts5hPgMjjIg=
+	t=1756977838; cv=none; b=t9ZivRQK+1gX82za8t6n4EbPjsPh20RYxZtV/hVAOvaehzU2w5BjFxZ7JCHUCf96j6zOX8tHPKMr3QmtGqeRhpxO0O9Ge7hxbtRncjU6g6bASd9MYat9ZkEwymo2h9osc3r+/RXImwbjl9b6uq82/1YORYDicK0IpK+igxHU+Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756977803; c=relaxed/simple;
-	bh=TDSln1mF3xgUP8nsTtJypSwko7BDQHldbUJU4u28Q5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TG5S2Npj/VRDhw4MKnO08e4bPSgo/q92U/VW9H6Z2098Z9DGH8xGbL9XYutNQGqcdeDxL4BCovgFg48obfNYz26tblIIHVtWiFFfBo6aX7QUN4CcuaBqVSdK2Ghsk/JtyfS35ezYiXDzt+tjM1+WdvM+SB33L9gcszL5Tj9PpFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R6RV3lkL; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756977801; x=1788513801;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=TDSln1mF3xgUP8nsTtJypSwko7BDQHldbUJU4u28Q5k=;
-  b=R6RV3lkL/WCPnDdBuWG0HDTGl/y5PLg65Y+Ew036cc6jT7jasfpJ193d
-   ddP3dX8hPnIDI+hY7DHcCpe9amnXTkPI8ivlOUsKGvXJekQOwZexRxn4r
-   goaD+8uWFBoNnpDnARxLyhtLf5Sj1iyUBTjmVUcvtla/Chtn9/fiiNg1B
-   5sj4TSc5JjapEp2NfU3E92cvnsVDn7wjWWtZ12gRzhtcqKkOz6JfmfnT0
-   qSX/0bBkJgt9zTeouIz+EvhWdCCiAtMpIJZOfs1jgoB0gqT/zuYSDZeeK
-   8ecZTO9mvbUyct1HNBTYMeNNeRnQzsVt204XfN5nFa134+YFbG2McS0Mx
-   w==;
-X-CSE-ConnectionGUID: TmqzdbTsTMuTnmb/0+omPA==
-X-CSE-MsgGUID: o2T1I4oKRI27u3qrrukXyA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="70683128"
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="70683128"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 02:23:20 -0700
-X-CSE-ConnectionGUID: z1dtnF/cQLmbmzzeQ1j0pA==
-X-CSE-MsgGUID: 9JIJ4CuERhKgU/cdXTESqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="172209461"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 02:23:16 -0700
-Message-ID: <41c87e38-4855-48da-bb7e-fd9b3c39a439@linux.intel.com>
-Date: Thu, 4 Sep 2025 17:23:13 +0800
+	s=arc-20240116; t=1756977838; c=relaxed/simple;
+	bh=d6DJnsU//9cevGg0jVYiTkvbd/hhmd7yOLgFi5tH7ZY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PpIuJ5zu9tRYjQejrbiijTJiX+7KZixTrcc0gsBH63u1iYWAVmBV/9HQkxlPgnxdRKUb6yTMZv2/ydQCLR8/ZyBJPOHaBcKNUTr3VCo30t1k9+hyUzYkz5MiDCTwdY+0Ytqwcsk/pBHpJIYmJla37sbJiqzn4Od8gMMfUZuinOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LyDIgMvd; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-71d603f13abso8825107b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 02:23:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756977835; x=1757582635; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QzeRrlKixisMVnd0UvA2X18pYorJUCabya/Ko1pEIRg=;
+        b=LyDIgMvddeO+vc8a4eJGFhR0zJl8f8yzfsITu5RlWe1+ApPietDxRSM2CLqLcWk2+o
+         ptgE71GJMlTsy9eeLRZU3res9T3jz34q6l1c5aQ7yOn8HHIwY+wB3lmKjhd0DDtuH5OJ
+         ZPq0sAfgWAx+1P8lOyNPJjj0oXlkXH1rWuEVDMB30OPfLF2MF7KoNfJYNNEayhg7EjOm
+         yNJ4E6Oyj3SD22oi2maaCxU1DX8DStrLS6Jmjh61xa/UUxAgO33VCZRxkVQj0L9l1pTL
+         GDEmROPRXxrnFKcDvwSOdUSghGNaDyZhtoW718UBH+oVqywGmg2pHzz8XNNsEdjvJBib
+         35ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756977835; x=1757582635;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QzeRrlKixisMVnd0UvA2X18pYorJUCabya/Ko1pEIRg=;
+        b=ODFChZ60jGbJr2bZrChdJG/Iw3ka2nlu/2J0DPBMWzwb/AHDYej/6YobbPS25KLHh1
+         0VsP7YsgKv/MUl1twzQDmNf3M2MFJRZHbcDa1AqbCWhcdFIlN+vXTP+TPNt+ePEDdtT6
+         F9dzyWlwc3hslYZ+Lb55yxRAUlU1jCv9NsdsHyweaLDliD3mjclctg/DhCQr8LE1PDIz
+         8de2dejLaF8y8XmMa/DxbWZsq1bocv4Ay4D5fonskEXn/6U5a51bsVTuT/uMOaXmvTAh
+         EzQlwfNX04u28K4CbJ1kqATcl+8+FgswKx3mZx/Mmp1fiqOjhDtuwxZZmKgR5bdGi6ei
+         3j6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUSzq0O4LBP9ZnbGm1Mab2p17z2lX9TlatpS6Iz+I0EanVAB8FsjSVviPejMP4XzQ1NT18wud5pIebUAkI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzxYYY7Ut1RxGMD79VjHNwHGlyQ+kWZQ+hlJFYFQOkqmYUKomo
+	CAdOihG3zU42XRA8/CE3LWRv2g0Bd4mKcVi3ZsIp+Rp9uX3VQ2BHRNGlKNI3nybIw3B6yq9dWc3
+	tvZch/b3ZrpTQMc+A58ZGT7zp8ZEvobvREYklW9u5ow==
+X-Gm-Gg: ASbGncsMHci+78uC0nT9jddhN4Uizo2/IVXKTHFPFd6rOqGrZHvdehGVSL+8O9SvV64
+	vN4vaPp0rOrJQZj65JExggHUaOTfIKWr8jap16niIy3TyKnL16uolx2GBduNlLLi6wHeFduHl2g
+	Fa0ypJ/gJdNRmAED0wCYR8RFNvUoQpvEdy601jVT3RET1Xjw1CEfB2n/IksAw11Y27cgAoEocz3
+	4EqzyEQ
+X-Google-Smtp-Source: AGHT+IFr9L4PrSZPmzSuetZEfmDWJaA0qvzMSVVhGJl1HJQyaGQxkOvsSArE/36UhbKntob1lOo5JVJohbDRYtoqRbY=
+X-Received: by 2002:a05:690c:6c85:b0:71f:f198:da8f with SMTP id
+ 00721157ae682-72276335654mr205654447b3.2.1756977835142; Thu, 04 Sep 2025
+ 02:23:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 02/21] KVM: selftests: Expose functions to get default
- sregs values
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
- Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-References: <20250904065453.639610-1-sagis@google.com>
- <20250904065453.639610-3-sagis@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250904065453.639610-3-sagis@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <6202205.lOV4Wx5bFT@rafael.j.wysocki> <2393512.ElGaqSPkdT@rafael.j.wysocki>
+In-Reply-To: <2393512.ElGaqSPkdT@rafael.j.wysocki>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 4 Sep 2025 11:23:18 +0200
+X-Gm-Features: Ac12FXwDCpU4_C_Ls_ht_T7Y3VN2FOjJ3-MfI0MyM4u_qIM41ufdSl_RCheNlgI
+Message-ID: <CAPDyKFp5NbEtiLRZihta0y=DXSTKghnfGHH1N_Y1BF=Q73eTtA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] PM: core: Annotate loops walking device links as _srcu
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Johannes Berg <johannes@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-On 9/4/2025 2:54 PM, Sagi Shahar wrote:
-> TDX can't set sregs values directly using KVM_SET_SREGS. Expose the
-> default values of certain sregs used by TDX VMs so they can be set
-> manually.
+On Tue, 2 Sept 2025 at 15:45, Rafael J. Wysocki <rafael@kernel.org> wrote:
 >
-> Signed-off-by: Sagi Shahar <sagis@google.com>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Since SRCU is used for the protection of device link lists, the loops
+> over device link lists in multiple places in drivers/base/power/main.c
+> and in pm_runtime_get_suppliers() should be annotated as _srcu rather
+> than as _rcu which is the case currently.
+>
+> Change the annotations accordingly.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-One suggestion:
-It's better to add change history so that reviewers can know the change quickly
-without comparing b/t versions.
+Kind regards
+Uffe
 
 > ---
->   .../selftests/kvm/include/x86/processor.h     | 33 +++++++++++++++++++
->   .../testing/selftests/kvm/lib/x86/processor.c | 12 +++----
->   2 files changed, 38 insertions(+), 7 deletions(-)
+>  drivers/base/power/main.c    |   18 +++++++++---------
+>  drivers/base/power/runtime.c |    4 ++--
+>  2 files changed, 11 insertions(+), 11 deletions(-)
 >
-> diff --git a/tools/testing/selftests/kvm/include/x86/processor.h b/tools/testing/selftests/kvm/include/x86/processor.h
-> index 2efb05c2f2fb..f610c09cadf4 100644
-> --- a/tools/testing/selftests/kvm/include/x86/processor.h
-> +++ b/tools/testing/selftests/kvm/include/x86/processor.h
-> @@ -27,6 +27,10 @@ extern uint64_t guest_tsc_khz;
->   #define MAX_NR_CPUID_ENTRIES 100
->   #endif
->   
-> +#ifndef NUM_INTERRUPTS
-> +#define NUM_INTERRUPTS 256
-> +#endif
-> +
->   #define NONCANONICAL 0xaaaaaaaaaaaaaaaaull
->   
->   /* Forced emulation prefix, used to invoke the emulator unconditionally. */
-> @@ -1456,4 +1460,33 @@ void virt_map_level(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr,
->   
->   bool sys_clocksource_is_based_on_tsc(void);
->   
-> +static inline uint16_t kvm_get_default_idt_limit(void)
-> +{
-> +	return NUM_INTERRUPTS * sizeof(struct idt_entry) - 1;
-> +}
-> +
-> +static inline uint16_t kvm_get_default_gdt_limit(void)
-> +{
-> +	return getpagesize() - 1;
-> +}
-> +
-> +static inline uint64_t kvm_get_default_cr0(void)
-> +{
-> +	return X86_CR0_PE | X86_CR0_NE | X86_CR0_PG;
-> +}
-> +
-> +static inline uint64_t kvm_get_default_cr4(void)
-> +{
-> +	uint64_t cr4 = X86_CR4_PAE | X86_CR4_OSFXSR;
-> +
-> +	if (kvm_cpu_has(X86_FEATURE_XSAVE))
-> +		cr4 |= X86_CR4_OSXSAVE;
-> +	return cr4;
-> +}
-> +
-> +static inline uint64_t kvm_get_default_efer(void)
-> +{
-> +	return EFER_LME | EFER_LMA | EFER_NX;
-> +}
-> +
->   #endif /* SELFTEST_KVM_PROCESSOR_H */
-> diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
-> index d4c19ac885a9..83efcf48faad 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/processor.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
-> @@ -498,15 +498,13 @@ static void vcpu_init_sregs(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
->   	vcpu_sregs_get(vcpu, &sregs);
->   
->   	sregs.idt.base = vm->arch.idt;
-> -	sregs.idt.limit = NUM_INTERRUPTS * sizeof(struct idt_entry) - 1;
-> +	sregs.idt.limit = kvm_get_default_idt_limit();
->   	sregs.gdt.base = vm->arch.gdt;
-> -	sregs.gdt.limit = getpagesize() - 1;
-> +	sregs.gdt.limit = kvm_get_default_gdt_limit();
->   
-> -	sregs.cr0 = X86_CR0_PE | X86_CR0_NE | X86_CR0_PG;
-> -	sregs.cr4 |= X86_CR4_PAE | X86_CR4_OSFXSR;
-> -	if (kvm_cpu_has(X86_FEATURE_XSAVE))
-> -		sregs.cr4 |= X86_CR4_OSXSAVE;
-> -	sregs.efer |= (EFER_LME | EFER_LMA | EFER_NX);
-> +	sregs.cr0 = kvm_get_default_cr0();
-> +	sregs.cr4 |= kvm_get_default_cr4();
-> +	sregs.efer |= kvm_get_default_efer();
->   
->   	kvm_seg_set_unusable(&sregs.ldt);
->   	kvm_seg_set_kernel_code_64bit(&sregs.cs);
-
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -40,8 +40,8 @@
+>
+>  typedef int (*pm_callback_t)(struct device *);
+>
+> -#define list_for_each_entry_rcu_locked(pos, head, member) \
+> -       list_for_each_entry_rcu(pos, head, member, \
+> +#define list_for_each_entry_srcu_locked(pos, head, member) \
+> +       list_for_each_entry_srcu(pos, head, member, \
+>                         device_links_read_lock_held())
+>
+>  /*
+> @@ -281,7 +281,7 @@
+>          * callbacks freeing the link objects for the links in the list we're
+>          * walking.
+>          */
+> -       list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node)
+> +       list_for_each_entry_srcu_locked(link, &dev->links.suppliers, c_node)
+>                 if (READ_ONCE(link->status) != DL_STATE_DORMANT)
+>                         dpm_wait(link->supplier, async);
+>
+> @@ -338,7 +338,7 @@
+>          * continue instead of trying to continue in parallel with its
+>          * unregistration).
+>          */
+> -       list_for_each_entry_rcu_locked(link, &dev->links.consumers, s_node)
+> +       list_for_each_entry_srcu_locked(link, &dev->links.consumers, s_node)
+>                 if (READ_ONCE(link->status) != DL_STATE_DORMANT)
+>                         dpm_wait(link->consumer, async);
+>
+> @@ -675,7 +675,7 @@
+>         idx = device_links_read_lock();
+>
+>         /* Start processing the device's "async" consumers. */
+> -       list_for_each_entry_rcu_locked(link, &dev->links.consumers, s_node)
+> +       list_for_each_entry_srcu_locked(link, &dev->links.consumers, s_node)
+>                 if (READ_ONCE(link->status) != DL_STATE_DORMANT)
+>                         dpm_async_with_cleanup(link->consumer, func);
+>
+> @@ -1330,7 +1330,7 @@
+>         idx = device_links_read_lock();
+>
+>         /* Start processing the device's "async" suppliers. */
+> -       list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node)
+> +       list_for_each_entry_srcu_locked(link, &dev->links.suppliers, c_node)
+>                 if (READ_ONCE(link->status) != DL_STATE_DORMANT)
+>                         dpm_async_with_cleanup(link->supplier, func);
+>
+> @@ -1384,7 +1384,7 @@
+>
+>         idx = device_links_read_lock();
+>
+> -       list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node)
+> +       list_for_each_entry_srcu_locked(link, &dev->links.suppliers, c_node)
+>                 link->supplier->power.must_resume = true;
+>
+>         device_links_read_unlock(idx);
+> @@ -1813,7 +1813,7 @@
+>
+>         idx = device_links_read_lock();
+>
+> -       list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node) {
+> +       list_for_each_entry_srcu_locked(link, &dev->links.suppliers, c_node) {
+>                 spin_lock_irq(&link->supplier->power.lock);
+>                 link->supplier->power.direct_complete = false;
+>                 spin_unlock_irq(&link->supplier->power.lock);
+> @@ -2065,7 +2065,7 @@
+>
+>         idx = device_links_read_lock();
+>
+> -       list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node) {
+> +       list_for_each_entry_srcu_locked(link, &dev->links.suppliers, c_node) {
+>                 if (!device_link_test(link, DL_FLAG_PM_RUNTIME))
+>                         continue;
+>
+> --- a/drivers/base/power/runtime.c
+> +++ b/drivers/base/power/runtime.c
+> @@ -1903,8 +1903,8 @@
+>
+>         idx = device_links_read_lock();
+>
+> -       list_for_each_entry_rcu(link, &dev->links.suppliers, c_node,
+> -                               device_links_read_lock_held())
+> +       list_for_each_entry_srcu(link, &dev->links.suppliers, c_node,
+> +                                device_links_read_lock_held())
+>                 if (device_link_test(link, DL_FLAG_PM_RUNTIME)) {
+>                         link->supplier_preactivated = true;
+>                         pm_runtime_get_sync(link->supplier);
+>
+>
+>
 
