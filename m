@@ -1,216 +1,179 @@
-Return-Path: <linux-kernel+bounces-801455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E65BDB44524
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:13:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4F2B44527
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D2C81CC0582
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:14:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EB0558412C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C053A341ADC;
-	Thu,  4 Sep 2025 18:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FD73431EC;
+	Thu,  4 Sep 2025 18:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BwKzrEX1"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2059.outbound.protection.outlook.com [40.107.223.59])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jaw00GqV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6316813DBA0
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757009625; cv=fail; b=YCmpCFnlnwc8BTlgQ3SKy49U9aN5zbeWzI5TxioY/ZtwBQ5Gohwn9wGVTP+55t0Qo+5JeIikcrXQ1c8GLnznAqN6xhN9y8jO9qxqk2kJOQqzNCdgK5VnT8wS/JKuOeF7C+BI2nYgpxZUKM/0wge/BDB19CEylkXujKxz+Xmnles=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757009625; c=relaxed/simple;
-	bh=p07tAsgj8NrROX0efjM3tW4mic5SI1LUefGt44WMht8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=C6g1nGg2RFo/L0/dVFksQTnx6m+e5D0DyHpHQhJMcncdyef3IPaR3npk3ksMlxXXELKsG13KDeNXt1pP0mfv0/5f2dATYrn4H5BGl5rNvp+ZwkM1xLOU+OP/pPf69FyE2jWzqht421xMqvcaATNlP72i0lTwQK0h9TLimTuJbJc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BwKzrEX1; arc=fail smtp.client-ip=40.107.223.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nVk2K3szRu6Hin0yinLb7ownU/cV4lOVpHznJomf1PPPussHH6oeYqncJ2v9vSop0bSwUXxJUYewo4xdrJGH+lGR1JFbv2zlqDqpzLWnGH1nXsF78SYFUPLnevAIGeVpLC1Fme+Rxr5SM6UDjSoe6Q1pGIc/MUksA7xHG14WJfLewVPKkDZUwf8pN6KY0HEUjYtzMnH9wAMwJ+BoRiTAHvF4gXLYo9bzzcyHqVQ0IxAf6EOLHqsE/XBj4dTV9ILr0NXcNASUmLtBP9/Y5GvSbYwqjHTszM19VaU8LRnEq0YWE6F2jkdI11xWJ1CB8tQZoYwBON+E33aStq1X2AJO/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g/11I4DdvqIN8b/bDQtVD44WiUoyqxvOFWXrvBsVZlg=;
- b=G2swswSs/sjHYpptWQQEOzBTCKLzHl9GRifd0Lc2ovckr2VrjKIXUxOoUjjp2iYT+iz6cZTLWkkP9Jrs/CVUfEL4ppnmxCwj7gUh/H/meV/F4A7kafFk/fACKFJjKn6i/EXadzPaUFziXCDSFh94Na6B3E6Hm+ycksMPC4t2sxUNBibBAMzeJYs9gvpjr4RYmAG/GAYTB7AxEyS/vA4fa7/yIT1C36jF3ZPSh85SN+sXdGQ0jTrIkuqC5VVDu6BzLYJCPk6ZUyXBp48//QkWnXooSsRFpR+126ECyqnJbp+jmaZVG417War0gQcXBSCl9gjJi2j8bFW0ck4geDivlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g/11I4DdvqIN8b/bDQtVD44WiUoyqxvOFWXrvBsVZlg=;
- b=BwKzrEX1VpOsw2AKWsrlwgy0Ep11/FDedHOb/PdZdAkWN5423EwSCo+yfA7lTSY2hkQ30seH387SAO3R3qe8EpiE8SAM/bMgf5uqKfk2rtXd7gwqLhrebgaKi9l/AvRWoM0qr4rmm5TtPIuG8oE7Cmp0I3hPjuMFMtqKGHy6oiKbAJI87WGdGHLrGczUKkGxo2xcunHumGNotS+cTCXOAZqpst5N2o5ROxsIUNI8G/nL6RdiOobC7QZYVUKPpAa5kO6U3mq8WkvCcwUaQsOpRYbK+B9q4a5h7K/uYlLIYHhpy2M6koYwEIub2xet36cM7wgBqxaxy7jYf9yIdZf7SQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by DM4PR12MB6592.namprd12.prod.outlook.com (2603:10b6:8:8a::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9073.27; Thu, 4 Sep 2025 18:13:41 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.9094.017; Thu, 4 Sep 2025
- 18:13:40 +0000
-Date: Thu, 4 Sep 2025 20:13:34 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Jake Hillion <jakehillion@meta.com>, sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH sched_ext/for-6.18] sched_ext: Fix NULL dereference in
- scx_bpf_cpu_rq() warning
-Message-ID: <aLnWztwCj4GyJFyS@gpd4>
-References: <20250904125522.561737-1-arighi@nvidia.com>
- <aLnO1r5X265Knl0W@slm.duckdns.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLnO1r5X265Knl0W@slm.duckdns.org>
-X-ClientProxiedBy: MI1P293CA0024.ITAP293.PROD.OUTLOOK.COM (2603:10a6:290:3::6)
- To LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92351341AB6;
+	Thu,  4 Sep 2025 18:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757009660; cv=none; b=Yipl0miklET8xJEJNjmwHom6BvrZJCeZY4W/tpMdYi6xJN/JPEux9AyGuBqpNGNYQEyJh4nA30Bc04UXPgO7XgReroxCK8D8H0AX+9TCAGhn6n05oM/U1pI2SwpKULV7FZ+tItylhYb2UHKa/6j6wHQWt4TzC19GgarQHd4T4fI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757009660; c=relaxed/simple;
+	bh=snRYZy8sFUcGEZgJH9P6mgJNhGmYsmCzIsOzo2eyGW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a2vJ1HFSMVfjnV5Q3S1EfvMKOvmPNVjNTlcFJdghqHtpv90zkvCuVYiHgApaY8+yZ5o4P5JBNxX/oblS6Sf41J940ZpOdi1/x/8N8xhhfJ/ZTxb3LpP24l13w/dSzdVpEAMrdACUpMMAjzRxzta9834/9ZWoSBcNoH99kUiF+7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jaw00GqV; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757009658; x=1788545658;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=snRYZy8sFUcGEZgJH9P6mgJNhGmYsmCzIsOzo2eyGW4=;
+  b=Jaw00GqVNWfQlgJBQsYhi5N2jGUlLg0p0hbxuHBUiIRPyLlMvnvjRK/V
+   F897XlXnTAh0IGECbRrzjkPNGMgJbH5JqdDTFbvyp3wZieXP5pB4MwV0k
+   Q7aIzW9KY0Rnwb8Cbv/qDoIetRTRr4jij45zSuF+nFN3SSnwhY63iu6BY
+   wfdUAAjQPsEhNXNdGadRohmT9ty1bSDi7dK73HmcqgI2+rHS0dj0YF9+n
+   4rvNm2FHgjc08RtV4HzG9aj1AlDpKEacMKHI0krCSs71BUHBaQtQeB98G
+   25mfyhqaXxmtC+QlY5GcaNZ4GQbWKLc5yy4qyWHCpd8yJ7uIQ3CtwCyU8
+   w==;
+X-CSE-ConnectionGUID: bQP0YyE1T3KLRj1fus8YTw==
+X-CSE-MsgGUID: avdgIM2GRH+ixkTYZGfj6Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="76814956"
+X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
+   d="scan'208";a="76814956"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 11:14:18 -0700
+X-CSE-ConnectionGUID: uXWQ13oQTYOxPlfW1q2Xow==
+X-CSE-MsgGUID: vt+G3bBGQMSvNLBiSWtcYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
+   d="scan'208";a="176300742"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.24]) ([10.125.110.24])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 11:14:16 -0700
+Message-ID: <14d94e89-8342-4bd7-9c53-a3b46e22caa7@intel.com>
+Date: Thu, 4 Sep 2025 11:14:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DM4PR12MB6592:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d49621b-020b-4cfb-19eb-08ddebdec6b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6ECuJAD600YnXp78Ew4WbL/QavWRESC3Q+paYiWaD4zSSfRQzrNpdIumEUs4?=
- =?us-ascii?Q?0ceIg9YSZ4HeIhWpDqPjF7iWRRV89kynRA6/67q1DGcJStj7rhtsnJI7xyka?=
- =?us-ascii?Q?57XZWASn7JEj8rX+3RWfXSZPm1rSJghRBB1sQicu3OJZBc3r9hh/WPY6fpzM?=
- =?us-ascii?Q?l55Y+RnbQIWfxWE6TWAXLJf++4wueSsqG+JWs9i6dOMwlFOJ/6439I0b0FHB?=
- =?us-ascii?Q?iLm85hgEH2dHPo1DtNrNhft11U7c2fQ76uBpjm7p5tmTMWVc2YA44EQcze7e?=
- =?us-ascii?Q?KeBR4GxwT04jU7SreW3Wkgnt03eL/yn9xvcsirU22kVp5X0TccVWd0dR3VVS?=
- =?us-ascii?Q?gEyl3zaO0wMR7UOi6is/bFNplVa6bj5FFhB+YlW/spkdgJnPUsAC87gXdgdl?=
- =?us-ascii?Q?hNAkq51D21RSry+/5BI/Em/99DCvwMZmoQzN/9ZXpC+rQ3FQcqAyg2dlM3hN?=
- =?us-ascii?Q?Bj+ZvnE51fMf4g2g+0EuQIVMVgU9Mz86OMYZc9J4kVOgJKRfGxiy3hosICcW?=
- =?us-ascii?Q?81DAzKTpuUrK3zvYtxYhM8hYAyi1cIG8rql37BTBUMKnr2gur8MGonhNxRNJ?=
- =?us-ascii?Q?7tYUKjyhJvP11ulFad0QSvvwL21BxfogvALVFsLG05X1CF10VY7XzguTwjnD?=
- =?us-ascii?Q?8ypC+XBo0cDFvrXH09prZZjyU3OiIQ48Bzk3zj+hWcVXVPR58KpCbckAhLqs?=
- =?us-ascii?Q?L0hLsTZzAOSi0IS+laPhnjUMpwW7xoynB1MmqsKNCf4vMuSJ8LXqmq96kIAy?=
- =?us-ascii?Q?QHEoBN/LtgcCqZP65WFNi/kL47G2mByPlOnhGaskFdGL7PGiTgp0b8Y25GrY?=
- =?us-ascii?Q?CeGcs5pPbx1TNXuLtIVfNdvvw11rxW7LUwuX2wGlXoS9lwkDYipZpFct8Pcm?=
- =?us-ascii?Q?tAxqqkQPuOlJMhQFSjFYL/YrJQl5enBuDI28gA+bQkWJwP/SxA2Wm2qrrZKN?=
- =?us-ascii?Q?lVwQWekk/8pADz6dJn776H+bunQL3HMgdsj0548gHBuLPkbaW09SE9BQe51u?=
- =?us-ascii?Q?Gj/wYhVrO12ZoI3FSruXfDGCaRMg/q8PnHcYRoH5FmVzbBO8BY70uhdbO+GM?=
- =?us-ascii?Q?L3352h3ZR7MxKTiC+kDQIP5wVkmUoj5/fOS2O6kMeOivckYF9joFrkYwaxR3?=
- =?us-ascii?Q?Q5a4FRhO48HLmVMHuh9AH4PYVdmVLu3JkrUQRBa0gBsp3Egt7LW+aEGq3c4v?=
- =?us-ascii?Q?29bqPpHWAZ9Sz+URmIK2kdf1iYazHrzp6xFzo/toS4jXQCsp57iruTSTBN8S?=
- =?us-ascii?Q?I4zi/BK2GsKWXHh49OLqwXrmh1qOmW9J4S30sNyJ5RaQ76j3iNgbVCvdA2Na?=
- =?us-ascii?Q?+bvZNEdM7v5c4JH7pewoIoZtVbYAM7wVDtwTH/DwzGsP1h/3uhUKyADSuoCV?=
- =?us-ascii?Q?lAgmharpuiq0ON9AC3t3uD9gD9CFcXQKUGYOBdS68codzSWWcidxkzERVKw+?=
- =?us-ascii?Q?cT1RA3KyvLA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?goASO94FCrJa/5mhBsGPPb3m6d/fbdPchaXm0uQAJ6tUBgOvUeVyDpcOxQaB?=
- =?us-ascii?Q?YeZ6cxOUrYW8St8FMtQ6vgVKX6j9dkxFa1Znb/dUKZ12Mm6ZjKEdqmpyHvpm?=
- =?us-ascii?Q?RTe1hGfmH/1D76U4OegY2c0Z5bMTdFzQdRfA/MjZRJnKO7nLnYcjhO/y9ozU?=
- =?us-ascii?Q?Kw7dtA8fX0IVtR30c6pPfIrb2ldxPA7kP7jh/7wJUhOKOQD+5bGNBIYWQRen?=
- =?us-ascii?Q?vInlLktmef0uxS2iAD52+Tuz3Wd2CCQCFAYfcYaM3ce+bAVDlRKDsUk6faow?=
- =?us-ascii?Q?cgergxGd9R9wQ8d6IIjWwo5HNC0tNJoh5qU3ObqAaBk7th8wkg2xV8g/l9NQ?=
- =?us-ascii?Q?cY8F3RJGvSwxBUXE7YIe31OOZ9mrrp8Dk04BWphijTD0rVsOy3gPY033aKHP?=
- =?us-ascii?Q?tgh9Rk6Zg3fK6mcbLmLX4s6uld0nsdeURonoJqFzoQ9cgVvzPveQyuJ4Lc53?=
- =?us-ascii?Q?MS7HWR0P+cy0EolDGN644jBXQ8yv6hHf91VZbzoyjesk2xJoqACdnlLQ913Q?=
- =?us-ascii?Q?w378dzt5/7h7OeLfHcIzPLq6FXVDNhbv4GGGh0kD/vCfgWRQEvPMDGVr5rdn?=
- =?us-ascii?Q?dkpc8cc1IyiMsLaVhcXWDF0xVVpth7h1OiusJ22se+2TnQEGowM34+h5g9JI?=
- =?us-ascii?Q?LX0x6qMYTo8kX5ugdDKYkTtr2E1IEraClXdBdx0KtvKOwL/1oskIO0lfFBi9?=
- =?us-ascii?Q?OvicHhEsDx9KB6L9UfSrm1IG0LI7B3I6rHLWVKXH7oKKT9x62uDyE5GLMKU6?=
- =?us-ascii?Q?+GyP5o2+1jHEFwP4qQovnMDy5WL0fNFdh6GvYSgFenzJQ+QJumOfUfM1Afvl?=
- =?us-ascii?Q?djjHguwqj18Qih7GZb1iyEnkIXviIVlvMkVn7hH/8YCaJAvA8vIxXUjWw41I?=
- =?us-ascii?Q?5FCpgxi7fq5To684sgrh4/5k2WRHMvkIPC47YGpUxz5UAAHXuFf50pAT75ji?=
- =?us-ascii?Q?vHG7XVr5O+oD6ae9DTPibj2GjGVB1xjRA295rHeg4IuHknLRz9u8sR8B1BHU?=
- =?us-ascii?Q?GuFRITA2IRbDzdYVbqkzuMeJaF9uoiArF87I4yhwWrF4xvgedI8JDJ8MKyhd?=
- =?us-ascii?Q?+e05aK7red5IDn0jo/ThQ0uRuvoSjSKo4a4txmynZvy/4eKrb3hD5wa8ciIT?=
- =?us-ascii?Q?kL8uJeo/DXDLTg8FHOonTEAcu/JJBFTQHb5Ep8UkRe3IYYV9ZIG/l+uV4v3e?=
- =?us-ascii?Q?ye7nUX05n1OsikT+rABn3y8TY3oFw3EKQekB5LvozLsSetLS00zlB2/KaYO/?=
- =?us-ascii?Q?XDVvtDW/ym4jiwB7qf9W+r6Ebi2Q7LClIrWcFmXvH/xCcKgSr8Tf35Skg/+T?=
- =?us-ascii?Q?pV+8FVT6VcmKR92qwIj8V0Ds4Jf60xgE+55uMI1SxFEk2BgrT7QitfzJQCWB?=
- =?us-ascii?Q?sDvFecuC3a0C8OqhsEjhKweSn227Zo8uwkt4rRJddFdNUEtUi/zWPJRI0eFV?=
- =?us-ascii?Q?uMUIWRrghj6ctRioI5SEFZz1i9dQHjBTIJIrgJ/Zs9dVVECLAyJA+UY17TZh?=
- =?us-ascii?Q?re8D7r9hGmbPI/pwBtddqyOxsqF8KKxmwThU4EA77GwcYj4MciI/RlAz9HQ5?=
- =?us-ascii?Q?M400iIDiurT3zqIj+Wkq2MBqqjlE4e0DIl3RddGs?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d49621b-020b-4cfb-19eb-08ddebdec6b5
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 18:13:40.7187
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fwfo/+vbn8CtUIgB7fFBDye8F54SeIi3c2VGgCk9ZZkIU9d/I868jC28+z62v4Ccb+qqMIRh1JChQ49b4CXMtQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6592
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] dax/hmem: Reintroduce Soft Reserved ranges back into
+ the iomem tree
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
+ <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+ Pavel Machek <pavel@kernel.org>, Li Ming <ming.li@zohomail.com>,
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Ying Huang <huang.ying.caritas@gmail.com>,
+ Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
+ Greg KH <gregkh@linuxfoundation.org>,
+ Nathan Fontenot <nathan.fontenot@amd.com>,
+ Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
+ Benjamin Cheatham <benjamin.cheatham@amd.com>,
+ PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>,
+ Zhijian Li <lizhijian@fujitsu.com>
+References: <20250822034202.26896-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20250822034202.26896-6-Smita.KoralahalliChannabasappa@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250822034202.26896-6-Smita.KoralahalliChannabasappa@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 04, 2025 at 07:39:34AM -1000, Tejun Heo wrote:
-> On Thu, Sep 04, 2025 at 02:55:22PM +0200, Andrea Righi wrote:
-> > When printing the deprecation warning for scx_bpf_cpu_rq(), we may hit a
-> > NULL pointer dereference if the kfunc is called before a BPF scheduler
-> > is fully attached, for example, when invoked from a BPF timer or during
-> > ops.init():
-> > 
-> >  [   50.752775] BUG: kernel NULL pointer dereference, address: 0000000000000331
-> >  ...
-> >  [   50.764205] RIP: 0010:scx_bpf_cpu_rq+0x30/0xa0
-> >  ...
-> >  [   50.787661] Call Trace:
-> >  [   50.788398]  <TASK>
-> >  [   50.789061]  bpf_prog_08f7fd2dcb187aaf_wakeup_timerfn+0x75/0x1a8
-> >  [   50.792477]  bpf_timer_cb+0x7e/0x140
-> >  [   50.796003]  hrtimer_run_softirq+0x91/0xe0
-> >  [   50.796952]  handle_softirqs+0xce/0x3c0
-> >  [   50.799087]  run_ksoftirqd+0x3e/0x70
-> >  [   50.800197]  smpboot_thread_fn+0x133/0x290
-> >  [   50.802320]  kthread+0x115/0x220
-> >  [   50.804984]  ret_from_fork+0x17a/0x1d0
-> >  [   50.806920]  ret_from_fork_asm+0x1a/0x30
-> >  [   50.807799]  </TASK>
-> > 
-> > Fix this by only printing the warning once the scheduler is fully
-> > registered.
-> > 
-> > Fixes: 5c48d88fe0049 ("sched_ext: deprecation warn for scx_bpf_cpu_rq()")
-> > Cc: Christian Loehle <christian.loehle@arm.com>
-> > Signed-off-by: Andrea Righi <arighi@nvidia.com>
-> > ---
-> >  kernel/sched/ext.c | 7 +++++--
-> >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> > index 489462290142a..04fefd34db238 100644
-> > --- a/kernel/sched/ext.c
-> > +++ b/kernel/sched/ext.c
-> > @@ -6362,17 +6362,20 @@ __bpf_kfunc s32 scx_bpf_task_cpu(const struct task_struct *p)
-> >   */
-> >  __bpf_kfunc struct rq *scx_bpf_cpu_rq(s32 cpu)
-> >  {
-> > -	struct scx_sched *sch = scx_root;
-> > +	struct scx_sched *sch;
-> >  
-> >  	if (!kf_cpu_valid(cpu, NULL))
-> >  		return NULL;
-> >  
-> > -	if (!sch->warned_deprecated_rq) {
-> > +	rcu_read_lock();
-> > +	sch = rcu_dereference(scx_root);
-> > +	if (sch && sch->warned_deprecated_rq) {
+
+
+On 8/21/25 8:42 PM, Smita Koralahalli wrote:
+> Reworked from a patch by Alison Schofield <alison.schofield@intel.com>
 > 
-> This drops ! from the condition.
+> Reintroduce Soft Reserved range into the iomem_resource tree for dax_hmem
+> to consume.
 > 
-> Thanks.
+> This restores visibility in /proc/iomem for ranges actively in use, while
+> avoiding the early-boot conflicts that occurred when Soft Reserved was
+> published into iomem before CXL window and region discovery.
+> 
+> Link: https://lore.kernel.org/linux-cxl/29312c0765224ae76862d59a17748c8188fb95f1.1692638817.git.alison.schofield@intel.com/
+> Co-developed-by: Alison Schofield <alison.schofield@intel.com>
+> Signed-off-by: Alison Schofield <alison.schofield@intel.com>
+> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
 
-Oops, thanks for noticing it Tejun. I'll send a v2.
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/dax/hmem/hmem.c | 38 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+> 
+> diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
+> index 90978518e5f4..24a6e7e3d916 100644
+> --- a/drivers/dax/hmem/hmem.c
+> +++ b/drivers/dax/hmem/hmem.c
+> @@ -93,6 +93,40 @@ static void process_defer_work(struct work_struct *_work)
+>  	walk_hmem_resources(&pdev->dev, handle_deferred_cxl);
+>  }
+>  
+> +static void remove_soft_reserved(void *data)
+> +{
+> +	struct resource *r = data;
+> +
+> +	remove_resource(r);
+> +	kfree(r);
+> +}
+> +
+> +static int add_soft_reserve_into_iomem(struct device *host,
+> +				       const struct resource *res)
+> +{
+> +	struct resource *soft = kzalloc(sizeof(*soft), GFP_KERNEL);
+> +	int rc;
+> +
+> +	if (!soft)
+> +		return -ENOMEM;
+> +
+> +	*soft = DEFINE_RES_NAMED_DESC(res->start, (res->end - res->start + 1),
+> +				      "Soft Reserved", IORESOURCE_MEM,
+> +				      IORES_DESC_SOFT_RESERVED);
+> +
+> +	rc = insert_resource(&iomem_resource, soft);
+> +	if (rc) {
+> +		kfree(soft);
+> +		return rc;
+> +	}
+> +
+> +	rc = devm_add_action_or_reset(host, remove_soft_reserved, soft);
+> +	if (rc)
+> +		return rc;
+> +
+> +	return 0;
+> +}
+> +
+>  static int hmem_register_device(struct device *host, int target_nid,
+>  				const struct resource *res)
+>  {
+> @@ -125,6 +159,10 @@ static int hmem_register_device(struct device *host, int target_nid,
+>  					    IORES_DESC_SOFT_RESERVED);
+>  	if (rc != REGION_INTERSECTS)
+>  		return 0;
+> +
+> +	rc = add_soft_reserve_into_iomem(host, res);
+> +	if (rc)
+> +		return rc;
+>  #else
+>  	rc = region_intersects(res->start, resource_size(res), IORESOURCE_MEM,
+>  			       IORES_DESC_SOFT_RESERVED);
 
--Andrea
 
