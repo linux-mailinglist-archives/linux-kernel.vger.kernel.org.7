@@ -1,197 +1,144 @@
-Return-Path: <linux-kernel+bounces-800444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2D7B437A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA09B437AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF3D95A2B44
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:52:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C87705A1047
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AC028153C;
-	Thu,  4 Sep 2025 09:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBD02F83D8;
+	Thu,  4 Sep 2025 09:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7bsG31Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="lXUfOehW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jj4OQoB6"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAF82F3C00;
-	Thu,  4 Sep 2025 09:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8C07081F;
+	Thu,  4 Sep 2025 09:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756979558; cv=none; b=h9Lq5PSoszJTXj4Gpr1sw4eH3f5dpbnjbw/e9GkXabRiMd90lXzG/Di9MUvr/BtykA5jApsQ4vnlGeJGlzB0qCRvw0Vuluvnaenk5lpi8fWt/MDl/xQkw9DCfNHh90g9VydjbPe0bdDlYmlKgxZqpU5gNyZ/HAPPG3IaW/FW+Nk=
+	t=1756979650; cv=none; b=dn63/jf5WnR/rOFsmj+BFGCnfet9wFKNRvLPHz/bC//wg5iZAmjG0J2zhymbWU1I4k1jndvD77M3gI8xY9L29qPRgyMYXiyfigFsTYz8JUc3NNM2VVuCqgXlwv9r0MpEaa59g3JEKrTl57nxYoUOQgqfCqOz4ivhloCjlo3m9vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756979558; c=relaxed/simple;
-	bh=u0vsfvciDH8S0kKhdJA/qY4vOXIKYKoouJXTmgxB7jo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j4K0et97zmLLVxzP9mz4e9z0ra2tS0x+ll+R53ZvNVPzCifjuPL+9jaqNsFAiIrj3a3CidKwYva158t09weQdsGcznVTWvTSKcGoor+X/WUw9aMn+OonFOMPVwLKVUiJWckHXq5oAOw/IAWRmE9Yvg5r7wPeksV5kK++Soy1qdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7bsG31Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99CE1C4CEF0;
-	Thu,  4 Sep 2025 09:52:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756979557;
-	bh=u0vsfvciDH8S0kKhdJA/qY4vOXIKYKoouJXTmgxB7jo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j7bsG31Ya4wtH/YIInKQFPgA8PYrPFpecivOzOrK6dCyyV7/cwC4s0U96kvLHcKZ/
-	 6892MP82c4VxsvCoHwurX7fXd8UEGEeXn4vQo77+qRA3FkKoCVhQs5zGU1ikgJvH6N
-	 +xtB4LWpHwR+QQwbDI9MlrFlXHwb5juKXX/K1/a0abuQC6Rr/4cFmUTr69RetohUMV
-	 VQCwM8mJxCBI1hXImf8d7V5OrAeY85Hio8bs7Vosq1UsgeLg7flYmEAUqUvU3+fhKJ
-	 qsAOPKDdiZrT3rw2bcxZzRvF16MijhEO5Bk++eDPzP7CyMYZ2FKHA7h5vlUpsXEJfA
-	 Rsa7msDfzW87Q==
-Message-ID: <ea295ff6-5395-4470-afc2-76e5e2dc9fb5@kernel.org>
-Date: Thu, 4 Sep 2025 11:52:32 +0200
+	s=arc-20240116; t=1756979650; c=relaxed/simple;
+	bh=VbZVS5Dg4DDI6OYnVGP2ic6emtQx1a8qK46eYzbd1iI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eogfm/vxw5Oc/eAjARZ8QZuIVDHWSwSYd1BIOkXWRYqegKHGFI7g07zcCOot3cafogdfYTFEwBnbVFouCcNuJO/hTim9xKQrMFmkVmmdCrdHeB3T8tyDcwBNSkya5ZuR+c8A8BzwbGgpNLY7B0r78E6JvdWxeDy+RwDdufNyGFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=lXUfOehW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jj4OQoB6; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 4BE8A14001F0;
+	Thu,  4 Sep 2025 05:54:06 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Thu, 04 Sep 2025 05:54:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1756979646; x=
+	1757066046; bh=b47tdDARfEiTwuQ3hf+5RWFsfXNqTxNJTg2FAkCOtvk=; b=l
+	XUfOehWOft9uDlScA3+oh0pL26WPX5Q2FGllngz2njoiaqnsbcvC14/A18DsEl8E
+	1yrWufLLCBt+pcGEyJFVvOg5/5FT/SJlyiGSWcZYAylC9Wp1m1KioJ6CRRUtLfT7
+	R4e/PT9IqniHuGizCRmgnqApuonHulvUY0qFfZn+zE2iJ5b6re+DWi6JzW4Ngrwk
+	ogb1IbqJXnQJgDk7Pt2ipIaXMpsdacHEo4uYIarAUdvfeW42E8ylaFdutFoc4aNw
+	kFHimInBzwn1UYMK//vwE+8Ou4pxhYtMZ6MN/hLoayp5DOKSUziQagF0Jg6Bq1Zk
+	4Obr9v9ZX0mi8o4+hmCmw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1756979646; x=1757066046; bh=b47tdDARfEiTwuQ3hf+5RWFsfXNqTxNJTg2
+	FAkCOtvk=; b=jj4OQoB67s5a0bCCfu+VoDdUJuiC152+JdZMAMd3kAKRWu/rX5b
+	7MF6gVt5QZ0iI9s2dc5ceZHL1nmTGCfQJZ3Aa9XQ9WfrXifvikE6Pb3J8cHJM59G
+	BEhscZC4CEnZJZYlAhKXxCia53lp9XzzYCHytMp9BTbZzJA/3SuqePnLfCTJ+4aH
+	UUt5HeOZwpwVOHz25MK76tR5gakx0gvFWEgW7FpLBC+hijgf0TbtPcKLclWSzUIP
+	1DbtMTDl1vzVgJtOxj/RTw8aT+WWVJFkP0zUIp9pO6XMwj7MflmNQWes2UnedVvH
+	APmzLBnEOBXyADE7SgCOTcv8Stok0f7LLwg==
+X-ME-Sender: <xms:vWG5aAyVPmhngvGNzdyC8wEoEazSYva0DXr9P10c8GGB97GRXyKeBw>
+    <xme:vWG5aI3RGU7E7Kp5Cmd5qU28FVfn4QsZHbCR0l64BTtV1WwI8Fvo0GWyj6fVfcSSE
+    v8aG150n73gnS5sUZs>
+X-ME-Received: <xmr:vWG5aPdmHyjpcd9Mmlxe4rVvAVXhoaGiGBWHB3ZnuxiSkZ0_jUvdbg0S24Us>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehjeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomhepufgrsghrihhnrgcu
+    ffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrfgrth
+    htvghrnhepuefhhfffgfffhfefueeiudegtdefhfekgeetheegheeifffguedvuefffefg
+    udffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsh
+    gusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopedugedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepfihilhhfrhgvugdrohhpvghnshhouhhrtggvse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgv
+    thdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtoh
+    epkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughh
+    rghtrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepjhhohhhnrdhfrghsthgr
+    sggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:vWG5aFVSUKzu3lL76TbjuZE4561OxO7Nr_z2JE16FKRXL0air6IbdQ>
+    <xmx:vWG5aP-AvKsk6f3YZ9FQ6xYnivFmNEdPdBdGChT2k-XkQWWTp6F9jg>
+    <xmx:vWG5aHimAjWLAHuG_oRjyRIGoLxipxgHz6o1imOQ5bHAeRWpbqaZVQ>
+    <xmx:vWG5aDfVt5U1wSRK5VZXN4hPPcMl3OyPYw7_VtNGq9q9fYkObvkwYg>
+    <xmx:vmG5aPOdtRs-jLpk28JFvnYPyUbEFo1zDO8w3DdEbYbqH5QFAQscnKS1>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 4 Sep 2025 05:54:05 -0400 (EDT)
+Date: Thu, 4 Sep 2025 11:54:03 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Wilfred Mallawa <wilfred.opensource@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+	john.fastabend@gmail.com, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alistair.francis@wdc.com, dlemoal@kernel.org,
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Subject: Re: [PATCH v3] net/tls: support maximum record size limit
+Message-ID: <aLlhuyBQ8C610qv-@krikkit>
+References: <20250903014756.247106-2-wilfred.opensource@gmail.com>
+ <aLgVCGbq0b6PJXbY@krikkit>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: Add binding for gunyah watchdog
-To: hrishabh.rajput@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250903-gunyah_watchdog-v1-0-3ae690530e4b@oss.qualcomm.com>
- <20250903-gunyah_watchdog-v1-1-3ae690530e4b@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250903-gunyah_watchdog-v1-1-3ae690530e4b@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aLgVCGbq0b6PJXbY@krikkit>
 
-On 03/09/2025 21:33, Hrishabh Rajput via B4 Relay wrote:
-> From: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+2025-09-03, 12:14:32 +0200, Sabrina Dubroca wrote:
+> 2025-09-03, 11:47:57 +1000, Wilfred Mallawa wrote:
+> Pushing out the pending "too big" record at the time we set
+> tx_record_size_limit would likely make the peer close the connection
+> (because it's already told us to limit our TX size), so I guess we'd
+> have to split the pending record into tx_record_size_limit chunks
+> before we start processing the new message (either directly at
+> setsockopt(TLS_INFO_TX_RECORD_SIZE_LIM) time, or the next send/etc
+> call). The final push during socket closing, and maybe some more
+> codepaths that deal with ctx->open_rec, would also have to do that.
 > 
-> The Gunyah Hypervisor applies a devicetree overlay providing the
-> pretimeout interrupt for the Gunyah Watchdog that it will be using to
-> notify watchdog's pretimeout event. Add the DT bindings that Gunyah
-> adheres to for the hypervisor and watchdog.
+> I think additional selftests for
+>     send(MSG_MORE), TLS_INFO_TX_RECORD_SIZE_LIM, send
+> and
+>     send(MSG_MORE), TLS_INFO_TX_RECORD_SIZE_LIM, close
+> verifying the received record sizes would make sense, since it's a bit
+> tricky to get that right.
 
-Wasn't tested, so limited review.
+Hmm, after thinking about this a bit more, maybe we don't need to
+care? There could be more records larger than the new limit already
+pushed out to TCP but not received by the peer, and we can't do
+anything about those.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+I suspect it's not a problem in practice because of what the TLS
+exchange between the peers setting up this extension looks like? (ie,
+there should never be an open record at this stage - unless userspace
+delays doing this setsockopt after getting the message from the peer,
+but then maybe we can call that a buggy userspace)
 
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
-
-> 
-> Signed-off-by: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
-> ---
->  .../bindings/watchdog/qcom,gh-watchdog.yaml        | 76 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 77 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/qcom,gh-watchdog.yaml b/Documentation/devicetree/bindings/watchdog/qcom,gh-watchdog.yaml
-> new file mode 100644
-> index 000000000000..bde8438c6242
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/watchdog/qcom,gh-watchdog.yaml
-> @@ -0,0 +1,76 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/watchdog/qcom,gh-watchdog.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Gunyah Virtual Watchdog
-> +
-> +maintainers:
-> +  - Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
-> +
-> +description: |+
-> +  The Gunyah Hypervisor provides an SMC-based watchdog interface for its virtual
-> +  machines. The virtual machines use this information to determine the
-> +  pretimeout IRQ which the hypervisor will be using to communicate pretimeout
-> +  event.
-> +  See also: [1]
-> +
-> +  [1]: https://github.com/quic/gunyah-resource-manager/blob/1b23ceb0dfa010b3b6b5a5f7a4ec1e95b93ab99d/src/vm_creation/dto_construct.c#L519
-> +
-> +properties:
-> +  compatible:
-> +    allOf:
-> +      - const: gunyah-hypervisor
-> +      - const: simple-bus
-
-What? No.
-
-Don't create patches with AI.
-
-> +
-> +  "#address-cells":
-> +    description: Number of cells needed to represent 64-bit capability IDs.
-> +    const: 2
-> +
-> +  "#size-cells":
-> +    description: must be 0, because capability IDs are not memory address
-> +                  ranges and do not have a size.
-> +    const: 0
-> +
-> +patternProperties:
-> +  "^gh-watchdog":
-
-
-I could not express more: NAK. Does not match any DT style. Please do
-some internal reviews first. This patch does not meet minimum quality
-criteria for public posting.
-
-
-Best regards,
-Krzysztof
+-- 
+Sabrina
 
