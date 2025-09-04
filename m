@@ -1,330 +1,165 @@
-Return-Path: <linux-kernel+bounces-801676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C49B448A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:35:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17312B448A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C69B41CC1AE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:36:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD94C3BF13D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1748C2C1589;
-	Thu,  4 Sep 2025 21:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACB22C1581;
+	Thu,  4 Sep 2025 21:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kUMUEcCv"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="rblHqW69"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8972C0289;
-	Thu,  4 Sep 2025 21:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E1E289811
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 21:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757021743; cv=none; b=D45s1yECCaxQXyCyto1U8+hrgr3P0aUlQefwBvP8hMJ25L6wo2uS5yQgXWH2KR4qk3zdJSGjgTfySqbZ02m49pH7LXS2V6w4wfGK1q3q99DY1uQSTMXwP/97b0ie5bMNz0PYOtsIcCYRmfyVuaMK7/ryjK+mhLjuXMSWdR2HNo0=
+	t=1757021798; cv=none; b=auYTQLix0XnBC/LdoG2Y84JhpqfL7QMy1toZ2XSG9ST7LfQXRS+hBwPHX4EZZfuCEMZIrQ2Op4lIlXnppxJHSyW/Azu4Q7lZFoEkD12nYGRZ6Rn1hpaf0F9yh1kMtX2sYlRuMXZjc/P5Rj3n3GFWhcyQrTZl8t0XDT9fY/ZnopA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757021743; c=relaxed/simple;
-	bh=m9NnJCluKVTR11hVnQmXKzYllpPWfe3CilE8MG0CLyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hNkr8emepxvT0uqhXIb2oSGf48QvUQQCIAyEblPeCt4+GVwa39ovM24TW8UwiQuHsjT/aOk4mXmUjYdNjhYX0NkrTizOB2B/E022RwUjfIHXMDGxsTZiojxdFg3VU3aDOMe154MvgDg7qqy4q8nliCsYL3XPAcll4lb3I9Hz2zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kUMUEcCv; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e96fc00ad79so1472612276.0;
-        Thu, 04 Sep 2025 14:35:41 -0700 (PDT)
+	s=arc-20240116; t=1757021798; c=relaxed/simple;
+	bh=7CzmPfMQy+yfaTvGUJ5I488Q7O3xDmbX1jz1pgUJ5bg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UI8JaPyBtOMWiOev6amuLnXw+cr7YlDrtOGDCCETSEVheAqIxoDio14CJARJ8ChKgbZPeuQsLTf7XYPmOPXHRvKgNCgAc/4KRjUvTBNS/NVtw++zAAEmahV4fwfNCq6qgymLnnyeyfzBCPIO3ESRrtrgdAosumqs9s9MihMEZ/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=rblHqW69; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-745a415bf72so458350a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 14:36:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757021740; x=1757626540; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IvCBV4RAVElTtuBlztSRnmNbm0dDQBJMrO8cYnccOd4=;
-        b=kUMUEcCvbgyKiMBtA3TOdZKAkTSs59VATMCu04VpTnXFXgGFgubXwct1zemC/72jwb
-         RQNuhWpStWeWp8uQ1qlW81iKiQWQ6oTPBhcvGrSwUHPb730CBje0wghkmzRp3bM4VDu9
-         DNgC1xN9DK/VZbxdFUv7r8kT/piYSSsVS6+qJ8EcezQwEkPfnHcdDQQK7gyuq0BO4UWC
-         U77PsjifaDvSg0APe4i5RPDfj9XdRxLNUoqAloFc2R0gdRBuSpJChEzXb1fYhKOywwh2
-         +O+RdVCBGs5yywYMFL1yTSbHxD3+d8P+8Y0IojfXcVok9LcPdHdXzuPSxr0INJz2A5OX
-         Fs6w==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757021795; x=1757626595; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o2ksK33O2Gh+zayfz9iUY+WpS0hxyQwgAZC6r3ahBbc=;
+        b=rblHqW69LUPEE0IgIzBO57xVsY1DEr8uGx63kQm6tisj1Gub6qdmbvgO01A2VTJ+si
+         iYG6PXp1acn3eviDevDMgZ55o01MZsQc9O0jMpgGxR62KW4KVZteOG8e+FqoImWUe8EE
+         JdM161uqCeZcmwG/fQMF/Jm6MSpzJlVKoZnvGu2gkQmTx9QcvDdEkLLyarRm/qGwbL/x
+         8UP5JbPVUIH5xcXvbedDaa25VlhrY+Y+0OQZawQmo4HVj0LUoyvBMWrVIIiQiYBxybt/
+         cLPgVU0eVmP6dDU+nol+6MdR0IS9XlS4OVjWTi+YjDEZcOxAYvzgMD1G8TrwjiWjTh2x
+         Nx1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757021740; x=1757626540;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1757021795; x=1757626595;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IvCBV4RAVElTtuBlztSRnmNbm0dDQBJMrO8cYnccOd4=;
-        b=YobDCVPnpcdnbk/if4Py4ppagevv/iVl1wJXXqt52Zpb3QHO3JPpjZYcNoHOdbXxVS
-         9AO4TsLX4/wBgoZokIGJx1/Z+xnAjv3nC88pL/W1KQGmUfX9sEPMUfazojhXT/5UN0V1
-         p4HA8aaIp6ghZXuZVfYpJqb6vVL8ZiG21l9kGdsXk78dJg5nAjzrEOVnGnOkmCSyDFD5
-         3s5hOq/gyupDswK21na3vxGHF45kr3TYgmf+EaAs0TqLw2KZGq9AYWoBcj1ZI9daE3gZ
-         lfd9/MKy1vdPFcARlZ7DLcSQ4Nes4XOaMnErf6TqeAcngLMlHeRpTnFLu7wfJAwENpWc
-         ln7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXa3nl8NBzu4s3LH2xP4EAlKxmcuaSxr77quF69jQTWo93gyclW/dmcItjHLZp3UOZxKjSkK/zSNSrQtcuGbg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIIz07/HvHe1z90VkacSo8WkX0FD6aEAV7LlSbGR9UmSxUKtHq
-	eP8ZRqRfsTFuX3WtELK4qEEg+MgayZo82LceOu7fx2KbQFHvGzqNeO3e
-X-Gm-Gg: ASbGncsp2ruT4mpZxLm7tSLOVtv1mGNFx2OsQoPy02GCw2/XqS9J3syZDS8mnytHix3
-	MUw3UOLKty+kRAOhXM5tCxyjuGgroaAGc0ssBexgu89S+m8OGLQEgHvKKkpm4yt1GWj+Ey6tAxC
-	xUVZMCPuIxm0RCV0bPhDG7zW+S0y/m5ToxufFw6jRKgVIL5oulJwGeipFzo+Lqa/USPNnmz5sUL
-	ywiDlmjCb0LWPGVCpG+SgzpBD1cRVuigPFEAifLW0hbnxo0IVE5CMHx+OS2flhv3ucvG/0CtEQp
-	Wit/oq5K9YZAXUT8SIHqOjfihYZqSsbTVPrbAKvLDisBsHFgSTumVtCOAXpYEEbv07AWNQkDObB
-	NcvXoh0shCdkHj9sRXoNO9w==
-X-Google-Smtp-Source: AGHT+IGcjNZusnsLiR6R1wgbKQBrEhDGHmeQUz60B2AGaGgy+2NRFtq0i4WitkyqZVH+hfJ5zflfxw==
-X-Received: by 2002:a05:690e:424c:b0:5f3:319c:fec6 with SMTP id 956f58d0204a3-60175b91dfcmr3275590d50.11.1757021740093;
-        Thu, 04 Sep 2025 14:35:40 -0700 (PDT)
-Received: from localhost ([2601:347:100:5ea0:1218:85e4:58ab:e67f])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-5ff8ef2b4cdsm1726511d50.7.2025.09.04.14.35.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 14:35:39 -0700 (PDT)
-Date: Thu, 4 Sep 2025 17:35:38 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>, nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 1/2] nova-core: Add a library for bitfields in Rust
- structs
-Message-ID: <aLoGKilQPupPQkd2@yury>
-References: <20250824135954.2243774-1-joelagnelf@nvidia.com>
+        bh=o2ksK33O2Gh+zayfz9iUY+WpS0hxyQwgAZC6r3ahBbc=;
+        b=TryB5h6di739Gu4HJw2rf0BM+7N+xdaX51T0gDSBTnooEGGWsbmpmCPh7z05qfFFln
+         83P2jYUzKIDB/35FMH2p3RLVMYNKDiOF4zn315Dsx57njDzmm+2ayZtAg2aZB2uwW1po
+         5+afvdSeUzkizZFL9rxYhnLuGMF3r7QJNRWSHXip5+bE4rUcG8XwCWfVROSxz4FzBUeo
+         KpEOOIvvHB3NEJRs1x/X2ilwNMjxMwn4+UYI4a58cLEgKSRONWVeJJXbZALwlC9JQu9t
+         EKr1GkD6T7JzZ7Ikp+dwVB6RKAD8wGwK7+ntfNc972qlmvpYCqCutyAyRSXu0MRU3+Pg
+         +dMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUntSkVQ+1VrdEwGZbW/C6958PXpsOvxHr4q7YZGKb1cA+yHjdJXjSLpOj9Z4Jvz86TdpiCz7p+EyP16Es=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3SYA6uvMpL6t7D3Eus+k0bD3e0n/TGHGddJT+HUzlW57SFGeo
+	3pZOpokcKRpZjRrKzW6T3Uzo8ZRecAhlEFGEWdLpffZ+6fDrGDkTsXuD4L0swIOZDkPtwt4WwGf
+	Mt8rW
+X-Gm-Gg: ASbGncuZiDH+u6Z/6UbfXj53nt4obSBpajFE+D6QA8+A40ul9WL4nr5ifq8h/aOK8Wu
+	5bYsTYn9wc12mKcauyJXRLjd+6avgAbTfslXk5QLuS0eQACHQr5PWI54tL/4tn3CoXzgTiawi3H
+	loT+2onb2dV5Ev/Nuo/FZ0jS1B7aTT9ZSi9xPRMZYhVcEOngKuUq9hfPPwQsFDQsRj6Q+40IQbS
+	Cf4SB5ShFhaDpxCD3i1VZiPnhhwTYMW00SisfljOaZITWLI35O7LatAi1aNy/84v8lB600cS4ZK
+	s3qsfolvyq9nNMoMaRgBb0OHJEfCWkk1C3WIWkALKjYCqkG5vDlI1PmCjqt+W3Ri0T7LY+Ouu/T
+	WfYXLg6wmFE/v2JJAJd03hag4/EM1nqM52q+jg0aW/uqCQkbwRAoJ9OxvwG57JAy/L+oSOrrjIt
+	BlhxXDymNuMg==
+X-Google-Smtp-Source: AGHT+IEkZaYGqTaVEBhg/NH0XJNUU/u00tkVS5TwqBNVwmkgoIkNoMb3Fp5vF6Y8P21aL8iacPxIWw==
+X-Received: by 2002:a05:6830:d83:b0:745:9a08:c9b2 with SMTP id 46e09a7af769-7459a08ced9mr3566127a34.5.1757021795594;
+        Thu, 04 Sep 2025 14:36:35 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:a178:aa1c:68f0:444a? ([2600:8803:e7e4:1d00:a178:aa1c:68f0:444a])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-745742a5a9bsm3617905a34.11.2025.09.04.14.36.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 14:36:35 -0700 (PDT)
+Message-ID: <88936759-77f5-479c-8cdb-121fc08f068f@baylibre.com>
+Date: Thu, 4 Sep 2025 16:36:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250824135954.2243774-1-joelagnelf@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] iio: adc: ad7124: fix sample rate for multi-channel
+ use
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250904-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v2-1-bbf2f0d997ea@baylibre.com>
+ <aLnYk6RPePeACmex@smile.fi.intel.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <aLnYk6RPePeACmex@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Joel,
-
-(Thanks to John for referencing this.)
-
-On Sun, Aug 24, 2025 at 09:59:52AM -0400, Joel Fernandes wrote:
-> Add a minimal bitfield library for defining in Rust structures (called
-> bitstruct), similar in concept to bit fields in C structs.
-
-So maybe name it bitfield? 
-
-> This will be used
-> for defining page table entries and other structures in nova-core.
-
-I think this is understatement, and this will find a broader use. :)
-
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-
-I agree with the others that this bitstruct is worth to live in core
-directory. I just merged bitmap wrapper in rust/kernel/bitmap.rs, and
-I think this one should go in rust/kernel/bitstruct.rs (or bitfield.rs?).
-
-Can you please consider this change for v2, and also add the new file in
-BITOPS API record in MAINTAINERS?
-
-A couple nits inline.
-
-Thanks,
-Yury
-
-> ---
->  drivers/gpu/nova-core/bitstruct.rs | 149 +++++++++++++++++++++++++++++
->  drivers/gpu/nova-core/nova_core.rs |   1 +
->  2 files changed, 150 insertions(+)
->  create mode 100644 drivers/gpu/nova-core/bitstruct.rs
+On 9/4/25 1:21 PM, Andy Shevchenko wrote:
+> On Thu, Sep 04, 2025 at 11:19:56AM -0500, David Lechner wrote:
+>> Change how the FS[10:0] field of the FILTER register is calculated to
+>> get consistent sample rates when only one channel is enabled vs when
+>> multiple channels are enabled in a buffered read.
+>>
+>> By default, the AD7124 allows larger sampling frequencies when only one
+>> channel is enabled. It assumes that you will discard the first sample or
+>> so to allow for settling time and then no additional settling time is
+>> needed between samples because there is no multiplexing due to only one
+>> channel being enabled. The conversion formula to convert between the
+>> sampling frequency and the FS[10:0] field is:
+>>
+>>     fADC = fCLK / (FS[10:0] x 32)
+>>
+>> which is what the driver has been using.
+>>
+>> On the other hand, when multiple channels are enabled, there is
+>> additional settling time needed when switching between channels so the
+>> calculation to convert between becomes:
+>>
+>>     fADC = fCLK / (FS[10:0] x 32 x (4 + AVG - 1))
+>>
+>> where AVG depends on the filter type selected and the power mode.
+>>
+>> The FILTER register has a SINGLE_CYCLE bit that can be set to force the
+>> single channel case to use the same timing as the multi-channel case.
+>>
+>> Before this change, the first formula was always used, so if all of the
+>> in_voltageY_sampling_frequency attributes were set to 10 Hz, then doing
+>> a buffered read with 1 channel enabled would result in the requested
+>> sampling frequency of 10 Hz. But when more than one channel was
+>> enabled, the actual sampling frequency would be 2.5 Hz per channel,
+>> which is 1/4 of the requested frequency.
+>>
+>> After this change, the SINGLE_CYCLE flag is now always enabled and the
+>> multi-channel formula is now always used. This causes the sampling
+>> frequency to be consistent regardless of the number of channels enabled.
+>>
+>> Technically, the sincx+sinc1 filter modes can't currently be selected
+>> so there is some temporarily dead code in ad7124_get_avg() until filter
+>> support is added.
+>>
+>> The AD7124_FILTER_FS define is moved while we are touching this to
+>> keep the bit fields in descending order to be consistent with the rest
+>> of the file.
 > 
-> diff --git a/drivers/gpu/nova-core/bitstruct.rs b/drivers/gpu/nova-core/bitstruct.rs
-> new file mode 100644
-> index 000000000000..661a75da0a9c
-> --- /dev/null
-> +++ b/drivers/gpu/nova-core/bitstruct.rs
-> @@ -0,0 +1,149 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// bitstruct.rs — C-style library for bitfield-packed Rust structures
-> +//
-> +// A library that provides support for defining bit fields in Rust
-> +// structures to circumvent lack of native language support for this.
-> +//
-> +// Similar usage syntax to the register! macro.
-> +
-> +use kernel::prelude::*;
-> +
-> +/// Macro for defining bitfield-packed structures in Rust.
-> +/// The size of the underlying storage type is specified with #[repr(TYPE)].
-> +///
-> +/// # Example (just for illustration)
-> +/// ```rust
-> +/// bitstruct! {
-> +///     #[repr(u64)]
-> +///     pub struct PageTableEntry {
-> +///         0:0       present     as bool,
-> +///         1:1       writable    as bool,
-> +///         11:9      available   as u8,
-> +///         51:12     pfn         as u64,
-> +///         62:52     available2  as u16,
-> +///         63:63     nx          as bool,
-> +///     }
-> +/// }
-
-Is it possible to create overlapping fields? Should we allow that?
-(I guess yes.) Does your machinery handle it correctly now?
-
-If the answer is yes, can you add a test for it?
-
-> +/// ```
-> +///
-> +/// This generates a struct with methods:
-> +/// - Constructor: `default()` sets all bits to zero.
-> +/// - Field accessors: `present()`, `pfn()`, etc.
-> +/// - Field setters: `set_present()`, `set_pfn()`, etc.
-> +/// - Builder methods: `with_present()`, `with_pfn()`, etc.
-> +/// - Raw conversion: `from_raw()`, `into_raw()`
-> +#[allow(unused_macros)]
-> +macro_rules! bitstruct {
-> +    (
-> +        #[repr($storage:ty)]
-> +        $vis:vis struct $name:ident {
-> +            $(
-> +                $hi:literal : $lo:literal $field:ident as $field_type:tt
-> +            ),* $(,)?
-> +        }
-> +    ) => {
-> +        #[repr(transparent)]
-> +        #[derive(Copy, Clone, Default)]
-> +        $vis struct $name($storage);
-> +
-> +        impl $name {
-> +            /// Create from raw value
-> +            #[inline(always)]
-> +            $vis const fn from_raw(val: $storage) -> Self {
-> +                Self(val)
-> +            }
-> +
-> +            /// Get raw value
-> +            #[inline(always)]
-> +            $vis const fn into_raw(self) -> $storage {
-> +                self.0
-> +            }
-> +        }
-> +
-> +        impl core::fmt::Debug for $name {
-> +            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-> +                write!(f, "{}({:#x})", stringify!($name), self.0)
-> +            }
-> +        }
-> +
-> +        // Generate all field methods
-> +        $(
-> +            bitstruct_field_impl!($vis, $name, $storage, $hi, $lo, $field as $field_type);
-> +        )*
-> +    };
-> +}
-> +
-> +/// Helper to calculate mask for bit fields
-> +#[allow(unused_macros)]
-> +macro_rules! bitstruct_mask {
-> +    ($hi:literal, $lo:literal, $storage:ty) => {{
-> +        let width = ($hi - $lo + 1) as usize;
-> +        let storage_bits = 8 * core::mem::size_of::<$storage>();
-
-Does this '8' mean BITS_PER_BYTE? If so, we've got BITS_PER_TYPE() macro. Can
-you use it here?
-
-> +        if width >= storage_bits {
-> +            <$storage>::MAX
-
-This is an attempt to make an out-of-boundary access. Maybe print a
-warning or similar? 
-
-I actually think that if user wants to make an out-of-boundary access,
-the best thing we can do is to keep the memory untouched. So, maybe
-return None here, or 0, and make sure that the upper code doesn't
-access it?
-
-> +        } else {
-> +            ((1 as $storage) << width) - 1
-> +        }
-> +    }};
-> +}
-> +
-> +#[allow(unused_macros)]
-> +macro_rules! bitstruct_field_impl {
-> +    ($vis:vis, $struct_name:ident, $storage:ty, $hi:literal, $lo:literal, $field:ident as $field_type:tt) => {
-> +        impl $struct_name {
-> +            #[inline(always)]
-> +            $vis const fn $field(&self) -> $field_type {
-> +                let field_val = (self.0 >> $lo) & bitstruct_mask!($hi, $lo, $storage);
-> +                bitstruct_cast_value!(field_val, $field_type)
-> +            }
-> +        }
-> +        bitstruct_make_setters!($vis, $struct_name, $storage, $hi, $lo, $field, $field_type);
-> +    };
-> +}
-> +
-> +/// Helper macro to convert extracted value to target type
-> +///
-> +/// Special handling for bool types is required because the `as` keyword
-> +/// cannot be used to convert to bool in Rust. For bool fields, we check
-> +/// if the extracted value is non-zero. For all other types, we use the
-> +/// standard `as` conversion.
-> +#[allow(unused_macros)]
-> +macro_rules! bitstruct_cast_value {
-> +    ($field_val:expr, bool) => {
-> +        $field_val != 0
-> +    };
-> +    ($field_val:expr, $field_type:tt) => {
-> +        $field_val as $field_type
-> +    };
-> +}
-> +
-> +#[allow(unused_macros)]
-> +macro_rules! bitstruct_write_bits {
-> +    ($raw:expr, $hi:literal, $lo:literal, $val:expr, $storage:ty) => {{
-> +        let mask = bitstruct_mask!($hi, $lo, $storage);
-> +        ($raw & !(mask << $lo)) | ((($val as $storage) & mask) << $lo)
-> +    }};
-> +}
-> +
-> +#[allow(unused_macros)]
-> +macro_rules! bitstruct_make_setters {
-> +    ($vis:vis, $struct_name:ident, $storage:ty, $hi:literal, $lo:literal, $field:ident, $field_type:tt) => {
-> +        ::kernel::macros::paste! {
-> +            impl $struct_name {
-> +                #[inline(always)]
-> +                #[allow(dead_code)]
-> +                $vis fn [<set_ $field>](&mut self, val: $field_type) {
-> +                    self.0 = bitstruct_write_bits!(self.0, $hi, $lo, val, $storage);
-> +                }
-> +
-> +                #[inline(always)]
-> +                #[allow(dead_code)]
-> +                $vis const fn [<with_ $field>](mut self, val: $field_type) -> Self {
-> +                    self.0 = bitstruct_write_bits!(self.0, $hi, $lo, val, $storage);
-> +                    self
-> +                }
-> +            }
-> +        }
-> +    };
-> +}
-> diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
-> index cb2bbb30cba1..54505cad4a73 100644
-> --- a/drivers/gpu/nova-core/nova_core.rs
-> +++ b/drivers/gpu/nova-core/nova_core.rs
-> @@ -2,6 +2,7 @@
->  
->  //! Nova Core GPU Driver
->  
-> +mod bitstruct;
->  mod dma;
->  mod driver;
->  mod falcon;
-> -- 
-> 2.34.1
+> ...
 > 
+>>  	tmp = FIELD_PREP(AD7124_FILTER_FILTER, cfg->filter_type) |
+>> +		AD7124_FILTER_SINGLE_CYCLE |
+>>  		FIELD_PREP(AD7124_FILTER_FS, cfg->odr_sel_bits);
+> 
+> Seems to me that this is not indented correctly, with that in mind I would
+> 
+> 	tmp = FIELD_PREP(AD7124_FILTER_FILTER, cfg->filter_type) |
+> 	      FIELD_PREP(AD7124_FILTER_FS, cfg->odr_sel_bits) |
+> 	      AD7124_FILTER_SINGLE_CYCLE;
+> 
+> 
+
+All 3 of these lines are being removed in a later patch (haven't sent it to the
+mailing list yet). So I will leave this as-is to keep the diff to a minimum.
+
 
