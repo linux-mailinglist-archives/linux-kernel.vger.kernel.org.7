@@ -1,269 +1,216 @@
-Return-Path: <linux-kernel+bounces-800842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63EEBB43CD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:17:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB8EB43CDF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AE8E4E35F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:17:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 481881C273D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3D92DE701;
-	Thu,  4 Sep 2025 13:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E182FF178;
+	Thu,  4 Sep 2025 13:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QOEeWodh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rSeeYMQC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1855C5B21A;
-	Thu,  4 Sep 2025 13:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823361C1AAA;
+	Thu,  4 Sep 2025 13:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756991841; cv=none; b=GftW2Xlyp5TlkzEuJ4huG+ha+gIrFKW/B1VF39St8liTteYraF6bG3WJ9s+0gymkgtBLzpRnezyK0qhDdibzYopjmqKMrd/8IYYnE9kIY3jckPVCVOu2I67BfP2WciMxdQyJrwe0Jc7IY7OziC/J5Q2d6XTROeaM2WtIbg2aaxk=
+	t=1756991858; cv=none; b=GQVCYyNj4/awWFsTiIoyJfiuvNyL7Qc/AhlQ7pXVr4+SOFPNdVbQ5Jcksm+XZFs/KqDI+2t2KMAuyxMIbiFHHx6z3mzz+PSnD0ItPw2U4FDMtjXwjz6GJ/4zy/O8HHM70c8hWnGfhb5RZUk2kUMDHkvCNk5BUYYwId5fyQhwnjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756991841; c=relaxed/simple;
-	bh=GZgfMe3TroFvgjok++upgu6x7x/+2ppU32692Lp6mmc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bg6YILNLlfMncHOZwJcTb4qoALJz4+yp1dmzCQio0OkpGIXgzqLek7tt72Z4Sl8+isPzd5QkSWBIkutCeG3mpQNzUaV5hfNKzaXG2b7owCK9MaTIy4qqiUOJIilnvNUnfeYsI7jccjz9lqCod7r/1wM9yPt6sZAUevJwyWmu0gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QOEeWodh; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756991840; x=1788527840;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GZgfMe3TroFvgjok++upgu6x7x/+2ppU32692Lp6mmc=;
-  b=QOEeWodhWPEPEXXY7psOMVDQOJ5Syjz4NJeLfHmh+zdDpL+4CifkW7jQ
-   9VZI3SqdK6yZR76G7rQgyN7aK7UyeCa4eKKXuFtWwdKiyNrFqiVdGjLsE
-   OMmtN6TN9QhoS27eRNZsvs+UskuZfxXZXP10r1inJBv4XNYVgUCPXKO4g
-   nDcypMeji8/+FzRVUdByODVj8sljgDUMyOsy8DcMRzHxJwFD3QSFgVx5x
-   1VFrjPD8xQCHmtM2BKTbTVoSAgRoMN7T0YUfCZsgjlSFIKmV99WIdnD3B
-   JVAIGYWS73BR5kSR7UCJrxm8pZgt7DR+uWHaP/ZhrT2b89Z25ffj65Cdi
-   Q==;
-X-CSE-ConnectionGUID: b/a73pBrS8GwFsVXA/Jlew==
-X-CSE-MsgGUID: rGMAOR9mSUmzNDZt4hH2pA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="59186411"
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="59186411"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 06:17:18 -0700
-X-CSE-ConnectionGUID: w93+n0GzT2OyFR+vp0DBrQ==
-X-CSE-MsgGUID: 27dCC6muRWibyP4Fg4Z32Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="172256644"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 06:17:15 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uu9pw-0000000BHAS-3fE4;
-	Thu, 04 Sep 2025 16:17:12 +0300
-Date: Thu, 4 Sep 2025 16:17:12 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Remi Buisson <Remi.Buisson@tdk.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 2/9] iio: imu: inv_icm45600: add new inv_icm45600
- driver
-Message-ID: <aLmRWHZ-fNYjeYll@smile.fi.intel.com>
-References: <20250820-add_newport_driver-v5-0-2fc9f13dddee@tdk.com>
- <20250820-add_newport_driver-v5-2-2fc9f13dddee@tdk.com>
- <aKbgt_g3FsLMM8-g@smile.fi.intel.com>
- <FR2PPF4571F02BCC073F7740CBA818676388C00A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1756991858; c=relaxed/simple;
+	bh=J37h8zaAlmHnvnALjyhUgHlYpkvFqaV8s8bqNB0XjFQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UMbjhuMhaMMuRyxNuNrATaJFQRGcySWC6azi+O8eE7CnNZiYoAnUwsN6T+Z//OgPeZgsgZZuymlLYKlc1PXpbj22zvAYsY1GR6f/qvQchpnVdvelN54OLUexh5/tRiKUYjFpWZ5Z9jTmUi80wlf1seIzxdED+DPuvEsxvqI4AUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rSeeYMQC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13A4EC113D0;
+	Thu,  4 Sep 2025 13:17:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756991858;
+	bh=J37h8zaAlmHnvnALjyhUgHlYpkvFqaV8s8bqNB0XjFQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rSeeYMQC35U85BwNUUpTccZq+hmNBZVbOybxyuurDfaGkCAOruDMl/BJ+6V3r+u6h
+	 58CWTnMu+bkN110RdLUvsucq93Jc3d5+kS4frgCgo3FVx3GWK1mqvcgH10uQaLNdrC
+	 SjzoQa4PZZYmq/Cxf5GId4h0wwWgehrTcd3/KL9uaLs131Bk/JxcPE98Jb6fe/jKYz
+	 z9ZzUD2u+kcZHrqVDT3DoVuv24+ayotdgqIP+Ft/7HhGElCcWzJX7QOvWcqV7tq8AE
+	 Dyj7Rt7r/bwUN6zrO9NKAoaO0vQbLGPtbHKeSIOKcrHhUaGW45oySjjKxi6/1oZJq4
+	 26vW+iK8JHIJQ==
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-74382048b8cso694965a34.3;
+        Thu, 04 Sep 2025 06:17:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUyNtr/4aJdyhytaK1Vm3P7NTTrCm4FkihQDdxcRjI7QIqwuFm856bDIb+aXTg3U/auaqZBL4snWJsz@vger.kernel.org, AJvYcCVBTfLz6W1afH+IsCZDhs/lyAOpCN2pnhlESQO9cOiR7PWmUhU6VwKJagQIxaYKSJWxPQ22q+ioKEE=@vger.kernel.org, AJvYcCVNG4KhjHY/kwv1dhs/46Pss98DXzhP7RhTWkRbh3X/3dxZit6ACKADJUjI0v8YjFCcFVLpcwwWmfpKiA==@vger.kernel.org, AJvYcCWI+z+OpfeGTfScCyvXsNCebwjyjIg5ZnNfIxah9MZ/jma+0Pp6ikaD74JflPMKI8css+d9VtE89UMdRzYn@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvJvpwyxGuV+F8otscqaMZh3d/WzksYSbbDnXvxZCOUcp2bfyj
+	rtV8MNO47haC+7dQMQu5St9fVDW4o7qok4gOPInJS0ELON4ep2rVltqj3qIjq8m+/J2HY98OF+f
+	6lEN1Rm5bSFI3JeezQ8urQTGNLZKEU7o=
+X-Google-Smtp-Source: AGHT+IEjDfW+3hJPUPYu26F2xz+pxJ+KiqPGjYP79H7T0/I1zIoWql1eDpgpdg2oH+VBSzMp/G1t2kU5l5bZBE+Bi2g=
+X-Received: by 2002:a05:6830:4901:b0:73e:8c8b:749 with SMTP id
+ 46e09a7af769-74569c6739fmr14127345a34.0.1756991857138; Thu, 04 Sep 2025
+ 06:17:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <FR2PPF4571F02BCC073F7740CBA818676388C00A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250903131733.57637-1-zhangzihuan@kylinos.cn>
+ <20250903131733.57637-8-zhangzihuan@kylinos.cn> <CAJZ5v0hirWzWZiLbAXPWB58SQv3CAW95iHLnsqs=i2twVCcmwg@mail.gmail.com>
+ <52e322e5-2dd4-488c-a98e-3a4018f0c323@kylinos.cn>
+In-Reply-To: <52e322e5-2dd4-488c-a98e-3a4018f0c323@kylinos.cn>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 4 Sep 2025 15:17:26 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g__9g_dfA3=4GVi351f4CKBegKkW9nU81j+Qu=2Hfg1Q@mail.gmail.com>
+X-Gm-Features: Ac12FXwmEGaidQr8PE8Gnv5hzk4SwGXFsXwEgV1BR4I0F2oh9v2_Dsc7pRXgYnA
+Message-ID: <CAJZ5v0g__9g_dfA3=4GVi351f4CKBegKkW9nU81j+Qu=2Hfg1Q@mail.gmail.com>
+Subject: Re: [PATCH v4 07/10] powercap: dtpm_cpu: Use scope-based cleanup helper
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Ben Horgan <ben.horgan@arm.com>, 
+	zhenglifeng <zhenglifeng1@huawei.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Len Brown <lenb@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
+	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-arm-kernel@lists.infradead.org, intel-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
+	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 04, 2025 at 12:58:10PM +0000, Remi Buisson wrote:
-> >From: Andy Shevchenko <andriy.shevchenko@intel.com> 
-> >Sent: Thursday, August 21, 2025 11:03 AM
-> >On Wed, Aug 20, 2025 at 02:24:20PM +0000, Remi Buisson via B4 Relay wrote:
-
-...
-
-> >> +struct inv_icm45600_state {
-> >> +	struct mutex lock;
-> >
-> >No header for this.
-> 
-> Correct
-
-Please, add.
-
-...
-
-> >> +	struct regmap *map;
-> >
-> >No forward declaration.
-> 
-> Correct again
-
-Ditto.
-
-...
-
-> >> +	struct regulator *vddio_supply;
-> >
-> >Ditto.
-> 
-> Correct
-
-Ditto.
-
-...
-
-> >> +static const struct regmap_config inv_icm45600_regmap_config = {
-> >> +	.reg_bits = 16,
-> >> +	.val_bits = 8,
-> >
-> >No cache?
-> >
-> If OK for you, we prefer to push this patch without cache.
-> And introduce it in another patchset.
-
-Fine to me if there is a comment given (in the email, not in the code) to
-justify this split. Enabling cache is one line, but, of cource, it might
-require a cache handling in the corner or special cases.
-
-> >> +};
-
-...
-
-> >> +/**
-> >> + *  inv_icm45600_setup() - check and setup chip
-> >> + *  @st:	driver internal state
-> >> + *  @chip_info:	detected chip description
-> >> + *  @reset:	define whether a reset is required or not
-> >> + *  @bus_setup:	callback for setting up bus specific registers
-> >> + *
-> >> + *  Returns 0 on success, a negative error code otherwise.
-> >
-> >Please, run kernel-doc validator. It's not happy (Return section is missing)
-> 
-> kernel-doc does not complain on this, on my side. 
-> I ran kernel-doc.py -v -none drivers/iio/imu/inv_icm45600/*
-> Is there any option I'm missing.
-> Anyway, I will add the missing colon and check the result.
-
--Wall is missed in the command line.
-
-> >> + */
-
-...
-
-> >> +		if (val == U8_MAX || val == 0)
-> >
-> >Hmm... Perhaps in_range() ?
-> 
-> Not sure of the benefit of this change.
-> I prefer to keep it this way if OK for you.
-
-It depends on the semantics of the value in the 'val'. And hence semantics of 0
-and U8_MAX.
-
-> >> +			return dev_err_probe(dev, -ENODEV,
-> >> +					     "Invalid whoami %#02x expected %#02x (%s)\n",
-> >> +					     val, chip_info->whoami, chip_info->name);
-
-...
-
-> >> +		ret = regmap_write(st->map, INV_ICM45600_REG_MISC2,
-> >> +				   INV_ICM45600_MISC2_SOFT_RESET);
-> >> +		if (ret)
-> >> +			return ret;
-> >> +		/* IMU reset time: 1ms. */
-> >> +		fsleep(1000);
-> >
-> >Use 1 * USEC_PER_MSEC and drop useless comment after that.
-> >You will need time.h for it.
-> 
-> Thanks for the tip, clear improvement.
-> >
+On Thu, Sep 4, 2025 at 12:38=E2=80=AFPM Zihuan Zhang <zhangzihuan@kylinos.c=
+n> wrote:
+>
+>
+> =E5=9C=A8 2025/9/3 21:45, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> > On Wed, Sep 3, 2025 at 3:18=E2=80=AFPM Zihuan Zhang <zhangzihuan@kylino=
+s.cn> wrote:
+> >> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+> >> annotation for policy references. This reduces the risk of reference
+> >> counting mistakes and aligns the code with the latest kernel style.
+> >>
+> >> No functional change intended.
+> >>
+> >> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> >> ---
+> >>   drivers/powercap/dtpm_cpu.c | 30 +++++++++++-------------------
+> >>   1 file changed, 11 insertions(+), 19 deletions(-)
+> >>
+> >> diff --git a/drivers/powercap/dtpm_cpu.c b/drivers/powercap/dtpm_cpu.c
+> >> index 99390ec1481f..f76594185fa2 100644
+> >> --- a/drivers/powercap/dtpm_cpu.c
+> >> +++ b/drivers/powercap/dtpm_cpu.c
+> >> @@ -144,19 +144,17 @@ static int update_pd_power_uw(struct dtpm *dtpm)
+> >>   static void pd_release(struct dtpm *dtpm)
+> >>   {
+> >>          struct dtpm_cpu *dtpm_cpu =3D to_dtpm_cpu(dtpm);
+> >> -       struct cpufreq_policy *policy;
+> >>
+> >>          if (freq_qos_request_active(&dtpm_cpu->qos_req))
+> >>                  freq_qos_remove_request(&dtpm_cpu->qos_req);
+> >>
+> >> -       policy =3D cpufreq_cpu_get(dtpm_cpu->cpu);
+> >> -       if (policy) {
+> >> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D
+> >> +               cpufreq_cpu_get(dtpm_cpu->cpu);
 > >> +
-> >> +		if (bus_setup) {
-> >> +			ret = bus_setup(st);
-> >> +			if (ret)
-> >> +				return ret;
-> >> +		}
+> >> +       if (policy)
+> >>                  for_each_cpu(dtpm_cpu->cpu, policy->related_cpus)
+> >>                          per_cpu(dtpm_per_cpu, dtpm_cpu->cpu) =3D NULL=
+;
+> >>
+> >> -               cpufreq_cpu_put(policy);
+> >> -       }
+> >> -
+> >>          kfree(dtpm_cpu);
+> >>   }
+> >>
+> >> @@ -192,7 +190,6 @@ static int cpuhp_dtpm_cpu_online(unsigned int cpu)
+> >>   static int __dtpm_cpu_setup(int cpu, struct dtpm *parent)
+> >>   {
+> >>          struct dtpm_cpu *dtpm_cpu;
+> >> -       struct cpufreq_policy *policy;
+> >>          struct em_perf_state *table;
+> >>          struct em_perf_domain *pd;
+> >>          char name[CPUFREQ_NAME_LEN];
+> >> @@ -202,21 +199,19 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm=
+ *parent)
+> >>          if (dtpm_cpu)
+> >>                  return 0;
+> >>
+> >> -       policy =3D cpufreq_cpu_get(cpu);
+> >> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D
+> >> +               cpufreq_cpu_get(cpu);
 > >> +
-> >> +		ret = regmap_read(st->map, INV_ICM45600_REG_INT_STATUS, &val);
-> >> +		if (ret)
-> >> +			return ret;
-> >> +		if (!(val & INV_ICM45600_INT_STATUS_RESET_DONE)) {
-> >> +			dev_err(dev, "reset error, reset done bit not set\n");
-> >> +			return -ENODEV;
-> >> +		}
+> >>          if (!policy)
+> >>                  return 0;
+> >>
+> >>          pd =3D em_cpu_get(cpu);
+> >> -       if (!pd || em_is_artificial(pd)) {
+> >> -               ret =3D -EINVAL;
+> >> -               goto release_policy;
+> >> -       }
+> >> +       if (!pd || em_is_artificial(pd))
+> >> +               return -EINVAL;
+> >>
+> >>          dtpm_cpu =3D kzalloc(sizeof(*dtpm_cpu), GFP_KERNEL);
+> >> -       if (!dtpm_cpu) {
+> >> -               ret =3D -ENOMEM;
+> >> -               goto release_policy;
+> >> -       }
+> >> +       if (!dtpm_cpu)
+> >> +               return -ENOMEM;
+> >>
+> >>          dtpm_init(&dtpm_cpu->dtpm, &dtpm_ops);
+> >>          dtpm_cpu->cpu =3D cpu;
+> >> @@ -239,7 +234,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *=
+parent)
+> >>          if (ret < 0)
+> >>                  goto out_dtpm_unregister;
+> > So this change kind of goes against another recommendation given in cle=
+anup.h:
 > >
-> >...
-> >
-> >> +static int inv_icm45600_enable_regulator_vddio(struct inv_icm45600_state *st)
-> >> +{
-> >> +	int ret;
-> >> +
-> >> +	ret = regulator_enable(st->vddio_supply);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	/* Wait a little for supply ramp. */
-> >> +	fsleep(3000);
-> >
-> >As per above.
-> Yes.
+> >   * Lastly, given that the benefit of cleanup helpers is removal of
+> >   * "goto", and that the "goto" statement can jump between scopes, the
+> >   * expectation is that usage of "goto" and cleanup helpers is never
+> >   * mixed in the same function. I.e. for a given routine, convert all
+> >   * resources that need a "goto" cleanup to scope-based cleanup, or
+> >   * convert none of them.
+>
+>
+> Should I replace all the memory allocation cleanups here with `__free`?
+> That would allow us to drop all the `goto`s, but since this function has
+> quite a few of them, I=E2=80=99m concerned it might introduce new issues.=
+ What=E2=80=99s
+> your recommendation?
 
-For both cases actually you can leave a comment, but rewrite it in a way that
-it refers to the datasheet. This will be useful.
+Frankly, don't use __free() in this code at all, at least for the time bein=
+g.
 
-> >> +	return 0;
-> >> +}
+There is a problem with dropping the reference to policy at the end of
+__dtpm_cpu_setup() because that policy may be subsequently indirectly
+used in set_pd_power_limit() which calls
+freq_qos_update_request(&dtpm_cpu->qos_req, freq) and
+dtpm_cpu->qos_req->qos is policy->constraints, so using it will cause
+policy->constraints to be dereferenced in freq_qos_apply() which will
+crash and burn if the policy goes away in the meantime.  So AFAICS
+__dtpm_cpu_setup() shouldn't call cpufreq_cpu_put() at all and the
+policy should be released in pd_release() without acquiring a new
+reference to it.
 
-...
-
-> >> +	/* IMU start-up time. */
-> >> +	fsleep(100000);
-> >
-> >100 * USEC_PER_MSEC
-> Yes.
-
-As per above.
-
-...
-
-> >> +	scoped_guard(mutex, &st->lock)
-> >> +		/* Restore sensors state. */
-> >> +		ret = inv_icm45600_set_pwr_mgmt0(st, st->suspended.gyro,
-> >> +						st->suspended.accel, NULL);
-> >
-> >With guard()() this whole construction will look better.
-> 
-> It's coming in later patch.
-> I thought it would better follow coding guidelines this way.
-> But let me know if it is not the case.
-
-Ah, yes, but weren't {} missing?
-
-> >> +	return ret;
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+You may as well try to fix this if you have free cycles.
 
