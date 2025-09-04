@@ -1,205 +1,91 @@
-Return-Path: <linux-kernel+bounces-799652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F92B42EAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:02:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BBE7B42EB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD04F1C21A06
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:03:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B3483ACF1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B34F5B21A;
-	Thu,  4 Sep 2025 01:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2598019006B;
+	Thu,  4 Sep 2025 01:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cftMC5e3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="yMOZg30Y"
+Received: from mail3-167.sinamail.sina.com.cn (mail3-167.sinamail.sina.com.cn [202.108.3.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C036FC5;
-	Thu,  4 Sep 2025 01:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E05F29D0E
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 01:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.167
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756947755; cv=none; b=Hcy/tcUqfRAqGECt6q8eP8+ErPvxeBPXm4dZmj1y7MhUD5ly20PZPX/Jyr4sx8uBf+wm241emsHR9ko84qJPIFi2KeN2ailRCbz6rhBmYpncwsSlFu4/LFq1Ic2QR6eGRUXfNo/++sEcM/i9JPLZENPkJBzMrddnm3oiVfWnAGk=
+	t=1756947987; cv=none; b=V1jbyg0y7C8rraIJxm5/8Xf8EEePbV790UbKWEnQGb9/f0Z+Gj6cORNawjXL3EGHkHr0dgrXS2N2J4cwXwV14YkKhsYx15XI+GUpXse58KxAFhEIcRNMNqcRGiDJMFqqvpKgQTmse1WcP+KfH/lZHLN6tZWJb8a+vjmuYasumgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756947755; c=relaxed/simple;
-	bh=8nAczwppKWkmFx31kmIPa7xy1KYrypF3ToB6n147+gg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=icVdJPnPdb+dZjCe+4Ah/uogeXLKT7W0eO1zYdhca8DcBWSh9jkIVffj0wI5t6ZKrlLagJvob+hy+DqE6+W/8PIdk66y9T0UUzAdr6pRSFZcu0cMPOlIriW+Q5M06S9KloDjWHOLnlSZdShj8cq+EQA+wnpuC/A/tF9QbTg/8cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cftMC5e3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBABBC4CEE7;
-	Thu,  4 Sep 2025 01:02:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756947755;
-	bh=8nAczwppKWkmFx31kmIPa7xy1KYrypF3ToB6n147+gg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cftMC5e3pTJknQ88YxQ8XMWYUvbmiioDE+LmlC6whHTtQihOKlFkD0DgXwRskIAQP
-	 oipGG9uaqXtXJdE67auCilCzPxOQig5NUJI+BS4nyRf6nb4W7Dx1xYV1SC8eB+W1ug
-	 GDhXKkTNEH89m60LLZBO6hE3rEMMmXYX839IJhrz0J8RTNXvM9M4p4FhKkK4Ybkl/l
-	 hYzNeVNk/VXdO+zRuq6TpsM1Yn3NLAMgVaYOMEtnrYfF9+BFmLwmJU24PmNYvemT7x
-	 54dxqqEu1B8w3MPckq4A/5dFhCIJtfOxcbyMYurVADyZivTq9O4hoAtM5sxa461dLh
-	 qGpNidom8scKg==
-Date: Thu, 4 Sep 2025 10:02:31 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Jinchao Wang <wangjinchao600@gmail.com>
-Cc: akpm@linux-foundation.org, naveen@kernel.org, davem@davemloft.net,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 02/13] x86/HWBP: Add arch_reinstall_hw_breakpoint()
- for atomic updates
-Message-Id: <20250904100231.e0bb08d069db31520a6e0435@kernel.org>
-In-Reply-To: <5a6dde06-11ee-4ce7-9cb5-f0b8096e42ed@gmail.com>
-References: <20250818122720.434981-1-wangjinchao600@gmail.com>
-	<20250818122720.434981-2-wangjinchao600@gmail.com>
-	<20250818122720.434981-3-wangjinchao600@gmail.com>
-	<20250901160602.e25f0107e7b0ef4af1078fb7@kernel.org>
-	<284d5eef-447f-4e12-a121-3742d708c96f@gmail.com>
-	<20250902231152.442041a74774d888cec39201@kernel.org>
-	<5a6dde06-11ee-4ce7-9cb5-f0b8096e42ed@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756947987; c=relaxed/simple;
+	bh=Y5FkXg1q+l+bANYuU78sTSjCfRhtQEMrq4gwoYi2ZcY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BP4PqZvH0qxLtJhKjzJrjU8tFA96KEdsr2lWNcR9+bUnr+l5quxHOTHlFP4VdgkasGdUWecke52lJSUfEO4mUPj30fIywwJkMrBfdKfLwt8aYCm5d7ksU+g5b1XijO/CAjzNPGoA4FMyN5RVDl9u2IPtQqTiODIPShD5YoI6XEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=yMOZg30Y; arc=none smtp.client-ip=202.108.3.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756947982;
+	bh=1PRX40VDXKt5fdkyOugUQheA0/3kNkmIu8jTLpAcbrQ=;
+	h=From:Subject:Date:Message-ID;
+	b=yMOZg30Y3zWFiW7jenptpOQ7zFYYw4dS0DWBUV5mKSCf62Dg52FYkvKxit9DrMrh2
+	 uxst5HfxM5mJDYSZJQgMITcfHME49cFspLDEhyI17VslRV9IAAm4JI7BJv1w4uDUfx
+	 yHl/4EZ0hDsWqZqI5t7AZV1e/PdqApBpnYA14ObA=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 68B8E5E000002BF5; Thu, 4 Sep 2025 09:05:38 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 2775386685278
+X-SMAIL-UIID: 7201085AE2EC48469630045E6EB342DF-20250904-090538-1
+From: Hillf Danton <hdanton@sina.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: syzbot <syzbot+10b4363fb0f46527f3f3@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [sound?] possible deadlock in __snd_pcm_lib_xfer (2)
+Date: Thu,  4 Sep 2025 09:05:28 +0800
+Message-ID: <20250904010529.6410-1-hdanton@sina.com>
+In-Reply-To: <20250903145905.r7Ak4Wya@linutronix.de>
+References: <68b269e9.a00a0220.1337b0.001f.GAE@google.com> <20250830065638.6116-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 3 Sep 2025 15:58:44 +0800
-Jinchao Wang <wangjinchao600@gmail.com> wrote:
+On Wed, 3 Sep 2025 16:59:05 +0200 Sebastian Andrzej Siewior wrote:
+> On 2025-08-30 14:56:37 [+0800], Hillf Danton wrote:
+> > > syz.0.46/6843 is trying to acquire lock:
+> > > ffff8880b8823d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
+> > > ffff8880b8823d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: __local_bh_disable_ip+0x264/0x400 kernel/softirq.c:168
+> > > 
+> > Given softirq_ctrl is percpu, this report is false positive.
+> 
+> No. This can happen on a single CPU.
+> 
+But the single CPU theory fails to explain the deadlock reported.
 
-> On 9/2/25 22:11, Masami Hiramatsu (Google) wrote:
-> > On Mon, 1 Sep 2025 18:23:44 +0800
-> > Jinchao Wang <wangjinchao600@gmail.com> wrote:
-> > 
-> >> On 9/1/25 15:06, Masami Hiramatsu (Google) wrote:
-> >>> Hi Jinchao,
-> >>>
-> >> Hi Masami,
-> >>
-> >>> On Mon, 18 Aug 2025 20:26:07 +0800
-> >>> Jinchao Wang <wangjinchao600@gmail.com> wrote:
-> >>>
-> >>>> Add arch_reinstall_hw_breakpoint() to enable atomic context modification
-> >>>> of hardware breakpoint parameters without deallocating and reallocating
-> >>>> the breakpoint slot.
-> >>>>
-> >>>> The existing arch_install_hw_breakpoint() allocates a new debug register
-> >>>> slot, while arch_uninstall_hw_breakpoint() deallocates it. However, some
-> >>>> use cases require modifying breakpoint parameters (address, length, type)
-> >>>> atomically without losing the allocated slot, particularly when operating
-> >>>> in atomic contexts where allocation might fail or be unavailable.
-> >>>>
-> >>>> This is particularly useful for debugging tools like kstackwatch that
-> >>>> need to dynamically update breakpoint targets in atomic contexts while
-> >>>> maintaining consistent hardware state.
-> >>>>
-> >>>
-> >>> I'm also trying to find this interface for my wprobe. So the idea is good.
-> >>> But this looks hacky and only for x86. I think the interface should be
-> >>> more generic and do not use this arch internal function directly.
-> >>>
-> >>
-> >> I agree with your point about the architectural dependency. I have been
-> >> considering this problem not only for the hardware breakpoint
-> >> reinstallation,
-> >> but also for other related parts of the series, such as canary finding and
-> >> stack address resolving. These parts also rely on arch-specific code.
-> > 
-> > Yes, even though, the hw-breakpoint is an independent feature.
-> > Directly using arch_*() functions (which are expected to be used
-> > internally) introduces a hidden dependency between these two
-> > components and looses maintainability.
-> 
-> Yes, I am trying to improve this in the v3 series.
-> 
-> > 
-> >>> It seems that the slot is allocated by "type", thus, if this reinstall
-> >>> hwbp without deallocate/allocate slot, it must NOT change the type.
-> >>> See __modify_bp_slot. Also, provide CONFIG_HAVE_... option for checking
-> >>> whether the architecture support that interface.
-> >>>
-> >> Regarding the slot allocation, I would like to clarify my point. I
-> >> believe the
-> >> event->attr.type should not be changed when reinstalling a hardware
-> >> breakpoint, as this defines the fundamental nature of the event. The type
-> >> must always be PERF_TYPE_BREAKPOINT.
-> >>
-> >> The event->attr.bp_type, however, can be changed. For example, from a
-> >> HW_BREAKPOINT_W to a HW_BREAKPOINT_RW without needing to deallocate and
-> >> reallocate the slot. This is useful for future applications, even though the
-> >> current use case for KStackWatch only requires HW_BREAKPOINT_W.
-> > 
-> > I understand your point, so it also needs another wrapper which checks
-> > the type is compatible on the architecture.
-> > 
-> 
-> I think the wrapper should handle the type by type_slot, something like[1]:
-> 
-
-Ah, that's a good idea!
-
-> diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-> index 1db2c5e24d0e..6fed9521baf2 100644
-> --- a/kernel/events/hw_breakpoint.c
-> +++ b/kernel/events/hw_breakpoint.c
-> @@ -752,6 +752,7 @@ modify_user_hw_breakpoint_check(struct perf_event 
-> *bp, struct perf_event_attr *a
->   {
->   	struct arch_hw_breakpoint hw = { };
->   	int err;
-> +	enum bp_type_idx old_type_idx, new_type_idx;
-> 
->   	err = hw_breakpoint_parse(bp, attr, &hw);
->   	if (err)
-> @@ -766,7 +767,9 @@ modify_user_hw_breakpoint_check(struct perf_event 
-> *bp, struct perf_event_attr *a
->   			return -EINVAL;
->   	}
-> 
-> -	if (bp->attr.bp_type != attr->bp_type) {
-> +	old_type_idx = find_slot_idx(bp->attr.bp_type);
-> +	new_type_idx = find_slot_idx(attr->bp_type);
-> +	if (old_type_idx != new_type_idx) {
->   		err = modify_bp_slot(bp, bp->attr.bp_type, attr->bp_type);
->   		if (err)
->   			return err;
-> 
-> For kernel breakpoints, we might also consider introducing a
-> modify_kernel_hw_breakpoint() helper, similar to
-> modify_user_hw_breakpoint(), to encapsulate the kernel-specific case.
-> 
-> [1]https://lore.kernel.org/all/20250903075144.3722848-3-wangjinchao600@gmail.com/
-
-Hmm, it seems that there is *user_hw_breakpoint() and *wide_hw_breakpoint()
-(maybe it means system-wide) so it is better to call modify_wide_hw_breakpoint().
-(anyway it is only for kernel address space...)
-
-Thank you!
-
-> 
-> >>
-> >> By the way, I have sent an updated series.
-> >> https://lore.kernel.org/all/20250828073311.1116593-1-wangjinchao600@gmail.com/
-> > 
-> > Yeah, OK, let me review the series. Thanks for update!
-> > 
-> >>
-> >> Thank you again for your valuable review.
-> >> -- 
-> >> Best regards,
-> >> Jinchao
-> > 
-> > 
-> 
-> 
-> -- 
-> Best regards,
-> Jinchao
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > >  Possible unsafe locking scenario:
+> > > 
+> > >        CPU0                    CPU1
+> > >        ----                    ----
+> > >   lock(&group->lock#2);
+> > >                                lock((softirq_ctrl.lock));
+> > >                                lock(&group->lock#2);
+> > >   lock((softirq_ctrl.lock));
+> > > 
+> > >  *** DEADLOCK ***
 
