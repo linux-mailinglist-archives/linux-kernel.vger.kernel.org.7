@@ -1,148 +1,134 @@
-Return-Path: <linux-kernel+bounces-800531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40E0B438E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:36:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE56B438E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C505268516B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:36:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5563D169912
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB6E2F8BF7;
-	Thu,  4 Sep 2025 10:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="k8EF2jV4"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF492F6182
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F212F0693;
+	Thu,  4 Sep 2025 10:36:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1C52C21D3
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756982139; cv=none; b=GyxoOeGJl1qURAl7x/yvfJ0T1SWURuJMLt/xxI0SHIMC/6sx/82LH3PD9QemrS6lpyKZiI5VFtTtKuEGzdVFW0iWCG7RFS2pmmc6p54lg9RzCDXAEBQuelIFCy763yBAOnY7K8vFiv/iNQ41qbgUSiY0UR/cNlfb32MgH9m7NxE=
+	t=1756982177; cv=none; b=HEKWFcSI2If3CaIPENAS5wZQbDbgm2O94ajSD1iFmXQEbgfzPiHlVQUSWVEYs/0P1g3ReS9EitBuhcbYlgd+PqE3pIWBzIjnlX46bqoNXnzQgS5oaewzh4SptZJEnmHVDaJjJ8EM9Iwj924j1enNpix86hOflopbCBDFsg/mHjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756982139; c=relaxed/simple;
-	bh=tWzjEhv9/rxMpJSZAAM3NQw7wWCFIiaxAvsM2aiU140=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AU4dg1BZ6aKSTG+dXXKAvWyB96dEj19VJNZuqBVFJfYBwXMi+4gzd08v1/eiusccHozVrcwJcR6HWVffl3k1yDldNYOSesFSW0R7YwV9xnb9mJjvSSxZt7/iszMz6jRYE8KwvcHUX/0SwO4t4Qa2EMlwEXKjYhh7CD3jfQp7EAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=k8EF2jV4; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b109c4af9eso8567411cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 03:35:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1756982136; x=1757586936; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sIT1GMxTTZjV+tjvdw2PLkynYW7Friq1YzQm9eXThLM=;
-        b=k8EF2jV4RQTPBKEQ7XvNuwlkfwiL9QwGFvGbXiVYxIv75VnVUI1VtGLYCOz+BK25YB
-         1Xjyp58jom+qusmqTb46QG2her2LzcA4+XV0PRXBxyrGN5FjGZMglvyBqXQutrBlneSx
-         cdLnCfwrA6Gl9Md7BFA/0/h670dg/z8MS1eA8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756982136; x=1757586936;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sIT1GMxTTZjV+tjvdw2PLkynYW7Friq1YzQm9eXThLM=;
-        b=l3zaKnZJISjuRQBUF+1Z2mxXmih6ldRRLENzNpj9v8lsP5ZVbNE65+MHZGw7bpZ8cH
-         UaxxLEfhR++p6e4WFhA4L5n2F/qrkC/3gGpD0isuu2zOlc5bB4DAZ71Vz1jGl0x3SbZK
-         6u4t75zCSjG8HwhtGknJfF12U4Yw5JyDcTVB/7XR8fkxzdLIcsY+gY9gbTZBZR0mgF4Y
-         RN029tqW5LSWj3rnXb86ESdIFQvnLsxynSCi9gX+gkJDrb6OtmPPBFoNUwyh1cehmJTQ
-         0fXxgu2tLAgtFPW/bzzAi8OCiSr5Y8VgB5NErY5RbTrb01/C/19EO24JrUkOCbnp3or/
-         xE/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWRFzx4a1VniOrE8jauRbbl7u1qY+3s9urvCrEXJc9q02CPB7xPf2jmGe3vYuc/sWqf4JzL/n/w5W65eD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOOCPxwln0s7AnLt2s3ukR6nA507kzwR9htVBmHQ2tFPc3v3RK
-	wzvD+4RhpSfUxhvSId7wK3zjgrh3Pbn2KV1xN0LwwWbZnVjiTsJ5TYh56apSKaJZhF1eLjcVIfo
-	ROeVSyIWqGi/4UUxHNjiZKzjrAPFUocU2lTANsRgxcA==
-X-Gm-Gg: ASbGncvkFp9t5+LFJ1Qs0EeDjMuoxGNy2Z4+RzrzNT2XmeLEXQZDKxODgbn5jP+H0Rp
-	vn3THeMbC3KndvfQvY5nxjqkKvTzkR2olWKNyAhwcWdMQNV/NtGIdH5MHp/0mXJUjc65eSalo39
-	++I37PD39A8fH0VobtOyD36FFT7ohGAt5qtj34WGv+c8u4ROz+wlXjYMXXWSiWNKdYyRZmyCROf
-	ww+CSeR0B8D7pPMk0GL
-X-Google-Smtp-Source: AGHT+IE8b+WVUyYiDsb3sJ2/++lZTDAoyvJNn+yDWmThqVPmyxuZCjPkXBTY5Q0FEFEIT3NktWO01J553MjTdGLOlSU=
-X-Received: by 2002:a05:622a:3d3:b0:4b0:d8b9:22f3 with SMTP id
- d75a77b69052e-4b31da18b0cmr253664021cf.53.1756982136387; Thu, 04 Sep 2025
- 03:35:36 -0700 (PDT)
+	s=arc-20240116; t=1756982177; c=relaxed/simple;
+	bh=1m8qhcpohFQv8sODcdaKEV6r57T9QsA8GtgT+iU0WHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PVsxrhNgYtXIKKmVj/a9rsx4MJ1uBdQn3i0GQtSeYy3c/j2C+ibtyB97Vgnp5aZAgrGiciAX1wgrr+aCCJnjOdWNJSEQ4Is5VdQ9fOBefdS5NCHGfaiDjt9wq549u2IVg9LFzCo09AGcDh2MLpEBqprsxKD++rGo5mmA4L6vCe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D84321756;
+	Thu,  4 Sep 2025 03:36:05 -0700 (PDT)
+Received: from donnerap (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 19C653F63F;
+	Thu,  4 Sep 2025 03:36:12 -0700 (PDT)
+Date: Thu, 4 Sep 2025 11:36:09 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>, Russell King
+ <linux+etnaviv@armlinux.org.uk>, etnaviv@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Chen-Yu Tsai
+ <wens@csie.org>, linux-sunxi <linux-sunxi@lists.linux.dev>
+Subject: Re: drm/etnaviv: detecting disabled Vivante GPU?
+Message-ID: <20250904113609.18c39d38@donnerap>
+In-Reply-To: <CAH9NwWepSZnBP7tot9it_bDEbSC14PrMePz+fBtHfHz4ikLDYA@mail.gmail.com>
+References: <20250904002924.2bc63b73@minigeek.lan>
+	<CAH9NwWepSZnBP7tot9it_bDEbSC14PrMePz+fBtHfHz4ikLDYA@mail.gmail.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828162951.60437-1-luis@igalia.com> <20250828162951.60437-3-luis@igalia.com>
-In-Reply-To: <20250828162951.60437-3-luis@igalia.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 4 Sep 2025 12:35:25 +0200
-X-Gm-Features: Ac12FXwki24EEJbvrrFSSYg1PXao5OhBfkZpU5iyQOXB5Rz6B_OrHnyIr90LObQ
-Message-ID: <CAJfpegtmmxNozcevgP335nyZui3OAYBkvt-OqA7ei+WTNopbrg@mail.gmail.com>
-Subject: Re: [RFC PATCH v5 2/2] fuse: new work queue to invalidate dentries
- from old epochs
-To: Luis Henriques <luis@igalia.com>
-Cc: Bernd Schubert <bernd@bsbernd.com>, Laura Promberger <laura.promberger@cern.ch>, 
-	Dave Chinner <david@fromorbit.com>, Matt Harvey <mharvey@jumptrading.com>, 
-	linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 28 Aug 2025 at 18:30, Luis Henriques <luis@igalia.com> wrote:
->
-> With the infrastructure introduced to periodically invalidate expired
-> dentries, it is now possible to add an extra work queue to invalidate
-> dentries when an epoch is incremented.  This work queue will only be
-> triggered when the 'inval_wq' parameter is set.
->
-> Signed-off-by: Luis Henriques <luis@igalia.com>
-> ---
->  fs/fuse/dev.c    |  7 ++++---
->  fs/fuse/dir.c    | 34 ++++++++++++++++++++++++++++++++++
->  fs/fuse/fuse_i.h |  4 ++++
->  fs/fuse/inode.c  | 41 ++++++++++++++++++++++-------------------
->  4 files changed, 64 insertions(+), 22 deletions(-)
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index e80cd8f2c049..48c5c01c3e5b 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -2033,13 +2033,14 @@ static int fuse_notify_resend(struct fuse_conn *fc)
->
->  /*
->   * Increments the fuse connection epoch.  This will result of dentries from
-> - * previous epochs to be invalidated.
-> - *
-> - * XXX optimization: add call to shrink_dcache_sb()?
+On Thu, 4 Sep 2025 12:10:30 +0200
+Christian Gmeiner <christian.gmeiner@gmail.com> wrote:
 
-I guess it wouldn't hurt.   Definitely simpler, so I'd opt for this.
+> Hi
+>=20
+> >
+> > the Allwinner A523/A527/T527 family of SoCs feature a Vivante
+> > "VIP9000"(?) NPU, though it seems to be disabled on many SKUs.
+> > See https://linux-sunxi.org/A523#Family_of_sun55iw3 for a table, the
+> > row labelled "NPU" indicates which model has the IP. We suspect it's
+> > all the same die, with the NPU selectively fused off on some packages.
+> >
+> > Board vendors seem to use multiple SKUs of the SoC on the same board,
+> > so it's hard to say which particular board has the NPU or not. We
+> > figured that on unsupported SoCs all the NPU registers read as 0,
+> > though, so were wondering if that could be considered as a bail-out
+> > check for the driver?
+> > At the moment I get this, on a SoC with a disabled NPU:
+> > [    1.677612] etnaviv etnaviv: bound 7122000.npu (ops gpu_ops)
+> > [    1.683849] etnaviv-gpu 7122000.npu: model: GC0, revision: 0
+> > [    1.690020] etnaviv-gpu 7122000.npu: Unknown GPU model
+> > [    1.696145] [drm] Initialized etnaviv 1.4.0 for etnaviv on minor 0
+> > [    1.953053] etnaviv-gpu 7122000.npu: GPU not yet idle, mask: 0x00000=
+000
+> >
+> > Chen-Yu got this on his board featuring the NPU:
+> >     etnaviv-gpu 7122000.npu: model: GC9000, revision: 9003
+> >
+> > If I get the code correctly, then etnaviv_gpu_init() correctly detects
+> > the "unsupported" GPU model, and returns -ENXIO, but load_gpu() in
+> > etnaviv_drv.c then somewhat ignores this, since it keeps looking for mo=
+re
+> > GPUs, and fails to notice that *none* showed up:
+> > /sys/kernel/debug/dri/etnaviv/gpu is empty in my case.
+> > =20
+>=20
+> Looks fine to me - no wrong behavior.
+>=20
+> > Quick questions:
+> > - Is reading 0 from VIVS_HI_CHIP_IDENTITY (or any other of the ID
+> >   registers) an invalid ID, so we can use that to detect those disabled
+> >   NPUs? If not, can any other register used to check this? The whole
+> >   block seems to be RAZ/WI when the NPU is disabled.
+> >
+> > - Would it be acceptable to change the logic to error out of the
+> >   driver's init or probe routine when no GPU/NPU has been found, at
+> >   best with a proper error message? As it stands at the moment, the
+> >   driver is loaded, but of course nothing is usable, so it keeps
+> >   confusing users.
+> > =20
+>=20
+> From an application standpoint, it=E2=80=99s not confusing since there is=
+ no etnaviv
+> device to interact with. The user might wonder about the kernel messages,
+> but that=E2=80=99s actually caused by an incorrect device tree. If the So=
+C doesn=E2=80=99t
+> have an NPU, it shouldn=E2=80=99t be enabled in the DTS.
 
->  void fuse_conn_put(struct fuse_conn *fc)
->  {
-> -       if (refcount_dec_and_test(&fc->count)) {
-> -               struct fuse_iqueue *fiq = &fc->iq;
-> -               struct fuse_sync_bucket *bucket;
-> -
-> -               if (IS_ENABLED(CONFIG_FUSE_DAX))
-> -                       fuse_dax_conn_free(fc);
-> -               if (fc->timeout.req_timeout)
-> -                       cancel_delayed_work_sync(&fc->timeout.work);
-> -               if (fiq->ops->release)
-> -                       fiq->ops->release(fiq);
-> -               put_pid_ns(fc->pid_ns);
-> -               bucket = rcu_dereference_protected(fc->curr_bucket, 1);
-> -               if (bucket) {
-> -                       WARN_ON(atomic_read(&bucket->count) != 1);
-> -                       kfree(bucket);
-> -               }
-> -               if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
-> -                       fuse_backing_files_free(fc);
-> -               call_rcu(&fc->rcu, delayed_release);
-> +       struct fuse_iqueue *fiq = &fc->iq;
-> +       struct fuse_sync_bucket *bucket;
-> +
-> +       if (!refcount_dec_and_test(&fc->count))
-> +               return;
+You have a point there, but as I mentioned above, that sounds tricky to
+do: I have two boards that looks otherwise identical, but one has an A527,
+the other an T527. And still both don't have the NPU, since only some
+T527s feature it. So putting this on the user to use the right DT (or
+U-Boot defconfig) does not sound very nice.
 
-Please don't do this.  It's difficult to see what actually changed this way.
+And in contrast to many other devices described in DTs, we *can* safely
+detect the existence of this NPU: each of the SoCs have all the clock
+gates and resets, and accesses to the MMIO frame do not fault - and the
+kernel code apparently can cope with this situation already. So yeah, we
+could smear something into U-Boot, to put a status =3D "disabled"; in there,
+but I would like to avoid that, especially if the kernel is almost there
+already.
 
-Thanks,
-Miklos
+Cheers,
+Andre
+
+=20
 
