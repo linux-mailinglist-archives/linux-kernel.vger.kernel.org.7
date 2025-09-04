@@ -1,114 +1,134 @@
-Return-Path: <linux-kernel+bounces-801534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF04B44652
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:24:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2117B44655
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A0861CC3AEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:24:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E0445A7AA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A246272803;
-	Thu,  4 Sep 2025 19:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B311272814;
+	Thu,  4 Sep 2025 19:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gp3+Ln+h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTfuf2+g"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B687915DBC1;
-	Thu,  4 Sep 2025 19:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869EB271475;
+	Thu,  4 Sep 2025 19:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757013850; cv=none; b=cluZMhdtDCGUw+hW7+XLp2+C3TejE+revnsiMZ1TGNtZofL1ATvA2MrTPyauzdaOMAZskxquz1eBWp4Pqu06ui9OhF1RqEc2r0dS3liivje2Q2jZXKZV5fdBEilm71PeNGYW5Z1O1HneTJikByp1xw1VJX0Y63jefACNTzUbnp0=
+	t=1757013936; cv=none; b=eOzQctcy1gu0H45Zn1Wbo1l05wTaSL4GVWyrrL5nlcVnfX8tUvvPwHgepICl5/WsW0hKCRj03EpOKXsX8Ur4bVfwlhPiKKkWQM06ozI61Ou/24NqUpVA7unpzatZIJRo/BM+R0LpFyfeWM5gwCPbKQO25prVW8rrAGY9tgr/0wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757013850; c=relaxed/simple;
-	bh=DcZBwbvCs/APcDLJmkpflaT6uT/JUTX4N2f8nqi57sg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RkIYsHGyWGqDauWJwQdeBy1szEu7C1HooWifexcYJc4UtqcFXNAJY4OP9YkczUHkLA7IZg5NF6j6NAUCsQaNKb6AmXTVMWiXPEYj9QIyx9WuNur5w/wQ9Z/2VicyA0aleF+Z9ohXMXZvjmU/qMcmIvzG/v9tcuiXWmLQpyvPOTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gp3+Ln+h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7D14C4CEF0;
-	Thu,  4 Sep 2025 19:24:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757013850;
-	bh=DcZBwbvCs/APcDLJmkpflaT6uT/JUTX4N2f8nqi57sg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gp3+Ln+hhB1+8+lkFXXSillDiYum+dAPdUfELaZ7FRDiOTzBpVrgbAwIhJ+3hXR1s
-	 dOn4PqmUueHjXKJUs635qGZN7SZRDdWsMXwiPlPWkYDXvLnR8QGou6xrYNB97GTIXE
-	 PbOMK2KV0EMEuszui0Rr+3gdzdcyUC3XFFgRw1qNt7Jarycl+lPLEq7BWZZWAuS7pO
-	 SpxTYO34dGmrwlyYX+yQTNkv3IentC7g/DdNwluX0DVdFU7WWzab0K57zoWo9IXl+E
-	 OVGDEjjhcfpPp6NAjNrqHvOxoSDwRDe09WSFwDba3EIevvWIpnxJAEsbyA48Y61ecz
-	 kz8xv94usKF6A==
-Date: Thu, 4 Sep 2025 20:24:02 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Tobias Sperling <tobias.sperling@softing.com>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Esteban Blanc <eblanc@baylibre.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
-	Eason Yang <j2anfernee@gmail.com>,
-	Pop Ioan Daniel <pop.ioan-daniel@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: iio: adc: ROHM BD79112 ADC/GPIO
-Message-ID: <20250904-suffering-napping-cfb886addf1e@spud>
-References: <cover.1756988028.git.mazziesaccount@gmail.com>
- <af7292dea5cebe97553af67a8897e092bef3ec56.1756988028.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1757013936; c=relaxed/simple;
+	bh=WFTDRJlgt2y7MkVfOwUowbeWYPD9Cj1n/7htyMVpgaE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=byr3QsiId0hMHIsW+KH88C/Yhm0C/xtin+ol88fMvlO6BwKf6d99UMVGc4/2GodzaJx4Wqtg0J5FYY+V1GD9+8ADRZXiQW/y/jgr2UN3VO7rnDzPi8z9SNyFW+rWTMoUMoKYMUujp9872OEr0ZuHZkk1WMQDgY0/Qi23OvSKiFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTfuf2+g; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61e8fe26614so2557741a12.1;
+        Thu, 04 Sep 2025 12:25:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757013931; x=1757618731; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RyVqQnJKQdNZxLJ9itE9DWrgXd+hnVDHHwYCFnyfOQA=;
+        b=VTfuf2+g9W9wkGoaF7w8bipmshmEsxRIUr1NFsGSqhKbW5BuCdYXOMmf0+GvXoSr4X
+         PrUygcH3Rw5fUa8BONjeJYCXR22FiyxHPK05fzA3Ri/+rDz/c3hD1VXSj96bbyvYIY1K
+         Cnyl/FphUadDfDs/5K0kY7af+TWf/VzgGCeQfmEcY3d6gsL2zTaPkBmv168Gu2P4NMiX
+         YKdlywpF7y8Sud2cL25dm2TChRpoYNN2VKyrhih1TS73OOd3bWSFYwCfyHqb/hf7ZLQm
+         p+c854VkklYsf+E2Fp4Qm8kep+M+6h/LKvtVKPajwzl7ScjpgbzcAbvA210s+N+a/VIl
+         /pxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757013931; x=1757618731;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RyVqQnJKQdNZxLJ9itE9DWrgXd+hnVDHHwYCFnyfOQA=;
+        b=v/HJlyAYckhdlQ+Vk8fRqw7TG6mK8Xad08d/F8mLdoEkE0Buvao3SjclsP9Y4owF1D
+         T66je2idR4Kb2ZmI9WtPKHEZw7XvenAHrvmGL+xavAr5xhh5+wk8dGsEOd/nuozTXll5
+         IuxQYsFN1gPt9R87U6vUzOGw2FRJoL89ak/CuZ1CrTpCcD0EAo/10Rb8WwM8kbtKERMP
+         u70+XhhEx0lSk7k0+Pf9wJhFs7JbxphO4/cgUdr7V0afGQ+yKCDMu2Whij1ENuRd8bHK
+         yeQd8ndF5CXQO/z7IfqyfT+zdAVpQfirL/sRep50lHAdFnL5YXEwA5KO8wi8CqXIGoed
+         Xelw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfur8cbasg5ZlW+atFO7utZjR5hujwnyb5uLVMVygLjNz2rF0I+G7BmGBwFB5MOPaHKJx2Nl1FOxwMYvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywlMU60zXQuCX/Cfvqu2NaIVJZFJwcfIAW8a6ZL99VSQuyP2Qe
+	oGZ+mGlCmrzBmPMtIyYlhgDc861nH8cazEMTwRth1BobqBpuYtift9gN
+X-Gm-Gg: ASbGnct+LMefoz7EHIdIPkxH3ztz0BX6a8Sl4qiA299fzU93GcTzIql5BYuIGSKUQ+d
+	0Bv7zyh2yq1WNyB0gbv+5hZmzSWVuJN8gBGjR8DhyY81eH3auGim2rGvEkxJ0+0Gj0cHtSdOiNI
+	bSHNM3KjCpc0ATGPdVB0sosyAaPmeoKHtyK6sgYc1OqGkmBT92KPAtaerZjEZR69JthvMcUdlbr
+	/uI6FN4JxM5D757wtLMTwScKRrRIlyBgQYTaNYkLzm3Uc46YoM+XB2va0f7rG8aiOpHjxn3QKas
+	UukMfs4t5Q5IsBSnghuNLDyt6KXGCLs/IHasReJy6kZXOat6570gJ0eDPJqlRoJH67VVTGRoAAr
+	YmpMEvgTzNfEFvfOPNhGs0zekvzf9AAJ/j3XfY/Eq3x+KN+Bt+LAEqFHyVpzqH6WfR53nhVDvAJ
+	hNQemCGGLWVXiQ8PE=
+X-Google-Smtp-Source: AGHT+IGfuHthfXoTF/mLOHQy9KLR2aH/GiyiC921vGHckJ2DRkf9WZi723JdW/S0MUDp+nITTXm0sQ==
+X-Received: by 2002:a05:6402:40cf:b0:61d:2405:b4a5 with SMTP id 4fb4d7f45d1cf-61d26d9c302mr18548906a12.33.1757013930652;
+        Thu, 04 Sep 2025 12:25:30 -0700 (PDT)
+Received: from XPS.. ([2a02:908:1b0:afe0:7cda:f91c:9398:4c62])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc214bb7sm14188524a12.13.2025.09.04.12.25.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 12:25:30 -0700 (PDT)
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+To: tsbogend@alpha.franken.de,
+	macro@orcam.me.uk
+Cc: linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Osama Abdelkader <osama.abdelkader@gmail.com>
+Subject: [PATCH v3] mips: math-emu: replace deprecated strcpy() in me-debugfs
+Date: Thu,  4 Sep 2025 21:25:25 +0200
+Message-ID: <20250904192525.39830-1-osama.abdelkader@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TYMVqA+xISrwz0kg"
-Content-Disposition: inline
-In-Reply-To: <af7292dea5cebe97553af67a8897e092bef3ec56.1756988028.git.mazziesaccount@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+use strscpy() instead of deprecated strcpy().
 
---TYMVqA+xISrwz0kg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
+---
+v2:
+change function signature to get len and the caller.
+v3:
+use same parameters and arguments order
+---
+ arch/mips/math-emu/me-debugfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On Thu, Sep 04, 2025 at 03:36:30PM +0300, Matti Vaittinen wrote:
-> The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
-> be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
->=20
-> The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
-> voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
-> daisy-chain configuration) and maximum sampling rate is 1MSPS.
->=20
-> Add a device tree binding document for the ROHM BD79112.
->=20
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+diff --git a/arch/mips/math-emu/me-debugfs.c b/arch/mips/math-emu/me-debugfs.c
+index d5ad76b2bb67..49bf2b827ce2 100644
+--- a/arch/mips/math-emu/me-debugfs.c
++++ b/arch/mips/math-emu/me-debugfs.c
+@@ -37,11 +37,11 @@ DEFINE_SIMPLE_ATTRIBUTE(fops_fpuemu_stat, fpuemu_stat_get, NULL, "%llu\n");
+  * used in debugfs item names to be clearly associated to corresponding
+  * MIPS FPU instructions.
+  */
+-static void adjust_instruction_counter_name(char *out_name, char *in_name)
++static void adjust_instruction_counter_name(char *out_name, char *in_name, size_t len)
+ {
+ 	int i = 0;
+ 
+-	strcpy(out_name, in_name);
++	strscpy(out_name, in_name, len);
+ 	while (in_name[i] != '\0') {
+ 		if (out_name[i] == '_')
+ 			out_name[i] = '.';
+@@ -226,7 +226,7 @@ do {									\
+ 
+ #define FPU_STAT_CREATE_EX(m)						\
+ do {									\
+-	adjust_instruction_counter_name(name, #m);			\
++	adjust_instruction_counter_name(name, #m, sizeof(name));			\
+ 									\
+ 	debugfs_create_file(name, 0444, fpuemu_debugfs_inst_dir,	\
+ 				(void *)FPU_EMU_STAT_OFFSET(m),		\
+-- 
+2.43.0
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---TYMVqA+xISrwz0kg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLnnUgAKCRB4tDGHoIJi
-0hpgAQDEQSDG09i4H4ASWiQgAGYg6VSHoZz4ZF4QmHuzBaKuagD/ScVzBQXl5SZQ
-ctKeXmDU5aEZNzQzIDFHLgQG0q0O6w4=
-=YMPt
------END PGP SIGNATURE-----
-
---TYMVqA+xISrwz0kg--
 
