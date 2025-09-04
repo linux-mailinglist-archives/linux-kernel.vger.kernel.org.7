@@ -1,179 +1,106 @@
-Return-Path: <linux-kernel+bounces-801456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4F2B44527
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:14:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 805F3B44529
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EB0558412C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:14:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55DC45846C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FD73431EC;
-	Thu,  4 Sep 2025 18:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF527342CAF;
+	Thu,  4 Sep 2025 18:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jaw00GqV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Z2fRMd3C"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92351341AB6;
-	Thu,  4 Sep 2025 18:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AED342C90
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757009660; cv=none; b=Yipl0miklET8xJEJNjmwHom6BvrZJCeZY4W/tpMdYi6xJN/JPEux9AyGuBqpNGNYQEyJh4nA30Bc04UXPgO7XgReroxCK8D8H0AX+9TCAGhn6n05oM/U1pI2SwpKULV7FZ+tItylhYb2UHKa/6j6wHQWt4TzC19GgarQHd4T4fI=
+	t=1757009711; cv=none; b=JhikN/mOoeatpCmt1KMVbga0aL/5MUoiEjlqWD0Qjx+uhnNAx957frc4m885Cs+0GUT1n/dzTbTsjYQZGsWLPiJgtQHlLpiZbVr5eOIcU4v7wfZ0xwaiC9mvHwZ1cJ4oRorBN3OL+oK46HrXFAAkAeyicRILTMrUckAaaeXAeco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757009660; c=relaxed/simple;
-	bh=snRYZy8sFUcGEZgJH9P6mgJNhGmYsmCzIsOzo2eyGW4=;
+	s=arc-20240116; t=1757009711; c=relaxed/simple;
+	bh=Z+VK5U/Oi1LA6fb/D9V1KAbU7wRtydG7tfKSYqBTU7Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a2vJ1HFSMVfjnV5Q3S1EfvMKOvmPNVjNTlcFJdghqHtpv90zkvCuVYiHgApaY8+yZ5o4P5JBNxX/oblS6Sf41J940ZpOdi1/x/8N8xhhfJ/ZTxb3LpP24l13w/dSzdVpEAMrdACUpMMAjzRxzta9834/9ZWoSBcNoH99kUiF+7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jaw00GqV; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757009658; x=1788545658;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=snRYZy8sFUcGEZgJH9P6mgJNhGmYsmCzIsOzo2eyGW4=;
-  b=Jaw00GqVNWfQlgJBQsYhi5N2jGUlLg0p0hbxuHBUiIRPyLlMvnvjRK/V
-   F897XlXnTAh0IGECbRrzjkPNGMgJbH5JqdDTFbvyp3wZieXP5pB4MwV0k
-   Q7aIzW9KY0Rnwb8Cbv/qDoIetRTRr4jij45zSuF+nFN3SSnwhY63iu6BY
-   wfdUAAjQPsEhNXNdGadRohmT9ty1bSDi7dK73HmcqgI2+rHS0dj0YF9+n
-   4rvNm2FHgjc08RtV4HzG9aj1AlDpKEacMKHI0krCSs71BUHBaQtQeB98G
-   25mfyhqaXxmtC+QlY5GcaNZ4GQbWKLc5yy4qyWHCpd8yJ7uIQ3CtwCyU8
-   w==;
-X-CSE-ConnectionGUID: bQP0YyE1T3KLRj1fus8YTw==
-X-CSE-MsgGUID: avdgIM2GRH+ixkTYZGfj6Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="76814956"
-X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
-   d="scan'208";a="76814956"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 11:14:18 -0700
-X-CSE-ConnectionGUID: uXWQ13oQTYOxPlfW1q2Xow==
-X-CSE-MsgGUID: vt+G3bBGQMSvNLBiSWtcYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
-   d="scan'208";a="176300742"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.24]) ([10.125.110.24])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 11:14:16 -0700
-Message-ID: <14d94e89-8342-4bd7-9c53-a3b46e22caa7@intel.com>
-Date: Thu, 4 Sep 2025 11:14:15 -0700
+	 In-Reply-To:Content-Type; b=KzS1Uwt2g4v0ikk9Zh7nmz51ahUBXpf1/WOohMKRtd9gjzO/pmf5hwadHeAEHld8+tpXI2JhfOncem6ejWpeSopP1LnYa/tz488pyrTdN6/94iasDUZYLLV6YnFLV/M50glfDyPmgcYbuH6um06wulqvyguy1v2GyArd5kRNVRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Z2fRMd3C; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+Message-ID: <53482f3f-bd87-4980-ada7-c2c771a0c2b2@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1757009707;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RYXeUIKu52g0HlpWQIX4EGbvIx92SbpoHy5tYhxk2Sg=;
+	b=Z2fRMd3CO9KuuxljJ+Wo6/u+e7sMWhQTl34ciHFHH8JdD68N/r17s4hV6hxOIDx1oPi8nh
+	cnQtTJQ1Rfmfxh7daU+otZ/oUA9q/vj5B3x+drnKhNd8QlFS3Hw11TKX0RhdaDaEkNcbuA
+	eMqUqGWrUTp1fvqw4Grfxb7FlRQVooCFDLbVnNowYPdJKvl7OBkfEC7rbT89SIEmIKUqK2
+	Be4L7HJJPJO2g8GxOh5wL2HcbguI3bCp7EFZYF71ULmb9VCj3as2lrsyP8OsbB8JEuqZyy
+	UhHYYHohLeymXo4U3ArxLzkoZatMIFsuzSZ+7DkfkxHdohGuf2bTVsozFikT5A==
+Date: Thu, 4 Sep 2025 20:15:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] dax/hmem: Reintroduce Soft Reserved ranges back into
- the iomem tree
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
- <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@kernel.org>, Li Ming <ming.li@zohomail.com>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Ying Huang <huang.ying.caritas@gmail.com>,
- Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
- Greg KH <gregkh@linuxfoundation.org>,
- Nathan Fontenot <nathan.fontenot@amd.com>,
- Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
- Benjamin Cheatham <benjamin.cheatham@amd.com>,
- PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>,
- Zhijian Li <lizhijian@fujitsu.com>
-References: <20250822034202.26896-1-Smita.KoralahalliChannabasappa@amd.com>
- <20250822034202.26896-6-Smita.KoralahalliChannabasappa@amd.com>
+Subject: Re: [PATCH v1 03/10] drm: panel-orientation-quirks: Add Ayaneo 3
+To: Antheas Kapenekakis <lkml@antheas.dev>, dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+References: <20250904175025.3249650-1-lkml@antheas.dev>
+ <20250904175025.3249650-4-lkml@antheas.dev>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250822034202.26896-6-Smita.KoralahalliChannabasappa@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: =?UTF-8?Q?Philip_M=C3=BCller?= <philm@manjaro.org>
+Organization: Manjaro Community
+In-Reply-To: <20250904175025.3249650-4-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=philm@manjaro.org smtp.mailfrom=philm@manjaro.org
 
-
-
-On 8/21/25 8:42 PM, Smita Koralahalli wrote:
-> Reworked from a patch by Alison Schofield <alison.schofield@intel.com>
+On 9/4/25 19:50, Antheas Kapenekakis wrote:
+> The Ayaneo 3 comes with two panels, an OLED right side up 1080p panel
+> and an IPS landscape 1080p panel. However, both have the same DMI data.
+> This quirk adds support for the portrait OLED panel.
 > 
-> Reintroduce Soft Reserved range into the iomem_resource tree for dax_hmem
-> to consume.
+> As the landscape panel is 1920x1080 and the right side up panel is
+> 1080x1920, the width and height arguments are used to differentiate
+> the panels.
 > 
-> This restores visibility in /proc/iomem for ranges actively in use, while
-> avoiding the early-boot conflicts that occurred when Soft Reserved was
-> published into iomem before CXL window and region discovery.
-> 
-> Link: https://lore.kernel.org/linux-cxl/29312c0765224ae76862d59a17748c8188fb95f1.1692638817.git.alison.schofield@intel.com/
-> Co-developed-by: Alison Schofield <alison.schofield@intel.com>
-> Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
 > ---
->  drivers/dax/hmem/hmem.c | 38 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
+>   drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
 > 
-> diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
-> index 90978518e5f4..24a6e7e3d916 100644
-> --- a/drivers/dax/hmem/hmem.c
-> +++ b/drivers/dax/hmem/hmem.c
-> @@ -93,6 +93,40 @@ static void process_defer_work(struct work_struct *_work)
->  	walk_hmem_resources(&pdev->dev, handle_deferred_cxl);
->  }
->  
-> +static void remove_soft_reserved(void *data)
-> +{
-> +	struct resource *r = data;
-> +
-> +	remove_resource(r);
-> +	kfree(r);
-> +}
-> +
-> +static int add_soft_reserve_into_iomem(struct device *host,
-> +				       const struct resource *res)
-> +{
-> +	struct resource *soft = kzalloc(sizeof(*soft), GFP_KERNEL);
-> +	int rc;
-> +
-> +	if (!soft)
-> +		return -ENOMEM;
-> +
-> +	*soft = DEFINE_RES_NAMED_DESC(res->start, (res->end - res->start + 1),
-> +				      "Soft Reserved", IORESOURCE_MEM,
-> +				      IORES_DESC_SOFT_RESERVED);
-> +
-> +	rc = insert_resource(&iomem_resource, soft);
-> +	if (rc) {
-> +		kfree(soft);
-> +		return rc;
-> +	}
-> +
-> +	rc = devm_add_action_or_reset(host, remove_soft_reserved, soft);
-> +	if (rc)
-> +		return rc;
-> +
-> +	return 0;
-> +}
-> +
->  static int hmem_register_device(struct device *host, int target_nid,
->  				const struct resource *res)
->  {
-> @@ -125,6 +159,10 @@ static int hmem_register_device(struct device *host, int target_nid,
->  					    IORES_DESC_SOFT_RESERVED);
->  	if (rc != REGION_INTERSECTS)
->  		return 0;
-> +
-> +	rc = add_soft_reserve_into_iomem(host, res);
-> +	if (rc)
-> +		return rc;
->  #else
->  	rc = region_intersects(res->start, resource_size(res), IORESOURCE_MEM,
->  			       IORES_DESC_SOFT_RESERVED);
+> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> index d724253407af..0ea06f928f79 100644
+> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> @@ -209,6 +209,12 @@ static const struct dmi_system_id orientation_data[] = {
+>   		  DMI_MATCH(DMI_PRODUCT_NAME, "AYANEO 2"),
+>   		},
+>   		.driver_data = (void *)&lcd1200x1920_rightside_up,
+> +	}, {	/* AYANEO 3 */
+> +		.matches = {
+> +		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AYANEO"),
+> +		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "AYANEO 3"),
+> +		},
+> +		.driver_data = (void *)&lcd1080x1920_rightside_up,
+>   	}, {	/* AYA NEO 2021 */
+>   		.matches = {
+>   		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AYADEVICE"),
 
+Reviewed-by: Philip Müller <philm@manjaro.org>
+
+-- 
+Best, Philip
 
