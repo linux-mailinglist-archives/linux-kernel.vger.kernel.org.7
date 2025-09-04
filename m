@@ -1,40 +1,47 @@
-Return-Path: <linux-kernel+bounces-800596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFF1B439A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:13:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 117F8B43968
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3001C81F6E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:14:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A913BB871
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03782FC894;
-	Thu,  4 Sep 2025 11:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E83B2FB98F;
+	Thu,  4 Sep 2025 10:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="dnmK9/UP"
-Received: from mail-m1973188.qiye.163.com (mail-m1973188.qiye.163.com [220.197.31.88])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D0CMXZHr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EA42EC08B;
-	Thu,  4 Sep 2025 11:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF132EE294;
+	Thu,  4 Sep 2025 10:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756984424; cv=none; b=FtP2WBGTXt6ouVHMuUy5nUaJPfxj9ftwj0t/1rfblcfoA3Odpio9+kCnPjFYMbGUGmg7MY3gkC+1p07/gDlcdZ64xoRtb14rLZPSfC3YZPqBBQ9USQhVksGI3EN9gYiuzHDwQ3M9TPsJF9GPd14wIWW3nzXZtP+CWWm8ZO9gN5M=
+	t=1756983560; cv=none; b=mG/a4X/WFI/DxfADkDEZrXMeVCAN12wyslDPYGRxfW3ei8mDKOCDIv4vw900nPiTlkCVIG4cX/Q2MW6t0o/fPVYmuerVPHYnn26ji9RK1fhW8W74gtPUwW36ct0JEGZ0JRwyJRLGAbP/7DgrYC7JWPDZa66abryEeo4cH9z6jg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756984424; c=relaxed/simple;
-	bh=VR+slzUaA5P3b/xmVtL0y9/SvFdjzQ6rC/I6OeGj5H0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bL0Q392HbzWj6Vyg5L8Is3ThzPJxS+wXsjLsUUqRhARZk8MjOB/YiUZ4NoTvt6TsQIz5fJR9Qjp+3b2tizEdnzMy/FIzkk3wytDTbkUqIKE2GuqXZGOXmO6AnCRn6ccqbIiu5X9Zero8i5Rk33mBgw3WW2pTQhrsWWW6yfgycJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=dnmK9/UP; arc=none smtp.client-ip=220.197.31.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.153] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 21b2ecee9;
-	Thu, 4 Sep 2025 18:58:13 +0800 (GMT+08:00)
-Message-ID: <b0f9d781-6b8f-49dd-bfa1-456a26d01290@rock-chips.com>
-Date: Thu, 4 Sep 2025 18:58:12 +0800
+	s=arc-20240116; t=1756983560; c=relaxed/simple;
+	bh=vzm6fhXI8qlYTywBhxrwAEHvGnMbchKx5/IUszKBF4k=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VIhE33yG6oAnGB7YLCt0OswVILntySMidJP0rgYnr03hJJCTBAnPas03SOgW45sfjwtQXAzFNFi9CpnGG0MKKbeR+1JM2uol9zrM4fJyV0Bif8UcEdDdv3zf7t4dv+JlY43sg2QW8C167Vr8X5daxcUeB7imgsVBLFCO8qpy/38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D0CMXZHr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC713C4CEF4;
+	Thu,  4 Sep 2025 10:59:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756983559;
+	bh=vzm6fhXI8qlYTywBhxrwAEHvGnMbchKx5/IUszKBF4k=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=D0CMXZHrYqVJeNDUDRXnd5z2w7VuKd/SLTqC5GA/AD33/V3kkoZGpkNoLalY4eZRp
+	 +G4toklYhFzFOr/cNBG2r1mxuv6FZLCLgq56qTShLo32BpNeIrJzOEquC5/AweRY9B
+	 fSD7+ddGzCxePwwAkKuJ3ZpYoMd/gBPthlrN6aLSL3Ww5SJyiKQVsq2izvSVgYHmGD
+	 EwVflF/wEpdnMnUU6SpVFU8M/VrLEf/4VPsckIqiVPA/7UiLQv/f8TXID3lW7u6l5S
+	 /9+2+aLM5uGLppeU2wJJ9GSXldQWSpxnudtq9T55PPLpPW0EC+S0rT6VdU21ZiH0Np
+	 2ZkFiaGdCDGhw==
+Message-ID: <16c0d8f4-4a6d-4d65-90ce-34c86ebecfa1@kernel.org>
+Date: Thu, 4 Sep 2025 12:59:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,67 +49,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: stmmac: dwmac-rk: Ensure clk_phy doesn't contain
- invalid address
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
- Simon Horman <horms@kernel.org>
-Cc: Yao Zi <ziyao@disroot.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20250904031222.40953-3-ziyao@disroot.org>
- <20250904103443.GH372207@horms.kernel.org>
- <aLluvYQ-i-Z9vyp7@shell.armlinux.org.uk>
+Subject: Re: [PATCH 1/2] dt-bindings: Add binding for gunyah watchdog
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
+Cc: hrishabh.rajput@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250903-gunyah_watchdog-v1-0-3ae690530e4b@oss.qualcomm.com>
+ <20250903-gunyah_watchdog-v1-1-3ae690530e4b@oss.qualcomm.com>
+ <ea295ff6-5395-4470-afc2-76e5e2dc9fb5@kernel.org>
+ <5210a5e2-0d75-4532-b3ca-1cbdf8ea2a9e@quicinc.com>
+ <af074048-1999-435c-9405-6ffa09eef6dd@kernel.org>
 Content-Language: en-US
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <aLluvYQ-i-Z9vyp7@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <af074048-1999-435c-9405-6ffa09eef6dd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a991460843203abkunm7caaa1364336ff
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQktCT1ZOGEtOSEJLSE0dTEpWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=dnmK9/UPjJ1KtwkXs3RJue/a/vLG/YZOsysbscDZnwQNDQ5c4C0amKOXSiZUmTfNj8kHxAwVGhJt7sRb1ow7t8d3Ekv6iAXbCUl6eiSd+h5CO81xKVPLvWmod1zbw4ATKS+DhKoAd5OkjF+3GaDMCJC5hwrLGmZOR2S/m/p7nWI=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=oO8OiE3oPK2BXfQ71EAQVoAAmLr86e+akm6hPKvxYiw=;
-	h=date:mime-version:subject:message-id:from;
 
-
-On 9/4/2025 6:49 PM, Russell King (Oracle) wrote:
-> On Thu, Sep 04, 2025 at 11:34:43AM +0100, Simon Horman wrote:
->> Thanks, and sorry for my early confusion about applying this patch.
+On 04/09/2025 12:49, Krzysztof Kozlowski wrote:
+> On 04/09/2025 12:16, Pavan Kondeti wrote:
+>>>> +  compatible:
+>>>> +    allOf:
+>>>> +      - const: gunyah-hypervisor
+>>>> +      - const: simple-bus
+>>>
+>>> What? No.
+>>>
+>>> Don't create patches with AI.
+>>>
+>> I am next to Hrishabh when he is writing this patch. I can confirm he
+>> did not use AI :-) not sure what tool Krzysztof is using to catch
+> 
+> My brain?
+> 
+>> patches being written with AI, that tool needs some improvement for
+>> sure. 
+> 
+> Heh? Seriously, instead replying something like this think from how is
+> it possible to come with such syntax?
+> 
+> It does not exist. NOWHERE.
+> 
+> It had to be completely hallucinated by AI because I cannot imagine
+> coming with code which is completely different then EVERYTHING else.
+> There is no single code looking like that.
+> 
+> 
 >>
->> I agree that the bug you point out is addressed by this patch.
->> Although I wonder if it is cleaner not to set bsp_priv->clk_phy
->> unless there is no error, rather than setting it then resetting
->> it if there is an error.
-> +1 !
+>> I will let Hrishabh share why he put simple-bus here.
+> 
+> 
+> It is not about simple-bus!
 >
->> More importantly, I wonder if there is another bug: does clk_set_rate need
->> to be called in the case where there is no error and bsp_priv->integrated_phy
->> is false?
-> I think there's another issue:
->
-> static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
-> {
-> ...
->          if (plat->phy_node) {
->                  bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
-> ...
->
-> static void rk_gmac_remove(struct platform_device *pdev)
-> {
-> ...
->          if (priv->plat->phy_node && bsp_priv->integrated_phy)
->                  clk_put(bsp_priv->clk_phy);
->
-> So if bsp_priv->integrated_phy is false, then we get the clock but
-> don't put it.
 
-Yes! Just remove "bsp_priv->integrated_phy"
+And to clarify: it's not only about this part of the binding. Entire
+binding is terrible, does not meet any basic standards, does not follow
+basic principles of writing DTS. I cannot imagine this code passing
+internal review, so hallucinated AI is the most reasonable explanation.
+Sorry, if you send extremely poor code using patterns which do not
+exist, that;s either huge waste of community time or AI-based waste of
+community time.
 
+Best regards,
+Krzysztof
 
