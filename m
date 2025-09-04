@@ -1,176 +1,164 @@
-Return-Path: <linux-kernel+bounces-799759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FAAFB42FF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40164B42FF2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C177487A2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:44:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E13443A6726
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA5820468E;
-	Thu,  4 Sep 2025 02:44:41 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EFA1F869E;
-	Thu,  4 Sep 2025 02:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B84F1FDA89;
+	Thu,  4 Sep 2025 02:44:53 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D911F7098;
+	Thu,  4 Sep 2025 02:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756953881; cv=none; b=Ygz/uwCR7+bl4KuKV0ZqaNYr3wrJkf7yt/u+hL8l3c7zyqNyia+PkpfGXh3yxkbMIyVm5hQQQGcOy59JcJDF36KC77cnvHGukcMHkNds1wSvCvrCs8bX9zE7rdF0dB0PfQZnLFWzcfMZ5U4VO+zgCIKxf4PkoxhCxpuod9YQMX0=
+	t=1756953893; cv=none; b=OT785qLonvy9ix+qYwa1w44iwp7ySyO9qRKaTRrPotPgQDAMwmnWyYQA3DAMci1t2mjT8SBCShiRbYbyv2bIHkN+NqSiWd45RNs7P3sj31I8z9w2EyR+liH9G9MgUwjUS+4B2CTvAZulkNIEfQGmOyE47vtFtoZ+WNeetQv/c0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756953881; c=relaxed/simple;
-	bh=cquMonGgxWqhZGg0znTl+11rd8TzFMhrscmrEb4V7Ck=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=SYB1YAdW3irzD22Ewc4xZAQMZSILFDuqZ4BWSQQINA0grYSd9RCAaRX/SrZVlRTMMzhRNknBSwCBLOeW0XYE2ThSZB6BzNOr3Rz2HLUHDeffX8iLw369eSc7O9780AZypR/4fj5DY4jnGbo71RV2T52R2mYU8Y8crPBqf7WhChk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cHP2W4rDJzKHN10;
-	Thu,  4 Sep 2025 10:44:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 951801A1780;
-	Thu,  4 Sep 2025 10:44:35 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgB3wY0Q_bhotnlIBQ--.8785S3;
-	Thu, 04 Sep 2025 10:44:35 +0800 (CST)
-Subject: Re: [PATCH RFC v3 02/15] block: add QUEUE_FLAG_BIO_ISSUE
-To: Yu Kuai <hailan@yukuai.org.cn>, Christoph Hellwig <hch@infradead.org>,
- Yu Kuai <yukuai1@huaweicloud.com>
-Cc: colyli@kernel.org, hare@suse.de, dlemoal@kernel.org, tieren@fnnas.com,
- axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
- kmo@daterainc.com, satyat@google.com, ebiggers@google.com, neil@brown.name,
- akpm@linux-foundation.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
- <20250901033220.42982-3-yukuai1@huaweicloud.com>
- <aLhBqTrbUWVK4OKy@infradead.org>
- <5378349f-4d00-4d3e-9834-f3ddf2e514cc@yukuai.org.cn>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <dbbfce94-22d8-5c34-ba70-c6de2b902659@huaweicloud.com>
-Date: Thu, 4 Sep 2025 10:44:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1756953893; c=relaxed/simple;
+	bh=KRCGlopRUnMqp26El2EZ35VBypuAVZXu6UPeUAuaLe0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=pkSYozcmojka7dPnbdlo+b4Pi8xhAqwxhY8nwOGWuBUpSXXs48/+IYK0ooBET8lJVHLY2gHB2b5MRjjpvVJRU25s4S07tukFAUrgbEmccKaLOBg3Q6N3JtDv3To8Rlu3QRyWumA6NcKk04MwiwetljObkjomOpIIdelj85AP8i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.75.44.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
+ ajax-webmail-app2 (Coremail) ; Thu, 4 Sep 2025 10:44:36 +0800 (GMT+08:00)
+Date: Thu, 4 Sep 2025 10:44:36 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?6JGj57uq5rSL?= <dongxuyang@eswincomputing.com>
+To: p.zabel@pengutronix.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: [PATCH v6 0/2] Add driver support for ESWIN eic7700 SoC reset
+ controller
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <20250826110610.1338-1-dongxuyang@eswincomputing.com>
+References: <20250826110610.1338-1-dongxuyang@eswincomputing.com>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <5378349f-4d00-4d3e-9834-f3ddf2e514cc@yukuai.org.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3wY0Q_bhotnlIBQ--.8785S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxCFW8JF1Uuw15ur4ruw18uFg_yoW5Ww43pr
-	ZYqasrKws3KF4vgan7ta17tF10kF4DGry3C395A3ySkwsakrnFqr18ZrnYvF9Y9rs5CrWU
-	Zrn5Kr98Xw4F9rDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Message-ID: <5f0dfba0.c4f.199129c978f.Coremail.dongxuyang@eswincomputing.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:TQJkCgDHZpUU_bho7SjIAA--.24298W
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEPAmi4bdEKs
+	wABsa
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWDJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-Hi,
-
-在 2025/09/04 0:54, Yu Kuai 写道:
-> Hi,
-> 
-> 在 2025/9/3 21:24, Christoph Hellwig 写道:
->> On Mon, Sep 01, 2025 at 11:32:07AM +0800, Yu Kuai wrote:
->>>   static inline void blkcg_bio_issue_init(struct bio *bio)
->>>   {
->>> -    bio->issue_time_ns = blk_time_get_ns();
->>> +    struct request_queue *q = bdev_get_queue(bio->bi_bdev);
->>> +
->>> +    if (test_bit(QUEUE_FLAG_BIO_ISSUE, &q->queue_flags))
->>> +        bio->issue_time_ns = blk_time_get_ns();
->>>   }
->> Given that this is called on a bio and called from generic code
->> and not blk-mq, the flag should in the gendisk and not the queue.
->>
-> ok, will change to disk, and also change set/clear the flag to
-> enable/disable iolatency.
-
-After careful consideration, I think it's better to delay
-blkcg_bio_issue_init() to blk_mq_submit_bio():
-
-- it's only used by iolatency, which can only be enabled for rq-based
-disks;
-- For bio that is submitted the first time, blk_cgroup_bio_start() is
-called from submit_bio_no_acct_nocheck(), where q_usage_counter is not
-grabbed yet, hence it's not safe to enable that flag while enabling
-iolatency.
-
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 4201504158a1..83c262a3dfd9 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -728,7 +728,6 @@ static void __submit_bio_noacct_mq(struct bio *bio)
-  void submit_bio_noacct_nocheck(struct bio *bio)
-  {
-         blk_cgroup_bio_start(bio);
--       blkcg_bio_issue_init(bio);
-
-         if (!bio_flagged(bio, BIO_TRACE_COMPLETION)) {
-                 trace_block_bio_queue(bio);
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 70d704615be5..5538356770a4 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -119,7 +119,6 @@ static struct bio *bio_submit_split(struct bio *bio, 
-int split_sectors)
-                         goto error;
-                 }
-                 split->bi_opf |= REQ_NOMERGE;
--               blkcg_bio_issue_init(split);
-                 bio_chain(split, bio);
-                 trace_block_split(split, bio->bi_iter.bi_sector);
-                 WARN_ON_ONCE(bio_zone_write_plugging(bio));
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index ba3a4b77f578..030937b129a2 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -3108,7 +3108,7 @@ static bool bio_unaligned(const struct bio *bio, 
-struct request_queue *q)
-   * It will not queue the request if there is an error with the bio, or 
-at the
-   * request creation.
-   */
--void blk_mq_submit_bio(struct bio *bio)
-+void b k_mq_submit_bio(struct bio *bio)
-  {
-         struct request_queue *q = bdev_get_queue(bio->bi_bdev);
-         struct blk_plug *plug = current->plug;
-@@ -3168,6 +3168,9 @@ void blk_mq_submit_bio(struct bio *bio)
-         if (!bio_integrity_prep(bio))
-                 goto queue_exit;
-
-+       if (test_bit(QUEUE_FLAG_BIO_ISSUE, &q->queue_flags))
-+               bio->issue_time_ns = blk_time_get_ns();
-+
-         if (blk_mq_attempt_bio_merge(q, bio, nr_segs))
-                 goto queue_exit;
-
-
-> 
-> Thanks,
-> Kuai
-> 
-> .
-> 
-
+SGkgYWxsLAoKR2VudGxlIHBpbmcuCgpUaGFua3MsClh1eWFuZyBEb25nCgo+IAo+IFRoaXMgc2Vy
+aWVzIGRlcGVuZHMgb24gdGhlIHZlbmRvciBwcmVmaXggWzFdIGFuZCBjb25maWcgb3B0aW9uIHBh
+dGNoIFsyXS4KPiAKPiBbMV0gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tl
+cm5lbC9naXQvbmV4dC9saW51eC1uZXh0LmdpdC9jb21taXQvP2g9bmV4dC0yMDI1MDgyNSZpZD1h
+YzI5ZTQ0ODdhYTIwYTIxYjdjM2ZhY2JkMWYxNGY1MDkzODM1ZGM5Cj4gWzJdIGh0dHBzOi8vbG9y
+ZS5rZXJuZWwub3JnL2FsbC8yMDI1MDgyNTEzMjQyNy4xNjE4MDg5LTMtcGlua2VzaC52YWdoZWxh
+QGVpbmZvY2hpcHMuY29tLwo+IAo+IFVwZGF0ZXM6Cj4gCj4gICBkdC1iaW5kaW5nczogcmVzZXQ6
+IGVzd2luOiBEb2N1bWVudGF0aW9uIGZvciBlaWM3NzAwIFNvQwo+ICAgdjUgLT4gdjY6Cj4gICAg
+IEFkZCBkZXBlbmRlbmNpZXMgb2YgdmVuZG9yIHByZWZpeCBhbmQgY29uZmlnIG9wdGlvbiBwYXRj
+aCBpbiBjb3Zlci1sZXR0ZXIuCj4gICAgIExpbmsgdG8gdjU6IGh0dHBzOi8vbG9yZS5rZXJuZWwu
+b3JnL2FsbC8yMDI1MDcyNTA5MzI0OS42NjktMS1kb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNv
+bS8KPiAKPiAgIHY0IC0+IHY1Ogo+ICAgICAxLiBEcm9wcGVkIEVJQzc3MDBfUkVTRVRfTUFYIGZy
+b20gYmluZGluZ3MuCj4gICAgIDIuIEFkZCAiUmV2aWV3ZWQtYnkiIHRhZyBvZiAiS3J6eXN6dG9m
+IEtvemxvd3NraSIgZm9yIFBhdGNoIDEuCj4gICAgIDMuIENvcnJlY3RlZCB0aGUgbGluayB0byBw
+cmV2aW91cyB2ZXJzaW9ucy4KPiAgICAgTGluayB0byB2NDogaHR0cHM6Ly9sb3JlLmtlcm5lbC5v
+cmcvYWxsLzIwMjUwNzE1MTIxNDI3LjE0NjYtMS1kb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNv
+bS8KPiAKPiAgIHYzIC0+IHY0Ogo+ICAgICAxLiBSZW1vdmUgcmVnaXN0ZXIgb2Zmc2V0cyBpbiBk
+dC1iaW5kaW5ncy4KPiAgICAgMi4gVGhlIGNvbnN0IHZhbHVlIG9mICIjcmVzZXQtY2VsbCIgd2Fz
+IGNoYW5nZWQgZnJvbSAyIHRvIDEuCj4gICAgICAgIEJlY2F1c2UgdGhlIG9mZnNldHMgd2VyZSBy
+ZW1vdmVkIGZyb20gZHQtYmluZGluZ3MuIFRoZXJlIGFyZQo+ICAgICAgICBvbmx5IElEcy4gQW5k
+IHJlbW92ZWQgdGhlIGRlc2NyaXB0aW9uIG9mIGl0Lgo+ICAgICAzLiBNb2RpZnkgY29weXJpZ2h0
+IHllYXIgZnJvbSAyMDI0IHRvIDIwMjUuCj4gICAgIDQuIFJlZGVmaW5lZCB0aGUgSURzIGluIHRo
+ZSBkdC1iaW5kaW5ncyBhbmQgdXNlZCB0aGVzZSB0byBidWlsZCBhCj4gICAgICAgIHJlc2V0IGFy
+cmF5IGluIHJlc2V0IGRyaXZlci4gRW5zdXJlIHRoYXQgdGhlIHJlc2V0IHJlZ2lzdGVyIGFuZAo+
+ICAgICAgICByZXNldCB2YWx1ZSBjb3JyZXNwb25kaW5nIHRvIHRoZSBJRHMgYXJlIGNvcnJlY3Qu
+Cj4gICAgIExpbmsgdG8gdjM6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI1MDYxOTA3
+NTgxMS4xMjMwLTEtZG9uZ3h1eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20vCj4gCj4gICB2MiAtPiB2
+MzoKPiAgICAgMS4gRHJvcCBzeXNjb24gYW5kIHNpbXBsZS1tZmQgZnJvbSB5YW1sIGFuZCBjb2Rl
+LCBiZWNhdXNlIHRoZXNlIGFyZQo+ICAgICAgICBub3QgbmVjZXNzYXJ5Lgo+ICAgICAyLiBVcGRh
+dGUgZGVzY3JpcHRpb24gdG8gaW50cm9kdWNlIHJlc2V0IGNvbnRyb2xsZXIuCj4gICAgIDMuIEFk
+ZCByZXNldCBjb250cm9sIGluZGljZXMgZm9yIGR0LWJpbmRpbmdzLgo+ICAgICA0LiBLZWVwIHRo
+ZSByZWdpc3RlciBvZmZzZXRzIGluIGR0LWJpbmRpbmdzLgo+ICAgICBMaW5rIHRvIHYyOiBodHRw
+czovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNTA2MTkwNzU4MTEuMTIzMC0xLWRvbmd4dXlhbmdA
+ZXN3aW5jb21wdXRpbmcuY29tLwo+IAo+ICAgdjEgLT4gdjI6Cj4gICAgIDEuIENsZWFyIHdhcm5p
+bmdzL2Vycm9ycyBmb3IgdXNpbmcgIm1ha2UgZHRfYmluZGluZ19jaGVjayIuCj4gICAgIDIuIFVw
+ZGF0ZSBleGFtcGxlLCBjaGFuZ2UgcGFyZW50IG5vZGUgZnJvbSBzeXMtY3JnIHRvIHJlc2V0LWNv
+bnRyb2xsZXIKPiAgICAgICAgZm9yIHJlc2V0IHlhbWwuCj4gICAgIDMuIERyb3AgdGhlIGNoaWxk
+IG5vZGUgYW5kIGFkZCAnI3Jlc2V0LWNlbGxzJyB0byB0aGUgcGFyZW50IG5vZGUuCj4gICAgIDQu
+IERyb3AgdGhlIGRlc2NyaXB0aW9uLCBiZWNhdXNlIHN5cy1jcmcgYmxvY2sgaXMgY2hhbmdlZCB0
+byByZXNldC0KPiAgICAgICAgY29udHJvbGxlci4KPiAgICAgNS4gQ2hhbmdlIGhleCBudW1iZXJz
+IHRvIGRlY2ltYWwgbnVtYmVycyBnb2luZyBmcm9tIDAsIGFuZCBkcm9wIHRoZQo+ICAgICAgICBu
+b3QgbmVlZGVkIGhhcmR3YXJlIG51bWJlcnMuCj4gICAgIExpbmsgdG8gdjE6IGh0dHBzOi8vbG9y
+ZS5rZXJuZWwub3JnL2FsbC8yMDI1MDYxOTA3NTgxMS4xMjMwLTEtZG9uZ3h1eWFuZ0Blc3dpbmNv
+bXB1dGluZy5jb20vCj4gCj4gICByZXNldDogZXN3aW46IEFkZCBlaWM3NzAwIHJlc2V0IGRyaXZl
+cgo+ICAgdjUgLT4gdjY6Cj4gICAgIDEuIFJlbW92ZWQgcGxhdGZvcm1fc2V0X2RydmRhdGEoKSBm
+dW5jdGlvbi4KPiAgICAgMi4gSW4gcHJvYmUgZnVuY3Rpb24sIGRlZmluZWQgc3RydWN0IGRldmlj
+ZSAqZGV2ID0gJnBkZXYtPmRldi4KPiAgICAgICAgTW9kaWZpZWQgJnBkZXYtPmRldiB0byBkZXYu
+Cj4gICAgIExpbmsgdG8gdjU6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI1MDcyNTA5
+MzI0OS42NjktMS1kb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbS8KPiAKPiAgIHY0IC0+IHY1
+Ogo+ICAgICAxLiBUaGUgdmFsdWUgb2YgLm1heF9yZWdpc3RlciBpcyAweDdmZmZjLgo+ICAgICAy
+LiBDb252ZXJ0ZWQgInRvX2Vzd2luX3Jlc2V0X2RhdGEiIGZyb20gbWFjcm8gdG8gaW5saW5lIGZ1
+bmN0aW9uLgo+ICAgICAzLiBNb2RpZmllZCBFSUM3NzAwX1JFU0VUX09GRlNFVCB0byBFSUM3NzAw
+X1JFU0VUIGFuZCBlaWM3NzAwXwo+ICAgICAgICByZWdpc3Rlcl9vZmZzZXQgdG8gZWljNzcwMF9y
+ZXNldC4KPiAgICAgNC4gU2luY2UgRUlDNzcwMF9SRVNFVF9NQVggaXMgZHJvcHBlZCwgdXNlZCBl
+aWM3NzAwX3Jlc2V0W10gd2l0aG91dAo+ICAgICAgICBFSUM3NzAwX1JFU0VUX01BWC4KPiAgICAg
+NS4gUmVtb3ZlZCBmdW5jdGlvbiBlc3dpbl9yZXNldF9zZXQsIGFuZCBwdXQgcmVnbWFwX2NsZWFy
+X2JpdHMgaW4KPiAgICAgICAgZXN3aW5fcmVzZXRfYXNzZXJ0IGFuZCByZWdtYXBfc2V0X2JpdHMg
+aW4gZXN3aW5fcmVzZXRfZGVhc3NlcnQuCj4gICAgIDYuIEFkZGVkIHVzbGVlcF9yYW5nZSBpbiBm
+dW5jdGlvbiBlc3dpbl9yZXNldF9yZXNldCB3aGljaCB3YXMgbWlzc2VkLgo+ICAgICA3LiBVc2Vk
+IEFSUkFZX1NJWkUoZWljNzcwMF9yZXNldCkgZm9yIGRhdGEtPnJjZGV2Lm5yX3Jlc2V0cy4KPiAg
+ICAgOC4gVXNlIGJ1aWx0aW5fcGxhdGZvcm1fZHJpdmVyLCBiZWNhdXNlIHJlc2V0IGRyaXZlciBp
+cyBhIHJlc2V0Cj4gICAgICAgIGNvbnRyb2xsZXIgZm9yIFNvQy4gUmVtb3ZlZCBlc3dpbl9yZXNl
+dF9pbml0IGZ1bmN0aW9uLgo+ICAgICA5LiBNb2RpZmllZCBlc3dpbl9yZXNldF8qIHRvIGVpYzc3
+MDBfcmVzZXRfKi4KPiAgICAgTGluayB0byB2NDogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxs
+LzIwMjUwNzE1MTIxNDI3LjE0NjYtMS1kb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbS8KPiAK
+PiAgIHYzIC0+IHY0Ogo+ICAgICAxLiBBZGQgJ2NvbnN0JyBmb3IgdGhlIGRlZmluaXRpb24uIEl0
+IGlzICdjb25zdCBzdHJ1Y3Qgb2ZfcGhhbmRsZV8KPiAgICAgICAgYXJncyAqcmVzZXRfc3BlYyA9
+IGRhdGE7Jy4KPiAgICAgMi4gTW9kaWZ5IGNvcHlyaWdodCB5ZWFyIGZyb20gMjAyNCB0byAyMDI1
+Lgo+ICAgICAzLiBJbmNsdWRlZCAiZXN3aW4sZWljNzcwMC1yZXNldC5oIiBpbiByZXNldCBkcml2
+ZXIuCj4gICAgIDQuIEFkZGVkIG1hcHBpbmcgdGFibGUgZm9yIHJlc2V0IElEcy4KPiAgICAgNS4g
+UmVtb3ZlZCBvZl94bGF0ZSBhbmQgaWRyIGZ1bmN0aW9ucyBhcyB3ZSBhcmUgdXNpbmcgSURzIGZy
+b20gRFRTLgo+ICAgICA2LiBSZW1vdmVkIC5yZW1vdmUgZnVuY3Rpb24uCj4gICAgIExpbmsgdG8g
+djM6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI1MDYxOTA3NTgxMS4xMjMwLTEtZG9u
+Z3h1eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20vCj4gCj4gICB2MiAtPiB2MzoKPiAgICAgMS4gQ2hh
+bmdlIHN5c2Nvbl9ub2RlX3RvX3JlZ21hcCgpIHRvIE1NSU8gcmVnbWFwIGZ1bmN0aW9ucywgYmVj
+YXVzZQo+ICAgICAgICBkcm9wcGVkIHN5c2Nvbi4KPiAgICAgMi4gQWRkIEJJVCgpIGluIGZ1bmN0
+aW9uIGVzd2luX3Jlc2V0X3NldCgpIHRvIHNoaWZ0IHRoZSByZXNldAo+ICAgICAgICBjb250cm9s
+IGluZGljZXMuCj4gICAgIDMuIFJlbW92ZSBmb3JjZWQgdHlwZSBjb252ZXJzaW9ucyBmcm9tIGZ1
+bmN0aW9uIGVzd2luX3Jlc2V0X29mXwo+ICAgICAgICB4bGF0ZV9sb29rdXBfaWQoKS4KPiAgICAg
+TGluayB0byB2MjogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUwNjE5MDc1ODExLjEy
+MzAtMS1kb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbS8KPiAKPiAgIHYxIC0+IHYyOgo+ICAg
+ICAxLiBNb2RpZnkgdGhlIGNvZGUgYWNjb3JkaW5nIHRvIHRoZSBzdWdnZXN0aW9ucy4KPiAgICAg
+Mi4gVXNlIGVzd2luX3Jlc2V0X2Fzc2VydCgpIGFuZCBlc3dpbl9yZXNldF9kZWFzc2VydCBpbiBm
+dW5jdGlvbgo+ICAgICAgICBlc3dpbl9yZXNldF9yZXNldCgpLgo+ICAgICAzLiBQbGFjZSBSRVNF
+VF9FSUM3NzAwIGluIEtjb25maWcgYW5kIE1ha2VmaWxlIGluIG9yZGVyLgo+ICAgICA0LiBVc2Ug
+ZGV2X2Vycl9wcm9iZSgpIGluIHByb2JlIGZ1bmN0aW9uLgo+ICAgICBMaW5rIHRvIHYxOiBodHRw
+czovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNTA2MTkwNzU4MTEuMTIzMC0xLWRvbmd4dXlhbmdA
+ZXN3aW5jb21wdXRpbmcuY29tLwo+IAo+IFh1eWFuZyBEb25nICgyKToKPiAgIGR0LWJpbmRpbmdz
+OiByZXNldDogZXN3aW46IERvY3VtZW50YXRpb24gZm9yIGVpYzc3MDAgU29DCj4gICByZXNldDog
+ZXN3aW46IEFkZCBlaWM3NzAwIHJlc2V0IGRyaXZlcgo+IAo+ICAuLi4vYmluZGluZ3MvcmVzZXQv
+ZXN3aW4sZWljNzcwMC1yZXNldC55YW1sICAgfCAgNDIgKysKPiAgZHJpdmVycy9yZXNldC9LY29u
+ZmlnICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDEwICsKPiAgZHJpdmVycy9yZXNldC9NYWtl
+ZmlsZSAgICAgICAgICAgICAgICAgICAgICAgIHwgICAxICsKPiAgZHJpdmVycy9yZXNldC9yZXNl
+dC1laWM3NzAwLmMgICAgICAgICAgICAgICAgIHwgNDI4ICsrKysrKysrKysrKysrKysrKwo+ICAu
+Li4vZHQtYmluZGluZ3MvcmVzZXQvZXN3aW4sZWljNzcwMC1yZXNldC5oICAgfCAyOTggKysrKysr
+KysrKysrCj4gIDUgZmlsZXMgY2hhbmdlZCwgNzc5IGluc2VydGlvbnMoKykKPiAgY3JlYXRlIG1v
+ZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9yZXNldC9lc3dpbixl
+aWM3NzAwLXJlc2V0LnlhbWwKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvcmVzZXQvcmVz
+ZXQtZWljNzcwMC5jCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdzL3Jl
+c2V0L2Vzd2luLGVpYzc3MDAtcmVzZXQuaAo+IAo+IC0tCj4gMi4xNy4xCg==
 
