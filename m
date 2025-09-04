@@ -1,143 +1,90 @@
-Return-Path: <linux-kernel+bounces-800407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97B0B43747
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:35:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9932DB4374D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 774D1583F26
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:35:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D587F1891A4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2A82F6573;
-	Thu,  4 Sep 2025 09:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6CF2F745B;
+	Thu,  4 Sep 2025 09:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZ6EVn1m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DAD2571AA
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WtsHWGYY"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFED1A9F82;
+	Thu,  4 Sep 2025 09:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756978505; cv=none; b=qcRBMfJhIxnol+nRaQyYe7uB3tCR3qvAV3JQq13XvWf47kTkK2+oIatgAkwvwuksOtMadDp88RM0Gm2VJtvdtHqon6QJS9utRX3GjVYOhX0izQ27ZjJ1/ttlqd0qwyogzVYSp/GxUDeC8VgGZ16h+Kka7+cf9dtX6AgnJLnhDDg=
+	t=1756978589; cv=none; b=cntpiGgKudILhGEdR/ocoNEMemFYUHiDjfhgxDrwBcY2UqGRWAY1j7AQh5XfNAn+U9obX8QoOgfFAno/PhiMkK4kcDVLebTJePtl4mX4NKUDMIGbSFWCXQQF5bE6BpIr4uvE+CFmmgYH8tTrG8o6sikzn6pA3dksbrD/LWHlpKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756978505; c=relaxed/simple;
-	bh=99XBGOZxR9KclNmgU94R23/33YjiM2agRYpbBOc1qEs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MdDT7YLMyHzKbpYzAnwUtytzps44fB5KSs0/NXew0OpebgWVitn2jHzQyIGIQBpkV7ILQEw8ekVagWquXFpWXOSiBjhV8Hd5GdR/8q5QxoVK0/RZM4mX4P5DzTROgWlortWNfX40B9eyD0rSA6m56iHpxJRzNH2C53Wdqz47d74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZ6EVn1m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9FA0C4CEF0;
-	Thu,  4 Sep 2025 09:35:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756978504;
-	bh=99XBGOZxR9KclNmgU94R23/33YjiM2agRYpbBOc1qEs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lZ6EVn1mEEznaJ1wYd5M5WnFrg9IhZOAHELWA5PqrVMOsYcquIMbFGBhF24iuQGh6
-	 WhZfmHbwze427vWBHO/boZIFy8Nu9IhWcKtDfza9qVhf67mxScKkazV/yyPf/ze9Td
-	 S/c833oiBA3hjAYAHXv0h+yo3phUq0EZgnORTP9BSjmqJGbXgLGl+aZcV7PBS8UkNR
-	 hCDG5vSXEkRM0GtC3dDYO/xQApdES7Fc/hXxANv2IO6MSP4Au2QXRndYTLocVlVKVU
-	 JgBunm7l8om7rAdiKND2kHuucgND+CY++yxFzwgzAyR+2ofygddduMOsSmLTAKGHz8
-	 7LEP1SLcbJLBw==
-Received: from [131.175.126.3] (helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1uu6Mw-00000003FtY-2opD;
-	Thu, 04 Sep 2025 09:35:02 +0000
-Date: Thu, 04 Sep 2025 10:35:02 +0100
-Message-ID: <87tt1izhkp.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: <tglx@linutronix.de>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<fabrice.gasnier@foss.st.com>,
-	<mani@kernel.org>
-Subject: Re: [PATCH v2] irqchip: gic-v2m: Handle Multiple MSI base IRQ Alignment
-In-Reply-To: <20250902091045.220847-1-christian.bruel@foss.st.com>
-References: <20250902091045.220847-1-christian.bruel@foss.st.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1756978589; c=relaxed/simple;
+	bh=DcicNNUfFZKj/Yr+O+tHFbD8gezJ6gELfrIdlSYHVeY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t3wCExuqPOmicLSHkqWfZbrGSi7EUQJHmeFgov5Vk4MSCUAwgRrOEaokDd/vVyVu1uodjiJz6yYQ/eeYAUfQ6JB7bDBlux0I+kySms7V4o6S3U9pu79iKMVTNDam0KyAmwJMlf8UTgsyxN6z/8luHNn4TcvQ5NvN+KosM9OmmJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WtsHWGYY; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=fJ
+	bLh6waA+QrGunKjnxkbrkEAjiU744DKZaf6sYLl2M=; b=WtsHWGYYedINvrPyra
+	+c2WHl1uU2g1Gm0DMiuqw5iETRXFdNGON51o471PHnFFvVY/GPaJpmLuCaufl8KU
+	IeQzPx/ftIM1I6HJobUY3uiAGkbdvSzjHLEy20ZqpFn4xuyxEs3ylYt/JrdZkzy/
+	r912aG3lkPkoL0MT34S0r7lNI=
+Received: from neo-TianYi510Pro-15ICK.. (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDXz3yEXbloOb6fGg--.11019S2;
+	Thu, 04 Sep 2025 17:36:07 +0800 (CST)
+From: liuqiangneo@163.com
+To: anil.gurumurthy@qlogic.com,
+	sudarsana.kalluru@qlogic.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Qiang Liu <liuqiang@kylinos.cn>
+Subject: [PATCH] [SCSI] bfa: Remove self-assignment code
+Date: Thu,  4 Sep 2025 17:35:58 +0800
+Message-ID: <20250904093600.175762-1-liuqiangneo@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 131.175.126.3
-X-SA-Exim-Rcpt-To: christian.bruel@foss.st.com, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, fabrice.gasnier@foss.st.com, mani@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXz3yEXbloOb6fGg--.11019S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtr4Utr4kJF1fKry7Aw45trb_yoWfAwb_Kr
+	WvqFWxuw10yw47Gw18Wr1I9Fy2vry7Gr4kurn2qFyfCayIqFn5Jr1DZrZxZ3W8GF4DKF97
+	Xayxtr10v348JjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1gyZUUUUUU==
+X-CM-SenderInfo: 5olx1xxdqj0vrr6rljoofrz/1tbiXwe+YWi5VRf9IAAAsJ
 
-This is actually v3, right?
+From: Qiang Liu <liuqiang@kylinos.cn>
 
-On Tue, 02 Sep 2025 10:10:45 +0100,
-Christian Bruel <christian.bruel@foss.st.com> wrote:
-> 
-> The PCI Local Bus Specification 3.0 (section 6.8.1.6) allows modifying the
-> low-order bits of the MSI Message DATA register to encode nr_irqs interrupt
-> numbers in the log2(nr_irqs) bits for the domain.
-> 
-> The problem arises if the base vector (GICV2m base spi) is not aligned with
-> nr_irqs; in this case, the low-order log2(nr_irqs) bits from the base
-> vector conflict with the nr_irqs masking, causing the wrong MSI interrupt
-> to be identified.
-> 
-> To fix this, use bitmap_find_next_zero_area_off() instead of
-> bitmap_find_free_region() to align the initial base vector with nr_irqs.
-> 
-> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
-> ---
-> Changes in v2:
->    (Marc Zyngier)
->  - Move align_off definition inside the loop
->  - Reworked Commit Message
-> 
-> Changes in v1:
->    (Marc Zyngier)
->  - Replace the incorrect usage of msi_attrib.multiple with nr_irqs
->  - Reworked changelog
-> ---
->  drivers/irqchip/irq-gic-v2m.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
-> index 24ef5af569fe..8a3410c2b7b5 100644
-> --- a/drivers/irqchip/irq-gic-v2m.c
-> +++ b/drivers/irqchip/irq-gic-v2m.c
-> @@ -153,14 +153,19 @@ static int gicv2m_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
->  {
->  	msi_alloc_info_t *info = args;
->  	struct v2m_data *v2m = NULL, *tmp;
-> -	int hwirq, offset, i, err = 0;
-> +	int hwirq, i, err = 0;
-> +	unsigned long offset;
-> +	unsigned long align_mask = nr_irqs - 1;
->  
->  	spin_lock(&v2m_lock);
->  	list_for_each_entry(tmp, &v2m_nodes, entry) {
-> -		offset = bitmap_find_free_region(tmp->bm, tmp->nr_spis,
-> -						 get_count_order(nr_irqs));
-> -		if (offset >= 0) {
-> +		unsigned long align_off = tmp->spi_start - (tmp->spi_start & ~align_mask);
-> +
-> +		offset = bitmap_find_next_zero_area_off(tmp->bm, tmp->nr_spis, 0,
-> +							nr_irqs, align_mask, align_off);
-> +		if (offset < tmp->nr_spis) {
->  			v2m = tmp;
-> +			bitmap_set(v2m->bm, offset, nr_irqs);
->  			break;
->  		}
->  	}
+The variable num_cqs is of type u8 and does not require be16_to_cpu
+conversion, so the redundant  code is removed.
 
-Reviewed-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Qiang Liu <liuqiang@kylinos.cn>
+---
+ drivers/scsi/bfa/bfa_core.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-	M.
-
+diff --git a/drivers/scsi/bfa/bfa_core.c b/drivers/scsi/bfa/bfa_core.c
+index a99a101b95ef..2559df8baa05 100644
+--- a/drivers/scsi/bfa/bfa_core.c
++++ b/drivers/scsi/bfa/bfa_core.c
+@@ -1282,7 +1282,6 @@ bfa_iocfc_cfgrsp(struct bfa_s *bfa)
+ 	struct bfi_iocfc_cfgrsp_s	*cfgrsp	 = iocfc->cfgrsp;
+ 	struct bfa_iocfc_fwcfg_s	*fwcfg	 = &cfgrsp->fwcfg;
+ 
+-	fwcfg->num_cqs	      = fwcfg->num_cqs;
+ 	fwcfg->num_ioim_reqs  = be16_to_cpu(fwcfg->num_ioim_reqs);
+ 	fwcfg->num_fwtio_reqs = be16_to_cpu(fwcfg->num_fwtio_reqs);
+ 	fwcfg->num_tskim_reqs = be16_to_cpu(fwcfg->num_tskim_reqs);
 -- 
-Jazz isn't dead. It just smells funny.
+2.43.0
+
 
