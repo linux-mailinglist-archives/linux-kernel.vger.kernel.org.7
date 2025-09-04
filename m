@@ -1,242 +1,297 @@
-Return-Path: <linux-kernel+bounces-801211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF47B44222
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:04:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 089F8B4423A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7E613B41A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:04:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 920415A212C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D31A2EFDA5;
-	Thu,  4 Sep 2025 16:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950D82D3EE0;
+	Thu,  4 Sep 2025 16:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XbT8dyBA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rqhxcr1L"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B542367DC;
-	Thu,  4 Sep 2025 16:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757001883; cv=fail; b=V/F2imGGluXCMZsrRU2wP8aGZNs0SwnE3we5WiVa9MPSoS1ZW7L3ud7kDjbjO4aXq5YxIYnVl2xgjBoMMyBAcbo1wulHJwFhrOH3Nx2AOiwDptWVMffUKC11po46XSiBFdvulncmuaTiP/5YoOvYG9v+iSfdG7CHqtxTD8vZXDs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757001883; c=relaxed/simple;
-	bh=8GsrYfgglpfb81+q+m9g6Rf+LdRw9TllTpI1pAhfz3A=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=s2Mz1KRyBy3zXnDvbDt5jKhzokCo9Ec4Rxwl+TSjbL2yYo2ROUyMa1uv8ZqvDbssweY6h3gGtwlIEj7rW3I4l4AN5iZYxhwiAR0J7fILAOFt2HM9h0wHfvDkQLavw16SpKRGEtHx51bmcInoDYjt4a/Gygzih9UTBYWjzwuVfL4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XbT8dyBA; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757001881; x=1788537881;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=8GsrYfgglpfb81+q+m9g6Rf+LdRw9TllTpI1pAhfz3A=;
-  b=XbT8dyBAp00dVnrc5e3ZK4TLr6VfllEzg9q6Zemmyh3JxR3kZt5snMzP
-   CSvU1uThwiDtZIDtMkrdjJhIhk6n6wrAk5u1k2T7yZG/CWezY9gv9M7Ky
-   ES64Yp3bfGW4yZZLGUkUEpyhRpxJotTCgD22TfpZpvH5NZrKpN5rVt+9g
-   EQFvjh6dMIDvUYML0qBaert6r0wLeV0VPQjLYh/Ds7RS6ZqW5xSIbxY6u
-   BmAN2f02I5MS+M0veDF4xbUQIe89syniibWcoaPygWGauNRkOgQyKmB3F
-   LQLZe9bzW6DzrB7QOYrhx+23N3Fl04lhVDQxahjtVQQeAPDBzCEOgpn6W
-   w==;
-X-CSE-ConnectionGUID: SDR19KRvQBurvq6uaizbig==
-X-CSE-MsgGUID: 9jrVV29fRnWTLwcscPWhYQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="63171428"
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="63171428"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:04:40 -0700
-X-CSE-ConnectionGUID: /gcMzpuITQWaK2d+EZJXjw==
-X-CSE-MsgGUID: 9fL+Y+60R2WNtH8qMxj/ig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="171874963"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:04:39 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 4 Sep 2025 09:04:39 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Thu, 4 Sep 2025 09:04:38 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.42) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 4 Sep 2025 09:04:38 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bdM5DVt/4ksTzLxnROsBDsfsF45zzklwCQAgFXFL5E0hm4hc6mJjyJR0MEPT3u4jBfuT0xINwZIfG+lfaUeLWD9+h/pOf6n4wzbGR38/oT8Vn2kKS9xlA8ddFo3hv7sh6tY4wUIs7ycOIrXLlIZZeYJOBBE9o7q5Tg1CnDwvI1on0VoM2R7Mm7u72iQC5rH4+N/hc1wPucWBmZlsoH3cPsQfisVZFa/qMtWaU406CsSiRRyZd9uyIai06rBn6E+mwuQEbm3QRtPAyHXyA2rMMpvRwl+vHiXic3E8mycsRjV1szUkD2pMnKhNWaHKDviH8CNIxqaHqx1Msc6tqkLJ9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zQlGuwyDTl53wNxJFT3Qygts1LOBtbekmj5y/ZV5UdU=;
- b=m74mJH30vcPiWKdDgWIoV8UQYNWb9ZACYP1CP5mtkTrswMYXwIrKROeFZWKzorguHhx4U3i5/mlddh+byAKeO0ZUTLfu9iiews7jGgZvtWYhKiHQJcqNA02rEVsP4StgP/GMFp54jFWpXzn0dg7PPVqZ4/8sLuh3z1t5/1F2tSTQIQFo3bAnxSW1S+7njBoonxINlyYmaIb336/QNbDlY0xHEvLoBxuouxmehxqoeE7x3ua4p+SWHrcEbnIcGoEGbHslIeqP9PLCZxIunTtYpaD3PVMtYLWUEWzvTL2zmnHZsQ/BiTW31BzSztPFuiu5MsPJTx5wAyNSTME57i5SNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c) by SA2PR11MB5017.namprd11.prod.outlook.com
- (2603:10b6:806:11e::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Thu, 4 Sep
- 2025 16:04:31 +0000
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::bbd5:541c:86ba:3efa]) by PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::bbd5:541c:86ba:3efa%7]) with mapi id 15.20.9094.017; Thu, 4 Sep 2025
- 16:04:31 +0000
-Date: Thu, 4 Sep 2025 11:06:21 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Colin Ian King
-	<colin.i.king@gmail.com>, Dan Williams <dan.j.williams@intel.com>, Dave Jiang
-	<dave.jiang@intel.com>
-CC: Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Len Brown <lenb@kernel.org>, Jia He <justin.he@arm.com>,
-	<nvdimm@lists.linux.dev>, <linux-acpi@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] ACPI: NFIT: Fix incorrect ndr_desc being
- reportedin dev_err message
-Message-ID: <68b9b8fdb0443_70a18294b1@iweiny-mobl.notmuch>
-References: <20250902114518.2625680-1-colin.i.king@gmail.com>
- <CAJZ5v0je-10aKyA0zeDZbqTXzjxNb7yTfsWkt_-a-7uwqYdmcA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0je-10aKyA0zeDZbqTXzjxNb7yTfsWkt_-a-7uwqYdmcA@mail.gmail.com>
-X-ClientProxiedBy: MW4PR03CA0231.namprd03.prod.outlook.com
- (2603:10b6:303:b9::26) To PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A372367CE
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757002082; cv=none; b=OdMvyd7LVc15Sj6LUxogSZvO8BsEgSH4hCnUrcJO3f6TiZxx9g8K/B3VgER/tIhhKANjW7CkDZtnfyOg257HMvXMQIDn86iQsa9UDMSVWe3AgSIuSeSZu1QZatdSoqmJEp1KQ/0eeG45qLJXMS5AjYqUbkcvXv0Z1gp5/CrMMqc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757002082; c=relaxed/simple;
+	bh=cnXHYCpRCNjx5SUFDPlawJkSPyB4ySmqM9hVB3TT2RI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mJGdm/YbeABt2gP6I4BX7VffG5aFzJqojA8yeOEluvhkLQs5asCdI9kY9powKswudI68FcvGBpVpDw0Jy2yy/fNWUlNVsgp8zPXBpB0SQOrockafwKYocm4Tl5CkNq/LLc+i3xVxYUrQI7CdHECVo7MCSEXNNb2Wka7U0bn7nCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rqhxcr1L; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d603cebd9so15189237b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 09:08:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757002080; x=1757606880; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ngovn7ElXG+7WyoV0hjjDgFN9akcGWmEQfLRohWixno=;
+        b=Rqhxcr1LH0GBWIxBEVrDsRajEAUrXouW8oKXT2/eoZeoIbDMfa0L7f8Evbz/9faa7F
+         7Bt7tljzTJIO/vfaFG6Cp2dYgKYyaSy3RwnE+8GCKa07ctgP32wyxDiH/gcWHfYjNB5K
+         7N6C1nNS79eHY2c1DGGIIDFOHzCslTiUVn2XID5qBRoh4rIN/d5i8bU/uSS1f8qiszzw
+         t8M0gd9/HDtUMjdKYOax5vk9Hc5u07Q1VYeS+K8AScUifnnd/o/BB7l5uAksB+ZTb+iC
+         lUUdwpLFhHY1bquLOw0VSPcljUiuTKutaAwqlABPh8NlPxdE3gWG92gtnRBS73KzyZwz
+         6SuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757002080; x=1757606880;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ngovn7ElXG+7WyoV0hjjDgFN9akcGWmEQfLRohWixno=;
+        b=cCV9pjn/Ikwe/tOg89AmEQjWPXfhYK602dyJdelXAIhIiGI3DeAhvz7rBVN6Pd0/b1
+         QHg93p01qMTH9mSuuxv5A5CUUqBpe6BtYhy76mfPzB8mME1HE8tBsz9lhkcjbNgzVhcS
+         b1YECeB6uFH8icOMXEKbcQgK7+6wEERLcuB+5uLBPdFSUmPQ+yzqiyEyY9pWaFjlMLrP
+         EbREWxjRvk1act1yHq5ldmdYng4ZxcEcEACVSmzF4iKnyakbGy/VsavZPIq/Ni/Ei9IK
+         ZWFYZo/eE6cTWVmzFisGR4whlKUknchqDqr2KbX2pvjN5q8eUwIC470qPMaIHTJ05Aki
+         0sCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjLL9K83fl1E/geQleS//4obJdwqz9uZHbWlt+hbcbBD0J2J0tq3+C0MkjDIrDWXHC9WeKzGXzUo3VSw0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+WeAdHkAdvNQ9+StpKmd5LNGx2C2k+Vyq+J4uTZDX3HXll3dR
+	b+Nb4Q/1PvjTN/rCJSSpXq+xE1QPAAEuhjiwBgci6V2FhEjtxpXH0wtczUjuM0KVhAcCfb6Wly8
+	fDjGyLgM1x13OBi0fgAgJGy6NzC5Ilb6yKfpAx5ZU1g==
+X-Gm-Gg: ASbGncuVOW+yQRr8C70ybJZfnb5keguuByx+/eJg35fHf+0djKcUd0Aad4uZSzjVvSv
+	y5NU1b2LIrSDwQEB0leSlmgv4OGi8WUu1Px4iI/qcXHSeF072drwYbq5aDd0XjsC1QjHQeYe0Cx
+	dEhRUn4bcaTNb7n08WcLIS83lhWV2FDoxugewlQMpBpVhztrh1gwtRz3nVkpk3HNoeKw5U7wGtq
+	8/wKKpV+moXxiy9qLU=
+X-Google-Smtp-Source: AGHT+IEqH74Cg4iFEkHgdi0JpstCrWnwWXCtc1QVg5UcVB0OzflJy4/ZXz5pYBSrJ2p+olLRHuT9lTjmfhHY5q+VLGI=
+X-Received: by 2002:a05:690c:4513:b0:721:6a43:c960 with SMTP id
+ 00721157ae682-722763cfc0amr205545067b3.21.1757002079724; Thu, 04 Sep 2025
+ 09:07:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|SA2PR11MB5017:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8322d540-a96c-4fe8-ba86-08ddebccbbaf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?YkZ3cm5ncGpiWHVBbC9CWXQveWxBT2pFemc0RzAvWEFlOEdVVlUwd2ljZWpm?=
- =?utf-8?B?STdqK2lqakxaa25rSDVWbFFNaWl1Z3Z1ZStWVkFXZzY2N0lZOWlSdnVkbkVl?=
- =?utf-8?B?UXpkckNnTDdFSlF4b0FicnRQbHFBU2d6QlhWWmlOY2xrUlladERHbEpYcWVZ?=
- =?utf-8?B?QWk4bHJHZzVQNkFFaFZqNUJpaGt1amtrQTI3UUF1bldVZ1hKY2JGOUlMbmNz?=
- =?utf-8?B?K0l3ZmVmWWQxSDAvVWZzcHdXVzVUNk91Mnd4cUo2cmRsOUh6VVhjQ3RJNlVG?=
- =?utf-8?B?MUZtYW8yL1hvWDM3Y1MzUUgyQ0tobGd4SEhQMy9QSDVlMlJwNXdYWGNkeHRn?=
- =?utf-8?B?WXhTME5waEN0N2RUY256elp4b2JCWEFpWUozYXh6UnFPZjVJS1M4b3phdFNz?=
- =?utf-8?B?OU94WktnOUxobjN0cVB2SFFvbTlUa1R3ekM4cEhadG0rMjBzd1NOczFKRHdm?=
- =?utf-8?B?aXJtNmZCZmZKK21NTVhBb3hsSm15YzFlbTRXZnJ1K2dGakMxWC9DNWJ6TTZm?=
- =?utf-8?B?aUd0YXJGNHBTR3JxMXpUZDBaVlpEZTR5Y0pzNlY2dkhGOVNRMWNjWGFycEh4?=
- =?utf-8?B?K1VvOHVzOW1UV2dxekdJbUhOaVNRcDMyVlJlTWZFVkgvOGxPdjVMbHhqVVVo?=
- =?utf-8?B?VUYwdnFXT2ZGa0hKZXlIZmtaU01jbHozQnA1Z3NDZ0hWa2g1TVJtNS9xU04r?=
- =?utf-8?B?cWtUQWovNU5uVEdJYzE0VFA3REs5dnVTWEtJQ2NIbTdVV29LVmRWZ2xvV2Rs?=
- =?utf-8?B?eklPU1p0bWJRVXZTV0dQdlpOWFl4Y2grQkdMbmZidDhMTFczQmIzZmdIRjAz?=
- =?utf-8?B?UmhDbmkvZjlhZU9NVENPRUV2QXIva01aVnBVYUJ1UmxGS0I5VzFKQUl3Wmx6?=
- =?utf-8?B?TEw1cjRHTkhxYi9rN2NWaityMEVmY3ZJdHJTdHJMblRYSmI2bzR5a0ZIL21I?=
- =?utf-8?B?OWNra0o1aUZxVnpLSHR6NEhYZDlMWm56TndXMEg2N0hGaVdsZHBxM3RHT3NU?=
- =?utf-8?B?dDErY2ZBQUhCMkNjL3VFUHIrNm1DdjFzMzFzQzlyYmhFWW1FT1JITXhxejRs?=
- =?utf-8?B?NGZQenpZYXJCaStjZ1ZreXdudStCNUVITEdLQnBMcm0rSDBxSURneGZxWkFW?=
- =?utf-8?B?TVNLMlhxaFBpSEV3TkRyM0FZbjcxaURiNExLWS85eENIV0dmeVlQTXI3eTIr?=
- =?utf-8?B?dFc0SDhDZkpPNE9nK1hNOC9mdFdvY0Ruck1PSlZWYjlBMUx3dkFscjg3SldV?=
- =?utf-8?B?YlJFMVVsT3dvczQ3RGI5Y2U1V0JDV1RhM21rSzhydlZuQjBwbGl4eFFPeGg0?=
- =?utf-8?B?ZXI1Szg1QldaNldKNlV4YUpSN211TnU4dXV0Z3Mya05DZlZHSjFjVmZIZHZ1?=
- =?utf-8?B?MkV0WFEzcG5CRWwzc3Awd0JiM2xOcnk0a0FOZFFwMEk5TE93WDNxVXdDbGgv?=
- =?utf-8?B?ZTVEOWtaRFJHSzhNRGlDZDR1b0YyOERndWpMSDBBSGFUZXJwdURoN29QLzNq?=
- =?utf-8?B?UG1JZ0I0Q1g3eXI5MHo3UmNBTnMwdUljaWwwcm1VUDdPb2FOZFFSdll3eVJ2?=
- =?utf-8?B?VXNRemV2dERCdjlPSVJ6bHJIUGdxQnVjUDFSYUxqSFF2MDA5ZEFpVWVMREhW?=
- =?utf-8?B?bUVqVk1PZ2hONmdQSDRaSXFyc1hJcHdNcWhHeVNkYmwxWmFheUttSFBwZTJK?=
- =?utf-8?B?NlZmRkl3dWpMdVpMNTJaZy9ycUJ4Q3RVUjc0ODFWblg4V00wUHVsRWx3MFNT?=
- =?utf-8?B?WDB1Qk1jVHZWTFlFYTRsT2Q1eDhxMWN2b2o3WU15WG52ZUx5c3U2ajE4YUda?=
- =?utf-8?B?ekdFbGVTcEcwRWliUGlkUW5sdDNUSHdGYU9lVXRhK1UzZ0lEd2JwNTkxc0cx?=
- =?utf-8?B?amkwNm1KcFRPV0p4RFlYaUlDdGp6QjhLQ0l4OGhlTklRYXc9PQ==?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RzFNVHVNMDNaT0pObFJtNzlwWGpCRldnc25IUnhhYmNYSXVpaHMzK1RPUWZ4?=
- =?utf-8?B?cVFveDVGZ3FPaDQ1OThrRGN0dWo5MHorSnhOWWovYk0rc0dac3R0R2FMSUJT?=
- =?utf-8?B?emZrR2c2WVhjeFpFTEQ1bXhhcTcvWFBvNEZzdlUrT2lTcU5IL0gvWUt0TTE3?=
- =?utf-8?B?c08xeGlWbTVsWFMwdUNHRkdJVk1DT24yQlIvUEFMZld6NTZZUHcweWRTSi9S?=
- =?utf-8?B?VmloNGtKK0UzMXN4OGdndFhiSWdpMUNONS96cDI5eWYxVSs3UG40dXRHMEVk?=
- =?utf-8?B?K0ozY2kwTkcralpoQTIrclJ3TnF4ZUJUN3dKKzJUb05iT2RYT0w0OU8wdjVh?=
- =?utf-8?B?SjhXa3pXdUZHclFLcU1vdkErUjd6LzgwazZQTTY5N3kxNGszLzRZL3dGZ2VQ?=
- =?utf-8?B?UERVakVHTXRzYS9Wb1V2ZGlRSXU0SkNHVDhzL2FGeTR2YVA3dkZrY3kvc0Rz?=
- =?utf-8?B?YXRPWEJOMHJaQjNoR2dRZC9WbHRsWnk1MVJsbWZnZ25jd2IvUmV0NEhjMEpa?=
- =?utf-8?B?V2JGT3RVbFVvUElkVXZCcDIwcTVZelB6SHV4akJGaWRRc0N5QzdMQ2lKbmlY?=
- =?utf-8?B?L2N0ZXJ6STV4VURkbDZTeXlub3ErQ1BJRGR3d1JGb2tMbzdOTlJ1WXJseHJ0?=
- =?utf-8?B?ZG1mcWpqbjZKdkFJU2k5Uk0xNEdrdXllc21BSDc5ZDJFMWdCblgvTVVIdGxV?=
- =?utf-8?B?a1JaZUVFYjROVklIeVpyWk9GbnNzeGlKYmhhdG82U0NwNllHNlF5empzVmdx?=
- =?utf-8?B?V2MyWVYrVVJJUGhacDU0bTgwdWFoVWFYeWhFbUVzdm5mamYrOGtYaVJqUEdr?=
- =?utf-8?B?dUc3SlBYczg5ekh2OVc4TFhFV25OUlp2T3grK1l3YmtCMnhodGR3L2NyOHNQ?=
- =?utf-8?B?MEN6NGJ2a3NZZzlVdm5kbmEwVGhZNUVqVG9ISlMrd0pOMnVWR0IrQmpnOXZD?=
- =?utf-8?B?cGVHOGRHL1d5LzJ3TElIV0xFMEFkUEJqZDc2ZG9Oa1RyaFo5ZlhUQ1Q5Qmds?=
- =?utf-8?B?M25ibURSMGtIN083TnBYdjZlZnF3end2NHVZaCtuNFFwTmh2cFhlWW0zeGdC?=
- =?utf-8?B?Z0pTQzlGcXBHL25rV2xJMWpaaUlLZjJtWXB2cWhHemdCUDlTcWI0eUNMa2Zp?=
- =?utf-8?B?aitWUVdXaWZFTlYrc1h3OEJlSENBSkplSnRzeWl3dzlxN0tWR3ZPUFBYUHdn?=
- =?utf-8?B?T0laWGxYb2Nsb0oyV3YrY3FabTd6SEN4eW5kK3I0UHpOTlFWNitzMUlXV3Er?=
- =?utf-8?B?M0EraG1VaHowSnBuY3lFWlpFZFBlbHYzNkRBeVZUaWJHdGorQ1NiQThGZnNC?=
- =?utf-8?B?THhCcFg1Ukc4bjhpS1dBd2c0NXczcTBPQUdtV29HVnh2SHdZYzQ5aVc2L255?=
- =?utf-8?B?dE91VVEvdVdCaXdIdjZ2YjNKbGE4ZCtBNWZZU0xFWFpCMHRjcTFPRkZrUXpp?=
- =?utf-8?B?ZVNoQzhuaS9GajQ3VGlyWTJLOGJxTEc1Q1VLWE4rTXNha2ZQV3lCN2xZWDh4?=
- =?utf-8?B?RHJVcTZ3NXdLbjhtb0c4NlU0NERORUljZkdVOHVrTXFJRUFqdmsycWJnSzM5?=
- =?utf-8?B?T2FwVDdjMnU4NDhqeThKeDBVZEJkdmVvNW9hOW9JMjNoS3phVExUQVExOGM2?=
- =?utf-8?B?NEk4eCtlQmd0WS9oakJ5RndWRmdYU2tIR1c4TEdvN1dZaTJDUEU0d1llVnZw?=
- =?utf-8?B?VGovMG0yN08zMysvNlpNajVvZERWQU02TDdZSU5PWEJDY1BrMDUyeERnZVY2?=
- =?utf-8?B?Q3JTSEFKTmxYS2xFQm0yMmcvOGNLUkdORnI5TDhubUpwZEtjV0V6UGpPc1dN?=
- =?utf-8?B?N210NDJCVDJCUGdZaVhrWHZybmptVFQ5MCsvR0c0aXY0dHRlaWhFSHkwdWx3?=
- =?utf-8?B?bnVMTFA2QmUzUkMvU2tnc3BTSGZYVGJsbCtmNjdKM1RQTk1xaVNXVVhHMG1P?=
- =?utf-8?B?QnJzMUVzd3pvaktKbkdvdG1LNjJyUVhZeXkyejhhbGdkYytmdS80ZmFwZGl4?=
- =?utf-8?B?VlNHMmthWElwVVl2TVFyRlBHNnNJMHlXeWtIMVlLSEtneXo5ajg0YzVYS3Fm?=
- =?utf-8?B?d0R1SG1yN3BNVytHWjlVZ3R6OE1DbTdYMnJQZG13YkRnSXloakVneDljNEU0?=
- =?utf-8?Q?utGSaEZwcoTQ6GL2LPpfzjojM?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8322d540-a96c-4fe8-ba86-08ddebccbbaf
-X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 16:04:31.2967
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4+Akx8tuqlOKZueVgpaqZO1SkXwQh2CZlSXChOXuoNTu9wVu5hOx9n3Su1JWEFX3spc4Nq5utXPfdM+9cpxUVw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5017
-X-OriginatorOrg: intel.com
+References: <20250902-rk3576-lockup-regression-v1-1-c4a0c9daeb00@collabora.com>
+ <117136352.nniJfEyVGO@diego> <878503621.0ifERbkFSE@diego>
+In-Reply-To: <878503621.0ifERbkFSE@diego>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 4 Sep 2025 18:07:23 +0200
+X-Gm-Features: Ac12FXygP8QcUyXMTTe5VNxf5L6rnNsUUgEJRbWZ5YyIweFbnGJhrePkXqyAfZM
+Message-ID: <CAPDyKFpZOgrOtAcpopkk0s+OYr6f+_yFz1v1E+4NHgUsnDhLtg@mail.gmail.com>
+Subject: Re: [PATCH] pmdomian: core: don't unset stay_on during sync_state
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel@collabora.com, linux-rockchip@lists.infradead.org, 
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Rafael J. Wysocki wrote:
-> On Tue, Sep 2, 2025 at 1:46 PM Colin Ian King <colin.i.king@gmail.com> wrote:
+On Thu, 4 Sept 2025 at 17:55, Heiko St=C3=BCbner <heiko@sntech.de> wrote:
+>
+> Am Donnerstag, 4. September 2025, 17:49:16 Mitteleurop=C3=A4ische Sommerz=
+eit schrieb Heiko St=C3=BCbner:
+> > Hi,
 > >
-> > There appears to be a cut-n-paste error with the incorrect field
-> > ndr_desc->numa_node being reported for the target node. Fix this by
-> > using ndr_desc->target_node instead.
+> > Am Dienstag, 2. September 2025, 20:23:04 Mitteleurop=C3=A4ische Sommerz=
+eit schrieb Nicolas Frattaroli:
+> > > This reverts commit de141a9aa52d6b2fbeb63f98975c2c72276f0878.
+> > >
+> > > On RK3576, the UFS controller's power domain has a quirk that require=
+s
+> > > it to stay enabled, infrastricture for which was added in Commit
+> > > cd3fa304ba5c ("pmdomain: core: Introduce dev_pm_genpd_rpm_always_on()=
+").
+> > >
+> > > Unfortunately, Commit de141a9aa52d ("pmdomain: core: Leave powered-on
+> > > genpds on until sync_state") appears to break this quirk wholesale. T=
+he
+> > > result is that RK3576 devices with the UFS controller enabled but unu=
+sed
+> > > will freeze once pmdomain shuts off unused domains.
+> > >
+> > > Revert it until a better fix can be found.
+> > >
+> > > Fixes: de141a9aa52d ("pmdomain: core: Leave powered-on genpds on unti=
+l sync_state")
+> > > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 > >
-> > Fixes: f060db99374e ("ACPI: NFIT: Use fallback node id when numa info in NFIT table is incorrect")
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > ---
-> >  drivers/acpi/nfit/core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-> > index ae035b93da08..3eb56b77cb6d 100644
-> > --- a/drivers/acpi/nfit/core.c
-> > +++ b/drivers/acpi/nfit/core.c
-> > @@ -2637,7 +2637,7 @@ static int acpi_nfit_register_region(struct acpi_nfit_desc *acpi_desc,
-> >         if (ndr_desc->target_node == NUMA_NO_NODE) {
-> >                 ndr_desc->target_node = phys_to_target_node(spa->address);
-> >                 dev_info(acpi_desc->dev, "changing target node from %d to %d for nfit region [%pa-%pa]",
-> > -                       NUMA_NO_NODE, ndr_desc->numa_node, &res.start, &res.end);
-> > +                       NUMA_NO_NODE, ndr_desc->target_node, &res.start, &res.end);
-> >         }
-> >
-> >         /*
-> > --
-> 
-> Dan, Dave, are you guys going to take this one, or should I take care of it?
+> > just an observation independent of the conversation in the other thread=
+.
+> > This patch/revert whatever fixes an actual issue for me.
+>
+> ah and just saw Nicolas' mail from 6 minutes earlier.
+>
+> So I guess what saves me here is the rocket driver being built as a
+> module, power-domain getting turned off early, rocket probes with
+> pd off and then gets its supplies as expected.
 
-Apologies, I should have said I'm taking this one.  It is queued up.
+Okay, so to follow up on your analysis.
 
-Thanks for the ping,
-Ira
+I am thinking that the PM domain "looks like" it's properly powered-on
+during boot/init, while in-fact it may not.
+
+In other words, calling pm_genpd_init() and stating that the genpd is
+powered-on seems to be the problem here. Could a proper power-off be
+done before calling pm_genpd_init() and then leaving it off until
+later?
+
+Kind regards
+Uffe
+
+>
+>
+> Heiko
+>
+>
+> >
+> > On the rk3588 the NPU power-domains are a hirarchy of
+> >
+> > PD_NPU
+> >       PD_NPUTOP (core0)
+> >               PD_NPU1 (core1)
+> >               PD_NPU2 (core2)
+> >
+> > and the PD_NPU does need a supply regulator.
+> >
+> > (1) With "just" v6.17-rc + the rocket driver probing and then idling, I=
+ get:
+> >
+> > # cat /sys/kernel/debug/regulator/regulator_summary
+> >  regulator                      use open bypass  opmode voltage current=
+     min     max
+> > -----------------------------------------------------------------------=
+----------------
+> >  dc_12v                           4    3      0 unknown 12000mV     0mA=
+ 12000mV 12000mV
+> > [...]
+> >     vcc5v0_baseboard              2    1      0 unknown  5000mV     0mA=
+  5000mV  5000mV
+> >        vcc5v0_sys                18   18      0 unknown  5000mV     0mA=
+  5000mV  5000mV
+> > [...]
+> >           vdd_npu_s0              0    0      0  normal   800mV     0mA=
+   550mV   950mV
+> >           vcc_1v2_s3              2    1      0 unknown  1200mV     0mA=
+  1200mV  1200mV
+> >              fe1b0000.ethernet-phy   1                                 =
+0mA     0mV     0mV
+> >           vdd_gpu_s0              1    2      0  normal   675mV     0mA=
+   550mV   950mV
+> >              fb000000.gpu-mali    1                                 0mA=
+   675mV   850mV
+> >              fd8d8000.power-management:power-controller-domain   0     =
+                            0mA     0mV     0mV
+> > [...]
+> >
+> > #  cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+> > domain                          status          children        perform=
+ance
+> >     /device                         runtime status                  man=
+aged by
+> > -----------------------------------------------------------------------=
+-------
+> > [...]
+> > gpu                             off-0                           0
+> >     fb000000.gpu                    suspended                   0      =
+     SW
+> > npu2                            off-0                           0
+> >     fdada000.iommu                  suspended                   0      =
+     SW
+> >     fdad0000.npu                    suspended                   0      =
+     SW
+> > npu1                            off-0                           0
+> >     fdaca000.iommu                  suspended                   0      =
+     SW
+> >     fdac0000.npu                    suspended                   0      =
+     SW
+> > nputop                          off-0                           0
+> >                                                 npu1, npu2
+> >     fdab9000.iommu                  suspended                   0      =
+     SW
+> >     fdab0000.npu                    suspended                   0      =
+     SW
+> > npu                             on                              0
+> >                                                 nputop
+> >
+> > Observe that the PD_NPU never got its regulator and the domain also
+> > never actually gets turned off. While the domains directly attached to
+> > the cores get turned off.
+> >
+> >
+> > (2) with Nicolas's patch applied on top, I get the correct behaviour,
+> > that was also happening with v6.16 before
+> >
+> > # cat /sys/kernel/debug/regulator/regulator_summary
+> >  regulator                      use open bypass  opmode voltage current=
+     min     max
+> > -----------------------------------------------------------------------=
+----------------
+> >  dc_12v                           4    3      0 unknown 12000mV     0mA=
+ 12000mV 12000mV
+> > [...]
+> >     vcc5v0_baseboard              2    1      0 unknown  5000mV     0mA=
+  5000mV  5000mV
+> >        vcc5v0_sys                18   18      0 unknown  5000mV     0mA=
+  5000mV  5000mV
+> > [...]
+> >           vdd_npu_s0              0    1      0  normal   800mV     0mA=
+   550mV   950mV
+> >              fd8d8000.power-management:power-controller-domain   0     =
+                            0mA     0mV     0mV
+> >           vdd_cpu_big1_s0         2    1      0  normal  1000mV     0mA=
+   550mV  1050mV
+> >              cpu6-cpu             1                                 0mA=
+  1000mV  1000mV
+> >           vdd_gpu_s0              1    2      0  normal   675mV     0mA=
+   550mV   950mV
+> >              fb000000.gpu-mali    1                                 0mA=
+   675mV   850mV
+> >              fd8d8000.power-management:power-controller-domain   0     =
+                            0mA     0mV     0mV
+> > [...]
+> >
+> > # cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+> > domain                          status          children        perform=
+ance
+> >     /device                         runtime status                  man=
+aged by
+> > -----------------------------------------------------------------------=
+-------
+> > [...]
+> > gpu                             off-0                           0
+> >     fb000000.gpu                    suspended                   0      =
+     SW
+> > npu2                            off-0                           0
+> >     fdada000.iommu                  suspended                   0      =
+     SW
+> >     fdad0000.npu                    suspended                   0      =
+     SW
+> > npu1                            off-0                           0
+> >     fdaca000.iommu                  suspended                   0      =
+     SW
+> >     fdac0000.npu                    suspended                   0      =
+     SW
+> > nputop                          off-0                           0
+> >                                                 npu1, npu2
+> >     fdab9000.iommu                  suspended                   0      =
+     SW
+> >     fdab0000.npu                    suspended                   0      =
+     SW
+> > npu                             off-0                           0
+> >                                                 nputop
+> >
+> > The regulator handling is working correctly and also the parent PD_NPU
+> > domain gets turned off when its children are off.
+> >
+> >
+> > Heiko
+> >
+>
+>
+>
+>
 
