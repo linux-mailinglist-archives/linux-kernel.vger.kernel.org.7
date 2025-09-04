@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-801784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56BE8B449CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:39:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FCBAB449D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EE7EA406A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:39:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0047F7AB4A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AC02EBDDE;
-	Thu,  4 Sep 2025 22:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC2F2EF670;
+	Thu,  4 Sep 2025 22:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LNCqNpGR"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3+mP/jxQ"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBFB2ECD11
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12BE2ED87C
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757025560; cv=none; b=IOkrvYym1lTL3YF9e4vPbm+mlGIvFQbln/X8NiQYIkp/Ohu3WriQBzH4vYo0CwT3hVMTuUZJtey5ZSk5zRkcH8DagMLseTCv41VLO+s5CSPi/cNdxLcT5ROFxJxLKHElTGs0jTh0Fhaj2F6qz0wDp9M+Biy+RjduqkU7H5U6ujU=
+	t=1757025563; cv=none; b=Bk6MvnCmQIEy4TwE/wZxZacbHYyvR4L7MFCnMWpavnpE9m+chOU+Bn3+F9r5wSC+xt+kXQfeZMBorgZdTReX0WnV4snEJ7rs5fL22oZQasrLy6+ZD7FJvfn5SgayXLqP0dJbvrT7e6sydeOsAEQAkDLMMEpWfQ+O0gvvWZSQYNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757025560; c=relaxed/simple;
-	bh=xnlkf0BdWeK6D1DOdzra4zgNbxjdYbPxVOi1fszhAWM=;
+	s=arc-20240116; t=1757025563; c=relaxed/simple;
+	bh=NovLOGBdyArFTxtU+57EVnKh/sjgYEL5oQ0KRAhMNk8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=n2R34RAj9v8anH3MLHVZmx/Q9di85DCTu7+onqQXHO9bZbHXED6v7MGTOsmZFR9EcThlttozIWmA9m/5hwEAAUw+lnbSVyx7+SF06c/Fx7nA+0Fd6PEUqlJLvRFQq3bNCUAhjKnC32VLFTelU0ESO0Mp/cr3CqjjxGruBzIW19o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dylanbhatch.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LNCqNpGR; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=ohDvH8lakgLc4vZduj7Jnx6ttxMZJZ8YnNQllo7w0kSqgfoZdTsQ0E6lvHx74HRBXv3hIesrB7W3pYhzKb9AlcUtbEy75YfdiqMgrbek21rvJiH699x8w2gEhQLYva+AG3J5ZGvGLi8e3D/7VoA0v2e9k2oVl+lqa6FlUi8XQ/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dylanbhatch.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3+mP/jxQ; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dylanbhatch.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3278bb34a68so1288729a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 15:39:18 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32bbe7c5b87so285172a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 15:39:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757025558; x=1757630358; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1757025561; x=1757630361; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EwoyDNtF8aplk2UKsRnTrhjyV0ajLd9EcSIYMNuhcao=;
-        b=LNCqNpGRwGf1vbqhjoJkFtCERBxk7xFzYWKOlaegL/Sde4SngB3unOFLsdSq8V2pCs
-         KQLFD8/pSKDP4hyo3otwvTK45vN2cWEvqDJAxx00JW9fcAga2vpR8XUGYn3Nyt6FBKyi
-         FVORTIzYR9oGz5MzKDubORIRugTrQO2eEvkftZcRuftjT2uqOYBaKwyzFy6nWPntnnkz
-         4RNJrbYfOJiEX8x1B3hJJLoK/Rtel2ZF1acWgdmib92UW2J3LAsCJI0hZOHB9MLFxyo5
-         +6tWuQ0SgO80aE1hSxZRakoP6z4KOPBrfsZiURVcAWfTMua7RmP7pecGJLl/ripwtHD5
-         Z34Q==
+        bh=2m08r/ZQjtbTIB1gTP1Sld7JP5u72ORtVv9DJEb0tSQ=;
+        b=3+mP/jxQ0ziCoP9Ai1chQHA6UMMd5teHT6Uqo12P1qQPcKbx2JHSORrMDmISmM3D27
+         7I7ar/02FXtPV7gLQyH6ADtcxco6Rgqocku51fmsRr0H+FLYVUl+KZdU2DkCL4zJc7KS
+         MBhW9NAPi7leJl5fTywmfDSRqA/2EzcLUIyKQX/jxbVMjeAUNh05F3dcilyXm56hwjZv
+         /5r1ewuEe95hrHBG6Fa5WaFKzBAVyrV7C69wFVmtPXvBDq+UJI2M7FBKKCXDngqueWMk
+         2manxpxiOtbqkdy3Hb+enQvA3oVp29cnEfONL1Ni26m88HzlOvF4HDHtq4cTqByYRNTg
+         8WAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757025558; x=1757630358;
+        d=1e100.net; s=20230601; t=1757025561; x=1757630361;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EwoyDNtF8aplk2UKsRnTrhjyV0ajLd9EcSIYMNuhcao=;
-        b=jBA8ksGfLsZnWWhaJu1wlKTqd0f4JCD1QPrq2iycUArb3+aNl5g2/fb+xwV+QQF7Bz
-         k8k4Klwg0W1sJVxZDpPbsnzltTPj0F+UQIURb2K8wCCfE+oLzMywiVH1HDvuZ9xL1tfz
-         7bqQvAV16R3FqJPfc5D51cq60/kNHMkxSYUCeVq+fx4wVi/yvPTn6YQJRJgxdE72biyw
-         UcPHUhmLRzaWMC77qT0REA/KqdDg+CgL8NmAw1RzKzCHzhhBxwoFfdN1LwSc/fpQ8J1X
-         i9fykd+SD3blyCmZfr1Wl3Odcw9jnlGuWehQ8+LOYK1nDx44mr14XmaTg/uLcLWTWNE0
-         ZTNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3uawjzH9TFHO1w4LSYpTnOeUwP4g08xdqia8nmIroEaBKX9XKNoAXpnZDWhiwFMvx07+Lb1rqIgCQHlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn7pCpFPSTGXiodbW/kyu1UFCNHnxw/12rXCTkB5sgQ5JVA6Gk
-	TEgGGgglMILfTaQB1soels7Uf4Cvg4CJLc1PABHMGA4APq0k9tJOFPxF/jmkXKhsUHk24DOkpRo
-	BUi3rr4dOOBE0C48YRN/NzSPZjw==
-X-Google-Smtp-Source: AGHT+IG7LIyWvYU3YC2gAf7gR5JcEes7dNZngeNd+zYZ0BktekgBZQfRfAdsbGLuA2OZMC4Xg5mySNnpvS3fkIoA9Q==
-X-Received: from pjyd12.prod.google.com ([2002:a17:90a:dfcc:b0:31f:b2f:aeed])
+        bh=2m08r/ZQjtbTIB1gTP1Sld7JP5u72ORtVv9DJEb0tSQ=;
+        b=LoHd9arN2TzId5l3uvfhnHwduP9J50c8CTCHUEXPlJtM/TrTMsK5aLrpMoQkSsVNxk
+         vsgdkhcByeGc4QKn0QBF8PPRgoUHp4VbuFrfPUSgwafqhi0N5VRFySmxOw6hK1NdCyVf
+         +vvyqW2SeixUPvZGEwHnrsicejOJG7uebg5qPYPcmXcUUoAtRk1MOd7f5CJK/j0AbAG1
+         UhvFtnJDhLUXjLwPyGuJNQiAeTKCdkf2SdyGe5p8bf8GW7Q2kiNqUfRKK/XqoKPcpggm
+         uaHvgRrRR4VXKf6wOaQ9XKigfyV/HmNXBPPomkh5KIEf0zLC5qRUmfhHBb0oQsz70ZzO
+         sLPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeCyadu8jDnvfz1DYHJSMEv7T3bZVgY44/lA0F9oFJ0+xm1Ar7siTYn4BEtFPAm4tqplcCxCfPD3h+uY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMXqBr/LSbudItSRhmFcfVurwKGlYBKzg1xeWUvBi/TxhEExCf
+	Hpfz9KbTsBaYfaYP6nGTRWf3ouyjHImDk4LsgwnQto8f9wllHoBLkWTarJBcKhI9fVArw8iM7Er
+	dDbsoKJ31zSsv0R6BfiyEUL0Ptw==
+X-Google-Smtp-Source: AGHT+IEydTUhEuAQ3A1H8zKyclA89jCNB3VUkBozS1oBCNaZG2tV6zRAiEaoyka9mctrU/XAtHk0Qslbb13/nP1pWg==
+X-Received: from pjbsx14.prod.google.com ([2002:a17:90b:2cce:b0:32b:682f:e6ca])
  (user=dylanbhatch job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:2802:b0:32b:9506:1773 with SMTP id 98e67ed59e1d1-32b950618b8mr5636335a91.33.1757025558182;
- Thu, 04 Sep 2025 15:39:18 -0700 (PDT)
-Date: Thu,  4 Sep 2025 22:38:46 +0000
+ 2002:a17:90b:1d03:b0:320:fda8:fabe with SMTP id 98e67ed59e1d1-328156ba3b0mr23030730a91.22.1757025561033;
+ Thu, 04 Sep 2025 15:39:21 -0700 (PDT)
+Date: Thu,  4 Sep 2025 22:38:47 +0000
 In-Reply-To: <20250904223850.884188-1-dylanbhatch@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250904223850.884188-1-dylanbhatch@google.com>
 X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
-Message-ID: <20250904223850.884188-3-dylanbhatch@google.com>
-Subject: [PATCH v2 2/6] arm64: entry: add unwind info for various kernel entries
+Message-ID: <20250904223850.884188-4-dylanbhatch@google.com>
+Subject: [PATCH v2 3/6] unwind: add sframe v2 header
 From: Dylan Hatch <dylanbhatch@google.com>
 To: Josh Poimboeuf <jpoimboe@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
 	Indu Bhagat <indu.bhagat@oracle.com>, Peter Zijlstra <peterz@infradead.org>, 
@@ -84,62 +84,108 @@ Cc: Dylan Hatch <dylanbhatch@google.com>, Roman Gushchin <roman.gushchin@linux.d
 	Weinan Liu <wnliu@google.com>, Mark Rutland <mark.rutland@arm.com>, Ian Rogers <irogers@google.com>, 
 	linux-toolchains@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	live-patching@vger.kernel.org, joe.lawrence@redhat.com, 
-	Puranjay Mohan <puranjay@kernel.org>, Song Liu <song@kernel.org>
+	Puranjay Mohan <puranjay@kernel.org>, Song Liu <song@kernel.org>, 
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
 
-From: Weinan Liu <wnliu@google.com>
+Add sframe header so that we know how to access the sframe section
+generated by compilers.
 
-DWARF CFI (Call Frame Information) specifies how to recover the return
-address and callee-saved registers at each PC in a given function.
-Compilers are able to generate the CFI annotations when they compile
-the code to assembly language. For handcrafted assembly, we need to
-annotate them by hand.
+This is the sframe header file borrowed from the patchset [1]
+Josh Poimboeuf according to sframe v2 spec [2].
 
-Annotate CFI unwind info for assembly for interrupt and exception
-handlers.
+[1]: https://lore.kernel.org/all/f27e8463783febfa0dabb0432a3dd6be8ad98412.1737511963.git.jpoimboe@kernel.org/
+[2]: https://sourceware.org/binutils/docs/sframe-spec.html
 
 Signed-off-by: Weinan Liu <wnliu@google.com>
 Signed-off-by: Dylan Hatch <dylanbhatch@google.com>
+Reviewed-by: Prasanna Kumar T S M <ptsm@linux.microsoft.com>
 ---
- arch/arm64/kernel/entry.S | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ kernel/sframe.h | 75 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
+ create mode 100644 kernel/sframe.h
 
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index f8018b5c1f9a..3148ede8c2c6 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -575,7 +575,12 @@ SYM_CODE_START_LOCAL(el\el\ht\()_\regsize\()_\label)
- 	.if \el == 0
- 	b	ret_to_user
- 	.else
-+	.cfi_startproc
-+	.cfi_def_cfa_offset PT_REGS_SIZE
-+	.cfi_offset 29, S_FP - PT_REGS_SIZE
-+	.cfi_offset 30, S_LR - PT_REGS_SIZE
- 	b	ret_to_kernel
-+	.cfi_endproc
- 	.endif
- SYM_CODE_END(el\el\ht\()_\regsize\()_\label)
- 	.endm
-@@ -889,6 +894,10 @@ SYM_FUNC_START(call_on_irq_stack)
- 	add	sp, x16, #IRQ_STACK_SIZE
- 	restore_irq x9
- 	blr	x1
-+	.cfi_startproc
-+	.cfi_def_cfa 29, 16
-+	.cfi_offset 29, -16
-+	.cfi_offset 30, -8
- 
- 	save_and_disable_daif x9
- 	/*
-@@ -900,6 +909,7 @@ SYM_FUNC_START(call_on_irq_stack)
- 	scs_load_current
- 	restore_irq x9
- 	ret
-+	.cfi_endproc
- SYM_FUNC_END(call_on_irq_stack)
- NOKPROBE(call_on_irq_stack)
- 
+diff --git a/kernel/sframe.h b/kernel/sframe.h
+new file mode 100644
+index 000000000000..e9045f980fee
+--- /dev/null
++++ b/kernel/sframe.h
+@@ -0,0 +1,75 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * From https://www.sourceware.org/binutils/docs/sframe-spec.html
++ */
++#ifndef _SFRAME_H
++#define _SFRAME_H
++
++#include <linux/types.h>
++
++#define SFRAME_VERSION_1			1
++#define SFRAME_VERSION_2			2
++#define SFRAME_MAGIC				0xdee2
++
++#define SFRAME_F_FDE_SORTED			0x1
++#define SFRAME_F_FRAME_POINTER			0x2
++
++#define SFRAME_ABI_AARCH64_ENDIAN_BIG		1
++#define SFRAME_ABI_AARCH64_ENDIAN_LITTLE	2
++#define SFRAME_ABI_AMD64_ENDIAN_LITTLE		3
++
++#define SFRAME_FRE_TYPE_ADDR1			0
++#define SFRAME_FRE_TYPE_ADDR2			1
++#define SFRAME_FRE_TYPE_ADDR4			2
++
++#define SFRAME_FDE_TYPE_PCINC			0
++#define SFRAME_FDE_TYPE_PCMASK			1
++
++struct sframe_preamble {
++	u16	magic;
++	u8	version;
++	u8	flags;
++} __packed;
++
++struct sframe_header {
++	struct sframe_preamble preamble;
++	u8	abi_arch;
++	s8	cfa_fixed_fp_offset;
++	s8	cfa_fixed_ra_offset;
++	u8	auxhdr_len;
++	u32	num_fdes;
++	u32	num_fres;
++	u32	fre_len;
++	u32	fdes_off;
++	u32	fres_off;
++} __packed;
++
++#define SFRAME_HEADER_SIZE(header) \
++	((sizeof(struct sframe_header) + (header).auxhdr_len))
++
++#define SFRAME_AARCH64_PAUTH_KEY_A		0
++#define SFRAME_AARCH64_PAUTH_KEY_B		1
++
++struct sframe_fde {
++	s32	start_addr;
++	u32	func_size;
++	u32	fres_off;
++	u32	fres_num;
++	u8	info;
++	u8	rep_size;
++	u16 padding;
++} __packed;
++
++#define SFRAME_FUNC_FRE_TYPE(data)		(data & 0xf)
++#define SFRAME_FUNC_FDE_TYPE(data)		((data >> 4) & 0x1)
++#define SFRAME_FUNC_PAUTH_KEY(data)		((data >> 5) & 0x1)
++
++#define SFRAME_BASE_REG_FP			0
++#define SFRAME_BASE_REG_SP			1
++
++#define SFRAME_FRE_CFA_BASE_REG_ID(data)	(data & 0x1)
++#define SFRAME_FRE_OFFSET_COUNT(data)		((data >> 1) & 0xf)
++#define SFRAME_FRE_OFFSET_SIZE(data)		((data >> 5) & 0x3)
++#define SFRAME_FRE_MANGLED_RA_P(data)		((data >> 7) & 0x1)
++
++#endif /* _SFRAME_H */
 -- 
 2.51.0.355.g5224444f11-goog
 
