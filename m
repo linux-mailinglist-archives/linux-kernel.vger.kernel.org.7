@@ -1,151 +1,170 @@
-Return-Path: <linux-kernel+bounces-800383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39876B43712
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:27:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95FB5B43714
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC0FD1C27F0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:27:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7F5173EF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969852F3C39;
-	Thu,  4 Sep 2025 09:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97D32F5305;
+	Thu,  4 Sep 2025 09:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ccGcI1Y/"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b1mky/tm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAA722836C
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3480277CB4;
+	Thu,  4 Sep 2025 09:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756978040; cv=none; b=KyiPoJJUoAqY8XCchOKU1Au4/78iV93HOCtCSmhCReUIhxHWQoBy/NbbgTtogOlVxmzQRpobKnr3tTd07p5T+0xzlVrKZZSQV6F1hHKKi+fh2PSWotTvz1sqzps2xmUl8Kd+y80OrZzVOzziyK6QJqRwE8ETbluxklo1VNJj4kY=
+	t=1756978073; cv=none; b=PL63Fqy4MNkV3R0iwBCN7NF4EPaNQV/mS2/K/ZVlOAWaplVyKBYoAEAo/Dvlbj9gJ4E2dLyoK2so8naN5s9s2N+/iCs2gt6ha31PQ5KhkGFTcjdql5Rm7FbE/yc3LMnQCYbT7HSi3XTESARoV7Yep0x/rprUF+8HmvNDitgXJnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756978040; c=relaxed/simple;
-	bh=m5V5yAwlWcGivcep1LpLjkL/uYuPtGhniYz5NzNVLMM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=huFS60xEI2KNSioqyPkKNR6taXE8F+lX+uZZG9AWu3KwLVK2/UEzPAAgDJ039J3sYSc/soK9MAbCrul0qg6wCBMqs3ecfSoD6FCsbHsRkKikkPtBzFeYeEzygINvBT9Y3RILYgqSNupk8AcqsYAngVO/4MxcqMk84Jk7dwuSVMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ccGcI1Y/; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e96e1c82b01so833653276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 02:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756978037; x=1757582837; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zbvmmOuLIUDxZp1MnPrPCU4uMrAUR6dmAfh6E5KAke8=;
-        b=ccGcI1Y/Un3550mew1hvH8pPUzIoh4BPibwfJKYGfNrkx6jxatssq6oLXMKJy4efLJ
-         wDmHjW/C4Wnfh0H0IDNXNI1w0Q5Gxcw06i7xfJJF+PYKUGANc3HoZX/Z9KRvhdqe0D8x
-         gFO0VJo1+IWr+w5bfg8MY2z9wX+QIYHgNgq8NmYj6VNK+3bc+EDQBPU4+qu29nwY+d6O
-         pcgL9RFaucesRuHVHOgrNUnjqflECm4apjVX2aT3y/s28w2Jz50f3B9yODgMXDyp/drj
-         tdEbe8mFAGYS+vK25Xm0myGc75dmmuJmAnBBZCBUhcGPnTi4AyPPWRkYhYnjFXslSwQN
-         p62w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756978037; x=1757582837;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zbvmmOuLIUDxZp1MnPrPCU4uMrAUR6dmAfh6E5KAke8=;
-        b=tjYtmCcxndwF3zZOF6znPKa6GVV2iM+Hv1fWyUKo3/TNyUvjuolfNnZkYIOxb65sCS
-         uwiqEs/iuFm34mpwlbu19o14v0QgiCJ1tNqn0v7sExxdUnrHBqpYO9g4zzaj7fqhaCvL
-         j4yMX00bA3SMfKc+1JbIVRqULVKoOl45PfB6OO/6XnYzA5FEt5TPvUCPHRgnJXBBoAAp
-         xouHPJHWyPEi2pbySdx7+8LbRdYzlxgjyr4cNtNWUfzFylar0V+nH+5LzKig6YVPs/zT
-         XODni0LAPOGlEQV7W3VIMu+cd2l+9xUZAGY9VeqGjkjneyZ2v4v0jzeNvNHpeBv3iwcl
-         ZBiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaqWPm/o06WKJQBphVXkzQ1O7JTj5zFp7hYcouk1poplhJwNeJZxkiQG1crCcF/TdJVebEsK2ceEOZY/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylorAubcu//EEXzQOKXo7vgAIYBOaGPXLBEsu3Aq+wd+GzvV5p
-	uaMjDzKQZTeLQS6qO1F8+ZPqf6FAY2Npcco/Up/7/PP6nn5oypzIvW2OABvtifVb1DMJzurJLTm
-	do/FePXh1N0vlxLatlqudA5B7UwqHXO0sfPZm5wfOVuW+fMfLVtDd
-X-Gm-Gg: ASbGncswVgjGTq5TaXJPp2KABef8dKx8IBEN5O/j/MB79/1NcNGEupdf1J/sfBtgxB9
-	ryhek3BZ80wKuqg+ZJscC0QpUzyPY9nUMSQG67Bt5UkX2Yc56LMEvuvvoF9/Bg1s5agoOmit+Le
-	mN7kbkVzPlbps+JI91ouRmSHuO5sHTAyYm10fSmha+AOGLRrLDcCOKWWJ189+DcPaLRrQosCmC+
-	0SoWY3UiB50J5t/nCY=
-X-Google-Smtp-Source: AGHT+IHdZ4C9gIy76k2TL/mh0J4/RFSZEnngxhmBLw1tI+NSOUEGkIf8VYX6cpMLBIYdOMj5QaxWJXdV3lal6fJnTwg=
-X-Received: by 2002:a05:690e:4308:b0:5fe:1b7d:8cb7 with SMTP id
- 956f58d0204a3-601755b4dfcmr1559312d50.5.1756978037354; Thu, 04 Sep 2025
- 02:27:17 -0700 (PDT)
+	s=arc-20240116; t=1756978073; c=relaxed/simple;
+	bh=3vmcO3IDLVqiIgvWlLZTNLw6ISoWbnTQAzKUb0u3ILk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AY9FvpfbepdE5HdTy1405J+uvBoZjyObSrxBLmm8DYw9MWKW+7jhu+2VWahRmng+IYPppJ9e0z0O6XTwaK7fIxQc0LK6LpXyHnEEVjM+Gqe+0hpBkwZloja1OJZ86vjlHwnODDTUblOpL5LM2snIIwZ5uQ9ckRlKMbHdV8/+mn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b1mky/tm; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756978072; x=1788514072;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=3vmcO3IDLVqiIgvWlLZTNLw6ISoWbnTQAzKUb0u3ILk=;
+  b=b1mky/tmPhOHLK1kWPV1MQR5+zFwuFfLc+Lw0Zff42ob3FM4ODKxiXf/
+   uWH7QqcOEz4mkoazlmS20LnTSayphcYsAqPpi/GWTao/LM7Wp+7I7nDwT
+   1cW/YxknPRmONch1x+WJHH8J7rNkMxG8aMazfJT7dLwDoyS5Ue7eD7x+X
+   IDKA2DFcOql5E1ywLtjPjejWS2ijJlhZrs/R2msb6yT2Kbt1dCeY4VJVt
+   TErvcfWDTliSx/DcR8UrEIk5EBQ7rbxTrp+mGNn9OYL0Wmle49oTJ4XFu
+   bYblwhUf/U1O9ednK8Bpk3t/5sdWH6qpnet7Jc8Rm99fcV+WlXPmj4ZMa
+   Q==;
+X-CSE-ConnectionGUID: RHe/RclLR8Ku7DfT59fbqw==
+X-CSE-MsgGUID: Rjgn2z/KQm+K2YGtJ2gMJw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="62951487"
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="62951487"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 02:27:51 -0700
+X-CSE-ConnectionGUID: wlcGnxx/Su2kFT5/P2TcRg==
+X-CSE-MsgGUID: RjDfgkfRS/unBfaFd0oW5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="195501501"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 02:27:46 -0700
+Message-ID: <9247e150-800c-4e95-a5e9-e0032dc7d3ed@linux.intel.com>
+Date: Thu, 4 Sep 2025 17:27:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3381776.aeNJFYEL58@rafael.j.wysocki>
-In-Reply-To: <3381776.aeNJFYEL58@rafael.j.wysocki>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 4 Sep 2025 11:26:41 +0200
-X-Gm-Features: Ac12FXy9xOgdN1mtLPkFLfyCSrw6qK2l4IQFU4QEEm513md6_ixyqso-UEzQQi4
-Message-ID: <CAPDyKFqk343jLYL=x=+7VcUAG_n9xVs8ZhB8x1mytYmm8C8h3g@mail.gmail.com>
-Subject: Re: [PATCH v1] PM: sleep: core: Clear power.must_resume in noirq
- suspend error path
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 03/21] KVM: selftests: Expose function to allocate
+ guest vCPU stack
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+References: <20250904065453.639610-1-sagis@google.com>
+ <20250904065453.639610-4-sagis@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250904065453.639610-4-sagis@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2 Sept 2025 at 15:55, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> If system suspend is aborted in the "noirq" phase (for instance, due to
-> an error returned by one of the device callbacks), power.is_noirq_suspended
-> will not be set for some devices and device_resume_noirq() will return
-> early for them.  Consequently, noirq resume callbacks will not run for
-> them at all because the noirq suspend callbacks have not run for them
-> yet.
->
-> If any of them has power.must_resume set and late suspend has been
-> skipped for it (due to power.smart_suspend), early resume should be
-> skipped for it either, or its state may become inconsistent (for
-> instance, if the early resume assumes that it will always follow
-> noirq resume).
->
-> Make that happen by clearing power.must_resume in device_resume_noirq()
-> for devices with power.is_noirq_suspended clear that have been left in
-> suspend by device_suspend_late(), which will subsequently cause
-> device_resume_early() to leave the device in suspend and avoid
-> changing its state.
->
-> Fixes: 0d4b54c6fee8 ("PM / core: Add LEAVE_SUSPENDED driver flag")
-> Link: https://lore.kernel.org/linux-pm/5d692b81-6f58-4e86-9cb0-ede69a09d799@rowland.harvard.edu/
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Kind regards
-Uffe
+On 9/4/2025 2:54 PM, Sagi Shahar wrote:
+> TDX guests' registers cannot be initialized directly using
+> vcpu_regs_set(), hence the stack pointer needs to be initialized by
+> the guest itself, running boot code beginning at the reset vector.
+>
+> Expose the function to allocate the guest stack so that TDX
+> initialization code can allocate it itself and skip the allocation in
+> vm_arch_vcpu_add() in that case.
+>
+> Signed-off-by: Sagi Shahar <sagis@google.com>
+
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
 > ---
->  drivers/base/power/main.c |   14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
+>   .../selftests/kvm/include/x86/processor.h        |  2 ++
+>   tools/testing/selftests/kvm/lib/x86/processor.c  | 16 +++++++++++-----
+>   2 files changed, 13 insertions(+), 5 deletions(-)
 >
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -720,8 +720,20 @@
->         if (dev->power.syscore || dev->power.direct_complete)
->                 goto Out;
->
-> -       if (!dev->power.is_noirq_suspended)
-> +       if (!dev->power.is_noirq_suspended) {
-> +               /*
-> +                * This means that system suspend has been aborted in the noirq
-> +                * phase before invoking the noirq suspend callback for the
-> +                * device, so if device_suspend_late() has left it in suspend,
-> +                * device_resume_early() should leave it in suspend either in
-> +                * case the early resume of it depends on the noirq resume that
-> +                * has not run.
-> +                */
-> +               if (dev_pm_skip_suspend(dev))
-> +                       dev->power.must_resume = false;
+> diff --git a/tools/testing/selftests/kvm/include/x86/processor.h b/tools/testing/selftests/kvm/include/x86/processor.h
+> index f610c09cadf4..8e75df5e6bc9 100644
+> --- a/tools/testing/selftests/kvm/include/x86/processor.h
+> +++ b/tools/testing/selftests/kvm/include/x86/processor.h
+> @@ -1109,6 +1109,8 @@ static inline void vcpu_clear_cpuid_feature(struct kvm_vcpu *vcpu,
+>   	vcpu_set_or_clear_cpuid_feature(vcpu, feature, false);
+>   }
+>   
+> +vm_vaddr_t kvm_allocate_vcpu_stack(struct kvm_vm *vm);
 > +
->                 goto Out;
-> +       }
->
->         if (!dpm_wait_for_superior(dev, async))
->                 goto Out;
->
->
->
+>   uint64_t vcpu_get_msr(struct kvm_vcpu *vcpu, uint64_t msr_index);
+>   int _vcpu_set_msr(struct kvm_vcpu *vcpu, uint64_t msr_index, uint64_t msr_value);
+>   
+> diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
+> index 83efcf48faad..82369373e843 100644
+> --- a/tools/testing/selftests/kvm/lib/x86/processor.c
+> +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
+> @@ -658,12 +658,9 @@ void vcpu_arch_set_entry_point(struct kvm_vcpu *vcpu, void *guest_code)
+>   	vcpu_regs_set(vcpu, &regs);
+>   }
+>   
+> -struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
+> +vm_vaddr_t kvm_allocate_vcpu_stack(struct kvm_vm *vm)
+>   {
+> -	struct kvm_mp_state mp_state;
+> -	struct kvm_regs regs;
+>   	vm_vaddr_t stack_vaddr;
+> -	struct kvm_vcpu *vcpu;
+>   
+>   	stack_vaddr = __vm_vaddr_alloc(vm, DEFAULT_STACK_PGS * getpagesize(),
+>   				       DEFAULT_GUEST_STACK_VADDR_MIN,
+> @@ -684,6 +681,15 @@ struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
+>   		    "__vm_vaddr_alloc() did not provide a page-aligned address");
+>   	stack_vaddr -= 8;
+>   
+> +	return stack_vaddr;
+> +}
+> +
+> +struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
+> +{
+> +	struct kvm_mp_state mp_state;
+> +	struct kvm_regs regs;
+> +	struct kvm_vcpu *vcpu;
+> +
+>   	vcpu = __vm_vcpu_add(vm, vcpu_id);
+>   	vcpu_init_cpuid(vcpu, kvm_get_supported_cpuid());
+>   	vcpu_init_sregs(vm, vcpu);
+> @@ -692,7 +698,7 @@ struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
+>   	/* Setup guest general purpose registers */
+>   	vcpu_regs_get(vcpu, &regs);
+>   	regs.rflags = regs.rflags | 0x2;
+> -	regs.rsp = stack_vaddr;
+> +	regs.rsp = kvm_allocate_vcpu_stack(vm);
+>   	vcpu_regs_set(vcpu, &regs);
+>   
+>   	/* Setup the MP state */
+
 
