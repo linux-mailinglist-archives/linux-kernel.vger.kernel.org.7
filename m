@@ -1,105 +1,125 @@
-Return-Path: <linux-kernel+bounces-801843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 943D2B44A9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:57:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B31B44AA1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67D681C8562C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:58:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D89855407CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2132D2EFD8A;
-	Thu,  4 Sep 2025 23:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C072F362E;
+	Thu,  4 Sep 2025 23:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oon6Ebtf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mcbridemail.com header.i=@mcbridemail.com header.b="gEpeEReT"
+Received: from mail-4317.protonmail.ch (mail-4317.protonmail.ch [185.70.43.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469572ECD14;
-	Thu,  4 Sep 2025 23:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1F42ED166
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 23:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757030270; cv=none; b=KJuRNntI3kb+VkbI7AvLJICd5kL0dFePPd4pCeFyjo4ZxB9XFdCUTp5kQIywR9Zm7ja0LsW5KJHCL7aRNh0cfp9uZirKr/nQuRT6yuQftt86RJsAyBnfXW3WP4mKJDwCiun5xgYarrQfr7h7wkAA+rGCOPiIrcsMl6lwS1jUoC0=
+	t=1757030289; cv=none; b=YOAJrfG8ATrJmfwWwGXOjRCRL4FEwqIQO3pX++KU3QZSTZritM2nnxJdC9ZTIkIRL1ehAGnTk5Sm/v1q9rSXSFoqleI1ZDBtte6q2OWPCmmbGtYjLV//y/2zasP5y5rEt4Bhvvphcix+vxRfCHCZnZXJXuLWvQCK6goD9ZLiPdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757030270; c=relaxed/simple;
-	bh=P+DXnz/Q91LWFyoKcdy3SDCmvxkhSnhDsa8wj5qsVZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HQkeyhuFSXnduXQ0DhuoRqKLBMcgf6swwFsfd9NAA750PQErWRJtS/dAGkJH6J8MlvH3gGq/vhZxJrCAkKHoJm7LsKN8znx0w3IV9cpWE7TYfLal59T6b30jfDIsSQQWdWRw/1Z+O6hcle5YulFU3EO5R/Onow/koEjf0mZa+Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oon6Ebtf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C758AC4CEF0;
-	Thu,  4 Sep 2025 23:57:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757030270;
-	bh=P+DXnz/Q91LWFyoKcdy3SDCmvxkhSnhDsa8wj5qsVZY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Oon6EbtfSg5qSY14zgUxJd5zQzs174FUC7b/dnL/uHkj41ZpYOn3CYn0eLrmZ0+JS
-	 ac4RN2j7in8rdy5CB8SbU35MFZXvyiG98yf8SD8G1jZ2MKYDdgfvz1/FFIzE7CqOUP
-	 5ow+QW+Bkw9mZ6vkDV+kuZ1toMsDE1puCuEV0b+WCbMyIqqOtLjZ7l6Va1YV5eCSBy
-	 PNaJsPdShMsVI6IPIkYq5MR4xdSx0I4Y/qL3uB8azZi1dTKTA6+TNywtv9EWzaodbv
-	 C7OmdbX0Jibr34cgm7N6ZCeKsnCJBnT6y3XNDMzcMSW55PULoJu96VBY/VXFkDXZzZ
-	 us5nt/mB6syQQ==
-Date: Thu, 4 Sep 2025 23:57:48 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	Nam Cao <namcao@linutronix.de>,
-	"K . Y . Srinivasan" <kys@microsoft.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] x86/hyperv: Switch to
- msi_create_parent_irq_domain()
-Message-ID: <aLonfMzpIF6FZVM5@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-References: <cover.1752868165.git.namcao@linutronix.de>
- <45df1cc0088057cbf60cb84d8e9f9ff09f12f670.1752868165.git.namcao@linutronix.de>
- <0105fb29-1d42-49cb-8146-d2dfcb600843@linux.microsoft.com>
- <87o6rqy1yk.ffs@tglx>
+	s=arc-20240116; t=1757030289; c=relaxed/simple;
+	bh=C4NU9cMtdxrLyGuN3xq4dbUAslLZuV/Eo1Sag8WFxzA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s3QjuRER8KS3y5lE1pbHdZEZaXqvpzn0b4yq1J08o09Ign2p+t9cP5OBuR+FRH7e2zHJ3ENy/2WKqjHfPZ6a/cA3w+BSoPyvvL8bwEsfTxGLBZeERCkwLckG7pJZrq68seJSqHIRQuRhVueDJY1oJmU0Zkkc0ehmBjFhpChkNoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcbridemail.com; spf=pass smtp.mailfrom=mcbridemail.com; dkim=pass (2048-bit key) header.d=mcbridemail.com header.i=@mcbridemail.com header.b=gEpeEReT; arc=none smtp.client-ip=185.70.43.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcbridemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mcbridemail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mcbridemail.com;
+	s=protonmail; t=1757030285; x=1757289485;
+	bh=C4NU9cMtdxrLyGuN3xq4dbUAslLZuV/Eo1Sag8WFxzA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=gEpeEReTLhr9KUZI/6wL0U4qXN71QR5W2SDkS/jBl2o+6QgTdBqWkhTZvHGnIXYTp
+	 ANWUXuMIk2+mx9wUqiKZQKyu8Shuy5VhqVJMbBonEw/y5t5IBfBYV/5wSzqklGr02c
+	 k20zE1dqnD0L5FmT7qd8rT0bgb+Jp8mGOIOIAmxwy+hcUEpWUH5DpkN9IWvpS3vsxj
+	 Csy3s1sNA9ZF68hoxboUJ0Hi6xbe4xG0ak3zrGZf3L9GjG/svMSh8z0384G5nelj8N
+	 B1w/48FOt0p9KuC9KwkxoWSiovkVkN/wlLNRBlGL0iw7u3ZjEeUVWNQgU+kvYf88N5
+	 7oVYRqc6Tg99A==
+Date: Thu, 04 Sep 2025 23:57:58 +0000
+To: Blake McBride <blake@mcbridemail.com>
+From: Blake McBride <blake@mcbridemail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, Colby Wes McBride <colbym84@gmail.com>
+Subject: Re: [RFC] View-Based File System Model with Program-Scoped Isolation
+Message-ID: <X0FicR_DkHDIm8QFrAKwaEcu5_rAQY4OUHYnA62zwbNXPxJJ6vk-e3zsNkoTaOFSXVwAaPom7WDhrnSauyUjtqvPYDQKIDwsHzY2TWnSuv8=@mcbridemail.com>
+In-Reply-To: <nPMV5WRZT62Eq5Cu84Q0NMH2CgxAuisCAMQ4XfuG7kb6OdEOgY9UMi5sVx3CV0kSVcEBoDDz1w5btWaT1CfOCC_4jkCDrIoYk866FO9bZVo=@mcbridemail.com>
+References: <Oa1N9bTNjTvfRX39yqCcQGpl9FJVwfDT2fTq-9NXTT8HqTIqG2Y-Gy0f7QHKcp2-TIv7NZ3bu_YexmKiGuo9FBTeCtRnVzABBVnhx5EiShk=@mcbridemail.com> <20250904220650.GQ39973@ZenIV> <DHMURiMioUDX6Ggo4Qy8C43EUoC_ltjjS52i2kgC9tl6GhjGuJXOwyf9Nb-WkI__cM0NXECZw_HdKeIUmwShKkAmP7PwqZcmGz-vBrdWYL8=@mcbridemail.com> <20250904230846.GR39973@ZenIV> <nPMV5WRZT62Eq5Cu84Q0NMH2CgxAuisCAMQ4XfuG7kb6OdEOgY9UMi5sVx3CV0kSVcEBoDDz1w5btWaT1CfOCC_4jkCDrIoYk866FO9bZVo=@mcbridemail.com>
+Feedback-ID: 30086830:user:proton
+X-Pm-Message-ID: b9e2af5321edd8adc1d662b30d3cb6329281b864
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o6rqy1yk.ffs@tglx>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 04, 2025 at 11:57:39AM +0200, Thomas Gleixner wrote:
-> On Wed, Sep 03 2025 at 12:40, Nuno Das Neves wrote:
-> > On 7/18/2025 12:57 PM, Nam Cao wrote:
-> >> Move away from the legacy MSI domain setup, switch to use
-> >> msi_create_parent_irq_domain().
-> >> 
-> >> While doing the conversion, I noticed that hv_irq_compose_msi_msg() is
-> >> doing more than it is supposed to (composing message content). The
-> >> interrupt allocation bits should be moved into hv_msi_domain_alloc().
-> >> However, I have no hardware to test this change, therefore I leave a TODO
-> >> note.
-> >> 
-> >> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> >> ---
-> >>  arch/x86/hyperv/irqdomain.c | 111 ++++++++++++++++++++++++------------
-> >>  drivers/hv/Kconfig          |   1 +
-> >>  2 files changed, 77 insertions(+), 35 deletions(-)
-> >
-> > Tested on nested root partition.
-> >
-> > Looks good, thanks.
-> >
-> > Tested-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> > Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> 
-> I assume this goes through the hyper-V tree.
-> 
-> Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Let me be a little more clear about the application programmer-level API - =
+nothing has to change. A context or view is selected by the user before a p=
+rogram is started (unless a program has a default or specific context). The=
+ API that the program uses is utterly unchanged. However, all of the calls =
+are within the context of the view.
 
-No problem -- applied to hyperv-next.
+--blake
 
-Thank you Nam and Thomas.
+
+
+
+
+On Thursday, September 4th, 2025 at 6:41 PM, Blake McBride <blake@mcbridema=
+il.com> wrote:
+
+>=20
+>=20
+> On Thursday, September 4th, 2025 at 6:09 PM, Al Viro viro@zeniv.linux.org=
+.uk wrote:
+>=20
+> > On Thu, Sep 04, 2025 at 10:58:12PM +0000, Blake McBride wrote:
+> >=20
+> > > Off the cuff, I'd say it is an mv option. It defaults to changing all=
+ occurrences, with an option to change it only in the current view.
+> >=20
+> > Huh? mv(1) is userland; whatever it does, by definition it boils down
+> > to a sequence of system calls.
+>=20
+>=20
+>=20
+> Yes. This is what is intended. All of userland would just operate on the =
+view the same as if that was your real hierarchy.
+>=20
+> > If those "views" of yours are pasted together subtrees of the global
+> > forest, you already can do all of that with namespaces; if they are not=
+,
+> > you get all kinds of interesting questions about coherency.
+>=20
+>=20
+>=20
+> These views are not pasted together subtrees. Each view can have utterly =
+different layouts of the same set of files.
+>=20
+>=20
+>=20
+>=20
+> > Which one it is? Before anyone can discuss possible implementations
+> > and relative merits thereof, you need to define the semantics of
+> > what you want to implement...
+> >=20
+> > And frankly, if you are thinking in terms of userland programs (file
+> > manglers, etc.) you are going the wrong way - description will have
+> > to be on the syscall level.
+>=20
+>=20
+> I did not specify the implementation, just the user experience. All of us=
+erland would "appear" to function as it does now. The same with the syscall=
+s that are made by the application code. They all effect the current view a=
+s if it was the real hierarchy.
+>=20
+> --blake
 
