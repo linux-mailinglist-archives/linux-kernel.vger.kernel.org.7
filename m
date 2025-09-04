@@ -1,89 +1,62 @@
-Return-Path: <linux-kernel+bounces-800327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB6BB43654
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:56:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93050B43658
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3889A1B256C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:56:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 457867B6293
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731692D0C88;
-	Thu,  4 Sep 2025 08:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6C42D1916;
+	Thu,  4 Sep 2025 08:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sy5hY5wh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Bf1r7jXn";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VGsA9teC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UFMl6h+K"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JZxGE2UB"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A0124167F
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D630D24167F;
+	Thu,  4 Sep 2025 08:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756976174; cv=none; b=KE5+AZclzaiZ0uz8uNwMA1Ag74yH1HlnqWZGdTHIx6Uz3hXcefkVukdkSgZrBt0sTL0nfacR3+EsnzwPHSD7cXYg7rxx+WJdyzK1ThF4hpWA20xH+fmtDqSOllSoIrvD/zp0OHl8mD8rboW8ppo0f7YRRbIXfGDlVr790ardARo=
+	t=1756976259; cv=none; b=hB0ry7I2zscdWWmEM8vixLlEHDicB+tYxm05eCDcu2f2Mz/RRGR4PuMktgS7sqjt+sqHgp5mCvtKj3+gOVVMU7t7J2VP5PfzrtFFTnuzjKS0R1KCLXgQ6kNUnzk+QyGuH+KYW/ByHuazjUjcbxNT408yLHqI9DhMF+QdqLu6xCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756976174; c=relaxed/simple;
-	bh=933baSzK7o96o75Uy2ELY9riAPfGrpttB+n7Fk6IaQE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=iFCQOyYHM2zCG2PaxfWJSjnwH/jl5B1ywNgBnMCB2Ig2mWq/D6a5UTnH1Nom4cQuWAxLOcExtG8M3OCFfKZg9Zhlzmz1vcCFARb3X9bzqNPNN+doKVsNFzFo6ccvBE6RXcabFWLq/5Ui/SjGVZ1bIAjmXYeZ4os2Ql/0YusYWds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sy5hY5wh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Bf1r7jXn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VGsA9teC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UFMl6h+K; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 749FF33DB3;
-	Thu,  4 Sep 2025 08:56:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756976170; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=m0ZDa47UqfnYQ0ZbmuSqajhVRJWdZWcH4E32chG0A7M=;
-	b=sy5hY5whGhnE+z7dC8cRex9GO4Wgo8yuBp6BJo1uMQZ6q5Aw9x92JgiRgI1svfSFuJdK/8
-	zlQJApWkP2yOLGkOBBPAUmbDBm9xKrzUqxo7DgAfsBhsyKrpjKevi5mtgHlf7zpiIn8Gzu
-	1k7AWrpYcurli6M1ct1gJf6hpkg+dSU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756976170;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=m0ZDa47UqfnYQ0ZbmuSqajhVRJWdZWcH4E32chG0A7M=;
-	b=Bf1r7jXnWJbLEhm+5JmbbTwLTtYyDaT7HRWcfFha6xEo67qcJZQD6MwQTm1lupPBB+nYz7
-	o8iUUcqgHzTaxVAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756976169; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=m0ZDa47UqfnYQ0ZbmuSqajhVRJWdZWcH4E32chG0A7M=;
-	b=VGsA9teCgiYqgQg4XKdYxx1VwqW3JA5CHsiJJJ83AC02y0IWvlwc6eAD66r08d31bv8uos
-	6evPPorgYRtsYu3UrJZCN8eg+EPKDor6zeLSFy+Ny5eA7e9wTiEtVujIFhit8wgO/9P193
-	YxS3o66jCV8moTKbz1qfV36qxusqQbY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756976169;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=m0ZDa47UqfnYQ0ZbmuSqajhVRJWdZWcH4E32chG0A7M=;
-	b=UFMl6h+KloWwRH225BeEDiyvK7tdlUITS5aXqEyUUtaWZpcW327l0HpOpUgrzJ1ujjamRO
-	ulpAaU+DQJRaY7Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6588B13675;
-	Thu,  4 Sep 2025 08:56:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RdB8GClUuWhlEQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 04 Sep 2025 08:56:09 +0000
-Message-ID: <c15d56f1-b1f9-4ed2-8f20-1d8111ac1115@suse.cz>
-Date: Thu, 4 Sep 2025 10:56:09 +0200
+	s=arc-20240116; t=1756976259; c=relaxed/simple;
+	bh=ef0an2s0RMq35BHmE3vLeCCXeXHzfb8w06p6vIy8qfs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CGAoP9PAjvzsdbrf9x/z9iroN9NL9iGO6Ehk46E+bBTf3rkyn5dWxIM46IhdLkzMAijYyUAWiI0TnMCTParsM6JSNlsJyU67b2kepnhTgGCHQ1ZYJ96k/kE1rRiJMuQ6zObrwmCn+TSmtEfOj8amAN1Bz/x/frqisVUjDqN0/C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JZxGE2UB; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5848vKau3472912;
+	Thu, 4 Sep 2025 03:57:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756976240;
+	bh=uF4m/pRRU4rgRt7tXnCtpn8VYgPl9axTqJo4BB655os=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=JZxGE2UBN40dWWYuDmfX2FMeRszsL4a7bvGt7TEhMXmCCHwYjN8WkLUZC0Nl8do7C
+	 vkSvHNg5bkVnCHd/DMKtwrMrLFq3xXWEnWD+Emu44QX7Cro4DUhm7eNrSVVNFg8K3m
+	 GOzORqTCUFmXIrpiXg1HAODHPx4WgDrzpblcQdt0=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5848vKSn749886
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 4 Sep 2025 03:57:20 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 4
+ Sep 2025 03:57:20 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 4 Sep 2025 03:57:20 -0500
+Received: from [172.24.20.139] (lt5cd2489kgj.dhcp.ti.com [172.24.20.139])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5848vFWj3006227;
+	Thu, 4 Sep 2025 03:57:15 -0500
+Message-ID: <b946af38-abf9-4b34-bf44-3ba9bc64bff7@ti.com>
+Date: Thu, 4 Sep 2025 14:27:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,105 +64,178 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: [GIT PULL] slab fixes for 6.17-rc5
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Harry Yoo <harry.yoo@oracle.com>, David Rientjes <rientjes@google.com>,
- Christoph Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>
+Subject: Re: [PATCH v3 3/3] arm64: dts: ti: k3-pinctrl: Add the remaining
+ macros
+To: Akashdeep Kaur <a-kaur@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <afd@ti.com>, <vigneshr@ti.com>, <d-gole@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <vishalm@ti.com>, <sebin.francis@ti.com>, <u-kumar1@ti.com>
+References: <20250902071917.1616729-1-a-kaur@ti.com>
+ <20250902071917.1616729-4-a-kaur@ti.com>
 Content-Language: en-US
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20250902071917.1616729-4-a-kaur@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Linus,
+Hello Akashdeep,
 
-please pull the latest slab fixes from:
+On 9/2/2025 12:49 PM, Akashdeep Kaur wrote:
+> Add the drive stregth, schmitt trigger enable macros to pinctrl file.
+> Add the missing macros for DeepSleep configuration control referenced
+> from "Table 14-6172. Description Of The Pad Configuration Register Bits"
+> in AM625 TRM[0].
+> Add some DeepSleep macros to provide combinations that can be used
+> directly in device tree files example PIN_DS_OUTPUT_LOW that
+> configures pin to be output and also sets its value to 0.
+>
+> [0] https://www.ti.com/lit/ug/spruiv7b/spruiv7b.pdf
+>
+> Signed-off-by: Akashdeep Kaur <a-kaur@ti.com>
+> ---
+>   arch/arm64/boot/dts/ti/k3-pinctrl.h | 55 +++++++++++++++++++++++++++--
+>   1 file changed, 52 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/ti/k3-pinctrl.h b/arch/arm64/boot/dts/ti/k3-pinctrl.h
+> index c0f09be8d3f9..39aad59075d1 100644
+> --- a/arch/arm64/boot/dts/ti/k3-pinctrl.h
+> +++ b/arch/arm64/boot/dts/ti/k3-pinctrl.h
+> @@ -3,15 +3,20 @@
+>    * This header provides constants for pinctrl bindings for TI's K3 SoC
+>    * family.
+>    *
+> - * Copyright (C) 2018-2024 Texas Instruments Incorporated - https://www.ti.com/
+> + * Copyright (C) 2018-2025 Texas Instruments Incorporated - https://www.ti.com/
+>    */
+>   #ifndef DTS_ARM64_TI_K3_PINCTRL_H
+>   #define DTS_ARM64_TI_K3_PINCTRL_H
+>   
+> +#define WKUP_LVL_EN_SHIFT       (7)
+> +#define WKUP_LVL_POL_SHIFT      (8)
+>   #define ST_EN_SHIFT		(14)
+>   #define PULLUDEN_SHIFT		(16)
+>   #define PULLTYPESEL_SHIFT	(17)
+>   #define RXACTIVE_SHIFT		(18)
+> +#define DRV_STR_SHIFT           (19)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.17-rc5
+referring to above TRM mentioned in commit message
 
-Thanks,
-Vlastimil
+Bit 20-19 are for DRV_STR, and description says
 
-======================================
+0 - Default
+1 - Reserved
+2 - Reserved
+3 - Reserved
 
-- Stable fix to make slub_debug code not access invalid pointers in the
-  process of reporting issues (Li Qiong)
+Not sure, is there some additional document to be referred for 
+PIN_DRIVE_STRENGTH
 
-- Stable fix to make object tracking pass gfp flags to stackdepot to
-  avoid deadlock in contexts that can't even wake up kswapd due to
-  e.g. timers debugging enabled (yangshiguang)
 
-----------------------------------------------------------------
-Li Qiong (1):
-      mm/slub: avoid accessing metadata when pointer is invalid in object_err()
+> +#define DS_ISO_OVERRIDE_SHIFT   (22)
+> +#define DS_ISO_BYPASS_EN_SHIFT  (23)
 
-yangshiguang (1):
-      mm: slub: avoid wake up kswapd in set_track_prepare
+Please follow same convention as for rest of bit fields
 
- mm/slub.c | 37 ++++++++++++++++++++++++++-----------
- 1 file changed, 26 insertions(+), 11 deletions(-)
+DS_ISO_OVERRIDE_SHIFT  to ISO_OVR_SHIFT and
+DS_ISO_BYPASS_EN_SHIFT to ISO_BYP_SHIFT
+
+
+
+>   #define DEBOUNCE_SHIFT		(11)
+>   #define FORCE_DS_EN_SHIFT	(15)
+>   #define DS_EN_SHIFT		(24)
+> @@ -19,6 +24,7 @@
+>   #define DS_OUT_VAL_SHIFT	(26)
+>   #define DS_PULLUD_EN_SHIFT	(27)
+>   #define DS_PULLTYPE_SEL_SHIFT	(28)
+> +#define WKUP_EN_SHIFT           (29)
+>   
+>   /* Schmitt trigger configuration */
+>   #define ST_DISABLE		(0 << ST_EN_SHIFT)
+> @@ -33,6 +39,26 @@
+>   #define INPUT_EN		(1 << RXACTIVE_SHIFT)
+>   #define INPUT_DISABLE		(0 << RXACTIVE_SHIFT)
+>   
+> +#define DS_PULL_DISABLE         (1 << DS_PULLUD_EN_SHIFT)
+> +#define DS_PULL_ENABLE          (0 << DS_PULLUD_EN_SHIFT)
+
+what is purpose of shifting zero,
+
+
+> +
+> +#define DS_PULL_UP              (1 << DS_PULLTYPE_SEL_SHIFT | DS_PULL_ENABLE)
+> +#define DS_PULL_DOWN            (0 << DS_PULLTYPE_SEL_SHIFT | DS_PULL_ENABLE)
+> +
+> +#define DS_INPUT_EN             (1 << DS_OUT_DIS_SHIFT)
+> +#define DS_INPUT_DISABLE        (0 << DS_OUT_DIS_SHIFT)
+> +
+> +#define DS_OUT_VALUE_ZERO       (0 << DS_OUT_VAL_SHIFT)
+> +#define DS_OUT_VALUE_ONE        (1 << DS_OUT_VAL_SHIFT)
+> +
+> +#define WKUP_ENABLE             (1 << WKUP_EN_SHIFT)
+> +#define WKUP_ON_LEVEL           (1 << WKUP_LVL_EN_SHIFT)
+> +#define WKUP_ON_EDGE            (0 << WKUP_LVL_EN_SHIFT)
+> +#define WKUP_LEVEL_LOW          (0 << WKUP_LVL_POL_SHIFT)
+> +#define WKUP_LEVEL_HIGH         (1 << WKUP_LVL_POL_SHIFT)
+> +
+> +#define WKUP_DISABLE            (0 << WKUP_EN_SHIFT)
+> +
+>   /* Only these macros are expected be used directly in device tree files */
+>   #define PIN_OUTPUT		(INPUT_DISABLE | PULL_DISABLE)
+>   #define PIN_OUTPUT_PULLUP	(INPUT_DISABLE | PULL_UP)
+> @@ -53,18 +79,41 @@
+>   #define PIN_DEBOUNCE_CONF5	(5 << DEBOUNCE_SHIFT)
+>   #define PIN_DEBOUNCE_CONF6	(6 << DEBOUNCE_SHIFT)
+>   
+> +#define PIN_DRIVE_STRENGTH_NOMINAL      (0 << DRV_STR_SHIFT)
+> +#define PIN_DRIVE_STRENGTH_SLOW         (1 << DRV_STR_SHIFT)
+> +#define PIN_DRIVE_STRENGTH_FAST         (2 << DRV_STR_SHIFT)
+> +
+> +#define PIN_SCHMITT_TRIGGER_DISABLE	(0 << ST_EN_SHIFT)
+> +#define PIN_SCHMITT_TRIGGER_ENABLE	(1 << ST_EN_SHIFT)
+> +
+>   #define PIN_DS_FORCE_DISABLE		(0 << FORCE_DS_EN_SHIFT)
+>   #define PIN_DS_FORCE_ENABLE		(1 << FORCE_DS_EN_SHIFT)
+>   #define PIN_DS_IO_OVERRIDE_DISABLE	(0 << DS_IO_OVERRIDE_EN_SHIFT)
+>   #define PIN_DS_IO_OVERRIDE_ENABLE	(1 << DS_IO_OVERRIDE_EN_SHIFT)
+> -#define PIN_DS_OUT_ENABLE		(0 << DS_OUT_DIS_SHIFT)
+> -#define PIN_DS_OUT_DISABLE		(1 << DS_OUT_DIS_SHIFT)
+> +#define PIN_DS_OUT_ENABLE		DS_INPUT_DISABLE
+> +#define PIN_DS_OUT_DISABLE		DS_INPUT_EN
+>   #define PIN_DS_OUT_VALUE_ZERO		(0 << DS_OUT_VAL_SHIFT)
+>   #define PIN_DS_OUT_VALUE_ONE		(1 << DS_OUT_VAL_SHIFT)
+>   #define PIN_DS_PULLUD_ENABLE		(0 << DS_PULLUD_EN_SHIFT)
+>   #define PIN_DS_PULLUD_DISABLE		(1 << DS_PULLUD_EN_SHIFT)
+>   #define PIN_DS_PULL_DOWN		(0 << DS_PULLTYPE_SEL_SHIFT)
+>   #define PIN_DS_PULL_UP			(1 << DS_PULLTYPE_SEL_SHIFT)
+> +#define PIN_DS_ISO_BYPASS               (1 << DS_ISO_BYPASS_EN_SHIFT)
+> +#define PIN_DS_ISO_BYPASS_DISABLE       (0 << DS_ISO_BYPASS_EN_SHIFT)
+> +
+> +#define DS_STATE_VAL                    (1 << DS_EN_SHIFT)
+> +#define ACTIVE_STATE_VAL                (0 << DS_EN_SHIFT)
+> +
+
+Please do not mix PIN_x #define with other internal defines
+
+
+> +#define PIN_DS_OUTPUT_LOW               (DS_STATE_VAL | DS_INPUT_DISABLE | DS_OUT_VALUE_ZERO)
+> +#define PIN_DS_OUTPUT_HIGH              (DS_STATE_VAL | DS_INPUT_DISABLE | DS_OUT_VALUE_ONE)
+> +#define PIN_DS_INPUT                    (DS_STATE_VAL | DS_INPUT_EN | DS_PULL_DISABLE)
+> +#define PIN_DS_INPUT_PULLUP             (DS_STATE_VAL | DS_INPUT_EN | DS_PULL_UP)
+> +#define PIN_DS_INPUT_PULLDOWN           (DS_STATE_VAL | DS_INPUT_EN | DS_PULL_DOWN)
+> +
+> +#define PIN_WKUP_EN_EDGE                (WKUP_ENABLE | WKUP_ON_EDGE)
+> +#define PIN_WKUP_EN_LEVEL_LOW           (WKUP_ENABLE | WKUP_ON_LEVEL | WKUP_LEVEL_LOW)
+> +#define PIN_WKUP_EN_LEVEL_HIGH          (WKUP_ENABLE | WKUP_ON_LEVEL | WKUP_LEVEL_HIGH)
+> +#define PIN_WKUP_EN                     WKUP_EN_EDGE
+
+what is difference between PIN_WKUP_EN_EDGE and PIN_WKUP_EN
+
+
+>   
+>   /* Default mux configuration for gpio-ranges to use with pinctrl */
+>   #define PIN_GPIO_RANGE_IOPAD	(PIN_INPUT | 7)
 
