@@ -1,109 +1,165 @@
-Return-Path: <linux-kernel+bounces-800452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16510B437C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:00:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E8AB437D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7474D7B5837
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:58:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C8C45E69E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3B62F90E2;
-	Thu,  4 Sep 2025 10:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4022EB87B;
+	Thu,  4 Sep 2025 10:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G82B4FQQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K8buFOKc"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38FB2F616C;
-	Thu,  4 Sep 2025 09:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8606C29AAEA;
+	Thu,  4 Sep 2025 10:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756980001; cv=none; b=tqna3UIhVXQQT/PRzPAIRQebtJGjnxADbC+yQCNErve/oi7CW46MophPq19kAKRw6EiJCK4+6g7kqEqGAO+df+utd8F4H7DKaPyvPVbeiy9Vxy9fxvQ9X87JZuxKRNkvoXGP1oNk1X7rrwEYnuaTS6uvAa7OebJ8cT7kTmzig9w=
+	t=1756980079; cv=none; b=MGC9Ej0WH1F93x4vY7gmcLwpNX4s0VTvMQ2Mak/Jzv7bOirs3978QUsNAjkObkrA36jPlR534hJaM1QwZL89ViViCOriFOta9eTDadY2pb8zmD4gaXPkcSkUsUfab+7K/g8Z/G9MP+RLyaoynKxfSoDU2US9JK80XUP7Ji6ZGME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756980001; c=relaxed/simple;
-	bh=mi+9YZfREfl8bO0SgMMuARpKTRd8R4HxdIYJ2cUBdG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ovgd/Ma81G28hUtwYIxV9lCbCWTVcKoY1/R5iZrOEMCr0qYW+yAqXZ9pcX6vnmptthfCfFVwyNb0NvmMpDw/JODRuEqxbOb4mjS52cptYHJwBdQhr5wUQI+8oMZ87W3vg/Ie4Y7kS5dzuwopzlFYuQAmAJ2U7IvImbTqRVXEow8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G82B4FQQ; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756980001; x=1788516001;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mi+9YZfREfl8bO0SgMMuARpKTRd8R4HxdIYJ2cUBdG8=;
-  b=G82B4FQQTCvgovhR5S7GI6SYMjndTr668S73HQxhaAlls68uaOh3ROKS
-   eru0B1Wpc22LY/mqxCzyJfE6C7BUiMqLHXD+PukFb5lSVXs8nProtiL6v
-   B7/jxv0uw+Y5KUk0nPbCO1Osx8+jagjGWOzRCPgLngELfznssAO7v1nIm
-   q3iAFlPWM8ZHYlfZKMPe3fWVc8dhAC8ttOI6+slog6GIrvUXwjCQv5lTI
-   0fapKG47xujWVonEiichJNXrIA3HhRdZ2SOx8y/sQQKWPM5RV5/IElBsW
-   XrHGTN9YJWeMfZ9usTbTRoDDUV/tzxR9d/j3st8CIJ9gkIVeKrX6CYEaR
-   g==;
-X-CSE-ConnectionGUID: N7FBLycMQ3GxeDUekRxjOg==
-X-CSE-MsgGUID: rcqe6eU6TICt5c9Ud8tk4w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59230285"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="59230285"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 03:00:00 -0700
-X-CSE-ConnectionGUID: RM5IJwZ1Ql+otGJ4bKKJjQ==
-X-CSE-MsgGUID: uuZKpFSCQJO8Q9v49ca8fw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="202696450"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 02:59:56 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uu6ky-0000000BEeS-4A78;
-	Thu, 04 Sep 2025 12:59:52 +0300
-Date: Thu, 4 Sep 2025 12:59:52 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] device property: Add scoped fwnode child node
- iterators
-Message-ID: <aLljGIcjAjQhC2uS@smile.fi.intel.com>
-References: <20250902190443.3252-1-jefflessard3@gmail.com>
- <aLgY1z-MvQbDBx2_@smile.fi.intel.com>
- <aLlgpUlHp7t8P4dQ@shikoro>
+	s=arc-20240116; t=1756980079; c=relaxed/simple;
+	bh=i2nafBkNwQgFl5rpeNdSMRL6JBBBjM+BG+dTG5K1gAQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pLR/FAOQbOp+eeZ7ZtXBxn0KZYFSOgdXtZyydExMb3wb/8O63dxmUQX+xLbQpfyGeAsKzggG++hS5P0jCGsTY7ar/6MsLtVHYwzP5Q3l9J/15aoWkbb5tr8yzKLASDug3xwMWoaxcFpTLQq8IhqlbGOGYVwCB8ckdCojsQBwCso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K8buFOKc; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-32b959b4895so349715a91.1;
+        Thu, 04 Sep 2025 03:01:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756980077; x=1757584877; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ki826I6LC2wPdNkCXDL1NW7JtQHmmjb2hJ+tp/qyoNw=;
+        b=K8buFOKc0inb7IEyw4tlVNFGaVZFsGDpOk+1FBmHSUoiF6fHA3T7xILQg/NN4Owmb3
+         GKyVUgbkM+F1QILTcbQxWqS44/Ad/bryc6iTVSfjl2CIs4LtUkr5tBrv5pC6ATaFcAQc
+         74nlU0SV9zHP0F6dcf3AkgX6LD/gyHkrMZkcze6qC2HxFdDIPA3rrII1kSmqN+LUuzAT
+         wfqjjIEenUPIpZuGWyxcKaq/7HGRR9NNuGsPtfjrdTqcDF44a15vDPUHIkXejZQ8SOCE
+         0N/NKLApJuFqbT0liqbjtYvnIGqXUd6nHeR89DLQESqM4uCbGh9I1YsSPciJIzyjXIYV
+         T4Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756980077; x=1757584877;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ki826I6LC2wPdNkCXDL1NW7JtQHmmjb2hJ+tp/qyoNw=;
+        b=n3LcJoHFP2/jSur4APP8eiAzNunELSK9LnlAtu2nFdHJVpGEQcbEJjqKSWTv81+qmB
+         J6g0urVthw93uOOIDumVfrZU8L2tXXh/jcqOtLWViEJ34mGHDAYP0t2j9h3HmKMCwNQ7
+         oJSMC+0rKIYX9JXQuxYnOMbnOar848PCM/e/0iA6Bw2tAgtkapf8od9J6w3fciTzxxg7
+         FDK7GBOLPLGEbm9tUp4vXzTuEoJ+j+fm2u2tMiLPfm6+F4ByM4ygV1AzY/t4Myfi/MAs
+         ZqTAyuXRSfKQuA6SBiloNaC9IN+Q05o/6la4fxm69cBCuc7UGtMSTA3YTrbDhTMdKDtX
+         f1Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSRrv8AzOCoJBnwoLqlnenOnAUePdHH1cN8km1maadBL/GPKeTWeEpCx5Im5JeyQwhtJsZ3taLmFW8ADvdgw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6cVo7WlvuNW2XPR7Ri9EVHDadTyPQPkbsZHjIaJmmRLif5u0a
+	4qAK+ZU3KRHrHpjobLxFtyYEW0ftImByorHu5z7z8DCQELS05lHDpqlegAMXRMHYyBxysw==
+X-Gm-Gg: ASbGncvNymin3O4O9jf7ASPJUDuay7dX3PZiPp6Ke2SZN2R4dATfvfwVWAYT0ZZ2v/A
+	TUX3O6vs0TAFOk+ZgEoSF0cyrt93eWv0eMeq3kNjoZiQRRF0OYzPZSK9v/Yd5LYgUS3RgRqxt1/
+	fEfccJvf36Q/l7VH55HfNZUKFo1qCUXKHOG7jWRfIXSabFn46ZKHwF/BttlSzBzX7eVB0xpxBc2
+	vebM3ln81sfy+K+Ff/O34I3Zgc2XVgU68hxnW0BqVPYOfd93lpTViBFZ4v2s6EQ/KiDKZfF0nbH
+	TC69PsWmNYMPT9XCgnsWQFldenaypoNNZlc7bwUKCOzUZXGfHQDW0iqhj5/pylbTQ3nH8Ox/6vR
+	OgkVVMeZ2Ll0DGXDkowpIR7yMpd4cGhEmDvgIEQDItRDxKbk90Mc=
+X-Google-Smtp-Source: AGHT+IGiPpwAhtV6hn0STCKQ+PXkyAiYKj6iOCTqUwtWnZI/CnCp6LUbol+WbtS0KUgVhYK6wEnh4g==
+X-Received: by 2002:a17:90b:3ec8:b0:324:e96a:2ada with SMTP id 98e67ed59e1d1-328156b9277mr23357172a91.21.1756980076932;
+        Thu, 04 Sep 2025 03:01:16 -0700 (PDT)
+Received: from nyaos.. (v133-18-108-210.vir.kagoya.net. [133.18.108.210])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32b747c2d66sm3510656a91.28.2025.09.04.03.01.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 03:01:16 -0700 (PDT)
+From: ChenMiao <chenmiao.ku@gmail.com>
+To: Linux Kernel <linux-kernel@vger.kernel.org>,
+	Linux OpenRISC <linux-openrisc@vger.kernel.org>
+Cc: chenmiao <chenmiao.ku@gmail.com>
+Subject: [PATCH v4 0/4] openrisc: Support basic trace mechanism
+Date: Thu,  4 Sep 2025 10:00:48 +0000
+Message-ID: <20250904100109.688033-1-chenmiao.ku@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLlgpUlHp7t8P4dQ@shikoro>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 04, 2025 at 11:49:25AM +0200, Wolfram Sang wrote:
-> 
-> > It might be good to have an immutable branch for me from i2c core.
-> > Wolfram, can you provide a such if no objections?
-> 
-> Sure thing, I can do that. But there is still discussion on patch 1, so
-> I will wait for an outcome there.
+From: chenmiao <chenmiao.ku@gmail.com>
 
-But it seems that the discussion can be implemented in a followup?
-I think we are not in hurry anyway, so let see if it settles down soon.
+Hello everyone,
+
+This implements a basic text patching mechanism and a complete jump_label
+implementation for OpenRISC. It should be noted that the jump_label have
+passed testing.
+
+1. Implement the patch_map interface and the patch_insn_write single insn
+write API by providing FIX_TEXT_POKE0. And create a new insn-def.h to record
+openrisc's instruction macro definition which only have OPENRISC_INSN_SIZE
+now.
+
+2. Support for the R_OR1K_32_PCREL relocation type is added for module insertion,
+enabling subsequent jump_label selftest module insertion.
+
+3. Regenerate defconfigs for or1ksim_defconfig and virt_defconfig.
+
+4. Based on the previously implemented patch_insn_write, achieve a complete
+jump_label implementation, directly supporting arch_jump_label_transform_queue.
+And add a new macro OPENRISC_INSN_NOP in insn-def.h.
+
+Link: https://lore.kernel.org/openrisc/20250805084926.4125564-1-chenmiao.ku@gmail.com/T/#u
+
+Thanks,
+
+Chen Miao
+
+---
+Changes in V4:
+  - Added testing for jump_label
+  - Split part of the jump_label patch content to form the third patch
+  - Implemented R_OR1K_32_PCREL module support for jump_label testing
+
+Changes in V3:
+  - Removed the is_exit_text used, added some necessary comments.
+  - Modify some macro like __ASSEMBLY__ to __ASSEMBLER__ and ensure the
+    defconfig by make savedefconfig.
+
+Changes in V2:
+  - Add a new insn-def.h to record the insn macro.
+  - Modify the patch_insn_write API from const void* to u32 insn.
+  - Using the modified patch_insn_write API in 
+    arch_jump_label_transform_queue.
+
+chenmiao (4):
+  openrisc: Add text patching API support
+  openrisc: Add R_OR1K_32_PCREL relocation type module support
+  openrisc: Regenerate defconfigs.
+  openrisc: Add jump label support
+
+ .../core/jump-labels/arch-support.txt         |  2 +-
+ arch/openrisc/Kconfig                         |  2 +
+ arch/openrisc/configs/or1ksim_defconfig       | 19 ++---
+ arch/openrisc/configs/virt_defconfig          |  2 +-
+ arch/openrisc/include/asm/Kbuild              |  1 -
+ arch/openrisc/include/asm/fixmap.h            |  1 +
+ arch/openrisc/include/asm/insn-def.h          | 15 ++++
+ arch/openrisc/include/asm/jump_label.h        | 72 +++++++++++++++++
+ arch/openrisc/include/asm/text-patching.h     | 13 +++
+ arch/openrisc/kernel/Makefile                 |  2 +
+ arch/openrisc/kernel/jump_label.c             | 52 ++++++++++++
+ arch/openrisc/kernel/module.c                 |  4 +
+ arch/openrisc/kernel/patching.c               | 79 +++++++++++++++++++
+ arch/openrisc/kernel/setup.c                  |  2 +
+ arch/openrisc/mm/init.c                       |  6 +-
+ 15 files changed, 256 insertions(+), 16 deletions(-)
+ create mode 100644 arch/openrisc/include/asm/insn-def.h
+ create mode 100644 arch/openrisc/include/asm/jump_label.h
+ create mode 100644 arch/openrisc/include/asm/text-patching.h
+ create mode 100644 arch/openrisc/kernel/jump_label.c
+ create mode 100644 arch/openrisc/kernel/patching.c
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.45.2
 
 
