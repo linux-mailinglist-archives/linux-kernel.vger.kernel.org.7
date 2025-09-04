@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-801415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA147B444CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:51:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD41EB444CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79636A60077
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:50:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B5AAA40887
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49451320CB3;
-	Thu,  4 Sep 2025 17:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4483C3218C9;
+	Thu,  4 Sep 2025 17:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="QqA3kHn2"
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="Wn2ogZd5"
 Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634B831A558
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 17:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC3131AF36
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 17:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757008242; cv=none; b=GSF8em2wsBkED/Fq+qQjuRj0R0TedETr/tQplSbQnmTVz3JjZ9eUUqUkimexLy72rStXR+WMKmxrgucrM6lt4vCk+jtOZZd5tO6ZxfMs6aQhGhnPeX434t3iJ4LPyaSTQ5hsWziSxAG8RKY+gz8oXo0h2j5OXVLBrHj1BSbFI1M=
+	t=1757008243; cv=none; b=nfQapjQ0vbtJqDfApB9uaJM/PYSNoVGwuDarEx07ufMFRDzgSDVkpJpCO6MTH0qSjE1QCETXYqAHT7OtADdaKFRtLEMpt4j3S+4UUFsfhyaLdQ835SbN9wLfLSofb15dNx1RJ2ZEFV29qSZPy34LGx39wohPPxJYXA9kYf/FExU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757008242; c=relaxed/simple;
-	bh=QgM71Vx9GPruJZ1GQARsMLEdNuE7CzFhk7e3orUiEyM=;
+	s=arc-20240116; t=1757008243; c=relaxed/simple;
+	bh=EAIT06RX4dHEcRLhstnh3tKNg76fpFzrkajLxLNs9bw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=paQOdYwisHBF+E+I1l+Vygbowc0t1VmVaDM73MJT0Sy0Q1rIzv6/DMFTdAaR5o5VzJl/V3VKXrFNW791qN+ZZdLaPDHGsDnRtR4rYdQl4qLPvCZdpo0pMIL9fMM2BBXVgZcdYPG86lWLlluhEG75YsFTxilEpV+/A/WevjjESlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=QqA3kHn2; arc=none smtp.client-ip=78.46.171.57
+	 MIME-Version; b=lYXuthOBhYPpRByjN4aCoR2GZCPYcuqomQay11PNLBWmJIz9TXPhaB3mzNkH2muqmLfZCvIwHm4NPzrty03Mh9gVKvLTWOk7ZJO5Bns9ciWBRoTlRdRGmFglvdgTw2Fkx/LhdWczjXp7y/8Elrnwwmi3LRcFlY7IEKIbsWYja1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=Wn2ogZd5; arc=none smtp.client-ip=78.46.171.57
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
 Received: from relay11 (localhost.localdomain [127.0.0.1])
-	by relay11.grserver.gr (Proxmox) with ESMTP id 84A1AC83C4;
-	Thu,  4 Sep 2025 20:50:38 +0300 (EEST)
+	by relay11.grserver.gr (Proxmox) with ESMTP id 2DF9EC83BC;
+	Thu,  4 Sep 2025 20:50:40 +0300 (EEST)
 Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by relay11.grserver.gr (Proxmox) with ESMTPS id 252A6C83BC;
-	Thu,  4 Sep 2025 20:50:38 +0300 (EEST)
+	by relay11.grserver.gr (Proxmox) with ESMTPS id BAE71C83C3;
+	Thu,  4 Sep 2025 20:50:39 +0300 (EEST)
 Received: from antheas-z13 (unknown [37.96.55.21])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id B8DB31FD14D;
-	Thu,  4 Sep 2025 20:50:36 +0300 (EEST)
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 6F9A91FD13B;
+	Thu,  4 Sep 2025 20:50:38 +0300 (EEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1757008237;
-	bh=+ecMEM4xOwQfNGFueMdh3PKM9vrNglGfesSLHZZtaFs=; h=From:To:Subject;
-	b=QqA3kHn2HD27vf36GILkSaFsDQxkhNIiDKyXC+YuHtDKFx5CbSmnoTGoSmTNhIg9a
-	 r6D8Sll9SzS6geJbBROh6+8QAYq034avAUZkZ695IWrPyPb+uUhSFzF2wkolHWekfE
-	 Er7M7ZcoWKUYeZFN3PTo7fsYog4DD2gADCz9mCH1FJmhE9aRLTIcie8KLwGlAiL3/M
-	 90nYC4vsAYD/ZV0voeab8ULqWnYjoF+lHjS2cD7DkhKnk+j86BsEQMDbWRgQC8XwJE
-	 h+XlhfKzK563Q0yqKiEBcfYrxcZImqK8I1KL7OkpoSiyiYmzHdrF5uv50vJFIpkCiB
-	 fXG6e+prMQXUQ==
+	s=default; t=1757008239;
+	bh=BAvDGtLi6Zo9CZ1tJtojxW1gBOs8Zcop6Ypl8Lyl3Nw=; h=From:To:Subject;
+	b=Wn2ogZd5pY83lrLjAXK2CoCDEZulDmzlGK3mz0l0k2NOUivSEnVWJmUJFYoDsqJA0
+	 yvWmo0lRP3cHcA5nVxA1ymjQIhrWuSrqN85Bn2BzHWkGQ4hF64g2C+YCvKtz7VCKmJ
+	 5NxGlSaXuuI6EpFHd1SHNnJahZ0HjbEnpIryScLpHuCtXP+EdAFhsN1cqBz0t5bVeZ
+	 IMBUaEIU/ebtk6lq3FCXYTAaFAFvmvftsuIPvvOHRXCc8gbnSy1mYpwHhaVWqbpJTo
+	 XG7gYcpX5cxR+BPWbT759aiaSjajB6DzOm2JAB7+Wu04oyUjHt9PMYQh7PflI7MEnN
+	 lCfugq+mQ0PNg==
 Authentication-Results: linux3247.grserver.gr;
 	spf=pass (sender IP is 37.96.55.21) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
 Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
@@ -64,10 +64,10 @@ Cc: linux-kernel@vger.kernel.org,
 	Simona Vetter <simona@ffwll.ch>,
 	philm@manjaro.org,
 	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: [PATCH v1 05/10] drm: panel-orientation-quirks: Add OneXPlayer X1
- Mini variants
-Date: Thu,  4 Sep 2025 19:50:20 +0200
-Message-ID: <20250904175025.3249650-6-lkml@antheas.dev>
+Subject: [PATCH v1 06/10] drm: panel-orientation-quirks: Add OneXPlayer F1
+ variants
+Date: Thu,  4 Sep 2025 19:50:21 +0200
+Message-ID: <20250904175025.3249650-7-lkml@antheas.dev>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250904175025.3249650-1-lkml@antheas.dev>
 References: <20250904175025.3249650-1-lkml@antheas.dev>
@@ -79,43 +79,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-PPP-Message-ID: 
- <175700823784.2009311.5126683241193834955@linux3247.grserver.gr>
+ <175700823943.2009361.5295348970573880397@linux3247.grserver.gr>
 X-PPP-Vhost: antheas.dev
 X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
 X-Virus-Status: Clean
 
-The OneXPlayer X1 mini features a 2k 8.8 display with a portrait
-orientation. The Pro is a CPU refresh. Add quirks to set the panel
-orientation to portrait mode. There is no Intel variant.
+The OneXPlayer F1Pro has a 144hz 1920x1080 portrait OLED panel.
+Add a quirk to correct the panel portrait orientation. In addition,
+it comes with a red limited edition variant in the Chinese market,
+so add that as well. Then, add the 8840U non-pro variant as well.
 
 Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
 ---
- drivers/gpu/drm/drm_panel_orientation_quirks.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/gpu/drm/drm_panel_orientation_quirks.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
 diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-index 378a3f692952..0c0fe66e94ad 100644
+index 0c0fe66e94ad..6f5ce26a84b7 100644
 --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
 +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-@@ -516,6 +516,18 @@ static const struct dmi_system_id orientation_data[] = {
- 		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ONEXPLAYER X1 i"),
+@@ -540,6 +540,24 @@ static const struct dmi_system_id orientation_data[] = {
+ 		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ONEXPLAYER X1Pro EVA-02"),
  		},
  		.driver_data = (void *)&lcd1600x2560_leftside_up,
-+	}, {	/* OneXPlayer X1 mini (AMD) */
++	}, {	/* OneXPlayer OneXFly F1 Pro (OLED) LE Red variant */
 +		.matches = {
 +		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ONE-NETBOOK"),
-+		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ONEXPLAYER X1 mini"),
++		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ONEXPLAYER F1 EVA-02"),
 +		},
-+		.driver_data = (void *)&lcd1600x2560_leftside_up,
-+	}, {	/* OneXPlayer X1 mini pro (AMD Strix Point) */
++		.driver_data = (void *)&lcd1080x1920_leftside_up,
++	}, {	/* OneXPlayer OneXFly F1 Pro (OLED) Hawk Point */
 +		.matches = {
 +		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ONE-NETBOOK"),
-+		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ONEXPLAYER X1Mini Pro"),
++		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ONEXPLAYER F1 OLED"),
 +		},
-+		.driver_data = (void *)&lcd1600x2560_leftside_up,
- 	}, {	/* OneXPlayer X1 AMD Strix Point */
++		.driver_data = (void *)&lcd1080x1920_leftside_up,
++	}, {	/* OneXPlayer OneXFly F1 Pro (OLED) Strix Point */
++		.matches = {
++		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ONE-NETBOOK"),
++		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ONEXPLAYER F1Pro"),
++		},
++		.driver_data = (void *)&lcd1080x1920_leftside_up,
+ 	}, {	/* OrangePi Neo */
  		.matches = {
- 		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ONE-NETBOOK"),
+ 		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "OrangePi"),
 -- 
 2.51.0
 
