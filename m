@@ -1,149 +1,207 @@
-Return-Path: <linux-kernel+bounces-801200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D9BCB44181
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:58:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FDEEB4419A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21E9A5878EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:57:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47F5258806E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA352D372D;
-	Thu,  4 Sep 2025 15:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF952D46D9;
+	Thu,  4 Sep 2025 15:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aM3MoRXO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QovsCbtb"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="hhPJQJUb"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B195280A5A
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BE828152D
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757001454; cv=none; b=bGBZyS+cpSKzZN8+CNt5uYmcepDjBbamaheF+X6Gzy5xfQM5kg0IBb0MzBtP98oIoy/pFYnfJJ8YGFWJT6rvOfTZZKPLMA6H5RwCYbHHNYBkIQf6S/ct5gfwNBa4vdScSuZNIsAu39j8rbqlgVu5O8izUHoARGVi61wvQ3V34+A=
+	t=1757001493; cv=none; b=Sp4M2SvGR/xV6R54kZFsUsoJkObj62kXhPqCV6CsRaojB+RLpcgZvlYAATmoraN6D3ym+b62KjbqyNqCY9EBObTTvijCZvK//SVKxvlHAmw3l8fkCLVE6dCRBElKhamrWcCZULwCujIj/fkti5O3PHr8RVxc9IaYg03VmBnG5/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757001454; c=relaxed/simple;
-	bh=o8MxY15oYgymi06x5QgLEO2uD8/8sm37kk2ErSbl5Zg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nwufJPwUwcGjiT3xLHOTTEcYi0GmeZqSOnD8RhTnvKW+o+3yThLwkmNq7mg7PnirB0f31JiTHcEcuvvSZlFnlv4Cy+3iB8D84zt2a14lXaVzivnuwhu9StJsV0vXDAjW0ok+L1oF/Bwkxym7IXpwL6NX3YPXDPDrEnkiEEkok4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aM3MoRXO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QovsCbtb; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757001451;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=13UoqwgXArTk59f3NeL/fhVRlStlcBSEJq2cxPToQCY=;
-	b=aM3MoRXO8NVf1SloZwu9C4wzfOq2/GQ5rVx/Y+m+Ap17bWJfitEhN9TXjOUuYW9mqTi1Db
-	ShvzoZj/UpX2jmClxDVwh1XHPlZ/7vt0wFTEXp+eOz63cN6vG/5PWnFEfiTomXibtjxJmv
-	/ic0YqbBpaw/ybleaPukJ4Kxiavc1ynxEY8bPp8dZP1gJPu7UioBukU93ShuCTU4lskvF6
-	tctZg1WuUqmBoFYeAVD93vwRXnp8xlXS+v1mSgZZjWUHdvTKbYg7wtT0QU66FU9FiA7wZD
-	WOmzj/Lb9/nwaqluVBB+W8h/w3ynEcclJsYrsZ9xoBoLYEz3mQFWcvO/0NAhAA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757001451;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=13UoqwgXArTk59f3NeL/fhVRlStlcBSEJq2cxPToQCY=;
-	b=QovsCbtblPkrEW4QFi0X0e0lSnghJKoIHzC/PGCyPGeIUsv4Ew8cuUxREcVRQ5b+U+mcoN
-	Z9cOYCyN1g3p8lBg==
-To: Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, Xianglai Li
- <lixianglai@loongson.cn>
-Subject: Re: [PATCH v2 1/2] tick: Remove unreasonable detached state set in
- tick_shutdown()
-In-Reply-To: <20250904071732.3513694-2-maobibo@loongson.cn>
-References: <20250904071732.3513694-1-maobibo@loongson.cn>
- <20250904071732.3513694-2-maobibo@loongson.cn>
-Date: Thu, 04 Sep 2025 17:57:30 +0200
-Message-ID: <87frd2xlat.ffs@tglx>
+	s=arc-20240116; t=1757001493; c=relaxed/simple;
+	bh=GNG4T3IyxV5t7L2kGCETdYPeAjNlEABauKY6n8jzG+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bP61DZpBIXcn2e+90ifdeDO8kr4X0GW+14SRfCweel3q7LKoJK/Le4RlAHAPgA18LUUN3awtut/J8UaeJgkKW276FCrXFZjITDWh+o25bKojPe1aI+oTPi0M9iSpW1EyGkTQajWAWbHCfQtw6T3DjOH7v2cQ6AY2SVktmmkkBTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=hhPJQJUb; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6004b.ext.cloudfilter.net ([10.0.30.210])
+	by cmsmtp with ESMTPS
+	id uBJBuI9dvaPqLuCLduv44k; Thu, 04 Sep 2025 15:58:05 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id uCLbuzmWeOWVUuCLcuyBjD; Thu, 04 Sep 2025 15:58:04 +0000
+X-Authority-Analysis: v=2.4 cv=bqdMBFai c=1 sm=1 tr=0 ts=68b9b70c
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=XW3vq5T86JFyMsJaYQInbg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=eB5EMIHYC3Eq57A48okA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=wsIKJrAXhneWuMZ2Gt5XlAPUdaDAASZmisxqElG8+oQ=; b=hhPJQJUbqWpm4rtoZOzyNG+Z/b
+	UyybaI54eqVOgcHhq2gzHJ9K/F1Sp0ZSMtJeLph/h02IiAL5BheyN44ON3CZyz1/ImlLcRaSHK9n9
+	kri01p5tpqcmwwh7oAUfbjhvshDTWw/IMrWQBsrLNYP7vZHqy3fisV1DeIyMDb3596/ZOjcUa34M9
+	BSEL6vJnbdPNyOngVysO8h4wF/O88JvLRaYwXN+BgGNsnc/DcxctVP3eRWuA/WARbEoYuqwteD1Np
+	cDJrT/rXjKj1lEzAmLKixKQju5S76/cvOyBwrXLt0CqxmJuHhnxrm3pzaulfyenpmLokFCA+GzHvx
+	mupQRlNQ==;
+Received: from d4b26982.static.ziggozakelijk.nl ([212.178.105.130]:52332 helo=[10.52.79.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1uuCLb-00000003O4a-0yLR;
+	Thu, 04 Sep 2025 10:58:03 -0500
+Message-ID: <5417cc2c-c29a-49f5-8932-44d0507c0dea@embeddedor.com>
+Date: Thu, 4 Sep 2025 17:57:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] scsi: pm80xx: Avoid -Wflex-array-member-not-at-end
+ warning
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+ John Garry <john.g.garry@oracle.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Jack Wang <jinpu.wang@cloud.ionos.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <aLiMoNzLs1_bu4eJ@kspp>
+ <7b60681e-a964-494a-a6fa-aba00086b7f7@oracle.com>
+ <b79c69e27b4ccd9556c89a88bf6c69ed441193ea.camel@HansenPartnership.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <b79c69e27b4ccd9556c89a88bf6c69ed441193ea.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 212.178.105.130
+X-Source-L: No
+X-Exim-ID: 1uuCLb-00000003O4a-0yLR
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: d4b26982.static.ziggozakelijk.nl ([10.52.79.44]) [212.178.105.130]:52332
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFrGDUYFM4pIMZgoRbiTGJNVtS/DGtBPwF/afhXvOZNNuCpSo94X5aPj5SXqjz8jn9q7RmK2AAvfix9atbbdCQvYfVXUwAq56aUowx9vqdN36BxmsD/Q
+ MaTYveIvPP/wQGerK7ioIDrmw/RYpZnLFGpT/yG/JLV47MGvAGcwXmbN1+p/JPOcqlWD2YYQW1dy+RGyQaUuA1DyFNZirw0Su9V8q8+b940xgk/3TcnsFdrx
 
-On Thu, Sep 04 2025 at 15:17, Bibo Mao wrote:
-> Function clockevents_switch_state() will check whether it has already
-> switched to specified state, do nothing if it has.
->
-> In function tick_shutdown(), it will set detached state at first and
-> call clockevents_switch_state() in clockevents_exchange_device(). The
-> function clockevents_switch_state() will do nothing since it is already
-> detached state. So the tick timer device will not be shutdown when CPU
-> is offline. In guest VM system, timer interrupt will prevent vCPU to
-> sleep if vCPU is hot removed.
->
-> Here remove state set before calling clockevents_exchange_device(),
-> its state will be set in function clockevents_switch_state() if it
-> succeeds to do so.
 
-This explanation is incomplete. tick_shutdown() did this because it was
-originally invoked on a life CPU and not on the outgoing CPU.
 
-That got changed in
+On 9/4/25 14:39, James Bottomley wrote:
+> On Thu, 2025-09-04 at 07:52 +0100, John Garry wrote:
+>> On 03/09/2025 19:44, Gustavo A. R. Silva wrote:
+>>> diff --git a/drivers/scsi/pm8001/pm8001_hwi.h
+>>> b/drivers/scsi/pm8001/pm8001_hwi.h
+>>> index fc2127dcb58d..7dc7870a8f86 100644
+>>> --- a/drivers/scsi/pm8001/pm8001_hwi.h
+>>> +++ b/drivers/scsi/pm8001/pm8001_hwi.h
+>>> @@ -339,8 +339,10 @@ struct ssp_completion_resp {
+>>>    	__le32	status;
+>>>    	__le32	param;
+>>>    	__le32	ssptag_rescv_rescpad;
+>>> -	struct ssp_response_iu  ssp_resp_iu;
+>>>    	__le32	residual_count;
+>>> +
+>>> +	/* Must be last --ends in a flexible-array member. */
+>>> +	struct ssp_response_iu  ssp_resp_iu;
+>>
+>> this is a HW structure, right? I did not think that it is ok to
+>> simply re-order them...
+> 
+> Agreed, this is a standards defined information unit corresponding to
+> an on the wire data structure.  The patch is clearly wrong.
+> 
+> That being said, the three things the flexible member can contain are
+> no data, response data or sense data.  None of them has a residual
+> count at the beginning and, indeed, this field is never referred to in
+> the driver, so it looks like it can simply be deleted to fix the
+> warning.
 
-  3b1596a21fbf ("clockevents: Shutdown and unregister current clockevents at CPUHP_AP_TICK_DYING")
+I see. I just submitted v2. Thanks!
 
-which is the actual root cause.
+> 
+> That being said, this pattern of adding fields after flexible members
+> to represent data that's common to all content types of the union is
+> not unknown in SCSI so if you want to enable this warning, what are we
+> supposed to do when we encounter a genuine use case?
 
-The pile of 'Fixes:' below is just enumerating the subsequent problems.
+It depends on the situation. Some people prefer to have a separate struct
+with only the header part of the flexible structure --this is excluding
+the flexible-array member (FAM), and then use an object of that header
+type embedded anywhere in any other struct. This of course (sometimes)
+implies having to do many other changes to accommodate the rest of the
+code accordingly, as in this[1] case.
 
-> Fixes: bf9a001fb8e4 ("clocksource/drivers/timer-tegra: Remove clockevents shutdown call on offlining")
-> Fixes: cd165ce8314f ("clocksource/drivers/qcom: Remove clockevents shutdown call on offlining")
-> Fixes: 30f8c70a85bc ("clocksource/drivers/armada-370-xp: Remove clockevents shutdown call on offlining")
-> Fixes: ba23b6c7f974 ("clocksource/drivers/exynos_mct: Remove clockevents shutdown call on offlining")
-> Fixes: 15b810e0496e ("clocksource/drivers/arm_global_timer: Remove clockevents shutdown call on offlining")
-> Fixes: 78b5c2ca5f27 ("clocksource/drivers/arm_arch_timer: Remove clockevents shutdown call on offlining")
-> Fixes: 900053d9eedf ("ARM: smp_twd: Remove clockevents shutdown call on offlining")
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
->  kernel/time/tick-common.c | 5 -----
->  1 file changed, 5 deletions(-)
->
-> diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
-> index 9a3859443c04..eb9b777f5492 100644
-> --- a/kernel/time/tick-common.c
-> +++ b/kernel/time/tick-common.c
-> @@ -424,11 +424,6 @@ void tick_shutdown(unsigned int cpu)
->  
->  	td->mode = TICKDEV_MODE_PERIODIC;
->  	if (dev) {
-> -		/*
-> -		 * Prevent that the clock events layer tries to call
-> -		 * the set mode function!
-> -		 */
-> -		clockevent_set_state(dev, CLOCK_EVT_STATE_DETACHED);
->  		clockevents_exchange_device(dev, NULL);
->  		dev->event_handler = clockevents_handle_noop;
->  		td->evtdev = NULL;
+To address the situation described above without necessarily having to
+create a separate header struct and change a lot of code, the
+struct_group() helper can be used [2].
 
-Can this pretty please cleanup the misleading comment above
-tick_shutdown() as well?
+In other cases, when for some reason the FAM has to be accessed through
+a composite struct, both struct_group() and container_of() (this to
+retrieve a pointer to the flexible structure and then access the FAM)
+can be used [3].
 
- * Shutdown an event device on a given cpu:
- *
- * This is called on a life CPU, when a CPU is dead. So we cannot
- * access the hardware device itself.
- * We just set the mode and remove it from the lists.
+We have the new TRAILING_OVERLAP() helper that in many cases can be
+superior to the struct_group()/container_of() approach. For instance
+this[4] could've been fixed with the following shorter and simpler
+patch:
 
-That should have been removed or updated with 3b1596a21fbf too, no?
+  struct nfsacl_simple_acl {
+-       struct posix_acl acl;
+-       struct posix_acl_entry ace[4];
++       TRAILING_OVERLAP(struct posix_acl, acl, a_entries,
++               struct posix_acl_entry ace[4];
++       );
+  };
 
-With that the cpu argument is not longer useful either, because this is
-now guaranteed to be invoked on the outgoing CPU, no?
+However, at the time we didn't have TRAILING_OVERLAP(). Also, this new
+macro is helping us to detect alignment issues and correct them [5].
+These[6][7] are a couple more example of when and how to use this helper.
 
-Thanks,
+We also have the DEFINE_FLEX()/DEFINE_RAW_FLEX() helpers [8][9].
 
-        tglx
+So, again, we can do different things depending on the situation and
+maintainer's preferences.
 
+Ideally, FAMs-in-the-middle should be avoided, because it's so easy
+for them to open the door to memory corruption bugs[10] (to mention
+some).
+
+Thanks
+-Gustavo
+
+[1] https://git.kernel.org/linus/d2af710d6d50
+[2] https://git.kernel.org/linus/c54979a3abc4
+[3] https://git.kernel.org/linus/a7e8997ae18c
+[4] https://git.kernel.org/linus/dfd500d89545
+[5] https://lore.kernel.org/linux-hardening/aLiYrQGdGmaDTtLF@kspp/
+[6] https://git.kernel.org/linus/5e54510a9389
+[7] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=8abbbbb588f1
+[8] https://git.kernel.org/linus/1d717123bb1a
+[9] https://git.kernel.org/linus/34116ec67cc1
+[10a] https://git.kernel.org/linus/eea03d18af9c
+[10b] https://git.kernel.org/linus/6e4bf018bb04
+[10c] https://git.kernel.org/linus/cf44e745048d
+[10d] https://git.kernel.org/linus/d761bb01c85b
 
