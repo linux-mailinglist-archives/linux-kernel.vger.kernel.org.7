@@ -1,255 +1,128 @@
-Return-Path: <linux-kernel+bounces-800434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3362B4378F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:50:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 520DBB4378D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCD423A971F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:50:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE9E27B0C4B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E75C2F7471;
-	Thu,  4 Sep 2025 09:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c2ZuVh1I"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFFD2F8BD3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D692F83DC;
 	Thu,  4 Sep 2025 09:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BnQGCtsO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1920E2E88A6;
+	Thu,  4 Sep 2025 09:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756979387; cv=none; b=dfsfg/bcn0wBQbZ0K2dxQZymAI+ezpHSxWz7vG3wqb7fPLPLpTHlQViVM2Mh24tk8Yd+FKVN/sY1+ETNxwxW4a/yl5TvxbeqeFDypW1vKpnHf5suqO7Shbpq5+d2fStDiEfc710ZVESLdSmRSFoadkEHUB3wGZ38w3Qq0bcRNYo=
+	t=1756979384; cv=none; b=FPlx+q00hOqgWgZmV0cv82gcOsLX4ZBa0C/LmYucjlqp98wo4QkkXkSsI0yvAIbAhVPscMIumzQLjiLnPxy4onrObDlkK0/w2um64fLmFs8BLn5C3fV5VbDzRnhCrTyMowlcj4HUhYwsLhQ6oWVMOb0LH6jeQEIW4F9aLhwmfEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756979387; c=relaxed/simple;
-	bh=tlQQ4A8SaD2iscfk1wzIkweYD5icMB5K/XilKna4f7w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UZDbuICGRCMtGTjeSfbE0nnEXSrqY8GSAcly/b4q2CtwG3KgASUugW85lepfq+QMdvMcFcRmzlBwk2wlwY2HOsbx/+0z5R1Xuju5kzYjCm8mQga/UfOp1xc/Ca2E2MVoadSmx23C078rZjS4BJZyzF1fePy8FHNwRcxIBukI5qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c2ZuVh1I; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61e3b74672cso1807886a12.0;
-        Thu, 04 Sep 2025 02:49:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756979384; x=1757584184; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MJbNOvdwkGYJ/Frmp0x806yVuX/X2QwoxXLiar6zoiw=;
-        b=c2ZuVh1IOKdeLiDCIry4bCGIjotN0bkASA8vpHTXTLsEzCkTC3dIGhEYjkTrJgyN7M
-         T6tJ8PCBvHcPSs62P+HBoKYg1kt9RyD6f0TVpHD91L0nTfQKT43R1KfEwa+3XQK+F4hm
-         6he5H8woHlUIvcKr0D1orelL6CwAJoKAvgLHJUDShP0i53OnJ10YB9lHxgpy+4O0RCYQ
-         90nZ84esi+pljgcrr8FByREtuteb/AbiGMV1ZdFBZmBq1BYWQcUcyL8bpUP3X89dv8MW
-         Qjns595bg+vDGPXHWJWfrkVA6eynr+Ymbe/jdX9tNnkYmETddGJpasKLfpUIQEsHzqWY
-         9GcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756979384; x=1757584184;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MJbNOvdwkGYJ/Frmp0x806yVuX/X2QwoxXLiar6zoiw=;
-        b=KIgHH6mcSR45zn10KLbHxCwEqwlZqg6RLhSJjpGVrmwIPjLubZRoeVivqm7A+kPJQK
-         VXxuGx8Jy3wC21XOTIBOPtKVPBXuUmL4We4PpNnhhRq3DATCHtfZI1JY3V7Dl9LhNsSA
-         KeFdwkPnkqyn9bMFaxK+WxBjuN17jjfl/kNaMf/hgIjks9kGLPwv3v73GnRIP2yGv+3l
-         jHh2e0iFATBeulfSppoDtAKp9HAJ8qW5BgCpOlScQe3JDNpJVW+uEHncolvZ3gjfshpP
-         tnNzg/JfpV28HLUEsJOSqWuH4noalzjdjczxa468f79FI6JkFw+x8FkAeMiyn9SPY13i
-         OLaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwS65O4PuLiCdZTxiSV4BF/EgoNAL89n1HhoIcGbjFUXWFqi03YZ8qVXaauziQGp75xj6BmEnR1iA9@vger.kernel.org, AJvYcCXOo6CcuN7QamoGdRZXPKqqA+p4ipVmHUnC5SkTionyVrNnLBFeMXL1S8m2juOe8N6T+3xtpSyS@vger.kernel.org, AJvYcCXSEn3g3BvfGvK+LWqVZZAlEiY7nFyFITYUsyZ840kJP21JT36ZSkL1z6uooQbSSyV+6Otnb5ILMZIYYj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5EtSMnLfu//oVwEvAyn2oYRmOAqVhE6poXpSNovPvbf5VhWCG
-	aSbdsDEG5B7Jq933w4X7sVH0JKx2iWOmDqrLyiNQAO0iqd49hPBDBCGYufv8sdw6Pg048UeaPkt
-	cEGB9G/I8vKeI+/HGVKHa+kLYRKmQ1Ag=
-X-Gm-Gg: ASbGncvD7f3ohR0eeNAE0WiaJCWH8VBdYbKotsYQ3RdPpb84DWhHssNFIqTRjys2fNj
-	5yk2fNmDNSreKY7gCnryKHKU71+zZ0m+5xdD6tWyekNa/I6Y543nE86dg+lfs7Yl6PZabtUhj+c
-	R22MMrXBxDM3eEGH/Qm/LP5gYLfKSPicBOaMOuW2zVN1gGBQPsz2zrSv6USSz+8Wj6RMY3d/MNL
-	MQAzll3KVQyGOxxeQ==
-X-Google-Smtp-Source: AGHT+IEym0TH2z8qEFt9WsYQjUjil/LV/1cr0gI187BMwtPUNK+/X4B9HHmhicxhhHBU3epGxzmnQxouyxtZCL40q+M=
-X-Received: by 2002:a05:6402:5252:b0:61c:899d:90cc with SMTP id
- 4fb4d7f45d1cf-61d26d5bc94mr15686461a12.11.1756979383629; Thu, 04 Sep 2025
- 02:49:43 -0700 (PDT)
+	s=arc-20240116; t=1756979384; c=relaxed/simple;
+	bh=LTd9DO5iC+rsaQHJ8nmu4yfR1TBtklbVQoOL9sBZ8W4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DOEIsRqkM34m5gY785Y2gW2T4ymQPHMAoUcW8OJFQgUI32xf2LoHfJItbHKvpyMJqoJ3j5lQVsMiSgn3WCdB84zeXJlcCtfGXBM4lrSHFcHI0tUtjL+3ZtpIukg+Nh8hegEDxXJpXuXIsRBFIbq1+DAwPtEo4SIOcWwaZdTXy8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BnQGCtsO; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756979383; x=1788515383;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=LTd9DO5iC+rsaQHJ8nmu4yfR1TBtklbVQoOL9sBZ8W4=;
+  b=BnQGCtsOtFqgRddNttKO15qrDW36OdxsEOqLN7bd33V7xmFfz74s9doZ
+   ovE5Rc8q2ZPFNUAYtV/ZaDT9sf9lU8haxkmw8xgtLk62VkBhzCcl3Tqf6
+   Jq5fDDo1jiWQog8sfnfaGfyOfhsnGTqPpc6NfE8SSQ2LLHhZuWe30X1i0
+   ICCEZbsT19B23fQ4vz2RO1cXBcRnWux2HJBp3sH3/AtrE+FSXnMW0PO2a
+   JlIHIvz2uIr2s5wQUjx40JR94U5sFGgtprYB1tjikqbwnVuSekG4yZSNN
+   ZakK+TtLA1VZGJn8tMh3X8p85t2sVsKE8ijsOy+KASde0tQr4nv+CpXC6
+   A==;
+X-CSE-ConnectionGUID: pchJcaZsQ1aa50pnp4rn6A==
+X-CSE-MsgGUID: Tgvd9UFHTS+neAufB9Eo1Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="62953476"
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="62953476"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 02:49:42 -0700
+X-CSE-ConnectionGUID: 760uCKLlQriNhzKI2gxazg==
+X-CSE-MsgGUID: AwXql6ATTpafFERblQI85Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="195504677"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 02:49:39 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uu6b3-0000000BEWA-0pfE;
+	Thu, 04 Sep 2025 12:49:37 +0300
+Date: Thu, 4 Sep 2025 12:49:36 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: =?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: designware: use dev_err_probe when probing platform
+ device
+Message-ID: <aLlgsLDFvBGA7OZA@smile.fi.intel.com>
+References: <20250904-i2c-dw-dev-err-probe-v1-1-acca6ffd122e@bootlin.com>
+ <aLlgRorNlvF1k2h9@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901094046.3903-1-benchuanggli@gmail.com> <86721a4f-1dbd-4ef5-a149-746111170352@intel.com>
- <1aaeb332-255e-4689-ad82-db6b05a6e32c@intel.com> <CACT4zj8LxG_UeL22ERaP4XVwopdSjXz7mH95TyxXJ==WKZWHLw@mail.gmail.com>
- <416be416-014c-4efb-9f85-8f7023dcdc3f@intel.com>
-In-Reply-To: <416be416-014c-4efb-9f85-8f7023dcdc3f@intel.com>
-From: Ben Chuang <benchuanggli@gmail.com>
-Date: Thu, 4 Sep 2025 17:49:31 +0800
-X-Gm-Features: Ac12FXzUZFrC1mTCqdAH4oDlb8uBabI8RAGNPVWv2KxPMYvodNfo0WIwG8me464
-Message-ID: <CACT4zj9ttNfa4FkeBQS+CRsTRuq1apqYqGUmr9xyzU2RgTsV8g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mmc: sdhci-uhs2: Fix calling incorrect
- sdhci_set_clock() function
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: ulf.hansson@linaro.org, victor.shih@genesyslogic.com.tw, 
-	ben.chuang@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
-	SeanHY.Chen@genesyslogic.com.tw, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aLlgRorNlvF1k2h9@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Sep 3, 2025 at 7:15=E2=80=AFPM Adrian Hunter <adrian.hunter@intel.c=
-om> wrote:
->
-> On 02/09/2025 09:32, Ben Chuang wrote:
-> > On Tue, Sep 2, 2025 at 12:50=E2=80=AFAM Adrian Hunter <adrian.hunter@in=
-tel.com> wrote:
-> >>
-> >> On 01/09/2025 15:07, Adrian Hunter wrote:
-> >>> On 01/09/2025 12:40, Ben Chuang wrote:
-> >>>> From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-> >>>>
-> >>>> Fix calling incorrect sdhci_set_clock() in __sdhci_uhs2_set_ios() wh=
-en the
-> >>>> vendor defines its own sdhci_set_clock().
-> >>>>
-> >>>> Fixes: 10c8298a052b ("mmc: sdhci-uhs2: add set_ios()")
-> >>>> Cc: stable@vger.kernel.org # v6.13+
-> >>>> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-> >>>> ---
-> >>>>  drivers/mmc/host/sdhci-uhs2.c | 5 ++++-
-> >>>>  1 file changed, 4 insertions(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-=
-uhs2.c
-> >>>> index 0efeb9d0c376..704fdc946ac3 100644
-> >>>> --- a/drivers/mmc/host/sdhci-uhs2.c
-> >>>> +++ b/drivers/mmc/host/sdhci-uhs2.c
-> >>>> @@ -295,7 +295,10 @@ static void __sdhci_uhs2_set_ios(struct mmc_hos=
-t *mmc, struct mmc_ios *ios)
-> >>>>      else
-> >>>>              sdhci_uhs2_set_power(host, ios->power_mode, ios->vdd);
-> >>>>
-> >>>> -    sdhci_set_clock(host, host->clock);
-> >>>> +    if (host->ops->set_clock)
-> >>>> +            host->ops->set_clock(host, host->clock);
-> >>>> +    else
-> >>>> +            sdhci_set_clock(host, host->clock);
-> >>>
-> >>> host->ops->set_clock is not optional.  So this should just be:
-> >>>
-> >>>       host->ops->set_clock(host, host->clock);
-> >>>
-> >
-> > I will update it. Thank you.
-> >
-> >>
-> >> Although it seems we are setting the clock in 2 places:
-> >>
-> >>         sdhci_uhs2_set_ios()
-> >>                 sdhci_set_ios_common()
-> >>                         host->ops->set_clock(host, ios->clock)
-> >>               __sdhci_uhs2_set_ios
-> >>                         sdhci_set_clock(host, host->clock)
-> >>
-> >> Do we really need both?
-> >>
-> >
-> > We only need one sdhci_set_clock() in __sdhci_uhs2_set_ios() for the
-> > UHS-II card interface detection sequence.
-> > Refer to Section 3.13.2, "Card Interface Detection Sequence" of the SD
-> > Host Controller Standard Spec. Ver. 7.00,
-> > First set the VDD1 power on and VDD2 power on, then enable the SD clock=
- supply.
-> >
-> > Do I need to add a separate patch or add it in the same patch like this=
-?
-> >
-> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> > index 3a17821efa5c..bd498b1bebce 100644
-> > --- a/drivers/mmc/host/sdhci.c
-> > +++ b/drivers/mmc/host/sdhci.c
-> > @@ -2369,7 +2369,8 @@ void sdhci_set_ios_common(struct mmc_host *mmc,
-> > struct mmc_ios *ios)
-> >                 sdhci_enable_preset_value(host, false);
-> >
-> >         if (!ios->clock || ios->clock !=3D host->clock) {
-> > -               host->ops->set_clock(host, ios->clock);
-> > +               if (!mmc_card_uhs2(host->mmc))
-> > +                       host->ops->set_clock(host, ios->clock);
-> >                 host->clock =3D ios->clock;
-> >
-> >                 if (host->quirks & SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK =
-&&
->
-> It can be a separate patch, but the whole of
->
->         if (!ios->clock || ios->clock !=3D host->clock) {
->                 etc
->         }
->
-> needs to move from sdhci_set_ios_common() into
-> sdhci_set_ios() like further below.  Note, once that is done, you need
-> to add "host->clock =3D ios->clock;" to __sdhci_uhs2_set_ios()
-> like:
->         host->ops->set_clock(host, ios->clock);
->         host->clock =3D ios->clock;
->
->
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 3a17821efa5c..ac7e11f37af7 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -2367,23 +2367,6 @@ void sdhci_set_ios_common(struct mmc_host *mmc, st=
-ruct mmc_ios *ios)
->                 (ios->power_mode =3D=3D MMC_POWER_UP) &&
->                 !(host->quirks2 & SDHCI_QUIRK2_PRESET_VALUE_BROKEN))
->                 sdhci_enable_preset_value(host, false);
-> -
-> -       if (!ios->clock || ios->clock !=3D host->clock) {
-> -               host->ops->set_clock(host, ios->clock);
-> -               host->clock =3D ios->clock;
-> -
-> -               if (host->quirks & SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK &&
-> -                   host->clock) {
-> -                       host->timeout_clk =3D mmc->actual_clock ?
-> -                                               mmc->actual_clock / 1000 =
-:
-> -                                               host->clock / 1000;
-> -                       mmc->max_busy_timeout =3D
-> -                               host->ops->get_max_timeout_count ?
-> -                               host->ops->get_max_timeout_count(host) :
-> -                               1 << 27;
-> -                       mmc->max_busy_timeout /=3D host->timeout_clk;
-> -               }
-> -       }
->  }
->  EXPORT_SYMBOL_GPL(sdhci_set_ios_common);
->
-> @@ -2410,6 +2393,23 @@ void sdhci_set_ios(struct mmc_host *mmc, struct mm=
-c_ios *ios)
->
->         sdhci_set_ios_common(mmc, ios);
->
-> +       if (!ios->clock || ios->clock !=3D host->clock) {
-> +               host->ops->set_clock(host, ios->clock);
-> +               host->clock =3D ios->clock;
-> +
-> +               if (host->quirks & SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK &&
-> +                   host->clock) {
-> +                       host->timeout_clk =3D mmc->actual_clock ?
-> +                                               mmc->actual_clock / 1000 =
-:
-> +                                               host->clock / 1000;
-> +                       mmc->max_busy_timeout =3D
-> +                               host->ops->get_max_timeout_count ?
-> +                               host->ops->get_max_timeout_count(host) :
-> +                               1 << 27;
-> +                       mmc->max_busy_timeout /=3D host->timeout_clk;
-> +               }
-> +       }
-> +
->         if (host->ops->set_power)
->                 host->ops->set_power(host, ios->power_mode, ios->vdd);
->         else
->
+On Thu, Sep 04, 2025 at 12:47:51PM +0300, Andy Shevchenko wrote:
+> On Thu, Sep 04, 2025 at 10:59:24AM +0200, Benoît Monin wrote:
+> > Add calls to dev_err_probe on error paths that can return -EPROBE_DEFER
 
-I will add this as a separate patch and modify  __sdhci_uhs2_set_ios().
+Also add () to the function names or macros with parameters, i.e.
+dev_err_probe()
 
-Best regards,
-Ben Chuang
+> > when probing platform device. Namely when requesting the reset controller,
+> > when probing for lock support and when requesting the clocks.
+> > 
+> > In i2c_dw_probe_master and i2c_dw_probe_slave, called by the platform
+
+i2c_dw_probe_master() and i2c_dw_probe_slave()
+
+> > probe from i2c_dw_probe, replace the call to dev_err by dev_err_probe
+
+i2c_dw_probe()
+dev_err() by dev_err_probe()
+
+> > when failing to acquire the IRQ.
+> > 
+> > PCI device probing already use dev_err_probe.
+
+dev_err_probe()
+
+> What I see here is two patches:
+> 1) conversion existing dev_err() to dev_err_probe();
+> 2) adding messages to some of the plain return $ERR.
+> 
+> Can you split with respective justification for each of them?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
