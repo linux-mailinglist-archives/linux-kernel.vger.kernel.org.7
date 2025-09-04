@@ -1,129 +1,149 @@
-Return-Path: <linux-kernel+bounces-801571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40240B446DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:01:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D06B446E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC1F1A4055D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:01:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C19AA40453
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287A32797AE;
-	Thu,  4 Sep 2025 20:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3832F27A92A;
+	Thu,  4 Sep 2025 20:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Wdrg70sz"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOaA7t6d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF39215F5C;
-	Thu,  4 Sep 2025 20:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A75279DDA;
+	Thu,  4 Sep 2025 20:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757016112; cv=none; b=tvy41QhKdMrlQBTo2is+IzAUAi71NVzGa1G1QvyZCTlcBZ2AAAdDzx0UTR0XI3GC2vnvxWRGFO/5Qn+5FhfdBEuPIG22xy/d7fk5PhmOWIUvoCo0ZuRDqL3EHSmQg4oiQyIlMHuGrZN5vyKZT7EBw0R10Eb9rEaMUJrK7rzxMIw=
+	t=1757016188; cv=none; b=oxtoQxrdKTxLZuXj9NSO575sKCYXyQUiWKDKcU5JNZTiq9emin1GUhqGgZRYvY6JVvXGttV59LyWMu9k6bi8acPdKmJUJFmj0OSewBqBUgSWBaEEhjCy+kub6hBdeizcjgJrPV46Ef/GBPXpTlahMjLuO53d37TNMCjMrMn82aU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757016112; c=relaxed/simple;
-	bh=giDG6yLbZbChEwyrNi7daCsisorV/2wtCDx2g6t/AQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dS4dLiqnh1H/odsLa6dRDAXReZ1a8Tnx7Ecs4OjHaejjMRdaWf3+QdMXko/CWi9AMWOPpzz8OG6XT7/5EGslPNKJWxNATBAn5r0Y4R1OCc999G98vd8b+bNywQumjQpVCsCrloCAVlmMFYhzl3AEg5lrPnBn/CtJZQZWD65H0Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Wdrg70sz; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=HwRnJdXLUnbJzEliJ8F7yWyHZeWeHGJT0waJGQRe0iU=; b=Wdrg70szvN/Jf+5SKMdlqaYhhw
-	7wWW7bSsYxodvgACuWp5HYjdBWfyuJ1ud6jBYmz+eZo9rPDD5PW/trO/gw+IViNTpZpf2MhGS34vm
-	Q094atAW/NFnksVkTTUhS1uUUa/DW81zkQNOjwiNSwNqmVEBabodf/RzW+XJaJSoWzjekPp09SD+4
-	LOkJnffbEPz0fYXukeH2U4soT0qjZYu53RF7UlA8COJDghYxoJsqpdiKmP8azk+TtE+kTH8uiED1p
-	XQhvYFDVIHRyKaHgFC2vsbXb7ptjqwRwxF8Nbkb2cvQiqHRbxU/XhxzCkG37SQPfn8M9IUb8eVmEJ
-	cT+kcimw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uuG9H-00000004PgU-3yfk;
-	Thu, 04 Sep 2025 20:01:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B8E2D300220; Thu, 04 Sep 2025 22:01:34 +0200 (CEST)
-Date: Thu, 4 Sep 2025 22:01:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Marco Elver <elver@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Ramon de C Valle <rcvalle@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	x86@kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 0/9] kcfi: Prepare for GCC support
-Message-ID: <20250904200134.GA4067720@noisy.programming.kicks-ass.net>
-References: <20250904033217.it.414-kees@kernel.org>
- <20250904070410.GX4067720@noisy.programming.kicks-ass.net>
- <202509040933.06AF02E714@keescook>
+	s=arc-20240116; t=1757016188; c=relaxed/simple;
+	bh=jiB0SmMjS4zaMyTVtUGdfi4c0oVbMnzk0ENcWBuYT6U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vGTL/e3DretmXrbWv55I2bjv9sTF992dR0l5+eA6kRawV1g5XAPH3nwoS9ck787bMXrlSn58uzz1FGTPyKv7aMNKpypRnomG2D0YWSZ1fXm/wC0efExBvBBVC4Nt3S7lMuXtkTA1G+Be2Q0LHefki12jZqa7VVul8KHTRv7jPTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOaA7t6d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B755C4CEF0;
+	Thu,  4 Sep 2025 20:03:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757016188;
+	bh=jiB0SmMjS4zaMyTVtUGdfi4c0oVbMnzk0ENcWBuYT6U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JOaA7t6dly4gcV34fzYVYHG0ngsLNCvfjXBy5NU03O8jgEl+1BQObSoXXs/7l8rc/
+	 pAmEff+kl+8uNaMSkhakFCdO0s+5C7m9cFJIcyTauuBfwIpJzkzU2JaxfKswDrnt6j
+	 4I2t7qEiigpnVNfEEn4DnoN18hMaMnigRR3GOvmOfy2dxK61jyYikhG7mjNbDJQyUD
+	 ZS4dreJqKQAzAvf418X7I7XW0Z+bEA+tq1a5MKdCuv8+vKEQDV+z3nz13n81tu+WXG
+	 koBrAX9Dm/FJ1LczbIJ+6iXZkA9zWQ/DJDtyQspB8C1NdBOpcMw5AABilhWEfslSsC
+	 uDpX2gcgy5IyA==
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-74526ca79c2so686001a34.3;
+        Thu, 04 Sep 2025 13:03:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUJNn+jPWp+Ylr0JAvHG5ksSNBHn4Y05fhgjDn7ar9YJIRF1MVhWJ/oaikwB7Y7YigtQDNB0gCTmGwLtuU=@vger.kernel.org, AJvYcCVqjytkUvyO83R63SdlPhpVmoviKN6rMIMNcHbjlzk5PXeXsEKeUgFYxsqCzk+RIbi5vtgK72sNUww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVttRX7d6L2d+YKEOi8xMK7lzFALIEOuTOVBbHhiCVlDdo3d/w
+	puAIL8fMTaht6cJGRy+SiMquGWGURpSJSgdNzEPRAeTdGv+zEJgzy7b5Rjmnicdv82B7p24V4Ke
+	pRM8NI6gBV94mPH8OGD+Hyv0DTC7dEN0=
+X-Google-Smtp-Source: AGHT+IGDgabH07o0jXUsx8EUBmxVIeNIp9gbySMtFVD6zhi4DjUSLK9X5SYv0mndPHQ/smsOJXFgUANYD0cBtQuciOA=
+X-Received: by 2002:a05:6830:f82:b0:745:623b:fcea with SMTP id
+ 46e09a7af769-74569c68d47mr11744107a34.0.1757016187344; Thu, 04 Sep 2025
+ 13:03:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202509040933.06AF02E714@keescook>
+References: <20250826183644.220093-1-sohil.mehta@intel.com>
+In-Reply-To: <20250826183644.220093-1-sohil.mehta@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 4 Sep 2025 22:02:55 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hw+797-mm3qA6PqQdA7hWyZKhkYobbvF+8MCvg1cHZvQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyvbt0m04pHIDjR3IZESiqkecbEoB7zGlMvdqST2dqGlpONMlCx5RdiJgM
+Message-ID: <CAJZ5v0hw+797-mm3qA6PqQdA7hWyZKhkYobbvF+8MCvg1cHZvQ@mail.gmail.com>
+Subject: Re: [PATCH v3] cpufreq: ondemand: Update the efficient idle check for
+ Intel extended Families
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
+	x86@kernel.org, Tony Luck <tony.luck@intel.com>, Zhao Liu <zhao1.liu@linux.intel.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 04, 2025 at 09:37:14AM -0700, Kees Cook wrote:
-> On Thu, Sep 04, 2025 at 09:04:10AM +0200, Peter Zijlstra wrote:
-> > On Wed, Sep 03, 2025 at 08:46:39PM -0700, Kees Cook wrote:
-> > 
-> > > Kees Cook (9):
-> > >   compiler_types.h: Move __nocfi out of compiler-specific header
-> > >   x86/traps: Clarify KCFI instruction layout
-> > >   x86/cfi: Document the "cfi=" bootparam options
-> > >   x86/cfi: Standardize on common "CFI:" prefix for CFI reports
-> > >   x86/cfi: Add "debug" option to "cfi=" bootparam
-> > >   x86/cfi: Remove __noinitretpoline and __noretpoline
-> > 
-> > So I can take these first 6 patches (and edit that debug patch to
-> > un-annoy myself ;-), but I'm thinking this Kconfig stuff:
-> 
-> Sure, yeah. Do you want a v3 for the debug stuff that uses your proposed
-> helper?
+On Tue, Aug 26, 2025 at 8:38=E2=80=AFPM Sohil Mehta <sohil.mehta@intel.com>=
+ wrote:
+>
+> IO time is considered busy by default for modern Intel processors. The
+> current check covers recent Family 6 models but excludes the brand new
+> Families 18 and 19.
+>
+> According to Arjan van de Ven, the model check was mainly due to a lack
+> of testing on systems before INTEL_CORE2_MEROM. He suggests considering
+> all Intel processors as having an efficient idle.
+>
+> Extend the IO busy classification to all Intel processors starting with
+> Family 6, including Family 15 (Pentium 4s) and upcoming Families 18/19.
+>
+> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+> ---
+> v3:
+>  - Posting this patch separately since the core family cleanup series
+>    was merged without it.
+>  - Improve commit message and code comments.
+>
+> v2: https://lore.kernel.org/lkml/20250211194407.2577252-7-sohil.mehta@int=
+el.com/
+> ---
+>  drivers/cpufreq/cpufreq_ondemand.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/cpufreq/cpufreq_ondemand.c b/drivers/cpufreq/cpufreq=
+_ondemand.c
+> index 0e65d37c9231..3decfc53fe68 100644
+> --- a/drivers/cpufreq/cpufreq_ondemand.c
+> +++ b/drivers/cpufreq/cpufreq_ondemand.c
+> @@ -15,6 +15,10 @@
+>  #include <linux/tick.h>
+>  #include <linux/sched/cpufreq.h>
 
-Nah, already done :-) I just pushed out these 6 and my UDB hackery to
-queue.git/x86/core. If the robots don't complain, I'll stuff it into tip
-in a few days.
+Since you are adding this #ifdef below, why don't you go a bit farther and =
+do
 
-> > >   kconfig: Add transitional symbol attribute for migration support
-> > >   kcfi: Rename CONFIG_CFI_CLANG to CONFIG_CFI
-> > 
-> > Should perhaps go through the kbuild tree? A
-> 
-> I had chatted offline with Nathan about this series, and he'd suggested
-> the kconfig change could go with it's first user (the rename). So if you
-> don't want to put it in -tip, I can take it in the hardening tree.
-> (There's no dependencies between these 2 and the first 6.)
+> +#ifdef CONFIG_X86
+> +#include <asm/cpu_device_id.h>
 
-So I suppose I can carry them, just to keep the lot together, but then I
-need an ack from someone that actually knows this Kconfig language stuff
-:-)
-
-You taking them through the hardening tree also works for em.
+static bool should_io_be_busy(void)
+{
+       /* All Intel Family 6 and later processors have efficient idle. */
+       return boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL &&
+boot_cpu_data.x86_vfm >=3D INTEL_PENTIUM_PRO;
+}
+#else
+static inline bool should_io_be_busy(void)
+{
+        return false;
+}
+> +#endif
+> +
+>  #include "cpufreq_ondemand.h"
+>
+>  /* On-demand governor macros */
+> @@ -41,12 +45,9 @@ static unsigned int default_powersave_bias;
+>  static int should_io_be_busy(void)
+>  {
+>  #if defined(CONFIG_X86)
+> -       /*
+> -        * For Intel, Core 2 (model 15) and later have an efficient idle.
+> -        */
+> +       /* For Intel, Family 6 and later have an efficient idle. */
+>         if (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL &&
+> -                       boot_cpu_data.x86 =3D=3D 6 &&
+> -                       boot_cpu_data.x86_model >=3D 15)
+> +           boot_cpu_data.x86_vfm >=3D INTEL_PENTIUM_PRO)
+>                 return 1;
+>  #endif
+>         return 0;
+> --
 
