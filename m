@@ -1,258 +1,491 @@
-Return-Path: <linux-kernel+bounces-801014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F34B43EBF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:28:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 872F8B43EC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D31EA0262F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:28:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A38BB3B852D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC38307492;
-	Thu,  4 Sep 2025 14:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30516307AC6;
+	Thu,  4 Sep 2025 14:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JwHXLpl6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ATWbNFL0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="aFAskpAk";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="ph+ktFDK"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03EE30ACEB
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6068308F0F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756995934; cv=none; b=sNZKqi7qvlPjqYc/WHEiSKSBuVArl8BgE0hnDPD5FIeep/UR51wiHwvx5WgTGCliyk1cpZsdU98o/gFKEN1H8+20eoVBbxMnDxADNaxO6zIDK8WLOEQ2L+k8+kN764pyPHCZgsMpiNR3HSoIRH+nBeGsWjkC5krBJ1g80Vh2ecE=
+	t=1756995969; cv=none; b=prd1eoGNFUzIyrLAapOcmpWWJsYHTVol8b4PjCYwkY0G3St1I5cpC8cFx6nwZnYc9m+yEJ2FimwaTnFDNmadyyKI+j0GH8V/TxLowfstY8VyNY9IqYYZi4pmiUmJW1+eNsgQ7fJBGs8rg0m/M5jnoEk9/pwpcyHQOS2S+g0NqZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756995934; c=relaxed/simple;
-	bh=ntLMxMTJJL8iq2rbfSuz0Vqw+9K2PaY2gC9lbyvr3xk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aXYotaZLKoK8r4ldF/03bT1P+wV+ylnOgJd0MBhetbJ+CFQaLTfaoQev41jF0cYHpmiWdf+jNpYwZHt5IyTsWhNunQ0LRB2Apo2pIshFDmRQsaidZF4g3IRHQaQAzZeF8EbmnyZ6UWjmx3G0VuTsVnaPK86eYlc9vIBn3S245Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JwHXLpl6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ATWbNFL0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756995930;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zpqMI9FznM8U9iJMEFpqpF+IGwhgXp8qLalooxsCxCo=;
-	b=JwHXLpl6xv9sfs63bZWNe0iyugit6HI/0Fc0SbY0Y/oQ17Ohn1JrknA/t4H8P+KKJH5qSj
-	rLhueLBLxDsqQGrDrqcm6S8fSulE82TCdgD4WN7CG4+ja52S7aYyIKllVmyH7xJDWDow92
-	BmFQPoJKapX51HShVAD+bcUCyp8Geyvb4h0+1KT8wjf8eK7Q35ICZhJTqVk05VTbWw4lBT
-	Zq6Vac4/3RI3kyxwJ8wmVoOy9U1iBLEdhdp0PWwOk3sT0uZnBPXG95vsoNLhYBMlYJ1B8d
-	E+MHmvf1D5mgkulHVIDSlI+Nsh6LXF4VLIWVyx5H6JAPXabpEWtwMVIgHtCUsg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756995930;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zpqMI9FznM8U9iJMEFpqpF+IGwhgXp8qLalooxsCxCo=;
-	b=ATWbNFL0nwNSTIilXUwnO3DMbkuntpl4xbBcB5vugC264PsT4MoCg8LIuJ0e4xdYNqVcZm
-	BkYFtsajdSh9lPAg==
-To: linux-rt-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Clark Williams <clrkwllms@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tejun Heo <tj@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v3 3/3] softirq: Allow to drop the softirq-BKL lock on PREEMPT_RT
-Date: Thu,  4 Sep 2025 16:25:25 +0200
-Message-ID: <20250904142526.1845999-4-bigeasy@linutronix.de>
-In-Reply-To: <20250904142526.1845999-1-bigeasy@linutronix.de>
-References: <20250904142526.1845999-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1756995969; c=relaxed/simple;
+	bh=NSjx2Kev6QLNLP6dJARjwbezFbrgKBKumWXcKOCJjDs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UQS/5GB91vAeuz9cJdJ0lDFfWtO14Q0aNGOiKSnU41uxDgkItI6XUQelzXUsd7U80qbhREL1xVoSisgD0ol7a27sub4C+8hMerlX+jOS2Q8YXzm0kmCiihYIcfpFjwhLS5Y7GMa0ch5MAn77e88Rjwmg9aTns/RaaXxLcsKFpr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=aFAskpAk; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=ph+ktFDK; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1756995962; x=1757600762;
+	d=konsulko.se; s=rsa2;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=deQn3/3HdV7iulRd1+fiM17FbXQhI4PmGc3et3kdUHs=;
+	b=aFAskpAkSTkWoaDGAL364lHzPBDRn5nuzGVAmI7K+FEV76J1RPU0R+YCuiBE7JXGE8EjBdKI22ujU
+	 9LPcCY7kKqVyp+hQrQ8uVFD7293hKFt28FxMSj/1PPZJe/fNCA8dXkfqSjzhFVrFsgsfKV+FnDvmQf
+	 YQAxZi+Aq3NmBjYKklnIZZAXH4QJC5exm5InkPc6rXrOsqYJVGsGIY2I7x6OvSYQQRQHee8YW6tir9
+	 lVgm/ksZNfL6O2aUMnfTfCkfI/XaKuK5G9TRknIwHzfnJsKCNhGweuzgrb1OnGvCdnJmv9YvF2iOPn
+	 kkkzN3tuh+G3mkxHYWUvD+Y5dxmyI7w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1756995962; x=1757600762;
+	d=konsulko.se; s=ed2;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=deQn3/3HdV7iulRd1+fiM17FbXQhI4PmGc3et3kdUHs=;
+	b=ph+ktFDK3BtMLMf6LmZNPFGSKThKnnrw09l3j2JhaTxaoXbD1CFYeZ0/9tDrFxd+NZC6l1laCAGhJ
+	 FmzWNo/AA==
+X-HalOne-ID: 148fa465-899b-11f0-8ae3-632fe8569f3f
+Received: from localhost.localdomain (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
+	by mailrelay2.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id 148fa465-899b-11f0-8ae3-632fe8569f3f;
+	Thu, 04 Sep 2025 14:26:01 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: rust-for-linux@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: [PATCH] rust: rbtree: add immutable cursor
+Date: Thu,  4 Sep 2025 16:25:52 +0200
+Message-Id: <20250904142552.2790602-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-softirqs are preemptible on PREEMPT_RT. There is synchronisation between
-individual sections which disable bottom halves. This in turn means that
-a forced threaded interrupt can not preempt another forced threaded
-interrupt. Instead it will PI-boost the other handler and wait for its
-completion.
+Sometimes we may need to iterate over, or find an element in a read
+only (or read mostly) red-black tree, and in that case we don't need a
+mutable reference to the tree, which we'll however have to take to be
+able to use the current (mutable) cursor implementation.
 
-This is required because code within a softirq section is assumed to be
-non-preemptible and may expect exclusive access to per-CPU resources
-such as variables or pinned timers.
-Code with such expectation has been identified and updated to use
-local_lock_nested_bh() for locking of the per-CPU resource. This means
-the lock can be removed.
+This patch adds a simple immutable cursor implementation to RBTree,
+which enables us to use an immutable tree reference. The existing
+(fully featured) cursor implementation is renamed to CursorMut,
+while retaining its functionality.
 
-Add CONFIG_PREEMPT_RT_NEEDS_BH_LOCK which keeps the old behaviour if
-selected. Otherwise the softirq synchronising is lifted. The
-softirq_ctrl.cnt accounting remains to let NOHZ code if softirqs are
-currently handled.
-
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
 ---
- kernel/Kconfig.preempt | 13 +++++++
- kernel/softirq.c       | 83 ++++++++++++++++++++++++++++++++----------
- 2 files changed, 76 insertions(+), 20 deletions(-)
+ rust/kernel/rbtree.rs | 241 +++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 217 insertions(+), 24 deletions(-)
 
-diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
-index 54ea59ff8fbeb..da326800c1c9b 100644
---- a/kernel/Kconfig.preempt
-+++ b/kernel/Kconfig.preempt
-@@ -103,6 +103,19 @@ config PREEMPT_RT
- 	  Select this if you are building a kernel for systems which
- 	  require real-time guarantees.
-=20
-+config PREEMPT_RT_NEEDS_BH_LOCK
-+	bool "Enforce softirq synchronisation on PREEMPT_RT"
-+	depends on PREEMPT_RT
-+	help
-+	  Enforce synchronisation across the softirqs context. On PREEMPT_RT
-+	  the softirq is preemptible. This enforces the same per-CPU BLK
-+	  semantic non-PREEMPT_RT builds have. This should not be needed
-+	  because per-CPU locks were added to avoid the per-CPU BKL.
+diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
+index b8fe6be6fcc4..3b96d4a24217 100644
+--- a/rust/kernel/rbtree.rs
++++ b/rust/kernel/rbtree.rs
+@@ -11,7 +11,7 @@
+     cmp::{Ord, Ordering},
+     marker::PhantomData,
+     mem::MaybeUninit,
+-    ptr::{addr_of_mut, from_mut, NonNull},
++    ptr::{addr_of, addr_of_mut, from_mut, NonNull},
+ };
+ 
+ /// A red-black tree with owned nodes.
+@@ -243,34 +243,64 @@ pub fn values_mut(&mut self) -> impl Iterator<Item = &'_ mut V> {
+     }
+ 
+     /// Returns a cursor over the tree nodes, starting with the smallest key.
+-    pub fn cursor_front(&mut self) -> Option<Cursor<'_, K, V>> {
++    pub fn cursor_front_mut(&mut self) -> Option<CursorMut<'_, K, V>> {
+         let root = addr_of_mut!(self.root);
+         // SAFETY: `self.root` is always a valid root node
+         let current = unsafe { bindings::rb_first(root) };
+         NonNull::new(current).map(|current| {
+             // INVARIANT:
+             // - `current` is a valid node in the [`RBTree`] pointed to by `self`.
+-            Cursor {
++            CursorMut {
+                 current,
+                 tree: self,
+             }
+         })
+     }
+ 
++    /// Returns an unmutable cursor over the tree nodes, starting with the smallest key.
++    pub fn cursor_front(&self) -> Option<Cursor<'_, K, V>> {
++        let root = addr_of!(self.root);
++        // SAFETY: `self.root` is always a valid root node
++        let current = unsafe { bindings::rb_first(root) };
++        NonNull::new(current).map(|current| {
++            // INVARIANT:
++            // - `current` is a valid node in the [`RBTree`] pointed to by `self`.
++            Cursor {
++                current,
++                _tree: PhantomData,
++            }
++        })
++    }
 +
-+	  This switch provides the old behaviour for testing reasons. Select
-+	  this if you suspect an error with preemptible softirq and want test
-+	  the old synchronized behaviour.
+     /// Returns a cursor over the tree nodes, starting with the largest key.
+-    pub fn cursor_back(&mut self) -> Option<Cursor<'_, K, V>> {
++    pub fn cursor_back_mut(&mut self) -> Option<CursorMut<'_, K, V>> {
+         let root = addr_of_mut!(self.root);
+         // SAFETY: `self.root` is always a valid root node
+         let current = unsafe { bindings::rb_last(root) };
+         NonNull::new(current).map(|current| {
+             // INVARIANT:
+             // - `current` is a valid node in the [`RBTree`] pointed to by `self`.
+-            Cursor {
++            CursorMut {
+                 current,
+                 tree: self,
+             }
+         })
+     }
 +
- config PREEMPT_COUNT
-        bool
-=20
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index 4e2c980e7712e..77198911b8dd4 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -165,7 +165,11 @@ void __local_bh_disable_ip(unsigned long ip, unsigned =
-int cnt)
- 	/* First entry of a task into a BH disabled section? */
- 	if (!current->softirq_disable_cnt) {
- 		if (preemptible()) {
--			local_lock(&softirq_ctrl.lock);
-+			if (IS_ENABLED(CONFIG_PREEMPT_RT_NEEDS_BH_LOCK))
-+				local_lock(&softirq_ctrl.lock);
-+			else
-+				migrate_disable();
-+
- 			/* Required to meet the RCU bottomhalf requirements. */
- 			rcu_read_lock();
- 		} else {
-@@ -177,17 +181,34 @@ void __local_bh_disable_ip(unsigned long ip, unsigned=
- int cnt)
- 	 * Track the per CPU softirq disabled state. On RT this is per CPU
- 	 * state to allow preemption of bottom half disabled sections.
- 	 */
--	newcnt =3D __this_cpu_add_return(softirq_ctrl.cnt, cnt);
--	/*
--	 * Reflect the result in the task state to prevent recursion on the
--	 * local lock and to make softirq_count() & al work.
--	 */
--	current->softirq_disable_cnt =3D newcnt;
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT_NEEDS_BH_LOCK)) {
-+		newcnt =3D this_cpu_add_return(softirq_ctrl.cnt, cnt);
-+		/*
-+		 * Reflect the result in the task state to prevent recursion on the
-+		 * local lock and to make softirq_count() & al work.
-+		 */
-+		current->softirq_disable_cnt =3D newcnt;
-=20
--	if (IS_ENABLED(CONFIG_TRACE_IRQFLAGS) && newcnt =3D=3D cnt) {
--		raw_local_irq_save(flags);
--		lockdep_softirqs_off(ip);
--		raw_local_irq_restore(flags);
-+		if (IS_ENABLED(CONFIG_TRACE_IRQFLAGS) && newcnt =3D=3D cnt) {
-+			raw_local_irq_save(flags);
-+			lockdep_softirqs_off(ip);
-+			raw_local_irq_restore(flags);
-+		}
-+	} else {
-+		bool sirq_dis =3D false;
-+
-+		if (!current->softirq_disable_cnt)
-+			sirq_dis =3D true;
-+
-+		this_cpu_add(softirq_ctrl.cnt, cnt);
-+		current->softirq_disable_cnt +=3D cnt;
-+		WARN_ON_ONCE(current->softirq_disable_cnt < 0);
-+
-+		if (IS_ENABLED(CONFIG_TRACE_IRQFLAGS) && sirq_dis) {
-+			raw_local_irq_save(flags);
-+			lockdep_softirqs_off(ip);
-+			raw_local_irq_restore(flags);
-+		}
- 	}
++    /// Returns a cursor over the tree nodes, starting with the largest key.
++    pub fn cursor_back(&self) -> Option<Cursor<'_, K, V>> {
++        let root = addr_of!(self.root);
++        // SAFETY: `self.root` is always a valid root node
++        let current = unsafe { bindings::rb_last(root) };
++        NonNull::new(current).map(|current| {
++            // INVARIANT:
++            // - `current` is a valid node in the [`RBTree`] pointed to by `self`.
++            Cursor {
++                current,
++                _tree: PhantomData,
++            }
++        })
++    }
  }
- EXPORT_SYMBOL(__local_bh_disable_ip);
-@@ -195,23 +216,42 @@ EXPORT_SYMBOL(__local_bh_disable_ip);
- static void __local_bh_enable(unsigned int cnt, bool unlock)
- {
- 	unsigned long flags;
-+	bool sirq_en =3D false;
- 	int newcnt;
-=20
--	DEBUG_LOCKS_WARN_ON(current->softirq_disable_cnt !=3D
--			    this_cpu_read(softirq_ctrl.cnt));
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT_NEEDS_BH_LOCK)) {
-+		DEBUG_LOCKS_WARN_ON(current->softirq_disable_cnt !=3D
-+				    this_cpu_read(softirq_ctrl.cnt));
-+		if (softirq_count() =3D=3D cnt)
-+			sirq_en =3D true;
-+	} else {
-+		if (current->softirq_disable_cnt =3D=3D cnt)
-+			sirq_en =3D true;
-+	}
-=20
--	if (IS_ENABLED(CONFIG_TRACE_IRQFLAGS) && softirq_count() =3D=3D cnt) {
-+	if (IS_ENABLED(CONFIG_TRACE_IRQFLAGS) && sirq_en) {
- 		raw_local_irq_save(flags);
- 		lockdep_softirqs_on(_RET_IP_);
- 		raw_local_irq_restore(flags);
- 	}
-=20
--	newcnt =3D __this_cpu_sub_return(softirq_ctrl.cnt, cnt);
--	current->softirq_disable_cnt =3D newcnt;
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT_NEEDS_BH_LOCK)) {
-+		newcnt =3D this_cpu_sub_return(softirq_ctrl.cnt, cnt);
-+		current->softirq_disable_cnt =3D newcnt;
-=20
--	if (!newcnt && unlock) {
--		rcu_read_unlock();
--		local_unlock(&softirq_ctrl.lock);
-+		if (!newcnt && unlock) {
-+			rcu_read_unlock();
-+			local_unlock(&softirq_ctrl.lock);
-+		}
-+	} else {
-+		current->softirq_disable_cnt -=3D cnt;
-+		this_cpu_sub(softirq_ctrl.cnt, cnt);
-+		if (unlock && !current->softirq_disable_cnt) {
-+			migrate_enable();
-+			rcu_read_unlock();
-+		} else {
-+			WARN_ON_ONCE(current->softirq_disable_cnt < 0);
-+		}
- 	}
+ 
+ impl<K, V> RBTree<K, V>
+@@ -421,7 +451,7 @@ pub fn remove(&mut self, key: &K) -> Option<V> {
+     /// If the given key exists, the cursor starts there.
+     /// Otherwise it starts with the first larger key in sort order.
+     /// If there is no larger key, it returns [`None`].
+-    pub fn cursor_lower_bound(&mut self, key: &K) -> Option<Cursor<'_, K, V>>
++    pub fn cursor_lower_bound_mut(&mut self, key: &K) -> Option<CursorMut<'_, K, V>>
+     where
+         K: Ord,
+     {
+@@ -470,12 +500,74 @@ pub fn cursor_lower_bound(&mut self, key: &K) -> Option<Cursor<'_, K, V>>
+         NonNull::new(links).map(|current| {
+             // INVARIANT:
+             // - `current` is a valid node in the [`RBTree`] pointed to by `self`.
+-            Cursor {
++            CursorMut {
+                 current,
+                 tree: self,
+             }
+         })
+     }
++
++    /// Returns a cursor over the tree nodes based on the given key.
++    ///
++    /// If the given key exists, the cursor starts there.
++    /// Otherwise it starts with the first larger key in sort order.
++    /// If there is no larger key, it returns [`None`].
++    pub fn cursor_lower_bound(&self, key: &K) -> Option<Cursor<'_, K, V>>
++    where
++        K: Ord,
++    {
++        let mut node = self.root.rb_node;
++        let mut best_match: Option<NonNull<Node<K, V>>> = None;
++        while !node.is_null() {
++            // SAFETY: By the type invariant of `Self`, all non-null `rb_node` pointers stored in
++            // `self` point to the links field of `Node<K, V>` objects.
++            let this = unsafe { container_of!(node, Node<K, V>, links) };
++            // SAFETY: `this` is a non-null node so it is valid by the type invariants.
++            let this_key = unsafe { &(*this).key };
++            // SAFETY: `node` is a non-null node so it is valid by the type invariants.
++            let left_child = unsafe { (*node).rb_left };
++            // SAFETY: `node` is a non-null node so it is valid by the type invariants.
++            let right_child = unsafe { (*node).rb_right };
++            match key.cmp(this_key) {
++                Ordering::Equal => {
++                    best_match = NonNull::new(this);
++                    break;
++                }
++                Ordering::Greater => {
++                    node = right_child;
++                }
++                Ordering::Less => {
++                    let is_better_match = match best_match {
++                        None => true,
++                        Some(best) => {
++                            // SAFETY: `best` is a non-null node so it is valid by the type
++                            // invariants.
++                            let best_key = unsafe { &(*best.as_ptr()).key };
++                            best_key > this_key
++                        }
++                    };
++                    if is_better_match {
++                        best_match = NonNull::new(this);
++                    }
++                    node = left_child;
++                }
++            };
++        }
++
++        let best = best_match?;
++
++        // SAFETY: `best` is a non-null node so it is valid by the type invariants.
++        let links = unsafe { addr_of_mut!((*best.as_ptr()).links) };
++
++        NonNull::new(links).map(|current| {
++            // INVARIANT:
++            // - `current` is a valid node in the [`RBTree`] pointed to by `self`.
++            Cursor {
++                current,
++                _tree: PhantomData,
++            }
++        })
++    }
  }
-=20
-@@ -228,7 +268,10 @@ void __local_bh_enable_ip(unsigned long ip, unsigned i=
-nt cnt)
- 	lock_map_release(&bh_lock_map);
-=20
- 	local_irq_save(flags);
--	curcnt =3D __this_cpu_read(softirq_ctrl.cnt);
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT_NEEDS_BH_LOCK))
-+		curcnt =3D this_cpu_read(softirq_ctrl.cnt);
-+	else
-+		curcnt =3D current->softirq_disable_cnt;
-=20
- 	/*
- 	 * If this is not reenabling soft interrupts, no point in trying to
---=20
-2.51.0
+ 
+ impl<K, V> Default for RBTree<K, V> {
+@@ -507,7 +599,7 @@ fn drop(&mut self) {
+     }
+ }
+ 
+-/// A bidirectional cursor over the tree nodes, sorted by key.
++/// A bidirectional mutable cursor over the tree nodes, sorted by key.
+ ///
+ /// # Examples
+ ///
+@@ -526,7 +618,7 @@ fn drop(&mut self) {
+ /// tree.try_create_and_insert(30, 300, flags::GFP_KERNEL)?;
+ ///
+ /// // Get a cursor to the first element.
+-/// let mut cursor = tree.cursor_front().unwrap();
++/// let mut cursor = tree.cursor_front_mut().unwrap();
+ /// let mut current = cursor.current();
+ /// assert_eq!(current, (&10, &100));
+ ///
+@@ -564,7 +656,7 @@ fn drop(&mut self) {
+ /// tree.try_create_and_insert(20, 200, flags::GFP_KERNEL)?;
+ /// tree.try_create_and_insert(30, 300, flags::GFP_KERNEL)?;
+ ///
+-/// let mut cursor = tree.cursor_back().unwrap();
++/// let mut cursor = tree.cursor_back_mut().unwrap();
+ /// let current = cursor.current();
+ /// assert_eq!(current, (&30, &300));
+ ///
+@@ -577,7 +669,7 @@ fn drop(&mut self) {
+ /// use kernel::rbtree::RBTree;
+ ///
+ /// let mut tree: RBTree<u16, u16> = RBTree::new();
+-/// assert!(tree.cursor_front().is_none());
++/// assert!(tree.cursor_front_mut().is_none());
+ ///
+ /// # Ok::<(), Error>(())
+ /// ```
+@@ -628,7 +720,7 @@ fn drop(&mut self) {
+ /// tree.try_create_and_insert(30, 300, flags::GFP_KERNEL)?;
+ ///
+ /// // Retrieve a cursor.
+-/// let mut cursor = tree.cursor_front().unwrap();
++/// let mut cursor = tree.cursor_front_mut().unwrap();
+ ///
+ /// // Get a mutable reference to the current value.
+ /// let (k, v) = cursor.current_mut();
+@@ -655,7 +747,7 @@ fn drop(&mut self) {
+ /// tree.try_create_and_insert(30, 300, flags::GFP_KERNEL)?;
+ ///
+ /// // Remove the first element.
+-/// let mut cursor = tree.cursor_front().unwrap();
++/// let mut cursor = tree.cursor_front_mut().unwrap();
+ /// let mut current = cursor.current();
+ /// assert_eq!(current, (&10, &100));
+ /// cursor = cursor.remove_current().0.unwrap();
+@@ -665,7 +757,7 @@ fn drop(&mut self) {
+ /// assert_eq!(current, (&20, &200));
+ ///
+ /// // Get a cursor to the last element, and remove it.
+-/// cursor = tree.cursor_back().unwrap();
++/// cursor = tree.cursor_back_mut().unwrap();
+ /// current = cursor.current();
+ /// assert_eq!(current, (&30, &300));
+ ///
+@@ -694,7 +786,7 @@ fn drop(&mut self) {
+ /// tree.try_create_and_insert(30, 300, flags::GFP_KERNEL)?;
+ ///
+ /// // Get a cursor to the first element.
+-/// let mut cursor = tree.cursor_front().unwrap();
++/// let mut cursor = tree.cursor_front_mut().unwrap();
+ /// let mut current = cursor.current();
+ /// assert_eq!(current, (&10, &100));
+ ///
+@@ -702,7 +794,7 @@ fn drop(&mut self) {
+ /// assert!(cursor.remove_prev().is_none());
+ ///
+ /// // Get a cursor to the last element.
+-/// cursor = tree.cursor_back().unwrap();
++/// cursor = tree.cursor_back_mut().unwrap();
+ /// current = cursor.current();
+ /// assert_eq!(current, (&30, &300));
+ ///
+@@ -726,19 +818,51 @@ fn drop(&mut self) {
+ ///
+ /// # Invariants
+ /// - `current` points to a node that is in the same [`RBTree`] as `tree`.
+-pub struct Cursor<'a, K, V> {
++pub struct CursorMut<'a, K, V> {
+     tree: &'a mut RBTree<K, V>,
+     current: NonNull<bindings::rb_node>,
+ }
+ 
+-// SAFETY: The [`Cursor`] has exclusive access to both `K` and `V`, so it is sufficient to require them to be `Send`.
+-// The cursor only gives out immutable references to the keys, but since it has excusive access to those same
+-// keys, `Send` is sufficient. `Sync` would be okay, but it is more restrictive to the user.
+-unsafe impl<'a, K: Send, V: Send> Send for Cursor<'a, K, V> {}
++/// A bidirectional unmutable cursor over the tree nodes, sorted by key. This is a simpler
++/// variant of CursorMut that is basically providing read only access.
++///
++/// # Examples
++///
++/// In the following example, we obtain a cursor to the first element in the tree.
++/// The cursor allows us to iterate bidirectionally over key/value pairs in the tree.
++///
++/// ```
++/// use kernel::{alloc::flags, rbtree::RBTree};
++///
++/// // Create a new tree.
++/// let mut tree = RBTree::new();
++///
++/// // Insert three elements.
++/// tree.try_create_and_insert(10, 100, flags::GFP_KERNEL)?;
++/// tree.try_create_and_insert(20, 200, flags::GFP_KERNEL)?;
++/// tree.try_create_and_insert(30, 300, flags::GFP_KERNEL)?;
++///
++/// // Get a cursor to the first element.
++/// let cursor = tree.cursor_front().unwrap();
++/// let current = cursor.current();
++/// assert_eq!(current, (&10, &100));
++///
++/// # Ok::<(), Error>(())
++pub struct Cursor<'a, K, V> {
++    _tree: PhantomData<&'a RBTree<K, V>>,
++    current: NonNull<bindings::rb_node>,
++}
++
++// SAFETY: The [`CursorMut`] has exclusive access to both `K` and `V`, so it is sufficient to
++// require them to be `Send`.
++// The cursor only gives out immutable references to the keys, but since it has excusive access to
++// those same keys, `Send` is sufficient. `Sync` would be okay, but it is more restrictive to the
++// user.
++unsafe impl<'a, K: Send, V: Send> Send for CursorMut<'a, K, V> {}
+ 
+-// SAFETY: The [`Cursor`] gives out immutable references to K and mutable references to V,
++// SAFETY: The [`CursorMut`] gives out immutable references to K and mutable references to V,
+ // so it has the same thread safety requirements as mutable references.
+-unsafe impl<'a, K: Sync, V: Sync> Sync for Cursor<'a, K, V> {}
++unsafe impl<'a, K: Sync, V: Sync> Sync for CursorMut<'a, K, V> {}
+ 
+ impl<'a, K, V> Cursor<'a, K, V> {
+     /// The current node
+@@ -749,6 +873,75 @@ pub fn current(&self) -> (&K, &V) {
+         unsafe { Self::to_key_value(self.current) }
+     }
+ 
++    /// # Safety
++    ///
++    /// - `node` must be a valid pointer to a node in an [`RBTree`].
++    /// - The caller has immutable access to `node` for the duration of `'b`.
++    unsafe fn to_key_value<'b>(node: NonNull<bindings::rb_node>) -> (&'b K, &'b V) {
++        // SAFETY: the caller guarantees that `node` is a valid pointer in an `RBTree`.
++        let (k, v) = unsafe { Self::to_key_value_raw(node) };
++        // SAFETY: the caller guarantees immutable access to `node`.
++        (k, unsafe { &*v })
++    }
++
++    /// # Safety
++    ///
++    /// - `node` must be a valid pointer to a node in an [`RBTree`].
++    /// - The caller has immutable access to the key for the duration of `'b`.
++    unsafe fn to_key_value_raw<'b>(node: NonNull<bindings::rb_node>) -> (&'b K, *mut V) {
++        // SAFETY: By the type invariant of `Self`, all non-null `rb_node` pointers stored in `self`
++        // point to the links field of `Node<K, V>` objects.
++        let this = unsafe { container_of!(node.as_ptr(), Node<K, V>, links) };
++        // SAFETY: The passed `node` is the current node or a non-null neighbor,
++        // thus `this` is valid by the type invariants.
++        let k = unsafe { &(*this).key };
++        // SAFETY: The passed `node` is the current node or a non-null neighbor,
++        // thus `this` is valid by the type invariants.
++        let v = unsafe { addr_of_mut!((*this).value) };
++        (k, v)
++    }
++
++    /// Access the previous node without moving the cursor.
++    pub fn peek_prev(&self) -> Option<(&K, &V)> {
++        self.peek(Direction::Prev)
++    }
++
++    /// Access the previous node without moving the cursor.
++    pub fn peek_next(&self) -> Option<(&K, &V)> {
++        self.peek(Direction::Next)
++    }
++
++    fn peek(&self, direction: Direction) -> Option<(&K, &V)> {
++        self.get_neighbor_raw(direction).map(|neighbor| {
++            // SAFETY:
++            // - `neighbor` is a valid tree node.
++            // - By the function signature, we have an immutable reference to `self`.
++            unsafe { Self::to_key_value(neighbor) }
++        })
++    }
++
++    fn get_neighbor_raw(&self, direction: Direction) -> Option<NonNull<bindings::rb_node>> {
++        // SAFETY: `self.current` is valid by the type invariants.
++        let neighbor = unsafe {
++            match direction {
++                Direction::Prev => bindings::rb_prev(self.current.as_ptr()),
++                Direction::Next => bindings::rb_next(self.current.as_ptr()),
++            }
++        };
++
++        NonNull::new(neighbor)
++    }
++}
++
++impl<'a, K, V> CursorMut<'a, K, V> {
++    /// The current node
++    pub fn current(&self) -> (&K, &V) {
++        // SAFETY:
++        // - `self.current` is a valid node by the type invariants.
++        // - We have an immutable reference by the function signature.
++        unsafe { Self::to_key_value(self.current) }
++    }
++
+     /// The current node, with a mutable value
+     pub fn current_mut(&mut self) -> (&K, &mut V) {
+         // SAFETY:
+@@ -920,7 +1113,7 @@ unsafe fn to_key_value_raw<'b>(node: NonNull<bindings::rb_node>) -> (&'b K, *mut
+     }
+ }
+ 
+-/// Direction for [`Cursor`] operations.
++/// Direction for [`Cursor`] and [`CursorMut`] operations.
+ enum Direction {
+     /// the node immediately before, in sort order
+     Prev,
+-- 
+2.39.2
 
 
