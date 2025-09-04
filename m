@@ -1,180 +1,138 @@
-Return-Path: <linux-kernel+bounces-800360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA20B436C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:14:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD63B436C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:15:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 917A51C22F35
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04ED91BC192A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551392E22AA;
-	Thu,  4 Sep 2025 09:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665832E1EFF;
+	Thu,  4 Sep 2025 09:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PY6KtGhR"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="lN4LhAr4"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3ED623506F
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644142C1587
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756977243; cv=none; b=Wh2ZSojLCBWvUSR9V90oq8jyJsr+2YAZ3LVAMwpKPAscIiDsrd8JfxQ5h6CKoVHTefkvvxj9vHgedMr71c9VPfqLZUVmlP1CnR+fdMmVgU1W+sGb6kfPKU55fGHIaEN854ksfWem1VX/1fKZLWVlXxNQJMk6kCUkC42KY7yvghc=
+	t=1756977295; cv=none; b=OW415oQmICyPNBhcSjPvrXBxEK/6sCj+H/0jyE2FLlEAi86nkUCoB8qWAONXy+8H/DmnHO8lmJXA/r7cpgqxlBLsEcNMSH7bkhLaU/Y79l8dwv3R6RO6KbCO6ZJY8QKPaBNTSyueFDd1KjeGhh15gkh/w/3Ft6EZmiVw1ksdmSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756977243; c=relaxed/simple;
-	bh=0KMAEfR0V0VEYFiwcgqzkiMZLifpuJMqRR7bm2KR/yw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=jfSsu0XBgL/MBEZGxVngVoWGSdtVn2+xbl1UPk1GMIYFI9qXiyJ4+TyuY7qDUKEDD0Z/KZMYEY602NXcL9nJTA9wfhCqKCToW+cqey1o/AxEAn5BD2DaMw9NC0phuh8cQsyArQXZoOxdv3J9y1/Eb4RK95LanzRasXihoxHye1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PY6KtGhR; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250904091354epoutp03867e19627dbecb12e1ce29c4287f8874~iCXxMrtrb1667616676epoutp03Z
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:13:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250904091354epoutp03867e19627dbecb12e1ce29c4287f8874~iCXxMrtrb1667616676epoutp03Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756977234;
-	bh=tXT+xGg463hwxHQkaysDNXj3DgmwgfCfpZCPDlCDOkA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=PY6KtGhRlxGmDpbtwOHdwsBtnAee65iHDPBNo8OP9IwKDtoubFDbc/B7e+PLYta/C
-	 nzzO8EzKXMfHdMzxjZUkFSNZcOW5Ln+XRpDC4AdyblmK5aY4ls/83WfvDJTe2sg/Ha
-	 JmSHBpekeoKCEuAtxSP1R2Yd5O5pPC9/xECZViu0=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250904091353epcas5p1583257065573710b90d66d7dfa6604f9~iCXwt45ny2104021040epcas5p1h;
-	Thu,  4 Sep 2025 09:13:53 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cHYgh4ZL4z6B9mB; Thu,  4 Sep
-	2025 09:13:52 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250904091351epcas5p12b672a06d35140266c02c2038c580f7c~iCXu3-r_91514515145epcas5p1w;
-	Thu,  4 Sep 2025 09:13:51 +0000 (GMT)
-Received: from INBRO002520 (unknown [107.122.1.191]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250904091349epsmtip274097b068a5ef332a9676265ad6c52ec~iCXtVRBrG1708017080epsmtip2D;
-	Thu,  4 Sep 2025 09:13:49 +0000 (GMT)
-From: "Devang Tailor" <dev.tailor@samsung.com>
-To: "'Henrik Grimler'" <henrik@grimler.se>
-Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<alim.akhtar@samsung.com>, <alexandre.belloni@bootlin.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-rtc@vger.kernel.org>, <faraz.ata@samsung.com>
-In-Reply-To: <20250903192046.GA4126@l14.localdomain>
-Subject: RE: [PATCH v2 2/3] rtc: s3c: support for exynosautov9 on-chip RTC
-Date: Thu, 4 Sep 2025 14:43:48 +0530
-Message-ID: <000001dc1d7c$3ac93f90$b05bbeb0$@samsung.com>
+	s=arc-20240116; t=1756977295; c=relaxed/simple;
+	bh=Js9WKlGR54rxKtb9FSB7t1WvKne4eF2EaDwjcYm16mE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MKGqOOiOMOt72jljsxEqNNHprA36Y5BZuIaeNzpgyn3o2Fiqm7jQmJrjccYi9CsbZomuQ7GZ2Heo9Qa0EBGKdF1e5HqSz0u5DtE9mQZGy92IQi/7ZB1C2ih76p4fDlBy1mkleUiCbrM2D3nNmycloK2b0RO/H2v3NkTMiae8nUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=lN4LhAr4; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 33BDB14805E7;
+	Thu,  4 Sep 2025 11:14:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1756977290; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=B6QZEQAGrZ6/3rkKC265OmTZsvazFci2LpzaEltMG8Y=;
+	b=lN4LhAr46QA2PDMQsbmJLuOwfONCabS9l0jHr5Jt7hNcIJ/ySJurLYYB+fRyOH40yRAWzp
+	JyTt+STxlouZpYfPWOsjd02Fn+BGAXsSEI+rUayHPiArwkcT+30lA4eXbgqFrSfpG6OZbD
+	sVF1RaRWjjyNYcC9ZAMU158SaXpDN3mxomDSDzLpQA9DiA24bIph3hMIbEWfQ8Zln9PriB
+	ZdSWLgLO8CSPY7mV0BAgr8HiLbwqH+n6VEVsoe2zLRIBfNuxRM6vmD6WztEO9y/0ryHvLv
+	QswgSpdoW88nFRKhNAxwvoqLoalqFIskmtZsv7vm4C5jyUzcielj0sq3NOWMFQ==
+From: Alexander Dahl <ada@thorsis.com>
+To: linux-mtd@lists.infradead.org
+Cc: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>,
+	Li Bin <bin.li@microchip.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Thomas Fourier <fourier.thomas@gmail.com>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Microchip (AT91) SoC support),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] mtd: nand: raw: atmel: Fix pulse read timing for certain flash chips
+Date: Thu,  4 Sep 2025 11:14:41 +0200
+Message-Id: <20250904091441.351805-1-ada@thorsis.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMc6yo9jRPgA4nZ2IiZrgLtyBFMygKSVtdMAw5/R1ICS4saWrHBuvVQ
-Content-Language: en-in
-X-CMS-MailID: 20250904091351epcas5p12b672a06d35140266c02c2038c580f7c
-X-Msg-Generator: CA
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250710082536epcas5p4f9dcd50ff474066562b2cbd40199d2d9
-References: <20250710083434.1821671-1-dev.tailor@samsung.com>
-	<CGME20250710082536epcas5p4f9dcd50ff474066562b2cbd40199d2d9@epcas5p4.samsung.com>
-	<20250710083434.1821671-3-dev.tailor@samsung.com>
-	<20250903192046.GA4126@l14.localdomain>
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Prevent PMECC errors when reading from AMD/Spansion S34ML02G1 flash on
+SAM9X60 SoC, after switching to ONFI timing mode 3.
 
-Hi,
+From reading the S34ML02G1 and the SAM9X60 datasheets again, it seems
+like we have to wait tREA after rising RE# before sampling the data.
+Thus pulse must be at least tREA.
 
+The previous approach to set this timing worked on sam9g20 and sama5d2
+with the same flash (S34ML02G1), probably because those have a slower
+mck clock rate and thus the resolution of the timings setup is not as
+tight as with sam9x60.
 
-> -----Original Message-----
-> From: Henrik Grimler <henrik=40grimler.se>
-> Sent: 04 September 2025 00:51
-> To: Devang Tailor <dev.tailor=40samsung.com>
-> Cc: robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org;
-> alim.akhtar=40samsung.com; alexandre.belloni=40bootlin.com;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-
-> rtc=40vger.kernel.org; faraz.ata=40samsung.com
-> Subject: Re: =5BPATCH v2 2/3=5D rtc: s3c: support for exynosautov9 on-chi=
-p RTC
->=20
-> Hi Devang,
->=20
-> On Thu, Jul 10, 2025 at 02:04:33PM +0530, Devang Tailor wrote:
-> > The on-chip RTC of this SoC is almost similar to the previous versions
-> > of SoC. Hence re-use the existing driver with platform specific change
-> > to enable RTC.
->=20
-> Could you please describe what the differences are to previous SoCs?
-> You write almost similar, please elaborate in what way in commit message.
+The approach to fix the issue was carried over from u-boot, which itself
+got it from at91bootstrap.  It has been successfully tested in
+at91bootstrap, U-Boot and Linux on sam9x60 and sama5d2, for several
+months here.
 
-Ok. I will add in V3.
+Link: https://github.com/linux4sam/at91bootstrap/issues/174
+Link: https://github.com/linux4sam/at91bootstrap/commit/e2dfd8141d00613a37acee66ef5724f70f34a538
+Link: https://lore.kernel.org/u-boot/20240415075755.780653-1-ada@thorsis.com/
+Link: https://source.denx.de/u-boot/u-boot/-/commit/344e2f2cd4a407f847b301804f37d036e8a0a10c
+Cc: Li Bin <bin.li@microchip.com>
+Signed-off-by: Alexander Dahl <ada@thorsis.com>
+---
 
->=20
-> > This has been tested with 'hwclock' & 'date' utilities
-> >
-> > Signed-off-by: Devang Tailor <dev.tailor=40samsung.com>
-> > ---
-> >
-> >  drivers/rtc/rtc-s3c.c =7C 18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> >
-> > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c index
-> > 5dd575865adf..8db24b6360b8 100644
-> > --- a/drivers/rtc/rtc-s3c.c
-> > +++ b/drivers/rtc/rtc-s3c.c
-> > =40=40 -384,6 +384,15 =40=40 static void s3c6410_rtc_disable(struct s3c=
-_rtc
-> *info)
-> >  	writew(con, info->base + S3C2410_RTCCON);  =7D
-> >
-> > +static void exynosautov9_rtc_disable(struct s3c_rtc *info) =7B
-> > +	unsigned int con;
-> > +
-> > +	con =3D readb(info->base + S3C2410_RTCCON);
-> > +	con &=3D =7ES3C2410_RTCCON_RTCEN;
-> > +	writeb(con, info->base + S3C2410_RTCCON); =7D
->=20
-> Rather than adding a new rtc_disable variant I think this could be handle=
-d
-in
-> existing s3c24xx_rtc_disable (and I think that is what Krzysztof meant).
-How
-> about adding a new bool to rtc_data that describes if S3C2410_TICNT reg i=
-s
-> supported or not, and checking it in s3c24xx_rtc_disable?
+Notes:
+    based on v6.17-rc4
 
-Ok. I will add bool 'use_s3c2410_ticnt=B4=20to=20differentiate=20if=20any=
-=20variant=20uses=0D=0ATICNT=20or=20not,=20making=20it=0D=0A'true'=20for=20=
-existing=20RTC=20variants=20which=20are=20using=20s3c24xx_rtc_disable().=0D=
-=0A=0D=0A>=20=0D=0A>=20Best=20regards,=0D=0A>=20Henrik=20Grimler=0D=0A>=20=
-=0D=0A>=20>=20=20static=20void=20s3c_rtc_remove(struct=20platform_device=20=
-*pdev)=20=20=7B=0D=0A>=20>=20=20=09struct=20s3c_rtc=20*info=20=3D=20platfor=
-m_get_drvdata(pdev);=20=40=40=20-574,6=20+583,12=0D=0A>=20>=20=40=40=20stat=
-ic=20struct=20s3c_rtc_data=20const=20s3c6410_rtc_data=20=3D=20=7B=0D=0A>=20=
->=20=20=09.disable=09=09=3D=20s3c6410_rtc_disable,=0D=0A>=20>=20=20=7D;=0D=
-=0A>=20>=0D=0A>=20>=20+static=20const=20struct=20s3c_rtc_data=20exynosautov=
-9_rtc_data=20=3D=20=7B=0D=0A>=20>=20+=09.irq_handler=09=09=3D=20s3c6410_rtc=
-_irq,=0D=0A>=20>=20+=09.enable=09=09=09=3D=20s3c24xx_rtc_enable,=0D=0A>=20>=
-=20+=09.disable=09=09=3D=20exynosautov9_rtc_disable,=0D=0A>=20>=20+=7D;=0D=
-=0A>=20>=20+=0D=0A>=20>=20=20static=20const=20__maybe_unused=20struct=20of_=
-device_id=20s3c_rtc_dt_match=5B=5D=20=3D=20=7B=0D=0A>=20>=20=20=09=7B=0D=0A=
->=20>=20=20=09=09.compatible=20=3D=20=22samsung,s3c2410-rtc=22,=20=40=40=20=
--590,6=20+605,9=20=40=40=0D=0A>=20static=0D=0A>=20>=20const=20__maybe_unuse=
-d=20struct=20of_device_id=20s3c_rtc_dt_match=5B=5D=20=3D=20=7B=0D=0A>=20>=
-=20=20=09=7D,=20=7B=0D=0A>=20>=20=20=09=09.compatible=20=3D=20=22samsung,ex=
-ynos3250-rtc=22,=0D=0A>=20>=20=20=09=09.data=20=3D=20&s3c6410_rtc_data,=0D=
-=0A>=20>=20+=09=7D,=20=7B=0D=0A>=20>=20+=09=09.compatible=20=3D=20=22samsun=
-g,exynosautov9-rtc=22,=0D=0A>=20>=20+=09=09.data=20=3D=20&exynosautov9_rtc_=
-data,=0D=0A>=20>=20=20=09=7D,=0D=0A>=20>=20=20=09=7B=20/*=20sentinel=20*/=
-=20=7D,=0D=0A>=20>=20=20=7D;=0D=0A>=20>=20--=0D=0A>=20>=202.34.1=0D=0A>=20>=
-=0D=0A>=20>=0D=0A=0D=0A
+ drivers/mtd/nand/raw/atmel/nand-controller.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
+index 84ab4a83cbd6..87481b60f315 100644
+--- a/drivers/mtd/nand/raw/atmel/nand-controller.c
++++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
+@@ -1240,7 +1240,7 @@ static int atmel_smc_nand_prepare_smcconf(struct atmel_nand *nand,
+ 					const struct nand_interface_config *conf,
+ 					struct atmel_smc_cs_conf *smcconf)
+ {
+-	u32 ncycles, totalcycles, timeps, mckperiodps;
++	u32 ncycles, totalcycles, timeps, mckperiodps, pulse;
+ 	struct atmel_nand_controller *nc;
+ 	int ret;
+ 
+@@ -1366,11 +1366,16 @@ static int atmel_smc_nand_prepare_smcconf(struct atmel_nand *nand,
+ 			 ATMEL_SMC_MODE_TDFMODE_OPTIMIZED;
+ 
+ 	/*
+-	 * Read pulse timing directly matches tRP:
++	 * Read pulse timing would directly match tRP,
++	 * but some NAND flash chips (S34ML01G2 and W29N02KVxxAF)
++	 * do not work properly in timing mode 3.
++	 * The workaround is to extend the SMC NRD pulse to meet tREA
++	 * timing.
+ 	 *
+-	 * NRD_PULSE = tRP
++	 * NRD_PULSE = max(tRP, tREA)
+ 	 */
+-	ncycles = DIV_ROUND_UP(conf->timings.sdr.tRP_min, mckperiodps);
++	pulse = max(conf->timings.sdr.tRP_min, conf->timings.sdr.tREA_max);
++	ncycles = DIV_ROUND_UP(pulse, mckperiodps);
+ 	totalcycles += ncycles;
+ 	ret = atmel_smc_cs_conf_set_pulse(smcconf, ATMEL_SMC_NRD_SHIFT,
+ 					  ncycles);
+
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+-- 
+2.39.5
+
 
