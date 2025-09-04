@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-801754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC5DB44987
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:24:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC8EB44988
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD782188EFF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:24:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98E0217465D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC382E9757;
-	Thu,  4 Sep 2025 22:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3012F90DB;
+	Thu,  4 Sep 2025 22:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2FZsgZpx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4hzmgYh6"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y1e01AFD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2b12v+08"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B443009CD
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927BA2EBB86
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757024472; cv=none; b=TwqQZc/kils87eYnKIDHiCaFSh0/aAxF5HKc0n2PVg1AxeKpIG2dOW0RNGqoN/XQtMlYFnJ3NWXBniGSCOvo+8j8bORr7gxjRF8tvLe8CFep6HO/k5PVh69uMXZUZHaKiJVJmHHLZfUqVyUvF/bhAtSfKVmdsVY7Gbi2fWeDNhg=
+	t=1757024474; cv=none; b=oDdJ+tx2/0OQgofNr3vDWvbK+IT53YshFRFOiGUBykfWstPPakNfPSumPVW2foMwYazbaIw1vOUzd5qCs8iHCPVHLSssgqsM9yTB4Lt7LCbY9i39tG4iESsYKBCP2W2utfPsyZj3Ddmz+wpZ4CjIkp0oWGZAUr064Bgg+QrcZUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757024472; c=relaxed/simple;
-	bh=MgrLu8885YykjI9T+zoAugV4jP2T9LfTNVif86nyMpQ=;
+	s=arc-20240116; t=1757024474; c=relaxed/simple;
+	bh=zAHI2fRTndh4JqSPV246Uh9yqpIINDFeMHXyluqNSGA=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=EZp1QSA8sz5alnghbXzfidknUiGhaTN4uWd+0KZOcS/NuFSdiG1prbgNiviK768QKCjDUh6UhqbyO9gOBEME5XAKHLLig1cWdYmape3luRFR+TvEHrVspyygoKe2DNrt8h/JPjWMnVXnTNDPOsjz0LoI4SIhcm3rIU2wIfx3LXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2FZsgZpx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4hzmgYh6; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=l5ErjoNxtrZEqWqlVHVXEZCqvIxo+Omn2EGt76m4wFHibaoc02Po7BGnOva2bEdNwLegfgCWOJOyw0uUq07Vk8lzqG3NAfCTfJSFh4YJKyh5aWBI1nwoRDNWOSyllyIJPEVRUcV37S72JhxExnJwPYOBVv5hq+g2Z//RARba5Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y1e01AFD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2b12v+08; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250904185720.276985797@linutronix.de>
+Message-ID: <20250904185720.341062181@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757024468;
+	s=2020; t=1757024470;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=ELIY36Vd7T3xHlN9AvBbx8OgIkFV2rxtaqgthmf+YiE=;
-	b=2FZsgZpx38c/9ZCiGq873wWqMYbJJ5MNZcoQPwD8vTeYrrU1K4TDj7P1tZkXQFGu29mnlf
-	GnNzGZARaZcgzksC7eQLfol9nU27xD2Z/RCFSHRUM88zsKkAdqssjFdEQs3nfPShgdVLW8
-	TbHWZDQhkxmAR4GuyWTj3yiaDZbc3q5kwwpLEDtFR38JkR3XoMSxnNPf1apSGnAIKRO8+W
-	egh6+5c51txq6/VQ7OrzGVEk2hD9ermZaRkWA6vQx6n8CFOkMKw4CHixUYHUH9eAO2ofWz
-	WklkZWrdxSGvFDSVDXNJoh5hv7poHUhvofIPSjhe2B8ejQhEDeLm57EEzbS4NQ==
+	 references:references; bh=KMdyn4Ons1NGRFBeIa6Mn/PR9/S05FSLGP0TXr6caLs=;
+	b=y1e01AFDsfNDM24Y8KyBuG16BywXkmDTGVua8IvWKXe2FcSr0pe4DavMPM0WHbjo5uQvqV
+	jZFzHrOiFznXMy5uf4ekhwKvZZin+6C1CDPxUikqQkhgB3vagzjSi9RaO/UOw0Rif4up5Z
+	fM/nHWW1iYXFQuntaBG6uIjvgff/xhe996VSBV7xtdLIBpTkuTdUzDLJ1NA1QaEBmJHY4p
+	MDO2hq4vpmlWVvPS6CjIcj8UZkRMYM3OGEQBB/6g3Teq7NzITrEZOoUm4ekR5vlpxEh3zB
+	Sp7sWTwf8u3LfkOZlkJXI+P/yJRBvOSYflBqJFBbw++6S3TIy5jMHVLVoMvxtw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757024468;
+	s=2020e; t=1757024470;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=ELIY36Vd7T3xHlN9AvBbx8OgIkFV2rxtaqgthmf+YiE=;
-	b=4hzmgYh6NnbayUiMBJrJ2VCCVKdH+zEhdrNi+yEM91tcL75nHnqi8MEufqC00JlMse0b0E
-	Jr3OFHrewgbHcjAg==
+	 references:references; bh=KMdyn4Ons1NGRFBeIa6Mn/PR9/S05FSLGP0TXr6caLs=;
+	b=2b12v+08q4q1Ihf+c4vZOu3okdXJf96ngvGPj8d9gaDkX9QXheOidYEzXUBwcxLp16neE6
+	grkWzuFOjm5B5lDg==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Michael Jeanson <mjeanson@efficios.com>,
  Jens Axboe <axboe@kernel.dk>,
- Peter Zijlstra <peterz@infradead.org>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Peter Zijlstra <peterz@infradead.org>,
  "Paul E. McKenney" <paulmck@kernel.org>,
  Boqun Feng <boqun.feng@gmail.com>,
  Paolo Bonzini <pbonzini@redhat.com>,
@@ -69,7 +69,7 @@ Cc: Michael Jeanson <mjeanson@efficios.com>,
  Huacai Chen <chenhuacai@kernel.org>,
  Paul Walmsley <paul.walmsley@sifive.com>,
  Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [patch V3 18/37] rseq: Provide static branch for runtime debugging
+Subject: [patch V3 19/37] rseq: Provide and use rseq_update_user_cs()
 References: <20250904185336.943880027@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,200 +78,574 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Fri,  5 Sep 2025 00:21:07 +0200 (CEST)
+Date: Fri,  5 Sep 2025 00:21:09 +0200 (CEST)
 
-Config based debug is rarely turned on and is not available easily when
-things go wrong.
+Provide a straight forward implementation to check for and eventually
+clear/fixup critical sections in user space.
 
-Provide a static branch to allow permanent integration of debug mechanisms
-along with the usual toggles in Kconfig, command line and debugfs.
+The non-debug version does only the minimal sanity checks and aims for
+efficiency.
 
-Requested-by: Peter Zijlstra <peterz@infradead.org>
+There are two attack vectors, which are checked for:
+
+  1) An abort IP which is in the kernel address space. That would cause at
+     least x86 to return to kernel space via IRET.
+
+  2) A rogue critical section descriptor with an abort IP pointing to some
+     arbitrary address, which is not preceeded by the RSEQ signature.
+
+If the section descriptors are invalid then the resulting misbehaviour of
+the user space application is not the kernels problem.
+
+The kernel provides a run-time switchable debug slow path, which implements
+the full zoo of checks including termination of the task when one of the
+gazillion conditions is not met.
+
+Replace the zoo in rseq.c with it and invoke it from the TIF_NOTIFY_RESUME
+handler. Move the reminders into the CONFIG_DEBUG_RSEQ section, which will
+be replaced and removed in a subsequent step.
+
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 ---
-V3: Fix __setup() return value - Michael
+V3: Brought back the signature check along with a comment - Mathieu
 ---
- Documentation/admin-guide/kernel-parameters.txt |    4 +
- include/linux/rseq_entry.h                      |    3 
- init/Kconfig                                    |   14 ++++
- kernel/rseq.c                                   |   73 ++++++++++++++++++++++--
- 4 files changed, 90 insertions(+), 4 deletions(-)
+ include/linux/rseq_entry.h |  209 +++++++++++++++++++++++++++++++++++++++
+ include/linux/rseq_types.h |   11 +-
+ kernel/rseq.c              |  238 +++++++++++++--------------------------------
+ 3 files changed, 288 insertions(+), 170 deletions(-)
 
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6443,6 +6443,10 @@
- 			Memory area to be used by remote processor image,
- 			managed by CMA.
- 
-+	rseq_debug=	[KNL] Enable or disable restartable sequence
-+			debug mode. Defaults to CONFIG_RSEQ_DEBUG_DEFAULT_ENABLE.
-+			Format: <bool>
-+
- 	rt_group_sched=	[KNL] Enable or disable SCHED_RR/FIFO group scheduling
- 			when CONFIG_RT_GROUP_SCHED=y. Defaults to
- 			!CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED.
 --- a/include/linux/rseq_entry.h
 +++ b/include/linux/rseq_entry.h
-@@ -34,6 +34,7 @@ DECLARE_PER_CPU(struct rseq_stats, rseq_
- #endif /* !CONFIG_RSEQ_STATS */
- 
+@@ -36,6 +36,7 @@ DECLARE_PER_CPU(struct rseq_stats, rseq_
  #ifdef CONFIG_RSEQ
-+#include <linux/jump_label.h>
+ #include <linux/jump_label.h>
  #include <linux/rseq.h>
++#include <linux/uaccess.h>
  
  #include <linux/tracepoint-defs.h>
-@@ -64,6 +65,8 @@ static inline void rseq_trace_ip_fixup(u
- 				       unsigned long offset, unsigned long abort_ip) { }
- #endif /* !CONFIG_TRACEPOINT */
  
-+DECLARE_STATIC_KEY_MAYBE(CONFIG_RSEQ_DEBUG_DEFAULT_ENABLE, rseq_debug_enabled);
+@@ -67,12 +68,220 @@ static inline void rseq_trace_ip_fixup(u
+ 
+ DECLARE_STATIC_KEY_MAYBE(CONFIG_RSEQ_DEBUG_DEFAULT_ENABLE, rseq_debug_enabled);
+ 
++#ifdef RSEQ_BUILD_SLOW_PATH
++#define rseq_inline
++#else
++#define rseq_inline __always_inline
++#endif
++
++bool rseq_debug_update_user_cs(struct task_struct *t, struct pt_regs *regs, unsigned long csaddr);
 +
  static __always_inline void rseq_note_user_irq_entry(void)
  {
  	if (IS_ENABLED(CONFIG_GENERIC_IRQ_ENTRY))
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1895,10 +1895,24 @@ config RSEQ_STATS
+ 		current->rseq_event.user_irq = true;
+ }
  
- 	  If unsure, say N.
++/*
++ * Check whether there is a valid critical section and whether the
++ * instruction pointer in @regs is inside the critical section.
++ *
++ *  - If the critical section is invalid, terminate the task.
++ *
++ *  - If valid and the instruction pointer is inside, set it to the abort IP
++ *
++ *  - If valid and the instruction pointer is outside, clear the critical
++ *    section address.
++ *
++ * Returns true, if the section was valid and either fixup or clear was
++ * done, false otherwise.
++ *
++ * In the failure case task::rseq_event::fatal is set when a invalid
++ * section was found. It's clear when the failure was an unresolved page
++ * fault.
++ *
++ * If inlined into the exit to user path with interrupts disabled, the
++ * caller has to protect against page faults with pagefault_disable().
++ *
++ * In preemptible task context this would be counterproductive as the page
++ * faults could not be fully resolved. As a consequence unresolved page
++ * faults in task context are fatal too.
++ */
++
++#ifdef RSEQ_BUILD_SLOW_PATH
++/*
++ * The debug version is put out of line, but kept here so the code stays
++ * together.
++ *
++ * @csaddr has already been checked by the caller to be in user space
++ */
++bool rseq_debug_update_user_cs(struct task_struct *t, struct pt_regs *regs, unsigned long csaddr)
++{
++	struct rseq_cs __user *ucs = (struct rseq_cs __user *)(unsigned long)csaddr;
++	u64 start_ip, abort_ip, offset, cs_end, head, tasksize = TASK_SIZE;
++	unsigned long ip = instruction_pointer(regs);
++	u64 __user *uc_head = (u64 __user *) ucs;
++	u32 usig, __user *uc_sig;
++
++	if (!user_rw_masked_begin(ucs))
++		return false;
++
++	/*
++	 * Evaluate the user pile and exit if one of the conditions is not
++	 * fulfilled.
++	 */
++	unsafe_get_user(start_ip, &ucs->start_ip, fail);
++	if (unlikely(start_ip >= tasksize))
++		goto die;
++	/* If outside, just clear the critical section. */
++	if (ip < start_ip)
++		goto clear;
++
++	unsafe_get_user(offset, &ucs->post_commit_offset, fail);
++	cs_end = start_ip + offset;
++	/* Check for overflow and wraparound */
++	if (unlikely(cs_end >= tasksize || cs_end < start_ip))
++		goto die;
++
++	/* If not inside, clear it. */
++	if (ip >= cs_end)
++		goto clear;
++
++	unsafe_get_user(abort_ip, &ucs->abort_ip, fail);
++	/* Ensure it's "valid" */
++	if (unlikely(abort_ip >= tasksize || abort_ip < sizeof(*uc_sig)))
++		goto die;
++	/* Validate that the abort IP is not in the critical section */
++	if (unlikely(abort_ip - start_ip < offset))
++		goto die;
++
++	/*
++	 * Check version and flags for 0. No point in emitting deprecated
++	 * warnings before dying. That could be done in the slow path
++	 * eventually, but *shrug*.
++	 */
++	unsafe_get_user(head, uc_head, fail);
++	if (unlikely(head))
++		goto die;
++
++	/* abort_ip - 4 is >= 0. See abort_ip check above */
++	uc_sig = (u32 __user *)(unsigned long)(abort_ip - sizeof(*uc_sig));
++	unsafe_get_user(usig, uc_sig, fail);
++	if (unlikely(usig != t->rseq_sig))
++		goto die;
++
++	/* rseq_event.user_irq is only valid if CONFIG_GENERIC_IRQ_ENTRY=y */
++	if (IS_ENABLED(CONFIG_GENERIC_IRQ_ENTRY)) {
++		/* If not in interrupt from user context, let it die */
++		if (unlikely(!t->rseq_event.user_irq))
++			goto die;
++	}
++
++	unsafe_put_user(0ULL, &t->rseq->rseq_cs, fail);
++	user_access_end();
++
++	instruction_pointer_set(regs, (unsigned long)abort_ip);
++
++	rseq_stat_inc(rseq_stats.fixup);
++	rseq_trace_ip_fixup(ip, start_ip, offset, abort_ip);
++	return true;
++clear:
++	unsafe_put_user(0ULL, &t->rseq->rseq_cs, fail);
++	user_access_end();
++	rseq_stat_inc(rseq_stats.clear);
++	return true;
++die:
++	t->rseq_event.fatal = true;
++fail:
++	user_access_end();
++	return false;
++}
++#endif /* RSEQ_BUILD_SLOW_PATH */
++
++/*
++ * This only ensures that abort_ip is in the user address space by masking it.
++ * No other sanity checks are done here, that's what the debug code is for.
++ */
++static rseq_inline bool
++rseq_update_user_cs(struct task_struct *t, struct pt_regs *regs, unsigned long csaddr)
++{
++	struct rseq_cs __user *ucs = (struct rseq_cs __user *)(unsigned long)csaddr;
++	unsigned long ip = instruction_pointer(regs);
++	u64 start_ip, abort_ip, offset;
++	u32 usig, __user *uc_sig;
++
++	rseq_stat_inc(rseq_stats.cs);
++
++	if (unlikely(csaddr >= TASK_SIZE)) {
++		t->rseq_event.fatal = true;
++		return false;
++	}
++
++	if (static_branch_unlikely(&rseq_debug_enabled))
++		return rseq_debug_update_user_cs(t, regs, csaddr);
++
++	if (!user_rw_masked_begin(ucs))
++		return false;
++
++	unsafe_get_user(start_ip, &ucs->start_ip, fail);
++	unsafe_get_user(offset, &ucs->post_commit_offset, fail);
++	unsafe_get_user(abort_ip, &ucs->abort_ip, fail);
++
++	/*
++	 * No sanity checks. If user space screwed it up, it can
++	 * keep the pieces. That's what debug code is for.
++	 *
++	 * If outside, just clear the critical section.
++	 */
++	if (ip - start_ip >= offset)
++		goto clear;
++
++	/*
++	 * Two requirements for @abort_ip:
++	 *   - Must be in user space as x86 IRET would happily return to
++	 *     the kernel.
++	 *   - The four bytes preceeding the instruction at @abort_ip must
++	 *     contain the signature.
++	 *
++	 * The latter protects against the following attack vector:
++	 *
++	 * An attacker with limited abilities to write, creates a critical
++	 * section descriptor, sets the abort IP to a library function or
++	 * some other ROP gadget and stores the address of the descriptor
++	 * in TLS::rseq::rseq_cs. An RSEQ abort would then evade ROP
++	 * protection.
++	 */
++	if (abort_ip >= TASK_SIZE || abort_ip < sizeof(*uc_sig))
++		goto die;
++
++	/* The address is guaranteed to be >= 0 and < TASK_SIZE */
++	uc_sig = (u32 __user *)(unsigned long)(abort_ip - sizeof(*uc_sig));
++	unsafe_get_user(usig, uc_sig, fail);
++	if (unlikely(usig != t->rseq_sig))
++		goto die;
++
++	/* Invalidate the critical section */
++	unsafe_put_user(0ULL, &t->rseq->rseq_cs, fail);
++	user_access_end();
++
++	/* Update the instruction pointer */
++	instruction_pointer_set(regs, (unsigned long)abort_ip);
++
++	rseq_stat_inc(rseq_stats.fixup);
++	rseq_trace_ip_fixup(ip, start_ip, offset, abort_ip);
++	return true;
++clear:
++	unsafe_put_user(0ULL, &t->rseq->rseq_cs, fail);
++	user_access_end();
++	rseq_stat_inc(rseq_stats.clear);
++	return true;
++die:
++	t->rseq_event.fatal = true;
++fail:
++	user_access_end();
++	return false;
++}
++
+ static __always_inline void rseq_exit_to_user_mode(void)
+ {
+ 	struct rseq_event *ev = &current->rseq_event;
+--- a/include/linux/rseq_types.h
++++ b/include/linux/rseq_types.h
+@@ -11,10 +11,12 @@
+  * @sched_switch:	True if the task was scheduled out
+  * @user_irq:		True on interrupt entry from user mode
+  * @has_rseq:		True if the task has a rseq pointer installed
++ * @error:		Compound error code for the slow path to analyze
++ * @fatal:		User space data corrupted or invalid
+  */
+ struct rseq_event {
+ 	union {
+-		u32				all;
++		u64				all;
+ 		struct {
+ 			union {
+ 				u16		events;
+@@ -25,6 +27,13 @@ struct rseq_event {
+ 			};
  
-+config RSEQ_DEBUG_DEFAULT_ENABLE
-+	default n
-+	bool "Enable restartable sequences debug mode by default" if EXPERT
-+	depends on RSEQ
-+	help
-+	  This enables the static branch for debug mode of restartable
-+	  sequences.
-+
-+	  This also can be controlled on the kernel command line via the
-+	  command line parameter "rseq_debug=0/1" and through debugfs.
-+
-+	  If unsure, say N.
-+
- config DEBUG_RSEQ
- 	default n
- 	bool "Enable debugging of rseq() system call" if EXPERT
- 	depends on RSEQ && DEBUG_KERNEL
-+	select RSEQ_DEBUG_DEFAULT_ENABLE
- 	help
- 	  Enable extra debugging checks for the rseq system call.
- 
+ 			u8			has_rseq;
++			u8			__pad;
++			union {
++				u16		error;
++				struct {
++					u8	fatal;
++				};
++			};
+ 		};
+ 	};
+ };
 --- a/kernel/rseq.c
 +++ b/kernel/rseq.c
-@@ -95,6 +95,27 @@
- 				  RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL | \
- 				  RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE)
+@@ -382,175 +382,15 @@ static int rseq_reset_rseq_cpu_node_id(s
+ 	return -EFAULT;
+ }
  
-+DEFINE_STATIC_KEY_MAYBE(CONFIG_RSEQ_DEBUG_DEFAULT_ENABLE, rseq_debug_enabled);
-+
-+static inline void rseq_control_debug(bool on)
-+{
-+	if (on)
-+		static_branch_enable(&rseq_debug_enabled);
-+	else
-+		static_branch_disable(&rseq_debug_enabled);
-+}
-+
-+static int __init rseq_setup_debug(char *str)
-+{
-+	bool on;
-+
-+	if (kstrtobool(str, &on))
-+		return -EINVAL;
-+	rseq_control_debug(on);
-+	return 1;
-+}
-+__setup("rseq_debug=", rseq_setup_debug);
-+
- #ifdef CONFIG_TRACEPOINTS
+-/*
+- * Get the user-space pointer value stored in the 'rseq_cs' field.
+- */
+-static int rseq_get_rseq_cs_ptr_val(struct rseq __user *rseq, u64 *rseq_cs)
+-{
+-	if (!rseq_cs)
+-		return -EFAULT;
+-
+-#ifdef CONFIG_64BIT
+-	if (get_user(*rseq_cs, &rseq->rseq_cs))
+-		return -EFAULT;
+-#else
+-	if (copy_from_user(rseq_cs, &rseq->rseq_cs, sizeof(*rseq_cs)))
+-		return -EFAULT;
+-#endif
+-
+-	return 0;
+-}
+-
+-/*
+- * If the rseq_cs field of 'struct rseq' contains a valid pointer to
+- * user-space, copy 'struct rseq_cs' from user-space and validate its fields.
+- */
+-static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
+-{
+-	struct rseq_cs __user *urseq_cs;
+-	u64 ptr;
+-	u32 __user *usig;
+-	u32 sig;
+-	int ret;
+-
+-	ret = rseq_get_rseq_cs_ptr_val(t->rseq, &ptr);
+-	if (ret)
+-		return ret;
+-
+-	/* If the rseq_cs pointer is NULL, return a cleared struct rseq_cs. */
+-	if (!ptr) {
+-		memset(rseq_cs, 0, sizeof(*rseq_cs));
+-		return 0;
+-	}
+-	/* Check that the pointer value fits in the user-space process space. */
+-	if (ptr >= TASK_SIZE)
+-		return -EINVAL;
+-	urseq_cs = (struct rseq_cs __user *)(unsigned long)ptr;
+-	if (copy_from_user(rseq_cs, urseq_cs, sizeof(*rseq_cs)))
+-		return -EFAULT;
+-
+-	if (rseq_cs->start_ip >= TASK_SIZE ||
+-	    rseq_cs->start_ip + rseq_cs->post_commit_offset >= TASK_SIZE ||
+-	    rseq_cs->abort_ip >= TASK_SIZE ||
+-	    rseq_cs->version > 0)
+-		return -EINVAL;
+-	/* Check for overflow. */
+-	if (rseq_cs->start_ip + rseq_cs->post_commit_offset < rseq_cs->start_ip)
+-		return -EINVAL;
+-	/* Ensure that abort_ip is not in the critical section. */
+-	if (rseq_cs->abort_ip - rseq_cs->start_ip < rseq_cs->post_commit_offset)
+-		return -EINVAL;
+-
+-	usig = (u32 __user *)(unsigned long)(rseq_cs->abort_ip - sizeof(u32));
+-	ret = get_user(sig, usig);
+-	if (ret)
+-		return ret;
+-
+-	if (current->rseq_sig != sig) {
+-		printk_ratelimited(KERN_WARNING
+-			"Possible attack attempt. Unexpected rseq signature 0x%x, expecting 0x%x (pid=%d, addr=%p).\n",
+-			sig, current->rseq_sig, current->pid, usig);
+-		return -EINVAL;
+-	}
+-	return 0;
+-}
+-
+-static bool rseq_warn_flags(const char *str, u32 flags)
++static bool rseq_handle_cs(struct task_struct *t, struct pt_regs *regs)
+ {
+-	u32 test_flags;
++	u64 csaddr;
+ 
+-	if (!flags)
++	if (get_user_masked_u64(&csaddr, &t->rseq->rseq_cs))
+ 		return false;
+-	test_flags = flags & RSEQ_CS_NO_RESTART_FLAGS;
+-	if (test_flags)
+-		pr_warn_once("Deprecated flags (%u) in %s ABI structure", test_flags, str);
+-	test_flags = flags & ~RSEQ_CS_NO_RESTART_FLAGS;
+-	if (test_flags)
+-		pr_warn_once("Unknown flags (%u) in %s ABI structure", test_flags, str);
+-	return true;
+-}
+-
+-static int rseq_check_flags(struct task_struct *t, u32 cs_flags)
+-{
+-	u32 flags;
+-	int ret;
+-
+-	if (rseq_warn_flags("rseq_cs", cs_flags))
+-		return -EINVAL;
+-
+-	/* Get thread flags. */
+-	ret = get_user(flags, &t->rseq->flags);
+-	if (ret)
+-		return ret;
+-
+-	if (rseq_warn_flags("rseq", flags))
+-		return -EINVAL;
+-	return 0;
+-}
+-
+-static int clear_rseq_cs(struct rseq __user *rseq)
+-{
+-	/*
+-	 * The rseq_cs field is set to NULL on preemption or signal
+-	 * delivery on top of rseq assembly block, as well as on top
+-	 * of code outside of the rseq assembly block. This performs
+-	 * a lazy clear of the rseq_cs field.
+-	 *
+-	 * Set rseq_cs to NULL.
+-	 */
+-#ifdef CONFIG_64BIT
+-	return put_user(0UL, &rseq->rseq_cs);
+-#else
+-	if (clear_user(&rseq->rseq_cs, sizeof(rseq->rseq_cs)))
+-		return -EFAULT;
+-	return 0;
+-#endif
+-}
+-
+-/*
+- * Unsigned comparison will be true when ip >= start_ip, and when
+- * ip < start_ip + post_commit_offset.
+- */
+-static bool in_rseq_cs(unsigned long ip, struct rseq_cs *rseq_cs)
+-{
+-	return ip - rseq_cs->start_ip < rseq_cs->post_commit_offset;
+-}
+-
+-static int rseq_ip_fixup(struct pt_regs *regs, bool abort)
+-{
+-	unsigned long ip = instruction_pointer(regs);
+-	struct task_struct *t = current;
+-	struct rseq_cs rseq_cs;
+-	int ret;
+-
+-	rseq_stat_inc(rseq_stats.cs);
+-
+-	ret = rseq_get_rseq_cs(t, &rseq_cs);
+-	if (ret)
+-		return ret;
+-
+-	/*
+-	 * Handle potentially not being within a critical section.
+-	 * If not nested over a rseq critical section, restart is useless.
+-	 * Clear the rseq_cs pointer and return.
+-	 */
+-	if (!in_rseq_cs(ip, &rseq_cs)) {
+-		rseq_stat_inc(rseq_stats.clear);
+-		return clear_rseq_cs(t->rseq);
+-	}
+-	ret = rseq_check_flags(t, rseq_cs.flags);
+-	if (ret < 0)
+-		return ret;
+-	if (!abort)
+-		return 0;
+-	ret = clear_rseq_cs(t->rseq);
+-	if (ret)
+-		return ret;
+-	rseq_stat_inc(rseq_stats.fixup);
+-	trace_rseq_ip_fixup(ip, rseq_cs.start_ip, rseq_cs.post_commit_offset,
+-			    rseq_cs.abort_ip);
+-	instruction_pointer_set(regs, (unsigned long)rseq_cs.abort_ip);
+-	return 0;
++	if (likely(!csaddr))
++		return true;
++	return rseq_update_user_cs(t, regs, csaddr);
+ }
+ 
  /*
-  * Out of line, so the actual update functions can be in a header to be
-@@ -112,10 +133,11 @@ void __rseq_trace_ip_fixup(unsigned long
- }
- #endif /* CONFIG_TRACEPOINTS */
- 
-+#ifdef CONFIG_DEBUG_FS
- #ifdef CONFIG_RSEQ_STATS
- DEFINE_PER_CPU(struct rseq_stats, rseq_stats);
- 
--static int rseq_debug_show(struct seq_file *m, void *p)
-+static int rseq_stats_show(struct seq_file *m, void *p)
+@@ -567,8 +407,8 @@ static int rseq_ip_fixup(struct pt_regs
+ void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
  {
- 	struct rseq_stats stats = { };
- 	unsigned int cpu;
-@@ -140,14 +162,56 @@ static int rseq_debug_show(struct seq_fi
- 	return 0;
- }
+ 	struct task_struct *t = current;
+-	int ret, sig;
+ 	bool event;
++	int sig;
  
-+static int rseq_stats_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, rseq_stats_show, inode->i_private);
-+}
-+
-+static const struct file_operations stat_ops = {
-+	.open		= rseq_stats_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
-+static int __init rseq_stats_init(struct dentry *root_dir)
-+{
-+	debugfs_create_file("stats", 0444, root_dir, NULL, &stat_ops);
-+	return 0;
-+}
-+#else
-+static inline void rseq_stats_init(struct dentry *root_dir) { }
-+#endif /* CONFIG_RSEQ_STATS */
-+
-+static int rseq_debug_show(struct seq_file *m, void *p)
-+{
-+	bool on = static_branch_unlikely(&rseq_debug_enabled);
-+
-+	seq_printf(m, "%d\n", on);
-+	return 0;
-+}
-+
-+static ssize_t rseq_debug_write(struct file *file, const char __user *ubuf,
-+			    size_t count, loff_t *ppos)
-+{
-+	bool on;
-+
-+	if (kstrtobool_from_user(ubuf, count, &on))
-+		return -EINVAL;
-+
-+	rseq_control_debug(on);
-+	return count;
-+}
-+
- static int rseq_debug_open(struct inode *inode, struct file *file)
- {
- 	return single_open(file, rseq_debug_show, inode->i_private);
- }
+ 	/*
+ 	 * If invoked from hypervisors before entering the guest via
+@@ -618,8 +458,7 @@ void __rseq_handle_notify_resume(struct
+ 	if (!IS_ENABLED(CONFIG_DEBUG_RSEQ) && !event)
+ 		return;
  
--static const struct file_operations dfs_ops = {
-+static const struct file_operations debug_ops = {
- 	.open		= rseq_debug_open,
- 	.read		= seq_read,
-+	.write		= rseq_debug_write,
- 	.llseek		= seq_lseek,
- 	.release	= single_release,
- };
-@@ -156,11 +220,12 @@ static int __init rseq_debugfs_init(void
- {
- 	struct dentry *root_dir = debugfs_create_dir("rseq", NULL);
+-	ret = rseq_ip_fixup(regs, event);
+-	if (unlikely(ret < 0))
++	if (!rseq_handle_cs(t, regs))
+ 		goto error;
  
--	debugfs_create_file("stats", 0444, root_dir, NULL, &dfs_ops);
-+	debugfs_create_file("debug", 0644, root_dir, NULL, &debug_ops);
-+	rseq_stats_init(root_dir);
- 	return 0;
+ 	if (unlikely(rseq_update_cpu_node_id(t)))
+@@ -632,6 +471,67 @@ void __rseq_handle_notify_resume(struct
  }
- __initcall(rseq_debugfs_init);
--#endif /* CONFIG_RSEQ_STATS */
-+#endif /* CONFIG_DEBUG_FS */
  
  #ifdef CONFIG_DEBUG_RSEQ
- static struct rseq *rseq_kernel_fields(struct task_struct *t)
++/*
++ * Unsigned comparison will be true when ip >= start_ip, and when
++ * ip < start_ip + post_commit_offset.
++ */
++static bool in_rseq_cs(unsigned long ip, struct rseq_cs *rseq_cs)
++{
++	return ip - rseq_cs->start_ip < rseq_cs->post_commit_offset;
++}
++
++/*
++ * If the rseq_cs field of 'struct rseq' contains a valid pointer to
++ * user-space, copy 'struct rseq_cs' from user-space and validate its fields.
++ */
++static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
++{
++	struct rseq_cs __user *urseq_cs;
++	u64 ptr;
++	u32 __user *usig;
++	u32 sig;
++	int ret;
++
++	if (get_user_masked_u64(&ptr, &t->rseq->rseq_cs))
++		return -EFAULT;
++
++	/* If the rseq_cs pointer is NULL, return a cleared struct rseq_cs. */
++	if (!ptr) {
++		memset(rseq_cs, 0, sizeof(*rseq_cs));
++		return 0;
++	}
++	/* Check that the pointer value fits in the user-space process space. */
++	if (ptr >= TASK_SIZE)
++		return -EINVAL;
++	urseq_cs = (struct rseq_cs __user *)(unsigned long)ptr;
++	if (copy_from_user(rseq_cs, urseq_cs, sizeof(*rseq_cs)))
++		return -EFAULT;
++
++	if (rseq_cs->start_ip >= TASK_SIZE ||
++	    rseq_cs->start_ip + rseq_cs->post_commit_offset >= TASK_SIZE ||
++	    rseq_cs->abort_ip >= TASK_SIZE ||
++	    rseq_cs->version > 0)
++		return -EINVAL;
++	/* Check for overflow. */
++	if (rseq_cs->start_ip + rseq_cs->post_commit_offset < rseq_cs->start_ip)
++		return -EINVAL;
++	/* Ensure that abort_ip is not in the critical section. */
++	if (rseq_cs->abort_ip - rseq_cs->start_ip < rseq_cs->post_commit_offset)
++		return -EINVAL;
++
++	usig = (u32 __user *)(unsigned long)(rseq_cs->abort_ip - sizeof(u32));
++	ret = get_user(sig, usig);
++	if (ret)
++		return ret;
++
++	if (current->rseq_sig != sig) {
++		printk_ratelimited(KERN_WARNING
++			"Possible attack attempt. Unexpected rseq signature 0x%x, expecting 0x%x (pid=%d, addr=%p).\n",
++			sig, current->rseq_sig, current->pid, usig);
++		return -EINVAL;
++	}
++	return 0;
++}
+ 
+ /*
+  * Terminate the process if a syscall is issued within a restartable
 
 
