@@ -1,130 +1,155 @@
-Return-Path: <linux-kernel+bounces-801071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABC91B43F80
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:47:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB1BB43F68
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40A0F4829F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:44:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12CF75A6B27
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE2B307AFC;
-	Thu,  4 Sep 2025 14:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C68F30BF74;
+	Thu,  4 Sep 2025 14:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajBr+Xfm"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="buy9Zu0Z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836311F4174;
-	Thu,  4 Sep 2025 14:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7BB3090F9
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756997039; cv=none; b=jio1Ay2/WkwQtK95Y+xODdAV5KZ8OHJJAQ9m7K3jPC+bixt59dekXD+bXoyP1cR1CfUl/uSpMi5fsdwAms2LMccTorDE9zrVYhgkGfRKMfzENBnpL0XlTC1UkFJDRWff8f4o69kcyEIQSv9dvYD8bqKebGs9J10c9BaMiZz3F/0=
+	t=1756997047; cv=none; b=Vy01isZX0GRMIimDCH2Gg5tukpID+KOHzTyWIPz6UprD8GFrzvJ2ybngd2vKQfuRQvIrFcvQrcGo8L3h8FDBLHe5+EWgi7eqCJmjPCmahAJgbLk6xVcY59SNf+HL79HfVJF7sHvCEm1wOdS2BCbxEVQ+ZRG5UNqa3xhQyDIWQlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756997039; c=relaxed/simple;
-	bh=uTnI1fSb+0O/dtZS9vd5suR4yxBZH69XXAYT/NdOd8E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i01EOn0U5O/vt8UAW0HF2rmnDna8E0Khcff/bsouK1tJ3ET2ZAYwMdHS8wnaZ8a+igAsD1faVPxl9eD62pdOmV8bImEgN3jnkLRQKG6mb/9dxHUD56+9lMgttafhgbBpr0FzwrVmQeNAkgbu5o5PJmQX8pmBkALYNsdSUIzTMzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ajBr+Xfm; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b4f8bf49aeaso921274a12.1;
-        Thu, 04 Sep 2025 07:43:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756997037; x=1757601837; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FFf7Yyea9LHiZle0Vu0g/QEXsC9kvW/M7vSP9n9xiK4=;
-        b=ajBr+Xfmfx7Nb3WIIbcbIox3LITLVAJreWPBfUFBVFBURiKgw4APSUWtst+jKhdoj1
-         1+r7G0CDEbeaK+ySYfATAGELHEWb1T3JNfN9P200UqCtG9vzGxVyAyPxdcgfpdYVoYIH
-         b72sIrXjHp6x96qVTcvLtaW0bbvQ1EY492LxjTvfuT0J75ahX6VESHJW3b4oMEVGIhii
-         BZiNGqEUQhVj1if+rZLhUzqWUcunZugSDZgyxwVaZnEFn5BSJJiyjV+QGwf4XATOe0/q
-         BQ9oQOcqtWuHv92XzAKBaz4sTUN8B9tOm4dsS02fADQAt6eBrhKQIS5eiDp/gzSO3G/H
-         Kg/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756997037; x=1757601837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FFf7Yyea9LHiZle0Vu0g/QEXsC9kvW/M7vSP9n9xiK4=;
-        b=BQ+8GvGJT4x/+gwa8EUvzrPpGarsNX/MPcDmboZtb0RcCwZUFJ0x3+zjT223PfxjZz
-         EqjaCJJryx9ZgSI1q18ARNEX65MLQpdY4ELRQ7U/aGOPJcF3ZMcP/hdP2RQ4oVnqTmH7
-         So1T1MrHp/KUUYmxWwpHom9EHRtXR9J95pbWHh2hbF/UghgAz7nv/Nll3jzAkhhXDWVS
-         RMN99tmA6kRtcJONbeTsGsmA/iE1g1ZjDJA0tPdeCze+MeuDHXmItnpElxGJkSR5TUsS
-         ZpgDPtzJtjI461gOi8B8qksP/wH9DhA8HkX2LEP87LJrRd0D+pZmCZTBgkyPgYuscTDZ
-         hvCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCru2yn7hDZUtcOIVxOrLOKieCzZtlQMcMFthIXgMH1lSTIl8xGbVKo0f2jDC4aFBGLICp2AdpqhxdnQ==@vger.kernel.org, AJvYcCVBdViW4ml6qqCYy0XUMMeLDBQGDkaZFO7296hlamzGAsvhh3FLka4hjpWKvlfMYbGSpoyZECJEu0CTFaCU@vger.kernel.org, AJvYcCVNaIdAVuCRcFNtKpzSby2x/rUIEtc/JgtVZsPCX4gDWXyQbCeWuvyPhqjSk8xIFWUwUxfczH2XAaE/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYUvnsZIAollKBinczp/meJdwh0m8feM0HIudEwUiuY12eGzWX
-	uDQgz/0bKaoUi3wC5woALF/f5J3v8hfR8IpsQSR4gZr+HlznglXftqnqSwC+xKg6ezMA/nBbCoN
-	idiJwkh7+HHv76fMlN83exFGWS1g6cQ==
-X-Gm-Gg: ASbGncuy6fmc42IfNpAAOZUH4lXZ/EYZgPkcy6T1yi/4Re7pi4i99jDbNEtZcXGlt1P
-	0G4yASKUtVDy1ogEGpSqYgBcU4dGJx+5Ez2vhyiH916DGs9ZvthXytpZWu8AjrYqToG9s4kR55B
-	kc9YK0yuh9mW5f5aUxDX8yiKCavg2JqMiw9/I/j1ZzGIzvApmEnFfH2u57cmuUiHKscNGT7Zea9
-	epOamDYt2jljIDoe6G1QQ==
-X-Google-Smtp-Source: AGHT+IHsY0zXA6zUaKZwMLESPvBcSYKBHt69QEuQOrXgFcfm0SeYjpDQnakpdZCaDqwyXd1TBq2aYmhF9+AYJK+f2Vo=
-X-Received: by 2002:a17:90b:55c8:b0:327:dc81:b3a9 with SMTP id
- 98e67ed59e1d1-32815437a2amr27682469a91.10.1756997036687; Thu, 04 Sep 2025
- 07:43:56 -0700 (PDT)
+	s=arc-20240116; t=1756997047; c=relaxed/simple;
+	bh=fJE2yF/PvWH3g7fdEOCUn49CqL0Rrtpc7KRDzBeXS9A=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ab2SnE7W+3pbOXoWfBPj8zYJD1XL7QNtOWAndzn4anTCK4w/rhOm76VsL5fRLypz62A2GnL059hcNz2iCA+y6RNDqDixWrR0c88vbPBEvSazl8uhwVLjediY5SOCPcQ0Ua7CUYYkzA36Ek58oEMJ3QZBBOXg+azVhdgl6FMPOEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=buy9Zu0Z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756997044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3FsChnjzIB7Kv9twtI1vDkbPW57rkIUWsti3YFoQlUs=;
+	b=buy9Zu0Zm7CZ5BIj6BxRuc0Wb0yMobWuWoupEkaYBAAdHEnaZls00R9Gw+KuDGxaA581Ma
+	t/bonp61sbyPpAXCFVBilMyaGjDqXMjB3gTps1RlzinFkieVSjHL+1G4IREW2sO4bP627u
+	JCskrmuFfI2m4q5AZlGe6UURmWTpNa0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-572-oiJcdi-4NV6kWH0YGfplcA-1; Thu,
+ 04 Sep 2025 10:44:00 -0400
+X-MC-Unique: oiJcdi-4NV6kWH0YGfplcA-1
+X-Mimecast-MFC-AGG-ID: oiJcdi-4NV6kWH0YGfplcA_1756997038
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9AA571800366;
+	Thu,  4 Sep 2025 14:43:57 +0000 (UTC)
+Received: from [10.45.224.74] (unknown [10.45.224.74])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 91B2E19560B8;
+	Thu,  4 Sep 2025 14:43:53 +0000 (UTC)
+Message-ID: <906137ef-822d-4178-b80d-d332ab1046dc@redhat.com>
+Date: Thu, 4 Sep 2025 16:43:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829052233.26821-1-alexander.stein@mailbox.org>
-In-Reply-To: <20250829052233.26821-1-alexander.stein@mailbox.org>
-From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-Date: Thu, 4 Sep 2025 16:43:45 +0200
-X-Gm-Features: Ac12FXwCjwRMKGmkZskxGm2oHmUORnzURuKHggP-ddD4-5C41v9LtzsaKROlKUI
-Message-ID: <CANBuOYpC4OMFx4pMe3-0i+cR8TqOALxb62taJbL=MSBpYxmHmQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ARM: dts: ti: omap: am335x-baltos: Fix TPS property
-To: Alexander Stein <alexander.stein@mailbox.org>
-Cc: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-omap@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH net-next] dt-bindings: dpll: Add per-channel Ethernet
+ reference property
+From: Ivan Vecera <ivecera@redhat.com>
+To: Rob Herring <robh@kernel.org>
+Cc: netdev@vger.kernel.org, mschmidt@redhat.com, poros@redhat.com,
+ Andrew Lunn <andrew@lunn.ch>, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Prathosh Satish <Prathosh.Satish@microchip.com>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250815144736.1438060-1-ivecera@redhat.com>
+ <20250820211350.GA1072343-robh@kernel.org>
+ <5e38e1b7-9589-49a9-8f26-3b186f54c7d5@redhat.com>
+Content-Language: en-US
+In-Reply-To: <5e38e1b7-9589-49a9-8f26-3b186f54c7d5@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Fri, Aug 29, 2025 at 7:23=E2=80=AFAM Alexander Stein
-<alexander.stein@mailbox.org> wrote:
->
-> ti,en-ck32k-xtal is a boolean value. So remove the value and keep the
-> property by itself. Fixes the dtbs_check warning:
->   ti/omap/am335x-netcom-plus-2xx.dtb: tps@2d (ti,tps65910):
->     ti,en-ck32k-xtal: 1 is not of type 'boolean'
->
-> Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
+Hi Rob,
+
+any comment to my second proposal (below)?
+
+Thank you,
+Ivan
+
+On 29. 08. 25 3:29 odp., Ivan Vecera wrote:
+>> Seems a bit odd to me that the ethernet controller doesn't have a link
+>> to this node instead.
+> 
+> Do you mean to add a property (e.g. dpll-channel or dpll-device) into
+> net/network-class.yaml ? If so, yes, it would be possible, and the way
+> I look at it now, it would probably be better. The DPLL driver can
+> enumerate all devices across the system that has this specific property
+> and check its value.
+> 
+> See the proposal below...
+> 
+> Thanks,
+> Ivan
+> 
 > ---
->  arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi b/arch/arm/boot=
-/dts/ti/omap/am335x-baltos.dtsi
-> index ae2e8dffbe04..ea47f9960c35 100644
-> --- a/arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi
-> +++ b/arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi
-> @@ -269,7 +269,7 @@ &tps {
->         vcc7-supply =3D <&vbat>;
->         vccio-supply =3D <&vbat>;
->
-> -       ti,en-ck32k-xtal =3D <1>;
-> +       ti,en-ck32k-xtal;
->
->         regulators {
->                 vrtc_reg: regulator@0 {
-> --
-> 2.51.0
->
->
+>   Documentation/devicetree/bindings/dpll/dpll-device.yaml  | 6 ++++++
+>   Documentation/devicetree/bindings/net/network-class.yaml | 7 +++++++
+>   2 files changed, 13 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml b/ 
+> Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> index fb8d7a9a3693f..560351df1bec3 100644
+> --- a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> +++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> @@ -27,6 +27,12 @@ properties:
+>     "#size-cells":
+>       const: 0
+> 
+> +  "#dpll-cells":
+> +    description: |
+> +      Number of cells in a dpll specifier. The cell specifies the index
+> +      of the channel within the DPLL device.
+> +    const: 1
+> +
+>     dpll-types:
+>       description: List of DPLL channel types, one per DPLL instance.
+>       $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> diff --git a/Documentation/devicetree/bindings/net/network-class.yaml b/ 
+> Documentation/devicetree/bindings/net/network-class.yaml
+> index 06461fb92eb84..144badb3b7ff1 100644
+> --- a/Documentation/devicetree/bindings/net/network-class.yaml
+> +++ b/Documentation/devicetree/bindings/net/network-class.yaml
+> @@ -17,6 +17,13 @@ properties:
+>       default: 48
+>       const: 48
+> 
+> +  dpll:
+> +    description:
+> +      Specifies DPLL device phandle and index of the DPLL channel within
+> +      this device used by this network device to synchronize its hardware
+> +      clock.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +
+>     local-mac-address:
+>       description:
+>         Specifies MAC address that was assigned to the network device 
+> described by
 
-Hi Alexander,
-
-I believe I submitted a patch with the same fix a few days earlier,
-Link: https://lore.kernel.org/all/20250822222530.113520-1-jihed.chaibi.dev@=
-gmail.com/
-
-best regards,
 
