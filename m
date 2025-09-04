@@ -1,153 +1,112 @@
-Return-Path: <linux-kernel+bounces-800944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 188BDB43DFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95CC3B43E24
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7FE23B5DC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:04:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D462A06868
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A59305E2F;
-	Thu,  4 Sep 2025 14:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KfJohFUH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D70330ACFA;
+	Thu,  4 Sep 2025 14:07:23 +0000 (UTC)
+Received: from einhorn-mail-out.in-berlin.de (einhorn.in-berlin.de [192.109.42.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3952D8771;
-	Thu,  4 Sep 2025 14:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18A53090EA
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.109.42.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756994679; cv=none; b=dEzAtVj0GQJ9AX9aQt+97z+jLJirH3ZnHunQZYL95n/gJCx6XqepipXK4rbIVMiTn9FWG2vhaTC2tXox0SC8j1W45GcDyq6tCgdHo2GrxGpBwmcqoy+gcFLJym4+9R4pb8C6hBfB7DD5ukoqMbyq99JZF63+VvdwuGX0MqzqPGc=
+	t=1756994843; cv=none; b=GJOzN7nrPZq875nJ5SMMSgl4+6GXYcmVAuUcjwP0pxiHfGGE0JgILCDkiznNVCPcprLSb/0D+8gopqdQWR1jyzQ8mQokWBLAgPuCzlG1rEkXaSWnatci1A/LO1F5CYxNcJOwm6IZAmaNjpT+bfmeU9eW2yJtPSNKMjui3UFO3x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756994679; c=relaxed/simple;
-	bh=8D15COu2exGUd3E0Qy8knhTqB4T/stT3kGk+YvNt1Xc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BtGJNnHqiAsLiPU25ARVPZjYgLNvKVd4UdnlFgS/1OMVsiss/8/lLDdB+NOB7m6XCEe8jNou9HJbFshHdqRu1qa5nACBSipqdYFWmIJRtcDk1Z0KWCf18f2+ZRSss1X9koT7pZqQ8DCJwerWs+VOBuCUQ7mZi9YC+oRrhAZKg+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KfJohFUH; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756994678; x=1788530678;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8D15COu2exGUd3E0Qy8knhTqB4T/stT3kGk+YvNt1Xc=;
-  b=KfJohFUH7Hn1UeO43oPCiN3r+3F941+Cogr92jFKdEr40icswc/cO/Q1
-   P4ZXVOEFo4TOHlPuR/3xJYWVJqbuoj3LLbSOOUmWEF59xJhZaQ3xqLwIV
-   zZoIdG376fb/57Zl6nMqJdCHKUNd7dd0WnXBywvjPToeTaNJ72YD+D/tu
-   CJfOt1RX9do3P6jR3r2MnvnazJ302KTRUQ6dbBbpXXiZG7BmOdpt89X5Q
-   qjPZJ0WiQoBA4A6BVYaZ33ifaOVyiSKNgcjAHI3jgdLGIQKL/JIh53vMN
-   iqYLxc84JY6RmGVe1btPRJFy225gJwcXpk0s3EbEe1d4kWXe+lIfJPH+z
-   w==;
-X-CSE-ConnectionGUID: dur8aXbyR4icYs9PvtclUw==
-X-CSE-MsgGUID: 8XQCbnVKQZGLYFK/yZFDaQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="70431585"
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="70431585"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 07:04:37 -0700
-X-CSE-ConnectionGUID: jk3xqa1ERUuvLneeMH0DuQ==
-X-CSE-MsgGUID: ZlXGG7xRRzuIrTFtgMNG7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="202827580"
-Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 04 Sep 2025 07:04:31 -0700
-Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uuAYv-0005Mt-2U;
-	Thu, 04 Sep 2025 14:03:53 +0000
-Date: Thu, 4 Sep 2025 22:02:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Tobias Sperling <tobias.sperling@softing.com>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Esteban Blanc <eblanc@baylibre.com>,
-	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Hans de Goede <hansg@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-Message-ID: <202509042119.GiwpuwCl-lkp@intel.com>
-References: <08929460fe11dd0b749c50a72a634423f13f4104.1756813980.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1756994843; c=relaxed/simple;
+	bh=KgBFjeu9szUATId/Aod52mo/ZvN3jtzh4mqqMKXz0x8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tTrrYp6+RaUdpvDHrrzK4zLLYh/rNEtV4WWbBmCRSf+N6rDspWMAnJyJSF4WOMT1DD/4ER0w8sBhMlPkFIi88CoaVwIzsTxDhq2rzMY5frAHDIebqFx2ZgL+bR81ZvZCqYEsL5qyhLPP0CzxHT0a4s7/dKK/UQPavO/QqlA27Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; arc=none smtp.client-ip=192.109.42.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+X-Envelope-From: doko@debian.org
+Received: from authenticated.user (localhost [127.0.0.1]) by einhorn.in-berlin.de  with ESMTPSA id 584E2hg13579742
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 4 Sep 2025 16:02:43 +0200
+Message-ID: <b3db475e-e84d-4056-9420-bc0acc8b9fe5@debian.org>
+Date: Thu, 4 Sep 2025 16:02:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <08929460fe11dd0b749c50a72a634423f13f4104.1756813980.git.mazziesaccount@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] Don't create sframes during build
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Josh Poimboeuf <jpoimboe@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nathan Chancellor
+ <nathan@kernel.org>,
+        Nicolas Schier <nicolas.schier@linux.dev>,
+        Binutils <binutils@sourceware.org>
+References: <20250904131835.sfcG19NV@linutronix.de>
+Content-Language: en-US
+From: Matthias Klose <doko@debian.org>
+In-Reply-To: <20250904131835.sfcG19NV@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Matti,
+[ CCing binutils@sourceware.org ]
 
-kernel test robot noticed the following build warnings:
+On 9/4/25 15:18, Sebastian Andrzej Siewior wrote:
+> Hi,
+> 
+> gcc in Debian, starting with 15.2.0-2, 14.3.0-6 enables sframe
+> generation. Unless options like -ffreestanding are passed. Since this
+> isn't done, there are a few warnings during compile
 
-[auto build test WARNING on d1487b0b78720b86ec2a2ac7acc683ec90627e5b]
+If there are other options when sframe shouldn't be enabled, please tell.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Matti-Vaittinen/dt-bindings-iio-adc-ROHM-BD79112-ADC-GPIO/20250902-203558
-base:   d1487b0b78720b86ec2a2ac7acc683ec90627e5b
-patch link:    https://lore.kernel.org/r/08929460fe11dd0b749c50a72a634423f13f4104.1756813980.git.mazziesaccount%40gmail.com
-patch subject: [PATCH 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-config: sparc-randconfig-r071-20250904 (https://download.01.org/0day-ci/archive/20250904/202509042119.GiwpuwCl-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 14.3.0
+Gentoo chose another approach, enabling sframe unconditionally in gas, 
+unless disabled by --gsframe=no.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509042119.GiwpuwCl-lkp@intel.com/
-
-smatch warnings:
-drivers/iio/adc/rohm-bd79112.c:212 bd79112_read_raw() warn: inconsistent indenting
-
-vim +212 drivers/iio/adc/rohm-bd79112.c
-
-   192	
-   193	static int bd79112_read_raw(struct iio_dev *indio_dev,
-   194				    struct iio_chan_spec const *chan, int *val,
-   195				    int *val2, long m)
-   196	{
-   197		struct bd79112_data *data = iio_priv(indio_dev);
-   198		int ret;
-   199	
-   200		switch (m) {
-   201		case IIO_CHAN_INFO_RAW:
-   202			ret = regmap_read(data->map, chan->channel, val);
-   203			if (ret < 0)
-   204				return ret;
-   205	
-   206			return IIO_VAL_INT;
-   207	
-   208		case IIO_CHAN_INFO_SCALE:
-   209			 *val = data->vref_mv;
-   210			 *val2 = 12;
-   211	
- > 212			return IIO_VAL_FRACTIONAL_LOG2;
-   213		}
-   214	
-   215		return -EINVAL;
-   216	}
-   217	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> | crypto/chacha.o: warning: objtool: .sframe+0x30: data relocation to !ENDBR: chacha_stream_xor+0x0
+> | crypto/chacha.o: warning: objtool: .sframe+0x94: data relocation to !ENDBR: crypto_xchacha_crypt+0x0
+> 
+> followed by warnings at the end
+> 
+> |   AR      vmlinux.a
+> |   LD      vmlinux.o
+> | vmlinux.o: warning: objtool: .sframe+0x15c: data relocation to !ENDBR: repair_env_string+0x0
+> | vmlinux.o: warning: objtool: .sframe+0x1c0: data relocation to !ENDBR: run_init_process+0x0
+> | vmlinux.o: warning: objtool: .sframe+0x1d4: data relocation to !ENDBR: try_to_run_init_process+0x0
+> | vmlinux.o: warning: objtool: .sframe+0x1e8: data relocation to !ENDBR: rcu_read_unlock+0x0
+> …
+> | vmlinux.o: warning: objtool: .sframe+0x12765c: data relocation to !ENDBR: get_eff_addr_reg+0x0
+> | vmlinux.o: warning: objtool: .sframe+0x1276ac: data relocation to !ENDBR: get_seg_base_limit+0x0
+> |   OBJCOPY modules.builtin.modinfo
+> 
+> followed by a boom
+> |   LD      .tmp_vmlinux1
+> | ld: error: unplaced orphan section `.sframe' from `vmlinux.o'
+> 
+> We could drop the sframe during the final link but this does not get rid
+> of the objtool warnings so we would have to ignore them. But we don't
+> need it. So what about the following:
+> 
+> diff --git a/Makefile b/Makefile
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -886,6 +886,8 @@ ifdef CONFIG_CC_IS_GCC
+>   KBUILD_CFLAGS	+= $(call cc-option,--param=allow-store-data-races=0)
+>   KBUILD_CFLAGS	+= $(call cc-option,-fno-allow-store-data-races)
+>   endif
+> +# No sframe generation for kernel if enabled by default
+> +KBUILD_CFLAGS	+= $(call cc-option,-Xassembler --gsframe=no)
+>   
+>   ifdef CONFIG_READABLE_ASM
+>   # Disable optimizations that make assembler listings hard to read.
+This is what I chose for package builds that need disablement of sframe.
 
