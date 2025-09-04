@@ -1,143 +1,146 @@
-Return-Path: <linux-kernel+bounces-800343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D061B43685
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:03:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B56B0B43689
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECAAA3AAC78
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:03:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55FD31BC3562
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E7B2DBF48;
-	Thu,  4 Sep 2025 09:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A767A2DD60E;
+	Thu,  4 Sep 2025 09:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IAaXnSLZ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tekYqWB+"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8492D63EF
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CB32D5C95
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756976595; cv=none; b=So+vo7SJ9OLW27pgYDRII/VAAw5SmN40YPsLmTkhb7pTGirmeqQEMtcqWj4pLhW/ZFFHeLxS0MjRhN/fQk60Apc9gAdrKR804XAPbFirqrDk0riN3gci9KEBUWjGh82ib/Vuhem37mVXSHnH3t/J8jTJcJ+aXRzoP8snvOITtdc=
+	t=1756976610; cv=none; b=Tw3Ln6gA2jQjZyUGlPB8f1IcGmszGRxUuT/lcVxBr86hzMcERp61GWkJy21inqjkcBj30dsJBHfKmsdqzuu3LejQFjopC/Y7vlxIF8dmh7qqtMboN66ird7I3WzkQ7CcFA2VjDgbEC5sZuna83lr53Vj5On8GKhYwliJpVrqLF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756976595; c=relaxed/simple;
-	bh=PpYWG0Bjw7Xcz83Fr7zQIEJIntOwcuHatKNx6YBA8Rg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=AOZ+qhnPN1+Y21jqkO1lmCVy25w7q1SPJNNVjqVHfOo0PSlZUZ9uiAwmQ7XcYBsbm+K79zTxFlBhWFqU19pVi/qnbRl0CsWwjSdrOkaHLWr3I+F6bGO0WvG58jl2BJRxHu79dnu7co00f2BSHWxFVc7lFAqrOwQqO+J0Ej4KVP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IAaXnSLZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5841FwfG005260
-	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 09:03:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GOkHmK1X6utHVg6lksjhhYY3cmPafHwC8mul7BxpLiA=; b=IAaXnSLZl73fvOj7
-	4OnTx8g28FrJ634V1uzwdIr13148t2fLHCp7NsmGVMQWP27gnLUrc9ECpkDbtIUG
-	Q320qjCI9d2lxgnAv6hCV66I4fQPirejPeIUBBGY77EsvS0TOAjJ+t5OhMIHRfx6
-	f+mnTiZUNz2nym42n7J0wxgobt7No8fdv6rNPW06brhHXpwxeE/I+2CRHzMq5ZzT
-	Pj5EjPCJaE2TZVwCQGm6GPVp8oBnTkbOmgXMR5N47poN1rTkS3m+xapmEr/+MG3h
-	A/X+ftgvnRYjWQZTEeewL1/m8niYhOgCQnQyrlQJ/Z/IopkRbN2mcedycnRoVgxS
-	lcRh1g==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urmjpukb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 09:03:13 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b3387c826eso3177341cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 02:03:13 -0700 (PDT)
+	s=arc-20240116; t=1756976610; c=relaxed/simple;
+	bh=vd6AugBRQQ7LSCss9P7jkclD2lwejCl9P5EdEOF1JQA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=H781HFFJz2HUNchRqcV4HCK4YylohcZz10sdT0iskrIEHv2NHspdwCW5HdqZWDwgSlC6gBpubVOR1GeyRkybtdrBsSA9/+MRTjh3BmvmiqJAIdPMxxNch/DmLZOQb13Bpn2UxfoBuhPhzANwKBJpddVfaOmdlWYl+CxMaVvS9Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tekYqWB+; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45cb612d362so4289685e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 02:03:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756976607; x=1757581407; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jJtnDDrtdvxSxz2byyhf6ovg3vXgEml10lpi8GliOwg=;
+        b=tekYqWB+kGgUXTKTfXzZb1/3XFaAyHW0G5mD/UyznnWDka6LP+pVidT9CMWn43F1Az
+         wtnd/gwvukSeiyVkykYgbSFu1EKLpxZp61Uss//gaNzI4mLhfju03ggEzzXbDZzbVE2k
+         FUmzfcyKVEepoX8S6KlckEW3XFomIXGwUUwucd7J/g0ld9Cn95YHHHWJBvEzt1Aan1LD
+         E9GX3cjBGTOfp6wnKCgAr3dTiXItuKLjlUMxZgdbgI0BsN055zMRIXmYo5UURC2fDUKb
+         41YuuyfZJ9E8eTkJBUkX5poyzSI8qgRLDDcvnzdKCgj7cKA6n6D6GpBxAcCutEB+JxF0
+         VA8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756976592; x=1757581392;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GOkHmK1X6utHVg6lksjhhYY3cmPafHwC8mul7BxpLiA=;
-        b=a6z6Ax+IOX2er9P5VWgjBZcFA0Ph34ymUYU9loLir2vXdlI5QsG3P3AJepjOR8HW8n
-         FUtdSPXlFzYrhc3y1qPech9SSezstBhVzwV6sWRoAJtPzs94NQ7D+EzJd13dSyriydWk
-         +htvYRsZ1ve9oAR9vv9epBWFjux5RBlftQ7KjmNvDmJgGiA+JyFXgMT0AbFekfA9kScO
-         Z3dT6h/6Rcq7MC+V7bCxKnfo2RrbhmJdCsCIWwoTREJ4gzNDooGYn4R1f/dUF1nDRyrh
-         SxDTpaGKNeqgSUrckXBzrAyDuuDwnaTPSA/RUXkj1vMUwkzKEqONd7/FWwpWCC/0rC9p
-         PvnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVseiMHUTJutGQgddLm22pmRQF79OHi8FV2pkGl2WxoM4NZIsnP2pmTPvlVFjDvHi2sASKKnk0G4E0EDo8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwecwCJpWx8bmc12M1MUk5P4D8/ZQt8WnVZvK78TJKEtV/xk+TT
-	Sxx+vyaxq2CvJm4UmLpWSDa/jo7TmHm94ob+Qa2lcYtBpCsIKpxKmin2At6osim3Hy4AgNCE+UE
-	g3a4I7Yxc8SzH6kbOdWUmqh2Mgm86t4FZIxq3keFG581m4mNM38uElRBBJqJh1JlEDDfS1ixs9E
-	s=
-X-Gm-Gg: ASbGncsj34QorcFY7UJWjMI85KKzdcqS1OqjimwKaKqDc1CDClb8Lu3KRPgqBIxltKj
-	oFiiMULypKs4mlUxhSqqaWHCUs4Dblfw5n7baCTDh5uGLb7L+hzEEOCD9o9/P5PPlqsUJDc9mQw
-	+UFq5iwXjD/sPRdM+kufwXjipiaN6+t4KmhDeISeArFeH+Tqzmy6fFcV1zWgnxesBsi2vlX/IQy
-	oIedg/SjBK0vdHAMu7YF4UZue/I+MOE+O4Lb/qnqRwViTa6BzOKbZKL/8bj2YegByuUjwNTuYlD
-	yXGHWvkotZ7vr1J2xg0E7H0KDzihTkvYEa/UNVbfoOTgmEZq0v8iyFMbdQe+BQ+jAnosWyzSAKy
-	+b6kTrrFDSaCuML+vhxCS1w==
-X-Received: by 2002:a05:622a:15c7:b0:4b5:d5d7:ffc7 with SMTP id d75a77b69052e-4b5d5d80f37mr20681361cf.13.1756976592338;
-        Thu, 04 Sep 2025 02:03:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHPxfQPnRd4aV7IvxsGAOnP8Ip3eXmSuLZ1CLc+OJVlpcJMCuVjxhIyH9GSvmMLrOySYJM5dw==
-X-Received: by 2002:a05:622a:15c7:b0:4b5:d5d7:ffc7 with SMTP id d75a77b69052e-4b5d5d80f37mr20681131cf.13.1756976591919;
-        Thu, 04 Sep 2025 02:03:11 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b042c7b3671sm951424866b.42.2025.09.04.02.03.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 02:03:11 -0700 (PDT)
-Message-ID: <fc6a0a18-ea29-4588-83d6-2f162b343177@oss.qualcomm.com>
-Date: Thu, 4 Sep 2025 11:03:09 +0200
+        d=1e100.net; s=20230601; t=1756976607; x=1757581407;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jJtnDDrtdvxSxz2byyhf6ovg3vXgEml10lpi8GliOwg=;
+        b=mb9itc5QLBZBSPxKlVcelmp9Y8Tcs011IK1aUT4E205Dabb33ZsPmzpODBeGHppcHU
+         IJv348C+KaezupIENdUaVfaYie12LNeF/hcueF1jgCHdLkPQNQgMhFe0ifgyyn9BG2EB
+         72rVQIc/hO/S5VP5535Pj72RfW06pV5c1ywfJ59XKdiSHMLnYog1x3JzrOoIUNxZ+hOf
+         yBxvKRX79PtaPqyWsimDoZ+604AuDOi7NpdjH+E6b0pz63F5+0ja9WdkBo3Pb89wgQNq
+         3ngYW9xto4djPSp7KA1Jmbv7pfm/EzJJLu1B/Hoy129QygQA/Mp6dWKNGgGB1egflCg5
+         U3gg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoHWHwhFidcPHMTXPongNYyJDxwevTH4Lj+XMIqf8hrLvVqP/fyM6sG8tjam8SFPi/+KD6Lj0Tqf2pgpI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1MotJd6ETEoeLhbaPMoNVz0wkOtDWVcWA71IwLX4knwYmOjVS
+	9JMzNQQV/gI3hsGPo/ga4YSyBAtME4Hf1Ugjvtgd2GWiWj/kCs2H0Z9Z9p9o+e8HFYq+zyZaIlr
+	1r2DdQfVBiGN6Vnxm9Q==
+X-Google-Smtp-Source: AGHT+IFON1WOJMPLi3KX20ldY+fg9A+absAs4vpg5c2bhfbXxem38DAApNJjd/cwu2TKdJ2KoCKCY+4GfZPUlUU=
+X-Received: from wmbep20.prod.google.com ([2002:a05:600c:8414:b0:45b:9cac:6fea])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:354f:b0:459:d6a6:77c with SMTP id 5b1f17b1804b1-45b855add8bmr140973945e9.33.1756976606738;
+ Thu, 04 Sep 2025 02:03:26 -0700 (PDT)
+Date: Thu, 04 Sep 2025 09:03:19 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: apq8016-sbc: Correct HDMI bridge
- #sound-dai-cells
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250904084421.82985-3-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250904084421.82985-3-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=OemYDgTY c=1 sm=1 tr=0 ts=68b955d1 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=y9CducrL600We7hCCaYA:9 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: iN4vVrCzTkI5BV2RnclO-8nciVonYqAl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNCBTYWx0ZWRfX2I0N0lul5Epw
- ychKohWZa7AlIrL0vfvnLQthsM91FUhcQzgonItbtXouqn8WWJgOuHsXVHHJz8wREN6uOrXWtSU
- OD77t7KmGFqQQkgB8BpiH2JfXP83rSMgJPkcYjyqthWd7c59fW37cuIIKG5yk6Tv7DL6cTsO6Uu
- WsDCVg/J2Y8xT561w6/P+slbzAuSv0WnNJNFPC9ZFypMFM3yRhqEm4GkzxswopnebBIoimKeGHI
- Bxj8QkHrEC8mexYIHA6ndrvqUjy5BJd8LC6p1i02zhzDHWNI01jXgXceZbvjT4jbQPv1MgXbVF4
- SsDBu+fEnOjG2JR+rZ0An8vCtEgubwEZzLhol6rX4LC65OJkpSRKGYl7rkF3/jvXFqnP7pZvkvR
- yKIuxu9Q
-X-Proofpoint-ORIG-GUID: iN4vVrCzTkI5BV2RnclO-8nciVonYqAl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-04_03,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300024
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIANZVuWgC/x3MMQqAMAxA0atIZgO1VkSvIg4lphqUKg2IIt7d4
+ viG/x9QTsIKffFA4lNU9phRlQXQ4uPMKFM2WGMb0xmHtK2oHCfUOxLWFHwbHFfEFnJzJA5y/b9 hfN8PQpUfpV8AAAA=
+X-Change-Id: 20250904-clk-send-sync-3cfa7f4e1ce2
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1600; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=vd6AugBRQQ7LSCss9P7jkclD2lwejCl9P5EdEOF1JQA=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBouVXZEgW4jnxvJ/iEOXp3OqgNSuN/YN/xWrsUl
+ SHDqcVjfEWJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaLlV2QAKCRAEWL7uWMY5
+ RmRBD/9CYkpfGQt4q39WuBsUiTUblJypwp1kURHjawSb19cMOK6iRyNxPWJ5XFUnnmSrI20oTxq
+ xb/XKSu1fg6DVdee5o2IfO4oYwZg88f4sFNwi1wZS8ghUcbgkGS37DcOexsFbojXb55i/rh5TyJ
+ ZZByQj+JrSx9XTyh/weW/Y/2TTtYn+d3tbVHFV69heZUNYTFmi/z677wHaGH9kcja5p9+9rZ6XL
+ vPTw7USab1mnLP6p09WCBPmx37b19BkbddxuFWsSq2p3ZHp657uUpgOTmiaQqz9srkJZhRMa2Wy
+ N9h+v3YR5H3zD6xIc19nB+LuSseRU6lD05Q5vtgs3yEkS2e9NtHrj2O0JDrW4bQ9VzqdMvYLkz5
+ 98Qvst/ohMU/YWeDQwa9psTIfGaL5mMFncAQajootFjynWZ2ed1Q6JOYDHRNm/7SNdCESVFFlMi
+ GBAtvAkWzWU01Fa24TFche5ToEyzcWDjE+lSXax/5MUljrsLN6sQD2cA1hwXjlLFRwtkY4UH4Zn
+ 78qRXHUn0uKPuSVJnjXBDYxj5uJWK0breTxPRQixK7IUhRWKa2K9PPcb58MgiXU0pETKAABBogp
+ rJt3B79qzP9ZTvBP6P673FpDuH0bBV94XF2/OXenumEIsf2fEaOAK6DImEmg1cbNSpcuDoMo6FP 9bsx2qmPLaHdL2Q==
+X-Mailer: b4 0.14.2
+Message-ID: <20250904-clk-send-sync-v1-1-48d023320eb8@google.com>
+Subject: [PATCH] rust: clk: implement Send and Sync
+From: Alice Ryhl <aliceryhl@google.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 9/4/25 10:44 AM, Krzysztof Kozlowski wrote:
-> HDMI bridge has only one sound DAI and bindings already expect that
-> (dtbs_check):
-> 
->   apq8016-sbc.dtb: bridge@39 (adi,adv7533): #sound-dai-cells: 0 was expected
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+These traits are required for drivers to embed the Clk type in their own
+data structures because driver data structures are usually required to
+be Send. See e.g. [1] for the kind of workaround that drivers currently
+need due to lacking this annotation.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Link: https://lore.kernel.org/rust-for-linux/20250812-tyr-v2-1-9e0f3dc9da95@collabora.com/ [1]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+I'm not sure if there was already sent a patch for this. I recall
+being told that one had been sent, but I could not find it. Maybe I
+mixed it up with the regulator change, so now I'm sending a change for
+clk.
+---
+ rust/kernel/clk.rs | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Konrad
+diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+index 1e6c8c42fb3a321951e275101848b35e1ae5c2a8..0a290202da69669d670ddad2b6762a1d5f1d912e 100644
+--- a/rust/kernel/clk.rs
++++ b/rust/kernel/clk.rs
+@@ -129,6 +129,13 @@ mod common_clk {
+     #[repr(transparent)]
+     pub struct Clk(*mut bindings::clk);
+ 
++    // SAFETY: It is safe to call `clk_put` on another thread than where `clk_get` was called.
++    unsafe impl Send for Clk {}
++
++    // SAFETY: It is safe to call any combination of the `&self` methods in parallel, as the
++    // methods are synchronized internally.
++    unsafe impl Sync for Clk {}
++
+     impl Clk {
+         /// Gets [`Clk`] corresponding to a [`Device`] and a connection id.
+         ///
+
+---
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+change-id: 20250904-clk-send-sync-3cfa7f4e1ce2
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
