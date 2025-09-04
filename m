@@ -1,117 +1,196 @@
-Return-Path: <linux-kernel+bounces-801824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ABB2B44A64
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:24:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00AF1B44A67
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 413B71CC3530
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:25:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D5481C253D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A992F6578;
-	Thu,  4 Sep 2025 23:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C8D2F6573;
+	Thu,  4 Sep 2025 23:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H8rAoqbg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="19iNBcz2"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6072EDD6C;
-	Thu,  4 Sep 2025 23:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DEB2F6171
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 23:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757028277; cv=none; b=Mx60frNCa86S6t730XeF+MJWqxfCEkHHZzsZBvPH5GSunQBLEJBcrdc8O9Cj/uxuFgd1S0VP+tsBMB6wNeeTwH2OlWAUzynFtEEEnLFShqgaVRIxFtbh5pXI/BUOwyhNUhuej/TCFZUghhbbC1xBy0AYRags0TCEP7RIYa1SGwg=
+	t=1757028358; cv=none; b=l6lraH5Zpc+raMWe7RfQBuXbCg1ULuCZzwEQM0/iKXHUR/4r+PlnxIGBawzWBPVrSB6+UnhCY+uAeSK6qEWmrYJwYobAMLmLNFG1YhVxiUw5OwCMB+KB5cggHxZ3U+Nh1fyq/isIsUGzF2ZoqrSscWRAZsZVfVyhCqAcNSULN98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757028277; c=relaxed/simple;
-	bh=OgkI8noiXQ5CWIZ0ZMUtx+0t4I0H3Sb21zhjyKKhbWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QVgpCKw6HbEW+S4aYd5MAc7//b65OWEPwdjHuIRBd1jdUY+OynNpM/53op4tVdHa3a/vV8fKzERGj7nSA3wjCoYXZA5ePx74Vqn2wrz7I7V90ze7lZJHOpm9sVn+q+Cp+47S3em7jLH9A4MX9jMCnajw39VRMJNiKovh/AipMXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H8rAoqbg; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757028276; x=1788564276;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OgkI8noiXQ5CWIZ0ZMUtx+0t4I0H3Sb21zhjyKKhbWc=;
-  b=H8rAoqbg97kJdRaIjmVWKDi7wkZVwK0qKaLtpsC6qz1HewB2I3lmEfc0
-   +2yumgzjvBpLkSEq3TqpI/PNCBJtGMRE8caiQANZiV2PEbpxgQzesW/rF
-   LXvhsM2uAGhzjVNourmVNZrIUElfkiaCmpvY51vO4BC4aRRgzkL+5lOTS
-   NPtgd8nun+9lWFNv4aMCoMytR+B0UT2/G98EH1yck0ziy2HlhrMe3h8v8
-   qMyQN/jrevRXj6ofavluXdTATfnXKdUQ8D5RXJ7o7AhFpNUzw00L6/Hwc
-   ycNP7hhDXS751/msRfnnGcxonV9WQ1Ka5olUsvIhlO7MXg6q5p3R4x0EB
-   w==;
-X-CSE-ConnectionGUID: 7XToG7ynQxCQF9e6ssehZQ==
-X-CSE-MsgGUID: NPP5JEavSNamjvfHqvnrsQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="84813432"
-X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
-   d="scan'208";a="84813432"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 16:24:35 -0700
-X-CSE-ConnectionGUID: SOkaAXxtTq+dBZbVLsM6Ow==
-X-CSE-MsgGUID: M9KY89M4T3q/gJJ19iMC8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
-   d="scan'208";a="177239359"
-Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 04 Sep 2025 16:24:33 -0700
-Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uuJJ5-00061T-2J;
-	Thu, 04 Sep 2025 23:24:01 +0000
-Date: Fri, 5 Sep 2025 07:23:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>, alexandre.belloni@bootlin.com,
-	krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	skhan@linuxfoundation.org, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	akhileshpatilvnit@gmail.com
-Subject: Re: [PATCH 7/7] rtc: m41t93: Add watchdog support
-Message-ID: <202509050759.dwYECwEA-lkp@intel.com>
-References: <694706ad8577a36ef8948e0d9ca7ea561900fbc2.1756908788.git.akhilesh@ee.iitb.ac.in>
+	s=arc-20240116; t=1757028358; c=relaxed/simple;
+	bh=0z4W131kc7IZA/MZBmrE2/S7QjivMLpZDRe6D8mSq1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g5CGQzwIWet2OXEljvVXkx4XwqqdgJ3bsUOwI+xcfVbANh/pk8mA/JWqqaPs1fJ0EnTA9JP/HuMk7974jkegR2z1Jv7aB+Yrno5IWtppG9BgFfLAzAhEYn8UjG39KPrt+WIh43U8KBgYvgQbPjuZzxBtaT3DW2+kOkqZSDq2+4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=19iNBcz2; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e98a18faa25so1625706276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 16:25:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757028355; x=1757633155; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7xozTMnAUTSGP/OIsr+6T7j3/FSd9yXb5HKJfOm++2A=;
+        b=19iNBcz2azO0oyiCCxgYHGPJ+qjLi2CdjGHUPwd+s4x58zywNc+7ZN2ENqrAuXQQI/
+         Y+yJNbuDnkkHKHTEpL09rVvZ1C1zbfPIHpV+9O6lMSNbAuk8Am1swNihkoTrG9JjzuEM
+         SIUy1rRntwRrctbAb2bJckwCeS8Nc2kJYNHnEhdcbVQGqznq0J9sJrH+tXxRO8GBEYxa
+         r2TCjb/w01CdpgbJTJjsbmODokw2G6SY4CxXXZKOCVNHoPbnVSFnrI89t5R5TIvOH8K/
+         o2kMg8pfqo6RKHHSa5foK3s+UAYAuOGg/w+lUKQ00h7Pjh2hn7Rtv3myyhgwrk7+vHiL
+         Pewg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757028355; x=1757633155;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7xozTMnAUTSGP/OIsr+6T7j3/FSd9yXb5HKJfOm++2A=;
+        b=XXVg7P8YW3IbwU0rRI9cQNkSVQOA/QCfHv4oum4DV3qai7TUnIKQfB8iykFW81pge1
+         cx1i/NJ3VvxhSQHZUxWrHWaX6UGLeqQ47Dp1tzAMSSL5A14gRcvrl8vHIJRV4pEqoGIh
+         A2SsOdB24XJanzrytBqlvcd6Eu6GnYlRxjpfXXAJ+4d84eTyyT8dpMpvE2kSLBOGg/+q
+         6b3yF5PIaVBxEXHMrjwEtZ72VeqEJdBkDJkqGzj+mOxsSjxKMuSN1JOlY3eWazjNCiw1
+         Fm0ZK4PibFtGhP6Vb2I2qOSptFVBxBZGQtDBMU8lFubscIzCG5GACr7GngHqOEOlyr/g
+         6gBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVcRf7W14Rps+3QYqTRbkYX7H6pIjZDKR55ZONo5nvSdjwIqrsFLxjnKX7vRHGtbkYvldEILKFTUGjW6I0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM5U3Fh5QnTE4f6ofKtk5Ydnb5L5vlpl+8gZsI4gQJWsi6BjXW
+	vBkMSrCJlEBld4kPWxtkHpgLU5euDDdZHCMr7bycwaZmT+8Y9YXBTmZp9l4VK22o3JQ=
+X-Gm-Gg: ASbGncuwbs/d2kYFatM5Pihw6HaKu9/Jyn+KKcdWEm4bAKOExiayG1ySos8KU7YrdfY
+	FHa8crSAnGDf7Tz1qQPP8xmbkTaVYqH81kDQYNsQOv4GnPVyvMv0+PyjIko1NfPRsq37nzcHb3S
+	PDOGhPR9vtX4+tmIR0q3wNGdfBMuqUgkaAD6yJWVNqqh8EZCdLWsecHN2TPWiENT4e1peaNdhUz
+	adhp/s56XNlKEjSqHYAc9Lbo6U8h68gbtZFQYDoD/5fZAv5KFCGm6n8IKOkXYin4iGTVLy2PoSy
+	G2cmpR+2szbA4xP/23gyKDL9GSxC/PybEO6fVg1CFZZRH7D+Urz5/fbwAhfjxCXlQ2dcNRqoK1p
+	BXlCkgQc/CHzrnWGriuXQit+5vHXY
+X-Google-Smtp-Source: AGHT+IHYyMuPItddACX1ADJHnCstSzAXvHPDxAQjNdgUGdiE0877dFLHUdUXWRUOoRlz4okMbYYr6A==
+X-Received: by 2002:a05:6902:158c:b0:e90:6ed1:ec51 with SMTP id 3f1490d57ef6-e98a578c92cmr23210220276.14.1757028355311;
+        Thu, 04 Sep 2025 16:25:55 -0700 (PDT)
+Received: from [10.0.3.24] ([50.227.229.138])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e9d6a5cdb43sm1149951276.8.2025.09.04.16.25.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 16:25:54 -0700 (PDT)
+Message-ID: <d3c5e370-5d60-4f00-9f92-d783e0e4a051@kernel.dk>
+Date: Thu, 4 Sep 2025 17:25:54 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <694706ad8577a36ef8948e0d9ca7ea561900fbc2.1756908788.git.akhilesh@ee.iitb.ac.in>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot ci] Re: io_uring: avoid uring_lock for
+ IORING_SETUP_SINGLE_ISSUER
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: syzbot ci <syzbot+cibd93ea08a14d0e1c@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+References: <68b8b95f.050a0220.3db4df.0206.GAE@google.com>
+ <26aa509e-3070-4f6b-8150-7c730e05951d@kernel.dk>
+ <CADUfDZpTtLjyQjURhTOND5XbdJOSEduDLdSuyUJVk_OKG9HVGA@mail.gmail.com>
+ <CADUfDZot=DxWjERupMofRuyvK3jKx79yQUOSniqT4uhMac2dbw@mail.gmail.com>
+ <CADUfDZq-x3t6gfzAg8kxe8oNezDwYKggkeZ4o1Jw-Q1smjh6aQ@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CADUfDZq-x3t6gfzAg8kxe8oNezDwYKggkeZ4o1Jw-Q1smjh6aQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Akhilesh,
+On 9/4/25 10:50 AM, Caleb Sander Mateos wrote:
+> On Thu, Sep 4, 2025 at 9:46?AM Caleb Sander Mateos
+> <csander@purestorage.com> wrote:
+>>
+>> On Thu, Sep 4, 2025 at 7:52?AM Caleb Sander Mateos
+>> <csander@purestorage.com> wrote:
+>>>
+>>> On Wed, Sep 3, 2025 at 4:30?PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>
+>>>> On 9/3/25 3:55 PM, syzbot ci wrote:
+>>>>> syzbot ci has tested the following series
+>>>>>
+>>>>> [v1] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
+>>>>> https://lore.kernel.org/all/20250903032656.2012337-1-csander@purestorage.com
+>>>>> * [PATCH 1/4] io_uring: don't include filetable.h in io_uring.h
+>>>>> * [PATCH 2/4] io_uring/rsrc: respect submitter_task in io_register_clone_buffers()
+>>>>> * [PATCH 3/4] io_uring: factor out uring_lock helpers
+>>>>> * [PATCH 4/4] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
+>>>>>
+>>>>> and found the following issue:
+>>>>> WARNING in io_handle_tw_list
+>>>>>
+>>>>> Full report is available here:
+>>>>> https://ci.syzbot.org/series/54ae0eae-5e47-4cfe-9ae7-9eaaf959b5ae
+>>>>>
+>>>>> ***
+>>>>>
+>>>>> WARNING in io_handle_tw_list
+>>>>>
+>>>>> tree:      linux-next
+>>>>> URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next
+>>>>> base:      5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
+>>>>> arch:      amd64
+>>>>> compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+>>>>> config:    https://ci.syzbot.org/builds/1de646dd-4ee2-418d-9c62-617d88ed4fd2/config
+>>>>> syz repro: https://ci.syzbot.org/findings/e229a878-375f-4286-89fe-b6724c23addd/syz_repro
+>>>>>
+>>>>> ------------[ cut here ]------------
+>>>>> WARNING: io_uring/io_uring.h:127 at io_ring_ctx_lock io_uring/io_uring.h:127 [inline], CPU#1: iou-sqp-6294/6297
+>>>>> WARNING: io_uring/io_uring.h:127 at io_handle_tw_list+0x234/0x2e0 io_uring/io_uring.c:1155, CPU#1: iou-sqp-6294/6297
+>>>>> Modules linked in:
+>>>>> CPU: 1 UID: 0 PID: 6297 Comm: iou-sqp-6294 Not tainted syzkaller #0 PREEMPT(full)
+>>>>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+>>>>> RIP: 0010:io_ring_ctx_lock io_uring/io_uring.h:127 [inline]
+>>>>> RIP: 0010:io_handle_tw_list+0x234/0x2e0 io_uring/io_uring.c:1155
+>>>>> Code: 00 00 48 c7 c7 e0 90 02 8c be 8e 04 00 00 31 d2 e8 01 e5 d2 fc 2e 2e 2e 31 c0 45 31 e4 4d 85 ff 75 89 eb 7c e8 ad fb 00 fd 90 <0f> 0b 90 e9 cf fe ff ff 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 22 ff
+>>>>> RSP: 0018:ffffc900032cf938 EFLAGS: 00010293
+>>>>> RAX: ffffffff84bfcba3 RBX: dffffc0000000000 RCX: ffff888107f61cc0
+>>>>> RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000000000
+>>>>> RBP: ffff8881119a8008 R08: ffff888110bb69c7 R09: 1ffff11022176d38
+>>>>> R10: dffffc0000000000 R11: ffffed1022176d39 R12: ffff8881119a8000
+>>>>> R13: ffff888108441e90 R14: ffff888107f61cc0 R15: 0000000000000000
+>>>>> FS:  00007f81f25716c0(0000) GS:ffff8881a39f5000(0000) knlGS:0000000000000000
+>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>> CR2: 0000001b31b63fff CR3: 000000010f24c000 CR4: 00000000000006f0
+>>>>> Call Trace:
+>>>>>  <TASK>
+>>>>>  tctx_task_work_run+0x99/0x370 io_uring/io_uring.c:1223
+>>>>>  io_sq_tw io_uring/sqpoll.c:244 [inline]
+>>>>>  io_sq_thread+0xed1/0x1e50 io_uring/sqpoll.c:327
+>>>>>  ret_from_fork+0x47f/0x820 arch/x86/kernel/process.c:148
+>>>>>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>>>>>  </TASK>
+>>>>
+>>>> Probably the sanest thing to do here is to clear
+>>>> IORING_SETUP_SINGLE_ISSUER if it's set with IORING_SETUP_SQPOLL. If we
+>>>> allow it, it'll be impossible to uphold the locking criteria on both the
+>>>> issue and register side.
+>>>
+>>> Yup, I was thinking the same thing. Thanks for taking a look.
+>>
+>> On further thought, IORING_SETUP_SQPOLL actually does guarantee a
+>> single issuer. io_uring_enter() already avoids taking the uring_lock
+>> in the IORING_SETUP_SQPOLL case because it doesn't issue any SQEs
+>> itself. Only the SQ thread does that, so it *is* the single issuer.
+>> The assertions I added in io_ring_ctx_lock()/io_ring_ctx_unlock() is
+>> just unnecessarily strict. It should expect current ==
+>> ctx->sq_data->thread in the IORING_SETUP_SQPOLL case.
+> 
+> Oh, but you are totally correct about needing the mutex to synchronize
+> between issue on the SQ thread and io_uring_register() on other
+> threads. Yeah, I don't see an easy way to avoid taking the mutex on
+> the SQ thread unless we disallowed io_uring_register() completely.
+> Clearing IORING_SETUP_SINGLE_ISSUER seems like the best option for
+> now.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on abelloni/rtc-next]
-[also build test ERROR on linus/master v6.17-rc4 next-20250904]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Akhilesh-Patil/rtc-m41t93-add-device-tree-support/20250903-223155
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
-patch link:    https://lore.kernel.org/r/694706ad8577a36ef8948e0d9ca7ea561900fbc2.1756908788.git.akhilesh%40ee.iitb.ac.in
-patch subject: [PATCH 7/7] rtc: m41t93: Add watchdog support
-config: x86_64-randconfig-007-20250904 (https://download.01.org/0day-ci/archive/20250905/202509050759.dwYECwEA-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250905/202509050759.dwYECwEA-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509050759.dwYECwEA-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: devm_watchdog_register_device
-   >>> referenced by rtc-m41t93.c:490 (drivers/rtc/rtc-m41t93.c:490)
-   >>>               drivers/rtc/rtc-m41t93.o:(m41t93_watchdog_register) in archive vmlinux.a
+Right - I don't disagree that SQPOLL is the very definition of "single
+issuer", but it'll still have to contend with the creating task doing
+other operations that they would need mutual exclusion for. I don't
+think clearing SINGLE_ISSUER on SQPOLL is a big deal, it's not like it's
+worse off than before. It's just not getting the same optimizations that
+the !SQPOLL single issuer path would get.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jens Axboe
 
