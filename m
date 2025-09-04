@@ -1,181 +1,449 @@
-Return-Path: <linux-kernel+bounces-801735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE87B4495C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:16:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B5BB44970
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30C0A7AE6AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:15:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 115A1189A485
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCF62E7651;
-	Thu,  4 Sep 2025 22:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDC52E8DF4;
+	Thu,  4 Sep 2025 22:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FanVN3Eh"
-Received: from mail-vk1-f226.google.com (mail-vk1-f226.google.com [209.85.221.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uw/ITK9w";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pKwJ+922"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226B62E717C
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FB52E88B0
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757024185; cv=none; b=nufP2AaLnv5I7Ea211a3RcUU5sglbvn7jhYYLE1IPm6Cb2H9wRw9VkvatOIoLcngqpUHrvS9xMj4RFbabnPrhiOiyQ/23P2M4tSwIxLIw8LfJyk4yqCM5bFhAj1B7TJ3Cw5JAx6+iRzi1wAE9Pm6thCZuJfz73Ayjm7qX9x8AIg=
+	t=1757024439; cv=none; b=EQEh4avjcHAvnb2cF8VdQJubG+IENyMtKV4JsUZeaPdERvZiyzckuXK1D78n6h9R0p1oSFeZRjPlld+4KNoY43NTlx5HzkLYEqlz8kw6dNkQO+X2T5hh96CF44+BaevTMXdG4f0x0tWzASRVGRxh20UyQcKEuFjcEa4N5h7KuH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757024185; c=relaxed/simple;
-	bh=+ZW26YkUajpJpxvZyQ7i4YKy8mdKix00cWusc9O7HQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GduTsZDmbh5o/q6TwUN9/3VCQbiy49G/QbiOLi8a8NshuhNaGQN0mT4AfGD8QWEbk0hICKWkj/ooC5ZIAZhruOxRI5Is5TCeOBdF5WadpkqKF8OIjLl+xRJ1kAwri3fpvG6fFasvg40sO6QGKQMfytV+vdPnw7QijXG0dYDilJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=FanVN3Eh; arc=none smtp.client-ip=209.85.221.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-vk1-f226.google.com with SMTP id 71dfb90a1353d-54494c3f7e3so600181e0c.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 15:16:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757024182; x=1757628982;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:dkim-signature:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XhlHQX9QZI2Wc/319mBhA+FHNIABCp68X6Q8ZJdJwTQ=;
-        b=qpmg7Ztuh/2Nz1NIhKUHPOpn7BYDClPRFCXvtBTrK+BCTMWGQqRkNJnSUUWSsgKkW7
-         dYvVgfJZVoiGWpWjqmQxL9jXO07FAxDDaOd1njSmPqi1nUhH6FDMufh8+Sg0uKTGCNBt
-         5G4U3NRW6KQ9Zo4wWJZi4/fqa3aoOMHhXpePoBEixImN/t4/mmnaKYc2UvCu8Ba+kNyo
-         SNQpVfWlwl59CbtpoKEtlw8N8zldD7lftgBGmKtqXvMvVQPllNpVtVm/3+CJuVbFxrA4
-         Pl/0k2Bj/f0Jw3gzPzCnzBeD9Uunln/K00esgDVy67DHUw4rE7v+/Z3cIQA16DPPNPb1
-         ubyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXGQAQsmdLGA7V65SPVDf2g6bbXfhAMi5C/X986T4FtnmvDg5zHOJiAwrUCMjXDexkAn2BlJTPrgIbrDIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywnzpo0b4ffKcPaPMDExyfL97JOeahiqvyyc8/33WvSeHsF4eYQ
-	f4Kqnp/tCfKAlNNoR5sbQdUohDFDz9rzxkYsRLpvYNFNN2wZg4Irnde6C0EqdaAuoIpI8vO6ZvY
-	wkOvek6FwGxGNktioKoO/ZEwcqaA+t2KwYmVAsjJxqwUELTWVR2Kp1bdGD3fYJDlCB+IN7epxzT
-	iDKgk0wriBf0LFByNNh6lFekq0hQM6Ct8S3AkL4sgBYcUTLtsMnH5HmjdCx6p2g8rSkMpFe6vbi
-	iak3x6c09F1Q1SpCDQqbO9r
-X-Gm-Gg: ASbGncs0Mig05yguEG7GwvYfQL+/ZBwnhq2V0u1x1k7Rk/Ub/TfuHt3KVv3LR4lHHF7
-	mGKkb6A2lW6Kn1i39cX/jg1c8L96Bpzh663Tj4CKtYZOvwSLgqvxCJaRr6UP6IbAGP2mict4CYU
-	TPVJ8WtS8Q49Ms8BIEJkyFAJ2gzIRMWXlZAnQwcZuebjz8w1r+kks4ToM50PPfrNWLqg2iomk7Y
-	V10yIOnlMlIIp/0J0DTONePn76RRwCOOgk2ohCzi9hcXjwdAk7JRdD+Tr043FGZ8DCYJU+ZSfNq
-	TqAgJFeX+VPub0hv4s145L2/NBTOMX/sOX4PSEE0Y1yjPUZVfPIjuBNRLGnnZ1kaMKU5zNDp8r/
-	UKrV9D/I++X+wQCYyVwMC+tLeBUsE
-X-Google-Smtp-Source: AGHT+IHp/xzNVeCjmhauLarxqu1OOPh2YHEiA2gMhTcUXkvzoUFmhRKQ3uGQl8P/OCSsL/CELZuhFuQPBH1C
-X-Received: by 2002:a05:6122:90b:b0:53f:7828:16c7 with SMTP id 71dfb90a1353d-544a02f4ce9mr7626629e0c.15.1757024181993;
-        Thu, 04 Sep 2025 15:16:21 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com ([144.49.247.127])
-        by smtp-relay.gmail.com with ESMTPS id 71dfb90a1353d-544914976c6sm1648285e0c.8.2025.09.04.15.16.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Sep 2025 15:16:21 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-804512c4373so257818185a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 15:16:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1757024181; x=1757628981; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=XhlHQX9QZI2Wc/319mBhA+FHNIABCp68X6Q8ZJdJwTQ=;
-        b=FanVN3EhwuVCWPv2CsIMhcXELdo8UAVLomqWYZ0oyGNFrbzFUj4BLm85ql97h2q5U3
-         YlmJ9A9jlOzpFWufJgkjXjY8FyacJplhbtWMns70nJAq6mtxBFOustP/k+sFvgTxQKDV
-         JElpWCkTSRp+INwUHtm87Q5k2ymzNH4dqUAm8=
-X-Forwarded-Encrypted: i=1; AJvYcCWdlyjNrVJPH6/izNYn4ZY2/kEYNvCulGfWJgWE/fTblbvIh9IVHl81QTvlZHgwB/kh6xd5o+FM0GRuPLQ=@vger.kernel.org
-X-Received: by 2002:a05:620a:2585:b0:7f2:d9d3:f5da with SMTP id af79cd13be357-7ff284b1c36mr2661082685a.33.1757024181103;
-        Thu, 04 Sep 2025 15:16:21 -0700 (PDT)
-X-Received: by 2002:a05:620a:2585:b0:7f2:d9d3:f5da with SMTP id af79cd13be357-7ff284b1c36mr2661077685a.33.1757024180578;
-        Thu, 04 Sep 2025 15:16:20 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b48f7838edsm34678821cf.39.2025.09.04.15.16.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 15:16:19 -0700 (PDT)
-Message-ID: <7e83777f-0912-4ae8-a196-d07fce67385c@broadcom.com>
-Date: Thu, 4 Sep 2025 15:16:14 -0700
+	s=arc-20240116; t=1757024439; c=relaxed/simple;
+	bh=d++7RuAAPgPbMLMyVdP0Oq865J74tYNYdO9HzBQKdoM=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=P+mX7J6mOoxqGC7WQVd2zsJ+pAcoW0LNTKR9Y1+uYqb/n3vP+f8sOS7Ai/9oN7L63Wf6+IGk7tgPjU+NiQKoEE/WeuEIAax8VK7sBU8x+Md1NdjC4/Cm7fORMim7b1B5BIgwAVOOKtDr8UB/DrJqtz7DyyBBNpMv796DpMSswfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uw/ITK9w; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pKwJ+922; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250904185336.943880027@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757024435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=YNvKHITnE8XMefNX5sM44ZRpl+PuKaeXaHZoS6Gn5DQ=;
+	b=uw/ITK9w1iImnNgRZ1w0l2e80fPjmcUXkhepf17tvNqBSG1UUndX9B7b/3IVhyjLcSyu7K
+	1DtCsHOebyJpYa++pV5CMDGcqCPoh6/1FNB8h4rfUvAnsl6QSbKeULaTEnT1Qnv5s+XMAA
+	b0PRR6PysvG6uf4HOX+aQI6Peb1faNHi/LlVbUICxqT3YjkZLnbjzKo9JY4cNZP+Ospftk
+	E+zlNik3IumoojRxgNGF5o+gpoA8B/YNH0ys1ZPny+BkYlEwMlm10XcId0Xe6cTgTijGmd
+	Xf2zwbvSAxXqGwwU4FM5Am4KTufCY/ANJU4Op+/ELk520qMt44KaUY9BF7sKHQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757024435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=YNvKHITnE8XMefNX5sM44ZRpl+PuKaeXaHZoS6Gn5DQ=;
+	b=pKwJ+922gae0Pzvod2gyhdk9/qtgXxezPj9dECfZ/8DEG6HBfZAed8J5VKfNSxKseL9lHc
+	Ovp62TpSXMHyotCA==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Michael Jeanson <mjeanson@efficios.com>,
+ Jens Axboe <axboe@kernel.dk>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>,
+ Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>,
+ x86@kernel.org,
+ Arnd Bergmann <arnd@arndb.de>,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>
+Subject: [patch V3 00/37] rseq: Optimize exit to user space
+Date: Fri,  5 Sep 2025 00:20:33 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH 1/2] arm64: dts: broadcom: delete redundant pcie
- enablement nodes
-To: Andrea della Porta <andrea.porta@suse.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof Wilczynski <kw@linux.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>,
- Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
- Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn
- <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>,
- iivanov@suse.de, svarbanov@suse.de
-References: <cover.1754914766.git.andrea.porta@suse.com>
- <2865b787d893fd1dcf816e1c96856711754d612d.1754914766.git.andrea.porta@suse.com>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <2865b787d893fd1dcf816e1c96856711754d612d.1754914766.git.andrea.porta@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On 8/11/25 07:12, Andrea della Porta wrote:
-> The pcie1 and pcie2 override nodes to enable the respective peripherals are
-> declared both in bcm2712-rpi-5-b.dts and bcm2712-rpi-5-b-ovl-rp1.dts, which
-> makes those declared in the former file redundant.
-> 
-> Drop those redundant nodes from the board devicetree.
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> ---
+This is a follow up on the V2 series, which can be found here:
 
-Applied to 
-https://github.com/Broadcom/stblinux/commits/devicetree-arm64/next, thanks!
--- 
-Florian
+   https://lore.kernel.org/all/20250823161326.635281786@linutronix.de
+
+The V2 posting contains a detailed list of the addressed problems. TLDR:
+
+    - A significant amount of pointless RSEQ operations on exit to user
+      space, which have been reported by people as measurable impact after
+      glibc switched to use RSEQ
+
+    - Suboptimal hotpath handling both in the scheduler and on exit to user
+      space.
+
+This series addresses these issues by:
+
+  1) Limiting the RSEQ work to the actual conditions where it is
+     required. The full benefit is only available for architectures using
+     the generic entry infrastructure. All others get at least the basic
+     improvements.
+
+  2) Re-implementing the whole user space handling based on proper data
+     structures and by actually looking at the impact it creates in the
+     fast path.
+
+  3) Moving the actual handling of RSEQ out to the latest point in the exit
+     path, where possible. This is fully inlined into the fast path to keep
+     the impact confined.
+
+Changes vs. V2:
+
+  - Bring back the ROP protection - Mathieu
+
+  - Document the guest visible change when host TLS is mapped into guest - Sean
+
+  - Document the TIF_RSEQ optimization for virt - Sean
+
+  - Fix the __setup() return value - Michael
+
+  - Add the missing include in HV - 0-day
+
+  - Rename *uids to *ids - Mathieu
+
+  - Spelling and grammar fixes in comments and change logs - Mathieu
+
+  - Picked up tags where appropriate
+
+Delta patch to V2 is below.
+
+As for the previous version these patches have a pile of dependencies:
+
+The series depends on the separately posted rseq bugfix:
+
+   https://lore.kernel.org/lkml/87o6sj6z95.ffs@tglx/
+
+and the uaccess generic helper series:
+
+   https://lore.kernel.org/lkml/20250813150610.521355442@linutronix.de/
+
+and a related futex fix in
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/urgent
+
+The combination of all of them and some other related fixes (rseq
+selftests) are available here:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/base
+
+For your convenience all of it is also available as a conglomerate from
+git:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/perf
+
+Thanks,
+
+	tglx
+---
+ Documentation/admin-guide/kernel-parameters.txt |    4 
+ arch/Kconfig                                    |    4 
+ arch/loongarch/Kconfig                          |    1 
+ arch/loongarch/include/asm/thread_info.h        |   76 +-
+ arch/riscv/Kconfig                              |    1 
+ arch/riscv/include/asm/thread_info.h            |   31 -
+ arch/s390/Kconfig                               |    1 
+ arch/s390/include/asm/thread_info.h             |   44 -
+ arch/x86/Kconfig                                |    1 
+ arch/x86/entry/syscall_32.c                     |    3 
+ arch/x86/include/asm/thread_info.h              |   76 +-
+ drivers/hv/mshv_root_main.c                     |    3 
+ fs/binfmt_elf.c                                 |    2 
+ fs/exec.c                                       |    2 
+ include/asm-generic/thread_info_tif.h           |   51 +
+ include/linux/entry-common.h                    |   38 -
+ include/linux/irq-entry-common.h                |   68 ++
+ include/linux/mm.h                              |   25 
+ include/linux/resume_user_mode.h                |    2 
+ include/linux/rseq.h                            |  223 +++++---
+ include/linux/rseq_entry.h                      |  621 ++++++++++++++++++++++++
+ include/linux/rseq_types.h                      |   72 ++
+ include/linux/sched.h                           |   50 +
+ include/linux/thread_info.h                     |    5 
+ include/trace/events/rseq.h                     |    4 
+ include/uapi/linux/rseq.h                       |   21 
+ init/Kconfig                                    |   28 +
+ kernel/entry/common.c                           |   37 -
+ kernel/entry/syscall-common.c                   |    8 
+ kernel/rseq.c                                   |  604 +++++++++--------------
+ kernel/sched/core.c                             |   10 
+ kernel/sched/membarrier.c                       |    8 
+ kernel/sched/sched.h                            |    5 
+ virt/kvm/kvm_main.c                             |    3 
+ 34 files changed, 1433 insertions(+), 699 deletions(-)
+---
+Delta to V2:
+
+--- a/drivers/hv/mshv_root_main.c
++++ b/drivers/hv/mshv_root_main.c
+@@ -28,6 +28,7 @@
+ #include <linux/crash_dump.h>
+ #include <linux/panic_notifier.h>
+ #include <linux/vmalloc.h>
++#include <linux/rseq.h>
+ 
+ #include "mshv_eventfd.h"
+ #include "mshv.h"
+--- a/include/linux/irq-entry-common.h
++++ b/include/linux/irq-entry-common.h
+@@ -241,7 +241,7 @@ static __always_inline void __exit_to_us
+  * syscall_exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
+  * @regs:	Pointer to pt_regs on entry stack
+  *
+- * Wrapper around __exit_to_user_mode_prepare() to seperate the exit work for
++ * Wrapper around __exit_to_user_mode_prepare() to separate the exit work for
+  * syscalls and interrupts.
+  */
+ static __always_inline void syscall_exit_to_user_mode_prepare(struct pt_regs *regs)
+@@ -255,7 +255,7 @@ static __always_inline void syscall_exit
+  * irqentry_exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
+  * @regs:	Pointer to pt_regs on entry stack
+  *
+- * Wrapper around __exit_to_user_mode_prepare() to seperate the exit work for
++ * Wrapper around __exit_to_user_mode_prepare() to separate the exit work for
+  * syscalls and interrupts.
+  */
+ static __always_inline void irqentry_exit_to_user_mode_prepare(struct pt_regs *regs)
+--- a/include/linux/rseq.h
++++ b/include/linux/rseq.h
+@@ -112,17 +112,24 @@ static inline void rseq_force_update(voi
+ 
+ /*
+  * KVM/HYPERV invoke resume_user_mode_work() before entering guest mode,
+- * which clears TIF_NOTIFY_RESUME. To avoid updating user space RSEQ in
+- * that case just to do it eventually again before returning to user space,
+- * the entry resume_user_mode_work() invocation is ignored as the register
+- * argument is NULL.
++ * which clears TIF_NOTIFY_RESUME on architectures that don't use the
++ * generic TIF bits and therefore can't provide a separate TIF_RSEQ flag.
+  *
+- * After returning from guest mode, they have to invoke this function to
+- * re-raise TIF_NOTIFY_RESUME if necessary.
++ * To avoid updating user space RSEQ in that case just to do it eventually
++ * again before returning to user space, because __rseq_handle_slowpath()
++ * does nothing when invoked with NULL register state.
++ *
++ * After returning from guest mode, before exiting to userspace, hypervisors
++ * must invoke this function to re-raise TIF_NOTIFY_RESUME if necessary.
+  */
+ static inline void rseq_virt_userspace_exit(void)
+ {
+-	if (!IS_ENABLED(CONFIG_HAVE_GENERIC_TIF_BITS) && current->rseq_event.sched_switch)
++	/*
++	 * The generic optimization for deferring RSEQ updates until the next
++	 * exit relies on having a dedicated TIF_RSEQ.
++	 */
++	if (!IS_ENABLED(CONFIG_HAVE_GENERIC_TIF_BITS) &&
++	    current->rseq_event.sched_switch)
+ 		rseq_raise_notify_resume(current);
+ }
+ 
+--- a/include/linux/rseq_entry.h
++++ b/include/linux/rseq_entry.h
+@@ -53,10 +53,8 @@ void __rseq_trace_ip_fixup(unsigned long
+ 
+ static inline void rseq_trace_update(struct task_struct *t, struct rseq_ids *ids)
+ {
+-	if (tracepoint_enabled(rseq_update)) {
+-		if (ids)
+-			__rseq_trace_update(t);
+-	}
++	if (tracepoint_enabled(rseq_update) && ids)
++		__rseq_trace_update(t);
+ }
+ 
+ static inline void rseq_trace_ip_fixup(unsigned long ip, unsigned long start_ip,
+@@ -81,7 +79,7 @@ DECLARE_STATIC_KEY_MAYBE(CONFIG_RSEQ_DEB
+ #endif
+ 
+ bool rseq_debug_update_user_cs(struct task_struct *t, struct pt_regs *regs, unsigned long csaddr);
+-bool rseq_debug_validate_uids(struct task_struct *t);
++bool rseq_debug_validate_ids(struct task_struct *t);
+ 
+ static __always_inline void rseq_note_user_irq_entry(void)
+ {
+@@ -209,14 +207,20 @@ bool rseq_debug_update_user_cs(struct ta
+  * debugging is enabled, but don't do that on the first exit to user
+  * space. In that case cpu_cid is ~0. See fork/execve.
+  */
+-bool rseq_debug_validate_uids(struct task_struct *t)
++bool rseq_debug_validate_ids(struct task_struct *t)
+ {
+-	u32 cpu_id, uval, node_id = cpu_to_node(task_cpu(t));
+ 	struct rseq __user *rseq = t->rseq;
++	u32 cpu_id, uval, node_id;
+ 
+ 	if (t->rseq_ids.cpu_cid == ~0)
+ 		return true;
+ 
++	/*
++	 * Look it up outside of the user access section as cpu_to_node()
++	 * can end up in debug code.
++	 */
++	node_id = cpu_to_node(t->rseq_ids.cpu_id);
++
+ 	if (!user_read_masked_begin(rseq))
+ 		return false;
+ 
+@@ -252,11 +256,13 @@ rseq_update_user_cs(struct task_struct *
+ {
+ 	struct rseq_cs __user *ucs = (struct rseq_cs __user *)(unsigned long)csaddr;
+ 	unsigned long ip = instruction_pointer(regs);
++	unsigned long tasksize = TASK_SIZE;
+ 	u64 start_ip, abort_ip, offset;
++	u32 usig, __user *uc_sig;
+ 
+ 	rseq_stat_inc(rseq_stats.cs);
+ 
+-	if (unlikely(csaddr >= TASK_SIZE)) {
++	if (unlikely(csaddr >= tasksize)) {
+ 		t->rseq_event.fatal = true;
+ 		return false;
+ 	}
+@@ -281,15 +287,28 @@ rseq_update_user_cs(struct task_struct *
+ 		goto clear;
+ 
+ 	/*
+-	 * Force it to be in user space as x86 IRET would happily return to
+-	 * the kernel. Can't use TASK_SIZE as a mask because that's not
+-	 * necessarily a power of two. Just make sure it's in the user
+-	 * address space. Let the pagefault handler sort it out.
++	 * Two requirements for @abort_ip:
++	 *   - Must be in user space as x86 IRET would happily return to
++	 *     the kernel.
++	 *   - The four bytes preceeding the instruction at @abort_ip must
++	 *     contain the signature.
++	 *
++	 * The latter protects against the following attack vector:
+ 	 *
+-	 * Use LONG_MAX and not LLONG_MAX to keep it correct for 32 and 64
+-	 * bit architectures.
++	 * An attacker with limited abilities to write, creates a critical
++	 * section descriptor, sets the abort IP to a library function or
++	 * some other ROP gadget and stores the address of the descriptor
++	 * in TLS::rseq::rseq_cs. An RSEQ abort would then evade ROP
++	 * protection.
+ 	 */
+-	abort_ip &= (u64)LONG_MAX;
++	if (unlikely(abort_ip >= tasksize || abort_ip < sizeof(*uc_sig)))
++		goto die;
++
++	/* The address is guaranteed to be >= 0 and < TASK_SIZE */
++	uc_sig = (u32 __user *)(unsigned long)(abort_ip - sizeof(*uc_sig));
++	unsafe_get_user(usig, uc_sig, fail);
++	if (unlikely(usig != t->rseq_sig))
++		goto die;
+ 
+ 	/* Invalidate the critical section */
+ 	unsafe_put_user(0ULL, &t->rseq->rseq_cs, fail);
+@@ -306,7 +325,8 @@ rseq_update_user_cs(struct task_struct *
+ 	user_access_end();
+ 	rseq_stat_inc(rseq_stats.clear);
+ 	return true;
+-
++die:
++	t->rseq_event.fatal = true;
+ fail:
+ 	user_access_end();
+ 	return false;
+@@ -335,13 +355,13 @@ rseq_update_user_cs(struct task_struct *
+  * faults in task context are fatal too.
+  */
+ static rseq_inline
+-bool rseq_set_uids_get_csaddr(struct task_struct *t, struct rseq_ids *ids,
+-			      u32 node_id, u64 *csaddr)
++bool rseq_set_ids_get_csaddr(struct task_struct *t, struct rseq_ids *ids,
++			     u32 node_id, u64 *csaddr)
+ {
+ 	struct rseq __user *rseq = t->rseq;
+ 
+ 	if (static_branch_unlikely(&rseq_debug_enabled)) {
+-		if (!rseq_debug_validate_uids(t))
++		if (!rseq_debug_validate_ids(t))
+ 			return false;
+ 	}
+ 
+@@ -375,7 +395,7 @@ static rseq_inline bool rseq_update_usr(
+ {
+ 	u64 csaddr;
+ 
+-	if (!rseq_set_uids_get_csaddr(t, ids, node_id, &csaddr))
++	if (!rseq_set_ids_get_csaddr(t, ids, node_id, &csaddr))
+ 		return false;
+ 
+ 	/*
+@@ -507,6 +527,7 @@ static __always_inline bool __rseq_exit_
+ # define CHECK_TIF_RSEQ		_TIF_RSEQ
+ static __always_inline void clear_tif_rseq(void)
+ {
++	static_assert(TIF_RSEQ != TIF_NOTIFY_RESUME);
+ 	clear_thread_flag(TIF_RSEQ);
+ }
+ #else
+--- a/include/linux/rseq_types.h
++++ b/include/linux/rseq_types.h
+@@ -3,13 +3,13 @@
+ #define _LINUX_RSEQ_TYPES_H
+ 
+ #include <linux/types.h>
+-/* Forward declaration for the sched.h */
++/* Forward declaration for sched.h */
+ struct rseq;
+ 
+ /*
+  * struct rseq_event - Storage for rseq related event management
+  * @all:		Compound to initialize and clear the data efficiently
+- * @events:		Compund to access events with a single load/store
++ * @events:		Compound to access events with a single load/store
+  * @sched_switch:	True if the task was scheduled and needs update on
+  *			exit to user
+  * @ids_changed:	Indicator that IDs need to be updated
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -99,7 +99,7 @@ static int __init rseq_setup_debug(char
+ 	if (kstrtobool(str, &on))
+ 		return -EINVAL;
+ 	rseq_control_debug(on);
+-	return 0;
++	return 1;
+ }
+ __setup("rseq_debug=", rseq_setup_debug);
+ 
+@@ -218,9 +218,9 @@ static int __init rseq_debugfs_init(void
+ __initcall(rseq_debugfs_init);
+ #endif /* CONFIG_DEBUG_FS */
+ 
+-static bool rseq_set_uids(struct task_struct *t, struct rseq_ids *ids, u32 node_id)
++static bool rseq_set_ids(struct task_struct *t, struct rseq_ids *ids, u32 node_id)
+ {
+-	return rseq_set_uids_get_csaddr(t, ids, node_id, NULL);
++	return rseq_set_ids_get_csaddr(t, ids, node_id, NULL);
+ }
+ 
+ static bool rseq_handle_cs(struct task_struct *t, struct pt_regs *regs)
+@@ -374,7 +374,7 @@ static bool rseq_reset_ids(void)
+ 	 * stupid state as exit to user space will try to fixup the ids
+ 	 * again.
+ 	 */
+-	if (rseq_set_uids(current, &ids, 0))
++	if (rseq_set_ids(current, &ids, 0))
+ 		return true;
+ 
+ 	force_sig(SIGSEGV);
+
+
 
