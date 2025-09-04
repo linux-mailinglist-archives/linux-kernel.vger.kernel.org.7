@@ -1,138 +1,138 @@
-Return-Path: <linux-kernel+bounces-801304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02AA6B4438A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:49:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A842FB4438F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CAD91CC4272
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:47:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 615CB1783C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF2830BF70;
-	Thu,  4 Sep 2025 16:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8CC30DEC0;
+	Thu,  4 Sep 2025 16:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuqE+LEe"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/afV4Ov"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D049A30BF62;
-	Thu,  4 Sep 2025 16:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6890130CDAA;
+	Thu,  4 Sep 2025 16:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757004339; cv=none; b=a8TDDYizp/glSXsCfjbMvrReQlQKM6QJzgQgWs6aELxjCfMyEsd699803T8bngjKlBQZBEdLhAtUAfR3I2dXlbcKyKro5AzCxn9/K/HqKhRNnlxyoncI4KHTpTROB19/HPZlgCYShsIAumNQmz0kgpUJi/YGBDLt5JDTSbw0u1A=
+	t=1757004353; cv=none; b=fF9F0TAcVc9b7+nwIG/x95+RX/avkDXnNN6oApQQ2CTKA5uoQzGXXEzGxRTR8qnkLQLB+buC2iIiYvpkVSMZ3KNd24mf6Btw6iR3yyaZnrfv3x59WGgTLc9UoCwOBYLT+kzAhmuMgy5SNC32m29MwJtcKOxOwonZ8il9Um8YGDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757004339; c=relaxed/simple;
-	bh=z58fohIHjEeQhEpGCki3vj0PFTuHZ0s0bq9O6Orn1Hk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Us0INkKyIrz54gCNDIe2qEsuu3PiTZVx6nvmGHmb480fqlyrZpYKI/OK8ezMYDsUBkruEXqoTHOX0nMv8deCeo8c0ILQivghO9C+n0FoTI2AdgbdgMql4emMddIpAV0pifgZvPljmhBJ9kpXp+Q9K2/8poAJ1py59Nxm7ppsKfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TuqE+LEe; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-722d5d8fa11so9703136d6.3;
-        Thu, 04 Sep 2025 09:45:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757004337; x=1757609137; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ia2wL09QeCuJKNsIERP8tUdHVHMgM08COMkA9RM3w9s=;
-        b=TuqE+LEe6XrUKi5k8YtEnASxH5vkF6UDPfqVBoTey0p4bKZOQEdIRk80jitzTw6oID
-         Jzcx4CpAztPp7oOlZvSmrZgf6Yn+ud9D3v+Fty1Mv4Bhoi7j5oYZI9Ecf7RmggHvfO77
-         t7PzdlkWPfSKXh01BpXCtUmnWX81nv8S+cLioZFTLjrTZQaHOs22XF0yelKpyyo5Ci5z
-         XD/Ag/YyEDOAjIqHjlWVM1b7eAcn4o7mzminxwPVQa0WJHVa5sPiEgXT6Ha3454CLjd5
-         vqB2b/fKxzvHgfB86URAFkyOL8mLbaCLz3DApU9lLqYq8UbXLuwlPBHTcC8fIR6MigOb
-         c+jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757004337; x=1757609137;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ia2wL09QeCuJKNsIERP8tUdHVHMgM08COMkA9RM3w9s=;
-        b=osSfhz2sXm/syZ9PWW1GVgQCyBIm7TZZ2h8N9bo1g7OSoD36HhGDaqH1bNwmAtIUHV
-         VTFA5Nskt/VOKEIKr7LcDZmCiXjNlplP7q6+rpEnwlu/vrLXg/Pw1aoLfgYTlYODz2nr
-         5R/7vRqPnHId5q5sC+gSwKlPSnZttFGbr4gGKhtbtO/DR/OSAPnZwExcID3cGvByvJJ/
-         nEg6tr69r+C/m2DdKuesbz2AVrKteZpiig5NykfYgRHlcH8B28h9X8jt8EZnsX8kI9+9
-         ZAqVlrXUOX8psdf7E91Wk8qQtJbErpzUq3c9M3rtGtWztrH3CmafTebbWA3ZYbkSCfZ9
-         iO3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUMl8RU+5qeb++W3Kki0ynegwy77I9y5rlz6cwkiW/FhwrZPUEZmhAggCfmkDcF92t5iyKdR+JKvveG@vger.kernel.org, AJvYcCUzS5S1ddc0fh9Rb91Cv76cjUMBB2tby0TUDJMYDbuiVmKgW2Hm+dWW9StDSZgK6VIS1WdEnWH46UgIOET4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnWQo627AwGuFEcvLy1WROPIEzyZ/A/YHU7QRMgGZnlOF3v2py
-	Z9jMdIkU+WqlH3JjJKjNui0qfg4WWKzBym9MhYrzn1zgRMjP6aFlyR7HhKS6XdN9E58bZ7OXO7V
-	sllJTJ0TFe2mr4rFgT0WdcFqXz3bbUtk=
-X-Gm-Gg: ASbGncuVM/Zpzzod+OpV42Tw9zzs8EXWy4CX211Z6XCuqj+l1qgJVeKIpAYfD+qxHiI
-	U4QmyaNDd36UptLs+GXPbXKoABaolNNdsZZViJcGqW1DHsXLtSBNnhfhI4eRsifrY1Z9vcDiCyQ
-	dXI0P88kKZ1t46SQ9AmygN8Be1spyGmXSyUBWo1fDtjgsfomMZuZhMSpfUWrwlhYQ8kuM/NTzEI
-	hXdHLfWVT7Finh/PWQyzQ7Gqb4sTS1ZLAl4/LdWJnqnj5P9JeJtCESWv+Hxt7lcEG77pgS3f7tL
-	RSIfNILfrfawpiMh+uMlugdWQnCXATLeFnqJkYwc6N5SKEGF7jj/EnGGkJUkpRQrrQ==
-X-Google-Smtp-Source: AGHT+IEOxRfRzqGB/cImgAzKezg7nrkWN8WIrkfhgbzxJ6FrrSUzVS8xZTgfzxjmRnWACFC/rVa5oZtvvBBmGBWnmqE=
-X-Received: by 2002:a05:6214:19e6:b0:729:9ec8:a1a6 with SMTP id
- 6a1803df08f44-7299ec8a2ccmr27704906d6.53.1757004336633; Thu, 04 Sep 2025
- 09:45:36 -0700 (PDT)
+	s=arc-20240116; t=1757004353; c=relaxed/simple;
+	bh=ueToUlWIzhMTJb84eNZhkJOh9Icl3dDZSvjoxrKVsUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WcXEga5+pO8UJE3XaoI/M/B3ArsIYHxlY1W5nlAcTAeub8PuilyuMLxYo17QWPqTwOJC3znn9caIXi+neQAdOvvqlZhEH9vs8TITA2KQ8btzND6Qxk56kMgtCyGWGBr+zDlHYCPAqUkrpLNAjRa2Y3jCaQUeacU0Xk1TwUxufAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/afV4Ov; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41C4AC4CEF0;
+	Thu,  4 Sep 2025 16:45:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757004352;
+	bh=ueToUlWIzhMTJb84eNZhkJOh9Icl3dDZSvjoxrKVsUQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n/afV4Ov0VJYNF/SaJpFsCONmCEqEyW/IDvjSZP4mitQ9zurIt3qcJDSFDA6zq+Tg
+	 PCjnodV/H1AYnLQFz3dVReb/Mw7JG2j4z5S+2cw6DnuLSTgdrl6D0ZuWeBcwVrKfBE
+	 Jc8GIuxpjNGgltkS4qJUzzE01j4HhVtOZvD+Jw9ybf9vfwXvZmG0rM5+rlng0USvOy
+	 QgKYV3HyaXPlkCE/awFefb05Jx2x8jLar9Sam0RJusBDvXOjeHHL9x6dTF0cEjQvc5
+	 lfvf22FUx1U97GJZRb0ljFOgrYSlGPO4Uyd/4Z4JdpHTQpyJ2tFfrl3/SJHeMMC++9
+	 1+rFhGf7OkYfQ==
+Date: Thu, 4 Sep 2025 22:15:44 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: "David E. Box" <david.e.box@linux.intel.com>, rafael@kernel.org, 
+	bhelgaas@google.com, vicamo.yang@canonical.com, kenny@panix.com, 
+	ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com, linux-pm@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 1/2] PCI/ASPM: Add host-bridge API to override default
+ ASPM/CLKPM link state
+Message-ID: <a47sg5ahflhvzyzqnfxvpk3dw4clkhqlhznjxzwqpf4nyjx5dk@bcghz5o6zolk>
+References: <2fo64esrc5v5vj46iff2ptgcthaeahwicuzug46popwqrryfsi@yt62sqsnv4e3>
+ <20250903225527.GA1236657@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904122843.1681269-1-m.semenov@tssltd.ru>
-In-Reply-To: <20250904122843.1681269-1-m.semenov@tssltd.ru>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 4 Sep 2025 11:45:25 -0500
-X-Gm-Features: Ac12FXz8JCL0cueiu-FAiIyvutc7K5G4KwOL5gaJEZUTzbvJ9TsJjvr8PLVZ_uY
-Message-ID: <CAH2r5mugqRXD_OH5m_+1dyPyTEmH-Rpdq_6zDiGB8_XOHOMH9w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] cifs: prevent NULL pointer dereference in UTF16 conversion
-To: Makar Semyonov <m.semenov@tssltd.ru>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250903225527.GA1236657@bhelgaas>
 
-merged into cifs-2.6.git for-next and added Cc: stable
+On Wed, Sep 03, 2025 at 05:55:27PM GMT, Bjorn Helgaas wrote:
+> On Sun, Aug 31, 2025 at 06:28:53PM +0530, Manivannan Sadhasivam wrote:
+> > On Thu, Aug 28, 2025 at 03:43:45PM GMT, Bjorn Helgaas wrote:
+> > > On Mon, Aug 25, 2025 at 01:35:22PM -0700, David E. Box wrote:
+> > > > Synthetic PCIe hierarchies, such as those created by Intel VMD, are not
+> > > > enumerated by firmware and do not receive BIOS-provided ASPM or CLKPM
+> > > > defaults. Devices in such domains may therefore run without the intended
+> > > > power management.
+> > > > 
+> > > > Add a host-bridge mechanism that lets controller drivers supply their own
+> > > > defaults. A new aspm_default_link_state field in struct pci_host_bridge is
+> > > > set via pci_host_set_default_pcie_link_state(). During link initialization,
+> > > > if this field is non-zero, ASPM and CLKPM defaults come from it instead of
+> > > > BIOS.
+> > > > 
+> > > > This enables drivers like VMD to align link power management with platform
+> > > > expectations and avoids embedding controller-specific quirks in ASPM core
+> > > > logic.
+> > > 
+> > > I think this kind of sidesteps the real issue.  Drivers for host
+> > > controllers or PCI devices should tell us about *broken* things, but
+> > > not about things advertised by the hardware and available for use.
+> > > 
+> > > The only documented policy controls I'm aware of for ASPM are:
+> > > 
+> > >   - FADT "PCIe ASPM Controls" bit ("if set, OS must not enable ASPM
+> > >     control on this platform")
+> > > 
+> > >   - _OSC negotiation for control of the PCIe Capability (OS is only
+> > >     allowed to write PCI_EXP_LNKCTL if platform has granted control to
+> > >     the OS)
+> > > 
+> > > I think what we *should* be doing is enabling ASPM when it's
+> > > advertised, subject to those platform policy controls and user choices
+> > > like CONFIG_PCIEASPM_PERFORMANCE/POWERSAVE/etc and sysfs attributes.
+> > > 
+> > > So basically I think link->aspm_default should be PCIE_LINK_STATE_ALL
+> > > without drivers doing anything at all.  Maybe we have to carve out
+> > > exceptions, e.g., "VMD hierarchies are exempt from _OSC," or "devices
+> > > on x86 systems before 2026 can't enable more ASPM than BIOS did," or
+> > > whatever.  Is there any baby step we can make in that direction?
+> > 
+> > I'm not sure about the ACPI world, but for devicetree platforms,
+> > BIOS or the bootloader won't configure ASPM for the devices
+> > (mostly). So the baby step would be to set PCIE_LINK_STATE_ALL for
+> > all devicetree platforms :)
+> 
+> Yes.  How likely would this be to break something?
+> 
 
-On Thu, Sep 4, 2025 at 7:36=E2=80=AFAM Makar Semyonov <m.semenov@tssltd.ru>=
- wrote:
->
-> There can be a NULL pointer dereference bug here. NULL is passed to
-> __cifs_sfu_make_node without checks, which passes it unchecked to
-> cifs_strndup_to_utf16, which in turn passes it to
-> cifs_local_to_utf16_bytes where '*from' is dereferenced, causing a crash.
->
-> This patch adds a check for NULL 'src' in cifs_strndup_to_utf16 and
-> returns NULL early to prevent dereferencing NULL pointer.
->
-> Found by Linux Verification Center (linuxtesting.org) with SVACE
->
-> Signed-off-by: Makar Semyonov <m.semenov@tssltd.ru>
-> ---
->  fs/smb/client/cifs_unicode.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/fs/smb/client/cifs_unicode.c b/fs/smb/client/cifs_unicode.c
-> index 4cc6e0896fad..1a9324bec7d6 100644
-> --- a/fs/smb/client/cifs_unicode.c
-> +++ b/fs/smb/client/cifs_unicode.c
-> @@ -628,6 +628,9 @@ cifs_strndup_to_utf16(const char *src, const int maxl=
-en, int *utf16_len,
->  {
->         int len;
->         __le16 *dst;
-> +
-> +       if (!src)
-> +               return NULL;
->
->         len =3D cifs_local_to_utf16_bytes(src, maxlen, cp);
->         len +=3D 2; /* NULL */
-> --
-> 2.43.0
->
->
+I don't know :) If we want to bite the bullet, let's do it. Otherwise, let's
+keep waiting for the time to come ;) For sure there will be breakages
+reported, but it won't be like on x86 which people use for day to day work.
+There are IBM Power and MIPS based servers using devicetree as well, so they
+might also get impacted.
 
+But it would be the optimal test bed if we ever want to start enabling ASPM by
+default.
 
---=20
-Thanks,
+> Before doing that, I think we need to add some logging, at least at
+> pci_dbg(), of what is already enabled and what we change, so we have
+> some kind of hint when things do break.
 
-Steve
+Sure. Even if we want to make it pci_info(), I think it would be worth doing it
+as it will make the reporting much easier.
+
+Let me know if I can proceed with this.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
