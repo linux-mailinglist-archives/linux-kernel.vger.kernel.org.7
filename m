@@ -1,137 +1,178 @@
-Return-Path: <linux-kernel+bounces-800319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2EAFB43637
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:46:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 853EBB4362B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A5E51B22354
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:46:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3D2B7AADD3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1402B2264B1;
-	Thu,  4 Sep 2025 08:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFC42C234F;
+	Thu,  4 Sep 2025 08:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mjgvfthe"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m6bvvW3R"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B091B2D374A
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4221C2C11F6;
+	Thu,  4 Sep 2025 08:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756975529; cv=none; b=m51/2+l4pngi8AM7JD9j+FxDR6s4PtsgY1YwGm2nNtcrV1GztHMTIkd4Bb705QC9L4rURJBDP3V3X6eNpSVya1PXyLnFQ8iBnM9jTJ9IOxFvKiizR+r5gWbG7eL6GZTy0Jn/1vjeWgLfAXinGF6+gQ+0Y0VJo32pF8ShbduJ6Kk=
+	t=1756975500; cv=none; b=hSxsklOXAEW2PmBGZ7RYcCBjMnk8R0FLEwOl4vky+iwdi9WfeUIUG2XGQlmmSQCgwoiHwjshqrBHBU5ESsZAc+VwDoVOEbB2jIpbwHWN+Dqg7gJXwkrIvHeLpZSZH1yj72QRWF/iuWuQEzJsnzpAydB9gG+OWC7QNK8ywl4pBLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756975529; c=relaxed/simple;
-	bh=ZGEqH7zGYkqnFSi4rlrpNOSAhung6PJfCUWI+PnX5d0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NQh7IJRgIcwChsXxa/KTjm+qzzE3/UyGFxfHQpS/9Lht/5a7saSwxvvkPu32cjzqRmX3cDddxIs6YJGhPAnTlpGD9+levzCX1WM0OZoABjnjE9vdIuJYEVWJKcYOmLBwxNfjxIAyr3deZ5ULxDK+6z7Lf6RVqyMOSoA2uqyEoV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mjgvfthe; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61a54560c1fso181386a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 01:45:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756975526; x=1757580326; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rpo1jT8QicmRmcggPU2o1bfHtAUWdd2RgALld2UHpDk=;
-        b=Mjgvfthe4lrT4xnxMQSZi1ExQ7eiB4T6r1Yq9pvAsNh9EJ/tM4chppdv6zPHdrBUJO
-         Zjcj4OGyzvAiID9OPmvcR0IXTl7hrm5OOPM9x4w/JyLoFC1eUBhbIuoxVrihpECnKbwm
-         S6nOknd7K18kvsPJJVHcZRrdW4SKuSQNEhsyaXuCYP/Cu3qIyvAF5QSWiTcI3BRSV2yf
-         Y95spOdRL+rClzBPs7f2ggIEOav6+OUvqjV+qlAVK1PpmnaD/QN22EqNpt7gg1iTaVtp
-         V/GPXTAj5zxby8iDWv9ZQA31lCvm6hB/LprEYomx29++CDVgnK7+GUI+e3HpFLDaW+fB
-         zCXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756975526; x=1757580326;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rpo1jT8QicmRmcggPU2o1bfHtAUWdd2RgALld2UHpDk=;
-        b=u4OWxVJT6So+9sKV+g/8TqoEK8WiMMWhJfBVYa4FqAKRNQmKmd55RRoIenxt/SET//
-         1UHWaF7FeRSndMRPgvOJNA+sTCI+Hjrxo2oPfjCTJCVTTAq/idHAnqRTZO5aTqsPG9yX
-         VJPmbWsQ0fAviyS29lIMwxJjyXYMVEn/NXV6ern9qQ9xlkHGm1VE0+IOO8kmYaZZIYjC
-         1z+wGIIKI0umuO5RSvZzvWKfp5ahj+lDduGjdSiBR+/tJuHsTKrDVfPoV27AaPbepJfc
-         4hGK5xgXVY96FoUVBrwqUG/AiZfFm1yhVgoKhN4/2+EsvCE3JPGXBrrMa2x9XCrcbAXa
-         YNaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYWn5YcaWgkX5o3ZokMFvVf13NbXMQbC7bUcaEn8Calf1JP96PlgGaiwMRdOrOAMVxJ55bxJ7VNrhbHlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgEh43pyQoIcl1EybCd6grahwuPxjX5/Od1nsMpbQ8C8YcrP/q
-	N5/D9NHTqHrlVQhKEHmD0YOGNoTRCgOPVqeySw0M7JSDQ/Bva2G0saPvYETJwDyu5sI=
-X-Gm-Gg: ASbGncspZ/zD48BoJ/gGLlDeT6RaDvcGhWZgO0mhp0y/tWwGX4Wcmo9F+LLC4lDyw9n
-	L8f/R/g1m41KLjK9WJWG30hZJ2EAjGZ96ajxFPgio5cd1xhKL4r/KJP4G2xY/k9SrD3GNuPLN4c
-	WAhb1L3uSlfdHrVbMgfziFKAkVjRs2WpbnVoeovsh2bJBbphXJ+ufDi7UfMF7EbJ6a66I1+2Gwu
-	jX5lNi7F/75qMqk7Tzm1LdnZaAOWiyvDCC99AEeKPd1F4VwGD49PlgxYj3k0U7WFnSciF6IXglh
-	hdasn8dep17QklUtswX6cND+lQa0+xBf6tWS8sQl4TbiYXo1ZEc1xT0s3XMrDiEtmYpAUDPEqHm
-	ZDm25XRB3tyr33sE8z99HAFX64Xkd+UOelebB9Vs65f+l
-X-Google-Smtp-Source: AGHT+IE3VdjWLOu6xIo8rIEY/sOYhCgLWevktG3rPpuCMabmQujVAgKwDckQsqvJYhFcJkQvWetMyQ==
-X-Received: by 2002:a05:6402:234e:b0:61d:107:d0b7 with SMTP id 4fb4d7f45d1cf-61d0d612dc1mr10930224a12.7.1756975526042;
-        Thu, 04 Sep 2025 01:45:26 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc1c7ed1sm14209228a12.1.2025.09.04.01.45.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 01:45:25 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] arm64: dts: qcom: apq8016-sbc: Drop redundant HDMI bridge status
-Date: Thu,  4 Sep 2025 10:44:23 +0200
-Message-ID: <20250904084421.82985-4-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250904084421.82985-3-krzysztof.kozlowski@linaro.org>
-References: <20250904084421.82985-3-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1756975500; c=relaxed/simple;
+	bh=gzetGRXPPEFaGfqJAQ6Chzwhs2gIrlbRduBmetQTYrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tI8jmt4xM9HxdsoLxPtjVjKSR0dzxveejQIGbGkkHQG2a5zE20/T67wSJExzZnpQminw6H8f8GD/1WkkSBVpixrCpmvU1U9EglugASZigCy38IIfeSeoSZgr3B6TznIdVfECfhsCac3QZk9S2MbnU2RGkHbFzEjhp8OEa1lmSMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m6bvvW3R; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756975499; x=1788511499;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gzetGRXPPEFaGfqJAQ6Chzwhs2gIrlbRduBmetQTYrY=;
+  b=m6bvvW3Rom+DeuhxAKuIGPrKc89UY7KAXA3I7vWy1nyug+yc5r4v78ZD
+   DPxZAYGVJr3bT2h1WN1DNGCySAFMrf8mHg+8Pg1jBvDoQlJ1213IXOq6M
+   00j3uUWMMxh5xA/QkNLmi+Laj2WquRC4GIidlCmG9UVtakPm4olsKhGxT
+   777dCUeIGpx8nkMMPLyChN3KuDLj1MgTAUUqtYw6nI6QOWe5xhNKbyJCg
+   EQIVQ7we70bB1bF1Nu6rMaE+nIKZgwzu8ePzNYMucGedCZrQMCwlCrAPV
+   bbbyBVmk+qIYkqcXf8cfhFrxX1T3i+ZTRKBYFFAP4qMF5RRb1U5gqLBT+
+   A==;
+X-CSE-ConnectionGUID: HW5VAqwcTQSYK3jPIFVeHA==
+X-CSE-MsgGUID: WY7bHa3aSPKAMJd1f7FSOw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="58520275"
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="58520275"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:44:58 -0700
+X-CSE-ConnectionGUID: N3TxRB0xQP6c9RbJ1GcVrg==
+X-CSE-MsgGUID: aYx3EAAlQhmx5apJZHzVyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="177096940"
+Received: from agladkov-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.92])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:44:53 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id EBE7611FCC7;
+	Thu, 04 Sep 2025 11:44:49 +0300 (EEST)
+Date: Thu, 4 Sep 2025 11:44:49 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Isaac Scott <isaac.scott@ideasonboard.com>
+Cc: laurent.pinchart@ideasonboard.com, rmfrfs@gmail.com, martink@posteo.de,
+	kernel@puri.sm, mchehab@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	linux-media@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	hverkuil@kernel.org, nicolas.dufresne@collabora.com,
+	tomi.valkeinen@ideasonboard.com, jonas@kwiboo.se,
+	dan.scally+renesas@ideasonboard.com, m.szyprowski@samsung.com,
+	mehdi.djait@linux.intel.com, niklas.soderlund+renesas@ragnatech.se
+Subject: Re: [PATCH v2 1/3] media: v4l: Add helper to get number of active
+ lanes via a pad
+Message-ID: <aLlRgRBztMEicEgM@kekkonen.localdomain>
+References: <20250903102243.1563527-1-isaac.scott@ideasonboard.com>
+ <20250903102243.1563527-2-isaac.scott@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=684; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=ZGEqH7zGYkqnFSi4rlrpNOSAhung6PJfCUWI+PnX5d0=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBouVFma+h6JZWLqFpNS91mMYe05574SI438BPYQ
- Iyapi97XC6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLlRZgAKCRDBN2bmhouD
- 188hEACasGVcudwsVYdu6N6YGVAycTiEivBNGZhcL+6QnP8jxD95/+rceGEt9yM+gZFpU9zu0NZ
- wU7dHyj2R4R/rOt7Ly2/EQ0AadkVU6Ofsm+ttRZJK/Eqi2jCWbDObjZE17b1kFfwU7H8dCdweBN
- A6Z6Mi21DBNtNf6hGT65z30FeCF9icstLVtPvwppH0HN/VeaFQ+qdRFBlNAXDObxpOmrw3KIizF
- WvVPJ0v28P8su9mK6wmibQNMMfwv9ckkGRDCfFumnYLFGoQj7QpouC4HXsugNq8AmI57nucYLQd
- B6bhstxvmo9JZRMZAXH6IPOBgHngtDE9meiLsOANE8a7znf2Y/RoI3Jws8m/ceJyaBAHuTDibR9
- YhgNh87yF8GLyMeRvuN2IBxH1RMAjP05yXVKK4ug3xhi7pTnr/f85z9kMpZAgHHhXIHeO6vWmNh
- dIT7XQxWuv9T5+q2PHEcW25g7eiAnpU8H1vwxm4xBBi6NBXjGb36RJ9sZt8jRyn48wRlUVLwEji
- pUM+Sd93oCC5SxjzVr1VSXUPcJrVU7WS81Bw+k+qza6d37+A48GYHa4ALAXGjk5+6sMYulkHVwL
- cjbhxuPuUn1EMiIvBj0iEz0XLg3gUCu5DtvrzkTPNcb19lEcqndww6AnScAYA4EkV1ggJ8OdoqQ 9IpQF3vSgFJRIWg==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903102243.1563527-2-isaac.scott@ideasonboard.com>
 
-New device nodes are enabled by default, so status is redundant.  No
-functional impact, verified with dtx_diff.
+Hi Isaac,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/boot/dts/qcom/apq8016-sbc.dts | 2 --
- 1 file changed, 2 deletions(-)
+Thanks for the update.
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8016-sbc.dts b/arch/arm64/boot/dts/qcom/apq8016-sbc.dts
-index 9c71de589749..ba6ccf0db16a 100644
---- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dts
-+++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dts
-@@ -157,8 +157,6 @@ &blsp_i2c4 {
- 	status = "okay";
- 
- 	adv_bridge: bridge@39 {
--		status = "okay";
--
- 		compatible = "adi,adv7533";
- 		reg = <0x39>;
- 
+On Wed, Sep 03, 2025 at 11:22:40AM +0100, Isaac Scott wrote:
+> Sometimes, users will not use all of the MIPI CSI 2 lanes available when
+> connecting to the MIPI CSI receiver of their device. Add a helper
+> function that checks the mbus_config for the device driver to allow
+> users to define the number of active data lanes through the
+> get_mbus_config op.
+> 
+> If the driver does not implement this op, fall back to using the number
+> of data lanes specified in device tree.
+> 
+> Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
+> ---
+>  drivers/media/v4l2-core/v4l2-common.c | 25 +++++++++++++++++++++++++
+>  include/media/v4l2-common.h           |  1 +
+>  2 files changed, 26 insertions(+)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
+> index 6e585bc76367..8683107b3704 100644
+> --- a/drivers/media/v4l2-core/v4l2-common.c
+> +++ b/drivers/media/v4l2-core/v4l2-common.c
+> @@ -571,6 +571,31 @@ s64 __v4l2_get_link_freq_pad(struct media_pad *pad, unsigned int mul,
+>  	return __v4l2_get_link_freq_ctrl(sd->ctrl_handler, mul, div);
+>  }
+>  EXPORT_SYMBOL_GPL(__v4l2_get_link_freq_pad);
+> +
+> +unsigned int v4l2_get_active_data_lanes(const struct media_pad *pad, unsigned int dt_lanes)
+
+This line would benefit from being wrapped.
+
+> +{
+> +	struct v4l2_mbus_config mbus_config = {};
+> +	struct v4l2_subdev *sd;
+> +	unsigned int lanes;
+> +	int ret;
+> +
+> +	sd = media_entity_to_v4l2_subdev(pad->entity);
+> +	ret = v4l2_subdev_call(sd, pad, get_mbus_config, pad->index,
+> +			       &mbus_config);
+> +	if (ret < 0 && ret != -ENOIOCTLCMD)
+> +		return ret;
+> +
+> +	if (!mbus_config.bus.mipi_csi2.num_data_lanes)
+> +		return dt_lanes;
+> +
+> +	lanes = mbus_config.bus.mipi_csi2.num_data_lanes;
+> +
+> +	if (lanes < 0 || lanes > dt_lanes)
+
+lanes is unsigned int so no need to check for less than 0.
+
+I might just not use a local variable for this, up to you.
+
+> +		return -EINVAL;
+> +
+> +	return lanes;
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_get_active_data_lanes);
+>  #endif /* CONFIG_MEDIA_CONTROLLER */
+>  
+>  /*
+> diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
+> index 0a43f56578bc..3f8937260c76 100644
+> --- a/include/media/v4l2-common.h
+> +++ b/include/media/v4l2-common.h
+> @@ -584,6 +584,7 @@ int v4l2_fill_pixfmt_mp(struct v4l2_pix_format_mplane *pixfmt, u32 pixelformat,
+>  	(pad, mul, div)
+>  s64 __v4l2_get_link_freq_pad(struct media_pad *pad, unsigned int mul,
+>  			     unsigned int div);
+
+Some kernel-doc documentation would be nice.
+
+> +unsigned int v4l2_get_active_data_lanes(const struct media_pad *pad, unsigned int dt_lanes);
+
+Please wrap this, too.
+
+>  #else
+>  #define v4l2_get_link_freq(handler, mul, div)		\
+>  	__v4l2_get_link_freq_ctrl(handler, mul, div)
+
 -- 
-2.48.1
+Kind regards,
 
+Sakari Ailus
 
