@@ -1,111 +1,244 @@
-Return-Path: <linux-kernel+bounces-800227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C84B434DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B72FBB434E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 87E954E542C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:00:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EC214E541A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6683970824;
-	Thu,  4 Sep 2025 08:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8082229D264;
+	Thu,  4 Sep 2025 08:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZhSHOWo/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IYf4U2jH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDACC2BEC2D;
-	Thu,  4 Sep 2025 08:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC982A1D1;
+	Thu,  4 Sep 2025 08:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756972802; cv=none; b=fWDiZp5NG8tmQPe8Kph/7kGEl1MdMEKRWpzhM37YWTVB0nUNRJ9v6ofeUZJCKfZNWNs93MsU13u369PtyDbeXpxlpXgN2J7trADV8ux4aLi6kl5YQHR/yNt5AGrqKcgavmpsMZXjrCXe3bwLNPospL8K/HdsL+Kbq3KCx9PR+a4=
+	t=1756972881; cv=none; b=J/8thEOo3x/0nvUYREfZyMlJ3hPZEyUCUlggHZxy89S6DLzZqNPVFXbTjTcqwGnA6IakqdEOmmLR81/dlG8nmrD0P3MW/ZADvTwuo4magkeeq/Yq0OgfInIrahWBnC2OsNMeNHVgozZDnFAd5X7WaiSRxnknfDMz+RMYsVFUx1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756972802; c=relaxed/simple;
-	bh=LTfSK6bm0uoDmpF/XmAaaSZU4qORee0HC7EH0q/Ptpk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Ues39li9bGVEJrlZmys2vr74EDUNQIcNG3NK9Z8tuucFDhBWH3+aWwxCxFitCBdh4SNq5/L7pHhNY3VVANM1ptxY1hODY5ZOe875gHgpaBMiDWz1rGtvGaOXulvbiP+uPGTnhd8i7luobxVAeiiQnxwIEQZjfpKxZVKenZLYRPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZhSHOWo/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB477C4CEF4;
-	Thu,  4 Sep 2025 08:00:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756972802;
-	bh=LTfSK6bm0uoDmpF/XmAaaSZU4qORee0HC7EH0q/Ptpk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ZhSHOWo/nxz9p8qppx08leARXGv7SpENcwjjT9yby0I4mZ39+1CH7CFBRNQxkzeBY
-	 GQwkWxk2Jpv6PgtUiS4wO+2h1KZ7x6DRJR24z/DALys7/pn+xVXtpABUjg8FbG0/og
-	 Vb+uIXtwVnTIilN2tQRjo2yaHPqS3YoHzteWKATnn4UNY0l6CzKKDX2xz3aen6PMrU
-	 2fnUfRj4piQjjMJrZhJ6KoGHaXlI2DXrolM+nRt84Q5r7/dEY/bq3k+Jf/c7PFZPLM
-	 ceIjRAC+LJ6GbIAKmcEV9SQcRvvu1faD7eD3r0+j61JK3R6Zm2EsW3tpum/4R3NzcZ
-	 fTeg5HpkVDCEA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB8EB383C25A;
-	Thu,  4 Sep 2025 08:00:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1756972881; c=relaxed/simple;
+	bh=wlwUBGaf2355vudJz1Ud10sFTnKCAwmGCbZ+bzsJSsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rsc3+JxJaQ8/vVx5RS6sg1yWvxbeFrcC1H2I1beKHQedrJBknZ3kpoRdmjFCvmmBFKEir2i6NQchgqrkP9JcjFw9CwFMusXW5kMHaEPpvUWm6km7D+PScXWN8XRAZj3/eq8SGFE1Jc+TTtj1jt1tclPlhIobGyKLEaOytfAhM4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IYf4U2jH; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756972880; x=1788508880;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=wlwUBGaf2355vudJz1Ud10sFTnKCAwmGCbZ+bzsJSsc=;
+  b=IYf4U2jHrjR4no7VnIJnx6qgrAvGJjr4fo4iS4ueVYR7Tzr3FZ6O5wpK
+   Z5du6N8B+Fkeif8ug7iZWnxyj60S00po/7AwxJMOj3i0ST+sqTLIVWQPf
+   Fx2W7WaamJGPKxZhiSS6fG//dC+HvL/J8PfBbTFowdst/RkMipNR8Jov9
+   w64FzskmLLm+SRj+Fw46T85cxlh2ytIEnTPr1mau4S7AKmwS30+xeSZwe
+   VvhQ1F6kY2IMLE4VihWF67SlCCvziwhz+ylMEpx5Qild64zE7HAFn3ZuG
+   ZConCTBKpBEZoRv0bewRa5VLLtgqJvfRJgKciSPjrQaxSCn09lIuktCXg
+   w==;
+X-CSE-ConnectionGUID: h3KR6OkaRbiMBjeaHGPaCg==
+X-CSE-MsgGUID: dbpEh5rTSD2cu8VZlLJQ/A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="69566907"
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="69566907"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:01:15 -0700
+X-CSE-ConnectionGUID: zDeJhkXMQqeHsg/47czUHA==
+X-CSE-MsgGUID: 8PRe9YUuStWQnak1m1x4Cw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="202669563"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:01:12 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uu4u5-0000000BChH-2WrO;
+	Thu, 04 Sep 2025 11:01:09 +0300
+Date: Thu, 4 Sep 2025 11:01:09 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Akshay Jindal <akshayaj.lkd@gmail.com>
+Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] iio: light: ltr390: Implement runtime PM support
+Message-ID: <aLlHRYPC-bPLQe-N@smile.fi.intel.com>
+References: <20250903112648.11972-1-akshayaj.lkd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: atm: fix memory leak in atm_register_sysfs when
- device_register fail
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175697280674.1344869.4481080369917304414.git-patchwork-notify@kernel.org>
-Date: Thu, 04 Sep 2025 08:00:06 +0000
-References: <20250901063537.1472221-1-wangliang74@huawei.com>
-In-Reply-To: <20250901063537.1472221-1-wangliang74@huawei.com>
-To: Wang Liang <wangliang74@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, kuniyu@google.com, kay.sievers@vrfy.org,
- gregkh@suse.de, yuehaibing@huawei.com, zhangchangzhong@huawei.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250903112648.11972-1-akshayaj.lkd@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Mon, 1 Sep 2025 14:35:37 +0800 you wrote:
-> When device_register() return error in atm_register_sysfs(), which can be
-> triggered by kzalloc fail in device_private_init() or other reasons,
-> kmemleak reports the following memory leaks:
+On Wed, Sep 03, 2025 at 04:56:43PM +0530, Akshay Jindal wrote:
+> Implement runtime power management for the LTR390 sensor. The device
+> autosuspends after 1s of idle time, reducing current consumption from
+> 100 µA in active mode to 1 µA in standby mode as per the datasheet.
 > 
-> unreferenced object 0xffff88810182fb80 (size 8):
->   comm "insmod", pid 504, jiffies 4294852464
->   hex dump (first 8 bytes):
->     61 64 75 6d 6d 79 30 00                          adummy0.
->   backtrace (crc 14dfadaf):
->     __kmalloc_node_track_caller_noprof+0x335/0x450
->     kvasprintf+0xb3/0x130
->     kobject_set_name_vargs+0x45/0x120
->     dev_set_name+0xa9/0xe0
->     atm_register_sysfs+0xf3/0x220
->     atm_dev_register+0x40b/0x780
->     0xffffffffa000b089
->     do_one_initcall+0x89/0x300
->     do_init_module+0x27b/0x7d0
->     load_module+0x54cd/0x5ff0
->     init_module_from_file+0xe4/0x150
->     idempotent_init_module+0x32c/0x610
->     __x64_sys_finit_module+0xbd/0x120
->     do_syscall_64+0xa8/0x270
->     entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> [...]
+> Ensure that interrupts continue to be delivered with runtime PM.
+> Since the LTR390 cannot be used as a wakeup source during runtime
+> suspend, therefore increment the runtime PM refcount when enabling
+> events and decrement it when disabling events or powering down.
+> This prevents event loss while still allowing power savings when IRQs
+> are unused.
 
-Here is the summary with links:
-  - [net] net: atm: fix memory leak in atm_register_sysfs when device_register fail
-    https://git.kernel.org/netdev/net/c/0a228624bcc0
+...
 
-You are awesome, thank you!
+> -static int ltr390_read_raw(struct iio_dev *iio_device,
+> -			   struct iio_chan_spec const *chan, int *val,
+> -			   int *val2, long mask)
+> +
+> +static int ltr390_do_read_raw(struct iio_dev *iio_device,
+> +			struct iio_chan_spec const *chan, int *val,
+> +			int *val2, long mask)
+
+The new indentation is broken.
+
+static int ltr390_do_read_raw(struct iio_dev *iio_device,
+			      struct iio_chan_spec const *chan,
+			      int *val, int *val2, long mask)
+
+...
+
+> +static int ltr390_read_raw(struct iio_dev *iio_device,
+> +			   struct iio_chan_spec const *chan, int *val,
+> +			   int *val2, long mask)
+
+For example here it's okay.
+
+...
+
+> -static int ltr390_write_event_config(struct iio_dev *indio_dev,
+> +static int ltr390_do_event_config(struct iio_dev *indio_dev,
+>  				const struct iio_chan_spec *chan,
+>  				enum iio_event_type type,
+>  				enum iio_event_direction dir,
+
+You forgot fixing an indentation of the parameters.
+
+...
+
+> +static int ltr390_write_event_config(struct iio_dev *indio_dev,
+> +				const struct iio_chan_spec *chan,
+> +				enum iio_event_type type,
+> +				enum iio_event_direction dir,
+> +				bool state)
+
+Broken indentation.
+
+...
+
+> +	int ret;
+> +	struct ltr390_data *data = iio_priv(indio_dev);
+> +	struct device *dev = &data->client->dev;
+> +
+> +	guard(mutex)(&data->lock);
+> +
+> +	if (state && !data->irq_enabled) {
+> +		ret = pm_runtime_resume_and_get(dev);
+> +		if (ret < 0) {
+> +			dev_err(dev, "runtime PM failed to resume: %d\n", ret);
+> +			return ret;
+> +		}
+> +		data->irq_enabled = true;
+> +	}
+> +
+> +	ret = ltr390_do_event_config(indio_dev, chan, type, dir, state);
+> +
+> +	if (!state && data->irq_enabled) {
+> +		data->irq_enabled = false;
+> +		pm_runtime_put_autosuspend(dev);
+> +	}
+> +
+> +	return ret;
+
+I think we still can refactor this as following if _do_event_config() does not
+have side-effects on irq_enabled field. (Otherwise that side-effect should be
+documented.)
+
+// we also assume indio_dev can be retrieved from data
+_on_and_do_event_config()
+{
+	struct device *dev = &data->client->dev;
+	int ret;
+
+	ret = pm_runtime_resume_and_get(dev);
+	if (ret < 0) {
+		dev_err(dev, "runtime PM failed to resume: %d\n", ret);
+		return ret;
+	}
+
+	data->irq_enabled = true;
+
+	return ltr390_do_event_config(indio_dev, chan, type, dir, state);
+}
+
+_do_event_config_and_off()
+{
+	struct device *dev = &data->client->dev;
+	int ret;
+
+	ret = ltr390_do_event_config(indio_dev, chan, type, dir, state);
+
+	data->irq_enabled = false;
+	pm_runtime_put_autosuspend(dev);
+
+	return ret;
+}
+
+write_event_config()
+{
+	struct ltr390_data *data = iio_priv(indio_dev);
+
+	guard(mutex)(&data->lock);
+
+	if (state == data->irq_enabled)
+		return ltr390_do_event_config(indio_dev, chan, type, dir, state);
+
+	if (state)
+		return _on_and_event_config(data, ...)
+	else // yes, it's redundant, but for better coupling of these two branches
+		return _event_config_and_off(data, ...)
+
+}
+
+But this is quite verbose, hence I leave it to you and others to decide if the
+originally proposed code is better.
+
+...
+
+> +	ret = devm_pm_runtime_set_active_enabled(dev);
+> +	if (ret)
+
+> +		return dev_err_probe(dev, ret,
+> +				     "failed to enable runtime PM\n");
+
+It's exactly one line of 80 characters!
+
+...
+
+> +	/* default value of irq_enabled is false*/
+
+Missing space
+
+> +	data->irq_enabled = false;
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+With Best Regards,
+Andy Shevchenko
 
 
 
