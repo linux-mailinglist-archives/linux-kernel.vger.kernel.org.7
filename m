@@ -1,108 +1,129 @@
-Return-Path: <linux-kernel+bounces-801733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58B4B44952
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:15:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AAF0B44959
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 923AD16CD03
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:15:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD6551C25AFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466C82DC333;
-	Thu,  4 Sep 2025 22:14:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9D12D46C8;
-	Thu,  4 Sep 2025 22:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53072E7BCB;
+	Thu,  4 Sep 2025 22:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="jj5agdIu"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597052DCC13;
+	Thu,  4 Sep 2025 22:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757024094; cv=none; b=ghXQGv3eXC+XSd4YqT+xWiBoSGBmEuC8fWvITCCjXi2x1YF2Ds7Xqh7P1v9Zkgz34NB7BphYV5iem2WAWE0QjdaPS+Sx3Q9dt39WdFdYSPqeGKm8xIFpsfMrUk9DDk9xd4LI637Mnwnxtz8XYlYs1T2NG0GThGnFvJsM9GkdYmo=
+	t=1757024174; cv=none; b=W0SuS4ozE76t//dhgzDDVDHtImvLCESBiqGxlg7UZJFiPEOFgpvr11o/sL/lsGpqhSMVIcJIeSL9dVthuHu9m2FxAW2MCURiu92tihNeq2ySddGwNvUFzdmniEcuQsZUPohfDoK8bz+zfpCrLrOaB5nDkiDlsE4IWCJW1LnwyeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757024094; c=relaxed/simple;
-	bh=tR8bRPKrAsiMDrBi4Jc86OCZCYcgzukXnSpHEWnXymg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fbx94RoQ8gLO3tmXwpAUgZk2ZqJw9NnulK3rYry9MTXi86qA9zgSGPJjxeOMAZl0mAWSN0JhrwnT0c3V3DNIsjYel+zADKRAnayZRgG70QpGw0EjUMP3bYsJek5S9kbcwAl+FT/P+KuHjFCP6FwZI+OHkmdr4+uDXvjHA7GwRjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2977D1596;
-	Thu,  4 Sep 2025 15:14:43 -0700 (PDT)
-Received: from [10.57.58.14] (unknown [10.57.58.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 46B793F63F;
-	Thu,  4 Sep 2025 15:14:44 -0700 (PDT)
-Message-ID: <75db1f58-98b3-463c-af4f-2ce9878cba9f@arm.com>
-Date: Fri, 5 Sep 2025 00:14:39 +0200
+	s=arc-20240116; t=1757024174; c=relaxed/simple;
+	bh=FfkRI+Thfq9FLWdeGquE+YXJSXWp3aWZQCznOMbITyI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lSdt4NF4hsbdyljBC3XjvYx369F/iArlgRjvwiiUJvVPqNpvU09jz1IhyZdoGp/mPu6FdbWhoj0muvIJXRfZkBZHHX6VmESNYtm8N9pAMib1/MftfKKGDuLKAlvzVVzXHrhxakff8ocW9N6VpovYGNIrNdEnWn2AU+t0lNDQuYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=jj5agdIu; arc=none smtp.client-ip=192.19.144.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 00813C00151A;
+	Thu,  4 Sep 2025 15:16:05 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 00813C00151A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1757024165;
+	bh=FfkRI+Thfq9FLWdeGquE+YXJSXWp3aWZQCznOMbITyI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jj5agdIupuNpfglCUEa2dAc3pRYIR+M/3P1yNtjfospVkOl8dfiOPDXtFcjcZc0sl
+	 eArjms3P9QmpLWWz9ORrwX30AtSoOAraPOsvB//vvB6dy32Khkc8G+s3384E8r85bd
+	 e9z4/294XS+ibqTGk0Y2m9N0FdrJIZhZb1BgLxlg=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 58A7C18000530;
+	Thu,  4 Sep 2025 15:15:34 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: bcm-kernel-feedback-list@broadcom.com,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com,
+	Matthias Brugger <mbrugger@suse.com>,
+	iivanov@suse.de,
+	svarbanov@suse.de
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: broadcom: amend the comment about the role of BCM2712 board DTS
+Date: Thu,  4 Sep 2025 15:15:33 -0700
+Message-ID: <20250904221533.227156-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <47f6368a77d6bd846c02942d20c07dd48e0ae7df.1754914766.git.andrea.porta@suse.com>
+References: <cover.1754914766.git.andrea.porta@suse.com> <47f6368a77d6bd846c02942d20c07dd48e0ae7df.1754914766.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] mm: introduce local state for lazy_mmu sections
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org
-References: <20250904125736.3918646-1-kevin.brodsky@arm.com>
- <20250904125736.3918646-3-kevin.brodsky@arm.com>
- <22131943-3f92-4f5a-be28-7b668c07a25c@lucifer.local>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <22131943-3f92-4f5a-be28-7b668c07a25c@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 04/09/2025 19:28, Lorenzo Stoakes wrote:
-> Hi Kevin,
->
-> This is causing a build failure:
->
-> In file included from ./include/linux/mm.h:31,
->                  from mm/userfaultfd.c:8:
-> mm/userfaultfd.c: In function ‘move_present_ptes’:
-> ./include/linux/pgtable.h:247:41: error: statement with no effect [-Werror=unused-value]
->   247 | #define arch_enter_lazy_mmu_mode()      (LAZY_MMU_DEFAULT)
->       |                                         ^
-> mm/userfaultfd.c:1103:9: note: in expansion of macro ‘arch_enter_lazy_mmu_mode’
->  1103 |         arch_enter_lazy_mmu_mode();
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~
-> ./include/linux/pgtable.h:248:54: error: expected expression before ‘)’ token
->   248 | #define arch_leave_lazy_mmu_mode(state) ((void)(state))
->       |                                                      ^
-> mm/userfaultfd.c:1141:9: note: in expansion of macro ‘arch_leave_lazy_mmu_mode’
->  1141 |         arch_leave_lazy_mmu_mode();
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~
->
-> It seems you haven't carefully checked call sites here, please do very
-> carefully recheck these - I see Yeoreum reported a mising kasan case, so I
-> suggest you just aggressively grep this + make sure you've covered all
-> bases :)
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-I did check all call sites pretty carefully and of course build-tested,
-but my series is based on v6.17-rc4 - just like the calls Yeoreum
-mentioned, the issue is that those calls are in mm-stable but not in
-mainline :/ I suppose I should post a v2 rebased on mm-stable ASAP then?
+On Mon, 11 Aug 2025 16:12:35 +0200, Andrea della Porta <andrea.porta@suse.com> wrote:
+> Current board DTS for Raspberry Pi5 states that bcm2712-rpi-5-b.dts
+> should not be modified and all declarations should go in the overlay
+> board DTS instead (bcm2712-rpi-5-b-ovl-rp1.dts).
+> 
+> There's a caveat though: there's currently no infrastructure to reliably
+> reference nodes that have not been declared yet, as is the case when
+> loading those nodes from a runtime overlay. For more details about
+> these limitations see [1] and follow-ups.
+> 
+> Change the comment to make it clear which DTS file will host specific
+> nodes, especially the RP1 related nodes which should be customized
+> outside the overlay DTS.
+> 
+> Link
+> [1] - https://lore.kernel.org/all/CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com/
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
 
-- Kevin
+Applied to https://github.com/Broadcom/stblinux/commits/devicetree-arm64/next, thanks!
+--
+Florian
 
