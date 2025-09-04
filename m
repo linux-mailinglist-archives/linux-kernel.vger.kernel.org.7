@@ -1,182 +1,171 @@
-Return-Path: <linux-kernel+bounces-801139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A80B4404A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:18:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49AC8B44048
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDEF87BEEC9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:15:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA851A45A45
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24E72D0C98;
-	Thu,  4 Sep 2025 15:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B693720DD51;
+	Thu,  4 Sep 2025 15:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="htwuitqH"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YopC/f+f"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FE8264F85;
-	Thu,  4 Sep 2025 15:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756998996; cv=pass; b=Wncr8Rpw+1JBC9W/GlnI/GE3kekCCjr7zlIdqZ1CejV0Gvo2jhTVYdPy5scDFdsxHHXrCxGdmaeYtulfLI+7EPEQ9edVavsUguUnEyYhFiNFqK48ku0xJPY0a7WiREXET1dss93O7C6rpOrlZPjcNMH/bpVNrw9jXIiFlrwRxX8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756998996; c=relaxed/simple;
-	bh=IDWyLVzecAEfVD400butClxhszlQia4W90O4OX+Q7fc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=s9oY+N8j0JademDdm93n8jMNiJe15/af906DrIVk2Z1GQ/B822Mt66JYxWfKXULj2aMSe68KeW5lb+cll+vMh6Bcxn25GoLxMY/YDjOqlbi6UkxGfqd7aJ/Ma/GiyvrinTUljfurDaIszzZnqk2QuVUBk8YoWEjAm+hJmfD9XjM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=htwuitqH; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756998962; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=gBqLL5q3yLt9fLimxiEJFgOeTcafEBg721TEAIBeEAQWdJVcxleHHIVAvwURkYYS8Zc1WeNPn5mN3OLLWPn68+FS3GZFMQM9/GIpYQWxj46c4mKp1mLvhp4ojhsPM4lASBIwW3qe8QEo2tJbizhSmygtVy0z7Cm7Sa/ZDk/xbSc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756998962; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+8kLEzOcFQCu6rX0G1Q4op3WkweRqgBGuaJYySKuIus=; 
-	b=C9Mz3vlBXxqN07qVHyNN2CKTWXhyZoOqITPue85u+OAVS06hvrFk24M+NF1MyiVRbnxvsC6DuxgvbOF/XvflZ8YntVz1b6x5EnQAXlD9/47nwJvF6zdKNpcn2VI/+YMvcRNiPEcGM4vtHSQNs9NdlLcSfaVTbAN2u0duhUcOz0I=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756998962;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=+8kLEzOcFQCu6rX0G1Q4op3WkweRqgBGuaJYySKuIus=;
-	b=htwuitqHKgRocLnSjZRHD6gcp8XjjkHBxYZRBZpbqZyc22UitnFytOBTR05ouda8
-	T4BpK+JI+lrtLqrT79Ybf8jSI5cVuJq/28MqWuulYeVPEMwfbdTxfFB4XkZ3p+nZsRu
-	YcHafLCQAh5N5rUSRF65UdznVWHnJzydhDvF1YIE=
-Received: by mx.zohomail.com with SMTPS id 1756998960392971.3692629958074;
-	Thu, 4 Sep 2025 08:16:00 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BB0214801
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756998960; cv=none; b=bRLLJ7B01ieTe2oTQnRWJLAqu26Rm5ZIjZBDvfG+Ebjed+M6hmUoWDKEX7+axA8zEKfq3XdfHwLt1wZTOslvk1FH0pUaoqRSWx7F5PD9HdgGKnVxu7PtMnbo0bpsWzdzTxJNp1TSE4txqv+D5fd/9/Uv67/4ZY4ae1l07sz2PEY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756998960; c=relaxed/simple;
+	bh=TDLPSgBG6CDBzR+vutxdND3Sby+Hbw6ZUDBzV09JVio=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QuFfqvyAz8Z8MR3lMbTuIaEVz/pKHyI2Q5eYdinTta9ms3ySfUzTn2BEY0qewrooH8vgqDVVyDjkEwXAxUI3hzUfuSgKbIJ+5Apq2i3SxjMTwrTl36tnAPJ9PVJ3OVYkcILKulsOkTEBCzOSUogFYppKrxtI98pdySpjtdL/0SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YopC/f+f; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24498e93b8fso2073605ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 08:15:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756998958; x=1757603758; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A9Jq0Qss5RqOroarhNVXi84lrn3E/aL/e2HhwPAXgdE=;
+        b=YopC/f+fjnZHgM6mNE5HbrVBFyMQhhRTb/7XVdyIcko9LtN1cvHQPRCqdgw3d6CA6l
+         R6OVwCzPJFWSbKJPnIP6Xx0m7GRkQXIVz6F7lwyxR6mC2FRxrzY9Y/Bfq2aHzIbqWZNd
+         1COR/6/4vbi6RMhhPMqGtJ3ZLRaPLn5BHFZjqorufiisx65bSb2asiQP+lnm3AFVJomt
+         37OrrXB/8mVBZ+Fs1Z+vHpC2xbTI2rMZxpac8g0Uq/I8+/lyYZ07kqiJeq4ZZ5k84H63
+         HLkbMaCkb4af8a2te9OCB/KUbq5d2TGT0YUvzfdo5VAmdw7xyNWwYcpS6+pBuztCtJq2
+         BpWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756998958; x=1757603758;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A9Jq0Qss5RqOroarhNVXi84lrn3E/aL/e2HhwPAXgdE=;
+        b=rLiCt1Ei9gvBYZ+AmpDFKcdQjtAO7UAMcl0C9wt5AILOPPI+IKzw2KAnWCddRYGUcD
+         XZtQNT022VpMLswpHoq06eW5g9d0Zm0vx8aNsYxh7GqB0JE9ZkZTk5TG2j8XuDtaBZJ8
+         LwPdXh7RrgdluCzuH+XfDQNLTuOwDTgSNFrgYxs9F5AtPSrOvLWwx8bI3Pow8M7jzceN
+         RkHPWRVqy23vDOhN8Ae+IfhZ+ci18cw3DVxjkAxrfL/Zk58jLa1CqC2etZkHM9p/Wjh6
+         fCe2Lg+kpShH9p3fZ2hyf+Leik9y+GeeU37fy234cILN3N3OXT+n3jmYvPUHSc3Zf+fj
+         xQzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUa7AxeKuLrfBzLOP3zgtqVlUGx7VPaIUIdt2JK7t/1dpT40ypxHMiOPUc1u+OOaTzKi6J1oRg/XWnyHRc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOZuWsvc89bZuwMRv5+qRY61f6e3oVnrf3xnfWeL2IOxZG1TbY
+	6NTitiKk8Xs78rz0/qv0vwfpmwpLI8CDmsHtwJwlXtV9A/TIML+nqhs186A1h5rUnED5vFH5flQ
+	GNUFDlGjqC/WQFb5XETAeXwTw1pDnHwM=
+X-Gm-Gg: ASbGncvDH7Kc837pyNlNx1PSPQnmis81fj2JPR3ccV7grLY7jNwPPH4z+ju7bHrMqeD
+	O2N9ErSNss/EKxuBOdfG8Fec9hpL0WDn2A6LKgxER43OSDy5kRqX5XaOndyrKp9HZDqel1DnftI
+	JyBm6KG+9HcH1WE5B+7nzUQH+cwIMgqispBQKD4672ikcUgDamrO4/aUbQjzEk7wqG5JVWglML2
+	XmOOk6pVGhLYP1paQ==
+X-Google-Smtp-Source: AGHT+IF65tvTv3v42r1JI9j62M5o5qPYw1oDc/yG7KI7ueINNwA7BlbdkkzA9BhPG147OhT975Nb20L/xrlEM5e+oLE=
+X-Received: by 2002:a17:902:f54d:b0:24c:e213:ca4a with SMTP id
+ d9443c01a7336-24ce213cdacmr9525015ad.2.1756998957514; Thu, 04 Sep 2025
+ 08:15:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v2 3/3] rust: lock: add a Pin<&mut T> accessor
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <DCK43W485VCY.3KE72NNMDP32D@kernel.org>
-Date: Thu, 4 Sep 2025 12:15:43 -0300
-Cc: Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>,
- Waiman Long <longman@redhat.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
+MIME-Version: 1.0
+References: <20250904145807.556882-1-rongqianfeng@vivo.com>
+In-Reply-To: <20250904145807.556882-1-rongqianfeng@vivo.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 4 Sep 2025 11:15:46 -0400
+X-Gm-Features: Ac12FXxv0FUvBauKct_Lpu4EMKY0aLOZVPk2DGipspAwts4gAS5Q2uAmVAt2310
+Message-ID: <CADnq5_Mxryr36q_Sj1xPQEmBsnMmxoAo_hksrqewH0=Ae7_pvw@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/pm: use int type to store negative error codes
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Kenneth Feng <kenneth.feng@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Lijo Lazar <lijo.lazar@amd.com>, 
+	Boyuan Zhang <boyuan.zhang@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <BD4724FF-4AB7-4551-B71C-C22E6E709F19@collabora.com>
-References: <20250828-lock-t-when-t-is-pinned-v2-0-b067c4b93fd6@collabora.com>
- <20250828-lock-t-when-t-is-pinned-v2-3-b067c4b93fd6@collabora.com>
- <DCK43W485VCY.3KE72NNMDP32D@kernel.org>
-To: Benno Lossin <lossin@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
 
+Applied.  Thanks!
 
+Alex
 
-> On 4 Sep 2025, at 12:13, Benno Lossin <lossin@kernel.org> wrote:
->=20
-> On Thu Aug 28, 2025 at 10:52 PM CEST, Daniel Almeida wrote:
->> In order for callers to be able to access the inner T safely if T: =
-!Unpin,
->> there needs to be a way to get a Pin<&mut T>. Add this accessor and a
->> corresponding example to tell users how it works.
->>=20
->> This is not useful on its own for now, because we do not support pin
->> projections yet. This means that the following is not going to =
-compile:
->>=20
->>    let mut data: MutexGuard<'_, Data> =3D mutex.lock();
->>    let mut data: Pin<&mut Data> =3D data.as_mut();
->>    let foo =3D &mut data.foo;
->>=20
->> A future patch can enable the behavior above by implementing support =
-for
->> pin projections. Said patch is in the works already and will possibly
->> land on 6.18.
->>=20
->> Link: https://github.com/Rust-for-Linux/linux/issues/1181
->> Suggested-by: Benno Lossin <lossin@kernel.org>
->> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
->> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
->=20
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
->=20
->> ---
->> rust/kernel/sync/lock.rs | 25 +++++++++++++++++++++++++
->> 1 file changed, 25 insertions(+)
->>=20
->> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
->> index =
-9242790d15dbf65d66518d060a8a777aac558cfc..7191804a244da05db74294fdec598f1a=
-4732682c 100644
->> --- a/rust/kernel/sync/lock.rs
->> +++ b/rust/kernel/sync/lock.rs
->> @@ -245,6 +245,31 @@ pub(crate) fn do_unlocked<U>(&mut self, cb: impl =
-FnOnce() -> U) -> U {
->>=20
->>         cb()
->>     }
->> +
->> +    /// Returns a pinned mutable reference to the protected data.
->> +    ///
->> +    /// The guard implements [`DerefMut`] when `T: Unpin`, so for =
-[`Unpin`]
->> +    /// types [`DerefMut`] should be used instead of this function.
->> +    ///
->> +    /// [`DerefMut`]: core::ops::DerefMut
->> +    /// [`Unpin`]: core::marker::Unpin
->> +    ///
->> +    /// # Examples
->> +    ///
->> +    /// ```
->> +    /// # use kernel::sync::{Mutex, MutexGuard};
->> +    /// # use core::pin::Pin;
->> +    /// struct Data;
->> +    ///
->> +    /// fn example(mutex: &Mutex<Data>) {
->> +    ///   let mut data: MutexGuard<'_, Data> =3D mutex.lock();
->> +    ///   let mut data: Pin<&mut Data> =3D data.as_mut();
->> +    ///  }
->=20
-> The formatting looks off in this one, there should be 4 spaces of
-> indentation here; there are also 2 spaces in front of the `}`.
->=20
-> Also `Data` implements `Unpin`, so you're not following your own
-> recommendation from above :)
-
-I=E2=80=99ll fix this :)
-
-=E2=80=94 Daniel
-
->=20
+On Thu, Sep 4, 2025 at 10:58=E2=80=AFAM Qianfeng Rong <rongqianfeng@vivo.co=
+m> wrote:
+>
+> Use int instead of uint32_t for 'ret' variable to store negative error
+> codes or zero returned by other functions.
+>
+> Storing the negative error codes in unsigned type, doesn't cause an issue
+> at runtime but can be confusing. Additionally, assigning negative error
+> codes to unsigned type may trigger a GCC warning when the -Wsign-conversi=
+on
+> flag is enabled.
+>
+> No effect on runtime.
+>
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 > ---
-> Cheers,
-> Benno
->=20
->> +    /// ```
->> +    pub fn as_mut(&mut self) -> Pin<&mut T> {
->> +        // SAFETY: `self.lock.data` is structurally pinned.
->> +        unsafe { Pin::new_unchecked(&mut *self.lock.data.get()) }
->> +    }
->> }
->>=20
->> impl<T: ?Sized, B: Backend> core::ops::Deref for Guard<'_, T, B> {
-
-
+>  drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu10_hwmgr.c  | 2 +-
+>  drivers/gpu/drm/amd/pm/powerplay/smumgr/smu7_smumgr.c | 2 +-
+>  drivers/gpu/drm/amd/pm/swsmu/smu12/renoir_ppt.c       | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu10_hwmgr.c b/drive=
+rs/gpu/drm/amd/pm/powerplay/hwmgr/smu10_hwmgr.c
+> index 9a821563bc8e..14ccd743ca1d 100644
+> --- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu10_hwmgr.c
+> +++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu10_hwmgr.c
+> @@ -1032,7 +1032,7 @@ static int smu10_print_clock_levels(struct pp_hwmgr=
+ *hwmgr,
+>                         data->clock_vol_info.vdd_dep_on_fclk;
+>         uint32_t i, now, size =3D 0;
+>         uint32_t min_freq, max_freq =3D 0;
+> -       uint32_t ret =3D 0;
+> +       int ret =3D 0;
+>
+>         switch (type) {
+>         case PP_SCLK:
+> diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/smu7_smumgr.c b/driv=
+ers/gpu/drm/amd/pm/powerplay/smumgr/smu7_smumgr.c
+> index baf51cd82a35..0d4cbe4113a0 100644
+> --- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/smu7_smumgr.c
+> +++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/smu7_smumgr.c
+> @@ -401,7 +401,7 @@ int smu7_request_smu_load_fw(struct pp_hwmgr *hwmgr)
+>  int smu7_check_fw_load_finish(struct pp_hwmgr *hwmgr, uint32_t fw_type)
+>  {
+>         struct smu7_smumgr *smu_data =3D (struct smu7_smumgr *)(hwmgr->sm=
+u_backend);
+> -       uint32_t ret;
+> +       int ret;
+>
+>         ret =3D phm_wait_on_indirect_register(hwmgr, mmSMC_IND_INDEX_11,
+>                                         smu_data->soft_regs_start + smum_=
+get_offsetof(hwmgr,
+> diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu12/renoir_ppt.c b/drivers/gp=
+u/drm/amd/pm/swsmu/smu12/renoir_ppt.c
+> index e97b0cf19197..3baf20f4c373 100644
+> --- a/drivers/gpu/drm/amd/pm/swsmu/smu12/renoir_ppt.c
+> +++ b/drivers/gpu/drm/amd/pm/swsmu/smu12/renoir_ppt.c
+> @@ -470,7 +470,7 @@ static int renoir_od_edit_dpm_table(struct smu_contex=
+t *smu,
+>  static int renoir_set_fine_grain_gfx_freq_parameters(struct smu_context =
+*smu)
+>  {
+>         uint32_t min =3D 0, max =3D 0;
+> -       uint32_t ret =3D 0;
+> +       int ret =3D 0;
+>
+>         ret =3D smu_cmn_send_smc_msg_with_param(smu,
+>                                                                 SMU_MSG_G=
+etMinGfxclkFrequency,
+> --
+> 2.34.1
+>
 
