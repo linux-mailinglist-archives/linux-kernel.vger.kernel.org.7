@@ -1,160 +1,270 @@
-Return-Path: <linux-kernel+bounces-800017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED2DB43272
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:34:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE119B4327A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46775564369
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:34:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B0DB3A95CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4A3275B0D;
-	Thu,  4 Sep 2025 06:34:46 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D733253B5C;
-	Thu,  4 Sep 2025 06:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B37276020;
+	Thu,  4 Sep 2025 06:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ex3ajPSz"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F742750E1;
+	Thu,  4 Sep 2025 06:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756967686; cv=none; b=XYOmJJ93Oj+fk2twOhRUdlU898CzJBg7NCqnH90oPT4cTi0IymmYOJbsVM9Hr0Lf28/y89ClT4nzWOaJVh+e90Yp9Xa/HExINFUKA/5yEVMwWF2uYhvjVKRAqYtu/ttagfdEkP62rsDWTb8dDva307BRESWh29u0K1GLMreEl5Q=
+	t=1756967743; cv=none; b=TqdfpztQJSIXKOYOcAbbDnUszOBp3Rmnctw3O8YuZibRgdYQtnntHsvfWZ8uUaWgy3U8tnJK4LoFri5ShjeVlx+hXheGBHzNmgA3zBm/qzivyoGz/PYWplVSgfNipgecEgGwGHF8EuIyuxSNsbAJ7ZPJ5GmDlC8aEO1Z3XnV87g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756967686; c=relaxed/simple;
-	bh=YSV9ojTwVUCmOZLAW1nmzCEEdATne0F6waPXQ/CsoRg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ijazrTj+/o2ZADlywGgFuSeNsPTiZe6g/T91W6mwHItU6xS6vIFWLrJDt0czqSHADbbD+LJqmpsYdGaMGkXXmFFlHh5wlc+3lGhWLQxYApDju/jqPeRGU581+90IfJ48oQ+QMevpw9m7IjGqKXjigaaGEqprdBJVHmJusFsU7fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8AxP_D9MrlofYsGAA--.13749S3;
-	Thu, 04 Sep 2025 14:34:37 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJAxE+T2Mrlo7lF9AA--.3223S3;
-	Thu, 04 Sep 2025 14:34:31 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: KVM: remove unused returns.
-To: cuitao <cuitao@kylinos.cn>, zhaotianrui@loongson.cn, maobibo@loongson.cn,
- chenhuacai@kernel.org, loongarch@lists.linux.dev
-Cc: kernel@xen0n.name, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250904042622.1291085-1-cuitao@kylinos.cn>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <462e346b-424d-263d-19a8-766d578d9781@loongson.cn>
-Date: Thu, 4 Sep 2025 14:34:30 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1756967743; c=relaxed/simple;
+	bh=FjQXXChF1UqOy7FKRSQjGWQ/hIkkXKXQmcLrd7YhGs8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XuPWZJtBhCzpWtuABuGsvY2OHFMiEE/wnVfIl2EzhsxJGHPCpxXk2pvPBywV3onay0a9R+gVsX3lG/nuV2QKID4Itnekb+ZmHg6+1pwMhRP2wtpk/E6JOFWxvBR/U+KnAV3dx9fDKDEFotTaajxjY+I4vle2+cJGWizEAZXzxCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ex3ajPSz; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-724b9ba77d5so8088997b3.3;
+        Wed, 03 Sep 2025 23:35:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756967740; x=1757572540; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vvHhcp83qsBQuM6ySHCTxjF66qQvhHoowgPPy8cRsQY=;
+        b=Ex3ajPSzUGl9LunxeNMLUIVE5p75r3KpPOBVJ79AXR4W6sJAoNt3vgHyLrjruACrRl
+         KDtI60EThbhmpq2fpaGa1F8bZG07QK7EIViFM0bhI3A0YsUJ2X5Xu/NwhYsRnHL4i8OH
+         /4Lb2p83OAigGCeuw8T1AbQ/miG1AhIQPQJVPfeISkRdbec1DOLZUA4EDp09GCHp+nv5
+         s7IAxi7vjUvouIRlJhCuiSjZ0VytczNUBptz/D8wZKwZyjpx1fF7l5ZfK5HeaLmop4SF
+         qioYQTh37w8wTWCaWk1QGWL8Ywfbihy9ANS7eHGh7KKpY7LN8YeiNavgTeqm9CKcu07k
+         bp2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756967740; x=1757572540;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vvHhcp83qsBQuM6ySHCTxjF66qQvhHoowgPPy8cRsQY=;
+        b=R62R7qdaeCrWEEhlKEkVClw4tGBlZhfHRb+7HBSVukFwZ0LPtNPZ6yPFjND4XmsBCJ
+         sMCo9OvV2WiXcVsTJQBXW1WfFjadJQ/qTSc3SCdNE9JoDj2XuOmi+WfOpepFMbAAR/vq
+         mbaPHxNhH7oBPHxlMpmQ1uWUtkwIQYz4XE7m96ZUIKeSaHVUAEOmeBbVoXQsxuCn+d0N
+         9IQuRm7gbWDDGb9lkcNBvCG0/n5u1qtgLxlqC1b94y19zetGbON95dAk8bI5dJWv+PQC
+         fR3r+rQK0kuUeahb6+rKqXOV+OkUxDPpEVWXuHRt9xWZNYlu23nnmON7goytD6mEqFvt
+         36ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUo/R63ufjCEAcFXqfKVkWhnvHMFWv2zpDhje79zpbkaszPkQedaTVcidDc5oVMfzr4kLlWCx0vwkA=@vger.kernel.org, AJvYcCUrHn2v/BMY8enCZ1C3OTit5iiqhyXHDw787zy/dNfvLoDKUSlAkuK5yhqrn7E4nL/hv3nrsEjKO+q8lP1Q@vger.kernel.org, AJvYcCUt+U9HHjNtG7Div+mCCW2L7rYoZ/ykLSwmAifSzmBiGwj0LyQBGw1tBu7efkNrdZupgaO23r/O7mjiW/xgqzzrg8aB@vger.kernel.org, AJvYcCXvr01Bbn3f2s08atPLRFCuDQE/SOp4WwSBDCCh/YbPmMCbTxAYQJP6VogiCjhrRDqni0putGIIqP3uXmxUGewmrw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBY70SVK8Oem8KskDkcezhY9ihGDyBW6eFiqS/1x5OGOImsn7p
+	l7lUW1WkBFx1UQVjRCshK4YYtZWuwMzc368P+7ocLxt/5QS8E+etQHkCaQJaic82hzcZKw==
+X-Gm-Gg: ASbGncvaLVNQ9U1gT0v4oVscIwwxsU8gEzfSABynnQGX1hEQd/vyfH+dGTPBmVxPyYp
+	J37Md/uIy7hyzMv5/XUU1R526z8Cm5myc4G8e3kV+YmLCk57ck6DCYITUnpQIMtBIWqWL/FRG1r
+	BXP6dEuLOhJQ9cXyHoPHqbmapiSeanxonIaGv044xROM84wYONVMlf58ywMWadEmIe0QPGrOjC5
+	1D+a3ZGOsAXT3N1qUU/IXwrie0AxbJOBLaJCygOhJHI2aglsL4h2UZZZdMiBC6l+p2vELN7iNEf
+	fKX0g6ZZT9I/HvTlIWD31cEGQP1IMUONXhPyFtYtEt5fCjk3NaJhXLFqMQHYhVvD1/PcQpeAvR0
+	j/eKQo/MNQCUu8Jt24NqD256iL91ywg==
+X-Google-Smtp-Source: AGHT+IGgecQvCGBex5+3I/10iJMKBk/eFdZyo6YsgGfzzsbsYSr06jzNjj+3YbrxoGZBlyvsgEyYmQ==
+X-Received: by 2002:a05:690c:6f0f:b0:71b:d6a0:9771 with SMTP id 00721157ae682-722764052d2mr219807807b3.20.1756967740504;
+        Wed, 03 Sep 2025 23:35:40 -0700 (PDT)
+Received: from [127.0.0.1] ([2a12:a301:1000::20f3])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a82d94b4sm19469427b3.6.2025.09.03.23.35.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 23:35:40 -0700 (PDT)
+Message-ID: <c8a312e9-644a-45e0-8184-6eac8d8f4af1@gmail.com>
+Date: Thu, 4 Sep 2025 14:35:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250904042622.1291085-1-cuitao@kylinos.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/6] tracing: wprobe: Add wprobe for watchpoint
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin"
+ <hpa@zytor.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Ian Rogers <irogers@google.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <175673787502.478080.3342912952394010967.stgit@devnote2>
+ <20250902230204.f3e81b03e7f6805caba1b717@kernel.org>
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxE+T2Mrlo7lF9AA--.3223S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7uFW5CrWkWw4DGrykJF4xuFX_yoW8KFyfpr
-	nrArWFkw48Kr93GFZrZ34DWr4UurZ2kr12qFWjyFy8Wr4Dtr4rAr10yr95uF15t3W0vF1I
-	qasYgFnIvF4DJ3XCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
-	6r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
-	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v2
-	6r1q6r43MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-	CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF
-	0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
-	AIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
-	KfnxnUUI43ZEXa7IU8vApUUUUUU==
+From: Jinchao Wang <wangjinchao600@gmail.com>
+In-Reply-To: <20250902230204.f3e81b03e7f6805caba1b717@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2025/9/4 下午12:26, cuitao wrote:
-> The default branch has already handled all undefined cases,
-> so the final return statement is redundant.
+On 9/2/25 22:02, Masami Hiramatsu (Google) wrote:
+> (Adding Jinchao)
 > 
-> Signed-off-by: cuitao <cuitao@kylinos.cn>
-> ---
->   arch/loongarch/kvm/exit.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
+> On Mon,  1 Sep 2025 23:44:35 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 > 
-> diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
-> index 2ce41f93b2a4..e501867740b1 100644
-> --- a/arch/loongarch/kvm/exit.c
-> +++ b/arch/loongarch/kvm/exit.c
-> @@ -778,9 +778,7 @@ static long kvm_save_notify(struct kvm_vcpu *vcpu)
->   		return 0;
->   	default:
->   		return KVM_HCALL_INVALID_CODE;
-> -	};
-> -
-> -	return KVM_HCALL_INVALID_CODE;
-> +	}
->   };
->   
->   /*
+>> Hi,
+>>
+>> Here is an RFC series for adding new wprobe (watch probe) which
+>> provides memory access tracing event. Moreover, this can be used via
+>> event trigger. Thus it can trace memory access on a dynamically
+>> allocated objects too.
+> 
+> BTW, this series is on the top of probes/for-next branch in the
+> linux-trace tree.
+> 
 
-In my opinion, there is only one case, no need to use switch case,
-the ";" at the end can be removed, the code can be like this:
+Hi, Masami
 
-static long kvm_save_notify(struct kvm_vcpu *vcpu)
-{
-         unsigned long id, data;
+Thanks for including me. I only received the cover letter, so I'm 
+providing my feedback here:
 
-         id   = kvm_read_reg(vcpu, LOONGARCH_GPR_A1);
-         data = kvm_read_reg(vcpu, LOONGARCH_GPR_A2);
-         if (id == BIT(KVM_FEATURE_STEAL_TIME)) {
-                 if (data & ~(KVM_STEAL_PHYS_MASK | KVM_STEAL_PHYS_VALID))
-                         return KVM_HCALL_INVALID_PARAMETER;
+- trigger_data issue:
+   it appears that the instance being removed is not the same as
+   the one that was originally set.
 
-                 vcpu->arch.st.guest_addr = data;
-                 if (!(data & KVM_STEAL_PHYS_VALID))
-                         return 0;
+  - the function call issue:
+    `trace_wprobe_update_local()` is called twice, once in the trigger
+    callback and again in `wprobe_work_func`.
 
-                 vcpu->arch.st.last_steal = current->sched_info.run_delay;
-                 kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
-                 return 0;
-         }
 
-         return KVM_HCALL_INVALID_CODE;
-}
+I also noticed that the Watchpoint probe and KStackWatch implementations 
+share very similar logic for managing hardware breakpoints/watchpoints 
+(`hwbp/watch`):
+- `watch_init(unsigned long &place_holder)`
+- `watch_on(struct perf_event_attr *attr)`
+- `watch_off()` (or reset to the `place_holder` value)
+- `watch_uninit()`
 
-The following is the diff:
+Their primary difference lies in their handler functions, specifically 
+the `perf_overflow_handler_t triggered` callback.
 
-diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
-index 2ce41f93b2a4..0c18761539fc 100644
---- a/arch/loongarch/kvm/exit.c
-+++ b/arch/loongarch/kvm/exit.c
-@@ -764,8 +764,7 @@ static long kvm_save_notify(struct kvm_vcpu *vcpu)
+I believe we could work together to unify this logic. I am open to 
+either approach: I can refactor my watch.c, or you can introduce new 
+helpers. This would help us save duplicated work and review time.
 
-         id   = kvm_read_reg(vcpu, LOONGARCH_GPR_A1);
-         data = kvm_read_reg(vcpu, LOONGARCH_GPR_A2);
--       switch (id) {
--       case BIT(KVM_FEATURE_STEAL_TIME):
-+       if (id == BIT(KVM_FEATURE_STEAL_TIME)) {
-                 if (data & ~(KVM_STEAL_PHYS_MASK | KVM_STEAL_PHYS_VALID))
-                         return KVM_HCALL_INVALID_PARAMETER;
+> Thanks,
+> 
+>>
+>> In this version, I reuse Jinchao's arch_reinstall_hw_breakpoint()
+>> patch[1].
+>>
+>> [1] https://lore.kernel.org/all/20250828073311.1116593-6-wangjinchao600@gmail.com/
+>>
+>> The basic usage of this wprobe is similar to other probes;
+>>
+>>    w:[GRP/][EVENT] [r|w|rw]@<ADDRESS|SYMBOL[+OFFS]> [FETCHARGS]
+>>
+>> This defines a new wprobe event. For example, to trace jiffies update,
+>> you can do;
+>>
+>>   echo 'w:my_jiffies w@jiffies:8 value=+0($addr)' >> dynamic_events
+>>   echo 1 > events/wprobes/my_jiffies/enable
+>>
+>> Moreover, this can be combined with event trigger to trace the memory
+>> accecss on slab objects. The trigger syntax is;
+>>
+>>    set_wprobe:WPROBE_EVENT:FIELD[+ADJUST]
+>>    clear_wprobe:WPROBE_EVENT
+>>
+>> For example, trace the first 8 byte of the dentry data structure passed
+>> to do_truncate() until it is deleted by __dentry_kill().
+>> (Note: all tracefs setup uses '>>' so that it does not kick do_truncate())
+>>
+>>    # echo 'w:watch rw@0:8 address=$addr value=+0($addr)' > dynamic_events
+>>
+>>    # echo 'f:truncate do_truncate dentry=$arg2' >> dynamic_events
+>>    # echo 'set_wprobe:watch:dentry' >> events/fprobes/truncate/trigger
+>>
+>>    # echo 'f:dentry_kill __dentry_kill dentry=$arg1' >> dynamic_events
+>>    # echo 'clear_wprobe:watch' >> events/fprobes/dentry_kill/trigger
+>>
+>>    # echo 1 >> events/fprobes/truncate/enable
+>>    # echo 1 >> events/fprobes/dentry_kill/enable
+>>
+>>    # echo aaa > /tmp/hoge
+>>    # echo bbb > /tmp/hoge
+>>    # echo ccc > /tmp/hoge
+>>    # rm /tmp/hoge
+>>
+>> Then, the trace data will show;
+>>
+>> # tracer: nop
+>> #
+>> # entries-in-buffer/entries-written: 16/16   #P:8
+>> #
+>> #                                _-----=> irqs-off/BH-disabled
+>> #                               / _----=> need-resched
+>> #                              | / _---=> hardirq/softirq
+>> #                              || / _--=> preempt-depth
+>> #                              ||| / _-=> migrate-disable
+>> #                              |||| /     delay
+>> #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
+>> #    [    7.026136] sh (113) used greatest stack depth: 12912 bytes left
+>>            | |         |   |||||     |         |
+>>                sh-113     [002] .....     7.024402: truncate: (do_truncate+0x4/0x120) dentry=0xffff8880069194b8
+>>                sh-113     [002] ..Zff     7.024822: watch: (lookup_fast+0xaa/0x150) address=0xffff8880069194b8 value=0x200008
+>>                sh-113     [002] ..Zff     7.024830: watch: (step_into+0x82/0x360) address=0xffff8880069194b8 value=0x200008
+>>                sh-113     [002] ..Zff     7.024834: watch: (step_into+0x9f/0x360) address=0xffff8880069194b8 value=0x200008
+>>                sh-113     [002] ..Zff     7.024839: watch: (path_openat+0xb3a/0xe70) address=0xffff8880069194b8 value=0x200008
+>>                sh-113     [002] ..Zff     7.024843: watch: (path_openat+0xb9a/0xe70) address=0xffff8880069194b8 value=0x200008
+>>                sh-113     [002] .....     7.024847: truncate: (do_truncate+0x4/0x120) dentry=0xffff8880069194b8
+>>                sh-113     [002] ...1.     7.025364: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff888006919380
+>>                sh-113     [002] ...1.     7.025511: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff8880069195f0
+>>                rm-118     [003] ...1.     7.027543: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff8880069194b8
+>>                sh-113     [002] ...2.     7.027825: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff8880044429c0
+>>                sh-113     [002] ...2.     7.027833: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff888004442270
+>>
+>>
+>> Thank you,
+>>
+>> ---
+>>
+>> Jinchao Wang (1):
+>>        x86/HWBP: introduce arch_reinstall_hw_breakpoint() for atomic context
+>>
+>> Masami Hiramatsu (Google) (5):
+>>        tracing: wprobe: Add watchpoint probe event based on hardware breakpoint
+>>        HWBP: Add modify_wide_hw_breakpoint_local() API
+>>        tracing: wprobe: Add wprobe event trigger
+>>        selftests: tracing: Add a basic testcase for wprobe
+>>        selftests: tracing: Add syntax testcase for wprobe
+>>
+>>
+>>   Documentation/trace/index.rst                      |    1
+>>   Documentation/trace/wprobetrace.rst                |  129 ++
+>>   arch/Kconfig                                       |   10
+>>   arch/x86/Kconfig                                   |    1
+>>   arch/x86/include/asm/hw_breakpoint.h               |    3
+>>   arch/x86/kernel/hw_breakpoint.c                    |   61 +
+>>   include/linux/hw_breakpoint.h                      |    6
+>>   include/linux/trace_events.h                       |    3
+>>   kernel/events/hw_breakpoint.c                      |   36 +
+>>   kernel/trace/Kconfig                               |   24
+>>   kernel/trace/Makefile                              |    1
+>>   kernel/trace/trace.c                               |    9
+>>   kernel/trace/trace.h                               |    5
+>>   kernel/trace/trace_probe.c                         |   20
+>>   kernel/trace/trace_probe.h                         |    8
+>>   kernel/trace/trace_wprobe.c                        | 1111 ++++++++++++++++++++
+>>   .../ftrace/test.d/dynevent/add_remove_wprobe.tc    |   68 +
+>>   .../test.d/dynevent/wprobes_syntax_errors.tc       |   20
+>>   18 files changed, 1513 insertions(+), 3 deletions(-)
+>>   create mode 100644 Documentation/trace/wprobetrace.rst
+>>   create mode 100644 kernel/trace/trace_wprobe.c
+>>   create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_wprobe.tc
+>>   create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/wprobes_syntax_errors.tc
+>>
+>> --
+>> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> 
 
-@@ -776,12 +775,10 @@ static long kvm_save_notify(struct kvm_vcpu *vcpu)
-                 vcpu->arch.st.last_steal = current->sched_info.run_delay;
-                 kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
-                 return 0;
--       default:
--               return KVM_HCALL_INVALID_CODE;
--       };
-+       }
 
-         return KVM_HCALL_INVALID_CODE;
--};
-+}
-
-  /*
-   * kvm_handle_lsx_disabled() - Guest used LSX while disabled in root.
-
-Thanks,
-Tiezhu
-
+-- 
+Best regards,
+Jinchao
 
