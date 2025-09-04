@@ -1,108 +1,105 @@
-Return-Path: <linux-kernel+bounces-800448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C6FB437B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:57:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C38FDB437B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4F8B3AE5B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859D73AFE85
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830892F83C0;
-	Thu,  4 Sep 2025 09:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB2C2F6195;
+	Thu,  4 Sep 2025 09:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fj8sq+mg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Rn+Org61";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h/q0DZkE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D730D7081F;
-	Thu,  4 Sep 2025 09:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CC02D4B5F;
+	Thu,  4 Sep 2025 09:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756979823; cv=none; b=ZvSFaLHMDFtWT7ZqVKubz30jf15oWGU09x+6sgfBpKiCSCHA6FhEo24IfNTLPZpXjfYizybf8k7gLA98fNiGLnZGl3Qc8cr5fCUVwh0Dao2kZUWIIzJzRUHGoD179UxbNm1s0eduaYiqmMKQGYEyDKjTauLRAZUBHaGYhsTnyA0=
+	t=1756979864; cv=none; b=NXi/OtyN9M56EQsQs21PUTlgNIEqOQBpMakNHvkcHoR9yHtBNbUJdkt0PUL0gil/BNZoWHPUDWuHy9pbXv/WwUxyfkTTvpfyuFPQKvWRaFhmqASWuZ8aFe/00QuGiKdM5kqt/654ep52iHAiwjIzpI7vzTW9FB7eumM0qjZMt6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756979823; c=relaxed/simple;
-	bh=Mr3XGbhvMQum++WN/lI8qNzkak39gyYMn/Hwp8A8pV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KKvbQ7KDaa+VZn17x8ucu4pTdKFjLToEzISTNbvmyn9LUp292hHCwyC6Eoxey6jPzlOWohIEYg+GmqmqqZxOJC54COIXEZWacN7nOwhk/uJGvGpnwWK7TfH2y9kLjdEjkvQkLFmNEMNAbT1qzUnmsH/BF3rtUrLIWPSfeIo6sXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fj8sq+mg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5508C4CEF0;
-	Thu,  4 Sep 2025 09:56:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756979822;
-	bh=Mr3XGbhvMQum++WN/lI8qNzkak39gyYMn/Hwp8A8pV4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fj8sq+mgo4dfxA5yYQzsWdjJrzopo8xjxcP55pLDVCdIYJX23w2mbI5w9ZBiWursc
-	 jbB4qXTb+q9JVhmeeUHzq57A0DfFP75EugVf4ShFtHyWrx9pvig6V/du2iNQ5L6CvH
-	 fh1LjNoheXSZvmggQwqStAds4c0Xz4imFgNEqBbQ99ZeLlDN++1/ksDWDRJbekGnUY
-	 vUcHGKCHV2ImQEGxjjdSNxVNY84eWqNxaev0mtKagsTLaZ9V8+2yN9dvnua6p/uU0W
-	 lw1SOQdyZaH0GHe5ccvEJh4ruq+DYW6X9HytsBHc7O+VaImvtkInuY1ZB0gLW5Hbza
-	 EnLwKSRA5uohQ==
-Date: Thu, 4 Sep 2025 10:56:57 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH net] net: stmmac: dwmac-rk: Ensure clk_phy doesn't
- contain invalid address
-Message-ID: <20250904095657.GF372207@horms.kernel.org>
-References: <20250904031222.40953-3-ziyao@disroot.org>
- <20250904095457.GE372207@horms.kernel.org>
+	s=arc-20240116; t=1756979864; c=relaxed/simple;
+	bh=jCWWS9thhqHI6WorjKVJ4Omd+zzp5g47xyBO8dkSAPI=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nXvMSSU3tQXTgxwXAn8+LjHEtfWbaJpREW3g5NhFAUXMt97vwQ2gDKpeId7L22MGARgTrhiootvVr8oCYwsDCaun8517uuF0XXHlS1ZLG5BtGkX4jSXQmq+2p0CrC/9coNeNoBlM5BXjbNML1XUZwwV6UenId2c6FipsM6WLtGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Rn+Org61; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h/q0DZkE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756979860;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lmxUDcVQGvGH5AiF2LAsdAfRz+R12LPp/Ke3ofTCeYo=;
+	b=Rn+Org61hauTNhCUylxzKqCb9uCYSrtylMDSEI+qtGUvF6TN03J3Ui9ylUvWK60MvvqMsR
+	SKox1lhDWuqillbAolGmzfB4vcUP1FSwLaqOtn1wbvgiZlLAQpQNfxXrT4b4RRj5xpzicF
+	jQrQRQMoaTSh8A6Ob6PsLgwJAKrZV7/D8VKA90Ksn0mztVDyi7IOh/2QM8CwrbxNk7YqK4
+	EKLul63PCeMgP+ROm/enfTs3XQ3jvXlOPvfJwxYNSlOK11gEfdRQonuQZ8cv3MLNTPNs8j
+	rhDm/a7+FbQuSY6Jny1Y6qfL57txEi2B7OZm0QgkjL7ANxr3z/rIwA5nE4K4lg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756979860;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lmxUDcVQGvGH5AiF2LAsdAfRz+R12LPp/Ke3ofTCeYo=;
+	b=h/q0DZkEQFvuC1q0khezrE5jkkUSq3+igljP7KCmENo5CHpWJwus2234LjAEt1+jTR5gdG
+	2hzRKoGJwdp6Y3BQ==
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>, Nam Cao
+ <namcao@linutronix.de>, "K . Y . Srinivasan" <kys@microsoft.com>, Marc
+ Zyngier <maz@kernel.org>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
+ <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H . Peter Anvin"
+ <hpa@zytor.com>, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] x86/hyperv: Switch to
+ msi_create_parent_irq_domain()
+In-Reply-To: <0105fb29-1d42-49cb-8146-d2dfcb600843@linux.microsoft.com>
+References: <cover.1752868165.git.namcao@linutronix.de>
+ <45df1cc0088057cbf60cb84d8e9f9ff09f12f670.1752868165.git.namcao@linutronix.de>
+ <0105fb29-1d42-49cb-8146-d2dfcb600843@linux.microsoft.com>
+Date: Thu, 04 Sep 2025 11:57:39 +0200
+Message-ID: <87o6rqy1yk.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904095457.GE372207@horms.kernel.org>
+Content-Type: text/plain
 
-On Thu, Sep 04, 2025 at 10:54:57AM +0100, Simon Horman wrote:
-> On Thu, Sep 04, 2025 at 03:12:24AM +0000, Yao Zi wrote:
-> > We must set the clk_phy pointer to NULL to indicating it isn't available
-> > if the optional phy clock couldn't be obtained. Otherwise the error code
-> > returned by of_clk_get() could be wrongly taken as an address, causing
-> > invalid pointer dereference when later clk_phy is passed to
-> > clk_prepare_enable().
-> > 
-> > Fixes: da114122b831 ("net: ethernet: stmmac: dwmac-rk: Make the clk_phy could be used for external phy")
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> 
-> ...
-> 
-> Hi,
-> 
-> I this patch doesn't seem to match upstream code.
-> 
-> Looking over the upstream code, it seems to me that
-> going into the code in question .clk_phy should
-> be NULL, as bsp_priv it is allocated using devm_kzalloc()
-> over in rk_gmac_setup()
-> 
-> While the upstream version of the code your patch modifies
-> is as follows. And doesn't touch .clk_phy if integrated_phy is not set.
-> 
->         if (plat->phy_node && bsp_priv->integrated_phy) {
->                 bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
->                 ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
->                 if (ret)
->                         return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
->                 clk_set_rate(bsp_priv->clk_phy, 50000000);
->         }
-> 
-> Am I missing something?
+On Wed, Sep 03 2025 at 12:40, Nuno Das Neves wrote:
+> On 7/18/2025 12:57 PM, Nam Cao wrote:
+>> Move away from the legacy MSI domain setup, switch to use
+>> msi_create_parent_irq_domain().
+>> 
+>> While doing the conversion, I noticed that hv_irq_compose_msi_msg() is
+>> doing more than it is supposed to (composing message content). The
+>> interrupt allocation bits should be moved into hv_msi_domain_alloc().
+>> However, I have no hardware to test this change, therefore I leave a TODO
+>> note.
+>> 
+>> Signed-off-by: Nam Cao <namcao@linutronix.de>
+>> ---
+>>  arch/x86/hyperv/irqdomain.c | 111 ++++++++++++++++++++++++------------
+>>  drivers/hv/Kconfig          |   1 +
+>>  2 files changed, 77 insertions(+), 35 deletions(-)
+>
+> Tested on nested root partition.
+>
+> Looks good, thanks.
+>
+> Tested-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
-Oops, I missed that da114122b831 is present in net-next (but not net).
-Let me look over this a second time.
+I assume this goes through the hyper-V tree.
 
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 
