@@ -1,187 +1,150 @@
-Return-Path: <linux-kernel+bounces-801273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D27B442EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:36:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FCBB442EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC46A05886
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:36:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A20C1890783
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F442DD60E;
-	Thu,  4 Sep 2025 16:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D6D1D554;
+	Thu,  4 Sep 2025 16:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fn3N8jCy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ye76iZPQ"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827C3230BEC;
-	Thu,  4 Sep 2025 16:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41826161302
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757003750; cv=none; b=AONh0Zrs2m5mWjT+q/IwFCLQ6PFe8Ix8nIXi066ELnoSa0czuJlie3uCVEvJDqxplwC9y/F7w7ozaLmgIVkxCh1wo2AYKhT4BHErRlktvPbsLtZU1DB+0U01Qc8ZC/asMstqjG3RAdV6E6kaO4THLMDbSvUPrsbN5YXgETBLswY=
+	t=1757003815; cv=none; b=h60mi5Ye4ir7kGiDsSuPx8pn3m2NH8rgCdw3935/DnYeEuQAAdX6TCDFIfivUxBob6ZY6nIFjadoOrda27G6pV0H3ezkOW2GS6B7P1W4buJ+pkgJBpJC4cYHeUqYPj93LfNa/Rlm7sk48LhHUmKhEWhyJ9EQiAnQLcIk97y6aS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757003750; c=relaxed/simple;
-	bh=licaZp2ybh8noYPh9P971ur58m6wEBdUMOVNCc7Es9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AuTNI1zuQCs9MMIoaBvGxRiS/2gccNRDTeMI//HRPyh7IjTsxpUMR3vc+kzgZf6Bl6oIE9gOCjuRB/Vb/WWVRt1qJQ56ogKRF9Cj+SJCHY+pD24bV+TDVSSjJ0YEvSFog1K0Vr4wNN6djPXO9z1IV43zc9Y87ViBwpsEX3D8sMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fn3N8jCy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F27FC4CEF0;
-	Thu,  4 Sep 2025 16:35:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757003750;
-	bh=licaZp2ybh8noYPh9P971ur58m6wEBdUMOVNCc7Es9U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fn3N8jCya+OEPCs9oBYZply8Iq7u146UCHkl8NI7Ks+J0dCCYHDEjvhktJ9fEFARD
-	 7gyiILo7qFQz7gYLy0mFEHIugCVvw84/a6yAT98sQXUBe98Ma8svlRbBg9ePG+Bfiu
-	 +akXBeYnsAKaUoVOH+cJxKKZmDxjic7J5L5l6sVdYBHQKCkSnKe/IUkc6KkmKZvd4f
-	 IBcKu/TYuzTctbKsviy1td2Za8jDwaR9roOUAXaG2u/XTZrIUHWAugfJrDzo1PmimJ
-	 mm+LXaUJmApZkdpIjFQJkRVY5IigpQNAs7baA/xjXXzczYKgkw/F7dE9em8Pkd/pMY
-	 n9TpaFQdcH0Qw==
-Date: Thu, 4 Sep 2025 22:05:38 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: David Box <david.e.box@linux.intel.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, rafael@kernel.org, 
-	bhelgaas@google.com, vicamo.yang@canonical.com, kenny@panix.com, 
-	ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com, linux-pm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 1/2] PCI/ASPM: Add host-bridge API to override default
- ASPM/CLKPM link state
-Message-ID: <edsuntasypojlpegqec4chsixmxvutcetnklkglah5dooe5xai@y6vh6lrnp72f>
-References: <ng67s7imjpj7i5ym7unvmewzhyk4ybgpkgw5aizicfs423vsxh@hvpfmk32ooe4>
- <20250903230450.GA1236832@bhelgaas>
- <ywuno3ssrgl3limng35j4hep6l7qvx5zmyuutrv4nqhd7r34pf@4apznk3xyyiv>
+	s=arc-20240116; t=1757003815; c=relaxed/simple;
+	bh=7904c62jqnr+Z9vpb9OeNuICRFS6lbka6nmTNqOdF0k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XUoaTQuK2ywtjiBT1MiCMB2Gt7kJ0h5ZwEQJSYTMBklM2w71l0RvwGm3NlOdrz2GVanPdgSLmmuaMTsVacn5AYjUXPajm31qwLdU0ShYMy+eUNkrJcoltE3mnFt4zU6mGrz9mE0Et+2/8jZP2pWrJ65IxoCP4THRhBw5hDD9lVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ye76iZPQ; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61cb9e039d9so2156464a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 09:36:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757003813; x=1757608613; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7904c62jqnr+Z9vpb9OeNuICRFS6lbka6nmTNqOdF0k=;
+        b=Ye76iZPQmnif30gTNvizD8NlTxOA+LlejWyYP0lmtbeFcGrwfVFjorxPbpr2ny1QbF
+         Kl9MgoB2R7JExmPGDnSy4LRdOtlbM20yK+20Ub2Ovh00JnBwUI+AHguFJkaH14l8KnRz
+         mE4J38Kip1TKbgUQxjcTr+rWY8AC5jX1H+cqIO0oqrQhr48nauvYhaHSuS+4u+UMpYiU
+         mv8258nP7zfwlALlwvp7sKanMJ/peytQtYsQWZw0nse9fuGI+uP6E2huxWRjx781WjIa
+         lkt9eMTpjM0Is4QAUB52OYLRgY0tnCiO541qi/8P5oKYWuslhz8fhJiPzTTequHTeP9D
+         K8cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757003813; x=1757608613;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7904c62jqnr+Z9vpb9OeNuICRFS6lbka6nmTNqOdF0k=;
+        b=PR24RfmpEO62+eX/gbIZMYHtI4COdzLraSr3ZWiHv3iD4WKoF1RNC+2akN9LNGUMAv
+         kU9wzQ6v4vXwxQu+RzvUatXeOgYk/AWZfrFiDNJJgECBq0INwtzJgkR3UdnvWLd3GN/r
+         bVh5UKX7KEVPR1ORCDeB46Yzt4Ryv1JU+qJwSjsZ5DpnjbI62jZtbkxxsgLehw1SlaGY
+         bs/IIEFfnyOO+7luUqroISMQ788tnUbVedLH7tNeqnJRO4qkFeIyUF3EwbOQlfhhbWJ5
+         vmUGXdl9a1q6Gg32CR1xGcnWJTyjUFYknV5GAn+sVDxqh5F3ZRkkT/nUNB5dfzifDoXI
+         mS6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVUWv/MCECYGSZFXFIbqbOsLspuCgglVbTmN5J88jBMl5VIzdRQ2Y92Pa4dSYU5ygJeuG1/gCgrRikNKrU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmRmVKqctmLMsuTHsLFw+yBK5LQZ3ZTIjNqqzATGMnlDgyR2Hh
+	jy7IJsNULKb9ixykPsFUfSiEltnJNqtO3L3DgJGoL4SdHVeeKSC4R3oXdpRXetH1RhTVSEcZ1XB
+	ovDpAv/AM7jXYNo6P8Syd8jPCaZzX16E=
+X-Gm-Gg: ASbGnctYfLW4vL3IroaKQMndi8xN3EvSewWzbsSnH513p8ApbMvto4bE0GGkaKKYzA+
+	b1Cz/z14EA12WnSYqJ6D+nEkb2OPvF0NffxPsIH18hETXHqLpApep5KPMKTMvq7P0IhLxEnTOEu
+	l69PUCMBRJ6JczGdlWLwV27HaL0/mBU0lJVLw0NyTL9RCZhqjG71pWqY4oOOSahsryvBiTlJKpx
+	L0TAQCkxQ6WzHeojb146Q==
+X-Google-Smtp-Source: AGHT+IEA2UeIAkXr+e/tdWh3HGDsg++x/c5BndXwl04n0fDAlOHFSLcblpbp/pDol4/9hV6KP6nc7aCS9TcBGJams98=
+X-Received: by 2002:a05:6402:504b:b0:618:aed3:38a with SMTP id
+ 4fb4d7f45d1cf-61d26ebbf9fmr16584771a12.31.1757003812505; Thu, 04 Sep 2025
+ 09:36:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ywuno3ssrgl3limng35j4hep6l7qvx5zmyuutrv4nqhd7r34pf@4apznk3xyyiv>
+References: <20250822192023.13477-1-ryncsn@gmail.com> <CACePvbWG85YJFpLDoFnz05tX2trUJFTzyuELMGYSYr5ye_hQ6w@mail.gmail.com>
+In-Reply-To: <CACePvbWG85YJFpLDoFnz05tX2trUJFTzyuELMGYSYr5ye_hQ6w@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 5 Sep 2025 00:36:15 +0800
+X-Gm-Features: Ac12FXxXIyA7Ak57QaP00eHzQFWcLDAWH7ZbkJmCacJCM3GF4SOIsmmFYuv5ftA
+Message-ID: <CAMgjq7Bv99OHvbEiDcEMVYS5bRdSgSu75a8YUEQ+3roLiOo=ug@mail.gmail.com>
+Subject: Re: [PATCH 0/9] mm, swap: introduce swap table as swap cache (phase I)
+To: Chris Li <chrisl@kernel.org>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 04, 2025 at 09:02:38AM GMT, David Box wrote:
-> On Wed, Sep 03, 2025 at 06:04:50PM -0500, Bjorn Helgaas wrote:
-> > On Fri, Aug 29, 2025 at 12:54:20PM -0700, David Box wrote:
-> > > On Thu, Aug 28, 2025 at 03:43:45PM -0500, Bjorn Helgaas wrote:
-> > > > On Mon, Aug 25, 2025 at 01:35:22PM -0700, David E. Box wrote:
-> > > > > Synthetic PCIe hierarchies, such as those created by Intel VMD, are not
-> > > > > enumerated by firmware and do not receive BIOS-provided ASPM or CLKPM
-> > > > > defaults. Devices in such domains may therefore run without the intended
-> > > > > power management.
-> > > > > 
-> > > > > Add a host-bridge mechanism that lets controller drivers supply their own
-> > > > > defaults. A new aspm_default_link_state field in struct pci_host_bridge is
-> > > > > set via pci_host_set_default_pcie_link_state(). During link initialization,
-> > > > > if this field is non-zero, ASPM and CLKPM defaults come from it instead of
-> > > > > BIOS.
-> > > > > 
-> > > > > This enables drivers like VMD to align link power management with platform
-> > > > > expectations and avoids embedding controller-specific quirks in ASPM core
-> > > > > logic.
-> > > > 
-> > > > I think this kind of sidesteps the real issue.  Drivers for host
-> > > > controllers or PCI devices should tell us about *broken* things, but
-> > > > not about things advertised by the hardware and available for use.
-> > > 
-> > > I agree with the principle. The intent isn’t for VMD (or any controller) to
-> > > override valid platform policy. It’s to handle synthetic domains where the
-> > > platform doesn’t provide any policy path (no effective _OSC/FADT for the child
-> > > hierarchy). In those cases, the controller is the only agent that knows the
-> > > topology and can supply sane defaults.
-> > > 
-> > > I’m happy to tighten the patch to explicitly cover synthetic domains only.
-> > > Instead of an API, we could have a boolean flag 'aspm_synthetic_domain'. When
-> > > set by the controller, we can do:
-> > > 
-> > >     if (host_bridge->aspm_synthetic_domain)
-> > >             link->aspm_default = PCIE_LINK_STATE_ALL;
-> > > 
-> > > This at least addresses your concern about policy decision, leaving it to the
-> > > core to determine how these domains are handled rather than an ABI that lets
-> > > domains set policy.
-> > > 
-> > > > The only documented policy controls I'm aware of for ASPM are:
-> > > > 
-> > > >   - FADT "PCIe ASPM Controls" bit ("if set, OS must not enable ASPM
-> > > >     control on this platform")
-> > > > 
-> > > >   - _OSC negotiation for control of the PCIe Capability (OS is only
-> > > >     allowed to write PCI_EXP_LNKCTL if platform has granted control to
-> > > >     the OS)
-> > > > 
-> > > > I think what we *should* be doing is enabling ASPM when it's
-> > > > advertised, subject to those platform policy controls and user choices
-> > > > like CONFIG_PCIEASPM_PERFORMANCE/POWERSAVE/etc and sysfs attributes.
-> > > > 
-> > > > So basically I think link->aspm_default should be PCIE_LINK_STATE_ALL
-> > > > without drivers doing anything at all.  Maybe we have to carve out
-> > > > exceptions, e.g., "VMD hierarchies are exempt from _OSC," or "devices
-> > > > on x86 systems before 2026 can't enable more ASPM than BIOS did," or
-> > > > whatever.  Is there any baby step we can make in that direction?
-> > > > 
-> > > > This feels a little scary, so feel free to convince me it can't be
-> > > > done :)
-> > > 
-> > > I understand your direction of enabling all advertised states by
-> > > default (subject to FADT/_OSC and user settings). To explore that,
-> > > I’ll send an RFC in parallel with this patch that proposes a baby
-> > > step, e.g.  add instrumentation so we can see where BIOS left
-> > > capabilities unused, and make it opt-in via a boot param so we can
-> > > evaluate impact safely.
-> > 
-> > The instrumentation, absolutely.  We need something about what was
-> > already enabled and when we change things.
-> > 
-> > > So this series will handle the VMD gap directly, and the RFC can
-> > > kick off the wider discussion about defaults on ACPI-managed hosts.
-> > > Does that sound like a reasonable approach and split?
-> > 
-> > I don't really want a parallel approach because I don't think it would
-> > ever converge again.  BUT I think you're still OK for VMD, because I
-> > think the default should be PCIE_LINK_STATE_ALL, and when we carve out
-> > the exceptions that would not be in vmd.c, and it's easy to say that
-> > there's no exception for VMD.
-> 
-> While I agree this is a better overall direction, it still won’t cover VMD in
-> the “FADT disallows OS ASPM control” case. VMD (and others) are already using
-> pci_enable_link_state() to set PCIE_LINK_STATE_ALL. But that doesn’t apply when
-> aspm_disabled = 1, which is the primary issue this patch addresses — moving away
-> from a runtime control setting to init-time and allowing policy to be set even
-> when aspm_disabled = 1.
-> 
-> I want to be clear that this is needed because VMD is NOT fully ACPI-compliant.
-> There is AML code, but it’s deliberately obfuscated to prevent the OS from
-> enumerating the devices natively [1]. VMD was designed to give the driver
-> complete control over the domain configuration, and that includes power
-> management settings.
-> 
-> So I can send a patch to make the default PCIE_LINK_STATE_ALL, but I would still
-> need a follow-on in that series that does something like:
-> 
-> 	if (host_bridge->synthetic_domain)
-> 		link->aspm_default = PCIE_LINK_STATE_ALL;
-> 
-> 
-> That carve-out is still required, because without it synthetic domains like VMD
-> would inherit invalid or nonexistent BIOS defaults. The key difference is that
-> only vmd.c would set itself as synthetic_domain; ASPM core still decides what
-> policy applies.
-> 
+On Sat, Aug 30, 2025 at 2:57=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
+>
+> Hi Kairui,
+>
+> I give one pass of review on your series already. I Ack a portion of
+> it. I expect some clarification or update on the rest.
+>
+> I especially want to double check the swap cache atomic set a range of
+> swap entries to folio.
+> I want to make sure this bug does not happen to swap table:
+> https://lore.kernel.org/linux-mm/5bee194c-9cd3-47e7-919b-9f352441f855@ker=
+nel.dk/
+>
+> I just double checked, the swap table should be fine in this regard.
+> The bug is triggered by memory allocation failure in the middle of
+> insert folio. Swap tables already populated the table when the swap
+> entry is allocated and handed out to the caller. We don't do memory
+> allocation when inserting folio into swap cache, which is a good
+> thing. We should not have that bug.
+>
+> I also want some extra pair of eyes on those subtle behavior change
+> patches, I expect you to split them out in the next version.
+> I will need to go through the split out subtle patch one more time as
+> well. This pass I only catch the behavior change, haven't got a chance
+> to reason those behavior changes patches are indeed fine. If you can
+> defer those split out patches, that will save me some time to reason
+> them on the next round. Your call.
 
-Both VMD and the non-ACPI host bridge controllers are mostly same functionality
-wise, so I don't think the 'synthetic_domain' property makes sense.
+Thanks a lot for the review and raising concern about robustness of phase 1=
+.
 
-IMO, it is better to go with the API introduced in this patch for VMD as it
-clearly tells us the host bridge driver is overriding for a purpose and I can
-set PCIE_LINK_STATE_ALL for DT based platforms separately.
+I just added more atomic runtime checks and ran another few days of
+stress and performance tests. So far I don't think there is a race or
+bug in the code, as I have been testing the longer series for months.
+But with more checks, we are still a lot faster than before, and much
+less error prone. So it seems very reasonable and acceptable to have
+them as this is a quite important part, even for a long term.
 
-- Mani
+That will surely help catch any potential new or historical issue.
 
--- 
-மணிவண்ணன் சதாசிவம்
+V2 would have a few more patches splitted from old ones so it should
+be cleaner. The code should be basically still the same though. Some
+parts like the whole new infrastructure are really hard to split though
+as they are supposed to work as a whole.
+
+>
+> Oh, I also want to write a design document for the swap table idea. I
+> will send it your way to incorporate into your next version of the
+> series.
+>
+> Thanks for the great work! I am very excited about this.
+
+Later phases will also be exciting where we start to trim down the LOC
+and long existing issues, with net gains :)
 
