@@ -1,139 +1,160 @@
-Return-Path: <linux-kernel+bounces-800018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E63B43277
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:35:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED2DB43272
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AA4C7AA066
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:33:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46775564369
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B442765FF;
-	Thu,  4 Sep 2025 06:35:03 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [207.46.229.174])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B845A274FE3;
-	Thu,  4 Sep 2025 06:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.46.229.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4A3275B0D;
+	Thu,  4 Sep 2025 06:34:46 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D733253B5C;
+	Thu,  4 Sep 2025 06:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756967702; cv=none; b=c+tsiA+RO61ejDPgy1NbEFdKi7eRHUHv2nDWrQLqW0iUiywdJ9uaGW+i+TzE5CqjxzEMTX8/nWtVuOX03HzT60KeI2xfykfwWaF+xABsucjIwSwudz0RnwrDY0DV12UaK0HivxddN0DibEkfrvSrsngOr4b5UWMf7AIjflgSBg8=
+	t=1756967686; cv=none; b=XYOmJJ93Oj+fk2twOhRUdlU898CzJBg7NCqnH90oPT4cTi0IymmYOJbsVM9Hr0Lf28/y89ClT4nzWOaJVh+e90Yp9Xa/HExINFUKA/5yEVMwWF2uYhvjVKRAqYtu/ttagfdEkP62rsDWTb8dDva307BRESWh29u0K1GLMreEl5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756967702; c=relaxed/simple;
-	bh=Tkri1JDAFjCg+7BznGdB8556T/CQsfaj0b90N8OAIGs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V0AaeduXY8rDLXW/1CSnzeI20pRkbdnvGOZ+ziJPH/w0Gb0lrro1ZLPCb829JaqdiCSCNVJxY+7qldUsiG2FtQeMNPE2sN/JggV+oMPRW0Fm1tJX8RB6XWukv3GaNMnYhGcXiEnGBPf73uNf0a6Yk7YuyFJWCGfShj2dED8CWas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=207.46.229.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
-	by app1 (Coremail) with SMTP id TAJkCgAHHxALM7lokE_IAA--.20421S2;
-	Thu, 04 Sep 2025 14:34:53 +0800 (CST)
-From: Yulin Lu <luyulin@eswincomputing.com>
-To: dlemoal@kernel.org,
-	cassel@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-ide@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	linux-phy@lists.infradead.org
-Cc: ningyu@eswincomputing.com,
-	zhengyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com,
-	fenglin@eswincomputing.com,
-	lianghujun@eswincomputing.com,
-	Yulin Lu <luyulin@eswincomputing.com>
-Subject: [PATCH v3 0/3] Add driver support for Eswin EIC7700 SoC SATA Controller and PHY
-Date: Thu,  4 Sep 2025 14:34:27 +0800
-Message-Id: <20250904063427.1954-1-luyulin@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
+	s=arc-20240116; t=1756967686; c=relaxed/simple;
+	bh=YSV9ojTwVUCmOZLAW1nmzCEEdATne0F6waPXQ/CsoRg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ijazrTj+/o2ZADlywGgFuSeNsPTiZe6g/T91W6mwHItU6xS6vIFWLrJDt0czqSHADbbD+LJqmpsYdGaMGkXXmFFlHh5wlc+3lGhWLQxYApDju/jqPeRGU581+90IfJ48oQ+QMevpw9m7IjGqKXjigaaGEqprdBJVHmJusFsU7fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8AxP_D9MrlofYsGAA--.13749S3;
+	Thu, 04 Sep 2025 14:34:37 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJAxE+T2Mrlo7lF9AA--.3223S3;
+	Thu, 04 Sep 2025 14:34:31 +0800 (CST)
+Subject: Re: [PATCH] LoongArch: KVM: remove unused returns.
+To: cuitao <cuitao@kylinos.cn>, zhaotianrui@loongson.cn, maobibo@loongson.cn,
+ chenhuacai@kernel.org, loongarch@lists.linux.dev
+Cc: kernel@xen0n.name, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250904042622.1291085-1-cuitao@kylinos.cn>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <462e346b-424d-263d-19a8-766d578d9781@loongson.cn>
+Date: Thu, 4 Sep 2025 14:34:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20250904042622.1291085-1-cuitao@kylinos.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgAHHxALM7lokE_IAA--.20421S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF4DZryDXF1rAr4xWFW5trb_yoW5Xryfpa
-	1kCryYyr1ktryxJan7Ja10kFy3Aan7GFWakrZrXw15X39I93yvqa1fK3WYyF97Cw1kXr1Y
-	vF4aga45CFy5ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
-	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRidbbtUUUUU==
-X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
+X-CM-TRANSID:qMiowJAxE+T2Mrlo7lF9AA--.3223S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7uFW5CrWkWw4DGrykJF4xuFX_yoW8KFyfpr
+	nrArWFkw48Kr93GFZrZ34DWr4UurZ2kr12qFWjyFy8Wr4Dtr4rAr10yr95uF15t3W0vF1I
+	qasYgFnIvF4DJ3XCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
+	6r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
+	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v2
+	6r1q6r43MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
+	CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF
+	0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
+	AIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
+	KfnxnUUI43ZEXa7IU8vApUUUUUU==
 
-This series depends on the config option patch [1].
+On 2025/9/4 下午12:26, cuitao wrote:
+> The default branch has already handled all undefined cases,
+> so the final return statement is redundant.
+> 
+> Signed-off-by: cuitao <cuitao@kylinos.cn>
+> ---
+>   arch/loongarch/kvm/exit.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
+> index 2ce41f93b2a4..e501867740b1 100644
+> --- a/arch/loongarch/kvm/exit.c
+> +++ b/arch/loongarch/kvm/exit.c
+> @@ -778,9 +778,7 @@ static long kvm_save_notify(struct kvm_vcpu *vcpu)
+>   		return 0;
+>   	default:
+>   		return KVM_HCALL_INVALID_CODE;
+> -	};
+> -
+> -	return KVM_HCALL_INVALID_CODE;
+> +	}
+>   };
+>   
+>   /*
 
-[1] https://lore.kernel.org/all/20250825132427.1618089-3-pinkesh.vaghela@einfochips.com/
+In my opinion, there is only one case, no need to use switch case,
+the ";" at the end can be removed, the code can be like this:
 
-Updates:
-  v2 -> v3:
-    - Use full name in "From" and "Signed-off-by" fields information.
-    - eswin,eic7700-ahci.yaml
-      - Remove the introduction to the reg, interrupts, phys, and phy-names fields.
-      - Modify the usage of the clocks field in the examples.
-      - Corrected the order of dt properties.
-    - phy-eic7700-sata.c
-      - Register operations use the GENMASK macro and FIELD_PREP instead of
-        the original bit offset method, and add "#include <linux/bitfield.h>".
-      - Modified some macro definition names.
-      - Remove the redundant initialization assignments for "ret" and "val".
-      - Delete ".suppress_bind_attrs = true".
-      - Modify the driver name.
-      - Add "#include <linux/io.h>" to fix the robot test issue.
-    - Link to v2: https://lore.kernel.org/lkml/20250819134722.220-1-luyulin@eswincomputing.com/
+static long kvm_save_notify(struct kvm_vcpu *vcpu)
+{
+         unsigned long id, data;
 
-  v2 -> v1:
-    - Delete the original controller driver and use ahci_dwc.c instead.
-    - Add eswin,eic7700-ahci.yaml
-      - Correct the descriptions of reset, interrupt and other
-        hardware resources for the sata controller on EIC7700 SoC.
-      - The clocks for both sata controller and sata PHY are controlled
-        via a register bit in the HSP bus and are not registered in the
-        clock tree. Clock are managed within the PHY driver, therefore
-        it is not described in this document.
-      - Add $ref: snps,dwc-ahci-common.yaml#.
-    - Add eswin,eic7700-sata-phy.yaml
-      - Add this file to include the description of the PHY on EIC7700 SoC.
-    - Add an eswin directory under the PHY driver path, and include the SATA
-      PHY driver code for EIC7700 SoC.
-    - Link to v1: https://lore.kernel.org/all/20250515085114.1692-1-hehuan1@eswincomputing.com/
+         id   = kvm_read_reg(vcpu, LOONGARCH_GPR_A1);
+         data = kvm_read_reg(vcpu, LOONGARCH_GPR_A2);
+         if (id == BIT(KVM_FEATURE_STEAL_TIME)) {
+                 if (data & ~(KVM_STEAL_PHYS_MASK | KVM_STEAL_PHYS_VALID))
+                         return KVM_HCALL_INVALID_PARAMETER;
 
-Yulin Lu (3):
-  dt-bindings: ata: eswin: Document for EIC7700 SoC ahci
-  dt-bindings: phy: eswin: Document for EIC7700 SoC SATA PHY
-  phy: eswin: Create eswin directory and add EIC7700 SATA PHY driver
+                 vcpu->arch.st.guest_addr = data;
+                 if (!(data & KVM_STEAL_PHYS_VALID))
+                         return 0;
 
- .../bindings/ata/eswin,eic7700-ahci.yaml      |  80 +++++++
- .../bindings/phy/eswin,eic7700-sata-phy.yaml  |  36 +++
- drivers/phy/Kconfig                           |   1 +
- drivers/phy/Makefile                          |   1 +
- drivers/phy/eswin/Kconfig                     |  14 ++
- drivers/phy/eswin/Makefile                    |   2 +
- drivers/phy/eswin/phy-eic7700-sata.c          | 205 ++++++++++++++++++
- 7 files changed, 339 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
- create mode 100644 Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml
- create mode 100644 drivers/phy/eswin/Kconfig
- create mode 100644 drivers/phy/eswin/Makefile
- create mode 100644 drivers/phy/eswin/phy-eic7700-sata.c
+                 vcpu->arch.st.last_steal = current->sched_info.run_delay;
+                 kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
+                 return 0;
+         }
 
--- 
-2.25.1
+         return KVM_HCALL_INVALID_CODE;
+}
+
+The following is the diff:
+
+diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
+index 2ce41f93b2a4..0c18761539fc 100644
+--- a/arch/loongarch/kvm/exit.c
++++ b/arch/loongarch/kvm/exit.c
+@@ -764,8 +764,7 @@ static long kvm_save_notify(struct kvm_vcpu *vcpu)
+
+         id   = kvm_read_reg(vcpu, LOONGARCH_GPR_A1);
+         data = kvm_read_reg(vcpu, LOONGARCH_GPR_A2);
+-       switch (id) {
+-       case BIT(KVM_FEATURE_STEAL_TIME):
++       if (id == BIT(KVM_FEATURE_STEAL_TIME)) {
+                 if (data & ~(KVM_STEAL_PHYS_MASK | KVM_STEAL_PHYS_VALID))
+                         return KVM_HCALL_INVALID_PARAMETER;
+
+@@ -776,12 +775,10 @@ static long kvm_save_notify(struct kvm_vcpu *vcpu)
+                 vcpu->arch.st.last_steal = current->sched_info.run_delay;
+                 kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
+                 return 0;
+-       default:
+-               return KVM_HCALL_INVALID_CODE;
+-       };
++       }
+
+         return KVM_HCALL_INVALID_CODE;
+-};
++}
+
+  /*
+   * kvm_handle_lsx_disabled() - Guest used LSX while disabled in root.
+
+Thanks,
+Tiezhu
 
 
