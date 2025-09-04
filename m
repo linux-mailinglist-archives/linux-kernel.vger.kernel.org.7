@@ -1,263 +1,188 @@
-Return-Path: <linux-kernel+bounces-800333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABDB5B43668
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:59:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4950B43670
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 716C37B753C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:57:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2452B3B6504
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3A32D238A;
-	Thu,  4 Sep 2025 08:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="p1QR0R6F"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8917124167F
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDB12D3225;
+	Thu,  4 Sep 2025 08:59:58 +0000 (UTC)
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8164524167F;
+	Thu,  4 Sep 2025 08:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756976362; cv=none; b=EvWfuFWAwzNCLBzB5JaDl6oBj+sP28QS6d8JFufCsAZj/tSK7b08fm5z9NSeYUkIXyCSxAbDrNr3i5h0TLEsvBKFG5qFwkYqWOcJ/WjufAnfwXJhtcIIxeScaRenweappV7fvMVmSOAkmuCsoxKyckHCRNBlOw77XjQDVHeTnTA=
+	t=1756976398; cv=none; b=limp7ZhStU6ApNUYVu08hwLaiebGgJoVXlXoNeTBCUl80iLAh4WhXXD/1YOZ8DW0p4KWT04KuxzMaqGjY1LlsosMTa64KH1TL8NChm7xYkCSzwiTahMHLLFB9IGJwTcvPH6MkcMoJWPVfyi7z3ehE5Sv61ntm8a8SBDEjxt4mEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756976362; c=relaxed/simple;
-	bh=KD7ktfeuQPKUZSNiJGcYWicZkMGhAXrv+wnTlCPpiCc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RSWnQkO75s4VAdL2cLwiLzCW+WpXCUC/0Et3SgVsghrBY15c4u9tnuWz2cLXfDJdZp/qMeaa4mcTHezOzts6fEG8sqJOUTV3rDWHUsJrhoDzf2vb/P/lEUXPYqhX/QP3BfcDY40+0DSFmlXYkZqgarLNpZvL+ooX+EmvHW1f+E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=p1QR0R6F; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584113tJ008906
-	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 08:59:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	S6SmD/lRJtpl+jt1dK1UZV6pTcf74vgfYRGz8fZ0E+A=; b=p1QR0R6FqrKgJvqz
-	mH00+D1s/Cm6/E1qDhkfOnY7o/3dFYQBm73kQMw/Y6BVC5Sp7bcq+xo1jXmgz95x
-	oCfcGPOS6YNJpAcUQIGIP4l9kmrARXRUQ1qOtUmrZAtc5WWBC5TyBgzpbPjJRipl
-	+SyvQnZnaDP7Cv7SOYdTL2Ks/xPmhCSoSIMr/MJqJNpS4OPlV/0IV/mQcc6ViQXx
-	8BPzYVGcRDsKwjHN7wwkbN5E2m0TCsT568h4u6RgnHoC7LMdaZeon48q395f2Oq+
-	DOG/sbwFmDVQ9112RtUSfVaK3eiBSbfqeXbMb2wtP17qRNitoHvGLhQ8X6SbBldO
-	1QbjkA==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48w8wyase9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 08:59:19 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-24c9304b7bcso9646095ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 01:59:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756976358; x=1757581158;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S6SmD/lRJtpl+jt1dK1UZV6pTcf74vgfYRGz8fZ0E+A=;
-        b=h+7l4KuLQd6kuu8BwAhPt5vpK2XbxJAXANsp6cy9QZ1V8TpK9g/oP8rBM1S1UvocCE
-         MJ6v9ZPooMqLp5TCUAAWUK2YNSo8TbdQNYUFeaTUk/9AZgcW9unUlGEfsIN/JRAZ1vxY
-         Cis9T+0iSnIw9FRPvxP/gu6u6jx6+62XsGD2Jy/HgF8/tA2Mp+P8IshHLCi51NLWUYGT
-         dEX73wHOe5XWzB5jRDhcX9ywyNObkRjiHPwXA8YVEQRXDl8xd34jGVex45aIPDQFL3fw
-         6foQVfP9A13W0li8ikUNryPeFHPiTaTyTmRc+K5GEV98gdS0NPSArFTBexoVwavPxymP
-         mOuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRDDvdZgjV1w0dBK+1sfUccvBTmpH3xeRQTEjcIDBLaMm1zsZ2XSh/Wpmh4d1OsE86v4LE1Bo8f53b8Bc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzneLCkYGCFN49oudwf7qvhLVVTH/i1/KCsymT5ST4SqdT5lMlT
-	OcgtYhF7cxdmKPJt830OQG0m83MY6Sld/rnBbk+7THapKDYnboUuMMURY613vZFoSgPWXhYjSxY
-	CDd6lE8gaVTCMSIjZ+meTS9ULAgzc2LzafWoH6SsYkkiHQBMCUHgekre+/m0VosAaAYsVAINuCh
-	1Mtg==
-X-Gm-Gg: ASbGncvxdO9xIWVPgh2TDlICBn245EGXqI23Ile146xBaTcToZduf207r2LiAu6CeZK
-	SWNwJomFRJxlroGBv1EHD0shbWSsAtQUXrqnVfQYmtwjaVmnhccfP+ngGgYCWjBPXaJCjvolCJ/
-	bnpuqdNK+mm1Gr4ycQMfRBGLkoKCxWXzENRruDx1HcgMu1w/l8M1Hn0xCn+JOa+kD3c6qv8iiTI
-	ea4/9aW6e4twcYY218MJjbg3wsV64awt01DU+JxmcPoS+bJn2uuAkuriSr0ON1E2Zhk9Bn9XQir
-	9LDiw9KglXHEGM+otcp4cKJ737Xgz3BfuDoJmWli+DcRvxc5OzuenON1+pBLCWycMXTpLX9FwvO
-	PIBenv1ehIuk1Jhx7kBXK7Zn9IDqC
-X-Received: by 2002:a17:903:2309:b0:248:96f3:408c with SMTP id d9443c01a7336-24944b1cb74mr283245715ad.31.1756976357831;
-        Thu, 04 Sep 2025 01:59:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxWuT4vPU835vv5tJ8tYhEIyfyj+itB0O3M9+Ms4yaueqkNroOnRQHh70sZZFhz9A9lgG84w==
-X-Received: by 2002:a17:903:2309:b0:248:96f3:408c with SMTP id d9443c01a7336-24944b1cb74mr283245125ad.31.1756976357320;
-        Thu, 04 Sep 2025 01:59:17 -0700 (PDT)
-Received: from [10.133.33.16] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b020a7cb5sm79081045ad.115.2025.09.04.01.59.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 01:59:16 -0700 (PDT)
-Message-ID: <a2e3bcf2-80c9-4c8b-ad88-bd91c33137b5@oss.qualcomm.com>
-Date: Thu, 4 Sep 2025 16:59:11 +0800
+	s=arc-20240116; t=1756976398; c=relaxed/simple;
+	bh=TyJkCCbUPD4VJsWVif6zYXzeJFnFiI63DHb4IK+7uJg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Zxz2KbpUyy3ZWhH0aXmuZj6rts9OQe4H6Ls6Dy42p11A41xDpnormPIm4KpHt6IdjOzqZun+cFt/Jag+2rNS3k50spG/NtwNb7Fk5uoi6rfKvQYPefob/SyBOWJTd3Zp6bBAlmlXer2m15aIDNSXhHSXXz0ikIbAfaQ5Kan5hZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005182LT.eswin.cn (unknown [10.12.96.155])
+	by app1 (Coremail) with SMTP id TAJkCgDn_Q7kVLlosGTIAA--.33516S2;
+	Thu, 04 Sep 2025 16:59:19 +0800 (CST)
+From: weishangjuan@eswincomputing.com
+To: devicetree@vger.kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	yong.liang.choong@linux.intel.com,
+	vladimir.oltean@nxp.com,
+	rmk+kernel@armlinux.org.uk,
+	faizal.abdul.rahim@linux.intel.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	inochiama@gmail.com,
+	jan.petrous@oss.nxp.com,
+	jszhang@kernel.org,
+	p.zabel@pengutronix.de,
+	boon.khai.ng@altera.com,
+	0x1207@gmail.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	emil.renner.berthing@canonical.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	lizhi2@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Shangjuan Wei <weishangjuan@eswincomputing.com>
+Subject: [PATCH v5 0/2] Add driver support for Eswin eic7700 SoC ethernet controller
+Date: Thu,  4 Sep 2025 16:59:13 +0800
+Message-Id: <20250904085913.2494-1-weishangjuan@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] coresight: tpda: fix the logic to setup the element
- size
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Jie Gan <jie.gan@oss.qualcomm.com>, Mike Leach <mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Tao Zhang <quic_taozha@quicinc.com>,
-        Mao Jinlong <quic_jinlmao@quicinc.com>
-Cc: tingwei.zhang@oss.qualcomm.com, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20250806080931.14322-1-jie.gan@oss.qualcomm.com>
- <2f243b22-d8d3-4352-b226-aaf9ccfe825b@arm.com>
- <a4382db3-115a-4d79-924a-08507e6e7b3e@oss.qualcomm.com>
- <1cef4224-1f0a-4c51-937d-66823a22dec3@oss.qualcomm.com>
- <961258a0-3cc6-4935-a305-80bb2c2c0597@arm.com>
-Content-Language: en-US
-From: Jie Gan <jie.gan@oss.qualcomm.com>
-In-Reply-To: <961258a0-3cc6-4935-a305-80bb2c2c0597@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=Ycq95xRf c=1 sm=1 tr=0 ts=68b954e7 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=pVyM_Y0qywZFV96uxSUA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-GUID: eQvP_Vjbi2jHZLru5jT0fYu80VG0nAzI
-X-Proofpoint-ORIG-GUID: eQvP_Vjbi2jHZLru5jT0fYu80VG0nAzI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAxMDEwMSBTYWx0ZWRfX4vuiFB8jZa+v
- LnwQQ76xyC5C14/8/knwNpOi2NNVm3UU5vRYHjiTNTiGovgIkUsfbu2KyJgfs8GizSaX4dBI2OF
- cbq8wlG1Ut6hcyDfgfqxsr7WWKxYGJdtooISqI4YQs8Nttgu5aLgMYPhkTLNVIzM7PU1g5zBJRL
- RZleWSJiLgYhAWiErMMZ2ob/y1PYp8NPjkBrSZECdhQvUiNTrF4qHQBxfZX6szr5NyBnShZ6Ind
- 4d3I4V68sosHcmDnCme5FMLJdImsE9jS3Eyw0J/sP+xmf1w7ruCTLqGCZplbe0HAYO/i1Dmqp4b
- b0dvsAFO/z7uP9ICGgVLRaVW/20ubBhBzmKf7ao/5VMRVDftaBbbh4MXSM2xk4MKFp7ADvHdf4E
- Qt1CMIqr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-04_03,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 adultscore=0 phishscore=0 malwarescore=0
- bulkscore=0 suspectscore=0 impostorscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509010101
+X-CM-TRANSID:TAJkCgDn_Q7kVLlosGTIAA--.33516S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZF4ftw1UXFy5try3WrykZrb_yoWrAryrpF
+	W0kry5Wwn8AryxXw4Iyw10kFyfJan7JF1akr1Iqw1fXa1qya90qr4ak3WjgFy7Cr4DZ34Y
+	gay3ZFW7Ca4ay3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBm14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26rWY6Fy7MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI4
+	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
+	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
+	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRAnYwUUUUU
+X-CM-SenderInfo: pzhl2xxdqjy31dq6v25zlqu0xpsx3x1qjou0bp/
 
+From: Shangjuan Wei <weishangjuan@eswincomputing.com>
 
+This series depends on the config option patch [1].
 
-On 9/4/2025 4:50 PM, Suzuki K Poulose wrote:
-> On 04/09/2025 02:12, Jie Gan wrote:
->>
->>
->> On 9/3/2025 5:45 PM, Jie Gan wrote:
->>>
->>>
->>> On 9/3/2025 4:57 PM, Suzuki K Poulose wrote:
->>>> On 06/08/2025 09:09, Jie Gan wrote:
->>>>> Some TPDM devices support both CMB and DSB datasets, requiring
->>>>> the system to enable the port with both corresponding element sizes.
->>>>>
->>>>> Currently, the logic treats tpdm_read_element_size as successful if
->>>>> the CMB element size is retrieved correctly, regardless of whether
->>>>> the DSB element size is obtained. This behavior causes issues
->>>>> when parsing data from TPDM devices that depend on both element sizes.
->>>>>
->>>>> To address this, the function should explicitly fail if the DSB
->>>>> element size cannot be read correctly.
->>>>
->>>> But what is the device only has CMB ? Back when this was originally 
->>>
->>> We have CMB TPDM, DSB TPDM and CMB&&DSB TPDM.
->>>
->>>> merged, we raised this question and the answer was, "Only one is 
->>>> supported, not both." But this sounds like that is wrong.
->>>
->>> I think we may not answer the previous question clearly. But it 
->>> definitely has issue here.
->>>
->>>> Could we defer the "Warning" to the caller. i.e., Let the caller
->>>> figure out the if the DSB size is found and predicate that on the
->>>> DSB support on the TPDM.
->>>
->>> Understood, below codes will be added in the caller to check the error:
->>> if ((tpdm_data->dsb && !drvdata->dsb_esize) ||
->>>      (tpdm_data->cmb && !drvdata->cmb_esize))
->>>      goto err;
->>>
->>> Thanks,
->>> Jie
->>>
->>
->> Hi Suzuki,
->>
->> I've reviewed the logic here. It's not feasible for the caller to 
->> perform the check, since we first retrieve TPDM's drvdata, which adds 
->> complexity to the code. I believe it's better to handle this within 
->> the function itself.
->>
->> We are expecting the element_size for cmb if the condition is true, as 
->> well as dsb:
->> if (tpdm_data->dsb)
->> ...
->> should obtain a valid element size for dsb.
->> ...
->>
->> if (tpdm_data->cmb)
->> ...
->> should obtain a valid element size for cmb.
->> ...
->>
-> 
-> Ok, fair enough. Please resend the patch without the dependency on the 
-> static TPDM patch. Given this is a fix, this could go in without waiting 
-> for the new series.
-> 
+[1] https://lore.kernel.org/all/20250825132427.1618089-3-pinkesh.vaghela@einfochips.com/
 
-Hi Suzuki,
+Updates:
 
-This patch has not dependency with the static TPDM patch series.
+  Changes in v5：
+  - Updated eswin,eic7700-eth.yaml
+    - Use "items" instead "enum" for clock-names
+    - Arrange clocks description in correct order
+    - Delete redundant descriptions for eswin,hsp-sp-csr property
+  - Updated dwmac-eic7700.c  
+    - Optimize the implementation of eic7700_ appy_delay
+    - Update comments and remove reg checking
+    - Use FIELD_PREP in eic7700_apply_delay function
+    - Use clk_bulk related APIs to manage clks
+  - Link to v4: https://lore.kernel.org/all/20250827081135.2243-1-weishangjuan@eswincomputing.com/
 
-Actually, the static TPDM patch series depends on this fix patch because 
-both modified same code snippet in function tpdm_read_element_size.
+  Changes in v4:
+  - Updated eswin,eic7700-eth.yaml
+    - Modify reg:minItems:1 to reg:maxItems: 1
+    - Delete minItems and maxItems of clock and clock-names
+    - Delete phy-mode and phy-handle properties
+    - Add description for clock
+    - Add types of clock-names
+    - Delete descriptions for rx-internal-delay-ps and tx-internal-delay-ps
+    - Add enum value for rx-internal-delay-ps and tx-internal-delay-ps
+    - Modify description for eswin,hsp-sp-csr property
+    - Delete eswin,syscrg-csr and eswin,dly-hsp-reg properties
+    - Modify phy-mode="rgmii" to phy-mode="rgmii-id"
+  - Updated dwmac-eic7700.c
+    - Remove fix_mac_speed and configure different delays for different rates
+    - Merge the offset of the dly register into the eswin, hsp sp csr attributes
+      for unified management
+    - Add missing Author and optimize the number of characters per
+      line to within 80
+    - Support default delay configuration and add the handling of vendor delay 
+      configuration
+    - Add clks_config for pm_runtime
+    - Modify the attribute format, such as eswin,hsp_sp_csr to eswin,hsp-sp-csr
+  - Link to v3: https://lore.kernel.org/all/20250703091808.1092-1-weishangjuan@eswincomputing.com/
 
-Thanks,
-Jie
+  Changes in v3:
+  - Updated eswin,eic7700-eth.yaml
+    - Modify snps,dwmac to snps,dwmac-5.20
+    - Remove the description of reg
+    - Modify the value of clock minItems and maxItems
+    - Modify the value of clock-names minItems and maxItems
+    - Add descriptions of snps,write-questions, snps,read-questions
+    - Add rx-internal-delay-ps and tx-internal-delay-ps properties
+    - Modify descriptions for custom properties, such as eswin,hsp-sp-csr
+    - Delete snps,axi-config property
+    - Add snps,fixed-burst snps,aal snps,tso properties
+    - Delete snps,lpi_en property
+    - Modify format of custom properties
+  - Updated dwmac-eic7700.c
+    - Simplify drivers and remove unnecessary API and DTS attribute configurations
+    - Increase the mapping from tx/rx_delay_ps to private dly
+  - Link to v2: https://lore.kernel.org/all/aDad+8YHEFdOIs38@mev-dev.igk.intel.com/
 
-> Suzuki
-> 
-> 
-> 
->> Thanks,
->> Jie
->>
->>>>
->>>> Suzuki
->>>>
->>>>>
->>>>> Fixes: e6d7f5252f73 ("coresight-tpda: Add support to configure CMB 
->>>>> element")
->>>>> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
->>>>> ---
->>>>>   drivers/hwtracing/coresight/coresight-tpda.c | 3 +++
->>>>>   1 file changed, 3 insertions(+)
->>>>>
->>>>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/ 
->>>>> drivers/ hwtracing/coresight/coresight-tpda.c
->>>>> index 0633f04beb24..333b3cb23685 100644
->>>>> --- a/drivers/hwtracing/coresight/coresight-tpda.c
->>>>> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
->>>>> @@ -71,6 +71,8 @@ static int tpdm_read_element_size(struct 
->>>>> tpda_drvdata *drvdata,
->>>>>       if (tpdm_data->dsb) {
->>>>>           rc = fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
->>>>>                   "qcom,dsb-element-bits", &drvdata->dsb_esize);
->>>>> +        if (rc)
->>>>> +            goto out;
->>>>>       }
->>>>>       if (tpdm_data->cmb) {
->>>>> @@ -78,6 +80,7 @@ static int tpdm_read_element_size(struct 
->>>>> tpda_drvdata *drvdata,
->>>>>                   "qcom,cmb-element-bits", &drvdata->cmb_esize);
->>>>>       }
->>>>> +out:
->>>>>       if (rc)
->>>>>           dev_warn_once(&csdev->dev,
->>>>>               "Failed to read TPDM Element size: %d\n", rc);
->>>>
->>>>
->>>
->>
-> 
-> 
+  Changes in v2:
+  - Updated eswin,eic7700-eth.yaml
+    - Add snps,dwmac in binding file
+    - Modify the description of reg
+    - Modify the number of clock-names
+    - Changed the names of reset-names and phy-mode
+    - Add description for custom properties, such as eswin,hsp_sp_csr
+    - Delete snps,blen snps,rd_osr_lmt snps,wr_osr_lmt properties
+  - Updated dwmac-eic7700.c
+    - Remove the code related to PHY LED configuration from the MAC driver
+    - Adjust the code format and driver interfaces, such as replacing kzalloc
+      with devm_kzalloc, etc.
+    - Use phylib instead of the GPIO API in the driver to implement the PHY
+      reset function
+  - Link to v1: https://lore.kernel.org/all/20250516010849.784-1-weishangjuan@eswincomputing.com/
+
+Shangjuan Wei (2):
+  dt-bindings: ethernet: eswin: Document for EIC7700 SoC
+  ethernet: eswin: Add eic7700 ethernet driver
+
+ .../bindings/net/eswin,eic7700-eth.yaml       | 128 +++++++++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ .../ethernet/stmicro/stmmac/dwmac-eic7700.c   | 250 ++++++++++++++++++
+ 4 files changed, 390 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-eic7700.c
+
+-- 
+2.17.1
 
 
