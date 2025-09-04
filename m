@@ -1,200 +1,185 @@
-Return-Path: <linux-kernel+bounces-799698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65166B42F45
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:55:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D590B42F47
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 273DF16C44A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:55:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5AC4174CC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73451DF965;
-	Thu,  4 Sep 2025 01:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA721DC198;
+	Thu,  4 Sep 2025 01:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aL/IhOv0"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lNdPSrdg"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013047.outbound.protection.outlook.com [40.107.162.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAC413C695;
-	Thu,  4 Sep 2025 01:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756950929; cv=none; b=rn3BwDXZio24umEJ+DnSuiUB2lCDFJBWylaDpIiUOgyRj60519FhBdfj2RjQnro5elOArmov1OFuFgzl/I0idtlSGaeiFhZvN7UgTTVowGuoxkaGSQLHI8KrctmATt35zJ2ouZeffulrU7jT9zaKvqeX+FkxHY4pSQZOq0B/3A4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756950929; c=relaxed/simple;
-	bh=z1CwDMrW/wZw91lPM0+5CsrDOfUzBV77U9GCkhvrhsk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lXE9i/LW5JOlGGtA9llsi4BiTmWyuwJJO0owmO3c//OYtGSXDEaxEsI2QaNvzgWxROsOURj+x+3D9xOxH1r1I7XIiFvhqzcrgUJ4ckbxVxkmjjUXNb514gPfEYM6LcNHMMiKB4iviAtn/6xDmdOoHwLbyJfpEK6QlGkCX8o4WrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aL/IhOv0; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f69cf4b77so558214e87.2;
-        Wed, 03 Sep 2025 18:55:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756950925; x=1757555725; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HLG0DSgHB2AINxOoZVWx4bl4S5WlCeyWoCbSypykd+g=;
-        b=aL/IhOv0cXwQuLLTztfwHYALL9C7fyUTZn0+ff8lKvICoOV7ZUA7MDM/Y0t1fsAEKR
-         eFjfUBlD81xSz7JNignvxKUuV0urWyP4hwpXmdo8caNywGz0ICufaByg3n/C5ECwuqMB
-         K3MTtlZJa8577xU9Qxg8ZUF8wmgpR1PM30Qxmof+UtlgdTNyPPHBNcli3Z5CGkMcR32v
-         347aYcMzxIG3+obVVDSzVp0WcgwTT8Jj6yFip72/GM2MO3n2Jrt44XWuxN9TvuwnseJ0
-         R0HdR4II5YFZ9vRwfldpcDHmDA3RYDKXXR6OYDE+U+SSs6Ecl9+mut3PtT1+qQNewZPX
-         RVew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756950925; x=1757555725;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HLG0DSgHB2AINxOoZVWx4bl4S5WlCeyWoCbSypykd+g=;
-        b=jRHxm6jLwLWps2ldAyRAFCLFEq8rUTXBhx6IFnfHtLHYAiPr4JySgpwMA7Eh0oXby2
-         J10toR6eJVfNzsplmF7OrPX6SFwZHRPw4mr/FAPJCuHvCJ3DT1ptAGwuQNeO3toPPHbQ
-         5UozRFlQnfhZMCPieAS2kxX7kERBWsm5Beq4uJP7VubaznPNTtOsjWabupXEugXcqdAe
-         nIoZzII0ZBK+XDGSucsp8jvwNbxxzDFPb0UCLZqpX6w5sDclA417TY56Nb3h9fULu++h
-         Z1PHQ0As5LroNEgLvjbEtlKORcXy1GnPL/EfROZrcFTTB73WwAUWeo3BppphKp8n+mLs
-         +iLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNk2i8mQFEBu8Mm4bJ//555D8/GjjKZONkgbSkH5dt/OWcRGRUDo4l02Ye6ck9LyjHbQxeRqsKg4/b@vger.kernel.org, AJvYcCVTSXttzgzBdcq8R2LBbe+HdxEJSVlcw1Qm5beoACseyPuES6XBVpsnPrJF8xAnA9iIlWEJWT+uIYpb@vger.kernel.org, AJvYcCWJKNGF+6iMk91xnalwX2gRqTRt5HpPbqD9DB0rBcDDeL1+nCdd94VVWyHugtjuTbAlDIs00Sp3/WQy2O5l@vger.kernel.org, AJvYcCWsxvn4RqEBneYj6L9XMrzKl8oBK4CCUtBZrJmt5hNDd6OGPtfs9yaAusvWRCQxSHnxHNpIZVg9DsKtTu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+nYtz5WhRg1phZmwaXtqpv4atR7bHxEZI1L5A4X/rwI4CxoAE
-	5HF3JPOUS7sDIqLr8yEM0RA+Gof7/Hu/AEwCmJJnDHN/plIrgWDW16VjudRraBtUjfk7SEGngJE
-	+P6XFPcQ5VgfDe7G/87OupVLizNyiAxw=
-X-Gm-Gg: ASbGncupKd/joF8KFLDJL5pnwnU+Y1c5YBD5WUa2bDwQfiuwZpzVQ8HlGdmXCoCACGy
-	RaeZTI3KD2j+RMj8brLYTaR2CQ3Hi8KbvyJ7ZwamKUbYeNCf0+QKOwMSk9U98TQNZgPpYDzGd7+
-	28GnjVBJC99uQ/7YLlqoaUDqqjN0RUOY2+dv5XHd8G8QIg51l/CMva4XukCBu8SyoomUnrRbcJH
-	gxCR8FgzkhHLqqs6g==
-X-Google-Smtp-Source: AGHT+IGz1wtV+gVZ44/7zWYiZepuh0kLYJU7upNdtxprFKlXRf79bTKOD6aQgFkhooo9LOubQDnW3P4JtM6aNPVl4CA=
-X-Received: by 2002:a05:6512:1417:b0:560:8c58:6cd7 with SMTP id
- 2adb3069b0e04-5608c587036mr1348684e87.5.1756950925157; Wed, 03 Sep 2025
- 18:55:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030B51CEAB2;
+	Thu,  4 Sep 2025 01:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756950950; cv=fail; b=rmBFSpNoCxLOKybYS1wWf2hquOUHqk2qa5S2vSWodW37sDR25/Hu7qquRL7i/bWr5qs/3fCoGUpt5yuofadGQ2unV3OtoVghH/+u42TTFOBsLQslPyU5YCQu0Cxh3eJUFcQqV5aQ/hpXEZL4wN9SfNWlgdH7GaVfmcKq9GO2vUg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756950950; c=relaxed/simple;
+	bh=3HAYQnTZyZrZJInGpiBgEQEo8jyELP9DFQO9P044HOU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=nct82t1xe6jx1VLO8FaedDbWURAuTB0j+K6+JPAw4V40egke3ey0ywZDmlj4n7pVKVe7Z32BGmOGtGskce0cZ9KOCywykE9VgKPx+dSSWQX0/evNfLI+ScQGtkBbsHlio7vrVKZ+vWx6kTIybyWcdwQu65A1MVanJ4ktWLdEEzU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lNdPSrdg; arc=fail smtp.client-ip=40.107.162.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=arAT9KpvVleg0KCathKqD5/htFENemCrmWpQlYcN3yOfCRvNqrd6nDBPaGhjbmBhi9JrCYHI27fTgdYy/mMEzgw2n9u7XAbB17NvCzwNk4CglXgi5X1Pf7pk4pjgX0RgDcFnlklEDJeyK56WbGzwokfw8ieh4sm+IQRTEjao7p0K4gp10GHI7RhJYzlRJaAVfkclI0m1In0OL2VFWuXDLzDu8bipcRd7jK42mQ1I+IufMTYmwZunTglLw5xQAwq4BNnso4DAjHgEX0LaswL+pOisoIv0Vs3pGv7Z1NJNWt08EDi3akosTFoUBMo8FL6o0VWitm6kBBGa1PcoD2JH9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3HAYQnTZyZrZJInGpiBgEQEo8jyELP9DFQO9P044HOU=;
+ b=wQzGWq6DPe/eJAwODZYQrgIrfNIvCrRfrJvN7lMiS1INwOZZtSyaPXWENM5c+P/jN3u88daNfhaHkKSGvu+MPWiZlZQRHnpPa2FlUk/HJGw+al9tnjffq767SB7Pfcv5PtHIklQkBAd8v0/cVBd0/Xc+PUtz78AIO5j/2tV7eWCBI2vu1NkgV+mcNaCJJ363E2O+VBef65+JVyPSClU0VKCBajmt93zT7t8b5xnPzPPXWK9KsaWOEq3mRl0odEEnkC+GiolPf0dH9/5eeMw7gp/WSFdoGjoJHEHkUcJA5hRXA2AM6PaLY4wqQJ2zo0tuBgpUd9LYwJnyB8kzypHhNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3HAYQnTZyZrZJInGpiBgEQEo8jyELP9DFQO9P044HOU=;
+ b=lNdPSrdgelg9S33wWPkdtVY/GLuc5VcCIM4VzMFZwaRFYukunloe8IygmIH2UCC4KshbN+95XHpOlrx1sInkrOBgw9RB2Bi0uTurpSLseyJShcQidbeOnomk7kZC6b80o9aZhS3dTHbCB0/3t0RdgWVzoShHPqckc1cHmv/6TioJ+STEuHJid7xKpv4QkI5k9ACNs6pMmg4VMv0B6C0cmJXJXCa+9PExZUraoe2DBqtc2Q8945IZ3Ehf3TwwQV26/X8SP77Vd7Icz6Z3JUEzYKgC6BfxKZO2T8dHkvk6i0U/bHuGXEl+7NoMfZFXjoctI/qqb1Z0zOa/4SNm74HvLg==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by PA1PR04MB11529.eurprd04.prod.outlook.com (2603:10a6:102:4e2::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Thu, 4 Sep
+ 2025 01:55:44 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.9094.017; Thu, 4 Sep 2025
+ 01:55:43 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Richard Cochran <richardcochran@gmail.com>
+CC: "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
+	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>, Clark Wang
+	<xiaoning.wang@nxp.com>, Frank Li <frank.li@nxp.com>, "Y.B. Lu"
+	<yangbo.lu@nxp.com>, "christophe.leroy@csgroup.eu"
+	<christophe.leroy@csgroup.eu>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
+	<linuxppc-dev@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "imx@lists.linux.dev"
+	<imx@lists.linux.dev>
+Subject: RE: [PATCH net-next 0/3] ptp: add pulse signal loopback support for
+ debugging
+Thread-Topic: [PATCH net-next 0/3] ptp: add pulse signal loopback support for
+ debugging
+Thread-Index: AQHcHLD5iK57qqmEXUuEFtuGvb40JbSBd4YAgADLQNA=
+Date: Thu, 4 Sep 2025 01:55:43 +0000
+Message-ID:
+ <PAXPR04MB8510785442793740E5237AFA8800A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250903083749.1388583-1-wei.fang@nxp.com>
+ <aLhFiqHoUnsBAVR7@hoboy.vegasvil.org>
+In-Reply-To: <aLhFiqHoUnsBAVR7@hoboy.vegasvil.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|PA1PR04MB11529:EE_
+x-ms-office365-filtering-correlation-id: 4a9bfd32-2a03-4c22-cf36-08ddeb5628a8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|19092799006|1800799024|7416014|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?L9K6MPgbF9q7kBYT95X1ZPDB8xrvvtp1Wqsp71YClB3GLks0tjLxnjNYRy7y?=
+ =?us-ascii?Q?a/F8NskFwegcrx2hRrmPIXEZ+3yAgY6klK4HCR9rDk3WcaQIJazl+kDxhYdj?=
+ =?us-ascii?Q?SaepwnWUKgQj7F4S/uCKk4+Pxjd4LwuXf2UOhhSyTMTUcA6bDnC+vcOwRhwc?=
+ =?us-ascii?Q?uE37Huzd8EindlnLpA9bHJT1RuL+jxrV7yFkX6JHB0UpQQ+ZegZIwA19bzla?=
+ =?us-ascii?Q?T9se2jXeJ3U3F3Uacz2FRT6itWOHM0nWF99/g1nB5h90f0//zTHZPRQWAXFD?=
+ =?us-ascii?Q?64slkYfydKnUmxSl9QBO6NPbkr7qxugLjeqEbwfgIXske6tlw7dK/qZnAeSO?=
+ =?us-ascii?Q?wShS9oMgrqwciYLTUeEZSdUYwm2fRE7vlxx7Y2YY+WR/v5oHU65V1MqmdDN3?=
+ =?us-ascii?Q?R4iH65KIsZAMt2bYWVp5fEV8KCJFpppmhrAOgBz4lqIu7b2hcpJhRBZZbX0D?=
+ =?us-ascii?Q?le1Hs/IiG1ptuRGp8mwp0trhozfCzIwn9nbRNhorFmygdzeuotxbXCG4KglO?=
+ =?us-ascii?Q?Jos5AKfzCb6a7MEdUxKfhBM3i4/2GKtqt6X1THGSaDlNbP2oZLVAR9dSawFN?=
+ =?us-ascii?Q?y83b+IpdZ9MllHFEPi2H8VpP89Q8RRMy/iwdiQrTrlXJwiYtvbvEGWFPeQbl?=
+ =?us-ascii?Q?gAYGD+exQYLzaqjgUVGx2HHALUT+ulv4lSiO6Z4wLmVEe4oJORH4XRDBSdGk?=
+ =?us-ascii?Q?uQyC7gi3ahOFoXwbRpkASgyFSPTp5357q9QOiTl12g1GJyg5m9PR4mjQ/WBf?=
+ =?us-ascii?Q?3S1BAJBda5mALUyWrFp5ox1751Pwzfse25W4osDX3GKxB3QR0jPO8j3/4IL4?=
+ =?us-ascii?Q?6us43i1HwMZlSMg+NnpQCGnavtFvE5WUwy7Jf3D5pVCR54ukMpRf/Nr5px+H?=
+ =?us-ascii?Q?VQSJnZ4kv6Vk9do50bEcbsN8YfxnBZGQ5nPsc2XfvycmckzE1GW6wLpNL6zW?=
+ =?us-ascii?Q?/bGrdYo84WijyTlO+rjhR91EQOdlmUeWyRSXAU78oyS9SwruJwdjPBjMQEWV?=
+ =?us-ascii?Q?wzqVgzIYIZwLRE99D17y0TFzap4LHYs3ZyO8WQoomtGjue9GEtZxkjFoZorr?=
+ =?us-ascii?Q?o4Dd8d3CJCsvHRZBtqUzbzh+MKAObFBYlORefbiHxAs9JjzI7L2r9DZikTJS?=
+ =?us-ascii?Q?J4pg1gKroar3vndbVBuu9wfOCHOtNqQbpOWxv6iLQWtl5DX8tvun1QumTkg9?=
+ =?us-ascii?Q?EUcnwOnjPT6xdznAHPz/GTSEKML+333z8w0+H9jSMspqOkYGTihWfz3n4a61?=
+ =?us-ascii?Q?xCKnwzJCNjr+Wf8DGQRHUJILnYIdAlUI5EX34PF+3NpEZTd24Zu1U1XeG88E?=
+ =?us-ascii?Q?iI6KY20zxJZ19xRUqe7P1z0rBzLLPp0fkQIMR53pBvVcpfNteCifmBlapzN7?=
+ =?us-ascii?Q?YwvzV7CpDtjPRS+w55vcrytqzAJR12Q5Hr9ReXFNsXPuariwyQwrsSv11DMH?=
+ =?us-ascii?Q?iuQ7wwuYk1gm0MQdj2S6vN35RkJKzSrHA4JFGYym/VqLKmtNz24kqQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?JxrgnMMi11RsiDXp24Ln5IcwIO3eHXY77CCOeVAwY9qfuDF9+qTGze4ikP8R?=
+ =?us-ascii?Q?wxWDDAnZDr3EuVhqG0OvOfJO0Q/UDRw5Nt4bR98GT0uc7G+aNrNfHcp653SG?=
+ =?us-ascii?Q?3rrULId6H12UI69KojQcE70pYqzB9C60Xa/LfiDbYh81bo1Q6akLe7iuUDAG?=
+ =?us-ascii?Q?aI73A+PPAkq/1ASPtpSRinKDnKjSYGoK0054f0cVxbzS610agZywriPdBF/A?=
+ =?us-ascii?Q?bInE+gNgkAHLP3oO71CIy8vEF3PGnkc38RsoOgAO8hrxZxYupjTG5TqH84uK?=
+ =?us-ascii?Q?IQd4n2pgF2AJr9jdX/8MsFMFqwaQbuf6Nso90wik8bB+X5XIE6TtQF5LayJv?=
+ =?us-ascii?Q?s/E6DCwkfs0yaO+JhZWDg8fk8dl/2Oncm6KE9gW0T4bvc+hg298zf/cKaBGk?=
+ =?us-ascii?Q?yX9Y25P4B8DQHfiLNUZ5cuM/XY2Ze+WDeHqlWePtg3iLtbCMwBC2lgn4np1n?=
+ =?us-ascii?Q?41Ie0ezAWMeKFqZ86coH9FUJ/7hghN6QqrlmOCw6++mO2CEHri1xRy+t2C6Q?=
+ =?us-ascii?Q?4P6Gww7glBawfNcT6TME267TiQLkoe0FikzKEJthT3REqNOFscBc24JvTMDU?=
+ =?us-ascii?Q?4Sfe9RBt6psBAHmZZinEiSVhPbkbbEA1l1MdQ8DWoMkijNZ5DB0PWkzRN87Q?=
+ =?us-ascii?Q?coAZyaG8J71bwQ7iPIHqjb+Fcj+onSucnEex3LrGBJrvNIeNhPZeL3eJs7GB?=
+ =?us-ascii?Q?/qaMOI9/dvkaLOt0veOA3u+8WUgcxRBuMswS3nBOXOaA0ORBTsLf3CGkfTLx?=
+ =?us-ascii?Q?mrwwb1VP8SZVaAaEFf/PTC2sM5fkt4dP++MKsnup8MX47WPlXkZGrU/NDcEf?=
+ =?us-ascii?Q?VupWmPtNZmHnhMsN3l5YDt4NPLSIgtSsmNPv9bE6z7obIY6YFfYuz0jk/AcM?=
+ =?us-ascii?Q?pwyAY6BXQa+3c0jmlxpxx9vJg3JtuiQ+G5Rae4VJD5yXaTl/ssYSfFUzD7/r?=
+ =?us-ascii?Q?Dtt1pMCwIXdqfqvvdqHplVt3Erk5lDwGpp8i9e2O0n86JHhp0cIqesJ+HfX9?=
+ =?us-ascii?Q?cNrHu/oHUI4ByP9h6TWdwwFGY+XXF4jwbp2Xmju8jHNtqs3j9e3lUzH/bJ8H?=
+ =?us-ascii?Q?JNV1OFRiL7+N5ObpMww/Fdaq2dqvhFVkx/lIGGf9CABybtAwpJ9d52zKLrCC?=
+ =?us-ascii?Q?Xhl9Yjyx6+MRDaXNx9hzRDG8mz40K6X7BpbH7rb8kqPKj00Pct8ZnsTt6ZQK?=
+ =?us-ascii?Q?Xw1IvOwoM8SSOcWCtiOv03T24aqBi0xWg9R5Dfvg6Sk7kXKCKEBdzezPFrYM?=
+ =?us-ascii?Q?+1elEOLy7jOFwYppkfpJ4S/PXEe+f7MFX4Gy5IoNfQ16puGKCgl+KHrmEzxR?=
+ =?us-ascii?Q?8QzPBAMxBi80ufbHrui0k2tuqCuEIAeS0dchBVHDKZaXtcp3RQPpR+B0iqK5?=
+ =?us-ascii?Q?q/PpePm4VsRzLz88fKKBrs9A/c5y6+YlJn0/i7T3RQHcOhrB/BAYHbNvSKIf?=
+ =?us-ascii?Q?b3/TnnMBnzrmivv03e5BVTNG9q8vqT8xvov2H8OtWAdj/i8d5V/xOU3Q0BJh?=
+ =?us-ascii?Q?2hNEHxtZLeHfmbZ1co1g1MkSilYZ3XdQedr00hBwsfi/XaLQ2QyMwrH5yRXf?=
+ =?us-ascii?Q?XSC94x5wdQ22x2OuPNs=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
- <26156028.ouqheUzb2q@senjougahara> <CALHNRZ894WcNaAuLFoDLwJ8mXDRM8PzdqRFzcyYUMPy+0q0nMw@mail.gmail.com>
- <8194755.G0QQBjFxQf@senjougahara>
-In-Reply-To: <8194755.G0QQBjFxQf@senjougahara>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Wed, 3 Sep 2025 20:55:14 -0500
-X-Gm-Features: Ac12FXxLT_e5MU2fnTigOv2SVdMZCKSueXgLw3o0A0mxrhqQ6JHy32mW3xL3eNo
-Message-ID: <CALHNRZ-59esnHPeQ6XD3CUAOFUMB4gAF6XxikrQ+iwsPWObfYA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: tegra: Limit max cpu frequency on P3450
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Joseph Lo <josephl@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thierry Reding <treding@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a9bfd32-2a03-4c22-cf36-08ddeb5628a8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2025 01:55:43.8162
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: NWWytu1O/8sSzan0/X2Eui70qckoT1yntCenx7oKbM6e7Gn5ynYk5BuBD9bnfl3XVeC4dzWkpfStP6PjemFpvQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB11529
 
-On Wed, Sep 3, 2025 at 7:56=E2=80=AFPM Mikko Perttunen <mperttunen@nvidia.c=
-om> wrote:
->
-> On Wednesday, September 3, 2025 5:01=E2=80=AFPM Aaron Kling wrote:
-> > On Wed, Sep 3, 2025 at 2:29=E2=80=AFAM Mikko Perttunen <mperttunen@nvid=
-ia.com> wrote:
-> > >
-> > > On Wednesday, September 3, 2025 3:28=E2=80=AFPM Aaron Kling wrote:
-> > > > On Wed, Sep 3, 2025 at 12:50=E2=80=AFAM Mikko Perttunen <mperttunen=
-@nvidia.com> wrote:
-> > > > >
-> > > > > On Saturday, August 16, 2025 2:53=E2=80=AFPM Aaron Kling via B4 R=
-elay wrote:
-> > > > > > From: Aaron Kling <webgeek1234@gmail.com>
-> > > > > >
-> > > > > > P3450's cpu is only rated for 1.4 GHz while the CVB table it us=
-es tries
-> > > > > > to scale to 1.5 GHz. Set an appropriate limit on the maximum sc=
-aling
-> > > > > > frequency.
-> > > > >
-> > > > > Looking at downstream, from what I can tell, the CPU's maximum fr=
-equency is indeed 1.55GHz under normal conditions. However, at temperatures=
- over 90C, its voltage is limited to 1090mV. Reference:
-> > > > >
-> > > > > static struct dvfs_therm_limits
-> > > > > tegra210_core_therm_caps_ucm2[MAX_THERMAL_LIMITS] =3D {
-> > > > >         {86, 1090},
-> > > > >         {0, 0},
-> > > > > };
-> > > > > (rel-32 kernel-4.9/drivers/soc/tegra/tegra210-dvfs.c)
-> > > > >
-> > > > > Here the throttling is set at 86C, I suppose to give some margin.
-> > > > >
-> > > > > 1090mV perfectly matches the 1.479GHz operating point defined in =
-the upstream kernel. So it seems to me that rather than setting a maximum f=
-requency, we would need temperature dependent DVFS. Or, at least as a first=
- step, we could have the driver just always limit the maximum frequency so =
-it fits under the thermal cap voltage -- the temperature limit is rather hi=
-gh, after all.
-> > > > >
-> > > > > If you have other information, please do tell.
-> > > >
-> > > > I am basing on this line in the downstream porg dt repo:
-> > > >
-> > > > nvidia,dfll-max-freq-khz =3D <1479000>;
-> > > > (tegra-l4t-r32.7.6_good kernel-dts/tegra210-porg-p3448-common.dtsi)
-> > > >
-> > > > Which in the downstream dfll driver limits the max frequency it wil=
-l use:
-> > > >
-> > > >         max_freq =3D fcpu_data->cpu_max_freq_table[speedo_id];
-> > > >         if (!of_property_read_u32(pdev->dev.of_node, "nvidia,dfll-m=
-ax-freq-khz",
-> > > >                                   &f))
-> > > >                 max_freq =3D min(max_freq, f * 1000UL);
-> > > > (tegra-l4t-r32.7.6_good drivers/clk/tegra/clk-tegra124-dfll-fcpu.c)
-> > > >
-> > > > If I read the commit history correctly, it does appear that this li=
-mit
-> > > > was set because the always-on use case was failing thermal tests. I
-> > > > couldn't say if it was intentional that this throttling was applied=
- to
-> > > > all use cases or not, but that is what appears to have happened. He=
-nce
-> > > > trying to replicate here in an effort to squash stability issues.
-> > >
-> > > I can't see any reference to failing thermal tests. Can to point to t=
-he commit?
-> >
-> > In the porg dt repo, commit hash d1326f08, which adds the
-> > nvidia,dfll-max-freq-khz property, the message body states: "Set
-> > CPU/GPU Fmax limit for 24x7 105C UCM." I read that to mean that the
-> > 24x7 always-on use case model was failing to stay under 105C unless
-> > the cpu and gpu frequencies were limited. Is that an incorrect
-> > reading? 105C is kind of a crazy number anyways, beyond the soctherm
-> > critical shutdown temperature.
->
-> What that's (trying) to say is that it sets the CPU's Fmax to the limit s=
-pecified by the 24x7 105C UCM profile, which is the 1090mV i.e. 1.4GHz limi=
-t. The profile is called that because it's normally used for the 90C-105C t=
-emperature range.
->
-> >
-> > > I looked into why this was added for porg -- it does not seem to be r=
-elated to reliability, but more so consistency of performance. I don't thin=
-k that's a huge concern for upstream -- though in any case we should be cap=
-ping the frequency in the DFLL driver for now since we don't support dynami=
-c thermal capping.
-> >
-> > So the whole conversation winds around to: The change is valid, but
-> > the commit message needs better justification?
->
-> In my opinion, there is no need to add the device tree property in upstre=
-am. The CPU is designed to work at 1.5GHz under 90C, and 1.4GHz between 90C=
- to 105C. I think this is a bit of a downstream-ism and not something we sh=
-ould add in upstream. If the user wants to underclock, then that should be =
-through the cpufreq governor or such mechanism.
+> On Wed, Sep 03, 2025 at 04:37:46PM +0800, Wei Fang wrote:
+> > Some PTP devices support looping back the periodic pulse signal for
+> > debugging,
+>=20
+> What kinds of debugs can be resolved by this loopback feature?
+>=20
+> It seems pointless to me...
 
-Ah, alright. I'll drop property handling and send a new revision.
-Which reduces this to only the speedo-tegra210 patch.
 
-Aaron
+Vladimir helped explain its purpose in the thread, do you still think
+it is pointless? If so, then I can only add a custom debugfs interface
+to the ptp_netc driver, at least this will be a better debugging feature
+for the NETC Timer. :)
+
 
