@@ -1,133 +1,176 @@
-Return-Path: <linux-kernel+bounces-800414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D810B43757
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:39:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77AB5B43759
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C11D189F650
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E12A61C2149A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C23F2F747B;
-	Thu,  4 Sep 2025 09:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B6E2F747F;
+	Thu,  4 Sep 2025 09:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WwEjB7cg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zkv3yXlH"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2DD2F83CF;
-	Thu,  4 Sep 2025 09:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223644F5E0
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756978756; cv=none; b=QKzw08TT4h0Hs8UASOfm9N2Rdxu5d/h5KNfnMXyHZmQzyD3vM8kXCVqvBMMYA1Srn2CPBhCrfaybh+K/5mY9lGSdwsEwGm7WILnuIr45JClv2zvK3v4Q5/OpfgiPUo9lYVy9TRAkgY36mNpO8Mxp0Cx5au9O8+CsKYb4mlbx4Lo=
+	t=1756978812; cv=none; b=bKLxZELTrtUyqugvdhHHBX4zVcVBdlVeZZP9FbiMMNietxZM2JALSiSYiNVhQM79YptUMIQuWf5DC0rKvyAYjEV+IXd90ovpEq+W6BSnerzC3XuLgwqb2MY83FL2kSr2P8d2Z0WRAPowYjrVnM/synb6yKaQM+L8WkbGkjMgBXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756978756; c=relaxed/simple;
-	bh=b7BACgAwQUb+uyXmCf5NXBvllTt2WyPGKAHbjgfVB+U=;
+	s=arc-20240116; t=1756978812; c=relaxed/simple;
+	bh=qiPAxPLNsHk954kmsc89B13q3EQZqdgliUn29iZKgKQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I0sLiEcOavSFmTSio/gSfLnX0cYLjEOJZSD/h365tXP8tlwf/pAXmIPParg303iNBia1r+u+dqyDmHtmTBylvBameOA6Ugt1RCY6cwI5HjDGWXuYm/gGiX6krhhvd04nVCZPz4hG6qeSgnV786s/GQs3Y85NavuromK2dZLJbZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WwEjB7cg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8BDAC4CEFA;
-	Thu,  4 Sep 2025 09:39:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756978755;
-	bh=b7BACgAwQUb+uyXmCf5NXBvllTt2WyPGKAHbjgfVB+U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WwEjB7cgK+eJtFldPWalpiAmq4p7ZPnN7tNvhCOJfmgcNzi/AWtgRp7qfM4BMPZl5
-	 yhs75u2Ns8UpweYIiAiRFivc3oqDQ37QvXDSz5dbnPvUE8loGBee8pDogGFbE+L/mx
-	 AfhRhPvAY5OIwkJOuCHEiEoolzNZ829Ijf9qVVRwHMm+UUVNwycqUnrnpGoej6kCdV
-	 eFH8f4TaxIDFGCSrF0bVkw/0ArKdvhCGo54KCnPRWlXFOoAEFOln7QBf4FlGvdGw3z
-	 iFu6sS05fcahe7VvGvuWv1aNukB9tbzhTr0CZ7i9UDuhrY2IUUb+F5fuVW91YLX76h
-	 On0EeUW75DhZg==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55f6bdcc195so1681526e87.0;
-        Thu, 04 Sep 2025 02:39:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVuZV+rmZ+HnkjDyIoCfxj1qe8udho1qfaiY/cXej5+6O7UYbjHweEqg4h6l4+dou698UrUOxKv9R+qRqR+@vger.kernel.org, AJvYcCXWBhaoQXBAVzTc3r/hcNIPDLwFDrKXd9EITL6ULtlFwxMAbHn0YK9k1HTZqWbTQ0A1xRg7HcG7Wfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2vmD7cSg/vuUx4GxIOiLH/ZBxFh8fvNAX9TiMdNbJ9q6KXGWg
-	/iLZBZHkuSOBAnj+MHCFANlbP2geP7SmvgYs+A4FJ1gt0zVrB+TYjUGTpeFIXqXS4grP1niDANA
-	haD5U+JpirST6kHg+y6EIXm+fT+h80i4=
-X-Google-Smtp-Source: AGHT+IE+sZix8HxDMFoQ4qCVA3ERgwP0vsD+zEJb2XElfW+EN65uuxN8+XQS8HhSU1B4zUIkMiL6fynWNcS2PalYMqE=
-X-Received: by 2002:a05:6512:63d9:b0:560:83e2:1db7 with SMTP id
- 2adb3069b0e04-56083e220c3mr2265147e87.6.1756978754251; Thu, 04 Sep 2025
- 02:39:14 -0700 (PDT)
+	 To:Cc:Content-Type; b=Moooq2y3E8NsnUWzOyifvxx8yQfyfYCIwqd+/ofcsC3gVBZCkursK397SoWuVzVAtlLgs5+kvGUwaUCmvgSxgPi2ruAR+xSTSW+WtILzvkgOP1xdhRdqIYijkb0qUcmkPaR8cT1OMlJL03UKWhMR2arVMWqiEWR0ZZzhhvvQjng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Zkv3yXlH; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61cfbb21fd1so8876a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 02:40:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756978809; x=1757583609; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TeUX3NDgv06+NcrhTZI/Y6Tb5TiLTC+7+QLeL03CebI=;
+        b=Zkv3yXlHEb1VWkFQ94GdbkhSi0ClB30t5y7VZCWt81p1cxHLl7zCXf4I32lPWd17jC
+         CIiuwNWTlfieHUSzNCRSUz8Iv1HnKEw+/TBsBWYjsOsSV4Pgw6pMMrTMVGs1NYZBw6yP
+         PrEnWFW266+1X965MG2OZ1HOElP5u49Ze8vFdSzvswwx4AR+A42daghpuh6RuX7EuC8Z
+         lIHIDDaVuDoSCEjgNO7jfxVRR8uhn4qOzszxn8DagDGqUMeDg3d0vth4n6T28m0elOeb
+         I04z9+ijxGsNgTQ5OWi1NK+EgyScKOZvsxP6ZwnIxwHZZ4dQ1YmtzJ7NtKDtpoluIk5O
+         3u2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756978809; x=1757583609;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TeUX3NDgv06+NcrhTZI/Y6Tb5TiLTC+7+QLeL03CebI=;
+        b=sinfUkuRBfvUTGDxK9EWmVs3VBeGjzsYb+4OogJtkF2e9s2AU+dmsnp8eILWsVjz3q
+         CPzj1qrEtEodainRQ1PRkwF+cXsWT36YgG6TUxmNYFP57IvDCuUMoKO0FHfM4QH+hyXn
+         Sk3qNc2kqZVbOiPVNRefvELziulUyOg75NdVwLpbeyj8xd2CsF2jKXof9g1iuJ5IkaQb
+         hNhgUWfzR+QoOGqLc1AmLDp8VYIuY7yqg3vhMb/9o7YCw3hopNLdwROSIwt9J0LjfSWd
+         mg6JO0lawptTXRyiX6KPYAJHN+6TrO07GyGYcINr98NMfTGlooUYyfOX8faTpmt8dFv5
+         6Uqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWN6AeglkTy21O/X/ymWs0dgaj7i9q/0OzKoetp6Qw2TLtKm5QSXRdEJuelciKUg+oHsNBGNrg4qb9c1Kg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze6BgVowQV53KIQSMMSrDYOb7SthODwuH5+JPx1tNNpt1aWNZQ
+	M6JaPF8dV+uvTC2YJmZg8aGbHUf4k9loIUIiDgT7hli062rBGR6Bk/tz2Zbt7Z/0sYGi82jcMw7
+	gTutZ6IbXfVs50bTlNupzCF733Fgtc8Hx0Dtcvz49
+X-Gm-Gg: ASbGnctiwO7thy8ig2GUeIytZsp2KYoboAQubHQ+r9IzRZO8uYF6gliH7ptJPvRwEYv
+	Wpt3TVxHySNENdbgVnlHupaUl7lgNqKfGhehQqolgUpTN7XxmsSZPf4e2mJYcr0RQyBn/5/E1zK
+	TlcKpp6vzFH5ovuHx+rIs2CRpojQ8ZAuJpztb5jyJFSlrf5ZO2VyONMDg1GXhwrS9PO/4pnqmYJ
+	9Vx8L4C+dMM5777h6vpkwqM4cSzUbMhXxtD85wxM/MS+AeO+Yvq
+X-Google-Smtp-Source: AGHT+IFvQ09ItdiF9IKa8AKCXWGo8iaQfkCiShjvgTToiej2wu3bQUANg3c8mPRCdKj+Oeo97Rq34yk08Eqg6vMF2/s=
+X-Received: by 2002:a05:6402:20d9:b0:61c:c08d:359d with SMTP id
+ 4fb4d7f45d1cf-61eeeb9e286mr58503a12.4.1756978809259; Thu, 04 Sep 2025
+ 02:40:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755721529.git.epetron@amazon.de> <b34da9fd50c89644cd4204136cfa6f5533445c56.1755721529.git.epetron@amazon.de>
- <CAMj1kXFQwOHyQg2LtabMA3qxiBn_AVV_JNfki2WPSg8u_XbBcg@mail.gmail.com>
- <CAMj1kXFzKzpoqczq7Rk-u+kKLFO057XEXMD+KM=iRMMsoUZbJA@mail.gmail.com> <20250904093455.73184-1-epetron@amazon.de>
-In-Reply-To: <20250904093455.73184-1-epetron@amazon.de>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 4 Sep 2025 11:39:02 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHTJxBMFX6J-QwcPRojLGMQsTNOH5Bz9kHk7CFdt1JApw@mail.gmail.com>
-X-Gm-Features: Ac12FXwC151u6vsYrsntF6Gl_qF6tE-aW0TPl91D1Up2Kpmz5zWqn28--0rAVOE
-Message-ID: <CAMj1kXHTJxBMFX6J-QwcPRojLGMQsTNOH5Bz9kHk7CFdt1JApw@mail.gmail.com>
-Subject: Re: Re: [PATCH v3 2/2] efi: Support booting with kexec handover (KHO)
-To: Evangelos Petrongonas <epetron@amazon.de>
-Cc: Ilias Apalodimas <ilias.apalodimas@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	bhe@redhat.com, changyuanl@google.com, graf@amazon.com, 
-	kexec@lists.infradead.org, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, nh-open-source@amazon.com, 
-	rppt@kernel.org
+References: <20250720112133.244369-1-jolsa@kernel.org> <20250720112133.244369-10-jolsa@kernel.org>
+ <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
+ <aLirakTXlr4p2Z7K@krava> <20250903210112.GS4067720@noisy.programming.kicks-ass.net>
+ <CAEf4Bza-5u1j75YjvMdfgsEexv2W8nwikMaOUYpScie6ZWDOsg@mail.gmail.com> <aLlGHSgTR5T17dma@krava>
+In-Reply-To: <aLlGHSgTR5T17dma@krava>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 4 Sep 2025 11:39:33 +0200
+X-Gm-Features: Ac12FXxsZGDsNFJ-OLi5fgKFV75dsXqfESDrRxdzmAMV29gomXnQnvt7nYNZ2rU
+Message-ID: <CAG48ez2BBTiDGT1NNK2dfZLiYMF-C75EAcufcVKWtP+Y4v-Utw@mail.gmail.com>
+Subject: Re: [PATCHv6 perf/core 09/22] uprobes/x86: Add uprobe syscall to
+ speed up uprobe
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	x86@kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	Ingo Molnar <mingo@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 4 Sept 2025 at 11:36, Evangelos Petrongonas <epetron@amazon.de> wrote:
->
-> On Thu, 4 Sep 2025 09:19:21 +0200, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > On Sat, 23 Aug 2025 at 23:47, Ard Biesheuvel <ardb@kernel.org> wrote:
+On Thu, Sep 4, 2025 at 9:56=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrote=
+:
+> On Wed, Sep 03, 2025 at 04:12:37PM -0700, Andrii Nakryiko wrote:
+> > On Wed, Sep 3, 2025 at 2:01=E2=80=AFPM Peter Zijlstra <peterz@infradead=
+.org> wrote:
 > > >
-> > > (cc Ilias)
+> > > On Wed, Sep 03, 2025 at 10:56:10PM +0200, Jiri Olsa wrote:
 > > >
-> > > Note to akpm: please drop this series for now.
+> > > > > > +SYSCALL_DEFINE0(uprobe)
+> > > > > > +{
+> > > > > > +       struct pt_regs *regs =3D task_pt_regs(current);
+> > > > > > +       struct uprobe_syscall_args args;
+> > > > > > +       unsigned long ip, sp;
+> > > > > > +       int err;
+> > > > > > +
+> > > > > > +       /* Allow execution only from uprobe trampolines. */
+> > > > > > +       if (!in_uprobe_trampoline(regs->ip))
+> > > > > > +               goto sigill;
+> > > > >
+> > > > > Hey Jiri,
+> > > > >
+> > > > > So I've been thinking what's the simplest and most reliable way t=
+o
+> > > > > feature-detect support for this sys_uprobe (e.g., for libbpf to k=
+now
+> > > > > whether we should attach at nop5 vs nop1), and clearly that would=
+ be
+> > > > > to try to call uprobe() syscall not from trampoline, and expect s=
+ome
+> > > > > error code.
+> > > > >
+> > > > > How bad would it be to change this part to return some unique-eno=
+ugh
+> > > > > error code (-ENXIO, -EDOM, whatever).
+> > > > >
+> > > > > Is there any reason not to do this? Security-wise it will be just=
+ fine, right?
+> > > >
+> > > > good question.. maybe :) the sys_uprobe sigill error path followed =
+the
+> > > > uprobe logic when things go bad, seem like good idea to be strict
+> > > >
+> > > > I understand it'd make the detection code simpler, but it could jus=
+t
+> > > > just fork and check for sigill, right?
 > > >
-> > > On Fri, 22 Aug 2025 at 04:00, Evangelos Petrongonas <epetron@amazon.de> wrote:
-> > > >
-> > > > When KHO (Kexec HandOver) is enabled, it sets up scratch memory regions
-> > > > early during device tree scanning. After kexec, the new kernel
-> > > > exclusively uses this region for memory allocations during boot up to
-> > > > the initialization of the page allocator
-> > > >
-> > > > However, when booting with EFI, EFI's reserve_regions() uses
-> > > > memblock_remove(0, PHYS_ADDR_MAX) to clear all memory regions before
-> > > > rebuilding them from EFI data. This destroys KHO scratch regions and
-> > > > their flags, thus causing a kernel panic, as there are no scratch
-> > > > memory regions.
-> > > >
-> > > > Instead of wholesale removal, iterate through memory regions and only
-> > > > remove non-KHO ones. This preserves KHO scratch regions, which are
-> > > > good known memory, while still allowing EFI to rebuild its memory map.
-> > > >
-> > > > Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > > > Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
-> > > > ---
-> > > > Changes in v3:
-> > > >         - Improve the code comments, by stating that the scratch regions are
-> > > >         good known memory
-> > > >
-> > > > Changes in v2:
-> > > >         - Replace the for loop with for_each_mem_region
-> > > >         - Fix comment indentation
-> > > >         - Amend commit message to specify that scratch regions
-> > > >         are known good regions
-> > > >
-> > > >  drivers/firmware/efi/efi-init.c | 29 +++++++++++++++++++++++++----
-> > > >  1 file changed, 25 insertions(+), 4 deletions(-)
-> > > >
-> > >
-> > > I'd rather drop the memblock_remove() entirely if possible. Could we
-> > > get some insight into whether memblocks are generally already
-> > > populated at this point during the boot?
-> > >
-> > >
+> > > Can't you simply uprobe your own nop5 and read back the text to see w=
+hat
+> > > it turns into?
 > >
-> > Ping?
+> > Sure, but none of that is neither fast, nor cheap, nor that simple...
+> > (and requires elevated permissions just to detect)
+> >
+> > Forking is also resource-intensive. (think from libbpf's perspective,
+> > it's not cool for library to fork some application just to check such
+> > a seemingly simple thing as whether to
+> >
+> > The question is why all that? That SIGILL when !in_uprobe_trampoline()
+> > is just paranoid. I understand killing an application if it tries to
+> > screw up "protocol" in all the subsequent checks. But here it's
+> > equally secure to just fail that syscall with normal error, instead of
+> > punishing by death.
 >
-> Hey Ard I was AFK travelling. I am back now and will get to it.
-> PS: Keen to meet you later today in the KVM Forum.
->
+> adding Jann to the loop, any thoughts on this ^^^ ?
 
-Yes, let's catch up!
+If I understand correctly, the main reason for the SIGILL is that if
+you hit an error in here when coming from an actual uprobe, and if the
+syscall were to just return an error, then you'd end up not restoring
+registers as expected which would probably end up crashing the process
+in a pretty ugly way?
+
+I guess as long as in_uprobe_trampoline() is reliable (which it should
+be), it would be fine to return an error when in_uprobe_trampoline()
+fails, though it would be nice to have a short comment describing that
+calls from uprobe trampolines must never fail with an error.
 
