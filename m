@@ -1,225 +1,177 @@
-Return-Path: <linux-kernel+bounces-801402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD55B4449E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:43:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17DF4B4449F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 290E44E564F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:43:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0DD17B9D7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8063126DB;
-	Thu,  4 Sep 2025 17:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDAB3126DB;
+	Thu,  4 Sep 2025 17:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=semtech.com header.i=@semtech.com header.b="J6XyTE7U";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=SemtechCorp.onmicrosoft.com header.i=@SemtechCorp.onmicrosoft.com header.b="fdr99s9O"
-Received: from mail1.bemta44.messagelabs.com (mail1.bemta44.messagelabs.com [67.219.246.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TE1vVPb0"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5B41D63C2;
-	Thu,  4 Sep 2025 17:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.219.246.113
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757007818; cv=fail; b=ZZ0QRFNLGrs/iitczYr2ddNFVF3PL3Ys+3ZHQLmZsJueCHcpABZ5NpX/oA5xIA0VtGJua5+jRC3RUPKWVsrws/1uQ5j8pg6x/6HKmNWhZqjl7tAAvp+QYYyxLt/QgUxiYTxA8X4Uagdwsnwqha0UkK93Hvwo+y9KRfoSTaxc3N0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757007818; c=relaxed/simple;
-	bh=lIriZ1Kidl92kQAKYsHaZXENkgobFTq9gMobzMhrNNo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R77W1ft9e1nWd5RDpOASd1PoooLDX14CEDErY9ixD3YmyUiOF1aV1SqGdJMhZqwXWenAs51td/O57PYI7XTB3ISVeAXQfSHSWRvL+e/2uVhP08n5aa72O47OzCG3Zo7puhDt2ksV5BKttKH2/H7NM7eoWVRYOB8M22EcHzqtxp8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=semtech.com; spf=pass smtp.mailfrom=semtech.com; dkim=pass (2048-bit key) header.d=semtech.com header.i=@semtech.com header.b=J6XyTE7U; dkim=fail (1024-bit key) header.d=SemtechCorp.onmicrosoft.com header.i=@SemtechCorp.onmicrosoft.com header.b=fdr99s9O reason="signature verification failed"; arc=fail smtp.client-ip=67.219.246.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=semtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=semtech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=semtech.com; s=k1;
-	t=1757007815; i=@semtech.com;
-	bh=y60seZusasOldV5mK6mCQCPNcFmAKgpcljtCgut8a/U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=J6XyTE7ULkjojUAa3ZF9kUAjTb7e3m0uk0T4wrxJSVkM53QAXd7Gn4CIU2VE5OaUK
-	 pkaLR8qYB3KihT5zTkBoKJL1Ff7k2+xak7MoxWvLIAaEMcJZbeQyE2G6SoYXmQ9Yvq
-	 9q/O88fB1iJJnWetNxSFJOBIE170WQQCtCs5W6GoJNa3t2dQqL136woD5ojnwej/pe
-	 jthXNRPHR9gkVAxaKylpHsqQMwOlmbPLmEyNQ77F+jUdlmbtXVXNKvidGyLL2itmdF
-	 pDdSvpZQyuAWvLUHO/I8MX/wU4Lr06b83/GqkKmKqcn2MdMXG31oKZisyS2xdQ6e6Z
-	 2lt5OPpXwVLNg==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRWlGSWpSXmKPExsWikf22SvfY+Z0
-  ZBlM3G1tM3H+W3eLyrjlsDkwenzfJBTBGsWbmJeVXJLBmXG7fzlawjbti1vxVrA2MVzi7GLk4
-  GAWWMUvca/vBDOEsZpW4s2g+E4QzjUnicdNZMIdFYDuzxOGemWBlQgLzmSRe7vnJBuGsZpJ4O
-  +clI4gjIXCUUeLS54ksEJmzjBK3mv+zQzi3GSW2rV7KCuFMYpTY230AqIeTg01AUaL1y2kmEF
-  tE4CujxOKrSSA2s4CWxM/HN8FqhAUcJV5sWAJkcwCdoirRczUMJMwrYCqxecEcdhBbQkBeYvG
-  O5cwQcUGJkzOfsECMkZdo3jobLC4kICuxYkIvG0R9sETLxD1MELakxLWbF6DmyEocPTuHBcJ2
-  lDj19TkbxBwJiYMvXjBDxH0lFryYxgphy0mc6j3HBHPDzo23oXpDJK7sfAwNljv8Ei0rPjJDO
-  M8YJX5saIXaJiPRfnkB6wRGjVlIDp+F5PBZSJYvYGRexWhenFpUllqka6qXVJSZnlGSm5iZo5
-  dYpZuoV1qsm5yaV1KUmGOol55coJdaXKxXXJmbnJOil5dasokRmFi4PlRK7WA8c6JZ/xCjJAe
-  Tkihv5YGdGUJ8SfkplRmJxRnxRaU5qcWHGGU4OJQkeF+fAsoJFqWmp1akZeYAkxxMWoKDR0mE
-  90Q9UJq3uCAxtzgzHSJ1ilGX4/vBk3uZhVjy8vNSpcR5Nc4BFQmAFGWU5sGNgCXcS4yyUsK8j
-  AwMDEI8BalFuZklqPKvGMU5GJWEeblApvBk5pXAbXoFdAQT0BEuT7aDHFGSiJCSamAq+Jboz/
-  Xx+QbZLF3lty/jZOPcAzPFzBI93f+X/pZnvtd0WXnLzK1+ilvtn3KLzHO041hcU75B2MqkXmn
-  htehTC5rsSudOnOBe/+GXjfI8pcaVSedKM1b+yC6b+v08X/CqI9Upq98vfP22v94reMtP2WPT
-  Lk5Ob7f++/7ouTDv/PW/9lrJlsxZsPvWq673n3NdVHezPEk9FWD00l1GaKbNDHPx7qDt+eZ/p
-  Y/8VtUw7i0NXp8hw7V5W9Cb3zkyO8qL/i86NHmjzMRyFTeOLWlvNSwtVjK0eP8Ka/rlu4u94g
-  zH/e0an3w7Zk1UD4kwqimTslmxffOOdZdmP3kye3pq5uOXhcETJ5uZ7zLLfeyrxFKckWioxVx
-  UnAgAQj7GpTMEAAA=
-X-Env-Sender: zxue@semtech.com
-X-Msg-Ref: server-21.tower-904.messagelabs.com!1757007814!137287!1
-X-SYMC-ESS-Client-Auth: mailfrom-relay-check=pass
-X-StarScan-Received:
-X-StarScan-Version: 9.118.3; banners=semtech.com,-,-
-X-VirusChecked: Checked
-Received: (qmail 989 invoked from network); 4 Sep 2025 17:43:34 -0000
-Received: from mail-bn8nam12on2122.outbound.protection.outlook.com (HELO NAM12-BN8-obe.outbound.protection.outlook.com) (40.107.237.122)
-  by server-21.tower-904.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 4 Sep 2025 17:43:34 -0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TuD3RcbMjPz/AYaEX7oUWvovPafLUfuCjaVFXP834KOcoF4RyDpoLv5ed9Z1P0CxugfSyZnzghxx+MqX9nGpvJPkJ71a5jqyAFA4qJkN/Bs0lEh2+THrmecwHoKZJ5I1gFkne2iKPuJgaxTMyLdYzv/Lpa+UcUsIbHRDqkOztqk+YIXMGy6GMEMvCQzZSFBpJcY2nzE1Q+j0+xh6//rbqzxRrujS6HrKPn8zKV/+8GkiSWp9KoUMydp3FCTx8EHUXz1PmfTYQih2we8r8W+Ao96ed7drojRbGhkuC/MCSN77xiFLWeEGcdFCTpLBE2UGnVgPoCiZJ5RNtoeGEIaS3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HWBZcHmfWBRFE6d0dtrAdDCMMaL0CU3bgrw3k/qekwY=;
- b=XWXNh4UcnvYmjiQeiHqcTaKWqsHwWnlfykEXPVf0VjVHvnfV1TraZw7axnIZ3OmUrfk6PaGJfQPAIodELEFCeCL+TctVXXZL8/wWWW4hY07w/T/8+r3COABhYmniYN7bf+zPS/LBwXSHnsCTk/pWifaYgRli3Ch039uQ5CR+RILbGNLqzZKPqWL1xRFLlfJ9ZxlN/C2/KuNDiZtQHnE+RHo/H4Z8AwGDQuGdOEoj5K937WVyh/6CHbPEkZv/q8e1AgLhGUd5G3G6OwGPhYib/ROoFCteNCXBC7xNXVF/9expJmGmxz50SfaIKJjAIU1aqBIcDZTbzGPOOv2mYA/azA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 38.104.251.66) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=semtech.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none
- header.from=semtech.com; dkim=none (message not signed); arc=none (0)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA0B30CD95
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 17:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757007833; cv=none; b=XK39qQ+tQRiUZEl9MU3yc7LqUJpQqNWuGHilrF6j5RLF2NlEbdcei8SoRIDYY2uNcA3s8NW/H1lTubV4PXaRA4v7A92xr6iAitbW+X3u269kUX/c/lz7/G7jQ/dhruBcpAz4AqTb6eEM8nOdUVYgANlFoYy+kJtCk33ju1V4sgA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757007833; c=relaxed/simple;
+	bh=nvtjTRQxSbVnjS2GFpfTukafqkG6VSPv0h4nKpUgFaA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eDpPjhPuS5usVw0H3bGDGW9Xhng89RrAx8rFpqn0tq1M0t8Wb9xHXnbPLRQoEEdNg0+Ziu0yfgnkx14McF1kfK9qBS7cD/ugxlA0GqeILoa3n+lFWO7KMpxuHK/aLFJOy1rUN3cOA5tsQA7j3l2FztQnhaGKlEo4uOCfioYvljs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TE1vVPb0; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24b2337d1bfso19415ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 10:43:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=SemtechCorp.onmicrosoft.com; s=selector1-SemtechCorp-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HWBZcHmfWBRFE6d0dtrAdDCMMaL0CU3bgrw3k/qekwY=;
- b=fdr99s9OU8nby9U0C2NK5x9EuMNZMFqJ/ezUl5ecMWiX1X81EtxtTy2mbcPPocFsjTAfXT6lxXsZR37RoYSuA+YD/JNgiS9altnYrqEeS1dfBp9QwynNTH50JXbfymOwMDpktFegW2NFb9/2J7QFMTldGasf3s56gqjDKGCvuLw=
-Received: from BY1P220CA0004.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:59d::15)
- by SA1PR20MB4467.namprd20.prod.outlook.com (2603:10b6:806:23e::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.29; Thu, 4 Sep
- 2025 17:43:30 +0000
-Received: from SJ1PEPF000026C6.namprd04.prod.outlook.com
- (2603:10b6:a03:59d:cafe::95) by BY1P220CA0004.outlook.office365.com
- (2603:10b6:a03:59d::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.19 via Frontend Transport; Thu,
- 4 Sep 2025 17:43:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 38.104.251.66)
- smtp.mailfrom=semtech.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=semtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of semtech.com designates
- 38.104.251.66 as permitted sender) receiver=protection.outlook.com;
- client-ip=38.104.251.66; helo=CA07RELAY1.semtech.com; pr=C
-Received: from CA07RELAY1.semtech.com (38.104.251.66) by
- SJ1PEPF000026C6.mail.protection.outlook.com (10.167.244.103) with Microsoft
- SMTP Server id 15.20.9094.14 via Frontend Transport; Thu, 4 Sep 2025 17:43:29
- +0000
-Received: from ca08gitmail.local ([10.23.50.249]) by CA07RELAY1.semtech.com with Microsoft SMTPSVC(10.0.20348.1);
-	 Thu, 4 Sep 2025 13:43:28 -0400
-From: Adam Xue <zxue@semtech.com>
-To: mani@kernel.org,
-	jeff.hugo@oss.qualcomm.com,
-	quic_yabdulra@quicinc.com,
-	chentao@kylinos.cn,
-	quic_mattleun@quicinc.com,
-	krishna.chundru@oss.qualcomm.com,
-	mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: zxue@semtech.com,
-	imocanu@semtech.com
-Subject: [PATCH v2] Fix potential kernel panic by calling dev_err
-Date: Thu,  4 Sep 2025 10:42:57 -0700
-Message-ID: <20250904174257.32371-1-zxue@semtech.com>
-X-Mailer: git-send-email 2.43.0
+        d=google.com; s=20230601; t=1757007831; x=1757612631; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1wWbc1gScFbVDYqIT9xFJKpu1PWDgbhL6vhmg/aRJGY=;
+        b=TE1vVPb00EWEQpVe5fcpCOJPQ+MvgOw5n85Jj7LULfNX3mBLs0S4gIhRqQwlXQjmon
+         TyiEf4+1hGqib61dfA4W108G4420I3JS7HRS4poeLJF0aG8A5ObOLS4En9oVTgKVlGvE
+         G3x5+Sq4NbIteLGj/K2eZvqcIHlHJzBXq2B1dD4zpabys09IfOf/qoB1N83Hk/AqPgt5
+         Pg2H5QpdSRAMiBJFCupk7s50QXh9EgjPjex1Qo9AojFPqC2YwEqTItveiKMw6B2DvPSn
+         dHKTuDOFGqvpmQZgXvqTzNjEWQUAMTDPnWmlstetbiTFazsCa7z63HojqadkooGCdB8Z
+         +1Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757007831; x=1757612631;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1wWbc1gScFbVDYqIT9xFJKpu1PWDgbhL6vhmg/aRJGY=;
+        b=vsyR0FEBtvMlV2tXziGSgyMVhxDriNKCZp+Msy97M3Bg0QC9FdkustuD0rMhB2u4nB
+         cdvG3R1hn/md1/R6TlLSUkMQRZLWXgwjTkxZ8S+1zcllpfY60PgizbC46y/shG1r3apS
+         KoRGE4XF1xil0C1lS2yEYh+qtrx8WGO+DYjqeQwaz4XlWfAAACEGhaSTfWqGmUFIU+PE
+         ui4f9apRvJFe1AfDUnYVcsT/TA5q9Yxg1HxckSZQD0mvGjgNhovlWFRlpw08vgH1A2GY
+         Fp8gC+GaAF+OvGDdVLSKATRW/6aNODux9JdpytLQrVI6P8WMzRZfdmRduLPp9T6cAR7i
+         S3RA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzkOC0fGCNt+Lhn2WnP6mGlApHYJMD9kUJtm7/iHfaVM/CwRFsxI2pYAOljY/yOkRN1Lf9W2s9i8igHek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8IZykKABa4Doc2cGY5dXHBpBrXBJ7X8jVdE3UmlVzazNBJshs
+	CCuxZQr6VgSdoe2LwdC1c4CuphuaSbten34jdjzZEwmgJixg2Z+nE9U4uh0azlA8d/WPTkirAE2
+	W2d6OnvY2plbPdOOvXrByoS010gb2/Fr6fVN7Zpz/
+X-Gm-Gg: ASbGncuevmupJtx7tOBeETtKVkNGXQcw16xA648I7RD5xDtEfBUPSNfl2x5yJxHDMRW
+	S0+1TjMxsooW253Sgb7wTF+KsDxa4FUceNgFanpNALaB4Ahm4ona2al59K7LD5H6zeSu8t0Gc9U
+	GR9+MgnTdH3XDC43g5SVEU27YVAeOqnzfPO+YOrr316rhg70KdnWtjlS5661QlQnb0GfGlbCov1
+	aQ0E/WGii7rViDlmTRYxrPLNb02uuOfUH2DnG7VrgPCZNidRMj739U=
+X-Google-Smtp-Source: AGHT+IFroDM4Brfkdoh6XHD17Mw5Q+wL7QsYilpxVXqgsw9AcRCm8Y2S/sHTZ0sspf0CyKz9yiAXKqbgpVOuuSHbKe4=
+X-Received: by 2002:a17:902:f693:b0:248:9d28:fca with SMTP id
+ d9443c01a7336-24cf5c4af03mr42785ad.14.1757007830996; Thu, 04 Sep 2025
+ 10:43:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 04 Sep 2025 17:43:28.0791 (UTC) FILETIME=[6C599270:01DC1DC3]
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C6:EE_|SA1PR20MB4467:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 11d6f7de-0786-4493-c7db-08ddebda8f65
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CEa7vPYgTCWYUTdsBiDoY45Z3S0FBTa316lUfVoV1fi1x2rgL6KP05qOhe+j?=
- =?us-ascii?Q?btPZJVv+4SUq6J1yhpBH5AAxW/XK3N2A9juz0fZE9HBynLhQT42u775RvBod?=
- =?us-ascii?Q?eG3mc+qtnCFF1demPSxyPf+/eFtRD2fTEVFCwHOE2qxi9Y/57kiA4jEwZMcJ?=
- =?us-ascii?Q?vH+T/xkPHUuXe8M93nq+CjMgllgcdGvJMIcdNe/ItIJYTO36PbTaVuQiTfh+?=
- =?us-ascii?Q?VD9Npa13Zl1g6nDTUp6oTujO8vOS3QEkbDQJ20rPKgylt8OFRAnW2KykCs4r?=
- =?us-ascii?Q?gVEYvSf7ZVxE6QWPzWN/MZf01XjDzQFgSJTZK1ErgTTcOZa7irBb1l3OKv72?=
- =?us-ascii?Q?N89+sctngS05xh79XqDclK7piuTMilwdbXqM4rNp4+QPOTFZ2rWxIxeypRPl?=
- =?us-ascii?Q?djupNqXkjXOn2MN4EKkO5s/Ocwe2jazcK6iKkzjLv+0SO1BHApTIlsdoUJd1?=
- =?us-ascii?Q?0DY7DXFg6EVogjR3sr9qmcfd5L3bTnonr/MXvaj4V2PrYQorW2vaHIomz+3G?=
- =?us-ascii?Q?i0t048M15N+oyFCRBko5rRUDuZJ1e83GnVKg6LUqjrQVU314OUZrfHprVlbK?=
- =?us-ascii?Q?69IM0JoyndzqCWCyez17yajcaxpyw4iRK9VOQgeNR6MrTjaFefZXD/ehQnj8?=
- =?us-ascii?Q?FWvxfpGZ86fk7F+WYiWajgF242AY0zDEsl+XNOdj1Rq0B/AZ/d8CLf1yvkK0?=
- =?us-ascii?Q?85vm2k10gfLOq1tEzLdhdjFO2AMJVP5lMd7dmnkjwV8yo6bsxv6KbOwU1dyE?=
- =?us-ascii?Q?y7sBbzY2zMqLRvAoIilohPNazS1zxQ4fQYiZF/R6wrdO7SUAFRnZ04FAvPJh?=
- =?us-ascii?Q?oAhtWXYargDe1Ddw6fl6PIYGHABRfdcd7P1kVc9jrdcZsSUkQL04M5yMGZcn?=
- =?us-ascii?Q?3Tn3qhqRVnU6KHZOyKx+UhN2aIdgpqBCdXNClYz0O/iBZaTu06pS4qG1OeRs?=
- =?us-ascii?Q?YMthHi9hn6ijzsCuozqaWmfPsurWCocfD/vy/DpNi20jDfUzgqxRtCrNXCEW?=
- =?us-ascii?Q?vN6OUMm0anhPIzYRAiwffVjAieWsKafxiDCd7WYlK5+j6kegHKfm1qzTiMaM?=
- =?us-ascii?Q?bLTmMbY3tl6eM5mZHEmA2lSulLR/zrMkAIwRprG5GPxXdb1qmrgTXbtbXA8h?=
- =?us-ascii?Q?bCNLDCsQB8FVRqQK6/npv9NWb8ySPTDZHFwRfP64jGdbzIgI+qs6dxl+FrKi?=
- =?us-ascii?Q?E3wM2Z6unAmeYDvTdiEMLjUvzj1tP0NWXdn9Ta9LuiXi94Psndw16uF4zWHi?=
- =?us-ascii?Q?OPaX4p1TAF9wcuwwG3DU8ULIWrTorllWZ81Jget34Lt2PfqbuE5LXGG25cRY?=
- =?us-ascii?Q?gsqp4/62XSzXcrg//0RKtK+KYB+D1kircjp3HZx/Xn2YGvDGgFz5WzuokjQ8?=
- =?us-ascii?Q?7bJiL0H/ygc3XS/YYtnr3DYArKbL95MdHGrA1lsV7RmqaRn/ukgWA7DhgEMF?=
- =?us-ascii?Q?SQJ8wM512cRFjfBwm9ltQLd2W3JnMf/vRe2+BW6a+2fQZ8er1HeV5kHsJrJ7?=
- =?us-ascii?Q?F7NQ3Gh/v3rcYsZML+eX1E9kpk6Uv0V10s4e?=
-X-Forefront-Antispam-Report:
-	CIP:38.104.251.66;CTRY:CA;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CA07RELAY1.semtech.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1102;
-X-OriginatorOrg: semtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 17:43:29.3474
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11d6f7de-0786-4493-c7db-08ddebda8f65
-X-MS-Exchange-CrossTenant-Id: b105310d-dc1a-4d6e-bf0d-b11c10c47b0f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=b105310d-dc1a-4d6e-bf0d-b11c10c47b0f;Ip=[38.104.251.66];Helo=[CA07RELAY1.semtech.com]
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-SJ1PEPF000026C6.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR20MB4467
+References: <20250903232437.1454293-1-kaleshsingh@google.com>
+ <827c844f-7106-4f62-a108-1f83544aa56e@lucifer.local> <43ryds7hzhs5bpaxznco7fppmakdb4f46agwtsc5erudqfoz2x@7y4jgbtft7jj>
+ <413ee338-1795-433c-b3d4-72c870488d95@lucifer.local>
+In-Reply-To: <413ee338-1795-433c-b3d4-72c870488d95@lucifer.local>
+From: Kalesh Singh <kaleshsingh@google.com>
+Date: Thu, 4 Sep 2025 10:43:39 -0700
+X-Gm-Features: Ac12FXwMuBbeKLTnzz-vrMqaDdYeAL1AnUaDmDRhybzWNwdrA2CKosvm7364eLA
+Message-ID: <CAC_TJvcCW003ef3=RCXTbC7daSS2+tiS24-7JdTLn3QVJX3Bgg@mail.gmail.com>
+Subject: Re: [PATCH] mm: centralize and fix max map count limit checking
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, akpm@linux-foundation.org, minchan@kernel.org, 
+	kernel-team@android.com, android-mm@google.com, 
+	David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In mhi_init_irq_setup, the device pointer used for dev_err
-was not initialized. Use the pointer from mhi_cntrl instead.
+On Thu, Sep 4, 2025 at 10:33=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Thu, Sep 04, 2025 at 01:22:51PM -0400, Liam R. Howlett wrote:
+> > > > diff --git a/mm/mremap.c b/mm/mremap.c
+> > > > index e618a706aff5..793fad58302c 100644
+> > > > --- a/mm/mremap.c
+> > > > +++ b/mm/mremap.c
+> > > > @@ -1040,7 +1040,7 @@ static unsigned long prep_move_vma(struct vma=
+_remap_struct *vrm)
+> > > >    * We'd prefer to avoid failure later on in do_munmap:
+> > > >    * which may split one vma into three before unmapping.
+> > > >    */
+> > > > - if (current->mm->map_count >=3D sysctl_max_map_count - 3)
+> > > > + if (exceeds_max_map_count(current->mm, 4))
+> > > >           return -ENOMEM;
+> > >
+> > > In my version this would be:
+> > >
+> > >     if (map_count_capacity(current->mm) < 4)
+> > >             return -ENOMEM;
+> > >
+> >
+> > Someone could write map_count_capacity(current->mm) <=3D 4 and reintrod=
+uce
+> > what this is trying to solve.  And with the way it is written in this
+> > patch, someone could pass in the wrong number.
 
-Signed-off-by: Adam Xue <zxue@semtech.com>
----
- drivers/bus/mhi/host/init.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Hi Liam,
 
-diff --git a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
-index 93eddf302a49..987dfde4b7e7 100644
---- a/drivers/bus/mhi/host/init.c
-+++ b/drivers/bus/mhi/host/init.c
-@@ -195,7 +195,6 @@ void mhi_deinit_free_irq(struct mhi_controller *mhi_cntrl)
- int mhi_init_irq_setup(struct mhi_controller *mhi_cntrl)
- {
- 	struct mhi_event *mhi_event = mhi_cntrl->mhi_event;
--	struct pci_dev *pdev = to_pci_dev(mhi_cntrl->cntrl_dev);
- 	unsigned long irq_flags = IRQF_SHARED | IRQF_NO_SUSPEND;
- 	int i, ret;
- 
-@@ -222,7 +221,7 @@ int mhi_init_irq_setup(struct mhi_controller *mhi_cntrl)
- 			continue;
- 
- 		if (mhi_event->irq >= mhi_cntrl->nr_irqs) {
--			dev_err(&pdev->dev, "irq %d not available for event ring\n",
-+			dev_err(mhi_cntrl->cntrl_dev, "irq %d not available for event ring\n",
- 				mhi_event->irq);
- 			ret = -EINVAL;
- 			goto error_request;
-@@ -233,7 +232,7 @@ int mhi_init_irq_setup(struct mhi_controller *mhi_cntrl)
- 				  irq_flags,
- 				  "mhi", mhi_event);
- 		if (ret) {
--			dev_err(&pdev->dev, "Error requesting irq:%d for ev:%d\n",
-+			dev_err(mhi_cntrl->cntrl_dev, "Error requesting irq:%d for ev:%d\n",
- 				mhi_cntrl->irq[mhi_event->irq], i);
- 			goto error_request;
- 		}
--- 
-2.43.0
+I still think there is value to this as it's lot less likely to get
+the common case incorrectly:
 
+if (!map_count_capacity(mm))
+        return -ENOMEM;
 
-To view our privacy policy, including the types of personal information we collect, process and share, and the rights and options you have in this respect, see www.semtech.com/legal.
+It also facilitate us adding the asserts as Pedro suggested (excluding
+the munmap() case.
+
+>
+> Right, but I think 'capacity' is pretty clear here, if the caller does so=
+mething
+> silly then that's on them...
+>
+> >
+> > I'm not sure this is worth doing.  There are places we allow the count
+> > to go higher.
+>
+> ...But yeah, it's kinda borderline as to how useful this is.
+>
+> I _do_ however like the 'put map count in one place statically' rather th=
+an
+> having a global, so a minimal version of this could be to just have a hel=
+per
+> function that gets the sysctl_max_map_count, e.g.:
+>
+> if (current->mm->mmap_count >=3D max_map_count() - 3)
+>
+> etc. etc.
+>
+> >
+> > Certainly fix the brk < to be <=3D and any other calculations, but the
+> > rest seem okay as-is to me.  The only real way to be sure we don't caus=
+e
+> > a bug in the future is to have better testing.
+>
+> Speaking of testing - Kalesh - do make sure to test the VMA tests to make=
+ sure
+> this doesn't break those - they live in tools/testing/vma and you just ha=
+ve to
+> do make && ./vma
+
+Thanks Lorenzo, will do.
+
+-- Kalesh
+
+>
+> Cheers!
+>
+> >
+> > Thanks,
+> > Liam
 
