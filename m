@@ -1,127 +1,145 @@
-Return-Path: <linux-kernel+bounces-799793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACC3BB4305C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:17:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A0F7B4305D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F3FA188BA6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:17:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C7D3204BDA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5931E520D;
-	Thu,  4 Sep 2025 03:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQf1d51o"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC8384E07;
-	Thu,  4 Sep 2025 03:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C16F274FCB;
+	Thu,  4 Sep 2025 03:18:40 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD96272E41
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 03:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756955841; cv=none; b=GENNSjIKgYTqOEbhmfoNZBw9sfcPsp5d5SXsebJ9YOrZ0EU5AfXsxLQyW3tiLlYkYFvRNKonw/+J7Vc80PL+wDJJd2u2bf0PyzLTpGvVIEMKuoawVNhN/bmHNM3yz7siZGw0w9TVXISYLa3W/hgUvNKet6pDZzBlhwACYjBqYJ4=
+	t=1756955920; cv=none; b=c16SJlDAvELlVHsy86YByvn07BXzrWbjXd/CVaLSSHQFCaYwQUgMEDV1QGIfMZub/4ESS4R9eOpEUKCu2lDNAogOhvqnZ62Vn01LZZiUOZUl2UVNpewA8kZOa3FPOZ0+BGR/iElj47w30On+eUuOFOwv1eeVcE7RpR0AaWl1n+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756955841; c=relaxed/simple;
-	bh=EejBiLCxFjywog9sanmt7MIEAs+lWXOyyyaShAeNxJM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kjfq3nkujJ7e5vyFtiwr810tEMIXM/K2o0l84VKmKgPQ2PiTMRDQM7Ck6j38AVLTg7mrube3ZH7A9XQ5WIczpsbkyhaRDTxT1zta4nsJe5IEQFu0nN1uzZ9CHN7LlhJcwyk92wFeAVKxITWyfDzImaeLA1aGgDptRhQ1bJhBoaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQf1d51o; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2489acda3bbso4968025ad.1;
-        Wed, 03 Sep 2025 20:17:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756955839; x=1757560639; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CwlGz5VRP5ZkPZgUDr33RtSbQBaIWanoj51psutpytY=;
-        b=GQf1d51o0STNXobnIiFyOeVVBGuohSOGQFoSalQL8qsJGEfthBCSnm1pxFifshmXB8
-         AIrKm7BNHVWTS8UtuJhSkijp1+5ElI5tTe8B7UGRLCO2gGdQOXzjMH+VlCknXXULSdXy
-         PtRZB+ntSweLyyW/WvmwH0amISTJxRwFRzbd/PlYwurpFRT6pL5ZYGNBgwFPWIysBTvz
-         NrSxd3yYnUtJbqG3Dp0ksg4NGfdNGnea4RDys1kERDknlVBKR9RabLkmc1ZboAI609Tq
-         U/TmiVSAiSFB9FMWj92S72vSQn7fsh/o0inf/TtZ/rKQFvzd7AiTFwCeUcXR6CK0dSH3
-         jlng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756955839; x=1757560639;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CwlGz5VRP5ZkPZgUDr33RtSbQBaIWanoj51psutpytY=;
-        b=T4gixqfm/2W33tJM2RpyCvLSFpktXr+PfWOsf8CI/3WNUVnJtJsa7m3IL4hR3+9Dcy
-         sC0s/mdZt6qnUJOW4A697T9FQI90A1krqn0TrHGkD9NVmmpd3ty5FW8AGJslEXnOUX03
-         gLeugLUYomxttORashIyYjX3QxQ+bA9V65af3EseV5z4UW66hwTi53jotAWbnWPiZKA0
-         kNJSrziHtWsbIMbYBT6OutXV2rJVb9IH0GG4Iynccx4gOCd4Cwxd9H4eYsUjfT068qCZ
-         LIYHq5yftBtartEajBdwJeXwuoj5TtyBU0GlkmAxIRG9ADWPyPk8yd2nTuFyjNQi+tvR
-         zkKg==
-X-Forwarded-Encrypted: i=1; AJvYcCU575lFgPmBted81xUZXfBJa4XgefU9/9eYQxqJL3YqETDxhgG3oOzkDWHXXlcHAzyU0zLM87np@vger.kernel.org, AJvYcCUer3NJqdM6j9JwiiX4inOVYL2KeLiUzH2WJsNT7HKGC/YslS1/2bsfmrUkO6IU/tlOHGmMiStxgwpHwhlc@vger.kernel.org, AJvYcCXL+J0/gurKkanJnK9ixU7Mzl8k/YGsQM4eIQlhOrM3fjAmXNaxnxygVJDOxTjwybMt49HGvWsXA1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSmADVXYfNeZkkJSc5I8AeNzDC5tsoj1F9T7jcHJqjsALJVirZ
-	z0Q8qW5vtB4c2yD1VbDLyrxl5lZQXHwjK6BwSYaWoRchowL+rhr+n3+d
-X-Gm-Gg: ASbGncuGqO4A1vWL5gm1k8g2wCJSq4YLAKfP5yYlDNzahrIFjwZG6bs9r+9xyf/4G/T
-	eSmo+k9aVLbRpAXAqNWqpEmnPswI8OBCNRoIqch80uf488h5WCA8MgwGg0hgZKVlECGgtArsvru
-	s3z1f7dfksDonKlGkwYTr5WX6gudWjK8zfyoRdC0YgxwpiKOT7ukV6ZyKyrs+WDD02ZYg3KYg69
-	QyjIKUsvyfORxvq8fa4gzFvFwRLe071cl0tS0zTrUqWV3ck1u893BfjP3+SWPmacu0mR0VF4ssH
-	gnGj0ZRMLIOB+ebRlpqOc20gUQit9WSCH98ATjz6rrwjp1ACaN2dALmvDkbE2Y1spA7Q+KiN9GM
-	jE5ZwOnYHEsLtkPcLc/ebSkwRW/AW4Iw2/qO88Ho+M+M2bsNJ8wJQ
-X-Google-Smtp-Source: AGHT+IGCYG6pexWrVDLMOJuhlbs7lAQKJ4a7SRLhFW234N8oy90hekqLgqNebBrdrdxE6UWCH2y2xw==
-X-Received: by 2002:a17:903:98f:b0:24c:cb6b:105b with SMTP id d9443c01a7336-24ccb6b138cmr8087135ad.25.1756955839363;
-        Wed, 03 Sep 2025 20:17:19 -0700 (PDT)
-Received: from fedora ([172.59.162.44])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ca63c9e71sm25284835ad.95.2025.09.03.20.17.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 20:17:18 -0700 (PDT)
-From: Alex Tran <alex.t.tran@gmail.com>
-To: socketcan@hartkopp.net
-Cc: mkl@pengutronix.de,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alex Tran <alex.t.tran@gmail.com>
-Subject: [PATCH v1] docs: networking: can: change bcm_msg_head frames member to support flexible array
-Date: Wed,  3 Sep 2025 20:17:09 -0700
-Message-ID: <20250904031709.1426895-1-alex.t.tran@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756955920; c=relaxed/simple;
+	bh=/GuSdoUa7Mg6kegPOB9iDxfDzkb16eBIAU06JZax8vg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=nJHdh7HpeLbrYs0Ii77J1+y1POWNRy4EIbedRyUhaGchJrc8s88UaEg4NuagEOUlflIyVbdhM3rcB3+IQBCxYpjrP4RGlTtr4Ydlya7Yv02rQVZjIrfN7FYu3ke2921+y4LaTnMbQvEIkLCVys4IveXdtm27hSALTayGF/9MM0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8DxvdIHBblob38GAA--.13605S3;
+	Thu, 04 Sep 2025 11:18:31 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJCxM+QEBbloyvV8AA--.579S3;
+	Thu, 04 Sep 2025 11:18:30 +0800 (CST)
+Subject: Re: [PATCH v1 3/3] LoongArch: Fix unreachable instruction warnings
+ about entry functions
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Nathan Chancellor <nathan@kernel.org>,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250901072156.31361-1-yangtiezhu@loongson.cn>
+ <20250901072156.31361-4-yangtiezhu@loongson.cn>
+ <ots6w2ntyudj5ucs5eowncta2vmfssatpcqwzpar3ekk577hxi@j45dd4dmwx6x>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <3da2092b-e6ca-a7a1-9459-c2754adf19aa@loongson.cn>
+Date: Thu, 4 Sep 2025 11:18:28 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <ots6w2ntyudj5ucs5eowncta2vmfssatpcqwzpar3ekk577hxi@j45dd4dmwx6x>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJCxM+QEBbloyvV8AA--.579S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxGryUAr18Zw17Aw1UXry8Xrc_yoW5WF17pF
+	y5Ar4kCrWkJr1qva45Aa4UuFWDXa4Du3Z7uF4kKryUCw40qr10qr1qvr47WF98Kw48GFWY
+	qF1xXw1ftFy8J3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AK
+	xVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
+	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
+	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F
+	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jYSoJU
+	UUUU=
 
-The documentation of the 'bcm_msg_head' struct does not match how
-it is defined in 'bcm.h'. Changed the frames member to a flexible array,
-matching the definition in the header file.
+On 2025/9/4 上午3:22, Josh Poimboeuf wrote:
+> On Mon, Sep 01, 2025 at 03:21:56PM +0800, Tiezhu Yang wrote:
+>> +++ b/arch/loongarch/kernel/Makefile
+>> @@ -3,8 +3,6 @@
+>>   # Makefile for the Linux/LoongArch kernel.
+>>   #
+>>   
+>> -OBJECT_FILES_NON_STANDARD_head.o := y
+>> -
+>>   always-$(KBUILD_BUILTIN)	:= vmlinux.lds
+>>   
+>>   obj-y		+= head.o cpu-probe.o cacheinfo.o env.o setup.o entry.o genex.o \
+>> diff --git a/arch/loongarch/kernel/head.S b/arch/loongarch/kernel/head.S
+>> index e3865e92a917..a11880f3a7e1 100644
+>> --- a/arch/loongarch/kernel/head.S
+>> +++ b/arch/loongarch/kernel/head.S
+>> @@ -42,6 +42,7 @@ SYM_DATA(kernel_fsize, .long _kernel_fsize);
+>>   	.align 12
+>>   
+>>   SYM_CODE_START(kernel_entry)			# kernel entry point
+>> +	UNWIND_HINT_UNDEFINED
+> 
+> Should this not be UNWIND_HINT_END_OF_STACK?
 
-See commit 94dfc73e7cf4 ("treewide: uapi: Replace zero-length arrays with
-flexible-array members")
+Yes, makes sense, will do it in the next version.
 
-Bug 217783 <https://bugzilla.kernel.org/show_bug.cgi?id=217783>
+> I notice Loongarch doesn't seem to use that anywhere.  How does any ORC
+> unwind succeed?  UNWIND_HINT_UNDEFINED sets an error condition which
+> should cause a livepatch transition to stall.
 
-Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
----
- Documentation/networking/can.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Actually, kernel_entry() or smpboot_entry() is recognized as the last
+frame, because at this point is_entry_func() is true and 
+state->stack_info.type = STACK_TYPE_UNKNOWN in unwind_next_frame() of
+arch/loongarch/kernel/unwind_orc.c.
 
-diff --git a/Documentation/networking/can.rst b/Documentation/networking/can.rst
-index bc1b585355f7..7650c4b5be5f 100644
---- a/Documentation/networking/can.rst
-+++ b/Documentation/networking/can.rst
-@@ -742,7 +742,7 @@ The broadcast manager sends responses to user space in the same form:
-             struct timeval ival1, ival2;    /* count and subsequent interval */
-             canid_t can_id;                 /* unique can_id for task */
-             __u32 nframes;                  /* number of can_frames following */
--            struct can_frame frames[0];
-+            struct can_frame frames[];
-     };
- 
- The aligned payload 'frames' uses the same basic CAN frame structure defined
--- 
-2.51.0
+Call Trace:
+[<90000000031a36b4>] show_stack+0x5c/0x180
+[<900000000319d4b0>] dump_stack_lvl+0x6c/0x9c
+[<900000000458d3e0>] nmi_cpu_backtrace+0x160/0x168
+[<90000000031a3b6c>] handle_backtrace+0xc/0x40
+[<90000000032b1078>] __flush_smp_call_function_queue+0xd0/0x330
+[<90000000031aec40>] loongson_ipi_interrupt+0xb0/0x168
+[<900000000325b4d4>] __handle_irq_event_percpu+0x54/0x1a8
+[<900000000325b63c>] handle_irq_event_percpu+0x14/0x80
+[<9000000003262a48>] handle_percpu_irq+0x50/0xa0
+[<900000000325aad4>] generic_handle_domain_irq+0x2c/0x80
+[<9000000003bc4d24>] handle_cpu_irq+0x64/0xa0
+[<90000000045a350c>] handle_loongarch_irq+0x2c/0x48
+[<90000000045a35e4>] do_vint+0xbc/0xe0
+[<90000000031a1624>] handle_vint+0x144/0x1e4
+[<900000000321e2e8>] _nohz_idle_balance.isra.0+0x230/0x3a0
+[<90000000031cd004>] handle_softirqs+0x10c/0x298
+[<90000000031cd2e8>] __irq_exit_rcu+0x100/0x160
+[<90000000045a35a4>] do_vint+0x7c/0xe0
+[<90000000045a55cc>] idle_exit+0x0/0x4
+[<90000000045a55d8>] arch_cpu_idle+0x8/0x30
+[<90000000045a5698>] default_idle_call+0x18/0x50
+[<90000000032250b0>] do_idle+0xb8/0x130
+[<9000000003225374>] cpu_startup_entry+0x2c/0x38
+[<90000000045a6240>] kernel_entry_end+0xdc/0xe0
+[<90000000045c0d44>] start_kernel+0x65c/0x660
+[<90000000045a60f0>] kernel_entry+0xf0/0xf8
+
+Thanks,
+Tiezhu
 
 
