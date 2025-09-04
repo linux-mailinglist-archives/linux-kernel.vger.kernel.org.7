@@ -1,165 +1,320 @@
-Return-Path: <linux-kernel+bounces-801423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D390B444D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:52:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0967CB444DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EACCF1CC2770
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:52:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AC851CC2DA5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7139D31A571;
-	Thu,  4 Sep 2025 17:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1E1321458;
+	Thu,  4 Sep 2025 17:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0ecf27iA"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="vAJMMjGJ"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CA43128CC
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 17:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5BB2C026D;
+	Thu,  4 Sep 2025 17:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757008286; cv=none; b=C9uz9XKfO/RZBxBN3SLxXEBrmSG1srtWcHtKrspl37KLWqjh4ugLb00uORyIG8M6u9t4mvVYa2jmUiprBnqKp2sctcO5lzUWVDg4qwNXrS+3l1pkPOllppZHjxrbUVKtLI+HwpS4tTtUDVPIU6jjymtLZRCmyKZzY4whcDuSwFw=
+	t=1757008305; cv=none; b=tHLLyPxa7Jc25xk8RaVWAFWpycOzsNhRzunWWI2BClbAi5S5hv8D/ZpS3Ki4/hWu4eaC5Hjx2TKT6r1cHXeakQTVYq+3uEuYfBHbUIRfwe+6laiE2lq9CdNMx7WNq23kqO20l81t2XWr3L7RL9XvgBhFamI8xHsB6zOeJfBIZXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757008286; c=relaxed/simple;
-	bh=zL0BQBLVSP12qsO8N9fp3GBVIxlwd1bonh505oq0ysk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IsQMO3fGwIN13qP8X7r2k92zwchAz919irIExZszGOjoguYnIVYcaYkPNzlL66uf3JsX/K8FMHFNCHem2wESttVXeoYFZzBa23z+vA8wKrOtXPRzY7vnpjUv90QvBat+OTkD0iQTL48Nfy6W/lfK7G3LiyjLzq9ziUS9+SyGdpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0ecf27iA; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-24cca557085so16105ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 10:51:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757008284; x=1757613084; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S5f4CV7/Zq9AHWfcQkbq4wqzY80LXaCxVRDw6EMIrtQ=;
-        b=0ecf27iAs2jcqVgXqGbioyuQnYgawdsNvgZpWchlSV4IZ6/V8ITAk8PDwsD2up5BrK
-         lXX+q0WKwLEIOqMy5nJe5aW+cvScB1HevKbUVdgcdl3SOluauhTjcT0g1iCHZwzCPxjw
-         q5xfV0FH7qPRh4byiTbHMlPPBpraqiFixNFpvOqa6ZzZVzlSIMx7EICIMelOiix5tH9z
-         nGI1oZEfS+iCSAYi9OvSeIbHduc8GqnPjiZ59ZCr0m9SJxy5gm5OBPdZ8VfGvO2Wa3Ue
-         dTH/q1rKgDbI1eLVIqbvxnF3gsuf4Kne9RvPTrVlg5tsUK+40xseSHAfDFMLrKAPE61l
-         3anw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757008284; x=1757613084;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S5f4CV7/Zq9AHWfcQkbq4wqzY80LXaCxVRDw6EMIrtQ=;
-        b=nX8i2DwS0nb7J3QXLEMXSSlWoLLo+E1uLnHN9aAGKeWDfhS3H6rEu95iZWSDwMfogD
-         0DbWGEkP8RA7XOHs1KSv+BZAOsDSrDpZz66innPj5MFfMbCSfeAXBqcUmVhn/yMOTvGD
-         msibmJUeJySZB+bp55nPyiJRMy3Cg7XQKTgtG/2g/zOSScseRG/OairIh4vehmyyCqY0
-         P8x9ECBO3s109dTxw3WIvEKi1S0q19ErRZ50XPgDWCuSQXqJN9eDQyc7acqxRBbPxkpo
-         fEYE0667WSjDlmKR0KDleV2zIpiju4G5L3CFTmv0ceKtkSAB5dnhd/mwOhX22ZgiygHC
-         zQGw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2cMoJDaJ+kaU+ECvm/uoBIPq2ZG5mSkl/mdOWNGZLi+GWsTrBc16jxoR/lzyj1cPjWllLI0mgTYzGxvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1UOc7+QpPVHfXWp2xfcJHplOXHY2YAZM43U5zGx0tph1zZQfF
-	zW6zhTSo1pT01YJmzClsKJxzYjaUPXhL6u9JJQpjPhQ5+FGxCyubnA6nNufCVICjBE08CaHi/c2
-	JkEOv4m/hH2iTDIVkVUF5S3xUOqf5grLfEvywKCh7
-X-Gm-Gg: ASbGnctlElTkPt5m5eBzeU6Xb6Jdbp0uJ/qZhx2QlGL4fSNhiH2uCy2z932ZAra4Apf
-	GMQ4LwMhy7jwPT4TijRN0WwcP1g6TAl6wiwdDHyRo82e9Yg69zH52mAzGFGTeF4b0nvmuKpMuTN
-	toSSZ9lJAQYHgfOIT+YhUN4Bsu9OdvOgKueF/RpSuu2M2hA8+9Iy7oEpk/herPCudcWckCyD+5X
-	Joyh+qBQeZfHD0YojopCrOa4iziAZYzZ/DFY/18yHcxM+HCc7lwFvA=
-X-Google-Smtp-Source: AGHT+IE/3b8sPJKpYGeK7oU85pQOncW+STxSebtEdgTCPGH/HESFfdjgboseK2XGkBZX91Fw4LOcIAmv4JXkuThCDGs=
-X-Received: by 2002:a17:903:283:b0:240:5c75:4d29 with SMTP id
- d9443c01a7336-24cf5994170mr241895ad.0.1757008284007; Thu, 04 Sep 2025
- 10:51:24 -0700 (PDT)
+	s=arc-20240116; t=1757008305; c=relaxed/simple;
+	bh=jDu+D0q8nRKICmZ6bnLrMMMfQ0qvf+zqJ4dVtnlIAf8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mJvOCf4oUtEdzseTbd0ux9edUR0ETrzPUTRlgxDv6JQzQZK2ZUbe8eoB2+u3y3RCaN+loEc78cXTguq7KXChIlVO2pS3FY6dpq+z5rQ6Txq9D6w3bJpqtF6bGOlhyZDHsdmoVgnEmNjsrq6OYLgwUV5LCjuNXCEvkFNxwQUfjKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=vAJMMjGJ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LsiKyVM8DaNk49lJby8XtmITtLhNnVn6b2laLK9bt4A=; b=vAJMMjGJ8dlaApYEToY9hKb/zg
+	fkqrPuBKVphEZ1nmIbmAyh75hmYOdTlEZtjAb2mnW/QHCYLapLVpmr3PcGAWt04+yR465nScjS75x
+	GjGCQmjVQwUUEHP5NGDS87iHkNCKuFPVqlPNWa47WyYjIv7hh1tXxnWbTIcaPbI89mdPbvu/t3FxW
+	2Plxvk/Qci1SbswNUTc3YMM08GcER8W1yJjnAFpNx5qRmAv/rZwFmJpArbwNYKFq+CdFcHdhrJs/i
+	STDsfnDfA0lD1mwNQf17hmFXejtzaUsfrEXOzVyX5X99UDNnb9VO7fhklNA/LfbUYeulOa4O+FyBJ
+	f08PIwcg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uuE7W-00000005U1W-1kes;
+	Thu, 04 Sep 2025 17:51:38 +0000
+Date: Thu, 4 Sep 2025 18:51:38 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Tom Hromatka <tom.hromatka@oracle.com>
+Cc: kees@kernel.org, luto@amacapital.net, wad@chromium.org,
+	sargun@sargun.me, corbet@lwn.net, shuah@kernel.org,
+	brauner@kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	bpf@vger.kernel.org, YiFei Zhu <zhuyifei@google.com>
+Subject: Re: [PATCH] seccomp: Add SECCOMP_CLONE_FILTER operation
+Message-ID: <20250904175138.GA886028@ZenIV>
+References: <20250903203805.1335307-1-tom.hromatka@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903232437.1454293-1-kaleshsingh@google.com>
- <827c844f-7106-4f62-a108-1f83544aa56e@lucifer.local> <43ryds7hzhs5bpaxznco7fppmakdb4f46agwtsc5erudqfoz2x@7y4jgbtft7jj>
- <413ee338-1795-433c-b3d4-72c870488d95@lucifer.local> <84aad392-3bff-4f98-b612-5e9a046edb36@redhat.com>
-In-Reply-To: <84aad392-3bff-4f98-b612-5e9a046edb36@redhat.com>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Thu, 4 Sep 2025 10:51:12 -0700
-X-Gm-Features: Ac12FXyT6XQaoSAVRSJwX4zOcb1nmPXZsqOrxsSrYiMr1nQbN0UJKDP2mFJkfEk
-Message-ID: <CAC_TJvc=5=iS8gCumJWqH5eF4XufFSogqtWHJmiH5WBN1A6gng@mail.gmail.com>
-Subject: Re: [PATCH] mm: centralize and fix max map count limit checking
-To: David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	akpm@linux-foundation.org, minchan@kernel.org, kernel-team@android.com, 
-	android-mm@google.com, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903203805.1335307-1-tom.hromatka@oracle.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Sep 4, 2025 at 10:42=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 04.09.25 19:33, Lorenzo Stoakes wrote:
-> > On Thu, Sep 04, 2025 at 01:22:51PM -0400, Liam R. Howlett wrote:
-> >>>> diff --git a/mm/mremap.c b/mm/mremap.c
-> >>>> index e618a706aff5..793fad58302c 100644
-> >>>> --- a/mm/mremap.c
-> >>>> +++ b/mm/mremap.c
-> >>>> @@ -1040,7 +1040,7 @@ static unsigned long prep_move_vma(struct vma_=
-remap_struct *vrm)
-> >>>>     * We'd prefer to avoid failure later on in do_munmap:
-> >>>>     * which may split one vma into three before unmapping.
-> >>>>     */
-> >>>> -  if (current->mm->map_count >=3D sysctl_max_map_count - 3)
-> >>>> +  if (exceeds_max_map_count(current->mm, 4))
-> >>>>            return -ENOMEM;
-> >>>
-> >>> In my version this would be:
-> >>>
-> >>>     if (map_count_capacity(current->mm) < 4)
-> >>>             return -ENOMEM;
-> >>>
-> >>
-> >> Someone could write map_count_capacity(current->mm) <=3D 4 and reintro=
-duce
-> >> what this is trying to solve.  And with the way it is written in this
-> >> patch, someone could pass in the wrong number.
-> >
-> > Right, but I think 'capacity' is pretty clear here, if the caller does =
-something
-> > silly then that's on them...
-> >
-> >>
-> >> I'm not sure this is worth doing.  There are places we allow the count
-> >> to go higher.
-> >
-> > ...But yeah, it's kinda borderline as to how useful this is.
-> >
-> > I _do_ however like the 'put map count in one place statically' rather =
-than
-> > having a global, so a minimal version of this could be to just have a h=
-elper
-> > function that gets the sysctl_max_map_count, e.g.:
-> >
-> > if (current->mm->mmap_count >=3D max_map_count() - 3)
->
-> I enjoy seeing sysctl_max_map_count hidden. But map_count_capacity() is
-> even more readable, so I like it.
->
-> I don't complete like the "capacity" term, but I cannot think of
-> something better right now. Maybe something around "free" or
-> "remaining", not sure.
->
-> I also don't completely like "map_count" (I know, I know, we call it
-> like that in structures), because it reminds me of the mapcount ...
-> talking somehow about "vmas" would be quite clear.
+On Wed, Sep 03, 2025 at 08:38:03PM +0000, Tom Hromatka wrote:
 
-Thanks David, my original implementation started with vma_limit() :).
-Maybe something like vma_count_remaining() ?
+> +static long seccomp_clone_filter(void __user *upidfd)
+> +{
+> +	struct task_struct *task;
+> +	unsigned int flags;
+> +	pid_t pidfd;
+> +
+> +	if (!capable(CAP_SYS_ADMIN))
+> +		return -EPERM;
 
--- Kalesh
->
-> Anyhow, just as an inspiration my 2 cents ...
->
-> --
-> Cheers
->
-> David / dhildenb
->
+OK...
+
+> +	if (atomic_read(&current->seccomp.filter_count) > 0)
+> +		return -EINVAL;
+
+If it's atomic, then presumably there's something that can change
+it asynchronously, right?  If so, what's there to prevent
+invalidation of the result of this test right after you've
+decided everything's fine?
+
+Let's check...
+; git grep -n -w filter_count
+<64 lines of output, most clearly unrelated to that>
+; git grep -n -w -c filter_count
+drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils_fw2x.c:1
+drivers/net/ethernet/intel/i40e/i40e_common.c:18
+drivers/net/ethernet/intel/i40e/i40e_prototype.h:4
+drivers/net/ethernet/qlogic/qede/qede_filter.c:13
+drivers/net/ipa/ipa.h:2
+drivers/net/ipa/ipa_cmd.c:1
+drivers/net/ipa/ipa_table.c:6
+fs/proc/array.c:1
+include/linux/seccomp_types.h:2
+init/init_task.c:1
+kernel/seccomp.c:3
+lib/kunit/executor.c:7
+lib/kunit/executor_test.c:5
+
+Sod drivers and lib/kunit, these are irrelevant.  Removing those
+hits yields this:
+; git grep -n -w filter_count|grep -v '[^dl]'
+fs/proc/array.c:340:                        atomic_read(&p->seccomp.filter_count));
+include/linux/seccomp_types.h:15: * @filter_count: number of seccomp filters
+include/linux/seccomp_types.h:24:       atomic_t filter_count;
+init/init_task.c:208:   .seccomp        = { .filter_count = ATOMIC_INIT(0) },
+kernel/seccomp.c:631:           atomic_set(&thread->seccomp.filter_count,
+kernel/seccomp.c:632:                      atomic_read(&caller->seccomp.filter_count));
+kernel/seccomp.c:932:   atomic_inc(&current->seccomp.filter_count);
+
+Aha.  We have a reader in fs/proc/array.c, definition of that thing in
+seccomp_types.h, initialization in init_task.c and two places in
+seccomp.c, one around line 631 copying the value from one thread to
+another (seccomp_sync_threads()) and one at line 932 incrementing
+the damn thing (seccomp_attach_filter()).
+
+Humm...  OK, former is copying the filter_count of current (caller is
+set to current there) to other threads in the same thread group and
+apparently that's serialized on ->signal->cred_guard_mutex of that
+bunch, as well as on current->sighand->siglock (and since all threads
+in the group are going to share ->sighand, it's the same thing
+as their ->sighand->siglock).
+
+The latter increments that thing for current, under ->sighand->siglock.
+
+So
+	* atomic_t for filter_count looks like cargo-culting (and unless I'm
+missing something, the only thing that cares about it is /proc/*/status;
+rudiment of some sort?)
+	* looks like the test can be invalidated by another thread hitting
+that seccomp_sync_threads() thing (from a quick look, SECCOMP_SET_MODE_FILTER
+with SECCOMP_FILTER_FLAG_TSYNC in flags).
+
+> +	if (copy_from_user(&pidfd, upidfd, sizeof(pid_t)))
+> +		return -EFAULT;
+
+OK...
+
+> +	task = pidfd_get_task(pidfd, &flags);
+> +	if (IS_ERR(task))
+> +		return -ESRCH;
+
+OK...
+
+> +	spin_lock_irq(&current->sighand->siglock);
+> +	spin_lock_irq(&task->sighand->siglock);
+
+WTF?  You are apparently trying to lock both the current and the task you
+want to copy from, but... you are nesting two locks of the same sort
+here, with not even preventing the self-deadlock (task and current sharing
+->sighand - e.g. by belonging to the same thread group), let alone preventing
+the same from two threads trying to take the same couple of locks in the
+opposite orders.
+
+More to the point, why do you need both at once?
+
+> +	if (atomic_read(&task->seccomp.filter_count) == 0) {
+
+OK...  from the earlier digging it looks like this actually stands for
+"if task has no filter attached, piss off - nothing to copy".
+
+> +		spin_unlock_irq(&task->sighand->siglock);
+> +		spin_unlock_irq(&current->sighand->siglock);
+> +		put_task_struct(task);
+> +		return -EINVAL;
+> +	}
+> +
+> +	get_seccomp_filter(task);
+
+Umm...
+void get_seccomp_filter(struct task_struct *tsk)
+{
+        struct seccomp_filter *orig = tsk->seccomp.filter;
+	if (!orig)
+		return;
+	__get_seccomp_filter(orig);
+	refcount_inc(&orig->users);
+}
+and
+static void __get_seccomp_filter(struct seccomp_filter *filter)
+{
+	refcount_inc(&filter->refs);
+}
+
+So you are taking task->seccomp.filter and bumping refcounts on
+it, presumably allowing to unlock the task->sighand->siglock?
+
+> +	current->seccomp = task->seccomp;
+
+wait, what?  You are copying all fields at once, but... from the look
+at what seccomp_sync_threads() was doing, it not quite that simple.
+OK, atomic for filter_count is worthless, so plain copy will do,
+but what about ->seccomp.filter?  This
+                /* Make our new filter tree visible. */
+		smp_store_release(&thread->seccomp.filter,
+				  caller->seccomp.filter);
+is potentially more serious.  Granted, in this case we are doing store
+to our own thread's ->seccomp.filter, so the barrier implications
+might be unimportant - if all reads are either under ->sighand->siglock
+or done to current->seccomp.filter, we should be fine, but that needs
+to be verified _AND_ commented upon.  Memory barriers are subtle
+enough...
+
+Looks like the only lockless reader is
+	struct seccomp_filter *f =
+			READ_ONCE(current->seccomp.filter);
+in seccomp_run_filters(), so unless I've missed something (and "filter"
+is not a search-friendly name ;-/) we should be fine; that READ_ONCE()
+is there to handle *other* threads doing stores (with that
+smp_store_release() in seccomp_sync_threads()).  Incidentally, this
+	if (!lock_task_sighand(task, &flags))
+		return -ESRCH;
+
+	f = READ_ONCE(task->seccomp.filter);
+in proc_pid_seccomp_cache() looks cargo-culted - it's *not* a lockless
+access, so this READ_ONCE() is confusing.
+
+Anyway, that copying needs a comment.  What's more, this
+		__seccomp_filter_release(thread->seccomp.filter);
+just prior to smp_store_release() is more serious - it drops the old
+reference.  Yes, you count upon no old reference being there - that's
+what your check of current->seccomp.filter_count was supposed to
+guarantee, but... it could've appeared after the test.
+
+> +	spin_unlock_irq(&task->sighand->siglock);
+
+OK, finally unlocked the source...
+
+> +	set_task_syscall_work(current, SECCOMP);
+
+... marked current as "we have filters"
+
+> +	spin_unlock_irq(&current->sighand->siglock);
+
+... and unlocked the current.
+
+So basically you have
+
+	verify that current has no filters
+	lock current
+	lock source
+	verify that source has filters
+	grab reference to that
+	store it in current, assuming that it still has no filters
+	unlock source
+	mark current as having filters
+	unlock current
+
+For one thing, the first check is done before we locked current,
+making it racy.  For another, this "hold two locks at once" is
+asking for trouble - it could be dealt with, but do we really
+need both at once?  We do need the source locked for checking
+if it has filters and grabbing a reference, but we don't need
+current locked for that - the only thing this lock would give is
+protection against filters appearing, but it's done too late to
+guarantee that.  And the lock on source shouldn't be needed after
+we'd got its filters and grabbed the reference.  So... something
+along the lines of
+
+	lock source
+	verify that source has filters
+	grab reference to that
+	store it in local variable, along with filter_count and mode
+	unlock source
+	lock current
+	verify that current has no filters
+	copy the stuff we'd stashed into our local variabl to current
+	mark current as having filters
+	unlock current
+
+That would avoid all problems with nested locks, by virtue of never
+taking more than one at a time, but now we grab the reference(s)
+to source filters before checking that current has none.  Which
+means that we need to undo that on failure.  From the way an old
+reference is dropped by seccomp_sync_threads(), that would be
+__seccomp_filter_release(filters)...
+
+So something like this:
+	spin_lock_irq(&task->sighand->siglock);
+	if (atomic_read(&task->seccomp.filter_count) == 0) {
+		spin_unlock_irq(&task->sighand->siglock);
+		put_task_struct(task);
+		return -EINVAL;
+	}
+	get_seccomp_filter(task);
+	new_seccomp = task->seccomp;
+	spin_unlock_irq(&task->sighand->siglock);
+	spin_lock_irq(&current->sighand->siglock);
+	if (atomic_read(&current->seccomp.filter_count) > 0) {
+		spin_unlock_irq(&current->sighand->siglock);
+		__seccomp_filter_release(new_seccomp.filter);
+		put_task_struct(task);
+		return -EINVAL;
+	}
+	// no barriers - only current->seccomp.filter is read locklessly
+	current->seccomp = new_seccomp;
+	set_task_syscall_work(current, SECCOMP);
+	spin_unlock_irq(&current->sighand->siglock);
+	put_task_struct(task);
+	return 0;
+
+and I would suggest asking whoever had come up with that atomic for
+filter_count if it's needed (or ever had been, for that matter).
+Who was it, anyway?  Kees, unless I'm misreading the history,
+and AFAICS on Cc in this thread, so...
+
+Kees, is there any reason not to make it a plain int?  And what is
+that READ_ONCE() doing in proc_pid_seccomp_cache(), while we are
+at it...  That's 0d8315dddd28 "seccomp/cache: Report cache data
+through /proc/pid/seccomp_cache", by YiFei Zhu <yifeifz2@illinois.edu>,
+AFAICS.  Looks like YiFei Zhu <zhuyifei@google.com> is the current
+address [Cc'd]...
 
