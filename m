@@ -1,260 +1,98 @@
-Return-Path: <linux-kernel+bounces-801601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33FDB4476E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:37:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9661BB4475F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F99B1688C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:37:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E40737B6E0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C550A288C25;
-	Thu,  4 Sep 2025 20:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8DC2836B4;
+	Thu,  4 Sep 2025 20:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WLzow28V"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011038.outbound.protection.outlook.com [40.107.130.38])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KR/8ynTQ"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74E528851C;
-	Thu,  4 Sep 2025 20:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757018167; cv=fail; b=YY+meG76E+xEPJLmuCwAitRXgtM6mSKlMHa6c8FaIQZA+eL3Z7SH9D3vg0HZI2hRgZ2dwDKtFMv29xgwVJECwqX3swxPVzpLj4NhYvPBD9ggHYRui4bT/SY9xGJfSyd5LC+knEtymTyoLc4Ul3BPdWwbodhsiSNzh5Iukc/SK6o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757018167; c=relaxed/simple;
-	bh=OTvfoj/V3AvjLInaXwjYJnNSQZWcAC6AjG/JgtVhcnc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Z5fKkYoRSWgRdGgZzIEN3kxBlRO/bDwPI4bN4wohpJpa8yaVGAp1VV+gZRpxTBI3NQgCHSrkRT+wtRIbJ6p1T6qXzhtM94aWqmXRneBpySJS2H4IhoWKO6W6Mhd+G3uKVpF5wb450Js0XBOk2cbLQAgPL+rBkpBEHDmnOn+A/ow=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WLzow28V; arc=fail smtp.client-ip=40.107.130.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GajsE4SabuTo00LysWkIokVIzdIXEOdvCgfX+IBsdOfXIz+kSzUfsNtXaeLBPT5xTLyQU/tHKaKzJvmSkyljy86slqlXFWztI7hFqGPpeLnb5szDcYCerNBCcYfCgwU5X5naklVfyG90onjNF+WTEdeJVlSFU85IBCSWBmynOI+DQuy0HV2b4mBzqmSYP2lhE2wJwrZGCd0ydJ96j2wpA7ErwlEvzhmbYrxUNgSE9/JQJn9bkhS8NbYg25cQp5+jYSGW8DDSx/eowSF1qkewPtCPLqKw+oLbgDT+0gyYkBImhDmsMFQXv77kGHR5DjRe8z6K+L0i3s7ztv+ILr1bmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zTCkxW5hj77uFMr8yRSkS/s9JyMlCe17E5h9uyjBN7Y=;
- b=nhrp6xg+vfeU9bCql4aCDsqipO0Y45TXFNz/NSy4NNlRM9Ur2TadQXKRkzKG6Hv77jzUl+T/Eq1Cv6EcS4SpQiRub0WCJg6QWKne3UFeLiYSoo3x9aFsx3mIa6f52HpNe2M7zRo4Xun9AvZ3Ah63wI+VkHWTCPKbiUgHT99+ozf3vOikXboCcsoOzcwE3GNUOXRKMJA+hDTXLuaqGXY7SH/uTJ95Kqz4mRwWsrUr7dHC2ZTat4kYYfpGHHIDg7koM/Cj7Ias/Cr2eqWddEiQQhH8QtbSHXoDPQx1rMUof90sQQdq4z+PJCKtqy1s2C++7awlPEOKmIIwh6xmBPXD4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zTCkxW5hj77uFMr8yRSkS/s9JyMlCe17E5h9uyjBN7Y=;
- b=WLzow28VbGji8BmfBg1Ebh/w6S0eYe7fIjFx/KuWZLoTvFOCjbLhNPE/o+RVmfZCJIOdbo+9aNIpjDpF3mFsC/64K7BniUR9qDvZqiWph8i9diAiZ8o7ANR2KYExpeJvw6wA+OawBLGxMJX+HG9vNeIl7DB4rAIenxomt+Rf1cJSFCTZen4T47SpTRTvvyfRfQT9NYAk54YSJz6BX4jWstXSe3jwy7RlhHRjXr82Ahyvy5WVrjCjTf25Mvx47wA7DmPHXT/+Y66vHm5AqUW/eYSOLCDKpXKTew60qfW36dP0/hZmga59Ik45P1f+1JlBC3kaL8GfTM+iGoPSuo4WgQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
- by VI1PR04MB10027.eurprd04.prod.outlook.com (2603:10a6:800:1e1::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Thu, 4 Sep
- 2025 20:36:01 +0000
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612%7]) with mapi id 15.20.9094.015; Thu, 4 Sep 2025
- 20:36:01 +0000
-From: Shenwei Wang <shenwei.wang@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>
-Cc: Shenwei Wang <shenwei.wang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	imx@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-imx@nxp.com
-Subject: [PATCH v5 net-next 5/5] net: fec: enable the Jumbo frame support for i.MX8QM
-Date: Thu,  4 Sep 2025 15:35:02 -0500
-Message-ID: <20250904203502.403058-6-shenwei.wang@nxp.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250904203502.403058-1-shenwei.wang@nxp.com>
-References: <20250904203502.403058-1-shenwei.wang@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR17CA0019.namprd17.prod.outlook.com
- (2603:10b6:a03:1b8::32) To PAXPR04MB9185.eurprd04.prod.outlook.com
- (2603:10a6:102:231::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838BA1F872D;
+	Thu,  4 Sep 2025 20:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757018126; cv=none; b=IrVmHy0HunZvmYtnHAUSXDEb+q3bhZMqStYT+KuKIlub0XvsjGUFkF4lAvAikFStjiKYwmWK4PzBSD4Q2/0In7URPP0Ye2Z8dzj/LWn8v1EBtfTdF5YyaiSrolFa9PFeV6NabcYjTUU57v4W93NUvY37ZRfmWuCERvN4H7Gg3d8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757018126; c=relaxed/simple;
+	bh=M8EbvMxMXMibzkZOtXRkWchoAXACqomoMACH3LplP9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lalQLwbHYmaFoVOFYJHIIJCjLRQHVriIz+MUzxnUIFfHTBlHWn0ckDNxQOLq1Qvm5TZBv1p2km6UbDmfF0ifnnuGjuL7yfU5RX8WzS3wrnRjFiLaN0WLag7bromvvKRM//4rDcrpKfYY/16SFjaSTrb16+qQg0+wWCbCKBCkGvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KR/8ynTQ; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=M8EbvMxMXMibzkZOtXRkWchoAXACqomoMACH3LplP9M=; b=KR/8ynTQ9yCd1BeztNH28HNN/M
+	JxZcdlx9flo2Fs4chIsiRXPKrY1ihmbqSS3QrAIdpsutvFWbtnrhMlnkCsS5DfkaulC5e51RQN/3L
+	8KuiDE2515Hns9YnMLlO1n1kAws5nn8ZXAq0+3cowoixxXxauP2MLfTCGFfvDhVFjmh3BHo8uEWpU
+	8uSYTDgJNTYoku2BcmC0LbOcuAjK1UAczACwfZJBW8OFdubdFWS7vCUrDbaAG7HJF1UbOZfidYRvy
+	RLMqMj+6+HLrGYTc/Am7ldWFy4gAFGGVI1Pg82ZRWzFVoZ2ZX/v6lIyuqRf4fl65a2H0HHpYfzr9c
+	meNODCYw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uuGfo-00000004Pop-2gaA;
+	Thu, 04 Sep 2025 20:35:13 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7966A300220; Thu, 04 Sep 2025 22:35:11 +0200 (CEST)
+Date: Thu, 4 Sep 2025 22:35:11 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
+	X86 ML <x86@kernel.org>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: nop5-optimized USDTs WAS: Re: [PATCHv6 perf/core 09/22]
+ uprobes/x86: Add uprobe syscall to speed up uprobe
+Message-ID: <20250904203511.GB4067720@noisy.programming.kicks-ass.net>
+References: <20250720112133.244369-1-jolsa@kernel.org>
+ <20250720112133.244369-10-jolsa@kernel.org>
+ <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
+ <aLlKJWRs5etuvFuK@krava>
+ <CAEf4BzYUyOP_ziQjXshVeKmiocLjtWH+8LVHSaFNN1p=sp2rNg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9185:EE_|VI1PR04MB10027:EE_
-X-MS-Office365-Filtering-Correlation-Id: 416792d9-cffd-4e21-64c7-08ddebf2a989
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|7416014|366016|19092799006|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?M2lNTiRCL11iJMOk4dNFbD1YMGw6V9b1zNJ8bEqbMraGbRer6szo5jDWOVg9?=
- =?us-ascii?Q?8P//j1L4NL4wwTTUJQ1qOfSw40iocqMRC+65RAPhpYMpXb92qQa2/Rqf+V54?=
- =?us-ascii?Q?NE8OfFqWN1ySGDW63NXfszZ4QAqoXWyAiSTnGxSjoYxQRHEyLFdpVbsfu29H?=
- =?us-ascii?Q?EenDyRStieyCSD4Q4E29m4lzdh33EvBIH2C5LVwjnB8lMCKjT0AA7XODWAMi?=
- =?us-ascii?Q?Lw6uZcSLoNtuymRyjwC6a8KfUELOK/rLnYS/cO/ZO2QdRc+JnjdVQyyo6L3W?=
- =?us-ascii?Q?2IxMETXTaiHKNB3yvRNDq6IJhskU9PM/3CjROLqLPEc1/jKAcluCHitSLa+F?=
- =?us-ascii?Q?ulRldY4aVPHbgwIHT6W1LOHroFz6hU3oQDjIA1l0Z4svDE8Kd3ldcZgr0LHR?=
- =?us-ascii?Q?ZWtWs24cNjNIRcKYamFrGoCfkfvutX4IZXUUjj9tvJOFZ0GBs36UYPGisykU?=
- =?us-ascii?Q?PyA108O4/qnHvG157A4VERXjGqho9qlein0o2jJr11Gn1AlyDLgMPFFlInrf?=
- =?us-ascii?Q?LR4jMBKd36ARwiahnFMt7X081homqYjv2ACyVwtFds5I5pRhgF9P+1Zjkf6w?=
- =?us-ascii?Q?60UGzLl7lROEP2AU9NcmJVMdbeyLkXEduTHsrLc4YRLNiV/E0gsV03fzRbv2?=
- =?us-ascii?Q?Lg0m5z+vTV/VJOOUDt0ZTXhFuXycDK6oD6EWW/bmcRn/UtHhshi5QPpnuAex?=
- =?us-ascii?Q?VG3CYf+OZJytMxYY6p6OodOQWzkPrxmJy1onZF6B14NxXQ6RarXopBrRk9X3?=
- =?us-ascii?Q?E3NhfiBSTNIm1jR/5TIB7NwfrCCrF1foOl/WK0jLWjOcRNTs36+Qp2LWJDhJ?=
- =?us-ascii?Q?EMtIVDYlUQiiLBNOZDvqKcUVl1FTpIF1cswiAr5H7GQQa4hW8yQ+GpLzRpm9?=
- =?us-ascii?Q?WBnAYl+65vY2DqobVn/ZxYx7s6AfVHLFla/rp3PK4oUASqEyAaVuwx4PXdUy?=
- =?us-ascii?Q?UokEO2DURtHf+B+gJgKgzzollzhn0URyhfrjGECgE7Qd4UjHlZH5UZA8MmEf?=
- =?us-ascii?Q?p8wP3CfhNXBJApgdAxEMmVS60vwSZCY3WkdLB6UpNjVECKygjg+KaZOGSaBd?=
- =?us-ascii?Q?uBILzsY4lf0B7eXG4RR2WzQy5A44+szdFZ06+0MBgm7gS3BjY0DDpKqpKhtv?=
- =?us-ascii?Q?IQQPHooDV1rLBdu7gEXT8rPH2iyV4xhqcGSa8UNL+9aOqxSsxGs0idx6qyDh?=
- =?us-ascii?Q?m2ku9S2P6om3bM9Zn8J3ZjAJ111d3eILQNhljYnv7Iw+wjOfrqVWDrxg5TSp?=
- =?us-ascii?Q?es26KzB7COgB/bqAngifu7FLt8xgupx1MckSoKnQXKnzu4Ofa4Cih1oWh1fF?=
- =?us-ascii?Q?iYE+IJtZ+G97DVC5pXsO+8JmSxY2MFZyCdRQymRMnGxMccobUmGwsQ197vkD?=
- =?us-ascii?Q?AAqFHOCzHxbxjLP1PJ6mICkwTpgbsAlA4B9VKVmxwhQpiy1BX/JplFRaWA5s?=
- =?us-ascii?Q?pFpT3zptOADnsTSCbYs9Ke9JqgHiNVJJaMw8jm7NoH/DFM6gUtn3mMPypzZK?=
- =?us-ascii?Q?QfcCxwiZzUtvgCY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(366016)(19092799006)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gkBAc+u3S4TOgHSOSDoATRBIm2wE2uest1A/are8lTc62UjFxvFN/OVht/2/?=
- =?us-ascii?Q?nxo+CuT7n2craMuctR5Ve/7kK6BUsXJR+GzZU7qNXwq8S0hIv7AUySBFPRw0?=
- =?us-ascii?Q?N2uX6+RM9O9i/fuwShXh/WMab44zRDVt9euLRZa9if+PKd2U7SpUmM8Ru+Le?=
- =?us-ascii?Q?03l8TfZAXeoqpwm4JRUcfLpVUTcMNFFqMrUAxoiCnlq0VoA8u3aaMRifMyba?=
- =?us-ascii?Q?cWPqB+PV8vvmdfVuIOUx0FVtsYmduiBtxzLn0CZj0t60rA7kuEgrguYyeq1G?=
- =?us-ascii?Q?iUm8X7ruw8WX/lODqYzHYsCTn2AAhhO4tePrOAoimAzyG5YjXZ7R5V99wGf3?=
- =?us-ascii?Q?/EKur6BqZdK542gny2snWuGOsbyNguDqfdYXgDbIBk8w6bIDTYSBbJ8bt514?=
- =?us-ascii?Q?H6/y4qLc3sR88VMRVDWibiEtGc8qH0jmlEW42CyE2OZMk4G/crT5zYfJJdGB?=
- =?us-ascii?Q?b1GRpGLIcf9gYqpC4Xw0Rzy6C3oXDI6P27bmDIZAW/lbLeN799pCjD8q5eZR?=
- =?us-ascii?Q?NuEvKogakNu5HjhYoEidO3qhrE6tQ5utXK/sotwb+Jb1qN8H6NALBBrEjbtT?=
- =?us-ascii?Q?Mc8kpVtmbf15HpWquSfPfJVtaLYOahduAVJv06e+zeWHSjuAM5l1GDbJUGPS?=
- =?us-ascii?Q?0o87tf1Vusm41hXydng8RCNR1tRJmZNC2FIal2fgLaxyDS/+4Zmw7XzQ9Y3y?=
- =?us-ascii?Q?s+rLrYYnp6K1cQh2OgsggNvnDmIvJXQEf3QbVTbiA3rH7i1YveD/2gKbqrOE?=
- =?us-ascii?Q?+NPCgvlXfyv7WKI3yDy1xx38Ck2O+1ddu9ipX9JT3/2xxiZtZJLIDcC4LwGl?=
- =?us-ascii?Q?Ff+WDJOhkIIUmPsVZaiJarwD9SRnI0GcDkf6Ky8Xca3W5RIRxsX9FC/PUQkT?=
- =?us-ascii?Q?GHHnCcoMdihUuzrwySS31bp1asktxaRQ1C0GT0WBq4ehQcD+h3HS2WmVeSdt?=
- =?us-ascii?Q?mo55xVdV3+nnXWr1nJpYejXXdw3Ax5xLESG/wWzehbg0c0BSM+4LAy2hiTnN?=
- =?us-ascii?Q?Z90nyAfMs/sHAday4QVN8hUcTVCRZXPGA/fvCR7bOvAERoDJlr7AVgp8zmbD?=
- =?us-ascii?Q?aawuT+Y7VC6Jjf6506xGstgvLxdAy77hByBLVlNs54iXcnoR27j/CpGgD3Lx?=
- =?us-ascii?Q?9kuP/06DUnE6MRLvVbtAaXePShqCZAFueSp5rnWroyeYLGeZ+2KEA5SniLhg?=
- =?us-ascii?Q?z9UN497/9LjSTCs0LDI2fRh4vniN9zMi72HRB5gFkF4DP8BVXy/PRtYCQXw7?=
- =?us-ascii?Q?lrrBRitf/Ubb7CUVcf2fPRuyW+EJISR3a1+aBLFBL3oyljFue+u6btp6b2b2?=
- =?us-ascii?Q?rKq5MMORPwPAi2WH1+E08/oLV3mMoShpoCk9aMtMv5RdRUjO/O0OScnEKxwX?=
- =?us-ascii?Q?BwPD2g/VQCNSyZsUcf7flb2dBY6I77Ag6s0VVO6S6depvQ5zl95KvZNXGtud?=
- =?us-ascii?Q?U30ewCFVfi0oUmXvnTy39o7l3vnfT8X69HSyC/k+vF8IGQ2kv9qV4DQE2/dF?=
- =?us-ascii?Q?ShMZV2ri8UErdaJAeqNWu3dnoUO3PyRbRvlSfMfF8XCslxRoQgYvXA/6a+tA?=
- =?us-ascii?Q?cLCCwsYFJEovZ2KhCWwRHhrY/ESfW1Tsbnzx8CjF?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 416792d9-cffd-4e21-64c7-08ddebf2a989
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 20:36:01.7206
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Mp8/N4bFY5OFiXelCUT1maf9ZndJjyAKDObrOJqcvhQtxYkJ/0epaE9kZqpR4TCfR2PFtzSuQoWChomAgYyc6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB10027
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzYUyOP_ziQjXshVeKmiocLjtWH+8LVHSaFNN1p=sp2rNg@mail.gmail.com>
 
-Certain i.MX SoCs, such as i.MX8QM and i.MX8QXP, feature enhanced
-FEC hardware that supports Ethernet Jumbo frames with packet sizes
-up to 16K bytes.
+On Thu, Sep 04, 2025 at 11:27:45AM -0700, Andrii Nakryiko wrote:
 
-When Jumbo frames are supported, the TX FIFO may not be large enough
-to hold an entire frame. To handle this, the FIFO is configured to
-operate in cut-through mode when the frame size exceeds
-(PKT_MAXBUF_SIZE - ETH_HLEN - ETH_FCS_LEN), which allows transmission
-to begin once the FIFO reaches a certain threshold.
+> > > So I've been thinking what's the simplest and most reliable way to
+> > > feature-detect support for this sys_uprobe (e.g., for libbpf to know
+> > > whether we should attach at nop5 vs nop1), and clearly that would be
+> >
+> > wrt nop5/nop1.. so the idea is to have USDT macro emit both nop1,nop5
+> > and store some info about that in the usdt's elf note, right?
 
-Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
----
- drivers/net/ethernet/freescale/fec.h      |  3 +++
- drivers/net/ethernet/freescale/fec_main.c | 25 +++++++++++++++++++----
- 2 files changed, 24 insertions(+), 4 deletions(-)
+Wait, what? You're doing to emit 6 bytes and two nops? Why? Surely the
+old kernel can INT3 on top of a NOP5?
 
-diff --git a/drivers/net/ethernet/freescale/fec.h b/drivers/net/ethernet/freescale/fec.h
-index 0127cfa5529f..41e0d85d15da 100644
---- a/drivers/net/ethernet/freescale/fec.h
-+++ b/drivers/net/ethernet/freescale/fec.h
-@@ -514,6 +514,9 @@ struct bufdesc_ex {
-  */
- #define FEC_QUIRK_HAS_MDIO_C45		BIT(24)
- 
-+/* Jumbo Frame support */
-+#define FEC_QUIRK_JUMBO_FRAME		BIT(25)
-+
- struct bufdesc_prop {
- 	int qid;
- 	/* Address of Rx and Tx buffers */
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index 295420d2b71b..bf854abf982d 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -167,7 +167,8 @@ static const struct fec_devinfo fec_imx8qm_info = {
- 		  FEC_QUIRK_ERR007885 | FEC_QUIRK_BUG_CAPTURE |
- 		  FEC_QUIRK_HAS_RACC | FEC_QUIRK_HAS_COALESCE |
- 		  FEC_QUIRK_CLEAR_SETUP_MII | FEC_QUIRK_HAS_MULTI_QUEUES |
--		  FEC_QUIRK_DELAYED_CLKS_SUPPORT | FEC_QUIRK_HAS_MDIO_C45,
-+		  FEC_QUIRK_DELAYED_CLKS_SUPPORT | FEC_QUIRK_HAS_MDIO_C45 |
-+		  FEC_QUIRK_JUMBO_FRAME,
- };
- 
- static const struct fec_devinfo fec_s32v234_info = {
-@@ -233,6 +234,7 @@ MODULE_PARM_DESC(macaddr, "FEC Ethernet MAC address");
-  * 2048 byte skbufs are allocated. However, alignment requirements
-  * varies between FEC variants. Worst case is 64, so round down by 64.
-  */
-+#define MAX_JUMBO_BUF_SIZE	(round_down(16384 - FEC_DRV_RESERVE_SPACE - 64, 64))
- #define PKT_MAXBUF_SIZE		(round_down(2048 - 64, 64))
- #define PKT_MINBUF_SIZE		64
- 
-@@ -1278,8 +1280,18 @@ fec_restart(struct net_device *ndev)
- 	if (fep->quirks & FEC_QUIRK_ENET_MAC) {
- 		/* enable ENET endian swap */
- 		ecntl |= FEC_ECR_BYTESWP;
--		/* enable ENET store and forward mode */
--		writel(FEC_TXWMRK_STRFWD, fep->hwp + FEC_X_WMRK);
-+
-+		/* When Jumbo Frame is enabled, the FIFO may not be large enough
-+		 * to hold an entire frame. In such cases, if the MTU exceeds
-+		 * (PKT_MAXBUF_SIZE - ETH_HLEN - ETH_FCS_LEN), configure the interface
-+		 * to operate in cut-through mode, triggered by the FIFO threshold.
-+		 * Otherwise, enable the ENET store-and-forward mode.
-+		 */
-+		if ((fep->quirks & FEC_QUIRK_JUMBO_FRAME) &&
-+		    (ndev->mtu > (PKT_MAXBUF_SIZE - ETH_HLEN - ETH_FCS_LEN)))
-+			writel(0xF, fep->hwp + FEC_X_WMRK);
-+		else
-+			writel(FEC_TXWMRK_STRFWD, fep->hwp + FEC_X_WMRK);
- 	}
- 
- 	if (fep->bufdesc_ex)
-@@ -4614,7 +4626,12 @@ fec_probe(struct platform_device *pdev)
- 
- 	fep->pagepool_order = 0;
- 	fep->rx_frame_size = FEC_ENET_RX_FRSIZE;
--	fep->max_buf_size = PKT_MAXBUF_SIZE;
-+
-+	if (fep->quirks & FEC_QUIRK_JUMBO_FRAME)
-+		fep->max_buf_size = MAX_JUMBO_BUF_SIZE;
-+	else
-+		fep->max_buf_size = PKT_MAXBUF_SIZE;
-+
- 	ndev->max_mtu = fep->max_buf_size - ETH_HLEN - ETH_FCS_LEN;
- 
- 	ret = register_netdev(ndev);
--- 
-2.43.0
+
+
 
 
