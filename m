@@ -1,132 +1,157 @@
-Return-Path: <linux-kernel+bounces-800222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84647B434D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:59:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D7CB434D6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A0104E4052
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:59:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F321C81F26
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD842BE7B8;
-	Thu,  4 Sep 2025 07:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047D92BEFF0;
+	Thu,  4 Sep 2025 07:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="kBZsKGUT"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RSayuYH+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B769432F775
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 07:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A052BE652;
+	Thu,  4 Sep 2025 07:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756972739; cv=none; b=aZvcOM1UHm/2PVX1prAlJGMVVoOS6uBCVcyG5JoMQBAGrn15mcNmyXkv4otB/gY6nvVrO2guNottouNeaF3AQAPGhLxBPz2ydfKmlOIZXLjDmzC6rEC4McYgQ3i1OqNYGLzbhu3aCZwecb4RfvCvGXG9+42IiirhQ4nxr70HqXs=
+	t=1756972745; cv=none; b=Lf8kl7adteZSVbyF5ii2zLcwx7PE0tyPP0EJE1uIy6gbCArmUAOhLR+xOCR+GLT6fAEWPeEAGPBXC/tnCbdwj0AH7LV6A+nPTDfOoeWBN3pldly5mrWAmVbNvI/M1x7PBaP6HoONH+hYEi1zswmXBRpGXo23RnMG2QTPLGgyJWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756972739; c=relaxed/simple;
-	bh=N6Npsnyc7bgvqYUsjSHBHbabPLRsCgibAzS96LtiKs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CCHkRfsB0q0wNzEOR03yqcyNsmolJ9JYtg7yDI5o+0mOoPms3rVJrXOq5t4UyPMCRFnxk8/+RT3MABJF+ZXVusgFkGrS1/J7jqo95gpoxDcPE9N16tYamthiAWjv5rulhzyL4Ug7Pqb+WmskBHSnRZH7XTjAu7C/bv/H3uL2r+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=kBZsKGUT; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C3FAD1480743;
-	Thu,  4 Sep 2025 09:58:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1756972733; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=+X43dhWbmJe9Xz++Pv2ayZuVgsAdoCm6ORyQ6/XM/ek=;
-	b=kBZsKGUTXh40axdPM+jwNAUPcrKpHtV+eLyOGobFw9fzq5Nw0GoG8Hom5cCSOzzfoCAScQ
-	lBtuzBDJWEPaH6wszhHWWr5kpl5b0/ODwsgRKdY4yU+QR1MyncGvbzcNxSojV0JvcEvQyO
-	upSNBPm85nflPkb7bnlvMw5iWWv3LBJxPyqkyi4yF+WqgEeeqrxJXah1WJyk7pFQbfh+XK
-	S1nPs5MfHrvkX+ZsVT7eMDfjYu45Z3XGB6tIPFArPzFHKVXyo6O3Hp+MRfK/nB9Ewso1m0
-	AbNTKhAQaHJBbu1c75R+cchVAJUg1tdzQuxYonbZ/5qxeMET28GC0Vf+g36UYw==
-Date: Thu, 4 Sep 2025 09:58:50 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: nicolas.ferre@microchip.com
-Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org,
-	Linux Kernel list <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Vinod Koul <vkoul@kernel.org>, Alexander Dahl <ada@thorsis.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: Re: [GIT PULL] ARM: at91: fixes for 6.17
-Message-ID: <20250904-comply-veal-99d4839588e9@thorsis.com>
-Mail-Followup-To: nicolas.ferre@microchip.com,
-	Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org,
-	Linux Kernel list <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-References: <20250903173403.113604-1-nicolas.ferre@microchip.com>
+	s=arc-20240116; t=1756972745; c=relaxed/simple;
+	bh=aBuEluC+86E34BYUv5Oa47sk/w75PmXicZuwfYiSDcM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kDsU2zi3xCynJYi0OSlJJlEkdPz1CJH3wRMC2n/jHLaeU6BqwAkXcG/JXJm+HjQm+gg0JC2p0taFlCforRUzMpfhtvC5fq+Md9hfjUa7O1gHcTpMoCMTYQWu8htgABg99jFPPyM4wCjqjgAFEg6sjaFs9AE+EGPVfAbk7Rl7sVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RSayuYH+; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756972744; x=1788508744;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aBuEluC+86E34BYUv5Oa47sk/w75PmXicZuwfYiSDcM=;
+  b=RSayuYH+xgkMOysHOpl3kxO96rcDTxBeCL3QLjjUCXcZxC1yUeVExbs9
+   arQ20+ZYV0t6MdMK9kzy7ctKIQVbz7aXeLSvhAqXc8oICzTDtSOTXUSHL
+   vvHhfArvrPyo1vtsyU7xti0HqiO5tStNjbjAwzSEINscbw1RFoSd3Ggt3
+   WUaPaHtg41FD6YnMEQ3qvPKcPX/gdDj9zXFZUiRXNuhRMU5oBFMFwSZPp
+   EjMCqcIvg9l6HujnsCiJmrblgWgFYPWGxlZxile7UKvR3SD++l4Mzn6HY
+   KPVE9CtZnwQFMW1OnznsfXd+MBL+9yHAx1soGGX75xUD4tUug3fwfPw/J
+   w==;
+X-CSE-ConnectionGUID: fLx1pzDISBiRL/L5jMEWAA==
+X-CSE-MsgGUID: gANneA5eSmmWL3Y2RFXAwQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59217879"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59217879"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 00:59:04 -0700
+X-CSE-ConnectionGUID: cK68dvTjQOWIr9ZUxNgrkA==
+X-CSE-MsgGUID: hHmZT+vfQqu3I+274QjcUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="175950505"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 00:58:57 -0700
+Message-ID: <6b61cee4-0405-4967-afee-af934df34c5f@linux.intel.com>
+Date: Thu, 4 Sep 2025 15:58:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903173403.113604-1-nicolas.ferre@microchip.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 17/23] KVM: guest_memfd: Split for punch hole and
+ private-to-shared conversion
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, x86@kernel.org, rick.p.edgecombe@intel.com,
+ dave.hansen@intel.com, kas@kernel.org, tabba@google.com,
+ ackerleytng@google.com, quic_eberman@quicinc.com, michael.roth@amd.com,
+ david@redhat.com, vannapurve@google.com, vbabka@suse.cz,
+ thomas.lendacky@amd.com, pgonda@google.com, zhiquan1.li@intel.com,
+ fan.du@intel.com, jun.miao@intel.com, ira.weiny@intel.com,
+ isaku.yamahata@intel.com, xiaoyao.li@intel.com, chao.p.peng@intel.com
+References: <20250807093950.4395-1-yan.y.zhao@intel.com>
+ <20250807094503.4691-1-yan.y.zhao@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250807094503.4691-1-yan.y.zhao@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello Nicolas,
 
-Am Wed, Sep 03, 2025 at 07:33:55PM +0200 schrieb nicolas.ferre@microchip.com:
-> From: Nicolas Ferre <nicolas.ferre@microchip.com>
-> 
-> Dear arm-soc maintainers,
-> 
-> Here are the fixes for 6.17. The addition of the Kconfig symbol is taken from a
-> bigger series by Robert here:
-> https://lore.kernel.org/linux-arm-kernel/20250813174720.540015-1-robert.marko@sartura.hr/
-> It is needed because one patch of this series was taken before that symbols were
-> defined properly (queued for 6.18). You can read the discussion here:
-> https://lore.kernel.org/all/bac5390f-725a-43db-a2b6-17a68d0d733c@tuxon.dev/
-> 
-> Thanks, best regards,
->   Nicolas
-> 
-> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
-> 
->   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/at91-fixes-6.17
-> 
-> for you to fetch changes up to 217efb440933bf97a78ef328b211d8a39f4ff171:
-> 
->   ARM: dts: microchip: sama7d65: Force SDMMC Legacy mode (2025-09-03 18:52:08 +0200)
-> 
-> ----------------------------------------------------------------
-> Microchip AT91 fixes for v6.17
-> 
-> This update includes:
-> - adaptation to the SDHCI capabilities on sama7d65 curiosity board DT as
->   SDHCI quirks are not in place yet. SD/MMC don't work without these
-> - addition of one Kconfig symbol that is already used in DMA tree for
->   6.17. XDMA cannot be selected if not present.
-> 
-> ----------------------------------------------------------------
-> Robert Marko (1):
->       ARM: at91: select ARCH_MICROCHIP
 
-Tested on SAMA5D2 and SAM9X60 based boards.  Works for me.  Thanks for
-taking care of it. :-)
+On 8/7/2025 5:45 PM, Yan Zhao wrote:
+[...]
+>   
+> @@ -514,6 +554,8 @@ static int kvm_gmem_convert_should_proceed(struct inode *inode,
+>   					   struct conversion_work *work,
+>   					   bool to_shared, pgoff_t *error_index)
+>   {
+> +	int ret = 0;
+> +
+>   	if (to_shared) {
+>   		struct list_head *gmem_list;
+>   		struct kvm_gmem *gmem;
+> @@ -522,19 +564,24 @@ static int kvm_gmem_convert_should_proceed(struct inode *inode,
+>   		work_end = work->start + work->nr_pages;
+>   
+>   		gmem_list = &inode->i_mapping->i_private_list;
+> +		list_for_each_entry(gmem, gmem_list, entry) {
+> +			ret = kvm_gmem_split_private(gmem, work->start, work_end);
+> +			if (ret)
+> +				return ret;
+> +		}
+>   		list_for_each_entry(gmem, gmem_list, entry)
+> -			kvm_gmem_unmap_private(gmem, work->start, work_end);
+> +			kvm_gmem_zap(gmem, work->start, work_end, KVM_FILTER_PRIVATE);
+>   	} else {
+>   		unmap_mapping_pages(inode->i_mapping, work->start,
+>   				    work->nr_pages, false);
+>   
+>   		if (!kvm_gmem_has_safe_refcount(inode->i_mapping, work->start,
+>   						work->nr_pages, error_index)) {
+> -			return -EAGAIN;
+> +			ret = -EAGAIN;
+>   		}
 
-Greets
-Alex
+Not from this patch.
+When if statement breaks into two lines, are curly braces needed?
 
-> 
-> Ryan Wanner (1):
->       ARM: dts: microchip: sama7d65: Force SDMMC Legacy mode
-> 
->  arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts | 2 ++
->  arch/arm/mach-at91/Kconfig                              | 4 ++++
->  2 files changed, 6 insertions(+)
-> 
-> -- 
-> Nicolas Ferre
+
+>   	}
+>   
+> -	return 0;
+> +	return ret;
+>   }
+>   
+[...]
+> @@ -1906,8 +1926,14 @@ static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *fol
+>   	start = folio->index;
+>   	end = start + folio_nr_pages(folio);
+>   
+> -	list_for_each_entry(gmem, gmem_list, entry)
+> -		kvm_gmem_invalidate_begin_and_zap(gmem, start, end);
+> +	/* The size of the SEPT will not exceed the size of the folio */
+To me, the comment alone without the context doesn't give a direct expression that
+split is not needed. If it's not too wordy, could you make it more informative?
+
+
+> +	list_for_each_entry(gmem, gmem_list, entry) {
+> +		enum kvm_gfn_range_filter filter;
+> +
+> +		kvm_gmem_invalidate_begin(gmem, start, end);
+> +		filter = KVM_FILTER_PRIVATE | KVM_FILTER_SHARED;
+> +		kvm_gmem_zap(gmem, start, end, filter);
+> +	}
+>   
+>   	/*
+>   	 * Do not truncate the range, what action is taken in response to the
+
 
