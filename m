@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-801182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9690B440E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:46:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1304AB440E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 690E85A2A1D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:46:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2762A4606A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4AC3090CA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18F530102F;
 	Thu,  4 Sep 2025 15:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="EeLvkb79"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010029.outbound.protection.outlook.com [52.101.69.29])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="W3K8fbVl"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013019.outbound.protection.outlook.com [40.107.159.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F143C28850F
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86AE2D59EF
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.19
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757000672; cv=fail; b=pkPUSkUkcPXVhYVXD8Jc6bTHZmp9yB/KhLIX7BdgvRz3T2Txa5MAtIyIIpio5HCT6zpKXbKPxXYD7qwwbzv+MfpuD01XnTAHnU4fn8nYnzprR930gYGjmqxVu+3hAwareLLm21L+Li9bdLUbd97J/CEuVGXMXuIggJlYFMmXEQQ=
+	t=1757000672; cv=fail; b=OskTpdDpERojOBG/ZlJMsbWJqkVtLWnjGS0GwhCaAkniy3gGV1W6oetUfbJuWCm5HX6TK7PuJKkdhR1uV4hgzwo3nsHenzFB1PvVkPSpqm2wo9e51HQ5E7EtGkF2TUI+H2rqIeWKms+CTGAxgbxctcEV/WK1zTQa0nYXN+6lU3s=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757000672; c=relaxed/simple;
-	bh=UF8Z2Uyrw+Ldi1ZSxRJcGNoCDhhXOn+72Ha8d2/K9kc=;
+	bh=jjfz+BNIPoLVk/vfHrDyJrJ7BVXnzeyC1+uH+VyhUgk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kcVLfTb3mrvYIBxdgH4uLtDRPUhnyhSDfdVFMhtJOssfq0CCqC0V8tK7jbk2B/aAJTDZoXz6YPW78FoGgzCgR4RWq/+3MVBAvuDugU4fKM6rJBDLoPMEDB58vC2FU++iaSVvIoEuvgp9toX6ZuKovrswz1GsRPtFP+N392ZS3rc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=EeLvkb79; arc=fail smtp.client-ip=52.101.69.29
+	 Content-Type:MIME-Version; b=XgXCFq6Qe8dQ2wSe1BorOpgo9sFaZjjxeojoebgLIWwkcyeII8FCdIeVFkBG/9177qMKPNG9TNG4i+y9Ch2M+Tt5REEynQf0wBzvaLtg5r3zQm+i5IIbvzVGrJG6+jFdMQLPD8B5ZP0i6cmXC2Tu+LlUu7OhOApuYdy6eTua8UM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=W3K8fbVl; arc=fail smtp.client-ip=40.107.159.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oVV5sqhq91J4yjvFgRW9ipFYQ11DVtCWyFJ3p1V9zc82rBA+UaeEs0Nhtk+JPhPePPUhn60aeWWoquHHddh8y4nvfeqYPyx+mGiKY8WJ5+DpvCFI61mUomcANZiZyFfN7kP1k+zGACJoJLMLyp0KWuKscMqP+ovf64xhb21r3DL9wJbCssoGPkfsPDb5RrJ6genFlVrEynQ/dbUXNkN4doUvHNXsaQx3/itdnQe8+CB6A348IN93UTPFFh0uuQrRrumW2eocyeq0OeRwQs/+HiOO8mnPDBfqGSuUF441TRp3NoSnCUcZKLnu1Y4uvXBPop9vnL6B0MAd5QWm+u3z4A==
+ b=oyoJbRHRL42msJivCy6xGy36AZquE3HAs3pPhcts8kseSvBS0ld/Ex7hYFmo5JzfGIfQpE14eFY94Q0Kl+Co1/ULBcV8nOMVF+uM28rhM9pOJX6n/Zwhn5B1JefLO3/WmBE2sz2MOUmhqRNkDMlgqmr4JuKCVUss2lt4+KL+v+qV1jTIuxnDdXfwzg/tU6TuQUWNq8JB1HT5JW7vPFqTsDKLp8xgh31DSbNtz1mwFom4xrhGLCq6ArLE/rlsPrLPvSE6eimueBP56kPilIW2OVAlnjPP2YL4eK5kfZ2vFHEjVyfsxiWH9jIRaQN1G2m6hzv2Qp3iSZ5ep39czyKg7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qn7G5uBAoD3yWq6TW0r6z8yAK8XBT9TFJzfF2OFKFYo=;
- b=RsctxeS5wg7mfP3PyT9k1OBakDS/EJj8Aoze+yPMfH2nr8tDjJ230wE1LfzZAswlhalLY2V2mDFNZYNEs9npZ/nFP39tT1PdUMMxEtBjO3BkF5mvCiu2zhAdVtngWPUpncKxCpdn47g30DfFn1g2cjqgEIuW9O36vvhUJiMGisoYxx3201TalUkWGTAsgUoEiP/rf8DqAYY1sbP7dnovCVbo3sJMYKnZ+paCifnJ/8EMW0pYD8Opd+VEnTMezcVX9KY0RN+hH4yX11PT8+DunXohbtrzdVQzDT9wnx6vSSahD2j31kJp2vtfuT0lhdFzQN+cv5vbaVJKFOAfBpreEw==
+ bh=IUvic0CFY+j3/6MtAM6wKOtwTDCwMqKJ/jcmNzV6FIU=;
+ b=DkqPLjo3XfxxFp4+tVXmq/35cRKaYg11V+uGxdBTI4YPpcy+jQ2dpWiBhtr8r6W0xYkL1qiWcYIbFBD/d/Mi0Nns1U+lQZggvrRU7qObDbn+F+vu95uDv+z5lfO2UmQE5l648ektnoC/bdy0cUtzwXzVKpwHK+c8HAqPd7SSokW51xLaMoUvcDt3v7s3GYVJvgbjbQuCItNlN1E8k9/x4DN9JuIn4SNYBuPJoBFHwKA38KpO1PDU8Ww7mvYVTBnduRZnmyJXZQap5t2qqjA6opHtCZ0m2IR42gHD4JpojNOUipRDv6jGjFb0DydFWb+ST9R987TizSgQYA1afH13tA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qn7G5uBAoD3yWq6TW0r6z8yAK8XBT9TFJzfF2OFKFYo=;
- b=EeLvkb79b5vrVuQdeBZLbr4PfUZQYbz3+L4cGyomNvrVOnF3vJGaGD1k0/9olNMgNHkWADwyGAmMOFyq5UnztGAoOMLNS23UwHWJvPzYvRlgJ5jvcwuD7x49NDbgHtONCRPrnPYeKJLnNQAhB4NeAkPukFV00yMCQ8opOQyDAMNyeOlGCgf6U8BxpAaKiyYV3s7A9UrRm4zOCY54H0QBFrdAkvuZ1HkrTiu6YufBvgmJ0tEvHb6Qylaj0K4KoHUCzbSB+cVkbzSknSUZm+UJURTbhWv0CYKMVuo4spTY28a6eriWMt05fvX4FS3tlrDOWYpCmZYa0BgrRSW0giq06A==
+ bh=IUvic0CFY+j3/6MtAM6wKOtwTDCwMqKJ/jcmNzV6FIU=;
+ b=W3K8fbVl+60hAHQGzbd54GI+x/fJAAEd5/VKITiegEIFiavmjuwPGItoDCLIrhNY8xZa8xM4gZPW54NsxE5VqvessvZIfFoLVSiQS8qLYBxlkD2HzbPGkCVa6mLHUjVen52CyXjU0a9kXg5wDTbr6mfxo9iUw+EW/NIz+oDcpFhekRu8l8o74/1WSBOEYUZ/LblhShw22Uw+PW/tHZj3QPJaEgq6j7hlrC8BuxLnpKFWc/LH8HcI9uTfV6jTk+ibouSQ/r2aWRhartrqB8h7O6Wc2teghVgnphHKIHi1dCvRceKw6FJMJzQd/jaTj3EJ9dixtIl2sREnt0si8ciHLg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
@@ -61,9 +61,9 @@ Cc: Ioana Ciornei <ioana.ciornei@nxp.com>,
 	Vinod Koul <vkoul@kernel.org>,
 	Kishon Vijay Abraham I <kishon@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH phy 11/14] phy: lynx-28g: truly power the lanes up or down
-Date: Thu,  4 Sep 2025 18:43:59 +0300
-Message-Id: <20250904154402.300032-12-vladimir.oltean@nxp.com>
+Subject: [PATCH phy 12/14] phy: lynx-28g: implement phy_exit() operation
+Date: Thu,  4 Sep 2025 18:44:00 +0300
+Message-Id: <20250904154402.300032-13-vladimir.oltean@nxp.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250904154402.300032-1-vladimir.oltean@nxp.com>
 References: <20250904154402.300032-1-vladimir.oltean@nxp.com>
@@ -79,238 +79,143 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AM9PR04MB7635:EE_
-X-MS-Office365-Filtering-Correlation-Id: 968ca221-7603-44ec-8fdf-08ddebc9e8f6
+X-MS-Office365-Filtering-Correlation-Id: 2e752604-0b6a-4b3b-5853-08ddebc9e955
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|1800799024|376014|52116014|19092799006|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?b2EUdVwz5BL3eRVGTnt7+Hurvs+ZJ5Na9jLMcC0INFlgYaxcOob4DimKeiOM?=
- =?us-ascii?Q?xAWpmq3MVtx1iN66phCX14aPZU9yPeMb6DG2UjYlBSKRU881hyf2y2EKZxot?=
- =?us-ascii?Q?rIgC28Try6NTxjljMmY1pvWE2wZ2/0kXaMf+zZO3vv4q3I2GJgbI0OLPZmvf?=
- =?us-ascii?Q?o1HXOr2G+4eN/YpDp6a4sFuL0ZvIU3Zz5R1cryKuTs8VbJd8INaBa+08Q+or?=
- =?us-ascii?Q?O5CH0QxfBnFHUVEdMsaK/g6caRnpoiijzTdzohy0GxoQeE0DwK+70pxbrZCJ?=
- =?us-ascii?Q?lhR9KskVdxp4aq9YMgjmqp8lmzRsYDwX97FcYUoZSgCJmkXCfzHmTroGO/YM?=
- =?us-ascii?Q?0OKuomLIcrdvSZkIjN1/x5Rf9kXajHYfaw33RiQwzTnjn8K9nng7Q+YWC+m3?=
- =?us-ascii?Q?qOH6sRila0K6Yn7brtAxAP7HXdiMsCYKqxHO8oPfNZmythoYqbyIJ5j1c/0R?=
- =?us-ascii?Q?PujuETdlZY0E3zRWVP82aZPffEJ6UyrzppyLI9yp1gIdjCWosLa59SE/dqG/?=
- =?us-ascii?Q?lmvXbTic8so1RZZJC6jcCDt4J9GYkkWfHR6BR+emwiox0dU5j8z4ztCThdj3?=
- =?us-ascii?Q?RDqnyARykI6DmmWBSwXI3XimtsQaeWJLqKMVcIbc4ssesYO3xg5fDhZc34hQ?=
- =?us-ascii?Q?3l07zTK7llyvG/hrOmD2sHzsICCJEkOsRcI/xrRqD8n7zi1nnfBt+7qPTfJb?=
- =?us-ascii?Q?ICEvrcQfqhgKsP0B4GSJPqN8gX1FyR74tbqccTZg0Mq1dBKYhNnu0CWBaWoi?=
- =?us-ascii?Q?65CbQ2i7dVUK84ZNbQ2cKb52uWxhvtUWEwI3Ei3sOWIjgWh3CkdLzOtrTgfd?=
- =?us-ascii?Q?ohC8S2K+aCtRnCC88Qjgc2+wWcKe07BFq2NaI0WDcUBocuPgvN2GTFBymCog?=
- =?us-ascii?Q?7gBzCSed2DOVF4TcHbPjaNGkNKzgzHB2Jg49J6dCQwmfAl1/p4LN6kmvIUcf?=
- =?us-ascii?Q?SvVVEbTfN1Hw7NPT7afubhqlcdK5Lm3GUwOj7m4fF2QX3EUW8+c1jcXHTlWT?=
- =?us-ascii?Q?LqoyWnfw03kEs2XNl38qw/SoNvBHzz8Y/ksR2nayTSdFw5Zt+1BLA2hQvaGq?=
- =?us-ascii?Q?j2DtJU4WEtJZZEMjbwqvgPOhh1hh06jLMj25EHxLCIeG/djt5fFvVGLpI7cd?=
- =?us-ascii?Q?cbSq7S5X1Ey1bptHw+Tq2Y9H8H/6nBKjuLCbqE6TaR5mpjea0B9l5Inz++1h?=
- =?us-ascii?Q?w7PosQRiDcM9UAfCArIZs6lfi9395KQmMOhchWOEf1wfuDi2aWV/A+u2c3GQ?=
- =?us-ascii?Q?k8NppyZ3nPVU7k3xuqK0ouqBId9fVzhc8JpJsYDzJQsMg9F7ogidXX1eRhZy?=
- =?us-ascii?Q?ZTxS2KVpp+Fv5oVYl/Rmhiw1PWLiI+RQgwTriDl+MiSuMJtoQFW6nevedEFs?=
- =?us-ascii?Q?F5T5eDXFbTRqUjc2IbKcgt/q5lgBzKmW/PbzsdpiCsasMZujLjA5tQmPVzB1?=
- =?us-ascii?Q?Y7ZhBhUI3PU8M9gWjq6w+ydfbNTnEDRoIwvblWxPntv3vnK63thpig=3D=3D?=
+	=?us-ascii?Q?Dg5W22bHcMxP3faaaI1hz4F26xq39T3MzncfNw+JK22vJk+GL4Pp48IuI61L?=
+ =?us-ascii?Q?7d3MTib/orUGnUIo9VXvabiEa4Fr+QecTQtpsbU+9mPeWtcbw96CR0h90Xa/?=
+ =?us-ascii?Q?UOov1WPX4UrZaPzrERcmfdYb5hpIRKL2kVHZp+xwIGokIi07GOudORPrPqY+?=
+ =?us-ascii?Q?6ttpEJDMyNfO22O+1/NlsGaCt9uZ/xRfzdhWNhUQ3/96BtmfEj36eLJxnuBG?=
+ =?us-ascii?Q?GSAdnoI1BAmqfNuLP2r91YHkz1sNdjngxLu0PnQQuwep0A+upuIG1RQMvzET?=
+ =?us-ascii?Q?05mrlLJIcRBDPM3b8p0snaq7FHPr28PCWKvEEkyMDg2UR3j5NBB5Lg0tvyZU?=
+ =?us-ascii?Q?PSfFhztnmyiE7Ey6pZPzoUG8VOur5y5cnNW+5+hOwolmn+vv/+RXpKBR1a1r?=
+ =?us-ascii?Q?yczKtwfBPXQ0HcgfQleo1TNQN3AD896dcQO0OHHT/eRuNMpqA9pQRqw1Mhmc?=
+ =?us-ascii?Q?AT6QPPll0RkkybBXRHJw3yVKi4hnG/UsT1IEujCIfYEMBdUaQRjppEF6M8TE?=
+ =?us-ascii?Q?l8tscWj7qxC8Op2FuZQ+25rKphU9Xiux8tICZByZSqCKvEOyl7AjJuz+ALZk?=
+ =?us-ascii?Q?g8uHXwZbki4k2cRAzF1L98FalqRq2Vrt1dsu+8NlrL/9kv1hHdIWC7JO5Iyt?=
+ =?us-ascii?Q?2nEh/AXTsifCdEokoZWX8jpQMiQht6F85YrNtuDrPGfp3cQ+wt1ck/oBgBgn?=
+ =?us-ascii?Q?iD2yMhzIHOqffQGVoR79G2mRVWuNTQVR4zjIe4aQrdFr5FNVtMa4iRrl5NkR?=
+ =?us-ascii?Q?K6bgiqbptukiClTP4thjjGEN5x4D5cnHg5USnl1QcRGojZT2ZDobO5/FsJM6?=
+ =?us-ascii?Q?fIHPRtL0jLYl2AWcEMRSZwY1jJCGXxS7OC0rCYNvG56E9o5vBlBswsyw3pyJ?=
+ =?us-ascii?Q?Hh28BlS4OH/iDqyVfpFvk4/fYcVsvMpR5k0k/U/C++sk+zc7xg52EWb17urr?=
+ =?us-ascii?Q?jOE1/SsyntMU+ytotqixDaAm9au8hTavTcZ6UGF3kP+wVMO4BIj/GVILSlQc?=
+ =?us-ascii?Q?ReOf2aiOKcZPqujcgRxWR3ojab6PYvFSF8V+qVM1mCgp8+MljefFCNpey6T+?=
+ =?us-ascii?Q?7+KAdu3ulplBzJastoVGyD5bs0JGJfttknUKKH2aht0V5DeL6hbLKNyyN1FA?=
+ =?us-ascii?Q?ZNu2TpMB1aoc+B39QDAJslea/XEwo00x1oRi6tjqp6Zk22+zUHLKSm9qSVng?=
+ =?us-ascii?Q?R2qfIy6bbYPGPGSFUEZDs0TUy+wxu0DUtC70wXNpsPlYRwQY0TYxzMXBfrjw?=
+ =?us-ascii?Q?26uCnCx6gUYLWIMiFbfa2hC7HftSG8PoX2KxXbZIFbWnoKhHkGJ2uT4y5GHf?=
+ =?us-ascii?Q?VRGYjJR93C6IE68BQssemjMw31UpPgtVG7FFuIgQF42WKT9LEc5R44gmmpBC?=
+ =?us-ascii?Q?cbfrJ1SAr1ehsGDBwAnMf/UcekeUf+cTUEhV3hPIeQCIltUGx8ynjvScjft/?=
+ =?us-ascii?Q?NMFqwVfqejBUCeYWjmJkuAN33FmtuH9YpjTlRzwjewpPMG0XDZK++Q=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(19092799006)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rqOwwsHDevex29zxCjgOIJs7WmoU5axDAqGKkX3TRauGQmgHdVO9DCz+S/fm?=
- =?us-ascii?Q?5nuVxeDwO0rPr6VFWiY6Kt/At9YyfP+BdoJ7zIeXweXMQlCn/DgbO51rjKwZ?=
- =?us-ascii?Q?JXubTO+T33LiHFu43lyIVILQ8XscJmGnqhb9QqilOPg74y1Jnz/chCwZPrJq?=
- =?us-ascii?Q?mPaS3snParKLYSF2sI+CpMr+9AKoyYewBDZg/I15LlApPnRnerpztMmdHlXh?=
- =?us-ascii?Q?XXDKLb0y065oJSB84F/CdU5F/WUT4k97QYG5bB8eTI3PbG0+CBGyBaCTMsM9?=
- =?us-ascii?Q?qqvTdp3y+vLqB+Dlz6P1zJt2YSQCCMFimHmwDcg3vuVgi+pkKdh9dtftHVP4?=
- =?us-ascii?Q?HcTVjKVc8F9RMR2TViIgtfxOmB0MJT9+AkC1o8YH3az1Ageyv7W0t9Z4tsRX?=
- =?us-ascii?Q?svSujnuXRkC7HBTYhkPUS8ea7dY04peyvL/wqbd1NjC0OsZ5Aye5jPIeFtk9?=
- =?us-ascii?Q?tYkSUNxVKbIxYKlFNfqggg7f+4jYbtHlcyDAI5PKTc8wfg6hJ06XJtQCN18c?=
- =?us-ascii?Q?4QkLGlQfbWqHnTSfbb2Ch8MWssDaymWMZCqtSYiztsQiHw7nCayGuwt/Bp+X?=
- =?us-ascii?Q?6cJkyiW5YZc/BhmID/VHNQnrGj8oQEspVmlSb+58m3Maeg8qSsVoyplCdoG6?=
- =?us-ascii?Q?zw8rn0dTguRM4gJGog3CD80xT8BqhHzN+TXcLKdLRkRdfb/7jpvhc+46To96?=
- =?us-ascii?Q?G2tQdQiSZrp1PBOhXLkDfaFcF+4msOSGI+x7nhs9Pv4qPMzDTJumf5T5yD9g?=
- =?us-ascii?Q?0NR2EMe2yVQqozpmK5IRBAhIVEZZ4SiJgmxlV6zg5DrBJ2QNRd1roJzTMI2p?=
- =?us-ascii?Q?2SV3acMMq6eTUml2MZ2YSgvJpd/G0fynnAu5XPMRdqAdEB3ga3tXkxsaiivM?=
- =?us-ascii?Q?d4HFyoSBxMtDKtELF65XgbFlTsz8pLdnHaQ8NiFzV8fSTM3VEjotllN2j0iT?=
- =?us-ascii?Q?bdOVLKJMgOHiC92iHoE82rgDl9U0qqVJehNELGmnsEyH2FmOKQH3JY5GFY22?=
- =?us-ascii?Q?+1lVZqoYKbjiaX3tTj4/E7sAV06ckt5d5jW1VRm6FHt9ZGvhoQVwqBcwdHg2?=
- =?us-ascii?Q?yC4sXUJ6ONPN1toyvoW46M0WBZcc0VYJAKne4hzTE6wbYY22IEB/xgPIozr6?=
- =?us-ascii?Q?rWuNtH49Wt+XZe9a2Cfbf7z7aXeYHo2wquN2QKeCe7Q0Gm+VMFTemb5ieKcu?=
- =?us-ascii?Q?ShVOYLWgwckH4bH8jJx3bOZY5qZatEsRAXcv3lDvWnkBWS9ntxs8BIEt8IWC?=
- =?us-ascii?Q?yLCOihP6lj20mghF07f8P2lx2EwpP5wC0b65GuVDI7Qo8ca6G9wtPo+XnDUM?=
- =?us-ascii?Q?/DZiF5mpLIoUuCaHtuxyYV9FnfuFIU2BmCYtYsoWOpFNhxupPSSH71ddwYFG?=
- =?us-ascii?Q?4BTbUvgGT9C9mc6vwe4ORghfrwkgIdrhnFelN1MzKPtJoB5ly8X6Sw/RFuTx?=
- =?us-ascii?Q?5MJEML3Wa7WnOCFVYm4PL9AZY4kzxnMRzsV4FKcH/VF9NZIniONxQG1doxJo?=
- =?us-ascii?Q?iYnCmucCajIwMEDroxeuRjFB36Azvd9svecon46dTckbi1R3qNeGY1O3E7A2?=
- =?us-ascii?Q?f5COOBrk9931foAHqbtJadthPA5j/LGOan5scn1ALwkoahHmwhrXBl3rZelL?=
- =?us-ascii?Q?UQ=3D=3D?=
+	=?us-ascii?Q?wmk1d1GcC58SQiJfFrA2Pa1VUvc/k4nfpUu5H0TGLoQFUWa3DADXeDcEipkh?=
+ =?us-ascii?Q?cniW8zgo1bPRfyVz9Ptp2vozL+NOEPphGmcWXBz38kbb0wR9KcTubKRQ2CX+?=
+ =?us-ascii?Q?eBcXb4+Kp0uP7YCw7ZAJO71el+kKdkeZdLrNN9UKT9kPg/P5Ac3dbfd/Rkfe?=
+ =?us-ascii?Q?3yqdcOoFyv4X3MO5lIH6LiQU5N8kCsPjiW0S5d1/unVvqPEt1XpWSpBComIN?=
+ =?us-ascii?Q?K+cxVzY0I4RaIZKI16sSQeRsVhkKm5r0agELcmaNuSvpTNItM2j238Lgzw5Y?=
+ =?us-ascii?Q?UeT+YTLXxIuahp4R/KakFUPr+tMjngNRJDNNjCI+g/X1s4k11h3oNzTRIjss?=
+ =?us-ascii?Q?dudiOG0X4IqgmQz3u9Z+ZAbVbv0tKc31oaNeC0u7j+gqXuiPrjr76DO/o1AY?=
+ =?us-ascii?Q?uOo2hxacRX2b7WFMV1IixQniiWIw678H3U1PhdldJYtJRfd9888COW4YbiWy?=
+ =?us-ascii?Q?JKTI8MzZZNpgT3zyTlVEYJDYB6mA9clhQHL+BJlmETsfyHsU/P2E+qpfNmas?=
+ =?us-ascii?Q?/sjuxyerdxiKZBhOx1Hoo2uBatwgfgk88Vy6jk+pigsFys30CCGLjvzntRx/?=
+ =?us-ascii?Q?0hIOHxd2LyPOACHzMwARBQxEV6AdWV+1Mv8O8BCzvthfwNH+xXRZhN+gdXZ7?=
+ =?us-ascii?Q?9AsZGyPHdzCSQFl05qvuPvqMZjZNsHvgPQ49zAjfaPQlCVBZKLO+q+0wqAlK?=
+ =?us-ascii?Q?m1aOob+18dmIQYXwiUI1GqH3KX139RnKueSwXkzqbvjK+Ewt4Q1rFK66nPdm?=
+ =?us-ascii?Q?T5vd2sM6x/CZ/p9gMZxLw4UJr+RalkeML+cVCWkiHTJXVCQHZtsnHLKWP9bL?=
+ =?us-ascii?Q?nNsVxDShrJdf2zyOHIF2T1oOxUQsz50VDzp97MsU6Z4mQy57Uc2N9aqqJSn/?=
+ =?us-ascii?Q?7SHrkn1SncnDqkIiYIM+GVV7uthzqYeuRqCk8pGCUoP2SRNrqZt4o1C2CBoN?=
+ =?us-ascii?Q?V/3tcLVn4G2a3DWgwgN/5csqArhOZfCigIro61ZF0zdte3zFuq4DjtQagdWE?=
+ =?us-ascii?Q?mSfAynf3U9zSLLW+GYg5F8VV+FFlm7G4Pu6l6UL20TyLd6GTTsSgJZncpV02?=
+ =?us-ascii?Q?HR4+DJJIAvd9cS/4lVZIoz4rP6l3jqu5/8To/slH676C6FnPorxEVviNpEpG?=
+ =?us-ascii?Q?G0mymbcrVVOaJ2HOR93Vv+ev3tTlosK5b8B3mr1HsdTrYcqFTCcNUHkXTYwM?=
+ =?us-ascii?Q?uKkD5Nlpef6gDTO2/7FUj5slOwy8YQLN8SJcaj0nV85JLOoJyhDRf/T42HrI?=
+ =?us-ascii?Q?+xlsT7JG7UexX+80ryYJHIz/ChHfp+HhgRahJdkre4wajUwKIS6SNz3DNg8f?=
+ =?us-ascii?Q?zx3fZE23z+UTbP44ZAB8Wx3sMuBdGSb5/O9rkzjhy6LjKpl4Jd/RV5I3PJe8?=
+ =?us-ascii?Q?+fO87140zKHQ51jUBZ81sBBRYJ2iVUeMwjuwQ9RuaC+NpDaRC2veF1Ynl3PW?=
+ =?us-ascii?Q?CWEwnZL5Bv+JlO/Xhpvw/zAXxNuQIb8uiZHLzvzT/TQJO4S8ClkT6GVYxsfo?=
+ =?us-ascii?Q?VEi3IQInQV+fZ0EikEGy4iQkTiG1W8O7r1SJN1L2Gujdmt09/T6URuiW97kS?=
+ =?us-ascii?Q?Ru8S852bA4oIVIi0iARmGBO8jBrI0jcXOTea4dp5es1McHCPwykZ7lD4RkoB?=
+ =?us-ascii?Q?iA=3D=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 968ca221-7603-44ec-8fdf-08ddebc9e8f6
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e752604-0b6a-4b3b-5853-08ddebc9e955
 X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 15:44:18.7252
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 15:44:19.3536
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cUuxbjJE48Hs/dvXoAi0qNDQLucP+XHd+T7G4cIB540Nj7kOq62qz7E7HqFpThA1kTc89Xjw8yeIzssY/KbOZw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: ge5sLE4uW+WkZ9MMDSkXCqfuFKcQG4uOa74BHaMjNdh5iv5tb0rsjXifdOlOt8ShLX1YtJEe1/wS4N4++VLHrg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7635
 
-The current procedure for power_off() and power_on() is the same as the
-one used for major lane reconfiguration, aka halting. But one can
-observe that a halted lane does not cause, for example, the CDR loop of
-the link partner to lose lock on its RX stream.
+Managed lanes are supposed to have power management through
+phy_power_on() and phy_power_off().
 
-Implement the procedure mentioned in the block guide for powering down
-a lane, and then back on.
+Unmanaged lanes are supposed to be always powered on, because they might
+have a consumer which doesn't use this SerDes driver, and we don't want
+to break it.
+
+A lane is initially unmanaged, and becomes managed when phy_init() is
+called on it.
+
+It is normal for consumer drivers to call both phy_init() and
+phy_exit(), in a balanced way. This ensures the phy->init_count from the
+phy core is brought back to zero, for example during -EPROBE_DEFER in
+the consumer, the lane temporarily becomes unmanaged and then managed
+again.
+
+Given the above requirement for consumers, it also imposes a requirement
+for the SerDes driver to implement the exit() operation. Otherwise, a
+balanced set of phy_init() and phy_exit() calls from the consumer will
+effectively result in multiple lynx_28g_init() calls as seen by the
+SerDes and nothing else. That actually doesn't work - the driver can't
+power down a SerDes lane which is actually powered down, so such a call
+sequence would hang the kernel.
+
+No consumer driver currently uses phy_exit(), so the above problem does
+not yet trigger, but in preparation for its introduction, it is
+necessary to add lynx_28g_exit() as the mirror of lynx_28g_init().
 
 Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 ---
- drivers/phy/freescale/phy-fsl-lynx-28g.c | 78 ++++++++++++++++++------
- 1 file changed, 60 insertions(+), 18 deletions(-)
+ drivers/phy/freescale/phy-fsl-lynx-28g.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/drivers/phy/freescale/phy-fsl-lynx-28g.c b/drivers/phy/freescale/phy-fsl-lynx-28g.c
-index 08553ffe273f..5055ddba0363 100644
+index 5055ddba0363..91a3b3928ab4 100644
 --- a/drivers/phy/freescale/phy-fsl-lynx-28g.c
 +++ b/drivers/phy/freescale/phy-fsl-lynx-28g.c
-@@ -73,9 +73,11 @@
- 
- /* Lane a Tx Reset Control Register */
- #define LNaTRSTCTL(lane)			(0x800 + (lane) * 0x100 + 0x20)
--#define LNaTRSTCTL_HLT_REQ			BIT(27)
--#define LNaTRSTCTL_RST_DONE			BIT(30)
- #define LNaTRSTCTL_RST_REQ			BIT(31)
-+#define LNaTRSTCTL_RST_DONE			BIT(30)
-+#define LNaTRSTCTL_HLT_REQ			BIT(27)
-+#define LNaTRSTCTL_STP_REQ			BIT(26)
-+#define LNaTRSTCTL_DIS				BIT(24)
- 
- /* Lane a Tx General Control Register */
- #define LNaTGCR0(lane)				(0x800 + (lane) * 0x100 + 0x24)
-@@ -102,9 +104,11 @@
- 
- /* Lane a Rx Reset Control Register */
- #define LNaRRSTCTL(lane)			(0x800 + (lane) * 0x100 + 0x40)
--#define LNaRRSTCTL_HLT_REQ			BIT(27)
--#define LNaRRSTCTL_RST_DONE			BIT(30)
- #define LNaRRSTCTL_RST_REQ			BIT(31)
-+#define LNaRRSTCTL_RST_DONE			BIT(30)
-+#define LNaRRSTCTL_HLT_REQ			BIT(27)
-+#define LNaRRSTCTL_STP_REQ			BIT(26)
-+#define LNaRRSTCTL_DIS				BIT(24)
- #define LNaRRSTCTL_CDR_LOCK			BIT(12)
- 
- /* Lane a Rx General Control Register */
-@@ -660,14 +664,12 @@ static void lynx_28g_lane_set_pll(struct lynx_28g_lane *lane,
- 	}
+@@ -1129,8 +1129,24 @@ static int lynx_28g_init(struct phy *phy)
+ 	return 0;
  }
  
--static int lynx_28g_power_off(struct phy *phy)
-+/* Halting puts the lane in a mode in which it can be reconfigured */
-+static void lynx_28g_lane_halt(struct phy *phy)
- {
- 	struct lynx_28g_lane *lane = phy_get_drvdata(phy);
- 	u32 trstctl, rrstctl;
- 
--	if (!lane->powered_up)
--		return 0;
--
- 	/* Issue a halt request */
- 	lynx_28g_lane_rmw(lane, LNaTRSTCTL, LNaTRSTCTL_HLT_REQ,
- 			  LNaTRSTCTL_HLT_REQ);
-@@ -680,20 +682,13 @@ static int lynx_28g_power_off(struct phy *phy)
- 		rrstctl = lynx_28g_lane_read(lane, LNaRRSTCTL);
- 	} while ((trstctl & LNaTRSTCTL_HLT_REQ) ||
- 		 (rrstctl & LNaRRSTCTL_HLT_REQ));
--
--	lane->powered_up = false;
--
--	return 0;
- }
- 
--static int lynx_28g_power_on(struct phy *phy)
-+static void lynx_28g_lane_reset(struct phy *phy)
- {
- 	struct lynx_28g_lane *lane = phy_get_drvdata(phy);
- 	u32 trstctl, rrstctl;
- 
--	if (lane->powered_up)
--		return 0;
--
- 	/* Issue a reset request on the lane */
- 	lynx_28g_lane_rmw(lane, LNaTRSTCTL, LNaTRSTCTL_RST_REQ,
- 			  LNaTRSTCTL_RST_REQ);
-@@ -706,6 +701,52 @@ static int lynx_28g_power_on(struct phy *phy)
- 		rrstctl = lynx_28g_lane_read(lane, LNaRRSTCTL);
- 	} while (!(trstctl & LNaTRSTCTL_RST_DONE) ||
- 		 !(rrstctl & LNaRRSTCTL_RST_DONE));
-+}
-+
-+static int lynx_28g_power_off(struct phy *phy)
++static int lynx_28g_exit(struct phy *phy)
 +{
 +	struct lynx_28g_lane *lane = phy_get_drvdata(phy);
-+	u32 trstctl, rrstctl;
 +
-+	if (!lane->powered_up)
-+		return 0;
-+
-+	/* Issue a stop request */
-+	lynx_28g_lane_rmw(lane, LNaTRSTCTL, LNaTRSTCTL_STP_REQ,
-+			  LNaTRSTCTL_STP_REQ);
-+	lynx_28g_lane_rmw(lane, LNaRRSTCTL, LNaRRSTCTL_STP_REQ,
-+			  LNaRRSTCTL_STP_REQ);
-+
-+	/* Wait until the stop process is complete */
-+	do {
-+		trstctl = lynx_28g_lane_read(lane, LNaTRSTCTL);
-+		rrstctl = lynx_28g_lane_read(lane, LNaRRSTCTL);
-+	} while ((trstctl & LNaTRSTCTL_STP_REQ) ||
-+		 (rrstctl & LNaRRSTCTL_STP_REQ));
-+
-+	/* Power down the RX and TX portions of the lane */
-+	lynx_28g_lane_rmw(lane, LNaRRSTCTL, LNaRRSTCTL_DIS,
-+			  LNaRRSTCTL_DIS);
-+	lynx_28g_lane_rmw(lane, LNaTRSTCTL, LNaTRSTCTL_DIS,
-+			  LNaTRSTCTL_DIS);
-+
++	/* The lane returns to the state where it isn't managed by the
++	 * consumer, so we must treat is as if it isn't initialized, and always
++	 * powered on.
++	 */
++	lane->init = false;
 +	lane->powered_up = false;
++	lynx_28g_power_on(phy);
 +
 +	return 0;
 +}
 +
-+static int lynx_28g_power_on(struct phy *phy)
-+{
-+	struct lynx_28g_lane *lane = phy_get_drvdata(phy);
-+
-+	if (lane->powered_up)
-+		return 0;
-+
-+	/* Power up the RX and TX portions of the lane */
-+	lynx_28g_lane_rmw(lane, LNaRRSTCTL, 0, LNaRRSTCTL_DIS);
-+	lynx_28g_lane_rmw(lane, LNaTRSTCTL, 0, LNaTRSTCTL_DIS);
-+
-+	lynx_28g_lane_reset(phy);
- 
- 	lane->powered_up = true;
- 
-@@ -1035,7 +1076,7 @@ static int lynx_28g_set_mode(struct phy *phy, enum phy_mode mode, int submode)
- 	 * the reconfiguration is being done.
- 	 */
- 	if (powered_up)
--		lynx_28g_power_off(phy);
-+		lynx_28g_lane_halt(phy);
- 
- 	err = lynx_28g_lane_disable_pcvt(lane, lane->mode);
- 	if (err)
-@@ -1048,8 +1089,9 @@ static int lynx_28g_set_mode(struct phy *phy, enum phy_mode mode, int submode)
- 	lane->mode = lane_mode;
- 
- out:
-+	/* Reset the lane if necessary */
- 	if (powered_up)
--		lynx_28g_power_on(phy);
-+		lynx_28g_lane_reset(phy);
- 
- 	return err;
- }
+ static const struct phy_ops lynx_28g_ops = {
+ 	.init		= lynx_28g_init,
++	.exit		= lynx_28g_exit,
+ 	.power_on	= lynx_28g_power_on,
+ 	.power_off	= lynx_28g_power_off,
+ 	.set_mode	= lynx_28g_set_mode,
 -- 
 2.34.1
 
