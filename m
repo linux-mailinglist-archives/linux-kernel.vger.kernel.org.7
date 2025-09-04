@@ -1,355 +1,293 @@
-Return-Path: <linux-kernel+bounces-800789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DD8B43C15
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:52:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E266EB43C17
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 062097B86FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:51:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42B661C23FC6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5242FDC59;
-	Thu,  4 Sep 2025 12:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746082FE059;
+	Thu,  4 Sep 2025 12:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="LF/mHckQ"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="UoxlIyKq"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011021.outbound.protection.outlook.com [52.101.70.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722032DF68;
-	Thu,  4 Sep 2025 12:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E962FDC3E;
+	Thu,  4 Sep 2025 12:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.21
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756990353; cv=pass; b=qMr0wi1DT3vqoLR47nlyfRXf+0XvHCpXRbl/zR0TEDT3RjYVjg3+lipkW/UikEmYFrXiqb5R0YNAbFjQeJia7x7eWRtUbDnNOwK1LNg5OJ1fpo5GpeaiZcXDuytYZs0FAQsrQS6loUTDZAsryoRPz2UEGCUn9jwfgNA4nE/ikrk=
+	t=1756990376; cv=fail; b=d7dld46DlAmkkxFW3iuZrpH1nEi5QlmTuKsxI4m7ncAmFbMEU+phXW1hLBEQx4HUURqann84blmgTJwzoHddSNlqE3br5vC8Bi+PBWSvJCSVJddUP/y6Toy9j24JStTGU0VLbVEi2VOI82iKOqfTgyuCx8BUglTTNUzmchkfPv0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756990353; c=relaxed/simple;
-	bh=+TT5ySWOKrVWAKONpVGSQHta0E4euLIRsgOZrE0m4U4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=cHN9oApa/1ZcyBZUj9WmIS2bQFoijy5f+4JXzzmLvue2puJZ9fz6NbZSK4pq+jZSlVsEq6H/c3WOfVgWkiGgGpXxkYRzas3cWEv1aJARuAVAMep9VGrmNGTNi6eIiIq7P0wVOHZDQID5SA/TXi0lL9KsNEWiVJ6UBJCa7Np+58M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=LF/mHckQ; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756990319; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=kNwweftCdsYYW2NBJCaQsWb4UkBVa5bU0hmU/LiNdP7ZsGrCGoiwq6qJwHn4PUzuZNV0VC4++iilge29IltjBuljI1t21pJFW9YNEMoNULFuKbPaLRgl44wGW5Jk/nxgEOoNfRbxSIhZ4NMYaRZtJRLPD9tPAgiZg4Fd5zqP5sY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756990319; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=LS+WHaA6mqYgA1Bato0TNTAkG5Ennz86of9TLR85Mk0=; 
-	b=mt7tdbNsL0S7mTd+5eQZAW/dIjT1eVRJglLgN2M2Z8H1OgumKXwemPNPZBTB29LeCpKxFA5FFCaRA3aop3R7WhO1bMCCAkK3NkK9XnsRcg5F/eBClw4tvJPBvMwxNDxngSuL6u6ysf5pxV6sF7yFHBNm2Ps9ldJixJ68wEGxscQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756990319;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=LS+WHaA6mqYgA1Bato0TNTAkG5Ennz86of9TLR85Mk0=;
-	b=LF/mHckQA+m+dSjpj5Iye1LGHmScXT0NdGuMNbveAL+4ZXItfRs3CmVyoCdWtYov
-	oJMiQMv1iAFKEfeJ8pZ7tn1VYNFE68yZ5Mqpm8Ch7wEKvc+Joa++ZtxGT1ty2R3NgPm
-	j4I9itq1YgCoG4/jXWjLcp/PPv0AyYHS5NMXoAnc=
-Received: by mx.zohomail.com with SMTPS id 1756990318302309.3482528512816;
-	Thu, 4 Sep 2025 05:51:58 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1756990376; c=relaxed/simple;
+	bh=yVeIEeSSp5mmNAFLfrWYIw9HF7oiL0X9tXw9Fn9wqvk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=OebqdNmnvOi7qe+UmLt2plGiLUyrSL/DLzR7U13neCKGzwKmTZnVEbWc+NVgV8k60qaIxMtwuUrJf2Xr6u6dhGP0fOJ+w2PPvzgkkfQvHIMDWZwEy0l1zFOo67GQY5vcxjpMWj2XCGzotgrTvqQ4tvjwlEycI+ORvYb/g2jVgvQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=UoxlIyKq; arc=fail smtp.client-ip=52.101.70.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PNq9rWAaTfS7KbtabZvR9ULhg5greT9djXUlInjLTY6oie9rZMkd9EuPEt9ijzjkKJXux5QMm3wGoD8rn2Xa3WImXJMOroVQNXkgbcQUdkNXUcvJIlscGsD6ia5bGfSGHLfu9petBNSglpbpMupR/D2djTr+50POS1TXU8xwWy4jTwI3tuUC09ork6iDWkfwdjMn3xYtC7kNG55TT6JUfX8G97PSgI4Ger+q52mO0zlfmCGatuZrwBALCNYaXv3aaqq0yEirPmuTZiknx+hdUApsYL9Pq1922yvlN9MHyELYLATX1ca3TOWk1qXq6CMfTN3WCEuMLFGGJFj1D0Zx1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wZ8kIuwBi73EGYcYWqgkb0eeSMH4VTaP+izeuP5Xe4E=;
+ b=hMa16nl16OdtIqrG0fOpFFeX74IKB1AIQYoOcYvZwk21iLdXh4PofS9j+qUx4J0YTUcT4EcHfNjPcyhuL0ir1dQpimssjlozeAs2fHg9MsrZjhA2YrO4LJsqfdlG/l0hd00x/Qn2xquKbBd891pDFpKGPiZuRN2CIjpAfGXetpp5sdAplxPeMitz7GlNOO73t3SD+qYtJMqwaIX8jBlkYUaGXt28mHlgFoT+ZzrNav0MKZQOHLYUY4ujoxGn+lKkQkdjIjnTLmYCa/j/E5+akzdV5zQIq7E9sPjHjMoD7IjBArMNkDQxtTAZWRcKCoRrvma620EanLSAZ7VBpcG27g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wZ8kIuwBi73EGYcYWqgkb0eeSMH4VTaP+izeuP5Xe4E=;
+ b=UoxlIyKqgvo9lJrKFLmwFLKcWyKjrc8RH9dr19obi1rlagg1loDnrbjoAf6ijMnyIwspu0gw1OodfhamKwvn9LKrryeV/Tt1LHWT62DDG8HxRVl5fyHvQ6ZoeyTpFzOJBrWQGbEGBJcxSoUx0qBwW14npXTW6guCvom5+NyXj9p7v2dVVPMaI+v1uaf+Oj0TCi7Ob1SuBZgZyCa8VyDlWCuMBj1Aljc9nn0XJ9SGyM/KDf5aRpNYK1x7EQGFYEphU+wou3+wSYOLbcNTp1zmHseiVal9x6p7Q1w21jPy8LVzx2eejjhKCDqbzssenStbZYfuOcqmv8Up4TC4CIt00w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by VI1PR04MB9836.eurprd04.prod.outlook.com (2603:10a6:800:1d9::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Thu, 4 Sep
+ 2025 12:52:49 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.9094.016; Thu, 4 Sep 2025
+ 12:52:49 +0000
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 net 1/2] net: phylink: add lock for serializing concurrent pl->phydev writes with resolver
+Date: Thu,  4 Sep 2025 15:52:37 +0300
+Message-Id: <20250904125238.193990-1-vladimir.oltean@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AS4P190CA0040.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d1::20) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v3 04/14] rust: drm: gem: Support driver-private GEM
- object types
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250829224116.477990-5-lyude@redhat.com>
-Date: Thu, 4 Sep 2025 09:51:41 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Danilo Krummrich <dakr@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Asahi Lina <lina+kernel@asahilina.net>,
- "open list:DRM DRIVER FOR NVIDIA GPUS [RUST]" <nouveau@lists.freedesktop.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <856327A4-2D29-4340-984E-97E2002CCAE8@collabora.com>
-References: <20250829224116.477990-1-lyude@redhat.com>
- <20250829224116.477990-5-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|VI1PR04MB9836:EE_
+X-MS-Office365-Filtering-Correlation-Id: 062239e8-4fa8-4094-eff3-08ddebb1f40e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?l2kM9RdgrIYumhu5vEqNlzkVpAWSa6GSTOntptqsfVN4RxZSRlq8dAtlwjGn?=
+ =?us-ascii?Q?2Gg2SEeLqJo8F3RDVYxhDT1UkWDF+emRDS/rmGmXdUy5G8EU7teG76yZk87X?=
+ =?us-ascii?Q?WD6Z8H7xWdNMUMBI8PwoWpzC1DbK0oom2p3kMe5Gp1Q7HYsrmdu9zv90yNeb?=
+ =?us-ascii?Q?Yt/rw0mUHIKKGWsaWBYAOZNC++liSH7wchUsTRLSPo36TsG0CW0SNu//CsXx?=
+ =?us-ascii?Q?YlPVBQt1QYVBq2MCvTZD2KTTJK/xHAmmpf1BI47T2xNgJytvxFfxiC9dEFoJ?=
+ =?us-ascii?Q?XvN0k9Y7rdV7tAosJORerPHtZdIHIfk/uVdARClWlv1jGG+IRIZW8cOK35e7?=
+ =?us-ascii?Q?43fiCiOG9eS2Qzl6maT4+qlmOXhn1FBl1/xGPwb72Y02pRlpLLPd7KN2ZyAz?=
+ =?us-ascii?Q?n67g6Px2NNxfgkD7X4Q7RkhEhc6niIBRhYwpOTfaT2A52VvJ6w8UIOB85iZE?=
+ =?us-ascii?Q?/Z0lRZnUtnDUQg9+UoJvnJ7DO8GNmo0XqykVCo1Ox9a/t2XZbIp3V0roN0tW?=
+ =?us-ascii?Q?SE5mlA1oho6tI1ug+XUJ3vmf06U3gRJpzdTJV1taRG1D9U8PZYPD41MHXdw9?=
+ =?us-ascii?Q?9SrHBV8FJqiaSu83dF8eoWseHNEaavxO7VEpJQoH8ktgsJ4quS/6BGK/U1Ph?=
+ =?us-ascii?Q?bOxVVpXxS38Q4OuoYzXN3pSWzwCcmvUZGCDOazl/QZPDr30rHw5Kkboh+eaK?=
+ =?us-ascii?Q?8dQAPMFaB1ZQQGOe3Pr3maf+I8QpLNwJ+FDfZyjJB7F2iBW2pIaR4wA+BupD?=
+ =?us-ascii?Q?gt+ICxa5iPl9WW7ReuAXPlbuoABXloW7KYFs2h8hxzh90p67AsWEEbG15FNZ?=
+ =?us-ascii?Q?fDEnpQJgtgIaED/kMaYcI8lCe0//pPH2ZQ6ylkZ7KiMbtBLZc3XKHCy8ud9u?=
+ =?us-ascii?Q?LU0TUmi5e5fXwKUXXtcnC9sKXqT3wEVkdcnOC/tVgzJvPG7mVe8xzEyFke9/?=
+ =?us-ascii?Q?OLMRLIUcaqyVtZ2v6kmsPfdMC6uEG6i4wnqglq1DapuGRHrzlMw9DwUv7T5e?=
+ =?us-ascii?Q?b7QrG/2ZKz7hB5+lflSUiRSMN1P//sfTIG85xrS/5bibhHiXW5/d5Y1GHdco?=
+ =?us-ascii?Q?mabKlAvzsJ82r26kCeS8IW5Yzirqi8nvgsEqe9JdiFX3GfAtA9AmfeeHj9tg?=
+ =?us-ascii?Q?7RuZu4azWBMn2TVyadMuU8uL0eMQoU9ETanr2QMOp9YeV+grXbS4z84ICqdk?=
+ =?us-ascii?Q?eKy8B89MzTaHGA+GPTuK2uQMcPUIr+pmWlV28XR77Y0eLPMBLWqdea7pyqoC?=
+ =?us-ascii?Q?R7EiOTraVk3Lwm6A/DRVDw13yqhwYoJvRFcYe546vDxPJKGxO3b1CAQVuiww?=
+ =?us-ascii?Q?3+VkRkwqRCPEw5Bobs0pBf5s2Jryn4+CZOz327Nmrxm85W9R2ZpuZYlIrX81?=
+ =?us-ascii?Q?uYUL9yklKn46zsyKH0JDwAXoDA3Pi4r2pd+wSG2E/Mmkgkhun0GWBwIk0nYQ?=
+ =?us-ascii?Q?izwWtd6mMxjjf+ILzDXxXTOvTZZPeqhV?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?F5Bunz8i9QvnYsCTIdC/pwZO4ing+mPP5ChUUvgkrXf8WV8zalRIkSKv1jQO?=
+ =?us-ascii?Q?AYbSEJDa9VoVH/1epzKD3yy2QfDjyjQ/tdvHEISma6uEnmn4xmPNmQ+9H9ms?=
+ =?us-ascii?Q?w1zeVCEweDKx6hDUgVvqw6/Q+D+LAWXOyMQZY4QZC8QK2J0RLUgGfLFxW3fH?=
+ =?us-ascii?Q?ABhjoMCpXdifVpoKYZRCB191ciNhMcLc38ba0EnaE1AjdmtMXQQuGTswzbyP?=
+ =?us-ascii?Q?XJ5nnKTm72pZFoBlVmbVlbYa0JSBk/SxpgCab7y217PjPWabPYGReC+xTQYC?=
+ =?us-ascii?Q?fb4PA4UigZQPkRsP3e1F7vX6INnw/h9SBBD3BsnUSI2yTpNtF9crs/am70X5?=
+ =?us-ascii?Q?ufLPFTQB7HMuuSy/zzt+FwwekvTv413g3+1xtx+lZJqxt4t24Ap/GUsW/4s3?=
+ =?us-ascii?Q?nlDzHnm/Dhnxcav0m525elRbPF/O6G/mLQH0E0a/FgIhAMokjz8P9Ilh0YEX?=
+ =?us-ascii?Q?BfMEfKeWqAmIbvr9O7/V3S91bBK+9oeY2QF4Ix0LHA+mQ8HoX8FFZ2g7Wg30?=
+ =?us-ascii?Q?x1xjAU5d0x5Q6Q2gCFfi+pQa4pox7lXyEofpIHkcMpHM4vrKoIVj/sM/k7GC?=
+ =?us-ascii?Q?v4Jm9J7krqlDXmOdA3008mflGdLet0wXqryghqoh42Zk4IpuipQFps1/YjU/?=
+ =?us-ascii?Q?jXTsEskldVYovzhYw7UQ/fBbZC4e9KlWVZWpmzYmNmFmMcakC4plNnURPwh1?=
+ =?us-ascii?Q?VgVyl1F9i3nhIq0aNYtmfnVHhwLjHl37ikYnSzTzw/yyqeSUAmXmBxU6+bDs?=
+ =?us-ascii?Q?yHm+CYvbrD8uKZx5CkDLBkzYuHf2rxgrwLL/fssEe0F0Ebd8CenzO+8EmRvh?=
+ =?us-ascii?Q?2QlaP1CfkeLVfPXTCPoW5CK6eqPzZ53K0DlKT+KxmDCG41uIDmpRqcNyPOgh?=
+ =?us-ascii?Q?fHiDsD2/dr5t4LhmguRS7hGWJALzKVNcHXEQ85i9qbCLOsZ6ohN1VoXZkQQy?=
+ =?us-ascii?Q?Vb5lglTOqQFGowPzBYzFYe5TCeS6hyLfzJZ0tiyapq8jMjRB+wDXxESGd3dH?=
+ =?us-ascii?Q?Tsj6e9GmbKErFUXQ44CLTGA7p3dpy+clWmt0fBZJUTxkokcUZVX1kKonmaLc?=
+ =?us-ascii?Q?ncJutaEPT+qwJ6gPZ1LA37pWJvZH1Yf3U4NMGzhqF3N+yEyUIJVsVp1AJCaN?=
+ =?us-ascii?Q?PbeRQCM3wxXL+v4BIAdCR94D4HpfsU+N6JAtlaLjlStDihMaTjsY2yR/g/up?=
+ =?us-ascii?Q?IaGZNx5MIMxjhPBEuRSeWo2/p6176iLV49OWuC7BcBA9pDYLV6/7YGAyXSsN?=
+ =?us-ascii?Q?S3cTkx37sDprWNQzlO7FWCnYpnfIrDNLsT+FHV8OFYqHE1EZlPnBbfgNz52u?=
+ =?us-ascii?Q?Fu1g1QAgTSl3IhmGf8kQ7BMVeEVn9912siefxrgBJixJ3VHYXAFo5aOx2d6z?=
+ =?us-ascii?Q?0Mq+dekb96e7eqsrkOMcVXCA2CO3hReiJGxSLV4MblSDdF/bHTEEsM85GPZ0?=
+ =?us-ascii?Q?NFqf1xG096uBLTpzgZfrZC6zhsVu7Ia0bXGL5rNQlJteZIwf7uREMAxKf7yS?=
+ =?us-ascii?Q?GNuAc93xPTuIiVZjNf8lMJzPfNzeR8RQXxRqE7IInOhPaxHc13ZSEwAEejqR?=
+ =?us-ascii?Q?WMTSllVv2HgO3zVTVmewuZdX6V4FA8vWmB6vs/JMLB7WPhullNz1wt11iZO9?=
+ =?us-ascii?Q?QQ=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 062239e8-4fa8-4094-eff3-08ddebb1f40e
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 12:52:49.7144
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bMZ+2G+7LXhfA6O0RObQubKFyibxMIIWo9ZsdTV9zQ+cLymiSrthnq7yeOVvi6224YVZQyrdGAuTVxbFTPJs5g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9836
 
+Currently phylink_resolve() protects itself against concurrent
+phylink_bringup_phy() or phylink_disconnect_phy() calls which modify
+pl->phydev by relying on pl->state_mutex.
 
+The problem is that in phylink_resolve(), pl->state_mutex is in a lock
+inversion state with pl->phydev->lock. So pl->phydev->lock needs to be
+acquired prior to pl->state_mutex. But that requires dereferencing
+pl->phydev in the first place, and without pl->state_mutex, that is
+racy.
 
-> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> One of the original intents with the gem bindings was that drivers =
-could
-> specify additional gem implementations, in order to enable for driver
-> private gem objects. This wasn't really possible however, as up until =
-now
-> our GEM bindings have always assumed that the only GEM object we would =
-run
-> into was driver::Driver::Object - meaning that implementing another =
-GEM
-> object type would result in all of the BaseDriverObject callbacks =
-assuming
-> the wrong type.
->=20
-> This is a pretty easy fix though, all we need to do is specify a
-> BaseDriverObject in driver::Driver instead of an AllocImpl, and then =
-add an
-> associated type for AllocImpl in BaseDriverObject. That way each
-> BaseDriverObject has its own AllocImpl allowing it to know which type =
-to
-> provide in BaseDriverObject callbacks, and driver::Driver can simply =
-go
-> through the BaseDriverObject to its AllocImpl type in order to get =
-access
-> to ALLOC_OPS.
->=20
-> So, let's do this and update Nova for these changes.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->=20
-> ---
-> V4:
-> * Update trait bounds. This looks gnarlier then it is:
->=20
->    Self: AllocImpl<Driver =3D D>, <-- Get the driver for this GEM =
-object
->    D: drm::Driver<Object =3D O, File =3D F>, <-- Get the driver's =
-Object, File
->                                              impl
->    F: drm::file::DriverFile,
->    O: BaseDriverObject<Object =3D Self>, <-- Make sure we're the =
-driver's
->                                            main GEM object impl.
->  (don't worry, the compiler can always figure out what D, F, O are)
-> * Also, rename the commit. I realized I should be clearer about what =
-this
->  does so people can stop me if this isn't what was meant by private =
-gem
->  object implementations :).
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> drivers/gpu/drm/nova/driver.rs |  8 ++++++--
-> drivers/gpu/drm/nova/gem.rs    |  1 +
-> rust/kernel/drm/device.rs      | 17 ++++++++++-------
-> rust/kernel/drm/driver.rs      |  2 +-
-> rust/kernel/drm/gem/mod.rs     | 21 +++++++++++++--------
-> 5 files changed, 31 insertions(+), 18 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/nova/driver.rs =
-b/drivers/gpu/drm/nova/driver.rs
-> index 91b7380f83ab4..4c252426056c5 100644
-> --- a/drivers/gpu/drm/nova/driver.rs
-> +++ b/drivers/gpu/drm/nova/driver.rs
-> @@ -1,7 +1,11 @@
-> // SPDX-License-Identifier: GPL-2.0
->=20
-> use kernel::{
-> -    auxiliary, c_str, device::Core, drm, drm::gem, drm::ioctl, =
-prelude::*, sync::aref::ARef,
-> +    auxiliary, c_str,
-> +    device::Core,
-> +    drm::{self, gem, ioctl},
-> +    prelude::*,
-> +    types::ARef,
-> };
->=20
-> use crate::file::File;
-> @@ -59,7 +63,7 @@ fn probe(adev: &auxiliary::Device<Core>, _info: =
-&Self::IdInfo) -> Result<Pin<KBo
-> impl drm::Driver for NovaDriver {
->     type Data =3D NovaData;
->     type File =3D File;
-> -    type Object =3D gem::Object<NovaObject>;
-> +    type Object =3D NovaObject;
->=20
->     const INFO: drm::DriverInfo =3D INFO;
->=20
-> diff --git a/drivers/gpu/drm/nova/gem.rs b/drivers/gpu/drm/nova/gem.rs
-> index 2760ba4f3450b..10e3053f1a246 100644
-> --- a/drivers/gpu/drm/nova/gem.rs
-> +++ b/drivers/gpu/drm/nova/gem.rs
-> @@ -18,6 +18,7 @@ pub(crate) struct NovaObject {}
->=20
-> impl gem::DriverObject for NovaObject {
->     type Driver =3D NovaDriver;
-> +    type Object =3D gem::Object<Self>;
->=20
->     fn new(_dev: &NovaDevice, _size: usize) -> impl PinInit<Self, =
-Error> {
->         try_pin_init!(NovaObject {})
-> diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
-> index 3bb7c83966cf2..16cf6cb53d9a7 100644
-> --- a/rust/kernel/drm/device.rs
-> +++ b/rust/kernel/drm/device.rs
-> @@ -60,6 +60,9 @@ pub struct Device<T: drm::Driver> {
->     data: T::Data,
-> }
->=20
-> +/// A type alias for referring to the [`AllocImpl`] implementation =
-for a DRM driver.
-> +type DriverAllocImpl<T> =3D <<T as drm::Driver>::Object as =
-drm::gem::DriverObject>::Object;
-> +
-> impl<T: drm::Driver> Device<T> {
->     const VTABLE: bindings::drm_driver =3D drm_legacy_fields! {
->         load: None,
-> @@ -70,13 +73,13 @@ impl<T: drm::Driver> Device<T> {
->         master_set: None,
->         master_drop: None,
->         debugfs_init: None,
-> -        gem_create_object: T::Object::ALLOC_OPS.gem_create_object,
-> -        prime_handle_to_fd: T::Object::ALLOC_OPS.prime_handle_to_fd,
-> -        prime_fd_to_handle: T::Object::ALLOC_OPS.prime_fd_to_handle,
-> -        gem_prime_import: T::Object::ALLOC_OPS.gem_prime_import,
-> -        gem_prime_import_sg_table: =
-T::Object::ALLOC_OPS.gem_prime_import_sg_table,
-> -        dumb_create: T::Object::ALLOC_OPS.dumb_create,
-> -        dumb_map_offset: T::Object::ALLOC_OPS.dumb_map_offset,
-> +        gem_create_object: =
-DriverAllocImpl::<T>::ALLOC_OPS.gem_create_object,
-> +        prime_handle_to_fd: =
-DriverAllocImpl::<T>::ALLOC_OPS.prime_handle_to_fd,
-> +        prime_fd_to_handle: =
-DriverAllocImpl::<T>::ALLOC_OPS.prime_fd_to_handle,
-> +        gem_prime_import: =
-DriverAllocImpl::<T>::ALLOC_OPS.gem_prime_import,
-> +        gem_prime_import_sg_table: =
-DriverAllocImpl::<T>::ALLOC_OPS.gem_prime_import_sg_table,
-> +        dumb_create: DriverAllocImpl::<T>::ALLOC_OPS.dumb_create,
-> +        dumb_map_offset: =
-DriverAllocImpl::<T>::ALLOC_OPS.dumb_map_offset,
+Hence the reason for the extra lock. Currently it is redundant, but it
+will serve a functional purpose once mutex_lock(&phy->lock) will be
+moved outside of the mutex_lock(&pl->state_mutex) section.
 
-There are now possibly infinitely many ALLOC_OPS. Is it a problem that
-we=E2=80=99re choosing a particular one here?
+Another alternative considered would have been to let phylink_resolve()
+acquire the rtnl_mutex, which is also held when phylink_bringup_phy()
+and phylink_disconnect_phy() are called. But since phylink_disconnect_phy()
+runs under rtnl_lock(), it would deadlock with phylink_resolve() when
+calling flush_work(&pl->resolve). Additionally, it would have been
+undesirable because it would have unnecessarily blocked many other call
+paths as well in the entire kernel, so the smaller-scoped lock was
+preferred.
 
->         show_fdinfo: None,
->         fbdev_probe: None,
->=20
-> diff --git a/rust/kernel/drm/driver.rs b/rust/kernel/drm/driver.rs
-> index dae0f4d1bbe3c..2500a61f45a6a 100644
-> --- a/rust/kernel/drm/driver.rs
-> +++ b/rust/kernel/drm/driver.rs
-> @@ -103,7 +103,7 @@ pub trait Driver {
->     type Data: Sync + Send;
->=20
->     /// The type used to manage memory for this driver.
-> -    type Object: AllocImpl;
-> +    type Object: drm::gem::DriverObject;
->=20
->     /// The type used to represent a DRM File (client)
->     type File: drm::file::DriverFile;
-> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-> index b27b9fbf28bbb..ec36cd9ea69ed 100644
-> --- a/rust/kernel/drm/gem/mod.rs
-> +++ b/rust/kernel/drm/gem/mod.rs
-> @@ -26,16 +26,19 @@ pub trait DriverObject: Sync + Send + Sized {
->     /// Parent `Driver` for this object.
->     type Driver: drm::Driver;
->=20
-> +    /// The GEM object type that will be passed to various callbacks.
-> +    type Object: AllocImpl;
-> +
->     /// Create a new driver data object for a GEM object of a given =
-size.
->     fn new(dev: &drm::Device<Self::Driver>, size: usize) -> impl =
-PinInit<Self, Error>;
->=20
->     /// Open a new handle to an existing object, associated with a =
-File.
-> -    fn open(_obj: &<Self::Driver as drm::Driver>::Object, _file: =
-&DriverFile<Self>) -> Result {
-> +    fn open(_obj: &Self::Object, _file: &DriverFile<Self>) -> Result =
-{
->         Ok(())
->     }
->=20
->     /// Close a handle to an existing object, associated with a File.
-> -    fn close(_obj: &<Self::Driver as drm::Driver>::Object, _file: =
-&DriverFile<Self>) {}
-> +    fn close(_obj: &Self::Object, _file: &DriverFile<Self>) {}
-> }
->=20
-> /// Trait that represents a GEM object subtype
-> @@ -83,7 +86,7 @@ extern "C" fn open_callback<T: DriverObject>(
->=20
->     // SAFETY: `open_callback` is specified in the AllocOps structure =
-for `DriverObject<T>`,
->     // ensuring that `raw_obj` is contained within a `DriverObject<T>`
-> -    let obj =3D unsafe { <<T::Driver as drm::Driver>::Object as =
-IntoGEMObject>::from_raw(raw_obj) };
-> +    let obj =3D unsafe { T::Object::from_raw(raw_obj) };
->=20
->     match T::open(obj, file) {
->         Err(e) =3D> e.to_errno(),
-> @@ -100,7 +103,7 @@ extern "C" fn close_callback<T: DriverObject>(
->=20
->     // SAFETY: `close_callback` is specified in the AllocOps structure =
-for `Object<T>`, ensuring
->     // that `raw_obj` is indeed contained within a `Object<T>`.
-> -    let obj =3D unsafe { <<T::Driver as drm::Driver>::Object as =
-IntoGEMObject>::from_raw(raw_obj) };
-> +    let obj =3D unsafe { T::Object::from_raw(raw_obj) };
->=20
->     T::close(obj, file);
-> }
-> @@ -127,11 +130,12 @@ fn size(&self) -> usize {
->=20
->     /// Creates a new handle for the object associated with a given =
-`File`
->     /// (or returns an existing one).
-> -    fn create_handle<D, F>(&self, file: &drm::File<F>) -> Result<u32>
-> +    fn create_handle<D, F, O>(&self, file: &drm::File<F>) -> =
-Result<u32>
->     where
->         Self: AllocImpl<Driver =3D D>,
-> -        D: drm::Driver<Object =3D Self, File =3D F>,
-> +        D: drm::Driver<Object =3D O, File =3D F>,
->         F: drm::file::DriverFile,
-> +        O: DriverObject<Object =3D Self>,
->     {
->         let mut handle: u32 =3D 0;
->         // SAFETY: The arguments are all valid per the type =
-invariants.
-> @@ -142,11 +146,12 @@ fn create_handle<D, F>(&self, file: =
-&drm::File<F>) -> Result<u32>
->     }
->=20
->     /// Looks up an object by its handle for a given `File`.
-> -    fn lookup_handle<D, F>(file: &drm::File<F>, handle: u32) -> =
-Result<ARef<Self>>
-> +    fn lookup_handle<D, F, O>(file: &drm::File<F>, handle: u32) -> =
-Result<ARef<Self>>
->     where
->         Self: AllocImpl<Driver =3D D>,
-> -        D: drm::Driver<Object =3D Self, File =3D F>,
-> +        D: drm::Driver<Object =3D O, File =3D F>,
->         F: drm::file::DriverFile,
-> +        O: DriverObject<Object =3D Self>,
->     {
->         // SAFETY: The arguments are all valid per the type =
-invariants.
->         let ptr =3D unsafe { =
-bindings::drm_gem_object_lookup(file.as_raw().cast(), handle) };
-> --=20
-> 2.50.0
->=20
+Link: https://lore.kernel.org/netdev/aLb6puGVzR29GpPx@shell.armlinux.org.uk/
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+---
+v2->v3:
+- clarify in the commit message that rtnl_lock() in phylink_resolve()
+  wouldn't have worked
+- s/phy_lock/phydev_mutex/
+- expand and refactor critical section in phylink_disconnect_phy()
+- make use of the local "phy" variable in phylink_resolve()
+v2 at:
+https://lore.kernel.org/netdev/20250903152348.2998651-1-vladimir.oltean@nxp.com/
+v1->v2: patch is new
+
+ drivers/net/phy/phylink.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index c7f867b361dd..386d37f6bad4 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -67,6 +67,8 @@ struct phylink {
+ 	struct timer_list link_poll;
+ 
+ 	struct mutex state_mutex;
++	/* Serialize updates to pl->phydev with phylink_resolve() */
++	struct mutex phydev_mutex;
+ 	struct phylink_link_state phy_state;
+ 	unsigned int phy_ib_mode;
+ 	struct work_struct resolve;
+@@ -1582,8 +1584,11 @@ static void phylink_resolve(struct work_struct *w)
+ 	struct phylink_link_state link_state;
+ 	bool mac_config = false;
+ 	bool retrigger = false;
++	struct phy_device *phy;
+ 	bool cur_link_state;
+ 
++	mutex_lock(&pl->phydev_mutex);
++	phy = pl->phydev;
+ 	mutex_lock(&pl->state_mutex);
+ 	cur_link_state = phylink_link_is_up(pl);
+ 
+@@ -1617,11 +1622,11 @@ static void phylink_resolve(struct work_struct *w)
+ 		/* If we have a phy, the "up" state is the union of both the
+ 		 * PHY and the MAC
+ 		 */
+-		if (pl->phydev)
++		if (phy)
+ 			link_state.link &= pl->phy_state.link;
+ 
+ 		/* Only update if the PHY link is up */
+-		if (pl->phydev && pl->phy_state.link) {
++		if (phy && pl->phy_state.link) {
+ 			/* If the interface has changed, force a link down
+ 			 * event if the link isn't already down, and re-resolve.
+ 			 */
+@@ -1685,6 +1690,7 @@ static void phylink_resolve(struct work_struct *w)
+ 		queue_work(system_power_efficient_wq, &pl->resolve);
+ 	}
+ 	mutex_unlock(&pl->state_mutex);
++	mutex_unlock(&pl->phydev_mutex);
+ }
+ 
+ static void phylink_run_resolve(struct phylink *pl)
+@@ -1820,6 +1826,7 @@ struct phylink *phylink_create(struct phylink_config *config,
+ 	if (!pl)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	mutex_init(&pl->phydev_mutex);
+ 	mutex_init(&pl->state_mutex);
+ 	INIT_WORK(&pl->resolve, phylink_resolve);
+ 
+@@ -2080,6 +2087,7 @@ static int phylink_bringup_phy(struct phylink *pl, struct phy_device *phy,
+ 		     dev_name(&phy->mdio.dev), phy->drv->name, irq_str);
+ 	kfree(irq_str);
+ 
++	mutex_lock(&pl->phydev_mutex);
+ 	mutex_lock(&phy->lock);
+ 	mutex_lock(&pl->state_mutex);
+ 	pl->phydev = phy;
+@@ -2125,6 +2133,7 @@ static int phylink_bringup_phy(struct phylink *pl, struct phy_device *phy,
+ 
+ 	mutex_unlock(&pl->state_mutex);
+ 	mutex_unlock(&phy->lock);
++	mutex_unlock(&pl->phydev_mutex);
+ 
+ 	phylink_dbg(pl,
+ 		    "phy: %s setting supported %*pb advertising %*pb\n",
+@@ -2303,6 +2312,7 @@ void phylink_disconnect_phy(struct phylink *pl)
+ 
+ 	ASSERT_RTNL();
+ 
++	mutex_lock(&pl->phydev_mutex);
+ 	phy = pl->phydev;
+ 	if (phy) {
+ 		mutex_lock(&phy->lock);
+@@ -2312,8 +2322,11 @@ void phylink_disconnect_phy(struct phylink *pl)
+ 		pl->mac_tx_clk_stop = false;
+ 		mutex_unlock(&pl->state_mutex);
+ 		mutex_unlock(&phy->lock);
+-		flush_work(&pl->resolve);
++	}
++	mutex_unlock(&pl->phydev_mutex);
+ 
++	if (phy) {
++		flush_work(&pl->resolve);
+ 		phy_disconnect(phy);
+ 	}
+ }
+-- 
+2.34.1
 
 
