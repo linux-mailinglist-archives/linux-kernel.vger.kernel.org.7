@@ -1,171 +1,122 @@
-Return-Path: <linux-kernel+bounces-801396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45247B44493
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:40:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63776B44491
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B8D67BF6F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:38:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F11A6188459F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333613126D2;
-	Thu,  4 Sep 2025 17:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95D33126CF;
+	Thu,  4 Sep 2025 17:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="edEYk+u/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exGMUlsp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8540B27511C;
-	Thu,  4 Sep 2025 17:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F15E31354F;
+	Thu,  4 Sep 2025 17:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757007573; cv=none; b=nswBYiDyCTORHD6hTYz1aKaB3aQ4GTI7Fc94NjBXhSWyw9Dx0XMIlU8sSSEWbaBMwxzf2piOgF7v1XaVnPfgdI7QC6BmPJvMKgxejiPe4ownQ0De73X4x1aKwyW8NHpq3/D9TvI0zet2g/C4eKKWOuGWY3U5Db6McsNdCTe2LbE=
+	t=1757007576; cv=none; b=ZLIJ+7F+MezlR8AsFIuDlfcHLyq90Ebz+9pgob1v4m4SkfVY3LBz6na1Bv+8EwmYI4nHhdHx5XdABraBMmPTCDcX1KPmDaEV38qeHSbZjZFdk1j0XZBjMhbbr7SwEDSnvTypxUpAtFxov/nXWs8O47R2NQqgO0Zrxx5ta0c/dVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757007573; c=relaxed/simple;
-	bh=Xbvz6qKnaBnWjDty07oXkI1QOz/gH22+Af4nDw/yES0=;
+	s=arc-20240116; t=1757007576; c=relaxed/simple;
+	bh=ZMi8STu4rwUVTI5LI7m6pQhVZR8qQSyjjKTnEsVSHL4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l7ctd8OcaWYXvZlosbK5VZleLwLLJsYK+comEC7BKcI1Am2Boc6o34zr8yUgMw9h26b/MaV6XE8NS8437vMvnPEkhy5iA8+sb80mYzzXQFT63yRIv6YsW5xq3seQ1o4AQgia5hS49PswCCiRj/jyV2EhjzeZlL4KTI6cp3+Dl7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=edEYk+u/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E811C4CEF0;
-	Thu,  4 Sep 2025 17:39:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hiCeSskRulFHDP54V10gM44gEs6NKergr+0kQMCQ2odhthULqkCDIeXMhKNTe70v2rS/QNIs7XvTKupKuBCdzhl9zCjGotmOPNqRyigd+tTwLIUveqPExGcqgBSFpYYl0ufudNFNKV0XgpuYJ8gDaHfYwqP6AOiHvVdL4Aer1wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exGMUlsp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8341DC4CEF0;
+	Thu,  4 Sep 2025 17:39:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757007573;
-	bh=Xbvz6qKnaBnWjDty07oXkI1QOz/gH22+Af4nDw/yES0=;
+	s=k20201202; t=1757007575;
+	bh=ZMi8STu4rwUVTI5LI7m6pQhVZR8qQSyjjKTnEsVSHL4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=edEYk+u//CE5kp4AcfLqO+W2yncL4Or78zA4tBKXCkJ78caqFnnvgzVkDFLLcKh5R
-	 AP1BtIQCjrkYFVq1HOD0aQuLiGxB0bzBG5L+Vt5RYywOa/N7vj94cCw2cM5Porjk6G
-	 9eLFYE7W8OgsfqJeclDt/znvHo743bcVpXjjmMIX+J/VoreDiDmcvmLQ8UItIDZ1C5
-	 I7CFCmNBTXQdGKuYVAKPXsC3NYUeRljlkhfrBrxvz5LvYqhcKQB+y5NmxdbvJICGHG
-	 pBJxPOykZOuv7WoWR31BHxlvnSGSb52nUVa9Zow4A5qpPDMWrNYk5FvZspMCFTDYQd
-	 h3tB+2/ZmaGaQ==
-Date: Thu, 4 Sep 2025 10:39:30 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, 
-	Peter Zijlstra <peterz@infradead.org>, Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev, 
+	b=exGMUlspUpPITgayvmKL9lVku8eR2I9HlnZZwKCfT75tyBtCC+GYElaN/4vXKkfLI
+	 pfDZexwqQnX0j+bfX8442jvFv8aSQZ2R6+kj6ScIgqHTNRT3Cd9K9x6tAm1dXlvMgx
+	 SsnHabMld4s3aDl/vov+26Hw1UJEmqTV7nqykSeAxIxfZ0VSSfqoidapN0hMwaT/dY
+	 n406TYTcz+NLe8Aq88SqwewnyQ7fTPjXVzonAi5MFmAD9wssdTcEVScxm+sL8JWcBN
+	 eGgZxmtQY7YKBWeq6uzzb1skrgQnh4EkOlnYJ/f3rh2xfQKWfTFiiPJW4Aqex0rvBD
+	 uW6RxF+f34i3A==
+Date: Thu, 4 Sep 2025 07:39:34 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Jake Hillion <jakehillion@meta.com>, sched-ext@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] objtool/LoongArch: Fix unreachable instruction
- warnings about EFISTUB
-Message-ID: <ybv2ndrzbqztkctzwhfphpdqrqbxlougs75glm22rcuzdmnrfp@lqwcms3j2d55>
-References: <20250901072156.31361-1-yangtiezhu@loongson.cn>
- <20250901072156.31361-3-yangtiezhu@loongson.cn>
- <20250901081904.GB4067720@noisy.programming.kicks-ass.net>
- <82c913b9-4403-cde9-0542-5bd6e04415f5@loongson.cn>
- <wt4qpgi5isj5m6wq33pomvm6borvafuzktekc7lgtoitscar5q@brixzj3lccbw>
- <ccbb40c1-5f2d-77e9-e8d2-52f2fdbad645@loongson.cn>
- <CAAhV-H5qhKepa-8sz3_AC=_RCChbVeEmnHKESMqpiJ0phMORbg@mail.gmail.com>
- <52056c29-4f21-83c9-db1f-ebd1875a3675@loongson.cn>
- <CAAhV-H47VKERJCKRi7uAS7OmCWaE4yxZ07Hwz_si2DMVRDrsag@mail.gmail.com>
+Subject: Re: [PATCH sched_ext/for-6.18] sched_ext: Fix NULL dereference in
+ scx_bpf_cpu_rq() warning
+Message-ID: <aLnO1r5X265Knl0W@slm.duckdns.org>
+References: <20250904125522.561737-1-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H47VKERJCKRi7uAS7OmCWaE4yxZ07Hwz_si2DMVRDrsag@mail.gmail.com>
+In-Reply-To: <20250904125522.561737-1-arighi@nvidia.com>
 
-On Thu, Sep 04, 2025 at 11:59:30AM +0800, Huacai Chen wrote:
-> On Thu, Sep 4, 2025 at 11:50 AM Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
-> >
-> > On 2025/9/4 上午10:21, Huacai Chen wrote:
-> > > On Thu, Sep 4, 2025 at 10:18 AM Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
-> > >>
-> > >> On 2025/9/4 上午3:19, Josh Poimboeuf wrote:
-> > >>> On Mon, Sep 01, 2025 at 04:39:29PM +0800, Tiezhu Yang wrote:
-> > >>>> On 2025/9/1 下午4:19, Peter Zijlstra wrote:
-> > >>>>> On Mon, Sep 01, 2025 at 03:21:55PM +0800, Tiezhu Yang wrote:
-> > >>>>>> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exist the
-> > >>>>>> following objtool warnings:
-> > >>
-> > >> ...
-> > >>
-> > >>>> Josh suggested to do something to put these instructions in the data
-> > >>>> section, but as said in the previous reply, it needs to modify the link
-> > >>>> process and seems too complicated and expensive for this warning to some
-> > >>>> extent.
-> > >>>>
-> > >>>> So I did this change for objtool.
-> > >>>
-> > >>> I don't like this workaround either, how exactly is it complicated and
-> > >>> expensive to put the data in a data section?
-> > >>
-> > >> I can put them in a data section in the next version, this is
-> > >> reasonable.
-> > > No, from the ARM64 and RISC-V design, we can put jump instructions in
-> > > the HEAD section, and this is what Jiaxun wants to do. Changing to a
-> > > data section is not reasonable.
-> >
-> > ARM64, RISC-V and LoongArch share the same logic in efistub:
-> >
-> > $ grep -r "libstub/lib.a" arch/*/Makefile
-> > arch/arm64/Makefile:libs-$(CONFIG_EFI_STUB) +=
-> > $(objtree)/drivers/firmware/efi/libstub/lib.a
-> > arch/loongarch/Makefile:libs-$(CONFIG_EFI_STUB) +=
-> > $(objtree)/drivers/firmware/efi/libstub/lib.a
-> > arch/riscv/Makefile:libs-$(CONFIG_EFI_STUB) +=
-> > $(objtree)/drivers/firmware/efi/libstub/lib.a
-> >
-> > If we can not put the these data to a data section, then we can not
-> > link efistub separately, because if remove the following code in
-> > arch/loongarch/Makefile:
-> >
-> > libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
-> >
-> > there exists the following build error:
-> >
-> >     LD      vmlinux.o
-> >    OBJCOPY modules.builtin.modinfo
-> >    GEN     modules.builtin
-> >    GEN     .vmlinux.objs
-> >    MODPOST Module.symvers
-> >    UPD     include/generated/utsversion.h
-> >    CC      init/version-timestamp.o
-> >    KSYMS   .tmp_vmlinux0.kallsyms.S
-> >    AS      .tmp_vmlinux0.kallsyms.o
-> >    LD      .tmp_vmlinux1
-> > ld: arch/loongarch/kernel/head.o: in function `pe_header':
-> > (.head.text+0x68): undefined reference to `__efistub_efi_pe_entry'
-> >
-> > What should to do in the next step? I am looking forward to your
-> > final conclusion.
+On Thu, Sep 04, 2025 at 02:55:22PM +0200, Andrea Righi wrote:
+> When printing the deprecation warning for scx_bpf_cpu_rq(), we may hit a
+> NULL pointer dereference if the kfunc is called before a BPF scheduler
+> is fully attached, for example, when invoked from a BPF timer or during
+> ops.init():
 > 
-> This is from RISC-V code.
+>  [   50.752775] BUG: kernel NULL pointer dereference, address: 0000000000000331
+>  ...
+>  [   50.764205] RIP: 0010:scx_bpf_cpu_rq+0x30/0xa0
+>  ...
+>  [   50.787661] Call Trace:
+>  [   50.788398]  <TASK>
+>  [   50.789061]  bpf_prog_08f7fd2dcb187aaf_wakeup_timerfn+0x75/0x1a8
+>  [   50.792477]  bpf_timer_cb+0x7e/0x140
+>  [   50.796003]  hrtimer_run_softirq+0x91/0xe0
+>  [   50.796952]  handle_softirqs+0xce/0x3c0
+>  [   50.799087]  run_ksoftirqd+0x3e/0x70
+>  [   50.800197]  smpboot_thread_fn+0x133/0x290
+>  [   50.802320]  kthread+0x115/0x220
+>  [   50.804984]  ret_from_fork+0x17a/0x1d0
+>  [   50.806920]  ret_from_fork_asm+0x1a/0x30
+>  [   50.807799]  </TASK>
 > 
-> __HEAD
-> SYM_CODE_START(_start)
->         /*
->          * Image header expected by Linux boot-loaders. The image header data
->          * structure is described in asm/image.h.
->          * Do not modify it without modifying the structure and all bootloaders
->          * that expects this header format!!
->          */
-> #ifdef CONFIG_EFI
->         /*
->          * This instruction decodes to "MZ" ASCII required by UEFI.
->          */
->         c.li s4,-13
->         j _start_kernel
-> #else
->         /* jump to start kernel */
->         j _start_kernel
->         /* reserved */
->         .word 0
-> #endif
+> Fix this by only printing the warning once the scheduler is fully
+> registered.
 > 
-> The HEAD section has instructions, if you change it into a data
-> section then it loses the "x" attribute.
+> Fixes: 5c48d88fe0049 ("sched_ext: deprecation warn for scx_bpf_cpu_rq()")
+> Cc: Christian Loehle <christian.loehle@arm.com>
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> ---
+>  kernel/sched/ext.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> So my conclusion is this series is the correct solution for all
-> non-x86 archs. We don't need to treat it as "workarounds".
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 489462290142a..04fefd34db238 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -6362,17 +6362,20 @@ __bpf_kfunc s32 scx_bpf_task_cpu(const struct task_struct *p)
+>   */
+>  __bpf_kfunc struct rq *scx_bpf_cpu_rq(s32 cpu)
+>  {
+> -	struct scx_sched *sch = scx_root;
+> +	struct scx_sched *sch;
+>  
+>  	if (!kf_cpu_valid(cpu, NULL))
+>  		return NULL;
+>  
+> -	if (!sch->warned_deprecated_rq) {
+> +	rcu_read_lock();
+> +	sch = rcu_dereference(scx_root);
+> +	if (sch && sch->warned_deprecated_rq) {
 
-Ok.  In that case please put the full justifications for these changes
-in the patch descriptions.
+This drops ! from the condition.
+
+Thanks.
 
 -- 
-Josh
+tejun
 
