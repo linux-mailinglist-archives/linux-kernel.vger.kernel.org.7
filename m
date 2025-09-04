@@ -1,115 +1,100 @@
-Return-Path: <linux-kernel+bounces-799810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BAC7B43088
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:42:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05AE2B430AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DA581C23DC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:43:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF714200856
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2AEC28750B;
-	Thu,  4 Sep 2025 03:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zgv1JQSd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51B7225A35;
+	Thu,  4 Sep 2025 03:54:16 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6481CBEB9;
-	Thu,  4 Sep 2025 03:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB8DF9CB
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 03:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756957369; cv=none; b=QSGVs1RSs+U4gxHt3APCH5lRS91tHrBw8n5K9FOA/fURH/Hd8FbWGHxVWikyNJchN9aR4w4lXbrY/4rtXt0BuDnAkAxRjyoaqvcdwG7YiJQMMG2jESDKpJd20/ZMyKl+XucdHVbarH/R745uPIyBkMDebLVuQZoujwpgqBftRB8=
+	t=1756958056; cv=none; b=TOVNZN1BIBuR2BHiSidb07cd9D8GS210CcYxaAztVFZmCAEVveHBRawK0Sl/k1VsLsxqk4u1S0yjW2qwpqMl7PI62m9TqWCxtwuZmNUFrRAP5WiefFD636aZ3tYvqkVER7ioavawnibc7ABY8lc0XOB5Viymf2oBzZ23dJX9BP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756957369; c=relaxed/simple;
-	bh=K0JrEhJK//gSOD3e3hCCpFFjeNprd+OX8hXlrerK1yQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NNGfeTFTJNu2egB35IF0/PttlWXlaUA8M4J3kDihSPlE5pULZykJHwNpBcckm5M8u518QfozAhDDHB7dTuZRzDRLQJQ3qYWCbibXrsvRDtJplJv4SBppJrx+GMFNmak3K+4odj0wuILLlxclzBjjiuKYm6ZJiPXZl4Gn6/ergmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zgv1JQSd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F3AFC4CEF0;
-	Thu,  4 Sep 2025 03:42:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756957368;
-	bh=K0JrEhJK//gSOD3e3hCCpFFjeNprd+OX8hXlrerK1yQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Zgv1JQSd39vfeef/fpzYQtGQL7z6PVFDTxro9c+JvAeCUqGg5d0H+FcfPqrUiq47P
-	 kjjMMr60Z3y4WKPSu7+0mlHZlQGPcvXOq/b6GrDTlEcGkGA3boWgIOLgTR0WkCsja2
-	 dxQRBITCkRtZOtR8Ms9xDEWUMO5DwNiPubtX6d4edwHyFBgSZ0+TSKuf7sQ0EbaoZ+
-	 qu06/g4PNXAs/yWEmDfbpsdYTiYf0ZVliqSGXnC8WHpFqNQBVC/bCtOA+YSWPn7Ok5
-	 2dIfPeQHIqWwKdNIWIedQauVJ6GLFrxwfeoOuatcbEmsNEl43PuEVQdngAxO/so44l
-	 y0mL+qWrINgBA==
-Message-ID: <d7bf992f-0342-450d-8830-f0523ac11e2a@kernel.org>
-Date: Thu, 4 Sep 2025 12:39:47 +0900
+	s=arc-20240116; t=1756958056; c=relaxed/simple;
+	bh=V+hJ1fP7uf/nGq8/27YZ5i+4npXqTJlURF/TPTEPL6c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N/D3jHICeQagIsTm7nvJKgUABpmEB3CsoWyRLu1jbgDHXrrR6cl9SocMgbi7XLytDgPEPzTeaYyuyZ9f821sFxL4Rf4CTlMz2O50AAGMb/i2cIKpwm6XWXqwTrjsEEQF3DmNpsyqjXuIPmV4YPbAeyLY+UEqW9RHEJ7T2GY9/sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cHQTN4HjBzPqgK;
+	Thu,  4 Sep 2025 11:49:28 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3C2D6140109;
+	Thu,  4 Sep 2025 11:54:05 +0800 (CST)
+Received: from kwepemn200010.china.huawei.com (7.202.194.133) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 4 Sep 2025 11:54:05 +0800
+Received: from huawei.com (10.44.142.84) by kwepemn200010.china.huawei.com
+ (7.202.194.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 4 Sep
+ 2025 11:54:04 +0800
+From: Qi Xi <xiqi2@huawei.com>
+To: <bobo.shaobowang@huawei.com>, <xiqi2@huawei.com>,
+	<andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+	<Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+	<jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <lumag@kernel.org>, <dianders@chromium.org>,
+	<lyude@redhat.com>, <luca.ceresoli@bootlin.com>, <andy.yan@rock-chips.com>,
+	<viro@zeniv.linux.org.uk>, <mordan@ispras.ru>, <amishin@t-argos.ru>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>
+Subject: [PATCH] drm: bridge: cdns-mhdp8546: Fix missing mutex unlock on error path
+Date: Thu, 4 Sep 2025 11:44:47 +0800
+Message-ID: <20250904034447.665427-1-xiqi2@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: endpoint: pci-epf-test: Limit PCIe BAR size for
- fixed BARs
-To: Marek Vasut <marek.vasut@mailbox.org>, linux-pci@vger.kernel.org
-Cc: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Niklas Cassel <cassel@kernel.org>,
- Wang Jiang <jiangwang@kylinos.cn>, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-References: <20250904023753.494147-1-marek.vasut+renesas@mailbox.org>
- <b3d5773d-c573-4491-b799-90405a8af6a9@kernel.org>
- <4b8ee973-5201-4936-a248-6f145b958f45@mailbox.org>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <4b8ee973-5201-4936-a248-6f145b958f45@mailbox.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemn200010.china.huawei.com (7.202.194.133)
 
-On 9/4/25 12:32 PM, Marek Vasut wrote:
-> On 9/4/25 4:40 AM, Damien Le Moal wrote:
-> 
-> Hello Damien,
-> 
->>> @@ -1050,7 +1051,13 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
->>>           if (bar == test_reg_bar)
->>>               continue;
->>>   -        base = pci_epf_alloc_space(epf, bar_size[bar], bar,
->>> +        test_bar_size = bar_size[bar];
->>> +
->>> +        bar_fixed_size = epc_features->bar[bar].fixed_size;
->>> +        if (epc_features->bar[bar].type == BAR_FIXED && bar_fixed_size)
->>> +            test_bar_size = min(bar_size[bar], bar_fixed_size);
->>
->> I think this can be simplified to:
->>
->>         if (epc_features->bar[bar].type == BAR_FIXED)
->>             test_bar_size = epc_features->bar[bar].fixed_size;
->>         else
->>             test_bar_size = bar_size[bar];
->>
->> because if the bar type is BAR_FIXED, then the size of the bar can only be its
->> fixed size.
-> That is correct, however, please consider the following case:
-> 
-> - The BAR under test is BAR4 , therefore the size requested by this driver is
-> bar_size[4] = 131072 Bytes
-> - The BAR4 on a hypothetical hardware is a fixed size BAR , 262144 Bytes large
-> 
-> With your proposed change, the "test_bar_size" would end up being 262144
-> Bytes , instead of 131072 Bytes without your proposed change , which I think is
-> not the desired behavior.
-> 
-> What do you think ?
+Add missing mutex unlock before returning from the error path in
+cdns_mhdp_atomic_enable().
 
-The bar size for the test is arbitrary. If the bar being tested is not a fixed
-bar, anything is OK. But in the case of a fixed bar, you can only use the fixed
-bar size so we should force that.
+Fixes: 935a92a1c400 ("drm: bridge: cdns-mhdp8546: Fix possible null pointer dereference")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Qi Xi <xiqi2@huawei.com>
+---
+ drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-
+diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+index a614d1384f71..38726ae1bf15 100644
+--- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
++++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+@@ -1984,8 +1984,10 @@ static void cdns_mhdp_atomic_enable(struct drm_bridge *bridge,
+ 	mhdp_state = to_cdns_mhdp_bridge_state(new_state);
+ 
+ 	mhdp_state->current_mode = drm_mode_duplicate(bridge->dev, mode);
+-	if (!mhdp_state->current_mode)
+-		return;
++	if (!mhdp_state->current_mode) {
++		ret = -EINVAL;
++		goto out;
++	}
+ 
+ 	drm_mode_set_name(mhdp_state->current_mode);
+ 
 -- 
-Damien Le Moal
-Western Digital Research
+2.33.0
+
 
