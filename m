@@ -1,86 +1,39 @@
-Return-Path: <linux-kernel+bounces-800581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7F1B4398A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:07:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F20EAB4398B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46F0317B6D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:07:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 681AB1B27A43
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CBE2FC024;
-	Thu,  4 Sep 2025 11:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NYfoP760"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888472FC02E
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D312FDC31;
+	Thu,  4 Sep 2025 11:06:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5167F2FB626
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756983993; cv=none; b=eov+B3XMBIqZDWc5EaonLmGnC7jhGAXCXA/qq5hi7Y93B6ViaDh7X+9qEf3xw2hp1CRp7T/ofKRrqKOnJK7H+GP8ydt/DjOWI12Q4aF+15Ey8tv9moobsPVIwl7K2MePeNjWlKieeXizNHy1rAcRbU+cgY6Wixg/hSCgMV4HWAk=
+	t=1756983995; cv=none; b=Nf18/l/F7uAB3pdFD0LXB2z55zNzUfDlSAXIL50ubw5DqgoxXbfh4YQMxZHz/3V6QELSMGcv3TqlowgtMO7VuKeW5/TmUzqAyQExR0sUwUKEF65zmptvbJqUn9fDWXiEctXA0Dtf6/nlzlomyF+EyHhPjCWxMUqqAqVg1Totk80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756983993; c=relaxed/simple;
-	bh=5vZcmgBM+9Nv9iip0wHP9dGmRG2D1+tPZM/R2QISb3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=akreWMZEAnh5ix4O6SuSdDcUqeEUtxRllkPRdXsjylIs6bdocgUcdoA6cpzGt8fDHUKpjagfOiT1tGIwq7X068CYgLoueh4o65vbJyywfBrLjPCo0Au3Nsjy+7nXeAVPZu+9x3SYsoBTJqSx8un5U8n4250n85zYMcNQynyumYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NYfoP760; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5849X7Ja022145
-	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 11:06:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QhYbFIRKKiIOKT8Pi5ddhFvBtwfY5TujA8EjKQzqmHA=; b=NYfoP760/aavXEgn
-	NAeSWua4vdb1T2zsy+jZJLjjOyAITEG4X7hv224yW+jBIISzyHdN5NGnhT6NoDSN
-	T8qiYfeJsPYpMQV26puRU+9MYHu8/iSQP2cTu3a8X1mY/OBAkNOjI4dc/fl0fCFA
-	aAJsKc9MQ6j60ZSvLGeE/5D1swcb746fMbRh8apqsvkyVaPYh64XACZ+NmN2sJM9
-	hKo+fva3SaBLMKegUwmaH+hnGjo1LpXEaEgOopn6kafVEVU7K4TqO+5tqMil2oRp
-	S8OJCZi/qDoram6vU5TTGnN+EBcjauUfiJp1bFenA/N/y4TwPFywXAhF0o62RYxZ
-	q8CzAg==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48utk973ag-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 11:06:29 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-724ee8d2a33so12093806d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 04:06:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756983988; x=1757588788;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QhYbFIRKKiIOKT8Pi5ddhFvBtwfY5TujA8EjKQzqmHA=;
-        b=bxSW/Fl0sN/kVmhyNPpr2Lcm32h+tSmUkdhNKyLtABqeZq9hj8nF3jY3i/3GXT7FfB
-         fcutT8Zshimfn7G5hdabjRFWO0JpPbuiFke64u9vFlVBR5fxJ93ZDVSiHq2eMel4EAYf
-         kc3LmKsOI2Sd7+xhx3dFWYKccvQFRzKC6fMCmx6nzXMj8ihGZ/8KsMdlkKuJr+RrjlLF
-         d7Wgs3BQy+XcdloXG1MA0j/CbJqTVhI1SPPxVj5m8s8A+2RRMnxCPWHNUL2OnDenCSnp
-         TnXgxyzb/0zetvgT+j9G5YOQ7viyEu8GPApfcZhXVs4en6jxpM3SwPWNij2L7A7B/w4B
-         ksqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBzX9VUE/ndS/k+NU9Yioq3nAQX7YqkKF7WwH3358ShCVV/XIt68HhTwVvr0CZcm3jPy0Uv2kdbX2g9pc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlvMmNXRCxtLLcBDPif0IaFiv3IK/vkXPl/LsxdCPFmu/k/iza
-	XOwMFYUy8BeuZr0SXCbx6B54Q8t0EWzxamtBy0rRjDOILWPr9NU9/6nF12go6cqDn075nmujfLF
-	GppkK4IAt3uu/Mu/JJwiN0VXmWbrtwj9tg7PBExjVtazvJ5THL/smIWVph21yYMaj9O4=
-X-Gm-Gg: ASbGncvIdzGlaavCfWdEepaRV4v202baDc2K1YLaUBbsHeDNjO84mroAJcPdGXsHKno
-	KvwVDuj5SulZlSEm3+nLGo7aI9LPmpW2X2TAqEBtnJe5o638xEkF/YHIo5hQJv6NfRT22xXheW6
-	cuGtl5evn4jHnLaoh86nZ8StasccbvmMBlxgkifzfLBgE00kcERvyKhQkG5rwghIInM0x+/CuDk
-	TLwnNxfNmBWZ3zZfJ5ZCaYCTYhq1UoCUF7oG1FfnRqdc4lzHG4N10TMG8EjqOB8+bcw/c7x3Faa
-	OekiJCC01OH+X5myXXY6hTy5NJE15Tf7Qbxy3ot7W36wtLJRU3NJhfEhYTag6tbSFVQ=
-X-Received: by 2002:a05:6214:3015:b0:70d:ba48:f8b1 with SMTP id 6a1803df08f44-70fac86ebe1mr208966466d6.31.1756983988357;
-        Thu, 04 Sep 2025 04:06:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEiU50o2//fs1eSkv5hsgG79HTu0XUnuA2rf/GSrZwv3jzhD7GlK0nFH1+s4mvAUoYiQMkTNg==
-X-Received: by 2002:a05:6214:3015:b0:70d:ba48:f8b1 with SMTP id 6a1803df08f44-70fac86ebe1mr208965996d6.31.1756983987822;
-        Thu, 04 Sep 2025 04:06:27 -0700 (PDT)
-Received: from [192.168.68.119] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45b9c234b24sm94775045e9.16.2025.09.04.04.06.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 04:06:27 -0700 (PDT)
-Message-ID: <b396807c-309c-445c-85f4-b9c7ec5f1b88@oss.qualcomm.com>
-Date: Thu, 4 Sep 2025 12:06:26 +0100
+	s=arc-20240116; t=1756983995; c=relaxed/simple;
+	bh=IWBjoKpjKhrRO6spmPzwkPFrazfIkA50uifM7YQVRfk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X8JwSZTYl8nlYFGRH502yb/Th41S6VqTAb5Y2hw0gYrVFInncSr/GtTDCZG16jbFQCGFWZM2bvBqPBfXDP5a/VYrVJWj7yBiGcYWeLRUHotKpxvwyhF58XEDgg+mLEBO/Kqy/ShVPquqTl8fXqs6PtjOULueRFHwnzjyfTjf8a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 361531756;
+	Thu,  4 Sep 2025 04:06:24 -0700 (PDT)
+Received: from [10.1.37.179] (XHFQ2J9959.cambridge.arm.com [10.1.37.179])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B4D43F6A8;
+	Thu,  4 Sep 2025 04:06:30 -0700 (PDT)
+Message-ID: <42b3b394-a6ec-4d70-b5a1-941a0628cd25@arm.com>
+Date: Thu, 4 Sep 2025 12:06:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,128 +41,386 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] ASoC: qcom: audioreach: Add support for Speaker
- Protection module
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250904102558.143745-3-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <20250904102558.143745-3-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v7 1/6] arm64: Enable permission change on arm64 kernel
+ block mappings
+Content-Language: en-GB
+To: Jinjiang Tu <tujinjiang@huawei.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Yang Shi <yang@os.amperecomputing.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Dev Jain <dev.jain@arm.com>, scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20250829115250.2395585-1-ryan.roberts@arm.com>
+ <20250829115250.2395585-2-ryan.roberts@arm.com>
+ <7705c29b-4f08-4b56-aab3-024795ee9124@huawei.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <7705c29b-4f08-4b56-aab3-024795ee9124@huawei.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 16QspcVm_r5LTGk9vjrI6HXw08gOdP-U
-X-Proofpoint-ORIG-GUID: 16QspcVm_r5LTGk9vjrI6HXw08gOdP-U
-X-Authority-Analysis: v=2.4 cv=ccnSrmDM c=1 sm=1 tr=0 ts=68b972b5 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=jR5H-ETkXLhSoB5CPuAA:9 a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDA0MiBTYWx0ZWRfX9gy+g8Hs7OoU
- 0IpDWa74vHa7unYR12Ax0Z2hQqEwJX+qg+eo5IE8HBzPZKXOIsZr8Stui5pTwDnkvLyHOzXT34J
- GSt7mHWaq6f2ztHbqZEcAQHgW1o9n5VrgW9dv4kqilrW8nVgWUdebZAGS9xNRBIArkEyZapwGXG
- 38EhgqF4fZlM9uF47R0+6BsHZ0kQpS+JOBmE6LyqJ7jutEAwjv5HyiR4jdalPsk+EXcJ4WgRlxG
- uKnAWBDuzfbh982z7++5kR9fsWZU4VYuVzOzJ7HpmPhEdKtVC6IHzwF3c5A1ORl0sGrB/ZdXQ0T
- FroIWTWf+MKAgRmk6XRsSUgZqvCaKbdC4rC2cLQ/dkayHJbp0Xo6lVjmS9KtJZGY24nhPi2plKn
- BqWQx6gn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-04_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
- clxscore=1015 suspectscore=0 spamscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300042
+Content-Transfer-Encoding: 8bit
 
+On 04/09/2025 04:40, Jinjiang Tu wrote:
+> 
+> 在 2025/8/29 19:52, Ryan Roberts 写道:
+>> From: Dev Jain <dev.jain@arm.com>
+>>
+>> This patch paves the path to enable huge mappings in vmalloc space and
+>> linear map space by default on arm64. For this we must ensure that we
+>> can handle any permission games on the kernel (init_mm) pagetable.
+>> Previously, __change_memory_common() used apply_to_page_range() which
+>> does not support changing permissions for block mappings. We move away
+>> from this by using the pagewalk API, similar to what riscv does right
+>> now. It is the responsibility of the caller to ensure that the range
+>> over which permissions are being changed falls on leaf mapping
+>> boundaries. For systems with BBML2, this will be handled in future
+>> patches by dyanmically splitting the mappings when required.
+>>
+>> Unlike apply_to_page_range(), the pagewalk API currently enforces the
+>> init_mm.mmap_lock to be held. To avoid the unnecessary bottleneck of the
+>> mmap_lock for our usecase, this patch extends this generic API to be
+>> used locklessly, so as to retain the existing behaviour for changing
+>> permissions. Apart from this reason, it is noted at [1] that KFENCE can
+>> manipulate kernel pgtable entries during softirqs. It does this by
+>> calling set_memory_valid() -> __change_memory_common(). This being a
+>> non-sleepable context, we cannot take the init_mm mmap lock.
+>>
+>> Add comments to highlight the conditions under which we can use the
+>> lockless variant - no underlying VMA, and the user having exclusive
+>> control over the range, thus guaranteeing no concurrent access.
+>>
+>> We require that the start and end of a given range do not partially
+>> overlap block mappings, or cont mappings. Return -EINVAL in case a
+>> partial block mapping is detected in any of the PGD/P4D/PUD/PMD levels;
+>> add a corresponding comment in update_range_prot() to warn that
+>> eliminating such a condition is the responsibility of the caller.
+>>
+>> Note that, the pte level callback may change permissions for a whole
+>> contpte block, and that will be done one pte at a time, as opposed to an
+>> atomic operation for the block mappings. This is fine as any access will
+>> decode either the old or the new permission until the TLBI.
+>>
+>> apply_to_page_range() currently performs all pte level callbacks while
+>> in lazy mmu mode. Since arm64 can optimize performance by batching
+>> barriers when modifying kernel pgtables in lazy mmu mode, we would like
+>> to continue to benefit from this optimisation. Unfortunately
+>> walk_kernel_page_table_range() does not use lazy mmu mode. However,
+>> since the pagewalk framework is not allocating any memory, we can safely
+>> bracket the whole operation inside lazy mmu mode ourselves. Therefore,
+>> wrap the call to walk_kernel_page_table_range() with the lazy MMU
+>> helpers.
+>>
+>> Link: https://lore.kernel.org/linux-arm-kernel/89d0ad18-4772-4d8f-
+>> ae8a-7c48d26a927e@arm.com/ [1]
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+>> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+>> ---
+>>  arch/arm64/mm/pageattr.c | 153 +++++++++++++++++++++++++++++++--------
+>>  include/linux/pagewalk.h |   3 +
+>>  mm/pagewalk.c            |  36 ++++++---
+>>  3 files changed, 149 insertions(+), 43 deletions(-)
+>>
+>> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+>> index 04d4a8f676db..6da8cbc32f46 100644
+>> --- a/arch/arm64/mm/pageattr.c
+>> +++ b/arch/arm64/mm/pageattr.c
+>> @@ -8,6 +8,7 @@
+>>  #include <linux/mem_encrypt.h>
+>>  #include <linux/sched.h>
+>>  #include <linux/vmalloc.h>
+>> +#include <linux/pagewalk.h>
+>>  
+>>  #include <asm/cacheflush.h>
+>>  #include <asm/pgtable-prot.h>
+>> @@ -20,6 +21,99 @@ struct page_change_data {
+>>  	pgprot_t clear_mask;
+>>  };
+>>  
+>> +static ptdesc_t set_pageattr_masks(ptdesc_t val, struct mm_walk *walk)
+>> +{
+>> +	struct page_change_data *masks = walk->private;
+>> +
+>> +	val &= ~(pgprot_val(masks->clear_mask));
+>> +	val |= (pgprot_val(masks->set_mask));
+>> +
+>> +	return val;
+>> +}
+>> +
+>> +static int pageattr_pgd_entry(pgd_t *pgd, unsigned long addr,
+>> +			      unsigned long next, struct mm_walk *walk)
+>> +{
+>> +	pgd_t val = pgdp_get(pgd);
+>> +
+>> +	if (pgd_leaf(val)) {
+>> +		if (WARN_ON_ONCE((next - addr) != PGDIR_SIZE))
+>> +			return -EINVAL;
+>> +		val = __pgd(set_pageattr_masks(pgd_val(val), walk));
+>> +		set_pgd(pgd, val);
+>> +		walk->action = ACTION_CONTINUE;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int pageattr_p4d_entry(p4d_t *p4d, unsigned long addr,
+>> +			      unsigned long next, struct mm_walk *walk)
+>> +{
+>> +	p4d_t val = p4dp_get(p4d);
+>> +
+>> +	if (p4d_leaf(val)) {
+>> +		if (WARN_ON_ONCE((next - addr) != P4D_SIZE))
+>> +			return -EINVAL;
+>> +		val = __p4d(set_pageattr_masks(p4d_val(val), walk));
+>> +		set_p4d(p4d, val);
+>> +		walk->action = ACTION_CONTINUE;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int pageattr_pud_entry(pud_t *pud, unsigned long addr,
+>> +			      unsigned long next, struct mm_walk *walk)
+>> +{
+>> +	pud_t val = pudp_get(pud);
+>> +
+>> +	if (pud_leaf(val)) {
+>> +		if (WARN_ON_ONCE((next - addr) != PUD_SIZE))
+>> +			return -EINVAL;
+>> +		val = __pud(set_pageattr_masks(pud_val(val), walk));
+>> +		set_pud(pud, val);
+>> +		walk->action = ACTION_CONTINUE;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int pageattr_pmd_entry(pmd_t *pmd, unsigned long addr,
+>> +			      unsigned long next, struct mm_walk *walk)
+>> +{
+>> +	pmd_t val = pmdp_get(pmd);
+>> +
+>> +	if (pmd_leaf(val)) {
+>> +		if (WARN_ON_ONCE((next - addr) != PMD_SIZE))
+>> +			return -EINVAL;
+>> +		val = __pmd(set_pageattr_masks(pmd_val(val), walk));
+>> +		set_pmd(pmd, val);
+>> +		walk->action = ACTION_CONTINUE;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+> 
+> #define pmd_leaf(pmd)        (pmd_present(pmd) && !pmd_table(pmd))
+> #define pmd_present(pmd)	pte_present(pmd_pte(pmd))
+> #define pte_present(pte)	(pte_valid(pte) || pte_present_invalid(pte))
+> 
+> When PTE_VALID is cleared, pmd_leaf() will return false. As a result, the
+> caller won't be able to set PTE_VALID for the pmd.
 
+Ouch - good spot!
 
-On 9/4/25 11:25 AM, Krzysztof Kozlowski wrote:
-> Speaker Protection is capability of ADSP to adjust the gain during
-> playback to different speakers and their temperature.  This allows good
-> playback without blowing the speakers up.
-> 
-> Implement parsing MODULE_ID_SPEAKER_PROTECTION from Audioreach topology
-> and sending it as command to the ADSP.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+So this will break set_direct_map_default_noflush(), set_memory_valid() and
+__set_memory_enc_dec(). I wonder why it doesn't cause problems with mm selftests
+- I'll investigate.
 
-Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Anyway, I think the simplest solution is to replace the pmd_leaf()/pud_leaf()
+checks with !pmd_table()/!pud_table() checks. (and I think we can entirely
+remove the pgd and p4d callbacks because pgd_leaf() and p4d_leaf() always return
+false on arm64). As long as no code ever clears PTE_VALID from a table entry, I
+think this works.
 
---srini
-> ---
+Thanks,
+Ryan
+
 > 
-> Changes in v2:
-> 1. Add and use PARAM_ID_SP_OP_MODE_NORMAL
-> ---
->  sound/soc/qcom/qdsp6/audioreach.c | 13 +++++++++++++
->  sound/soc/qcom/qdsp6/audioreach.h | 12 ++++++++++++
->  2 files changed, 25 insertions(+)
-> 
-> diff --git a/sound/soc/qcom/qdsp6/audioreach.c b/sound/soc/qcom/qdsp6/audioreach.c
-> index f4c53e84b4dc..3b7dffd696e7 100644
-> --- a/sound/soc/qcom/qdsp6/audioreach.c
-> +++ b/sound/soc/qcom/qdsp6/audioreach.c
-> @@ -1250,6 +1250,15 @@ static int audioreach_gain_set(struct q6apm_graph *graph, struct audioreach_modu
->  	return rc;
->  }
->  
-> +static int audioreach_speaker_protection(struct q6apm_graph *graph,
-> +					 struct audioreach_module *module,
-> +					 uint32_t operation_mode)
-> +{
-> +	return audioreach_send_u32_param(graph, module, PARAM_ID_SP_OP_MODE,
-> +					 operation_mode);
-> +}
-> +
-> +
->  int audioreach_set_media_format(struct q6apm_graph *graph, struct audioreach_module *module,
->  				struct audioreach_module_config *cfg)
->  {
-> @@ -1299,6 +1308,10 @@ int audioreach_set_media_format(struct q6apm_graph *graph, struct audioreach_mod
->  	case MODULE_ID_GAPLESS:
->  		rc = audioreach_gapless_set_media_format(graph, module, cfg);
->  		break;
-> +	case MODULE_ID_SPEAKER_PROTECTION:
-> +		rc = audioreach_speaker_protection(graph, module,
-> +						   PARAM_ID_SP_OP_MODE_NORMAL);
-> +		break;
->  	default:
->  		rc = 0;
->  	}
-> diff --git a/sound/soc/qcom/qdsp6/audioreach.h b/sound/soc/qcom/qdsp6/audioreach.h
-> index 790fba96e34d..9f6ddcf081ee 100644
-> --- a/sound/soc/qcom/qdsp6/audioreach.h
-> +++ b/sound/soc/qcom/qdsp6/audioreach.h
-> @@ -31,6 +31,7 @@ struct q6apm_graph;
->  #define MODULE_ID_MP3_DECODE		0x0700103B
->  #define MODULE_ID_GAPLESS		0x0700104D
->  #define MODULE_ID_DISPLAY_PORT_SINK	0x07001069
-> +#define MODULE_ID_SPEAKER_PROTECTION	0x070010E2
->  
->  #define APM_CMD_GET_SPF_STATE		0x01001021
->  #define APM_CMD_RSP_GET_SPF_STATE	0x02001007
-> @@ -542,6 +543,17 @@ struct data_logging_config {
->  	uint32_t mode;
->  } __packed;
->  
-> +/* Speaker Protection */
-> +#define PARAM_ID_SP_OP_MODE			0x080011e9
-> +#define PARAM_ID_SP_OP_MODE_NORMAL		0
-> +#define PARAM_ID_SP_OP_MODE_CALIBRATION		1
-> +#define PARAM_ID_SP_OP_MODE_FACTORY_TEST	2
-> +#define PARAM_ID_SP_OP_MODE_VALIDATION		3
-> +
-> +struct param_id_sp_op_mode {
-> +	uint32_t operation_mode;
-> +} __packed;
-> +
->  #define PARAM_ID_SAL_OUTPUT_CFG			0x08001016
->  struct param_id_sal_output_config {
->  	uint32_t bits_per_sample;
+>> +
+>> +static int pageattr_pte_entry(pte_t *pte, unsigned long addr,
+>> +			      unsigned long next, struct mm_walk *walk)
+>> +{
+>> +	pte_t val = __ptep_get(pte);
+>> +
+>> +	val = __pte(set_pageattr_masks(pte_val(val), walk));
+>> +	__set_pte(pte, val);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct mm_walk_ops pageattr_ops = {
+>> +	.pgd_entry	= pageattr_pgd_entry,
+>> +	.p4d_entry	= pageattr_p4d_entry,
+>> +	.pud_entry	= pageattr_pud_entry,
+>> +	.pmd_entry	= pageattr_pmd_entry,
+>> +	.pte_entry	= pageattr_pte_entry,
+>> +};
+>> +
+>>  bool rodata_full __ro_after_init = IS_ENABLED(CONFIG_RODATA_FULL_DEFAULT_ENABLED);
+>>  
+>>  bool can_set_direct_map(void)
+>> @@ -37,32 +131,35 @@ bool can_set_direct_map(void)
+>>  		arm64_kfence_can_set_direct_map() || is_realm_world();
+>>  }
+>>  
+>> -static int change_page_range(pte_t *ptep, unsigned long addr, void *data)
+>> +static int update_range_prot(unsigned long start, unsigned long size,
+>> +			     pgprot_t set_mask, pgprot_t clear_mask)
+>>  {
+>> -	struct page_change_data *cdata = data;
+>> -	pte_t pte = __ptep_get(ptep);
+>> +	struct page_change_data data;
+>> +	int ret;
+>>  
+>> -	pte = clear_pte_bit(pte, cdata->clear_mask);
+>> -	pte = set_pte_bit(pte, cdata->set_mask);
+>> +	data.set_mask = set_mask;
+>> +	data.clear_mask = clear_mask;
+>>  
+>> -	__set_pte(ptep, pte);
+>> -	return 0;
+>> +	arch_enter_lazy_mmu_mode();
+>> +
+>> +	/*
+>> +	 * The caller must ensure that the range we are operating on does not
+>> +	 * partially overlap a block mapping, or a cont mapping. Any such case
+>> +	 * must be eliminated by splitting the mapping.
+>> +	 */
+>> +	ret = walk_kernel_page_table_range_lockless(start, start + size,
+>> +						    &pageattr_ops, NULL, &data);
+>> +	arch_leave_lazy_mmu_mode();
+>> +
+>> +	return ret;
+>>  }
+>>  
+>> -/*
+>> - * This function assumes that the range is mapped with PAGE_SIZE pages.
+>> - */
+>>  static int __change_memory_common(unsigned long start, unsigned long size,
+>> -				pgprot_t set_mask, pgprot_t clear_mask)
+>> +				  pgprot_t set_mask, pgprot_t clear_mask)
+>>  {
+>> -	struct page_change_data data;
+>>  	int ret;
+>>  
+>> -	data.set_mask = set_mask;
+>> -	data.clear_mask = clear_mask;
+>> -
+>> -	ret = apply_to_page_range(&init_mm, start, size, change_page_range,
+>> -					&data);
+>> +	ret = update_range_prot(start, size, set_mask, clear_mask);
+>>  
+>>  	/*
+>>  	 * If the memory is being made valid without changing any other bits
+>> @@ -174,32 +271,26 @@ int set_memory_valid(unsigned long addr, int numpages, int enable)
+>>  
+>>  int set_direct_map_invalid_noflush(struct page *page)
+>>  {
+>> -	struct page_change_data data = {
+>> -		.set_mask = __pgprot(0),
+>> -		.clear_mask = __pgprot(PTE_VALID),
+>> -	};
+>> +	pgprot_t clear_mask = __pgprot(PTE_VALID);
+>> +	pgprot_t set_mask = __pgprot(0);
+>>  
+>>  	if (!can_set_direct_map())
+>>  		return 0;
+>>  
+>> -	return apply_to_page_range(&init_mm,
+>> -				   (unsigned long)page_address(page),
+>> -				   PAGE_SIZE, change_page_range, &data);
+>> +	return update_range_prot((unsigned long)page_address(page),
+>> +				 PAGE_SIZE, set_mask, clear_mask);
+>>  }
+>>  
+>>  int set_direct_map_default_noflush(struct page *page)
+>>  {
+>> -	struct page_change_data data = {
+>> -		.set_mask = __pgprot(PTE_VALID | PTE_WRITE),
+>> -		.clear_mask = __pgprot(PTE_RDONLY),
+>> -	};
+>> +	pgprot_t set_mask = __pgprot(PTE_VALID | PTE_WRITE);
+>> +	pgprot_t clear_mask = __pgprot(PTE_RDONLY);
+>>  
+>>  	if (!can_set_direct_map())
+>>  		return 0;
+>>  
+>> -	return apply_to_page_range(&init_mm,
+>> -				   (unsigned long)page_address(page),
+>> -				   PAGE_SIZE, change_page_range, &data);
+>> +	return update_range_prot((unsigned long)page_address(page),
+>> +				 PAGE_SIZE, set_mask, clear_mask);
+>>  }
+>>  
+>>  static int __set_memory_enc_dec(unsigned long addr,
+>> diff --git a/include/linux/pagewalk.h b/include/linux/pagewalk.h
+>> index 682472c15495..88e18615dd72 100644
+>> --- a/include/linux/pagewalk.h
+>> +++ b/include/linux/pagewalk.h
+>> @@ -134,6 +134,9 @@ int walk_page_range(struct mm_struct *mm, unsigned long start,
+>>  int walk_kernel_page_table_range(unsigned long start,
+>>  		unsigned long end, const struct mm_walk_ops *ops,
+>>  		pgd_t *pgd, void *private);
+>> +int walk_kernel_page_table_range_lockless(unsigned long start,
+>> +		unsigned long end, const struct mm_walk_ops *ops,
+>> +		pgd_t *pgd, void *private);
+>>  int walk_page_range_vma(struct vm_area_struct *vma, unsigned long start,
+>>  			unsigned long end, const struct mm_walk_ops *ops,
+>>  			void *private);
+>> diff --git a/mm/pagewalk.c b/mm/pagewalk.c
+>> index 648038247a8d..936689d8bcac 100644
+>> --- a/mm/pagewalk.c
+>> +++ b/mm/pagewalk.c
+>> @@ -606,10 +606,32 @@ int walk_page_range(struct mm_struct *mm, unsigned long start,
+>>  int walk_kernel_page_table_range(unsigned long start, unsigned long end,
+>>  		const struct mm_walk_ops *ops, pgd_t *pgd, void *private)
+>>  {
+>> -	struct mm_struct *mm = &init_mm;
+>> +	/*
+>> +	 * Kernel intermediate page tables are usually not freed, so the mmap
+>> +	 * read lock is sufficient. But there are some exceptions.
+>> +	 * E.g. memory hot-remove. In which case, the mmap lock is insufficient
+>> +	 * to prevent the intermediate kernel pages tables belonging to the
+>> +	 * specified address range from being freed. The caller should take
+>> +	 * other actions to prevent this race.
+>> +	 */
+>> +	mmap_assert_locked(&init_mm);
+>> +
+>> +	return walk_kernel_page_table_range_lockless(start, end, ops, pgd,
+>> +						     private);
+>> +}
+>> +
+>> +/*
+>> + * Use this function to walk the kernel page tables locklessly. It should be
+>> + * guaranteed that the caller has exclusive access over the range they are
+>> + * operating on - that there should be no concurrent access, for example,
+>> + * changing permissions for vmalloc objects.
+>> + */
+>> +int walk_kernel_page_table_range_lockless(unsigned long start, unsigned long end,
+>> +		const struct mm_walk_ops *ops, pgd_t *pgd, void *private)
+>> +{
+>>  	struct mm_walk walk = {
+>>  		.ops		= ops,
+>> -		.mm		= mm,
+>> +		.mm		= &init_mm,
+>>  		.pgd		= pgd,
+>>  		.private	= private,
+>>  		.no_vma		= true
+>> @@ -620,16 +642,6 @@ int walk_kernel_page_table_range(unsigned long start, unsigned long end,
+>>  	if (!check_ops_valid(ops))
+>>  		return -EINVAL;
+>>  
+>> -	/*
+>> -	 * Kernel intermediate page tables are usually not freed, so the mmap
+>> -	 * read lock is sufficient. But there are some exceptions.
+>> -	 * E.g. memory hot-remove. In which case, the mmap lock is insufficient
+>> -	 * to prevent the intermediate kernel pages tables belonging to the
+>> -	 * specified address range from being freed. The caller should take
+>> -	 * other actions to prevent this race.
+>> -	 */
+>> -	mmap_assert_locked(mm);
+>> -
+>>  	return walk_pgd_range(start, end, &walk);
+>>  }
+>>  
 
 
