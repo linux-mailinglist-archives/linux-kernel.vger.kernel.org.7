@@ -1,59 +1,63 @@
-Return-Path: <linux-kernel+bounces-800387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EBDEB4371B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:29:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8767B43721
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CF727C5024
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:29:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EFF25A202F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62042F618E;
-	Thu,  4 Sep 2025 09:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2B42F7445;
+	Thu,  4 Sep 2025 09:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYaolKcm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HIp5rGKS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5941EEE6;
-	Thu,  4 Sep 2025 09:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143E44F5E0;
+	Thu,  4 Sep 2025 09:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756978168; cv=none; b=a/dP4lo2+gb/+/xPfChdYnXgr2xVOxEvfa4b9bJZlAIl9tMcEZpfdUfeCb0IOYu1gzI+E23teF43gV+U5BiYHn2pMDY4ibrwGdJ2REwLg45Uk+QvCDytAmyFRwuQbJ53oNDMS2Iv4U+utZ8sXA1WLsnsdHjoRejwUG0fMo446pw=
+	t=1756978238; cv=none; b=XsIXDhxlHDbQlq1gmPnetBKgQVmcb8jutT9MuASFQnN70MuWBMzH9xXc9Yjy4/FZvsdKlcNJ/E24jEJhMLHKj9sCJCSY7ZPKeqLzS2bDV7us3bJKVMIIp8BXFhNsKQYhj/O2wbcWw5Yi9oHiZsA2E4JQig03UeINarv++6/3mss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756978168; c=relaxed/simple;
-	bh=tLhzmUoB6F0bCZVOg6V1Z/71TJ8zwtXmXvbdCQbSAWY=;
+	s=arc-20240116; t=1756978238; c=relaxed/simple;
+	bh=NuLfP+r54LURDa2LMo8LpqmiyCBnEVHwC9eXfZe3py4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aQnc6Wy+ed1wGvVDfXoAtkzW1qAc1xGJ9KsV4G7VrCwjsirTa6EqAzrPg8pobbtF+pYO+yYzVy8djSQbkaMn2yaRE5AX/+frg02/CFiEHdkhkLIgNUScZqTlRwObemIQUdAsCqqprnMLAwynQmXCsGtMdvSihvL6UmNcF0UNDlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYaolKcm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABCDBC4CEF0;
-	Thu,  4 Sep 2025 09:29:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lCszN7YG6z5MvhFH7r+RSl+r9cy9cM8J6/mXaK086xdWC6Lxgjq0AJ64IbIJRu1QXe8PNEyTlMPnXntNid88ucHJ9KZ04GQBtX3CLf5LIHK2rb90BMT8flAXxNKhE91RgcllqkY9rRzybHLkB1Fa1ozKVIaXN5gorUFNGhQrnSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HIp5rGKS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58917C4CEF0;
+	Thu,  4 Sep 2025 09:30:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756978168;
-	bh=tLhzmUoB6F0bCZVOg6V1Z/71TJ8zwtXmXvbdCQbSAWY=;
+	s=k20201202; t=1756978238;
+	bh=NuLfP+r54LURDa2LMo8LpqmiyCBnEVHwC9eXfZe3py4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cYaolKcm/+oQsHD+/h6GUtEn7176vTOWYyBMqmbAJMpbcbqR6PsVsp4ke3kKLrJbz
-	 adImpnCN0iquCCmunC1Bnad6/isCNihpmuPJrihaStEOSPtioa2iBKvhHTXuh6ZbNl
-	 nm3rRsql0/CMF5oRQih8zwqMReY8HsKZvuf99f5g2/rA4N9aL1d6Do77GjmsMp5Rp9
-	 Z032fgk9vDxFDiF4EYbz2dsGzjIVazhnCt1Nha3KtlSISytU0ofsofwfTFvNnbmCap
-	 sRXigqFOwL5oUd7eSWHvRJ+MPYh+18wRW+gjy6hWT1fvj373uNtfA9mJ/2WZ3iCggE
-	 HL98BEG1QpXTQ==
-Date: Thu, 4 Sep 2025 11:29:25 +0200
+	b=HIp5rGKSsb4OffYTPRkTkmC9E5V/Dz1pqOk7/EYbgLIWe3oY2+HwirS20q+oEPy7Y
+	 JMxHmdnotOEJ8ULS1BDyK7jDnnJH74Kf9u3jTPldI2ZFawLqRARtARC8L0G/wqu+p0
+	 kzUoCsSHywe6b6JIv+2jQ3aWL7u6dlQ9B7W402IpH19nRtWcuJAxd3dZbBZ/ptL9Kg
+	 +bvoO7gBWo1QDg/Qwsx3T+tFveH8XnAxmfJRrAb6JFrjJLS2B1hUcdAEHYu+udoGUk
+	 UM5tvz4E86r5BCr809NTNldr6BMX4bc2Qm8AYrLLMPjIimyfDxJVOxcvQPidbWSuvi
+	 3Wu5OChGPV14w==
+Date: Thu, 4 Sep 2025 11:30:35 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Frank Li <Frank.li@nxp.com>, Rob Herring <robh@kernel.org>, 
+To: Chia-I Wu <olvaffe@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
+	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: rtc: pcf2127: add compatible string
- nxp,rtc-pcf2123
-Message-ID: <20250904-mustard-lion-of-downpour-f07cea@kuoka>
-References: <20250903165536.431586-1-Frank.Li@nxp.com>
- <202509031658298690ab12@mail.local>
- <aLiHyoI6orsalmyJ@lizhi-Precision-Tower-5810>
- <202509031924363f3ca29e@mail.local>
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org
+Subject: Re: [RFC PATCH 1/2] dt-bindings: gpu: mali-valhall-csf: add MediaTek
+ MT8196 compatible
+Message-ID: <20250904-practical-dazzling-quail-f1bebb@kuoka>
+References: <20250903225504.542268-1-olvaffe@gmail.com>
+ <20250903225504.542268-2-olvaffe@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,48 +66,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <202509031924363f3ca29e@mail.local>
+In-Reply-To: <20250903225504.542268-2-olvaffe@gmail.com>
 
-On Wed, Sep 03, 2025 at 09:24:36PM +0200, Alexandre Belloni wrote:
-> On 03/09/2025 14:24:10-0400, Frank Li wrote:
-> > On Wed, Sep 03, 2025 at 06:58:29PM +0200, Alexandre Belloni wrote:
-> > > On 03/09/2025 12:55:36-0400, Frank Li wrote:
-> > > > Add compatible string nxp,rtc-pcf2123, which style is not consistent with
-> > > > existed compatible string because existed driver and dts use
-> > > > nxp,rtc-pcf2123.
-> > > >
-> > > > Fix below CHECK_DTBS warning:
-> > > > arch/arm/boot/dts/nxp/imx/imx6q-evi.dtb: /soc/bus@2000000/spba-bus@2000000/spi@2018000/rtc@3: failed to match any schema with compatible: ['nxp,rtc-pcf2123']
-> > > >
-> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml b/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
-> > > > index 11fcf0ca1ae07..595c20df6a411 100644
-> > > > --- a/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
-> > > > +++ b/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
-> > > > @@ -20,6 +20,7 @@ properties:
-> > > >        - nxp,pcf2127
-> > > >        - nxp,pcf2129
-> > > >        - nxp,pcf2131
-> > > > +      - nxp,rtc-pcf2123
-> > >
-> > > Nope, you need to fix the devicetree.
+On Wed, Sep 03, 2025 at 03:55:03PM -0700, Chia-I Wu wrote:
+> MediaTek MT8196 has Mali-G925-Immortalis, which can be supported by
+> panthor.
 
-Yep, 6 years is enough for all users to adjust, so I agree.
-
-> > 
-> > Oh, driver drivers/rtc/rtc-pcf2123.c also use nxp,rtc-pcf2123. For such old
-> > devices, generally keep it as it.
-> > 
-> > Maybe DT team members provide more professional comments for it.
-> 
-> It is there for DT ABI compatibility, we don't need to advertise its
-> existence in the doc, you must fix the device tree.
-
-In-tree compatibles should be documented anyway (as "deprecated: true").
+What is panthor? Please describe here hardware or provide some
+explanations of not-that-known hardware names (if panthos is that).
 
 Best regards,
 Krzysztof
