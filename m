@@ -1,189 +1,249 @@
-Return-Path: <linux-kernel+bounces-800649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73239B43A16
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:28:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E0A6B43A20
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D142A1C828BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:29:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49AC05A3F79
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7558B2F0C6F;
-	Thu,  4 Sep 2025 11:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1319C2FE053;
+	Thu,  4 Sep 2025 11:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="gxydoQ7W"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012054.outbound.protection.outlook.com [52.101.126.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hlVtdfRz"
+Received: from mail-il1-f196.google.com (mail-il1-f196.google.com [209.85.166.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A348D2D3A86
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756985229; cv=fail; b=d/v8BVXNENeGmyeGv9Ix5aNWOukQsUYS4Qt0dnsg5Mr0N6vWJwQoW/GiU8NXwwLP1w4XLmUtETxJgdDJLN2omSm5zSL/wRSYLlVW21DkmrzXY6K1JQlCl0wX+6OFjk61SWm4vFFRJHCwLFWSwadevXWhoFE7h8w55Cppqtnjv50=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756985229; c=relaxed/simple;
-	bh=QrkUaLHBBw5sp/PfwSuoCxLyMOesRmM4Y2jXf3/g6u4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=r4Ct5MW8Hcanrt5ZDeHhL4tLBDGJwopqijXXu0Mv54XSgFEGELThaK5O9EsLW8ZRdw6jpVQR9TJUGoiyGXKKvOcTt7MhgAv6nfNxEYew4R0eKwo5r3NRbtbF8UC2pNldFljNaUo/Njfl5x197ve8xcdz9L8ZEYv98T/KvKtexXI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=gxydoQ7W; arc=fail smtp.client-ip=52.101.126.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Y8ttJ/EWf6l7jqO5u76lQUbg+8eiMQTJ3IfWc5nplrvE4/9L4is+yAwTz5QxhbZho1uTrFWccVBpDULUgb9Ko951L/WJ2eukol4Wqd9psi5bb4j5CXHVaNKKJPYg7fe4IwRK3ZhDRatglE+ycW1DXbp63vUB4uEto5KA2X72GJZqEJn5U6ym/NUIDJsUGKf76w/EWExbIv8RAtzNyQIEIxwcsf3WkIP66FW9sHo4frKUlyc+DhCVpQ3jiKhR0W9A2pslvEBfUkSEvImzyjdt3oGU1YW9MScvfYu9ji4WfCc98mSjWt01nvkD8qzWyA00Fimbw3CtojQF6F4HkQDarw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WnkbIPEFtEcqejzsEUWebNW9CHlgFoybS8JH5GBL0R8=;
- b=PoDq+s5zRpVr5knoghE1P+QCnyzqPylFV+yyNI1usH0tfKXtXGwB7pEyv4L3Eg+wPefeuzZ1dTXrEHjoXBbTgG5UKprLUSxb3YKC6vuuvlVaP+IYYsS4fyqVWuz+BY0cfd1/iBH1RNrh00KtQtjzWiYdNp35flPhNSJtDiEmMKGiZyxg+TB0JoIH5+zu1TMWWdt5n/Fb1dSZwqkM3I6sfeY9Mt5zC1NYA58BLVc6Si9YpuEUll1xrx/heNRF50dmLsOGW7HAJbUtpubulmxKtEaOv2x12DnibH9r3spfArk91T5qdln1G2E0Lvrz0qdHTQFnnOuqUFXvzKYy7GrBWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WnkbIPEFtEcqejzsEUWebNW9CHlgFoybS8JH5GBL0R8=;
- b=gxydoQ7WlR+aNp+Eeez3uBxf0WKSfyNzNY9sIqUaSERtipEOvCB2SClOV6nTxSVpKuT+iaRos4AMfPuB1ODrobFQhh1krHpKKVd4FOzUMntFIb5Jmsbx+QAuh3CHA0OX3X4ovIHxZsfIiEZ5Setxoj86UeyA4UX63UWp0R6kGDcxkb52AUqWQ39W1jFkce7RA0UfHvnhTjMn26dRSa+6Mkm52UEJfGo2TL2AyUUaW9VbGX47EA/3YQhFNPycarsoGVEVRqX7sokhjohvRneuil1jkJetfeHXomMmdWpIiB1sw5q34G0WgSOnREGm1zwu72ofIvQE4euAqLMyaFN4hg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by TYZPR06MB7063.apcprd06.prod.outlook.com (2603:1096:405:40::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Thu, 4 Sep
- 2025 11:27:04 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9094.016; Thu, 4 Sep 2025
- 11:27:03 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Zhenyu Wang <zhenyuw.linux@gmail.com>,
-	Zhi Wang <zhi.wang.linux@gmail.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Nitin Gote <nitin.r.gote@intel.com>,
-	Luca Coelho <luciano.coelho@intel.com>,
-	Krzysztof Niemiec <krzysztof.niemiec@intel.com>,
-	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH] drm/i915/gvt: Remove redundant ternary operators
-Date: Thu,  4 Sep 2025 19:26:40 +0800
-Message-Id: <20250904112644.350512-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0061.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31a::13) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A782D2FE072;
+	Thu,  4 Sep 2025 11:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.196
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756985236; cv=none; b=HkpgLwiugnCaUaW71ra9oMpBYOVGTwC8jOtl8Izizg0bjPj6Iye7lP9DPfipOz98iwI0Azaooqe7Rm/UHA53nyZWpwL3ZYriwMJmir+0O/OZCk6MC88StIqpnEF1hGeHa+FO1EaE3sksb4jR9c1FnWhjL0fz7102P8AGqPhs5Mo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756985236; c=relaxed/simple;
+	bh=0GFSLvp8nlz8nExv1JNcJXDGrQgXQuC7rx/KZJePKEU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RCpsteFw63rJ8Arpbf4m/2w7HyR+iLXs1roj7wf7el3nitefJ1hbFdUyP8HaeZcPESkBPOsXFCmmUyNf7LxBJz3VLWHBtcb1NScry9VQbdK0poSWbfmh5julOugYK5F+sne/k9Tt5pC7GWiykdv5N+q9x0dOZ+1Y34oj4ZCxeE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hlVtdfRz; arc=none smtp.client-ip=209.85.166.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f196.google.com with SMTP id e9e14a558f8ab-3f664c47ad2so9919375ab.2;
+        Thu, 04 Sep 2025 04:27:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756985234; x=1757590034; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7Omu2iDAjQIOjKg0DmAgEj8ICa8iVBrvJA7lXUZP/Pg=;
+        b=hlVtdfRzWZyPoRPc6Hwsgbjl2+xF0CeHHgE5Okh9yo3TDz6h3dVecgvyTncIv+rRmo
+         5Wu6DsPUnrVB4JXtiGhk2QvOm+e580M4w87EmZZj2sJI+YjVtVFCXqzbIuoNLjvQQnKF
+         vl18DqUI0DLaijDJK/ktN3Y+RIgGCPxlVYGv5S9aVb3fdsnjGk/bdq3c+FAzwaNQjDhG
+         qh9+OBbSdzi6l3wwm1xuTVlbQ325nUThFklPGo//5pyxFjY/jm6nZw7rGN5dswPI8+RL
+         r+repm22nfg5/x84yK2o78njDtpma2G5wpRoJmkpwWlNj0X3YHUjrdT+FdE8ZKErg9KY
+         H1qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756985234; x=1757590034;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7Omu2iDAjQIOjKg0DmAgEj8ICa8iVBrvJA7lXUZP/Pg=;
+        b=G6r9EEtEJOrA1VL9nSub830Hwg/WLhovhYPelQpzYF2sKnwNsPDtMKrsvz1yxt/NQW
+         hd1l1Khpn4tePok6BSONFiuD0ybOp84WeAiM/4j22/9RbkzEKl/BE29DkA5nPOpqqROj
+         adjc4YzYBm3aBfX/RDLiBMXcU1ZGQKl+qRQLx7LRNNHJojm07IFyxxYf5K+WPq7wSkZO
+         jUXLT6qaw2ttj9KDnMpQphixp+0l52AVj3UeUFQ2T6I9o05e5RJNGsnXEDB9cQiURxwq
+         vEVydsqkmoHK0Gcd4T0z918Ct3Hw1ZsA9VnloFuBgBIb86OFnHSHC6R7nrIW0ZjZvE/F
+         FnxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW091OWZLQfmmue+26zIt0Uei3CLrcdcIrOlNnKcrhFypgxQNutFWdxD5DJ6dvCA/uEiTSEwY9/lvZlFTTx@vger.kernel.org, AJvYcCX1GhnZ2RdkFCO6ozppg/Df3GeOyByuvSLQZ8905ySlRxmg5kgRQp/aH9t/Apouv5PXOlpzh1Ndebll@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8LT/B7Sn1/Tusenu2T/kHXCtVqtvm3opBWMYLqftwXUa8uvpD
+	2+K7sKz0SrcQdDsAsCozt8z9DaRi1ivXLOpeW0SdC6EXIuqXIBrt+pAjnVAUUL7Ze4Fa7jJ1INd
+	MRVBVI5/UX1RNeKWwaw9YdnzCXeLO+RA=
+X-Gm-Gg: ASbGnctrdjEGO0RbJ5l2C6lnq8p9i9Nr5pwQedl/4kx5zjQXISEp5nAfivbZDAnwpcS
+	TexQUMssP9nA9EbGXqrDPjRMvDR2aUAVRd9Sqmr78edqwHKaCCdcR29kOr5yAo99Si6L+sJGN8E
+	dQUWTRLjJK+Xe0z/sa1cDz5vAcYSPmwWD/6CMygk35CW7EbZX/GPI6WtFATtJpfu9RIPDYUgN3z
+	k3pdXg=
+X-Google-Smtp-Source: AGHT+IGwTHBUyBBmLkqWjAslRacNLUyP6rwDJEvQxuZzahg0BV3R26YS068p5u2POX62gnoxSFbFHAKFousXuOi5eqE=
+X-Received: by 2002:a05:6e02:1a0e:b0:3f0:2c49:936d with SMTP id
+ e9e14a558f8ab-3f400284d15mr144126505ab.12.1756985233526; Thu, 04 Sep 2025
+ 04:27:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TYZPR06MB7063:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a34a5dd-63c0-4f39-9f73-08ddeba5f8b2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|52116014|366016|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CXF2R/mbx+wtIINhKeZR0VWBbUP3zPe2SoaghZdVvJCrunCSO2GpuKGbPnC+?=
- =?us-ascii?Q?0MDIXzFd44lB1o9HbYL51YOHiF7mMDRzzrsRNEmzPARs3YMBUI6wyhpdpviE?=
- =?us-ascii?Q?i0rOqeA3VE4krFe+h2y1H0lwcvLPhYLBKG2FG6ElDMBlY+0H/DDbEKcRGG1Y?=
- =?us-ascii?Q?R3vA8DKGnO28Wn2p3gWx07dXkv9xllWRssbU8QztELqibg+ZMcOUBtaDv9Lw?=
- =?us-ascii?Q?kfUNLAH8VAHSPbiHztymeMyJ7psGggzoq9Mv0rHktVRIQW5OtMgCTttLny3G?=
- =?us-ascii?Q?CzHx7VSHJ9E4azxqLf2GTSPuxGYSdBi1/pxfuRPrzBWhYwsRSY8BJGzB2IGX?=
- =?us-ascii?Q?Ge+Xrjp3FURwm6IGCqK8CI/A751Wv9XELm4wh3Fp23nWDS6JwtoDn6TXotK9?=
- =?us-ascii?Q?Dz4MjR2CU3+OdZCfN44TvTIRC0KTvCUVfM7U4DEbUKxlAd5mEEjEPu6rlxNI?=
- =?us-ascii?Q?a50leuqRPjHcQmt3awGsW4TkRK2s3HNwUU8fj+nsYBK2FWh1xzrqo5yghPB6?=
- =?us-ascii?Q?njS1hfml6DeFHCmweOvBXd2bYZZxp0IEGi3AgVzyK99GexhnSHMPt1x4Qpym?=
- =?us-ascii?Q?BTpZ5wX9BN7uRmwsDqKMGHDwfhkaqUNGqpDNfMIc/Onu52SuTtgWjak6LgJd?=
- =?us-ascii?Q?C0EzvEyJw1Aw84ZCFG8JQ4Nnq7nn7RRh4aqbiA+3ljTa6zWMmoa2441S+lqC?=
- =?us-ascii?Q?rI26DiQdnBBrWuSk1bWi8+5qKyZV9H2SC28ROWHZbe66f+az1bdQmKf2PzAi?=
- =?us-ascii?Q?HiJrDI+QmJ2xiZWr1im30NShoTFi0dVPqP1C2lDBO5hThz154kfqJa3ELnu+?=
- =?us-ascii?Q?0JFqfbxDHIjbyLW++mPqHymwWvZLN6F42wn+uyYTVR/W4vCF0EcSApUe2qP5?=
- =?us-ascii?Q?QLkVQ6PcWblgel0cOmpQ5kXl7eOHLADDtGzQMX6hCWw8hQ/M7NKJy6XH918g?=
- =?us-ascii?Q?UGv9lNwQ6z27WE2434/mineEXgUiO5ITO4w1/ieubP4Hs/0xGYuNaY6OtBsX?=
- =?us-ascii?Q?SDDNP8saH8mQjEYBn5sK1fwRPabyEMp8dia44jvH4HNNlkladKrcrQOsjk9/?=
- =?us-ascii?Q?BW6xTEpimuyBLEs+MwzDSo6709TEhDdrLdOu0GMe+C3jKufDmfROJdatG7Vx?=
- =?us-ascii?Q?4uM7STaPYb5jPm/mEP1CAJbNSOGeRqJvALu/a45i72MzshM6GJyR+zYMFbd4?=
- =?us-ascii?Q?VIIYKOicyG42J35krdGQ/PbltPo0OG5zAIwyv5o/fycuzZJD12+x5ihJ5tsq?=
- =?us-ascii?Q?WTmcHTm7E1jZUEEulcyajUf7ehm0KVeVw4vnUa0Wotk7IErXvjLfVKkBqWzi?=
- =?us-ascii?Q?LxEN+mvZO5NRXi9o+QmdxB1UFR+4+eraoj6s5/5iCjUPOxTndsqQ/QvJDTHR?=
- =?us-ascii?Q?rDMrLer0WjKe2UU3exJXJ2lcOMB/6+6SSPjA8Grj6Q1cNdYHep1sqnrOqRfj?=
- =?us-ascii?Q?69ArnrPtNmYBXcExnsrYP7jA19ddC2IgcxShDc4wUloQy1WhWfFf8+k152kM?=
- =?us-ascii?Q?cAWXBWnf06WedaM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(52116014)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/aKuYr1yG5fWZNca1Q66aDQs9n3ivU00mT3V1BIZzrQK5jnqz1p4DLRxNuXB?=
- =?us-ascii?Q?Ptkz5Z4C3b6KKs8v3XruH0Rcc+/0GXPuZq2xr18wVCMJBl6+98NeBW1V+jiy?=
- =?us-ascii?Q?JYWMAbXlFC5Ne+Yhj2QDugnqMe0cucB6E43HyEWifv8Ta1E6MCLYSHYkA5pk?=
- =?us-ascii?Q?x9igLCXyF5x+UaVrfJHnPlIH64B4HgiicdtuRdIp+d+IkS0YrIynjUXVktm5?=
- =?us-ascii?Q?Sf+f25vULhlRVyd6TEX6YoffWrLlgOi95v+Lvcq4XvQseFhoNKAsHpLisZQD?=
- =?us-ascii?Q?GK7i9lIRJVNhxTFtvMNegAfRiIRSO40jpO2D9khvUaUBicMIUAw+A9JVz9K4?=
- =?us-ascii?Q?g9wVKaDbIVQvDfuDKGP18I1eeYTx+E3LO8GY5ENVHmraVx/yZP6OGc3feImc?=
- =?us-ascii?Q?AuGYhf3/PRcdU2/sAXVRkXmnFzKA4g0X+TlI8SqzF4bGVIXz/R6x45H9yumE?=
- =?us-ascii?Q?HHtdm5395oFfkrD+dFi3GCsDoyjONhNU/7NlQtGX4TR9HwPauMJ+odfDabao?=
- =?us-ascii?Q?8DggACyCfEw8ThnZeBjkROABxQWAy/TEhuQAf6ikqnZUtVwdc/xjsW8OM8cM?=
- =?us-ascii?Q?CrDfo7Md+bz6SGEFcPLsem1qSyhr8hhg6tQYTQyuWiYt9ymTNGRGnz/nf4eu?=
- =?us-ascii?Q?AGdhk91GX9T4TkH3F493zvvgvDQaeke9GZK8jlcRSbq5CKtwvgththM0MUdC?=
- =?us-ascii?Q?dwhMWfPxd9YbjOGZnK2pIsSwl8gZTcXW8ZSswP9ZbC36QwwWIqHwVCdJ1m5R?=
- =?us-ascii?Q?9FOBfzwgcXdCvQQt+CAdrfj/ADh3Q9fz7kEyA2ujBbt9x2YnPuhTqI9g8tDy?=
- =?us-ascii?Q?svOO3Ge2oj7AgSACtGDW7qxJunbkD7is+DM47pox7OCvv4ZRqnd4xOczYBRd?=
- =?us-ascii?Q?5A44OEuar0oCuKQK14GdJIbn/5iC9FvqbQFoe2VpvQr3gz6zeZmBATOzAMH1?=
- =?us-ascii?Q?SsFKG7LxlG8YM5p10erw0TqS7ma4yrVlR7oh+OJB1lXTvH7gVER2Df8CZhKf?=
- =?us-ascii?Q?xF1vDsCQn/8hrkqtFz99lg1IQrovbkN3/6fSCq+g155K+N5CwRttU/jhTOJG?=
- =?us-ascii?Q?qC5k2Q9p4JzTykP7CZC5LAwGIyrxNpsmLNSZE/lq3Lt3SdOwsjMRf124dErZ?=
- =?us-ascii?Q?dsHbafc5X5VX53Brb85Fhg7TRjXczOx19gxcckw2F7NyxcSfPH7r4+7Au8Ik?=
- =?us-ascii?Q?2w/j6vdoavFzAMJu9WMaHMn0ZhwFRMgQTi80wCCTGl2e6aEz8NfwawMN8LCg?=
- =?us-ascii?Q?dhSc8GJspWopzpvnvwzFyrV7zI0brwQNJKG8HNkqaZoG2Gp6IDKzDtVR8Y2Z?=
- =?us-ascii?Q?nqgquV3y/l+UifOPHCfbLiNnSpwqo+tER0AXGVwCgMgBXbpelPWEtCfUamy2?=
- =?us-ascii?Q?+QOmqPY9apNoRL281qYNiHUB15FS3ensMKLEYAILwJ1vPY2hPkgkmLzGZoKt?=
- =?us-ascii?Q?AhT9M/mTLKUK7qBPrd0I1o5dVL0sRoAn4CP9JzoRYqyoT+0h7VuYDL47w0SN?=
- =?us-ascii?Q?Wrc76+1dVVBHEab9uMciU7pMbZdPj+seW1G6QzyNesTgRzcZXNkMM7TsUVDk?=
- =?us-ascii?Q?pa/I5eL67zZdbbxSYFRCotLL5tkEdkK5/1XoFewT?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a34a5dd-63c0-4f39-9f73-08ddeba5f8b2
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 11:27:03.4280
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sx6fgeub6KBfZ1oCZXykOVT0+Vi7jo61XAmcqXL0t6pXoTxaU+HwirG6780ylqd008Uiy9Y2HciuGmYPvK1fnA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB7063
+References: <175691717884.2393851.6340903042726389490.robh@kernel.org>
+ <20250904022524.1748587-1-syyang@lontium.com> <042523f7-2b75-4a04-8e0b-d1019ab84987@kernel.org>
+ <CAFQXuNZpLBP3=MGmRRpwJu43ZtkNhrTzh8kOwFgKy20rqFiG7Q@mail.gmail.com> <20250904-aromatic-loon-of-honeydew-f7861e@kuoka>
+In-Reply-To: <20250904-aromatic-loon-of-honeydew-f7861e@kuoka>
+From: =?UTF-8?B?5p2o5a2Z6L+Q?= <yangsunyun1993@gmail.com>
+Date: Thu, 4 Sep 2025 19:27:02 +0800
+X-Gm-Features: Ac12FXwy1IO1UhmsmetaaHLdUnL-i9ZgD2TthvXT1YzMwKP3in7ctBXaHrxoB9c
+Message-ID: <CAFQXuNaR+Y+PZG5h0_ETSs+hsepj6uUb2-ogZSNPT_C0JwGWDw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] This patch adds a new device tree binding documentation.
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: syyang <syyang@lontium.com>, robh@kernel.org, Laurent.pinchart@ideasonboard.com, 
+	andrzej.hajda@intel.com, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, jonas@kwiboo.se, 
+	krzk+dt@kernel.org, linux-kernel@vger.kernel.org, neil.armstrong@linaro.org, 
+	rfoss@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For ternary operators in the form of "a ? false : true", if 'a' itself
-returns a boolean result, the ternary operator can be omitted. Remove
-redundant ternary operators to clean up the code.
+Krzysztof Kozlowski <krzk@kernel.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=884=E6=
+=97=A5=E5=91=A8=E5=9B=9B 16:26=E5=86=99=E9=81=93=EF=BC=9A
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
----
- drivers/gpu/drm/i915/gvt/cmd_parser.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> On Thu, Sep 04, 2025 at 04:08:30PM +0800, =E6=9D=A8=E5=AD=99=E8=BF=90 wro=
+te:
+> > > > +
+> > > > +description: |
+> > >
+> > > Do not need '|' unless you need to preserve formatting.
+> > >
+> > Both lontium,lt9211.yaml and lontium,lt9611.yaml use "|", so please
+> > confirm if they need to be removed.
+>
+> Add code which is needed, not code which you found somewhere. Why '|' is
+> needed here?
+>
+ '|' It feels more comfortable to me to write the description text
+after a line break.  '|'  When there's only one line of description
+text, it can be omitted.
 
-diff --git a/drivers/gpu/drm/i915/gvt/cmd_parser.c b/drivers/gpu/drm/i915/gvt/cmd_parser.c
-index a91e23c22ea1..d432fdd69833 100644
---- a/drivers/gpu/drm/i915/gvt/cmd_parser.c
-+++ b/drivers/gpu/drm/i915/gvt/cmd_parser.c
-@@ -1921,7 +1921,7 @@ static int perform_bb_shadow(struct parser_exec_state *s)
- 	if (!bb)
- 		return -ENOMEM;
- 
--	bb->ppgtt = (s->buf_addr_type == GTT_BUFFER) ? false : true;
-+	bb->ppgtt = s->buf_addr_type != GTT_BUFFER;
- 
- 	/*
- 	 * The start_offset stores the batch buffer's start gma's
--- 
-2.34.1
+> >
+> > > > +  The LT9611C are bridge devices which convert DSI to HDMI
+> > >
+> > > Why this cannot be added to lt9611 binding? Commit msg should clearly
+> > > answer that.
+> > >
+> > The lt9611 and lt9611c are chips of different specifications, and
+> > their related parameters are different.
+> > The VDD-supply of lt9611c is 1.2V; the vdd-supply of lt9611uxc is also
+> > 1.2V, while the vdd-supply of lt9611 is 1.8V.
+> > Now lt9611 and lt9611uxc are connected together. I'm not sure if this
+> > is a problem.
+> > If this lt9611c can also be bound to lt9611, and if you think it's
+> > okay, then I have no problem.
+>
+> It is not a problem.
+>
 
+Do you think it can be merged with lt9611 and lt9611uxc?
+
+
+> >
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    enum:
+> > > > +      - lontium,lt9611c
+> > > > +
+> > > > +  reg:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  "#sound-dai-cells":
+> > >
+> > > Missing dai-common ref.
+> > >
+> > I don't understand .   I referred to:
+> > Documentation/devicetree/bindings/display/bridge/ite,it6505.yaml
+> > Documentation/devicetree/bindings/display/bridge/lontium,lt9611.yaml
+> >
+>
+>
+> You call this device a DAI, so your binding should reference dai-common
+> schema, like every other one. You can check simple codecs for examples.
+>
+i will fix , thks
+
+> > > > +    const: 0
+> > > > +
+> > > > +  interrupts:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  reset-gpios:
+> > > > +    maxItems: 1
+> > > > +    description: GPIO connected to active high RESET pin.
+> > > > +
+> > > > +  vdd-supply:
+> > > > +    description: Regulator for 1.2V MIPI phy power.
+> > > > +
+> > > > +  vcc-supply:
+> > > > +    description: Regulator for 3.3V IO power.
+> > > > +
+> > > > +  ports:
+> > > > +    $ref: /schemas/graph.yaml#/properties/ports
+> > > > +
+> > > > +    properties:
+> > > > +      port@0:
+> > > > +        $ref: /schemas/graph.yaml#/properties/port
+> > > > +        description:
+> > > > +          Primary MIPI port-1 for MIPI input
+> > > > +
+> > > > +      port@1:
+> > > > +        $ref: /schemas/graph.yaml#/properties/port
+> > > > +        description:
+> > > > +          Additional MIPI port-2 for MIPI input, used in combinati=
+on
+> > > > +          with primary MIPI port-1 to drive higher resolution disp=
+lays
+> > > > +
+> > > > +      port@2:
+> > > > +        $ref: /schemas/graph.yaml#/properties/port
+> > > > +        description:
+> > > > +          HDMI port for HDMI output
+> > > > +
+> > > > +    required:
+> > > > +      - port@0
+> > > > +      - port@2
+> > > > +
+> > > > +required:
+> > > > +  - compatible
+> > > > +  - reg
+> > > > +  - interrupts
+> > > > +  - vdd-supply
+> > > > +  - vcc-supply
+> > > > +  - ports
+> > > > +
+> > > > +additionalProperties: false
+> > > > +
+> > > > +examples:
+> > > > +  - |
+> > > > +    #include <dt-bindings/gpio/gpio.h>
+> > > > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > > > +
+> > > > +    i2c10 {
+> > > > +      #address-cells =3D <1>;
+> > > > +      #size-cells =3D <0>;
+> > > > +
+> > > > +      hdmi-bridge@41 {
+> > > > +        compatible =3D "lontium,lt9611c";
+> > > > +        reg =3D <0x41>;
+> > > > +        #sound-dai-cells =3D <0>;
+> > > > +        interrupts-extended =3D <&pio 128 GPIO_ACTIVE_HIGH>;
+> > > > +        reset-gpios =3D <&pio 127 GPIO_ACTIVE_HIGH>;
+> > > > +        vdd-supply =3D <&lt9611_1v2>;
+> > > > +        vcc-supply =3D <&lt9611_3v3>;
+> > > > +        status =3D "okay";
+> > >
+> > > Nope, drop.
+> > >
+> > remove  status =3D "okay"  ?
+>
+> Yes. Instead of asking me, you can try to think about possibilities.
+> Ask yourself yourself - why do you need it here? What changes if you
+> have it? What changes if you drop it? Why reviewer asks for it - maybe
+> there is something behind. That way you will learn more about this.
+>
+> I suggest to go through the slides of my OSSE25 talk about DT for
+> beginners.
+>
+thanks,
+
+> Best regards,
+> Krzysztof
+>
 
