@@ -1,161 +1,125 @@
-Return-Path: <linux-kernel+bounces-800844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F0EB43CE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:18:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49EE9B43CE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B8D25E6781
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:18:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 181B516E636
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3322FF178;
-	Thu,  4 Sep 2025 13:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DEF2EC57F;
+	Thu,  4 Sep 2025 13:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwVFousB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VpnvOczL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CoPrQf+L"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D938A198851;
-	Thu,  4 Sep 2025 13:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C48F1AA7A6;
+	Thu,  4 Sep 2025 13:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756991880; cv=none; b=Ht7LgSIk6NbkbJlvAmngneuvEGQ323s2O9dDea7xSmkgEnY9C7WYVK39LXSaPEfOWgIZvUZNyKRkrWKlveuasNZxWGktvCSw9I8X4jdqc6CEavy/AVSsWfhjDfK7sfI0EE3nxb5IuEDX8q+g6AWwU3bZYVMyquK3po/0R1AT5Go=
+	t=1756991920; cv=none; b=k9H/nIsubxnghZtF2Ecq9LtHx/RuE0n2M9xWp3Jk6CkD10cXOGnjZz14cncF78/8TRBRCrLll5X9MDukiLG61n0tA7mj/QBDUSTJk9rcVUTOACs8wFjeTS4qgVQm/LihRIYbqQiP1216RFbGjpaC3XaRgLiTifdLQut5t871sCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756991880; c=relaxed/simple;
-	bh=WxaD6gphkJ2Gk/Jf0nfE5M7L6/fiMPCyPbZwunINGek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nL+QZsplbjgjorEO6kP1TDgbHwub8KFq4c/SsvAbDuxLsy96lpX5h7Wp/gpnBCrYRVjiDCmBawSe3suds3h/tqNGv9LCj3WxF8VBazHu81mJeM0wYTgfI1oGNmcRm/VNTCXRv3yCZNCG2pcrM9V6paE+vHY7mGlGARyyBcVccyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CwVFousB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1CAAC4CEF0;
-	Thu,  4 Sep 2025 13:17:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756991879;
-	bh=WxaD6gphkJ2Gk/Jf0nfE5M7L6/fiMPCyPbZwunINGek=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CwVFousBcrdbNKei8QUIwVjeqiVm/FHgN3lSpNE0OWBvxkiLb7JPZh9S3DvUrggva
-	 9IJEromdZCrdwMI3zLk6PCQfRt3OoPdsH5Kz6pLxLD7CvlKf3xEk2HlNMl/SUNSaYK
-	 NWZI73AXgi7V0x1dyxQhs2plRNOZcZvfrf85ho5166BZqN5tag0YATIj1LXkS0lIDx
-	 Bq9JvKh6pzxJHWZz8orVT/jS0TVUe0Xw0oX73quG8ZPwjJjI114f23b94q5UPP+OzS
-	 MxjXIE+aimWLVNiRSgTtm5PNPWYRoDltG+w5gx2q3nFh/ACUgJZF6BgHmJChqE/Uy8
-	 Wudd3C/BIu0pg==
-Message-ID: <29a91114-d862-452e-b7bf-1b659ad7d831@kernel.org>
-Date: Thu, 4 Sep 2025 15:17:55 +0200
+	s=arc-20240116; t=1756991920; c=relaxed/simple;
+	bh=Xbsr3mMaL9NCZ3jddPXvCK0BHPT4UJ86jyDK9FcPFZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rdRKw4XUQqyZbGk8sEvi6It+S/8ADaiWofG2XtSaZJ2TBmwd4RkkpfKNRSHv62LweIisZ6pF4fOFgmaOnZ2l4SJCX6iyQqLVK/BSnMoac3C1O6ddkhe4HZ9d4/7wmu9MJRkbaiCB+pGbDn/O6BLohRlo0zF5GPvdunbjzGNVd5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VpnvOczL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CoPrQf+L; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 4 Sep 2025 15:18:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756991917;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gzlN8F33jc5mv1D5YUXNt8JDHCEp4+wRIW4ePyrbL50=;
+	b=VpnvOczLfVbbqODlZMbXhaQVt/6ilYtkg01NC7JF8K25ek4wSwP1YBy2XJXSqC3K7pazLG
+	eB84uIYIVyAzzVvd7DKBNOIIaPtkaFau1wsV+F+PEvs5txRLyy6PCnbQ3SS8ymONx/GKxm
+	/tLMQkBaa/Nf06T4iHbSI7Zm+OFtEnurS0hkrYeyCWcLhRWjYsf1B6ojb4zWOjmNG4va3W
+	mYcEBnVG9ImBG28c2q+EZp7HPWstF+ST7QWOTjBZUSI9JadpxGF2WK2TEu0tJP4rsnC5+T
+	N/exAW15q2WhIw3a+iUBrKVH4zzOkNXCArLn2477b3cj0guLSBXKpGqsKQ/nlA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756991917;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gzlN8F33jc5mv1D5YUXNt8JDHCEp4+wRIW4ePyrbL50=;
+	b=CoPrQf+LBKZs1H4pu3WxB5ZZ4tAxZwspJ1+iPVWaRAVm9XRsIOrxuqnWcJ84FCMMbD0ayP
+	GSzwMhhBAKR4v0CA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Matthias Klose <doko@debian.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>
+Subject: [RFC] Don't create sframes during build
+Message-ID: <20250904131835.sfcG19NV@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: Add binding for gunyah watchdog
-To: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250903-gunyah_watchdog-v1-0-3ae690530e4b@oss.qualcomm.com>
- <20250903-gunyah_watchdog-v1-1-3ae690530e4b@oss.qualcomm.com>
- <ea295ff6-5395-4470-afc2-76e5e2dc9fb5@kernel.org>
- <099a7c48-c447-40d4-9076-570f5a5058a2@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <099a7c48-c447-40d4-9076-570f5a5058a2@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 04/09/2025 15:07, Hrishabh Rajput wrote:
->>> +properties:
->>> +  compatible:
->>> +    allOf:
->>> +      - const: gunyah-hypervisor
->>> +      - const: simple-bus
->> What? No.
->>
->> Don't create patches with AI.
-> 
-> This patch was not created with AI. Reference was taken from the patch [1].
+Hi,
 
-There is no such syntax like allOf in [1]. Nowhere in Linux kernel, btw,
-that's some total invention, thus my gut told me - it must be made with
-poor AI tools.
+gcc in Debian, starting with 15.2.0-2, 14.3.0-6 enables sframe
+generation. Unless options like -ffreestanding are passed. Since this
+isn't done, there are a few warnings during compile
+| crypto/chacha.o: warning: objtool: .sframe+0x30: data relocation to !ENDB=
+R: chacha_stream_xor+0x0
+| crypto/chacha.o: warning: objtool: .sframe+0x94: data relocation to !ENDB=
+R: crypto_xchacha_crypt+0x0
 
-> 
-> That being said, I see your point about the mistakes which were made 
-> while adding the compatible "simple-bus".
-> I apologize for the same.
-> 
-> I will make sure `make dt_binding_check` passes with latest versions of 
-> dtschema and yamllint as pointed out by Rob and as should have been done 
-> with this patch as well.
+followed by warnings at the end
 
-No, that's not enough.
+|   AR      vmlinux.a
+|   LD      vmlinux.o
+| vmlinux.o: warning: objtool: .sframe+0x15c: data relocation to !ENDBR: re=
+pair_env_string+0x0
+| vmlinux.o: warning: objtool: .sframe+0x1c0: data relocation to !ENDBR: ru=
+n_init_process+0x0
+| vmlinux.o: warning: objtool: .sframe+0x1d4: data relocation to !ENDBR: tr=
+y_to_run_init_process+0x0
+| vmlinux.o: warning: objtool: .sframe+0x1e8: data relocation to !ENDBR: rc=
+u_read_unlock+0x0
+=E2=80=A6
+| vmlinux.o: warning: objtool: .sframe+0x12765c: data relocation to !ENDBR:=
+ get_eff_addr_reg+0x0
+| vmlinux.o: warning: objtool: .sframe+0x1276ac: data relocation to !ENDBR:=
+ get_seg_base_limit+0x0
+|   OBJCOPY modules.builtin.modinfo
 
-You should ask for internal review. I did an extra effort, I checked
-that and:
+followed by a boom
+|   LD      .tmp_vmlinux1
+| ld: error: unplaced orphan section `.sframe' from `vmlinux.o'
 
-1. You did post it for internal review, BUT:
+We could drop the sframe during the final link but this does not get rid
+of the objtool warnings so we would have to ignore them. But we don't
+need it. So what about the following:
 
-2. Your internal testing system pointed out errors (schema failure) or
-failed itself,
-
-3. You did not ask your internal testing system to RETEST the patch, in
-case this was a system failure. That's your mistake. If this was true
-failure of schema, then you obviously should not send it, but
-investigate why schema fails on your patch.
-
-4. You did not receive review (at least no track of it) but decided to
-post it on mailing list. That's also your mistake, because lack of
-internal review does not mean you can post it to the mailing lists. Talk
-with your managers or colleagues about missing review, for example.
-
-Best regards,
-Krzysztof
+diff --git a/Makefile b/Makefile
+--- a/Makefile
++++ b/Makefile
+@@ -886,6 +886,8 @@ ifdef CONFIG_CC_IS_GCC
+ KBUILD_CFLAGS	+=3D $(call cc-option,--param=3Dallow-store-data-races=3D0)
+ KBUILD_CFLAGS	+=3D $(call cc-option,-fno-allow-store-data-races)
+ endif
++# No sframe generation for kernel if enabled by default
++KBUILD_CFLAGS	+=3D $(call cc-option,-Xassembler --gsframe=3Dno)
+=20
+ ifdef CONFIG_READABLE_ASM
+ # Disable optimizations that make assembler listings hard to read.
+--=20
+2.51.0
 
