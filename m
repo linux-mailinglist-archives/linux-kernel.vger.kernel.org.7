@@ -1,254 +1,203 @@
-Return-Path: <linux-kernel+bounces-800877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AADAB43D3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:32:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C34FB43D3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F8F1C80BF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:32:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB13C58785D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E00302759;
-	Thu,  4 Sep 2025 13:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80042304BDA;
+	Thu,  4 Sep 2025 13:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLw0um75"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="faaCiUuf"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012013.outbound.protection.outlook.com [52.101.66.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242FB14AA9;
-	Thu,  4 Sep 2025 13:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756992715; cv=none; b=qj36El9s081Pb9JWlRkGCsVZOTrAOQnUaZCD3z/3TvVLugXe8i1n0U587LDbbfdP+BPsVkpNU5CfawDfzZO2rUi7cvn8CtXdVsSx9pYa/NImtyCI661KORe364NzVb128hL6ubwPuD94bG5PA5WFt4BJRWIKJ1e+ZvO0mJLpY9o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756992715; c=relaxed/simple;
-	bh=0Hp1bTwqzrclDWQutkJWOBnGlUdjHEwBxDG3UFmgWpQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ndmShrCJhXSm0pUfsuiJwKmLvHrW9eQTqd4tNsZnOfdrcmZQgXcbvlNTmiEaunI7ODNnABFlPNsYeMWbKGkmTiDMDcnD1Vy8vjv2x8nx297dvjzvDNg5GOkGUFLmkv7MdxcAhfVJwZ31VPViCaJs4wu5qcktDBbVkGRB9Sm4oMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLw0um75; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB9ABC4CEF8;
-	Thu,  4 Sep 2025 13:31:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756992714;
-	bh=0Hp1bTwqzrclDWQutkJWOBnGlUdjHEwBxDG3UFmgWpQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PLw0um75nAZ1ff0lmLQ9c0xkT2opk2xVmZQnv7zz92aeACCG0YyGPDzgdnvXhcbDD
-	 RsPiW2fwpZNGaeHS4N5HKL4qOnBVdQUBE8ZfODaFYH/ovQL8p5IfyHqkB1EeQR0sci
-	 hoFaIWbKeUn9xHY3IX6AbcsVWYwX22aVfgKj+YgvD0Qwe6kF0Cm3/qtEclM1vYsHI4
-	 rQKR+hh1sJ0yVa94NYHRDzHKVDoa9zzzuVqJvn+GV9q4hd+DNGyhgy/b5hX9jdD/be
-	 Gm8+WT/z0PqMxIi7wlpvCrlSXRNVXpdbLdPW6VZJN3DmGBQgWeNFHG+JrU8Cks1BjV
-	 GGkK9qXzGucuw==
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-74543fea20dso987249a34.0;
-        Thu, 04 Sep 2025 06:31:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX4FUYpthQoWtG1HgcZf3qs0g5jfyEtZuhxWN9RZX/0RsHfozaaNahYGQGlGw0o7IZjwxqLXkw/CV459/w=@vger.kernel.org, AJvYcCX6JLOv53DBPidyzxGbxTGh7jR+weqlNNVICxoQBg/l6Eqznh36KuNeriWAKTOCCHf3TVDJQI0vmdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZJlEMQGuVmIGckKMquord5ZtWzxZDqyzW4hNaIA9ADFBV6uBj
-	xz15BIuSBe+0VHXNXEjSNixQ+p1aPIhNcml/GnmSX3Gai3lgla28KXGPQs6/0+jWdtlAOYFrmAH
-	ideLnsmjdDZM5JWMFJj8rrFbitiRdL3c=
-X-Google-Smtp-Source: AGHT+IGKMQV/N9IW7UcNcGVF0ayJJuv6BZu6Wo7P5OnPk1Mb0GMCVJELd8/B2GAaZKVqR1Ow6POYXNLHmqVa/k7LNXM=
-X-Received: by 2002:a05:6830:370a:b0:745:a08d:cbc8 with SMTP id
- 46e09a7af769-745a08dd15cmr1973579a34.24.1756992713892; Thu, 04 Sep 2025
- 06:31:53 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D1B303C9D;
+	Thu,  4 Sep 2025 13:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756992718; cv=fail; b=GNeBSo/evz58L/iBPJgLiRUciKZn57ga6VI6DkuVRb3CVHL6L3VCDzJD/BUpSSxDzkqB2JtYKQAFXOPWFTxDpzBeKFtkzG3bVyS0Md+XXXluAeK1kQ1XORiXvO84xODzUu2GOHipV15sj2SGqeAC58wOlWXworu23UaSUnq85h0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756992718; c=relaxed/simple;
+	bh=vumGXdrt7WVetpB2w7lSQrWbZSc3TOmGK+n1gz18/Z8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=B6OhiD2xoRu9U/CCqQ4kobjQ0dAURxkjQy4sbJwX6ObvJCPRNQn4HucxHYXExjGE7fcI/u8m/G3Fw7P0Wb7cda3djKPb92JGwnsB2L5M3sUwxu20wtOBT3ykoChN+22lHDIzGr/xIeqGbtpUAofS6yvVH735tp53+Lfh8f0MoNA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=faaCiUuf; arc=fail smtp.client-ip=52.101.66.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SxGJHHhiM3g66FR6oA6skuoYpHRyLx9CWQcpys3IwDlKaSb73GmEgtCe1Bz2iTlhVfb6eeptY7RIe+0SLAL5VWk7rkN0/8ZUMJiZ9oGPXhCQYa/PSwvhZuEHu8tKhRX0LH57JzB4EZ8KjRypfo68zS0aa71L/8cRqK5pBm++Xw3F5HDMRTVvffukddXNG6E2sDn5JZ08onMqqNs/LHaUIFIJeAX//n3+kOQwL9KJPBvNCm5/CpfPEmkrdejiB6ZLt7aMf3AadUjmvHTVFb8DR4q2DIm3JwZMcO9s7/YTc3/s4Uy7JH+duYTYDm881D5eH1K0lipCzxs7W54NiRfzFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H/e3lWvkF5EIUw4Cme47fvmvzODqZHsKbZcHVy5ucFc=;
+ b=mFYTDBv2uwjhygSTbp0cERxe2ojkcbvVV/HxHLQ0sENkcIW3WqJKRIf4qO8pcr1r0pEE9RHwZgqknFNDEpwYBRx0bbW0nwmxdMZWOuFwaQNThYaFqcCNNqJq89c+BDOqEa/0yvnUeIav/bdcQeT56gUskClssAgjjqhpZAhQQ66nS1TtTNkqRGZAK8OnlQ9z+1QrEdxl6d67gjLWaBvsCpdFCyU0e+xenIdmuhBL7Yf0/+jfKXiVskG7x50CUzaxI9Gsr/72GHF8MFoOpnfmZEVPOMROCVY9fUc3Dd3kHx8Num2Pzp0KFSmzKXwGftQ0yB3twJ3xjIi3zeT8Lut/bw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H/e3lWvkF5EIUw4Cme47fvmvzODqZHsKbZcHVy5ucFc=;
+ b=faaCiUufptgXGSmVfxunAtuaXJMq1TJTNTnBZjGAXMYt6Q7FZ46SQxfuusYssnVgsiwVALGmRVinEo3TB4lpadShVHaTuEGSG3r9rUv5J350WaT2MjzRhfUN7/d783cTaZD8i5vyipAQh8heO0/eHphFWcqPLhRq7eYnauTTILPoBpuz1OiRNQ2VwM1E3A6L/Sb2Z4YgNvL1LJoDyvi6PzxmOAzqBJw5isAcMWNn90a1z/n1YursvVRhgDsED3G0nq+qBklte4wZ90niUeY5ZRLCXAwb9vW1ExObIrXhO/I0JFGPpU2HepisatM6uC3FXtlaKMJQfff4SiYn2W8CGg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by AM7PR04MB7048.eurprd04.prod.outlook.com (2603:10a6:20b:11a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Thu, 4 Sep
+ 2025 13:31:53 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.9094.016; Thu, 4 Sep 2025
+ 13:31:53 +0000
+Date: Thu, 4 Sep 2025 16:31:50 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: richardcochran@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	xiaoning.wang@nxp.com, Frank.Li@nxp.com, yangbo.lu@nxp.com,
+	christophe.leroy@csgroup.eu, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
+Subject: Re: [PATCH net-next 2/3] ptp: netc: add the periodic output signal
+ loopback support
+Message-ID: <20250904133150.shxehnjfz2qpl2dk@skbuf>
+References: <20250903083749.1388583-1-wei.fang@nxp.com>
+ <20250903083749.1388583-1-wei.fang@nxp.com>
+ <20250903083749.1388583-3-wei.fang@nxp.com>
+ <20250903083749.1388583-3-wei.fang@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903083749.1388583-3-wei.fang@nxp.com>
+ <20250903083749.1388583-3-wei.fang@nxp.com>
+X-ClientProxiedBy: BE0P281CA0016.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:a::26) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904032210.92978-1-zhangzihuan@kylinos.cn> <20250904032210.92978-2-zhangzihuan@kylinos.cn>
-In-Reply-To: <20250904032210.92978-2-zhangzihuan@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 4 Sep 2025 15:31:42 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hcnqD39OAjFfscCnQ2ZGu9Z1gP5WAPfu3jbeEWr6rGwQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyuK6vz8uprUsIuOHqkFOeYQLhed9a2HKRuy5bXFejStPe6_CqPrpWL6JA
-Message-ID: <CAJZ5v0hcnqD39OAjFfscCnQ2ZGu9Z1gP5WAPfu3jbeEWr6rGwQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] cpufreq: Drop redundant freq_table parameter
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Saravana Kannan <saravanak@google.com>, zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AM7PR04MB7048:EE_
+X-MS-Office365-Filtering-Correlation-Id: ce6ca6af-06e7-4313-686c-08ddebb768e9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|19092799006|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?soVe7eg0zJxidxxUFAyJrOQaYQWygIPh9zWqb0/RyxgVQv8IoNjQv+0TJuMu?=
+ =?us-ascii?Q?abBn00lHZMdJaRMXP6Zg6toSh+euVrgMk+YCOJ6euPdgCihbUEExHIpl1duz?=
+ =?us-ascii?Q?/Of/wuT8Tbu/OKDsBkt1CXBYJHqWgFALXBVKnaod9HmlGb3wIHcxAtRUQ++x?=
+ =?us-ascii?Q?gZvK33jRYZE3m/Nc7/b3OhpxXj+br50xBc2cJoYBIpQTkoQMDCwFsLjEwLeU?=
+ =?us-ascii?Q?M2ULMRJJI1kCiezTHD4UH1Ua5uDb569o/AZsi8DO5nfIHSYn2QL/hphJeRxT?=
+ =?us-ascii?Q?Nt3kRwaRl+R60JDH1L1dPMfH1SMSY3C7PxRJvlgFv73qNDeFSmBtT3c1R54l?=
+ =?us-ascii?Q?yylAHda0DAljLDe73x6Kb6IacAamcOFRteAXJ5NKwvm4X2IRU0FDKNIdxp2B?=
+ =?us-ascii?Q?5PWB3X6dLDu0R1iE6tfF7t9SgE4UmdroGUkIDj879/XGAEwF28hxACa3hrEQ?=
+ =?us-ascii?Q?2HSsv7Prx8yiP/ugByEO8IypQdEjWpoLkOqBhRVZoSrKC/SHDb//jhz/NXOG?=
+ =?us-ascii?Q?OeQeuqHaIzuQu4W7HtYSsUBqCSabtO7LOXizJgH2PSLdvPHnCZ2+X6UVbWdc?=
+ =?us-ascii?Q?W/VF1GSupqzxb8mphM0G4EcfZcSB/rkksvXlnHXk1HjctNoY6N1x7Qh+aohA?=
+ =?us-ascii?Q?jXkCdpig2Gfg+cZbVbWRSp9VMIYfi3Cvl1ET0p85p8ncDCVx8zDGVBTDD9Lt?=
+ =?us-ascii?Q?RSouDihQoEEZAnBznnfyslqrjLEUVWO6THnSR82OKRuBcoOyYhUry1+7FwyY?=
+ =?us-ascii?Q?iALu5lmCTUUL4RSJTJEsWdXW5yKNTqua2cjZbq4hPGl2pNixN80vAE6oxzKo?=
+ =?us-ascii?Q?CwvXuJ9SZWEn+7MehK6qnRPeUsYcix2VDanDsBiLPUGBsgUTkjkKiIW9KS6x?=
+ =?us-ascii?Q?FrbCPEoC6pIATOuLKMatT0b+djzCHfJq5mR3xvsFAN4OSxNvH1aWo3yh3Bpq?=
+ =?us-ascii?Q?HdEzGMD1uneEssxNopqBNzeEko7zcTUmYzl9mtUhnnh5fcgZhNdgxRP39KBH?=
+ =?us-ascii?Q?FL+vVUtxg9iM22aIXlaL0athB0k0LiSiiY+w1MgAnAnziO7fJZPmYnFvrNSp?=
+ =?us-ascii?Q?HAOn+CV8UuyUgEGZTbYqD7yajA6j5LD/vtCcxpe3lfoRz3aouYA7cEg40sS5?=
+ =?us-ascii?Q?F8UwE3X5zqcMoiZPgkVB34KBHwbBLel5B1xgpNw9HLbMuiU3HiAfgrEpk6x4?=
+ =?us-ascii?Q?OtWey7l3h03Xj5jDopwwddagJhib0nLOT7et+jwtnX/WDyoOMbrPS8G7/4kn?=
+ =?us-ascii?Q?1L6Bh0e4Yg/0HiYlff6d6Q7TJGO5i8rr8XbOioOc3LwVVZwgOAXK6OoBiWOu?=
+ =?us-ascii?Q?RzypZcvyJ5HeU3dN0xBv2j8vOVg8wqc9EluNkj9bo1mp9v658Q7CP328Nd7s?=
+ =?us-ascii?Q?4Qexgw1TjDhn2fx3VEmEMB7PFbAihM0FLGoNbkFhgHi66ryUB7NNo2e4in5Y?=
+ =?us-ascii?Q?OgztxQtNek8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(19092799006)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8PW/Vf/xk16Eufmrp6eCMIqE2cxoC5vfWuj+/0+zuDZWjTTb4oDbHHj3ng3u?=
+ =?us-ascii?Q?r1Y8Kusj1TeyI2oNXCVrHsWMOm9Epkp2U4m2E7+vZE2Lk98q65AMlIuckDki?=
+ =?us-ascii?Q?tabqnv4Le+puOTlH2381lHcWER9dlSbgLe1QhUwuANSjCcEjZjfupkAWpYp/?=
+ =?us-ascii?Q?AzoLXbbGGJJL0HRIPUhTkY0MSKJQg0UDWCxtOoqgPs+ia1bi2pqe2euJ8dw3?=
+ =?us-ascii?Q?x23zMqJU8sWMsqWZg9NS4P5ZGb5JHPG2TMeuovXjfTyXVb92OelpPy4y1sCm?=
+ =?us-ascii?Q?q9pR/3TKxftUS7dh7dkd7g4Wx+RZ2O/6DZ46LTv5PbT0bQF3gfeXKrum2fI2?=
+ =?us-ascii?Q?RGwy/dhHO0g4NJ+dQo4OBW6tqywSi5x9FRdBQHS/LrBPvKgAgc+rc2gr31Yg?=
+ =?us-ascii?Q?OHfp2Kyea1KsqRsPLFtPhuHC4mTCkYdMTYJaDm8ap7AlMtHLTDNk8//36hcJ?=
+ =?us-ascii?Q?OtSQzXUGDs5JIf7IDU3KglL74zefZbpQjVt0wWNLEoT/vgEEa4QoTmIKrTSu?=
+ =?us-ascii?Q?V36RimQtpTWQpWUBmCLJoHyld98ITBYlOTromMrjOEbQe6ytJ2QbjBgT/tLl?=
+ =?us-ascii?Q?fJcAKNJoH5wSpUSblamY1noM0tqyOT2IrUiVcCVNN7Hn01FadpBViCf8+PRR?=
+ =?us-ascii?Q?Yfb7BhoNDJgN3pBp2+igTTF0UGldyW7CR7RlCtVLcDHMVaPizDX8AYxfcFwC?=
+ =?us-ascii?Q?IfTqPPsBPSqlkEVZOW0mJ5CP+h1PioHYm6IF9qDoNyfeDxYJYMdFokknm7mU?=
+ =?us-ascii?Q?XGeCCjKk8cIcPrUQr895paF4lsdlU/O8U7s2a6011sK3yRTNLasH11J7aYuP?=
+ =?us-ascii?Q?cqQ51HUeHrlWi4euFfcBrCklwfqOC65CBM6vrDqIlfYuSTGMr7emSywJP3Sl?=
+ =?us-ascii?Q?my8DVMiVzqDAVno8UCpOkT0JPhRsXkloXw/XlIbP+6eKECbTB6zhVtXZOayu?=
+ =?us-ascii?Q?b7a6KXxzQrlPCkGi1ulUVIkES2Nua+EEnPGteFKiHy0pFUT3zmjJUtpfDFZQ?=
+ =?us-ascii?Q?+AB2ClbvPyVvNdz1oSDSGFodnfGbIYZjFk+XI3Fc2Ozi9IWZulTkZVRWCSLb?=
+ =?us-ascii?Q?nnk0kuIPjDhzgUwWUhKCsrjz9V0/DsiygKDdciFXBsSwMlEpfl5lCEu7IJMS?=
+ =?us-ascii?Q?qqPwXQ7TovZ3gwX1e5WdJR2tZ+mSEJi5v8EwKDlOW1CgQtLprAMftPK37aO4?=
+ =?us-ascii?Q?lR6+PPGFFjageEmpIa2srvf0JeSioK5RXNgHOaxdiIz15kjWRrl4199LCtbh?=
+ =?us-ascii?Q?C2jpHtsGQYQac+2uSciVQ+RMMmkhPOEK68J/Tg4c6BX1qjPJ9TeezGXcJ36F?=
+ =?us-ascii?Q?rbb5VDmkiXN+t99P1ZeqOWhzLP+1mdnJ+Xc7zQB48OymIMJfwMPfZjIWsjks?=
+ =?us-ascii?Q?e/hMuRLax9Ab6qGyTnjsoTV6YKQgsezzogIbCUtfs0ArFJ26OmHSr/tP8Ds+?=
+ =?us-ascii?Q?92uQtIFEvg5b5qqpdUGiFH081NUrp6yew1bWZi8xQp69D9oImg5J/N3uw9/S?=
+ =?us-ascii?Q?rg1sM0UlTQiX/geof4IC/quGOCmWFjqVfZk3NQwezU8CaBy4gsd44DmE8Vsi?=
+ =?us-ascii?Q?PaGQtCldZy93QTIEV8zo6IhRO0K+M20KIq9RbIYm8Z0L8ISoAYIb16JOPnIX?=
+ =?us-ascii?Q?wAaTWXyxWTa4ALeKYyfMsNlDafH9olu55qEOtZirq1uOVZhtgOb6YkUbsYdg?=
+ =?us-ascii?Q?kJrYxw=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce6ca6af-06e7-4313-686c-08ddebb768e9
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 13:31:52.9486
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zSXOqheS05Ba/NL0XnxGBJtyW3YFDWWLqjm59H3qCPBbNpT+Ja/9wS1rn85fyj5x0EhfwKkkDyAeuANpc8q2kA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB7048
 
-On Thu, Sep 4, 2025 at 5:22=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylinos.cn=
-> wrote:
->
-> Since commit e0b3165ba521 ("cpufreq: add 'freq_table' in struct
-> cpufreq_policy"),
-> freq_table has been stored in struct cpufreq_policy instead of being
-> maintained separately.
->
-> However, several helpers in freq_table.c still take both policy and
-> freq_table as parameters, even though policy->freq_table can always be
-> used. This leads to redundant function arguments and increases the chance
-> of inconsistencies.
->
-> This patch removes the unnecessary freq_table argument from these functio=
-ns
-> and updates their callers to only pass policy. This makes the code simple=
-r,
-> more consistent, and avoids duplication.
->
-> V2:
->  - Merge three patches into one to fix compile error
->  - simple the check suggested by Viresh Kumar
->
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
-Do I think correctly that this is a resend of
-https://lore.kernel.org/all/20250902073323.48330-1-zhangzihuan@kylinos.cn/
-?
-
-There's no need to resend it.
-
-If you want to make new changes on top of it, just say in their
-changelogs that they depend on it.
-
-OTOH, if the new patch is not a resend, you should have listed the
-differences between it and the old one.
-
+On Wed, Sep 03, 2025 at 04:37:48PM +0800, Wei Fang wrote:
+> The NETC Timer supports looping back the output pulse signal of Fiper-n
+> into Trigger-n input, so that users can leverage this feature to validate
+> some other features without external hardware support. For example, users
+> can use it to test external trigger stamp (EXTTS). And users can combine
+> EXTTS with loopback mode to check whether the generation time of PPS is
+> aligned with an integral second of PHC, or the periodic output signal
+> (PTP_CLK_REQ_PEROUT) whether is generated at the specified time.
+> 
+> Since ptp_clock_info::perout_loopback() has been added to the ptp_clock
+> driver as a generic interface to enable or disable the periodic output
+> signal loopback, therefore, netc_timer_perout_loopback() is added as a
+> callback of ptp_clock_info::perout_loopback().
+> 
+> Test the generation time of PPS event:
+> 
+> $ echo 0 1 > /sys/kernel/debug/ptp0/perout_loopback
+> $ echo 1 > /sys/class/ptp/ptp0/pps_enable
+> $ testptp -d /dev/ptp0 -e 3
+> external time stamp request okay
+> event index 0 at 63.000000017
+> event index 0 at 64.000000017
+> event index 0 at 65.000000017
+> 
+> Test the generation time of the periodic output signal:
+> 
+> $ echo 0 1 > /sys/kernel/debug/ptp0/perout_loopback
+> $ echo 0 150 0 1 500000000 > /sys/class/ptp/ptp0/period
+> $ testptp -d /dev/ptp0 -e 3
+> external time stamp request okay
+> event index 0 at 150.000000014
+> event index 0 at 151.500000015
+> event index 0 at 153.000000014
+> 
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
 > ---
->  drivers/cpufreq/cpufreq.c         |  2 +-
->  drivers/cpufreq/freq_table.c      | 14 ++++++--------
->  drivers/cpufreq/sh-cpufreq.c      |  6 ++----
->  drivers/cpufreq/virtual-cpufreq.c |  2 +-
->  include/linux/cpufreq.h           |  7 +++----
->  5 files changed, 13 insertions(+), 18 deletions(-)
->
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index a615c98d80ca..5fcc99f768d2 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -2793,7 +2793,7 @@ int cpufreq_boost_set_sw(struct cpufreq_policy *pol=
-icy, int state)
->         if (!policy->freq_table)
->                 return -ENXIO;
->
-> -       ret =3D cpufreq_frequency_table_cpuinfo(policy, policy->freq_tabl=
-e);
-> +       ret =3D cpufreq_frequency_table_cpuinfo(policy);
->         if (ret) {
->                 pr_err("%s: Policy frequency update failed\n", __func__);
->                 return ret;
-> diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
-> index 35de513af6c9..d5111ee56e38 100644
-> --- a/drivers/cpufreq/freq_table.c
-> +++ b/drivers/cpufreq/freq_table.c
-> @@ -28,10 +28,9 @@ static bool policy_has_boost_freq(struct cpufreq_polic=
-y *policy)
->         return false;
->  }
->
-> -int cpufreq_frequency_table_cpuinfo(struct cpufreq_policy *policy,
-> -                                   struct cpufreq_frequency_table *table=
-)
-> +int cpufreq_frequency_table_cpuinfo(struct cpufreq_policy *policy)
->  {
-> -       struct cpufreq_frequency_table *pos;
-> +       struct cpufreq_frequency_table *pos, *table =3D policy->freq_tabl=
-e;
->         unsigned int min_freq =3D ~0;
->         unsigned int max_freq =3D 0;
->         unsigned int freq;
-> @@ -65,10 +64,9 @@ int cpufreq_frequency_table_cpuinfo(struct cpufreq_pol=
-icy *policy,
->                 return 0;
->  }
->
-> -int cpufreq_frequency_table_verify(struct cpufreq_policy_data *policy,
-> -                                  struct cpufreq_frequency_table *table)
-> +int cpufreq_frequency_table_verify(struct cpufreq_policy_data *policy)
->  {
-> -       struct cpufreq_frequency_table *pos;
-> +       struct cpufreq_frequency_table *pos, *table =3D policy->freq_tabl=
-e;
->         unsigned int freq, prev_smaller =3D 0;
->         bool found =3D false;
->
-> @@ -110,7 +108,7 @@ int cpufreq_generic_frequency_table_verify(struct cpu=
-freq_policy_data *policy)
->         if (!policy->freq_table)
->                 return -ENODEV;
->
-> -       return cpufreq_frequency_table_verify(policy, policy->freq_table)=
-;
-> +       return cpufreq_frequency_table_verify(policy);
->  }
->  EXPORT_SYMBOL_GPL(cpufreq_generic_frequency_table_verify);
->
-> @@ -354,7 +352,7 @@ int cpufreq_table_validate_and_sort(struct cpufreq_po=
-licy *policy)
->                 return 0;
->         }
->
-> -       ret =3D cpufreq_frequency_table_cpuinfo(policy, policy->freq_tabl=
-e);
-> +       ret =3D cpufreq_frequency_table_cpuinfo(policy);
->         if (ret)
->                 return ret;
->
-> diff --git a/drivers/cpufreq/sh-cpufreq.c b/drivers/cpufreq/sh-cpufreq.c
-> index 9c0b01e00508..642ddb9ea217 100644
-> --- a/drivers/cpufreq/sh-cpufreq.c
-> +++ b/drivers/cpufreq/sh-cpufreq.c
-> @@ -89,11 +89,9 @@ static int sh_cpufreq_target(struct cpufreq_policy *po=
-licy,
->  static int sh_cpufreq_verify(struct cpufreq_policy_data *policy)
->  {
->         struct clk *cpuclk =3D &per_cpu(sh_cpuclk, policy->cpu);
-> -       struct cpufreq_frequency_table *freq_table;
->
-> -       freq_table =3D cpuclk->nr_freqs ? cpuclk->freq_table : NULL;
-> -       if (freq_table)
-> -               return cpufreq_frequency_table_verify(policy, freq_table)=
-;
-> +       if (policy->freq_table)
-> +               return cpufreq_frequency_table_verify(policy);
->
->         cpufreq_verify_within_cpu_limits(policy);
->
-> diff --git a/drivers/cpufreq/virtual-cpufreq.c b/drivers/cpufreq/virtual-=
-cpufreq.c
-> index 7dd1b0c263c7..6ffa16d239b2 100644
-> --- a/drivers/cpufreq/virtual-cpufreq.c
-> +++ b/drivers/cpufreq/virtual-cpufreq.c
-> @@ -250,7 +250,7 @@ static int virt_cpufreq_offline(struct cpufreq_policy=
- *policy)
->  static int virt_cpufreq_verify_policy(struct cpufreq_policy_data *policy=
-)
->  {
->         if (policy->freq_table)
-> -               return cpufreq_frequency_table_verify(policy, policy->fre=
-q_table);
-> +               return cpufreq_frequency_table_verify(policy);
->
->         cpufreq_verify_within_cpu_limits(policy);
->         return 0;
-> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-> index 95f3807c8c55..40966512ea18 100644
-> --- a/include/linux/cpufreq.h
-> +++ b/include/linux/cpufreq.h
-> @@ -780,11 +780,10 @@ struct cpufreq_frequency_table {
->                 else
->
->
-> -int cpufreq_frequency_table_cpuinfo(struct cpufreq_policy *policy,
-> -                                   struct cpufreq_frequency_table *table=
-);
-> +int cpufreq_frequency_table_cpuinfo(struct cpufreq_policy *policy);
-> +
-> +int cpufreq_frequency_table_verify(struct cpufreq_policy_data *policy);
->
-> -int cpufreq_frequency_table_verify(struct cpufreq_policy_data *policy,
-> -                                  struct cpufreq_frequency_table *table)=
-;
->  int cpufreq_generic_frequency_table_verify(struct cpufreq_policy_data *p=
-olicy);
->
->  int cpufreq_table_index_unsorted(struct cpufreq_policy *policy,
-> --
-> 2.25.1
->
+
+Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 
