@@ -1,190 +1,114 @@
-Return-Path: <linux-kernel+bounces-800088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2BB1B43344
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:03:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95750B43347
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B08893B11D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:02:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25DE188A138
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDD728751B;
-	Thu,  4 Sep 2025 07:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808F7287260;
+	Thu,  4 Sep 2025 07:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W7NMLZeI"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ds8OpRwO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F001242D86;
-	Thu,  4 Sep 2025 07:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D407628642D;
+	Thu,  4 Sep 2025 07:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756969252; cv=none; b=dOXg1dOQt1SWP+ClxYfx/6bUFUgLdgxPohH3Yop26E5FYZSkJItqB4OSaioeUxxj5iyD7BexmSus4MNhBrlGpC6XGw954lzBOqZMYbhByxZ/znjy51oj3hOQBAV59jq+/uFh8n9ue13jxaVMdU1vj/nJ2UO+NvvxEf5IKjwOgqA=
+	t=1756969428; cv=none; b=cx2nU69U66YmrKTZ1Vs+IiZpIXInOHKXHI9EQvVEnr85Qm3EXKF5RIcORI58TaElqtWB++Np7LHGZyifqMTmz2wV5upLyETqWnlkNo4MBU9ObHJamCoRjVSWrqpjQnZ79laWADxKaW/hLZZNXRRgzPKJOQsridp9/SZlDTUVQFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756969252; c=relaxed/simple;
-	bh=37erLIONhaV3dnD3FCCl2zgDM26oRzL9Ox+wdNor9eE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZMSfCpPAVbmaSWKHI+ipobt/QcboDHyL+o8vOxsWPWj26zvdQY+T10Z4R81ormxmwEGGNPGw3c/4yvW6l/WONKCMrQRQUXg7Ssvg8RIKae5jHxTYSIkfVwPqDz1gyQtgfbKkt9bQiRWVEOF2dgSRyuzF28C2ClzN5i2Pvja7uD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W7NMLZeI; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DNsi1N8ANWHoR2Q6Eu2ZFoyXqqxCVpVHzpLmykJN6Ec=; b=W7NMLZeIKCTe5tsHWthhHxHA7Z
-	1CM5FkomVoWsu0gk9+juyLSnrVjOoPAU0I0OsiTlP32/Ytk7Rm2QF4vQb0/8XRghZEDASC+UTwEge
-	AwbQR1Hct+5rTN4ThUNZawy29bZdgLFwo+hEI4yq6NMW+R476V5NQ6lv3DP8sMdt66OYvI9IUUtbV
-	CoepnEKHlSfy5PdAQ6vfG3fDIhYYA+b+iUXnGCuC9zWvJvLSsxab0YKumo5WtA2prviAgm1DEqotZ
-	VHW8Gh0E7ycyGsX4mLMekcbei1w6XLwxJi0aiABtpTcpVT3AKkqqnTWgIJOzE7aytSc1hYQQ4veoS
-	M0LIJhxg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uu3xT-0000000EVBI-1pV1;
-	Thu, 04 Sep 2025 07:00:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9C15C30034B; Thu, 04 Sep 2025 09:00:35 +0200 (CEST)
-Date: Thu, 4 Sep 2025 09:00:35 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Marco Elver <elver@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Ramon de C Valle <rcvalle@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	x86@kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 5/9] x86/cfi: Add "debug" option to "cfi=" bootparam
-Message-ID: <20250904070035.GW4067720@noisy.programming.kicks-ass.net>
-References: <20250904033217.it.414-kees@kernel.org>
- <20250904034656.3670313-5-kees@kernel.org>
+	s=arc-20240116; t=1756969428; c=relaxed/simple;
+	bh=UN1zBMHZj+zqZW96zkOzVqEldbE0hEA82H0xM74o/rY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=AE6ND8CuZodRH1pICrfkrqi1Bcoj/ZwOIFq1Saaw0d2rUSlypCt5CdLCf1rkkmpl6QPPt90BdO7fC1wCNGJvANzpuwrECv3hZl+0W69bVGP0HpDJdxNVQsbaDhqn6YSaE14LOmCb1unDFU0V4EA98GGHnVyNVmEOWPMnr4St9LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ds8OpRwO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CED11C4CEF0;
+	Thu,  4 Sep 2025 07:03:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756969428;
+	bh=UN1zBMHZj+zqZW96zkOzVqEldbE0hEA82H0xM74o/rY=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=ds8OpRwOm2nWJqHXA4sFLodcjwVGuD6u10uSMjj5wpxrP9RMmkTt0/l7331wfYTDc
+	 b4UacHPUXwzautBlKnb+y/UNY90AbWGaKPkxQjUsAS70sFe5M5k0H3BrQIM637Apse
+	 ytxpZ3nIWuKG06ejJ6ghWguzqxM9rZd/v2wL6VbGUGOIAfd6f/gxOJPOOf6yk65aGb
+	 UTHq1l01gsmVZXAn/Gsi4RfP0/jmfyVmG6cZOewbWmDQy0Wnnqs4UujRKQlhDKoK8P
+	 yBlmFGDCepK7jS8NhLh564mxC8n+4AX+7rykInH1f1CRGxgLVost9rxOoko9/ryh5I
+	 /AoqJK8KBxXAw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904034656.3670313-5-kees@kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 04 Sep 2025 09:03:44 +0200
+Message-Id: <DCJTOIQ4Q0Z5.Q2UE5AQU1X35@kernel.org>
+Cc: =?utf-8?q?Jean-Fran=C3=A7ois_Lessard?= <jefflessard3@gmail.com>,
+ "Wolfram Sang" <wsa+renesas@sang-engineering.com>, "Andy Shevchenko"
+ <andriy.shevchenko@linux.intel.com>, "Daniel Scally" <djrscally@gmail.com>,
+ "Heikki Krogerus" <heikki.krogerus@linux.intel.com>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Javier Carrasco" <javier.carrasco.cruz@gmail.com>,
+ <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-acpi@vger.kernel.org>
+To: "Sakari Ailus" <sakari.ailus@linux.intel.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v4 1/2] device property: Add scoped fwnode child node
+ iterators
+References: <20250902190443.3252-1-jefflessard3@gmail.com>
+ <20250902190443.3252-2-jefflessard3@gmail.com>
+ <aLhAKJBUNQVH1Vmf@kekkonen.localdomain>
+ <DCJC7Q9MZEM3.34FU7BXXZ7UGF@kernel.org>
+ <aLkqE9c9w9m4Axsp@kekkonen.localdomain>
+In-Reply-To: <aLkqE9c9w9m4Axsp@kekkonen.localdomain>
 
-On Wed, Sep 03, 2025 at 08:46:44PM -0700, Kees Cook wrote:
+On Thu Sep 4, 2025 at 7:56 AM CEST, Sakari Ailus wrote:
+> Hi Danilo,
+>
+> On Wed, Sep 03, 2025 at 07:22:29PM +0200, Danilo Krummrich wrote:
+>> (Cc: Javier)
+>>=20
+>> On Wed Sep 3, 2025 at 3:18 PM CEST, Sakari Ailus wrote:
+>> > Do we really need the available variant?
+>> >
+>> > Please see
+>> > <URL:https://lore.kernel.org/linux-acpi/Zwj12J5bTNUEnxA0@kekkonen.loca=
+ldomain/>.
+>> >
+>> > I'll post a patch to remove fwnode_get_next_available_child_node(), to=
+o.
+>>=20
+>> Either I'm missing something substantial or the link does indeed not pro=
+vide an
+>> obvious justification of why you want to send a patch to remove
+>> fwnode_get_next_available_child_node().
+>>=20
+>> Do you mean to say that all fwnode backends always return true for
+>> device_is_available() and hence the fwnode API should not make this dist=
+inction?
+>>=20
+>> I.e. are you referring to the fact that of_fwnode_get_next_child_node() =
+always
+>> calls of_get_next_available_child() and swnode has no device_is_availabl=
+e()
+>> callback and hence is always available? What about ACPI?
+>
+> On ACPI there's no such concept on ACPI data nodes so all data nodes are
+> considered to be available. So effectively the fwnode_*available*() is
+> always the same as the variant without _available().
 
-> @@ -1734,6 +1737,8 @@ static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
->  	 * rewrite them. This disables all CFI. If this succeeds but any of the
->  	 * later stages fails, we're without CFI.
->  	 */
-> +	if (cfi_debug)
-> +		pr_info("CFI: disabling all indirect call checking\n");
->  	ret = cfi_disable_callers(start_retpoline, end_retpoline);
->  	if (ret)
->  		goto err;
-> @@ -1744,14 +1749,23 @@ static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
->  			cfi_bpf_hash = cfi_rehash(cfi_bpf_hash);
->  			cfi_bpf_subprog_hash = cfi_rehash(cfi_bpf_subprog_hash);
->  		}
-> +		if (cfi_debug)
-> +			pr_info("CFI: cfi_seed: 0x%08x\n", cfi_seed);
->  
-> +		if (cfi_debug)
-> +			pr_info("CFI: rehashing all preambles\n");
+What about acpi_fwnode_device_is_available()? Is it guaranteed to always
+evaluate to true?
 
-So this repeated if() bugs the heck out of me ... :-)
-
-What would you prefer, this:
-
-		if (cfi_debug) {
-			pr_info("CFI: cfi_seed: 0x%08x\n", cfi_seed);
-			pr_info("CFI: rehashing all preambles\n");
-		}
-
-or something like:
-
-#define pr_cfi_debug(X...) if (cfi_debug) pr_info(X)
-
-		pr_cfi_debug("CFI: cfi_seed: 0x%08x\n", cfi_seed);
-		pr_cfi_debug("CFI: rehashing all preambles\n");
-
-?
-
->  		ret = cfi_rand_preamble(start_cfi, end_cfi);
->  		if (ret)
->  			goto err;
->  
-> +		if (cfi_debug)
-> +			pr_info("CFI: rehashing all indirect calls\n");
->  		ret = cfi_rand_callers(start_retpoline, end_retpoline);
->  		if (ret)
->  			goto err;
-> +	} else {
-> +		if (cfi_debug)
-> +			pr_info("CFI: rehashing disabled\n");
->  	}
->  
->  	switch (cfi_mode) {
-> @@ -1761,6 +1775,8 @@ static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
->  		return;
->  
->  	case CFI_KCFI:
-> +		if (cfi_debug)
-> +			pr_info("CFI: enabling all indirect call checking\n");
-
-This should be "CFI: re-enabling all..." I suppose, to better match the
-earlier "CFI: disabling all ..." message.
-
->  		ret = cfi_enable_callers(start_retpoline, end_retpoline);
->  		if (ret)
->  			goto err;
-> @@ -1771,17 +1787,23 @@ static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
->  		return;
->  
->  	case CFI_FINEIBT:
-> +		if (cfi_debug)
-> +			pr_info("CFI: adding FineIBT to all preambles\n");
->  		/* place the FineIBT preamble at func()-16 */
->  		ret = cfi_rewrite_preamble(start_cfi, end_cfi);
->  		if (ret)
->  			goto err;
->  
->  		/* rewrite the callers to target func()-16 */
-> +		if (cfi_debug)
-> +			pr_info("CFI: rewriting indirect call sites to use FineIBT\n");
->  		ret = cfi_rewrite_callers(start_retpoline, end_retpoline);
->  		if (ret)
->  			goto err;
->  
->  		/* now that nobody targets func()+0, remove ENDBR there */
-> +		if (cfi_debug)
-> +			pr_info("CFI: removing old endbr insns\n");
->  		cfi_rewrite_endbr(start_cfi, end_cfi);
->  
->  		if (builtin) {
-> @@ -2324,6 +2346,7 @@ void __init alternative_instructions(void)
->  
->  	__apply_fineibt(__retpoline_sites, __retpoline_sites_end,
->  			__cfi_sites, __cfi_sites_end, true);
-> +	cfi_debug = false;
->  
->  	/*
->  	 * Rewrite the retpolines, must be done before alternatives since
+If so, to you plan to remove device_is_available() from struct
+fwnode_operations and fixup all users of fwnode_get_next_available_child_no=
+de()
+and fwnode_for_each_available_child_node() as well?
 
