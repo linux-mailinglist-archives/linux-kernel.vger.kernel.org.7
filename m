@@ -1,71 +1,115 @@
-Return-Path: <linux-kernel+bounces-801087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C507B43FAD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:54:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED46B43FB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99B367B60E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:52:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F6B17B76DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6A2303C96;
-	Thu,  4 Sep 2025 14:53:26 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F404E30276C;
+	Thu,  4 Sep 2025 14:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+LWy6/M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4F91EB1A4;
-	Thu,  4 Sep 2025 14:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E44A1DF97F;
+	Thu,  4 Sep 2025 14:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756997605; cv=none; b=HqJo6UMU07qYgJdm2LJ9veSXF9dF/pl6/BR4ahq1rQLi/bPNWAoPcMcFlgXORb/vEHFonpICyCUKltPHj7s3Vl3cLc2D1Tgxf1jnMOP2zBl8QDWUBz7UG0ouHR98Rs+WOgWcaclcKMyhD60aVYV2VQfex54EAIzkd/KO3qSjBUk=
+	t=1756997657; cv=none; b=S/kbXnbB4eja5tRT5cOuZt/M2dBH1ldxg/JorA2ZvSqcStKYZLhW43HjpFokPtGyg3DqdKxgUgIX0LjELVCU7dEdA2pbDWNhGEuEStb6V30BAEDAyf056GXRgv3RGUWiLJfmi260qPB2s26h0zgvFYdnFv+SFAsr9CWBUFV5dTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756997605; c=relaxed/simple;
-	bh=KSx/TiJ8ZczLmapgz5FLegPMs0j6YLk3ABF+H2N+FoE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ELEj3OQo8WvCySjJOiSEfDVS2BEjdgmzcjxDSpopT8Bx2MKLVm+t3uHWy/EdGALd58nta2Q3zLHZ7ZcaMBwY4PHRTCk2/g/cfvxG1gAMeEmaJILqyHRcNYeYnb4dZ70HkYbYT19VGwQsmUUbrNRLstcNe0yX3T9o78K9YyWpqug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from [IPV6:2a01:e0a:3e8:c0d0:74c4:9b58:271e:cbdf] (unknown [IPv6:2a01:e0a:3e8:c0d0:74c4:9b58:271e:cbdf])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 9524441C88;
-	Thu,  4 Sep 2025 14:53:21 +0000 (UTC)
-Authentication-Results: Plesk;
-        spf=pass (sender IP is 2a01:e0a:3e8:c0d0:74c4:9b58:271e:cbdf) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a01:e0a:3e8:c0d0:74c4:9b58:271e:cbdf]
-Received-SPF: pass (Plesk: connection is authenticated)
-Message-ID: <3e283264-e53e-4d16-a0f1-401f1acbd546@arnaud-lcm.com>
-Date: Thu, 4 Sep 2025 16:53:20 +0200
+	s=arc-20240116; t=1756997657; c=relaxed/simple;
+	bh=NRF4KZuR9OnhWyUxnCyXlXsD7UEatus8Z/yPvb0aXZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KFcZyMj6sSS707+aAabhTE0FkFBu6lfsqazVwjpyBFwk4HMi5sVbb+MIDAGLhiAlQwUEumEPhbWw6/5QncdJuEekKICaL27grYBj9SiOXSO9EyU91gAub1nE3417N3aq8pKkqn8zgYzVC+ASwoEbKtDsB6tTQc8PAdjlg4fGGh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+LWy6/M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB104C4CEF0;
+	Thu,  4 Sep 2025 14:54:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756997656;
+	bh=NRF4KZuR9OnhWyUxnCyXlXsD7UEatus8Z/yPvb0aXZE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=f+LWy6/MWEkLk+OTSgkzAZdn0BeGqlNte6BtXqlVOHPOPfakyDvEJ14A8FPbP+67s
+	 Oofeo3CSXSTdweT5Cw4bjPJCiMbGeXLKRjKdZYg7gzcePiWN7nO0mSvuEmlETpsxSI
+	 LsK+enWN49uLWwhMdtxm0qI3ILic5Ew66CY3SrlyPfzn+vtofuhZEg9gZjyTWD5N1M
+	 k6xiA6321d7CE/a728QdZJTkL28xd1ZsXbej1rTyYX/k7KUUJBWbdSuKRERC4f7QG1
+	 8V9D461NyC3Whvaj1g2oqiqsHjhNxU8tjdJ+60OyOqIfDjqmP5Rvo5DhsL+efFqtWh
+	 kx67HGkC8gZKQ==
+Date: Thu, 4 Sep 2025 16:54:11 +0200
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Jack Wang <jinpu.wang@cloud.ionos.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2][next] scsi: pm80xx: Avoid -Wflex-array-member-not-at-end
+ warnings
+Message-ID: <aLmoE8CznVPres5r@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: syztest
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <6887e3c8.a00a0220.b12ec.00ad.GAE@google.com>
- <20250904141113.40660-1-contact@arnaud-lcm.com>
- <20250904074752.352982bf@kernel.org>
-Content-Language: en-US
-From: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
-In-Reply-To: <20250904074752.352982bf@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-PPP-Message-ID: <175699760199.24351.8490463781548650169@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Remove unused field residual_count in a couple of structures,
+and with this, fix the following -Wflex-array-member-not-at-end
+warnings:
 
-On 04/09/2025 16:47, Jakub Kicinski wrote:
-> On Thu,  4 Sep 2025 16:11:13 +0200 Arnaud Lecomte wrote:
->> #syz test
-> You are hereby encouraged to not CC the vger MLs on your attempts
-> to get your patches tested by syzbot. It's not necessary.
->
-Hey, sorry for the inconvenience.
-Will be removed.
+drivers/scsi/pm8001/pm8001_hwi.h:342:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/scsi/pm8001/pm80xx_hwi.h:561:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+Changes in v2:
+ - Remove unused field residual_count. (James)
+
+v1:
+ - Link: https://lore.kernel.org/linux-hardening/aLiMoNzLs1_bu4eJ@kspp/
+
+ drivers/scsi/pm8001/pm8001_hwi.h | 3 ++-
+ drivers/scsi/pm8001/pm80xx_hwi.h | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/pm8001/pm8001_hwi.h b/drivers/scsi/pm8001/pm8001_hwi.h
+index fc2127dcb58d..170853dbf952 100644
+--- a/drivers/scsi/pm8001/pm8001_hwi.h
++++ b/drivers/scsi/pm8001/pm8001_hwi.h
+@@ -339,8 +339,9 @@ struct ssp_completion_resp {
+ 	__le32	status;
+ 	__le32	param;
+ 	__le32	ssptag_rescv_rescpad;
++
++	/* Must be last --ends in a flexible-array member. */
+ 	struct ssp_response_iu  ssp_resp_iu;
+-	__le32	residual_count;
+ } __attribute__((packed, aligned(4)));
+ 
+ 
+diff --git a/drivers/scsi/pm8001/pm80xx_hwi.h b/drivers/scsi/pm8001/pm80xx_hwi.h
+index eb8fd37b2066..b13d42701b1b 100644
+--- a/drivers/scsi/pm8001/pm80xx_hwi.h
++++ b/drivers/scsi/pm8001/pm80xx_hwi.h
+@@ -558,8 +558,9 @@ struct ssp_completion_resp {
+ 	__le32	status;
+ 	__le32	param;
+ 	__le32	ssptag_rescv_rescpad;
++
++	/* Must be last --ends in a flexible-array member. */
+ 	struct ssp_response_iu ssp_resp_iu;
+-	__le32	residual_count;
+ } __attribute__((packed, aligned(4)));
+ 
+ #define SSP_RESCV_BIT	0x00010000
+-- 
+2.43.0
+
 
