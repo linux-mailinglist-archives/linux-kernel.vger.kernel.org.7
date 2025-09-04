@@ -1,219 +1,245 @@
-Return-Path: <linux-kernel+bounces-801574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E437FB446F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:06:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6729DB446FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F05F516D6CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:06:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 197787B4A51
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B138B27AC4C;
-	Thu,  4 Sep 2025 20:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6D227B351;
+	Thu,  4 Sep 2025 20:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvOkBsqE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="SGWXpl3X"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012057.outbound.protection.outlook.com [52.101.66.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B47277030;
-	Thu,  4 Sep 2025 20:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757016393; cv=none; b=VoZuBtgI9G06s6xCR/2uoOmhfMKb4ulTLOVkdSCZHlQBpDDS6c9WTDILInL8T49jqkH08SKoIWvN1hy91vPLX/6X+F0x01BvUNjdd02t/ZAadz7DDl9PUHmA+9tIKwznT3m+xPT/lG7mWLQ0/bkWrTFf19pelzW7V7EsOE2PaOE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757016393; c=relaxed/simple;
-	bh=8sflmMM9VERUA+boqGi1GL6vzSZZVoB8dkgxOo5XWdE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mabe0KdEIFeq+DiHJfKing5kFzpjK9u5BiXb6bN/VrDWnW36T/7hDXajZJmliEJ9rUXE6qMce6m1FL3xmp4LxS+QAAuj0CVD5tivUym3KZVLEMT+fHKz1Dd/qPkSCSdAOv6b/Oje7lULspOk2/R1dUWjiq9tiAOiTQ3W6LJKKtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvOkBsqE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61044C4CEF0;
-	Thu,  4 Sep 2025 20:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757016392;
-	bh=8sflmMM9VERUA+boqGi1GL6vzSZZVoB8dkgxOo5XWdE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YvOkBsqEiJQMrYCg5s3O05y+7UzRW9N5WIqKeVib4Cj6zb0e9W0KVF4vhOlEcbnRu
-	 3CUEsB16xTmbDkCaZpefKBt4PGkYkAF/Clgzg4/FXibqmrP/kbDqyQN4rEaDwTdNTB
-	 Rf+hbYuBs8kz72P3Rn8E7EDNYAJ7kYm4FL0qKzaSxUdzc53jYoIRuI5p+3JsiFsOX/
-	 SRiIxTfwGdu+4eYaslN1hA3hiObpdGF/bJuQ/69gsyPDMwSaPG9xwU+wFXOH1yMKOm
-	 OJYt3cYmBcqB9aHKKMjHq48NX1aZiRVsw4zdepgcPLBjHKqOrNWeXCzPknZLuFSvf8
-	 ykINLc6pMOHRA==
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7456b27fac1so1563672a34.2;
-        Thu, 04 Sep 2025 13:06:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW4VZ5bJweBRDzfxU9dZfIHcXGOPaJtKggcAlxG8n3txYlwEPW98jOz1Mc4C5vBEa3PgSopthcTdXI=@vger.kernel.org, AJvYcCXTOiUMUU70mXEdyg+LnJoBCynzrerpnXrBANKuauIImWdgO+XirRI3Nb4lwB0aK9qsmiog1Ehqzf83sdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz35crRml58WrelNUsnlq+FX9K7pv8Px0W6re0jDQBEBXHsg3Hy
-	cC8zkZwMOPnF4Qrospq9HyGH1lJ2UvXW9YXXtWlD9773Qd5ZAM+IxxYZrE/aqlFQfJX7T9KTY29
-	FccdzgQZ8O1DxyWECA/wA6eZd5iKixzU=
-X-Google-Smtp-Source: AGHT+IFmwswv9DnPxP2er9PFfSzw0atJNw24WOUl7SUel+Fn6ts15ddcSScUEhJejvARV/If4bjRsBN7UNW5wb65FpI=
-X-Received: by 2002:a05:6830:82f2:b0:746:d22b:11f2 with SMTP id
- 46e09a7af769-746d22b1b32mr1430823a34.4.1757016391707; Thu, 04 Sep 2025
- 13:06:31 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07EF27A123;
+	Thu,  4 Sep 2025 20:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757016426; cv=fail; b=Evyh/1N0LcrqLAXIojmdv82FasyFrsrnKw19wzLatjnkU985acwRRJL33U0bGn3a3YX3tAwZdszOZy5V0McqBSa06D2EuvEIhKq9CPdOaq7nYEo9j45hT5pv+0GLwySiHBbpQrPvN0XgXj1xQzyCDsa4z+CyWdhXocZrxnPwcPs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757016426; c=relaxed/simple;
+	bh=oR6L9YmZOj62y4L1uO8TLLXnxz4LgsT5kIgwb/aIpuw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=YcqZ3kJ5fP0t3gRs5h6KAARE2m8uRt+rIL2V5DgQJI/Kb6zikhq1BfpwCxBZ+DtELG+W3PkGEIUw87NtGvf0c197F2p4Q5NvepbII0MzzSQw5kIq1jTB48uIR5SJb55CPvACaKGeYbO/Qnc6VxfmlKJOYa9c675L5qUmN3HpgvE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=SGWXpl3X; arc=fail smtp.client-ip=52.101.66.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=baOdcNSMXymQ9eSiQpXXRDEnaXIkbhZvEEPEjGAdbhsB+WJfFYMJ9zkcc98tFPYy2jwG5C1JIBGSkkKkR3sbDQacHk3mGRFkJynFzhiifQyBqWyoiuH0rB23ZmlT9zUuIEhd/UzERQwcJfq4m5xOGSDsp3GvFurk9tBhByCsqHel3h3O0LXKeSk7fZhOSomJyKk9bXfNsNwDyfHDLy0Z0JATI84iedq4axC9rQcbI5TSeJJuHXUUsHlXkp/sTzzMHHcfh2nxmOIBfyejgkcIRfKIeyRm7eizDPooNddFsyu4ME5u3L000bCaY/s5K9gfApYALJiStUqVw7aICuQ6qw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=70VnzXW8JQflG7VmaONu1zQN8AFUrTykyFFuM5x/ULw=;
+ b=qVaj6qh9HXlRODrxYO4hXlxXd3kdPHOm5Mqht68gx+baHLd9lIsX+PHXHRMLNd1y4+KrMpW1K+kviw/kRRB7W9W4AMgPtoVjXzzRsDrNqs8mdDqKrVkWq6wIywimFE567b514TzZwKaJk2mBTCtyGkzjwCy4aznlpKkG3TSN8Mt48mpO0qJw/PGjBpYOvu9pZKeP0RJNo3doffGmrHaX/Kwmj3ac108pl0ae06xxdYyHy59O0Ob/mVsEImwAivPTLosiedz6vsAmS70wHdyVeGjiSzoSUmN/mCkFlhRdwcwFAffrBkpsEp50YFvDNlOwTubD8zKHJkLGfvxY8wKRcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=70VnzXW8JQflG7VmaONu1zQN8AFUrTykyFFuM5x/ULw=;
+ b=SGWXpl3XFDi3wcZPhgtcRFyb0W9YH4qyVOwzot0S4DYRFEB4iS+bmcjaKjT5/NNONGCWYx2nc7xukSdnT9wP75d/BeSs/VdZTYLNix8GbAPLw1KvG9vnTwgLelz/KZgaj7NrNdyA41kjm6UfX7zBvGNYn56HKThSGjmwdjKFDhmFpqxjvg0P5hP1TrfGBH8q6p7s+5LUlMFFpK3nSpJ48zJU0Ew7jTB2HAFAhvmBmAJ+1aZM0hJ4eoyf/6Ah8zfs3Ej9G6U+ckiO/h9vWrHVJr+z49CtzTUvOExlHqcwu/S04g2Ki0nYv1diDSDgzRRLC73un6h2TiWdy0jvf/sqtA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by PA4PR04MB7837.eurprd04.prod.outlook.com (2603:10a6:102:ca::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Thu, 4 Sep
+ 2025 20:06:57 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd%5]) with mapi id 15.20.9094.015; Thu, 4 Sep 2025
+ 20:06:57 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] dt-bindings: input: convert max11801-ts to yaml format
+Date: Thu,  4 Sep 2025 16:06:37 -0400
+Message-Id: <20250904200641.531897-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR13CA0094.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c5::9) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828034646.10700-1-tuhaowen@uniontech.com>
-In-Reply-To: <20250828034646.10700-1-tuhaowen@uniontech.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 4 Sep 2025 22:06:20 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hekD1PyC4BrX7HCO2hTZhyTGSyjfQYXY5r5v3QMQfscw@mail.gmail.com>
-X-Gm-Features: Ac12FXxsZKiEN2e_hCBDWZMIH7MjBykmdvz6PA47uOJM9tbif_moxUYZYtvTyjA
-Message-ID: <CAJZ5v0hekD1PyC4BrX7HCO2hTZhyTGSyjfQYXY5r5v3QMQfscw@mail.gmail.com>
-Subject: Re: [RFC PATCH] PM: Add configurable sync timeout to prevent suspend hang
-To: tuhaowen <tuhaowen@uniontech.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Pavel Machek <pavel@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	huangbibo@uniontech.com, Saravana Kannan <saravanak@google.com>, 
-	Samuel Wu <wusamuel@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|PA4PR04MB7837:EE_
+X-MS-Office365-Filtering-Correlation-Id: 500f06f2-dcd5-43ce-056d-08ddebee9a01
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|1800799024|19092799006|376014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?O2cJ7POGOJcO6fT02xnXe7d3I+n0dTi5el/v9+H/n+gHcSOeQS8QYF0ULWCO?=
+ =?us-ascii?Q?OBXZBnUjdg73AS7tzEUzf1HJfTQg4QpA3aWTuwTFPJMOZNT+uRjWMUQ3KNWa?=
+ =?us-ascii?Q?Uo/nd4n7BQq6++yazxDt+o0oBd0DytOcUGmBHgdqaYI0VQ0qWJr2IU4mI9/5?=
+ =?us-ascii?Q?YvYW3BKZnR8gjiKOcGywJ6/05neofZo8TatN1JVPwITQsM4guNwIfll9zH/Y?=
+ =?us-ascii?Q?1rFoenbFTn4iqpPSuRbNnBUl9S2gRxyfacug4GdiEXNM+yU2YE/hFgi0di07?=
+ =?us-ascii?Q?qQaPuLLabcc5a6sD+mw1AVbhcxqpnFU5p+lQZYHyIK+kY6xJPGI7Dtdi1eN8?=
+ =?us-ascii?Q?u4sCJgESsgB4xgST8nJbRyNH/jGkFRpEhyaaGqZ3pv9BIWVOX3NkzpDBblnU?=
+ =?us-ascii?Q?mnkYhkPhkV71exeq21I0IIPtCfgp0WqMLIMaLDtskALnT9CwuDZOszXeePwA?=
+ =?us-ascii?Q?B8cpE00pn8a9VHnJCWwPHjnfm3QxVO5ndcjMHyQDESGPlg7EebnbgdTZAxiZ?=
+ =?us-ascii?Q?Ih+Rj1HbFkw+NRUeHRJ3ZZnnGo+tFJfgLx5qaBIEcBF699uUUfQPWH91SPAn?=
+ =?us-ascii?Q?bHvd8fbIq7G31j+0Gsai1EuJZBgdBSs7L46ZECbADoHa/WJBKy6O2sesC1Iw?=
+ =?us-ascii?Q?GZzQC4DnL/xgybn/mxmZVfycWg1C2dpCSUWRj5Mx6OY3kxVzrCR8XJ5v1mO/?=
+ =?us-ascii?Q?PmtMKQE4ljb23pIZ/JYEvDC7zDdVX6R9BwvVPaomj2mI0wjd2UhqIU9xMi/B?=
+ =?us-ascii?Q?6b/JfRW6BI+K+txieUc95MJKkXdzlXDKPxGfdjfO2zJWvVdPZh/CLEdbgxuo?=
+ =?us-ascii?Q?uukM+0t19Dvw/CL6hbtMMn9wvlFlit/xRhBQxClcTf3pzntnQThq7+EDZ+Wt?=
+ =?us-ascii?Q?/Bnkvhxmy4ew3KAV9h3hW0AIOT+WaklZDsaC180ws6yUWKO4QVWRrTOxj0Me?=
+ =?us-ascii?Q?9NJ5jN07UEeexl5Dgk605dncSjQ6N9OAAUZywohfbG9UgVF1WSFZpD6bQEZP?=
+ =?us-ascii?Q?fpgoxIO8btw0zh5/pTEcAij4IhKkK1/mJVDhbvg2GPuD6cOln+bOdUPXZjtK?=
+ =?us-ascii?Q?CU8RzSOi1vDf9UKZ/xytdwAuKN3432+yXzhSXeSe5Vlz8QZa2cd13f3z7KjP?=
+ =?us-ascii?Q?8BsR0dyMFuDrLp1aBhby0cIg3MCAT5TM3jp9V5l8P4SdpJDXdPJYK2mV+lQv?=
+ =?us-ascii?Q?RLWWHgwhocKySVQulD/VQG0AYwP5QCPvqGLmZIc2vbrDK+qBRc5xBuG6BXM9?=
+ =?us-ascii?Q?vDi/wOEQMl7i8BJkbvZh6EXYQOliPgMDaXbTKx2+3Ak8Ss5Xf6Rn5tDjjvd2?=
+ =?us-ascii?Q?tDSJM32yFTdM9m5yvjhQtCl49+gAPwZhXDsrY4g99DQNzbdHmfewFmpS1Vms?=
+ =?us-ascii?Q?bPDr9wWBYwBEw2gQGPt4PikOFi6Wx5Rog3wVyGJzFQLI1PKR2UaGVzdCYsD8?=
+ =?us-ascii?Q?lmvfMxoK8rTCfLCgkxP8OLfcgnA6IspK?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(1800799024)(19092799006)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Puiy+1OpZ3AsM9qvBAeG/dqsr4pCMdjyyswbqxRe+EbCeLgK1I5jkpOr07ZW?=
+ =?us-ascii?Q?AC26TviyKz0Zrby5ngfSAY5cwn2723w5w33T6O5wxq0ioX5v6R6qbxjwlbUZ?=
+ =?us-ascii?Q?TqNC0y9+IYvT6lQXWeisWE5V/AXnN5vLF7Kij9sPy4bPSxq5pfigfy+dQE3F?=
+ =?us-ascii?Q?9837s4pEgbPEvIoyvOn+ab3pNBXuaR4HWECjE0/N+xqU5BvZv1viiqdT1A9Q?=
+ =?us-ascii?Q?arCvTZlXKEof5h477jsqmxiLwesI8md2S1E9MAFIowrWtZgs1Pa+Ey8UvMRy?=
+ =?us-ascii?Q?m88bJ22V23dAlBjuUvhWSJuRboSwhcmmRz7Skux4CpyRNXk/pR48TD9L72XA?=
+ =?us-ascii?Q?9ZxWpayy7xBi6jC9k8QctGMdntAOXyn16uT56z9J/FuiSTxHLdMVMF9PZLEa?=
+ =?us-ascii?Q?XZgYOYmy/TRszVNIuveCbfJ/CkxKYjb3zBHav8cuW92QDO1VlSZfTl8zOS9e?=
+ =?us-ascii?Q?c2hGGNVglmqSH7UZfESRHaahga86zigEGhqqq1FeoMslrLu9+gTMqo531FnX?=
+ =?us-ascii?Q?F8D5RxT6lj9KUucjNMbAFtLTjfgrcjzD1tQXSAc7CUqmyNsOxzyT+VE0OvMZ?=
+ =?us-ascii?Q?Hhzs6Gtp69naveOoFJRN+5nfkGm12F+FvHZLop1zWxc4NRsmF9kubxo9ZGRA?=
+ =?us-ascii?Q?kmtw7OyXfdKyrsRJLnNkQ74FBYKh+0olAat5LXjtvDTCt5o3HcuA+8c9dAAw?=
+ =?us-ascii?Q?OhdotSOn6YrUO6tj1pFTlybOBLgY7fgfdnHeGjFaZ2q0gXIa+NniDs1WQAx1?=
+ =?us-ascii?Q?CcymNovfwPjGqd1Coa80fgWZRdREooMfuUuuobhH+bfSSg9CqcXCeHSQ+Pcl?=
+ =?us-ascii?Q?VqiDDFmyjJ+J/AVXhqqaxdKpXgCqM5Lqki9QcFG4oSqqvg7FoEkzoQ6d5drY?=
+ =?us-ascii?Q?9DDjb8CRCRAt53IXQ095/2aGiBq1yMOyellPRh+UeCwj7hXyCpvUf517KXEv?=
+ =?us-ascii?Q?CZkupj4+ZYUdIBDCGEPXtog7UgWr1Uq4lpnMDYMOi1e13bAYr7iSUy71qGPO?=
+ =?us-ascii?Q?QyNrS9Siz8/Td8W8u8RxX9lxhSr9doOtnAagAI9LKoVwDgY9gxVeiFV1VK37?=
+ =?us-ascii?Q?lUBwxNncAhL4S7NRKu417IkDlHV5f7XXWjPuiZtpIT1RmMdTOEUcE/N1ZBO/?=
+ =?us-ascii?Q?/KjZEPQQJCNW865dlAXrt9GiqvTwkeZfGuU/Hx8odnJ7ClGS5xilUG2qtFuT?=
+ =?us-ascii?Q?GQXBNTruQgTa5nEvUrt3yn1tR8TRkwBuQQfriiLgLnPTq8avb7k9ORLMoxB3?=
+ =?us-ascii?Q?vLLho3MrSyTz7+fCfSssdKfym/uBPHFOVOeWscoHMvix8tUvGhjOBdxDaPzF?=
+ =?us-ascii?Q?+7roxRNYS40sKRag32oAlgsBSjXQGH8EgT9WcD13e3jy5KdVSjx5iDXDw3rj?=
+ =?us-ascii?Q?IgKI/7Nb6KvmpeY/9TU7ds7jaOvlyEwA58ulydlmnvw8kk46nftxiIhH5Kku?=
+ =?us-ascii?Q?D51Bu8+BGhlHQi/expZ/q4ZBzLfNUwW+KCunWt4Z9qhOkptRA1bajNTBk45q?=
+ =?us-ascii?Q?3LfoSJXo47d2INZLCVY62JNrGBMARuWfvgm9LQi3HbgnxQTmQxDxNpAR0DIP?=
+ =?us-ascii?Q?U5AM4L/Go9f3JWMe3EfYyY7pnhgcrLULD2SjqVsP?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 500f06f2-dcd5-43ce-056d-08ddebee9a01
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 20:06:57.7393
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Qv3liXZiLYkYW2rh2sUr7fzSGHUa0UIZ6jUa8cMQwiUtWqq/ejPx4tS+E8yzptbPrvwKw8mPghgBSLVpcwJpMg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7837
 
-On Thu, Aug 28, 2025 at 5:47=E2=80=AFAM tuhaowen <tuhaowen@uniontech.com> w=
-rote:
->
-> When users initiate suspend while large file copy operations are in
-> progress (especially to USB storage devices), the system can appear to
-> hang with a black screen for an extended period. This occurs because
-> ksys_sync_helper() in the suspend path blocks until all pending I/O
-> operations complete, which can take several minutes for large file
-> transfers.
->
-> This creates a poor user experience where the system appears
-> unresponsive, and users may force power off thinking the system has
-> crashed.
->
-> This RFC proposes adding an optional timeout mechanism for the sync
-> operation during suspend. The implementation includes:
->
-> - A configurable timeout (default: 60 seconds, disabled by default)
-> - Module parameters for runtime configuration:
->   * sync_on_suspend_timeout_enable: Enable/disable the timeout feature
->   * sync_on_suspend_timeout_ms: Configure timeout duration
-> - Uses a separate kernel thread to perform sync with timeout monitoring
-> - On timeout, suspend is aborted with clear error messaging
-> - Maintains backward compatibility (disabled by default)
->
-> Questions for the community:
->
-> 1. Is this approach acceptable for addressing the user experience issue?
-> 2. Are there better alternatives to handle long-running sync operations
->    during suspend?
+Convert max11801-ts to yaml format.
 
-Yes, please see
-https://lore.kernel.org/linux-pm/20250821004237.2712312-1-wusamuel@google.c=
-om/
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+ .../input/touchscreen/max11801-ts.txt         | 17 -------
+ .../input/touchscreen/maxim,max11801.yaml     | 46 +++++++++++++++++++
+ 2 files changed, 46 insertions(+), 17 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/max11801-ts.txt
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/maxim,max11801.yaml
 
-> 3. Should the default timeout value be different?
-> 4. Any concerns with the implementation approach?
->
-> The feature is disabled by default to ensure no regression in existing
-> behavior. When enabled, it allows users to abort suspend if sync takes
-> too long, providing immediate feedback rather than an apparent system
-> hang.
->
-> Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
-> ---
->  kernel/power/suspend.c | 56 +++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 55 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-> index 8eaec4ab1..feb1583c5 100644
-> --- a/kernel/power/suspend.c
-> +++ b/kernel/power/suspend.c
-> @@ -30,9 +30,25 @@
->  #include <trace/events/power.h>
->  #include <linux/compiler.h>
->  #include <linux/moduleparam.h>
-> +#include <linux/completion.h>
-> +#include <linux/kthread.h>
-> +#include <linux/jiffies.h>
->
->  #include "power.h"
->
-> +/* Sync timeout parameters */
-> +static bool sync_on_suspend_timeout_enable;
-> +module_param(sync_on_suspend_timeout_enable, bool, 0644);
-> +MODULE_PARM_DESC(sync_on_suspend_timeout_enable, "Enable sync timeout du=
-ring suspend (default: false)");
-> +
-> +static unsigned int sync_on_suspend_timeout_ms =3D 60000;
-> +module_param(sync_on_suspend_timeout_ms, uint, 0644);
-> +MODULE_PARM_DESC(sync_on_suspend_timeout_ms, "Sync timeout in millisecon=
-ds during suspend (default: 60000)");
-> +
-> +/* Sync timeout implementation */
-> +static struct completion sync_completion;
-> +static struct task_struct *sync_task;
-> +
->  const char * const pm_labels[] =3D {
->         [PM_SUSPEND_TO_IDLE] =3D "freeze",
->         [PM_SUSPEND_STANDBY] =3D "standby",
-> @@ -61,6 +77,40 @@ static DECLARE_SWAIT_QUEUE_HEAD(s2idle_wait_head);
->  enum s2idle_states __read_mostly s2idle_state;
->  static DEFINE_RAW_SPINLOCK(s2idle_lock);
->
-> +static int sync_thread_func(void *data)
-> +{
-> +       ksys_sync_helper();
-> +       complete(&sync_completion);
-> +       return 0;
-> +}
-> +
-> +static int suspend_sync_with_timeout(void)
-> +{
-> +       unsigned long timeout_jiffies;
-> +
-> +       if (!sync_on_suspend_timeout_enable) {
-> +               ksys_sync_helper();
-> +               return 0;
-> +       }
-> +
-> +       init_completion(&sync_completion);
-> +       sync_task =3D kthread_run(sync_thread_func, NULL, "suspend_sync")=
-;
-> +       if (IS_ERR(sync_task)) {
-> +               pr_warn("PM: Failed to create sync thread, performing syn=
-c directly\n");
-> +               ksys_sync_helper();
-> +               return 0;
-> +       }
-> +
-> +       timeout_jiffies =3D msecs_to_jiffies(sync_on_suspend_timeout_ms);
-> +       if (!wait_for_completion_timeout(&sync_completion, timeout_jiffie=
-s)) {
-> +               pr_warn("PM: Sync operation timed out after %u ms, aborti=
-ng suspend\n",
-> +                               sync_on_suspend_timeout_ms);
-> +               kthread_stop(sync_task);
-> +               return -ETIMEDOUT;
-> +       }
-> +       return 0;
-> +}
-> +
->  /**
->   * pm_suspend_default_s2idle - Check if suspend-to-idle is the default s=
-uspend.
->   *
-> @@ -585,8 +635,12 @@ static int enter_state(suspend_state_t state)
->
->         if (sync_on_suspend_enabled) {
->                 trace_suspend_resume(TPS("sync_filesystems"), 0, true);
-> -               ksys_sync_helper();
-> +               error =3D suspend_sync_with_timeout();
->                 trace_suspend_resume(TPS("sync_filesystems"), 0, false);
-> +               if (error) {
-> +                       pr_err("PM: Sync timeout, aborting suspend\n");
-> +                       goto Unlock;
-> +               }
->         }
->
->         pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[s=
-tate]);
-> --
-> 2.20.1
->
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/max11801-ts.txt b/Documentation/devicetree/bindings/input/touchscreen/max11801-ts.txt
+deleted file mode 100644
+index 05e982c3454eb..0000000000000
+--- a/Documentation/devicetree/bindings/input/touchscreen/max11801-ts.txt
++++ /dev/null
+@@ -1,17 +0,0 @@
+-* MAXI MAX11801 Resistive touch screen controller with i2c interface
+-
+-Required properties:
+-- compatible: must be "maxim,max11801"
+-- reg: i2c slave address
+-- interrupts: touch controller interrupt
+-
+-Example:
+-
+-&i2c1 {
+-	max11801: touchscreen@48 {
+-		compatible = "maxim,max11801";
+-		reg = <0x48>;
+-		interrupt-parent = <&gpio3>;
+-		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/maxim,max11801.yaml b/Documentation/devicetree/bindings/input/touchscreen/maxim,max11801.yaml
+new file mode 100644
+index 0000000000000..4f528d2201992
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/touchscreen/maxim,max11801.yaml
+@@ -0,0 +1,46 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/input/touchscreen/maxim,max11801.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: MAXI MAX11801 Resistive touch screen controller with i2c interface
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    const: maxim,max11801
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++allOf:
++  - $ref: touchscreen.yaml
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        touchscreen@48 {
++            compatible = "maxim,max11801";
++            reg = <0x48>;
++            interrupt-parent = <&gpio3>;
++            interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
++        };
++    };
+-- 
+2.34.1
+
 
