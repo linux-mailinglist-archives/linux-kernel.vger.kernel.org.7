@@ -1,283 +1,218 @@
-Return-Path: <linux-kernel+bounces-800977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52BE1B43E6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:17:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 868EBB43E67
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1EB1C27417
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:18:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F9031C273FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58393090DD;
-	Thu,  4 Sep 2025 14:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0624307AC4;
+	Thu,  4 Sep 2025 14:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PskcboAi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fbCncYCu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D441DDC23;
-	Thu,  4 Sep 2025 14:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756995438; cv=fail; b=Kb9kqcqw/i0eOzO8YO7CqKVbPyJ4UqpnZGHGYp7jN6B2nR4nxnPvnx9vXVtl8jQMlDatgtaQu55INKLqtdO3h4T+9WjxIqnXihPU96nFTKlKHXAYWFcCPrdYdsF5Re/5asnJlFNHX9ueOHCX+pA2Zd41MbtbO08WqpmepY+3BWs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756995438; c=relaxed/simple;
-	bh=4PABV4anIOdr+5RIW+WQ5YD6GzSWL0f6vp05jvoQffQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=je93b2LVOtk9gjCn3kUm8hzrPjSP7hH1hqQLHXM8uGhSzAsQw3I1rO8lAAboUU35hYX+6c43yUUELzsAk4Bd4a0O2ChU0w4kms+rmSM8tkQQQKufM6qhKUzD3NCxch+l0Z1ThPNFJI1PQc8ES0RYhTGpmgGYtZb1B8GTXlJVjqg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PskcboAi; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756995437; x=1788531437;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=4PABV4anIOdr+5RIW+WQ5YD6GzSWL0f6vp05jvoQffQ=;
-  b=PskcboAi/OfvJcZIBuAE2yydbqloWH7lUXbjAgLJUFKJJg9YiZPoWOoz
-   VX+kmbyOEUbwSgScdRmjLPwdIjqQAkHJXFjbkpBTZ4RLJ8LJgthmDSXSE
-   e+h6LNrwK72duQda+9llHG2NX6zoSKFI7CO5DKVj+gbIS789WsOgovky5
-   /LQgUbkI5QVIi2ftysLF4A6OK5mxlNXm+rcNIdjgQTCSKRrkPOhXfkwRQ
-   h1ShnYRJR31nHWmnasNm7YSgxw3my/95dxdNEt2skjO73ZHVq89SbilXv
-   C0wzMYIdRsYfi2Akx2PQDD00fM1Dr1VC2McV7lTuOaQvvR21e+LEtgdwz
-   Q==;
-X-CSE-ConnectionGUID: GbbiHiYtTx6WAQKRVHKLtw==
-X-CSE-MsgGUID: Jez5pHgzS7auPYupB4L2Ag==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63164241"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63164241"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 07:17:16 -0700
-X-CSE-ConnectionGUID: 5KQgpav5TnqdPsXs29KV2w==
-X-CSE-MsgGUID: t9S2PxjyQAOoYhCn9nGl+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="171193315"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 07:17:16 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 4 Sep 2025 07:17:15 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Thu, 4 Sep 2025 07:17:15 -0700
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (40.107.212.83)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 4 Sep 2025 07:17:15 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vBdAqcfkWKzEWa2PYDu7zeC0CuuXt8rwqC0rj0YMNzuJhy3tZKL/VFVbe6ieLtaO8EDpBWs8GP1wwfYQ0/1XbfUCkeUzIxIg+S03MelGJTBRyn5tn8DY5Qy2pba8KhXjK/g4eDbc1WxOPhe8piIWeQAPuGDXgohjfdY4z4mfHU9SMS+TFtO7elcpAJMpyu5CeRZCj+u/DGvUYX3tzm2h3pg53tvfCwPwNKxz28yNvs7i12uIGRna5TFwfF2qfzbDkjAN1lOQjbXPtjyA38XKhVmsCspVe2xy5DFfvT4G2aC5/UtVQCJi8KKSrWaalt40G9+CtqUK6DvxFlpZwyovyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lKP3xzqe7KSRX/0NVTL3HmWfgSRSE6t62MtuF5GC2G8=;
- b=rZxAG7pmThpLaaj7HouRXFokEzzuLOivvsWCP+3FijgfHmz1bcTQ4JvBVKU7OV48Z9vct0s+zA+eE1zOU7z9OJpptONECatTnBcaOHc0i8ZhE0jK1lw44RT2LgN0JdBs4PYyXlESPm+6FyL9A8uCpRyqr8NVSu7g6/DRrSGUWerLBuYrB3h9pfBcvnwkrBU0blCi6sp02VeJj58xnkZEqZks69Qk/do/Re0WM1Y4o56r08qmqee38nZnq5xWgUM/Derz6XmZtH+LrJrzkKSV7f2OMyZZNRr9jkwiQbnn/4tKzQ7lJNtJe+5BQO3WoFot0gOdulVSq65rZJ84W7uQjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6117.namprd11.prod.outlook.com (2603:10b6:8:b3::19) by
- SA0PR11MB4543.namprd11.prod.outlook.com (2603:10b6:806:99::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9094.17; Thu, 4 Sep 2025 14:17:12 +0000
-Received: from DM4PR11MB6117.namprd11.prod.outlook.com
- ([fe80::d19:56fe:5841:77ca]) by DM4PR11MB6117.namprd11.prod.outlook.com
- ([fe80::d19:56fe:5841:77ca%4]) with mapi id 15.20.9094.017; Thu, 4 Sep 2025
- 14:17:12 +0000
-Date: Thu, 4 Sep 2025 16:17:02 +0200
-From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-To: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-CC: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>, Magnus Karlsson
-	<magnus.karlsson@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, "Yonghong
- Song" <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>,
-	"KP Singh" <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao
- Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko
-	<mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, "David S. Miller"
-	<davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, "Jesper Dangaard
- Brouer" <hawk@kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Alexis Lothore <alexis.lothore@bootlin.com>, <netdev@vger.kernel.org>,
-	<bpf@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next v3 00/14] selftests/bpf: Integrate test_xsk.c to
- test_progs framework
-Message-ID: <aLmfXuSwtQgwrCRC@boxer>
-References: <20250904-xsk-v3-0-ce382e331485@bootlin.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250904-xsk-v3-0-ce382e331485@bootlin.com>
-X-ClientProxiedBy: DB8PR04CA0006.eurprd04.prod.outlook.com
- (2603:10a6:10:110::16) To DM4PR11MB6117.namprd11.prod.outlook.com
- (2603:10b6:8:b3::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA2D2FFDFC;
+	Thu,  4 Sep 2025 14:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756995432; cv=none; b=kM9Q6dVNLJy+KZVXfK0wE28kGV6gnCiiVZ29fdPm2f93hE9b3BnjqzRFec03rB1z68b/1FF63YtZ2/aPyOWNJLgQoDmTCDlyILgMeWZSteCw5ePHRr8MkMfwvsd5QBAI+AkPc6E+p5I1GdZCdy1CyCXZucTDiCzlrdZZA1rb2yc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756995432; c=relaxed/simple;
+	bh=aCmXLdx4Hc9zvhSv2FDrd3wLpy0XzPSSkGZRGeb2boA=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=BXLmUhNlDzOMsNcBBODJim8DqfFtVR88p4AsNorhxCriMOU0JijRprKGsixMuxlNhQPyTD06UwssMLCAMN0SPIel6Q/oaRArH6PKC1QJhnpuAkjxWPJ4lvunuy1WLWTZTpL9mDmtJH3y64e5u5Uqw/KXFFxboqX6/InQMSzDXhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fbCncYCu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FBE4C4CEF7;
+	Thu,  4 Sep 2025 14:17:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756995431;
+	bh=aCmXLdx4Hc9zvhSv2FDrd3wLpy0XzPSSkGZRGeb2boA=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=fbCncYCuH+feAgyp4klVWcJckxsLV2tqtxLoEET1EwSHZnewjEFQ3IPZPVDHITnNh
+	 rLlu1HZcNBzAZIXOLkyL4x/dNA1MDOupa6hkIuixJdsDhyzPCyBdWmLNNmtfWMpKiG
+	 YGR+2N9Q3X/PxPT+0yu5kz+8Oc+0+23YR9gRDiJ90z8HecJK9utEyas9NOK1XyoL84
+	 Xsi8IEnnM1lGmBF/6IglpDrlHhh7NMu9W9wTtwFHwcXBqfZCmwVp3cJzck606ry2y1
+	 Swdvkhf7DSTmJNJtx3c01hvfCHRR7VjwS1OnLeXzJMqyaJaMo+AjGfzT6rSI3lWBLT
+	 t+ATTyJOVVXlA==
+Date: Thu, 04 Sep 2025 09:17:10 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6117:EE_|SA0PR11MB4543:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9c357d14-29c0-4773-7e80-08ddebbdbd12
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?OmWj6Xb0jHvtsotRteXzvkFQdtOccWzY3nx8rEDNsiySD0Xepa2psg95TOv6?=
- =?us-ascii?Q?KToP6TmXRzp2cgMqnA3b/FA+HmeA6loluZ8NIT9kVqGK+lyrBwzj45gW41cD?=
- =?us-ascii?Q?W91vapdZXk6kPxOhxWfv1HW0+1NscF0rpq8OSVb0mbHS0U+JzVG8ibvtybGe?=
- =?us-ascii?Q?9Ismj8mRxYIjgNDc2z29SkOmknS3J1EZvspPHrhVsiLXIsmQQDPESou6th9V?=
- =?us-ascii?Q?PoRCxo2m2aWopKFhH7LTt0x31MWR3Gqui26hU+gXOOrqQxhsJ0nNyo7X1Sqb?=
- =?us-ascii?Q?tcm1320jpoJ21fc+aYUZmp0SvjtJ0Y657DTNSDxXjQ+Qrwa1x6VZKETc+97L?=
- =?us-ascii?Q?7ODIkw5O1LEwjUTBviiObD5EjkNnfKgdMT6HaymOLLYKktfcBaqHglwraz/h?=
- =?us-ascii?Q?gnZZWwmZksIkj+JogX/Xv+7OQCLvOe5NmgAHP9N7/2N4qd+z4l/anV22TE00?=
- =?us-ascii?Q?8nSIoI4y+nZzqZxvsSd8rKO4xlTCrcJp/cqATR+zxDDxw5gRTyPxBzJSJRY3?=
- =?us-ascii?Q?/E75XLQ5M3P4BYG/wcQPUPwiFRWoocZ2EIOYJuDZyt6LsL7AfCFxufacMTyd?=
- =?us-ascii?Q?nGkDMKWYgyFhNNd937QJLRS15Bi0gKRXVoqXbYRFRaHYtS7A7Fcj/T6FsjvF?=
- =?us-ascii?Q?KRq7MO7xTs1S87efOY1EHMa1eUqoUvug3yk61H4pHscD4duK1Re2jfPc5Omr?=
- =?us-ascii?Q?UXt5BjTBMedoxYtzk68Nd1OaoaRfzkUtXw8huG89iDeOqOA9BM7nOBlum1lw?=
- =?us-ascii?Q?AU0vDyQA2dAl1bZSzjiTdnbrCQgOtai+Z1+U1g/4t4gSdbGV3jzNKdcGo6PN?=
- =?us-ascii?Q?nHQPSMbv9wZQROn+dq+/54+Hpm8QigSI2uJ7d7e3MsufN8BaX7uPikD02qhS?=
- =?us-ascii?Q?dkabVS2uuPTPdpFQLGiGd2PNcIxJyNtOIa3mdLdwbk6IG90ixVYESdl65lLQ?=
- =?us-ascii?Q?v3W/wBRlxUk5BnWT2St0xlFGor1luBRidC0zaGfLPEjgCK45w8WyGzc/+AJa?=
- =?us-ascii?Q?zmdixIi25Ff/r2jntRoMxZRUvkeOzamfuyDRV4SENUgjVr8Z72BQvg+DHYmZ?=
- =?us-ascii?Q?Oc9fz/sXU8hHcGLyk0aY/GFr3Q/eK+mWP9Cpqq7gDFzx87JleuCrmRaLHhj8?=
- =?us-ascii?Q?LK/YePKJyGGoyYXRPvpb8lW4q+9obEh3beG8VmeHQGV56BZyOnhwUc5HS3X+?=
- =?us-ascii?Q?q4oZbb270puKN6zt5aHu+9SNfIp9IcjXiIUxbdEKM3Px9QVH9HEhVIQ9nr7n?=
- =?us-ascii?Q?CJ2z+H0rQBrHKWRTGWiaxx9104lJ3WoU2FIYjJYm2dnVi2dTfegHgshIfJPe?=
- =?us-ascii?Q?M6/oIzavCS/6o28J5Ct0hyc1I0L7xlwZYspzwjRsXuDiptSQpoas+joCDv3G?=
- =?us-ascii?Q?bhU1yb7hUqVN5hL4YZDkPRsmvXFb?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6117.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kijkJLIKzmW9EqZSdGJA6AM7BzATV8wJ0Q+ISbC0J6APMPMLF9Oe5CbQ+pCh?=
- =?us-ascii?Q?LzbnBQheWsYW71ciCADC/bvbM20rxBziu0YDNHoQ+eh6TX6/ZLsILw3kQuS0?=
- =?us-ascii?Q?R/eat9j6fj7PnRDDMOe25VsAOF2OMzoQ8j11skSdSkL0+DWewnGZB9gCqqaF?=
- =?us-ascii?Q?0hep8NDEaxkZN0/RQln0w7gHsLLSxNql/VxRVXALjMU8GYCkdJvQyLTE+OQg?=
- =?us-ascii?Q?ZGTFJR5hYgn/x+mFwV2xlwM+KpUJ2tcqVjyGS+lAAqmQQoY0HRleada1JczY?=
- =?us-ascii?Q?KBtrlkERrO/4TkcGZKSEcAIobqiPpvATw7scsqIzDbgHl0ki6yxZuQqMhOXl?=
- =?us-ascii?Q?INVhAs8mda1NXQTXBFXrO+IzmuIHPgy+JnyhS6HNo9p/EgbNOoiYJGy3Qfu6?=
- =?us-ascii?Q?CzC9DBrjfIW/ZRtSMjunGdSj2mzdCgEOJ0aOC68LyivsbCuJ5L9Lz4nTA5hI?=
- =?us-ascii?Q?qON2gGpOnDVesZasM//QBk/tCrQtvSJiKIBHtvf0VxvSWlqRXSOtKce58xAE?=
- =?us-ascii?Q?eMiUb9sab3mf0TKpm9zb3XmRWxCe46mwRVYXkHJBPyybGJ3oVz3kWc5NW879?=
- =?us-ascii?Q?/+Yfhe/JpYNR4QCUlB3ZlRD8Ua3mfTAr6Dq4Wuf4vuVbrLbF8EL9F0Wo0cpZ?=
- =?us-ascii?Q?XFIitpckfiyF5cZcis3oksbq+4OpubBUyvoA28oltgX1PXCBFP+Q8AqDyaJf?=
- =?us-ascii?Q?fzcI6b0NmXJ3iagGbFpmFAWl0Eoin6xM+WrZ9ctgd9ZQFyAHed1flk9c6zwI?=
- =?us-ascii?Q?F9nNiyN0eF5laSlzRfy1DK36OE5PRx3EoFlVkOJL/enSRLwvNuUn3Oc0gRDg?=
- =?us-ascii?Q?n/BawK656AUV4J/9euRwzuAKFS5/Wei5hxfxY7QGybqzEijHptCa1gQ+FBft?=
- =?us-ascii?Q?auuHHHtyxZ8s/bCVwmBgW+4S9Nmry4xw3o6YS86asUd5gEAcGZz1SekB9JD0?=
- =?us-ascii?Q?FZv4kL85HdN2wzgXrspI9RKN2YfMBnYSQkfVyW/TSB6OSrH+yEEkdcldkubx?=
- =?us-ascii?Q?bOJVDmcy4o/H0GCXBxVe1SDXCD0/rmN2Hi2yf9oLNti9cIrs2TSedagURQms?=
- =?us-ascii?Q?qABVCKGACl++2bJvqGHFPrTCH8/sXDoth1B/e8JKlBczw5wYUle3nc5VwjNS?=
- =?us-ascii?Q?/zr4PFopRGdpwohfbevb2s8HBxBCZ1pZZpzwUPafDfu9xRcrId5rlL2k10DL?=
- =?us-ascii?Q?gXnA+yb3W2+TYGUMFAyLnt3z/dzVlwUJjyheNMKNAsy7Pz90w4AznEdzCfin?=
- =?us-ascii?Q?w4E3hYE4svo4RoMCXPaFuBynoKJaDnVZZ58MLkCo/WRl7oPrFPl8/30vEiaU?=
- =?us-ascii?Q?JhXWchWCiHzQoHCjL+lpaj8YVlJZgOajER53ruGzcTieBHS+U+3oZANFkpg0?=
- =?us-ascii?Q?6S/2mTORLBrNnMtAQWmo3ytFp8dXWHRgHIUpEV3c67iFHpvTtPrdEwvGFPLS?=
- =?us-ascii?Q?/WsWrcPv0yDgAvnWNTo4NwZS2QEWL7o/P48bVIPMHIwzsxAjl4ftUuQvjnCQ?=
- =?us-ascii?Q?SgvEnkA9gciPZfS9BiVWunitgwq7Z5oawMFbRODlkn+YjS8aUKKPyiu3rj6V?=
- =?us-ascii?Q?Y+0n7Z/sbA/Ywtms+FGSRlU0gDPhADB0lrXKgxF73aOqpiN9s6aJgiuhTape?=
- =?us-ascii?Q?Hg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c357d14-29c0-4773-7e80-08ddebbdbd12
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6117.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 14:17:11.7018
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: t9BLqJorivpEiV8I4q3k3qSl2f2gz6ejNqaYq2RA2/uGfl3ZHnpAy7lKfh3CxIgihabntTfX5qWgBYOwcTBcz1V0G2syZCEkkMuPMYMocpk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4543
-X-OriginatorOrg: intel.com
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+To: Yijie Yang <yijie.yang@oss.qualcomm.com>
+In-Reply-To: <20250904-hamoa_initial-v9-0-d73213fa7542@oss.qualcomm.com>
+References: <20250904-hamoa_initial-v9-0-d73213fa7542@oss.qualcomm.com>
+Message-Id: <175699523750.4060076.15321819933844414302.robh@kernel.org>
+Subject: Re: [PATCH v9 0/3] Initial support for Qualcomm Hamoa IOT EVK
+ board
 
-On Thu, Sep 04, 2025 at 12:10:15PM +0200, Bastien Curutchet (eBPF Foundation) wrote:
-> Hi all,
-> 
-> This is a second version of a series I sent some time ago, it continues
-> the work of migrating the script tests into prog_tests.
-> 
-> The test_xsk.sh script covers many AF_XDP use cases. The tests it runs
-> are defined in xksxceiver.c. Since this script is used to test real
-> hardware, the goal here is to leave it as it is, and only integrate the
-> tests that run on veth peers into the test_progs framework.
-> 
-> Some tests are flaky so they can't be integrated in the CI as they are.
-> I think that fixing their flakyness would require a significant amount of
-> work. So, as first step, I've excluded them from the list of tests
-> migrated to the CI (see PATCH 13). If these tests get fixed at some
-> point, integrating them into the CI will be straightforward.
-> 
-> PATCH 1 extracts test_xsk[.c/.h] from xskxceiver[.c/.h] to make the
-> tests available to test_progs.
-> PATCH 2 to 5 fix small issues in the current test
-> PATCH 7 to 12 handle all errors to release resources instead of calling
-> exit() when any error occurs.
-> PATCH 13 isolates some flaky tests
-> PATCH 14 integrate the non-flaky tests to the test_progs framework
-> 
-> Maciej, I've fixed the bug you found in the initial series. I've
-> looked for any hardware able to run test_xsk.sh in my office, but I
-> couldn't find one ... So here again, only the veth part has been tested,
-> sorry about that.
 
-Hi Bastien,
-
-just a heads up, I won't be able to review this until 15 sept. If anyone
-else would pick this up earlier then good, otherwise please stay patient
-:)
-
+On Thu, 04 Sep 2025 15:48:31 +0800, Yijie Yang wrote:
+> Introduce the device tree, DT bindings, and driver modifications required
+> to bring up the HAMOA-IOT-EVK evaluation board—based on the X1E80100 SoC—to
+> a UART shell.
+> This patch set focuses on two key hardware components: the HAMOA-IOT-SOM
+> and the HAMOA-IOT-EVK carrier board.
+> The HAMOA-IOT-SOM is a compact System on Module that integrates the SoC,
+> GPIOs, and PMICs. It is designed to be modular and can be paired with
+> various carrier boards to support different use cases.
+> The HAMOA-IOT-EVK is one such carrier board, designed for IoT scenarios.
+> It provides essential peripherals such as UART, on-board PMICs, and
+> USB-related components.
+> Together, these components form a flexible and scalable platform, and this
+> patch set enables their initial bring-up through proper device tree
+> configuration and driver support.
 > 
-> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+> Qualcomm SoCs often have multiple product variants, each identified by a
+> different SoC ID. For instance, the x1e80100 SoC has closely related
+> variants such as x1e78100 and x1e001de. This diversity in SoC identifiers
+> can lead to confusion and unnecessary maintenance complexity in the device
+> tree and related subsystems.
+> To address this, code names offer a more consistent and project-agnostic
+> way to represent SoC families. They tend to remain stable across
+> development efforts.
+> This patch series introduces "hamoa" as the codename for the x1e80100 SoC.
+> Going forward, all x1e80100-related variants—including x1e81000 and others
+> in the same family—will be represented under the "hamoa" designation in the
+> device tree.
+> This improves readability, streamlines future maintenance, and aligns with
+> common naming practices across Qualcomm-based platforms.
+> 
+> Features added and enabled:
+> - UART
+> - On-board regulators
+> - Regulators on the SOM
+> - PMIC GLINK
+> - USB0 through USB6 and their PHYs
+> - Embedded USB (eUSB) repeaters
+> - USB Type-C mux
+> - PCIe6a and its PHY
+> - PCIe4 and its PHY
+> - Reserved memory regions
+> - Pinctrl
+> - NVMe
+> - ADSP, CDSP
+> - WLAN, Bluetooth (M.2 interface)
+> - USB DisplayPort
+> - Graphic
+> - Audio
+> 
+> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
 > ---
+> Changes in v9:
+> - Sort the nodes within the root node in alphabetical order.
+> - Add WLAN control pin to the PMU.
+> - Link to v8: https://lore.kernel.org/r/20250828-hamoa_initial-v8-0-c9d173072a5c@oss.qualcomm.com
+> 
+> Changes in v8:
+> - Change the style of how collaborators are listed.
+> - Link to v7: https://lore.kernel.org/r/20250827-hamoa_initial-v7-0-f9b81d564bb2@oss.qualcomm.com
+> 
+> Changes in v7:
+> - Configure the EDP regulator to boot-on.
+> - Change back to a year‑less copyright statement.
+> - Update base commit.
+> - Link to v6: https://lore.kernel.org/r/20250821-hamoa_initial-v6-0-72e4e01a55d0@oss.qualcomm.com
+> 
+> Changes in v6:
+> - Restore the full change log for each revision.
+> - Merge the changes related to Audio and Graphics into the patch series.
+> - Link to v5: https://lore.kernel.org/r/20250814-hamoa_initial-v5-0-817a9c6e8d47@oss.qualcomm.com
+> 
+> Changes in v5:
+> - Update base commit.
+> - Drop an already merged patch:
+> https://lore.kernel.org/all/20250804-hamoa_initial-v4-2-19edbb28677b@oss.qualcomm.com/
+> - Link to v4: https://lore.kernel.org/r/20250804-hamoa_initial-v4-0-19edbb28677b@oss.qualcomm.com
+> 
+> Changes in v4:
+> - Update commit messages.
+> - Update base commit.
+> - Update the format of the node mdss_dp3_out.
+> - Add comments to clarify certain nodes.
+> - Update the configuration of regulator-wcn-3p3 from regulator-boot-on to regulator-always-on.
+> - Link to v3: https://lore.kernel.org/r/20250729-hamoa_initial-v3-0-806e092789dc@oss.qualcomm.com
+> 
 > Changes in v3:
-> - Rebase on latest bpf-next_base to integrate commit c9110e6f7237 ("selftests/bpf:
-> Fix count write in testapp_xdp_metadata_copy()").
-> - Move XDP_METADATA_COPY_* tests from flaky-tests to nominal tests
-> - Link to v2: https://lore.kernel.org/r/20250902-xsk-v2-0-17c6345d5215@bootlin.com
+> - Add compatible string and dt-bindings for SOM.
+> - Restore PMU-related regulators to comply with dt-binding rules and enable kernel-level power management.
+> - Adjust commit description accordingly.
+> - Link to v2: https://lore.kernel.org/r/20250724-hamoa_initial-v2-0-91b00c882d11@oss.qualcomm.com
 > 
 > Changes in v2:
-> - Rebase on the latest bpf-next_base and integrate the newly added tests
->   to the work (adjust_tail* and tx_queue_consumer tests)
-> - Re-order patches to split xkxceiver sooner.
-> - Fix the bug reported by Maciej.
-> - Fix verbose mode in test_xsk.sh by keeping kselftest (remove PATCH 1,
->   7 and 8)
-> - Link to v1: https://lore.kernel.org/r/20250313-xsk-v1-0-7374729a93b9@bootlin.com
+> - Merge the compatible rules and remove the compatible string map.
+> - Align the ADSP and CDSP firmware paths with other x1e80100 platforms.
+> - Remove the regulators on the M.2 card, as well as those managed by UEFI on this board.
+> - Merge another patch series that enables USB DisplayPort functionality on this platform: https://lore.kernel.org/all/20250723-x1e-evk-dp-v1-1-be76ce53b9b8@quicinc.com/
+> - Link to v1: https://lore.kernel.org/r/20250716-hamoa_initial-v1-0-f6f5d0f9a163@oss.qualcomm.com
 > 
 > ---
-> Bastien Curutchet (eBPF Foundation) (14):
->       selftests/bpf: test_xsk: Split xskxceiver
->       selftests/bpf: test_xsk: Initialize bitmap before use
->       selftests/bpf: test_xsk: Fix memory leaks
->       selftests/bpf: test_xsk: Wrap test clean-up in functions
->       selftests/bpf: test_xsk: Release resources when swap fails
->       selftests/bpf: test_xsk: Add return value to init_iface()
->       selftests/bpf: test_xsk: Don't exit immediately when xsk_attach fails
->       selftests/bpf: test_xsk: Don't exit immediately when gettimeofday fails
->       selftests/bpf: test_xsk: Don't exit immediately when workers fail
->       selftests/bpf: test_xsk: Don't exit immediately if validate_traffic fails
->       selftests/bpf: test_xsk: Don't exit immediately on allocation failures
->       selftests/bpf: test_xsk: Move exit_with_error to xskxceiver.c
->       selftests/bpf: test_xsk: Isolate flaky tests
->       selftests/bpf: test_xsk: Integrate test_xsk.c to test_progs framework
+> Yijie Yang (3):
+>       dt-bindings: arm: qcom: Document HAMOA-IOT-EVK board
+>       arm64: dts: qcom: Add HAMOA-IOT-SOM platform
+>       arm64: dts: qcom: Add base HAMOA-IOT-EVK board
 > 
->  tools/testing/selftests/bpf/Makefile              |   11 +-
->  tools/testing/selftests/bpf/prog_tests/test_xsk.c | 2604 ++++++++++++++++++++
->  tools/testing/selftests/bpf/prog_tests/test_xsk.h |  294 +++
->  tools/testing/selftests/bpf/prog_tests/xsk.c      |  146 ++
->  tools/testing/selftests/bpf/xskxceiver.c          | 2685 +--------------------
->  tools/testing/selftests/bpf/xskxceiver.h          |  156 --
->  6 files changed, 3170 insertions(+), 2726 deletions(-)
+>  Documentation/devicetree/bindings/arm/qcom.yaml |    6 +
+>  arch/arm64/boot/dts/qcom/Makefile               |    1 +
+>  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts      | 1248 +++++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi     |  609 +++++++++++
+>  4 files changed, 1864 insertions(+)
 > ---
-> base-commit: e4e08c130231eb8071153ab5f056874d8f70430b
-> change-id: 20250218-xsk-0cf90e975d14
+> base-commit: b899981540841e409e496083921f2e5c4c209925
+> change-id: 20250604-hamoa_initial-0cd7036d7271
 > 
 > Best regards,
-> -- 
-> Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+> --
+> Yijie Yang <yijie.yang@oss.qualcomm.com>
 > 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit b899981540841e409e496083921f2e5c4c209925
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250904-hamoa_initial-v9-0-d73213fa7542@oss.qualcomm.com:
+
+arch/arm64/boot/dts/qcom/hamoa-iot-evk.dtb: chosen: stdout-path:0: 'serial0: 115200n8' does not match '^[a-zA-Z0-9@/,+\-._]*(:[0-9]*[noe]?[78]?[r]?)?$'
+	from schema $id: http://devicetree.org/schemas/chosen.yaml#
+
+
+
+
+
 
