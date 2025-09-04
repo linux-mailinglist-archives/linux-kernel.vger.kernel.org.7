@@ -1,149 +1,81 @@
-Return-Path: <linux-kernel+bounces-799950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2DAB4318E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:24:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42246B43191
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9EFD1B20CEF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:24:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D4F486AA4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078ED23D7CF;
-	Thu,  4 Sep 2025 05:24:07 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478E723D7D8;
+	Thu,  4 Sep 2025 05:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qzTsrK7W"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A2522C355;
-	Thu,  4 Sep 2025 05:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F68F22C355;
+	Thu,  4 Sep 2025 05:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756963446; cv=none; b=hvUPhHf86MqybtX8PjBoDNiLgK54HGFGagQNVD1YOi+Zq0WwcOHEi/9JQq1gpJ8ebfWzRV3xbIFKdOREEOuWOkAP58Q+umwGjWeDouW5Y8EM93Qju2Ak8Je4gYWNINLXScES/9jqLL31RFD8iahgDCxsGbC3PofODsKZCOnPTgo=
+	t=1756963578; cv=none; b=O1vHdLYwhpep76qvXwlmV+APlfWD/FKuyfW8rGxYFSbzaIA/gSReb4A+Mjh/q5KlDTUYLFLx3gw1VvMtPlAdApNKqixvmJTN9NARZKZyIGPYhfTCfQ+m1bf2vb3JboHc6g/tJKxaF/WEAHSWdAGZQ+uHfhdy8/8di1x48YQ6edo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756963446; c=relaxed/simple;
-	bh=ps2vSL6FMlRnK/n3hdnbliP23/FN2FPWl5kCq8zoEps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=moLM4Azxd23CUiVHFmSEFLDn/yrVs+Xh5MnScSskOEw5EQWdOh9ge5tSRCBvFecwENsqJLAZn651uSfekoKX98X4xtecmddzJqlef89AxBfxxQHPPx06idjFaXRSaSNF5sAuLGkhTAdKrarZe51cNdQVWaOAxftdGqzExiSWoB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 5b2dad2c894f11f0b29709d653e92f7d-20250904
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:f25e3567-48cd-4b8c-a06f-3892f72d4ce9,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:b868f439536289f8e62dcf9eeb14dd12,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 5b2dad2c894f11f0b29709d653e92f7d-20250904
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1322521824; Thu, 04 Sep 2025 13:23:57 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 2A326E008FA2;
-	Thu,  4 Sep 2025 13:23:57 +0800 (CST)
-X-ns-mid: postfix-68B9226D-137554
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 855C4E008FA2;
-	Thu,  4 Sep 2025 13:23:56 +0800 (CST)
-Message-ID: <540469c3-9bc5-444e-87da-95dc27fc481b@kylinos.cn>
-Date: Thu, 4 Sep 2025 13:23:55 +0800
+	s=arc-20240116; t=1756963578; c=relaxed/simple;
+	bh=qfKXCKBrgFrfhU+4Sn7ylp43ko1arUbp8AaFFRraewo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NjrEZ16HFnVzLBu+TbSAMNMbjcSrFprJQUTkrUaXPSuxQrwqK73Lpk3ByS1YAYVOO42dv8rx0dADdXhKOHrnN0zbBoHidQGDalM/zJd6CTl7KhGQS+jjd3Xg4Bjap+wkNkXNTrMqwle8tmPYktZyGBLlOqJqnXW1f2lGLXbP6ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qzTsrK7W; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7W5siyRKoR2QHdVBSGezPzMySkx5Ka2AqWH9wwpUgBs=; b=qzTsrK7WxY6l4A5nMIigpADMpy
+	jq0FrxSZs8T8YJtZ/vUTeLseL6s0qBlcTLWB65Mx9Rggsq5WdiE8p86wooknlfTTk8JQg1G8EsAec
+	avNWBfP74hQ4REcB5SErgoV83ZAquWTh+jAb/rE7SFltd+IiabYKYG0F7E9ySkG8WnSBfJJ/nboKm
+	3y/DT9dctMzA9Ck+x2ix9WP4vQKR6VxqgsSCsjQGi4IdHA8INA4ZTvsFKUWlHe8TicHhYoZlCK++V
+	3Hun6dR4wDa5H3Jyi+oloZgMMXOPqisiPH0NCrauToJ8Ee6wj/pLfvAsIvgiiLjmCWPoIBj7qui+N
+	oKt2OZ8g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uu2UA-00000009Ebb-09CC;
+	Thu, 04 Sep 2025 05:26:14 +0000
+Date: Wed, 3 Sep 2025 22:26:14 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Sergey Bashirov <sergeybashirov@gmail.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Konstantin Evtushenko <koevtushenko@yandex.com>
+Subject: Re: [PATCH v2] NFSD: Disallow layoutget during grace period
+Message-ID: <aLki9rH7p13PPiRy@infradead.org>
+References: <20250903193438.62613-1-sergeybashirov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] cpufreq: Always enforce policy limits even without
- frequency table
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>,
- Saravana Kannan <saravanak@google.com>, zhenglifeng
- <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250904032210.92978-1-zhangzihuan@kylinos.cn>
- <20250904032210.92978-3-zhangzihuan@kylinos.cn>
- <20250904044812.cpadajrtz3mrz2ke@vireshk-i7>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250904044812.cpadajrtz3mrz2ke@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903193438.62613-1-sergeybashirov@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+On Wed, Sep 03, 2025 at 10:34:24PM +0300, Sergey Bashirov wrote:
+> When the block/scsi layout server is recovering from a reboot and is in a
+> grace period, any operation that may result in deletion or reallocation of
+> block extents should not be allowed. See RFC 8881, section 18.43.3.
+> 
+> If multiple clients write data to the same file, rebooting the server
+> during writing can result in the file corruption. Observed this behavior
+> while testing pNFS block volume setup.
 
-=E5=9C=A8 2025/9/4 12:48, Viresh Kumar =E5=86=99=E9=81=93:
-> On 04-09-25, 11:22, Zihuan Zhang wrote:
->> Currently, cpufreq_frequency_table_verify() simply returns when the dr=
-iver=E2=80=99s
->> frequency table is missing (policy->freq_table =3D=3D NULL).
->> This means that cpufreq_verify_within_cpu_limits() is not invoked in s=
-uch
->> cases, leaving policy->min and policy->max unchecked.
->>
->> Some cpufreq drivers handle this manually by calling
->> cpufreq_verify_within_cpu_limits() even when no frequency table is pre=
-sent,
->> in order to ensure the policy stays within CPU limits.
->>
->> To avoid this inconsistency and potential misuse, make
->> cpufreq_generic_frequency_table_verify() always call
->> cpufreq_verify_within_cpu_limits(), regardless of whether policy->freq=
-_table
->> is available. This unifies the behavior across all drivers and makes t=
-he helper
->> safe to use universally.
->>
->> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
->> ---
->>   drivers/cpufreq/freq_table.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table=
-.c
->> index d5111ee56e38..f4b05dcc479b 100644
->> --- a/drivers/cpufreq/freq_table.c
->> +++ b/drivers/cpufreq/freq_table.c
->> @@ -105,6 +105,7 @@ EXPORT_SYMBOL_GPL(cpufreq_frequency_table_verify);
->>    */
->>   int cpufreq_generic_frequency_table_verify(struct cpufreq_policy_dat=
-a *policy)
->>   {
->> +	cpufreq_verify_within_cpu_limits(policy);
-> So if we have a freq-table, we will call this twice now. Why make it
-> bad for the existing users ?
+Looks good:
 
-
-Just to clarify, in the third patch of this series we remove
-cpufreq_generic_frequency_table_verify() from the table_verify path,
-so cpufreq_verify_within_cpu_limits() is now only called here. There
-won=E2=80=99t be any duplicate invocation for drivers that already have a
-frequency table.
-
-This also resolves the semantic concern, since the helper is no
-longer invoked outside of this context.
-
-Thanks!
-
-
-> And then the name of this function, it is all about freq-table. If it
-> isn't there, not sure we should call it at all.
-
-
-As it stands, only drivers that have a frequency table actually call
-cpufreq_generic_frequency_table_verify(). Drivers without a table
-implement their own verification logic. So in practice, this helper
-is still only used in the context of a frequency table, keeping the
-semantics consistent with its name.
-
->>   	if (!policy->freq_table)
->>   		return -ENODEV;
->>  =20
->> --=20
->> 2.25.1
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
