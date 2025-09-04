@@ -1,120 +1,112 @@
-Return-Path: <linux-kernel+bounces-800330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B60BB4365F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:58:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E86B43671
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08C4A7B6AB9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:56:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 292495873BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4EC2D1F61;
-	Thu,  4 Sep 2025 08:58:01 +0000 (UTC)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7AF2D1925;
-	Thu,  4 Sep 2025 08:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17E02D3EC7;
+	Thu,  4 Sep 2025 09:00:19 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239B12D375D;
+	Thu,  4 Sep 2025 09:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756976281; cv=none; b=P7q9aKP+uhi51dFPCzpcca8EQgBvyhBXJKBtYQelsk4Eh9SzA3VgK5LeV57LxFKewV+eFilMXyEvHKeC9sgVHv8KZZIOr5RutFst7fyhq8suHKCi2+WdnUws5/78XRSeR5aHsKHqoyCfdPJy99vxJHyyOTL42nZXnqgBqadxGyg=
+	t=1756976419; cv=none; b=Xtz92OtuePl+vXzj8dQqkVP0Pq1tZll7m6f38aKOK1LMjdCg9crRH2d+taGBBDc7L3qbgUuofeu6osodqlephDxVg8uOw92R1Vih4mGmfBpBNl886n9ac2ULsn//Tb5GmM4L3CwEnoTnwHQsMRyheOqj+jbtRBcOcOVKBcEVnTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756976281; c=relaxed/simple;
-	bh=uJlZsSoTRN+PNDEIO2cmsHo1sMd7N9tzGTzQXDvoozE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P15i1PN5htB1U/Y3yMs1UGnzJ2eRsQIsq9PbVWMVYRGdN6eI3mjPa2Ru1nylpeBAeW03MSp6GtP07V8zCn6a77e6ugViauKqixkezR3O30eq00mK7IzvzOlJsYXs5g8aV4NU7nNpSaDgpIbkq3eDZIaWDVR9E9KwqEQyR7RCAX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-544a59e1e87so214182e0c.1;
-        Thu, 04 Sep 2025 01:57:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756976278; x=1757581078;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VQ38eglfsyJ+jBD6L5ZChIcNKuaetDWRgesngh0HUwc=;
-        b=X9N4wMVFL4I0GQR+K4vuowYQspsZjysdcKwuvyYuBFPnUxHIU+ZtKb6+Zr+AQ1hF/y
-         8kUEzldF/gv9TMCeklESBt5gbn0Wcj8g75MgNPyl2XYzcidYJ5tEt25FnuoUXDZ+7Cx8
-         zWranRiw73rKPFn3zuM2nBvM7QSuxch6eV6M9ugltWHS6aI7TbVWLDrggDRpE4WhoKSD
-         63YxXIk34Fr1w82QH2UNOu3Ma7o9jXfJmP6vLq4SzTKlkqRzhoeVW4R8MsPI3jnGJSQD
-         Y0E3gdjE/nwaXlkgpX1EO9p0cbEDf6JG8UzUwfnzHZL34jpf6+fORVDbHoE8PRAfHaVb
-         /gfg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1J25dDGVs5X8R+BL3y0rkz1UN4ED5qo07s2hesCAgdaf76i6jWsnYCTlzcSIG6Itmbv3M0pI9C0qcUePf7FgyHnw=@vger.kernel.org, AJvYcCVsqYMZHHR7rHDAqSEOP2CASrDVj7CwKzOmEGVjBQ5imxPdfWo8a+yXOMVuW/mOC3Ink40eE3YfRpc4@vger.kernel.org, AJvYcCVwEINbV3EOoXnqZm7DIQcmxe0TDmr0J5Co1qi9NdNqaIG4vC3CzLwhT8XvUy3JOm609f+f8/QqyCfBG/HW@vger.kernel.org, AJvYcCXPBYVANiLUDf4EWcXQFnpzq3OUjHeY3KWwNDmJex6CcQ3VV8t0/FmtgsR9K4EzqHSKBeRxMTX6PsVw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk9VePloPPVkvU3ZF2r1Cp59vmHUB8e3DBvJe3+AWdhrlGhFU6
-	ibJYQWK9q06VdmkEIK6nuBsAfpTTLcoTUlLPMwXOSuUSbEcMDHGzFcyRig/zNG/7
-X-Gm-Gg: ASbGnctXg1hkACo+zEyaYO4k+eq6fSZwZS4f7XlkTNpFdDpDYHrC2V7ELct3tbMeIWL
-	KXmJOEJ3MNw7xcz4x/YpaCHC8RnWBM3mqEwJQuXxB73+GBBAlSEdY1YcOjX5lKLibb+bBe09e06
-	DIX/OtWngY+ClA1ajPfu/xC4JQie4f1vPjXCxrmxOa1KYWpwoZq/8snHMBU/cvhNbErUavE01qv
-	d+T+UG47qEtcsH7uozj/cQQk6zsN7nK5VoS3/Dft0Y3ZLffSnNBZMePP5HEcl0w4v6cwCfqUqhp
-	lKvFtVz48/IuvSEPrdJ5NrwXphloiR8G1nRIqZh7yHrTqY/y1rgpReuU/Kwzd1XJ+gRPxn8wz0S
-	jt6xOnKUdkotryPVh13TiNjSmp/BgsSPH8AqtZF+jTTQJjaXI4WwUBn2qiO8F
-X-Google-Smtp-Source: AGHT+IFqbfAerr3f6r1NVOFBMacaqG0X113OY/AhMDqYKY04wK9+OevlJ6iLmBFvS7i2q3WtvLx59w==
-X-Received: by 2002:a05:6122:90b:b0:53f:7828:16c7 with SMTP id 71dfb90a1353d-544a02f4ce9mr6346952e0c.15.1756976278394;
-        Thu, 04 Sep 2025 01:57:58 -0700 (PDT)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544ad6f8047sm5350156e0c.25.2025.09.04.01.57.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 01:57:58 -0700 (PDT)
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-50f8af3517eso263862137.2;
-        Thu, 04 Sep 2025 01:57:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHjOr/sHVaoaYwIAl33Xk8nrcmueZ2PrgNjO5eBmGnkAc1rZCem/oP0GyfX6WOb4YBwmcAAl2e+K6T@vger.kernel.org, AJvYcCUbEqZ1YFq9XC25RH1MLrjfbODBOOtYYjwMYqmF5OpgeRe94meq30NDVYxPV2vIy2kmid6Ii//UjHvZBZ5EVHol0Ko=@vger.kernel.org, AJvYcCVgML8qrmQQ9CwmNMWoxIUtoM/h+tRkL3QtPV7OXoqziIuCp5VanzqoTxtajX9FmNQUOeqws/7Sfa5+@vger.kernel.org, AJvYcCWKzvdl5e1U7CAmSynF+AqIk1G/63nnGWzwDbpeWFFOQYs+LEKskURQ0BlQXwWzZR8Elr8FnXqyhOiQaGOw@vger.kernel.org
-X-Received: by 2002:a05:6102:3713:b0:529:1815:ae9b with SMTP id
- ada2fe7eead31-52b1c33cc1bmr6200990137.32.1756976277976; Thu, 04 Sep 2025
- 01:57:57 -0700 (PDT)
+	s=arc-20240116; t=1756976419; c=relaxed/simple;
+	bh=ZxHp9rvXp3A5BFA/iyuoW2TlsxQ7kn4hKMLyxjrZ7Tg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=tyVMUKqC5ToDXymKC4ekbEj470erW9lW1aPsOTSvyAqdTpr3CL8TKSTfEin9yV2JS/F8BUJ2bCVcF+iAdycS0RP3VC048HzVObihCms6B2h5EALdGhMlSdSdFQrFll6lcPiLHd2LhORvYBDAt4yo3m7Xc4O9mP+1oZK8TOgu3QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8CxaNEYVblohpoGAA--.13967S3;
+	Thu, 04 Sep 2025 17:00:08 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowJDxQ+QPVblou5t9AA--.4589S3;
+	Thu, 04 Sep 2025 17:00:03 +0800 (CST)
+Subject: Re: [PATCH] LoongArch: KVM: remove unused returns.
+To: Huacai Chen <chenhuacai@kernel.org>, cuitao <cuitao@kylinos.cn>
+Cc: yangtiezhu@loongson.cn, kernel@xen0n.name, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ zhaotianrui@loongson.cn
+References: <462e346b-424d-263d-19a8-766d578d9781@loongson.cn>
+ <20250904081356.1310984-1-cuitao@kylinos.cn>
+ <CAAhV-H4QDs+zruvKVkDgWnMoObhoHiWOL7x4=Q2PRTnnqkNnsw@mail.gmail.com>
+From: Bibo Mao <maobibo@loongson.cn>
+Message-ID: <5bd70387-0dc0-fe66-5c5a-5914dd32d6bc@loongson.cn>
+Date: Thu, 4 Sep 2025 16:57:59 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904071954.3176806-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250904071954.3176806-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250904071954.3176806-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 4 Sep 2025 10:57:47 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUTXVJyhJ1p5Juef9j3P=oiyCo1NLuu9YZ8DC+x+JhPbQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxiM14ATP9BOkVKnNyTpukPFDdmwRYmPo57DaHlMkCwtQIc-5weKTBKTh0
-Message-ID: <CAMuHMdUTXVJyhJ1p5Juef9j3P=oiyCo1NLuu9YZ8DC+x+JhPbQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: renesas,r9a09g077/87: Add
- Ethernet clocks
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAAhV-H4QDs+zruvKVkDgWnMoObhoHiWOL7x4=Q2PRTnnqkNnsw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJDxQ+QPVblou5t9AA--.4589S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj9xXoWrZr17Gr47Gr4DWw1fKryDJwc_yoWDKwb_Wa
+	9ak3s2kw1ktF43K3Wvkw45CasxKw4DC34DtrWkJr1Sq34xXayDGrs5Cr17u3W3XayIvwnx
+	uFyYgayxXw1a9osvyTuYvTs0mTUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUb3AYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
+	oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F4
+	0EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_
+	Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbI
+	xvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_
+	Jw0_GFylx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+	AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
+	cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
+	IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIev
+	Ja73UjIFyTuYvjxUcVc_UUUUU
 
-On Thu, 4 Sept 2025 at 09:20, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add clock definitions for Ethernet (ETCLK A-E) to both R9A09G077 and
-> R9A09G087 SoCs. These definitions are required for describing Ethernet
-> devices in DT.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
-> v2->v3:
-> - Dropped R9A09G077_GMAC* clock definitions.
-> - Updated commit message to reflect changes.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in a branch shared by renesas-clk for v6.18 and DTS.
 
-Gr{oetje,eeting}s,
+On 2025/9/4 下午4:20, Huacai Chen wrote:
+> On Thu, Sep 4, 2025 at 4:14 PM cuitao <cuitao@kylinos.cn> wrote:
+>>
+>> Thanks for the review.
+>>
+>> My initial idea was to remove the switch-case structure.
+>> However, after checking the case value KVM_FEATURE_STEAL_TIME,
+>> I found there are 13 parallel definitions—and it is unclear when
+>> this part of the development will be completed later. Therefore,
+>> I temporarily retained the switch-case structure.
+>>
+>> Now, I have updated the patch according to your suggestion:
+>> - Replaced `switch` with `if` since there is only one case.
+>> - Removed the redundant semicolon after the block.
+>>
+>> Please see the updated patch below.
+> It has been applied, don't make useless effort.
+> https://github.com/chenhuacai/linux/commit/f5d35375a6546bcc5d0993e3a48cdbc3a7217544
+I think that it is unnecessary to replace `switch` with `if` here:)
 
-                        Geert
+One thing is that the change is big for such thing, and also there may 
+be new case condition in future, just maybe.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards
+Bibo Mao
+> 
+> Huacai
+> 
+>>
+>> Thanks,
+>> Tiezhu
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
