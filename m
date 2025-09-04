@@ -1,138 +1,185 @@
-Return-Path: <linux-kernel+bounces-801305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A842FB4438F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:49:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89344B44391
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 615CB1783C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:47:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D651AA06D39
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8CC30DEC0;
-	Thu,  4 Sep 2025 16:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E7A2F3C0C;
+	Thu,  4 Sep 2025 16:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/afV4Ov"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Lc/cYZNb"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6890130CDAA;
-	Thu,  4 Sep 2025 16:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F031F2C45
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757004353; cv=none; b=fF9F0TAcVc9b7+nwIG/x95+RX/avkDXnNN6oApQQ2CTKA5uoQzGXXEzGxRTR8qnkLQLB+buC2iIiYvpkVSMZ3KNd24mf6Btw6iR3yyaZnrfv3x59WGgTLc9UoCwOBYLT+kzAhmuMgy5SNC32m29MwJtcKOxOwonZ8il9Um8YGDE=
+	t=1757004384; cv=none; b=KlxYbBcYUeDYqaFrjiLVHb3LUlkyk9ZhL32eqAahY8YcmNqY9olUSwNSW/GQ4r+1JE7f8UZNTgTwfRjGBwVV2s4wms20XwMWiNIVhGbSWS1VZzdJX3Rv/2LTkYBCYgDU6C7Tml/uBwGTcZxv8aMEMUMsIcY+X2RPAy7P7XR6p8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757004353; c=relaxed/simple;
-	bh=ueToUlWIzhMTJb84eNZhkJOh9Icl3dDZSvjoxrKVsUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WcXEga5+pO8UJE3XaoI/M/B3ArsIYHxlY1W5nlAcTAeub8PuilyuMLxYo17QWPqTwOJC3znn9caIXi+neQAdOvvqlZhEH9vs8TITA2KQ8btzND6Qxk56kMgtCyGWGBr+zDlHYCPAqUkrpLNAjRa2Y3jCaQUeacU0Xk1TwUxufAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/afV4Ov; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41C4AC4CEF0;
-	Thu,  4 Sep 2025 16:45:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757004352;
-	bh=ueToUlWIzhMTJb84eNZhkJOh9Icl3dDZSvjoxrKVsUQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n/afV4Ov0VJYNF/SaJpFsCONmCEqEyW/IDvjSZP4mitQ9zurIt3qcJDSFDA6zq+Tg
-	 PCjnodV/H1AYnLQFz3dVReb/Mw7JG2j4z5S+2cw6DnuLSTgdrl6D0ZuWeBcwVrKfBE
-	 Jc8GIuxpjNGgltkS4qJUzzE01j4HhVtOZvD+Jw9ybf9vfwXvZmG0rM5+rlng0USvOy
-	 QgKYV3HyaXPlkCE/awFefb05Jx2x8jLar9Sam0RJusBDvXOjeHHL9x6dTF0cEjQvc5
-	 lfvf22FUx1U97GJZRb0ljFOgrYSlGPO4Uyd/4Z4JdpHTQpyJ2tFfrl3/SJHeMMC++9
-	 1+rFhGf7OkYfQ==
-Date: Thu, 4 Sep 2025 22:15:44 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: "David E. Box" <david.e.box@linux.intel.com>, rafael@kernel.org, 
-	bhelgaas@google.com, vicamo.yang@canonical.com, kenny@panix.com, 
-	ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com, linux-pm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 1/2] PCI/ASPM: Add host-bridge API to override default
- ASPM/CLKPM link state
-Message-ID: <a47sg5ahflhvzyzqnfxvpk3dw4clkhqlhznjxzwqpf4nyjx5dk@bcghz5o6zolk>
-References: <2fo64esrc5v5vj46iff2ptgcthaeahwicuzug46popwqrryfsi@yt62sqsnv4e3>
- <20250903225527.GA1236657@bhelgaas>
+	s=arc-20240116; t=1757004384; c=relaxed/simple;
+	bh=yeig2/h6+JzCj8J11pJs7VODI2hn7tsgFbunC4RZtuw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MAq63vbf2JrB0esm9pt6JBCXdOkLO0eA2bSp01j8xRYijHKk3JjGsXeduDIH8cBQrGUsdlAP1B64I3VqQBQfvugmvvI412BIzIPFQTP7MSK44aJxLej+VtEvEQUEXITcuoy+NErSVT0sARugAHfEMf7wvCXTpeNsiJGl78FxIdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Lc/cYZNb; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24b157ba91bso2380505ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 09:46:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1757004382; x=1757609182; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=esdQfPQXbS6WrJkjrbmIf4YcFmqNl+DroIr0Wz/5KiE=;
+        b=Lc/cYZNbgaQ0l4SMf9I64auH60EIJpJOdNYKo7E3QctflA/cI3bOors2/cguIvOr5p
+         YgkK3kjmp/F+hz44Trvy2nS91heWvDdpQ40Fmyeg8T6lqB4A4opQ/kruoi6vCklMtDX3
+         MZXkfYlZedggCJ7J0Q7mIAHE/E4ckwLM7HfgcjbSkesNpt9SNnGwbGapqmH3LOfc5A0i
+         vnc7w1F4MmBxHfkedD4AJzKwtnYOgeMoqrEpvf6ojDKd7+SFZ9KaWKIX6YuovvEBztVI
+         J5VJWd50VjWilEW9xgSgWShY98eFEOaqPNs9Grrpo+iKOrU38PTSnINJR1hnKqfoaaaV
+         mqRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757004382; x=1757609182;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=esdQfPQXbS6WrJkjrbmIf4YcFmqNl+DroIr0Wz/5KiE=;
+        b=OZgUnHMDFSsiAjgPTuluTxQM76IekVI/ottgcKh8Xj6mL3M8hRfQQUWdmgHjGrASw9
+         JRJtnS2/DF9JFBov7nvb9xB+8S9M+dYKWEVTQT32/HGESdCMsYzgZjAHzdKjB0F/FNvQ
+         597oLKn2SbVHsSC9+6ftL7nGV3L4dOh98Af+VWOOjIPbQ66EZ4NJL0rMTkQF7L3BTLyb
+         h0YPw19Txy540PLjjpi1GmcJwj3EhgaNF0jlB+fb9m+0all0rR26lwA+ARdd0R3Y7pyc
+         ffYv85TPIBONh8pYkt2Q4mvi6DxOYCTv4D1LKX58E6AE6HUMVajHMawZASqZ9dSfseVg
+         m/1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVbHDfeLOUYJGGlJcGWazZrOJgn3R2fNZtcFvqNYNaPeY+g4h6Upmy3fAxBJH03zXGqLoYDF2Ye78xk+0A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8zgPMQkPme0w8jXnxJ5P0E3QAH4XfRqJW3jvshkb523ETGKSJ
+	r0kFhEI8EzM/mIWi+DpVw6H3Ykxfbe9dZDDOgVrEOjuJQ0oDbn7g/rgQAwup6Z3UbgQ97BgpPFF
+	opm7BpviR9IvY+moGoAT9cd0o26k0IoSrNlc997Ix3w==
+X-Gm-Gg: ASbGnctpiRYSJ9+fsgXjs1WzqXG3Fe7uTK1nTVQfkpNdNYFWxiaOkpXBpEox16rVmA+
+	hM0mzYa9DwZjeXPh9lV1ZGCYuHmw/51qzfW+Xeo7NebMlqLQlxDD0IThYbc2LP8dq+lL2OX5a6w
+	9HYqX5/cyMuXrr3TXAX3OW8U9433Xy1Izan5na4R6U2qEsJs6ejM05iQjWzeD4WmS9FYoRGbNnx
+	KOVZrylKQKS
+X-Google-Smtp-Source: AGHT+IGrZNSK0knOxEHf6PsWEDnTsqGXLr9ZT4FDcu0e0+A+rMw9hJbAM6Q+b2AWs6Aec9Wiln+LuYk7mvryiLvgOqg=
+X-Received: by 2002:a17:902:ce8c:b0:24c:7bc8:a51c with SMTP id
+ d9443c01a7336-24c7bc8a879mr52655195ad.9.1757004381611; Thu, 04 Sep 2025
+ 09:46:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250903225527.GA1236657@bhelgaas>
+References: <68b8b95f.050a0220.3db4df.0206.GAE@google.com> <26aa509e-3070-4f6b-8150-7c730e05951d@kernel.dk>
+ <CADUfDZpTtLjyQjURhTOND5XbdJOSEduDLdSuyUJVk_OKG9HVGA@mail.gmail.com>
+In-Reply-To: <CADUfDZpTtLjyQjURhTOND5XbdJOSEduDLdSuyUJVk_OKG9HVGA@mail.gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Thu, 4 Sep 2025 09:46:08 -0700
+X-Gm-Features: Ac12FXxn_8Ji6Q7m7oxenDDgFiIonvxO9qeRpHFqvVppbyILUhbyHtFsJ57ZCzw
+Message-ID: <CADUfDZot=DxWjERupMofRuyvK3jKx79yQUOSniqT4uhMac2dbw@mail.gmail.com>
+Subject: Re: [syzbot ci] Re: io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
+To: Jens Axboe <axboe@kernel.dk>
+Cc: syzbot ci <syzbot+cibd93ea08a14d0e1c@syzkaller.appspotmail.com>, 
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 03, 2025 at 05:55:27PM GMT, Bjorn Helgaas wrote:
-> On Sun, Aug 31, 2025 at 06:28:53PM +0530, Manivannan Sadhasivam wrote:
-> > On Thu, Aug 28, 2025 at 03:43:45PM GMT, Bjorn Helgaas wrote:
-> > > On Mon, Aug 25, 2025 at 01:35:22PM -0700, David E. Box wrote:
-> > > > Synthetic PCIe hierarchies, such as those created by Intel VMD, are not
-> > > > enumerated by firmware and do not receive BIOS-provided ASPM or CLKPM
-> > > > defaults. Devices in such domains may therefore run without the intended
-> > > > power management.
-> > > > 
-> > > > Add a host-bridge mechanism that lets controller drivers supply their own
-> > > > defaults. A new aspm_default_link_state field in struct pci_host_bridge is
-> > > > set via pci_host_set_default_pcie_link_state(). During link initialization,
-> > > > if this field is non-zero, ASPM and CLKPM defaults come from it instead of
-> > > > BIOS.
-> > > > 
-> > > > This enables drivers like VMD to align link power management with platform
-> > > > expectations and avoids embedding controller-specific quirks in ASPM core
-> > > > logic.
-> > > 
-> > > I think this kind of sidesteps the real issue.  Drivers for host
-> > > controllers or PCI devices should tell us about *broken* things, but
-> > > not about things advertised by the hardware and available for use.
-> > > 
-> > > The only documented policy controls I'm aware of for ASPM are:
-> > > 
-> > >   - FADT "PCIe ASPM Controls" bit ("if set, OS must not enable ASPM
-> > >     control on this platform")
-> > > 
-> > >   - _OSC negotiation for control of the PCIe Capability (OS is only
-> > >     allowed to write PCI_EXP_LNKCTL if platform has granted control to
-> > >     the OS)
-> > > 
-> > > I think what we *should* be doing is enabling ASPM when it's
-> > > advertised, subject to those platform policy controls and user choices
-> > > like CONFIG_PCIEASPM_PERFORMANCE/POWERSAVE/etc and sysfs attributes.
-> > > 
-> > > So basically I think link->aspm_default should be PCIE_LINK_STATE_ALL
-> > > without drivers doing anything at all.  Maybe we have to carve out
-> > > exceptions, e.g., "VMD hierarchies are exempt from _OSC," or "devices
-> > > on x86 systems before 2026 can't enable more ASPM than BIOS did," or
-> > > whatever.  Is there any baby step we can make in that direction?
-> > 
-> > I'm not sure about the ACPI world, but for devicetree platforms,
-> > BIOS or the bootloader won't configure ASPM for the devices
-> > (mostly). So the baby step would be to set PCIE_LINK_STATE_ALL for
-> > all devicetree platforms :)
-> 
-> Yes.  How likely would this be to break something?
-> 
+On Thu, Sep 4, 2025 at 7:52=E2=80=AFAM Caleb Sander Mateos
+<csander@purestorage.com> wrote:
+>
+> On Wed, Sep 3, 2025 at 4:30=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote=
+:
+> >
+> > On 9/3/25 3:55 PM, syzbot ci wrote:
+> > > syzbot ci has tested the following series
+> > >
+> > > [v1] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
+> > > https://lore.kernel.org/all/20250903032656.2012337-1-csander@purestor=
+age.com
+> > > * [PATCH 1/4] io_uring: don't include filetable.h in io_uring.h
+> > > * [PATCH 2/4] io_uring/rsrc: respect submitter_task in io_register_cl=
+one_buffers()
+> > > * [PATCH 3/4] io_uring: factor out uring_lock helpers
+> > > * [PATCH 4/4] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSU=
+ER
+> > >
+> > > and found the following issue:
+> > > WARNING in io_handle_tw_list
+> > >
+> > > Full report is available here:
+> > > https://ci.syzbot.org/series/54ae0eae-5e47-4cfe-9ae7-9eaaf959b5ae
+> > >
+> > > ***
+> > >
+> > > WARNING in io_handle_tw_list
+> > >
+> > > tree:      linux-next
+> > > URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/n=
+ext/linux-next
+> > > base:      5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
+> > > arch:      amd64
+> > > compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976=
+-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> > > config:    https://ci.syzbot.org/builds/1de646dd-4ee2-418d-9c62-617d8=
+8ed4fd2/config
+> > > syz repro: https://ci.syzbot.org/findings/e229a878-375f-4286-89fe-b67=
+24c23addd/syz_repro
+> > >
+> > > ------------[ cut here ]------------
+> > > WARNING: io_uring/io_uring.h:127 at io_ring_ctx_lock io_uring/io_urin=
+g.h:127 [inline], CPU#1: iou-sqp-6294/6297
+> > > WARNING: io_uring/io_uring.h:127 at io_handle_tw_list+0x234/0x2e0 io_=
+uring/io_uring.c:1155, CPU#1: iou-sqp-6294/6297
+> > > Modules linked in:
+> > > CPU: 1 UID: 0 PID: 6297 Comm: iou-sqp-6294 Not tainted syzkaller #0 P=
+REEMPT(full)
+> > > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debia=
+n-1.16.2-1 04/01/2014
+> > > RIP: 0010:io_ring_ctx_lock io_uring/io_uring.h:127 [inline]
+> > > RIP: 0010:io_handle_tw_list+0x234/0x2e0 io_uring/io_uring.c:1155
+> > > Code: 00 00 48 c7 c7 e0 90 02 8c be 8e 04 00 00 31 d2 e8 01 e5 d2 fc =
+2e 2e 2e 31 c0 45 31 e4 4d 85 ff 75 89 eb 7c e8 ad fb 00 fd 90 <0f> 0b 90 e=
+9 cf fe ff ff 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 22 ff
+> > > RSP: 0018:ffffc900032cf938 EFLAGS: 00010293
+> > > RAX: ffffffff84bfcba3 RBX: dffffc0000000000 RCX: ffff888107f61cc0
+> > > RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000000000
+> > > RBP: ffff8881119a8008 R08: ffff888110bb69c7 R09: 1ffff11022176d38
+> > > R10: dffffc0000000000 R11: ffffed1022176d39 R12: ffff8881119a8000
+> > > R13: ffff888108441e90 R14: ffff888107f61cc0 R15: 0000000000000000
+> > > FS:  00007f81f25716c0(0000) GS:ffff8881a39f5000(0000) knlGS:000000000=
+0000000
+> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > CR2: 0000001b31b63fff CR3: 000000010f24c000 CR4: 00000000000006f0
+> > > Call Trace:
+> > >  <TASK>
+> > >  tctx_task_work_run+0x99/0x370 io_uring/io_uring.c:1223
+> > >  io_sq_tw io_uring/sqpoll.c:244 [inline]
+> > >  io_sq_thread+0xed1/0x1e50 io_uring/sqpoll.c:327
+> > >  ret_from_fork+0x47f/0x820 arch/x86/kernel/process.c:148
+> > >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+> > >  </TASK>
+> >
+> > Probably the sanest thing to do here is to clear
+> > IORING_SETUP_SINGLE_ISSUER if it's set with IORING_SETUP_SQPOLL. If we
+> > allow it, it'll be impossible to uphold the locking criteria on both th=
+e
+> > issue and register side.
+>
+> Yup, I was thinking the same thing. Thanks for taking a look.
 
-I don't know :) If we want to bite the bullet, let's do it. Otherwise, let's
-keep waiting for the time to come ;) For sure there will be breakages
-reported, but it won't be like on x86 which people use for day to day work.
-There are IBM Power and MIPS based servers using devicetree as well, so they
-might also get impacted.
+On further thought, IORING_SETUP_SQPOLL actually does guarantee a
+single issuer. io_uring_enter() already avoids taking the uring_lock
+in the IORING_SETUP_SQPOLL case because it doesn't issue any SQEs
+itself. Only the SQ thread does that, so it *is* the single issuer.
+The assertions I added in io_ring_ctx_lock()/io_ring_ctx_unlock() is
+just unnecessarily strict. It should expect current =3D=3D
+ctx->sq_data->thread in the IORING_SETUP_SQPOLL case.
 
-But it would be the optimal test bed if we ever want to start enabling ASPM by
-default.
-
-> Before doing that, I think we need to add some logging, at least at
-> pci_dbg(), of what is already enabled and what we change, so we have
-> some kind of hint when things do break.
-
-Sure. Even if we want to make it pci_info(), I think it would be worth doing it
-as it will make the reporting much easier.
-
-Let me know if I can proceed with this.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Best,
+Caleb
 
