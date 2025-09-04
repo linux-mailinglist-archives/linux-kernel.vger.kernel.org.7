@@ -1,180 +1,248 @@
-Return-Path: <linux-kernel+bounces-801492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C3D8B445BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:47:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F83B445C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB65F1CC146D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:48:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 241A7A047AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07134257422;
-	Thu,  4 Sep 2025 18:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4862586C8;
+	Thu,  4 Sep 2025 18:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jd3hjVEO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="HFHnCdaI"
+Received: from iguana.tulip.relay.mailchannels.net (iguana.tulip.relay.mailchannels.net [23.83.218.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65BE229B2E;
-	Thu,  4 Sep 2025 18:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757011670; cv=none; b=PEmOEJjgw7rbwhQaZUH3wvYWFcicS94/KCyu7dSJDXzoDUV2ez0XKeCdx1LE/mNgjXccfdqWzH43TCNGoyAKIRXKIvp5kgfuLhWS0wXDxXXtPg98PN4RN4ArlknlRMoOLNgldmpFlfGgVjtAST9rwZiJDpYNC3bal25yjt/gK28=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757011670; c=relaxed/simple;
-	bh=KzUGxTop9JhPXBG4T/1leWl65MjxiWSzlGCzfJwjlsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A12a3NQCpUYr2bBk/R0B2rQkPivTMSZHBVYXhp4vRE4uqjumSts0JmSkCvgKQQqezi68l2OIOH2eM/x1xiuWRGvOk9nqy8d7qa1fcF/6s5k1ON31ytYL9wfiM+clCBbFC3IHOc+jhACwDYUSvQhudTK4cVGbp7icfosPovEC+Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jd3hjVEO; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757011669; x=1788547669;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KzUGxTop9JhPXBG4T/1leWl65MjxiWSzlGCzfJwjlsQ=;
-  b=Jd3hjVEOYEJvilCPA2LjzrYVtbtu62ros5qiwyfKyp+54bCkIAERuZfm
-   +hNabt4h1eJobfYFTrCN1VaPL0q4MXyl2UZqCdT+ARtXZmVk/69tHiDfl
-   SSxZtRK97Uk0AbKFFPW2ITo2MU+qK5tJ++6J1tV2dap0bwDOkk6U4CLww
-   UKzNLZhdeYb+NEzYDA3TBuc9ycl5WPSTAEopKYAt1C00KhPgeMUvOKniq
-   yqnD1jmZTECN6bIHzm6Mm228ziv3B8jHN8OH+q3xo+u01UGv2DnEq9E4C
-   pKqqvpYqo+9ZLJZ1nzcaUGcCWVdfxVQhutgpf8gDlJtGkp4rjPJTnIHgn
-   g==;
-X-CSE-ConnectionGUID: 8gdnTTCVRSuwRx30GBU5Dg==
-X-CSE-MsgGUID: uK5OidPgRW2O+/88d2wkyA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="69978547"
-X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
-   d="scan'208";a="69978547"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 11:47:48 -0700
-X-CSE-ConnectionGUID: UM8whEFzQOK8xu7mfj6JoQ==
-X-CSE-MsgGUID: SZWJjCQXSYizn4utPvz7kg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
-   d="scan'208";a="176091002"
-Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 04 Sep 2025 11:47:45 -0700
-Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uuEzm-0005dr-13;
-	Thu, 04 Sep 2025 18:47:42 +0000
-Date: Fri, 5 Sep 2025 02:46:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vincent Mailhol <mailhol@kernel.org>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Vincent Mailhol <mailhol@kernel.org>,
-	=?iso-8859-1?Q?St=E9phane?= Grosjean <stephane.grosjean@hms-networks.com>,
-	Robert Nawrath <mbro1689@gmail.com>,
-	Minh Le <minh.le.aj@renesas.com>,
-	Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/21] can: netlink: add can_validate_databittiming()
-Message-ID: <202509050259.NjPdQyAD-lkp@intel.com>
-References: <20250903-canxl-netlink-prep-v1-6-904bd6037cd9@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B775E2505A5;
+	Thu,  4 Sep 2025 18:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.253
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757011699; cv=pass; b=VhyfTGwCALwG3yYsG1maP/iT64xLb5hg7nXjI/zW6wCatJfVc/fnwowTM65nrM9eFAakkXOZuvWr8xUqp0vHYwUXP7s2pIMwGvITZ/HvJdmLlAhMF2q66xPBlbJM/WjvoQ8PoNnFdMrwwbcyHX9ExtgCbejxEyL1Nlaiaycw7mY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757011699; c=relaxed/simple;
+	bh=zVBoUBDk6LNpa2rPxcMF/px2EY2Tk2CJDQheuO7cQvY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KNcymR44bqRQU/tjgqfGBYgLKz9F3UVC16fDcfOzIV0/mra7KIH+kH2qvBMMzBHCFXEF6+DF/cJaNTReTRIu9cVHmVWG1CQV3DB0FtOjBAX2evUMA6BvB7McxYFyAo13yuvY7Cke28BDtPNqhVfsIG6nVBdDrbhzbKpNIRGTlII=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=HFHnCdaI; arc=pass smtp.client-ip=23.83.218.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 47F7C783F7E;
+	Thu,  4 Sep 2025 18:48:11 +0000 (UTC)
+Received: from pdx1-sub0-mail-a216.dreamhost.com (100-102-90-158.trex-nlb.outbound.svc.cluster.local [100.102.90.158])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id BA59878263F;
+	Thu,  4 Sep 2025 18:48:10 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1757011690; a=rsa-sha256;
+	cv=none;
+	b=mwot+RoSt5WFH1Z2E8QaaT4REcB/hB9DIJHg530BkZMCMJF+RZGYEys8KAvoppkdN9PMOv
+	QQx+kMSNIM5Cd6eVwcj3Axbv2CSJaNbGTZb0SlbJqnsAgmrKcAfsrUkDEvLRqNpEB6MUcx
+	dS8HaPneswOSvrCziy0Za04PQT+AMGjof8KHoMTAgjk2kAPlWBjoWX2b6Cvq5aQ8HMqeTZ
+	viQnLSHJKGQnsoRrJ50XMdBiioZlhNmJpWZGF8DGwe+FRcvoANL/DBUBreBvBjtk6+iP1b
+	65gvLwUoVz3E1ooUwfBqNT3OgpAv2VFpUaDnWyC40LnUDi7k1b9UCFYLuEcBCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1757011690;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:dkim-signature;
+	bh=JHwOvcWkt+mIE9FpPBs3qDJ2IlTxHvz63kAx8Lygg0I=;
+	b=vfftwxu6mISPizFvw+ys4XbngjJCTPXvUKEv+LydfvRS+75gvN9tgyOfivTFd78eAgLt79
+	QIlzjtyiCXQDrO7pubGfG1KlH6doj19EsMGV/F1nL/+Azl9ETCFD7YVjI0hDr6V9PZwxpx
+	LcCh9HstHGIVsaRKrJYHB/n7w76BssV6gZSycY1aoUyrLPxoRUyknhU0QFSGqjR41uWaxF
+	c1WLacWo4SLeQjL7vHtq49sBvsAlcOiSrC98FZGpRb1nTamcFUExKmZuarN1aBsKtH/jO8
+	m6audvB7KBAQU0FDcecXzCERkQgLDwOezrZS2O0ulcPvixY36OvKvdBvYvBkOg==
+ARC-Authentication-Results: i=1;
+	rspamd-8b9589799-n4rjh;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Abiding-Robust: 1681329f306e1448_1757011691083_2189893994
+X-MC-Loop-Signature: 1757011691083:16660094
+X-MC-Ingress-Time: 1757011691082
+Received: from pdx1-sub0-mail-a216.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.102.90.158 (trex/7.1.3);
+	Thu, 04 Sep 2025 18:48:11 +0000
+Received: from offworld.lan (syn-076-167-199-067.res.spectrum.com [76.167.199.67])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a216.dreamhost.com (Postfix) with ESMTPSA id 4cHpQK6ZVjz6h;
+	Thu,  4 Sep 2025 11:48:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1757011690;
+	bh=JHwOvcWkt+mIE9FpPBs3qDJ2IlTxHvz63kAx8Lygg0I=;
+	h=From:To:Cc:Subject:Date:Content-Transfer-Encoding;
+	b=HFHnCdaIzZmtUjZjuUTA1pQ1JK0Wa0SWQ7VtvQkO73MSCUr0C4Z/dyQhKFmITdVV1
+	 xykVe4xWV92q7qbdMfdjK8sBIHDDEHALiVzyVYCvMc3KoR6jvPCMbCoQpBwFxbJ+6Z
+	 vCBB+D+Lj1SUTvii5qLGk9i4ax8bahChbqcucNV0zN81d5/3JBX02Qd7Wl46b+vQqU
+	 Y9vzGvXPMUwoY9wR+CwfkXgWnB1ATyV90NeNr70BO9sRPtgcV/9MgRbC4TuMou5+9d
+	 ZbSism92LpVhgaZ+qW5x4Risc2aI87L3pqcIFMpbGVIItN4CAQ9BmWJx2HwQfLSFM1
+	 eP8JFOR8OZcHw==
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: rafael.j.wysocki@intel.com,
+	dave.jiang@intel.com
+Cc: dan.j.williams@intel.com,
+	jonathan.cameron@huawei.com,
+	alejandro.lucero-palau@amd.com,
+	ira.weiny@intel.com,
+	alison.schofield@intel.com,
+	a.manzanares@samsung.com,
+	linux-acpi@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Davidlohr Bueso <dave@stgolabs.net>
+Subject: [PATCH] acpi, tables: Rename coherency CFMW restrictions
+Date: Thu,  4 Sep 2025 11:48:01 -0700
+Message-Id: <20250904184801.47498-1-dave@stgolabs.net>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903-canxl-netlink-prep-v1-6-904bd6037cd9@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-Hi Vincent,
+ACPICA commit 710745713ad3a2543dbfb70e84764f31f0e46bdc
 
-kernel test robot noticed the following build warnings:
+This has been renamed in more recent CXL specs, as
+type3 (memory expanders) can also use HDM-DB for
+device coherent memory.
 
-[auto build test WARNING on 2fd4161d0d2547650d9559d57fc67b4e0a26a9e3]
+Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
+---
+ drivers/cxl/acpi.c           |  4 ++--
+ include/acpi/actbl1.h        |  4 ++--
+ tools/testing/cxl/test/cxl.c | 18 +++++++++---------
+ 3 files changed, 13 insertions(+), 13 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vincent-Mailhol/can-dev-move-struct-data_bittiming_params-to-linux-can-bittiming-h/20250903-170807
-base:   2fd4161d0d2547650d9559d57fc67b4e0a26a9e3
-patch link:    https://lore.kernel.org/r/20250903-canxl-netlink-prep-v1-6-904bd6037cd9%40kernel.org
-patch subject: [PATCH 06/21] can: netlink: add can_validate_databittiming()
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20250905/202509050259.NjPdQyAD-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250905/202509050259.NjPdQyAD-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509050259.NjPdQyAD-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/net/can/dev/netlink.c:111:6: warning: variable 'is_on' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-     111 |         if (ifla_can_data_bittiming == IFLA_CAN_DATA_BITTIMING) {
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/can/dev/netlink.c:119:6: note: uninitialized use occurs here
-     119 |         if (is_on) {
-         |             ^~~~~
-   drivers/net/can/dev/netlink.c:111:2: note: remove the 'if' if its condition is always true
-     111 |         if (ifla_can_data_bittiming == IFLA_CAN_DATA_BITTIMING) {
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     112 |                 data_tdc = data[IFLA_CAN_TDC];
-     113 |                 tdc_flags = flags & CAN_CTRLMODE_FD_TDC_MASK;
-     114 |                 is_on = flags & CAN_CTRLMODE_FD;
-     115 |         } else {
-         |           ~~~~~~
-     116 |                 WARN_ON(1); /* Place holder for CAN XL */
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     117 |         }
-         |         ~
-   drivers/net/can/dev/netlink.c:108:12: note: initialize the variable 'is_on' to silence this warning
-     108 |         bool is_on;
-         |                   ^
-         |                    = 0
-   1 warning generated.
-
-
-vim +111 drivers/net/can/dev/netlink.c
-
-   101	
-   102	static int can_validate_databittiming(struct nlattr *data[],
-   103					      struct netlink_ext_ack *extack,
-   104					      int ifla_can_data_bittiming, u32 flags)
-   105	{
-   106		struct nlattr *data_tdc;
-   107		u32 tdc_flags;
-   108		bool is_on;
-   109		int err;
-   110	
- > 111		if (ifla_can_data_bittiming == IFLA_CAN_DATA_BITTIMING) {
-   112			data_tdc = data[IFLA_CAN_TDC];
-   113			tdc_flags = flags & CAN_CTRLMODE_FD_TDC_MASK;
-   114			is_on = flags & CAN_CTRLMODE_FD;
-   115		} else {
-   116			WARN_ON(1); /* Place holder for CAN XL */
-   117		}
-   118	
-   119		if (is_on) {
-   120			if (!data[IFLA_CAN_BITTIMING] || !data[ifla_can_data_bittiming])
-   121				return -EOPNOTSUPP;
-   122		}
-   123	
-   124		if (data[ifla_can_data_bittiming] || data_tdc) {
-   125			if (!is_on)
-   126				return -EOPNOTSUPP;
-   127		}
-   128	
-   129		err = can_validate_bittiming(data, extack, ifla_can_data_bittiming);
-   130		if (err)
-   131			return err;
-   132	
-   133		err = can_validate_tdc(data_tdc, extack, tdc_flags);
-   134		if (err)
-   135			return err;
-   136	
-   137		return 0;
-   138	}
-   139	
-
+diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+index 26c494704437..2cf75b553f26 100644
+--- a/drivers/cxl/acpi.c
++++ b/drivers/cxl/acpi.c
+@@ -128,9 +128,9 @@ static unsigned long cfmws_to_decoder_flags(int restrictions)
+ {
+ 	unsigned long flags = CXL_DECODER_F_ENABLE;
+ 
+-	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_TYPE2)
++	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_DEVMEM)
+ 		flags |= CXL_DECODER_F_TYPE2;
+-	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_TYPE3)
++	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM)
+ 		flags |= CXL_DECODER_F_TYPE3;
+ 	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_VOLATILE)
+ 		flags |= CXL_DECODER_F_RAM;
+diff --git a/include/acpi/actbl1.h b/include/acpi/actbl1.h
+index 99fd1588ff38..eb787dfbd2fa 100644
+--- a/include/acpi/actbl1.h
++++ b/include/acpi/actbl1.h
+@@ -560,8 +560,8 @@ struct acpi_cedt_cfmws_target_element {
+ 
+ /* Values for Restrictions field above */
+ 
+-#define ACPI_CEDT_CFMWS_RESTRICT_TYPE2      (1)
+-#define ACPI_CEDT_CFMWS_RESTRICT_TYPE3      (1<<1)
++#define ACPI_CEDT_CFMWS_RESTRICT_DEVMEM      (1)
++#define ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM (1<<1)
+ #define ACPI_CEDT_CFMWS_RESTRICT_VOLATILE   (1<<2)
+ #define ACPI_CEDT_CFMWS_RESTRICT_PMEM       (1<<3)
+ #define ACPI_CEDT_CFMWS_RESTRICT_FIXED      (1<<4)
+diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
+index 6a25cca5636f..ba50338f8ada 100644
+--- a/tools/testing/cxl/test/cxl.c
++++ b/tools/testing/cxl/test/cxl.c
+@@ -210,7 +210,7 @@ static struct {
+ 			},
+ 			.interleave_ways = 0,
+ 			.granularity = 4,
+-			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
++			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+ 					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
+ 			.qtg_id = FAKE_QTG_ID,
+ 			.window_size = SZ_256M * 4UL,
+@@ -225,7 +225,7 @@ static struct {
+ 			},
+ 			.interleave_ways = 1,
+ 			.granularity = 4,
+-			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
++			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+ 					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
+ 			.qtg_id = FAKE_QTG_ID,
+ 			.window_size = SZ_256M * 8UL,
+@@ -240,7 +240,7 @@ static struct {
+ 			},
+ 			.interleave_ways = 0,
+ 			.granularity = 4,
+-			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
++			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+ 					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+ 			.qtg_id = FAKE_QTG_ID,
+ 			.window_size = SZ_256M * 4UL,
+@@ -255,7 +255,7 @@ static struct {
+ 			},
+ 			.interleave_ways = 1,
+ 			.granularity = 4,
+-			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
++			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+ 					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+ 			.qtg_id = FAKE_QTG_ID,
+ 			.window_size = SZ_256M * 8UL,
+@@ -270,7 +270,7 @@ static struct {
+ 			},
+ 			.interleave_ways = 0,
+ 			.granularity = 4,
+-			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
++			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+ 					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+ 			.qtg_id = FAKE_QTG_ID,
+ 			.window_size = SZ_256M * 4UL,
+@@ -285,7 +285,7 @@ static struct {
+ 			},
+ 			.interleave_ways = 0,
+ 			.granularity = 4,
+-			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
++			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+ 					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
+ 			.qtg_id = FAKE_QTG_ID,
+ 			.window_size = SZ_256M,
+@@ -302,7 +302,7 @@ static struct {
+ 			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
+ 			.interleave_ways = 0,
+ 			.granularity = 4,
+-			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
++			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+ 					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+ 			.qtg_id = FAKE_QTG_ID,
+ 			.window_size = SZ_256M * 8UL,
+@@ -318,7 +318,7 @@ static struct {
+ 			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
+ 			.interleave_ways = 1,
+ 			.granularity = 0,
+-			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
++			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+ 					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+ 			.qtg_id = FAKE_QTG_ID,
+ 			.window_size = SZ_256M * 8UL,
+@@ -334,7 +334,7 @@ static struct {
+ 			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
+ 			.interleave_ways = 8,
+ 			.granularity = 1,
+-			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
++			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+ 					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+ 			.qtg_id = FAKE_QTG_ID,
+ 			.window_size = SZ_512M * 6UL,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.5
+
 
