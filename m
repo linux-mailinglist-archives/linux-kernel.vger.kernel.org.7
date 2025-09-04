@@ -1,157 +1,119 @@
-Return-Path: <linux-kernel+bounces-800258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30B9FB43572
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:19:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95762B435A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C560E1883321
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:20:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED8831BC55B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A332C11C7;
-	Thu,  4 Sep 2025 08:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B752C11D9;
+	Thu,  4 Sep 2025 08:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmFoytlr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="a8WXWOTv"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45ECB2BEFE8;
-	Thu,  4 Sep 2025 08:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F2E2877EE;
+	Thu,  4 Sep 2025 08:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756973974; cv=none; b=SKtBDwSw0vOEq3rjZGa0DZMDWbFToRTs3OAQa+yaqecvpC/OIE7z/h3c/j5FkxYC2eLEDKjxqrQamukT0219KRDA8uuUCGVWj/V7siC+p2AqeFpYN/chaRGcuA+CU8S6SMNd9POHuHdKWBReXjtSmh73EXYTCbRiBl6nJR/Dw/U=
+	t=1756974309; cv=none; b=tMvF8ZjCDiaTMRmiwvUGX8DdaNfadj7JYhUDdERc7N5iuxYRuLDTVtozRv2PaD+wnxJAsugHkzyrhYiTIhdyE8diSidYRe1mhXSN29png79VL7ZbpfRjRqp5Cm29abuBXe+lHDrtZO+MTLOVEU0XH5Yyo6elgZkLYlvLKxq1J/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756973974; c=relaxed/simple;
-	bh=kxMA6xJIchs9QR1tfO7hgVmWfcdv0CoNQonnp5feJiU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cDGUBSocC5l8WAzr/4qUa/qCLzNzGmSH7Oxle9/6qN+nsjcu8M7ua0t08jM6DY2t4VGRFIlzlLAYcTq6191zMppIcPSjJNXD9CXSuOYX7oNZaN9tKLgltyFP4ZpM6TkNn/FabkxPRtRbj1RkPk1An/bN/TVkqL0UITf5qKWbBXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmFoytlr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B01C4CEF0;
-	Thu,  4 Sep 2025 08:19:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756973974;
-	bh=kxMA6xJIchs9QR1tfO7hgVmWfcdv0CoNQonnp5feJiU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pmFoytlrB60TuzrpAsR5wdSCNjdICXeOP+kFtNbfcpuUsFZNrj/dlrtSbLiRxNHCt
-	 WvJ1kfQmjsmELWl3mCa7Ptd7+4zagRgZkj6rY+8veiUupCeHu6kFQREvU8nXOsYG1m
-	 vaJhW91XH9hO5tuQaPpaIraXRCFEZUwpwMuVCWzTmQvnzSvJQ8frE8KOiQ04mvx279
-	 Ml4X1THzPtoEv1qmJsyeYJVpphzSOhndH7OQdDTxF4vcCN9BaNikA1IAJ6oJBvoNtV
-	 FoqlfUTF0kfHaWGjcCGrObVyf6SSzTgq5+BEPZxMXZgKP15fM/Zv3wf56Ueppn4QMt
-	 tJ6g215RFgbEw==
-Message-ID: <08062eb7-1b7d-4fc3-86ea-af70069065eb@kernel.org>
-Date: Thu, 4 Sep 2025 10:19:29 +0200
+	s=arc-20240116; t=1756974309; c=relaxed/simple;
+	bh=0w+xnx8GDzBkVH9MReXmk6GUPZ5qZuiT3Hfka7nZ3z4=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=rMsVfuoO+u0efE5MQn/CaEu2r+Q9F3AESA19VrvAd1nHlTOdtNeyyn0sP3iqLXRF8o7N1Omk2tv8pzX04ApsDbT1BffQ1eBPwy/ufw3IYwqQcxGgyCRv3nbh46WmsRhR6olrO5iJzsD91wc2D8onkisPUgnCTtobW2lGhs3/Gts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=a8WXWOTv; arc=none smtp.client-ip=43.163.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1756973995;
+	bh=7DN0jn8EFbvGagtqyUaHOSQPeNSavR6C85ONmpAUNNc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=a8WXWOTvRijQdEPpl+JiVWZmXQWN+VosqIrCO8GJAuvis3J3WSZ1zmIBLEdYzwEi+
+	 OdXqTSJyrCvej+/DNjqZurVkVziyLZ8Sx6ZzL2h+EEd9LE9ewMavLFfg2Sso85XFov
+	 4PNx5bctctOCJksSzdwCC1/M3zklWSLoInNomowI=
+Received: from SSOC3-SH.company.local ([58.33.109.195])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 4E5236EA; Thu, 04 Sep 2025 16:19:37 +0800
+X-QQ-mid: xmsmtpt1756973977tsvxx6u76
+Message-ID: <tencent_329AB29889A28A31719F322691C87E214C07@qq.com>
+X-QQ-XMAILINFO: NZa67OCgpTu6oc+56M+ZfTWjVoMuYGJi2nW9nhd25uQ8uEJ0hgY8nnHyG8p8A2
+	 AW3VIDJTXs7yDI7E2fjw5JORUw5U3Ic4t8lM10c/YEwxuCFKNaxVR9WptP33/bXb+buu0Hb3q9z6
+	 WqXo5ifbVzcYHjjhNDLWec3DSYEdQ4cuYIyXvgahGy89UFw6mDBS+kcWkw9kSw4wgolstVj4QHl1
+	 uQVyEhAdJCzZrnhi9hI1VU1w/Dbda5rPpMQsSpnUrAgJwkNmosTRSOXg73T4uLa9rwEVaTT/C2dW
+	 0x73pjmTv2qe7vKZFSZ3HQ33QwSbTL4jIuVPV4EuaT4i3ypj96tWpyx9ZbEXQgwybO9ZhS2V4OKR
+	 MTcNPfr6L7vTZzRuUERxMTjFFg25QCb7ts1TvQX2uG0vP8zOR+YA5A2B5fW8cvyl7UMTHVViFdMg
+	 4NbvQsxa2yaa81+J988I7KGuON59H1q7jxhZKyfgIUMVSS3Wvvbq1aHd5NxFowXR/S0P/1KrA8ah
+	 3Tw3Eb2fqcHdNIqT+6AM39JkmfLRUuP89lNqUe1xvbxbb4PSIm6ssQRVVJDqOVdiodYWkVz3JzLb
+	 aZYrNU5miF6a2Xq9oOsR5+UqINfglG+2FlfnqWrZ3zudCQ8VzebYb2lAeS6Fw4IA4BMvkZXrs8Bw
+	 2ObIlrp5Ax8Of+LOiHbH+mFO9VNvhUlsv/Q7ZXeqaqkRGN/+bCi9nliUhACdEd2j8kyEkHGL4Sx5
+	 vdnOE4biva4Sw3bzhMvYi/wW1LYV+CkyM5Q6vB1RgePRTJ2Yk+t/l7ezAju26vIEh/6R61f0c3tz
+	 hloXwzyjdlkWTP3AKVWy4m3boaKGdnLQ2FGmGhlGmd33vqYhoycQi5H4IMRRqRpGFvXfY/zMXZSa
+	 4hKPn+Z8j5+tqaUxXS0pJU/qKzIGIzo24f1rEFrVUN+GbTZt5FLsrB6FOoHgfdX/QIGoncxSoM5l
+	 gffXwPiQOKRayw3o3YgjxS8q8hMPR+EB1OeMqtprAUwndbTVQPGgvtNwcqUd14huCRZT9c90ysDr
+	 8npCOtew==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Han Guangjiang <gj.han@foxmail.com>
+To: yukuai1@huaweicloud.com
+Cc: axboe@kernel.dk,
+	fanggeng@lixiang.com,
+	gj.han@foxmail.com,
+	hanguangjiang@lixiang.com,
+	liangjie@lixiang.com,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yangchen11@lixiang.com
+Subject: Re: [PATCH] blk-throttle: check policy bit in blk_throtl_activated()
+Date: Thu,  4 Sep 2025 16:19:37 +0800
+X-OQ-MSGID: <20250904081937.3979230-1-gj.han@foxmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <59464ad0-856c-4ec3-b5b7-e7799c337a84@yukuai.org.cn>
+References: <59464ad0-856c-4ec3-b5b7-e7799c337a84@yukuai.org.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] Support dynamic EMC frequency scaling on
- Tegra186/Tegra194
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
- <20250902-glittering-toucan-of-feminism-95fd9f@kuoka>
- <CALHNRZ_CNvq_srzBZytrO6ZReg81Z6g_-Sa+=26kBEHx_c8WQA@mail.gmail.com>
- <47c7adc9-fa91-4d4e-9be4-912623c627d6@kernel.org>
- <CALHNRZ8rxyRvb1GCifeXRKjPkkBE+sK6VnPc2nS01iZV_NcjaQ@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CALHNRZ8rxyRvb1GCifeXRKjPkkBE+sK6VnPc2nS01iZV_NcjaQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 03/09/2025 08:37, Aaron Kling wrote:
-> On Wed, Sep 3, 2025 at 1:20 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 02/09/2025 18:51, Aaron Kling wrote:
->>> On Tue, Sep 2, 2025 at 3:23 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>
->>>> On Sun, Aug 31, 2025 at 10:33:48PM -0500, Aaron Kling wrote:
->>>>> This series borrows the concept used on Tegra234 to scale EMC based on
->>>>> CPU frequency and applies it to Tegra186 and Tegra194. Except that the
->>>>> bpmp on those archs does not support bandwidth manager, so the scaling
->>>>> iteself is handled similar to how Tegra124 currently works.
->>>>>
->>>>
->>>> Three different subsystems and no single explanation of dependencies and
->>>> how this can be merged.
->>>
->>> The only cross-subsystem hard dependency is that patches 5 and 6 need
->>> patches 1 and 2 respectively. Patch 5 logically needs patch 3 to
->>> operate as expected, but there should not be compile compile or probe
->>> failures if those are out of order. How would you expect this to be
->>> presented in a cover letter?
->>
->> Also, placing cpufreq patch between two memory controller patches means
->> you really make it more difficult to apply it for the maintainers.
->> Really, think thoroughly how this patchset is supposed to be read.
+Hi,
+
+> Yes, however, this can be fixed very similar:
 > 
-> This is making me more confused. My understanding was that a series
-> like this that has binding, driver, and dt changes would flow like
-> that: all bindings first, all driver changes in the middle, and all dt
+> Set sq->parent_sq to NULL here, and add a helper parent_sq(q, sq):
+> 
+> if (sq->parent_sq)
+>         return sq->parent_sq;
+> 
+> td_sq = &q->td->service_queue;
+> return sq == td_sq ? NULL : td_sq;
+> 
+> And sq_to_tg() need to be changed as well. So far, I'm not sure how many
+> code changes are required this way. We of course want a simple fix for
+> stable backport, but we definitely still want this kind of fix in future
+> release.
 
-You mix completely independent subsystems, that's the main problem.
-Don't send v3 before you understand it or we finish the discussion here.
+We preliminarily tried implementing this approach. But the changes are 
+scattered and backport might be complex. So we provide a simple fix first.
 
-> changes last. Are you suggesting that this should be: cpufreq driver
-> -> bindings -> memory drivers -> dt? Are the bindings supposed to be
-> pulled with the driver changes? I had understood those to be managed
-> separately.
-What does the submitting patches doc in DT say?
+> Meanwhile, please remove the comment about freeze queue, turns out it
+> can't protect blk_throtl_bio() becasue q_usage_coutner is not grabbed
+> yet while issuing bio.
 
-Best regards,
-Krzysztof
+As discussed before, we also removed some outdated comments in 
+blk_should_throtl().
+
+We just submitted v2 which includes the changes.
+
+We look forward to your feedback and suggestions on the v2 patch.
+
+Thanks,
+Han Guangjiang
+
 
