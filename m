@@ -1,108 +1,93 @@
-Return-Path: <linux-kernel+bounces-800261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF30BB43584
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:21:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0ECB43583
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C4C11794CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:21:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B9CD178C41
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068332C11EC;
-	Thu,  4 Sep 2025 08:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2562C11F1;
+	Thu,  4 Sep 2025 08:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="34jLjEpo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fq8SCTbR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSy/OUSO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621752C11CE;
-	Thu,  4 Sep 2025 08:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9817C2C0F6F;
+	Thu,  4 Sep 2025 08:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756974067; cv=none; b=UfGpP5ZCeL1TWB870l26UFMcgiIDESY/oo2/gpTPyUH3I4UFNqphTRq2JEpyx6WCPwk8yiye8y2QMzIdMsFzX6WUjHgcn4Xn1IQwMpy4U7c+IgCJOlOscCGtPGP/VUR0ITReR0pK3kTacFvK6HJ2fl3YEHQFr+4thkVQckqaBbs=
+	t=1756974058; cv=none; b=SpZFBK0echEf4H0oQJkg624Xm/YnjRXOLx3v6VRUw6q7dJLBHmLI6SXDRgkaGYP62JEhxedWNq4Monz/M5G/maNGXLzK13e+9AebGqaRZJOo3rMr7NoWk16RZKk+0WGeoP0CuoWWXSI/b6Ex+JuH+3jh8/2Ku3wk4y1GYqf5shQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756974067; c=relaxed/simple;
-	bh=5pU3lCcZIMMUPd7itWXVJiRbd8i372zWp0UaGvbm6Ro=;
+	s=arc-20240116; t=1756974058; c=relaxed/simple;
+	bh=nlOhFP3s8L5AUAfOG7ykkwPjQWERB9QoU6d96TfEL+Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVIbJ3zP6UxfjLR21s9VFn9BWUFWXfaVs6Y1XTVDuOmohwIlU78aVDIH50qVe47Jb3zmK1tOmgo1TreFROL3bWufgWNsQ1nWkyM2DGleInMb+EbMjotMwYC9+mrsGjvj1ciSD131PqYRVvOSWmlxsi5apekUMDHBqFguAJNz9KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=34jLjEpo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fq8SCTbR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 4 Sep 2025 10:20:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756974056;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LgKZEQgTNNt9FIDqyGUYA+pKErtCZCz7YZuMjPmhs4k=;
-	b=34jLjEpoHDDC4Hxfx3dU/lL20uh+fVPDIo5647C6TqQ8eKEQAIsfVRXav6h681xHiouEjb
-	4b3H3vaKxCqAqueQi/SaBdMrj2gIah8MkDQC+qUULPKL5JQIhXgf+QxfNnsXMcn/7EXv+Z
-	+9QTRYZfPOW4KpsR/e1eZICytE+m59JSo9DkE00ZOqhBx3E8O881OK8cBWVuYwkpRWOfrQ
-	1w4qtFTBIwpcUKeZBiVP5TJVZIRYA88nOWHNyZkJJ6rUTznwYQpe8kS0DZ/J6xEDMKH3rK
-	YUjUfsl0/i9TX/hBzWhZVGU/esTNevhLg5Qc78F15ufBipPFl/wRfrXe6jhF1w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756974056;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LgKZEQgTNNt9FIDqyGUYA+pKErtCZCz7YZuMjPmhs4k=;
-	b=fq8SCTbRlmzfiY6orM272DLWtUYNe78JJrNDhU6E1D1TjIWYPMGXSu1NnQlRfl530JHjQD
-	qk6J5ErYw8hldGDQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [RFC PATCH 16/17] verification/rvgen: Add support for per-obj
- monitors
-Message-ID: <20250904082054.W0fQJAQw@linutronix.de>
-References: <20250814150809.140739-1-gmonaco@redhat.com>
- <20250814150809.140739-17-gmonaco@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hnurt9CupjZQjmycaLMKE8ihXVEqn5vNBy8DaH31bjndm8JzVjjHmPc5zzLCCBsxvCmcp/yWjM5qamamBTRFWDdJs1v1LGEe4drvoJJbN5EV+EJ8ytSZvXFlOwyfF3yi6xn9+xeuu892+RDsNSRlH9H2CgH9e55Dcy/EFuRPPtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSy/OUSO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD95AC4CEF0;
+	Thu,  4 Sep 2025 08:20:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756974058;
+	bh=nlOhFP3s8L5AUAfOG7ykkwPjQWERB9QoU6d96TfEL+Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BSy/OUSOl/vGmzTRdOdapS2OSRZ8G97JPpM98z2wYRKbuJ8bWd+t6hxz7+rHMlM/s
+	 tipahlscBtQD5vGCZv6krx06RWbrJeVoK7/TxsQKMd+B+LIcwn8ok5M4XaKrgp5wqT
+	 n8ada+hFalEp6zmzcJp4Sp5uEmMP/g7yjF96O53qBNQM/8oD0RnosnhGx/oK+86zZ0
+	 KL9DESUybfN+enQmn5xz9NJugEeC5hYfqr49CgWZw9U55FuXjhAi3qzJvPw53vDPS8
+	 7upymmfnUzTecfwPNXLQjtpw3GZ+Kfg1aBgsjYaVHX5rHqMK1o9gH7ucYTKScN23vU
+	 p8I3qAxkOzhUg==
+Date: Thu, 4 Sep 2025 10:20:55 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 1/8] dt-bindings: memory: tegra210: Add memory client
+ IDs
+Message-ID: <20250904-honest-accurate-bullfrog-fdeaf9@kuoka>
+References: <20250903-t210-actmon-v2-0-e0d534d4f8ea@gmail.com>
+ <20250903-t210-actmon-v2-1-e0d534d4f8ea@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250814150809.140739-17-gmonaco@redhat.com>
+In-Reply-To: <20250903-t210-actmon-v2-1-e0d534d4f8ea@gmail.com>
 
-On Thu, Aug 14, 2025 at 05:08:08PM +0200, Gabriele Monaco wrote:
-> +    def fill_per_obj_definitions(self) -> list:
-> +        if self.monitor_type == "per_obj":
-> +            return ["""
-> +/*
-> + * da_get_id - Get the id from a target
-> + */
-> +static inline da_id_type da_get_id(monitor_target target)
-> +{
-> +	return /* XXX: define how to get an id from the target */;
-> +}
-> +"""]
-> +        return []
-> +
+On Wed, Sep 03, 2025 at 02:50:07PM -0500, Aaron Kling wrote:
+> Each memory client has unique hardware ID, add these IDs.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>  include/dt-bindings/memory/tegra210-mc.h | 58 ++++++++++++++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+> 
+> diff --git a/include/dt-bindings/memory/tegra210-mc.h b/include/dt-bindings/memory/tegra210-mc.h
+> index 5e082547f1794cba1f72872782e04d8747863b6d..48474942a000e049142014e3bcc132b88bf1a92d 100644
+> --- a/include/dt-bindings/memory/tegra210-mc.h
+> +++ b/include/dt-bindings/memory/tegra210-mc.h
+> @@ -75,4 +75,62 @@
+>  #define TEGRA210_MC_RESET_ETR		28
+>  #define TEGRA210_MC_RESET_TSECB		29
+>  
+> +#define TEGRA210_MC_PTCR		0
 
-I know this is the existing style that we have. But I think this is not
-something we should keep. How about something like:
+There is no driver user of this ABI, so does not look like a binding.
 
-import textwrap
+You have entire commit msg to clarify such unusual things, like lack of
+users. Please use it.
 
-def fill_per_obj_definitions(self) -> list:
-    if self.monitor_type == "per_obj":
-        return [textwrap.dedent("""
-            /*
-             * da_get_id - Get the id from a target
-             */
-            static inline da_id_type da_get_id(monitor_target target)
-            {
-            	return /* XXX: define how to get an id from the target */;
-            }
-            """)]
-    return []
+Best regards,
+Krzysztof
+
 
