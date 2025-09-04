@@ -1,109 +1,118 @@
-Return-Path: <linux-kernel+bounces-801584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB9BB4472C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:19:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52D41B44732
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 217817AED6F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:18:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 164891605F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B556A27FB03;
-	Thu,  4 Sep 2025 20:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345C127FB12;
+	Thu,  4 Sep 2025 20:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvqRjmXz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g3hoLTL5"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1320A27D77A;
-	Thu,  4 Sep 2025 20:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DC027A123;
+	Thu,  4 Sep 2025 20:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757017175; cv=none; b=asgUIKGACsFC18vVfsnqtDCk4bbBbnrBAOQzTESQ7UeyBEWBk63enX7Hw6l8AcpagaQFjIv8VwDcVwPXItkyPaBT3+gFLo+K/lwabD9xxq19Rw0r5fqPYvLKSfRdCEAdu3RBivEtX3GWQQ2AxMubeo7p/6Xflin5nOF+k/N7XTg=
+	t=1757017270; cv=none; b=ihCeBKsjDRTwQ9QYY+7SOZEpf8AnOeUmASbTQsJFZB5e4D2ZdmgicMXPolYwY27DoxjFSDN+Ufv1VwlvwESSlDN3jhQawZH0IJV2HvFFcfP4g6zjm56ZVY9hPuIAVMhXa4z2rYtxJDf6KpJDYZnACxuZXIeTTDHjnzFmxxbtP/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757017175; c=relaxed/simple;
-	bh=1VcNKAEFNBmc/vHbQvTGEEIRpCJEnXjNlNZHTRxexDU=;
+	s=arc-20240116; t=1757017270; c=relaxed/simple;
+	bh=5R73QwFGpxpwtcDAq2/wRoOXZRZTM7agVtz97/zJueA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HKcSzJpEWle0j/3oLyC4TuDqTvcZeDX30H7ZS9TFr6l91uZ6MYcBZXKBS/CNoNgkpDI0d6eSeX3rHK3qxUMYCeLr33/XEJyfLssqLBIqaxTzgxKXK3emZQCflEsApdg7nzYXRjAT12pkAlPmVZ4AVHBb13tEeJkP4ptmInGbPQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvqRjmXz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 838B7C4CEF8;
-	Thu,  4 Sep 2025 20:19:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757017174;
-	bh=1VcNKAEFNBmc/vHbQvTGEEIRpCJEnXjNlNZHTRxexDU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hvqRjmXzfVFGW5tXF1K8PPr0Lt//tTNJFbogYY8w22mAu7+adSXS5hoe4WHtpa3yF
-	 fEXhnGXPu19pVX/2XqgVPsaNswSczmBo5jhpXGk8FvsYSvtm+z14h1YW89M419l+Wu
-	 /eNsYFDdNWG2y3rPQtQYXzpFNEMvGks6RGuZJhL8AugUoSeHYTYnl+2cATnQlPj6xy
-	 L4s7Ag1N0jei/rHqhfxC0TPp2s93XfILhmTZZ6e9E0/P3yT/t9VyX2nhPn3IaDFadu
-	 +GN9gvnkmhx92hziTIjchiDkuaeMTAujOzkWFWMO4+avESBO5my51xP3uMtVdAi5Du
-	 lZumUnUyXFIYw==
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-745a415bf72so433827a34.2;
-        Thu, 04 Sep 2025 13:19:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUiF+/NYwKQfG8lns4USYfDytF5Pm7wBNs6mnQk7W5WBfMIbTblXKXYWqd8pCQkqsR5R+IXf3qrk3A=@vger.kernel.org, AJvYcCVz+ljHo7aw2RkDR/nLZOkXx8ri/jg2jzYrHO/tkBH4xUcDuoPgzQsUiwiW6el5papf5p3aQbEIy5LLkQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN6Evi6lg9XSYQ18tmzZFLaHgv4Q7s41UjD+Ln0Sk+W4klYzMb
-	ivDJB5w+4g2Msx9sfuBC7YeKoeaOS7E5Yk2gsegpMSkr6tqQ3Sci8d8Ekq4sztmoq7Vsy2ebtNC
-	OHU8FZBHXnRMVyJO+sya51ojxNUDRgmE=
-X-Google-Smtp-Source: AGHT+IF4x2Qs0rn/ky21diP4DVdylPNAkWrN8lszliMurTMli+f6jvFvp5R72NVhDEKs4dIuAQroGWwE6FHo+Hsd9kQ=
-X-Received: by 2002:a05:6830:67d7:b0:745:4db8:460a with SMTP id
- 46e09a7af769-74569dfaa86mr9939538a34.15.1757017173793; Thu, 04 Sep 2025
- 13:19:33 -0700 (PDT)
+	 To:Cc:Content-Type; b=nhmEGHTIy1ODw3bwWFsetLXhmxHS/ZjFvNi/MxtCCr5u+cm3pQnTPCo7AJXAOfz51eZcEiuGJ/S5sUj7iZp8HYr3MS/nyEBc3D5hYuXRalpZ/pnjPUpRkrtsZ7+tA+UpFzfjgtG/ZGa+1XfIk+nqxYxDdnFMnXjXQwytJeG/xn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g3hoLTL5; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-244580523a0so15873715ad.1;
+        Thu, 04 Sep 2025 13:21:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757017268; x=1757622068; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5R73QwFGpxpwtcDAq2/wRoOXZRZTM7agVtz97/zJueA=;
+        b=g3hoLTL5uZOcJoIhsYn24yK6DXqOn8KmSzdUqmdNkep4ymDHncDMFQWefi9rPyn09i
+         Bhn3pW7W7C7MsqVA6Y/Q8YKcniG4NCQiCQ4F872rHXPAYbQuhLDfaw9WZhrQL77a82wL
+         2ACU0xhCY62TiP9PGPPAbbQBbb/VdM0GxsQLvaUTpPp8EDZSPCjLKWyJhm8RuRP7Ti5H
+         MOm8nr3FYtLeyGgNGg2HdeeUn2x1bKkkYUVNHi5by6MKB5UFYOmijbAxNgVM/+i7OBzn
+         PmCndNtksdFRrOy35Mip+j+zYZsedQ2iBPYUf4pDxvVNMfEyvDApANkpxJNQgdKyjN82
+         ptvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757017268; x=1757622068;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5R73QwFGpxpwtcDAq2/wRoOXZRZTM7agVtz97/zJueA=;
+        b=vL14za3BQQQ8pooI5ffghBSrKX2NL6gzZXqyC1p87g9RyeBOR0EiZcRldlpvrTK2bM
+         IVdiBmyRW4riARSzDLqUONsKDb56eP6xsUFuaTTLZhr9R/Kd4PJKBM+hVbIYKSeO5JHx
+         EllWyVAr59DozxyFqEBLO1xwRyyvSWeUUOUGfFT+zAyyLP28bCV2c8YWX3QfCjiQiT07
+         zSYkWT3qo4hpOHp9fXcQb6NA/2qOVddKZwBDlayv78WcPLLBLhritriBs7vWd2gDykoY
+         vlxydwKNvQudXM7nX/Y0AKpfG9hk0q74EhHEWxez1y60WOzOGq3gyiWOhDvGuCZ13tv+
+         4XHw==
+X-Forwarded-Encrypted: i=1; AJvYcCW83128OGmXPXV1xtW5ZPmaRQgUyCKTN4pnXcsIMkPljl0SpyPgNUybu8A4GWyJ8nPBV4C1pa9B6Vn1ufI=@vger.kernel.org, AJvYcCXmZNiycOkQm4g0bNm8O+kaOtcuLwZit8NpqoKy5vyq11bH/qIRkfuOmlR2VHo+M/soQ2N9w25y9kHF0Hkk@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvrWPLdAYTzkUT57uyF4qNdIEFe3sa6mE7QmGvQSxjF+SUeESA
+	S/dU+N6XmoBBfS4sr70epua25aa3riPf8Vp/8KqV1kFGLf2BCA/wKIrRK3UPZKvG62gh/Lsj2UZ
+	/RRa5OiuR/sHKuzSAVdzyJmnQAugFhiU=
+X-Gm-Gg: ASbGncuxTzNLFOHiHnOndnkbK/RYvs3tOMl62NCztxa7bsDfduR8q6VtgOA5D0wQLh3
+	G7U6ZlGOzfdgDJ96fM4QO5cjthuvvdeSAyUnCgXKGsEmrD5IfGLshGxllHmM44spLmpGtfCWl7+
+	+BNDk6/FcC4KHqBcMdsqAAkQUzzRA31YLSfYejUJptd/QtFRBae3h6Ra9Usx8mSfcpXEaycdC3j
+	JyXzOfJ7M/RrjSea0hTEF7w6rAdbxUg5BI9+w==
+X-Google-Smtp-Source: AGHT+IEI0YtwNUP5Ckeu7lnXmy0Rk28H9EZkLvS0yGrAkAdCynjENqi0zkQG7ZR9KNGK7GfDI0Z/fifzp2eGgX7XZqI=
+X-Received: by 2002:a17:903:37cb:b0:242:9bc6:6bc0 with SMTP id
+ d9443c01a7336-24944b73618mr268496855ad.55.1757017268482; Thu, 04 Sep 2025
+ 13:21:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828201541.931425-1-srinivas.pandruvada@linux.intel.com>
-In-Reply-To: <20250828201541.931425-1-srinivas.pandruvada@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 4 Sep 2025 22:19:22 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i4W2fC8WsbTSpszoBC2DLnP7QsqvTuuSriEU7oXoVLYA@mail.gmail.com>
-X-Gm-Features: Ac12FXzgCXPzlxBHjwh7tioi_0Lh3p9vM7mZulHrUsD2WOam4ePG71EJ5hHYXEo
-Message-ID: <CAJZ5v0i4W2fC8WsbTSpszoBC2DLnP7QsqvTuuSriEU7oXoVLYA@mail.gmail.com>
-Subject: Re: [PATCH v2] selftests/thermel/intel/workload_hint: Mask
- unsupported types
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, lukasz.luba@arm.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250901164212.460229-1-ethan.w.s.graham@gmail.com>
+ <20250901164212.460229-8-ethan.w.s.graham@gmail.com> <CALrw=nGkk01xXG7S68FggsWQXygTXnXGz8AvseQuRE9K-OE0uA@mail.gmail.com>
+In-Reply-To: <CALrw=nGkk01xXG7S68FggsWQXygTXnXGz8AvseQuRE9K-OE0uA@mail.gmail.com>
+From: Ethan Graham <ethan.w.s.graham@gmail.com>
+Date: Thu, 4 Sep 2025 22:20:56 +0200
+X-Gm-Features: Ac12FXyXqZdTxVG6TdzkdqBvv0Mcwr4nVECn24stQHwKcyWRqz_jVg7upfdtHW8
+Message-ID: <CANgxf6xCfk9uDsGgqWqociv0Q2Ngu0_GBR0vzWHwOAowsO+CVw@mail.gmail.com>
+Subject: Re: [PATCH v2 RFC 7/7] crypto: implement KFuzzTest targets for PKCS7
+ and RSA parsing
+To: Ignat Korchagin <ignat@cloudflare.com>
+Cc: ethangraham@google.com, glider@google.com, andreyknvl@gmail.com, 
+	brendan.higgins@linux.dev, davidgow@google.com, dvyukov@google.com, 
+	jannh@google.com, elver@google.com, rmoar@google.com, shuah@kernel.org, 
+	tarasmadan@google.com, kasan-dev@googlegroups.com, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, dhowells@redhat.com, 
+	lukas@wunner.de, herbert@gondor.apana.org.au, davem@davemloft.net, 
+	linux-crypto@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 28, 2025 at 10:15=E2=80=AFPM Srinivas Pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
->
-> The workload hint may contain some other hints which are not defined.
-> So mask out unsupported types. Currently only lower 4 bits of workload
-> type hints are defined.
->
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> ---
-> v2:
-> - Removed extra line
->
->  .../selftests/thermal/intel/workload_hint/workload_hint_test.c  | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/tools/testing/selftests/thermal/intel/workload_hint/workload=
-_hint_test.c b/tools/testing/selftests/thermal/intel/workload_hint/workload=
-_hint_test.c
-> index ba58589a1145..ca2bd03154e4 100644
-> --- a/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_t=
-est.c
-> +++ b/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_t=
-est.c
-> @@ -144,6 +144,8 @@ int main(int argc, char **argv)
->                         ret =3D sscanf(index_str, "%d", &index);
->                         if (ret < 0)
->                                 break;
-> +
-> +                       index &=3D 0x0f;
->                         if (index > WORKLOAD_TYPE_MAX_INDEX)
->                                 printf("Invalid workload type index\n");
->                         else
-> --
+On Wed, Sep 3, 2025 at 10:58=E2=80=AFAM Ignat Korchagin <ignat@cloudflare.c=
+om> wrote:
+> nit: can I ask for another real example? AFAIK this subsystem is
+> rarely used (at least directly by users). However, one user-controlled
+> widely used parser terrifies me: load_script() function from
+> binfmt_script.c, which parses the shebang line for scripts. I would
+> really like to see what this framework can do to fuzz that.
 
-Applied, thanks!
+Thanks for the suggestion! It looks like a promising target.
+
+> I'm a bit worried about the scalability of defining one (visible)
+> config option per fuzz file/module. Is there a use-case, where a user
+> would want to enable some targets, but not the others? Can it be
+> unconditionally enabled and compiled only if CONFIG_KFUZZTEST=3Dy?
+
+That's a good point. I agree it's best to enable them all by default if
+CONFIG_KFUZZTEST=3Dy. A fuzzer can pick and choose which targets
+it wants to fuzz so there's no downside there. My original thought was
+to maintain consistency with how KUnit tests are built, but since
+KFuzzTest targets aren't executed directly it makes sense to diverge
+here.
 
