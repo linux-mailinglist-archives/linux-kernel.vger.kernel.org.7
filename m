@@ -1,768 +1,186 @@
-Return-Path: <linux-kernel+bounces-800769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBFDB43BCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:37:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8360B43BCC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:38:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B460B1BC7E53
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:38:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C675A003CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872602749E5;
-	Thu,  4 Sep 2025 12:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C83E2FE074;
+	Thu,  4 Sep 2025 12:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nYIVFDlP"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="GV6j6M/m"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013056.outbound.protection.outlook.com [40.107.44.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46232EE280;
-	Thu,  4 Sep 2025 12:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756989416; cv=none; b=bNVlHUeYKWoNam1EWUAZ3Jy0DrAL3szEl5ep3NcKR9CLalNq0OTV3ZxskObDIlJbGQd1r1JQ0MsAfEYIXyr/jU1OpLVogygSOedOsvbbLIIBR7bUQbo0DxOmMAh3QxSI3hph9o98bPgejM2Hg2UYeS7da+nx4mHdffx6977g3Co=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756989416; c=relaxed/simple;
-	bh=swLAc+pSK85/dmgJzWvmIfn+ApcDqF5z6wQKvzLmrlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FnoEdRi10RUedX3B6Fg1WZr5PiKob3J+bi8E0Bg6X4I9jxPeGbEFnatGuRf9AcVcNdQSWZGw+viAEGi+q0pVl1jFUG+/XAtEhUleHnm6EpHyJV7C+QTX7kciYnEQkzdg8KBYnZNdIVzXBNi/ol8r1E7c864tOosfyeyJpMkk1gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nYIVFDlP; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-336af6356a5so7486131fa.3;
-        Thu, 04 Sep 2025 05:36:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756989412; x=1757594212; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=z7tQrfd7WbhawpS04U8Vms64zeOZEvxnnUPUuDYBil8=;
-        b=nYIVFDlPOWX/QGPMxsSMT52FYH2bqVP1WHjFgoO1ImPTUyd62zC78dsuyww6+333Wx
-         5P9eUfGINGO/VE+3BZTv7/P/cw50NeGN3lrAlnUlVWyPvaXiiis/zy5qP7NVoOvVqtXQ
-         vOnyfB6MaZoEH+op5yxmzBt1cQwERVKesUudMVsdXCBRrgNgb4QqbKDLC3rxj/VSTyeY
-         fkaqilCgEaWsPSJlobScFEcn/yIVjkKvNMyimoAkdDmd2KZwjzX7FRSAFIQ7y8r1aTUq
-         VKpIqcN3uJPtvFsZ7yi7e/1v1HFgavQ3Yz5aIF9ucwfzyV5usqLqAV9Vh9cB4CgY6Gv7
-         hKoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756989412; x=1757594212;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z7tQrfd7WbhawpS04U8Vms64zeOZEvxnnUPUuDYBil8=;
-        b=OQ+Mus6y9uWW+UayLjEsh365wvKEr0hLnNi7hZ+Cct0PMzBQyiqVcE9yA/9lgeTh6m
-         YQFIaDS6bwXpkbHzZq7rVejUGWX/qZtxgvGfBQgwGgcmW/QZ6xEw3zVyIZF2ApZGufT6
-         SEO1XYpqONvININprXv/Yn5LjFbwwQL3JMxxI32sFsueardwotVE9piLnYspXfW0gJP4
-         M0HeQThGOtOWJc7hwrgPsP/Fq6tzdSxjqCk0kFjNI0EpbXvBEqmASF7PWPk1x+9hVZR7
-         bNRZ4hC+N/qwUzpmM5NVVbIAhVhsqXExlIscnhlNqUITHeJgBeiHakFUuIhTdaPlN8Vl
-         3HfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUG8rlvxzXt4JUez4lACYI4rind3y8MJ/Agi6HaYbtVsshCIXuc3I7Q2IgfKIXYv9GTeVUym8N//CRU@vger.kernel.org, AJvYcCUP60WOOLcUAQnj1vUiFOVDtvNDiRiek26UMNc/zNLB8I1izJoqFEg66wIJxkprD3b3OdQUwB56GrfSodff@vger.kernel.org, AJvYcCVwPuQ/cqr4Ij1Btfbo3oRjxq4QdLTy4sTyYiEP/i77OfYoEqqxQ1cs4lm9FYTQeqoU+6ZCrwyDaEYi@vger.kernel.org, AJvYcCWHHpd6jd6A2XuRbIJ+KZ0zvberNjWb/PRxTqvzXmWdMhL841OjXcfHZBMtB/BEf6mLX+FC8wgokdrRiA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyax8A71R6IsQ3BdSQeeXa3X1Zmr8XJTYXa2AxSiy+cNmdJ669q
-	MnbAvdYAXRAovAlJhJirMlfZWJ5JoqdBy9AHDVV/zNCDLhmhLwyR7TCU
-X-Gm-Gg: ASbGncvoQeH1GtM1aOL357eQDCQoz8UjhZqtqRkO76RmN02LmrpSkeMCHX0bmkreaAJ
-	oPPwDfI4MfCPgt9Hm+jSGYlm08jX8rcpqkbnzNf+i7taL/nkliqSHu1bZtbC749+oRcx5SZECKj
-	lp11N7jiY+BxrReRtp0TvGf2ntKslDBf7rzapRLb1Cb12HV2D2hRidS50X9hhw20tVeRHXIDyBn
-	3VNQcy+qtxpVM1XkJhHM3DacUTNLUuOBKq/jwwD8yF3EQWusxd8Cn4wo/dYwHoE4KaTyjUshvld
-	3kqEeRWmVw5rami+ghwMG+ab1FyTKnNiKxrmnRdpYXCjO7lRcXO1WaRuVOTujofnJp2Gd0UeJYl
-	PRYF/3/9CIu78s858Yf/pqytjDhETUpLjH84QgftYofpb5rU=
-X-Google-Smtp-Source: AGHT+IH4fxSWNPt1p/VVPnJSk1IvN0HYsVTiobswLXaGkVZle9kdXGVE76UE5ae3xrEg1Rg9QOatFA==
-X-Received: by 2002:a2e:bc0c:0:b0:336:e176:cd32 with SMTP id 38308e7fff4ca-336e176d495mr47162081fa.25.1756989411424;
-        Thu, 04 Sep 2025 05:36:51 -0700 (PDT)
-Received: from mva-rohm ([213.255.186.37])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f50328fcsm14956401fa.40.2025.09.04.05.36.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 05:36:50 -0700 (PDT)
-Date: Thu, 4 Sep 2025 15:36:46 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Tobias Sperling <tobias.sperling@softing.com>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Esteban Blanc <eblanc@baylibre.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
-	Eason Yang <j2anfernee@gmail.com>,
-	Pop Ioan Daniel <pop.ioan-daniel@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v2 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-Message-ID: <facc8b9255a754f767807b7e5c79c0eb20c680e4.1756988028.git.mazziesaccount@gmail.com>
-References: <cover.1756988028.git.mazziesaccount@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEAE2FDC3F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756989421; cv=fail; b=VqPRySx3OcfRw+DjfDQ9BANYboSAK7aqkQGck5TuVqyG21CwPyiRTdxUmzEgUfqHN2NtnPySYIKjGcRJlpBtPDs9jXAD+/O//uhjwp4zB/PvFLo6xlGoyWTfaLDf0aVc2pfstIMu+5aQZ0/m7k+ky267AcbDGQympan3oh5/dog=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756989421; c=relaxed/simple;
+	bh=neODtvQd2Ri9epG3wa8iHNw4Vr0gNC144A/Zp4TNVaQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=g7lBLkrSz1B65IjZwD1wb0U37oIa/fwXaEGKgzbpsPerQFZWexHt/FDkS22lof6nqwwuoKFc7y14pl3HQnz4+EnGcswdph35hzqz8WTb+6JkuGKcAeV+E6OnmHML034G+KlCn5R1tSjUbUJU7ppJXmMOlRkK7mDVsgX4bn8H2bE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=GV6j6M/m; arc=fail smtp.client-ip=40.107.44.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wKOdLK14yrlKIIQj8eYuKzHqfmbBIKXQDaj+bJ+UzvXS4ep0h5m7VvdGNhNzsaQeuNxy6O301E+E+I0NA5CIe7cZTz7cd4HdKPDKXD1iP9sSdVnf9wKdJ4ikxw4N6Qn+nAyJmihPu2GmpM4YouQfumF4anMoMNVE5/P6HBzUUP1tDf12D1LKKR4wzNto81mnk7TIJquDPdfwKaSnoURF3+VSkn4ASv2je1COLFi+PaPrvQ51HRmT5noy8WqT2qASp2+En8Q0vYP+r3UyW6mIPcQw6NSAVfSrC5ex6QO4GXmqSira/A57Xn7MvOh/9rz3jUMA/OZhEq6dCCuCdMwR3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=06TFSUO/2S/BCeA732LX7xVRcqaRcj5HL+oHeCIT+m0=;
+ b=mbMqxBuO/NoFe8zhAUdZmvzYWL3n4zIcRg300twwheXlIvo/XC2QZcmJ5fcrdz+zZP//yCgZ+k5jkkMir/ZTmL3j8hXFesCUZSH/oEKranEqkMf12fakw+NtIZNe/CmvQWiT2XRzNojONwOCJOb2nFyBkRuQ2OVocae1hQQbCN3MlTj+XFlf9qwWUqkx7qPd3p8zsdCB66WUSR0yUzeB6dyIBVQ3lyzRLW4OD+mWekjrD9QVuMaY0jFm0DAEt63VxOZPJFryHSG5sCY+hB1+wJ0xBpIkA6h304mBnA5mNxVO1dbcwxA01O8qyGDwpoiN1AzZIzElOO5syNqujImIig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=06TFSUO/2S/BCeA732LX7xVRcqaRcj5HL+oHeCIT+m0=;
+ b=GV6j6M/m9hDMiCbt1XQIZfxpy2Btkt3U0wfMpGo/0ak3pwkI5QXZoveJiKSiqAIueNEN9TCaNJO+XVqPX3A4OCGqceDRNgf3vo/M+LxRAKL0bTDkDaHbR8OabxLXZYcfvuYStEagJ+p8AE3zyM29ijxZ+7j/pc9/5DayEQKpMQgphqsginyJmLGrrz+pY83VFSWIpQOldsaLYG9781FS3+e410uvtzsjSH8lPcZWHH+nzqSa/QzgzfVrpMtjRUMyOVrqikorTzYbzIxCyQ8jF1JlDdAlS5trKlSnhvl5gY0j5pN+Ptifv0BMe+BpwkbqxiFfSuQTjcsN/J+Mt43OcQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ PUZPR06MB5885.apcprd06.prod.outlook.com (2603:1096:301:110::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Thu, 4 Sep
+ 2025 12:36:56 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9094.017; Thu, 4 Sep 2025
+ 12:36:56 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Felix Kuehling <Felix.Kuehling@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Philip Yang <Philip.Yang@amd.com>,
+	Alex Sierra <alex.sierra@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH] drm/amdkfd: Fix error code sign for EINVAL in svm_ioctl()
+Date: Thu,  4 Sep 2025 20:36:46 +0800
+Message-Id: <20250904123646.464028-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0029.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::20) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="p2j7jxvmv06+tZC6"
-Content-Disposition: inline
-In-Reply-To: <cover.1756988028.git.mazziesaccount@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|PUZPR06MB5885:EE_
+X-MS-Office365-Filtering-Correlation-Id: 99324071-0d21-467e-8da2-08ddebafbc07
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|7416014|1800799024|376014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LC7ZTiQpNdi3iIcTjUfsWJHeR+KMn0g2OaTl3Ojjqy2bgyQXYaRjU+XRrsxK?=
+ =?us-ascii?Q?VqMCD18pL/OMA83udrfwyTEgc2E8wS54F36I1df8mh7UZhp/Wqt5j3f9mS/g?=
+ =?us-ascii?Q?fpH8ConfilxevBcituu1dJYJwgHBbrU9dzVO7t7jdHu1wHj0kwyet7w9E4kF?=
+ =?us-ascii?Q?qbRSyn8VGd4uf40+efmXCP63TP6QGQj04IJ4Sy2DrFiES3UMrL7pXK+5gtRq?=
+ =?us-ascii?Q?BrkyG8dwkemcgUc8KFVUobCm+raiSOvaEHfsV61Ap8iWX8+3OUbEmpElF+Zk?=
+ =?us-ascii?Q?6HaBtqY2HQCMSM6btHTRVMuBY68m8XZjogBaCbWfWNKofnhiUHKyKdbq9TCg?=
+ =?us-ascii?Q?mVXiouPz8kVHZetdEeFPKVZQBQOpwcc5iEkBcOcI1+vCal3/bYaH7SLt/cwV?=
+ =?us-ascii?Q?XN4R2BUD6Y3C0gGrM4bjn+Nerwj49OfUwiHbSciLj4ZX37ZJI2l/YPReLJJy?=
+ =?us-ascii?Q?8X3iHvi9fWWpmu+/2aJUNgWFN6ogyle3+f7rM4KjBmUtEEgQLENbjGJ0IJIO?=
+ =?us-ascii?Q?pdPdf1bFVZpNCtRf/Pblkaw8b1Z8Qv8BbanpAGFevj4zYRXtBpV9QIhM/5kW?=
+ =?us-ascii?Q?nXI7FdqTbEFqPwgsXQ1udrKr9J2RXkjgC0dCvherSlHC1Lnkpnnx/9amAwSi?=
+ =?us-ascii?Q?EnpSqpXLF0xSYpbX7sG7KLPxqXZsahEeiQco8HV3d8LvR2IPFS2+KWExlUwd?=
+ =?us-ascii?Q?5UHABEHHe2Uwki2WGTR2vA/5wYKJKTpoGtx3kvZoQv3HyYyMV4WEX6bi6/ri?=
+ =?us-ascii?Q?DtDf26BOxkv4E8izGYhN7k5CfzqDgpIxIOBH3MsQSuYtYEM0BzygIgR1Dsjv?=
+ =?us-ascii?Q?CpXjeTw9iZ4LrljalH/Z1DWB3AW+9NbqfkwFKJg0Ap+5l8B4Z/AHbBXJ/ltC?=
+ =?us-ascii?Q?zPCxFYxOZ5QAPVCi2tMV5Lo7E3XIRCrUqqvUJhzm2idl+PdFQq/0H3Mvk6pX?=
+ =?us-ascii?Q?e5HYTm+mtfFpmUSjbzAZvXwtR0TyHe8LnIvHfh2LOUtS9ZmoqFk2MSmY3C13?=
+ =?us-ascii?Q?1zIpxZ6k9+vHFl9U70mgYYbu+RzVUGoxR71Z7Rd/tnmdpeRou6Y+hgPIzlcn?=
+ =?us-ascii?Q?LyUmwgQq70vuShNaSBT4+UcG4avLl3R+tEdlVnqH0g2XzPgtgUjLvKSOue9o?=
+ =?us-ascii?Q?jVpvTvKLBIviEvKrdq0YNxn2hF+L2TSC49cm/wlBxCc3ellvftuYbxTHgu0n?=
+ =?us-ascii?Q?ghhCiXHWNL35szPol2KE74NYDPMVBXqQE5WqjL4GZreePxCMfWavtYl6hVDN?=
+ =?us-ascii?Q?GhbH+5RmSC3ykJt+gnw2lpMxTE+Ny78lhOG1nc0+mIFoJ+FOHpUYdhdFesky?=
+ =?us-ascii?Q?2IYstw2fQCvIMsYqGAzUX9MGTglmmBuEdj7lz3P09eI6Hz2IS4UDGNENazgF?=
+ =?us-ascii?Q?ecAt2vyPEjbw/QO8Q0HfTeJyYxYv110wi6AfCV4yiPuBgICFwOgWlhl2W9Fz?=
+ =?us-ascii?Q?VAZdmA9LP7UDsMJhwJqU5rbFu0gm4ih0yeQC44VH5eN6bJmZWt/lB3GDj0os?=
+ =?us-ascii?Q?KZT8QmaobgGctTA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(7416014)(1800799024)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YCEBpbeGUDO3JJ8Kl7l6SM1lJJPv7WFritmvwCjCIGRhq1xmQpmfpD/WNfHY?=
+ =?us-ascii?Q?m56Wr90a9EEbjpFqE326IaFaGaZhCLn0WpEwdmWCjQZAkF2OOHO42rFFy3oP?=
+ =?us-ascii?Q?qgUuOYohjCANA9YLXezcAWjU9jSp0PY+MnK0Uj7uzfKFL+0DnL/lHNXmNBmP?=
+ =?us-ascii?Q?LlqJNppSVtPvJOu8WK3uVMVtU2b+ao4YlyqKqOIvFQ3QcPW6byTug4K8zV6Q?=
+ =?us-ascii?Q?nZWOrUBRxOQ+NE8GW9p/TekSnCiYB3yH0rlgldgA6cF4xZ1lnroX7lrsdoO2?=
+ =?us-ascii?Q?aklEPbh1fZAdZ41rWb2mRBr/RJZGIEPDX/Gs6b1XeHgDkKB4bXNXes0Swv88?=
+ =?us-ascii?Q?sJ8orv7CVrCp+tctmATvUf8Fke1PsJiWK2WNFu5f7vV5yPBNPbL6REiFWjEW?=
+ =?us-ascii?Q?5ao1g33NoskydKGaORvHy+Y4HrLIojU8wkpAtNKSH9HVBk072xsVJ+rAkeU4?=
+ =?us-ascii?Q?zqfpuG6mSz3ECHyZ9miOOrgGDufglxQF2J0c0ORoJP/P7z12wovDN7rDBBwh?=
+ =?us-ascii?Q?tVK7RItcFDCucQUvw156f+D3uheLfrjWx4cFlgm3aPEiTG7btgM7/7/jp2tc?=
+ =?us-ascii?Q?FeKzsQC4kjFS5bF2GAuchHdL9xpQSiOks0y0C5zCjV5DPOB/SMDL+bX+dVpg?=
+ =?us-ascii?Q?yDLuYGrxzoKchvNceSVsDY8MaQxWq9XDJEYqHS/kVxUMf8QDRe8xxVmMICX9?=
+ =?us-ascii?Q?4BMQTueUF2EiYoB67LizPzgsdOS0dzugBgIMlLIic35CxGxOAD5HuHtSCj1E?=
+ =?us-ascii?Q?PcTvfaS1eHtNeF7NteMCEGf9nl5W9pbuig9nwXM5VJSXic3vJnCBShfCeexV?=
+ =?us-ascii?Q?QSQ6RorCpXgZ/zmEqGNC3YYO9J3cM4YUJAo5zk2we7qgg1VwPv8Zftb8ekAk?=
+ =?us-ascii?Q?qmtT7uUAw1bH5yUiqYLmnJBCu3yAt7jGtFZZO1dX58jmC8NZrIFNyNkJbJu3?=
+ =?us-ascii?Q?wfvQgH8ja0Jrb2e6iX9vciio0PgteXIpJ2aZuiRmX6IFmzniT3UOcXM3ZZEu?=
+ =?us-ascii?Q?2cZILFEg7SPpJF3b4P8BjeMD6rGpOC/uHrs7SJG3V/0VzkZ8LOUmnxXPT6rL?=
+ =?us-ascii?Q?8Hol33z8SHrB8xjmslcCXeTEk23A4q5d3SY9p3lt9zL8FS0s+cP6jDoa/ASI?=
+ =?us-ascii?Q?mGrpwtmznj7+uIeq8pBmiSuxg7Y3HACHCMcMBWuCO04+t+ka2fIOtHzK+oW6?=
+ =?us-ascii?Q?CSQnUun/6l/McxJBeJ83mW/PT1+tFtV9mq3rmqC3CN75n4yGfqDGkXToTQMz?=
+ =?us-ascii?Q?isHv35BMIuqwoCAqU5OVbPBev/frZaAg063KPLPBqIr8suQ5FNxlLt9RbqSo?=
+ =?us-ascii?Q?3rRiKxG9TcNmC990YF7JmN5oCRnap1AUJGLcfejGDd1eoO/0aPhOKcXW3ha6?=
+ =?us-ascii?Q?RKxnpmuJUnEVMdPexWXOc+1qaNf03eNXEwTrYmueR1cSny4JGmxTt4cZWclP?=
+ =?us-ascii?Q?qqpPBHc8BcwP5I9Lprz3Jl5Aneinn1aTFhueSR1dUH8/5EOjTb0Xw7uFGME3?=
+ =?us-ascii?Q?Nli+ODBq0+b0P9U9D7Sd0O2maNPqDwBBhUco8iH2avnlGnUdDZTpog9IvT5K?=
+ =?us-ascii?Q?KMgfRxKFqau74c0VbvjhDe6MmOBmEAisq9W+htN6?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99324071-0d21-467e-8da2-08ddebafbc07
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 12:36:56.5547
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jI2GDMh5WTtVYWF9TzEjFckK0dMbRVbVZYuVSdwWyKVSLoUAeJUQrxB/caCUx/TMoC/UA9sUyXAknoh6DY2D5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5885
 
+Use negative error code -EINVAL instead of positive EINVAL in the default
+case of svm_ioctl() to conform to Linux kernel error code conventions.
 
---p2j7jxvmv06+tZC6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
-be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
-
-The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
-voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
-daisy-chain configuration) and maximum sampling rate is 1MSPS.
-
-The IC does also support CRC but it is not implemented in the driver.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-
+Fixes: 42de677f7999 ("drm/amdkfd: register svm range")
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 ---
-Revision history:
-v1 =3D> v2 (mainly based on reviews by Andy and David, thanks!)
-- Fix Kconfig dependency to REGMAP_SPI instead of REGMAP_I2C
-- Add a few header includes
-- Drop unnecessary alignments
-- plenty of styling
-- use for_each_set_clump8 instead of open-coding it
-- change order of direction setting writes to avoid receiving 'event'
-  when direction is changed from input to output.
-- fix data-sheet names and assigning of them to iio_dev
----
- drivers/iio/adc/Kconfig        |  10 +
- drivers/iio/adc/Makefile       |   1 +
- drivers/iio/adc/rohm-bd79112.c | 551 +++++++++++++++++++++++++++++++++
- 3 files changed, 562 insertions(+)
- create mode 100644 drivers/iio/adc/rohm-bd79112.c
+ drivers/gpu/drm/amd/amdkfd/kfd_svm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index e3d3826c3357..64ce1eda78c4 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -1309,6 +1309,16 @@ config RN5T618_ADC
- 	  This driver can also be built as a module. If so, the module
- 	  will be called rn5t618-adc.
-=20
-+config ROHM_BD79112
-+	tristate "Rohm BD79112 ADC driver"
-+	depends on I2C && GPIOLIB
-+	select REGMAP_SPI
-+	select IIO_ADC_HELPER
-+	help
-+	  Say yes here to build support for the ROHM BD79112 ADC. The
-+	  ROHM BD79112 is a 12-bit, 32-channel, SAR ADC, which analog
-+	  inputs can also be used for GPIO.
-+
- config ROHM_BD79124
- 	tristate "Rohm BD79124 ADC driver"
- 	depends on I2C
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index 89d72bf9ce70..34b40c34cf71 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -117,6 +117,7 @@ obj-$(CONFIG_QCOM_VADC_COMMON) +=3D qcom-vadc-common.o
- obj-$(CONFIG_RCAR_GYRO_ADC) +=3D rcar-gyroadc.o
- obj-$(CONFIG_RICHTEK_RTQ6056) +=3D rtq6056.o
- obj-$(CONFIG_RN5T618_ADC) +=3D rn5t618-adc.o
-+obj-$(CONFIG_ROHM_BD79112) +=3D rohm-bd79112.o
- obj-$(CONFIG_ROHM_BD79124) +=3D rohm-bd79124.o
- obj-$(CONFIG_ROCKCHIP_SARADC) +=3D rockchip_saradc.o
- obj-$(CONFIG_RZG2L_ADC) +=3D rzg2l_adc.o
-diff --git a/drivers/iio/adc/rohm-bd79112.c b/drivers/iio/adc/rohm-bd79112.c
-new file mode 100644
-index 000000000000..8107d6b79fa4
---- /dev/null
-+++ b/drivers/iio/adc/rohm-bd79112.c
-@@ -0,0 +1,551 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * ROHM ADC driver for BD79112 signal monitoring hub.
-+ * Copyright (C) 2025, ROHM Semiconductor.
-+ *
-+ * SPI communication derived from ad7923.c and ti-ads7950.c
-+ */
-+
-+#include <asm/byteorder.h>
-+#include <linux/array_size.h>
-+#include <linux/bitfield.h>
-+#include <linux/bitops.h>
-+#include <linux/bits.h>
-+#include <linux/dev_printk.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/spi/spi.h>
-+#include <linux/types.h>
-+
-+#include <linux/iio/adc-helpers.h>
-+#include <linux/iio/iio.h>
-+
-+#define BD79112_MAX_NUM_CHANNELS 32
-+
-+struct bd79112_data {
-+	struct spi_device *spi;
-+	struct regmap *map;
-+	struct device *dev;
-+	struct gpio_chip gc;
-+	unsigned long gpio_valid_mask;
-+	unsigned int vref_mv;
-+	struct spi_transfer read_xfer[2];
-+	struct spi_transfer write_xfer;
-+	struct spi_message read_msg;
-+	struct spi_message write_msg;
-+	/* 16-bit TX, valid data in high byte */
-+	u8 read_tx[2] __aligned(IIO_DMA_MINALIGN);
-+	/* 8-bit address followed by 8-bit data */
-+	u8 reg_write_tx[2];
-+	/* 12-bit of ADC data or 8 bit of reg data */
-+	__be16 read_rx;
-+};
-+
-+/*
-+ * The ADC data is read issuing SPI-command matching the channel number.
-+ * We treat this as a register address.
-+ */
-+#define BD79112_REG_AGIO0A		0x00
-+#define BD79112_REG_AGIO15B		0x1f
-+
-+/*
-+ * ADC STATUS_FLAG appended to ADC data will be set, if the ADC result is =
-being
-+ * read for a channel, which input pin is muxed to be a GPIO.
-+ */
-+#define BD79112_ADC_STATUS_FLAG BIT(14)
-+
-+/*
-+ * The BD79112 requires "R/W bit" to be set for SPI register (not ADC data)
-+ * reads and an "IO bit" to be set for read/write operations (which aren't
-+ * reading the ADC data).
-+ */
-+#define BD79112_BIT_RW			BIT(4)
-+#define BD79112_BIT_IO			BIT(5)
-+
-+/*
-+ * The data-sheet explains register I/O communication as follows:
-+ *
-+ * Read, two 16-bit sequences separated by CSB:
-+ * MOSI:
-+ * SCK:	| 1 | 2 | 3   | 4      | 5 .. 8 | 9 .. 16 |
-+ * data:| 0 | 0 |IOSET| RW (1) | ADDR   | 8'b0    |
-+ *
-+ * MISO:
-+ * SCK:	| 1 .. 8 | 9 .. 16 |
-+ * data:| 8'b0   | data    |
-+ *
-+ * Note, CSB is shown to be released between writing the address (MOSI) and
-+ * reading the register data (MISO).
-+ *
-+ * Write, single 16-bit sequence:
-+ * MOSI:
-+ * SCK:	| 1 | 2 | 3   | 4     | 5 .. 8 |
-+ * data:| 0 | 0 |IOSET| RW(0) | ADDR   |
-+ *
-+ * MISO:
-+ * SCK:	| 1 .. 8 |
-+ * data:| data   |
-+ */
-+
-+#define BD79112_REG_GPI_VALUE_B8_15	(BD79112_BIT_IO | 0x0)
-+#define BD79112_REG_GPI_VALUE_B0_B7	(BD79112_BIT_IO | 0x1)
-+#define BD79112_REG_GPI_VALUE_A8_15	(BD79112_BIT_IO | 0x2)
-+#define BD79112_REG_GPI_VALUE_A0_A7	(BD79112_BIT_IO | 0x3)
-+
-+#define BD79112_REG_GPI_EN_B7_B15	(BD79112_BIT_IO | 0x4)
-+#define BD79112_REG_GPI_EN_B0_B7	(BD79112_BIT_IO | 0x5)
-+#define BD79112_REG_GPI_EN_A8_A15	(BD79112_BIT_IO | 0x6)
-+#define BD79112_REG_GPI_EN_A0_A7	(BD79112_BIT_IO | 0x7)
-+
-+#define BD79112_REG_GPO_EN_B7_B15	(BD79112_BIT_IO | 0x8)
-+#define BD79112_REG_GPO_EN_B0_B7	(BD79112_BIT_IO | 0x9)
-+#define BD79112_REG_GPO_EN_A8_A15	(BD79112_BIT_IO | 0xa)
-+#define BD79112_REG_GPO_EN_A0_A7	(BD79112_BIT_IO | 0xb)
-+
-+#define BD79112_NUM_GPIO_EN_REGS	8
-+#define BD79112_FIRST_GPIO_EN_REG	BD79112_REG_GPI_EN_B7_B15
-+
-+#define BD79112_REG_GPO_VALUE_B8_15	(BD79112_BIT_IO | 0xc)
-+#define BD79112_REG_GPO_VALUE_B0_B7	(BD79112_BIT_IO | 0xd)
-+#define BD79112_REG_GPO_VALUE_A8_15	(BD79112_BIT_IO | 0xe)
-+#define BD79112_REG_GPO_VALUE_A0_A7	(BD79112_BIT_IO | 0xf)
-+
-+#define BD79112_REG_MAX BD79112_REG_GPO_VALUE_A0_A7
-+
-+static int _get_gpio_reg(unsigned int offset, unsigned int base)
-+{
-+	int regoffset =3D offset / 8;
-+
-+	if (offset > 31 || offset < 0)
-+		return -EINVAL;
-+
-+	return base - regoffset;
-+}
-+
-+#define GET_GPIO_BIT(offset) BIT((offset) % 8)
-+#define GET_GPO_EN_REG(offset)  _get_gpio_reg((offset), BD79112_REG_GPO_EN=
-_A0_A7)
-+#define GET_GPI_EN_REG(offset)  _get_gpio_reg((offset), BD79112_REG_GPI_EN=
-_A0_A7)
-+#define GET_GPO_VAL_REG(offset)  _get_gpio_reg((offset), BD79112_REG_GPO_V=
-ALUE_A0_A7)
-+#define GET_GPI_VAL_REG(offset)  _get_gpio_reg((offset), BD79112_REG_GPI_V=
-ALUE_A0_A7)
-+
-+static const struct regmap_range bd71815_volatile_ro_ranges[] =3D {
-+	{
-+		/* Read ADC data */
-+		.range_min =3D BD79112_REG_AGIO0A,
-+		.range_max =3D BD79112_REG_AGIO15B,
-+	}, {
-+		/* GPI state */
-+		.range_min =3D BD79112_REG_GPI_VALUE_B8_15,
-+		.range_max =3D BD79112_REG_GPI_VALUE_A0_A7,
-+	},
-+};
-+
-+static const struct regmap_access_table bd79112_volatile_regs =3D {
-+	.yes_ranges =3D &bd71815_volatile_ro_ranges[0],
-+	.n_yes_ranges =3D ARRAY_SIZE(bd71815_volatile_ro_ranges),
-+};
-+
-+static const struct regmap_access_table bd79112_ro_regs =3D {
-+	.no_ranges =3D &bd71815_volatile_ro_ranges[0],
-+	.n_no_ranges =3D ARRAY_SIZE(bd71815_volatile_ro_ranges),
-+};
-+
-+static int bd79112_reg_read(void *context, unsigned int reg, unsigned int =
-*val)
-+{
-+	struct bd79112_data *data =3D context;
-+	int ret;
-+
-+	if (reg & BD79112_BIT_IO)
-+		reg |=3D BD79112_BIT_RW;
-+
-+	data->read_tx[0] =3D reg;
-+
-+	ret =3D spi_sync(data->spi, &data->read_msg);
-+	if (!ret)
-+		*val =3D be16_to_cpu(data->read_rx);
-+
-+	if (reg & BD79112_BIT_IO && *val & BD79112_ADC_STATUS_FLAG)
-+		dev_err(data->dev, "ADC pin configured as GPIO\n");
-+
-+	return ret;
-+}
-+
-+static int bd79112_reg_write(void *context, unsigned int reg, unsigned int=
- val)
-+{
-+	struct bd79112_data *data =3D context;
-+
-+	data->reg_write_tx[0] =3D reg;
-+	data->reg_write_tx[1] =3D val;
-+
-+	return spi_sync(data->spi, &data->write_msg);
-+}
-+
-+static const struct regmap_config bd79112_regmap =3D {
-+	.reg_read =3D bd79112_reg_read,
-+	.reg_write =3D bd79112_reg_write,
-+	.volatile_table =3D &bd79112_volatile_regs,
-+	.wr_table =3D &bd79112_ro_regs,
-+	.cache_type =3D REGCACHE_MAPLE,
-+	.max_register =3D BD79112_REG_MAX,
-+};
-+
-+static int bd79112_read_raw(struct iio_dev *indio_dev,
-+			    struct iio_chan_spec const *chan, int *val,
-+			    int *val2, long m)
-+{
-+	struct bd79112_data *data =3D iio_priv(indio_dev);
-+	int ret;
-+
-+	switch (m) {
-+	case IIO_CHAN_INFO_RAW:
-+		ret =3D regmap_read(data->map, chan->channel, val);
-+		if (ret < 0)
-+			return ret;
-+
-+		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_SCALE:
-+		 *val =3D data->vref_mv;
-+		 *val2 =3D 12;
-+
-+		return IIO_VAL_FRACTIONAL_LOG2;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+}
-+
-+static const struct iio_info bd79112_info =3D {
-+	.read_raw =3D bd79112_read_raw,
-+};
-+
-+static const struct iio_chan_spec bd79112_chan_template =3D {
-+	.type =3D IIO_VOLTAGE,
-+	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW),
-+	.info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE),
-+	.indexed =3D 1,
-+};
-+
-+static int bd79112_gpio_init_valid_mask(struct gpio_chip *gc,
-+					unsigned long *valid_mask,
-+					unsigned int ngpios)
-+{
-+	struct bd79112_data *data =3D gpiochip_get_data(gc);
-+
-+	*valid_mask =3D data->gpio_valid_mask;
-+
-+	return 0;
-+}
-+
-+static int bd79112_gpio_dir_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct bd79112_data *data =3D gpiochip_get_data(gc);
-+	unsigned int reg, bit, val;
-+	int ret;
-+
-+	bit =3D GET_GPIO_BIT(offset);
-+	reg =3D GET_GPO_EN_REG(offset);
-+
-+	ret =3D regmap_read(data->map, reg, &val);
-+	if (ret)
-+		return ret;
-+
-+	if (bit & val)
-+		return GPIO_LINE_DIRECTION_OUT;
-+
-+	reg =3D GET_GPI_EN_REG(offset);
-+	ret =3D regmap_read(data->map, reg, &val);
-+	if (ret)
-+		return ret;
-+
-+	if (bit & val)
-+		return GPIO_LINE_DIRECTION_IN;
-+
-+	/*
-+	 * Ouch. Seems the pin is ADC input - shouldn't happen as changing mux
-+	 * at runtime is not supported and non GPIO pins should be invalidated
-+	 * by the valid_mask at probe. Maybe someone wrote register bypassing
-+	 * the driver?
-+	 */
-+	dev_err(data->dev, "Pin not a GPIO\n");
-+
-+	return -EINVAL;
-+}
-+
-+static int bd79112_gpio_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct bd79112_data *data =3D gpiochip_get_data(gc);
-+	unsigned int reg, bit, val;
-+	int ret;
-+
-+	bit =3D GET_GPIO_BIT(offset);
-+	reg =3D GET_GPI_VAL_REG(offset);
-+
-+	ret =3D regmap_read(data->map, reg, &val);
-+	if (ret)
-+		return ret;
-+
-+	return !!(val & bit);
-+}
-+
-+static int bd79112_gpio_set(struct gpio_chip *gc, unsigned int offset,
-+			    int value)
-+{
-+	struct bd79112_data *data =3D gpiochip_get_data(gc);
-+	unsigned int reg, bit;
-+
-+	bit =3D GET_GPIO_BIT(offset);
-+	reg =3D GET_GPO_VAL_REG(offset);
-+
-+	return regmap_assign_bits(data->map, reg, bit, value);
-+}
-+
-+static int bd79112_gpio_set_multiple(struct gpio_chip *gc, unsigned long *=
-mask,
-+				     unsigned long *bits)
-+{
-+	struct bd79112_data *data =3D gpiochip_get_data(gc);
-+	unsigned long i, bank_mask;
-+
-+	for_each_set_clump8(i, bank_mask, mask, /* gc->ngpio */ 32) {
-+		unsigned long bank_bits;
-+		unsigned int reg;
-+		int ret;
-+
-+		if (bank_mask) {
-+			bank_bits =3D bitmap_get_value8(bits, i);
-+			reg =3D BD79112_REG_GPO_VALUE_A0_A7 - i / 8;
-+			ret =3D regmap_update_bits(data->map, reg, bank_mask,
-+						 bank_bits);
-+			if (ret)
-+				return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int bd79112_gpio_dir_set(struct bd79112_data *data, unsigned int of=
-fset,
-+				int dir)
-+{
-+	unsigned int gpi_reg, gpo_reg, bit;
-+	int ret;
-+
-+	bit =3D GET_GPIO_BIT(offset);
-+	gpi_reg =3D GET_GPI_EN_REG(offset);
-+	gpo_reg =3D  GET_GPO_EN_REG(offset);
-+
-+	if (dir =3D=3D GPIO_LINE_DIRECTION_OUT) {
-+		ret =3D regmap_clear_bits(data->map, gpi_reg, bit);
-+		if (ret)
-+			return ret;
-+
-+		return regmap_set_bits(data->map, gpo_reg, bit);
-+	}
-+
-+	ret =3D regmap_set_bits(data->map, gpi_reg, bit);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_clear_bits(data->map, gpo_reg, bit);
-+}
-+
-+static int bd79112_gpio_input(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct bd79112_data *data =3D gpiochip_get_data(gc);
-+
-+	return bd79112_gpio_dir_set(data, offset, GPIO_LINE_DIRECTION_IN);
-+}
-+
-+static int bd79112_gpio_output(struct gpio_chip *gc, unsigned int offset,
-+			       int value)
-+{
-+	struct bd79112_data *data =3D gpiochip_get_data(gc);
-+	int ret;
-+
-+	ret =3D bd79112_gpio_set(gc, offset, value);
-+	if (ret)
-+		return ret;
-+
-+	return bd79112_gpio_dir_set(data, offset, GPIO_LINE_DIRECTION_OUT);
-+}
-+
-+static const struct gpio_chip bd79112_gpio_chip =3D {
-+	.label			=3D "bd79112-gpio",
-+	.get_direction		=3D bd79112_gpio_dir_get,
-+	.direction_input	=3D bd79112_gpio_input,
-+	.direction_output	=3D bd79112_gpio_output,
-+	.get			=3D bd79112_gpio_get,
-+	.set			=3D bd79112_gpio_set,
-+	.set_multiple		=3D bd79112_gpio_set_multiple,
-+	.init_valid_mask	=3D bd79112_gpio_init_valid_mask,
-+	.can_sleep		=3D true,
-+	.ngpio			=3D 32,
-+	.base			=3D -1,
-+};
-+
-+static int bd79112_get_gpio_pins(const struct iio_chan_spec *cs, int num_c=
-hannels)
-+{
-+	int i, gpio_channels;
-+
-+	/*
-+	 * Let's initialize the mux config to say that all 32 channels are
-+	 * GPIOs. Then we can just loop through the iio_chan_spec and clear the
-+	 * bits for found ADC channels.
-+	 */
-+	gpio_channels =3D GENMASK(31, 0);
-+	for (i =3D 0; i < num_channels; i++)
-+		gpio_channels &=3D ~BIT(cs[i].channel);
-+
-+	return gpio_channels;
-+}
-+
-+/* ADC channels as named in the data-sheet */
-+static const char * const bd79112_chan_names[] =3D {
-+	"AGIO0A", "AGIO1A", "AGIO2A", "AGIO3A", "AGIO4A",	/* 0 - 4 */
-+	"AGIO5A", "AGIO6A", "AGIO7A", "AGIO8A", "AGIO9A",	/* 5 - 9 */
-+	"AGIO10A", "AGIO11A", "AGIO12A", "AGIO13A", "AGIO14A",	/* 10 - 14 */
-+	"AGIO15A", "AGIO0B", "AGIO1B", "AGIO2B", "AGIO3B",	/* 15 - 19 */
-+	"AGIO4B", "AGIO5B", "AGIO6B", "AGIO7B", "AGIO8B",	/* 20 - 24 */
-+	"AGIO9B", "AGIO10B", "AGIO11B", "AGIO12B", "AGIO13B",	/* 25 - 29 */
-+	"AGIO14B", "AGIO15B",					/* 30 - 31 */
-+};
-+
-+static int bd79112_probe(struct spi_device *spi)
-+{
-+	struct bd79112_data *data;
-+	struct iio_dev *iio_dev;
-+	struct iio_chan_spec *cs;
-+	struct device *dev =3D &spi->dev;
-+	unsigned long gpio_pins, pin;
-+	unsigned int i;
-+	int ret;
-+
-+	iio_dev =3D devm_iio_device_alloc(dev, sizeof(*data));
-+	if (!iio_dev)
-+		return -ENOMEM;
-+
-+	data =3D iio_priv(iio_dev);
-+	data->spi =3D spi;
-+	data->dev =3D dev;
-+	data->map =3D devm_regmap_init(&spi->dev, NULL, data, &bd79112_regmap);
-+	if (IS_ERR(data->map))
-+		return dev_err_probe(dev, PTR_ERR(data->map),
-+				     "Failed to initialize Regmap\n");
-+
-+	ret =3D devm_regulator_get_enable_read_voltage(dev, "vdd");
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to get the Vdd\n");
-+
-+	data->vref_mv =3D ret / 1000;
-+
-+	ret =3D devm_regulator_get_enable(dev, "iovdd");
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to enable I/O voltage\n");
-+
-+	data->read_xfer[0].tx_buf =3D &data->read_tx[0];
-+	data->read_xfer[0].len =3D sizeof(data->read_tx);
-+	data->read_xfer[0].cs_change =3D 1;
-+	data->read_xfer[1].rx_buf =3D &data->read_rx;
-+	data->read_xfer[1].len =3D sizeof(data->read_rx);
-+	spi_message_init_with_transfers(&data->read_msg, data->read_xfer, 2);
-+
-+	data->write_xfer.tx_buf =3D &data->reg_write_tx[0];
-+	data->write_xfer.len =3D sizeof(data->reg_write_tx);
-+	spi_message_init_with_transfers(&data->write_msg, &data->write_xfer, 1);
-+
-+	ret =3D devm_iio_adc_device_alloc_chaninfo_se(dev, &bd79112_chan_template,
-+						    BD79112_MAX_NUM_CHANNELS - 1,
-+						    &cs);
-+	if (ret < 0) {
-+		/* Register all pins as GPIOs if there are no ADC channels */
-+		if (ret =3D=3D -ENOENT)
-+			goto register_gpios;
-+
-+		return ret;
-+	}
-+
-+	iio_dev->num_channels =3D ret;
-+	iio_dev->channels =3D cs;
-+
-+	/* Let's assign data-sheet names to channels */
-+	for (i =3D 0; i < iio_dev->num_channels; i++) {
-+		unsigned int ch =3D cs[i].channel;
-+
-+		cs[i].datasheet_name =3D bd79112_chan_names[ch];
-+	}
-+
-+	iio_dev->info =3D &bd79112_info;
-+	iio_dev->name =3D "bd79112";
-+	iio_dev->modes =3D INDIO_DIRECT_MODE;
-+
-+	/*
-+	 * Ensure all channels are ADCs. This allows us to register the IIO
-+	 * device early (before checking which pins are to be used for GPIO)
-+	 * without having to worry about some pins being initially used for
-+	 * GPIO.
-+	 */
-+	for (i =3D 0; i < BD79112_NUM_GPIO_EN_REGS; i++) {
-+		ret =3D regmap_write(data->map, BD79112_FIRST_GPIO_EN_REG + i, 0);
-+		if (ret)
-+			return dev_err_probe(dev, ret,
-+					     "Failed to initialize channels\n");
-+	}
-+
-+	ret =3D devm_iio_device_register(data->dev, iio_dev);
-+	if (ret)
-+		return dev_err_probe(data->dev, ret, "Failed to register ADC\n");
-+
-+register_gpios:
-+	gpio_pins =3D bd79112_get_gpio_pins(iio_dev->channels,
-+					  iio_dev->num_channels);
-+
-+	/* If all channels are reserved for ADC, then we're done. */
-+	if (!gpio_pins)
-+		return 0;
-+
-+	/* Default all the GPIO pins to GPI */
-+	for_each_set_bit(pin, &gpio_pins, BD79112_MAX_NUM_CHANNELS) {
-+		ret =3D bd79112_gpio_dir_set(data, pin, GPIO_LINE_DIRECTION_IN);
-+		if (ret)
-+			return dev_err_probe(dev, ret,
-+					     "Failed to mark pin as GPI\n");
-+	}
-+
-+	data->gpio_valid_mask =3D gpio_pins;
-+	data->gc =3D bd79112_gpio_chip;
-+	data->gc.parent =3D dev;
-+
-+	return devm_gpiochip_add_data(dev, &data->gc, data);
-+}
-+
-+static const struct of_device_id bd79112_of_match[] =3D {
-+	{ .compatible =3D "rohm,bd79112" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, bd79112_of_match);
-+
-+static const struct spi_device_id bd79112_id[] =3D {
-+	{ "bd79112" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(spi, bd79112_id);
-+
-+static struct spi_driver bd79112_driver =3D {
-+	.driver =3D {
-+		.name =3D "bd79112",
-+		.of_match_table =3D bd79112_of_match,
-+	},
-+	.probe =3D bd79112_probe,
-+	.id_table =3D bd79112_id,
-+};
-+module_spi_driver(bd79112_driver);
-+
-+MODULE_AUTHOR("Matti Vaittinen <mazziesaccount@gmail.com>");
-+MODULE_DESCRIPTION("Driver for ROHM BD79112 ADC/GPIO");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("IIO_DRIVER");
---=20
-2.51.0
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
+index 521c14c7a789..68ba239b2e5d 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
+@@ -4261,7 +4261,7 @@ svm_ioctl(struct kfd_process *p, enum kfd_ioctl_svm_op op, uint64_t start,
+ 		r = svm_range_get_attr(p, mm, start, size, nattrs, attrs);
+ 		break;
+ 	default:
+-		r = EINVAL;
++		r = -EINVAL;
+ 		break;
+ 	}
+ 
+-- 
+2.34.1
 
-
---p2j7jxvmv06+tZC6
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmi5h94ACgkQeFA3/03a
-ocW2Igf/Q3Kj5CBW7DB3GuzI/or9wLfLrUWrncUx6A8EOk3N9JU/9lO4ZEfl601s
-vPj0f3L8HfnZL0WOgRNsNLCIznTTjEdO7lgYyil3KmpKPuKiiikl/I5HkPjm4KIO
-xqtGSkmAalX6FzYn929rsQrGEazE0KxhF1kZnmapfdg+lKkAfYYOfbcPc7VfBLBE
-Wo6KhS+hCJbUd1ChZqWgaAX7mndfepgLJFbyFqhncafUVFdobcZDySDDqDxcL1Bk
-sZPxJF/BS7rwSXw+9VmqZbT3rhbJ04a4ks/aZ09qqwLQ1yRx4AYnb22WuhI+IwBa
-0sv/WEFsO/XYq41+BABT8B1n/mdAIw==
-=GMz0
------END PGP SIGNATURE-----
-
---p2j7jxvmv06+tZC6--
 
