@@ -1,148 +1,160 @@
-Return-Path: <linux-kernel+bounces-800549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB85B4391C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:44:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C624B43920
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E0D81C803C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:45:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C92E268790E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117252F99A6;
-	Thu,  4 Sep 2025 10:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC002F90E2;
+	Thu,  4 Sep 2025 10:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DThHZmd4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DCE6VIp+"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B105661;
-	Thu,  4 Sep 2025 10:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2A472629;
+	Thu,  4 Sep 2025 10:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756982676; cv=none; b=nCGp7V7K9YjKM1X4lSVWpzWE4SRgU8bYlm69TTIYuPPMxm3P6Vbm7CuEM/Eeb0QeS+9UQLEWUnX2XZUu5NVIBr0C0opBorajBE39rpzkDKaEJDlGANgByd1QmZN6FLwt2Wx3lxyS+OGEf4S/hr1dKAUM1kHkU0IZoQ8F1XCHISI=
+	t=1756982796; cv=none; b=NHS8eaiWynCARtEcGCbGZIHrzjnjhqYEzS/LxoBEZIUnIliSrBfWKLYlxEbyp6uGYAZClOoZj6b3SPkDPbosquNkz8wN/oqAIxlvsg9Idi2+4nRLsbIUiXfUaODHSNLGQeBP+zRiR41bQmFhNcERCjiMvQt7xPkOanWGZmMztFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756982676; c=relaxed/simple;
-	bh=pKXQ2BOe5S23ZZX1t20m3mUlrnVNSp1CdRdrgqIRj78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VpWQtqHZhoqvwvY0TUABNUQIJYs/Ik+rSxiSLCgbzgP5DbggH7wZvoSZeNb9v/Uh/L5LaRkpfUCO1eCzJNQPsymi/PLHcO96rgxq+Azf43NUUkwaV6KlZMwlX/WWMeFKRDsJKf6XDKuh2o6phDnylsAeFOj0zcSOc99WRd/jYPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DThHZmd4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 006FEC4CEF0;
-	Thu,  4 Sep 2025 10:44:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756982675;
-	bh=pKXQ2BOe5S23ZZX1t20m3mUlrnVNSp1CdRdrgqIRj78=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DThHZmd4O/0IYMRQaqdxjRE2eu376zOP7YfVWGpo0EwQkbrz9P9zY5LXSD6VOGW5C
-	 q+KD/X0jVRp3Z6bCZWOpy+Ewu7t/55PiILUftovaYRUJvfcL/HSt4QD/9oZFjcwmuN
-	 GyEiXSs/gBx40h8KsUH0o8d/mJim8vsTdjB7FygOnzUfbkz03UytfMiP+xr1osA5Pn
-	 bWtfVI3NDl8wRbYfRRqy1RLFdQYYVwMBLXjHZnwKN28xFAZSbLjhzdCC1xuvPauqBR
-	 si3nzbuk75JDcNsezQiTVnic0sEEYYBadv9kxsdp5ydiolmedJw36nDTrbA+su4YL3
-	 EYjLoR76Aw1MQ==
-Message-ID: <90aa7f8a-9ce1-425d-a988-3c1f9990ec4d@kernel.org>
-Date: Thu, 4 Sep 2025 12:44:28 +0200
+	s=arc-20240116; t=1756982796; c=relaxed/simple;
+	bh=t7jhEFWu/vL/nffTlTXgSrADqDago8gdgl9cPR+Pi2o=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xl25waemFlhMPQgqupXsTK9VvZmfgibbh/OzKZfSkkGqj4ZJ/br5Kdlh/GkMWKZF4sqinjZRlsenORCmntcv8Xuwg6Tqn0TrfjUj01BkLwgUm7vnv0T2bmBUldgrkQ2KTxpUS3P4aunZ3ujHzAR2O//km1BINndDUUFxpYMeljc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DCE6VIp+; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61d143aa4acso1293837a12.2;
+        Thu, 04 Sep 2025 03:46:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756982793; x=1757587593; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v/6MCHmVs/INco1rBZwPhEs0od+L81/1d00TkL5c64U=;
+        b=DCE6VIp+KFjtVo2zuxUq1CFdhffi+0fvDvJZQ9+Q1brEeLGbQ53BIfcxRn4+aWCAhU
+         Pa58YEMF15RVfOIyaOhj1IxEQ3CB6wcGAl+Rq9puOY4eeGcPUM2h7cKNKxkN1g6REsSz
+         l2NCBU+BAgdkkR6/3UHGytxzd5zag6Nm64UUcDCliPCTHI/mFjjLwL45rmLWA0whDrbI
+         +hsnWDMLz1uvO+gaj+DPmm2VJM/qS5Jqi9XXLt+wY1WAk4XudcrKPr+z8/BUXB1CHRRn
+         ClBhquHrijfbFIODWmUin8Uh574WVobyTxu18tclAWURfvXBa0o55uEuKZBjcINh2BRq
+         Q9rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756982793; x=1757587593;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v/6MCHmVs/INco1rBZwPhEs0od+L81/1d00TkL5c64U=;
+        b=fspTrS3GjtQfV2K0tSsEk9xvXRZhtM1rE2hpc4Exb4mex7vIXkWgtZdJvQGMZac59F
+         Mq7L5cuU3GzUXnfWs9bTpTgcZQQmWvpww8FCpfr4KJZe/JZsOF6elcbxw/4vLdaHZgkK
+         D6ypuZkZRo4KGr1be8mH3ENk5kdYFukgWKtyq8yjPSBMN6r5yf2nP7xnsAgfOzj28mrU
+         jQGqQveN22qjWdiPTWAKWHj3KcjyleMUDkl1Zx4oXyiHSkQYIfIPilAe+6r9g33c/UXZ
+         d580TAMa6e11IPHO2B8jjrmG/zYtPVsSXeNWU8i9EL31+9AZL+LDbs8E8BaeAXFVSUsi
+         ePAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUI5y9fkJBVEHB8Ha4XxLDnSKaUt+AGyVEI6pLoIwnRW1O0PW5Qsi9aGxzpqj0fRCjQGyM=@vger.kernel.org, AJvYcCXq7TXE4lenJU1mevyUDdAHXGZrEPLuNxLWw+vOs2epnjojOXje+oHf/sAXcjPSG862GKiIWZ0dS1Gqc37lIibV1Gc3@vger.kernel.org, AJvYcCXs6iR2xSxIc8CnneIsAOCjgIjs80ctryotlOScvdlRLw3yTPggdBMFXUdBrawe39fRJc/9iLzCJ6ALJwT8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAQFiS3JukDKxYJkojSWXInmI4MaSSJLDCt7ho9lFcpDQRfmGT
+	AlM+lBF4VwiVRf63ybzWfVsgJAn2dwqv6wN/X0svZ+I8vYuXUa29iZwy
+X-Gm-Gg: ASbGncubnUA3uVALkGGNq6UMGegmnRv5+3Q8XWHcHTZ2+schrsYuRZYj/xBOveO/2pA
+	TjIbsPsQDJ112uOtz8urTTZAenxKTGyNngqHpd/zfr/AiQYC89EZBfzXn07re1XrjJw5G6fqPfo
+	9hpHXnFi7pTTlfJ5T/N5rWT6D+6+PecLlFUbXUJdybxzOb++tGWybxmnWkmZTrSM7NKfWY8rzEc
+	HYuGxRcQ/DastVS5AQ3OOksPplTYrMsWH2t5CenNSJYjXk9ZbldliUMG7TmxwxO/sD1P5n2GhFA
+	s9aaShm989jRiXM4LRErC6i5898SCyA9GrTQYnBma7+SUL4O0yqcf5TNzwvA79M3qFCVUNHPyU6
+	OewIeg9E=
+X-Google-Smtp-Source: AGHT+IF2BbXiznN72q968yvBy6zKn2zLuchEHAzxeMcnRqvSKT6buqhPOlQiBdzDdyf17ZN1MJI/1Q==
+X-Received: by 2002:a17:907:6d18:b0:afe:ba8e:7378 with SMTP id a640c23a62f3a-b01d979d03dmr2024143466b.48.1756982793072;
+        Thu, 04 Sep 2025 03:46:33 -0700 (PDT)
+Received: from krava ([2a02:8308:a00c:e200::31e0])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b017e4b9ed7sm1308898266b.90.2025.09.04.03.46.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 03:46:32 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 4 Sep 2025 12:46:31 +0200
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH perf/core 02/11] uprobes: Skip emulate/sstep on unique
+ uprobe when ip is changed
+Message-ID: <aLluB1Qe6Y9B8G_e@krava>
+References: <20250902143504.1224726-1-jolsa@kernel.org>
+ <20250902143504.1224726-3-jolsa@kernel.org>
+ <20250903112648.GC18799@redhat.com>
+ <aLicCjuqchpm1h5I@krava>
+ <20250904084949.GB27255@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: iio: afe: current-sense-amplifier: Add
- io-channel-cells
-To: Primoz Fiser <primoz.fiser@norik.com>
-Cc: Peter Rosin <peda@axentia.se>, Jonathan Cameron <jic23@kernel.org>,
- David Lechner <dlechner@baylibre.com>, Nuno Sa <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- upstream@lists.phytec.de
-References: <20250903113700.3079626-1-primoz.fiser@norik.com>
- <20250904-tangible-practical-partridge-a1b0e4@kuoka>
- <b6006a1b-0b46-4e0d-9d49-6cc0dbe84814@norik.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <b6006a1b-0b46-4e0d-9d49-6cc0dbe84814@norik.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904084949.GB27255@redhat.com>
 
-On 04/09/2025 12:15, Primoz Fiser wrote:
-> Hi Krzysztof,
+On Thu, Sep 04, 2025 at 10:49:50AM +0200, Oleg Nesterov wrote:
+> On 09/03, Jiri Olsa wrote:
+> >
+> > On Wed, Sep 03, 2025 at 01:26:48PM +0200, Oleg Nesterov wrote:
+> > > On 09/02, Jiri Olsa wrote:
+> > > >
+> > > > If user decided to take execution elsewhere, it makes little sense
+> > > > to execute the original instruction, so let's skip it.
+> > >
+> > > Exactly.
+> > >
+> > > So why do we need all these "is_unique" complications? Only a single
+> > > is_unique/exclusive consumer can change regs->ip, so I guess handle_swbp()
+> > > can just do
+> > >
+> > > 	handler_chain(uprobe, regs);
+> > > 	if (instruction_pointer(regs) != bp_vaddr)
+> > > 		goto out;
+> >
+> > hum, that's what I did in rfc [1] but I thought you did not like that [2]
+> >
+> > [1] https://lore.kernel.org/bpf/20250801210238.2207429-2-jolsa@kernel.org/
+> > [2] https://lore.kernel.org/bpf/20250802103426.GC31711@redhat.com/
+> >
+> > I guess I misunderstood your reply [2], I'd be happy to drop the
+> > unique/exclusive flag
 > 
-> On 4. 09. 25 11:17, Krzysztof Kozlowski wrote:
->> On Wed, Sep 03, 2025 at 01:36:59PM +0200, Primoz Fiser wrote:
->>> The current-sense-amplifier is an IIO provider thus can be referenced by
->>> IIO consumers (via "io-channels" property in consumer device node). Such
->>> provider is required to describe number of cells used in phandle lookup
->>> with "io-channel-cells" property, otherwise the following kernel error
->>> is present:
->>>
->>>    OF: /iio-hwmon: could not get #io-channel-cells for /current-sense
->>
->> Also, how can I reproduce this error? Do you paste here real errors or
->> just some invented ones from some out of tree code (hint: such would not
->> be relevant).
-> 
-> I get this error if I apply patch #2 without patch #1. See [1] for more 
-> details.
-Then your warning is not relevant here.
+> Well, but that rfc didn't introduce the exclusive consumers, and I think
+> we agree that even with these changes the non-exclusive consumers must
+> never change regs->ip?
 
-You said in your commit there is a bug, expressed with that warning, so
-you make this commit. Turns out there is no bug, so all the reasons for
-this commit are gone.
+ok, got excited too soon.. so you meant getting rid of is_unique
+check only for this patch and have just change below..  but keep
+the unique/exclusive flag from patch#1
 
-Rephrase the commit msg to describe accurate reasons WHY you are doing
-this. Drop non-existing warnings and any misleading fixes tag, since
-there is no bug being fixed.
-Best regards,
-Krzysztof
+IIUC Andrii would remove the unique flag completely?
+
+jirka
+
+
+--
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index b9b088f7333a..1baf5d2792ff 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -2791,6 +2791,9 @@ static void handle_swbp(struct pt_regs *regs)
+ 
+ 	handler_chain(uprobe, regs);
+ 
++	if (instruction_pointer(regs) != bp_vaddr)
++		goto out;
++
+ 	/* Try to optimize after first hit. */
+ 	arch_uprobe_optimize(&uprobe->arch, bp_vaddr);
+ 
 
