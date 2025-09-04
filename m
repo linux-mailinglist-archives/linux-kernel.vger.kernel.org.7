@@ -1,95 +1,245 @@
-Return-Path: <linux-kernel+bounces-801297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAA92B44359
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:45:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0EE9B44378
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B09B94E4A1D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:45:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B2FD178A0F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0562306D26;
-	Thu,  4 Sep 2025 16:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F6E30E0DB;
+	Thu,  4 Sep 2025 16:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="f9aM0l70"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EZYrru3s"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941EC1D554;
-	Thu,  4 Sep 2025 16:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757004182; cv=none; b=DtR7opAoxSOk0cjhGBf7VS9a9pU7K2sPbWxDM+KrHXS6m8w1FGCyU8eeR/dVWzbWvGbWHPgVRxYqWCVSd5cTI1VOZqv++K4tjX98Z3x5sqHa0PwctIK/TsIKWJnsk7D2FLe/MVPbA8MNQtDaRhM3FQ6E5k+phqi9CxE4Wgtuytw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757004182; c=relaxed/simple;
-	bh=VclGNSTasmoyTyQtliq2S2zIA/MChid17egfEOlk83c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kVdbjG9NFtXMXrERue9i7aY6l/woFe58UCuMIW1e6vD2xaVy9Ib6QRePfXR7he7b851FwwA1dNbj89LLQaGoSeGwTRbxtjx0bPmovg8t9BBhxmItO/mYhPL1LDdmbMVQc2O9x/+YZYboGQcz9fcjE7RO78jBR6GTOE65IF0aq40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=f9aM0l70; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 71F59406FA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1757004177; bh=3Pkh2sB0VtPl6+kb9/0x9oQQp35VYh+YFPxsQo/WNrQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=f9aM0l70YnB/LZDpI3Af5UHc+ihAxPADLoFi04ZJaLcbB08LKyexr6OGamC05kzt6
-	 oxEaG3xVJC7INBpza9lOW/GRDg4KECuiWppyxdZFgQ1dzYlxoc5XAyvOgW6XlJ2ibL
-	 lHVVkKKOWEKZS3PrBFx6Ad3rcZpSjY5tbFdONM2M8JRM22IpImfR8RUpr61GvKwDcK
-	 8+XkBhsuiUBggvNodWBLSsnkNqPj1+k8kaWOtaNABGjAILG+tC08oleCih5gxS/Qd6
-	 sNPvOdJlwPqHgnGE/BFOzLYR2wzs9sC0Pk0lmQmdx6bO6SUFpHuPZeCXW8p6J5JUx+
-	 LwYbcOQ21vI7Q==
-Received: from localhost (c-73-14-55-248.hsd1.co.comcast.net [73.14.55.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 71F59406FA;
-	Thu,  4 Sep 2025 16:42:57 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
- List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Akira Yokosawa
- <akiyks@gmail.com>, Alex Shi <mchehab+huawei@kernel.org>, Dongliang Mu
- <dzm91@hust.edu.cn>, Federico Vaga <federico.vaga@vaga.pv.it>, Mauro
- Carvalho Chehab <mchehab+huawei@kernel.org>, Randy Dunlap
- <rdunlap@infradead.org>, Yanteng Si <si.yanteng@linux.dev>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 04/19] scripts: sphinx-pre-install: move it to
- tools/docs
-In-Reply-To: <68810fc1065bbe8ef1305041fb10fa632bb64dd3.1756969623.git.mchehab+huawei@kernel.org>
-References: <cover.1756969623.git.mchehab+huawei@kernel.org>
- <68810fc1065bbe8ef1305041fb10fa632bb64dd3.1756969623.git.mchehab+huawei@kernel.org>
-Date: Thu, 04 Sep 2025 10:42:56 -0600
-Message-ID: <87ms7amanj.fsf@trenco.lwn.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0C82D46AF;
+	Thu,  4 Sep 2025 16:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757004213; cv=fail; b=sSV+5b0n+M4dALgr29wC6JLeg8j4fEhnREjgOahKD0yICTuSz5HYQKhMy645yNO3ZMkKs3T8P1mS50IHcXNobMtLRFgdWsR5k5JwXdWo5ZBvKPBpelsPGioxVKOqlOib6yw37osHZzMN//MxHs0pknBdMlACZVqEPYQtlMtcOBw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757004213; c=relaxed/simple;
+	bh=7B56DioEgkPEq4ijSdUGNMTyZEgUnt5nGDHWSYnCaYc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LPTNdaM5Bper/ys4FjDtmVLT4O32tkId8kC0k4ik4g7ul7CmT0Zy3SM1uFGZqqamTvjkNBstvApjBx1bOrhCLT+8W5OlfnWUe31KAy/9GD2wxeoAyXXBV1VnL7EWq+UXjE2nEHHZml7IjgswSkrRb1lGL+FEkoSrUoLZ9KdgbRY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EZYrru3s; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757004212; x=1788540212;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=7B56DioEgkPEq4ijSdUGNMTyZEgUnt5nGDHWSYnCaYc=;
+  b=EZYrru3sml69PQFPtgT0hIT9d02AxG2Ml5eWIry2VLsp1z1mRdzaDFTz
+   ZznPpos+pZOFYHCk3D0XgcNU1ng4LKBCynip7M/kWUqbKwzdf3HjNBV4c
+   OjBQq+MP1P918uFgXs8PedbW5+kFdkcbmlJTumnfdQR2xUWudCndWLq7w
+   mD01PdYDXFS+5RbRgZxJDOdJ5uOVvgbWt7LdiAZSSJo5sM9wmWWV80b6n
+   37sZm58Orfat+ONpYTRE4uWa80CXlmmCx8ak9UOu19bT80F635hsUEE/t
+   uUuE2fYpjnAnOvm6t6ePuBx4FdZzj9cqTvhRgZrujwDSeDPeWtRHFR/wt
+   w==;
+X-CSE-ConnectionGUID: tXLtCbnrSuqeB+0xA8XJJw==
+X-CSE-MsgGUID: ES/J2kEsReSizQoAiWl8ZQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="59460422"
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="59460422"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:43:31 -0700
+X-CSE-ConnectionGUID: pwpoeiexRbWObpytOLdhdg==
+X-CSE-MsgGUID: XI490XT2RnK2fPqwaW7DGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="176281591"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:43:30 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 4 Sep 2025 09:43:29 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Thu, 4 Sep 2025 09:43:29 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.62)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 4 Sep 2025 09:43:29 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wqb98JOy89IatJcETVQldqZyOhdpPpy2m/jTwQltpEFy8nDLu7ao49TV+MTUA2DrEwJqAkpcgVqTU3BiZyznttB+vPYsu1OWoWr2QCPoHP/i59bWKIvX8xoHPbVv59+FvdGWmjJrfbl5saCTkPMgRTz/RMgWLVjN9j/sbgvy0+Ge6y4qXAcQV4uQcrOYELn24PmzqKGFndVCJNSoflWPI2m1JeW2w1CXhu18mntKJSPcSo/j8Gqs1PuUoRC3AP1t2ix0QqR1sUjXT0NL6xk/Tq8cQBvQzZPDNxyxGH2uPj89W/zbjM8rb2gYpiFxEhXk81YCsgi5kpKSCx+thE4xcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4NgtZLJQMgeIoT0yzeZvrXcBgsL4UYPMvtBfVyaJOoA=;
+ b=uSGv9N1lpW/ppvoU0tbyULxLgtyW+eY5zjnHDEHNiHaOYnUyL1n4bbwXzl3a00ObvNlrxaNHZ483iRnMZ0alPXfBrn+pby5oyRu08dckzUs8Psj+IQf3PdHrfL+SGD7cMARmufuWu8N6RTJzQjPBq+NlIPmWJDP8IbEcmZoan5rjdpJ71LLY0IrhdigR/a5QMc/OiM0WBm7/csCy5aZQgbrFiwF7AkwYBL1PrvIoODy0du6byoprZ4MnbVIjYzMMM9kt+FH+VjjcwQBhPVndK7H6fFLusaRsI1HfvOBafKeughqTh/YiurVOfMyVSH2Vx93sI08UdCjS1QsakU3UsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM4PR11MB6455.namprd11.prod.outlook.com (2603:10b6:8:ba::17) by
+ PH3PPF9E162731D.namprd11.prod.outlook.com (2603:10b6:518:1::d3c) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Thu, 4 Sep
+ 2025 16:43:24 +0000
+Received: from DM4PR11MB6455.namprd11.prod.outlook.com
+ ([fe80::304a:afb1:cd4:3425]) by DM4PR11MB6455.namprd11.prod.outlook.com
+ ([fe80::304a:afb1:cd4:3425%6]) with mapi id 15.20.9009.013; Thu, 4 Sep 2025
+ 16:43:24 +0000
+From: "R, Ramu" <ramu.r@intel.com>
+To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
+CC: "Lobakin, Aleksander" <aleksander.lobakin@intel.com>, "Kubiak, Michal"
+	<michal.kubiak@intel.com>, "Fijalkowski, Maciej"
+	<maciej.fijalkowski@intel.com>, "Nguyen, Anthony L"
+	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "Simon
+ Horman" <horms@kernel.org>, NXNE CNSE OSDT ITP Upstreaming
+	<nxne.cnse.osdt.itp.upstreaming@intel.com>, "bpf@vger.kernel.org"
+	<bpf@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [Intel-wired-lan] [PATCH iwl-next v5 02/13] idpf: fix Rx
+ descriptor ready check barrier in splitq
+Thread-Topic: [Intel-wired-lan] [PATCH iwl-next v5 02/13] idpf: fix Rx
+ descriptor ready check barrier in splitq
+Thread-Index: AQHcFqVv3zJ5tvXgVk6z0OS4dr88irSDMvPQgAAVi+A=
+Date: Thu, 4 Sep 2025 16:43:24 +0000
+Message-ID: <DM4PR11MB64551BDC0C6DE8AA57C4542B9800A@DM4PR11MB6455.namprd11.prod.outlook.com>
+References: <20250826155507.2138401-1-aleksander.lobakin@intel.com>
+ <20250826155507.2138401-3-aleksander.lobakin@intel.com>
+ <PH0PR11MB501389C85BEE4E0550FCBD139600A@PH0PR11MB5013.namprd11.prod.outlook.com>
+In-Reply-To: <PH0PR11MB501389C85BEE4E0550FCBD139600A@PH0PR11MB5013.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM4PR11MB6455:EE_|PH3PPF9E162731D:EE_
+x-ms-office365-filtering-correlation-id: 0ddae3e7-b9cf-432a-84cc-08ddebd22aa5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?bqnLeFxNCmHh1HWwWQhueXCuVILNz0DZeaCRc9mTEX2oJXclZrprhdwf6V1x?=
+ =?us-ascii?Q?NuubIO3stpESIfIcrh91kDJyDEzFHyW9GW+wWk2mbnt4qw6QzURwhuuNQXpl?=
+ =?us-ascii?Q?/cZ6+9Kn2SwnIZCM2bPh41wZd2qlXsJYLw4AMbIl595p8MpRjoNJdSUsR8Qa?=
+ =?us-ascii?Q?QS5w2WEIVR73ZA0q1hrRTSgrD5HZqXZInslprCaagP8o0wKwLVeffZ+YHBvw?=
+ =?us-ascii?Q?A0TNHyIs6c4Mw6XvAtDZabx/pjZSt3I/mz2bqhFc+2VWZV54dVvLOHE6HMqI?=
+ =?us-ascii?Q?8Znw15PBIFtGK3QOrpvGfLcry2AzXbwbavqFRRdls43yI2M3tEhXyLh8koYD?=
+ =?us-ascii?Q?RQaCKz48jzmG7nqXxIRXYRGupT605zYiSzuE4UhDBbp3yBkIlc6rTvLmyZtD?=
+ =?us-ascii?Q?omy8U2V02CdycJUFM3NcRelX/j5GEDYgISzUVH03Vaq9/IVN59QG6ciRmaAZ?=
+ =?us-ascii?Q?VKdCxf/aGvIgbEig0rUnmRCdlorUUebACwsOI/YjeWhfd/vd9VkH4BUbI8Xd?=
+ =?us-ascii?Q?vzi6/+syinqYug9cmEgdESuG09GC5yaNgcO7B3PEWIN1XsuMt+KunVdErm2k?=
+ =?us-ascii?Q?H5dRoyt9ETRy1IqKsp75BMcGbvmxQ7lTbunIKpKcAZkev+40gslHtO5AhRXl?=
+ =?us-ascii?Q?rPGHce18K8aJKsP72djuMaSY5foHEhxrzcYJbvsKhp9roft9cDh4LX/sSjfd?=
+ =?us-ascii?Q?iK9sK+ZYXT7cvITCwbcQFn18VgTJIvFAAuB0fZpSmG7yVL17In92Ky//jBMu?=
+ =?us-ascii?Q?bfH6hhTRDJRJ0Tyir/YRvgWy4mxkdMIUTcHq0iF9cXpSVOc3jNt/4N8X402R?=
+ =?us-ascii?Q?FE5DZgwbV03WZK1gEQgq8AvLpI3LPlMKHxCzuoJ0itVBJl9y3wzjZoo/21ge?=
+ =?us-ascii?Q?e5XRr/ZMJsvgheqoNbbcdYDSSpXoqNn+f8ttRVFtf6fv9Itm1w7zxhZQ7tmi?=
+ =?us-ascii?Q?im4AIJDM21svRzfcXDTtWpP/cSm5BC5K2bAATjBYlEsYoMIxZVkrOWddbkcm?=
+ =?us-ascii?Q?2D793rbp0GyJ4DREygTM12a6q09nuOKsZSKie7767bFzc9GRp+TCZAzCmzcs?=
+ =?us-ascii?Q?oAj/OiHDXt+4eQWiy3S/TvL0xMMhgMHvjcZXGQt1VCCkkwu/MTha3e/4aqW5?=
+ =?us-ascii?Q?vDprhtPdnY319zXvFGB2ZuqX2xygYZayph9L1EvqFp5WbqRcya7Socgzr3Hm?=
+ =?us-ascii?Q?MHOLn5U3M1Df4avTyzh80acnjcX3im2UdYAfW/tTjJgOceF9rkDz0hRef5g7?=
+ =?us-ascii?Q?FjdaRNl+BplRYgd4kYQ2XYZW+kBSJDvYikX1Ed8UwS2MP5IJaom5ElbKry+y?=
+ =?us-ascii?Q?aIb0yG2Ovr+R9PU7j+jHffR6KezlaBmJlcfxxW5uPCehURBFZJK19F0Q7bx1?=
+ =?us-ascii?Q?eo2GpIKGzQwrzG+RVIfxQyob3++w2AYQJhxOmu5sSGQ66ntiCE14PSARsd6m?=
+ =?us-ascii?Q?KhFgUSHQluZAQ+tlhFK7Z26AHgWURyyHVhTl2lOhfosi+L3hmcflMQ=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6455.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?8d+JAXrioUcut+1rcMe6lMyrIoO/b09yyMmI2pOnWuYh0oRmJhpBx4xWIWJq?=
+ =?us-ascii?Q?LAxIGroykHwioZ7CPu0SFPqCcRvTMmnSA/0U9DJ5yjK6MGnhCUmAy2cF+ce2?=
+ =?us-ascii?Q?bv7vedBQgN248bCGTPbeo6qQhR/U4qfgh9MyRZK0zY42/ZQV26DmKnhiFK9A?=
+ =?us-ascii?Q?dNLfYDFbgzPvo2Hxl1ivlBmHMRxE6HgKGcWeMxW64wvUaKsDHjnIFPiFom7e?=
+ =?us-ascii?Q?YgyP+aqHknqby4QTgkX/vGckNeHfHcckWPObtkm2rQmnbY0VWkqZE0pGxhJz?=
+ =?us-ascii?Q?4NX0u5EKJL2ibnseJQzlrOYDOVJmEQh77ONXVZ2fEtRaXBiDRebuizCOTRBa?=
+ =?us-ascii?Q?c9YP5BwBR0ckvrSwe4LvpyLmvYnujrwNj7wEThZ8lRhKfRwxZEr64+O+JCJk?=
+ =?us-ascii?Q?0ypoqHLsskppcfCUfrqzTkZw+4hGrCdZy+UMfTScygkyFr61Ci1jifoTPHCd?=
+ =?us-ascii?Q?Ky1hLFglRAcEV1uEC7sMMZyGsTuzK1oND2DVL1+yLy+ydUNWsebODKdzw5qO?=
+ =?us-ascii?Q?3V3keMJKrUkFI+JxEjUxe/Za1IWmmitOvyN7c47NTcuApNP2lX016IQqGiux?=
+ =?us-ascii?Q?/uMi1hj5gXmtGgH+FIrmQlS2DywNUAvebQcN6QBRk3J034q0leT+0zlq1TIz?=
+ =?us-ascii?Q?LWDHitcMp5GBdXl9/lT3QBnfeUqlyjsqU7KTes/FTDiuSGMmsu/FXl49c8Q1?=
+ =?us-ascii?Q?EdEJkRfUjFaXJ1zrDCekbcxgx9VCHgsO4aagKaJYxFmHQgLiSrAzQ1f/UrFP?=
+ =?us-ascii?Q?IojkK9tIriVuXAOs6MFF27Gb6EGAC0JnfxeYbfNIrXmvkXH6ki396Ic7ZlDv?=
+ =?us-ascii?Q?Y9EBz9GL2s8QJMGtL28AD29p0nvi/W8w7vLTK1i+Ah+AAM+FK1ZA3DzBuGLp?=
+ =?us-ascii?Q?KQJniutdT6RPUPt7EkyGgmQf2TCpQrEagHR2Thndw1R/rTNfCTrYALoVdmfZ?=
+ =?us-ascii?Q?WtbEVuOHuq2R/jONmClqikh9J58mXqc9b0RzJd3Oq8/e17OKdn6YJ1JYzqJr?=
+ =?us-ascii?Q?ZI6147KQ7t5JvcxACBK0bJEN/+KRugslfItZqKEZ1BkcN75aQeFvbjHNvAHe?=
+ =?us-ascii?Q?jDRVyVEtxDaf+i1bBKxWZVqTHxb3tq2qU3wc/qcfMpntytMtcWRbHszgcBgs?=
+ =?us-ascii?Q?PG3HnihvUUREkUFlTXOD3fQXOAGGGYyEtdN4EeczCI7MHuP1Azgj9Jfu0EMl?=
+ =?us-ascii?Q?14rgySESjE17mV13vaXbTQxLklB8RKMMKMwzfya44FEKBlSMKqiKMn5WnBz/?=
+ =?us-ascii?Q?zwZU82Ubsa09xzO1iLdmjJDTTiEiJYAMWs5FwUaz5Yt19VwFyLbE3g9pyYeG?=
+ =?us-ascii?Q?ffz7qdJzA1IaG5sPfxV5okPstx5/+gARXLo644OFox7qMllVKmjuWn300JzX?=
+ =?us-ascii?Q?ScgiZDzzeZTDInYla7jSelFlojsQvyxHddzQ9gUZtvDQgH+CmW+MWOk62SKR?=
+ =?us-ascii?Q?+AJMYWb8b7TrlLXzP+eXYdqJxiv6PzxQWmQncsemd0nOXdSfbrVKLXni8an5?=
+ =?us-ascii?Q?eiOO/ubrLVlq4WCiFh+qZZm7n2pfNaBRvU/68wXEVB7Wk8PWwGY4/y3+sD2M?=
+ =?us-ascii?Q?dlfvPlv7TtAjuKcZuMY=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6455.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ddae3e7-b9cf-432a-84cc-08ddebd22aa5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2025 16:43:24.7594
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dW4+3a2n7f+YNprOMIq0B1YeEn5HWUMh4+9DujziRHuTPrQGIf4VvlRIOjsow9eYNe8JWbS2Q2rvAo+1+1LLtg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF9E162731D
+X-OriginatorOrg: intel.com
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
-
-> As we're reorganizing the place where doc scripts are located,
-> move this one to tools/docs.
->
-> No functional changes.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
+> Alexander Lobakin
+> Sent: Tuesday, August 26, 2025 9:25 PM
+> To: intel-wired-lan@lists.osuosl.org
+> Cc: Lobakin, Aleksander <aleksander.lobakin@intel.com>; Kubiak, Michal
+> <michal.kubiak@intel.com>; Fijalkowski, Maciej
+> <maciej.fijalkowski@intel.com>; Nguyen, Anthony L
+> <anthony.l.nguyen@intel.com>; Kitszel, Przemyslaw
+> <przemyslaw.kitszel@intel.com>; Andrew Lunn <andrew+netdev@lunn.ch>;
+> David S. Miller <davem@davemloft.net>; Eric Dumazet
+> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
+> <pabeni@redhat.com>; Alexei Starovoitov <ast@kernel.org>; Daniel
+> Borkmann <daniel@iogearbox.net>; Simon Horman <horms@kernel.org>;
+> NXNE CNSE OSDT ITP Upstreaming
+> <nxne.cnse.osdt.itp.upstreaming@intel.com>; bpf@vger.kernel.org;
+> netdev@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [Intel-wired-lan] [PATCH iwl-next v5 02/13] idpf: fix Rx descrip=
+tor
+> ready check barrier in splitq
+>=20
+> No idea what the current barrier position was meant for. At that point,
+> nothing is read from the descriptor, only the pointer to the actual one i=
+s
+> fetched.
+> The correct barrier usage here is after the generation check, so that onl=
+y the
+> first qword is read if the descriptor is not yet ready and we need to sto=
+p
+> polling. Debatable on coherent DMA as the Rx descriptor size is <=3D cach=
+eline
+> size, but anyway, the current barrier position only makes the codegen wor=
+se.
+>=20
+> Fixes: 3a8845af66ed ("idpf: add RX splitq napi poll support")
+> Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
 > ---
->  Documentation/Makefile                             | 14 +++++++-------
->  Documentation/doc-guide/sphinx.rst                 |  4 ++--
->  Documentation/sphinx/kerneldoc-preamble.sty        |  2 +-
->  .../translations/it_IT/doc-guide/sphinx.rst        |  4 ++--
->  .../translations/zh_CN/doc-guide/sphinx.rst        |  4 ++--
->  Documentation/translations/zh_CN/how-to.rst        |  2 +-
+>  drivers/net/ethernet/intel/idpf/idpf_txrx.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+>=20
+Tested-by: R,Ramu <ramu.r@intel.com>
 
-This one fails to apply to the translations - it looks like some sort of
-encoding problem...?
-
-Thanks,
-
-jon
 
