@@ -1,134 +1,176 @@
-Return-Path: <linux-kernel+bounces-801237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16376B44284
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:18:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 908C2B44299
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3163AA04721
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:18:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5821C175E28
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D2C224234;
-	Thu,  4 Sep 2025 16:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C4A224B04;
+	Thu,  4 Sep 2025 16:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fBMKu5he"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="HzpJyk0Y"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8BE233D9C
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705EF163
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757002664; cv=none; b=Uw/BRwtPmOlr3nBWINZYtYNtB7uzN5qoePE2qhpKLi9xKMHJRMXQ8wEvIANvagWdQf+d0zblGfik73+4zASIQt19E+SxWi5VyQMauBQduLUcSgjHXdxqpwTH1pzXKQWBzmhdaphY2vfapg8ZcGW4KhBYcQBqpQCHt5sY7G8CCvY=
+	t=1757002994; cv=none; b=alQKrWPU8smGoeMbSW1bxY51f1fZmhClGxnulpuiKbcp3zBibeQvgxYFipN8wxz0l1QVTIOQ0euzrac4kH+F9CwpRD/o52ZmCfissEyl+l52r1DgQODf8qo91R9795/r1pT3hI1WicF6WSDIFZTAcRK9aqBvBjkcNO6ZqBEyggg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757002664; c=relaxed/simple;
-	bh=WbwuewpY10icGQu/W7sUvcToRo1R4qP9KKJtQKyOM0s=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=nbKclL6E7GC0yi6ss1GKzvuhRnKY+++Chi7/iZFLlzva8Kn9m9ogNkpTLKf9PFXXvx1ol0NbEOdepv5eGcrpXjykaB3e5xt29dzxsc6MAiI0B2z6I4evCCsjJR/iIpCqSjr9ziSJ9hvGhzrFdIhtpKqBKfOuJowTA02+pv/At6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fBMKu5he; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24ae30bd2d0so13012115ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 09:17:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757002662; x=1757607462; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/UOanZ2PmR3kMJHnHNKLCAes3a/LIBraz6jr4hqu0OQ=;
-        b=fBMKu5hehv14p9IF60YoyWG0JCH37j/QF4rfp9k5yfoH9U/zU6Dwq3M5Wsyu7zCVk5
-         9gu9Rq3Jbf0FnO8CRvXzikJJ6S91Ta02n0U7lr+D5I7pmbFHiYdBtbx/P/dYlEcINkng
-         Fzmpej1sIL22cQ7dJuV/gfRKx7x3EdNQ3bwSLfyug3p10bKDtGzmrBgYqsFBPYon/iGH
-         V/d4gHmWb3WMQxeM+hcvO9l/J5PDLkIjiGxvDWtxrRBdSvIs8F4Rw3wzlETm8kLaKtS9
-         70p5y+ANcfUErJ2r4RUDNAuysjblY+mQDwq0ZaaW0oWRSXpslRdqAa4lc7leX+S6ydQK
-         7hvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757002662; x=1757607462;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/UOanZ2PmR3kMJHnHNKLCAes3a/LIBraz6jr4hqu0OQ=;
-        b=vgf9zuyhKloV1G15XKs1zpXUYwMGeGXURV8Jk3maOzruDUym5A2gsdKpT8EG66kte/
-         L9kIlgAXFDuydqMQJpBrIuZZNXREkQloDlQYHDrNfhE1A4w5n+kmRf1kCjBJL33vn3GT
-         N6cr5ykw+k5kwCn0cBFwdtwGP/x+ZxcEgTS3efwMCbWddMkWhru2XQWCQ0EWDzluZpKm
-         OqZdk6rWtVFvtxF3N1x1rWGrnpdqF/VUnf9z7rf//VF3ZqX/LxYoQOYhN434OZcFKfau
-         8ZnEahQsviWEN+d/v0ZewKs9gDPY02N6a+0zA6lZ868GJGhGhoAJAnBX69o5BSGlz4R+
-         2rwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWALkeZSKy97XbdZCah/pwqccmO2hW1TnDTDur5unrnTa4oXin/PFsc8o+awEf9K2gWu4NholHrmZ3zmC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgR/BZZrwq+I7zi25lnzfFxY/yMpVeXF4z1OabPY8nj+1UDP3y
-	b7QBzHB1Qf1QFea0U2ENfVLpM4JDW+7we6YzVGLIh4XpyjKmbCcZOk3nEDDynrYmNUMnvmGtMYK
-	0kelA926XgA==
-X-Google-Smtp-Source: AGHT+IHve4jHgJ8Ftz3JzIwawxkAlew/pKxKturHnhBrtdGSG7IWbPfF3US/ysEaBUE4Mj9is3lfpj8gS3tt
-X-Received: from plpl17.prod.google.com ([2002:a17:903:3dd1:b0:24c:8b0f:b5e4])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:dac2:b0:24a:b5a1:10cd
- with SMTP id d9443c01a7336-24ab5a1122fmr220398345ad.52.1757002662335; Thu, 04
- Sep 2025 09:17:42 -0700 (PDT)
-Date: Thu,  4 Sep 2025 09:17:31 -0700
+	s=arc-20240116; t=1757002994; c=relaxed/simple;
+	bh=kOSJRzlq31p9goyMdzFyTfciHM4AtiRH9rV+jNCVACg=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=icxPSXppvSfcgcVVkBY9fgJZlRR4+03pVw/prZ8EjzXSsukCcI7GekEvzhTS6nS+AxI4KHlGn6T9DvCfUmFgv8WYk8Ao1E9IzZHTAG6Xe1btZkt2gIrWDSisN4wWHh2cmloBhaZtd6kil58LK0YxlkhgPMtC+bbb+IawVPeKGsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=HzpJyk0Y; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1757002678;
+	bh=mKGfRAvbvXf3bMQ6oNHWZ2vAK77Q635WqynSct7rlEU=;
+	h=From:To:Cc:Subject:Date;
+	b=HzpJyk0YIvfq8qfm1M8uiu9jH7TTWw5F2TbX4w4wBdXrH4nEa3yMGsI8AziewjSyW
+	 mh3O6mRIWccEZ3kUTiNSM+QfOrSVCSnFciPJgPe0Y7zuKsGieOsvcwu7yO9Ej5D1or
+	 I84jXk4KJsZ6fYpjRtGpkMynZ4bRk4b/DoiXq2LY=
+Received: from zm.. ([2408:8340:a2e:f9b0:20c:29ff:fe69:94c7])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 47924CA4; Fri, 05 Sep 2025 00:17:57 +0800
+X-QQ-mid: xmsmtpt1757002677t02xkli6l
+Message-ID: <tencent_C19E4D9448D8514A505A9FE439D01C333B08@qq.com>
+X-QQ-XMAILINFO: MllZffuBkEb59NM42ui9HbnHAvDkQw2FZ43LFzwbw+FOSJFGNwUveuDCrLYyVO
+	 U8nq//JUMwyQ6RO3By6P+bNvEjBpqDqg68VZ3HKs1KQqQBpajEpWXKXEmB+LQ/3duguBavcnCXT7
+	 t5Fouzo4AW8tb5x147WbGlUWPbEjql93cuWGPTvsWz+7xEvzVipjfRUQXl76Wvtt20zCCszB/PPG
+	 9up6jP0a56L8gOQODLYiVtE/sUJraU4A0a4sBBEDUmK3TYc+KUK+cH4LPNIdQUTtGwTjqbch3XfY
+	 a4WegQHPI+lGNf0REOAM36enAcC//Ep6IA/qRJmp4AwBjy/grOh8zfTFzpx+IZD7bsR4KoOM1moH
+	 EvdSpLVYTkQRMi1H+xxgWSPWIfZ1G9Gsf8NBr55au5nybipwPDIVUiZk5nqRfhT4UFzlwArBso/u
+	 grn7CXOQ//MUIqoxx28kdJhIe/VV06cdYdkFof/GIEAd+QNnvmZno2P5dDg3WkfHOqMmz7bSUb+o
+	 Sdk+JnHJRSyMZAnYPMDZ/PAP1eNDu4Z/0CGCavTi5y5jwHPnKimYTJqjBiSe7oUZ0F2q4aI9o6mg
+	 D+MnCiADvii9DlKX/+a2pTxIiznnfX+GitjqM0DyXsU/Ij2mA8Q7M4UASJbWuQtpjWzPG6MRNFmv
+	 6A7K5r4tO5PXrrZgbgh56+MfxOLdXUYuGztIFg4O3w/jZmzeUCnAKa5qkTLQiTTlKUd53C7IPN2i
+	 7Rjby/BSXG3D54EPCMgOWariA6G0lQM6UwOrGIiQ1Hr4jnX7o5MquTZUucnzHRzp3Pf7CpSBC9OC
+	 H7ObwZQDYhBOMdPkJI11OLh1/Ty5dJgdcHDD0UfON3e51Gn5nB6Jpg6oKsg5JXkb8FHovKaZtpx8
+	 LuFfa7+o775SNiLraKRzBkBlR3ZWz7bmXSL+YmfkBSHplrlVcyXMeLv/BHoIusB3e4Xmw5g/j/O9
+	 Ou/0O6+D60kQWlC/frL68jXn5Gzmj1w6uHSvBdP4ZY8t1Dgf9f1gSnqomGo/EzL2QmNfQzrzG6H2
+	 N++xCVPzeAnCcNkSXzeXXZfGUYPenNP2RXA1Lk8+WDC/ZTPtHcB7WHtZx/Ten1pjY18ARTFZ/Wyr
+	 7ZHtcCZlriuql/dl4=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: zhoumin <teczm@foxmail.com>
+To: hirofumi@mail.parknet.co.jp
+Cc: linux-kernel@vger.kernel.org,
+	zhoumin <teczm@foxmail.com>
+Subject: [RFC PATCH] vfat:avoid unnecessary check
+Date: Fri,  5 Sep 2025 00:17:54 +0800
+X-OQ-MSGID: <20250904161754.137467-1-teczm@foxmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
-Message-ID: <20250904161731.1193729-1-irogers@google.com>
-Subject: [PATCH v1] perf symbol-elf: Add support for the block argument for libbfd
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Haibo Xu <haibo1.xu@intel.com>, 
-	Stephen Brennan <stephen.s.brennan@oracle.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	"=?UTF-8?q?R=C3=A9mi=20Bernon?=" <rbernon@codeweavers.com>, Sam James <sam@gentoo.org>, 
-	James Clark <james.clark@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-James Clark caught that the BUILD_NONDISTRO=1 build with libbfd was
-broken due to an update to the read_build_id function adding a
-blocking argument. Add support for this argument by first opening the
-file blocking or non-blocking, then switching from bfd_openr to
-bfd_fdopenr and passing the opened fd. bfd_fdopenr closes the fd on
-error and when bfd_close are called.
+Remove redundant and unreachable name check code in dir.c.
 
-Reported-by: James Clark <james.clark@linaro.org>
-Closes: https://lore.kernel.org/lkml/20250903-james-perf-read-build-id-fix-v1-2-6a694d0a980f@linaro.org/
-Fixes: 2c369d91d093 ("perf symbol: Add blocking argument to filename__read_build_id")
-Signed-off-by: Ian Rogers <irogers@google.com>
+Remove flags check in fat_update_time since fat does not support
+inode version.
+
+Optimize fat_truncate_time to return a meaningful value, allowing
+the removal of redundant inode checks in fat_update_time. This
+ensures non-root inodes are validated only once.
+
+Signed-off-by: zhoumin <teczm@foxmail.com>
 ---
-This patch should be applied after:
-https://lore.kernel.org/lkml/20250903-james-perf-read-build-id-fix-v1-1-6a694d0a980f@linaro.org/
----
- tools/perf/util/symbol-elf.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ fs/fat/dir.c  | 12 ++++--------
+ fs/fat/misc.c | 11 ++++-------
+ 2 files changed, 8 insertions(+), 15 deletions(-)
 
-diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index 033c79231a54..1346fd180653 100644
---- a/tools/perf/util/symbol-elf.c
-+++ b/tools/perf/util/symbol-elf.c
-@@ -873,13 +873,17 @@ static int elf_read_build_id(Elf *elf, void *bf, size_t size)
+diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+index acbec5bdd521..4f1be9939292 100644
+--- a/fs/fat/dir.c
++++ b/fs/fat/dir.c
+@@ -337,11 +337,11 @@ static int fat_parse_long(struct inode *dir, loff_t *pos,
+ 		if (ds->alias_checksum != alias_checksum)
+ 			goto parse_long;
+ 	}
+-	if ((*de)->name[0] == DELETED_FLAG)
++	if (IS_FREE((*de)->name))
+ 		return PARSE_INVALID;
+ 	if ((*de)->attr == ATTR_EXT)
+ 		goto parse_long;
+-	if (IS_FREE((*de)->name) || ((*de)->attr & ATTR_VOLUME))
++	if ((*de)->attr & ATTR_VOLUME)
+ 		return PARSE_INVALID;
+ 	if (fat_checksum((*de)->name) != alias_checksum)
+ 		*nr_slots = 0;
+@@ -491,12 +491,10 @@ int fat_search_long(struct inode *inode, const unsigned char *name,
+ 			goto end_of_dir;
+ parse_record:
+ 		nr_slots = 0;
+-		if (de->name[0] == DELETED_FLAG)
++		if (IS_FREE(de->name))
+ 			continue;
+ 		if (de->attr != ATTR_EXT && (de->attr & ATTR_VOLUME))
+ 			continue;
+-		if (de->attr != ATTR_EXT && IS_FREE(de->name))
+-			continue;
+ 		if (de->attr == ATTR_EXT) {
+ 			int status = fat_parse_long(inode, &cpos, &bh, &de,
+ 						    &unicode, &nr_slots);
+@@ -608,12 +606,10 @@ static int __fat_readdir(struct inode *inode, struct file *file,
+ 	 * need to parse long filename.
+ 	 */
+ 	if (isvfat && !short_only) {
+-		if (de->name[0] == DELETED_FLAG)
++		if (IS_FREE(de->name))
+ 			goto record_end;
+ 		if (de->attr != ATTR_EXT && (de->attr & ATTR_VOLUME))
+ 			goto record_end;
+-		if (de->attr != ATTR_EXT && IS_FREE(de->name))
+-			goto record_end;
+ 	} else {
+ 		if ((de->attr & ATTR_VOLUME) || IS_FREE(de->name))
+ 			goto record_end;
+diff --git a/fs/fat/misc.c b/fs/fat/misc.c
+index c7a2d27120ba..41f6362a0428 100644
+--- a/fs/fat/misc.c
++++ b/fs/fat/misc.c
+@@ -335,7 +335,7 @@ int fat_truncate_time(struct inode *inode, struct timespec64 *now, int flags)
+ 		inode_set_mtime_to_ts(inode,
+ 				      inode_set_ctime_to_ts(inode, fat_truncate_mtime(sbi, now)));
  
- #ifdef HAVE_LIBBFD_BUILDID_SUPPORT
+-	return 0;
++	return 1;
+ }
+ EXPORT_SYMBOL_GPL(fat_truncate_time);
  
--static int read_build_id(const char *filename, struct build_id *bid)
-+static int read_build_id(const char *filename, struct build_id *bid, bool block)
+@@ -343,18 +343,15 @@ int fat_update_time(struct inode *inode, int flags)
  {
- 	size_t size = sizeof(bid->data);
--	int err = -1;
-+	int err = -1, fd;
- 	bfd *abfd;
+ 	int dirty_flags = 0;
  
--	abfd = bfd_openr(filename, NULL);
-+	fd = open(filename, block ? O_RDONLY : (O_RDONLY | O_NONBLOCK));
-+	if (fd < 0)
-+		return -1;
+-	if (inode->i_ino == MSDOS_ROOT_INO)
+-		return 0;
+-
+-	if (flags & (S_ATIME | S_CTIME | S_MTIME)) {
+-		fat_truncate_time(inode, NULL, flags);
++	if (fat_truncate_time(inode, NULL, flags)) {
+ 		if (inode->i_sb->s_flags & SB_LAZYTIME)
+ 			dirty_flags |= I_DIRTY_TIME;
+ 		else
+ 			dirty_flags |= I_DIRTY_SYNC;
 +
-+	abfd = bfd_fdopenr(filename, /*target=*/NULL, fd);
- 	if (!abfd)
- 		return -1;
++		__mark_inode_dirty(inode, dirty_flags);
+ 	}
  
+-	__mark_inode_dirty(inode, dirty_flags);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(fat_update_time);
 -- 
-2.51.0.338.gd7d06c2dae-goog
+2.43.0
 
 
