@@ -1,120 +1,113 @@
-Return-Path: <linux-kernel+bounces-800140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD56CB433E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:25:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF5AB435C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A9F172300
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:25:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5236B5A1472
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BAC29B8D3;
-	Thu,  4 Sep 2025 07:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F112A25A2A1;
+	Thu,  4 Sep 2025 08:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GkYGvWfS"
-Received: from mail-ua1-f74.google.com (mail-ua1-f74.google.com [209.85.222.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xZZHEQPI"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043E529B78E
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 07:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EED32F775
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756970744; cv=none; b=YQnGCN8i9XIhP+HHo6FtyyjS/+UcITwk0ZKsq6a938gLVjGUefcNZwyzqYDDctJhzfx8bLpq0P7Uiq4a+bxVfruAkDOdR2zVBlfSY++Ka5/zeScXSPgf/8rB+bby0V99vQ2CY+I+WqVRUJDZVNltpMrQYgR0c9sRl3wUuP3WF+s=
+	t=1756974660; cv=none; b=rqeUr9mflS8AGgQXpVz9CDJuwUm6LRcg0rNJiR+kjhU87zykaBct6mMtIcbiMDLS/AkNa/XdVMbV483f1LF7UcshzNfs/J0ft9wmaX30MNX6Hd+3LseOISO8r6vfzg33+4rPoZUYXebnJJ12buY1UKMx/B8XCHr7d4+vtnGD0c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756970744; c=relaxed/simple;
-	bh=NoAEI1qxVcsQ6DYeN4T2CiFqL+okoOWU6OTz1fbr+8g=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZOj3VYNWzCpPfm4zUSiZ7Mif+6vetBRTjttcosoSl9LkjUXCPY5jqNeyJiGXh5pvLPgUEJaeN9Ie3xXnl13NJ9eJ/5+K9Zh95XMcJa8t17Q+aeJ0KJJ1+aGkIXN0uNoYJL4yKBXdUotjMhPw+c0q0nQgWAof24kNOalso8kMYA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GkYGvWfS; arc=none smtp.client-ip=209.85.222.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com
-Received: by mail-ua1-f74.google.com with SMTP id a1e0cc1a2514c-895f77f0bcdso629994241.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 00:25:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756970741; x=1757575541; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MPQVkAFMgmOhR8+kYXpb7BN7WiH06c2CJj9w5v/CuXw=;
-        b=GkYGvWfSOB6sbOSgCigx4CvcBdcHSPIiRp+AW8seHt9g6l+YfJtclAxcmVHKIkrnuV
-         Z9AWf4zJgMe68vuX+7VsinhZhDidUghN4zoOra89kFYlTnWPyk3yfhL96GbEb+KK2dGG
-         NzDl103qlOU3CtRO2WCV28hMkOdLuaR9naJH6puti3tpvoQDuRNJz9DbwKAVh5fdKSuk
-         TOzHKgUbWxZnIHb+SQz6xEhHWZ9JFhpUi4eY4mA1SnnnDmK2E5IP2FeIIYJlKggldIXT
-         nTXnV817vr6WtpMPPecGtt4QgGE7K+c4ddMMDAzR6NsRrK1TJLmGpvnkemTH32i1Zwnj
-         YNLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756970741; x=1757575541;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MPQVkAFMgmOhR8+kYXpb7BN7WiH06c2CJj9w5v/CuXw=;
-        b=r/AXq4qrgnCNA4Yz6DqrtkYaVu5qhHi9AJRQovVmHQ4lE+V7bCpPLyptIYLgtwj8hl
-         3G9JwNQwLOD18vpx7rAXldZ+5fWHYh7LTkjThTP/yb1oWV0L33FcgvDFui4lZEPDyhXV
-         c/QYZdkl7AIDfMprUzEeAiVEGWJKtIbKEyk6uj0b09efvAdyeV42Dsxgn56YTAPntmDs
-         n4Kg3fHWxWJfqpMesLfRSaaUrUhM1j+LtJMxc/DaKj8+JjDHipnGlaxh3oxwt3g//J2h
-         JspePa9bn106lttVip6squEsl3n8kt4rnQ6TpeH1wKmipmGcjxQG9pK26/iUdAA3juO5
-         4dNQ==
-X-Gm-Message-State: AOJu0Yz63Lx9OyKbg4FA6foZ/DH5DbNrMFmlSGRC6Y9M7NBgBxwDuTBy
-	8/ybwVsBz80b/mFIX8WUVMDn0ZQCnd7CJ3ZOCjVDZIp/NtCFvaB9A6CinuxK3ntn3cv+i55w5R7
-	ve/zB0kCYdlNUgg==
-X-Google-Smtp-Source: AGHT+IHbPWd89svBphXZ7pOsltABNLESlaMmG9uM8eaeOdLkw5PpSHqif8D5xIT1A7cB13jOEQimM/Mr8nVHGw==
-X-Received: from vsbbw7.prod.google.com ([2002:a05:6102:5547:b0:523:510:faa5])
- (user=edumazet job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6102:4691:b0:524:2917:61aa with SMTP id ada2fe7eead31-52b1c149c51mr7026803137.32.1756970740886;
- Thu, 04 Sep 2025 00:25:40 -0700 (PDT)
-Date: Thu,  4 Sep 2025 07:25:37 +0000
+	s=arc-20240116; t=1756974660; c=relaxed/simple;
+	bh=dNK+Uh0eSrcb1kz54j/HC6iHQyjm3cyL0Ws0tPsoLEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bkRHuUQGI38W1lYGsp3/tbs1fT1sfWP1Th4ozKGMFnS0MCEdB3YWg3/On5NiKX03viG6UfwiLfbXoCHtVhqXUbdy2EsL1fP7C25+r2LU4yhC7cNPaGAljvAOOW54EjX9V9fCrZ+oHxwj6OZPqXd6ijgGj71xsFfV5z+BGRPVvMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xZZHEQPI; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 4 Sep 2025 00:26:15 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756974655;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oNdZCLI9Qh4c9oJ4l0QFxSHO1I3wLPIs2ZcoTVbvVSI=;
+	b=xZZHEQPICy+oxcy5y2oGaGUIUdwzJ0QpB0CjVdocLgXh97ZBpxbOzHhYQ366AXqVNLIVYS
+	Uc48K+mfCygSr09+VVL+rHrFbxEYnSq1LyKoavn7mwraT6POlwjhCXOeeKT46YDUl7fHJL
+	YgdMjHHiu85UjKVXDkQIH/KuLMsce24=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Yingchao Deng <yingchao.deng@oss.qualcomm.com>
+Cc: Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, quic_yingdeng@quicinc.com,
+	jinlong.mao@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com
+Subject: Re: [PATCH v2] KVM: arm64: Fix NULL pointer access issue
+Message-ID: <aLk_F8LgpFW6Qo3O@linux.dev>
+References: <20250902-etm_crash-v2-1-aa9713a7306b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
-Message-ID: <20250904072537.2278210-1-edumazet@google.com>
-Subject: [PATCH] audit: init ab->skb_list earlier in audit_buffer_alloc()
-From: Eric Dumazet <edumazet@google.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, Paul Moore <paul@paul-moore.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
-	Eric Dumazet <eric.dumazet@gmail.com>, Eric Dumazet <edumazet@google.com>, 
-	syzbot+bb185b018a51f8d91fd2@syzkaller.appspotmail.com, 
-	Eric Paris <eparis@redhat.com>, audit@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902-etm_crash-v2-1-aa9713a7306b@oss.qualcomm.com>
+X-Migadu-Flow: FLOW_OUT
 
-syzbot found a bug in audit_buffer_alloc() if nlmsg_new() returns NULL.
+Hi Yingchao,
 
-We need to initialize ab->skb_list before calling audit_buffer_free()
-which will use both the skb_list spinlock and list pointers.
+The shortlog is extremely vague, you should aim to succinctly describe
+the functional change of your patch. e.g.
 
-Fixes: eb59d494eebd ("audit: add record for multiple task security contexts")
-Reported-by: syzbot+bb185b018a51f8d91fd2@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/lkml/68b93e3c.a00a0220.eb3d.0000.GAE@google.com/T/#u
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Eric Paris <eparis@redhat.com>
-Cc: audit@vger.kernel.org
----
- kernel/audit.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+  KVM: arm64: Return early from trace helpers when KVM isn't available
 
-diff --git a/kernel/audit.c b/kernel/audit.c
-index bd7474fd8d2c..707483879648 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -1831,11 +1831,12 @@ static struct audit_buffer *audit_buffer_alloc(struct audit_context *ctx,
- 	if (!ab)
- 		return NULL;
- 
-+	skb_queue_head_init(&ab->skb_list);
-+
- 	ab->skb = nlmsg_new(AUDIT_BUFSIZ, gfp_mask);
- 	if (!ab->skb)
- 		goto err;
- 
--	skb_queue_head_init(&ab->skb_list);
- 	skb_queue_tail(&ab->skb_list, ab->skb);
- 
- 	if (!nlmsg_put(ab->skb, 0, 0, type, 0, 0))
--- 
-2.51.0.338.gd7d06c2dae-goog
+On Tue, Sep 02, 2025 at 11:48:25AM +0800, Yingchao Deng wrote:
+> When linux is booted in EL1, macro "host_data_ptr()" is a wrapper that
+> resolves to "&per_cpu_ptr_nvhe_sym(kvm_host_data, cpu)",
+> is_hyp_mode_available() return false during kvm_arm_init, the per-CPU base
+> pointer __kvm_nvhe_kvm_arm_hyp_percpu_base[cpu] remains uninitialized.
+> Consequently, any access via per_cpu_ptr_nvhe_sym(kvm_host_data, cpu)
+> will result in a NULL pointer.
+> 
+> Add is_kvm_arm_initialised() condition check to ensure that kvm_arm_init
+> completes all necessary initialization steps, including init_hyp_mode.
 
+OTOH, the changelog is very mechanical and hard to grok.
+
+  When linux is booted at EL1, host_data_ptr() resolves to the nVHE
+  hypervisor's copy of host data. When hyp mode isn't available for
+  KVM the nVHE percpu bases remain uninitialized. Consequently, any usage
+  of host_data_ptr() will result in a NULL dereference which has been
+  observed in KVM's trace filtering helpers.
+
+  Add an early return to the trace filtering helpers if KVM isn't
+  initialized, avoiding the NULL dereference.
+
+> Fixes: 054b88391bbe2 ("KVM: arm64: Support trace filtering for guests")
+> Signed-off-by: Yingchao Deng <yingchao.deng@oss.qualcomm.com>
+> Reviewed-by: James Clark <james.clark@linaro.org>
+> ---
+> Add a check to prevent accessing uninitialized per-CPU data.
+> ---
+> Changes in v2:
+> 1. Move the warning to the end in order to improve readability. No
+> functional change intended
+
+IMO, the warning should be the very first condition we evaluate. Even if
+the system configuration leads to an early return anyway (e.g. protected
+mode) the caller is not invoking these helpers from the right context.
+
+Thanks,
+Oliver
 
