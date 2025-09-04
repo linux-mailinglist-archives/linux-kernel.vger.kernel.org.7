@@ -1,102 +1,117 @@
-Return-Path: <linux-kernel+bounces-799651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E50B42E84
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:58:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B28D3B42EAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849DD166DDE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:58:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87C731C2214F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56B11A254E;
-	Thu,  4 Sep 2025 00:58:38 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E36199949;
+	Thu,  4 Sep 2025 01:02:57 +0000 (UTC)
+Received: from r9206.ps.combzmail.jp (r9206.ps.combzmail.jp [160.16.62.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520BF15B971;
-	Thu,  4 Sep 2025 00:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10FCE10E0
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 01:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.16.62.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756947518; cv=none; b=Wmnfw5M/xQ1mzLNlW5cQk7UWgvwvKmb1oMXilkCqM7RiM0jIarNNevp/hd1/Myi5CNv2Grn9aBSYHF4jFnKDjXAmm/mie9YKPQsQN5Bdddf54gvjezhsPLFExm/OQQfOlwqABUMfhG5gdW6ACy7+bPDkehDw4Q3cFSiK46o6qB0=
+	t=1756947776; cv=none; b=F8K1PggqNq+eoJTU5rdse2iJu2cmXPQTAtpbCzajnKdX0gWzQLobQ6i0nAtlvPH7/cRRkvIZEgd2hIUFXv6PdGcM9HhjnFiToDxQ2HtOBz1WDvWtupmg56SScCiiHwvxVKdVh+CqZ3NmbOPZtjAuRHHCHj7O6jWL7mSaHG38UvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756947518; c=relaxed/simple;
-	bh=4N4NHI8fecaG7Y6tkvs47/ZEf4mjZ5K5CrZFYQqgTCQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=p46fpEDnGoBr+KXM0za1bFCr9rCZFX4goxS7/BOtiWJeddvo7V4oxgENpfOc/IZjpLHmM3L4N66KUdSfwWWyfgtoVttYbSiBpq36mQAUb8iOyd865K+nuWHT4qLBsElVI648uMZn5Kq7+rW7rjX795Nb8uWYOgUPyLAwwb/efY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cHLhB3Tb6zYQvK7;
-	Thu,  4 Sep 2025 08:58:34 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id EF90D1A1305;
-	Thu,  4 Sep 2025 08:58:32 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAncIw35Lho5O0_BQ--.53034S3;
-	Thu, 04 Sep 2025 08:58:32 +0800 (CST)
-Subject: Re: [PATCH RFC v3 03/15] md: fix mssing blktrace bio split events
-To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: colyli@kernel.org, hare@suse.de, dlemoal@kernel.org, tieren@fnnas.com,
- axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
- kmo@daterainc.com, satyat@google.com, ebiggers@google.com, neil@brown.name,
- akpm@linux-foundation.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
- <20250901033220.42982-4-yukuai1@huaweicloud.com>
- <aLhB1sDlKRmpM2NW@infradead.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <110d2107-00dc-313f-08e5-6e2f747810f0@huaweicloud.com>
-Date: Thu, 4 Sep 2025 08:58:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1756947776; c=relaxed/simple;
+	bh=axWwrDS18HIJCEVjQdEfDJ44H28AbiiKgHuDEiuX3TI=;
+	h=To:From:Subject:Mime-Version:Content-Type:Message-Id:Date; b=iSXMNlLBE9dnxOTYu/+pzV8Wth4P/LJl6W0cOCfg8sWV+aCx+xcq7MjbeWc+mAtPT6qiAGkFPngKZxG5WaWD50OOYK1kUZSmGClbL7LJFqoOw4z/oXzy5OBi5fNf0J64M0pJtgN87RUfexBf8xPEmMRINpunUvaakJUY9tKkZZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=p-healthtech.work; spf=pass smtp.mailfrom=magerr.combzmail.jp; arc=none smtp.client-ip=160.16.62.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=p-healthtech.work
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
+Received: by r9206.ps.combzmail.jp (Postfix, from userid 99)
+	id E739B1038D6; Thu,  4 Sep 2025 10:02:16 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9206.ps.combzmail.jp E739B1038D6
+To: linux-kernel@vger.kernel.org
+From: =?ISO-2022-JP?B?GyRCJDEkcyQ1JF0bKEI=?= <info@p-healthtech.work>
+X-Ip: 200702634529294
+X-Ip-source: k85gj79348dnsa8ju0p6gd
+Precedence: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+Subject: =?ISO-2022-JP?B?GyRCPT42SDB3JE43cjkvNElNfRsoQg==?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <aLhB1sDlKRmpM2NW@infradead.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAncIw35Lho5O0_BQ--.53034S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
-	rI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr4
-	1l4c8EcI0Ec7CjxVAaw2AFwI0_GFv_Wryl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6r
-	W5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU
-	F0eHDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Transfer-Encoding: 7bit
+X-MagazineId: 938j
+X-uId: 6763304238485965565052571030
+X-Sender: CombzMailSender
+X-Url: http://www.combzmail.jp/
+Message-Id: <20250904010245.E739B1038D6@r9206.ps.combzmail.jp>
+Date: Thu,  4 Sep 2025 10:02:16 +0900 (JST)
 
-Hi,
+$B!!(B
+$B!!$$$D$b$*@$OC$K$J$j$^$9!#(B
 
-ÔÚ 2025/09/03 21:25, Christoph Hellwig Ð´µÀ:
-> s/mssing/missing/ in the subject.
-> 
-> Having all these open coded trace_block_split is a bit annoying, but
-> we don't have to fix it in this series.
-> 
-> .
-> 
+$B!!=>6H0w$N7r9/4IM}$K$*$$$F!"!V(B $B7n3[(B100$B1_!A!W$H$$$&05E]E*$J%3%9%Q$G(B
 
-This patch alone is for stable backport without following patches to
-convert to new helper. I'll keep this patch if you're not against this,
-or I'll just remove this patch and convert to new helper directly.
+$B!!<B6HL3IiC4$r8:$i$9$N$KLrN)$D4IM}%5!<%S%9$r$4>R2p$9$k(B
+$B!!%&%'%S%J!<$r$40FFb?=$7>e$2$^$9!#(B
+$B!!(B
+$B!!(B
+$B!!%"%J%m%0(B/$B%G%8%?%k(B $BN>LL$+$i;Y$($k(B
+$B!!!!!!=>6H0w$N7r9/4IM}%5!<%S%9(B
+$B!!!!(B $B!!!!!!!H(B $B$1$s$5$](B $B!I(B
 
-Thanks,
-Kuai
+$B!!!!(B9$B7n(B17$BF|(B($B?e(B)
+$B!!!!%*%s%i%$%s3+:E%;%_%J!<(B
 
+$B!!!!"!!!!!(B $B!!>\:Y!&?=9~!!!!!!"!(B
+$B!!!!!!(Bhttps://knsp.work/seminar/
+
+$B"(=>6H0w(B100$B?M0J>e$J$I!"4IM}$9$k?M0w$,B?$$(B
+$B!!4k6HMM$[$I%a%j%C%H$,Bg$-$/$J$j$^$9(B
+
+
+$B!!7r9/?GCG$K$*$1$kF|DxD4@0!&M=Ls$NJQ99!"7k2L>pJs$N2s<}$d(B
+$B!!4IM}$J$I$N6HL3$rIiC4$K46$8$k$3$H$,$4$6$$$^$;$s$G$7$g$&$+!#(B
+
+
+$B!!$=$&$7$?J}$K$*$9$9$a$9$k$N$,!"7r9/4IM}6HL3$r$^$k$4$H(B
+$B!!$*G$$;$G$-$k=>6H0w$N7r9/4IM}%5!<%S%9!H(B $B$1$s$5$](B $B!I$G$9!#(B
+
+
+$B!!!H(B $B$1$s$5$](B $B!I$O!"<j4V$N$+$+$k7r9/?GCG6HL3$NBe9T$+$i(B
+$B!!>pJs$r0l852=$9$k7r9/4IM}%7%9%F%`$^$G!"%"%J%m%0!&%G%8%?%kN>J}$N;Y1g$r(B
+$B!!!V(B $B7n3[(B100$B1_!?=>6H0wKh(B $B!W$H$$$&05E]E*$J%3%9%Q$G<B8=$7$^$9!#(B
+
+
+$B!!%*%s%i%$%s%;%_%J!<$K$F>\:Y$r$*EA$($7$^$9$N$G!"(B
+$B!!$46=L#$,$"$l$P!"2<5-(BURL$B$h$j;kD0$r$*?=$79~$_$/$@$5$$!#(B
+
+$B!!$h$m$7$/$*4j$$$7$^$9!#(B
+
+
+$B!!%"%J%m%0(B/$B%G%8%?%k(B $BN>LL$+$i;Y$($k(B
+$B!!!!!!=>6H0w$N7r9/4IM}%5!<%S%9(B
+$B!!!!(B $B!!!!!!!H(B $B$1$s$5$](B $B!I(B
+
+$B!!!!(B9$B7n(B17$BF|(B($B?e(B)
+$B!!!!%*%s%i%$%s3+:E%;%_%J!<(B
+
+$B!!!!"!!!!!(B $B!!>\:Y!&?=9~!!!!!!"!(B
+$B!!!!(B https://knsp.work/seminar/
+
+$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
+ $B"#3t<02q<R(BPersonal Health Tech
+$B!!EEOC!'(B0120-984-925
+$B!!=;=j!'Bg:e;TCf1{6hFnK\D.(B2-2-3$B!!(B $BK\D.(BUNICO$B%S%k(B4F
+$B!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=(B
+$BK\%a!<%k$N$4ITMW$JJ}$K$OBgJQ$4LBOG$r$*$+$1$$$?$7$^$7$?!#(B
+$B:#8e!"$40FFb$,ITMW$G$7$?$i!"$*<j?t$G$9$,0J2<$h$j$*<jB3$-$N>e(B
+$B%o%s%/%j%C%/2r=|$r$*4j$$$$$?$7$^$9!#(B
+https://knsp.work/mail/
+$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
 
