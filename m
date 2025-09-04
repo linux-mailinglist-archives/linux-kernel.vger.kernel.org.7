@@ -1,135 +1,153 @@
-Return-Path: <linux-kernel+bounces-801612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39735B44793
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:42:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49C7B44796
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600C2A4783F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:41:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B93A05D78
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2F32820D5;
-	Thu,  4 Sep 2025 20:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B43E2848A7;
+	Thu,  4 Sep 2025 20:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sKwADUHL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCZ7Bgh6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CD9283FE0;
-	Thu,  4 Sep 2025 20:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55B92253FB;
+	Thu,  4 Sep 2025 20:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757018512; cv=none; b=IqUvfkifgPaZxicCbiAFnxmfv+H+QmGePh9ugNeXal1ch7Jqu/DHwHMQdqZGiYaOYHYpHcNrCX/tAvjvEWDYSoQCVxZa8G4nYjA+9g3wTCWoqDT6LCspE9GtNVpxSrO8KPsY8u+yv+J3gLOj9bQS34LrYnySvnVYXHj3n58miaE=
+	t=1757018579; cv=none; b=TaQEdqoEOQjetFFrflRrvsChdK4NvHB8vbRthOa7zsBRxfbWXN2vR8JqKvzs3SfE/iFLbcZq46TYVwhu39iBtcDE9LXS/jSG476PvUQCgs7uyb3R3X20D9ihu5kWS8LSmtOT1jLAaiMm/1gXUA89sk76AXD4bLlUfsq+f+LjGi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757018512; c=relaxed/simple;
-	bh=cpIiOlznt8sZKfQDmwpFVIZ0b/IXFuqamad14tuawyQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=p0WI2Kmb5XOen7qhuSgBcv1mfnXX8qmLIAFAmWPbHomePkgTzgAG9LHCmJoUwyCTpw4bBT17aKybX1N5T+n+Y/2S50KcmI8C7HAAbZtUjszuPfiTJAygOXclGX6o/e272MztxhgzSTgsufspeqZ/BDarYD7O7Y3uljIPRNHeeOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sKwADUHL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2CA06C4CEF0;
-	Thu,  4 Sep 2025 20:41:52 +0000 (UTC)
+	s=arc-20240116; t=1757018579; c=relaxed/simple;
+	bh=gl6feTJt/B+TOZvG57z5VrXnOhVpynrQD6B5PUvbN1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=rPGP0kmi3iNCa/lQUjSS77XiCuFkqqISze81v+Y4wo+AkyNZvF6gT7xTcgKJF5tM6qU04gPUJeFjnZ+O5XgNU2cLsmJ0T0c2lyYFUXt1YNXAiPQ6jFAidqRaLwhbYy1+8haecInqglOetpPlpgKL7dnEezXQbBrM1ALVwBdGLoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jCZ7Bgh6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49F1EC4CEF0;
+	Thu,  4 Sep 2025 20:42:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757018512;
-	bh=cpIiOlznt8sZKfQDmwpFVIZ0b/IXFuqamad14tuawyQ=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=sKwADUHLo3ks9friZqtdLMkmO2KiOGoMGDaEe4LIUtx9wmrlG4stt8+rnZhUZriyd
-	 KgJjgTRqW03EOlkle82OmL6O6FmskNIYZVfExH+1TfJ4MwUx8qia0t4O+tt1RHr6yS
-	 OqCWD7zkGpMYSJT21xFz0qEFJbdcONI76Re5e8BxGfs0asSIHH/7SLIVo+TVrI1p0U
-	 Q6RHuyLUrv4beI03rah/RyI+B9nJVWacVLRjdnukl+dSnqR+0Jw73r9IBk/JMqq/zL
-	 o3/2iaIgVfFGWTLvrMAsZCLNljYlmKEOJl6WeYc51lUgLKJU97gQJ4n258RpmQcV+u
-	 zH7HslZBMFssA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A78CA1002;
-	Thu,  4 Sep 2025 20:41:52 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Thu, 04 Sep 2025 22:41:44 +0200
-Subject: [PATCH v2] dt-bindings: extcon: linux,extcon-usb-gpio: GPIO must
- be provided
+	s=k20201202; t=1757018578;
+	bh=gl6feTJt/B+TOZvG57z5VrXnOhVpynrQD6B5PUvbN1Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=jCZ7Bgh6T2k6NL9SXYmBR+3vZgQiykuOeKOay4XKp5Ym9hPplZwgMUqiO6utxiUhH
+	 BTUYEmBS5yzuMUpLe7p0j6vIealxoJE7ENcLCSZVh7JNuIa+xGaxMeZREnwHs/muLO
+	 Kwz7f0WpcDpzwhzaGojx8Dwi67YZP7utHWrec3YEfoEM2UtuOnkx3gGhY7ntvHwNHi
+	 1+YFt5oIHK//Dc9QVJEOoPXMgwWyHMNYMSLByyGh4VSeZQp/ghZfTF3YvlcdsyHkPF
+	 tEeVXPWs1JhaNXWuE1W+FPydbcF5m67/7Gg2vZsQfHI5qroM7hsXxrqMy1kiJ079lf
+	 QhMltA3H3mmhA==
+Date: Thu, 4 Sep 2025 15:42:56 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Mario Limonciello (AMD)" <superm1@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	Daniel Dadap <ddadap@nvidia.com>
+Subject: Re: [PATCH v10 3/4] fbcon: Use screen info to find primary device
+Message-ID: <20250904204256.GA1277756@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-yaml-extcon-usb-gpio-v2-1-a5c4afa496c3@ixit.cz>
-X-B4-Tracking: v=1; b=H4sIAIf5uWgC/4WNQQ6CMBBFr0Jm7ZgypFVceQ/DgtYRJlFK2kpAw
- t2tXMD81fvJf3+FyEE4wqVYIfAkUfyQgQ4FuL4dOka5ZwZSpFVFNS7t64k8J+cHfEeL3SgeSZf
- WGE1E5xPk6Rj4IfOuvTWZe4nJh2V/mcpf+0c4lZhTK1Mb1lWr7FVmSUf3gWbbti8mkUwKtgAAA
- A==
-X-Change-ID: 20250329-yaml-extcon-usb-gpio-251b66522287
-To: MyungJoo Ham <myungjoo.ham@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Conor Dooley <conor.dooley@microchip.com>, David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1393; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=38o5l+Gd5d4+Zkxmiu4BB0zsyw4fWa9j1Br5WQIrDCY=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBoufmPMszQV/vhPettuncRzuRf3JM93viHJZSlO
- o6rS08QHdyJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaLn5jwAKCRBgAj/E00kg
- ct8MD/sEYLadRUK+M64Y8KLwkwKTy+Cw9A8/l5d/rXwyGH+cMl5XxV66eS6NPBPHHjXlhIxFfVX
- uw4gYIfxETbo8A+SvddLtij4awSMqKnj9S/7R0VmwtMSyPlKjp7gxZL5a160E02PVXHykLeHFiA
- My0jE/FHguyArG+RVy9lZAw3K6o8mYpe89v1aRJb5vNUYnw5DTgPPHMgk2jv7H1e9vj4WDqSK3B
- y+98ZNzuheG4RCx4k1bbkCVXYHs5gepo5J5UYXZJpYTK5mOKBnkXioIscdm8lXPNALAKThpMtan
- MfcKNylmdcEu9kh6sNcNpGmfGL0o+uE1S+aiS7SXuEr2Cm9A/zBWg9ahEE0QVdPR7tRzTxf8f0e
- zCWmmG5CEfzqUPdF7dT8qHzAPi4b5NuXvxtXcMGqv8YJLBiN5BOkqw2vEkQxdNz5OGUt2ZdKP0U
- s2+ptBOz4ulFhU21vznXRE14GPiEmGPYBpDtmjhjw6r2PV7n5Vs9MFKLxP3xKApkiWeXxRWZ1Jk
- FWbloHF2NR1e7oSyPTteBwpRwJJ0v+AyP+cjKSfmU7u0A4sKMIO5BqrF9IMkJlDej3bfwnGadJ+
- oawdsy12rsiKa2vH6Yb/VKxTRw7ZDCgx4tlrDpQPL/jXM4CQTI8++EDFFBQ4N0c75IB+X7mwcDr
- /3Zt8iIocpxv7yQ==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811162606.587759-4-superm1@kernel.org>
 
-From: David Heidelberg <david@ixit.cz>
+On Mon, Aug 11, 2025 at 11:26:05AM -0500, Mario Limonciello (AMD) wrote:
+> On systems with non VGA GPUs fbcon can't find the primary GPU because
+> video_is_primary_device() only checks the VGA arbiter.
+> 
+> Add a screen info check to video_is_primary_device() so that callers
+> can get accurate data on such systems.
+> 
+> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
+> Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
 
-Without providing either ID or VBUS GPIO the driver is not able to operate.
-Original text binding says:
-  "Either one of id-gpio or vbus-gpio must be present."
+Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Fixes: 79a31ce03f41 ("dt-bindings: extcon: convert extcon-usb-gpio.txt to yaml format")
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
-Changes in v2:
-- Rebased and added Conor A-b.
-- Link to v1: https://lore.kernel.org/r/20250329-yaml-extcon-usb-gpio-v1-1-190696e53a0b@ixit.cz
----
- Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+I don't think you need my ack for this, but it does look fine to me.
 
-diff --git a/Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml b/Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml
-index 8856107bdd33b8654812ab9c97e85e23dc2ef75a..8f29d333602b95fe5ccd8464aa64e2d1f0c1c781 100644
---- a/Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml
-+++ b/Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml
-@@ -25,6 +25,12 @@ properties:
- required:
-   - compatible
- 
-+anyOf:
-+  - required:
-+      - id-gpios
-+  - required:
-+      - vbus-gpios
-+
- additionalProperties: false
- 
- examples:
+I wish __screen_info_pci_dev() didn't have to use pci_get_base_class()
+to iterate through all the devices, but you didn't change that and
+maybe somebody will dream up a more efficient way someday.
 
----
-base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
-change-id: 20250329-yaml-extcon-usb-gpio-251b66522287
+Let me know if you need anything more from me.  Thanks for persevering
+with this!
 
-Best regards,
--- 
-David Heidelberg <david@ixit.cz>
-
-
+> ---
+> v10:
+>  * Rebase on 6.17-rc1
+>  * Squash 'fbcon: Stop using screen_info_pci_dev()'
+> ---
+>  arch/x86/video/video-common.c | 25 ++++++++++++++++++++++++-
+>  1 file changed, 24 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/video/video-common.c b/arch/x86/video/video-common.c
+> index 81fc97a2a837a..e0aeee99bc99e 100644
+> --- a/arch/x86/video/video-common.c
+> +++ b/arch/x86/video/video-common.c
+> @@ -9,6 +9,7 @@
+>  
+>  #include <linux/module.h>
+>  #include <linux/pci.h>
+> +#include <linux/screen_info.h>
+>  #include <linux/vgaarb.h>
+>  
+>  #include <asm/video.h>
+> @@ -27,6 +28,11 @@ EXPORT_SYMBOL(pgprot_framebuffer);
+>  
+>  bool video_is_primary_device(struct device *dev)
+>  {
+> +#ifdef CONFIG_SCREEN_INFO
+> +	struct screen_info *si = &screen_info;
+> +	struct resource res[SCREEN_INFO_MAX_RESOURCES];
+> +	ssize_t i, numres;
+> +#endif
+>  	struct pci_dev *pdev;
+>  
+>  	if (!dev_is_pci(dev))
+> @@ -34,7 +40,24 @@ bool video_is_primary_device(struct device *dev)
+>  
+>  	pdev = to_pci_dev(dev);
+>  
+> -	return (pdev == vga_default_device());
+> +	if (!pci_is_display(pdev))
+> +		return false;
+> +
+> +	if (pdev == vga_default_device())
+> +		return true;
+> +
+> +#ifdef CONFIG_SCREEN_INFO
+> +	numres = screen_info_resources(si, res, ARRAY_SIZE(res));
+> +	for (i = 0; i < numres; ++i) {
+> +		if (!(res[i].flags & IORESOURCE_MEM))
+> +			continue;
+> +
+> +		if (pci_find_resource(pdev, &res[i]))
+> +			return true;
+> +	}
+> +#endif
+> +
+> +	return false;
+>  }
+>  EXPORT_SYMBOL(video_is_primary_device);
+>  
+> -- 
+> 2.43.0
+> 
 
