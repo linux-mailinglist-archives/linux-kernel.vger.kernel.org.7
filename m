@@ -1,122 +1,133 @@
-Return-Path: <linux-kernel+bounces-799686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3497BB42EEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:40:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E01B42EF1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2A63B1DC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:40:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E79FA3B06C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5BD1D618E;
-	Thu,  4 Sep 2025 01:40:20 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552AA1C8621;
+	Thu,  4 Sep 2025 01:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="A2buGANs"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D6C1940A1;
-	Thu,  4 Sep 2025 01:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279E61607A4;
+	Thu,  4 Sep 2025 01:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756950020; cv=none; b=eOC0v1DS6doECFIYmRyFFTDfOUxNXrTVUHEE7QpVjR755jxu8pwLucfrnghr59M8XV195Q/wIw/kdWqYR+q2vrpSIhPx84RLaGBrqi5Q9xOXX+dhLXAdChJ2W4bIjpdIX/KhnFHjl6MoSOOSVYby5RXvQl02666ZoxR3cOpTeOc=
+	t=1756950074; cv=none; b=c8pKnxnJ3zTacQngd24+OMmruYhj4CNFC+sS3aQ1DVJ4eKGEqHbX3x6av59F0Yi/m4CTswEVdHeyigs8QvukckLtCe8pEqcLPV+c5vddJsHIp77dvWXKlEWtWgbCUzb+SmN7bfpzfPDt8/R+rwOimlsSf8YxcdvjicTPBsHkPsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756950020; c=relaxed/simple;
-	bh=MbPtQfbMRe9s59FcPN8+OJbEnT+coKqPntOEWN4MtVc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=saWVJy6B+Yj0yzaThaYs/F5QnT1T56WcKGfaPbg/8cKAFYfDsbLTvDEFfYqo3cA3RCL5AF7ZiXRf+KSp4on3ltyTorp4vFppEZ1eHhaskfc8/jYFL8dyllsKPXbq1qZAdB9fo/hSjvfYddqBDpDO1itm4uP+GKe7wccDuUuKUq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cHMcG5mPZzYQvMd;
-	Thu,  4 Sep 2025 09:40:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 4CBE71A13A6;
-	Thu,  4 Sep 2025 09:40:13 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP3 (Coremail) with SMTP id _Ch0CgA30mn87bhoQU8sBQ--.49393S2;
-	Thu, 04 Sep 2025 09:40:13 +0800 (CST)
-Message-ID: <7e05b179-90ec-449b-86a8-796f4a12180a@huaweicloud.com>
-Date: Thu, 4 Sep 2025 09:40:12 +0800
+	s=arc-20240116; t=1756950074; c=relaxed/simple;
+	bh=10BN+d0CyWOnY/xrZrnnEhoHL/odQO+tf4JXwUf0XxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bt4UgnaPowqZkCZmqPSQEZdAg9/jl1OYUC5BdJKJ5sod2O51tI11K92R6wouj+P4iHw821oZIUtWqJLjuF1+YDNATFgKgmXgHXgVI6us7zLeP+lvZrI47lUYLUw8KZD56Z0pEQQMK1OSe51g33Zhm+DY/FHS+uxnFz1g15CMwgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=A2buGANs; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id BB59E20B30;
+	Thu,  4 Sep 2025 03:41:11 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id gJLgEhmVl2CH; Thu,  4 Sep 2025 03:41:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1756950070; bh=10BN+d0CyWOnY/xrZrnnEhoHL/odQO+tf4JXwUf0XxU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=A2buGANsG4HEzYHvIOD8PVZCAR0FJOTyEFIGvGFVDmxLRwW4IW/WNuHnbiQh+JP6c
+	 FtraAor/QIhoSrtzmrv62cvvMoLJBxoEeQLVBjqlvBTcxvCgV5XxjwArPcAr5UfJDW
+	 QIYjrM+phTZw7wtljoRc1eNRojFzI91HUgCUz3AnOeGsIKhjngPeLMtKijARSGnkbA
+	 bknqVPKeMIf+qvwbUs9QegUZSIFLsYgh86QboQTbkmAcBjr1VluuLGhQmg/maNsJBP
+	 6hfGrWOaJxuY2CNuZV5YCn2dP5ZXlYbHZ564SxOkRZurmj8H+zjV3o0d5RogAMtB3c
+	 AsrVqtFCGIJSA==
+Date: Thu, 4 Sep 2025 01:40:56 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: gpio: loongson: Document GPIO
+ controller of 2K0300 SoC
+Message-ID: <aLjuKPIhTcdAQ7Z1@pie>
+References: <20250901133804.38433-1-ziyao@disroot.org>
+ <20250901133804.38433-2-ziyao@disroot.org>
+ <CAAhV-H5odi479mTr0zmDnX1WF2AmJRXTL34_ts2VCM-g6N7bjA@mail.gmail.com>
+ <aLW0rgvKno3zpXDi@pie>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cgroup: replace global percpu_rwsem with
- signal_struct->group_rwsem when writing cgroup.procs/threads
-To: Tejun Heo <tj@kernel.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: Yi Tao <escape@linux.alibaba.com>, hannes@cmpxchg.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <f460f494245710c5b6649d6cc7e68b3a28a0a000.1756896828.git.escape@linux.alibaba.com>
- <aLhykIPSGV1k_OG0@slm.duckdns.org>
- <rgjlqyeqcgi43crx4mqpwi7tqxqgy7bkmjbpv7t6eiqodreydm@6pag34zcnekp>
- <aLio7Z6YolSZ2lPo@slm.duckdns.org>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <aLio7Z6YolSZ2lPo@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgA30mn87bhoQU8sBQ--.49393S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw4fGw4kWFWxtFy3WF4xXrb_yoW8GFy8pF
-	9Yya4rJwsIk3W8ZF4vqay0v3WrW3y8ZF47JFW7A3W8AFsxGr1fZr4IvF45Zw1UZ3ZxXr12
-	qw43Zry8tFWvy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1yE_tUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+In-Reply-To: <aLW0rgvKno3zpXDi@pie>
 
+Hi Huacai,
 
-
-On 2025/9/4 4:45, Tejun Heo wrote:
-> Hello, Michal.
+On Mon, Sep 01, 2025 at 02:58:54PM +0000, Yao Zi wrote:
+> On Mon, Sep 01, 2025 at 10:22:04PM +0800, Huacai Chen wrote:
+> > Hi, Yao,
+> > 
+> > On Mon, Sep 1, 2025 at 9:38 PM Yao Zi <ziyao@disroot.org> wrote:
+> > >
+> > > Loongson 2K0300 ships a GPIO controller whose input/output control logic
+> > > is similar to previous generation of SoCs. Additionally, it acts as an
+> > > interrupt-controller supporting both level and edge interrupts and has a
+> > > distinct reset signal.
+> > >
+> > > Describe its compatible in devicetree. We enlarge the maximum value of
+> > > ngpios to 128, since the controller technically supports at most 128
+> > > pins, although only 106 are routed out of the package. Properties for
+> > > interrupt-controllers and resets are introduced and limited as 2K0300
+> > > only.
+> > Replace the full name with "Loongson-2K0300" and short name with
+> > "LS2K0300", others look good to me.
+> > Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
 > 
-> On Wed, Sep 03, 2025 at 10:03:39PM +0200, Michal Koutný wrote:
->> On Wed, Sep 03, 2025 at 06:53:36AM -1000, Tejun Heo <tj@kernel.org> wrote:
->>> If you use CLONE_INTO_CGROUP, cgroup migration doesn't just become cold. It
->>> disappears completely and CLONE_INTO_CGROUP doesn't need any global locks
->>> from cgroup side.
->>
->> CLONE_INTO_CGROUP uses cgroup_mutex and threadgroup rwsem like regular
->> migration, no? Its effect is atomicity wrt clone.
->> Or, Tejum, what do you mean that it disappears? (I think we cannot give
->> up cgroup_mutex as it ensures synchronization of possible parent's
->> migration.)
+> I don't understand what is improved with this. For the fullname, I don't
+> see any difference between "Loongson 2K0300" and "Loongson-2K0300". And
+> for the short one, omitting the "LS" prefix doesn't introduce any
+> ambiguity, either.
 > 
-> Sorry, I was confused. We no longer need to write lock threadgroup rwsem
-> when CLONE_INTO_CGROUP'ing into an empty cgroup. We do still need
-> cgroup_mutex.
+> I did a quick search through git log, and found many commits for Loongson
+> 2K SoCs do include a hyphen for the fullname and "LS" prefix for
+> abbreviation in messages, while some merge commits don't do so.
 > 
->   671c11f0619e ("cgroup: Elide write-locking threadgroup_rwsem when updating csses on an empty subtree")
+> Even the official production page for Loongson 2K0300 refers to it
+> without a hyphen[1]. Thus I cannot find out of the point of rewording...
 > 
-> Thanks.
+> > Loongson 2K0300 is a multi-function SoC build upon the LA264 processor
+> > core, ...
 > 
+> I'll appreciate and adapt it if you could explain why the change is
+> necessary. Thanks for your patience.
 
-I'm still a bit confused. Commit 671c11f0619e ("cgroup: Elide write-locking threadgroup_rwsem when
-updating csses on an empty subtree") only applies to CSS updates. However, cloning with
-CLONE_INTO_CGROUP still requires acquiring the threadgroup_rwsem.
+Though I still don't understand purpose of the change, I've sent v3[2]
+with naming style adjusted and all comments you left in PATCH 2
+resolved. Thanks for your review.
 
-cgroup_can_fork
-  cgroup_css_set_fork
-    	if (kargs->flags & CLONE_INTO_CGROUP)
-		cgroup_lock();
-	cgroup_threadgroup_change_begin(current);
+> Best regards,
+> Yao Zi
+> 
+> [1]: https://loongson.cn/EN/product/show?id=35
 
--- 
-Best regards,
-Ridong
+Regards,
+Yao Zi
 
+[2]: https://lore.kernel.org/linux-gpio/20250904013438.2405-1-ziyao@disroot.org/
 
