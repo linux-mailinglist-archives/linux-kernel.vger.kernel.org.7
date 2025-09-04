@@ -1,331 +1,191 @@
-Return-Path: <linux-kernel+bounces-800515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82748B438A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:24:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BEE2B438AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 186B01C2010F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:24:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB20F480967
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF4F2F83CC;
-	Thu,  4 Sep 2025 10:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13212F83D8;
+	Thu,  4 Sep 2025 10:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ca9nmzxM"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wtl/90RX"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C6522E3E9;
-	Thu,  4 Sep 2025 10:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443482D3A6F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756981462; cv=none; b=Zc8qdDAByucfYW6P8Xg/NussXPCLVr+l/8fF81osECKFRgZCfcPfyeYRd2z6Sevz8UJX2MQZ8KHS83on76bnOk2/ZDqUniH3ftrK6Naj66w+GE3XTvp9YlyCO2BgC9fGKVzkYfXowQLL7mQSsXVlK1xcpo6frpi4+8sZyIRbqnA=
+	t=1756981568; cv=none; b=I4U5dbXQXFyECN0PYx9DYb9p7RWskq+heNYBYGwhQohpH/itod0Yerc20Evo4eS8JPblAQZIIpJhXcQKAwtj7GqYiQejBqTSK7s34PD2HvWfsXOJslsnuXnA2+kFJMZ9SLb9VigZISFz0/mc/2dOhQpX9srieniEPZKBiqnemxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756981462; c=relaxed/simple;
-	bh=c2gpxeWGrJmTuWMNi5PLcSU/Z+KrnMmz3jdOctjwprU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TtkZFx7V8egF2ojzQj/kXIgdr+ydnWqiIfKlbSlIZC/KYipiovUJBJlpMd2qvdSm80CdItmsUBAyKgPIsq7LiE/ZfJ9UBU0KDWDXEWoLqjI5LD81DVOHEa8O6R2/aI6bCLFJN3SMwVnCBfHchCA+PLglUG6w6O5P+u5s5rGOOwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ca9nmzxM; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b49cf1d4f6fso590727a12.3;
-        Thu, 04 Sep 2025 03:24:21 -0700 (PDT)
+	s=arc-20240116; t=1756981568; c=relaxed/simple;
+	bh=BI2ZP0T/2XRoH+M4+QI/c/CiOCDichYufqvrnpKIP2A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gbseMsFbX88nW1Ob4kolTp3Xp/Rtz83UY/Mw+xU+rkZNZQXMajR8a10qs9T5fgpyU4jywaHcY4wwMKFRjjWe0Ab9oh4seB3LH8bnROXLRRi/PL0aAg1s2on2mCR2l+FJ1e7dDQBiaSLSQu0oYuARQKgmG021L4ypAhnEQ8hD2y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wtl/90RX; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61cafa0a38aso151893a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 03:26:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756981460; x=1757586260; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Fe9Vrd7TWrwfDgopYRzH6xudKvXJ+7N0vfpOqJW1Gs=;
-        b=Ca9nmzxMFXems4idKtLDG84YKKwnFISNQOJ8emxJAFkPQzK9StM2Z/Q97isenyVolt
-         wn4NBv1hDO/pyVWmh5UPnnEl/5W+xLdCHof7PLwhmUOKdF3fgNwJH8wc6b2W3bstW/Oo
-         Tj1TGVfDBSXp5bjlHI7rEH0OefipVBCJy2lARNZtl2U35iGIUGuTHGvLRzcJpf5gd8Kg
-         83sQECF2EvcrYsPgfxA0nizVHARIrT3zzpBRO7rge4Lm1r/u2yqjCwW1v0s3elQLPY9F
-         EOUY5GOgUda85k2e0LiIU7XQErQ3Hr5qW4KfyZG8bz7bCJGzQ2dnQkaIG0jdYSinrVTc
-         Qzqg==
+        d=linaro.org; s=google; t=1756981563; x=1757586363; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UW3bkHx1vvQghfKXG7aIDgCaJXMu8LRQiFsEscet0eY=;
+        b=wtl/90RXSI/+BG1hs+zM0iznhWQ05giQ7GvLqbNlMRPM3QJHKMeqUdsMB8PHJL3b/d
+         DpmrG4JTClmdrc7zcPTIPU+htZ9hxYfLtWm78C8+HCd2kGgKTh4ILbFk+YSPXeLUKhKL
+         IBmhRsNH2hp/yNVKgxhVmE3T04kQaI8VyVxUKgQu4tAKajAT0b4WaCtiaHLf1iGcaCdn
+         4qOXrbgajl/XmmJesEf49yCLjvIqt0Mnnfa5QBr3vDboPVVp9O8AoRLrFZWGinzinTmb
+         uje5W5OLT9xdmNZ+VgNtc7wB+HbT+E3ecDsTQ0PdaT29I3DimxRsqhkOv10vLBusuOS0
+         jabg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756981460; x=1757586260;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8Fe9Vrd7TWrwfDgopYRzH6xudKvXJ+7N0vfpOqJW1Gs=;
-        b=n9QdqeZKo0/K2DLejSqVN+Hon74e7qgQoEl8ikCI/z/VSJtM7ts8SeJuvyDdjyTynZ
-         aRj/Cb7kzgDU/an6z5SFnG8zUb10fsxszUXxLLBdiEcapgxjn7ys51hPQUwA6KixtFZB
-         TI318227aNcjQ/CF6c2DYgQPlqaFZpkOswmMTIj4IYvsKNR0IiqB8n7aWfk0YHmTSSv9
-         Q2elSZ4zgre7oT/9ChsPkg1sogeyAkir82iUwgZA7AsheAdvc2a5bw1C9x0te6o4BreV
-         GOUR/ZTAQ50D75V8e4+WrIbmSj5ExLE55tIxe89BbbggJDbvhCr/zeFzlDNetqtwQx2H
-         K1IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUH0do78B6Q0FpC8bq4eoF/Qwe5YKd2MOSQB0Pwybps83b5Aiil+4bzRncWat66v3iKfFQNRCskNp/LuD4=@vger.kernel.org, AJvYcCW+3RfRpeUBZlovbHIb0C1Xs+SuLGFO7m31uMa7/fh5oZKjXiLoZqhyF6BMU1ojRfyQH2Q53EZZq4+F6sY9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR3v5tOQbU7/9TV10jbhZURDGWaA8XPLJMPRHvyecRMi/pAgSo
-	HHRpcBGwrFY/pXmPXnNKm2DeNtIvHXfVEe7wPpraiKqMgY7L32qsasmOLuzfttRpqsY/MuFXqqw
-	bgS8EQHZh5hIZWvIaWEnXJCbTrf3+J9aznZbt
-X-Gm-Gg: ASbGncsL8s147Pgch7gjMp2TOVpWHFLYf07lJVG+mwLrcASYgFqYqoYGHdFvOiXv/qP
-	GPHxutNLu3zUm5WPJ8nkJ2RE5lDlLASj2bVl1rs6BN1PrqI0xmNbHIB3jocs+Q3tFj1k6upgiMM
-	Zd1KjY9vsyLzr/7UxJV0C/dqHLAFVtqLdTlB+kwVefY9zxNS2NBKcocTeTG2L5LP1fXSAW4lXz8
-	wiu2DY=
-X-Google-Smtp-Source: AGHT+IH9VpJBoSfgQBCfvbGtEx4wYfgn64e9slTSFU2ij5LeTLT1TqslheTZVnmVXilTg/N3w6YIGcjf5Bbu/LkEWFo=
-X-Received: by 2002:a17:903:1b0e:b0:24c:b69f:e4ce with SMTP id
- d9443c01a7336-24cb69ffb36mr43092035ad.11.1756981460256; Thu, 04 Sep 2025
- 03:24:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756981563; x=1757586363;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UW3bkHx1vvQghfKXG7aIDgCaJXMu8LRQiFsEscet0eY=;
+        b=AKKijbDCnhj2QptegRD90rn8JOyRyg6W5a5oMeChYqsJpe7pydSmWSP0gbsK+NbRCO
+         9JXd1Z6+rHSZGlY6qraaBe+CbDTMeZyzWSwmG5Wh0gVwioqyea9kKQjOIFEQmESCM3+l
+         Wfl72diiv2BW5Bl4sPtk9NSkqEOLtn3Kd4sGQT4HsZWTQq7nnrcWFYD+NVaggArFy4ah
+         uW3LTQ01AfvsqBRObjDL0+D3yNJDjSGBDmKGXsd1rww0GqD5Re7N3pHKGdPEbBG5KhQC
+         3uoIijSKVs8ZMx+++TMc7A/6RpxnFNnJHwaY53vfxQ6/eKY2bFWPlm+5GTfa7vKaXWnC
+         qSjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXG3zvaZzL3L9OJqUJyzbfQlYTIOJVwC+BXxcFihVFaZ0E2WSmwkqb0bNiOj5IgWOzpB0DeR8l5YRq07Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHsQevLq2bXwAWYWE9sqS2vhSd3VtfBYd/evEDNjN+X1iFsFcP
+	+EZ5mJhN5AUQrpq7madfmRqaCIwr9g0a9yozJ3KS8EB4/LUt1uw8RtPq7Fu2drtnzjQ=
+X-Gm-Gg: ASbGncsMRwayxjqdNbm5+sTfmXLT83lJRjtIKUHtJF5j7M/a1Pji3tisKPzKNcmJ9d6
+	QlFxB3AuUMYjK951Skvs4X3yn4MHcJ+YvU4M7LemU74zMaF7gtNyKyM7A6Bp3pHI+J5Bd/xxH1z
+	yOY+y/LASN420sk+hEDDgMgXuC3De6FJrNzYZL2NBq8PkiA3PLcWgjUwmjxSiyxaBSR69c8j9y0
+	LwEse/v4GssN94tqStEgtkbtbi1Zb2H7b6UV+154BC43msiPc8ZssiR+7kZlZYvSzof6sf3CgT1
+	gigPADr9/BZ8/QxYM1noL1DXxEms4fDtLEwWDijQzCXoyJd+EYtpHCm77NurGRi+wZOYXvLC1sN
+	EX8nI5wDC48cueZdtWmA/BYLs0s0SQ9FGqA==
+X-Google-Smtp-Source: AGHT+IHeVQhoqHiq7M7DSuYNRekdsgwKuToJnU6OnuZ5WZbs+S98q8aT+92pCuXXZAfHE2RtjImacA==
+X-Received: by 2002:a05:6402:5203:b0:61c:484c:a533 with SMTP id 4fb4d7f45d1cf-61d0d2a91ecmr8967545a12.1.1756981563564;
+        Thu, 04 Sep 2025 03:26:03 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc5306e6sm13887446a12.47.2025.09.04.03.26.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 03:26:02 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 1/2] ASoC: qcom: audioreach: Add support for Speaker Protection module
+Date: Thu,  4 Sep 2025 12:25:59 +0200
+Message-ID: <20250904102558.143745-3-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731190227.16187-1-ebiggers@kernel.org>
-In-Reply-To: <20250731190227.16187-1-ebiggers@kernel.org>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Thu, 4 Sep 2025 12:24:08 +0200
-X-Gm-Features: Ac12FXy0ozdf-dNaaNLVwpGZ5ILF_7vcxieASaQ3Bfv0DQ4Tdi_TYnNZHpVReFg
-Message-ID: <CAOi1vP9QRWKoQuYHynTXuupJ=VHhLLtN3s2FE6a+gG6gvrA6SQ@mail.gmail.com>
-Subject: Re: [PATCH] libceph: Use HMAC-SHA256 library instead of crypto_shash
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2761; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=BI2ZP0T/2XRoH+M4+QI/c/CiOCDichYufqvrnpKIP2A=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBouWk3+PRBfkwRoqp9LwmJsk3WZeR8OgXnneZHH
+ 9jz5o/j/D+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLlpNwAKCRDBN2bmhouD
+ 191XD/9gdZ7c9cSgx3T+L4BF1NnAK9sXKZbTdYH32Bv7mnxLjRg8Uf8+O7S1XCWf7xa2HE4EUxD
+ 0j6dyaRNb9YZp+X4C0+G1NWdMMjR3HBDPToI3j4eE8coWnXqml+hGZm2x6XKPSRVUJ5vmsEHXXy
+ DGpHznm0gOQIoiv4KkF7rdH9ObEw5NicG/IlA78DLe5vgYVNfiIE+rHf9Nuel+28fGHXLfxojVS
+ iz32ojyV6fKMIamiNMxx+gpQEXLaUWlF4JdOwpB2PGly/M2/nVpAQk30JAhE+uhQ7PBGoL5UjJH
+ wKrEkqupzUGI/h5w7HtxnP0ZNIhB1Wyjkgkfc+B8vtfjvyk/kc/9NxfmjvlnNnmDehlwxHU/WWB
+ YRSgNIjLKvMfGgi3Cm3UoIoOc5O15KJjjBOkVSCXmLxC/dmvZBb2FJgstsnLF4bM4kFTzO91sUI
+ ms3ZPyUlplK5X1qsuUNALw6tv9fez0MFudS7W0nmuhJbRSvK6lr4D6Wn7ytxF1vQ2DI7kcJpjly
+ giT+rfzDo1Fvo/bkSIHekPAxRU7+hLaPzfK3y/vZtUAhVDOWsA6qsZ4xJTzQyi3M1CDabgMPoGp
+ tLjBTmO+pCzV+zbR095gqWXD19IRN199ERkQ0wRgXPizKZiQKlTw+0JCB469hTkI7k72L8C0exc ZCc9HmzsDQ1cI2w==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 31, 2025 at 9:03=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
-wrote:
->
-> Use the HMAC-SHA256 library functions instead of crypto_shash.  This is
-> simpler and faster.
->
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> ---
->  include/linux/ceph/messenger.h |  4 +-
->  net/ceph/Kconfig               |  3 +-
->  net/ceph/messenger_v2.c        | 77 ++++++++++------------------------
->  3 files changed, 26 insertions(+), 58 deletions(-)
->
-> diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenge=
-r.h
-> index 1717cc57cdacd..4b49592a738fc 100644
-> --- a/include/linux/ceph/messenger.h
-> +++ b/include/linux/ceph/messenger.h
-> @@ -1,9 +1,10 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
->  #ifndef __FS_CEPH_MESSENGER_H
->  #define __FS_CEPH_MESSENGER_H
->
-> +#include <crypto/sha2.h>
->  #include <linux/bvec.h>
->  #include <linux/crypto.h>
->  #include <linux/kref.h>
->  #include <linux/mutex.h>
->  #include <linux/net.h>
-> @@ -410,11 +411,12 @@ struct ceph_connection_v2_info {
->
->         struct ceph_frame_desc in_desc;
->         struct ceph_msg_data_cursor in_cursor;
->         struct ceph_msg_data_cursor out_cursor;
->
-> -       struct crypto_shash *hmac_tfm;  /* post-auth signature */
-> +       struct hmac_sha256_key hmac_key;  /* post-auth signature */
-> +       bool hmac_key_set;
->         struct crypto_aead *gcm_tfm;  /* on-wire encryption */
->         struct aead_request *gcm_req;
->         struct crypto_wait gcm_wait;
->         struct ceph_gcm_nonce in_gcm_nonce;
->         struct ceph_gcm_nonce out_gcm_nonce;
-> diff --git a/net/ceph/Kconfig b/net/ceph/Kconfig
-> index 0aa21fcbf6ece..ea60e3ef08343 100644
-> --- a/net/ceph/Kconfig
-> +++ b/net/ceph/Kconfig
-> @@ -4,12 +4,11 @@ config CEPH_LIB
->         depends on INET
->         select CRC32
->         select CRYPTO_AES
->         select CRYPTO_CBC
->         select CRYPTO_GCM
-> -       select CRYPTO_HMAC
-> -       select CRYPTO_SHA256
-> +       select CRYPTO_LIB_SHA256
->         select CRYPTO
->         select KEYS
->         default n
->         help
->           Choose Y or M here to include cephlib, which provides the
-> diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-> index 5483b4eed94e1..c54c8b5a65261 100644
-> --- a/net/ceph/messenger_v2.c
-> +++ b/net/ceph/messenger_v2.c
-> @@ -707,11 +707,11 @@ static int setup_crypto(struct ceph_connection *con=
-,
->         unsigned int noio_flag;
->         int ret;
->
->         dout("%s con %p con_mode %d session_key_len %d con_secret_len %d\=
-n",
->              __func__, con, con->v2.con_mode, session_key_len, con_secret=
-_len);
-> -       WARN_ON(con->v2.hmac_tfm || con->v2.gcm_tfm || con->v2.gcm_req);
-> +       WARN_ON(con->v2.hmac_key_set || con->v2.gcm_tfm || con->v2.gcm_re=
-q);
->
->         if (con->v2.con_mode !=3D CEPH_CON_MODE_CRC &&
->             con->v2.con_mode !=3D CEPH_CON_MODE_SECURE) {
->                 pr_err("bad con_mode %d\n", con->v2.con_mode);
->                 return -EINVAL;
-> @@ -721,26 +721,12 @@ static int setup_crypto(struct ceph_connection *con=
-,
->                 WARN_ON(con->v2.con_mode !=3D CEPH_CON_MODE_CRC);
->                 WARN_ON(con_secret_len);
->                 return 0;  /* auth_none */
->         }
->
-> -       noio_flag =3D memalloc_noio_save();
-> -       con->v2.hmac_tfm =3D crypto_alloc_shash("hmac(sha256)", 0, 0);
-> -       memalloc_noio_restore(noio_flag);
-> -       if (IS_ERR(con->v2.hmac_tfm)) {
-> -               ret =3D PTR_ERR(con->v2.hmac_tfm);
-> -               con->v2.hmac_tfm =3D NULL;
-> -               pr_err("failed to allocate hmac tfm context: %d\n", ret);
-> -               return ret;
-> -       }
-> -
-> -       ret =3D crypto_shash_setkey(con->v2.hmac_tfm, session_key,
-> -                                 session_key_len);
-> -       if (ret) {
-> -               pr_err("failed to set hmac key: %d\n", ret);
-> -               return ret;
-> -       }
-> +       hmac_sha256_preparekey(&con->v2.hmac_key, session_key, session_ke=
-y_len);
-> +       con->v2.hmac_key_set =3D true;
->
->         if (con->v2.con_mode =3D=3D CEPH_CON_MODE_CRC) {
->                 WARN_ON(con_secret_len);
->                 return 0;  /* auth_x, plain mode */
->         }
-> @@ -791,42 +777,30 @@ static int setup_crypto(struct ceph_connection *con=
-,
->                con_secret + CEPH_GCM_KEY_LEN + CEPH_GCM_IV_LEN,
->                CEPH_GCM_IV_LEN);
->         return 0;  /* auth_x, secure mode */
->  }
->
-> -static int ceph_hmac_sha256(struct ceph_connection *con,
-> -                           const struct kvec *kvecs, int kvec_cnt, u8 *h=
-mac)
-> +static void ceph_hmac_sha256(struct ceph_connection *con,
-> +                            const struct kvec *kvecs, int kvec_cnt,
-> +                            u8 hmac[SHA256_DIGEST_SIZE])
->  {
-> -       SHASH_DESC_ON_STACK(desc, con->v2.hmac_tfm);  /* tfm arg is ignor=
-ed */
-> -       int ret;
-> +       struct hmac_sha256_ctx ctx;
->         int i;
->
-> -       dout("%s con %p hmac_tfm %p kvec_cnt %d\n", __func__, con,
-> -            con->v2.hmac_tfm, kvec_cnt);
-> +       dout("%s con %p hmac_key_set %d kvec_cnt %d\n", __func__, con,
-> +            con->v2.hmac_key_set, kvec_cnt);
->
-> -       if (!con->v2.hmac_tfm) {
-> +       if (!con->v2.hmac_key_set) {
->                 memset(hmac, 0, SHA256_DIGEST_SIZE);
-> -               return 0;  /* auth_none */
-> +               return;  /* auth_none */
->         }
->
-> -       desc->tfm =3D con->v2.hmac_tfm;
-> -       ret =3D crypto_shash_init(desc);
-> -       if (ret)
-> -               goto out;
-> -
-> -       for (i =3D 0; i < kvec_cnt; i++) {
-> -               ret =3D crypto_shash_update(desc, kvecs[i].iov_base,
-> -                                         kvecs[i].iov_len);
-> -               if (ret)
-> -                       goto out;
-> -       }
-> -
-> -       ret =3D crypto_shash_final(desc, hmac);
-> -
-> -out:
-> -       shash_desc_zero(desc);
-> -       return ret;  /* auth_x, both plain and secure modes */
-> +       /* auth_x, both plain and secure modes */
-> +       hmac_sha256_init(&ctx, &con->v2.hmac_key);
-> +       for (i =3D 0; i < kvec_cnt; i++)
-> +               hmac_sha256_update(&ctx, kvecs[i].iov_base, kvecs[i].iov_=
-len);
-> +       hmac_sha256_final(&ctx, hmac);
->  }
->
->  static void gcm_inc_nonce(struct ceph_gcm_nonce *nonce)
->  {
->         u64 counter;
-> @@ -1453,21 +1427,18 @@ static int prepare_auth_request_more(struct ceph_=
-connection *con,
->  }
->
->  static int prepare_auth_signature(struct ceph_connection *con)
->  {
->         void *buf;
-> -       int ret;
->
->         buf =3D alloc_conn_buf(con, head_onwire_len(SHA256_DIGEST_SIZE,
->                                                   con_secure(con)));
->         if (!buf)
->                 return -ENOMEM;
->
-> -       ret =3D ceph_hmac_sha256(con, con->v2.in_sign_kvecs,
-> -                              con->v2.in_sign_kvec_cnt, CTRL_BODY(buf));
-> -       if (ret)
-> -               return ret;
-> +       ceph_hmac_sha256(con, con->v2.in_sign_kvecs, con->v2.in_sign_kvec=
-_cnt,
-> +                        CTRL_BODY(buf));
->
->         return prepare_control(con, FRAME_TAG_AUTH_SIGNATURE, buf,
->                                SHA256_DIGEST_SIZE);
->  }
->
-> @@ -2458,14 +2429,12 @@ static int process_auth_signature(struct ceph_con=
-nection *con,
->         if (con->state !=3D CEPH_CON_S_V2_AUTH_SIGNATURE) {
->                 con->error_msg =3D "protocol error, unexpected auth_signa=
-ture";
->                 return -EINVAL;
->         }
->
-> -       ret =3D ceph_hmac_sha256(con, con->v2.out_sign_kvecs,
-> -                              con->v2.out_sign_kvec_cnt, hmac);
-> -       if (ret)
-> -               return ret;
-> +       ceph_hmac_sha256(con, con->v2.out_sign_kvecs, con->v2.out_sign_kv=
-ec_cnt,
-> +                        hmac);
->
->         ceph_decode_need(&p, end, SHA256_DIGEST_SIZE, bad);
->         if (crypto_memneq(p, hmac, SHA256_DIGEST_SIZE)) {
->                 con->error_msg =3D "integrity error, bad auth signature";
->                 return -EBADMSG;
-> @@ -3812,14 +3781,12 @@ void ceph_con_v2_reset_protocol(struct ceph_conne=
-ction *con)
->
->         con->v2.con_mode =3D CEPH_CON_MODE_UNKNOWN;
->         memzero_explicit(&con->v2.in_gcm_nonce, CEPH_GCM_IV_LEN);
->         memzero_explicit(&con->v2.out_gcm_nonce, CEPH_GCM_IV_LEN);
->
-> -       if (con->v2.hmac_tfm) {
-> -               crypto_free_shash(con->v2.hmac_tfm);
-> -               con->v2.hmac_tfm =3D NULL;
-> -       }
-> +       memzero_explicit(&con->v2.hmac_key, sizeof(con->v2.hmac_key));
-> +       con->v2.hmac_key_set =3D false;
+Speaker Protection is capability of ADSP to adjust the gain during
+playback to different speakers and their temperature.  This allows good
+playback without blowing the speakers up.
 
-Hi Eric,
+Implement parsing MODULE_ID_SPEAKER_PROTECTION from Audioreach topology
+and sending it as command to the ADSP.
 
-Since we have hmac_key_set anyway, could the call to memzero_explicit()
-be conditioned on it?
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thanks,
+---
 
-                Ilya
+Changes in v2:
+1. Add and use PARAM_ID_SP_OP_MODE_NORMAL
+---
+ sound/soc/qcom/qdsp6/audioreach.c | 13 +++++++++++++
+ sound/soc/qcom/qdsp6/audioreach.h | 12 ++++++++++++
+ 2 files changed, 25 insertions(+)
+
+diff --git a/sound/soc/qcom/qdsp6/audioreach.c b/sound/soc/qcom/qdsp6/audioreach.c
+index f4c53e84b4dc..3b7dffd696e7 100644
+--- a/sound/soc/qcom/qdsp6/audioreach.c
++++ b/sound/soc/qcom/qdsp6/audioreach.c
+@@ -1250,6 +1250,15 @@ static int audioreach_gain_set(struct q6apm_graph *graph, struct audioreach_modu
+ 	return rc;
+ }
+ 
++static int audioreach_speaker_protection(struct q6apm_graph *graph,
++					 struct audioreach_module *module,
++					 uint32_t operation_mode)
++{
++	return audioreach_send_u32_param(graph, module, PARAM_ID_SP_OP_MODE,
++					 operation_mode);
++}
++
++
+ int audioreach_set_media_format(struct q6apm_graph *graph, struct audioreach_module *module,
+ 				struct audioreach_module_config *cfg)
+ {
+@@ -1299,6 +1308,10 @@ int audioreach_set_media_format(struct q6apm_graph *graph, struct audioreach_mod
+ 	case MODULE_ID_GAPLESS:
+ 		rc = audioreach_gapless_set_media_format(graph, module, cfg);
+ 		break;
++	case MODULE_ID_SPEAKER_PROTECTION:
++		rc = audioreach_speaker_protection(graph, module,
++						   PARAM_ID_SP_OP_MODE_NORMAL);
++		break;
+ 	default:
+ 		rc = 0;
+ 	}
+diff --git a/sound/soc/qcom/qdsp6/audioreach.h b/sound/soc/qcom/qdsp6/audioreach.h
+index 790fba96e34d..9f6ddcf081ee 100644
+--- a/sound/soc/qcom/qdsp6/audioreach.h
++++ b/sound/soc/qcom/qdsp6/audioreach.h
+@@ -31,6 +31,7 @@ struct q6apm_graph;
+ #define MODULE_ID_MP3_DECODE		0x0700103B
+ #define MODULE_ID_GAPLESS		0x0700104D
+ #define MODULE_ID_DISPLAY_PORT_SINK	0x07001069
++#define MODULE_ID_SPEAKER_PROTECTION	0x070010E2
+ 
+ #define APM_CMD_GET_SPF_STATE		0x01001021
+ #define APM_CMD_RSP_GET_SPF_STATE	0x02001007
+@@ -542,6 +543,17 @@ struct data_logging_config {
+ 	uint32_t mode;
+ } __packed;
+ 
++/* Speaker Protection */
++#define PARAM_ID_SP_OP_MODE			0x080011e9
++#define PARAM_ID_SP_OP_MODE_NORMAL		0
++#define PARAM_ID_SP_OP_MODE_CALIBRATION		1
++#define PARAM_ID_SP_OP_MODE_FACTORY_TEST	2
++#define PARAM_ID_SP_OP_MODE_VALIDATION		3
++
++struct param_id_sp_op_mode {
++	uint32_t operation_mode;
++} __packed;
++
+ #define PARAM_ID_SAL_OUTPUT_CFG			0x08001016
+ struct param_id_sal_output_config {
+ 	uint32_t bits_per_sample;
+-- 
+2.48.1
+
 
