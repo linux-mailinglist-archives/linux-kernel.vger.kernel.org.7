@@ -1,258 +1,215 @@
-Return-Path: <linux-kernel+bounces-802185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CE9B44EA0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:03:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73205B43E75
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36B8D3B7C21
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:03:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ABB6A4179E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC972D97AF;
-	Fri,  5 Sep 2025 07:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2991303CA1;
+	Thu,  4 Sep 2025 14:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cQV7xdUM"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ob0IXTyg"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010052.outbound.protection.outlook.com [52.101.84.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52582D3A65
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757055788; cv=none; b=Ki+gKBmLQUIf2UsAogXbaYafkrZzAwhglvUDCwPHI9CyGyG38+gqpREgcJHffXc50rz5gkYgls6N4J3YYVPwka/fg+bKVJk4fposjSBFkYnCVcZKB9sL+1+8oyRLYPC5e/THoiUcimLtPxH+mYCWaki7D0cVOU68Yd020r2sHdo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757055788; c=relaxed/simple;
-	bh=dOfpsIAhUOtMRab1Awwq5/KwLpctA8yxxOhdk2/ax18=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=AIYcDbJNP3EJLCWG4lS4jm9E7IyRanPXFX6slUsrWLk/9N4eYbiU0UEgfkuzQRYxrwIEKBk+UQ558kdxTaRuzNUkDL2baES5EYk4mUfmUJJWBcaK6hSyrHXTFKIkl6EBODHzHs3a8L/9OLzUoiJnoDYFTFpGMHJJNb2/wNI63cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cQV7xdUM; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250905070303epoutp03613f0229612bddff02a38f4e67509590~iUO0eUHoY3272132721epoutp03O
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:03:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250905070303epoutp03613f0229612bddff02a38f4e67509590~iUO0eUHoY3272132721epoutp03O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1757055784;
-	bh=RtUacEzIo4KPpynQl+ohz+dT9VtPS9oHDasFUEPMRpU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cQV7xdUMaaUdv6eR7M9LhPprXkv/e3ESuNkyJzMQePc11ICnTNeIr3ECgTeHokagK
-	 GYwHNwU9ER7InG5AohbWiP/jNPxiXZnHSDpPmo/NpgHyMyC+dUsZQuw+kDy55klkRO
-	 3cg1cOJQX+JddLtZon0J4I5/lqzDL0b0O5ySGA84=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250905070303epcas5p27dfa47e7b64350282ba567212d592329~iUO0OyFZV0211902119epcas5p2s;
-	Fri,  5 Sep 2025 07:03:03 +0000 (GMT)
-Received: from epcpadp2new (unknown [182.195.40.142]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cJ6kH4rXMz6B9m8; Fri,  5 Sep
-	2025 07:03:03 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250904141829epcas5p2829b463e4898f478d54615ed0c115544~iGhtL9Xrh2864428644epcas5p2Y;
-	Thu,  4 Sep 2025 14:18:29 +0000 (GMT)
-Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250904141827epsmtip1a61940aee76ccf4886d48f01af8eab9f~iGhr77-jY3139931399epsmtip1B;
-	Thu,  4 Sep 2025 14:18:27 +0000 (GMT)
-Date: Thu, 4 Sep 2025 19:48:21 +0530
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
-	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	cpgs@samsung.com
-Subject: Re: [PATCH V2 05/20] nvdimm/region_label: Add region label updation
- routine
-Message-ID: <439928219.101757055783676.JavaMail.epsvc@epcpadp2new>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A58303C9D;
+	Thu,  4 Sep 2025 14:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756995525; cv=fail; b=p5Ny9qJFme5zmawYVEnXzrEuGXqgEjC9dR+d4Hd83Px899nuwVaytmOh5xcsDFpWFqIDXorq0362Y7oJo9Nqfx0VHbtTC5PD3Jn7V/Ugp1lHCTLx5d4/fAu4U6/SY69a6jaHr4zkhYGQz2RjbVcTcaacZKiz7P9ED1rhhgDiDZY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756995525; c=relaxed/simple;
+	bh=F1/epbr8OIfs3M8OYB5Vi1DK/vpH1jb49pC+897Syec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=slC1E6EhcAMCbxQdjpBHeNRMH0VGBxrkGFxzOT4YrY4kgfLeiKLVkppSsAsHDpCMCykrWrn0lfAEcuVEre+KWro8a5K801dNvhtl0/C1DbZGdM3/HXPFzZiKedkKPGw0gKzgZIxP/SfXaj8oPd1lWpdo/T7m3KH/BQH/3A+IlIQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ob0IXTyg; arc=fail smtp.client-ip=52.101.84.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ALC5jrxNMOdPeYsvDk6udKGBEo7szYPxMvre7mxjaIGFeOsDRzclGCEAvmUTjBbA87FQvz8bl19jb6VS9z7pGn08OAe4uQF+ItYY4yhWgmGtXZRhCiOwenTGT1Qs+CGGM33oHDSFoC3WWjOjx0F07fVGH4XBae6wNqilzPL37uF+MCsXyl5SeQ2Mc+S2M6wqEhvtI1kNFgDNsqIRPPxlGAJHeTXAFWBHvXmcfIjPMxjAbjSGyJHuq/o3ILM/o6hi365ilynogpkNZ+UZOlbuUZP7aPqzYAkOgvEO3l1ljb95uuF994DYSN1ToBKIP0dNVB2ilfkTEiQ5e0N2Sz2gKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EYptEAC0Qgw5z9/pWSxwLA7cBiJQO2jRppGgWvFW4pE=;
+ b=PhNt0Js4rrFvT8aLCap+m1IqF3jg9UegMN8wouw6BhTl1E2z6x5V0ImVHlewubN6yOzIizC0feeXArL91qlREaB3SJJks2USZNx1SRCk9LQobuPMQXCLNisBDXHfEwSsTQlsJWxMw/EQsAlFwaiujNPSGlixTrr5je/YRPEkaMYkY7TyqEVjz8qmu49tWib4uoKvMDqu2K70W5mF+VMNsHQvQ8SUpsGISARJLvCWyvjtwULF+9FExRvrtqU354peB/uFawcksZAFuEFivGHWQq7ynD74nrCpmtuG/Pu8oDpI8PGMYdgDsb0Yob5yavSPl70O6Sz2oKESW40SLU57ng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EYptEAC0Qgw5z9/pWSxwLA7cBiJQO2jRppGgWvFW4pE=;
+ b=Ob0IXTygonjJLciDCl5pFWd9lFWuImEExWpfVVCylRu2wABcp2R+yty7JRVwNLmjsx3uYBBhWKmO2WFWnUdEvrC1cZ/oDTixne1UNe/fOxtKz+zqUn3WRZoHKtxUxIz/UMbVJ8Z2lq1NcviilIxKIySUButkHPgajS7OW4AZkfs+o1JLYP5CMtGFUo6ZVdizAlDzdi0SI0n0gvZ565rITRq6rxQ6D+1S1ucVo3un1HIXvw9EFMW3aQlEtKLepcLsCdCsGHv+6hhtYrtENqqCQevgaXIHAcAFAKriHtJP9H1o7VQ3Z/XriFULpIbbtAotKyEvB6iNDykAn8W9Q4xVcA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by AM8PR04MB7380.eurprd04.prod.outlook.com (2603:10a6:20b:1d5::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Thu, 4 Sep
+ 2025 14:18:40 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd%5]) with mapi id 15.20.9094.015; Thu, 4 Sep 2025
+ 14:18:40 +0000
+Date: Thu, 4 Sep 2025 10:18:32 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Aswath Govindraju <a-govindraju@ti.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Haibo Chen <haibo.chen@nxp.com>,
+	linux-can@vger.kernel.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 4/9] phy: phy-can-transceiver: Drop the gpio desc check
+Message-ID: <aLmfuA6kj1qq7Cec@lizhi-Precision-Tower-5810>
+References: <20250904-can-v5-0-23d8129b5e5d@nxp.com>
+ <20250904-can-v5-4-23d8129b5e5d@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904-can-v5-4-23d8129b5e5d@nxp.com>
+X-ClientProxiedBy: PH7P223CA0014.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:510:338::24) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <68a4bf6b747e2_27db9529461@iweiny-mobl.notmuch>
-X-CMS-MailID: 20250904141829epcas5p2829b463e4898f478d54615ed0c115544
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----At96h8_oYHqdM-HzD.Qv-z6Hqrsj5DpI3AOnKMLFsbTdazMP=_ead6b_"
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-X-Hop-Count: 3
-X-CMS-RootMailID: 20250730121228epcas5p411e5cc6d29fb9417178dbd07a1d8f02d
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121228epcas5p411e5cc6d29fb9417178dbd07a1d8f02d@epcas5p4.samsung.com>
-	<20250730121209.303202-6-s.neeraj@samsung.com>
-	<68a4bf6b747e2_27db9529461@iweiny-mobl.notmuch>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AM8PR04MB7380:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7c71e5ab-34c8-43b3-118d-08ddebbdf273
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|52116014|1800799024|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LVV9tghFx0KWK6bUFG+6rBn/tuWDTaa2AIeZVLoSYwAnS2ymxlVveMA+8l+b?=
+ =?us-ascii?Q?cCCZrr7o/GRgJByJ8q61wd6KpsFrPhP5/VmJeMx8FmmOyNdz/uUBd0UFN917?=
+ =?us-ascii?Q?e5gtWh9f1P7ffLTghOFnH4skI6ppxshof0d77EBkfwQuDeMA9B+4oVViqzdJ?=
+ =?us-ascii?Q?FSTvvJR3sLPXgkEfg5k6Ah5n91a+6Dymi8PNTKDVcm7r+nqbNPjpIm5g80pd?=
+ =?us-ascii?Q?XJLJtP/kfGFomDyByRzKtB6Kr2W7Vlty/ODWVOBPQ0n1DUak4q9f0QR2EVVW?=
+ =?us-ascii?Q?wpFSuVaIKKwidQ749mAF4aOhbrVAwXGcjhFwb7jNal0FyMJuXUqjHUIA5ZZT?=
+ =?us-ascii?Q?fCbuUSsf6bBywfrOa9774OOLaEY5e5rswgMSotzrU26/y8iqdESxF8xGlgTB?=
+ =?us-ascii?Q?s9waSETqdPtRJeRbN8tu2FbxS8OCo7BNtWxici83yzsw4O16bp0fPGPkcAHr?=
+ =?us-ascii?Q?M3ZnYYYwtnQK51gH8FrVOaW4aB6rqfZbfV9BXN+E81Xq7R3s7PipfLmHk1SC?=
+ =?us-ascii?Q?FFa9sq3RjfKZUVfYyQn1OAlQli+qtyUdvO/c2gn9ZQifEjuiU8xrVMP5l4Za?=
+ =?us-ascii?Q?bdzPfMdIziJJ/ZXeQPRXSRf3rR0rp+kLBY2GqiO7rSnU4uEhZW9wrHJx19CR?=
+ =?us-ascii?Q?/wVsTm8qO9m4rTfN7hxpQwrUNZRxAdmgd6bOtJGtnqdvWA5D/9EcAuwvMsfT?=
+ =?us-ascii?Q?d0AdkrSHRA6ucp43CEINgW2TR+fViMkUmA83Aaa6TC3AIr5GykW20DTlvO0J?=
+ =?us-ascii?Q?MwYT5Kt1dyx0ATwNz5JkyCoA2U24uQQFVh3A4YiDJZS1P0Dh5xbFZpi+LkhI?=
+ =?us-ascii?Q?nUY0nWysSXUnnlHVOoN7sGjJFdr5Lu9ARU/j0t7pSQhIVEsRLUJmcjXdyPDn?=
+ =?us-ascii?Q?4ytJXSzjrRfBKPUdC7IuQvBq+McIhMryz7vdr83rCgnYx8tLyvfP6GBHRlYj?=
+ =?us-ascii?Q?S7G4xrdiQnv1CHp5MEyJ1ln1xmlkl3TKoqpyXT12q3HjX+INbFAXE6DW5npy?=
+ =?us-ascii?Q?9Se1TiPBh6XRzD8ZRpbu+K542dQdGeXIpOU4J/zTcJ14AB1HsNpppQBiTcoM?=
+ =?us-ascii?Q?p+8F0b8wbs1oXzgroOjjeuUkENbsGArHX8osQOKx4Zn1RQb2HOuBupFOk8aT?=
+ =?us-ascii?Q?2e/SbCrFfPT22WPy8hdmUvnl2aAs0pz3v6GqjQahb2veItOjk601iU8N7oKT?=
+ =?us-ascii?Q?w0IIr9qW+xEOy/Mt0n4fIiOfsYSdtNy3+NIYFkmUm6HZINocXJBbsnmMJZhi?=
+ =?us-ascii?Q?r9u3z5K7catcOqtZI6XuxxMIxX55lrVKYm76iFbH0Wt4Z0WGm0dE7iwQF1Sg?=
+ =?us-ascii?Q?8hu8wSjIu+6097L0rEOWee/oSMhfgPYdYVZ1Qdy4Tu3Q75XWdYeizjkoZG7r?=
+ =?us-ascii?Q?Z5FOMo5HZdm5mAeGD8/XsOnT1HDDvboeGfJN16Fnx0djr3SvMaqOgX58F8Up?=
+ =?us-ascii?Q?CsACAM/wnF6ISrGldCk11I1TpIj5QRpA2AOaz2AjNWDXylXHRUQXIg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(52116014)(1800799024)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?fcUjYWDWHCx1Y7L8NxKWdGfaWt8rU6bMe8ALg6rfWZv98/oVEYg0B/vrcFaU?=
+ =?us-ascii?Q?Qe8kQ0soWGlDBC5F6Q85mnxyQSYaQEa6eOtHRSS28FaIBicAodHGqGcREPHn?=
+ =?us-ascii?Q?QrRmaqZvQ7fg4Cw9yS1a9ugIMKnHCZpgJ6l2O9juGrTzfR059DgKMpmJIQJ1?=
+ =?us-ascii?Q?fvKALPPPFZdchIh6qI1sx89ukMtmLmC4Xqx/YWDwjjqIc8A5en5vPON4m8m4?=
+ =?us-ascii?Q?zJhqzG145t4BET5FF8NgW33iP8PR1+0jAPm0S3bnmxofR3pSiXZMD1GyapaG?=
+ =?us-ascii?Q?e2RJOrIYYLpf4eFm8Uuk0h2N/luMUrEOMgrzJtaWOmnHHUx43KXnCWatxmVK?=
+ =?us-ascii?Q?XFJTfBv55zkSAnGhWpXSZ5w7rRRzbvT0qCMTCvYn64gploY34NdJ2dzW5gPG?=
+ =?us-ascii?Q?cg3z6LowFvrAH8eYL4yHbLa1lrPiGkO4UbvxIYU4oQuYI7XEBtzkWO9rOaMU?=
+ =?us-ascii?Q?I/52rWTZ5fLqB8aLYFRKOq66FxMFJht29feB9+M6HpRJawRekKc8JAunK/go?=
+ =?us-ascii?Q?a9TxxinqRGCU8Bi9W2J/Dfp/YPZUiCClWXIwAFuEFp5gWCZNDAxfmUkCrCS3?=
+ =?us-ascii?Q?1j4eIJsiFToqPRCHJ6LxCPH6oMOxug3JeOA5yUNl6ooW8My322v2zYjtULl/?=
+ =?us-ascii?Q?CTusSeHRVm+gJFWytzY3r8wepMvRMD/YyoYi0H1vZUUrmvVjX/Zg/3lc2G4G?=
+ =?us-ascii?Q?RKS9L8djg0Y2JUMYojEQiSJw9wIEd3HV797q3y+vt/yNBDzOK86HlGoP+ZL1?=
+ =?us-ascii?Q?QuSA8fC3BfNwn01cdO/utvnohlHKtCetqgII3+W26hV6oy8Brk9qPyK21izf?=
+ =?us-ascii?Q?cNaX18NAVmH7yRHdBu/5PKHRFk8XNl6vyhHyvllr0emMOCNeUKGESWRnIxtG?=
+ =?us-ascii?Q?RBpVkmMun5quzaHObyazij3gbnr4UsKFbDUc4v4JoRvXXmJCPTyaBRhCWY3s?=
+ =?us-ascii?Q?6b5BPf0fYAWuXCITYF1O0Zr5Gplryn5ORqNvu69Ot0Ysv76yf65fYDbCZMXI?=
+ =?us-ascii?Q?SDFX8ISVOcAVVIloRG+0gnyx2VDT59KLhWidNuh6oiFvD+AFPj/fTs6MZ/cc?=
+ =?us-ascii?Q?UOzSyb15G7ajGhp2yDXDO+l8ehFUEdwbh2bmn/5SjxoWsK0s7KqkLD74ghXe?=
+ =?us-ascii?Q?Vb4lUy/cU7A/5XCEu5JTvxW2cWvpjdb+osBUCs/Os9FqkwA52fCYEF9gjHoj?=
+ =?us-ascii?Q?plZAO2AKa1lOyXIrNL1B8IOfbIr8cbB64bR7PrUatwZ4Ib3CtCHr8SVZmMzb?=
+ =?us-ascii?Q?egYs+nXkhQ8n0eBPW5bv7ILkKWzfyu9ldAJNNTfgxEOquOTfumGka2lBrB12?=
+ =?us-ascii?Q?vkixKTzKekMpduNxHGPm13kMt0bPFKtgkZX97dD4A2pItT3xZsjPafdekHq4?=
+ =?us-ascii?Q?4cQdxjhWEYLlFpGN/WKl33WC3McnQIESk87Zg7V2i4A3foVnWD7YqTUtliwC?=
+ =?us-ascii?Q?t9ntXfkkA1u4mek9yQqFdD8jOK+nyTh30YHOf+ENtw0I+CnDc9RGKY3Q4Ot7?=
+ =?us-ascii?Q?3adoKeTI9UGaS8QpvHPdNnQrp/uHCQnbbYJghqn4C1uRWVu1Go0J2nROejpV?=
+ =?us-ascii?Q?pUDwUx96F6Y5umAm3U3slw2zFCiQcPdAImAauupa?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c71e5ab-34c8-43b3-118d-08ddebbdf273
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 14:18:40.8510
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bMkclWMrgi9S2+v4McQUZUCJvXhyttxQS09+4WncNOE8it/QqY0NTqrO/q2y5/GcanSLkJVKJ3jdxBdrk8J9Ew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7380
 
-------At96h8_oYHqdM-HzD.Qv-z6Hqrsj5DpI3AOnKMLFsbTdazMP=_ead6b_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-
-On 19/08/25 01:16PM, Ira Weiny wrote:
->RE Subject: [PATCH V2 05/20] nvdimm/region_label: Add region label updation routine
->                                                                   ^^^^^^^
->								   update
-
-Sure, I will fix it in next patch-set
-
+On Thu, Sep 04, 2025 at 04:36:47PM +0800, Peng Fan wrote:
+> gpiod_set_value_cansleep has an internal check on gpio_desc using
+> 'VALIDATE_DESC(desc)', the check before invoking gpiod_set_value_cansleep
+> could be removed.
 >
->Neeraj Kumar wrote:
->> Added __pmem_region_label_update region label update routine to update
->  ^^^
->  Add
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Sure, I will fix it in next patch-set
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
+> ---
+>  drivers/phy/phy-can-transceiver.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
 >
->> region label.
+> diff --git a/drivers/phy/phy-can-transceiver.c b/drivers/phy/phy-can-transceiver.c
+> index f06b1df76ada023f432dce892c3346f45397ab54..b7d75a78d9242e2003660a87d2d4c9f784aea523 100644
+> --- a/drivers/phy/phy-can-transceiver.c
+> +++ b/drivers/phy/phy-can-transceiver.c
+> @@ -46,10 +46,8 @@ static int can_transceiver_phy_power_on(struct phy *phy)
+>  			return ret;
+>  		}
+>  	}
+> -	if (can_transceiver_phy->standby_gpio)
+> -		gpiod_set_value_cansleep(can_transceiver_phy->standby_gpio, 0);
+> -	if (can_transceiver_phy->enable_gpio)
+> -		gpiod_set_value_cansleep(can_transceiver_phy->enable_gpio, 1);
+> +	gpiod_set_value_cansleep(can_transceiver_phy->standby_gpio, 0);
+> +	gpiod_set_value_cansleep(can_transceiver_phy->enable_gpio, 1);
 >
->How about:
+>  	return 0;
+>  }
+> @@ -59,10 +57,8 @@ static int can_transceiver_phy_power_off(struct phy *phy)
+>  {
+>  	struct can_transceiver_phy *can_transceiver_phy = phy_get_drvdata(phy);
 >
->Add __pmem_region_label_update to update region labels.  ???
-
-May be I will re-use __pmem_label_update() for region label also.
-
+> -	if (can_transceiver_phy->standby_gpio)
+> -		gpiod_set_value_cansleep(can_transceiver_phy->standby_gpio, 1);
+> -	if (can_transceiver_phy->enable_gpio)
+> -		gpiod_set_value_cansleep(can_transceiver_phy->enable_gpio, 0);
+> +	gpiod_set_value_cansleep(can_transceiver_phy->standby_gpio, 1);
+> +	gpiod_set_value_cansleep(can_transceiver_phy->enable_gpio, 0);
+>  	if (can_transceiver_phy->priv->mux_state)
+>  		mux_state_deselect(can_transceiver_phy->priv->mux_state);
 >
->But is that really what this patch is doing?  And why do we need such a
->function?
 >
->Why is __pmem_label_update changing?
-
-__pmem_label_update() is changing because modification of mutex locking.
-Yes, Its not really related hunk, So I will handle it in separate
-patch-set.
-
+> --
+> 2.37.1
 >
->>
->> Also used guard(mutex)(&nd_mapping->lock) in place of mutex_lock() and
->> mutex_unlock()
->
->Why?
-
-As per Jonathan's comment on V1 have modified it, and added it in commit
-message. seems its not required in commit message. I will remove it
-
->
->I'm not full out naking the patch but I think its purpose needs to be
->clear.
->
->More below...
->
->[snip]
->
->>  static bool slot_valid(struct nvdimm_drvdata *ndd,
->>  		struct nd_lsa_label *lsa_label, u32 slot)
->>  {
->> @@ -960,7 +970,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
->>  		return rc;
->>
->>  	/* Garbage collect the previous label */
->> -	mutex_lock(&nd_mapping->lock);
->> +	guard(mutex)(&nd_mapping->lock);
->
->This, and the following hunks, looks like a completely separate change and
->should be in it's own pre-patch with a justification of the change.
-
-Yes this hunk is not related, So I will create a separate patch for this change
-
->
->>  	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
->>  		if (!label_ent->label)
->>  			continue;
->> @@ -972,20 +982,20 @@ static int __pmem_label_update(struct nd_region *nd_region,
->>  	/* update index */
->>  	rc = nd_label_write_index(ndd, ndd->ns_next,
->>  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
->> -	if (rc == 0) {
->> -		list_for_each_entry(label_ent, &nd_mapping->labels, list)
->> -			if (!label_ent->label) {
->> -				label_ent->label = lsa_label;
->> -				lsa_label = NULL;
->> -				break;
->> -			}
->> -		dev_WARN_ONCE(&nspm->nsio.common.dev, lsa_label,
->> -				"failed to track label: %d\n",
->> -				to_slot(ndd, lsa_label));
->> -		if (lsa_label)
->> -			rc = -ENXIO;
->> -	}
->> -	mutex_unlock(&nd_mapping->lock);
->> +	if (rc)
->> +		return rc;
->> +
->> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
->> +		if (!label_ent->label) {
->> +			label_ent->label = lsa_label;
->> +			lsa_label = NULL;
->> +			break;
->> +		}
->> +	dev_WARN_ONCE(&nspm->nsio.common.dev, lsa_label,
->> +			"failed to track label: %d\n",
->> +			to_slot(ndd, lsa_label));
->> +	if (lsa_label)
->> +		rc = -ENXIO;
->>
->>  	return rc;
->>  }
->> @@ -1127,6 +1137,137 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
->>  	return 0;
->>  }
->>
->
->[snip]
->
->> diff --git a/drivers/nvdimm/label.h b/drivers/nvdimm/label.h
->> index 4883b3a1320f..0f428695017d 100644
->> --- a/drivers/nvdimm/label.h
->> +++ b/drivers/nvdimm/label.h
->> @@ -190,6 +190,7 @@ struct nd_namespace_label {
->>  struct nd_lsa_label {
->>  	union {
->>  		struct nd_namespace_label ns_label;
->> +		struct cxl_region_label rg_label;
->
->Why can't struct cxl_region_label be it's own structure?  Or just be part
->of the nd_namespace_label union?
-
-Thanks Ira for your suggestion. I will revisit this change and try using
-region label handling separately instead of using union.
-
->
->>  	};
->>  };
->>
->> @@ -233,4 +234,5 @@ struct nd_region;
->>  struct nd_namespace_pmem;
->>  int nd_pmem_namespace_label_update(struct nd_region *nd_region,
->>  		struct nd_namespace_pmem *nspm, resource_size_t size);
->> +int nd_pmem_region_label_update(struct nd_region *nd_region);
->>  #endif /* __LABEL_H__ */
->> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
->> index 5b73119dc8fd..02ae8162566c 100644
->> --- a/drivers/nvdimm/namespace_devs.c
->> +++ b/drivers/nvdimm/namespace_devs.c
->> @@ -232,6 +232,18 @@ static ssize_t __alt_name_store(struct device *dev, const char *buf,
->>  	return rc;
->>  }
->>
->> +int nd_region_label_update(struct nd_region *nd_region)
->
->Is this called in a later patch?
->
->Ira
-
-Yes its called from patch 20 (cxl/core/pmem_region.c) by region_label_update_store()
-
-
-Regards,
-Neeraj
-
-------At96h8_oYHqdM-HzD.Qv-z6Hqrsj5DpI3AOnKMLFsbTdazMP=_ead6b_
-Content-Type: text/plain; charset="utf-8"
-
-
-------At96h8_oYHqdM-HzD.Qv-z6Hqrsj5DpI3AOnKMLFsbTdazMP=_ead6b_--
-
 
