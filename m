@@ -1,351 +1,211 @@
-Return-Path: <linux-kernel+bounces-800604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9DA2B439BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:20:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 655DAB439A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A86553BD3C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:20:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DBE83AB180
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0032F4A08;
-	Thu,  4 Sep 2025 11:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4A12FC87E;
+	Thu,  4 Sep 2025 11:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="cnQTmwcd"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bRPTOnXh"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240C22A1B2
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4CB2EC08B;
+	Thu,  4 Sep 2025 11:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756984812; cv=none; b=CRdbV99F+ea7nyoGII3GXE9O8OzABq9BKmB/zW6/8kvEKoymcJgsIkisoK/5e4IG4Mwm5+yStLy6NT/5tmwEXJObw0NXxkhVRN49LSpWdKINH3d8oBjFe0cF5RvOjaGO6V+bMfjO2gBdBlfo4Hm2dIPxfyBQNqik6U+mzpd21os=
+	t=1756984358; cv=none; b=rTksIZz9D7Iphvfp0hmD5XlelzhBi6Hw4krII1kF36FOZagZ+zEo6F6T8/4f+xArhPQeC2gpWmbScqjBIg9kw3Y/xSDV8oh+CrfIC4tnvHTpXa8DvyNUY3/eGncLdQEoZdFopc9JbsafL+WYlUVS0rp0TTEgx7Hrar4taN9sUmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756984812; c=relaxed/simple;
-	bh=Dmb8SBDJOM16cZwrxUkS9YN30urgHiFF33K//ejpJ1Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=chNqiKLxkiPQYtDq8ixWumCxEZC4LU+O2F8KY5WVGyF8EYD5iAdOKH1uzjNTcKGmHO+AnhSunUP7YYIVmtWPRWqj1bL1D6phcQ/ftABFIaKpeQX4C86zhCX0u+0b5Owb0pZbYenjLLe6MDKwIz3e3DekB+cVpWPMVGmTlfu+dVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=cnQTmwcd; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cHcJG2tj1z9tfj;
-	Thu,  4 Sep 2025 13:12:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1756984334; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mgFBwRT9dIgvy3AOVDN4aP5Af2uJGAVza9uOG2VbXEY=;
-	b=cnQTmwcdlWm+TBO80LPk6LJaHAodVcEWyFx+5bX7lkb23KmvvO5aE1iHSW06b5/6E+NoVv
-	aslS3RmQQB0iIqfKs68jR8wtZCN8PKLk5q/GwYKvjCGy0oWOGyovTTtqbwIO+uJqfAV49t
-	7AA7S8u9T3/cF8Sdym5iN7Q/sEVixnXpETjn7qj9PJgrdEo/YFpIJsU8B7Rvo9rjd1XLdS
-	iQWbUunYm5vC5IZpEnujZah1GVgVbw1zSGoDhLpfclkxw7fi/kcjZ0Ccw71TSrM/+9EUX7
-	+hu9zHv4JMvjUKblgATraio0dcBFt6rdLIvZOYBO0kcLyzHB/QsneTfY5EoTBA==
-Message-ID: <b35506de99be38f560709660b10667ca9f386181.camel@mailbox.org>
-Subject: Re: [PATCH v2] Revert "drm/nouveau: Remove waitque for sched
- teardown"
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Philipp
- Stanner <phasta@kernel.org>, Lyude Paul <lyude@redhat.com>, Danilo
- Krummrich <dakr@kernel.org>,  David Airlie <airlied@gmail.com>, Simona
- Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 04 Sep 2025 13:12:10 +0200
-In-Reply-To: <3407fd9d-68e0-4c45-9761-98ede450bb25@amd.com>
-References: <20250901083107.10206-2-phasta@kernel.org>
-	 <3407fd9d-68e0-4c45-9761-98ede450bb25@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1756984358; c=relaxed/simple;
+	bh=NUh4Ct3rcDGpktOBV6+CRcuN5e1CANyp9gZr1JFgsFk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mrf/habRCGzUYiduJPwWML1wkLLFnnVUZDfJ17vXILjBnl+uczc1+lig8hYVgwJCKFBoY8MUniv4WU6fFPvl90k1FCIBjxAmYGgzWyqPVxaKVl/RETLP5M8WWTvVuAbSUJkShHfrlLnuCP2FPxzfLUMLPNqMF6MOPpu41BOxjig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bRPTOnXh; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58493o0q001636;
+	Thu, 4 Sep 2025 11:12:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=fJdoxL
+	fUDXXsS/d69LQviT/kSS1XVQYsqlBlsnjzJQY=; b=bRPTOnXhvvfQjliamjrXZA
+	JRZxYRQHQu4JTWNSbxihlku4vQ91bFKXgW2odznOK38B9O449LyCumbwoDgFqW5C
+	XE1XolxAkgduV6EVXRmO0C8UN/tS6Z5uEIdbOwj0MopPnQeAm9Q8UqsR/1xCXoNw
+	O14fLE25lODSFC26C6e3BdQlSqg58XQvGLuXN6Q4XgVzX1htcvcpij9YHG0DvfFv
+	1q2pzpUcA2ahos6YmRnmjq4vPEnfp5wtCc59rvlD2XkmpQ3iTwJQOzxAJsRrc3yo
+	vMNjPymryOBOprFAtXaJZfx1ajTF58er8oHHaIrtcip03MWe9iHmIxXI6Iwnr3zw
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48wshf5fq6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Sep 2025 11:12:33 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 584916hH014345;
+	Thu, 4 Sep 2025 11:12:33 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48veb3kv9u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Sep 2025 11:12:33 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 584BCSQ851446232
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 4 Sep 2025 11:12:28 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CCC682004E;
+	Thu,  4 Sep 2025 11:12:28 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DC20420043;
+	Thu,  4 Sep 2025 11:12:27 +0000 (GMT)
+Received: from [9.87.130.193] (unknown [9.87.130.193])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  4 Sep 2025 11:12:27 +0000 (GMT)
+Message-ID: <7b5c5629-49b1-42c0-ad88-e955be7b6e2b@linux.ibm.com>
+Date: Thu, 4 Sep 2025 13:12:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: a4ascgdpn1w3bydypredr54rs7bd1c3w
-X-MBO-RS-ID: 90a219ffd1067569ea5
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: s390: Fix access to unavailable adapter indicator
+ pages during postcopy
+To: Thomas Huth <thuth@redhat.com>, Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org
+Cc: Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Douglas Freimuth <freimuth@linux.ibm.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>
+References: <20250821152309.847187-1-thuth@redhat.com>
+Content-Language: en-US
+From: Christian Borntraeger <borntraeger@linux.ibm.com>
+In-Reply-To: <20250821152309.847187-1-thuth@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: -DVYUYSDcWqDqcfSbqDpZA1CMZZZTQOk
+X-Authority-Analysis: v=2.4 cv=do3bC0g4 c=1 sm=1 tr=0 ts=68b97422 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8 a=XFCOAtceyYmSXJIPWGwA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: -DVYUYSDcWqDqcfSbqDpZA1CMZZZTQOk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAyMDA0MCBTYWx0ZWRfX+OIuZGaxCPHI
+ qqIuXuLPOGlefmOgGgmBsRpNE//VCq2m7SJamL6w4AZodUGQ0hBf/cOFRUg8lFZ4et1CEHIS0Fg
+ DUH+qioJGH9clJNr9HB6BwkJHlDQUPRGl9Fac+U6bf0nTF0yTW1LENoRTUp3nHKzVRr4tONThnA
+ Sna2b6IUChwuLb1o3xIgy30xJuB4qaYgHC5e4UHc9XEuwGRUEA6pIbDQhkDW+dAGRP3sjxy4Efi
+ 6ug6UFhJgA7+MO7mcSbjCMEQaw1XkhuJNz/GTnerobFKLcmusuFFzsxJ0w52J7peHgjXE2FeS21
+ EpBwgxZjIau6JMkdgm86zu3F61jzJjL0aMCF59tENIyC52p/zRMlPccbv9Z3dUTCFJE2fOF6S3c
+ yNDJSAam
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1011 impostorscore=0 bulkscore=0 suspectscore=0
+ malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509020040
 
-On Thu, 2025-09-04 at 12:27 +0200, Christian K=C3=B6nig wrote:
-> On 01.09.25 10:31, Philipp Stanner wrote:
-> > This reverts:
-> >=20
-> > commit bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
-> > commit 5f46f5c7af8c ("drm/nouveau: Add new callback for scheduler teard=
-own")
-> >=20
-> > from the drm/sched teardown leak fix series:
-> >=20
-> > https://lore.kernel.org/dri-devel/20250710125412.128476-2-phasta@kernel=
-.org/
-> >=20
-> > The aforementioned series removed a blocking waitqueue from
-> > nouveau_sched_fini(). It was mistakenly assumed that this waitqueue onl=
-y
-> > prevents jobs from leaking, which the series fixed.
-> >=20
-> > The waitqueue, however, also guarantees that all VM_BIND related jobs
-> > are finished in order, cleaning up mappings in the GPU's MMU. These job=
-s
-> > must be executed sequentially. Without the waitqueue, this is no longer
-> > guaranteed, because entity and scheduler teardown can race with each
-> > other.
->=20
-> That sounds like exactly the kind of issues I tried to catch with the rec=
-ent dma_fence changes.
+CC Douglas, since Doug is looking into kvm_arch_set_irq_inatomic and this might have implications.
 
-Link? :)
 
->=20
-> Going to keep working on that and potentially using this here as blueprin=
-t for something it should catch.
-
-This is more like a nouveau-specific issue. The problem is that
-unmapping mappings in the GPU's MMU must be done in a specific order,
-and all the unmappings must be performed, not canceled.
-
-For EXEC jobs, it's perfectly fine to cancel pending jobs, remove the
-waitqueue and just rush through drm_sched_fini().
-
-I don't know the issue you're describing, but I don't think a feature
-in dma_fence could help with that specific Nouveau problem. dma_fence
-can't force the driver to submit jobs in a specific order or to wait
-until they're all completed.
-
-Gr=C3=BC=C3=9Fe
-P.
-
->=20
-> Regards,
-> Christian.
->=20
-> >=20
-> > Revert all patches related to the waitqueue removal.
-> >=20
-> > Fixes: bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
-> > Suggested-by: Danilo Krummrich <dakr@kernel.org>
-> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> > ---
-> > Changes in v2:
-> > =C2=A0 - Don't revert commit 89b2675198ab ("drm/nouveau: Make fence con=
-tainer helper usable driver-wide")
-> > =C2=A0 - Add Fixes-tag
-> > ---
-> > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.c | 15 -----------
-> > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.h |=C2=A0 1 -
-> > =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.c | 35 ++++++++++----------=
------
-> > =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.h |=C2=A0 9 ++++---
-> > =C2=A0drivers/gpu/drm/nouveau/nouveau_uvmm.c=C2=A0 |=C2=A0 8 +++---
-> > =C2=A05 files changed, 24 insertions(+), 44 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/=
-nouveau/nouveau_fence.c
-> > index 9f345a008717..869d4335c0f4 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_fence.c
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
-> > @@ -240,21 +240,6 @@ nouveau_fence_emit(struct nouveau_fence *fence)
-> > =C2=A0	return ret;
-> > =C2=A0}
-> > =C2=A0
-> > -void
-> > -nouveau_fence_cancel(struct nouveau_fence *fence)
-> > -{
-> > -	struct nouveau_fence_chan *fctx =3D nouveau_fctx(fence);
-> > -	unsigned long flags;
-> > -
-> > -	spin_lock_irqsave(&fctx->lock, flags);
-> > -	if (!dma_fence_is_signaled_locked(&fence->base)) {
-> > -		dma_fence_set_error(&fence->base, -ECANCELED);
-> > -		if (nouveau_fence_signal(fence))
-> > -			nvif_event_block(&fctx->event);
-> > -	}
-> > -	spin_unlock_irqrestore(&fctx->lock, flags);
-> > -}
-> > -
-> > =C2=A0bool
-> > =C2=A0nouveau_fence_done(struct nouveau_fence *fence)
-> > =C2=A0{
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.h b/drivers/gpu/drm/=
-nouveau/nouveau_fence.h
-> > index 9957a919bd38..183dd43ecfff 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_fence.h
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.h
-> > @@ -29,7 +29,6 @@ void nouveau_fence_unref(struct nouveau_fence **);
-> > =C2=A0
-> > =C2=A0int=C2=A0 nouveau_fence_emit(struct nouveau_fence *);
-> > =C2=A0bool nouveau_fence_done(struct nouveau_fence *);
-> > -void nouveau_fence_cancel(struct nouveau_fence *fence);
-> > =C2=A0int=C2=A0 nouveau_fence_wait(struct nouveau_fence *, bool lazy, b=
-ool intr);
-> > =C2=A0int=C2=A0 nouveau_fence_sync(struct nouveau_bo *, struct nouveau_=
-channel *, bool exclusive, bool intr);
-> > =C2=A0
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/=
-nouveau/nouveau_sched.c
-> > index 0cc0bc9f9952..e60f7892f5ce 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_sched.c
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
-> > @@ -11,7 +11,6 @@
-> > =C2=A0#include "nouveau_exec.h"
-> > =C2=A0#include "nouveau_abi16.h"
-> > =C2=A0#include "nouveau_sched.h"
-> > -#include "nouveau_chan.h"
-> > =C2=A0
-> > =C2=A0#define NOUVEAU_SCHED_JOB_TIMEOUT_MS		10000
-> > =C2=A0
-> > @@ -122,9 +121,11 @@ nouveau_job_done(struct nouveau_job *job)
-> > =C2=A0{
-> > =C2=A0	struct nouveau_sched *sched =3D job->sched;
-> > =C2=A0
-> > -	spin_lock(&sched->job_list.lock);
-> > +	spin_lock(&sched->job.list.lock);
-> > =C2=A0	list_del(&job->entry);
-> > -	spin_unlock(&sched->job_list.lock);
-> > +	spin_unlock(&sched->job.list.lock);
-> > +
-> > +	wake_up(&sched->job.wq);
-> > =C2=A0}
-> > =C2=A0
-> > =C2=A0void
-> > @@ -305,9 +306,9 @@ nouveau_job_submit(struct nouveau_job *job)
-> > =C2=A0	}
-> > =C2=A0
-> > =C2=A0	/* Submit was successful; add the job to the schedulers job list=
-. */
-> > -	spin_lock(&sched->job_list.lock);
-> > -	list_add(&job->entry, &sched->job_list.head);
-> > -	spin_unlock(&sched->job_list.lock);
-> > +	spin_lock(&sched->job.list.lock);
-> > +	list_add(&job->entry, &sched->job.list.head);
-> > +	spin_unlock(&sched->job.list.lock);
-> > =C2=A0
-> > =C2=A0	drm_sched_job_arm(&job->base);
-> > =C2=A0	job->done_fence =3D dma_fence_get(&job->base.s_fence->finished);
-> > @@ -392,23 +393,10 @@ nouveau_sched_free_job(struct drm_sched_job *sche=
-d_job)
-> > =C2=A0	nouveau_job_fini(job);
-> > =C2=A0}
-> > =C2=A0
-> > -static void
-> > -nouveau_sched_cancel_job(struct drm_sched_job *sched_job)
-> > -{
-> > -	struct nouveau_fence *fence;
-> > -	struct nouveau_job *job;
-> > -
-> > -	job =3D to_nouveau_job(sched_job);
-> > -	fence =3D to_nouveau_fence(job->done_fence);
-> > -
-> > -	nouveau_fence_cancel(fence);
-> > -}
-> > -
-> > =C2=A0static const struct drm_sched_backend_ops nouveau_sched_ops =3D {
-> > =C2=A0	.run_job =3D nouveau_sched_run_job,
-> > =C2=A0	.timedout_job =3D nouveau_sched_timedout_job,
-> > =C2=A0	.free_job =3D nouveau_sched_free_job,
-> > -	.cancel_job =3D nouveau_sched_cancel_job,
-> > =C2=A0};
-> > =C2=A0
-> > =C2=A0static int
-> > @@ -458,8 +446,9 @@ nouveau_sched_init(struct nouveau_sched *sched, str=
-uct nouveau_drm *drm,
-> > =C2=A0		goto fail_sched;
-> > =C2=A0
-> > =C2=A0	mutex_init(&sched->mutex);
-> > -	spin_lock_init(&sched->job_list.lock);
-> > -	INIT_LIST_HEAD(&sched->job_list.head);
-> > +	spin_lock_init(&sched->job.list.lock);
-> > +	INIT_LIST_HEAD(&sched->job.list.head);
-> > +	init_waitqueue_head(&sched->job.wq);
-> > =C2=A0
-> > =C2=A0	return 0;
-> > =C2=A0
-> > @@ -493,12 +482,16 @@ nouveau_sched_create(struct nouveau_sched **psche=
-d, struct nouveau_drm *drm,
-> > =C2=A0	return 0;
-> > =C2=A0}
-> > =C2=A0
-> > +
-> > =C2=A0static void
-> > =C2=A0nouveau_sched_fini(struct nouveau_sched *sched)
-> > =C2=A0{
-> > =C2=A0	struct drm_gpu_scheduler *drm_sched =3D &sched->base;
-> > =C2=A0	struct drm_sched_entity *entity =3D &sched->entity;
-> > =C2=A0
-> > +	rmb(); /* for list_empty to work without lock */
-> > +	wait_event(sched->job.wq, list_empty(&sched->job.list.head));
-> > +
-> > =C2=A0	drm_sched_entity_fini(entity);
-> > =C2=A0	drm_sched_fini(drm_sched);
-> > =C2=A0
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.h b/drivers/gpu/drm/=
-nouveau/nouveau_sched.h
-> > index b98c3f0bef30..20cd1da8db73 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_sched.h
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_sched.h
-> > @@ -103,9 +103,12 @@ struct nouveau_sched {
-> > =C2=A0	struct mutex mutex;
-> > =C2=A0
-> > =C2=A0	struct {
-> > -		struct list_head head;
-> > -		spinlock_t lock;
-> > -	} job_list;
-> > +		struct {
-> > +			struct list_head head;
-> > +			spinlock_t lock;
-> > +		} list;
-> > +		struct wait_queue_head wq;
-> > +	} job;
-> > =C2=A0};
-> > =C2=A0
-> > =C2=A0int nouveau_sched_create(struct nouveau_sched **psched, struct no=
-uveau_drm *drm,
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/n=
-ouveau/nouveau_uvmm.c
-> > index d94a85509176..79eefdfd08a2 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-> > @@ -1019,8 +1019,8 @@ bind_validate_map_sparse(struct nouveau_job *job,=
- u64 addr, u64 range)
-> > =C2=A0	u64 end =3D addr + range;
-> > =C2=A0
-> > =C2=A0again:
-> > -	spin_lock(&sched->job_list.lock);
-> > -	list_for_each_entry(__job, &sched->job_list.head, entry) {
-> > +	spin_lock(&sched->job.list.lock);
-> > +	list_for_each_entry(__job, &sched->job.list.head, entry) {
-> > =C2=A0		struct nouveau_uvmm_bind_job *bind_job =3D to_uvmm_bind_job(__j=
-ob);
-> > =C2=A0
-> > =C2=A0		list_for_each_op(op, &bind_job->ops) {
-> > @@ -1030,7 +1030,7 @@ bind_validate_map_sparse(struct nouveau_job *job,=
- u64 addr, u64 range)
-> > =C2=A0
-> > =C2=A0				if (!(end <=3D op_addr || addr >=3D op_end)) {
-> > =C2=A0					nouveau_uvmm_bind_job_get(bind_job);
-> > -					spin_unlock(&sched->job_list.lock);
-> > +					spin_unlock(&sched->job.list.lock);
-> > =C2=A0					wait_for_completion(&bind_job->complete);
-> > =C2=A0					nouveau_uvmm_bind_job_put(bind_job);
-> > =C2=A0					goto again;
-> > @@ -1038,7 +1038,7 @@ bind_validate_map_sparse(struct nouveau_job *job,=
- u64 addr, u64 range)
-> > =C2=A0			}
-> > =C2=A0		}
-> > =C2=A0	}
-> > -	spin_unlock(&sched->job_list.lock);
-> > +	spin_unlock(&sched->job.list.lock);
-> > =C2=A0}
-> > =C2=A0
-> > =C2=A0static int
->=20
+Am 21.08.25 um 17:23 schrieb Thomas Huth:
+> From: Thomas Huth <thuth@redhat.com>
+> 
+> When you run a KVM guest with vhost-net and migrate that guest to
+> another host, and you immediately enable postcopy after starting the
+> migration, there is a big chance that the network connection of the
+> guest won't work anymore on the destination side after the migration.
+> 
+> With a debug kernel v6.16.0, there is also a call trace that looks
+> like this:
+> 
+>   FAULT_FLAG_ALLOW_RETRY missing 881
+>   CPU: 6 UID: 0 PID: 549 Comm: kworker/6:2 Kdump: loaded Not tainted 6.16.0 #56 NONE
+>   Hardware name: IBM 3931 LA1 400 (LPAR)
+>   Workqueue: events irqfd_inject [kvm]
+>   Call Trace:
+>    [<00003173cbecc634>] dump_stack_lvl+0x104/0x168
+>    [<00003173cca69588>] handle_userfault+0xde8/0x1310
+>    [<00003173cc756f0c>] handle_pte_fault+0x4fc/0x760
+>    [<00003173cc759212>] __handle_mm_fault+0x452/0xa00
+>    [<00003173cc7599ba>] handle_mm_fault+0x1fa/0x6a0
+>    [<00003173cc73409a>] __get_user_pages+0x4aa/0xba0
+>    [<00003173cc7349e8>] get_user_pages_remote+0x258/0x770
+>    [<000031734be6f052>] get_map_page+0xe2/0x190 [kvm]
+>    [<000031734be6f910>] adapter_indicators_set+0x50/0x4a0 [kvm]
+>    [<000031734be7f674>] set_adapter_int+0xc4/0x170 [kvm]
+>    [<000031734be2f268>] kvm_set_irq+0x228/0x3f0 [kvm]
+>    [<000031734be27000>] irqfd_inject+0xd0/0x150 [kvm]
+>    [<00003173cc00c9ec>] process_one_work+0x87c/0x1490
+>    [<00003173cc00dda6>] worker_thread+0x7a6/0x1010
+>    [<00003173cc02dc36>] kthread+0x3b6/0x710
+>    [<00003173cbed2f0c>] __ret_from_fork+0xdc/0x7f0
+>    [<00003173cdd737ca>] ret_from_fork+0xa/0x30
+>   3 locks held by kworker/6:2/549:
+>    #0: 00000000800bc958 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x7ee/0x1490
+>    #1: 000030f3d527fbd0 ((work_completion)(&irqfd->inject)){+.+.}-{0:0}, at: process_one_work+0x81c/0x1490
+>    #2: 00000000f99862b0 (&mm->mmap_lock){++++}-{3:3}, at: get_map_page+0xa8/0x190 [kvm]
+> 
+> The "FAULT_FLAG_ALLOW_RETRY missing" indicates that handle_userfaultfd()
+> saw a page fault request without ALLOW_RETRY flag set, hence userfaultfd
+> cannot remotely resolve it (because the caller was asking for an immediate
+> resolution, aka, FAULT_FLAG_NOWAIT, while remote faults can take time).
+> With that, get_map_page() failed and the irq was lost.
+> 
+> We should not be strictly in an atomic environment here and the worker
+> should be sleepable (the call is done during an ioctl from userspace),
+> so we can allow adapter_indicators_set() to just sleep waiting for the
+> remote fault instead.
+> 
+> Link: https://issues.redhat.com/browse/RHEL-42486
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> [thuth: Assembled patch description and fixed some cosmetical issues]
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
+> ---
+>   Note: Instructions for reproducing the bug can be found in the ticket here:
+>   https://issues.redhat.com/browse/RHEL-42486?focusedId=26661116#comment-26661116
+> 
+>   arch/s390/kvm/interrupt.c | 15 +++++++++++----
+>   1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+> index 60c360c18690f..dcce826ae9875 100644
+> --- a/arch/s390/kvm/interrupt.c
+> +++ b/arch/s390/kvm/interrupt.c
+> @@ -2777,12 +2777,19 @@ static unsigned long get_ind_bit(__u64 addr, unsigned long bit_nr, bool swap)
+>   
+>   static struct page *get_map_page(struct kvm *kvm, u64 uaddr)
+>   {
+> +	struct mm_struct *mm = kvm->mm;
+>   	struct page *page = NULL;
+> +	int locked = 1;
+> +
+> +	if (mmget_not_zero(mm)) {
+> +		mmap_read_lock(mm);
+> +		get_user_pages_remote(mm, uaddr, 1, FOLL_WRITE,
+> +				      &page, &locked);
+> +		if (locked)
+> +			mmap_read_unlock(mm);
+> +		mmput(mm);
+> +	}
+>   
+> -	mmap_read_lock(kvm->mm);
+> -	get_user_pages_remote(kvm->mm, uaddr, 1, FOLL_WRITE,
+> -			      &page, NULL);
+> -	mmap_read_unlock(kvm->mm);
+>   	return page;
+>   }
+>   
 
 
