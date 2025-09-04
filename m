@@ -1,386 +1,118 @@
-Return-Path: <linux-kernel+bounces-799679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D103EB42EDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:34:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC4B1B42EE3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3211BC399C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:34:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DAC33B625B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76914199E9D;
-	Thu,  4 Sep 2025 01:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF491DF97C;
+	Thu,  4 Sep 2025 01:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JuTnpxeg"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="IEj1Q5BS"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D791DFCB;
-	Thu,  4 Sep 2025 01:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80B71DFCB;
+	Thu,  4 Sep 2025 01:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756949636; cv=none; b=sAAHNsvwMqeA2/JIxHotabfzGjYSQKshBrE6PWiPUvRENEdGHg2DLpJFI/TuwrrZSrADmY7mRMLuu2GhIateGLQXVZxW1N2SKcHX/EV6w2PZz6Ia/pxFLdbDjNwHu+ZdMi/VNjQiWVOb3866BwgHhahrUWe/xA4/NEUYNpEkDBQ=
+	t=1756949713; cv=none; b=NYhkSvfCPzzImcqCXol3Oc3e7CW6qrnPmWxIVLhGaD1ltkITD7qaOk0bp0CE6bg8ceFX2sQwCUQjltIHli65S2z8seikA/hV6xSlcYwbtesvkAaldvAQDIpmqGzBK9QzQBntMOQ8dKQEHe+T13R1vP6KqG2iIMIDBBdq5hnsshw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756949636; c=relaxed/simple;
-	bh=DtkvrNP7w08gM9yU3FrMmrzllWzkaC9Cm5WXraBpWZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=U85N7/wP9LSXChITQefxCC5vq7hI9hg7U2J3MlGtsEvlTFrVA7c/ScGQczH/V4pV1dN2ogJNoiSqz8E+RY9ltAwuKG02Pi4lw15CJL2vwaRaG4xKGGd5KJxUnPPo2QDrNIldyClOFI2N6Bc2e8yXuacG1NF0ujBTkWakZNN1hEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=JuTnpxeg; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1756949629;
-	bh=8IgRurJM6lT+ULAr0UR24U7GUYvZyB2KalpNkdU3bM4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JuTnpxegPKZrIT62V9MbnCxd1pDlqh+t+VuZ0lDdZZV+pqlLC6tmRZlNVYjDpAuDQ
-	 x4RNRKHQutS3wGdDXDIVdFV9mSZSAlW0++AX+8iiThNaJnQnDFoQF6291/07WsI7mM
-	 HauqgMpfFhPZZUr3bFwAt9Trq9X2vmIGmnjsd1gfY+cAf0yyNfn0BscOoBoKx+z/B7
-	 pllVMmqef4gGqeYuDogSEz0KjEuYkDHuSr947P9aB5o9dSzPo4UB4S+MJI7BESGQoq
-	 QRw0AEH5o4sHc6KkXfgqOVWVsMRXzTvT2Gw8NqXpccX9IhOT5wpjt/5QgETzaPlMl6
-	 LUS0iepSlnyAQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cHMSr5V7gz4w23;
-	Thu,  4 Sep 2025 11:33:48 +1000 (AEST)
-Date: Thu, 4 Sep 2025 11:33:34 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Simon Schuster <schuster.simon@siemens-energy.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20250904113334.18822d43@canb.auug.org.au>
+	s=arc-20240116; t=1756949713; c=relaxed/simple;
+	bh=rK7UvUnvod158lPYL4vusiZ8if3giwXepEt7gycPh1Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Idh7KLNCh2r0KCGBmFXi1OZJUeHpOsuaHWI1MN4QgTPJfUpoz7H2k5+b0hGvfr6bwvRb/+jJ2jRP+rxQSygBn34gACGbo4rKy3JALEcCZ9Xz+tyulJ28NeEpejNAfDZDoO02jEZ5vHmomvF8065jeilApcLPAR+JT/RPyy61ZfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=IEj1Q5BS; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 91BF825D3B;
+	Thu,  4 Sep 2025 03:35:02 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id c0C6HC74cgYU; Thu,  4 Sep 2025 03:35:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1756949701; bh=rK7UvUnvod158lPYL4vusiZ8if3giwXepEt7gycPh1Q=;
+	h=From:To:Cc:Subject:Date;
+	b=IEj1Q5BSXsa2ONfQS4DsgxI96IdyTugFe3QSzh4wrmtgV+QwZh4mUz4rbFDarvOMX
+	 RDbGDG6fZH0ro52ZdHsnDPoYYYEGrQK5sXXr/byTPMLq5Jko+smAUJcv3xL689A3mI
+	 PxmtXtuhvioFpqzzI1xNsJAKtvwiiXqg8qSCCg+MKmfWpQuWJ56Tw2vdTeJ8TILrQI
+	 3w6DpNsAOP1ve2TPhhQ2nBDMaEHFEqZFfd4SKAPmPZseOWhEg4592Uf8m6whpMfco8
+	 1+v0U8sQhN96dIDH+pqYbmbFybO/5KuWYZcpO8vq0vbxKFijJl63wpfhJzL4friJWy
+	 QTkN1JENLQ3XA==
+From: Yao Zi <ziyao@disroot.org>
+To: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH v3 0/3] Support GPIO controller of Loongson-2K0300 SoC
+Date: Thu,  4 Sep 2025 01:34:35 +0000
+Message-ID: <20250904013438.2405-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/1j3F=qdA2YqPgldUugDQd_F";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/1j3F=qdA2YqPgldUugDQd_F
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This series adds support for Loongson-2K0300's GPIO controller. While
+being mostly identical to previous implementation, its interrupt
+functionality hasn't been implemented in gpio-loongson-64bit.c. PATCH 2
+implements its interrupt support with an IRQCHIP, and the code could be
+reused for other Loongson SoCs with similar interrupt functionality like
+LS2K1500 and LS2K2000.
 
-Hi all,
+Tested on CTCISZ Forever Pi, reading/writing GPIOs works correctly, and
+both level and edge interrupts could be triggered.
 
-After merging the vfs-brauner tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+The devicetree patch depends on series "Support reset controller of
+Loongson 2K0300 SoC"[1] for a clean apply. Thanks for your time and
+review.
 
-In file included from include/rv/ltl_monitor.h:11,
-                 from kernel/trace/rv/monitors/sleep/sleep.c:23:
-include/rv/ltl_monitor.h: In function 'ltl_monitor_init':
-include/rv/ltl_monitor.h:75:51: error: passing argument 1 of 'check_trace_c=
-allback_type_task_newtask' from incompatible pointer type [-Wincompatible-p=
-ointer-types]
-   75 |         rv_attach_trace_probe(name, task_newtask, handle_task_newta=
-sk);
-      |                                                   ^~~~~~~~~~~~~~~~~=
-~~
-      |                                                   |
-      |                                                   void (*)(void *, =
-struct task_struct *, long unsigned int)
-include/rv/instrumentation.h:18:48: note: in definition of macro 'rv_attach=
-_trace_probe'
-   18 |                 check_trace_callback_type_##tp(rv_handler);        =
-                     \
-      |                                                ^~~~~~~~~~
-In file included from kernel/trace/rv/monitors/sleep/sleep.c:3:
-include/linux/tracepoint.h:260:49: note: expected 'void (*)(void *, struct =
-task_struct *, u64)' {aka 'void (*)(void *, struct task_struct *, long long=
- unsigned int)'} but argument is of type 'void (*)(void *, struct task_stru=
-ct *, long unsigned int)'
-  260 |         check_trace_callback_type_##name(void (*cb)(data_proto))   =
-     \
-      |                                          ~~~~~~~^~~~~~~~~~~~~~~
-include/linux/tracepoint.h:270:9: note: in expansion of macro '__DECLARE_TR=
-ACE_COMMON'
-  270 |         __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), P=
-ARAMS(data_proto)) \
-      |         ^~~~~~~~~~~~~~~~~~~~~~
-include/linux/tracepoint.h:481:9: note: in expansion of macro '__DECLARE_TR=
-ACE'
-  481 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),         =
-     \
-      |         ^~~~~~~~~~~~~~~
-include/linux/tracepoint.h:619:9: note: in expansion of macro 'DECLARE_TRAC=
-E_EVENT'
-  619 |         DECLARE_TRACE_EVENT(name, PARAMS(proto), PARAMS(args))
-      |         ^~~~~~~~~~~~~~~~~~~
-include/trace/events/task.h:9:1: note: in expansion of macro 'TRACE_EVENT'
-    9 | TRACE_EVENT(task_newtask,
-      | ^~~~~~~~~~~
-In file included from include/asm-generic/bug.h:7,
-                 from arch/x86/include/asm/bug.h:103,
-                 from arch/x86/include/asm/alternative.h:9,
-                 from arch/x86/include/asm/barrier.h:5,
-                 from include/asm-generic/bitops/generic-non-atomic.h:7,
-                 from include/linux/bitops.h:28,
-                 from include/linux/kernel.h:23,
-                 from include/linux/interrupt.h:6,
-                 from include/linux/trace_recursion.h:5,
-                 from include/linux/ftrace.h:10,
-                 from kernel/trace/rv/monitors/sleep/sleep.c:2:
-include/rv/ltl_monitor.h:75:51: error: passing argument 1 of 'register_trac=
-e_task_newtask' from incompatible pointer type [-Wincompatible-pointer-type=
-s]
-   75 |         rv_attach_trace_probe(name, task_newtask, handle_task_newta=
-sk);
-      |                                                   ^~~~~~~~~~~~~~~~~=
-~~
-      |                                                   |
-      |                                                   void (*)(void *, =
-struct task_struct *, long unsigned int)
-include/linux/once_lite.h:28:41: note: in definition of macro 'DO_ONCE_LITE=
-_IF'
-   28 |                 bool __ret_do_once =3D !!(condition);              =
-       \
-      |                                         ^~~~~~~~~
-include/rv/instrumentation.h:19:17: note: in expansion of macro 'WARN_ONCE'
-   19 |                 WARN_ONCE(register_trace_##tp(rv_handler, NULL),   =
-                     \
-      |                 ^~~~~~~~~
-include/rv/ltl_monitor.h:75:9: note: in expansion of macro 'rv_attach_trace=
-_probe'
-   75 |         rv_attach_trace_probe(name, task_newtask, handle_task_newta=
-sk);
-      |         ^~~~~~~~~~~~~~~~~~~~~
-include/linux/tracepoint.h:241:38: note: expected 'void (*)(void *, struct =
-task_struct *, u64)' {aka 'void (*)(void *, struct task_struct *, long long=
- unsigned int)'} but argument is of type 'void (*)(void *, struct task_stru=
-ct *, long unsigned int)'
-  241 |         register_trace_##name(void (*probe)(data_proto), void *data=
-)    \
-      |                               ~~~~~~~^~~~~~~~~~~~~~~~~~
-include/linux/tracepoint.h:270:9: note: in expansion of macro '__DECLARE_TR=
-ACE_COMMON'
-  270 |         __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), P=
-ARAMS(data_proto)) \
-      |         ^~~~~~~~~~~~~~~~~~~~~~
-include/linux/tracepoint.h:481:9: note: in expansion of macro '__DECLARE_TR=
-ACE'
-  481 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),         =
-     \
-      |         ^~~~~~~~~~~~~~~
-include/linux/tracepoint.h:619:9: note: in expansion of macro 'DECLARE_TRAC=
-E_EVENT'
-  619 |         DECLARE_TRACE_EVENT(name, PARAMS(proto), PARAMS(args))
-      |         ^~~~~~~~~~~~~~~~~~~
-include/trace/events/task.h:9:1: note: in expansion of macro 'TRACE_EVENT'
-    9 | TRACE_EVENT(task_newtask,
-      | ^~~~~~~~~~~
-include/rv/ltl_monitor.h: In function 'ltl_monitor_destroy':
-include/rv/ltl_monitor.h:92:51: error: passing argument 1 of 'unregister_tr=
-ace_task_newtask' from incompatible pointer type [-Wincompatible-pointer-ty=
-pes]
-   92 |         rv_detach_trace_probe(name, task_newtask, handle_task_newta=
-sk);
-      |                                                   ^~~~~~~~~~~~~~~~~=
-~~
-      |                                                   |
-      |                                                   void (*)(void *, =
-struct task_struct *, long unsigned int)
-include/rv/instrumentation.h:28:39: note: in definition of macro 'rv_detach=
-_trace_probe'
-   28 |                 unregister_trace_##tp(rv_handler, NULL);           =
-                     \
-      |                                       ^~~~~~~~~~
-include/linux/tracepoint.h:254:40: note: expected 'void (*)(void *, struct =
-task_struct *, u64)' {aka 'void (*)(void *, struct task_struct *, long long=
- unsigned int)'} but argument is of type 'void (*)(void *, struct task_stru=
-ct *, long unsigned int)'
-  254 |         unregister_trace_##name(void (*probe)(data_proto), void *da=
-ta)  \
-      |                                 ~~~~~~~^~~~~~~~~~~~~~~~~~
-include/linux/tracepoint.h:270:9: note: in expansion of macro '__DECLARE_TR=
-ACE_COMMON'
-  270 |         __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), P=
-ARAMS(data_proto)) \
-      |         ^~~~~~~~~~~~~~~~~~~~~~
-include/linux/tracepoint.h:481:9: note: in expansion of macro '__DECLARE_TR=
-ACE'
-  481 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),         =
-     \
-      |         ^~~~~~~~~~~~~~~
-include/linux/tracepoint.h:619:9: note: in expansion of macro 'DECLARE_TRAC=
-E_EVENT'
-  619 |         DECLARE_TRACE_EVENT(name, PARAMS(proto), PARAMS(args))
-      |         ^~~~~~~~~~~~~~~~~~~
-include/trace/events/task.h:9:1: note: in expansion of macro 'TRACE_EVENT'
-    9 | TRACE_EVENT(task_newtask,
-      | ^~~~~~~~~~~
-In file included from include/rv/ltl_monitor.h:11,
-                 from kernel/trace/rv/monitors/pagefault/pagefault.c:19:
-include/rv/ltl_monitor.h: In function 'ltl_monitor_init':
-include/rv/ltl_monitor.h:75:51: error: passing argument 1 of 'check_trace_c=
-allback_type_task_newtask' from incompatible pointer type [-Wincompatible-p=
-ointer-types]
-   75 |         rv_attach_trace_probe(name, task_newtask, handle_task_newta=
-sk);
-      |                                                   ^~~~~~~~~~~~~~~~~=
-~~
-      |                                                   |
-      |                                                   void (*)(void *, =
-struct task_struct *, long unsigned int)
-include/rv/instrumentation.h:18:48: note: in definition of macro 'rv_attach=
-_trace_probe'
-   18 |                 check_trace_callback_type_##tp(rv_handler);        =
-                     \
-      |                                                ^~~~~~~~~~
-In file included from kernel/trace/rv/monitors/pagefault/pagefault.c:9:
-include/linux/tracepoint.h:260:49: note: expected 'void (*)(void *, struct =
-task_struct *, u64)' {aka 'void (*)(void *, struct task_struct *, long long=
- unsigned int)'} but argument is of type 'void (*)(void *, struct task_stru=
-ct *, long unsigned int)'
-  260 |         check_trace_callback_type_##name(void (*cb)(data_proto))   =
-     \
-      |                                          ~~~~~~~^~~~~~~~~~~~~~~
-include/linux/tracepoint.h:270:9: note: in expansion of macro '__DECLARE_TR=
-ACE_COMMON'
-  270 |         __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), P=
-ARAMS(data_proto)) \
-      |         ^~~~~~~~~~~~~~~~~~~~~~
-include/linux/tracepoint.h:481:9: note: in expansion of macro '__DECLARE_TR=
-ACE'
-  481 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),         =
-     \
-      |         ^~~~~~~~~~~~~~~
-include/linux/tracepoint.h:619:9: note: in expansion of macro 'DECLARE_TRAC=
-E_EVENT'
-  619 |         DECLARE_TRACE_EVENT(name, PARAMS(proto), PARAMS(args))
-      |         ^~~~~~~~~~~~~~~~~~~
-include/trace/events/task.h:9:1: note: in expansion of macro 'TRACE_EVENT'
-    9 | TRACE_EVENT(task_newtask,
-      | ^~~~~~~~~~~
-In file included from include/asm-generic/bug.h:7,
-                 from arch/x86/include/asm/bug.h:103,
-                 from arch/x86/include/asm/alternative.h:9,
-                 from arch/x86/include/asm/barrier.h:5,
-                 from include/asm-generic/bitops/generic-non-atomic.h:7,
-                 from include/linux/bitops.h:28,
-                 from include/linux/kernel.h:23,
-                 from include/linux/interrupt.h:6,
-                 from include/linux/trace_recursion.h:5,
-                 from include/linux/ftrace.h:10,
-                 from kernel/trace/rv/monitors/pagefault/pagefault.c:2:
-include/rv/ltl_monitor.h:75:51: error: passing argument 1 of 'register_trac=
-e_task_newtask' from incompatible pointer type [-Wincompatible-pointer-type=
-s]
-   75 |         rv_attach_trace_probe(name, task_newtask, handle_task_newta=
-sk);
-      |                                                   ^~~~~~~~~~~~~~~~~=
-~~
-      |                                                   |
-      |                                                   void (*)(void *, =
-struct task_struct *, long unsigned int)
-include/linux/once_lite.h:28:41: note: in definition of macro 'DO_ONCE_LITE=
-_IF'
-   28 |                 bool __ret_do_once =3D !!(condition);              =
-       \
-      |                                         ^~~~~~~~~
-include/rv/instrumentation.h:19:17: note: in expansion of macro 'WARN_ONCE'
-   19 |                 WARN_ONCE(register_trace_##tp(rv_handler, NULL),   =
-                     \
-      |                 ^~~~~~~~~
-include/rv/ltl_monitor.h:75:9: note: in expansion of macro 'rv_attach_trace=
-_probe'
-   75 |         rv_attach_trace_probe(name, task_newtask, handle_task_newta=
-sk);
-      |         ^~~~~~~~~~~~~~~~~~~~~
-include/linux/tracepoint.h:241:38: note: expected 'void (*)(void *, struct =
-task_struct *, u64)' {aka 'void (*)(void *, struct task_struct *, long long=
- unsigned int)'} but argument is of type 'void (*)(void *, struct task_stru=
-ct *, long unsigned int)'
-  241 |         register_trace_##name(void (*probe)(data_proto), void *data=
-)    \
-      |                               ~~~~~~~^~~~~~~~~~~~~~~~~~
-include/linux/tracepoint.h:270:9: note: in expansion of macro '__DECLARE_TR=
-ACE_COMMON'
-  270 |         __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), P=
-ARAMS(data_proto)) \
-      |         ^~~~~~~~~~~~~~~~~~~~~~
-include/linux/tracepoint.h:481:9: note: in expansion of macro '__DECLARE_TR=
-ACE'
-  481 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),         =
-     \
-      |         ^~~~~~~~~~~~~~~
-include/linux/tracepoint.h:619:9: note: in expansion of macro 'DECLARE_TRAC=
-E_EVENT'
-  619 |         DECLARE_TRACE_EVENT(name, PARAMS(proto), PARAMS(args))
-      |         ^~~~~~~~~~~~~~~~~~~
-include/trace/events/task.h:9:1: note: in expansion of macro 'TRACE_EVENT'
-    9 | TRACE_EVENT(task_newtask,
-      | ^~~~~~~~~~~
-include/rv/ltl_monitor.h: In function 'ltl_monitor_destroy':
-include/rv/ltl_monitor.h:92:51: error: passing argument 1 of 'unregister_tr=
-ace_task_newtask' from incompatible pointer type [-Wincompatible-pointer-ty=
-pes]
-   92 |         rv_detach_trace_probe(name, task_newtask, handle_task_newta=
-sk);
-      |                                                   ^~~~~~~~~~~~~~~~~=
-~~
-      |                                                   |
-      |                                                   void (*)(void *, =
-struct task_struct *, long unsigned int)
-include/rv/instrumentation.h:28:39: note: in definition of macro 'rv_detach=
-_trace_probe'
-   28 |                 unregister_trace_##tp(rv_handler, NULL);           =
-                     \
-      |                                       ^~~~~~~~~~
-include/linux/tracepoint.h:254:40: note: expected 'void (*)(void *, struct =
-task_struct *, u64)' {aka 'void (*)(void *, struct task_struct *, long long=
- unsigned int)'} but argument is of type 'void (*)(void *, struct task_stru=
-ct *, long unsigned int)'
-  254 |         unregister_trace_##name(void (*probe)(data_proto), void *da=
-ta)  \
-      |                                 ~~~~~~~^~~~~~~~~~~~~~~~~~
-include/linux/tracepoint.h:270:9: note: in expansion of macro '__DECLARE_TR=
-ACE_COMMON'
-  270 |         __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), P=
-ARAMS(data_proto)) \
-      |         ^~~~~~~~~~~~~~~~~~~~~~
-include/linux/tracepoint.h:481:9: note: in expansion of macro '__DECLARE_TR=
-ACE'
-  481 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),         =
-     \
-      |         ^~~~~~~~~~~~~~~
-include/linux/tracepoint.h:619:9: note: in expansion of macro 'DECLARE_TRAC=
-E_EVENT'
-  619 |         DECLARE_TRACE_EVENT(name, PARAMS(proto), PARAMS(args))
-      |         ^~~~~~~~~~~~~~~~~~~
-include/trace/events/task.h:9:1: note: in expansion of macro 'TRACE_EVENT'
-    9 | TRACE_EVENT(task_newtask,
-      | ^~~~~~~~~~~
+Changed from v2:
+- Adjust SoC naming style
+- Fold some multi-line calls to dev_err_probe() in the driver into a
+  single line
+- Collect review tags
+- Link to v2: https://lore.kernel.org/all/20250901133804.38433-1-ziyao@disroot.org/
+Changed from v1:
+- Rebase on top of gpio/for-next, adapt changes that convert
+  gpio-loongson-64bit.c to use generic gpiochip.
+- Collect review tags
+- Link to v1: https://lore.kernel.org/all/20250816035027.11727-2-ziyao@disroot.org/
 
-Presumably caused by commit
+[1]: https://lore.kernel.org/all/20250816033327.11359-2-ziyao@disroot.org/
 
-  edd3cb05c00a ("copy_process: pass clone_flags as u64 across calltree")
+Yao Zi (3):
+  dt-bindings: gpio: loongson: Document GPIO controller of LS2K0300 SoC
+  gpio: loongson-64bit: Add support for Loongson-2K0300 SoC
+  LoongArch: dts: Add GPIO controller for Loongson-2K0300
 
-I have used the vfs-brauner tree from next-20250829 for today.
+ .../bindings/gpio/loongson,ls-gpio.yaml       |  28 ++-
+ arch/loongarch/boot/dts/loongson-2k0300.dtsi  |  20 ++
+ drivers/gpio/Kconfig                          |   1 +
+ drivers/gpio/gpio-loongson-64bit.c            | 189 +++++++++++++++++-
+ 4 files changed, 230 insertions(+), 8 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell
+-- 
+2.50.1
 
---Sig_/1j3F=qdA2YqPgldUugDQd_F
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi47G4ACgkQAVBC80lX
-0Gw9bwf/XndwVSOeOYJftDsrbDxUn02nu87xJt11AOgJGJ/+K6AUlS3VcfBx3Zbg
-BOXf5HWcWA0REUKQPP3SWq4UNUxYLUprMMeAGHqC3EaEfr3Dz5Gf106+e1gnCXI1
-5q5ezP1QoNsb7a0IdnxegSzwt65uxb/esw7WFgHsoBXQ+DLC5tEa8Eit+ATBAEU2
-F5ddjnLxcdI9u6KPfxlpTzm1S3o1OXN6dLAzsUqNDa6UOrGSj9oDqELFPv20gbRs
-2iVXin+9jMT5mHHZ9BlxO5dXAcpBw7VLTlcTTCnMeqRBL4y21hTJXSRuxlSrd+QF
-XYFuUF/Hxp9lLV2vDyDC06P2oQ+xSw==
-=kH6c
------END PGP SIGNATURE-----
-
---Sig_/1j3F=qdA2YqPgldUugDQd_F--
 
