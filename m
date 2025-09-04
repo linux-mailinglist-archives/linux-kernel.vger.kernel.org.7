@@ -1,110 +1,146 @@
-Return-Path: <linux-kernel+bounces-800775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B45B43BD9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:39:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0083CB43BDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD41C1BC84A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:39:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE5775A2D9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C8E2E7620;
-	Thu,  4 Sep 2025 12:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685752F49E0;
+	Thu,  4 Sep 2025 12:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QqM8jGv4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="jiO1xggp"
+Received: from fra-out-008.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-008.esa.eu-central-1.outbound.mail-perimeter.amazon.com [35.158.23.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6CE2ED17B;
-	Thu,  4 Sep 2025 12:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FDC2F616E;
+	Thu,  4 Sep 2025 12:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.158.23.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756989551; cv=none; b=pRnZSAx0pTXDDoEECKraaoLHsz9+r/nYfTvZX0M3yzO83lv71nD39U7YRiYDXukbOfMO74qrWnhr/frWrWDS6HQoDcO7dcZVI09ZVcG+3j98KPnsaXORHdn6v9DZRcSV7WxUH9vE/fxgUKZ3crRL5jDTeEwGYoT9iXDLjMjah8A=
+	t=1756989562; cv=none; b=rmsDY56skFCDKF+j77XKtGDiMlOhC8G4bERIJGsHMQiYSR2cQiyy6dbjvrriZwyHauey87RJjk8+Y0ginzuRFODxGlh1mbguzjdZW/6SRBtQETEwXmwEmjy2QiwiDSqddXpfQNXg3nquMmP0p5ovq7u9sy672MZm53evsyfBaOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756989551; c=relaxed/simple;
-	bh=PYaalYxcH+Y9o2jdHw45itdsSulRZEoCVkROLCxQ6JI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EqjEv9pmS4BmxNla3s6nfHA97INQL9V9PzWiV2SDi1omI9h7RNUUe4rxval/UA+cPlaNSi20gjwsEGEQZq/32i8akojIawvTuMnhjykWqiYU6n0iC+vZyHWRGn+RB7usk9z8vw9Uco7/MzhzcdCws47A06/FtR1QxzCpjEJTJ8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QqM8jGv4; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756989550; x=1788525550;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PYaalYxcH+Y9o2jdHw45itdsSulRZEoCVkROLCxQ6JI=;
-  b=QqM8jGv4OsAdHYhiS1etY98GJJ5LybCfFu9yQNYSuUiKoQDmTtuQ+eXh
-   7sTvzYFQHlujn5wqjGCmVGRkpf5nxn5Y42arJh4dYDYYO2YKgIT478/Kq
-   MUvoSeC7If67MQzYYDipTDrzf01EQIhqz1Ab+Mx8xpYWjRFMmPZVSKyeW
-   uR6Fv8dTBOwUtghoBr/ZKRebqNlYMVboMHL9wYssRBo+0gugAksIcMupW
-   ZZv4FY3EPB5BuvVb9Qnz7ZY9laFc1Y0xh6LtYlZdfRNx3M0ZSPjQKhmZf
-   6BiWJb5nZwLkZo2/e8o8YUruMzNme8+MXWBl+RvzLbc0040WpcRMVIiR/
+	s=arc-20240116; t=1756989562; c=relaxed/simple;
+	bh=ULScby5e7nfE21eIVPMtirUeTHzPiyrQ91q0FcQlkHM=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=GW7n/P9YB1e7NXWDK331v0VdlRmhwpeZURa5qfnomVpA2LQL3nPPbc9p97KqqNmvPa5wP3ATtWp1FFrFDiPuMwzSP7FNXRZkhA/4S+sVcuIHyH4qXRuZjVZwvBAxbQywc3PhH3LSeulB56ojeQqtoIXEkyDyAeGS8ViGiQj7POQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=jiO1xggp; arc=none smtp.client-ip=35.158.23.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1756989559; x=1788525559;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   mime-version:content-transfer-encoding:subject;
+  bh=ULScby5e7nfE21eIVPMtirUeTHzPiyrQ91q0FcQlkHM=;
+  b=jiO1xggpOhwae79eENcry3QlWuKF9JxxDe90CbKke9ytfsnlFEOf/i9o
+   0z0OMOr+7PGUTzvvMV1/hrM/GfPhuKe/vzdq1lCga1z5heh+Poe/zATX7
+   c42L2OCSGly76yU3l/UyUjDvop/a75cVYEijqt8HFXlFS9VmU3GJ5rSTw
+   rJ2Oy1pVEEjuWnVoKzsZ6vojYD7U/b1S+7ty7q2C2guIaPqw2bEn+Jm9N
+   E7ZaOUssAjYE3PJ8xxLTsk7VuvNQGSP1qofnCNMfE4nql3QH1GMhAU6d1
+   RM2TikGsLzI0f6srhG5wAm1XJwmuTiOQNwl9nPFEg9+V69yftr3CqtxNn
    Q==;
-X-CSE-ConnectionGUID: tssEjimATeqE8PxvBlQDyg==
-X-CSE-MsgGUID: fDfSJ7IUQQG14tNEMyzacw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="76928237"
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="76928237"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 05:39:09 -0700
-X-CSE-ConnectionGUID: q7Y6c87xQzS+ui/Bn19TKA==
-X-CSE-MsgGUID: QQzJ7foXQgyDfAdrLNFQaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="171825503"
-Received: from agladkov-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.92])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 05:39:06 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 9DC8A11F8F6;
-	Thu, 04 Sep 2025 15:39:03 +0300 (EEST)
-Date: Thu, 4 Sep 2025 15:39:03 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] device property: Add scoped fwnode child node
- iterators
-Message-ID: <aLmIZ1qHWBjpiNjH@kekkonen.localdomain>
-References: <20250902190443.3252-1-jefflessard3@gmail.com>
- <20250902190443.3252-2-jefflessard3@gmail.com>
- <aLhAKJBUNQVH1Vmf@kekkonen.localdomain>
- <DCJC7Q9MZEM3.34FU7BXXZ7UGF@kernel.org>
- <aLkqE9c9w9m4Axsp@kekkonen.localdomain>
- <DCJTOIQ4Q0Z5.Q2UE5AQU1X35@kernel.org>
- <aLlDJETaWTjiSP0L@kekkonen.localdomain>
- <DCJVYUINZ7KM.7RCV9P9KHTVM@kernel.org>
- <aLl-ABtFi2R9Wc1a@kekkonen.localdomain>
+X-CSE-ConnectionGUID: zSYct0lzSkaIIBnxJlsWUQ==
+X-CSE-MsgGUID: siHY+fGUQ/eEuX1zssW6cw==
+X-IronPort-AV: E=Sophos;i="6.18,214,1751241600"; 
+   d="scan'208";a="1639693"
+Subject: Re: Bug: Performance regression in 1013af4f585f: mm/hugetlb: fix
+ huge_pmd_unshare() vs GUP-fast race
+Thread-Topic: Bug: Performance regression in 1013af4f585f: mm/hugetlb: fix
+ huge_pmd_unshare() vs GUP-fast race
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-008.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 12:39:08 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.228:13862]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.43.161:2525] with esmtp (Farcaster)
+ id 2da87af0-5385-40d0-9937-3670b0b57a6f; Thu, 4 Sep 2025 12:39:08 +0000 (UTC)
+X-Farcaster-Flow-ID: 2da87af0-5385-40d0-9937-3670b0b57a6f
+Received: from EX19D024EUA001.ant.amazon.com (10.252.50.75) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Thu, 4 Sep 2025 12:39:08 +0000
+Received: from EX19D024EUA004.ant.amazon.com (10.252.50.30) by
+ EX19D024EUA001.ant.amazon.com (10.252.50.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Thu, 4 Sep 2025 12:39:07 +0000
+Received: from EX19D024EUA004.ant.amazon.com ([fe80::4608:828c:c80b:ca72]) by
+ EX19D024EUA004.ant.amazon.com ([fe80::4608:828c:c80b:ca72%3]) with mapi id
+ 15.02.2562.020; Thu, 4 Sep 2025 12:39:07 +0000
+From: "Uschakow, Stanislav" <suschako@amazon.de>
+To: David Hildenbrand <david@redhat.com>, Jann Horn <jannh@google.com>
+CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, "trix@redhat.com"
+	<trix@redhat.com>, "ndesaulniers@google.com" <ndesaulniers@google.com>,
+	"nathan@kernel.org" <nathan@kernel.org>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "muchun.song@linux.dev" <muchun.song@linux.dev>,
+	"mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+	"liam.howlett@oracle.com" <liam.howlett@oracle.com>, "osalvador@suse.de"
+	<osalvador@suse.de>, "vbabka@suse.cz" <vbabka@suse.cz>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Thread-Index: AQHcGOKArPRLx5Gss0qhHb9N9ZVPl7R+LN+AgAAH1gCABJSBfQ==
+Date: Thu, 4 Sep 2025 12:39:07 +0000
+Message-ID: <355102b559a747fe9a09142d46852551@amazon.de>
+References: <4d3878531c76479d9f8ca9789dc6485d@amazon.de>
+ <CAG48ez2yrEtEUnG15nbK+hern0gL9W-9hTy3fVY+rdz8QBkSNA@mail.gmail.com>,<2dcf12d0-e29c-4c9b-aeac-a0b803d2c2fd@redhat.com>
+In-Reply-To: <2dcf12d0-e29c-4c9b-aeac-a0b803d2c2fd@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLl-ABtFi2R9Wc1a@kekkonen.localdomain>
+Content-Transfer-Encoding: base64
 
-On Thu, Sep 04, 2025 at 02:54:40PM +0300, Sakari Ailus wrote:
-> I noticed there's also no availability check for the OF graph nodes. That's
-> likely an accidental omission.
+SGkgRGF2aWQsDQoNCj4gRnJvbTogRGF2aWQgSGlsZGVuYnJhbmQgPGRhdmlkQHJlZGhhdC5jb20+
+DQo+IFNlbnQ6IE1vbmRheSwgU2VwdGVtYmVyIDEsIDIwMjUgMToyNiBQTQ0KPiBUbzogSmFubiBI
+b3JuOyBVc2NoYWtvdywgU3RhbmlzbGF2DQo+IENjOiBsaW51eC1tbUBrdmFjay5vcmc7IHRyaXhA
+cmVkaGF0LmNvbTsgbmRlc2F1bG5pZXJzQGdvb2dsZS5jb207IG5hdGhhbkBrZXJuZWwub3JnOyBh
+a3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnOyBtdWNodW4uc29uZ0BsaW51eC5kZXY7IG1pa2Uua3Jh
+dmV0ekBvcmFjbGUuY29tOyBsb3JlbnpvLnN0b2FrZXNAb3JhY2xlLmNvbTsgbGlhbS5ob3dsZXR0
+QG9yYWNsZS5jb207IG9zYWx2YWRvckBzdXNlLmRlOyB2YmFia2FAc3VzZS5jejsgc3RhYmxlQHZn
+ZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSRTogW0VYVEVSTkFMXSBCdWc6IFBlcmZvcm1hbmNl
+IHJlZ3Jlc3Npb24gaW4gMTAxM2FmNGY1ODVmOiBtbS9odWdldGxiOiBmaXggaHVnZV9wbWRfdW5z
+aGFyZSgpIHZzIEdVUC1mYXN0IHJhY2UNCj4gwqAgICANCj4gQ0FVVElPTjogVGhpcyBlbWFpbCBv
+cmlnaW5hdGVkIGZyb20gb3V0c2lkZSBvZiB0aGUgb3JnYW5pemF0aW9uLiBEbyBub3QgY2xpY2sg
+bGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91IGNhbiBjb25maXJtIHRoZSBzZW5k
+ZXIgYW5kIGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZS4NCj4gDQo+IA0KPiANCj4gT24gMDEuMDku
+MjUgMTI6NTgsIEphbm4gSG9ybiB3cm90ZToNCj4gPiBIaSENCj4gPg0KPiA+IE9uIEZyaSwgQXVn
+IDI5LCAyMDI1IGF0IDQ6MzDigK9QTSBVc2NoYWtvdywgU3RhbmlzbGF2IDxzdXNjaGFrb0BhbWF6
+b24uZGU+IHdyb3RlOg0KPiA+PiBXZSBoYXZlIG9ic2VydmVkIGEgaHVnZSBsYXRlbmN5IGluY3Jl
+YXNlIHVzaW5nIGBmb3JrKClgIGFmdGVyIGluZ2VzdGluZyB0aGUgQ1ZFLTIwMjUtMzgwODUgZml4
+IHdoaWNoIGxlYWRzIHRvIHRoZSBjb21taXQgYDEwMTNhZjRmNTg1ZjogbW0vaHVnZXRsYjogZml4
+IGh1Z2VfcG1kX3Vuc2hhcmUoKSB2cyBHVVAtZmFzdCByYWNlYC4gT24gbGFyZ2UgbWFjaGluZXMg
+d2l0aCAxLjVUQiBvZiBtZW1vcnkgd2l0aCAxOTYgY29yZXMsIHdlIGlkZW50aWZpZWQgIG1tYXBw
+aW5nIG9mIDEuMlRCIG9mIHNoYXJlZCBtZW1vcnkgYW5kIGZvcmtpbmcgaXRzZWxmIGRvemVucyBv
+ciBodW5kcmVkcyBvZiB0aW1lcyB3ZSBzZWUgYSBpbmNyZWFzZSBvZiBleGVjdXRpb24gdGltZXMg
+b2YgYSBmYWN0b3Igb2YgNC4gVGhlIHJlcHJvZHVjZXIgaXMgYXQgdGhlIGVuZCBvZiB0aGUgZW1h
+aWwuDQo+ID4NCj4gPiBZZWFoLCBldmVyeSAxRyB2aXJ0dWFsIGFkZHJlc3MgcmFuZ2UgeW91IHVu
+c2hhcmUgb24gdW5tYXAgd2lsbCBkbyBhbg0KPiA+IGV4dHJhIHN5bmNocm9ub3VzIElQSSBicm9h
+ZGNhc3QgdG8gYWxsIENQVSBjb3Jlcywgc28gaXQncyBub3QgdmVyeQ0KPiA+IHN1cnByaXNpbmcg
+dGhhdCBkb2luZyB0aGlzIHdvdWxkIGJlIGEgYml0IHNsb3cgb24gYSBtYWNoaW5lIHdpdGggMTk2
+DQo+ID4gY29yZXMuDQo+IA0KPiBXaGF0IGlzIHRoZSB1c2UgY2FzZSBmb3IgdGhpcyBleHRyZW1l
+IHVzYWdlIG9mIGZvcmsoKSBpbiB0aGF0IGNvbnRleHQ/DQo+IElzIGl0IGp1c3Qgc29tZXRoaW5n
+IHBlb3BsZSBub3RpY2VkIGFuZCBpdCdzIHN1Ym9wdGltYWwsIG9yIGlzIHRoaXMgYQ0KPiByZWFs
+IHByb2JsZW0gZm9yIHNvbWUgdXNlIGNhc2VzPw0KPiANCg0KWWVzLCB3ZSBoYXZlIGN1c3RvbWVy
+IHJlcG9ydGluZyBodWdlIHBlcmZvcm1hbmNlIHJlZ3Jlc3Npb25zIG9uIHRoZWlyIHdvcmtsb2Fk
+cy4gSSBkb24ndCBrbm93IHRoZSBzb2Z0d2FyZSBhcmNoaXRlY3R1cmUgb3IgYWN0dWFsIHVzZSBj
+YXNlIGZvciB0aGVpciBhcHBsaWNhdGlvbiB0aG91Z2guIEEgZXhlY3V0aW9uIHRpbWUgaW5jcmVh
+c2Ugb2YgYXQgbGVhc3QgYSBmYWN0b3Igb2YgNCBpcyBub3RpY2VhYmxlIGV2ZW4gd2l0aCBmZXcg
+Zm9ya3MoKSBvbiB0aG9zZSBtYWNoaW5lcy4NCg0KPiAtLQ0KPiBDaGVlcnMNCj4gDQo+IERhdmlk
+IC8gZGhpbGRlbmINCg0KDQpUaGFua3MNCg0KU3RhbmlzbGF2DQoNCiAgICAKCgoKQW1hem9uIFdl
+YiBTZXJ2aWNlcyBEZXZlbG9wbWVudCBDZW50ZXIgR2VybWFueSBHbWJIClRhbWFyYS1EYW56LVN0
+ci4gMTMKMTAyNDMgQmVybGluCkdlc2NoYWVmdHNmdWVocnVuZzogQ2hyaXN0aWFuIFNjaGxhZWdl
+ciwgSm9uYXRoYW4gV2Vpc3MKRWluZ2V0cmFnZW4gYW0gQW10c2dlcmljaHQgQ2hhcmxvdHRlbmJ1
+cmcgdW50ZXIgSFJCIDI1Nzc2NCBCClNpdHo6IEJlcmxpbgpVc3QtSUQ6IERFIDM2NSA1MzggNTk3
+Cg==
 
-After doing some further research, this seems to be correct. In OF, the
-status is defined for device nodes only. A child node could be a device
-whereas graph endpoints are not device nodes, so the lack of a check there
-is reasonable.
-
--- 
-Sakari Ailus
 
