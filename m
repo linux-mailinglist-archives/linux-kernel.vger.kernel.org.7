@@ -1,517 +1,613 @@
-Return-Path: <linux-kernel+bounces-800086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A1ACB43333
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:02:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E5AB4333F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDDBD544A0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:01:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B600D3A63E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEECE2C08A2;
-	Thu,  4 Sep 2025 06:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C5F2882B2;
+	Thu,  4 Sep 2025 06:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PHuKQ1Ud"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pv5k0t2J"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2073.outbound.protection.outlook.com [40.107.236.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8852874EB
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756968990; cv=none; b=dkBxth9INsUfVuqeZdzVQJaT16p8/1A9BcUC5fd2PvLVF67oYnehDDGtRrJ8pTQrPxRG5erctJZt/wXjMKuzFKmcAofkQV7Euq/fNQDF7qfpHg6Ql6PQu6HJxXwe0WIP3ZgBJH9yuBAzdNXQCD+hvlvjgJMNUuNk8Jv8v3FhJxg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756968990; c=relaxed/simple;
-	bh=srebaxDv3eZJ3Yn5QEdqdMvmUTaVbZloO57dCUSYXak=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ef2kfZq0XrRzFgry82e3K/MIUaxoVRVei0MirqgyUCiPf4+EsNnIow2DVSqkQh6RmhuFVAAQbOyEZMrI6VhmRdHoyo57S3p7nm9VVwDPFZrNW6o7xRW9brz7j4F8DGWfyYvlUKdn1oVZ/+x7kn7L9D5iRhVl5ubG27NysQcN6LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PHuKQ1Ud; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3e2055ce973so27825f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 23:56:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756968986; x=1757573786; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iuWa/TU+jCKequWuceGeCu2kioVsaALaGs2DgkR7OiI=;
-        b=PHuKQ1Ud/7Nf26cpdr0/i2FPotSJrTJM6AeVrArKIZSJUXENMnkKYerOLBQeASOtf2
-         nrkxXDx7hJ+12fKe0QhPzV5yzTTUIuNOspS+1LNMZkM3nvRTx/6JN1UPX0WVtqIPs3jT
-         hMEf6DVvBTlHmd/C9/WDTHoNoU2ChGSq+ZSHVJICGGHS2xuRBcZ4HrSo5ygjRqk2qZiR
-         qGJrGgeT5YQeAXV+H9HLZN4hqJZnw7Mr/c0nRSkXh9/BeDWUXrtvd1s7VMqjT0aeVL3G
-         rc3mk04NmPHUVpSJ0+MmjE5QagqoJFPBreuGMd3o5JSiE2b3mNbSdFxJT9Hlmxv1ySL/
-         XyvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756968986; x=1757573786;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iuWa/TU+jCKequWuceGeCu2kioVsaALaGs2DgkR7OiI=;
-        b=gcePR2U4XL5G2RPdwgqUaimf3KfIq8zvOAxIQynkQoZ9y84yRVlGyz8qYWTmy39ksJ
-         h3il48PPeuQbWpnhnoXmT8jqAI4rkIDXrNC1SQ0GjJDuTp4oiE/Ubq/esAZPOVaHM89K
-         iq82K0CmiZSF7+kyMPh7dmF9h2R+yjnHZBrH4ijNCo9X1yXIpDPo5W4RYilozr0ne9VB
-         mF6tBQRk/ECl3j435LNjjrdDizUhYUnrk0LM6yi8KjB0Cbv0xSlXWHMsAB7wtEyI2/Vq
-         r7IOkiOB9tdIgBjT30PofddBfqJcc18euGYvuYXL+hWi7YmQZKZpanKA8+VrLxx/T9ho
-         iRNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWR7Vm6qrNSZyGjvHM4lFRdXmHsblBgiD8mI6lSRqSxfZYyNdDF/GfW0zwV5mc98tPYvf3kGFDDQtrOUq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj2OSfYUR6y+2O8eHgh5gj+ZQ1iqljNZu4b3xbEsiPZkjooFAz
-	SZ9fZCUPVNrbb5P7+wmT0+ByjOJ+IkV2l1UAUr80+AFOusvp+bkicz4tw7h3N1CYSc2Hku7Nre8
-	Ym3Lo
-X-Gm-Gg: ASbGncvmpkLXPPrBE/I9c2pOWXTHNsEOeAfSVHrAbkmjzmHXuPrkulymY4qDb3KbwTh
-	gF3BaT5L/ZlTN5862PMtggfaTjAkr9FMNTaZo4675pLqLgEu5SaldL88LWNlK9jW252X5/B/PWs
-	Z5SyyE1BDKGw0Q8TceCI3Ou+w/K76sAmxJXT3B1oJGQmoeimwMN45Jx3gJlZdA9roCHjlx9XP2c
-	jjmEbjsucoPKpcBE/V9VHOQv4FuyC7vkUvbQWcNmlPN8ytjMTSXajlJrP4fGel4gEEEIzdYeP6H
-	cXM1gdrf8Gi0ZDmjjA6jEUQDEDOODf8WgeVsJPbGUKsUjfxHACEg35HNlWI/6mt6qDpeHGCD3rI
-	elR/mKhRRoX2UdxXewEcab9EVt9p5vH5XLw==
-X-Google-Smtp-Source: AGHT+IGZcOQmL7QDDiQf5uiqGROnu/ur6py/GIqo6bRLjxu/5sY/Q4fqFg8GKpIxdF5jT/ziSXFakQ==
-X-Received: by 2002:a05:6000:2384:b0:3cd:ac2b:7f0 with SMTP id ffacd0b85a97d-3d1def61f55mr11300684f8f.49.1756968986068;
-        Wed, 03 Sep 2025 23:56:26 -0700 (PDT)
-Received: from hackbox.lan ([86.121.170.194])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d701622b92sm15256075f8f.58.2025.09.03.23.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 23:56:25 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Thu, 04 Sep 2025 09:55:53 +0300
-Subject: [PATCH 3/3] phy: qcom: edp: Add Glymur platform support
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CE2286887
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756969054; cv=fail; b=Ya1n7GqNLOICOelKdBKENvvp/piBxmbE8NCyH7sZkn0DPlcbHHALvhEt7FVqNWl1FeIcyf+JtAEwMbiCVSqwqmc7yInhesMH57cOnLrd5pbBuvpc7HjcltvN7hAxF1/EcDPpfRMfLIyAi/Ly3GrsmiGtwNrJ7veHqMHAvvc6ZuI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756969054; c=relaxed/simple;
+	bh=ovC3wLAPUiVh/zJHSPoe4jfzTEcGP7qYGVOWQVIO3Yo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PqQqwquMMhudjnhpu419OfCMKPleeg/xM9B2sGcP//pL4LE+68W19gKnnsdAejfGDYuU+90ExgVPLDOjQ4UJwNyqnLap61BkIqDEhP3Zt0Dl4jw97orp5XPaBdd5XOwm8nQuVNg1GWoGAV1sEW6n+jjGpxLAW62x4q2fpLt0r90=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pv5k0t2J; arc=fail smtp.client-ip=40.107.236.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aU2s03y4r1iKncH6MPzvL+Gbmqf9DR8jS4p0yJQmBsh1jrwxSjkplumNz/aAHQ9FV8BBpWFPySYeoLJNchXvhvDzKphQQ9mz/Oe92AZvnsh2F3irQcT2nBSUU3kv+OsG9AHbxNCx0KzkeR7WHUH2jDL+GKwWy+OXPO9QAfBYABaxwEWkV5DVf892++dw5BNIAwWBj4A2y+m9lpryzX6ltZic821SdvVTiByzuzzMl0ijwNPyGrkV6IxpCeZHdW13lA7uDGYUISSWLhIpkOn2l7YftIjutbljb8YBw6LdZb4mTcIHr8q8l07DR5g/wguqErMi53o/ltPCUekswgO5bQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3vTSlG9YLQJS3ahS2yfwWDs9EEZWfejyJzD/lOSUjVI=;
+ b=qtFuPw5JXXKPjTRiC91oKx+9EQZdqnoEy3bTpLn4O7BiXTAEK8JViof+0cEFKoe5SVYBjC9k6NrATVU8IM2zMw2fDAbQMCMso+YX1MvD3XO7lb3u8oOdTNwEMQxrmFCNMMvA5MizD52CX3VIlbtB4vJtKvi9kQMKpEGJbrt7GrB2caQNS6kWLodq+moL0cg9dm8oCchdJcfRFPcuiGNOaPd7B425N7H+f7bm7j5kJT+9esPxnZ+G1LpG6ehxQZj/MtZKVUKJJ7xzJ7aZ8E+knZVNirxd0ytFPbWzLP4bBa9/EPSwbnOzmzanszL9jdSAkyGq5l0dWONthfGI+vdrVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3vTSlG9YLQJS3ahS2yfwWDs9EEZWfejyJzD/lOSUjVI=;
+ b=pv5k0t2J29NGp3S8nDT7cYAaeqXMp0LwApnrPW/WQ9wLg4UUD4XKK6bBtOJrtmCg30REGXWynw7NXQii1GKqFvF4DGPf9xeAIcCE+/xs6L2JP7voSVKXj4kTBriPfimqwmChIfpZaxA6xzIa84cvWXdI/krP8B/mov1lb0sXSfW6YVvvQtQIEetYmUNeiadHg4UA5ZbXF+kOzuXsxKEhPKVxmq34l7JNJmeBZ2pWzKYDrEf/b4Gcx6SQESIESMfVaZSUJei9KM6r/OFOsMxoie8ZutkqP3ivZvWP3O1WYOf68MSbxDQjipmZzBmwVPQivgFLY5TRO7zZ/1EOxC65XA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS1SPRMB0005.namprd12.prod.outlook.com (2603:10b6:8:1e3::12) by
+ IA1PR12MB6531.namprd12.prod.outlook.com (2603:10b6:208:3a4::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.27; Thu, 4 Sep 2025 06:57:26 +0000
+Received: from DS1SPRMB0005.namprd12.prod.outlook.com
+ ([fe80::7629:20ac:4306:5f4f]) by DS1SPRMB0005.namprd12.prod.outlook.com
+ ([fe80::7629:20ac:4306:5f4f%5]) with mapi id 15.20.9073.026; Thu, 4 Sep 2025
+ 06:57:26 +0000
+Date: Thu, 4 Sep 2025 16:57:17 +1000
+From: Alistair Popple <apopple@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, dakr@kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	John Hubbard <jhubbard@nvidia.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	Nouveau <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH 05/10] gpu: nova-core: gsp: Add GSP command queue handling
+Message-ID: <6vewssmsixzbghivrehmng7pyapmidh6nx5qjd2bzfr2orgeob@p2cni6gj75l3>
+References: <20250827082015.959430-1-apopple@nvidia.com>
+ <20250827082015.959430-6-apopple@nvidia.com>
+ <DCJQ1JPNP66D.237HVGM4L0UPZ@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DCJQ1JPNP66D.237HVGM4L0UPZ@nvidia.com>
+X-ClientProxiedBy: MEVP282CA0073.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:220:202::13) To DS1SPRMB0005.namprd12.prod.outlook.com
+ (2603:10b6:8:1e3::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-phy-qcom-edp-add-glymur-support-v1-3-e83c6b9a145b@linaro.org>
-References: <20250904-phy-qcom-edp-add-glymur-support-v1-0-e83c6b9a145b@linaro.org>
-In-Reply-To: <20250904-phy-qcom-edp-add-glymur-support-v1-0-e83c6b9a145b@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13462; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=srebaxDv3eZJ3Yn5QEdqdMvmUTaVbZloO57dCUSYXak=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBouTgRgAN4hAbV4ZOmc33+OmGfaLXBmYCk+Kvd+
- RiIB5LGl8KJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaLk4EQAKCRAbX0TJAJUV
- VovpD/9OvHlxnwtUWXo367Losskrr81TZQxUS7pGnkp5abwlhIRkQf3B65I6ti5Y535Vyl7XWIy
- uJtOiOstGYLS4P09KbsK0cSWnsqBkT6CkkMs2LeQFnBXxWi7oqQadMxh+Bgppd7VFAT51BPwerm
- kzBGvidicXT+UpUMAD0YZpqUPFOmEwlVfayYT1y1HpdAKEfXt1VPlKLMWsnwK/vEFe7Zj4VXltE
- tAFXtClNYrChgDm5WGfmCAPozHkTrt/cVp2HFsuNdHp7Biof/WC3JwHHXqkgWltqXxcN3frgAtU
- kTk6UwORgyk/Yi9TyEEI9p+gfmLLkii6tFSTq5HhlCpntjlw6lkoco6cGgOelcSOW4RhZDqWh4U
- CNEPcP94yF+Qm7YjBOp27PtjhqniZRruhTeDI+XJxzDxQf/PmJRL+BDMBstYiSe2A9WNy/ad+8R
- dPgs01QqO/vLeFticouvsBp4/QzF9eezlaFSUla5pJD4irnPvEYqXCyuiSvr9Qi+4WqLAEzKc5V
- Km3IdwDY6nhLlQHSZVM2vG2nd8lgfxSryTCMtC9GaIfUld5RYbG9v5Sv6nz3JDjNsDqksWSPR9A
- hg+stA+UgbbPxuIomRXsLtdFim9+HuTed9+nhg/vNfskzdJtMRXiLfm4CawdbdCly9uEwI0Fz7J
- 1/t9WYM6TnsmggQ==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1SPRMB0005:EE_|IA1PR12MB6531:EE_
+X-MS-Office365-Filtering-Correlation-Id: 22e7c241-17e5-4fff-220d-08ddeb804e29
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xLPS5Ue8oUuT+rY9mimWU7C52dYThfURUHS40J/TkGEbrWscCYzVMS3dVShP?=
+ =?us-ascii?Q?oNhcGtZ+EPf8Yig9TIrObZhpK5XT2apvXlY7vu/l/pcbZaE0fWhBSsXalAVi?=
+ =?us-ascii?Q?R7rVWx5ZYm8A5oU0cOh4s9JwPjPcOtLe+jPmqVb/UJRA28PwDigsV8gz3Gxh?=
+ =?us-ascii?Q?AMtnfPW3agtR5MrFSK7byggtWuQPxJ5t2SsjMbrSMkOuWneUqPYgkxVl4z3m?=
+ =?us-ascii?Q?lf3Uxnq5vWx1udfqiICQs0XoKmTPg8c5eJ2Ksb0g6OkDjDYmVqp9s6Pnof9q?=
+ =?us-ascii?Q?miCIKqaovQzLwKif4E4vonbNbXz3Af0LcbQ/fwC+CMK3oTG3AfGGdWw1Chjl?=
+ =?us-ascii?Q?9mgBRKMH3GPLq9EZ369T8JLouBmvliYel3Gczn2Ef64qjIhogIaY2wrdcXJ3?=
+ =?us-ascii?Q?taFkaZzC3wJGkhdAh3zmNuhoBIl8Tnzu2Eqym7W3BQke1LSgrK2E98/Uuusv?=
+ =?us-ascii?Q?umUP/5YiCM2U7pKb1zTgHWh7r2lSyo5p9nAZp40AN823YNqnqlqnTI4uPj+Q?=
+ =?us-ascii?Q?MuEnw1syZmY84u2nh71dyFDkadXavureOw3qN5wLBmlM8SoWg3nLi6mvP2Sc?=
+ =?us-ascii?Q?i9AITdQfzufUnt8VmgqETNXPev6FOMTZmh8czF9xM1d9I3Wm7KUuQ9WWMPS6?=
+ =?us-ascii?Q?IylmgVZaQSoH2VnJM6qlPHNkvC+WxWqsmTlCY8XJrj2Y7YmtXYRTGQe1W40k?=
+ =?us-ascii?Q?6Ucc5AEnD/ozN1Ag4JdWpkGvG1nHQVcm3RNrXIHUrTZhcC/q8I2GKjBT7ejp?=
+ =?us-ascii?Q?QCeOhqIz+iVdo3fzo9aCxHXQO7SgV6sFjdTwJHGSEeMszj/d06coUUsIJ73T?=
+ =?us-ascii?Q?gKWII4f7ryD8O16+izGdUlf63j19IAOxl0XluPEvaTcq0DxCHIga9RI892Gi?=
+ =?us-ascii?Q?gdo0V58VgMCWfIiQThoehO4gGfEN9fDHBMji/qMjICCiknpLYZfnWRgUFWQD?=
+ =?us-ascii?Q?dfJYaL1yDVbXff5TszScM6jSPowyUgpa7eVZgNQ5WlJiDFvD/MXkbxk+7CK/?=
+ =?us-ascii?Q?33On8HYfRx9B5x2SecynDsvywFrRlQnybE3L8zJ35u9wknbhIkp66OilBKJb?=
+ =?us-ascii?Q?S10vwaxzkSTEKtGD+RZVXTsCpq2xxQvjb/cqoDJYh63DtRK4Yw6aERgYErvO?=
+ =?us-ascii?Q?uTmYU2Q9yXvr5iNKT3bFGHvTz64Nh8PsX7dX2smjZ2DEgzRPOjn8ULr1eLhN?=
+ =?us-ascii?Q?f7QQT+Um+GNFUTZVGGs/7CvjIKwQu0ksQ90TkZ+BvB+bCHXR0uWCNxmigHfK?=
+ =?us-ascii?Q?bObx0NHAdW0MOyykrCRARB5ogIwWhXorm0ggcYvqx8XXbkVXDLJA1n3ikiwA?=
+ =?us-ascii?Q?SINh30EERacQwKPtQNRYZzksSTBDlBXCiUa2qfOWB155xcjSCa+bYxXJQiUI?=
+ =?us-ascii?Q?wwmomJ8aoe0Fx02lC632EnLfc9HzBs207NGl+dPRy1bIz+Hin0wPaj+nAwEo?=
+ =?us-ascii?Q?MFy/qsKSBls=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS1SPRMB0005.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?iMxPOZlSCLQzjvr2za967m1huZVVDz/LtN56N1AT5NOJEd9qFODKRnwhAc/J?=
+ =?us-ascii?Q?E7wW91VBdIkmufQq1l/c5bga5q9haCeFBux+qUf9JTbZYc53NOIxMmWNqJOW?=
+ =?us-ascii?Q?LrJyp14/iWjecT90Gpohbx5UTozoMnR6G/xLaFPaQ6ARmGFtVGP03FpR6ct0?=
+ =?us-ascii?Q?c62gPrYUeu/SISnrql/wOp6wplSxLSzN+nnsYj20LxddLSDyH6l7TvBUP0Jl?=
+ =?us-ascii?Q?jrF+uxzTRXZAcXCLh1V25TlpVJuCiRyLLCUD81HF0fWhjSnsyN3lHUgEOo0C?=
+ =?us-ascii?Q?lF381T/XGFoungrMInpMCsiYbcln/q77+wg31u0ZCf6KNGqhwpmhq4lOtJdb?=
+ =?us-ascii?Q?bQ1lETwF6IQ/ECqbOpXqBMqw0+d2zI2X6a6dJ3Ivi6KZnHGnS/xFHbtirn0I?=
+ =?us-ascii?Q?LLf0kG4+j/HLxi2wtvzb+ROavUMgX3mXpJ97AN3U78TaVafKFiT0vFS5OLLR?=
+ =?us-ascii?Q?uYZ2zGY0hHpGtctEBklcaSpguqC1c8Gw+lVfmJv5XscYD4rlAkPiavFwMWNA?=
+ =?us-ascii?Q?yraVS/lSPEtxKtVkAMMlfeWN8Zc+TR9N0wXrpwzaMl1nbJrqtX8yBdzM8N3Z?=
+ =?us-ascii?Q?bLgf3hQSaS2i6cYgoWlzjrdh/iZPfyWAmSME/S14vSQ21vr0+2Kq9Dwq9ZIy?=
+ =?us-ascii?Q?1fIkWeNcnOCmT+bWx/ydZJLfUi6fwgUw4KhLWjQp1L4sIvqXo58Y4Pc3DTgY?=
+ =?us-ascii?Q?N664A+E2K7TIzEDiXJVb4BmNz8cRFyxX7MLqZ8u4+b/HXBZfGZJ9QVhyluiO?=
+ =?us-ascii?Q?iBUHxg5gM+KOf22REqXxX+CpQnjXkc55/+zCLTKrHTQZxCkos2kYHi4UOhl5?=
+ =?us-ascii?Q?Hsw6ImuLEBRgJpp6lwIKvZ2k1QAAQuhJmYtg4954j6ltFP30qCMPJoOy2Xim?=
+ =?us-ascii?Q?BP65n1RKudIn4xRwWCuRPimDtChp+bvaWTrjVSSkeOxiX8menajmFyHUDlrL?=
+ =?us-ascii?Q?v0W9NBFA9wu7I2j7F7oL3mHIPbQJ5WH7UEq4zQFK9H7PrHTysWhTZwS8KxMk?=
+ =?us-ascii?Q?OcDUg+GGnfU+4Eh3cSiBHDbTucSfan2RXs7uAg/6+i3/HUcp9UyvzwhWwsxv?=
+ =?us-ascii?Q?gP1RAmxDufLRhV+/gIbsvut4/JXxH/5glYIE+l7Nn/m/ZvpXc0wgJW3Hn7L9?=
+ =?us-ascii?Q?YPHeKOvInnPdL+uYJO+KxTsVCjUWQ5rRPktazDMlcA43S+iKsF6LtKdoekI9?=
+ =?us-ascii?Q?M3/VznHvcuIexZn4EJFxQLoSZUf8283jfmDrWfZ98u8sPN8dYfhoZozLid7p?=
+ =?us-ascii?Q?Bzcq0aRIgCq4+3qg2gXFnbTbVV8LjxrXzh/T570lTyATbdGX9WuKFWj1FP3X?=
+ =?us-ascii?Q?OhSA5cm3kUEMp2CZWtHduxvxJID+Zo3GB5zaNtRpWd9s4OOmzsNBrKVZbl7N?=
+ =?us-ascii?Q?kj2LamrJPLy3aKCWSFTeGaDKAZ6llp+F8YRPPpTIEvauZ+zGTR58nrNvSGlA?=
+ =?us-ascii?Q?nIJlMlnz0UcSY2Pkwp/WzIn0JXWD/Ck9d4ooeBYKrNHu1Qh9J0QUt5IyHeyr?=
+ =?us-ascii?Q?jWquRd9w5nwpgN2hcTgsrFnmpcWySVbk4xabAsZhPMzuu9AZMZAUntU4qgWP?=
+ =?us-ascii?Q?6g1tcQG7ersKmAghWv7o2jAPKafYYkqQHDXx6rOq?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22e7c241-17e5-4fff-220d-08ddeb804e29
+X-MS-Exchange-CrossTenant-AuthSource: DS1SPRMB0005.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 06:57:26.0299
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LbswujGvj0wuyAZG34Ugidc6oeA1ZcSgP1p4azM/+wuTRyvhm0mdTx2XJmLyhmD5mDlkrxF9smXdGK/hsDACKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6531
 
-The Qualcomm Glymur platform has the new v8 version
-of the eDP/DP PHY. So rework the driver to support this
-new version and add the platform specific configuration data.
+On 2025-09-04 at 14:12 +1000, Alexandre Courbot <acourbot@nvidia.com> wrote...
+> Hi Alistair,
+> 
+> Making a pass about the bindings only - I will check the command-queue
+> logic in another one.
+> 
+> On Wed Aug 27, 2025 at 5:20 PM JST, Alistair Popple wrote:
+> > This commit introduces core infrastructure for handling GSP command and
+> > message queues in the nova-core driver. The command queue system enables
+> > bidirectional communication between the host driver and GSP firmware
+> > through a remote message passing interface.
+> >
+> > The interface is based on passing serialised data structures over a ring
+> > buffer with separate transmit and receive queues. Commands are sent by
+> > writing to the CPU transmit queue and waiting for completion via the
+> > receive queue.
+> >
+> > To ensure safety mutable or immutable (depending on whether it is a send
+> > or receive operation) references are taken on the command queue when
+> > allocating the message to write/read to. This ensures message memory
+> > remains valid and the command queue can't be mutated whilst an operation
+> > is in progress.
+> >
+> > Currently this is only used by the probe() routine and therefore can
+> > only used by a single thread of execution. Locking to enable safe access
+> > from multiple threads will be introduced in a future series when that
+> > becomes necessary.
+> >
+> > Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> > ---
+> >  drivers/gpu/nova-core/gsp.rs                  |  20 +-
+> >  drivers/gpu/nova-core/gsp/cmdq.rs             | 695 ++++++++++++++++++
+> >  drivers/gpu/nova-core/nvfw.rs                 |  31 +
+> >  .../gpu/nova-core/nvfw/r570_144_bindings.rs   | 268 +++++++
+> >  drivers/gpu/nova-core/regs.rs                 |   4 +
+> >  5 files changed, 1012 insertions(+), 6 deletions(-)
+> >  create mode 100644 drivers/gpu/nova-core/gsp/cmdq.rs
+> >
+> > diff --git a/drivers/gpu/nova-core/gsp.rs b/drivers/gpu/nova-core/gsp.rs
+> > index 1f51e354b9569..41a88087d9baa 100644
+> > --- a/drivers/gpu/nova-core/gsp.rs
+> > +++ b/drivers/gpu/nova-core/gsp.rs
+> > @@ -1,5 +1,6 @@
+> >  // SPDX-License-Identifier: GPL-2.0
+> >  
+> > +use kernel::alloc::flags::GFP_KERNEL;
+> >  use kernel::bindings;
+> >  use kernel::device;
+> >  use kernel::dma::CoherentAllocation;
+> > @@ -12,6 +13,7 @@
+> >  
+> >  use crate::fb::FbLayout;
+> >  use crate::firmware::Firmware;
+> > +use crate::gsp::cmdq::GspCmdq;
+> >  use crate::nvfw::{
+> >      GspFwWprMeta, GspFwWprMetaBootInfo, GspFwWprMetaBootResumeInfo, LibosMemoryRegionInitArgument,
+> >      LibosMemoryRegionKind_LIBOS_MEMORY_REGION_CONTIGUOUS,
+> > @@ -19,6 +21,8 @@
+> >      GSP_FW_WPR_META_REVISION,
+> >  };
+> >  
+> > +pub(crate) mod cmdq;
+> > +
+> >  pub(crate) const GSP_PAGE_SHIFT: usize = 12;
+> >  pub(crate) const GSP_PAGE_SIZE: usize = 1 << GSP_PAGE_SHIFT;
+> >  pub(crate) const GSP_HEAP_ALIGNMENT: Alignment = Alignment::new(1 << 20);
+> > @@ -44,6 +48,7 @@ pub(crate) struct GspMemObjects {
+> >      pub logintr: CoherentAllocation<u8>,
+> >      pub logrm: CoherentAllocation<u8>,
+> >      pub wpr_meta: CoherentAllocation<GspFwWprMeta>,
+> > +    pub cmdq: GspCmdq,
+> >  }
+> >  
+> >  pub(crate) fn build_wpr_meta(
+> > @@ -107,7 +112,7 @@ fn id8(name: &str) -> u64 {
+> >  }
+> >  
+> >  /// Creates a self-mapping page table for `obj` at its beginning.
+> > -fn create_pte_array(obj: &mut CoherentAllocation<u8>) {
+> > +fn create_pte_array<T: AsBytes + FromBytes>(obj: &mut CoherentAllocation<T>, skip: usize) {
+> 
+> I'd move this extra argument to the patch that introduced this function,
+> that way we don't need to update the existing callers in this patch.
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- drivers/phy/qualcomm/phy-qcom-edp.c | 239 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 232 insertions(+), 7 deletions(-)
+Yep, sounds good.
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-edp.c b/drivers/phy/qualcomm/phy-qcom-edp.c
-index 116b7f7b4f8be93e5128c3cc6f382ce7576accbc..26af8d8db4d765ce35132a0fd092f8c8634e43d6 100644
---- a/drivers/phy/qualcomm/phy-qcom-edp.c
-+++ b/drivers/phy/qualcomm/phy-qcom-edp.c
-@@ -25,6 +25,7 @@
- #include "phy-qcom-qmp-dp-phy.h"
- #include "phy-qcom-qmp-qserdes-com-v4.h"
- #include "phy-qcom-qmp-qserdes-com-v6.h"
-+#include "phy-qcom-qmp-qserdes-com-v8.h"
- 
- /* EDP_PHY registers */
- #define DP_PHY_CFG                              0x0010
-@@ -32,7 +33,7 @@
- #define DP_PHY_PD_CTL                           0x001c
- #define DP_PHY_MODE                             0x0020
- 
--#define DP_AUX_CFG_SIZE                         10
-+#define DP_AUX_CFG_SIZE                         13
- #define DP_PHY_AUX_CFG(n)                       (0x24 + (0x04 * (n)))
- 
- #define DP_PHY_AUX_INTERRUPT_MASK		0x0058
-@@ -76,6 +77,7 @@ struct phy_ver_ops {
- 	int (*com_power_on)(const struct qcom_edp *edp);
- 	int (*com_resetsm_cntrl)(const struct qcom_edp *edp);
- 	int (*com_bias_en_clkbuflr)(const struct qcom_edp *edp);
-+	int (*com_clk_fwd_cfg)(const struct qcom_edp *edp);
- 	int (*com_configure_pll)(const struct qcom_edp *edp);
- 	int (*com_configure_ssc)(const struct qcom_edp *edp);
- };
-@@ -83,6 +85,8 @@ struct phy_ver_ops {
- struct qcom_edp_phy_cfg {
- 	bool is_edp;
- 	const u8 *aux_cfg;
-+	int aux_cfg_size;
-+	const u8 *vco_div_cfg;
- 	const struct qcom_edp_swing_pre_emph_cfg *swing_pre_emph_cfg;
- 	const struct phy_ver_ops *ver_ops;
- };
-@@ -185,6 +189,10 @@ static const u8 edp_phy_aux_cfg_v4[10] = {
- 	0x00, 0x13, 0x24, 0x00, 0x0a, 0x26, 0x0a, 0x03, 0x37, 0x03
- };
- 
-+static const u8 edp_phy_vco_div_cfg_v4[4] = {
-+	0x1, 0x1, 0x2, 0x0,
-+};
-+
- static const u8 edp_pre_emp_hbr_rbr_v5[4][4] = {
- 	{ 0x05, 0x11, 0x17, 0x1d },
- 	{ 0x05, 0x11, 0x18, 0xff },
-@@ -199,6 +207,14 @@ static const u8 edp_pre_emp_hbr2_hbr3_v5[4][4] = {
- 	{ 0x0d, 0xff, 0xff, 0xff }
- };
- 
-+static const u8 edp_phy_aux_cfg_v8[13] = {
-+	0x00, 0x00, 0xa0, 0x00, 0x0a, 0x26, 0x0a, 0x03, 0x37, 0x03, 0x02, 0x02, 0x4,
-+};
-+
-+static const u8 edp_phy_vco_div_cfg_v8[4] = {
-+	0x1, 0x1, 0x1, 0x1,
-+};
-+
- static const struct qcom_edp_swing_pre_emph_cfg edp_phy_swing_pre_emph_cfg_v5 = {
- 	.swing_hbr_rbr = &edp_swing_hbr_rbr,
- 	.swing_hbr3_hbr2 = &edp_swing_hbr2_hbr3,
-@@ -224,7 +240,11 @@ static int qcom_edp_phy_init(struct phy *phy)
- 	if (ret)
- 		goto out_disable_supplies;
- 
--	memcpy(aux_cfg, edp->cfg->aux_cfg, sizeof(aux_cfg));
-+	memcpy(aux_cfg, edp->cfg->aux_cfg, edp->cfg->aux_cfg_size);
-+
-+	ret = edp->cfg->ver_ops->com_clk_fwd_cfg(edp);
-+	if (ret)
-+		return ret;
- 
- 	writel(DP_PHY_PD_CTL_PWRDN | DP_PHY_PD_CTL_AUX_PWRDN |
- 	       DP_PHY_PD_CTL_PLL_PWRDN | DP_PHY_PD_CTL_DP_CLAMP_EN,
-@@ -252,7 +272,7 @@ static int qcom_edp_phy_init(struct phy *phy)
- 
- 	writel(0xfc, edp->edp + DP_PHY_MODE);
- 
--	for (int i = 0; i < DP_AUX_CFG_SIZE; i++)
-+	for (int i = 0; i < edp->cfg->aux_cfg_size; i++)
- 		writel(aux_cfg[i], edp->edp + DP_PHY_AUX_CFG(i));
- 
- 	writel(PHY_AUX_STOP_ERR_MASK | PHY_AUX_DEC_ERR_MASK |
-@@ -345,22 +365,22 @@ static int qcom_edp_set_vco_div(const struct qcom_edp *edp, unsigned long *pixel
- 
- 	switch (dp_opts->link_rate) {
- 	case 1620:
--		vco_div = 0x1;
-+		vco_div = edp->cfg->vco_div_cfg[0];
- 		*pixel_freq = 1620000000UL / 2;
- 		break;
- 
- 	case 2700:
--		vco_div = 0x1;
-+		vco_div = edp->cfg->vco_div_cfg[1];
- 		*pixel_freq = 2700000000UL / 2;
- 		break;
- 
- 	case 5400:
--		vco_div = 0x2;
-+		vco_div = edp->cfg->vco_div_cfg[2];
- 		*pixel_freq = 5400000000UL / 4;
- 		break;
- 
- 	case 8100:
--		vco_div = 0x0;
-+		vco_div = edp->cfg->vco_div_cfg[3];
- 		*pixel_freq = 8100000000UL / 6;
- 		break;
- 
-@@ -398,6 +418,11 @@ static int qcom_edp_phy_com_resetsm_cntrl_v4(const struct qcom_edp *edp)
- 				     val, val & BIT(0), 500, 10000);
- }
- 
-+static int qcom_edp_com_clk_fwd_cfg_v4(const struct qcom_edp *edp)
-+{
-+	return 0;
-+}
-+
- static int qcom_edp_com_bias_en_clkbuflr_v4(const struct qcom_edp *edp)
- {
- 	/* Turn on BIAS current for PHY/PLL */
-@@ -530,6 +555,7 @@ static const struct phy_ver_ops qcom_edp_phy_ops_v4 = {
- 	.com_power_on		= qcom_edp_phy_power_on_v4,
- 	.com_resetsm_cntrl	= qcom_edp_phy_com_resetsm_cntrl_v4,
- 	.com_bias_en_clkbuflr	= qcom_edp_com_bias_en_clkbuflr_v4,
-+	.com_clk_fwd_cfg	= qcom_edp_com_clk_fwd_cfg_v4,
- 	.com_configure_pll	= qcom_edp_com_configure_pll_v4,
- 	.com_configure_ssc	= qcom_edp_com_configure_ssc_v4,
- };
-@@ -538,16 +564,21 @@ static const struct qcom_edp_phy_cfg sa8775p_dp_phy_cfg = {
- 	.is_edp = false,
- 	.aux_cfg = edp_phy_aux_cfg_v5,
- 	.swing_pre_emph_cfg = &edp_phy_swing_pre_emph_cfg_v5,
-+	.vco_div_cfg = edp_phy_vco_div_cfg_v4,
- 	.ver_ops = &qcom_edp_phy_ops_v4,
- };
- 
- static const struct qcom_edp_phy_cfg sc7280_dp_phy_cfg = {
- 	.aux_cfg = edp_phy_aux_cfg_v4,
-+	.aux_cfg_size = ARRAY_SIZE(edp_phy_aux_cfg_v4),
-+	.vco_div_cfg = edp_phy_vco_div_cfg_v4,
- 	.ver_ops = &qcom_edp_phy_ops_v4,
- };
- 
- static const struct qcom_edp_phy_cfg sc8280xp_dp_phy_cfg = {
- 	.aux_cfg = edp_phy_aux_cfg_v4,
-+	.aux_cfg_size = ARRAY_SIZE(edp_phy_aux_cfg_v4),
-+	.vco_div_cfg = edp_phy_vco_div_cfg_v4,
- 	.swing_pre_emph_cfg = &dp_phy_swing_pre_emph_cfg,
- 	.ver_ops = &qcom_edp_phy_ops_v4,
- };
-@@ -555,10 +586,37 @@ static const struct qcom_edp_phy_cfg sc8280xp_dp_phy_cfg = {
- static const struct qcom_edp_phy_cfg sc8280xp_edp_phy_cfg = {
- 	.is_edp = true,
- 	.aux_cfg = edp_phy_aux_cfg_v4,
-+	.aux_cfg_size = ARRAY_SIZE(edp_phy_aux_cfg_v4),
-+	.vco_div_cfg = edp_phy_vco_div_cfg_v4,
- 	.swing_pre_emph_cfg = &edp_phy_swing_pre_emph_cfg,
- 	.ver_ops = &qcom_edp_phy_ops_v4,
- };
- 
-+static int qcom_edp_phy_com_resetsm_cntrl_v8(const struct qcom_edp *edp)
-+{
-+	u32 val;
-+
-+	writel(0x20, edp->pll + QSERDES_V8_COM_RESETSM_CNTRL);
-+
-+	return readl_poll_timeout(edp->pll + QSERDES_V8_COM_C_READY_STATUS,
-+				     val, val & BIT(0), 500, 10000);
-+}
-+
-+static int qcom_edp_com_clk_fwd_cfg_v8(const struct qcom_edp *edp)
-+{
-+	writel(0x3f, edp->pll + QSERDES_V8_COM_CLK_FWD_CONFIG_1);
-+
-+	return 0;
-+}
-+
-+static int qcom_edp_com_bias_en_clkbuflr_v8(const struct qcom_edp *edp)
-+{
-+	/* Turn on BIAS current for PHY/PLL */
-+	writel(0x1f, edp->pll + QSERDES_V8_COM_BIAS_EN_CLKBUFLR_EN);
-+
-+	return 0;
-+}
-+
- static int qcom_edp_phy_power_on_v6(const struct qcom_edp *edp)
- {
- 	u32 val;
-@@ -724,6 +782,139 @@ static int qcom_edp_com_configure_pll_v6(const struct qcom_edp *edp)
- 	return 0;
- }
- 
-+static int qcom_edp_com_configure_ssc_v8(const struct qcom_edp *edp)
-+{
-+	const struct phy_configure_opts_dp *dp_opts = &edp->dp_opts;
-+	u32 step1;
-+	u32 step2;
-+
-+	switch (dp_opts->link_rate) {
-+	case 1620:
-+	case 2700:
-+	case 8100:
-+		step1 = 0x5b;
-+		step2 = 0x02;
-+		break;
-+
-+	case 5400:
-+		step1 = 0x5b;
-+		step2 = 0x02;
-+		break;
-+
-+	default:
-+		/* Other link rates aren't supported */
-+		return -EINVAL;
-+	}
-+
-+	writel(0x01, edp->pll + QSERDES_V8_COM_SSC_EN_CENTER);
-+	writel(0x00, edp->pll + QSERDES_V8_COM_SSC_ADJ_PER1);
-+	writel(0x6b, edp->pll + QSERDES_V8_COM_SSC_PER1);
-+	writel(0x02, edp->pll + QSERDES_V8_COM_SSC_PER2);
-+	writel(step1, edp->pll + QSERDES_V8_COM_SSC_STEP_SIZE1_MODE0);
-+	writel(step2, edp->pll + QSERDES_V8_COM_SSC_STEP_SIZE2_MODE0);
-+
-+	return 0;
-+}
-+
-+static int qcom_edp_com_configure_pll_v8(const struct qcom_edp *edp)
-+{
-+	const struct phy_configure_opts_dp *dp_opts = &edp->dp_opts;
-+	u32 div_frac_start2_mode0;
-+	u32 div_frac_start3_mode0;
-+	u32 dec_start_mode0;
-+	u32 lock_cmp1_mode0;
-+	u32 lock_cmp2_mode0;
-+	u32 code1_mode0;
-+	u32 code2_mode0;
-+	u32 hsclk_sel;
-+
-+	switch (dp_opts->link_rate) {
-+	case 1620:
-+		hsclk_sel = 0x5;
-+		dec_start_mode0 = 0x34;
-+		div_frac_start2_mode0 = 0xc0;
-+		div_frac_start3_mode0 = 0x0b;
-+		lock_cmp1_mode0 = 0x37;
-+		lock_cmp2_mode0 = 0x04;
-+		code1_mode0 = 0x71;
-+		code2_mode0 = 0x0c;
-+		break;
-+
-+	case 2700:
-+		hsclk_sel = 0x3;
-+		dec_start_mode0 = 0x34;
-+		div_frac_start2_mode0 = 0xc0;
-+		div_frac_start3_mode0 = 0x0b;
-+		lock_cmp1_mode0 = 0x07;
-+		lock_cmp2_mode0 = 0x07;
-+		code1_mode0 = 0x71;
-+		code2_mode0 = 0x0c;
-+		break;
-+
-+	case 5400:
-+		hsclk_sel = 0x2;
-+		dec_start_mode0 = 0x4f;
-+		div_frac_start2_mode0 = 0xa0;
-+		div_frac_start3_mode0 = 0x01;
-+		lock_cmp1_mode0 = 0x18;
-+		lock_cmp2_mode0 = 0x15;
-+		code1_mode0 = 0x14;
-+		code2_mode0 = 0x25;
-+		break;
-+
-+	case 8100:
-+		hsclk_sel = 0x2;
-+		dec_start_mode0 = 0x4f;
-+		div_frac_start2_mode0 = 0xa0;
-+		div_frac_start3_mode0 = 0x01;
-+		lock_cmp1_mode0 = 0x18;
-+		lock_cmp2_mode0 = 0x15;
-+		code1_mode0 = 0x14;
-+		code2_mode0 = 0x25;
-+		break;
-+
-+	default:
-+		/* Other link rates aren't supported */
-+		return -EINVAL;
-+	}
-+
-+	writel(0x01, edp->pll + QSERDES_V8_COM_SVS_MODE_CLK_SEL);
-+	writel(0x3b, edp->pll + QSERDES_V8_COM_SYSCLK_EN_SEL);
-+	writel(0x02, edp->pll + QSERDES_V8_COM_SYS_CLK_CTRL);
-+	writel(0x0c, edp->pll + QSERDES_V8_COM_CLK_ENABLE1);
-+	writel(0x06, edp->pll + QSERDES_V8_COM_SYSCLK_BUF_ENABLE);
-+	writel(0x30, edp->pll + QSERDES_V8_COM_CLK_SELECT);
-+	writel(hsclk_sel, edp->pll + QSERDES_V8_COM_HSCLK_SEL_1);
-+	writel(0x07, edp->pll + QSERDES_V8_COM_PLL_IVCO);
-+	writel(0x00, edp->pll + QSERDES_V8_COM_LOCK_CMP_EN);
-+	writel(0x36, edp->pll + QSERDES_V8_COM_PLL_CCTRL_MODE0);
-+	writel(0x16, edp->pll + QSERDES_V8_COM_PLL_RCTRL_MODE0);
-+	writel(0x06, edp->pll + QSERDES_V8_COM_CP_CTRL_MODE0);
-+	writel(dec_start_mode0, edp->pll + QSERDES_V8_COM_DEC_START_MODE0);
-+	writel(0x00, edp->pll + QSERDES_V8_COM_DIV_FRAC_START1_MODE0);
-+	writel(div_frac_start2_mode0, edp->pll + QSERDES_V8_COM_DIV_FRAC_START2_MODE0);
-+	writel(div_frac_start3_mode0, edp->pll + QSERDES_V8_COM_DIV_FRAC_START3_MODE0);
-+	writel(0x96, edp->pll + QSERDES_V8_COM_CMN_CONFIG_1);
-+	writel(0x3f, edp->pll + QSERDES_V8_COM_INTEGLOOP_GAIN0_MODE0);
-+	writel(0x00, edp->pll + QSERDES_V8_COM_INTEGLOOP_GAIN1_MODE0);
-+	writel(0x00, edp->pll + QSERDES_V8_COM_VCO_TUNE_MAP);
-+	writel(lock_cmp1_mode0, edp->pll + QSERDES_V8_COM_LOCK_CMP1_MODE0);
-+	writel(lock_cmp2_mode0, edp->pll + QSERDES_V8_COM_LOCK_CMP2_MODE0);
-+
-+	writel(0x0a, edp->pll + QSERDES_V8_COM_BG_TIMER);
-+	writel(0x0a, edp->pll + QSERDES_V8_COM_CORECLK_DIV_MODE0);
-+	writel(0x00, edp->pll + QSERDES_V8_COM_VCO_TUNE_CTRL);
-+	writel(0x1f, edp->pll + QSERDES_V8_COM_BIAS_EN_CLKBUFLR_EN);
-+	writel(0x00, edp->pll + QSERDES_V8_COM_CORE_CLK_EN);
-+	writel(0xa0, edp->pll + QSERDES_V8_COM_VCO_TUNE1_MODE0);
-+	writel(0x01, edp->pll + QSERDES_V8_COM_VCO_TUNE2_MODE0);
-+
-+	writel(code1_mode0, edp->pll + QSERDES_V8_COM_BIN_VCOCAL_CMP_CODE1_MODE0);
-+	writel(code2_mode0, edp->pll + QSERDES_V8_COM_BIN_VCOCAL_CMP_CODE2_MODE0);
-+
-+	return 0;
-+}
-+
- static const struct phy_ver_ops qcom_edp_phy_ops_v6 = {
- 	.com_power_on		= qcom_edp_phy_power_on_v6,
- 	.com_resetsm_cntrl	= qcom_edp_phy_com_resetsm_cntrl_v6,
-@@ -732,12 +923,45 @@ static const struct phy_ver_ops qcom_edp_phy_ops_v6 = {
- 	.com_configure_ssc	= qcom_edp_com_configure_ssc_v6,
- };
- 
-+static int qcom_edp_phy_power_on_v8(const struct qcom_edp *edp)
-+{
-+	u32 val;
-+
-+	writel(DP_PHY_PD_CTL_PWRDN | DP_PHY_PD_CTL_AUX_PWRDN |
-+	       DP_PHY_PD_CTL_LANE_0_1_PWRDN | DP_PHY_PD_CTL_LANE_2_3_PWRDN |
-+	       DP_PHY_PD_CTL_PLL_PWRDN | DP_PHY_PD_CTL_DP_CLAMP_EN,
-+	       edp->edp + DP_PHY_PD_CTL);
-+	writel(0xfc, edp->edp + DP_PHY_MODE);
-+
-+	return readl_poll_timeout(edp->pll + QSERDES_V8_COM_CMN_STATUS,
-+				     val, val & BIT(7), 5, 200);
-+}
-+
-+static const struct phy_ver_ops qcom_edp_phy_ops_v8 = {
-+	.com_power_on		= qcom_edp_phy_power_on_v8,
-+	.com_resetsm_cntrl	= qcom_edp_phy_com_resetsm_cntrl_v8,
-+	.com_bias_en_clkbuflr	= qcom_edp_com_bias_en_clkbuflr_v8,
-+	.com_clk_fwd_cfg	= qcom_edp_com_clk_fwd_cfg_v8,
-+	.com_configure_pll	= qcom_edp_com_configure_pll_v8,
-+	.com_configure_ssc	= qcom_edp_com_configure_ssc_v8,
-+};
-+
- static struct qcom_edp_phy_cfg x1e80100_phy_cfg = {
- 	.aux_cfg = edp_phy_aux_cfg_v4,
-+	.aux_cfg_size = ARRAY_SIZE(edp_phy_aux_cfg_v4),
-+	.vco_div_cfg = edp_phy_vco_div_cfg_v4,
- 	.swing_pre_emph_cfg = &dp_phy_swing_pre_emph_cfg,
- 	.ver_ops = &qcom_edp_phy_ops_v6,
- };
- 
-+static struct qcom_edp_phy_cfg glymur_phy_cfg = {
-+	.aux_cfg = edp_phy_aux_cfg_v8,
-+	.aux_cfg_size = ARRAY_SIZE(edp_phy_aux_cfg_v8),
-+	.vco_div_cfg = edp_phy_vco_div_cfg_v8,
-+	.swing_pre_emph_cfg = &edp_phy_swing_pre_emph_cfg_v5,
-+	.ver_ops = &qcom_edp_phy_ops_v8,
-+};
-+
- static int qcom_edp_phy_power_on(struct phy *phy)
- {
- 	const struct qcom_edp *edp = phy_get_drvdata(phy);
-@@ -1141,6 +1365,7 @@ static const struct of_device_id qcom_edp_phy_match_table[] = {
- 	{ .compatible = "qcom,sc8280xp-dp-phy", .data = &sc8280xp_dp_phy_cfg, },
- 	{ .compatible = "qcom,sc8280xp-edp-phy", .data = &sc8280xp_edp_phy_cfg, },
- 	{ .compatible = "qcom,x1e80100-dp-phy", .data = &x1e80100_phy_cfg, },
-+	{ .compatible = "qcom,glymur-dp-phy", .data = &glymur_phy_cfg, },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, qcom_edp_phy_match_table);
+> >      let num_pages = obj.size().div_ceil(GSP_PAGE_SIZE);
+> >      let handle = obj.dma_handle();
+> >  
+> > @@ -119,7 +124,7 @@ fn create_pte_array(obj: &mut CoherentAllocation<u8>) {
+> >      //  - The allocation size is at least as long as 8 * num_pages as
+> >      //    GSP_PAGE_SIZE is larger than 8 bytes.
+> >      let ptes = unsafe {
+> > -        let ptr = obj.start_ptr_mut().cast::<u64>().add(1);
+> > +        let ptr = obj.start_ptr_mut().cast::<u64>().add(skip);
+> >          core::slice::from_raw_parts_mut(ptr, num_pages)
+> >      };
+> >  
+> > @@ -166,20 +171,23 @@ pub(crate) fn new(
+> >              GFP_KERNEL | __GFP_ZERO,
+> >          )?;
+> >          let mut loginit = create_coherent_dma_object::<u8>(dev, "LOGINIT", 0x10000, &mut libos, 0)?;
+> > -        create_pte_array(&mut loginit);
+> > +        create_pte_array(&mut loginit, 1);
+> >          let mut logintr = create_coherent_dma_object::<u8>(dev, "LOGINTR", 0x10000, &mut libos, 1)?;
+> > -        create_pte_array(&mut logintr);
+> > +        create_pte_array(&mut logintr, 1);
+> >          let mut logrm = create_coherent_dma_object::<u8>(dev, "LOGRM", 0x10000, &mut libos, 2)?;
+> > -        create_pte_array(&mut logrm);
+> > -
+> > +        create_pte_array(&mut logrm, 1);
+> >          let wpr_meta = build_wpr_meta(dev, fw, fb_layout)?;
+> >  
+> > +        // Creates its own PTE array
+> > +        let cmdq = GspCmdq::new(dev)?;
+> > +
+> >          Ok(GspMemObjects {
+> >              libos,
+> >              loginit,
+> >              logintr,
+> >              logrm,
+> >              wpr_meta,
+> > +            cmdq,
+> >          })
+> >      }
+> >  
+> > diff --git a/drivers/gpu/nova-core/gsp/cmdq.rs b/drivers/gpu/nova-core/gsp/cmdq.rs
+> > new file mode 100644
+> > index 0000000000000..3f5d31c8e68f2
+> > --- /dev/null
+> > +++ b/drivers/gpu/nova-core/gsp/cmdq.rs
+> > @@ -0,0 +1,695 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +use core::mem::offset_of;
+> > +use core::ptr;
+> > +use core::sync::atomic::{fence, Ordering};
+> > +
+> > +use kernel::alloc::flags::GFP_KERNEL;
+> > +use kernel::device;
+> > +use kernel::dma::CoherentAllocation;
+> > +use kernel::prelude::*;
+> > +use kernel::sync::aref::ARef;
+> > +use kernel::time::Delta;
+> > +use kernel::transmute::{AsBytes, FromBytes};
+> > +use kernel::{dma_read, dma_write};
+> > +
+> > +use crate::driver::Bar0;
+> > +use crate::gsp::create_pte_array;
+> > +use crate::gsp::{GSP_PAGE_SHIFT, GSP_PAGE_SIZE};
+> > +use crate::nvfw::{
+> > +    NV_VGPU_MSG_EVENT_GSP_INIT_DONE, NV_VGPU_MSG_EVENT_GSP_LOCKDOWN_NOTICE,
+> > +    NV_VGPU_MSG_EVENT_GSP_POST_NOCAT_RECORD, NV_VGPU_MSG_EVENT_GSP_RUN_CPU_SEQUENCER,
+> > +    NV_VGPU_MSG_EVENT_MMU_FAULT_QUEUED, NV_VGPU_MSG_EVENT_OS_ERROR_LOG,
+> > +    NV_VGPU_MSG_EVENT_POST_EVENT, NV_VGPU_MSG_EVENT_RC_TRIGGERED,
+> > +    NV_VGPU_MSG_EVENT_UCODE_LIBOS_PRINT, NV_VGPU_MSG_FUNCTION_ALLOC_CHANNEL_DMA,
+> > +    NV_VGPU_MSG_FUNCTION_ALLOC_CTX_DMA, NV_VGPU_MSG_FUNCTION_ALLOC_DEVICE,
+> > +    NV_VGPU_MSG_FUNCTION_ALLOC_MEMORY, NV_VGPU_MSG_FUNCTION_ALLOC_OBJECT,
+> > +    NV_VGPU_MSG_FUNCTION_ALLOC_ROOT, NV_VGPU_MSG_FUNCTION_BIND_CTX_DMA, NV_VGPU_MSG_FUNCTION_FREE,
+> > +    NV_VGPU_MSG_FUNCTION_GET_GSP_STATIC_INFO, NV_VGPU_MSG_FUNCTION_GET_STATIC_INFO,
+> > +    NV_VGPU_MSG_FUNCTION_GSP_INIT_POST_OBJGPU, NV_VGPU_MSG_FUNCTION_GSP_RM_CONTROL,
+> > +    NV_VGPU_MSG_FUNCTION_GSP_SET_SYSTEM_INFO, NV_VGPU_MSG_FUNCTION_LOG,
+> > +    NV_VGPU_MSG_FUNCTION_MAP_MEMORY, NV_VGPU_MSG_FUNCTION_NOP,
+> > +    NV_VGPU_MSG_FUNCTION_SET_GUEST_SYSTEM_INFO, NV_VGPU_MSG_FUNCTION_SET_REGISTRY,
+> 
+> We will want to declare these as a set of enums. :) It will make the
+> import easier (only one type to import), and we can benefit from the
+> goodies that come with having a dedicated type (more on that below).
 
--- 
-2.45.2
+Yes, previously these were all just imported but an enum would make sense.
 
+> > +};
+> > +use crate::regs::NV_PGSP_QUEUE_HEAD;
+> > +use crate::sbuffer::SBuffer;
+> > +use crate::util::wait_on;
+> > +
+> > +const GSP_COMMAND_TIMEOUT: i64 = 5;
+> > +
+> > +pub(crate) trait GspCommandToGsp: Sized {
+> > +    const FUNCTION: u32;
+> 
+> This then could become the right enum type, constraining the values it
+> can take.
+
+Makes sense.
+
+> Let's also add short doccomments for this new trait.
+> 
+> > +}
+> > +
+> > +pub(crate) trait GspMessageFromGsp: Sized {
+> > +    const FUNCTION: u32;
+> 
+> Same here.
+> 
+> > +}
+> > +
+> > +// This next section contains constants and structures hand-coded from the GSP
+> > +// headers We could replace these with bindgen versions, but that's a bit of a
+> > +// pain because they basically end up pulling in the world (ie. definitions for
+> > +// every rpc method). So for now the hand-coded ones are fine. They are just
+> > +// structs so we can easily move to bindgen generated ones if/when we want to.
+> > +
+> > +// A GSP RPC header
+> > +#[repr(C)]
+> > +#[derive(Debug, Clone)]
+> > +struct GspRpcHeader {
+> > +    header_version: u32,
+> > +    signature: u32,
+> > +    length: u32,
+> > +    function: u32,
+> > +    rpc_result: u32,
+> > +    rpc_result_private: u32,
+> > +    sequence: u32,
+> > +    cpu_rm_gfid: u32,
+> > +}
+> 
+> This is the equivalent of `rpc_message_header_v03_00` in OpenRM. The
+> fact it is versioned makes me a bit nervous. :) If the layout change
+> somehow, we are in for a fun night of debugging. This is where having an
+> opaque abstraction built on top of a bindgen-generated type would be
+> handy: if the layout changes in an incompatible way, when the
+> abstraction would break at compile-time.
+
+Argh! I guess I wrote that before we were generating the headers and I never
+thought to go back and change that. Will fix these to use the generated binding.
+
+I will sync up with you offline but I'm not really understanding the point here.
+If a bindgen generated type changes in some incompatible way wouldn't we already
+get a compile-time error? And if the bindgen generated type changes, what's to
+say the rest of the logic hasn't also changed?
+
+Whilst I'm not totally opposed to something like this it just seems premature
+- the ABI is supposed to be stabalising and in practice none of the structures
+we care about appear to have changed in the 3 years since 525.53 was released.
+So IHMO it would be better to just deal with these changes if (not when) they
+happen rather than try and create an abstraction now, especially as this is only
+supposed to become more stable.
+
+> I've experimented a bit and we can generate this type while avoiding
+> pulling the world if we just define `rpc_generic_union` to e.g. `u8`.
+> I'll share how I did this with you.
+> 
+> > +
+> > +// SAFETY: These structs don't meet the no-padding requirements of AsBytes but
+> > +//         that is not a problem because they are not used outside the kernel.
+> 
+> Doesn't it? I don't see any implicit padding in this struct, it is just
+> a series of u32s.
+
+These safety comments are all wrong and need updating. I switched to using
+explicit padding (not that it's required here) to ensure we did meet the
+requirements for AsBytes. Will update for the next version.
+
+> > +unsafe impl AsBytes for GspRpcHeader {}
+> > +
+> > +// SAFETY: These structs don't meet the no-padding requirements of FromBytes but
+> > +//         that is not a problem because they are not used outside the kernel.
+> > +unsafe impl FromBytes for GspRpcHeader {}
+> > +
+> > +// A GSP message element header
+> > +#[repr(C)]
+> > +#[derive(Debug, Clone)]
+> > +struct GspMsgHeader {
+> > +    auth_tag_buffer: [u8; 16],
+> > +    aad_buffer: [u8; 16],
+> > +    checksum: u32,
+> > +    sequence: u32,
+> > +    elem_count: u32,
+> > +    pad: u32,
+> > +}
+> 
+> This one is `GSP_MSG_QUEUE_ELEMENT` in OpenRM - it has a macro and might
+> be a bit trickier to export, but if we can I think we want to do it
+> the same reasons as `GspRpcHeader`.
+> 
+> > +
+> > +// SAFETY: These structs don't meet the no-padding requirements of AsBytes but
+> > +//         that is not a problem because they are not used outside the kernel.
+> > +unsafe impl AsBytes for GspMsgHeader {}
+
+These also need fixing up.
+
+> > +// SAFETY: These structs don't meet the no-padding requirements of FromBytes but
+> > +//         that is not a problem because they are not used outside the kernel.
+> > +unsafe impl FromBytes for GspMsgHeader {}
+> > +
+> > +// These next two structs come from msgq_priv.h. Hopefully the will never
+> > +// need updating once the ABI is stabalised.
+> > +#[repr(C)]
+> > +#[derive(Debug)]
+> > +struct MsgqTxHeader {
+> > +    version: u32,    // queue version
+> > +    size: u32,       // bytes, page aligned
+> > +    msg_size: u32,   // entry size, bytes, must be power-of-2, 16 is minimum
+> > +    msg_count: u32,  // number of entries in queue
+> > +    write_ptr: u32,  // message id of next slot
+> > +    flags: u32,      // if set it means "i want to swap RX"
+> > +    rx_hdr_off: u32, // Offset of msgqRxHeader from start of backing store
+> > +    entry_off: u32,  // Offset of entries from start of backing store
+> > +}
+> 
+> This is OpenRM's `msgqTxHeader`. It's declaration doesn't look too
+> funny, and the only useful member on the driver side (outside of
+> construction) is `write_ptr`, so it wraps pretty well into an opaque
+> type that only exposes a couple of methods to read and set `write_ptr`.
+
+Huh. I guess these snuck in for the same reason as the previous ones. Clearly I
+didn't properly review why I was defining these by hand.
+
+> 
+> Doing so is valuable for clarity as well as future compatibility, as it
+> clearly shows in a single page of code how the header is used. Here is
+> all the code operating on it, in a single block instead of being spread
+> through this file:
+> 
+> 	impl MsgqTxHeader {
+> 			pub(crate) fn new(msgq_size: u32, msg_count: u32, rx_hdr_offset: u32) -> Self {
+> 					Self(bindings::msgqTxHeader {
+> 							version: 0,
+> 							size: msgq_size,
+> 							msgSize: GSP_PAGE_SIZE as u32,
+> 							msgCount: msg_count as u32,
+> 							writePtr: 0,
+> 							flags: 1,
+> 							rxHdrOff: rx_hdr_offset,
+> 							entryOff: GSP_PAGE_SIZE as u32,
+> 					})
+> 			}
+> 
+> 			pub(crate) fn write_ptr(&self) -> u32 {
+> 					let ptr = (&self.0.writePtr) as *const u32;
+> 
+> 					unsafe { ptr.read_volatile() }
+> 			}
+> 
+> 			pub(crate) fn set_write_ptr(&mut self, val: u32) {
+> 					let ptr = (&mut self.0.writePtr) as *mut u32;
+> 
+> 					unsafe { ptr.write_volatile(val) }
+> 			}
+> 	}
+
+Yes, this makes a lot of sense although I'm still not seeing the value of the
+[repr(transparent)] representation. Hopefully you can explain during out sync
+up ;)
+
+> > +
+> > +// SAFETY: These structs don't meet the no-padding requirements of AsBytes but
+> > +//         that is not a problem because they are not used outside the kernel.
+> > +unsafe impl AsBytes for MsgqTxHeader {}
+
+Also needs fixing.
+
+> > +#[repr(C)]
+> > +#[derive(Debug)]
+> > +struct MsgqRxHeader {
+> > +    read_ptr: u32, // message id of last message read
+> > +}
+> 
+> This is is even simpler than `MsgqTxHeader`, and can be abstracted
+> equally well.
+> 
+> > +
+> > +/// Number of GSP pages making the Msgq.
+> > +const MSGQ_NUM_PAGES: usize = 0x3f;
+> > +
+> > +#[repr(C, align(0x1000))]
+> > +#[derive(Debug)]
+> > +struct MsgqData {
+> > +    data: [[u8; GSP_PAGE_SIZE]; MSGQ_NUM_PAGES],
+> > +}
+> > +
+> > +// Annoyingly there is no real equivalent of #define so we're forced to use a
+> > +// literal to specify the alignment above. So check that against the actual GSP
+> > +// page size here.
+> > +static_assert!(align_of::<MsgqData>() == GSP_PAGE_SIZE);
+> > +
+> > +// There is no struct defined for this in the open-gpu-kernel-source headers.
+> > +// Instead it is defined by code in GspMsgQueuesInit().
+> > +#[repr(C)]
+> > +#[derive(Debug)]
+> > +struct Msgq {
+> > +    tx: MsgqTxHeader,
+> > +    rx: MsgqRxHeader,
+> > +    msgq: MsgqData,
+> > +}
+> > +
+> > +#[repr(C)]
+> > +#[derive(Debug)]
+> > +struct GspMem {
+> > +    ptes: [u8; GSP_PAGE_SIZE],
+> > +    cpuq: Msgq,
+> > +    gspq: Msgq,
+> > +}
+> 
+> ... and here is probably where we want to draw the line with generated
+> bindings. I suspect there are definitions for these types in OpenRM, but
+> if we generate bindings for them we won't be able to take advantage of
+> the abstractions we defined before, since bindgen won't know about them.
+
+Actually I'm pretty sure this was just hardcoded in OpenRM, but agree it's
+unlikely to change.
+
+> They also seem very unlikely to change, and we can probably negotiate a
+> stability guarantee for them.
+> 
+> <snip>
+> > +fn decode_gsp_function(function: u32) -> &'static str {
+> > +    match function {
+> > +        // Common function codes
+> > +        NV_VGPU_MSG_FUNCTION_NOP => "NOP",
+> > +        NV_VGPU_MSG_FUNCTION_SET_GUEST_SYSTEM_INFO => "SET_GUEST_SYSTEM_INFO",
+> > +        NV_VGPU_MSG_FUNCTION_ALLOC_ROOT => "ALLOC_ROOT",
+> > +        NV_VGPU_MSG_FUNCTION_ALLOC_DEVICE => "ALLOC_DEVICE",
+> > +        NV_VGPU_MSG_FUNCTION_ALLOC_MEMORY => "ALLOC_MEMORY",
+> > +        NV_VGPU_MSG_FUNCTION_ALLOC_CTX_DMA => "ALLOC_CTX_DMA",
+> > +        NV_VGPU_MSG_FUNCTION_ALLOC_CHANNEL_DMA => "ALLOC_CHANNEL_DMA",
+> > +        NV_VGPU_MSG_FUNCTION_MAP_MEMORY => "MAP_MEMORY",
+> > +        NV_VGPU_MSG_FUNCTION_BIND_CTX_DMA => "BIND_CTX_DMA",
+> > +        NV_VGPU_MSG_FUNCTION_ALLOC_OBJECT => "ALLOC_OBJECT",
+> > +        NV_VGPU_MSG_FUNCTION_FREE => "FREE",
+> > +        NV_VGPU_MSG_FUNCTION_LOG => "LOG",
+> > +        NV_VGPU_MSG_FUNCTION_GET_GSP_STATIC_INFO => "GET_GSP_STATIC_INFO",
+> > +        NV_VGPU_MSG_FUNCTION_SET_REGISTRY => "SET_REGISTRY",
+> > +        NV_VGPU_MSG_FUNCTION_GSP_SET_SYSTEM_INFO => "GSP_SET_SYSTEM_INFO",
+> > +        NV_VGPU_MSG_FUNCTION_GSP_INIT_POST_OBJGPU => "GSP_INIT_POST_OBJGPU",
+> > +        NV_VGPU_MSG_FUNCTION_GSP_RM_CONTROL => "GSP_RM_CONTROL",
+> > +        NV_VGPU_MSG_FUNCTION_GET_STATIC_INFO => "GET_STATIC_INFO",
+> > +
+> > +        // Event codes
+> > +        NV_VGPU_MSG_EVENT_GSP_INIT_DONE => "INIT_DONE",
+> > +        NV_VGPU_MSG_EVENT_GSP_RUN_CPU_SEQUENCER => "RUN_CPU_SEQUENCER",
+> > +        NV_VGPU_MSG_EVENT_POST_EVENT => "POST_EVENT",
+> > +        NV_VGPU_MSG_EVENT_RC_TRIGGERED => "RC_TRIGGERED",
+> > +        NV_VGPU_MSG_EVENT_MMU_FAULT_QUEUED => "MMU_FAULT_QUEUED",
+> > +        NV_VGPU_MSG_EVENT_OS_ERROR_LOG => "OS_ERROR_LOG",
+> > +        NV_VGPU_MSG_EVENT_GSP_POST_NOCAT_RECORD => "NOCAT",
+> > +        NV_VGPU_MSG_EVENT_GSP_LOCKDOWN_NOTICE => "LOCKDOWN_NOTICE",
+> > +        NV_VGPU_MSG_EVENT_UCODE_LIBOS_PRINT => "LIBOS_PRINT",
+> > +
+> > +        // Default for unknown codes
+> > +        _ => "UNKNOWN",
+> > +    }
+> > +}
+> 
+> This can probably be implemented as a `as_str` method for the enum types
+> discussed above.
+
+Sounds good.
 
