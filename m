@@ -1,106 +1,182 @@
-Return-Path: <linux-kernel+bounces-799737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB3FB42F9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:18:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A75B42FA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE4F87A1D43
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:17:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54D99567784
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EBC1FBC8E;
-	Thu,  4 Sep 2025 02:15:47 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9E3129E6E
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 02:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1EE3D3B3;
+	Thu,  4 Sep 2025 02:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="i90ZRoOq"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8991EB1A4;
+	Thu,  4 Sep 2025 02:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756952146; cv=none; b=W+5xZy3BtCrrw2O8bPjsCvmwH5bPwSOL+XiDzGCHQ5j+381VNuxl5Gi3PDtHCfNNw5uh6XXaqWQaWg1O6WIHtNb/T+ItplQqQGGjBxz8ovobRogGzdbxap+gDl/NaPxlm6AxdnbxoXXwWJ9CMPzlwuJ3xMQm5924s9YObGqoWcs=
+	t=1756952201; cv=none; b=Xg5GxgvqUT1kDRRmycwFt8soKzTEmxMKjQry7Xifj3XDsZbXXxiYahU3lO/Fpc2YrIWQvCfxLMZU8oCG1JEDfDq/t4/Z7aVO/1xuhmc5Xv/A/SaqjPRoIpSSyW+tmLZEkTK3zWoPCATVlQTQ3fuiA3YMnTK8Pdtf/YdhNfSCY9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756952146; c=relaxed/simple;
-	bh=cFFORYB7W9kJ/fMRCxTcDJgh1ntBg6Yn+F8k58EQXVY=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=C1iGjPkOEsxC1YmfepFjU0dUp2Av0PY317hxjxvojYo8Gau3WBVu76y1o+VsyJ5Y50o6uHE7jhiw1+u0+tsQIupBY8+bSkEkOMlWgGxA8XurMvDK/dencxeqrfpG+EooeCnQs1wnTrw0PTQNBU/jPW0rRbt6/tJnpsZo1SA9UE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8DxP9NH9rhoznoGAA--.13305S3;
-	Thu, 04 Sep 2025 10:15:35 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJDxQ+RD9rhofdZ8AA--.1935S3;
-	Thu, 04 Sep 2025 10:15:32 +0800 (CST)
-Subject: Re: [PATCH v1 1/3] objtool/LoongArch: Fix fall through warning about
- efi_boot_kernel()
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Huacai Chen
- <chenhuacai@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250901072156.31361-1-yangtiezhu@loongson.cn>
- <20250901072156.31361-2-yangtiezhu@loongson.cn>
- <20250901081616.GA4067720@noisy.programming.kicks-ass.net>
- <a59b3eaa-133d-88bf-f1f3-41328d023c4a@loongson.cn>
- <qvatvh7rixtdtaflqtgphlva7kkr47drijklkvmae3xh54vn6y@y5v75lwgjdyu>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <40e60857-8e02-cf5e-7804-453b406b0b8b@loongson.cn>
-Date: Thu, 4 Sep 2025 10:15:31 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1756952201; c=relaxed/simple;
+	bh=WzRgIr8Nsc96FYUeTDhPpbd74zf/aBMieYBWKFYK56Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RHOhL0M3mio8FsfiDv8f0zk+gkcSWGS/JWXSALvcp2mbK4Ymn0mJdOwK2kPvqPIzsi+5GQZ1qQOzgm+f9WIXYoCqkTyukZPPwoKBmPNTPviA3lDXIkKRPys21E8Z7o6UKXPhYkHAghIUwtHqdASabBSTmlR3P7kXrVZrD9OjiiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=i90ZRoOq; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
+	by linux.microsoft.com (Postfix) with ESMTPSA id AF272211938F;
+	Wed,  3 Sep 2025 19:16:37 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AF272211938F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1756952198;
+	bh=a4jumFB4PVokJK1dGa5tFvFLYvH7VS3Usw/M76NBjRw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=i90ZRoOq/9PHAR3KCaZxigllW/rJt9761pZoVNcSfG2k0k8yrrQjtXGtzTjhqKYEa
+	 vk3MOSjtKtSM1u/8MB2oA8JfxdfTkQF7vk0FOKgSHEWKbplGhjLGN+714eXuU+OkHP
+	 v0DqC9hBYEPhR1bpYXVDvxoNQqd7OQ09twpOLTno=
+Message-ID: <ff4c58f1-564d-ddfa-bdff-48ffee6e0d72@linux.microsoft.com>
+Date: Wed, 3 Sep 2025 19:16:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <qvatvh7rixtdtaflqtgphlva7kkr47drijklkvmae3xh54vn6y@y5v75lwgjdyu>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH V0 0/2] Fix CONFIG_HYPERV and vmbus related anamoly
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJDxQ+RD9rhofdZ8AA--.1935S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrZrWUury7GF13ZF15trWfCrX_yoWfWrc_ur
-	n29wn7C3s8ta1qvan8Kr4YqFZ5Za4UWrW8J3yDXw48Z345Ja90kFyfJFyfWas8KFsxZasr
-	GF4UXas5WryI9osvyTuYvTs0mTUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbx8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
-	oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F4
-	0EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_
-	Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbI
-	xvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
-	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrx
-	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
-	6r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
-	CI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j1WlkUUUUU
-	=
+To: Michael Kelley <mhklinux@outlook.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "virtualization@lists.linux.dev" <virtualization@lists.linux.dev>
+Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
+ <simona@ffwll.ch>, "jikos@kernel.org" <jikos@kernel.org>,
+ "bentiss@kernel.org" <bentiss@kernel.org>,
+ "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+ "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
+ <pabeni@redhat.com>, "bhelgaas@google.com" <bhelgaas@google.com>,
+ "James.Bottomley@HansenPartnership.com"
+ <James.Bottomley@HansenPartnership.com>,
+ "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "deller@gmx.de" <deller@gmx.de>, "arnd@arndb.de" <arnd@arndb.de>,
+ "sgarzare@redhat.com" <sgarzare@redhat.com>,
+ "horms@kernel.org" <horms@kernel.org>
+References: <20250828005952.884343-1-mrathor@linux.microsoft.com>
+ <SN6PR02MB4157917D84D00DBDAF54BD69D406A@SN6PR02MB4157.namprd02.prod.outlook.com>
+From: Mukesh R <mrathor@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157917D84D00DBDAF54BD69D406A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025/9/4 上午3:17, Josh Poimboeuf wrote:
-> On Mon, Sep 01, 2025 at 04:31:36PM +0800, Tiezhu Yang wrote:
->> On 2025/9/1 下午4:16, Peter Zijlstra wrote:
->>> On Mon, Sep 01, 2025 at 03:21:54PM +0800, Tiezhu Yang wrote:
->>>> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
->>>> the following objtool warning:
-
-...
-
->> Josh suggested to do something so that the EFI stub code isn't linked into
->> vmlinux.o [2], it needs to modify the link process and seems too
->> complicated and expensive for this warning to some extent.
+On 9/2/25 07:42, Michael Kelley wrote:
+> From: Mukesh Rathor <mrathor@linux.microsoft.com> Sent: Wednesday, August 27, 2025 6:00 PM
 >>
->> So I did this change for objtool.
+>> At present, drivers/Makefile will subst =m to =y for CONFIG_HYPERV for hv
+>> subdir. Also, drivers/hv/Makefile replaces =m to =y to build in
+>> hv_common.c that is needed for the drivers. Moreover, vmbus driver is
+>> built if CONFIG_HYPER is set, either loadable or builtin.
+>>
+>> This is not a good approach. CONFIG_HYPERV is really an umbrella config that
+>> encompasses builtin code and various other things and not a dedicated config
+>> option for VMBUS. Vmbus should really have a config option just like
+>> CONFIG_HYPERV_BALLOON etc. This small series introduces CONFIG_HYPERV_VMBUS
+>> to build VMBUS driver and make that distinction explicit. With that
+>> CONFIG_HYPERV could be changed to bool.
 > 
-> I don't like adding these workarounds to objtool.  Is it really that
-> complicated to link efistub separately?  That seems like the proper
-> design.  vmlinux.o should only have real kernel code.
+> Separating the core hypervisor support (CONFIG_HYPERV) from the VMBus
+> support (CONFIG_HYPERV_VMBUS) makes sense to me. Overall the code
+> is already mostly in separate source files code, though there's some
+> entanglement in the handling of VMBus interrupts, which could be
+> improved later.
+> 
+> However, I have a compatibility concern. Consider this scenario:
+> 
+> 1) Assume running in a Hyper-V VM with a current Linux kernel version
+>     built with CONFIG_HYPERV=m.
+> 2) Grab a new version of kernel source code that contains this patch set.
+> 3) Run 'make olddefconfig' to create the .config file for the new kernel.
+> 4) Build the new kernel. This succeeds.
+> 5) Install and run the new kernel in the Hyper-V VM. This fails.
+> 
+> The failure occurs because CONFIG_HYPERV=m is no longer legal,
+> so the .config file created in Step 3 has CONFIG_HYPERV=n. The
+> newly built kernel has no Hyper-V support and won't run in a
+> Hyper-V VM.
+> 
+> As a second issue, if in Step 1 the current kernel was built with
+> CONFIG_HYPERV=y, then the .config file for the new kernel will have
+> CONFIG_HYPERV=y, which is better. But CONFIG_HYPERV_VMBUS
+> defaults to 'n', so the new kernel doesn't have any VMBus drivers
+> and won't run in a typical Hyper-V VM.
+> 
+> The second issue could be fixed by assigning CONFIG_HYPERV_VMBUS
+> a default value, such as whatever CONFIG_HYPERV is set to. But
+> I'm not sure how to fix the first issue, except by continuing to
+> allow CONFIG_HYPERV=m. 
 
-OK, I see. If this is the only proper direction, I will do it
-in the next version.
+To certain extent, imo, users are expected to check config files
+for changes when moving to new versions/releases, so it would be a 
+one time burden. CONFIG_HYPERV=m is just broken imo as one sees that
+in .config but magically symbols in drivers/hv are in kerenel.
 
 Thanks,
-Tiezhu
+-Mukesh
+
+
+> See additional minor comments in Patches 1 and 2.
+> 
+> Michael
+> 
+>>
+>> For now, hv_common.c is left as is to reduce conflicts for upcoming patches,
+>> but once merges are mostly done, that and some others should be moved to
+>> virt/hyperv directory.
+>>
+>> Mukesh Rathor (2):
+>>   hyper-v: Add CONFIG_HYPERV_VMBUS option
+>>   hyper-v: Make CONFIG_HYPERV bool
+>>
+>>  drivers/Makefile               |  2 +-
+>>  drivers/gpu/drm/Kconfig        |  2 +-
+>>  drivers/hid/Kconfig            |  2 +-
+>>  drivers/hv/Kconfig             | 14 ++++++++++----
+>>  drivers/hv/Makefile            |  4 ++--
+>>  drivers/input/serio/Kconfig    |  4 ++--
+>>  drivers/net/hyperv/Kconfig     |  2 +-
+>>  drivers/pci/Kconfig            |  2 +-
+>>  drivers/scsi/Kconfig           |  2 +-
+>>  drivers/uio/Kconfig            |  2 +-
+>>  drivers/video/fbdev/Kconfig    |  2 +-
+>>  include/asm-generic/mshyperv.h |  8 +++++---
+>>  net/vmw_vsock/Kconfig          |  2 +-
+>>  13 files changed, 28 insertions(+), 20 deletions(-)
+>>
+>> --
+>> 2.36.1.vfs.0.0
+>>
 
 
