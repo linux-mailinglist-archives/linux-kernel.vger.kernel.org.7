@@ -1,148 +1,114 @@
-Return-Path: <linux-kernel+bounces-800438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BDFCB43798
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:51:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A69B4379C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA749189E0B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:52:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C1B23B44D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FB5263C7F;
-	Thu,  4 Sep 2025 09:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="UP15EjQR"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4213A2F99B5;
+	Thu,  4 Sep 2025 09:52:02 +0000 (UTC)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FBB7081F
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D322F83D8;
+	Thu,  4 Sep 2025 09:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756979502; cv=none; b=tqNFKu8PmLmC02+J6d5goelfiI8d79JP4feuZ/nBU1My1/GqxuVSmM5JnR2pSDHeDEo6PoHuUYSzSBpslAL6+yJd2ie0MckjQpMa37YrLvwnzi+EjrvwV9YwWrG55Sz2wP/yZqSQiLl7Cy/T33xkfyTULKCdOcIttVlszcLlAhM=
+	t=1756979521; cv=none; b=Av2JcZKpC67Hdxjnu1j1lZh63LUV/8tiEDusAj92DyicxzfW+ZjEselAYu7/ckOl+msUtnV2jMbVjyNgQKxAEi0rFYjEkDfxUQAN5zw2kE5sZP2vSlf+DR20EKOfCmQBatd6Xvcy9InlPdfBlDiuRjFE7M7GI/E2WmUu5kGVIqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756979502; c=relaxed/simple;
-	bh=Kf2285TNlcXXNdn314ZnQ9xn4p2b4fhoMfEfI4TRX9c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YUMFKXLnDQBEYlau/k2aFDlOe8Ij0FZkW51jPyw6e8KG1rhMsyUYFwKzU6/5QoKdupCUlmgBsVWSYsI0G4JveiWFjJAdj9NJGm2NUbgUqyZHifucE9Ca+yAPOtDDZaTjqjA4NsOYqqsFhW5rlErV1YBUrnbucixzqQlLj9W6ME4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=UP15EjQR; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cHZWD5Wcdz9t9t;
-	Thu,  4 Sep 2025 11:51:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1756979496;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=x783YplO/5tjt9thpzQQW4QfxErzCVsQDB0HrQ3Femw=;
-	b=UP15EjQRTgf8AXTpzsUwtLgs/7Bh43AuvseBH6zA+zqpIGOnDB2Ttbegpp8PFC6uq923Za
-	i44sQ0lkIt2NgHybBfJ0ovOylQzEQA9aUm2ZrmnqjU2sZho+QbFhkufhOvUboplEBcrZAq
-	vRkv7A4p0CSUNaJXRMTCAixbLx3hYGL7YRnwIYeQIo4YBo1l08WVF0IevcqZR/P0v4zQsC
-	qTal45fJLavRmizwApYOPj2lz+n4qjDPf9vC31hldT5k4gOESnpa5A5tDb+x47AFOeM5fI
-	8kfVpxM1TkF6GvZGshPs9DQStJN/SSQQEUZsNKm+sZLIDJ6uHOtGh9G8lcVSyg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Zi Yan <ziy@nvidia.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Barry Song <baohua@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nico Pache <npache@redhat.com>,
-	Dev Jain <dev.jain@arm.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel@pankajraghav.com,
-	willy@infradead.org,
-	linux-mm@kvack.org,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH v2] huge_memory: return -EINVAL in folio split functions when THP is disabled
-Date: Thu,  4 Sep 2025 11:51:29 +0200
-Message-ID: <20250904095129.222316-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1756979521; c=relaxed/simple;
+	bh=aRh9ECIvCZ+BSu3p11lpn1TnBSepXTWeXORdoXjYepE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pImU/QAZcO+yJDsCh89DDnr0U2ZmYe0JZKKZyg9ug/Z07XwpR3h7x1WVJY0LZz3rO5x8g0E22wzsUHY/2AbzRVRf276EsTw0AS9EMkKSr7hqocum/LLwUSaL0dusFupMaptVGsZ71QMGdcz/f4dCqED48tKNo/5KfizUWgadvc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-89434e44afcso504952241.3;
+        Thu, 04 Sep 2025 02:51:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756979519; x=1757584319;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G+4vrH2QO8CjdsLy8N7yx+23YHCO6qODmfoFZkVh+xU=;
+        b=CNzRIRZu0ype/gjs9H/oZB4HKXaLxyYa7I5QNJ49sLenovGyF2WuoDvTwE4foBVied
+         7Sbt3yzUeZPNe2knSWlF8dypfYbPGNnkmp+Ze3bWVpcxFNEvzQKMhmb8Hb8/k0HSrefY
+         UrHYYECSA4ldN/EHqPwH+WlIG8EN4i/SJWU7vEf6+4KN9ZPItitCKOOM2OutckxBRqaF
+         knqRTMxmz4juXWdwJRBdEChAhb9i2mQzGFK5fUQHiXwGN+bm0XraWaoMIL/juYPAEFWn
+         AEx71sgATBYUYJ+5VvoWau3d+LMEnbhyn7D/TX2SASdS1swiS9EpTvH3+Qh5Yx5J+lDo
+         liuw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCEUkZ8NOfqUzXR4wPKQ/iJEHMgEiF2C8DaOm85xI8iQxADO1WX7/vdcZEm6bh7nZfFUQTU5OP7wm1@vger.kernel.org, AJvYcCVgEvxyemE7uu5sDoO4h4lrXMLXNciODkd4EraVSRXRJqnndPuTBhonZzyoaA132/uqfP+SAX+RGrdEaOz1YlU13vs=@vger.kernel.org, AJvYcCXiiJNTjCfrGYUlq/8kWx6+Su7AIXRe/O7gicgYdGVlNoljn+APOA5J6cuinexUsqNVIuq8oNKn/xA1/y5e@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWBZyqvaIpDDUTeedG7ejfVIMQv+BRtwYio+kt0ue64xoM+w3L
+	Wuxi+uWFJQxxzOMcbYOv6LOylGiyz9U2u1w5x+86X+5vJOOJu0rRLxhD+kDE4aO9
+X-Gm-Gg: ASbGncui0Bq+w6BI1gpT6mW7Q8I+ILCtpAJYLT4GP0AAWmA1MEAD1QbpexV5pnx5dTw
+	MQBUeXlq7GJobAOwykTT0IiCNwJLBjlHynNqBCUyYkWKBK3qYNN2p0ovM+zjUoyQ/7QrZ74Vb2m
+	egxKts0BsvEg5CNHile1n2UBen6KoD8J8Br2xhAaF6WbGZpv5itRSB5vGS0QFBiyGuW07Eo3ZS/
+	1AmUfebEhdx5PQMlstC+HlocyrFTqRgOSCy5FnyOLvUyveX0DYC4AC8z6L2CteoH409JUruhPzJ
+	xrmx7J6eFkz7zBuM2Fm2lGuq2ziQIc8ff2wyOjfwIxTCKxDDayrXPYyjNQyr1EaEBWzKt7xbkbe
+	p+px10Z8N9Gg0vboQOP+rgYOmRXAGsYZLQpNXasU+Ds8iR8VXoI7Ijxfo/f8i
+X-Google-Smtp-Source: AGHT+IF5uzLnV8WSshDf+gXCFiLlvmuDBnlLEA9YOUOp0iJFBNobguAAE5tQCqVakEcKZInDyQH4Ew==
+X-Received: by 2002:a05:6122:a1f:b0:539:5cff:8070 with SMTP id 71dfb90a1353d-544a0254443mr6348094e0c.9.1756979518796;
+        Thu, 04 Sep 2025 02:51:58 -0700 (PDT)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544912eef59sm7988926e0c.8.2025.09.04.02.51.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 02:51:58 -0700 (PDT)
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-8943761ca20so536860241.2;
+        Thu, 04 Sep 2025 02:51:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU1reHDZbY+6ujc9e/JqHtZ6G2qoFWLeDlF2Mbz4PgEDr0WxW4Kb2+JJGfN1C/igXj07SJucJsA9q0/@vger.kernel.org, AJvYcCUuiv7I/JtkzXMDjgiu428yThoM6LocpYrky7pwTHVB2iogFtzbjcmJiKiLro6PTEFtdvOGlr7iOTRSbjwe@vger.kernel.org, AJvYcCVb6rWmjE0PnQiPGHoOHlUyhBCDqVZIYHjTK6Q36c6TABESoMcCBI7Yx7DPgdyBENTcW7qQx6tfYAbikhp70bmKWTk=@vger.kernel.org
+X-Received: by 2002:a05:6102:2ac9:b0:4f3:1d:6b47 with SMTP id
+ ada2fe7eead31-52b1b8fe837mr7122022137.25.1756979518360; Thu, 04 Sep 2025
+ 02:51:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4cHZWD5Wcdz9t9t
+References: <20250821161946.1096033-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250821161946.1096033-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXoaz8ZJS5==-6_5ojFg6igSg+VUaXuDyus=2365g-9dw@mail.gmail.com>
+In-Reply-To: <CAMuHMdXoaz8ZJS5==-6_5ojFg6igSg+VUaXuDyus=2365g-9dw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 4 Sep 2025 11:51:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU5RZFChUZPkNpiB+55KXX+4KbTUg5=Z543hPiuYsAgZw@mail.gmail.com>
+X-Gm-Features: Ac12FXyOlu_dZieWgINxQelvoG77msqMY2GyW7rtdIO6qK6sGu_JVE2fDK5WslY
+Message-ID: <CAMuHMdU5RZFChUZPkNpiB+55KXX+4KbTUg5=Z543hPiuYsAgZw@mail.gmail.com>
+Subject: Re: [PATCH 3/6] arm64: dts: renesas: rzt2h-evk-common: Enable WDT2
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+On Wed, 3 Sept 2025 at 15:49, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Thu, 21 Aug 2025 at 18:19, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Enable watchdog (WDT2) on RZ/T2H and RZ/N2H EVKs.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-devel for v6.18.
 
-split_huge_page_to_list_[to_order](), split_huge_page() and
-try_folio_split() return 0 on success and error codes on failure.
+FTR: s/rzt2h-evk-common/rzt2h-n2h-evk-common/g...
 
-When THP is disabled, these functions return 0 indicating success even
-though an error code should be returned as it is not possible to split a
-folio when THP is disabled.
+Gr{oetje,eeting}s,
 
-Make all these functions return -EINVAL to indicate failure instead of
-0. As large folios depend on CONFIG_THP, issue warning as this function
-should not be called without a large folio.
+                        Geert
 
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
-This issue was discovered while experimenting enabling large folios
-without THP and found that returning 0 in these functions is resulting in
-undefined behavior in truncate operations. This change fixes the issue.
-
- include/linux/huge_mm.h | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 29ef70022da1..23f124493c47 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -588,22 +588,30 @@ static inline int
- split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 		unsigned int new_order)
- {
--	return 0;
-+	struct folio *folio = page_folio(page);
-+
-+	VM_WARN_ON_ONCE_FOLIO(1, folio);
-+	return -EINVAL;
- }
- static inline int split_huge_page(struct page *page)
- {
--	return 0;
-+	struct folio *folio = page_folio(page);
-+
-+	VM_WARN_ON_ONCE_FOLIO(1, folio);
-+	return -EINVAL;
- }
- 
- static inline int split_folio_to_list(struct folio *folio, struct list_head *list)
- {
--	return 0;
-+	VM_WARN_ON_ONCE_FOLIO(1, folio);
-+	return -EINVAL;
- }
- 
- static inline int try_folio_split(struct folio *folio, struct page *page,
- 		struct list_head *list)
- {
--	return 0;
-+	VM_WARN_ON_ONCE_FOLIO(1, folio);
-+	return -EINVAL;
- }
- 
- static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
-
-base-commit: 291634ccfd2820c09f6e8c4982c2dee8155d09ae
 -- 
-2.50.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
