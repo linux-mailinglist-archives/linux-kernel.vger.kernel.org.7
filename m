@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-801725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BC96B44938
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:10:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED416B4493B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 665887AD02F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:08:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A83845C1AC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD7A2DCBEB;
-	Thu,  4 Sep 2025 22:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C782350857;
+	Thu,  4 Sep 2025 22:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="otW0zT0z"
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="NaQVCVG7"
 Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9612DCF55;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9D82EB5B3;
 	Thu,  4 Sep 2025 22:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757023429; cv=none; b=jjT7+LHyIB8ptS6qUFBkaWkxeTd0kg2NgJlE6wL3Z50sy2HE+lbd/9JRUz70cEwpQVZEgJukjEWW+BgUOmXgwrw/Mv9GqOyulG3q03orhj1lAKhsVDsgxvgzKC0MPi+aN2zLDNauhlFijUCGjPcZHw4UynAwyKc+MTrB2N4Cgb4=
+	t=1757023430; cv=none; b=eky7l5ybuexiTwcxGXOGJkleDakt8yW+7aW6B2A5KfpgPhiPwwllVKC/MFBaapMziAZIFasVKcZ3iqfiWvaos6iekhYV+IL7vZ1I6ZWF/Ugqwm88L9mehy8OB+b471kIMNR3uoyZc71n6/6YpVsmTAuKy5v5LUD93rvrdzwIngo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757023429; c=relaxed/simple;
-	bh=WqcDo6tdhzDxNEaRlGwvJ/3NEtjIz7qn2K6+WOAmmH8=;
+	s=arc-20240116; t=1757023430; c=relaxed/simple;
+	bh=ef/KmXAU5twJnvrbNwO81lp483y8IFKk+ht1SJzwdcs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Shj0XgXFs1Cl+RbjR4XKL411ODuEFqH8JiQd7HTeGXGEBfjTU3wWgF5W9xEV3aygJ6GihcDEQE1SK9C/pinvyYsM/q+pdCkO+LXDygGj8qyT+XmCn3XyFQF6C3rEeOLAfyav9EDLrQO/zPyTaefoCvxtA97dIZfeP4AqbdVUfbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=otW0zT0z; arc=none smtp.client-ip=130.133.4.66
+	 In-Reply-To:To:Cc; b=Z2Oe2RiW0KHHJqFV0OlqrX4yYehJy1wzYZy4K7GBzEss64z4EOfR+K4nKoa5Fo0+hpoutQUdOF0mfFLbUiZVLFCL3qyr0Ul+YaocXDv/L/WSeDB1ZLYfeSdUqItMPWyt0TF7ed9S3oPh1rCciiKhDRB2wGb0Ve7DsysxiPvROYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=NaQVCVG7; arc=none smtp.client-ip=130.133.4.66
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -35,28 +35,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:From:
 	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
 	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=c/smPJ5cqqeUFArcOKPQwnin0Vhj5pge1Y5vI9zqoBA=; t=1757023427;
-	x=1757628227; b=otW0zT0zTHyracN/8T0bgMDXaWCN0pnpudXw77NQ9RwHN8kCYSairarLe9xuN
-	wZQnfdxP5k05GrHKv8hDfQQoFyPiuZuIx359WTDrTHJKxV17Rlu+jLd81xh4McH1PIQoO6yKaKHK0
-	nBmXBRqTjUdyeTU3OXyANYP0t6ibT8O88JR8qWJV2RoGidCWEYTx33+H3+T3i6+N712bEKT2QqWlz
-	SiRsqtIqUJo11DNy+9QyxwYMlgoenxMVVITryMhXDmjKjG9y8Y/IiiHXMhnvpbsk7ERXuONisM+yn
-	Zec0N8fVqrYo6MHKPIgEu4+aSjCvkvIe0T71wHfgazvQdjPmyQ==;
+	References; bh=oS6pbq8B7+OURvadlkC+ImR86L0693Iz+IdGLSCm81E=; t=1757023427;
+	x=1757628227; b=NaQVCVG7p6WcnfR2CTkH5bhZZZeohtrR/JHXnCnGtg0qTi7lEREPU9Rs0r4ED
+	99ixHzYrRiZGBj3PizRSaD/4qtE7qnRcVCyNFYqvpaORaim065mkFU76vclk3ZGV+Bm4FWeZAMbLC
+	0yM7s9ZpetQ1pyqAnR4HzH+63pIhBjLHM4pjzru2GqKsVasoqrPegXz8KQuNHiarMY3nO2UBHy+Zd
+	rcg/7+LxDLPIIsh7/NWDGvps1owfx2L9jP7TpxeoDRNRuQptkGzGaEbrYitNwpFP8ipWUuMCC4L1P
+	89TAZUQxXX7ZoKbJvydGES4Q/XCmHvOn3Bk8Bauz3VEs/eMK1w==;
 Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
           by outpost.zedat.fu-berlin.de (Exim 4.98)
           with esmtps (TLS1.3)
           tls TLS_AES_256_GCM_SHA384
           (envelope-from <mkarcher@zedat.fu-berlin.de>)
-          id 1uuI3V-00000000z7D-00OS; Fri, 05 Sep 2025 00:03:45 +0200
+          id 1uuI3V-00000000z7J-1bAx; Fri, 05 Sep 2025 00:03:45 +0200
 Received: from 89-103-142-46.pool.kielnet.net ([46.142.103.89] helo=Geist14.)
           by inpost2.zedat.fu-berlin.de (Exim 4.98)
           with esmtpsa (TLS1.3)
           tls TLS_AES_256_GCM_SHA384
           (envelope-from <kernel@mkarcher.dialup.fu-berlin.de>)
-          id 1uuI3U-00000002DJL-3M5a; Fri, 05 Sep 2025 00:03:44 +0200
+          id 1uuI3V-00000002DJL-0nAc; Fri, 05 Sep 2025 00:03:45 +0200
 From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
-Date: Fri, 05 Sep 2025 00:03:30 +0200
-Subject: [PATCH v4 1/5] sparc: fix accurate exception reporting in
- copy_{from_to}_user for UltraSPARC
+Date: Fri, 05 Sep 2025 00:03:31 +0200
+Subject: [PATCH v4 2/5] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for UltraSPARC III
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,7 +65,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250905-memcpy_series-v4-1-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
+Message-Id: <20250905-memcpy_series-v4-2-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
 References: <20250905-memcpy_series-v4-0-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
 In-Reply-To: <20250905-memcpy_series-v4-0-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
 To: Andreas Larsson <andreas@gaisler.com>
@@ -73,79 +73,58 @@ Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
  Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
  John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
  Anthony Yznaga <anthony.yznaga@oracle.com>, 
- =?utf-8?q?Ren=C3=A9_Rebe?= <rene@exactcode.com>, 
- Jonathan 'theJPster' Pallant <kernel@thejpster.org.uk>
+ =?utf-8?q?Ren=C3=A9_Rebe?= <rene@exactcode.com>
 X-Mailer: b4 0.14.2
 X-Original-Sender: kernel@mkarcher.dialup.fu-berlin.de
 X-ZEDAT-Hint: PO
 
+Anthony Yznaga tracked down that a BUG_ON in ext4 code with large folios
+enabled resulted from copy_from_user() returning impossibly large values
+greater than the size to be copied. This lead to __copy_from_iter()
+returning impossible values instead of the actual number of bytes it was
+able to copy.
+
+The BUG_ON has been reported in
+https://lore.kernel.org/r/b14f55642207e63e907965e209f6323a0df6dcee.camel@physik.fu-berlin.de
+
 The referenced commit introduced exception handlers on user-space memory
 references in copy_from_user and copy_to_user. These handlers return from
 the respective function and calculate the remaining bytes left to copy
-using the current register contents. This commit fixes a couple of bad
-calculations. This will fix the return value of copy_from_user and
-copy_to_user in the faulting case. The behaviour of memcpy stays unchanged.
+using the current register contents. The exception handlers expect that
+%o2 has already been masked during the bulk copy loop, but the masking was
+performed after that loop. This will fix the return value of copy_from_user
+and copy_to_user in the faulting case. The behaviour of memcpy stays
+unchanged.
 
-Fixes: cb736fdbb208 ("sparc64: Convert U1copy_{from,to}_user to accurate exception reporting.")
-Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de> # on QEMU 10.0.3
-Tested-by: René Rebe <rene@exactcode.com> # on Ultra 5 UltraSparc IIi
-Tested-by: Jonathan 'theJPster' Pallant <kernel@thejpster.org.uk> # on Sun Netra T1
+Fixes: ee841d0aff64 ("sparc64: Convert U3copy_{from,to}_user to accurate exception reporting.")
+Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de> # on Sun Netra 240
+Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
+Tested-by: René Rebe <rene@exactcode.com> # on UltraSparc III+ and UltraSparc IIIi
 Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
 ---
- arch/sparc/lib/U1memcpy.S | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ arch/sparc/lib/U3memcpy.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/sparc/lib/U1memcpy.S b/arch/sparc/lib/U1memcpy.S
-index 635398ec7540ee3d344151ddc4c6f07ad41e11f9..154fbd35400ca8fe547c222d26aec18f46fcb1d2 100644
---- a/arch/sparc/lib/U1memcpy.S
-+++ b/arch/sparc/lib/U1memcpy.S
-@@ -164,17 +164,18 @@ ENTRY(U1_gs_40_fp)
- 	retl
- 	 add		%o0, %o2, %o0
- ENDPROC(U1_gs_40_fp)
--ENTRY(U1_g3_0_fp)
--	VISExitHalf
--	retl
--	 add		%g3, %o2, %o0
--ENDPROC(U1_g3_0_fp)
- ENTRY(U1_g3_8_fp)
- 	VISExitHalf
- 	add		%g3, 8, %g3
- 	retl
- 	 add		%g3, %o2, %o0
- ENDPROC(U1_g3_8_fp)
-+ENTRY(U1_g3_16_fp)
-+	VISExitHalf
-+	add		%g3, 16, %g3
-+	retl
-+	 add		%g3, %o2, %o0
-+ENDPROC(U1_g3_16_fp)
- ENTRY(U1_o2_0_fp)
- 	VISExitHalf
- 	retl
-@@ -547,18 +548,18 @@ FUNC_NAME:		/* %o0=dst, %o1=src, %o2=len */
- 62:	FINISH_VISCHUNK(o0, f44, f46)
- 63:	UNEVEN_VISCHUNK_LAST(o0, f46, f0)
+diff --git a/arch/sparc/lib/U3memcpy.S b/arch/sparc/lib/U3memcpy.S
+index 9248d59c734ce200f1f55e6d9913277f18715a87..bace3a18f836f1428ae0ed72b27aa1e00374089e 100644
+--- a/arch/sparc/lib/U3memcpy.S
++++ b/arch/sparc/lib/U3memcpy.S
+@@ -267,6 +267,7 @@ FUNC_NAME:	/* %o0=dst, %o1=src, %o2=len */
+ 	faligndata	%f10, %f12, %f26
+ 	EX_LD_FP(LOAD(ldd, %o1 + 0x040, %f0), U3_retl_o2)
  
--93:	EX_LD_FP(LOAD(ldd, %o1, %f2), U1_g3_0_fp)
-+93:	EX_LD_FP(LOAD(ldd, %o1, %f2), U1_g3_8_fp)
- 	add		%o1, 8, %o1
- 	subcc		%g3, 8, %g3
- 	faligndata	%f0, %f2, %f8
--	EX_ST_FP(STORE(std, %f8, %o0), U1_g3_8_fp)
-+	EX_ST_FP(STORE(std, %f8, %o0), U1_g3_16_fp)
- 	bl,pn		%xcc, 95f
- 	 add		%o0, 8, %o0
--	EX_LD_FP(LOAD(ldd, %o1, %f0), U1_g3_0_fp)
-+	EX_LD_FP(LOAD(ldd, %o1, %f0), U1_g3_8_fp)
- 	add		%o1, 8, %o1
- 	subcc		%g3, 8, %g3
- 	faligndata	%f2, %f0, %f8
--	EX_ST_FP(STORE(std, %f8, %o0), U1_g3_8_fp)
-+	EX_ST_FP(STORE(std, %f8, %o0), U1_g3_16_fp)
- 	bge,pt		%xcc, 93b
- 	 add		%o0, 8, %o0
- 
++	and		%o2, 0x3f, %o2
+ 	subcc		GLOBAL_SPARE, 0x80, GLOBAL_SPARE
+ 	add		%o1, 0x40, %o1
+ 	bgu,pt		%XCC, 1f
+@@ -336,7 +337,6 @@ FUNC_NAME:	/* %o0=dst, %o1=src, %o2=len */
+ 	 * Also notice how this code is careful not to perform a
+ 	 * load past the end of the src buffer.
+ 	 */
+-	and		%o2, 0x3f, %o2
+ 	andcc		%o2, 0x38, %g2
+ 	be,pn		%XCC, 2f
+ 	 subcc		%g2, 0x8, %g2
 
 -- 
 2.50.1
