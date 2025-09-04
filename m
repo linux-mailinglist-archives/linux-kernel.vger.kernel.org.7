@@ -1,117 +1,205 @@
-Return-Path: <linux-kernel+bounces-799653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B28D3B42EAF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:03:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F92B42EAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87C731C2214F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:03:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD04F1C21A06
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E36199949;
-	Thu,  4 Sep 2025 01:02:57 +0000 (UTC)
-Received: from r9206.ps.combzmail.jp (r9206.ps.combzmail.jp [160.16.62.99])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B34F5B21A;
+	Thu,  4 Sep 2025 01:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cftMC5e3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10FCE10E0
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 01:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.16.62.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C036FC5;
+	Thu,  4 Sep 2025 01:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756947776; cv=none; b=F8K1PggqNq+eoJTU5rdse2iJu2cmXPQTAtpbCzajnKdX0gWzQLobQ6i0nAtlvPH7/cRRkvIZEgd2hIUFXv6PdGcM9HhjnFiToDxQ2HtOBz1WDvWtupmg56SScCiiHwvxVKdVh+CqZ3NmbOPZtjAuRHHCHj7O6jWL7mSaHG38UvU=
+	t=1756947755; cv=none; b=Hcy/tcUqfRAqGECt6q8eP8+ErPvxeBPXm4dZmj1y7MhUD5ly20PZPX/Jyr4sx8uBf+wm241emsHR9ko84qJPIFi2KeN2ailRCbz6rhBmYpncwsSlFu4/LFq1Ic2QR6eGRUXfNo/++sEcM/i9JPLZENPkJBzMrddnm3oiVfWnAGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756947776; c=relaxed/simple;
-	bh=axWwrDS18HIJCEVjQdEfDJ44H28AbiiKgHuDEiuX3TI=;
-	h=To:From:Subject:Mime-Version:Content-Type:Message-Id:Date; b=iSXMNlLBE9dnxOTYu/+pzV8Wth4P/LJl6W0cOCfg8sWV+aCx+xcq7MjbeWc+mAtPT6qiAGkFPngKZxG5WaWD50OOYK1kUZSmGClbL7LJFqoOw4z/oXzy5OBi5fNf0J64M0pJtgN87RUfexBf8xPEmMRINpunUvaakJUY9tKkZZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=p-healthtech.work; spf=pass smtp.mailfrom=magerr.combzmail.jp; arc=none smtp.client-ip=160.16.62.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=p-healthtech.work
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
-Received: by r9206.ps.combzmail.jp (Postfix, from userid 99)
-	id E739B1038D6; Thu,  4 Sep 2025 10:02:16 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9206.ps.combzmail.jp E739B1038D6
-To: linux-kernel@vger.kernel.org
-From: =?ISO-2022-JP?B?GyRCJDEkcyQ1JF0bKEI=?= <info@p-healthtech.work>
-X-Ip: 200702634529294
-X-Ip-source: k85gj79348dnsa8ju0p6gd
-Precedence: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCPT42SDB3JE43cjkvNElNfRsoQg==?=
+	s=arc-20240116; t=1756947755; c=relaxed/simple;
+	bh=8nAczwppKWkmFx31kmIPa7xy1KYrypF3ToB6n147+gg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=icVdJPnPdb+dZjCe+4Ah/uogeXLKT7W0eO1zYdhca8DcBWSh9jkIVffj0wI5t6ZKrlLagJvob+hy+DqE6+W/8PIdk66y9T0UUzAdr6pRSFZcu0cMPOlIriW+Q5M06S9KloDjWHOLnlSZdShj8cq+EQA+wnpuC/A/tF9QbTg/8cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cftMC5e3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBABBC4CEE7;
+	Thu,  4 Sep 2025 01:02:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756947755;
+	bh=8nAczwppKWkmFx31kmIPa7xy1KYrypF3ToB6n147+gg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cftMC5e3pTJknQ88YxQ8XMWYUvbmiioDE+LmlC6whHTtQihOKlFkD0DgXwRskIAQP
+	 oipGG9uaqXtXJdE67auCilCzPxOQig5NUJI+BS4nyRf6nb4W7Dx1xYV1SC8eB+W1ug
+	 GDhXKkTNEH89m60LLZBO6hE3rEMMmXYX839IJhrz0J8RTNXvM9M4p4FhKkK4Ybkl/l
+	 hYzNeVNk/VXdO+zRuq6TpsM1Yn3NLAMgVaYOMEtnrYfF9+BFmLwmJU24PmNYvemT7x
+	 54dxqqEu1B8w3MPckq4A/5dFhCIJtfOxcbyMYurVADyZivTq9O4hoAtM5sxa461dLh
+	 qGpNidom8scKg==
+Date: Thu, 4 Sep 2025 10:02:31 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jinchao Wang <wangjinchao600@gmail.com>
+Cc: akpm@linux-foundation.org, naveen@kernel.org, davem@davemloft.net,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 02/13] x86/HWBP: Add arch_reinstall_hw_breakpoint()
+ for atomic updates
+Message-Id: <20250904100231.e0bb08d069db31520a6e0435@kernel.org>
+In-Reply-To: <5a6dde06-11ee-4ce7-9cb5-f0b8096e42ed@gmail.com>
+References: <20250818122720.434981-1-wangjinchao600@gmail.com>
+	<20250818122720.434981-2-wangjinchao600@gmail.com>
+	<20250818122720.434981-3-wangjinchao600@gmail.com>
+	<20250901160602.e25f0107e7b0ef4af1078fb7@kernel.org>
+	<284d5eef-447f-4e12-a121-3742d708c96f@gmail.com>
+	<20250902231152.442041a74774d888cec39201@kernel.org>
+	<5a6dde06-11ee-4ce7-9cb5-f0b8096e42ed@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-2022-jp
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-MagazineId: 938j
-X-uId: 6763304238485965565052571030
-X-Sender: CombzMailSender
-X-Url: http://www.combzmail.jp/
-Message-Id: <20250904010245.E739B1038D6@r9206.ps.combzmail.jp>
-Date: Thu,  4 Sep 2025 10:02:16 +0900 (JST)
 
-　
-　いつもお世話になります。
+On Wed, 3 Sep 2025 15:58:44 +0800
+Jinchao Wang <wangjinchao600@gmail.com> wrote:
 
-　従業員の健康管理において、「 月額100円〜」という圧倒的なコスパで
+> On 9/2/25 22:11, Masami Hiramatsu (Google) wrote:
+> > On Mon, 1 Sep 2025 18:23:44 +0800
+> > Jinchao Wang <wangjinchao600@gmail.com> wrote:
+> > 
+> >> On 9/1/25 15:06, Masami Hiramatsu (Google) wrote:
+> >>> Hi Jinchao,
+> >>>
+> >> Hi Masami,
+> >>
+> >>> On Mon, 18 Aug 2025 20:26:07 +0800
+> >>> Jinchao Wang <wangjinchao600@gmail.com> wrote:
+> >>>
+> >>>> Add arch_reinstall_hw_breakpoint() to enable atomic context modification
+> >>>> of hardware breakpoint parameters without deallocating and reallocating
+> >>>> the breakpoint slot.
+> >>>>
+> >>>> The existing arch_install_hw_breakpoint() allocates a new debug register
+> >>>> slot, while arch_uninstall_hw_breakpoint() deallocates it. However, some
+> >>>> use cases require modifying breakpoint parameters (address, length, type)
+> >>>> atomically without losing the allocated slot, particularly when operating
+> >>>> in atomic contexts where allocation might fail or be unavailable.
+> >>>>
+> >>>> This is particularly useful for debugging tools like kstackwatch that
+> >>>> need to dynamically update breakpoint targets in atomic contexts while
+> >>>> maintaining consistent hardware state.
+> >>>>
+> >>>
+> >>> I'm also trying to find this interface for my wprobe. So the idea is good.
+> >>> But this looks hacky and only for x86. I think the interface should be
+> >>> more generic and do not use this arch internal function directly.
+> >>>
+> >>
+> >> I agree with your point about the architectural dependency. I have been
+> >> considering this problem not only for the hardware breakpoint
+> >> reinstallation,
+> >> but also for other related parts of the series, such as canary finding and
+> >> stack address resolving. These parts also rely on arch-specific code.
+> > 
+> > Yes, even though, the hw-breakpoint is an independent feature.
+> > Directly using arch_*() functions (which are expected to be used
+> > internally) introduces a hidden dependency between these two
+> > components and looses maintainability.
+> 
+> Yes, I am trying to improve this in the v3 series.
+> 
+> > 
+> >>> It seems that the slot is allocated by "type", thus, if this reinstall
+> >>> hwbp without deallocate/allocate slot, it must NOT change the type.
+> >>> See __modify_bp_slot. Also, provide CONFIG_HAVE_... option for checking
+> >>> whether the architecture support that interface.
+> >>>
+> >> Regarding the slot allocation, I would like to clarify my point. I
+> >> believe the
+> >> event->attr.type should not be changed when reinstalling a hardware
+> >> breakpoint, as this defines the fundamental nature of the event. The type
+> >> must always be PERF_TYPE_BREAKPOINT.
+> >>
+> >> The event->attr.bp_type, however, can be changed. For example, from a
+> >> HW_BREAKPOINT_W to a HW_BREAKPOINT_RW without needing to deallocate and
+> >> reallocate the slot. This is useful for future applications, even though the
+> >> current use case for KStackWatch only requires HW_BREAKPOINT_W.
+> > 
+> > I understand your point, so it also needs another wrapper which checks
+> > the type is compatible on the architecture.
+> > 
+> 
+> I think the wrapper should handle the type by type_slot, something like[1]:
+> 
 
-　実業務負担を減らすのに役立つ管理サービスをご紹介する
-　ウェビナーをご案内申し上げます。
-　
-　
-　アナログ/デジタル 両面から支える
-　　　従業員の健康管理サービス
-　　 　　　“ けんさぽ ”
+Ah, that's a good idea!
 
-　　9月17日(水)
-　　オンライン開催セミナー
+> diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+> index 1db2c5e24d0e..6fed9521baf2 100644
+> --- a/kernel/events/hw_breakpoint.c
+> +++ b/kernel/events/hw_breakpoint.c
+> @@ -752,6 +752,7 @@ modify_user_hw_breakpoint_check(struct perf_event 
+> *bp, struct perf_event_attr *a
+>   {
+>   	struct arch_hw_breakpoint hw = { };
+>   	int err;
+> +	enum bp_type_idx old_type_idx, new_type_idx;
+> 
+>   	err = hw_breakpoint_parse(bp, attr, &hw);
+>   	if (err)
+> @@ -766,7 +767,9 @@ modify_user_hw_breakpoint_check(struct perf_event 
+> *bp, struct perf_event_attr *a
+>   			return -EINVAL;
+>   	}
+> 
+> -	if (bp->attr.bp_type != attr->bp_type) {
+> +	old_type_idx = find_slot_idx(bp->attr.bp_type);
+> +	new_type_idx = find_slot_idx(attr->bp_type);
+> +	if (old_type_idx != new_type_idx) {
+>   		err = modify_bp_slot(bp, bp->attr.bp_type, attr->bp_type);
+>   		if (err)
+>   			return err;
+> 
+> For kernel breakpoints, we might also consider introducing a
+> modify_kernel_hw_breakpoint() helper, similar to
+> modify_user_hw_breakpoint(), to encapsulate the kernel-specific case.
+> 
+> [1]https://lore.kernel.org/all/20250903075144.3722848-3-wangjinchao600@gmail.com/
 
-　　◆　　 　詳細・申込　　　◆
-　　　https://knsp.work/seminar/
+Hmm, it seems that there is *user_hw_breakpoint() and *wide_hw_breakpoint()
+(maybe it means system-wide) so it is better to call modify_wide_hw_breakpoint().
+(anyway it is only for kernel address space...)
 
-※従業員100人以上など、管理する人員が多い
-　企業様ほどメリットが大きくなります
+Thank you!
+
+> 
+> >>
+> >> By the way, I have sent an updated series.
+> >> https://lore.kernel.org/all/20250828073311.1116593-1-wangjinchao600@gmail.com/
+> > 
+> > Yeah, OK, let me review the series. Thanks for update!
+> > 
+> >>
+> >> Thank you again for your valuable review.
+> >> -- 
+> >> Best regards,
+> >> Jinchao
+> > 
+> > 
+> 
+> 
+> -- 
+> Best regards,
+> Jinchao
 
 
-　健康診断における日程調整・予約の変更、結果情報の回収や
-　管理などの業務を負担に感じることがございませんでしょうか。
-
-
-　そうした方におすすめするのが、健康管理業務をまるごと
-　お任せできる従業員の健康管理サービス“ けんさぽ ”です。
-
-
-　“ けんさぽ ”は、手間のかかる健康診断業務の代行から
-　情報を一元化する健康管理システムまで、アナログ・デジタル両方の支援を
-　「 月額100円／従業員毎 」という圧倒的なコスパで実現します。
-
-
-　オンラインセミナーにて詳細をお伝えしますので、
-　ご興味があれば、下記URLより視聴をお申し込みください。
-
-　よろしくお願いします。
-
-
-　アナログ/デジタル 両面から支える
-　　　従業員の健康管理サービス
-　　 　　　“ けんさぽ ”
-
-　　9月17日(水)
-　　オンライン開催セミナー
-
-　　◆　　 　詳細・申込　　　◆
-　　 https://knsp.work/seminar/
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- ■株式会社Personal Health Tech
-　電話：0120-984-925
-　住所：大阪市中央区南本町2-2-3　 本町UNICOビル4F
-――――――――――――――――――――――――――――
-本メールのご不要な方には大変ご迷惑をおかけいたしました。
-今後、ご案内が不要でしたら、お手数ですが以下よりお手続きの上
-ワンクリック解除をお願いいたします。
-https://knsp.work/mail/
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
