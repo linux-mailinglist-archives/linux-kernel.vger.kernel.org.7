@@ -1,144 +1,163 @@
-Return-Path: <linux-kernel+bounces-801685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B8AB448C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:46:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C83B448C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A0E1BC2B7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:46:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79C5D17D04E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DBD296BBE;
-	Thu,  4 Sep 2025 21:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424D92620D2;
+	Thu,  4 Sep 2025 21:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3n/qL+w"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFCqVeCB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358F1BA4A;
-	Thu,  4 Sep 2025 21:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8735D242D8B;
+	Thu,  4 Sep 2025 21:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757022367; cv=none; b=T5u9Hcp7JlYMOjxYS8OUuHoETZfebgpCSeRvBL3XJ/PF/EGFQTnnR+y2ziG4Jc8uJk7CY4WrvyJbhSdB/GoGzTJ4+eDiNcxnBsWdozjovVsL5VSzRb2eudgap+WOH+D4mEdNGOjK5e+qTmKM9w4vElo+rXdB1p2De2Zos+vy1lc=
+	t=1757022396; cv=none; b=T1TQkLZaiN7BlVFELkCHSwTKXCUTU6CuGfGlnYQxwBxINJXbLL0Ta4iRmVtqF7gku2ajzUZJJdD9b8EhGtQRs+jawsfBVyAUpxHH+GxEC1JGeRHdkufVP9nRvFQZU0SRgZdiM1CiphIpXNCQzI5JBKaNUvIm7wVatbXRCyo3opE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757022367; c=relaxed/simple;
-	bh=Y4WScoMBSoQ0K3o9GeRyrWn+v8aRfgQG6RE84ONiSK8=;
+	s=arc-20240116; t=1757022396; c=relaxed/simple;
+	bh=4fJ9zZxsC1MqR01ZLfdpGSY+0DIm1cCw5C2znm5oqqA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r0vbEjr9oNMnJ3Z6Ldj1IfKa9a0hOB3wjiS8yb4UNrKV5Pfnb5iQyTTBnLbMCr2B5tJFkOHujl/5SmnucvYhAOFjkhDNZaPfEmnGjOY0GagBQRH+/hNLlqm5ByQ7CNIbcYL/0pRHEKcjYHBxF3zJ3m99OD8Ny97I93uHQPSv6Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3n/qL+w; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-723bc91d7bbso18358997b3.3;
-        Thu, 04 Sep 2025 14:46:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757022365; x=1757627165; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2dxmIK87Es6+ed8yKW7yiT6uue3ZfsQixPgvt43/STU=;
-        b=E3n/qL+wMeQL86+qrOQk2v0pDhEUY9554RJnKywfh47UFev2RoECbqL+t+weTF5bRd
-         1mnGA3yrVGrwj6mrHeAcKR9AQZiXwKjN2tbHszaLfi5qm4EfPZD8nMSonEan3W3mzNrd
-         bl9c93/Rn7YTRT/oCIeCSLQz2TtHdKg32oFJyq7So5JVX/9pWiqxCbghS/5jmyfC9nWj
-         9LOfT7D3lb8AyudeD/8EGMN6R2V2rJWzVesGYz9OeFZ3SHq/oOGSqkFchMdfJif+5F+5
-         VPEu4EnrvQm9ynGmVBvnxxUgU3MGsYURHhd8j67del494TanuOk8JqOBodKQKqUsqavX
-         VnCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757022365; x=1757627165;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2dxmIK87Es6+ed8yKW7yiT6uue3ZfsQixPgvt43/STU=;
-        b=iRwmRAyiZcMkV3xENQ6ISSG5vHf6fQX9rmeQ2tQUmNf6lf540x02RYk1qt1kQv4X4q
-         nd3QJwr1myFWn0IzDaO1joWo3Iz3SZQEq423H8T0mIhlXBi6n+z6+M8MhsfvwlWIb2nW
-         bgcASZuhvD7DUOX2LMhd5yeQqh+4dbYo505N69yn93lQAnKD0wr+uM3kMX8g6mPnYF10
-         cEB8qM2NhgGAlpd7JFnT5oKfSDXIBPOve01pcdPJmWZ1z7iUq/zQdcwL8oFzJI+wbEe2
-         sPHGgcCnBDCsW2deONoMT5UMKu2/b44xSj2rWh8r7bGjjUaUu/o5eDIG//dMWzhLRL/o
-         Y4Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCWU8deC84Ca4e7uAEd4Y46VnoyQgG98hafI4GgH4wl2RTYXLUXKoSVIkl6kD3bE+3L1AOb5ZX5TacXfIeQ=@vger.kernel.org, AJvYcCXauzQJbBuQ5COdM4shEfyVwrRKOZxL1ojQxguJas6iqpYWZ3UBMMKD+oo0YTbg0tJkp7qZspbrTo2UItu9n70=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnX4Pg+MSkJMbVkZtcTZDTWPWTK55uMUy97m81+k98++aqcurL
-	TAb4/fAxDKuFZFk+fvTPsICBxqAcyy1ZQvvxbCUU9TQ155FJjie04HzM
-X-Gm-Gg: ASbGnct1VMgIlwmu8C6MiFHBjJB3LuwksIpIraWSCM8o8jPstixbyOUbeqm2TkB5Tyb
-	JWzIfGzDnGXn7u9dprv34TCHXfWFNDazgANi44LArLZSnDeoYcC0Y8O36IDgDyq1oTRHRdq4jBI
-	Zf++AHQhdF+GTlPdgIwGGpSH4wKOHXs+Ko/CT4twGUU+f7KbQueIsXfd10UlOvT+8S4XKIBDgNQ
-	3pY4Q8nu9+vsnZTF1ccajpg+bTl+f0Hbzs7WbeqXfIUmreIYwdIzezxZG88oIsKtFKCSMDXzNgw
-	XSFXbqA1+0yviTFbh61N58U0KOZgLpSChbEoazR5uNKK3Pc2LGxZHgX8NBJesoJp7FkrBKMmKLq
-	hb9uyEdxpbpAtuPY6w7fG80sDGlKREYFoRenXdMoOtMU=
-X-Google-Smtp-Source: AGHT+IFMi8TYlY3AfynFMyr7MO2wBtRPKgDfu06foXlotOWPPhYh6f2Czm6tvqNfbPzn8j5BUU9pJw==
-X-Received: by 2002:a05:690c:61c6:b0:721:5b31:54d7 with SMTP id 00721157ae682-7227635bbcfmr192690397b3.7.1757022365134;
-        Thu, 04 Sep 2025 14:46:05 -0700 (PDT)
-Received: from localhost ([2601:347:100:5ea0:1218:85e4:58ab:e67f])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-609d205c24dsm632727d50.0.2025.09.04.14.46.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 14:46:04 -0700 (PDT)
-Date: Thu, 4 Sep 2025 17:46:03 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Mitchell Levy <levymitchell0@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Benno Lossin <lossin@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3 5/7] rust: percpu: Support non-zeroable types for
- DynamicPerCpu
-Message-ID: <aLoIm94aP6Er0Gn8@yury>
-References: <20250828-rust-percpu-v3-0-4dd92e1e7904@gmail.com>
- <20250828-rust-percpu-v3-5-4dd92e1e7904@gmail.com>
- <aLi-7W21N45fBGJk@yury>
- <68b9f5e2.170a0220.1224d9.5d3d@mx.google.com>
- <aLn4bopPt8uS4d1O@yury>
- <68b9ff1c.050a0220.35de1d.11b7@mx.google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=k5M7OwUvMrrM0FaZFRZv83zTmB39c+EKaNEbkBUO0pqnEBCCYlvRoH3/ZfvRt2UnQM32zI80QKbyPt+Ag6gNUhQ5Ox1pyR2wLl0O/ozhHqVtcJx54NBVanf4tyNsPRO2QDrcyHJ0DQNpm1hSrpZ462iInmE6aQ2eNi7LgS1Dd8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFCqVeCB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D175C4CEF0;
+	Thu,  4 Sep 2025 21:46:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757022396;
+	bh=4fJ9zZxsC1MqR01ZLfdpGSY+0DIm1cCw5C2znm5oqqA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UFCqVeCBJ0dLeTOx1GMqDQ+GAP0IjUfn+Zy0XxOiQzSs7ST8/8JfjnWQUmMOm8Ljz
+	 cPJj4lFf67aIF3nw9IMhOY+5g4Nb6REnbujfyOk/G5x3k4Y3/5enbqYRG26dxDEJsC
+	 /36kwn8F8NyBoICp2R0CyxePKdsOxJ/g8QG07fHJPnZbWQGRVzfbiLO8rnfKo4hHlN
+	 0T9VaOyrPCdNOH4IgNXlov3AM/YkBE6yhiMobFwFjtinHtjgSCu+v4pfPcMtNo8TDZ
+	 IMK4MKrrpsy+xrf8mJHkay/ivPb3kztgsaVmrFnz2EcFseIBllq97SCH9D5vFYvUR/
+	 vj1cE/QvgOVGg==
+Date: Thu, 4 Sep 2025 14:46:33 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, 
+	Peter Zijlstra <peterz@infradead.org>, Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/3] objtool/LoongArch: Fix unreachable instruction
+ warnings about EFISTUB
+Message-ID: <4thrzifl6ntk7kdf65egt4srzkbrxqoqf7yzmasblwvaq3qwmt@vigfgpbxzjkq>
+References: <20250901072156.31361-1-yangtiezhu@loongson.cn>
+ <20250901072156.31361-3-yangtiezhu@loongson.cn>
+ <20250901081904.GB4067720@noisy.programming.kicks-ass.net>
+ <82c913b9-4403-cde9-0542-5bd6e04415f5@loongson.cn>
+ <wt4qpgi5isj5m6wq33pomvm6borvafuzktekc7lgtoitscar5q@brixzj3lccbw>
+ <ccbb40c1-5f2d-77e9-e8d2-52f2fdbad645@loongson.cn>
+ <CAAhV-H5qhKepa-8sz3_AC=_RCChbVeEmnHKESMqpiJ0phMORbg@mail.gmail.com>
+ <52056c29-4f21-83c9-db1f-ebd1875a3675@loongson.cn>
+ <CAAhV-H47VKERJCKRi7uAS7OmCWaE4yxZ07Hwz_si2DMVRDrsag@mail.gmail.com>
+ <ybv2ndrzbqztkctzwhfphpdqrqbxlougs75glm22rcuzdmnrfp@lqwcms3j2d55>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <68b9ff1c.050a0220.35de1d.11b7@mx.google.com>
+In-Reply-To: <ybv2ndrzbqztkctzwhfphpdqrqbxlougs75glm22rcuzdmnrfp@lqwcms3j2d55>
 
+On Thu, Sep 04, 2025 at 10:39:30AM -0700, Josh Poimboeuf wrote:
+> On Thu, Sep 04, 2025 at 11:59:30AM +0800, Huacai Chen wrote:
+> > This is from RISC-V code.
 > > 
-> >         for_each_possible_cpu(cpu) {
-> >                 let remote_ptr = unsafe { ptr.get_remote_ptr(cpu) };
-> >                 unsafe { (*remote_ptr).write(val.clone()); }
-> >                 let arc = Arc::new(alloc, flags).ok()?;
-> >                 Some(Self { alloc: arc })
-> >         }
+> > __HEAD
+> > SYM_CODE_START(_start)
+> >         /*
+> >          * Image header expected by Linux boot-loaders. The image header data
+> >          * structure is described in asm/image.h.
+> >          * Do not modify it without modifying the structure and all bootloaders
+> >          * that expects this header format!!
+> >          */
+> > #ifdef CONFIG_EFI
+> >         /*
+> >          * This instruction decodes to "MZ" ASCII required by UEFI.
+> >          */
+> >         c.li s4,-13
+> >         j _start_kernel
+> > #else
+> >         /* jump to start kernel */
+> >         j _start_kernel
+> >         /* reserved */
+> >         .word 0
+> > #endif
 > > 
-> > Is it possible to do the above in rust?
-> 
-> Ah, I see.
-> 
-> The syntax would be slightly different, probably something like
-> 
->         use cpu::for_each_possible_cpu;
-> 
->         for_each_possible_cpu(|&cpu| {
->                 let remote_ptr = unsafe { ptr.get_remote_ptr(cpu) };
->                 // ...
->         })
-> 
-> it *might* also be possible to use a macro and dispense with the need for
-> a closure, though I'm not familiar enough with proc macros to say for
-> sure. That would probably look like
-> 
->         for_each_possible_cpu!(cpu) {
->                 let remote_ptr = unsafe { ptr.get_remote_ptr(cpu) };
->                 // ...
->         }
-> 
-> though personally I think the first one is better (simpler
-> implementation without too much syntactic overhead, especially since
-> closures are already used some within R4L).
+> > The HEAD section has instructions, if you change it into a data
+> > section then it loses the "x" attribute.
 
-Sure, #1 is OK if you prefer it.
+Actually, the "x" attribute isn't needed for vmlinux.  The vmlinux
+linker script places it in the text region regardless.
+
+Moving the data to a data section should be really simple, something
+like the below.
+
+And yes, even the above RISC-V code can be in a data section.  Those
+instructions are part of the 'struct riscv_image_header' data structure.
+
+diff --git a/arch/loongarch/kernel/head.S b/arch/loongarch/kernel/head.S
+index e3865e92a917a..c42500d9fad81 100644
+--- a/arch/loongarch/kernel/head.S
++++ b/arch/loongarch/kernel/head.S
+@@ -17,7 +17,7 @@
+ 
+ #include "efi-header.S"
+ 
+-	__HEAD
++	__HEADDATA
+ 
+ _head:
+ 	.word	IMAGE_DOS_SIGNATURE	/* "MZ", MS-DOS header */
+diff --git a/arch/loongarch/kernel/vmlinux.lds.S b/arch/loongarch/kernel/vmlinux.lds.S
+index 08ea921cdec16..fc35ef349aba6 100644
+--- a/arch/loongarch/kernel/vmlinux.lds.S
++++ b/arch/loongarch/kernel/vmlinux.lds.S
+@@ -38,6 +38,7 @@ SECTIONS
+ 	. = VMLINUX_LOAD_ADDRESS;
+ 
+ 	_text = .;
++	HEAD_DATA_SECTION
+ 	HEAD_TEXT_SECTION
+ 
+ 	. = ALIGN(PECOFF_SEGMENT_ALIGN);
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 6b2311fa41393..c74492e1baa5a 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -629,6 +629,11 @@
+ 		*(.static_call.text)					\
+ 		__static_call_text_end = .;
+ 
++#define HEAD_DATA_SECTION						\
++	.head.data : AT(ADDR(.head.data) - LOAD_OFFSET) {		\
++		KEEP(*(.head.data))					\
++	}
++
+ /* Section used for early init (in .S files) */
+ #define HEAD_TEXT  KEEP(*(.head.text))
+ 
+diff --git a/include/linux/init.h b/include/linux/init.h
+index 331886205049e..fcb02ab3faae2 100644
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -98,6 +98,7 @@
+ 
+ /* For assembly routines */
+ #define __HEAD		.section	".head.text","ax"
++#define __HEADDATA	.section	".head.data","aw"
+ #define __INIT		.section	".init.text","ax"
+ #define __FINIT		.previous
+ 
+
 
