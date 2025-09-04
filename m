@@ -1,147 +1,157 @@
-Return-Path: <linux-kernel+bounces-800713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14846B43AE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:00:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D244B43AE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A40B31BC312C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:00:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E56B7A7308
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760042FD7B8;
-	Thu,  4 Sep 2025 12:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404ED2EA480;
+	Thu,  4 Sep 2025 12:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fR14sSbE"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l1DrHh09"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719FB2F3C01
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04EF2D0C85
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756987199; cv=none; b=VlJfv9dOJwTtUXtDApsswfySptrye3FN7gp13US0jpyV1z8dp8UD3r9LA9udMKvUKOBnvbFMMYOj+duv5CRQ9oRRARIpzp337MbELLfWQFyO9x8/2aWsTgTbsnaaYWUD8fgdNxzRAbAo0WvJHMcYaQ/l7QcMxwZvpnHQK+kQ9ag=
+	t=1756987207; cv=none; b=hx8jJcVtGMTYAa6YqeSqwKhT4Uc5Y3AJP0xq/9/duvZlQpCHLCnqz1F4YykWApVJZBlXkX03MxLrpUkDCNQ3HMi/IVoPiMor6JRa7esbJaUX9xYZ2vugZ9YgxoAEJp7w2IcCQr4r/wZCsA8SWlxz583EH0evRQ1AcaGfnaWqGyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756987199; c=relaxed/simple;
-	bh=ZXNn7I+rDr8GQnTPEyxX8hDMbjRGz6pxIO5JVjmS4wM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eZqTGP/Q25iJfWy4dd/DBs1d9flyjRRNnvYANwfg5bzfGN+lpgh61vJGqQGHWydGxw5bvhedWTB1w65jLbSvutOnWBccXum2LYKT2S1+ViTInp2XjjVByTWAslgV5eiO9sJRFLSDNf8j5UUyMVAkz/TL0G0cYYHfyiWfomkPqj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fR14sSbE; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32b51b26802so862395a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 04:59:58 -0700 (PDT)
+	s=arc-20240116; t=1756987207; c=relaxed/simple;
+	bh=JAKt+DJHLvgwPHMPIJfLNVW9BnFW7wAb0S/uo+VBz5Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QpZ2OcoRgL0o56/Hixr5zoGIGzRdqOvunX6ZDZwz+n+YZpeQ7V5MEPxk74CV9htbDnkRHayAoa2zvoMKNt1BhD5uE/kDZgQmuCvt/mzlyhaN0mZi5vWsym0yWX5mKCHR6GYO67YUPol1rLBabkxFPXuGJycfqB4Rq5tFifRGL8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l1DrHh09; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b9a856dc2so6540455e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 05:00:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756987198; x=1757591998; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Dto7K6eXvGSvhdBpztAXq5eWQrSsso/7rLd9mr1E24A=;
-        b=fR14sSbEaJim7HvVIfltSd3dXGIVPlqzLZlXm+98fIZfCb7atRyJ9jURKHdti7cM9N
-         V278HnrDVoN5Rowtj1GDcEA8T6l7PfWc5azsVXHksCEG1rqdtI4hTfxZdsU6CKu5Wf04
-         Ms0QB2xGwZC8WrJjuzxlYEBgVyKpyckcv9dWNn4a9Yw/GAdsLadKugmf2A8I0HYuPsaQ
-         OzQq6CiSKVTfFXj5QPQd15w1ss0JHCFAQuRhHI6WMMdlo8N55L8ScLh8X7ZRjKqDRTlD
-         d1givSFKeT4s67aQ8ZVuWZpc/J39V1gFxVIa/0iLAnWKUSmn5DvBvRbquGBSh69rP/ww
-         990Q==
+        d=linaro.org; s=google; t=1756987204; x=1757592004; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AFkBz8t+kCT8UUeu24okw56fSQSLiELatilmrdAB8x0=;
+        b=l1DrHh09ye8Qza7pZH2Y1Ty3psD2ZdoLbyZK3EDCyzpbs44gmwAFTBrSkQBcTDmjI2
+         PwGM419Y5jdTjn4v4b1pZR27/LgRGNNd64o1lGYNmq2BlHS/ov3IPGQ80GAMV4ka/D17
+         2+Q00cwDWh+Jeq3EP/FwjZ0a69RMp9L9DwE663Wo8MozBYRL2LNgVZO1YKEWYKCjAdY+
+         4AZJOglUObMOlk4o0cCUihsHj6HDF9R3oXm4eqsR7rb+nkW2N6nLZ7Vt6DC0FC1kFbPC
+         EwKZft/9qiiYgP93xMCHhKoullvtK2w3PG57/rI35LuvmBhhX6QiCeG0tQsTF0DxBVTg
+         03EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756987198; x=1757591998;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Dto7K6eXvGSvhdBpztAXq5eWQrSsso/7rLd9mr1E24A=;
-        b=BTLXdmiNgWCIZRLGi/DJNA6wmmdSR3AiX2T0UxPqrKFCqfQAWgFPhpE1vIr6v+LCSA
-         e1g9s1t7AzhsrnGL8qd+eOblQkidXG3QIMYsFXj5YPHQSd9B73+7+NmOc7E9x++2MXWt
-         ppFQp26Up2ltdcTueGLhKgcrRmvzvY2UKERwF5ffDgn3RBN0qLiYvIE7Lg/b7CVrTLlB
-         9PeFMc73kGOeRZkaqsPK+UClZbie+ju9I8HZzy1CniGjNSb+sHqLfjcp8oAUT2M7MzLJ
-         PS7OThpxHr0IvhZ6Te2JVj005KjStZut1qHcwDA2LWCAL3ccimGk6Jt0wvVBr/ca0Dzc
-         K5rA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMDP2mHiRqmZxHaXuNvSsC8HOZ+c0JWjvMXhFbeIpzVFk63LjK97enVvfXV3O14fJu/e3lBCVyr0moaTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXgJb7SmuqX2rjkBFi0KCL3yGeT8+lmZlQQtqL5nJ9SyudJPq9
-	OpHZB7yJewIsjwY243uwiNPOcF7kvIjUhxjN4bZMegs78/6Yi8eYyl4A9MT9JdH7ROqSv3Zbn4K
-	zW54zuA==
-X-Google-Smtp-Source: AGHT+IHP6++Ieg1NxgcxEx/LfHzuEBAPAP8bF6XQFVaVCxfhu7J+bDNjZtW76Vo5/SjfbbqGGuwo3OTmXSY=
-X-Received: from pjh5.prod.google.com ([2002:a17:90b:3f85:b0:325:7c49:9cce])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1d03:b0:328:a89:71b8
- with SMTP id 98e67ed59e1d1-328156e1238mr23720013a91.30.1756987197621; Thu, 04
- Sep 2025 04:59:57 -0700 (PDT)
-Date: Thu, 4 Sep 2025 04:59:44 -0700
-In-Reply-To: <3268e953e14004d1786bf07c76ae52d98d0f8259.camel@infradead.org>
+        d=1e100.net; s=20230601; t=1756987204; x=1757592004;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AFkBz8t+kCT8UUeu24okw56fSQSLiELatilmrdAB8x0=;
+        b=au1PP8EjBoAEN67rVYv8wlTN1aNcX4cd7aKG9E55WpLSOVYzzPaTVtV0JCvU1bjntF
+         XPnPippCmZwo7Tg3e/EuXTH+L5Vr2ku2VHxRlItt1chazKaAbq7NnX5h7d0z7emYjWdr
+         5GDXye2b9lopoEX0Y7yNAFe4TBtR9yE9JiljbQydheSTuH8D+amtAJxWFv+mk4ybkC7t
+         9UXudCb8fYuKfGAu0q63ev/rz3fT5qmrELPMwY8ttzuYzhmmidzJM0PErzbYf19x0AJK
+         +kNQmfvJgqYk8bpstVbmsIUxCUXPJbimlQRXmVSgS+xpkknltrvz6Rhz0+xoDd9CnIku
+         2vyA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1dr4FcDNi0DoopIA8nA5w9pJJ2kykikXaOrReFnZ7LLNBOvDAGO0eq+PetyAtOIIiiNjKTM2uvOcDWFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDCftvcCeX1Car1YNP6reO4dbMA9b0BOJJmcIG6b+Vtxugt7hA
+	lA10iefnPaE+6DFpBqJKzS1NhBBiChHkcyMk6zpO7GdAnjEyFCCu1q0rpOndFQ+h9ao=
+X-Gm-Gg: ASbGncuFgKhbVi613LZkdEZFaF2oA2TCLXHxLLMfQp8SFrT2IBxBj9TGqjiTnZzGLjp
+	sdOd1YrocxsFKcWEiXU7YtYfSG+JZj9TazZQEtNM+vND+v8AqjcCNUw1XLHTI4+brVL2f22dXmW
+	SA67ZqALkAz8OpBFrL6u38zy+v468vHHQeMAmrip/1vFnrtJ8oeo7Muv1qgC7+IkAehdPREmMh/
+	nhWWLCTJjDDaqTm/Zqnifvnk5YEzEOOyxOxatiZ+KFgt7g2Y3s5WQ9OezZO0GUZy4uSASS8Q836
+	trNv01Eg9jV7txHxwyhMkIh48zdoXlZWSEvumg4s1VyuhAlbrBHa/r0JG0j7meUOB/idDq1OgFw
+	Q8cBN6hHYpgmrjWS3vu2/MpuFRmbtJP6UV7tqqg==
+X-Google-Smtp-Source: AGHT+IEeJr8/W7i384dfItP0nBlu/2Q4pZvcih8lGi8Ow9/IMWLIJQ8ZyVlqeIZXNl/vx/mclRKwsQ==
+X-Received: by 2002:a05:600c:1f0e:b0:458:a7b5:9f6c with SMTP id 5b1f17b1804b1-45b855335a8mr163914835e9.11.1756987203568;
+        Thu, 04 Sep 2025 05:00:03 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b8f2d3c88sm151251345e9.19.2025.09.04.05.00.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 05:00:03 -0700 (PDT)
+Message-ID: <5f24d286-629c-404f-8e0f-aa01e27bcb80@linaro.org>
+Date: Thu, 4 Sep 2025 13:00:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <aK4LamiDBhKb-Nm_@google.com> <e6dd6de527d2eb92f4a2b4df0be593e2cf7a44d3.camel@infradead.org>
- <aLDo3F3KKW0MzlcH@google.com> <ea0d7f43d910cee9600b254e303f468722fa355b.camel@infradead.org>
- <54BCC060-1C9B-4BE4-8057-0161E816A9A3@amazon.co.uk> <caf7b1ea18eb25e817af5ea907b2f6ea31ecc3e1.camel@infradead.org>
- <aLIPPxLt0acZJxYF@google.com> <d74ff3c1c70f815a10b8743647008bd4081e7625.camel@infradead.org>
- <aLcuHHfxOlaF5htL@google.com> <3268e953e14004d1786bf07c76ae52d98d0f8259.camel@infradead.org>
-Message-ID: <aLl_MAk9AT5hRuoS@google.com>
-Subject: Re: [PATCH v2 0/3] Support "generic" CPUID timing leaf as KVM guest
- and host
-From: Sean Christopherson <seanjc@google.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Paul Durrant <pdurrant@amazon.co.uk>, Fred Griffoul <fgriffo@amazon.co.uk>, 
-	Colin Percival <cperciva@tarsnap.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Graf (AWS), Alexander" <graf@amazon.de>, 
-	Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov <alexey.makhalov@broadcom.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] coresight: perf: Fix pointer check with IS_ERR_OR_NULL()
+To: Leo Yan <leo.yan@arm.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Tamas Zsoldos <tamas.zsoldos@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+References: <20250904-cs_etm_auxsetup_fix_error_handling-v1-1-ecc5edf282a5@arm.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250904-cs_etm_auxsetup_fix_error_handling-v1-1-ecc5edf282a5@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 02, 2025, David Woodhouse wrote:
-> On Tue, 2025-09-02 at 10:49 -0700, Sean Christopherson wrote:
-> >=20
-> > > So even if a VMM has set the TSC frequency VM-wide with KVM_SET_TSC_K=
-HZ
-> > > instead of doing it the old per- vCPU way, how can it get the results=
- for a
-> > > specific VM?
-> >=20
-> > I don't see any need for userspace to query per-VM support.=C2=A0 What =
-I'm proposing
-> > is that KVM advertise the feature if the bare metal TSC is constant and=
- the CPU
-> > supports TSC scaling.=C2=A0 Beyond that, _KVM_ doesn't need to do anyth=
-ing to ensure
-> > the guest sees a constant frequency, it's userspace's responsibility to=
- provide
-> > a sane configuration.
-> >=20
-> > And strictly speaking, CPUID is per-CPU, i.e. it's architecturally lega=
-l to set
-> > per-vCPU frequencies and then advertise a different frequency in CPUID =
-for each
-> > vCPU.=C2=A0 That's all but guaranteed to break guests as most/all kerne=
-ls assume that
-> > TSC operates at the same frequency on all CPUs, but as above, that's us=
-erspace's
-> > responsibility to not screw up.
->=20
-> Sure, but doesn't that make this whole thing orthogonal to the original
-> problem being solved? Because userspace still doesn't *know* the actual
-> effective TSC frequency, whether it's scaled or not.
 
-I thought the original problem being solved was that the _guest_ doesn't kn=
-ow the
-effective TSC frequency?  Userspace can already get the effectively TSC fre=
-quency
-via KVM_GET_TSC_KHZ, why do we need another uAPI to provide that?  (Honest =
-question,
-I feel like I'm missing something)
 
-> Or are you suggesting that we add the leaf (with unscaled values) in
-> KVM_GET_SUPPORTED_CPUID and *also* 'correct' the values if userspace
-> does pass that leaf to its guests, as I had originally proposed?
+On 04/09/2025 11:53 am, Leo Yan wrote:
+> The returned pointer from .alloc_buffer() callback can be an error, if
+> only checking NULL pointer the driver cannot capture errors. The driver
+> will proceed even after failure and cause kernel panic.
+> 
+> Change to use IS_ERR_OR_NULL() check for capture error cases.
+> 
+> Fixes: 0bcbf2e30ff2 ("coresight: etm-perf: new PMU driver for ETM tracers")
+> Reported-by: Tamas Zsoldos <tamas.zsoldos@arm.com>
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>   drivers/hwtracing/coresight/coresight-etm-perf.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> index f677c08233ba1a28b277674662c6e6db904873dd..440d967f5d0962df187a81b0dd69a7d82a8b62ba 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> @@ -198,7 +198,7 @@ static void free_sink_buffer(struct etm_event_data *event_data)
+>   	cpumask_t *mask = &event_data->mask;
+>   	struct coresight_device *sink;
+>   
+> -	if (!event_data->snk_config)
+> +	if (IS_ERR_OR_NULL(event_data->snk_config))
+>   		return;
+>   
+>   	if (WARN_ON(cpumask_empty(mask)))
+> @@ -450,7 +450,7 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
+>   	event_data->snk_config =
+>   			sink_ops(sink)->alloc_buffer(sink, event, pages,
+>   						     nr_pages, overwrite);
+> -	if (!event_data->snk_config)
+> +	if (IS_ERR_OR_NULL(event_data->snk_config))
+>   		goto err;
 
-The effective guest TSC frequency should be whatever is reported in KVM_GET=
-_TSC_KHZ
-when done on a vCPU, modulo temporarily skewed results without hardware sca=
-ling.
-If that doesn't hold true, we should fix that.
+I think the bug is in TRBE. It's the only one that returns an error 
+pointer, but only for -ENOMEM which would normally be NULL for alloc 
+type functions anyway.
+
+Also it's assigned to event_data->snk_config which is later NULL checked 
+rather than IS_ERR_OR_NULL in free_sink_buffer(). Maybe that path 
+doesn't happen, but all instances should be updated anyway.
+
+It's much easier to keep it as NULL and make the fix in TRBE. It also 
+wouldn't need to be backported as far.
+
+>   
+>   out:
+> 
+> ---
+> base-commit: fa71e9cb4cfa59abb196229667ec84929bdc18fe
+> change-id: 20250904-cs_etm_auxsetup_fix_error_handling-cb7e07ed9adf
+> 
+> Best regards,
+
 
