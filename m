@@ -1,244 +1,177 @@
-Return-Path: <linux-kernel+bounces-800422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C876B43771
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:45:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B28D6B43774
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99C887AAA1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:43:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 739D41886563
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61AC2C21D0;
-	Thu,  4 Sep 2025 09:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF372F90D5;
+	Thu,  4 Sep 2025 09:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="KKgGORZe"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NBaoaFp2"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1449F2F90E6;
-	Thu,  4 Sep 2025 09:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B72B2C2ABF;
+	Thu,  4 Sep 2025 09:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756979117; cv=none; b=qaGeqJOwozinFX0tmSvSn7IOotJs5E0IPBnEJNFCDvyvlPkUtygoKXmta2kZ+/HGS+rq2i0nKrBkiE4678Hml30zH8IVcLCqd6/LqRRhXS93w9O6N7lUuoWRaQ6WHvlZXHzyQfY6iWNeBaPMaZ/sk8IaxZ66w8/ZQLWjGtlCJPY=
+	t=1756979117; cv=none; b=OkfBz80jKVk5Ar4QoGT+FYWhCTsjOa/4pgmB+0vkbAeHJ+jM4qx+rhIGyUNUcluNQXgfdlQzMpOfmcRApA6IeFHHPilRH15XJiNe3KI49PkNzQxHW3zwHqgT9CnAA+PlBBIAPLGXly7z1m1XCAdUTnYNL18gKmiuHFtrPGsnXng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756979117; c=relaxed/simple;
-	bh=XHPvdKbjG5ka9RaObhQu+o1XhqKNYZRUilx9t5/3HlI=;
+	bh=lZHyHsUXDsGsrX6TebtAYsy3nBIcN7FY8vdQTq/1mTQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E22afEdyuE0OBdbcEdUypLMF4OFB0D5fLJkBS5+5LwswksRIcscSu1yUNqiNBq3zt5TWC3wFO8isaS9Ioi/xbx8rAvEpnRF+dDgokfwYYDhY/Y5NZwNZsIhKIcBTi4JzfVZf3/kRNpXoV1PbQ2bywHC00k8USwJW3Qdg1fom3LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=KKgGORZe; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=+EgLYPOzr2Seya9sjkwg+xKsIVeQv5IYNgfp7NTJIiw=; b=KKgGORZejla2hVwlTXeP8DUBX2
-	UjtFEy9nX3hpfKCoAG3teGS/OU516sAxK6BwMLDQFJ+bXPMRAPxTqvxbRFoELKYQGvfUkQdEIW1E5
-	g9pc1bEX6O8d32UvrdLom2K0zv3yOzNvKNVcEoTRQkZMj7WVN82fq8tJBUlcSHvF53qZ38zzWTAC4
-	hS8Kw8v9IvX/I7wLZA/6blnhVw1Zib3giZt8A/xwY3VSdemkFVmqOGYtgzYXSbWf+PjGRpOHhEO33
-	MXcf4K7kim/QHyxEPDCdGq+a81hWw6RmdANlfEgiLpDeqzkPjAFPUksHjApAsSfnWCcpSqWsPw9vs
-	aYoWiHtA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uu6H3-002ZQx-1d;
-	Thu, 04 Sep 2025 17:44:54 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 04 Sep 2025 17:44:53 +0800
-Date: Thu, 4 Sep 2025 17:44:53 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Menglong Dong <dongml2@chinatelecom.cn>,
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	kernel test robot <oliver.sang@intel.com>, tgraf@suug.ch,
-	linux-crypto@vger.kernel.org
-Subject: [PATCH] rhashtable: Use rcu_dereference_all and
- rcu_dereference_all_check
-Message-ID: <aLlflTV_SDwMB7mq@gondor.apana.org.au>
-References: <20250829021436.19982-1-dongml2@chinatelecom.cn>
- <20250828222357.55fab4c2@batman.local.home>
- <d1da3939-62e6-4ad1-afcc-5710ce3f6cbd@paulmck-laptop>
- <20250901170655.0757884ad7c2afb63ced3230@kernel.org>
- <615da75d-cb2f-4e7e-9e11-6b19f03fea6c@paulmck-laptop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nz6FW3msG2Rk/di+wVGJPhSyJwEd1TZUD74wONETccXOh5zwYuX6604oe4fsua6PZiPAG4zPscLc7HXHNqxpcwm9xKpnxOWtSwHEF/1fwnLnZE0PE7bR6LB7mFOUhZRYbxdZa+HTzataRl5zjJHlJFJi+q+B09mkep0AI3s6s6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NBaoaFp2; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5848XM1a017937;
+	Thu, 4 Sep 2025 09:45:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:sender:subject:to; s=pp1;
+	 bh=A0nA+PaBXyWTXSobLQojNRs9RU5X055I9qvx6crey0M=; b=NBaoaFp2vuji
+	XX2Ou+a6MRy7xLbk6jAc3vQD6IQqylonLiDHTWR2KOco832V1+WblAjHtJnsG5oH
+	th3zwEvCvHVsdKEHsVeXm38USHt2xi89MYKsuHjwxp64t+Wpb4gRq0gxOqkXXzV8
+	iZnxJDSQsyV0ov9MlY6MNgjJnDhaJ9wFKwpT2YCIPsGimY2tRO2H71N+BL8PBMTX
+	ZaZX0UiWed0RrKqUHtaX9zmW9pVPsMuxc3pCYw51mxkhDo22b2eWPSaEhwesy+c2
+	r83Av+xJ0V2SbvxqJ1No9MiOAKdYPil/kVP6EstIhn7mPVD/aFCVd87xth34+HTw
+	/7tDSVsEdw==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usur9f7m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Sep 2025 09:45:08 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5848bEkX013942;
+	Thu, 4 Sep 2025 09:45:07 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48veb3kjnn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Sep 2025 09:45:07 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5849j3Ch7864808
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 4 Sep 2025 09:45:03 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BDA422004D;
+	Thu,  4 Sep 2025 09:45:03 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AB2AC20040;
+	Thu,  4 Sep 2025 09:45:03 +0000 (GMT)
+Received: from p1gen4-pw042f0m (unknown [9.152.212.197])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  4 Sep 2025 09:45:03 +0000 (GMT)
+Received: from bblock by p1gen4-pw042f0m with local (Exim 4.98.2)
+	(envelope-from <bblock@linux.ibm.com>)
+	id 1uu6Wd-00000000Hql-1wez;
+	Thu, 04 Sep 2025 11:45:03 +0200
+Date: Thu, 4 Sep 2025 11:45:03 +0200
+From: Benjamin Block <bblock@linux.ibm.com>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Matthew Rosato <mjrosato@linux.ibm.com>, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>, Farhan Ali <alifm@linux.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux.dev
+Subject: Re: [PATCH] iommu/s390: Make attach succeed when the device was
+ surprise removed
+Message-ID: <20250904094503.GA23344@p1gen4-pw042f0m.boeblingen.de.ibm.com>
+References: <20250904-iommu_succeed_attach_removed-v1-1-e7f333d2f80f@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <615da75d-cb2f-4e7e-9e11-6b19f03fea6c@paulmck-laptop>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250904-iommu_succeed_attach_removed-v1-1-e7f333d2f80f@linux.ibm.com>
+Sender: Benjamin Block <bblock@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMCBTYWx0ZWRfX9Uf97TqOR7P7
+ d6kEq/lzAOUGoNT2hzbd2VqLX1GDdkAvWRqIhfRtNNH7j1k7JRxw8tWwniNo4hfWcVHhZEn1jiR
+ XApKuimdWTLSlXU1hCdPUcdHCKt7zJHHBMB5lNeFemZ5mKsStSmx/T/YdoPnNzForKxrM9TaWpS
+ ydxNlt9EI4vYGEvaqegJAfKh/M49siqZPr0yjdUND7a4rISEe7OJ0CisHm/p+4v/EfhhE6ljA9s
+ IUTVRJ7Mq/CXYfLKpVQRyWNWHDqo1VFGBxE8uko5xBmALSLwI4wYf03uu6CC0AMi/yFDtKjuXJq
+ 0UaDv4ZSnDEdrL7zLzOsA0JS3Pj0Ltj41ACaByZ1KPJusaTxAQ326OXj8cys21zrpmG/etWAXR5
+ tz7fSXLd
+X-Proofpoint-GUID: mARirreqmIRmdzxpAgjnFR0UX0q8JwGf
+X-Proofpoint-ORIG-GUID: mARirreqmIRmdzxpAgjnFR0UX0q8JwGf
+X-Authority-Analysis: v=2.4 cv=Ao/u3P9P c=1 sm=1 tr=0 ts=68b95fa4 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=8nJEP1OIZ-IA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=9jRdOu3wAAAA:8
+ a=VnNF1IyMAAAA:8 a=f94wAlES5zcTxHjwagAA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+ a=ZE6KLimJVUuLrTuGpvhn:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_03,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 phishscore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300030
 
-On Mon, Sep 01, 2025 at 08:00:15AM -0700, Paul E. McKenney wrote:
->
-> However, another option for the the above rcu_dereference_check() to
-> become something like this:
+On Thu, Sep 04, 2025 at 10:59:49AM +0200, Niklas Schnelle wrote:
+> When a PCI device is removed with surprise hotplug, there may still be
+> attempts to attach the device to the default domain as part of tear down
+> via (__iommu_release_dma_ownership()), or because the removal happens
+> during probe (__iommu_probe_device()). In both cases zpci_register_ioat()
+> fails with a cc value indicating that the device handle is invalid. This
+> is because the device is no longer part of the instance as far as the
+> hypervisor is concerned.
 > 
-> 	rcu_dereference_check(p, lockdep_rht_mutex_is_held(ht) ||
-> 				 rcu_read_lock_any_held());
+> Currently this leads to an error return and s390_iommu_attach_device()
+> fails. This triggers the WARN_ON() in __iommu_group_set_domain_nofail()
+> because attaching to the default domain must never fail.
 > 
-> This would be happy with any RCU reader, including rcu_read_lock(),
-> preempt_disable(), local_irq_disable(), local_bh_disable(), and various
-> handler contexts.  One downside is that this would *always* be happy in
-> a kernel built with CONFIG_PREEMPT_{NONE,VOLUNTARY}=y.
-
-Why is that a problem? Assuming that it is always safe to perform
-an rcu_dereference_all() on such a kernel, not warning would appear
-to be the right thing to do.
-
-> If this is happening often enough, it would be easy for me to create an
-> rcu_dereference_all_check() that allows all forms of vanilla RCU readers
-> (but not, for example, SRCU readers), but with only two use cases,
-> it is not clear to me that this is an overall win.
+> With the device fenced by the hypervisor no DMAs to or from memory are
+> possible and the IOMMU translations have no effect. Proceed as if the
+> registration was successful and let the hotplug event handling clean up
+> the device.
 > 
-> Or am I missing a turn in here somewhere?
+> This is similar to how devices in the error state are handled since
+> commit 59bbf596791b ("iommu/s390: Make attach succeed even if the device
+> is in error state") except that for removal the domain will not be
+> registered later. This approach was also previously discussed at the
+> link.
+> 
+> Handle both cases, error state and removal, in a helper which checks if
+> the error needs to be propagated or ignored. Avoid magic number
+> condition codes by using the pre-existing, but never used, defines for
+> PCI load/store condition codes and rename them to reflect that they
+> apply to all PCI instructions.
+> 
+> Cc: stable@vger.kernel.org # v6.2
+> Link: https://lore.kernel.org/linux-iommu/20240808194155.GD1985367@ziepe.ca/
+> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> ---
+>  arch/s390/include/asm/pci_insn.h | 10 +++++-----
+>  drivers/iommu/s390-iommu.c       | 26 +++++++++++++++++++-------
+>  2 files changed, 24 insertions(+), 12 deletions(-)
+> 
 
-As I said rhashtable is just a middle-man, while it does some
-RCU actions internally, in the end the user is free to choose
-the RCU variant (vanilla, bh, sched).  So I'm faced with the
-choice of using only rcu_dereference_all in rhashtable code,
-or splitting the rhashtable API into three variants just like
-RCU.  I'd rather not do this especially because it appears RCU
-itself has essentially morphed into a single variant because
-call_rcu etc. always waits for all three variants.
+Looks good to me; thanks Niklas.
 
-So how about this patch?
 
----8<---
-Add rcu_dereference_all and rcu_dereference_all_check so that
-library code such as rhashtable can be used with any RCU variant.
+Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
 
-As it stands rcu_dereference is used within rashtable, which
-creates false-positive warnings if the user calls it from another
-RCU variant context, such as preempt_disable().
-
-Use the rcu_dereference_all and rcu_dereference_all_check calls
-in rhashtable to suppress these warnings.
-
-Also replace the rcu_dereference_raw calls in the list iterators
-with rcu_dereference_all to uncover buggy calls.
-
-Reported-by: Menglong Dong <dongml2@chinatelecom.cn>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 120536f4c6eb..b4261a0498f0 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -713,6 +713,23 @@ do {									      \
- 				(c) || rcu_read_lock_sched_held(), \
- 				__rcu)
- 
-+/**
-+ * rcu_dereference_all_check() - rcu_dereference_all with debug checking
-+ * @p: The pointer to read, prior to dereferencing
-+ * @c: The conditions under which the dereference will take place
-+ *
-+ * This is the RCU-all counterpart to rcu_dereference_check().
-+ * However, please note that starting in v5.0 kernels, vanilla RCU grace
-+ * periods wait for preempt_disable() regions of code in addition to
-+ * regions of code demarked by rcu_read_lock() and rcu_read_unlock().
-+ * This means that synchronize_rcu(), call_rcu, and friends all take not
-+ * only rcu_read_lock() but also rcu_read_lock_*() into account.
-+ */
-+#define rcu_dereference_all_check(p, c) \
-+	__rcu_dereference_check((p), __UNIQUE_ID(rcu), \
-+				(c) || rcu_read_lock_any_held(), \
-+				__rcu)
-+
- /*
-  * The tracing infrastructure traces RCU (we want that), but unfortunately
-  * some of the RCU checks causes tracing to lock up the system.
-@@ -767,6 +784,14 @@ do {									      \
-  */
- #define rcu_dereference_sched(p) rcu_dereference_sched_check(p, 0)
- 
-+/**
-+ * rcu_dereference_all() - fetch RCU-all-protected pointer for dereferencing
-+ * @p: The pointer to read, prior to dereferencing
-+ *
-+ * Makes rcu_dereference_check() do the dirty work.
-+ */
-+#define rcu_dereference_all(p) rcu_dereference_all_check(p, 0)
-+
- /**
-  * rcu_pointer_handoff() - Hand off a pointer from RCU to other mechanism
-  * @p: The pointer to hand off
-diff --git a/include/linux/rhashtable.h b/include/linux/rhashtable.h
-index 6c85b28ea30b..e9b5ac26b42d 100644
---- a/include/linux/rhashtable.h
-+++ b/include/linux/rhashtable.h
-@@ -272,13 +272,13 @@ struct rhash_lock_head __rcu **rht_bucket_nested_insert(
- 	rcu_dereference_protected(p, lockdep_rht_mutex_is_held(ht))
- 
- #define rht_dereference_rcu(p, ht) \
--	rcu_dereference_check(p, lockdep_rht_mutex_is_held(ht))
-+	rcu_dereference_all_check(p, lockdep_rht_mutex_is_held(ht))
- 
- #define rht_dereference_bucket(p, tbl, hash) \
- 	rcu_dereference_protected(p, lockdep_rht_bucket_is_held(tbl, hash))
- 
- #define rht_dereference_bucket_rcu(p, tbl, hash) \
--	rcu_dereference_check(p, lockdep_rht_bucket_is_held(tbl, hash))
-+	rcu_dereference_all_check(p, lockdep_rht_bucket_is_held(tbl, hash))
- 
- #define rht_entry(tpos, pos, member) \
- 	({ tpos = container_of(pos, typeof(*tpos), member); 1; })
-@@ -373,7 +373,7 @@ static inline struct rhash_head *__rht_ptr(
- static inline struct rhash_head *rht_ptr_rcu(
- 	struct rhash_lock_head __rcu *const *bkt)
- {
--	return __rht_ptr(rcu_dereference(*bkt), bkt);
-+	return __rht_ptr(rcu_dereference_all(*bkt), bkt);
- }
- 
- static inline struct rhash_head *rht_ptr(
-@@ -497,7 +497,7 @@ static inline void rht_assign_unlock(struct bucket_table *tbl,
- 	for (({barrier(); }),						\
- 	     pos = head;						\
- 	     !rht_is_a_nulls(pos);					\
--	     pos = rcu_dereference_raw(pos->next))
-+	     pos = rcu_dereference_all(pos->next))
- 
- /**
-  * rht_for_each_rcu - iterate over rcu hash chain
-@@ -513,7 +513,7 @@ static inline void rht_assign_unlock(struct bucket_table *tbl,
- 	for (({barrier(); }),					\
- 	     pos = rht_ptr_rcu(rht_bucket(tbl, hash));		\
- 	     !rht_is_a_nulls(pos);				\
--	     pos = rcu_dereference_raw(pos->next))
-+	     pos = rcu_dereference_all(pos->next))
- 
- /**
-  * rht_for_each_entry_rcu_from - iterated over rcu hash chain from given head
-@@ -560,7 +560,7 @@ static inline void rht_assign_unlock(struct bucket_table *tbl,
-  * list returned by rhltable_lookup.
-  */
- #define rhl_for_each_rcu(pos, list)					\
--	for (pos = list; pos; pos = rcu_dereference_raw(pos->next))
-+	for (pos = list; pos; pos = rcu_dereference_all(pos->next))
- 
- /**
-  * rhl_for_each_entry_rcu - iterate over rcu hash table list of given type
-@@ -574,7 +574,7 @@ static inline void rht_assign_unlock(struct bucket_table *tbl,
-  */
- #define rhl_for_each_entry_rcu(tpos, pos, list, member)			\
- 	for (pos = list; pos && rht_entry(tpos, pos, member);		\
--	     pos = rcu_dereference_raw(pos->next))
-+	     pos = rcu_dereference_all(pos->next))
- 
- static inline int rhashtable_compare(struct rhashtable_compare_arg *arg,
- 				     const void *obj)
-
-Cheers,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Best Regards, Benjamin Block        /        Linux on IBM Z Kernel Development
+IBM Deutschland Research & Development GmbH    /   https://www.ibm.com/privacy
+Vors. Aufs.-R.: Wolfgang Wendt         /        Geschäftsführung: David Faller
+Sitz der Ges.: Böblingen     /    Registergericht: AmtsG Stuttgart, HRB 243294
 
