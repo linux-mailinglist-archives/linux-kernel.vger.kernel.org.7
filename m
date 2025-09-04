@@ -1,160 +1,112 @@
-Return-Path: <linux-kernel+bounces-801829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D5CB44A7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:38:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B421B44A81
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6C11C27DB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:38:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B62E17588E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706942F619B;
-	Thu,  4 Sep 2025 23:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E1F2F90D4;
+	Thu,  4 Sep 2025 23:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0tclXte"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mcbridemail.com header.i=@mcbridemail.com header.b="uDsIAzcP"
+Received: from mail-05.mail-europe.com (mail-05.mail-europe.com [85.9.206.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10652D73B3;
-	Thu,  4 Sep 2025 23:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33422882C8
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 23:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.206.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757029082; cv=none; b=b0nYvtLu8dyBkxORh9bbquf5bulrtPUCmoKMVEBBSMKH4znLlB05XhjsfcCwrKSls1iqfi/2CCt+H7CxmjFBMbel5nSTp0AzFDNl3FGDQbkG02Ze1oE/xvFCOTVjLMv3h2TAHmq9unyjk6NHn7mXRrIsAQNivztnbdeLewkj6tc=
+	t=1757029291; cv=none; b=j3vfoZdKGSlAdiqlBeyN3voTKavb9gnQaik2V8anXjWBRuTxHczpa83L2whG9t5kPyloB5JUKt3BvtZ6rvOgFReZh+MLckqj0qW5U0O5FuyJ87rJ40obVPyS7KfCo0rXxZUcQXkQOO22vVjwx9Uz2GEmNlJN1f7xtbEnpi9pJ5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757029082; c=relaxed/simple;
-	bh=i+01YYY1wAETl8uPU7E8Ydrb8Pq90kKfcxjQN9XqHmY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MbkvQuhKVKNiYGLR5GzchF0VFj5BzQp5jd/405ixKAzN/xv7bnRNOLpLaNEFJ85ZppvphFcS0LTM9ag5v1RvJDQEgmhktEVYsU/Q2Lmk6zspINSC9dBs+VgE196GQsdq5b3o/cpef2IHL2FFEHJbDtoYpzqONBiXKC25fAV+xaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0tclXte; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AE71C4AF0B;
-	Thu,  4 Sep 2025 23:38:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757029082;
-	bh=i+01YYY1wAETl8uPU7E8Ydrb8Pq90kKfcxjQN9XqHmY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=s0tclXteDCYT7ZyezWUyvRUi0f5+96I4ovEgEgImvic6Dv+KBtSrWdbVnK2tqLq+c
-	 zYTydfFUT5LZM1VFk21uICVuI/giz7wjdwFJDSQ+7tF8SQyT/UFWr8OkNG32WL00jx
-	 /QjjqDhpXIf4Ou8VyU5G2Si6Xc/JFkS8Xr/RhxiV/fMjiaVTDLyeqa7LVm40D5+MMJ
-	 Ree6mP727tgdQSBFo2kWqF5I0F28o8OGWGgfAVPskBIcOeCY4gtS7aoa894ol+jfND
-	 5IU34nskxf63KG6x5GrV2FgGM356CeFuiYSwbStPpfHj1MAfafOS+mhmCbLLpkSD8g
-	 6rpdd21u5PA0Q==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61e4254271dso2980823a12.2;
-        Thu, 04 Sep 2025 16:38:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUaxpDJPtteGe1364WeKKKZfi6vxNueNayyJ0YvzkxZpjHUWraqViwPt7Jjy5+dmEwo+y5jtRtBmvew@vger.kernel.org, AJvYcCWSDB2hP8tUVHAJbyGdIehe1H4iKICcncAt96xUGoN48DWfZBhdTljqaQMyhXZLWCZmrQW2Sk9VEzzXaedi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9Z4WAtNLaj74svRP98LqDxfuRXo6q8RB9UIFos8bUAFrVdLBP
-	L2c7rXOLbYVvULHIZ4lThN84+/ZythN0qGboO1dnzhxp8SjfFLSRtQxTPY061844XZYeorYDZWz
-	bmHD5qRK6Rjr2c6tjSLvtCl1QykoYBQ==
-X-Google-Smtp-Source: AGHT+IFFN6fk5YVg+B1Gm6YAlYwOQG6ufa/AOFFGb2DahNQbjmVf7LcAWNTuQcant4szK9wxkX0bXwvOq8gcg3FZDZM=
-X-Received: by 2002:a05:6402:90a:b0:61e:1636:aeee with SMTP id
- 4fb4d7f45d1cf-61e1636b01bmr14623674a12.38.1757029080874; Thu, 04 Sep 2025
- 16:38:00 -0700 (PDT)
+	s=arc-20240116; t=1757029291; c=relaxed/simple;
+	bh=LFbIKM8j4M9g/fcCcVVVRJnzocvfkIzRKWElyt6Oha8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T4zX6S04GQShfC2JVsrTesodegsySFM4SDKpjv2RcM/EYazilYPNIKuuS/wY+v3W8oSy5nVeq+JPM9qF8o+Sn0evUE/zPPiZ4bunrAMlu/Z14lNP8Wqq//t66CUGCm63B/XHf9OILRxzOaE3vooWcEBtf4zBaYhYW2NQN4d8SYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcbridemail.com; spf=pass smtp.mailfrom=mcbridemail.com; dkim=pass (2048-bit key) header.d=mcbridemail.com header.i=@mcbridemail.com header.b=uDsIAzcP; arc=none smtp.client-ip=85.9.206.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcbridemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mcbridemail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mcbridemail.com;
+	s=protonmail; t=1757029278; x=1757288478;
+	bh=PvkD4sYAUcc7H3PsgqKK7mZCcx4fpxzEJ/vRxP1AZio=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=uDsIAzcPsIcRKoq5QwwojpV8tBpeU2vrNKCcY+F1qN8bA/qq9ZBpQPotGZ1dQmihv
+	 KkguBe8DxvoB2ZY6oHlc8Ppc/mm76bMe+yS6ipi4DczV6Up0VbkuLitpn4ztZu/960
+	 IxPk26yY2E5vxEAhsPVStYjoyN2DtD3SRhp1HCT434wK9BF6OxjZVOPfYOTcdh7h34
+	 z+R0ndGe5k7RUfYQKrbRYHSrIkywoAmPuGfw8NpsizYUw2uGWrbyxfFcg/vh5TtpjV
+	 gQ7N2ZxlqK/74DjcX4rkgPlcsq28bOkWeRZkS1oiJdMujkXXSAthQqzqVQpAQvow89
+	 2TvtIpNiCkH4g==
+Date: Thu, 04 Sep 2025 23:41:12 +0000
+To: Al Viro <viro@zeniv.linux.org.uk>
+From: Blake McBride <blake@mcbridemail.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, Colby Wes McBride <colbym84@gmail.com>
+Subject: Re: [RFC] View-Based File System Model with Program-Scoped Isolation
+Message-ID: <nPMV5WRZT62Eq5Cu84Q0NMH2CgxAuisCAMQ4XfuG7kb6OdEOgY9UMi5sVx3CV0kSVcEBoDDz1w5btWaT1CfOCC_4jkCDrIoYk866FO9bZVo=@mcbridemail.com>
+In-Reply-To: <20250904230846.GR39973@ZenIV>
+References: <Oa1N9bTNjTvfRX39yqCcQGpl9FJVwfDT2fTq-9NXTT8HqTIqG2Y-Gy0f7QHKcp2-TIv7NZ3bu_YexmKiGuo9FBTeCtRnVzABBVnhx5EiShk=@mcbridemail.com> <20250904220650.GQ39973@ZenIV> <DHMURiMioUDX6Ggo4Qy8C43EUoC_ltjjS52i2kgC9tl6GhjGuJXOwyf9Nb-WkI__cM0NXECZw_HdKeIUmwShKkAmP7PwqZcmGz-vBrdWYL8=@mcbridemail.com> <20250904230846.GR39973@ZenIV>
+Feedback-ID: 30086830:user:proton
+X-Pm-Message-ID: 584adc3b8567c8ef078a37bca4435820c1ddcfdb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714-sti-rework-v2-0-f4274920858b@gmail.com> <20250714-sti-rework-v2-1-f4274920858b@gmail.com>
-In-Reply-To: <20250714-sti-rework-v2-1-f4274920858b@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 4 Sep 2025 18:37:49 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ0ckZ529gm781uF52yR3-gj2ctHR11hUK=4q8_Eq65EQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyVHTjBeXc1k7EZQPMmRZXJqAQXLxtZHtgAqDf9uO9vDCivi8C1SxLEoVo
-Message-ID: <CAL_JsqJ0ckZ529gm781uF52yR3-gj2ctHR11hUK=4q8_Eq65EQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] ARM: sti: drop B2120 board support
-To: Raphael Gallais-Pou <rgallaispou@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Patrice Chotard <patrice.chotard@foss.st.com>, Russell King <linux@armlinux.org.uk>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2025 at 8:54=E2=80=AFAM Raphael Gallais-Pou
-<rgallaispou@gmail.com> wrote:
->
-> B2120 boards are internal boards which never were commercialised.
->
-> Drop them.
->
-> Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
-> ---
->  arch/arm/boot/dts/st/Makefile           |   2 -
->  arch/arm/boot/dts/st/stih407-b2120.dts  |  27 -----
->  arch/arm/boot/dts/st/stih407.dtsi       | 145 ----------------------
->  arch/arm/boot/dts/st/stih410-b2120.dts  |  66 ----------
->  arch/arm/boot/dts/st/stihxxx-b2120.dtsi | 206 --------------------------=
-------
->  5 files changed, 446 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/st/Makefile b/arch/arm/boot/dts/st/Makefil=
-e
-> index cc9948b9870f7f73629573149bfd342af75b07da..f57fc6dc48a00c9a9323b4508=
-e5e4e161b197c47 100644
-> --- a/arch/arm/boot/dts/st/Makefile
-> +++ b/arch/arm/boot/dts/st/Makefile
-> @@ -13,8 +13,6 @@ dtb-$(CONFIG_ARCH_SPEAR3XX) +=3D \
->  dtb-$(CONFIG_ARCH_SPEAR6XX) +=3D \
->         spear600-evb.dtb
->  dtb-$(CONFIG_ARCH_STI) +=3D \
-> -       stih407-b2120.dtb \
-> -       stih410-b2120.dtb \
->         stih410-b2260.dtb \
->         stih418-b2199.dtb \
->         stih418-b2264.dtb
-> diff --git a/arch/arm/boot/dts/st/stih407-b2120.dts b/arch/arm/boot/dts/s=
-t/stih407-b2120.dts
-> deleted file mode 100644
-> index 9c79982ee7ba8fadb1a2a92e732bf7f652b74c38..0000000000000000000000000=
-000000000000000
-> --- a/arch/arm/boot/dts/st/stih407-b2120.dts
-> +++ /dev/null
-> @@ -1,27 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-only
-> -/*
-> - * Copyright (C) 2014 STMicroelectronics (R&D) Limited.
-> - * Author: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-> - */
-> -/dts-v1/;
-> -#include "stih407.dtsi"
-> -#include "stihxxx-b2120.dtsi"
-> -/ {
-> -       model =3D "STiH407 B2120";
-> -       compatible =3D "st,stih407-b2120", "st,stih407";
-> -
-> -       chosen {
-> -               stdout-path =3D &sbc_serial0;
-> -       };
-> -
-> -       memory@40000000 {
-> -               device_type =3D "memory";
-> -               reg =3D <0x40000000 0x80000000>;
-> -       };
-> -
-> -       aliases {
-> -               serial0 =3D &sbc_serial0;
-> -               ethernet0 =3D &ethernet0;
-> -       };
-> -
-> -};
-> diff --git a/arch/arm/boot/dts/st/stih407.dtsi b/arch/arm/boot/dts/st/sti=
-h407.dtsi
-> deleted file mode 100644
-> index aca43d2bdaad44ef2a0e8a120c679c217709af44..0000000000000000000000000=
-000000000000000
-> --- a/arch/arm/boot/dts/st/stih407.dtsi
-> +++ /dev/null
-> @@ -1,145 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-only
-> -/*
-> - * Copyright (C) 2015 STMicroelectronics Limited.
-> - * Author: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-> - */
-> -#include "stih407-clock.dtsi"
+On Thursday, September 4th, 2025 at 6:09 PM, Al Viro <viro@zeniv.linux.org.=
+uk> wrote:
 
-Looks like this file is unused now too and can be removed.
+>=20
+>=20
+> On Thu, Sep 04, 2025 at 10:58:12PM +0000, Blake McBride wrote:
+>=20
+> > Off the cuff, I'd say it is an mv option. It defaults to changing all o=
+ccurrences, with an option to change it only in the current view.
+>=20
+>=20
+> Huh? mv(1) is userland; whatever it does, by definition it boils down
+> to a sequence of system calls.
 
-Rob
+
+Yes.  This is what is intended.  All of userland would just operate on the =
+view the same as if that was your real hierarchy.
+
+
+>=20
+> If those "views" of yours are pasted together subtrees of the global
+> forest, you already can do all of that with namespaces; if they are not,
+> you get all kinds of interesting questions about coherency.
+
+
+These views are not pasted together subtrees.  Each view can have utterly d=
+ifferent layouts of the same set of files.
+
+
+
+
+
+>=20
+> Which one it is? Before anyone can discuss possible implementations
+> and relative merits thereof, you need to define the semantics of
+> what you want to implement...
+>=20
+> And frankly, if you are thinking in terms of userland programs (file
+> manglers, etc.) you are going the wrong way - description will have
+> to be on the syscall level.
+
+I did not specify the implementation, just the user experience.  All of use=
+rland would "appear" to function as it does now.  The same with the syscall=
+s that are made by the application code.  They all effect the current view =
+as if it was the real hierarchy.
+
+--blake
+
 
