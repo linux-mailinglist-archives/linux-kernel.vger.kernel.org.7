@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-799927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF127B4315B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:50:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05531B4315C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:50:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B593B583E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:50:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C693E3BC9A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CF2277C90;
-	Thu,  4 Sep 2025 04:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3362C242D8B;
+	Thu,  4 Sep 2025 04:47:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cZRj5VL/"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g/RSaRXT"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03244276020
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 04:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DFB277C8C
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 04:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756961252; cv=none; b=X7YmxS0fllE3eiMtPve3stHa0/BluXTA0UdOTj8OcbLUhl1eg+W1BXQ1plzLlg/O4hfkbEJwv4dBt50lEk2mSWPc6Pu0Qf9UDFWIQxPL7oDgxCwNCH9Rw1XlVeHG5h8ycMI/aAN7eZxfgpCOCcJlGz8p+B++mGCWo9COueAvQBc=
+	t=1756961254; cv=none; b=Nqf0xN9YDZHAwk6dC/+LM00DBBA7rWJVvHEPNHMGAICRnOZrJJPXVgSgrf4uzStc3cEOspG1Ia1A4vlF62lOBqCv9PfcYv2Pl89FynXYogmEd6CP8zMON2trOq1vvreAxTNby5G5Hi1FdZm714IGiOdhvMyToJbCMZs5GDbk2sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756961252; c=relaxed/simple;
-	bh=60AxySV/dmMVoRCj/GcMPkU9qf75oRSvrC+cz4keYjQ=;
+	s=arc-20240116; t=1756961254; c=relaxed/simple;
+	bh=eCeE/2YA1gW3yikph8tyIv9Qo87llAzuCgL/jet0ORQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=N0jXgLHlGHqmpoaPKkiofe0uLKuQhhJsyksY3jOdnnPpLcuLchwC9hJV1NS6NGw9YaV9RHdJJyiPfFCPeIcHk6J6UqCO15rUifbHgfo3k84rHwiVZEed6DDYWQc33wQ++k3jqoEnXkEtifPzecI95BQxXHYUrLMPBpvMVAowNd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cZRj5VL/; arc=none smtp.client-ip=209.85.214.201
+	 To:Content-Type; b=fEvNi2i+jzt16J0g7Bn1Trfa6FGecpVr67wen/Ra0S6wxWBGfd3DqMhXO7lWAF+5KzPP0LVbIXPmCxOFGre8FjeanwAjmmnjKHyXsELit7yRrWsRFaERbUWirYMquaxCO0hD16bP6OgRfjZg4S5KbiUPF+q0jpHd7cNzgq5CPc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g/RSaRXT; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24ca417fb41so8035055ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 21:47:30 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-329e3db861eso549937a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 21:47:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756961250; x=1757566050; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756961252; x=1757566052; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Io76sF4baxRad2N7SLfDof4lYFnNY5EeWNuGzy0T8Ug=;
-        b=cZRj5VL/uyYT3a6s6UtjbZv/xZaOOFiJlSOEpEKU6GP0KM2yevqgxCuZboRuCHeH/8
-         Go6nhbi7bhYVwQPwPQE9N+33+qSxrE/ZS0iMAJWo5PzBfwRcLAmTCWSWlXg2fqB/0z/D
-         BX9LMeU7sNEVcnDcYkyArLJuKpLTOkXDo6tcwvlqriE0UKYhIE1tNf56FxhRFSMUmD6F
-         zHal/34E9QRQpQz3pjZusCBVEQOGD3fr01ByWyTHdxWxbS30WlAWpN26qgwZr6NkOMlu
-         eh2pIVUSsg+4DNVGo53pbiR8H/6yjrU2rL/eTKAz8pyY75BHyaIWNsXyKWr+vNub5vsu
-         Rkiw==
+        bh=41eHmEOBCKxz0FQX8SK2j27zDRY5OHr/EQpAd6DfRhw=;
+        b=g/RSaRXTs7UZ23v/atNMPUhIFiVHNPRDjhkcjQiokjzOlb5CTO3TtakqiiMmwXQ1ZU
+         NJQohxytIzPtIZVsiqIDe422iCcZLGYYp+DBH0NGlmYmxCeUjQiLqaYvFEwy7wNHhRqu
+         JPW7VtCL+0tdRMFeuTexIM5pt9vGI9xhenhWTtRv3XuZ2qTzcE6NW23KVhFpxMwg179S
+         diPUVCgo3Kse2dLozfeRIRF8jSBI7SZk++3ARmFIbiJQX/x0yVExEjUeEEn8zPC94+Cm
+         jHx+H0Rfc2JFqlXeTFKYtzPetNHM8jfcu67OUhOtFm1Uc84ObVkp47zs+fRVtCEexEB8
+         mIEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756961250; x=1757566050;
+        d=1e100.net; s=20230601; t=1756961252; x=1757566052;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Io76sF4baxRad2N7SLfDof4lYFnNY5EeWNuGzy0T8Ug=;
-        b=ElG4c+KtZRc9LJSzFJmR/dd6LN/ppFGukSm1yf7+YsCxMJajAJcoHzGZISGE+3cAsJ
-         xQX+Qtp1cQjdeHMO3u5+StiPij9REM3PslTWHfFii60hmq29gva/bPMDkRrWdCBP9ucx
-         JTCZnoaTvAzFgCe09iRLbZYTUdRXGQLTXF9iXf2hcFuFjeyO9d9zFeJIqj2tZHTMeyuJ
-         jL7gf1xMoCj1HDYspZELZZkb+y4oBzhdfNo9vzVkURJcnHGaAmPo3XrdL58evz9DjU4U
-         f3bN6azSYohPOUzjIjFfgOFVXCp6JimcJzYG3ZmZ5PrtPraqhbOIgj5TXSWRux/VP7/F
-         KeNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXt5Lpcz2v39rnkNuPLpc7FyF4vUrInZYdX7LfhjvgfJQD1UBhCiQE54CvZoD74GtT2dXOWVj/5NXCp6Ao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfxjugIUuI823R5IkOoNVKZZhP8Ruac2KImHptG4BTSR1Rllkl
-	GyU+/C/HAcbQMkzJsadozI8+xJIvtBwegRtoVjiSNUlP2adWyRCX7viQ+DRru6MDka5af4JOtBq
-	c3ZuvRnsIrA==
-X-Google-Smtp-Source: AGHT+IEVnXY/B5S1r8J+Ny8OVcr+d21wc7YVRwjOD7omQGHy9M7EgkbvrV73G95LnJfRePnt7fmYqhAG4VrG
-X-Received: from plbkk13.prod.google.com ([2002:a17:903:70d:b0:240:718d:564a])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1a28:b0:24c:bd9f:211c
- with SMTP id d9443c01a7336-24cbd9f24bdmr27679775ad.54.1756961250104; Wed, 03
- Sep 2025 21:47:30 -0700 (PDT)
-Date: Wed,  3 Sep 2025 21:46:48 -0700
+        bh=41eHmEOBCKxz0FQX8SK2j27zDRY5OHr/EQpAd6DfRhw=;
+        b=ZP1TkUdSH8dHy2cK3VAmRwu5eYQ6MP/M5We07Ztk4R1l0rqDokxA9TLQq1MbnuV9+J
+         24FFEBRtUNDOy/wINpSmp2jpgGLtwg+IAHPHS8g5spebfuog1IkJtcM2prJku1qp3GNY
+         J4HCTje5Y4fo5u7lYf3C3C9FP6uzfnPRCaa9GtweZkXJfW9AP0st0Mfq9YVK5xJ+vh5I
+         hh4sct+AFADVC/SV/64ObHUdMSZ0sCB1pQZ4Ukr+UmXij3fLI9hvZafFG7HTej2FF68I
+         xvXYIwJLJ61a5/50IcmO2xkdW4TIYFSDWCU7HHGK6VV4P07mKjYgDHDNh6TuFuWoIQpR
+         /piQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEi4R6/zyDmKYWYpAIfVBb6rxX7NMeJXyyWca55ayTc952cu6tAobJgJIX1pdeOL2310GBGnE4m6oxGKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfSBxWTMfRZNXh6Vw1d7q6Otl3ZDLHNqE8pKYiMiWnHVZmXRUB
+	jh/ZQjmExDT3dKyF18Q8ZfoRkZZ1HCmXSDCy4nuVq6jCjtOZoOj/t5FnosAy15xIAs3Mr17lYAP
+	gIjpREimV9A==
+X-Google-Smtp-Source: AGHT+IFMGvdDOM894XFlRC4C8ABn2l/2js1gvMdb3naZGms4QkhWcuW7svL1yywkey+lraXUjRQta+HUkNvQ
+X-Received: from pjhu32.prod.google.com ([2002:a17:90a:51a3:b0:329:7dfc:f4e1])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1b4b:b0:32b:656f:5a5d
+ with SMTP id 98e67ed59e1d1-32b656f5b5fmr5026346a91.29.1756961252229; Wed, 03
+ Sep 2025 21:47:32 -0700 (PDT)
+Date: Wed,  3 Sep 2025 21:46:49 -0700
 In-Reply-To: <20250904044653.1002362-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250904044653.1002362-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
-Message-ID: <20250904044653.1002362-18-irogers@google.com>
-Subject: [PATCH v6 17/22] perf jevents: Add local/remote "mem" breakdown
- metrics for Intel
+Message-ID: <20250904044653.1002362-19-irogers@google.com>
+Subject: [PATCH v6 18/22] perf jevents: Add dir breakdown metrics for Intel
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -92,61 +91,69 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Thomas Falcon <thomas.falcon@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Breakdown local and remote memory bandwidth, read and writes. The
-implementation uses the HA and CHA PMUs present in server models
-broadwellde, broadwellx cascadelakex, emeraldrapids, haswellx,
-icelakex, ivytown, sapphirerapids and skylakex.
+Breakdown directory hit, misses and requests. The implementation uses
+the M2M and CHA PMUs present in server models broadwellde, broadwellx
+cascadelakex, emeraldrapids, icelakex, sapphirerapids and skylakex.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/pmu-events/intel_metrics.py | 27 ++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ tools/perf/pmu-events/intel_metrics.py | 36 ++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
 diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
-index f7a9186bdf40..30cf668c7769 100755
+index 30cf668c7769..669b5668a753 100755
 --- a/tools/perf/pmu-events/intel_metrics.py
 +++ b/tools/perf/pmu-events/intel_metrics.py
-@@ -800,6 +800,32 @@ def IntelLdSt() -> Optional[MetricGroup]:
+@@ -800,6 +800,41 @@ def IntelLdSt() -> Optional[MetricGroup]:
    ], description = "Breakdown of load/store instructions")
  
  
-+def UncoreMem() -> Optional[MetricGroup]:
++def UncoreDir() -> Optional[MetricGroup]:
 +  try:
-+    loc_rds = Event("UNC_CHA_REQUESTS.READS_LOCAL", "UNC_H_REQUESTS.READS_LOCAL")
-+    rem_rds = Event("UNC_CHA_REQUESTS.READS_REMOTE", "UNC_H_REQUESTS.READS_REMOTE")
-+    loc_wrs = Event("UNC_CHA_REQUESTS.WRITES_LOCAL", "UNC_H_REQUESTS.WRITES_LOCAL")
-+    rem_wrs = Event("UNC_CHA_REQUESTS.WRITES_REMOTE", "UNC_H_REQUESTS.WRITES_REMOTE")
++    m2m_upd = Event("UNC_M2M_DIRECTORY_UPDATE.ANY")
++    m2m_hits = Event("UNC_M2M_DIRECTORY_HIT.DIRTY_I")
++    # Turn the umask into a ANY rather than DIRTY_I filter.
++    m2m_hits.name += "/umask=0xFF,name=UNC_M2M_DIRECTORY_HIT.ANY/"
++    m2m_miss = Event("UNC_M2M_DIRECTORY_MISS.DIRTY_I")
++    # Turn the umask into a ANY rather than DIRTY_I filter.
++    m2m_miss.name += "/umask=0xFF,name=UNC_M2M_DIRECTORY_MISS.ANY/"
++    cha_upd = Event("UNC_CHA_DIR_UPDATE.HA")
++    # Turn the umask into a ANY rather than HA filter.
++    cha_upd.name += "/umask=3,name=UNC_CHA_DIR_UPDATE.ANY/"
 +  except:
 +    return None
 +
-+  scale = 64 / 1_000_000
-+  return MetricGroup("lpm_mem", [
-+      MetricGroup("lpm_mem_local", [
-+          Metric("lpm_mem_local_read", "Local memory read bandwidth not including directory updates",
-+                 d_ratio(loc_rds, interval_sec), f"{scale}MB/s"),
-+          Metric("lpm_mem_local_write", "Local memory write bandwidth not including directory updates",
-+                 d_ratio(loc_wrs, interval_sec), f"{scale}MB/s"),
-+      ]),
-+      MetricGroup("lpm_mem_remote", [
-+          Metric("lpm_mem_remote_read", "Remote memory read bandwidth not including directory updates",
-+                 d_ratio(rem_rds, interval_sec), f"{scale}MB/s"),
-+          Metric("lpm_mem_remote_write", "Remote memory write bandwidth not including directory updates",
-+                 d_ratio(rem_wrs, interval_sec), f"{scale}MB/s"),
-+      ]),
-+  ], description = "Memory Bandwidth breakdown local vs. remote (remote requests in). directory updates not included")
++  m2m_total = m2m_hits + m2m_miss
++  upd = m2m_upd + cha_upd # in cache lines
++  upd_r = upd / interval_sec
++  look_r = m2m_total / interval_sec
++
++  scale = 64 / 1_000_000 # Cache lines to MB
++  return MetricGroup("lpm_dir", [
++      Metric("lpm_dir_lookup_rate", "",
++             d_ratio(m2m_total, interval_sec), "requests/s"),
++      Metric("lpm_dir_lookup_hits", "",
++             d_ratio(m2m_hits, m2m_total), "100%"),
++      Metric("lpm_dir_lookup_misses", "",
++             d_ratio(m2m_miss, m2m_total), "100%"),
++      Metric("lpm_dir_update_requests", "",
++             d_ratio(m2m_upd + cha_upd, interval_sec), "requests/s"),
++      Metric("lpm_dir_update_bw", "",
++             d_ratio(m2m_upd + cha_upd, interval_sec), f"{scale}MB/s"),
++  ])
 +
 +
- def UncoreMemBw() -> Optional[MetricGroup]:
-   mem_events = []
+ def UncoreMem() -> Optional[MetricGroup]:
    try:
-@@ -897,6 +923,7 @@ def main() -> None:
+     loc_rds = Event("UNC_CHA_REQUESTS.READS_LOCAL", "UNC_H_REQUESTS.READS_LOCAL")
+@@ -923,6 +958,7 @@ def main() -> None:
        IntelMlp(),
        IntelPorts(),
        IntelSwpf(),
-+      UncoreMem(),
++      UncoreDir(),
+       UncoreMem(),
        UncoreMemBw(),
    ])
- 
 -- 
 2.51.0.338.gd7d06c2dae-goog
 
