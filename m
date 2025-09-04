@@ -1,143 +1,154 @@
-Return-Path: <linux-kernel+bounces-799995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 337D2B4322E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:19:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84AE2B43231
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E750C544E2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:19:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04EC11C21690
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0A525B1D2;
-	Thu,  4 Sep 2025 06:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498C325B2FA;
+	Thu,  4 Sep 2025 06:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YQ0V4/o6"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xXhFRW3z"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A9D2417D4
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4CB259CA5
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756966738; cv=none; b=B9DuIlt2OLI50cha4N8Uq/RylNNYYQUB9MzgduGntQ6J1crQSLjOXyzT0+0b0TiZX4DQkSwOg3fhs+/1tEBOUYqrXh1vQpXayQcZaH4CZrIa3F9IBi9HxQGobAGgSTkn5Wp9Agqf93yygnV3OvpQMpSFD0bzlNBevjA7aIf5yN0=
+	t=1756966815; cv=none; b=UCEQk1kEkev5af/2yKe/dj+iuLhtvV4KQzSVJ1owj+qIkSKYAyTY03UrOr9C6XzdnpRb8J63GC6yLFnvVHneG7va6rNBn3g/Z0uYDemL/P+n+ZLYud6h0kcaiioekoI4g6KaX3G9fElEJYjV95wEq1gPdAVPAiNANyCXKbhzpA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756966738; c=relaxed/simple;
-	bh=V+SCQTip4Jj4Bo7UqGS8PgqQeKkz3sa/LNgtAzDwCz0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i+RO7VMC0bD/PUrDDCTivP1MnoCIgC6la2x0Y2TWs4hpKyLUp6tIjPz/6RlaeFFXSmOWiC3SGtiZfaUpACx8jFaYUr1Oy3zdYyoW4jOE2GQ74lMzLsGL4IUFnm7LEJ8Jv3uuhXOfTdGBzrOk/5KCVQ8nT1qhe8w5LseP8OaaCAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YQ0V4/o6; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-336d3e4df3eso5683311fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 23:18:56 -0700 (PDT)
+	s=arc-20240116; t=1756966815; c=relaxed/simple;
+	bh=L9IbDpl9YeAPbkNWRMRMo/b2Utf7GwlhkdtfUevFjGc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=puUhBsZjMEzR2tWAcA/Z2HHjn3KU5MP1dMqsRd/BVjqCiZtI8giEozxoo9QV22sULh3VJVW+2pP5mcL0XBE1T76b3ReDwOetVDMFFIGLN7A8ZozdKCSm2Z6dqtR+A9sBObWk9sntS3kpleYTwtyBqLIXKRGkO0Q50KLUmeOOmzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xXhFRW3z; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24cb39fbd78so9627385ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 23:20:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1756966735; x=1757571535; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7CQBkphJcdYBghhb0rqPa4FTq1gxFu4hiwbVOVVdraE=;
-        b=YQ0V4/o6wOwedE4WLJ0UhQs/S9981jM09Alpui5FQ8Fsxwot/cL1jZZyBmzbU1xJiQ
-         zNCmDYHwzYdMHZmTXYs+hyKNSQuFa2BSKZ2FJHI1e4bpLF+aAiLTZdd2L/UnMdsl6UJR
-         ElJCJtzpAFhrjbvgm5TIO+kvq27B7tnjvS7SU=
+        d=google.com; s=20230601; t=1756966813; x=1757571613; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5quzDayhtAriGJg7zaAaFURysSpqDdXw5doHq+jt5QU=;
+        b=xXhFRW3zykPGgerALfhOn9ooK2CNuKN7k7Yi9gnSkT2iMfAJKCZvEgyl2zl2kJwe0B
+         p2xiu0fbl46cc1T+89aoeOdtjqeJ1MORxBdTWJlEBZDkg/TvXGOAQHubLy3Q8S6nr7m2
+         yWrAJPxqH9XFh8QpoY6psNclGwYgTTuxcSom78jFzLsHjyOjoGt7XwgOKu+2ww2JLIX9
+         i+d2GM+VdjyWsAvN5SxdOECR8Xk81UsHfTObGO+q+k3wJTl6WC9YWav7CFtT+L+pHdpf
+         B68D7ulIUfybbAWQ/vXPS0eUHz0/Nzm6WFeS/sFU88/RuD4b2srdVsl6n8JgSCldQpah
+         vT+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756966735; x=1757571535;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7CQBkphJcdYBghhb0rqPa4FTq1gxFu4hiwbVOVVdraE=;
-        b=oogkND4QKG/TPRKIvgQd8rCJCd5wIqguttqPm3KTq8IFaIVR4A3c3MDQwlvgubIJ4c
-         Sdgpa8aMCajUXsFPZqKyX3B0v4Q3D294dz7WL1Uhg54UnbTsjJK9jAkOCRK15kXHYv5s
-         EL0lRMN40mSzRo/0DQWCEdkYXA3Bcfpy0HI8R3yp0H2JAkE34YypSOmj3+Zby4PlZ0Gz
-         JdyttjlGT2kkyZudqIuqZ0o+PGZy8bchidc1YLiqVpo+fuZ/eHitWysqkY3e2d8OMGna
-         cMOcUIH41sDWSwKeJRFoQHdGm+yvC/pIyq/b8+yyBr6VTxRovaNYLBwKoLP6mCoHwg/t
-         EE6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWFqvnfs7IQaNMdrYBGlauwRdOI2x3n3BjdzP09WJazepCxO66jl4o3z+vVoB2zbHmz18IfEEnH0iFrMUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLC5Co3lmAltGtOmhJRzN2IvGVTWKG1VT1SDnY2COYrPw6lV+y
-	c2vgBUcGTnWnXv72YDGFBYtWC0gDMnUMaRKksGKBrSLIy/I4des2V1i2c+imfp7OCEpgkXeNBV1
-	BMKdV+19VtfZPEZp4s7B7TQ5X1RbDWZMDb/wktEYT
-X-Gm-Gg: ASbGnctunn1iftMpx6KejG/xC4P+dTcu/tEeL1gzoYY2uHZM/vSktIBtrbuBe5dzfDh
-	Et74EU41guQbKG5+sKJI0yC9bJXrNFmEIi3facWJ4Y4unzmLQw+f3/W93UIcMHLxsbL8FzN5Bv3
-	0lg6Nq/cnEt+TZjGNXd2ljYcmYw58/jXgoIXJOqrCK68MXid3WD23gviJAEAQTBoUUw+cl5xdys
-	KWVCjxiDOY9IEwU2fBEiWa90UrbFExZVAl5XMCgIOXMtgUsj3OnjNxYOu0=
-X-Google-Smtp-Source: AGHT+IFmpIgZJkgG1TcnUjMeEXxa3OW2u+0iRL2YEUKOrf2DSwzSi6u1IDGdInKUk3OLck6UIHWPn37d12I2FT8Uhls=
-X-Received: by 2002:a2e:a991:0:b0:337:e585:8082 with SMTP id
- 38308e7fff4ca-337e585814emr40485291fa.22.1756966734673; Wed, 03 Sep 2025
- 23:18:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756966813; x=1757571613;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5quzDayhtAriGJg7zaAaFURysSpqDdXw5doHq+jt5QU=;
+        b=t/uthZhrcnY714HS+ntOdx8Prvtyh99glpWs2VpeMk5TYqHZ3BVrn0lI2OjQvEeZJF
+         WOpsHG8gkaw0yGzxwiJLa4CMQvvsFFAf0my5CaO4NpaiHt6JmaiMAKvb3o/ZA5RCl6Ql
+         4xFh5gt4R2NoPAINQh8I3EH3d2HHDzOlpnEk85DoC6x+jcm1qle1+PuaalE9TCp4jWxb
+         7sb8bfGbu1iaPVKi2OzwDUehpaMsOcMCsEvTPs2bVJTFUjWPUFkLtnrYRIq3PZgT/a45
+         0UKvteBcCOScG7DZRktNguWzcGVcnyWwE+y5dCsf6szUoLH+csqgfVUqRxQ4VHZXnkX7
+         24Qw==
+X-Gm-Message-State: AOJu0YxiRSEMyqm2xmj9JdGsUYiDAG4ZlmtPddpg9NLV4J/K4pY7+ilg
+	/v2uSIG1R5d0OQWM56LuUkuyc5mMknNmslJm+1UU7lDhoFh0DsN6DoFTT6AJXicc2S41IinzvV4
+	G/A==
+X-Google-Smtp-Source: AGHT+IF1Km48eiSONTRaLAhk/LxIal+ixyPLftV6nKQfAlBvSe8kiyLsI8+e4CycXRiD5UG9VK7pSCprOg==
+X-Received: from pjbst15.prod.google.com ([2002:a17:90b:1fcf:b0:327:5082:ca1b])
+ (user=sagis job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ec8b:b0:249:113c:b676
+ with SMTP id d9443c01a7336-249448d6991mr229945645ad.16.1756966813490; Wed, 03
+ Sep 2025 23:20:13 -0700 (PDT)
+Date: Wed,  3 Sep 2025 23:20:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250820075405.1041838-1-wenst@chromium.org> <CAC=S1njQ5z2Ezz2OXDJ6Pk_9EEPgG3gu=Os7uFv6Lmdq0X77og@mail.gmail.com>
-In-Reply-To: <CAC=S1njQ5z2Ezz2OXDJ6Pk_9EEPgG3gu=Os7uFv6Lmdq0X77og@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 4 Sep 2025 14:18:43 +0800
-X-Gm-Features: Ac12FXyJUlQIqk0i4ipdL_cOK9k6d650IYlqwO_gxbw4GTZ_J2T6UQ6kDktMWOs
-Message-ID: <CAGXv+5GgGs5LEGJV4fpUpxOXC=_Fvo3CA4S10zZGxes9C2HrEQ@mail.gmail.com>
-Subject: Re: [PATCH v2] media: mediatek: vcodec: Use spinlock for context list
- protection lock
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Yunfei Dong <yunfei.dong@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	Tomasz Figa <tfiga@chromium.org>, Fei Shao <fshao@chromium.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
+Message-ID: <20250904062007.622530-1-sagis@google.com>
+Subject: [PATCH v4] KVM: TDX: Force split irqchip for TDX at irqchip creation time
+From: Sagi Shahar <sagis@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Kai Huang <kai.huang@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org, 
+	Sagi Shahar <sagis@google.com>, Xiaoyao Li <xiaoyao.li@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Ping?
+TDX module protects the EOI-bitmap which prevents the use of in-kernel
+I/O APIC. See more details in the original patch [1].
 
-On Wed, Aug 20, 2025 at 6:37=E2=80=AFPM Fei Shao <fshao@chromium.org> wrote=
-:
->
-> On Wed, Aug 20, 2025 at 3:54=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org>=
- wrote:
-> >
-> > Previously a mutex was added to protect the encoder and decoder context
-> > lists from unexpected changes originating from the SCP IP block, causin=
-g
-> > the context pointer to go invalid, resulting in a NULL pointer
-> > dereference in the IPI handler.
-> >
-> > Turns out on the MT8173, the VPU IPI handler is called from hard IRQ
-> > context. This causes a big warning from the scheduler. This was first
-> > reported downstream on the ChromeOS kernels, but is also reproducible
-> > on mainline using Fluster with the FFmpeg v4l2m2m decoders. Even though
-> > the actual capture format is not supported, the affected code paths
-> > are triggered.
-> >
+The current implementation already enforces the use of split irqchip for
+TDX but it does so at the vCPU creation time which is generally too late
+to fallback to split irqchip.
 
-We really should get this in as this triggers a very large and scary
-warning every time the encoder or decoder is used.
+This patch follows Sean's recommendation from [2] and adds a check if
+I/O APIC is supported for the VM at irqchip creation time.
 
+[1] https://lore.kernel.org/lkml/20250222014757.897978-11-binbin.wu@linux.intel.com/
+[2] https://lore.kernel.org/lkml/aK3vZ5HuKKeFuuM4@google.com/
 
-ChenYu
+Suggested-by: Sean Christopherson <seanjc@google.com>
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Acked-by: Kai Huang <kai.huang@intel.com>
+Signed-off-by: Sagi Shahar <sagis@google.com>
+---
+ arch/x86/include/asm/kvm_host.h | 1 +
+ arch/x86/kvm/vmx/tdx.c          | 1 +
+ arch/x86/kvm/x86.c              | 9 +++++++++
+ 3 files changed, 11 insertions(+)
 
-> > Since this lock just protects the context list and operations on it are
-> > very fast, it should be OK to switch to a spinlock.
-> >
-> > Fixes: 6467cda18c9f ("media: mediatek: vcodec: adding lock to protect d=
-ecoder context list")
-> > Fixes: afaaf3a0f647 ("media: mediatek: vcodec: adding lock to protect e=
-ncoder context list")
-> > Cc: Yunfei Dong <yunfei.dong@mediatek.com>
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > ---
-> > Changes since v1:
-> > - Switched to _irqsave / _irqrestore variants even in helper only calle=
-d
-> >   by IRQ handler (Tomasz)
-> >
-> >  .../mediatek/vcodec/common/mtk_vcodec_fw_vpu.c       | 10 ++++++----
-> >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c     | 12 +++++++-----
-> >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h     |  2 +-
-> >  .../platform/mediatek/vcodec/decoder/vdec_vpu_if.c   |  5 +++--
-> >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c     | 12 +++++++-----
-> >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.h     |  2 +-
-> >  .../platform/mediatek/vcodec/encoder/venc_vpu_if.c   |  5 +++--
-> >  7 files changed, 28 insertions(+), 20 deletions(-)
->
-> Reviewed-by: Fei Shao <fshao@chromium.org>
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index f19a76d3ca0e..6a4019d3a184 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1357,6 +1357,7 @@ struct kvm_arch {
+ 	u8 vm_type;
+ 	bool has_private_mem;
+ 	bool has_protected_state;
++	bool has_protected_eoi;
+ 	bool pre_fault_allowed;
+ 	struct hlist_head *mmu_page_hash;
+ 	struct list_head active_mmu_pages;
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 66744f5768c8..6daa45dcbfb0 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -630,6 +630,7 @@ int tdx_vm_init(struct kvm *kvm)
+ 
+ 	kvm->arch.has_protected_state = true;
+ 	kvm->arch.has_private_mem = true;
++	kvm->arch.has_protected_eoi = true;
+ 	kvm->arch.disabled_quirks |= KVM_X86_QUIRK_IGNORE_GUEST_PAT;
+ 
+ 	/*
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index a1c49bc681c4..57b4d5ba2568 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6966,6 +6966,15 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
+ 		if (irqchip_in_kernel(kvm))
+ 			goto create_irqchip_unlock;
+ 
++		/*
++		 * Disallow an in-kernel I/O APIC if the VM has protected EOIs,
++		 * i.e. if KVM can't intercept EOIs and thus can't properly
++		 * emulate level-triggered interrupts.
++		 */
++		r = -ENOTTY;
++		if (kvm->arch.has_protected_eoi)
++			goto create_irqchip_unlock;
++
+ 		r = -EINVAL;
+ 		if (kvm->created_vcpus)
+ 			goto create_irqchip_unlock;
+-- 
+2.51.0.338.gd7d06c2dae-goog
+
 
