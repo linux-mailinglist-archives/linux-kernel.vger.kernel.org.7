@@ -1,157 +1,238 @@
-Return-Path: <linux-kernel+bounces-801209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8F7B4420B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:03:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33F5B4422E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:06:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75C3C1CC289E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:03:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB246168215
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6219F2D8376;
-	Thu,  4 Sep 2025 16:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322192F3C0C;
+	Thu,  4 Sep 2025 16:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HU+Cd349"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="HTPG9K+B"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36562367DC;
-	Thu,  4 Sep 2025 16:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757001795; cv=none; b=uS+j2HvdrBoS3WH8ccQpKRhDDj+s4s2mCswbwbh/ud+1vMxaQQ20femfWAslPTeUFmAty6DRBfaiYTy8wfvJyE7uBR3h1xO+nne7rY0aCddxT5LPOsus3WPOHEk4LOG7qRUysIXXEN3GuvIvXoZVyRQGnqaw956JvHglKLMWcOc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757001795; c=relaxed/simple;
-	bh=sAzFasY0irDT+RWFfdcKlsf9/BNuAkoj4KNlayvUweA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fpwgjxyI+40lL3i4NGnxqksCC6/k8eI2uY70yc5KFvXDCQAOll02M9Mo9rMSJyVlTVxGey3F/D5HGfxesF1N6pt94aXNmWiCS+/35ARlMetO55NKL0ePMhXWjNCngZivN3JgCjhmZmg0B4FJZGv85qetyPByR6oHgXfFFVWY43M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HU+Cd349; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45b7da4101fso4560175e9.3;
-        Thu, 04 Sep 2025 09:03:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757001791; x=1757606591; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=inlzeL92Q1+R3JzgzpZ5gZz+OI69SWz4CtAKRdZzkcw=;
-        b=HU+Cd349SNI+fA9/mWPl1jIUXtGKL2WCqRxKOwc+gnJRQTgaGRe8wNQca1ClfUa1yD
-         /Hkeg/7or6fE4pzxq6TmsnwysknPYvrHYPA9hnN4ntd1VTa4nA7IO9WBq2FwcSfyNSgU
-         yG+m9DO0izzs/CBTc1F/IuvmVHGXqmbnmv8rERzX+G9HLYAW/7hI8sWzpyZIQgTPw2hc
-         LuLX4Y8n4z8M9wq2tNzBnaPpS4WBhQKncO9rtlb6BtVYY+BZ0ZfQV4XjA0DviOpM4cxu
-         UGJorKj16Nv3dMgpTgkmyF59xKy/Zhi29ps92U1YAA5kkEZjzRMdz9c62RWIZoZpdF4I
-         RZog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757001791; x=1757606591;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=inlzeL92Q1+R3JzgzpZ5gZz+OI69SWz4CtAKRdZzkcw=;
-        b=DkTPQk9uOV46FxVenhuOnDmLCVq7ZVRTkIqZUPmlna+ulI8POpACP5UdsMTmuxcFck
-         zT5+gYxng570KhQ8aDMEi8kS5CeCCTvgNclsGrxcvluUq9hvLDYWhpTnNJyeXuu3ZDU1
-         TwVmcAuKBmg/oJX+sc2y3feOuXklJUeSuJ5pMwa0yIkNgS2080Brr8SWDSvBP2RPBvZl
-         rK/Dy0saCegSkANutxLXS2QKoqn//tvdOUq4knHIXlNobAnxXAeeDyjUcuKp9jufydrp
-         dSZrXpW2qd5Fwgz7/awLxuSKODiUKOU9U/MizrRi6HjcGL+dlcR0bKZPtq222gf8x8ey
-         kmbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULIepyvkeGjTbKVu8qB/9ApSJou/iEp7FK866jhf3rvhC+foHZCkmHuNW6ToYojppZPrO8LT6Y2Knffx2f@vger.kernel.org, AJvYcCWjY76Jw31TucJyd9mNX8I0zS7w//a5ju/1dsN8UaZQ1SeWIYiOzFN3FW4OnCUUbusYDUnEMNyB2QNtx3b2jh8YrY0=@vger.kernel.org, AJvYcCX4/YQZAtaHxMWd/QBmshymMQDELVY3Eppd79HEjYpyhAW7TuYsDGDbwC9sYw9M+3tuKKZNbGM2r6k5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws5LsgNg1yVdLYXI2Hc3o+bIsaK7KooCmnCWhfVD9JQPf3BSjI
-	QEJ2c7SIn4uV/SvVTG/V97zM1VguQ6k5xO5ajUJJdlGfeRjGeqT4t0z+
-X-Gm-Gg: ASbGncv/p4fOZNr+rndLMhnVsmoxmMApTup/udZZ1qRccMdGji+VKIUemNQMZ88VV+3
-	6HXfxna2vqwt2XKck5jRwqNX+ZiJT8skRv97IycWXn+knnCkPIruEsJdGV2CiYHNeer4bYjHnYT
-	LiJbQOGkJsAOTugn4G6RjSHZQhm5OMyLz/vyf/VrJB01kiYggHI/agYQFzW+eAPhqLLsc36rBBj
-	44/s/6NABZ5PYk6patTZKUnLJ/OB/CCL0LAzoR/0OAPPyg2oZJRkudIi2hEDTYqzPSW0xPy1fdV
-	JweThU8n2C3meu3b5T9eYfnFmVaufQJdnIwJnXp7XbPen9NvjNtXAVnpDX8FdRmhXPy9zPO22qD
-	XaIyIazjJaDUPrvRC76UCz3LpSbXoB9yyVya8wcZrCEA6d7LLmvk4pBSuqg==
-X-Google-Smtp-Source: AGHT+IFgIVReQPVQhz9k/P9YI/MxpwIZDmDNHMJlsOtsRqB1HD/exOoyXUahixSAJHYLjPaR1ELVcw==
-X-Received: by 2002:a05:600c:4452:b0:455:f187:6203 with SMTP id 5b1f17b1804b1-45b855983cfmr146238965e9.27.1757001790426;
-        Thu, 04 Sep 2025 09:03:10 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:904e:70c8:edf3:59a4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b98e77231sm117935885e9.12.2025.09.04.09.03.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 09:03:09 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-i3c@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] dt-bindings: i3c: renesas,i3c: Add RZ/V2H(P) and RZ/V2N support
-Date: Thu,  4 Sep 2025 17:03:05 +0100
-Message-ID: <20250904160305.247618-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4FD2C21D8;
+	Thu,  4 Sep 2025 16:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757001933; cv=pass; b=VcwQzSvIaCrWm3t+cu/7LZ/zjNUHB54hmA/3TQ+5cYkMXHm3FEB94AI/Lh1WmRRN7tqGS3dNj3uWB7f8NdYd4NvumcK89IpLwNp4SA3roC0625z5f2tMHqe8xM4h71dCSqQG01fKoZpNGxazdYdY3SvNexbISEFTPoK8e0cHPOQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757001933; c=relaxed/simple;
+	bh=t9lu0JvhFkb5SYNRJXlmsj74IKcd4iYS8XLjNYqVtU8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Lg3wl0wlloqdX6yqkv3IUTjNP2CccDMxSRUXTZqWkxoFtRkulVFNpFbRnHpDpHaaMgcUtyOEKP3meclk5sQSC3BgKtMUanic2DcqqVnk9r2/y331ATZp6j83rrVa6RiWIo/1dRZGe3ZRXlI2krb3LskwGu5kcyRmX4BcjYxDXzk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=HTPG9K+B; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757001827; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=gtRAk0lbJpwRajce8c3ou1oyR8B31wR2xCsncDDpk8GWWo9WMbzxgocK0I+fqceiwPeueps6+YVZjEQSWzwgFfD4RiY3Z7jOjvOLUaQc7h/Dj3uluxYi7GAJsgvPs8XhUeNIAhEgS13wLVqgXBCEdWOBHMaGf+GspJRkaDMJC/8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757001827; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=rJ141p4G/KKeNp34zR+PuCIzRFG2OM4Vkt+bjATVJ9Q=; 
+	b=e/PMtmWWs9xF3tc/vKdNOxlK9iw0XBjhurUgH3EAbAFnUNPzUK3Y3UErrizatqg0689i8WfjCKmny0dfgGc1m4fMTe1LDFBVmkXCA13RRwwVmHfuZjbUTCI5GQTNsiVJUfSByGYPuq1ffXvTKS34K1KTFfb2UEujHG6MK3bPTY4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757001827;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=rJ141p4G/KKeNp34zR+PuCIzRFG2OM4Vkt+bjATVJ9Q=;
+	b=HTPG9K+B/NXU0PsSt1T7FkCP7HHqQ2Sj0WfyN3XKqSrDE+xU1QBCqbjex4lUf1Fs
+	6cImP9GEyIwkDVO7/0OhbJRvwcg/ssoVtjiosxiIy4bdBle9yt3OV3jbkRiBRm32pbV
+	UExPwukgNb8A2O8TWiJThBh3BBmYYN6AJ5y+jtqU=
+Received: by mx.zohomail.com with SMTPS id 1757001825245717.3281844603312;
+	Thu, 4 Sep 2025 09:03:45 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v3 11/14] rust: drm: gem: Introduce SGTableRef
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250829224116.477990-12-lyude@redhat.com>
+Date: Thu, 4 Sep 2025 13:03:27 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Asahi Lina <lina+kernel@asahilina.net>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F97D14AA-2ADF-4D49-9F4B-418113F79562@collabora.com>
+References: <20250829224116.477990-1-lyude@redhat.com>
+ <20250829224116.477990-12-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add device tree binding support for the I3C Bus Interface on Renesas
-RZ/V2H(P) and RZ/V2N SoCs. The I3C IP on these SoCs is identical to
-that found on the RZ/G3E SoC.
+Hi Lyude,
 
-Add new compatible strings "renesas,r9a09g056-i3c" for RZ/V2N and
-"renesas,r9a09g057-i3c" for RZ/V2H(P). Both variants use
-"renesas,r9a09g047-i3c" as a fallback compatible to indicate hardware
-compatibility with the RZ/G3E implementation.
+> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> Currently we expose the ability to retrieve an SGTable for an shmem =
+gem
+> object using gem::shmem::Object::<T>::sg_table(). However, this only =
+gives us a
+> borrowed reference. This being said - retrieving an SGTable is a =
+fallible
+> operation, and as such it's reasonable that a driver may want to hold
+> onto an SGTable for longer then a reference would allow in order to =
+avoid
+> having to deal with fallibility every time they want to access the =
+SGTable.
+> One such driver with this usecase is the Asahi driver.
+>=20
+> So to support this, let's introduce SGTableRef - which both holds a
+> pointer to the SGTable and a reference to its respective GEM object in
+> order to keep the GEM object alive for as long as the SGTableRef. The
+> type can be used identically to a normal SGTable.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>=20
+> ---
+> V3:
+> * Rename OwnedSGTable to SGTableRef. Since the current version of the
+>  SGTable abstractions now has a `Owned` and `Borrowed` variant, I =
+think
+>  renaming this to SGTableRef makes things less confusing.
+>  We do however, keep the name of owned_sg_table() as-is.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> rust/kernel/drm/gem/shmem.rs | 50 ++++++++++++++++++++++++++++++++++++
+> 1 file changed, 50 insertions(+)
+>=20
+> diff --git a/rust/kernel/drm/gem/shmem.rs =
+b/rust/kernel/drm/gem/shmem.rs
+> index 6a8a392c3691b..1437cda27a22c 100644
+> --- a/rust/kernel/drm/gem/shmem.rs
+> +++ b/rust/kernel/drm/gem/shmem.rs
+> @@ -178,6 +178,22 @@ pub fn sg_table(&self) -> =
+Result<&scatterlist::SGTable> {
+>         Ok(unsafe { scatterlist::SGTable::from_raw(sgt) })
+>     }
+>=20
+> +    /// Creates (if necessary) and returns an owned reference to a =
+scatter-gather table of DMA pages
+> +    /// for this object.
+> +    ///
+> +    /// This is the same as [`sg_table`](Self::sg_table), except that =
+it instead returns a
+> +    /// [`OwnedSGTable`] which holds a reference to the associated =
+gem object.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- .../devicetree/bindings/i3c/renesas,i3c.yaml     | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+This was forgotten ^
 
-diff --git a/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml b/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
-index fe2e9633c46f..e41ba3ba4b58 100644
---- a/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
-+++ b/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Renesas RZ/G3S and RZ/G3E I3C Bus Interface
-+title: Renesas RZ/G3S, RZ/G3E, RZ/V2H(P) and RZ/V2N I3C Bus Interface
- 
- maintainers:
-   - Wolfram Sang <wsa+renesas@sang-engineering.com>
-@@ -12,10 +12,16 @@ maintainers:
- 
- properties:
-   compatible:
--    items:
--      - enum:
--          - renesas,r9a08g045-i3c # RZ/G3S
--          - renesas,r9a09g047-i3c # RZ/G3E
-+    oneOf:
-+      - items:
-+          - enum:
-+              - renesas,r9a08g045-i3c # RZ/G3S
-+              - renesas,r9a09g047-i3c # RZ/G3E
-+      - items:
-+          - enum:
-+              - renesas,r9a09g056-i3c # RZ/V2N
-+              - renesas,r9a09g057-i3c # RZ/V2H(P)
-+          - const: renesas,r9a09g047-i3c
- 
-   reg:
-     maxItems: 1
--- 
-2.51.0
+> +    ///
+> +    /// This will pin the object in memory.
+> +    pub fn owned_sg_table(&self) -> Result<SGTableRef<T>> {
+
+owned_sg_table() returns SGTableRef. I do think this is confusing.
+
+> +        Ok(SGTableRef {
+
+Let=E2=80=99s call this shmem::SGTable, perhaps?
+
+> +            sgt: self.sg_table()?.into(),
+> +            // INVARIANT: We take an owned refcount to `self` here, =
+ensuring that `sgt` remains
+> +            // valid for as long as this `OwnedSGTable`.
+> +            _owner: self.into(),
+> +        })
+> +    }
+> +
+>     /// Creates and returns a virtual kernel memory mapping for this =
+object.
+>     pub fn vmap(&self) -> Result<VMap<T>> {
+>         let mut map: MaybeUninit<bindings::iosys_map> =3D =
+MaybeUninit::uninit();
+> @@ -309,3 +325,37 @@ fn drop(&mut self) {
+> unsafe impl<T: DriverObject> Send for VMap<T> {}
+> /// SAFETY: `iosys_map` objects are safe to send across threads.
+> unsafe impl<T: DriverObject> Sync for VMap<T> {}
+> +
+> +/// An owned reference to a scatter-gather table of DMA address spans =
+for a GEM shmem object.
+> +///
+> +/// This object holds an owned reference to the underlying GEM shmem =
+object, ensuring that the
+> +/// [`SGTable`] referenced by `SGTableRef` remains valid for the =
+lifetime of this object.
+> +///
+> +/// # Invariants
+> +///
+> +/// - `sgt` is kept alive by `_owner`, ensuring it remains valid for =
+as long as `Self`.
+> +/// - `sgt` corresponds to the owned object in `_owner`.
+> +/// - This object is only exposed in situations where we know the =
+underlying `SGTable` will not be
+> +///   modified for the lifetime of this object.
+> +///
+> +/// [`SGTable`]: scatterlist::SGTable
+> +pub struct SGTableRef<T: DriverObject> {
+> +    sgt: NonNull<scatterlist::SGTable>,
+
+Didn=E2=80=99t Danilo & Abdiel introduce an owned SGTable variant?
+
+> +    _owner: ARef<Object<T>>,
+> +}
+> +
+> +// SAFETY: This object is only exposed in situations where we know =
+the underlying `SGTable` will not
+> +// be modified for the lifetime of this object.
+
+We should perhaps say why is it valid to send SGTable to another thread =
+here.
+
+> +unsafe impl<T: DriverObject> Send for SGTableRef<T> {}
+> +// SAFETY: This object is only exposed in situations where we know =
+the underlying `SGTable` will not
+> +// be modified for the lifetime of this object.
+> +unsafe impl<T: DriverObject> Sync for SGTableRef<T> {}
+> +
+> +impl<T: DriverObject> Deref for SGTableRef<T> {
+> +    type Target =3D scatterlist::SGTable;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        // SAFETY: Creating an immutable reference to this is safe =
+via our type invariants.
+> +        unsafe { self.sgt.as_ref() }
+
+The as_ref() nomenclature remains in place to convert *mut T to &T? I =
+thought
+that had changed to from_raw().
+
+
+> +    }
+> +}
+> --=20
+> 2.50.0
+>=20
+>=20
 
 
