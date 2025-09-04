@@ -1,75 +1,81 @@
-Return-Path: <linux-kernel+bounces-801590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63401B44752
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:30:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB60B44756
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F141CC18C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:31:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7821A7BB023
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439BF28032D;
-	Thu,  4 Sep 2025 20:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035A028152B;
+	Thu,  4 Sep 2025 20:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ONLaCKNt"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EGcIRJgq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE732189BB6;
-	Thu,  4 Sep 2025 20:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD8C1F872D;
+	Thu,  4 Sep 2025 20:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757017847; cv=none; b=DK+0gW73a1hsBFo4b5XeLL6wwqKk5BUYTWjV00sAzmBywGJZkl2bm/DuP8Bjp2QkSq8t5osS8DHNDsoHbrmsSh3bT1FZp1D/0lc9zh1gCZaX/p6kG8Ju8wkmwodTfhI3ayFnNAZKD4iYzaUzpYPGL/WXoLLL/NoIJyv84hU+xOQ=
+	t=1757017868; cv=none; b=jOlG187H2dtd0HOku73iXGey+cIrZeDjQWQRvQrlbdpdF+s5LaWKyHnEBKzwQnBdzwp1O02b/EksQXt0uTftge39XzGMgpbUTNiw88Bc1zEvt5tcmN1VKI37nq7kxTliS2W3MY3/DpgGXaeI6teN7uI4pgp7NXPBYunCAbU873g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757017847; c=relaxed/simple;
-	bh=L766kVxO9bbTh/SmGmeQQeNTUq8GvnfoXyTjFRwS4m4=;
+	s=arc-20240116; t=1757017868; c=relaxed/simple;
+	bh=mevtwclf1A6YuQKtSnCE5vgxn3iHjDiioyKpOoZocm4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OjVbjo1QDO/yDQ+cURxGxmvKoHqmYsM3roTYX86ngoRGzlqAxBrYMoVd+KhIg8uz+7zqBq3QHd5g3nDDUmEAabh5CIdn06UiPDyGL9wXXgLTTGNtgpbIBtpl7tMa/AHJuCtxMSwfjIkjfxiJ3uevQJoXkjC6/TV2+Pfl1Oo6lZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ONLaCKNt; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=TwrWiKBtSgzrh15YMDMuIGvc6gG2LpA6lfs1IoQCxTY=; b=ONLaCKNtpDTf3+7kWAmiVAtX56
-	T2n/pem3DsnX95VASO1LE9v2n6qEI7X7hnxMzN9U3LGTfO/VmDroeYDhdVOLr/moI6Jz8W2ovI1Fe
-	TV3EIx3wTv1ZukCwyq9mVBl++KPhcsr4clSLqkmV8ixRO+BHMYcyntxTuAgo7iOLxcwN8qjG3ZQM9
-	oihCd6m9wlsCGslUexxqLZR0xF9D8pN/5/zQjv7HMPgT11sQ4C82DkSz5nyr4i5xlvzonBijf+g6U
-	b179FMyj6hWNTnwla+nu6oes7KBDpkgq6I+X/JnZ6320LIXl0fPFpbsePHe7t1T+rcrrTq6RPtIYr
-	7hhEfU6A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uuGa4-00000004Plm-0cys;
-	Thu, 04 Sep 2025 20:30:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id AA39E300220; Thu, 04 Sep 2025 22:28:58 +0200 (CEST)
-Date: Thu, 4 Sep 2025 22:28:58 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Andrea Righi <arighi@nvidia.com>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luigi De Matteis <ldematteis123@gmail.com>
-Subject: Re: [PATCH 07/16] sched_ext: Add a DL server for sched_ext tasks
-Message-ID: <20250904202858.GN4068168@noisy.programming.kicks-ass.net>
-References: <20250903095008.162049-1-arighi@nvidia.com>
- <20250903095008.162049-8-arighi@nvidia.com>
- <aLidEvX41Xie5kwY@slm.duckdns.org>
- <20250903200822.GO4067720@noisy.programming.kicks-ass.net>
- <aLin8VayVsYyKXze@slm.duckdns.org>
- <20250903205646.GR4067720@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BRpuxJOYWcD0Ldp/IMvmjqG3ACt2AKzR/CpSa+68RNqUzsRpr14CrLOObBL4w9sQVPeOU6NSmcizx21nrLhEzoEK2Wzx8Z15tbXO+vq6hwOQ2VJtyCAYE/DJuP8u58yHCVnH1sJtEonmFftBSep4KnDhzEojgowY/IRw2ova+JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EGcIRJgq; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757017867; x=1788553867;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mevtwclf1A6YuQKtSnCE5vgxn3iHjDiioyKpOoZocm4=;
+  b=EGcIRJgqEIqWWHXeesgjm2iE08Ewgi/7xOgJmVeJNZNx70bLkW6vpbu5
+   CiFcNCOOUcPLcwqFC7X7hOuSNdu6qr08EVag30ktRtHadx7XAgcnGUwqv
+   sBJ9KC5A7A618JRYaNEg4g3V+qs/mY434HutL3GaHRePI7NjNhl2VFnxX
+   FiT90yymHCJs1tXsCtVeh01AqTVebyuU2mFlbYVUUhLg/DawyFA9/+NW8
+   ems4eV8LFpkg9nyGC1HUewRnqllVBhwJKhiJz/h47ZhhFyhnyI3gYx3Wa
+   yeqDVj2zaqDAfEBeiVFUnvKrgNsZ95zo/gEYCiRuef9QX+WddCiCgn3JZ
+   w==;
+X-CSE-ConnectionGUID: VGSc2MnuSf6Ihnu7yTrRgA==
+X-CSE-MsgGUID: cSydlQqYTqanU0N7xxG46w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59439383"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59439383"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 13:31:06 -0700
+X-CSE-ConnectionGUID: cqgGuh6xSVChlP52I+EWMA==
+X-CSE-MsgGUID: KHdVqKHsQOKbz78JUUbx6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
+   d="scan'208";a="172346642"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 04 Sep 2025 13:31:01 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uuGbX-0005sp-0D;
+	Thu, 04 Sep 2025 20:30:49 +0000
+Date: Fri, 5 Sep 2025 04:29:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vincent Mailhol <mailhol@kernel.org>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Vincent Mailhol <mailhol@kernel.org>,
+	=?iso-8859-1?Q?St=E9phane?= Grosjean <stephane.grosjean@hms-networks.com>,
+	Robert Nawrath <mbro1689@gmail.com>,
+	Minh Le <minh.le.aj@renesas.com>,
+	Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/21] can: netlink: add can_dtb_changelink()
+Message-ID: <202509050404.ZLQknagH-lkp@intel.com>
+References: <20250903-canxl-netlink-prep-v1-11-904bd6037cd9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,109 +84,166 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250903205646.GR4067720@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250903-canxl-netlink-prep-v1-11-904bd6037cd9@kernel.org>
 
-On Wed, Sep 03, 2025 at 10:56:46PM +0200, Peter Zijlstra wrote:
-> On Wed, Sep 03, 2025 at 10:41:21AM -1000, Tejun Heo wrote:
-> > Hello,
-> > 
-> > On Wed, Sep 03, 2025 at 10:08:22PM +0200, Peter Zijlstra wrote:
-> > > > I'm a bit confused. This series doesn't have prep patches to add @rf to
-> > > > dl_server_pick_f. Is this the right patch?
-> > > 
-> > > Patch 14 seems to be the proposed alternative, and I'm not liking that
-> > > at all.
-> > > 
-> > > That rf passing was very much also needed for that other issue; I'm not
-> > > sure why that's gone away.
-> > 
-> > Using balance() was my suggestion to stay within the current framework. If
-> > we want to add @rf to pick_task(), that's more fundamental change. We
-> > dropped the discussion in the other thread but I found it odd to add @rf to
-> > pick_task() while disallowing the use of @rf in non-dl-server pick path and
-> > if we want to allow that, we gotta solve the race between pick_task()
-> > dropping rq lock and the ttwu inserting high pri task.
-> 
-> I thought the idea was to add rf unconditionally, dl-server or not, it
-> is needed in both cases.
-> 
-> Yes, that race needs dealing with. We have this existing pattern that
-> checks if a higher class has runnable tasks and restarting the pick.
-> This is currently only done for pick_next_task_fair() but that can
-> easily be extended.
-> 
-> You suggested maybe moving this to the ttwu side -- but up to this point
-> I thought we were in agreement. I'm not sure moving it to the ttwu side
-> makes things better; it would need ttwu to know a pick is in progress
-> and for which class. The existing restart pick is simpler, I think.
-> 
-> Yes, the restart is somewhat more complicated if we want to deal with
-> the dl-server, but not terribly so. It could just store a snapshot of
-> rq->dl.dl_nr_running from before the pick and only restart if that went
-> up.
+Hi Vincent,
 
-Stepping back one step; per here:
+kernel test robot noticed the following build warnings:
 
-  https://lore.kernel.org/all/20250819100838.GH3245006@noisy.programming.kicks-ass.net/T/#mf8f95d1c2637a2ac9d9ec8f71fffe064a5718fff
+[auto build test WARNING on 2fd4161d0d2547650d9559d57fc67b4e0a26a9e3]
 
-the reason for dropping rq->lock is having to migrate a task from the
-global dispatch queue.
+url:    https://github.com/intel-lab-lkp/linux/commits/Vincent-Mailhol/can-dev-move-struct-data_bittiming_params-to-linux-can-bittiming-h/20250903-170807
+base:   2fd4161d0d2547650d9559d57fc67b4e0a26a9e3
+patch link:    https://lore.kernel.org/r/20250903-canxl-netlink-prep-v1-11-904bd6037cd9%40kernel.org
+patch subject: [PATCH 11/21] can: netlink: add can_dtb_changelink()
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20250905/202509050404.ZLQknagH-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250905/202509050404.ZLQknagH-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509050404.ZLQknagH-lkp@intel.com/
 
-Now, the current rules for migrating tasks are:
+All warnings (new ones prefixed by >>):
 
-  WAKEUP:
-  hold p->pi_lock, this serializes against ttwu() and if found blocked
-  after taking the lock, you're sure it will stay blocked and you can
-  call set_task_cpu(), then you can lock the target rq, enqueue the
-  thing and call it a day.
-
-  RUNNABLE:
-  1) hold both source and target rq->lock.
-  2) hold source rq->lock, set p->on_rq = TASK_ON_RQ_MIGRATING, dequeue, call
-  set_task_cpu(), drop source rq->lock, take target rq->lock, enqueue,
-  set p->on_rq = TASK_ON_RQ_QUEUED, drop target rq->lock.
-
-set_task_cpu() has a pile of assertions trying to make sure these rules
-are followed.
-
-Of concern here is the RUNNABLE thing -- if you want to strictly follow
-those rules, you're going to have to drop rq->lock in order to acquire
-the source rq->lock and all that.
-
-However, the actual reason we need to acquire the source rq->lock, is
-because that lock protects the data structures the task is on. Without
-taking the source rq->lock you're not protected from concurrent use, it
-could get scheduled in, or migrated elsewhere at the same time --
-obviously bad things.
+   drivers/net/can/dev/netlink.c:111:6: warning: variable 'is_on' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     111 |         if (ifla_can_data_bittiming == IFLA_CAN_DATA_BITTIMING) {
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/net/can/dev/netlink.c:119:6: note: uninitialized use occurs here
+     119 |         if (is_on) {
+         |             ^~~~~
+   drivers/net/can/dev/netlink.c:111:2: note: remove the 'if' if its condition is always true
+     111 |         if (ifla_can_data_bittiming == IFLA_CAN_DATA_BITTIMING) {
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     112 |                 data_tdc = data[IFLA_CAN_TDC];
+     113 |                 tdc_flags = flags & CAN_CTRLMODE_FD_TDC_MASK;
+     114 |                 is_on = flags & CAN_CTRLMODE_FD;
+     115 |         } else {
+         |           ~~~~~~
+     116 |                 WARN_ON(1); /* Place holder for CAN XL */
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     117 |         }
+         |         ~
+   drivers/net/can/dev/netlink.c:108:12: note: initialize the variable 'is_on' to silence this warning
+     108 |         bool is_on;
+         |                   ^
+         |                    = 0
+>> drivers/net/can/dev/netlink.c:227:6: warning: variable 'data_bittiming' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     227 |         if (fd) {
+         |             ^~
+   drivers/net/can/dev/netlink.c:236:7: note: uninitialized use occurs here
+     236 |         if (!data_bittiming)
+         |              ^~~~~~~~~~~~~~
+   drivers/net/can/dev/netlink.c:227:2: note: remove the 'if' if its condition is always true
+     227 |         if (fd) {
+         |         ^~~~~~~
+     228 |                 data_bittiming = data[IFLA_CAN_DATA_BITTIMING];
+     229 |                 data_tdc = data[IFLA_CAN_TDC];
+     230 |                 dbt_params = &priv->fd;
+     231 |                 tdc_mask = CAN_CTRLMODE_FD_TDC_MASK;
+     232 |         } else {
+         |           ~~~~~~
+     233 |                 WARN_ON(1); /* Place holder for CAN XL */
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     234 |         }
+         |         ~
+   drivers/net/can/dev/netlink.c:219:31: note: initialize the variable 'data_bittiming' to silence this warning
+     219 |         struct nlattr *data_bittiming, *data_tdc;
+         |                                      ^
+         |                                       = NULL
+   2 warnings generated.
 
 
-Now, assuming you have a locking order like:
+vim +227 drivers/net/can/dev/netlink.c
 
- p->pi_lock
-   rq->lock
-     dsq->lock
+   215	
+   216	static int can_dbt_changelink(struct net_device *dev, struct nlattr *data[],
+   217				      bool fd, struct netlink_ext_ack *extack)
+   218	{
+   219		struct nlattr *data_bittiming, *data_tdc;
+   220		struct can_priv *priv = netdev_priv(dev);
+   221		struct data_bittiming_params *dbt_params;
+   222		struct can_bittiming dbt;
+   223		bool need_tdc_calc = false;
+   224		u32 tdc_mask;
+   225		int err;
+   226	
+ > 227		if (fd) {
+   228			data_bittiming = data[IFLA_CAN_DATA_BITTIMING];
+   229			data_tdc = data[IFLA_CAN_TDC];
+   230			dbt_params = &priv->fd;
+   231			tdc_mask = CAN_CTRLMODE_FD_TDC_MASK;
+   232		} else {
+   233			WARN_ON(1); /* Place holder for CAN XL */
+   234		}
+   235	
+   236		if (!data_bittiming)
+   237			return 0;
+   238	
+   239		/* Do not allow changing bittiming while running */
+   240		if (dev->flags & IFF_UP)
+   241			return -EBUSY;
+   242	
+   243		/* Calculate bittiming parameters based on data_bittiming_const
+   244		 * if set, otherwise pass bitrate directly via do_set_bitrate().
+   245		 * Bail out if neither is given.
+   246		 */
+   247		if (!dbt_params->data_bittiming_const && !dbt_params->do_set_data_bittiming &&
+   248		    !dbt_params->data_bitrate_const)
+   249			return -EOPNOTSUPP;
+   250	
+   251		memcpy(&dbt, nla_data(data_bittiming), sizeof(dbt));
+   252		err = can_get_bittiming(dev, &dbt, dbt_params->data_bittiming_const,
+   253					dbt_params->data_bitrate_const,
+   254					dbt_params->data_bitrate_const_cnt, extack);
+   255		if (err)
+   256			return err;
+   257	
+   258		if (priv->bitrate_max && dbt.bitrate > priv->bitrate_max) {
+   259			NL_SET_ERR_MSG_FMT(extack,
+   260					   "CAN data bitrate %u bps surpasses transceiver capabilities of %u bps",
+   261					   dbt.bitrate, priv->bitrate_max);
+   262			return -EINVAL;
+   263		}
+   264	
+   265		memset(&dbt_params->tdc, 0, sizeof(dbt_params->tdc));
+   266		if (data[IFLA_CAN_CTRLMODE]) {
+   267			struct can_ctrlmode *cm = nla_data(data[IFLA_CAN_CTRLMODE]);
+   268	
+   269			need_tdc_calc = !(cm->mask & tdc_mask);
+   270		}
+   271		if (data_tdc) {
+   272			/* TDC parameters are provided: use them */
+   273			err = can_tdc_changelink(dbt_params, data_tdc, extack);
+   274			if (err) {
+   275				priv->ctrlmode &= ~tdc_mask;
+   276				return err;
+   277			}
+   278		} else if (need_tdc_calc) {
+   279			/* Neither of TDC parameters nor TDC flags are provided:
+   280			 * do calculation
+   281			 */
+   282			can_calc_tdco(&dbt_params->tdc, dbt_params->tdc_const, &dbt,
+   283				      &priv->ctrlmode, priv->ctrlmode_supported);
+   284		} /* else: both CAN_CTRLMODE_TDC_{AUTO,MANUAL} are explicitly
+   285		   * turned off. TDC is disabled: do nothing
+   286		   */
+   287	
+   288		memcpy(&dbt_params->data_bittiming, &dbt, sizeof(dbt));
+   289	
+   290		if (dbt_params->do_set_data_bittiming) {
+   291			/* Finally, set the bit-timing registers */
+   292			err = dbt_params->do_set_data_bittiming(dev);
+   293			if (err)
+   294				return err;
+   295		}
+   296	
+   297		return 0;
+   298	}
+   299	
 
-When you do something like:
-
-  __schedule()
-    raw_spin_lock(rq->lock);
-    next = pick_next_task() -> pick_task_scx()
-      raw_spin_lock(dsq->lock);
-
-Then you are, in effect, in the RUNNABLE 1) case above. You hold both
-locks. Nothing is going to move your task around while you hold that
-dsq->lock. That task is on the dsq, anybody else wanting to also do
-anything with that task, will have to first take dsq->lock.
-
-Therefore, at this point, it is perfectly fine to do:
-
-	set_task_cpu(cpu_of(rq)); // move task here
-
-There is no actual concurrency. The only thing there is is
-set_task_cpu() complaining you're not following the rules -- but you
-are, it just doesn't know -- and we can fix that.
-
-
-Or am I still missing something?
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
