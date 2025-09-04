@@ -1,89 +1,139 @@
-Return-Path: <linux-kernel+bounces-801654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8967DB44864
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:19:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50361B4486D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3D1E7BA564
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:18:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DF635A5490
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE8E2BD597;
-	Thu,  4 Sep 2025 21:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CD02C0264;
+	Thu,  4 Sep 2025 21:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMMGvqnI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rLE+MT2E"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E282279DA8;
-	Thu,  4 Sep 2025 21:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D3A278751;
+	Thu,  4 Sep 2025 21:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757020771; cv=none; b=cS5/ir2O4aztQKHQn4n1gT9IfGgsD9l2e3gx3tgesyLc6qafeLToOgV0Zwn/k8OUuK9PZe8srJEBBQ/mBg3SnqfqUmVbD3zAVfqd3ffxdqrbV5gM2+2bb7EyCeWM5UAiFnv5Ebue9Q37Qoezc+mPQL/m0B3gCD1/vGhIB+bRS+Q=
+	t=1757021110; cv=none; b=jsnWymmPouN1ulnRcI2ur//ShWo2Gm6mlTW5vnMofcsGyuUivjLigy2cvWWE4hrKIp110fJMGeGhmGJhkMxFvlNnIZlrgR+GBr6licT0C7hvczeQJkDvHUUI7XSeQK8AM1oM4lVP/nueaXkVu/schl4FAK3yZg34UCrggr5YTdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757020771; c=relaxed/simple;
-	bh=GC/A3A6Y/v/hxD5uAlzHBWvzqoFel1f6OwGSvndxo4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PBUCLVidPK7lRrT7t2oul90gB/DInfcJ8waBpZWB1keLJvJoGbh/f4JXFTKe+pP53h4D3rtTYGYd96iOo+UjgS3+2RHe546kHz4qPP7m54h1awwvkvD/Gc04nS+IWTPkxpNPsw7b4FMBAl2J7waVklDZwayawON21O71/JDNLJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMMGvqnI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D989C4CEF0;
-	Thu,  4 Sep 2025 21:19:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757020771;
-	bh=GC/A3A6Y/v/hxD5uAlzHBWvzqoFel1f6OwGSvndxo4Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gMMGvqnIqjexs+oaj6h/+bNsDAl1MQ4U4l87TbZZJnMQTb8FgbO00zqZAXzITn5vU
-	 x1qzUDjBN15/bEXcQChZda8gMwF+i9uxllo8faYykqMVa8CY17Zqd4Xj0EoUaPokff
-	 rb52xiQRZkD++dcNuVTgFH+LNzWrWjKmdXt4G2+y1ffT/qkZNyHEWw8QyBs7jfVMYm
-	 uDutEzU9sowQwqukQg9GjkjrwJAHk6rtU5bhtlKqBc38S9dDKvuPd7FhG3mOnoo13U
-	 1cap99BbuLnKQLh7TyiBYoW/03YBr4cGPd3aVwhir/iQ+J/7YxhsH9yOeUZKsXDhm2
-	 QM1lCSCl/qkwg==
-Date: Thu, 4 Sep 2025 18:19:27 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Caleb Biggers <caleb.biggers@intel.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Weilin Wang <weilin.wang@intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-actions@lists.infradead.org
-Subject: Re: [PATCH v2 00/20] Intel TMA 5.1 metrics and event updates
-Message-ID: <aLoCX-hWbTWIGchB@x1>
-References: <20250818190416.145274-1-irogers@google.com>
+	s=arc-20240116; t=1757021110; c=relaxed/simple;
+	bh=8Yeh/tAVOAYkSI0FRSgjmVSkAYxuZ9zbAdCdxFJkaJk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kBT45ciLqGrevR3Y4uRUc8yqy+9vWJZ6o3yMgEB7ZYM7v+RbyiG7iWxt32Z+GRjdHH6SGipDSynNuk7foVdc6E0m93z+dc9K0olJogoM8yJopKRaJ4hYpWFGPFTM3q4oCxhtL04EiTKeHN4fKiWjEnJBYtWNk5k1+iexVyg91mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rLE+MT2E; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 584LOwRV3104322;
+	Thu, 4 Sep 2025 16:24:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757021098;
+	bh=W+7k4iMDy3tPbRxwd98DTYf2oybvEfzGMmh8cURrCmg=;
+	h=From:To:CC:Subject:Date;
+	b=rLE+MT2EsLwL45Qi+zX5/TxKSxsrRerZ0ZRN/aFJYEVqwq+I+ZD6Bje3gy9xr+3qd
+	 xCS87Ynl2PO/dmzIzf9UWCA0HwP0IWn9HyM1CFMWdhzn+49lGY5r2Nhw8WDzAzrWr2
+	 AQ4msLeW8PXxpYl2DrSZ9T/fRJIO3rLsA6XMXCRY=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 584LOv9w405688
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 4 Sep 2025 16:24:57 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 4
+ Sep 2025 16:24:57 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 4 Sep 2025 16:24:57 -0500
+Received: from uda0506412.dhcp.ti.com (uda0506412.dhcp.ti.com [128.247.81.19])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 584LOvld3611150;
+	Thu, 4 Sep 2025 16:24:57 -0500
+From: Kendall Willis <k-willis@ti.com>
+To: <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <vigneshr@ti.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <d-gole@ti.com>, <vishalm@ti.com>, <sebin.francis@ti.com>,
+        <msp@baylibre.com>, <khilman@baylibre.com>, <a-kaur@ti.com>,
+        <k-willis@ti.com>, <john.ogness@linutronix.de>,
+        <andriy.shevchenko@linux.intel.com>, <yujiaoliang@vivo.com>,
+        <b-liu@ti.com>, <u.kleine-koenig@baylibre.com>
+Subject: [PATCH 0/3] serial: 8250: omap: Add wakeup support
+Date: Thu, 4 Sep 2025 16:24:52 -0500
+Message-ID: <20250904212455.3729029-1-k-willis@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818190416.145274-1-irogers@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Aug 18, 2025 at 12:03:56PM -0700, Ian Rogers wrote:
-> Update events from:
-> v1.31 -> v1.33 for alderlake
-> v1.09 -> v1.12 for arrowlake
-> v1.14 -> v1.16 for emeraldrapids
-> v1.10 -> v1.12 for graniterpaids
-> v1.14 -> v1.17 for lunarlake
-> v1.14 -> v1.16 for meteorlake
-> v1.28 -> v1.30 for sapphirerapids
- 
-> Update TMA 5.0 to 5.1 removing the slots event workaround as the patch series:
-> https://lore.kernel.org/lkml/20250719030517.1990983-1-irogers@google.com/
-> is assumed.
+This series adds wakeup support for the serial 8250_omap driver. On the
+TI K3 AM62 family of devices, the UARTs are able to wakeup the system
+from various low power modes by using I/O daisy-chaining.
 
-Thanks, applied to perf-tools-next,
+The wakeup functionality is implemented by adding the pinctrl state
+'wakeup' in which specific flags are set on the pins to enable wakeup
+via I/O daisy-chain. If the 'wakeup' pinctrl state exists for the serial
+device, the 'wakeup' pinctrl state is selected on suspend. Upon resume,
+the pinctrl 'default' state is selected.
 
-- Arnaldo
+The commits "dt-bindings: serial: 8250_omap: Add wakeup pinctrl state"
+and "serial: 8250: omap: Support wakeup pinctrl state on suspend" were
+picked from this series [1]. The commit "dt-bindings: serial: 8250_omap:
+Add wakeup pinctrl state" was updated to follow the structure of a
+similar patch [2] by Markus for the m_can driver. The commit "serial:
+8250: omap: Support wakeup pinctrl state on suspend" was updated to only
+include s2ram functionality instead of a poweroff state.
+
+Implementation
+--------------
+This series is intended to be implemented along with the following
+series:
+
+1. "pmdomain: ti_sci: Handle wakeup constraint if device has pinctrl
+   wakeup state": Patch which skips setting constraints for wakeup sources
+   that use pinctrl state 'wakeup'.
+
+2. "serial: 8250: omap: Add wakeup support" (this series): Implements
+   wakeup from the UARTs for TI K3 SoCs
+
+3. "arm64: dts: ti: k3-am62: Support Main UART wakeup": Implements the
+   functionality to wakeup the system from the Main UART
+
+Testing
+-------
+Tested on a SK-AM62B-P1 board with all series and dependencies
+implemented. Suspend/resume verified with the Main UART wakeup source
+by entering a keypress on the console.
+
+[1] https://lore.kernel.org/all/20240523075819.1285554-1-msp@baylibre.com/
+[2] https://lore.kernel.org/all/20250820-topic-mcan-wakeup-source-v6-12-v9-1-0ac13f2ddd67@baylibre.com/
+
+Kendall Willis (1):
+  dt-bindings: serial: 8250_omap: Update wakeup-source type property
+
+Markus Schneider-Pargmann (2):
+  dt-bindings: serial: 8250_omap: Add wakeup pinctrl state
+  serial: 8250: omap: Support wakeup pinctrl state on suspend
+
+ .../devicetree/bindings/serial/8250_omap.yaml | 25 ++++++++++++-
+ drivers/tty/serial/8250/8250_omap.c           | 36 +++++++++++++++++++
+ 2 files changed, 60 insertions(+), 1 deletion(-)
+
+
+base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
+-- 
+2.34.1
+
 
