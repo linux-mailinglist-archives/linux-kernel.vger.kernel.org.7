@@ -1,357 +1,253 @@
-Return-Path: <linux-kernel+bounces-801270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83E0B442E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:34:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4EBEB442E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:36:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67E625A10AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:34:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8900E1893F2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEA71DE2C2;
-	Thu,  4 Sep 2025 16:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F6D2F3C39;
+	Thu,  4 Sep 2025 16:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qiRi0YHa"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KTyjsGH7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6CD23507B
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757003685; cv=none; b=BDuO9dxZlwM817FlO68qXoABGmvdqJxWItdx6xVZw0zZIB1DWJYJZ7sdb03PcCEbiU3j1amY6iit1JqFo2mp1ywBzQ7KGgehZO6TWELGIeY3NriOB7rsNFjv1Ub9r/4f9YXLm1Bkkc1rI2RAMWmUHJx2neVikOSxPeHSSOWdtuU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757003685; c=relaxed/simple;
-	bh=MtZYe6JG3XpxIXqk/NA0mU3LiZ2DVqocc06ddILhg4Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J++5Yrf0aFUckRCyfFD9GK9rHbTeALm5LYqH0EmazK6vk3x4MgVfqH1Sxf/Sgm/3/FRbh6fVtL/qyw6sUVrrFmq7hSDuY2NVpdShZDEaGLeFsCzzMVp+7mcI8mn4n2yVn9Yt0WibRXoWhh/85kDtnrp5NflTjZVqxT5PT3kTYr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qiRi0YHa; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24cca557085so175835ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 09:34:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757003683; x=1757608483; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZIphyer/v3DPFwcbM/1VaFFLYbcPkwf7pTaOPXgyjPs=;
-        b=qiRi0YHaCpiwk3L5p9UrvauE7aJKlr8kxVX7XPh3wgOx4Ty+nF+wN7Dd8PXivSLYZ2
-         sn+uwc8wJkJ170Vpc/piLxQQMNuFpX7WqaDnt33zC8GXjkc/kokTtktwQUEFJPtAb04H
-         ED0gMZkEDWyjXqNPmHHt2QlhgNF9CB4t7laJEglCRyhArDm9EGd+vUnrNJLRdzb0A5rs
-         HSB8+EWvILiYvMUHXWzqMApEljWTzzYhnGxZdCg6bJ6TGSseyFrnX/1Ngz3jTxLlX+1S
-         +brba2ag0NzrP+ODcVLUiIRCUz60au2LJC9CFx6C+CWjncgEGnpx1zG+lpkOdf6C8oQB
-         a1jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757003683; x=1757608483;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZIphyer/v3DPFwcbM/1VaFFLYbcPkwf7pTaOPXgyjPs=;
-        b=OoOGWGLqK9KMu1LQkPUK7xVqKQJwgJo7PD5kocoW+ESw9F9W3qGnqKejPcDpO/9shV
-         t4Ro1alh1Cg11jttA9NqcgYomZJHhvfsCluh2eCi22gqMr76bKBFSw2PJRswWTt2N5Ks
-         ti2BTGpPx6WsyBVW5VKRw2GzltZu3p5/4q4QLDxHYwMcJTPGKpbmI7qu7iwUwQDsBcmH
-         X7/YPatBoXhOwXQLFjiYUKOgqcwt0YTdLh2+9w/pUCps6T4FN3c2XaicFy3ZqCJtJOMA
-         squKB64+0n9KqwXGcWexsIg3E5Mjh4X5YPilHLafTAt6xAsEkK33B+YSu7/r0wUzm6Nd
-         gdTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKJk0VQr9jXcOfFafU7Ssv+PI9Q4mmycROEOi51G0kOyuMq5mx+rdzAmajD4QRl0YTz8oVqlv5h/Y9BAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAAGsAJcP9OIlyOiGDVWGJUVQofxPGTKec496O78AWKt53mQ9w
-	8gxy9Y1XUuN+pcByoSoP2r4UMcDTQ3Z/cYVv/dyuqtyUIIAkyDkp+dcEiNEm9RhMBNLNMnNqGvx
-	lVVRVyZEcpDMJcWJjXAI6o33y5bCDUWPKHOLG5jls
-X-Gm-Gg: ASbGncvCPMnV27CmiuV8PhB5GxnpNP/j7DVxYwBsCMF9cPNngVyKZxC89x+GS9X48Wl
-	OJWmmnqscFXYQ8628JeFAtK50Xu+zA9kFUqaFJ6u0O+JsOdfzHLXpNdP6uZ+FZ81H2J6MuT//k7
-	NXFvmnvpnIbbWDekiY8U2xiDkSnjDhfeMM2HGqFsrhQTwdE3nVW1tJm1Irwvf/9n3I2RyChCQM9
-	IARIU+IJx67bk9iX8imr2Kr5eFEbnG3NdvRJDyneymj
-X-Google-Smtp-Source: AGHT+IFSPuUUCV+cBM50sI3Z+1DFuftHs12TO1fvAlwdozBMKG95tjjnen/h1oMKUTo1sitW0F5Uu9n6CiEUtIOosmY=
-X-Received: by 2002:a17:902:ea01:b0:231:f6bc:5c84 with SMTP id
- d9443c01a7336-24ccaf6e116mr3651605ad.8.1757003683119; Thu, 04 Sep 2025
- 09:34:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC33F224AF2;
+	Thu,  4 Sep 2025 16:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757003724; cv=fail; b=cNWpW5CsSWwbMd5YnUIlteCHpTgZ5tBlJqxLoZyLNFxvnxbHETmRyHDyKn0rO3rsu2R3pxBNftw2+5yI/ZT3suy9Hi0BhQhYKp/Ac2pPCbO75vCW/kkALbT0yvlhgIYxXRU1phOlz+zTo/UialeDp0B7E1j3NHLFrB/Ltzn6xFw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757003724; c=relaxed/simple;
+	bh=HK9Kk5Z/KlPbEq13gY11MtGP6ep2Qv+ilBfkEZTtalk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=kufpCDVPmaAP6HJodfzDKCSDX4aDbLq8RJ7arrMQ8HwQ0kbzaqt1nm5zt7ym+mfLrK4LMNR57r8USn6yTctyBpqLu4XjUN2ywJxVvEY4CjF8O1Aep85kTVePn2aRdeyyG+hVSOwnFyF8YlqibisUEuADLWV5VN3FMcWFYCqk8/Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KTyjsGH7; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757003723; x=1788539723;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=HK9Kk5Z/KlPbEq13gY11MtGP6ep2Qv+ilBfkEZTtalk=;
+  b=KTyjsGH7y4esTQAgpoJ8ON7xlg4mDC/W6O7n7GaYzFIGvSlBT4+mrgF7
+   No52UYY9miMSU5X3aKK8zMPZxECrfFSPjak83w5JtD/dYrx0yboau398h
+   ib2m0tg4F4r0FOryv4n16RPCNekTsuK2Pvi5ToU67/6EkxkdSaPvACLCU
+   GxragsPFSg60tuuCX/s4XzdO71qVe2jWj9pK6l4k1PdpyZtRb97MggeUP
+   LLdDMR3McTPkWqIJO+x6lOM1PFLnUG1652gi06BeiM9ChojjAkpiSnK0e
+   N9Gea6rzmpUP+7V8a/e3zhow2Bw9rfw4rZPMiFcG99x9gkTekSwvMuF7g
+   w==;
+X-CSE-ConnectionGUID: kiAhWW/7QPiEHuO1XMwDcg==
+X-CSE-MsgGUID: l7yBZGpOQKOzPFqJahCilw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="58383727"
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="58383727"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:35:22 -0700
+X-CSE-ConnectionGUID: 9SE1Jpc6QnmBlqwxc/bsqQ==
+X-CSE-MsgGUID: vnXblmDmR62RM2IM9JZpNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="177165420"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:35:22 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 4 Sep 2025 09:35:21 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Thu, 4 Sep 2025 09:35:21 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.58)
+ by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 4 Sep 2025 09:35:21 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=edEPbU/0DTN5T8oT/UmpLUeIDWRPhphBktdGFN/8HOpOMAnBtFdeNlAWhUBG7XW7qsWGa58EmPOfHxB+g76vKX+oRJAton5utKAJqiEiRgMRXRkVSoX+Itx08fZGbfNfC8Ctpm8ez4IhhHU9hsuctahhLPEtMbBMQL/Q8MyR4WZ4ndGbAtHWG28jxcTFAYSlhUc3iJoC1nSaLo1tW4cMYcTBczjfMtRDuQLlovoa93GNQNHhCJuCYwGN6my4JCkuK2AkvxjJmzM6nyoiuF+A+oqrXZBLl/cS0NbNdJM1CCxrdRZyIu3pDa7XZAz/ribXt/qi57k44y0oA5YcoZMmxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/Cxrourx0TrHXiXtBAV2/QrlZ48s1fYS+zT7TpdPUSY=;
+ b=NWOz0oXD1CCBdl6GG305xAh3splBH9V66UEvtkZdMCrZ9V+43/SWeDtV7n60PgWaxy2WIpgvI3YaIDAX/8blsSJBj3r20MANL/5H7mOkm9BDEpg2c7k7+QVXF4DsCgFb5cgW0bDRntcnbKiOPJvonKtyVZwNNdQQCgnGu+6VS6JzuJUwsTeXP7O04jd3JaWNjR8Y0EmcdhIbBGAJ3IymmhqGuAye3lUbUufsUXvZR+ieSW00YT3MEY6CYb7U8PJXZFqWE2yiWHiqn5anwB+pZmBWSzKiFY32S7Dc++Ctn5iChOvyqsEcdchjfjjClpaJ6P7JRwkb+etMDERAPelhmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM4PR11MB6455.namprd11.prod.outlook.com (2603:10b6:8:ba::17) by
+ SJ5PPF8225D2149.namprd11.prod.outlook.com (2603:10b6:a0f:fc02::83a) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Thu, 4 Sep
+ 2025 16:35:18 +0000
+Received: from DM4PR11MB6455.namprd11.prod.outlook.com
+ ([fe80::304a:afb1:cd4:3425]) by DM4PR11MB6455.namprd11.prod.outlook.com
+ ([fe80::304a:afb1:cd4:3425%6]) with mapi id 15.20.9009.013; Thu, 4 Sep 2025
+ 16:35:18 +0000
+From: "R, Ramu" <ramu.r@intel.com>
+To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
+CC: "Lobakin, Aleksander" <aleksander.lobakin@intel.com>, "Kubiak, Michal"
+	<michal.kubiak@intel.com>, "Fijalkowski, Maciej"
+	<maciej.fijalkowski@intel.com>, "Nguyen, Anthony L"
+	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "Simon
+ Horman" <horms@kernel.org>, NXNE CNSE OSDT ITP Upstreaming
+	<nxne.cnse.osdt.itp.upstreaming@intel.com>, "bpf@vger.kernel.org"
+	<bpf@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [Intel-wired-lan] [PATCH iwl-next v5 07/13] idpf: add support for
+ nointerrupt queues
+Thread-Topic: [Intel-wired-lan] [PATCH iwl-next v5 07/13] idpf: add support
+ for nointerrupt queues
+Thread-Index: AQHcFqV4sGdo+Ifm4EKPGL5DKGGxdLSDMy1QgAAS6+A=
+Date: Thu, 4 Sep 2025 16:35:18 +0000
+Message-ID: <DM4PR11MB6455A8F3F8ADF06FF9A2B7D59800A@DM4PR11MB6455.namprd11.prod.outlook.com>
+References: <20250826155507.2138401-1-aleksander.lobakin@intel.com>
+ <20250826155507.2138401-8-aleksander.lobakin@intel.com>
+ <PH0PR11MB50137C213B5616331E5960399600A@PH0PR11MB5013.namprd11.prod.outlook.com>
+In-Reply-To: <PH0PR11MB50137C213B5616331E5960399600A@PH0PR11MB5013.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM4PR11MB6455:EE_|SJ5PPF8225D2149:EE_
+x-ms-office365-filtering-correlation-id: 449af131-585b-4657-507d-08ddebd10890
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016|7053199007|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?WaFybhXupnawzxGYgIRVcmjY11Uz+poHia4o3O7Z367wriolVWeroqMDWi92?=
+ =?us-ascii?Q?0MfTCMTpQTguPi05K5YrAaGvdEUwaaEGOgDAaURs3GCEZkoyqArRKDdpc8JI?=
+ =?us-ascii?Q?gsTOFDoD0YWhrQXKKbN7BRFac9+xMAaGH25J0HyrynEgQhnYJSzG2ravSLVs?=
+ =?us-ascii?Q?iE9p7+A/tLiTjgIvkZ0v3/6ZhCVOAVyY2NWPsl8x+3/sm9aC1caH/6rhlzSg?=
+ =?us-ascii?Q?33hkNRSUVLLKWmb8NasZTJl6BemByXnOUaVUj9/NuEeO0UHk0jn5bxUdroIE?=
+ =?us-ascii?Q?/7IIyoX7pe+DsKvthcQvNHb3IW+6S4wjdhF0asgY/BqxuPendhC0T7I+NEMg?=
+ =?us-ascii?Q?tPphmC94xoq2ht3UwPRmIQioPb3PKjHZtzi2ZnycqO1b/ASB1QO+GC+4TwLm?=
+ =?us-ascii?Q?L3x9xD32MXEzx+AkgbY6j5OUAbCeeU0o6AQRsc085YZa61aFYsUHKa2XahQ9?=
+ =?us-ascii?Q?sHFMSF6lBqcOp2VBCVRhvTpbuK1RjwDiAsEDpripdaEaHgzfA3BGM5qp27zv?=
+ =?us-ascii?Q?feg7NtjfughoB/jcy7+laPGzVnrIR0v2Yc27kqTxpanuUgP6Vl0YyrKdxLkL?=
+ =?us-ascii?Q?Hr0RaK0zmpqfjsHnXWcEoK0qMVfVxMOGFPOjSic7TfOGDyOYhAsmKWjTQoOY?=
+ =?us-ascii?Q?dHXUvp5rcY+7R/31Sa8waY2zlhT3t81EsdZBfdkRZGGEE1CY8VIdR3SzFhCh?=
+ =?us-ascii?Q?3jWiJV3xHmC+17QMbpDbHAxiW6aLTKZ2xFGCO8A8RV0/y1t0Mf3e0vaVxxyj?=
+ =?us-ascii?Q?F8MF/DVZRogTqaR2Nii13VhyH4DPk/T8FyH0AjuqpVE/8o+niQ7XHsXX6Dwb?=
+ =?us-ascii?Q?tYltGywp/+K955TlmqOyttkkaRTd1f/NjElU5RxmGWQh1vHto2rZDLx2Y/hQ?=
+ =?us-ascii?Q?2x367iyeUbV6HLth8EZR42RF5H1isP7dvOaiWSMtfqc4AqjjDK5SqcVv6rqt?=
+ =?us-ascii?Q?1iZxYSvrhtEl0erAxg0sPKBejHX8gD6fTH/O93nV82ejxgnPu4lSQ6pnt6p7?=
+ =?us-ascii?Q?LEjCCBWtGrpTt9iVOZDVDytQuBaj9RjkcWLGIvJiTzOCUMFFcq+qpVj55hTS?=
+ =?us-ascii?Q?nYCsaXPBPY0tALfGOVMW6p62BqmxoLY31a19YU9++TmzQeUS6Ok4iz2vTpwq?=
+ =?us-ascii?Q?WtliVaTbCqKOdzQJE+6P5/a7LfTcFFXm28emHqD+33F/rIprL06cj4LIxuK0?=
+ =?us-ascii?Q?jRJh2TLXe5q6cK8S/FbMMjCn7uKuGdgfHJvaHjx0TEShVSVCz7fjva1aFf+Z?=
+ =?us-ascii?Q?Rt4ZAsUm4+eCV6vjXUGKylNgMWfd6nyAY+clJTxF9DPjYxZk4v/LqVJMfxgJ?=
+ =?us-ascii?Q?BxhAHIgqoZC2RaSWi1DR6ZqSu+J0+OZK32f+hm2K88Q4IzrUMHDquJeHx59z?=
+ =?us-ascii?Q?uWdWQKEUyX9qWmD5e9wGPu0uEPHhVlvtl//qsktZ5doS0Ca7pSufhSU0AavG?=
+ =?us-ascii?Q?52K3AELMSaefPUxx7wamLy0Msgnc2tcj6HgEZfDucUNbUVJOaBqtlA=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6455.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(7053199007)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?SIXy6RMiaPoyES/fUpXkrHs5o/OtSUCPDeeTwJIRKu+TYHGjC2jAfrTqeLHN?=
+ =?us-ascii?Q?b+f0aMVdhyTIEXIWT7fZMGxueUmmqjx45f0GyqMftkL1GLHJx3/z8wxSmrAR?=
+ =?us-ascii?Q?3rXL7rkTR0rbtJCgwYmZjTTcUuqUAhalwCWtcvJnlUTo3RbIK6n4swOxPRJv?=
+ =?us-ascii?Q?FGiRbRB0ddRp6mcVh5F5MYKhGljkxQ3WZT3rkl0BdBxrAmc52zdGrObkx0dV?=
+ =?us-ascii?Q?pKBoBWj/UURj0BidD6fR/HRLkx0WGLbMeDAnH717IM0gCpHlwVDLdE1DIUHC?=
+ =?us-ascii?Q?1INW9nYfATa+Mkklige7KnY3xCtZJtzbUFIvdOzXgtY/mFZY2CPtUf8oa7Ha?=
+ =?us-ascii?Q?iu9B+6KG7e8o9JZYabIQFdSVuWcxJmD/mWVMVodC1RAYwy981JIHgrKpodUh?=
+ =?us-ascii?Q?fZvK02lQKzv1MCfgPipfVVVcXOJyp+bxTN8cI8D09IM0zYWh6pRb4MOyXfEg?=
+ =?us-ascii?Q?L0AIcqhv0Jjwmnp3AzNMtYhqEQIMMgjg1s9d1wa4qjiReX+XJABZ2kPyOVNh?=
+ =?us-ascii?Q?RChb8tJp7E+dNQq960RrkIHV+vzQL/KS+x9x76DJraRynFvia87h0cT7XvRu?=
+ =?us-ascii?Q?ehCDpBWM4I2S5dsV5zZnCp2z5VNSBm1teHMfxPmdHleCEPuo3pMHoS0WakGO?=
+ =?us-ascii?Q?eD0WAJ1QyX5rRlE+nOv718z6hWFM5ulbSMv4+G2hnxaY/qrMos5sVodLClAN?=
+ =?us-ascii?Q?oQWwQCA5pSAxHWAMIBliqC4bx/ZmykEf2Xxsr1oLUHFfzx003rGwxaikXpbX?=
+ =?us-ascii?Q?CWsreAuWS4Uk068TdF4bnNuJO/ofrOfeQTESm2N0T/ZTskPty0gxh5rkgLdq?=
+ =?us-ascii?Q?O5p18RIa9uPYMP49CsQwvRAuq2HlAlq/cDGKQUKSL94Z9APWpU/G8tdAjrXT?=
+ =?us-ascii?Q?dUbm8sFavYuiUKW0NjS8HW2IsDUXAri6IDiPxDbuYYZV0bF76A6/0n2vV7SR?=
+ =?us-ascii?Q?s3qjGH5U41vBZgnmNz3jqaXQ4RtkFGalapVIPGelbQij8FG9DsL4opNKUO9X?=
+ =?us-ascii?Q?NjBDJDLSluop8rzO06ABv/8LkVJ5KXYYEbXH3VFE7m9CO3Sa5357Ny7cga+X?=
+ =?us-ascii?Q?KyfwOKjlwWWCvu+9LpoQ3+rBSfvaPp/4utWm+0ApYthCEg9tWMKdkqPQfyWq?=
+ =?us-ascii?Q?kg77Ep6tiGoieLsq2DeRBopAIAM/itVVn+c3d5l9++1vCjv7sl17/OezEWqO?=
+ =?us-ascii?Q?fF1iEz4I+XH1V/s/wBLA6OBPyEQ4ZrTl6lmQzmD9MNiznXfQBtRhpo8fTMe/?=
+ =?us-ascii?Q?c0ZesViZhmMXg9wQum8mWZ/dlGaNoeK3qw00CbVdDCq6JNgDvjpDyhHs35B0?=
+ =?us-ascii?Q?CKFtld8hKiTFo0ECERVRPRGFotNR+yCDZQneXxE4OAu/+WONEed/Yj4iFU6V?=
+ =?us-ascii?Q?CmrZKk2z3WrqrvE9PzO5mDNSP8VzO2NdzBAvmaIZA0kLlL1tIypyXbcuxmyk?=
+ =?us-ascii?Q?rMaxdyoQNIvdXK0m9OAzSN7y1f5k5Uzc9pN0GVEXMVyUQePAmizgXymB1dHC?=
+ =?us-ascii?Q?KJ0pWZllICK6pnukWVRCBi+8MJtURENTXSNzFTZITQnTz/xDkf6+UpFKg+8a?=
+ =?us-ascii?Q?noeGDMW6ERVEXko3Aa0=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903232437.1454293-1-kaleshsingh@google.com> <827c844f-7106-4f62-a108-1f83544aa56e@lucifer.local>
-In-Reply-To: <827c844f-7106-4f62-a108-1f83544aa56e@lucifer.local>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Thu, 4 Sep 2025 09:34:31 -0700
-X-Gm-Features: Ac12FXyZ35C2YiXL_Ds3Xt1Dj85unZqP3Rp-ROvVkOK_JLyiLa944HgsyNtXqH4
-Message-ID: <CAC_TJvfCRkDt-4BwffD_QN9hhuUz78N51ztwqcfDmA=wJjm_Zw@mail.gmail.com>
-Subject: Re: [PATCH] mm: centralize and fix max map count limit checking
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, minchan@kernel.org, kernel-team@android.com, 
-	android-mm@google.com, David Hildenbrand <david@redhat.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6455.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 449af131-585b-4657-507d-08ddebd10890
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2025 16:35:18.0312
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: KEXBCpPv1kmgkLnnRXZV1Z9urnj6ehQuxQSvWezR3eRwtoSpXsHvHGhBwgs5Iq3TpK643IHkcAWyKhZblmbsmg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF8225D2149
+X-OriginatorOrg: intel.com
 
-On Thu, Sep 4, 2025 at 9:03=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Wed, Sep 03, 2025 at 04:24:35PM -0700, Kalesh Singh wrote:
-> > The check against the max map count (sysctl_max_map_count) was
-> > open-coded in several places. This led to inconsistent enforcement
-> > and subtle bugs where the limit could be exceeded.
-> >
-> > For example, some paths would check map_count > sysctl_max_map_count
-> > before allocating a new VMA and incrementing the count, allowing the
-> > process to reach sysctl_max_map_count + 1:
-> >
-> >     int do_brk_flags(...)
-> >     {
-> >         if (mm->map_count > sysctl_max_map_count)
-> >             return -ENOMEM;
-> >
-> >         /* We can get here with mm->map_count =3D=3D sysctl_max_map_cou=
-nt */
-> >
-> >         vma =3D vm_area_alloc(mm);
-> >         ...
-> >         mm->map_count++   /* We've now exceeded the threshold. */
-> >     }
-> >
-> > To fix this and unify the logic, introduce a new function,
-> > exceeds_max_map_count(), to consolidate the check. All open-coded
-> > checks are replaced with calls to this new function, ensuring the
-> > limit is applied uniformly and correctly.
-> >
-> > To improve encapsulation, sysctl_max_map_count is now static to
-> > mm/mmap.c. The new helper also adds a rate-limited warning to make
-> > debugging applications that exhaust their VMA limit easier.
-> >
->
-> Yeah this is nice thanks!
->
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Minchan Kim <minchan@kernel.org>
-> > Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> > ---
-> >  include/linux/mm.h | 11 ++++++++++-
-> >  mm/mmap.c          | 15 ++++++++++++++-
-> >  mm/mremap.c        |  7 ++++---
-> >  mm/nommu.c         |  2 +-
-> >  mm/util.c          |  1 -
-> >  mm/vma.c           |  6 +++---
-> >  6 files changed, 32 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index 1ae97a0b8ec7..d4e64e6a9814 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -192,7 +192,16 @@ static inline void __mm_zero_struct_page(struct pa=
-ge *page)
-> >  #define MAPCOUNT_ELF_CORE_MARGIN     (5)
-> >  #define DEFAULT_MAX_MAP_COUNT        (USHRT_MAX - MAPCOUNT_ELF_CORE_MA=
-RGIN)
-> >
-> > -extern int sysctl_max_map_count;
-> > +/**
-> > + * exceeds_max_map_count - check if a VMA operation would exceed max_m=
-ap_count
-> > + * @mm: The memory descriptor for the process.
-> > + * @new_vmas: The number of new VMAs the operation will create.
-> > + *
-> > + * Returns true if the operation would cause the number of VMAs to exc=
-eed
-> > + * the sysctl_max_map_count limit, false otherwise. A rate-limited war=
-ning
-> > + * is logged if the limit is exceeded.
-> > + */
-> > +extern bool exceeds_max_map_count(struct mm_struct *mm, unsigned int n=
-ew_vmas);
->
-> No new externs please (as Pedro also pointed out! :)
->
-> >
-> >  extern unsigned long sysctl_user_reserve_kbytes;
-> >  extern unsigned long sysctl_admin_reserve_kbytes;
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > index 7306253cc3b5..693a0105e6a5 100644
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -374,7 +374,7 @@ unsigned long do_mmap(struct file *file, unsigned l=
-ong addr,
-> >               return -EOVERFLOW;
-> >
-> >       /* Too many mappings? */
-> > -     if (mm->map_count > sysctl_max_map_count)
-> > +     if (exceeds_max_map_count(mm, 0))
->
-> Yeah this last 'mystery meat' parameter isn't amazing though to be honest=
-, it's
-> kinda hard to read/understand.
->
-> E.g.:
->
-> int map_count_capacity(const struct *mm)
-> {
->         const int map_count =3D mm->map_count;
->         const int max_count =3D sysctl_max_map_count;
->
->         return max_count > map_count ? max_count - map_count : 0;
-> }
->
-> Then this would become;
->
->         if (!map_count_capacity(mm)) {
->                 // blah.
->         }
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
+> Alexander Lobakin
+> Sent: Tuesday, August 26, 2025 9:25 PM
+> To: intel-wired-lan@lists.osuosl.org
+> Cc: Lobakin, Aleksander <aleksander.lobakin@intel.com>; Kubiak, Michal
+> <michal.kubiak@intel.com>; Fijalkowski, Maciej
+> <maciej.fijalkowski@intel.com>; Nguyen, Anthony L
+> <anthony.l.nguyen@intel.com>; Kitszel, Przemyslaw
+> <przemyslaw.kitszel@intel.com>; Andrew Lunn <andrew+netdev@lunn.ch>;
+> David S. Miller <davem@davemloft.net>; Eric Dumazet
+> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
+> <pabeni@redhat.com>; Alexei Starovoitov <ast@kernel.org>; Daniel
+> Borkmann <daniel@iogearbox.net>; Simon Horman <horms@kernel.org>;
+> NXNE CNSE OSDT ITP Upstreaming
+> <nxne.cnse.osdt.itp.upstreaming@intel.com>; bpf@vger.kernel.org;
+> netdev@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [Intel-wired-lan] [PATCH iwl-next v5 07/13] idpf: add support fo=
+r
+> nointerrupt queues
+>=20
+> Currently, queues are associated 1:1 with interrupt vectors as it's assum=
+ed
+> queues are always interrupt-driven. For XDP, we want to use Tx queues
+> without interrupts and only do "lazy" cleaning when the number of free
+> elements is <=3D threshold (closest pow-2 to 1/4 of the ring).
+> In order to use a queue without an interrupt, idpf still needs to have a =
+vector
+> assigned to it to flush descriptors. This vector can be global and only o=
+ne for
+> the whole vport to handle all its noirq queues.
+> Always request one excessive vector and configure it in non-interrupt mod=
+e
+> right away when creating vport, so that it can be used later by queues wh=
+en
+> needed (not only XDP ones).
+>=20
+> Co-developed-by: Michal Kubiak <michal.kubiak@intel.com>
+> Signed-off-by: Michal Kubiak <michal.kubiak@intel.com>
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> ---
+>  drivers/net/ethernet/intel/idpf/idpf.h        |  8 +++
+>  drivers/net/ethernet/intel/idpf/idpf_txrx.h   |  4 ++
+>  drivers/net/ethernet/intel/idpf/idpf_dev.c    | 11 +++-
+>  drivers/net/ethernet/intel/idpf/idpf_lib.c    |  2 +-
+>  drivers/net/ethernet/intel/idpf/idpf_txrx.c   |  8 +++
+>  drivers/net/ethernet/intel/idpf/idpf_vf_dev.c | 11 +++-
+>  .../net/ethernet/intel/idpf/idpf_virtchnl.c   | 54 ++++++++++++++-----
+>  7 files changed, 81 insertions(+), 17 deletions(-)
 >
 
-Hi Lorenzo,
-
-I agree your suggestion is a lot clearer and readable. Thanks for the
-suggestion :)  Let me update that in the next revision.
-
---Kalesh
-
->
-> >               return -ENOMEM;
-> >
-> >       /*
-> > @@ -1504,6 +1504,19 @@ struct vm_area_struct *_install_special_mapping(
-> >  int sysctl_legacy_va_layout;
-> >  #endif
-> >
-> > +static int sysctl_max_map_count __read_mostly =3D DEFAULT_MAX_MAP_COUN=
-T;
-> > +
-> > +bool exceeds_max_map_count(struct mm_struct *mm, unsigned int new_vmas=
-)
-> > +{
-> > +     if (unlikely(mm->map_count + new_vmas > sysctl_max_map_count)) {
-> > +             pr_warn_ratelimited("%s (%d): Map count limit %u exceeded=
-\n",
-> > +                                 current->comm, current->pid,
-> > +                                 sysctl_max_map_count);
->
-> Yeah not a fan of this, we aren't warning elsewhere, it's actually perfec=
-tly
-> normal for somebody to exceed this, this isn't at the level of a warning.
->
-> > +             return true;
-> > +     }
-> > +     return false;
-> > +}
-> > +
-> >  static const struct ctl_table mmap_table[] =3D {
-> >               {
-> >                               .procname       =3D "max_map_count",
-> > diff --git a/mm/mremap.c b/mm/mremap.c
-> > index e618a706aff5..793fad58302c 100644
-> > --- a/mm/mremap.c
-> > +++ b/mm/mremap.c
-> > @@ -1040,7 +1040,7 @@ static unsigned long prep_move_vma(struct vma_rem=
-ap_struct *vrm)
-> >        * We'd prefer to avoid failure later on in do_munmap:
-> >        * which may split one vma into three before unmapping.
-> >        */
-> > -     if (current->mm->map_count >=3D sysctl_max_map_count - 3)
-> > +     if (exceeds_max_map_count(current->mm, 4))
-> >               return -ENOMEM;
->
-> In my version this would be:
->
->         if (map_count_capacity(current->mm) < 4)
->                 return -ENOMEM;
->
-> And etc. etc. I won't do them all :)
->
-> I do think this is clearer...
->
-> >
-> >       if (vma->vm_ops && vma->vm_ops->may_split) {
-> > @@ -1811,9 +1811,10 @@ static unsigned long check_mremap_params(struct =
-vma_remap_struct *vrm)
-> >        * split in 3 before unmapping it.
-> >        * That means 2 more maps (1 for each) to the ones we already hol=
-d.
-> >        * Check whether current map count plus 2 still leads us to 4 map=
-s below
-> > -      * the threshold, otherwise return -ENOMEM here to be more safe.
-> > +      * the threshold. In other words, is the current map count + 6 at=
- or
-> > +      * below the threshold? Otherwise return -ENOMEM here to be more =
-safe.
-> >        */
-> > -     if ((current->mm->map_count + 2) >=3D sysctl_max_map_count - 3)
-> > +     if (exceeds_max_map_count(current->mm, 6))
-> >               return -ENOMEM;
-> >
-> >       return 0;
-> > diff --git a/mm/nommu.c b/mm/nommu.c
-> > index 8b819fafd57b..0533e1e3b266 100644
-> > --- a/mm/nommu.c
-> > +++ b/mm/nommu.c
-> > @@ -1316,7 +1316,7 @@ static int split_vma(struct vma_iterator *vmi, st=
-ruct vm_area_struct *vma,
-> >               return -ENOMEM;
-> >
-> >       mm =3D vma->vm_mm;
-> > -     if (mm->map_count >=3D sysctl_max_map_count)
-> > +     if (exceeds_max_map_count(mm, 1))
-> >               return -ENOMEM;
-> >
-> >       region =3D kmem_cache_alloc(vm_region_jar, GFP_KERNEL);
-> > diff --git a/mm/util.c b/mm/util.c
-> > index f814e6a59ab1..b6e83922cafe 100644
-> > --- a/mm/util.c
-> > +++ b/mm/util.c
-> > @@ -751,7 +751,6 @@ EXPORT_SYMBOL(folio_mc_copy);
-> >  int sysctl_overcommit_memory __read_mostly =3D OVERCOMMIT_GUESS;
-> >  static int sysctl_overcommit_ratio __read_mostly =3D 50;
-> >  static unsigned long sysctl_overcommit_kbytes __read_mostly;
-> > -int sysctl_max_map_count __read_mostly =3D DEFAULT_MAX_MAP_COUNT;
-> >  unsigned long sysctl_user_reserve_kbytes __read_mostly =3D 1UL << 17; =
-/* 128MB */
-> >  unsigned long sysctl_admin_reserve_kbytes __read_mostly =3D 1UL << 13;=
- /* 8MB */
-> >
-> > diff --git a/mm/vma.c b/mm/vma.c
-> > index 3b12c7579831..f804c8ac8fbb 100644
-> > --- a/mm/vma.c
-> > +++ b/mm/vma.c
-> > @@ -592,7 +592,7 @@ __split_vma(struct vma_iterator *vmi, struct vm_are=
-a_struct *vma,
-> >  static int split_vma(struct vma_iterator *vmi, struct vm_area_struct *=
-vma,
-> >                    unsigned long addr, int new_below)
-> >  {
-> > -     if (vma->vm_mm->map_count >=3D sysctl_max_map_count)
-> > +     if (exceeds_max_map_count(vma->vm_mm, 1))
-> >               return -ENOMEM;
-> >
-> >       return __split_vma(vmi, vma, addr, new_below);
-> > @@ -1345,7 +1345,7 @@ static int vms_gather_munmap_vmas(struct vma_munm=
-ap_struct *vms,
-> >                * its limit temporarily, to help free resources as expec=
-ted.
-> >                */
-> >               if (vms->end < vms->vma->vm_end &&
-> > -                 vms->vma->vm_mm->map_count >=3D sysctl_max_map_count)=
- {
-> > +                 exceeds_max_map_count(vms->vma->vm_mm, 1)) {
-> >                       error =3D -ENOMEM;
-> >                       goto map_count_exceeded;
-> >               }
-> > @@ -2772,7 +2772,7 @@ int do_brk_flags(struct vma_iterator *vmi, struct=
- vm_area_struct *vma,
-> >       if (!may_expand_vm(mm, vm_flags, len >> PAGE_SHIFT))
-> >               return -ENOMEM;
-> >
-> > -     if (mm->map_count > sysctl_max_map_count)
-> > +     if (exceeds_max_map_count(mm, 1))
-> >               return -ENOMEM;
-> >
-> >       if (security_vm_enough_memory_mm(mm, len >> PAGE_SHIFT))
-> > --
-> > 2.51.0.338.gd7d06c2dae-goog
-> >
 
