@@ -1,170 +1,91 @@
-Return-Path: <linux-kernel+bounces-801488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D43B445A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:40:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ABBEB445A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62D021BC707D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:40:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 693563AC372
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C551341AD6;
-	Thu,  4 Sep 2025 18:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95266334372;
+	Thu,  4 Sep 2025 18:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QuPqvLm3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQLae5Tl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B59930F528;
-	Thu,  4 Sep 2025 18:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02621EE7B9;
+	Thu,  4 Sep 2025 18:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757011218; cv=none; b=Dgmgi7q+vna22KjEmN3dlBuAm8gQ1PVtvbB2Ti5w01NjWrVddLBIH8X0vkz7droHlqzY51q8h7XHRht0tgpyoEjhwVz02UaT/+/wY9HKwPUAP27H68p4bYoTmwpeiSovpTYmcJDWT2kxbD1PGdXWQNnKSrB2Tglq0w9x0nG86ag=
+	t=1757011205; cv=none; b=eUqpWM6EcYjFFev7FcfpWg+kMT6FPw0z2bZP/RvjcAuML9YQuZkDk+lVjZrpVg8lHUPL78gHukct25zbJ5hHBJ61Z66ybBb8cFbtJyWygmjwVSgh0ZVRUdv07trrJOSwe4A5EFNMJGbskptC4xWWbDzEDTbrezBB5RyNz/53rwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757011218; c=relaxed/simple;
-	bh=ILiVByv+j8sL6RIqPKHr6lcD5lYejE6CwCw4EFoN4f8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=obk7RyANdLP5hePch2jjrbzVTqa7gqjIua1Y9g1aKwuwGYtlcmExVeY7hEjkWIG3KEHQFgbWV2H8VcRiiaohmJspjJ5ho/I48fb+Q3GqRxvQBEd4tbm1DysBfMdGHr5yUqxEkhO8+pWvV4FDKPMWH/fNsRjrsxd6dnZ4a0tK4X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QuPqvLm3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB0ADC4CEF6;
-	Thu,  4 Sep 2025 18:40:07 +0000 (UTC)
+	s=arc-20240116; t=1757011205; c=relaxed/simple;
+	bh=Winv3KuO6OdN1ZG9NJ1TBlrd3TJ5pZUlYk6IRArhaCI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=GI0LeeDjAD6KDs1ewLJSiKItMdeUsMKVSyGPPWvonBO6nMqGogQgKZk7WLYppLz9393WWAPo2Dhee0n+UdGv6pYzdKpkddNrbCrS/eo4RBCEAAFhwLnHHzGIRwZ9/6dy765X7UecU2gHVKEbxDAwixDE5aYOI5Fsfr+QmILrAX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQLae5Tl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E5C9C4CEF0;
+	Thu,  4 Sep 2025 18:40:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757011214;
-	bh=ILiVByv+j8sL6RIqPKHr6lcD5lYejE6CwCw4EFoN4f8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QuPqvLm3BxpuhLbqcQawdON7moRQflTsG/i697n1BQm5czZrXEMAY0SKKt8ZbpKxa
-	 CfwMIMFPO+HtPWYHlb1Dykig0UCLgZwo/CZVLh9iGcfAIqbv4EK6UrGC+zUj2DG5Nk
-	 32t9+6h5DTNfOBTEbQuhvMqcW/zTCLi/NvfCiXtdUFFg+epbo4E3OP7h1OzCZyb/mU
-	 bykMskO9KqcE00XXI9fXVewJdKZOELlVb9E1ydT1pFn3FhuhAqq7kJIGaawMvcskQa
-	 Kg99OHJffxp9hNXtIzfwD4PvSRtB6Y6dKy/9mfg2g6N2552wzx/5T9va88RdST70Jr
-	 1N01jP9mlh7Iw==
-Date: Thu, 4 Sep 2025 11:40:04 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Marco Elver <elver@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Ramon de C Valle <rcvalle@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	x86@kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 4/9] x86/cfi: Standardize on common "CFI:" prefix for
- CFI reports
-Message-ID: <20250904184004.GC2110053@ax162>
-References: <20250904033217.it.414-kees@kernel.org>
- <20250904034656.3670313-4-kees@kernel.org>
+	s=k20201202; t=1757011204;
+	bh=Winv3KuO6OdN1ZG9NJ1TBlrd3TJ5pZUlYk6IRArhaCI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=UQLae5TlfCgQ04m91HGbpFsHCX5OAX/bZoKhAFtgI8b2UeB2vv0uM+AKG/wz2ckIH
+	 2UdpxbGGEMHhkpw7B3SrdCG128tjbidfGy+YOakgK14v/y0G9ckPeW00t5/BVpzNkz
+	 elbnOmvowKt8WiQ+4o8fRYJP24um9mJOKP6lwGkKi3cXtSEKTBZf6hihVWO4yfSopd
+	 4XFhwDNgZsckqtWTy8LkKbWP61sH/MTV/YJddbTj1taFomv9EXGg7N1tROFfErBHHX
+	 BNrR8bYALtb+inpi2BlY/CSH3EdLIt7Pf7kuOPbfEO2UgqJVkhaeIOme2AbXSfE1XJ
+	 2B1Sd0Z5efBOQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 713C7383BF69;
+	Thu,  4 Sep 2025 18:40:10 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904034656.3670313-4-kees@kernel.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v1] libbpf: remove unused args in parse_usdt_note
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175701120927.1914025.414355681034862288.git-patchwork-notify@kernel.org>
+Date: Thu, 04 Sep 2025 18:40:09 +0000
+References: <20250904030525.1932293-1-phoenix500526@163.com>
+In-Reply-To: <20250904030525.1932293-1-phoenix500526@163.com>
+To: Jiawei Zhao <Phoenix500526@163.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ yonghong.song@linux.dev, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 03, 2025 at 08:46:43PM -0700, Kees Cook wrote:
-> Use a regular "CFI:" prefix for CFI reports during alternatives setup,
-> including reporting when nothing has happened (i.e. CONFIG_FINEIBT=n).
+Hello:
+
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
+
+On Thu,  4 Sep 2025 03:05:23 +0000 you wrote:
+> Remove unused 'elf' and 'path' parameters from parse_usdt_note function
+> signature. These parameters are not referenced within the function body
+> and only add unnecessary complexity.
 > 
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-
-Obviously minor but I had pointed out on v1 that there appears to be
-some inconsistency within the diff around capitalization, "ignoring" vs.
-"Ignoring".
-
-> ---
->  arch/x86/kernel/alternative.c | 17 ++++++++++-------
->  1 file changed, 10 insertions(+), 7 deletions(-)
+> The function only requires the note header, data buffer, offsets, and
+> output structure to perform USDT note parsing.
 > 
-> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> index 7bde68247b5f..d8f4ac95b4df 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -1266,26 +1266,26 @@ static __init int cfi_parse_cmdline(char *str)
->  		} else if (!strcmp(str, "norand")) {
->  			cfi_rand = false;
->  		} else if (!strcmp(str, "warn")) {
-> -			pr_alert("CFI mismatch non-fatal!\n");
-> +			pr_alert("CFI: mismatch non-fatal!\n");
->  			cfi_warn = true;
->  		} else if (!strcmp(str, "paranoid")) {
->  			if (cfi_mode == CFI_FINEIBT) {
->  				cfi_paranoid = true;
->  			} else {
-> -				pr_err("Ignoring paranoid; depends on fineibt.\n");
-> +				pr_err("CFI: ignoring paranoid; depends on fineibt.\n");
->  			}
->  		} else if (!strcmp(str, "bhi")) {
->  #ifdef CONFIG_FINEIBT_BHI
->  			if (cfi_mode == CFI_FINEIBT) {
->  				cfi_bhi = true;
->  			} else {
-> -				pr_err("Ignoring bhi; depends on fineibt.\n");
-> +				pr_err("CFI: ignoring bhi; depends on fineibt.\n");
->  			}
->  #else
-> -			pr_err("Ignoring bhi; depends on FINEIBT_BHI=y.\n");
-> +			pr_err("CFI: ignoring bhi; depends on FINEIBT_BHI=y.\n");
->  #endif
->  		} else {
-> -			pr_err("Ignoring unknown cfi option (%s).", str);
-> +			pr_err("CFI: Ignoring unknown option (%s).", str);
->  		}
->  
->  		str = next;
-> @@ -1757,7 +1757,7 @@ static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
->  	switch (cfi_mode) {
->  	case CFI_OFF:
->  		if (builtin)
-> -			pr_info("Disabling CFI\n");
-> +			pr_info("CFI: disabled\n");
->  		return;
->  
->  	case CFI_KCFI:
-> @@ -1766,7 +1766,8 @@ static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
->  			goto err;
->  
->  		if (builtin)
-> -			pr_info("Using kCFI\n");
-> +			pr_info("CFI: Using %sretpoline kCFI\n",
-> +				cfi_rand ? "rehashed " : "");
->  		return;
->  
->  	case CFI_FINEIBT:
-> @@ -2005,6 +2006,8 @@ bool decode_fineibt_insn(struct pt_regs *regs, unsigned long *target, u32 *type)
->  static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
->  			    s32 *start_cfi, s32 *end_cfi, bool builtin)
->  {
-> +	if (IS_ENABLED(CONFIG_CFI) && builtin)
-> +		pr_info("CFI: Using standard kCFI\n");
->  }
->  
->  #ifdef CONFIG_X86_KERNEL_IBT
-> -- 
-> 2.34.1
-> 
+> [...]
+
+Here is the summary with links:
+  - [v1] libbpf: remove unused args in parse_usdt_note
+    https://git.kernel.org/bpf/bpf-next/c/b338cf849ec8
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
