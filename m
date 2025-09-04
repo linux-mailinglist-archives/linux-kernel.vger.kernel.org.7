@@ -1,236 +1,268 @@
-Return-Path: <linux-kernel+bounces-800697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7973EB43AA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:48:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74E6B43AAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32F6B3B1E44
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:48:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E2A016D4B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2789D2E2DF4;
-	Thu,  4 Sep 2025 11:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F309A2FCC10;
+	Thu,  4 Sep 2025 11:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bniC1y9A"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2042.outbound.protection.outlook.com [40.107.93.42])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ArlC6+th";
+	dkim=pass (1024-bit key) header.d=stmicroelectronics.onmicrosoft.com header.i=@stmicroelectronics.onmicrosoft.com header.b="XmTdXMPn"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809C92F998E;
-	Thu,  4 Sep 2025 11:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A87199FAB;
+	Thu,  4 Sep 2025 11:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.182.106
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756986476; cv=fail; b=SryvAZtOAQFKql8jnVG3mF1bD5V+OAUAXkOCGYL9vMReDM6g9Zjs1lbb7lhmAfSZ3eGOlPxMOwxbPoBB4V3bjGMeO4Vvny8RvXgfzNrB9Lj6DA4ji40JoWaI94b60fqEynn5sEy1eWQdc7Vr5ntFG5sVdZU1a1vpMOv7qFMY1cg=
+	t=1756986547; cv=fail; b=b/Xng9CFsnsRcaV2SM4pcyd9vEwwwEZDbEPrQoYlvAlIMt0ahQhKBaQk0K5yJsZpi5bKB4bSUoZ0Lz0P7aHrVvuhrmaVg13TD2iI4zxjgmZ+Mu9E1hRvhGc5ncsaC7lAs4mqYZi9kjEpffLFU/hL+MhcgY8VcoEscAkzBZpBoOs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756986476; c=relaxed/simple;
-	bh=tIXmXSHWptnP+mHWBvg4oHg1Mg1lltHzV5CQ9BrzYmg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FU8lmMx95uSym4jgWTviv5awDtmmpNVzoRa26srEoJ6alDmPz7DdKDWP9/X+uUSbJAETmN7Qectm+ZJ45gwgTmd+fQF8+WZLiCTavzmLG7yDIKiEFoeDn5C1UufRUF2LrAyZcArzAtBO5M6dtM1VVsFTlNljtPZWxBO5HMdbbEc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bniC1y9A; arc=fail smtp.client-ip=40.107.93.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1756986547; c=relaxed/simple;
+	bh=vvjgKEz3gFHKWmyJfiiW62YgjMSIU8klK1jwOt6A9cI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dlAvg2BwHaQFsC5Ep0NLGJkwXXU2HaQh3auxF7s/m8aVzNv/S3TLVK7Mc1vCmf92bZYpnHc927cK3gYSfKtJoP9DgqgyHYBfHAQZsZOH+ON1Pe0ajEzRVjSKGOtrX+uYcefxas+PVcMLsD+u+867NNV3vwcpBft5LyzQ2KljSRw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ArlC6+th; dkim=pass (1024-bit key) header.d=stmicroelectronics.onmicrosoft.com header.i=@stmicroelectronics.onmicrosoft.com header.b=XmTdXMPn; arc=fail smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584AIvNV024377;
+	Thu, 4 Sep 2025 13:48:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	emGjkwW8uuRte2LHCeSdeXbyBXj819goaK5mrm9FJ14=; b=ArlC6+th5h8M7f9Y
+	AVREEVZb2OQzWkzF/9z1ZVsxF/c/DLH4W1IqDQd14OMMKixh+PPmPWodd7b32QGi
+	wXqDIwNZxh6RrwJz9j4E0kmoSBRdtW3Oau01suYo0s6w/Y7X2yGR2PtPxllngu6O
+	30DibS2B1Q1G39PU6KkS+y74a0oCLFiUyGyNzvGPAgXvSCnlPuTYXpAogpmx3TUF
+	eaVabl+edKZxIzH4npL3qegkZ3z6QO1QNKQXgwNKpxdqnSAvxX0eIQsJb5+8O4oq
+	SlapfGor4LEP8sos23L8+7UjerDTBVfaFWAMpCs5SekEKXtZ9hDSNEYF3E1Gf8S3
+	p4rU9A==
+Received: from gvxpr05cu001.outbound.protection.outlook.com (mail-swedencentralazon11013063.outbound.protection.outlook.com [52.101.83.63])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48vav2ueqp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Sep 2025 13:48:30 +0200 (MEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SwmSXGkpgI/qwZfWzX/8VMqcTes02t9PhNUXpnU4jMgSfD8UseJejukrdn6HH5zIBQS2jT2D30mOYE7j2xUJnATQPp3Sd/E/mTRDhuzqyIxFHVXFnLHHkGXtE/wLVD5TjADYpAl+7VclN4VP7VsGI6HTiAhjDcswWeFvGN/+p/HNGofus0fh/4KGGMGi9zxo7aIuQ7YBHyX5p/yMc4yF7i4RZ9+wpTmOWkuLbWLw82PGTT9bPSwllSGlik4qHSA7qYHZo+CMeGyYu6fUBHo/pSuz/fkcAc7aJ9yZu4EK8TMcLxjlZFtlmEyW1teaZ7UC2OTcZ774Lya6iOyRR9FZkQ==
+ b=Z3Dh+7OJ00TDvj/QpmCnpj+iI7qBnp2z9RZbbxAMtSG2600xt5dKiWTHy4YPn+7j3b08ygbG+j41wSo0NYpOy0ygnLx0ymGvUdWaBml+xZQVifDHg/fS9vezHN7oJOP/ZWYw+Xvonmu2DV/x85edpoRDYlr+iXqyZp9QkQGxC7kJ5k9+0PMVFVkdisaemppjsb384xO7bknCprMPy2YG1Dif6PRQwiZAc8ToDLOPW5XHpLqyKAm9DI87c1F9MzNPorogtfGigyUgWvrmJukSkONnRlbt4C2HVMgg2l1RH45YcCEZmZn6mIjJe2jYeosI/r4SZvzqeQcYkO6MJhyFuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=//Z9OjsP8DCBwntEyq6upJHsyd1hc/cFSuxPnKpJQ0g=;
- b=bMlguUauBnSUhU7YH6NwzG/naEu3yC8WUzOzp92Zr9Ri6gRBRiTCCQCKuvf4rl9L6yEcxtU6+eHj6238ZghTOCg4osB74RTeXIjsJ5/0+N8s65XiPT/dIcu2u7czBcl/Fva6wT7wU4Uo082uvS2cmSQzyxO9kNyZ1hOQQP8RTvrBWOyx1aF0c29eAABKI0IEcpqypvs/TlevMe/R8Smfl95Jlr359upIAzDR0Tlrv8gqtBDDfpBxFIFa4DLw2Jg6TCtpN2Z7G2bleTIouOHiOWPHEuRPE73AmHJWPtcOdhrcJUW8roR4h7OHT9rnnAxb1WPGbDqA82ftTIJWydrfSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=emGjkwW8uuRte2LHCeSdeXbyBXj819goaK5mrm9FJ14=;
+ b=bzU/FSWaKYbBjQ9tbGVvSekTH4yNW5QfMZI7tjj8iH4Ndmc52H9c2XZUXZcNQY1UI8RAd9fyYVWcL5SVPL6sAZRgeht6HxRrAQLtI1tEOWbm8S5OFdos5ez0Z2ge1RwujVUVFbJlGqjfXrdb4U5mzSsw02eRz5JPWZt3l0vMppC4BcsJqAM+rHEvGky75iJ5ZFyoL4cNmEV5EDibYnDJN2x4UaSM1axcboTjoTTB1rw7kjZch4dtmQFSXA+qZbjG42w+95qNLAfA9DwqZIlpfhphEEGT4Gj/FxcNmElwVfrMyTAz7ARcIGVm8CUC2oRoS+0XwvOeGDms9ws36IIUrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.44) smtp.rcpttodomain=lunn.ch smtp.mailfrom=foss.st.com; dmarc=fail
+ (p=none sp=none pct=100) action=none header.from=foss.st.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=stmicroelectronics.onmicrosoft.com;
+ s=selector2-stmicroelectronics-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=//Z9OjsP8DCBwntEyq6upJHsyd1hc/cFSuxPnKpJQ0g=;
- b=bniC1y9Apr4vBXCEGFBlYbI1dwTE48J0oygPiG6IICb0/grFaXq4vVZNtQMaNAsasSwOSmipkKBCS79CQUm5OQb4mbLbVv3bDmKSgoHGRvD47ZEqiGcKYWcEMu7nSVn2Lb+lFaWeYWhM4OykthNuOfeKG/WIrK2t4+8vNO/plMBp4PZBnSBW0AxGuuFPR7GDzLM9Ah78l3pJGCg6Uas9B5ciCpMO3/LRjNvb+rmqwt9cHOn4VZQIpfjgFhpAXAdxPkOlmyAsL7sfQ2pjmSO+VO/klnqkRRNfSsQJNebozzCZfmFdEq97v44Lc6q/1UHoARPvjukEVUqv8AFj97Th2Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BN9PR12MB5179.namprd12.prod.outlook.com (2603:10b6:408:11c::18)
- by PH7PR12MB5829.namprd12.prod.outlook.com (2603:10b6:510:1d4::6) with
+ bh=emGjkwW8uuRte2LHCeSdeXbyBXj819goaK5mrm9FJ14=;
+ b=XmTdXMPn3oe3Zha0hB/I4Fwj0duG+Ekmg0Eev/cgB/tswz1Zl+5Ls73KxgLrTfYsRS38tOUJ8oDJCf950rIBWx9MkjVNwBSvGN9VLHaYCvXSSnyTOGWX/JpklDQU7ZvPZaI6ZKqkRCtv+u/rdCzzG72Z+REb6xnqgNKuwbFHdtA=
+Received: from DU2PR04CA0090.eurprd04.prod.outlook.com (2603:10a6:10:232::35)
+ by DU4PR10MB8880.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:55d::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Thu, 4 Sep
- 2025 11:47:50 +0000
-Received: from BN9PR12MB5179.namprd12.prod.outlook.com
- ([fe80::44e5:415d:e1a8:6e42]) by BN9PR12MB5179.namprd12.prod.outlook.com
- ([fe80::44e5:415d:e1a8:6e42%5]) with mapi id 15.20.9094.017; Thu, 4 Sep 2025
- 11:47:50 +0000
-Message-ID: <cfffcabd-c33b-46f9-9b16-b6063ceee4c1@nvidia.com>
-Date: Thu, 4 Sep 2025 17:17:40 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] Support dynamic EMC frequency scaling on
- Tegra186/Tegra194
-To: webgeek1234@gmail.com, Krzysztof Kozlowski <krzk@kernel.org>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, bbasu@nvidia.com, sumitg@nvidia.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
-Content-Language: en-US
-From: Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA5PR01CA0007.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:174::16) To BN9PR12MB5179.namprd12.prod.outlook.com
- (2603:10b6:408:11c::18)
+ 2025 11:48:27 +0000
+Received: from DB5PEPF00014B9B.eurprd02.prod.outlook.com
+ (2603:10a6:10:232:cafe::29) by DU2PR04CA0090.outlook.office365.com
+ (2603:10a6:10:232::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.18 via Frontend Transport; Thu,
+ 4 Sep 2025 11:48:27 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.44)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.44 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.44; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.44) by
+ DB5PEPF00014B9B.mail.protection.outlook.com (10.167.8.168) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.11 via Frontend Transport; Thu, 4 Sep 2025 11:48:26 +0000
+Received: from SHFDAG1NODE1.st.com (10.75.129.69) by smtpO365.st.com
+ (10.250.44.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Thu, 4 Sep
+ 2025 13:41:12 +0200
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Thu, 4 Sep
+ 2025 13:48:25 +0200
+Message-ID: <43cc641e-4c77-49a0-a18a-9707600de344@foss.st.com>
+Date: Thu, 4 Sep 2025 13:48:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 0/3] net: stmmac: allow generation of flexible
+ PPS relative to MAC time
+To: Gatien Chevallier <gatien.chevallier@foss.st.com>,
+        Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric
+ Dumazet" <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Richard
+ Cochran" <richardcochran@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        "John Stultz" <jstultz@google.com>,
+        Thomas Gleixner
+	<tglx@linutronix.de>,
+        "Stephen Boyd" <sboyd@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20250901-relative_flex_pps-v4-0-b874971dfe85@foss.st.com>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20250901-relative_flex_pps-v4-0-b874971dfe85@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN9PR12MB5179:EE_|PH7PR12MB5829:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e048b7b-9525-4cf2-5c24-08ddeba8dfc3
+X-MS-TrafficTypeDiagnostic: DB5PEPF00014B9B:EE_|DU4PR10MB8880:EE_
+X-MS-Office365-Filtering-Correlation-Id: 74b4d7ba-25e8-4f80-a511-08ddeba8f5f0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020|7053199007;
+	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024|13003099007|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?alJGZ0lvV0RYRTllQ1Z0VGdLd3dXZitmMk5FaHdlYjBuTTdmM0dYV3RpZDdS?=
- =?utf-8?B?dFlFSjRjYlZEOU9RQ3VFR1FBK0xxK2dscEFsV0tQcTFKWXd4T3BYRlNZQnF3?=
- =?utf-8?B?YzBrMGEwQ2N2aG10bWV5bVRaWkdIRDdxeDJybUlabXBrejFHU2Y3MVdKQVBR?=
- =?utf-8?B?MStGKzNvY2NLSDlPcWQwTHlUY0dSWTlROW5reGtXVUhrTHRpWFJQVDdWYW9s?=
- =?utf-8?B?M3AzL2J0M1lER3JyaGhTdHNSV05NQW9KYVQxOEZtSkd3ZFJtc212WTN3aWYw?=
- =?utf-8?B?N01VKzNYNk5FS3BMV2ZYNjRkZzhlNVU3a1AwYUsrcGw3Sk16eE02VEg2VzlL?=
- =?utf-8?B?RzNXUHJxMCtuWTVJL3dCUktHdEZ6T0Zwc1RQVnl3L3BCTU1CSWkwN2V0dHN5?=
- =?utf-8?B?dmkrVzgwR1Z4Q1pBU01UVCtEd1M1cnlTVEJObXRQWS8xTGk1NFJCWUUzbEhj?=
- =?utf-8?B?ajNweTA4R1lBSW0vSzNqVnVFL3hGWUtDR3BDbmVqRGt1bTZvZUJ6a3A2MStG?=
- =?utf-8?B?ajh6c2tqMnlEdHBYOTNiVkxUd3NmLzQ0NHVOOUQ3UzZoa0hiOGgvVk0rQzhT?=
- =?utf-8?B?dlJJenZTaForMG9OM3JJYk5Bd2gzMVg5Skg1NUVhanR4VEJ4Vm9vbWNnQUNw?=
- =?utf-8?B?b3ZzbVdDV1VYOTRZZDQwRG1mN3IybkgyWFR3T3RpeDlHdmhsd1FMOHkxSVZj?=
- =?utf-8?B?ZHNBKzJLY0xQYVhyTEZMcGdYbEMzK2dGTEcvVUs3bFAyZDg5cy9UTWxHejRp?=
- =?utf-8?B?d09iMEdRR0ZabHpscFdEWnhNRC9uZ3lZUktXOE1aVWVKdXc4SHROb2cwcFRG?=
- =?utf-8?B?WTd0RXU2UURRQXhCOC9RMzFYRnZEV3FRWi9HbE9XMkV4N0xyWUo5YjlPUHh2?=
- =?utf-8?B?MHhJZDFGSXlIOFY2ZWNYVVJkRmxqUkpreU8rSFYrdHNrak1PQzBGbFVEUEYy?=
- =?utf-8?B?d2FBbWVZTUNvLzBkRWJZUkdkVHVSY0l4R25KbXNUQW5vSnk4N3dINUx5TCt1?=
- =?utf-8?B?azlQKy82OFQ1MTZ0RHpQeFZ3eS9XTHRsVXN6MjBDdnZtcXEwUzdFT05vZVd1?=
- =?utf-8?B?MUxjTXhKL1MxOW5nRlFDUWVoelIxUGF3YTBhVi95UEF6SjRSdStVTkNTcmgv?=
- =?utf-8?B?YktaQy9EdlVkejM5Y0g4TGkzQmxOVmk4cTd4azQ2cFpySkdxWE1ZQUFPdTdr?=
- =?utf-8?B?WUp0OTNIbm4rdWJ4QmptYjlZdS9YaE55NVNCdUZ4b0ZCTXFnQVlaMWRPK2V0?=
- =?utf-8?B?MWNyUW83dmc4cmFwbGhTY1dOWDFnbTU1dS9QeTRsMi9QQnAvQmhMV21JUmVl?=
- =?utf-8?B?ME8xR2psVWVBQm5sQXVEZThtZmc1ZG1sSXd1NnU1RGxpbnlrUG9JMk1aWWdz?=
- =?utf-8?B?WmsyUzNia1Qvc1B6TC9sVDJVYURPMExuaVZCMWI0anZUSjhCdVE1UnFzWmNG?=
- =?utf-8?B?NUlaNUlKWndoTHRGVTZYL3FQUTE0SGJyNWFxeFBuc3hTNTFLaXdZUUc4REdI?=
- =?utf-8?B?STNkbXFUOWpsckZ2NXU5N1N6cE40akkvWFV0TlJzcVhSYklCY2pyaW95T1F0?=
- =?utf-8?B?UEFxNmlLNllBUGYvS0NrVUkyNEZCY3MwME85MVIzUlY1YVZTNk1JTnpoUytG?=
- =?utf-8?B?eDZnV0Z2eTBob0JjMGFWeTZzcy9uaVZZRnlzb28ycUJBdmNud2ZXWVVEeElh?=
- =?utf-8?B?RWhxbTViUXpEV1B2dE5YTitvUVF3bmlQblBQY3Z0WUtIM2VjT2tFTUhVTld5?=
- =?utf-8?B?MHMwVmo4RlYxVUV1cGN5c2xCL2JXVVZyUk9mcUFHYTgxb05LRHJnTTBEOHdL?=
- =?utf-8?B?RkxhWGhpdTEvWnk5SldWYm9HazNya2VhNWl4dmUxUzFzcW4wbk9udTVpK2t4?=
- =?utf-8?B?a2ZHN01hczFEWWx4OVRkc2tJZCtZeFhFeGMwVlFMMDNoemVYdEw0YzVEWnMv?=
- =?utf-8?B?TTZuaHJmdDl2a3JXcHd3MGRicFIrNjcvRWEzSlBnV1czaTd5SE5LcDlTSUZl?=
- =?utf-8?B?MmxpR2R1azNRPT0=?=
+	=?utf-8?B?eHMyY0ZtWXlBRjRkSDZkREtTM3l1am80YXlrS1J5KzRnbUZZcnc2YWdZalI5?=
+ =?utf-8?B?NVErU1BKaHJVYmlGUS9hd0NyaGxjS053TkhaWXg5NjhtNkMwbkZpaGVlSDQz?=
+ =?utf-8?B?bHBScjZDbzl5cVNkVk9uSk8xT0pmdEVNRlFTMmo5ektxa2hTdkxqUW1DeVpz?=
+ =?utf-8?B?VmJWZGhLM3duNkRXTW9oY1MwSnNndE1iQTE1ZllIMFQwUmVSMXJlUWZKNHdq?=
+ =?utf-8?B?WSt1MitDZlF4RWg5dGJvVzFmeHJjQ0RUb0JubnNSaXdxblFCTFlocS9JVnlI?=
+ =?utf-8?B?KzZuS0ZSQVk2eWNETlBNMExTeTJSYXNOditldkFKbnlqMGErcG5KNjN6cEQ3?=
+ =?utf-8?B?cytRQ1hPcTVBc3RlU2xNZ3p2cW5sQzRHeFNLYjgxcXFvSEVGbFQyZHhwMkpa?=
+ =?utf-8?B?MVVqOFV1aTRGb0ZzUzEyRW02SWtaZXpJYUFlRGo2eWF3TFY5MllBUGpzSE5x?=
+ =?utf-8?B?NGx3VGRidTJhK2lEendjQkdZU3dXT25CbDR6ejFJRWt1OFAzamdGalFCUEln?=
+ =?utf-8?B?NnB4TmJ5SndXT050c0QxL0t6dnlHZDFvbVIvK05ZbTFEVGthSUJVMnhQeStP?=
+ =?utf-8?B?eXFOeWQ1eGZ1QzNrQVZXWUpjSG9GVlRZc1FmbFBKbFFwbm15RGt6a2trRTBZ?=
+ =?utf-8?B?aHVqZFFKSGx0WlhzelRtb05BakhwMGZEY2JoK0swOHk0VVpReWZoRDlEV25x?=
+ =?utf-8?B?aEJGZm1IYWRHN1A1M1hvM3BRSm9oK0gzZzBPbEx5MDdRWVE1bFQ2RUpLK0gx?=
+ =?utf-8?B?YXl4WHdXa0RMemFaanA2K2JNM3F1MHZZODlFeEZKTFJmM3F2NjVBU2RiV2wv?=
+ =?utf-8?B?T2Q3VVhpcmFqVmI3NWdGVENYL0hId2RXR24xODJhekliWjJIa0JwL0FRcmlG?=
+ =?utf-8?B?QjZ3d1ZiRTNRZnJwclVsazlvcFRLblNTWUVFY293alphNUJpWHJyR21hQ21u?=
+ =?utf-8?B?SEVhKy9UUXV2TWIxOGFRd2R2bGQ4QkpCdGw1N1dWS09GVjEzRVY5R29wcjZB?=
+ =?utf-8?B?ajdXcTlGdTBEMXVqeEpzdnVtWFo1djVVY1NjekMvbzN1Nk5XWDJxQ2dudmU5?=
+ =?utf-8?B?NCtBa3A4c29wVE85Y0hLOFg1MUhPYWF1M3JSc0htZjhvbVk4a1pFcU1mYW40?=
+ =?utf-8?B?VVBZWjF0czMwc1J0WjFmaVo2Yk96Vmo0MFFzS05uNjA1dkpSekxFZ2poUHZw?=
+ =?utf-8?B?RFJ0cjZOcWg1UzU0eDZhUjlCTkJHdEM5VDJkVmI0T0xhVjZZbnVxelJFcHY2?=
+ =?utf-8?B?MElCTWZnQld4YkJBWEl4azVhMC9UMHpGSzl4bHlrMjFyemlEa2gvaUJZMkUy?=
+ =?utf-8?B?dTZOMnozenErVnYzRisrdU53MTJzTm5Vbi93N0RsVG1RSWVsUVhCZXlTWXFY?=
+ =?utf-8?B?dXMyWlk0UVU2Nm0vRUJzYTk1N1VqTVpFY0pVMHNkMWRyOXBTeVdlVzE1cGRC?=
+ =?utf-8?B?K1cwaCtIK3RkU2Y4eEdMb3ZrdUEvRyt3SEptamZaS3VyNnE3OXkzOUsxY0JR?=
+ =?utf-8?B?S0FwT3ZwRXlGWUkyaGdjRWJXdUI2R1lJNTcxand3NE1CMUM5TVROQjNHbm5P?=
+ =?utf-8?B?dWxFNEZSYm0xWXFQQnJBQnFzRk55aGFNY2M4dHU0Q29MWm9iOFFDdEc3dE4y?=
+ =?utf-8?B?QVRnY2VjWGJXL2ZKNjduc1dSRVFxVVlqVU5IL0gxQ1BTYWs5KzNLNGtJSGQ3?=
+ =?utf-8?B?cHVlejBMWGlJUjVIRytKaWw1TytBRzM2dWpaL091ZE9XV0hZVSs2bG0zdDht?=
+ =?utf-8?B?VlRyMW5Pb0ZoSVNKQmJ2VytzUTBUR0hCcElVUjBSL2gydmNOemxmYWZmdFJZ?=
+ =?utf-8?B?WXpKZnk1TDBsdTd5RzYyR2M5OVNrZGVNcUltSE84WG9Yd0U5UXFPbkNjb3hj?=
+ =?utf-8?B?ZmlmRkR2YmNJRC90dS9nNnErRnFYb25oZVRsbW4vUXZ1TDMyUHNPNXdnQmIy?=
+ =?utf-8?B?bTV4ZVhPZW9kWUpYblRlaHl2bC9SNlE0WlM1RDc3WFk1WVVjbXhCYi9Qd2E4?=
+ =?utf-8?Q?pi32IuB7tbHF/q5DkjA9iGYFTgYbaE=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5179.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VFNPMDNrdEdsaC9JUElMSWtEQVRuQjFuVGl2TnVYdGdwalJqSkx5bEE0azJz?=
- =?utf-8?B?OE92WTFVaGFvRk5GVS9WWE8zYlNXWGFobmxUV25jR0pnMEJrWWcvRnFyTjZs?=
- =?utf-8?B?ZVRDTTNqTzdGUUtxVDZCY2hsU1BGcXFaVXY5eXNJRkJWdmJwcUttanV1OEM5?=
- =?utf-8?B?Wlpyc3lkWjE4eDB5bEFWb01xK2pTVHdjckQyVHhBUUVkMXRYeHFXY0s2SWdh?=
- =?utf-8?B?WDNjOGZkM0Y3LzNyZU9MNUp0cGswbWFDNjBRSzhVZmhUSGJ5RTV6MUxuY042?=
- =?utf-8?B?dWR5YS9SdUdsVWlCU2VVN1UySWFUa2FNRHp3RE1ZNzZGRituYnpubGhOOTZp?=
- =?utf-8?B?Zm5mWXFwYjlsOS9WdkR2cDVkaWJnRnJaRE1Kb3U4ZjZVSEFSWTFBczZMRUdH?=
- =?utf-8?B?S0JZb3k5cHF2azZQQlVJZm8zT21wVVlTSGFUR3JaNkhZaElHak1QdEJOWGRh?=
- =?utf-8?B?MkR1K0o1Z2FDN1lvekNESXZxUkZzU2VQLzhtakdaeStoSGRUdUd0QWpka2Vz?=
- =?utf-8?B?MnJlenZjQ2hQUUFOR2hRYWhsRmhPd24rK09KRHlGRFJkdE9WcUdTRjl5ZG43?=
- =?utf-8?B?eHhqcUdJR29wMnhkdm9mVExTemRmRWxoMTRPRlJZQ0xSZjAzbXlVOXFuS1J6?=
- =?utf-8?B?TGY1Vy91MDdGeW1nZUFweWhTK2pHVFFibUdzY051VnRPTUdmUXRNbWMwZkgw?=
- =?utf-8?B?bTVzS2dVNlNQZU5EV1YweVZpaFFra3Z5NzJDOGF6UGdnWUg1V01zdkhGUk9J?=
- =?utf-8?B?VWRURm1rOHpKMVVBWVFJRklMRVlRa05KN0hlV1I0R1Q1cHRQeXNOb1FyRXhj?=
- =?utf-8?B?VXhmbFBHMWQyNEtScVlSekhGTlV4TjNwbUZLWUxsT3EwNDk5cnZiUHJsdDdC?=
- =?utf-8?B?Mm1TblBDeWVkcUhNT2xpOHFXVkdyWGdtUU1HTWdiNm9iMVh2eUVmZnp5Mmti?=
- =?utf-8?B?b2dGUkFJRmpVTzZOWnZ1NVlKTGRPaDM1TTFPeWtrRVI3eWtjNll1dlNUVG5N?=
- =?utf-8?B?cWR2cm5xYlpueTRtc3BVOG5zNnlCTE9nVFhySU5lejM2NE1SNnBsQmJnK3cr?=
- =?utf-8?B?UUFMUjcvSnhtQWI3azBHZ2tUeFcvajNXUkpaaWFNS1pxcnAzWmVrR2hFQWho?=
- =?utf-8?B?aGMrUGVPeFNlRzRyRHU4SzJ4RThGWURCcTFBc1NtbW5ITWtCUzhLN3hucGln?=
- =?utf-8?B?VGlYMWFWbDd5VmowTUtiN0Fud1E1MVdrOWpVL0dsYm1leGYwRDM4SVRiVjZr?=
- =?utf-8?B?WXQ4Tnp0UEVtTlNsYzJFZS93QWdpYmZzU2NMUkkrbk9XckdyUUFOdDlBcVRY?=
- =?utf-8?B?T0NZTDlRY2JiNStYM21hUTVqc2h0UFhmQm01MWZrdWdYSzYxOWs1dDJWZTlO?=
- =?utf-8?B?SVNYbUV0MFd4SnEwRzhMdXk3empaOWN0dTlZbGh5WFpKS0hMaFFGVGN1V3ZW?=
- =?utf-8?B?SjNxcjBaa0ozemVDMDJqbDdqOUEzbHpnT1BoQ0dJbUhJb05xZmtIYThldjZ0?=
- =?utf-8?B?YnMrUVpOcEp0VHF5Q2ZUN3RDd0V3aEx0RW1nMWprYkJ1MTlFY3JxK2s0a3Bq?=
- =?utf-8?B?RFltM2tpdUZnUk12N010QUFydkVHcFZtRTM5R2VwOEg0TndXaENTRzF6ZWZy?=
- =?utf-8?B?eWVEM2pRZHF4bUtVN3ZzNFhoMXQwNHBSSVhXMklObnUzcG0xOWxONWNKK0cx?=
- =?utf-8?B?MzBHbzZja3pScy91ZHBPNlIwR3BZTWpHUHpITlA1YjAwNXJ4WWNyWFFBS2dY?=
- =?utf-8?B?Z1ExYlZIZkZaS2ZPTzZSOHBmVk9ZVHo3VjRZcmJFNHNZODZlYkg0M3cxM3U4?=
- =?utf-8?B?eWg2YTRoNDZIeU56ekEzR2EvWERJeFJmZzkvNHROS3dwMThuSTJWTGZrM0xL?=
- =?utf-8?B?VlZzZHNPUS9ScS9FWHdUWGtzOWo5ODRDRWlCdnh5aDlNU2ZicjYzQllEUkQ3?=
- =?utf-8?B?MjF6aXBWT0pUY2FVUVlFcFVXV3BSMUNJYkhvMkUrSVZEVlJtdHVSRVdQWWZ0?=
- =?utf-8?B?a2lPSy90cVFMTXl0dEtOY2VuZm5ZUzJHMERqcG8ydFAweG1CdkNtc0ZINHZy?=
- =?utf-8?B?R0I1Y09EOGlGelBLdFI2Rzk5REFaVEx5SzFNbTc0Q3FEdlVGSFFlb2VwNkRt?=
- =?utf-8?Q?9Xk2ikfeZ8t0TYFcd+47a67cu?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e048b7b-9525-4cf2-5c24-08ddeba8dfc3
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5179.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 11:47:50.1212
+	CIP:164.130.1.44;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024)(13003099007)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 11:48:26.8445
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vtyZFMt8LosTHkHtVt3Zf0uOfMdnggdDQ33Lp2ZV6DB12UG91ip/3xrKR88aof0hM0nOdE3nKvDBGX8ebe+zow==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5829
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74b4d7ba-25e8-4f80-a511-08ddeba8f5f0
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.44];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B9B.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR10MB8880
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDI1MCBTYWx0ZWRfX4CJW87M3XX/8 4Tz3pZG+tJkBtVeRFi+RT1VatIoLUz3VBDd94U/geJ8nVTouXcMIubm8iAWRQpaWz2GLg+NPBNC NbOWFwJnTM4ENBDhhPvMkd0ubkPZoIk8OcRQNy+wewQcxkwq0/yvWxyshZY7IxMYVT4qJz6oXm3
+ C8sltjyWvimy7Uhk4+nW90A2SDbNyrTsDB02r/onWiXtpVHynBU5lgWcYTWE0G2/tx7vRp58sVT 890bYagsv/nv/LmX09icC58ntLVNsTN3z8/mNOfdkwJjfyC1JVAhoBYjLTSDEIm++7MZAMyuySz mbDdOTmDJZI2HPhZhkgD0pCHJ97XKZ+ASarXAoS7HFDMBigTTcxsmQUjO369MGpNAGznVAYM4vF qcc6bv3d
+X-Proofpoint-GUID: L7K5ZcXLi0zKvybupprnlVvqhUgaDpac
+X-Proofpoint-ORIG-GUID: L7K5ZcXLi0zKvybupprnlVvqhUgaDpac
+X-Authority-Analysis: v=2.4 cv=bchrUPPB c=1 sm=1 tr=0 ts=68b97c8e cx=c_pps a=l6Btcvq5nnSnB4iwbML6oA==:117 a=Tm9wYGWyy1fMlzdxM1lUeQ==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=h8e1o3o8w34MuCiiGQrqVE4VwXA=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=TP8aPCUxYTYA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=s63m1ICgrNkA:10 a=FUbXzq8tPBIA:10 a=VwQbUJbxAAAA:8 a=8b9GpE9nAAAA:8 a=j2rUa52JnNMlxABqLIwA:9 a=QEXdDO2ut3YA:10 a=T3LWEMljR5ZiDmsYVIUa:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_04,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 clxscore=1011
+ bulkscore=0 adultscore=0 impostorscore=0 phishscore=0 malwarescore=0
+ spamscore=0 suspectscore=0 classifier=typeunknown authscore=0 authtc=
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300250
 
+Hi Gatien
 
-On 01/09/25 09:03, Aaron Kling via B4 Relay wrote:
-> External email: Use caution opening links or attachments
->
->
-> This series borrows the concept used on Tegra234 to scale EMC based on
-> CPU frequency and applies it to Tegra186 and Tegra194. Except that the
-> bpmp on those archs does not support bandwidth manager, so the scaling
-> iteself is handled similar to how Tegra124 currently works.
->
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+On 9/1/25 11:16, Gatien Chevallier wrote:
+> When doing some testing on stm32mp2x platforms(MACv5), I noticed that
+> the command previously used with a MACv4 for genering a PPS signal:
+> echo "0 0 0 1 1" > /sys/class/ptp/ptp0/period
+> did not work.
+> 
+> This is because the arguments passed through this command must contain
+> the start time at which the PPS should be generated, relative to the
+> MAC system time. For some reason, a time set in the past seems to work
+> with a MACv4.
+> 
+> Because passing such an argument is tedious, consider that any time
+> set in the past is an offset regarding the MAC system time. This way,
+> this does not impact existing scripts and the past time use case is
+> handled. Edit: But maybe that's not important and we can just change
+> the default behavior to this.
+> 
+> Example to generate a flexible PPS signal that has a 1s period 3s
+> relative to when the command was entered:
+> 
+> echo "0 3 0 1 1" > /sys/class/ptp/ptp0/period
+> 
+> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
 > ---
-
-Tegra186/194 had multiple drivers for BWMGR, ISOMGR and LA+PTSA configs
-on the CPU side. I am not sure how effective this patch series will be 
-in absence
-of those components. In Tegra234, those were moved to BPMP-FW. So, Kernel
-forwards the BW request to BPMP (R5) who takes care of setting the final 
-freq.
-
-Thank you,
-Sumit Gupta
-
-> Aaron Kling (8):
->        dt-bindings: tegra: Add ICC IDs for dummy memory clients for Tegra186
->        dt-bindings: tegra: Add ICC IDs for dummy memory clients for Tegra194
->        cpufreq: tegra186: add OPP support and set bandwidth
->        memory: tegra186-emc: Support non-bpmp icc scaling
->        memory: tegra186: Support icc scaling
->        memory: tegra194: Support icc scaling
->        arm64: tegra: Add CPU OPP tables for Tegra186
->        arm64: tegra: Add CPU OPP tables for Tegra194
->
->   arch/arm64/boot/dts/nvidia/tegra186.dtsi | 317 +++++++++++++++
->   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 636 +++++++++++++++++++++++++++++++
->   drivers/cpufreq/tegra186-cpufreq.c       | 152 +++++++-
->   drivers/memory/tegra/tegra186-emc.c      | 132 ++++++-
->   drivers/memory/tegra/tegra186.c          |  48 +++
->   drivers/memory/tegra/tegra194.c          |  59 ++-
->   include/dt-bindings/memory/tegra186-mc.h |   4 +
->   include/dt-bindings/memory/tegra194-mc.h |   6 +
->   8 files changed, 1344 insertions(+), 10 deletions(-)
+> Changes in v4:
+> - Export timespec64_add_safe() symbol.
+> - Link to v3: https://lore.kernel.org/r/20250827-relative_flex_pps-v3-0-673e77978ba2@foss.st.com
+> 
+> Changes in v3:
+> - Fix warning on braces for the switch case.
+> - Link to v2: https://lore.kernel.org/r/20250729-relative_flex_pps-v2-0-3e5f03525c45@foss.st.com
+> 
+> Changes in v2:
+> - Drop STMMAC_RELATIVE_FLEX_PPS config switch
+> - Add PTP reference clock in stm32mp13x SoCs
+> - Link to v1: https://lore.kernel.org/r/20250724-relative_flex_pps-v1-0-37ca65773369@foss.st.com
+> 
 > ---
-> base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
-> change-id: 20250823-tegra186-icc-7299110cd774
-> prerequisite-change-id: 20250826-tegra186-cpufreq-fixes-7fbff81c68a2:v3
-> prerequisite-patch-id: 74a2633b412b641f9808306cff9b0a697851d6c8
-> prerequisite-patch-id: 9c52827317f7abfb93885febb1894b40967bd64c
->
+> Gatien Chevallier (3):
+>        time: export timespec64_add_safe() symbol
+>        drivers: net: stmmac: handle start time set in the past for flexible PPS
+>        ARM: dts: stm32: add missing PTP reference clocks on stm32mp13x SoCs
+> 
+>   arch/arm/boot/dts/st/stm32mp131.dtsi             |  2 ++
+>   arch/arm/boot/dts/st/stm32mp133.dtsi             |  2 ++
+>   drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c | 34 +++++++++++++++++++++++-
+>   kernel/time/time.c                               |  1 +
+>   4 files changed, 38 insertions(+), 1 deletion(-)
+> ---
+> base-commit: 864ecc4a6dade82d3f70eab43dad0e277aa6fc78
+> change-id: 20250723-relative_flex_pps-faa2fbcaf835
+> 
 > Best regards,
-> --
-> Aaron Kling <webgeek1234@gmail.com>
->
->
->
+
+DT patch applied on stm32-next.
+
+Thanks!
+Alex
 
