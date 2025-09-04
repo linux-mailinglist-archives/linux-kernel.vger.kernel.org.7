@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-799869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 349D2B4310D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:20:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A30B4310E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA4DA3B946B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:20:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD159487793
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEB41F1313;
-	Thu,  4 Sep 2025 04:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811CC1F1313;
+	Thu,  4 Sep 2025 04:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sUQ/G012"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2065.outbound.protection.outlook.com [40.107.223.65])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GGx92Cln"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2077.outbound.protection.outlook.com [40.107.100.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F683AC1C
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 04:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE081DED4C
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 04:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.77
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756959614; cv=fail; b=peupvB6XuvOdwp/CjfFraVe235bTGXp2M+52PIEbDiAFQUArdj1nopmuHEpvN99QMaq9udI71VL/XKwUsoJcLYzGGDoPrK2qDZq6fBC+oNtyRJ4WbFgDFk/Qm3noG9qJy5eXl56IFv9o1XyE1o8fuPmxrJHPdCQurahPNi+q+KE=
+	t=1756959635; cv=fail; b=KeuOEjASPvYydWwdF2DQhKWKbDvfq6UnuaVzrs0mX/3sthX5I/abyMBQOPyNjdNxo2uCa/Q36sO7BKYeZCqfU9Hg3IalrvwIwjTHDpvbwCJYcQWQSfC/rTLYGacZlH+fepy3B7jLS5mzCo6sP3PW+Yi6uuBUV9ikC3EhDveVj0I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756959614; c=relaxed/simple;
-	bh=YMWp1oAGAUdWbY6heSmOcfug0aiKkQSvG+khnJXT8hk=;
+	s=arc-20240116; t=1756959635; c=relaxed/simple;
+	bh=F3E3zYBbHyopIXwqIxcJek4bfuJ7LiBQO4n/7nIjFdw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K194IX/tDqRusvHodeLlvpnXi3OkGwgFlwi7/Z8ijnjrsB4Nl1r7P1dOkZaGQhG4e35ohLjWs1WRwFGphf/KUYAbZeIHZ3D+rh5Xtp5G9rpDTGV7yJLCF/pUAJbD8jOXbDIi1GAC9YxPwNTQOmEai6axyvDgF/ddakCTbndxufY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sUQ/G012; arc=fail smtp.client-ip=40.107.223.65
+	 MIME-Version:Content-Type; b=YcJ+3wlMxirOk7M2kktqxAQnRNemK34jv1+xbgkw+MG9S7DXfkfZOFFZCy8KMPaQZgGCf4jqKWQSTd6Dc7paw5bjCNtxXzjiP0pOh89+CMBUDpiRfB2zC90PydfcMDDgOFYEHih17vCb2BhhLX+7z7geCemgVdadg7L5oW0OTXU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GGx92Cln; arc=fail smtp.client-ip=40.107.100.77
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wikI6gprCm7salNKLXorcoquHuArAQPwgraH7nE/kdy4S57UvZ51G5tXfks06Ydd4hp9441A3/d04wr3Rfd/uwqfITKSx7/cxdfLh/B6b1SEjxpMegTd/OOn1EnwNrWYiGtuVxpWUDK8RLoVjYPsjDJvGVzFh846o6OYouxa+Bv7dyGhKcTX7bThDtmnW32Gta5SN5mZFoChY0Q0sie5kTI7G1qF/yGQKZtpsD3IHLHZVVd8T+MJv4DI2HlINCNOOQNjnkztTyC0dPQW1ZhBKZPxu8k9u4ANtVjM9CQs11YHhWUNqU59AigB3VWm6ULGfaSzQAQMnWEkQOpWvIDfSQ==
+ b=fpQG77PaqLcA5N8lvC2T+VxPXnzgMd22FGBOd1IgDkUsdy8BA1taXFVTs/quiKj8hFffOC/5mslM94vqXvOaAMJTjcy+wqK+CZD/fX1+n2dCLLe/418/kvlAG181JydBc+RJ9r+F9YYw04EgHUGM0m4VLxJW7qNFgSFW79yvxIcv8G86smfWVBrvsq4xsk8fkSLyimo3/Y9mEuwncVru7IoNOK0qbfVzu+wO8/7LYcQlZauexUfwAlQEhUOkyaOQAjsaw+lKsSoBkvN1mAJTyTBZ2HKRuJ6N2cux15o8jHUlCuj4KJmygGRjiYhNJCMhsKKcEeBe0j3TL2gpBoATug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J6ZH8cUYPxMEF6gJh4Qvdm7EFKssCP9kvh6CreJngeo=;
- b=H8d+8H7JQjVv8JGEWk6tWXVH6saR326PRsKxZDnkqNSnuLUH1a4gML3hMlFDu8sCaDvkSptAyge4vnsU/CJx5l4ayUpWnYk76oHxYP7sI5ao1StlIO7y3C7INVdjfAHo3UK25fiZ7xmWF8QaZqzxxnbn7JfnbtEJSkHyLfnZ7DR+ofKDQhHWsgU8TsKUPHBrir/+vLIwmOAeXZo/z7VjMujLQtQ6gLuw3VidsKYgBRJSoqvSdTF5skRlM9nELeGiTFtk47JktIpXa+5t7GVzxuUO1ohrfLhiLtUPSkPA3/+wN+c4Gp7SL4RJTD1b3905mJVo147knZDfmsLp25gZVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
+ bh=3YoPxriIVapTGkqMB7FGQ9QL2f5SA2AMi4KllrwrYZc=;
+ b=TQTA+XF0OQW+WtxVByYqtxuczrh5+m50q+Gl07ysieiG9c1LqtdWWzXhcHOQoretZf5UUykHTkx1aJXi9zcCl+Qxc3rxZ2z4pgtp0SZqJCvkzwqomOFxlMSR4AI9ssKOOjSo45IYJUUTqfsPGeQpUuFLMgo7wIZkjM/6/lT77QWhFh7gOA2uHGWqnhucMEhyP95GrICT9oAb6VHcTjEvWF7BvBoDLwdbL7i91GX0EAE8a9t4WOudyYZHn5XjqA06nFoxnIh0XEVK1CMVSvo1S6Oz7jiFAOH6YT9oz3wUTHGwFZK5rriS3EUOxZDr5cUVPrh1nTk57cGeY7R0oLzjIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
+ is 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com;
+ dmarc=temperror action=none header.from=amd.com; dkim=none (message not
+ signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J6ZH8cUYPxMEF6gJh4Qvdm7EFKssCP9kvh6CreJngeo=;
- b=sUQ/G012CaTUsfdx2weybWBSt537MBtoae5Plu4v7ZEpAkbqLcAZkFh7pRfo1nFOztCkFj40JpCgqYQ1wnfWCI1I18Rug3151iShbJImPfwuD+gIjzlAzunqymcckWHgFfaeX6PLMEysYKvK8/I+xkf2i19/+PzFZJwpy5zAMpw=
-Received: from SA9PR13CA0143.namprd13.prod.outlook.com (2603:10b6:806:27::28)
- by MN2PR12MB4111.namprd12.prod.outlook.com (2603:10b6:208:1de::22) with
+ bh=3YoPxriIVapTGkqMB7FGQ9QL2f5SA2AMi4KllrwrYZc=;
+ b=GGx92ClnJNpz5vi4QwXZH8ewgoz5wiZda1pFhv6ZEJNkjhzpAipRo+PwqCOQJ4cqYNjCQoUryMf4hpPB7Hakk3BGjxRvmbaASLK+GzrKoG+uxsUyJw8VjmFSnloHcpBabv521CcsBq53GOwXWEM3bB1mWTh2SEEmCUPcr3H8ZBY=
+Received: from BN1PR14CA0027.namprd14.prod.outlook.com (2603:10b6:408:e3::32)
+ by PH7PR12MB5619.namprd12.prod.outlook.com (2603:10b6:510:136::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Thu, 4 Sep
- 2025 04:20:07 +0000
-Received: from SA2PEPF00001506.namprd04.prod.outlook.com
- (2603:10b6:806:27:cafe::48) by SA9PR13CA0143.outlook.office365.com
- (2603:10b6:806:27::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.10 via Frontend Transport; Thu,
- 4 Sep 2025 04:20:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+ 2025 04:20:27 +0000
+Received: from BL6PEPF0001AB4B.namprd04.prod.outlook.com
+ (2603:10b6:408:e3:cafe::51) by BN1PR14CA0027.outlook.office365.com
+ (2603:10b6:408:e3::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.18 via Frontend Transport; Thu,
+ 4 Sep 2025 04:20:27 +0000
+X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
+ 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=temperror action=none header.from=amd.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of amd.com: DNS Timeout)
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00001506.mail.protection.outlook.com (10.167.242.38) with Microsoft
+ BL6PEPF0001AB4B.mail.protection.outlook.com (10.167.242.69) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9094.14 via Frontend Transport; Thu, 4 Sep 2025 04:20:07 +0000
+ 15.20.9094.14 via Frontend Transport; Thu, 4 Sep 2025 04:20:26 +0000
 Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 3 Sep
- 2025 23:20:02 -0500
+ 2025 23:20:24 -0500
 Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by satlexmb09.amd.com
  (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Wed, 3 Sep
- 2025 21:19:58 -0700
+ 2025 21:20:20 -0700
 From: K Prateek Nayak <kprateek.nayak@amd.com>
 To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
 	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
@@ -84,9 +83,9 @@ CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
 	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, K Prateek Nayak
 	<kprateek.nayak@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
 	Swapnil Sapkal <swapnil.sapkal@amd.com>
-Subject: [RFC PATCH 15/19] sched/fair: Introduce sched_asym_prefer_idle() for ILB kick
-Date: Thu, 4 Sep 2025 04:15:11 +0000
-Message-ID: <20250904041516.3046-16-kprateek.nayak@amd.com>
+Subject: [RFC PATCH 16/19] sched/fair: Convert sched_balance_nohz_idle() to use nohz_shared_list
+Date: Thu, 4 Sep 2025 04:15:12 +0000
+Message-ID: <20250904041516.3046-17-kprateek.nayak@amd.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250904041516.3046-1-kprateek.nayak@amd.com>
 References: <20250904041516.3046-1-kprateek.nayak@amd.com>
@@ -102,160 +101,147 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To satlexmb09.amd.com
  (10.181.42.218)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00001506:EE_|MN2PR12MB4111:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ce241c9-19c2-4949-31f7-08ddeb6a549f
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4B:EE_|PH7PR12MB5619:EE_
+X-MS-Office365-Filtering-Correlation-Id: 75c34108-41e9-4754-699d-08ddeb6a5fe9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|7416014|1800799024|376014;
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|7416014|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0NMpEag1ccNi1xzst5ezdXxnVyFijKuardFZQq5poZJruT3OS7+L79iZwaRF?=
- =?us-ascii?Q?qUOM6CcKRdR0n0jk0jhUg5CVKd0+UahysgxF5Q74/5Pjr5FceQm6CASZFOJm?=
- =?us-ascii?Q?gwSms4o3zr9eKsYIZNEfXA+jG2UKlAyT/sXyCYoKWBtAneIHYGw53qigIv6Z?=
- =?us-ascii?Q?p7SewT3sNo0nDbfQQ/UmmMj3zURkEIcguFqYWxgfwv3+cbxZBHeCG9m6jXfQ?=
- =?us-ascii?Q?qzy2X0SBf74mhPlkcWicN24oH+aelRbgNs4UG8zpfaD2bqRrHX7Uv8cQP9s1?=
- =?us-ascii?Q?jaQzx5CNw9GQIABXI5XmT/Z5Pc7m7k/0aRCG34Ncjui4V6q4h6DxedtRIs4t?=
- =?us-ascii?Q?xAyqEmb05K7AfDCgOvrddwsk3+Qttr+ppkBSU89/oZzSHTkIYi2k/JzeWSyT?=
- =?us-ascii?Q?QdteZK400Ig8QWvYvyl5eRMSG+EtPvRV21c9RIs+Rj2AFmK4KyVb0wRPf+E+?=
- =?us-ascii?Q?jTjNqbRaOCjbMJWYTMEi+uups6VUHTaqbAOuk0YkOs9MyKNfKdzzAp4dhgsG?=
- =?us-ascii?Q?bVgNNrfiGwanZJrNtZ46bWlzhZR4bvc4FUkcbOoGEL+RsxsMgWizI2vlvEUq?=
- =?us-ascii?Q?11KStMPv1uyJORnPtiEVirzYFEvtDutdtiyYg1kcf7rSSAV7nKts0/Oz6dHy?=
- =?us-ascii?Q?RyFYdzebUQUvqy84XvlYuyypRnoJfSSUchozWidbxBu3Ik1ORuad9X2QfFmU?=
- =?us-ascii?Q?QBtkz1MN2Oq1po5GHjfy75i6nTKRyQIoIcUm7adv8zqb6/BkmwzhZce5BF85?=
- =?us-ascii?Q?XBYa88jVriZv3wENE75A7DSOP1R3BM6SwP3y0cbAA+mHlGydXqGYiYOin/9g?=
- =?us-ascii?Q?+9W8PfSFDiZM+m9vt3HLH1MerqDlr3Js49rGTdIcbc0EB5AIkF1aOjkiO7Gj?=
- =?us-ascii?Q?30giAEyC3m/O+ayZ0zO1DdMnnLlGzcFj2/3PoC9jMtcAamMDLNobnTSqe6+n?=
- =?us-ascii?Q?joQPfqZhCN5Jy00bKe+h6KX4VUUwuXkNtK8F95njHV6yVcK1ARi2TGEAnalg?=
- =?us-ascii?Q?h9fydgab3Ab8Acpzlkme/9ikB0W9mB2VG72Y05Ms9b81Qgeahj0xj0tETTLM?=
- =?us-ascii?Q?GyHMP59EOzW0Vajlevn/BZEDFnSwQmPTYH21A4vVV5vphZjfOIDQzS4hcEaQ?=
- =?us-ascii?Q?9dMm1KHeJKcm+WVHTjz766EHbFrlQ0+RkizdjSNAAc01XSudrCaPicoMNHr4?=
- =?us-ascii?Q?3/+E1U+ronGDDB9O5BXCTEfnhZUs571OUdaJw4HNkTn01E8nlS1f9bwr/rFq?=
- =?us-ascii?Q?8Zgk91mVZ5aQ43W1zFxegx541WKLZ0JwS4YCt3tQUxsS4Jaz2ROIWPvJ3lGf?=
- =?us-ascii?Q?t8+Kwek7WfuJrvlIvEhzKBvKUshGRg2fjJqUEwqnGqbZiX4LOrRbI7zHOYnX?=
- =?us-ascii?Q?YQ2XC3CB+IulWjlN1RTEO6JG9ctC50quM369OMl0K7R1zfRdjp13jt9YVt8q?=
- =?us-ascii?Q?j3hSKmRAzEm2um5jIv42dIDsc8p2im4xPvVGzxDN1IyDx3MSf40GVnMasrL0?=
- =?us-ascii?Q?+zZubzn0yOr0VYourjC1fNoAQ3UXbb+McfdE?=
+	=?us-ascii?Q?w86NuQ/cutBXzR4nOZZEhUXgDgZfduaghkzEw9XEQWWP8xHJdJMAcE1mcW61?=
+ =?us-ascii?Q?FMw+zu2+LCmDAOEGcIGv0g4vT66QerJ4kgTxXLYaN3bjudmgtHSlw3RNOjYu?=
+ =?us-ascii?Q?0H+mZPCzAcSvb8CV5t3ZA9pn430+p03zyyIFlsCaTYK4fh+7vwQ1oKeAae+e?=
+ =?us-ascii?Q?0NQ2Psw062UTFFL+ZuXG5k30N7kelesYLgcIfEs/mqfD0DxyKNUlEh3SRlLr?=
+ =?us-ascii?Q?Fks+nVlYE3cHJCGWeFAhTsyPQO9soIibyuZhnw+34H3jpKXQbTMWa3Tyzjn2?=
+ =?us-ascii?Q?L7oRqn4CRYJGBUolouuTL1QR/1aGE9D1CAPU8h7wdy2iLH3TuQRwOqrTDd6E?=
+ =?us-ascii?Q?8u0DRxKKiSeVgrkIZFrNGqM1jMZc9kD1cFGzIg46/2S+T/S+bV3tLefyadAr?=
+ =?us-ascii?Q?nMGITvd5sxeoOE3PtPrwrqFABtDwuxwRrK+FRoCoPngrNSigASgwUNRqkXp5?=
+ =?us-ascii?Q?CiL1g7nwt1K7qMpDkkWb80QlJrxFm0vpVdG3sSAC/4VI5y7EEFDZuQVbDlt8?=
+ =?us-ascii?Q?eSs3SZTZRGWWFSVVhE65l7W7L93KRwv30/hHtiwo1NYyYqqIEDXgOf5hDHwh?=
+ =?us-ascii?Q?Ex6kkliK6vEt/uJIzvQhXVgxjwNobnLuZTJHRZh9uIHvBY5422kvs6QCjcnk?=
+ =?us-ascii?Q?DKMV+sKg+PWqjKXBvcX0vGnZDaYKqcBLJ8grNRlkkMtPtvthhZ1oPFtc3S3s?=
+ =?us-ascii?Q?LrUhiDPMq1QrgsaWQq/28hyU8VDem+pw5nUiB1C3iCsJDprLO8eXlWU4HkVC?=
+ =?us-ascii?Q?KOrBzgEV7eI7HVTmiJcaj434roYbyCu0/BQi1W5IGfzEUxJTuklyUebHIrko?=
+ =?us-ascii?Q?5YD/6jW0mv2h39BVNEkqd8RIYu7tCxZ11jHqvsEYjCgutP523VrC/5eGw4qM?=
+ =?us-ascii?Q?I5x7IWJb/VvbPcuOWn3OG7e5emzWy+mikV2xeRRrQ8xm3e4AMjG6/C/9CU3J?=
+ =?us-ascii?Q?HNWe4IDsBqqRr53roIsX9rbrOez0d/XiohjvHrckDRpha2cYHQYAK6hU9P8S?=
+ =?us-ascii?Q?XOiv5JmtyE4Et2zlX5No/N03jKUhwKoBiMPotWcKIIcI/3DsCI5W2EZxoZCo?=
+ =?us-ascii?Q?7xHEXgHp5blh4Gu5A8oUlt2fJ1Sx0zmUcw35ZS4FaC8qyG72WQ+3r96pU8Z3?=
+ =?us-ascii?Q?h9P7HAH5b+P3R0ejfbDS8/GCbDINGBVN705soglFMuSUu7LX4V3IZDtDhQku?=
+ =?us-ascii?Q?2/HWZ3xjKnHHhTETv97gb8N/muIqGfB9S8Blcot/8Ef8l+6RHrYcUq91N7Wt?=
+ =?us-ascii?Q?hISRvchwqyLrq27fDSZBO72LxPsqB1sBxvxKbSVIerOIT9cjwutRmd8Kgd1E?=
+ =?us-ascii?Q?J1x92JrnRTP7TOoFr6XpoVNtEhcZV2qFV/DBmF9j4MmFauhI/9VG23MC1FwF?=
+ =?us-ascii?Q?uF3AQXvdyIcDuscYvIPh8siIGif6osTo2opMusn3Ez0FbU5zxzfCI7ioqHDq?=
+ =?us-ascii?Q?nkxYBxuBAhnTzZdcuI0cSOpL8toqiwFl2UD/wSqVN1GLgx2Zd+jJzzNIAS7L?=
+ =?us-ascii?Q?EbzDnWKiJSOU/fyHFkqAHz6fkjLSj/tIuxi3?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(7416014)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 04:20:07.4603
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 04:20:26.4229
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ce241c9-19c2-4949-31f7-08ddeb6a549f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75c34108-41e9-4754-699d-08ddeb6a5fe9
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00001506.namprd04.prod.outlook.com
+	BL6PEPF0001AB4B.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4111
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5619
 
-nohz_balancer_kick() currently depends on "nohz.idle_cpus_maks" to kick
-off an idle balance if it finds a more preferred CPU in nohz idle state.
+Convert the main nohz idle load balancing loop in
+sched_balance_nohz_idle() to use the distributed nohz idle tracking
+mechanism via "nohz_shared_list".
 
-Move the detection logic into sched_asym_prefer_idle() and use the
-distributed "sd->shared" based nohz tracking to kick ILB if a more
-preferred CPU is found idle.
+The nifty trick to balance the nohz owner at the very end using
+for_each_cpu_wrap() is lost during this transition. Special care is
+taken to ensure nohz.{needs_update,has_blocked} are set correctly for a
+reattempt if the balance_cpu turns bust towards the end of nohz
+balancing preserving the current behavior.
 
 Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 ---
- kernel/sched/fair.c | 70 ++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 54 insertions(+), 16 deletions(-)
+ kernel/sched/fair.c | 62 ++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 47 insertions(+), 15 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 5e7198078d19..d309cb73d428 100644
+index d309cb73d428..c7ac8e7094ed 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -12289,6 +12289,56 @@ static inline int find_new_ilb(void)
- 	return -1;
- }
- 
-+static inline int
-+__asym_prefer_idle(int cpu, struct sched_domain *sd_asym, struct cpumask *idle_mask)
-+{
-+	int i;
-+
-+	for_each_cpu_and(i, idle_mask, sched_domain_span(sd_asym)) {
-+		if (sched_asym(sd_asym, i, cpu))
-+			return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int sched_asym_prefer_idle(int cpu, struct sched_domain *sd_asym)
-+{
-+	struct sched_domain *sd = rcu_dereference(per_cpu(sd_nohz, cpu));
+@@ -12685,27 +12685,59 @@ static int sched_balance_nohz_idle(int balancing_cpu, unsigned int flags, unsign
+ {
+ 	/* Earliest time when we have to do rebalance again */
+ 	unsigned long next_balance = start + 60*HZ;
 +	struct sched_domain_shared *sds;
-+
-+	if (!sd)
-+		return 0;
-+
-+	/*
-+	 * If sd_asym_packing is a subset of sd_llc, don't traverse
-+	 * the nohz_shared_list and directly use the mask from
-+	 * sd_nohz->shared to find it a preferred CPU is idling.
-+	 */
-+	if (sd_asym->flags & SD_SHARE_LLC) {
-+		sds = sd->shared;
-+
-+		if (sds &&
-+		    atomic_read(&sds->nr_idle_cpus) &&
-+		    __asym_prefer_idle(cpu, sd_asym, sds->idle_cpus_mask))
-+			return 1;
-+
-+		return 0;
-+	}
-+
-+	/* Try the entire list id sd_asym_packing is larger than sd_nohz. */
+ 	unsigned int update_flags = 0;
+-	int target_cpu;
+ 
+-	/*
+-	 * Start with the next CPU after the balancing CPU so we will end with
+-	 * balancing CPU and let a chance for other idle cpu to pull load.
+-	 */
+-	for_each_cpu_wrap(target_cpu, nohz.idle_cpus_mask, balancing_cpu + 1) {
+-		if (!idle_cpu(target_cpu))
++	rcu_read_lock();
 +	list_for_each_entry_rcu(sds, &nohz_shared_list, nohz_list_node) {
++		int target_cpu;
++
 +		/* No idle CPUs in this domain */
 +		if (!atomic_read(&sds->nr_idle_cpus))
-+			continue;
-+
-+		if (__asym_prefer_idle(cpu, sd_asym, sds->idle_cpus_mask))
-+			return 1;
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * Kick a CPU to do the NOHZ balancing, if it is time for it, via a cross-CPU
-  * SMP function call (IPI).
-@@ -12343,7 +12393,7 @@ static void nohz_balancer_kick(struct rq *rq)
- 	unsigned long now = jiffies;
- 	struct sched_domain_shared *sds;
- 	struct sched_domain *sd;
--	int nr_busy, i, cpu = rq->cpu;
-+	int nr_busy, cpu = rq->cpu;
- 	unsigned int flags = 0;
+ 			continue;
  
- 	if (unlikely(rq->idle_balance))
-@@ -12389,21 +12439,9 @@ static void nohz_balancer_kick(struct rq *rq)
- 	}
- 
- 	sd = rcu_dereference(per_cpu(sd_asym_packing, cpu));
--	if (sd) {
 -		/*
--		 * When ASYM_PACKING; see if there's a more preferred CPU
--		 * currently idle; in which case, kick the ILB to move tasks
--		 * around.
--		 *
--		 * When balancing between cores, all the SMT siblings of the
--		 * preferred CPU must be idle.
+-		 * If balancing CPU gets work to do, stop the load balancing
+-		 * work being done for other CPUs. Next load balancing owner
+-		 * will pick it up.
 -		 */
--		for_each_cpu_and(i, sched_domain_span(sd), nohz.idle_cpus_mask) {
--			if (sched_asym(sd, i, cpu)) {
--				flags = NOHZ_STATS_KICK | NOHZ_BALANCE_KICK;
--				goto unlock;
--			}
--		}
-+	if (sd && sched_asym_prefer_idle(cpu, sd)) {
-+		flags = NOHZ_STATS_KICK | NOHZ_BALANCE_KICK;
-+		goto unlock;
- 	}
+-		if (!idle_cpu(balancing_cpu) && need_resched())
+-			return -EBUSY;
++		for_each_cpu(target_cpu, sds->idle_cpus_mask) {
++			/* Deal with the balancing CPU at the end. */
++			if (balancing_cpu == target_cpu)
++				continue;
++
++			if (!idle_cpu(target_cpu))
++				continue;
  
- 	sd = rcu_dereference(per_cpu(sd_asym_cpucapacity, cpu));
+-		update_flags |= sched_balance_idle_rq(cpu_rq(target_cpu), flags, &next_balance);
++			/*
++			 * If balancing CPU gets work to do, stop the load balancing
++			 * work being done for other CPUs. Next load balancing owner
++			 * will pick it up.
++			 */
++			if (!idle_cpu(balancing_cpu) && need_resched()) {
++				rcu_read_unlock();
++				return -EBUSY;
++			}
++
++			update_flags |= sched_balance_idle_rq(cpu_rq(target_cpu),
++						flags, &next_balance);
++		}
+ 	}
++	rcu_read_unlock();
++
++	/*
++	 * If we reach here, all CPUs have been balance and it is time
++	 * to balance the balancing_cpu.
++	 *
++	 * If coincidentally the balancing CPU turns busy at this point
++	 * and is the only nohz idle CPU, we still need to set
++	 * nohz.{needs_update,has_blocked} since the CPU can transition
++	 * back to nohz idle before the tick hits.
++	 *
++	 * In the above case, rq->nohz_tick_stopped is never cleared and
++	 * nohz_balance_enter_idle() skips setting nohz.has_blocked.
++	 * Return -EBUSY instructing the caller to reset the nohz
++	 * signals allowing a reattempt.
++	 */
++	if (!idle_cpu(balancing_cpu) && need_resched())
++		return -EBUSY;
++
++	update_flags |= sched_balance_idle_rq(cpu_rq(balancing_cpu), flags, &next_balance);
+ 
+ 	/*
+ 	 * next_balance will be updated only when there is a need.
 -- 
 2.34.1
 
