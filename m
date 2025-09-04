@@ -1,134 +1,117 @@
-Return-Path: <linux-kernel+bounces-801535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2117B44655
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:25:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E3FB44658
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E0445A7AA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:25:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C97E1CC0573
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B311272814;
-	Thu,  4 Sep 2025 19:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C687B272E5A;
+	Thu,  4 Sep 2025 19:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTfuf2+g"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QZglj0rj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869EB271475;
-	Thu,  4 Sep 2025 19:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30632727ED
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 19:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757013936; cv=none; b=eOzQctcy1gu0H45Zn1Wbo1l05wTaSL4GVWyrrL5nlcVnfX8tUvvPwHgepICl5/WsW0hKCRj03EpOKXsX8Ur4bVfwlhPiKKkWQM06ozI61Ou/24NqUpVA7unpzatZIJRo/BM+R0LpFyfeWM5gwCPbKQO25prVW8rrAGY9tgr/0wI=
+	t=1757014005; cv=none; b=TAbaW4KY53nWFkslbmLLlPm671Ycly7+oKP6+flO11HMTZz0We7jEhjvu91IY6fmtVX2s6ZGbSh2jEGSz5gBGB+4Z4bQNcKVK2s7uZJBNUbh/RvC4WTTluLAFv0xFElXY1bObCA8D7NX7qLRg80f05B/wLSG/Hjxf5yeqdOLukQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757013936; c=relaxed/simple;
-	bh=WFTDRJlgt2y7MkVfOwUowbeWYPD9Cj1n/7htyMVpgaE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=byr3QsiId0hMHIsW+KH88C/Yhm0C/xtin+ol88fMvlO6BwKf6d99UMVGc4/2GodzaJx4Wqtg0J5FYY+V1GD9+8ADRZXiQW/y/jgr2UN3VO7rnDzPi8z9SNyFW+rWTMoUMoKYMUujp9872OEr0ZuHZkk1WMQDgY0/Qi23OvSKiFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTfuf2+g; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61e8fe26614so2557741a12.1;
-        Thu, 04 Sep 2025 12:25:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757013931; x=1757618731; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RyVqQnJKQdNZxLJ9itE9DWrgXd+hnVDHHwYCFnyfOQA=;
-        b=VTfuf2+g9W9wkGoaF7w8bipmshmEsxRIUr1NFsGSqhKbW5BuCdYXOMmf0+GvXoSr4X
-         PrUygcH3Rw5fUa8BONjeJYCXR22FiyxHPK05fzA3Ri/+rDz/c3hD1VXSj96bbyvYIY1K
-         Cnyl/FphUadDfDs/5K0kY7af+TWf/VzgGCeQfmEcY3d6gsL2zTaPkBmv168Gu2P4NMiX
-         YKdlywpF7y8Sud2cL25dm2TChRpoYNN2VKyrhih1TS73OOd3bWSFYwCfyHqb/hf7ZLQm
-         p+c854VkklYsf+E2Fp4Qm8kep+M+6h/LKvtVKPajwzl7ScjpgbzcAbvA210s+N+a/VIl
-         /pxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757013931; x=1757618731;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RyVqQnJKQdNZxLJ9itE9DWrgXd+hnVDHHwYCFnyfOQA=;
-        b=v/HJlyAYckhdlQ+Vk8fRqw7TG6mK8Xad08d/F8mLdoEkE0Buvao3SjclsP9Y4owF1D
-         T66je2idR4Kb2ZmI9WtPKHEZw7XvenAHrvmGL+xavAr5xhh5+wk8dGsEOd/nuozTXll5
-         IuxQYsFN1gPt9R87U6vUzOGw2FRJoL89ak/CuZ1CrTpCcD0EAo/10Rb8WwM8kbtKERMP
-         u70+XhhEx0lSk7k0+Pf9wJhFs7JbxphO4/cgUdr7V0afGQ+yKCDMu2Whij1ENuRd8bHK
-         yeQd8ndF5CXQO/z7IfqyfT+zdAVpQfirL/sRep50lHAdFnL5YXEwA5KO8wi8CqXIGoed
-         Xelw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfur8cbasg5ZlW+atFO7utZjR5hujwnyb5uLVMVygLjNz2rF0I+G7BmGBwFB5MOPaHKJx2Nl1FOxwMYvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywlMU60zXQuCX/Cfvqu2NaIVJZFJwcfIAW8a6ZL99VSQuyP2Qe
-	oGZ+mGlCmrzBmPMtIyYlhgDc861nH8cazEMTwRth1BobqBpuYtift9gN
-X-Gm-Gg: ASbGnct+LMefoz7EHIdIPkxH3ztz0BX6a8Sl4qiA299fzU93GcTzIql5BYuIGSKUQ+d
-	0Bv7zyh2yq1WNyB0gbv+5hZmzSWVuJN8gBGjR8DhyY81eH3auGim2rGvEkxJ0+0Gj0cHtSdOiNI
-	bSHNM3KjCpc0ATGPdVB0sosyAaPmeoKHtyK6sgYc1OqGkmBT92KPAtaerZjEZR69JthvMcUdlbr
-	/uI6FN4JxM5D757wtLMTwScKRrRIlyBgQYTaNYkLzm3Uc46YoM+XB2va0f7rG8aiOpHjxn3QKas
-	UukMfs4t5Q5IsBSnghuNLDyt6KXGCLs/IHasReJy6kZXOat6570gJ0eDPJqlRoJH67VVTGRoAAr
-	YmpMEvgTzNfEFvfOPNhGs0zekvzf9AAJ/j3XfY/Eq3x+KN+Bt+LAEqFHyVpzqH6WfR53nhVDvAJ
-	hNQemCGGLWVXiQ8PE=
-X-Google-Smtp-Source: AGHT+IGfuHthfXoTF/mLOHQy9KLR2aH/GiyiC921vGHckJ2DRkf9WZi723JdW/S0MUDp+nITTXm0sQ==
-X-Received: by 2002:a05:6402:40cf:b0:61d:2405:b4a5 with SMTP id 4fb4d7f45d1cf-61d26d9c302mr18548906a12.33.1757013930652;
-        Thu, 04 Sep 2025 12:25:30 -0700 (PDT)
-Received: from XPS.. ([2a02:908:1b0:afe0:7cda:f91c:9398:4c62])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc214bb7sm14188524a12.13.2025.09.04.12.25.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 12:25:30 -0700 (PDT)
-From: Osama Abdelkader <osama.abdelkader@gmail.com>
-To: tsbogend@alpha.franken.de,
-	macro@orcam.me.uk
-Cc: linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Osama Abdelkader <osama.abdelkader@gmail.com>
-Subject: [PATCH v3] mips: math-emu: replace deprecated strcpy() in me-debugfs
-Date: Thu,  4 Sep 2025 21:25:25 +0200
-Message-ID: <20250904192525.39830-1-osama.abdelkader@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757014005; c=relaxed/simple;
+	bh=zaSNqNWr/ozA6Ijh9En3MDPWxOwBsI+hHrcq5pxJ/mA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EkAuDnT2Eq0FAD/JQA/EFanwLjQr9VNcmIXN67eENtUCdsXWK+QpF57R+F6M8OOYRQM/9qd59cUVuA2n3u65er/d+cDzrZ9WNNDYdFekOHl2lmskwqst45M5YtdzfWRXDad66xeZ98kWSoJ4LDcFbvYjba/xq9c8hi1gF3QvPNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QZglj0rj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757014002;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dac3Dl60syEmIm3dGi2bHfeTJ2Rbg7LOh3H/HPUT6/U=;
+	b=QZglj0rjAekSf0xH9kNFQK3q1mvb9otkLQwfnmQr7E+rMPyrhNin7LVdp6yIn/Y/j3Ee6r
+	DNPpm61avNQnbLTOQsXAywvoL2CBrO4GykzKxmPHULHlTvDtq/6aQoGIqtsBEnYrfN4OJ4
+	RAY6lMoTqHHv0oUn5rZ7nuWU2lwvIns=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-629-zb8rTkA8O7SfBrtN72BJ9Q-1; Thu,
+ 04 Sep 2025 15:26:37 -0400
+X-MC-Unique: zb8rTkA8O7SfBrtN72BJ9Q-1
+X-Mimecast-MFC-AGG-ID: zb8rTkA8O7SfBrtN72BJ9Q_1757013996
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DCFE119560B4;
+	Thu,  4 Sep 2025 19:26:35 +0000 (UTC)
+Received: from aion.redhat.com (unknown [10.22.88.117])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 618661800452;
+	Thu,  4 Sep 2025 19:26:35 +0000 (UTC)
+Received: by aion.redhat.com (Postfix, from userid 1000)
+	id 9B73B42EE90; Thu, 04 Sep 2025 15:26:33 -0400 (EDT)
+Date: Thu, 4 Sep 2025 15:26:33 -0400
+From: Scott Mayhew <smayhew@redhat.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] nfsd: delete unnecessary NULL check in __fh_verify()
+Message-ID: <aLnn6ZngnxAR8tXW@aion>
+References: <aLnhkm7q1Di0IiIu@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLnhkm7q1Di0IiIu@stanley.mountain>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-use strscpy() instead of deprecated strcpy().
+On Thu, 04 Sep 2025, Dan Carpenter wrote:
 
-Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
----
-v2:
-change function signature to get len and the caller.
-v3:
-use same parameters and arguments order
----
- arch/mips/math-emu/me-debugfs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> In commit 4a0de50a44bb ("nfsd: decouple the xprtsec policy check from
+> check_nfsd_access()") we added a NULL check on "rqstp" to earlier in
+> the function.  This check is no longer required so delete it.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-diff --git a/arch/mips/math-emu/me-debugfs.c b/arch/mips/math-emu/me-debugfs.c
-index d5ad76b2bb67..49bf2b827ce2 100644
---- a/arch/mips/math-emu/me-debugfs.c
-+++ b/arch/mips/math-emu/me-debugfs.c
-@@ -37,11 +37,11 @@ DEFINE_SIMPLE_ATTRIBUTE(fops_fpuemu_stat, fpuemu_stat_get, NULL, "%llu\n");
-  * used in debugfs item names to be clearly associated to corresponding
-  * MIPS FPU instructions.
-  */
--static void adjust_instruction_counter_name(char *out_name, char *in_name)
-+static void adjust_instruction_counter_name(char *out_name, char *in_name, size_t len)
- {
- 	int i = 0;
- 
--	strcpy(out_name, in_name);
-+	strscpy(out_name, in_name, len);
- 	while (in_name[i] != '\0') {
- 		if (out_name[i] == '_')
- 			out_name[i] = '.';
-@@ -226,7 +226,7 @@ do {									\
- 
- #define FPU_STAT_CREATE_EX(m)						\
- do {									\
--	adjust_instruction_counter_name(name, #m);			\
-+	adjust_instruction_counter_name(name, #m, sizeof(name));			\
- 									\
- 	debugfs_create_file(name, 0444, fpuemu_debugfs_inst_dir,	\
- 				(void *)FPU_EMU_STAT_OFFSET(m),		\
--- 
-2.43.0
+Reviewed-by: Scott Mayhew <smayhew@redhat.com>
+
+-Scott
+> ---
+>  fs/nfsd/nfsfh.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+> index 062cfc18d8c6..3edccc38db42 100644
+> --- a/fs/nfsd/nfsfh.c
+> +++ b/fs/nfsd/nfsfh.c
+> @@ -403,9 +403,7 @@ __fh_verify(struct svc_rqst *rqstp,
+>  	if (error)
+>  		goto out;
+>  
+> -	/* During LOCALIO call to fh_verify will be called with a NULL rqstp */
+> -	if (rqstp)
+> -		svc_xprt_set_valid(rqstp->rq_xprt);
+> +	svc_xprt_set_valid(rqstp->rq_xprt);
+>  
+>  check_permissions:
+>  	/* Finally, check access permissions. */
+> -- 
+> 2.47.2
+> 
 
 
