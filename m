@@ -1,54 +1,64 @@
-Return-Path: <linux-kernel+bounces-800182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3450BB43454
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:40:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F7EB4344F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F8743BD1EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:39:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 186D9188A1E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5E72BD024;
-	Thu,  4 Sep 2025 07:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Y3QxZhSJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7244F2BE7B8;
+	Thu,  4 Sep 2025 07:34:42 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265952BE043;
-	Thu,  4 Sep 2025 07:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792F129E113
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 07:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756971259; cv=none; b=gj7cfDZKKixbJuysKEpx5FfTrwp/b+1MgZGBePgx5Dgc7ljSpLFmFftLImMYcAkisVr5cYTaIyLi5TWem/Lfk2crKxidd2PcxspKGeVb0E2aJsZpKFtMp0fGRhftdIqlFvTGgfZ8IM15FFdPA8lKM9QEMpQrketYbX2o+RSpxOM=
+	t=1756971282; cv=none; b=cC5rYMwqO3fYugW5bDjN0QWhjeTCtqzm+obmwMYm1Kv6qBITfZiijFxzjHcv8Xudc4d1ZE7YQtGgD9/kBeCz1L5QKKryLn1w1HZzLVkPhHZLLbBhr7b7AuBqm8yW0GekvHT+T9pjUi0txpv+DzIpqF0g3r74LuSPcBVh/rqYSIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756971259; c=relaxed/simple;
-	bh=Gb3dXxHLnyIdodkR1zm/mQFOrmfiQ9kM+6EHCHGDVN0=;
+	s=arc-20240116; t=1756971282; c=relaxed/simple;
+	bh=9Lfs7x06aYUGDh170BRagUu5k+P060o70Hk6IG+sLGY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=akNYd4P+j/HH/jl0DnMpVdN7hEiokVsmuBKpZzvLeWB+iPnTTH8EEiH4BYdLY//bUv83JlBmMyoofXnAhuujw8YDUSjGY3lGoQww/AJsRGegnAaCapq1i1x/v8sr7LicjQlSdNYdVvNvuD4oCda2wXih//Bctv48kIk+hUCaWVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Y3QxZhSJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14CEDC4CEF0;
-	Thu,  4 Sep 2025 07:34:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756971258;
-	bh=Gb3dXxHLnyIdodkR1zm/mQFOrmfiQ9kM+6EHCHGDVN0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y3QxZhSJIZBfP4jM4JEwk5PDleObAscxustVWe07xtnVG6zbceiKWI6eP6rwHnALH
-	 N/ukTAwlUE1i5ex6cqD2lIfuBmue4r6r/hFJkYpKMUbHTZ86a/9ocLIlTSwuUV/NqS
-	 zJkDpnSGCRdr+4EleFmaRb09EkJ9Q6sthnouIlkc=
-Date: Thu, 4 Sep 2025 09:34:13 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Kuen-Han Tsai <khtsai@google.com>
-Cc: krzysztof.kozlowski@linaro.org, prashanth.k@oss.qualcomm.com,
-	Thinh.Nguyen@synopsys.com, s.hauer@pengutronix.de,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@kernel.org
-Subject: Re: [PATCH v2] usb: gadget: f_ecm: Fix ecm_opts->bound logic in bind
- path
-Message-ID: <2025090401-chemo-pedigree-3556@gregkh>
-References: <20250904065203.1162629-1-khtsai@google.com>
- <2025090429-snooze-womankind-77fb@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=h4OzsS/ijb6EPe3wfmxLnzbIAauQQCjZBz3Of+rzWA883d7r+KFgANFQZeBHGrXmnNS817TGbr8Tk70IgMFr5JAyNuAAob27bwP4C+4/8KV9P/IKwM4Al0oo64qjfWOqe4oXRRkqTKe5A/wUWt6RL2s+8dXtsXSRmlqRpA9NUHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uu4UF-0006Gq-DD; Thu, 04 Sep 2025 09:34:27 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uu4UE-003gug-3D;
+	Thu, 04 Sep 2025 09:34:27 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uu4UE-0025QG-2n;
+	Thu, 04 Sep 2025 09:34:26 +0200
+Date: Thu, 4 Sep 2025 09:34:26 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	kernel@pengutronix.de, Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	Alvin =?iso-8859-15?Q?=A6ipraga?= <alsi@bang-olufsen.dk>
+Subject: Re: [PATCH v6 1/2] dt-bindings: clock: add TI CDCE6214 binding
+Message-ID: <aLlBAuYoHIJZLfiE@pengutronix.de>
+References: <20250903-clk-cdce6214-v6-0-b2cc0a6f282b@pengutronix.de>
+ <20250903-clk-cdce6214-v6-1-b2cc0a6f282b@pengutronix.de>
+ <20250904-arboreal-upbeat-iguana-aebba6@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,69 +67,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025090429-snooze-womankind-77fb@gregkh>
+In-Reply-To: <20250904-arboreal-upbeat-iguana-aebba6@kuoka>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Sep 04, 2025 at 09:33:32AM +0200, Greg KH wrote:
-> On Thu, Sep 04, 2025 at 02:52:00PM +0800, Kuen-Han Tsai wrote:
-> > The bound flag in ecm_opts is being set to true even if
-> > gether_register_netdev() failed.
+On Thu, Sep 04, 2025 at 09:18:13AM +0200, Krzysztof Kozlowski wrote:
+> On Wed, Sep 03, 2025 at 03:55:45PM +0200, Sascha Hauer wrote:
+> > Add device tree binding for the CDCE6214, an Ultra-Low Power Clock
+> > Generator With One PLL, Four Differential Outputs, Two Inputs, and
+> > Internal EEPROM.
 > > 
-> > Move the assignment of ecm_opts->bound to after the success check to
-> > ensure the flag only reflects the true state. The race condition on this
-> > flag is not a concern because the caller, configfs_composite_bind(),
-> > binds functions sequentially.
-> > 
-> > Fixes: d65e6b6e884a ("usb: gadget: f_ecm: Always set current gadget in ecm_bind()")
-> > Cc: stable@kernel.org
-> > Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
+> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 > > ---
-> >  drivers/usb/gadget/function/f_ecm.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/usb/gadget/function/f_ecm.c b/drivers/usb/gadget/function/f_ecm.c
-> > index 027226325039..9f5ed6f32a62 100644
-> > --- a/drivers/usb/gadget/function/f_ecm.c
-> > +++ b/drivers/usb/gadget/function/f_ecm.c
-> > @@ -690,13 +690,14 @@ ecm_bind(struct usb_configuration *c, struct usb_function *f)
-> >  
-> >  	if (!ecm_opts->bound) {
-> >  		status = gether_register_netdev(ecm_opts->net);
-> > -		ecm_opts->bound = true;
-> >  	}
-> >  
-> >  	mutex_unlock(&ecm_opts->lock);
-> >  	if (status)
-> >  		return status;
-> >  
-> > +	ecm_opts->bound = true;
-> > +
-> >  	ecm_string_defs[1].s = ecm->ethaddr;
-> >  
-> >  	us = usb_gstrings_attach(cdev, ecm_strings,
-> > -- 
-> > 2.51.0.338.gd7d06c2dae-goog
-> > 
+> >  .../devicetree/bindings/clock/ti,cdce6214.yaml     | 198 +++++++++++++++++++++
+> >  include/dt-bindings/clock/ti,cdce6214.h            |  24 +++
+> >  2 files changed, 222 insertions(+)
 > > 
 > 
+> I don't understand what is happening here.
 > 
-> Hi,
-> 
-> This is the friendly semi-automated patch-bot of Greg Kroah-Hartman.
-> You have sent him a patch that has triggered this response.
-> 
-> Right now, the development tree you have sent a patch for is "closed"
-> due to the timing of the merge window.  Don't worry, the patch(es) you
-> have sent are not lost, and will be looked at after the merge window is
-> over (after the -rc1 kernel is released by Linus).
-> 
-> So thank you for your patience and your patches will be reviewed at this
-> later time, you do not have to do anything further, this is just a short
-> note to let you know the patch status and so you don't worry they didn't
-> make it through.
-> 
-> thanks,
-> 
-> greg k-h's patch email bot
+> Patch changed in weird and unexplained way - nothing in the changelog
+> explains dropping SPDX - and does not pass even checkpatch.
 
-Oops, nope, wrong bot, forgot to turn this one off...
+I removed the SPDX by accident, will add it back of course.
+
+Other than that, what's weird? Changelog says I now use the pinctrl
+subsystem to configure pins. OK, that also changes the binding, I could
+have mentioned that explicitly, sorry for that.
+
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
