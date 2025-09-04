@@ -1,178 +1,164 @@
-Return-Path: <linux-kernel+bounces-800314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853EBB4362B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:45:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94231B4362E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3D2B7AADD3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:43:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FB75175F9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFC42C234F;
-	Thu,  4 Sep 2025 08:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62002C327C;
+	Thu,  4 Sep 2025 08:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m6bvvW3R"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="raH91HrR"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4221C2C11F6;
-	Thu,  4 Sep 2025 08:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C18F28B3E2
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756975500; cv=none; b=hSxsklOXAEW2PmBGZ7RYcCBjMnk8R0FLEwOl4vky+iwdi9WfeUIUG2XGQlmmSQCgwoiHwjshqrBHBU5ESsZAc+VwDoVOEbB2jIpbwHWN+Dqg7gJXwkrIvHeLpZSZH1yj72QRWF/iuWuQEzJsnzpAydB9gG+OWC7QNK8ywl4pBLk=
+	t=1756975523; cv=none; b=nIErrUQi/Nt7RhLDdvKXIrwa1F2wCa4bZMOgatTjtDX6A4f04i2fwvwq2Y793xkuRwNBj/37CFcXGsirbrXWerPDb52PuAo44lhN0tSs25J5IXGCR3kpplVDZNgEnlLY9tMf//4sITJej++dvTh6mB6L8E34uOXAMg2DliZK9mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756975500; c=relaxed/simple;
-	bh=gzetGRXPPEFaGfqJAQ6Chzwhs2gIrlbRduBmetQTYrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tI8jmt4xM9HxdsoLxPtjVjKSR0dzxveejQIGbGkkHQG2a5zE20/T67wSJExzZnpQminw6H8f8GD/1WkkSBVpixrCpmvU1U9EglugASZigCy38IIfeSeoSZgr3B6TznIdVfECfhsCac3QZk9S2MbnU2RGkHbFzEjhp8OEa1lmSMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m6bvvW3R; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756975499; x=1788511499;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gzetGRXPPEFaGfqJAQ6Chzwhs2gIrlbRduBmetQTYrY=;
-  b=m6bvvW3Rom+DeuhxAKuIGPrKc89UY7KAXA3I7vWy1nyug+yc5r4v78ZD
-   DPxZAYGVJr3bT2h1WN1DNGCySAFMrf8mHg+8Pg1jBvDoQlJ1213IXOq6M
-   00j3uUWMMxh5xA/QkNLmi+Laj2WquRC4GIidlCmG9UVtakPm4olsKhGxT
-   777dCUeIGpx8nkMMPLyChN3KuDLj1MgTAUUqtYw6nI6QOWe5xhNKbyJCg
-   EQIVQ7we70bB1bF1Nu6rMaE+nIKZgwzu8ePzNYMucGedCZrQMCwlCrAPV
-   bbbyBVmk+qIYkqcXf8cfhFrxX1T3i+ZTRKBYFFAP4qMF5RRb1U5gqLBT+
-   A==;
-X-CSE-ConnectionGUID: HW5VAqwcTQSYK3jPIFVeHA==
-X-CSE-MsgGUID: WY7bHa3aSPKAMJd1f7FSOw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="58520275"
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="58520275"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:44:58 -0700
-X-CSE-ConnectionGUID: N3TxRB0xQP6c9RbJ1GcVrg==
-X-CSE-MsgGUID: aYx3EAAlQhmx5apJZHzVyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="177096940"
-Received: from agladkov-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.92])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:44:53 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id EBE7611FCC7;
-	Thu, 04 Sep 2025 11:44:49 +0300 (EEST)
-Date: Thu, 4 Sep 2025 11:44:49 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Isaac Scott <isaac.scott@ideasonboard.com>
-Cc: laurent.pinchart@ideasonboard.com, rmfrfs@gmail.com, martink@posteo.de,
-	kernel@puri.sm, mchehab@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	linux-media@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	hverkuil@kernel.org, nicolas.dufresne@collabora.com,
-	tomi.valkeinen@ideasonboard.com, jonas@kwiboo.se,
-	dan.scally+renesas@ideasonboard.com, m.szyprowski@samsung.com,
-	mehdi.djait@linux.intel.com, niklas.soderlund+renesas@ragnatech.se
-Subject: Re: [PATCH v2 1/3] media: v4l: Add helper to get number of active
- lanes via a pad
-Message-ID: <aLlRgRBztMEicEgM@kekkonen.localdomain>
-References: <20250903102243.1563527-1-isaac.scott@ideasonboard.com>
- <20250903102243.1563527-2-isaac.scott@ideasonboard.com>
+	s=arc-20240116; t=1756975523; c=relaxed/simple;
+	bh=bF8A9kjIXOyp4KJQCwHrBsND+iKStCkVgpl25MXZkzc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=aOypghzzpcP4z1JnDTfmK8aIyvBck20nkwovjB9FLT+PfhlwYJmOMfWFKb43rf4kvJ3x1BXuC3tEMqJGC8l8X4S4jO4SgsVkDoCJyESR+yA/uu6kJFOaPPiReglaAxXiJSFRRwkDDor3ylCbQLXoMLttvxZJfWRTGY8Vhnlw+Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=raH91HrR; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-77265551c77so1336457b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 01:45:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756975521; x=1757580321; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P71OTbqs7HkHLt+0YQ5aCeNmESM5V1X30oeNZynlP4Y=;
+        b=raH91HrRbRogsl8dWmTlnqyl5lxpIK4vHdCEhQm0sQQ4ADvj7kT4J2yZNqzWC3sDUA
+         zpSY+cybxMtEWChCfAwvAWXo+nvn3jR1Zw/JPdrAFP7WoSeqCJhIgLxzoUK5RkuQ+4Yx
+         QcSGwnhyoNay6MI7oAWm1TG5vKgZXdf4A1YxJexjuDp4cRuyYwAXlOVYjomRwoRbi955
+         k9ooOJezddfhik10cxE3crtGL0PVnVAyBDQB4MNrZevqXX+i8uR2F7U4Elb+Gp89ebEL
+         3aNDeXA57QKM3P1G/hpKAwJFEUY/ZAb3ZDEJu8gt89/0r2joBLBM6mT2UCP51YFnwuzD
+         bOQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756975521; x=1757580321;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=P71OTbqs7HkHLt+0YQ5aCeNmESM5V1X30oeNZynlP4Y=;
+        b=NOsmzyhmcJKhqEcUIa/D4CVEsbCscQKsBC8H/yOHu6f/V0lIybUU0KPSAspRdtdpqj
+         px8mtkAliZk5elrRL2P4fktaPW1z0UvgUY6lP5xHPKku19gDeTySR9JLR8+sPYk9GUZn
+         vXBZiZNYr76ICXDpIpjnKZqRG9mJKgp5hZIBP2wKfcHBHcR52WzYWgt9qcuQZ97m9mCT
+         rhaMeNiGYaptKzE7d0YQG+eBwYuC/acBywTaJMqAtUL9taGAEpyAsF+RYm+BiNiDNQNO
+         7V3AL1NXQtgeWbWTPDwFszAMwQnPPRB/XbcQaWI2hic3S2sHXQomdFeLQ/LYBn9KZuqn
+         WJeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiZXQF7Rg6yktiDvEgSCrLhbm2gkQBySI5hqKRHUMvPI+7d1fHPDiHA3rnwqFR9WQlnhEdGwct6OL3pyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyvRjE40gV0KasaUfDd0GLJstQtZsSiXvtAuVYMVFwiwNmju1t
+	Qh/xOPxF/djRUIgXdW0ovxUYUBdgQT3J7i7uB3SOlAHlDaPSx02tti/1vifmWw5h4pHPAfJNEaE
+	aNmV22Q==
+X-Google-Smtp-Source: AGHT+IFifnWO8BsbpNnWCA7xwWar2zICrVkC3ktYtvdG1V4ckGV0ffM8aKP/TkCPQ7eLFK9nQT5Kj0Gq72U=
+X-Received: from pga17.prod.google.com ([2002:a05:6a02:4f91:b0:b49:dac2:f892])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:32a7:b0:243:15b9:7791
+ with SMTP id adf61e73a8af0-243d6f7d02fmr23663536637.53.1756975520887; Thu, 04
+ Sep 2025 01:45:20 -0700 (PDT)
+Date: Thu, 4 Sep 2025 01:45:09 -0700
+In-Reply-To: <97a422c0ba7a5d68b35b5327d3bf0cd11429c300.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903102243.1563527-2-isaac.scott@ideasonboard.com>
+Mime-Version: 1.0
+References: <20250829000618.351013-1-seanjc@google.com> <20250829000618.351013-6-seanjc@google.com>
+ <49c337d247940e8bd3920e5723c2fa710cd0dd83.camel@intel.com>
+ <aLT2FwlMySKVYP1i@yzhao56-desk.sh.intel.com> <aLcqVtqxrKtzziK-@google.com> <97a422c0ba7a5d68b35b5327d3bf0cd11429c300.camel@intel.com>
+Message-ID: <aLlRlbaq84IRvNPv@google.com>
+Subject: Re: [RFC PATCH v2 05/18] KVM: TDX: Drop superfluous page pinning in
+ S-EPT management
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: Yan Y Zhao <yan.y.zhao@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, Vishal Annapurve <vannapurve@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ira Weiny <ira.weiny@intel.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "michael.roth@amd.com" <michael.roth@amd.com>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Isaac,
+On Tue, Sep 02, 2025, Rick P Edgecombe wrote:
+> On Tue, 2025-09-02 at 10:33 -0700, Sean Christopherson wrote:
+> > > Besides, a cache flush after 2 can essentially cause a memory write t=
+o the
+> > > page.
+> > > Though we could invoke tdh_phymem_page_wbinvd_hkid() after the KVM_BU=
+G_ON(),
+> > > the SEAMCALL itself can fail.
+> >=20
+> > I think this falls into the category of "don't screw up" flows.=C2=A0 F=
+ailure to
+> > remove a private SPTE is a near-catastrophic error.=C2=A0 Going out of =
+our way to
+> > reduce the impact of such errors increases complexity without providing=
+ much
+> > in the way of value.
+> >=20
+> > E.g. if VMCLEAR fails, KVM WARNs but continues on and hopes for the bes=
+t, even
+> > though there's a decent chance failure to purge the VMCS cache entry co=
+uld be
+> > lead to UAF-like problems.=C2=A0 To me, this is largely the same.
+> >=20
+> > If anything, we should try to prevent #2, e.g. by marking the entire
+> > guest_memfd as broken or something, and then deliberately leaking _all_=
+ pages.
+>=20
+> There was a marathon thread on this subject.
 
-Thanks for the update.
+Holy moly, you weren't kidding.
 
-On Wed, Sep 03, 2025 at 11:22:40AM +0100, Isaac Scott wrote:
-> Sometimes, users will not use all of the MIPI CSI 2 lanes available when
-> connecting to the MIPI CSI receiver of their device. Add a helper
-> function that checks the mbus_config for the device driver to allow
-> users to define the number of active data lanes through the
-> get_mbus_config op.
-> 
-> If the driver does not implement this op, fall back to using the number
-> of data lanes specified in device tree.
-> 
-> Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
-> ---
->  drivers/media/v4l2-core/v4l2-common.c | 25 +++++++++++++++++++++++++
->  include/media/v4l2-common.h           |  1 +
->  2 files changed, 26 insertions(+)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
-> index 6e585bc76367..8683107b3704 100644
-> --- a/drivers/media/v4l2-core/v4l2-common.c
-> +++ b/drivers/media/v4l2-core/v4l2-common.c
-> @@ -571,6 +571,31 @@ s64 __v4l2_get_link_freq_pad(struct media_pad *pad, unsigned int mul,
->  	return __v4l2_get_link_freq_ctrl(sd->ctrl_handler, mul, div);
->  }
->  EXPORT_SYMBOL_GPL(__v4l2_get_link_freq_pad);
-> +
-> +unsigned int v4l2_get_active_data_lanes(const struct media_pad *pad, unsigned int dt_lanes)
+> We did discuss this option (link to
+> most relevant part I could find):
+> https://lore.kernel.org/kvm/a9affa03c7cdc8109d0ed6b5ca30ec69269e2f34.came=
+l@intel.com/
+>=20
+> The high level summary is that pinning the pages wrinkles guestmemfd's pl=
+ans to
+> use refcount for other tracking purposes. Dropping refcounts interferes w=
+ith the
+> error handling safety.
 
-This line would benefit from being wrapped.
+It also bakes even more assumptions into TDX about guest_memfd being backed=
+ with
+"struct page", which I would like to avoid doing whenever possible.
 
-> +{
-> +	struct v4l2_mbus_config mbus_config = {};
-> +	struct v4l2_subdev *sd;
-> +	unsigned int lanes;
-> +	int ret;
-> +
-> +	sd = media_entity_to_v4l2_subdev(pad->entity);
-> +	ret = v4l2_subdev_call(sd, pad, get_mbus_config, pad->index,
-> +			       &mbus_config);
-> +	if (ret < 0 && ret != -ENOIOCTLCMD)
-> +		return ret;
-> +
-> +	if (!mbus_config.bus.mipi_csi2.num_data_lanes)
-> +		return dt_lanes;
-> +
-> +	lanes = mbus_config.bus.mipi_csi2.num_data_lanes;
-> +
-> +	if (lanes < 0 || lanes > dt_lanes)
+> I strongly agree that we should not optimize for the error path at all. I=
+f we
+> could bug the guestmemfd (kind of what we were discussing in that link) I=
+ think
+> it would be appropriate to use in these cases. I guess the question is ar=
+e we ok
+> dropping the safety before we have a solution like that.
 
-lanes is unsigned int so no need to check for less than 0.
+Definitely a "yes" from me.  For this to actually cause real world problems=
+, we'd
+need a critical KVM, hardware, or TDX-Module bug, and several unlikely even=
+ts to
+all line up.
 
-I might just not use a local variable for this, up to you.
+If someone encounters any of these KVM_BUG_ON()s _and_ has observed that th=
+e
+probability of data corruption is meaningful, then we can always convert on=
+e or
+more of these to full BUG_ON() conditions, but I don't see any reason to do=
+ that
+without strong evidence that it's necessary.
 
-> +		return -EINVAL;
-> +
-> +	return lanes;
-> +}
-> +EXPORT_SYMBOL_GPL(v4l2_get_active_data_lanes);
->  #endif /* CONFIG_MEDIA_CONTROLLER */
->  
->  /*
-> diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
-> index 0a43f56578bc..3f8937260c76 100644
-> --- a/include/media/v4l2-common.h
-> +++ b/include/media/v4l2-common.h
-> @@ -584,6 +584,7 @@ int v4l2_fill_pixfmt_mp(struct v4l2_pix_format_mplane *pixfmt, u32 pixelformat,
->  	(pad, mul, div)
->  s64 __v4l2_get_link_freq_pad(struct media_pad *pad, unsigned int mul,
->  			     unsigned int div);
-
-Some kernel-doc documentation would be nice.
-
-> +unsigned int v4l2_get_active_data_lanes(const struct media_pad *pad, unsigned int dt_lanes);
-
-Please wrap this, too.
-
->  #else
->  #define v4l2_get_link_freq(handler, mul, div)		\
->  	__v4l2_get_link_freq_ctrl(handler, mul, div)
-
--- 
-Kind regards,
-
-Sakari Ailus
+> In that thread I was advocating for yes, partly to close it because the
+> conversation was getting stuck. But there is probably a long tail of
+> potential issues or ways of looking at it that could put it in the grey a=
+rea.
 
