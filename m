@@ -1,126 +1,254 @@
-Return-Path: <linux-kernel+bounces-800882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01DB8B43D49
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:33:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AADAB43D3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF1593BF816
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:33:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F8F1C80BF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31CB5305071;
-	Thu,  4 Sep 2025 13:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E00302759;
+	Thu,  4 Sep 2025 13:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VjUYINx6"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLw0um75"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39172EA480;
-	Thu,  4 Sep 2025 13:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242FB14AA9;
+	Thu,  4 Sep 2025 13:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756992756; cv=none; b=CTbXtzOMASpyH7e+2wKY7wapwjFgDMw8o21BYMq2xoidJZGQHD1GUeinjJBabm8GTA4dvSqA1uhxF+s9BtDv9pXVLYBQZt7PbleouDhy/5OLFjPbLRH7wyBizZP6ugbDYfSwHQUkecs/aJKT1JbsbimEShJV+Hk2V2ITSPGlUA0=
+	t=1756992715; cv=none; b=qj36El9s081Pb9JWlRkGCsVZOTrAOQnUaZCD3z/3TvVLugXe8i1n0U587LDbbfdP+BPsVkpNU5CfawDfzZO2rUi7cvn8CtXdVsSx9pYa/NImtyCI661KORe364NzVb128hL6ubwPuD94bG5PA5WFt4BJRWIKJ1e+ZvO0mJLpY9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756992756; c=relaxed/simple;
-	bh=KlqjwRyOyZ8RVuU0yCrHqiZjDdHNQSVtnaYeXWRiByk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aFKar48lcglcSCRCg4H9QuUbOqJF9bYjx02EaTP4wT0OHSn50M1XGqs5mx6jI4mK3rJmV0wuBDolzsI5Ydh2dtI7GgpgpSLetsF5K5T+2KP2FZJFfFFSZdGRRU+YtueAmIJ4MCygTblor7RWI17VGHznsl9v/uymMQSWH4UXP7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VjUYINx6; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 584DWNV23083911;
-	Thu, 4 Sep 2025 08:32:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756992743;
-	bh=VYuB3aj6zQtB9TojGXYO9w09Sr5XdUxpxuM9sgLqAOI=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=VjUYINx6RV55L/P05ywSIVfrrXLSvPueS530AJDoj3tgH9Jy3hklJN8aYGRbobQZV
-	 Q+3kiArKHJkVbc3+loBfqkQ7BdlFZy2cION118Uuqol/ixiwEn1CXbJhtTU8sqlGrP
-	 wg+hWFnstVNs20py1Z8b6GCHs9dV9VcxJOgaRCS4=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 584DWNTJ149849
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 4 Sep 2025 08:32:23 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 4
- Sep 2025 08:32:23 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 4 Sep 2025 08:32:23 -0500
-Received: from santhoshkumark.dhcp.ti.com (santhoshkumark.dhcp.ti.com [172.24.233.254])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 584DW0DQ3325799;
-	Thu, 4 Sep 2025 08:32:19 -0500
-From: Santhosh Kumar K <s-k6@ti.com>
-To: <miquel.raynal@bootlin.com>, <broonie@kernel.org>, <vigneshr@ti.com>,
-        <marex@denx.de>, <computersforpeace@gmail.com>,
-        <grmoore@opensource.altera.com>, <theo.lebrun@bootlin.com>
-CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <s-k6@ti.com>,
-        <praneeth@ti.com>, <p-mantena@ti.com>, <a-dutta@ti.com>,
-        <u-kumar1@ti.com>
-Subject: [PATCH 4/4] spi: cadence-quadspi: Use BIT() macros where possible
-Date: Thu, 4 Sep 2025 19:01:30 +0530
-Message-ID: <20250904133130.3105736-5-s-k6@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250904133130.3105736-1-s-k6@ti.com>
-References: <20250904133130.3105736-1-s-k6@ti.com>
+	s=arc-20240116; t=1756992715; c=relaxed/simple;
+	bh=0Hp1bTwqzrclDWQutkJWOBnGlUdjHEwBxDG3UFmgWpQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ndmShrCJhXSm0pUfsuiJwKmLvHrW9eQTqd4tNsZnOfdrcmZQgXcbvlNTmiEaunI7ODNnABFlPNsYeMWbKGkmTiDMDcnD1Vy8vjv2x8nx297dvjzvDNg5GOkGUFLmkv7MdxcAhfVJwZ31VPViCaJs4wu5qcktDBbVkGRB9Sm4oMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLw0um75; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB9ABC4CEF8;
+	Thu,  4 Sep 2025 13:31:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756992714;
+	bh=0Hp1bTwqzrclDWQutkJWOBnGlUdjHEwBxDG3UFmgWpQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PLw0um75nAZ1ff0lmLQ9c0xkT2opk2xVmZQnv7zz92aeACCG0YyGPDzgdnvXhcbDD
+	 RsPiW2fwpZNGaeHS4N5HKL4qOnBVdQUBE8ZfODaFYH/ovQL8p5IfyHqkB1EeQR0sci
+	 hoFaIWbKeUn9xHY3IX6AbcsVWYwX22aVfgKj+YgvD0Qwe6kF0Cm3/qtEclM1vYsHI4
+	 rQKR+hh1sJ0yVa94NYHRDzHKVDoa9zzzuVqJvn+GV9q4hd+DNGyhgy/b5hX9jdD/be
+	 Gm8+WT/z0PqMxIi7wlpvCrlSXRNVXpdbLdPW6VZJN3DmGBQgWeNFHG+JrU8Cks1BjV
+	 GGkK9qXzGucuw==
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-74543fea20dso987249a34.0;
+        Thu, 04 Sep 2025 06:31:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX4FUYpthQoWtG1HgcZf3qs0g5jfyEtZuhxWN9RZX/0RsHfozaaNahYGQGlGw0o7IZjwxqLXkw/CV459/w=@vger.kernel.org, AJvYcCX6JLOv53DBPidyzxGbxTGh7jR+weqlNNVICxoQBg/l6Eqznh36KuNeriWAKTOCCHf3TVDJQI0vmdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZJlEMQGuVmIGckKMquord5ZtWzxZDqyzW4hNaIA9ADFBV6uBj
+	xz15BIuSBe+0VHXNXEjSNixQ+p1aPIhNcml/GnmSX3Gai3lgla28KXGPQs6/0+jWdtlAOYFrmAH
+	ideLnsmjdDZM5JWMFJj8rrFbitiRdL3c=
+X-Google-Smtp-Source: AGHT+IGKMQV/N9IW7UcNcGVF0ayJJuv6BZu6Wo7P5OnPk1Mb0GMCVJELd8/B2GAaZKVqR1Ow6POYXNLHmqVa/k7LNXM=
+X-Received: by 2002:a05:6830:370a:b0:745:a08d:cbc8 with SMTP id
+ 46e09a7af769-745a08dd15cmr1973579a34.24.1756992713892; Thu, 04 Sep 2025
+ 06:31:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250904032210.92978-1-zhangzihuan@kylinos.cn> <20250904032210.92978-2-zhangzihuan@kylinos.cn>
+In-Reply-To: <20250904032210.92978-2-zhangzihuan@kylinos.cn>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 4 Sep 2025 15:31:42 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hcnqD39OAjFfscCnQ2ZGu9Z1gP5WAPfu3jbeEWr6rGwQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyuK6vz8uprUsIuOHqkFOeYQLhed9a2HKRuy5bXFejStPe6_CqPrpWL6JA
+Message-ID: <CAJZ5v0hcnqD39OAjFfscCnQ2ZGu9Z1gP5WAPfu3jbeEWr6rGwQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] cpufreq: Drop redundant freq_table parameter
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Saravana Kannan <saravanak@google.com>, zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Vignesh Raghavendra <vigneshr@ti.com>
+On Thu, Sep 4, 2025 at 5:22=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylinos.cn=
+> wrote:
+>
+> Since commit e0b3165ba521 ("cpufreq: add 'freq_table' in struct
+> cpufreq_policy"),
+> freq_table has been stored in struct cpufreq_policy instead of being
+> maintained separately.
+>
+> However, several helpers in freq_table.c still take both policy and
+> freq_table as parameters, even though policy->freq_table can always be
+> used. This leads to redundant function arguments and increases the chance
+> of inconsistencies.
+>
+> This patch removes the unnecessary freq_table argument from these functio=
+ns
+> and updates their callers to only pass policy. This makes the code simple=
+r,
+> more consistent, and avoids duplication.
+>
+> V2:
+>  - Merge three patches into one to fix compile error
+>  - simple the check suggested by Viresh Kumar
+>
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Convert few open coded bit shifts to BIT() macro for better readability.
-No functional changes intended.
+Do I think correctly that this is a resend of
+https://lore.kernel.org/all/20250902073323.48330-1-zhangzihuan@kylinos.cn/
+?
 
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-Signed-off-by: Santhosh Kumar K <s-k6@ti.com>
----
- drivers/spi/spi-cadence-quadspi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+There's no need to resend it.
 
-diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
-index da3ec15abb3e..b18f095516f2 100644
---- a/drivers/spi/spi-cadence-quadspi.c
-+++ b/drivers/spi/spi-cadence-quadspi.c
-@@ -335,7 +335,7 @@ static bool cqspi_is_idle(struct cqspi_st *cqspi)
- {
- 	u32 reg = readl(cqspi->iobase + CQSPI_REG_CONFIG);
- 
--	return reg & (1UL << CQSPI_REG_CONFIG_IDLE_LSB);
-+	return reg & BIT(CQSPI_REG_CONFIG_IDLE_LSB);
- }
- 
- static u32 cqspi_get_rd_sram_level(struct cqspi_st *cqspi)
-@@ -571,7 +571,7 @@ static int cqspi_command_read(struct cqspi_flash_pdata *f_pdata,
- 		reg |= (dummy_clk & CQSPI_REG_CMDCTRL_DUMMY_MASK)
- 		     << CQSPI_REG_CMDCTRL_DUMMY_LSB;
- 
--	reg |= (0x1 << CQSPI_REG_CMDCTRL_RD_EN_LSB);
-+	reg |= BIT(CQSPI_REG_CMDCTRL_RD_EN_LSB);
- 
- 	/* 0 means 1 byte. */
- 	reg |= (((n_rx - 1) & CQSPI_REG_CMDCTRL_RD_BYTES_MASK)
-@@ -1191,7 +1191,7 @@ static void cqspi_chipselect(struct cqspi_flash_pdata *f_pdata)
- 		 * CS2 to 4b'1011
- 		 * CS3 to 4b'0111
- 		 */
--		chip_select = 0xF & ~(1 << chip_select);
-+		chip_select = 0xF & ~BIT(chip_select);
- 	}
- 
- 	reg &= ~(CQSPI_REG_CONFIG_CHIPSELECT_MASK
--- 
-2.34.1
+If you want to make new changes on top of it, just say in their
+changelogs that they depend on it.
 
+OTOH, if the new patch is not a resend, you should have listed the
+differences between it and the old one.
+
+> ---
+>  drivers/cpufreq/cpufreq.c         |  2 +-
+>  drivers/cpufreq/freq_table.c      | 14 ++++++--------
+>  drivers/cpufreq/sh-cpufreq.c      |  6 ++----
+>  drivers/cpufreq/virtual-cpufreq.c |  2 +-
+>  include/linux/cpufreq.h           |  7 +++----
+>  5 files changed, 13 insertions(+), 18 deletions(-)
+>
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index a615c98d80ca..5fcc99f768d2 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -2793,7 +2793,7 @@ int cpufreq_boost_set_sw(struct cpufreq_policy *pol=
+icy, int state)
+>         if (!policy->freq_table)
+>                 return -ENXIO;
+>
+> -       ret =3D cpufreq_frequency_table_cpuinfo(policy, policy->freq_tabl=
+e);
+> +       ret =3D cpufreq_frequency_table_cpuinfo(policy);
+>         if (ret) {
+>                 pr_err("%s: Policy frequency update failed\n", __func__);
+>                 return ret;
+> diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
+> index 35de513af6c9..d5111ee56e38 100644
+> --- a/drivers/cpufreq/freq_table.c
+> +++ b/drivers/cpufreq/freq_table.c
+> @@ -28,10 +28,9 @@ static bool policy_has_boost_freq(struct cpufreq_polic=
+y *policy)
+>         return false;
+>  }
+>
+> -int cpufreq_frequency_table_cpuinfo(struct cpufreq_policy *policy,
+> -                                   struct cpufreq_frequency_table *table=
+)
+> +int cpufreq_frequency_table_cpuinfo(struct cpufreq_policy *policy)
+>  {
+> -       struct cpufreq_frequency_table *pos;
+> +       struct cpufreq_frequency_table *pos, *table =3D policy->freq_tabl=
+e;
+>         unsigned int min_freq =3D ~0;
+>         unsigned int max_freq =3D 0;
+>         unsigned int freq;
+> @@ -65,10 +64,9 @@ int cpufreq_frequency_table_cpuinfo(struct cpufreq_pol=
+icy *policy,
+>                 return 0;
+>  }
+>
+> -int cpufreq_frequency_table_verify(struct cpufreq_policy_data *policy,
+> -                                  struct cpufreq_frequency_table *table)
+> +int cpufreq_frequency_table_verify(struct cpufreq_policy_data *policy)
+>  {
+> -       struct cpufreq_frequency_table *pos;
+> +       struct cpufreq_frequency_table *pos, *table =3D policy->freq_tabl=
+e;
+>         unsigned int freq, prev_smaller =3D 0;
+>         bool found =3D false;
+>
+> @@ -110,7 +108,7 @@ int cpufreq_generic_frequency_table_verify(struct cpu=
+freq_policy_data *policy)
+>         if (!policy->freq_table)
+>                 return -ENODEV;
+>
+> -       return cpufreq_frequency_table_verify(policy, policy->freq_table)=
+;
+> +       return cpufreq_frequency_table_verify(policy);
+>  }
+>  EXPORT_SYMBOL_GPL(cpufreq_generic_frequency_table_verify);
+>
+> @@ -354,7 +352,7 @@ int cpufreq_table_validate_and_sort(struct cpufreq_po=
+licy *policy)
+>                 return 0;
+>         }
+>
+> -       ret =3D cpufreq_frequency_table_cpuinfo(policy, policy->freq_tabl=
+e);
+> +       ret =3D cpufreq_frequency_table_cpuinfo(policy);
+>         if (ret)
+>                 return ret;
+>
+> diff --git a/drivers/cpufreq/sh-cpufreq.c b/drivers/cpufreq/sh-cpufreq.c
+> index 9c0b01e00508..642ddb9ea217 100644
+> --- a/drivers/cpufreq/sh-cpufreq.c
+> +++ b/drivers/cpufreq/sh-cpufreq.c
+> @@ -89,11 +89,9 @@ static int sh_cpufreq_target(struct cpufreq_policy *po=
+licy,
+>  static int sh_cpufreq_verify(struct cpufreq_policy_data *policy)
+>  {
+>         struct clk *cpuclk =3D &per_cpu(sh_cpuclk, policy->cpu);
+> -       struct cpufreq_frequency_table *freq_table;
+>
+> -       freq_table =3D cpuclk->nr_freqs ? cpuclk->freq_table : NULL;
+> -       if (freq_table)
+> -               return cpufreq_frequency_table_verify(policy, freq_table)=
+;
+> +       if (policy->freq_table)
+> +               return cpufreq_frequency_table_verify(policy);
+>
+>         cpufreq_verify_within_cpu_limits(policy);
+>
+> diff --git a/drivers/cpufreq/virtual-cpufreq.c b/drivers/cpufreq/virtual-=
+cpufreq.c
+> index 7dd1b0c263c7..6ffa16d239b2 100644
+> --- a/drivers/cpufreq/virtual-cpufreq.c
+> +++ b/drivers/cpufreq/virtual-cpufreq.c
+> @@ -250,7 +250,7 @@ static int virt_cpufreq_offline(struct cpufreq_policy=
+ *policy)
+>  static int virt_cpufreq_verify_policy(struct cpufreq_policy_data *policy=
+)
+>  {
+>         if (policy->freq_table)
+> -               return cpufreq_frequency_table_verify(policy, policy->fre=
+q_table);
+> +               return cpufreq_frequency_table_verify(policy);
+>
+>         cpufreq_verify_within_cpu_limits(policy);
+>         return 0;
+> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> index 95f3807c8c55..40966512ea18 100644
+> --- a/include/linux/cpufreq.h
+> +++ b/include/linux/cpufreq.h
+> @@ -780,11 +780,10 @@ struct cpufreq_frequency_table {
+>                 else
+>
+>
+> -int cpufreq_frequency_table_cpuinfo(struct cpufreq_policy *policy,
+> -                                   struct cpufreq_frequency_table *table=
+);
+> +int cpufreq_frequency_table_cpuinfo(struct cpufreq_policy *policy);
+> +
+> +int cpufreq_frequency_table_verify(struct cpufreq_policy_data *policy);
+>
+> -int cpufreq_frequency_table_verify(struct cpufreq_policy_data *policy,
+> -                                  struct cpufreq_frequency_table *table)=
+;
+>  int cpufreq_generic_frequency_table_verify(struct cpufreq_policy_data *p=
+olicy);
+>
+>  int cpufreq_table_index_unsorted(struct cpufreq_policy *policy,
+> --
+> 2.25.1
+>
 
