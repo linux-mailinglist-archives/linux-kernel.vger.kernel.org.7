@@ -1,56 +1,67 @@
-Return-Path: <linux-kernel+bounces-801088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED46B43FB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:54:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9BC9B43FB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F6B17B76DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:52:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9C885A03AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F404E30276C;
-	Thu,  4 Sep 2025 14:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4675304BBC;
+	Thu,  4 Sep 2025 14:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+LWy6/M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="UJBNJPgN"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E44A1DF97F;
-	Thu,  4 Sep 2025 14:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDF52FE079;
+	Thu,  4 Sep 2025 14:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756997657; cv=none; b=S/kbXnbB4eja5tRT5cOuZt/M2dBH1ldxg/JorA2ZvSqcStKYZLhW43HjpFokPtGyg3DqdKxgUgIX0LjELVCU7dEdA2pbDWNhGEuEStb6V30BAEDAyf056GXRgv3RGUWiLJfmi260qPB2s26h0zgvFYdnFv+SFAsr9CWBUFV5dTQ=
+	t=1756997669; cv=none; b=ZyZ3WozAKnsC5VSfDWXIIFlDwfsOM2DRXMRS92uK471pVy7ic2DlI07Nv0WFC/N+gmwSXnvts7Vpm/alhvtoEXrxJ8Adyn/tjRd6apxJQ/CszV6t6XdwzdpM4s2kCsjoUUdAp1hRqdtgH/tSgI824uV6ma0elZNNklcpW5//JXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756997657; c=relaxed/simple;
-	bh=NRF4KZuR9OnhWyUxnCyXlXsD7UEatus8Z/yPvb0aXZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KFcZyMj6sSS707+aAabhTE0FkFBu6lfsqazVwjpyBFwk4HMi5sVbb+MIDAGLhiAlQwUEumEPhbWw6/5QncdJuEekKICaL27grYBj9SiOXSO9EyU91gAub1nE3417N3aq8pKkqn8zgYzVC+ASwoEbKtDsB6tTQc8PAdjlg4fGGh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+LWy6/M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB104C4CEF0;
-	Thu,  4 Sep 2025 14:54:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756997656;
-	bh=NRF4KZuR9OnhWyUxnCyXlXsD7UEatus8Z/yPvb0aXZE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=f+LWy6/MWEkLk+OTSgkzAZdn0BeGqlNte6BtXqlVOHPOPfakyDvEJ14A8FPbP+67s
-	 Oofeo3CSXSTdweT5Cw4bjPJCiMbGeXLKRjKdZYg7gzcePiWN7nO0mSvuEmlETpsxSI
-	 LsK+enWN49uLWwhMdtxm0qI3ILic5Ew66CY3SrlyPfzn+vtofuhZEg9gZjyTWD5N1M
-	 k6xiA6321d7CE/a728QdZJTkL28xd1ZsXbej1rTyYX/k7KUUJBWbdSuKRERC4f7QG1
-	 8V9D461NyC3Whvaj1g2oqiqsHjhNxU8tjdJ+60OyOqIfDjqmP5Rvo5DhsL+efFqtWh
-	 kx67HGkC8gZKQ==
-Date: Thu, 4 Sep 2025 16:54:11 +0200
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Jack Wang <jinpu.wang@cloud.ionos.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2][next] scsi: pm80xx: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <aLmoE8CznVPres5r@kspp>
+	s=arc-20240116; t=1756997669; c=relaxed/simple;
+	bh=U5GevkF+cOyj1KYlkQ98Uiw69qbSwaHKdRRBPX8wLjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YKdaksuYpUkDOSzFmhWGi7ak51Bs8qGjXxvmtpFn3qL3m+TFBrysgy+8A8nQfiPLNTv7MrpPxjG43fkiNU2UIjJ+y1TegDGOSbu/XN+q5EXOdukKOFuoceEG8GcJW486GvfIcaivafLUY4nsiWrmC0Bd5E+6Y5vKm3m+xHNcqbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=UJBNJPgN; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+KGTa++fE1o/QSkIN9FVC/7XXIZU3mX08lTkxBMB+YM=; b=UJBNJPgN40zbt/sWSTQtnZUSl3
+	0id5qS5iGWYZhXg8cY5MtpIJybKvmST5YhghrA+ScUH82tRDAmGofjWFaBWz+Ulvp9z4y7+k8ctDx
+	87oEBZ3IynLjJkFLZVR0Qujs1YWDCuzZ2WAOh8Oyert3cbfdVoaJIBDtjabdnBIJzlBI/QRTs8pDh
+	kP0Z4DOCZUIiuEv5JZJZkf/mzdVDVxOIPTA2ktBQVWd/+aaNr0d8hAFQ35NFo5J76tfxCIf8GgF+x
+	gEqmgwlwNAgPja9PjtDSJtG3PXteqF2cjRhMug4VvJ1OXhIjnwc9Wk7Wd3tpjbq7awbAoYDnq6pLm
+	ObbMA+Mg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uuBLw-00000003DEe-31wV;
+	Thu, 04 Sep 2025 14:54:20 +0000
+Date: Thu, 4 Sep 2025 15:54:20 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Tom Hromatka <tom.hromatka@oracle.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>, Sargun Dhillon <sargun@sargun.me>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH] seccomp: Add SECCOMP_CLONE_FILTER operation
+Message-ID: <20250904145420.GP39973@ZenIV>
+References: <20250903203805.1335307-1-tom.hromatka@oracle.com>
+ <CAADnVQLve3KgrqNqSqVrmL-wz6Jj1QUdjAcE5P26Z4wvh9e4HA@mail.gmail.com>
+ <42cf76db-6cda-4606-9128-6f433da57d48@oracle.com>
+ <CAADnVQJSgcAjEnU-A9bF6-9MQRFvbHqRsCCY7a0Y6bhVGtcGpA@mail.gmail.com>
+ <21b618d5-7f6c-4b06-81be-eea6cbac5ba6@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,57 +70,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <21b618d5-7f6c-4b06-81be-eea6cbac5ba6@oracle.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Remove unused field residual_count in a couple of structures,
-and with this, fix the following -Wflex-array-member-not-at-end
-warnings:
+On Thu, Sep 04, 2025 at 08:26:30AM -0600, Tom Hromatka wrote:
 
-drivers/scsi/pm8001/pm8001_hwi.h:342:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/scsi/pm8001/pm80xx_hwi.h:561:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> This snippet addresses the double irq issue.  I also added a
+> check to make sure that task != current.  (A user shouldn't
+> do that but who knows what they'll actually do.)
+> 
+>         if (task == current) {
+>                 put_task_struct(task);
+>                 return -EINVAL;
+>         }
+> 
+>         spin_lock_irq(&current->sighand->siglock);
+>         spin_lock(&task->sighand->siglock);
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
-Changes in v2:
- - Remove unused field residual_count. (James)
-
-v1:
- - Link: https://lore.kernel.org/linux-hardening/aLiMoNzLs1_bu4eJ@kspp/
-
- drivers/scsi/pm8001/pm8001_hwi.h | 3 ++-
- drivers/scsi/pm8001/pm80xx_hwi.h | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/pm8001/pm8001_hwi.h b/drivers/scsi/pm8001/pm8001_hwi.h
-index fc2127dcb58d..170853dbf952 100644
---- a/drivers/scsi/pm8001/pm8001_hwi.h
-+++ b/drivers/scsi/pm8001/pm8001_hwi.h
-@@ -339,8 +339,9 @@ struct ssp_completion_resp {
- 	__le32	status;
- 	__le32	param;
- 	__le32	ssptag_rescv_rescpad;
-+
-+	/* Must be last --ends in a flexible-array member. */
- 	struct ssp_response_iu  ssp_resp_iu;
--	__le32	residual_count;
- } __attribute__((packed, aligned(4)));
- 
- 
-diff --git a/drivers/scsi/pm8001/pm80xx_hwi.h b/drivers/scsi/pm8001/pm80xx_hwi.h
-index eb8fd37b2066..b13d42701b1b 100644
---- a/drivers/scsi/pm8001/pm80xx_hwi.h
-+++ b/drivers/scsi/pm8001/pm80xx_hwi.h
-@@ -558,8 +558,9 @@ struct ssp_completion_resp {
- 	__le32	status;
- 	__le32	param;
- 	__le32	ssptag_rescv_rescpad;
-+
-+	/* Must be last --ends in a flexible-array member. */
- 	struct ssp_response_iu ssp_resp_iu;
--	__le32	residual_count;
- } __attribute__((packed, aligned(4)));
- 
- #define SSP_RESCV_BIT	0x00010000
--- 
-2.43.0
-
+What do you expect to happen if two tasks do that to each other
+at the same time?  Or, for that matter, if task has been spawned
+by current with CLONE_VM | CLONE_SIGHAND?
 
