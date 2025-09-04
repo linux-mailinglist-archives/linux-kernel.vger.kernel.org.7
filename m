@@ -1,47 +1,53 @@
-Return-Path: <linux-kernel+bounces-800103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2223B43371
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:08:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 665DFB433B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCA041776DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:08:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F03851C202DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E128C288C1E;
-	Thu,  4 Sep 2025 07:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m6N7cdaK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A57E2857F2;
-	Thu,  4 Sep 2025 07:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420B629D26D;
+	Thu,  4 Sep 2025 07:21:18 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AA029ACE5;
+	Thu,  4 Sep 2025 07:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756969725; cv=none; b=LrQMrBXj+gXXS1fgq7pa922vxovvqifDbBiCG+Vdmpm/2DHQ5CtypanRsDVjTCpQgQgd59tMHw7R4IXB+9uVM7VvesFEOBJF1Gq6E2k51XX6qxa7SA+VIK+ST7RoLOPEyHyGh6OSzvqTjQ5xHPSntwjpF0fqjHeBz/UPNjnap0w=
+	t=1756970477; cv=none; b=Cx77HlUx7PccTIWq2NgL8HmTyxrVnDqs4OPHiqraSfiK0lKt5d3wCRz1kw4G9+DBBY5hw11B/BVXJQWSaO13Mxh5TbTSWA07aYOW3GTz4nZbG13/tO8LaiWa3CcWZx634/nkFkXhXDyjgTVpNljlLq4h56yq6uZFQB8zX7Jw910=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756969725; c=relaxed/simple;
-	bh=tehr5OKKPXDCgpZtWn7ZOAAHOWoGtGokgtR8Jjc1MmQ=;
+	s=arc-20240116; t=1756970477; c=relaxed/simple;
+	bh=64Idyk7KpaYg2cooNWe1O1ydAYcDe1fcDSernhyvyEM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XNIdyRangBC3svu+Itw4ifiUG+sMDAUdY2wGW8MTvpZJtN9QYLRZVpzXwvtrsFmdHT7YezAzUVs0ILls47N8MpLK94U7ZGIGsMEyODN4K0S+79sBSEobP17pinQVJ4eckpWkSD/1T42bnYD4KStDQiNRy7M9BoLT6PulltRDfvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m6N7cdaK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 204A4C4CEF0;
-	Thu,  4 Sep 2025 07:08:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756969724;
-	bh=tehr5OKKPXDCgpZtWn7ZOAAHOWoGtGokgtR8Jjc1MmQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=m6N7cdaKytyYJvWSl2a8fggZCeLDv0l3a2ZrFDuyip4K89mgISHAkwOXShutQqbR+
-	 s9aZd5DijS6AeOMlcDIJSVZZaxNt6K4gnVJFzxk1P5TbWjJfjEd6TrrwYoc69MSVUd
-	 48HbqappdvFS9PwbBWefa8AOOEyiX42YZ8/PMkwZeL2PK/UWtmtb+uyPDL5zyYWN0E
-	 0goQHM8QRzjX0jRlvGX+echcqvlzluu3YEc0Mp+NU6YfoR4c+EO1JdKDhJPP98oCtL
-	 WjATJAbaYiBoOAf8uA5r7LjTWMfVcOnA4AXspvjIFoXDIly3Ruqhuq81FJftRUj2QQ
-	 I69EU8jKSYjbg==
-Message-ID: <7a6aa370-a9e5-41f4-86d8-09d3f5c7643d@kernel.org>
-Date: Thu, 4 Sep 2025 09:08:40 +0200
+	 In-Reply-To:Content-Type; b=e2OtZXiE+w3/qiQcrZkvJSTdj2RwfCIXkUQiRKo2BMiXAW+bteDA0q+vidNf0FT+sCBvVNVgjE2Bs+A5MmJPCvcf7bkimjVTqh53sZ8wbihaEID5nv5E1vKcSDC5spbIFucO7RwcUCW41HmXq3NWm919HSah5NA9M2kk/qN9wCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cHVwp4xsdz9sVh;
+	Thu,  4 Sep 2025 09:10:02 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id WEv7Y2YJZkgd; Thu,  4 Sep 2025 09:10:02 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cHVwp4BWrz9sVk;
+	Thu,  4 Sep 2025 09:10:02 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 784388B764;
+	Thu,  4 Sep 2025 09:10:02 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id JZAEJLwTYdG3; Thu,  4 Sep 2025 09:10:02 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 23FBF8B763;
+	Thu,  4 Sep 2025 09:10:02 +0200 (CEST)
+Message-ID: <3b333f4e-9817-4a5b-bf0a-f8a9d33575e9@csgroup.eu>
+Date: Thu, 4 Sep 2025 09:10:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,169 +55,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] leds: led-class: Add devicetree support to led_get()
-To: Aleksandrs Vinarskis <alex@vinarskis.com>, Lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: andy.shevchenko@gmail.com, devicetree@vger.kernel.org,
- linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org
-References: <8aa9dfc5-5e77-48af-b2f4-f1964d20d6d1@kernel.org>
- <8aa9dfc5-5e77-48af-b2f4-f1964d20d6d1@kernel.org>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <8aa9dfc5-5e77-48af-b2f4-f1964d20d6d1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v3 5/7] powerpc: Stop calling page_address() in
+ free_pages()
+To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ linux-block@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-efi@vger.kernel.org, virtualization@lists.linux.dev,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>,
+ "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+References: <20250903185921.1785167-1-vishal.moola@gmail.com>
+ <20250903185921.1785167-6-vishal.moola@gmail.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250903185921.1785167-6-vishal.moola@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
 
-On 4-Sep-25 1:01 AM, Aleksandrs Vinarskis wrote:
->> Hi Aleksandrs,
->>
->> Thank you for working on this.
->>
->> On 2-Sep-25 1:10 PM, Aleksandrs Vinarskis wrote:
->>> From: Hans de Goede <hansg@kernel.org>
->>>
->>> Turn of_led_get() into a more generic __of_led_get() helper function,
->>> which can lookup LEDs in devicetree by either name or index.
->>>
->>> And use this new helper to add devicetree support to the generic
->>> (non devicetree specific) [devm_]led_get() function.
->>>
->>> This uses the standard devicetree pattern of adding a -names string array
->>> to map names to the indexes for an array of resources.
->>>
->>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->>> Reviewed-by: Lee Jones <lee@kernel.org>
->>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->>
->> Please update this to:
->>
->> Reviewed-by: Hans de Goede <hansg@kernel.org>
->>
->> to match the update of the author which you already did.
->>
->> Also note that checkpatch should complain about the mismatch,
->> please ensure to run checkpatch before posting v2.
+
+Le 03/09/2025 à 20:59, Vishal Moola (Oracle) a écrit :
+> free_pages() should be used when we only have a virtual address. We
+> should call __free_pages() directly on our page instead.
 > 
-> Hi,
+> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
+> ---
+>   arch/powerpc/mm/book3s64/radix_pgtable.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> ahh, I actually did not even see that email got changed, apologies. Seems
-> 'b4' auto-corrected it when sending,
-
-I already wondered if it might be something like that. b4 probably did
-this because of the .mailmap entry mapping my Red Hat address (which
-I've stopped using since I'm leaving Red Hat) to hansg@kernel.org .
-
-> which would explain why checkpatch
-> did not catch it, as I run it before importing and sending via 'b4'. Sure,
-> will fix - did you mean to change your signoff to R-by, or is it a mistake?
-
-It is a mistake please keep it as S-o-b.
-
-> 
->>
->>> Tested-by: Aleksandrs Vinarskis <alex@vinarskis.com>
->>> ---
->>>  drivers/leds/led-class.c | 38 +++++++++++++++++++++++++++++---------
->>>  1 file changed, 29 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->>> index 15633fbf3c166aa4f521774d245f6399a642bced..6f2ef4fa556b44ed3bf69dff556ae16fd2b7652b 100644
->>> --- a/drivers/leds/led-class.c
->>> +++ b/drivers/leds/led-class.c
->>> @@ -248,19 +248,18 @@ static const struct class leds_class = {
->>>  	.pm = &leds_class_dev_pm_ops,
->>>  };
->>>  
->>> -/**
->>> - * of_led_get() - request a LED device via the LED framework
->>> - * @np: device node to get the LED device from
->>> - * @index: the index of the LED
->>> - *
->>> - * Returns the LED device parsed from the phandle specified in the "leds"
->>> - * property of a device tree node or a negative error-code on failure.
->>> - */
->>> -static struct led_classdev *of_led_get(struct device_node *np, int index)
->>> +static struct led_classdev *__of_led_get(struct device_node *np, int index,
->>> +					 const char *name)
->>>  {
->>>  	struct device *led_dev;
->>>  	struct device_node *led_node;
->>>  
->>> +	/*
->>> +	 * For named LEDs, first look up the name in the "led-names" property.
->>> +	 * If it cannot be found, then of_parse_phandle() will propagate the error.
->>> +	 */
->>> +	if (name)
->>> +		index = of_property_match_string(np, "led-names", name);
->>>  	led_node = of_parse_phandle(np, "leds", index);
->>>  	if (!led_node)
->>>  		return ERR_PTR(-ENOENT);
->>> @@ -271,6 +270,20 @@ static struct led_classdev *of_led_get(struct device_node *np, int index)
->>>  	return led_module_get(led_dev);
->>>  }
->>>  
->>> +/**
->>> + * of_led_get() - request a LED device via the LED framework
->>> + * @np: device node to get the LED device from
->>> + * @index: the index of the LED
->>> + *
->>> + * Returns the LED device parsed from the phandle specified in the "leds"
->>> + * property of a device tree node or a negative error-code on failure.
->>> + */
->>> +struct led_classdev *of_led_get(struct device_node *np, int index)
->>> +{
->>> +	return __of_led_get(np, index, NULL);
->>> +}
->>> +EXPORT_SYMBOL_GPL(of_led_get);
->>
->> I probably did this myself, but since of_led_get() is private now
->> (I guess it was not private before?) and since we are moving away from
->> "of" specific functions to using generic dev_xxxx functions in the kernel
->> in general, I think this just should be a static helper.
->>
->> Or probably even better: just add the name argument to of_led_get()
->> before without renaming it, update the existing callers to pass
->> an extra NULL arg and completely drop this wrapper.
->>
-> 
-> That indeed sounds like a better and cleaner option, will change it.
-> This way also incorporates the rest of the feedback on this series.
-
-Sounds good.
-
-Regards,
-
-Hans
-
-
-
->>> +
->>>  /**
->>>   * led_put() - release a LED device
->>>   * @led_cdev: LED device
->>> @@ -342,9 +355,16 @@ EXPORT_SYMBOL_GPL(devm_of_led_get);
->>>  struct led_classdev *led_get(struct device *dev, char *con_id)
->>>  {
->>>  	struct led_lookup_data *lookup;
->>> +	struct led_classdev *led_cdev;
->>>  	const char *provider = NULL;
->>>  	struct device *led_dev;
->>>  
->>> +	if (dev->of_node) {
->>> +		led_cdev = __of_led_get(dev->of_node, -1, con_id);
->>> +		if (!IS_ERR(led_cdev) || PTR_ERR(led_cdev) != -ENOENT)
->>> +			return led_cdev;
->>> +	}
->>> +
->>>  	mutex_lock(&leds_lookup_lock);
->>>  	list_for_each_entry(lookup, &leds_lookup_list, list) {
->>>  		if (!strcmp(lookup->dev_id, dev_name(dev)) &&
->>>
+> diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/book3s64/radix_pgtable.c
+> index be523e5fe9c5..73977dbabcf2 100644
+> --- a/arch/powerpc/mm/book3s64/radix_pgtable.c
+> +++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
+> @@ -780,7 +780,7 @@ static void __meminit free_vmemmap_pages(struct page *page,
+>   		while (nr_pages--)
+>   			free_reserved_page(page++);
+>   	} else
+> -		free_pages((unsigned long)page_address(page), order);
+> +		__free_pages(page, order);
+>   }
+>   
+>   static void __meminit remove_pte_table(pte_t *pte_start, unsigned long addr,
 
 
