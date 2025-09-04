@@ -1,126 +1,147 @@
-Return-Path: <linux-kernel+bounces-801539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B7FB44664
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:30:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079D9B44670
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C8254E1034
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:30:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35AE21CC3B0B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C19271A9D;
-	Thu,  4 Sep 2025 19:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DB1273D8A;
+	Thu,  4 Sep 2025 19:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Oz1kEODm"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="LI75wg/E"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A8027144A
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 19:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3532940D;
+	Thu,  4 Sep 2025 19:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757014196; cv=none; b=LbBiTGrIOxfXJ5fgxTGSTfSR0pnHl82yj0rPY7tre1cBSTcPtsIFHe1/bFDb9I8bUbLKZSc/8msOa/O8VrA3X6pNcnAT4VKfnOKi/Mxldo0YWyINdKwGZOjgdorWrB5F67p4OlkZoyiILAnWLHKaE1981zJKDZBbMPTShrCtxYU=
+	t=1757014233; cv=none; b=TmRy5+Vg1GSmL/DuMXjzBo5gDFTPOsNx9RYu8kbNUpODzZtty5B0AXcyIhZ+tuqPp4VqErhqeb9AryCeLTiDtI2ySDxC/gIcq1TvTVVmy0p3hagPzdGsN6+VgpDim0QQZDXz5dMV22NochL0Qp9iTy0xkLUhkXG/Z3euw81SsaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757014196; c=relaxed/simple;
-	bh=dMnCp8lDJ58wlkg0f5C1YKuXsb2gVD3F0HfT6YNyqik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sowjJi3mvte9SbOd127SsSylKrH/A0okeXPIiVjOnn6IMhYZmoqQ7KkLSjcwETwsv60AdKorf2h4ykF/8XZ+XpBqoZg+ZfDm23rw7l90sHdrxoZsuWR15xMmDSI647FzGpmfKd0wJ+sU4Vn7wDl0D2rT2jkxiCvocefjVbHRJrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Oz1kEODm; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-336ce4a8bfcso12135861fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 12:29:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757014192; x=1757618992; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Iv0SiejT9pGvOZKgqag5hFnMWEWIdp2Oclt2dtVzm7Y=;
-        b=Oz1kEODmH3VC4KTlbc0UlnW9sojp5w4jtKWw1pU0jBfSnn+r7RuRce1uo7fEZ/cdT3
-         7yuyaYs1GrW0Pmr8YzDJbUlug9ion5pSq6uB+Oqd+X3qamjFZentq48a/6aueUIk6Sc9
-         bQH3Hi7TIZR59ynHmC2J9Mb+yxFylqo/XmcMGqfbwcohNDKYUI151ucaLW7+KpnQOEAO
-         CdBICwVzNUxx+UCdmzbmV2bIF3Ry+B80k5Iuaq73C0xVjbp618j56iaZxWijLule48c+
-         j8CKOSd8H5cTNG0p1Qmfe9KfwutnjZLjliUkjYSIyM5iY5vhBfN6ZOqLQj+KCSLb1hc/
-         xKSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757014192; x=1757618992;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Iv0SiejT9pGvOZKgqag5hFnMWEWIdp2Oclt2dtVzm7Y=;
-        b=A0IUfZXeSwUd6GHI6+39GPLHF66PQuYZdLjxE3qPQRvaK6A2iQ6keOGR2rG56ioX1Y
-         HHDNUw2t0G25lxq0JsVbV/YYZcQcBt7kZ+0Bpu8U4GxLcBeK6boUeMKCoT1BHbcqXyki
-         +vq3XrVVErG5gWnYFcO0wVFW5gJQyFjqHD92kzUjZmUQ0fuxqpjq14AoA3ZvuWm8IR/S
-         UggW/xTSK6UpndxLNVb/JkdmjdIdmsteAT7O5Oww8HOd6kIwQf/bnlBZ1rO3nZwRpkil
-         FBq4qwun67xeiesUUBsHd16j3O+RT3SrJDjlXcEKUNqVMkWJsjnevgUIbwoG19LmYSxD
-         jcCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3Hjr4IiSl0GEKlBdNf7dSKUZfOB2oe+1g3CL+mJTX3b1lrENYp2TSOURR3sXVzJslrn6PDteMGipcQ6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRjj1La9P/nxwgefm0NJjGx4jh6oWzAMm8BtpqerwRHZaKMZFy
-	8HDpWV0CSFXQ7KswMvdMxuvySDm/DBGUjGJFj96rhB3GSJIj8IBKu5VKRZrJ0cdmWrrV+bnuLIA
-	dy8C5MH6A+rsycvbGnPIZ0OZYHsuaMoqdxDUrk6NMTQ==
-X-Gm-Gg: ASbGnctPuWOhkbtH0qjBfsTe+LflzKnysKHkXo/WassZ94UfS5D2437RcbPHWqbFl+a
-	+IMjCs3z14mQLn2uuSgVpUuj3DLy+9qzNjhZ2sT4l11LIlSwOri6qIKAP0s18d3rsVpoH5JcDco
-	2hbJtUode0Fo8iJ7dw/Asp35GdK8wg/nEd+SGdxWl12PZMclwsnopFP1m2wZYc7xE0SOkTXg6Ra
-	wDq528=
-X-Google-Smtp-Source: AGHT+IH1kBQqBQ52jB6hqXMmqfS3SVBooZioI1g0pD2KpZUum1w4TdABG7XyFaic4aps4hAPOGeiBCP48WLyX2PmnYg=
-X-Received: by 2002:a05:651c:1547:b0:336:e024:5c3f with SMTP id
- 38308e7fff4ca-336e0245df9mr46926441fa.30.1757014192308; Thu, 04 Sep 2025
- 12:29:52 -0700 (PDT)
+	s=arc-20240116; t=1757014233; c=relaxed/simple;
+	bh=5xvZxddKN8qFgUdueagRmFmWWK/KCDMAbtfI84GN+OE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HZZKxb3y2KzyZYr4O95r/N/3jo3QXU3JZsxQoI7owGg8jJljL8+vpvMyOaVak1WUYvbHN/QIbSDWRFXwFdxrjX6JPuUurNW+j0UWbC5BAfjngM4vejEl7UFdN/jBiGEafd9LFqmf3sF43FCKiZ/hygJaABV8alkZvUl3LULS0T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=LI75wg/E; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=Cc:To:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-Id:Date:Subject:From:From:Reply-To:Subject:Date:
+	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=jDbuGI7VZ7n5BDdv6EYT+XZ7w8MHEkwgyAX25jQ1cAk=; t=1757014230; x=1757619030; 
+	b=LI75wg/EV6Q7TJwaWGqnIWfsFqqoZGjMjQMOT9OduE8Pv3JFe+o6sdVvWJdvbqfDgm9LjIpKMKD
+	1bvKstEe1qusBOU2npuWjVGcxGQuto97cTo+ABQWQRARuRuQYxKD6nG4VL7VKcZ86Ot+kUfUleWm8
+	JrhTEJJwQ2HT4+5UGHJRFg3CEk4owBURACHDXGtQoRWyrdSUovN39DbqriwcP9b2W74mvIxj3qovt
+	6ZqQ6LDIapowM4Im8ghS1TFOGwa5MSqHIxI+xwguB6kD7WhK4kThCv+AGbpJ7bxaffqIRAH7QfPH6
+	n9W0bfvjjX0qJWt4BlmYOWUx3HyKD6zlM4Lg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <mkarcher@zedat.fu-berlin.de>)
+          id 1uuFfA-00000000UBD-0oel; Thu, 04 Sep 2025 21:30:28 +0200
+Received: from 89-103-142-46.pool.kielnet.net ([46.142.103.89] helo=Geist14.)
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <kernel@mkarcher.dialup.fu-berlin.de>)
+          id 1uuFf9-00000001eLL-45NG; Thu, 04 Sep 2025 21:30:28 +0200
+From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+Subject: [PATCH v3 0/5] Fix accurate exception reporting in SPARC assembly
+Date: Thu, 04 Sep 2025 21:29:52 +0200
+Message-Id: <20250904-memcpy_series-v3-0-906655a5a7ad@mkarcher.dialup.fu-berlin.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903091915.2026-1-luyulin@eswincomputing.com>
-In-Reply-To: <20250903091915.2026-1-luyulin@eswincomputing.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 4 Sep 2025 21:29:39 +0200
-X-Gm-Features: Ac12FXxXmGzHHllI1tHQQlAEHb6DXbv5xtLEukKmH1YJ4aihsiJyHyrI9aS8ODI
-Message-ID: <CACRpkdYSOGkeN34tzLtKMASS9gskNzsVGP=7_08CQvT-O6dobg@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: eswin: Fix regulator error check and Kconfig dependency
-To: Yulin Lu <luyulin@eswincomputing.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ningyu@eswincomputing.com, zhengyu@eswincomputing.com, 
-	linmin@eswincomputing.com, huangyifeng@eswincomputing.com, 
-	fenglin@eswincomputing.com, lianghujun@eswincomputing.com, 
-	Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALDouWgC/62OyQ6CMBRFf4V0bUn7GAqu/A9DTGkf0jCmSCMh/
+ LsMrly4MC7PTe7JmcmA1uBAzt5MLDozmK5dITh5RJWyvSM1emUCDCKWMqANNqqfbseN5kGudRS
+ FoKQg66e3WJjn7rtmK5dmeHR22vUOtvUwJRDzmAUcfGCCUU4rtC3Wl6aSVpVofW1kPfZ+MdIcb
+ W1aX+Pmf2eEHxkOKKNpwmKtuUhCFN9FW5njf6r56Zwty/ICcC3i0nwBAAA=
+X-Change-ID: 20250902-memcpy_series-b3bdd5542ca7
+To: Andreas Larsson <andreas@gaisler.com>
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ Anthony Yznaga <anthony.yznaga@oracle.com>, 
+ =?utf-8?q?Ren=C3=A9_Rebe?= <rene@exactcode.com>, 
+ Jonathan 'theJPster' Pallant <kernel@thejpster.org.uk>, 
+ Magnus Lindholm <linmag7@gmail.com>
+X-Mailer: b4 0.14.2
+X-Original-Sender: kernel@mkarcher.dialup.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Wed, Sep 3, 2025 at 11:19=E2=80=AFAM Yulin Lu <luyulin@eswincomputing.co=
-m> wrote:
+In 2018, David Miller implemented accurate exception reporting in
+copy_from_user and copy_to_user by handling exceptions on each load
+or store instruction that accesses userspace memory and calculating
+the remaining bytes from the processor context. As issues with
+transparent huge page support and folio support in ext4 were due
+to a bogus return value from copy_from_user, I wrote a comprehensive
+testsuite for the generic variant, and the machine-specific variants
+for UltraSPARC I/II, UltraSPARC III, Niagara, Niagara 2/3,
+Niagara 4 and M7, see
 
-> Smatch reported the following warning in eic7700_pinctrl_probe():
->
->   drivers/pinctrl/pinctrl-eic7700.c:638 eic7700_pinctrl_probe()
->   warn: passing zero to 'PTR_ERR'
->
-> The root cause is that devm_regulator_get() may return NULL when
-> CONFIG_REGULATOR is disabled. In such case, IS_ERR_OR_NULL() triggers
-> PTR_ERR(NULL) which evaluates to 0, leading to passing a success code
-> as an error.
->
-> However, this driver cannot work without a regulator. To fix this:
->
->  - Change the check from IS_ERR_OR_NULL() to IS_ERR()
->  - Update Kconfig to explicitly select REGULATOR and
->    REGULATOR_FIXED_VOLTAGE, ensuring that the regulator framework is
->    always available.
->
-> This resolves the Smatch warning and enforces the correct dependency.
->
-> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Fixes: 5b797bcc00ef ("pinctrl: eswin: Add EIC7700 pinctrl driver")
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/linux-gpio/aKRGiZ-fai0bv0tG@stanley.mount=
-ain/
-> Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
+https://github.com/karcherm/sparc-cfu-bug-reproducer
 
-Patch applied!
+despite the name of the project, it does not only test copy_from_user,
+but also copy_to_user, and it also contains fixes to a very small amount
+of exception handler references that were calculating the result in
+a wrong way.
 
-Yours,
-Linus Walleij
+For UltraSPARC III, I chose to adjust the memcpy code itself instead of
+adding complexity to multiple exception handlers. That fix has already
+been tested to fix stability issues observed by Adrian Glaubitz which
+kicked off the investigation. On all other architectures, the changes
+are just to the exception handlers.
+
+Kind regards,
+  Michael Karcher
+
+Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+---
+Changes in v3:
+- Fix bad formatting in commit messages (missing line wrap,
+  extra empty line after Fixes:)
+- Consistently add hardware to Tested-By lines
+- Link to v2: https://lore.kernel.org/r/20250904-memcpy_series-v2-0-9806dd1784e7@mkarcher.dialup.fu-berlin.de
+
+Changes in v2:
+- More verbose description on how these issues were found
+- Add M7 change, previously separate in
+  https://lore.kernel.org/r/20250828121844.2250-1-kernel@mkarcher.dialup.fu-berlin.de
+- Link to v1: https://lore.kernel.org/r/20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de
+
+---
+Michael Karcher (5):
+      sparc: fix accurate exception reporting in copy_{from_to}_user for UltraSPARC
+      sparc: fix accurate exception reporting in copy_{from_to}_user for UltraSPARC III
+      sparc: fix accurate exception reporting in copy_{from_to}_user for Niagara
+      sparc: fix accurate exception reporting in copy_to_user for Niagara 4
+      sparc: fix accurate exception reporting in copy_{from,to}_user for M7
+
+ arch/sparc/lib/M7memcpy.S     | 20 ++++++++++----------
+ arch/sparc/lib/Memcpy_utils.S |  9 +++++++++
+ arch/sparc/lib/NG4memcpy.S    |  2 +-
+ arch/sparc/lib/NGmemcpy.S     | 29 ++++++++++++++++++-----------
+ arch/sparc/lib/U1memcpy.S     | 19 ++++++++++---------
+ arch/sparc/lib/U3memcpy.S     |  2 +-
+ 6 files changed, 49 insertions(+), 32 deletions(-)
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250902-memcpy_series-b3bdd5542ca7
+
+Best regards,
+-- 
+Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+
 
