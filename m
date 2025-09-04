@@ -1,94 +1,164 @@
-Return-Path: <linux-kernel+bounces-801020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B91B43ECB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:32:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4D8B44EAA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16AC558592A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:32:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03BEA00B46
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133C3321F51;
-	Thu,  4 Sep 2025 14:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47E52EBB83;
+	Fri,  5 Sep 2025 07:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNUp/kGm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BhDpYcNw"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FAA31A565
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A592D9EC8
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756996113; cv=none; b=UTiq6llopUAQYJtAJwsmuf5qT755kLo0ccDtysX1wGdRKwdrHRgbyKjdV+SdOHKHOBD3p9hSqQJi0Vkj2lOdDtauDy/QgRnb6sYYb3Kgm337fCw1CKg6mONUHmNkiexaMFCTOMz+9mCvPl1o6GaH3Rb4zknABduIavE5DL/cDEs=
+	t=1757055791; cv=none; b=jVTOtWVgWMKUNjMzF7Yjgz1Vul998Ot0xuYWz0sZWh5+lhKj8eYajavTs23b5BiTf4xs2MdOvExUEOAJLf6D7/TZsf/3VE0yKzUBWy7tBEMNQJ8p5NCskR0dOTH6bxkN4eMKcrzWdFxSwBMopt7ZgBICJ/MaJ86Wifb5/wtrcUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756996113; c=relaxed/simple;
-	bh=63EyfkQ9uLkqvFiwLzXISEp0rwUsp9Ea/lnRsSv+xzA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I+qD6VfxcIZvwp+N2FIXG5Mf4eboeLdnP72P73Jt4a5lcdvB2JDtjdsJOpmI8Sc92pEza2unHtXjo1kg1uv8NZr7g1r0/uk8ua03e2wzsA+vNo6RWiWnKT1xLeMp9GjXvawdjx+G4Gu3J0Ai8MVd4+6hY/cmsoJ8w3mVAWhiXk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNUp/kGm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0679AC4CEF0
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:28:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756996113;
-	bh=63EyfkQ9uLkqvFiwLzXISEp0rwUsp9Ea/lnRsSv+xzA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UNUp/kGmXFV0RUWtm428XqwVdG91ckW04CxVOzs3Gt34V4menHoNl1eE80tSRbJmB
-	 pNKjAWdCpjEHGqRtFbMADeVixEyIY4EIVD+WR4DYm8WwqGKABJmQ/0E2MxkTomJ0eb
-	 uSymBYjh4hgbVE3HIvUuh/SyoHDEnBChGUY44Rhlij1NvMtDGj4rkOLMDFqLoMbDG7
-	 i3BZRr3+tQTqeQNTtbNDFnrI9GITgM/ZGMXAykyWoK/I094Gz1lODUwzX3toFZMDV+
-	 nVgTFEbVYnBhmUhPGZTalZ4Y+BPHwa4SiAkHINs3Zip9bT4CFmpr/c1D3iuhiQfiUf
-	 2OUnT7I+shAyw==
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b04271cfc3eso136390266b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 07:28:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXhb12x33CrLP0cI5SM7UobAPe2tUhC3ba8CeA5U8TZXpcp0a2ofkX2FgVoSXkhhOOFUbEK8/Gs1MqBp8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz5j05oxeBkDaqOAOGa/N9er8aHeTcRlww7wgw70ssuyaX7+8h
-	vuewC2B/rOno9URSojR+mAuHlDHqG2QTjXQxk9yRmvdOtN05POUZllDXXHn2o3HTx2sKj1nZu6y
-	SJJOu8FuRCYBEuInaErCLVOYW+nNt5/c=
-X-Google-Smtp-Source: AGHT+IG4SRozL+wVVcS2be0dFzI1Wcw/+YQJAtuyFgJHMDJBG1A0zxamLuuwbUDiKROt+aiUKZDd5ZA9Pyr1Nr1RhM4=
-X-Received: by 2002:a17:907:9719:b0:b04:6045:f7ed with SMTP id
- a640c23a62f3a-b046045f81cmr847491566b.10.1756996111618; Thu, 04 Sep 2025
- 07:28:31 -0700 (PDT)
+	s=arc-20240116; t=1757055791; c=relaxed/simple;
+	bh=tYTw0TUQluJ2boRtmgrcWl+mn/DykMFsYobVXc+pP2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=MSYlz1rW/lHFOfIoc8HsYuV+wIlr+MiIKWkYgt3duHDLBQ4FAfOgSM+C0atSvSOUZXC6L/SXxh+s2qkxkUyz8TLRPLiZA6uAu8qaapzBpSptGcPtZPS6X6ArFrgZla2wrfSlP6/DHvPAtAruV2xZzrMXzviUog6wzCCy/v4apoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BhDpYcNw; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250905070304epoutp04ef815872172ed2661fdf795eb731dec2~iUO1BSwCH2251722517epoutp04Y
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:03:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250905070304epoutp04ef815872172ed2661fdf795eb731dec2~iUO1BSwCH2251722517epoutp04Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757055784;
+	bh=jpC6OoIJ4nWt/t21DdJG4HLH6jax/kMLcep0R/SZAYw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BhDpYcNwRXMs3SiU19nxOhj9tEchwfpQ8dvnI7d+jHVh8lQMP15T8Fdaz0Hmz5Ys0
+	 v+UsU6t2UfnXDAA+qt6QYkZbp9HgSeQFftvylkT2a4UXffdgA200CFC8XOnhedCp5M
+	 6CJaZtTwi3oT9VCmpp5XZnw1K7PKOxE6JHUTx9xI=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250905070304epcas5p1d83816b98fb06d71d1bb7709bbfa31d9~iUO0olguf2873728737epcas5p1a;
+	Fri,  5 Sep 2025 07:03:04 +0000 (GMT)
+Received: from epcpadp2new (unknown [182.195.40.142]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cJ6kJ0pb1z2SSKw; Fri,  5 Sep
+	2025 07:03:04 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250904142835epcas5p49586d70c778865b4b66dae580d9a6c27~iGqiEYsgK0079200792epcas5p4I;
+	Thu,  4 Sep 2025 14:28:35 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250904142834epsmtip25eaf468cef29d5215dbe53e42730201e~iGqg01E1r0994409944epsmtip2e;
+	Thu,  4 Sep 2025 14:28:34 +0000 (GMT)
+Date: Thu, 4 Sep 2025 19:58:29 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V2 07/20] nvdimm/namespace_label: Update namespace
+ init_labels and its region_uuid
+Message-ID: <1690859824.141757055784098.JavaMail.epsvc@epcpadp2new>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904071732.3513694-1-maobibo@loongson.cn> <20250904071732.3513694-3-maobibo@loongson.cn>
- <aLmd2KlBzFxJc21r@localhost.localdomain>
-In-Reply-To: <aLmd2KlBzFxJc21r@localhost.localdomain>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 4 Sep 2025 22:28:28 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6ThTR+r6m-moVpLTLVsV9ozfwaJPBuwZ+VdHDXsamwTQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwg_ocMRfomyqjav8jGlObrS3AMIBO8OOryGxf6i8E1-teB9eXyiS-mN60
-Message-ID: <CAAhV-H6ThTR+r6m-moVpLTLVsV9ozfwaJPBuwZ+VdHDXsamwTQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] LoongArch: Remove clockevents shutdown call on offlining
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Bibo Mao <maobibo@loongson.cn>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
-	loongarch@lists.linux.dev, Xianglai Li <lixianglai@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <68a4c8d971529_27db9529479@iweiny-mobl.notmuch>
+X-CMS-MailID: 20250904142835epcas5p49586d70c778865b4b66dae580d9a6c27
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_ead19_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20250730121231epcas5p2c12cb2b4914279d1f1c93e56a32c3908
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121231epcas5p2c12cb2b4914279d1f1c93e56a32c3908@epcas5p2.samsung.com>
+	<20250730121209.303202-8-s.neeraj@samsung.com>
+	<68a4c8d971529_27db9529479@iweiny-mobl.notmuch>
 
-On Thu, Sep 4, 2025 at 10:10=E2=80=AFPM Frederic Weisbecker <frederic@kerne=
-l.org> wrote:
->
-> Le Thu, Sep 04, 2025 at 03:17:32PM +0800, Bibo Mao a =C3=A9crit :
-> > The clockevents core already detached and unregistered it at this stage=
-.
-> >
-> > Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->
-> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-If I'm right, I should pick this patch after the first one be merged?
+------OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_ead19_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-Huacai
+On 19/08/25 01:56PM, Ira Weiny wrote:
+>Neeraj Kumar wrote:
+>> nd_mapping->labels maintains the list of labels present into LSA.
+>> init_labels() prepares this list while adding new label into LSA
+>> and updates nd_mapping->labels accordingly. During cxl region
+>> creation nd_mapping->labels list and LSA was updated with one
+>> region label. Therefore during new namespace label creation
+>> pre-include the previously created region label, so increase
+>> num_labels count by 1.
+>
+>Why does the count of the labels in the list not work?
+>
+>static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
+>{
+>        int i, old_num_labels = 0;
+>...
+>        mutex_lock(&nd_mapping->lock);
+>        list_for_each_entry(label_ent, &nd_mapping->labels, list)
+>                old_num_labels++;
+>        mutex_unlock(&nd_mapping->lock);
+>...
+>
 
+Hi Ira,
+
+init_labels() allocates new label based on comparison with existing
+count of the labels in the list and passed num_labels. If num_labels
+is greater than count of the labels in the list then new label is
+allocated and stored in list for later usage
+
+...
+         mutex_lock(&nd_mapping->lock);
+	list_for_each_entry(label_ent, &nd_mapping->labels, list)
+		old_num_labels++;
+	mutex_unlock(&nd_mapping->lock);
+
+	for (i = old_num_labels; i < num_labels; i++) {
+		label_ent = kzalloc(sizeof(*label_ent), GFP_KERNEL);
+		if (!label_ent)
+			return -ENOMEM;
+
+		mutex_lock(&nd_mapping->lock);
+		list_add_tail(&label_ent->list, nd_mapping->labels);
+		mutex_unlock(&nd_mapping->lock);
+	}
+...
+
+
+>>
+>> Also updated nsl_set_region_uuid with region uuid with which
+>> namespace is associated with.
 >
-> --
-> Frederic Weisbecker
-> SUSE Labs
+>Whenever using a word like 'Also' in the commit message ask if this should be a
+>separate patch.  I'm thinking this hunk should be somewhere else in the series.
 >
+>Ira
+
+Sure Ira, Yes both hunks are not associated, I just added both to avoid
+extra commit. I will create separate commit to update region_uuid and
+will remove 'Also' part from commit message.
+
+
+Regards,
+Neeraj
+
+------OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_ead19_
+Content-Type: text/plain; charset="utf-8"
+
+
+------OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_ead19_--
+
 
