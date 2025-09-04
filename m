@@ -1,154 +1,118 @@
-Return-Path: <linux-kernel+bounces-800940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E073B43DF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:01:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8359B43DDA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3EF248699E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:01:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C37A73B965D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A371303C87;
-	Thu,  4 Sep 2025 14:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8E9307484;
+	Thu,  4 Sep 2025 13:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="VahYKXGO"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LD0Y8KMg"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551B322172D;
-	Thu,  4 Sep 2025 14:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248A5306D4D
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756994467; cv=none; b=BSiVQzqBYvbpA0PbwNusFiS1fTcgmskg8/mvvtyW3VUq74FkJT36z708a/1ypz7xHUsg6cb8tpCB6vHN7WlVlO+lEO9WtgTVpac0HTRQfZSYlWkP6nJNjhyJ2VdMZy58VZdnboRoWJUx+vCBtMvq44Sj/HU58bz6f5iPalfEoCI=
+	t=1756994109; cv=none; b=amUUvGinvLwWz4o0y5fdK794rLplUpLBYZ/+olV6EY4A4ta198AMia9U0XSX3VFL1Qy1Wedy2oBRFA3jsdSrhA8pgkvW3u+hbplXZl3Ak2wiZtSnS622s2SuetpU85RmovpK5zU9hVhyPtRPcE9jL+x3BBAflDpnKMuIWeQEOQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756994467; c=relaxed/simple;
-	bh=qzYVr1AScfIpsKVS6LA/O8RwzKoLaaMQIo5FdZ86WtA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=J9K+7SlYMMmP5ruPEI6Dj7rDrCzMx6oYVFfmCCepzBFKrgqyWjfZC/WEW8BNyFTY90D9wwuCE5Pbfet7fs70svKxWamwFsnG02cfew2jyzWqosSR2jXd7YGwdLGLdsWhxxjOJayuHjLy/QokjuwjX/pOfD2WtQKQT9gO4vu4HNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=VahYKXGO; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [127.0.1.1] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 4E1AB5341097;
-	Thu, 04 Sep 2025 15:54:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1756994095;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=T9W4Iww9vZA6Ui66WUPdSDjtf5WWHN/INIoEfaMNDTE=;
-	b=VahYKXGOyZtgwiZhAqu62HUHZNKUZ1EDFnDSydV+pDi8PuSG0nxso/xt88yKjMb+PxzX/3
-	KZMglG+cGJc88xvCaJRtoWLqZdhRmUlRtm4NvReFOGxvP4S3Fp/Bym40n5ZM0/x4dtPrRe
-	Fe//mWweKU5Bz1CA6BYeepWpGov1gRw=
-From: David Heidelberg <david@ixit.cz>
-Date: Thu, 04 Sep 2025 15:54:54 +0200
-Subject: [PATCH] arm64: dts: qcom: sdm845-enchilada: Add notification LED
+	s=arc-20240116; t=1756994109; c=relaxed/simple;
+	bh=5AuHor2gjdBQMSXf29j05gf0MvYmzK8kAiB5uy6SZCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=fZCP74rYE/nprOsoA0bhp4q5LGXec1ZkvghYPDYqR6aJ4gBtcw2qjrux/JrwFQMXI8O9gvf85BDqhc9MbwsBOGayZy6X/RvytiRwrzmp+SoZy9Hj+9AroSHqR29HYvw7x8YMqRDoTN++zE7s0eViU/CRdkMxalrFUz+wtj11gso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LD0Y8KMg; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250904135505epoutp014f7e8d3283751d18cbdc815fbee937fe~iGNRmUrYv1453514535epoutp01L
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:55:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250904135505epoutp014f7e8d3283751d18cbdc815fbee937fe~iGNRmUrYv1453514535epoutp01L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756994105;
+	bh=5AuHor2gjdBQMSXf29j05gf0MvYmzK8kAiB5uy6SZCM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LD0Y8KMgyO20yOAnIERcfDeETGHFzzwUp5BfcRKox4NtcwDsNb7fJPhZAXte7/V+e
+	 aDDRuzpjrQ1guZEnjm4E6acEYumUaglKLc0gpZLIZgIgDkhoVZ3qwCpkLcZ1M9kM6A
+	 vtRdahKnKxzqcO/XttgG0OILM0Z8WK3tMN6lDP/s=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250904135504epcas5p1c4da8380378cf269976e47fcda76b024~iGNRGXL4z1524715247epcas5p1b;
+	Thu,  4 Sep 2025 13:55:04 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cHgw74hfFz2SSKZ; Thu,  4 Sep
+	2025 13:55:03 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250904135502epcas5p28479f68a04427e46e862eba17069900e~iGNPZRlbO2098820988epcas5p2Z;
+	Thu,  4 Sep 2025 13:55:02 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904135501epsmtip106bef041e084fa4f3ee6b5c04265dfc7~iGNOQGiDw1697616976epsmtip1f;
+	Thu,  4 Sep 2025 13:55:01 +0000 (GMT)
+Date: Thu, 4 Sep 2025 19:24:56 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V2 04/20] nvdimm/label: CXL labels skip the need for
+ 'interleave-set cookie'
+Message-ID: <20250904135456.aqt2yndnmfdeowux@test-PowerEdge-R740xd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20250813144401.00004fee@huawei.com>
+X-CMS-MailID: 20250904135502epcas5p28479f68a04427e46e862eba17069900e
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----At96h8_oYHqdM-HzD.Qv-z6Hqrsj5DpI3AOnKMLFsbTdazMP=_eac47_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250730121227epcas5p4675fdb3130de49cd99351c5efd09e29e
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121227epcas5p4675fdb3130de49cd99351c5efd09e29e@epcas5p4.samsung.com>
+	<20250730121209.303202-5-s.neeraj@samsung.com>
+	<20250813144401.00004fee@huawei.com>
+
+------At96h8_oYHqdM-HzD.Qv-z6Hqrsj5DpI3AOnKMLFsbTdazMP=_eac47_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
+
+On 13/08/25 02:44PM, Jonathan Cameron wrote:
+>On Wed, 30 Jul 2025 17:41:53 +0530
+>Neeraj Kumar <s.neeraj@samsung.com> wrote:
+>
+>> CXL LSA v2.1 utilizes the region labels stored in the LSA for interleave
+>> set configuration instead of interleave-set cookie used in previous LSA
+>> versions. As interleave-set cookie is not required for CXL LSA v2.1 format
+>> so skip its usage for CXL LSA 2.1 format
+>>
+>> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+>
+>Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
+Thanks Jonathan for review and your RB tag
+
+
+Regards,
+Neeraj
+
+------At96h8_oYHqdM-HzD.Qv-z6Hqrsj5DpI3AOnKMLFsbTdazMP=_eac47_
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-enchilada-led-v1-1-dcf936ea7795@ixit.cz>
-X-B4-Tracking: v=1; b=H4sIAC2auWgC/x3MQQqAIBBA0avIrBNUFLGrRAvRKQfEQiEC8e5Jy
- 7f4v0PDSthgZR0qPtToKhNyYRCSLydyitOghDLCCc2xhETZR88zRu60Fs5qb6ORMJu74kHv/9v
- 2MT6GgSs9XwAAAA==
-X-Change-ID: 20250904-enchilada-led-9440974a7d51
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Antonio Rische <nt8r@protonmail.com>, 
- David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1575; i=david@ixit.cz;
- h=from:subject:message-id; bh=knNvZzc7dgOOqg2VjmBKpuXtS6yDiSJg4Q7BytFj8Cs=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBouZoveMPOv/rNORmi26Lhl/DBsKlHx/8o+f5zU
- unYYpwJeaaJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaLmaLwAKCRBgAj/E00kg
- cqWxD/4nCdRbC4EIotgVzDk/aG+zeBjaQEzIDv1eWeZsmCC78LSwwvjcRr3mGCk1UOszcFkPDEs
- rePv4w+dbG0D2qhSQfSEUnsSvXHqcvnO7bok/rwGK1d+lDYWJ1i9ZNngd8eXOE+WB6Q8FqXXc/Z
- MUMz6MOL3+/75S68Fn/CoiKvnnvs4XDwf3gtI4rwrnAMd1CzEM/zkVQ+fE8bL4khPyFrwyv7mgp
- 2bwyWJWPk9prg8ZQA21loD9vLNWfCDa5lwCovtOxs2IO41+GfPTEK22v1F002Et4Qea+kQAaQ68
- dnx/iP6J5zaUsJDN2DQAy94BABkG0csMZWaisZsEFCmWLU5LkFrurRZ2NE3jciTlNJT+MsfZZh0
- +mq+z3W5bXoRS84ACu8mnDzpAS0bwbvqzjI6AdkWkel4bnKDPJMW68CwX5Oz1Vs41tftx8Y50e/
- qSpfAo2wosq4Am61L4CRjh8lsi4/Srv5v3dIncqXT3snwcoNZd5ZTRPja2egWCtPL90O0nqp8oW
- qd1EpKoCUL4dmxsgz0j8jhYItA1PkAq/JT0AS4JUu9gMPwkqMmYRXHq2N2rtMsb14kGS8mbMcg8
- YwnlNtpgBXSkPMLxJpy3xBGwQbMdRdwFJrh71UUYs7Xk5zHkkUpWfhspuv+xjt9isqSbxkf2WRz
- DgPzlAqgXVIRvbg==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
 
-From: Antonio Rische <nt8r@protonmail.com>
 
-Add the notification LED for the device.
-The R/G/B channels are controlled by the PMI8998 LPG.
-
-Signed-off-by: Antonio Rische <nt8r@protonmail.com>
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- .../boot/dts/qcom/sdm845-oneplus-enchilada.dts     | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-enchilada.dts b/arch/arm64/boot/dts/qcom/sdm845-oneplus-enchilada.dts
-index bfbc3e6e71bb5dc846f84260d2effe0b8af628c6..a259eb9d45ae07497d4ed31c643871eebe970200 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-enchilada.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-enchilada.dts
-@@ -5,6 +5,7 @@
-  * Copyright (c) 2020, The Linux Foundation. All rights reserved.
-  */
- 
-+#include <dt-bindings/leds/common.h>
- #include "sdm845-oneplus-common.dtsi"
- 
- / {
-@@ -61,6 +62,33 @@ &pmi8998_charger {
- 	monitored-battery = <&battery>;
- };
- 
-+&pmi8998_lpg {
-+	status = "okay";
-+
-+	multi-led {
-+		color = <LED_COLOR_ID_RGB>;
-+		function = LED_FUNCTION_STATUS;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		led@3 {
-+			reg = <3>;
-+			color = <LED_COLOR_ID_BLUE>;
-+		};
-+
-+		led@4 {
-+			reg = <4>;
-+			color = <LED_COLOR_ID_GREEN>;
-+		};
-+
-+		led@5 {
-+			reg = <5>;
-+			color = <LED_COLOR_ID_RED>;
-+		};
-+	};
-+};
-+
- &sound {
- 	model = "OnePlus 6";
- 	audio-routing = "RX_BIAS", "MCLK",
-
----
-base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
-change-id: 20250904-enchilada-led-9440974a7d51
-
-Best regards,
--- 
-David Heidelberg <david@ixit.cz>
-
+------At96h8_oYHqdM-HzD.Qv-z6Hqrsj5DpI3AOnKMLFsbTdazMP=_eac47_--
 
