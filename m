@@ -1,136 +1,89 @@
-Return-Path: <linux-kernel+bounces-799986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBB9B4320F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:11:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB288B43210
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F08A5E153D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:11:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 161C57C27A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614B1257836;
-	Thu,  4 Sep 2025 06:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CF424E016;
+	Thu,  4 Sep 2025 06:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="cG2eG5xX"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Zw3zRPkO"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8B3247287
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98834248F4F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756966264; cv=none; b=OYFHF5JbqQiB9s3Z/IJhtoia6f0pfGn6q62Z7xwde1izq0FNQu9zzjkiDAjrRK2O9g+9x+Rc1PJsZacjDLq7gXPu0vgKeXmPMJI7ixwcJcUaXPruW5uQ8uC1I9MLMH91ut8AWRcn+zvLGBUfuXPJ2t9B7Dh06X+ieuAVsFqucmg=
+	t=1756966291; cv=none; b=SebjiONv6rAdoa3bhq7xJLQyztzrcy0w4QbuohN0fTQL/J+O4AVDa+yb3x1y+LvZqqOWZNAuAms+A+nwGuRlc3T34cuWj5eZ+x2L8MShV3atXKo8m3UlterhnKT7UXKqBGCaXqVYGV8TxDQQg2OOYHEo/aMSB/T8CMz2FjlOyjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756966264; c=relaxed/simple;
-	bh=+RqIKnwtu57DKNAvk31YMXlcTX+OWZxeh3S/lJS5aIU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XwdvBsqTj1afaULHYYPcn1jsPzwOokYzfA3IxAlJHUuHbMKQSDCFdCL/9zFvXFf3n3WXhDFturPfmWueIMA0hlj2Qxb8n4akZcVqByQybuOd6yMlIOADpHvfiSi0cL+4C4FIi0wxXPlFhRYGQ9N+Hjm4/csGOLgJaPNBHrjJVkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=cG2eG5xX; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1756966260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e7ZAexcl7NA+Yx5jyarUQkkoImsrTDPo+86HgrQfNaw=;
-	b=cG2eG5xXds808wU3nuEWB6Er2ulibXKlSPJNLqTW0LmflDACh57LiEN6ziu2GOd8XjmnDe
-	OiVhHsLfvrhqe2xY9yORam2uNLyFtVlSxmMggXDr2CyEqA6RioRp0ZnNzrMMX7wFv5tjd2
-	j3Rtu4XUMf9qIk+p6y0k7yCYfsH/12Q=
-From: Henrik Grimler <henrik@grimler.se>
-Date: Thu, 04 Sep 2025 08:10:11 +0200
-Subject: [PATCH 2/2] ARM: dts: samsung: smdk5250: add sromc node
+	s=arc-20240116; t=1756966291; c=relaxed/simple;
+	bh=/TpJ9ooFtbzm4iwjnf7q41q4BGoczl8zNAtRuRyAcoA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ArfOJLLGy1TJ1rRmEOZ9Y/y2P3qXkEMC/PrzS+xt+FZD3xlYKydsCwtRKdRr2180djhqdFrrzoMXMOWAAIO9b9oDZbmxGGSrx1NA74NoBtuXm3VEG+GDo5aIFeQSa6jHSsnuNyrY9iGPtUKV9jV+AQOW9pI15S4lVh3zCKFRR6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Zw3zRPkO; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1756966286; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=pMr2AJyZ2cwZjMK+R2zzArtB3tmjy+ONY5ZQPKXfLA8=;
+	b=Zw3zRPkO1axEGr8w1PtyxGjhG34U26F9uvpVsF/iQuxX5UZ7OfEahljVnMaYzKpcUp2YobffEfbLUB2gO5d1abRfkJHx4LgO1WgNWvDtisz4n+dCdrxcF0hL2DPSwLrg7cdNgz3PI6Hgqaq8tKAe0tvHtpUOd9ugDC6jbJDBlww=
+Received: from 30.74.144.113(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WnERfV8_1756966283 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 04 Sep 2025 14:11:24 +0800
+Message-ID: <8cf7a0c6-be15-4935-827b-a6000395d545@linux.alibaba.com>
+Date: Thu, 4 Sep 2025 14:11:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mm: Enable khugepaged to operate on non-writable VMAs
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
+ kas@kernel.org, willy@infradead.org, hughd@google.com
+Cc: ziy@nvidia.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250903054635.19949-1-dev.jain@arm.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250903054635.19949-1-dev.jain@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-smdk5250-sromc-v1-2-b360c6ab01c6@grimler.se>
-References: <20250904-smdk5250-sromc-v1-0-b360c6ab01c6@grimler.se>
-In-Reply-To: <20250904-smdk5250-sromc-v1-0-b360c6ab01c6@grimler.se>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Henrik Grimler <henrik@grimler.se>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1914; i=henrik@grimler.se;
- h=from:subject:message-id; bh=+RqIKnwtu57DKNAvk31YMXlcTX+OWZxeh3S/lJS5aIU=;
- b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBouS1sON8k/3z9OyHSqL6ujTUeUuezO/9jrm17a
- k1vOsgJHq+JATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCaLktbAAKCRCwB25JC3Fh
- a5dMB/9EeVN7NTfjd0ja0jjzlrzz6T4MZ05OSDqMtcNECYRZy78B2rId76xLOynzJz1hc79Ita1
- Hdx8yo3NBnlA8M9BYIRr0VvHpKCOSYR8xJZzycn+EiHlFbNzB+XsUaunxrhDFDL7zlMPDBiC3jd
- IDt+avz6eUgBlP/ocyG92bxh+C2ePyqQYABv/SpkVHzIgFVkkDE6u0df/b/beYfP/fFfasGKJDA
- qET4uNO8Y3LiVHzzbUikq4jJJSqqHHRlffXrlB4SeTIr4j2EwTbhy1UwSLS276Uw5/YSL5ZJeel
- OJYCfjky5g7FoRDdUMhFgT+dgGfHm9GTy0IgK4WF6LkjNz+Z
-X-Developer-Key: i=henrik@grimler.se; a=openpgp;
- fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
-X-Migadu-Flow: FLOW_OUT
 
-The smdk5250 board has an ethernet port which is connected to bank 1
-of the SROM controller. Describe it.
 
-Signed-off-by: Henrik Grimler <henrik@grimler.se>
----
- arch/arm/boot/dts/samsung/exynos5250-smdk5250.dts | 37 +++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
 
-diff --git a/arch/arm/boot/dts/samsung/exynos5250-smdk5250.dts b/arch/arm/boot/dts/samsung/exynos5250-smdk5250.dts
-index bb623726ef1e614c50074ec2890072b2b37d212e..6af1f64c984ba6e8344d759d2feb7fbfa320d81f 100644
---- a/arch/arm/boot/dts/samsung/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/samsung/exynos5250-smdk5250.dts
-@@ -422,6 +422,43 @@ max77686_irq: max77686-irq-pins {
- 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
- 	};
-+
-+	srom_ctl: srom-ctl-pins {
-+		samsung,pins = "gpy0-3", "gpy0-4", "gpy0-5",
-+			       "gpy1-0", "gpy1-1", "gpy1-2", "gpy1-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	srom_ebi: srom-ebi-pins {
-+		samsung,pins = "gpy3-0", "gpy3-1", "gpy3-2", "gpy3-3",
-+			       "gpy3-4", "gpy3-5", "gpy3-6", "gpy3-7",
-+			       "gpy5-0", "gpy5-1", "gpy5-2", "gpy5-3",
-+			       "gpy5-4", "gpy5-5", "gpy5-6", "gpy5-7",
-+			       "gpy6-0", "gpy6-1", "gpy6-2", "gpy6-3",
-+			       "gpy6-4", "gpy6-5", "gpy6-6", "gpy6-7";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+};
-+
-+&sromc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&srom_ctl>, <&srom_ebi>;
-+
-+	ethernet@1,0 {
-+		compatible = "smsc,lan9115";
-+		reg = <1 0 0x100>;
-+		phy-mode = "mii";
-+		smsc,irq-push-pull;
-+		interrupt-parent = <&gpx0>;
-+		interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
-+		reg-io-width = <2>;
-+
-+		samsung,srom-page-mode;
-+		samsung,srom-timing = <9 12 1 6 1 1>;
-+	};
- };
- 
- &usbdrd {
+On 2025/9/3 13:46, Dev Jain wrote:
+> Currently khugepaged does not collapse a region which does not have a
+> single writable page. This is wasteful since non-writable VMAs mapped by
+> the application won't benefit from THP collapse. Therefore, remove this
+> restriction and allow khugepaged to collapse a VMA with arbitrary
+> protections.
+> 
+> Along with this, currently MADV_COLLAPSE does not perform a collapse on a
+> non-writable VMA, and this restriction is nowhere to be found on the
+> manpage - the restriction itself sounds wrong to me since the user knows
+> the protection of the memory it has mapped, so collapsing read-only
+> memory via madvise() should be a choice of the user which shouldn't
+> be overriden by the kernel.
+> 
+> On an arm64 machine, an average of 5% improvement is seen on some mmtests
+> benchmarks, particularly hackbench, with a maximum improvement of 12%.
 
--- 
-2.51.0
+I also wondered about the writable check before, but never dug into the 
+history. The result looks nice.
 
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> ---
+
+LGTM.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
