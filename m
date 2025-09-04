@@ -1,193 +1,212 @@
-Return-Path: <linux-kernel+bounces-799802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6496B43071
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:23:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160AFB43078
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CE591BC8429
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:23:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C62FC5670DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFCC28CF77;
-	Thu,  4 Sep 2025 03:22:36 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A72527E074;
+	Thu,  4 Sep 2025 03:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jFhSmq+f"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035BF3209;
-	Thu,  4 Sep 2025 03:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C821F1302;
+	Thu,  4 Sep 2025 03:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756956155; cv=none; b=I4gIbA/UoE9LNronrVbrpH7nP+E+VorM3KuYo/p6t3/jOHp9tgDHp6SnbkwQVjWcddGve9sl2Ij26B7F+31kBUisL//9ZyATfdEAnr4ab1/zLDUtiUJaiQrPVxuvJxP46X+ZKeyVe+kFoUiwajJsaMppD3oT6WYCA5xoIJVWvR8=
+	t=1756956424; cv=none; b=nnxIHyv2wgBQQRgAUwyW4mwlOXYXiU5isOFS3C80HOBH2vj2BNln0+3Gy8ESUXHjV+fCX0nhtefaN6Z9tv85Fzmy/SgHQCRf4NAzRoMSr8ivsY6ZZd8d9tIqFhsdEnZUHcAyQFyjYfWiuMeG98d5+tlkpzTmQ73aZYAA6MiUMwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756956155; c=relaxed/simple;
-	bh=k0LN+wL4HRHl6TaEJ88+JUFRCRFLfXvr2BjuIXLReHM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YoJjcJpV9l4vY2dohEyUmFhVcl85CTFV1nd0FHmCv6S/iBCiG67yM+B0ZOQkNkfludoUrmdljummoZamHaKRLpQ/1dzc/Ib7jXVKyjPWKq4PWAxZ+sIOwg0g/1veS2JNWSQCUJ61+Uaz7Q9YV3H0MLcuVyLbscsLGW+rsEJqPmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 609be398893e11f0b29709d653e92f7d-20250904
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:713e5fd1-bb7d-4cfc-b179-ac01170625ac,IP:0,U
-	RL:0,TC:0,Content:28,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:28
-X-CID-META: VersionHash:6493067,CLOUDID:1c3f862ab780cee6f3c4f534703e0f60,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:4|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 609be398893e11f0b29709d653e92f7d-20250904
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1138274889; Thu, 04 Sep 2025 11:22:25 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id B375CE008FA5;
-	Thu,  4 Sep 2025 11:22:24 +0800 (CST)
-X-ns-mid: postfix-68B905F0-562822608
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 148D7E008FA3;
-	Thu,  4 Sep 2025 11:22:24 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: "Rafael J . wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: zhenglifeng <zhenglifeng1@huawei.com>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zihuan Zhang <zhangzihuan@kylinos.cn>
-Subject: [PATCH v1 3/3] cpufreq: Make cpufreq_frequency_table_verify() internal
-Date: Thu,  4 Sep 2025 11:22:10 +0800
-Message-Id: <20250904032210.92978-4-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250904032210.92978-1-zhangzihuan@kylinos.cn>
-References: <20250904032210.92978-1-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1756956424; c=relaxed/simple;
+	bh=T7o2vR9v/NyTpj4YHVsT0sDyK1JkjQg5Xz4p1ImpF10=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NbGDrwKX+Fbrdb4j/Yxp3NST6nd9C2hlVIV5xn7M+213JE/+9giLugKBnfmbrtpTGGDs1QcN7mixkiUpBP4DD2+CONGW7rKPyGFgoxSrHzeZECLzA6g7JuUreBOe2mWRifLqQxi0f8BvkfUCzN7AcLvKQIzw2lyi5R5lD/JZAH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jFhSmq+f; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3f65d600d35so6610025ab.0;
+        Wed, 03 Sep 2025 20:27:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756956422; x=1757561222; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bP9u6IDD8DedDeQulxVxdn26xs4TZxFphEmYs0nd0AY=;
+        b=jFhSmq+fkGU9HgrenBkQthHWEyAknVggYI+/J8MBO0XRe/xOAjl/uuCbtdSRQTQmS9
+         1tRtiYzBM3nS9E82VvTFFVs0MSF/0aIwp/6xXXP50er4O3OSuUofyFdIU9IRZaQSQvu2
+         Fvhe+THAqJKhPwsWJrAtmtXgg9pFwCya7t+cBeSrfb5y/s0WJYlSBwNT+O9TeV40cmlq
+         C//z1zFdvXjyFKQ5TyVdtC3cXBk5QhlaecPTz9MrKiaTyQ1qSDdp2K+dk1u2sOSxtdWd
+         EB+pzRCwfC16lEBxSyZDW6jFLl1t7yYoof99Aiqx8BC3qgwf2UdirlCE0TqZehMvt0SS
+         ZOhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756956422; x=1757561222;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bP9u6IDD8DedDeQulxVxdn26xs4TZxFphEmYs0nd0AY=;
+        b=eZY4fQ2CDUGzB/A++kS/M1XRmcD3VlLdMnF4EIr8He4j6QSxYI3LSRAQrLPXR9KcCU
+         Sk+dT+bXJeEN1iTm74kEEj+GMutFHHRP2TIVcK7Qg1ZuvtALHBUxHykiQxUCVsZ/kuHn
+         WL1qFsp2gGxr9gslnz+HU6ZWL/5gtzL3yHm5WZKkOovNpJUlVbSoZMQYSlYTmeOd/ULP
+         MNP0HLNtsyR9FeycxpH73TYW/Lj5i/HjvVqGfD5vmBiWd/VHMyQn1eER9pPGypz5FZYM
+         SVzTQ5/2fwuWSIc+5S3lMNEX26xcC2iD4bMfyg4UDIcPi7tEuai+HRDGID0vYBxYNByB
+         RG1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWhbPcs33b3E5oAJlqLWknPDys8pls7KaXWC4xwAxtrIOr3cl0cgYvz/dY1LqbKn09nhIN/DvFdr8bEWGM=@vger.kernel.org, AJvYcCWtCLAceuvDiu/3c7c72L+ccvwlS6X/hn1gchm6UC4lCBr6UVvUqqFaQxWekO+7b8FsICrxKRI6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6mn+1qWxduvNKVe+A7kgMFny7jc5nCLTUIbzPtWbSX4R73q2x
+	QXMpIwVJ251UFZGX3C+3RSAmJgKvXOY/sk1zE1xE8gwpB6d0INka8DvoSmK9v77wn4LaCPleAXB
+	UKk3zNLHHRub3lRrk/3w4/mWd+gSEee0=
+X-Gm-Gg: ASbGncul95fX7Y5gqWva7VfXun2qvAJC8q4orl5fKXsDogbSesQoBZFBj3ztte3wRZ4
+	wBBxTr6NTKrfIxgIISYJSxQIyUEQ2KLQ8HzgBv/369txjm+tF7Ci0Xj6uj6fAhKpsDOCZBPnLIB
+	1PtL5Qo2ffMmiDw+aQxDQc6F7OxcEPq8wFz8B+OuWqfHEN7Lue+q0apf2enFhPyFT3TAjj4PYhG
+	Zutm+L+XHXRzTnu
+X-Google-Smtp-Source: AGHT+IFEJoPaNt7tgEVdA9038q9wZC7h1mgWs+ysmO1YruDQCgZ7grUdUWptBw+9V1QPVyWeWoh5iUy+M3r3jRfLweE=
+X-Received: by 2002:a05:6e02:168c:b0:3f1:6141:8a40 with SMTP id
+ e9e14a558f8ab-3f4021cb5ffmr281884885ab.23.1756956422190; Wed, 03 Sep 2025
+ 20:27:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250903170716.595528-1-jackzxcui1989@163.com>
+In-Reply-To: <20250903170716.595528-1-jackzxcui1989@163.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Thu, 4 Sep 2025 11:26:26 +0800
+X-Gm-Features: Ac12FXwGF5iy9mf_S8K4jjwnYmB644KAbE1Rd4FOgkrdNcUrcjWYN8oW58ugqg0
+Message-ID: <CAL+tcoB0dbRnQUFqV9WEzZx+UxjYTt_yP21951HPvu9Dg9jxeg@mail.gmail.com>
+Subject: Re: [PATCH net-next v10 2/2] net: af_packet: Use hrtimer to do the
+ retire operation
+To: Xin Zhao <jackzxcui1989@163.com>
+Cc: willemdebruijn.kernel@gmail.com, edumazet@google.com, ferenc@fejes.dev, 
+	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The helper cpufreq_frequency_table_verify() was previously exported and u=
-sed
-directly by a few cpufreq drivers. With the previous change ensuring that
-cpufreq_generic_frequency_table_verify() always calls
-cpufreq_verify_within_cpu_limits(), drivers no longer need to call
-cpufreq_frequency_table_verify() explicitly.
+On Thu, Sep 4, 2025 at 1:07=E2=80=AFAM Xin Zhao <jackzxcui1989@163.com> wro=
+te:
+>
+> On Wed, Sep 3, 2025 at 00:42=E2=80=AF+0800 Jason Xing <kerneljasonxing@gm=
+ail.com> wrote:
+>
+> > One more review from my side is that as to the removal of
+> > delete_blk_timer, I'm afraid it deserves a clarification in the commit
+> > message.
+> >
+> > > > -       spin_unlock_bh(&rb_queue->lock);
+> > > > -
+> > > > -       prb_del_retire_blk_timer(pkc);
+> > > > -}
+> > > > -
+>
+> In the description of [PATCH net-next v10 0/2] net: af_packet: optimize r=
+etire operation:
+>
+> Changes in v8:
+> - Delete delete_blk_timer field, as suggested by Willem de Bruijn,
+>   hrtimer_cancel will check and wait until the timer callback return and =
+ensure
+>   enter enter callback again;
 
-Update the affected drivers (sh-cpufreq and virtual-cpufreq) to use
-cpufreq_generic_frequency_table_verify() instead, and convert
-cpufreq_frequency_table_verify() to a private static function inside
-freq_table.c.
+I see the reason now :)
 
-This reduces the exported cpufreq API surface and enforces a single, cons=
-istent
-entry point (cpufreq_generic_frequency_table_verify()) for drivers.
+Please know that the history changes through versions will finally be
+removed, only the official message that will be kept in the git. So
+this kind of change, I think, should be clarified officially since
+you're removing a structure member. Adding more descriptions will be
+helpful to readers in the future. Thank you.
 
-No functional changes intended.
+>
+> I will also emphasize the removal of delete_blk_timer in the commit messa=
+ge for this 2/2
+> commit. The updated commit message for the 2/2 patch is as follows=EF=BC=
+=9A
+>
+> Changes in v8:
+> - Simplify the logic related to setting timeout.
+> - Delete delete_blk_timer field, hrtimer_cancel will check and wait until
+>   the timer callback return.
+>
+>
+> > I gradually understand your thought behind this modification. You're
+> > trying to move the timer operation out of prb_open_block() and then
+> > spread the timer operation into each caller.
+> >
+> > You probably miss the following call trace:
+> > packet_current_rx_frame() -> __packet_lookup_frame_in_block() ->
+> > prb_open_block() -> _prb_refresh_rx_retire_blk_timer()
+> > ?
+> >
+> > May I ask why bother introducing so many changes like this instead of
+> > leaving it as-is?
+>
+>
+>
+>
+> Consider the following timing sequence:
+> timer   cpu0 (softirq context, hrtimer timeout)                cpu1 (proc=
+ess context)
+> 0       hrtimer_run_softirq
+> 1         __hrtimer_run_queues
+> 2           __run_hrtimer
+> 3             prb_retire_rx_blk_timer_expired
+> 4               spin_lock(&po->sk.sk_receive_queue.lock);
+> 5               _prb_refresh_rx_retire_blk_timer
+> 6                 hrtimer_forward_now
+> 7               spin_unlock(&po->sk.sk_receive_queue.lock)
+> 8             raw_spin_lock_irq(&cpu_base->lock);              tpacket_rc=
+v
+> 9             enqueue_hrtimer                                    spin_loc=
+k(&sk->sk_receive_queue.lock);
+> 10                                                               packet_c=
+urrent_rx_frame
+> 11                                                                 __pack=
+et_lookup_frame_in_block
+> 12            finish enqueue_hrtimer                                 prb_=
+open_block
+> 13                                                                     _p=
+rb_refresh_rx_retire_blk_timer
+> 14                                                                       =
+hrtimer_is_queued(&pkc->retire_blk_timer) =3D=3D true
+> 15                                                                       =
+hrtimer_forward_now
+> 16                                                                       =
+  WARN_ON
+> On cpu0 in the timing sequence above, enqueue_hrtimer is not protected by=
+ sk_receive_queue.lock,
+> while the hrtimer_forward_now is not protected by raw_spin_lock_irq(&cpu_=
+base->lock).
+>
+> In my previous email, I provided an explanation. As a supplement, I would
+> like to reiterate a paragraph from my earlier response to Willem.
+> The point is that when the hrtimer is in the enqueued state, you cannot
 
-Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
----
- drivers/cpufreq/freq_table.c      | 5 +----
- drivers/cpufreq/sh-cpufreq.c      | 6 ++----
- drivers/cpufreq/virtual-cpufreq.c | 5 +----
- include/linux/cpufreq.h           | 2 --
- 4 files changed, 4 insertions(+), 14 deletions(-)
+How about tring hrtimer_is_queued() beforehand?
 
-diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
-index f4b05dcc479b..79fa65aa3859 100644
---- a/drivers/cpufreq/freq_table.c
-+++ b/drivers/cpufreq/freq_table.c
-@@ -64,7 +64,7 @@ int cpufreq_frequency_table_cpuinfo(struct cpufreq_poli=
-cy *policy)
- 		return 0;
- }
-=20
--int cpufreq_frequency_table_verify(struct cpufreq_policy_data *policy)
-+static int cpufreq_frequency_table_verify(struct cpufreq_policy_data *po=
-licy)
- {
- 	struct cpufreq_frequency_table *pos, *table =3D policy->freq_table;
- 	unsigned int freq, prev_smaller =3D 0;
-@@ -73,8 +73,6 @@ int cpufreq_frequency_table_verify(struct cpufreq_polic=
-y_data *policy)
- 	pr_debug("request for verification of policy (%u - %u kHz) for cpu %u\n=
-",
- 					policy->min, policy->max, policy->cpu);
-=20
--	cpufreq_verify_within_cpu_limits(policy);
--
- 	cpufreq_for_each_valid_entry(pos, table) {
- 		freq =3D pos->frequency;
-=20
-@@ -97,7 +95,6 @@ int cpufreq_frequency_table_verify(struct cpufreq_polic=
-y_data *policy)
-=20
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(cpufreq_frequency_table_verify);
-=20
- /*
-  * Generic routine to verify policy & frequency table, requires driver t=
-o set
-diff --git a/drivers/cpufreq/sh-cpufreq.c b/drivers/cpufreq/sh-cpufreq.c
-index 642ddb9ea217..ee3fd1e71b90 100644
---- a/drivers/cpufreq/sh-cpufreq.c
-+++ b/drivers/cpufreq/sh-cpufreq.c
-@@ -90,10 +90,8 @@ static int sh_cpufreq_verify(struct cpufreq_policy_dat=
-a *policy)
- {
- 	struct clk *cpuclk =3D &per_cpu(sh_cpuclk, policy->cpu);
-=20
--	if (policy->freq_table)
--		return cpufreq_frequency_table_verify(policy);
--
--	cpufreq_verify_within_cpu_limits(policy);
-+	if (!cpufreq_generic_frequency_table_verify(policy))
-+		return 0;
-=20
- 	policy->min =3D (clk_round_rate(cpuclk, 1) + 500) / 1000;
- 	policy->max =3D (clk_round_rate(cpuclk, ~0UL) + 500) / 1000;
-diff --git a/drivers/cpufreq/virtual-cpufreq.c b/drivers/cpufreq/virtual-=
-cpufreq.c
-index 6ffa16d239b2..2498f40cd57e 100644
---- a/drivers/cpufreq/virtual-cpufreq.c
-+++ b/drivers/cpufreq/virtual-cpufreq.c
-@@ -249,10 +249,7 @@ static int virt_cpufreq_offline(struct cpufreq_polic=
-y *policy)
-=20
- static int virt_cpufreq_verify_policy(struct cpufreq_policy_data *policy=
-)
- {
--	if (policy->freq_table)
--		return cpufreq_frequency_table_verify(policy);
--
--	cpufreq_verify_within_cpu_limits(policy);
-+	cpufreq_generic_frequency_table_verify(policy);
- 	return 0;
- }
-=20
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 40966512ea18..577f1cd723a0 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -782,8 +782,6 @@ struct cpufreq_frequency_table {
-=20
- int cpufreq_frequency_table_cpuinfo(struct cpufreq_policy *policy);
-=20
--int cpufreq_frequency_table_verify(struct cpufreq_policy_data *policy);
--
- int cpufreq_generic_frequency_table_verify(struct cpufreq_policy_data *p=
-olicy);
-=20
- int cpufreq_table_index_unsorted(struct cpufreq_policy *policy,
---=20
-2.25.1
+IIUC, with this patch applied, we will lose the opportunity to refresh
+the timer when the lookup function (in the above path I mentioned)
+gets called compared to before. If the packet socket tries to look up
+a new block and it doesn't update its expiry time, the timer will soon
+wake up. Does it sound unreasonable?
 
+Thanks,
+Jason
+
+> call interfaces like hrtimer_forward_now. The kernel has a WARN_ON check
+> in hrtimer_forward_now for this reason. Similarly, you also cannot call
+> interfaces like hrtimer_set_expires. The kernel does not include a WARN_O=
+N
+> check in hrtimer_set_expires to avoid increasing the code size, as
+> hrtimer_set_expires is an inline function.
+>
+>
+> Thanks
+> Xin Zhao
+>
 
