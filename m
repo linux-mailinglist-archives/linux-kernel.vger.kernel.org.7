@@ -1,191 +1,117 @@
-Return-Path: <linux-kernel+bounces-801823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D611B44A62
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:20:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ABB2B44A64
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D56B7B0A36
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 413B71CC3530
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F512F60D1;
-	Thu,  4 Sep 2025 23:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A992F6578;
+	Thu,  4 Sep 2025 23:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FGop1r6j"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H8rAoqbg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A821296BD1
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 23:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6072EDD6C;
+	Thu,  4 Sep 2025 23:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757028045; cv=none; b=QrfTwHfwHiXfcDU0CG5oSDGtqywHvy/TZXkcxyXAcZijvzjBy0h1A4vqiWDmla9GPWAT+vNzZcorCScDRjrMUc9xBKpeJXnoxcEdBp4U67+dltkKo+KyxEXDgwYzn8tKZBwBBrg62lYf91f077vnmCBK6Vd9pjiR1ngW8NpSiSg=
+	t=1757028277; cv=none; b=Mx60frNCa86S6t730XeF+MJWqxfCEkHHZzsZBvPH5GSunQBLEJBcrdc8O9Cj/uxuFgd1S0VP+tsBMB6wNeeTwH2OlWAUzynFtEEEnLFShqgaVRIxFtbh5pXI/BUOwyhNUhuej/TCFZUghhbbC1xBy0AYRags0TCEP7RIYa1SGwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757028045; c=relaxed/simple;
-	bh=ewALHqGy5tuuTChxZiDl3T7/UNGXb7XI/a+bgYYFYQ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=X2x7gKbMcZYKx64g8c1kithUhqmAQ1Sl2bNdJule2+TNB6f8uH5Uq0qLZfEqhqlY/kkDNoJKg1uJ2vam4lJdtu8kdELbu0DnAzpD+27JIJEY9vKSBWR7M4GzYmhnrhcyELMl4bwIbMo2oM+3AsEyiqFmLXUgripuA6F8MpQAGs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FGop1r6j; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71d603a9cfaso16222997b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 16:20:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757028042; x=1757632842; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=aRwZHhESXMYZyHSR6sI/Jb9sZA0hD8LgQNqFD43qiSc=;
-        b=FGop1r6jP5UNg6doJ1ld5yamCh5V3za9yUI6wJDbvP/rhYBS7p/GjJH7EXaMqcNIhy
-         1N/a/GiTERJMKrSy1vvJZul0iQb89o/KSEjEC8UZYU9dU8rFXBhrJWXMRamvdEzOhFhW
-         Vuveh74BlzEAODROfGYOHdmVi6vj04a2LGrJxGRxB/b+m43YlXJijOpkj6sNNSdfW4ED
-         djbOgmsn9gqVn2067Lm8UZilhL4QTZcmiR6lw0T4Cg8UliY4vP+OLOnbxfIUyrPkfMcw
-         ZAUZSwKK4iA3sN8l/wzmAFH3T/uGUcCuqZjWYlSWS6CI1jXAjtWvHAHyBg7FgPPQ9ORp
-         D52w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757028042; x=1757632842;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aRwZHhESXMYZyHSR6sI/Jb9sZA0hD8LgQNqFD43qiSc=;
-        b=Fz88M/4xpg4muuAvSbZayjsTTLj8196Esi1pJD59H0Y+nL06LyrcdnlHGcHMXWjeNK
-         dVPEm6YfvbWGfHloijtqY9Vzz5fK4Cv9i2aC82Eqy72xgT/FMF8OgW7GpihgsDSwc7iK
-         WZHPnS1QQojTBgoFsiScg4XtULkzSh3cNJ6G9PIX9P55KglGxvNBcJU9KmLH71NTHA33
-         GNYP4/TmF3uZ16VbLw4NpAfMr8XKRlPb8zvSz4PTL84DMs1YUYnXP5ez+DjAPw1rZDZJ
-         T93AYfQk2I4EciNPPD7Z8WEK0Jm6uomEtUqNJWm1DXp+yOAW8iv76+BLHHY0g3IFy14U
-         0fCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkVS1q+VtZrVwmzbyXgNdUnYOpGS+TJjDihe946lSMNafmzpD6yIFOS8QkcZtAuYWJOjK6obm81esIigE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCm8zHFLe0wu7BHK33Z6/30qZDCRcWhlSk7UcGDrwGZfFLuQJd
-	sBho7ac0zUMbe0H6P4QnFdyfvRnNtyNNtSviV1z02ByeQlodWrYGzzZOChaa0E2WkEQ=
-X-Gm-Gg: ASbGnctXeaqrgC+FnRghY890O6pOvtizypU6y0olXDO03tmAqEQs25TKsUMTxBedcM+
-	2JjCbHrL6VVzRwG0d1+MmkaKhgco4PvD5jGwUzRQMGdWJQLzpTYE/pSdUaIIxysAcufUkXwosTW
-	3pm4E2XtGrd1D0BWcaSIdeDJzlMgZHk14hQbsCtOYKm60y4AHCiC3wtOqDVvg5YgM2L3aFHQDtF
-	4fQKCRKR9BkszKHRWMgBXlIp07puAaU2d2HHKXhnHXvi6Eo6rPLyfvZ5k7DfRhr28uaJnSYPIat
-	RzJDD/7PcTI6DHbMGU/bz1z8kDYHmcFgSyTEEAzPGh3YrFRVqfcBddnx+feCdshdGb8T+x8bVb3
-	88ifISgx3siAVpO4N7bd8XALe+248
-X-Google-Smtp-Source: AGHT+IGvbBhMOcXfylPm/9NSlvF5+lCTc4rsnucF8Y+pzJ+UJ37E30YkGhwUDgeXMdUu0Kd7n9YtCg==
-X-Received: by 2002:a05:690c:6f0f:b0:71f:df7e:2d0 with SMTP id 00721157ae682-722764ad026mr226492207b3.25.1757028042300;
-        Thu, 04 Sep 2025 16:20:42 -0700 (PDT)
-Received: from [10.0.3.24] ([50.227.229.138])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a832e435sm25422227b3.26.2025.09.04.16.20.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 16:20:41 -0700 (PDT)
-Message-ID: <54a9fea7-053f-48c9-b14f-b5b80baa767c@kernel.dk>
-Date: Thu, 4 Sep 2025 17:20:41 -0600
+	s=arc-20240116; t=1757028277; c=relaxed/simple;
+	bh=OgkI8noiXQ5CWIZ0ZMUtx+0t4I0H3Sb21zhjyKKhbWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QVgpCKw6HbEW+S4aYd5MAc7//b65OWEPwdjHuIRBd1jdUY+OynNpM/53op4tVdHa3a/vV8fKzERGj7nSA3wjCoYXZA5ePx74Vqn2wrz7I7V90ze7lZJHOpm9sVn+q+Cp+47S3em7jLH9A4MX9jMCnajw39VRMJNiKovh/AipMXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H8rAoqbg; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757028276; x=1788564276;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OgkI8noiXQ5CWIZ0ZMUtx+0t4I0H3Sb21zhjyKKhbWc=;
+  b=H8rAoqbg97kJdRaIjmVWKDi7wkZVwK0qKaLtpsC6qz1HewB2I3lmEfc0
+   +2yumgzjvBpLkSEq3TqpI/PNCBJtGMRE8caiQANZiV2PEbpxgQzesW/rF
+   LXvhsM2uAGhzjVNourmVNZrIUElfkiaCmpvY51vO4BC4aRRgzkL+5lOTS
+   NPtgd8nun+9lWFNv4aMCoMytR+B0UT2/G98EH1yck0ziy2HlhrMe3h8v8
+   qMyQN/jrevRXj6ofavluXdTATfnXKdUQ8D5RXJ7o7AhFpNUzw00L6/Hwc
+   ycNP7hhDXS751/msRfnnGcxonV9WQ1Ka5olUsvIhlO7MXg6q5p3R4x0EB
+   w==;
+X-CSE-ConnectionGUID: 7XToG7ynQxCQF9e6ssehZQ==
+X-CSE-MsgGUID: NPP5JEavSNamjvfHqvnrsQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="84813432"
+X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
+   d="scan'208";a="84813432"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 16:24:35 -0700
+X-CSE-ConnectionGUID: SOkaAXxtTq+dBZbVLsM6Ow==
+X-CSE-MsgGUID: M9KY89M4T3q/gJJ19iMC8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
+   d="scan'208";a="177239359"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 04 Sep 2025 16:24:33 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uuJJ5-00061T-2J;
+	Thu, 04 Sep 2025 23:24:01 +0000
+Date: Fri, 5 Sep 2025 07:23:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>, alexandre.belloni@bootlin.com,
+	krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	skhan@linuxfoundation.org, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akhileshpatilvnit@gmail.com
+Subject: Re: [PATCH 7/7] rtc: m41t93: Add watchdog support
+Message-ID: <202509050759.dwYECwEA-lkp@intel.com>
+References: <694706ad8577a36ef8948e0d9ca7ea561900fbc2.1756908788.git.akhilesh@ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Read in
- io_sqe_buffer_register
-To: syzbot <syzbot+1ab243d3eebb2aabf4a4@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>
-References: <68b9b200.a00a0220.eb3d.0006.GAE@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <68b9b200.a00a0220.eb3d.0006.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <694706ad8577a36ef8948e0d9ca7ea561900fbc2.1756908788.git.akhilesh@ee.iitb.ac.in>
 
-On 9/4/25 9:36 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    4ac65880ebca Add linux-next specific files for 20250904
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1785fe62580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fbc16d9faf3a88a4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=1ab243d3eebb2aabf4a4
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13f23e62580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12cb6312580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/36645a51612c/disk-4ac65880.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/bba80d634bef/vmlinux-4ac65880.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/e58dd70dfd0f/bzImage-4ac65880.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+1ab243d3eebb2aabf4a4@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-> BUG: KASAN: null-ptr-deref in _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
-> BUG: KASAN: null-ptr-deref in PageCompound include/linux/page-flags.h:331 [inline]
-> BUG: KASAN: null-ptr-deref in io_buffer_account_pin io_uring/rsrc.c:668 [inline]
-> BUG: KASAN: null-ptr-deref in io_sqe_buffer_register+0x369/0x20a0 io_uring/rsrc.c:817
-> Read of size 8 at addr 0000000000000000 by task syz.0.17/6020
-> 
-> CPU: 0 UID: 0 PID: 6020 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->  kasan_report+0x118/0x150 mm/kasan/report.c:595
->  check_region_inline mm/kasan/generic.c:-1 [inline]
->  kasan_check_range+0x2b0/0x2c0 mm/kasan/generic.c:200
->  instrument_atomic_read include/linux/instrumented.h:68 [inline]
->  _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
->  PageCompound include/linux/page-flags.h:331 [inline]
->  io_buffer_account_pin io_uring/rsrc.c:668 [inline]
->  io_sqe_buffer_register+0x369/0x20a0 io_uring/rsrc.c:817
->  __io_sqe_buffers_update io_uring/rsrc.c:322 [inline]
->  __io_register_rsrc_update+0x55e/0x11b0 io_uring/rsrc.c:360
->  io_register_rsrc_update+0x196/0x1a0 io_uring/rsrc.c:391
->  __io_uring_register io_uring/register.c:736 [inline]
->  __do_sys_io_uring_register io_uring/register.c:926 [inline]
->  __se_sys_io_uring_register+0x795/0x11b0 io_uring/register.c:903
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f99b1f8ebe9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f99b2d88038 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-> RAX: ffffffffffffffda RBX: 00007f99b21c5fa0 RCX: 00007f99b1f8ebe9
-> RDX: 00002000000003c0 RSI: 0000000000000010 RDI: 0000000000000003
-> RBP: 00007f99b2011e19 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000020 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f99b21c6038 R14: 00007f99b21c5fa0 R15: 00007ffeadfa5958
->  </TASK>
-> ==================================================================
+Hi Akhilesh,
 
-This is from the mm-unstable changes in linux-next, adding David as I
-ran a quick bisect and it said:
+kernel test robot noticed the following build errors:
 
-da6b34293ff8dbb78f8b9278c9a492925bbf1f87 is the first bad commit
-commit da6b34293ff8dbb78f8b9278c9a492925bbf1f87
-Author: David Hildenbrand <david@redhat.com>
-Date:   Mon Sep 1 17:03:40 2025 +0200
+[auto build test ERROR on abelloni/rtc-next]
+[also build test ERROR on linus/master v6.17-rc4 next-20250904]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-    mm/gup: remove record_subpages()
-    
-    We can just cleanup the code by calculating the #refs earlier, so we can
-    just inline what remains of record_subpages().
-    
-    Calculate the number of references/pages ahead of times, and record them
-    only once all our tests passed.
-    
-    Link: https://lkml.kernel.org/r/20250901150359.867252-20-david@redhat.com
-    Signed-off-by: David Hildenbrand <david@redhat.com>
-    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+url:    https://github.com/intel-lab-lkp/linux/commits/Akhilesh-Patil/rtc-m41t93-add-device-tree-support/20250903-223155
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
+patch link:    https://lore.kernel.org/r/694706ad8577a36ef8948e0d9ca7ea561900fbc2.1756908788.git.akhilesh%40ee.iitb.ac.in
+patch subject: [PATCH 7/7] rtc: m41t93: Add watchdog support
+config: x86_64-randconfig-007-20250904 (https://download.01.org/0day-ci/archive/20250905/202509050759.dwYECwEA-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250905/202509050759.dwYECwEA-lkp@intel.com/reproduce)
 
-I won't personally have time to look into this until after the weekend,
-but as it's linux-next specific, not a huge deal right now.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509050759.dwYECwEA-lkp@intel.com/
 
-Note that there's also a similar report, which is the same thing:
+All errors (new ones prefixed by >>):
 
-https://lore.kernel.org/all/68b9d130.a00a0220.eb3d.0008.GAE@google.com/
-
-which I marked as dupe of this one.
+>> ld.lld: error: undefined symbol: devm_watchdog_register_device
+   >>> referenced by rtc-m41t93.c:490 (drivers/rtc/rtc-m41t93.c:490)
+   >>>               drivers/rtc/rtc-m41t93.o:(m41t93_watchdog_register) in archive vmlinux.a
 
 -- 
-Jens Axboe
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
