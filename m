@@ -1,170 +1,296 @@
-Return-Path: <linux-kernel+bounces-801507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1D8B445E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:56:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66441B445EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019841CC3921
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:57:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 401CB1CC3986
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47AE62586C8;
-	Thu,  4 Sep 2025 18:56:31 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED01267733;
+	Thu,  4 Sep 2025 18:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dCFCNbGD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E205A25A343
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51672641EE
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757012190; cv=none; b=rx/pn0f0bg3rpl275c4s3K6Lao4TQoFq2GlbbILQ+43FtGHmaEfByFnSM7lci2+mAKCm8/l0nnW8PDM/ZRamqYdD3D9q6Q7IFwl9UkKMupWrmreyMV5ubZ/ipuE0JLoG0x+mfYM6Rs/Ug5pzv69oAh9KAqMwVPjgVdjlLVtfReU=
+	t=1757012214; cv=none; b=PMRk3hKLeJuT7DrsRYlDGkKQb56tQV+j57l9CUh3wRf8uJsoXAej1vmLNLABmgcm+T606yy8xmCDba5BfPEEZ6MiTjK3OTvSKkogbR3s14uB+uuWpEWy2h/L9zaTmsyqJOAg1nyM9sN3x7WTezy3ry7Hy0sQQ+RrRMLJ17X/8zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757012190; c=relaxed/simple;
-	bh=jB2rfBlXI0KkJ1zLVCcqRlAI+kHXxRER+mLzQEyMzug=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NOeMLgEW38qRJRRrTxKrB1X2PmL0BF1l+OcdBD1d0zuvz4UMpwUcPiWtzp3BuFFwcohPnO+gbcTxqh7RG+wqrdZbTebFawB+wXtHp77xNyX4eAuWwcFpocK5jcfswHV7EHg07MqxEdlnTZMH5QYmoEOpSO33slq/KmB7LXN7erI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3f42b6cf6b1so18093145ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 11:56:28 -0700 (PDT)
+	s=arc-20240116; t=1757012214; c=relaxed/simple;
+	bh=xarvoNYWqZncjjHZQkHn4mAe8i3NYFJpOF5stI5Hcbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MjXRoBWSEJrrOzsAMCYhMuoCQ7PWf5anBXeSN8RQXySXc7C8UMzYXXc4SWLBcGZ+de6z4OKb61vMWE84an0wQnjxlyWyKWZJddquxNFSj0jOStbCAF9CPwrJRAyGQDawKI5wmctCjuthsD9xBcK7zfgB8pZbXob1kIng3Tcg7AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dCFCNbGD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757012211;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=//wY+wiCi15t97+fQ+FMBl1p8QkU5s+6Pz+y0f6tnSE=;
+	b=dCFCNbGDw8IQR/b2l7hUmhKu0+reHaJ2mCdzCITCB44DBQ9qjvFDvS2iEBDSq25APZ8s4g
+	HNsIDXZy9ouda/iyf9i13QNS8w4tuw4zC13o5+gvuzmG1iWxTEqCEiNX0gDqNxfAbL15j0
+	gjja3iUtiXxEvGNzl3hWl9LX99tsAXo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-367-eEAZK_kNO7uHcWUA8ljSpQ-1; Thu, 04 Sep 2025 14:56:50 -0400
+X-MC-Unique: eEAZK_kNO7uHcWUA8ljSpQ-1
+X-Mimecast-MFC-AGG-ID: eEAZK_kNO7uHcWUA8ljSpQ_1757012209
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b9c1b74d0so7366325e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 11:56:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757012188; x=1757616988;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/VE33VSoKEOrL6ZD9wabtHhy48BYqLCrHMaZLCCfhp8=;
-        b=YzG2pCZjw12M+wt/MYLY8iID0S60pGoS6hW7yWfXigQzeC3GKnGQ3Nfs2j2NWPGvn7
-         UdyOfeWgebzviSdGTTYRitl6h+7smmWrusKdH8esrlnIUqxnXP2rokj0yT6iJt60A+fn
-         zcuqnSWFK9j6ZTME67i7EBCTmAk5oGPqMPQ2NSuL3axik8NohcdkclWAmD+Xj+spT/rn
-         IwM5Tm5KiJTaSRv4rdv4LBJOgyn3YjiXMpMuEiw9ZsLhsgxm6hfPc6bthgbMnlEO2ELY
-         9GQXEz7lEv0ruuJJZYiFYr3bEO8bTFobJa7UaXbthgxR4EeZ7FeyExvPIKMd6wyQ5PSo
-         WIJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDwwZzVVAdJMDqkI91x5vk4aEQIL90BYKkA/1rG3F8xs+8wlU3fvQx1P9263D15baaomDTsNFFF0jfRdo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+PZCBB87c12BC5oLy6YPjvPT8TnfBL5HDm4O3NhLy0YZIyIxm
-	3hIMANY0iZ2UI3+ukLWrb4ZPGTg93fOymLWT8qsHHJx+S8ebUIRqHH35hxtKSTPm8hzeLY4AVtJ
-	vOYgT34oXXk2Ip/GHv5ypVuszNacBcd2wXM9HCQf0v+JsFQUHUD3d+7H3/q4=
-X-Google-Smtp-Source: AGHT+IEIqGSnOjPqGGEOP6+o6ewLipRC5K/t7OoQxeZDoXfzg276OMR6fz3QI22W6j+Y6d7UcGZYohHPdEZozGrvN3N1OjWi5IA7
+        d=1e100.net; s=20230601; t=1757012209; x=1757617009;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=//wY+wiCi15t97+fQ+FMBl1p8QkU5s+6Pz+y0f6tnSE=;
+        b=npG1CXS4Eue1ewb8DRlXFLzqPgM08dafmu6Z0/wMJ8a0umLaTuPv5HYsfXeXSoMJge
+         CuE1ayjp2w0+F1CW8G0UxKCrSip+59V+fGxD1fqkHUz0+lcJO44vcXW7gUdgzmUtd6RE
+         P/JIStZwdPmxJcacmQtYy3Sdhp9otYN1/EF21rvuYv1Xa0FdSk5X1igc16lGLF8tHysl
+         I/ju81xZofRWmH4At2WLQXSi8JChGPDwGOSb/XD8Npkn2rtLxpv4ohnBHpEm5JXaGhK2
+         lozctfR309VdZk4N9AgvtzAhdQt7EOI0BDHkN1GzAQJ+Z5+56Y54BwMqEipi0rCY3033
+         ohcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPSNNz9HmOUk9teqz8a3UwYHDVUj6i9/Mb8xyLvqu7/SD9RbSUSYW76DepvRq/uEu6r8O3wCmxxAnhiYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRA2pMuynf0nez9NVAish+n7GqkYIyklt8Z7qme8TcFYjnErDW
+	sbhjz5pPLdDNUx2//ue/icm4CqJSGfEhWQrOqOO7q+c6H+PXth3+QUMLkzyW9DznklqOyQAUnEi
+	Jp/LKp/vPioAqcjQt3svH377QiY3ThDt/psTBT02xAthvGTp+mGKKc6WUQ1fU9vWFDw==
+X-Gm-Gg: ASbGncuhTHRRaSdb7IM+HH+P+7yPB9vrb0JlzzrRBQ2ZB0PyHGikvNXQ16+s9k5ZyuZ
+	gRqe5fM3ubo2H8eTLe0wm6w8AmrMawBdkG/FnOSoNzHRS3GBY2cJZlbqz5bKJDFod4WjRl57g8K
+	uQR+ypRKt8FLfVkSy5UfcnobI/dHSRUP0cUvgZ4OWxd20s+tQcAN3mtYipeq408gniCEsK1tA8V
+	v+eapDqiHHknOxXAeaBNuxnR/BAi2sKmmkHz/vcv3jqZMiCoHXs/MlhEzOwTceYh68VUW6UgMCu
+	3RqrHYg/+uQLWaizTffXx2NLt7BsjsNQJhvuWi6iH58yuz7GYpXx9zp8immCKTcvt8M0HdHf/yI
+	kHJTRgIwzWp1oGk7M33y3Jdd+SWjwa034QG8paNJ4alGFbY0cDQJVXOuz8McRo9oy
+X-Received: by 2002:a05:600c:1d0c:b0:456:1b93:76b with SMTP id 5b1f17b1804b1-45b85528632mr169110895e9.4.1757012208933;
+        Thu, 04 Sep 2025 11:56:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEeNuNqOEHJCDLrWhEXGuSOxXZHwBD+OGhZztGaw1PGcxtN9h6/v7McFNFlb90ZhXi09IhDLQ==
+X-Received: by 2002:a05:600c:1d0c:b0:456:1b93:76b with SMTP id 5b1f17b1804b1-45b85528632mr169110445e9.4.1757012208416;
+        Thu, 04 Sep 2025 11:56:48 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:1e00:ce4c:be3:97b3:6587? (p200300d82f251e00ce4c0be397b36587.dip0.t-ipconnect.de. [2003:d8:2f25:1e00:ce4c:be3:97b3:6587])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0d32a2sm415142505e9.9.2025.09.04.11.56.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 11:56:47 -0700 (PDT)
+Message-ID: <26e6828e-78f7-4454-abaa-334257a8f8c2@redhat.com>
+Date: Thu, 4 Sep 2025 20:56:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4a:0:b0:3f2:1a77:4876 with SMTP id
- e9e14a558f8ab-3f4024cb129mr325626485ab.26.1757012188003; Thu, 04 Sep 2025
- 11:56:28 -0700 (PDT)
-Date: Thu, 04 Sep 2025 11:56:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b9e0db.050a0220.192772.000f.GAE@google.com>
-Subject: [syzbot] [net?] [usb?] KMSAN: uninit-value in lan78xx_reset
-From: syzbot <syzbot+62ec8226f01cb4ca19d9@syzkaller.appspotmail.com>
-To: Rengarajan.S@microchip.com, Thangaraj.S@microchip.com, 
-	UNGLinuxDriver@microchip.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 00/13] khugepaged: mTHP support
+To: Nico Pache <npache@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, ziy@nvidia.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, corbet@lwn.net, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
+ peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
+ sunnanyong@huawei.com, vishal.moola@gmail.com,
+ thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+ kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
+ anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
+ will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, hughd@google.com
+References: <20250819134205.622806-1-npache@redhat.com>
+ <e971c7e0-70f0-4ce0-b288-4b581e8c15d3@lucifer.local>
+ <38b37195-28c8-4471-bd06-951083118efd@arm.com>
+ <0d9c6088-536b-4d7a-8f75-9be5f0faa86f@lucifer.local>
+ <CAA1CXcCqhFoGBvFK-ox2sJw7QHaFt+-Lw09BDYsAGKg4qc8nSw@mail.gmail.com>
+ <CAA1CXcAXTL811VJxqyL18CUw8FNek6ibPr6pKJ_7rfGn-ZU-1A@mail.gmail.com>
+ <5bea5efa-2efc-4c01-8aa1-a8711482153c@lucifer.local>
+ <CAA1CXcBDq9PucQdfQRh1iqJLPB6Jn6mNy28v_AuHWb9kz1gpqQ@mail.gmail.com>
+ <d110a84a-a827-48b4-91c5-67cec3e92874@lucifer.local>
+ <CAA1CXcBVR=L5_6x5FGeR693AB_YqEF=4KAX7_2fRgGNa1j1j9A@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <CAA1CXcBVR=L5_6x5FGeR693AB_YqEF=4KAX7_2fRgGNa1j1j9A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 04.09.25 04:44, Nico Pache wrote:
+> On Thu, Aug 21, 2025 at 10:55 AM Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+>>
+>> On Thu, Aug 21, 2025 at 10:46:18AM -0600, Nico Pache wrote:
+>>>>>>> Thanks and I"ll have a look, but this series is unmergeable with a broken
+>>>>>>> default in
+>>>>>>> /sys/kernel/mm/transparent_hugepage/khugepaged/mthp_max_ptes_none_ratio
+>>>>>>> sorry.
+>>>>>>>
+>>>>>>> We need to have a new tunable as far as I can tell. I also find the use of
+>>>>>>> this PMD-specific value as an arbitrary way of expressing a ratio pretty
+>>>>>>> gross.
+>>>>>> The first thing that comes to mind is that we can pin max_ptes_none to
+>>>>>> 255 if it exceeds 255. It's worth noting that the issue occurs only
+>>>>>> for adjacently enabled mTHP sizes.
+>>>>
+>>>> No! Presumably the default of 511 (for PMDs with 512 entries) is set for a
+>>>> reason, arbitrarily changing this to suit a specific case seems crazy no?
+>>> We wouldn't be changing it for PMD collapse, just for the new
+>>> behavior. At 511, no mTHP collapses would ever occur anyways, unless
+>>> you have 2MB disabled and other mTHP sizes enabled. Technically at 511
+>>> only the highest enabled order always gets collapsed.
+>>>
+>>> Ive also argued in the past that 511 is a terrible default for
+>>> anything other than thp.enabled=always, but that's a whole other can
+>>> of worms we dont need to discuss now.
+>>>
+>>> with this cap of 255, the PMD scan/collapse would work as intended,
+>>> then in mTHP collapses we would never introduce this undesired
+>>> behavior. We've discussed before that this would be a hard problem to
+>>> solve without introducing some expensive way of tracking what has
+>>> already been through a collapse, and that doesnt even consider what
+>>> happens if things change or are unmapped, and rescanning that section
+>>> would be helpful. So having a strictly enforced limit of 255 actually
+>>> seems like a good idea to me, as it completely avoids the undesired
+>>> behavior and does not require the admins to be aware of such an issue.
+>>>
+>>> Another thought similar to what (IIRC) Dev has mentioned before, if we
+>>> have max_ptes_none > 255 then we only consider collapses to the
+>>> largest enabled order, that way no creep to the largest enabled order
+>>> would occur in the first place, and we would get there straight away.
+>>>
+>>> To me one of these two solutions seem sane in the context of what we
+>>> are dealing with.
+>>>>
+>>>>>>
+>>>>>> ie)
+>>>>>> if order!=HPAGE_PMD_ORDER && khugepaged_max_ptes_none > 255
+>>>>>>        temp_max_ptes_none = 255;
+>>>>> Oh and my second point, introducing a new tunable to control mTHP
+>>>>> collapse may become exceedingly complex from a tuning and code
+>>>>> management standpoint.
+>>>>
+>>>> Umm right now you hve a ratio expressed in PTES per mTHP * ((PTEs per PMD) /
+>>>> PMD) 'except please don't set to the usual default when using mTHP' and it's
+>>>> currently default-broken.
+>>>>
+>>>> I'm really not sure how that is simpler than a seprate tunable that can be
+>>>> expressed as a ratio (e.g. percentage) that actually makes some kind of sense?
+>>> I agree that the current tunable wasn't designed for this, but we
+>>> tried to come up with something that leverages the tunable we have to
+>>> avoid new tunables and added complexity.
+>>>>
+>>>> And we can make anything workable from a code management point of view by
+>>>> refactoring/developing appropriately.
+>>> What happens if max_ptes_none = 0 and the ratio is 50% - 1 pte
+>>> (ideally the max number)? seems like we would be saying we want no new
+>>> none pages, but also to allow new none pages. To me that seems equally
+>>> broken and more confusing than just taking a scale of the current
+>>> number (now with a cap).
+>>>
+>>>
+>>
+>> The one thing we absolutely cannot have is a default that causes this
+>> 'creeping' behaviour. This feels like shipping something that is broken and
+>> alluding to it in the documentation.
+> Ok I've put a lot of thought and time into this and came up with a solution.
+> 
+> Here is what I currently have tested and would like to proposing:
+> 
+> - Expand bitmap to HPAGE_PMD_NR (512)*, this increases the accuracy of
+> the max_pte_none handling, and removes a lot of inaccuracies caused by
+> the compression into 128 bits that was being done. This also makes the
+> code a lot easier to understand.
 
-syzbot found the following issue on:
+That sounds good to me. Should make the code easier as well.
 
-HEAD commit:    c8bc81a52d5a Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1342fa62580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=845da2a9c105a0be
-dashboard link: https://syzkaller.appspot.com/bug?extid=62ec8226f01cb4ca19d9
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> 
+> - When attempting mTHP level collapses cap max_ptes_none to 255 to
+> prevent the creep issue
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I guess the documentation would then state something like
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ec99afb47153/disk-c8bc81a5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b0879d84349c/vmlinux-c8bc81a5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a9a55e2d5763/bzImage-c8bc81a5.xz
+* When collapsing smaller THPs, "max_ptes_none" is scaled proportional
+   to the THP size.
+* When collapsing smaller THPs, "max_ptes_none" may be internally
+   capped at 255 if it exceeds 255 but is not set to the default (511).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+62ec8226f01cb4ca19d9@syzkaller.appspotmail.com
+Not 100% a fan of all of that, but maybe the only option when wanting to 
+avoid other toggles.
 
-lan78xx 1-1:1.0 (unnamed net_device) (uninitialized): EEPROM is busy
-=====================================================
-BUG: KMSAN: uninit-value in lan78xx_read_eeprom drivers/net/usb/lan78xx.c:1095 [inline]
-BUG: KMSAN: uninit-value in lan78xx_init_mac_address drivers/net/usb/lan78xx.c:1937 [inline]
-BUG: KMSAN: uninit-value in lan78xx_reset+0x999/0x2cd0 drivers/net/usb/lan78xx.c:3241
- lan78xx_read_eeprom drivers/net/usb/lan78xx.c:1095 [inline]
- lan78xx_init_mac_address drivers/net/usb/lan78xx.c:1937 [inline]
- lan78xx_reset+0x999/0x2cd0 drivers/net/usb/lan78xx.c:3241
- lan78xx_bind+0x711/0x1690 drivers/net/usb/lan78xx.c:3766
- lan78xx_probe+0x225c/0x3310 drivers/net/usb/lan78xx.c:4707
- usb_probe_interface+0xd20/0x1460 drivers/usb/core/driver.c:396
- call_driver_probe drivers/base/dd.c:-1 [inline]
- really_probe+0x4d4/0xdc0 drivers/base/dd.c:659
- __driver_probe_device+0x268/0x380 drivers/base/dd.c:801
- driver_probe_device+0x70/0x8b0 drivers/base/dd.c:831
- __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:959
- bus_for_each_drv+0x3e3/0x680 drivers/base/bus.c:462
- __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1031
- device_initial_probe+0x33/0x40 drivers/base/dd.c:1080
- bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
- device_add+0x12a9/0x1c10 drivers/base/core.c:3689
- usb_set_configuration+0x3493/0x3b70 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xfc/0x290 drivers/usb/core/generic.c:250
- usb_probe_device+0x38d/0x690 drivers/usb/core/driver.c:291
- call_driver_probe drivers/base/dd.c:-1 [inline]
- really_probe+0x4d4/0xdc0 drivers/base/dd.c:659
- __driver_probe_device+0x268/0x380 drivers/base/dd.c:801
- driver_probe_device+0x70/0x8b0 drivers/base/dd.c:831
- __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:959
- bus_for_each_drv+0x3e3/0x680 drivers/base/bus.c:462
- __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1031
- device_initial_probe+0x33/0x40 drivers/base/dd.c:1080
- bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
- device_add+0x12a9/0x1c10 drivers/base/core.c:3689
- usb_new_device+0x1062/0x20f0 drivers/usb/core/hub.c:2694
- hub_port_connect drivers/usb/core/hub.c:5566 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
- port_event drivers/usb/core/hub.c:5870 [inline]
- hub_event+0x54e0/0x7620 drivers/usb/core/hub.c:5952
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xb8e/0x1d80 kernel/workqueue.c:3319
- worker_thread+0xedf/0x1590 kernel/workqueue.c:3400
- kthread+0xd59/0xf00 kernel/kthread.c:463
- ret_from_fork+0x1e3/0x310 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+The only alternative would really be respecting only 0/511 for mTHP, and 
+not doing any scaling. That would obviously make the documentation 
+easier and would allow us to revisit that later. The documentation would be:
 
-Local variable sig.i.i created at:
- lan78xx_read_eeprom drivers/net/usb/lan78xx.c:1092 [inline]
- lan78xx_init_mac_address drivers/net/usb/lan78xx.c:1937 [inline]
- lan78xx_reset+0x77e/0x2cd0 drivers/net/usb/lan78xx.c:3241
- lan78xx_bind+0x711/0x1690 drivers/net/usb/lan78xx.c:3766
+* When collapsing smaller THPs, "max_ptes_none" may be interpreted as
+   "0"  when set to a value different to the default (511). This behavior
+   might change in the future.
 
-CPU: 1 UID: 0 PID: 7482 Comm: kworker/1:6 Tainted: G        W           syzkaller #0 PREEMPT(none) 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Workqueue: usb_hub_wq hub_event
-=====================================================
+> 
+> Ive tested this and found this performs better than my previous
+> version, allows for more granular control via max_ptes_none, and
+> prevents the creep issue without any admin knowledge needed.
 
+How would this interact with the shrinker once extended to mTHP? Would 
+your RFC patch be sufficient for that or would we actually also want to 
+cap? I haven't; fully thought this through yet. I'd assume we would not 
+want to cap here. Which makes the doc weird as well, lol.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+-- 
+Cheers
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+David / dhildenb
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
