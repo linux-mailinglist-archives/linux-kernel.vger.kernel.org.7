@@ -1,173 +1,126 @@
-Return-Path: <linux-kernel+bounces-799655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F381BB42EB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:08:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF14FB42EB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF68E3ABC17
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:08:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DD477B8A21
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADE11922F6;
-	Thu,  4 Sep 2025 01:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FA7199949;
+	Thu,  4 Sep 2025 01:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F0VJMdye"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Kfue+q4u"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECAB5B21A;
-	Thu,  4 Sep 2025 01:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5517318B12
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 01:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756948124; cv=none; b=H9iXYE4KqJMqtiEsBg6XYk0dkkVgG0NvROQ55ax7LK4Pa/cs32nmRupGATPnn3md4NnucIwhTHXnApftJMUuLatPcpm7T1922mV3t/WKBaagPf/10YcAuavAqFTu+ICLrMxQIGxPZudXYFsJq6xkFbS+5Jrc/hdhnFxoJ2FLPZc=
+	t=1756948385; cv=none; b=tUk9e22fd5MhXUJZ4ONIi4LiDOUtEoqCiFiBoffGG/a0uIjbCaT1MK0sm1GmbXwftsT26ggih8Q7qtz58JYt+r3Tn8XVtVU7dCZPrjcVf70OQR6r7wTw+1GyVjaw+JPIOFsjdxzLw5Ht/YNuwUT7JXysSF8gLsvhgtNjGDDeVjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756948124; c=relaxed/simple;
-	bh=SMMMSKhcB6f0NdR47qRVTh1uwbXbXXPIDU/RqoxIL6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fc/UoyGxWEzdIlftSZ/hA/gxYWiivfPmWpWEvWhXkQC2N7sjRUlVGB/TKjtRFNhLWsvnlRmBl836Qjrsy2Gvk1K1why8hDTKeTS1ON6KhSjnNW9uLFustAZsDJSh1RQgQWI9RNPlquyzZ5TP+gxU8mnZBHgvfth3IlAXC4z/GXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F0VJMdye; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b627ea685so4140085e9.1;
-        Wed, 03 Sep 2025 18:08:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756948121; x=1757552921; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MS8+FZ8U1cvwX6WE4HlbAZ/j0VShsdOkmZyc33LPkkM=;
-        b=F0VJMdye7eFUPjN6id+2nBi6QOAQNcpMOikHjaqSMCxtiCx7tSYeJU76xPWL0+Lm76
-         ZdRVgMYGpErfL0r1xVYaGeiAFbqPEpmT7X6dOEbwRs7M6cIdF6tyE9l4Q+3O1WDeP9SG
-         TOIESdWW4e3ShpDxCoVURVS2YkLtbAkj+o9rnc8uL3GzIDqf1y5FmpX2dl+iUmNdgpdV
-         YNXoT8faaCDGe4C4fMm73Nk2DVQyTrM6n6XPg6tpGADhRWjdOmIGpzUihzteYnxmAZB5
-         stDdw8R2simyOxNPUzZCtPlpYLC7YyD5Y3VXVHseIlCR8086ngbZhW2AYyUPForfQUCP
-         aCPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756948121; x=1757552921;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MS8+FZ8U1cvwX6WE4HlbAZ/j0VShsdOkmZyc33LPkkM=;
-        b=J8jhUnZSU7kgs+AepXE2AyTMb/bxI+w4OUpRJaiWcA812QfHqUIefRE9JAwzNwJOLT
-         gCDgxalH12asuzSFDKL3Q+YcNgOmpbk+4vQ+vtkzDbhIYgfqrOu9jVrsn/r2taCqZGLv
-         SDJ+oEg8uosY/crpJsZYSSv/QI2DXFK1VpmdkJqSmfcUlUBb4SuYzV2OrItRLtw1I422
-         26zsfEh7ETaZeHik2wDcB8pX/LxHONg1IDyMPkLtLRCn5IyTgmy+npdK6uUNX0nNRnXU
-         sPGm3vQ/QG0woradTxe9cLaH+sgNeVRgLPwyAOcTmD7eVSKFXRBbLtkOg6x63fFK6pmi
-         3jUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVufp+KgQVS7tqHzkLTHb+Gc0Ar2GRELcp+899VYX9V4p39iuRpQIkJ37+krF/4HRVU4qLNch+3U4MwcrbN@vger.kernel.org, AJvYcCVxn3jl5mOOuwMIbtRM3pa5alu4dQz3pEKPhsZSqbAH69eOU4CY0DZV87W7f1Ju0SDMWUR00i8xpgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgH4a2YgdXV7un0qVzOuYbqaOTdZezIb3RiTNMub9cCRH3J/cy
-	pAG8yHuW48CiJVDsg78kwcqZvuu7MKhSiZjfmStYRZ6yYpoj5qjvdhYE
-X-Gm-Gg: ASbGncsFK3NO6DwRQsTLRRAJjzdzLha9O+vHMgN1M6E+2mr/tAmnvHDI48WKQC9cMrJ
-	Ny3c4RiYkslXKIYlxVyVpABummi5PoAVq7FR328du9G3C93Iklvl6eCg+otSu2zbkZJ916kk5YG
-	iC4E1jR/xaczY23F2Ba7IYFjVrveYpZHj6+lo33pQgyIsq+Ylvx+xpSvU7X2O+ubtkHrchWzo6B
-	El5ObAGBAasR+BRn56SMQ1QyQ8OviPXCE3wtEiucxsp+1DoGu/DKd4iwECFu1kmHHLm9w+ry5OT
-	dqTnYk8Cx9jsXmKcsagD5xKjL1yJewPiZHarazZtGCXKnj64M9ET3E+L07BtWt6dAV+Gixnk2MS
-	S+ILVALvCAOmkVPHCmSEGTnEZgxY=
-X-Google-Smtp-Source: AGHT+IGhsSB2KqXIGeIWmV9v+JujN6o6fChIo0ICzXvPfhE73WcL4hM6t8r4lpYoI1isojWTE2vcGw==
-X-Received: by 2002:a05:600c:4f50:b0:45b:9c97:af85 with SMTP id 5b1f17b1804b1-45cb50689admr50705225e9.17.1756948120328;
-        Wed, 03 Sep 2025 18:08:40 -0700 (PDT)
-Received: from hangmanPC ([86.124.200.102])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7d2393sm260231705e9.3.2025.09.03.18.08.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 18:08:39 -0700 (PDT)
-Date: Thu, 4 Sep 2025 04:08:36 +0300
-From: Cezar Chiru <chiru.cezar.89@gmail.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>
-Cc: peda@axentia.se, jdelvare@suse.com, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: Main i2c-*.c files and algos/ subdirectory : Fix
- errors and warnings generated by checkpatch
-Message-ID: <aLjmlHDPV9n88YoM@hangmanPC>
-References: <20250830093016.160753-1-chiru.cezar.89@gmail.com>
- <fkiu64vdlndg5lvuaktao2vmvmn5al7xcpksrjmxrr4ldz5ssn@dolroldcknpd>
- <aLh3rVYItYZ3CYpq@shikoro>
+	s=arc-20240116; t=1756948385; c=relaxed/simple;
+	bh=EztcU3I2jQu/JANSrFiQs6YdssHNrEuZtzcIEgzOo50=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ICWk3+QqKVWJ8NgxfE40hTCOQiyI2Jwg4ZoQtTF9LtMLti7zK03BqoAKc0T8kt7im/LMW1eNLMYp9keAFo6NJl7Njym/OT8c4CzN9OfmTpH/wzJDs42YkmALyW03HdjPdCtshd86XmqgK8LfuXZn5IJKup0gGOf7PpSFrbrFjxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Kfue+q4u; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756948380;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T/YdEdpdY6Oro8d1rFM7+q7LaJ8Hyug3oWsbG3ERi6U=;
+	b=Kfue+q4urULTY/Sv4Jusx10FkSy7wsftg2H7iFLQgu5BAnzsUwZKOliqNMWYet95ck94M1
+	RFN69Bwv6howDbyF2Jy2bnhXr9ZmDxmRUSfzcPkuwxth+WHLLSi98e44xaggv9GmNITXtG
+	KBMnAz1skKwEZTrZaKmvPE3kigtD/JI=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: Menglong Dong <menglong8.dong@gmail.com>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: andrii@kernel.org, olsajiri@gmail.com, eddyz87@gmail.com, mykolal@fb.com,
+ ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ yikai.lin@vivo.com, memxor@gmail.com, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH bpf-next v3 0/3] selftests/bpf: benchmark all symbols for
+ kprobe-multi
+Date: Thu, 04 Sep 2025 09:12:18 +0800
+Message-ID: <2797578.mvXUDI8C0e@7940hx>
+In-Reply-To:
+ <CAEf4BzZVTr26Uogf8uh=7HmgG6Qo_uVy3fX8bQgC+Xs63wZcCA@mail.gmail.com>
+References:
+ <20250901034252.26121-1-dongml2@chinatelecom.cn>
+ <CAEf4BzZVTr26Uogf8uh=7HmgG6Qo_uVy3fX8bQgC+Xs63wZcCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLh3rVYItYZ3CYpq@shikoro>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Sep 03, 2025 at 07:15:25PM +0200, Wolfram Sang wrote:
-> On Wed, Sep 03, 2025 at 06:56:12PM +0200, Andi Shyti wrote:
-> > Hi Cezar,
-> > 
-> > On Sat, Aug 30, 2025 at 12:30:15PM +0300, Cezar Chiru wrote:
-> > > Fixed some coding style errors and warnings plus some minor changes
-> > > in code as reported by checkpatch script. The busses/ and muxes/
-> > > subfolders will be dealt with another commit. Main changes were done
-> > > to comments, defines of 'if' statement, swapping 'unsigned' with
-> > > 'unsigned int' and other minor changes.
-> > > 
-> > > Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
-> > > ---
-> > >  drivers/i2c/Kconfig              |  2 +-
-> > >  drivers/i2c/algos/i2c-algo-bit.c | 29 +++++++++------
-> > >  drivers/i2c/algos/i2c-algo-pca.c | 25 +++++++++----
-> > >  drivers/i2c/algos/i2c-algo-pcf.c | 61 ++++++++++++++++++++++----------
-> > >  drivers/i2c/algos/i2c-algo-pcf.h | 10 +++---
-> > >  drivers/i2c/i2c-boardinfo.c      |  2 +-
-> > >  drivers/i2c/i2c-core-base.c      | 59 +++++++++++++++++++-----------
-> > >  drivers/i2c/i2c-dev.c            | 47 ++++++++++++++----------
-> > >  drivers/i2c/i2c-mux.c            |  1 +
-> > >  drivers/i2c/i2c-slave-eeprom.c   |  2 +-
-> > >  drivers/i2c/i2c-smbus.c          |  2 +-
-> > >  drivers/i2c/i2c-stub.c           | 29 +++++++--------
-> > >  12 files changed, 170 insertions(+), 99 deletions(-)
-> > 
-> > first of all, thanks for your patch, but I can't accept it.
-> > Please split your patch in several smaller patches with single
-> > changes.
-> > 
-> > Granularity is very important for reviews and git blame.
-> 
-> Same comment as previous patch: describe testing please
-> 
+On 2025/9/4 07:50 Andrii Nakryiko <andrii.nakryiko@gmail.com> write:
+> On Sun, Aug 31, 2025 at 8:43=E2=80=AFPM Menglong Dong <menglong8.dong@gma=
+il.com> wrote:
+> >
+> > Add the benchmark testcase "kprobe-multi-all", which will hook all the
+> > kernel functions during the testing.
+> >
+> > This series is separated out from [1].
+> >
+> > Changes since V2:
+> > * add some comment to attach_ksyms_all, which notes that don't run the
+> >   testing on a debug kernel
+> >
+> > Changes since V1:
+> > * introduce trace_blacklist instead of copy-pasting strcmp in the 2nd
+> >   patch
+> > * use fprintf() instead of printf() in 3rd patch
+> >
+> > Link: https://lore.kernel.org/bpf/20250817024607.296117-1-dongml2@china=
+telecom.cn/ [1]
+> > Menglong Dong (3):
+> >   selftests/bpf: move get_ksyms and get_addrs to trace_helpers.c
+> >   selftests/bpf: skip recursive functions for kprobe_multi
+> >   selftests/bpf: add benchmark testing for kprobe-multi-all
+> >
+>=20
+> this doesn't apply cleanly over bpf-next, can you please rebase and
+> resend to let CI run?
 
-Hello Andi, Wolfram,
+Yeah, I just notice that. I'll rebase and resend it now.
 
-Resending email to entire receipients in plain text mode from my mutt
-client with linux-i2c@vger.kernel.org and linux-kernel@vger.kernel.org 
-as my initial reply was rejected because of Gmail client being not in plain mode. I thought maybe you didn't receive it. sorry if I sent twice or three times the same message .
+Thanks!
+Menglong Dong
 
-I am new to submitting linux kernel patches. The first patch i
-submitted "[PATCH] Fix checkpatch.pl warnings and errors in i2c driver
-directory and subdirectories" was wrong and also missed
-signed--off--by git signature. Some change i made originally broke the
-build . I rushed and sent it before I built the kernel and modules.
-rookie mistake.
-But on the second patch I submitted, I built the kernel and modules
-after i made the changes and fixed the build errors. I activated all
-i2c external modules and built in modules in the .config under Device
-Drivers---> I2C in the menuconfig. But didn't tested the kernel on my
-linux laptop and didn't loaded all the external modules to see if they
-generate dmesg errors.
-I plan to resubmit and break down changes from 1 commit to several
-commits(patches) as Andi suggested. I will create a commit in git
-explaining how the patches apply (their order) and this patch can be
-disregarded. And along with it i will  send 1 patch for each i2c file
-i submit changes for. Also after I commit locally on git the final
-version of the commits I will create a build with everything under
-Device Drivers---> I2C menuconfig activated. Upon success I will locally
-test the build on my laptop. load manually all external i2c modules and
-make sure there aren't any dmesg errors and modules are loaded
-successfully. Other than that I don't own any I2C hardware device that
-I could test with my laptop.
-Wolfram, Andi, if you have other ideas on how i could test the i2c
-functionality to make sure i don't break anything with my changes
-please let me know.
- I am a newbie to linux kernel development and want to take it slow
-with small changes in the beginning and then possibly to grow this in
-a full time Linux Kernel Developer career.
-I will be back to you with next patches by Sunday night this week.
-Sorry for the long email but I wanted you to know the whole process 
-I did to submit the patches.
+>=20
+> >  tools/testing/selftests/bpf/bench.c           |   4 +
+> >  .../selftests/bpf/benchs/bench_trigger.c      |  61 +++++
+> >  .../selftests/bpf/benchs/run_bench_trigger.sh |   4 +-
+> >  .../bpf/prog_tests/kprobe_multi_test.c        | 220 +---------------
+> >  .../selftests/bpf/progs/trigger_bench.c       |  12 +
+> >  tools/testing/selftests/bpf/trace_helpers.c   | 234 ++++++++++++++++++
+> >  tools/testing/selftests/bpf/trace_helpers.h   |   3 +
+> >  7 files changed, 319 insertions(+), 219 deletions(-)
+> >
+> > --
+> > 2.51.0
+> >
+>=20
+>=20
 
-Best regards,
-Cezar Chiru
+
+
+
 
