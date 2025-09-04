@@ -1,93 +1,97 @@
-Return-Path: <linux-kernel+bounces-799581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34ACCB42DEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:10:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45CAAB42DEE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0388C581717
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:10:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCD9F7A84D4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6CB125A9;
-	Thu,  4 Sep 2025 00:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525371548C;
+	Thu,  4 Sep 2025 00:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jspM+jEG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pr8ooTkp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD48749C;
-	Thu,  4 Sep 2025 00:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF39749C;
+	Thu,  4 Sep 2025 00:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756944602; cv=none; b=moV/ds7ZCpodiup36q8t1SxobHVD2wsgFd6jfGYlDcO+HuHGQt+fbS+n2N9c0GTQ2xHI0oCA4Ru9RWI3dXg8jJajCOq1ZvixB+8bbEKGxsedpGGEJusQzFCnt38zlM2nvgA/RFMYkKf+z6giSKJ/yS1q2aT1fwUZF0MgYdEnV9M=
+	t=1756944621; cv=none; b=jMjyGFww3nhMakrpMX/xB1w/KypTI0kWh8nHbWDcfCg+hs7JcGxkQ1IUMWmacvic3ULOdbTvwRoqJbXM9bZMk0M1yFe2jCB942fp5dXSk+cxuQf4zYXeTSSM/RjI9KZbw6telkB8s2opEAaj1h77PPe6CSerhdEFCbch5gLPDXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756944602; c=relaxed/simple;
-	bh=wJsKBk2q0S3pJweL1mcBE0GK5BV/WgcNJWJHIErzeXM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=WXhliG170jhMI3msDsMQeNIWbSH/t+UfmE+boG1bThj7PG9L3Rn5VEGBlBRwrGuSVLSLIzfzlnODCBN9h7AVJ09Hop41nVhUXrgo73l5SRciifciBFkHnTFtPAUOLefMXJmPlhnogV0QMfn2fBhwnwmSn9ZQZLisjyomP2bxpyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jspM+jEG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F56DC4CEE7;
-	Thu,  4 Sep 2025 00:10:01 +0000 (UTC)
+	s=arc-20240116; t=1756944621; c=relaxed/simple;
+	bh=xLTUgYpzyJUGQC8iGmNCWf2tluEEgft6La/4Blouoww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iO28/Ndp46KaCVHOy9HLJ+Tb11SXyUEo2mKqgphcZxW8Q9ZM6IM0zGXxw4CLOVPAS6I7vPcpJ5ylgFUq79P8Ct7Y/4o2lVKC3LYa5Q+Ogljgz4atkzbFqZmRD9R5Bqf088DD89lwDpgarleUEVBgQ4wHJ/NyhpH1RI+1HxJinpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pr8ooTkp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD611C4CEE7;
+	Thu,  4 Sep 2025 00:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756944601;
-	bh=wJsKBk2q0S3pJweL1mcBE0GK5BV/WgcNJWJHIErzeXM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jspM+jEGFLLAESYaOpnP+INKRfFj5q4+2bNS0ZM0yh2dtdXb6DW2XM7QYrDzlmwvT
-	 FiIKaTKXtXPvo/Em1at+VFrB0AWXOArurlTDX8fpHIpLYyG5VXGO236hGXccIoutZ4
-	 dtbtg1Dphp+FoAnTJ+CheY6K6PupZ2AQNi/UcwEm0++3SWQfAQQxsqZrtoLHprSHIh
-	 +3ARVH/haJWdu3/asOQcFUz7wtEHIZ7QAyNTWC7WzwolHRRk3DtD62q0gUClDJlbRy
-	 57nIkPiIMnM7krPsCzgDlG5MzV0r8pnQsYSg08oP+A7s6hgH53DEZjJYUvarfSzSCE
-	 9cxnMvtyB71YA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE06D383C259;
-	Thu,  4 Sep 2025 00:10:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1756944620;
+	bh=xLTUgYpzyJUGQC8iGmNCWf2tluEEgft6La/4Blouoww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pr8ooTkp5X63oq60GYII6ufmf73Tu/V4wMy5FfBKW3enutpe21ce9NSZ9r/9+BIa1
+	 QNmdc8QYmWEvlYACtm5vQBlmmQa/7R7TuwUjoq1NqXNG/iDyQcBkrz+A6mCPhnA0Bm
+	 KaUAXelCuIWHuT5Bunwq6+1t4VKF3tIvpYCEuQ3sK5juz62hYLTbdhL2rzY0MHQgIr
+	 Qd43UvP6ORpkbhcWf8nycewvgqOH8U8EyQOrTQBlhBLdOGNdQugD2nN0foJJoQNM63
+	 7JcIA7/yGfCiVe2BKoGCT1x/Mh36Cf4T2EXGhnNc7t0hJ7wH0D/yKI/HRSf27sUHhy
+	 x32cVoiNHYA1A==
+Date: Wed, 3 Sep 2025 19:10:14 -0500
+From: Rob Herring <robh@kernel.org>
+To: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Add support for Gunyah Watchdog
+Message-ID: <20250904001014.GA3405605-robh@kernel.org>
+References: <20250903-gunyah_watchdog-v1-0-3ae690530e4b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] ipv4: Fix NULL vs error pointer check in
- inet_blackhole_dev_init()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175694460652.1244446.15804955986657235785.git-patchwork-notify@kernel.org>
-Date: Thu, 04 Sep 2025 00:10:06 +0000
-References: <aLaQWL9NguWmeM1i@stanley.mountain>
-In-Reply-To: <aLaQWL9NguWmeM1i@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: lucien.xin@gmail.com, davem@davemloft.net, dsahern@kernel.org,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903-gunyah_watchdog-v1-0-3ae690530e4b@oss.qualcomm.com>
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 2 Sep 2025 09:36:08 +0300 you wrote:
-> The inetdev_init() function never returns NULL.  Check for error
-> pointers instead.
+On Wed, Sep 03, 2025 at 07:33:58PM +0000, Hrishabh Rajput wrote:
+> Gunyah is a Type-I hypervisor which was introduced in the patch series
+> [1]. It is an open source hypervisor. The source repo is available at
+> [2].
 > 
-> Fixes: 22600596b675 ("ipv4: give an IPv4 dev to blackhole_netdev")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  net/ipv4/devinet.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+> The Gunyah Hypervisor doesn't allow its Virtual Machines to directly
+> access the MMIO watchdog. It either provides the fully emulated MMIO
+> based watchdog interface or the SMC-based watchdog interface depending
+> on the hypervisor configuration.
 
-Here is the summary with links:
-  - [net] ipv4: Fix NULL vs error pointer check in inet_blackhole_dev_init()
-    https://git.kernel.org/netdev/net/c/a51160f8da85
+EFI provides a standard watchdog interface. Why can't you use that?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> The SMC-based watchdog follows ARM's SMC Calling Convention (SMCCC)
+> version 1.1 and uses Vendor Specific Hypervisor Service Calls space.
 
+Is a watchdog really a hypervisor service? Couldn't a non-virtualized 
+OS want to call a watchdog (in secure mode) as well? But I don't know 
+how the SMCCC call space is divided up...
 
+> This patch series adds support for the SMC-based watchdog interface
+> provided by the Gunyah Hypervisor. The driver supports start/stop
+> operations, timeout and pretimeout configuration, pretimeout interrupt
+> handling and system restart via watchdog.
+
+Shouldn't system restart be handled by PSCI?
+
+Why can't you probe by trying to see if watchdog smc call succeeds to 
+see if there is a watchdog? Then you don't need DT for it.
+ 
+Rob
 
