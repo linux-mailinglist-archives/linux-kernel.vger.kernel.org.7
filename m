@@ -1,149 +1,259 @@
-Return-Path: <linux-kernel+bounces-799972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88764B431CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:50:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8465EB431C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED94D18990BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:50:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D041188EF20
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EFD2459C5;
-	Thu,  4 Sep 2025 05:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840B52405EB;
+	Thu,  4 Sep 2025 05:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PWzAy9wB"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rTzL+F86"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F41D227B94
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 05:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0448632;
+	Thu,  4 Sep 2025 05:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756964999; cv=none; b=Eu0CoogZqahTYSLoEf4UVZkTvfFK1o7KPYZrmWVQpNw8gW1bb6Hc8hac2MmyAAlW0KvXBMbZGuroIVHqEIV42W4/puA7TLO01+1jrwNpw0BNqsQ3FTelxxz1J0fr+sB1ga7Zxvw8V7tUWCUF5vxXnCYE7ruTy/OvfMWEZQ16bR0=
+	t=1756964992; cv=none; b=VKKw4s6lMUt6cRak0q96J+DYazTKSLn8ZNsztPIWYSDhXzkCCjnzBXbIV6iPLEgbTpssS/CPmpDJbvhwCUviJa3ZGisEqGjqU8Bv1M1Fzsaq5iv4TwUP07X00MrzxCEbHujUsLi5yRmdpXBqA4BYEvSGUef76bh/nZ7vR/QCBJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756964999; c=relaxed/simple;
-	bh=cHXL6xHUHiNr78dezyhRkZqCf3fXZn4s6BpkJKXpUTI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XtK6yrZLiU5aqMr/S2dGPSnaFgX42LJyHbQ9CwOtTvK6ATvaTfS7k2u2VUAiMIhR/RR/H8xfuhIbNT3si9szeAOqEHjPVsBwWd3mRq2AD+sEqwGqDx/btZ/JQB3dX1XHT7P7ZDZgyh58WlmIxBRXO7ffsM2X8D1rGNZHQzIuXgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PWzAy9wB; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45b8873085fso49565e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 22:49:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756964996; x=1757569796; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uZekwazS2g2pYhPPIj8vSuvjbizjS9SUCjW0PdNHHTI=;
-        b=PWzAy9wBy2SRDWfkd7iPMJv3ENxLy50CSD2Pq0enS/j7x/LIq5uBrHXdaZXbAZXAwP
-         HLc8C367SntH04TRBZrsZNM89idujw/a70LbUvtvWqM0hvKMkd38MrLlpB6CjQ47wBC4
-         JklXA/2gOrnBXg0X5WH9BDLfLVgGZ0+kE/FQhO9NMVGniFLI+IGxgdz2sauA9YF0bg2Z
-         Nh7tWF7YWRHGr/hTfyuRdc6J58ThCQChFFAp5kHMf89IwtPJvEh12dFpMRBUZpgV+zPD
-         i0RCivn/v3S1c6/YYRoR+BiQ87Q0aXeE3r8CPBFVVHo55wyltyK7nIp4uAl+MfMNNW+P
-         TFgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756964996; x=1757569796;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uZekwazS2g2pYhPPIj8vSuvjbizjS9SUCjW0PdNHHTI=;
-        b=jn1GQ6du2GLGjWQ3210PYQn8FeeKjG2hcdjITPnISNZtu+2a2CiULyTLzkfogp9uZ4
-         L+BTutTv9vp/GvPVvTL7eaZ2zBUK3O8yK9Omkr+gZ2+jKdEjLFCv+bZ6YzN4H5ydI7Oq
-         odv95TACaR1tsSNEkel+v+wGG4N6RwaAWOfk+N0KoZPb8ZHjuq4bW4zZVjBvWgk/mwxe
-         a+64o6iv+WUBAvJKk0lWp3QqlvRwbY6aLL02JVScZiaLDQNyofoP4uP0idIULDLxGbNg
-         m7/c3/JNoXZLG0oiRvt3S9hg/P6p1eohu+VNIgxnnHJtLxw+dZA0MX4Y55snsi7KuBqz
-         /r7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVtEgDdddXWjl1KlUffsRk47rkYESat7x8r+btBe6A8CFjlqs9/u2wX4BCk+GGK01pyD5pwmhs9XfVZtNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGGKT8x3PFIqwZO+CGhnRpiUuPgK4mOwOeaIFeOUrqtlATKpA7
-	WN3MRNTjJ+oSZ40PZkC7aPP/Q30sViNqh0XFaMxFlJ492kXGELOnFmm9Q+tb95TC+v/htPoYMcQ
-	T8G9N8MfZFSA62bGeM1nDaJxqQF5f7ajYsMwtkCV1
-X-Gm-Gg: ASbGncvHPN1QwHXHvXAhgX9gOTWk6r3hkgexwvxOzg2DdGVUoiSR9GhgukWE9rC8X/C
-	eCqKubSUM4t6xcs1Bz6i7pgZSdVMGj9oucaaNpvv8QW+9WmLN+IK4qk6JWsfcTXBrlGi+B8iwm4
-	/mATP6ZuF7mwemMguHhE/rW2sYpuwH6g9I7fUY9GSEPxvGAA0aizTBKhbii7fk5PFA1Q1H4u6Im
-	XbY9PiePNL5O/yTaUHmv9XhJzHTznCcZ9oF20uL
-X-Google-Smtp-Source: AGHT+IGKXKMOwaX1XwiLYd9cWPAOn8fRshNus9S9PFRUt8IGNa0sD7+Q7RKYMmonPYpj8+GPY4e60I9X1xIgZWTCRrM=
-X-Received: by 2002:a05:600c:b96:b0:45b:9a6e:ceaf with SMTP id
- 5b1f17b1804b1-45dd0d16286mr549045e9.0.1756964995324; Wed, 03 Sep 2025
- 22:49:55 -0700 (PDT)
+	s=arc-20240116; t=1756964992; c=relaxed/simple;
+	bh=9WQzIa3qfWUZV+EvhgZ4SESBS1eEflnShf9kFqeX2bs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G//LszjNQLdS8AqqaC58alm981l8qxpzAsbu1hT7JLKBuQ8Tl2sTlOAdDtG7P17d3ZfaYbC6HRBLwYLQTvuzuIRPGD0e06TEprP///lIIUp/eiqAPtsmBiGt72gCW/JhDqcf2BCA60gvXn2kzFDQEG7u9DI6Fbc9gTcxmOQvec8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rTzL+F86; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F43C4CEF0;
+	Thu,  4 Sep 2025 05:49:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756964992;
+	bh=9WQzIa3qfWUZV+EvhgZ4SESBS1eEflnShf9kFqeX2bs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rTzL+F86JVWgnktoyv0vu4spAbwRiYPEK2NTI22kayi/nfMBXKuSZhaNbc3cRxn6y
+	 0cxiJdrxiDORMBnH/Hch/JvkJKtT0cn3abPZbzvbbMhc5YJU4SY6yVi2oTr89fojKg
+	 qibr08LLv5NlxU8w574gxtW2GmX602Ez8UfbrD2zwZjwYdMVg2hTsCh50ogSAm0LTi
+	 fX5n1y0fi9ruvxmp6tV2N6QwXo494VkKfrQ+GhkDI7ZrnNN6kvqfgPhcklCOFQW5HC
+	 7oPZDozbFge3d4MhAnIcDJXSk+9vL3/i+QPoLpcxQXNZqt0kCwY/ni24YMANnIVFOm
+	 VtspCk1BYpdOw==
+Message-ID: <042523f7-2b75-4a04-8e0b-d1019ab84987@kernel.org>
+Date: Thu, 4 Sep 2025 07:49:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903083017.795065-1-khtsai@google.com> <b50f9d10-88a3-4b1c-a75e-6c67b9d1504c@linaro.org>
-In-Reply-To: <b50f9d10-88a3-4b1c-a75e-6c67b9d1504c@linaro.org>
-From: Kuen-Han Tsai <khtsai@google.com>
-Date: Thu, 4 Sep 2025 13:49:28 +0800
-X-Gm-Features: Ac12FXwuISttGL2s4mMoPJlKjujNxzCkzweDYjIHvsxMp4VbNeORKHN870izq7s
-Message-ID: <CAKzKK0q4aioOOYZyXVp1-GTcQFaU036YoecKzvVCRPjeUAyNKA@mail.gmail.com>
-Subject: Re: [PATCH] usb: gadget: f_ecm: Fix ecm_opts->bound logic in bind path
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: gregkh@linuxfoundation.org, prashanth.k@oss.qualcomm.com, 
-	Thinh.Nguyen@synopsys.com, s.hauer@pengutronix.de, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] This patch adds a new device tree binding
+ documentation.
+To: syyang <syyang@lontium.com>, robh@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, andrzej.hajda@intel.com,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, jonas@kwiboo.se,
+ krzk+dt@kernel.org, linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
+ rfoss@kernel.org, yangsunyun1993@gmail.com
+References: <175691717884.2393851.6340903042726389490.robh@kernel.org>
+ <20250904022524.1748587-1-syyang@lontium.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250904022524.1748587-1-syyang@lontium.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+On 04/09/2025 04:25, syyang wrote:
+> Fix device tree binding validation errors reported by Rob Herring.
+> 
+> v2:
 
-On Wed, Sep 3, 2025 at 4:33=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 03/09/2025 10:30, Kuen-Han Tsai wrote:
-> > The bound flag in ecm_opts is being set to true even if
-> > gether_register_netdev() failed.
-> >
-> > Set ecm_opts->bound to true only upon success.
-> >
-> > Fixes: d65e6b6e884a ("usb: gadget: f_ecm: Always set current gadget in =
-ecm_bind()")
-> > Cc: stable@kernel.org
-> > Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
-> > ---
-> >  drivers/usb/gadget/function/f_ecm.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/usb/gadget/function/f_ecm.c b/drivers/usb/gadget/f=
-unction/f_ecm.c
-> > index 027226325039..9f5ed6f32a62 100644
-> > --- a/drivers/usb/gadget/function/f_ecm.c
-> > +++ b/drivers/usb/gadget/function/f_ecm.c
-> > @@ -690,13 +690,14 @@ ecm_bind(struct usb_configuration *c, struct usb_=
-function *f)
-> >
-> >       if (!ecm_opts->bound) {
-> >               status =3D gether_register_netdev(ecm_opts->net);
-> > -             ecm_opts->bound =3D true;
-> >       }
-> >
-> >       mutex_unlock(&ecm_opts->lock);
-> >       if (status)
-> >               return status;
-> >
-> > +     ecm_opts->bound =3D true;
->
-> Now it is outside of mutex, so this is raising questions you should have
-> answered in commit msg.
->
+That's not the place where you put changelog.
 
-Thanks for the review.
+> - Fixed $id field to match actual filename (lontium,lt9611c.yaml)
+> - build pass
+> 
+> Thanks to Rob Herring for the review and feedback.
 
-1. Commit da92801c647c ("usb: gadget: f_ecm: add configfs support")
-introduced a mutex_lock in the ecm_bind function, but this lock did
-not protect the ecm_opts->bound flag. Subsequently, commit
-d65e6b6e884a ("usb: gadget: f_ecm: Always set current gadget in
-ecm_bind()") moved the status check outside the locked section but
-neglected to also move the assignment for ecm_opts->bound.
-2. The caller, configfs_composite_bind(), binds functions
-sequentially, which prevents race conditions when accessing
-ecm_opts->bound.
+Please carefully read submitting patches.
 
-I will update the commit message and submit a new version shortly.
+Do not attach (thread) your patchsets to some other threads (unrelated
+or older versions). This buries them deep in the mailbox and might
+interfere with applying entire sets. See also:
+https://elixir.bootlin.com/linux/v6.16-rc2/source/Documentation/process/submitting-patches.rst#L830
 
-Regards,
-Kuen-Han
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
+> 
+> Signed-off-by: syyang <syyang@lontium.com>
+> ---
+>  .../display/bridge/lontium,lt9611c.yaml       | 121 ++++++++++++++++++
+>  1 file changed, 121 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/lontium,lt9611c.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/lontium,lt9611c.yaml b/Documentation/devicetree/bindings/display/bridge/lontium,lt9611c.yaml
+> new file mode 100644
+> index 000000000000..712644da4f1d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/lontium,lt9611c.yaml
+> @@ -0,0 +1,121 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/bridge/lontium,lt9611c.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Lontium LT9611C 2 Port MIPI to HDMI Bridge
+> +
+> +maintainers:
+> +  - Rob Herring <robh@kernel.org>
+
+No, how so?
+
+> +
+> +description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +  The LT9611C are bridge devices which convert DSI to HDMI
+
+Why this cannot be added to lt9611 binding? Commit msg should clearly
+answer that.
+
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - lontium,lt9611c
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#sound-dai-cells":
+
+Missing dai-common ref.
+
+> +    const: 0
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +    description: GPIO connected to active high RESET pin.
+> +
+> +  vdd-supply:
+> +    description: Regulator for 1.2V MIPI phy power.
+> +
+> +  vcc-supply:
+> +    description: Regulator for 3.3V IO power.
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description:
+> +          Primary MIPI port-1 for MIPI input
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description:
+> +          Additional MIPI port-2 for MIPI input, used in combination
+> +          with primary MIPI port-1 to drive higher resolution displays
+> +
+> +      port@2:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description:
+> +          HDMI port for HDMI output
+> +
+> +    required:
+> +      - port@0
+> +      - port@2
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - vdd-supply
+> +  - vcc-supply
+> +  - ports
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c10 {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      hdmi-bridge@41 {
+> +        compatible = "lontium,lt9611c";
+> +        reg = <0x41>;
+> +        #sound-dai-cells = <0>;
+> +        interrupts-extended = <&pio 128 GPIO_ACTIVE_HIGH>;
+> +        reset-gpios = <&pio 127 GPIO_ACTIVE_HIGH>;
+> +        vdd-supply = <&lt9611_1v2>;
+> +        vcc-supply = <&lt9611_3v3>;
+> +        status = "okay";
+
+Nope, drop.
+
+
+
+Best regards,
+Krzysztof
 
