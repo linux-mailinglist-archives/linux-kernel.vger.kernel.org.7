@@ -1,61 +1,73 @@
-Return-Path: <linux-kernel+bounces-801613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49C7B44796
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:43:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0FE3B4479A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B93A05D78
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:43:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1CD65868C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B43E2848A7;
-	Thu,  4 Sep 2025 20:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80E1284B4E;
+	Thu,  4 Sep 2025 20:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCZ7Bgh6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qY/1p+ir"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55B92253FB;
-	Thu,  4 Sep 2025 20:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E569D271475;
+	Thu,  4 Sep 2025 20:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757018579; cv=none; b=TaQEdqoEOQjetFFrflRrvsChdK4NvHB8vbRthOa7zsBRxfbWXN2vR8JqKvzs3SfE/iFLbcZq46TYVwhu39iBtcDE9LXS/jSG476PvUQCgs7uyb3R3X20D9ihu5kWS8LSmtOT1jLAaiMm/1gXUA89sk76AXD4bLlUfsq+f+LjGi4=
+	t=1757018606; cv=none; b=U4Xjs4lJcG6HTuRy2xKxg0RACdokt6piOp99/GQ6l2tBrmr5PKUS6eJ5Smurvs+W1K3MZE7HAtXranqFbrXkAZswPJKPhUus5kVwfD0QfC51ssevixwe4VUTOFqd2/2nOW1GwrbrC47Gm7mgfsKTbVrkPriYTrFhbMej++KEhqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757018579; c=relaxed/simple;
-	bh=gl6feTJt/B+TOZvG57z5VrXnOhVpynrQD6B5PUvbN1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=rPGP0kmi3iNCa/lQUjSS77XiCuFkqqISze81v+Y4wo+AkyNZvF6gT7xTcgKJF5tM6qU04gPUJeFjnZ+O5XgNU2cLsmJ0T0c2lyYFUXt1YNXAiPQ6jFAidqRaLwhbYy1+8haecInqglOetpPlpgKL7dnEezXQbBrM1ALVwBdGLoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jCZ7Bgh6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49F1EC4CEF0;
-	Thu,  4 Sep 2025 20:42:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757018578;
-	bh=gl6feTJt/B+TOZvG57z5VrXnOhVpynrQD6B5PUvbN1Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=jCZ7Bgh6T2k6NL9SXYmBR+3vZgQiykuOeKOay4XKp5Ym9hPplZwgMUqiO6utxiUhH
-	 BTUYEmBS5yzuMUpLe7p0j6vIealxoJE7ENcLCSZVh7JNuIa+xGaxMeZREnwHs/muLO
-	 Kwz7f0WpcDpzwhzaGojx8Dwi67YZP7utHWrec3YEfoEM2UtuOnkx3gGhY7ntvHwNHi
-	 1+YFt5oIHK//Dc9QVJEOoPXMgwWyHMNYMSLByyGh4VSeZQp/ghZfTF3YvlcdsyHkPF
-	 tEeVXPWs1JhaNXWuE1W+FPydbcF5m67/7Gg2vZsQfHI5qroM7hsXxrqMy1kiJ079lf
-	 QhMltA3H3mmhA==
-Date: Thu, 4 Sep 2025 15:42:56 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Mario Limonciello (AMD)" <superm1@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
-	Daniel Dadap <ddadap@nvidia.com>
-Subject: Re: [PATCH v10 3/4] fbcon: Use screen info to find primary device
-Message-ID: <20250904204256.GA1277756@bhelgaas>
+	s=arc-20240116; t=1757018606; c=relaxed/simple;
+	bh=NzH5f6y970hhv0kh6FwfAIeMgXKfPv4dAoq/Y/zQ/0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B9bWper+iUf1zJ44DcsMIx6Gt6KvBZWaqiORHBFxiGKh6g5jPtlEFbq30BEhEsFEaTsMGNP0rq5HpmumUkscMk8XurMonWZwue+uJgZEvh5AL+XBEkw83g9WfvmUfeGsT/L1GVpKV7pFWiQT4+5u3+HGBdtGgHEdka9UuXwleiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qY/1p+ir; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=2zGbgW/cDgXPG1zOwlu2oL2V6JgF6ORfLuZCn2FbO7o=; b=qY/1p+ir1YlJHB57jjuWNokeH5
+	NbfgM4VdUW5OJMgZnZ8326YcQ2uPlgdmW0cqOiNZTwIn49/+gQxyzXp1VJ8XTN1ni1UKbWl6D6QDk
+	UBrB3EXFNsALXJDpmVMJkASMiaivvhYs6BUjAQrKzc2tF3cNy7cGGVAEJYBSkiVJc+ws=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uuGna-007Gpp-Q0; Thu, 04 Sep 2025 22:43:14 +0200
+Date: Thu, 4 Sep 2025 22:43:14 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next v2 7/9] net: pcs: rzn1-miic: Add support to
+ handle resets
+Message-ID: <9ad6ec03-bd01-463f-b076-e537bb7eada4@lunn.ch>
+References: <20250904114204.4148520-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250904114204.4148520-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,90 +76,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250811162606.587759-4-superm1@kernel.org>
+In-Reply-To: <20250904114204.4148520-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Mon, Aug 11, 2025 at 11:26:05AM -0500, Mario Limonciello (AMD) wrote:
-> On systems with non VGA GPUs fbcon can't find the primary GPU because
-> video_is_primary_device() only checks the VGA arbiter.
+On Thu, Sep 04, 2025 at 12:42:01PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> Add a screen info check to video_is_primary_device() so that callers
-> can get accurate data on such systems.
+> Add reset-line handling to the RZN1 MIIC driver and move reset
+> configuration into the SoC/OF data. Introduce MIIC_MAX_NUM_RSTS (= 2),
+> add storage for reset_control_bulk_data in struct miic and add
+> reset_ids and reset_count fields to miic_of_data.
 > 
-> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
-> Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
-
-Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
-
-I don't think you need my ack for this, but it does look fine to me.
-
-I wish __screen_info_pci_dev() didn't have to use pci_get_base_class()
-to iterate through all the devices, but you didn't change that and
-maybe somebody will dream up a more efficient way someday.
-
-Let me know if you need anything more from me.  Thanks for persevering
-with this!
-
-> ---
-> v10:
->  * Rebase on 6.17-rc1
->  * Squash 'fbcon: Stop using screen_info_pci_dev()'
-> ---
->  arch/x86/video/video-common.c | 25 ++++++++++++++++++++++++-
->  1 file changed, 24 insertions(+), 1 deletion(-)
+> When reset_ids are present in the OF data, the driver obtains the reset
+> lines with devm_reset_control_bulk_get_exclusive(), deasserts them during
+> probe and registers a devres action to assert them on remove or on error.
 > 
-> diff --git a/arch/x86/video/video-common.c b/arch/x86/video/video-common.c
-> index 81fc97a2a837a..e0aeee99bc99e 100644
-> --- a/arch/x86/video/video-common.c
-> +++ b/arch/x86/video/video-common.c
-> @@ -9,6 +9,7 @@
->  
->  #include <linux/module.h>
->  #include <linux/pci.h>
-> +#include <linux/screen_info.h>
->  #include <linux/vgaarb.h>
->  
->  #include <asm/video.h>
-> @@ -27,6 +28,11 @@ EXPORT_SYMBOL(pgprot_framebuffer);
->  
->  bool video_is_primary_device(struct device *dev)
->  {
-> +#ifdef CONFIG_SCREEN_INFO
-> +	struct screen_info *si = &screen_info;
-> +	struct resource res[SCREEN_INFO_MAX_RESOURCES];
-> +	ssize_t i, numres;
-> +#endif
->  	struct pci_dev *pdev;
->  
->  	if (!dev_is_pci(dev))
-> @@ -34,7 +40,24 @@ bool video_is_primary_device(struct device *dev)
->  
->  	pdev = to_pci_dev(dev);
->  
-> -	return (pdev == vga_default_device());
-> +	if (!pci_is_display(pdev))
-> +		return false;
-> +
-> +	if (pdev == vga_default_device())
-> +		return true;
-> +
-> +#ifdef CONFIG_SCREEN_INFO
-> +	numres = screen_info_resources(si, res, ARRAY_SIZE(res));
-> +	for (i = 0; i < numres; ++i) {
-> +		if (!(res[i].flags & IORESOURCE_MEM))
-> +			continue;
-> +
-> +		if (pci_find_resource(pdev, &res[i]))
-> +			return true;
-> +	}
-> +#endif
-> +
-> +	return false;
->  }
->  EXPORT_SYMBOL(video_is_primary_device);
->  
-> -- 
-> 2.43.0
+> This change is preparatory work to support the RZ/T2H SoC, which exposes
+> two reset lines for the ETHSS IP. The driver remains backward compatible
+> for platforms that do not provide reset lines.
 > 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
 
