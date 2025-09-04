@@ -1,146 +1,138 @@
-Return-Path: <linux-kernel+bounces-801789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69727B449D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:40:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28560B449DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 853973AC6CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:40:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1C9DA411C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AF52EC0B4;
-	Thu,  4 Sep 2025 22:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D5oi70zv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3VbdcIOn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A3F2EC093;
+	Thu,  4 Sep 2025 22:40:50 +0000 (UTC)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362F82E8DE9
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A4A2749C4;
+	Thu,  4 Sep 2025 22:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757025621; cv=none; b=XJTnN3uTbEQwMrofcE6bjGsnEs9hG6l4EFuJc0APfka2ySUIM5fAzUGQccekYI/0KiCodrbApfndgreqqnb5QLnthhh9Xd7EFm6Vve4RnG3ym2U7HaFPEQ+TBMBgm5Tk9OXgQN2RNv4fc2K9xArpkIjbxjMLTGhDnjHrgS6yHG4=
+	t=1757025650; cv=none; b=cF8iv8oIBORvC1FINsVKwpHmj58iqfnL7vWkbz+IQCyJkrq4UFx0I3c/RiLTi0WWAk7iwckK8//NqWr4Mj9SK22yjJaMmLByMD0ip7Q1CrnZ+364j4RmwfdSFYXw8XoT2fDRiTOcn3tXa6i7CHaRnmQ0Iu9oYmBobd6asYPeMVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757025621; c=relaxed/simple;
-	bh=4ghSQSA6ygpn4VSB5NPZWZuMJQteCrrYVsreKPJWXgE=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JrAsiCqxhE7Jceyd09ze3KJp8M/eiDbyjW8apNclN7N4qwOI5UT+V8/D+/mLMEZJD+0Xsw5KeAqszvEQ/DJgvAwEVovPRH2s2D+p+jweWUir0OoWu+wHzZqJC2aKkk2un7+bDLnK5wINIB3K0cSg+cx5JjwSO7/w7w9wvivzdBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D5oi70zv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3VbdcIOn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757025617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jENW2pLaY1cNK8kKMarghne97j86Sp4vW16zY5vMznc=;
-	b=D5oi70zvc/uTmhR878tx01/znsKCztsB4srhhwEVmexRz2Nyt36PZOmIv/EeLjSGanKj4M
-	UCUlDn2M5nN951LvIi8KgWcW2/wHHRWVBNq3rPpCPWGk9CRifbpkqPgW+vh6rOdYB5P/EB
-	y94ekwjJf5UD3NOynn9ew4azSgK4TfTyUf9GPZ1d+tQs0bUFz5T+srmRmdwm68MswoqoN9
-	nCBnkX5wi4pzRLMjg5J58bE56+Jnz8mRnp+KVmU12TMG9ADzVPLdNsJEWI8TvfJBje8Mdk
-	WrdH9I5zMIc3ZMwzoOkoEob5oxcCmICpUkff+nrk6NLmPtg01M4MAen7tBkFJw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757025617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jENW2pLaY1cNK8kKMarghne97j86Sp4vW16zY5vMznc=;
-	b=3VbdcIOn9lsG6jWqwRsIgdrTdzn85oKeDujS/Y5DEtbZ4o+nofRyGN7jQFRSZHtfZLxFTs
-	xs1QfHu1pOXf+YBw==
-To: LKML <linux-kernel@vger.kernel.org>
-Subject: [patch V3 RESEND 16/37] rseq: Provide tracepoint wrappers for
- inline code
-In-Reply-To: <20250904185720.150944384@linutronix.de>
-References: <20250904185336.943880027@linutronix.de>
- <20250904185720.150944384@linutronix.de>
-Date: Fri, 05 Sep 2025 00:40:16 +0200
-Message-ID: <874ithyh7z.ffs@tglx>
+	s=arc-20240116; t=1757025650; c=relaxed/simple;
+	bh=qTVF5sL19zmszjcdOcaIjk6qURyzvokgiNft2ILmfUw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NrIVe05GJhukcagpDIhWxQv90znwicrW0zOLgpJj4XNZJHZ2RBjATHkDMwpzqG8Jt2E7RCp4WAPOauhtPCbfrbSVZ1Sk0KL3jPjvsMa5d5zeqEIRUHJvRCp4hIf9Iedxd3zH6XqxPo24ySKU+xNSmhcFG73zQFCWO7kKo3hjcWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-248df8d82e2so16446615ad.3;
+        Thu, 04 Sep 2025 15:40:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757025648; x=1757630448;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U9kLjbbW0v3g5jIz1pOHvQ6wI7RCfXH9XFGjzeB8QiM=;
+        b=eb0MSwqEC4xqgrhULeLBS6EWASNwwKzxCK67EnQxURsvPYuN4yPcZvOg1v0bFB/ihJ
+         ebV605uwn9z784hzutp9m0GZm8H4wuUaXTGrWcg37k+gan9QJUCQXKUI9105q5xOnX2M
+         SKpt9kBdOofYyWCCRWjQhc0Z5KoXWl9v7Jfye7MZPr+23cDlkZJrctv/SrDd1/s+seE0
+         CiqpVb0WHzzVaAJt831eIfcXbUM0U3xybfpISjj+0vOuGMmyqXCHHn27KA3lS30bUeDr
+         ZY1DzMojalQWv552kYRo24f1wMns7hVLwiBEUUdLTtDCc3fFIDlxRhEdWlykjezD2fUl
+         N2og==
+X-Forwarded-Encrypted: i=1; AJvYcCUfOChSc22vqxadHF5CAt0K0RKWdreS9LBO7tct/VpO70i9+derXexlbySWwU9v0jkvOic=@vger.kernel.org, AJvYcCWbFrtpCl+cPODKQ2wAUabMRJpzTdE2XOJTZ1Qypg2yrMdRsH3F+iUgWUOqjZq163Ebn0cXEGnPEsDfnq1u@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZKmGPzAzvsLK0KqhpYDq8bvzl9ww86jPOJaAITT/Ifyp2T5Sx
+	0aKO6Wp4SM8GPoBO4L3yNcTif2yjFSy1zzlbFHXlPVeRH8oD60u3y7Xq
+X-Gm-Gg: ASbGncvRw4pcpVPxKpf6FuvvrEDcl7XJIyGAeSjIIiu7tkuQm88CYIidpOf6HnTF1rQ
+	yCJQnjZ3NEw4jcULWgAwNYOcK8ZYYMV7RrWmsZalbmWfD0Ti70smQt4QyNwHmkvzK6M1GHkk5Mp
+	SRjGHEyEVs1ve0RTO2a3ADbUSSwSlNzn/PJT5DbV5HCaULGX6imOyO9HeKIV3IH4Q3QRfLr3xf3
+	XX0nOIdcsDNZsFbh4M5+ZRKMn8qFfFZtAxbOfPJnYLUrrz5gTSWZLJZSkdmLWMogdpuY0N2gjMQ
+	9chQuk2yuefR5UoHpwaUtpZApFdCiFmjF54RkG+7KQHh56qjrSAj5sI392MdSTcdBWV/LsMyVsA
+	mFLEJJsa/tT53WcI+ZHbKk1VDpDJB4t9cZIqRngUArBjyJPRx/XGF35tkqivTsaAymQ==
+X-Google-Smtp-Source: AGHT+IEg0EBJsgJD54RpVq77SBgOPP8QfZWbRdHeWbFnCFhn3Dtyc2saKsHgJj5EGnJS6W7ggBQrKw==
+X-Received: by 2002:a17:902:f64a:b0:24a:9105:d020 with SMTP id d9443c01a7336-24a9105d719mr186110155ad.51.1757025648083;
+        Thu, 04 Sep 2025 15:40:48 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1151:15:499:89f8:cf94:6e72? ([2620:10d:c090:500::4:2ac])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24905da2896sm198006415ad.81.2025.09.04.15.40.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 15:40:44 -0700 (PDT)
+Message-ID: <05b2c226-9a09-4541-a18c-8a21898846d0@kernel.org>
+Date: Thu, 4 Sep 2025 15:40:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v7 2/3] bpf: clean-up bounds checking in
+ __bpf_get_stack
+To: Arnaud Lecomte <contact@arnaud-lcm.com>, alexei.starovoitov@gmail.com,
+ yonghong.song@linux.dev
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+ john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+ linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
+ syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+References: <20250903233910.29431-1-contact@arnaud-lcm.com>
+ <20250903234052.29678-1-contact@arnaud-lcm.com>
+Content-Language: en-US
+From: Song Liu <song@kernel.org>
+In-Reply-To: <20250903234052.29678-1-contact@arnaud-lcm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Provide tracepoint wrappers for the upcoming RSEQ exit to user space inline
-fast path, so that the header can be safely included by code which defines
-actual trace points.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
----
-V3: Get rid of one indentation level - Mathieu
----
- include/linux/rseq_entry.h |   28 ++++++++++++++++++++++++++++
- kernel/rseq.c              |   17 +++++++++++++++++
- 2 files changed, 45 insertions(+)
+On 9/3/25 4:40 PM, Arnaud Lecomte wrote:
+> Clean-up bounds checking for trace->nr in
+> __bpf_get_stack by limiting it only to
+> max_depth.
+>
+> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+> Cc: Song Lui <song@kernel.org>
 
---- a/include/linux/rseq_entry.h
-+++ b/include/linux/rseq_entry.h
-@@ -5,6 +5,34 @@
- #ifdef CONFIG_RSEQ
- #include <linux/rseq.h>
- 
-+#include <linux/tracepoint-defs.h>
-+
-+#ifdef CONFIG_TRACEPOINTS
-+DECLARE_TRACEPOINT(rseq_update);
-+DECLARE_TRACEPOINT(rseq_ip_fixup);
-+void __rseq_trace_update(struct task_struct *t);
-+void __rseq_trace_ip_fixup(unsigned long ip, unsigned long start_ip,
-+			   unsigned long offset, unsigned long abort_ip);
-+
-+static inline void rseq_trace_update(struct task_struct *t, struct rseq_ids *ids)
-+{
-+	if (tracepoint_enabled(rseq_update) && ids)
-+		__rseq_trace_update(t);
-+}
-+
-+static inline void rseq_trace_ip_fixup(unsigned long ip, unsigned long start_ip,
-+				       unsigned long offset, unsigned long abort_ip)
-+{
-+	if (tracepoint_enabled(rseq_ip_fixup))
-+		__rseq_trace_ip_fixup(ip, start_ip, offset, abort_ip);
-+}
-+
-+#else /* CONFIG_TRACEPOINT */
-+static inline void rseq_trace_update(struct task_struct *t) { }
-+static inline void rseq_trace_ip_fixup(unsigned long ip, unsigned long start_ip,
-+				       unsigned long offset, unsigned long abort_ip) { }
-+#endif /* !CONFIG_TRACEPOINT */
-+
- static __always_inline void rseq_note_user_irq_entry(void)
- {
- 	if (IS_ENABLED(CONFIG_GENERIC_IRQ_ENTRY))
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -91,6 +91,23 @@
- 				  RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL | \
- 				  RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE)
- 
-+#ifdef CONFIG_TRACEPOINTS
-+/*
-+ * Out of line, so the actual update functions can be in a header to be
-+ * inlined into the exit to user code.
-+ */
-+void __rseq_trace_update(struct task_struct *t)
-+{
-+	trace_rseq_update(t);
-+}
-+
-+void __rseq_trace_ip_fixup(unsigned long ip, unsigned long start_ip,
-+			   unsigned long offset, unsigned long abort_ip)
-+{
-+	trace_rseq_ip_fixup(ip, start_ip, offset, abort_ip);
-+}
-+#endif /* CONFIG_TRACEPOINTS */
-+
- #ifdef CONFIG_DEBUG_RSEQ
- static struct rseq *rseq_kernel_fields(struct task_struct *t)
- {
+Typo in my name, which is "Song Liu".
+
+This looks right.
+
+Acked-by: Song Liu <song@kernel.org>
+
+> ---
+>   kernel/bpf/stackmap.c | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+> index ed707bc07173..9f3ae426ddc3 100644
+> --- a/kernel/bpf/stackmap.c
+> +++ b/kernel/bpf/stackmap.c
+> @@ -462,13 +462,15 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+>   	if (may_fault)
+>   		rcu_read_lock(); /* need RCU for perf's callchain below */
+>   
+> -	if (trace_in)
+> +	if (trace_in) {
+>   		trace = trace_in;
+> -	else if (kernel && task)
+> +		trace->nr = min_t(u32, trace->nr, max_depth);
+> +	} else if (kernel && task) {
+>   		trace = get_callchain_entry_for_task(task, max_depth);
+> -	else
+> +	} else {
+>   		trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
+>   					   crosstask, false);
+> +	}
+>   
+>   	if (unlikely(!trace) || trace->nr < skip) {
+>   		if (may_fault)
+> @@ -477,7 +479,6 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+>   	}
+>   
+>   	trace_nr = trace->nr - skip;
+> -	trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
+>   	copy_len = trace_nr * elem_size;
+>   
+>   	ips = trace->ip + skip;
 
