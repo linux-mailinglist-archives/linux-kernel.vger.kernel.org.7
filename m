@@ -1,181 +1,267 @@
-Return-Path: <linux-kernel+bounces-801728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0BC5B4493E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:11:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85ADB44947
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148243B67E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:10:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D59C540E1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A412350D42;
-	Thu,  4 Sep 2025 22:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CFD2D0614;
+	Thu,  4 Sep 2025 22:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="dBTUuHE7"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kDGRrFQy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE8E2DC344;
-	Thu,  4 Sep 2025 22:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B7E2E2F1A;
+	Thu,  4 Sep 2025 22:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757023430; cv=none; b=a4Ouv1A/vSvqLsdVMmzym7vEamphCc8OqsPMtqXRjYmpacI/e/9NAgG3ci+8e7lQNMryjBZqK/Wghvpa/N1Ndhg4vMzOqrDL3md0c0cgqWKas1t9uTVkj+CSCuwpI/aOIpzS2mbQF/wvSW2HSix+YwzGm+04Tq9k7MMYHee7dnY=
+	t=1757023622; cv=none; b=ZrkdSp11eVIQnQxfuai5tGakwGftTAYzTuosZLfUlOTGkZa+cn3h7U91sSbf4WjQr1jELsjToXg+UplwVdVXdF0IdsywbJSX9m0hY/z1ocy6w5B7CUAZq5eWem9FVErMnqdz3JFP+q+OPCRW7i9VD+vyH8TJav7WOEN6/HIdCqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757023430; c=relaxed/simple;
-	bh=yckpfoj4npEN+YtfiZVyat6SWElVSjCHN+wFaEGmz3E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=q/mvxqeXsRQrAmDhSzGKELHIK9XE4qoYzm90aBJcevz9xwQ2eS0eMInk71YE0Dtrmmz68iI6xaWsV4UW2QCB6uL9PxB1XSjwgkeXxyBiDYL23XttUMGMuoNZUoD2uwrDdkXGDmoW3QMyC8pjLCNohdvdgTqoaAx8eGezClGgZmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=dBTUuHE7; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=ynhD031oOOhISCeOF4gi9TxV/Tn9AXmI3UK6Fm/q0Wg=; t=1757023428;
-	x=1757628228; b=dBTUuHE7ucgrz1NpBct1ETYDrN10dA7n1CZR8zLl7TLRWdGKxOkPK3H8OOJ+E
-	Z1I3kkq6jze3Lxr7xABc4sGWI303PJlBikPKYcd5JBj3ANHRGIZKBD50pn0j7ZS/gg0y5a4bfOfFF
-	x1eQNPLHkUME3m0PPP62sRjcEnExkZDcNOUfH0/J8QwEF6elBhhycvT5A1yVzUjMHgpPukIq0Zhug
-	vtnDnOUyrG/YbYCpS3iGYEd1qAMjaSzrD82xhz07IqICJYefIv4Mm4E7gbQgFH7ghQ1Zzkb5I+H2R
-	4gPBXC5yDQG+aCph5bkIvH+kMWYHe6b5i43u+TsChuJWt2xexA==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <mkarcher@zedat.fu-berlin.de>)
-          id 1uuI3W-00000000z8I-1nyk; Fri, 05 Sep 2025 00:03:46 +0200
-Received: from 89-103-142-46.pool.kielnet.net ([46.142.103.89] helo=Geist14.)
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <kernel@mkarcher.dialup.fu-berlin.de>)
-          id 1uuI3W-00000002DJL-0tSn; Fri, 05 Sep 2025 00:03:46 +0200
-From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
-Date: Fri, 05 Sep 2025 00:03:34 +0200
-Subject: [PATCH v4 5/5] sparc: fix accurate exception reporting in
- copy_{from,to}_user for M7
+	s=arc-20240116; t=1757023622; c=relaxed/simple;
+	bh=jJhRUuO/5DksvNEh02TanYPo+USrmlI2eOgLzi4mPFM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cqvNQ9maIvxak/zNAfIUTy4iWyu5oLoBW8a5B8K8+naW1khtfBPedvU7o5ootgzCe+LrtT0vVjefIMPfBSkH2H29Zl5G83SX/LE2QpU8vUFTskYwJeOApHoUwJvHu5+XX9WPSVjUanoely58YDkehanE9jQIflhtu3tLyLWx7hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kDGRrFQy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9796C4CEF0;
+	Thu,  4 Sep 2025 22:07:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757023621;
+	bh=jJhRUuO/5DksvNEh02TanYPo+USrmlI2eOgLzi4mPFM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kDGRrFQytiXE5Ip6YxTa0R0mkMN5RaF9UTszBwoFZtJnkO1V/EoecRbaGxKF/ET4F
+	 FPcLYBtr9F+CHIflB8qfiKS/bHBOKFG8Ikm+bOYiwanbskT52gvpIVoAQioRhIRESj
+	 oPIy+k5tg40MdhJBOsWZ/jpvPxEm/3QxQc50aJQucHQjnhNmjdlJltultYDHFIFs98
+	 szz5/d44JMXWUpAO2kc8//+WYcJ3rwHLlv6lxAysPBfQh0jQa009nuGzoKKLs0pusG
+	 LdiHrafda5JQh6sgdFUQc7Zi16Mj9HI1nNyweF22ireYdqnU407EXEOo/Pl1/xBO7d
+	 yzaiwabt7rwxQ==
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b045d56e181so222170166b.2;
+        Thu, 04 Sep 2025 15:07:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXZZ9UHTu071T5Ex0r/ig/BtpfC3jB1J8aZctP5qy0r/y9NeD1E0yArFLJDCVJXwZgrxCnASF+oryQJkC9f@vger.kernel.org, AJvYcCXucovPLwetTlKrpJElWGg4NGw10IKMate5WrE+yR/4eivtt9X9zJSZl9KUcheMVS+1EWleWGCEseYp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0hdb5HUSKaNmcrGGj6/2F/TxOLJiqCA7agprRS/oCvsMBE+u7
+	KHKMjoKyQ29q0xUGPaOTpxx7LM+I7RwFVgNHik6iKFhlkQWIJhve9lfSRJt0VicDuu2QU2ydewo
+	/2txmABrZM4zY86BuZC9CGuUa7FjEwA==
+X-Google-Smtp-Source: AGHT+IFPU86J5q2os3DqVwm6OQaIRkb2uYTcTl4ECKidm6RB8z6xN09U8ImNFZgAVv9Nyn09Omd/IqLY/RP2kNmAtGk=
+X-Received: by 2002:a17:906:7308:b0:b04:616c:d762 with SMTP id
+ a640c23a62f3a-b04616cdf1fmr904842166b.0.1757023620219; Thu, 04 Sep 2025
+ 15:07:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250905-memcpy_series-v4-5-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
-References: <20250905-memcpy_series-v4-0-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
-In-Reply-To: <20250905-memcpy_series-v4-0-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
-To: Andreas Larsson <andreas@gaisler.com>
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- Anthony Yznaga <anthony.yznaga@oracle.com>, 
- Tony Rodriguez <unixpro1970@gmail.com>
-X-Mailer: b4 0.14.2
-X-Original-Sender: kernel@mkarcher.dialup.fu-berlin.de
-X-ZEDAT-Hint: PO
+References: <20250815144736.1438060-1-ivecera@redhat.com> <20250820211350.GA1072343-robh@kernel.org>
+ <5e38e1b7-9589-49a9-8f26-3b186f54c7d5@redhat.com>
+In-Reply-To: <5e38e1b7-9589-49a9-8f26-3b186f54c7d5@redhat.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 4 Sep 2025 17:06:48 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKui29O_8xGBVx9T2e85Dy0onyAp4mGqChSuuwABOhDqA@mail.gmail.com>
+X-Gm-Features: Ac12FXzrq6H3317mJJXy9VKhjd67b1NEF52ll39fJK2DNVneuUd7QWVkJXMJpLI
+Message-ID: <CAL_JsqKui29O_8xGBVx9T2e85Dy0onyAp4mGqChSuuwABOhDqA@mail.gmail.com>
+Subject: Re: [RFC PATCH net-next] dt-bindings: dpll: Add per-channel Ethernet
+ reference property
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, mschmidt@redhat.com, poros@redhat.com, 
+	Andrew Lunn <andrew@lunn.ch>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Prathosh Satish <Prathosh.Satish@microchip.com>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The referenced commit introduced exception handlers on user-space memory
-references in copy_from_user and copy_to_user. These handlers return from
-the respective function and calculate the remaining bytes left to copy
-using the current register contents. This commit fixes a couple of bad
-calculations. This will fix the return value of copy_from_user and
-copy_to_user in the faulting case. The behaviour of memcpy stays unchanged.
+On Fri, Aug 29, 2025 at 8:29=E2=80=AFAM Ivan Vecera <ivecera@redhat.com> wr=
+ote:
+>
+> Hi Rob,
+>
+> On 20. 08. 25 11:13 odp., Rob Herring wrote:
+> > On Fri, Aug 15, 2025 at 04:47:35PM +0200, Ivan Vecera wrote:
+> >> In case of SyncE scenario a DPLL channels generates a clean frequency
+> >> synchronous Ethernet clock (SyncE) and feeds it into the NIC transmit
+> >> path. The DPLL channel can be locked either to the recovered clock
+> >> from the NIC's PHY (Loop timing scenario) or to some external signal
+> >> source (e.g. GNSS) (Externally timed scenario).
+> >>
+> >> The example shows both situations. NIC1 recovers the input SyncE signa=
+l
+> >> that is used as an input reference for DPLL channel 1. The channel loc=
+ks
+> >> to this signal, filters jitter/wander and provides holdover. On output
+> >> the channel feeds a stable, phase-aligned clock back into the NIC1.
+> >> In the 2nd case the DPLL channel 2 locks to a master clock from GNSS a=
+nd
+> >> feeds a clean SyncE signal into the NIC2.
+> >>
+> >>                 +-----------+
+> >>              +--|   NIC 1   |<-+
+> >>              |  +-----------+  |
+> >>              |                 |
+> >>              | RxCLK     TxCLK |
+> >>              |                 |
+> >>              |  +-----------+  |
+> >>              +->| channel 1 |--+
+> >> +------+        |-- DPLL ---|
+> >> | GNSS |---------->| channel 2 |--+
+> >> +------+  RefCLK   +-----------+  |
+> >>                                |
+> >>                          TxCLK |
+> >>                                |
+> >>                 +-----------+  |
+> >>                 |   NIC 2   |<-+
+> >>                 +-----------+
+> >>
+> >> In the situations above the DPLL channels should be registered into
+> >> the DPLL sub-system with the same Clock Identity as PHCs present
+> >> in the NICs (for the example above DPLL channel 1 uses the same
+> >> Clock ID as NIC1's PHC and the channel 2 as NIC2's PHC).
+> >>
+> >> Because a NIC PHC's Clock ID is derived from the NIC's MAC address,
+> >> add a per-channel property 'ethernet-handle' that specifies a referenc=
+e
+> >> to a node representing an Ethernet device that uses this channel
+> >> to synchronize its hardware clock. Additionally convert existing
+> >> 'dpll-types' list property to 'dpll-type' per-channel property.
+> >>
+> >> Suggested-by: Andrew Lunn <andrew@lunn.ch>
+> >> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+> >> ---
+> >>   .../devicetree/bindings/dpll/dpll-device.yaml | 40 ++++++++++++++++-=
+--
+> >>   .../bindings/dpll/microchip,zl30731.yaml      | 29 +++++++++++++-
+> >>   2 files changed, 62 insertions(+), 7 deletions(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml b=
+/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> >> index fb8d7a9a3693f..798c5484657cf 100644
+> >> --- a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> >> +++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> >> @@ -27,11 +27,41 @@ properties:
+> >>     "#size-cells":
+> >>       const: 0
+> >>
+> >> -  dpll-types:
+> >> -    description: List of DPLL channel types, one per DPLL instance.
+> >> -    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> >> -    items:
+> >> -      enum: [pps, eec]
+> >
+> > Dropping this is an ABI change. You can't do that unless you are
+> > confident there are no users both in existing DTs and OSs.
+>
+> Get it, will keep.
+>
+> >> +  channels:
+> >> +    type: object
+> >> +    description: DPLL channels
+> >> +    unevaluatedProperties: false
+> >> +
+> >> +    properties:
+> >> +      "#address-cells":
+> >> +        const: 1
+> >> +      "#size-cells":
+> >> +        const: 0
+> >> +
+> >> +    patternProperties:
+> >> +      "^channel@[0-9a-f]+$":
+> >> +        type: object
+> >> +        description: DPLL channel
+> >> +        unevaluatedProperties: false
+> >> +
+> >> +        properties:
+> >> +          reg:
+> >> +            description: Hardware index of the DPLL channel
+> >> +            maxItems: 1
+> >> +
+> >> +          dpll-type:
+> >> +            description: DPLL channel type
+> >> +            $ref: /schemas/types.yaml#/definitions/string
+> >> +            enum: [pps, eec]
+> >> +
+> >> +          ethernet-handle:
+> >> +            description:
+> >> +              Specifies a reference to a node representing an Etherne=
+t device
+> >> +              that uses this channel to synchronize its hardware cloc=
+k.
+> >> +            $ref: /schemas/types.yaml#/definitions/phandle
+> >
+> > Seems a bit odd to me that the ethernet controller doesn't have a link
+> > to this node instead.
+>
+> Do you mean to add a property (e.g. dpll-channel or dpll-device) into
+> net/network-class.yaml ? If so, yes, it would be possible, and the way
+> I look at it now, it would probably be better. The DPLL driver can
+> enumerate all devices across the system that has this specific property
+> and check its value.
 
-Fixes: 34060b8fffa7 ("arch/sparc: Add accurate exception reporting in M7memcpy")
-Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de> # on Oracle SPARC S7
-Tested-by: Tony Rodriguez <unixpro1970@gmail.com> # S7, see https://lore.kernel.org/r/98564e2e68df2dda0e00c67a75c7f7dfedb33c7e.camel@physik.fu-berlin.de
-Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
----
- arch/sparc/lib/M7memcpy.S     | 20 ++++++++++----------
- arch/sparc/lib/Memcpy_utils.S |  9 +++++++++
- 2 files changed, 19 insertions(+), 10 deletions(-)
+Yes. Or into ethernet-controller.yaml. Is a DPLL used with wifi,
+bluetooth, etc.?
 
-diff --git a/arch/sparc/lib/M7memcpy.S b/arch/sparc/lib/M7memcpy.S
-index cbd42ea7c3f7c25a369536eaf8d0b28a808ae5ba..99357bfa8e82ad7cf15dfd04117c89b905082f5b 100644
---- a/arch/sparc/lib/M7memcpy.S
-+++ b/arch/sparc/lib/M7memcpy.S
-@@ -696,16 +696,16 @@ FUNC_NAME:
- 	EX_LD_FP(LOAD(ldd, %o4+40, %f26), memcpy_retl_o2_plus_o5_plus_40)
- 	faligndata %f24, %f26, %f10
- 	EX_ST_FP(STORE(std, %f6, %o0+24), memcpy_retl_o2_plus_o5_plus_40)
--	EX_LD_FP(LOAD(ldd, %o4+48, %f28), memcpy_retl_o2_plus_o5_plus_40)
-+	EX_LD_FP(LOAD(ldd, %o4+48, %f28), memcpy_retl_o2_plus_o5_plus_32)
- 	faligndata %f26, %f28, %f12
--	EX_ST_FP(STORE(std, %f8, %o0+32), memcpy_retl_o2_plus_o5_plus_40)
-+	EX_ST_FP(STORE(std, %f8, %o0+32), memcpy_retl_o2_plus_o5_plus_32)
- 	add	%o4, 64, %o4
--	EX_LD_FP(LOAD(ldd, %o4-8, %f30), memcpy_retl_o2_plus_o5_plus_40)
-+	EX_LD_FP(LOAD(ldd, %o4-8, %f30), memcpy_retl_o2_plus_o5_plus_24)
- 	faligndata %f28, %f30, %f14
--	EX_ST_FP(STORE(std, %f10, %o0+40), memcpy_retl_o2_plus_o5_plus_40)
--	EX_ST_FP(STORE(std, %f12, %o0+48), memcpy_retl_o2_plus_o5_plus_40)
-+	EX_ST_FP(STORE(std, %f10, %o0+40), memcpy_retl_o2_plus_o5_plus_24)
-+	EX_ST_FP(STORE(std, %f12, %o0+48), memcpy_retl_o2_plus_o5_plus_16)
- 	add	%o0, 64, %o0
--	EX_ST_FP(STORE(std, %f14, %o0-8), memcpy_retl_o2_plus_o5_plus_40)
-+	EX_ST_FP(STORE(std, %f14, %o0-8), memcpy_retl_o2_plus_o5_plus_8)
- 	fsrc2	%f30, %f14
- 	bgu,pt	%xcc, .Lunalign_sloop
- 	 prefetch [%o4 + (8 * BLOCK_SIZE)], 20
-@@ -728,7 +728,7 @@ FUNC_NAME:
- 	add	%o4, 8, %o4
- 	faligndata %f0, %f2, %f16
- 	subcc	%o5, 8, %o5
--	EX_ST_FP(STORE(std, %f16, %o0), memcpy_retl_o2_plus_o5)
-+	EX_ST_FP(STORE(std, %f16, %o0), memcpy_retl_o2_plus_o5_plus_8)
- 	fsrc2	%f2, %f0
- 	bgu,pt	%xcc, .Lunalign_by8
- 	 add	%o0, 8, %o0
-@@ -772,7 +772,7 @@ FUNC_NAME:
- 	subcc	%o5, 0x20, %o5
- 	EX_ST(STORE(stx, %o3, %o0 + 0x00), memcpy_retl_o2_plus_o5_plus_32)
- 	EX_ST(STORE(stx, %g2, %o0 + 0x08), memcpy_retl_o2_plus_o5_plus_24)
--	EX_ST(STORE(stx, %g7, %o0 + 0x10), memcpy_retl_o2_plus_o5_plus_24)
-+	EX_ST(STORE(stx, %g7, %o0 + 0x10), memcpy_retl_o2_plus_o5_plus_16)
- 	EX_ST(STORE(stx, %o4, %o0 + 0x18), memcpy_retl_o2_plus_o5_plus_8)
- 	bne,pt	%xcc, 1b
- 	 add	%o0, 0x20, %o0
-@@ -804,12 +804,12 @@ FUNC_NAME:
- 	brz,pt	%o3, 2f
- 	 sub	%o2, %o3, %o2
- 
--1:	EX_LD(LOAD(ldub, %o1 + 0x00, %g2), memcpy_retl_o2_plus_g1)
-+1:	EX_LD(LOAD(ldub, %o1 + 0x00, %g2), memcpy_retl_o2_plus_o3)
- 	add	%o1, 1, %o1
- 	subcc	%o3, 1, %o3
- 	add	%o0, 1, %o0
- 	bne,pt	%xcc, 1b
--	 EX_ST(STORE(stb, %g2, %o0 - 0x01), memcpy_retl_o2_plus_g1_plus_1)
-+	 EX_ST(STORE(stb, %g2, %o0 - 0x01), memcpy_retl_o2_plus_o3_plus_1)
- 2:
- 	and	%o1, 0x7, %o3
- 	brz,pn	%o3, .Lmedium_noprefetch_cp
-diff --git a/arch/sparc/lib/Memcpy_utils.S b/arch/sparc/lib/Memcpy_utils.S
-index 64fbac28b3db18864b0d067acaee0d7898feec7a..207343367bb2daa41a70398e20ef271116423b38 100644
---- a/arch/sparc/lib/Memcpy_utils.S
-+++ b/arch/sparc/lib/Memcpy_utils.S
-@@ -137,6 +137,15 @@ ENTRY(memcpy_retl_o2_plus_63_8)
- 	ba,pt	%xcc, __restore_asi
- 	 add	%o2, 8, %o0
- ENDPROC(memcpy_retl_o2_plus_63_8)
-+ENTRY(memcpy_retl_o2_plus_o3)
-+	ba,pt	%xcc, __restore_asi
-+	 add	%o2, %o3, %o0
-+ENDPROC(memcpy_retl_o2_plus_o3)
-+ENTRY(memcpy_retl_o2_plus_o3_plus_1)
-+	add	%o3, 1, %o3
-+	ba,pt	%xcc, __restore_asi
-+	 add	%o2, %o3, %o0
-+ENDPROC(memcpy_retl_o2_plus_o3_plus_1)
- ENTRY(memcpy_retl_o2_plus_o5)
- 	ba,pt	%xcc, __restore_asi
- 	 add	%o2, %o5, %o0
+>
+> See the proposal below...
+>
+> Thanks,
+> Ivan
+>
+> ---
+>   Documentation/devicetree/bindings/dpll/dpll-device.yaml  | 6 ++++++
+>   Documentation/devicetree/bindings/net/network-class.yaml | 7 +++++++
+>   2 files changed, 13 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> index fb8d7a9a3693f..560351df1bec3 100644
+> --- a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> +++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> @@ -27,6 +27,12 @@ properties:
+>     "#size-cells":
+>       const: 0
+>
+> +  "#dpll-cells":
+> +    description: |
+> +      Number of cells in a dpll specifier. The cell specifies the index
+> +      of the channel within the DPLL device.
+> +    const: 1
 
--- 
-2.50.1
+If it is 1 for everyone, then you don't need a property for it. The
+question is whether it would need to vary. Perhaps some configuration
+flags/info might be needed? Connection type or frequency looking at
+the existing configuration setting?
 
+> +
+>     dpll-types:
+>       description: List of DPLL channel types, one per DPLL instance.
+>       $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> diff --git a/Documentation/devicetree/bindings/net/network-class.yaml
+> b/Documentation/devicetree/bindings/net/network-class.yaml
+> index 06461fb92eb84..144badb3b7ff1 100644
+> --- a/Documentation/devicetree/bindings/net/network-class.yaml
+> +++ b/Documentation/devicetree/bindings/net/network-class.yaml
+> @@ -17,6 +17,13 @@ properties:
+>       default: 48
+>       const: 48
+>
+> +  dpll:
+> +    description:
+> +      Specifies DPLL device phandle and index of the DPLL channel within
+> +      this device used by this network device to synchronize its hardwar=
+e
+> +      clock.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+
+If you have cells, then this should be phandle-array.
+
+> +
+>     local-mac-address:
+>       description:
+>         Specifies MAC address that was assigned to the network device
+> described by
+>
 
