@@ -1,204 +1,167 @@
-Return-Path: <linux-kernel+bounces-800597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A802B439AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:14:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1B6DB439AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:15:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FB22587FF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:14:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 711BA483287
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5C22FC88B;
-	Thu,  4 Sep 2025 11:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385932E6CB0;
+	Thu,  4 Sep 2025 11:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="iFIfUCLu"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="S//mWkFt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5FD2FC00C;
-	Thu,  4 Sep 2025 11:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E0B2DECB4
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756984454; cv=none; b=QtzwvxXRxZ2ee9imjXcZsOMWBqimUNJ0LKQS1Mdxe+I5kMOF5qMF1Ov/jdWAOIrHxmhmI/qVpwyTIlwIiz6wc3LECtEJKwGbjAq80n/VEfxjLCqKfuXBCubWk4ry17KB9bbqwQQBZ9ko7qFIjW9jvq8RVA4HWmFNTeiprx3XDls=
+	t=1756984530; cv=none; b=eflARoteSPfpq+LSe+AZU2KwUCe2Z5UTZI/hsakVDX96KRxIAG7IplNpgU5MJBNfBCF5HtmGl8Vp2sP7vkrJ7z8DVrgPAKsWoIoAGxrAZnGyyUAE94mkB9jMJj+QEjIe9zRQ6XBlzHrQY2Q+tIXM/2bWNhdUGjhhw8HkVeFXBUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756984454; c=relaxed/simple;
-	bh=a9TgE+M7267BdTJIuw3gh/B6w3LpVMeRFli2D8fltPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VJc3SYi96lwPIpfLaWbCKhh4EWNFIQTEpyb7+CT+IgLFx6tGSaf/yFYN1Vmn0P513Z1pW4mTNH/1JUE9xSJJ1+NdCSRU/xeE88g9FkGRcR5YlKxcHGK/J3jS+E1cclJA/AMB8v6knwDA+od6CCINQKeE3PhwGmnU/hvgQOmbEGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=iFIfUCLu; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 480E922FC2;
-	Thu,  4 Sep 2025 13:14:09 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id JH20WvHbfP0i; Thu,  4 Sep 2025 13:14:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1756984448; bh=a9TgE+M7267BdTJIuw3gh/B6w3LpVMeRFli2D8fltPQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iFIfUCLuO/STk0WVtv2IgHQalzKuAMQ5N5EkPwTtlvH7OsMa5p0ToDE8BszzyEA1b
-	 aLAu2FiJOxp7zHXhrQZDsHLZ/tE8yAm9G3Jh+7+bNh07rr4Q/4lQvgCpPdyx7ekqQf
-	 6ry2lOjoW7Gdahi9UxNA4vaEOaXz0iaZMgyN+pJowizj8bDKgNX+2xaUj3uAqbYrYf
-	 X2U+Dsm4NyNxWumzOaPSsV6E86eVL9YsZ/97k9zusBhy/DRNHpPEPxZlpIU7+r0+zY
-	 8RuD8D+oP7WDF/C73vUnRPZvaa2cYeEVTctnLJi/pahfn7rLLq4EDqRS3dz31HRW0Y
-	 SDFRMIyUbxiLA==
-Date: Thu, 4 Sep 2025 11:13:53 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Simon Horman <horms@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH net] net: stmmac: dwmac-rk: Ensure clk_phy doesn't
- contain invalid address
-Message-ID: <aLl0cbYv-fY-tPpI@pie>
-References: <20250904031222.40953-3-ziyao@disroot.org>
- <20250904103443.GH372207@horms.kernel.org>
+	s=arc-20240116; t=1756984530; c=relaxed/simple;
+	bh=CEbnxEFLxlJ6hHhNZQ/AMp/Mbj4cpgb9+IbAllToY1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SXTvqxIr+j4eaAtzz71/DDrpO8vcL672brPICm/EH3OuW9nvxzJtyCW70SHmVn+Wh5Y0l9u2NTDYctNbfCL9e+QQ7FZdB5Pua2y5q074cXW2Na2oZqrcPqAgVECEJAnqieumcSdWd4pGlCKI11FJmXanRX/BQH7fyImGbln432k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=S//mWkFt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5849X91d022174
+	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 11:15:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OOKtLhZE/W1bfuEuReYiTjW5qnUa6W0YPOAnKvpNQs8=; b=S//mWkFtDYgDqEHX
+	AfSFCDuBgkj4G8y80FCF13N4WmTzvWhpTTvChmkG1RqDVxyKFY7RkR5weSUq9Tzh
+	5E0w9RSp8Oas3srE/vw4BrRGnvjZgpEokod86vB4cA6Z/hf+8XIqwle1sOQroOaL
+	EjevRNBO4EUVCHkT/Ef/i55BhHQohHW5Qlhb3Y6qv0H1lA5DvohfENNs3uZgPhrv
+	VTiH02P3BB4ugz1a+PtgzK3sojB2sYuTwXh9iQWTlpFyqMqzJRlGLJ24BKQX+qP6
+	uu6Zru1CJoqDs4iROEkKIvwpICJJ5uczS9OHecwOnUMX25s+SvGlkWx0EesuVe7X
+	76fTGg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48utk97427-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 11:15:28 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b307e1bef2so2223581cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 04:15:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756984527; x=1757589327;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OOKtLhZE/W1bfuEuReYiTjW5qnUa6W0YPOAnKvpNQs8=;
+        b=SUwR9EGSq5OjF4g536OqIgi9+1jR5RSZJtgrGvEwTpREWBHXqwpTsUp6iN/pM9HgFW
+         BmTyKmwPETI0omsXgKvm287k1I2o4wTOThEVU6Nr4vc9hgMMU1D4OkLYAOicJsf5QXx5
+         P8L3e25yOntnCIRd9LcVYxBkgynH/EKqpckz0swPfswSwYdd0/0w82pfcMTheDcANCP2
+         5vsdSBuuiTJr6hAEZhWxcl0DjA8uXJ1GUo+jH6ohGPsj9ki14ZAdp34ep4WZMs7c6Xt5
+         gCgaSoIAHm/cqpEBDxE59RZIZfWDTRzaYnEWXd8xmY58RV0IZhvcgvsliO2X2qVxfu2t
+         yaPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuXwCS69nVmyeSurA8jN1qcXmVCE2TarP0K2wIopHGS18oizZXCOad96TQrfa7PhhG1Pqu9dt7fusrYCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQc7EksnXtVql8j73PyEFUEPbtTypYQ2iP/vu3tGpnBBzuKtZx
+	eIFR9lTfSDe7kk6FaToloI2CKIJno1BtMJgFHdJSPyJC3yX0Au9hGKRe+IXsHfTIG6k/TAIame2
+	Hp8X36y+PHM2Y2ZfllB4qqZMUvSoafH3k17Hdh1s5Z+5FrJrsM1C+njo2KrDxU6DUOiw=
+X-Gm-Gg: ASbGncvLcRSxl9q+vY9XNIy/k1TGn+REhcWGW8eqPcRIYRz0xg9eDWb6MYf07BVD6mW
+	v5lpiy/4FeabXSbhXJXWM71GpmCqdcuGhtn93hmbTWeJEzFaeat5U+uAlnggPubLci+90x5oNA6
+	bpvuV5HtzuZuIkNX/t6nkHJeOWrlwNrl8uG0AP7+UHshQ5SWkT5t/QxhOhuEFg0IrAQdbfA0ucH
+	hLVwzY5ohqU7VubGjuUBi19BTOCakumB09NVKDENv2+hS/UuPdAhGyo2Xyy9CG51IZ3Q+lkBX2K
+	pplCN26r7gvvEEKYrMarBykTUBq5QBkhpD3od17wDCKjyT/wXTZ6JCUkFurmb87ieEamWP6Rjvz
+	qXH7Bgextl+30H7FecVWrrA==
+X-Received: by 2002:ac8:5710:0:b0:4ab:723e:fba7 with SMTP id d75a77b69052e-4b313ea00camr179595031cf.7.1756984526902;
+        Thu, 04 Sep 2025 04:15:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG7j0pS6IjjhSGlZj35O8i4kEMXE/eC6FnHTO0eI5oav2a4taNUJNhPrFFvhieF/D0b0vfiCQ==
+X-Received: by 2002:ac8:5710:0:b0:4ab:723e:fba7 with SMTP id d75a77b69052e-4b313ea00camr179594751cf.7.1756984526426;
+        Thu, 04 Sep 2025 04:15:26 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b04110b94cbsm1185570066b.93.2025.09.04.04.15.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 04:15:25 -0700 (PDT)
+Message-ID: <46ea9ff9-f119-472c-ac5a-b91e36fcb226@oss.qualcomm.com>
+Date: Thu, 4 Sep 2025 13:15:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904103443.GH372207@horms.kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] phy: qcom-qmp: qserdes-com: Add some more v8 register
+ offsets
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Abel Vesa <abel.vesa@linaro.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Wenbin Yao <wenbin.yao@oss.qualcomm.com>,
+        Qiang Yu <qiang.yu@oss.qualcomm.com>, Johan Hovold <johan@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250904-phy-qcom-edp-add-glymur-support-v1-0-e83c6b9a145b@linaro.org>
+ <20250904-phy-qcom-edp-add-glymur-support-v1-2-e83c6b9a145b@linaro.org>
+ <bf5e7ea2-9f0f-4d83-a567-028ffbe184bf@oss.qualcomm.com>
+ <6nhnerb5yooodw73ku6yxtp7ud3irwhfwd5zxjwcwbws2q5y4x@7fj7dck2cv3a>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <6nhnerb5yooodw73ku6yxtp7ud3irwhfwd5zxjwcwbws2q5y4x@7fj7dck2cv3a>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 7cjNeXnAOZigYcZ5x7Qk9_wmYDjLAaeu
+X-Proofpoint-ORIG-GUID: 7cjNeXnAOZigYcZ5x7Qk9_wmYDjLAaeu
+X-Authority-Analysis: v=2.4 cv=ccnSrmDM c=1 sm=1 tr=0 ts=68b974d0 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=zjWQaSZ_NnQgvzHGnUkA:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDA0MiBTYWx0ZWRfX/KFWra/qwm+D
+ X54DVQSxvMtLl0+9qAclmdBYOnopU3oT3aZBoAy0jvnKN6/Wvt8x+0E2IEU/cuGXVPj1Fd0rzKI
+ VI/fFxQhFAcpPkrulonNWTjPN5A96mIU9JBWP3HMRQ68ThbFpkVMIDxSLF97wgfsY5dJvF2SGeF
+ WjeWF7F0LY5h1Fa7sFse12JNQiMIMXkBQTpnHpZLsUT4UUsdoJX5SD8wPlZFj9KtqE9rGVSML9G
+ aGBd2buBfdoHS0RKiW3DxCyGXelBtkSRZAPbpE364t+SKm8hX3xJNQm17UKAzm+d1vNZiuBR4qj
+ 72GB/Lkl+m83y+4q8r1Jt/b+tL72h4/SVqq9KNdk9MOFybzhnjVSgEBwMO+trvuyrfx7pKKyOJM
+ 8I9AVEvr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ clxscore=1015 suspectscore=0 spamscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300042
 
-On Thu, Sep 04, 2025 at 11:34:43AM +0100, Simon Horman wrote:
-> On Thu, Sep 04, 2025 at 03:12:24AM +0000, Yao Zi wrote:
-> > We must set the clk_phy pointer to NULL to indicating it isn't available
-> > if the optional phy clock couldn't be obtained. Otherwise the error code
-> > returned by of_clk_get() could be wrongly taken as an address, causing
-> > invalid pointer dereference when later clk_phy is passed to
-> > clk_prepare_enable().
-> > 
-> > Fixes: da114122b831 ("net: ethernet: stmmac: dwmac-rk: Make the clk_phy could be used for external phy")
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> >  drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> > 
-> > On next-20250903, the fixed commit causes NULL pointer dereference on
-> > Radxa E20C during probe of dwmac-rk, a typical dmesg looks like
-> > 
-> > [    0.273324] rk_gmac-dwmac ffbe0000.ethernet: IRQ eth_lpi not found
-> > [    0.273888] rk_gmac-dwmac ffbe0000.ethernet: IRQ sfty not found
-> > [    0.274520] rk_gmac-dwmac ffbe0000.ethernet: PTP uses main clock
-> > [    0.275226] rk_gmac-dwmac ffbe0000.ethernet: clock input or output? (output).
-> > [    0.275867] rk_gmac-dwmac ffbe0000.ethernet: Can not read property: tx_delay.
-> > [    0.276491] rk_gmac-dwmac ffbe0000.ethernet: set tx_delay to 0x30
-> > [    0.277026] rk_gmac-dwmac ffbe0000.ethernet: Can not read property: rx_delay.
-> > [    0.278086] rk_gmac-dwmac ffbe0000.ethernet: set rx_delay to 0x10
-> > [    0.278658] rk_gmac-dwmac ffbe0000.ethernet: integrated PHY? (no).
-> > [    0.279249] Unable to handle kernel paging request at virtual address fffffffffffffffe
-> > [    0.279948] Mem abort info:
-> > [    0.280195]   ESR = 0x000000096000006
-> > [    0.280523]   EC = 0x25: DABT (current EL), IL = 32 bits
-> > [    0.280989]   SET = 0, FnV = 0
-> > [    0.281287]   EA = 0, S1PTW = 0
-> > [    0.281574]   FSC = 0x06: level 2 translation fault
-> > 
-> > where the invalid address is just -ENOENT (-2).
-> > 
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> > index cf619a428664..26ec8ae662a6 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> > @@ -1414,11 +1414,17 @@ static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
-> >  	if (plat->phy_node) {
-> >  		bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
-> >  		ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
-> > -		/* If it is not integrated_phy, clk_phy is optional */
-> > +		/*
-> > +		 * If it is not integrated_phy, clk_phy is optional. But we must
-> > +		 * set bsp_priv->clk_phy to NULL if clk_phy isn't proivded, or
-> > +		 * the error code could be wrongly taken as an invalid pointer.
-> > +		 */
-> >  		if (bsp_priv->integrated_phy) {
-> >  			if (ret)
-> >  				return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
-> >  			clk_set_rate(bsp_priv->clk_phy, 50000000);
-> > +		} else if (ret) {
-> > +			bsp_priv->clk_phy = NULL;
-> >  		}
-> >  	}
+On 9/4/25 1:13 PM, Dmitry Baryshkov wrote:
+> On Thu, Sep 04, 2025 at 12:47:43PM +0200, Konrad Dybcio wrote:
+>> On 9/4/25 8:55 AM, Abel Vesa wrote:
+>>> Add the missing v8 register offsets needed by the eDP/DP PHY driver.
+>>>
+>>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+>>> ---
+>>
+>> + a couple folks that I talked to about this lately
+>>
+>> Please create a separate header for this, Glymur contains multiple
+>> "v8"/"v8.x" PHYs that are not identical to one another (or vs ones
+>> present on different SoCs), even if advertising that revision
 > 
-> Thanks, and sorry for my early confusion about applying this patch.
-> 
-> I agree that the bug you point out is addressed by this patch.
-> Although I wonder if it is cleaner not to set bsp_priv->clk_phy
-> unless there is no error, rather than setting it then resetting
-> it if there is an error.
+> Is it about v8 vs v8.xx ?
 
-Yes, it sounds more natural to have a temporary variable storing result
-of of_clk_get() and only assign it to clk_phy when the result is valid.
+No
 
-> More importantly, I wonder if there is another bug: does clk_set_rate need
-> to be called in the case where there is no error and bsp_priv->integrated_phy
-> is false?
+Two (different protocol) PHYs with the same revision data (rev_id
+register) may have completely different register maps (even in the
+COM region), both across SoCs and in (at least) Glymur's case, on
+the same die
 
-In my understanding this may be intended, bsp_priv->integrated_phy is
-only false when an external phy is used, and an external phy might
-require arbitrary clock rates, thus it doesn't seem a good idea to me to
-hardcode the clock rate in the driver.
+Two instances of the same PHY (e.g. 2 usb combo PHYs) will not have
+such differences, just to make it clear
 
-I guess rate of clk_phy could also be set up with assigned-clock-rates
-in devicetree. If so it may be reasonable to enable the clock only.
-
-> So I am wondering if it makes sense to go with something like this.
-> (Compile tested only!)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> index 266c53379236..a25816af2c37 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> @@ -1411,12 +1411,16 @@ static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
->  	}
->  
->  	if (plat->phy_node) {
-> -		bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
-> -		ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
-> -		/* If it is not integrated_phy, clk_phy is optional */
-> -		if (bsp_priv->integrated_phy) {
-> -			if (ret)
-> +		struct clk *clk_phy;
-> +
-> +		clk_phy = of_clk_get(plat->phy_node, 0);
-> +		ret = PTR_ERR_OR_ZERO(clk_phy);
-> +		if (ret) {
-> +			/* If it is not integrated_phy, clk_phy is optional */
-> +			if (bsp_priv->integrated_phy)
->  				return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
-> +		} else {
-> +			bsp_priv->clk_phy = clk_phy;
->  			clk_set_rate(bsp_priv->clk_phy, 50000000);
->  		}
->  	}
-> 
-> Please note: if you send an updated patch (against net) please
-> make sure you wait 24h before the original post.
-> 
-> See: https://docs.kernel.org/process/maintainer-netdev.html
-
-Thanks for the tip. While digging through the problematic commit for the
-clk_phy's rate problem, I found others have discovered the problem[1]
-and proposed some fixes (though there hasn't been a formal patch).
-
-I should have read the original thread before sending this patch! Will
-wait for some time and see whether the netdev maintainer prefers waiting
-for original author's fix or taking mine.
-
-Best regards,
-Yao Zi
-
-[1]: https://lore.kernel.org/netdev/a30a8c97-6b96-45ba-bad7-8a40401babc2@samsung.com/
+Konrad
 
