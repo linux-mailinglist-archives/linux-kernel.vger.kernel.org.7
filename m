@@ -1,126 +1,124 @@
-Return-Path: <linux-kernel+bounces-801521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F24B44623
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:07:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD5EB44627
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4CC1BC7222
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:07:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16C99A44688
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66DEF26738D;
-	Thu,  4 Sep 2025 19:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D8C26738D;
+	Thu,  4 Sep 2025 19:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nOhjNsab"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="buIFpMzW"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1662417D4;
-	Thu,  4 Sep 2025 19:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EAB1FDE09
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 19:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757012816; cv=none; b=fYMWtzlD+GPr+5muurmiDDq5zpL4ymOFP/XQBTrwlIX8mEewuZ1sj2+4uQONuAzzPcHawApN9OL8BIYz9Ll0LtEJ86/8DAQ7qUrP0lt2qF9cYUj3LWWozmZppbM6weSNQPgMqcAnrvjlSEMYbjb34eB0Fw8D0iYHR7GKRAhmQpc=
+	t=1757012896; cv=none; b=CH4FAAQwhe05/BJ7fxY9PBSQeFRCPt0WylfLNDwPnzd6xT3pDE2Qoe/yIzPBJy/grDnpVFqgeA9d1f82WBW1SB5w2XlWfXUwyt7zLXJKVi3TaZtxk5DM8rCe6TogUl+KE+ev5CToe+Sgkos6/pxPZvDrno94tVTPmCWJrwqaO7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757012816; c=relaxed/simple;
-	bh=uzFFK+oAV4o+/Z6Ea8q6YgA+56IAqj4eUydEcdT1QYg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BpLNMLiAvI38egnmJDXw3knrvoNyaLwKlEQJk85WwZuvxD971iLlnHGY/IhtI4qafTpoR0kS/pCRnICmytShGa0z6ty21iHU0F2j6yHJ/fqglevYnRW3HCsPGwnjspOqPGtX+GAxKGqGL2ezFsLhyNhqRiem1aR5oaokUiSkUuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nOhjNsab; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28929C4CEF0;
-	Thu,  4 Sep 2025 19:06:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757012816;
-	bh=uzFFK+oAV4o+/Z6Ea8q6YgA+56IAqj4eUydEcdT1QYg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nOhjNsabw6l3g77wM4M2YpnfZkNiKs1OrjYsbsMm4p+DgEXVfgFdnWT3BIY93zfMY
-	 +vlcvPuiyin740afy1+F+0u+WdISkyzN80VAVYJp0Ax3PuI3UBPpaHuPsXywelB+cw
-	 IetMqTx92cEJsl5hWQyV+5+unoK+AN72X3fYorUkqCc1oXaICw4L5UqYh3sRIwbPrf
-	 MK5g8qwGb92TfkJCxGrKMOMKOQiS/DQxUINgLy5qjGcS4dvH6JHGcotPI6VgjyRZ2v
-	 L00brth37zgd6ed+esE2gwMZzwQo8kdB0LbH85UGEmGM8yhL09qv4cj+Xa51vYy9yW
-	 8pnjErRKwf/dw==
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-61bf9ef4cc0so835807eaf.0;
-        Thu, 04 Sep 2025 12:06:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUC0ObMKFyWih5nSIgcXGRm0yidBuwQSvz7sXTrWQhtN1Fn4etDhCSFuWcFmNB9JZuRMPlyKbdRc5ep9YM=@vger.kernel.org, AJvYcCXg9XRHcR+pOjRtgqtpR8KKNClrZ1IgJm2YR+JkTXgR6xdl/bdOBqXKHFLNiNyuU43MvXknrHnuDkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvD3OlJbCu7CIRB7kuHhW+y4ApgdMAei+pBgBgH/4VgeyCgudH
-	9Y9pLzkKyIAywVm7fLbJ+H+plGqymQPCWff/6FxzWmH7lGb6H7tgQqn78tEDt4jFV76hYQhD0di
-	bn/mUDhO8kohC4tGQkDgUHDNj38Q3XLM=
-X-Google-Smtp-Source: AGHT+IHlcABl4lYSNC2Neohra2TuA90Q/9eeXf30jxyYpHVlPesEYQId/gXLk7grB5kT9hQ1FNxF6hY5j9op/ZftYKM=
-X-Received: by 2002:a05:6808:a545:20b0:438:1c76:d3e with SMTP id
- 5614622812f47-4381c7610fdmr4396935b6e.31.1757012815437; Thu, 04 Sep 2025
- 12:06:55 -0700 (PDT)
+	s=arc-20240116; t=1757012896; c=relaxed/simple;
+	bh=vAc8GWlbS1dNAlArdFmlz8JV/K5D/zFsXv7QiZpMwiE=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aYltP9bIIZrULW/aZPX2mpayLtQoayj9ikRfKs31hfkvnx6ShzxmqCJ8yd3DamcgfDePdDR6WH8sR71x438nUKVbd70qwLgRc+ly2YPhz1EBYMWH2Hw66fHtpissDjoROgSaRRL8ba2PLzstKyCeXWYEyQm1g32F5//ipLI2Ab4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=buIFpMzW; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-560880bb751so1436337e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 12:08:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757012891; x=1757617691; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vo5h9zWwGoqlYpJct4FmDo3z+MmmKvsMCfXCdRWbkd0=;
+        b=buIFpMzWhzI1UteyKZo2+nFbuh1svmpvVoAMHuXy03PXBAXPfvBiNAV7T5LFChxUls
+         Re38b2oeGWZ03aUrUSgLgPa5IGhfIb60IRGLbt1XfHWFypykZhIMWi74QeitGdgHbFgx
+         r1IwH5uwiZvqxvMySdOx736Af8+pLyxzl3vmZZcoWv/vWXdn4M6hmjIhZhV+5D3tapY0
+         rvFgj1iuIKpbfNDsIdVkSt1NRZBAbtZHuz9T5n4RqPFZllJzpre8ivLtk+Tnu0nbhW51
+         JnnKq1cCBIJF92uTIAXYWiobXYuuJw2lkldiwINUpQ90SyF+hWqLJ64bh5VBTpXm4uiQ
+         8T3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757012891; x=1757617691;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vo5h9zWwGoqlYpJct4FmDo3z+MmmKvsMCfXCdRWbkd0=;
+        b=B3Bp52wEq8WTIFxAVBu4O1vednOxBMJNpooloPQ84Ser9JbtZPModWeKYot5HYSgqx
+         dSuXAjEkH+hzDnIjInaAmh+5wj62R4zDDeovB/n8cdQST4osh3Oxo0yZDtJQn1z6do/0
+         Hxq58PzjY0GWniY7HrRVmIXcgJZLz23IRC9UU3joA3+LqOjuTIPIKFKrEZ+3EAgkNnnC
+         XRA7J6cNRcoTfPSK05vf0uy0sYOZRx+QUaItfi/22ykoM1DUlbG4Q0ijVFnoZ/GU2mfM
+         gQEJIs/MRPy9Gh5Ze+smhqZiEVZzA0/ptfKAQhsRy59ZsX0gPvfJHYJVh3Y07r55w4p0
+         +NVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtJ/pFe+EQ9rTocNxc2L/Efo576bRnJrC1sU7iSQkTfJe1ABrcM8/1fKgFuvKdcrNMgvlhg3jUHMP0Dd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ+XExJhLEg5QcPqJaoLccLn0ng5Z7ygRK4L0MS+XjoTi43JLW
+	cPcWXf/IbILvkcVZyzQfNaFZpND6whMtiNFyTTCSzIKoOtTHJunZygTZSERXG31wB/ed56WCutr
+	d9kKGoOJIWjzLxlAeNBaTvG4lnbebZm/YJk88LoGt0ivksk8YKix3W+A=
+X-Gm-Gg: ASbGnctjLP3H1e0kgoi9hLC2WxkbM64evHBlRQIKSwtuPqvLAd9jmdCk20sQUQyDSFQ
+	CjmxOMb6hj0kO8FGtkzecd5aPwqqJjI/t4r4r4vhbo1vy7EVY70RlvSNWw/SnyqVL9kkQDiBrQv
+	RxEKtpJo0Ejn+A8LXM16Ky42QXIolqZ+6Lyx9hXlh92gr1hu0GuE4rhNfeD0RLRum1iu4CABslf
+	iG55h1t0DrGAjWKRrZ5NhTGe/bQLeLc4SWgpQ==
+X-Google-Smtp-Source: AGHT+IEjg25sWuO3bmaj5PHUknGO0S2JXM45w9uKMpw3odRt7dOKB/ZN0eWo0rVVU5lHI6RtH5iDMCEfa3X9yWzPwAE=
+X-Received: by 2002:a05:6512:291a:b0:55f:63f5:747b with SMTP id
+ 2adb3069b0e04-55f708b4f88mr6505796e87.16.1757012891026; Thu, 04 Sep 2025
+ 12:08:11 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 4 Sep 2025 15:08:10 -0400
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 4 Sep 2025 15:08:10 -0400
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <aLnhbpfeweBI1H4N@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821004237.2712312-1-wusamuel@google.com> <20250821004237.2712312-2-wusamuel@google.com>
-In-Reply-To: <20250821004237.2712312-2-wusamuel@google.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 4 Sep 2025 21:06:44 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gmDnEr_WtVarWRTFWNTzK+fg9jTTD9FXJ5dTwGH0jPRQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwQDLunXv5qPLGgcOUC5UpRC803tqZZybQGLk-Xa7bMRIvRD-GbPkbu1-A
-Message-ID: <CAJZ5v0gmDnEr_WtVarWRTFWNTzK+fg9jTTD9FXJ5dTwGH0jPRQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] PM: Make pm_wakeup_clear() call more clear
-To: Samuel Wu <wusamuel@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, kernel-team@android.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Saravana Kannan <saravanak@google.com>
+References: <aLnhbpfeweBI1H4N@stanley.mountain>
+Date: Thu, 4 Sep 2025 15:08:10 -0400
+X-Gm-Features: Ac12FXysO6QNdjIEOI33bmHVFPgLJt02PCy8XpvyDgLc8P_ntklQBO8hfnzbYpY
+Message-ID: <CAMRc=MfZuB53p2AMG_=zTzERL8+3cfZdXh+c-UhO9S8_aZJoHg@mail.gmail.com>
+Subject: Re: [PATCH next] pinctrl: keembay: fix double free in keembay_build_functions()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 21, 2025 at 2:42=E2=80=AFAM Samuel Wu <wusamuel@google.com> wro=
-te:
+On Thu, 4 Sep 2025 20:58:54 +0200, Dan Carpenter
+<dan.carpenter@linaro.org> said:
+> This kfree() was accidentally left over when we converted to devm_
+> and it would lead to a double free.  Delete it.
 >
-> Move pm_wakeup_clear() to the same location as other functions that do
-> bookkeeping prior to suspend_prepare(). Since calling pm_wakeup_clear()
-> is a prerequisite to setting up for suspend and enabling functionalities
-> of suspend (like aborting during suspend), moving pm_wakeup_clear()
-> higher up the call stack makes its intent more clear and obvious that it
-> is called prior to suspend_prepare().
->
-> With this patch, there is a slightly larger window when abort events
-> can be registered, but otherwise suspend functionality is the same.
->
-> Suggested-by: Saravana Kannan <saravanak@google.com>
-> Signed-off-by: Samuel Wu <wusamuel@google.com>
+> Fixes: 995bc9f4826e ("pinctrl: keembay: release allocated memory in detach path")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  kernel/power/process.c | 1 -
->  kernel/power/suspend.c | 1 +
->  2 files changed, 1 insertion(+), 1 deletion(-)
+>  drivers/pinctrl/pinctrl-keembay.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 >
-> diff --git a/kernel/power/process.c b/kernel/power/process.c
-> index dc0dfc349f22..8ff68ebaa1e0 100644
-> --- a/kernel/power/process.c
-> +++ b/kernel/power/process.c
-> @@ -132,7 +132,6 @@ int freeze_processes(void)
->         if (!pm_freezing)
->                 static_branch_inc(&freezer_active);
+> diff --git a/drivers/pinctrl/pinctrl-keembay.c b/drivers/pinctrl/pinctrl-keembay.c
+> index 30122ca90cbe..3241d3ae6219 100644
+> --- a/drivers/pinctrl/pinctrl-keembay.c
+> +++ b/drivers/pinctrl/pinctrl-keembay.c
+> @@ -1643,10 +1643,8 @@ static int keembay_build_functions(struct keembay_pinctrl *kpc)
+>  	new_funcs = devm_krealloc_array(kpc->dev, keembay_funcs,
+>  					kpc->nfuncs, sizeof(*new_funcs),
+>  					GFP_KERNEL);
+> -	if (!new_funcs) {
+> -		kfree(keembay_funcs);
+> +	if (!new_funcs)
+>  		return -ENOMEM;
+> -	}
 >
-> -       pm_wakeup_clear(0);
->         pm_freezing =3D true;
->         error =3D try_to_freeze_tasks(true);
->         if (!error)
-> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-> index b4ca17c2fecf..4bb4686c1c08 100644
-> --- a/kernel/power/suspend.c
-> +++ b/kernel/power/suspend.c
-> @@ -595,6 +595,7 @@ static int enter_state(suspend_state_t state)
->         }
->
->         pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[s=
-tate]);
-> +       pm_wakeup_clear(0);
->         pm_suspend_clear_flags();
->         error =3D suspend_prepare(state);
->         if (error)
+>  	return keembay_add_functions(kpc, new_funcs);
+>  }
 > --
+> 2.47.2
+>
 
-Applied as 6.18 material with Saravana's R-by and minor edits in the
-subject and changelog.
-
-Thanks!
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
