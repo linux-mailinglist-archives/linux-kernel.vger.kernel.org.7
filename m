@@ -1,123 +1,83 @@
-Return-Path: <linux-kernel+bounces-801524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 480B2B4462C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:10:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18ECDB44630
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A0D6585A93
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:10:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77C9F4872C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B323826A0C6;
-	Thu,  4 Sep 2025 19:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDED26A0DB;
+	Thu,  4 Sep 2025 19:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="KrgrQzzH"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="im42okMu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E554D599;
-	Thu,  4 Sep 2025 19:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757013025; cv=pass; b=GBEeIFxP/1XTIEEO4OyLiVnYtZYLecPCRbX9DD4WTw013b8GA9Ps8H+YNdcBTVD9srabDt3g0M2JvdomfTzVYd6dV+eeiZZdNRsB/EsQ6sZiCfS6swZVptAt4F1KzULlRJrEzn+i6UHeHYjkFtXcJFhBrKR9bdxEEoeyjqGU2Ho=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757013025; c=relaxed/simple;
-	bh=+h4Zse7WhDcAJDw0AavI4Al0yjN0FBx0HhqVfrpEfIg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=GdPzBJqnf+cD60NDUSDxrpBs02zr7gaEoUtVTLML/f/wAlFRcgKJHMCYxm3nnynOtdlQRUrc7/CX1I0CQj1IMdsdLt0fm8B3uqbgAEBZ6IsKisML0HXBWf5DqFvFjFc76+RLs8Jb+iUqTTfjneFWRAHK76oOtMnY8ANmPfZUn14=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=KrgrQzzH; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757013016; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EyAXeSu3/4WsEdNzyrP8tAQT1gP81vdqPZpi7gqVzRlQwRcMt/DR5QJAhP0OMJGxn/1ZALfxn7gHXuxKqKzeJnGNcmxlgfLQ4lWeFrJpEChW1SL0HIuAY3xDtjJ/aYX8EhtlOfB3C/OFIx6xuP7bPHWCsjzphUCbmpK2+fPxx8s=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757013016; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+h4Zse7WhDcAJDw0AavI4Al0yjN0FBx0HhqVfrpEfIg=; 
-	b=MWHm/Vmi+YouFlPxnuSLcdyzNM4twXnNan5Lj4mEKbosagIWAJVRxCqm0A07sXE0M9WHvWXW44vJB9inpcu4pnFOiaWV5cEo7e4kJgqJuA2e9/qpu+KVqj+Oj58kkpUX4IhsDBeyhWwehgFYFrSrC4IY9kh1wGv1nlbjWT/q2Rw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757013015;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=+h4Zse7WhDcAJDw0AavI4Al0yjN0FBx0HhqVfrpEfIg=;
-	b=KrgrQzzHT6tJrG2R3fySF+qofUY7rNqw+Mhi+ZQYTu3BLj9S8jCnt5z7AbQBoDsa
-	lxVzDpDg3zzC89uIh//UC6/VmP1/9wdkxV1zxM3x1V86Ks61eQl9bq6oe3MOaBaqnSg
-	uMxQx+rJEhXYtxAJyNKV7mMbcw7IlIUEYOrQygr8=
-Received: by mx.zohomail.com with SMTPS id 17570130111351013.0951418007742;
-	Thu, 4 Sep 2025 12:10:11 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598FF4D599;
+	Thu,  4 Sep 2025 19:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757013085; cv=none; b=BZroDRguEvUu0y0iwpR68VPz3WSsMgeEJt54/2m80k4KquuW+X5TuBpYQLTnf0axEL+a+ZQQGWaQx3Dg1bJd61uyCzkEvv+lpEh4p9ES9mIB6tjNRL8r/8eo1TLHfgxi7dl1INw4qmHwhwk/zoS4t+lRIrzVtrcS0Hy8ByXaXr4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757013085; c=relaxed/simple;
+	bh=IokcKs+vLMBO32zCWa1lnXCp6NL4ULAQjAcWJgaaik4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZLJqp6/HsubrbMkpI0m7qbICJTEbY4RF5sp2E3tDklFao7ZnuTRf9UPmmzRPvi9XNtaYYcNX0vwZoJ+CWewwWD0AT1fkq5Y8V/yFM+5f3u7Ppq0YXro4qX/SGs+WmhOTrP4ZHAN1m5C5DQD/FVACd0Os8FFF9bXlRBMZ6Re3vP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=im42okMu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7839C4CEF0;
+	Thu,  4 Sep 2025 19:11:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757013085;
+	bh=IokcKs+vLMBO32zCWa1lnXCp6NL4ULAQjAcWJgaaik4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=im42okMuPHcx/8mnx3Cw3ficjYRySl+hlyMKRjq96JutJQfSG0SnW52YenDXHYSQL
+	 ng3rPm/jrpk0kpYNlnJhbHi8ITkNaOcE6BGJA9uT6W0sDbw53BP353O8MkZsQACQWE
+	 yEvLJ5KQJcRsEX3CDOSU4XJv4O3SVyc2EXRz3MPV9JB/k7TTfs9fLbQr26p2g/sLAn
+	 XBqrxsDivSG7z7pupExeiF5LafcyukHCvvCxY6YkhAPpfw/7a3ymDsAP+cmXcbidlR
+	 34yLTi6Dvr67EDBk+82sIBUGvrz9uN7009W9Z69SdkyeDENvsOdereSnzmbkVxNYyH
+	 jjQJQtMdZoVyg==
+Date: Thu, 4 Sep 2025 14:11:24 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 1/1] dt-bindings: rtc: pcf85063: remove
+ quartz-load-femtofarads restriction for nxp,pcf85063
+Message-ID: <175701308303.42745.14023304164615181268.robh@kernel.org>
+References: <20250903191128.439164-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v2 RESEND] media: vidtv: initialize local pointers upon
- transfer of memory ownership
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250904054000.3848107-1-aha310510@gmail.com>
-Date: Thu, 4 Sep 2025 16:09:56 -0300
-Cc: mchehab@kernel.org,
- linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- stable@vger.kernel.org,
- syzbot+1d9c0edea5907af239e0@syzkaller.appspotmail.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <67D8F9B1-3121-469A-8F50-952BD4C0C99F@collabora.com>
-References: <20250904054000.3848107-1-aha310510@gmail.com>
-To: Jeongjun Park <aha310510@gmail.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903191128.439164-1-Frank.Li@nxp.com>
 
-Hi Jeongjun,
 
-You=E2=80=99re resending this, but there were comments on v2.
-
-If you=E2=80=99ve taken steps to address them, please send a v3 instead.
-
-> On 4 Sep 2025, at 02:40, Jeongjun Park <aha310510@gmail.com> wrote:
->=20
-> vidtv_channel_si_init() creates a temporary list (program, service, =
-event)
-> and ownership of the memory itself is transferred to the PAT/SDT/EIT
-> tables through vidtv_psi_pat_program_assign(),
-> vidtv_psi_sdt_service_assign(), vidtv_psi_eit_event_assign().
->=20
-> The problem here is that the local pointer where the memory ownership
-> transfer was completed is not initialized to NULL. This causes the
-> vidtv_psi_pmt_create_sec_for_each_pat_entry() function to fail, and
-> in the flow that jumps to free_eit, the memory that was freed by
-> vidtv_psi_*_table_destroy() can be accessed again by
-> vidtv_psi_*_event_destroy() due to the uninitialized local pointer, so =
-it
-> is freed once again.
->=20
-> Therefore, to prevent use-after-free and double-free vuln, local =
-pointers
-
-Please do not use =E2=80=9Cvuln=E2=80=9D instead of vulnerability.
-
-> must be initialized to NULL when transferring memory ownership.
->=20
-> Cc: <stable@vger.kernel.org>
-> Reported-by: syzbot+1d9c0edea5907af239e0@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D1d9c0edea5907af239e0
-> Fixes: 3be8037960bc ("media: vidtv: add error checks")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+On Wed, 03 Sep 2025 15:11:27 -0400, Frank Li wrote:
+> Original TXT binding doc have not limitition about quartz-load-femtofarads,
+> which only allow 7000 for nxp,pcf85063.
+> 
+> So remove it to fix below CHECK_DTBS warnings:
+> arch/arm/boot/dts/nxp/imx/imx6dl-skov-revc-lt2.dtb: rtc@51 (nxp,pcf85063): quartz-load-femtofarads:0: 7000 was expected
+>         from schema $id: http://devicetree.org/schemas/rtc/nxp,pcf85063.yaml#
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
-> v2: Improved patch description wording and CC stable mailing list
-> - Link to v1: =
-https://lore.kernel.org/all/20250822065849.1145572-1-aha310510@gmail.com/
-> ---
-> drivers/media/test-drivers/vidtv/vidtv_channel.c | 3 +++
-> 1 file changed, 3 insertions(+)
+>  .../devicetree/bindings/rtc/nxp,pcf85063.yaml          | 10 ----------
+>  1 file changed, 10 deletions(-)
+> 
 
-=E2=80=94 Daniel
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
