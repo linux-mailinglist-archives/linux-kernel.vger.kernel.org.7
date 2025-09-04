@@ -1,212 +1,221 @@
-Return-Path: <linux-kernel+bounces-800491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3DEFB43866
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:18:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 544F5B4386A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC9E917FB87
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:17:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 617E55628C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04AA72FCBF9;
-	Thu,  4 Sep 2025 10:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9399E2FCBEA;
+	Thu,  4 Sep 2025 10:13:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BfR4sS3o"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ADMeXip8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tzuvLD/f";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ADMeXip8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tzuvLD/f"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1002EC567
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061552C08C4
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756980764; cv=none; b=cfoYXVbCbp0jp5wtRbmSgyR7z/kp4GC/IVctby2Le0/BQgEGMkMflYqJalO1GIU+VXWL/8iZ7UBkuA6Tf5O5MSwxVRYIAvDm86nBGeYrdhyudLmpXAzFYDEL7vSGydOJzNEk5lsyWRJE4v3Doim+k2AQ8IIqoH2caj69PzEdBEg=
+	t=1756980807; cv=none; b=oSBrYPG9dtGTyEU7Do+ymxIdzGqfe0vqEE2OyPa3Csc/lmjJk4javYsp3pGj3G6v+vJ7YxSFNGXVp1mI4cMV3CiF23RgEtZyc5PpyV6emdnzC9CYJTVZXOZ5hVzsj5VWqCCQ/lGyW4nIUeJIt0j4oBLNO9bC4n5dTSlcrDq0wFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756980764; c=relaxed/simple;
-	bh=+uMYP2uW1nW7hKYFC4QWMKbYzHHQg2YgG9k4JO4Cwac=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HNqPLbABsbf8ag4TuLa1XJMlT8UIQj+xVBs6ItMKxgV1Fy5JiNAnPxKXXexiGWF/TMgT8X02qlo11rR5PTMoru1xgBXR/BZUGGoeX1ronem8w6Qwm7vbtcuN8WZvOdfRB9AMmAjjNRQj1QmyIWQTsvatXILHDKxExWIiCd6Gx10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BfR4sS3o; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756980761;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=UFmPjeed1+G8MbqZG8Hbk52yIxOOxNCzUZSme1htoZc=;
-	b=BfR4sS3oneBZylDy8vyEPOJY2ALsKAtqmw7zqUgzc3tNsohjeuCT5IQJ4RJ1EkZh5ilV8e
-	MHTz+8cGQWtOY6xTWPso4SzM0LUS1O8vw1l1CL7OIW1/FKYUZnp1RWa0jCF9S4W4OzIFXE
-	GqMMrSPCyddHRz/O2yJG4UmvUleW66E=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-652-55oRkVQuMneTVGJK3_AVJw-1; Thu, 04 Sep 2025 06:12:40 -0400
-X-MC-Unique: 55oRkVQuMneTVGJK3_AVJw-1
-X-Mimecast-MFC-AGG-ID: 55oRkVQuMneTVGJK3_AVJw_1756980760
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-807056330b6so93439285a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 03:12:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756980760; x=1757585560;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UFmPjeed1+G8MbqZG8Hbk52yIxOOxNCzUZSme1htoZc=;
-        b=AEOC14aa0xpgkMuMqAyQkhvJPnrp6bJhsAx4kv/wuOmqtS/3taozG5rwUqZ5pjaP5g
-         8sicm7i2WYHDDUjQ4eCqHkU6XbiNRndhDj87Ij8XUu7HZph5JLu7PxI4D8/5RWlcgsSX
-         kE7a4OtnZ6oDJfd2XylLJksbsQTcTUlKlQA5szasSKYzgBIwvQwaz1OUVFPGtH5NZdFy
-         9Wb97YeEoxm4yStaBu6Z7D5r8BktJ/xg9pSQjZsc9B5lw6WKpGbD140wKDsCpWW5uCl9
-         L8t04F50rwqRhg9NmV6hqYDJm3NJAI5tY4IIyUtDXH31esqrAC29AgZH9m7WMAqGwn6f
-         OViQ==
-X-Gm-Message-State: AOJu0YyKZmxlS1SjIxdSbqmHcd8cja99keRZZM2aFrIw5h2mJprMSuse
-	9Uc9L/F16896s4hGqUqo2/4BfoTj4WSXMamBBEFo0K7WsfImRv3w3wwsQVeRkKc67tIWd853OjO
-	GGr+bKtzqJfMdv0/jVZf4EyLU9ARArFhsxpxw+9aOceIBdc62KIE6iZzaLE0dRPqswA==
-X-Gm-Gg: ASbGnctBU5ID12HZm2/uLIFqXqUn2v/7heWDGPC6puLooI4P6MvBLxY+9ERJOLAgsKY
-	IOO3KuiERN5sFbVDboSNK1VqRC8SGr9IRyR0mmLWdPF6F8bTTv/+FEwYqpAKAVvNbM4MHYo6pJX
-	1KQQm18SiV3gVvihYBBUhE7CWTyqBvyV+4O07KBeKEqCaoZgJ+vCoWL2oGig5mR9Tn61AR/v6fv
-	Q3RnO++HovbwILQo0LMyPZ2xdzZGTUNgwF5a/O5WKG188x1cuFiCPXy8fxlBadXNF/35NEl6oLB
-	Zpz3JY4mRLbuiJ/8mYsFuUATn1Bj2MxHFf1+QMo4EtSnerKrJEhDUx4rkJdXGHcAVWOOsiTW3Q=
-	=
-X-Received: by 2002:a05:620a:4546:b0:800:a501:a352 with SMTP id af79cd13be357-800a501a36dmr2440070985a.22.1756980759733;
-        Thu, 04 Sep 2025 03:12:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFL1gCgjDR/UJSPyS0pDCnJsbNgq3Th9S3r7HPQW0fM0NwOvfg+53mJUbtTccsFXLpcIYIZXg==
-X-Received: by 2002:a05:620a:4546:b0:800:a501:a352 with SMTP id af79cd13be357-800a501a36dmr2440067485a.22.1756980759198;
-        Thu, 04 Sep 2025 03:12:39 -0700 (PDT)
-Received: from cluster.. (4f.55.790d.ip4.static.sl-reverse.com. [13.121.85.79])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-80b105e1ce6sm231267385a.67.2025.09.04.03.12.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 03:12:38 -0700 (PDT)
-From: Alex Markuze <amarkuze@redhat.com>
-To: ceph-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Slava.Dubeyko@ibm.com,
-	idryomov@gmail.com,
-	Alex Markuze <amarkuze@redhat.com>
-Subject: [PATCH v2 2/2] ceph/inode: drop extra reference from ceph_get_reply_dir() in ceph_fill_trace()
-Date: Thu,  4 Sep 2025 10:12:34 +0000
-Message-Id: <20250904101234.1258643-1-amarkuze@redhat.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756980807; c=relaxed/simple;
+	bh=r2jrMCzlHINe2y/zoU59XCweavVVEjBnVBuRAgX/llQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CQ/oI5T5i+R0p3p80CaUNxrqHwOQAKFQrnVdgyFtlqiipa1/ZSeJFKvwwwNZdg0QgIUoe4EYkVuoul9zuPvlrZC72tDfIZjTZe31/eZ1yzSaYs36xsMO8JFjVqJrvIlyWZofTTD2BW9eeTvXsaMaSBILhDSD56k4ZoFCPacnj1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ADMeXip8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tzuvLD/f; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ADMeXip8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tzuvLD/f; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 140BF3442D;
+	Thu,  4 Sep 2025 10:13:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756980804; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2X+C3ZZNjZ4YV3oyJvmZaV0E/yUjqNpHuzGBIGNUEg4=;
+	b=ADMeXip8ilmTbst4zCAEIzTvtwV1rbeDu7Yv290/EhnP8tg4RwrnVjYhaMJefp/I3CCA+W
+	IeRpgtEfR7wuXtftXxxkZBVPIE+9iQS4kSBaaiUYxtHpVEkNlnM/rZ7cfiqdvAFyu6h6LV
+	UkX6+KFdmJc0VuDMEKpHP5ycxWGTcAk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756980804;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2X+C3ZZNjZ4YV3oyJvmZaV0E/yUjqNpHuzGBIGNUEg4=;
+	b=tzuvLD/fqKgoCoqkPa0KGOor5sFp3O5/m7IBSzvfx15OzSOBkzg/TKRPjF2RyD83ITmsW+
+	ayrm0NJtXKwhHRBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756980804; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2X+C3ZZNjZ4YV3oyJvmZaV0E/yUjqNpHuzGBIGNUEg4=;
+	b=ADMeXip8ilmTbst4zCAEIzTvtwV1rbeDu7Yv290/EhnP8tg4RwrnVjYhaMJefp/I3CCA+W
+	IeRpgtEfR7wuXtftXxxkZBVPIE+9iQS4kSBaaiUYxtHpVEkNlnM/rZ7cfiqdvAFyu6h6LV
+	UkX6+KFdmJc0VuDMEKpHP5ycxWGTcAk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756980804;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2X+C3ZZNjZ4YV3oyJvmZaV0E/yUjqNpHuzGBIGNUEg4=;
+	b=tzuvLD/fqKgoCoqkPa0KGOor5sFp3O5/m7IBSzvfx15OzSOBkzg/TKRPjF2RyD83ITmsW+
+	ayrm0NJtXKwhHRBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 068BA13675;
+	Thu,  4 Sep 2025 10:13:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id HqRIAURmuWjnKQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 04 Sep 2025 10:13:24 +0000
+Message-ID: <7b1ca42d-1b89-44f4-bffb-e6b09f86fdc5@suse.cz>
+Date: Thu, 4 Sep 2025 12:13:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] mm: remove zpool
+Content-Language: en-US
+To: Vitaly Wool <vitaly.wool@konsulko.se>, hannes@cmpxchg.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Christoph Hellwig <hch@infradead.org>
+References: <20250829162212.208258-1-hannes@cmpxchg.org>
+ <20250904093325.2768507-1-vitaly.wool@konsulko.se>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250904093325.2768507-1-vitaly.wool@konsulko.se>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-ceph_get_reply_dir() may return a different, referenced inode when r_parent is stale and the parent directory lock is not held.
-ceph_fill_trace() used that inode but failed to drop the reference when it differed from req->r_parent, leaking an inode reference.
+On 9/4/25 11:33, Vitaly Wool wrote:
+>> With zswap using zsmalloc directly, there are no more in-tree users of
+>> this code. Remove it.
+>> 
+>> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> 
+> Per the previous discussions, this gets a *NACK* from my side. There is
+> hardly anything _technical_ preventing new in-tree users of zpool API.
+> zpool API is neutral and well-defined, I don’t see *any* good reason for
+> it to be phased out.
 
-Keep the directory inode in a local and iput() it at function end if it does not match req->r_parent.
+AFAIK it's a policy that unused code should be removed ASAP. And that's the
+case for zpool after Patch 1, no? It could be different if another user was
+about to be merged (to avoid unnecessary churn), but that doesn't seem the
+case for zblock?
 
-Signed-off-by: Alex Markuze <amarkuze@redhat.com>
----
- fs/ceph/inode.c | 30 +++++++++++++++++++-----------
- 1 file changed, 19 insertions(+), 11 deletions(-)
+My concern would be if the removal breaks any existing installations relying
+on zswap. Presumably not as a make oldconfig will produce a config where
+nothing important is missing, and existing boot options such as
+"zswap.zpool=" or attempts to write to in the init scripts to
+"/sys/module/zswap/parameters/zpool" will cause some errors/noise but not
+prevent booting correctly?
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 470ee595ecf2..cffa2cd7b530 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1584,6 +1584,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 	struct ceph_vino tvino, dvino;
- 	struct ceph_fs_client *fsc = ceph_sb_to_fs_client(sb);
- 	struct ceph_client *cl = fsc->client;
-+	struct inode *parent_dir = NULL;
- 	int err = 0;
- 
- 	doutc(cl, "%p is_dentry %d is_target %d\n", req,
-@@ -1601,9 +1602,13 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 		 * r_parent may be stale, in cases when R_PARENT_LOCKED is not set,
- 		 * so we need to get the correct inode
- 		 */
--		struct inode *dir = ceph_get_reply_dir(sb, req->r_parent, rinfo);
--		if (dir) {
--			err = ceph_fill_inode(dir, NULL, &rinfo->diri,
-+		parent_dir = ceph_get_reply_dir(sb, req->r_parent, rinfo);
-+		if (unlikely(IS_ERR(parent_dir))) {
-+			err = PTR_ERR(parent_dir);
-+			goto done;
-+		}
-+		if (parent_dir) {
-+			err = ceph_fill_inode(parent_dir, NULL, &rinfo->diri,
- 					      rinfo->dirfrag, session, -1,
- 					      &req->r_caps_reservation);
- 			if (err < 0)
-@@ -1612,14 +1617,14 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 			WARN_ON_ONCE(1);
- 		}
- 
--		if (dir && req->r_op == CEPH_MDS_OP_LOOKUPNAME &&
-+		if (parent_dir && req->r_op == CEPH_MDS_OP_LOOKUPNAME &&
- 		    test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags) &&
- 		    !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
- 			bool is_nokey = false;
- 			struct qstr dname;
- 			struct dentry *dn, *parent;
- 			struct fscrypt_str oname = FSTR_INIT(NULL, 0);
--			struct ceph_fname fname = { .dir	= dir,
-+			struct ceph_fname fname = { .dir	= parent_dir,
- 						    .name	= rinfo->dname,
- 						    .ctext	= rinfo->altname,
- 						    .name_len	= rinfo->dname_len,
-@@ -1628,10 +1633,10 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 			BUG_ON(!rinfo->head->is_target);
- 			BUG_ON(req->r_dentry);
- 
--			parent = d_find_any_alias(dir);
-+			parent = d_find_any_alias(parent_dir);
- 			BUG_ON(!parent);
- 
--			err = ceph_fname_alloc_buffer(dir, &oname);
-+			err = ceph_fname_alloc_buffer(parent_dir, &oname);
- 			if (err < 0) {
- 				dput(parent);
- 				goto done;
-@@ -1640,7 +1645,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 			err = ceph_fname_to_usr(&fname, NULL, &oname, &is_nokey);
- 			if (err < 0) {
- 				dput(parent);
--				ceph_fname_free_buffer(dir, &oname);
-+				ceph_fname_free_buffer(parent_dir, &oname);
- 				goto done;
- 			}
- 			dname.name = oname.name;
-@@ -1659,7 +1664,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 				      dname.len, dname.name, dn);
- 				if (!dn) {
- 					dput(parent);
--					ceph_fname_free_buffer(dir, &oname);
-+					ceph_fname_free_buffer(parent_dir, &oname);
- 					err = -ENOMEM;
- 					goto done;
- 				}
-@@ -1674,12 +1679,12 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 				    ceph_snap(d_inode(dn)) != tvino.snap)) {
- 				doutc(cl, " dn %p points to wrong inode %p\n",
- 				      dn, d_inode(dn));
--				ceph_dir_clear_ordered(dir);
-+				ceph_dir_clear_ordered(parent_dir);
- 				d_delete(dn);
- 				dput(dn);
- 				goto retry_lookup;
- 			}
--			ceph_fname_free_buffer(dir, &oname);
-+			ceph_fname_free_buffer(parent_dir, &oname);
- 
- 			req->r_dentry = dn;
- 			dput(parent);
-@@ -1869,6 +1874,9 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 					    &dvino, ptvino);
- 	}
- done:
-+	/* Drop extra ref from ceph_get_reply_dir() if it returned a new inode */
-+	if (unlikely(!IS_ERR_OR_NULL(parent_dir) && parent_dir != req->r_parent))
-+		iput(parent_dir);
- 	doutc(cl, "done err=%d\n", err);
- 	return err;
- }
--- 
-2.34.1
+I mean if we were paranoid and anticipated somebody would break their
+booting if writing to /sys/module/zswap/parameters/zpool failed, we could
+keep the file (for a while) and just produce a warning in dmesg that it's
+deprecated and does nothing?
+
+From Patch 1:
+
+> Note that this does not preclude future improvements and experiments
+> with different allocation strategies. Should it become necessary, it's
+> possible to provide an alternate implementation for the zsmalloc API,
+> selectable at compile time. However, zsmalloc is also rather mature
+> and feature rich, with years of widespread production exposure; it's
+> encouraged to make incremental improvements rather than fork it.
+
+With my history of maintaining the slab allocators I can only support this
+approach.
+
+
+> BTW, remarkable is that you didn't bother to CC: me to this patch.
+> 
+> Anyway,
+> 
+> Nacked-by: Vitaly Wool <vitaly.wool@konsulko.se>
+> 
 
 
