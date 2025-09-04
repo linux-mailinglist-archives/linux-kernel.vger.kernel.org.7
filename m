@@ -1,166 +1,117 @@
-Return-Path: <linux-kernel+bounces-799963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80AAB431B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:42:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F468B431B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F0861C2366C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:43:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 295661C23881
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B5323B627;
-	Thu,  4 Sep 2025 05:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11F5242D60;
+	Thu,  4 Sep 2025 05:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KmopdLIp"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EmkR/F3c"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D05A23E358;
-	Thu,  4 Sep 2025 05:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6FF23B627;
+	Thu,  4 Sep 2025 05:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756964564; cv=none; b=dmNnftcBvzKa8iQ9IDAC4myWJr4eQ6GIWXNPVciWxUamxbgwoL90WVL+MYNrlAxK6dSHR+74DxNksGWh0rICZ0XIG7ctrF/USP78ilavHkQhwPFEpbWOCbATV5+wtMayUvSgg+Fb4zhgXN85Tp2md2EkrQslveAAMFSp8W+gA6Y=
+	t=1756964638; cv=none; b=YqXOYtEe9Rh0o1aQprMSlLSGQUlBimyPnpAJoN5DdrQZy/9c5Ej5hb2+B9QsDV1UU27iBEDwByskv1OOu1Ud9tOzGoZXnt/Q1JjBhX4Tpj7w9XQmUA0a8P9XtZCum51TzDM3LZbR8pRFU6j402L/jTLGFGZMCGkydV5gr/Epd8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756964564; c=relaxed/simple;
-	bh=g+SXvOscJQeh5HJU9Sa9a+M2q24ilt3506SIFNah/B4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Knra3c7qGJsEtZGBF7etSBLyLHT5AcnRriGonakMk/nf0ccEX/ow+4/LjDc6uBXzZQKNl37myJNA5TcVZBm74aq6MnfBATEDyBF4Qd7SfqPFHFNXDy3EpG3U9Mnd99jRR/K2x0YDsisxmPxWDI914jQs+8aeynmnd4T7RGX6l5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KmopdLIp; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24456ce0b96so7297295ad.0;
-        Wed, 03 Sep 2025 22:42:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756964563; x=1757569363; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hbHjJUZmwsNSKsI58Zu00uvyyhHZY/S+yPHhdvFRXMU=;
-        b=KmopdLIpGH5QQJdk7PVDu2hV3IslHSwjq6I2hOuK1ZcbsTq7uodXgB2mbXiEqDg5qa
-         JLXLoIHHbqV3K3WTBROtcVRv7xLgZFPJAPZSY+XaRtk3y2IHpWfOxMPDARfpKBiC2Foa
-         2UhPY0z+eW/17B6RKegAGJkE+8aS8EZLOO8NI3QQo9kRkKVfdD7on7orG+WGqFltiApW
-         783C7SnowNLCLGn6UNzVII+tYGg8BDIXr88Qe/NDKn0UMoKG+d8Anf2HIkov98OfZ/e2
-         pIknbpjC+oQUq9Mjk6JiDW5yFRdNAR4baiozqXwKfg1NyyedGhSn3xo1BkxAyj54Wx+o
-         W9UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756964563; x=1757569363;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hbHjJUZmwsNSKsI58Zu00uvyyhHZY/S+yPHhdvFRXMU=;
-        b=pFT3dQXCEYhY8wriYIWhgPWkSG2pjxG2zwj74PSF6HZNo7GzLebwxCDvLg9KOJmwkq
-         DYEfCDjTw1Fc6fSBDK6WVA11tPpexgyQh3hmYtGjormlg9n+Fe0uumSH1YzCkn64jSAl
-         FB7wu/rxaG/cvYWM3JXC1fhK978w/rbrpgj7wvDKoliv66kPU8Ko3uUH/sajzmCO3Q3T
-         yvHgNsdUHurlxMACIyt7mlPU/hf6Gw1Pl/vEk+LOa6+TemYZvtSHZ4v5f0aSluel0J6k
-         Nnt4dTPlJh1pBmsCeGSwggRCc7EJnMDlZZnTlSG1R3g7mg7b0hh6ccql/nlnbIiKw6ix
-         50XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/nsU8g0RZz81sdlhvJDY9kSx22biYMq7h3j3fi4gnfBKUGuugumunVU3w+kbQqKWeOX0W5GoK@vger.kernel.org, AJvYcCV2qSyzNgz+RcTJ4OR3d703jblgzt0DEAIDY9RWJFZurQ0KdXxZ5Dg59UaoL2aXzLOLpvCSVIN+IrvH3Ns=@vger.kernel.org, AJvYcCVB2CY0oniCCahYIozUOQQ7CpMkcjtvEih7lNnkxhnvXAB5vJWsV6pfdzwevtIyIhiy/vSh4sTnn5dWZus=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5Jdyb3MsbQy8OjFjOkGxSETaecggaDl4zh5f3KHVfLmbDyIct
-	ABWrc1RakvCOdxqJB3bgUaCKLJ7UVh+j6MW4RR0G+vsZiGXV3R6fMRv4
-X-Gm-Gg: ASbGnctTZP5Wxu4D9umsscd1j8N1jFp6g5gbdQ+5tPnvvpYyaJQ5DAB9v9h8GnQMNtF
-	+aT6rzJ6WL5r+6EufzuJR7TeOoG0IakGPBvXpzZzrILAth/WjoP5Zb4ZQ2S3RMXr0OFz2JpN+7+
-	73+kYiMnVbk0+Xz3torNrDDTi0SSttIkfXHemByNcI3vM8FceOLsXVbE0nfaj8Sf1VOgWx44xzC
-	9Z+zeGqNAvNiBZfcCzLdm2T1ipeEc7Zd7giWzVrWvFLLthL87l/Wr7DO+GtZfdopf11J6CgRky2
-	1J1hfIxNwbxqyizDvaAFVJOsbUG/X6/Xx4x8H3cLuGf3G+M7wRBRzXxKbEYhZMY4bX+bEezmQed
-	z0aQD8YD3Wetd3JDsN6DEW9j7GePtqi8nvH9/VpS+0zlXIlsN4Q==
-X-Google-Smtp-Source: AGHT+IGR7eTErbfyCZxh8spMVu2TekPQ7+J4ZP6rBfg12RyZ6N3Czo9+NdflESJbPScLb7zZNdl/Kg==
-X-Received: by 2002:a17:902:d603:b0:24c:1a94:e601 with SMTP id d9443c01a7336-24c1a94ed33mr72611455ad.20.1756964562540;
-        Wed, 03 Sep 2025 22:42:42 -0700 (PDT)
-Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c965558b8sm34028405ad.68.2025.09.03.22.42.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 22:42:42 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: mchehab@kernel.org,
-	hverkuil@kernel.org
-Cc: laurent.pinchart+renesas@ideasonboard.com,
-	crope@iki.fi,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	syzbot+6ffd76b5405c006a46b7@syzkaller.appspotmail.com,
-	syzbot+f1b20958f93d2d250727@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH v2 RESEND] media: hackrf: fix to not free memory after the device is registered in hackrf_probe()
-Date: Thu,  4 Sep 2025 14:42:32 +0900
-Message-Id: <20250904054232.3848637-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756964638; c=relaxed/simple;
+	bh=ZUj/WoAq115Q2cD8ESZPsGtWQFjGhFZrLxiNY/MDBcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=izKCl1IzbqSnX46qm1XM4yuXgKxje9l2axjVd4hwqCra6QD0lNXHU5Vxit9QpiqmWcWKlVl9xvdgKe6eBIowhfuNtfyynGTgj4+4KRI19KCpLHmFIfKHEA02fG9atOpZ3KBO2/XNFBCZTgK9Mu12N6rQlwJSegMl9HHGuhOpCeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EmkR/F3c; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5845hkqw2940972;
+	Thu, 4 Sep 2025 00:43:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756964626;
+	bh=47DEz/6ha8fZiHE5oM7w1+bkW2dkQmrKXzDB+j6xPJw=;
+	h=Date:Subject:To:References:From:In-Reply-To;
+	b=EmkR/F3c23o5OuA4YkYjGrSEbr5bzGuG0pyFGnXHqwi1/IaMyE4ZyEhZ8wP8rKrsE
+	 6GeUeAuE2a1po7BQIJ08OsnD4xRUIKTlikh7l9YGpRqbZb+7T2RpConxu+M/+e2+ze
+	 vsJKsUJ5iDfj0wonZTmxNvLw3b3zqKie41nCSLEM=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5845hkwR641637
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 4 Sep 2025 00:43:46 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 4
+ Sep 2025 00:43:46 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 4 Sep 2025 00:43:46 -0500
+Received: from [172.24.233.62] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.233.62])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5845hfOS2766310;
+	Thu, 4 Sep 2025 00:43:42 -0500
+Message-ID: <49db8bea-80a0-4f09-9b39-20fd7493b5da@ti.com>
+Date: Thu, 4 Sep 2025 11:13:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] arm64: dts: ti: k3-j721e-main: Update DSS EDP
+ integration configuration register
+To: Harikrishna Shenoy <h-shenoy@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <r-ravikumar@ti.com>, <tomi.valkeinen@ti.com>,
+        <a-bhatia1@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <aradhya.bhatia@linux.dev>, <u-kumar1@ti.com>, <s-jain1@ti.com>
+References: <20250904050940.2913567-1-h-shenoy@ti.com>
+Content-Language: en-US
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <20250904050940.2913567-1-h-shenoy@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-In hackrf driver, the following race condition occurs:
-```
-		CPU0						CPU1
-hackrf_probe()
-  kzalloc(); // alloc hackrf_dev
-  ....
-  v4l2_device_register();
-  ....
-						open("/path/to/dev"); // open hackrf dev
-						....
-  v4l2_device_unregister();
-  ....
-  kfree(); // free hackrf_dev
-  ....
-						ioctl(fd, ...);
-						  v4l2_ioctl();
-						    video_is_registered() // UAF!!
-						....
-						close(fd);
-						  v4l2_release() // UAF!!
-						    hackrf_video_release()
-						      kfree(); // DFB!!
-```
+On 04/09/25 10:39, Harikrishna Shenoy wrote:
+> Fix size of DSS_EDP0_INT_CFG_VP to 256B as stated in
+> TRM Table 2-1 MAIN Domain Memory Map.
+> Link: https://www.ti.com/lit/zip/spruil1/SPRUIL_DRA829_TDA4VM
+> 
+> Fixes: 92c996f4ceab ("arm64: dts: ti: k3-j721e-*: add DP & DP PHY")
+> 
 
-When a V4L2 or video device is unregistered, the device node is removed so
-new open() calls are blocked.
+Remove this blank line. With this,
 
-However, file descriptors that are already open-and any in-flight I/O-do
-not terminate immediately; they remain valid until the last reference is
-dropped and the driver's release() is invoked.
+Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+> Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
 
-Therefore, freeing device memory on the error path after hackrf_probe()
-has registered dev it will lead to a race to use-after-free vuln, since
-those already-open handles haven't been released yet.
+Regards
+Devarsh
 
-And since release() free memory too, race to use-after-free and 
-double-free vuln occur.
+> ---
+>   arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+> index ab3666ff4297..3fa7537d5414 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+> @@ -1863,7 +1863,7 @@ mhdp: dp-bridge@a000000 {
+>   		 * the PHY driver.
+>   		 */
+>   		reg = <0x00 0x0a000000 0x00 0x030a00>, /* DSS_EDP0_V2A_CORE_VP_REGS_APB */
+> -		      <0x00 0x04f40000 0x00 0x20>;    /* DSS_EDP0_INTG_CFG_VP */
+> +		      <0x00 0x04f40000 0x00 0x100>;    /* DSS_EDP0_INTG_CFG_VP */
+>   		reg-names = "mhdptx", "j721e-intg";
+>   
+>   		clocks = <&k3_clks 151 36>;
 
-To prevent this, if device is registered from probe(), it should be
-modified to free memory only through release() rather than calling
-kfree() directly.
-
-Cc: <stable@vger.kernel.org>
-Reported-by: syzbot+6ffd76b5405c006a46b7@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=6ffd76b5405c006a46b7
-Reported-by: syzbot+f1b20958f93d2d250727@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f1b20958f93d2d250727
-Fixes: 8bc4a9ed8504 ("[media] hackrf: add support for transmitter")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
-v2: Fix incorrect patch description style and CC stable mailing list
-- Link to v1: https://lore.kernel.org/all/20250822142729.1156816-1-aha310510@gmail.com/
----
- drivers/media/usb/hackrf/hackrf.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/media/usb/hackrf/hackrf.c b/drivers/media/usb/hackrf/hackrf.c
-index 0b50de8775a3..d7a84422193d 100644
---- a/drivers/media/usb/hackrf/hackrf.c
-+++ b/drivers/media/usb/hackrf/hackrf.c
-@@ -1515,6 +1515,8 @@ static int hackrf_probe(struct usb_interface *intf,
- 	video_unregister_device(&dev->rx_vdev);
- err_v4l2_device_unregister:
- 	v4l2_device_unregister(&dev->v4l2_dev);
-+	dev_dbg(&intf->dev, "failed=%d\n", ret);
-+	return ret;
- err_v4l2_ctrl_handler_free_tx:
- 	v4l2_ctrl_handler_free(&dev->tx_ctrl_handler);
- err_v4l2_ctrl_handler_free_rx:
---
 
