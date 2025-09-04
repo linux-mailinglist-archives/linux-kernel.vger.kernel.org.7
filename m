@@ -1,140 +1,144 @@
-Return-Path: <linux-kernel+bounces-800403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5788CB4373F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:34:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E91B43743
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A781C8006A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:34:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76AE25E40A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A8F2FC89F;
-	Thu,  4 Sep 2025 09:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9015E2F7479;
+	Thu,  4 Sep 2025 09:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ABcOGIU0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pql1dti3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pa6HEGs3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FC02FC027;
-	Thu,  4 Sep 2025 09:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FE4292938;
+	Thu,  4 Sep 2025 09:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756978349; cv=none; b=VajcGRQS0ygH7v7zjKyMvp+kQWUJeUHuMt+RfAWLT0MP+68Kwvp8PR/9rIxjTWyDtnoRW82dYY7ihIrE53jdOA+f2TjhT+aRI1s31rY759LBEy/261wcR1Qu3ClEFgk1prFnBMDYHW5otejpE2W2GVkAEsDzeeq7M5OMCAp+vfw=
+	t=1756978367; cv=none; b=DngeOprXYNJH2xxXhcdIrurobRmlwBNi9O2zB1GEoiOG5qhAY6yCyO0rsYlHnnInAWTFBKxnkCfWkwYG7JHS6b2TdPY4hJ7GgwIeF9wSCFjE+cJdK1av3kPFOHapNLY2Odc0w9dYczDNDoYJwFYIko1c3wtb0bNNpCD133EVw0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756978349; c=relaxed/simple;
-	bh=iWaxHgE1EK/RG4QaTr6cx5vvpnFzJxSCZWsiyIzIH14=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=fjQSONQJpcdAqAPjEqHFjobhMpiX4YLP+CT1v0oqcYBZ+4S4GXDkSggSW17VYmB6FAyzLzXPx4Tvx8c2KiVhQSf0PENcb+EBs2/HtvFEgCCMVeF1HaN1APtqrg1QAyEiUXunYSwX1KpfD1wJf0CBMJGaTRGQaVRe4iD2tzlcyds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ABcOGIU0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pql1dti3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 04 Sep 2025 09:32:25 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756978346;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RvBqsCpQHvVJE9vxlqKs3ep88LF+kr98rn6pzWZcprs=;
-	b=ABcOGIU0a32XQPN4slPV9n7l0rg2qJ6thHhuSw80NN7Xnu7W/GF+sJz9wjUDVNNrS2F57b
-	56q1oR8sMhxJjyYetTiuXdOuUX5K4P27A22eQVkPRqGT5RTj1fnR0R2MHEN1+vZUo9DFq4
-	f0Zlgw93YEubfey3bxbPuOlX12yFZcczeQ4jKSYsQOr357SR3dfsSDnMwTlrkYU5bEP0+p
-	x8ed9wr5qvo+1aDn2VfHMXgNYtCr11BJUMXNYibNiAXSoHsXbto7FtAFFb4cnCaY2l12/J
-	s2TxAj6gm83dg4PRIDy4BmBCPtUwGCWANVoWaB8/5qzjm7YvZUCLxASswVZYWA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756978346;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RvBqsCpQHvVJE9vxlqKs3ep88LF+kr98rn6pzWZcprs=;
-	b=Pql1dti3ZVmX/IPFzmsCCyxxIBr2gCNhGm9fxs64TuiDClSoa4XQDBHrDhKwGCWe2Tcg/M
-	5XhPjYQvnSZ375CA==
-From: tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/vdso] vdso/datastore: Gate time data behind
- CONFIG_GENERIC_GETTIMEOFDAY
-Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250826-vdso-cleanups-v1-1-d9b65750e49f@linutronix.de>
-References: <20250826-vdso-cleanups-v1-1-d9b65750e49f@linutronix.de>
+	s=arc-20240116; t=1756978367; c=relaxed/simple;
+	bh=yf/N5FG6j+HGi+MnPiinMu7YMSmQafp7t//r67FQCIQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tILsC9Q+xC2iAq4v9wL2tmoP2nlTagkwSfD8bEuOjDBcCZd9cWaaCpfquxWkMIgeaT9Sq2NyIjZvwWwPeh+Is/E4FwvZs3lTcA+N3cfqETaKJNfbE5NLz/QTZKRxFoSZwl4LpZCXXgqUZDJ+FJhk/0LfQxgMBvGpRlF7kydDrew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pa6HEGs3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A0AC4CEF0;
+	Thu,  4 Sep 2025 09:32:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756978367;
+	bh=yf/N5FG6j+HGi+MnPiinMu7YMSmQafp7t//r67FQCIQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Pa6HEGs3yoQTLqBVfGTHPhLM5ADn5HxjG0dVuwFap4t+ryAS2vz8XCR8i05wZfvi7
+	 VlHfKQ29KpTIRrhmVDf7gCmbTVOnre5xQTkGvuKw3U/uzkOo9eG92zu2LiGk/t/ohW
+	 2UukjGuPwl9xmdPVnPIAFBU1UqRgrf67haCK4VNpfVkXt2KV+igaCeZOq6oGR2Zhot
+	 4VgOKdfXDnuizMIF/dBP1UVUVmRu57LX2ZsaxLfDZ3XtLHxMI66YD1J7KJIMCOQiF7
+	 mVhCmi1mWWtNnb/spq5Dzn2HCtyaJ979htqSL9GahXhKNBEjwPzbnTsyYDG9le+vQt
+	 k75b0IAwqpEEw==
+Received: from [131.175.126.3] (helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uu6Kj-00000003Foo-00sL;
+	Thu, 04 Sep 2025 09:32:45 +0000
+Date: Thu, 04 Sep 2025 10:32:44 +0100
+Message-ID: <87v7lyzhoj.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Geonha Lee <w1nsom3gna@korea.ac.kr>
+Cc: kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] KVM: arm64: nested: fix VNCR TLB ASID match logic for non-Global entries
+In-Reply-To: <20250903150421.90752-1-w1nsom3gna@korea.ac.kr>
+References: <20250903150421.90752-1-w1nsom3gna@korea.ac.kr>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <175697834531.1920.17519023914521515930.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 131.175.126.3
+X-SA-Exim-Rcpt-To: w1nsom3gna@korea.ac.kr, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-The following commit has been merged into the timers/vdso branch of tip:
+On Wed, 03 Sep 2025 16:04:21 +0100,
+Geonha Lee <w1nsom3gna@korea.ac.kr> wrote:
+>=20
+> kvm_vncr_tlb_lookup() is supposed to return true when the cached VNCR
+> TLB entry is valid for the current context. For non-Global entries, that
+> means the entry=E2=80=99s ASID must match the current ASID.
+>=20
+> The current code returns true when the ASIDs do *not* match, which
+> inverts the logic. This is a potential vulnerability:
+>=20
+> - Valid entries are ignored and we fall back to kvm_translate_vncr(),
+>   hurting performance.
+> - Mismatched entries are treated as permission faults (-EPERM) instead
+>   of triggering a fresh translation.
+> - This can also cause stale translations to be (wrongly) considered
+>   valid across address spaces.
 
-Commit-ID:     7c0c01a216e6d9e1d169c0f6f3b5522e6da708ed
-Gitweb:        https://git.kernel.org/tip/7c0c01a216e6d9e1d169c0f6f3b5522e6da=
-708ed
-Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Tue, 26 Aug 2025 08:17:04 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 04 Sep 2025 11:23:49 +02:00
+I don't immediately see the vulnerability on the host. In the guest,
+yes, absolutely.
 
-vdso/datastore: Gate time data behind CONFIG_GENERIC_GETTIMEOFDAY
+>=20
+> Flip the predicate so non-Global entries only hit when ASIDs match.
+>=20
+> Reported-by: Team 0xB6 in bob14
+>   DongHa Lee (@GAP-dev)
+>   Gyujeong Jin (@gyutrange)
+>   Daehyeon Ko (@4ncienth)
+>   Geonha Lee (@leegn4a)
+>   Hyungyu Oh (@DQPC_lover)
+>   Jaewon Yang (@R4mbb)
 
-When the generic vDSO does not provide time functions, as for example on
-riscv32, then the time data store is not necessary.
+Reported-by: has a specific meaning, and needs addresses. Oliver, can
+you change this to some sort of attribution?
 
-Avoid allocating these time data pages when not used.
+>=20
+> Signed-off-by: Geonha Lee <w1nsom3gna@korea.ac.kr>
+> ---
+>  arch/arm64/kvm/nested.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
+> index 77db81bae86f..24eab94d7d7f 100644
+> --- a/arch/arm64/kvm/nested.c
+> +++ b/arch/arm64/kvm/nested.c
+> @@ -1276,7 +1276,7 @@ static bool kvm_vncr_tlb_lookup(struct kvm_vcpu *vc=
+pu)
+>  		    !(tcr & TCR_ASID16))
+>  			asid &=3D GENMASK(7, 0);
+> =20
+> -		return asid !=3D vt->wr.asid;
+> +		return asid =3D=3D vt->wr.asid;
+>  	}
+> =20
+>  	return true;
 
-Fixes: df7fcbefa710 ("vdso: Add generic time data storage")
-Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250826-vdso-cleanups-v1-1-d9b65750e49f@li=
-nutronix.de
+Yup, looks correct to me. Thanks again for fixing it.
 
----
- lib/vdso/datastore.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Reviewed-by: Marc Zyngier <maz@kernel.org>
 
-diff --git a/lib/vdso/datastore.c b/lib/vdso/datastore.c
-index 3693c6c..a565c30 100644
---- a/lib/vdso/datastore.c
-+++ b/lib/vdso/datastore.c
-@@ -11,14 +11,14 @@
- /*
-  * The vDSO data page.
-  */
--#ifdef CONFIG_HAVE_GENERIC_VDSO
-+#ifdef CONFIG_GENERIC_GETTIMEOFDAY
- static union {
- 	struct vdso_time_data	data;
- 	u8			page[PAGE_SIZE];
- } vdso_time_data_store __page_aligned_data;
- struct vdso_time_data *vdso_k_time_data =3D &vdso_time_data_store.data;
- static_assert(sizeof(vdso_time_data_store) =3D=3D PAGE_SIZE);
--#endif /* CONFIG_HAVE_GENERIC_VDSO */
-+#endif /* CONFIG_GENERIC_GETTIMEOFDAY */
-=20
- #ifdef CONFIG_VDSO_GETRANDOM
- static union {
-@@ -46,7 +46,7 @@ static vm_fault_t vvar_fault(const struct vm_special_mappin=
-g *sm,
-=20
- 	switch (vmf->pgoff) {
- 	case VDSO_TIME_PAGE_OFFSET:
--		if (!IS_ENABLED(CONFIG_HAVE_GENERIC_VDSO))
-+		if (!IS_ENABLED(CONFIG_GENERIC_GETTIMEOFDAY))
- 			return VM_FAULT_SIGBUS;
- 		pfn =3D __phys_to_pfn(__pa_symbol(vdso_k_time_data));
- 		if (timens_page) {
+	M.
+
+--=20
+Jazz isn't dead. It just smells funny.
 
