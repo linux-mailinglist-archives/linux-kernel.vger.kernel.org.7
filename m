@@ -1,187 +1,285 @@
-Return-Path: <linux-kernel+bounces-800975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2BBB43E64
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:17:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C060B43E6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CC8E3AD2DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:17:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B7AF4E5D51
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175D02FF166;
-	Thu,  4 Sep 2025 14:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83DC308F0E;
+	Thu,  4 Sep 2025 14:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PU7y7ZPv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jj/E9IsD"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011004.outbound.protection.outlook.com [40.107.130.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D224A3C;
-	Thu,  4 Sep 2025 14:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756995431; cv=none; b=lxs+t2KKcoZUAiE5krlyQkPnwEFQOI7dB5PlPon/CORL84FV8nKnBLByKgkIsBvkRh+lypPhZrU8C1THdVYl6i9TaSPaxaGi9Pjfpkfeh3sfAWwvVO20m11MD7X15x+BJU0LidRM2tA3E1voQqjO9QprDEm/XUunQmKb0vPlbLM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756995431; c=relaxed/simple;
-	bh=ejGIkx8afYA1cykDAUIyzFsHzUPSCskfk2RxoKQ3LsU=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=mfn+EGZ7HMzXQJlRHkZbUVGDEi55tHvMpaaMaq/yyCSSpPb8LVdHCNoau7/fZtsMP4AyLqLXffFdi1L6BU9tcWZozQ3PRKMnnWgxjXt0TVOT7MPq9iyoUp47JACtdcJRtuQG4IYeUwGqoLJNtzPgqKN1n/3Xh/yF8Z6YWd45Gq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PU7y7ZPv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0FEAC4CEF0;
-	Thu,  4 Sep 2025 14:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756995430;
-	bh=ejGIkx8afYA1cykDAUIyzFsHzUPSCskfk2RxoKQ3LsU=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=PU7y7ZPvcIO89FIJIPqyrPdXX4XP2Py83uvM8umriHzBUA9mExfPQVemGWCJxL25n
-	 zq5lHshGAmj3ySkKiHLdZcdClZadu8XTX4X6ukwGZACbYzEhwxg8G5vSzr4JQaQMFN
-	 fjk3qag5IjfPF/CmKJkMHWf7ebvFO1JjYJ/684mc9QBMDCcKj0j2kKlbRw5WoJUNN9
-	 spo7Z6ZRUa5RyPsnX0ssLt5NN9ivoz/elCiMlWm24DRP50YVzprthjxDyBnFXV+X+v
-	 E9/wJmqtJB1GWMtfliobdlPP7Mct77/kvMFVOFhyXlD7+N/SAinZCUQFsSTVGPLjEX
-	 C9ABexQos/lEQ==
-Date: Thu, 04 Sep 2025 09:17:10 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD13307AE4;
+	Thu,  4 Sep 2025 14:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756995448; cv=fail; b=KFsRBvRv4UgSnqs2p+2RG9JjKabwG7IZDPe/JndM/ry3wQmp8e0I9fRAVpRkRAK9e2HnzoH1r6TMYpJmhiKF/Gi67EOXTdXBtU8bIOslf4PSLDlet5RZyJ2z1V4hfu13ETrHRDVg8bI6AAYuNqdMmwzz0SzooN+tv75MsrdNmhw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756995448; c=relaxed/simple;
+	bh=i82UVtxkPhY09+iZ/hJjdpav7vTmvvJG39e5HYCK69o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=rCJIycZNSuiuBjh7On+TpS61slPYE/6DEMqzgy3/pg+VnoO7+TCkrbBU8efmjVs5+RTlIGCD9+BHJv42EpAY/eRtybUOKnEZw4GO0S5ZNjbBIQJCLrCVNfULKXj7jci38Kf7iHizeKCJ5sI60Na+4AEIaW+LzyOMAs+P6C93PiY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jj/E9IsD; arc=fail smtp.client-ip=40.107.130.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iz7CG5fMWtChr4ywsB+aHTOv1wBydiU9kjo6oM4eaJ1jCyMTEY59IKVsAlH9ulrIqelszqZceqF2TNMHrspJv1BWSGSMz7YpPGbJOVNy5fKx7i3UchNx7Ew2q+jJKjso4xk1OyGxLAJRJrwMTYlvEHLGVRnu3FqTxSif1IlPm7JQWRPqBbhT9Clp8EzumCST/9YuT3d/36+RyeMW1yeoq6dFXI8vcf10bSFQPyxEolc3W64/5weoaEPoCZYXuw02eOh9ENH886CyvFogF12pPLfrxfPNgxZjQ90l08u7rCjj+NTjWd4dI23lkA/09//mZJGbdi5FEg3hPbT8PJ/X6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gO7x5dEYNGvNugp7waxmzPmDj5iTh0FeNaD8Uk9KpSg=;
+ b=pyw/bzdKhjYv/jzj6Qgr+GHy5RvYXgeMCn0nhCuxjGf0omYrvoGJ2ZFeyobYacBECeeKlsJORyPYOrEAwME+53nAlPDEXrWNpp0j6Ss0zEV/O4DhoD25rc66eDchsP9NU/A/KB8Dhykwmd2RednFHl8recSjejBMSxa9FxtfEqQr6XUdTyWG1Gt2JvlkHwkf0AzCNNi4NukM5idcfprSZ35BQokAZmMb+vXJVLwYjn+d1mzNAzwN93dMh9wO4fWOPrRvRMg3G64xCbdhnzZzUScDWyQ5ix/94JoCOgHqak1ajnjSxpKvkRkCZqgRy/D2C5+VI20+TJd3FFrECUIaZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gO7x5dEYNGvNugp7waxmzPmDj5iTh0FeNaD8Uk9KpSg=;
+ b=jj/E9IsDKXsElAdgECUCd8wT0R43MDqza9bnQg5xa5E0/e+xEc0yRe4tsm4WOk3sTiljPUsuvM8obn/ZH7ifgZbvNaghTxKxafY0acaewv/9l4EfU0odajthye046zcfqsQVmIJW1LxI1kUOt/e08cH8+D22TT3YE9tdsZrUrInFOnfkhHjl22I9VBv4SwHW728lNLGhDOtJGSB4dW8MgCJL8l2fImq6hqSVKERgTTM+9qBLqC6qVFjmem1USio1yDUx/d9ywE45c/bZkC9t+RT10q1rNbamxFLYW9XqiGVXeR1okt6ZG+KOdoKeXR12Y0Um0PR6vbQoWzcYYbHKYg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by DB5PR04MB11254.eurprd04.prod.outlook.com (2603:10a6:10:5e6::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Thu, 4 Sep
+ 2025 14:17:22 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd%5]) with mapi id 15.20.9094.015; Thu, 4 Sep 2025
+ 14:17:22 +0000
+Date: Thu, 4 Sep 2025 10:17:13 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Aswath Govindraju <a-govindraju@ti.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Haibo Chen <haibo.chen@nxp.com>,
+	linux-can@vger.kernel.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 1/9] dt-bindings: phy: ti,tcan104x-can: Document NXP
+ TJA105X/1048
+Message-ID: <aLmfaZQcsd8zqY/i@lizhi-Precision-Tower-5810>
+References: <20250904-can-v5-0-23d8129b5e5d@nxp.com>
+ <20250904-can-v5-1-23d8129b5e5d@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904-can-v5-1-23d8129b5e5d@nxp.com>
+X-ClientProxiedBy: BY5PR13CA0005.namprd13.prod.outlook.com
+ (2603:10b6:a03:180::18) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, willmcvicker@google.com, 
- kernel-team@android.com, Will Deacon <will@kernel.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Peter Griffin <peter.griffin@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20250903-acpm-dvfs-dt-v3-0-f24059e5cd95@linaro.org>
-References: <20250903-acpm-dvfs-dt-v3-0-f24059e5cd95@linaro.org>
-Message-Id: <175699523574.4060004.693479596122414416.robh@kernel.org>
-Subject: Re: [PATCH v3 0/3] arm64: dts: exynos: gs101: add cpufreq support
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|DB5PR04MB11254:EE_
+X-MS-Office365-Filtering-Correlation-Id: 003120d1-cd44-4c53-45d5-08ddebbdc3ca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|19092799006|376014|52116014|7416014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?nhzmxaPVFf24w03amFIn5lG6gqx0xBNgCgHlp/9yOmbTrT2+HARgtyakrYn5?=
+ =?us-ascii?Q?EiuEfokre2vN5FI/nDrmPE5ftUmHesoLFUB3x49bDDQwzlOL9Gegn2Fovz9n?=
+ =?us-ascii?Q?qGZ+/zBLq+KeTGd62jDuvH+RG1MTQI/BTQG1Z2f8oB67WlctVsA/Nja2cF69?=
+ =?us-ascii?Q?priRj8AaLar7hdUkFtp8XWseKeOLtR1NAVdeUf7gXDAkLuwr8bpT+ay5V6u4?=
+ =?us-ascii?Q?n1K+EXP4xvEcihv8ZSj8OGyLIaZPBUa/UpuzAzHcd69NAeZTlsnLbUtJQjcZ?=
+ =?us-ascii?Q?8GKBXxNyS20D9aAX2AHIsZKj7AZoDV4ulL66ZoB8oKcD5kGAToPU2jELAUjo?=
+ =?us-ascii?Q?okTp9wn1ECD1aCibj6oKW77vpDJgATdFSdZ5bXHfphWEjA85iiBhnG5vLWat?=
+ =?us-ascii?Q?mRW9dlKboa44HkltZ8RnwSPnboEqFNGEvxNL1EMBqoG+Bt5G3irDceZeJ9fO?=
+ =?us-ascii?Q?jSui7NG9WPDSNfbebjtg1PVbtcXMwaymqOFqP7TkmOpCkN1VkFPVewK0dvdI?=
+ =?us-ascii?Q?fdQxbT9/rRQ1hBrWGEc/mO1MzeCB890fnhGPC1gcyhL31Vqh3cTSBQkbdx97?=
+ =?us-ascii?Q?Iu0UmMz2uIoK008RPy+suoFXajHV3ixVf2CIHnp1GC76NV7RcK0AtVz6H8RH?=
+ =?us-ascii?Q?7VEpHufVSfAE6pbvJcLnEHkHC3mbb0mkiTghZIuiA1UbEKTC2WqJOd7Rsk87?=
+ =?us-ascii?Q?6zm+HqjM9Gg/03HIEXlxSAslDfQr6WXLxYxxctaIiKV1XO/0PUEvmtBbHjTd?=
+ =?us-ascii?Q?KKh2GfJ9ftjNnHiX3FikjXpZC9PXHiO5u8v0b3DH58X01J8UpM1V1tX6UjHz?=
+ =?us-ascii?Q?SJFLB2WQpKrpuQo239k9Lg0iPAddZcRWV+TOZP96ToQgpeJ6Yyx6RHtNncDI?=
+ =?us-ascii?Q?iMwpUoISSdJYcX47Zu3izENrsULc/j4y4EE90L9yQTuINcN7FoXsh2cZHTkC?=
+ =?us-ascii?Q?K1qtnvZgBEbebynMhbBGzGYKG8zzNFf6hOeDXBD+r0iBijRh/pXavGP+58Dz?=
+ =?us-ascii?Q?5v2N+TeqT+OeyzYUP9LRF8Z2cSOAp59Yq15fmRR5NSi6JAJFy2PXJqXqUvge?=
+ =?us-ascii?Q?8Hqj/BwO6eP7VxSJWC3Q2F4kyRgForBhAmWAbJd9GA9fNfE8Ki2AX2bL1kt8?=
+ =?us-ascii?Q?qUpiN4AVBP+Rj+U0Erc6RWW1DRvi3dP7pm/26Rhw0Al/Wp4tFxxejyZgv8oC?=
+ =?us-ascii?Q?nZQMAXo6gUVBaf+wO84K3ae/8ajkHo7YVLzKJM2CmGhD4oEjMdAdH5pZVoGk?=
+ =?us-ascii?Q?0Ejqgj1fQHO86WdboAVzETEVFDQNiDwKOgcQ39+AyyhpVEa1Vhu1ILi4IXtS?=
+ =?us-ascii?Q?IM8s7f323Qa7t6gz73CnDN4VblqbS2a4Rra0KaZDc9N2Wc5OyHd5NzPVp60X?=
+ =?us-ascii?Q?0reTj5u1Nu4gchsrxdDQ0DWT9pDHzAICOEBL9dQKCeNa7VWidnbKLEN17zJR?=
+ =?us-ascii?Q?k4aTj6+PgXBLeKo8cf+boAU8drdL6puba4W/jNFaOH6asFtW6ZL6nA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(376014)(52116014)(7416014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?juChAwgJX+li6RMiQLug3FW5rhPl+gZPx5mnLCe4uejzq6x96VddNEMcvcOn?=
+ =?us-ascii?Q?kSM33CSmK4XVWnCDxWY7Vf8gHc/IZHOyfk2ukn3eQakyL5niARNmBDVCiQU7?=
+ =?us-ascii?Q?riHkdtEsWa7yv/2PhHyQxbAIAeN5L8SelqRYDUY7AHobPYLrQllip4My+XaL?=
+ =?us-ascii?Q?3TNZ3H6tuebBbjxhMNaA5cQtfBg28lSHy6uXpfGhNSWEkMP2DVjn7UFsUVJ9?=
+ =?us-ascii?Q?xJLPvkAGhqnc25RF+eAXQhQFiyuSfWY9lli+jUd9/oO5ZNchgvDII24iB6lg?=
+ =?us-ascii?Q?HnJOXcS4HNZb92KEk/HHQ2HkB3JGLTR2dhu/cguBU3a6biKhUtJrm3Ptk5Rb?=
+ =?us-ascii?Q?TcDpPhfoT5xha48VeeP3QQ6XAMBZXrcN8/ftIqrIPHHHMcFcX2R6nJlMYz8F?=
+ =?us-ascii?Q?R08c56npGUjS6wttFoJG8B84RIOc8btupOXPL8KFI/d/tQKGphvRCXIgF2PE?=
+ =?us-ascii?Q?B0XWJsYL17hNttji5mVt18ZfMdNjYtyNy42vNCR5LL3lReC8z/AkhRtUIuSV?=
+ =?us-ascii?Q?yruuf3ZN2b8w7rZqeRusF7UMAPGrJwvE2whoKVPZJFBOYecFFXwNuYkg8Dg9?=
+ =?us-ascii?Q?iQ7hDINZkc+FbHyCl115HxIatOtSb8xWRPnUAjZ+ZOwm/yRzSwLuTNaNDt82?=
+ =?us-ascii?Q?YsDlqgPxqb25Kq2YEKQwtS7yWkG/yEAlb2I8vuSJnKikbZAGb+e6DFwb+ICJ?=
+ =?us-ascii?Q?e3n9udIOurqBFjZhCez1dfFsriTVIFIWoDZv+/WOwsiV7ssVVY0dXafLqzKs?=
+ =?us-ascii?Q?fBAxoRexb6ZCmprdgMb/yn9sKdeF5FKnX8WcwPDLha6GZwjiDVJZRiCE5mOc?=
+ =?us-ascii?Q?SdqH1IoyUyHYTWIxxU/iZh532JWum2LXx3PpSnHQwt7QGOuYhsJzvezPdjib?=
+ =?us-ascii?Q?L/0uMfeH/b3+bt09t4z22N8RYX1bpEe4PLG2txWGzBGUTwOlaIkr7cJdGKnH?=
+ =?us-ascii?Q?JXby9K6J2TWjgo+3guWRkDDEvS/CNTT7dP5PVEOIyqmKUADcTVRArJXrOfps?=
+ =?us-ascii?Q?YOZi2YghHvaot9jENTU4wXSTdZ4pwEJW5qLiN8rs6xy6vgrr/9TmAflOeFsZ?=
+ =?us-ascii?Q?hswEzmnRSkyub4Zcj+gBC9EQz5oQn1Ue4BmNJKvhSzzglbyANGxiQjrdS5xa?=
+ =?us-ascii?Q?SL1ZPyQZ8Z1MphXesLWvviJNMM+K9XlFwOl/YN55eNwPJu1fP3D3H8gvprA/?=
+ =?us-ascii?Q?KkTDCCvhZc7r/DDYqdC18R+M+qHQaaNJy0S3aCBl9GGfyWusZq3dQBQkAYhj?=
+ =?us-ascii?Q?WorKO3E1wnEKqTXjzXfOTvgYLH9O2SR6hek3ec4NSQUrV7dfilUYT2PFu8sq?=
+ =?us-ascii?Q?cXVLhBmgVXIXbu+wVk8Jo3FuZrqCnc30wDnGoY/JzX+cFGLwN7k49fpZZ+4A?=
+ =?us-ascii?Q?gRPdPTuYIj3E3kLpvX7MR9u+s3vfcQRLvhdjPD9mdKhe6PBi0UV/T+IMwh0r?=
+ =?us-ascii?Q?PLuA0LeDXCC/xOaeU58ZEC55SqGvXs6dgn8eqZF1OU7eXleZbuht8PdWXHux?=
+ =?us-ascii?Q?YUgRXnahR/2DkZ3ydnmo2oafupgp9mHvAjYA++Eg4c0FVgVdQyurUpq2OXIR?=
+ =?us-ascii?Q?qv8gu9c+UtknLQ1a2l39YjHCrjNX91pCAtLxN8M3?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 003120d1-cd44-4c53-45d5-08ddebbdc3ca
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 14:17:22.7597
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qFuW2tk5oQNxo4Lzxlfxgfc4oVSpmhdwUF4jmGwdJNRxUvmaW9bF0/Q8CSzebaxM0JviNPH3Zs+9zDXnvFMzww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR04MB11254
 
+On Thu, Sep 04, 2025 at 04:36:44PM +0800, Peng Fan wrote:
+> The TJA1048 is a dual high-speed CAN transceiver with sleep mode supported
+> and no EN pin.
+>
+> The TJA1051 is a high-speed CAN transceiver with slient mode supported,
+> but only TJA1051T/E has EN pin. To make it simple, make enable-gpios as
+> optional for TJA1051.
+>
+> The TJA1057 is a high-speed CAN transceiver with slient mode supported
+> and no EN pin.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-On Wed, 03 Sep 2025 14:24:34 +0000, Tudor Ambarus wrote:
-> Define the CPU clocks and OPPs.
-> 
-> Patch #2 has a dependency on the ACPM clock bindings sent at:
-> https://lore.kernel.org/linux-samsung-soc/20250903-acpm-clk-v3-1-65ecd42d88c7@linaro.org/
-> 
-> The following error will be seen without the bindings patch:
-> arch/arm64/boot/dts/exynos/google/gs101.dtsi:10:10: fatal error: dt-bindings/clock/google,gs101-acpm.h: No such file or directory
->    10 | #include <dt-bindings/clock/google,gs101-acpm.h>
->       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Thanks,
-> ta
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 > ---
-> Changes in v3:
-> - the ACPM clock bindings were moved to their own file, update the
->   references accordingly.
-> - Link to v2: https://lore.kernel.org/r/20250827-acpm-dvfs-dt-v2-0-e1d2890d12b4@linaro.org
-> 
-> Changes in v2:
-> - acpm node becomes a clock provider.
-> - reword commit message, extend cover letter with info about dependency
->   on a bindings patch.
-> - Link to v1: https://lore.kernel.org/r/20250819-acpm-dvfs-dt-v1-0-4e38b95408c4@linaro.org
-> 
-> ---
-> Tudor Ambarus (3):
->       arm64: dts: exynos: gs101: add #clock-cells to the ACPM protocol node
->       arm64: dts: exynos: gs101: add CPU clocks
->       arm64: dts: exynos: gs101: add OPPs
-> 
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 285 +++++++++++++++++++++++++++
->  1 file changed, 285 insertions(+)
-> ---
-> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-> change-id: 20250819-acpm-dvfs-dt-06bc794bdccd
-> 
-> Best regards,
+>  .../devicetree/bindings/phy/ti,tcan104x-can.yaml   | 69 +++++++++++++++++++++-
+>  1 file changed, 66 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml b/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml
+> index 4a8c3829d85d3c4a4963750d03567c1c345beb91..124493f360516eb203e8711cb96789258dd01119 100644
+> --- a/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml
+> +++ b/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml
+> @@ -22,16 +22,26 @@ properties:
+>        - enum:
+>            - ti,tcan1042
+>            - ti,tcan1043
+> +          - nxp,tja1048
+> +          - nxp,tja1051
+> +          - nxp,tja1057
+>            - nxp,tjr1443
+>
+>    '#phy-cells':
+> -    const: 0
+> +    enum: [0, 1]
+>
+> -  standby-gpios:
+> +  silent-gpios:
+>      description:
+> -      gpio node to toggle standby signal on transceiver
+> +      gpio node to toggle silent signal on transceiver
+>      maxItems: 1
+>
+> +  standby-gpios:
+> +    description:
+> +      gpio node to toggle standby signal on transceiver. For two Items, item 1
+> +      is for stbn1, item 2 is for stbn2.
+> +    minItems: 1
+> +    maxItems: 2
+> +
+>    enable-gpios:
+>      description:
+>        gpio node to toggle enable signal on transceiver
+> @@ -53,6 +63,59 @@ required:
+>    - compatible
+>    - '#phy-cells'
+>
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: nxp,tja1048
+> +    then:
+> +      properties:
+> +        '#phy-cells':
+> +          const: 1
+> +        enable-gpios: false
+> +        silent-gpios: false
+> +        standby-gpios:
+> +          minItems: 2
+> +    else:
+> +      properties:
+> +        '#phy-cells':
+> +          const: 0
+> +        standby-gpios:
+> +          maxItems: 1
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - nxp,tja1051
+> +            - nxp,tja1057
+> +    then:
+> +      properties:
+> +        silent-gpios: true
+> +    else:
+> +      properties:
+> +        silent-gpios: false
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: nxp,tja1051
+> +    then:
+> +      properties:
+> +        standby-gpios: false
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: nxp,tja1057
+> +    then:
+> +      properties:
+> +        enable-gpios: false
+> +        standby-gpios: false
+> +
+>  additionalProperties: false
+>
+>  examples:
+>
 > --
-> Tudor Ambarus <tudor.ambarus@linaro.org>
-> 
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: using specified base-commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250903-acpm-dvfs-dt-v3-0-f24059e5cd95@linaro.org:
-
-In file included from arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi:15,
-                 from arch/arm64/boot/dts/exynos/google/gs101-oriole.dts:11:
-arch/arm64/boot/dts/exynos/google/gs101.dtsi:10:10: fatal error: dt-bindings/clock/google,gs101-acpm.h: No such file or directory
-   10 | #include <dt-bindings/clock/google,gs101-acpm.h>
-      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[4]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb] Error 1
-make[3]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos/google] Error 2
-make[3]: Target 'arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb' not remade because of errors.
-make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos] Error 2
-make[2]: Target 'arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1480: exynos/google/gs101-oriole.dtb] Error 2
-In file included from arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi:15,
-                 from arch/arm64/boot/dts/exynos/google/gs101-raven.dts:11:
-arch/arm64/boot/dts/exynos/google/gs101.dtsi:10:10: fatal error: dt-bindings/clock/google,gs101-acpm.h: No such file or directory
-   10 | #include <dt-bindings/clock/google,gs101-acpm.h>
-      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[4]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/google/gs101-raven.dtb] Error 1
-make[3]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos/google] Error 2
-make[3]: Target 'arch/arm64/boot/dts/exynos/google/gs101-raven.dtb' not remade because of errors.
-make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos] Error 2
-make[2]: Target 'arch/arm64/boot/dts/exynos/google/gs101-raven.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1480: exynos/google/gs101-raven.dtb] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-make: Target 'exynos/exynos8895-dreamlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos2200-g0s.dtb' not remade because of errors.
-make: Target 'exynos/exynos850-e850-96.dtb' not remade because of errors.
-make: Target 'exynos/exynos7870-on7xelte.dtb' not remade because of errors.
-make: Target 'exynos/exynos7885-jackpotlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-x1slte.dtb' not remade because of errors.
-make: Target 'exynos/exynos5433-tm2.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-r8s.dtb' not remade because of errors.
-make: Target 'exynos/exynos7-espresso.dtb' not remade because of errors.
-make: Target 'exynos/google/gs101-oriole.dtb' not remade because of errors.
-make: Target 'exynos/google/gs101-raven.dtb' not remade because of errors.
-make: Target 'exynos/exynosautov920-sadk.dtb' not remade because of errors.
-make: Target 'exynos/exynosautov9-sadk.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-c1s.dtb' not remade because of errors.
-make: Target 'exynos/exynos9810-starlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-x1s.dtb' not remade because of errors.
-make: Target 'exynos/exynos7870-a2corelte.dtb' not remade because of errors.
-make: Target 'exynos/exynos5433-tm2e.dtb' not remade because of errors.
-make: Target 'exynos/exynos7870-j6lte.dtb' not remade because of errors.
-
-
-
-
-
+> 2.37.1
+>
 
