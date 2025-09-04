@@ -1,120 +1,110 @@
-Return-Path: <linux-kernel+bounces-800143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F026B433F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:28:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B28FB43399
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 290E61BC3A28
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:29:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2576F173784
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614DF29BDAA;
-	Thu,  4 Sep 2025 07:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A098829B217;
+	Thu,  4 Sep 2025 07:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nl0LVh9J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ak5tC+BF"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA4029B8DC;
-	Thu,  4 Sep 2025 07:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3436D2868A6
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 07:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756970916; cv=none; b=MaULjyJPj88+6IiqM3ilkZhNio/GlfspqcFORPC2+McmyDnhdQi8CRidHwKpdvq/9oa/zCWD6X2bV+SKc9PYliu6LfH2Ueywzabn5dVgiMFHfcX616hJyVnAQnPgolwbm5UbLkrlxZDB/M62NKEjzV+qoH8daBxOgwXXZhn0QGI=
+	t=1756970387; cv=none; b=bjNqb0iIjxjz4QSuuXKgy6lmYcY1YTCm3OBJkxtxoXp8O/nsN+V4quzYtxw0RYL07QoCA3cfL+tg5qKdOQLYB/f5ifOEceotVdN7+KF2R8jVUMg+vy2t05BxDNwqNcmG9BYri/sScoYV7dq53PHlrC9HS7fJjy+N1eeoGh5LkT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756970916; c=relaxed/simple;
-	bh=g8jAqqwvTf+B1bq0ge0QqOZnp61fXA9coqS2PyI5Y3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nBXI1rUd+TKDW6Z138iwB2yYW8lvSbTjTtMbiAFnV4/e0sdV2U3rTQdW3/S4BR8MWJLniqPqgo4PD75l83L+qbQFVQ3Bav1w0srsPAJL6AfV4Pai2/9g1JQmHSYCsedlWGkZgLkfGSNkk5jkGL+lYi/ZHv6i8aNP7M7PLooCJy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nl0LVh9J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36037C4CEF1;
-	Thu,  4 Sep 2025 07:28:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756970916;
-	bh=g8jAqqwvTf+B1bq0ge0QqOZnp61fXA9coqS2PyI5Y3w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nl0LVh9J40I2SvwKD719bSyOZtQCwJDtcPXvxfKKE/7E42B+PGY9PiY0ooEA5xyGx
-	 5fh5cvhVBgbtkXFPlmj2g7TpMJ9cVJCrTYb4Vtt+xscnC+3/xoISkCcdRtaJER/wDc
-	 WBx4UOWLT23Cz383SVGfKgqvAutvOQs+M4B8LkuNR2vg6xHcKvXo5Y17KgUcGpYGpn
-	 kdj+v/VAHQA4Bz7qOy/XCwndaNQ9+SHToP4iOW4MXXopCU2J3jFh7QKT9X8PsH3FCn
-	 qOP2A3TDnn695VWw38h9P1X9zHuwG8Bzh0j9f0RSLF3OBVuLEPKr6xvK7Tx7MoNxHq
-	 ieyDZ1vKB32Tw==
-Date: Wed, 3 Sep 2025 21:28:35 -1000
-From: Tejun Heo <tj@kernel.org>
-To: escape <escape@linux.alibaba.com>
-Cc: hannes@cmpxchg.org, mkoutny@suse.com, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cgroup: replace global percpu_rwsem with
- signal_struct->group_rwsem when writing cgroup.procs/threads
-Message-ID: <aLk_o0GUhC14T8f9@slm.duckdns.org>
-References: <f460f494245710c5b6649d6cc7e68b3a28a0a000.1756896828.git.escape@linux.alibaba.com>
- <aLhykIPSGV1k_OG0@slm.duckdns.org>
- <cfe595a7-c20d-4891-aba1-35546c488024@linux.alibaba.com>
+	s=arc-20240116; t=1756970387; c=relaxed/simple;
+	bh=If26aWe6HDRuUd8BLxK/DNXNMPYO7QPBtdN29DandUs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=eh8ROZotbBEWzbph9F+HYpqgqIoZTCVPopQOkD0FvED1F+WYCl4I2tdq6ARiNRTDNgbM7hZQQCO2mdjSxAx5qIH9xfn4SHg7RYDP0IDtkTRF4EQla2xpOcMelLiDwKoS20tnOTiE0e4wTaNyD2O+y2tOgWrHzLm/8FVDVSMvw5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ak5tC+BF; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250904071943epoutp0471468a495f8ed35edf341a31962cb95b~iA0E5OF1K1017910179epoutp04o
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 07:19:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250904071943epoutp0471468a495f8ed35edf341a31962cb95b~iA0E5OF1K1017910179epoutp04o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756970383;
+	bh=XIDY5zJ3pMt83TWBBmEEmGxMtm/5CHCj2NnIva/BZ98=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ak5tC+BFukzrUTWfIQGVKoVs3fE3A1pMBMpvIbCCnxwXVljg8dReeZVJljr5b5tuj
+	 pvjMRqzqUEwrCTFeY9BdCBIAjRUw9KsLIPoexT2J8J+mQ1iFL+8mJAkRQZuL2hc7K4
+	 +NlnWziASrp6fpu9SlQ5thFrSPByo3MeHuUumzng=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250904071942epcas5p1c7fd121345ed8fc30e6c449b18f1e023~iA0ES--qd0357003570epcas5p17;
+	Thu,  4 Sep 2025 07:19:42 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.87]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cHW7x4cL9z2SSKX; Thu,  4 Sep
+	2025 07:19:41 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1~iA0C3ZhEO0357003570epcas5p10;
+	Thu,  4 Sep 2025 07:19:41 +0000 (GMT)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904071939epsmtip1658d4b2730e1a080e4041b37c376d7cb~iA0BI2m9F0339503395epsmtip1d;
+	Thu,  4 Sep 2025 07:19:39 +0000 (GMT)
+From: Faraz Ata <faraz.ata@samsung.com>
+To: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, alim.akhtar@samsung.com
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rosa.pila@samsung.com,
+	pritam.sutar@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com
+Subject: [PATCH] dt-bindings: i2c: exynos5: add exynosautov920-hsi2c
+ compatible
+Date: Thu,  4 Sep 2025 12:58:44 +0530
+Message-Id: <20250904072844.358759-1-faraz.ata@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <cfe595a7-c20d-4891-aba1-35546c488024@linux.alibaba.com>
+X-CMS-MailID: 20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1
+References: <CGME20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1@epcas5p1.samsung.com>
 
-Hello,
+Add "samsung,exynosautov920-hsi2c" dedicated compatible for
+HSI2C found in ExynosAutov920 SoC.
 
-On Thu, Sep 04, 2025 at 11:15:26AM +0800, escape wrote:
-> 在 2025/9/4 00:53, Tejun Heo 写道:
-> > Hello,
-...
-> As Ridong pointed out, in the current code, using CLONE_INTO_CGROUP
-> still requires holding the threadgroup_rwsem, so contention with fork
-> operations persists.
+Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
+---
+ Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Sorry about my fumbling explanations repeatedly but this isn't true. On
-cgroup2, if you create a cgroup, enable controllers and then seed it with
-CLONE_INTO_CGROUP, threadgroup_rwsem is out of the picture. The only
-remaining contention point is cgroup_mutex.
-
-> CLONE_INTO_CGROUP helps alleviate the contention between cgroup creation
-> and deletion, but its usage comes with significant limitations:
-> 
-> 1. CLONE_INTO_CGROUP is only available in cgroup v2. Although cgroup v2
-> adoption is gradually increasing, many applications have not yet been
-> adapted to cgroup v2, and phasing out cgroup v1 will be a long and
-> gradual process.
-> 
-> 2. CLONE_INTO_CGROUP requires specifying the cgroup file descriptor at the
-> time of process fork, effectively restricting cgroup migration to the
-> fork stage. This differs significantly from the typical cgroup attach
-> workflow. For example, in Kubernetes, systemd is the recommended cgroup
-> driver; kubelet communicates with systemd via D-Bus, and systemd
-> performs the actual cgroup attachment. In this case, the process being
-> attached typically does not have systemd as its parent. Using
-> CLONE_INTO_CGROUP in such a scenario is impractical and would require
-> coordinated changes to both systemd and kubelet.
-
-A percpu rwsem (threadgroup_rwsem) was used instead of per-threadgroup
-locking to avoid adding overhead to hot paths - fork and exit - because
-cgroup operations were expected to be a lot colder. Now, threadgroup rwsem
-is *really* expensive for the writers, so the trade-off could be a bit too
-extreme for some use cases.
-
-However, now that the most common usage pattern doesn't involve
-threadgroup_rwsem, I don't feel too enthusiastic about adding hot path
-overhead to work around usage patterns that we want to move away from. Note
-that dynamic migrations have other more fundamental problems for stateful
-resources and we generally want to move away from it. Sure, a single rwsem
-operation in fork/exit isn't a lot of overhead but it isn't nothing either
-and this will impact everybody.
-
-Maybe we can make it a mount option so that use cases that still depend on
-it can toggle it on? In fact, there's already favordynmods mount option
-which seems like a good fit. Maybe put the extra locking behind that flag?
-
-Thanks.
-
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+index 7ae8c7b1d006..207b95e392e5 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
++++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+@@ -38,6 +38,7 @@ properties:
+               - google,gs101-hsi2c
+               - samsung,exynos2200-hsi2c
+               - samsung,exynos850-hsi2c
++              - samsung,exynosautov920-hsi2c
+           - const: samsung,exynosautov9-hsi2c
+       - const: samsung,exynos5-hsi2c    # Exynos5250 and Exynos5420
+         deprecated: true
 -- 
-tejun
+2.34.1
+
 
