@@ -1,96 +1,49 @@
-Return-Path: <linux-kernel+bounces-801623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8EEEB447C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:53:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D666DB44444
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8231D5A54E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:53:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B551A05494
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6AFF288522;
-	Thu,  4 Sep 2025 20:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=editrage.com header.i=@editrage.com header.b="BK+H8vpQ"
-Received: from beige.yew.relay.mailchannels.net (beige.yew.relay.mailchannels.net [23.83.220.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190862882B7
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 20:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.220.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757019221; cv=pass; b=tE/9POGj+137bWaMcKFL1S/AsA0VatBUfD0Fq3LZR+kGcHFdO1ZqXUiXpomXcFtJFozHu8yv3b1BOllw7tvOtzQQ6UvoU4FSIj+w2f0QbXs1ZZEoKqGJwfSXZ53bdT1sL585rix1QqM1E25e1iUDV/da/3VfGALtABMq1Cpk9XA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757019221; c=relaxed/simple;
-	bh=YsKk358zWKMe2Qm3eNuUlPjlEKDHPJ5nSK2erZ54WzM=;
-	h=Message-ID:From:To:Subject:MIME-Version:Content-Type:Date; b=UjyvW6ShCxEzYqzDK5G1fd8FesIIIVKmItpwhtg3zcjzhfnx6AvEpVClGUMl9ttwJkgx3gi23sHEr72HSbnyNRCAvjBzTrcmfXd4sm/xOHyDxbox7ToAal2UrGR4KtiEaBDflmmhyubGXs/Ic/O22iwah8vsLhgN+sCh7oBINDw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=editrage.com; spf=pass smtp.mailfrom=editrage.com; dkim=pass (2048-bit key) header.d=editrage.com header.i=@editrage.com header.b=BK+H8vpQ; arc=pass smtp.client-ip=23.83.220.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=editrage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=editrage.com
-X-Sender-Id: hostingeremailsmtpin|x-authuser|drsupport@editrage.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 6B1BF3248CF
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 17:25:45 +0000 (UTC)
-Received: from fr-int-smtpout12.hostinger.io (100-102-63-102.trex-nlb.outbound.svc.cluster.local [100.102.63.102])
-	(Authenticated sender: hostingeremailsmtpin)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 9298E32429B
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 17:25:44 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1757006744; a=rsa-sha256;
-	cv=none;
-	b=aEjkmCd4gvnIn84KnMyhRbT4iiSQj/ChzloCsnc/xtZLAwR+QUnBT4KlpsYNQu5ZfKRJRM
-	Flk+mNQBIBAkCRYxd/SnjLtLFIRaGIvI1RpwORN3drGkX4dIdrrHiI/xWYqoXFg9/ns87Z
-	IdvIEtMqAI+vA5R2jm+5OsM5flW5XCmD8zO7Vj6qUE+mG8lxoqMNdEe4M0BO2KNLyi0dAI
-	LUgOulsWDb0zAHhNWcxArQKfwtVk2h/ULG6MS5bEJhJ1P7Dw6DPIYJBuVifRZvR8ci8fuT
-	UzuTWfhHMk6KcZdM3WRa11gWb26lQomNsoZEvluCkCtIEyqUk4GAUvg6OKP6yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1757006744;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:dkim-signature;
-	bh=YsKk358zWKMe2Qm3eNuUlPjlEKDHPJ5nSK2erZ54WzM=;
-	b=VF76QiSrSKRMLDtXp8brSuJITg+c8L8wF7gdGPTeeb5ytfBCTi3Lvcr7D440BNGMZ9j6Aj
-	wPrAZw4FZoNXN4fsqfAkOVDXvMXq4ZxURmdbGDXIVb/qbyBqmOuvK+BPpJeozuI6GPWb7T
-	L6BRnp8PjVUn0nWW21oDpkUkKs7/BpemNr9yCZaNIfuDmT3lhfnjVQawoSkY7pmt/ks925
-	ZyVm2GY8oHdMwhP9F74Ys8N5tnnSZUd/4Aa+2tJzKdpYJtTWveG3oMBhZXZWtkOZG5L2Q3
-	UcSGjmLXR9t0b9cU85nNxH2fu/cfc+MCUtJ7Wtb2iWcn+lV/aH+wRa6iD3VbSw==
-ARC-Authentication-Results: i=1;
-	rspamd-8b9589799-8nm74;
-	auth=pass smtp.auth=hostingeremailsmtpin smtp.mailfrom=drsupport@editrage.com
-X-Sender-Id: hostingeremailsmtpin|x-authuser|drsupport@editrage.com
-X-MC-Relay: Good
-X-MailChannels-SenderId:
- hostingeremailsmtpin|x-authuser|drsupport@editrage.com
-X-MailChannels-Auth-Id: hostingeremailsmtpin
-X-Arithmetic-Relation: 0bee8b017a6dc42c_1757006745103_2245112427
-X-MC-Loop-Signature: 1757006745103:3694424935
-X-MC-Ingress-Time: 1757006745103
-Received: from fr-int-smtpout12.hostinger.io ([UNAVAILABLE]. [148.222.54.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.102.63.102 (trex/7.1.3);
-	Thu, 04 Sep 2025 17:25:45 +0000
-Received: from 35f9bf90-8522-4fe6-b8fd-2ebe31b60b5b.local (ec2-44-222-226-4.compute-1.amazonaws.com [44.222.226.4])
-	(Authenticated sender: drsupport@editrage.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4cHmbB4y5vz1yF8
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 17:25:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=editrage.com;
-	s=hostingermail-a; t=1757006742;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=YsKk358zWKMe2Qm3eNuUlPjlEKDHPJ5nSK2erZ54WzM=;
-	b=BK+H8vpQVXpi/9VmaXajD6wLVkWZC0N0kGClnlgJB7nWKB2/XScwd+imfzDoBc1q/nnk9p
-	PvCrozFJSG10PYLdxysQ0oJHrVu2iaW3iL+/9WxhXWo1d4ybWacj6w4dGMykdaAEGLKLuM
-	Rj0yH9D1PWYxO9tNarExGvQ/8Wi+pScV7zjnBFTJ7dTxiLqxYXEd065nIOX1/0pNGeAkfE
-	UyUnvuehnhhq9IsHVoEcR8TDvITexQ9lVPiQMsi688WxFwv777wVLOHDhKoMvMp9la4O7c
-	2fY6yfJswumpRcVidsHErB13rq98QyZQabwjrpQXn3OARYvW2W98zA+Msh3WGg==
-Message-ID: <35f9bf90-8522-4fe6-b8fd-2ebe31b60b5b@editrage.com>
-From: Mohanish Ved <drsupport@editrage.com>
-To: linux-kernel@vger.kernel.org
-Subject: Truth: AI adoption in healthcare
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB6E30EF80;
+	Thu,  4 Sep 2025 17:26:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9251730DD31;
+	Thu,  4 Sep 2025 17:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757006765; cv=none; b=bApl2QJNmGD3AuLNMwGUDvuLQ/BN0SxXP/DMp0KavMTDeWnUttchbFYW0GWl64WnUhp8P8PZaDQzMqnyqTKsqWxzQ6sPqGMd+1rZUvgcnPJrzXVgV73XlrFUv6hl9JpmB32BqL4Frju7qI4TSHPcZSLs6CVcbvJUlADbXwSLlZQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757006765; c=relaxed/simple;
+	bh=BzE37pCTjBM4grm+sMS4LKVV5Q/CpMxXMvX6vlqHE6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bb4PA0iWaI8N1gCQN4SZ+sXGu8POhDHEZQuMItSdtAHAJUTusqMgfX5MzvE0r/A0Ej2zwyIl2xWuwZdv1hyD6pP2V2druItiIkJlY/Hrmb9d3bTuRN3+VlUwENIuxEoBtyVGE2cm+/I5UxaGVdECmskpsJy6jxDjAtwDE9UPkQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 606A31596;
+	Thu,  4 Sep 2025 10:25:53 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 694A33F6A8;
+	Thu,  4 Sep 2025 10:25:59 -0700 (PDT)
+Date: Thu, 4 Sep 2025 18:25:56 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: panfan <panfan@qti.qualcomm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, rostedt@goodmis.org,
+	mhiramat@kernel.org, samitolvanen@google.com, song@kernel.org,
+	ardb@kernel.org, dylanbhatch@google.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, kdong@qti.qualcomm.com
+Subject: Re: [PATCH v1] arm64: ftrace: fix unreachable PLT for ftrace_caller
+ in init_module with CONFIG_DYNAMIC_FTRACE
+Message-ID: <aLnLpArhiT-mQxn9@J2N7QTR9R3>
+References: <20250819063418.1263119-1-panfan@qti.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,32 +51,222 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Date: Thu,  4 Sep 2025 17:25:42 +0000 (UTC)
-X-CM-Analysis: v=2.4 cv=DJTd4DNb c=1 sm=1 tr=0 ts=68b9cb96 a=6zFhyHCCOneUZrx2JNiB/A==:117 a=6zFhyHCCOneUZrx2JNiB/A==:17 a=IkcTkHD0fZMA:10 a=amsrZz8KWSJj8ufvzgsA:9 a=QEXdDO2ut3YA:10 a=UzISIztuOb4A:10
-X-CM-Envelope: MS4xfAa8aQKBP614JTg3z5cMO5D+vZoyQtq+ESjv50Ef+Q1Qn7aer4Ct3TVyETMY8cLGd8u/EI1bPPDUvhpJUJbGnB5QunfTQLg3t3pu9atrsSRdBFbNfgic 4d9cx69boCiMul4Wjskpvzfkvq1x0AFrmXX+H2K9Iu2OuNysSmhSvTwjEI7qaXyJ2Z+hVwVSZFp/hUWGjEPr4vEjKdUtGIg5OKP1XnPhwKum9pgWjCkKlapz Z3cbco0J2E9nk3DfGr8/BQ==
-X-AuthUser: drsupport@editrage.com
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250819063418.1263119-1-panfan@qti.qualcomm.com>
 
-Hi Dr. Sam Lavi Cosmetic And Implant Dentistry=C2=A0,
+Hi,
 
-AI adoption in healthcare isn=E2=80=99t coming =E2=80=94 it=E2=80=99s =
-already here.
-Some implant clinics are quietly using AI to handle patient =
-calls, consultations, and scheduling.
+On Mon, Aug 18, 2025 at 11:34:18PM -0700, panfan wrote:
+> with the previous patch [PATCH v3 6/6] arm64: module: rework module VA
+> range selection, the module region can use a full 2GB for large modules.
+>
+> On arm64 with CONFIG_DYNAMIC_FTRACE, due to the ±128 MB range limit of
+> the `BL` instruction, ftrace uses a PLT entry to branch indirectly to
+> ftrace_caller when modules may be placed far away.
+>
+> Currently, this PLT(.text.ftrace_trampoline) resides in MOD_TEXT,
+> so call sites in .init.text cannot reach it by `BL` if .init.text
+> and .text are allocated in different 128 MB regions.
 
-Their growth isn=E2=80=99t a =
-coincidence.
-Being first gives them an edge =E2=80=94 being late means =
-playing catch-up.
+Ouch; sorry about this. Given the failure mode below, this is a pretty
+horrid bug.
 
-Should I share a 2-min demo video so you can see how it =
-works?
-Reply 'Video' and I=E2=80=99ll send it.
+> For example, init_moudle in tz_log_dlkm.ko can not reach PLT or
+> ftrace_caller by `BL`:
+> 
+> module_direct_base = 0xFFFFFFC07B270000   128M
+> module_plt_base = 0xFFFFFFC003270000  2G
+> 
+> mod = 0xFFFFFFC07FF65880 -> (
+>     state = MODULE_STATE_COMING,
+>     name = "tz_log_dlkm",
+>     init = 0xFFFFFFC00370F01C,
+> 
+>     mem = (
+>       (base = 0xFFFFFFC07E7E8000, size = 12288,  // MOD_TEXT -- direct
+>       (base = 0xFFFFFFC07FF65000, size = 12288,  // MOD_DATA
+>       (base = 0xFFFFFFC07FFFB000, size = 12288,  // MOD_RODATA
+>       (base = 0xFFFFFFC07DDA9000, size = 4096,   // MOD_RO_AFTER_INIT
+>       (base = 0xFFFFFFC00370F000, size = 4096,   // MOD_INIT_TEXT -- plt
+>       (base = 0xFFFFFFC003711000, size = 12288,  // MOD_INIT_DATA
+> 
+>     arch = (
+>       core = (plt_shndx = 8, plt_num_entries = 0, plt_max_entries = 35),
+>       init = (plt_shndx = 9, plt_num_entries = 1, plt_max_entries = 1),
+>       ftrace_trampolines = 0xFFFFFFC07E7EA730 -> (   //
+> .text.ftrace_trampoline in MOD_TEXT
+> 
+> PLT in .text.ftrace_trampoline:
+> 0xFFFFFFC07E7EA730            adrp    x16,0xFFFFFFC080014000
+> 0xFFFFFFC07E7EA734            add     x16,x16,#0xF64   ; x16,x16,#3940
+> 0xFFFFFFC07E7EA738            br      x16; ftrace_caller
+> 
+> Here, init_module() in MOD_INIT_TEXT cannot branch to the PLT in MOD_TEXT
+> because the offset exceeds 128 MB. As a result,
+> ftrace fails to update `nop` to `BL` and inserts `brk #0x100` instead:
+> 
+> 0xFFFFFFC00370F01C  init_module:    mov     x9,x30
+> 0xFFFFFFC00370F020                  brk     #0x100           ; #256
+> 
+> [   36.290790][  T835] label_imm_common: offset out of range
+> 
+> [   36.333765][  T835] Kernel text patching generated an invalid instruct
+> ion at init_module+0x4/0xfe4 [tz_log_dlkm]!
+> 
+> [   36.335728][  T835] Call trace:
+> [   36.335735][  T835]  init_module+0x4/0xfe4 [tz_log_dlkm]
+> [   36.335750][  T835]  do_init_module+0x60/0x2cc
+> [   36.335761][  T835]  load_module+0x10e0/0x12ac
+> [   36.335771][  T835]  __arm64_sys_finit_module+0x240/0x348
+> [   36.335780][  T835]  invoke_syscall+0x60/0x11c
+> [   36.335791][  T835]  el0_svc_common+0xb4/0xf0
+> [   36.335801][  T835]  do_el0_svc+0x24/0x30
+> [   36.335810][  T835]  el0_svc+0x3c/0x74
+> [   36.335821][  T835]  el0t_64_sync_handler+0x68/0xbc
+> [   36.335831][  T835]  el0t_64_sync+0x1a8/0x1ac
+>
+> To fix this, introduce an additional `.init.text.ftrace_trampoline`
+> section for .init.text. This provides a PLT within MOD_INIT_TEXT, ensuring
+> that init functions can branch within range using `BL`. This section
+> is freed after do_one_initcall, so there is no persistent cost.
+> The core text continues to use the existing PLT in MOD_TEXT.
+> 
+> Signed-off-by: panfan <panfan@qti.qualcomm.com>
 
-=E2=80=94
-Best regards, =C2=A0
-Mohanish Ved =C2=A0
-AI Growth Specialist =C2=A0
-EditRage Solutions
+Aside from one nit below, I think this is the right fix, though I think
+it would be good to simplify/clarify the commit message.
 
-=C2=A0
+How about:
+
+| On arm64, it has been possible for a module's sections to be placed more
+| than 128M away from each other since commit:
+| 
+|   3e35d303ab7d ("arm64: module: rework module VA range selection")
+| 
+| Due to this, an ftrace callsite in a module's .init.text section can be
+| out of branch range for the module's ftrace PLT entry (in the module's
+| .text section). Any attempt to enable tracing of that callsite will
+| result in a BRK being patched into the callsite, resulting in a fatal
+| exception when the callsite is later executed.
+| 
+| Fix this by adding an additional trampoline for .init.text, which will
+| be within range.
+| 
+| No additional trampolines are necessary due to to the way a given
+| module's executable sections are packed together. Any executable
+| section beginning with ".init" or ".exit" will be placed in
+| MOD_INIT_TEXT, and any other executable section will be placed in
+| MOD_TEXT.
+| 
+| Fixes: 3e35d303ab7d ("arm64: module: rework module VA range selection")
+
+[...]
+
+> -static struct plt_entry *get_ftrace_plt(struct module *mod)
+> +static struct plt_entry *get_ftrace_plt(struct module *mod, unsigned long addr)
+>  {
+>  #ifdef CONFIG_MODULES
+> -	struct plt_entry *plt = mod->arch.ftrace_trampolines;
+> +	struct plt_entry *plt = NULL;
+> +
+> +	if (within_module_mem_type(addr, mod, MOD_INIT_TEXT))
+> +		plt = mod->arch.init_ftrace_trampolines;
+> +	else
+> +		plt = mod->arch.ftrace_trampolines;
+>  
+>  	return &plt[FTRACE_PLT_IDX];
+
+It would be good if we could explicitly verify that the region is either
+MOD_TEXT or MOD_INIT_TEXT, and if not, return NULL, e.g.
+
+
+	if (within_module_mem_type(addr, mod, MOD_INIT_TEXT))
+		plt = mod->arch.init_ftrace_trampolines;
+	else if (within_module_mem_type(addr, mod, MOD_TEXT))
+		plt = mod->arch.ftrace_trampolines;
+	else
+		return NULL;
+
+That last case should never happen, but if it does it'll cause
+ftrace_find_callable_addr() to log a warning and return false, such that
+its callers can return an error.
+
+Other than that, I think this is fine. With those changes:
+
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+Mark.
+
+>  #else
+> @@ -332,7 +337,7 @@ static bool ftrace_find_callable_addr(struct dyn_ftrace *rec,
+>  	if (WARN_ON(!mod))
+>  		return false;
+>  
+> -	plt = get_ftrace_plt(mod);
+> +	plt = get_ftrace_plt(mod, pc);
+>  	if (!plt) {
+>  		pr_err("ftrace: no module PLT for %ps\n", (void *)*addr);
+>  		return false;
+> diff --git a/arch/arm64/kernel/module-plts.c b/arch/arm64/kernel/module-plts.c
+> index bde32979c06a..7afd370da9f4 100644
+> --- a/arch/arm64/kernel/module-plts.c
+> +++ b/arch/arm64/kernel/module-plts.c
+> @@ -283,7 +283,7 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+>  	unsigned long core_plts = 0;
+>  	unsigned long init_plts = 0;
+>  	Elf64_Sym *syms = NULL;
+> -	Elf_Shdr *pltsec, *tramp = NULL;
+> +	Elf_Shdr *pltsec, *tramp = NULL, *init_tramp = NULL;
+>  	int i;
+>  
+>  	/*
+> @@ -298,6 +298,9 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+>  		else if (!strcmp(secstrings + sechdrs[i].sh_name,
+>  				 ".text.ftrace_trampoline"))
+>  			tramp = sechdrs + i;
+> +		else if (!strcmp(secstrings + sechdrs[i].sh_name,
+> +				 ".init.text.ftrace_trampoline"))
+> +			init_tramp = sechdrs + i;
+>  		else if (sechdrs[i].sh_type == SHT_SYMTAB)
+>  			syms = (Elf64_Sym *)sechdrs[i].sh_addr;
+>  	}
+> @@ -363,5 +366,12 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+>  		tramp->sh_size = NR_FTRACE_PLTS * sizeof(struct plt_entry);
+>  	}
+>  
+> +	if (init_tramp) {
+> +		init_tramp->sh_type = SHT_NOBITS;
+> +		init_tramp->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
+> +		init_tramp->sh_addralign = __alignof__(struct plt_entry);
+> +		init_tramp->sh_size = NR_FTRACE_PLTS * sizeof(struct plt_entry);
+> +	}
+> +
+>  	return 0;
+>  }
+> diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
+> index 40148d2725ce..d6d443c4a01a 100644
+> --- a/arch/arm64/kernel/module.c
+> +++ b/arch/arm64/kernel/module.c
+> @@ -466,6 +466,17 @@ static int module_init_ftrace_plt(const Elf_Ehdr *hdr,
+>  	__init_plt(&plts[FTRACE_PLT_IDX], FTRACE_ADDR);
+>  
+>  	mod->arch.ftrace_trampolines = plts;
+> +
+> +	s = find_section(hdr, sechdrs, ".init.text.ftrace_trampoline");
+> +	if (!s)
+> +		return -ENOEXEC;
+> +
+> +	plts = (void *)s->sh_addr;
+> +
+> +	__init_plt(&plts[FTRACE_PLT_IDX], FTRACE_ADDR);
+> +
+> +	mod->arch.init_ftrace_trampolines = plts;
+> +
+>  #endif
+>  	return 0;
+>  }
+> -- 
+> 2.34.1
+> 
 
