@@ -1,49 +1,92 @@
-Return-Path: <linux-kernel+bounces-801036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B00FB43F09
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:37:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1B3B43EE5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 369B11891424
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:36:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC1CD16939C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526D83218BA;
-	Thu,  4 Sep 2025 14:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABB331CA6B;
+	Thu,  4 Sep 2025 14:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C02U6Ifz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="R58V/fXs"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BC3337686;
-	Thu,  4 Sep 2025 14:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BE0312835
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756996308; cv=none; b=FXs/a1FDAFwhwpszMVRI2Kp8Eiy9L08obsy3MoCCdzqyVMFPQqGOcrU5i2ycIdyRotsrzCQAKH11/KXf2tPM5yU6opVT6FlsdDGJPDNxGkkl8nuvDoyG9A3vqzNos1O8KhR3/k0gIa60x0qoLmKuzn9wdM/FefQI1N7qH4u6S2g=
+	t=1756996298; cv=none; b=aQXotnsoqq62RRq3FE1weduiTMYBEo83wwFLUwaXUiYC+KrervqO/ZQrr2kQtm8UFkWz73vJcPHGBgmXp35nkumSwhKqEVI8NGFKyVch1gUyxpmIzozApmC559ufGrLwo2DKYjvCbcu8VCwhHVTX0Eyo7MtacdkDBv2cJ2rP8kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756996308; c=relaxed/simple;
-	bh=zrXW+Azg1ybj1TP3cpfO/sfkOo2o+dZsnZjYmLh/LK8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rpErtZlkU2h1VczCFgABIR0rB3HMrMoEYqo9hxhld8oF61UJzo125S0+pBWFfv1DG1SY3/M34+71ru21+TBMGVQLzmHmVlo7opYrEPOOJchLCkNbBDIVt88gkOs2DmB7jFD2yyde1pOIjBNPQJfuN55l3xFvrxt3zb+6CVKk5mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C02U6Ifz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE8F8C4CEF0;
-	Thu,  4 Sep 2025 14:31:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756996308;
-	bh=zrXW+Azg1ybj1TP3cpfO/sfkOo2o+dZsnZjYmLh/LK8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=C02U6IfzCnjPntWkpqfN55JYi+7tR1UyxDv2EQdPD5QKrddYeU6thbFlveMQMiZhz
-	 ETaW9jJ5wOR3oGI/1nw0RBNOlg7rSr7+ye9hlOIobPvP/M2Q4JiwM4EtOcYxjpTE8t
-	 xtOtcJk1pFzU3v3KDfNUJA2Kec6dpefNVU0cl7TXq5TeptIaX1JTiEwg5l42oaM3mV
-	 9dHjPg/lWCDBpkdEmRpWaR6TVSDjBXubLoZY1A1U/rR432Sk8EKKcJTXHmHoALmRGp
-	 o3qVa8wg5oqV4lzYDjZVq8V/W9swLAZQLlayaXKAhquiRkdOlTdgSn7XHWJhfT4MOh
-	 6jkkhdQn0raLw==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Thu, 04 Sep 2025 16:31:24 +0200
-Subject: [PATCH 5/5] arm64: dts: qcom: sc8280xp: Add OPP table for CCI
- hosts
+	s=arc-20240116; t=1756996298; c=relaxed/simple;
+	bh=Jqv05BEur9jLVO6NaKp7y9M72ErD6pTvcjBw1BuFNBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iQPIWnoBuhU6G6l71L18c/ZGGIr8aUm5xGUEaXc7nJRLXln6Z+XiVlPOnQ8xBWxMMtMfzk6ni+UKrCnJ1DtD9uv3vToy1fbj29a8YhrcoNi6fbDUXgZqopFhWd+vcOnFSCRfHk/ZXvqkbhTBMHTOXrMWOmHhuca/5NDDrhyzHwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=R58V/fXs; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dcff2f313so6363885e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 07:31:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756996294; x=1757601094; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SOWc/c1a94HTBP6zFYRMkz+Dicl7/4365yjhzPWmzAk=;
+        b=R58V/fXsG/bU+8Jj+szLP0FD92FSkIptWQFoUQFUUo/TPzLoTO6rWtoCK3H4ARxHoq
+         kuVTh/gT1woUij1wr7+LfTyE4FZspe6g6gjTYOHyVfHvgmKIs/BDbYRIqDPry+wTv1dy
+         Mryu/JKlyBtPvt/93SoaE9N1/BM4QacnJpvH2B0i+UmxMxa3Ecsie9fWZ5eUP0giOlia
+         dyaQK7yAhjKCFXj9rri8At/HpV07cUzIrAEe2aQyVcsVr8+5iOnTftf0c6Fr8jxc474s
+         0u7OUSWFqlMqqd/pB/8HSS/q6BWmvuktG+PZXcPSibOyqcxXhR9U/6E+OKc7dhSVecf3
+         82vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756996294; x=1757601094;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SOWc/c1a94HTBP6zFYRMkz+Dicl7/4365yjhzPWmzAk=;
+        b=ag4mwzJNdXUUtKwNrJVJv6d1HjDHTe05rP0xCeAHAHuUBVGi0JYaajg1a1PHF5s9nY
+         Ip+ICPBn34cnjOnhXFzLZ7kmCYgok4CoPq4NjuIPN+bZ0Y2QHCGYrRokZQ6ODM8k3LmW
+         LN4HjqVoJRp0Gq6mjB9j0dyVWS8sPNnpjEPkVc98774C6LEm/zCiFl5cumeeciDmZiPO
+         OIn92pwsCF+PZ2LtRCIIl/v1GwA1WXBWY11WrP2UxsXCQmFH6ALxyGT16JBlgK82zxDE
+         lmz3ue/r1zkeGTaD2xIxHJfCoc+KFLlJcW8uLpDudArJ7gTOjb32HDWHyFPNgmW9QBk+
+         KCbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVan4t1Qt9KnUCpleYbD9qLuf+bCy/1OKbLj/LVnjpD8OG5q8pUqoypQGlub0w7AmH6nB1s6pt97kuvOoA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyKWlW/gYa0Izr1bG+RQl1Re39P1mg+4T3iZSXW3/Gjgdt6YKq
+	FM04I/ieV4IpGN+zZfeOoiBlNlV583kUZxEqwOTbBPjg2xrw8NHFpLKXMvecwwNttAza8Cu4jYy
+	w7aR4YJo=
+X-Gm-Gg: ASbGncsDjx6MhBWZLFmm7PiwjvdyWR18PYK8fUOCw0b8zFlQKFvH7qR26L6RupRr3Fu
+	v8P+ZstHY8dZor1pvmhndwdbIm7VgZGyP/un6eK5v/WHCGLtdrriP2KpJ2Ut5JfqGpkjfbE490x
+	ZAusggEOiLYP6nkTZ+N5ASq6zHlXI3Lhx0/qoVftu3Oux8D04wdbw8Yxrbx6kHnWjseeroDjb76
+	3UYQlUEvtE5Oe7xPTUmIDw2uVDKc2LuzELNOX62aPlgR+heQDzUMVF6HPR4U2FvkO5KjhdwBKy2
+	W9aQQd5D2xy7FxAHnfFzREYR8oQ6M05ERVUcJhuCqXQ1C2l16vuuTnnvWwNZg8h9/dUsNxmwon9
+	O4tbDJOjhKhEiVtMYd0V6TfaHEmvQe6q6Y+upVNQJ6tPY
+X-Google-Smtp-Source: AGHT+IGfdMUSy686Cb1BqOU8JAIe9bVYHo+twh1W9Pn3DRVe6Sxnh5hEhO7YHP8lWHvi12JNN11Fhg==
+X-Received: by 2002:a05:600c:8b23:b0:45b:47e1:ef6c with SMTP id 5b1f17b1804b1-45b855b2b0emr155588755e9.35.1756996294547;
+        Thu, 04 Sep 2025 07:31:34 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6e82:a4aa:49e0:a7d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7d1319sm319642535e9.5.2025.09.04.07.31.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 07:31:32 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] gpio: nomadik: wrap a local variable in a necessary ifdef
+Date: Thu,  4 Sep 2025 16:31:29 +0200
+Message-ID: <175699628267.79535.14392040407433836716.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250903131903.95100-1-brgl@bgdev.pl>
+References: <20250903131903.95100-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,97 +94,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-topic-cci_updates-v1-5-d38559692703@oss.qualcomm.com>
-References: <20250904-topic-cci_updates-v1-0-d38559692703@oss.qualcomm.com>
-In-Reply-To: <20250904-topic-cci_updates-v1-0-d38559692703@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Loic Poulain <loic.poulain@oss.qualcomm.com>, 
- Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756996284; l=1943;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=s0obim0MuDOlL4+p0Nk62B+LrJ+2kyEd8cmm4PAWtK8=;
- b=P8CmCRAIy6ipK3s7L7LsmaixnjgqhLcOehR6tKYWKSMguFg9xxmQpO8hqbbYYpglR5C5yzqSV
- 1l4LC8ILpdyAsn/Z7oQUi1WqP3niXbvTVRyCQs5eBoYl+Hn23uuMIfj
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Transfer-Encoding: 8bit
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-The CCI hosts have both frequency and voltage requirements (which
-happen to be common across instances on a given SoC, at least so far).
 
-Express them by introducing an OPP table and linking it to the hosts.
+On Wed, 03 Sep 2025 15:19:03 +0200, Bartosz Golaszewski wrote:
+> The 'desc' local variable in nmk_gpio_dbg_show_one() is now only used
+> with CONFIG_PINCTRL_NOMADIK enabled so wrap its declaration with an
+> appropriate ifdef.
+> 
+> 
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Applied, thanks!
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-index 18b5cb441f955f7a91204376e05536b203f3e28b..c396186317d49f411d7162771a358563329a02a4 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-@@ -391,6 +391,15 @@ memory@80000000 {
- 		reg = <0x0 0x80000000 0x0 0x0>;
- 	};
- 
-+	cci_opp_table: opp-table-cci {
-+		compatible = "operating-points-v2";
-+
-+		opp-37500000 {
-+			opp-hz = /bits/ 64 <37500000>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
-+		};
-+	};
-+
- 	cpu0_opp_table: opp-table-cpu0 {
- 		compatible = "operating-points-v2";
- 		opp-shared;
-@@ -4181,6 +4190,7 @@ cci0: cci@ac4a000 {
- 				      "cpas_ahb",
- 				      "cci";
- 
-+			operating-points-v2 = <&cci_opp_table>;
- 			power-domains = <&camcc TITAN_TOP_GDSC>;
- 
- 			pinctrl-0 = <&cci0_default>;
-@@ -4222,6 +4232,7 @@ cci1: cci@ac4b000 {
- 				      "cpas_ahb",
- 				      "cci";
- 
-+			operating-points-v2 = <&cci_opp_table>;
- 			power-domains = <&camcc TITAN_TOP_GDSC>;
- 
- 			pinctrl-0 = <&cci1_default>;
-@@ -4262,6 +4273,8 @@ cci2: cci@ac4c000 {
- 				      "slow_ahb_src",
- 				      "cpas_ahb",
- 				      "cci";
-+
-+			operating-points-v2 = <&cci_opp_table>;
- 			power-domains = <&camcc TITAN_TOP_GDSC>;
- 
- 			pinctrl-0 = <&cci2_default>;
-@@ -4303,6 +4316,7 @@ cci3: cci@ac4d000 {
- 				      "cpas_ahb",
- 				      "cci";
- 
-+			operating-points-v2 = <&cci_opp_table>;
- 			power-domains = <&camcc TITAN_TOP_GDSC>;
- 
- 			pinctrl-0 = <&cci3_default>;
+[1/1] gpio: nomadik: wrap a local variable in a necessary ifdef
+      (no commit info)
 
+Best regards,
 -- 
-2.51.0
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
