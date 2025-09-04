@@ -1,134 +1,134 @@
-Return-Path: <linux-kernel+bounces-801026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592A2B43ED8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:33:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9939B43ED4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18BCB16206A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:33:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BA5C1619E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9CE1E3DF2;
-	Thu,  4 Sep 2025 14:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C77E3090CA;
+	Thu,  4 Sep 2025 14:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="b4wex0b6"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JIZ0johu"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD126302CC2
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEF83054CF
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756996240; cv=none; b=YjiwIUrlIdEF9QtHrUFGOPlKXw6kn/+eE/ePMNSmGwqNunmC0X/NDWs6ueOqTTfMvzFtZubsxswn0ahDT6z4Z2YllseBXpz5pWolHsxszqBMtcaoXVpb45yympeMT7npLpVV59jJ70zY6tuUSntEd7vVHuC7xKbxTg4Oeit3DdE=
+	t=1756996239; cv=none; b=T7XiBUKAu8bncK4uhnmFCNzAh/52SO+og1Q18CzvgBTaWQ6oYQxz4i0x46ri3ag2T0L1w5ClxzS8JvbtiFxT0OKfqoNNUFfUar1Ue80GhFTBoKS+5jJH5CaA0IX0TTlOElQlHTR8IrDAZ2DII8cjBKe5mMmYFQ+PqPe7z5BLuMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756996240; c=relaxed/simple;
-	bh=HzVN/FWIYFA0LAumW0vBstspHi6NMIxiu3xoBHSm194=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=fdxATwUA0tt6xanrS+DQMDDogm9qu9Lyern9agfDfOdujvnJkyMXAxqVCm5/LmddWb7Qcs2TUfOGZCO+CTfZ9FzKlgqLVUe3Lqgs2GYbEN5v8rmJHeeF9E7ZBJR+IeVUtU3FBAlDCoKpIlHiZFx8twRJJVeKEesWIQsJoFDRn/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=b4wex0b6; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250904143036epoutp0219cfd2835ed9a1a1883a061717a6a7f3~iGsSrFtNj1606516065epoutp022
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:30:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250904143036epoutp0219cfd2835ed9a1a1883a061717a6a7f3~iGsSrFtNj1606516065epoutp022
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756996236;
-	bh=HzVN/FWIYFA0LAumW0vBstspHi6NMIxiu3xoBHSm194=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=b4wex0b6n4XOZFNNUnEMFbtq4IgdiO1dP/8PMm05b7MRhILRFHTuel3mviGiWy8ft
-	 pR7TuCrgielKYY0VT9DqbjeKlG4XNgm7cG6iHfQYNPYweeIJU8JuzgsmBhDlOpG690
-	 +S60ap66mXIAQEwxo0oeep8s1Rwk2xXstFGx72J8=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250904143035epcas5p4e338770b44f01f8c4b52b2f41815e116~iGsSCKzjK0749207492epcas5p40;
-	Thu,  4 Sep 2025 14:30:35 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.89]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cHhj66gWJz6B9mD; Thu,  4 Sep
-	2025 14:30:34 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250904143034epcas5p2fa47cdab5bc240ed5e197985bbcc3183~iGsQsGMRe3194431944epcas5p2X;
-	Thu,  4 Sep 2025 14:30:34 +0000 (GMT)
-Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250904143033epsmtip2f28a528501ae15ec1443c060153d865c~iGsPUa7Jq1342413424epsmtip20;
-	Thu,  4 Sep 2025 14:30:32 +0000 (GMT)
-Date: Thu, 4 Sep 2025 20:00:28 +0530
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
-	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	cpgs@samsung.com
-Subject: Re: [PATCH V2 08/20] nvdimm/label: Include region label in slot
- validation
-Message-ID: <20250904143028.edliocds7u7lwgmj@test-PowerEdge-R740xd>
+	s=arc-20240116; t=1756996239; c=relaxed/simple;
+	bh=zJHIz3YRmxc+02v8bM4ziRUOLxTM2eTuBpEimmmwZj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZoeIaiVYVQF2W+7fZdZmjEktrRlnC8Szh5qHofI2hpzJXKljpv6qRpVrY5wM0CPi0JkNAIxExRxv2BwxlPsxnd7ZdweXE50kmJ2ZI2X2Unse/7lZ2KxMx5PKhZAtJAzHPGYpAsX22YXX2cHjMyllshGNQRSAmeDHCQAwqrx7UZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JIZ0johu; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso999227f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 07:30:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1756996235; x=1757601035; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hX/bF6HxE9Anf1wDQ91C9LDHW5RaXiJsPIY3BAgxozQ=;
+        b=JIZ0johuPRySIFt2/Hz9qmeM6U9yu6E6K5MjuTAWi+UvnyRJzg49bM6iT45GyuyZ1r
+         aN2Ln23JVFKpk0q2IdTXPMKZkuy27sZ8un6klvt4Wzq5vT/M21P5S5IW5AlW5cHtqsCF
+         rPtqF3sWoq/Kvwsa39uoO/xYT54/zcX8E/JJch/vfn7JlN3faH7uUvQEctBzjIRJLwYR
+         MHLOhx6bgSCOI34f4ZHkFCfwOY/r+mZaFwvExfAFdWvzCiZnGXbZ9GqnjvEQSa8IJb9r
+         TB5M9L9ohVDp798vBI/hEYna3tXuAECvFL11BY4fpc9/9umqpG0Z/YNm2Cn8EjC5u62O
+         8FLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756996235; x=1757601035;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hX/bF6HxE9Anf1wDQ91C9LDHW5RaXiJsPIY3BAgxozQ=;
+        b=hEJCPzyqCRtX+Mh3SYaxcmN4raH8Gp0wBrAgP1W0L/qYE9k/tYpM0+CBRrl1qR3s5I
+         vBbex3otT+2yzkghv84Y+3fSTIXBYfPPqJ2MjzrX2gzUmo16BCqOpLyv1no+jRPbLDAD
+         N3XSBrUxyPjKZw09DwT+NHaGPmzbk3Q766XX/HE1UlRZqueCOdJ1TybJiBhDL9CA+BJl
+         gNMnpb4GMjpdUVj+TqZMIOHcwziiXEmliMzcUPh230f7MLDzm5KuJe3dCD43HBpM/E8H
+         e4dTFuqItOZ/ydeAKKJRZSkDMJk/RaEbtU/Dh58EZS+6KPUpyaOzwaC3gAC3iK68fhx+
+         Hikg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDO4Ihpj6cKXerl0jxAML9WzvD++DnSEi3TGxrMBDnhanNYr23S+YaD4GuKosJbvL0c/A1XfFRZH7s0pc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym4Q+1FV0HMdlSuVW+s8W8lBKIIAK/Xv6JqKuEU/c6K/w74bwR
+	oPsYKRNV6HKsOkMrjCkt9s3ntBBrSLvfmkA9vI28ubnutK4N5LEm6Dgm4MYnKeqPGLR3Y+mktX3
+	VhYlB
+X-Gm-Gg: ASbGnctyeBZI74ACkcVUfAhXu9a+YrPPZ1I2+ElIrotkdWOWL6jLzTkQqqfftUPungR
+	rgVnHgeelttfWYZUm+FeH08816sdifrfF4gbFv5m62szh5DnQwJ/k+vzumbcXeyVDd7s352tI7p
+	p4X2IgMmGUNSnElThhVWo8ymqts3BoFX03D8fDKdHKFN5g4Hqz3zKtXIYx+qy5bS6POzg1IsDqB
+	jGHkR7SfqXyFhzz1r05eiIyAAqpBjejsiafL2ZV09r5upeILyl2YP/Q/c1xxA+1c4wm68pfjV6Y
+	R4exwAFRokHj2jgIdDgG2JxN85gY4+gTflqYJwYv5z5Oi12pRrEKT1JXbgOZcDXBBJ234085Kwk
+	XNdEsp1voVkN8ZSZskl/pcagbWYejceleJqEkpFTgTkEX7W2VKtQEdA==
+X-Google-Smtp-Source: AGHT+IE64SW0b9G4EriIgoQIx3IdJv0SdEU7rMWSMoetIGgaEqvORKKpydbxM9wZI32pmP+F6RLT1w==
+X-Received: by 2002:a05:6000:4007:b0:3ca:4b59:2714 with SMTP id ffacd0b85a97d-3d1dc5a29dfmr13638077f8f.10.1756996234784;
+        Thu, 04 Sep 2025 07:30:34 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b72c55c1bsm392552795e9.10.2025.09.04.07.30.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 07:30:34 -0700 (PDT)
+Date: Thu, 4 Sep 2025 16:30:32 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chuyi Zhou <zhouchuyi@bytedance.com>
+Cc: tj@kernel.org, hannes@cmpxchg.org, longman@redhat.com, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] cpuset: Don't always flush cpuset_migrate_mm_wq in
+ cpuset_write_resmask
+Message-ID: <3jopfa5deuncuvfjltop7qu5dvdak37imdtmkjmnd5alg2zc2s@wiaztnxwgavz>
+References: <20250904074505.1722678-1-zhouchuyi@bytedance.com>
+ <20250904074505.1722678-2-zhouchuyi@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250813160740.00001ed2@huawei.com>
-X-CMS-MailID: 20250904143034epcas5p2fa47cdab5bc240ed5e197985bbcc3183
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_ead27_"
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250730121232epcas5p4cd632fe09d1bc51499d9e3ac3c2633b3
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121232epcas5p4cd632fe09d1bc51499d9e3ac3c2633b3@epcas5p4.samsung.com>
-	<20250730121209.303202-9-s.neeraj@samsung.com>
-	<20250813160740.00001ed2@huawei.com>
-
-------OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_ead27_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bu3pxxhfgyevwhcb"
 Content-Disposition: inline
-
-On 13/08/25 04:07PM, Jonathan Cameron wrote:
->On Wed, 30 Jul 2025 17:41:57 +0530
->Neeraj Kumar <s.neeraj@samsung.com> wrote:
->
->> slot validation routine validates label slot by calculating label
->
->Slot validation ... or
->The slot validation routing ...
-
-Sure, I will fix it in next patch-set
-
->
->
->> checksum. It was only validating namespace label. This changeset also
->> validates region label if present.
->>
->> Also validate and calculate lsa v2.1 namespace label checksum
->
->LSA v2.1 ...
-
-Sure, I will fix it in next patch-set
-
->
->
->>
->> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
->Otherwise LGTM
->
->Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
-Thanks Jonathan for your review and RB tag.
-
-Regards,
-Neeraj
-
-------OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_ead27_
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20250904074505.1722678-2-zhouchuyi@bytedance.com>
 
 
-------OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_ead27_--
+--bu3pxxhfgyevwhcb
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/3] cpuset: Don't always flush cpuset_migrate_mm_wq in
+ cpuset_write_resmask
+MIME-Version: 1.0
+
+On Thu, Sep 04, 2025 at 03:45:03PM +0800, Chuyi Zhou <zhouchuyi@bytedance.c=
+om> wrote:
+> It is unnecessary to always wait for the flush operation of
+> cpuset_migrate_mm_wq to complete in cpuset_write_resmask, as modifying
+> cpuset.cpus or cpuset.exclusive does not trigger mm migrations. The
+> flush_workqueue can be executed only when cpuset.mems is modified.
+>=20
+> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
+> ---
+>  kernel/cgroup/cpuset.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+
+Reasonable and AFAICT correct optimization.
+
+Reviewed-by: Michal Koutn=FD <mkoutny@suse.com>
+
+--bu3pxxhfgyevwhcb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaLmihhsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+Aj5GgD/VPKgsWOqzEtLK6zNV7T5
+YOpZLkevhgWIbOrGsUIrf7cBAK24IkfPgyN5ApBXH/LsiWO6K8unvyZI8hqmPrtH
+tPYF
+=WtJn
+-----END PGP SIGNATURE-----
+
+--bu3pxxhfgyevwhcb--
 
