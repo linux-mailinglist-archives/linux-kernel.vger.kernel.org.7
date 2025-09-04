@@ -1,173 +1,170 @@
-Return-Path: <linux-kernel+bounces-800575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF0E7B4397C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:04:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58243B4397E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A50843B1219
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:04:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 135013BA465
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27C02FC00E;
-	Thu,  4 Sep 2025 11:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D2C2FC002;
+	Thu,  4 Sep 2025 11:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u5nZ5Nuw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="OENaUDcb"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F32A2FB63D;
-	Thu,  4 Sep 2025 11:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186372D060C
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756983874; cv=none; b=EGyPqyJbWIgnkHtNSuEmbSgipK8bv4cWQ6r0PKwFaJ0MQ3rYrQFpsddLPWtTPuTWmJ1Le4kOrc6qeVo66q38a30EmXqHSTOrAEP1NkM1/X5/UbfD5jzZfU2axFgyKd2xU/eXRKQQK0Em5LXwYpS/765j5aDHeZVBmvDlLdOLUUw=
+	t=1756983919; cv=none; b=Gfff72EUSgOvC19cigb8dF/kVhH4F1vCFbq/U/O4b7NIQLtoK6WVo7mA5w/HMtqFMvzBmZ/Kau64pGQcenUUsuBMJwkdmbvnQTXP0lhcytbDwVEBL2Y3f41Fli+vvOjc9G6FD2teVeiVDBbwiJ28e6EeZ4frPyizSgRFl2OL7ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756983874; c=relaxed/simple;
-	bh=gZrdc2XAuoGO07YrW/d2XCXm0nua7N2x6yXGw6uJSFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uE44124IIKKTRc8F4WVTtyJGH5SlJ4I0hZaH1rq7lIu6tRDz0iS4/6WxXtyOSq4zwyUKQf9bmdlMGk42xM9CZUW+qYY419YNJTzg5dhdOxIDubd2mSLpEwL7p7HGGnBJGz91XX6IMf4AcJNukzNgDuiWpvnKifOpLuiNGjearMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u5nZ5Nuw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0192AC4CEF0;
-	Thu,  4 Sep 2025 11:04:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756983873;
-	bh=gZrdc2XAuoGO07YrW/d2XCXm0nua7N2x6yXGw6uJSFM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=u5nZ5Nuw7uG1NigAlPZqPweeFwAkjzTaWIj2XyrrBuZC5bFDSfUDUj3W+Fx3fAZdS
-	 lo0AF8Z7fH/gEFEguGfGRV3b37M4ePvOIO0bgUxW2RB33KmjCRlr+fs72pGD+W/PRy
-	 D61A7MSJez94CfOnjiD87phisk1nVNHg5NLSv2Q7aq7ZNgMv/XkJp9rMy5nsggPUI6
-	 /jDoHVyPFfEYzYsvu8dNemFouSL7pz7BJZV66VihCv/YaVV5Cz9i8Sg7EfRwrPyqwY
-	 U0T2/kB4DhHFiWgw1qov4Ip7Uuw8UYrFL6f4wzd9mo05aO9H0CaawZ6CIzCNH/jcVr
-	 QYZzkGa2W71ng==
-Message-ID: <e2c40d56-e0aa-45fa-958d-97dcf4f92a6c@kernel.org>
-Date: Thu, 4 Sep 2025 13:04:28 +0200
+	s=arc-20240116; t=1756983919; c=relaxed/simple;
+	bh=HthRouz1wbkfvlCxNwQc5tooP60v7rJjd3WRFFx5608=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eVm1tlS7GR/9srlMODL5fBreRclmtt3OVda1v/w9Kax7Hhu5beRZ6e3cmYldlMMDNdM01TjkmEOJfVBZL5iPwR1QlkIsUc23n1ohGDB8F1oRYe0qIFK3x96Hf/M5DhQI2SQ1w5wobc/weFBYTvNO2N9mONgcgb0xRRNJMHMnu5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=OENaUDcb; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-323266cdf64so646820a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 04:05:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1756983916; x=1757588716; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FR29r6kQ/obU+hIfpjuirh4UjOrHiOEU4iCiBT1+uKg=;
+        b=OENaUDcbrjsninSiazzldkecLRuCi2/ecC7w/gWwj6JMAm9WZ2NGSCgp9yxs0wVzuJ
+         ObVfxf6NsQak+u8qxs5PIiCT7CBm6kSaqnY94aZFaMK4cWo9FwEWmk3lTgWdaJBodxml
+         Fys2HlmlwbsLo2mHiYdjxw9dYmZnFbrDJ9XGDMQher/ZHhygAs1F5N1Z38N1dEOZ6NtL
+         3GU4D4/CyyTw/Pk1Oc0BsIavtAkmAyDzA76KQl/Mk8WLRzRK/IZiwLG5/xnH17uC+eN+
+         KwOX/4CuPaKnXB9PlJdYUsu+//BZoPVMNwiz7advaNJLyE8Mh+PxC81ElN8T7FhxYkus
+         uVUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756983916; x=1757588716;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FR29r6kQ/obU+hIfpjuirh4UjOrHiOEU4iCiBT1+uKg=;
+        b=AkLZc+qQFg1DVk/cdMqAChyOUDr2Z0dPMTh4WB7J8g/e1XSz5kowNi4YTw9xN0woUI
+         zQnPV0ajvK7qh/jFRrwE0MBvLldQjb8aQ1jabWlp8E7lvCCquvav9knyaoP9rNQ+/XjQ
+         jlM/bJp6YAgEom+hb2xUQ09Y5LOh3QQrstiW0ebWNt94WgXKgJR/RcHtzsM5J6zWJygx
+         hx3udOB0pKLV88Tj+nEeHFP7kb8n//gvfQE0dhuL8Ij6WWfQidqrfdYNINe+i+YIUZuO
+         fmavyx0PN8P43o6PRGWHVoXPXa8GSJ7wSaAcJWyvuSvgoV8mkVrwgTfdQVCOoy4S8fJd
+         VyXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxqEWt6azY249p5v2lgVeSLRBht9hXVyQ01g/tJJC+pi/v6ye4sRX9FDGZHiejXxbUg2yVkc+3Cl/prHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuUqQaeX6xAV58TSlsunjUh8t5sGsqzr6Sp0SFBXgy3n9kGTPw
+	Ld4xN+DqQXPPKno8aevwQVAjpdBf7/V17tPO9v8+29vR2JwyLck1jlQu+QTiCoo1KA==
+X-Gm-Gg: ASbGnctUDu24syG3c1hrnb6TpaDr7ejAnI3VwItkYiY9q1PLmWSpAFoH8yKsvJwl3Z9
+	KJ79m4ioIFnG/2IML0s0iJtChuOQR6hWy7tXNvgqqgvSBLAAaYhUA+l9k2WMxPRZKe+snSxHjzW
+	9WLuUZjvSxxIxc6xF2zuJkcY1AdDqz+SC8WRXBmmNtlugwTA/5aYXxIpY+2ckB30mNZHjCn85eb
+	784k6UIwMNL6HMMVvUoeFO796wbOw2IS/VVJtYZK9ldC8whisjgBWKx174OXccQcdHzSCP5ydU7
+	r5pCLVzDBHa3di1GZlU+mn3QBkwZD3haEclzqR4HIu4b4U2WtsmXXlKo13ZCZk814tJq4vQNWpW
+	o2R9Izk4UmOSD7zTj0/qNr4jLEb6rrP2bP5JxJ2u1Q27g/YNT2/EIYIaBpjRb
+X-Google-Smtp-Source: AGHT+IE2ApTZe3W9ZtEMaeLcjfMIPxN576p003nkbzr8TTxjYyb3mCysAKEPDoPaEWk5DNHt14E7ig==
+X-Received: by 2002:a17:90b:55c7:b0:327:ba77:a47 with SMTP id 98e67ed59e1d1-3281543610dmr28899974a91.15.1756983916112;
+        Thu, 04 Sep 2025 04:05:16 -0700 (PDT)
+Received: from bytedance ([61.213.176.56])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a090c77sm18907239b3a.0.2025.09.04.04.05.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 04:05:15 -0700 (PDT)
+Date: Thu, 4 Sep 2025 19:05:04 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Benjamin Segall <bsegall@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Matteo Martelli <matteo.martelli@codethink.co.uk>,
+	Michal Koutn?? <mkoutny@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH v4 3/5] sched/fair: Switch to task based throttle model
+Message-ID: <20250904110504.GG42@bytedance>
+References: <20250829081120.806-1-ziqianlu@bytedance.com>
+ <20250829081120.806-4-ziqianlu@bytedance.com>
+ <20250903145124.GM4067720@noisy.programming.kicks-ass.net>
+ <14be66aa-e088-4267-ac10-d04d600b1294@amd.com>
+ <xm26o6rrtgav.fsf@google.com>
+ <20250904081611.GE42@bytedance>
+ <da9141b1-d717-493f-939f-85e23d46e7ba@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] This patch adds a new DRM bridge driver for the
- Lontium LT9611C chip.
-To: =?UTF-8?B?5p2o5a2Z6L+Q?= <yangsunyun1993@gmail.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: syyang <syyang@lontium.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org,
- rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250903123825.1721443-1-syyang@lontium.com>
- <20250903123825.1721443-3-syyang@lontium.com>
- <24rahlm4kkob7knapdxxnjixye3khx3nv2425y4kkirat4lmam@gjey7zqsnzks>
- <CAFQXuNZUfAJe4QEDfi+-1N99xO0_z5_Omnsn_-SXr2QPtvdL_g@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAFQXuNZUfAJe4QEDfi+-1N99xO0_z5_Omnsn_-SXr2QPtvdL_g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <da9141b1-d717-493f-939f-85e23d46e7ba@amd.com>
 
-On 04/09/2025 12:48, 杨孙运 wrote:
->>> +
->>> +static void lt9611c_cleanup_resources(struct lt9611c *lt9611c)
->>> +{
->>> +     struct device *dev = lt9611c->dev;
->>> +
->>> +     if (lt9611c->work_inited) {
->>> +             cancel_work_sync(&lt9611c->work);
->>> +             lt9611c->work_inited = false;
->>> +             dev_err(dev, "work cancelled\n");
->>
->> Why???
->>
-> ?? I don't understand.
-
-You need to explain why that line - printing error - should be here. And
-focus on "WHY" part.
-
+On Thu, Sep 04, 2025 at 03:21:06PM +0530, K Prateek Nayak wrote:
+> Hello Aaron,
 > 
->>> +     }
->>> +
->>> +     if (lt9611c->bridge_added) {
->>> +             drm_bridge_remove(&lt9611c->bridge);
->>> +             lt9611c->bridge_added = false;
->>> +             dev_err(dev, "DRM bridge removed\n");
->>> +     }
->>> +
->>> +     if (lt9611c->regulators_enabled) {
->>> +             regulator_bulk_disable(ARRAY_SIZE(lt9611c->supplies), lt9611c->supplies);
->>> +             lt9611c->regulators_enabled = false;
->>> +             dev_err(dev, "regulators disabled\n");
->>> +     }
->>> +
->>> +     if (lt9611c->audio_pdev)
->>> +             lt9611c_audio_exit(lt9611c);
->>> +
->>> +     if (lt9611c->fw) {
->>
->> You definitely don't need firmware when the bridge is up and running.
->>
-> The previous text has already described the working logic of the firmware.
+> On 9/4/2025 1:46 PM, Aaron Lu wrote:
+> > @@ -8722,15 +8730,6 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+> >  	if (unlikely(se == pse))
+> >  		return;
+> >  
+> > -	/*
+> > -	 * This is possible from callers such as attach_tasks(), in which we
+> > -	 * unconditionally wakeup_preempt() after an enqueue (which may have
+> > -	 * lead to a throttle).  This both saves work and prevents false
+> > -	 * next-buddy nomination below.
+> > -	 */
+> > -	if (unlikely(throttled_hierarchy(cfs_rq_of(pse))))
+> > -		return;
 > 
->>> +             release_firmware(lt9611c->fw);
->>> +             lt9611c->fw = NULL;
->>> +             dev_err(dev, "firmware released\n");
->>> +     }
->>> +
->>> +     if (lt9611c->dsi0_node) {
->>> +             of_node_put(lt9611c->dsi0_node);
->>> +             lt9611c->dsi0_node = NULL;
->>> +             dev_err(dev, "dsi0 node released\n");
+> I think we should have a:
+> 
+> 	if (task_is_throttled(p))
+> 		return;
+> 
+> here. I can see at least one possibility via prio_changed_fair()
 
-Your driver is way, way to noisy.
+Ah right. I didn't realize wakeup_preempt() can be called for a throttled
+task, I think it is not expected. What about forbid that :)
+(not tested in anyway, just to show the idea and get feedback)
 
-Please read coding style - what does it say about driver being silent?
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index cb93e74a850e8..f1383aede764f 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -13135,7 +13135,11 @@ static void task_fork_fair(struct task_struct *p)
+ static void
+ prio_changed_fair(struct rq *rq, struct task_struct *p, int oldprio)
+ {
+-	if (!task_on_rq_queued(p))
++	/*
++	 * p->on_rq can be set for throttled task but there is no need to
++	 * check wakeup preempt for throttled task, so use p->se.on_rq instead.
++	 */
++	if (!p->se.on_rq)
+ 		return;
+ 
+ 	if (rq->cfs.nr_queued == 1)
 
+> where a throttled task might reach here. Rest looks good. I'll
+> still wait on Ben for the update_cfs_group() bits :)
+> 
+> > -
+> >  	if (sched_feat(NEXT_BUDDY) && !(wake_flags & WF_FORK) && !pse->sched_delayed) {
+> >  		set_next_buddy(pse);
+> >  	}
 
 Best regards,
-Krzysztof
+Aaron
 
