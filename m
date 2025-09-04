@@ -1,140 +1,137 @@
-Return-Path: <linux-kernel+bounces-801212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96AB9B44227
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:05:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 317C5B44234
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06B99A020E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:05:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 149701CC2920
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8522D23AD;
-	Thu,  4 Sep 2025 16:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C98D2F361B;
+	Thu,  4 Sep 2025 16:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0m7J6wR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="enl43B9Y"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069541F4262
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390332EBB92
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757001926; cv=none; b=UezwTzI41W31dW4xlY9pxL7L+y00hmfAqIpAOXKI/PSf+puPjptUOiqiYsMu3xqcT+wF9dwYF0q6WlIma3nPyj/3L9d40Jd4OKtMkW1GWNc4VQtIA0sflE3w7GdKw3mJsKvfKPsyZQnHATnCIJ5zeya3+dKCuwgMFmXWAK5RpJM=
+	t=1757001980; cv=none; b=ZPhVIhbaKBROrX1lvNv/72niDH7/viP4eQIBKy7+8W7Wa7ROQO7HISgYM/pD+g1L2WspR+Q66Cnp3c+3Poseg4WfAiaDRl0LNiPozONW92Siq8P8s5EWoFxSEQbzTzTetJ0yM2OpPvuziRUyxnIWlEFS6Qx4gP6Roge60lOR2KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757001926; c=relaxed/simple;
-	bh=iLVcyr0jvQ2GCC3Cpf1b3sKXKD9ERka32krfugQxTtc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LorCg4KQGwTyHjqnqB8qgtHBsDQZqZtiMkIgtASKz463UJnZMVXssdqvQHWUWW11WTAFOpz+TiphNZ44580cP/LzEo6C8MrpU6qlwtXM+z8Q3k97xPXVHNqoxmN31GS2qjnex9QnA0LZWiSC3JUuXqeIMMK3lVlBEgDz4Ae8c+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0m7J6wR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CB27C4CEF0;
-	Thu,  4 Sep 2025 16:05:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757001924;
-	bh=iLVcyr0jvQ2GCC3Cpf1b3sKXKD9ERka32krfugQxTtc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a0m7J6wRr4xrRv2isEZ5ynFCSHC0vkj/Oc3Fd2pBul1gFVQBW3BqmjlY7if/xkXRW
-	 Rw0KVqkzDcwR70YcrWPWVepPasir0T212Wp1Kc9D0/WuVk4xZlbYc8YXB0UHFqC03V
-	 DIGPkystU9Cl2xfbvaZ+DZ11V452dRMOiaf928sH8YIo0IS2456wtGOuHKynC4UdsM
-	 SMGgedtI9RMjzlyri0xHTJEfh0AFDaOMFbvNpzZoYWFgeQ8r4oqqTVXCLtuiTlLvhM
-	 9f+2eOt1UZghQJLG2MVHxV0Fc4tCUG8hmx6275cWlBdDKJu6Eau8OtaIA1rGgH1pF4
-	 iggw2bsIjPmYg==
-Date: Thu, 4 Sep 2025 18:05:21 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Adam Li <adamli@os.amperecomputing.com>
-Cc: anna-maria@linutronix.de, tglx@linutronix.de, mingo@redhat.com,
-	peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, vschneid@redhat.com,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, cl@linux.com, linux-kernel@vger.kernel.org,
-	patches@amperecomputing.com, Christoph Lameter <cl@gentwo.org>
-Subject: Re: [PATCH RESEND 1/2] tick/nohz: Fix wrong NOHZ idle CPU state
-Message-ID: <aLm4wRwKBMGkekkT@localhost.localdomain>
-References: <20250821042707.62993-1-adamli@os.amperecomputing.com>
- <20250821042707.62993-2-adamli@os.amperecomputing.com>
+	s=arc-20240116; t=1757001980; c=relaxed/simple;
+	bh=TJB1/hNYsH8Q20BteySCtJnDw0ynZ68mEzNhyiDKstk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OIr+NBC4zeMeou7BsjOtE5KUoN1nKBisrhwWbUhZHIsLUaebP9NeoKOh0uNozt43I7km+LHTfsdg2EFo4OpN1aNXgjTsZliGIYXqgMVOAzMS6VolkmNl9w8iVgitx5LwkirDQaKc6T5Fx6gldB/DcKpPc6Y+svgqXoVeOmKcjao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=enl43B9Y; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61d143aa4acso1816035a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 09:06:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757001976; x=1757606776; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TJB1/hNYsH8Q20BteySCtJnDw0ynZ68mEzNhyiDKstk=;
+        b=enl43B9YHzgP3uzb4qK8XFlyOuJIT/G3swGCP0T/qvS/ds7/AoNJ7MATZ+Rb7QmU9d
+         dfO+v8GZq70JryLWiC5z87SIpZxWNtIDKYldr4WEt6lOdTgepyXNHFCg2esVaMu5kaMV
+         LRR0FZi+c4UTdlA+8T7YLug/qDjlpoT6ogSujZ9udadrcgKccNes4CfoipZjxxxZWKm0
+         UWoqr1QO6JIpvnx+v19nz0wUCpmfi7VXhpPbeIoxcgwrYVDZtprQF7lIDVgg1PeVkT+U
+         NOs4oiSHuwD8ILNMFcvOruEVGN9wC1ILwfbI9YNBvBOh84K1VzF0/eboWqgz7TFGs6tL
+         3mKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757001976; x=1757606776;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TJB1/hNYsH8Q20BteySCtJnDw0ynZ68mEzNhyiDKstk=;
+        b=lSXtS208X1xqtUVxPE2A6wTNCEKmQDtAxBOSZnOU1RPcxz03FmS5/Km7RX2bPqteHO
+         hanIkjVJ0Jbb0IpDliqpUTUwv3uY+3yPcxNTl1hfPj2SUIltAARbAHMcCd/GrVZAGCrP
+         7M2mMb3+bf9QpdN/uw7ICN8Q0/asR4eRKlb69crKCrxPIA/ngq4Hpc7lkhoObIIS3jRD
+         fMgBBS61Y/IRXctHoRjNbgqXmGBmShG/QC1gdkxSovlyF03oSjtTIYpaGGu4I/RWDT6d
+         qyZEWqe31feUoN/ksf3Zw7II7CjPEHTzoq8LPdTii73GW3JFmyzRinCFqQ+GoxYDVbmn
+         gQzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTy1Rd9F/PqmM8YoyN166akNLxeYPcdAA6uW9DqA+Q0pdTy6E/3fYAU9yVqCW1EA5m1usX7aQ/DyIzbfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywgs2n0hww8ls+nQ/twJqoQJw/iqJJAGMf0BzaWbKbloYRG1/Qw
+	bMLcvAapS+WA+cB26o74O9AWwmUS2rRJsrFP3nyOX5XMywO6AGwHWZiWK6MsgSymZZZUffSWfyv
+	9Ocqm5l+xXIVr1Yp2MO7BfnjpvIT8zjo=
+X-Gm-Gg: ASbGncvd7XNRdfGM0PL9C7PtygHzBaXP2PcHSbIOK5/GiEHaQKiRajeRCpqI08WgK1V
+	c4CWYSGvj40fyc+JPjZr9CuLUq0z2S3VZYNNYy+De9e0HiWuviU6Hw9tsSNcOddai5tU5QPecAb
+	6DdjpGZJeNoUmzQJzcMPQHkDjRAPkH32uu01F+jCVcn25q1MnMGkiuVjsv4rASQAdWrqVZOcXJi
+	DFoBBlOJ9Q=
+X-Google-Smtp-Source: AGHT+IHOugCOPsyWMYI/9frBi1EDh/M6MUda/nljZdBGVaeD4eAkldmiAKLHeV9fd51Mn6Vw2gFbWeyKSwJn5vu8fHA=
+X-Received: by 2002:a05:6402:2686:b0:61f:afe3:9177 with SMTP id
+ 4fb4d7f45d1cf-61fafe393f9mr2096912a12.2.1757001976066; Thu, 04 Sep 2025
+ 09:06:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250821042707.62993-2-adamli@os.amperecomputing.com>
+References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-2-ryncsn@gmail.com>
+ <CAKEwX=O-_khBw0h3F+Uqx-8joMPHb-aOBuODx6LVO3vEZ38tpw@mail.gmail.com>
+In-Reply-To: <CAKEwX=O-_khBw0h3F+Uqx-8joMPHb-aOBuODx6LVO3vEZ38tpw@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 5 Sep 2025 00:05:39 +0800
+X-Gm-Features: Ac12FXxv3acge-iILq_OS5ASCS0n5qK1Bxoju9QuUQYOMxssZswBOiwQNaPmA3s
+Message-ID: <CAMgjq7Dy1ma_jq-AutAGjOXfinFPOLVJatz7dnHi_Nc563q2cA@mail.gmail.com>
+Subject: Re: [PATCH 1/9] mm, swap: use unified helper for swap cache look up
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Thu, Aug 21, 2025 at 04:27:06AM +0000, Adam Li a écrit :
-> NOHZ idle load balance is done among CPUs in nohz.idle_cpus_mask.
-> A CPU is added to nohz.idle_cpus_mask in:
-> do_idle()
->   -> tick_nohz_idle_stop_tick()
->      -> nohz_balance_enter_idle()
-> 
-> nohz_balance_enter_idle() is called if:
-> 1) tick is stopped (TS_FLAG_STOPPED is set)
-> 2) and tick was not already stopped before tick_nohz_idle_stop_tick()
->    stops the tick (!was_stopped)
-> 
-> When CONFIG_NO_HZ_FULL is set and the CPU is in the nohz_full list
-> then 'was_stopped' may always be true.
-> The flag 'TS_FLAG_STOPPED' may be already set in
-> tick_nohz_full_stop_tick(). So nohz_balance_enter_idle() has no chance
-> to be called.
-> 
-> As a result, CPU will stay in a 'wrong' state:
-> 1) tick is stopped (TS_FLAG_STOPPED is set)
-> 2) and CPU is not in nohz.idle_cpus_mask
-> 3) and CPU stays idle
-> 
-> Neither the periodic nor the NOHZ idle load balancing can move task
-> to this CPU. Some CPUs keep idle while others busy.
-> 
-> In nohz_balance_enter_idle(), 'rq->nohz_tick_stopped' is checked to avoid
-> duplicated nohz.idle_cpus_mask setting. So for nohz_balance_enter_idle()
-> there is no need to check the '!was_stopped' condition.
-> 
-> This patch will add the CPU to nohz.idle_cpus_mask as expected.
-> 
-> Signed-off-by: Adam Li <adamli@os.amperecomputing.com>
-> Reviewed-by: Christoph Lameter (Ampere) <cl@gentwo.org>
-> ---
->  kernel/time/tick-sched.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-> index c527b421c865..b900a120ab54 100644
-> --- a/kernel/time/tick-sched.c
-> +++ b/kernel/time/tick-sched.c
-> @@ -1229,8 +1229,9 @@ void tick_nohz_idle_stop_tick(void)
->  		ts->idle_sleeps++;
->  		ts->idle_expires = expires;
->  
-> -		if (!was_stopped && tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
-> -			ts->idle_jiffies = ts->last_jiffies;
-> +		if (tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
-> +			if (!was_stopped)
-> +				ts->idle_jiffies = ts->last_jiffies;
->  			nohz_balance_enter_idle(cpu);
+On Thu, Sep 4, 2025 at 2:10=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrote:
+>
+> On Fri, Aug 22, 2025 at 12:20=E2=80=AFPM Kairui Song <ryncsn@gmail.com> w=
+rote:
+> >
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > Always use swap_cache_get_folio for swap cache folio look up. The reaso=
+n
+> > we are not using it in all places is that it also updates the readahead
+> > info, and some callsites want to avoid that.
+> >
+> > So decouple readahead update with swap cache lookup into a standalone
+> > helper, let the caller call the readahead update helper if that's
+> > needed. And convert all swap cache lookups to use swap_cache_get_folio.
+> >
+> > After this commit, there are only three special cases for accessing swa=
+p
+> > cache space now: huge memory splitting, migration and shmem replacing,
+> > because they need to lock the Xarray. Following commits will wrap their
+> > accesses to the swap cache too with special helpers.
+> >
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+>
+> My personal taste is we should have one patch to do the decoupling of
+> readahead update and the swapcache lookup, then another patch to use
+> the swapcache lookup helper in places that previously cannot be used
+> (due to the coupling of swapcache and readahead).
+>
+> But, this looks good to me :) Feel free to add:
+>
+> Acked-by: Nhat Pham <nphamcs@gmail.com>
+>
 
-The current state is indeed broken and some people have already tried to fix it.
-The thing is nohz_full don't want dynamic isolation because it is deemed to run a
-single task. Therefore those tasks must be placed manually in order not to break
-isolation guarantees by accident.
+Thanks, I think I'll just drop the readahead update for now, it is
+harmless to keep it out of the lock and it's really small change, I
+didn't measure anything different either way.
 
-In fact nohz_full doesn't make much sense without isolcpus (or isolated cpuset
-v2 partitions) and I even intend to make nohz_full depend on domain isolation
-in the long term.
-
-Thanks.
-
->  		}
->  	} else {
-> -- 
-> 2.34.1
-> 
-
--- 
-Frederic Weisbecker
-SUSE Labs
+We may test and figure out how to read ahead better later, not really
+related to this series.
 
