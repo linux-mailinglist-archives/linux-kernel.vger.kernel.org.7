@@ -1,223 +1,167 @@
-Return-Path: <linux-kernel+bounces-801638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0682B44833
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:12:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E261B44838
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 425787AF689
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:11:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2966617A629
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B5129B8EF;
-	Thu,  4 Sep 2025 21:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0C929C33D;
+	Thu,  4 Sep 2025 21:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="GOLXty3e"
-Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="h4byn6Rl"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2F028D8ED;
-	Thu,  4 Sep 2025 21:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFFC29AB02;
+	Thu,  4 Sep 2025 21:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757020352; cv=none; b=rtcND+PbzORq8NjKF0zKEvybMg62Q1F1rrnPW/YsnoWthKM/tyrrAsy2JBHnDscwcHqN4VoHG87KTDyOsju9efxPZ2PHmt+lAl2w6Yn3nFpfcYKKfgBDAA3UBvjn+qnwoc1oHD3R50RuiuqxWFmankcK9y65eC5yM8AH1tvbUCs=
+	t=1757020393; cv=none; b=NWipBOB35PYpCbGUoJAqye999TKtxrbQswF01zkqIC0a4C2K99fbuav+ufGmta25F2xC6AhEMwN1KeRbiN6DGt+oRVhqUor6q7G0nYfB+87s8Ffs2294Aqn7Sq4qijBLfEszdzKxbQNw8lzks+pe6D2F4sqobAumvLgzXJDZZlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757020352; c=relaxed/simple;
-	bh=bVpTdvqZQwctg8yn5l2gjB3RXA0ZvRDSr4BwQH5FB5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UVL6/sEtUkg6taj9tV0aTBn1SIiRea4wHRH88dvcVOZgauDhnyaTvaG8FAVRnCGw1bj1WeMuVtlztX0vEH0M9fmDFC6KDN1y3L00zXv+GOWELn/j1D6hijEPRfoRJ2gVZH5v5IeZ1o7LFW/F87Bo7+1JriS/tJ10adZzv+7yMmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=GOLXty3e; arc=none smtp.client-ip=166.84.1.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
-Received: from [192.168.8.212] (kenny-tx.gotdns.com [162.196.229.233])
-	by mailbackend.panix.com (Postfix) with ESMTPSA id 4cHscr5Hz7z1CFP;
-	Thu,  4 Sep 2025 17:12:28 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
-	t=1757020349; bh=bVpTdvqZQwctg8yn5l2gjB3RXA0ZvRDSr4BwQH5FB5E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=GOLXty3eTWhG1W11NvdnOztq1grcyUiovXv1N9gz0Y6BDajpNX9G0MoZSlknbGIPH
-	 O1x/lQX5d7Ihd39CT7Y093K6tStW9xvl3aiHdi9TV4ZgA3afINZmnTPJnZLF2doKZ7
-	 rQlN/ghaqifZG9RztbaB6/RL7M6akVEuz82JbYjs=
-Message-ID: <7242c456-ca01-4212-96d4-73e63ad0d5d3@panix.com>
-Date: Thu, 4 Sep 2025 14:12:27 -0700
+	s=arc-20240116; t=1757020393; c=relaxed/simple;
+	bh=cJeYw+fnmGuV/6yhEDTOpXJYJivHESINJnODijfUJeQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZJNtsJhK8vsw3gpLuceJIqzJAx4bo7OPJ/0l7YHMQlBLlr3WZIosmGHL9ptSXlKw3+EZDb7qW0Vbt/R0qa6/acZ9uz+ggxxYBNq32VXKm9Bj81Fp9P8N58nztmTMdhaAv1UM3ViZ04nO6ePZ+YiPdQLRpqe1nGe9pCSKHz8+lbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=h4byn6Rl; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584EDNYw020235;
+	Thu, 4 Sep 2025 21:13:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=gGSz/3wzTB7ULIot6d2uI8FCULkYJSh7CX+787MXO
+	VI=; b=h4byn6RlpOx5ytI43RfSm5XhBgP3sgbYbqD4FmYQEwY6Fyf49G5xx+QPv
+	tQgvUjTB/WB71enpUwZyGJHjp2jy/AyjhJkKs04/lNSoyVrY86vXvsCLFwNiYGgr
+	zzlB2eSg1WYWIytYb2/4sYBsLPizFbM3edNkyVGt7ICKPVnFuN/Hcy+1T47twXgW
+	aLdCYjsyMhzDMsJffvXI3WMAFI4mPDTuqGlMwUw8oyf31abP6goXM02H45nlLtX0
+	6g9N9uo0GP0Nl/ED9mT5m+xbSNwOONt0d5ZDsypDey0luSwy3aoKl6s7Gl8H2GER
+	LpXfZU0BTgXJmEe8f3YajiKnpXRIA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usv3cs3v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Sep 2025 21:13:07 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 584L77Lr003791;
+	Thu, 4 Sep 2025 21:13:06 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usv3cs3s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Sep 2025 21:13:06 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 584J2KhP021170;
+	Thu, 4 Sep 2025 21:13:05 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48vcmpxfn4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Sep 2025 21:13:05 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 584LD1e661342030
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 4 Sep 2025 21:13:01 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5FADC20040;
+	Thu,  4 Sep 2025 21:13:01 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1E6962004B;
+	Thu,  4 Sep 2025 21:13:01 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  4 Sep 2025 21:13:01 +0000 (GMT)
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Simon Horman <horms@kernel.org>,
+        "D. Wythe" <alibuda@linux.alibaba.com>,
+        Dust Li <dust.li@linux.alibaba.com>,
+        Sidraya Jayagond <sidraya@linux.ibm.com>,
+        Wenjia Zhang <wenjia@linux.ibm.com>,
+        Mahanta Jambigi <mjambigi@linux.ibm.com>,
+        Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Cc: Halil Pasic <pasic@linux.ibm.com>
+Subject: [PATCH net-next 0/2] net/smc: make wr buffer count configurable 
+Date: Thu,  4 Sep 2025 23:12:51 +0200
+Message-ID: <20250904211254.1057445-1-pasic@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 1/2] PCI/ASPM: Add host-bridge API to override default
- ASPM/CLKPM link state
-To: "David E. Box" <david.e.box@linux.intel.com>, rafael@kernel.org,
- bhelgaas@google.com, vicamo.yang@canonical.com,
- ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com, mani@kernel.org
-Cc: linux-pm@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250825203542.3502368-1-david.e.box@linux.intel.com>
-Content-Language: en-US
-From: Kenneth Crudup <kenny@panix.com>
-In-Reply-To: <20250825203542.3502368-1-david.e.box@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 0N7XCAWMBfEUIccWqvYX4h1yw78u_pk2
+X-Authority-Analysis: v=2.4 cv=FPMbx/os c=1 sm=1 tr=0 ts=68ba00e3 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=yJojWOMRYYMA:10 a=OPAOpny1AAAA:8 a=piJGGMyLFvZckxoXyWEA:9
+ a=Vt4qOV5uLRUYeah0QK8L:22
+X-Proofpoint-GUID: qbasB6_8y8NRLwbyo1x5bU3BRhdVeJoR
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzNCBTYWx0ZWRfX5fgMXwX73yyl
+ /tNGGMedGYSG4BCjH6gySXDmbq0K1RRZzjHsORObH+dInnYbJZHqkq/r/q46myRS5gK9T80Ieh1
+ 9Dki9g66Sr0HJnX/LeDHUhuFWOpJGpdtKEVTzEoi/J13NtqBibFSYiGc5tPghXMTh8sbi5nFKG2
+ ZkDoDa2hXe2LxKCuPGUbcJvzYScVNrJPTt/9ckdoLgMjUQgLnfYu+KoQPvBZh7tnaTJsczsys0I
+ 875M6VBsIy7IeBf1uok+mlShVufxTfgPnKuJg1WRXstyr2Acn033N49gCiPcbrlxv69oIwSepx2
+ oqQ1SHTHgYsPtgl/cGhX/evbO3zhLtdxvePYxm4w20SUaKl3JkCNnAjTbNFummK2p6RJKNyx8qW
+ u6QOK0tL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_07,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 phishscore=0 clxscore=1011 bulkscore=0
+ spamscore=0 adultscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300034
+
+The current value of SMC_WR_BUF_CNT is 16 which leads to heavy
+contention on the wr_tx_wait workqueue of the SMC-R linkgroup and its
+spinlock when many connections are competing for the work request
+buffers. Currently up to 256 connections per linkgroup are supported.
+
+To make things worse when finally a buffer becomes available and
+smc_wr_tx_put_slot() signals the linkgroup's wr_tx_wait wq, because
+WQ_FLAG_EXCLUSIVE is not used all the waiters get woken up, most of the
+time a single one can proceed, and the rest is contending on the
+spinlock of the wq to go to sleep again.
+
+Addressing this by simply bumping SMC_WR_BUF_CNT to 256 was deemed
+risky, because the large-ish physically continuous allocation could fail
+and lead to TCP fall-backs. For reference see this discussion thread on
+"[PATCH net-next] net/smc: increase SMC_WR_BUF_CNT" (in archive
+https://lists.openwall.net/netdev/2024/11/05/186), which concludes with
+the agreement to try to come up with something smarter, which is what
+this series aims for.
+
+Additionally if for some reason it is known that heavy contention is not
+to be expected going with something like 256 work request buffers is
+wasteful. To address these concerns make the number of work requests
+configurable, and introduce a back-off logic with handles -ENOMEM form
+smc_wr_alloc_link_mem() gracefully.
+
+Halil Pasic (2):
+  net/smc: make wr buffer count configurable
+  net/smc: handle -ENOMEM from smc_wr_alloc_link_mem gracefully
+
+ Documentation/networking/smc-sysctl.rst | 40 +++++++++++++++++++++++++
+ net/smc/smc.h                           |  2 ++
+ net/smc/smc_core.c                      | 34 ++++++++++++++-------
+ net/smc/smc_core.h                      |  6 ++++
+ net/smc/smc_ib.c                        |  7 ++---
+ net/smc/smc_llc.c                       |  2 ++
+ net/smc/smc_sysctl.c                    | 22 ++++++++++++++
+ net/smc/smc_wr.c                        | 32 ++++++++++----------
+ net/smc/smc_wr.h                        |  2 --
+ 9 files changed, 115 insertions(+), 32 deletions(-)
 
 
-Tested-by: Kenneth R. Crudup <kenny@panix.com>
-
-On 8/25/25 13:35, David E. Box wrote:
-> Synthetic PCIe hierarchies, such as those created by Intel VMD, are not
-> enumerated by firmware and do not receive BIOS-provided ASPM or CLKPM
-> defaults. Devices in such domains may therefore run without the intended
-> power management.
-> 
-> Add a host-bridge mechanism that lets controller drivers supply their own
-> defaults. A new aspm_default_link_state field in struct pci_host_bridge is
-> set via pci_host_set_default_pcie_link_state(). During link initialization,
-> if this field is non-zero, ASPM and CLKPM defaults come from it instead of
-> BIOS.
-> 
-> This enables drivers like VMD to align link power management with platform
-> expectations and avoids embedding controller-specific quirks in ASPM core
-> logic.
-> 
-> Link: https://patchwork.ozlabs.org/project/linux-pci/patch/20250720190140.2639200-1-david.e.box%40linux.intel.com/
-> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
-> Tested-by: Manivannan Sadhasivam <mani@kernel.org>
-> Reviewed-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
-> ---
-> Changes in V3:
->    -- Changed pci_host_get_default_pcie_link_state() argument name from
->       parent to dev.
->    -- Applied changelog tags
-> 
-> Changes in V2:
-> 
->    -- Host field name changed to aspm_default_link_state.
->    -- Added get/set functions for aspm_default_link_state. Only the
->       setter is exported. Added a kernel-doc describing usage and
->       particulars around meaning of 0.
-> 
-> Changes in V1 from RFC:
-> 
->    -- Rename field to aspm_dflt_link_state since it stores
->       PCIE_LINK_STATE_XXX flags, not a policy enum.
->    -- Move the field to struct pci_host_bridge since it's being applied to
->       the entire host bridge per Mani's suggestion.
->    -- During testing noticed that clkpm remained disabled and this was
->       also handled by the formerly used pci_enable_link_state(). Add a
->       check in pcie_clkpm_cap_init() as well to enable clkpm during init.
-> 
->   drivers/pci/pcie/aspm.c | 42 +++++++++++++++++++++++++++++++++++++++--
->   include/linux/pci.h     |  9 +++++++++
->   2 files changed, 49 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> index 919a05b97647..851ca3d68e55 100644
-> --- a/drivers/pci/pcie/aspm.c
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -373,6 +373,39 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
->   	pcie_set_clkpm_nocheck(link, enable);
->   }
->   
-> +/**
-> + * pci_host_set_default_pcie_link_state - set controller-provided default ASPM/CLKPM mask
-> + * @host: host bridge on which to apply the defaults
-> + * @state: PCIE_LINK_STATE_XXX flags
-> + *
-> + * Allows a PCIe controller driver to specify the default ASPM and/or
-> + * Clock Power Management (CLKPM) link state mask that will be used
-> + * for links under this host bridge during ASPM/CLKPM capability init.
-> + *
-> + * The value is consumed in pcie_aspm_cap_init() and pcie_clkpm_cap_init()
-> + * to override the firmware-discovered defaults.
-> + *
-> + * Interpretation of aspm_default_link_state:
-> + *   - Nonzero: bitmask of PCIE_LINK_STATE_* values to be used as defaults
-> + *   - Zero:    no override provided; ASPM/CLKPM defaults fall back to
-> + *              values discovered in hardware/firmware
-> + *
-> + * Note: zero is always treated as "unset", not as "force ASPM/CLKPM off".
-> + */
-> +void pci_host_set_default_pcie_link_state(struct pci_host_bridge *host,
-> +					  unsigned int state)
-> +{
-> +	host->aspm_default_link_state = state;
-> +}
-> +EXPORT_SYMBOL_GPL(pci_host_set_default_pcie_link_state);
-> +
-> +static u32 pci_host_get_default_pcie_link_state(struct pci_dev *dev)
-> +{
-> +	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
-> +
-> +	return host ? host->aspm_default_link_state : 0;
-> +}
-> +
->   static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
->   {
->   	int capable = 1, enabled = 1;
-> @@ -394,7 +427,10 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
->   			enabled = 0;
->   	}
->   	link->clkpm_enabled = enabled;
-> -	link->clkpm_default = enabled;
-> +	if (pci_host_get_default_pcie_link_state(link->pdev) & PCIE_LINK_STATE_CLKPM)
-> +		link->clkpm_default = 1;
-> +	else
-> +		link->clkpm_default = enabled;
->   	link->clkpm_capable = capable;
->   	link->clkpm_disable = blacklist ? 1 : 0;
->   }
-> @@ -866,7 +902,9 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
->   	}
->   
->   	/* Save default state */
-> -	link->aspm_default = link->aspm_enabled;
-> +	link->aspm_default = pci_host_get_default_pcie_link_state(parent);
-> +	if (!link->aspm_default)
-> +		link->aspm_default = link->aspm_enabled;
->   
->   	/* Setup initial capable state. Will be updated later */
->   	link->aspm_capable = link->aspm_support;
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 59876de13860..8947cbaf9fa6 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -620,6 +620,10 @@ struct pci_host_bridge {
->   	unsigned int	size_windows:1;		/* Enable root bus sizing */
->   	unsigned int	msi_domain:1;		/* Bridge wants MSI domain */
->   
-> +#ifdef CONFIG_PCIEASPM
-> +	unsigned int	aspm_default_link_state;	/* Controller-provided default */
-> +#endif
-> +
->   	/* Resource alignment requirements */
->   	resource_size_t (*align_resource)(struct pci_dev *dev,
->   			const struct resource *res,
-> @@ -1849,6 +1853,8 @@ int pci_disable_link_state(struct pci_dev *pdev, int state);
->   int pci_disable_link_state_locked(struct pci_dev *pdev, int state);
->   int pci_enable_link_state(struct pci_dev *pdev, int state);
->   int pci_enable_link_state_locked(struct pci_dev *pdev, int state);
-> +void pci_host_set_default_pcie_link_state(struct pci_host_bridge *host,
-> +					  unsigned int state);
->   void pcie_no_aspm(void);
->   bool pcie_aspm_support_enabled(void);
->   bool pcie_aspm_enabled(struct pci_dev *pdev);
-> @@ -1861,6 +1867,9 @@ static inline int pci_enable_link_state(struct pci_dev *pdev, int state)
->   { return 0; }
->   static inline int pci_enable_link_state_locked(struct pci_dev *pdev, int state)
->   { return 0; }
-> +static inline void
-> +pci_host_set_default_pcie_link_state(struct pci_host_bridge *host,
-> +				     unsigned int state) { }
->   static inline void pcie_no_aspm(void) { }
->   static inline bool pcie_aspm_support_enabled(void) { return false; }
->   static inline bool pcie_aspm_enabled(struct pci_dev *pdev) { return false; }
-> 
-> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-
+base-commit: 5ef04a7b068cbb828eba226aacb42f880f7924d7
 -- 
-Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
-County CA
+2.48.1
 
 
