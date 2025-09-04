@@ -1,142 +1,123 @@
-Return-Path: <linux-kernel+bounces-801661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779B7B4487C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:29:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23418B44882
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39EED7BB3B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:27:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BFCB7BB94E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42BC2C08A2;
-	Thu,  4 Sep 2025 21:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE48B2C0291;
+	Thu,  4 Sep 2025 21:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Z0j6tRne"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="vqKCdK6O";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Agrt92AC"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909E22BEFE7;
-	Thu,  4 Sep 2025 21:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7F52BEFF9;
+	Thu,  4 Sep 2025 21:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757021319; cv=none; b=BXTE2k9BFNVGJZJySxWPov8GehNBJAMiizGFFJ7b3+Gtgzv4ooS+KJ0DSFdYT4LhW4CQGLyREYZJ7RYgIjHNuGu9PL+PkSa7GPPQJIA1t6ton7ktyJpwpG+IQK3Y3KLPh2WbtpLt2p8WbUE0TnVYjZvyTKN3iPPcUnv8F1JBKNE=
+	t=1757021364; cv=none; b=td3MOGb9ay8x4Nly4m/SO6EreApQ8UVbQhWvUTGv8HwiJkB+xKa06NnEe2KiSjTcaz5+4cm5XAmwhdHuZvOqVhY5+CvQu7m+ibUfJ7CNgZDJjlcPQ7sJKgboa3d4CqBiqY2ymWdcIwZxDo0VFy1zUcYycMAcNk2pN3FEm4Y/FEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757021319; c=relaxed/simple;
-	bh=XfGcghG19TabjT51QdOsitXxhnwZTmBxIT0FUrZXRpA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b7aB/9RlFZhYeoXZvcfL7F2/yrIWBsXY9LfEUjs8i9etfMzxGtBplKub3oh8/xnHz+7DBWIht6TJ4EyQVt9woSnNnfqFgFO82D5al4Tr45HLFo0uy73i3813X1akWI3aGQObvi44K1ZGz5fdtjWL8QFWCxSuNQ8XwneGX/r3yPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Z0j6tRne; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 584LSWW53169123;
-	Thu, 4 Sep 2025 16:28:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757021312;
-	bh=ffpMJyApy52p0uslmGd/xoHzUe/PhPzo7pID9ctc1EU=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Z0j6tRneAzThXhUP/H3kXnLtgPX+Fp6BKKPv7BBSbHnrjzRPvpzgi6vBSMBFjbkK0
-	 d66otnNwiAlxDqBNbiGOQ3bwJ9Frh3oNw/3CpuwUmz+pf0TwaxHnku1E8wYCGFBDno
-	 USYuBmITcRtx4JKSYeJbkcMgzqG8avTUevJ7+dEk=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 584LSWD54090301
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 4 Sep 2025 16:28:32 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 4
- Sep 2025 16:28:31 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 4 Sep 2025 16:28:31 -0500
-Received: from uda0506412.dhcp.ti.com (uda0506412.dhcp.ti.com [128.247.81.19])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 584LSTnQ3903903;
-	Thu, 4 Sep 2025 16:28:31 -0500
-From: Kendall Willis <k-willis@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <d-gole@ti.com>, <vishalm@ti.com>, <sebin.francis@ti.com>,
-        <msp@baylibre.com>, <khilman@baylibre.com>, <a-kaur@ti.com>,
-        <k-willis@ti.com>
-Subject: [PATCH 3/3] arm64: dts: ti: k3-am62p5-sk: Enable Main UART wakeup
-Date: Thu, 4 Sep 2025 16:28:27 -0500
-Message-ID: <20250904212827.3730314-4-k-willis@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250904212827.3730314-1-k-willis@ti.com>
-References: <20250904212827.3730314-1-k-willis@ti.com>
+	s=arc-20240116; t=1757021364; c=relaxed/simple;
+	bh=fScXVv76m2mKBKx4ebn1H7Q/CThhzFVySUmCsTiVyHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ESE/j71ZCDDLSAOmbe3pPWS4yfqDDEMEPTCpdVpFPlDP1AZYJ3qXYgFEmk2JSoJCQE21BAus0IdQ5OGzMC/h3KqPHgnlu/g2dyzhmqm4L1xS5NFNIIjxL5F+fN12mTzi+nnks+NAsABrUJLUAXIdVX2/WxCUxti2Ci12a4jBG2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=vqKCdK6O; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Agrt92AC; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cHt0J2Yj9z9t6m;
+	Thu,  4 Sep 2025 23:29:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1757021360;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qgCy5hEX6SEax4DnBF030MM5fVg7BhEB4QGlPjHTqY=;
+	b=vqKCdK6Oij1e2VHcDOdExh+kVg98BbdqxdJ8pMB0klfCOCtzkzxXh9e/0P5YIF7YlX3JS0
+	TgMlLg7GoQ9NfcDE6qUiLrJvp6Jul8+//luRVAIIABu8AwYtZKkqLJNXCLgm8wo2hGUZny
+	fKARcKEVIweMhdt4hHn3mjpAzbZWbKsOzSAxPKiIxEr/4ECFg7MDJjutngrCanmY7imaQ1
+	sNZulTQN5JT/d5z8MrgpzXX5vh21P2/OqopjrAyffU7Co0cdFiqU9tVICy4hYhnO2J5gm5
+	5xGB5htYs8FhqkEEOsHKabAf1gAa+8LFGEd+P8unp1J0gZ9wRUf0Q22Y3HWj2w==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=Agrt92AC;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
+Message-ID: <62584e30-72ab-49df-bfaa-9730679b2dbe@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1757021358;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qgCy5hEX6SEax4DnBF030MM5fVg7BhEB4QGlPjHTqY=;
+	b=Agrt92ACPZ25Mi0vxCNLxulxcG0BbutZvVHHhJhOt7XgPK1scax+L6Nmna4vl6h7JAh+x+
+	PysFC4nowHUeTK0IUGtAmNrudExosikyQt+FqILNLvIFt6+o7VxpVkrrRqPGMTKkS2/hXM
+	I8tmqF4ml8Ko0H7dmfstY7dEvX2fujyx+cfXoiy825H7diGBEQVcQmn2lcQyWIRbbnuvRH
+	DzZDmZKPtY039Mj28OQnsmJKqwnhQUQsxfwb6H3DPsFZxroCMNwpOzG8Ik2kF2vviEspuv
+	nAfK8prPAVBqSdMxxrEkC2grvRMJ7AFZouFAIn/DmzD68ZWuozB7gVrp31F5tg==
+Date: Thu, 4 Sep 2025 23:29:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Subject: Re: [PATCH] PCI: endpoint: pci-epf-test: Limit PCIe BAR size for
+ fixed BARs
+To: Niklas Cassel <cassel@kernel.org>, Damien Le Moal <dlemoal@kernel.org>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-pci@vger.kernel.org,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Wang Jiang <jiangwang@kylinos.cn>,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Jerome Brunet <jbrunet@baylibre.com>
+References: <20250904023753.494147-1-marek.vasut+renesas@mailbox.org>
+ <b3d5773d-c573-4491-b799-90405a8af6a9@kernel.org> <aLmGBYOVevP5hH0X@ryzen>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <aLmGBYOVevP5hH0X@ryzen>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 13dcbb0edfde5df60c7
+X-MBO-RS-META: sewnssyio4q88ui38z5rntywakq5zocz
+X-Rspamd-Queue-Id: 4cHt0J2Yj9z9t6m
 
-The Main UART can resume from suspend to RAM states when PIN_WKUP_EN
-is enabled. Add the necessary pins needed to wakeup the system. Add the
-system idle states that the Main UART can wakeup the system from.
+On 9/4/25 2:28 PM, Niklas Cassel wrote:
 
-Signed-off-by: Kendall Willis <k-willis@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62p5-sk.dts | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+Hello Niklas,
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-index 899da7896563b..1857437eb9c34 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-@@ -340,14 +340,26 @@ AM62PX_IOPAD(0x0164, PIN_INPUT, 0) /* (A20) RGMII2_TX_CTL */
- 		bootph-all;
- 	};
- 
--	main_uart0_pins_default: main-uart0-default-pins {
-+	main_uart0_tx_pins_default: main-uart0-tx-default-pins {
- 		pinctrl-single,pins = <
--			AM62PX_IOPAD(0x1c8, PIN_INPUT, 0)	/* (A22) UART0_RXD */
- 			AM62PX_IOPAD(0x1cc, PIN_OUTPUT, 0)	/* (B22) UART0_TXD */
- 		>;
- 		bootph-all;
- 	};
- 
-+	main_uart0_rx_pins_default: main-uart0-rx-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x1c8, PIN_INPUT, 0)	/* (A22) UART0_RXD */
-+		>;
-+		bootph-all;
-+	};
-+
-+	main_uart0_rx_pins_wakeup: main-uart0-rx-wakeup-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x1c8, PIN_INPUT | PIN_WKUP_EN, 0)	/* (A22) UART0_RXD */
-+		>;
-+	};
-+
- 	main_uart1_pins_default: main-uart1-default-pins {
- 		pinctrl-single,pins = <
- 			AM62PX_IOPAD(0x0194, PIN_INPUT, 2) /* (D25) MCASP0_AXR3.UART1_CTSn */
-@@ -738,8 +750,12 @@ &mcu_r5fss0_core0 {
- };
- 
- &main_uart0 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&main_uart0_pins_default>;
-+	pinctrl-names = "default", "wakeup";
-+	pinctrl-0 = <&main_uart0_tx_pins_default>, <&main_uart0_rx_pins_default>;
-+	pinctrl-1 = <&main_uart0_tx_pins_default>, <&main_uart0_rx_pins_wakeup>;
-+	wakeup-source = <&system_deep_sleep>,
-+			<&system_mcu_only>,
-+			<&system_standby>;
- 	status = "okay";
- 	bootph-all;
- };
--- 
-2.34.1
+[...]
 
+> pci_epf_alloc_space() works like this:
+> If the user requests a BAR size that is smaller than the fixed-size BAR,
+> it will allocate space matching the fixed-size.
+> 
+> As in most cases, having a BAR larger than needed by an EPF driver is
+> still acceptable.
+> 
+> However, if the user requests a size larger than the fixed-size BAR,
+> as in your case, we will return an error, as we cannot fulfill the
+> user's request.
+> 
+> I don't see any alternative other than your/Damien's proposal above.
+> 
+> Unfortunately, all EPF drivers would probably need this same change.
+
+It seems that pci-epf-ntb and pci-epf-vntb only use BAR0 (BAR_CONFIG) 
+and BAR0+BAR1 (BAR_CONFIG and BAR_DB) , so those should be OK on this 
+controller. NVMe EPF also seems to use only BAR0 and it specifically 
+handles fixed size BAR. It seems everything that is in the tree so far 
+managed to sidestep hitting fixed-size BAR4 problems on this hardware, 
+except for the test driver.
 
