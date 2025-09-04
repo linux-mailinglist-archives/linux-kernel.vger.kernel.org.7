@@ -1,171 +1,238 @@
-Return-Path: <linux-kernel+bounces-801223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A00A4B4425A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:11:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2D6B4425C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D32651C83E92
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:11:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89FD21895659
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4EE2DD60E;
-	Thu,  4 Sep 2025 16:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5900D2F0699;
+	Thu,  4 Sep 2025 16:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="j6dbMiCA"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m8gc2bo3"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671A029AB07
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE88279329
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757002259; cv=none; b=WW932lwwgRouAtAmw4IVvcleGy7aiXCKeu4w8GqgGQqwhPkI1sy1C9kth5b/6ghRYPXRMIwxeOAt3rfARdOdaGX/ifO9RlGEc82JEBtOa/8YI2szmMxDEV7pdSMHj/i4D95aZ/U0Tha+nqlMx0OEW/ptdDevhTGulHjFIzzRqKo=
+	t=1757002337; cv=none; b=HtJPTcOeCOh9JXSI2m5B9wsXQJ26kIpGLB7XTnXOaGZf9CAsb3pduiXjMTNxLmGmGd0bfvxSuYjVMvzAVXX+Xg1aiZZwib0B6X9+Xe3cMcDxTu0Z2R5zJwktRyJp1H595vNL0ySjLo/ykuYuccVi5tFebJIWZxRmYBBdq2LirkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757002259; c=relaxed/simple;
-	bh=HDAw67jd/Gyw+stVOPgMNuQ0D7NZ9sg4+FFZ406x1Mo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=FHFe/3FU1J4dyYHYYqAcDdh/t+m/GeJ96Z93EbYiQFGvWrVwJuwUNM9Dah0z5dz+iv7NFj/0g4ihyhA+kySdHU6aJjzW7pLb08zHWs1qAmxjWIGXeAbl1ov8bEL6EAbIRs9Lia+0+aaW+R5xGmG020OPVECNEknimhoiO/iMf6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=j6dbMiCA; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1757002247; x=1757607047; i=markus.elfring@web.de;
-	bh=fnB78AZRybzXGEGbKEs063u7SIqqC/HQB9Q8uYop7u0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=j6dbMiCAmToyLG7QSjEg71uRAwDqm2Gxx6R7gW36icVtVDxze4ov8wgoNoRbd6XH
-	 mIuisnKPUJ0fV4q57tDaol77XbtMrlf/8Vdy79ko16g8NT5z02bEn6octU8SLzDF2
-	 CliJP+3BEcls8zBcb2yqE+cDcgGI4evHze2n5b8e+FOgfXGNzwJm2uxl5cSepXtOz
-	 hzFzW1MMhG9iFFSRE7ERbv71gUD6CmdGZ3o5vknQ18MsmxrHSyH8gakrjtrd24gPi
-	 n4kuW3Xp/2pcbu7eV7qPK+8wjqUaIBujpMtWWzRfMc8Dk+kArgUEUCN0kVMdDt2zo
-	 IxfGL4kKIbjUVofVWQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.243]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mm9VU-1uC26h3U9I-00ZwwA; Thu, 04
- Sep 2025 18:10:47 +0200
-Message-ID: <b8dd23cd-9e95-4e2c-8388-54b6d184bcf2@web.de>
-Date: Thu, 4 Sep 2025 18:10:45 +0200
+	s=arc-20240116; t=1757002337; c=relaxed/simple;
+	bh=K9Fczei7Gse+fy6tTEDoXiORVBMNIRe6agRMkzng1jk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=qbtRLfj45ZcbuszWUkJZcIteYYPam0cp18ZeUSEIG1uBFGepK21DZNH9FB6VorCsHvqMaiNMuIVXtj+X8m3x1lIDWwsPsIvyDeKVNUWsBOyIz08Ok51UOKtoQUTG8VREgJOAL4+yhPnog3Bu46YtBMdzSBRMllHczxjFgAJw7YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m8gc2bo3; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24ab15b6f09so206475ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 09:12:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757002334; x=1757607134; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Oxg6KGbvMXnhKUZiGVSFPxFZrjrAk2t56vsmdG05ac8=;
+        b=m8gc2bo3wEQdiMJDw/kMFXwqSQ7zDyY3W+CuWdKrvqpRCRJEtTbZyElJhvjX1Ah4lh
+         5sm3d4pdrC+NKM7Xmo4BTAekS0BGkikg1eaVz+x00ygpNh7nZl0ZPLhyks3w0udjLBEE
+         xBBJm+1sdKuhSGDjL2WYPovvtO8G8okPhcoV3VuedyNB8LNaE1ASna7jXsqbzQb/MZAG
+         06oGLsm+KPJwOr6kEoqB6WGbWVodXeklhMeYbavbdT0wjJ6wbWTA2Qv/8A5D90vCu7tL
+         SrSp899UWQAQy+oK6sqUGmHw0tZg07he3SQ5ysPBSorChR3zNqwpJND+Uuq2AhopqoXE
+         Rk/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757002334; x=1757607134;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Oxg6KGbvMXnhKUZiGVSFPxFZrjrAk2t56vsmdG05ac8=;
+        b=hvJskOimW+JcZmLrftqcaWCjQsz6XPE1M1cBu6caAktQcPUu2LGyKbBuhBLD7eNdMq
+         sHalw0vb0FF3EbqRi8zrX7eKos4t507a31jt8kMU1e+4FlxIjE7csR72osdnEvW53VkS
+         PnH6JSudvKnfjx3VTsbVbq8YDKGu2t5wGNE2k0K/ho3M4l+YuZvNORotpN0eM10lj5c5
+         /e9yRLmC6VjvqFcX0kFBNVo3MoQe1LDSxCWMqrLrd8hY5+CmptpA6uSagKlBbO5BFkLL
+         cuGi49v3b/PDVoTs4OsxmbZOXXxfiHzCK+M0D2wTt4YaCRxyxNvD977GIeefe283Eems
+         3UEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIj51ZDNq/JBYeXT4oeTEdOrDzACcHYngD8tFVk4UXjrZ8q2VZTYyfgtngeAJv9azDO9UJLf9wPvaz2Uw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYa8vmVFC7NhU6REpkUs+fvk4M7psIlTpFVcgjFKOYWs94wUzO
+	o+PgEGZM00/j+NlfxEUu0QDDtuHWx6MSX81NiGMk2xcZ7j5ROR2mAKBhW6uflRCwB4umDcBx8V1
+	jF0V0/zdnsZw8y9xWbCIR720DS7YyBYBvf4cQElXO
+X-Gm-Gg: ASbGncumYW4uXV9c9bROksSzMmlp0ri+JLRCvVx2+lKwtywcYB7teu2zanNXnQiYe2C
+	/wwsOYeMdI3pipKBy9ou4dRglbo2dndxlbp8QuEfDC8vQkJX3Llil/BrrP00dWjpGjoCX7blRj+
+	LXUCBsSruAfWc6sic1VnQXUy0ilMpUzGJLw/bQlGWgPQNL4y/0rvNCh2yHqnEKaGFhjA5ShVqyM
+	sFawCE3Ht5Vh7YrctXKNY5H/yjXvRdOSwbQebMZHvUfOPUHP7r4w6c=
+X-Google-Smtp-Source: AGHT+IHW7f3F5NWf9sYWKBTAjggA1mZgGkBd01ZKSCBDGYwxoF8q6+EZJZxRJLKs0yJt+GZptAwL9pppaDotP6kYM7s=
+X-Received: by 2002:a17:902:c402:b0:24c:863a:4ccc with SMTP id
+ d9443c01a7336-24ccaea1adcmr3953915ad.4.1757002333199; Thu, 04 Sep 2025
+ 09:12:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Leo Yan <leo.yan@arm.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>,
- Suzuki Poulouse <suzuki.poulose@arm.com>,
- Tamas Zsoldos <tamas.zsoldos@arm.com>
-References: <20250904-cs_etm_auxsetup_fix_error_handling-v2-1-a502d0bafb95@arm.com>
-Subject: Re: [PATCH v2] coresight: trbe: Return NULL pointer for allocation
- failures
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250904-cs_etm_auxsetup_fix_error_handling-v2-1-a502d0bafb95@arm.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20250818190416.145274-1-irogers@google.com>
+In-Reply-To: <20250818190416.145274-1-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 4 Sep 2025 09:12:01 -0700
+X-Gm-Features: Ac12FXxysLLHAhErdPoKUPnZVN0keF2Cr89cgrhUhX9PHhv7CPUoctpU94BOENA
+Message-ID: <CAP-5=fUJcaK75cfkDJBueh39EXbWtD-A_rOm-VYbnz4bsDq3XA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/20] Intel TMA 5.1 metrics and event updates
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Caleb Biggers <caleb.biggers@intel.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Weilin Wang <weilin.wang@intel.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-actions@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mESZX6zP+LT4CwfOaT3Tw2Lu31CAMmq3HKoGIqZruq9qR1l+/9P
- eFNhZfS+vYexXYa+LLYrAcVjhO/LjXdBqJOCPA4nsxTi6cLHYTREMkzhVHomhL5pV4FxP/Y
- 9Ry//pvBP/AxKlcV61Zm8mln4jg1RhrHfNnowlaqqoeyTQVj7AUh5zGao4Yw+WE7taLM/o+
- twHWaaNF8NqjfEFoYlEaQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+6GZ3kqxxJA=;BvHYnxwHh4TC9+qn9+XS1NIsI0W
- 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
 
-=E2=80=A6
-> Fix this by returning a NULL pointer from arm_trbe_alloc_buffer() on
-> allocation failures. This allows that the callers can properly handle
-> the failure.
+On Mon, Aug 18, 2025 at 12:05=E2=80=AFPM Ian Rogers <irogers@google.com> wr=
+ote:
+>
+> Update events from:
+> v1.31 -> v1.33 for alderlake
+> v1.09 -> v1.12 for arrowlake
+> v1.14 -> v1.16 for emeraldrapids
+> v1.10 -> v1.12 for graniterpaids
+> v1.14 -> v1.17 for lunarlake
+> v1.14 -> v1.16 for meteorlake
+> v1.28 -> v1.30 for sapphirerapids
+>
+> Update TMA 5.0 to 5.1 removing the slots event workaround as the patch se=
+ries:
+> https://lore.kernel.org/lkml/20250719030517.1990983-1-irogers@google.com/
+> is assumed.
+>
+> The patches are generated by:
+> https://github.com/intel/perfmon/blob/main/scripts/create_perf_json.py
+> with pull requests 323 and 324 applied.
+>
+> v2: Add Thomas Falcon's tested-by. Both Thomas and myself had tested
+>     v1 on hybrid machines with cpu_atom and cpu_core PMUs. Namhyung
+>     reported issues on non-hybrid/AMD machines with the fake_pmu test
+>     - the metrics using those PMUs were failing event parsing. Add a
+>     patch so that the PMU in a cpu=3DPMU term is ignored when fake PMUs
+>     are in use.
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.17-rc4#n94
+Ping.
 
+Thanks,
+Ian
 
-By the way:
-* Would you like to improve the exception handling by using a goto chain?
-
-* How do you think about to increase the application of scope-based resour=
-ce management?
-  https://elixir.bootlin.com/linux/v6.17-rc4/source/include/linux/slab.h#L=
-476
-
-
-Regards,
-Markus
+> Ian Rogers (20):
+>   perf parse-events: Handle fake PMUs in CPU terms
+>   perf vendor events: Update alderlake events/metrics
+>   perf vendor events: Update arrowlake events/metrics
+>   perf vendor events: Update broadwell metrics
+>   perf vendor events: Update cascadelakex metrics
+>   perf vendor events: Update emeraldrapids events/metrics
+>   perf vendor events: Update grandridge metrics
+>   perf vendor events: Update graniterapids events/metrics
+>   perf vendor events: Update haswell metrics
+>   perf vendor events: Update icelake metrics
+>   perf vendor events: Update ivybridge/ivytown metrics
+>   perf vendor events: Update jaketown metrics
+>   perf vendor events: Update lunarlake events/metrics
+>   perf vendor events: Update meteorlake events/metrics
+>   perf vendor events: Update rocketlake metrics
+>   perf vendor events: Update sandybridge metrics
+>   perf vendor events: Update sapphirerapids events/metrics
+>   perf vendor events: Update sierraforest metrics
+>   perf vendor events: Update skylake metrics
+>   perf vendor events: Update tigerlake metrics
+>
+>  .../arch/x86/alderlake/adl-metrics.json       | 104 ++++----
+>  .../pmu-events/arch/x86/alderlake/cache.json  |  99 ++++----
+>  .../arch/x86/alderlake/floating-point.json    |  28 +--
+>  .../arch/x86/alderlake/frontend.json          |  42 ++--
+>  .../pmu-events/arch/x86/alderlake/memory.json |  12 +-
+>  .../pmu-events/arch/x86/alderlake/other.json  |   8 +-
+>  .../arch/x86/alderlake/pipeline.json          | 163 +++++--------
+>  .../x86/alderlake/uncore-interconnect.json    |   2 -
+>  .../arch/x86/alderlake/virtual-memory.json    |  40 +--
+>  .../arch/x86/alderlaken/adln-metrics.json     |  20 +-
+>  .../x86/alderlaken/uncore-interconnect.json   |   2 -
+>  .../arch/x86/arrowlake/arl-metrics.json       | 180 ++++++++------
+>  .../pmu-events/arch/x86/arrowlake/cache.json  | 122 +++++++---
+>  .../arch/x86/arrowlake/frontend.json          |  40 +--
+>  .../pmu-events/arch/x86/arrowlake/memory.json |  22 +-
+>  .../arch/x86/arrowlake/pipeline.json          |  94 +++++---
+>  .../arch/x86/broadwell/bdw-metrics.json       |  30 +--
+>  .../arch/x86/broadwellde/bdwde-metrics.json   |  30 +--
+>  .../arch/x86/broadwellx/bdx-metrics.json      |  33 ++-
+>  .../arch/x86/cascadelakex/clx-metrics.json    | 139 ++++++++---
+>  .../arch/x86/emeraldrapids/cache.json         | 100 ++++----
+>  .../arch/x86/emeraldrapids/emr-metrics.json   | 131 +++++-----
+>  .../x86/emeraldrapids/floating-point.json     |  43 ++--
+>  .../arch/x86/emeraldrapids/frontend.json      |  42 ++--
+>  .../arch/x86/emeraldrapids/memory.json        |  30 +--
+>  .../arch/x86/emeraldrapids/other.json         |  28 ++-
+>  .../arch/x86/emeraldrapids/pipeline.json      | 167 +++++--------
+>  .../arch/x86/emeraldrapids/uncore-memory.json |  82 +++++++
+>  .../x86/emeraldrapids/virtual-memory.json     |  40 +--
+>  .../arch/x86/grandridge/grr-metrics.json      |  20 +-
+>  .../arch/x86/graniterapids/cache.json         | 227 +++++++++++++-----
+>  .../x86/graniterapids/floating-point.json     |  43 ++--
+>  .../arch/x86/graniterapids/frontend.json      |  42 ++--
+>  .../arch/x86/graniterapids/gnr-metrics.json   | 131 +++++-----
+>  .../arch/x86/graniterapids/memory.json        |  33 ++-
+>  .../arch/x86/graniterapids/other.json         |  30 ++-
+>  .../arch/x86/graniterapids/pipeline.json      | 167 ++++++-------
+>  .../arch/x86/graniterapids/uncore-io.json     |   1 -
+>  .../arch/x86/graniterapids/uncore-memory.json |  31 ---
+>  .../x86/graniterapids/virtual-memory.json     |  40 +--
+>  .../arch/x86/haswell/hsw-metrics.json         |  32 ++-
+>  .../arch/x86/haswellx/hsx-metrics.json        |  35 ++-
+>  .../arch/x86/icelake/icl-metrics.json         |  96 ++++----
+>  .../arch/x86/icelakex/icx-metrics.json        | 155 ++++++++----
+>  .../arch/x86/ivybridge/ivb-metrics.json       |  30 +--
+>  .../arch/x86/ivytown/ivt-metrics.json         |  33 ++-
+>  .../arch/x86/jaketown/jkt-metrics.json        |  20 +-
+>  .../pmu-events/arch/x86/lunarlake/cache.json  | 104 ++++++--
+>  .../arch/x86/lunarlake/frontend.json          |  40 +--
+>  .../arch/x86/lunarlake/lnl-metrics.json       | 216 +++++++++--------
+>  .../pmu-events/arch/x86/lunarlake/memory.json |  22 +-
+>  .../arch/x86/lunarlake/pipeline.json          |  85 ++++---
+>  .../x86/lunarlake/uncore-interconnect.json    |  10 +
+>  .../arch/x86/lunarlake/uncore-memory.json     |   8 +
+>  tools/perf/pmu-events/arch/x86/mapfile.csv    |  16 +-
+>  .../pmu-events/arch/x86/meteorlake/cache.json | 129 +++++-----
+>  .../arch/x86/meteorlake/floating-point.json   |  28 +--
+>  .../arch/x86/meteorlake/frontend.json         |  42 ++--
+>  .../arch/x86/meteorlake/memory.json           |  15 +-
+>  .../arch/x86/meteorlake/mtl-metrics.json      | 103 ++++----
+>  .../pmu-events/arch/x86/meteorlake/other.json |   5 +-
+>  .../arch/x86/meteorlake/pipeline.json         | 173 ++++++-------
+>  .../arch/x86/meteorlake/virtual-memory.json   |  40 +--
+>  .../arch/x86/rocketlake/rkl-metrics.json      |  97 ++++----
+>  .../arch/x86/sandybridge/snb-metrics.json     |  19 +-
+>  .../arch/x86/sapphirerapids/cache.json        | 100 ++++----
+>  .../x86/sapphirerapids/floating-point.json    |  43 ++--
+>  .../arch/x86/sapphirerapids/frontend.json     |  42 ++--
+>  .../arch/x86/sapphirerapids/memory.json       |  30 +--
+>  .../arch/x86/sapphirerapids/other.json        |  28 ++-
+>  .../arch/x86/sapphirerapids/pipeline.json     | 167 +++++--------
+>  .../arch/x86/sapphirerapids/spr-metrics.json  | 153 +++++++-----
+>  .../x86/sapphirerapids/uncore-memory.json     |  82 +++++++
+>  .../x86/sapphirerapids/virtual-memory.json    |  40 +--
+>  .../arch/x86/sierraforest/srf-metrics.json    |  20 +-
+>  .../arch/x86/skylake/skl-metrics.json         | 101 +++++---
+>  .../arch/x86/skylakex/skx-metrics.json        | 101 +++++---
+>  .../arch/x86/tigerlake/tgl-metrics.json       |  97 ++++----
+>  tools/perf/util/parse-events.c                | 116 ++++-----
+>  79 files changed, 2930 insertions(+), 2381 deletions(-)
+>  create mode 100644 tools/perf/pmu-events/arch/x86/lunarlake/uncore-inter=
+connect.json
+>
+> --
+> 2.51.0.rc1.167.g924127e9c0-goog
+>
 
