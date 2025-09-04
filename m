@@ -1,105 +1,142 @@
-Return-Path: <linux-kernel+bounces-800726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0659CB43B20
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:11:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E314B43B36
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0EB1540D1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:11:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC7E15E5B6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987CD2D3720;
-	Thu,  4 Sep 2025 12:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="rgxMczjY"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A432EB5CE;
+	Thu,  4 Sep 2025 12:11:39 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D916233704
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA442D5410;
+	Thu,  4 Sep 2025 12:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756987865; cv=none; b=NN3v8+wEEeIQLDFpmiCbI7yEI9lwerqp+pZ785O2Nwqzn51yZujGg3aJFb4skdFBLDm8q7hUD07CTJ8Gsniyz5upHRfqAXDjN1t5FWxS1nTIxyEhZgRqm4Cq+yhAFeZ+u9rUMG1X/xjRQ2KWaA8N8VigI6f4jPcRH/rpAQWO7mM=
+	t=1756987898; cv=none; b=DjxCszPRgN0eO6S9uNvc5PYjnZ8hQV7vpWQysl+vLFHQuBmIwoBbDiiFTVbBxWZCAL2ivtPH21WPIR2jRE7sJ/CGlZcOIcY8Z9eSdHS22d9BUY97C5DHqbAdAPf0E/Kez7WIDCJwyiCLJRLOlNzY+3/Fvxpv2wwNgVsMNxZ1Stw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756987865; c=relaxed/simple;
-	bh=gjlVq8FpVKFgiAyllL0wB2r8/I9yHjQu5VbHsqkQxiU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=csWkds/YgF9hk/9Qm+mpuz4lb+7BNjfOEOrGjyONhPl8AhAzpfy3RvJYv0LLpND6cRb9K6Xb2tCQUOfS8XxaDYWF+6qQGVGdwXTK/70+9eO0xJjSj5Mce3FlQezLeu0U6Rx0ojRQ5dmaU2ge68vFfL4fcefqzy5mYLb+CD68oOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=rgxMczjY; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7f7742e71c6so92188285a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 05:11:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1756987861; x=1757592661; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gjlVq8FpVKFgiAyllL0wB2r8/I9yHjQu5VbHsqkQxiU=;
-        b=rgxMczjYxPMrYMDYR3UA/atnihZuKUrpx1dDyzwH/enmjLAwiylxEJjuyzHriWA5dx
-         xYJR7blt89THMY+biwAZwi2AvL1vUEajNM4N+cDFD83IvLMCGekxcN2ppDAZMVO/uKyl
-         Uk9T+fSLNx+1dYpKXLqh5yOVx3XyoTlHwZK00=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756987861; x=1757592661;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gjlVq8FpVKFgiAyllL0wB2r8/I9yHjQu5VbHsqkQxiU=;
-        b=eCeOid6H14d6DERJiArWgBszL5rJG57kUXIhNxl95MNmiaOKAOVHXsdCaa4IhtmuOQ
-         +IM97zln/UVCKF6jpfQ8cqfda1zdIrHnX9PymBC3LQcW0NGnsiw25oVzRLY1sD8kECkH
-         M8L9tdlYf+A2TunyipjWiursxJukJXV79yDtu3Gn6+Yrjvb3l1qOGAXVqNczcG9ygeiJ
-         sBEOX0ZK1StjI0PiEf+vL74lEcRrggQ8PBx1uOAMLr+0PNHK8RFCIkgopGGBRZ8O51/J
-         VlMAwOmK3sNS44ymJoKMtIlBqdKmQGpl+PycE5bA787BBqR2CCOZh28L/lhI3xdbCmuh
-         RgkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwsxUizJnezzD/z+xmvWMcTWZu55H16upK+xXn6qiiDWhELMAJOGOzWMPoy9fJlBGrhD6hqAhcEEmIO5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVOjTMhsHU57/zLkcVNFVFKp3D2etZ+7/UxGo7lsZMH6KP3w1Q
-	YGEf6Y0iDQUXpvMl8o+whsncjsUL4C1Z17PZnPn96TaAN+JwA20hTdxVLOFF8fkQaAJDyDr0upE
-	v9iv55MhBbJVyuKk2Kln8ffNDFoaIPWMqXiVpqDOCUA==
-X-Gm-Gg: ASbGncvSRiPgv6h1EqSWfW18VyANb3Lv2guJ83fF6VZa9R4bYDoXxivRd1vubz2Uw5g
-	wtTHALo033sDkqJ832HjyaEfMbN41fqe4Bpn3qkMIT+G9IkwvQWkdMgvGttXLICUp33sFN/VnYK
-	zYltzHcPIbOYtOvjp0y6D7nCr8H0pKfMwQerHJIckqybOXZVTnsFabrAHKYmlINbqIYqUUWADn1
-	DG86KC5xmnerc7vbnY+qpUvQ5KHHMgq9YoOJu0tAqntU8lznaas
-X-Google-Smtp-Source: AGHT+IHRBKQCViOy+3E5ogp9zVpNMNg0Q43pXtgHycVq8ia8hUOj1ReM9zgzxUU55FO82PBbTz+ok2x7oLUwMlmTuHY=
-X-Received: by 2002:a05:620a:2948:b0:7fc:c964:38df with SMTP id
- af79cd13be357-7ff2b5a713dmr2135908485a.55.1756987861094; Thu, 04 Sep 2025
- 05:11:01 -0700 (PDT)
+	s=arc-20240116; t=1756987898; c=relaxed/simple;
+	bh=jUl8KfwFagSZlpvEancmTQoJOmbKc9C4wmaWDyGTf+4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C8xvrx/xHWwyRs5zPy4shmtZEelPn98I7tkK/iU2QwU46ltPb4qZ2ERamX18sMhpi5eyA4e3WWE6MjLauJ2XqyU+cI92107SES92v6TKPhItcVQhbr+2iSMNl8IlmdqaGBzzOWMkXujOUThao5KF4rSm5EqBGHbBcR11m+/la0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cHdcV219bz14MWN;
+	Thu,  4 Sep 2025 20:11:22 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id D7E50180488;
+	Thu,  4 Sep 2025 20:11:32 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 4 Sep 2025 20:11:32 +0800
+Received: from localhost.localdomain (10.50.165.33) by
+ kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 4 Sep 2025 20:11:31 +0800
+From: Huisong Li <lihuisong@huawei.com>
+To: <rafael@kernel.org>, <lenb@kernel.org>
+CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
+	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>,
+	<lihuisong@huawei.com>
+Subject: [PATCH] ACPI: processor: Fix function defined but not used warning
+Date: Thu, 4 Sep 2025 20:11:31 +0800
+Message-ID: <20250904121131.2610989-1-lihuisong@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904120339.972-1-haiyuewa@163.com>
-In-Reply-To: <20250904120339.972-1-haiyuewa@163.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 4 Sep 2025 14:10:45 +0200
-X-Gm-Features: Ac12FXxDCj7qXFPJlrrixUNL9wFH0RfwVg8nWGcK3mUz3g-juiYtolyxpTYsSD8
-Message-ID: <CAJfpegswS_KRpOxsCYCR9-z3uCGKrJz_=-c1__CHimHC7Y=M2Q@mail.gmail.com>
-Subject: Re: [PATCH v2] fuse: virtio_fs: fix page fault for DAX page address
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	Alistair Popple <apopple@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Haiyue Wang <haiyuewa@163.com>, David Hildenbrand <david@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, 
-	"open list:VIRTIO FILE SYSTEM" <virtualization@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-On Thu, 4 Sept 2025 at 14:04, Haiyue Wang <haiyuewa@163.com> wrote:
->
-> The commit ced17ee32a99 ("Revert "virtio: reject shm region if length is zero"")
-> exposes the following DAX page fault bug (this fix the failure that getting shm
-> region alway returns false because of zero length):
->
-> The commit 21aa65bf82a7 ("mm: remove callers of pfn_t functionality") handles
-> the DAX physical page address incorrectly: the removed macro 'phys_to_pfn_t()'
-> should be replaced with 'PHYS_PFN()'.
+If CONFIG_ACPI_PROCESSOR=n and CONFIG_ACPI_PROCESSOR_IDLE=n, we may
+encounter some compling warnings as the following link said.
+So remove these empty function definition because they are just used
+in processor_driver.c and if CONFIG_ACPI_PROCESSOR is selected and
+CONFIG_ACPI_PROCESSOR_IDLE also be selected automatically.
 
-Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202508300519.tZQHY6HA-lkp@intel.com/
 
-Christian, can you please pick this up?
+Signed-off-by: Huisong Li <lihuisong@huawei.com>
+---
+ include/acpi/processor.h | 34 +++-------------------------------
+ 1 file changed, 3 insertions(+), 31 deletions(-)
 
-Thanks,
-Miklos
+diff --git a/include/acpi/processor.h b/include/acpi/processor.h
+index 360b673f05e5..a4e1081fd0da 100644
+--- a/include/acpi/processor.h
++++ b/include/acpi/processor.h
+@@ -417,40 +417,17 @@ static inline void acpi_processor_throttling_init(void) {}
+ #endif	/* CONFIG_ACPI_CPU_FREQ_PSS */
+ 
+ /* in processor_idle.c */
+-extern struct cpuidle_driver acpi_idle_driver;
+ #ifdef CONFIG_ACPI_PROCESSOR_IDLE
++extern struct cpuidle_driver acpi_idle_driver;
+ int acpi_processor_power_init(struct acpi_processor *pr);
+ int acpi_processor_power_exit(struct acpi_processor *pr);
+ int acpi_processor_power_state_has_changed(struct acpi_processor *pr);
+ int acpi_processor_hotplug(struct acpi_processor *pr);
+ void acpi_processor_register_idle_driver(void);
+ void acpi_processor_unregister_idle_driver(void);
+-#else
+-static inline int acpi_processor_power_init(struct acpi_processor *pr)
+-{
+-	return -ENODEV;
+-}
+-
+-static inline int acpi_processor_power_exit(struct acpi_processor *pr)
+-{
+-	return -ENODEV;
+-}
+-
+-static inline int acpi_processor_power_state_has_changed(struct acpi_processor *pr)
+-{
+-	return -ENODEV;
+-}
+ 
+-static inline int acpi_processor_hotplug(struct acpi_processor *pr)
+-{
+-	return -ENODEV;
+-}
+-static inline void acpi_processor_register_idle_driver(void)
+-{
+-}
+-static inline void acpi_processor_unregister_idle_driver(void)
+-{
+-}
++extern int acpi_processor_ffh_lpi_probe(unsigned int cpu);
++extern int acpi_processor_ffh_lpi_enter(struct acpi_lpi_state *lpi);
+ #endif /* CONFIG_ACPI_PROCESSOR_IDLE */
+ 
+ /* in processor_thermal.c */
+@@ -473,11 +450,6 @@ static inline void acpi_thermal_cpufreq_exit(struct cpufreq_policy *policy)
+ }
+ #endif	/* CONFIG_CPU_FREQ */
+ 
+-#ifdef CONFIG_ACPI_PROCESSOR_IDLE
+-extern int acpi_processor_ffh_lpi_probe(unsigned int cpu);
+-extern int acpi_processor_ffh_lpi_enter(struct acpi_lpi_state *lpi);
+-#endif
+-
+ void acpi_processor_init_invariance_cppc(void);
+ 
+ #endif
+-- 
+2.33.0
+
 
