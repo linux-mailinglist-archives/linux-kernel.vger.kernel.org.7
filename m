@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-799862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01698B43106
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:18:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CAF2B43107
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0E5717588B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:18:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12BC24847F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63811F542A;
-	Thu,  4 Sep 2025 04:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE1B1F131A;
+	Thu,  4 Sep 2025 04:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Ii+YSO6h"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2049.outbound.protection.outlook.com [40.107.223.49])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4s/JzYjr"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2049.outbound.protection.outlook.com [40.107.243.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23ECA1BC58
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 04:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706E91BC58
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 04:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.49
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756959485; cv=fail; b=W9JHtNy+JhuXis8c4CvgiTtURQ8fpjOYCMnFAsMT6QGwrQq4PTDLIDMVJWiWFRlZr8BagieAQb5hCZ2ijtm0reKlcqp9+6jYpQGzmNZ1+sDaYgDM3iM+gna4nblhEEiRb94eQH11IblunLWXOA5PLC+Iu+uGzkgogWNCypF5pvI=
+	t=1756959501; cv=fail; b=BfimGFOTpXKiNc1U1rlIGOhJXDxDVYv4dhV7D7PD2rLk/a9TuHxikiprGu2hhbhkcfXC6ZKNqGS3acFjUJD7oaCB41v4KgNyCYc94E9hg0bPbrlwMZ7efJhwcQX13haVVfs8wfcOlQFGLpl5/5bWoPh4l4vDO/o0ufIFUhEPwWc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756959485; c=relaxed/simple;
-	bh=FMew96lDjvFWNRmBL380KbU2s36MMaSFDFrK5Iczs3M=;
+	s=arc-20240116; t=1756959501; c=relaxed/simple;
+	bh=u2rNDdKkP0SQ0ttI1YOun7g1iJXrLG5/q0Gf95Y4H3c=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UmjjQIBFcIntOvwpv+IxSLw7B0s+MSwGvE+pUehHJGmGUQRqlCFRUAEjWr4TGKHaJg9zHlDQUR4Bp1SfhG+Slwy7dU2yeXYomfKRjxUaf2nH41ZQ84tDBXb8qgiILkreylgElho4g12lYp8eFz+tWkxgm6QN3uOFV05CVNn+e9g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Ii+YSO6h; arc=fail smtp.client-ip=40.107.223.49
+	 MIME-Version:Content-Type; b=FnPb0h7JgLGczMMC9JV5+me1l3zx8CUO2pQDQuuq2iUL+2mCxP92cnyCLlwgCujFN7hI+Qj5lOFBzozSsOL9adklSmMTEvBXX43nw7r+b3kMrEWVdgxtSeMBICheHTV01zTAVUNqmzLl4v79n2x9D9d8Z4oDfVKkLf0a8NmIIC8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4s/JzYjr; arc=fail smtp.client-ip=40.107.243.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vscVgU2glzJBHW8tXqAELLDoJ7k71p7kZKl/xbeANy6BjM2P7XweG1YSQX8SPO5ZGaKqQzbj22hfFpaveypSyw8QEaWDwDcP1dvY28wIQdJFpbaftQXpVg4+Tv1VPNCf2b7PGbEROIvXqQx3Vtc9x3X1Cl5RIOGOgcntE4U56V+XMkgcOVM7UNTKyC7fvt6NICbh0P7c6Wy7lF2X3pb31MqFt5Pif4YkkySAKGWThpF+kMEpjjNR5y1f7px1qD/bljBRzY2ESAIpKXsWg2CFi/So+J4V75tbZMWqjiyrFaEZF+HCdrvUpgFbWVOncwPKqTRVUYbdeiCNl3MSDzEPKA==
+ b=uKzN6czCfgYnrh6YB/TZNDdlgjsEi8TpbtCJpyuONI6edDpp8B2e9FlDY1LKHt9eOZxukYGBLtQY1NyNDFA3G33Eis5XsFmr8+I+/Uj+CIfYOfU0WQx74g3rECt064D6nbfdNku9bu7i4LD+AfAFD4AX/ivts4GDP0toS93xWVQIkTV55b16DPVdsL10qqr3nqJi6hT4nIp3bviHbHHtsXtBccpdvBhJXn6VwYN53asmeDFQ7BRzQa6iU9/ZlRy4XEWNTymyjv5PpgkI/pR9K7hYBfNdoXPU7CtkjIHwv7+xMvjbDqQXFkz+YX+mYwVBszEytKG8XtRPwAK/5L2EEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NxjoBt4iA7Xgr2dFS05ErOIFnuKyixnANaUEZp/wI4Y=;
- b=ZaOnNeieViXIGKu6vepBaP0TL509W2szheB2FH76GYqBcepZ8liJJfzE8cIRGqvIDZ66+NMGbzDHtnl229kVOHP8EOjfpUWor8se5Gv1nC6tiPcPU7MjCajTpLjin9xKHc6gUxKPVEpCrD2nJXw91sfPjOHO5GbrMAyupXOtLLjjSZxfNdLMk2pSK92T+qwMIPjZgevujCeLYvQi8W6MyeQDZkWQW7F8h3ZSHgJYn6YE2ueeUxRpzniroZGpQSxWRSxY0NYRs3sEFnSK6zq0qrEyIec6e5ZDw41pCf7KUEyxhuop2VsoMRNV6GSfjG1kmwk9So5gSaKRY7WWTwEE3g==
+ bh=xAfcEeA5Mf6rl7zoeQLTaVVhpW5455LMFPvJ1SEQB1g=;
+ b=WM0abD+SmF04Bwz5dJPsSrt6j3OmLirtwQc/q+fGCS99GG/d8SRBZZ7TwgK9xx8RJsNjqug9RGG1zPLToVl8Uf3DNVD3OhQiYtB5PxzqL5S+CZAwJ8pEdO/NDBnPtZnUy7Xtn9xUxVG7t8jvw7XD74s8Jp/TR1S0nVGXs1YoOq9zXFiDP63MytFWMJwv3ZeAcasMOeSLqPR0ggkgmU5FazHmu+koc2qv4mPqSNdD8HvNg1rnS9t0k7OBN/MpEsulvxP7p8khZjSpZg/O40Nq5dCwU/9vQDOQAhDHRqHVoeVOKLZ2gvG2d4dHZ0x9sgc7afMiZ8iFf4E8i92moKZv3A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NxjoBt4iA7Xgr2dFS05ErOIFnuKyixnANaUEZp/wI4Y=;
- b=Ii+YSO6hikpn7XwF98Bz0LdHeC1Ei3KmIRJALLjKZxATkAN5i+JsOzxu/EoDsiXzmTb2QhBQwQzsuts5bri0fMj5q9sT8J1vD7PmBIMt2bXGATx23+oXlfJPoIqg/EpYkkSquRv52CfKJApdikOZ6mH03B57ttqDUmEBvENf42o=
-Received: from DM6PR07CA0098.namprd07.prod.outlook.com (2603:10b6:5:337::31)
- by BL1PR12MB5947.namprd12.prod.outlook.com (2603:10b6:208:39a::9) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=xAfcEeA5Mf6rl7zoeQLTaVVhpW5455LMFPvJ1SEQB1g=;
+ b=4s/JzYjrcEpfMuO1Z/FQif07Id3/WGP7uQj8U033xUL3pAtIPAPO2V7s2B/RfF2ohsi5YilRi0vhOPyLgYW491NhIZ7DngYY07ICNRfv8fDfwV/PrFhuPXqrlPLIXpwxdk0gbC7p0H5FNY/FJZAeMnnFrJt4sTnkkQvXOw21fLM=
+Received: from SN4PR0501CA0066.namprd05.prod.outlook.com
+ (2603:10b6:803:41::43) by DS0PR12MB7927.namprd12.prod.outlook.com
+ (2603:10b6:8:147::11) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Thu, 4 Sep
- 2025 04:17:57 +0000
-Received: from CY4PEPF0000E9DC.namprd05.prod.outlook.com
- (2603:10b6:5:337:cafe::ec) by DM6PR07CA0098.outlook.office365.com
- (2603:10b6:5:337::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.16 via Frontend Transport; Thu,
- 4 Sep 2025 04:17:46 +0000
+ 2025 04:18:14 +0000
+Received: from SA2PEPF00001506.namprd04.prod.outlook.com
+ (2603:10b6:803:41:cafe::2) by SN4PR0501CA0066.outlook.office365.com
+ (2603:10b6:803:41::43) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.6 via Frontend Transport; Thu, 4
+ Sep 2025 04:18:14 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CY4PEPF0000E9DC.mail.protection.outlook.com (10.167.241.75) with Microsoft
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF00001506.mail.protection.outlook.com (10.167.242.38) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9094.14 via Frontend Transport; Thu, 4 Sep 2025 04:17:57 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9094.14 via Frontend Transport; Thu, 4 Sep 2025 04:18:14 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 3 Sep
- 2025 23:17:56 -0500
+ 2025 23:18:13 -0500
 Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by satlexmb09.amd.com
  (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Wed, 3 Sep
- 2025 21:17:52 -0700
+ 2025 21:18:09 -0700
 From: K Prateek Nayak <kprateek.nayak@amd.com>
 To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
 	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
@@ -84,9 +84,9 @@ CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
 	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, K Prateek Nayak
 	<kprateek.nayak@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
 	Swapnil Sapkal <swapnil.sapkal@amd.com>
-Subject: [RFC PATCH 08/19] sched/topology: Introduce fallback sd->shared assignment
-Date: Thu, 4 Sep 2025 04:15:04 +0000
-Message-ID: <20250904041516.3046-9-kprateek.nayak@amd.com>
+Subject: [RFC PATCH 09/19] sched/topology: Introduce percpu sd_nohz for nohz state tracking
+Date: Thu, 4 Sep 2025 04:15:05 +0000
+Message-ID: <20250904041516.3046-10-kprateek.nayak@amd.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250904041516.3046-1-kprateek.nayak@amd.com>
 References: <20250904041516.3046-1-kprateek.nayak@amd.com>
@@ -102,280 +102,160 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To satlexmb09.amd.com
  (10.181.42.218)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9DC:EE_|BL1PR12MB5947:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4fc1ce7e-6d8e-4227-fb8d-08ddeb6a06e0
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001506:EE_|DS0PR12MB7927:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7686ed8d-2667-4cbf-6804-08ddeb6a1117
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
+	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?C6s1F37DBprAgDADoNr3cz4uFa/MMOkfmWtXqwQSw62m4PCVRz5EFVGE+qMe?=
- =?us-ascii?Q?gC5nlf+ozSZ3AWIJS3bYQHlkzBP34UwqC4gF72LqFuVIeYFT273SrnHQy6IA?=
- =?us-ascii?Q?VdEADTxo3ffM4PpYyg6XbYKzxuuWQDuZnM0Rh3QCtRIfCja6X90zUvm6tEYd?=
- =?us-ascii?Q?z1tgbhdahh0tVRi5UHuOwGg+pC6a7P7Bp5N1dXHF32Hh3/Zm1wbx4NbLz+Cj?=
- =?us-ascii?Q?MAPtE0lduS32xCz5d1FhlVVsvoG8o3yll0NPq3LSWsqZ1XTotGvuLBj9Y6sV?=
- =?us-ascii?Q?s8OMZ1xvmFestl5vLs9uVP4euckCQutO7B9LcEOWraB3Lx9nMIODXhlxx3gw?=
- =?us-ascii?Q?MlP5m29i8vDCI9iM4x+m4WZXIFp/Y0SIoyA4XgTIMrCA5Hm3casqC0rn0Ct6?=
- =?us-ascii?Q?g+5b2WdFjaUr9sAgcsbFRB3I8wmLSDXLQYdjLIhg25AtdB6DFH+r4GLAVgPG?=
- =?us-ascii?Q?mq0aNrC/KROtgWM3xRkwrwzVOepT8EENYstlCQi6080VjKeQ3pio6COMxQM+?=
- =?us-ascii?Q?SvNa9KR8kW5vvEwdf7zsjJofr5U+RkQfGLgkN4/IbF372NGOo9u/lGqbMZu1?=
- =?us-ascii?Q?c33xOlD8dOBRcPRFsUHJXW+rjuEG1GIP+gYuQCswkB9NOZB2/BdI82I8VKOk?=
- =?us-ascii?Q?o/apUxu3j5Wi47xzXhL6Fv2ym3GowUGUMc4LWKFDD/Rabxh5kgM/HNcsyKjo?=
- =?us-ascii?Q?+o5t1ay8HOyONUGmfTCM22i+wbAUZeD+Qdynvsdlp6FvQXgiHfvfuGk/SYe4?=
- =?us-ascii?Q?KvU8LgmLjimN4CJQ+eHgg2aiqou7Hl4n5he2S+TtP0HvkeuUu5PLzYI/191Z?=
- =?us-ascii?Q?CpmG7m5Wlxdy4DmT+/nQxJof+ujBaaq3khWeo2bJ56pzmHxqEwAKKxLcw/jj?=
- =?us-ascii?Q?8m6yMsKoBDTXUNG0wbINPTK+rd3r6a8DQ54NSBzdoI3TyhxMPf4tPlysU2cd?=
- =?us-ascii?Q?8R/c4tO11NvUC6Xh3tmMfAY6tl7eI+fSVZZhlt/A5cNJO6VgRrcOJhgaWytv?=
- =?us-ascii?Q?z5a5GvpU9LJfqlgNtL7UFEOPWW07WfH2BTtq4vrb/panb4lVG+PzxFFJ9nIC?=
- =?us-ascii?Q?u+ZyYJw8IKp6cqIZxJGU8+vwraEBQ5nznSlqVaY2JcMwLHGYvbyEK8RdjXA1?=
- =?us-ascii?Q?yA4UQo7DiL7WHOdqVvH5fl8hs3gHheBa6/hqRqklag5E8Qz8baF6roZHOCo6?=
- =?us-ascii?Q?aEKd7PteesprFqm5kxLEaEdtSR4GnEPJsQ6qcjgUErk7IBjzbzVRnjyp9jGD?=
- =?us-ascii?Q?CxaxH31LKtzdxG2WCqMSLCFMrdRLhhle658/4JVjwVcIAn/DEMW+Kul94X3w?=
- =?us-ascii?Q?p0+ucN73Mltrz917qB3ypP8R02uYicxz8k9/R6Avb0qS+dPB/DWmIxRDUXzV?=
- =?us-ascii?Q?FIYOvXRHLCIX30b22Tb4PP9R8xb4na513fB4mC6Bj86bXv0JAkpewxIzphkD?=
- =?us-ascii?Q?VXqYNu2dY7PEkYjUXdE7GqvfJB5nzg5iJG/Hx2MGp9y4fMGmNK0pj1WXn7Vk?=
- =?us-ascii?Q?yIJGewSqqGXdmCGFHoHZiHEv+UEa6ucsX4TF?=
+	=?us-ascii?Q?nyuhlNXy+NXArKsGa3HF07VAS9ajcp7aj7jgaw6udApppjZJT2J0rypBIhGQ?=
+ =?us-ascii?Q?GjoWVAVZbTtMAygJPfvjKxXGs6/vn8SXUxPN64d9BMVT5u7WKS3gr3WJTbnl?=
+ =?us-ascii?Q?gUGGmPp9r1KCHL+zegMMHAaXm6UZrGuPbn/Pmr5JHqYTIJn34ve+EkfSBA77?=
+ =?us-ascii?Q?CDbYZEim7TssFpoftgloUpC9+wMWt4Ml5y3khU2U6dFg0U8YID3ctlkrMsr/?=
+ =?us-ascii?Q?QX7xgwv94+Knyovx4Hy9RmJ6epnRGMmY8qIYSxapNPhhNT8WRHBI8wxOLFDF?=
+ =?us-ascii?Q?D8SlaO5zXPIwOEuuNl8aEFXqvxELq2u8WJxeh4ohhQVwW/YMU3m+DLPsbYdI?=
+ =?us-ascii?Q?TkwIg7rMOS9joaTANym4jnZjCuXltFi7F0rlPNMkj+BhxPnhyNufGfgl2O3Q?=
+ =?us-ascii?Q?+jcPQ6HGGRKpeJQ1SjZua47xEvwOKG+iYF7qrhvu2NO7UMvssvCePo4Ykc1i?=
+ =?us-ascii?Q?heoP8XIv1csgqFKVyYc5Ewuikn6VSE+ilkk40AJD6N4Y5Xn/FmnQQYxM+v9f?=
+ =?us-ascii?Q?8pQ18vNOgv8Fte4pllQELXP+eEXARsJKeqNL8YF95oXqjxYSQ4aojVQSM/Ty?=
+ =?us-ascii?Q?IF5hZzT0Rv6yFY1hBfa2QR6xUaw+EEViTGhSFOoAo2o3/AJsvolnFiXnuutg?=
+ =?us-ascii?Q?tqTvRZqUUPRcFjuWczIAMSxOaCcSr07WZaF/D23GH1d3CcmurXcmCUmCSalx?=
+ =?us-ascii?Q?PQ27bKt3Pwo6f1R/j9fw4cQrO0GD4ZQxtrz0lVHx4qFybNMG5By8EVCa3buP?=
+ =?us-ascii?Q?8tXtaH5NWluy2fPzvgWWduU84okoYEi4Y1pZqUiLn1nzKOOz4wZjgDY7XYCu?=
+ =?us-ascii?Q?ASo9pwRCZisa2kzEqLFq9sx0YkO8EZymiDLSFT9KfzDNc20IVR4Sk1hX8/lT?=
+ =?us-ascii?Q?5def8wylbtVjeC1VZtI3IawUUGxPDp5mg+FdeAo9xF4auBtVkszgoleEW3PX?=
+ =?us-ascii?Q?Bn5PFY5RT0/GjYXwtGXayMyul9dYmWcTeFokgbZJ2YpgtD3PFxB8fwjD+NZW?=
+ =?us-ascii?Q?odWo6Q/Ha6p3zK95cI3BZpmeOpTyB8jkpVSratoO+RkYgHam1T0tn7eVvWq6?=
+ =?us-ascii?Q?Q+4MXsLMWjxrq8gfdyZ7EMmaGM2k7E+GPVIMfZKrNi7TKaKYZgYFeT0FeFx2?=
+ =?us-ascii?Q?xdEp4u3qcgVgT+h1356shB490GxhToLks9zpoWPxDw/HtwCVOEMyeeSylGvz?=
+ =?us-ascii?Q?x1dK6tERF4Thqqyf/lZ/KY/olkEqEcCDCX+qhEFbvnXLyN9GbHmX5sHtM6lK?=
+ =?us-ascii?Q?5SDaWVsuLuQe0s9CWVwf2ASgvZKFecfUu4/JAi46UevkzPQVDg2Me5i/hVU/?=
+ =?us-ascii?Q?KhkXXIkxFJqYIakX4pOOIE2DbyrH7ZRPHKqqTSnZ7fSYtqlX1/+lgzfHEaQz?=
+ =?us-ascii?Q?iupGAwsirjoNEh5m3F98tjduTRIuUOZU3RDZ7Wj9wHL3eFrHagQz7W/idw7g?=
+ =?us-ascii?Q?ju3p1dEJ38TIxvNZyVclJYiik+YEWmTf7zLKUoUyhG+WgQR0XvYZno1+kFJQ?=
+ =?us-ascii?Q?3xPTZRytDvc4q7O2ZqMZ82q7WCp2jblN+NFr?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 04:17:57.0060
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 04:18:14.1547
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4fc1ce7e-6d8e-4227-fb8d-08ddeb6a06e0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7686ed8d-2667-4cbf-6804-08ddeb6a1117
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9DC.namprd05.prod.outlook.com
+	SA2PEPF00001506.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5947
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7927
 
-Going forward, tying the nohz balancing to "sd->shared" will require
-each CPU's hierarchy to have at least one "sd->shared" object tracking
-its idle status.
+Add a per-CPU "sd_nohz" variable to track domains in the local CPU's
+hierarchy that have "sd->shared" set for nohz idle tracking.
 
-If the lowest domain of the hierarchy after degeneration does not have
-the SD_SHARE_LLC flag set, assign a per-Node fallback shared object to
-the lowest domain on CONFIG_NO_HZ_COMMON. !CONFIG_NO_HZ_COMMON kernels
-will always have tick enabled on idle CPUs and will not require nohz
-idle tracking.
+Convert cpu_set_sd_state_*() to use "sd_nohz" instead of "sd_llc"
+increasing the scope of tracking to all CPUs with non-NULL sd hierarchy
+attached as opposed to just those CPUs with a "sd_llc" domain.
 
-An example scenario where the fallback shared object is used is as
-follows - Consider a cpuset with 17CPUs where 16CPUs are from the same
-LLC and a singleton CPU from another LLC:
+"sd_nohz" will be used in a subsequent commit to transition
+nohz_balancer_kick() to use the distributed nohz idle tracking.
 
-  CPU0:
-  domain0: MC {0-15}
-    groups: {0} {1} ... {15}
-    domain1: PKG {0-16}
-      groups: {0-15} {16}
-  ...
-  CPU15:
-  domain0: MC {0-15}
-    groups: {15} {0} {1} ... {14}
-    domain1: PKG {0-16}
-      groups: {0-15} {16}
-  CPU16:
-  # MC is degenerated since {16} is the only CPU is the domain
-  domain0: PKG {0-15}
-    groups: {16} {0-15}
-  # Assign sd[PKG]->shared = fallback_dhared[cpu_to_node(16)]
-
-If the lowest domain is a SD_OVERLAP domain, "sd->shared" is only shared
-by the CPUs on the same node and not the entire domain. This is
-acceptable since the fallback shared object is only keeping track of the
-CPU's idle status unlike sd_llc_shared which also tracks
-"has_idle_cores" and "nr_idle_scan".
-
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
 Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 ---
- kernel/sched/topology.c | 123 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 117 insertions(+), 6 deletions(-)
+ kernel/sched/fair.c     |  4 ++--
+ kernel/sched/sched.h    |  2 ++
+ kernel/sched/topology.c | 22 ++++++++++++++++++++++
+ 3 files changed, 26 insertions(+), 2 deletions(-)
 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index dee0ded7f40d..624b3753c818 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -12451,7 +12451,7 @@ static void set_cpu_sd_state_busy(int cpu)
+ 
+ 	guard(rcu)();
+ 
+-	sd = rcu_dereference(per_cpu(sd_llc, cpu));
++	sd = rcu_dereference(per_cpu(sd_nohz, cpu));
+ 	if (!sd || !sd->nohz_idle)
+ 		return;
+ 
+@@ -12481,7 +12481,7 @@ static void set_cpu_sd_state_idle(int cpu)
+ 
+ 	guard(rcu)();
+ 
+-	sd = rcu_dereference(per_cpu(sd_llc, cpu));
++	sd = rcu_dereference(per_cpu(sd_nohz, cpu));
+ 	if (!sd || sd->nohz_idle)
+ 		return;
+ 
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 9ae3e2993641..35ffb3926334 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -3097,6 +3097,8 @@ extern void cfs_bandwidth_usage_dec(void);
+ 
+ #define nohz_flags(cpu)		(&cpu_rq(cpu)->nohz_flags)
+ 
++DECLARE_PER_CPU(struct sched_domain __rcu *, sd_nohz);
++
+ extern void nohz_balance_exit_idle(struct rq *rq);
+ #else /* !CONFIG_NO_HZ_COMMON: */
+ static inline void nohz_balance_exit_idle(struct rq *rq) { }
 diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 0b0257937a97..d71c60d99313 100644
+index d71c60d99313..f230892528c7 100644
 --- a/kernel/sched/topology.c
 +++ b/kernel/sched/topology.c
-@@ -455,6 +455,96 @@ static bool build_perf_domains(const struct cpumask *cpu_map)
- static void free_pd(struct perf_domain *pd) { }
- #endif /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
+@@ -466,6 +466,8 @@ struct s_data {
  
-+struct s_data {
-+#ifdef CONFIG_NO_HZ_COMMON
-+	struct sched_domain_shared **fallback_nohz_sds;
-+#endif
-+	struct sched_domain_shared * __percpu *sds;
-+	struct sched_domain * __percpu *sd;
-+	struct root_domain	*rd;
-+};
+ #ifdef CONFIG_NO_HZ_COMMON
+ 
++DEFINE_PER_CPU(struct sched_domain __rcu *, sd_nohz);
 +
-+#ifdef CONFIG_NO_HZ_COMMON
-+
-+static int __fallback_sds_alloc(struct s_data *d, unsigned long *visited_nodes)
-+{
-+	int j;
-+
-+	d->fallback_nohz_sds = kcalloc(nr_node_ids,
-+			sizeof(*d->fallback_nohz_sds), GFP_KERNEL);
-+	if (!d->fallback_nohz_sds)
-+		return -ENOMEM;
-+
-+	/*
-+	 * Allocate a fallback sd->shared object
-+	 * for each node covered by the cpu_map.
-+	 */
-+	for_each_set_bit(j, visited_nodes, nr_node_ids) {
-+		struct sched_domain_shared *sds;
-+
-+		sds = kzalloc_node(sizeof(struct sched_domain_shared),
-+				GFP_KERNEL, j);
-+		if (!sds)
-+			return -ENOMEM;
-+
-+		d->fallback_nohz_sds[j] = sds;
-+	}
-+
-+	return 0;
-+}
-+
-+static void __fallback_sds_free(struct s_data *d)
-+{
-+	int j;
-+
-+	if (!d->fallback_nohz_sds)
-+		return;
-+
-+	for (j = 0; j < nr_node_ids; ++j)
-+		kfree(d->fallback_nohz_sds[j]);
-+
-+	kfree(d->fallback_nohz_sds);
-+	d->fallback_nohz_sds = NULL;
-+}
-+
-+static void assign_fallback_sds(struct s_data *d, struct sched_domain *sd, int cpu)
-+{
-+	struct sched_domain_shared *sds;
-+
-+	sds = d->fallback_nohz_sds[cpu_to_node(cpu)];
-+	sd->shared = sds;
-+	atomic_inc(&sd->shared->ref);
-+}
-+
-+static void claim_fallback_sds(struct s_data *d)
-+{
-+	int j;
-+
-+	/*
-+	 * Claim allocations for the fallback shared objects
-+	 * if they were assigned during cpu_attach_domain().
-+	 */
-+	for (j = 0; j < nr_node_ids; ++j) {
-+		struct sched_domain_shared *sds = d->fallback_nohz_sds[j];
-+
-+		if (sds && atomic_read(&sds->ref))
-+			d->fallback_nohz_sds[j] = NULL;
-+	}
-+}
-+
-+#else /* !CONFIG_NO_HZ_COMMON */
-+
-+static inline int __fallback_sds_alloc(struct s_data *d, unsigned long *visited_nodes)
-+{
-+	return 0;
-+}
-+
-+static inline void __fallback_sds_free(struct s_data *d) { }
-+static inline void assign_fallback_sds(struct s_data *d, struct sched_domain *sd, int cpu) { }
-+static inline void claim_fallback_sds(struct s_data *d) { }
-+
-+#endif /* CONFIG_NO_HZ_COMMON */
-+
- static void free_rootdomain(struct rcu_head *rcu)
+ static int __fallback_sds_alloc(struct s_data *d, unsigned long *visited_nodes)
  {
- 	struct root_domain *rd = container_of(rcu, struct root_domain, rcu);
-@@ -716,12 +806,6 @@ static void update_top_cache_domain(int cpu)
- 	rcu_assign_pointer(per_cpu(sd_asym_cpucapacity, cpu), sd);
- }
- 
--struct s_data {
--	struct sched_domain_shared * __percpu *sds;
--	struct sched_domain * __percpu *sd;
--	struct root_domain	*rd;
--};
--
- /*
-  * Attach the domain 'sd' to 'cpu' as its base domain. Callers must
-  * hold the hotplug lock.
-@@ -790,6 +874,14 @@ cpu_attach_domain(struct s_data *d, int cpu)
- 		}
- 	}
- 
-+	/*
-+	 * Ensure there is at least one domain in the
-+	 * hierarchy with sd->shared attached to
-+	 * ensure participation in nohz balancing.
-+	 */
-+	if (sd && !(sd->flags & SD_SHARE_LLC))
-+		assign_fallback_sds(d, sd, cpu);
-+
- 	sched_domain_debug(sd, cpu);
- 
- 	tmp = rq->sd;
-@@ -2387,12 +2479,19 @@ static void __sdt_free(const struct cpumask *cpu_map)
- 
- static int __sds_alloc(struct s_data *d, const struct cpumask *cpu_map)
- {
-+	unsigned long *visited_nodes;
  	int j;
- 
-+	visited_nodes = bitmap_alloc(nr_node_ids, GFP_KERNEL);
-+	if (!visited_nodes)
-+		return -ENOMEM;
-+
- 	d->sds = alloc_percpu(struct sched_domain_shared *);
- 	if (!d->sds)
- 		return -ENOMEM;
- 
-+	bitmap_zero(visited_nodes, nr_node_ids);
-+
- 	for_each_cpu(j, cpu_map) {
- 		struct sched_domain_shared *sds;
- 
-@@ -2401,9 +2500,13 @@ static int __sds_alloc(struct s_data *d, const struct cpumask *cpu_map)
- 		if (!sds)
- 			return -ENOMEM;
- 
-+		bitmap_set(visited_nodes, cpu_to_node(j), 1);
- 		*per_cpu_ptr(d->sds, j) = sds;
+@@ -532,6 +534,23 @@ static void claim_fallback_sds(struct s_data *d)
  	}
- 
-+	if (__fallback_sds_alloc(d, visited_nodes))
-+		return -ENOMEM;
-+
- 	return 0;
  }
  
-@@ -2417,6 +2520,8 @@ static void __sds_free(struct s_data *d, const struct cpumask *cpu_map)
- 	for_each_cpu(j, cpu_map)
- 		kfree(*per_cpu_ptr(d->sds, j));
- 
-+	__fallback_sds_free(d);
-+
- 	free_percpu(d->sds);
- 	d->sds = NULL;
- }
-@@ -2655,6 +2760,12 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
- 		if (lowest_flag_domain(i, SD_CLUSTER))
- 			has_cluster = true;
- 	}
++static void update_nohz_domain(int cpu)
++{
++	struct sched_domain *sd = highest_flag_domain(cpu, SD_SHARE_LLC);
 +
 +	/*
-+	 * Claim allocations for the fallback shared objects
-+	 * if they were assigned during cpu_attach_domain().
++	 * If sd_llc doesn't exist, use the lowest sd for nohz idle
++	 * tracking. cpu_attach_domain() already ensures sd->shared is
++	 * assigned for the lowest domain if sd_llc doesn't exist after
++	 * degeneration of the hierarchy.
 +	 */
-+	claim_fallback_sds(&d);
- 	rcu_read_unlock();
++	if (!sd)
++		sd = rcu_dereference(cpu_rq(cpu)->sd);
++
++	WARN_ON_ONCE(sd && !sd->shared);
++	rcu_assign_pointer(per_cpu(sd_nohz, cpu), sd);
++}
++
+ #else /* !CONFIG_NO_HZ_COMMON */
  
- 	if (has_asym)
+ static inline int __fallback_sds_alloc(struct s_data *d, unsigned long *visited_nodes)
+@@ -542,6 +561,7 @@ static inline int __fallback_sds_alloc(struct s_data *d, unsigned long *visited_
+ static inline void __fallback_sds_free(struct s_data *d) { }
+ static inline void assign_fallback_sds(struct s_data *d, struct sched_domain *sd, int cpu) { }
+ static inline void claim_fallback_sds(struct s_data *d) { }
++static inline void update_nohz_domain(int cpu) { }
+ 
+ #endif /* CONFIG_NO_HZ_COMMON */
+ 
+@@ -804,6 +824,8 @@ static void update_top_cache_domain(int cpu)
+ 
+ 	sd = lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY_FULL);
+ 	rcu_assign_pointer(per_cpu(sd_asym_cpucapacity, cpu), sd);
++
++	update_nohz_domain(cpu);
+ }
+ 
+ /*
 -- 
 2.34.1
 
