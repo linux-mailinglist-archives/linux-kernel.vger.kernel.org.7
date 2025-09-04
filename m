@@ -1,308 +1,189 @@
-Return-Path: <linux-kernel+bounces-800252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF01DB4355A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:17:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A291B4354B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1550B18830EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:16:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E23F1745EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFA823817E;
-	Thu,  4 Sep 2025 08:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06852BE7BA;
+	Thu,  4 Sep 2025 08:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="cg0TBEAe"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OS4pUQHN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845422AE68
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2BC19E7F8;
+	Thu,  4 Sep 2025 08:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756973785; cv=none; b=q5O3+B+3zWh2NQstLPSZdL7ov3Muk3ek0MF28yUr89Ha2lLVygvwG1PExrmoy+R+XADvARZne2ohHFD8dUZJVxYlj/9zOewlx1dTxf6jSBU1sTrW+9KyPJI+UDSVSGQnR/Ffk/TOX+D3ULfwK5r/yZOyRGSVpWCcim2PYa8yQQo=
+	t=1756973797; cv=none; b=n54V4f5F/4pI9+hvTZAl45DRaViZ7rNPaMGjV6Avq/25lTm3cAX/KDV092VatLLhBLHob+QlXP46eKRTRChtdr6jhQG77V3jteC6OilFdDaCDMEl2V5OjtTEkSWebGsm3ExbVXU5GQs2BBiyyDpnJV+DpxAieido4PskE99Hki8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756973785; c=relaxed/simple;
-	bh=lEAo/i+3UCtQzxnQIa3OX2Jw6ExCPfTRbgK3vT4vdPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h+pi6wxPitmUwvLPHfwpbyAcR3CnN/QvxXeTK9NeeDCqWXAh4fOVbKKiL4vx499aV4mBnQuiSZCKmrb+jUE7Ir+8fyCCiNf+1UiLFYp10Hyqilp6pnA60t8uTzzVMFZXjs1qXAdWq8cXw8IUnlH+LYVXrBdINJbAkVupFEmxT2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=cg0TBEAe; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b4f9d61e7deso461231a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 01:16:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756973783; x=1757578583; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2ADLLJPjcyHqMqFotpE8rqFKN/fEUykCZgiIgkTBpDE=;
-        b=cg0TBEAeOWhVFEUURnCTKfzdpOWvniVT9JwxfLzP1LebAddY3lsxN60xJ8Xa3SyiRk
-         q9T/idpgLORo62CXQNFdmVEvANgcQgKFdTYCmBEMQILASdLcLSXepapB9RvFT/Osd5Dy
-         zyFN9d4dHMBtrkeswyH0ZD5c5YO/KrddLjFk3fYhKIv+YhHjAx5iQfjLoowutka6JAjS
-         DVysAcyilAvFWomsMquyXH+oD+DjSseNJ8+yJd161gyDhTZShFdRXLP0K9bWQTlH+FuJ
-         UyRcC4NxihSvCqptUcoX+1NAm2n+fpRG1PXQmQAOoAb3sl1SUBKm/xm2ZjZcjCrwh30v
-         3yxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756973783; x=1757578583;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ADLLJPjcyHqMqFotpE8rqFKN/fEUykCZgiIgkTBpDE=;
-        b=Tv12sF6kuk8pDUE1q+/HeAXASLh2AisTFj5ScISfsm1fDmoQWV8nzID/9jSUXv+L1k
-         /sxwDx24thuusDzUyyJzqTOcNSuJZLhO9q5Un7OjwvTqBsdatbLGDnce+lj20t2HEMzX
-         rnTgPAhEfzrKKEBpEBiGn/tajYS4vrBuJGXmylV6gDwS8rwq2KIYcD+V475uBkBJ53i+
-         JL/Exy44Y+hId8w8t8OtcTgSG2CHrpMElS68s053nnEEdYFc+2mZIY+t9T1MSstKpdvK
-         3uOY2bFy2jxl3DMSUaHtGzwUOUPhzKzUj7o7hiV2OoDe2dP0Kk7fI3TUen8+w6aFzpBO
-         HFTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUT1EMu5ukFp6X8nzs0yDHn1C2Rpcb5/XYX2Fz3GF3yJMTsbchYmLVZhNTjFVFkbxSh409soz9x/ie6Wlo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6n2Bjyow5BFc3bo46zywEfga0sf5k5uteOC7Y80BfqPzwM0Yc
-	ZVNWDloPEkyaZ8G/lQrKkRolQKseS8AADq2dosdZItuhiTsIoAubKIlV7oA8NcoKPA==
-X-Gm-Gg: ASbGncviqebmdGJxk7R3E6uSReiojCzFFSrUBzAMOCzdXAyVP1Sza/3eADFR6C+mpPW
-	tmSvjKyMQGvoT6JhWdXBs/SdxGbp3KiepnY5SKuQOOKR1dhK6XlfS8tQVm6w+wZ6HmcMaMEAsSQ
-	YtnT7VUxwyqHQvaV/G04twoiC3DpnClK7+MXUM7Mek4nN6Su2Aq/vXbD8kyrC+v9E8332rzkVya
-	hm7we899DJ0/0g4QoCGeD7/RWkXako5VjRwZfUCNmpfj8OzVKGJFPduacO8YrpIVK1qgRDt8Zl+
-	ugo0hOdZH8J40L9blGb+lgp7cuTHJFxabW4mV9oFJAJzyvxPPrA3/cedG5HSlcqrjmoDWBPiiZW
-	QTfpjzfdjv1WGFOPyx1Z7SgNcVxCJhEHwKqB256yw9YeRULHlmw==
-X-Google-Smtp-Source: AGHT+IG31mZwNCOcdnsyBIHLSET1LHfkzf8HUmPQ3hOewg/SGDXYr3rw24rtaKmNjAbwfDspCWCIKg==
-X-Received: by 2002:a17:902:ecc1:b0:24c:b54e:bf0a with SMTP id d9443c01a7336-24cb54ec1c4mr40210455ad.0.1756973782487;
-        Thu, 04 Sep 2025 01:16:22 -0700 (PDT)
-Received: from bytedance ([61.213.176.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24903702396sm183459885ad.14.2025.09.04.01.16.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 01:16:21 -0700 (PDT)
-Date: Thu, 4 Sep 2025 16:16:11 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Benjamin Segall <bsegall@google.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Matteo Martelli <matteo.martelli@codethink.co.uk>,
-	Michal Koutn?? <mkoutny@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v4 3/5] sched/fair: Switch to task based throttle model
-Message-ID: <20250904081611.GE42@bytedance>
-References: <20250829081120.806-1-ziqianlu@bytedance.com>
- <20250829081120.806-4-ziqianlu@bytedance.com>
- <20250903145124.GM4067720@noisy.programming.kicks-ass.net>
- <14be66aa-e088-4267-ac10-d04d600b1294@amd.com>
- <xm26o6rrtgav.fsf@google.com>
+	s=arc-20240116; t=1756973797; c=relaxed/simple;
+	bh=0uRVCZgU5phbSJgXhd7NozI3rO8rlqQp8LratVeijWo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CTv+WvpJb29jgjkpAO6xfzPw6f+UyhKpbzWZnIVRBnt7p/xtLpuJrdd/i5cm72e3behu2GFsAUbad3i/p6tdvgj/9akHKZmHcMR/EHw0YrELBJplwmSKHGOD4ozZ+fWmXqu3sLY9Zl0u4SpWzACw2gMT0nGQHf/kskzu8tPCcCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OS4pUQHN; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756973795; x=1788509795;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=0uRVCZgU5phbSJgXhd7NozI3rO8rlqQp8LratVeijWo=;
+  b=OS4pUQHNiwbGaAvhrSjGkRWZPHsvjh3fmUVSAIlADV3lwj4OIVHiLVMf
+   qOkmJPT0XA6TsV5/UjFKIWqyvfxhc+YAaAjwljGOJjZUSvmSVkAr4dRSr
+   5i6sCeF8C9NiqQAWyAB1mnDr4kBXvuNskrg7c3p6uJzN8TEFnX0swpQ0P
+   dI1YLWwU9Mzp7ztbyJr0/ulFr2xtnQ0uolYEc6pr1gqXWyAoEN60s9naj
+   y/pj2zKOGjo9NcWxRR5jqPmWritIvEER+4ludlIT0axQHkE8eknhJSNRC
+   999SkY3GI8wevYc3sgp+vyg04DTOQStRpHujAhc5OnZt9NPYJP6lX+dFG
+   w==;
+X-CSE-ConnectionGUID: NFzTnAEmSiC40fv81Fd0ww==
+X-CSE-MsgGUID: ALUj9ZCrTP+2hq/BM9+IFQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81891358"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="81891358"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:16:34 -0700
+X-CSE-ConnectionGUID: lElWuWOzTQOck6HQYwVykQ==
+X-CSE-MsgGUID: tn/sM+FSTaS9YffOShqeRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="177047588"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:16:29 -0700
+Message-ID: <0d3229ff-2359-4ade-a715-c8af56c2916c@linux.intel.com>
+Date: Thu, 4 Sep 2025 16:16:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xm26o6rrtgav.fsf@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 18/23] x86/virt/tdx: Do not perform cache flushes
+ unless CLFLUSH_BEFORE_ALLOC is set
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, x86@kernel.org, rick.p.edgecombe@intel.com,
+ dave.hansen@intel.com, kas@kernel.org, tabba@google.com,
+ ackerleytng@google.com, quic_eberman@quicinc.com, michael.roth@amd.com,
+ david@redhat.com, vannapurve@google.com, vbabka@suse.cz,
+ thomas.lendacky@amd.com, pgonda@google.com, zhiquan1.li@intel.com,
+ fan.du@intel.com, jun.miao@intel.com, ira.weiny@intel.com,
+ isaku.yamahata@intel.com, xiaoyao.li@intel.com, chao.p.peng@intel.com
+References: <20250807093950.4395-1-yan.y.zhao@intel.com>
+ <20250807094516.4705-1-yan.y.zhao@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250807094516.4705-1-yan.y.zhao@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 03, 2025 at 01:46:48PM -0700, Benjamin Segall wrote:
-> K Prateek Nayak <kprateek.nayak@amd.com> writes:
-> 
-> > Hello Peter,
-> >
-> > On 9/3/2025 8:21 PM, Peter Zijlstra wrote:
-> >>>  static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
-> >>>  {
-> >>> +	if (task_is_throttled(p)) {
-> >>> +		dequeue_throttled_task(p, flags);
-> >>> +		return true;
-> >>> +	}
-> >>> +
-> >>>  	if (!p->se.sched_delayed)
-> >>>  		util_est_dequeue(&rq->cfs, p);
-> >>>  
-> >> 
-> >> OK, so this makes it so that either a task is fully enqueued (all
-> >> cfs_rq's) or full not. A group cfs_rq is only marked throttled when all
-> >> its tasks are gone, and unthrottled when a task gets added. Right?
-> >
-> > cfs_rq (and the hierarchy below) is marked throttled when the quota
-> > has elapsed. Tasks on the throttled hierarchies will dequeue
-> > themselves completely via task work added during pick. When the last
-> > task leaves on a cfs_rq of throttled hierarchy, PELT is frozen for
-> > that cfs_rq.
-> >
-> > When a new task is added on the hierarchy, the PELT is unfrozen and
-> > the task becomes runnable. The cfs_rq and the hierarchy is still
-> > marked throttled.
-> >
-> > Unthrottling of hierarchy is only done at distribution.
-> >
-> >> 
-> >> But propagate_entity_cfs_rq() is still doing the old thing, and has a
-> >> if (cfs_rq_throttled(cfs_rq)) break; inside the for_each_sched_entity()
-> >> iteration.
-> >> 
-> >> This seems somewhat inconsistent; or am I missing something ? 
-> >
-> > Probably an oversight. But before that, what was the reason to have
-> > stopped this propagation at throttled_cfs_rq() before the changes?
-> >
-> 
-> Yeah, this was one of the things I was (slowly) looking at - with this
-> series we currently still abort in:
-> 
-> 1) update_cfs_group
-> 2) dequeue_entities's set_next_buddy
-> 3) check_preempt_fair
-> 4) yield_to
-> 5) propagate_entity_cfs_rq
-> 
-> In the old design on throttle immediately remove the entire cfs_rq,
-> freeze time for it, and stop adjusting load. In the new design we still
-> pick from it, so we definitely don't want to stop time (and don't). I'm
-> guessing we probably also want to now adjust load for it, but it is
-> arguable - since all the cfs_rqs for the tg are likely to throttle at the
-> same time, so we might not want to mess with the shares distribution,
-> since when unthrottle comes around the most likely correct distribution
-> is the distribution we had at the time of throttle.
+
+
+On 8/7/2025 5:45 PM, Yan Zhao wrote:
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 >
-
-I can give it a test to see how things change by adjusting load and share
-distribution using my previous performance tests.
-
-> Assuming we do want to adjust load for a throttle then we probably want
-> to remove the aborts from update_cfs_group and propagate_entity_cfs_rq.
-> I'm guessing that we need the list_add_leaf_cfs_rq from propagate, but
-> I'm not 100% sure when they are actually doing something in propagate as
-> opposed to enqueue.
+> The TDX module enumerates with a TDX_FEATURES0 bit if an explicit cache
+> flush is necessary when switching KeyID for a page, like before
+> handing the page over to a TD.
 >
+> Currently, none of the TDX-capable platforms have this bit enabled.
+>
+> Moreover, cache flushing with TDH.PHYMEM.PAGE.WBINVD fails if
+> Dynamic PAMT is active and the target page is not 4k. The SEAMCALL only
+> supports 4k pages and will fail if there is no PAMT_4K for the HPA.
+>
+> Avoid performing these cache flushes unless the CLFLUSH_BEFORE_ALLOC bit
+> of TDX_FEATURES0 is set.
+>
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> ---
+> RFC v2:
+> - Pulled from
+>    git://git.kernel.org/pub/scm/linux/kernel/git/kas/linux.git tdx/dpamt-huge.
+> - Rebased on top of TDX huge page RFC v2 (Yan)
+> ---
+>   arch/x86/include/asm/tdx.h  |  1 +
+>   arch/x86/virt/vmx/tdx/tdx.c | 19 +++++++++++++------
+>   2 files changed, 14 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
+> index f1bd74348b34..c058a82d4a97 100644
+> --- a/arch/x86/include/asm/tdx.h
+> +++ b/arch/x86/include/asm/tdx.h
+> @@ -15,6 +15,7 @@
+>   
+>   /* Bit definitions of TDX_FEATURES0 metadata field */
+>   #define TDX_FEATURES0_NO_RBP_MOD		BIT_ULL(18)
+> +#define TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC	BIT_ULL(23)
+>   #define TDX_FEATURES0_DYNAMIC_PAMT		BIT_ULL(36)
+>   
+>   #ifndef __ASSEMBLER__
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+> index 9ed585bde062..b7a0ee0f4a50 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.c
+> +++ b/arch/x86/virt/vmx/tdx/tdx.c
+> @@ -1648,14 +1648,13 @@ static inline u64 tdx_tdvpr_pa(struct tdx_vp *td)
+>   	return page_to_phys(td->tdvpr_page);
+>   }
+>   
+> -/*
+> - * The TDX module exposes a CLFLUSH_BEFORE_ALLOC bit to specify whether
+> - * a CLFLUSH of pages is required before handing them to the TDX module.
+> - * Be conservative and make the code simpler by doing the CLFLUSH
+> - * unconditionally.
+> - */
+>   static void tdx_clflush_page(struct page *page)
+>   {
+> +	u64 tdx_features0 = tdx_sysinfo.features.tdx_features0;
+> +
+> +	if (tdx_features0 & TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC)
 
-Yes, commit 0258bdfaff5bd("sched/fair: Fix unfairness caused by missing 
-load decay") added that list_add_leaf_cfs_rq() in
-propagate_entity_cfs_rq() to fix a problem.
+According to the cover letter, if TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC is enabled,
+an explicit cache flush is necessary.
+Shouldn't this and below be:
+if (!(tdx_features0 & TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC))
 
-> The other 3 are the same sort of thing - scheduling pick heuristics
-> which imo are pretty arbitrary to keep. We can reasonably say that "the
-> most likely thing a task in a throttled hierarchy will do is just go
-> throttle itself, so we shouldn't buddy it or let it preempt", but it
-> would also be reasonable to let them preempt/buddy normally, in case
-> they hold locks or such.
-
-I think we do not need to special case tasks in throttled hierarchy in
-check_preempt_wakeup_fair().
-
-> 
-> yield_to is used by kvm and st-dma-fence-chain.c. Yielding to a
-> throttle-on-exit kvm cpu thread isn't useful (so no need to remove the
-> abort there). The dma code is just yielding to a just-spawned kthread,
-> so it should be fine either way.
-
-Get it.
-
-The cumulated diff I'm going to experiment is below, let me know if
-something is wrong, thanks.
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 3e927b9b7eeb6..c2e46b8e5e3d9 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3957,9 +3957,6 @@ static void update_cfs_group(struct sched_entity *se)
- 	if (!gcfs_rq || !gcfs_rq->load.weight)
- 		return;
- 
--	if (throttled_hierarchy(gcfs_rq))
--		return;
--
- 	shares = calc_group_shares(gcfs_rq);
- 	if (unlikely(se->load.weight != shares))
- 		reweight_entity(cfs_rq_of(se), se, shares);
-@@ -5234,6 +5231,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 
- static void check_enqueue_throttle(struct cfs_rq *cfs_rq);
- static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
-+static inline int cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq);
- 
- static void
- requeue_delayed_entity(struct sched_entity *se);
-@@ -5729,6 +5727,11 @@ static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
- 	return cfs_bandwidth_used() && cfs_rq->throttled;
- }
- 
-+static inline int cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
-+{
-+	return cfs_bandwidth_used() && cfs_rq->pelt_clock_throttled;
-+}
-+
- /* check whether cfs_rq, or any parent, is throttled */
- static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
- {
-@@ -6721,6 +6724,11 @@ static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
- 	return 0;
- }
- 
-+static inline int cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
-+{
-+	return 0;
-+}
-+
- static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
- {
- 	return 0;
-@@ -7074,7 +7082,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
- 			 * Bias pick_next to pick a task from this cfs_rq, as
- 			 * p is sleeping when it is within its sched_slice.
- 			 */
--			if (task_sleep && se && !throttled_hierarchy(cfs_rq))
-+			if (task_sleep && se)
- 				set_next_buddy(se);
- 			break;
- 		}
-@@ -8722,15 +8730,6 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
- 	if (unlikely(se == pse))
- 		return;
- 
--	/*
--	 * This is possible from callers such as attach_tasks(), in which we
--	 * unconditionally wakeup_preempt() after an enqueue (which may have
--	 * lead to a throttle).  This both saves work and prevents false
--	 * next-buddy nomination below.
--	 */
--	if (unlikely(throttled_hierarchy(cfs_rq_of(pse))))
--		return;
--
- 	if (sched_feat(NEXT_BUDDY) && !(wake_flags & WF_FORK) && !pse->sched_delayed) {
- 		set_next_buddy(pse);
- 	}
-@@ -13154,10 +13153,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
- {
- 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
- 
--	if (cfs_rq_throttled(cfs_rq))
--		return;
--
--	if (!throttled_hierarchy(cfs_rq))
-+	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
- 		list_add_leaf_cfs_rq(cfs_rq);
- 
- 	/* Start to propagate at parent */
-@@ -13168,10 +13164,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
- 
- 		update_load_avg(cfs_rq, se, UPDATE_TG);
- 
--		if (cfs_rq_throttled(cfs_rq))
--			break;
--
--		if (!throttled_hierarchy(cfs_rq))
-+		if (!cfs_rq_pelt_clock_throttled(cfs_rq))
- 			list_add_leaf_cfs_rq(cfs_rq);
- 	}
- }
--- 
-2.39.5
+> +		return;
+> +
+>   	clflush_cache_range(page_to_virt(page), PAGE_SIZE);
+>   }
+>   
+> @@ -2030,8 +2029,12 @@ EXPORT_SYMBOL_GPL(tdh_phymem_cache_wb);
+>   
+>   u64 tdh_phymem_page_wbinvd_tdr(struct tdx_td *td)
+>   {
+> +	u64 tdx_features0 = tdx_sysinfo.features.tdx_features0;
+>   	struct tdx_module_args args = {};
+>   
+> +	if (tdx_features0 & TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC)
+> +		return 0;
+> +
+>   	args.rcx = mk_keyed_paddr(tdx_global_keyid, td->tdr_page);
+>   
+>   	return seamcall(TDH_PHYMEM_PAGE_WBINVD, &args);
+> @@ -2041,10 +2044,14 @@ EXPORT_SYMBOL_GPL(tdh_phymem_page_wbinvd_tdr);
+>   u64 tdh_phymem_page_wbinvd_hkid(u64 hkid, struct folio *folio,
+>   				unsigned long start_idx, unsigned long npages)
+>   {
+> +	u64 tdx_features0 = tdx_sysinfo.features.tdx_features0;
+>   	struct page *start = folio_page(folio, start_idx);
+>   	struct tdx_module_args args = {};
+>   	u64 err;
+>   
+> +	if (tdx_features0 & TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC)
+> +		return 0;
+> +
+>   	if (start_idx + npages > folio_nr_pages(folio))
+>   		return TDX_OPERAND_INVALID;
+>   
 
 
