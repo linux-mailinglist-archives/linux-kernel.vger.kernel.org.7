@@ -1,115 +1,96 @@
-Return-Path: <linux-kernel+bounces-800235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14412B434F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:09:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52ABBB434F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 302DB1C826C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:09:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA3F3B6254
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BCA2BEFE0;
-	Thu,  4 Sep 2025 08:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5459C2BFC9D;
+	Thu,  4 Sep 2025 08:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="FrLPMhUV"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SAUscH97"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D442BE7CB;
-	Thu,  4 Sep 2025 08:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB4B2BF3CC
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756973341; cv=none; b=WdwUwoiYF8HOYHg7qZAglagNTAZmTS3V83ejR48x16fv+zXKZS8GGeBusH4xySmIcm/3DVv7z9sdo/np3GHvWseZGL6ZatbCn+i5n2JIN0/Qa5AkLph+YSTZbp3pOhcZZFbyOQPzgAgH0PV7A2dRXtdPjjbz8xyYYAW1UgWOWcs=
+	t=1756973328; cv=none; b=rxhD73XlK7yQDbhsXCG//MjN2u96Gbza2uEgjmL42akizbvgfOOkSWmxMJ5niolQ/KXgjvU/bjvEj5PQqyLHajJT1rrA+tMT2aZv5+3z1i6dA2R9heLYUI4EdDoW0ucp/mlojEG0YtDzqrs2v4ZRHPIW5Qa4biYcJu6LG1SUsfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756973341; c=relaxed/simple;
-	bh=sQRZUjw/NuitnjZWeXvE6DX3fE7M+HJx/GrD6grhYyE=;
+	s=arc-20240116; t=1756973328; c=relaxed/simple;
+	bh=D5/uCG0kH3sTiEMP/8vh8oyfqVnBuKNNC2AFU/Q2BvY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OmW3lDWzcmXcGIJkaD+A0rlGe/ovnS7nKkWiX7Xn1+z846t+YD5hc9K1xZRE6n1r07gBXtdQ0LUAlkRSj7Z4KUfmmkbocfZ/GS7SKLfKKYoKbGhunGdrIeIwIzFGHKgfU/fUtDSkOQFxfUMs2ND7+6Y7IUgqMptv/qIqsazrQMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=FrLPMhUV; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1014C1038C103;
-	Thu,  4 Sep 2025 10:08:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1756973330; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=XxYVzgu681T/LCDB4jGVbJTLbaYqK3/BHA7KYwFFKUQ=;
-	b=FrLPMhUV9tkmO2CwWeGevu8h9/1ZLpF9mQqUCbpNsRwGBcq5SUN5ArLZKfuTRp/8tKwdUN
-	bCdHhPrRX7gHIwfj7Q+kxXkrgYZyn5KPAnm9cF3pE3jjLJDa03Xpr8jZaOEc1L3w9NXFXV
-	LqdpFA5e6IOwmQj52AHHbsTOaKMnUspKYjW9Z3+vSioU3QyhUioMcYITRlKfqHeP5VyOSB
-	S0Cul0CeEqgZPfnyzqoJjnrVZGoO5O1t9BZm6+x11whb37cv0LB6NMlM88BrRZwvx7yvSz
-	DNUYYm2rsDrIfexgfXMnV5w0J2xoCJkm+LsAliNkh+/sf3iec53+2KuOKPlGDw==
-Date: Thu, 4 Sep 2025 10:08:40 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, dlemoal@kernel.org,
-	WeitaoWang-oc@zhaoxin.com
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	achill@achill.org
-Subject: Re: [PATCH 6.12 000/322] 6.12.44-rc1 review
-Message-ID: <aLlJCKO5vIlZ6ZJp@duo.ucw.cz>
-References: <20250826110915.169062587@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lftSRWw885L1+vUBMRv+LOS8wMdI6Z++jww8KZc7RNgO0NEQ39Jf/hHPuS7B52SBpoQwtIzXxjy7H5YOMgtYd3Au2TmNliKUwb/UP8ScDGNkYWYzN0nVvi8HoxXkjHEdMZJobcL542s9/11OnrmrKjywZuJp+9F7EM4tAzLuTL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SAUscH97; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756973327; x=1788509327;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=D5/uCG0kH3sTiEMP/8vh8oyfqVnBuKNNC2AFU/Q2BvY=;
+  b=SAUscH97lo6KBJazjUblo3PsWV0OG6iKOc0sfsjRiglvItHidkkGwCwS
+   J+IP+khhHJotCIefFmKFSyt2gy1NRPVrV6bvRpdeggKZ9mjvGhGSriqnf
+   c7E01wlEiUgxGpCihgYRiYa9c2qYSYAjXvjhyZ0AYcH8LhMx8rlh8RkOi
+   No6xjOM1qthhCWGvW8Pn14rwGlBjN7AvcYXAK0RtTJp07jXkxh7JDJEu7
+   Cq2gmw3GHyEMbbhx8IcP2wnB6WHL0fAQDNxYZPWt9omHr7kefcJ5P6895
+   Q6dxE2CkvtNkpDdDP5HqQvmV4rNIALiS1aH1FSE1RPNR8lpNTxcJUCsXJ
+   A==;
+X-CSE-ConnectionGUID: gVjA2z06Q3u1exgu5Az/Yw==
+X-CSE-MsgGUID: qWEfbvDNRGCYjVr9a0B4QQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="58338542"
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="58338542"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:08:46 -0700
+X-CSE-ConnectionGUID: rSv7HPYTTee6cW4vAcXV8A==
+X-CSE-MsgGUID: iWUfZIESRIOfnhTfvp/EPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="177090569"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:08:46 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uu51O-0000000BCnn-3mKJ;
+	Thu, 04 Sep 2025 11:08:42 +0300
+Date: Thu, 4 Sep 2025 11:08:42 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: Peter Tyser <ptyser@xes-inc.com>, Lee Jones <lee@kernel.org>
+Subject: Re: [PATCH v1 0/2] mfd: lpc_ich: Simplify GPIO resource handling
+Message-ID: <aLlJCquzCONTPUuG@smile.fi.intel.com>
+References: <20250903081414.1972179-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Wgc8ZY9FwFCe7DKA"
-Content-Disposition: inline
-In-Reply-To: <20250826110915.169062587@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
-
-
---Wgc8ZY9FwFCe7DKA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250903081414.1972179-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi!
+On Wed, Sep 03, 2025 at 10:12:27AM +0200, Andy Shevchenko wrote:
+> Introduce a helper to iopoll.h which allows to simplify GPIO resource handling
+> in lpc_ich driver for the starter. The helper can be used in many other cases.
 
-> This is the start of the stable review cycle for the 6.12.44 release.
-> There are 322 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+After thinking a bit, this series is no go as it will regress on module unbind-bind
+and I have no clear view right now how to avoid that. So self-NAK.
 
-> Weitao Wang <WeitaoWang-oc@zhaoxin.com>
->     usb: xhci: Fix slot_id resource race conflict
+-- 
+With Best Regards,
+Andy Shevchenko
 
-This was merged for 6.12 and 5.10, but not 6.1. I believe that's an
-mistake.
 
-> Damien Le Moal <dlemoal@kernel.org>
->     ata: Fix SATA_MOBILE_LPM_POLICY description in Kconfig
-
-Not sure this is suitable for stable, for example it removes warning
-about possible data corruption:
-
--         Note "Minimum power" is known to cause issues, including disk
--         corruption, with some disks and should not be used.
-
-Best regards,
-								Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---Wgc8ZY9FwFCe7DKA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaLlJCAAKCRAw5/Bqldv6
-8k7LAKCXDsf9oFpGdmM77qKCKp0BJQqoMwCeKu4Gem3uw7stIQGSe3+ulvHUsmk=
-=XHbR
------END PGP SIGNATURE-----
-
---Wgc8ZY9FwFCe7DKA--
 
