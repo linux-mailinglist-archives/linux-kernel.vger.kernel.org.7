@@ -1,139 +1,125 @@
-Return-Path: <linux-kernel+bounces-800341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2861B43680
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:02:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BFB3B43683
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B34FB161ECE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:02:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9BDA3A863F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9EB2DD60E;
-	Thu,  4 Sep 2025 09:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="k50We7Xu"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8722D59F7;
+	Thu,  4 Sep 2025 09:03:01 +0000 (UTC)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A892D63E4
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BA4230BFD;
+	Thu,  4 Sep 2025 09:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756976549; cv=none; b=MbBKm/QMiZJ+nDGb65PffHpa8TQnCOMvCtSiWzY5mK17K/qgsLXoXM+E+aKVRqzHjLSbWkhf605s7iNmKX5IlJizS1JW4TJGBRSOF5wAMHGcp3Gud649mRu/95u9wylvUHRFUEoTbcOey4ldsEWGl8CIhadPxcY4n3RE/WMOjQM=
+	t=1756976580; cv=none; b=fGVdVpa3q0gdu1l0daXnNEaE5vEu2IyugK4UdHYtu6Rqz8LuveZ7iSpBg7nN9oaxjlqPNTHn0gwIGQx4qSEs+ynCcOJf7+UtGrm5WDjO48bFf8iX+2eQcaSACcE15c4caE3ImuIr3gUXDjrs/mapG8no4lZLq45fr3c0flr++GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756976549; c=relaxed/simple;
-	bh=t3pzkYuGU2tYuRTyuDW5/Wc33zKbBI7wfB66Rtab/NE=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U3sRMjfkF+W9xp5WCFinuS4jv+UDZl4WZ4IQR67TFKybTvaGnAZNUp40Gw4yrthuUV9SGQkykGs/+yABVVvaQgF2Ia8cjB1gcC62s8mFxK/hfsaR2GWSmz0WjI/ASFR5Qe8r/vSkvx9RLZ4Z5hAGHv5WgXYlYyA6q8nRzhtjFy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=k50We7Xu; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 357373F6B2
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:02:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1756976545;
-	bh=W5tXZLE9U8ZLxM4XnYQFYNA7WVcvzE7u2s5SMaMyKfs=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=k50We7Xuom84tD6AoaIJjVxCwfgxmanRSqjOuPwfjO2Bkl7XVE/01msqMhSGhepN6
-	 ot1uE5UWvoe+LFkzz0RbggtKVw82o+NnlOfps4EL/loEf4ttglJ0wOWQ2jpCpFkjX7
-	 bAYTfdd52yHJdUf8KkxmIzNVN1ulHcOVXlefpUkEI8ex5T+MAWpHkBcURVZmSxSbGd
-	 ORUHbHnehYG2lZ9Ke4cK7HDoJ4S3pQHdKjayN/oFGAW4QMbvGLVM8y2uo9eefYGkqh
-	 C30jjKMHFrlQg7H0MUxveRoyfrI8pzx/uaRwoOChZSv4ron7SLCoCUOOFKa0TcVQ+7
-	 fHxy7S0KY11tA==
-Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-52e090c943cso210838137.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 02:02:25 -0700 (PDT)
+	s=arc-20240116; t=1756976580; c=relaxed/simple;
+	bh=6a9B/LMmosZSjvkQZ22ISQBb8/CDfupfugcrL4K6H5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TUllQQU4F6OUmpqRT6r04G2SBPbn91Z4jxMta9HF40c/KEfZh3yRuakBsa5OveEnw8zmU0wZwCk5N42zViqdQfRJ5rywdKNqqF8lgt0T9K51h4x45cgr9bcH2u+rxS4/R2Ip1FyJu78qXh5E6eKuT9CwaUeu1RhNOkOzb6fK8S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-53b174ca9bdso576680e0c.2;
+        Thu, 04 Sep 2025 02:02:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756976544; x=1757581344;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W5tXZLE9U8ZLxM4XnYQFYNA7WVcvzE7u2s5SMaMyKfs=;
-        b=VU0UeR+WjWgVCSZec222IKW2398Ab1XbCvw2l5usCHUPvRNMr87n7eiqcSKYQZpKeh
-         ZXIs7ug+Rev9BBukT5rJH97jk3vERFgKHwD6m3nV14FOoU901TXg3Hd4sKjIdfxBFCbi
-         nDfPmJJxX6EjdSchlMV5hsqL6pxxLEQuM2gaJplzty9ZEbacn8yq4zB+i3lDELt8gcsf
-         u0vmQLm4uoCX8gsVlVE6Fp6gvXGLjcbD3xEMkpK/M8/cItVI3db4c7G752NnVDdo5J+G
-         h/MQZjj0h8XqT8nJ4yv+bGcrULTPA37DCNzRvoooyJyz54OdzxlVeJzWR/8gyBE8vi/X
-         /Hdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOSkc/Ip8ee7l+RdIss3JcZB1Jmy23yewhAofZ3h8LYXpdY5Ou6Mlclj7xEuSeQXvkov2ZnV6F55ULsPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw1P6SIi1oJeXEdH2fKi5k2ADgP340+ezz5JZ1eMQwN5nxXKIY
-	bd206iXSn1Aj1iqaUOq+ODKZnTsFXqTtoiVsQKb8IPp5PTyczzKAGQnocpnIaJEqtSXjzyuXLKE
-	1ELrq6Dtl4C8tdYmP59ZP4NVGLWiK/OvOMY4+CWdf3NbkIwTcur3YWdWz7N/sAnUzUG9QBWSoQy
-	3AAV9i2hCR1cn2tmnldQLqrj6qAXYag8Q5wfb8S7XAbD0tsLXu87yRl/tJ
-X-Gm-Gg: ASbGncuI0HOhPF+ngypAKmw8974FpW54ynHHyXHhWBlYPOc9skNbt11vs5Xmfa1zAZG
-	rzj1AbMTdiRuSM5Gmlx7sE8yX3clpSkT+S0DcmSTAb4Na+DunPPM+6yqb3E0YUOzop98MniqE/b
-	rpxNQ2bNbxO/kBEBjk780=
-X-Received: by 2002:a05:6102:549f:b0:51a:4906:f195 with SMTP id ada2fe7eead31-52b1bc21699mr6330767137.29.1756976544059;
-        Thu, 04 Sep 2025 02:02:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGfwrOh3ZXQWUEYw7cNtkkSuMIylybKSVsj1rE0ILOBF18eeNxhb8j1NXutX/Bv0RybyaBlTDCviu/T9BrHNss=
-X-Received: by 2002:a05:6102:549f:b0:51a:4906:f195 with SMTP id
- ada2fe7eead31-52b1bc21699mr6330758137.29.1756976543690; Thu, 04 Sep 2025
- 02:02:23 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 4 Sep 2025 02:02:22 -0700
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 4 Sep 2025 02:02:22 -0700
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <20250823100159.203925-1-e@freeshell.de>
-References: <20250823100159.203925-1-e@freeshell.de>
+        d=1e100.net; s=20230601; t=1756976578; x=1757581378;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pf2UXeQpUCNSrRy/zIjB+baZ0t2WATM0TZaxGsoMeRg=;
+        b=BNs1tOY1Ia57QZbGJCj59XetKaY4AcuQQwLZLizFeykPzWO/HQTDem1c8VSEwTh4ze
+         ydnyy9pSBrbwYjbMNSGc+6SbVgY39P6Bo0s5I4oLkJkusyWh+e/U0LUNzc41GcvTGaa9
+         QyQiTeXYdLaWPHT/rbeSRAeRIkyGEB45GycOgABICDFlk9FbP1uDIfzLK/e0dCoMz5mv
+         myqetwj+gaiT6FPgq6YlDX2QijMnIaWjZ4syllcNqPOohmHFHkZ9wZFqlO4rNmHHq44t
+         U4q98ByOjIMqbwak393Zf8hOGHxePsli+2NA6A49Oa0yUIj1TN3tAPKFMmcS0uCyNkYV
+         PQXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjK/KcqwHnO1Itoo6Yp6JiRpUJq530UB6NlCrT9Q5DLUKVsKnrIxh/uQ84RETTtVq/7f9fnQcSP3iwsx79df0vzbY=@vger.kernel.org, AJvYcCV6piJv9KC8avuzrAIj25Ol2qLnNCSJKahnVGfa9qcg0HN/jtCDNFZQen0uTgH90nkuaB5PYfMdKTTUN3wG@vger.kernel.org, AJvYcCX5+qlLapTfKNbAzxFJFfyR4ZWrdGu+YdxRQDeOs3zNY/HFulZRX9JCH5mCOFVd8q98ls7JhsE48K9b@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzWjbffWvE5nVeCn9ac7KTwWuyPRA0KrrQv4hPG7bGOskAyk6V
+	Nl3mW2KrslhROZbdvOrW2DaQunjnw9lgTTXrp/Wkm8ga2bX2UUrWlk0vD6Zk2+QL
+X-Gm-Gg: ASbGncvEiK3vQwatrGS0DHJgc1F/8eMelP2d1b50KPnlcWY3AAK+8WVEbjuK/1rLNsc
+	yEFPIaOOh4i99IMi92TDM+UM3mieGQKhiGlVpEUvKIo/XOwfoelTEWdAVE4VI9n7idj2JClpm7D
+	ndiWHbhmSL7pxdf74yZu2ElnWOSJVkXaIwzW2ZEYFNpCkOqD1j73nTESNCGWSQDptrjYDPXmYzR
+	qH2QIRgCSDoFQsu/XR2H2tcjap1geY9mqKznV/V6jChfoxptcgeP9Fyr0UiK/6WFCJZL76eHyjx
+	Px40hSeSLnkDNBsZQOgecyr/66MW9bXYM3JL9A2b3aY7AZuGOLESwg0M6Bj0Lne1nxQ5k3W6Bgn
+	f9jwVEu7XIUDWuDDUB1KzFSKSFVIoMATbzzEITLtKba7P94THyMw1zCCKll6FCw9z9d+y7Io=
+X-Google-Smtp-Source: AGHT+IE9JHQpA+JRoU/dDjobo9NZu84Djc6IwYaELzQcavZpwrmjZKL2FrZRkthRm1bf9Lo3Oz1kuA==
+X-Received: by 2002:a05:6122:1350:b0:539:3bb5:e4d6 with SMTP id 71dfb90a1353d-544a0196ec5mr5549020e0c.1.1756976577073;
+        Thu, 04 Sep 2025 02:02:57 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54491464aebsm8000183e0c.14.2025.09.04.02.02.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 02:02:56 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-89018e9f902so414529241.0;
+        Thu, 04 Sep 2025 02:02:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVWPXPwZldt/ohT48CDihrQ39SmTElgR8n6+5AJ4E8J0Wl+NVy4F5pGL61XO2eEot4NUsTlCn456yBRUPsVE2iuXYE=@vger.kernel.org, AJvYcCXBXvBucULPHMq+VXa4X2WVkRhq6eTYxkXMPefTM1/gNfClsvQrnVFx+fA57eLYPDClvrltM7bBf5jnHiLV@vger.kernel.org, AJvYcCXD+waoiUqSXp+kHs8IAHRmdbv7eGWuQNug5ffRZi1/yZPVIZa3GmroxmPcbcAnxjHuaN0JiZiUdxsr@vger.kernel.org
+X-Received: by 2002:a05:6102:38cb:b0:51a:4916:c5f0 with SMTP id
+ ada2fe7eead31-52b1c887eafmr6490467137.32.1756976576275; Thu, 04 Sep 2025
+ 02:02:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Thu, 4 Sep 2025 02:02:22 -0700
-X-Gm-Features: Ac12FXx9BokiA1zWTAcPCh_5RS6LljOLjGyyWFJoP9qUWJdcuwYzY8X--Neq5V0
-Message-ID: <CAJM55Z9KJNPOp1ngDqKz0BDpxWu-_cqOMALSE_Jou9FU2TPK9g@mail.gmail.com>
-Subject: Re: [PATCH v3 RESEND 0/3] riscv: dts: starfive: jh7110: More U-Boot
- downstream changes for JH7110
-To: E Shattow <e@freeshell.de>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hal Feng <hal.feng@starfivetech.com>, 
-	Minda Chen <minda.chen@starfivetech.com>
+MIME-Version: 1.0
+References: <20250821161946.1096033-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250821161946.1096033-6-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVxDcunZcqg65O3Ap9usJUTPnYh34AUk0pmB-pFqesHGw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVxDcunZcqg65O3Ap9usJUTPnYh34AUk0pmB-pFqesHGw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 4 Sep 2025 11:02:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVzZQ4N9LGsq=Gr54SEybBb1hukzTVGmL02ZPfP8jXdFA@mail.gmail.com>
+X-Gm-Features: Ac12FXxH9T5HOnIC_v5EMqfhkxpW959ceovgansllU74BPLiXRwkakgcuRFtzm4
+Message-ID: <CAMuHMdVzZQ4N9LGsq=Gr54SEybBb1hukzTVGmL02ZPfP8jXdFA@mail.gmail.com>
+Subject: Re: [PATCH 5/6] arm64: dts: renesas: r9a09g087: Add USB2.0 support
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-E Shattow wrote:
-> Bring in additional downstream U-Boot boot loader changes for StarFive
-> VisionFive2 board target (and related JH7110 common boards). Create a
-> basic dt-binding (and not any Linux driver) in support of the
-> memory-controller dts node used in mainline U-Boot. Also add
-> bootph-pre-ram hinting to jh7110.dtsi needed at SPL boot phase.
+On Wed, 3 Sept 2025 at 16:06, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Thu, 21 Aug 2025 at 18:19, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> >
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add EHCI, OHCI, PHY and HSUSB nodes to RZ/N2H (R9A09G087) SoC DTSI.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Changes since v2:
+> Thanks for your patch!
 >
-> - patch 1/3 "add StarFive JH7110 SoC DMC": wrap at 80 col, clock-names
->   const is 'pll'.
+> > --- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
 >
-> - patch 2/3 "add memory controller node": memory-controller node follows
->   sorting style by reg address, between watchdog and crypto nodes. Update
->   clock-names to 'pll'.
+> > +               hsusb: usb@92041000 {
+> > +                       compatible = "renesas,usbhs-r9a09g087", "renesas,usbhs-r9a09g077";
+> > +                       reg = <0 0x92041000 0 0x10000>;
 >
-> - patch 3/3 "bootph-pre-ram hinting needed by boot loader": add missing
->   hints for syscrg dependencies 'gmac1_rgmii_rxin', 'gmac1_rmii_refin',
->   and 'pllclk'.
->
-> E Shattow (3):
->   dt-bindings: memory-controllers: add StarFive JH7110 SoC DMC
->   riscv: dts: starfive: jh7110: add DMC memory controller
->   riscv: dts: starfive: jh7110: bootph-pre-ram hinting needed by boot
->     loader
->
->  .../starfive,jh7110-dmc.yaml                  | 74 +++++++++++++++++++
->  arch/riscv/boot/dts/starfive/jh7110.dtsi      | 24 ++++++
->  2 files changed, 98 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/starfive,jh7110-dmc.yaml
+> "0x1000", as the region starting at 0x92043000 is marked reserved?
+> I can fix that while applying.
 
-Thank you!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.18 with the above fixed.
 
-For the whole series:
+Gr{oetje,eeting}s,
 
-Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
