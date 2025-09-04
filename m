@@ -1,137 +1,129 @@
-Return-Path: <linux-kernel+bounces-799907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE9DB43143
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:43:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55DD2B43146
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 445E07B3115
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:41:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 113C11C23B77
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E6826F2A0;
-	Thu,  4 Sep 2025 04:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4ED0239085;
+	Thu,  4 Sep 2025 04:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B20lofRK"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lq3FNrgG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E878926E702
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 04:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A928D45C0B;
+	Thu,  4 Sep 2025 04:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756960880; cv=none; b=fOP8axQsDuE5UCOK3a8z5MYikGjoTNUrXtgSGhbIYufKbekoFMa588zSOly9a5QqCuHIs9SdpbVdgQy3R3/X0nFB8b9GMQbm1Re4LAZTVpTYhTVMbymtCeXFCSOWtVQRhBkN0gVtDl0jRheneYu7juXfsNo7B3/aSSHm4UcYOtA=
+	t=1756960993; cv=none; b=DzBMn/chwR/T0AD4q7ZsykPb5kr/wVa/WuYwi41UxIHPBulVjygVCjz6vnyaMTGpm9mqwsZaTZglESxn+I83gJW54idyuQXcXdX72DoTK7Arm15TwJhzBw4CrAhZ1bgw0qTPeKeR7O6tgtal791f9HcS9ZnD7NRHcVkwayXRrnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756960880; c=relaxed/simple;
-	bh=BivOpsCDlj6Ru6Y1v8vqQWzWVWfc4mJL7YxG+enkvi4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=H/JcjHrKVCxhlRvz/bGYGcfcjhpcguKf6lUzfNTnO14Htvffj1VlxsfI3y6sOULgDPnQBC/vmONAtyF1m9mQEnNFNU3dvLkHPOLA8PUFIqP10g/IrAbkTHzseRep2XqykssC7iBWd4Ezwx6hOGF29IKu0v+31q+tc6dmXgXxNrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B20lofRK; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24c8264a137so8450415ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 21:41:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756960878; x=1757565678; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=45l4Nbc70EVKZSax2ToeXyk5HR9RXkMGigjhQ29rNYU=;
-        b=B20lofRKATaQjzpG+HB4MQ0TyuYNTL+1cCxyDxOhiMI1APGQsr4NDyfctmP7p7TE7x
-         W7z9nIevG5I2d4oTxLNnDHY1alg3R/O+BTIMBTvgcPuYN20ET8dcztQAqOZ2p6ik2uok
-         sZ5xmoBRxegaLo1nwRmOB8xuDYIipuaO9qXCgL94DMmTIbWDmoTGc1nTz3FZMeur+YsX
-         ovUo5rLNkl7iBy+lydNEWmGY1AF9NuuIvE8ZV0F4icd2/x/jjU3b5JOyS4e8tQhxYYzI
-         B0QY4/JQvXbY+AwjFY5rlqIs/eBxJQFdd1kixtIQXPbT+Rc2LjpLAMpONwC9dvdFbU4g
-         3DjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756960878; x=1757565678;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=45l4Nbc70EVKZSax2ToeXyk5HR9RXkMGigjhQ29rNYU=;
-        b=hSpfJ3rpkGtg20bZtc/99e33f8Y/7vQG4JH1NHx4u9/8tqFXUR4dEnv+ILzjZYEfIv
-         E8ODJiyV2GaEUDhdJ+3bkF8ZFQtZ3DKMdDNRCvYSe3qHwUCgStM0iK6JscHR0tE147bj
-         KBhgJJpbVFln5xCSpnkXTw1AfSV2RLgxF7M26QbCoRA3DWH1UZ+lgbOTiSramDiwP7Pj
-         Mm9vIf/S2wpesxTzmdvwK7mU/wrHmBFqC+5lqTB8W/TiwJkqHEmkIofxW/xak3HKDguZ
-         sO+CWYeT6yooDSu+C5VoxTcmRzQd9Vj/h5I9Xno3N1HUofV6RFdOB0kLQOrW84Ky+Rne
-         an4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVPSJk2kVkmpfcUu76VtUK8TqDEChzwA54cAFW8+LBJ9UbhttfKQ+H4RinFQ33fAVOnIyTnassgA03pD84=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCM4uhhiwVpA1OwW1cbVcwh88tUMHs0mqnE0CDj5kIW27nP4yg
-	2Pk7fQX5UwUIlKP/A42Qpx3fz0CG6+xBDOpJ0tnH9NsIVDSFr8H9Zlwm2944laWXZhDRxOl4H2I
-	stFgJZlEd9g==
-X-Google-Smtp-Source: AGHT+IFjrwY6H5XIxngL3wSepYwbC5YU2i0XhpZ085evNzhAMNsUpZLoTY71sUiT2wF+USz0iC3XmuS8kyGH
-X-Received: from plbkc12.prod.google.com ([2002:a17:903:33cc:b0:246:5b98:9a])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:db06:b0:248:7b23:5129
- with SMTP id d9443c01a7336-24944a4152dmr263420495ad.16.1756960878298; Wed, 03
- Sep 2025 21:41:18 -0700 (PDT)
-Date: Wed,  3 Sep 2025 21:40:47 -0700
-In-Reply-To: <20250904044047.999031-1-irogers@google.com>
+	s=arc-20240116; t=1756960993; c=relaxed/simple;
+	bh=EZFV2l+6WCpsVXc8n38Qwngh98PTJl9C2BGkwWAYuzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B5o1HurFl2dnxz+b+actIJ7snDZoJet7GiLJL3zSeGQktCv25jqUzpiVb6FcF2ZKbuhhTR4HPsEkaFJyV2z8YRI4wzZC8SeCyC9m4aGCuR197SL96BMTt4FRgJQAogp+4hem7z81ZMH5kjPm1UMXNxi90FQlBtOhzevkT9+kJWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lq3FNrgG; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756960992; x=1788496992;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EZFV2l+6WCpsVXc8n38Qwngh98PTJl9C2BGkwWAYuzc=;
+  b=Lq3FNrgG29ctz0eDfLHTIlxPg00Pq18vTPoqnWeKfARtXX/SxKBqosYc
+   0mFMHSFJhr4arjyFtO8KwusI/+X6OfcmU0G3esPx/LOwle2Mh+p29G26I
+   NW428YPgtg6HUbDoQHXvAINrwDJ0f67jtoSDXwPCWcckUU2WfDxLfHkVD
+   YOkWMjoEIsg8J6Rgu278xb4UuJbYWHexBJZiXWSbz1Jk1/j287F28JkeI
+   uPrw7dELmdSyoj9Gf1w04GdK4TEgVsX1GHSH9L4T7dBIbt0A9NjZLgbVG
+   RNn8LMQfsiEB56qPgHE9xxvl0OdOSkUyfwRHhYO3bi3M3unAbjdQtiYbn
+   g==;
+X-CSE-ConnectionGUID: LiU+AyBNQ2mG/AGuK/DuHQ==
+X-CSE-MsgGUID: HbiyGVzZToKKeFuYhc2lfw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="63113289"
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="63113289"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 21:43:11 -0700
+X-CSE-ConnectionGUID: egndLxXZSOyRUKyMeU/jBA==
+X-CSE-MsgGUID: TuwL2iDkS+iHBqCo1UkZkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="171072545"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 03 Sep 2025 21:43:08 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uu1oP-0004l1-19;
+	Thu, 04 Sep 2025 04:43:05 +0000
+Date: Thu, 4 Sep 2025 12:42:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>, alexandre.belloni@bootlin.com,
+	krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, skhan@linuxfoundation.org,
+	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com
+Subject: Re: [PATCH 6/7] rtc: m41t93: Add square wave clock provider support
+Message-ID: <202509041224.AOsBArcW-lkp@intel.com>
+References: <c53cdf7c2af95160e05cb4db343bb172a88ae7c9.1756908788.git.akhilesh@ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250904044047.999031-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
-Message-ID: <20250904044047.999031-14-irogers@google.com>
-Subject: [PATCH v6 13/13] perf jevents: Add uop cache hit/miss rates for AMD
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, John Garry <john.g.garry@oracle.com>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Benjamin Gray <bgray@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c53cdf7c2af95160e05cb4db343bb172a88ae7c9.1756908788.git.akhilesh@ee.iitb.ac.in>
 
-Add metrics giving ratio of uop cache hits to misses.
+Hi Akhilesh,
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/pmu-events/amd_metrics.py | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+kernel test robot noticed the following build warnings:
 
-diff --git a/tools/perf/pmu-events/amd_metrics.py b/tools/perf/pmu-events/amd_metrics.py
-index a782e41dedca..d971fbf40318 100755
---- a/tools/perf/pmu-events/amd_metrics.py
-+++ b/tools/perf/pmu-events/amd_metrics.py
-@@ -571,6 +571,23 @@ def AmdSwpf() -> Optional[MetricGroup]:
-                      description="Software prefetch breakdown (CCX L3 = L3 of current thread, Loc CCX = CCX cache on some socket)")
- 
- 
-+def AmdUopCache() -> Optional[MetricGroup]:
-+  try:
-+    op_cache_hit = Event("op_cache_hit_miss.op_cache_hit")
-+    op_cache_miss = Event("op_cache_hit_miss.op_cache_miss")
-+  except:
-+    return None
-+  op_cache_total = op_cache_hit + op_cache_miss
-+  return MetricGroup("lpm_uop_cache", [
-+      Metric("lpm_uop_cache_hit_ratio", "Uop cache full or partial hits rate",
-+             d_ratio(op_cache_hit, op_cache_total),
-+             "100%"),
-+      Metric("lpm_uop_cache_miss_ratio", "Uop cache misses rate",
-+             d_ratio(op_cache_miss, op_cache_total),
-+             "100%"),
-+  ], description="Micro-op (uop) hit and miss rates.")
-+
-+
- def AmdUpc() -> Metric:
-   ops = Event("ex_ret_ops", "ex_ret_cops")
-   upc = d_ratio(ops, smt_cycles)
-@@ -657,6 +674,7 @@ def main() -> None:
-       AmdLdSt(),
-       AmdHwpf(),
-       AmdSwpf(),
-+      AmdUopCache(),
-       AmdUpc(),
-       Idle(),
-       Rapl(),
+[auto build test WARNING on abelloni/rtc-next]
+[also build test WARNING on linus/master v6.17-rc4 next-20250903]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Akhilesh-Patil/rtc-m41t93-add-device-tree-support/20250903-223155
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
+patch link:    https://lore.kernel.org/r/c53cdf7c2af95160e05cb4db343bb172a88ae7c9.1756908788.git.akhilesh%40ee.iitb.ac.in
+patch subject: [PATCH 6/7] rtc: m41t93: Add square wave clock provider support
+config: x86_64-buildonly-randconfig-001-20250904 (https://download.01.org/0day-ci/archive/20250904/202509041224.AOsBArcW-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.4.0-5) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250904/202509041224.AOsBArcW-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509041224.AOsBArcW-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/rtc/rtc-m41t93.c: In function 'm41t93_clk_sqw_unprepare':
+>> drivers/rtc/rtc-m41t93.c:364:45: warning: conversion from 'long unsigned int' to 'unsigned int' changes value from '18446744073709551551' to '4294967231' [-Woverflow]
+     364 |                            M41T93_BIT_SQWE, ~M41T93_BIT_SQWE);
+
+
+vim +364 drivers/rtc/rtc-m41t93.c
+
+   358	
+   359	static void m41t93_clk_sqw_unprepare(struct clk_hw *hw)
+   360	{
+   361		struct m41t93_data *m41t93 = clk_sqw_to_m41t93_data(hw);
+   362	
+   363		regmap_update_bits(m41t93->regmap, M41T93_REG_AL1_MONTH,
+ > 364				   M41T93_BIT_SQWE, ~M41T93_BIT_SQWE);
+   365	}
+   366	
+
 -- 
-2.51.0.338.gd7d06c2dae-goog
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
