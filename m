@@ -1,157 +1,165 @@
-Return-Path: <linux-kernel+bounces-800714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D244B43AE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:00:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A9EB43AFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E56B7A7308
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:58:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BDBF3AA69F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404ED2EA480;
-	Thu,  4 Sep 2025 12:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98DC27A468;
+	Thu,  4 Sep 2025 12:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l1DrHh09"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04EF2D0C85
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="e8qt5Hgq"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04B0271469;
+	Thu,  4 Sep 2025 12:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756987207; cv=none; b=hx8jJcVtGMTYAa6YqeSqwKhT4Uc5Y3AJP0xq/9/duvZlQpCHLCnqz1F4YykWApVJZBlXkX03MxLrpUkDCNQ3HMi/IVoPiMor6JRa7esbJaUX9xYZ2vugZ9YgxoAEJp7w2IcCQr4r/wZCsA8SWlxz583EH0evRQ1AcaGfnaWqGyE=
+	t=1756987502; cv=none; b=u8Wxlw63U5JZUpeZSTb06L+MgxfkQ5cCRuVd+mXwU4Vb6J9HlJYrPr4cb70gR+N43GYluTuUnsrd37P8wIKVLZHJyH2Vca0SLN4mfBr21gDMDzRnzFaXntR/2HGAZTpcIIb9rAzrm5DiLfaLz75+KfPBSF/AOV+bpTwHw8mQFD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756987207; c=relaxed/simple;
-	bh=JAKt+DJHLvgwPHMPIJfLNVW9BnFW7wAb0S/uo+VBz5Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QpZ2OcoRgL0o56/Hixr5zoGIGzRdqOvunX6ZDZwz+n+YZpeQ7V5MEPxk74CV9htbDnkRHayAoa2zvoMKNt1BhD5uE/kDZgQmuCvt/mzlyhaN0mZi5vWsym0yWX5mKCHR6GYO67YUPol1rLBabkxFPXuGJycfqB4Rq5tFifRGL8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l1DrHh09; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b9a856dc2so6540455e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 05:00:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756987204; x=1757592004; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AFkBz8t+kCT8UUeu24okw56fSQSLiELatilmrdAB8x0=;
-        b=l1DrHh09ye8Qza7pZH2Y1Ty3psD2ZdoLbyZK3EDCyzpbs44gmwAFTBrSkQBcTDmjI2
-         PwGM419Y5jdTjn4v4b1pZR27/LgRGNNd64o1lGYNmq2BlHS/ov3IPGQ80GAMV4ka/D17
-         2+Q00cwDWh+Jeq3EP/FwjZ0a69RMp9L9DwE663Wo8MozBYRL2LNgVZO1YKEWYKCjAdY+
-         4AZJOglUObMOlk4o0cCUihsHj6HDF9R3oXm4eqsR7rb+nkW2N6nLZ7Vt6DC0FC1kFbPC
-         EwKZft/9qiiYgP93xMCHhKoullvtK2w3PG57/rI35LuvmBhhX6QiCeG0tQsTF0DxBVTg
-         03EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756987204; x=1757592004;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AFkBz8t+kCT8UUeu24okw56fSQSLiELatilmrdAB8x0=;
-        b=au1PP8EjBoAEN67rVYv8wlTN1aNcX4cd7aKG9E55WpLSOVYzzPaTVtV0JCvU1bjntF
-         XPnPippCmZwo7Tg3e/EuXTH+L5Vr2ku2VHxRlItt1chazKaAbq7NnX5h7d0z7emYjWdr
-         5GDXye2b9lopoEX0Y7yNAFe4TBtR9yE9JiljbQydheSTuH8D+amtAJxWFv+mk4ybkC7t
-         9UXudCb8fYuKfGAu0q63ev/rz3fT5qmrELPMwY8ttzuYzhmmidzJM0PErzbYf19x0AJK
-         +kNQmfvJgqYk8bpstVbmsIUxCUXPJbimlQRXmVSgS+xpkknltrvz6Rhz0+xoDd9CnIku
-         2vyA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1dr4FcDNi0DoopIA8nA5w9pJJ2kykikXaOrReFnZ7LLNBOvDAGO0eq+PetyAtOIIiiNjKTM2uvOcDWFI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDCftvcCeX1Car1YNP6reO4dbMA9b0BOJJmcIG6b+Vtxugt7hA
-	lA10iefnPaE+6DFpBqJKzS1NhBBiChHkcyMk6zpO7GdAnjEyFCCu1q0rpOndFQ+h9ao=
-X-Gm-Gg: ASbGncuFgKhbVi613LZkdEZFaF2oA2TCLXHxLLMfQp8SFrT2IBxBj9TGqjiTnZzGLjp
-	sdOd1YrocxsFKcWEiXU7YtYfSG+JZj9TazZQEtNM+vND+v8AqjcCNUw1XLHTI4+brVL2f22dXmW
-	SA67ZqALkAz8OpBFrL6u38zy+v468vHHQeMAmrip/1vFnrtJ8oeo7Muv1qgC7+IkAehdPREmMh/
-	nhWWLCTJjDDaqTm/Zqnifvnk5YEzEOOyxOxatiZ+KFgt7g2Y3s5WQ9OezZO0GUZy4uSASS8Q836
-	trNv01Eg9jV7txHxwyhMkIh48zdoXlZWSEvumg4s1VyuhAlbrBHa/r0JG0j7meUOB/idDq1OgFw
-	Q8cBN6hHYpgmrjWS3vu2/MpuFRmbtJP6UV7tqqg==
-X-Google-Smtp-Source: AGHT+IEeJr8/W7i384dfItP0nBlu/2Q4pZvcih8lGi8Ow9/IMWLIJQ8ZyVlqeIZXNl/vx/mclRKwsQ==
-X-Received: by 2002:a05:600c:1f0e:b0:458:a7b5:9f6c with SMTP id 5b1f17b1804b1-45b855335a8mr163914835e9.11.1756987203568;
-        Thu, 04 Sep 2025 05:00:03 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b8f2d3c88sm151251345e9.19.2025.09.04.05.00.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 05:00:03 -0700 (PDT)
-Message-ID: <5f24d286-629c-404f-8e0f-aa01e27bcb80@linaro.org>
-Date: Thu, 4 Sep 2025 13:00:02 +0100
+	s=arc-20240116; t=1756987502; c=relaxed/simple;
+	bh=ZlPemRzqZBWkCIt9e79unBYjQpbThJ+dY1T3u+NOXoY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wy0WYNVC9ia1DrJSht7seIyopbdJDBCIYK6RmrQhKc6U+FjI9cS3eovM3enQzzf5hrjzK4BO3DRwMQo4k1mT1Mc7SIB0ZbqFidY4hMbg4VXwuoZIY2C8bPH8MPyWputfJhL7p6a8Iu0w3S2Ck7Wl8aTPjpVTVTGkjSyE7yvYVFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=e8qt5Hgq; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=IJ
+	YiXUgYfec7n2c5/2xp13tDlxmBs6mrIZwN/MTkTps=; b=e8qt5HgqJQXeGesonp
+	OQ/ghJaF4NC8LkBonNk1qKIGXjG73dG9YkVETF2tE5YVy4EIr2zQlj3AEdf7SQVk
+	Cmsia3nrt88eFfZo1Blw4oqC+z5rXi4bnbMn6VMw61s3/COE6H/ckgOXlO7gCNlx
+	JH1TbMzGGv5jL+VoReQxCyKNg=
+Received: from haiyue-pc.localdomain (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgAn1CkigLloi3ngBg--.1994S2;
+	Thu, 04 Sep 2025 20:03:48 +0800 (CST)
+From: Haiyue Wang <haiyuewa@163.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Alistair Popple <apopple@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Haiyue Wang <haiyuewa@163.com>,
+	David Hildenbrand <david@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	virtualization@lists.linux.dev (open list:VIRTIO FILE SYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] fuse: virtio_fs: fix page fault for DAX page address
+Date: Thu,  4 Sep 2025 20:01:19 +0800
+Message-ID: <20250904120339.972-1-haiyuewa@163.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] coresight: perf: Fix pointer check with IS_ERR_OR_NULL()
-To: Leo Yan <leo.yan@arm.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Tamas Zsoldos <tamas.zsoldos@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <20250904-cs_etm_auxsetup_fix_error_handling-v1-1-ecc5edf282a5@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250904-cs_etm_auxsetup_fix_error_handling-v1-1-ecc5edf282a5@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PygvCgAn1CkigLloi3ngBg--.1994S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtF18JF4rtryxCrWkGF4rKrg_yoW7WF47pF
+	yUtr1UGr4kXr1UJF10vr18Xr13trsrAF18XrWxAr1kZF1UW3WDJr1ktrWUtr4UXryjqrW7
+	trs8Gw1xtryDKaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zEiiSDUUUUU=
+X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/1tbiYAS+a2i5fI1csAAAs9
 
+The commit ced17ee32a99 ("Revert "virtio: reject shm region if length is zero"")
+exposes the following DAX page fault bug (this fix the failure that getting shm
+region alway returns false because of zero length):
 
+The commit 21aa65bf82a7 ("mm: remove callers of pfn_t functionality") handles
+the DAX physical page address incorrectly: the removed macro 'phys_to_pfn_t()'
+should be replaced with 'PHYS_PFN()'.
 
-On 04/09/2025 11:53 am, Leo Yan wrote:
-> The returned pointer from .alloc_buffer() callback can be an error, if
-> only checking NULL pointer the driver cannot capture errors. The driver
-> will proceed even after failure and cause kernel panic.
-> 
-> Change to use IS_ERR_OR_NULL() check for capture error cases.
-> 
-> Fixes: 0bcbf2e30ff2 ("coresight: etm-perf: new PMU driver for ETM tracers")
-> Reported-by: Tamas Zsoldos <tamas.zsoldos@arm.com>
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->   drivers/hwtracing/coresight/coresight-etm-perf.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> index f677c08233ba1a28b277674662c6e6db904873dd..440d967f5d0962df187a81b0dd69a7d82a8b62ba 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> @@ -198,7 +198,7 @@ static void free_sink_buffer(struct etm_event_data *event_data)
->   	cpumask_t *mask = &event_data->mask;
->   	struct coresight_device *sink;
->   
-> -	if (!event_data->snk_config)
-> +	if (IS_ERR_OR_NULL(event_data->snk_config))
->   		return;
->   
->   	if (WARN_ON(cpumask_empty(mask)))
-> @@ -450,7 +450,7 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
->   	event_data->snk_config =
->   			sink_ops(sink)->alloc_buffer(sink, event, pages,
->   						     nr_pages, overwrite);
-> -	if (!event_data->snk_config)
-> +	if (IS_ERR_OR_NULL(event_data->snk_config))
->   		goto err;
+[    1.390321] BUG: unable to handle page fault for address: ffffd3fb40000008
+[    1.390875] #PF: supervisor read access in kernel mode
+[    1.391257] #PF: error_code(0x0000) - not-present page
+[    1.391509] PGD 0 P4D 0
+[    1.391626] Oops: Oops: 0000 [#1] SMP NOPTI
+[    1.391806] CPU: 6 UID: 1000 PID: 162 Comm: weston Not tainted 6.17.0-rc3-WSL2-STABLE #2 PREEMPT(none)
+[    1.392361] RIP: 0010:dax_to_folio+0x14/0x60
+[    1.392653] Code: 52 c9 c3 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 c1 ef 05 48 c1 e7 06 48 03 3d 34 b5 31 01 <48> 8b 57 08 48 89 f8 f6 c2 01 75 2b 66 90 c3 cc cc cc cc f7 c7 ff
+[    1.393727] RSP: 0000:ffffaf7d04407aa8 EFLAGS: 00010086
+[    1.394003] RAX: 000000a000000000 RBX: ffffaf7d04407bb0 RCX: 0000000000000000
+[    1.394524] RDX: ffffd17b40000008 RSI: 0000000000000083 RDI: ffffd3fb40000000
+[    1.394967] RBP: 0000000000000011 R08: 000000a000000000 R09: 0000000000000000
+[    1.395400] R10: 0000000000001000 R11: ffffaf7d04407c10 R12: 0000000000000000
+[    1.395806] R13: ffffa020557be9c0 R14: 0000014000000001 R15: 0000725970e94000
+[    1.396268] FS:  000072596d6d2ec0(0000) GS:ffffa0222dc59000(0000) knlGS:0000000000000000
+[    1.396715] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    1.397100] CR2: ffffd3fb40000008 CR3: 000000011579c005 CR4: 0000000000372ef0
+[    1.397518] Call Trace:
+[    1.397663]  <TASK>
+[    1.397900]  dax_insert_entry+0x13b/0x390
+[    1.398179]  dax_fault_iter+0x2a5/0x6c0
+[    1.398443]  dax_iomap_pte_fault+0x193/0x3c0
+[    1.398750]  __fuse_dax_fault+0x8b/0x270
+[    1.398997]  ? vm_mmap_pgoff+0x161/0x210
+[    1.399175]  __do_fault+0x30/0x180
+[    1.399360]  do_fault+0xc4/0x550
+[    1.399547]  __handle_mm_fault+0x8e3/0xf50
+[    1.399731]  ? do_syscall_64+0x72/0x1e0
+[    1.399958]  handle_mm_fault+0x192/0x2f0
+[    1.400204]  do_user_addr_fault+0x20e/0x700
+[    1.400418]  exc_page_fault+0x66/0x150
+[    1.400602]  asm_exc_page_fault+0x26/0x30
+[    1.400831] RIP: 0033:0x72596d1bf703
+[    1.401076] Code: 31 f6 45 31 e4 48 8d 15 b3 73 00 00 e8 06 03 00 00 8b 83 68 01 00 00 e9 8e fa ff ff 0f 1f 00 48 8b 44 24 08 4c 89 ee 48 89 df <c7> 00 21 43 34 12 e8 72 09 00 00 e9 6a fa ff ff 0f 1f 44 00 00 e8
+[    1.402172] RSP: 002b:00007ffc350f6dc0 EFLAGS: 00010202
+[    1.402488] RAX: 0000725970e94000 RBX: 00005b7c642c2560 RCX: 0000725970d359a7
+[    1.402898] RDX: 0000000000000003 RSI: 00007ffc350f6dc0 RDI: 00005b7c642c2560
+[    1.403284] RBP: 00007ffc350f6e90 R08: 000000000000000d R09: 0000000000000000
+[    1.403634] R10: 00007ffc350f6dd8 R11: 0000000000000246 R12: 0000000000000001
+[    1.404078] R13: 00007ffc350f6dc0 R14: 0000725970e29ce0 R15: 0000000000000003
+[    1.404450]  </TASK>
+[    1.404570] Modules linked in:
+[    1.404821] CR2: ffffd3fb40000008
+[    1.405029] ---[ end trace 0000000000000000 ]---
+[    1.405323] RIP: 0010:dax_to_folio+0x14/0x60
+[    1.405556] Code: 52 c9 c3 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 c1 ef 05 48 c1 e7 06 48 03 3d 34 b5 31 01 <48> 8b 57 08 48 89 f8 f6 c2 01 75 2b 66 90 c3 cc cc cc cc f7 c7 ff
+[    1.406639] RSP: 0000:ffffaf7d04407aa8 EFLAGS: 00010086
+[    1.406910] RAX: 000000a000000000 RBX: ffffaf7d04407bb0 RCX: 0000000000000000
+[    1.407379] RDX: ffffd17b40000008 RSI: 0000000000000083 RDI: ffffd3fb40000000
+[    1.407800] RBP: 0000000000000011 R08: 000000a000000000 R09: 0000000000000000
+[    1.408246] R10: 0000000000001000 R11: ffffaf7d04407c10 R12: 0000000000000000
+[    1.408666] R13: ffffa020557be9c0 R14: 0000014000000001 R15: 0000725970e94000
+[    1.409170] FS:  000072596d6d2ec0(0000) GS:ffffa0222dc59000(0000) knlGS:0000000000000000
+[    1.409608] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    1.409977] CR2: ffffd3fb40000008 CR3: 000000011579c005 CR4: 0000000000372ef0
+[    1.410437] Kernel panic - not syncing: Fatal exception
+[    1.410857] Kernel Offset: 0xc000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
 
-I think the bug is in TRBE. It's the only one that returns an error 
-pointer, but only for -ENOMEM which would normally be NULL for alloc 
-type functions anyway.
+Fixes: 21aa65bf82a7 ("mm: remove callers of pfn_t functionality")
+Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+---
+v2:
+  - Add 'fuse' prefix as git commit title.
+  - Add more message about how the bug be exposed.
+v1: https://lore.kernel.org/linux-mm/20250828061023.877-1-haiyuewa@163.com/
+---
+ fs/fuse/virtio_fs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Also it's assigned to event_data->snk_config which is later NULL checked 
-rather than IS_ERR_OR_NULL in free_sink_buffer(). Maybe that path 
-doesn't happen, but all instances should be updated anyway.
-
-It's much easier to keep it as NULL and make the fix in TRBE. It also 
-wouldn't need to be backported as far.
-
->   
->   out:
-> 
-> ---
-> base-commit: fa71e9cb4cfa59abb196229667ec84929bdc18fe
-> change-id: 20250904-cs_etm_auxsetup_fix_error_handling-cb7e07ed9adf
-> 
-> Best regards,
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index c826e7ca49f5..76c8fd0bfc75 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -1016,7 +1016,7 @@ static long virtio_fs_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+ 	if (kaddr)
+ 		*kaddr = fs->window_kaddr + offset;
+ 	if (pfn)
+-		*pfn = fs->window_phys_addr + offset;
++		*pfn = PHYS_PFN(fs->window_phys_addr + offset);
+ 	return nr_pages > max_nr_pages ? max_nr_pages : nr_pages;
+ }
+ 
+-- 
+2.51.0
 
 
