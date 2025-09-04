@@ -1,348 +1,194 @@
-Return-Path: <linux-kernel+bounces-801515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4D60B44606
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:00:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D40B3B4460B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D22C16D322
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:00:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C8F518939F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A355026C3AC;
-	Thu,  4 Sep 2025 19:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7897321ABA2;
+	Thu,  4 Sep 2025 19:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUGg1ODx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="mbDF70rb";
+	dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="vs+mdioG"
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE8C26B2A5;
-	Thu,  4 Sep 2025 19:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308D572625
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 19:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757012406; cv=none; b=RjJuh0QweRPUOoWKYUKvCvKmZ4mtwIPcNnJF71+JHM/dkGsCUQCghDylagZ7ZHtFj3C4HIFbyWTbnBTSiCDpjBFDpB0bA0hmfS9BLMHC6qxdlu4BWgFU5KV5qTyHzjQ48mQXNxOECqzOXIwOkIxBsOhwEXP7UnRG1I2619bet0o=
+	t=1757012515; cv=none; b=laWS9nDWshOAad4ooIa1Acs7jJEsQlgVGYTtOdgDfB5gBp4LHbrIEgKzeE3xckqrmWjIfe+8W28Q+8528LXm3VYE1QCUirl1eHFtPN7Uiy+5r86LkfimXgRs546oqN89cMoUk3rYkVhXaau6qreYBn4gMkg+LfMDEP9oDuZYWOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757012406; c=relaxed/simple;
-	bh=GGNzgggiwqfI3Drgy4V1N79jaY0m+XWuKRb9blp6bKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k4MGt+qsM8Z0iM4kXHXL2XXi7KatORhZc/Cg5SwDRkG2LRSflobVPCrCvP+aQIfqi94rwtB1Hc5Z1OWC1OIFuXcFB9mZiHgookAe+F/PgcwtNjJezCqpJpvfGfWDCAT1E2rX3o3dStvNm8uvioyd52w/01j4OYFi42zTV0x5I+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUGg1ODx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBBA8C4CEF0;
-	Thu,  4 Sep 2025 19:00:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757012406;
-	bh=GGNzgggiwqfI3Drgy4V1N79jaY0m+XWuKRb9blp6bKQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WUGg1ODx0wmrOlaMSpYAGSjxmkV4hRMETLkDU1ck8RQRFxf1+zVXptsIYoL8cwYbT
-	 2ujiGiRWHCKCq2UdtUvsb7h2AwXXAThnfpLTFabx/M66svYHZh+REAMLddu2nZ9AG5
-	 3dUfFMbeaewDo4dMFlXKZ8zwXnUL2USbv3LCg/6mHK4XT2sESDdjd3vvnSb51ksZDm
-	 MabejUxX+1CSi0GUH7SiRc04m/iS/2vda+kZPirq2fcAh8mGCbnPqChDw/AZwXdD2e
-	 j4OmrZ65yAowpjdATltYeeGWI9To/gMk27uMkGullFXGM4Kc/PSjE92/rzi+Xv9M18
-	 yY8n6k3/+hYxw==
-Date: Thu, 4 Sep 2025 14:00:05 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	kernel@pengutronix.de, Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-Subject: Re: [PATCH v6 1/2] dt-bindings: clock: add TI CDCE6214 binding
-Message-ID: <20250904190005.GA19595-robh@kernel.org>
-References: <20250903-clk-cdce6214-v6-0-b2cc0a6f282b@pengutronix.de>
- <20250903-clk-cdce6214-v6-1-b2cc0a6f282b@pengutronix.de>
+	s=arc-20240116; t=1757012515; c=relaxed/simple;
+	bh=mztVttCjCLkYbnRTSdT8LNvuhpPCokgAATSa0KbuFtM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mp2NxTXhqZlddOI1fu9ZlFofjTUG3RUk2nGekT5r4ER7A/VrIOnUV7pxMSX7JOHI8RGIDddFMe+O1iwL5XK/sWeytvjg9mFyeGTUKdprgClK8Epz204NRmeMClNt2RwKNZnE2JZr8VkUc/PRQCkB4IulSz6gFWn9YMeYpjLPPO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=mbDF70rb; dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=vs+mdioG; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id C635F26F75D8;
+	Fri,  5 Sep 2025 04:01:44 +0900 (JST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=parknet.co.jp;
+	s=20250114; t=1757012505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CUVswyxulafXpYRZJGqtlxZFD5w64Y2Pb8m4yULcfFc=;
+	b=mbDF70rbvS6hIUOG1ezul7b2NpKMC5xFTulBkHs4Q6ky9U7UIGRkVhWr3LzyLHq996YuQ5
+	99EgsU04X2FYPp3QXEW3g/QKRZABw8jqDKpah7FL2LTLPRdB1UjtR68DjZASFAe4xXsHzp
+	D4AtG21Pxx1dM7nonOH8JDEHq7gAPAES4BxRHd7y9j+ULk5OjgymiUpoAok/yefcv3pEc7
+	bfZmiKCIrpUqYwa7RJglYBy3sMGo16j2sioCaRDefFl2ywXMUbwYqmGTHQs7S2Hcl8VNuH
+	IFBem7M7iOgS+3ozGd3H50Mi8EMk+3j2lDzkJeACF0sFrsgdOC7bHElzX6E9rw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=parknet.co.jp;
+	s=20250114-ed25519; t=1757012505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CUVswyxulafXpYRZJGqtlxZFD5w64Y2Pb8m4yULcfFc=;
+	b=vs+mdioGGslqoifUj0CRWgRLhiXvC1evmFzfoCI2skzNbvJ2SV31Wyo9hUZwM7e+1RpwZo
+	Ap4yUVLuHzx7dSDw==
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-7) with ESMTPS id 584J1hs7271443
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 5 Sep 2025 04:01:44 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-7) with ESMTPS id 584J1hdf644220
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 5 Sep 2025 04:01:43 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 584J1hbK644219;
+	Fri, 5 Sep 2025 04:01:43 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: zhoumin <teczm@foxmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] vfat:avoid unnecessary check
+In-Reply-To: <tencent_C19E4D9448D8514A505A9FE439D01C333B08@qq.com>
+References: <tencent_C19E4D9448D8514A505A9FE439D01C333B08@qq.com>
+Date: Fri, 05 Sep 2025 04:01:43 +0900
+Message-ID: <87bjnqkpns.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903-clk-cdce6214-v6-1-b2cc0a6f282b@pengutronix.de>
+Content-Type: text/plain
 
-On Wed, Sep 03, 2025 at 03:55:45PM +0200, Sascha Hauer wrote:
-> Add device tree binding for the CDCE6214, an Ultra-Low Power Clock
-> Generator With One PLL, Four Differential Outputs, Two Inputs, and
-> Internal EEPROM.
-> 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+zhoumin <teczm@foxmail.com> writes:
+
+> Remove redundant and unreachable name check code in dir.c.
+
+Looks like you changed the logic, but no explanation.
+
+> Remove flags check in fat_update_time since fat does not support
+> inode version.
+>
+> Optimize fat_truncate_time to return a meaningful value, allowing
+> the removal of redundant inode checks in fat_update_time. This
+> ensures non-root inodes are validated only once.
+
+Also changed the logic, you removed the check of flags.
+
+The change may not have the issue, however please change and explain
+more carefully.
+
+Thanks.
+
+> Signed-off-by: zhoumin <teczm@foxmail.com>
 > ---
->  .../devicetree/bindings/clock/ti,cdce6214.yaml     | 198 +++++++++++++++++++++
->  include/dt-bindings/clock/ti,cdce6214.h            |  24 +++
->  2 files changed, 222 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..4d40b8101fd7e094bb1b79c071e1be2c1fefec23
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-> @@ -0,0 +1,198 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/ti,cdce6214.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  fs/fat/dir.c  | 12 ++++--------
+>  fs/fat/misc.c | 11 ++++-------
+>  2 files changed, 8 insertions(+), 15 deletions(-)
+>
+> diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+> index acbec5bdd521..4f1be9939292 100644
+> --- a/fs/fat/dir.c
+> +++ b/fs/fat/dir.c
+> @@ -337,11 +337,11 @@ static int fat_parse_long(struct inode *dir, loff_t *pos,
+>  		if (ds->alias_checksum != alias_checksum)
+>  			goto parse_long;
+>  	}
+> -	if ((*de)->name[0] == DELETED_FLAG)
+> +	if (IS_FREE((*de)->name))
+>  		return PARSE_INVALID;
+>  	if ((*de)->attr == ATTR_EXT)
+>  		goto parse_long;
+> -	if (IS_FREE((*de)->name) || ((*de)->attr & ATTR_VOLUME))
+> +	if ((*de)->attr & ATTR_VOLUME)
+>  		return PARSE_INVALID;
+>  	if (fat_checksum((*de)->name) != alias_checksum)
+>  		*nr_slots = 0;
+> @@ -491,12 +491,10 @@ int fat_search_long(struct inode *inode, const unsigned char *name,
+>  			goto end_of_dir;
+>  parse_record:
+>  		nr_slots = 0;
+> -		if (de->name[0] == DELETED_FLAG)
+> +		if (IS_FREE(de->name))
+>  			continue;
+>  		if (de->attr != ATTR_EXT && (de->attr & ATTR_VOLUME))
+>  			continue;
+> -		if (de->attr != ATTR_EXT && IS_FREE(de->name))
+> -			continue;
+>  		if (de->attr == ATTR_EXT) {
+>  			int status = fat_parse_long(inode, &cpos, &bh, &de,
+>  						    &unicode, &nr_slots);
+> @@ -608,12 +606,10 @@ static int __fat_readdir(struct inode *inode, struct file *file,
+>  	 * need to parse long filename.
+>  	 */
+>  	if (isvfat && !short_only) {
+> -		if (de->name[0] == DELETED_FLAG)
+> +		if (IS_FREE(de->name))
+>  			goto record_end;
+>  		if (de->attr != ATTR_EXT && (de->attr & ATTR_VOLUME))
+>  			goto record_end;
+> -		if (de->attr != ATTR_EXT && IS_FREE(de->name))
+> -			goto record_end;
+>  	} else {
+>  		if ((de->attr & ATTR_VOLUME) || IS_FREE(de->name))
+>  			goto record_end;
+> diff --git a/fs/fat/misc.c b/fs/fat/misc.c
+> index c7a2d27120ba..41f6362a0428 100644
+> --- a/fs/fat/misc.c
+> +++ b/fs/fat/misc.c
+> @@ -335,7 +335,7 @@ int fat_truncate_time(struct inode *inode, struct timespec64 *now, int flags)
+>  		inode_set_mtime_to_ts(inode,
+>  				      inode_set_ctime_to_ts(inode, fat_truncate_mtime(sbi, now)));
+>  
+> -	return 0;
+> +	return 1;
+>  }
+>  EXPORT_SYMBOL_GPL(fat_truncate_time);
+>  
+> @@ -343,18 +343,15 @@ int fat_update_time(struct inode *inode, int flags)
+>  {
+>  	int dirty_flags = 0;
+>  
+> -	if (inode->i_ino == MSDOS_ROOT_INO)
+> -		return 0;
+> -
+> -	if (flags & (S_ATIME | S_CTIME | S_MTIME)) {
+> -		fat_truncate_time(inode, NULL, flags);
+> +	if (fat_truncate_time(inode, NULL, flags)) {
+>  		if (inode->i_sb->s_flags & SB_LAZYTIME)
+>  			dirty_flags |= I_DIRTY_TIME;
+>  		else
+>  			dirty_flags |= I_DIRTY_SYNC;
 > +
-> +title: TI CDCE6214 programmable clock generator with PLL
-> +
-> +maintainers:
-> +  - Sascha Hauer <s.hauer@pengutronix.de>
-> +
-> +description: >
-> +  Ultra-Low Power Clock Generator With One PLL, Four Differential Outputs,
-> +  Two Inputs, and Internal EEPROM
-> +
-> +  - CDCE6214: https://www.ti.com/product/CDCE6214
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,cdce6214
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    items:
-> +      - enum: [ priref, secref ]
-> +      - const: secref
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
+> +		__mark_inode_dirty(inode, dirty_flags);
+>  	}
+>  
+> -	__mark_inode_dirty(inode, dirty_flags);
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(fat_update_time);
 
-No child nodes with 'reg', so drop #address/size-cells.
-
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +patternProperties:
-> +  '-pins$':
-> +    type: object
-> +    additionalProperties: false
-
-blank line
-
-> +    patternProperties:
-> +      '^conf':
-> +        type: object
-> +        additionalProperties: false
-> +        $ref: /schemas/pinctrl/pincfg-node.yaml#
-> +
-> +        properties:
-> +          pins:
-> +            items:
-> +              enum: [priref, secref, out0, out1, out2, out3, out4 ]
-> +          io-standard:
-
-Needs a vendor prefix.
-
-> +            description: |
-> +              1: CMOS
-> +              2: LVDS
-> +              3: Low-Power HCSL
-> +              4: XTAL mode
-> +              5: differential
-> +            enum: [1, 2, 3, 4, 5]
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-
-blank line between properties
-
-> +          xo-cload-femtofarad:
-
-Needs a vendor prefix
-
-Use standard unit suffixes. It's "-femtofarads".
-
-> +            description: >
-
-Don't need '>'.
-
-> +              Load capacity for XO in Femtofarad
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +          xo-bias-microampere:
-
-vendor prefix and unit suffix.
-
-> +            description: |
-
-Don't need '|'.
-
-> +              Bias current setting of the XO
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +          cmosp-mode:
-
-Vendor prefix
-
-And so on...
-
-> +            description: |
-> +              Driving mode for CMOSN output:
-> +              1: Low Polarity
-> +              2: High Polrity
-> +              3: Disable
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            maximum: 3
-> +          cmosn-mode:
-> +            description: |
-> +              Driving mode for CMOSN output:
-> +              1: Low Polarity
-> +              2: High Polrity
-> +              3: Disable
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            maximum: 3
-> +
-> +        allOf:
-> +          - if:
-> +              properties:
-> +                pins:
-> +                  contains:
-> +                    const: priref
-> +            then:
-> +              properties:
-> +                io-standard:
-> +                  enum: [ 1, 5 ]
-> +
-> +          - if:
-> +              properties:
-> +                pins:
-> +                  contains:
-> +                    const: secref
-> +            then:
-> +              properties:
-> +                io-standard:
-> +                  enum: [ 1, 4, 5 ]
-> +
-> +          - if:
-> +              properties:
-> +                pins:
-> +                  contains:
-> +                    const: out0
-> +            then:
-> +              properties:
-> +                io-standard:
-> +                  enum: [ 1 ]
-> +
-> +          - if:
-> +              properties:
-> +                pins:
-> +                  contains:
-> +                    enum:
-> +                      - out1
-> +                      - out4
-> +            then:
-> +              properties:
-> +                io-standard:
-> +                  enum: [ 1, 2, 3 ]
-> +
-> +          - if:
-> +              properties:
-> +                pins:
-> +                  contains:
-> +                    enum:
-> +                      - out2
-> +                      - out3
-> +            then:
-> +              properties:
-> +                io-standard:
-> +                  enum: [ 2, 3 ]
-> +
-> +        required:
-> +          - pins
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - '#clock-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/ti,cdce6214.h>
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        clock-generator@67 {
-> +            compatible = "ti,cdce6214";
-> +            reg = <0x67>;
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +            #clock-cells = <1>;
-> +            clocks = <&clock_ref25m>;
-> +            clock-names = "priref";
-> +
-> +            cdce6214_pins: cdce6214-pins {
-> +                conf1 {
-> +                    pins = "secref";
-> +                    io-standard = <CDCE6214_IOSTD_XTAL>;
-> +                    xo-cload-femtofarad = <8100>;
-> +                    xo-bias-microampere = <100>;
-> +                };
-> +
-> +                conf2 {
-> +                    pins = "out1";
-> +                    io-standard = <CDCE6214_IOSTD_CMOS>;
-> +                    cmosp-mode = <CDCE6214_CMOS_MODE_HIGH>;
-> +                    cmosn-mode = <CDCE6214_CMOS_MODE_LOW>;
-> +                };
-> +
-> +                conf3 {
-> +                    pins = "out4";
-> +                    io-standard = <CDCE6214_IOSTD_CMOS>;
-> +                    cmosp-mode = <CDCE6214_CMOS_MODE_HIGH>;
-> +                    cmosn-mode = <CDCE6214_CMOS_MODE_LOW>;
-> +                };
-> +            };
-> +        };
-> +    };
-> diff --git a/include/dt-bindings/clock/ti,cdce6214.h b/include/dt-bindings/clock/ti,cdce6214.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..6d2cc5f01864e70a3fbccbfe20e67899e0d049e4
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/ti,cdce6214.h
-> @@ -0,0 +1,24 @@
-> +#ifndef _DT_BINDINGS_CLK_TI_CDCE6214_H
-> +#define _DT_BINDINGS_CLK_TI_CDCE6214_H
-> +
-> +/* Clock indices for the clocks provided by the CDCE6214 */
-> +#define CDCE6214_CLK_OUT0	2
-> +#define CDCE6214_CLK_OUT1	3
-> +#define CDCE6214_CLK_OUT2	4
-> +#define CDCE6214_CLK_OUT3	5
-> +#define CDCE6214_CLK_OUT4	6
-> +#define CDCE6214_CLK_PLL	7
-> +#define CDCE6214_CLK_PSA	8
-> +#define CDCE6214_CLK_PSB	9
-> +
-> +#define CDCE6214_IOSTD_CMOS	1
-> +#define CDCE6214_IOSTD_LVDS	2
-> +#define CDCE6214_IOSTD_LP_HCSL	3
-> +#define CDCE6214_IOSTD_XTAL	4
-> +#define CDCE6214_IOSTD_DIFF	5
-> +
-> +#define CDCE6214_CMOS_MODE_LOW		1
-> +#define CDCE6214_CMOS_MODE_HIGH		2
-> +#define CDCE6214_CMOS_MODE_DISABLED	3
-> +
-> +#endif /* _DT_BINDINGS_CLK_TI_CDCE6214_H */
-> 
-> -- 
-> 2.47.2
-> 
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
