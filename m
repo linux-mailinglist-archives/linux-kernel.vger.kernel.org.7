@@ -1,126 +1,142 @@
-Return-Path: <linux-kernel+bounces-799934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 803A0B43165
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:52:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1162AB43167
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7CCE177AAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:51:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B93DB1890796
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B13221254B;
-	Thu,  4 Sep 2025 04:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24622264DB;
+	Thu,  4 Sep 2025 04:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E7ws/55A"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AbQBWzYp"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F84423A9BE
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 04:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48EA163;
+	Thu,  4 Sep 2025 04:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756961472; cv=none; b=NQ26dcrfMdIOyDrhFrREvYQ7cML3WQtOToVRlEvcVfJmL+XNSxt1j8bPeLtkDc91I65+Bs127t/ajzYSSjjbeTy07mwsq259tS5PmIcmeUgGyRQ+FNZW1H3Q7Zq+Atxci5qSmH6geF56u43eRTc/m6rtd+zZasBoAr2I7iZ5lp8=
+	t=1756961559; cv=none; b=jhEiafQye0PFVOn2ZXg5oxaYu1s7I9DZyB9sW+q4bOiW/s5bMeSNNav7Q9IOQTiZAnifFWpxxpNAoZIXm3VuXa422QFFLCAB5VtuoWsYHvL29qXoTA7oS4E6QeQp/t6UFpmF/M6gdk9miwIvTB3GTO7ljN0oGdMLblo0qqJFl8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756961472; c=relaxed/simple;
-	bh=wjqjIiSphWPTyvtrvZeyKZpf4cqcuUdpwB5iI5kacjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MtN063hY+BBltU8dyNe8ybm8u8BjdQW3L1M4vmhai3jfRu/Gt7cUZuxlUHOPmqZv05JyiWvmXm29AhoXzhtt8oTlBTAvDV30YjMUBb6o8X85iGX72/7NBIUB6Ofd/t8rCZTPs1JzqQiPAWs1pMSVyxEbuGEohf5Seo7J85Z3z/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E7ws/55A; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b49cf1d4f6fso396290a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 21:51:10 -0700 (PDT)
+	s=arc-20240116; t=1756961559; c=relaxed/simple;
+	bh=UpIXrFzX94ZD/a5vUSXMneIpQ7nvqDgV36IaS5y1KKI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZSdoM5FT7qWlSsrFqc2zxxzc9WR/z7s6GH0NuvjwvMbbLgmdbZyDhGJvA9FlP0Tlwph0764eD6ONbZggi++Gko89iXctkyNuTa+37CEStv7YJdCHooCAhAxHudrRc7PBIYNSqdVp1J6TsW3/He3htbfH997oM7RUt5nimEk+R/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AbQBWzYp; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-323267bc2eeso394113a91.1;
+        Wed, 03 Sep 2025 21:52:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756961470; x=1757566270; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Npc2kRdoiAQT8Oq6xsDbKE8d7v4q00xjFvwRzwJUB5g=;
-        b=E7ws/55AMyZm0/qk4+73N7RZTJwmW4fJN0Yr9mPd5UJj1V7f6YXAI9yXbjxPq6w8HY
-         sMa/W+Dfob+uXVySkztVN6VtsBtvnnwPC7gd+CwFz22NHQAycNteHWaMlACvbWPHsLRr
-         MvhNaXG8OXPiUAjbql4LaANf6I/RuNaAYz+RI4GsAf6rpdH/F3l9WoeCDUINAzD0QsS8
-         gqxOnm+ps0UYdGOoPXA29kwL7pt4Lq/qwGE3LZw42kM+ScuBVOUB5gnAZuqR28JeBOuP
-         NzgeaxpD3BfWM1PYYPb8sTQopNxxRZaYl1qNKgobaSg3BfB9YCd09Iaqjzvi9jkZ20S2
-         gqzA==
+        d=gmail.com; s=20230601; t=1756961557; x=1757566357; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UpIXrFzX94ZD/a5vUSXMneIpQ7nvqDgV36IaS5y1KKI=;
+        b=AbQBWzYpVXJrEzksOoEu+yEE1miA7EAwXG63CAbHuiQjoNkIBrXQc6z5u4KoggC1m2
+         GB0K2WTWW8MnoTQr+cgJTnzNucJVxy002h0Jf9B/5fw0ANYLwo9AK+eVY+13WdXc+BXl
+         MGvjtPRbw7mvTTOhFKUk3IezB3JLfnQ/3r53UkreW7M6TU2CUSC3w3rR1DiEl1HE32Sw
+         TNgFJJRI45MChht7ybJAFuRSYwl627bKRFNy4UcEA9DFb1P92oIAgODwycl2n8Z8z1xi
+         1ICGKZnFRQl4WwNfkNTOczUszGmRLZ6kQ2V+2uXIg9xT44yrN4Oi0zJYgQWuxTKUBOuI
+         I2uA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756961470; x=1757566270;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Npc2kRdoiAQT8Oq6xsDbKE8d7v4q00xjFvwRzwJUB5g=;
-        b=uiD05yYMwRZlo9Wh87XmItUxJZmgt8BiApNufU//4HYAkw8tbuEjGXduniqT6Lz3Vw
-         afxxmqffxrfhkumqMh37Aojo1F7eGhufEXOpUysyr90356H1YSscADqbMqZHNIgwWOQ6
-         bU6tifBO5AprNkWHkXOjOFfn32w737LpNl4uDy2jrt7j3guBnD0JZn4MN2nHUA0a+w7M
-         ZTBis1XbEM4l+6q/pByy5JT8fLwIY/SSDxQEOpXMRBB9/5+B39AykKr/e/4GH6YA/ttB
-         VAQsdTGqlyjsgmeJ0Q+7D6in1A4IOW9i/b1cBYnqipxdprABtcOICw7MwMQajAkmC+nC
-         lClQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXkB6hm6XW48Ta0gg1qKf0JwIYUA9yXPqytymyLQWmhrtrGgeEhxeI43+ueXS8Ti0TKZXcdKgA4sCIIKLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD0l+LncTuvlrbkp1Dg5mP+ha8Yrp10UxGibXEa987Y0DeF3kU
-	mBjMIGSBCCdS1/Q0O5rAA1kqGpzkJ/YcclsRv/6htIXYWVAbJi/ZJVOigtu+kLW0lzA=
-X-Gm-Gg: ASbGncsL7ML6c+syx89ii+6JmuB7N8zl05pCV/dNeWDRMJgjaU4Tk4NWpE+sLB6V7wp
-	8DJtBDXhMKcV/YxfdEbmZJhI8tft6uxz+7vCIZmNd+Gik8vngwMNPA69Iem9qlFi7A+L43MA3jb
-	CQSypJJrhR+rQgIZFJaNAHGTmB/l6mBVZyzygXFKwMx83I4MGLiGxeLP+4sExyO6t/h+S+DiWBr
-	kX/ac30u5OKZGlY+qbFUWcNfm4EH670HOknYYSRNwxmhfyqLV7EcDiYPK1aCzz3FLDBTw5effJ0
-	r3DO9sSXpXPjApu2Vn90cLE6hfr3+D6B1ypOX9PA+upq+nQckHFWrgv3IuWBlgw+vwZqFL4ipVK
-	H+D/DDfjbXrZ0UO3WE0ldEr9yINJ0IgmhbQI=
-X-Google-Smtp-Source: AGHT+IE8fhkKtW59L/QwQVMzIGYIlMT+Sa1j2ECntDz+uUUuSYYnswDb8stymALrifXH0JUgm5Q2WA==
-X-Received: by 2002:a17:902:d501:b0:245:f1bb:9bf9 with SMTP id d9443c01a7336-24944870959mr275858785ad.12.1756961469626;
-        Wed, 03 Sep 2025 21:51:09 -0700 (PDT)
-Received: from localhost ([122.172.87.183])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2490648c89bsm177058085ad.109.2025.09.03.21.51.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 21:51:08 -0700 (PDT)
-Date: Thu, 4 Sep 2025 10:21:07 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC support:Keyword:mediatek" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC support:Keyword:mediatek" <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH] cpufreq: mediatek: avoid redundant conditions
-Message-ID: <20250904045107.rweiwjv3glbehuwb@vireshk-i7>
-References: <20250903121228.385766-1-liaoyuanhong@vivo.com>
+        d=1e100.net; s=20230601; t=1756961557; x=1757566357;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UpIXrFzX94ZD/a5vUSXMneIpQ7nvqDgV36IaS5y1KKI=;
+        b=m9SAfiLU3wUUEvvkdZuid9Q5H7xTJdRR8hQ+QvGwqskdiS+rC4ZOkEH4nq4zuEEMOG
+         yPvwKRvSkRGZSnx44DztxtWTqrTeW7dAvydhmfMdpDHLQ8/6APOKnCClzWYehFmyCBmj
+         aj6u/hhgjwDdtq+nVCH8jmofKsYvCFqkPt/YllZZpGbt1MUC+T+/y46/emCuqhmW1/2o
+         fA9WYQ0wtrL0pAiB41YPlc/F0FDbdm7JU0S9xBTpIuuXD/R2eqczc0SUSxRbYv2qIVOb
+         vGqSuubfhYzVW5M69zi/QHY3tlZiw9GFftdiRw5itJD//ni3+AUvwze+qU1GdRTZBetB
+         OX9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWcOjfBO8xrz8zJ/2T890glwE3Owsfvqfs6HDKdwZVirnsDoXDri6H4Kfvwrh8PsoqtQ3ATQT62HphlKJ0S@vger.kernel.org, AJvYcCXdY/9IklTTGc9VqO7rAQVIYnWl+zPy/ks0sBIfxMnd1ZYArdGm7+ItwCN4Okm9NcdiccUhyTuhfLxI0Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKmxB6LSPrmW22fGJm3CCqbUOpOjbJl83EahocLopaQxJMRt4v
+	342D63mKsTqEOCW21TmVmXZce5hzwo1usd0ZhEUgrSrzvQNmrCgeX7lrhwqxLtpShMQzdRBhwJ+
+	aqGAHTmSY5UJkfYmWUeTZAPfSpQ5zXP0=
+X-Gm-Gg: ASbGncvHNllBQ2eNSxztUXjAxIxpuTFZYiXKpWmDnZwlqdsn0Vs9M9nD5B83MhRHK5+
+	J/B2eioZLF1W6cwds2CRzfR5fos4nYpHgzBcxuXpnH/1Vs83LEBwLH3M0lYI13ZPgTWZ+XPElNO
+	oYJHSo44y8a283ZaQuMbywxk0Ld2yAfbLpRFSVqCy3AGl0PKSWSCR2V3PGSYQMZq8GEP334X/jL
+	4ahddg5+BTxK/pYahATiAYPq09n5jy0+iybedx1r+X8gMBblLY=
+X-Google-Smtp-Source: AGHT+IEm8ecLi+g+ZBGqWqv5ZjZDmvBlfxk36uGeXmTU0HSEeJhqP30EH4pNIVUo/cGBGQgMbiObbXUgu8NN4wnc4+8=
+X-Received: by 2002:a17:90b:3ece:b0:32b:9750:10e4 with SMTP id
+ 98e67ed59e1d1-32b975012e6mr1130068a91.27.1756961556899; Wed, 03 Sep 2025
+ 21:52:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903121228.385766-1-liaoyuanhong@vivo.com>
+References: <20250717112643.1410093-1-aha310510@gmail.com> <4r8n3287-o91r-4903-0o01-5q93834sp47n@xreary.bet>
+In-Reply-To: <4r8n3287-o91r-4903-0o01-5q93834sp47n@xreary.bet>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Thu, 4 Sep 2025 13:52:26 +0900
+X-Gm-Features: Ac12FXxjvRYO0qzoeOnY-sBVhp9U87ne-RBmVNCJx2Tl62rCBZw-GvONQSgq1rk
+Message-ID: <CAO9qdTHgEkwUGk69MdT0hC5TQ-G7MNsF_GdbGSCdMfKYgCrZ1A@mail.gmail.com>
+Subject: Re: [PATCH] HID: steelseries: refactor probe() and remove()
+To: Jiri Kosina <jikos@kernel.org>
+Cc: bentiss@kernel.org, hadess@hadess.net, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 03-09-25, 20:12, Liao Yuanhong wrote:
-> While 'if (i <= 0) ... else if (i > 0) ...' is technically equivalent to
-> 'if (i <= 0) ... else ...', the latter is vastly easier to read because
-> it avoids writing out a condition that is unnecessary. Let's drop such
-> unnecessary conditions.
-> 
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> ---
->  drivers/cpufreq/mediatek-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediatek-cpufreq.c
-> index fae062a6431f..00de1166188a 100644
-> --- a/drivers/cpufreq/mediatek-cpufreq.c
-> +++ b/drivers/cpufreq/mediatek-cpufreq.c
-> @@ -123,7 +123,7 @@ static int mtk_cpufreq_voltage_tracking(struct mtk_cpu_dvfs_info *info,
->  						      soc_data->sram_max_volt);
->  				return ret;
->  			}
-> -		} else if (pre_vproc > new_vproc) {
-> +		} else {
->  			vproc = max(new_vproc,
->  				    pre_vsram - soc_data->max_volt_shift);
->  			ret = regulator_set_voltage(proc_reg, vproc,
+Hello Jiri,
 
-Applied. Thanks.
+Jiri Kosina <jikos@kernel.org> wrote:
+>
+> On Thu, 17 Jul 2025, Jeongjun Park wrote:
+>
+> > steelseries_srws1_probe() still does not use devm_kzalloc() and
+> > devm_led_classdev_register(), so there is a lot of code to safely manage
+> > heap, which reduces readability and may cause memory leaks due to minor
+> > patch mistakes in the future.
+> >
+> > Therefore, it should be changed to use devm_kzalloc() and
+> > devm_led_classdev_register() to easily and safely manage heap.
+> >
+> > Also, the current steelseries driver mainly checks sd->quriks to determine
+> > which product a specific HID device is, which is not the correct way.
+> >
+> > remove(), unlike probe(), does not receive struct hid_device_id as an
+> > argument, so it must check hdev unconditionally to know which product
+> > it is.
+> >
+> > However, since struct steelseries_device and struct steelseries_srws1_data
+> > have different structures, if SRWS1 is removed in remove(), converts
+> > hdev->dev, which is initialized to struct steelseries_srws1_data,
+> > to struct steelseries_device and uses it. This causes various
+> > memory-related bugs as completely unexpected values exist in member
+> > variables of the structure.
+> >
+> > Therefore, in order to modify probe() and remove() to work properly,
+> > Arctis 1, 9 should be added to HID_USB_DEVICE and some functions should be
+> > modified to check hdev->product when determining HID device product.
+> >
+> > Fixes: a0c76896c3fb ("HID: steelseries: Add support for Arctis 1 XBox")
+> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+>
+> Applied to hid.git#for-6.18/steelseries, thanks.
+>
 
--- 
-viresh
+I think this patch should be applied to 6.17 rc, not 6.18.
+
+This is because while this patch primarily addresses a potential memory
+leak, it also addresses a memory corruption vuln that occurs when using
+the SRWS1 device.
+
+Therefore, it should be patched quickly in the rc release, and the stable
+release, where this bug exists, should also receive this patch.
+
+> --
+> Jiri Kosina
+> SUSE Labs
+>
+
+Regards,
+Jeongjun Park
 
