@@ -1,143 +1,123 @@
-Return-Path: <linux-kernel+bounces-800907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D6BB43D96
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:46:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC43B43D8E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 925F11C853D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:47:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51F127BE058
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866C9303C8F;
-	Thu,  4 Sep 2025 13:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE2C2D3737;
+	Thu,  4 Sep 2025 13:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QOADzU6h"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="syF9QHH0"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CF1305E1E;
-	Thu,  4 Sep 2025 13:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362F22FF15B
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756993577; cv=none; b=p63/sq4ObCBrh8CbjT9Jewx8nemxnONKC5uhzXrZt3vjeDsfG9IFF42G762rJK3iTsTZsQu/kFbxUPBDL/wcRcjm37qpiRzylEkM8bXmxk7+3+4+JgTJOVgtSAcTU+kg1fGj5sgnPKf6CqFYQZ60Daq/zia5VGZk7lDyzigPWhU=
+	t=1756993572; cv=none; b=r4k/Tf2NbDrW0TkNKZC9qhG0wFAtW5htScvfLLQoDWCCBANAftE5iAecZfFxm9Z/oXndWoEvAVk+uxOwAUFz3fJMjM+QF4prXlG545r+pLTxfgxarRxg7boybsIe19D0LEldnkX7GtPSpdlGuv6OTrbdh+G8QJYpjX/8kj25AY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756993577; c=relaxed/simple;
-	bh=xdJwCsFQ8t8Tm42dw9F0k3GjarbLHIcc5Gh7XTCoyEI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cHkxOWzEeCt4x77AZz1dUdIO3wJZnGnJ+zLEVcMCNqsAGJxS2uODBqbBETqDwKq2y8jq0pgjBHs9FV6DOam+eRuWYsPtkhwBNOyJ/QJItppdVOyXgZRNmj4o0FRnwKO+/UFAN86aW9SiXeBbo2+fCzDqmbUg8m1Ack4UuO56jyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QOADzU6h; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 584Dk96T3479535;
-	Thu, 4 Sep 2025 08:46:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756993569;
-	bh=L11aX+BB+qM1JXGrNxK4IIqPwXoq5+CWXGVYROLmJgs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=QOADzU6hJGtS5drCUoNri8iBhZtuPVU7uXlMr5bZNUffj1der76zgwHFprUaLQE8B
-	 HRKhuqlMM4k0ORwqSHpD6mpdaszF1WD/LXq9V8YqqA6OyaAdF311LZEliRmjnyeQ7C
-	 0U0cYdotWlPbR1QBie/HTQOyzBuIIENZ3CzJYet4=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 584Dk93h3846174
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 4 Sep 2025 08:46:09 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 4
- Sep 2025 08:46:09 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 4 Sep 2025 08:46:09 -0500
-Received: from [10.24.68.177] (akashdeep-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.177])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 584Dk4DQ3342464;
-	Thu, 4 Sep 2025 08:46:05 -0500
-Message-ID: <1a20e784-d2d7-46d7-b705-67e460b6ae33@ti.com>
-Date: Thu, 4 Sep 2025 19:16:04 +0530
+	s=arc-20240116; t=1756993572; c=relaxed/simple;
+	bh=YbXtY+bB9UCcFJGSj880JfkrzUoWKkND3HjhqJeIUYY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mdk0rwA4ZvhfRzHVWixooJ2gifuIti04zIMM4vYbcUQtkR4IoUly6CrP3U63Dt+zAtFWBPX7/bqqUMvPbmXMXaoL4awRfQ7fWGqGHZn9n1cCufkR7xh/JLiOeOt6qUoWeuXW2GoQb/tuPrZeX3I4r/37BgURYJw6kLW0z7+s4YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=syF9QHH0; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b041264542eso12368066b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 06:46:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756993568; x=1757598368; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UUVOYaTKR2BcmefABwOjJaCKklr+SYDWM8eaXKmt/FA=;
+        b=syF9QHH0McR/jqRpSI5sBRPGCPal/w787PnnRWyhhNSuaENu/RSB9q0FV3cCQhMA9b
+         f3E1+sZeqdPvflTr1EsK8/NPb5MsPkWpzdl3U9AtWWbr1opm4lW+jNvhfG+mFW2h4AFR
+         qqhSghMzBh6uKwtc0NgYkPU/V0SwpM1o3APoxDYWsWuhcRjcWwW9p9jPMFWh9yCOsICS
+         g2y7nfhntRbBLMPyAcGE9S5RzL3IiET8Z2CeeCxjpW19zEaj0Oo6b0IdQIxCz4S06GKN
+         EqIAscX3Zx3iV/4NQDArKC2Y9LLj0djfPzl4QS+QPbypbPyPX87BMcIIjWTlhP3oTxnd
+         BaBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756993568; x=1757598368;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UUVOYaTKR2BcmefABwOjJaCKklr+SYDWM8eaXKmt/FA=;
+        b=lOFY74I3hp6M0GrvkqMId+IzwZ4Iqt3pgLZP087LroeWtNILjlqm9NynjE/wjh4bYM
+         no096K4eTDW7TSwnU0t3/v6llQRk81ia+xmj0v0O+ZJJyGJxmtCLsVmBuYu1Vy8vhw9f
+         FwfXHQSRDp9AOp0SaBv2YZJlL406T5zBBFSh3+br/xXgXJVmQkiDWmQFYLGuVOPF9dew
+         c4Mhq81jlS9+DNJwXVBMELp0DWHqMoQGWJtcQk6U49vfqQQI0XtLHpWeCFo3AMc/t/6Z
+         Hf7EpBvkShaeoEFWZOL5AIxgUN23Q8RQ3Aaok2y2zWXpjIJl0Vdbf5c5iMnKPNvBXwy4
+         4H/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUN8d02UVT3t61ZpyLolBUGGB62kXOhXzuRElGXOj/53gDLZJfemJJDBXenHqUK9YSNUdLcwL1iF/U2NSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCrkI12OHZvJ7hdutCj0uxCDi11EjDk+eCWcBnNdMMsGyI5W85
+	dt/4v8f40AOqeg/PUpyP34Hsm8CRyjSME/kEEf6bQ9tydBRS3ojC0YZJifpY01qxIlI=
+X-Gm-Gg: ASbGncvQoYJf4Uo989oZb3i++rTudu+DePwJUEs5qWUlKv9qpRNhLMtiQC4gW54OwrI
+	Xhw60h8Hco1S9NfE89+tzhQ5qRlR6UpFr1mRnjPlvk35M0teuPizkbNncoP4YIMOcBk7I9W7Zyj
+	jqSh7BxVHNlF56mS0KITLdq8QXy1eYSSVtYaSuQcOUNDYiyvUVGjt0bECkRT11f3O93XquQnEI+
+	2wQ36f4E4I5TdSR1Xqil29gpHtfaN1/hsQGzKkX0VwqxfpZShzw2JGY2FNAco8HGmAUVyEiD7wS
+	mXxZTuyAPAcoKECSll8STV0z4CbomqYpwos+81koiyRnDCmYZRVSYAW9GPy1t+dzgZifrRjRt5w
+	pj04xgrpaGRNvFYfnPAY6fda+pkzvavIv5osQrtw=
+X-Google-Smtp-Source: AGHT+IHR5XB2P+9jpNOyHwbkAht1wt06oHD5IV8g09IEd8azHiDpTqXuJszFXYr9m5Jzcbq7eoSIFg==
+X-Received: by 2002:a17:907:26c3:b0:af9:3758:a85a with SMTP id a640c23a62f3a-aff0ee81aa2mr1052139466b.5.1756993568421;
+        Thu, 04 Sep 2025 06:46:08 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0413782b94sm1180634266b.35.2025.09.04.06.46.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 06:46:07 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org, 
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org, 
+ s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+ linus.walleij@linaro.org, tomasz.figa@gmail.com, catalin.marinas@arm.com, 
+ will@kernel.org, arnd@arndb.de, Ravi Patel <ravi.patel@samsung.com>
+Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com, 
+ gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com, 
+ smn1196@coasia.com, shradha.t@samsung.com, inbaraj.e@samsung.com, 
+ swathi.ks@samsung.com, hrishikesh.d@samsung.com, dj76.yang@samsung.com, 
+ hypmean.kim@samsung.com, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-kernel@axis.com, devicetree@vger.kernel.org, 
+ linux-gpio@vger.kernel.org
+In-Reply-To: <20250901051926.59970-4-ravi.patel@samsung.com>
+References: <20250901051926.59970-1-ravi.patel@samsung.com>
+ <CGME20250901054249epcas5p483e898d45e072cb0faa79a681f73f0d8@epcas5p4.samsung.com>
+ <20250901051926.59970-4-ravi.patel@samsung.com>
+Subject: Re: (subset) [PATCH v4 3/6] dt-bindings: arm: axis: Add ARTPEC-8
+ grizzly board
+Message-Id: <175699356578.171312.4960170053878609185.b4-ty@linaro.org>
+Date: Thu, 04 Sep 2025 15:46:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] arm64: dts: ti: k3-pinctrl: Add the remaining
- macros
-To: "Kumar, Udit" <u-kumar1@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <afd@ti.com>, <vigneshr@ti.com>, <d-gole@ti.com>, <kristo@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <vishalm@ti.com>, <sebin.francis@ti.com>
-References: <20250902071917.1616729-1-a-kaur@ti.com>
- <20250902071917.1616729-4-a-kaur@ti.com>
- <b946af38-abf9-4b34-bf44-3ba9bc64bff7@ti.com>
- <b0ccb51f-14f4-43c9-9646-296d6e9d559c@ti.com>
- <f2e60ec2-5a1f-4cff-a8ee-c2555d835946@ti.com>
-Content-Language: en-US
-From: Akashdeep Kaur <a-kaur@ti.com>
-In-Reply-To: <f2e60ec2-5a1f-4cff-a8ee-c2555d835946@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hi Udit,
 
-On 04/09/25 18:06, Kumar, Udit wrote:
-> 
-
-...
-
->> ...
->>>>   #define PULLTYPESEL_SHIFT    (17)
->>>>   #define RXACTIVE_SHIFT        (18)
->>>> +#define DRV_STR_SHIFT           (19)
->>>
->>> referring to above TRM mentioned in commit message
->>>
->>> Bit 20-19 are for DRV_STR, and description says
->>>
->>> 0 - Default
->>> 1 - Reserved
->>> 2 - Reserved
->>> 3 - Reserved
->>>
->>> Not sure, is there some additional document to be referred for 
->>> PIN_DRIVE_STRENGTH
->>
->> This information will be updated in TRM in coming cycles.
+On Mon, 01 Sep 2025 10:49:23 +0530, Ravi Patel wrote:
+> Document the Axis ARTPEC-8 SoC binding and the grizzly board
+> which uses ARTPEC-8 SoC.
 > 
 > 
-> Sorry ,
-> 
-> can not ack before TRM update
 
-The information can be found at 
-https://www.ti.com/lit/ug/spruj83b/spruj83b.pdf in Table 14-8769. 
-Description Of The Pad Configuration Register Bit
+Applied, thanks!
 
-> 
-> 
-> 
->>>
->>>
->>>> +#define DS_ISO_OVERRIDE_SHIFT   (22)
->>>> +#define DS_ISO_BYPASS_EN_SHIFT  (23)
->>>
+[3/6] dt-bindings: arm: axis: Add ARTPEC-8 grizzly board
+      https://git.kernel.org/krzk/linux/c/604a932fa924e7b15be47c6208a305f289cfa309
 
-...
-
->>>
->>>>   /* Default mux configuration for gpio-ranges to use with pinctrl */
->>>>   #define PIN_GPIO_RANGE_IOPAD    (PIN_INPUT | 7)
->>
->> Regards,
->> Akashdeep Kaur
-
-Thanks,
-Akashdeep Kaur
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
