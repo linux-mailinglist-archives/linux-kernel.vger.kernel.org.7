@@ -1,393 +1,245 @@
-Return-Path: <linux-kernel+bounces-800766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E8EB43BBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:37:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31166B43BAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FF1D5A314A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:37:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB21D1BC4912
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B887B2FE59C;
-	Thu,  4 Sep 2025 12:36:01 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A382FE565
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8F92EDD7B;
+	Thu,  4 Sep 2025 12:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bg6hOliE"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D8C2773CB;
+	Thu,  4 Sep 2025 12:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756989361; cv=none; b=hY6RIk7ao75F/y0wG8tDjKIG6gFQBImf13+Sp2n/WVzdKgGCxfRM39ohAMYoKHUdAdchsfLcmnU+jA2ImjWVHRnr1MZB3UxzQz+m8H5Wb088MoBC2RT4rIEWJ2YzD1Gxil6yk2777DM4LwGWWcQwlT28302L42CnPpbUPmIJ/+k=
+	t=1756989342; cv=none; b=qCVOrwU2GGXP25iFdss2ZKLAJS56j0dDBKyrPb90Pz1xjfgUjF2eyWrU7SZ6KseSEaw2nLBOpoDuvIKVZo/COJ4umhlnCB4djzB8GahL4I2isWeIgnDc/xvAFl/ezK9JMzETczkrp5G3RTEcNRws0djeFbqFLpLrBaknhLSx2zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756989361; c=relaxed/simple;
-	bh=ZE497jrBOu+ylyKSH/GdUw6J6fc00Ka8NMLMmKVTkDs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tcIu5/YIE2Lp2PNKPj2YYdC6oIbx+9EzsDfTNN/3EWpxGrPekexLAn0TRz3rotxjL2UUX42PSyrVR8sKmqSfWr0Pk6EU2bb2QE/YuyLZoSAKm9NxYI22BwvvtCNCreLYNWl1CuOK9vVa8kTh8gh1Cnu/IMiOCVxMNpXxID5hF+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.89])
-	by gateway (Coremail) with SMTP id _____8Bx37+ah7lodKkGAA--.12769S3;
-	Thu, 04 Sep 2025 20:35:38 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.89])
-	by front1 (Coremail) with SMTP id qMiowJAxE+SJh7lot_99AA--.5542S5;
-	Thu, 04 Sep 2025 20:35:37 +0800 (CST)
-From: Binbin Zhou <zhoubinbin@loongson.cn>
-To: Binbin Zhou <zhoubb.aaron@gmail.com>,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Lee Jones <lee@kernel.org>,
-	Corey Minyard <minyard@acm.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net,
-	jeffbai@aosc.io,
-	kexybiscuit@aosc.io,
-	wangyao@lemote.com,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Chong Qiao <qiaochong@loongson.cn>,
-	Corey Minyard <corey@minyard.net>
-Subject: [PATCH v11 3/3] ipmi: Add Loongson-2K BMC support
-Date: Thu,  4 Sep 2025 20:35:07 +0800
-Message-ID: <8f9ffb6f0405345af8f04193ce1510aacd075e72.1756987761.git.zhoubinbin@loongson.cn>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1756987761.git.zhoubinbin@loongson.cn>
-References: <cover.1756987761.git.zhoubinbin@loongson.cn>
+	s=arc-20240116; t=1756989342; c=relaxed/simple;
+	bh=iGXqsuFVuUG2I1oYAHZMxD6alZmWDXebto1yrO4oz5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TxUPzDNzVv/cxdaKCrpkhk822uooHDou3wBtCgksBL1ClahQRLfnRV3zkAjtR42JMrEOh6IcPpnoDFmO+M35UHynmcWRJBjyyMn5V1q8kgh1RrruB2ur8JgLM8kXYBBgBvr80LPHX1+Krb2KTpF4ziAsoRCHwn+TAkNIqD7Vfh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bg6hOliE; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5607a240c75so1014525e87.2;
+        Thu, 04 Sep 2025 05:35:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756989338; x=1757594138; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DzLj+zIgPpFrAWVtQ6jPGHmw4+7i/5dMoIlp+lkaKxU=;
+        b=Bg6hOliEUsH9Vc1qD4Pt2pr28rcTznEsyc3MdkW88lmU+EExJDvLQ6n7IHOP5wgHOP
+         8EmmQmfwJmKhr/zWXr94pSkEmicJQ1tpCGV0i+0IhtlCGz6XSjKZhigIN48bqS16e1z6
+         or3eoImaCLTuxV+CLbgsngznPiJRCDt3jXNeiaxQzFQjyymRdMt194jc6jbCRxgJassM
+         qmMWagCkmkaOgf4NntjdwhBg8mI/vp+HhuKNOI9tQqfCi7FxbvpXgycfb8zd5iu0WQsP
+         T6SWAJwPlG9lFAVDGLM/aDCOJ/EOaUPFNz2+bHIt+JiicS1BDNaDepTt14Fr8HaefLSC
+         u+kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756989338; x=1757594138;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DzLj+zIgPpFrAWVtQ6jPGHmw4+7i/5dMoIlp+lkaKxU=;
+        b=llq3rzq36mzc88+fBgJ11yoTg7MrEXfAZTxri05vJA90Vn3CFHEV5LaX+zkwM+BIUI
+         YTgJttYv2TTT2T3YDYfWfrWpnq26RnMKZdJAJCe++N3oloz6aywt4pUscp6ovYeECzvo
+         GALb3WPMqFI8wAYuJz5F3fTiLvfsi5d0089bINbPy9nBxR0hqjuUncSzY+52XTNvsYOM
+         iUpe8xgqtqTj7qf0jg5Nj1nGcpLX/s6UWKNIjIN96kbuiDVYVorszkUZ2vzFjC4ttJaY
+         ANz4AF7kQujwA7T0PpOIIecjnFRB//sfGNp1RqD6ARN/htVRkH5ZTqjjTVKtktRvNSrB
+         SqbA==
+X-Forwarded-Encrypted: i=1; AJvYcCViFNA0ZALerrA69jAmaK0ybiZC9khPTuY8gcITySeeXXm9O5bLL5rvj1pDG0YzJ6ib3f7pPMsRUbfF@vger.kernel.org, AJvYcCVrTm0lcMBIls6ihvkw7czlYzfu5QT222cxPBckOSOJ/8C1xnicgQFzwL3Y2FiND7mz5qgwrdZlSAoor0uV@vger.kernel.org, AJvYcCXazBo8Q9g5Y8xcrdGUi8bSeLwsIyyhPMAe2Bunss5odJy/kRLo8fNdjxq149/AwUn2nwJyIf4Wfv+zKA==@vger.kernel.org, AJvYcCXhyiEjELJkpm0XxUfo6J3EqK/7UY4k3S+M8l/lRLzJgmZ+T0f6//BXp3LFKZ+lWfsSZtojxo7z/kLm@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSYckjiL+ZI+ExkL44QKILlqn4TT4IXJCptL3YSlQ5KEqt/SS4
+	4a/RM0yRuEOxgVXP9myhASPEzlhCeHB72xmbGi03jCm3KfatCaSmjXAI
+X-Gm-Gg: ASbGncvWLKuHX3Sf6xgx0qbhgrA0fojTkLBVQgJiYGYiucpxjiQAT5l7M8UcfbA3Kfi
+	AYMnj6uC3ccghLnyDvuWeIxNglDBsf6R7n0fDrEQsAD7ylEchU+P/R6JzGcfO69y4LScvpB2Lbl
+	9qKmjqcHGpD9MCls/HR6s6Pjo12nqxxA3jX4LMefmlaiwepS/KSch8Gj9rp01v6lcNtfFKdIWpS
+	qUVp53bBhbAgwsihOvtlowYTHW9Mwjk56vP/ZAAwhCKpNe01Q9KHpjQ7LxId9jx3GgKajpLCrJC
+	CLEvmQ+54dhps1Klmg4Zx1WT/R28NFxLvBkRSEQXsqfslNmSZZd2YDMGleCfgbTmq73sb/LtEU2
+	xliCZ4MYebjG2GsCMyTc5YnGmQf40TDrU
+X-Google-Smtp-Source: AGHT+IENMFv5xHK/CdOCub0m4AEAAbu/52uJtZNubU/VRWn4qjb27C+owK+OSqSLCNN4YWFaLtIHPQ==
+X-Received: by 2002:a05:6512:6390:b0:55f:348b:ffd with SMTP id 2adb3069b0e04-55f708c1fcfmr4313703e87.21.1756989337947;
+        Thu, 04 Sep 2025 05:35:37 -0700 (PDT)
+Received: from [10.38.18.54] ([213.255.186.37])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ab5c174sm1216379e87.11.2025.09.04.05.35.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 05:35:37 -0700 (PDT)
+Message-ID: <43141a95-2267-44de-bd7e-11eb8c80090e@gmail.com>
+Date: Thu, 4 Sep 2025 15:35:36 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Tobias Sperling <tobias.sperling@softing.com>,
+ Antoniu Miclaus <antoniu.miclaus@analog.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>,
+ Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+ Hans de Goede <hansg@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+References: <cover.1756813980.git.mazziesaccount@gmail.com>
+ <08929460fe11dd0b749c50a72a634423f13f4104.1756813980.git.mazziesaccount@gmail.com>
+ <aLb8HuIG0XXLu653@smile.fi.intel.com>
+ <00ee1968-a471-4d2b-a024-4bee00e40513@gmail.com>
+ <aLglJoqBDap_eMIj@smile.fi.intel.com>
+ <10c6b0c4-d75f-494c-bb3c-883c06cf3bc2@gmail.com>
+ <CAHp75Ve4vgU5kK3z3bZyGqDOPVkMbW7RUd6_EA3jjZSeruWs=Q@mail.gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <CAHp75Ve4vgU5kK3z3bZyGqDOPVkMbW7RUd6_EA3jjZSeruWs=Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxE+SJh7lot_99AA--.5542S5
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW3Ar17WF17Gr17GFW5Gw18CrX_yoWfur47pa
-	1aya43Cr48tF47K397ZryDWFyrCwnrWa4rKF47W34ruFWj934vgr1vya4fAry7tFyvq3y3
-	JrZ8ArW3WF13JwcCm3ZEXasCq-sJn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Wrv_
-	ZF1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
-	xGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
-	x2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
-	wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jfHUhUUUUU=
 
-This patch adds Loongson-2K BMC IPMI support.
+On 03/09/2025 16:29, Andy Shevchenko wrote:
+> On Wed, Sep 3, 2025 at 3:14 PM Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+>> On 03/09/2025 14:23, Andy Shevchenko wrote:
+>>> On Wed, Sep 03, 2025 at 09:52:02AM +0300, Matti Vaittinen wrote:
+>>>> On 02/09/2025 17:15, Andy Shevchenko wrote:
+>>>>> On Tue, Sep 02, 2025 at 03:24:31PM +0300, Matti Vaittinen wrote:
+> 
+> ...
+> 
+>>>>>> +  data->vref_mv = ret / 1000;
+>>>>>
+>>>>> (MICRO / MILLI)
+>>>>
+>>>> I find this much more confusing than plain 1000. (I know we had this type of
+>>>> discussion before. See [1] again).
+>>>
+>>> Rings a bell, but that's what IIO reviewers suggest to do nowadays as a
+>>> compromise between creating a new bunch of unit (V) related definitions.
+>>
+>> I am sorry, but this just seems stupid to me. I'd say that it is very
+>> obvious for most of the readers dividing microvolts by 1000 results
+>> millivolts. And if it is not, then having this MICRO / MILLI is likely
+>> to just cause more confusion.
+> 
+> No, it tells that we have a value in microSOMETHING that is converted
+> to MILLIsomething.
 
-According to the existing design, we use software simulation to
-implement the KCS interface registers: Stauts/Command/Data_Out/Data_In.
+No. I disagree. This tells that 'ret' from the regulator API is divided 
+by some unknown value, which is a result of division of two odd defines. 
+Especially odd because one would intuitively think MICRO is smaller than 
+MILLI. You need to look up the definitions to understand WTF is really 
+going on. I think this is plain terrible.
 
-Also since both host side and BMC side read and write kcs status, fifo flag
-is used to ensure data consistency.
+The fact that we store value in vref_mv should be enough of hint that 
+idea is to have value in millivolts. Dividing by 1000 before assigning 
+makes it 100% clear the ret is in microvolts even if you didn't know the 
+regulator API to return micro volts.
 
-The single KCS message block is as follows:
+>> I _really_ dislike these defines. Why is MILLI 1000? Why it isn't 0.001?
+> 
+> You know exactly a few reasons why it's not.
+> 
+>> It makes no sense that KILO and MILLI are the same. Especially not when
+>> we are dealing with physics.
+> 
+> Yes, this is the limitation of computers and particularly of _a_ kernel.
 
-+-------------------------------------------------------------------------+
-|FIFO flags| KCS register data | CMD data | KCS version | WR REQ | WR ACK |
-+-------------------------------------------------------------------------+
+No. In my opinion, this is an example of, hopefully unintentional, 
+obfuscation where blindly following some paradigm like 'avoid plain 
+numbers and always use named defines' just results things getting worse. 
+That combined with bad naming. If KILO is 1000, then MILLI can't be 
+1000. That's 1 per milli.
 
-Co-developed-by: Chong Qiao <qiaochong@loongson.cn>
-Signed-off-by: Chong Qiao <qiaochong@loongson.cn>
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
-Acked-by: Corey Minyard <corey@minyard.net>
-Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
----
- MAINTAINERS                      |   1 +
- drivers/char/ipmi/Kconfig        |   7 ++
- drivers/char/ipmi/Makefile       |   1 +
- drivers/char/ipmi/ipmi_si.h      |   7 ++
- drivers/char/ipmi/ipmi_si_intf.c |   4 +
- drivers/char/ipmi/ipmi_si_ls2k.c | 189 +++++++++++++++++++++++++++++++
- 6 files changed, 209 insertions(+)
- create mode 100644 drivers/char/ipmi/ipmi_si_ls2k.c
+And still, the original "mv = uv / 1000" is superior in clarity. Using 
+(MICRO / MILLI) there to avoid plain number is just a sign of blindly 
+and religiously following some 'golden rule', even when it results worse 
+code.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bff129a41bb0..eba99be64035 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14421,6 +14421,7 @@ LOONGSON-2K Board Management Controller (BMC) DRIVER
- M:	Binbin Zhou <zhoubinbin@loongson.cn>
- M:	Chong Qiao <qiaochong@loongson.cn>
- S:	Maintained
-+F:	drivers/char/ipmi/ipmi_si_ls2k.c
- F:	drivers/mfd/ls2k-bmc-core.c
- 
- LOONGSON EDAC DRIVER
-diff --git a/drivers/char/ipmi/Kconfig b/drivers/char/ipmi/Kconfig
-index f4adc6feb3b2..92bed266d07c 100644
---- a/drivers/char/ipmi/Kconfig
-+++ b/drivers/char/ipmi/Kconfig
-@@ -84,6 +84,13 @@ config IPMI_IPMB
- 	  bus, and it also supports direct messaging on the bus using
- 	  IPMB direct messages.  This module requires I2C support.
- 
-+config IPMI_LS2K
-+	bool 'Loongson-2K IPMI interface'
-+	depends on LOONGARCH
-+	select MFD_LS2K_BMC_CORE
-+	help
-+	  Provides a driver for Loongson-2K IPMI interfaces.
-+
- config IPMI_POWERNV
- 	depends on PPC_POWERNV
- 	tristate 'POWERNV (OPAL firmware) IPMI interface'
-diff --git a/drivers/char/ipmi/Makefile b/drivers/char/ipmi/Makefile
-index e0944547c9d0..4ea450a82242 100644
---- a/drivers/char/ipmi/Makefile
-+++ b/drivers/char/ipmi/Makefile
-@@ -8,6 +8,7 @@ ipmi_si-y := ipmi_si_intf.o ipmi_kcs_sm.o ipmi_smic_sm.o ipmi_bt_sm.o \
- 	ipmi_si_mem_io.o
- ipmi_si-$(CONFIG_HAS_IOPORT) += ipmi_si_port_io.o
- ipmi_si-$(CONFIG_PCI) += ipmi_si_pci.o
-+ipmi_si-$(CONFIG_IPMI_LS2K) += ipmi_si_ls2k.o
- ipmi_si-$(CONFIG_PARISC) += ipmi_si_parisc.o
- 
- obj-$(CONFIG_IPMI_HANDLER) += ipmi_msghandler.o
-diff --git a/drivers/char/ipmi/ipmi_si.h b/drivers/char/ipmi/ipmi_si.h
-index 508c3fd45877..687835b53da5 100644
---- a/drivers/char/ipmi/ipmi_si.h
-+++ b/drivers/char/ipmi/ipmi_si.h
-@@ -101,6 +101,13 @@ void ipmi_si_pci_shutdown(void);
- static inline void ipmi_si_pci_init(void) { }
- static inline void ipmi_si_pci_shutdown(void) { }
- #endif
-+#ifdef CONFIG_IPMI_LS2K
-+void ipmi_si_ls2k_init(void);
-+void ipmi_si_ls2k_shutdown(void);
-+#else
-+static inline void ipmi_si_ls2k_init(void) { }
-+static inline void ipmi_si_ls2k_shutdown(void) { }
-+#endif
- #ifdef CONFIG_PARISC
- void ipmi_si_parisc_init(void);
- void ipmi_si_parisc_shutdown(void);
-diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-index 8b5524069c15..cc7033e7f550 100644
---- a/drivers/char/ipmi/ipmi_si_intf.c
-+++ b/drivers/char/ipmi/ipmi_si_intf.c
-@@ -2120,6 +2120,8 @@ static int __init init_ipmi_si(void)
- 
- 	ipmi_si_pci_init();
- 
-+	ipmi_si_ls2k_init();
-+
- 	ipmi_si_parisc_init();
- 
- 	mutex_lock(&smi_infos_lock);
-@@ -2331,6 +2333,8 @@ static void cleanup_ipmi_si(void)
- 
- 	ipmi_si_pci_shutdown();
- 
-+	ipmi_si_ls2k_shutdown();
-+
- 	ipmi_si_parisc_shutdown();
- 
- 	ipmi_si_platform_shutdown();
-diff --git a/drivers/char/ipmi/ipmi_si_ls2k.c b/drivers/char/ipmi/ipmi_si_ls2k.c
-new file mode 100644
-index 000000000000..45442c257efd
---- /dev/null
-+++ b/drivers/char/ipmi/ipmi_si_ls2k.c
-@@ -0,0 +1,189 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Driver for Loongson-2K BMC IPMI interface
-+ *
-+ * Copyright (C) 2024-2025 Loongson Technology Corporation Limited.
-+ *
-+ * Authors:
-+ *	Chong Qiao <qiaochong@loongson.cn>
-+ *	Binbin Zhou <zhoubinbin@loongson.cn>
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/ioport.h>
-+#include <linux/module.h>
-+#include <linux/types.h>
-+
-+#include "ipmi_si.h"
-+
-+#define LS2K_KCS_FIFO_IBFH	0x0
-+#define LS2K_KCS_FIFO_IBFT	0x1
-+#define LS2K_KCS_FIFO_OBFH	0x2
-+#define LS2K_KCS_FIFO_OBFT	0x3
-+
-+/* KCS registers */
-+#define LS2K_KCS_REG_STS	0x4
-+#define LS2K_KCS_REG_DATA_OUT	0x5
-+#define LS2K_KCS_REG_DATA_IN	0x6
-+#define LS2K_KCS_REG_CMD	0x8
-+
-+#define LS2K_KCS_CMD_DATA	0xa
-+#define LS2K_KCS_VERSION	0xb
-+#define LS2K_KCS_WR_REQ		0xc
-+#define LS2K_KCS_WR_ACK		0x10
-+
-+#define LS2K_KCS_STS_OBF	BIT(0)
-+#define LS2K_KCS_STS_IBF	BIT(1)
-+#define LS2K_KCS_STS_SMS_ATN	BIT(2)
-+#define LS2K_KCS_STS_CMD	BIT(3)
-+
-+#define LS2K_KCS_DATA_MASK	(LS2K_KCS_STS_OBF | LS2K_KCS_STS_IBF | LS2K_KCS_STS_CMD)
-+
-+static bool ls2k_registered;
-+
-+static unsigned char ls2k_mem_inb_v0(const struct si_sm_io *io, unsigned int offset)
-+{
-+	void __iomem *addr = io->addr;
-+	int reg_offset;
-+
-+	if (offset & BIT(0)) {
-+		reg_offset = LS2K_KCS_REG_STS;
-+	} else {
-+		writeb(readb(addr + LS2K_KCS_REG_STS) & ~LS2K_KCS_STS_OBF, addr + LS2K_KCS_REG_STS);
-+		reg_offset = LS2K_KCS_REG_DATA_OUT;
-+	}
-+
-+	return readb(addr + reg_offset);
-+}
-+
-+static unsigned char ls2k_mem_inb_v1(const struct si_sm_io *io, unsigned int offset)
-+{
-+	void __iomem *addr = io->addr;
-+	unsigned char inb = 0, cmd;
-+	bool obf, ibf;
-+
-+	obf = readb(addr + LS2K_KCS_FIFO_OBFH) ^ readb(addr + LS2K_KCS_FIFO_OBFT);
-+	ibf = readb(addr + LS2K_KCS_FIFO_IBFH) ^ readb(addr + LS2K_KCS_FIFO_IBFT);
-+	cmd = readb(addr + LS2K_KCS_CMD_DATA);
-+
-+	if (offset & BIT(0)) {
-+		inb = readb(addr + LS2K_KCS_REG_STS) & ~LS2K_KCS_DATA_MASK;
-+		inb |= FIELD_PREP(LS2K_KCS_STS_OBF, obf)
-+		    | FIELD_PREP(LS2K_KCS_STS_IBF, ibf)
-+		    | FIELD_PREP(LS2K_KCS_STS_CMD, cmd);
-+	} else {
-+		inb = readb(addr + LS2K_KCS_REG_DATA_OUT);
-+		writeb(readb(addr + LS2K_KCS_FIFO_OBFH), addr + LS2K_KCS_FIFO_OBFT);
-+	}
-+
-+	return inb;
-+}
-+
-+static void ls2k_mem_outb_v0(const struct si_sm_io *io, unsigned int offset,
-+			     unsigned char val)
-+{
-+	void __iomem *addr = io->addr;
-+	unsigned char sts = readb(addr + LS2K_KCS_REG_STS);
-+	int reg_offset;
-+
-+	if (sts & LS2K_KCS_STS_IBF)
-+		return;
-+
-+	if (offset & BIT(0)) {
-+		reg_offset = LS2K_KCS_REG_CMD;
-+		sts |= LS2K_KCS_STS_CMD;
-+	} else {
-+		reg_offset = LS2K_KCS_REG_DATA_IN;
-+		sts &= ~LS2K_KCS_STS_CMD;
-+	}
-+
-+	writew(val, addr + reg_offset);
-+	writeb(sts | LS2K_KCS_STS_IBF, addr + LS2K_KCS_REG_STS);
-+	writel(readl(addr + LS2K_KCS_WR_REQ) + 1, addr + LS2K_KCS_WR_REQ);
-+}
-+
-+static void ls2k_mem_outb_v1(const struct si_sm_io *io, unsigned int offset,
-+			     unsigned char val)
-+{
-+	void __iomem *addr = io->addr;
-+	unsigned char ibfh, ibft;
-+	int reg_offset;
-+
-+	ibfh = readb(addr + LS2K_KCS_FIFO_IBFH);
-+	ibft = readb(addr + LS2K_KCS_FIFO_IBFT);
-+
-+	if (ibfh ^ ibft)
-+		return;
-+
-+	reg_offset = (offset & BIT(0)) ? LS2K_KCS_REG_CMD : LS2K_KCS_REG_DATA_IN;
-+	writew(val, addr + reg_offset);
-+
-+	writeb(offset & BIT(0), addr + LS2K_KCS_CMD_DATA);
-+	writeb(!ibft, addr + LS2K_KCS_FIFO_IBFH);
-+	writel(readl(addr + LS2K_KCS_WR_REQ) + 1, addr + LS2K_KCS_WR_REQ);
-+}
-+
-+static void ls2k_mem_cleanup(struct si_sm_io *io)
-+{
-+	if (io->addr)
-+		iounmap(io->addr);
-+}
-+
-+static int ipmi_ls2k_mem_setup(struct si_sm_io *io)
-+{
-+	unsigned char version;
-+
-+	io->addr = ioremap(io->addr_data, io->regspacing);
-+	if (!io->addr)
-+		return -EIO;
-+
-+	version = readb(io->addr + LS2K_KCS_VERSION);
-+
-+	io->inputb = version ? ls2k_mem_inb_v1 : ls2k_mem_inb_v0;
-+	io->outputb = version ? ls2k_mem_outb_v1 : ls2k_mem_outb_v0;
-+	io->io_cleanup = ls2k_mem_cleanup;
-+
-+	return 0;
-+}
-+
-+static int ipmi_ls2k_probe(struct platform_device *pdev)
-+{
-+	struct si_sm_io io;
-+
-+	memset(&io, 0, sizeof(io));
-+
-+	io.si_info	= &ipmi_kcs_si_info;
-+	io.io_setup	= ipmi_ls2k_mem_setup;
-+	io.addr_data	= pdev->resource[0].start;
-+	io.regspacing	= resource_size(&pdev->resource[0]);
-+	io.dev		= &pdev->dev;
-+
-+	dev_dbg(&pdev->dev, "addr 0x%lx, spacing %d.\n", io.addr_data, io.regspacing);
-+
-+	return ipmi_si_add_smi(&io);
-+}
-+
-+static void ipmi_ls2k_remove(struct platform_device *pdev)
-+{
-+	ipmi_si_remove_by_dev(&pdev->dev);
-+}
-+
-+struct platform_driver ipmi_ls2k_platform_driver = {
-+	.driver = {
-+		.name = "ls2k-ipmi-si",
-+	},
-+	.probe	= ipmi_ls2k_probe,
-+	.remove	= ipmi_ls2k_remove,
-+};
-+
-+void ipmi_si_ls2k_init(void)
-+{
-+	platform_driver_register(&ipmi_ls2k_platform_driver);
-+	ls2k_registered = true;
-+}
-+
-+void ipmi_si_ls2k_shutdown(void)
-+{
-+	if (ls2k_registered)
-+		platform_driver_unregister(&ipmi_ls2k_platform_driver);
-+}
--- 
-2.47.3
+>> This is just an obfuscation compared to using plain 1000. (I kind of
+>> understand having a define for a value like 100000 - where counting the
+>> zeros gets cumbersome, although 100 * 1000 would be equally clear. But
+>> 1000 _is_ really 100% clear, whereas MICRO / MILLI is not).
+> 
+> See above why this way.
 
+I see no real justification to degrade this - other than "because I say 
+so". Sorry but that's not really a good reason to me.
+
+> ...
+> 
+>>>>>> +  gpio_pins = bd79112_get_gpio_pins(iio_dev->channels,
+>>>>>> +                                    iio_dev->num_channels);
+>>>>>
+>>>>>> +
+>>>>>
+>>>>> Instead of leaving this rather unneeded blank line I would move above...
+>>>>>
+>>>>>> +  /* We're done if all channels are reserved for ADC. */
+>>>>>
+>>>>> ...to be here
+>>>>>
+>>>>>      gpio_pins = bd79112_get_gpio_pins(iio_dev->channels,
+>>>>>                                        iio_dev->num_channels);
+>>>>
+>>>> I suppose you mean something like:
+>>>>
+>>>> register_gpios:
+>>>>       /* We're done if all channels are reserved for ADC. */
+>>>>       gpio_pins = bd79112_get_gpio_pins(iio_dev->channels,
+>>>>                                             iio_dev->num_channels);
+>>>>       if (!gpio_pins)
+>>>>               return 0;
+>>>>
+>>>> right?
+>>>
+>>> Yes.
+>>>
+>>>> I don't like this because now the comment suggests we do call
+>>>> bd79112_get_gpio_pins() only to see if all channels were for ADCs. This,
+>>>> however, is not THE reason for this call, only an optimization. I think:
+>>>> having:
+>>>>
+>>>>           /* We're done if all channels are reserved for ADC. */
+>>>
+>>> Then you can amend the comment
+>>>
+>>>            /* If all channels are reserved for ADC, we are done. */
+>>>
+>>>>           if (!gpio_pins)
+>>>>                   return 0;
+>>>>
+>>>> is clearer.
+>>>
+>>> Which makes my approach sustainable.
+>>
+>> I like your wording better, but placing this comment before the call to
+>> bd79112_get_gpio_pins() is still more confusing that placing it before
+>> the actual check:
+>>          if (!gpio_pins)
+>> is still misleading. Comment applies to the check, not the retrieval.
+> 
+> The variable assignment, or i.o.w. the source of the value we are
+> testing is also part of the equation.
+
+The comment explains why the check, not why the value is obtained.
+
+Yours,
+	-- Matti
 
