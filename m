@@ -1,205 +1,188 @@
-Return-Path: <linux-kernel+bounces-800734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74926B43B50
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:15:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD412B43B55
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E05393BE4C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:15:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A19D1C27A81
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197FA2D94B9;
-	Thu,  4 Sep 2025 12:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8792C11D0;
+	Thu,  4 Sep 2025 12:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="APTqI9mi"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="db6hmjP+"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6E72773CB;
-	Thu,  4 Sep 2025 12:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756988119; cv=none; b=fvXAyw5Hg9oJGmuVlxBBpO6gzWAi0Q2Ss9pv0U2+1+Okqb6aQPMVCmMSq6roSyn0eajKkEgW5VEKrYHFB3WrlDGShv8lE4fIZECbiI8+ckD0Ijes9UGmFIVuSXRnPZiIJECxdiDunGtkR0BPLBHuSS00Og0xyH31sSwbvvhfysk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756988119; c=relaxed/simple;
-	bh=/CTICnVOF+pKcVUO21pD4vYnwXyys1BxAg/9iooDLuM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EyqqNBN8WEMlftMQAzsRfrvqNX2JPH3Woso5wSW910eqfwBm7bYQ7pB0Ttu9JMi7CpVrrfB5l6XP2IvbwOGh6i8oX7/sjD5+JH/RrnMsT+csEoHbZh5Sqqpff4WHmiC6IMw3K7wjKzc6e9M0Tuw6XhjDZCM4JzFWEo9ATOntkQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=APTqI9mi; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/CTICnVOF+pKcVUO21pD4vYnwXyys1BxAg/9iooDLuM=; b=APTqI9miTZkiLuvz616GQ4ZPdw
-	XojlEu5k5r2NssLD+kdei3UweBMEqLjMI/S0rhWp0AlgTGbDHLNCusB9it6E3VmuhOKGEXLhbz6iM
-	CuMAznVrUSxJ5ziUu2Oghn62QHX3DSx4YlAq/7wTIj0BHYgIQQ5daP53XvuN0H8IrpkgpiEO/J0io
-	SF3R2pGSOzMPVy0Mq3rWDOaLd4coRsf0qOTDXC6q8VhcGdeNPykpDY4Hocvr18F9Gn0/6YcVidQX+
-	L9HisEUSkuueG7cEmcViV2SAAVYl6OXhPCMfarcr2qSZMplk5n+a3J0C9BOqFzUflmLI37UHMT+Bp
-	BQcHSLXg==;
-Received: from [54.239.6.190] (helo=freeip.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uu8rk-00000000Zv4-2kZT;
-	Thu, 04 Sep 2025 12:15:01 +0000
-Message-ID: <4a3be390fe559de0bd5c61d24853d88f96a6ab6a.camel@infradead.org>
-Subject: Re: [PATCH v2 0/3] Support "generic" CPUID timing leaf as KVM guest
- and host
-From: David Woodhouse <dwmw2@infradead.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paul Durrant <pdurrant@amazon.co.uk>, Fred Griffoul
- <fgriffo@amazon.co.uk>,  Colin Percival <cperciva@tarsnap.com>, Paolo
- Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,  Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>,  "x86@kernel.org" <x86@kernel.org>, "H.
- Peter Anvin" <hpa@zytor.com>, Vitaly Kuznetsov <vkuznets@redhat.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Graf (AWS),
- Alexander" <graf@amazon.de>,  Ajay Kaher <ajay.kaher@broadcom.com>, Alexey
- Makhalov <alexey.makhalov@broadcom.com>
-Date: Thu, 04 Sep 2025 14:14:57 +0200
-In-Reply-To: <aLl_MAk9AT5hRuoS@google.com>
-References: <aK4LamiDBhKb-Nm_@google.com>
-	 <e6dd6de527d2eb92f4a2b4df0be593e2cf7a44d3.camel@infradead.org>
-	 <aLDo3F3KKW0MzlcH@google.com>
-	 <ea0d7f43d910cee9600b254e303f468722fa355b.camel@infradead.org>
-	 <54BCC060-1C9B-4BE4-8057-0161E816A9A3@amazon.co.uk>
-	 <caf7b1ea18eb25e817af5ea907b2f6ea31ecc3e1.camel@infradead.org>
-	 <aLIPPxLt0acZJxYF@google.com>
-	 <d74ff3c1c70f815a10b8743647008bd4081e7625.camel@infradead.org>
-	 <aLcuHHfxOlaF5htL@google.com>
-	 <3268e953e14004d1786bf07c76ae52d98d0f8259.camel@infradead.org>
-	 <aLl_MAk9AT5hRuoS@google.com>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-/jSEI9CyeXnZghyoPmYb"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C0080B;
+	Thu,  4 Sep 2025 12:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756988265; cv=pass; b=TynQOGZw0+wAuoNUE/bj+zNTVoPsB7C2xHK+tO3WAQVXn2A5xHaTi9kEI8WGN0daq/59LMERxnLnQZnq096KXaBy38yOeaNOc1Wv3DiIyJTkDJqMQkQmo2WhH2Oc0uXz0+euuxX6FOQdeFNjqIvksaSykl8yZOoBRMVDyR+lPuQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756988265; c=relaxed/simple;
+	bh=yEww7GiI7Q1CnfPqUKd7f6cvyF2fSqrfWv67wv25RKc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=o/gHIPc4GT+vO0A2TojhR3o1A5knhy1LkjYtuVbbHNjLVTa41kqNf9+dBM2DtANewmwbdqTTy5WvBFA5svvYNPZBznMKXNu4l5PqJLftRWWGnoh9wCucgGYAteLYJX0G9sTqAT3qBuc0xAiunV09KGghLfhamyUScG+G7HoXgoo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=db6hmjP+; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756988227; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=fu5i56MR5gqKZ1f2G9Xz5lDudtJcH3I9W17LiRO9dwOio9nAefUwa0wJVLFWte/xC1Ovn4Rl5KETEqhrBCrWXcElvCqEUhl55qIpPpbJpH4zlalIV0MB9Ixgf9iUAx0LJMR0ElgeKSi677OXr0jQnPCkrIbmFyYKf83ZZR+7M64=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756988227; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BGXLLXLza35q5x0tGMHrUvPhUFi5TzJmTtz5njAQN3c=; 
+	b=FyiECescXz52cWh4CSSG2krUc1FSPcu2erNAru2tSel6xEf5USb5o+e8/pUThQDaDY1r0LQiSpelBPDytroDQvhbn4iDkMySiIe9oQ5J0tB4jRnZJk5sQFPc8sUFnLRemMKdeMMxUB08/JIoQgCnKsSUfHfH5pJVPaOKypuE+y8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756988227;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=BGXLLXLza35q5x0tGMHrUvPhUFi5TzJmTtz5njAQN3c=;
+	b=db6hmjP+R5cjIOrwRt8pVfLDiTyO3EKSQbdEh8jNaMqfWDYpP/DqeSW57rUqeiBK
+	FerwSW47rwkJc6501vZmzLpAn4fYPMxoBJma/YwINP2pZ6f92WaOGBnzJqh/QZeQXD4
+	bC/5KX/nXv6Dcpt9KOrd1Jmw97fPclgmyP6aOYtU=
+Received: by mx.zohomail.com with SMTPS id 175698822434127.246868953927674;
+	Thu, 4 Sep 2025 05:17:04 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
-
-
---=-/jSEI9CyeXnZghyoPmYb
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v3 02/14] rust: drm: gem: Add DriverFile type alias
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250829224116.477990-3-lyude@redhat.com>
+Date: Thu, 4 Sep 2025 09:16:47 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Asahi Lina <lina+kernel@asahilina.net>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <864C74E2-77D7-4983-BC62-09C62672D600@collabora.com>
+References: <20250829224116.477990-1-lyude@redhat.com>
+ <20250829224116.477990-3-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Thu, 2025-09-04 at 04:59 -0700, Sean Christopherson wrote:
+
+
+> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
 >=20
-> I thought the original problem being solved was that the _guest_ doesn't =
-know the
-> effective TSC frequency?=C2=A0 Userspace can already get the effectively =
-TSC frequency
-> via KVM_GET_TSC_KHZ, why do we need another uAPI to provide that?=C2=A0 (=
-Honest question,
-> I feel like I'm missing something)
+> Just to reduce the clutter with the File<=E2=80=A6> types in gem.rs.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>=20
+> ---
+> V3:
+> * Rename ObjectFile to DriverFile
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> rust/kernel/drm/gem/mod.rs | 23 ++++++++++++-----------
+> 1 file changed, 12 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
+> index 31c5799d995c5..80940ed11368d 100644
+> --- a/rust/kernel/drm/gem/mod.rs
+> +++ b/rust/kernel/drm/gem/mod.rs
+> @@ -14,6 +14,13 @@
+> };
+> use core::{mem, ops::Deref, ptr::NonNull};
+>=20
+> +/// A type alias for retrieving a [`Driver`]s [`DriverFile`] =
+implementation from its
+> +/// [`DriverObject`] implementation.
+> +///
+> +/// [`Driver`]: drm::Driver
+> +/// [`DriverFile`]: drm::file::DriverFile
+> +pub type DriverFile<T> =3D drm::File<<<T as DriverObject>::Driver as =
+drm::Driver>::File>;
+> +
+> /// GEM object functions, which must be implemented by drivers.
+> pub trait DriverObject: Sync + Send + Sized {
+>     /// Parent `Driver` for this object.
+> @@ -23,19 +30,12 @@ pub trait DriverObject: Sync + Send + Sized {
+>     fn new(dev: &drm::Device<Self::Driver>, size: usize) -> impl =
+PinInit<Self, Error>;
+>=20
+>     /// Open a new handle to an existing object, associated with a =
+File.
+> -    fn open(
+> -        _obj: &<Self::Driver as drm::Driver>::Object,
+> -        _file: &drm::File<<Self::Driver as drm::Driver>::File>,
+> -    ) -> Result {
+> +    fn open(_obj: &<Self::Driver as drm::Driver>::Object, _file: =
+&DriverFile<Self>) -> Result {
+>         Ok(())
+>     }
+>=20
+>     /// Close a handle to an existing object, associated with a File.
+> -    fn close(
+> -        _obj: &<Self::Driver as drm::Driver>::Object,
+> -        _file: &drm::File<<Self::Driver as drm::Driver>::File>,
+> -    ) {
+> -    }
+> +    fn close(_obj: &<Self::Driver as drm::Driver>::Object, _file: =
+&DriverFile<Self>) {}
+> }
+>=20
+> /// Trait that represents a GEM object subtype
+> @@ -79,7 +79,8 @@ extern "C" fn open_callback<T: DriverObject>(
+>     raw_file: *mut bindings::drm_file,
+> ) -> core::ffi::c_int {
+>     // SAFETY: `open_callback` is only ever called with a valid =
+pointer to a `struct drm_file`.
+> -    let file =3D unsafe { drm::File::<<T::Driver as =
+drm::Driver>::File>::from_raw(raw_file) };
+> +    let file =3D unsafe { DriverFile::<T>::from_raw(raw_file) };
+> +
+>     // SAFETY: `open_callback` is specified in the AllocOps structure =
+for `DriverObject<T>`,
+>     // ensuring that `raw_obj` is contained within a `DriverObject<T>`
+>     let obj =3D unsafe { <<T::Driver as drm::Driver>::Object as =
+IntoGEMObject>::from_raw(raw_obj) };
+> @@ -95,7 +96,7 @@ extern "C" fn close_callback<T: DriverObject>(
+>     raw_file: *mut bindings::drm_file,
+> ) {
+>     // SAFETY: `open_callback` is only ever called with a valid =
+pointer to a `struct drm_file`.
+> -    let file =3D unsafe { drm::File::<<T::Driver as =
+drm::Driver>::File>::from_raw(raw_file) };
+> +    let file =3D unsafe { DriverFile::<T>::from_raw(raw_file) };
+>=20
+>     // SAFETY: `close_callback` is specified in the AllocOps structure =
+for `Object<T>`, ensuring
+>     // that `raw_obj` is indeed contained within a `Object<T>`.
+> --=20
+> 2.50.0
+>=20
+>=20
 
-I believe that KVM_GET_TSC_KHZ returns what userspace *asked* for the
-TSC frequency to be (vcpu->arch.virtual_tsc_khz), not what it actually
-ended up being based on the measured host frequency and the available
-scaling granularity (vcpu->hw_tsc_khz).
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-
-
---=-/jSEI9CyeXnZghyoPmYb
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
-ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
-AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
-BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
-MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
-a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
-jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
-GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
-aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
-nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
-8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
-IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
-KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
-BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
-QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
-QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
-ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
-/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
-uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
-xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
-W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
-c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
-VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
-NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
-DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
-sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
-w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
-i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
-kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
-0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
-ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
-blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
-hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
-VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
-HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
-ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
-AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
-cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
-cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
-AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
-aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
-hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
-iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
-8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
-JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
-xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
-EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
-B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
-MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
-KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
-Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
-nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
-WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
-W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
-nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
-g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
-9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
-9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
-sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
-a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
-ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
-AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
-dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
-MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
-YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
-4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
-6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
-QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
-nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
-MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
-VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
-ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDkwNDEyMTQ1
-N1owLwYJKoZIhvcNAQkEMSIEIOmTy8noICIrvAvKCaXz0+maEjZy4mp2UtHUo9TcTn6NMGQGCSsG
-AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
-cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
-VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
-cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIApcAfwncmtIh6
-JZaO9l1vbDriyptsY2HIRY98l9aTI5rpqVIJBJwv4XZf8m5SDKHfdlDCJmlwnK9/T1QiKDYthykh
-Qm/JxBZlyZYBy7Kl48cbketbTLRAqV2zf/MQzCkr53qpjq9WSYhT4fdqz57kPGBA0hmX88Rr+PL3
-Iaq5v7TgO7j2HTS2lfCv0ogn5V2Jhuahc5/nPypDPZwqkRopM6Bu6OpQkXZjwz83GJsr2AausinD
-Ft3RYpboUdQHkPPeyh1TTzOcnZDWKZUZoX/TVTuKUiNv4RJnzsJZjbTaw2XBsgdWJ+6b26naxX0C
-XPeg+ETDFJDpJy9y/6rnBa/HJ8uGG0XN+mmpsWxXsKvifR9pAb+NpYOzbI5lP4Uf9Mqc5UXkHHA4
-1kkkYPVpJ0XCmi7EhUHksepMQWBrRSN+gBi+2FY4hCcRizsC15PvvkUjlSYtTR04GDBwngq5Xolo
-Miz0sdH0/a7QWD80rCF+cg+4x2f60BnpaXtFI1sGRrZ+eosFOdkAZ+0yWFWKx1Ak1oSxJT9XiR+X
-kDIWRUNZi3N9/D6xfJVkQUXVEDgRtafC7nP4OkdKJunSiVUnT4sZ+p6dH2LIg/hVjk6YHcv/jTfr
-epDbL/LZhL4+wEwPfFLfy4dygkwYG0AwCExWhn9cAaDEbGodNFomNU8UU3n4rvAAAAAAAAA=
-
-
---=-/jSEI9CyeXnZghyoPmYb--
 
