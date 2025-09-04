@@ -1,326 +1,196 @@
-Return-Path: <linux-kernel+bounces-800966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68B95B43E4C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:13:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75F06B43E4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70EE31C8292C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:12:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26C501C870BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD89303C9D;
-	Thu,  4 Sep 2025 14:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B228C3081C3;
+	Thu,  4 Sep 2025 14:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OBZNujBK"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012054.outbound.protection.outlook.com [52.101.66.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yv8RdIsM"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C638307AD3;
-	Thu,  4 Sep 2025 14:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756995127; cv=fail; b=kNK/qlTYltUjVc4Q4ERyJJT1xXwi2b7hRwe1W14BPZEhE9y7hn6eocokyV4iz+DomsdWXVpxTsPzDzqAznIVnqlWmfDt/argd3E1AyHEOjGSZsSw1nK0+HD39OFTPkVYWRHz3nftJwR5aIWTSaHRTRxQ3hGk9i7A0iOmhZgc0l0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756995127; c=relaxed/simple;
-	bh=IktF8x9xzL8s3yLwon9bVAZxYiFNGE74gAKnoUOvHrI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SU5Mt+zzRY6AbKRQWDsgPfeUdcW3zsBKe3dEy/YxyhqQjFpgnuJ78nh5Fyd1qJ9OM6iskgxHOjxwERxdr5MdIO9DHbToku9Fj/jekcaU3+MlUx0GqIHgCkYfqv3VSTWluepiYwiN10kn6CwzG+znaoq8ge05cNYx5h0eN217nZo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OBZNujBK; arc=fail smtp.client-ip=52.101.66.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Y7aRO58pdwZqp3UJNEFTTcCluZCSgHU5gPo01eYDKgM/bkPgA/89jVeyK3OY6oDM9NQLh8bCnIz4It2nCTGQ+LBEHcpIhv+rPyR8q+S4mj/cUlm1uBIIjff69J1minCXXN03fkJOOSrAsWCrdh12xnc28I1GxE9t2HCd5AQUr8+Cd5HhmPywu3vzt3HQQGX9d5Om1Bu3aVD77siP9jCjXECtVOC6FxJ557VQJs6K2GFGzFGoMeIwP9YVlA5dylNT9CRJyD/DknuDoxwo4oKn65Z+9zon+U22nI6oDBsML34EIPzCmq8PkNMWylXT4QR5HzRB+AYIGVRUfg122NdSrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jj97W7M0ZRvMjSq3v1ZaC0VIqu3HpI37flMCEjyvZro=;
- b=a3CWOQPFreFwXeAFLTfs4rP8A5heNIqSDf/jgFc4Yer4yPW51xoaYcSvJnxZ4QdK9b0tEgQwootBdmtxu9tuHKh0yRk1jPt9/D8t6QSCKFoNL4ZKCQZAkmaVwUlrEZiSPbt3T322uOn4IOfEB+pHw9/Y6RJdU2jFXwQ8tStUxRl/XF9jaTgEMwed8jaO0UoW/zq4euLYzoLv5Zk0LD0Nc74ypsR1ENVjXUc8+yn0McP2Kc/O+lEncMeWbnievTFExaIO9vIhVVUb1qrNQqTq2CntEUpuBfHX9889ohlYzMV4fb+9tSdUzQzQjpJ0LNpKwDiRLsATZJqf8am9JhtrmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jj97W7M0ZRvMjSq3v1ZaC0VIqu3HpI37flMCEjyvZro=;
- b=OBZNujBKKbxc0QP2fbymEapuQ/TkWci5EywrMOtlhSgjp122YeALNN4nlDVN/bTsHewSbiCV4sgATf4dAG8DLRLeKEuYwy5KATHF8MJALHSsMexmz/eYsk3+SDc6duYQ1bjnZBBw5uonp7QSq8lD257dUe4tPiENHO0j3PMNAhKSHx2/WzD33YtKCshEi1o3/whQ6sZ5F4I24g/GIboHtHV56Al5xLyhRXDKGep8yT6jGcvBDjZHmYBGFRLNqjoq+8WCyEipIlslHX8p6I2DJgYsjWYaRrASJ4VWFk775uxe1o2MYcNG+YXXdVEXKZz7FwjMatftCuR9JafmeTRxEA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by VI2PR04MB11025.eurprd04.prod.outlook.com (2603:10a6:800:277::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Thu, 4 Sep
- 2025 14:11:59 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd%5]) with mapi id 15.20.9094.015; Thu, 4 Sep 2025
- 14:11:59 +0000
-Date: Thu, 4 Sep 2025 10:11:49 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, imx@lists.linux.dev,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/9] dt-bindings: display: imx: Add bindings for
- i.MX94 DCIF
-Message-ID: <aLmeJU3Bk6HpEWpq@lizhi-Precision-Tower-5810>
-References: <20250903123332.2569241-1-laurentiu.palcu@oss.nxp.com>
- <20250903123332.2569241-5-laurentiu.palcu@oss.nxp.com>
- <20250904-attentive-seagull-of-fantasy-adea9f@kuoka>
- <s6uc6wjdb3seygps6nvusvu3x2io46dc5kai2bnelpnggpgyyh@j2ao3lhupohz>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <s6uc6wjdb3seygps6nvusvu3x2io46dc5kai2bnelpnggpgyyh@j2ao3lhupohz>
-X-ClientProxiedBy: PH0P220CA0018.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:d3::33) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764A3306D3E
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756995134; cv=none; b=cYrT7Qh7W14rv0L8RaeWVX84UgAlR6bSzuPGSqOpfmIhQm1copLjSiVUOID/x64a8Oz62aDQFonLllUAkqVC3Y3Tpc+D/tPzR60rD40a81TMdIPlKlpCa/3QLj7OLerPv+jcUG8+YtNhqqn9YYbTwt1SvGR05zNzFAMYRckT+Rs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756995134; c=relaxed/simple;
+	bh=Oszfq71EiBGmZGzeiIxcawIJeOgfSBiqwWXKh3zkpwc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Oh5TpdBySj4n5K50Wysu1bdNug0c3ujTiwQ/TWmcAdmfas6JL3uQTuXAdFmwUy2taeVufv2ddfGU88XeeMoqbXRFoWoTn0Al3iZOr/1VqIu6Xj7J5nA0zCh5nY643qBQw4TN67FoYHLBdbYYlq9zElKfN8RhLEjoamqv9rKk/1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yv8RdIsM; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24602f6d8b6so1969765ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 07:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756995132; x=1757599932; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P76dzonJpjxq5JjtLQXtMWe8/rjM2VxntAZ0iJ6aPUc=;
+        b=Yv8RdIsMcqwWvWmGXDLXj0YZukaGPWJaNrpOwkM2wlGUbl6nmNvY84Kp+weJkN0TWN
+         Y7uWB57ppLLpa8g+UKUNzP30N9OmeukD5lqFPG+q+QndYD5yiwiRCLJBA9qNrDO3098D
+         pvyeaaFL2dSOnJBBxw13mVyFa2IxxHQqvGx22QfN1G/VHV7lxmVrJf2ccHq2DTSGopJT
+         se+iFOSiEQRDdQ7qPMA4WcBMesgm/RZBfQQl2FLAcKxjbP2/PTW0VGc9ggY5dqkAF1iY
+         9/uRkS0l/ddWU2ydNcG5VeK4k4LItYGhNssZfCrpfYbRMxYijTIgA6ojSCkpSkw5Yv5j
+         QPYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756995132; x=1757599932;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P76dzonJpjxq5JjtLQXtMWe8/rjM2VxntAZ0iJ6aPUc=;
+        b=o2chOGAqilAovwsuVWoDJnbFuWHipi3rHnEreB9iiXvjX5g2RSBQqOS0n/RvxBydXr
+         miK1jBl6MxZkAAKSBGYhm6jR/4wQJY3x2PeR0rdhNPe3DAQrDQVLieTpZlLSC8dqblRr
+         5IRpN+G4rI2rtHYwre6JcD0wNCqD4hWGg4f3SjeEOXPYDZliJNrZFtjrVL2/S0JpD+vD
+         b7q4Jo8GKvNvfaF/vvBx/CpVfSdVCFCUkqqexBRfnGrGVpK2ziTP36Iew6t8/DkCU1Tw
+         hyc2xo1xJ2Mp0WlFRUouDKpV3t/GA1HJXYr3AdorU79PQ+Z7JD47JLAr8lA2LcsNZ4zX
+         Be9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWM0o4CLzX5OPaynus8yc1WLHst9AIUylCEfXWHSFNw5h7wNLMeANl/5TWtGDYyMky8C0GZ1DaeJgpoR3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjv63BnYzv4XA5Sfv3TkMOPWCPWC96sgPOk7DSegQdfa0kmKD0
+	DYkXyfKSuj/MCa/5G06G1/mxe8/h7RhRDiPRFXTWw9CXbXXRgZipubrdvfwcYgbAKFDu4dKTdE0
+	4+kJMQEVwlFyeR0TuN9aODHorMb+rK2c=
+X-Gm-Gg: ASbGnct5IPnbol08nAcO9qxwWYoupkW0pn8abDfwpg/aGpQy4ERj2BduW2fwM/dAMQY
+	FQxAmWr69HPXdpzEqfy1kxsJ2ooli5yM+9/wRrm6xuIujxCgP3kF8UNV/nwM4tG2O3Xt3cf0nqQ
+	odynhppv4MaAHVFhM/K1nRAgSOnqqMud4rQDvNAGE9/eLtyR/UUqajxb9ue1ow8+flaTPq7ppHm
+	JFyXjAfCdfY2ZH6Og==
+X-Google-Smtp-Source: AGHT+IEAPIL9oOqiKjaF+AER58IkUXfQBh587o4Kke0xYokY60veibzOrZeGvBUwuW565SUvSnaGad6q2MHI0yFNW/E=
+X-Received: by 2002:a17:902:e885:b0:248:d679:1aa0 with SMTP id
+ d9443c01a7336-2491e604f03mr176532205ad.3.1756995131604; Thu, 04 Sep 2025
+ 07:12:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|VI2PR04MB11025:EE_
-X-MS-Office365-Filtering-Correlation-Id: cdf0260d-29c4-4568-6765-08ddebbd02d9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|19092799006|366016|52116014|7416014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1l1HaZ/1UnydzwPXcIcvWPe50fTvRwZUCRxuxWu6StzYaHQ3nP6MHBRCnaJP?=
- =?us-ascii?Q?0sPLY4u5MiUCQr5EPldkjhRPye+w2C6XGHbRLg1KICX8nhG6ARQBwWR6rNHL?=
- =?us-ascii?Q?RP3VwOxzYm/r2OKUoa1U7KmBPy7brLzbUaFd0EH+8njBrQPv3CmHG+nSIvlf?=
- =?us-ascii?Q?dXkSWA2P2aZa2Da9VtwjSkgAke8+6+iC7tdY8yXCDXY3koDAniqGPo7+FE7N?=
- =?us-ascii?Q?Z4aN8zrecD3e007/5++xlTeRwqU8k6YA8/WEwrC6PCLxpb/AtvF3SKlED9MX?=
- =?us-ascii?Q?/VPbvMXUHL+IpieeESMjGXzAS12FTxGHp3qvbCg7wIO9f7Vz1Srup2lzYeMa?=
- =?us-ascii?Q?k/Uaw5kJPXa8S9ThPYEHD5zAo8rT5UAPPF2BWVcaKmmP/6K8Bm0U6PR0Ewc4?=
- =?us-ascii?Q?qUaMPaPxrj4xePk2U0785FCltos3aOs2HRA7kIQVrbRcj8lmLfehXQut5Zae?=
- =?us-ascii?Q?ar2oXonZeLUTyLGilsU5E9oXscC2+1zItchuMdk/ube8LOSPG2Z/vu7csWQA?=
- =?us-ascii?Q?9EvvxaYbiXmr/+VQzQNit0n4/TvEWpLBjWugVKbooq59ZnOmF5HwC/Hw81TS?=
- =?us-ascii?Q?j8mZMHG/Qn2AZfPZsfwzag35HNeLQPckHk5Is7Tu7m6Tl9sGXMY46PgTKov0?=
- =?us-ascii?Q?ueF8FT/VlEaaxi9EHPHyHBYsebK2B5rp8pNIKshpK9jG+YI6tH31LoVLkDCz?=
- =?us-ascii?Q?L/0YU4ihKcfeGLh/trR48SHAi+8y1w5upGjAkatbId5pu76STVZ6t9QL5wqX?=
- =?us-ascii?Q?VYXsnTvxhHDSj6nSfr9K6KNiLT9SkCktNPceKYpLB+aDsCXNan7vo5fWO4tI?=
- =?us-ascii?Q?g9TzDlFGeExeFDoXvCOoOo3ocS4FoK2jiKH96m4t9dU8OXijgk519paUTFEX?=
- =?us-ascii?Q?KadcL6lQ9263Wx2Yr8JZeLak2zh+xfVIYwX46R4BeI14HbFC7rKihSdlPXDb?=
- =?us-ascii?Q?GlFsch4oqoGC4hF/SnEnjHKu3dEWaAEbDdSo0KKyrJw4Vwh2pfXLQPOsz2JP?=
- =?us-ascii?Q?ojSvKiiwJCvLMkLsYhAdOy+1zmBfugFfkcIyvXJz7GZmK3PF89utG2cwSP2C?=
- =?us-ascii?Q?Q55ghSuQZ8gh8TE0VlnXgRUaqEg0pkZupAkzAlUzfUcceov1n6/GTftgkFcl?=
- =?us-ascii?Q?/ecfLX6PGYO/Aq2Ir0S4y2KXHWxsXJso19+fYZHUtCLkQDV7O03ovDu0PSwz?=
- =?us-ascii?Q?dFxIkEipOxE1jI5TN9y7B7tNRp+iRw5Hbe8xj8iLbk8agsS43NYu3Vrska5c?=
- =?us-ascii?Q?rRCxgXPgkZlt9/JxGk6Pb0bR5wbw20JHoGU0T02HS8ji2Hp7bQh9ZEH/UXvg?=
- =?us-ascii?Q?Mptp+hDnt4+8xz5sEpcl3zTdx/zlPlyKuQdtWlrQoCRa6pmYG8TPvDw/rfsF?=
- =?us-ascii?Q?s4Cj3JcHEqjzmc5ZAbH6kIQi6qWGa0qYd3iThdbRb/vSuWWaCAXK0a8Wdf0+?=
- =?us-ascii?Q?G52/M9FR6mIYh9xaiSzi5RGpuJBc3EHi?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(19092799006)(366016)(52116014)(7416014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1a6biJBgak1hr6DLg4mKbbyQn9SI/41SLM4LxXMdSc2TUZ9sdgDY3aD+/6ay?=
- =?us-ascii?Q?Y9DBpf4Kdt7zMEnOjqzvquE0zj+AYEcenRnfg9MQ97/Wkv5kbU8ctKe3teUu?=
- =?us-ascii?Q?JdBQtrpbPUY7jJ8NGHMJUlfYWyXgg6fqx6vY0zYgVq6goFLT/z0+/FUaMFEA?=
- =?us-ascii?Q?KkTsCbn5+L/K4BDu3+aqTv7AZpkkP2HexxTQglTno1WYtx3zzW3Jolfxh4Ki?=
- =?us-ascii?Q?PGBrbsHLznD+N8gppH33kYasGsBqaXdKk2ARUr6EbG0dLZzDIcJ8eTsV3B7J?=
- =?us-ascii?Q?xuXlolGFSFn9AcetRCD4cYRoP8ldvXSo7ZhpkbriDzrtzz4agD26L7DolneB?=
- =?us-ascii?Q?bBIWB+jqjTOdYTgLfb6S9mhtWuC1ICHzAA7Sl9xZKwcMRpU7GdrXfqfYY8PI?=
- =?us-ascii?Q?Cx4Nuv5PZVujncfIgwzeAHmh3UfDifgTVhY1kfPEf4+UWp8AJzMG2BqEpLqs?=
- =?us-ascii?Q?mmwmoNfseGAZOFsU/ejdZdXPJ2O6WKtgGqJW7XBDEgLYgs1fWJn7AmR8K0kL?=
- =?us-ascii?Q?5DVz5eUero2sT73HQy2XIdWtT5JzabwPZv6G72/X8wvMMRiun6l/LDIRExT2?=
- =?us-ascii?Q?+LvRAFh2c8vvyRrQJrCmAL2/uPM0Tw0dwb7qAU/AvBrvblerLhMF+vgdv2q2?=
- =?us-ascii?Q?Ip8WqPk3j2CetDFLFGr1ehEN+DPIdMAO0yQ17UjNbQbJSsARdyp+1tK0EIJe?=
- =?us-ascii?Q?mBBlyDG/0MjKRBEZYb0UKR+F+pc4RD6s2ALgmLjvjNpRwrXMgmZZ/dHeVI4R?=
- =?us-ascii?Q?IOhSIRKE/S+wE8JSsLzjHnHkiAGwutW3p9CR2C1ScVb455qSlfJV2Ha7Ac77?=
- =?us-ascii?Q?JIUZvM+8bhFFov+GYC0Rn5Yw0Ar/dU8uZ6Rcs3yMHpAbRpm3/dgmQd9t/rTx?=
- =?us-ascii?Q?k52xanwMYKOp4FB+qRW4338M6EGtXQzmuJDFBSMn6/zp7wpLf5nrzeZeIc3V?=
- =?us-ascii?Q?Rmf3YdJ7Sv/C5dpvyqy8y3/e07x87gKX3+qjLDHGBxqB4fyn18q2hC5/xsNm?=
- =?us-ascii?Q?4kuPtI0+esVaovQwXTMJu7D8w3oOlptgELse3k4rY+Gq81wJNhLhf9i+1kl5?=
- =?us-ascii?Q?C9QYEo30wTpBQV3Ev4RV2ybuTCd2/lUW6+TASH+jRLnJ886/nmMNSXAV3ved?=
- =?us-ascii?Q?yFPDhn9wHnFUHIv7aVn81yTWF5BkTUN83kAp4pDGRASnvAQj6VTCe4DcIM87?=
- =?us-ascii?Q?sXN0Jy1A4jh/erw0V7sxjQghnZgS1TL/Wl0WiOCnX1tLn9nX6R/IRQceygZb?=
- =?us-ascii?Q?Faff2w/I4YzIbpDIphsN/0DeINoIjIvGfXAzpJqLTAnPbQf75l0Nn4v5RCnH?=
- =?us-ascii?Q?VEKBdMI0Iz3AqUkGTeBYUnFKJR1viPgr0xIbFv6XmqwLEsT5UpBHism9YggQ?=
- =?us-ascii?Q?f9qoVRf0cX4dFWAvBh/QVgVi4SaTyeBlHt2unIh3AfK2kqLJzzmTUdWwkTKj?=
- =?us-ascii?Q?OI3KCgOZauT0odp8Tkdex7fAOdOHLPCnFaMuLkiNKLMOLru2HeTey5GoY3BE?=
- =?us-ascii?Q?5DB/aGejh5Gjt2ipdqkBnRTih3nA8BsB60o/tSMSssgmEEjrLSfcI0LHLWIT?=
- =?us-ascii?Q?vV4bdAd9h0xcdewfl17LOVfU+FNILAJIDUwzXiWo?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cdf0260d-29c4-4568-6765-08ddebbd02d9
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 14:11:58.9426
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: chjHYETLKlKw4FxJ2gC9g309EX+/ImX6f6bm0M36SmKsa76JIJgZgDyF5+vU36ckgM7dcddrfYVzKl+IXWjn3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB11025
+References: <20250904082127.271638-1-liaoyuanhong@vivo.com> <20250904082127.271638-4-liaoyuanhong@vivo.com>
+In-Reply-To: <20250904082127.271638-4-liaoyuanhong@vivo.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 4 Sep 2025 10:11:59 -0400
+X-Gm-Features: Ac12FXxwjjMHeUEY5jR_elix-1Pg7z89-JPeJ8lMyom1ZYENdg-eos4fkcVJR2Q
+Message-ID: <CADnq5_Ppuwsz3RU0nK3nqUapfuSrS3QDQNZXiKxYUgBvLObWag@mail.gmail.com>
+Subject: Re: [PATCH 3/3] drm/amd/pm/powerplay/smumgr: remove redundant ternary operators
+To: Liao Yuanhong <liaoyuanhong@vivo.com>
+Cc: Kenneth Feng <kenneth.feng@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	"open list:AMD POWERPLAY AND SWSMU" <amd-gfx@lists.freedesktop.org>, 
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 04, 2025 at 03:14:31PM +0300, Laurentiu Palcu wrote:
-> On Thu, Sep 04, 2025 at 09:24:57AM +0200, Krzysztof Kozlowski wrote:
-> > On Wed, Sep 03, 2025 at 03:33:22PM +0300, Laurentiu Palcu wrote:
-> > > DCIF is the i.MX94 Display Controller Interface which is used to
-> > > drive a TFT LCD panel or connects to a display interface depending
-> > > on the chip configuration.
-> >
-> > It looks like you are going to send v5, so:
-> >
-> > A nit, subject: drop second/last, redundant "bindings for". The
-> > "dt-bindings" prefix is already stating that these are bindings.
-> > See also:
-> > https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-> >
-> > Anyway, nothing in the changelog explains dropping tags.
-> >
-> > I am not going to do the work twice. Write proper changelogs.
->
-> Sorry about that. :/ I agree it's frustrating to do the same work
-> twice... I admit I was lazy and only wrote a changelog in the
-> cover-letter. I will try to add a changelog to each changed patch next
-> time.
->
-> The r-b tag was dropped in v4 because I removed the QoS functionality until
-> I find a better way to handle it.
+Applied the series.  Thanks!
 
-If drop review tag, need write it at change log and said the reason why
-tag dropped.
+Alex
 
-Frank
-
-> Hence, the 'nxp,blk-ctl' property in
-> the binding needed to be dropped as well.
+On Thu, Sep 4, 2025 at 4:29=E2=80=AFAM Liao Yuanhong <liaoyuanhong@vivo.com=
+> wrote:
 >
-> Thanks,
-> Laurentiu
+> For ternary operators in the form of "a ? true : false", if 'a' itself
+> returns a boolean result, the ternary operator can be omitted. Remove
+> redundant ternary operators to clean up the code. Swap variable positions
+> on either side of '=3D=3D' to enhance readability.
 >
-> >
-> > <form letter>
-> > This is a friendly reminder during the review process.
-> >
-> > It looks like you received a tag and forgot to add it.
-> >
-> > If you do not know the process, here is a short explanation:
-> > Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-> > versions of patchset, under or above your Signed-off-by tag, unless
-> > patch changed significantly (e.g. new properties added to the DT
-> > bindings). Tag is "received", when provided in a message replied to you
-> > on the mailing list. Tools like b4 can help here. However, there's no
-> > need to repost patches *only* to add the tags. The upstream maintainer
-> > will do that for tags received on the version they apply.
-> >
-> > Please read:
-> > https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-> >
-> > If a tag was not added on purpose, please state why and what changed.
-> > </form letter>
-> >
-> > >
-> > > Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> > > ---
-> > >  .../bindings/display/imx/nxp,imx94-dcif.yaml  | 82 +++++++++++++++++++
-> > >  1 file changed, 82 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/display/imx/nxp,imx94-dcif.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/display/imx/nxp,imx94-dcif.yaml b/Documentation/devicetree/bindings/display/imx/nxp,imx94-dcif.yaml
-> > > new file mode 100644
-> > > index 0000000000000..54419c589ef74
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/display/imx/nxp,imx94-dcif.yaml
-> > > @@ -0,0 +1,82 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > +# Copyright 2025 NXP
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/display/imx/nxp,imx94-dcif.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: i.MX94 Display Control Interface (DCIF)
-> > > +
-> > > +maintainers:
-> > > +  - Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> > > +
-> > > +description:
-> > > +  The Display Control Interface(DCIF) is a system master that fetches graphics
-> > > +  stored in memory and displays them on a TFT LCD panel or connects to a
-> > > +  display interface depending on the chip configuration.
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: nxp,imx94-dcif
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  interrupts:
-> > > +    items:
-> > > +      - description: CPU domain 0 (controlled by common registers group).
-> > > +      - description: CPU domain 1 (controlled by background layer registers group).
-> > > +      - description: CPU domain 2 (controlled by foreground layer registers group).
-> > > +
-> > > +  interrupt-names:
-> > > +    items:
-> > > +      - const: common
-> > > +      - const: bg_layer
-> > > +      - const: fg_layer
-> > > +
-> > > +  clocks:
-> > > +    maxItems: 3
-> > > +
-> > > +  clock-names:
-> > > +    items:
-> > > +      - const: apb
-> > > +      - const: axi
-> > > +      - const: pix
-> > > +
-> > > +  power-domains:
-> > > +    maxItems: 1
-> > > +
-> > > +  port:
-> > > +    $ref: /schemas/graph.yaml#/properties/port
-> > > +    description: Display Pixel Interface(DPI) output port
-> > > +
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > > +
-> > > +    soc {
-> > > +        #address-cells = <2>;
-> > > +        #size-cells = <2>;
-> > > +
-> > > +        display-controller@4b120000 {
-> > > +            compatible = "nxp,imx94-dcif";
-> > > +            reg = <0x0 0x4b120000 0x0 0x300000>;
-> > > +            interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                         <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                         <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
-> > > +            interrupt-names = "common", "bg_layer", "fg_layer";
-> > > +            clocks = <&scmi_clk 69>, <&scmi_clk 70>, <&dispmix_csr 0>;
-> > > +            clock-names = "apb", "axi", "pix";
-> > > +            assigned-clocks = <&dispmix_csr 0>;
-> > > +            assigned-clock-parents = <&ldb_pll_pixel>;
-> > > +            power-domains = <&scmi_devpd 11>;
-> > > +
-> > > +            port {
-> > > +                dcif_out: endpoint {
-> > > +                    remote-endpoint = <&ldb_in>;
-> > > +                };
-> > > +            };
-> > > +        };
-> > > +    };
-> > > --
-> > > 2.49.0
-> > >
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+> ---
+>  drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c      | 5 ++---
+>  drivers/gpu/drm/amd/pm/powerplay/smumgr/iceland_smumgr.c   | 5 ++---
+>  drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c | 5 ++---
+>  drivers/gpu/drm/amd/pm/powerplay/smumgr/tonga_smumgr.c     | 5 ++---
+>  4 files changed, 8 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c b/driv=
+ers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
+> index 5e43ad2b2956..d2dbd90bb427 100644
+> --- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
+> +++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
+> @@ -2540,9 +2540,8 @@ static int fiji_initialize_mc_reg_table(struct pp_h=
+wmgr *hwmgr)
+>
+>  static bool fiji_is_dpm_running(struct pp_hwmgr *hwmgr)
+>  {
+> -       return (1 =3D=3D PHM_READ_INDIRECT_FIELD(hwmgr->device,
+> -                       CGS_IND_REG__SMC, FEATURE_STATUS, VOLTAGE_CONTROL=
+LER_ON))
+> -                       ? true : false;
+> +       return PHM_READ_INDIRECT_FIELD(hwmgr->device,
+> +                       CGS_IND_REG__SMC, FEATURE_STATUS, VOLTAGE_CONTROL=
+LER_ON) =3D=3D 1;
+>  }
+>
+>  static int fiji_update_dpm_settings(struct pp_hwmgr *hwmgr,
+> diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/iceland_smumgr.c b/d=
+rivers/gpu/drm/amd/pm/powerplay/smumgr/iceland_smumgr.c
+> index 17d2f5bff4a7..1f50f1e74c48 100644
+> --- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/iceland_smumgr.c
+> +++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/iceland_smumgr.c
+> @@ -2655,9 +2655,8 @@ static int iceland_initialize_mc_reg_table(struct p=
+p_hwmgr *hwmgr)
+>
+>  static bool iceland_is_dpm_running(struct pp_hwmgr *hwmgr)
+>  {
+> -       return (1 =3D=3D PHM_READ_INDIRECT_FIELD(hwmgr->device,
+> -                       CGS_IND_REG__SMC, FEATURE_STATUS, VOLTAGE_CONTROL=
+LER_ON))
+> -                       ? true : false;
+> +       return PHM_READ_INDIRECT_FIELD(hwmgr->device,
+> +                       CGS_IND_REG__SMC, FEATURE_STATUS, VOLTAGE_CONTROL=
+LER_ON) =3D=3D 1;
+>  }
+>
+>  const struct pp_smumgr_func iceland_smu_funcs =3D {
+> diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c b=
+/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
+> index ff6b563ecbf5..bf6d09572cfc 100644
+> --- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
+> +++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
+> @@ -2578,9 +2578,8 @@ static int polaris10_initialize_mc_reg_table(struct=
+ pp_hwmgr *hwmgr)
+>
+>  static bool polaris10_is_dpm_running(struct pp_hwmgr *hwmgr)
+>  {
+> -       return (1 =3D=3D PHM_READ_INDIRECT_FIELD(hwmgr->device,
+> -                       CGS_IND_REG__SMC, FEATURE_STATUS, VOLTAGE_CONTROL=
+LER_ON))
+> -                       ? true : false;
+> +       return PHM_READ_INDIRECT_FIELD(hwmgr->device,
+> +                       CGS_IND_REG__SMC, FEATURE_STATUS, VOLTAGE_CONTROL=
+LER_ON) =3D=3D 1;
+>  }
+>
+>  static int polaris10_update_dpm_settings(struct pp_hwmgr *hwmgr,
+> diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/tonga_smumgr.c b/dri=
+vers/gpu/drm/amd/pm/powerplay/smumgr/tonga_smumgr.c
+> index 6fe6e6abb5d8..2e21f9d066cb 100644
+> --- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/tonga_smumgr.c
+> +++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/tonga_smumgr.c
+> @@ -3139,9 +3139,8 @@ static int tonga_initialize_mc_reg_table(struct pp_=
+hwmgr *hwmgr)
+>
+>  static bool tonga_is_dpm_running(struct pp_hwmgr *hwmgr)
+>  {
+> -       return (1 =3D=3D PHM_READ_INDIRECT_FIELD(hwmgr->device,
+> -                       CGS_IND_REG__SMC, FEATURE_STATUS, VOLTAGE_CONTROL=
+LER_ON))
+> -                       ? true : false;
+> +       return PHM_READ_INDIRECT_FIELD(hwmgr->device,
+> +                       CGS_IND_REG__SMC, FEATURE_STATUS, VOLTAGE_CONTROL=
+LER_ON) =3D=3D 1;
+>  }
+>
+>  static int tonga_update_dpm_settings(struct pp_hwmgr *hwmgr,
+> --
+> 2.34.1
+>
 
