@@ -1,112 +1,101 @@
-Return-Path: <linux-kernel+bounces-800490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4237FB43873
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:19:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C731B437EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D55E03A7BB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:16:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C9183A4C1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E59A3090E2;
-	Thu,  4 Sep 2025 10:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531CF2F83BC;
+	Thu,  4 Sep 2025 10:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="Wi/KJwDe"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.52])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="nOl1yB9O"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22843019B3;
-	Thu,  4 Sep 2025 10:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A0529AAEA;
+	Thu,  4 Sep 2025 10:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756980727; cv=none; b=KWqWSkVKSEPjPSd4Ani/WPcgFadYl/lQAh0Tc0AGRYGQLPl1fa+Ng24bkgKWrICFigZhPcUFdOJNJVB2+HuzcnZyeeIEsumR2cHAt0tZIOy+Y0o/0a9GpPPH1Ak2/pkQ+3Zx3+oRmw83d36OxYVlAh26/4WPAooHhynx8tzEhdc=
+	t=1756980451; cv=none; b=ACpHmtRRjABimU/vB2cGx5Oy1NjMP13jEEcJVzCcYtxyvrcyscghf8DJtr5owgFCGEKrK6MbLWq8kPBBQBfaPbLGgzpR6c+qKaitdk2WYjeXPNIYf+CgJTUP9swkKwjTJ9//uJq9aqDteJgbvpOVrbHd0/HLubRn+XCDHRocIJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756980727; c=relaxed/simple;
-	bh=SVzrlG6EiqurtcYJS6e3s4CsW++ZWmmqsKqR3pT6waA=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=uepbIA72c+N9ZSrqY7SpDNhEvCGJAk8siiLM2amDLGvvhTpyHmjmNcg4Q/KBrY9rdHM2JcNd7590eOGbQqqgtprzlhJroZh/o0OtGQtB1Jyrbqw2pTLDV2uVKmEXluDc4Wt4i8+OtZIsuVNsxEZ8/9WK8b1xqm0sHk+QW2UAfQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=Wi/KJwDe; arc=none smtp.client-ip=43.163.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756980721;
-	bh=SmrgEE1d/4hfg8XYik2jCXkw+t8AuBI4gpU0IEWiY1M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Wi/KJwDelfnfVCQI9GmRZvZLq6ERIqinTPq+f9THbaL2Srebmj550miVR/1HvPiQa
-	 z5VwUQ0kim5J5GIT+1INx0X8+6Wod2PXPxg9du1a4d/DkX+53wl84aEdqdd5qc/Pto
-	 pmfiEkxs3sCuYvLkuWiHWHWuoZXJXZLnjBIAKMpA=
-Received: from SSOC3-SH.company.local ([58.33.109.195])
-	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
-	id 150B5428; Thu, 04 Sep 2025 18:05:16 +0800
-X-QQ-mid: xmsmtpt1756980316t3kaej8v2
-Message-ID: <tencent_4D98FA22B5856469AC62088A7AC6D67CB009@qq.com>
-X-QQ-XMAILINFO: M+DG/l9YxNXYhGG6xTZvAHoCs6fLNiYGPXsqjT7cDZEE2lTAJAvjOTlJAc/mQh
-	 9yzgVcYfyODOaZtU2mEqApQ6o9zfL3/i4cJvdXpu2/LpCsXqkULThC6EZ4mw/m3ikwySUg3e49/t
-	 28LEphxSJlY7sDzhx4NoSBEm48D1lE5gwBKDXXY/8uwp5IYSsSQ1ov6Xk1ro1aFF5LWYRw9HIaKE
-	 x4N3AdfNUPUP2cMQeatgJNu/Thus7ME4RVKPs0QVKS6qK1p1ADqT+Vrh7sAbgYAbEaa3tqPU7Bi6
-	 QEocdHwyKyJULrcRttl7/Kpz82gR0mzpcCdpJyDwpTFNx+r3ce7eA/z2mQLLsQN1XL1WJZT7P1w8
-	 wZsIpBdk/fTldu4KwMyaSl4k9cyk8iWgQUMVMC2BIMi1znjjVzKNpCcqlB3h6RmoIsYczZKiXc5q
-	 luZQmOPkeuuQyI5L4yDrgDRW9mFMNKflT4l02ce/48Yni04ZKU78jziYPj3GVM8KX0voAo9WY1nM
-	 EbV2GFqMzmUY92mlx94aGanuj+oLSs4z5NnqM7Mxzlez/5k/i5B9EtxMgIHXeeBfxpgSdLyd56JV
-	 a+Lz5jddEVfB3Wk4Rnc2EtO3uFLJsrM7bPHl0/Dp2C0vNbcB/Ta34Z0/IWnTBZNYEjsVEpq3HmcR
-	 dJYAa1q+wzdHyKsdH+WnS8JBqVE5ok7cfrprXsnvNdV44kQ93ziIECeVMZV43Cn5NazXKj5vRAa/
-	 b0ftCVoOvc94gOmigGnqV0E8BdMsVCieJH8e8JOYr7a4eeA24XXcVxTtJTN6tD4lqHbFQreADxI3
-	 N7p/0f/gqOlaUcslIyia/iaSgXOf9FD/p8ZvvlmloD6PtgeUt6V8go5xY+LU84INMeDx23I9e+WR
-	 UFM0ocPf46iuuscgHpLZ4XV9g3hnUsd2flr3YFwO33IuccNxFuBIhAIcFnguk6EXNAIAP8d/YbsL
-	 xP47q/CtISOVAP/vXF85tnKk6NChwZN/IhJELKzn4hUl/+YP7frAWvhK0xVVQ3JJbM5IU+3t5264
-	 1Wf/JzpndK3Sh6HA9Z
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Han Guangjiang <gj.han@foxmail.com>
-To: yukuai1@huaweicloud.com
-Cc: axboe@kernel.dk,
-	fanggeng@lixiang.com,
-	gj.han@foxmail.com,
-	hanguangjiang@lixiang.com,
-	liangjie@lixiang.com,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yangchen11@lixiang.com,
-	yukuai3@huawei.com
-Subject: Re: [PATCH] blk-throttle: check policy bit in blk_throtl_activated()
-Date: Thu,  4 Sep 2025 18:05:16 +0800
-X-OQ-MSGID: <20250904100516.250579-1-gj.han@foxmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <1f9c674a-9f5b-6c89-0504-1f6985095fa0@huaweicloud.com>
-References: <1f9c674a-9f5b-6c89-0504-1f6985095fa0@huaweicloud.com>
+	s=arc-20240116; t=1756980451; c=relaxed/simple;
+	bh=S2QJA2AOVeoUizABYeyfp6Twp176A8/YUn6FmsB1EvI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CdxdJfAXcfAMA+HxpZhKOmHf2Fejq/NRHdVGnkYg5ngl1jNGvgSW//KX2mF7T5TTnmM5VIiRhUHrFSsA8bUwdvFcNkvKg6oOQ0EHCUmmNibDdP/m4HsrRNtxfcSBmKVxNn8YoDW3TBI6g3oimvJEqthu8pVpDJQ/+H9vybuwoMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=nOl1yB9O; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=XA7weSSUHOq64zac9iqpCNVbJO8t7SshxgtzKYssu+U=;
+	t=1756980450; x=1758190050; b=nOl1yB9OkA/+3/1WQ5cxit+4ajJQu4yIXykGM8gkQ6j/1Zu
+	AQsJUP+u6/dF9iaUGiuB6AyPlrK77g7e+d2rwMjlWv4+ursabJTnm28GgLhMFCvYQD6Ixe9ffeVw3
+	2AW4wT82AdqYnL6ZiDlJopaiY1pe+Go3XpLVlZuiXRa/EYLogce2cbGs34msCZsz4++NhPXjyMb6V
+	b1dFP1wU1K1r1QKaeaS4HAt/8Cx57oYvvpbkqb0S1RBfWYclC6Crh0ct0PyEsHkIbij6O7iKKb5Oq
+	zwfCN4ccb1f4VyC4ccbOSv/RF0hvKNwovEeG9G4gi7KDcApwWhSXU93hv0vrbIqg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uu6s7-0000000DzTb-2JBt;
+	Thu, 04 Sep 2025 12:07:15 +0200
+Message-ID: <c0a6f1960a39ca6cc84764614cfd8ccb0afc24f9.camel@sipsolutions.net>
+Subject: Re: [PATCH v4 4/4] openrisc: Add jump label support
+From: Johannes Berg <johannes@sipsolutions.net>
+To: ChenMiao <chenmiao.ku@gmail.com>, Linux Kernel	
+ <linux-kernel@vger.kernel.org>, Linux OpenRISC
+ <linux-openrisc@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Jonas Bonn <jonas@southpole.se>, 
+ Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne
+ <shorne@gmail.com>, Peter Zijlstra	 <peterz@infradead.org>, Josh Poimboeuf
+ <jpoimboe@kernel.org>, Jason Baron	 <jbaron@akamai.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Ard Biesheuvel	 <ardb@kernel.org>, Masahiro Yamada
+ <masahiroy@kernel.org>, Nicolas Schier	 <nicolas.schier@linux.dev>, Sahil
+ Siddiq <sahilcdq0@gmail.com>, 	linux-doc@vger.kernel.org
+Date: Thu, 04 Sep 2025 12:07:14 +0200
+In-Reply-To: <20250904100109.688033-5-chenmiao.ku@gmail.com> (sfid-20250904_120203_780907_7229F626)
+References: <20250904100109.688033-1-chenmiao.ku@gmail.com>
+	 <20250904100109.688033-5-chenmiao.ku@gmail.com>
+	 (sfid-20250904_120203_780907_7229F626)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-malware-bazaar: not-scanned
 
 Hi,
 
->>   static inline bool blk_throtl_activated(struct request_queue *q)
->>   {
->> -        return q->td != NULL;
->> +        return q->td != NULL && test_bit(blkcg_policy_throtl.plid, q->blkcg_pols);
->>   }
-> 
-> You can just remove the fist checking, p->td must be set if policy is
-> enabled. And please make blkcg_policy_enabled() inline function in
-> blk-cgroup.h and use it here.
+So I'm not quite sure why I'm CC'ed, nor do I really care much, but
+since I was idly reading through it anyway ...
 
-We intentionally kept the q->td != NULL check because we cannot guarantee 
-that the policy module is fully loaded when this function is called. 
-If the policy module is not loaded yet, blkcg_policy_throtl.plid might not be 
-assigned, which could cause the test_bit() check to be incorrect.
+> +		if (unlikely(offset < -134217728 || offset > 134217724)) {
+> +			WARN_ON_ONCE(true);
+> +		}
 
-By keeping this check, we ensure that we have at least reached the cgroup 
-configuration flow, indicating that the policy loading is complete.
+Seems like that should just be
 
-I'm wondering if there are any risks here and whether we should remove 
-the q->td != NULL check?
+	WARN_ON_ONCE(offset < -134217728 || offset > 134217724);
 
-Thanks,
-Han Guangjiang
+since the unlikely is in there already.
 
+> +	if (early_boot_irqs_disabled) {
+> +		copy_to_kernel_nofault(addr, &insn, sizeof(insn));
+> +	} else {
+> +		patch_insn_write(addr, insn);
+> +	}
+
+(and maybe that doesn't need braces)
+
+johannes
 
