@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-801048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A87FB43F3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:41:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17180B43F3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD2DA1CC12ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:39:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CCEEA43BA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C793164AB;
-	Thu,  4 Sep 2025 14:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDB631A54A;
+	Thu,  4 Sep 2025 14:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ft7R67z6"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o92AJnVr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DB730F557
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5A130F557;
+	Thu,  4 Sep 2025 14:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756996492; cv=none; b=Nq0XvXvDQah3w8PlFrlT6PO++6JLIkM731CbliZ9h6AysN6b6YPNx5XdtcqDOzYb/a5a+6kr7Vmjdp2VynBv6jClIlV+O3N7kO025pklwGe573x+u7Q29vNSFvEn9w4WoaVJquBJezWB2DKgNi6mMB1tM0vM7Y7i4BM5U8NaMoU=
+	t=1756996521; cv=none; b=kcrn+NU5MT7lxRwh1CSo4c1z1fJMNpPmsa2BXtY9enzdKfkO0eTzmBXUo48LrZFPQDRHG+QjpIF4lHDi+GTRBiyEKR1mYFKcuT6ywIbaT7REouAsMpidIgv/k98O1aHepstYJ7oPoZFF4HFk7YwBalM3d3IbR8oIcOo4YfQaDEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756996492; c=relaxed/simple;
-	bh=5bp/92ROC/MIhinmDI/pNyNNDoOoefSD9Kf2q8amg/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=nBfh4FZdWIY5eucj01rySJRBQnuZmmld0ncqNkDvMd3JZoklm+BzablNMHlsitAMEDOholaE6YQAoad+drguxcMxdSkwbYFtcP/VPrjVwufisZDafTnX3MooRVMn81smz9DO19kwKNkEXlJWyK3byV+Ns+lHZgnZ1sDy2e7fhZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ft7R67z6; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250904143448epoutp04a7a1151a48b8d2c0d7ba160f8bd876df~iGv9LQHZO0589305893epoutp04i
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:34:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250904143448epoutp04a7a1151a48b8d2c0d7ba160f8bd876df~iGv9LQHZO0589305893epoutp04i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756996488;
-	bh=jnfTWRF/FMaqmWy+MGqeeb2CttG3aCtI8os1JvqG2AU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ft7R67z6oETGIdpRuLeRNGdMWi/wf1IaP2G6d0SsoIBXezRXx9Rt99XnNKKP3idSc
-	 MGl7Miwx6UqEiQfQTYR6zyuZYXriuVeWHU+ZsxxK93GOF4dd8U3iaHiMUg+BA0Ke/H
-	 3GvQ3tpG9gZ5jN/Kwop/RSCllNYuZg7qPdrmvySw=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250904143447epcas5p3d02bc4203cd4e4a428a60dd0a71b533a~iGv8YJIZz2391723917epcas5p3O;
-	Thu,  4 Sep 2025 14:34:47 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cHhny4Bcjz6B9m4; Thu,  4 Sep
-	2025 14:34:46 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250904143446epcas5p3ecf61b44e98a9e6eda2d8d49e4992de0~iGv7Aaf7K2391723917epcas5p3N;
-	Thu,  4 Sep 2025 14:34:46 +0000 (GMT)
-Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250904143444epsmtip1336043d5c30befc8ec88a30fd6779655~iGv53pWe50814008140epsmtip1h;
-	Thu,  4 Sep 2025 14:34:44 +0000 (GMT)
-Date: Thu, 4 Sep 2025 20:04:40 +0530
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
-	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	cpgs@samsung.com
-Subject: Re: [PATCH V2 12/20] nvdimm/namespace_label: Skip region label
- during namespace creation
-Message-ID: <20250904143440.l5fca2dgvmi2c325@test-PowerEdge-R740xd>
+	s=arc-20240116; t=1756996521; c=relaxed/simple;
+	bh=8kIGznDy+yBjtOzEZBMp/gYRmqnIWETZTPphA2eOkh8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jPCrzasyYqYONFINqhggIVJE0flifYOLfb1a1E+DWN6ipI/PbRlFuUdMVmnDH+N4l3JYlPifElhmc1y3L8S2HynPyB8SeNiz9OFmjutseQcHULbpbZfPM9+t0+d+2UYvygzYMoj48Xjhw8Owukody/EOTnLHSwBe/RVPq4pcTWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o92AJnVr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7651AC4CEF0;
+	Thu,  4 Sep 2025 14:35:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756996520;
+	bh=8kIGznDy+yBjtOzEZBMp/gYRmqnIWETZTPphA2eOkh8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=o92AJnVroMgO0xyUlw5zPy+0SOqoU8a73BKt5yk4HJ/rA6ZxM/Z4lnFBvkqCTCcUt
+	 g55GxGyJ4kUwstKETLKrzHpfRrXg1HXAFoT0g4qT6YMWzAA+sBlDYUwQKIxp3EWIAq
+	 qSjq8hUsOGyVnMDYJl6+EUFw/w0owqY6Wo9+MsgUIRgAJ5+NY8nrN2n+lOZRu8+feE
+	 eoTkxkplcOyrx0yLVoCoIHziOC/DHMYyRGcfgYBUVwTa4aZJwEGv9m6LNB7YRSjOhS
+	 PhPBCM5x3ORKjDJK7txAcwIKaho+KEKGM9LQ5AvnsrOOD6SmUSh3mB3CpmVsRjSDhP
+	 EgaYwvQIsFwSQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	=?UTF-8?q?Otto=20Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Lee Jones <lee@kernel.org>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Robert Marko <robimarko@gmail.com>,
+	Adam Skladowski <a_skl39@protonmail.com>,
+	Sireesh Kodali <sireeshkodali@protonmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	iommu@lists.linux.dev,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	phone-devel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	linux@mainlining.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Daniil Titov <daniilt971@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Dang Huynh <danct12@riseup.net>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v9 0/7] Initial support of MSM8937 and Xiaomi Redmi 3S
+Date: Thu,  4 Sep 2025 09:35:13 -0500
+Message-ID: <175699650574.2182703.5262816788916742029.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250903-msm8937-v9-0-a097c91c5801@mainlining.org>
+References: <20250903-msm8937-v9-0-a097c91c5801@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250813165554.00002dea@huawei.com>
-X-CMS-MailID: 20250904143446epcas5p3ecf61b44e98a9e6eda2d8d49e4992de0
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_ead3a_"
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250730121238epcas5p212dcce5cc5713173913ee154d5098a2c
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121238epcas5p212dcce5cc5713173913ee154d5098a2c@epcas5p2.samsung.com>
-	<20250730121209.303202-13-s.neeraj@samsung.com>
-	<20250813165554.00002dea@huawei.com>
-
-------OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_ead3a_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-
-On 13/08/25 04:55PM, Jonathan Cameron wrote:
->On Wed, 30 Jul 2025 17:42:01 +0530
->Neeraj Kumar <s.neeraj@samsung.com> wrote:
->
->> During namespace creation skip presence of region label if present.
->
->Confusing description.  What does skipping presence mean?
->Reword.
->
->During namespace creation, skip any region labels found.
-
-Thanks Jonathan, I will fix it in next patch-set
-
->
->
->> Also preserve region label into labels list if present.
->>
->> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
->> ---
->>  drivers/nvdimm/namespace_devs.c | 50 +++++++++++++++++++++++++++++----
->>  1 file changed, 45 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
->> index e5c2f78ca7dd..8edd26407939 100644
->> --- a/drivers/nvdimm/namespace_devs.c
->> +++ b/drivers/nvdimm/namespace_devs.c
->> @@ -1985,6 +1985,10 @@ static struct device **scan_labels(struct nd_region *nd_region)
->>  		if (!lsa_label)
->>  			continue;
->>
->> +		/* skip region labels if present */
->
->This is kind of obvious comment. I'd drop it.
-
-Sure, I will drop it in next patch-set
-
-
-Regards,
-Neeraj
-
-------OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_ead3a_
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
-------OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_ead3a_--
+On Wed, 03 Sep 2025 23:08:20 +0200, Barnabás Czémán wrote:
+> This patch series add initial support for MSM8937 SoC
+> and Xiaomi Redmi 3S (land).
+> 
+> The series is extending the MSM8917 gcc and pinctrl drivers
+> because they are sibling SoCs.
+> MSM8937 have 4 more A53 cores and have one more dsi port then
+> MSM8917.
+> It implements little-big architecture and uses Adreno 505.
+> 
+> [...]
+
+Applied, thanks!
+
+[3/7] dt-bindings: firmware: qcom,scm: Add MSM8937
+      commit: cf13bed78c90b2c0fc65774e86d564c868fa2a23
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
