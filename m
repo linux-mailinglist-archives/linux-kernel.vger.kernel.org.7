@@ -1,122 +1,363 @@
-Return-Path: <linux-kernel+bounces-799677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC4D4B42ED6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:30:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD30B42EDA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45BF33AE629
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:30:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A10403A953D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDABC202976;
-	Thu,  4 Sep 2025 01:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EF1199FBA;
+	Thu,  4 Sep 2025 01:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iL6XZtOM"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ueEyciu3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFE11F4C98
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 01:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4AD5661;
+	Thu,  4 Sep 2025 01:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756949366; cv=none; b=TE8n/gUYC3EyJYeOUNllnXV2TWZYHef8uJm0qYXzDZ9W5uYoyBV3aUHeDvNXYyZcg+I+HSQIHrZJY7T7q3f8n6ETFDM/7UZf04xhjLvgsdQYQsiuAQdpAccN8oP7J6+fI+Bm1XKFMSt1c9rbo7YyufsJuGwbo/qeieLlJ4GoPnE=
+	t=1756949544; cv=none; b=OKjyzAeHxDXKWNAOpOo9lEC6EbOH9huM3eqY2PXXqTmUrf/j62x6vcixcf470AUVtMN0W8XDtTXZYoh14cE7SFYUbQr+/loxp5l4eJOMs4aCIxCCYbz8xP8LUZ/AM0YZ3JApVKRSf7El8Biiioey4jlJPRcQyouNzJSK/HJVg/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756949366; c=relaxed/simple;
-	bh=1L6YyzW3erKcj33GY/6Si2DL2c5yax3FQGavbAJ0Bgw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GOFzkEpQP5Okm0u/xLB4JN1ABEnrQGKpeC7a5xvUEHKIFH2LzK4d4ihxUcA2tClthnQ4Wu9/Auq4stJ4eVumyi73eWfL5ewiTuFp+/48M1mwCRLXd4CPESrl0sF8g7GeX2lFwkHe7W/MRX21x5WejHp0L4MI4CV+eJ7NLM6mAZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iL6XZtOM; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b326b6c189so6886921cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 18:29:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756949364; x=1757554164; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d01B01AXVKk9If9XJH5GhITUvVOiKXQj/np/FqkF0PA=;
-        b=iL6XZtOM8Wsy//NRu3mNhLSiKL0yexB3OdQa6XNl9d4PM2fSTEheu6htJDgX0uUtg1
-         PRXPZoEBUFPpQJE9iX4bIRnaOuOVHquQxI2Yn5LIY7kTa+TY+065fnQ0Yyj8w7u/ynIv
-         54vZT/k3zcEZZKF9eVQgA41akNxyyy1pvH0Clljcr+nMhI1363aITxRxfRewmcHxERsl
-         cwXYfdGTabknQE0r5BTUjg+qRQSul9sP9Q6GZq58U3FORRUXX+Dx7NRUTUxNTtnmzZDX
-         ZKW6bOPRcKOLUbKHsm8gKfLfYvNXY/2kjagKhE/Dj5sV/h//EaQ2piDYO14y9PUU1juz
-         +Z0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756949364; x=1757554164;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d01B01AXVKk9If9XJH5GhITUvVOiKXQj/np/FqkF0PA=;
-        b=fk8L8WxeFk/IdCPD13+17TFYOyW2AogvDYvfdCPEJc0P3Tl1saeIpNABB5rz0/996t
-         11SV05A12MSCDtFARMjOYz1haEG8UgEE0lCqFAxv2AbHjqrNvlB3IEM5VPZbg3i79I70
-         /KX2m1WM49FyzWdA9j97yM+2mfNavRcA6DWhntKOFmaElYyg/ezR6dKPygVBXP28ipcJ
-         IY1k04AumAA1NzBf6oTdjkCv8MaE3DvaC9/CunktRprIlLjyrMlnbYkas/zJedBGlW1H
-         YWCCmnIA2zn1hbJ1WTAa7QTo7L7TGMFo2pn2JrRJ71RaxxjUDDeq7GHP4kZhPMcnob49
-         6tHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRS/Pqvvdosgk7/fkAv7SnGKqI7DJSmXLSPua1z/Sh1gt9jTLFKucheZPtYLKXNZfz9NSWBZO6arYuEXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgoGe9G9SI6zemPPvQRWyZFLTxF1HJVP8JS7yF6xT4s2VKAGNQ
-	MbKFxHCPZ/pI0EhVECv8Xg+4OVPZWP4IM3eXTRbb3ITyf6y4PtFBUXG3
-X-Gm-Gg: ASbGncvXUT+HU9IdfLoFUoCgj90cYoeTpKeREFbfuxjmdaWPdwOqtJBzEPUlC3raoPE
-	T+mjY57gGUBCDhyJhEWlzEcolrjWsUpaOMzsurvsU8jFOKxsRukBeTorEkXx4Ydk3FqoVAGi/cc
-	J808kcK9NZYNsvm8ut8sFw6xkLTYQR48njGafLDcxKT/W/Nc/rmtHEnsWcVAiiyM3MMq79yBYJJ
-	aUCTaw+7jnLnde/CHlvPLEsoYhFm5nhecM3GpslYRro4GJSB419wXqQmFxwuKs2XTrsM6MEABqD
-	2aHw+lsH8WkIqB/PUqiXtF+rFhb9ZaswB/B2anKrkMdtzczdEAOiEHhnmx70SW8OgMZte1WQC4X
-	uAEQRddmKVQ3B1kWzZl5cAyDjC/6nPtxj1avVujVCbF1NUAkdQxM=
-X-Google-Smtp-Source: AGHT+IHDNa7ZJksOVETNfIHr60YU5IWFtrsWzQgmzDu0ISrjUT6IbIEYQbo5/u1SRfpfeRz7Z/LlMw==
-X-Received: by 2002:ac8:7dc1:0:b0:4b3:775:ba3 with SMTP id d75a77b69052e-4b31dcd0f3dmr218186741cf.49.1756949363780;
-        Wed, 03 Sep 2025 18:29:23 -0700 (PDT)
-Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b48f78757fsm20378921cf.43.2025.09.03.18.29.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 18:29:23 -0700 (PDT)
-From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-Subject: [PATCH 16/16] staging: rtl8723bs: merge nested if conditions for clarity and tab problems
-Date: Thu,  4 Sep 2025 01:28:59 +0000
-Message-Id: <20250904012859.215565-7-vivek.balachandhar@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250904012859.215565-1-vivek.balachandhar@gmail.com>
-References: <20250904012859.215565-1-vivek.balachandhar@gmail.com>
+	s=arc-20240116; t=1756949544; c=relaxed/simple;
+	bh=l93qY3fTTLAE5J+kOYY/T0I+Q5vnv+2oWsWmEki3LBI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=HNKHrgmmJLJJEtFTcKW/AuA3Q41QbIuKwFwasV/5rJW+/OT5SvuogE/rmpV4v+N4Sz0z/5ho3uM1HWdWDS3ueYJp2up1lDVCwKYtkeY+s91y7N94iB+tobaQhl+0zn5eV543dA1q7IKjpbxl6bOSM7xDHdBGL9kFkyT6iOxIcgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ueEyciu3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36BB6C4CEE7;
+	Thu,  4 Sep 2025 01:32:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756949543;
+	bh=l93qY3fTTLAE5J+kOYY/T0I+Q5vnv+2oWsWmEki3LBI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ueEyciu3rzy5Ig03+g4uj1mkJKGS4bCB/rWI4HoIFdnW4CMt5Pc9NbYnuuXrln4Jk
+	 CUQUH35N6b5lgXoIhHANOVVdDkhyH9/G2JEZuuDsYDxtFt4q9RM4ce2avRzGieXBLp
+	 jzv9NiktYEwuXRkLtMxqjZQFSBcAXqwkYjK0R0qXlieY9yM1JDTYT23haq1NAdPba8
+	 vbUROs5pmhzRSC1pT715NKJoXTIZ1+JTVxMr8B0BJ6AqnQpOjZZ4iow7JH24N3lgel
+	 aPMLOcydkS9vRQjx7MUZKUnJgNPk9UhgzUzhY0N+9O5jthZkP/JXChg7Yb0+bMCwOY
+	 zjrlrRugN1/9w==
+Date: Thu, 4 Sep 2025 10:32:19 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Ryan Chung <seokwoo.chung130@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] trace_fprobe.c: TODO: handle filter, nofilter or
+ symbol list
+Message-Id: <20250904103219.f4937968362bfff1ecd3f004@kernel.org>
+In-Reply-To: <aLiHQNBPOytj_85Q@gmail.com>
+References: <20250829102050.232291-1-seokwoo.chung130@gmail.com>
+	<20250902112147.165c8030837b6b21cf402fd3@kernel.org>
+	<aLiHQNBPOytj_85Q@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Combine nested if conditions for clarity and fix tab indentation in one
-place to match kernel coding style.
+On Thu, 4 Sep 2025 03:21:52 +0900
+Ryan Chung <seokwoo.chung130@gmail.com> wrote:
 
-No functional changes.
+> On Tue, Sep 02, 2025 at 11:21:47AM +0900, Masami Hiramatsu wrote:
+> Hi Masami,
+> 
+> Thank you for your comments.
+> 
+> > Hi Ryan,
+> > 
+> > Thanks for update.
+> > 
+> > On Fri, 29 Aug 2025 19:20:50 +0900
+> > Ryan Chung <seokwoo.chung130@gmail.com> wrote:
+> > 
+> > > This v2 addresses the TODO in trace_fprobe to handle comma-separated
+> > > symbol lists and the '!' prefix. Tokens starting with '!' are collected
+> > > as "nofilter", and the others as "filter", then passed to
+> > > register_fprobe() accordingly. Empty tokens are rejected and errors are
+> > > reported with trace_probe_log_err().
+> > 
+> > OK, can you describe how it changes the syntax. You may find more things
+> > to write it down.
+> > 
+> 
+> > For example, fprobe is not only a function entry, but also it supports
+> > function return. How it is specified? Current "%return" suffix is introduced
+> > for single symbol (function), like schedule%return. If we introduce a list
+> > of symbols and filters, it looks more complicated.
+> > 
+> 
+> I see your concern and where my confusion came from.
+> 
+> > For example, "!funcAB,funcC,funcA*%return" seems like the exit of funcA*,
+> > the entry of funcC, but not covers funcAB. It is naturally misleading
+> > users. We have to check "funcA*%return,!funcAB,funcC" pattern.
+> > 
+> > Thus, I think we should use another suffix, like ":exit" (I think the colon
+> > does strongly separate than comma, what do you think?), or just
+> > prohibit to use "%return" but user needs to specify "$retval" in fetcharg
+> > to specify it is the fprobe on function exit. (this maybe more natural)
+> > 
+> 
+> I agree with you here. Using another suffix will make it more clearer
+> for the user. 
+> 
+> So in that sense, I am guessing you are suggesting:
+> :exit (return)
+> :entry (explicit entry)
 
-Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Yes, that's right.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 80b4dd1e8353..4fbb180398b0 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -1253,8 +1253,8 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
- 						rtw_free_stainfo(adapter,  pcur_sta);
- 
- 					ptarget_wlan = rtw_find_network(&pmlmepriv->scanned_queue, pnetwork->network.mac_address);
--					if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true) {
--					    if (ptarget_wlan)
-+					if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true &&
-+					    ptarget_wlan) {
- 						ptarget_wlan->fixed = true;
- 					}
- 				}
+> 
+> So this applies to the entire list. If a comma or wildcard is present
+> and %return appears, the parser will reject it with -EINVAL and a
+> precise trace_probe_log() index. For a single symbol, we use the legacy
+> foo%return.
+> 
+> Ex)
+> funcA*,!funcAB,funcC          # entry (default)
+> funcA*,!funcAB,funcC:exit     # exit (spec-level)
+> schedule%return               # single-symbol legacy
+
+Right. this also should be shown in README so that test program can
+identify the kernel supports new syntax.
+
+> 
+> > The reason why I talked about how to specify the exit point of a function
+> > so far, is because the variables that can be accessed at the entrance
+> > and exit are different.
+> > 
+> 
+> Ah I see.
+> 
+> > Also, fprobe supports event-name autogeneration from the symbol name,
+> > e.g. 'symbol__entry' or 'symbol__exit'. Recently I found the symbol
+> > already supports wildcards, so sanitize it from the event name [1]
+> > 
+> > [1] https://lore.kernel.org/all/175535345114.282990.12294108192847938710.stgit@devnote2/
+> > 
+> > To use this list-style filters, we may need to reject if there is no
+> > event name. Of cause we can generate event-name from the symbol list
+> > but you need to sanitize non alphabet-number characters.
+> > 
+> > Ah, here is another one, symbol is used for ctx->funcname, and this is
+> > used for querying BTF. But obviously BTF context is unusable for this
+> > case. So we should set the ctx->funcname = NULL with listed filter.
+> > 
+> 
+> So it seems like this TODO is actually a bit larger scope than the
+> patch anticipated.
+
+Yeah, sorry for confusion. It was too simple.
+
+> 
+> In that sense, maybe we could:
+> - for Single, literaly symbol, keep autogen symbol__entry/symbol__exit
+>   and sanitize wildcards.
+> - for List or wildcard, require an explicit [GROUP/]EVENT; reject if
+>   ommitted. No autogen.
+
+Also, 
+  - update <tracefs>/README so that we can write a new test case for
+    this syntax.
+  - update current existing test case's "requires:" lines.
+
+> 
+> I don't completely understand ctx->funcname you mentioned for the
+> usecase for querying BTF. I will research it more.
+
+It is only used for BTF (BPF type format, describes function prototype
+which can be queried by function name), so you just need to set it NULL.
+
+> > > 
+> > > Questions for maintainers (to confirm my understanding):
+> > >   * Parsing location: Masami suggested doing the parsing in the parse
+> > >     stage (e.g., via parse_symbol_and_return()). v2 keeps the logic in
+> > >     __register_trace_fprobe(), but I can move the call into the parsing
+> > >     path in v3 if that is the preferred place. Is that correct?
+> > 
+> > Most of above processes have been done in parse_symbol_and_return(),
+> > thus the parsing it should be done around there.
+> > 
+> 
+> Thank you.
+> 
+> > >   * Documentation: I plan to update the user-facing docs for fprobe
+> > >     syntax. Is Documentation/trace/ the right place (e.g., 
+> > >     Documentation/trace/fprobetrace.rst)?
+> > 
+> > Yes, please explain it with examples.
+> > 
+> > Also, can you add a testcase (in a sparate patch) for this syntax?)
+> > 
+> 
+> Yes. I will add selftests under tools/testing/selftests/ftrace/:
+> Accept when list entry/exit; ! exclusions; whitespace variants.
+> Reject when empty tokens, leading/trailing commas, %return with lists or
+> wildcards, mixed forms.
+> Naming: autogen only for single literal; list/wildcard requires explicit
+> event name. 
+> BTF: ctx->fullname == NULL when multi/wildcard.
+
+Yes, that's what I meant.
+
+> 
+> I will add the following: 
+> # entry across a list
+> echo 'f:net/tx_entry tcp_sendmsg*,!tcp_sendmsg_locked,tcp_sendpage' \
+>   > /sys/kernel/tracing/dynamic_events
+> 
+> # exit across the same list (spec-level)
+> echo 'f:net/tx_exit tcp_sendmsg*,!tcp_sendmsg_locked,tcp_sendpage:exit' \
+>   > /sys/kernel/tracing/dynamic_events
+> 
+> echo 1 > /sys/kernel/tracing/events/net/tx_entry/enable
+> echo 1 > /sys/kernel/tracing/events/net/tx_exit/enable
+
+OK, but carefully choose the symbols, some of them can be disappear
+depending on Kconfig.
+
+> 
+> > Thank you,
+> > 
+> > > 
+> > > Link: https://lore.kernel.org/linux-trace-kernel/20250812162101.5981-1-seokwoo.chung130@gmail.com/
+> > > Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
+> > 
+> > > ---
+> > > 
+> > > Changes in v2:
+> > >   * Classify '!' tokens as nofilter, others as filter; pass both to
+> > >     register_fprobe().
+> > >   * Reject empty tokens; log errors with trace_probe_log_*().
+> > >   * Use __free(kfree) for temporary buffers.
+> > >   * Keep subject and style per "Submitting patches" (tabs, wrapping).
+> > >   * No manual dedup (leave to ftrace).
+> > > 
+> > >  kernel/trace/trace_fprobe.c | 48 +++++++++++++++++++++++++++++++++++--
+> > >  1 file changed, 46 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+> > > index b36ade43d4b3..d731d9754a39 100644
+> > > --- a/kernel/trace/trace_fprobe.c
+> > > +++ b/kernel/trace/trace_fprobe.c
+> > > @@ -815,6 +815,11 @@ static int trace_fprobe_verify_target(struct trace_fprobe *tf)
+> > >  static int __register_trace_fprobe(struct trace_fprobe *tf)
+> > 
+> > This is not a good place to add anymore, because this change turned out
+> > not to meet the expected prerequisites. (when I commented TODO here,
+> > I didn't expected too.)
+> > 
+> > Anyway, this is a good opportunity to review this TODO deeper.
+> > 
+> > Thank you,
+> > 
+> 
+> I see. My question is whether or not all the symbol and filter should be
+> done in a separate location or possibly separate function (i.e.,
+> parse_symbol_and_return()).
+
+That's a good question. I recommend you to have a separate function
+because it needs a set of local variables, and independent logic.
+It also needs to introduce .filter and .nofilter fields in trace_fprobe.
+
+> 
+> Unless you prefer dropping %return entirely now, I’ll keep it for
+> single-symbol compatibility and mark it legacy in
+> Documentation/trace/fprobetrace.rst.
+
+Yeah, please keep it for backward compatibility.
+
+> I’ll send v3 with the parser
+> move, the spec-level suffix, explicit-name rule for list/wildcard,
+> BTF guard, docs, and selftests.
+
+Sounds good.
+
+Thank you!
+
+> 
+> > >  {
+> > >  	int i, ret;
+> > > +	const char *p, *q;
+> > > +	size_t spec_len, flen = 0, nflen = 0, tlen;
+> > > +	bool have_f = false, have_nf = false;
+> > > +	char *filter __free(kfree) = NULL;
+> > > +	char *nofilter __free(kfree) = NULL;
+> > >  
+> > >  	/* Should we need new LOCKDOWN flag for fprobe? */
+> > >  	ret = security_locked_down(LOCKDOWN_KPROBES);
+> > > @@ -835,8 +840,47 @@ static int __register_trace_fprobe(struct trace_fprobe *tf)
+> > >  	if (trace_fprobe_is_tracepoint(tf))
+> > >  		return __regsiter_tracepoint_fprobe(tf);
+> > >  
+> > > -	/* TODO: handle filter, nofilter or symbol list */
+> > > -	return register_fprobe(&tf->fp, tf->symbol, NULL);
+> > > +	spec_len = strlen(tf->symbol);
+> > > +	filter = kzalloc(spec_len + 1, GFP_KERNEL);
+> > > +	nofilter = kzalloc(spec_len + 1, GFP_KERNEL);
+> > > +	if (!filter || !nofilter)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	p = tf->symbol;
+> > > +	for (p = tf->symbol; p; p = q ? q + 1 : NULL) {
+> > > +		q = strchr(p, ',');
+> > > +		tlen = q ? (size_t)(q-p) : strlen(p);
+> > > +
+> > > +		/* reject empty token */
+> > > +		if (!tlen) {
+> > > +			trace_probe_log_set_index(1);
+> > > +			trace_probe_log_err(0, BAD_TP_NAME);
+> > > +			return -EINVAL;
+> > > +		}
+> > > +
+> > > +		if (*p == '!') {
+> > > +			if (tlen == 1) {
+> > > +				trace_probe_log_set_index(1);
+> > > +				trace_probe_log_err(0, BAD_TP_NAME);
+> > > +				return -EINVAL;
+> > > +			}
+> > > +			if (have_nf)
+> > > +				nofilter[nflen++] = ',';
+> > > +			memcpy(nofilter + nflen, p + 1, tlen - 1);
+> > > +			nflen += tlen - 1;
+> > > +			have_nf = true;
+> > > +		} else {
+> > > +			if (have_f)
+> > > +				filter[flen++] = ',';
+> > > +			memcpy(filter + flen, p, tlen);
+> > > +			flen += tlen;
+> > > +			have_f = true;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	return register_fprobe(&tf->fp,
+> > > +			have_f ? filter : NULL,
+> > > +			have_nf ? nofilter : NULL);
+> > >  }
+> > >  
+> > >  /* Internal unregister function - just handle fprobe and flags */
+> > > -- 
+> > > 2.43.0
+> > > 
+> > 
+> > 
+> > -- 
+> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Best regards,
+> Ryan Chung
+> 
+> 
+
+
 -- 
-2.39.5
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
