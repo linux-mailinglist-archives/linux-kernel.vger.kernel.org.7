@@ -1,117 +1,261 @@
-Return-Path: <linux-kernel+bounces-800817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69438B43C75
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:04:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EBBB43C78
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DB3D18902C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:04:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC4453A33BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9642FFDDD;
-	Thu,  4 Sep 2025 13:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054FA2EA15D;
+	Thu,  4 Sep 2025 13:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="eCmLNBYR"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HDrr0wXA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8DE2FF67F
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5966D2FDC28;
+	Thu,  4 Sep 2025 13:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756991059; cv=none; b=K1KRNtQ7JUCwOQULIxr8ohgzqoV4+wRhl59dpb4O5Hu7afKJ6jJKzbEKLkewp/yo3YYjUi1R5RNM4krWomek5joiKbBN2lfUB0EQB+ONb6Hhiz6E3pFRcbnt5eKi1vfek4/+Y0Mfdmk8i0vJ4XBlmit6Nh+frDw6mqoa0xfe23s=
+	t=1756991081; cv=none; b=eHREFQmj+VDZWYc8pT7EN1sves8OsgqifhFxr28g2LUFwFmfTbGXRIhKq54QxFOkgjJQAqg7n3NGH1mnSDoW6k/p/LDg7EM8x7+hsxU5KpTxcy9ZAjli9cTQQlBB/t56qktr/USFiiT6jGVs30rrtL5FcVvrJt+umgBOYxxHCI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756991059; c=relaxed/simple;
-	bh=LtdaAszdeXM6G8srz/BQF1PhrWxwy2ClWglLzRn1I7s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JY21ydn6leAxGeMmcOxjvXG+j8YNDvBcuR/PuYUHXpNUYZYC4pD5arK62/Gc9ACcxgsitsvOdWiMVOJqjmmSRp1F5b0VY8cnldm+oZ+H8i0xikXLzysyim+anwppmjq/7OBaHO+e9SsyBG5HDc91F/DFzgTIGgQBpczV+2a1wCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=eCmLNBYR; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b8b8d45b3so9357765e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 06:04:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756991056; x=1757595856; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eJ2yny2AZyLw5kGAtNbOv6rkTL+h8EX2jliOx5kuaqM=;
-        b=eCmLNBYRh61qT5a0eRCIwGzkvGk6zhqTpQLdqZqjJpgUIOQ6OL5aeg2HgNpKgAKLp+
-         A3Fm825v/8cf6JRrQLW/7FCwjZTmdJOdsXYcK4H+RzW6YxG4MS3T0P60dsrzZPu2fjEM
-         q1YINTy9QSZZupLVw4ccdNdxJAULOpeDQ4V8ZbeHoKQHG1CVyS8GmWsdoD7T9Tq7Col9
-         aYmBBTBHl26RufyIOkV7k3UxOIL6nIALbLoMZpODJDjVYA3NFDh5DPkUkCt4lXEMWU6J
-         AbeGGQEF2t1btuHUeISMLl4OJuVwhvdkTYZCwhgbnZ9YMRbHg22io2FrV/60Agi8MBmN
-         QBVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756991056; x=1757595856;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eJ2yny2AZyLw5kGAtNbOv6rkTL+h8EX2jliOx5kuaqM=;
-        b=vvgZLur/Rc86fsRNtTrug2kzkutSZ2dvPZWGsssCgXSenLrlCkHTZUNGleB1shCY5+
-         bb5IyLPQrbPzBi4WisRhRLZm/ImBha2qNKMaxoU3VOQ5uJiyUrv7Gs/Tu3cMY/VaYUYh
-         SNkj1GbQH6y7i8kycufG5LyTmxJ2UxF1xmK/NM+cvqiezpjjnJ4tgDCGkeaUI9X3CoJS
-         eJJTnyKp0h0V4QEIq3LIl/3T4bFig9kgLm4ILVf9sYwum+wAcx0VT1BA+pGL3hxWvh9J
-         rFrvMOe6TcfBGGJtFwhwp64cmDgfFcxo2Ykrz8ptWmtKS/hiqNjHg3+7wo3X6igwtsd2
-         DHbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNDuFz+WyUfXYsRN+YOaW+B/7qpHIs3gpnGtscXLDh/VnKFOPSlG89U05PUp6aO0/33p9FIOQd/9g9ccU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSWwq52HjE0ijXrLeA2Ju53nUE8CL/+SXkJbxRs3UDQNqcEUEN
-	UrO6hNuw4GGDoRTO1e0ruYPN3Mc2kiW9yrUkFv/Y6pEZ4Mc9GFvtCsmx8DsK325G6ss=
-X-Gm-Gg: ASbGnct2+dTA95EPjNn8nok384RhzlyxaGkpNCd64EEE+iIcLx10yqftY6cG3RhmvIS
-	FY79lupiCtfIvzRLY1O4ts6wT9sU8o17dqGb6BVIdwOYwk6EWikvRkplrc8LMCi0+XetA5kf2QC
-	hUs4026rNeKr/hjP3Mlc4U40bhaDNVCY5xB5jbVEgo4TadBejEyJRw37kn0QRH3lvbtxCTIfjw0
-	cHT5bLc5WnYLEz5Wvvf24oecEW0SZVuvLlSrVRnqc0yeByFo44wvZF2yXb2zt7+tHQGhkyy3SJT
-	X5blh5y2KDE9dbrLBusJw6DJX39io9atTMCQyZOCl7QCP9uJLYcd3jFFe/M/dDrxdfg/2ZwxHdR
-	Mxk6fzU4W5gmrgPEHcc1KrQeBTt1fTu7hyA==
-X-Google-Smtp-Source: AGHT+IGxBimr8IyZ1DY86cVwVfp94kA87fe9hUXm7C1nUfS6RvrRyv+/zG+v/lPCzgh/LN8QWSMvOA==
-X-Received: by 2002:a05:600c:8b23:b0:456:1dd2:4e3a with SMTP id 5b1f17b1804b1-45b855506e2mr155178225e9.3.1756991055686;
-        Thu, 04 Sep 2025 06:04:15 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6e82:a4aa:49e0:a7d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d701622b92sm16393258f8f.58.2025.09.04.06.04.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 06:04:14 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Lee Jones <lee@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/1] mfd: stmpe: Allow building as module
-Date: Thu,  4 Sep 2025 15:04:12 +0200
-Message-ID: <175699105010.72115.9734506229516403389.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250819070458.1027883-1-alexander.stein@ew.tq-group.com>
-References: <20250819070458.1027883-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1756991081; c=relaxed/simple;
+	bh=UDIZnclyMgk6mq7yGflC4fULp9pmEgo18qUYO+/ashU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ewPWHcV2KVXKNS3VvDZ0OYELOk1rVME3WSAADipQbyeNULgduExHLriTBAtuGkP4+AL+oTnuNrTOU97W3KdBKmop8lZMQc3CW9kmGrrWWjHhlnEY2YbkWA03KkxhrEQLLbQ718yXTq6Kpu0WT6VdGW5xc9z7W6RVfYXX+dg+bnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HDrr0wXA; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756991080; x=1788527080;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=UDIZnclyMgk6mq7yGflC4fULp9pmEgo18qUYO+/ashU=;
+  b=HDrr0wXAIwTZ+VPD00GBVSjedDDDeDVZo3RaU645Qt9cUqtD/LmNZmj/
+   ItYWbY6EsT8HB0IWntwAMV7p4ZW/0Sjp6yjH8c9nSxqbOMkE9Y5SBzJvc
+   nUZLdtN8+Bnc6+/+1jSt/8UNHBM7GNzJyQmfqYtFqiBOEVjKuQ2P/xLZq
+   BvOqLXYwtxAmnO4nqnFtwZEc/oMXj6AJ1H+qO0RIpXvUofZpUZ4O+HahJ
+   4Nm6j6uBY4eLJMezDS27Q3PJQtVnKieR1NkCGc9l5s+BxFTKr253MJJii
+   ZtgOQL8YSnUWYNYLzOdqm3EBKcG8uWi8DdwKaZymv5wa/KzhtplkBtgJ5
+   g==;
+X-CSE-ConnectionGUID: EPLiZUNmTnqieG/bzCQrwQ==
+X-CSE-MsgGUID: qr1whVLSRamsFDkp7mV8RQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="69943082"
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="69943082"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 06:04:39 -0700
+X-CSE-ConnectionGUID: 2S4+ZtsRR8aSbK7GKaPtfA==
+X-CSE-MsgGUID: t7KJxasoQVqtWk1dFi/icw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="177152150"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 06:04:33 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uu9dd-0000000BH0N-1vDs;
+	Thu, 04 Sep 2025 16:04:29 +0300
+Date: Thu, 4 Sep 2025 16:04:29 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Tobias Sperling <tobias.sperling@softing.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Esteban Blanc <eblanc@baylibre.com>,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Hans de Goede <hansg@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+Message-ID: <aLmOXTcUjw7cj9OK@smile.fi.intel.com>
+References: <cover.1756813980.git.mazziesaccount@gmail.com>
+ <08929460fe11dd0b749c50a72a634423f13f4104.1756813980.git.mazziesaccount@gmail.com>
+ <aLb8HuIG0XXLu653@smile.fi.intel.com>
+ <00ee1968-a471-4d2b-a024-4bee00e40513@gmail.com>
+ <aLglJoqBDap_eMIj@smile.fi.intel.com>
+ <10c6b0c4-d75f-494c-bb3c-883c06cf3bc2@gmail.com>
+ <CAHp75Ve4vgU5kK3z3bZyGqDOPVkMbW7RUd6_EA3jjZSeruWs=Q@mail.gmail.com>
+ <43141a95-2267-44de-bd7e-11eb8c80090e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <43141a95-2267-44de-bd7e-11eb8c80090e@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, Sep 04, 2025 at 03:35:36PM +0300, Matti Vaittinen wrote:
+> On 03/09/2025 16:29, Andy Shevchenko wrote:
+> > On Wed, Sep 3, 2025 at 3:14 PM Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> > > On 03/09/2025 14:23, Andy Shevchenko wrote:
+> > > > On Wed, Sep 03, 2025 at 09:52:02AM +0300, Matti Vaittinen wrote:
+> > > > > On 02/09/2025 17:15, Andy Shevchenko wrote:
+> > > > > > On Tue, Sep 02, 2025 at 03:24:31PM +0300, Matti Vaittinen wrote:
 
+...
 
-On Tue, 19 Aug 2025 09:04:57 +0200, Alexander Stein wrote:
-> Export the core probe and remove function to be used by i2c and spi
-> drivers. Also add necessary module information so the drivers can be built
-> as modules. This reduces footprint of the driver is enabled but unused.
+> > > > > > > +  data->vref_mv = ret / 1000;
+> > > > > > 
+> > > > > > (MICRO / MILLI)
+> > > > > 
+> > > > > I find this much more confusing than plain 1000. (I know we had this type of
+> > > > > discussion before. See [1] again).
+> > > > 
+> > > > Rings a bell, but that's what IIO reviewers suggest to do nowadays as a
+> > > > compromise between creating a new bunch of unit (V) related definitions.
+> > > 
+> > > I am sorry, but this just seems stupid to me. I'd say that it is very
+> > > obvious for most of the readers dividing microvolts by 1000 results
+> > > millivolts. And if it is not, then having this MICRO / MILLI is likely
+> > > to just cause more confusion.
+> > 
+> > No, it tells that we have a value in microSOMETHING that is converted
+> > to MILLIsomething.
 > 
+> No. I disagree. This tells that 'ret' from the regulator API is divided by
+> some unknown value, which is a result of division of two odd defines.
+> Especially odd because one would intuitively think MICRO is smaller than
+> MILLI. You need to look up the definitions to understand WTF is really going
+> on. I think this is plain terrible.
 > 
+> The fact that we store value in vref_mv should be enough of hint that idea
+> is to have value in millivolts. Dividing by 1000 before assigning makes it
+> 100% clear the ret is in microvolts even if you didn't know the regulator
+> API to return micro volts.
 
-Applied, thanks!
+"Dividing by 1000... makes 100% clear...". I disagree on this. It's not clear
+and 1000 needs to be counted (it's harder to read, than reader needs to think
+what mv and not mV (!) means) and so on. For bare minimum make it mV to
+understand the semantics.
 
-[1/1] mfd: stmpe: Allow building as module
-      https://git.kernel.org/brgl/linux/c/df6a44003953fb23ad67f82d299e439e7ff7150a
+So, since it's one of the principal disagreements between us on this particular
+issue, I leave it other reviewers and maintainers.
 
-Best regards,
+> > > I _really_ dislike these defines. Why is MILLI 1000? Why it isn't 0.001?
+> > 
+> > You know exactly a few reasons why it's not.
+> > 
+> > > It makes no sense that KILO and MILLI are the same. Especially not when
+> > > we are dealing with physics.
+> > 
+> > Yes, this is the limitation of computers and particularly of _a_ kernel.
+> 
+> No. In my opinion, this is an example of, hopefully unintentional,
+> obfuscation where blindly following some paradigm like 'avoid plain numbers
+> and always use named defines' just results things getting worse. That
+> combined with bad naming. If KILO is 1000, then MILLI can't be 1000. That's
+> 1 per milli.
+
+You have a point, send a patch!
+
+> And still, the original "mv = uv / 1000" is superior in clarity. Using
+> (MICRO / MILLI) there to avoid plain number is just a sign of blindly and
+> religiously following some 'golden rule', even when it results worse code.
+
+No, it's not.
+
+> > > This is just an obfuscation compared to using plain 1000. (I kind of
+> > > understand having a define for a value like 100000 - where counting the
+> > > zeros gets cumbersome, although 100 * 1000 would be equally clear. But
+> > > 1000 _is_ really 100% clear, whereas MICRO / MILLI is not).
+> > 
+> > See above why this way.
+> 
+> I see no real justification to degrade this - other than "because I say so".
+
+You may (mis)interpret this, up to you.
+
+> Sorry but that's not really a good reason to me.
+
+OK.
+
+...
+
+> > > > > > > +  gpio_pins = bd79112_get_gpio_pins(iio_dev->channels,
+> > > > > > > +                                    iio_dev->num_channels);
+> > > > > > 
+> > > > > > > +
+> > > > > > 
+> > > > > > Instead of leaving this rather unneeded blank line I would move above...
+> > > > > > 
+> > > > > > > +  /* We're done if all channels are reserved for ADC. */
+> > > > > > 
+> > > > > > ...to be here
+> > > > > > 
+> > > > > >      gpio_pins = bd79112_get_gpio_pins(iio_dev->channels,
+> > > > > >                                        iio_dev->num_channels);
+> > > > > 
+> > > > > I suppose you mean something like:
+> > > > > 
+> > > > > register_gpios:
+> > > > >       /* We're done if all channels are reserved for ADC. */
+> > > > >       gpio_pins = bd79112_get_gpio_pins(iio_dev->channels,
+> > > > >                                             iio_dev->num_channels);
+> > > > >       if (!gpio_pins)
+> > > > >               return 0;
+> > > > > 
+> > > > > right?
+> > > > 
+> > > > Yes.
+> > > > 
+> > > > > I don't like this because now the comment suggests we do call
+> > > > > bd79112_get_gpio_pins() only to see if all channels were for ADCs. This,
+> > > > > however, is not THE reason for this call, only an optimization. I think:
+> > > > > having:
+> > > > > 
+> > > > >           /* We're done if all channels are reserved for ADC. */
+> > > > 
+> > > > Then you can amend the comment
+> > > > 
+> > > >            /* If all channels are reserved for ADC, we are done. */
+> > > > 
+> > > > >           if (!gpio_pins)
+> > > > >                   return 0;
+> > > > > 
+> > > > > is clearer.
+> > > > 
+> > > > Which makes my approach sustainable.
+> > > 
+> > > I like your wording better, but placing this comment before the call to
+> > > bd79112_get_gpio_pins() is still more confusing that placing it before
+> > > the actual check:
+> > >          if (!gpio_pins)
+> > > is still misleading. Comment applies to the check, not the retrieval.
+> > 
+> > The variable assignment, or i.o.w. the source of the value we are
+> > testing is also part of the equation.
+> 
+> The comment explains why the check, not why the value is obtained.
+
+Yes, but value is not taken from out-of-nowhere. It belongs to that check.
+
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+With Best Regards,
+Andy Shevchenko
+
+
 
