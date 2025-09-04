@@ -1,157 +1,117 @@
-Return-Path: <linux-kernel+bounces-800565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7131BB43951
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:55:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF7FB43964
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28991BC4579
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:56:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFA52179154
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A412EE294;
-	Thu,  4 Sep 2025 10:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC212FB63D;
+	Thu,  4 Sep 2025 10:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHD9Wfe9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Hceoe2W9"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDA02F6182;
-	Thu,  4 Sep 2025 10:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032BB29B233;
+	Thu,  4 Sep 2025 10:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756983335; cv=none; b=Dy0AAFU22+MB0zSP1RQl7y22zrGQyyVfHoDA8cKAuMxKoYcAO3ETsWhosrY8K/bVilQ/T82hPtdjeO9o/F8e9+k9j6V2hrsXSljyftaARA4WiVHT69YXDlrXgKXlHmD5HFd2SrYkxKjVpXpikK7VMRS34IAVePxOPjQKVMFqLs4=
+	t=1756983501; cv=none; b=lNnGwC4Dr6RnnU9rlyoZxeC2xKrOYgXyZigCgoNPm1+F3ImpKHP27S3Ld7FouwzzZuHxeUuG++gpNd/8Uy0ITwOg3gFuHVOmsZ9pLUZSUzLkKZqh7l6LWBfZ+MH3+Z1WpUK680Ms3SaqyL1Jcf+Ol6jG8EXs9nS6AKUa6NcikbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756983335; c=relaxed/simple;
-	bh=IsvPPeqV8POyoYunxkhkVNbHZma0NTrLqcfEJ8H1vOg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=be1fxuFiD54fqN74FXHx3tGk5fyN5y0gOA7jjrcfbDB5GiZKekOE3jh1KK6iqqiANrUB/V2w3mS9wCl9T6lkHRQZIuT5JglqbIzZFMSYQSTMXKVImtbp5KkoIpbdK8kUD5/ZGN0QzgbrdAGLKRCn3QSYErj0XZRHk5hDo7ZDR/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHD9Wfe9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EBC1C4CEF0;
-	Thu,  4 Sep 2025 10:55:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756983335;
-	bh=IsvPPeqV8POyoYunxkhkVNbHZma0NTrLqcfEJ8H1vOg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QHD9Wfe9pl81KaKyYx3q2f/4xdKdSE4GTZg14n1v3R0PxBM2ZlnaHOp2M9mEmpnQ5
-	 nUlqo58kaXVT5TT+pkv8cdyMVTGaoBvtxf38tWncUX2yB0f3CxtRqy561mgeJRWNQo
-	 Zhv/Z1n+OkYOqJfBS08e434/Ym6augQuxit6SOa8DpY9qyOg6llKU1Rh607HpYBBA2
-	 L7AwBCP5Q+3XlTax5HRY96wjwpovkEbeP+5SnEeWTzW84jrlXkStyQ4pBCLZHIU+w6
-	 JNDzKYYrJgjrAbpK3rgqdSGP9hdCr746owEOPUcBO2xvQnEcg93ncOsWSJTeG3AvsC
-	 pUyvVC5JHBs5w==
-Message-ID: <818b7848-1b34-49dc-87bd-0438a82f2ebf@kernel.org>
-Date: Thu, 4 Sep 2025 12:55:23 +0200
+	s=arc-20240116; t=1756983501; c=relaxed/simple;
+	bh=otwBCMWbzbMUnF3uxye8IWWKXIFYIahmm24+U7WrjCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HJgQZyQN348RUmBlw56doQ+Au3ZA9wYV5jjiYGRbjzcU8bPdZXZTzGiWg23TTpHcuwJTkK/Mm1M+4VzaybwC14nGHFLodfJj/XDzrWNRHvShFen2R3FQzjNhVinqy5GU4cwgh/faoYvJarKC1q8a+4OFyYPIbCynPmDTA5Fk79Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Hceoe2W9; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0+dGMtdtbtPkJn14dHatEx4CiUjsN+rJYDHVha04vms=; b=Hceoe2W9SjDvm+/UrrvyknUWpK
+	4OF4nbG9zdLI7FmDlGd4t+cGFfcNs4Cb8m8ZMZN5iNhs7TbMrSp1O+UEOs7eA8XtUpg2yyV58e8GO
+	ty2qX1Aqn19LOsV34Jjou2Xa1/fCJIv199mdEXYheDlPIa3WJzmRRg+I80XTOf5K64kX0tXQqb1y2
+	YcmwP26pbT0FzdCxUylGypZw8MXNbEi8scU3mmHiw1kQnlK+IRXmCjIyuiXgXQqrtI2gpe0xjLb0F
+	yJx9lmSLgBdwv/wouAniGZcCnEH9x4OiFPa0ZYqUqtVeIq7C6w77gA3OX8EuCUmVUUCyiptzkgim6
+	HL889VZA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55126)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uu7fN-000000001r8-1SFK;
+	Thu, 04 Sep 2025 11:58:09 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uu7fM-000000001S6-0098;
+	Thu, 04 Sep 2025 11:58:08 +0100
+Date: Thu, 4 Sep 2025 11:58:07 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH net] net: stmmac: dwmac-rk: Ensure clk_phy doesn't
+ contain invalid address
+Message-ID: <aLlwv3v8ACha8b-3@shell.armlinux.org.uk>
+References: <20250904031222.40953-3-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/10] powercap: dtpm_cpu: Use scope-based cleanup
- helper
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>,
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Alim Akhtar
- <alim.akhtar@samsung.com>, Thierry Reding <thierry.reding@gmail.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
- Ben Horgan <ben.horgan@arm.com>, zhenglifeng <zhenglifeng1@huawei.com>,
- Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
- <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
- Sumit Gupta <sumitg@nvidia.com>,
- Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
- Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
- linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250903131733.57637-1-zhangzihuan@kylinos.cn>
- <20250903131733.57637-8-zhangzihuan@kylinos.cn>
- <CAJZ5v0hirWzWZiLbAXPWB58SQv3CAW95iHLnsqs=i2twVCcmwg@mail.gmail.com>
- <52e322e5-2dd4-488c-a98e-3a4018f0c323@kylinos.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <52e322e5-2dd4-488c-a98e-3a4018f0c323@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904031222.40953-3-ziyao@disroot.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 04/09/2025 12:37, Zihuan Zhang wrote:
->>   * Lastly, given that the benefit of cleanup helpers is removal of
->>   * "goto", and that the "goto" statement can jump between scopes, the
->>   * expectation is that usage of "goto" and cleanup helpers is never
->>   * mixed in the same function. I.e. for a given routine, convert all
->>   * resources that need a "goto" cleanup to scope-based cleanup, or
->>   * convert none of them.
-> 
-> 
-> Should I replace all the memory allocation cleanups here with `__free`?
-> That would allow us to drop all the `goto`s, but since this function has
-> quite a few of them, I’m concerned it might introduce new issues. What’s
-> your recommendation?
+On Thu, Sep 04, 2025 at 03:12:24AM +0000, Yao Zi wrote:
+>  	if (plat->phy_node) {
+>  		bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
+>  		ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
+> -		/* If it is not integrated_phy, clk_phy is optional */
+> +		/*
+> +		 * If it is not integrated_phy, clk_phy is optional. But we must
+> +		 * set bsp_priv->clk_phy to NULL if clk_phy isn't proivded, or
+> +		 * the error code could be wrongly taken as an invalid pointer.
+> +		 */
 
-If you keep asking this, I have doubts you really know how to use
-cleanup.h. Don't blindly convert code to cleanup.h. It's very odd syntax
-and it is not even welcomed everywhere.
+I'm concerned by this. This code is getting the first clock from the DT
+description of the PHY. We don't know what type of PHY it is, or what
+the DT description of that PHY might suggest that the first clock would
+be.
 
-Best regards,
-Krzysztof
+However, we're geting it and setting it to 50MHz. What if the clock is
+not what we think it is?
+
+I'm not sure we should be delving in to some other device's DT
+properties to then get resources that it _uses_ to then effectively
+take control those resources.
+
+I think we need way more detail on what's going on. Commit da114122b83
+merely stated:
+
+    For external phy, clk_phy should be optional, and some external phy
+    need the clock input from clk_phy. This patch adds support for setting
+    clk_phy for external phy.
+
+If the external PHY requires a clock supplied to it, shouldn't the PHY
+driver itself be getting that clock and setting it appropriately?
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
