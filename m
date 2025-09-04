@@ -1,244 +1,123 @@
-Return-Path: <linux-kernel+bounces-800228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72FBB434E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:01:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0C77B434E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EC214E541A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:01:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C36518805D4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8082229D264;
-	Thu,  4 Sep 2025 08:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C8F29BDA0;
+	Thu,  4 Sep 2025 08:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IYf4U2jH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="avIb+ecg"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC982A1D1;
-	Thu,  4 Sep 2025 08:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5872857EF
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756972881; cv=none; b=J/8thEOo3x/0nvUYREfZyMlJ3hPZEyUCUlggHZxy89S6DLzZqNPVFXbTjTcqwGnA6IakqdEOmmLR81/dlG8nmrD0P3MW/ZADvTwuo4magkeeq/Yq0OgfInIrahWBnC2OsNMeNHVgozZDnFAd5X7WaiSRxnknfDMz+RMYsVFUx1U=
+	t=1756973081; cv=none; b=LKhSkjlgWEXB2iUzwyLvVDvFKDCM+I4sgdh7JUVn9K85jIHUXDgvSgKoNJIB62lvb318x01lOVSwOyp0446VwIt2vkinoDYvyq3bOvyDUrq3S88EiYdg6wa9otlNdq8ct5ibNmL+nMF9Ejq7BNS+dYCJbTwvTtgnz/wS06aiO6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756972881; c=relaxed/simple;
-	bh=wlwUBGaf2355vudJz1Ud10sFTnKCAwmGCbZ+bzsJSsc=;
+	s=arc-20240116; t=1756973081; c=relaxed/simple;
+	bh=R0F4LxX8JeRbwSchRubd0jiTtwG2dsiQbgH91N64AuI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rsc3+JxJaQ8/vVx5RS6sg1yWvxbeFrcC1H2I1beKHQedrJBknZ3kpoRdmjFCvmmBFKEir2i6NQchgqrkP9JcjFw9CwFMusXW5kMHaEPpvUWm6km7D+PScXWN8XRAZj3/eq8SGFE1Jc+TTtj1jt1tclPlhIobGyKLEaOytfAhM4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IYf4U2jH; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756972880; x=1788508880;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=wlwUBGaf2355vudJz1Ud10sFTnKCAwmGCbZ+bzsJSsc=;
-  b=IYf4U2jHrjR4no7VnIJnx6qgrAvGJjr4fo4iS4ueVYR7Tzr3FZ6O5wpK
-   Z5du6N8B+Fkeif8ug7iZWnxyj60S00po/7AwxJMOj3i0ST+sqTLIVWQPf
-   Fx2W7WaamJGPKxZhiSS6fG//dC+HvL/J8PfBbTFowdst/RkMipNR8Jov9
-   w64FzskmLLm+SRj+Fw46T85cxlh2ytIEnTPr1mau4S7AKmwS30+xeSZwe
-   VvhQ1F6kY2IMLE4VihWF67SlCCvziwhz+ylMEpx5Qild64zE7HAFn3ZuG
-   ZConCTBKpBEZoRv0bewRa5VLLtgqJvfRJgKciSPjrQaxSCn09lIuktCXg
-   w==;
-X-CSE-ConnectionGUID: h3KR6OkaRbiMBjeaHGPaCg==
-X-CSE-MsgGUID: dbpEh5rTSD2cu8VZlLJQ/A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="69566907"
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="69566907"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:01:15 -0700
-X-CSE-ConnectionGUID: zDeJhkXMQqeHsg/47czUHA==
-X-CSE-MsgGUID: 8PRe9YUuStWQnak1m1x4Cw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="202669563"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:01:12 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uu4u5-0000000BChH-2WrO;
-	Thu, 04 Sep 2025 11:01:09 +0300
-Date: Thu, 4 Sep 2025 11:01:09 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Akshay Jindal <akshayaj.lkd@gmail.com>
-Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com,
-	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] iio: light: ltr390: Implement runtime PM support
-Message-ID: <aLlHRYPC-bPLQe-N@smile.fi.intel.com>
-References: <20250903112648.11972-1-akshayaj.lkd@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ReoC8uVTHywaMgYLN4CMFlP5w9P71exwz1OW2+7hO7m812BchMMZ9HfA7LhbEeA9sI/YKuTa64630ZFnB2ZGkg5w3ySbbJhGW6SNbPHt8iq2IG8ns5LWcCmC5o6vI8e0xN2xFyWnsUwGoaSHkXwFuUL8OpCOFmk0Nt/HaAd2Z/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=avIb+ecg; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3cdc54cabb1so287557f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 01:04:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756973078; x=1757577878; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NMQgTSi+TMSWhdqJbfwjnB9XNjiX9Q7epetailYd/f0=;
+        b=avIb+ecgoo9+YL9WEIzV5/WO8opKItsMU0+bNNEShHtVnKRkBKnivM6sRxiTEL+zPu
+         nMEQ85WxLO49CkPaeIGxKa8lm0OY+0U75KACtrTTR4aOSQTVLfO1kQi84FSuyaeOcjXe
+         sFXIu05EzSKhzB5j2YNJrhgiMg9yKvhDF9/BImKJCkdN5Eq7vAtscn3gDvDWVpLbCiuq
+         CcFkhP3fi//OT14D8Bpi7zgXhfOz840r3X5/kSST5I3MB1lJiZ5nJInC9Ih3JJmuub28
+         4EW3qyKsXJnYXxtJMDcY93oI/n80YbX8G6fSpr4EbwvWS2Xojogy0lr2kSZNQjXdCvQX
+         NPQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756973078; x=1757577878;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NMQgTSi+TMSWhdqJbfwjnB9XNjiX9Q7epetailYd/f0=;
+        b=BnogKodL1bNe3EqYCGfpupuWp4evwFi1m7NoUNGV+qhnHWA/u27zSHuwkp+4LdU1p8
+         1euj11IYqOC62xqsv/jJqNEREQsVNZbHLhnzHYzZUK/f1wfWYts/z+T156d3SryTP1Ec
+         oNWCE8R6WKDm3ZTFNjt08WEdyMqlADaRY70hohG7wPLbVArJL0Q6y6YDDbhRPS6fi8LX
+         T6+7b6CNLrxIIh/btTv6dPfnwLKTuZRBSfwZUZ+1tGfeP/qbFvZY0DXl6dV3E1TXRTov
+         xIIwG+uWCO0cjl3SQJlmowGu0vINKJCSx7cACPX3oOLeMnwsRgCOnWHeWUOvgcMqsyYn
+         5RdA==
+X-Forwarded-Encrypted: i=1; AJvYcCX33DNXWlgYYWyYE/zHphIj5tCoaWRRATxYEwH3GuMmcHIBZ+71ZSN1qdZfCJDuvNH1p6gIxsAiFc+MK5w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM8tBVNYSuFTC1smMibu/GJ/s/zUsHuU6SXCSV20s/4AsM//n2
+	z89NxXfjEoYF+u1YVpnG5NbRClGZ0wDE+v/WPdIJQNbiKgV+hw88NosNYG1BDqSyWBo=
+X-Gm-Gg: ASbGncsMvSf/VV/6d+xHc6p7Nkzcs4QihyVrIoCadGY9FQtiZ98lumnNAPrQizWMkZa
+	wgufKlrnHcdsM1odL+9notQiLnRYtYlogKZNNX9gkhQnAlwaSqOAWflfTH8yWLV7J1uBDhYOZFi
+	2bV2MZB/oyW/9ChMVJoHrmp7SvhmhP6OCEsxEZAroTLfH3ZxnYh6Ijqqh7F1zL0sExXpl8KaKy/
+	jZlaXLUJsX7Uw9cz3qt5Hfsj2bTRrZk9HQHQs7zvDlB+JsvRvbXKyUJU/kLs6R0A19IeHPtSxfu
+	BduWBhjVxsMbUYFV1lcOwyDSlE1YDTAcmNl0cGy9n0Yf2LIGfobNu5BENrh5ld3vYDJoD04fN1S
+	WC9aGAERMnBib0Lz/LxsSECoJ89w=
+X-Google-Smtp-Source: AGHT+IGCbRet6mDjv8hEUzW+n1WN7HfErihvQ0mwTKDBWlJ8UG8XGONqSLDPD72SdxeMgb9oxxEkRA==
+X-Received: by 2002:a5d:5d02:0:b0:3d5:55c9:f218 with SMTP id ffacd0b85a97d-3d555c9f834mr9936116f8f.2.1756973077662;
+        Thu, 04 Sep 2025 01:04:37 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3d6cf485eb7sm16503365f8f.3.2025.09.04.01.04.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 01:04:37 -0700 (PDT)
+Date: Thu, 4 Sep 2025 11:04:34 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 09/16] staging: rtl8723bs: fix excessive indentation
+ in nested if statement
+Message-ID: <aLlIEspZ2wLRnCru@stanley.mountain>
+References: <20250904021448.216461-1-vivek.balachandhar@gmail.com>
+ <20250904021448.216461-10-vivek.balachandhar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250903112648.11972-1-akshayaj.lkd@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250904021448.216461-10-vivek.balachandhar@gmail.com>
 
-On Wed, Sep 03, 2025 at 04:56:43PM +0530, Akshay Jindal wrote:
-> Implement runtime power management for the LTR390 sensor. The device
-> autosuspends after 1s of idle time, reducing current consumption from
-> 100 µA in active mode to 1 µA in standby mode as per the datasheet.
+On Thu, Sep 04, 2025 at 02:14:41AM +0000, Vivek BalachandharTN wrote:
+> Adjust indentation in a nested if-statement to match kernel coding
+> style and improve readability.
 > 
-> Ensure that interrupts continue to be delivered with runtime PM.
-> Since the LTR390 cannot be used as a wakeup source during runtime
-> suspend, therefore increment the runtime PM refcount when enabling
-> events and decrement it when disabling events or powering down.
-> This prevents event loss while still allowing power savings when IRQs
-> are unused.
+> No functional changes.
+> 
+> Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+> ---
+>  drivers/staging/rtl8723bs/core/rtw_mlme.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+> index d05ff073af2d..a2b1e34765ac 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+> @@ -1254,8 +1254,8 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
+>  
+>  					ptarget_wlan = rtw_find_network(&pmlmepriv->scanned_queue, pnetwork->network.mac_address);
+>  					if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true) {
+> -						if (ptarget_wlan)
+> -							ptarget_wlan->fixed = true;
+> +					    if (ptarget_wlan)
+> +						ptarget_wlan->fixed = true;
 
-...
+Wait, what?  We're moving from tabs to 4 space indents?
 
-> -static int ltr390_read_raw(struct iio_dev *iio_device,
-> -			   struct iio_chan_spec const *chan, int *val,
-> -			   int *val2, long mask)
-> +
-> +static int ltr390_do_read_raw(struct iio_dev *iio_device,
-> +			struct iio_chan_spec const *chan, int *val,
-> +			int *val2, long mask)
-
-The new indentation is broken.
-
-static int ltr390_do_read_raw(struct iio_dev *iio_device,
-			      struct iio_chan_spec const *chan,
-			      int *val, int *val2, long mask)
-
-...
-
-> +static int ltr390_read_raw(struct iio_dev *iio_device,
-> +			   struct iio_chan_spec const *chan, int *val,
-> +			   int *val2, long mask)
-
-For example here it's okay.
-
-...
-
-> -static int ltr390_write_event_config(struct iio_dev *indio_dev,
-> +static int ltr390_do_event_config(struct iio_dev *indio_dev,
->  				const struct iio_chan_spec *chan,
->  				enum iio_event_type type,
->  				enum iio_event_direction dir,
-
-You forgot fixing an indentation of the parameters.
-
-...
-
-> +static int ltr390_write_event_config(struct iio_dev *indio_dev,
-> +				const struct iio_chan_spec *chan,
-> +				enum iio_event_type type,
-> +				enum iio_event_direction dir,
-> +				bool state)
-
-Broken indentation.
-
-...
-
-> +	int ret;
-> +	struct ltr390_data *data = iio_priv(indio_dev);
-> +	struct device *dev = &data->client->dev;
-> +
-> +	guard(mutex)(&data->lock);
-> +
-> +	if (state && !data->irq_enabled) {
-> +		ret = pm_runtime_resume_and_get(dev);
-> +		if (ret < 0) {
-> +			dev_err(dev, "runtime PM failed to resume: %d\n", ret);
-> +			return ret;
-> +		}
-> +		data->irq_enabled = true;
-> +	}
-> +
-> +	ret = ltr390_do_event_config(indio_dev, chan, type, dir, state);
-> +
-> +	if (!state && data->irq_enabled) {
-> +		data->irq_enabled = false;
-> +		pm_runtime_put_autosuspend(dev);
-> +	}
-> +
-> +	return ret;
-
-I think we still can refactor this as following if _do_event_config() does not
-have side-effects on irq_enabled field. (Otherwise that side-effect should be
-documented.)
-
-// we also assume indio_dev can be retrieved from data
-_on_and_do_event_config()
-{
-	struct device *dev = &data->client->dev;
-	int ret;
-
-	ret = pm_runtime_resume_and_get(dev);
-	if (ret < 0) {
-		dev_err(dev, "runtime PM failed to resume: %d\n", ret);
-		return ret;
-	}
-
-	data->irq_enabled = true;
-
-	return ltr390_do_event_config(indio_dev, chan, type, dir, state);
-}
-
-_do_event_config_and_off()
-{
-	struct device *dev = &data->client->dev;
-	int ret;
-
-	ret = ltr390_do_event_config(indio_dev, chan, type, dir, state);
-
-	data->irq_enabled = false;
-	pm_runtime_put_autosuspend(dev);
-
-	return ret;
-}
-
-write_event_config()
-{
-	struct ltr390_data *data = iio_priv(indio_dev);
-
-	guard(mutex)(&data->lock);
-
-	if (state == data->irq_enabled)
-		return ltr390_do_event_config(indio_dev, chan, type, dir, state);
-
-	if (state)
-		return _on_and_event_config(data, ...)
-	else // yes, it's redundant, but for better coupling of these two branches
-		return _event_config_and_off(data, ...)
-
-}
-
-But this is quite verbose, hence I leave it to you and others to decide if the
-originally proposed code is better.
-
-...
-
-> +	ret = devm_pm_runtime_set_active_enabled(dev);
-> +	if (ret)
-
-> +		return dev_err_probe(dev, ret,
-> +				     "failed to enable runtime PM\n");
-
-It's exactly one line of 80 characters!
-
-...
-
-> +	/* default value of irq_enabled is false*/
-
-Missing space
-
-> +	data->irq_enabled = false;
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+regards,
+dan carpenter
 
 
