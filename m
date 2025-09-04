@@ -1,148 +1,248 @@
-Return-Path: <linux-kernel+bounces-799618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2038B42E2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:27:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E836AB42E0F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DFAB17977B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:27:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E0671C224A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0B421CC60;
-	Thu,  4 Sep 2025 00:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF42B19F127;
+	Thu,  4 Sep 2025 00:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RiJWxl+O"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ayh4m/so"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848B2207DE2;
-	Thu,  4 Sep 2025 00:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A3B22301
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 00:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756945475; cv=none; b=T7IsGDSyiF4TljWVd2h/IeD2VNf+AZSvtfG4aFBmHKeP72H8fZCPkXts3NzaTYOnMz/yzsFEom6DMzKXgMa0J+x848VqTiRPp9R9MXMVntTKTlMH9+gdytb7WelWI/z9yQPoP9LnxkBvOOkwvkpKO4H+pm+Wviv/Ga4B8+kR78E=
+	t=1756945329; cv=none; b=ehWEXymIYfQM5A0OLm1KaTTCQHJXI5TONRa8OvwaU7xvFMcP+8AVd+1YHyQ01xEOFqnvxsYMek0cA85qEjuU+6RquIWTP1Wfudosw2xWZAcO7US3xxBa0ODCxn7WlfxMpsHghEZ5GXxcSalYKW3Nf8E/ILhza/avu5bN/N1xE8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756945475; c=relaxed/simple;
-	bh=8M2/0UwLcXRxMD4ixlU21GMSrgoCNNEd15QxD/byhss=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rC/i1babZbtvjMVTaF7KzuheUEcs2zA1wUlf6c0nsGLgwB8vvW22tOcAIT3IQzDWCminMgeyekWqlCA5Sw93lkM93qpvps0uLIcnRb+Bno9IbZs8PrE9Dao2J29D6VBcqpOUboDZ1gaqj6plOHWTEa2KuyTNHJ52QYQGGlLw/F8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RiJWxl+O; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so541362b3a.0;
-        Wed, 03 Sep 2025 17:24:32 -0700 (PDT)
+	s=arc-20240116; t=1756945329; c=relaxed/simple;
+	bh=LCdk3I2Q74ZIL4ELbJS5XlkPOeXrIZJt/RuK5HlZwMg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GdHAYQFm/K8moa7nnjmLwPYQSV/INIGrOmiSBfgCNgAzE/anU+wpy8cxu3PhE/pjullTvrz2YgR4YacW3d0qQ1vfsBOSoXtUWt83u5z/n6se5tUOryR/P7ha5AxzmJfx/BPytj0sM3Dh0u1btzumDUT/8tI6XOIFhaepP3dI9/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ayh4m/so; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-329ee69e7f1so289321a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 17:22:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756945472; x=1757550272; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eP+OdhpAXeM3MeCoK1wrQ3GVDNoiOJzpSPwPKz/ThLg=;
-        b=RiJWxl+OOBsOILiw8DNDisjKZCt+86CoJrAvJnZP8YYmysGAhsWzWfaOHUJcVk7w6l
-         h9ym9e8zIFp42HO1vZyEZxLV13IFxA/1Mw5mS3e3MDsPfpVjQBH9+UeqpePyKk/XtFpY
-         9YQmLefde5N8/9uEL3x0zIGRn+ZrnrJi3B5QGDj8w8WJPY0i4iTxBI7PSO8CXaxelGZN
-         tjE18IeSO3L6S8yKznzmrSMg8E9tXDjNbsyoD0tCZL4Mrk/4CqCuP3j9HJprB2EzPGIW
-         ThOMRn5KbNmENoTTykSrN6q7uzp8lJBwfzeQc12+C38uJtFQjKUb3t/gAs8u7Mez1t2j
-         fD7g==
+        d=google.com; s=20230601; t=1756945325; x=1757550125; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=thtWK0kyMSL+2gdsE6SEJtYcPIxqdLFPNRv8DyZlsx8=;
+        b=Ayh4m/socUNNt/El3t7NzNdJrqRcS1NMtV09b84WDUSKOfSmqPSAnWxTkU7Dxwrljw
+         OMgJWs/0zVgC5gX8I13EcnOtIZgItIwBabR9hWp/XhE09Qzx/vTPDfhc1ozoyAfGOtYx
+         mMhek9vzWlpgGF/8JRa+s7PyZ6oUUIxt8uasSuTcg0omSUvIjpnRcEcfXaWCHzT9T1Nb
+         DzSvr+NtZIfk8jzUdMbelGJnnSb2ngtZmaa+rP7N133ex7lDQs78JIXn9Vo+4ix2Rz5k
+         Ks/6uSzKCv9ULlu5LQppYH+cSIPY8PRIBt0VDS6JPjhLOR5j6O1KAdEc6HTYqZ9KsvK+
+         0FyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756945472; x=1757550272;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eP+OdhpAXeM3MeCoK1wrQ3GVDNoiOJzpSPwPKz/ThLg=;
-        b=UKc0b2IlrA5+r/kR+P11LjJVy4zf+gKrxW81C3xukD0Iaa2INNyrHQqrByIgCjQwAR
-         KMSBrqFPqmdtV47d9iKevXYjOOva/e/yrephcAnOtb/jnJg8QQ9KRtspxn9JoFxfH3NQ
-         8OyXBKFKgcJGUkACvKhmNzBfXzMUrRl5teC9mraqapk2ncTjKM9qy6Em2n6tfJfe4Fuw
-         GwLt0pU0iAc2KCv27sl5b87gUKJHFfvvDU2paJhtP35kVdVFw73KiVhizehj8CJ52Icr
-         +2pP38FT3hRdu92vWG5aIKzzy03nb2UVH5fwlKI6ED6MNanbLHmcgCnQ+CIxFeC7Nnih
-         MTvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKjwEYmSEIv0uar7zOr1tRmU9GBvT8aULhn6ajWiHg9mPtFkDLPhFRy/ezufqvrHZXmrLKEk1Rgge+vhC5XC5z@vger.kernel.org, AJvYcCVYgqShgLe2Qzp2eQoT6Ht5Nw6H7hvoNEds+qPDcCO4AYQd/nVoEz2aQugMDF9EA1GWj2FCupkou5JC5s0kJaqZSN+o@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUkBDHTQ5J1ofJL6ujNzmI4UgyvtP5lTG8CTDLEfZOOEsGT1Sx
-	mfG/aqS/FndiIQvhSZ5u59jMVufeYDhOXR0y9oSlxCm9llevmRtsuMGt
-X-Gm-Gg: ASbGncvognJMV0wnKpQQtc/VkdHAsnPCp6IdAw3xJ6ZSHg0y1Qs6jp+9j9wQp6JuHcj
-	wO4KZLx6ZYF9q0fY/KnogKaeNv+mG2KlC6Y+fCPLAqAnAhL+4F5dDE3vfYBn9VXXeTwKgF1Xzy4
-	kbGfawZlwQwtFUypzS2IeM/GY/+C0ZolsTi65Mqs+17IP8TW92c2JxvFDuOKOuiEFWW0xlV/qV6
-	41sZoC2Rac3q0upGPc+HyH2wDkx/RpcTm3g8Dhxszn0m4CqsZS+r4hYyV5MfKvbBLVpMlyHWb/5
-	0+DVnDkBNyYpmW/sOAnX67QFURSpukZCpUB3Zmiu8sCWcqZ8AYDuss7wZiEBoyiFntkzMw4MJDq
-	YrqgxnwkJqLeu87yotymeSoE5Toa88riEes63K2UQxrbP5apTwECNU69klgsWZj4=
-X-Google-Smtp-Source: AGHT+IFdiMNyAnu9UryWCSK1mcKi/kj3qV4ntRIkK3d5kpgJtmLY+vw0EOiis+3DxW1OxC/tcEOAxA==
-X-Received: by 2002:a05:6a00:114e:b0:76b:ef44:1fa4 with SMTP id d2e1a72fcca58-7723e27d90fmr23784888b3a.14.1756945471815;
-        Wed, 03 Sep 2025 17:24:31 -0700 (PDT)
-Received: from localhost.localdomain ([45.142.165.62])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4bd2aesm17579551b3a.48.2025.09.03.17.24.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 17:24:31 -0700 (PDT)
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"Naveen N . Rao" <naveen@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Jinchao Wang <wangjinchao600@gmail.com>
-Subject: [PATCH v2 18/18] MAINTAINERS: add entry for KStackWatch (Kernel Stack Watch)
-Date: Thu,  4 Sep 2025 08:21:15 +0800
-Message-ID: <20250904002126.1514566-19-wangjinchao600@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250904002126.1514566-1-wangjinchao600@gmail.com>
-References: <20250904002126.1514566-1-wangjinchao600@gmail.com>
+        d=1e100.net; s=20230601; t=1756945325; x=1757550125;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=thtWK0kyMSL+2gdsE6SEJtYcPIxqdLFPNRv8DyZlsx8=;
+        b=In9Xu8+tSm7h/Ydwd2OSUVXhJ/wsPts+C7xt8p5KedUj/Zwkh/EYmcILw9YzHAk2Tz
+         fG9fr9VECmqE0zAB5UbEiwLUDcwbgNDRUzXhgiW7gHQWsSiyTqFE0CViC4QdbFEpseoG
+         lbC6Xtb0hpcdT+8nVQFZ2Boyulefay9AexneZl7aIeXBMtmfAPWwtsC1gHtskHd9YOBZ
+         fbjw12MMILHwCdXcPG3SJmQ+H6t5JTQPZHkiEdZ5TJ+4R+3B2dfaPwgpIj8YY6iJQZeo
+         RCzms9/Did715Q5/4v27K8rRiWCpBPED0HUk5rdpEvqhQEkI6AEg0YBfBQLbre5EU9zk
+         6sXw==
+X-Gm-Message-State: AOJu0YyBAQFVsLvq+p/Ve0uIb4291rkWvJYQ/LqqLnSPe7CbG6R5SaDq
+	1j4J7ZZRF/MNlNEEzgXqxr9p7+xTQt6yj3fpC0evT/JCMNXrRdPFB6qrM/JtnrogWdfVxBt+qv4
+	d97E34Qb7KMu2/R+dgpUnjyOgLQxi0Q97xC7fRclhiYzrj4c58iuPEpIZbA0iUqdNdFs9Jcddm/
+	MOGN2rsdfmac6MktGItbXcqL0fkrd2og0AsfZxtoYP4K8lYNxf
+X-Google-Smtp-Source: AGHT+IFeUtCyKYDUHICkzQ1CwjtGCM1yxxr34wdtskPisbt4oHq4UWpPwmLUyeiT0F3/9W0j7KVuvO3lpEJ8
+X-Received: from pjbnb3.prod.google.com ([2002:a17:90b:35c3:b0:327:7070:5b73])
+ (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:48c3:b0:327:f216:4360
+ with SMTP id 98e67ed59e1d1-3281541434dmr22272717a91.8.1756945324532; Wed, 03
+ Sep 2025 17:22:04 -0700 (PDT)
+Date: Thu,  4 Sep 2025 00:21:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
+Message-ID: <20250904002201.971268-1-jstultz@google.com>
+Subject: [RESEND][PATCH v21 0/6] Donor Migration for Proxy Execution (v21)
+From: John Stultz <jstultz@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: John Stultz <jstultz@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
+	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Suleiman Souhlal <suleiman@google.com>, kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add Jinchao Wang as the maintainer for KStackWatch, including its kernel
-module and test script.
+Hey All,
 
-Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+I didn't get any feedback on the last iteration, so I wanted to
+resend this next chunk of the series: Donor Migration=20
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fed6cd812d79..097a0462e604 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13354,6 +13354,12 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
- F:	Documentation/dev-tools/kselftest*
- F:	tools/testing/selftests/
- 
-+KERNEL STACK WATCH
-+M:	Jinchao Wang <wangjinchao600@gmail.com>
-+S:	Maintained
-+F:	mm/kstackwatch/
-+F:	tools/kstackwatch/
-+
- KERNEL SMB3 SERVER (KSMBD)
- M:	Namjae Jeon <linkinjeon@kernel.org>
- M:	Namjae Jeon <linkinjeon@samba.org>
--- 
-2.43.0
+The main change from v20 before it, is that I previously had
+logic where the ww_mutex paths took the blocked_lock of the task
+it was waking (either the lock waiter->task or owner), but in a
+context from __mutex_lock_common() where we already held the
+current->block_lock. This required using the spin_lock_nested()
+annotation to keep lockdep happy, and I was leaning on the logic
+that there is an implied order between running current and the
+existing not-running lock waiters, which should avoid loops. In
+the wound case, there is also an order used if the owners
+context is younger, which sounded likely to avoid loops.
+
+However, after thinking more about the wound case where we are
+wounding a lock owner, since that owner is not waiting and could
+be trying to acquire a mutex current owns, I couldn=E2=80=99t quite
+convince myself we couldn=E2=80=99t get into a ABBA style deadlock with
+the nested blocked_lock accesses (though, I=E2=80=99ve not been able to
+contrive it to happen, but that doesn=E2=80=99t prove anything).
+
+So the main difference in v21 is reworking of how we hold the
+blocked_lock in the mutex_lock_common() code, reducing it so we
+don=E2=80=99t call into ww_mutex paths while holding it. The
+lock->waiter_lock still serializes things at top level, but the
+blocked_lock isn=E2=80=99t held completely in parallel under that, and
+is focused on its purpose of protecting the blocked_on,
+blocked_on_state and similar proxy-related values in the task
+struct.
+
+I also did some cleanups to be more consistent in how the
+blocked_on_state is handled. I had a few spots previously where
+I was cheating and just set the value instead of going through
+the helpers. And sure enough, in fixing those I realized there
+were a few spots where I wasn=E2=80=99t always holding the right
+blocked_lock, so some minor rework helped clean that up.
+
+I=E2=80=99m trying to submit this larger work in smallish digestible
+pieces, so in this portion of the series, I=E2=80=99m only submitting
+for review and consideration the logic that allows us to do
+donor(blocked waiter) migration, allowing us to proxy-execute
+lock owners that might be on other cpu runqueues. This requires
+some additional changes to locking and extra state tracking to
+ensure we don=E2=80=99t accidentally run a migrated donor on a cpu it
+isn=E2=80=99t affined to, as well as some extra handling to deal with
+balance callback state that needs to be reset when we decide to
+pick a different task after doing donor migration.
+
+I=E2=80=99d love to get some feedback on any place where these patches
+are confusing, or could use additional clarifications.
+
+Also you can find the full proxy-exec series here:
+  https://github.com/johnstultz-work/linux-dev/commits/proxy-exec-v21-6.17-=
+rc4/
+  https://github.com/johnstultz-work/linux-dev.git proxy-exec-v21-6.17-rc4
+
+Issues still to address with the full series:
+* Need to sort out what is needed for sched_ext to be ok with
+  proxy-execution enabled. This is my next priority.
+
+* K Prateek Nayak did some testing about a bit over a year ago
+  with an earlier version of the full series and saw ~3-5%
+  regressions in some cases. Need to re-evaluate this with the
+  proxy-migration avoidance optimization Suleiman suggested
+  having now been implemented.
+
+* The chain migration functionality needs further iterations and
+  better validation to ensure it truly maintains the RT/DL load
+  balancing invariants (despite this being broken in vanilla
+  upstream with RT_PUSH_IPI currently)
+
+Future work:
+* Expand to other locking primitives: Suleiman is looking at
+  rw_semaphores, as that is another common source of priority
+  inversion. Figuring out pi-futexes would be good too.
+* Eventually: Work to replace rt_mutexes and get things happy
+  with PREEMPT_RT
+
+I=E2=80=99d really appreciate any feedback or review thoughts on the
+full series as well. I=E2=80=99m trying to keep the chunks small,
+reviewable and iteratively testable, but if you have any
+suggestions on how to improve the series, I=E2=80=99m all ears.
+
+Credit/Disclaimer:
+=E2=80=94--------------------
+As always, this Proxy Execution series has a long history with
+lots of developers that deserve credit:=20
+
+First described in a paper[1] by Watkins, Straub, Niehaus, then
+from patches from Peter Zijlstra, extended with lots of work by
+Juri Lelli, Valentin Schneider, and Connor O'Brien. (and thank
+you to Steven Rostedt for providing additional details here!)
+
+So again, many thanks to those above, as all the credit for this
+series really is due to them - while the mistakes are likely mine.
+
+Thanks so much!
+-john
+
+[1] https://static.lwn.net/images/conf/rtlws11/papers/proc/p38.pdf
+
+Cc: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Qais Yousef <qyousef@layalina.io>  =20
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Valentin Schneider <vschneid@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Zimuzo Ezeozue <zezeozue@google.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Will Deacon <will@kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Metin Kaya <Metin.Kaya@arm.com>
+Cc: Xuewen Yan <xuewen.yan94@gmail.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Suleiman Souhlal <suleiman@google.com>
+Cc: kuyo chang <kuyo.chang@mediatek.com>
+Cc: hupu <hupu.gm@gmail.com>
+Cc: kernel-team@android.com
+
+
+John Stultz (5):
+  locking: Add task::blocked_lock to serialize blocked_on state
+  sched/locking: Add blocked_on_state to provide necessary tri-state for
+    proxy return-migration
+  sched: Add logic to zap balance callbacks if we pick again
+  sched: Handle blocked-waiter migration (and return migration)
+  sched: Migrate whole chain in proxy_migrate_task()
+
+Peter Zijlstra (1):
+  sched: Add blocked_donor link to task for smarter mutex handoffs
+
+ include/linux/sched.h        | 120 ++++++++-----
+ init/init_task.c             |   4 +
+ kernel/fork.c                |   4 +
+ kernel/locking/mutex-debug.c |   4 +-
+ kernel/locking/mutex.c       |  83 +++++++--
+ kernel/locking/ww_mutex.h    |  20 +--
+ kernel/sched/core.c          | 329 +++++++++++++++++++++++++++++++++--
+ kernel/sched/fair.c          |   3 +-
+ kernel/sched/sched.h         |   2 +-
+ 9 files changed, 473 insertions(+), 96 deletions(-)
+
+--=20
+2.51.0.338.gd7d06c2dae-goog
 
 
