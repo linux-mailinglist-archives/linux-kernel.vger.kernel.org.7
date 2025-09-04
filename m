@@ -1,148 +1,112 @@
-Return-Path: <linux-kernel+bounces-800572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB5DB43975
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:03:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BF8AB43977
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E38DF1C8110D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:03:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA45D1C810D6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6FE2FC001;
-	Thu,  4 Sep 2025 11:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD84A2FC00D;
+	Thu,  4 Sep 2025 11:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="gBHU3Amu"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Xit9gLr6"
+Received: from mail-m1973181.qiye.163.com (mail-m1973181.qiye.163.com [220.197.31.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846CB1917FB;
-	Thu,  4 Sep 2025 11:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756983776; cv=pass; b=ADmXjcoKHvIH99yN1wLc41c6wY3oQxRgjtNq7slWYTr8E4jZxkRR2Aujt8x3EdgtYFcFDP3gJKyhv5y8hlC1dBfw4/PXUSqvTrMilinOz3eBTI3FLuLTBlDV1kSu0KMvVP+K2uDDxeFI++ACdx71u7aHUm9WUhmefbxt6DLOwYg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756983776; c=relaxed/simple;
-	bh=3UgIibTB47PeQZqU+bSLcHe5zQ85KUGU4yiKuuPW16U=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=KXP7oCtg+TgRY/wXpQEiN2D+Dp6v/qeJzKmipwbUD0LqWNo9BHFGXCqydoJvIAFxdGhB7c/Uzva2WUhNfQp0pKmEWIoAqpiXIgKMteUR7mE9hBisiVmCBxvvQ0qaRGWmIT1yjtclkV3nyT73GJ+4HdaA21CQ9p/DipuB3jQxMT8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=gBHU3Amu; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756983757; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=YGrZaiFXgz/dcAD/GhG5qWejTWpckke2xtxufSRxDWuIJ8TfsHzsQxzSDX1D1IstkMHOGXUlrdb4GRh0IHLqvh5GLRU0VgsT2nAVtVGcyIr8h/jnKsRO3FhUEoVY1wlOvYsnh2+gXQnqHXqgSWQVQ2yYffpbMCdybTmSIuZbIZ4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756983757; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=M+c8sBfNK7jTMhcj9S/0VC9pw8RniI4xywgLwf5sppE=; 
-	b=bCvYFODO7/KwS+25DN9Px9ISAIUCdCXbhvPcsqXI9TlcLdCp0D1SXxr7hmoIqTni/oj23iG0zWqhnl8s/UZSRsdl4rBmc3Zv0XdOmmL8TAYN3l5QV0t0Dsot0n08onTDCYznArS1n710ERwgk3DfUu9VIc4cwABpL/aXshgkOYU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756983756;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=M+c8sBfNK7jTMhcj9S/0VC9pw8RniI4xywgLwf5sppE=;
-	b=gBHU3AmuyBe8B5E0E8wU5a6jJhJv1uugBOQrrisM+9rIaGMuTo8Rcf4quNHKP8E0
-	liL6RHiyLZ6rYKSeMfr2d25Il4g17l2rBOreViwmNCxDBEfQbJOCCG+eXjGd8HLPd3R
-	wDIwvWOs8v6Sw3RcjnY+u0UYYMf5EUjtrWad5Z70=
-Received: by mx.zohomail.com with SMTPS id 1756983753966635.954770851991;
-	Thu, 4 Sep 2025 04:02:33 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B942FB626;
+	Thu,  4 Sep 2025 11:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.81
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756983806; cv=none; b=bRBXO3E5JimrZziDX+Tl7XKAlTBXB5PIrRyw/ceGapi66dB9cXqLB71A+/asJLyWIrwC/7/20lzXoFZuzS1ujc46udHr3tA7Pc20T3/6Epu8cJMizhkvXShisAKGphyUHtcv23eSEQWwIibRfdR+QLRh/jTomB6tZzEm3gpYj3Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756983806; c=relaxed/simple;
+	bh=ow5b9POkaXEpqRK3dMVygB0UZ9/f6SRG+hIyHUyvm/8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jbapasr9fBdvxCNYhTJwvTLxO50jRl67HKbA5bSSnaGhlkiSlALTRyug3KTJcZaJM2NRmbuguDOzATvJpL43OihYui96UhP+AspjS3IIVEpxmPU6z+CZ4KUpK0CZa1kJ6ZKXUbuyKmKgs1ZJaxbp60VQf2x9A5DEdXLCyHHml94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Xit9gLr6; arc=none smtp.client-ip=220.197.31.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.153] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 21b2ed1f3;
+	Thu, 4 Sep 2025 19:03:11 +0800 (GMT+08:00)
+Message-ID: <b5fbeb3f-9962-444d-85b3-3b8a11f69266@rock-chips.com>
+Date: Thu, 4 Sep 2025 19:03:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH 1/2] nova-core: Add a library for bitfields in Rust
- structs
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <DCJOUO214EXC.32MFBN80VJW3K@nvidia.com>
-Date: Thu, 4 Sep 2025 08:02:16 -0300
-Cc: Joel Fernandes <joelagnelf@nvidia.com>,
- linux-kernel@vger.kernel.org,
- Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- John Hubbard <jhubbard@nvidia.com>,
- Alistair Popple <apopple@nvidia.com>,
- nouveau@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8498F151-B4DF-43D3-981E-FAE598964CA2@collabora.com>
-References: <20250824135954.2243774-1-joelagnelf@nvidia.com>
- <DCBGLCQVD1RF.6V5UT0NQ4GLB@nvidia.com>
- <444ebd64-7a90-46a6-b885-2c114aa59284@nvidia.com>
- <DCJOUO214EXC.32MFBN80VJW3K@nvidia.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: stmmac: dwmac-rk: Ensure clk_phy doesn't contain
+ invalid address
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Yao Zi <ziyao@disroot.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20250904031222.40953-3-ziyao@disroot.org>
+ <aLlwv3v8ACha8b-3@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <aLlwv3v8ACha8b-3@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a991465108003abkunm0f56a227434cd4
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQxhDQlZLGR4dShpIS0pDQkxWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=Xit9gLr6c2F67gZWiRJ3knK+6v3aqUFhgRcIQ2qpT3IVYWVLjxjDx+93FZxit8MYIQ2q4QDexxikifP7ohn/GuR6WZl8TXLXN7BsZSF1phcaUvWq4h0bSxKVFlB7oNT+jkw/9A/nyTQILFNQSy4ZP7NbYAiYNyjQ3WrTJxtEWzs=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=ZFFCk3oD5mOkAzLuXB6XLVMdJMHaibq0TJviAsZVl/c=;
+	h=date:mime-version:subject:message-id:from;
+
+
+On 9/4/2025 6:58 PM, Russell King (Oracle) wrote:
+> On Thu, Sep 04, 2025 at 03:12:24AM +0000, Yao Zi wrote:
+>>   	if (plat->phy_node) {
+>>   		bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
+>>   		ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
+>> -		/* If it is not integrated_phy, clk_phy is optional */
+>> +		/*
+>> +		 * If it is not integrated_phy, clk_phy is optional. But we must
+>> +		 * set bsp_priv->clk_phy to NULL if clk_phy isn't proivded, or
+>> +		 * the error code could be wrongly taken as an invalid pointer.
+>> +		 */
+> I'm concerned by this. This code is getting the first clock from the DT
+> description of the PHY. We don't know what type of PHY it is, or what
+> the DT description of that PHY might suggest that the first clock would
+> be.
+>
+> However, we're geting it and setting it to 50MHz. What if the clock is
+> not what we think it is?
+
+We only set integrated_phy to 50M, which are all known targets. For external PHYs, we do not perform frequency settings.
 
 
 
-> On 4 Sep 2025, at 00:16, Alexandre Courbot <acourbot@nvidia.com> =
-wrote:
->=20
-> On Thu Sep 4, 2025 at 12:15 AM JST, Joel Fernandes wrote:
-> <snip>
->>>> +use kernel::prelude::*;
->>>> +
->>>> +/// Macro for defining bitfield-packed structures in Rust.
->>>> +/// The size of the underlying storage type is specified with =
-#[repr(TYPE)].
->>>> +///
->>>> +/// # Example (just for illustration)
->>>> +/// ```rust
->>>> +/// bitstruct! {
->>>> +///     #[repr(u64)]
->>>> +///     pub struct PageTableEntry {
->>>> +///         0:0       present     as bool,
->>>> +///         1:1       writable    as bool,
->>>> +///         11:9      available   as u8,
->>>> +///         51:12     pfn         as u64,
->>>> +///         62:52     available2  as u16,
->>>> +///         63:63     nx          as bool,
->>>=20
->>> A note on syntax: for nova-core, we may want to use the `H:L` =
-notation,
->>> as this is what OpenRM uses, but in the larger kernel we might want =
-to
->>> use inclusive ranges (`L..=3DH`) as it will look more natural in =
-Rust
->>> code (and is the notation the `bits` module already uses).
->>=20
->> Perhaps future add-on enhancement to have both syntax? I'd like to =
-initially
->> keep H:L and stabilize the code first, what do you think?
->=20
-> Let's have the discussion with the other stakeholders (Daniel?). I =
-think
-> in Nova we want to keep the `H:L` syntax, as it matches what the =
-OpenRM
-> headers do (so Nova would have its own `register` macro that calls =
-into
-> the common one, tweaking things as it needs). But in the kernel crate =
-we
-> should use something intuitive for everyone.
->=20
-
-I don=E2=80=99t specifically care which syntax is used. We will adapt to =
-it.
-
-=E2=80=94 Daniel
-
+>
+> I'm not sure we should be delving in to some other device's DT
+> properties to then get resources that it _uses_ to then effectively
+> take control those resources.
+>
+> I think we need way more detail on what's going on. Commit da114122b83
+> merely stated:
+>
+>      For external phy, clk_phy should be optional, and some external phy
+>      need the clock input from clk_phy. This patch adds support for setting
+>      clk_phy for external phy.
+>
+> If the external PHY requires a clock supplied to it, shouldn't the PHY
+> driver itself be getting that clock and setting it appropriately?
+>
 
