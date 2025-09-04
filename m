@@ -1,145 +1,274 @@
-Return-Path: <linux-kernel+bounces-800919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B70EB43DB5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:50:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1161EB44E99
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4BE3A041E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:50:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B479D5A35FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCDC2F3C30;
-	Thu,  4 Sep 2025 13:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734222D7DEB;
+	Fri,  5 Sep 2025 07:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="CxpSSWPx"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OuPE5FxJ"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498962EC54A
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A17E55A
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756993839; cv=none; b=QegmUDBSqE8zv6IUdVtDSsxC+ZgLsEGQDIGFD9NGhVX57q732CxOE+uTyf1E9QVptySzi0mFjsE7XnXTeDXOnF4DxHjAppA9vypChxeOqPQDX953h4se9TZxNB52n/jnEidj5GCwgGlxVMp5ixWMkMfyFpoocM4WWNiz/frK4/Q=
+	t=1757055787; cv=none; b=aM6EMYapPmCi0eyvr0xzkxl8fuKY4D1xTbvMlJcrC6geJ3IRi8UjAImORSkUrhKLi/1R+03Es1bkaQlUe64v78JsAJ3Fj4ZH31Qhf78iQQStua5nwr9odXc37DBtqEeWteUNd6svcQHR2/OqBmRvW/316WHYOIplE9Hi4dveF8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756993839; c=relaxed/simple;
-	bh=mo4sgaKZOpF6fcEiPQVuRCY4Rqd4Fs1IcnZ2aA6pidk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YtwMzWq9VdoJL5sYW7x06gnbP6car2OvUVbjkyy5+HiC1dgUKvHb4q4MdBS03gxSglnSu8hfVq58rdiSw8pKv7hsTCx9brLigulUsFfsnucpgaf6wGk2akCKiET5pFIFtv1e4ffu7DAaehlTwTlq1ozkhSevC5ydagY/Be8QfZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=CxpSSWPx; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-249406d5878so11285845ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 06:50:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1756993836; x=1757598636; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hlQ4Sx6+JNm7Anzsg6uLNnjJoKTjxwqCeqz7s3XShYk=;
-        b=CxpSSWPxAv8JfOr+XK17IrZ1utzByIiXkB365Q4ObD8u6mIa/RIn4YiRzQU+8HNTsT
-         cC+d1DWqnyNLDwTjXzE5RSnRGFOS9diJfB8ZIXhxX2IWa7ok5sa4YFLh+Eikz3L4NSEd
-         I2tgy0dI+nWobzzJVvIa8EC7uM7E+kG0Mi8vNuf5FShYTwJgkYcb8LEwvapKbefDZS0O
-         ategc6kVxuewKCN2qvnQRDJXuBNhrCaWdTO7rxdHiBgKAJCIkBXrlLPRZcMHhscP1fJ5
-         ErvHFOgkToZBkEnhsneQ+UCoIP+m10vzGnpYVNJjVox23+XfvhiDrK+zsOeCqW31GT9m
-         qOfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756993836; x=1757598636;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hlQ4Sx6+JNm7Anzsg6uLNnjJoKTjxwqCeqz7s3XShYk=;
-        b=SoswaE4JL/ouX7+H5BdXx8XVz8p93xoM4JTNnq94vVWKeZIDxPvW5BHlNdJSYMh7op
-         jzX29pFggOJOD4QkwCQn8GhcU74q3IAOW342hFzls2cgvS6I/YrfINb3uy6I82fj1jYZ
-         McSlDRVPS4lYnJnWrAEs3KW7hZzGGaEwUuKfxe5IOegCCaU0MphYIV2Mr6GAn8E9DoSP
-         Q9bByuTFacs1TOLYrsLr460a5xRyXRMY5p7hw7RYfuCah2ed+FVp0+FGp30q/84PSQ4+
-         suupDOscOjzdPHgH34d71mDFyi0doxX2pglXYSxbJgZ29eb+sQ9keDLUrlYqpwnaFd8I
-         EVWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXRISxdIJrpbj52qZBgvz7TNDxeC5FET1o73dIkKFAei9fRcUnwE+be0Ftm9x+q4YpDJNnl5tjNkzZWek0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7GYP8UoNLW/KkiXN/EwRzKg+in+IKNisiaLvgi7eltC3RSoo0
-	7myHHDJOtvpvCjGX3n0DBeAsTuq//hk/hyOKHXLOWihTHFx/UPtCMly79AJe4Tj0cko=
-X-Gm-Gg: ASbGncvo3xmI7PZkv9QgwKMoy5QaCzYgR2cyQyuOHD6uuRgtXvXhl+QBDDNURdzmYhx
-	H/IV1qhnN3bvHEdOmKVkHO9qr/fNy8c+hK2CWxYjqVkg2XY7Hl4jtJFPGxFwgbSLvQdz8APvXV+
-	6j1kQyce23+iVHNYAWxe+tE0SqK2NSYtOuyS5nn5Ff7LGoReOtZH2IGB/83eo0/APuxzqGzxZV7
-	nhQ7ytXJgo2B/JrgJQa6RzOwbAGkQFUYiXCMZAFY7wn/oKBGyDeokJ0KGV1YxSAtOHMMhaAGUC4
-	D4q2i2fxdt9ngL9A1M0Y0vbDeguwA+bZsq9Hkt5DaSqdkLeQcv8cVmv4ffLsbELgvlu11sMkeOW
-	mbSoy1RD+xtDkYrR3K088cpP7dJ9lm9ukDeAOPicuiGNKfpKlFsoXMWD9m5tldnSaVhU=
-X-Google-Smtp-Source: AGHT+IE++qNRXBiBncRgnIXQY1GziFXTwGi/APCNRK270AtfnhaMl41kWTSkHeIknkyFSIhHul9yOw==
-X-Received: by 2002:a17:903:37cf:b0:246:9a2c:7ecd with SMTP id d9443c01a7336-24944a9afe6mr259693895ad.29.1756993836464;
-        Thu, 04 Sep 2025 06:50:36 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9952bccasm44979405ad.105.2025.09.04.06.50.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 06:50:35 -0700 (PDT)
-Message-ID: <49bdcd0c-18ef-42ec-a71d-497bc6d6414d@rivosinc.com>
-Date: Thu, 4 Sep 2025 15:50:24 +0200
+	s=arc-20240116; t=1757055787; c=relaxed/simple;
+	bh=ySAcZ1O/HhEcGZRIBV0cJ92Y3epxlMYYFyZcNDCI64w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=CIPPRuWHz4ModVVm5MKvhIu0vEMRKGF7zd27h1IU/UlPcNjT12JQ5L9qfHptBfCHCuw+PQHDkwCiAKeiemoNc6N0EYWqXB18oFohpGUEWQSfbbKsJeiTG+EbEdPsZ3+YIUOc8YxSCQlu7xT539FcJCpaIVPZ9ks4bqmG97vcDQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OuPE5FxJ; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250905070303epoutp035b109810f7fca39e428dd10a46fe27c5~iUOzr0EzU3272132721epoutp03M
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:03:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250905070303epoutp035b109810f7fca39e428dd10a46fe27c5~iUOzr0EzU3272132721epoutp03M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757055783;
+	bh=m5ajDjZHfTK0j0ELw07lpV62uDlapjh3L7Yy9igxN/M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OuPE5FxJ6YqR/WIPsWHyGLqQ7VNetr60VJeIWd+h7PA8pd/dGVIV1eAuK/AbErRge
+	 QsVmHxuocsuJhD7iCAXLN+i9OzWeKv7K8NYeiDiaizYXPw1d3vZde14LEywQLT+5cM
+	 0G4Uh0VANRnrAXTW3R9OSp3T0AxgA72O1TKT+1rE=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250905070302epcas5p4817339b46a5fcfddcd437067d15f36c4~iUOzQUoq30936809368epcas5p4D;
+	Fri,  5 Sep 2025 07:03:02 +0000 (GMT)
+Received: from epcpadp2new (unknown [182.195.40.142]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cJ6kG4VFvz2SSKn; Fri,  5 Sep
+	2025 07:03:02 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250904135119epcas5p22c5d58686c2548fdb3b73f7c2ef4c7c3~iGJ-k9W611055510555epcas5p24;
+	Thu,  4 Sep 2025 13:51:19 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250904135118epsmtip2e516b66588de5af08905596e6b730f79~iGJ_VppIy2271922719epsmtip2V;
+	Thu,  4 Sep 2025 13:51:18 +0000 (GMT)
+Date: Thu, 4 Sep 2025 19:21:13 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V2 03/20] nvdimm/namespace_label: Add namespace label
+ changes as per CXL LSA v2.1
+Message-ID: <1983025922.01757055782611.JavaMail.epsvc@epcpadp2new>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] riscv: Fix sparse warning in __get_user_error()
-To: Alexandre Ghiti <alexghiti@rivosinc.com>,
- kernel test robot <lkp@intel.com>, Al Viro <viro@zeniv.linux.org.uk>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Cyril Bur <cyrilbur@tenstorrent.com>,
- Jisheng Zhang <jszhang@kernel.org>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250903-dev-alex-sparse_warnings_v1-v1-0-7e6350beb700@rivosinc.com>
- <20250903-dev-alex-sparse_warnings_v1-v1-1-7e6350beb700@rivosinc.com>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20250903-dev-alex-sparse_warnings_v1-v1-1-7e6350beb700@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <68a49f05796ef_27db95294cf@iweiny-mobl.notmuch>
+X-CMS-MailID: 20250904135119epcas5p22c5d58686c2548fdb3b73f7c2ef4c7c3
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_eabc3_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20250730121225epcas5p2742d108bd0c52c8d7d46b655892c5c19
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121225epcas5p2742d108bd0c52c8d7d46b655892c5c19@epcas5p2.samsung.com>
+	<20250730121209.303202-4-s.neeraj@samsung.com>
+	<68a49f05796ef_27db95294cf@iweiny-mobl.notmuch>
+
+------OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_eabc3_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+
+On 19/08/25 10:57AM, Ira Weiny wrote:
+>Neeraj Kumar wrote:
+>> CXL 3.2 Spec mentions CXL LSA 2.1 Namespace Labels at section 9.13.2.5
+>> Modified __pmem_label_update function using setter functions to update
+>> namespace label as per CXL LSA 2.1
+>
+>But why?  And didn't we just remove nd_namespace_label in patch 2?
+>
+>Why are we now defining accessor functions for it?
+>
+
+Hi Ira,
+
+No we haven't removed nd_namespace_label in patch 2. In patch 2, we have
+introduced
+lsa_label which contains nd_namespace_label as well as cxl_region_label
+under union.
+
+Actually, LSA 2.1 spec introduced new region label along with existing
+(v1.1 & v1.2) namespace label
+But in v2.1 namespace label members are also modified compared to v1.1 &
+v1.2.
+
+New members introduced in namespace label are following
+
+	struct nvdimm_cxl_label {
+		u8 type[NSLABEL_UUID_LEN];	--> Filling it with nsl_set_type()
+		u8 uuid[NSLABEL_UUID_LEN];
+		u8 name[NSLABEL_NAME_LEN];
+		__le32 flags;
+		__le16 nrange;
+		__le16 position;
+		__le64 dpa;
+		__le64 rawsize;
+		__le32 slot;
+		__le32 align;			--> Filling it with
+		nsl_set_alignment()
+		u8 region_uuid[16];		--> Filling it with
+		nsl_set_region_uuid()
+		u8 abstraction_uuid[16];
+		__le16 lbasize;
+		u8 reserved[0x56];
+		__le64 checksum;
+	};
+
+Therefore this patch-set address this modification in namespace label as per v2.1
+
+>>
+>> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+>> ---
+>>  drivers/nvdimm/label.c |  3 +++
+>>  drivers/nvdimm/nd.h    | 27 +++++++++++++++++++++++++++
+>>  2 files changed, 30 insertions(+)
+>>
+>> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+>> index 75bc11da4c11..3f8a6bdb77c7 100644
+>> --- a/drivers/nvdimm/label.c
+>> +++ b/drivers/nvdimm/label.c
+>> @@ -933,6 +933,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>>  	memset(lsa_label, 0, sizeof_namespace_label(ndd));
+>>
+>>  	nd_label = &lsa_label->ns_label;
+>> +	nsl_set_type(ndd, nd_label);
+>>  	nsl_set_uuid(ndd, nd_label, nspm->uuid);
+>>  	nsl_set_name(ndd, nd_label, nspm->alt_name);
+>>  	nsl_set_flags(ndd, nd_label, flags);
+>> @@ -944,7 +945,9 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>>  	nsl_set_lbasize(ndd, nd_label, nspm->lbasize);
+>>  	nsl_set_dpa(ndd, nd_label, res->start);
+>>  	nsl_set_slot(ndd, nd_label, slot);
+>> +	nsl_set_alignment(ndd, nd_label, 0);
+>>  	nsl_set_type_guid(ndd, nd_label, &nd_set->type_guid);
+>> +	nsl_set_region_uuid(ndd, nd_label, NULL);
+>>  	nsl_set_claim_class(ndd, nd_label, ndns->claim_class);
+>>  	nsl_calculate_checksum(ndd, nd_label);
+>>  	nd_dbg_dpa(nd_region, ndd, res, "\n");
+>> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+>> index 61348dee687d..651847f1bbf9 100644
+>> --- a/drivers/nvdimm/nd.h
+>> +++ b/drivers/nvdimm/nd.h
+>> @@ -295,6 +295,33 @@ static inline const u8 *nsl_uuid_raw(struct nvdimm_drvdata *ndd,
+>>  	return nd_label->efi.uuid;
+>>  }
+>>
+>> +static inline void nsl_set_type(struct nvdimm_drvdata *ndd,
+>> +				struct nd_namespace_label *ns_label)
+>
+>Set type to what?
+>
+
+LSA 2.1 spec mentions seperate UUID for namespace label and region
+label.
+
+#define CXL_REGION_UUID "529d7c61-da07-47c4-a93f-ecdf2c06f444"
+#define CXL_NAMESPACE_UUID "68bb2c0a-5a77-4937-9f85-3caf41a0f93c"
+Here we are setting label->type with CXL_NAMESPACE_UUID
+
+In following patch, accordingly we are setting region label->type with
+CXL_REGION_UUID
+
+May be I will rename it to nsl_set_type_uuid() in next patch-set.
+
+>Why is driver data passed here?
+
+ndd->cxl is used to segregate between EFI labels (v1.1 & v1.2) and CXL
+Labels (v2.1). It was introduced in 5af96835e4daf
+
+>
+>This reads as an accessor function for some sort of label class but seems
+>to do some back checking into ndd to set the uuid of the label?
+>
+>At a minimum this should be *_set_uuid(..., uuid_t uuid)  But I'm not
+>following this chunk of changes so don't just change it without more
+>explaination.
+
+I have created setter function taking inspiration from other members
+setter helpers introduced in 8176f14789125
+
+>
+>> +{
+>> +	uuid_t tmp;
+>> +
+>> +	if (ndd->cxl) {
+>> +		uuid_parse(CXL_NAMESPACE_UUID, &tmp);
+>> +		export_uuid(ns_label->cxl.type, &tmp);
+>> +	}
+>> +}
+>> +
+>> +static inline void nsl_set_alignment(struct nvdimm_drvdata *ndd,
+>> +				     struct nd_namespace_label *ns_label,
+>> +				     u32 align)
+>
+>Why is this needed?
+
+As per CXL spec 3.2 Table - 9-11. Namespace Label Layout
+The desired region alignment in multiples of 256 MB:
+• 0 = No desired alignment
+• 1 = 256-MB desired alignment
+• 2 = 512-MB desired alignment
+• etc.
+
+In this patch-set we are using 0.
+
+>
+>> +{
+>> +	if (ndd->cxl)
+>> +		ns_label->cxl.align = __cpu_to_le16(align);
+>> +}
+>> +
+>> +static inline void nsl_set_region_uuid(struct nvdimm_drvdata *ndd,
+>> +				       struct nd_namespace_label *ns_label,
+>> +				       const uuid_t *uuid)
+>
+>Again why?
+
+This field is used to track namespace label associated with perticular
+region label. It stores the region label's UUID
+
+>
+>> +{
+>> +	if (ndd->cxl)
+>> +		export_uuid(ns_label->cxl.region_uuid, uuid);
+>
+>export does a memcpy() and you are passing it NULL.  Is that safe?
+>
+>Ira
+
+Thanks Ira for pointing this, Yes it will not be safe with NULL.
+Sure I will fix this in next patch-set.
 
 
+Regards,
+Neeraj
 
-On 03/09/2025 20:53, Alexandre Ghiti wrote:
-> We used to assign 0 to x without an appropriate cast which results in
-> sparse complaining when x is a pointer:
-> 
->>> block/ioctl.c:72:39: sparse: sparse: Using plain integer as NULL pointer
-> 
-> So fix this by casting 0 to the correct type of x.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202508062321.gHv4kvuY-lkp@intel.com/
-> Fixes: f6bff7827a48 ("riscv: uaccess: use 'asm_goto_output' for get_user()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->  arch/riscv/include/asm/uaccess.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
-> index 22e3f52a763d1c0350e8185225e4c99aac3fc549..551e7490737effb2c238e6a4db50293ece7c9df9 100644
-> --- a/arch/riscv/include/asm/uaccess.h
-> +++ b/arch/riscv/include/asm/uaccess.h
-> @@ -209,7 +209,7 @@ do {									\
->  		err = 0;						\
->  		break;							\
->  __gu_failed:								\
-> -		x = 0;							\
-> +		x = (__typeof__(x))0;					\
->  		err = -EFAULT;						\
->  } while (0)
->  
-> 
+------OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_eabc3_
+Content-Type: text/plain; charset="utf-8"
 
-Hi Alex,
 
-I applied that and checked that the sparse warnings were fixed as well,
-looks good to me.
+------OUxkrUiS_5tNAtfPKy2OQMQtEkPPDXVoOsIej.5k6A4J0mxM=_eabc3_--
 
-Reviewed-by: Clément Léger <cleger@rivosinc.com>
-
-Thanks,
-
-Clément
 
