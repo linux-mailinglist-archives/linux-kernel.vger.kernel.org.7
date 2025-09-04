@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-800976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 868EBB43E67
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:17:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D2BBB43E64
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F9031C273FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:17:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CC8E3AD2DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0624307AC4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175D02FF166;
 	Thu,  4 Sep 2025 14:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fbCncYCu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PU7y7ZPv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA2D2FFDFC;
-	Thu,  4 Sep 2025 14:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D224A3C;
+	Thu,  4 Sep 2025 14:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756995432; cv=none; b=kM9Q6dVNLJy+KZVXfK0wE28kGV6gnCiiVZ29fdPm2f93hE9b3BnjqzRFec03rB1z68b/1FF63YtZ2/aPyOWNJLgQoDmTCDlyILgMeWZSteCw5ePHRr8MkMfwvsd5QBAI+AkPc6E+p5I1GdZCdy1CyCXZucTDiCzlrdZZA1rb2yc=
+	t=1756995431; cv=none; b=lxs+t2KKcoZUAiE5krlyQkPnwEFQOI7dB5PlPon/CORL84FV8nKnBLByKgkIsBvkRh+lypPhZrU8C1THdVYl6i9TaSPaxaGi9Pjfpkfeh3sfAWwvVO20m11MD7X15x+BJU0LidRM2tA3E1voQqjO9QprDEm/XUunQmKb0vPlbLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756995432; c=relaxed/simple;
-	bh=aCmXLdx4Hc9zvhSv2FDrd3wLpy0XzPSSkGZRGeb2boA=;
+	s=arc-20240116; t=1756995431; c=relaxed/simple;
+	bh=ejGIkx8afYA1cykDAUIyzFsHzUPSCskfk2RxoKQ3LsU=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=BXLmUhNlDzOMsNcBBODJim8DqfFtVR88p4AsNorhxCriMOU0JijRprKGsixMuxlNhQPyTD06UwssMLCAMN0SPIel6Q/oaRArH6PKC1QJhnpuAkjxWPJ4lvunuy1WLWTZTpL9mDmtJH3y64e5u5Uqw/KXFFxboqX6/InQMSzDXhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fbCncYCu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FBE4C4CEF7;
-	Thu,  4 Sep 2025 14:17:11 +0000 (UTC)
+	 Message-Id:Subject; b=mfn+EGZ7HMzXQJlRHkZbUVGDEi55tHvMpaaMaq/yyCSSpPb8LVdHCNoau7/fZtsMP4AyLqLXffFdi1L6BU9tcWZozQ3PRKMnnWgxjXt0TVOT7MPq9iyoUp47JACtdcJRtuQG4IYeUwGqoLJNtzPgqKN1n/3Xh/yF8Z6YWd45Gq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PU7y7ZPv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0FEAC4CEF0;
+	Thu,  4 Sep 2025 14:17:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756995431;
-	bh=aCmXLdx4Hc9zvhSv2FDrd3wLpy0XzPSSkGZRGeb2boA=;
+	s=k20201202; t=1756995430;
+	bh=ejGIkx8afYA1cykDAUIyzFsHzUPSCskfk2RxoKQ3LsU=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=fbCncYCuH+feAgyp4klVWcJckxsLV2tqtxLoEET1EwSHZnewjEFQ3IPZPVDHITnNh
-	 rLlu1HZcNBzAZIXOLkyL4x/dNA1MDOupa6hkIuixJdsDhyzPCyBdWmLNNmtfWMpKiG
-	 YGR+2N9Q3X/PxPT+0yu5kz+8Oc+0+23YR9gRDiJ90z8HecJK9utEyas9NOK1XyoL84
-	 Xsi8IEnnM1lGmBF/6IglpDrlHhh7NMu9W9wTtwFHwcXBqfZCmwVp3cJzck606ry2y1
-	 Swdvkhf7DSTmJNJtx3c01hvfCHRR7VjwS1OnLeXzJMqyaJaMo+AjGfzT6rSI3lWBLT
-	 t+ATTyJOVVXlA==
+	b=PU7y7ZPvcIO89FIJIPqyrPdXX4XP2Py83uvM8umriHzBUA9mExfPQVemGWCJxL25n
+	 zq5lHshGAmj3ySkKiHLdZcdClZadu8XTX4X6ukwGZACbYzEhwxg8G5vSzr4JQaQMFN
+	 fjk3qag5IjfPF/CmKJkMHWf7ebvFO1JjYJ/684mc9QBMDCcKj0j2kKlbRw5WoJUNN9
+	 spo7Z6ZRUa5RyPsnX0ssLt5NN9ivoz/elCiMlWm24DRP50YVzprthjxDyBnFXV+X+v
+	 E9/wJmqtJB1GWMtfliobdlPP7Mct77/kvMFVOFhyXlD7+N/SAinZCUQFsSTVGPLjEX
+	 C9ABexQos/lEQ==
 Date: Thu, 04 Sep 2025 09:17:10 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -50,137 +50,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-To: Yijie Yang <yijie.yang@oss.qualcomm.com>
-In-Reply-To: <20250904-hamoa_initial-v9-0-d73213fa7542@oss.qualcomm.com>
-References: <20250904-hamoa_initial-v9-0-d73213fa7542@oss.qualcomm.com>
-Message-Id: <175699523750.4060076.15321819933844414302.robh@kernel.org>
-Subject: Re: [PATCH v9 0/3] Initial support for Qualcomm Hamoa IOT EVK
- board
+Cc: linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, willmcvicker@google.com, 
+ kernel-team@android.com, Will Deacon <will@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Peter Griffin <peter.griffin@linaro.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250903-acpm-dvfs-dt-v3-0-f24059e5cd95@linaro.org>
+References: <20250903-acpm-dvfs-dt-v3-0-f24059e5cd95@linaro.org>
+Message-Id: <175699523574.4060004.693479596122414416.robh@kernel.org>
+Subject: Re: [PATCH v3 0/3] arm64: dts: exynos: gs101: add cpufreq support
 
 
-On Thu, 04 Sep 2025 15:48:31 +0800, Yijie Yang wrote:
-> Introduce the device tree, DT bindings, and driver modifications required
-> to bring up the HAMOA-IOT-EVK evaluation board—based on the X1E80100 SoC—to
-> a UART shell.
-> This patch set focuses on two key hardware components: the HAMOA-IOT-SOM
-> and the HAMOA-IOT-EVK carrier board.
-> The HAMOA-IOT-SOM is a compact System on Module that integrates the SoC,
-> GPIOs, and PMICs. It is designed to be modular and can be paired with
-> various carrier boards to support different use cases.
-> The HAMOA-IOT-EVK is one such carrier board, designed for IoT scenarios.
-> It provides essential peripherals such as UART, on-board PMICs, and
-> USB-related components.
-> Together, these components form a flexible and scalable platform, and this
-> patch set enables their initial bring-up through proper device tree
-> configuration and driver support.
+On Wed, 03 Sep 2025 14:24:34 +0000, Tudor Ambarus wrote:
+> Define the CPU clocks and OPPs.
 > 
-> Qualcomm SoCs often have multiple product variants, each identified by a
-> different SoC ID. For instance, the x1e80100 SoC has closely related
-> variants such as x1e78100 and x1e001de. This diversity in SoC identifiers
-> can lead to confusion and unnecessary maintenance complexity in the device
-> tree and related subsystems.
-> To address this, code names offer a more consistent and project-agnostic
-> way to represent SoC families. They tend to remain stable across
-> development efforts.
-> This patch series introduces "hamoa" as the codename for the x1e80100 SoC.
-> Going forward, all x1e80100-related variants—including x1e81000 and others
-> in the same family—will be represented under the "hamoa" designation in the
-> device tree.
-> This improves readability, streamlines future maintenance, and aligns with
-> common naming practices across Qualcomm-based platforms.
+> Patch #2 has a dependency on the ACPM clock bindings sent at:
+> https://lore.kernel.org/linux-samsung-soc/20250903-acpm-clk-v3-1-65ecd42d88c7@linaro.org/
 > 
-> Features added and enabled:
-> - UART
-> - On-board regulators
-> - Regulators on the SOM
-> - PMIC GLINK
-> - USB0 through USB6 and their PHYs
-> - Embedded USB (eUSB) repeaters
-> - USB Type-C mux
-> - PCIe6a and its PHY
-> - PCIe4 and its PHY
-> - Reserved memory regions
-> - Pinctrl
-> - NVMe
-> - ADSP, CDSP
-> - WLAN, Bluetooth (M.2 interface)
-> - USB DisplayPort
-> - Graphic
-> - Audio
+> The following error will be seen without the bindings patch:
+> arch/arm64/boot/dts/exynos/google/gs101.dtsi:10:10: fatal error: dt-bindings/clock/google,gs101-acpm.h: No such file or directory
+>    10 | #include <dt-bindings/clock/google,gs101-acpm.h>
+>       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 > 
-> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+> Thanks,
+> ta
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
-> Changes in v9:
-> - Sort the nodes within the root node in alphabetical order.
-> - Add WLAN control pin to the PMU.
-> - Link to v8: https://lore.kernel.org/r/20250828-hamoa_initial-v8-0-c9d173072a5c@oss.qualcomm.com
-> 
-> Changes in v8:
-> - Change the style of how collaborators are listed.
-> - Link to v7: https://lore.kernel.org/r/20250827-hamoa_initial-v7-0-f9b81d564bb2@oss.qualcomm.com
-> 
-> Changes in v7:
-> - Configure the EDP regulator to boot-on.
-> - Change back to a year‑less copyright statement.
-> - Update base commit.
-> - Link to v6: https://lore.kernel.org/r/20250821-hamoa_initial-v6-0-72e4e01a55d0@oss.qualcomm.com
-> 
-> Changes in v6:
-> - Restore the full change log for each revision.
-> - Merge the changes related to Audio and Graphics into the patch series.
-> - Link to v5: https://lore.kernel.org/r/20250814-hamoa_initial-v5-0-817a9c6e8d47@oss.qualcomm.com
-> 
-> Changes in v5:
-> - Update base commit.
-> - Drop an already merged patch:
-> https://lore.kernel.org/all/20250804-hamoa_initial-v4-2-19edbb28677b@oss.qualcomm.com/
-> - Link to v4: https://lore.kernel.org/r/20250804-hamoa_initial-v4-0-19edbb28677b@oss.qualcomm.com
-> 
-> Changes in v4:
-> - Update commit messages.
-> - Update base commit.
-> - Update the format of the node mdss_dp3_out.
-> - Add comments to clarify certain nodes.
-> - Update the configuration of regulator-wcn-3p3 from regulator-boot-on to regulator-always-on.
-> - Link to v3: https://lore.kernel.org/r/20250729-hamoa_initial-v3-0-806e092789dc@oss.qualcomm.com
-> 
 > Changes in v3:
-> - Add compatible string and dt-bindings for SOM.
-> - Restore PMU-related regulators to comply with dt-binding rules and enable kernel-level power management.
-> - Adjust commit description accordingly.
-> - Link to v2: https://lore.kernel.org/r/20250724-hamoa_initial-v2-0-91b00c882d11@oss.qualcomm.com
+> - the ACPM clock bindings were moved to their own file, update the
+>   references accordingly.
+> - Link to v2: https://lore.kernel.org/r/20250827-acpm-dvfs-dt-v2-0-e1d2890d12b4@linaro.org
 > 
 > Changes in v2:
-> - Merge the compatible rules and remove the compatible string map.
-> - Align the ADSP and CDSP firmware paths with other x1e80100 platforms.
-> - Remove the regulators on the M.2 card, as well as those managed by UEFI on this board.
-> - Merge another patch series that enables USB DisplayPort functionality on this platform: https://lore.kernel.org/all/20250723-x1e-evk-dp-v1-1-be76ce53b9b8@quicinc.com/
-> - Link to v1: https://lore.kernel.org/r/20250716-hamoa_initial-v1-0-f6f5d0f9a163@oss.qualcomm.com
+> - acpm node becomes a clock provider.
+> - reword commit message, extend cover letter with info about dependency
+>   on a bindings patch.
+> - Link to v1: https://lore.kernel.org/r/20250819-acpm-dvfs-dt-v1-0-4e38b95408c4@linaro.org
 > 
 > ---
-> Yijie Yang (3):
->       dt-bindings: arm: qcom: Document HAMOA-IOT-EVK board
->       arm64: dts: qcom: Add HAMOA-IOT-SOM platform
->       arm64: dts: qcom: Add base HAMOA-IOT-EVK board
+> Tudor Ambarus (3):
+>       arm64: dts: exynos: gs101: add #clock-cells to the ACPM protocol node
+>       arm64: dts: exynos: gs101: add CPU clocks
+>       arm64: dts: exynos: gs101: add OPPs
 > 
->  Documentation/devicetree/bindings/arm/qcom.yaml |    6 +
->  arch/arm64/boot/dts/qcom/Makefile               |    1 +
->  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts      | 1248 +++++++++++++++++++++++
->  arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi     |  609 +++++++++++
->  4 files changed, 1864 insertions(+)
+>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 285 +++++++++++++++++++++++++++
+>  1 file changed, 285 insertions(+)
 > ---
-> base-commit: b899981540841e409e496083921f2e5c4c209925
-> change-id: 20250604-hamoa_initial-0cd7036d7271
+> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+> change-id: 20250819-acpm-dvfs-dt-06bc794bdccd
 > 
 > Best regards,
 > --
-> Yijie Yang <yijie.yang@oss.qualcomm.com>
+> Tudor Ambarus <tudor.ambarus@linaro.org>
 > 
 > 
 > 
@@ -201,15 +128,57 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: using specified base-commit b899981540841e409e496083921f2e5c4c209925
+ Base: using specified base-commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250904-hamoa_initial-v9-0-d73213fa7542@oss.qualcomm.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250903-acpm-dvfs-dt-v3-0-f24059e5cd95@linaro.org:
 
-arch/arm64/boot/dts/qcom/hamoa-iot-evk.dtb: chosen: stdout-path:0: 'serial0: 115200n8' does not match '^[a-zA-Z0-9@/,+\-._]*(:[0-9]*[noe]?[78]?[r]?)?$'
-	from schema $id: http://devicetree.org/schemas/chosen.yaml#
+In file included from arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi:15,
+                 from arch/arm64/boot/dts/exynos/google/gs101-oriole.dts:11:
+arch/arm64/boot/dts/exynos/google/gs101.dtsi:10:10: fatal error: dt-bindings/clock/google,gs101-acpm.h: No such file or directory
+   10 | #include <dt-bindings/clock/google,gs101-acpm.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[4]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb] Error 1
+make[3]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos/google] Error 2
+make[3]: Target 'arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb' not remade because of errors.
+make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos] Error 2
+make[2]: Target 'arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1480: exynos/google/gs101-oriole.dtb] Error 2
+In file included from arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi:15,
+                 from arch/arm64/boot/dts/exynos/google/gs101-raven.dts:11:
+arch/arm64/boot/dts/exynos/google/gs101.dtsi:10:10: fatal error: dt-bindings/clock/google,gs101-acpm.h: No such file or directory
+   10 | #include <dt-bindings/clock/google,gs101-acpm.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[4]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/google/gs101-raven.dtb] Error 1
+make[3]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos/google] Error 2
+make[3]: Target 'arch/arm64/boot/dts/exynos/google/gs101-raven.dtb' not remade because of errors.
+make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos] Error 2
+make[2]: Target 'arch/arm64/boot/dts/exynos/google/gs101-raven.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1480: exynos/google/gs101-raven.dtb] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+make: Target 'exynos/exynos8895-dreamlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos2200-g0s.dtb' not remade because of errors.
+make: Target 'exynos/exynos850-e850-96.dtb' not remade because of errors.
+make: Target 'exynos/exynos7870-on7xelte.dtb' not remade because of errors.
+make: Target 'exynos/exynos7885-jackpotlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-x1slte.dtb' not remade because of errors.
+make: Target 'exynos/exynos5433-tm2.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-r8s.dtb' not remade because of errors.
+make: Target 'exynos/exynos7-espresso.dtb' not remade because of errors.
+make: Target 'exynos/google/gs101-oriole.dtb' not remade because of errors.
+make: Target 'exynos/google/gs101-raven.dtb' not remade because of errors.
+make: Target 'exynos/exynosautov920-sadk.dtb' not remade because of errors.
+make: Target 'exynos/exynosautov9-sadk.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-c1s.dtb' not remade because of errors.
+make: Target 'exynos/exynos9810-starlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-x1s.dtb' not remade because of errors.
+make: Target 'exynos/exynos7870-a2corelte.dtb' not remade because of errors.
+make: Target 'exynos/exynos5433-tm2e.dtb' not remade because of errors.
+make: Target 'exynos/exynos7870-j6lte.dtb' not remade because of errors.
 
 
 
