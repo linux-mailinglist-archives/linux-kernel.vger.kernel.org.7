@@ -1,100 +1,128 @@
-Return-Path: <linux-kernel+bounces-800915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17EF0B43DA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:48:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C24D6B43DA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:48:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2790B7B89F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:47:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EBFF1C85510
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CFD2EC54A;
-	Thu,  4 Sep 2025 13:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308652D47F1;
+	Thu,  4 Sep 2025 13:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TDfLMupa"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ll3IK9Mz"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27AD3043B2
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDD3301025
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756993709; cv=none; b=pYfWdCgW3COGQg99sCLjZiEUVpJJrWTs0fhr4lrm7eyDqnjGCG9FbqBbvH9tQpScHkk2Llqu8ynttOBdJ3F31WMO0w94e9lez5A2tFxfqPPfMJfH4FOxR7IFMH4Im3hOR7I5D9lHjyLnH78bZLhJFtc55hazvdGOtFXESf29P1o=
+	t=1756993699; cv=none; b=ltOqDzi+AdGrxomQhmYtNoghEm4Y4nB7ygYwa/I4vaJiwMC4mGtDfBbHBBEmIEVpLv0ZfY0uF51cNF6Mn2HBXadRkmD1TsBVUmDUtsKAKo7oBsc4qLVRfl5QL13wq0oov3xHA6VOO6ydteOdDm7AfSEhYV7PRNKCp5zCn/Gk6+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756993709; c=relaxed/simple;
-	bh=qj7TYM6aBzp1mFs6qz3iXy6diX/4QJq+uiR7/XGCy5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pxyPtLPw+BmVuvMgymK1QKZAE7Ks65m+hbViDWp0fKmEfapF/QSBVh9S1s9qyt+lPGiN1HpSGNKTJerDTp5Zlwkxi80Peg22DKmDnQqE4qpBIy8Zjd6ljyRKGMwS3dV8rZvmxYuwDfrJA/5jbNPAFdgYDk/xqkvFej7s6wG0M+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TDfLMupa; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 324FB40E01BB;
-	Thu,  4 Sep 2025 13:48:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id s4HTTzl8Bmr1; Thu,  4 Sep 2025 13:48:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756993697; bh=Hgsa2OSmHiAK6uGiLLCaZxDJkvjo2nf4oP3qPFLSiz4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TDfLMupaYMB4YUgzMltvZHnG2j0LSKVfbgDQhJcLyEDGdYrzrW99clg0I2HsxoJhM
-	 CzctUctnRia2LXYASbXyVpu86T0YTiKR4Eo21i7wFzhXFXF0IDuGkcuPp0+KqiIzC/
-	 JHMKZ57ORufn+hLy2ZcB7UUnLvgvvzmIySXyq6omWIJOZWWTs1U79coSR0TmaEJgJ+
-	 EgEkxzbDuSuGJDblO8O/Qe6j+vkiHXs8p0MKXgM84T1vQOe1K3ZgCZwLlgUphVrfMn
-	 zG04KUrNO3wL68dPKE2RItCWKUmkFQ5a4DFJ0Ia4WNM5L0fcjQRJUZyVpZfnKLP7+E
-	 uZFDXLmOh2WSOU7k3xBQKcO6TygCGcal/R5+FIUGXogolSp4oDnReD+UE8S+DFO+zq
-	 196ZDg14XxDBm2tezIbAKPQov8ees6W9UX+vOwLy9sdzLLhslyowBdqu5VLncNwI0V
-	 hfXkwzRWnYdE3gkCtlOMnU5wwqxN4q9H0TFm1oVKO6t2wPky3xpW3z+kjFGsCPAfKL
-	 BKxpkyb0a4i5n1Br3Qsy4oQ6lRv0/Yilict4gufoy49YNrOdbQyTJl7ljCwyriQtO4
-	 X8P9ar7Ve+rxbYbFIYOknAOaeFa1YnQ0a2P9DGmINPL3tjHmk2eWdp09UbfAuld3ZD
-	 MNZ77udMQROxiTLzSsex57FQ=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 59CD840E0174;
-	Thu,  4 Sep 2025 13:48:09 +0000 (UTC)
-Date: Thu, 4 Sep 2025 15:48:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Chang S. Bae" <chang.seok.bae@intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, chao.gao@intel.com,
-	abusse@amazon.de
-Subject: Re: [PATCH v5 4/7] x86/microcode/intel: Define staging state struct
-Message-ID: <20250904134802.GLaLmYksBaQgtonEp3@fat_crate.local>
-References: <20250813172649.15474-1-chang.seok.bae@intel.com>
- <20250823155214.17465-1-chang.seok.bae@intel.com>
- <20250823155214.17465-5-chang.seok.bae@intel.com>
+	s=arc-20240116; t=1756993699; c=relaxed/simple;
+	bh=5b17D17KCNLnqi/G2Z2dTgyoEWSeb8SG6sPYeTo5izY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Hwo6lXPY7PCEHRSaZ8/lSKFoU1uKiF3IemqyvozQh8OCjXPAAdju/hBBbEWD0arqGtFI4QYF85YMfjyuqIDpoeccbBABxSpZavbMWaJt7TUs3avARxtCSAaWB6Y0Qglit6ZmSokKob6M/p7F19KTD5ypk4K0VLV4I0JkyuX7BAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ll3IK9Mz; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-61ec2b5cb49so178923a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 06:48:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756993689; x=1757598489; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B5PfVj7z1U9Fq+QcRMWYVttXEzyn9uOL+vv6a+ytkds=;
+        b=ll3IK9MzbAsGWBYZYSLZwhueudyH7E5mbvXA6FF7OJ+F5GdVVJ5/9kzlfA7Rs00Zdk
+         wWLm4/l8mU3uD17NgaH9Dw9w8gvCt96No8IhNVO5h1BkSzxDdcvRKCVwAZCyUTRTFm9E
+         xya6RRwKJVKmRupE+mBQoap7vojfayhu+UxgPYGMb8FY+b/YQNU8UpD4ilz/yqaFI8+t
+         WpHkmXptPNt6EfA3sH5G8inCFiDVj2Hz9WEqfEwQEBt7CBpbLue/4Qn6wigdH+A93mJr
+         dNGeduqbBTL23LYBgzbYpSnWmDnyfjZD9qbw4LWfpNUP4bTYAdRgYeBjz3ourSxYXFOJ
+         3XAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756993689; x=1757598489;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B5PfVj7z1U9Fq+QcRMWYVttXEzyn9uOL+vv6a+ytkds=;
+        b=dHq46KRK2eCfgO5WuB2LGfJUNyoIFAAaZDH8JGAAkiwYnaJVm1Cmu8q4hkh/gFK6aM
+         CthO3g/2oy04FrFMr1Leabrdbdq20t16fuHOnrnC3d5TgcQeVjREmRT4qCRcQKUxKgpX
+         /vk0TZ5IRZvPGAHMhI4hUJiMniBRrWrGv3U2BSXNn8Dc9wDN3rpk20UZwlhOSJR1ec9H
+         BX3M+YdrHyfm8+irT6d2XR0DcxbQNzV8DCofJx06KYveMMVuGveuZoPn9aaoOiulzfHs
+         zoVJoQLhb/deK3+2DtrI0wc1/It+EtFYbvO4wdEhjdMtfGQhrfiTULa5V9pERjz/Yqtl
+         KsCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKQhyAH4sncKJE2c1NW4BxZBKXSXTSi2Wk2++Ps47T3L4j7OnN/lnLMd3T6FEOMUiKkX1fu+Spne04a8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIIKqIN/WQAV+KRsOVMaYDGkhT+jB1IpOJeWg6xIaQZiAbQ5tA
+	z9rm0aJo/7E5StMIZ0Ea+Gp2wdOSRAwcI077t9/0Td32TTdlwew85QTaGyMsHP4Xnh5yuDJ8YFg
+	d68Kl
+X-Gm-Gg: ASbGncvh2rnaG8D2ZlCMVEbuLmzsIeRZLGjz+Ycgo7GXR/y81Xd93IZkvDIqtCS+W0W
+	jfOwk2QWJ3cbl43+mm76dDUos1QjOkhI6w83rkR4xheYhIh0xasRyu1feMb8s7j2JKoG8sNuYCB
+	qj5uW7SCSG8zLxoxM5Xn0j84gvRHNlBYRJU3mJwrewsfcsmxbhUVNNabw27tVQ/jI69eUaG9aJo
+	8vPNowpaphTOB46cUxS4yX/P1/nUFUyV2sRQNag3DLIiiyDik4l9Knx3Yx519rjuecVtD3gCAgY
+	eF485Z5YYtG1dELWo0G1DhLSON7qhQoqM/qx6kkWIEaAGk9JvgsIpQXQ7CHU5JJSzpA4D/DnUAT
+	6eut/dvOcltIyxjdAABwuJrNij2GbGVqynREL+/Q=
+X-Google-Smtp-Source: AGHT+IFXmHyLiRikp8i7AT0rm9igyDk82338TdO+dG49oonCsmp2DJJwv/hKJNb9HHXBa/ePNM0EKw==
+X-Received: by 2002:a05:6402:354c:b0:61c:d7e5:47a3 with SMTP id 4fb4d7f45d1cf-61d0d365421mr10482985a12.3.1756993689530;
+        Thu, 04 Sep 2025 06:48:09 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61edb0fdf1dsm4243221a12.18.2025.09.04.06.48.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 06:48:08 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Denzeel Oliva <wachiturroxd150@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250831-usb-v2-0-00b9c0559733@gmail.com>
+References: <20250831-usb-v2-0-00b9c0559733@gmail.com>
+Subject: Re: [PATCH v2 0/3] clk: samsung: exynos990: Fix USB clock support
+Message-Id: <175699368813.172086.8536010951360222334.b4-ty@linaro.org>
+Date: Thu, 04 Sep 2025 15:48:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250823155214.17465-5-chang.seok.bae@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Sat, Aug 23, 2025 at 08:52:07AM -0700, Chang S. Bae wrote:
-> To facilitate a structured staging handler, a set of functions will be
-> introduced.
 
-No need for that sentence.
+On Sun, 31 Aug 2025 12:13:13 +0000, Denzeel Oliva wrote:
+> Small fixes for Exynos990 HSI0 USB clocks:
+> 
+> Add missing LHS_ACEL clock ID and implementation, plus two missing
+> USB clock registers. Without these, USB connections fail with errors
+> like device descriptor read timeouts and address response issues.
+> 
+> These changes ensure proper USB operation by adding critical missing
+> clock definitions.
+> 
+> [...]
 
-> Define staging_state struct to simplify function prototypes
-> by consolidating relevant data, instead of passing multiple local
-> variables.
+Applied, thanks!
 
-That's clear enough.
+[1/3] dt-bindings: clock: exynos990: Add LHS_ACEL clock ID for HSI0 block
+      https://git.kernel.org/krzk/linux/c/eb9bc162775cabfc4cf2b37cb0d3c2c2bf4c4b54
+[2/3] clk: samsung: exynos990: Add LHS_ACEL gate clock for HSI0 and update CLK_NR_TOP
+      https://git.kernel.org/krzk/linux/c/d0563d320b6014a8d56170253fe0aec524658b9f
+[3/3] clk: samsung: exynos990: Add missing USB clock registers to HSI0
+      https://git.kernel.org/krzk/linux/c/f00a5dc81744250e7a3f843adfe12d7883282c56
 
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
