@@ -1,66 +1,87 @@
-Return-Path: <linux-kernel+bounces-801202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FDEEB4419A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:59:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC742B441F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47F5258806E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:58:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 911DA7B6B2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF952D46D9;
-	Thu,  4 Sep 2025 15:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41654288511;
+	Thu,  4 Sep 2025 15:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="hhPJQJUb"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UVXKkAzy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BE828152D
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE33285078
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757001493; cv=none; b=Sp4M2SvGR/xV6R54kZFsUsoJkObj62kXhPqCV6CsRaojB+RLpcgZvlYAATmoraN6D3ym+b62KjbqyNqCY9EBObTTvijCZvK//SVKxvlHAmw3l8fkCLVE6dCRBElKhamrWcCZULwCujIj/fkti5O3PHr8RVxc9IaYg03VmBnG5/I=
+	t=1757001561; cv=none; b=jQEkJdOt+plrJf+AdoUvAA0+3dgm9f3gx+8z7c4kWsncM11g1rsNqJCUj2p/1+hJk6lFJaBgqNQ0s3nZe5IZHnZVMdLEdWKXQ9ZzROjDUyyaD1Flnmd3FKqBjxMiIMKUQKhDVySALR2SrrlYxFdMrurIJiPspdEP9s7XkeIaiEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757001493; c=relaxed/simple;
-	bh=GNG4T3IyxV5t7L2kGCETdYPeAjNlEABauKY6n8jzG+A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bP61DZpBIXcn2e+90ifdeDO8kr4X0GW+14SRfCweel3q7LKoJK/Le4RlAHAPgA18LUUN3awtut/J8UaeJgkKW276FCrXFZjITDWh+o25bKojPe1aI+oTPi0M9iSpW1EyGkTQajWAWbHCfQtw6T3DjOH7v2cQ6AY2SVktmmkkBTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=hhPJQJUb; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6004b.ext.cloudfilter.net ([10.0.30.210])
-	by cmsmtp with ESMTPS
-	id uBJBuI9dvaPqLuCLduv44k; Thu, 04 Sep 2025 15:58:05 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id uCLbuzmWeOWVUuCLcuyBjD; Thu, 04 Sep 2025 15:58:04 +0000
-X-Authority-Analysis: v=2.4 cv=bqdMBFai c=1 sm=1 tr=0 ts=68b9b70c
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=XW3vq5T86JFyMsJaYQInbg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=eB5EMIHYC3Eq57A48okA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wsIKJrAXhneWuMZ2Gt5XlAPUdaDAASZmisxqElG8+oQ=; b=hhPJQJUbqWpm4rtoZOzyNG+Z/b
-	UyybaI54eqVOgcHhq2gzHJ9K/F1Sp0ZSMtJeLph/h02IiAL5BheyN44ON3CZyz1/ImlLcRaSHK9n9
-	kri01p5tpqcmwwh7oAUfbjhvshDTWw/IMrWQBsrLNYP7vZHqy3fisV1DeIyMDb3596/ZOjcUa34M9
-	BSEL6vJnbdPNyOngVysO8h4wF/O88JvLRaYwXN+BgGNsnc/DcxctVP3eRWuA/WARbEoYuqwteD1Np
-	cDJrT/rXjKj1lEzAmLKixKQju5S76/cvOyBwrXLt0CqxmJuHhnxrm3pzaulfyenpmLokFCA+GzHvx
-	mupQRlNQ==;
-Received: from d4b26982.static.ziggozakelijk.nl ([212.178.105.130]:52332 helo=[10.52.79.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1uuCLb-00000003O4a-0yLR;
-	Thu, 04 Sep 2025 10:58:03 -0500
-Message-ID: <5417cc2c-c29a-49f5-8932-44d0507c0dea@embeddedor.com>
-Date: Thu, 4 Sep 2025 17:57:53 +0200
+	s=arc-20240116; t=1757001561; c=relaxed/simple;
+	bh=wP1mjY7oYAykBHuPl6UXlsQfY4pE3+EORBKDNCB2amw=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kmLjkh5oD9IUJ+kZfgZAfFG1GICf1Wma2rk9BbEWxD32jZitLgnw8XHkqiYZLc/9bep2hSiNaBYFAFgFUpSgyutNsE2vv6/iTnhlsKRXt6m3L2u2KtnFDF2pr8kIPkz6QQp310qnzdBWafz1GNwCpiXJljchYA0p3QyQDcgcFG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UVXKkAzy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757001558;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=07dkFvxcmTc5OCWDxxC6GUlNPtAy7YoAfUUe6s4/Nw0=;
+	b=UVXKkAzyMyglFDO8adhVUMZPl5ZViUrXtbriJefgVr1GXYspOH72UFSIK4NoHjZOv+f17m
+	AijS5WY7yGIdLS6iVbNXZaj7DiE/78kuy8G1veswQoROw9v+2XT6Ua3Nuh+Ot8lINk4w0Q
+	hJF25GCHqJyqG6Kqmsac1Z3zFiGXTSM=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-206-YQNVhj-SMQOCsTcFQLYNMA-1; Thu, 04 Sep 2025 11:59:17 -0400
+X-MC-Unique: YQNVhj-SMQOCsTcFQLYNMA-1
+X-Mimecast-MFC-AGG-ID: YQNVhj-SMQOCsTcFQLYNMA_1757001556
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b34c87dad0so23627971cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 08:59:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757001556; x=1757606356;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=07dkFvxcmTc5OCWDxxC6GUlNPtAy7YoAfUUe6s4/Nw0=;
+        b=KSJG/8VTeeyCO+pXTCplgbwosZLAru4UlxFob2Q1FiWgK/YAdkmAEi8uAzUKlGFkvV
+         Mxk00uTkDsyC08Q6YB3gXwcmkkmd8rQ1sLkwklUv8fIxQUqKra/QqxAFDRkqYVqdd2kS
+         7vKsom8IpFk6hhNXcTU1MMhL6SX6KE6N6dSqxihmwImLIOtAR/QuAgujgNAVAdT0l/kL
+         mY9bi8mA2C7Wxv2ONpCOPNis8PK/mv5nfnMz5iB7/X26GEU6ZQUm1Pl5/4xJx/VXo9Wn
+         BZg2E5XLX5pVnesFl6Ogm3it4HU29ih0k3y5t5PeBj7u+ZWPc2f8ezcbCeQrnF2MV/x/
+         KR9A==
+X-Gm-Message-State: AOJu0Yx0irDXmdibF0cckcTcqnmLStN55Pu7ufUN/g1TBsh+yK3oZw7Z
+	urIxvGFn9pMF9P02ncMgVJw0nsxYVSd64d2YX1oEIOI4GQEb3zEUjrsCtLW65sR/L4ov9pz3IM2
+	XFV/Kfw5Vmt5keZjxN6UqK1yReyZP0vVZqioTWG+1NwqhFKC/pybmBDUGMX56U1RLDw==
+X-Gm-Gg: ASbGncuC133jAD9xe8MH5fiRIOCaGWv1ZshCek97AW2Anh2M+1+vC3ONiEHmTyxpTEC
+	shYRl13hDhrMK7bOUL4XMgJ9xb1ohqHZzCCEEsGbv2MGQIi1yQkrxpYtJ6cbTmw+ncDs2bMUbqf
+	yhrdZn/3EW611E1jKXsk20rlEURPVHjwezO0ajWjDZzwv8mFbWA4GforGL20HjARbcv8w9N7Adv
+	JNz7arnu5iEjiHttnQLEJnIoq9P9dBS/Ydd3iNWGQBjFhvepey5KFkf+k1aCOmCxav8br//Af8T
+	sL3XJ/oEwpXJHrUBfcVNJ/rIr7FQmZ2WzubvHmI1trImxtgeVTVlEmH5y5arrYImgiw0dskXyp3
+	BGtM86DyHkg==
+X-Received: by 2002:a05:622a:54b:b0:4b0:78fb:39da with SMTP id d75a77b69052e-4b31d846113mr232112171cf.21.1757001556488;
+        Thu, 04 Sep 2025 08:59:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGkGpLl66+pXtPFx4EcxN3PEzIt/mqyBU6nj68kcsF8hJ9qMsL8t56zLath7e07jSH1WHfitQ==
+X-Received: by 2002:a05:622a:54b:b0:4b0:78fb:39da with SMTP id d75a77b69052e-4b31d846113mr232111601cf.21.1757001555782;
+        Thu, 04 Sep 2025 08:59:15 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b48f757a0fsm30464181cf.30.2025.09.04.08.59.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 08:59:15 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <a408ea95-2a03-4c87-a620-a455ca390630@redhat.com>
+Date: Thu, 4 Sep 2025 11:59:13 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,140 +89,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] scsi: pm80xx: Avoid -Wflex-array-member-not-at-end
- warning
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
- John Garry <john.g.garry@oracle.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Jack Wang <jinpu.wang@cloud.ionos.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <aLiMoNzLs1_bu4eJ@kspp>
- <7b60681e-a964-494a-a6fa-aba00086b7f7@oracle.com>
- <b79c69e27b4ccd9556c89a88bf6c69ed441193ea.camel@HansenPartnership.com>
+Subject: Re: [PATCH 1/2] selftest/futex: Make the error check more precise for
+ futex_numa_mpol
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ Waiman Long <llong@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Valentin Schneider <vschneid@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ kernel-dev@igalia.com
+References: <20250901203327.53887-1-andrealmeid@igalia.com>
+ <1d6a0c1e-5fa2-4c21-b3c1-7bfb2f9dd669@redhat.com>
+ <fd720337-ebc8-4039-b9bf-062be642f5d3@igalia.com>
 Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <b79c69e27b4ccd9556c89a88bf6c69ed441193ea.camel@HansenPartnership.com>
+In-Reply-To: <fd720337-ebc8-4039-b9bf-062be642f5d3@igalia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 212.178.105.130
-X-Source-L: No
-X-Exim-ID: 1uuCLb-00000003O4a-0yLR
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: d4b26982.static.ziggozakelijk.nl ([10.52.79.44]) [212.178.105.130]:52332
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfFrGDUYFM4pIMZgoRbiTGJNVtS/DGtBPwF/afhXvOZNNuCpSo94X5aPj5SXqjz8jn9q7RmK2AAvfix9atbbdCQvYfVXUwAq56aUowx9vqdN36BxmsD/Q
- MaTYveIvPP/wQGerK7ioIDrmw/RYpZnLFGpT/yG/JLV47MGvAGcwXmbN1+p/JPOcqlWD2YYQW1dy+RGyQaUuA1DyFNZirw0Su9V8q8+b940xgk/3TcnsFdrx
 
-
-
-On 9/4/25 14:39, James Bottomley wrote:
-> On Thu, 2025-09-04 at 07:52 +0100, John Garry wrote:
->> On 03/09/2025 19:44, Gustavo A. R. Silva wrote:
->>> diff --git a/drivers/scsi/pm8001/pm8001_hwi.h
->>> b/drivers/scsi/pm8001/pm8001_hwi.h
->>> index fc2127dcb58d..7dc7870a8f86 100644
->>> --- a/drivers/scsi/pm8001/pm8001_hwi.h
->>> +++ b/drivers/scsi/pm8001/pm8001_hwi.h
->>> @@ -339,8 +339,10 @@ struct ssp_completion_resp {
->>>    	__le32	status;
->>>    	__le32	param;
->>>    	__le32	ssptag_rescv_rescpad;
->>> -	struct ssp_response_iu  ssp_resp_iu;
->>>    	__le32	residual_count;
+On 9/4/25 11:23 AM, André Almeida wrote:
+> Hi Waiman,
+>
+> Thanks for the feedback!
+>
+> Em 03/09/2025 14:53, Waiman Long escreveu:
+>> On 9/1/25 4:33 PM, André Almeida wrote:
+>>> Instead of just checking if the syscall failed as expected, check as
+>>> well what is the error code returned, to check if it's match the
+>>> expectation and it's failing in the correct error path inside the
+>>> kernel.
+>>>
+>>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
+>>> ---
+>>> This patch is aimed for 6.18
+>>> ---
+>>>   .../futex/functional/futex_numa_mpol.c        | 36 
+>>> +++++++++++--------
+>>>   1 file changed, 21 insertions(+), 15 deletions(-)
+>>>
+>>> diff --git a/tools/testing/selftests/futex/functional/ 
+>>> futex_numa_mpol.c b/tools/testing/selftests/futex/functional/ 
+>>> futex_numa_mpol.c
+>>> index 802c15c82190..c84441751235 100644
+>>> --- a/tools/testing/selftests/futex/functional/futex_numa_mpol.c
+>>> +++ b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
+>>> @@ -77,7 +77,7 @@ static void join_max_threads(void)
+>>>       }
+>>>   }
+>>> -static void __test_futex(void *futex_ptr, int must_fail, unsigned 
+>>> int futex_flags)
+>>> +static void __test_futex(void *futex_ptr, int err_value, unsigned 
+>>> int futex_flags)
+>>>   {
+>>>       int to_wake, ret, i, need_exit = 0;
+>>> @@ -88,11 +88,17 @@ static void __test_futex(void *futex_ptr, int 
+>>> must_fail, unsigned int futex_flag
+>>>       do {
+>>>           ret = futex2_wake(futex_ptr, to_wake, futex_flags);
+>>> -        if (must_fail) {
+>>> -            if (ret < 0)
+>>> -                break;
+>>> -            ksft_exit_fail_msg("futex2_wake(%d, 0x%x) should fail, 
+>>> but didn't\n",
+>>> -                       to_wake, futex_flags);
 >>> +
->>> +	/* Must be last --ends in a flexible-array member. */
->>> +	struct ssp_response_iu  ssp_resp_iu;
+>>> +        if (err_value) {
+>>> +            if (ret >= 0)
+>>> +                ksft_exit_fail_msg("futex2_wake(%d, 0x%x) should 
+>>> fail, but didn't\n",
+>>> +                           to_wake, futex_flags);
+>>> +
+>>> +            if (errno != err_value)
+>>> +                ksft_exit_fail_msg("futex2_wake(%d, 0x%x) expected 
+>>> error was %d, but returned %d (%s)\n",
+>>> +                           to_wake, futex_flags, err_value, errno, 
+>>> strerror(errno));
+>>> +
+>>> +            break;
 >>
->> this is a HW structure, right? I did not think that it is ok to
->> simply re-order them...
-> 
-> Agreed, this is a standards defined information unit corresponding to
-> an on the wire data structure.  The patch is clearly wrong.
-> 
-> That being said, the three things the flexible member can contain are
-> no data, response data or sense data.  None of them has a residual
-> count at the beginning and, indeed, this field is never referred to in
-> the driver, so it looks like it can simply be deleted to fix the
-> warning.
+>> If (ret >= 0), the 2nd (errno != err_value) failure message will 
+>> likely be printed too. Should we use "else if" so that only one error 
+>> message will be printed?
+>>
+>>
+>
+> ksft_exit_fail_msg() calls exit(), so the code will exit before 
+> executing the second failure message.
+>
+> If this was a  ksft_test_result_error() call, then the message would 
+> be printed twice.
 
-I see. I just submitted v2. Thanks!
+I didn't realize that. Thanks for letting me know. In that case, the 
+code should be OK.
 
-> 
-> That being said, this pattern of adding fields after flexible members
-> to represent data that's common to all content types of the union is
-> not unknown in SCSI so if you want to enable this warning, what are we
-> supposed to do when we encounter a genuine use case?
+Cheers,
+Longman
 
-It depends on the situation. Some people prefer to have a separate struct
-with only the header part of the flexible structure --this is excluding
-the flexible-array member (FAM), and then use an object of that header
-type embedded anywhere in any other struct. This of course (sometimes)
-implies having to do many other changes to accommodate the rest of the
-code accordingly, as in this[1] case.
-
-To address the situation described above without necessarily having to
-create a separate header struct and change a lot of code, the
-struct_group() helper can be used [2].
-
-In other cases, when for some reason the FAM has to be accessed through
-a composite struct, both struct_group() and container_of() (this to
-retrieve a pointer to the flexible structure and then access the FAM)
-can be used [3].
-
-We have the new TRAILING_OVERLAP() helper that in many cases can be
-superior to the struct_group()/container_of() approach. For instance
-this[4] could've been fixed with the following shorter and simpler
-patch:
-
-  struct nfsacl_simple_acl {
--       struct posix_acl acl;
--       struct posix_acl_entry ace[4];
-+       TRAILING_OVERLAP(struct posix_acl, acl, a_entries,
-+               struct posix_acl_entry ace[4];
-+       );
-  };
-
-However, at the time we didn't have TRAILING_OVERLAP(). Also, this new
-macro is helping us to detect alignment issues and correct them [5].
-These[6][7] are a couple more example of when and how to use this helper.
-
-We also have the DEFINE_FLEX()/DEFINE_RAW_FLEX() helpers [8][9].
-
-So, again, we can do different things depending on the situation and
-maintainer's preferences.
-
-Ideally, FAMs-in-the-middle should be avoided, because it's so easy
-for them to open the door to memory corruption bugs[10] (to mention
-some).
-
-Thanks
--Gustavo
-
-[1] https://git.kernel.org/linus/d2af710d6d50
-[2] https://git.kernel.org/linus/c54979a3abc4
-[3] https://git.kernel.org/linus/a7e8997ae18c
-[4] https://git.kernel.org/linus/dfd500d89545
-[5] https://lore.kernel.org/linux-hardening/aLiYrQGdGmaDTtLF@kspp/
-[6] https://git.kernel.org/linus/5e54510a9389
-[7] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=8abbbbb588f1
-[8] https://git.kernel.org/linus/1d717123bb1a
-[9] https://git.kernel.org/linus/34116ec67cc1
-[10a] https://git.kernel.org/linus/eea03d18af9c
-[10b] https://git.kernel.org/linus/6e4bf018bb04
-[10c] https://git.kernel.org/linus/cf44e745048d
-[10d] https://git.kernel.org/linus/d761bb01c85b
 
