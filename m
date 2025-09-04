@@ -1,309 +1,146 @@
-Return-Path: <linux-kernel+bounces-801788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159ABB449D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:40:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69727B449D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A57383BBDC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:40:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 853973AC6CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27ACC2ECEA9;
-	Thu,  4 Sep 2025 22:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AF52EC0B4;
+	Thu,  4 Sep 2025 22:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iJBhliaz"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D5oi70zv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3VbdcIOn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81122ECE83
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362F82E8DE9
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757025579; cv=none; b=Sj1uoZBV5bwHQUf8QQC9jBNy0+XI8vYyXXTxbiOUZyUt/1CPpc4XO3ZTqdDoCZYfLg9HEc2eJI053wouvh8Z6z1WF3CNqe5FP+n7kR+o8x/ro82p2GUHScprtx5u/1SS0pfOXiKU8NpCLZezOefuoEgiNCMFsbzSvDkA76zEE/c=
+	t=1757025621; cv=none; b=XJTnN3uTbEQwMrofcE6bjGsnEs9hG6l4EFuJc0APfka2ySUIM5fAzUGQccekYI/0KiCodrbApfndgreqqnb5QLnthhh9Xd7EFm6Vve4RnG3ym2U7HaFPEQ+TBMBgm5Tk9OXgQN2RNv4fc2K9xArpkIjbxjMLTGhDnjHrgS6yHG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757025579; c=relaxed/simple;
-	bh=dlLs+yi7RwXEFoGkLBmy8K3WE1BY0qc9j744kGghnWs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jVjOXCXfjwcDs6ygI/OCmbAlCmszK8hVNW06vmp0PmsE1WW2WhWzPNRrMCgSixm5q/ARjmwUIAQCHOUbcKjXLfLNfNLRpz/1nfJCnYjOK1DImh35PjPER00uVxaJUFtL+Y3fNgWVjlArOOMCpQqaGbHmr4fkbw7tMs/oLyA2C0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dylanbhatch.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iJBhliaz; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dylanbhatch.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24458274406so28057745ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 15:39:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757025576; x=1757630376; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0NQT71Rd3hFVreB2uwDzx4dZZ1nQuKfGGKuQOi/O3l8=;
-        b=iJBhliaznHDR/NuiId7sWKJ6WkgbRZAgCRhMivhm6r2jkRWugg3+RAGUbQPA5+xmRh
-         kkVlkOmsItRApf6el4SMs41avh27Y8MncbON+Xa8J+bfCaEh1ynL5bmlRfnI8MC1ul9s
-         1OeKFKkWS7Dl9uuxrIb6nWcu3Nat1kiGq5wh1mnK4o5VN1lmdSzwZJlHM1XIll2ul9mT
-         b6HMFZGWNWlanqZQDq6qUiSHqRcXHW83IIuAq/xCVfNS48LzcdfaRdCJ20/Df+Op+Ko0
-         nfd2it4LMynCExS1ajhkE2b7CkCNeRSWqnIojzUg0q8/IifnlakM6mZYzZWyO9p9fGE7
-         aPTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757025576; x=1757630376;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0NQT71Rd3hFVreB2uwDzx4dZZ1nQuKfGGKuQOi/O3l8=;
-        b=DZ03vpMH+lVrzzBxESe1w7/fddp9CZ02TR3s0r73vQP0sJLcBUZ4bRUdNxAs/LP98+
-         8YBHt/hsHfkmQqf9q+Q/czAkqq/9CztzRViEz5ZcZBdpA4bKmWg4aDpLqv2tNAY3RdfT
-         4YSkVSix37XYgueFmDVKQXcbHktOHTWgJpBDTa2qNJXvDAd6EfsvARUfiVeDvdgwD4Af
-         ulr48sTTGKTf11DTE8bx/bxk8HCC0UOFMwUAQKOgeutM0hH5zFaLwIyn+8j85H87TXft
-         4TyzskCGDciVs7oojIk8RuTGsRttvIQJhOSpnpiphDlNNELBb2tkuDskLj0PCHG5aKb9
-         ozwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQuvzTwrRrlLyhFr3Dp7mMouTlgjEWf5L8yf9S0nV9D/nvfgILAuOBhpIRVp0YDZzn2gbjZGrHNos0a9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhJ0hLMlO5QnBiNSrVVAyJnkSI0u4ZjyMLqO/HifzrJoBYaEUu
-	73C+OikOC9gMit8+cWwMzNP+ii8LsiP9+QKP+HLJDp9LbuANXtA0Ss0v2Xhv8X2kJ0dk/dWOtMy
-	x0+YySwMXCBgpIHywOvONl/cLrA==
-X-Google-Smtp-Source: AGHT+IGU9/lQfrcWOX/dpTT9E6qyc3rvM+V4d9jDHZ4cKgBH8shTzfPR7bsY0ynubJ92rvKh6T2ZEGmb0PlBrTok+w==
-X-Received: from pjbsy7.prod.google.com ([2002:a17:90b:2d07:b0:327:b430:11ad])
- (user=dylanbhatch job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:e5cf:b0:242:8a45:a959 with SMTP id d9443c01a7336-24944ae5ff7mr273875345ad.47.1757025576197;
- Thu, 04 Sep 2025 15:39:36 -0700 (PDT)
-Date: Thu,  4 Sep 2025 22:38:50 +0000
-In-Reply-To: <20250904223850.884188-1-dylanbhatch@google.com>
+	s=arc-20240116; t=1757025621; c=relaxed/simple;
+	bh=4ghSQSA6ygpn4VSB5NPZWZuMJQteCrrYVsreKPJWXgE=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JrAsiCqxhE7Jceyd09ze3KJp8M/eiDbyjW8apNclN7N4qwOI5UT+V8/D+/mLMEZJD+0Xsw5KeAqszvEQ/DJgvAwEVovPRH2s2D+p+jweWUir0OoWu+wHzZqJC2aKkk2un7+bDLnK5wINIB3K0cSg+cx5JjwSO7/w7w9wvivzdBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D5oi70zv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3VbdcIOn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757025617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jENW2pLaY1cNK8kKMarghne97j86Sp4vW16zY5vMznc=;
+	b=D5oi70zvc/uTmhR878tx01/znsKCztsB4srhhwEVmexRz2Nyt36PZOmIv/EeLjSGanKj4M
+	UCUlDn2M5nN951LvIi8KgWcW2/wHHRWVBNq3rPpCPWGk9CRifbpkqPgW+vh6rOdYB5P/EB
+	y94ekwjJf5UD3NOynn9ew4azSgK4TfTyUf9GPZ1d+tQs0bUFz5T+srmRmdwm68MswoqoN9
+	nCBnkX5wi4pzRLMjg5J58bE56+Jnz8mRnp+KVmU12TMG9ADzVPLdNsJEWI8TvfJBje8Mdk
+	WrdH9I5zMIc3ZMwzoOkoEob5oxcCmICpUkff+nrk6NLmPtg01M4MAen7tBkFJw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757025617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jENW2pLaY1cNK8kKMarghne97j86Sp4vW16zY5vMznc=;
+	b=3VbdcIOn9lsG6jWqwRsIgdrTdzn85oKeDujS/Y5DEtbZ4o+nofRyGN7jQFRSZHtfZLxFTs
+	xs1QfHu1pOXf+YBw==
+To: LKML <linux-kernel@vger.kernel.org>
+Subject: [patch V3 RESEND 16/37] rseq: Provide tracepoint wrappers for
+ inline code
+In-Reply-To: <20250904185720.150944384@linutronix.de>
+References: <20250904185336.943880027@linutronix.de>
+ <20250904185720.150944384@linutronix.de>
+Date: Fri, 05 Sep 2025 00:40:16 +0200
+Message-ID: <874ithyh7z.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250904223850.884188-1-dylanbhatch@google.com>
-X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
-Message-ID: <20250904223850.884188-7-dylanbhatch@google.com>
-Subject: [PATCH v2 6/6] unwind: arm64: Add reliable stacktrace with sframe unwinder.
-From: Dylan Hatch <dylanbhatch@google.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Indu Bhagat <indu.bhagat@oracle.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Jiri Kosina <jikos@kernel.org>
-Cc: Dylan Hatch <dylanbhatch@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Weinan Liu <wnliu@google.com>, Mark Rutland <mark.rutland@arm.com>, Ian Rogers <irogers@google.com>, 
-	linux-toolchains@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	live-patching@vger.kernel.org, joe.lawrence@redhat.com, 
-	Puranjay Mohan <puranjay@kernel.org>, Song Liu <song@kernel.org>, 
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 
-From: Weinan Liu <wnliu@google.com>
+Provide tracepoint wrappers for the upcoming RSEQ exit to user space inline
+fast path, so that the header can be safely included by code which defines
+actual trace points.
 
-Add unwind_next_frame_sframe() function to unwind by sframe info.
-Built with GNU Binutils 2.42 to verify that this sframe unwinder can
-backtrace correctly on arm64.
-
-To support livepatch, we need to add arch_stack_walk_reliable to
-support reliable stacktrace according to
-https://docs.kernel.org/livepatch/reliable-stacktrace.html#requirements
-
-report stacktrace is not reliable if we are not able to unwind the stack
-by sframe unwinder and fallback to FP based unwinder
-
-Signed-off-by: Weinan Liu <wnliu@google.com>
-Signed-off-by: Dylan Hatch <dylanbhatch@google.com>
-Reviewed-by: Prasanna Kumar T S M <ptsm@linux.microsoft.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 ---
- arch/arm64/include/asm/stacktrace/common.h |   6 ++
- arch/arm64/kernel/setup.c                  |   2 +
- arch/arm64/kernel/stacktrace.c             | 102 +++++++++++++++++++++
- 3 files changed, 110 insertions(+)
+V3: Get rid of one indentation level - Mathieu
+---
+ include/linux/rseq_entry.h |   28 ++++++++++++++++++++++++++++
+ kernel/rseq.c              |   17 +++++++++++++++++
+ 2 files changed, 45 insertions(+)
 
-diff --git a/arch/arm64/include/asm/stacktrace/common.h b/arch/arm64/include/asm/stacktrace/common.h
-index 821a8fdd31af..26449cd402db 100644
---- a/arch/arm64/include/asm/stacktrace/common.h
-+++ b/arch/arm64/include/asm/stacktrace/common.h
-@@ -25,6 +25,8 @@ struct stack_info {
-  * @stack:       The stack currently being unwound.
-  * @stacks:      An array of stacks which can be unwound.
-  * @nr_stacks:   The number of stacks in @stacks.
-+ * @cfa:         The sp value at the call site of the current function.
-+ * @unreliable:  Stacktrace is unreliable.
-  */
- struct unwind_state {
- 	unsigned long fp;
-@@ -33,6 +35,10 @@ struct unwind_state {
- 	struct stack_info stack;
- 	struct stack_info *stacks;
- 	int nr_stacks;
-+#ifdef CONFIG_SFRAME_UNWINDER
-+	unsigned long cfa;
-+	bool unreliable;
-+#endif
- };
+--- a/include/linux/rseq_entry.h
++++ b/include/linux/rseq_entry.h
+@@ -5,6 +5,34 @@
+ #ifdef CONFIG_RSEQ
+ #include <linux/rseq.h>
  
- static inline struct stack_info stackinfo_get_unknown(void)
-diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-index 77c7926a4df6..ac1da45da532 100644
---- a/arch/arm64/kernel/setup.c
-+++ b/arch/arm64/kernel/setup.c
-@@ -32,6 +32,7 @@
- #include <linux/sched/task.h>
- #include <linux/scs.h>
- #include <linux/mm.h>
-+#include <linux/sframe_lookup.h>
- 
- #include <asm/acpi.h>
- #include <asm/fixmap.h>
-@@ -375,6 +376,7 @@ void __init __no_sanitize_address setup_arch(char **cmdline_p)
- 			"This indicates a broken bootloader or old kernel\n",
- 			boot_args[1], boot_args[2], boot_args[3]);
- 	}
-+	init_sframe_table();
- }
- 
- static inline bool cpu_can_disable(unsigned int cpu)
-diff --git a/arch/arm64/kernel/stacktrace.c b/arch/arm64/kernel/stacktrace.c
-index 3ebcf8c53fb0..72e78024d05e 100644
---- a/arch/arm64/kernel/stacktrace.c
-+++ b/arch/arm64/kernel/stacktrace.c
-@@ -14,6 +14,7 @@
- #include <linux/sched/debug.h>
- #include <linux/sched/task_stack.h>
- #include <linux/stacktrace.h>
-+#include <linux/sframe_lookup.h>
- 
- #include <asm/efi.h>
- #include <asm/irq.h>
-@@ -244,6 +245,53 @@ kunwind_next_frame_record(struct kunwind_state *state)
- 	return 0;
- }
- 
-+#ifdef CONFIG_SFRAME_UNWINDER
-+/*
-+ * Unwind to the next frame according to sframe.
-+ */
-+static __always_inline int
-+unwind_next_frame_sframe(struct unwind_state *state)
++#include <linux/tracepoint-defs.h>
++
++#ifdef CONFIG_TRACEPOINTS
++DECLARE_TRACEPOINT(rseq_update);
++DECLARE_TRACEPOINT(rseq_ip_fixup);
++void __rseq_trace_update(struct task_struct *t);
++void __rseq_trace_ip_fixup(unsigned long ip, unsigned long start_ip,
++			   unsigned long offset, unsigned long abort_ip);
++
++static inline void rseq_trace_update(struct task_struct *t, struct rseq_ids *ids)
 +{
-+	unsigned long fp = state->fp, ip = state->pc;
-+	unsigned long base_reg, cfa;
-+	unsigned long pc_addr, fp_addr;
-+	struct sframe_ip_entry entry;
-+	struct stack_info *info;
-+	struct frame_record *record = (struct frame_record *)fp;
-+
-+	int err;
-+
-+	/* frame record alignment 8 bytes */
-+	if (fp & 0x7)
-+		return -EINVAL;
-+
-+	info = unwind_find_stack(state, fp, sizeof(*record));
-+	if (!info)
-+		return -EINVAL;
-+
-+	err = sframe_find_pc(ip, &entry);
-+	if (err)
-+		return -EINVAL;
-+
-+	unwind_consume_stack(state, info, fp, sizeof(*record));
-+
-+	base_reg = entry.use_fp ? fp : state->cfa;
-+
-+	/* Set up the initial CFA using fp based info if CFA is not set */
-+	if (!state->cfa)
-+		cfa = fp - entry.fp_offset;
-+	else
-+		cfa = base_reg + entry.cfa_offset;
-+	fp_addr = cfa + entry.fp_offset;
-+	pc_addr = cfa + entry.ra_offset;
-+	state->cfa = cfa;
-+	state->fp = READ_ONCE(*(unsigned long *)(fp_addr));
-+	state->pc = READ_ONCE(*(unsigned long *)(pc_addr));
-+
-+	return 0;
-+}
-+#endif
-+
- /*
-  * Unwind from one frame record (A) to the next frame record (B).
-  *
-@@ -263,7 +311,20 @@ kunwind_next(struct kunwind_state *state)
- 	case KUNWIND_SOURCE_CALLER:
- 	case KUNWIND_SOURCE_TASK:
- 	case KUNWIND_SOURCE_REGS_PC:
-+#ifdef CONFIG_SFRAME_UNWINDER
-+	if (!state->common.unreliable)
-+		err = unwind_next_frame_sframe(&state->common);
-+
-+	/* Fallback to FP based unwinder */
-+	if (err || state->common.unreliable) {
- 		err = kunwind_next_frame_record(state);
-+		/* Mark its stacktrace result as unreliable if it is unwindable via FP */
-+		if (!err)
-+			state->common.unreliable = true;
-+	}
-+#else
-+	err = kunwind_next_frame_record(state);
-+#endif
- 		break;
- 	default:
- 		err = -EINVAL;
-@@ -350,6 +411,9 @@ kunwind_stack_walk(kunwind_consume_fn consume_state,
- 		.common = {
- 			.stacks = stacks,
- 			.nr_stacks = ARRAY_SIZE(stacks),
-+#ifdef CONFIG_SFRAME_UNWINDER
-+			.cfa = 0,
-+#endif
- 		},
- 	};
- 
-@@ -390,6 +454,43 @@ noinline noinstr void arch_stack_walk(stack_trace_consume_fn consume_entry,
- 	kunwind_stack_walk(arch_kunwind_consume_entry, &data, task, regs);
- }
- 
-+#ifdef CONFIG_SFRAME_UNWINDER
-+struct kunwind_reliable_consume_entry_data {
-+	stack_trace_consume_fn consume_entry;
-+	void *cookie;
-+	bool unreliable;
-+};
-+
-+static __always_inline bool
-+arch_kunwind_reliable_consume_entry(const struct kunwind_state *state, void *cookie)
-+{
-+	struct kunwind_reliable_consume_entry_data *data = cookie;
-+
-+	if (state->common.unreliable) {
-+		data->unreliable = true;
-+		return false;
-+	}
-+	return data->consume_entry(data->cookie, state->common.pc);
++	if (tracepoint_enabled(rseq_update) && ids)
++		__rseq_trace_update(t);
 +}
 +
-+noinline notrace int arch_stack_walk_reliable(
-+				stack_trace_consume_fn consume_entry,
-+				void *cookie, struct task_struct *task)
++static inline void rseq_trace_ip_fixup(unsigned long ip, unsigned long start_ip,
++				       unsigned long offset, unsigned long abort_ip)
 +{
-+	struct kunwind_reliable_consume_entry_data data = {
-+		.consume_entry = consume_entry,
-+		.cookie = cookie,
-+		.unreliable = false,
-+	};
-+
-+	kunwind_stack_walk(arch_kunwind_reliable_consume_entry, &data, task, NULL);
-+
-+	if (data.unreliable)
-+		return -EINVAL;
-+
-+	return 0;
++	if (tracepoint_enabled(rseq_ip_fixup))
++		__rseq_trace_ip_fixup(ip, start_ip, offset, abort_ip);
 +}
-+#else
- static __always_inline bool
- arch_reliable_kunwind_consume_entry(const struct kunwind_state *state, void *cookie)
++
++#else /* CONFIG_TRACEPOINT */
++static inline void rseq_trace_update(struct task_struct *t) { }
++static inline void rseq_trace_ip_fixup(unsigned long ip, unsigned long start_ip,
++				       unsigned long offset, unsigned long abort_ip) { }
++#endif /* !CONFIG_TRACEPOINT */
++
+ static __always_inline void rseq_note_user_irq_entry(void)
  {
-@@ -419,6 +520,7 @@ noinline noinstr int arch_stack_walk_reliable(stack_trace_consume_fn consume_ent
- 	return kunwind_stack_walk(arch_reliable_kunwind_consume_entry, &data,
- 				  task, NULL);
- }
-+#endif
+ 	if (IS_ENABLED(CONFIG_GENERIC_IRQ_ENTRY))
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -91,6 +91,23 @@
+ 				  RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL | \
+ 				  RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE)
  
- struct bpf_unwind_consume_entry_data {
- 	bool (*consume_entry)(void *cookie, u64 ip, u64 sp, u64 fp);
--- 
-2.51.0.355.g5224444f11-goog
-
++#ifdef CONFIG_TRACEPOINTS
++/*
++ * Out of line, so the actual update functions can be in a header to be
++ * inlined into the exit to user code.
++ */
++void __rseq_trace_update(struct task_struct *t)
++{
++	trace_rseq_update(t);
++}
++
++void __rseq_trace_ip_fixup(unsigned long ip, unsigned long start_ip,
++			   unsigned long offset, unsigned long abort_ip)
++{
++	trace_rseq_ip_fixup(ip, start_ip, offset, abort_ip);
++}
++#endif /* CONFIG_TRACEPOINTS */
++
+ #ifdef CONFIG_DEBUG_RSEQ
+ static struct rseq *rseq_kernel_fields(struct task_struct *t)
+ {
 
