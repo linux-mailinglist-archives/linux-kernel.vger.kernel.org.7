@@ -1,162 +1,164 @@
-Return-Path: <linux-kernel+bounces-800567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 117F8B43968
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:59:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD538B4396A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:59:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A913BB871
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:59:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A8E91C801CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E83B2FB98F;
-	Thu,  4 Sep 2025 10:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB6C2FB966;
+	Thu,  4 Sep 2025 10:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D0CMXZHr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fCGOoLzp"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF132EE294;
-	Thu,  4 Sep 2025 10:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F6B2EE294;
+	Thu,  4 Sep 2025 10:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756983560; cv=none; b=mG/a4X/WFI/DxfADkDEZrXMeVCAN12wyslDPYGRxfW3ei8mDKOCDIv4vw900nPiTlkCVIG4cX/Q2MW6t0o/fPVYmuerVPHYnn26ji9RK1fhW8W74gtPUwW36ct0JEGZ0JRwyJRLGAbP/7DgrYC7JWPDZa66abryEeo4cH9z6jg8=
+	t=1756983568; cv=none; b=NLofTnAvBImcoXQ9EPDTRAwFr9s+1VgLrRfkQ7Ul19XQpkAh9K2tJodTF3qqXopHoGxXLjupxSS0Ze2u87y/u2jK6U6Dl18W0AyAx/bStSQ9LH25WTz3wZgbvRPIk/TH+tvIso5xEBwskeu/S711RH3wU1YEgMdk8/G6y3by2D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756983560; c=relaxed/simple;
-	bh=vzm6fhXI8qlYTywBhxrwAEHvGnMbchKx5/IUszKBF4k=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VIhE33yG6oAnGB7YLCt0OswVILntySMidJP0rgYnr03hJJCTBAnPas03SOgW45sfjwtQXAzFNFi9CpnGG0MKKbeR+1JM2uol9zrM4fJyV0Bif8UcEdDdv3zf7t4dv+JlY43sg2QW8C167Vr8X5daxcUeB7imgsVBLFCO8qpy/38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D0CMXZHr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC713C4CEF4;
-	Thu,  4 Sep 2025 10:59:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756983559;
-	bh=vzm6fhXI8qlYTywBhxrwAEHvGnMbchKx5/IUszKBF4k=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=D0CMXZHrYqVJeNDUDRXnd5z2w7VuKd/SLTqC5GA/AD33/V3kkoZGpkNoLalY4eZRp
-	 +G4toklYhFzFOr/cNBG2r1mxuv6FZLCLgq56qTShLo32BpNeIrJzOEquC5/AweRY9B
-	 fSD7+ddGzCxePwwAkKuJ3ZpYoMd/gBPthlrN6aLSL3Ww5SJyiKQVsq2izvSVgYHmGD
-	 EwVflF/wEpdnMnUU6SpVFU8M/VrLEf/4VPsckIqiVPA/7UiLQv/f8TXID3lW7u6l5S
-	 /9+2+aLM5uGLppeU2wJJ9GSXldQWSpxnudtq9T55PPLpPW0EC+S0rT6VdU21ZiH0Np
-	 2ZkFiaGdCDGhw==
-Message-ID: <16c0d8f4-4a6d-4d65-90ce-34c86ebecfa1@kernel.org>
-Date: Thu, 4 Sep 2025 12:59:14 +0200
+	s=arc-20240116; t=1756983568; c=relaxed/simple;
+	bh=LLaWek7ZiyOIs4xGPWo28ZeywonYE/j7nxi3naAFXWg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jFIxpKlBDSShPDXV/PFZ2as+AJveWPtf2TSTQTb80k0LcfxbMFYe6zM2mABh/zfp95oKfv3s3xK89oapd4KT4iTiBD4mXmSA3ExO0nJUc6iQe03zX0hvszrMtVWEqZ4WDkR6wib9+42xCzoGzOkQaaGiJSsEm+hPZymva+vLhfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fCGOoLzp; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 584AxKSU2996009;
+	Thu, 4 Sep 2025 05:59:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756983560;
+	bh=2LIre3TFhr3h5fh/GInYRrsD3Rw8KDu39s4B2GrA9Lc=;
+	h=From:To:Subject:Date;
+	b=fCGOoLzptGzx7i5mnk6oQ39voYQMJMMRZYGyt7cVsJiY6+fDvFRTgz61Rd/G8wau+
+	 0E0aUdcJEVxCYYWMyFKjlq6P67lCh/Rgb1TNnfcSYv3J8MsrwtVFOdqDFPGcbrgS5L
+	 6FIae1MqDR7/yUWdgeL1ACeoE+AS2bTu+N9qdYLM=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 584AxKM8122137
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 4 Sep 2025 05:59:20 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 4
+ Sep 2025 05:59:19 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 4 Sep 2025 05:59:19 -0500
+Received: from hkshenoy.dhcp.ti.com (hkshenoy.dhcp.ti.com [172.24.235.208])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 584AxFad3147561;
+	Thu, 4 Sep 2025 05:59:16 -0500
+From: Harikrishna Shenoy <h-shenoy@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>, <u-kumar1@ti.com>,
+        <s-jain1@ti.com>
+Subject: [PATCH v2] arm64: dts: ti: k3-j721e-main: Add DSI and DPHY-TX
+Date: Thu, 4 Sep 2025 16:29:15 +0530
+Message-ID: <20250904105915.3043773-1-h-shenoy@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: Add binding for gunyah watchdog
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
-Cc: hrishabh.rajput@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250903-gunyah_watchdog-v1-0-3ae690530e4b@oss.qualcomm.com>
- <20250903-gunyah_watchdog-v1-1-3ae690530e4b@oss.qualcomm.com>
- <ea295ff6-5395-4470-afc2-76e5e2dc9fb5@kernel.org>
- <5210a5e2-0d75-4532-b3ca-1cbdf8ea2a9e@quicinc.com>
- <af074048-1999-435c-9405-6ffa09eef6dd@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <af074048-1999-435c-9405-6ffa09eef6dd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 04/09/2025 12:49, Krzysztof Kozlowski wrote:
-> On 04/09/2025 12:16, Pavan Kondeti wrote:
->>>> +  compatible:
->>>> +    allOf:
->>>> +      - const: gunyah-hypervisor
->>>> +      - const: simple-bus
->>>
->>> What? No.
->>>
->>> Don't create patches with AI.
->>>
->> I am next to Hrishabh when he is writing this patch. I can confirm he
->> did not use AI :-) not sure what tool Krzysztof is using to catch
-> 
-> My brain?
-> 
->> patches being written with AI, that tool needs some improvement for
->> sure. 
-> 
-> Heh? Seriously, instead replying something like this think from how is
-> it possible to come with such syntax?
-> 
-> It does not exist. NOWHERE.
-> 
-> It had to be completely hallucinated by AI because I cannot imagine
-> coming with code which is completely different then EVERYTHING else.
-> There is no single code looking like that.
-> 
-> 
->>
->> I will let Hrishabh share why he put simple-bus here.
-> 
-> 
-> It is not about simple-bus!
->
+From: Rahul T R <r-ravikumar@ti.com>
 
-And to clarify: it's not only about this part of the binding. Entire
-binding is terrible, does not meet any basic standards, does not follow
-basic principles of writing DTS. I cannot imagine this code passing
-internal review, so hallucinated AI is the most reasonable explanation.
-Sorry, if you send extremely poor code using patterns which do not
-exist, that;s either huge waste of community time or AI-based waste of
-community time.
+TI's J721E SoC supports a DPI to DSI video signal conversion bridge on
+it's platform bus. The IP is from Cadence, and it has a custom TI
+wrapper around it to facilitate integration.
 
-Best regards,
-Krzysztof
+This IP takes the DPI video signals from DSS and alongwith the DPHY IP,
+it transmits DSI video signals out of the SoC.
+
+Add support for DSI bridge and the DPHY-TX.
+
+Signed-off-by: Rahul T R <r-ravikumar@ti.com>
+Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
+---
+Changelog v1 --> v2:
+- Updated phy labels
+
+Link to v1:https://lore.kernel.org/all/1adea165-ae87-463f-a03e-2fe27f4b8695@ti.com/
+
+
+ arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 35 +++++++++++++++++++++--
+ 1 file changed, 33 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+index ab3666ff4297..df489bce86c9 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+@@ -671,7 +671,7 @@ cdns_csi2rx1: csi-bridge@4514000 {
+ 				 <&k3_clks 27 2>, <&k3_clks 27 3>, <&k3_clks 27 3>;
+ 			clock-names = "sys_clk", "p_clk", "pixel_if0_clk",
+ 				      "pixel_if1_clk", "pixel_if2_clk", "pixel_if3_clk";
+-			phys = <&dphy1>;
++			phys = <&dphy_rx>;
+ 			phy-names = "dphy";
+ 
+ 			ports {
+@@ -714,7 +714,7 @@ dphy0: phy@4580000 {
+ 		status = "disabled";
+ 	};
+ 
+-	dphy1: phy@4590000 {
++	dphy_rx: phy@4590000 {
+ 		compatible = "cdns,dphy-rx";
+ 		reg = <0x0 0x4590000 0x0 0x1100>;
+ 		#phy-cells = <0>;
+@@ -1887,6 +1887,37 @@ port@4 {
+ 		};
+ 	};
+ 
++	dphy_tx: phy@4480000 {
++		compatible = "ti,j721e-dphy";
++		reg = <0x00 0x04480000 0x00 0x1000>;
++		clocks = <&k3_clks 296 1>, <&k3_clks 296 3>;
++		clock-names = "psm", "pll_ref";
++		#phy-cells = <0>;
++		power-domains = <&k3_pds 296 TI_SCI_PD_EXCLUSIVE>;
++		assigned-clocks = <&k3_clks 296 3>;
++		assigned-clock-parents = <&k3_clks 296 4>;
++		assigned-clock-rates = <19200000>;
++		status = "disabled";
++	};
++
++	dsi0: dsi@4800000 {
++		compatible = "ti,j721e-dsi";
++		reg = <0x00 0x04800000 0x00 0x100000>, <0x00 0x04710000 0x00 0x100>;
++		clocks = <&k3_clks 150 1>, <&k3_clks 150 5>;
++		clock-names = "dsi_p_clk", "dsi_sys_clk";
++		power-domains = <&k3_pds 150 TI_SCI_PD_EXCLUSIVE>;
++		interrupt-parent = <&gic500>;
++		interrupts = <GIC_SPI 600 IRQ_TYPE_LEVEL_HIGH>;
++		phys = <&dphy_tx>;
++		phy-names = "dphy";
++		status = "disabled";
++
++		dsi0_ports: ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++	};
++
+ 	dss: dss@4a00000 {
+ 		compatible = "ti,j721e-dss";
+ 		reg =
+-- 
+2.34.1
+
 
