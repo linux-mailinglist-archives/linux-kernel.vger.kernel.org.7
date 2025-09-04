@@ -1,238 +1,140 @@
-Return-Path: <linux-kernel+bounces-801213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33F5B4422E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:06:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96AB9B44227
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB246168215
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:05:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06B99A020E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322192F3C0C;
-	Thu,  4 Sep 2025 16:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8522D23AD;
+	Thu,  4 Sep 2025 16:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="HTPG9K+B"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0m7J6wR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4FD2C21D8;
-	Thu,  4 Sep 2025 16:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757001933; cv=pass; b=VcwQzSvIaCrWm3t+cu/7LZ/zjNUHB54hmA/3TQ+5cYkMXHm3FEB94AI/Lh1WmRRN7tqGS3dNj3uWB7f8NdYd4NvumcK89IpLwNp4SA3roC0625z5f2tMHqe8xM4h71dCSqQG01fKoZpNGxazdYdY3SvNexbISEFTPoK8e0cHPOQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757001933; c=relaxed/simple;
-	bh=t9lu0JvhFkb5SYNRJXlmsj74IKcd4iYS8XLjNYqVtU8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Lg3wl0wlloqdX6yqkv3IUTjNP2CccDMxSRUXTZqWkxoFtRkulVFNpFbRnHpDpHaaMgcUtyOEKP3meclk5sQSC3BgKtMUanic2DcqqVnk9r2/y331ATZp6j83rrVa6RiWIo/1dRZGe3ZRXlI2krb3LskwGu5kcyRmX4BcjYxDXzk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=HTPG9K+B; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757001827; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=gtRAk0lbJpwRajce8c3ou1oyR8B31wR2xCsncDDpk8GWWo9WMbzxgocK0I+fqceiwPeueps6+YVZjEQSWzwgFfD4RiY3Z7jOjvOLUaQc7h/Dj3uluxYi7GAJsgvPs8XhUeNIAhEgS13wLVqgXBCEdWOBHMaGf+GspJRkaDMJC/8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757001827; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=rJ141p4G/KKeNp34zR+PuCIzRFG2OM4Vkt+bjATVJ9Q=; 
-	b=e/PMtmWWs9xF3tc/vKdNOxlK9iw0XBjhurUgH3EAbAFnUNPzUK3Y3UErrizatqg0689i8WfjCKmny0dfgGc1m4fMTe1LDFBVmkXCA13RRwwVmHfuZjbUTCI5GQTNsiVJUfSByGYPuq1ffXvTKS34K1KTFfb2UEujHG6MK3bPTY4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757001827;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=rJ141p4G/KKeNp34zR+PuCIzRFG2OM4Vkt+bjATVJ9Q=;
-	b=HTPG9K+B/NXU0PsSt1T7FkCP7HHqQ2Sj0WfyN3XKqSrDE+xU1QBCqbjex4lUf1Fs
-	6cImP9GEyIwkDVO7/0OhbJRvwcg/ssoVtjiosxiIy4bdBle9yt3OV3jbkRiBRm32pbV
-	UExPwukgNb8A2O8TWiJThBh3BBmYYN6AJ5y+jtqU=
-Received: by mx.zohomail.com with SMTPS id 1757001825245717.3281844603312;
-	Thu, 4 Sep 2025 09:03:45 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069541F4262
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757001926; cv=none; b=UezwTzI41W31dW4xlY9pxL7L+y00hmfAqIpAOXKI/PSf+puPjptUOiqiYsMu3xqcT+wF9dwYF0q6WlIma3nPyj/3L9d40Jd4OKtMkW1GWNc4VQtIA0sflE3w7GdKw3mJsKvfKPsyZQnHATnCIJ5zeya3+dKCuwgMFmXWAK5RpJM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757001926; c=relaxed/simple;
+	bh=iLVcyr0jvQ2GCC3Cpf1b3sKXKD9ERka32krfugQxTtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LorCg4KQGwTyHjqnqB8qgtHBsDQZqZtiMkIgtASKz463UJnZMVXssdqvQHWUWW11WTAFOpz+TiphNZ44580cP/LzEo6C8MrpU6qlwtXM+z8Q3k97xPXVHNqoxmN31GS2qjnex9QnA0LZWiSC3JUuXqeIMMK3lVlBEgDz4Ae8c+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0m7J6wR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CB27C4CEF0;
+	Thu,  4 Sep 2025 16:05:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757001924;
+	bh=iLVcyr0jvQ2GCC3Cpf1b3sKXKD9ERka32krfugQxTtc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a0m7J6wRr4xrRv2isEZ5ynFCSHC0vkj/Oc3Fd2pBul1gFVQBW3BqmjlY7if/xkXRW
+	 Rw0KVqkzDcwR70YcrWPWVepPasir0T212Wp1Kc9D0/WuVk4xZlbYc8YXB0UHFqC03V
+	 DIGPkystU9Cl2xfbvaZ+DZ11V452dRMOiaf928sH8YIo0IS2456wtGOuHKynC4UdsM
+	 SMGgedtI9RMjzlyri0xHTJEfh0AFDaOMFbvNpzZoYWFgeQ8r4oqqTVXCLtuiTlLvhM
+	 9f+2eOt1UZghQJLG2MVHxV0Fc4tCUG8hmx6275cWlBdDKJu6Eau8OtaIA1rGgH1pF4
+	 iggw2bsIjPmYg==
+Date: Thu, 4 Sep 2025 18:05:21 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Adam Li <adamli@os.amperecomputing.com>
+Cc: anna-maria@linutronix.de, tglx@linutronix.de, mingo@redhat.com,
+	peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, vschneid@redhat.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, cl@linux.com, linux-kernel@vger.kernel.org,
+	patches@amperecomputing.com, Christoph Lameter <cl@gentwo.org>
+Subject: Re: [PATCH RESEND 1/2] tick/nohz: Fix wrong NOHZ idle CPU state
+Message-ID: <aLm4wRwKBMGkekkT@localhost.localdomain>
+References: <20250821042707.62993-1-adamli@os.amperecomputing.com>
+ <20250821042707.62993-2-adamli@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v3 11/14] rust: drm: gem: Introduce SGTableRef
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250829224116.477990-12-lyude@redhat.com>
-Date: Thu, 4 Sep 2025 13:03:27 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Asahi Lina <lina+kernel@asahilina.net>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F97D14AA-2ADF-4D49-9F4B-418113F79562@collabora.com>
-References: <20250829224116.477990-1-lyude@redhat.com>
- <20250829224116.477990-12-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250821042707.62993-2-adamli@os.amperecomputing.com>
 
-
-Hi Lyude,
-
-> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> Currently we expose the ability to retrieve an SGTable for an shmem =
-gem
-> object using gem::shmem::Object::<T>::sg_table(). However, this only =
-gives us a
-> borrowed reference. This being said - retrieving an SGTable is a =
-fallible
-> operation, and as such it's reasonable that a driver may want to hold
-> onto an SGTable for longer then a reference would allow in order to =
-avoid
-> having to deal with fallibility every time they want to access the =
-SGTable.
-> One such driver with this usecase is the Asahi driver.
->=20
-> So to support this, let's introduce SGTableRef - which both holds a
-> pointer to the SGTable and a reference to its respective GEM object in
-> order to keep the GEM object alive for as long as the SGTableRef. The
-> type can be used identically to a normal SGTable.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->=20
+Le Thu, Aug 21, 2025 at 04:27:06AM +0000, Adam Li a écrit :
+> NOHZ idle load balance is done among CPUs in nohz.idle_cpus_mask.
+> A CPU is added to nohz.idle_cpus_mask in:
+> do_idle()
+>   -> tick_nohz_idle_stop_tick()
+>      -> nohz_balance_enter_idle()
+> 
+> nohz_balance_enter_idle() is called if:
+> 1) tick is stopped (TS_FLAG_STOPPED is set)
+> 2) and tick was not already stopped before tick_nohz_idle_stop_tick()
+>    stops the tick (!was_stopped)
+> 
+> When CONFIG_NO_HZ_FULL is set and the CPU is in the nohz_full list
+> then 'was_stopped' may always be true.
+> The flag 'TS_FLAG_STOPPED' may be already set in
+> tick_nohz_full_stop_tick(). So nohz_balance_enter_idle() has no chance
+> to be called.
+> 
+> As a result, CPU will stay in a 'wrong' state:
+> 1) tick is stopped (TS_FLAG_STOPPED is set)
+> 2) and CPU is not in nohz.idle_cpus_mask
+> 3) and CPU stays idle
+> 
+> Neither the periodic nor the NOHZ idle load balancing can move task
+> to this CPU. Some CPUs keep idle while others busy.
+> 
+> In nohz_balance_enter_idle(), 'rq->nohz_tick_stopped' is checked to avoid
+> duplicated nohz.idle_cpus_mask setting. So for nohz_balance_enter_idle()
+> there is no need to check the '!was_stopped' condition.
+> 
+> This patch will add the CPU to nohz.idle_cpus_mask as expected.
+> 
+> Signed-off-by: Adam Li <adamli@os.amperecomputing.com>
+> Reviewed-by: Christoph Lameter (Ampere) <cl@gentwo.org>
 > ---
-> V3:
-> * Rename OwnedSGTable to SGTableRef. Since the current version of the
->  SGTable abstractions now has a `Owned` and `Borrowed` variant, I =
-think
->  renaming this to SGTableRef makes things less confusing.
->  We do however, keep the name of owned_sg_table() as-is.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> rust/kernel/drm/gem/shmem.rs | 50 ++++++++++++++++++++++++++++++++++++
-> 1 file changed, 50 insertions(+)
->=20
-> diff --git a/rust/kernel/drm/gem/shmem.rs =
-b/rust/kernel/drm/gem/shmem.rs
-> index 6a8a392c3691b..1437cda27a22c 100644
-> --- a/rust/kernel/drm/gem/shmem.rs
-> +++ b/rust/kernel/drm/gem/shmem.rs
-> @@ -178,6 +178,22 @@ pub fn sg_table(&self) -> =
-Result<&scatterlist::SGTable> {
->         Ok(unsafe { scatterlist::SGTable::from_raw(sgt) })
->     }
->=20
-> +    /// Creates (if necessary) and returns an owned reference to a =
-scatter-gather table of DMA pages
-> +    /// for this object.
-> +    ///
-> +    /// This is the same as [`sg_table`](Self::sg_table), except that =
-it instead returns a
-> +    /// [`OwnedSGTable`] which holds a reference to the associated =
-gem object.
+>  kernel/time/tick-sched.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+> index c527b421c865..b900a120ab54 100644
+> --- a/kernel/time/tick-sched.c
+> +++ b/kernel/time/tick-sched.c
+> @@ -1229,8 +1229,9 @@ void tick_nohz_idle_stop_tick(void)
+>  		ts->idle_sleeps++;
+>  		ts->idle_expires = expires;
+>  
+> -		if (!was_stopped && tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
+> -			ts->idle_jiffies = ts->last_jiffies;
+> +		if (tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
+> +			if (!was_stopped)
+> +				ts->idle_jiffies = ts->last_jiffies;
+>  			nohz_balance_enter_idle(cpu);
 
-This was forgotten ^
+The current state is indeed broken and some people have already tried to fix it.
+The thing is nohz_full don't want dynamic isolation because it is deemed to run a
+single task. Therefore those tasks must be placed manually in order not to break
+isolation guarantees by accident.
 
-> +    ///
-> +    /// This will pin the object in memory.
-> +    pub fn owned_sg_table(&self) -> Result<SGTableRef<T>> {
+In fact nohz_full doesn't make much sense without isolcpus (or isolated cpuset
+v2 partitions) and I even intend to make nohz_full depend on domain isolation
+in the long term.
 
-owned_sg_table() returns SGTableRef. I do think this is confusing.
+Thanks.
 
-> +        Ok(SGTableRef {
+>  		}
+>  	} else {
+> -- 
+> 2.34.1
+> 
 
-Let=E2=80=99s call this shmem::SGTable, perhaps?
-
-> +            sgt: self.sg_table()?.into(),
-> +            // INVARIANT: We take an owned refcount to `self` here, =
-ensuring that `sgt` remains
-> +            // valid for as long as this `OwnedSGTable`.
-> +            _owner: self.into(),
-> +        })
-> +    }
-> +
->     /// Creates and returns a virtual kernel memory mapping for this =
-object.
->     pub fn vmap(&self) -> Result<VMap<T>> {
->         let mut map: MaybeUninit<bindings::iosys_map> =3D =
-MaybeUninit::uninit();
-> @@ -309,3 +325,37 @@ fn drop(&mut self) {
-> unsafe impl<T: DriverObject> Send for VMap<T> {}
-> /// SAFETY: `iosys_map` objects are safe to send across threads.
-> unsafe impl<T: DriverObject> Sync for VMap<T> {}
-> +
-> +/// An owned reference to a scatter-gather table of DMA address spans =
-for a GEM shmem object.
-> +///
-> +/// This object holds an owned reference to the underlying GEM shmem =
-object, ensuring that the
-> +/// [`SGTable`] referenced by `SGTableRef` remains valid for the =
-lifetime of this object.
-> +///
-> +/// # Invariants
-> +///
-> +/// - `sgt` is kept alive by `_owner`, ensuring it remains valid for =
-as long as `Self`.
-> +/// - `sgt` corresponds to the owned object in `_owner`.
-> +/// - This object is only exposed in situations where we know the =
-underlying `SGTable` will not be
-> +///   modified for the lifetime of this object.
-> +///
-> +/// [`SGTable`]: scatterlist::SGTable
-> +pub struct SGTableRef<T: DriverObject> {
-> +    sgt: NonNull<scatterlist::SGTable>,
-
-Didn=E2=80=99t Danilo & Abdiel introduce an owned SGTable variant?
-
-> +    _owner: ARef<Object<T>>,
-> +}
-> +
-> +// SAFETY: This object is only exposed in situations where we know =
-the underlying `SGTable` will not
-> +// be modified for the lifetime of this object.
-
-We should perhaps say why is it valid to send SGTable to another thread =
-here.
-
-> +unsafe impl<T: DriverObject> Send for SGTableRef<T> {}
-> +// SAFETY: This object is only exposed in situations where we know =
-the underlying `SGTable` will not
-> +// be modified for the lifetime of this object.
-> +unsafe impl<T: DriverObject> Sync for SGTableRef<T> {}
-> +
-> +impl<T: DriverObject> Deref for SGTableRef<T> {
-> +    type Target =3D scatterlist::SGTable;
-> +
-> +    fn deref(&self) -> &Self::Target {
-> +        // SAFETY: Creating an immutable reference to this is safe =
-via our type invariants.
-> +        unsafe { self.sgt.as_ref() }
-
-The as_ref() nomenclature remains in place to convert *mut T to &T? I =
-thought
-that had changed to from_raw().
-
-
-> +    }
-> +}
-> --=20
-> 2.50.0
->=20
->=20
-
+-- 
+Frederic Weisbecker
+SUSE Labs
 
