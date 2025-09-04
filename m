@@ -1,143 +1,217 @@
-Return-Path: <linux-kernel+bounces-801133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A46BFB44034
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:15:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55700B4403B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A47F166B14
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:15:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24C943A9DEF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC98731CA68;
-	Thu,  4 Sep 2025 15:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96B331576D;
+	Thu,  4 Sep 2025 15:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BpvHdX66"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JRX/HJLF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HhbyZPUX";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JRX/HJLF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HhbyZPUX"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF773164D7
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F51130CD99
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756998795; cv=none; b=rWPqQ5mNtP4psQuE9CZOk5z+r1/9Jr3iF8QkPALQ2SRgoJJMNHOT0zDbhTUu7GWdN8+UJwxSgVxyVTTh5je/215weRFG4VbQIAxIbsptEFX1HaHXpScecIm7M2sL2ZvJK3GowxJuWTdqDqTFMxqTnt8bPfnBzxQU0NSyMMVb/Is=
+	t=1756998790; cv=none; b=ihyw+luqq4tApEV8qQS58A9nLSogWpDBluy+J48vJvEPIBS7ZtaW/glYg+prbd8Jbx0Djlf/8dh63rMDejEuDpvQjn8gcwqgsWVujOXj2h9+cY1aD+QvOVnLzk5JSK6Dg+mxLti8gFP8xShClZ+TY4J2A3gcTIodRIy7GSs96R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756998795; c=relaxed/simple;
-	bh=hQTesLUjwHoE69NvEeQegylR6nw/aEJIYz4xhLEq3pA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UEDvKpI2s1iV8lsdE12mpwVw8iPr6n/K/jTvU7h5cV3qG6Q2uqFWHA21JhR8JkOnYuVZ85IBwKExU7f5McZdqcjFPedTVnCw8GsFxqx53n9eL07aUqwdZ/0aTOterC95QuDAwqo8xZ24hrNtjHMVeXZqOLAwULGYLv8UPY8bRvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BpvHdX66; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-32bae4bcd63so247587a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 08:13:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1756998793; x=1757603593; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zWu8/uT79TLkFHaoOripy/trgu/RnF6WTT4bI5QB+j8=;
-        b=BpvHdX66LvkycmwydTOg/y7ECD+YX4EjnHp/f0PRlCAltaGzCodAfm2TX9c77LiJF4
-         9j1wYGKxoj8xxT7IcVcZ6XGcKxpbmjZn1YywAh935G3WjDNKCpG20ojRzELorZ5DhL8a
-         oUx96WIDS8oeYFGOgBNtlcsjEnC0Q5MSA/BgLFGw5JrxNXNAjnnj/A2JakkfO9tzZUvB
-         05eF2WwEHp7fRyNwbkk2UOW80WuV6BszewWr8MwKEq8jO05eDlAuoKmXxO/0X2wMCEYv
-         dV2Fohl7aIPCTcPplo0VBdMn0SKMU5uT1D4IAYKQBYgahXlYY79f/+XgSBi4/1moUbc3
-         Is5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756998793; x=1757603593;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zWu8/uT79TLkFHaoOripy/trgu/RnF6WTT4bI5QB+j8=;
-        b=sS03nfQSGmTib/HmK/pKYDP2trP6AHnnJftsSsJqY2QZWU7rt48+5n9No+hW6jH30S
-         Pf9m3fZMaMtwRh/qeQOaWk+SYq4lGU5jsY4imbje2NkYK686HnfT7BRewEJO6IaLZQt8
-         82xwr1EDmPj7fDSQxj8C6CPy7iBC+kUb/Uk8WQHNW13TiFUSO4c1faPYEyjUvtAZfpfh
-         CfP21NrtmY7tHWFT15jT1hnwlS9Z7sVMlyDsQ9o2IdCpWJit28vD7L3u9tjDINJdWSc2
-         dUOAYlmutrWSSOVBczaS8Rdo61ptbxn8T3cHcGLLJJf8duyPX2XQjhqTUENDpNv7weko
-         12Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4Z3l1Tb3+FVfcOS7DqBjuFw2ch4oMYLYvqnDFBycLcKtbn1sl/nLT299axm9D09WDP+kIEAW6w10lCFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8B6vyWQtvcM961nzyh8mZXdfLOOaJvgdcEZTW8Q32hoyeXMhM
-	C+q011LY56+fGiPPx4AiHzzL908EwzPURcWbta8O75F9AX2ASqTqVl+YR0p9qmF4hpRqDg6BOR6
-	lyObLAH8UKeUNj1VX7f2A/T3PHi8aO6PJWaaa33Fq
-X-Gm-Gg: ASbGncu/5Rh3YoLHQNcRRSQi+V/YIwkVREoxV2rU4/Fy8zjXtddA9FKohcvJpMOpopc
-	OGhunTy0BXtbF7KxjT0VtxLQsY7gYWfn0uzT0C846ZVP99wF7RLXKvX7zjLwUPK2ZeSP5QBLOHA
-	aNJXfRdhXB9JePsIT3kLNM0e/2ietW3jxALN2NG0g47dYexAoudKp8iuhT+QrZDKurAPjKvNJUG
-	apIH2x2FEvwSmkAZA==
-X-Google-Smtp-Source: AGHT+IGqcMqHHAT75zSTTPlBqCVyFcn6AnTIKyagfTnT5D4zUa/iS7NyI7Sait1maUMEoXcJ2nw24OBTrZDWN8ZihOE=
-X-Received: by 2002:a17:90b:2ec7:b0:327:e59d:2cc2 with SMTP id
- 98e67ed59e1d1-32815436083mr27618387a91.10.1756998792394; Thu, 04 Sep 2025
- 08:13:12 -0700 (PDT)
+	s=arc-20240116; t=1756998790; c=relaxed/simple;
+	bh=BF2JYlW4O803U5Kf+KGf/BQmJNDHYbCWFpXcjx4As2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d2B+C604acFwzJ2RCuGTe+VQvbK64WGEXX60ub13WeBoqNFv+clYoEKEIhBWjSyWuY5J2JECVCBYEkkZXEggeX05El46W0LmohdVjYXjG4DsGY00j4wydCoBM4jEfPRHt43xVUJkEBVLp+zsq+AhpLhBtbYLa/ZFpkJXsmZr8Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JRX/HJLF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HhbyZPUX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JRX/HJLF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HhbyZPUX; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 826B5374EC;
+	Thu,  4 Sep 2025 15:13:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756998787; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Uc0MFXmurty/MFvGV5vECjCPl62NXr2oSZ/7oQCP8eM=;
+	b=JRX/HJLFtZ2zK7uDWFxn8a/vcX0uyoAzkO63iDeOOwRvP2VGrn0i8DKEl5tl6D4/5vHxFa
+	LfXRrhBSOBBa30+RzeYMDva/TgI5eFf1SGVOgIYgoo8+302iZOFT8Mla6dNOOOO2ZtPkjp
+	2Wnta+ZxIrxoG4INVnjDGfQ/+eC3Gpc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756998787;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Uc0MFXmurty/MFvGV5vECjCPl62NXr2oSZ/7oQCP8eM=;
+	b=HhbyZPUXOEhsLdadh4JNP0yAKrp4oFjWCHVhst/FoD2F44M11TMbTsbFGJF1S6WpDoVEUK
+	MZixa4GfA1x5XAAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="JRX/HJLF";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=HhbyZPUX
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756998787; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Uc0MFXmurty/MFvGV5vECjCPl62NXr2oSZ/7oQCP8eM=;
+	b=JRX/HJLFtZ2zK7uDWFxn8a/vcX0uyoAzkO63iDeOOwRvP2VGrn0i8DKEl5tl6D4/5vHxFa
+	LfXRrhBSOBBa30+RzeYMDva/TgI5eFf1SGVOgIYgoo8+302iZOFT8Mla6dNOOOO2ZtPkjp
+	2Wnta+ZxIrxoG4INVnjDGfQ/+eC3Gpc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756998787;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Uc0MFXmurty/MFvGV5vECjCPl62NXr2oSZ/7oQCP8eM=;
+	b=HhbyZPUXOEhsLdadh4JNP0yAKrp4oFjWCHVhst/FoD2F44M11TMbTsbFGJF1S6WpDoVEUK
+	MZixa4GfA1x5XAAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7177D13675;
+	Thu,  4 Sep 2025 15:13:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vvBQG4OsuWjBBwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 04 Sep 2025 15:13:07 +0000
+Message-ID: <12b43696-d684-4502-aa48-6179702c8b11@suse.cz>
+Date: Thu, 4 Sep 2025 17:13:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68b93e3c.a00a0220.eb3d.0000.GAE@google.com> <68b9ab18.050a0220.192772.0008.GAE@google.com>
-In-Reply-To: <68b9ab18.050a0220.192772.0008.GAE@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 4 Sep 2025 11:12:59 -0400
-X-Gm-Features: Ac12FXzmdDvybcxdLMeRBs2OONbitrTJM6yCl57blUt8t099sFu8t2Ati4PBkBs
-Message-ID: <CAHC9VhR6+cHx+FvonHtAvuNZ-Ls77HjGnU5k5VR7qy1BUSaxdA@mail.gmail.com>
-Subject: Re: [syzbot] [kernel?] INFO: trying to register non-static key in
- skb_dequeue (4)
-To: syzbot <syzbot+bb185b018a51f8d91fd2@syzkaller.appspotmail.com>
-Cc: apparmor@lists.ubuntu.com, audit@vger.kernel.org, casey@schaufler-ca.com, 
-	davem@davemloft.net, edumazet@google.com, eparis@redhat.com, 
-	eric.dumazet@gmail.com, horms@kernel.org, jmorris@namei.org, 
-	john.johansen@canonical.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, luto@kernel.org, 
-	netdev@vger.kernel.org, omosnace@redhat.com, pabeni@redhat.com, 
-	peterz@infradead.org, selinux@vger.kernel.org, serge@hallyn.com, 
-	stephen.smalley.work@gmail.com, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [vbabka:slub-percpu-sheaves-v6r2] [maple_tree] 99848157f7:
+ WARNING:possible_circular_locking_dependency_detected
+Content-Language: en-US
+To: kernel test robot <oliver.sang@intel.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, maple-tree@lists.infradead.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <202509041248.b7ece14a-lkp@intel.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <202509041248.b7ece14a-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,intel.com:email];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 826B5374EC
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 
-On Thu, Sep 4, 2025 at 11:07=E2=80=AFAM syzbot
-<syzbot+bb185b018a51f8d91fd2@syzkaller.appspotmail.com> wrote:
->
-> syzbot has bisected this issue to:
->
-> commit eb59d494eebd4c5414728a35cdea6a0ba78ff26e
-> Author: Casey Schaufler <casey@schaufler-ca.com>
-> Date:   Sat Aug 16 17:28:58 2025 +0000
->
->     audit: add record for multiple task security contexts
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1199fe6258=
-0000
-> start commit:   5d50cf9f7cf2 Add linux-next specific files for 20250903
-> git tree:       linux-next
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D1399fe6258=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1599fe6258000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D7d2429dff5531=
-d80
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dbb185b018a51f8d=
-91fd2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D15b9a312580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16819e6258000=
-0
->
-> Reported-by: syzbot+bb185b018a51f8d91fd2@syzkaller.appspotmail.com
-> Fixes: eb59d494eebd ("audit: add record for multiple task security contex=
-ts")
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
+On 9/4/25 07:20, kernel test robot wrote:
+> 
+> 
+> Hello,
+> 
+> kernel test robot noticed "WARNING:possible_circular_locking_dependency_detected" on:
+> 
+> commit: 99848157f71c03ca5e975b0e686def1d66e8b19f ("maple_tree: Sheaf conversion")
+> https://git.kernel.org/cgit/linux/kernel/git/vbabka/linux.git slub-percpu-sheaves-v6r2
+> 
+> in testcase: rcuscale
+> version: 
+> with following parameters:
+> 
+> 	runtime: 300s
+> 	scale_type: rcu
+> 
+> 
+> 
+> config: x86_64-randconfig-075-20250831
+> compiler: gcc-12
+> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202509041248.b7ece14a-lkp@intel.com
 
-The timing on this is amusing, I got the sysbot report just as I
-merged a fix for this provided by Eric Dumazet :)
+Thanks, will be fixed in the next -next snapshot.
 
-https://lore.kernel.org/audit/20250904072537.2278210-1-edumazet@google.com
-
-The commit has the appropriate syzbot tags so this should close out
-automatically.
-
---=20
-paul-moore.com
 
