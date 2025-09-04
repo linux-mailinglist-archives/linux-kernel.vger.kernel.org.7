@@ -1,124 +1,149 @@
-Return-Path: <linux-kernel+bounces-800534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26031B438EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1E8B43902
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5438188C708
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:38:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 948671C27A06
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C8D2F90F6;
-	Thu,  4 Sep 2025 10:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077B02F998D;
+	Thu,  4 Sep 2025 10:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X4cUqCzI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IX0C3vNk"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D29A2EC0A5;
-	Thu,  4 Sep 2025 10:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87B713B5AE
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756982293; cv=none; b=NCi82z11a0qBZA5Wo51NkpFQB4/zJrL47EznQqdX7IyUUpb6Y/VtVI0X8j9WuHVfPVt5gdCL6MRZy7pmU+x2MoJtvRXNAfjP3IXXCJ61M3d36DyCOTaA0PZFwasEM00Qkkibp1OCNds252pFy70FXEa3txosDflquc+89rUo20o=
+	t=1756982428; cv=none; b=ESdTNAGxPVJ7az2S/CVo2Rcj0m4A7fY5vaNblx+jM0UB9JE29nTTH9ac9xRU1GQQgU0KL4ShqscrjBKkRxZJQUxpUr4wRxTJJgokFdPIyoWdHGGybCxF9QbpmcWxdTHSkkHzzeMtnmjp15HSspz1vJfd5jHg41nbbWA4p7/RDeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756982293; c=relaxed/simple;
-	bh=hbR0wEYWqKtbDdPg7UhqpitNbfCEpvynd8wZStnxc/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gNpamZtqdxsAGgzetItiAv100aQdcNoTz0GdacgnfXKk0zEH1D7UNopIJPlFsnhQY+goEGCknT85cYvRrmX/WYKkjXP3sK5LdrVn3FmUkqMeq9ipVXsEmuSHYbTmRoKd4gensT3+4ZWYZcv08Y2/EuliIMZRr47scz6g68YFPlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X4cUqCzI; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756982292; x=1788518292;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hbR0wEYWqKtbDdPg7UhqpitNbfCEpvynd8wZStnxc/w=;
-  b=X4cUqCzIOxtb3mRvF5xQTzLPxUtRdBsWO6p9kjCKcdOdHVNUFiis/zCU
-   xdt8qWbImmsYSJi50/nKBdLpxi28L4/BoSSMIsTnQUH6lPo6sYSomKSjh
-   Bhf0NCG0W84Kr+dvU+kmc3xD0UOBsw03VDw9vz2R3CxzVoX+YgP5TCYK7
-   /Zo4EzIM+yjJivVonUzczfiYExc1a4eV8FsPTAAZMSzY7H13iWXwf9LVj
-   U1+dvY1lOOS4MKHvrKzFBKU4hTA+dFhRPaPd4MZDYsqqXDG7m7LNhKnOd
-   h7mH6ZFJNgJ3HeYTf2LYl414mqlnc2b4pyjbAZ+h4t6hCa1XuZHmFgTdF
-   A==;
-X-CSE-ConnectionGUID: 5B2SuVqxRwuBzyZbKkqVJQ==
-X-CSE-MsgGUID: f8OI8b9MTCeWfxsDFnn8zA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="76918202"
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="76918202"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 03:38:11 -0700
-X-CSE-ConnectionGUID: Uy3ajEFrSwqANOQewh/dNg==
-X-CSE-MsgGUID: H5emK1dER1OBz9xVq4Wz8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="209039630"
-Received: from agladkov-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.92])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 03:38:07 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 011FE11FCCF;
-	Thu, 04 Sep 2025 13:38:05 +0300 (EEST)
-Date: Thu, 4 Sep 2025 13:38:05 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	=?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] device property: Add scoped fwnode child node
- iterators
-Message-ID: <aLlsDZrark6u7Eq7@kekkonen.localdomain>
-References: <20250902190443.3252-1-jefflessard3@gmail.com>
- <aLgY1z-MvQbDBx2_@smile.fi.intel.com>
- <aLlgpUlHp7t8P4dQ@shikoro>
- <aLljGIcjAjQhC2uS@smile.fi.intel.com>
- <DCJXQ4CUQ88U.ZEEGKWZRCGL6@kernel.org>
+	s=arc-20240116; t=1756982428; c=relaxed/simple;
+	bh=K35TYVQdmCqeD7Q3E8OIUOVLCEHOxk1ZzvVD9CcXM0g=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eYQE2uV500KkrcmfhKdS8xqU3VpwzW8sOolXhMe4d4p1L8vijSaYI+9ixcDlqWoRBTvK6wzuzjzux+DXOFZ9wZU3M14Pj4fOJKBgKAfkH9s7G3+bQCKOJjRvv35pCdQLVOOmZ4t5maztJIDYnUMfClv36sHnUtl79EnBrCrCvfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IX0C3vNk; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3df3e935ec8so507348f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 03:40:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756982425; x=1757587225; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o6y2QOBZu14x36SZiIQblNfOse9Z30SqsU6mw32en+A=;
+        b=IX0C3vNkyF7wS+NVZHzQZdQsK/4MIrU68d9uFFm0UA3rjBeAORNyPm0dDYEUNJeWIA
+         yVizZij6kvIZvan6Ssjd/jRhNB0agwwW4l7utVO4UoRYQM+QPSRJjCMW5OcTy0hmIlay
+         okZTyTI/169C3jTozGkwFVVYMzzVYPN8A1NrqDt4ajeMgYBDXFMeBfR9E6/MYCN5+uaZ
+         IJycZ+N9Kcucf94GWXelN0NU6hNAaMoXJOGGmOnK50SVlHY+gVD8FT+jqRYV2eDAgKf+
+         n1WNPLVTPyo5XgIhCeOLuumdbxgQ9OqM9S/vAlAvk+kpVH8ziWlGYHgaYvq8ZjUIvK94
+         qxjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756982425; x=1757587225;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o6y2QOBZu14x36SZiIQblNfOse9Z30SqsU6mw32en+A=;
+        b=p9H90sE7GTpzED5p1ZlCsdU92uTaHMj1ud8eB7/GYTCOSHLKAkXoIlmcl3MKRi0ore
+         TPMIhLMIQR5LrHXZqpIT0Pk1go8UkyhzKUXfcqMgDtuiy5RQHZ9d8+W1KsFlGuAQjZ0h
+         1mOlNBmKmJF/E4Mimbijcvm4eilB4ZM3Kr2VT2hHX6l3jv5cQEMvggaCfZ57dEIleg3a
+         xLMTfIHtm5p9e5DlTOW8zv6piEQarQeUYsdctRAptsudcivuh0q9nzrAkwKEIM7XHA9I
+         6/P3OmRYQ2/tlGbu98kWfj4yRuWoW9i7COReaKCDh4J6RmufuAGIPOei5ijhGj6lHepV
+         MPpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWyuqQZN7qYVXl61TQZw2SNepJ5RJlg79/bMTTJ1KLDAejIbaQOd0B8Lt973pH7LC+KLEoFWzBM8jcJ6Z0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO77oXRu/PRmYPkgbPpw413Sn8GC7zISb1d2WInygObBAG2l6z
+	/ZsgYR1yhGW2C8FzPgSroIeJ2kUznI7YUD1As/MtPEKLeN0N31oNiwXMtLuirE8trgwUZsZO7b7
+	2yS4HOxvsl+OYUOPMmQ==
+X-Google-Smtp-Source: AGHT+IF9yvAHvKVOXXpEFHka86WFsWc+ojWObCx+xIgC+kdLnrHsvwSPcYjH86gfddOM2J9YtQ9wDriAn1Gd+jI=
+X-Received: from wrbfu17.prod.google.com ([2002:a05:6000:25f1:b0:3e1:aeb6:bd24])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:420c:b0:3d6:212b:9ae2 with SMTP id ffacd0b85a97d-3d6212b9f09mr13611267f8f.63.1756982425153;
+ Thu, 04 Sep 2025 03:40:25 -0700 (PDT)
+Date: Thu, 4 Sep 2025 10:40:24 +0000
+In-Reply-To: <20250901202850.208116-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DCJXQ4CUQ88U.ZEEGKWZRCGL6@kernel.org>
+Mime-Version: 1.0
+References: <20250901202850.208116-1-dakr@kernel.org>
+Message-ID: <aLlsmNzp_KardLUt@google.com>
+Subject: Re: [PATCH] MAINTAINERS: Add drm-rust tree for Rust DRM drivers and infrastructure
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, acourbot@nvidia.com, 
+	daniel.almeida@collabora.com, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Hi Danilo, others,
-
-On Thu, Sep 04, 2025 at 12:13:53PM +0200, Danilo Krummrich wrote:
-> On Thu Sep 4, 2025 at 11:59 AM CEST, Andy Shevchenko wrote:
-> > On Thu, Sep 04, 2025 at 11:49:25AM +0200, Wolfram Sang wrote:
-> >> 
-> >> > It might be good to have an immutable branch for me from i2c core.
-> >> > Wolfram, can you provide a such if no objections?
-> >> 
-> >> Sure thing, I can do that. But there is still discussion on patch 1, so
-> >> I will wait for an outcome there.
-> >
-> > But it seems that the discussion can be implemented in a followup?
+On Mon, Sep 01, 2025 at 10:26:39PM +0200, Danilo Krummrich wrote:
+> Multiple DRM Rust drivers (e.g. nova-core, nova-drm, Tyr, rvkms) are in
+> development, with at least Nova and (soon) Tyr already upstream. Having a
+> shared tree will ease and accelerate development, since all drivers can
+> consume new infrastructure in the same release cycle.
 > 
-> If Sakari attempts the rework, and we can prove this doesn't regress existing
-> users, removing fwnode_for_each_available_child_node_scoped() in the context
-> of the rework again should be trivial.
-
-It would perhaps be trivial but in this case I really wouldn't add it in
-the first place: it's unused. Either way, feel free to add:
-
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
+> This includes infrastructure shared with other subsystem trees (e.g. Rust
+> or driver-core). By consolidating in drm-rust, we avoid adding extra
+> burden to drm-misc maintainers, e.g. dealing with cross-tree topic
+> branches.
 > 
-> Given that, I don't see a reason to stall people working with the existing
-> semantics of the API in the meantime.
+> The drm-misc tree is not a good fit for this stage of development, since
+> its documented scope is small drivers with occasional large series.
+> 
+> Rust drivers in development upstream, however, regularly involve large
+> patch series, new infrastructure, and shared topic branches, which may
+> not align well with drm-misc at this stage.
+> 
+> The drm-rust tree may not be a permanent solution. Once the core Rust,
+> DRM, and KMS infrastructure have stabilized, drivers and infrastructure
+> changes are expected to transition into drm-misc or standalone driver
+> trees respectively. Until then, drm-rust provides a dedicated place to
+> coordinate development without disrupting existing workflows too much.
+> 
+> Cc: Alice Ryhl <aliceryhl@google.com>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Alexandre Courbot <acourbot@nvidia.com>
+> Cc: Daniel Almeida <daniel.almeida@collabora.com>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  MAINTAINERS | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fe168477caa4..1cd6597c7f1d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8079,7 +8079,6 @@ F:	Documentation/devicetree/bindings/gpu/
+>  F:	Documentation/gpu/
+>  F:	drivers/gpu/drm/
+>  F:	drivers/gpu/vga/
+> -F:	rust/kernel/drm/
+>  F:	include/drm/drm
+>  F:	include/linux/vga*
+>  F:	include/uapi/drm/
+> @@ -8096,6 +8095,16 @@ X:	drivers/gpu/drm/radeon/
+>  X:	drivers/gpu/drm/tegra/
+>  X:	drivers/gpu/drm/xe/
+>  
+> +DRM DRIVERS AND COMMON INFRASTRUCTURE [RUST]
+> +M:	Danilo Krummrich <dakr@kernel.org>
+> +M:	Alice Ryhl <aliceryhl@google.com>
+> +S:	Supported
+> +W:	https://drm.pages.freedesktop.org/maintainer-tools/drm-rust.html
 
--- 
-Regards,
+It looks like the right path is:
+https://drm.pages.freedesktop.org/maintainer-tools/repositories/drm-rust.html
 
-Sakari Ailus
+Alice
 
