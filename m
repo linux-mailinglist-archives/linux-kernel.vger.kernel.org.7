@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-801750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FBAB44983
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:24:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 593E6B44984
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B637D566208
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:23:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6EE580AB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AADE2F8BC9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9779D2E8E0A;
 	Thu,  4 Sep 2025 22:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GbzwCh4f";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7HEMeyGZ"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EK5g/tB5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w69SAMsm"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212B22F747F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741C42F83A3
 	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757024465; cv=none; b=VZhZHD3vNm9TwWM0YQHDpj1BvYDKD/7PS63O9Zry0ukmt+rck5XIUTSnbSZ8rjkLLmOOD9vil0xvY2feUXmn8RRyV12pzy6XEfaZkin5VmGvd+p48N6PVwRxdrp508d6xbXNY8AP+DQ+kuS6+ccFJxZaARfmYfFbCIroLcS/WBw=
+	t=1757024466; cv=none; b=LpEVK/zJ8ZOxax2L1P2PUwcLMaNNJXDUzub4kycHu1mJhtBFxK8PLe5epslEVCBSaqlxHWUnNY9dnsP92tWfrfE5exaR6MHd2EBorPnTnLTtEnjoRWYKkXUgwMknAh747UcVi9j2MVHONK47tAVtNL9tTX4W4Qf7Q+lkDzLIH7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757024465; c=relaxed/simple;
-	bh=Y5REso+KSnmwUD2JETKPgWRc7DEBswiB+PqsPdnigFE=;
+	s=arc-20240116; t=1757024466; c=relaxed/simple;
+	bh=d+nPlo23jlJ3xhxt9gQtYafkI1GlBDoZlZK/ehufdIw=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=YzMwj+A2WwMIAQKLLxwhnqiZkgjdBF9Mk8tPRp9/meDDWyrB5bc1UA50FCsgCP1eKGbS4Cr3y22LFYU3yl7aicpLIiPD4ZuH6x09YJeCkx8kzUJwytmxjmiD057xOhhvZIIWaAmVocwSIyd6n7sCguUZiavHtuDCHUO/xU3Mp4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GbzwCh4f; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7HEMeyGZ; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=JwzTJbhLW9/CqPXYy6Xvg7uDPs1aO7gQ5o80CG39WD+9ffTEjM7ju2hmrhh+nvIpehlN74x+Vh3IKxG0xc1BOAR1RLbqopefiOTXlSGmyyphFezXxJQPgGxZJ+pz45GXNnYiJ5uXgKtw0n+y/IFdXw7xDvfdoQOf+JYG7bUEPbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EK5g/tB5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w69SAMsm; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250904185720.024147389@linutronix.de>
+Message-ID: <20250904185720.087689754@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757024461;
+	s=2020; t=1757024462;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=aKkyyN4uhKDxXcmqSEbRndqAKHsWbh2jI3o2XKOXuho=;
-	b=GbzwCh4f8sEEj3e9agiDvfsF5fm/FaD9AG/1ELcBn6z5QUdvg5kpv0VETSnVvDWxS92pl1
-	mnuJD+zi8wopUPoV91/vuZuoHhfoXUqwOqIlXTkx6hfJLm0mxvPtkdOnoKN+KFxF/aje4X
-	QZkvi2l7zW0LOCFpOVY8CH0Q9IMKjlXcXIN3sPLbbwEbqWueJGbagcpR79TYRIitRCyKqj
-	iShSvQHg9nPJJyPXf7PDQanfwdWHdBHyE3shEtXuTnhHScHblMl8sPUnOlipp4xB+MV4Ch
-	DDINtkAfCXCJkBvcZYyazht7vfxT5327+E60X7YRcEtDYHUgzch7brf15UwG8w==
+	 references:references; bh=KA2d9h4jh4bj22uUQRFQsyaA2ITwuoGalkeKWc19FIg=;
+	b=EK5g/tB5C0BPueoHSkssli5m5GO2qpKCkKXW8tgeQkZ9/0eQOGwIw5EOsj+wSrSC+YdWJm
+	+22nS5TGqHdcKWCruGP9mt6VcNqu94zwQ9ED0yDna13nvoG3/XkStMxHnO/KxU7IymNGNI
+	13dF5bXUt/v7Q4gqS3KuJZkDYC27gKH0X2wxHRHqv2wTPBKdH1PcbHkONOqxWQCkpXqRPN
+	If7qEchZu46XBYKjBDqMdrrtE9YmyaVHZjJ9zzMaLo489tzeXJ6COULGJVn2oy2NPT+wVE
+	spSvl2KOBL+JMt8ZgbSJUB8DS0DFaWLRpt+YLky4IFFDm4lmsci0iVXIJcL7UA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757024461;
+	s=2020e; t=1757024462;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=aKkyyN4uhKDxXcmqSEbRndqAKHsWbh2jI3o2XKOXuho=;
-	b=7HEMeyGZsD+lkF+cYy4Kz3DKd2oQeafl+oU2gwKEsX5B494jMCQ+BNAchhh/hN8pQyeyud
-	BvBIDQip1nmZyTBA==
+	 references:references; bh=KA2d9h4jh4bj22uUQRFQsyaA2ITwuoGalkeKWc19FIg=;
+	b=w69SAMsmpq/6HDqmwyiNHQxNdMVwh8xfgpTfommlZN3w5HLDe9f7ifU/Bgfi82AKmD1kYJ
+	lriuMfpj03LgusDg==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Michael Jeanson <mjeanson@efficios.com>,
@@ -69,7 +69,7 @@ Cc: Michael Jeanson <mjeanson@efficios.com>,
  Huacai Chen <chenhuacai@kernel.org>,
  Paul Walmsley <paul.walmsley@sifive.com>,
  Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [patch V3 14/37] rseq: Cache CPU ID and MM CID values
+Subject: [patch V3 15/37] rseq: Record interrupt from user space
 References: <20250904185336.943880027@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,110 +78,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Fri,  5 Sep 2025 00:21:00 +0200 (CEST)
+Date: Fri,  5 Sep 2025 00:21:02 +0200 (CEST)
 
-In preparation for rewriting RSEQ exit to user space handling provide
-storage to cache the CPU ID and MM CID values which were written to user
-space. That prepares for a quick check, which avoids the update when
-nothing changed.
+For RSEQ the only relevant reason to inspect and eventually fixup (abort)
+user space critical sections is when user space was interrupted and the
+task was scheduled out.
+
+If the user to kernel entry was from a syscall no fixup is required. If
+user space invokes a syscall from a critical section it can keep the
+pieces as documented.
+
+This is only supported on architectures which utilize the generic entry
+code. If your architecture does not use it, bad luck.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
 ---
- include/linux/rseq.h        |    3 +++
- include/linux/rseq_types.h  |   19 +++++++++++++++++++
- include/linux/sched.h       |    1 +
- include/trace/events/rseq.h |    4 ++--
- kernel/rseq.c               |    4 ++++
- 5 files changed, 29 insertions(+), 2 deletions(-)
+ include/linux/irq-entry-common.h |    3 ++-
+ include/linux/rseq.h             |   16 +++++++++++-----
+ include/linux/rseq_entry.h       |   18 ++++++++++++++++++
+ include/linux/rseq_types.h       |    2 ++
+ 4 files changed, 33 insertions(+), 6 deletions(-)
 
+--- a/include/linux/irq-entry-common.h
++++ b/include/linux/irq-entry-common.h
+@@ -4,7 +4,7 @@
+ 
+ #include <linux/context_tracking.h>
+ #include <linux/kmsan.h>
+-#include <linux/rseq.h>
++#include <linux/rseq_entry.h>
+ #include <linux/static_call_types.h>
+ #include <linux/syscalls.h>
+ #include <linux/tick.h>
+@@ -281,6 +281,7 @@ static __always_inline void exit_to_user
+ static __always_inline void irqentry_enter_from_user_mode(struct pt_regs *regs)
+ {
+ 	enter_from_user_mode(regs);
++	rseq_note_user_irq_entry();
+ }
+ 
+ /**
 --- a/include/linux/rseq.h
 +++ b/include/linux/rseq.h
-@@ -64,11 +64,13 @@ static inline void rseq_fork(struct task
- 		t->rseq = NULL;
- 		t->rseq_len = 0;
- 		t->rseq_sig = 0;
-+		t->rseq_ids.cpu_cid = ~0ULL;
- 		t->rseq_event.all = 0;
- 	} else {
- 		t->rseq = current->rseq;
- 		t->rseq_len = current->rseq_len;
- 		t->rseq_sig = current->rseq_sig;
-+		t->rseq_ids.cpu_cid = ~0ULL;
- 		t->rseq_event = current->rseq_event;
- 	}
- }
-@@ -78,6 +80,7 @@ static inline void rseq_execve(struct ta
- 	t->rseq = NULL;
- 	t->rseq_len = 0;
- 	t->rseq_sig = 0;
-+	t->rseq_ids.cpu_cid = ~0ULL;
- 	t->rseq_event.all = 0;
+@@ -31,11 +31,17 @@ static inline void rseq_sched_switch_eve
+ 
+ static __always_inline void rseq_exit_to_user_mode(void)
+ {
+-	if (IS_ENABLED(CONFIG_DEBUG_RSEQ)) {
+-		if (WARN_ON_ONCE(current->rseq_event.has_rseq &&
+-				 current->rseq_event.events))
+-			current->rseq_event.events = 0;
+-	}
++	struct rseq_event *ev = &current->rseq_event;
++
++	if (IS_ENABLED(CONFIG_DEBUG_RSEQ))
++		WARN_ON_ONCE(ev->sched_switch);
++
++	/*
++	 * Ensure that event (especially user_irq) is cleared when the
++	 * interrupt did not result in a schedule and therefore the
++	 * rseq processing did not clear it.
++	 */
++	ev->events = 0;
  }
  
+ /*
+--- /dev/null
++++ b/include/linux/rseq_entry.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_RSEQ_ENTRY_H
++#define _LINUX_RSEQ_ENTRY_H
++
++#ifdef CONFIG_RSEQ
++#include <linux/rseq.h>
++
++static __always_inline void rseq_note_user_irq_entry(void)
++{
++	if (IS_ENABLED(CONFIG_GENERIC_IRQ_ENTRY))
++		current->rseq_event.user_irq = true;
++}
++
++#else /* CONFIG_RSEQ */
++static inline void rseq_note_user_irq_entry(void) { }
++#endif /* !CONFIG_RSEQ */
++
++#endif /* _LINUX_RSEQ_ENTRY_H */
 --- a/include/linux/rseq_types.h
 +++ b/include/linux/rseq_types.h
-@@ -27,4 +27,23 @@ struct rseq_event {
- 	};
- };
+@@ -9,6 +9,7 @@
+  * @all:		Compound to initialize and clear the data efficiently
+  * @events:		Compound to access events with a single load/store
+  * @sched_switch:	True if the task was scheduled out
++ * @user_irq:		True on interrupt entry from user mode
+  * @has_rseq:		True if the task has a rseq pointer installed
+  */
+ struct rseq_event {
+@@ -19,6 +20,7 @@ struct rseq_event {
+ 				u16		events;
+ 				struct {
+ 					u8	sched_switch;
++					u8	user_irq;
+ 				};
+ 			};
  
-+/*
-+ * struct rseq_ids - Cache for ids, which need to be updated
-+ * @cpu_cid:	Compound of @cpu_id and @mm_cid to make the
-+ *		compiler emit a single compare on 64-bit
-+ * @cpu_id:	The CPU ID which was written last to user space
-+ * @mm_cid:	The MM CID which was written last to user space
-+ *
-+ * @cpu_id and @mm_cid are updated when the data is written to user space.
-+ */
-+struct rseq_ids {
-+	union {
-+		u64		cpu_cid;
-+		struct {
-+			u32	cpu_id;
-+			u32	mm_cid;
-+		};
-+	};
-+};
-+
- #endif
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1406,6 +1406,7 @@ struct task_struct {
- 	u32				rseq_len;
- 	u32				rseq_sig;
- 	struct rseq_event		rseq_event;
-+	struct rseq_ids			rseq_ids;
- # ifdef CONFIG_DEBUG_RSEQ
- 	/*
- 	 * This is a place holder to save a copy of the rseq fields for
---- a/include/trace/events/rseq.h
-+++ b/include/trace/events/rseq.h
-@@ -21,9 +21,9 @@ TRACE_EVENT(rseq_update,
- 	),
- 
- 	TP_fast_assign(
--		__entry->cpu_id = raw_smp_processor_id();
-+		__entry->cpu_id = t->rseq_ids.cpu_id;
- 		__entry->node_id = cpu_to_node(__entry->cpu_id);
--		__entry->mm_cid = task_mm_cid(t);
-+		__entry->mm_cid = t->rseq_ids.mm_cid;
- 	),
- 
- 	TP_printk("cpu_id=%d node_id=%d mm_cid=%d", __entry->cpu_id,
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -184,6 +184,10 @@ static int rseq_update_cpu_node_id(struc
- 	rseq_unsafe_put_user(t, node_id, node_id, efault_end);
- 	rseq_unsafe_put_user(t, mm_cid, mm_cid, efault_end);
- 
-+	/* Cache the user space values */
-+	t->rseq_ids.cpu_id = cpu_id;
-+	t->rseq_ids.mm_cid = mm_cid;
-+
- 	/*
- 	 * Additional feature fields added after ORIG_RSEQ_SIZE
- 	 * need to be conditionally updated only if
-
 
 
