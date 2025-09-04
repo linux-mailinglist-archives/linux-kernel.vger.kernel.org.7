@@ -1,162 +1,143 @@
-Return-Path: <linux-kernel+bounces-800710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56F0B43ADC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:56:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3152B43AC7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61269171B46
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:56:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D9C61C26416
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0692FD7A8;
-	Thu,  4 Sep 2025 11:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9412FD7A0;
+	Thu,  4 Sep 2025 11:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KCdtUYs5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="j/jidoTP"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183F61E7C08;
-	Thu,  4 Sep 2025 11:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492702D5412;
+	Thu,  4 Sep 2025 11:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756987001; cv=none; b=ACm4+ye74dYdbBNegL5cBsezCgi/4zE3NIx09oi5cSowypQ2eXlFYNn6JYbSARi/irLAw/lGManEM+fsEK0wiPlSojRHxlc/H5d2su6+Qb2UyvGr4PYevwEEB9tMAUee4Q1c2jc4KvdPTxQs/bvAhkLU0IzMNJZcy9Kmv329ap0=
+	t=1756986840; cv=none; b=CfTkqn/tz4VSUUBxDSRTBkR7J9HqW00dl+RVw4hfGcVBsQTjBH+oEEVtxfhJ7XTNblX0+n5osXMZDtlAqXUniOVRgA9ZEDEAr8Q0PP5ehTveymEPqIypvam43Z4KbarREk5ZXeNuf7YtFlrTeOXhOdC/TqRw1Yhl51SI1lCOCKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756987001; c=relaxed/simple;
-	bh=w3sdhJKD22zCigLruzAyu/UYQLy1/QH44k6QEPcMNjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HQYmXw9w0pLLcqJZu0GYEZ3y5ZEndVToYCk7FTpY1nkmJ4tZI2rGjeE/fXuQscrjUpKdxtCr0dtRssHQdfis9v899rndHNHFmsqXpujOUHCQPGRmosuU7NCtE1EKIZ7TNzJqsy/wX2l6bzMQbP7+Um5n+3xYDV0nA45LJIOugJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KCdtUYs5; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756987001; x=1788523001;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=w3sdhJKD22zCigLruzAyu/UYQLy1/QH44k6QEPcMNjs=;
-  b=KCdtUYs53E0wPpW7dkina9E7D2Bf0xI8uET6vwHLsI6LSbAQxtyrbj8O
-   fdTrctfudaUiIfY896rMns41J+nOGhAHkqcLAd5lhTvCeMRRYf6oZFb0z
-   sTcOXm8AZqYZNTNlNwg42JiqE6W23JPjWbErMdOOCir6bfGoAPdE7l4FR
-   nZb12nqConSvpCJLnI1aWgRrdTuXhfFZdhFcURKEwWkaqZgeWVWatjISC
-   lxSnMEVFxBBidVD37PKad1uyllrPEWX6WonovxZQ6/HOrkCE7gy9M28U/
-   TBBCaZ5FRn3LrhaB95a998NvCrqQ1e2FW+EtcNmxxwjYdq4F/1Bkhw6E5
-   A==;
-X-CSE-ConnectionGUID: ZMKoBeqhRtKHdj2n6nKw0g==
-X-CSE-MsgGUID: /eptbQypRci5X5/KTxh23w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81911421"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="81911421"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 04:56:40 -0700
-X-CSE-ConnectionGUID: Oiiq1wuWS9q6tqe4SLAX7g==
-X-CSE-MsgGUID: JREOD9RtQQmHv0fxQ2OtPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="171984324"
-Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 04 Sep 2025 04:56:36 -0700
-Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uu8Z5-0005CZ-0x;
-	Thu, 04 Sep 2025 11:55:56 +0000
-Date: Thu, 4 Sep 2025 19:53:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tom Hromatka <tom.hromatka@oracle.com>, kees@kernel.org,
-	luto@amacapital.net, wad@chromium.org, sargun@sargun.me,
-	corbet@lwn.net, shuah@kernel.org, brauner@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH] seccomp: Add SECCOMP_CLONE_FILTER operation
-Message-ID: <202509041931.XtQcy27H-lkp@intel.com>
-References: <20250903203805.1335307-1-tom.hromatka@oracle.com>
+	s=arc-20240116; t=1756986840; c=relaxed/simple;
+	bh=Uqj1mwVVRPf6dJUVHDMHYF68rIygHhhFT9n30gWW/6Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oPkDQFnJ5Y5VOeXvdiLVQfygRSNW8SaLG5nkiS0uPfXSxJ6GNwg1O6rinagxGxTpz7K66jvFWmEw9EkUWPfWQrtneAvqznh8Q5tuLIi/dMqZkP6LAQX8YF/s6MRD/HwHmO2dX4TV4Ap15kcJe3Wl3JMwkkbcjhLwck963Vgg3WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=j/jidoTP; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5849nrvS011850;
+	Thu, 4 Sep 2025 11:53:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=zJPm6nhvLd9SCgGt
+	e3OOsBo0X4yKutvdmXTTDmGybsA=; b=j/jidoTPA4hLcIRzzmpCTmr/kaiM+xs3
+	VH5IQiL83636OqBfPeJyeAUz3ss8WEeQX6VXAn4SlJ0AQicTQFq4o0kRv36FRIYx
+	yHC0OFZpQFlndLvVEr2R9/ydh4t4wjIZoArDCwZ0t1wm1Jzi45Htf44FNvC3cjKk
+	H4kVmi192fA7mNdbDHnSK33d0LYIIb+ODK3TY67Do8xmrNw+SaSqN8BRvWqOsLTB
+	QNj2uIQ+xGimIEc0g6cTGDhkZ/oeBH+EsKiPnnnMn3KGfi4Fm6bN8Y/JfykiGWBI
+	fPZKm6IYfIdXJYHwZF84bX2aEm8V2AePtIayUV1i5GISWiVl4hik4w==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48y8fq87j8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 04 Sep 2025 11:53:50 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 584Axexe015766;
+	Thu, 4 Sep 2025 11:53:49 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48v01qrb9a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 04 Sep 2025 11:53:49 +0000
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 584BrnvM007701;
+	Thu, 4 Sep 2025 11:53:49 GMT
+Received: from lab61.no.oracle.com (lab61.no.oracle.com [10.172.144.82])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 48v01qrb7y-1;
+	Thu, 04 Sep 2025 11:53:48 +0000
+From: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
+To: Allison Henderson <allison.henderson@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+Cc: stable@vger.kernel.org,
+        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+Subject: [PATCH net v2] rds: ib: Remove unused extern definition
+Date: Thu,  4 Sep 2025 13:53:43 +0200
+Message-ID: <20250904115345.3940851-1-haakon.bugge@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903203805.1335307-1-tom.hromatka@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_04,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509040117
+X-Proofpoint-GUID: FKuVAkVWUcajVvFAG1xNf9egSD3RhvN4
+X-Authority-Analysis: v=2.4 cv=eoPfzppX c=1 sm=1 tr=0 ts=68b97dce cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=M51BFTxLslgA:10 a=VwQbUJbxAAAA:8
+ a=yPCof4ZbAAAA:8 a=vqxsdnOqdfS0dGDShygA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: FKuVAkVWUcajVvFAG1xNf9egSD3RhvN4
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA0MDA5NyBTYWx0ZWRfX2FzGZSOexjtv
+ QtufhH/RcXYH89FLqcDilzTdDqMEMY8bD81oO5ZetpQvP0eoPt/eaQaCCCNsR90lrGLs4GXPFTC
+ mNv3+aOZk1+D5C/T6QKy4MnhcmxN5R8Y/N32p3qBvvsJ942xYyYpmF8SnvsXyAu/m69aq/rSqwN
+ X/xxmrgYTt++m3Bfi9Oh0mybTWX8xN1NSnVrs0LTPre43uDJ8PpXKzCLGXbkEWSyM83ET5zCRvx
+ a6oxZxZX+mhapTaOTYlViPBxZhExkMMiGPljsc1rIh/3T1kW5igMmY8is1Y/cOkGFCcdQEa5uQp
+ Qo5klO+r3I2jn1O8lNPwZ6ozYVkcrCgqg9vCFHhh6alLBE/Kq8ReP7UM/RS+F6lEeQyAITe1a9J
+ Dw6hbvQX
 
-Hi Tom,
+In the old days, RDS used FMR (Fast Memory Registration) to register
+IB MRs to be used by RDMA. A newer and better verbs based
+registration/de-registration method called FRWR (Fast Registration
+Work Request) was added to RDS by commit 1659185fb4d0 ("RDS: IB:
+Support Fastreg MR (FRMR) memory registration mode") in 2016.
 
-kernel test robot noticed the following build warnings:
+Detection and enablement of FRWR was done in commit 2cb2912d6563
+("RDS: IB: add Fastreg MR (FRMR) detection support"). But said commit
+added an extern bool prefer_frmr, which was not used by said commit -
+nor used by later commits. Hence, remove it.
 
-[auto build test WARNING on kees/for-next/seccomp]
-[also build test WARNING on linus/master v6.17-rc4 next-20250904]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Fixes: 2cb2912d6563 ("RDS: IB: add Fastreg MR (FRMR) detection support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tom-Hromatka/seccomp-Add-SECCOMP_CLONE_FILTER-operation/20250904-043943
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/seccomp
-patch link:    https://lore.kernel.org/r/20250903203805.1335307-1-tom.hromatka%40oracle.com
-patch subject: [PATCH] seccomp: Add SECCOMP_CLONE_FILTER operation
-config: x86_64-randconfig-074-20250904 (https://download.01.org/0day-ci/archive/20250904/202509041931.XtQcy27H-lkp@intel.com/config)
-compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250904/202509041931.XtQcy27H-lkp@intel.com/reproduce)
+---
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509041931.XtQcy27H-lkp@intel.com/
+	v1 -> v2:
+	      * Added commit message
+	      * Added Cc: stable@vger.kernel.org
+---
+ net/rds/ib_mr.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-Note: it may well be a FALSE warning. FWIW you are at least aware of it now.
-http://gcc.gnu.org/wiki/Better_Uninitialized_Warnings
-
-All warnings (new ones prefixed by >>):
-
-   samples/seccomp/clone-filter.c: In function 'main':
->> samples/seccomp/clone-filter.c:142:9: warning: 'ret' may be used uninitialized [-Wmaybe-uninitialized]
-     142 |         exit(ret);
-         |         ^~~~~~~~~
-   samples/seccomp/clone-filter.c:113:13: note: 'ret' was declared here
-     113 |         int ret, status;
-         |             ^~~
-
-
-vim +/ret +142 samples/seccomp/clone-filter.c
-
-   109	
-   110	int main(void)
-   111	{
-   112		pid_t ref_pid = -1, child_pid = -1;
-   113		int ret, status;
-   114	
-   115		ref_pid = fork();
-   116		if (ref_pid < 0)
-   117			exit(errno);
-   118		else if (ref_pid == 0)
-   119			do_ref_filter();
-   120	
-   121		child_pid = fork();
-   122		if (child_pid < 0)
-   123			goto out;
-   124		else if (child_pid == 0)
-   125			do_child_process(ref_pid);
-   126	
-   127		waitpid(child_pid, &status, 0);
-   128		if (WEXITSTATUS(status) != 0) {
-   129			perror("child process failed");
-   130			ret = WEXITSTATUS(status);
-   131			goto out;
-   132		}
-   133	
-   134		ret = 0;
-   135	
-   136	out:
-   137		if (ref_pid != -1)
-   138			kill(ref_pid, SIGKILL);
-   139		if (child_pid != -1)
-   140			kill(child_pid, SIGKILL);
-   141	
- > 142		exit(ret);
-
+diff --git a/net/rds/ib_mr.h b/net/rds/ib_mr.h
+index ea5e9aee4959e..5884de8c6f45b 100644
+--- a/net/rds/ib_mr.h
++++ b/net/rds/ib_mr.h
+@@ -108,7 +108,6 @@ struct rds_ib_mr_pool {
+ };
+ 
+ extern struct workqueue_struct *rds_ib_mr_wq;
+-extern bool prefer_frmr;
+ 
+ struct rds_ib_mr_pool *rds_ib_create_mr_pool(struct rds_ib_device *rds_dev,
+ 					     int npages);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.5
+
 
