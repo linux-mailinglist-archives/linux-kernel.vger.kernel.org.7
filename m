@@ -1,98 +1,68 @@
-Return-Path: <linux-kernel+bounces-801330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D2ECB443C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:59:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33484B443CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C8E116808F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:59:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEADC16EC53
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69373308F36;
-	Thu,  4 Sep 2025 16:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FBF2FB624;
+	Thu,  4 Sep 2025 16:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYvQ6oPU"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T3ol7o3g"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C382F549A;
-	Thu,  4 Sep 2025 16:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867AF2F3C0C
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757005157; cv=none; b=N8sRK5EIq6jtdS3gNgb6Ti+lJqS+sFgABIjTdz8czQU6huJnIoYVinD9sdJD8xzpyVZV3jpxEmvfWO1wrIJFatJOp0BtsxD6iNlj+4Iwyr4L+haMdQ1Vl4OEQ7of6kCH0/xGTEhlY33x/zZzQcSu75HLa+dweha75IOgXYU2TNs=
+	t=1757005173; cv=none; b=QmO/hHko9RQGcCtaRZarTjL4jJEISfRBA0ypUYlGaBm6uaxtK2a29GE1RnlF2wtgAjT/bzsjnceD6b2VlZgN8wD3f3QEIOmfOPkbPhFwrk0i0zwVblsNFZZoCSSAeDB2p0dNvld9NRgdu5dcYlYWClQ4lXKq5Dc+XWmG+KvOcrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757005157; c=relaxed/simple;
-	bh=V8KimZQ81hArIVZ6C9yKXFRBe2uNmxunNpoowpcVjbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iOm/rdBHoM1gOaMK0oDkOAxS5DMv2qHeVCb0MI0fuVjr3WZFDVu8HI5Amw7RWA6usE9/eEislJBnC6PR7I8PKaqVOoz0VXc4SVcHjR+y/hodDLVDxM1pX74xY784zno84R4vU+w8pR9ahUKUIfks+vTiwCMyq2zABIVMpqv6JL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYvQ6oPU; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3dae49b117bso1130459f8f.1;
-        Thu, 04 Sep 2025 09:59:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757005154; x=1757609954; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4wiMnO8SJb2U+ZRBvm3E5r/yRz6+i7UGeG4zkCo/238=;
-        b=ZYvQ6oPU7izAfxAhOFoTJ/ZyY8yaN4gAdouei7t4GmsUHKLFMScqwAoNwB1jPNivAU
-         +L3iFsSnErVs60JCBHoZp2+Q+AemnO3rAc9VeXZmlg9WAfaNuIq5ylW/9d5o70nnDVMo
-         HUCpzDxxuAe9B3AXIyERRjVzAJz1oLzgS5ftbh4fyV8eJUrjJR0Rk5CK3bnM+Bv01MBN
-         8uqWUt+wr3cmQIRTv6qRvliv0ANdiA/bTuFK+76Hu+BOeQpCG+C2z07p9OjJNb6tuH6X
-         lsOw5qkGC6acIJbdKpO1lULZiCSmZLtVmL4lhZycBBHamibDd+wYIUGOTs1aklmQAKLE
-         wJ+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757005154; x=1757609954;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4wiMnO8SJb2U+ZRBvm3E5r/yRz6+i7UGeG4zkCo/238=;
-        b=r1I+ZIu1hjt7yxBlDHwqThCj77vSATTCYXVsIYMUy6wJePs9PvW0c3cAOH3P4TW9Mx
-         JBq6OauWvjpU9LIhyJQeiiVMjDF9rtTP6tFtbNQWueRSqvHvbFq1DoXU7V0sNMCat9Im
-         8u5qu5EyLQVmqFKEhxKLNDpaQaxZrOh+prn+mmjYkleNLJN1NZy+mTJakZlklVa2D6Vc
-         U8Mu+cEJ8wOC2Nf/ByfiSTRzscERdNjvMC76jDzFZXgcAWlKFZDpBP93/EcRpucNNGgT
-         TDPmtT+JJ+wn+hE6ZKtJ68zf6TifaEvsVI2ALDWP6Avcqw/MRS+1KOQEfqrsw0mHKf8p
-         V+JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqCefuDG8G21dPdai1ZPQxBmFOli1rQ+cY5l+BtPMftBskb6ba+rkrhXOsts0Ig0a9g4AKm1a+0r2UxZhT@vger.kernel.org, AJvYcCXTPq2ZDfygc8PkjAJnGO/xHtx+5d7p2FuIg/+yhg9cj2mQCx7ChCERypTcgyai93ACRIl968iDWrHJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyEd32xaC/Q0dhF+H3jWvtbkxAFBD61hHqmQbmCiekeEeC4LMU
-	DLfxPBYjL7d5uvyaSm9rFHkKR69wdCjjoZLGYWinCWUV7hHIz1ncYqlZ
-X-Gm-Gg: ASbGncuPhOWY//yLVBRRci3l1CrKCeBeZEa3fZDeHNQ7g4oO3b5hPl1ITussPVMmVPL
-	p4enehUCc9vjK5FIomvoSro3uGRUcoopEXOtOcXc2Un4A6LDQ9RpStb21gPWlXnbmPRM6jTVHMK
-	RqjuyalyJ6TyYO88pySHTQIh3SvREzBD4dAD4WWOOvRAAsKPlO7QKIbcTFCd7Q4h0WxALtyYSDq
-	V3Vup5OMcgkjWdvO/gchS9XvKcXxVvKIY2G+qTngTep521OoxM9xGQxzoNTY30xZgXLZOCW2EyL
-	fJZ+14qepBSXX3mzQpNReqJWZ7cqydqjtCV203JNksktIz0nS11yX+SxRI6yXXshF5gyxXp9ZVh
-	/k5UJk8r/dBDhyp36tWisgo5CzCxmqbEpm9k/AEG4FkndoRWCYs0zYLl/3Q==
-X-Google-Smtp-Source: AGHT+IFMg/jl9QNiL+2gEITLcm308B1VPsZ0mxe+e158ckf+9ehNC37Po8BdzE5bH1ykhRQmwekUUg==
-X-Received: by 2002:a05:6000:2501:b0:3dd:8b62:5fd7 with SMTP id ffacd0b85a97d-3dd8b6260c7mr6576829f8f.25.1757005154259;
-        Thu, 04 Sep 2025 09:59:14 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:904e:70c8:edf3:59a4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf34493b8csm27633141f8f.59.2025.09.04.09.59.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 09:59:13 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/2] arm64: dts: renesas: r9a09g056: Add I3C node
-Date: Thu,  4 Sep 2025 17:59:09 +0100
-Message-ID: <20250904165909.281131-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250904165909.281131-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250904165909.281131-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1757005173; c=relaxed/simple;
+	bh=GwGa1VVBJOYX6Cuh5Z3rjCzdVbbjZ7uaala3loTkIO8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VYUJuDZFVYERzba8LrHvGJHsgDxnEuG8RHYhTXbDOKnfO4EHczwkohMxCMCQ0o1w5SH2+4tUsUGzCTlc0JGg/c+2PolZyT+GhdtOGllRZcfiPY8Ij94sytRZKosP2PclnzfH+udG9n47ump4h+/E3QXVjYURrQ943cX5f5y9V8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T3ol7o3g; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757005170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=lXvCrt+DTTQMf7tnGktkXK8dIlODkW2gH3Cn4in8KJk=;
+	b=T3ol7o3gOXL2sIYsEmR/Ac7jd5KpJ1nmeH5zBy5fV2sDp5cmEmYhPmT/LYvrngrkUQdYmF
+	58cjZgrGp8eXisxs+7biBdT0OaM9BeVYS2T795t72mJW9Ti/tSJeubOho027CQ6JFF8n+A
+	52VzHzTllCgSDtzCigF544sq4JtboMA=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-157-qktPnUO2N3aKwQ0BmKt3UA-1; Thu,
+ 04 Sep 2025 12:59:27 -0400
+X-MC-Unique: qktPnUO2N3aKwQ0BmKt3UA-1
+X-Mimecast-MFC-AGG-ID: qktPnUO2N3aKwQ0BmKt3UA_1757005166
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0BBB018002C1;
+	Thu,  4 Sep 2025 16:59:26 +0000 (UTC)
+Received: from wsxc.redhat.com (unknown [10.96.134.42])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9005B3002D27;
+	Thu,  4 Sep 2025 16:59:23 +0000 (UTC)
+From: Ricardo Robaina <rrobaina@redhat.com>
+To: audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: paul@paul-moore.com,
+	eparis@redhat.com,
+	Ricardo Robaina <rrobaina@redhat.com>
+Subject: [PATCH v1] audit: merge loops in __audit_inode_child()
+Date: Thu,  4 Sep 2025 13:59:19 -0300
+Message-ID: <20250904165919.3362000-1-rrobaina@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,60 +70,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Whenever there's audit context, __audit_inode_child() gets called
+numerous times, which can lead to high latency in scenarios that
+create too many sysfs/debugfs entries at once, for instance, upon
+device_add_disk() invocation.
 
-Add I3C node to RZ/V2N ("R9A09G056") SoC DTSI.
+   # uname -r
+   6.17.0-rc3+
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+   # auditctl -a always,exit -F path=/tmp -k foo
+   # time insmod loop max_loop=1000
+   real 0m42.753s
+   user 0m0.000s
+   sys  0m42.494s
+
+   # perf record -a insmod loop max_loop=1000
+   # perf report --stdio |grep __audit_inode_child
+   37.95%  insmod  [kernel.kallsyms]  [k] __audit_inode_child
+
+__audit_inode_child() searches for both the parent and the child
+in two different loops that iterate over the same list. This
+process can be optimized by merging these into a single loop,
+without changing the function behavior or affecting the code's
+readability.
+
+This patch merges the two loops that walk through the list
+context->names_list into a single loop. This optimization resulted
+in around 54% performance enhancement for the benchmark.
+
+   # uname -r
+   6.17.0-rc3+-enhanced
+
+   # auditctl -a always,exit -F path=/tmp -k foo
+   # time insmod loop max_loop=1000
+   real 0m19.388s
+   user 0m0.000s
+   sys  0m19.149s
+
+Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ kernel/auditsc.c | 40 ++++++++++++++++++----------------------
+ 1 file changed, 18 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-index c1672eb490ca..2dd8f7fe5fff 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-@@ -371,6 +371,39 @@ scif: serial@11c01400 {
- 			status = "disabled";
- 		};
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index eb98cd6fe91f..7abfb68687fb 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -2437,44 +2437,40 @@ void __audit_inode_child(struct inode *parent,
+ 	if (inode)
+ 		handle_one(inode);
  
-+		i3c: i3c@12400000 {
-+			compatible = "renesas,r9a09g056-i3c", "renesas,r9a09g047-i3c";
-+			reg = <0 0x12400000 0 0x10000>;
-+			clocks = <&cpg CPG_MOD 0x91>, <&cpg CPG_MOD 0x92>, <&cpg CPG_MOD 0x90>;
-+			clock-names = "pclk", "tclk", "pclkrw";
-+			interrupts = <GIC_SPI 674 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 675 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 676 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 677 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 678 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 679 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 680 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 681 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 682 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 689 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 690 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 692 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 693 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 694 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 695 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 696 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ierr", "terr", "abort", "resp",
-+					  "cmd", "ibi", "rx", "tx", "rcv",
-+					  "st", "sp", "tend", "nack",
-+					  "al", "tmo", "wu";
-+			resets = <&cpg 0x96>, <&cpg 0x97>;
-+			reset-names = "presetn", "tresetn";
-+			power-domains = <&cpg>;
-+			#address-cells = <3>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
+-	/* look for a parent entry first */
+ 	list_for_each_entry(n, &context->names_list, list) {
+-		if (!n->name ||
+-		    (n->type != AUDIT_TYPE_PARENT &&
+-		     n->type != AUDIT_TYPE_UNKNOWN))
++		/* can only match entries that have a name */
++		if (!n->name)
+ 			continue;
+ 
+-		if (n->ino == parent->i_ino && n->dev == parent->i_sb->s_dev &&
+-		    !audit_compare_dname_path(dname,
+-					      n->name->name, n->name_len)) {
++		/* look for a parent entry first */
++		if (!found_parent &&
++		    (n->type == AUDIT_TYPE_PARENT || n->type == AUDIT_TYPE_UNKNOWN) &&
++		    (n->ino == parent->i_ino && n->dev == parent->i_sb->s_dev &&
++		     !audit_compare_dname_path(dname, n->name->name, n->name_len))) {
+ 			if (n->type == AUDIT_TYPE_UNKNOWN)
+ 				n->type = AUDIT_TYPE_PARENT;
+ 			found_parent = n;
+-			break;
+ 		}
+-	}
+ 
+-	cond_resched();
+-
+-	/* is there a matching child entry? */
+-	list_for_each_entry(n, &context->names_list, list) {
+-		/* can only match entries that have a name */
+-		if (!n->name ||
+-		    (n->type != type && n->type != AUDIT_TYPE_UNKNOWN))
+-			continue;
+-
+-		if (!strcmp(dname->name, n->name->name) ||
+-		    !audit_compare_dname_path(dname, n->name->name,
++		/* is there a matching child entry? */
++		if (!found_child &&
++		    (n->type == type || n->type == AUDIT_TYPE_UNKNOWN) &&
++		    (!strcmp(dname->name, n->name->name) ||
++		     !audit_compare_dname_path(dname, n->name->name,
+ 						found_parent ?
+ 						found_parent->name_len :
+-						AUDIT_NAME_FULL)) {
++						AUDIT_NAME_FULL))) {
+ 			if (n->type == AUDIT_TYPE_UNKNOWN)
+ 				n->type = type;
+ 			found_child = n;
+-			break;
+ 		}
 +
- 		i2c0: i2c@14400400 {
- 			compatible = "renesas,riic-r9a09g056", "renesas,riic-r9a09g057";
- 			reg = <0 0x14400400 0 0x400>;
++		if (found_parent && found_child)
++			break;
+ 	}
+ 
++	cond_resched();
++
+ 	if (!found_parent) {
+ 		/* create a new, "anonymous" parent record */
+ 		n = audit_alloc_name(context, AUDIT_TYPE_PARENT);
 -- 
 2.51.0
 
