@@ -1,130 +1,175 @@
-Return-Path: <linux-kernel+bounces-801259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A01FEB442C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:30:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5187DB442C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3769D564BD2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:30:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12D2A171F68
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14587301486;
-	Thu,  4 Sep 2025 16:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064352367DF;
+	Thu,  4 Sep 2025 16:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1FEaiEd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="md/ghe+b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6860A246BD2;
-	Thu,  4 Sep 2025 16:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A82202F71;
+	Thu,  4 Sep 2025 16:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757003405; cv=none; b=J5+sgNZKZCfEOJa/bOoTeFt5ZQjKKGAvUr3GBB2P3lcIDHfDoAsHf2VTUo/KRDNc+gwX40d1fQwB5gDFMsCNUfh2vGnYmkPaBeSsWV83K2lAJPIoHUeAB9aT+bkUQPfVCCACxQOzQ7jMGRmbJEAPHpr5SLOUyUMnjKj8yhhrFMw=
+	t=1757003482; cv=none; b=ZIDFqcTvbepi+lUVha+oQyaLEK/ebyMPSOn9nDBabFj1Bh37Y9f1urVUyTaffEzdjf3KCexh67fQps+oOvj2j68OaO3oOE0bFFieh0QeJrfskWltwA6I4C6wP5C1J7Syoatx7BUiDvVpufgyRt8SlEgysoKsVvuiqs9Fsp5RLOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757003405; c=relaxed/simple;
-	bh=4ehfi8+Lv59X0i+iJrRIOdokVSqi9hA1hvm7g7eoTKE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Jh7NIj69jKWQbRAU/CSavB4ewV6C1pLwmgXKLnYtktXuF142G+50kIVihCNAzBLAgVn9QW0EZloCwwqosEbyO7RZewWnlaUwMkZa+TOJaQMBxEzPfUrobanQPedF2K3Fv1uw5FeLa5Zvffosmq7uYxX0Yf9hddB5Dj2MdfANjSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1FEaiEd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7EAEC4CEF0;
-	Thu,  4 Sep 2025 16:30:04 +0000 (UTC)
+	s=arc-20240116; t=1757003482; c=relaxed/simple;
+	bh=kqQwbDXXQF4P2jHFoQGE1gTtX/4I+rWArvV7YFqReek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NDUzAJIVk/NMZbKs/6WbDByLPsYh3JnC8l8qHqco5Y0wnIAEgp+6F024UPGI6rLam00SMRa8KkgNI9+2rLwmWlA7nTPnxW7WpJEGcO61lNwhwnwtqWqEc9ChAqIDd146haSafLKM0EUnm6ueY8sOzt2X2JK/UlNQHmuedGEByfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=md/ghe+b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9716C4CEF0;
+	Thu,  4 Sep 2025 16:31:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757003404;
-	bh=4ehfi8+Lv59X0i+iJrRIOdokVSqi9hA1hvm7g7eoTKE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=E1FEaiEdijJ/qVYMN0hgZPGv9b66QndjSeallMhxDv+a/Tcq4Vk0Yc2Lk6QZwi3GJ
-	 /Z98DuNYBKHyeXuSLO+Q9qi4+/TkP+Wkzl8VZkXP4zPkaMyVLXdRHlq8he5yVt8sWx
-	 ySIMApJDdaDNwfmtknUdqUCEYVLOwpCFicOLic5eWQxeaGpM7QMt7f3zdVnmuaRKjD
-	 gWRVZE+T9nCssjaz8YlQt7VGD7LdyT8jjqHgNsPtqaqzbL/Ho0lhAYZFvmGQv/mV7F
-	 3uetM9g4apZWYNmhkcwvLVLcJ7pDtuu/JQhxkt6U7lkZo1/uT0VRhq7gXUL+Im8qvT
-	 KSS0HT0lalBYA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADBB383BF69;
-	Thu,  4 Sep 2025 16:30:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1757003481;
+	bh=kqQwbDXXQF4P2jHFoQGE1gTtX/4I+rWArvV7YFqReek=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=md/ghe+bvpopfvq2D0PKcjjn9nYpr7MpdPvXfCQiRzMoJmhxi2xQBH6NoDeNafY6j
+	 PAP6BzCih7rdVdx02/3JDlRzjeItdy7JBFHt49fjd3CdOnPxKhe+HAmBOQy3WVXk4+
+	 v2XFf2mToLD2DRE7tLZpMSeD5HlbfCA6wapQBs8huy93AX7CGcvsdbJTynI8+/UuLo
+	 c5cQklKBuBWalFgPlx/6h5r01l2Aw7PDMMjLG29Hbz5iBWjKq8kLiADPD8lIe5xJgx
+	 i9OAYa8/fTdX4I0XLXC2d69Y7QQAi4FAh4BLQ6cZckFgcr7zfEfyGcBkRKA5vVQpzk
+	 u7jEioSFTuDNQ==
+Date: Thu, 4 Sep 2025 06:31:20 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Yi Tao <escape@linux.alibaba.com>
+Cc: hannes@cmpxchg.org, mkoutny@suse.com, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] cgroup: replace global percpu_rwsem with
+ signal_struct->group_rwsem when writing cgroup.procs/threads
+Message-ID: <aLm-2Lcnu602AB85@slm.duckdns.org>
+References: <f460f494245710c5b6649d6cc7e68b3a28a0a000.1756896828.git.escape@linux.alibaba.com>
+ <cover.1756985260.git.escape@linux.alibaba.com>
+ <068d58f1f497bc4971c6ac0bae58bf53b98451fd.1756985260.git.escape@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v1] Bluetooth: btusb: Add new VID/PID 13d3/3633 for MT7922
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <175700340974.1874432.5518448218414871531.git-patchwork-notify@kernel.org>
-Date: Thu, 04 Sep 2025 16:30:09 +0000
-References: <20250904114611.762004-1-chris.lu@mediatek.com>
-In-Reply-To: <20250904114611.762004-1-chris.lu@mediatek.com>
-To: Chris Lu <chris.lu@mediatek.com>
-Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
- sean.wang@mediatek.com, jiande.lu@mediatek.com, will-cy.Lee@mediatek.com,
- ss.wu@mediatek.com, steve.lee@mediatek.com, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <068d58f1f497bc4971c6ac0bae58bf53b98451fd.1756985260.git.escape@linux.alibaba.com>
 
-Hello:
+Hello,
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+On Thu, Sep 04, 2025 at 07:39:32PM +0800, Yi Tao wrote:
+...
+> To avoid affecting other users, the per-thread-group rwsem is only used
+> when the `favordynmods` flag is enabled.
 
-On Thu, 4 Sep 2025 19:46:11 +0800 you wrote:
-> Add VID 13d3 & PID 3633 for MediaTek MT7922 USB Bluetooth chip.
-> 
-> The information in /sys/kernel/debug/usb/devices about the Bluetooth
-> device is listed as the below.
-> 
-> T:  Bus=06 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
-> D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-> P:  Vendor=13d3 ProdID=3633 Rev= 1.00
-> S:  Manufacturer=MediaTek Inc.
-> S:  Product=Wireless_Device
-> S:  SerialNumber=000000000
-> C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
-> A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
-> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
-> E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-> E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-> I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-> I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-> I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-> I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-> I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-> I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-> I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-> E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
-> E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
-> I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-> E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
-> E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
-> 
-> [...]
+Can you please:
 
-Here is the summary with links:
-  - [v1] Bluetooth: btusb: Add new VID/PID 13d3/3633 for MT7922
-    https://git.kernel.org/bluetooth/bluetooth-next/c/24fca13e2eb2
+- Note that this isn't necessary for cgroup2's recommended workflow and is
+  thus gated behind favordynmods.
 
-You are awesome, thank you!
+- Include performance numbers briefly.
+
+> +extern bool have_favordynmods;
+> +
+>  /**
+>   * cgroup_threadgroup_change_begin - threadgroup exclusion for cgroups
+>   * @tsk: target task
+> @@ -838,6 +840,8 @@ struct cgroup_of_peak {
+>  static inline void cgroup_threadgroup_change_begin(struct task_struct *tsk)
+>  {
+>  	percpu_down_read(&cgroup_threadgroup_rwsem);
+> +	if (have_favordynmods)
+> +		down_read(&tsk->signal->group_rwsem);
+>  }
+>  
+>  /**
+> @@ -848,6 +852,8 @@ static inline void cgroup_threadgroup_change_begin(struct task_struct *tsk)
+>   */
+>  static inline void cgroup_threadgroup_change_end(struct task_struct *tsk)
+>  {
+> +	if (have_favordynmods)
+> +		up_read(&tsk->signal->group_rwsem);
+>  	percpu_up_read(&cgroup_threadgroup_rwsem);
+
+Hmm... I wonder whether turning on/off the flag is racy. ie. what prevents
+have_favordynmods flipping while a task is between change_begin and end?
+
+> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+> index 1ef1edbaaf79..86fbc99a9174 100644
+> --- a/include/linux/sched/signal.h
+> +++ b/include/linux/sched/signal.h
+> @@ -226,6 +226,10 @@ struct signal_struct {
+>  	struct tty_audit_buf *tty_audit_buf;
+>  #endif
+>  
+> +#ifdef CONFIG_CGROUPS
+> +	struct rw_semaphore group_rwsem;
+> +#endif
+
+Maybe name it more specific - e.g. cgroup_threadgroup_rwsem?
+
+>  /**
+>   * cgroup_attach_lock - Lock for ->attach()
+> - * @lock_threadgroup: whether to down_write cgroup_threadgroup_rwsem
+> + * @tsk: thread group to lock
+> + * @lock_threadgroup: whether to down_write rwsem
+>   *
+>   * cgroup migration sometimes needs to stabilize threadgroups against forks and
+>   * exits by write-locking cgroup_threadgroup_rwsem. However, some ->attach()
+> @@ -2480,21 +2481,30 @@ EXPORT_SYMBOL_GPL(cgroup_path_ns);
+>   * write-locking cgroup_threadgroup_rwsem. This allows ->attach() to assume that
+>   * CPU hotplug is disabled on entry.
+>   */
+
+Please expand the function comment to explain what's going on and why and
+maybe point to it from a comment on top of favor_dynmods.
+
+> -void cgroup_attach_lock(bool lock_threadgroup)
+> +void cgroup_attach_lock(struct task_struct *tsk, bool lock_threadgroup)
+
+As @tsk is an optional argument, it'd probably make more sense to put it at
+the end.
+
+> @@ -3010,15 +3008,27 @@ struct task_struct *cgroup_procs_write_start(char *buf, bool threadgroup,
+>  	 */
+>  	if (tsk->no_cgroup_migration || (tsk->flags & PF_NO_SETAFFINITY)) {
+>  		tsk = ERR_PTR(-EINVAL);
+> -		goto out_unlock_threadgroup;
+> +		goto out_unlock_rcu;
+>  	}
+> -
+>  	get_task_struct(tsk);
+> -	goto out_unlock_rcu;
+>  
+> -out_unlock_threadgroup:
+> -	cgroup_attach_unlock(*threadgroup_locked);
+> -	*threadgroup_locked = false;
+> +	rcu_read_unlock();
+> +
+> +	/*
+> +	 * If we migrate a single thread, we don't care about threadgroup
+> +	 * stability. If the thread is `current`, it won't exit(2) under our
+> +	 * hands or change PID through exec(2). We exclude
+> +	 * cgroup_update_dfl_csses and other cgroup_{proc,thread}s_write
+> +	 * callers by cgroup_mutex.
+> +	 * Therefore, we can skip the global lock.
+> +	 */
+> +	lockdep_assert_held(&cgroup_mutex);
+> +	*threadgroup_locked = pid || threadgroup;
+> +
+> +	cgroup_attach_lock(tsk, *threadgroup_locked);
+
+I'm not sure this relocation is safe. What prevents e.g. @tsk changing its
+group leader or signal struct before lock is grabbed?
+
+Thanks.
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+tejun
 
