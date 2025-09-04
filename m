@@ -1,240 +1,123 @@
-Return-Path: <linux-kernel+bounces-801523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28774B4462A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:08:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 480B2B4462C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8425AA20E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:08:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A0D6585A93
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECEE267AF2;
-	Thu,  4 Sep 2025 19:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B323826A0C6;
+	Thu,  4 Sep 2025 19:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pfoHF/ho"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="KrgrQzzH"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBCD2417D4;
-	Thu,  4 Sep 2025 19:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757012929; cv=none; b=GQKj0U3w14cLmVFU3/7sG06AJSF3V6GhlE1gonAOL3Kv2TGnFttkAdEgNWnAk3C1r8wMxZcu9hQAqk8N5mphUq0cRyU390/ppEnverCFeDKxRgyBC2LhAc2CCxnar1oCOnnvjckT/AjPF61VCZbHu/3xtWmxtLEnerMiNFvDcOY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757012929; c=relaxed/simple;
-	bh=t+c0v2ur5TLaW4XhXaB4CR45lCrauYfOCz2+q4bGReU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tBBhNe+LpfDnKeisjpi/fJZaWdJkFAYQiMt40ezcr6k5MFVODYNhSyQHn7LhxVgj8MBs4IoyXGfvDBTlnTRMfQ/Fu6sbRMD390LFFd1p2w4Kl453zXR99n1CH7OEZ1wiPZCF5ILl+xBmA+xbkrlikKJkotubh3Yrsk8DVMpIr/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pfoHF/ho; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CC25C4CEF0;
-	Thu,  4 Sep 2025 19:08:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757012928;
-	bh=t+c0v2ur5TLaW4XhXaB4CR45lCrauYfOCz2+q4bGReU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pfoHF/hoADW0pe8O/bGGGd2a0LhFzVNs0NDfuLyFdBmDB85IOoTOEfV5lsbqz7cfU
-	 7yCGSwq6lpiDtFEOr+iy/vwhTgKrH8pFcycJIgUw/y1HFDNnv8kAX8fmQ0iYLof7/f
-	 Vnpto91YW3QYUj581K/5rgy8sv7aAhPzZbdm8Mq3mUH2ItBRlocibrHqLc0UK79FHZ
-	 ryWYNVAYFZxXRYFloNK1+1E7Onfjn5w8mvzHFhbrz2C95RnVnLz2+k56a2kPQcA9kp
-	 3slY5fuTvbaaKDVBknIQHPdG4BeKDSOA5M5nYqzXwB1eSpvZdZJ/o7A5aaGHUQKH2/
-	 ViCi0X8s8MBhQ==
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7456d2b49f5so860313a34.0;
-        Thu, 04 Sep 2025 12:08:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUF7WBEBYfGwvLqEX6jHOBUw0oe055XNq9Yhk+xDxAomIMB9oUvemHJRVKYcZlHXiuFjWxmx9orYe3F@vger.kernel.org, AJvYcCV8aRU/jY3YY4WKv9I86I2voXhj/padNGYA9V2BHU8ptyioqesa7raYbC486SC1CD8drbWcpT7XirRgUDPB@vger.kernel.org, AJvYcCXK40L4qUwPRFDELgkFHTBF4+FsyfJpXI29SAahyNige8U7H2dw4c2WpAkWu9zLacAfVYr1PM+zx7mK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH2QB8hoirJzi+C4LGBVb3MUBNjKErh3Qj4ohXyuSaufz4Oxmf
-	x/0Ffqu+5EVprTC07n/gJf8jZvXGEPUU5ou0zRdP4Q6JlMKLpxMu5jmjkp68kkHTOVBOU4DUC5N
-	ITPkZnamBY/xDIdFcxKhzm9zRpa1ggvw=
-X-Google-Smtp-Source: AGHT+IHNgDNQOE0rAXRLs65sHYP8dJkh6/SkGrwmDaRfsiYWq/8taut6vhsUcqBrE5ugz4uHHzjukMlsQzCco9VsHN8=
-X-Received: by 2002:a05:6830:d83:b0:745:9a08:c9b2 with SMTP id
- 46e09a7af769-7459a08ced9mr3347248a34.5.1757012927953; Thu, 04 Sep 2025
- 12:08:47 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E554D599;
+	Thu,  4 Sep 2025 19:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757013025; cv=pass; b=GBEeIFxP/1XTIEEO4OyLiVnYtZYLecPCRbX9DD4WTw013b8GA9Ps8H+YNdcBTVD9srabDt3g0M2JvdomfTzVYd6dV+eeiZZdNRsB/EsQ6sZiCfS6swZVptAt4F1KzULlRJrEzn+i6UHeHYjkFtXcJFhBrKR9bdxEEoeyjqGU2Ho=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757013025; c=relaxed/simple;
+	bh=+h4Zse7WhDcAJDw0AavI4Al0yjN0FBx0HhqVfrpEfIg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=GdPzBJqnf+cD60NDUSDxrpBs02zr7gaEoUtVTLML/f/wAlFRcgKJHMCYxm3nnynOtdlQRUrc7/CX1I0CQj1IMdsdLt0fm8B3uqbgAEBZ6IsKisML0HXBWf5DqFvFjFc76+RLs8Jb+iUqTTfjneFWRAHK76oOtMnY8ANmPfZUn14=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=KrgrQzzH; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757013016; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=EyAXeSu3/4WsEdNzyrP8tAQT1gP81vdqPZpi7gqVzRlQwRcMt/DR5QJAhP0OMJGxn/1ZALfxn7gHXuxKqKzeJnGNcmxlgfLQ4lWeFrJpEChW1SL0HIuAY3xDtjJ/aYX8EhtlOfB3C/OFIx6xuP7bPHWCsjzphUCbmpK2+fPxx8s=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757013016; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+h4Zse7WhDcAJDw0AavI4Al0yjN0FBx0HhqVfrpEfIg=; 
+	b=MWHm/Vmi+YouFlPxnuSLcdyzNM4twXnNan5Lj4mEKbosagIWAJVRxCqm0A07sXE0M9WHvWXW44vJB9inpcu4pnFOiaWV5cEo7e4kJgqJuA2e9/qpu+KVqj+Oj58kkpUX4IhsDBeyhWwehgFYFrSrC4IY9kh1wGv1nlbjWT/q2Rw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757013015;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=+h4Zse7WhDcAJDw0AavI4Al0yjN0FBx0HhqVfrpEfIg=;
+	b=KrgrQzzHT6tJrG2R3fySF+qofUY7rNqw+Mhi+ZQYTu3BLj9S8jCnt5z7AbQBoDsa
+	lxVzDpDg3zzC89uIh//UC6/VmP1/9wdkxV1zxM3x1V86Ks61eQl9bq6oe3MOaBaqnSg
+	uMxQx+rJEhXYtxAJyNKV7mMbcw7IlIUEYOrQygr8=
+Received: by mx.zohomail.com with SMTPS id 17570130111351013.0951418007742;
+	Thu, 4 Sep 2025 12:10:11 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250904184801.47498-1-dave@stgolabs.net>
-In-Reply-To: <20250904184801.47498-1-dave@stgolabs.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 4 Sep 2025 21:08:37 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j9r6bKOXuo+o0gdhryR1ne3WY3B0o0DufEHB9y3j0Leg@mail.gmail.com>
-X-Gm-Features: Ac12FXxMZElNIwd5D-TfEllMoPYRQzeOSpYa1MsH1gHzWXLyA0sPb5Vh9GDA8Mk
-Message-ID: <CAJZ5v0j9r6bKOXuo+o0gdhryR1ne3WY3B0o0DufEHB9y3j0Leg@mail.gmail.com>
-Subject: Re: [PATCH] acpi, tables: Rename coherency CFMW restrictions
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: rafael.j.wysocki@intel.com, dave.jiang@intel.com, dan.j.williams@intel.com, 
-	jonathan.cameron@huawei.com, alejandro.lucero-palau@amd.com, 
-	ira.weiny@intel.com, alison.schofield@intel.com, a.manzanares@samsung.com, 
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v2 RESEND] media: vidtv: initialize local pointers upon
+ transfer of memory ownership
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250904054000.3848107-1-aha310510@gmail.com>
+Date: Thu, 4 Sep 2025 16:09:56 -0300
+Cc: mchehab@kernel.org,
+ linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org,
+ syzbot+1d9c0edea5907af239e0@syzkaller.appspotmail.com
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <67D8F9B1-3121-469A-8F50-952BD4C0C99F@collabora.com>
+References: <20250904054000.3848107-1-aha310510@gmail.com>
+To: Jeongjun Park <aha310510@gmail.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Thu, Sep 4, 2025 at 8:48=E2=80=AFPM Davidlohr Bueso <dave@stgolabs.net> =
-wrote:
->
-> ACPICA commit 710745713ad3a2543dbfb70e84764f31f0e46bdc
->
-> This has been renamed in more recent CXL specs, as
-> type3 (memory expanders) can also use HDM-DB for
-> device coherent memory.
->
-> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
+Hi Jeongjun,
 
-A link to the corresponding upstream commit, please?
+You=E2=80=99re resending this, but there were comments on v2.
 
+If you=E2=80=99ve taken steps to address them, please send a v3 instead.
+
+> On 4 Sep 2025, at 02:40, Jeongjun Park <aha310510@gmail.com> wrote:
+>=20
+> vidtv_channel_si_init() creates a temporary list (program, service, =
+event)
+> and ownership of the memory itself is transferred to the PAT/SDT/EIT
+> tables through vidtv_psi_pat_program_assign(),
+> vidtv_psi_sdt_service_assign(), vidtv_psi_eit_event_assign().
+>=20
+> The problem here is that the local pointer where the memory ownership
+> transfer was completed is not initialized to NULL. This causes the
+> vidtv_psi_pmt_create_sec_for_each_pat_entry() function to fail, and
+> in the flow that jumps to free_eit, the memory that was freed by
+> vidtv_psi_*_table_destroy() can be accessed again by
+> vidtv_psi_*_event_destroy() due to the uninitialized local pointer, so =
+it
+> is freed once again.
+>=20
+> Therefore, to prevent use-after-free and double-free vuln, local =
+pointers
+
+Please do not use =E2=80=9Cvuln=E2=80=9D instead of vulnerability.
+
+> must be initialized to NULL when transferring memory ownership.
+>=20
+> Cc: <stable@vger.kernel.org>
+> Reported-by: syzbot+1d9c0edea5907af239e0@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D1d9c0edea5907af239e0
+> Fixes: 3be8037960bc ("media: vidtv: add error checks")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 > ---
->  drivers/cxl/acpi.c           |  4 ++--
->  include/acpi/actbl1.h        |  4 ++--
->  tools/testing/cxl/test/cxl.c | 18 +++++++++---------
->  3 files changed, 13 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-> index 26c494704437..2cf75b553f26 100644
-> --- a/drivers/cxl/acpi.c
-> +++ b/drivers/cxl/acpi.c
-> @@ -128,9 +128,9 @@ static unsigned long cfmws_to_decoder_flags(int restr=
-ictions)
->  {
->         unsigned long flags =3D CXL_DECODER_F_ENABLE;
->
-> -       if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_TYPE2)
-> +       if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_DEVMEM)
->                 flags |=3D CXL_DECODER_F_TYPE2;
-> -       if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_TYPE3)
-> +       if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM)
->                 flags |=3D CXL_DECODER_F_TYPE3;
->         if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_VOLATILE)
->                 flags |=3D CXL_DECODER_F_RAM;
-> diff --git a/include/acpi/actbl1.h b/include/acpi/actbl1.h
-> index 99fd1588ff38..eb787dfbd2fa 100644
-> --- a/include/acpi/actbl1.h
-> +++ b/include/acpi/actbl1.h
-> @@ -560,8 +560,8 @@ struct acpi_cedt_cfmws_target_element {
->
->  /* Values for Restrictions field above */
->
-> -#define ACPI_CEDT_CFMWS_RESTRICT_TYPE2      (1)
-> -#define ACPI_CEDT_CFMWS_RESTRICT_TYPE3      (1<<1)
-> +#define ACPI_CEDT_CFMWS_RESTRICT_DEVMEM      (1)
-> +#define ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM (1<<1)
->  #define ACPI_CEDT_CFMWS_RESTRICT_VOLATILE   (1<<2)
->  #define ACPI_CEDT_CFMWS_RESTRICT_PMEM       (1<<3)
->  #define ACPI_CEDT_CFMWS_RESTRICT_FIXED      (1<<4)
-> diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
-> index 6a25cca5636f..ba50338f8ada 100644
-> --- a/tools/testing/cxl/test/cxl.c
-> +++ b/tools/testing/cxl/test/cxl.c
-> @@ -210,7 +210,7 @@ static struct {
->                         },
->                         .interleave_ways =3D 0,
->                         .granularity =3D 4,
-> -                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_TYPE3 =
-|
-> +                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_HOSTON=
-LYMEM |
->                                         ACPI_CEDT_CFMWS_RESTRICT_VOLATILE=
-,
->                         .qtg_id =3D FAKE_QTG_ID,
->                         .window_size =3D SZ_256M * 4UL,
-> @@ -225,7 +225,7 @@ static struct {
->                         },
->                         .interleave_ways =3D 1,
->                         .granularity =3D 4,
-> -                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_TYPE3 =
-|
-> +                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_HOSTON=
-LYMEM |
->                                         ACPI_CEDT_CFMWS_RESTRICT_VOLATILE=
-,
->                         .qtg_id =3D FAKE_QTG_ID,
->                         .window_size =3D SZ_256M * 8UL,
-> @@ -240,7 +240,7 @@ static struct {
->                         },
->                         .interleave_ways =3D 0,
->                         .granularity =3D 4,
-> -                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_TYPE3 =
-|
-> +                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_HOSTON=
-LYMEM |
->                                         ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->                         .qtg_id =3D FAKE_QTG_ID,
->                         .window_size =3D SZ_256M * 4UL,
-> @@ -255,7 +255,7 @@ static struct {
->                         },
->                         .interleave_ways =3D 1,
->                         .granularity =3D 4,
-> -                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_TYPE3 =
-|
-> +                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_HOSTON=
-LYMEM |
->                                         ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->                         .qtg_id =3D FAKE_QTG_ID,
->                         .window_size =3D SZ_256M * 8UL,
-> @@ -270,7 +270,7 @@ static struct {
->                         },
->                         .interleave_ways =3D 0,
->                         .granularity =3D 4,
-> -                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_TYPE3 =
-|
-> +                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_HOSTON=
-LYMEM |
->                                         ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->                         .qtg_id =3D FAKE_QTG_ID,
->                         .window_size =3D SZ_256M * 4UL,
-> @@ -285,7 +285,7 @@ static struct {
->                         },
->                         .interleave_ways =3D 0,
->                         .granularity =3D 4,
-> -                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_TYPE3 =
-|
-> +                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_HOSTON=
-LYMEM |
->                                         ACPI_CEDT_CFMWS_RESTRICT_VOLATILE=
-,
->                         .qtg_id =3D FAKE_QTG_ID,
->                         .window_size =3D SZ_256M,
-> @@ -302,7 +302,7 @@ static struct {
->                         .interleave_arithmetic =3D ACPI_CEDT_CFMWS_ARITHM=
-ETIC_XOR,
->                         .interleave_ways =3D 0,
->                         .granularity =3D 4,
-> -                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_TYPE3 =
-|
-> +                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_HOSTON=
-LYMEM |
->                                         ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->                         .qtg_id =3D FAKE_QTG_ID,
->                         .window_size =3D SZ_256M * 8UL,
-> @@ -318,7 +318,7 @@ static struct {
->                         .interleave_arithmetic =3D ACPI_CEDT_CFMWS_ARITHM=
-ETIC_XOR,
->                         .interleave_ways =3D 1,
->                         .granularity =3D 0,
-> -                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_TYPE3 =
-|
-> +                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_HOSTON=
-LYMEM |
->                                         ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->                         .qtg_id =3D FAKE_QTG_ID,
->                         .window_size =3D SZ_256M * 8UL,
-> @@ -334,7 +334,7 @@ static struct {
->                         .interleave_arithmetic =3D ACPI_CEDT_CFMWS_ARITHM=
-ETIC_XOR,
->                         .interleave_ways =3D 8,
->                         .granularity =3D 1,
-> -                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_TYPE3 =
-|
-> +                       .restrictions =3D ACPI_CEDT_CFMWS_RESTRICT_HOSTON=
-LYMEM |
->                                         ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->                         .qtg_id =3D FAKE_QTG_ID,
->                         .window_size =3D SZ_512M * 6UL,
-> --
-> 2.39.5
->
->
+> v2: Improved patch description wording and CC stable mailing list
+> - Link to v1: =
+https://lore.kernel.org/all/20250822065849.1145572-1-aha310510@gmail.com/
+> ---
+> drivers/media/test-drivers/vidtv/vidtv_channel.c | 3 +++
+> 1 file changed, 3 insertions(+)
+
+=E2=80=94 Daniel
+
 
