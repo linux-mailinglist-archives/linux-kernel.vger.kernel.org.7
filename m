@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-801756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9D0B44986
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:24:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4302B44989
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA6E47BDF21
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:23:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED00016D0AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFCE30BB94;
-	Thu,  4 Sep 2025 22:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910B331158C;
+	Thu,  4 Sep 2025 22:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NwOs0P0c";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GrG8EfCy"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FQhYrPS0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6+kbqhCJ"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDC13054FF
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF60301009
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757024476; cv=none; b=a20yAhjQyMjD7UMMCAKckWCh4Zi/E7a6xOSVLH2dsoZd/BzF7jtlZfejMB8M5KxIZzSCNSasWIj2neAmt3Dw/OSY1y48CtSZoZ76zuk4L/nZaQJLJpGK9aJJzjJGkLvQsyluEhpmtzXVM6DIP1E6eU88df8+X13GEKPsN4uu2YI=
+	t=1757024477; cv=none; b=ZfXMroK0QLvQCrm+M52jiE3letE5kvxbrXa+s3w1yC3raGBldcvaq/M/CNmd4R1SVGS10XfvQNricQq6sGYyT6EdO/WkCmlRl99wh/rz0InFtoP3Ma3uxGRP04xXhg2qvuQYe4kGB4e/NZxr4qSB3e1yYznIjHsFaNFaPv8mR5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757024476; c=relaxed/simple;
-	bh=FxTr9oXKqmIaM2nLAIBh+805IyjRixsm2xJIhBZUuOg=;
+	s=arc-20240116; t=1757024477; c=relaxed/simple;
+	bh=kNYmSRU50YUAivixc6gv7PhCtu1rWHRdLhNs8c4aPHU=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=nXCSPDqfmgdWpgjL8Mh+qq6BWA/OnkOvMnzF5huwwIaTiJI9CReu0LqG9jDc1dQYmdQGEV5Se9+BZgvXwNvpx03Of0c8jjSM/h6VsF2uqprNRP4wzFvhCzO4lB94eA1GveDK20FdxRg0UQoMvx+GrbLbELySTbuiyMhYvZSS09E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NwOs0P0c; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GrG8EfCy; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=Gpp5WgPRrzM5Ro3tGJCXS0eknj5iVOW4vbYf75VK9VfeQjmWbElSp/oAzlKsOYTMx3Moph5suhTdcZAt+WxQlMAAlyVJ6eb49X4sXeu2gp/04lL/eF3RWepG+kEdvIdsS/TXCxJE3z06o2IavAGPEZ4NghxFYcQFzOh41wZQyaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FQhYrPS0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6+kbqhCJ; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250904185720.403484967@linutronix.de>
+Message-ID: <20250904185720.465343178@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757024472;
+	s=2020; t=1757024474;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=e8E5bexpGFTxzkTPKBdqXosE3FCUcPMxfP/7Owfh9kU=;
-	b=NwOs0P0cP6EQ6RxpMhOal4M0/Vv0CqYf+95/p91/LoU09g4y1YEjwC66qN430E1XaTnD0U
-	5zkCmtK6JxTbEO0RWx7GCpI16MJyIzFr6p2pe9GCnG/+WCFzQZwJvgUvtKZeQcRwNvTCmy
-	0QrrZTcrbJ99xli4IueaxN6TNmtVWnDNP8/4zh8zO1tioQIXmtp7CGscvxvOguIVjJimXA
-	DgVL5ubH/kfsiXZguyw5mef3YZhWRGTMs4wyo8Kpn719N43flNRVTbU8RjN4qXr/nKNQqv
-	/AqWfsJUwwW7sH7TRdsx8KrgelfHCYo97oJZvrYfaRBE/izU+F+JAZgo5vLaFw==
+	 references:references; bh=93xME4C2iVwuO0PKXV1UomsxAEhn+I0gsGktpnBAUc0=;
+	b=FQhYrPS03dXE5hUFCykBgESAy4HS9rMUEHzDLP8YUXUMfW6gdZXYSPweVX7+HT+1PnnWl/
+	VRJ481zNBgNR9618GDQoWLlZQrAwTLKTaGEPM6k5jTQ9y16QoXpW6HOEBEdFn1o+kzLryZ
+	nDhasTEI0F4RDHNz3k5xltrnMe6jyiW7I5oP2EKusds+Gqi8M16IKz+9Q20PaL5dnoAnx2
+	ysU9RK/ysc+B+XFX1e7wXBgesuZC+hiSpaIwISrjjPATOiRdbotLwLMa3ioE31GixwFhFd
+	Dj08aIwZuHVFMnP7vIpReRHnOUC7yYTGwtXiEGasBP5mHBmyWb5fvl/J/FVIlg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757024472;
+	s=2020e; t=1757024474;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=e8E5bexpGFTxzkTPKBdqXosE3FCUcPMxfP/7Owfh9kU=;
-	b=GrG8EfCy463wVt1CR9QB2guzZKCctFKT0K/nMaS5cQRFBLAr1hCO/pmYaoxKHt433eSxmu
-	It5ZoYJBMVp7ueBw==
+	 references:references; bh=93xME4C2iVwuO0PKXV1UomsxAEhn+I0gsGktpnBAUc0=;
+	b=6+kbqhCJQAE3n/9RUrwG2dgRGh9y7UrDPfo4NWW1LCwcqrVL4LmIJ2U5uqNEfsOk3JZGGG
+	6YR+inv0jlcf7WAw==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Michael Jeanson <mjeanson@efficios.com>,
@@ -69,7 +69,7 @@ Cc: Michael Jeanson <mjeanson@efficios.com>,
  Huacai Chen <chenhuacai@kernel.org>,
  Paul Walmsley <paul.walmsley@sifive.com>,
  Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [patch V3 20/37] rseq: Replace the original debug implementation
+Subject: [patch V3 21/37] rseq: Make exit debugging static branch based
 References: <20250904185336.943880027@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,114 +78,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Fri,  5 Sep 2025 00:21:11 +0200 (CEST)
+Date: Fri,  5 Sep 2025 00:21:13 +0200 (CEST)
 
-Just utilize the new infrastructure and put the original one to rest.
+Disconnect it from the config switch and use the static debug branch. This
+is a temporary measure for validating the rework. At the end this check
+needs to be hidden behind lockdep as it has nothing to do with the other
+debug infrastructure, which mainly aids user space debugging by enabling a
+zoo of checks which terminate misbehaving tasks instead of letting them
+keep the hard to diagnose pieces.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
 ---
- kernel/rseq.c |   80 ++++++++--------------------------------------------------
- 1 file changed, 12 insertions(+), 68 deletions(-)
+ include/linux/rseq_entry.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -472,83 +472,27 @@ void __rseq_handle_notify_resume(struct
+--- a/include/linux/rseq_entry.h
++++ b/include/linux/rseq_entry.h
+@@ -275,7 +275,7 @@ static __always_inline void rseq_exit_to
  
- #ifdef CONFIG_DEBUG_RSEQ
- /*
-- * Unsigned comparison will be true when ip >= start_ip, and when
-- * ip < start_ip + post_commit_offset.
-- */
--static bool in_rseq_cs(unsigned long ip, struct rseq_cs *rseq_cs)
--{
--	return ip - rseq_cs->start_ip < rseq_cs->post_commit_offset;
--}
--
--/*
-- * If the rseq_cs field of 'struct rseq' contains a valid pointer to
-- * user-space, copy 'struct rseq_cs' from user-space and validate its fields.
-- */
--static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
--{
--	struct rseq_cs __user *urseq_cs;
--	u64 ptr;
--	u32 __user *usig;
--	u32 sig;
--	int ret;
--
--	if (get_user_masked_u64(&ptr, &t->rseq->rseq_cs))
--		return -EFAULT;
--
--	/* If the rseq_cs pointer is NULL, return a cleared struct rseq_cs. */
--	if (!ptr) {
--		memset(rseq_cs, 0, sizeof(*rseq_cs));
--		return 0;
--	}
--	/* Check that the pointer value fits in the user-space process space. */
--	if (ptr >= TASK_SIZE)
--		return -EINVAL;
--	urseq_cs = (struct rseq_cs __user *)(unsigned long)ptr;
--	if (copy_from_user(rseq_cs, urseq_cs, sizeof(*rseq_cs)))
--		return -EFAULT;
--
--	if (rseq_cs->start_ip >= TASK_SIZE ||
--	    rseq_cs->start_ip + rseq_cs->post_commit_offset >= TASK_SIZE ||
--	    rseq_cs->abort_ip >= TASK_SIZE ||
--	    rseq_cs->version > 0)
--		return -EINVAL;
--	/* Check for overflow. */
--	if (rseq_cs->start_ip + rseq_cs->post_commit_offset < rseq_cs->start_ip)
--		return -EINVAL;
--	/* Ensure that abort_ip is not in the critical section. */
--	if (rseq_cs->abort_ip - rseq_cs->start_ip < rseq_cs->post_commit_offset)
--		return -EINVAL;
--
--	usig = (u32 __user *)(unsigned long)(rseq_cs->abort_ip - sizeof(u32));
--	ret = get_user(sig, usig);
--	if (ret)
--		return ret;
--
--	if (current->rseq_sig != sig) {
--		printk_ratelimited(KERN_WARNING
--			"Possible attack attempt. Unexpected rseq signature 0x%x, expecting 0x%x (pid=%d, addr=%p).\n",
--			sig, current->rseq_sig, current->pid, usig);
--		return -EINVAL;
--	}
--	return 0;
--}
--
--/*
-  * Terminate the process if a syscall is issued within a restartable
-  * sequence.
-  */
- void rseq_syscall(struct pt_regs *regs)
- {
--	unsigned long ip = instruction_pointer(regs);
- 	struct task_struct *t = current;
--	struct rseq_cs rseq_cs;
-+	u64 csaddr;
+ 	rseq_stat_inc(rseq_stats.exit);
  
--	if (!t->rseq)
-+	if (!t->rseq_event.has_rseq)
-+		return;
-+	if (get_user_masked_u64(&csaddr, &t->rseq->rseq_cs))
-+		goto fail;
-+	if (likely(!csaddr))
- 		return;
--	if (rseq_get_rseq_cs(t, &rseq_cs) || in_rseq_cs(ip, &rseq_cs))
--		force_sig(SIGSEGV);
-+	if (unlikely(csaddr >= TASK_SIZE))
-+		goto fail;
-+	if (rseq_debug_update_user_cs(t, regs, csaddr))
-+		return;
-+fail:
-+	force_sig(SIGSEGV);
- }
--
- #endif
+-	if (IS_ENABLED(CONFIG_DEBUG_RSEQ))
++	if (static_branch_unlikely(&rseq_debug_enabled))
+ 		WARN_ON_ONCE(ev->sched_switch);
  
- /*
+ 	/*
+
 
 
