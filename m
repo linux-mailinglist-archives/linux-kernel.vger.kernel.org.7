@@ -1,195 +1,211 @@
-Return-Path: <linux-kernel+bounces-801096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E31B43FCA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:59:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 953D0B43FCE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B77CA7BD0C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:57:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44EE05A5BAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9424306D26;
-	Thu,  4 Sep 2025 14:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D484308F0E;
+	Thu,  4 Sep 2025 15:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="miSOLtWN"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADC53054CF
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="E0Jfvwby"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B346302CC2;
+	Thu,  4 Sep 2025 15:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756997933; cv=none; b=Iag/47zk4V5u/H+bmIIIPM/+jj7dAvNXeOHnkuNdnEOVyFo4r8BZAaKSlsbo4NTZxFT2bG8CIojGc4/A3rxAoHBYiIWrN4WGMIqXtRpmkXKAmq18txf6kcMw7Q1r84/mjtql+e1IqZ7L4dDGdAKLsLJbwnRB557awanWEtE9i9Q=
+	t=1756998018; cv=none; b=SVYPQ0p4eMmi26kCiQcYbAMfQFeMOIvoT3De1E77qUJDScyennvmfT+3tZZLKoPaSwd8DfNgLZGcpKlCeIrox15yJl5erV7RE4j+GzumeoC3kT2nunLaDe8i4tfsKsI6gVwBNcoPEM/jV/4W4cn1hy04g0+IH49akvuEnch3wWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756997933; c=relaxed/simple;
-	bh=jjoOxNGipBZMZSrHgnJO7zIqbW8l/mlQVhOAOi/XHNk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fz6jrl+jmZF8Yhimaddm6rRzWml6PrXmCRp/9XjzdhQpCr5NLqjPhunpaw03R4XzyWEjGiJhsNpeahkZVLx2hqpoqBCD9ZRuz7hJb87MVv6eGWXoXzukkqSQpY/x81sBC7ofn6F2VRSKxZ9TbPzIbLfcnSGjTnvVHdiVVl9CYOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=miSOLtWN; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3d1bf79d758so917815f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 07:58:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756997930; x=1757602730; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jjoOxNGipBZMZSrHgnJO7zIqbW8l/mlQVhOAOi/XHNk=;
-        b=miSOLtWN81jrXbAcOe96F97s3Q1R9X3KhdHGeFFJMP5WnsGxcsKJcIKNW5UMci1mEC
-         dx+1qkJXFO7t4X5hGI35uuDE8yibqiVzn+W9vY1XVRlNJv3DztiFR5VP1uCtaP7yWfPj
-         Iu6wOXhJb3cxXIep75tP1aJ08qHJ0rPPzxb9ry/3WdeX1nhHzRWhnZr02EipRAhtJbgP
-         YxNGaGTPKePx2n+zRn6n2Ig9TjpQ3OHvh4r6kZ/Ig1WvWGMgTGYYtk1Dp/0vIy9dlOl0
-         frv/+hj3wc3zpVcx5MFeQhJDm7Ye8sNXaLsdTn7ZZSKD+C6C4KLaR2hYBSAFp/4wFJX+
-         iz4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756997930; x=1757602730;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jjoOxNGipBZMZSrHgnJO7zIqbW8l/mlQVhOAOi/XHNk=;
-        b=Bu65UObbyJHJ38dlQdVt3GBQWrmpdN33050dpbOhEIR9gsGp8QQLOnH+aVznawByt+
-         h1o9j3Vth/bpL701EDCUoD3/ywEFQxQRqfF9/CGrrjCqAGTmDbO2YX43MNBbCyxVkkxV
-         eo0qRUvvHihnDfJqinrBEgWWq2EslKRkF7rRUUfbsh4tFJeCJFCjLtGm+No8dbxASgBJ
-         qZccayvhvGzGnQPyDEKBFw1+kP+mXEce/VGZFu6s/LxrJAatvQJPjqaup1rVjSgbpPxw
-         055xtoEbIqvJ3gXALJl+b6RS72NkpCc2basd/D8dSFOrJuGCyoEdMprXM7yacbPRXELI
-         7JHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTpbLSrnZ/RS/TJ4ySFhR0rAhjanguiTnjiURrr14vQRg+VwOg8I9DqlW020LB+c3r/ElyQui7hF7+QR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLnZdPtwhvBJCxJA6UZqn/UoOfkw5y3hLphBebI/7k6fqaki1T
-	yFimkgEuHbYaixHCrcNBLiIHE95k/Ohu5nZTpbHq34ImQfZ/v8IYcopFzgnhXfktBDiKRmH6VPh
-	pnVjYmvmpJiqj/LmUgnJRYiIsrg4q30Y=
-X-Gm-Gg: ASbGncsi2UEZgU8/lpW0rMuFd6cojc0JDEyFY8sQt3i3C6tzr0SUZb8VShU8CjpaP5F
-	ASn3ogQqQQPRmrCalfb3uWbNkusKKRjtfD1uq8W4vOorB5N0R0Bpxs03GmaZQo87c8teQBRM0ug
-	Au6iMybeSqpGy4jrdVUx8qcnokxpEGaEBS7sR0g4Mw5XYaZ00iUPEErsD5fwEm5L1mUnSiUf35C
-	yL4CqY=
-X-Google-Smtp-Source: AGHT+IEOLYmXnNodyTdeKUcsNwKRu/qrjmwe1/I99spM8q/MVj2nsHb/yfnDKG0O9PUqtUVGjpAX+llHDS6iNPSghBc=
-X-Received: by 2002:a05:6000:430c:b0:3e0:4d29:80be with SMTP id
- ffacd0b85a97d-3e04d29815cmr2637642f8f.49.1756997929274; Thu, 04 Sep 2025
- 07:58:49 -0700 (PDT)
+	s=arc-20240116; t=1756998018; c=relaxed/simple;
+	bh=yN93/JGK3+gKg6XI5Xt7d/9ipacWhWqRUwi0NIAfa+Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=G5Eix9a38bEGVBcaHGoOqe6ZRRdRp6uXM0YUxXQl6eyQIgGDveG3csq9PWChKU21xtBscts1ScyzY2TEBtvWzL3ajXa8ji4BqXxlMvSjc2eU6TeBB16HW1tFMzMrtkIFD+MkyLynihicUh2JuFQam66bmNksV0dAc8wOrRoDh9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=E0Jfvwby; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=/5lazZJk/6vmmNJZ9fd2QJzdDNBwqyugP2eqo+d23QU=;
+	b=E0JfvwbyB7IR9YTyCr1TTOrYCnoCDnLdX5772564KPstCJWzAD5BpgpjvFvuNS
+	fJkxQwpg9M6BTL9nt0FtoqQdIhO19hPU1vcUaHkFf+Zhi6ybvOVT8/nzrslAYFaj
+	0kWCsWEhvdRZ28AavrRGR/SZkpz92flTda1UEFkAy00x8=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wAXvVNIqbloVZcuGQ--.61807S2;
+	Thu, 04 Sep 2025 22:59:21 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: kerneljasonxing@gmail.com,
+	willemdebruijn.kernel@gmail.com,
+	edumazet@google.com,
+	ferenc@fejes.dev
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v10 2/2] net: af_packet: Use hrtimer to do the retire operation
+Date: Thu,  4 Sep 2025 22:59:20 +0800
+Message-Id: <20250904145920.1431219-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820053459.164825-1-bhe@redhat.com> <CA+fCnZdfv+D7sfRtWgbbFAmWExggzC2by8sDaK7hXfTS7viY8w@mail.gmail.com>
- <aLlJtTeNMdtZAA9B@MiWiFi-R3L-srv>
-In-Reply-To: <aLlJtTeNMdtZAA9B@MiWiFi-R3L-srv>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Thu, 4 Sep 2025 16:58:38 +0200
-X-Gm-Features: Ac12FXyGDcz59ifSydw05MuQg_P1V6YF0m9gsQ5VWAu0_B8ZIjHvT6en0L_OHZQ
-Message-ID: <CA+fCnZf2fGTQ6PpoKxDqkOtwcdwyPYx2cFwQw+3xAjOVxjoh6w@mail.gmail.com>
-Subject: Re: [PATCH v3 00/12] mm/kasan: make kasan=on|off work for all three modes
-To: Baoquan He <bhe@redhat.com>, snovitoll@gmail.com
-Cc: glider@google.com, dvyukov@google.com, elver@google.com, 
-	linux-mm@kvack.org, ryabinin.a.a@gmail.com, vincenzo.frascino@arm.com, 
-	akpm@linux-foundation.org, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org, sj@kernel.org, 
-	lorenzo.stoakes@oracle.com, christophe.leroy@csgroup.eu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAXvVNIqbloVZcuGQ--.61807S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWryruw13Xry7Xry5WFW7Arb_yoWrXFyrpa
+	yjg34DGrZ7tr1jgw4UAan5Xr1SvwnrJF17Jrs3ta4YyrZrtF1fGa42kF909FZ8Xrs7u3Z3
+	ZF4fKry5uw4kJ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UmjgxUUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiRx6+Cmi4+XeCpgACsV
 
-On Thu, Sep 4, 2025 at 10:11=E2=80=AFAM Baoquan He <bhe@redhat.com> wrote:
->
-> > If so, would it help if we make the kasan.vmalloc command-line
-> > parameter work with the non-HW_TAGS modes (and make it do the same
-> > thing as disabling CONFIG_KASAN_VMALLOC)?
+On Thu, Sep 4, 2025 at 10:50 +0800 Jason Xing <kerneljasonxing@gmail.com> wrote:
+
+> > In the description of [PATCH net-next v10 0/2] net: af_packet: optimize retire operation:
 > >
-> > What I don't like about introducing kasan=3Doff for non-HW_TAGS modes i=
-s
-> > that this parameter does not actually disable KASAN. It just
-> > suppresses KASAN code for mapping proper shadow memory. But the
-> > compiler-added instrumentation is still executing (and I suspect this
-> > might break the inline instrumentation mode).
->
-> I may not follow your saying it doesn't disable KASAN. In this patchset,
-> not only do I disable the code for mapping shadow memory, but also I
-> skip any KASAN checking. Please see change of check_region_inline() in
-> mm/kasan/generic.c and kasan_check_range() in mm/kasan/sw_tags.c. It
-> will skip any KASAN checking when accessing memory.
->
-> Yeah, the compiler added instrumentation will be called, but the if
-> (!kasan_enabled()) checking will decide if going further into KASAN code
-> or just return directly.
-
-This all is true for the outline instrumentation mode.
-
-However, with the inline instrumentation, check_region_inline() is not
-called (in many cases, at least) and instead the compiler embeds the
-instructions to calculate the shadow memory address and check its
-value directly (this is why we have CONFIG_KASAN_SHADOW_OFFSET, whose
-value has to be known at compile time).
-
-> I tried inline mode on x86_64 and arm64, it
-> works well when one reviewer said inline mode could cost much more
-> memory, I don't see any breakage w or w/o kasan=3Doff when this patchset
-> applied..
-
-This is interesting. I guess what happens is that we still have the
-early shadow memory mapped so the shadow memory accesses inserted by
-the inline instrumentation do not crash.
-
-But have you tried running kasan=3Doff + CONFIG_KASAN_STACK=3Dy +
-CONFIG_VMAP_STACK=3Dy (+ CONFIG_KASAN_VMALLOC=3Dy)? I would expect this
-should causes crashes, as the early shadow is mapped as read-only and
-the inline stack instrumentation will try writing into it (or do the
-writes into the early shadow somehow get ignored?..).
-
-> > Perhaps, we could instead add a new kasan.shadow=3Don/off parameter to
-> > make it more explicit that KASAN is not off, it's just that it stops
-> > mapping shadow memory.
->
-> Hmm, as I explained at above, kasan=3Doff will stop mapping shadow memory=
-,
-> and also stop executing KASAN code to poison/unpoison memory and check th=
-e
-> shadow. It may be inappropriate to say it only stops mapping shadow.
-
-That's true, but we can only achieve this for the outline instrumentation m=
-ode.
-
-With the inline instrumentation mode, the (early) shadow memory would
-still get accessed all the time even with kasan=3Doff. Which can be
-considered inappropriate, as you pointed out (though this is what
-happens for vmalloc allocations when CONFIG_KASAN_VMALLOC is disabled
-and it does seem to work; but the inline stack instrumentation might
-be a problem).
-
-We could limit kasan=3Doff to only the outline instrumentation mode, but
-I guess that defeats the purpose.
-
-I'm not completely opposed to making kasan=3Doff work with all KASAN
-modes (assuming it works with the inline instrumentation), but then we
-will need to thoroughly document the behavior it creates.
-
-And let's also wait for an opinion from the other KASAN maintainers on this=
-.
-
-> > Dmitry, Alexander, Marco, do you have any opinion on kasan=3Doff for
-> > non-HW_TAGS modes?
+> > Changes in v7:
+> >   When the callback return, without sk_buff_head lock protection, __run_hrtimer will
+> >   enqueue the timer if return HRTIMER_RESTART. Setting the hrtimer expires while
+> >   enqueuing a timer may cause chaos in the hrtimer red-black tree.
 > >
-> > On a side note, this series will need to be rebased onto Sabyrzhan's
-> > patches [1] - those are close to being ready. But perhaps let's wait
-> > for v7 first.
->
-> I replied to Sabyrzhan's patchset, on top of this patchset, it's much
-> easier and cleaner to remove kasan_arch_is_ready(). We don't need
-> introduce CONFIG_ARCH_DEFER_KASAN. Please see below patchset which is
-> based on this patchset introducing 'kasan=3Doff|on' to genric|sw_tags
-> mode.
+> > Neither hrtimer_set_expires nor hrtimer_forward_now is allowed when the hrtimer has
+> > already been enqueued. Therefore, the only place where the hrtimer timeout can be set is
+> > within the callback, at which point the hrtimer is in a non-enqueued state and can have
+> > its timeout set.
+> 
+> Can we use hrtimer_is_queued() instead? Please see tcp_pacing_check()
+> as an example. But considering your following explanation, I think
+> it's okay now.
 
-Based on a brief look, both patch series seem to be doing similar
-things (except yours also allows using kasan=3Doff for all modes).
+Okay， let's keep the current logic as it is.
 
-But I like the Sabyrzhan's approach of hiding the explicit
-static_branch_enable() calls under CONFIG_ARCH_DEFER_KASAN for the
-architectures where they are actually required.
 
-So I propose we moved forward with the Sabyrzhan's series and then
-apply additional patches for supporting kasan=3Doff on top (but again,
-assuming they work with the inline instrumentation).
 
-Thank you!
+> > /* kbdq - kernel block descriptor queue */
+> > struct tpacket_kbdq_core {
+> >         struct pgv      *pkbdq;
+> >         unsigned int    feature_req_word;
+> >         unsigned int    hdrlen;
+> >         unsigned short  kactive_blk_num;
+> >         unsigned short  blk_sizeof_priv;
+> >         unsigned char   reset_pending_on_curr_blk;
+> >
+> >         char            *pkblk_start;
+> >         char            *pkblk_end;
+> >         int             kblk_size;
+> >         unsigned int    max_frame_len;
+> >         unsigned int    knum_blocks;
+> >         char            *prev;
+> >         char            *nxt_offset;
+> >
+> >         unsigned short  version;
+> >
+> >         uint64_t        knxt_seq_num;
+> >         struct sk_buff  *skb;
+> >
+> >         rwlock_t        blk_fill_in_prog_lock;
+> >
+> >         /* timer to retire an outstanding block */
+> >         struct hrtimer  retire_blk_timer;
+> >
+> >         /* Default is set to 8ms */
+> > #define DEFAULT_PRB_RETIRE_TOV  (8)
+> >
+> >         ktime_t         interval_ktime;
+> > };
+> 
+> Could you share the result after running 'pahole --hex -C
+> tpacket_kbdq_core vmlinux'?
+
+I change the struct tpacket_kbdq_core as following:
+
+/* kbdq - kernel block descriptor queue */
+struct tpacket_kbdq_core {
+	struct pgv	*pkbdq;
+	unsigned int	feature_req_word;
+	unsigned int	hdrlen;
+	unsigned char	reset_pending_on_curr_blk;
+	unsigned short	kactive_blk_num;
+	unsigned short	blk_sizeof_priv;
+
+	unsigned short  version;
+
+	char		*pkblk_start;
+	char		*pkblk_end;
+	int		kblk_size;
+	unsigned int	max_frame_len;
+	unsigned int	knum_blocks;
+	char		*prev;
+	char		*nxt_offset;
+
+	uint64_t	knxt_seq_num;
+	struct sk_buff	*skb;
+
+	rwlock_t	blk_fill_in_prog_lock;
+
+	/* timer to retire an outstanding block */
+	struct hrtimer  retire_blk_timer;
+
+	/* Default is set to 8ms */
+#define DEFAULT_PRB_RETIRE_TOV	(8)
+
+	ktime_t		interval_ktime;
+};
+
+
+pahole --hex -C tpacket_kbdq_core vmlinux
+
+running results:
+
+struct tpacket_kbdq_core {
+        struct pgv *               pkbdq;                /*     0   0x8 */
+        unsigned int               feature_req_word;     /*   0x8   0x4 */
+        unsigned int               hdrlen;               /*   0xc   0x4 */
+        unsigned char              reset_pending_on_curr_blk; /*  0x10   0x1 */
+
+        /* XXX 1 byte hole, try to pack */
+
+        short unsigned int         kactive_blk_num;      /*  0x12   0x2 */
+        short unsigned int         blk_sizeof_priv;      /*  0x14   0x2 */
+        short unsigned int         version;              /*  0x16   0x2 */
+        char *                     pkblk_start;          /*  0x18   0x8 */
+        char *                     pkblk_end;            /*  0x20   0x8 */
+        int                        kblk_size;            /*  0x28   0x4 */
+        unsigned int               max_frame_len;        /*  0x2c   0x4 */
+        unsigned int               knum_blocks;          /*  0x30   0x4 */
+
+        /* XXX 4 bytes hole, try to pack */
+
+        char *                     prev;                 /*  0x38   0x8 */
+        /* --- cacheline 1 boundary (64 bytes) --- */
+        char *                     nxt_offset;           /*  0x40   0x8 */
+        uint64_t                   knxt_seq_num;         /*  0x48   0x8 */
+        struct sk_buff *           skb;                  /*  0x50   0x8 */
+        rwlock_t                   blk_fill_in_prog_lock; /*  0x58  0x30 */
+        /* --- cacheline 2 boundary (128 bytes) was 8 bytes ago --- */
+        struct hrtimer             retire_blk_timer __attribute__((__aligned__(8))); /*  0x88  0x40 */
+
+        /* XXX last struct has 4 bytes of padding */
+
+        /* --- cacheline 3 boundary (192 bytes) was 8 bytes ago --- */
+        ktime_t                    interval_ktime;       /*  0xc8   0x8 */
+
+        /* size: 208, cachelines: 4, members: 19 */
+        /* sum members: 203, holes: 2, sum holes: 5 */
+        /* paddings: 1, sum paddings: 4 */
+        /* forced alignments: 1 */
+        /* last cacheline: 16 bytes */
+} __attribute__((__aligned__(8)));
+
+
+Thanks
+Xin Zhao
+
 
