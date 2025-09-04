@@ -1,79 +1,88 @@
-Return-Path: <linux-kernel+bounces-799752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516F3B42FD5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:38:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DF7B42FD6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BCD1681DA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:38:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C51C1BC741A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0F51F8ADD;
-	Thu,  4 Sep 2025 02:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CC72040B6;
+	Thu,  4 Sep 2025 02:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="sS4tqdLc";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="U/e93ogn"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bvZxTRsZ"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BD42628D;
-	Thu,  4 Sep 2025 02:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700D61F8728
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 02:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756953510; cv=none; b=gu2hVbg4rIRXB2iNkzZgoUbpfuIj528KzCClj50x8TccPJCZGDGArHXwCiMDxWRfB1eaUpkIQnPvPMn8MjRPmS/sO8qCCa7jR2MH6rVJsOnk3aiy57YjFbCCQCixGiE1uOfSqI+oln0nG7vtk/RlLRf7Q4IgOzy3mzvGPEqtKfg=
+	t=1756953511; cv=none; b=BkcmfLmhMflMeFLJfAu6qIIk8E7/u7r96KOWEgC7D+ikex5ubKV7LrCRGOE9CASg/6AlF30iKPnKqgqHHKqk+PjJWPz+rCTqFjRF7wYQ2PrEXOIGrixjbY9VilLl7mmJzN97QJ3j1z4XoK0uEUyhkQ2at3QKCvp+KedLaYJzRHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756953510; c=relaxed/simple;
-	bh=FdbeB+yV5/C5kxBua8uMen1dPsCyQQKz7pW1D60oLSs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZBanICEgeQ7qlrLedlxdLxHPdmMosaSMQ/iEfmBdYzfw/0EbG6BvVTYkdfnMOehiTmuAOGRnvnJI/gVjg5wGJAE6oilH2RObtv/n2dPcXzK4pZLi5t6qBIk7xiSM/f9R2hqztfkCyURXN//t0pEdToaNdxEWOAEGRXZvmZl83AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=sS4tqdLc; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=U/e93ogn; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cHNvN4nBrz9srJ;
-	Thu,  4 Sep 2025 04:38:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1756953504;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=7Avc2qjUFUbqIM0SvA74SfMpAPpoaNpwHHVCU9A6Trc=;
-	b=sS4tqdLcv+7ouTuTra9c+WTMdY0zY15kmf3vsZwDEQ8+g4acYHHS7H+xu7EuEvj9HsCWOU
-	LurUPa50lRyvR3fVj15YQZeliAmqp9js1hCAfAAD5vh+NUtELHAgIiDMTKKz8xj+7cuOA4
-	DCUbOR5Ec1xpzIUuyV7e7H56336m6Af7YPDwwcEPDbixRlbLwkgjkOLQxycqbe08+6Acsr
-	m1ePCGZWslF9/oCKlNV8aggcRTyohtTMf0cWkqyoxw/y/RYgSQ9kX/MvTHBzmUn5Fj9EGC
-	yLxQ/IJV0yH/WIsK2uai835nbouP4IDrXPniXYTWqYpUc0xvgmW70iZxhOkg7w==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1756953502;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=7Avc2qjUFUbqIM0SvA74SfMpAPpoaNpwHHVCU9A6Trc=;
-	b=U/e93ognuVVrfaawXGDYkNx5uyoeBH2ynAR9Jql4MsYVl0KWzHzeaFZI94ewyIMjyvVmzT
-	OkPFyQD37C+cpBkocHxdzLoB2SITf+Lrdp1NJQrLQU4R1fsoZtWwoK2nWnjh++fDciG7vG
-	p8J5feVSqew3tKl2hUyT0mP5YkE9ls9jNVIAUDqMBXEr0T8Yt/oFr5k0lOAzTnfRTdtW/n
-	dLmOySqwiWd+B3qo5jAfREdkPnrKIQ9td5CYa1W4oMoW53rfeS31pN24VOEQ+oZUNeEDjL
-	DWYCvRSg08OzifnMGdHtxIQbz17WipUyqy2CpajYCcA9YRVsIo2nZbhky1B05A==
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Wang Jiang <jiangwang@kylinos.cn>,
+	s=arc-20240116; t=1756953511; c=relaxed/simple;
+	bh=gt/1ux9jF+HA7NGZH4b8I8x6guW0hIucfUmZRaX8Lnw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ILTM96QY5qRFRsfTSrZa/Z1+6q5L6QlvXkFNvnLRaXwfaP+AG627HRPwCBZGc7Z1VETSeyh/LVn5UnYXR9pTdvPT1cuim/MLN5jgMEXtdTd/I7UOhbusH/u7sHHDnlYH1GB/d4t8s8MZHvcQfvsIV9SeMsFChSesCe9ckT+GD/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bvZxTRsZ; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-70ddadde494so4477616d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 19:38:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756953509; x=1757558309; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gt/1ux9jF+HA7NGZH4b8I8x6guW0hIucfUmZRaX8Lnw=;
+        b=bvZxTRsZdCOr2+qszKEdW+grpHo4wzMuN5i5Ml5qDV5uhrrNyPSnkSM+alP0Big6Sf
+         rojAC9iatd1O7JMMgJK1b7tsUWjqip3drsw3Hp24Nxx7QeGFpCCpOpgR31IQfHNWCRrm
+         qKuNruV2KkQ1jxbTGnoKSwTv5+s9j0xa0uDkRJI0GcRCCCEM3Ms3SVI6Mikt2CMqGVVH
+         bFEpPAbh+yml1AAlnSMZdHG3b30heXVH4h/mGs1rcJ+7b/+7zchZ1j3KLZOWAkSGA/7K
+         f4WtqBOrx86imZLDgixzME+OVVIrPFiv+XJJbvo+wRf8p6pHKbJ4W7oCLxQpw6jnKA6F
+         tN8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756953509; x=1757558309;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gt/1ux9jF+HA7NGZH4b8I8x6guW0hIucfUmZRaX8Lnw=;
+        b=MSPFhpmFONw7P07FBPPzkSPW+zoVDKWmwofXnxch9NIbT+g1+c7BW4oc33uLT1HxQk
+         lkLC3qo+S1YlirMz+HeyrjYvkkOTExdTB/HRYeISRisiApuUYj4y5knhoalZZRHEUHGK
+         TvqtlSepGojy94qzJ/oG/MWjYKQ9KeINUmCAvNTMsUdzfYmWGFSrCzU5qtWYOOM7F7Kg
+         t3I8+K/hiLOf1cGz+fMRC1hipufD8EcwU55ACxIcmd5HjlZpb11rteM1gZyVmR9+xKq3
+         AKrdudVV43BDRxkx4cwS8kRcysKH3D0w7EXntHUtIe3NEXAMNSyuXrOqrji0tWW5BT2M
+         afuw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYbqMag2SvlGI1OIwWwChjQsBDqGt7Au2AJu/P++hrWD3mYEt+I0l79gMe1NtN8eJvRxmHDcgmO2Z6ErU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyvxz53WLFYjOfmSvW5nvyEpskzjEOcPRhGc2x1gtMMoq42P5oQ
+	wnCnV5T1HScs4pEpc5XFIxJVQV68dLjU7nwtavYDhjthdLjW4H+9HZcP
+X-Gm-Gg: ASbGncuiFhye92zbANMX3zEMe4XjVVKJBpwIiCKHwyQEiEAduCznh2z5rh/BBqKlMNd
+	y8V3JIYXGNzd1mzD8t0VTIC9vKjZGb1NQns4Cko5hd7o4ArRMXWNYlqxEpW2emjvtogU3+iFNgy
+	WpiQJd5zAMY//nDzYsf9iszi255bH+K5pTGNGkqNBRQOiaNnn6MwkPIYGHydxn430g85ZJDrC70
+	yAbKke7HrHuct5208n3bMuamlbnvSoxF6UgR17118d2JZz1mt6ecuWqe29PhMsPRTR7/PowQ8zE
+	ixG26LwJjtnR+LoFQiSNyNCmS+0T9CtZLeldc/LA2zur9i0gjHW7KZs4ipgouioCHM5Fl1094NF
+	SFYHpBzhSn+KvKkZeWHZfo5X6LYN69dTb0u+qGyMcUO//iq0TyKFG99YVGNpUnQ==
+X-Google-Smtp-Source: AGHT+IEUP5RyMi1VOlfV+ceyjVn2nI/9lfMvjpM6uk2kMPvXZW8k4AHW6Lneo77FQNkYuZR/4O7Riw==
+X-Received: by 2002:a05:6214:2629:b0:724:271a:9750 with SMTP id 6a1803df08f44-724271a9f49mr54076586d6.12.1756953509374;
+        Wed, 03 Sep 2025 19:38:29 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720add668bdsm38209776d6.33.2025.09.03.19.38.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 19:38:29 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: vivek.balachandhar@gmail.com
+Cc: gregkh@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] PCI: endpoint: pci-epf-test: Limit PCIe BAR size for fixed BARs
-Date: Thu,  4 Sep 2025 04:37:39 +0200
-Message-ID: <20250904023753.494147-1-marek.vasut+renesas@mailbox.org>
+	linux-staging@lists.linux.dev
+Subject: =?UTF-8?q?Re=3A=20=5BPATCH=200/16=5D=20staging=3A=20rtl8723bs=3A=20style=20cleanups=20=E2=80=94=20please=20ignore=20v1=3B=20see=20v2?=
+Date: Thu,  4 Sep 2025 02:38:16 +0000
+Message-Id: <20250904023816.216762-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250904012529.215521-1-vivek.balachandhar@gmail.com>
+References: <20250904012529.215521-1-vivek.balachandhar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,73 +91,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 7ba099bd9488c476be4
-X-MBO-RS-META: um6ezw575iyqc6idttayuar7n9fmxtpx
 
-Currently, the test allocates BAR sizes according to fixed table
-bar_size[] = { 512, 512, 1024, 16384, 131072, 1048576 } . This
-does not work with controllers which have fixed size BARs, like
-Renesas R-Car V4H PCIe controller, which has BAR4 size limited
-to 256 Bytes, which is much less than 131072 currently requested
-by this test.
+Hi Greg and linux-staging folks,
 
-Adjust the test such, that in case a fixed size BAR is detected
-on a controller, minimum of requested size and fixed size BAR
-size is used during the test instead.
+Please ignore my first series — I accidentally sent patches 11–16 in a
+separate batch so they threaded under 10/16 instead of the cover letter.
 
-This helps with test failures reported as follows:
-"
-pci_epf_test pci_epf_test.0: requested BAR size is larger than fixed size
-pci_epf_test pci_epf_test.0: Failed to allocate space for BAR4
-"
+I’ve re-sent the series properly as v2 (same content, correct threading).
+You can find it here on lore:
+https://lore.kernel.org/all/20250904021448.216461-1-vivek.balachandhar@gmail.com/
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>
-Cc: Frank Li <Frank.Li@nxp.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Niklas Cassel <cassel@kernel.org>
-Cc: Wang Jiang <jiangwang@kylinos.cn>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/pci/endpoint/functions/pci-epf-test.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+Apologies for the noise, and thank you for your time.
 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index e091193bd8a8a..d9c950d4c9a9e 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -1022,7 +1022,8 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
- 	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
- 	enum pci_barno bar;
- 	const struct pci_epc_features *epc_features = epf_test->epc_features;
--	size_t test_reg_size;
-+	size_t test_reg_size, test_bar_size;
-+	u64 bar_fixed_size;
- 
- 	test_reg_bar_size = ALIGN(sizeof(struct pci_epf_test_reg), 128);
- 
-@@ -1050,7 +1051,13 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
- 		if (bar == test_reg_bar)
- 			continue;
- 
--		base = pci_epf_alloc_space(epf, bar_size[bar], bar,
-+		test_bar_size = bar_size[bar];
-+
-+		bar_fixed_size = epc_features->bar[bar].fixed_size;
-+		if (epc_features->bar[bar].type == BAR_FIXED && bar_fixed_size)
-+			test_bar_size = min(bar_size[bar], bar_fixed_size);
-+
-+		base = pci_epf_alloc_space(epf, test_bar_size, bar,
- 					   epc_features, PRIMARY_INTERFACE);
- 		if (!base)
- 			dev_err(dev, "Failed to allocate space for BAR%d\n",
--- 
-2.50.1
+Thanks,
+Vivek BalachandharTN
 
 
