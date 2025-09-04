@@ -1,57 +1,62 @@
-Return-Path: <linux-kernel+bounces-800376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7BEB436FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:23:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAEAAB43700
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DED27B4424
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:22:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2584A7C2AD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760922F0C6E;
-	Thu,  4 Sep 2025 09:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36032F39A6;
+	Thu,  4 Sep 2025 09:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sSx/Tbs3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWrkVtqF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAF32F0688;
-	Thu,  4 Sep 2025 09:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B262F28FB;
+	Thu,  4 Sep 2025 09:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756977803; cv=none; b=dICGMq5mQlUyvF1iVSfwsOsAumm6YRada+4WuVdcRwtzAgFbUbP7LkAqQ8lk4yG4sLf6qyNCD/E0VbV4af7oqc3ZWYCh88yJEWDqiBlwjeJbQGYN85tgDF9F/dHlE5ZSkbarvSUGaTP4DEWIUDPDR6rE+qSdnC+IlM97QD859E0=
+	t=1756977806; cv=none; b=swa0nvY7a0UOWn1eYta72dvj4wYyHXas6xHElBD4AeU/utHFeG6uP3FfYSkiCLHG4KnqV/veqf8O9aKVUNMdfcxqm+9XhJKD2f3hZVUzJLnVRu29jXGrE4m2qOmcmL/tzjVPasQ/Hn1mbq/21G9L5BrPyj7AghkyBZANXl+EQjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756977803; c=relaxed/simple;
-	bh=8qUNR5uk4ZoW60qCbqxX2WVE+fxq/h7F4lEPZWAqJVo=;
+	s=arc-20240116; t=1756977806; c=relaxed/simple;
+	bh=48A8fZ+V/JGLMfvPCJyuTIOZDOI04VyCgo6NPuPDezw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VUv/T5EhSyfMIsW9/vmPZQm641tS4Fa0MrSTQy9TjKlC8bICjefXWeqMTFc9F3Nj1td5eS4deKEsxNHhGesSWQDoXqSX6ks7mRCHhRCBnOA/6l8YdmeVmCi85PTsqykQie1+jV7yjCUZff02Cg7HWfqoMqFk5tdY9piq93mXY/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sSx/Tbs3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B1C7C4CEF1;
-	Thu,  4 Sep 2025 09:23:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CTFvcxd9HgBZTaNJTsnlm1PkU0/JnqOYYGxbn8sQzLfOK1RrIqFPmFVP5Zj3GQRlUdgM++rNBHbULIgbGA1cP+BsrmhOPvAbYULFqxrCbuEjz9CDriyrS6KUKHiL2zBQ7QatGVOmzuV8CCeNFNYxMSJ5rDSkgPTVwtSSRDhwIOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWrkVtqF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90DF3C4CEF0;
+	Thu,  4 Sep 2025 09:23:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756977803;
-	bh=8qUNR5uk4ZoW60qCbqxX2WVE+fxq/h7F4lEPZWAqJVo=;
+	s=k20201202; t=1756977806;
+	bh=48A8fZ+V/JGLMfvPCJyuTIOZDOI04VyCgo6NPuPDezw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sSx/Tbs3Mrrspkf4MULYwZBqL4rlQa7J+UoDxCdv5YfA7muXFwkJcLCOQKFiy3KmT
-	 N/BA079OMVlUgWSrSd2xF5p2+G9WS4tD/irCSCkTKj3OUtpgsF2L06yLsNWDSkLRCu
-	 8ApaRmWydy5hq0r07WfQZV6GOkv3/Mhs7nROD5ZLRfslCE7loqgBV6fWXOSzVl1KMn
-	 +RdBgZvIlwXttmohkWbTRFxUo20IJ7QOWfGy7gLCW2/J2eaRRiPqY3ZjuCZMSYfO0u
-	 xBdGWzbS+CFZE64zd/2Ww8cMSrbjKthJVxiBAYzvqY3xyutVYhJU/OJjAreOjEyZwQ
-	 Sm202kIvoMcHA==
-Date: Thu, 4 Sep 2025 10:23:19 +0100
-From: Lee Jones <lee@kernel.org>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Message-ID: <20250904092319.GG2764654@google.com>
-References: <20250904154122.63acc45c@canb.auug.org.au>
- <20250904063043.GE2764654@google.com>
- <CACMJSev63kfCBTzQnija6Q+PNm8KgD-LWVKeqRJ2kLBtT7Zh6A@mail.gmail.com>
+	b=rWrkVtqFpOEn/vqcXv69R9Y8VyJAv55HJC8uyjEL6Jv7YH5nLGwbFoL2FyJS2zqKI
+	 boqxquBRITYGUUyam4zTN3CKdCVB4B8lQN0eWCnmw6XUX7NBHL3qvk3QoZ27y/rX82
+	 e2f1hGPZEws7JdHy+AbxXrQqJ1H7pnnOqann2WOt7wyNRTuzJO64C5A9V6N+8TxJ5x
+	 hzN700usY/PkrFX9COW2nDCllCtxu/QgHEEzMD2g/hAw4bv5bJn0ZFKAHLUiAK0Z1y
+	 Djjuh3GkwUozJkafo5uooueXEZpFy1ocIN0wAbbhBaEVukx+C9C8Ef/b3fN1lNI5K1
+	 XNGUt4Ojklz2A==
+Date: Thu, 4 Sep 2025 11:23:23 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?Q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+	Gregory CLEMENT <gregory.clement@bootlin.com>, =?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+	Sari Khoury <sari.khoury@mobileye.com>
+Subject: Re: [PATCH 04/19] dt-bindings: clock: mobileye: add eyeQ7H clock
+ indexes
+Message-ID: <20250904-gainful-thankful-frigatebird-65beda@kuoka>
+References: <20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com>
+ <20250903-clk-eyeq7-v1-4-3f5024b5d6e2@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,78 +65,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACMJSev63kfCBTzQnija6Q+PNm8KgD-LWVKeqRJ2kLBtT7Zh6A@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250903-clk-eyeq7-v1-4-3f5024b5d6e2@bootlin.com>
 
-On Thu, 04 Sep 2025, Bartosz Golaszewski wrote:
+On Wed, Sep 03, 2025 at 02:47:11PM +0200, Beno=C3=AEt Monin wrote:
+> Add the clock indexes for the various OLB found in the eyeQ7H SoC.
+> For some of the OLB, the indexes are common between two or three
+> blocks:
+> * EQ7HC_DDR defines the clock indexes of DDR0 and DDR1 OLB.
+> * EQ7HC_MIPS defines the clock indexes of MIPS0, MIPS1, and MIPS2 OLB.
+> * EQ7HC_ACC defines the clock indexes of ACC0 and ACC1 OLB.
+> * EQ7HC_XNN defines the clock indexes of XNN0 and XNN1 OLB.
+>=20
+> Signed-off-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com>
+> ---
+>  include/dt-bindings/clock/mobileye,eyeq-clk.h | 110 ++++++++++++++++++++=
+++++++
+>  1 file changed, 110 insertions(+)
+>=20
+> diff --git a/include/dt-bindings/clock/mobileye,eyeq-clk.h b/include/dt-b=
+indings/clock/mobileye,eyeq-clk.h
+> index 8424ec59a02d037ddd5b049cb4b7f26764ae2542..0fe9b98c940cbc479ce46fc83=
+fc651101bf1b86a 100644
+> --- a/include/dt-bindings/clock/mobileye,eyeq-clk.h
+> +++ b/include/dt-bindings/clock/mobileye,eyeq-clk.h
 
-> On Thu, 4 Sept 2025 at 08:30, Lee Jones <lee@kernel.org> wrote:
-> >
-> > On Thu, 04 Sep 2025, Stephen Rothwell wrote:
-> >
-> > > Hi all,
-> > >
-> > > After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-> > > failed like this:
-> > >
-> > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_get':
-> > > gpio-stmpe.c:(.text+0x21a7c29): undefined reference to `stmpe_reg_read'
-> > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_get_direction':
-> > > gpio-stmpe.c:(.text+0x21a7db2): undefined reference to `stmpe_reg_read'
-> > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_irq_sync_unlock':
-> > > gpio-stmpe.c:(.text+0x21a8166): undefined reference to `stmpe_reg_write'
-> > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a82ef): undefined reference to `stmpe_reg_read'
-> > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a8372): undefined reference to `stmpe_reg_read'
-> > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_irq':
-> > > gpio-stmpe.c:(.text+0x21a8c27): undefined reference to `stmpe_block_read'
-> > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a8f05): undefined reference to `stmpe_reg_write'
-> > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a8f89): undefined reference to `stmpe_reg_write'
-> > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_disable':
-> > > gpio-stmpe.c:(.text+0x21a91dc): undefined reference to `stmpe_disable'
-> > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_set':
-> > > gpio-stmpe.c:(.text+0x21a93a4): undefined reference to `stmpe_reg_write'
-> > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a941e): undefined reference to `stmpe_set_bits'
-> > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_direction_output':
-> > > gpio-stmpe.c:(.text+0x21a95a4): undefined reference to `stmpe_set_bits'
-> > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_direction_input':
-> > > gpio-stmpe.c:(.text+0x21a9705): undefined reference to `stmpe_set_bits'
-> > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_request':
-> > > gpio-stmpe.c:(.text+0x21a983e): undefined reference to `stmpe_set_altfunc'
-> > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_dbg_show_one':
-> > > gpio-stmpe.c:(.text+0x21a99c0): undefined reference to `stmpe_reg_read'
-> > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9b8c): undefined reference to `stmpe_reg_read'
-> > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9bb1): undefined reference to `stmpe_reg_read'
-> > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9c61): undefined reference to `stmpe_reg_read'
-> > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9e6c): undefined reference to `stmpe_reg_read'
-> > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_probe':
-> > > gpio-stmpe.c:(.text+0x21aa5b2): undefined reference to `stmpe_enable'
-> > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21aa83e): undefined reference to `stmpe_disable'
-> > >
-> > > Presumably caused by commit
-> > >
-> > >   e160dd0ac8c3 ("mfd: stmpe: Allow building as module")
-> >
-> > Okay, I have removed this patch until it can be better tested.
-> >
-> > > I have used the mfd tree from next-20250903 for today.
-> > >
-> > > Note that commit
-> > >
-> > >  03db20aaa3ba ("gpio: stmpe: Allow to compile as a module")
-> > >
-> > > is in the gpio-brgl tree which has not been merged into linux-next at
-> > > this point.
-> >
-> > Okay, perhaps these need to go in together then.
-> >
-> > Thanks Stephen.
-> >
-> 
-> I can take it through the GPIO tree if you will and set up an
-> immutable branch for you. Or not if the potential conflict is minimal.
+This is not a separate patch.
 
-An IB would be good.  Thank you.
+Best regards,
+Krzysztof
 
--- 
-Lee Jones [李琼斯]
 
