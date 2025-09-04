@@ -1,183 +1,244 @@
-Return-Path: <linux-kernel+bounces-801192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E93B4411F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:54:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A3EB44121
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37A20587951
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:54:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05179A44A00
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6BD23D287;
-	Thu,  4 Sep 2025 15:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B28328003A;
+	Thu,  4 Sep 2025 15:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MWFum7xT"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="u0kUJwzu"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79477C8F0
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879E12727FD
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757001248; cv=none; b=XPTXjRxp5eLt8u11KfmiZTiLrtvdYdei05hYuOhDjeYJG0xmUb6ke0uRCMMGYUEfVaZop0GF/HuxnNjN1sVEcVthBil67qPab3mKU5ag+YLl6llodyW9wL50pwIBuAglj5BsmznmjXg0Cre7Kn07moU4Yv8xiWBBt3WbRJtfU8Q=
+	t=1757001266; cv=none; b=fyAjzMTzPqNCj0vE5bbmHonxhH4fXEgyuxZHmahISe/87LlX07oa2Xd/qM/Tj1eLlrIqtreHuDGdUEvwfeQBjpLBP8DLWpHN7I6zLWSE2Cspr/VeA/GDAvmanoAmm5yNh0zGIeJHLn/7s2qLYcZQys1YF/ES9ENWf8eS7cOnuoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757001248; c=relaxed/simple;
-	bh=8bX8Pw0dU1Nv0/aA0MnnTJ1bz+yUeok84T0x+Kv0XEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nWp7PlijGwnMycvLvLjYkc/RyMyVZPrnvQQTc7FHkMr9YiR4/d4TxITR4/ZHkhR4eVOVA9LjI7F0O6jJEer8dFXRELjk4L4Ci93JzaTXe8J8MkalaqEey7bixaUb0ZlGLEbsDRIMcUrXucXFJ19UNbhwrRxxa1Ty7cu7XXQpaWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MWFum7xT; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24ab15b6f09so202225ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 08:54:06 -0700 (PDT)
+	s=arc-20240116; t=1757001266; c=relaxed/simple;
+	bh=NZsXl6YNvbNKl/6Z8/xkPxia+1Mmiwl62zs5F3BiEBQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=C+yDWpXcE7+J7+LutUqCu4hYAAIsURMTTI8DAyOejgqsZXPwCLPRiL+9ozK4NRTM0N9UOcN3HHKldMGUr0wkZ9TWG9VdsOg4gkJj3xYKV4JcA5Mh+Ksyh31LD0S6y84xYdOGWGLZP5s7VmvBaltk3iTNwq2GOflaAUUDstLZpcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=u0kUJwzu; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-70ba7aa131fso12794356d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 08:54:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757001246; x=1757606046; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rgDq9K4RutiA3+hQQ/hGnSVwSGPHlJ2FijaFdFtw3Mw=;
-        b=MWFum7xTOueXqsd1BLAS5FS/utN8enQfM9z40gr78ZNtJNmCzYL1Ns0IzAW+6C7CCq
-         ibOiQvk5X4nYmu9+oWgJ3oZrg3BjNaeDMBDbK6kcUC/UJWvLinLZ513wgmVPoF+cpwzD
-         TBq7Kk3EWWSePCJSKf7wijoakR4yDlbl5PXvmN6T3ANZTU5gb074CQt4/M4ilzvOSiaa
-         fiQ2N+f3JmQekyOAnVbdZlFtgggeVr/sZg7JlV9GPLzmMSXmxZMtvApw3iXzr/M1whxC
-         CwuWgp/KPjrOZ/7/aaJYKwvt2bLCDbFBda9rLQ/bIEbXiyMR8g8yW3KymAxTPJSQ0Bjk
-         VP5A==
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1757001263; x=1757606063; darn=vger.kernel.org;
+        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
+         :from:subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=CupnfoR7Wq8Isj3y9KQeT4kDofo2q3g9cffLLEa/Bmw=;
+        b=u0kUJwzuP6Eoqz3N7QFYqX3uLgQx8UgJePqhNhhOVMowfjiQp9S+SuuOEXqxL9wYdj
+         pmwJhSl25Znh5WBP4lHxihNc26VfgXX6RbTV/WcvJw9Q59bqKuEA0YJtL1s21q4SLfRb
+         Rvj6leTRsXmbN6nhkEKR6TXrbQ7igIFZwBnN19E2l+/yXrkjfMgnnL+ZCLGWVpC31SVq
+         tFF3Lx0rCLDegEi5QQZ/Zr3f5fJMEH0XA34Y9dY/8Ht1hDUBkiEkG8ftawyqVErnB7o3
+         lz4nSyyhQDki6Y3+1TWRIdgMCA8gRTdssWML0o8j+XvIwLf2SEAK2t2A8zwEVrTU7g8N
+         Tk7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757001246; x=1757606046;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rgDq9K4RutiA3+hQQ/hGnSVwSGPHlJ2FijaFdFtw3Mw=;
-        b=tSDxxNrAPwR7k7o0v532glhWfwjjkcowAecNs1oWIP/LKOZqNXBB//Rd7hNMShiB3g
-         dIk2xBY92tmVCa5NnaNRxJwg569pq2LGxKESzb2Jl/rjW4aWeKa1ePQp3dbinittb2RU
-         LsLz2YSLc+iHhM26B2ZjTh/e6EfB6tKoOjJlUnLjFUCgAiJ8zjcHNZeveRa3EgALRLUF
-         NqwWdh7o22UCc/7/Fln0kS3y6TiEnmoLbFG40+XQgrJtRznqVrfXMAP4MNI66dI8tbaO
-         d+CoDtToscxBAEIpccVUoow7OfwRku5a53KPlbMt/oSh32DZYFEUqUqiosP/9Cykkgp3
-         B5/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUck48/IF/PdneMiYZ6cCvrrk3fqlFVDlMEd5ECDm4KV6SbUsCIELcswxhTPJuNgOxeV9UoQQ1U1U2OcZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEGt5rSPIAc93/B+ogWEw9oQORl33s1JGxEBtSXYf5/zLgCldI
-	4jTN0uOX7I5vyAaEWSFZWnUjRsUGAM+udvZk7RdUqSLqHj1cQa4H/jQmDwwqu4rsYC0eCI1J0+a
-	V6zt6gpQICFL4XFDgHhmGyidt70K22xslY8ZtWogR
-X-Gm-Gg: ASbGncv6ZFblD1OK0GfQ0S7mbYxijn1Qp0HB3K7lsGp2X1cO/i4Lkgt0vzj6J9XFSrP
-	ag+noRyD90uH6X7aJqAfm+yCyv8Ys0tIyDz2Ay4a5O/1UWfJEN9HRcff7lzJ3lCznInv2zv4P3O
-	/7KM7F4eqMBl3EJ1WS5u23zOZzymkCdLVzI9TbWMMzwE1YGV4JY2JHMb97PUN5xdU35fWHghyFF
-	o2+RL3XISUSzVT3pxob30pBGGb9gdRVfCL1ItNIb323kKqP4SFxniq1V2hYLXhAog==
-X-Google-Smtp-Source: AGHT+IFn09tZFMUc7Fo4TXop3uOW4hFYWgY+V3qnhieRUGzXAnxOjxJLxOzHpopesCWQqDuc8eiCaAklrshD5N2EaOI=
-X-Received: by 2002:a17:903:2450:b0:24b:1741:1a4c with SMTP id
- d9443c01a7336-24ccaab49d7mr3468945ad.0.1757001245354; Thu, 04 Sep 2025
- 08:54:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757001263; x=1757606063;
+        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
+         :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CupnfoR7Wq8Isj3y9KQeT4kDofo2q3g9cffLLEa/Bmw=;
+        b=ZTmMEVKdWbzeDv34UI8YJXx5oTXP9oxir+UtMeaUHZcjL9UIJl72aqyOTo5vZ96L/g
+         5KiyGxPMYxDRQCS0IOpw7MDnyq+NtXITVhu54uQFuTijMp54iD/5fgijS5NkkHVK2Nk5
+         Pvvx1siU4Cfg2jFj2yxJwhijDX5y0c9yGXMsbqj7xhGT/2Khbshrhy9C5xejbOEqRAVi
+         jmShjP5rbIoaZ9dUcWAqvKMFhdSFLyrGlfDPCXaKTr7e8YzfsAlxn3FF2duGyb6JWf++
+         XAGanXeGcklg9KSmqHQK+TIcgEd0M7aYu/0icEIZ5K6N0UkQX9e/hJJphApLOJh6KW6d
+         Z/cw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPhZh6HX6E2sogMUpeTtIb5YpyeSJ0dxhf9WmKgPmwEZTC2f5kZVYVFtjhdvNeEpS2YwnL+zy8XeaV61w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx9I8UHyJPhIZ21UAOmiez8FBuorb/3Lh3yZJgCSZv3ezIgqxO
+	qqFG7p2fgdQSVLR540VGmhZwSFBFA1i/yQYFsQsvSlgJyxP/bIMuREegWC6YXaP9kqM=
+X-Gm-Gg: ASbGncuDBfZHG8IhD/ax09AylSPFo4fPvARwsqrlFoB34IbPHRLpQTA0alcQnLofCxz
+	HLakAshfhZGCFciA83gdnxBGbg9Vj83sLbYVhKu4S+M6UorO9I+uzJ0iwZvlNBJC1bLMtXk0wYe
+	Booib5fQa5h147r0YpXkfGO0PuHQzyPdow3w4800F7zRsK80PDVkdUNm8+rPCxx4xDvTiBPtXeL
+	pO7mIzo1I3ugWcSCGSAG6iEkCvU6g4+DaOkdusy50pzki14epEuwW0lafLgvUIzpkeIcTxzJ/Kv
+	RfPDKLIyofV4xLXDWPIvNXVc3dd0jgkQredUhucaSvxQzkKfEbbGJxePLFt7+7o7jOA9h30Jyth
+	VOhe86uJFQwpTqufrlHtlqG9G67wnxQ8RgnOeKQ==
+X-Google-Smtp-Source: AGHT+IFE52FvAlaKtWbQ5o0NmfX8WgTvwUZ6/IuQgIgkYceXVYsMPe+6Yfn/RZ/Fv/powbGQSeXrcw==
+X-Received: by 2002:a05:6214:19cc:b0:716:ba73:8b72 with SMTP id 6a1803df08f44-716ba738bf2mr241684946d6.19.1757001262970;
+        Thu, 04 Sep 2025 08:54:22 -0700 (PDT)
+Received: from ?IPv6:2606:6d00:11:5a76::5ac? ([2606:6d00:11:5a76::5ac])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720b4947b1asm48950046d6.41.2025.09.04.08.54.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 08:54:22 -0700 (PDT)
+Message-ID: <59e87d8e346bb16b225382b9a4500e1b16bbf776.camel@ndufresne.ca>
+Subject: Re: [PATCH v2 0/8] Add support for Wave6 video codec driver
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Marek Vasut <marek.vasut@mailbox.org>, Nas Chung
+ <nas.chung@chipsnmedia.com>, 	mchehab@kernel.org, hverkuil@xs4all.nl,
+ sebastian.fricke@collabora.com, 	robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+ jackson.lee@chipsnmedia.com, 	lafley.kim@chipsnmedia.com
+Date: Thu, 04 Sep 2025 11:54:20 -0400
+In-Reply-To: <472aac3c-9d3e-4892-8d6c-665fa6793464@mailbox.org>
+References: <20250422093119.595-1-nas.chung@chipsnmedia.com>
+	 <f03d0ae0-d28b-4b06-8f63-9d06f15c0522@mailbox.org>
+	 <fcfa00b5ae102d76b02ce1667d27822e6d2c3c81.camel@ndufresne.ca>
+	 <472aac3c-9d3e-4892-8d6c-665fa6793464@mailbox.org>
+Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-rQkiAugD/o1ZvBT9U1nt"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903-james-perf-read-build-id-fix-v1-0-6a694d0a980f@linaro.org>
- <20250903-james-perf-read-build-id-fix-v1-2-6a694d0a980f@linaro.org>
- <CAP-5=fWHGFBaCgiRcj8zVy196OE07F8jnSUbjvsO_HerdqeyTg@mail.gmail.com>
- <70bd9eea-905a-4fa9-8265-f84ab9894b12@linaro.org> <2b958dec-7ba9-41a3-b11b-43b5e8418849@codeweavers.com>
- <549d3812-a606-4981-83f5-0a99b0ff9f6a@linaro.org>
-In-Reply-To: <549d3812-a606-4981-83f5-0a99b0ff9f6a@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 4 Sep 2025 08:53:54 -0700
-X-Gm-Features: Ac12FXzHwKy2t84CiPZNRVWOAvpknEgxnXzuzVKZ0Zr3bUGonJJspm9wVw5gIqg
-Message-ID: <CAP-5=fXKthsZe3J4_UHHGwDafBq7pHzM18Mh=_2QrnSfCT3nOg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] perf symbols: Fix HAVE_LIBBFD_BUILDID_SUPPORT build
-To: James Clark <james.clark@linaro.org>
-Cc: =?UTF-8?B?UsOpbWkgQmVybm9u?= <rbernon@codeweavers.com>, 
-	Sam James <sam@gentoo.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+
+
+--=-rQkiAugD/o1ZvBT9U1nt
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 4, 2025 at 7:18=E2=80=AFAM James Clark <james.clark@linaro.org>=
- wrote:
->
->
->
-> On 04/09/2025 9:27 am, R=C3=A9mi Bernon wrote:
-> > Hi!
-> >
-> > On 9/4/25 10:13, James Clark wrote:
-> >>
-> >>
-> >> On 03/09/2025 5:07 pm, Ian Rogers wrote:
-> >>> On Wed, Sep 3, 2025 at 8:15=E2=80=AFAM James Clark <james.clark@linar=
-o.org>
-> >>> wrote:
-> >>>>
-> >>>> read_build_id() now has a blocking argument, but libbfd uses fopen()
-> >>>> internally which doesn't support O_NONBLOCK. Fix the build by adding
-> >>>> the
-> >>>> argument and ignoring it:
-> >>>>
-> >>>>    util/symbol-elf.c:964:8: error: too many arguments to function
-> >>>> =E2=80=98read_build_id=E2=80=99
-> >>>>      964 |  err =3D read_build_id(filename, bid, block);
-> >>>>
-> >>>> Fixes: 2c369d91d093 ("perf symbol: Add blocking argument to
-> >>>> filename__read_build_id")
-> >>>> Signed-off-by: James Clark <james.clark@linaro.org>
-> >>>
-> >>> Libbfd should go away:
-> >>> https://lore.kernel.org/lkml/20250823003216.733941-14-
-> >>> irogers@google.com/
-> >>> but I can imagine that currently this is hit in a build test - sorry
-> >>> for missing that and thanks for the fix!
-> >>>
-> >>
-> >> Yeah just one of the build tests, I'm not actually using it.
-> >>
-> >> Remi are you still using this? To be fair the addition for PE support
-> >> is fairly recent and even includes a binary for testing it so I'm not
-> >> sure if we should be so quick to remove it.
-> >>
-> > Yes, I'm still using it occasionally, and I think it's generally useful
-> > for Wine profiling purposes and I would rather prefer that it's not
-> > removed.
-> >
-> > I know it's not built by default because of license conflicts. I didn't
-> > realize that was an issue when contributing the changes, and it is quit=
-e
-> > unfortunate (and silly IMO).
-> >
-> > Then I'm not particularly attached to libbfd and any other option that
-> > would let perf read PE files would be alright, as long as PE support is
-> > kept.
-> >
-> > Cheers,
->
-> It looks like libLLVM might work. Looking at the doxygen there are vague
-> references to PE binaries around the getBuildID() function. But as
-> mentioned in the linked thread, it's huge at 100+ MB.
->
-> WRT that thread, I think maybe re-writing some of this in Perf wouldn't
-> be so bad. Surely getting the buildID is trivial. For PE binaries it's
-> hard to tell what's supported currently, what's being used and what's
-> being done by what library or tool. addr2line, libbfd, symbols,
-> disassembly etc.
+Hi,
 
-I know some people who work on LLVM for Windows for the sake of having
-a Chrome build from Linux. It should be possible to migrate the libbfd
-use cases to LLVM. If I remember John Levine's Linkers and Loaders
-book correctly (contents available by way of your favorite search
-engine) everything is just a variant of COFF anyway.
+Le jeudi 04 septembre 2025 =C3=A0 17:32 +0200, Marek Vasut a =C3=A9crit=C2=
+=A0:
+> On 9/4/25 3:25 PM, Nicolas Dufresne wrote:
+> > Hi,
+> >=20
+> > Le mercredi 03 septembre 2025 =C3=A0 23:47 +0200, Marek Vasut a =C3=A9c=
+rit=C2=A0:
+> > > On 4/22/25 11:31 AM, Nas Chung wrote:
+> > > > This patch series introduces support for the Chips&Media Wave6 vide=
+o
+> > > > codec IP, a completely different hardware architecture compared to =
+Wave5.
+> > > >=20
+> > > > The wave6 driver is a M2M stateful encoder/decoder driver.
+> > > > It supports various video formats, including H.264 and H.265,
+> > > > for both encoding and decoding.
+> > > > While other versions of the Wave6 IP may support VP9 decoding and
+> > > > AV1 decoding and encoding those formats are not implemented or vali=
+dated
+> > > > in this driver at this time.
+> > > >=20
+> > > > On NXP i.MX SoCs, the Wave6 IP functionality is split between two r=
+egions:
+> > > > VPU Control region, Manages shared resources such as firmware memor=
+y.
+> > > > VPU Core region, Provides encoding and decoding capabilities.
+> > > > The VPU core cannot operate independently without the VPU control r=
+egion.
+> > > >=20
+> > > > This driver has been tested with GStreamer on:
+> > > > - NXP i.MX95 board
+> > > > - pre-silicon FPGA environment
+> > > >=20
+> > > > Test results for decoder fluster:
+> > > > - JVT-AVC_V1, Ran 77/135 tests successfully=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 in 35.519 secs
+> > > > - JVT-FR-EXT, Ran 25/69 tests successfully=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 in 17.725 secs
+> > > > - JCT-VC-HEVC_V1, Ran 132/147 tests successfully=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 in 81.549 secs
+> > > > - All failures are due to unsupported hardware features:
+> > > > -- 10bit, Resolutions higher than 4K, FMO, MBAFF
+> > > > -- Extended profile, Field encoding and High422 sreams.
+> > > >=20
+> > > > Test results for v4l2-compliance:
+> > > > v4l2-compliance 1.29.0-5359, 64 bits, 64-bit time_t
+> > > > v4l2-compliance SHA: 2a91a869eb8a 2025-04-12 11:35:53
+> > > >=20
+> > > > Compliance test for wave6-dec device /dev/video0:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fail: ../utils/v4l2-compliance/v4l2-te=
+st-controls.cpp(1180): !have_source_change || !have_eos
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_=
+(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
+> > > > Total for wave6-dec device /dev/video0: 48, Succeeded: 47, Failed: =
+1, Warnings: 0
+> > > >=20
+> > > > Compliance test for wave6-enc device /dev/video1:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fail: ../utils/v4l2-compliance/v4l2-te=
+st-controls.cpp(1169): node->codec_mask & STATEFUL_ENCODER
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_=
+(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
+> > > > Total for wave6-enc device /dev/video1: 48, Succeeded: 47, Failed: =
+1, Warnings: 0
+> > > >=20
+> > > > Note: the failures are all related with the eos event.
+> > >=20
+> > > For what its worth, the whole series:
+> > >=20
+> > > Tested-by: Marek Vasut <marek.vasut@mailbox.org> # NXP i.MX95 rev. A0
+> >=20
+> > Do you mind sharing what tests you have done ? Are you confirming the s=
+ame
+> > fluster and compliance results, have you done more ? Since this is larg=
+ely
+> > inspired on Wave5, I'd like to see people testing real-world playback, =
+with
+> > seeks, dynamic resolution changes, data lost. On Wave5, latest performa=
+nce
+> > patches leads to crash or hangs.
+> I did not use fluster this time, I used h264 decode of 1920x1080 60 FPS=
+=20
+> stream. The pipeline was very basic, something along the lines of:
+>=20
+> gst-launch-1.0 -v filesrc location=3D/test.mp4 ! qtdemux ! h264parse !=
+=20
+> v4l2h264dec ! fpsdisplaysink text-overlay=3Dfalse video-sink=3Dwaylandsin=
+k
 
-It is a shame that the PE testing in buildid.sh (and the testing in
-general) is requiring `cc` as it'd be much nicer to have the tests in
-a form similar to the perf test workloads (e.g. perf test -w noploop).
-I don't have a good idea on how to fix this but just wanted to note
-it.
+Thanks for the detail. Since you have a running setup, perhaps consider tes=
+ting
+with the following, left/right keyboard arrow will let you jump around in t=
+he
+media.
 
-I'll write a non-blocking patch for read_build_id with libbfd that
-matches what the others do and should avoid the hang in the meantime.
+  gst-play-1.0 --audiosink=3Dfakeaudiosink --videosink=3Dwaylandsink /test.=
+mp4
 
-Thanks,
-Ian
+That would at least cover seeking use cases. I provided Nas a stream that
+aggressively do resolution changes to reproduce a Wave5 crash, I would expe=
+ct
+him to test and report against Wave6 too. If you'd like to have that sample=
+, let
+me know, its not very big, and free, but I'd rather not do attachements ove=
+r the
+mailing list.
+
+regards,
+Nicolas
+
+--=-rQkiAugD/o1ZvBT9U1nt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLm2LAAKCRDZQZRRKWBy
+9EtkAQCHftEHuFqu/CGZGFVjDS0zfFNB49nCoSFYLcOlPivn+gD/THK9ihIjKXNh
+HFMc495U+ea+XAU+U2kGkIqsH9fdjgk=
+=CPDD
+-----END PGP SIGNATURE-----
+
+--=-rQkiAugD/o1ZvBT9U1nt--
 
