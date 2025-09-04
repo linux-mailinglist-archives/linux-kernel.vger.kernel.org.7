@@ -1,126 +1,77 @@
-Return-Path: <linux-kernel+bounces-801010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A038B43EBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:28:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08AD1B43EB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31D861C87E7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:28:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29AB1C87992
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F38030AAB0;
-	Thu,  4 Sep 2025 14:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B878B3090E2;
+	Thu,  4 Sep 2025 14:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IHuBMNeE"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DlqtHD48"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F7D3090E6
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082AD30147F;
+	Thu,  4 Sep 2025 14:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756995898; cv=none; b=DoDBepCpOV7LK8YxmGbKlBWgRVyOMGrTD36KkPa0oDI1cu18novUuWQC0K5iPOaujmDjJlByjyPxFVgr+gdZ0yHDmrVnxYPXjhERd3KcXvtUzp5knpOrYJ8YGfm39RGPsvBUHJwcLHJt3ICdwuHwYStrzPaxT2vbF6yo/RmOiQU=
+	t=1756995888; cv=none; b=pZglBn80k3O1l5lT/wjr+PEiPZxDDP52dXzy71LHROAaIKJYqVFSQqGgefHHqBNWWLVUgp6smVQBM1eWG3h0t5QyuP7INnXY6Ofss/wc5VFFxIiAc+DI6S8Vp1o435RjShfCLPgIDuX5DzKihOPzS2NNjVMnK3fq5OCjaEGdxxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756995898; c=relaxed/simple;
-	bh=rXizUaMeeJHGRgDHEsOcoN4pKpjy1oo22NgyBntIbd8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=mUq7iTNIGnLUQFsQs6u8BV5Gv/kkzF27oTsZxuJHGKPAgNoOFu+OGRoUnY0AAQ6WfsDy60RbicwrNuHp8PPI9Q2AeHR1euTAUpz6h22qKgEnY5Tuz03xbyAMhkKDkosBhOT8Kw+97XaIkD6m+v29ckeBnmZo2CCrZzMRlM3BseU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IHuBMNeE; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250904142454epoutp0181290a05d79ebccddea8cc03648f422f~iGnUgc0jH0556505565epoutp01V
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:24:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250904142454epoutp0181290a05d79ebccddea8cc03648f422f~iGnUgc0jH0556505565epoutp01V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756995895;
-	bh=qoiDptdgyUFjz3gdoq09yJAfTI36DqUH1Pp0hibVgZo=;
+	s=arc-20240116; t=1756995888; c=relaxed/simple;
+	bh=TMSFhLV/1wYkSJ97dKJw6ufL7BjjXw84F1bCscmJTtw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qWaxr7N4WLphvlJ5p78TPp9xC+HCmHf/WA4D6bcc6qJ+om3LhuVucDPp3fJHW3tKUZUDFlajoG3Fv64gn9SPw2YmL910cNHivxXyJOX5KnRXhK9F0vitM5XPDOn5co5e5Q4ynNy9flZ9VSa6tLB7tp4baSiBSy30qCmPtY+8CMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DlqtHD48; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C5BC4CEF0;
+	Thu,  4 Sep 2025 14:24:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756995887;
+	bh=TMSFhLV/1wYkSJ97dKJw6ufL7BjjXw84F1bCscmJTtw=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IHuBMNeEcINrHdhSripTCvGxoHZEKtO/KAosiJ2fqIaCVtuEF8xOfUEOegHALH+md
-	 CA/WEAqCzAExGwCQc4BLachzV1exysnd1igIKileA6aXHIhki9ILbnqkF/AU0qww8l
-	 CE29mXhk7wMIJUcakLWrQXzicw1h/UulZdjjoL7o=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250904142454epcas5p12ac962b94580190e5a3f6600c08ed63d~iGnUEGH7R0053600536epcas5p1V;
-	Thu,  4 Sep 2025 14:24:54 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.93]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cHhZY4BGwz6B9m6; Thu,  4 Sep
-	2025 14:24:53 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250904142452epcas5p40047078323fae682cca73f6dc99028aa~iGnSP93N83180031800epcas5p4p;
-	Thu,  4 Sep 2025 14:24:52 +0000 (GMT)
-Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250904142451epsmtip259cd7272a4eb456ae1007c891cc2b754~iGnRAO_-r1019010190epsmtip2p;
-	Thu,  4 Sep 2025 14:24:51 +0000 (GMT)
-Date: Thu, 4 Sep 2025 19:54:45 +0530
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
-	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	cpgs@samsung.com
-Subject: Re: [PATCH V2 07/20] nvdimm/namespace_label: Update namespace
- init_labels and its region_uuid
-Message-ID: <20250904142445.gohwsacmtuuqb6uu@test-PowerEdge-R740xd>
+	b=DlqtHD48YgV+PrFaJtWEk60ZfwIQ08DvnfwAInRIuLG13x92gTVjBWU1ChjPa5ahM
+	 AEfSxcERFIS0Bs97NAUWZWUTIwGlv2eYFuVR2yelqCz1QWzLpTkDg2D5icoi0KAGG9
+	 yTckK9cFA9Y4cWB9YaTPF9yEtvFZyCc0XJjavWv8FghE6w7hVGkbhPRQRVHvoK9wp5
+	 B5sB20in+GorY/jpsQzG7oZYykD4wAASJ5jCdivS3FYuEfoFT6LcTAt5g7SYN6ip4p
+	 c22q959WzyTU7ib43O7cvcVLeTYiSJWxTtGJSpDjT0HTGuyHqnbDLn6Ggt40q7yFZo
+	 gMd/Mh/odYsEA==
+Date: Thu, 4 Sep 2025 07:24:46 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Conley Lee <conleylee@foxmail.com>
+Cc: davem@davemloft.net, wens@csie.org, mripard@kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: ethernet: sun4i-emac: free dma descriptor
+Message-ID: <20250904072446.5563130d@kernel.org>
+In-Reply-To: <tencent_160BBED8A83CECDE110A344B51B6229B1209@qq.com>
+References: <20250902155731.05a198d7@kernel.org>
+	<tencent_160BBED8A83CECDE110A344B51B6229B1209@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250813155802.00003f3d@huawei.com>
-X-CMS-MailID: 20250904142452epcas5p40047078323fae682cca73f6dc99028aa
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e2696_"
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250730121231epcas5p2c12cb2b4914279d1f1c93e56a32c3908
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121231epcas5p2c12cb2b4914279d1f1c93e56a32c3908@epcas5p2.samsung.com>
-	<20250730121209.303202-8-s.neeraj@samsung.com>
-	<20250813155802.00003f3d@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e2696_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+On Wed,  3 Sep 2025 15:49:39 +0800 Conley Lee wrote:
+> In the current implementation of the sun4i-emac driver, when using DMA to
+> receive data packets, the descriptor for the current DMA request is not
+> released in the rx_done_callback.
+> 
+> Fix this by properly releasing the descriptor.
 
-On 13/08/25 03:58PM, Jonathan Cameron wrote:
->On Wed, 30 Jul 2025 17:41:56 +0530
->Neeraj Kumar <s.neeraj@samsung.com> wrote:
->
->> nd_mapping->labels maintains the list of labels present into LSA.
->> init_labels() prepares this list while adding new label into LSA
->> and updates nd_mapping->labels accordingly. During cxl region
->> creation nd_mapping->labels list and LSA was updated with one
->> region label. Therefore during new namespace label creation
->> pre-include the previously created region label, so increase
->> num_labels count by 1.
->>
->> Also updated nsl_set_region_uuid with region uuid with which
->> namespace is associated with.
->
->Any reason these are in the same patch?  I'd like to have
->seen a bit more on why this 'Also' change is here and a separate
->patch might make that easier to see.
+Reading the docs, it appears that the need to free the desc is tied to
+setting descriptor reuse flag. Which this driver does not do. So I'm
+unclear why this is needed, maybe the dma engine driver is doing
+something strange?
 
-I will create separate commit to update region_uuid and will remove
-'Also' part from commit message. Yes both hunks are not associated,
-I just added both to avoid extra commit.
-
-
-Regards,
-Neeraj
-
-------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e2696_
-Content-Type: text/plain; charset="utf-8"
-
-
-------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e2696_--
+Could you repost this, CC the dmaengine ML, Vinod and the appropriate
+SoC maintainers?
 
