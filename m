@@ -1,113 +1,84 @@
-Return-Path: <linux-kernel+bounces-800787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 450EDB43C0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:51:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1F95B43C11
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6E391C82CF3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:51:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EE3E1C24E4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662852FDC4C;
-	Thu,  4 Sep 2025 12:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7882FE059;
+	Thu,  4 Sep 2025 12:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i4+s7xvh"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vYr2V7Ga"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458712FC009;
-	Thu,  4 Sep 2025 12:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156822FC009;
+	Thu,  4 Sep 2025 12:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756990269; cv=none; b=T0hBIjsP8BmYDpFT1r99x/RIvXEEymil+Ihrd/Ku+cd7DJKPyHPfHXl2luX+40YrxCgthLJexS/U/v/P2oygvAVeWo9SesVxVeLWW8K+GpXC0+0NZFLAn4PCHEGhhD5KQX44Cpn7xEPDg+MxQROX11LLHJ3I8QzGPYqYMBOEv5w=
+	t=1756990294; cv=none; b=HjS4qxXrcmbOAuRW8m30bAPOxubLltdoBshns1TwlNKDSpvGUBC7maBZeZ3c8ZShRI9ssDdYZoPBf+UB9pQveOYY0zsH2bhsi9s/gav9PoLBTMJMulJgIId1L65heY+EJOAvswfSOfXBNRYpDZnLDe0SFKld1RWrIAkNEovK3eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756990269; c=relaxed/simple;
-	bh=eIKYTmiVJ5yfD1xV0iQhiKGU4UTgOxNpb38dYIPe608=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K7D47OjTgTlllo2ty4cSeKXLfCAqKa4zu1e+xFV90SFo/3E4vUpoJwGK2QZQp48kLxN6pr9s1YbaXUwCVbrIUjAmj3o3ttAGVvPLpeMJ1KjhS76e3Z1FxsLYP425GGNrgkG5xPdWnylnK4+5mQjsfqXw7sEeo9gm4/OTVcrTGT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i4+s7xvh; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3d1bf79d758so780994f8f.1;
-        Thu, 04 Sep 2025 05:51:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756990266; x=1757595066; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eIKYTmiVJ5yfD1xV0iQhiKGU4UTgOxNpb38dYIPe608=;
-        b=i4+s7xvh7PY1unU3xeDJLLiktU/nxpsfvp3QTY36qvOnYOrZN+c1zIv37HUotCtBxs
-         A62R9T1K2yKRGp9wFBh3ZEbx2leh0s25gJFQiuCd2gYPAyRli5MA0mjXp4lDtS6JxV+q
-         45fMEWcqOsFxAbWhycCyoAdzBZXDyFwz3rzfKUdvRBGYIDs4rOeFqOm9OMqOXydNJUpU
-         zoU4GYLnVvp6/xVOCQOnOZSGHb7b/NJpUg3jvNYCGJeUMKQ4xIAaywZ88OqXgCOKjKws
-         2VtGNfEmOgMEHyQ14m23bNjM/hDQvCKXOg7NEjmmxEuDc2caQ8gN+z0iEY3kyIc7us8W
-         uDxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756990266; x=1757595066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eIKYTmiVJ5yfD1xV0iQhiKGU4UTgOxNpb38dYIPe608=;
-        b=AzyjEURtghCQI4NX0EIkoLEfAe/gf/ijJzXii4nk5c/nndCJuNAha/EudhtRFMgg4e
-         zeC1e15S1NNQDKZ8QIvqOW2nSDm4bf3vBouknB2+XukZIhcbcMV8aqeWTT/ZZ2x75jqY
-         hJesHjcVraW45fMKG10LJ8R0dQ+CkzpbdYYIxFIdMjbihIj5cenE9RMntM2KaDjGcKwQ
-         pKD7fQwBylTlFZv06QKaloJfGx0K4ety7JjxSaFSZGH02jB8n8BzbJ/+dDmnAIVJQ0zj
-         uHdmOSGs0Pq2HrHJhgvi3NESnVd5hO84wx6nrc+lpbqDEbLtO7PxXZXDHPtOWlk1oxvU
-         MQiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBSovHdKIH83zkdMLqdCUmMskGqBP1S80FAW5qsenJSdpW1wxQOYnwa2PocWUcl+6QhLybtITAbVyBt+xx@vger.kernel.org, AJvYcCVzv1vx3BlMVDcaQVJ4fDe1HyRpMcBB5w5kkjUyyXNJBiWWTDO199OlX2PUC55WISKKZZcThhhO27GLuQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLDXyuGdbswGeX44eHfuXfd/LOW+CEUFY1mSpWrevrpO9n8Gew
-	Y0NU1TD8psruFSwmiFdCGdpSRx9OgMvMqrGw1L5TR4gsSkVRZURlXswhzJDPPVDQTRZpcC+zEAK
-	A++AR6tLPpkY0sQsjoM5jRbO+ndpz4oM=
-X-Gm-Gg: ASbGncswu6K0ZpOTFeeN65Ti7Wre2NeT3thEgmsFOukfouM89NpTYvHcuksmYxyKKOf
-	SHQuK53WAPEUnf2Jc7oNxchUW7MCgbMlUnPNDWk7xPPVCc/tbsLEGVCZulH0aUaNdSQ5g4yVF8n
-	9k5IB/ide1lrUbzqljTpzMjEynjtlthZwdwL2tvd1QWYF44R4pwmJZq4vaxzHxFDgUprfFqW7wi
-	/4aNsza1+Djxkc74t8=
-X-Google-Smtp-Source: AGHT+IEPf7mfkRpPLaB0y4Ac62qoI+10hGhweFxYiiSBOrdamFK1Qy2pRjskSnJmjZCSbFSmubfiej0baEUjF4svHHM=
-X-Received: by 2002:a05:6000:2dc6:b0:3dc:b041:9919 with SMTP id
- ffacd0b85a97d-3dcb0419c22mr6177984f8f.11.1756990266278; Thu, 04 Sep 2025
- 05:51:06 -0700 (PDT)
+	s=arc-20240116; t=1756990294; c=relaxed/simple;
+	bh=mjmuP3eTd5TQVyMcuIqiR9BfXcdv96nsp1pWUeopX8A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=haswuUlpZUKHYavrPWtasrPmizrC5Ij19zs3WNt2/3vgkxfnhVLFNesSoehyCl5NFCNXzT00agHYtgDpd0a6Aff/Tc7R5/8HBDct7tq/WuN3dPlBiWXFoitQwrmhgj2OOfFkkPtCWU4735Lt3mM4i6mmp1yM3s4oy4Eph+csjnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vYr2V7Ga; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=AkSI/H68/3rO9+rnbUFWKGs+2zxiUh31b/gspJbDwFk=; b=vYr2V7Gato0bSRMSrst4zVigSs
+	QfWDIDzkzN1M4B0Vqh2Ef4jFKVI4fARxoVjrgmJxefFY23HAFxo+U2L0A6mAa71Z8ONnJYgBndXh8
+	CaGwFQPXfEbwPu4SreDuKvfKgrkSwS9fciVJUr47akLzlsOs1C/jLS3p1nAQ8sGI7Yuo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uu9Qy-007DDO-Qf; Thu, 04 Sep 2025 14:51:24 +0200
+Date: Thu, 4 Sep 2025 14:51:24 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Qingfang Deng <dqfext@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-ppp@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Felix Fietkau <nbd@nbd.name>
+Subject: Re: [RFC PATCH net-next] ppp: enable TX scatter-gather
+Message-ID: <bcf9c1c9-996a-4fd4-902c-3bf797ca688d@lunn.ch>
+References: <20250904021328.24329-1-dqfext@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903162327.109538-1-clamor95@gmail.com> <20250903162327.109538-2-clamor95@gmail.com>
- <acakhrd7m7uigyqepxnaidrzpmftvxjaeybqlns6boujmzdzwq@lter6ek2b7er>
-In-Reply-To: <acakhrd7m7uigyqepxnaidrzpmftvxjaeybqlns6boujmzdzwq@lter6ek2b7er>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 4 Sep 2025 15:50:53 +0300
-X-Gm-Features: Ac12FXygWh6QSsyyOI-HKUOp1gcLrKsBvdpFLzFQh63HtOp2US09qTYCJBx2kdE
-Message-ID: <CAPVz0n015aKKjArWk5u+0rHU_tDZyQ1zQ92m3BbA2A=JgjAegg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] input: touchscreen: atmel_mxt_ts: add support for
- generic touchscreen configurations
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Nick Dyer <nick@shmanahar.org>, Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904021328.24329-1-dqfext@gmail.com>
 
-=D1=87=D1=82, 4 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 15:22 Dmitr=
-y Torokhov <dmitry.torokhov@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Hi Svyatoslav,
->
-> On Wed, Sep 03, 2025 at 07:23:27PM +0300, Svyatoslav Ryhel wrote:
-> > This provides support for generic touchscreen configuration options lik=
-e
-> > swapped-x-y, min-x, min-y, size-x, size-y, etc.
->
-> This requires corresponding change to the binding document.
->
+> diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
+> index f9f0f16c41d1..3bf37871a1aa 100644
+> --- a/drivers/net/ppp/ppp_generic.c
+> +++ b/drivers/net/ppp/ppp_generic.c
+> @@ -1710,6 +1710,12 @@ pad_compress_skb(struct ppp *ppp, struct sk_buff *skb)
+>  		ppp->xcomp->comp_extra + ppp->dev->hard_header_len;
+>  	int compressor_skb_size = ppp->dev->mtu +
+>  		ppp->xcomp->comp_extra + PPP_HDRLEN;
+> +	/* Until we fix the compressor need to make sure data portion is
+> +	 * linear.
+> +	 */
+> +	if (skb_linearize(skb))
+> +		return NULL;
 
-I assumed it was already included, but it seems not to be. I will add
-appropriate change to schema in v2. Do I need to add any adjustments
-to the code?
+The word 'fix' suggest something is broken. I don't think that is
+true, its just a limitation of the compressor. Please avoid 'fix'.
 
-> Thanks.
->
-> --
-> Dmitry
+	Andrew
 
