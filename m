@@ -1,93 +1,133 @@
-Return-Path: <linux-kernel+bounces-800405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47227B43746
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:35:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84FC7B4374A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 677D27C5B20
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:34:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 197CA1884520
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA372F747F;
-	Thu,  4 Sep 2025 09:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100712F7445;
+	Thu,  4 Sep 2025 09:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="ZmaUn4wn";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="4kaiBPQt"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="tiySNM70"
+Received: from pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.162.73.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D082F7455
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC251A9F82;
+	Thu,  4 Sep 2025 09:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.162.73.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756978447; cv=none; b=c3y80Fbl8PR4L0F6phtGPft0jNsgLJY/lFYdLW1UrM4o4Q1PUOA73bl5Aa2wMyhE2EUbNhrmMa/sEToa+zrmz4a31bVKhsILIjkO0EF1tFDzgHF/utBHXUYyeDTiM3T3ulV7GS/l33GYzS9Ggm66GEq33xAtv8kUCywMlt/QJ3I=
+	t=1756978575; cv=none; b=qlQzMrDkLLllMh/5eHbm8olJOheM08lIM7xMRfwkoqPyHX39mUWHKFCF+5bzSYx6oZOAvyrF+oqTp9NqyVJcptOEM53V2AUlpWtCqB58MfSITU70HnTp1U6H/C54FeUVxBbovH71DC9ycJMmnspnLydRkABBZECOa9nW9AF7rRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756978447; c=relaxed/simple;
-	bh=kAhDKjDH0/7hCdvshzbpJuJxL8ynu+aHcOlt/BEHvIE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N5kptf5eXvb7nXDuzCOAnhjYU/d1Y9p9dJmHgcgJbtHgTGIgSjxZ8qpnFW3OP8h+Vl3IzHvbLYl/g9cp0X4gmeW0FnF2GwGJOgHK0/iMUtD7uAkliQ6TLAqWoZqXCtt+golmWbgowmKZZQ6Ybf3gCqbrcm1vAt5RQSY/HWI573w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=ZmaUn4wn; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=4kaiBPQt; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1756978434; x=1757583234;
-	d=konsulko.se; s=rsa2;
-	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
-	 message-id:date:subject:cc:to:from:from;
-	bh=4IuKTho9AadcM+Re0nAwehN+zaegfeyCAyeD2EXwBdM=;
-	b=ZmaUn4wnej3tj0YPURzSnREubQR7uz0uoH5s4PsMUCGzyOagNr+E+eR5Ab71zSmt8k5c2nin0lH3i
-	 oep89GfftkxOZiLG+tMIBCdq6dUeLMfzNNgB9yBYCi6w/op+YJd6VkpVYegbHJxr+q0x1zeyhza4UH
-	 APLp9hlPx0PiEPHsRmskPD0MksbRo9CfpXXt80nXlCaCYzArOj0m+KxB+06lmT389GK0UzbFTn8rBq
-	 9yGzGT4OyKzNhNzQ2GSGBhoXiBRfSAXzBm9H6cbhGWvTCUZHNKMMGF4ucrns1b7x9Jfx7cMXDQ1nAA
-	 hvSuoLTO0ly/VQ4byqnvjqwP6jZAFaA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1756978434; x=1757583234;
-	d=konsulko.se; s=ed2;
-	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
-	 message-id:date:subject:cc:to:from:from;
-	bh=4IuKTho9AadcM+Re0nAwehN+zaegfeyCAyeD2EXwBdM=;
-	b=4kaiBPQtOZ/PWNLcFNX3C1uWz0M7ZqHYVA1wUtVitG2pKAYKIz0+b7gh2ytX5Qe+YuDykFtycLGbE
-	 vE+uZE8Bg==
-X-HalOne-ID: 44b5596e-8972-11f0-8a3c-85eb291bc831
-Received: from localhost.localdomain (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
-	by mailrelay5.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id 44b5596e-8972-11f0-8a3c-85eb291bc831;
-	Thu, 04 Sep 2025 09:33:54 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: hannes@cmpxchg.org
-Cc: linux-kernel@vger.kernel.org,
-	Vlastimil Babka <vbabka@suse.cz>,
-	linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: Re: [PATCH 0/3] mm: remove zpool
-Date: Thu,  4 Sep 2025 11:33:24 +0200
-Message-Id: <20250904093325.2768507-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250829162212.208258-1-hannes@cmpxchg.org>
-References: <20250829162212.208258-1-hannes@cmpxchg.org>
+	s=arc-20240116; t=1756978575; c=relaxed/simple;
+	bh=wjGzphpQSmdgD73ekPijlgtAxRIRaR7CsFHs0fRNlso=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eXr0kbpuvtQVv06fUcta8c7P1zoS3teZcYQUP/afyQ7rhVZdRdUTuQrpsmiPR9BLbkilQWD6aZGJz6QxR+HIdeuW7j/z+WKC0azR06tyqmG9fsQ4vn3r/R8LO75Q8gQz94iceGRZ9sG2GBckxa9GZgK+kYqJkzwdMMMSlapb0uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=tiySNM70; arc=none smtp.client-ip=35.162.73.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1756978573; x=1788514573;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=wjGzphpQSmdgD73ekPijlgtAxRIRaR7CsFHs0fRNlso=;
+  b=tiySNM703RtKNRf5FJAKiQHqeK/XNj+6dGK8IVim3Wk0YCNrFKoSa5mv
+   7RN//YdI11POPp0ozm5qaNgG+DjAB+LwufnAqzurkhEcbIjbIrHAFsyyG
+   lxeQkjoK0IazF205HeAWSD0q7RYfLDatpXy+HlZwWds2hFuBJ9QhN8gBx
+   GKZk7kKi45fiNVl+5OPm+nanIst2WFhEf5iqcdzpqcAkdw/Zog5rQsSca
+   iJrgK2PHuRfAYJLlq41S9jDRKRC/zps4Hd5s4/Kje5DUAmFv4r6eqw6zM
+   an+adF7kqfwOrQB8+ER2xCsJOL43RJ5AcVRPDZt7xrM76EotWbAk0urHH
+   A==;
+X-CSE-ConnectionGUID: bjc+8o0ZQjSAH2UyMvYysw==
+X-CSE-MsgGUID: 4EwNZJGCR2GA8AZ5/CtUCA==
+X-IronPort-AV: E=Sophos;i="6.18,238,1751241600"; 
+   d="scan'208";a="2272356"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:36:11 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:47410]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.63.19:2525] with esmtp (Farcaster)
+ id 67cfe508-291c-474a-991f-c5f04ba32975; Thu, 4 Sep 2025 09:36:10 +0000 (UTC)
+X-Farcaster-Flow-ID: 67cfe508-291c-474a-991f-c5f04ba32975
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Thu, 4 Sep 2025 09:36:10 +0000
+Received: from dev-dsk-epetron-1c-1d4d9719.eu-west-1.amazon.com
+ (10.253.109.105) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Thu, 4 Sep 2025
+ 09:36:08 +0000
+From: Evangelos Petrongonas <epetron@amazon.de>
+To: <ardb@kernel.org>, Evangelos Petrongonas <epetron@amazon.de>, "Ilias
+ Apalodimas" <ilias.apalodimas@linaro.org>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: <bhe@redhat.com>, <changyuanl@google.com>, <graf@amazon.com>,
+	<kexec@lists.infradead.org>, <linux-efi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<nh-open-source@amazon.com>, <rppt@kernel.org>
+Subject: Re: Re: [PATCH v3 2/2] efi: Support booting with kexec handover (KHO)
+Date: Thu, 4 Sep 2025 09:34:09 +0000
+Message-ID: <20250904093455.73184-1-epetron@amazon.de>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <CAMj1kXFzKzpoqczq7Rk-u+kKLFO057XEXMD+KM=iRMMsoUZbJA@mail.gmail.com>
+References: <cover.1755721529.git.epetron@amazon.de> <b34da9fd50c89644cd4204136cfa6f5533445c56.1755721529.git.epetron@amazon.de> <CAMj1kXFQwOHyQg2LtabMA3qxiBn_AVV_JNfki2WPSg8u_XbBcg@mail.gmail.com> <CAMj1kXFzKzpoqczq7Rk-u+kKLFO057XEXMD+KM=iRMMsoUZbJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D044UWA003.ant.amazon.com (10.13.139.43) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-> With zswap using zsmalloc directly, there are no more in-tree users of
-> this code. Remove it.
-> 
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+T24gVGh1LCA0IFNlcCAyMDI1IDA5OjE5OjIxICswMjAwLCBBcmQgQmllc2hldXZlbCA8YXJkYkBr
+ZXJuZWwub3JnPiB3cm90ZToKPiBPbiBTYXQsIDIzIEF1ZyAyMDI1IGF0IDIzOjQ3LCBBcmQgQmll
+c2hldXZlbCA8YXJkYkBrZXJuZWwub3JnPiB3cm90ZToKPiA+Cj4gPiAoY2MgSWxpYXMpCj4gPgo+
+ID4gTm90ZSB0byBha3BtOiBwbGVhc2UgZHJvcCB0aGlzIHNlcmllcyBmb3Igbm93Lgo+ID4KPiA+
+IE9uIEZyaSwgMjIgQXVnIDIwMjUgYXQgMDQ6MDAsIEV2YW5nZWxvcyBQZXRyb25nb25hcyA8ZXBl
+dHJvbkBhbWF6b24uZGU+IHdyb3RlOgo+ID4gPgo+ID4gPiBXaGVuIEtITyAoS2V4ZWMgSGFuZE92
+ZXIpIGlzIGVuYWJsZWQsIGl0IHNldHMgdXAgc2NyYXRjaCBtZW1vcnkgcmVnaW9ucwo+ID4gPiBl
+YXJseSBkdXJpbmcgZGV2aWNlIHRyZWUgc2Nhbm5pbmcuIEFmdGVyIGtleGVjLCB0aGUgbmV3IGtl
+cm5lbAo+ID4gPiBleGNsdXNpdmVseSB1c2VzIHRoaXMgcmVnaW9uIGZvciBtZW1vcnkgYWxsb2Nh
+dGlvbnMgZHVyaW5nIGJvb3QgdXAgdG8KPiA+ID4gdGhlIGluaXRpYWxpemF0aW9uIG9mIHRoZSBw
+YWdlIGFsbG9jYXRvcgo+ID4gPgo+ID4gPiBIb3dldmVyLCB3aGVuIGJvb3Rpbmcgd2l0aCBFRkks
+IEVGSSdzIHJlc2VydmVfcmVnaW9ucygpIHVzZXMKPiA+ID4gbWVtYmxvY2tfcmVtb3ZlKDAsIFBI
+WVNfQUREUl9NQVgpIHRvIGNsZWFyIGFsbCBtZW1vcnkgcmVnaW9ucyBiZWZvcmUKPiA+ID4gcmVi
+dWlsZGluZyB0aGVtIGZyb20gRUZJIGRhdGEuIFRoaXMgZGVzdHJveXMgS0hPIHNjcmF0Y2ggcmVn
+aW9ucyBhbmQKPiA+ID4gdGhlaXIgZmxhZ3MsIHRodXMgY2F1c2luZyBhIGtlcm5lbCBwYW5pYywg
+YXMgdGhlcmUgYXJlIG5vIHNjcmF0Y2gKPiA+ID4gbWVtb3J5IHJlZ2lvbnMuCj4gPiA+Cj4gPiA+
+IEluc3RlYWQgb2Ygd2hvbGVzYWxlIHJlbW92YWwsIGl0ZXJhdGUgdGhyb3VnaCBtZW1vcnkgcmVn
+aW9ucyBhbmQgb25seQo+ID4gPiByZW1vdmUgbm9uLUtITyBvbmVzLiBUaGlzIHByZXNlcnZlcyBL
+SE8gc2NyYXRjaCByZWdpb25zLCB3aGljaCBhcmUKPiA+ID4gZ29vZCBrbm93biBtZW1vcnksIHdo
+aWxlIHN0aWxsIGFsbG93aW5nIEVGSSB0byByZWJ1aWxkIGl0cyBtZW1vcnkgbWFwLgo+ID4gPgo+
+ID4gPiBBY2tlZC1ieTogTWlrZSBSYXBvcG9ydCAoTWljcm9zb2Z0KSA8cnBwdEBrZXJuZWwub3Jn
+Pgo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBFdmFuZ2Vsb3MgUGV0cm9uZ29uYXMgPGVwZXRyb25AYW1h
+em9uLmRlPgo+ID4gPiAtLS0KPiA+ID4gQ2hhbmdlcyBpbiB2MzoKPiA+ID4gICAgICAgICAtIElt
+cHJvdmUgdGhlIGNvZGUgY29tbWVudHMsIGJ5IHN0YXRpbmcgdGhhdCB0aGUgc2NyYXRjaCByZWdp
+b25zIGFyZQo+ID4gPiAgICAgICAgIGdvb2Qga25vd24gbWVtb3J5Cj4gPiA+Cj4gPiA+IENoYW5n
+ZXMgaW4gdjI6Cj4gPiA+ICAgICAgICAgLSBSZXBsYWNlIHRoZSBmb3IgbG9vcCB3aXRoIGZvcl9l
+YWNoX21lbV9yZWdpb24KPiA+ID4gICAgICAgICAtIEZpeCBjb21tZW50IGluZGVudGF0aW9uCj4g
+PiA+ICAgICAgICAgLSBBbWVuZCBjb21taXQgbWVzc2FnZSB0byBzcGVjaWZ5IHRoYXQgc2NyYXRj
+aCByZWdpb25zCj4gPiA+ICAgICAgICAgYXJlIGtub3duIGdvb2QgcmVnaW9ucwo+ID4gPgo+ID4g
+PiAgZHJpdmVycy9maXJtd2FyZS9lZmkvZWZpLWluaXQuYyB8IDI5ICsrKysrKysrKysrKysrKysr
+KysrKysrKystLS0tCj4gPiA+ICAxIGZpbGUgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygrKSwgNCBk
+ZWxldGlvbnMoLSkKPiA+ID4KPiA+Cj4gPiBJJ2QgcmF0aGVyIGRyb3AgdGhlIG1lbWJsb2NrX3Jl
+bW92ZSgpIGVudGlyZWx5IGlmIHBvc3NpYmxlLiBDb3VsZCB3ZQo+ID4gZ2V0IHNvbWUgaW5zaWdo
+dCBpbnRvIHdoZXRoZXIgbWVtYmxvY2tzIGFyZSBnZW5lcmFsbHkgYWxyZWFkeQo+ID4gcG9wdWxh
+dGVkIGF0IHRoaXMgcG9pbnQgZHVyaW5nIHRoZSBib290Pwo+ID4KPiA+Cj4gCj4gUGluZz8KCkhl
+eSBBcmQgSSB3YXMgQUZLIHRyYXZlbGxpbmcuIEkgYW0gYmFjayBub3cgYW5kIHdpbGwgZ2V0IHRv
+IGl0LgpQUzogS2VlbiB0byBtZWV0IHlvdSBsYXRlciB0b2RheSBpbiB0aGUgS1ZNIEZvcnVtLgoK
+S2luZCBSZWdhcmRzLApFdmFuZ2Vsb3MKCgoKCkFtYXpvbiBXZWIgU2VydmljZXMgRGV2ZWxvcG1l
+bnQgQ2VudGVyIEdlcm1hbnkgR21iSApUYW1hcmEtRGFuei1TdHIuIDEzCjEwMjQzIEJlcmxpbgpH
+ZXNjaGFlZnRzZnVlaHJ1bmc6IENocmlzdGlhbiBTY2hsYWVnZXIsIEpvbmF0aGFuIFdlaXNzCkVp
+bmdldHJhZ2VuIGFtIEFtdHNnZXJpY2h0IENoYXJsb3R0ZW5idXJnIHVudGVyIEhSQiAyNTc3NjQg
+QgpTaXR6OiBCZXJsaW4KVXN0LUlEOiBERSAzNjUgNTM4IDU5Nwo=
 
-Per the previous discussions, this gets a *NACK* from my side. There is
-hardly anything _technical_ preventing new in-tree users of zpool API.
-zpool API is neutral and well-defined, I don’t see *any* good reason for
-it to be phased out.
-
-BTW, remarkable is that you didn't bother to CC: me to this patch.
-
-Anyway,
-
-Nacked-by: Vitaly Wool <vitaly.wool@konsulko.se>
 
