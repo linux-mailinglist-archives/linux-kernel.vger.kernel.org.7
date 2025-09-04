@@ -1,90 +1,91 @@
-Return-Path: <linux-kernel+bounces-800872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2CDB43D2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:28:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37741B43D31
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC7635A5736
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:28:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E47943BE41C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BB2303CA1;
-	Thu,  4 Sep 2025 13:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DB0304971;
+	Thu,  4 Sep 2025 13:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tu/JYreT"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QucAwrZG"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C8A30276F
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19262FF66F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756992513; cv=none; b=ATswI6vYsMBj5FxdVLyYvCaE9npzHO8tyOy4xUlueLyckjFceRc849o4/a3Fdy+cN9hZHhA0VII6aMZH8ke0YwL9ycfHJtY7dN2sGMc3cGfnUNZa2n2a+N83nTUQ7FFw6IKsHPppUlVjSBEyd+/S3pZ8WPAxOmylcPHb1ote6Jg=
+	t=1756992514; cv=none; b=kgcGPoAvJryT84LtuvwOltLJgXTWEnqGaujRCPmWOum0EurE50IF5CGDKhxgmMr2215ooOR3y1SZJV9HBUkO+SQfjS3twUHcw60lKAY667ZQMbvrh3E798bib4wwvfvKZpRSmLB9uh7XjxMP3wJ/OOfcrhsnRnuszGLWjP/OH64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756992513; c=relaxed/simple;
-	bh=OAEQLvtjaMRkPtNdtAXuxJW6dE4Z71tMVOvtkQiratk=;
+	s=arc-20240116; t=1756992514; c=relaxed/simple;
+	bh=Ibcbjsz8p4nuEblKkqxuD7gS4VBpsAMM6/vY0nNETZM=;
 	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LKe97piZv9anD2VjrbHto3DRdUMtKwKwZvHfHQL9dzGgoCYMQ0uKPK+J9TKP/viQZJ2CH9a9zbo+ggffwESlihLWraGDSfR20KsdI3ec4ZUPtXsnpXfrCG7bZfOLgh2UXB+op+e2xBSz4NlryQFSNA2ODZB2poZyhCe5EHp6tco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tu/JYreT; arc=none smtp.client-ip=209.85.128.42
+	 MIME-Version:Content-Type; b=ALi4D42lvvRp0EqaomND0JN3q10liA6p9NLCJb7QYy5SPc+SvrN9NClJTnriyH4NlHSHv5CRT4z9RB4LXC3ova6aUmKUNG7B5KIpvdzooCb8XjfnubsZcPtHAnaahV+56cpC5EuFPCzYE3uLEd5XYLRX0GKXGVsUVgnRtOVT/OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QucAwrZG; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45b87bc67a4so7704235e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 06:28:31 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45cb5492350so7089675e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 06:28:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756992510; x=1757597310; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756992511; x=1757597311; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vVjNlWUjUJbko6NCXNm3bP5sMvagvoIs0Rsycf+Tcfk=;
-        b=Tu/JYreTREsRekuMgnSvGAcbFbY1rd4v8D0w1eJl9tHZar/olBCKzvFUXsnZKpx0Re
-         LslsrxgrpES5POdpWpBGOcZ1pCZiKgPexCfdYAZMqEmgbCLW+GKRgD96csPw4h95UrMp
-         4zwbSrXu/zatr90IM4iPwFCA9b7h2MfLxARd70ZK5U+neyKqGNaKac8AGNqc0mUyAaWN
-         dtwTMnDwV6JlBXIeRh6T5F2qVQeRn+sHhsej1LJO00plQG/gP6Jr7khmDdLdkOmNo4NM
-         +OSpyq0JS/WCWr+BJUMfDN6EVuqkN3DzVsigqaCyO+ciVhBLXXnztEsI9A/xolr+gnP+
-         BCAA==
+        bh=FPemxXw+0FJhICaHUSL6epgUI+v6RGxIc62gtZdQfSo=;
+        b=QucAwrZGOfrSwyStXrbGY+F6outV6ADpTp4kG0Y6fDOSlRG4yy3B9H7yyGklRFWokj
+         3kNOD7/o20rd4Y22T/1mNeAAIM089JNqUtVAfMcGu/NFaiZuKcP3rYSLhK/45Wa77d6m
+         GY0mXjjxrsnrl3BGaepv2/HZhvahFnOfFJIODKd7HddWxpulpWFywB64WP83WIWLS0Xo
+         Uz4IWxsUkDg/NnFLs4dz9xYpOar9cPOSiSFW1ISrn+p/AyhS0dNwm/FgUEICnejNWE2/
+         VnvXX8MfFb3x3H7bKnXwOM2puQy78losjUXIRztqHRgk+6eyVPXX5elW+TR7i4pDYnA+
+         CJ3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756992510; x=1757597310;
+        d=1e100.net; s=20230601; t=1756992511; x=1757597311;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vVjNlWUjUJbko6NCXNm3bP5sMvagvoIs0Rsycf+Tcfk=;
-        b=FN3vskcBaPY8Ny2HIJPBlIpttnJxCE6cyuOVn/66ToqZ0f1gihtOmsYa+LWctZUY8B
-         KenavErjJJ08twdkIc4RWOxA8vURbkUHs2wUbG/qNNLKe1vmUjbcH62x0kLEIsjlB9yu
-         7OMpu7Re+Idj2x5pXn4tYtJAdxK2Hon/TWB2msGOjQgArSjjnNsn5xIG18o0eU64kEjy
-         g9j0Afk7KTJKqSU8F+VBPSt9OWT8R/q5P7mC5NEQ0qWHt9Rin2gr6ewsY49ot2vVcJ/M
-         4/Vbh3gPiyFLoXaSuCJcvUuHSn/6rzJtXZTPwQoottU6leyFu7qhFXig5+h2RoS/pDIZ
-         4IMw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5DGK8MqVbxx+G/M69Z+ZvNijBRXV/63k1DkBKQB+2ZJJlMmfPPbYJSF+/LNEILQsw8BGYL9utf7oNavk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9ZfHNVevBErzlaUZS/FbOx1O1ZRtkbqEWNj+VnoDYJ3zIjytZ
-	hRtJavv5HNyZlUQohVNyRU8TUQtG0Kswvv9vC495G6dS0Y/syN4ga6FLVlTvBqHG2nk=
-X-Gm-Gg: ASbGncuOrbHrEOQXls40SNnUi5WqabPzthiJR9z/d6utgjobca7gmPB1M8mQConpeoa
-	jnqJOVId1/bMYpin4lUCnEqtcWezHj/N8rQxvEbD6MkdDOYgp+I6mnLR601pYlJXKHeTrPJ+Xga
-	h+9VPmyxcU4wGX7XvLN/FJdnxjyw4dGKAw/DOLqIvgz9SZDGXS+PrKjNgqQbXEhETCXuQb2kU8W
-	ft1kCga1qaLazjaX0R8WJD9vTHxjHJfNOHs9jhe5QdKd7Sj8h4438snVXQJPQMGER6K8gJWqPa6
-	lpvChjicF8atYOG5TavvbCFxmbvdDIUxtFOWf2gRaYxCTdyIgACyVXWGK+jZlq7UMW80WruCBCw
-	E868pP+gMX4izRYSEcFoVRmVo43jelJdE1/r2XUZk/8fknxh36YhTVQ==
-X-Google-Smtp-Source: AGHT+IEEWnzxKzJRyT3eEFYsuorsgTXLKnfmT3YCKLi6VQxYP8ugD4yl1yHboe6tUZ8/uCLiCcnrlQ==
-X-Received: by 2002:a05:600c:46c3:b0:458:c059:7db1 with SMTP id 5b1f17b1804b1-45b8557f254mr183701165e9.30.1756992510230;
-        Thu, 04 Sep 2025 06:28:30 -0700 (PDT)
+        bh=FPemxXw+0FJhICaHUSL6epgUI+v6RGxIc62gtZdQfSo=;
+        b=phQMk3sFQyL1/wFLyL7vFmKVISTW8yZKcjVhiZcE9XM0Cg9pT7mPalwqGXMZ78R8XP
+         RNyDppl+OnJ+QZnL38Q6nhLml2KtS+an+2FHMaCwWaAZ9KuP02/Dump7uOv7vY1whaK9
+         bN5qWjCwkEdWUO0sdBuIdCQJaJ9LqyWaDixEVnHirDSV/muyAPk9qh0pfCC5wLnG4Ciw
+         cMcGwv4q7nih10r93hRoN/9MUCTrDSj322u9OzIffxx5ELgPJLWN0bbAKpLL8pihBeY3
+         pUCJNvSkBcYYArt6+kE8ROCMU7FP9//iAO+AD6PusEtORGQqN2mA9SedlfGLCJHgz9io
+         sHdg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4qEHlfP5kfk9J6saYLns47/tk1U+TwpxuSbB8hxhP/1TiUk4vHf/n1vQHuFo0aZjmNcVWP1rZvywbEaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBhX1QMYNZ7htZZ2OLQEQmhaAplq7wPAAKtwwcYBEgTMWnT8nJ
+	+9HRuzmVtL6PdgAiQ4TVqB3KD8tlvPBtdVH8irzVM8ETfhXPsZcs3n/lXFVc6K+e3VU=
+X-Gm-Gg: ASbGncuC7l7FHDmjI8q01HGZfC+NP7jCqcccA/dhhgcbntbBp82WyBAfo8XkpqukfQR
+	1hKWK/+GDS48VckHNNg6Ni+TB6Wk1mjtQ4OTxE95ilHDM4uAgwjJ8/j9TRmB7GGs3Ns+irICXsx
+	HSMYDJ8Bfh021Rb8pGjQ03hqaY+wUWnzETT5VtQvJDpPyDijPLgz0DUQRC9BU0WkzFuKWHnczXE
+	4o+97JW189YOIVH5MXAdVFm1W9tF4KIX/leNxV7BDFA75E7mXHSSie1eKnIvf65ADr4SQc5rUAc
+	x3xR/utZOszxcvaxeEnlB55wmbS3OgiBL9XnHjkfmehikgOHsgMH2AZPSqBAgrndo2IJm8Nh5r1
+	KsXGW9ezB5nuKlfGx6ZNrXwLIsBZmt2YrO/H8DONRgdQ=
+X-Google-Smtp-Source: AGHT+IFChDxfidjmo6oLli8hpEv8BHitZXQWhFKQ0sFyaxZOzOcsJqvu3t6i4m2n6GGf1/m4WMbRVQ==
+X-Received: by 2002:a05:600c:35d5:b0:456:fdd:6030 with SMTP id 5b1f17b1804b1-45d030f7fc7mr32582245e9.19.1756992511081;
+        Thu, 04 Sep 2025 06:28:31 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e8879cesm286165305e9.12.2025.09.04.06.28.29
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e8879cesm286165305e9.12.2025.09.04.06.28.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 06:28:29 -0700 (PDT)
+        Thu, 04 Sep 2025 06:28:30 -0700 (PDT)
 From: Neil Armstrong <neil.armstrong@linaro.org>
 To: Kevin Hilman <khilman@baylibre.com>, 
  Jerome Brunet <jbrunet@baylibre.com>, 
  Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
-In-Reply-To: <20250825065240.22577-1-linux.amoon@gmail.com>
-References: <20250825065240.22577-1-linux.amoon@gmail.com>
-Subject: Re: [PATCH v2 00/11] Add cache information to Amlogic SoC
-Message-Id: <175699250964.3374853.16885676491827667777.b4-ty@linaro.org>
-Date: Thu, 04 Sep 2025 15:28:29 +0200
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Christian Hewitt <christianshewitt@gmail.com>
+In-Reply-To: <20250505143700.4029484-1-christianshewitt@gmail.com>
+References: <20250505143700.4029484-1-christianshewitt@gmail.com>
+Subject: Re: [PATCH] arm64: dts: amlogic: sm1-bananapi: lower SD card speed
+ for stability
+Message-Id: <175699251033.3374853.7119442456595565513.b4-ty@linaro.org>
+Date: Thu, 04 Sep 2025 15:28:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,41 +98,22 @@ X-Mailer: b4 0.14.2
 
 Hi,
 
-On Mon, 25 Aug 2025 12:21:40 +0530, Anand Moon wrote:
-> Most publicly available Amlogic datasheets mention that the CPU employs
-> a architecture, quad-core ARM Cortex-A53 and ARM Cortex A55 and
-> Cortex-A73 and Cortex-A53 cluster, sharing a unified L2 cache to enhance
-> overall system performance.
+On Mon, 05 May 2025 14:37:00 +0000, Christian Hewitt wrote:
+> Users report being able to boot (u-boot) from SD card but kernel
+> init then fails to mount partitions on the card containing boot
+> media resulting in first-boot failure. System logs show only the
+> probe of the mmc devices: the SD card is seen, but no partitions
+> are found so init fails to mount them and boot stalls.
 > 
-> However, these documents typically omit details regarding the sizes of the
-> L1 data cache, L1 instruction cache, and L2 cache.
+> Reducing the speed of the SD card from 50MHz to 35MHz results in
+> complete probing of the card and successful boot.
 > 
 > [...]
 
 Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.18/arm64-dt)
 
-[01/11] arm64: dts: amlogic: Add cache information to the Amlogic GXBB and GXL SoC
-        https://git.kernel.org/amlogic/c/d7fc05da8ba28d22fb9bd79d9308f928fcb81c19
-[02/11] arm64: dts: amlogic: Add cache information to the Amlogic SM1 SoC
-        https://git.kernel.org/amlogic/c/fd7b48b1f91e1830e22e73744e7525af24d8ae25
-[03/11] arm64: dts: amlogic: Add cache information to the Amlogic G12A SoCS
-        https://git.kernel.org/amlogic/c/a4428e52babdb682f47f99b0b816e227e51a3835
-[04/11] arm64: dts: amlogic: Add cache information to the Amlogic AXG SoCS
-        https://git.kernel.org/amlogic/c/3b6ad2a433672f4ed9e1c90e4ae6b94683d1f1a2
-[05/11] arm64: dts: amlogic: Add cache information to the Amlogic GXM SoCS
-        https://git.kernel.org/amlogic/c/fe2c12bc0a8f9e5db87bfbf231658eadef4cdd47
-[06/11] arm64: dts: amlogic: Add cache information to the Amlogic A1 SoC
-        https://git.kernel.org/amlogic/c/2d97773212f8516b2fe3177077b1ecf7b67a4e09
-[07/11] arm64: dts: amlogic: Add cache information to the Amlogic A4 SoC
-        https://git.kernel.org/amlogic/c/57273dc063d5a80e8cebc20878369099992be01a
-[08/11] arm64: dts: amlogic: Add cache information to the Amlogic C3 SoC
-        https://git.kernel.org/amlogic/c/6d4ab38a0a21c82076105e4cc37087ef92253c7b
-[09/11] arm64: dts: amlogic: Add cache information to the Amlogic S7 SoC
-        https://git.kernel.org/amlogic/c/494c362fa1633bba127045ace8f0eea0b277af28
-[10/11] arm64: dts: amlogic: Add cache information to the Amlogic S922X SoC
-        https://git.kernel.org/amlogic/c/e7f85e6c155aed3e10e698dd05bd04b2d52edb59
-[11/11] arm64: dts: amlogic: Add cache information to the Amlogic T7 SoC
-        https://git.kernel.org/amlogic/c/e97fdb9b8a0f8bd349de48815694f8a7200e3d62
+[1/1] arm64: dts: amlogic: sm1-bananapi: lower SD card speed for stability
+      https://git.kernel.org/amlogic/c/916fa558cb27182933fdfe82d6d84b437e69349c
 
 These changes has been applied on the intermediate git tree [1].
 
