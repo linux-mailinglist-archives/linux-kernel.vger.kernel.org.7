@@ -1,347 +1,281 @@
-Return-Path: <linux-kernel+bounces-800458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F03CB437DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:02:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FE5B437E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F57A1730DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:02:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3019D7AEE5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4982F83BC;
-	Thu,  4 Sep 2025 10:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0919F2F83BC;
+	Thu,  4 Sep 2025 10:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdmcYFwk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ao9mV0Tr"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9C42D839E;
-	Thu,  4 Sep 2025 10:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDC429AAEA;
+	Thu,  4 Sep 2025 10:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756980161; cv=none; b=G9mnQtahx0PW86MRYcbRQQulrKCPJJJFTqE0mM11N0cGjNC9lATDSJHyWUQz/x7iLBqqnh5GuhIL22ZMUzZ9KHdf6gy2IvYc56ThdsuoY6HX0Dob+Y3r0KA1kde30oCJnYJzhJ5KPsvO+4mfmHNPWdCsgY1wK3+S3WZrdcJpnyk=
+	t=1756980282; cv=none; b=dTYhUB/Od+Y/CNo1KGYiuM4kE0xnYWWf5OgPnqa4m1OKU14n8FzE7vfhHyDX2WXIFrPmoq4rDtB++z3hjUuflDaYCzecIm8vq5scfVv6XWBpos5P4ax0vRjR19eowikyA70fghf6I30NQTSP8MDvhRAY5zxtxhlZbRzMVoJeRpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756980161; c=relaxed/simple;
-	bh=G9oD2Jar+WBoNITD/6b8bDhkhI4zfLlgPeYmXoXP9PE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IWZxbPO6CyA7zAis1Gc46vjmwVCoOR0ni2C71+UTPTn1wGM1N348DAa7P85LyVY9SgR7PAUkiLedVNrRc36D9rlbmkpcC0I4yT6LhgaQn87+tOSYDa+pPOZW6ae3AyIinc1A0DV15Gq9cHhvY4hDRAs/XbThazLxFqksGX0FTj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TdmcYFwk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F9DC4CEF0;
-	Thu,  4 Sep 2025 10:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756980160;
-	bh=G9oD2Jar+WBoNITD/6b8bDhkhI4zfLlgPeYmXoXP9PE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TdmcYFwkE7qw/EzVrYKlGzBUCbDRPeWVbHjSXhQfHXv021S4sW/xLPj/kH9giDCxp
-	 jeaKMKR2bDFrUduPep1e+YhWdsS115Fo1bUtmPAv2my6vC3JiArHmc8HQUl1OaXZre
-	 7X0gj1r5aKoXh/xmKjDOBLb0YpzvFI0KUf4464DKAKFh3HvPKYtjsdzxdeDG4rgqAM
-	 wB0kM0Dur57kZCyZ4tEGRmljxlm3YWQFmV2/iagbMNABQ0JFZKuzAx6xKsTG8mXXv3
-	 gMHoDFuWlyQzx/HdAhKhPDiHm5WXiCCkh4/DBuODPQOFHIDiXK505msl4YIfmTTu2H
-	 3LJrE1DZGnowg==
-Date: Thu, 4 Sep 2025 12:02:35 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Jonathan Denose <jdenose@google.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>, 
-	Sean O'Brien <seobrien@google.com>
-Subject: Re: [PATCH v3 00/11] HID: Implement haptic touchpad support
-Message-ID: <vyhhm3x6nfdfw6gbgluq3sjr6bzamhear7nec6xdi5wfxq7wcz@cx2egj4yr5sp>
-References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
- <CAMCVhVOUn-un9N_Bv00RVJ7kAw1O+AHgAHOzSGM6UuMBZVdtYw@mail.gmail.com>
+	s=arc-20240116; t=1756980282; c=relaxed/simple;
+	bh=e8sCNKLHXZ3wRWcF/RMe9GH1E1HkP51BQPrLQvBj+Jk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SZyH+g3b99jk/QyGPO0kIkGqaCS68GwXcviPi/nZn/dzocTJ3q4/7wbioeGFpMM6urafboTQJoGReIcv+BLUcd60tHYoenGtNbJlJwuCZmDfwqbHVovdTMTtSDdTpCQmZyUVQ+ded9HRcOjpCxnL/sItDJ8zJ1s7sQBdxfjt4PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ao9mV0Tr; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45b7da4101fso2776605e9.3;
+        Thu, 04 Sep 2025 03:04:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756980279; x=1757585079; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ek9EYKXS2K219Y+/XLtHfNLMKPr93OF7TadNV0PAfFs=;
+        b=Ao9mV0Tr8Lv51GS5B4ntczdKBvYr2c09EZEF8g07rpS3ut6hh5qJckUIFs37QSW4a3
+         5SuNohbY6wzX0iMkyoKT6r/Dd4/h+7/XLM1hxvhnmrc321XjPhP5+pMINJnEoIP+Gslm
+         6YwhZgORMtc4QoJg5X6XMrK+n1W9lngdTUi7z54JVpNhRHgFEV5XmJmtzI8Yq7CPt8ff
+         cMnDgFf5+iZ2XYjmAVfMwe2rUzHKIWyEtl8ZT5gxquXqFdyMQZs1mVElG1yMXw5Z3Jfy
+         Adqclcnder1EyGgFqNxfZmLDuNya+dUGZAuGZWSyyMlZPg0TI8YPayJzKnVdhLoIYn9d
+         5maQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756980279; x=1757585079;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ek9EYKXS2K219Y+/XLtHfNLMKPr93OF7TadNV0PAfFs=;
+        b=kmOPyXoCxdioZc3hdfvHoy+VGrUVsElLmtqMy4yN0IJjSxuO0CgWjMWN5F1JoCW+vb
+         5+3nhCh1StnEPoFpO9PufpAg9yk4ZKThoBthxyzvqDrb6csj81w0MPrYafFA8Lxogq88
+         igMle0wIVH9S5e2q3aAmvbaoX66Xxw0TW8+e85oGrHxBtt5rNPG/mNK+duLtA+g1Nfqm
+         gP6sDW+rM3/jNsPVs7/jHeKnh4BfwGm27ZMCEXQquRKQU+sqzf6/LfyaqVwMqzY45UMo
+         lc+zMW0aHwhDOsOFCwDijuwHYkcX2nPtmoS/MWV9uyVyWmTIbYnRmNpcBHdzLQyl3vHl
+         1GVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkS06iUA2tuKm3ePPhAotUfyDcs1wIfHhc8vBCWvqncAw44Ms9T7jvbkPuU6D5+YBb3XVZbOkQSUrQjRh6@vger.kernel.org, AJvYcCXzsNIkqYCqnvW0D6JUjkaeaaYEcJcmuRxPrGiozreZ3/BVcTvuLonATMtnLq+COMVbdIIzBqtOeXfx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx58Rb/1tJsZuxHt2bNcpS4cfrsYD4bo86QA52F+F2K7zhaL9+1
+	QRveht7BKV9Q0mFmqj9XuzMwSLxLO+csY+6NZo9GnG6qB2tGF/XC+8fG
+X-Gm-Gg: ASbGnctiPRqUA3OIH9nd2D+3BgAuQaBXOHEGMW7md89rhOeL+tjKDGZoXfUszCnGGr7
+	1bHEFS3vTbLUXDcUUnAea3gi1wtKcWiJgHxJLrPZ9rzHtKrh+/NDOQfSrVWVwxiK/9pnre/MKvg
+	kqUjiIEQeIgEQXAG7X7CP8UzyLIV52kLJhNN21n8CH6zyaD0USMecKY5NoGe41uwE97D0sjxr1j
+	8315aQTxZbJYOfXkfGU4Z9bz6wcQoaRbcfjiC3NDk4C9frj8OODEIebDUm2kf6GwLex+e2x1YEQ
+	74aGIyUkGLs29o35/jXLzqyF+BXdTEN4OJ1hUaNH4B6u8bi2blXFR50STP8emiqNkotyTzzBjNB
+	u0o342uwrnWzRK3A1VdhYFTH2SMipWvMokxnMfZC4hXlvVJkMPrUP1vI/Wg==
+X-Google-Smtp-Source: AGHT+IH/n4569WVp7OYtaqAxS3++rY5OHrFxGS8luoF7L0HnUjYxEiq5MoQT0FbLi9B/HY0tyzRYuA==
+X-Received: by 2002:a05:600c:8b8b:b0:45c:b609:cbc5 with SMTP id 5b1f17b1804b1-45cb609cea7mr42663535e9.20.1756980278393;
+        Thu, 04 Sep 2025 03:04:38 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:904e:70c8:edf3:59a4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e68c83asm301288725e9.20.2025.09.04.03.04.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 03:04:37 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2] arm64: dts: renesas: rzt2h-n2h-evk: Enable USB2.0 support
+Date: Thu,  4 Sep 2025 11:04:35 +0100
+Message-ID: <20250904100435.4033858-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMCVhVOUn-un9N_Bv00RVJ7kAw1O+AHgAHOzSGM6UuMBZVdtYw@mail.gmail.com>
 
-On Sep 02 2025, Jonathan Denose wrote:
-> On Mon, Aug 18, 2025 at 6:10 PM Jonathan Denose <jdenose@google.com> wrote:
-> >
-> > Hello,
-> >
-> > This is an updated implementation of the interface for controlling haptic
-> > touchpads.
-> >
-> > Below is an updated design proposal for the userspace and HID interfaces,
-> > modified from what one of my colleagues submitted in 2019 [0].
-> >
-> > We would appreciate any feedback you might have.
-> >
-> > Thank you,
-> >
-> > Jonathan Denose
-> > Chromium OS Team
-> >
-> > Background
-> > ==========
-> >
-> > There are multiple independent projects to develop a touchpad with force sensors
-> > and haptic actuators, instead of a traditional button.  These haptic touchpads
-> > have several advantages and potential uses; they allow clicking across the
-> > entire touchpad surface, adjusting the force requirement for clicks, haptic
-> > feedback initiated by UI, etc. Supporting these features will potentially
-> > require two new communication channels at the kernel level:
-> > * Control of haptic motor by the host
-> > * Force sensor data from device to host
-> >
-> > This document includes two related proposals:
-> > 1. HID design proposal, that hardware makers would need to implement
-> > 2. Kernel design proposal
-> >
-> > Objective
-> > ==========
-> >
-> > Develop a standard protocol to allow userspace applications to communicate with
-> > haptic touchpads, and minimize duplicated code and effort.
-> >
-> > Requirements:
-> > 1. Support UI-initiated haptic feedback.
-> > 2. Allow userspace to control when button press and button release haptic
-> >    effects are triggered. (Useful when detecting a false click, changing force
-> >    thresholds, or sending context-dependent effects).
-> > 3. Reveal force sensor readings to userspace applications.
-> > 4. Only allow OS-controlled haptic feedback for those systems which support it.
-> >
-> > Proposal
-> > ========
-> >
-> > In order to minimize duplicated effort, we propose standardized haptic touchpad
-> > support in the linux kernel.
-> >
-> > HID API
-> > -------
-> >
-> > Modes
-> > .....
-> >
-> > The haptic touchpad should be able to operate under two different modes.
-> >
-> > 1. Device-controlled mode
-> >
-> > The haptic touchpad should start up in "device-controlled mode"
-> > (HID_HAPTIC_MODE_DEVICE), meaning it acts as a normal touchpad. This means it
-> > should perform the press and release haptic feedback autonomously at predefined
-> > force thresholds, and send the appropriate BTN_* events.
-> >
-> > 2. Host-controlled mode
-> >
-> > Once the touchpad has been confirmed as supporting haptics (described in more
-> > detail in the the "Click and release control" section below), the device should
-> > enter "host-controlled mode" (HID_HAPTIC_MODE_HOST). In this mode userspace
-> > should take control. From here, userspace will take control over
-> > press/release haptic feedback, relying on the effects sent by the kernel.
-> >
-> > Multitouch
-> > ..........
-> >
-> > The HID API for multitouch reports should follow the Microsoft precision
-> > touchpad spec [1], with the following changes:
-> > * A tip pressure field [2] should be used to report the force. The physical unit
-> >   Type (Newtons or grams), exponent, and limits should be reported in the
-> >   report descriptor for the force field.
-> > * The device will always report the button state according to its predefined
-> >   force thresholds, even when not in device-controlled mode.
-> > * The device must expose a "simple haptic controller" logical collection
-> >   alongside the touchpad collection.
-> >
-> > Haptic control
-> > ..............
-> >
-> > The HID protocol described in HUTRR63[3] must be used.
-> >
-> > The following waveforms should be supported:
-> >
-> > | WAVEFORMNONE             | Implicit waveforms required by protocol           |
-> > | WAVEFORMSTOP             |                                                   |
-> > | ------------------------ | ------------------------------------------------- |
-> > | WAVEFORMPRESS            | To be used to simulate button press. In device-   |
-> > |                          | controlled mode, it will also be used to simulate |
-> > |                          | button release.                                   |
-> > | ------------------------ | ------------------------------------------------- |
-> > | WAVEFORMRELEASE          | To be used to simulate button release.            |
-> >
-> > All waveforms will have an associated duration; continuous waveforms will be
-> > ignored by the kernel.
-> >
-> > Triggers & Mode switching
-> > .........................
-> >
-> > The “auto trigger waveform” should be set to WAVEFORM_PRESS by default, and the
-> > button from the touchpad collection should be set as the “auto trigger
-> > associated control”.
-> >
-> > The kernel can trigger the different modes in the following ways:
-> > * Device-controlled mode can be enabled by setting the “auto trigger waveform” to
-> >   WAVEFORM_PRESS.
-> > * Host-controlled mode can be enabled by setting the "auto trigger waveform" to
-> >   WAVEFORM_STOP.
-> >
-> > The device must also support manual triggering. If intensity modification for
-> > waveforms is supported by the device, the intensity control should be included
-> > in the manual trigger output report. This allows modification of the intensity
-> > on a per-waveform basis. Retriggering does not need to be supported by the
-> > device.
-> >
-> > Userspace API
-> > -------------
-> >
-> > Multitouch protocol
-> > ...................
-> >
-> > ABS_MT_PRESSURE will be used to report force. The resolution of ABS_MT_PRESSURE
-> > should also be defined and reported in force units of grams or Newtons.
-> > ABS_PRESSURE should be reported as the total force applied to the touchpad.
-> > When the kernel is in host-controlled mode, it should always forward the button
-> > press and release events to userspace.
-> >
-> > Use Force Feedback protocol to request pre-defined effects
-> > ..........................................................
-> >
-> > The force feedback protocol [4] should be used to control predefined effects.
-> >
-> > Typical use of the force feedback protocol requires loading effects to the
-> > driver by describing the output waveform, and then requesting those effects
-> > using an ID provided by the driver. However, for haptic touchpads we do not want
-> > to describe the output waveform explicitly, but use a set of predefined effects,
-> > which are identified by HID usage.
-> >
-> > The force feedback protocol will need to be extended to allow requests for HID
-> > haptic effects. This requires a new feedback effect type:
-> >
-> > /**
-> >  * struct ff_haptic_effect
-> >  * @hid_usage: hid_usage according to Haptics page (WAVEFORM_CLICK, etc.)
-> >  * @vendor_id: the waveform vendor ID if hid_usage is in the vendor-defined
-> >  * range
-> >  * @vendor_id: the vendor waveform page if hid_usage is in the vendor-defined
-> >  * range
-> >  * @intensity: strength of the effect
-> >  * @repeat_count: number of times to retrigger effect
-> >  * @retrigger_period: time before effect is retriggered (in ms)
-> >  */
-> > struct ff_haptic_effect {
-> >         __u16 hid_usage;
-> >         __u16 vendor_id;
-> >         __u8  vendor_waveform_page;
-> >         __s16 intensity;
-> >         __u16 repeat_count;
-> >         __u16 retrigger_period;
-> > }
-> >
-> > Since the standard waveform id namespace does not overlap with the vendor
-> > waveform id namespace, the vendor id and page can be ignored for standard
-> > waveforms.
-> >
-> > Click and release control
-> > .........................
-> >
-> > Haptic functionality shall be gated behind the HID_MULTITOUCH_HAPTIC kernel
-> > configuration option, and this kernel configuration option should only be
-> > enabled if userspace will support haptic capabilities. Haptic functionality will
-> > only be initialized and used if HID_MULTITOUCH_HAPTIC is enabled, and if the
-> > following conditions have been met:
-> > * ABS_MT_PRESSURE is defined and reporting force units of Newtons or grams.
-> > * The device supports haptic effects according to the hid protocol defined in
-> >   HUTRR63 [3].
-> > These checks will happen when the driver probes and initializes the multitouch
-> > device.
-> >
-> > In the case when the kernel configuration option has been set and the device
-> > reports pressure and haptic effects as defined above, the kernel will initialize
-> > the haptic device and configure the haptic driver to signal that the touchpad is
-> > haptic-compatible. To signal to userspace that the touchpad is haptic-compatible
-> > the kernel will mark INPUT_PROP_HAPTIC_TOUCHPAD.
-> >
-> > With userspace willing and able to take control, the kernel will signal to the
-> > device to exit device-controlled mode once a WAVEFORMPRESS or WAVEFORMRELEASE
-> > event is uploaded. From here, userspace will take control over press/release
-> > haptic feedback, relying on the effects sent by the kernel.
-> >
-> > In all other cases, the driver will take no action to enable haptic
-> > functionality.
-> >
-> > Summary of normal use-case
-> > 1. The kernel waits for userspace to upload WAVEFORMPRESS or
-> >    WAVEFORMRELEASE.
-> > 2. Userspace determines when a click has been performed based on its own
-> >    criteria and tells the touchpad to perform a haptic effect.
-> > 3. When userspace erases the WAVEFORMPRESS or WAVEFORMRELEASE effect, signal the
-> >    device to return to device-controlled mode.
-> >
-> > [0]: https://www.spinics.net/lists/linux-input/msg60938.html
-> > [1]: https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/touchpad-devices
-> > [2]: Usage ID 0x30 of HID usage table 0x0D. See chapter 16:
-> >      https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf
-> > [3]: https://www.usb.org/sites/default/files/hutrr63b_-_haptics_page_redline_0.pdf
-> > [4]: https://www.kernel.org/doc/html/v4.20/input/ff.html
-> >
-> > Signed-off-by: Jonathan Denose <jdenose@google.com>
-> > ---
-> > Changes in v3:
-> > - Change CONFIG_HID_HAPTIC from bool to tristate
-> > - Fix devm_kzalloc calls in hid-multitouch.c to use correct device
-> > - Minor comment cleanup + grammar fix
-> > - Link to v2: https://lore.kernel.org/r/20250818-support-forcepads-v2-0-ca2546e319d5@google.com
-> >
-> > Changes in v2:
-> > - Rename FF_HID and ff_hid_effect to FF_HAPTIC and ff_haptic_effect
-> > - Add more detail to CONFIG_HID_HAPTIC config option description
-> > - Remove CONFIG_MULTITOUCH_HAPTIC config option
-> > - Utilize devm api in hid-multitouch haptic functions
-> > - Link to v1: https://lore.kernel.org/all/20250714-support-forcepads-v1-0-71c7c05748c9@google.com
-> >
-> > ---
-> > Angela Czubak (11):
-> >       HID: add haptics page defines
-> >       Input: add FF_HAPTIC effect type
-> >       Input: add INPUT_PROP_HAPTIC_TOUCHPAD
-> >       HID: haptic: introduce hid_haptic_device
-> >       HID: input: allow mapping of haptic output
-> >       HID: haptic: initialize haptic device
-> >       HID: input: calculate resolution for pressure
-> >       HID: haptic: add functions handling events
-> >       Input: MT - add INPUT_MT_TOTAL_FORCE flags
-> >       HID: haptic: add hid_haptic_switch_mode
-> >       HID: multitouch: add haptic multitouch support
-> >
-> >  Documentation/input/event-codes.rst    |  14 +
-> >  drivers/hid/Kconfig                    |  11 +
-> >  drivers/hid/Makefile                   |   1 +
-> >  drivers/hid/hid-haptic.c               | 580 +++++++++++++++++++++++++++++++++
-> >  drivers/hid/hid-haptic.h               | 127 ++++++++
-> >  drivers/hid/hid-input.c                |  18 +-
-> >  drivers/hid/hid-multitouch.c           |  47 +++
-> >  drivers/input/input-mt.c               |  14 +-
-> >  include/linux/hid.h                    |  29 ++
-> >  include/linux/input/mt.h               |   1 +
-> >  include/uapi/linux/input-event-codes.h |   1 +
-> >  include/uapi/linux/input.h             |  22 +-
-> >  12 files changed, 858 insertions(+), 7 deletions(-)
-> > ---
-> > base-commit: 86731a2a651e58953fc949573895f2fa6d456841
-> > change-id: 20250625-support-forcepads-0b4f74fd3d0a
-> >
-> > Best regards,
-> > --
-> > Jonathan Denose <jdenose@google.com>
-> >
-> Hi all,
-> 
-> Please let me know if there is anything else needed from me.
-> 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Dmitry, I've just re-reviewed and tested this series. I'm fine with it.
-Can you give us your ack on the input bits?
+Enable USB2.0 support on RZ/T2H and RZ/N2H EVKs.
 
-Cheers,
-Benjamin
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+v1->v2:
+- Reflowed comments to adhere to 80 char width.
+- Updated comment about simultaneously using USB host and function interfaces.
+
+Note, this patch was originally part of series [0], rest of the
+patches have been accepted so just sending this one.
+[0] https://lore.kernel.org/all/20250821161946.1096033-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+---
+ .../dts/renesas/r9a09g077m44-rzt2h-evk.dts    | 36 ++++++++++++++++
+ .../dts/renesas/r9a09g087m44-rzn2h-evk.dts    | 41 +++++++++++++++++++
+ .../dts/renesas/rzt2h-n2h-evk-common.dtsi     | 22 ++++++++++
+ 3 files changed, 99 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
+index 264f7ddb8cc5..2bf867273ad0 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
+@@ -29,6 +29,28 @@
+  */
+ #define SD1_MICRO_SD	1
+ 
++/*
++ * USB Pin Configuration:
++ *
++ * This board is equipped with three USB connectors: Type-A (CN80), Mini-B
++ * (CN79), and Micro-AB (CN33). The RZ/T2H SoC has a single USB channel, so
++ * either the USB host interface or the USB function interface can be used,
++ * but not both simultaneously when using the CN79 and CN80 connectors.
++ *
++ * By default, the Type-A (CN80) and Mini-B (CN79) connectors are enabled.
++ * Configure the switches as follows:
++ *   - P00_0 - P00_2 (control signals for USB power supply): SW1[5] = ON
++ *   - USB_VBUSIN (used for USB function): SW7[7] = OFF; SW7[8] = ON
++ *   - USB_VBUSEN (used for USB_HF_VBUSEN): SW7[9] = OFF; SW7[10] = ON
++ *
++ * To enable the Micro-AB (CN33) USB OTG connector, set the following macro
++ * to 1 and configure the switches as follows:
++ *   - P00_0 - P00_2 (control signals for USB power supply): SW1[5] = ON
++ *   - USB_VBUSIN (used for USB OTG): SW7[7] = ON; SW7[8] = OFF
++ *   - USB_VBUSEN (used for USB_OTG_VBUSEN): SW7[9] = ON; SW7[10] = OFF
++ */
++#define USB_OTG		0
++
+ #include "rzt2h-n2h-evk-common.dtsi"
+ 
+ / {
+@@ -145,4 +167,18 @@ i2c1_pins: i2c1-pins {
+ 		pinmux = <RZT2H_PORT_PINMUX(5, 0, 0x17)>, /* SDA */
+ 			 <RZT2H_PORT_PINMUX(4, 7, 0x17)>; /* SCL */
+ 	};
++
++#if USB_OTG
++	usb-exicen-hog {
++		gpio-hog;
++		gpios = <RZT2H_GPIO(0, 2) GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "usb_exicen_a";
++	};
++#endif
++
++	usb_pins: usb-pins {
++		pinmux = <RZT2H_PORT_PINMUX(0, 0, 0x13)>, /* VBUSEN */
++			 <RZT2H_PORT_PINMUX(0, 1, 0x13)>; /* OVRCUR */
++	};
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
+index 80f358fb2d74..084b3a0c8052 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
+@@ -33,6 +33,33 @@
+  */
+ #define SD1_MICRO_SD	1
+ 
++/*
++ * USB Pin Configuration:
++ *
++ * This board is equipped with three USB connectors: Type-A (CN7), Mini-B
++ * (CN8), and Micro-AB (CN9). The RZ/N2H SoC has a single USB channel, so
++ * either the USB host interface or the USB function interface can be used,
++ * but not both simultaneously when using the CN7 and CN8 connectors.
++ *
++ * By default, the Type-A (CN7) and Mini-B (CN8) connectors are enabled.
++ * Configure the switches as follows:
++ *   - P02_2 - P02_3 (control signals for USB power supply): DSW2[6] = OFF;
++ *     - P02_2 (used for VBUSEN): DSW14[5] = OFF; DSW14[6] = ON
++ *     - P02_3 (used for USB_OVRCUR): DSW14[1] = OFF; DSW14[2] = ON
++ *   - USB_VBUSIN (used for VBUS of CN8): DSW16[1] = OFF; DSW16[2] = ON
++ *   - USB_VBUSEN (used for USB_HF_VBUSEN): DSW16[3] = OFF; DSW16[4] = ON
++ *
++ * To enable the Micro-AB (CN9) USB OTG connector, set the following macro
++ * to 1 and configure the switches as follows:
++ *   - P02_2 - P02_3 (control signals for USB power supply): DSW2[6] = OFF;
++ *     - P02_2 (used for VBUSEN): DSW14[5] = OFF; DSW14[6] = ON
++ *     - P02_3 (used for USB_OVRCUR): DSW14[1] = OFF; DSW14[2] = ON
++ *   - USB_VBUSIN (used for VBUS for OTG): DSW16[1] = ON; DSW16[2] = OFF
++ *   - USB_VBUSEN (used for USB_OTG_VBUSEN): DSW16[3] = ON; DSW16[4] = OFF
++ *   - USB_EXICEN (used for USB OTG EXICEN): DSW14[3] = OFF; DSW14[4] = ON
++ */
++#define USB_OTG		0
++
+ #include "rzt2h-n2h-evk-common.dtsi"
+ 
+ /*
+@@ -185,4 +212,18 @@ i2c1_pins: i2c1-pins {
+ 		pinmux = <RZT2H_PORT_PINMUX(3, 3, 0x17)>,
+ 			 <RZT2H_PORT_PINMUX(3, 4, 0x17)>;
+ 	};
++
++#if USB_OTG
++	usb-exicen-hog {
++		gpio-hog;
++		gpios = <RZT2H_GPIO(2, 4) GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "usb_exicen_a";
++	};
++#endif
++
++	usb_pins: usb-pins {
++		pinmux = <RZT2H_PORT_PINMUX(2, 2, 0x13)>, /* VBUSEN */
++			 <RZT2H_PORT_PINMUX(2, 3, 0x13)>; /* OVRCUR */
++	};
+ };
+diff --git a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+index 91068042bec0..5c91002c99c4 100644
+--- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+@@ -65,10 +65,20 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
+ #endif
+ };
+ 
++&ehci {
++	dr_mode = "otg";
++	status = "okay";
++};
++
+ &extal_clk {
+ 	clock-frequency = <25000000>;
+ };
+ 
++&hsusb {
++	dr_mode = "otg";
++	status = "okay";
++};
++
+ &i2c0 {
+ 	eeprom: eeprom@50 {
+ 		compatible = "renesas,r1ex24016", "atmel,24c16";
+@@ -77,6 +87,11 @@ eeprom: eeprom@50 {
+ 	};
+ };
+ 
++&ohci {
++	dr_mode = "otg";
++	status = "okay";
++};
++
+ &pinctrl {
+ 	/*
+ 	 * SCI0 Pin Configuration:
+@@ -218,6 +233,13 @@ &sdhi1 {
+ };
+ #endif
+ 
++&usb2_phy {
++	pinctrl-0 = <&usb_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
+ &wdt2 {
+ 	status = "okay";
+ 	timeout-sec = <60>;
+-- 
+2.51.0
+
 
