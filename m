@@ -1,235 +1,214 @@
-Return-Path: <linux-kernel+bounces-801171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51DF0B440D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:44:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C73A8B440DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E28EC1CC0431
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:44:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85F9B1CC05DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C565A28003A;
-	Thu,  4 Sep 2025 15:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43558280CFB;
+	Thu,  4 Sep 2025 15:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="EJIdeJ+r"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZXG88699"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011062.outbound.protection.outlook.com [40.107.130.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEBA28850F;
-	Thu,  4 Sep 2025 15:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28779280A5A;
+	Thu,  4 Sep 2025 15:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.62
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757000631; cv=pass; b=EfeMQKYoirBnAmyv3AVnInzhSI+KwhbkEEpPoS3rWhg5Ei/EiRqoQ6ZgAzfTC1mg+vBc9SxswH1uNw/0UcwS6Ygl6gjNn/kE1Zf8hxhzsfy8vjm/pyYLllcgAoqU8ENrD344yOOD81jC7eObpxDuE7RP3gIp3cWfBG6TADHjdNE=
+	t=1757000656; cv=fail; b=qD71QT+vxDp/9TwE5t60pZ+Ba0MLrXJTkynKfNqi/34cTI7ardbTWJOZLfEPTyF0JaJH8Nd1jVgIQWyeSKaRjqYgms6aSP4EVe6hCKay1iDWnFSmbcKCwn2Qx5+4XCNwm+PGrs3W78/bKeEfkN9FmukPxIcDubzw6hlTRm44sNc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757000631; c=relaxed/simple;
-	bh=gtxGTWmZGtxKutiC3yFflYNr+MvCB3LJNET+W5kgvvY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cANmc1P0akLvgW5T3q2hQWy2fZkFU86GygpcPVhSdXtC0Oyen3vJ/SH3+hpIxWFrltqsZvzYrSyDqLbGsjc2amq/aQQvcmIRb9jO+DL79NCIgVqpwHKlSdpv05KTi6wnfJ9n6lkt5Hpg5O8lXkLJLL1k6a1rg+zyZU2ormvsP6M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=EJIdeJ+r; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757000609; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Ngqd/d0J8XSNUO/KtRPyFJJL623lECHioy3AP5gZFL43wkQLftfAuO7hfafcScy0kCH8Tl6clO8Io/jVh/b8dqnlrmIZZtaCjZTkqaEyIRmyzKgaBxZiS4nJPS9keTbLYw0RGaluPAAihLmXGZnrnoiVxRLt1UVeJ9CA77F2XDc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757000609; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=tIoaxid+0bjo9EUFBk5X1+Q8h8mftkxRLwsEL6mj4dA=; 
-	b=k4h3NGVH50FrtpetX2RjCfeH2BMVFoyp6Axu3XhkusBmrJd5AphR3X1UIaDYal2PpP+qqZjZykMqJjzxG3qU2moSyu6I7mAvn/AVFTKPl400vEX+3FyBCauuHFOO0VK2ce1t3U0S0WfGuVQIP2QuPWv7hkIWRFbigRkTolmeVo4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757000609;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=tIoaxid+0bjo9EUFBk5X1+Q8h8mftkxRLwsEL6mj4dA=;
-	b=EJIdeJ+rM8uagbR+jpN2kBACdRK4+cQwL2RYwsbqQpS1r6DZJVTRx8mZhZrtQNeV
-	oa9F/omLsN4YPTDzXBp5HweVYxS6gFoou8IdvJA5RGzSq6ychuMHGtrPsLp7y9hQ/HW
-	PGhveIK+1HoLAn5XoqIo9PEDHS28wqJQemhA1BoY=
-Received: by mx.zohomail.com with SMTPS id 175700060827947.89453074437267;
-	Thu, 4 Sep 2025 08:43:28 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@collabora.com, linux-rockchip@lists.infradead.org,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH] pmdomian: core: don't unset stay_on during sync_state
-Date: Thu, 04 Sep 2025 17:43:23 +0200
-Message-ID: <3556261.BddDVKsqQX@workhorse>
-In-Reply-To: <3332408.jE0xQCEvom@workhorse>
-References:
- <20250902-rk3576-lockup-regression-v1-1-c4a0c9daeb00@collabora.com>
- <CAPDyKFpAOLiBOoAhv+GQcobU_g_AWrB9iyOGmodROLtRmR30JA@mail.gmail.com>
- <3332408.jE0xQCEvom@workhorse>
+	s=arc-20240116; t=1757000656; c=relaxed/simple;
+	bh=wtBC/zFhdU2V1DLngJDDttqZ6M4e+6u8H3ReA/v+jEM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=oY5Hp8iXspbqFBWa28nANFuw3QQJgalrtSfce3SNkU2PfJktqmLm37q1Rkewb9zTsuRLDS8rmQgSomF3OxS0CA/Jm5qJVy5Tnmnc0anYSsedDhf8JipETpP0C7Z/LQseZ/47w2QJvMoAeqZga051Dz5IcLYnQamC3OZgEIT2TK0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ZXG88699; arc=fail smtp.client-ip=40.107.130.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GP2yl7xWt5syYlxvO4q0/soP6nEbJVtNf5IMFUv39KU2G1aeaz9yspvBxo8ibO2UCSrrp1cXomzLbWo7y9PXyDYun0B4Ejxlk/sOPT3KVDEqVP0H4mlyyqTNOO+RVyTk4U41jXy9qRpY8vAdAVaMYOakb9atuyGcjrGQJULDui4ZcF/RqdhmeU19SSuuUg4qrp1+q7eTyeCZDIyz3OObtgY/si2tVSuLGJZ8fRqKoNgMzd7qPnVTsDv3GrSiUTln0jMUeO1rNGhNc79lCj7T5gsXjJBHJ9vgCRtyZbzKOd/VI45krZKqzrrdrzlhSEOdnP/47Qcf+SUTZjNQICubTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=On6iW3qS8qJpzs029r/XHgZWL7tl6cP9KZw8rzBhKMI=;
+ b=agby0ilggDXK8kNtx8sQy0ZMf9GaTm/+FVVh6s2E39lzby3tloBa1h/qJng/6rDCGtMNBd852gjMenjvH3EQL0h/Ww+o8PJvzpMDyFOYQ2JUD1DRZeGVUN4EvB9FeoEtfKQKVTQX4bJArCZ8E5RvJWcn7uEvxA2MYa0btnBcpihgWVYTtqUVzoh9UyKrtYgjDfkog92Trt3QYQ1IrmpcsJfPsn4UMSp5OSNRcMAEQfijXnkVxh+hLxDd+/ObLqmfwW0HQYi5zpTWGjalUYuHHY8L5LRHbFk28fHbVY4NcvidDS6RTRurlMq5pEyDvp+Mebt2wFbajjZNyCfQJ0rAaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=On6iW3qS8qJpzs029r/XHgZWL7tl6cP9KZw8rzBhKMI=;
+ b=ZXG886990A60lOVdK7cJue4rIES7OJtUpGWOvPypf5WwnFSJAjzM5wGLEx13Cv+Pbfra+L1M0aL2jdxUwf+N8NMX8E/uJ7kIutU04rCdn7SC3f476kH/XUDa6uEn3WmAXxktHiItFk5V9ok8fBYsHDD/D0Pw34rfRuI2m+gxR7lNc8JYuPfhXDqzZskq86ZrmtzIgkTK5qEMRhp78OQIz5ToEqB36R1BTy+RAMxqWmeiumsLE+Q/dVkE2dN/o5IUuL6meoZVqvLay6VT/s96UhP/4jJZlx2HdUQwmnYP0XMZMK2q/lUsHR3bmw6Cxdfrb7Yu0GUcSaK2zmjgLUMhVQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by AM8PR04MB7348.eurprd04.prod.outlook.com (2603:10a6:20b:1db::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Thu, 4 Sep
+ 2025 15:44:11 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.9094.016; Thu, 4 Sep 2025
+ 15:44:11 +0000
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: linux-phy@lists.infradead.org
+Cc: Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH phy 00/14] Lynx 28G improvements part 1
+Date: Thu,  4 Sep 2025 18:43:48 +0300
+Message-Id: <20250904154402.300032-1-vladimir.oltean@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AM0PR03CA0060.eurprd03.prod.outlook.com (2603:10a6:208::37)
+ To AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AM8PR04MB7348:EE_
+X-MS-Office365-Filtering-Correlation-Id: edaa6abf-cb1a-4688-1a4b-08ddebc9e467
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|1800799024|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TFsF1mTYtAKvtcBGQhH+JNyi/4pJbO4pxmKAsOVVNtmZusJKOqEgm4ru5kJ7?=
+ =?us-ascii?Q?o+hyEQqf/AZZ+hQTxE1vufxpMFOtoszWoUM6H2rEHdb8uPPcfnW+FDPjhw8h?=
+ =?us-ascii?Q?7jHJPpVu7MPhXgImitMZCZWv2pm6XgvdEOxpnZMlcMF1v4R3w+3VyGs85MAy?=
+ =?us-ascii?Q?EXaYvbbwHLQqGkf+1sfMgzWROV0xhA1hY2hh8zfJPKxvwCicxgv4JsmBPsAE?=
+ =?us-ascii?Q?2wgNp4FZudrvw7eOx576UF2D3vDDq+vwsYds3xcgFapn0Hh0KIvleewmEj5E?=
+ =?us-ascii?Q?xl4RBortMy5bvmpz43D9Q8JH12KNFpI93VZSYaLAuKBgeznxm/6pGJGBqrJN?=
+ =?us-ascii?Q?M9dD1gqBcCyxnjE+TuB7OJaIUAKc0PMoEidMR5IfGfEdbrznne3YuSKU2InX?=
+ =?us-ascii?Q?7nqChPGBYeBqZ3Rpi5Z8d85VtXzNwpyAEEyh2LD5hVcRvWNOoMShlVcLse9g?=
+ =?us-ascii?Q?RtDuLYaEPF0zTKLWbIcVjGdqxbiXa9EbgdbzI2mK+P7Q++Cu15ru0de7MsEP?=
+ =?us-ascii?Q?bOkOJXT2lFBjJoU9IxnnO11gn7XeWzThNMF1yVhODW6Vn0uMSOfiWmUd2cj5?=
+ =?us-ascii?Q?eMZWgRjwEPeR68nrFbfLq3gaitd8TTHhuDThHomiHy+0GKA/kt0c3K4b41DC?=
+ =?us-ascii?Q?E7KcXQqKFKlVPgCINWuZI9zxfa4Gm40ciQCU5oipH5fJ/dM7rhcRmIJUva3a?=
+ =?us-ascii?Q?EnvmeUBH7k9IFzP0nKG6CdakCFZ1vge10LYx39KQcIGmBPjYj27oVpSStO+u?=
+ =?us-ascii?Q?37r7kAdDjyv2Q140l1W1IB5/8xCgi/RK5ls2g8bxIP5+2SgCb71TAu2FGiON?=
+ =?us-ascii?Q?GfoOL/WBXjzlp0GmnKmmpLoeqDWq64+rHDnqXO4YCTthGomhflSg1zWtSNQm?=
+ =?us-ascii?Q?0J338NrO+7E4ilTLiYrSjTffdnuYDoPyR+ZVOyT0ppUl1W9qDEjqgCcT2J1C?=
+ =?us-ascii?Q?7Kf2m2MjyfVyHJ+HiHXMplY1pSKLzGQJvTPACViK3+TvH3xRH/H4u8+m8Q16?=
+ =?us-ascii?Q?ABny6E63X+Hzx44nM8YIH82XW3G5g3PSVP4rSsXJ8PU5Mkym81c0BgpTWQO+?=
+ =?us-ascii?Q?HgiMf1nQLrEnJDPZ/TK/Sefj9xVYDjDr0nwKU8XWHbSqP5Coe4mxOVDVLrJE?=
+ =?us-ascii?Q?z9vBnof59efpgVrDJjwvPRRdaCfhiCrJcLcPYZ8oLRvJHQiC894EAdEC91O3?=
+ =?us-ascii?Q?j+3ZGzHPPbD7RCpUFLC8+usJuPqr/iFqOz20phbv5qKxjFV+SopmT/B5D1w+?=
+ =?us-ascii?Q?7FhZDQ6ppvSaXkzA1/Ti2WAk0TUeQ4xoyu9DikjuxhRCMilQeWfb4wHK3oCZ?=
+ =?us-ascii?Q?LyH8fxlAKYCybFGIeAEhRKXqGhfnJDXvbGgdZNu70HaZ2idAWKNAMfD3Ch29?=
+ =?us-ascii?Q?e+7I8HGA5b4zHXxEAATI2jU+KY6hz+0E44YqRZwFQamsi2Q+ZaUfmz7LmD4/?=
+ =?us-ascii?Q?pmFOo3MjwxVwrGpp7MJrsuXyu0EbkyeVFVptJom6J+w2gW92KUvKEQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8eB2CtErzequ07epDvwKw2WOVJXBCsaz6yLVxsNd2u/H2rfi2O+6rRI7kqw+?=
+ =?us-ascii?Q?i5cEXgMH/wZvYsLstbXu+GkTwyH3XiloC9ULANQz+ewApGoRTQD+FD5R9kEY?=
+ =?us-ascii?Q?XJb7L3Gj0X4dBHOwupVm8ZpKwarDRknZJi8q4/S1dTH8U+1bhCsFTXYO5+2p?=
+ =?us-ascii?Q?QDWpZt+qAHxlm8vf4tZha6Y52FwC8GD3t6lesudiCFICEp42584mCyxfIwXy?=
+ =?us-ascii?Q?7L79wLovK1c4cPskpJ+iRnkTjXRroOmcxGCxU06ihpn0YdvjAm1zvRHA5Nnz?=
+ =?us-ascii?Q?L/cX/ehyTQsH2GW86lxcFpQGh3pAuQlT2Xt992Vb9Qs2BNXLFxGFAJ39Nk0w?=
+ =?us-ascii?Q?qGF07ivAHRl2loO+12yVw6jOqaoWutpp6YJbwTqgM7pxz+9WPbl25KMd1LKC?=
+ =?us-ascii?Q?RmT0jtCqpVoPYHxBVlilIU9nCLeO5aiQd4A1Ah+A5LMvQ4Sh/ipuhiJFBtsy?=
+ =?us-ascii?Q?nrCSlG1ZB5W1ypcptv8SsqAVYzgup0p2ikqJLBxiURLbJbi8vzmIiz2W/9IF?=
+ =?us-ascii?Q?L0aquEa26jzwtCbxEu2pBuqY/yfwzsVLZ+I0sIZaPaFSKI/6jN4Wj12e6u40?=
+ =?us-ascii?Q?RMRIeoZ5rHL5K9qbtTNac+YZ9QwRG2aVVUHMt4PoaFQJHKWhd+tW15nsnUFw?=
+ =?us-ascii?Q?pRjJNylrhD568i6HWrIzYwSlTpPNSImKh+9JZN7wsVR21ML8QaNdAB5nrnnv?=
+ =?us-ascii?Q?U2whvkQjjCXFWcDkCxUpi8DSgF1VFJtd1NAMAu0Ia5Np9SZ7FWt5dA4IaRjF?=
+ =?us-ascii?Q?29YgPB/R0e3xGM+E6Xa3oTIg4Xb6Lwb6hOcoQtgJy5pL+zyBw1U8KA+JJFc3?=
+ =?us-ascii?Q?J+HVi9TlxriKYI/EVFf1mqfZv2YEYjFbCemoHWAefSumEmYFTunDQnN1iQvH?=
+ =?us-ascii?Q?IFcfAsCSq4/F5CYfp+66A4xzLD7VqR+Alxw/rVandbNOV1oYthcV79TUG6KF?=
+ =?us-ascii?Q?tqsBRamnAilFmwuVy0f/jOcsutI89LHA7v8wlLcqV4cuU8HGzZosSGOAVKgL?=
+ =?us-ascii?Q?6qKND8c2eaTSWQvZIWA2rlp5anvURWyIaiQ+pJITnamCx/dqBZUpERwjS3x2?=
+ =?us-ascii?Q?KkanluPYz0ieeMdw18BzrkR8D7B27yn3u5+Wi1cL926w7zkWP0F1qLMRb0l/?=
+ =?us-ascii?Q?5HaoXMcYH54qAi2V6ebj6GZr6+/BA1klht56RyeHup4tvxRmnnYnwNP5k8Hx?=
+ =?us-ascii?Q?AV+bVFtPrWPfuQzZTdUjp6faZrpB3N4AnxTFwXZi6OJ74nJZBLx7/8xlzkGc?=
+ =?us-ascii?Q?ZN3ABVoJ82+13jUByCZ4lkFeQSRHQvMG+0kHiRyDyGSCOpI2cBjwqZ1mudhL?=
+ =?us-ascii?Q?Vn0PK4wJzZgkq5Y92yONdNKQUbiIDArxv9JO9CYi80kTEzi92IZvlvP+ozDQ?=
+ =?us-ascii?Q?YozNOyY58fQnlGXd2THbgcW7zoG9CA6m+YhPFI7HMSS980YSVBjCaaNe/dDQ?=
+ =?us-ascii?Q?WhRdkAEU54Qa9rFVLep2fP7WM+ZxDvwS70JhZAxLglI2BsN7cHicZYVuVHp0?=
+ =?us-ascii?Q?6PQkbToPpIKZ+dnycW62b2R18mwQbhVX5VRiBDD1soMGTa5JIOIKEa4sE9wf?=
+ =?us-ascii?Q?D00O+KZhd7fAkJxCkmVj2lnwOqIOJfPXpnvNWVFW?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: edaa6abf-cb1a-4688-1a4b-08ddebc9e467
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 15:44:11.4675
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: K09982rje/anJ+DoKzqX713CC3jV9Ck7cC9DvjLIzwvfGcPr4aHNuZKtdQpvFP8H0UPyUBgy1tF7JMaZOLkZvg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7348
 
-On Thursday, 4 September 2025 14:50:13 Central European Summer Time you wrote:
-> On Thursday, 4 September 2025 11:17:01 Central European Summer Time Ulf Hansson wrote:
-> > On Tue, 2 Sept 2025 at 20:23, Nicolas Frattaroli
-> > <nicolas.frattaroli@collabora.com> wrote:
-> > >
-> > > This reverts commit de141a9aa52d6b2fbeb63f98975c2c72276f0878.
-> > 
-> > I can't find this commit hash. What tree are you using when testing this?
-> > 
-> > Are you trying to revert 0e789b491ba04c31de5c71249487593e386baa67 ?
-> 
-> Probably, I did the revert on a rebased branch and then rebased the revert
-> onto v6.17-rc4 so it likely is the wrong hash here. I'll fix this in v2 if
-> there is a v2 (it might actually become a different patch, see huge text
-> below, sorry!)
-> 
-> > 
-> > >
-> > > On RK3576, the UFS controller's power domain has a quirk that requires
-> > > it to stay enabled, infrastricture for which was added in Commit
-> > > cd3fa304ba5c ("pmdomain: core: Introduce dev_pm_genpd_rpm_always_on()").
-> > >
-> > > Unfortunately, Commit de141a9aa52d ("pmdomain: core: Leave powered-on
-> > > genpds on until sync_state") appears to break this quirk wholesale. The
-> > > result is that RK3576 devices with the UFS controller enabled but unused
-> > > will freeze once pmdomain shuts off unused domains.
-> > >
-> > > Revert it until a better fix can be found.
-> > 
-> > This sounds a bit vague to me, can you please clarify and elaborate a
-> > bit more so I can try to help.
-> > 
-> > What does "UFS controller enabled but unused" actually mean? Has the
-> > UFS controller driver been probed successfully and thus its
-> > corresponding device been attached to its PM domain?
-> 
-> It means the UFS controller driver has probed, but does not find a
-> UFS storage chip connected to it, and therefore reports a probe
-> failure. This is a possibility on single-board computers like the
-> Radxa ROCK 4D, where the UFS storage is a separate module that plugs
-> into some headers.
-> 
-> > Moreover, the behaviour of dev_pm_genpd_rpm_always_on() is orthogonal
-> > to what 0e789b491ba0 ("pmdomain: core: Leave powered-on genpds on
-> > until sync_state") brings along with its corresponding sync_state
-> > series for genpd [1]. Again, more information is needed to understand
-> > what goes wrong.
-> 
-> [snip very long rubber duck debugging session]
+This is the first part in upstreaming a set of around 100 patches that
+were developed in NXP's vendor Linux Factory kernel over the course of
+several years.
 
-Okay so I believe I have found the root cause of the regression. UFS is
-innocent, disabling UFS just happens to avoid it due to how the timing of
-things works out.
+This part is mainly concerned with correcting some historical mistakes
+which make extending the driver more difficult:
+- the register naming scheme forces us to modify a single register field
+  per lynx_28g_lane_rmw() call - leads to inefficient code
+- lynx_28g_lane_set_sgmii(), lynx_28g_lane_set_10gbaser() are unfit for
+  their required roles when the current SerDes protocol is 25GBase-R.
+  They are replaced with a better structured approach.
+- USXGMII and 10GBase-R have different protocol converters, and should
+  be treated separately by the SerDes driver.
+- Lane power management does not really power down the lanes.
+- Consumer drivers using phy_exit() would cause the kernel to hang.
+- The 3 instances of this SerDes block, as seen on NXP LX2160A, need to
+  be differentiated somehow, because otherwise, the driver cannot reject
+  a configuration which is unsupported by the hardware. The proposal is
+  to do that based on compatible string.
 
-The real issue is that the NPU power domains on the RK3576, which are
-currently unused, have an undeclared dependency on vdd_npu_s0.
+In addition to the above, a new feature is also added in patch 10/14:
+25GBase-R. Code allowing this mode to be used is also necessary in the
+Ethernet MAC and PCS drivers - not present here.
 
-Declaring this dependency with a `domain-supply` and adding the
-necessary flag in the rockchip PD controller to use it does not solve
-he problem. This is because the rockchip PD controller cannot acquire
-those supplies during probe, as they're not available yet and their
-availability depends on the PD controller finishing probe.
+Cc: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 
-That's why it acquires them in the PD enable callback, but the NPU
-PDs are never enabled because they're unused.
+Ioana Ciornei (2):
+  phy: lynx-28g: configure more equalization params for 1GbE and 10GbE
+  phy: lynx-28g: add support for 25GBASER
 
-This worked fine when unused PDs were still turned off quite early, as
-this meant they were turned off before regulators. Now the unused
-regulators are turned off before turning off the unused PDs happens.
+Vladimir Oltean (12):
+  phy: lynx-28g: remove LYNX_28G_ prefix from register names
+  phy: lynx-28g: don't concatenate lynx_28g_lane_rmw() argument "reg"
+    with "val" and "mask"
+  phy: lynx-28g: use FIELD_GET() and FIELD_PREP()
+  phy: lynx-28g: convert iowrite32() calls with magic values to macros
+  phy: lynx-28g: restructure protocol configuration register accesses
+  phy: lynx-28g: make lynx_28g_set_lane_mode() more systematic
+  phy: lynx-28g: refactor lane->interface to lane->mode
+  phy: lynx-28g: distinguish between 10GBASE-R and USXGMII
+  phy: lynx-28g: truly power the lanes up or down
+  phy: lynx-28g: implement phy_exit() operation
+  dt-bindings: phy: lynx-28g: add compatible strings per SerDes and
+    instantiation
+  phy: lynx-28g: probe on per-SoC and per-instance compatible strings
 
-I don't really see an easy way to fix this with a patch that's fit for
-an rc cycle. We can't request the regulator early or even just add a
-device link, as the regulator is not around yet.
+ .../devicetree/bindings/phy/fsl,lynx-28g.yaml |   15 +-
+ drivers/phy/freescale/phy-fsl-lynx-28g.c      | 1292 +++++++++++++----
+ 2 files changed, 1045 insertions(+), 262 deletions(-)
 
-Marking vdd_npu_s0 as always-on would be abusing DT to work around a
-Linux kernel shortcoming, which is a no-no.
-
-What we need is either a way to register with pmdomain core that
-certain PDs need a late init for additional supplies, which is then
-called before any of the unused regulator power off functionality is
-invoked by the regulator core.
-
-Any ideas?
-
-Kind regards,
-Nicolas Frattaroli
-
-
-> 
-> Kind regards,
-> Nicolas Frattaroli
-> 
-> > 
-> > Kind regards
-> > Uffe
-> > 
-> > [1]
-> > https://lore.kernel.org/all/20250701114733.636510-1-ulf.hansson@linaro.org/
-> > 
-> > >
-> > > Fixes: de141a9aa52d ("pmdomain: core: Leave powered-on genpds on until sync_state")
-> > > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > > ---
-> > >  drivers/pmdomain/core.c | 4 ----
-> > >  1 file changed, 4 deletions(-)
-> > >
-> > > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> > > index 0006ab3d078972cc72a6dd22a2144fb31443e3da..4eba30c7c2fabcb250444fee27d7554473a4d0c2 100644
-> > > --- a/drivers/pmdomain/core.c
-> > > +++ b/drivers/pmdomain/core.c
-> > > @@ -1357,7 +1357,6 @@ static int genpd_runtime_resume(struct device *dev)
-> > >         return ret;
-> > >  }
-> > >
-> > > -#ifndef CONFIG_PM_GENERIC_DOMAINS_OF
-> > >  static bool pd_ignore_unused;
-> > >  static int __init pd_ignore_unused_setup(char *__unused)
-> > >  {
-> > > @@ -1393,7 +1392,6 @@ static int __init genpd_power_off_unused(void)
-> > >         return 0;
-> > >  }
-> > >  late_initcall_sync(genpd_power_off_unused);
-> > > -#endif
-> > >
-> > >  #ifdef CONFIG_PM_SLEEP
-> > >
-> > > @@ -3494,7 +3492,6 @@ void of_genpd_sync_state(struct device_node *np)
-> > >         list_for_each_entry(genpd, &gpd_list, gpd_list_node) {
-> > >                 if (genpd->provider == of_fwnode_handle(np)) {
-> > >                         genpd_lock(genpd);
-> > > -                       genpd->stay_on = false;
-> > >                         genpd_power_off(genpd, false, 0);
-> > >                         genpd_unlock(genpd);
-> > >                 }
-> > > @@ -3522,7 +3519,6 @@ static void genpd_provider_sync_state(struct device *dev)
-> > >
-> > >         case GENPD_SYNC_STATE_SIMPLE:
-> > >                 genpd_lock(genpd);
-> > > -               genpd->stay_on = false;
-> > >                 genpd_power_off(genpd, false, 0);
-> > >                 genpd_unlock(genpd);
-> > >                 break;
-> > >
-> > > ---
-> > > base-commit: 5cc61f86dff464a63b6a6e4758f26557fda4d494
-> > > change-id: 20250902-rk3576-lockup-regression-5b1f1fb7ff21
-> > >
-> > > Best regards,
-> > > --
-> > > Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > >
-> > 
-> 
-> 
-
-
-
+-- 
+2.34.1
 
 
