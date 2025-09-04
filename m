@@ -1,144 +1,93 @@
-Return-Path: <linux-kernel+bounces-800404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E91B43743
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:34:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47227B43746
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76AE25E40A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:34:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 677D27C5B20
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9015E2F7479;
-	Thu,  4 Sep 2025 09:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA372F747F;
+	Thu,  4 Sep 2025 09:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pa6HEGs3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="ZmaUn4wn";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="4kaiBPQt"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FE4292938;
-	Thu,  4 Sep 2025 09:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D082F7455
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756978367; cv=none; b=DngeOprXYNJH2xxXhcdIrurobRmlwBNi9O2zB1GEoiOG5qhAY6yCyO0rsYlHnnInAWTFBKxnkCfWkwYG7JHS6b2TdPY4hJ7GgwIeF9wSCFjE+cJdK1av3kPFOHapNLY2Odc0w9dYczDNDoYJwFYIko1c3wtb0bNNpCD133EVw0E=
+	t=1756978447; cv=none; b=c3y80Fbl8PR4L0F6phtGPft0jNsgLJY/lFYdLW1UrM4o4Q1PUOA73bl5Aa2wMyhE2EUbNhrmMa/sEToa+zrmz4a31bVKhsILIjkO0EF1tFDzgHF/utBHXUYyeDTiM3T3ulV7GS/l33GYzS9Ggm66GEq33xAtv8kUCywMlt/QJ3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756978367; c=relaxed/simple;
-	bh=yf/N5FG6j+HGi+MnPiinMu7YMSmQafp7t//r67FQCIQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tILsC9Q+xC2iAq4v9wL2tmoP2nlTagkwSfD8bEuOjDBcCZd9cWaaCpfquxWkMIgeaT9Sq2NyIjZvwWwPeh+Is/E4FwvZs3lTcA+N3cfqETaKJNfbE5NLz/QTZKRxFoSZwl4LpZCXXgqUZDJ+FJhk/0LfQxgMBvGpRlF7kydDrew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pa6HEGs3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A0AC4CEF0;
-	Thu,  4 Sep 2025 09:32:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756978367;
-	bh=yf/N5FG6j+HGi+MnPiinMu7YMSmQafp7t//r67FQCIQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Pa6HEGs3yoQTLqBVfGTHPhLM5ADn5HxjG0dVuwFap4t+ryAS2vz8XCR8i05wZfvi7
-	 VlHfKQ29KpTIRrhmVDf7gCmbTVOnre5xQTkGvuKw3U/uzkOo9eG92zu2LiGk/t/ohW
-	 2UukjGuPwl9xmdPVnPIAFBU1UqRgrf67haCK4VNpfVkXt2KV+igaCeZOq6oGR2Zhot
-	 4VgOKdfXDnuizMIF/dBP1UVUVmRu57LX2ZsaxLfDZ3XtLHxMI66YD1J7KJIMCOQiF7
-	 mVhCmi1mWWtNnb/spq5Dzn2HCtyaJ979htqSL9GahXhKNBEjwPzbnTsyYDG9le+vQt
-	 k75b0IAwqpEEw==
-Received: from [131.175.126.3] (helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1uu6Kj-00000003Foo-00sL;
-	Thu, 04 Sep 2025 09:32:45 +0000
-Date: Thu, 04 Sep 2025 10:32:44 +0100
-Message-ID: <87v7lyzhoj.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Geonha Lee <w1nsom3gna@korea.ac.kr>
-Cc: kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] KVM: arm64: nested: fix VNCR TLB ASID match logic for non-Global entries
-In-Reply-To: <20250903150421.90752-1-w1nsom3gna@korea.ac.kr>
-References: <20250903150421.90752-1-w1nsom3gna@korea.ac.kr>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1756978447; c=relaxed/simple;
+	bh=kAhDKjDH0/7hCdvshzbpJuJxL8ynu+aHcOlt/BEHvIE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N5kptf5eXvb7nXDuzCOAnhjYU/d1Y9p9dJmHgcgJbtHgTGIgSjxZ8qpnFW3OP8h+Vl3IzHvbLYl/g9cp0X4gmeW0FnF2GwGJOgHK0/iMUtD7uAkliQ6TLAqWoZqXCtt+golmWbgowmKZZQ6Ybf3gCqbrcm1vAt5RQSY/HWI573w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=ZmaUn4wn; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=4kaiBPQt; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1756978434; x=1757583234;
+	d=konsulko.se; s=rsa2;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:date:subject:cc:to:from:from;
+	bh=4IuKTho9AadcM+Re0nAwehN+zaegfeyCAyeD2EXwBdM=;
+	b=ZmaUn4wnej3tj0YPURzSnREubQR7uz0uoH5s4PsMUCGzyOagNr+E+eR5Ab71zSmt8k5c2nin0lH3i
+	 oep89GfftkxOZiLG+tMIBCdq6dUeLMfzNNgB9yBYCi6w/op+YJd6VkpVYegbHJxr+q0x1zeyhza4UH
+	 APLp9hlPx0PiEPHsRmskPD0MksbRo9CfpXXt80nXlCaCYzArOj0m+KxB+06lmT389GK0UzbFTn8rBq
+	 9yGzGT4OyKzNhNzQ2GSGBhoXiBRfSAXzBm9H6cbhGWvTCUZHNKMMGF4ucrns1b7x9Jfx7cMXDQ1nAA
+	 hvSuoLTO0ly/VQ4byqnvjqwP6jZAFaA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1756978434; x=1757583234;
+	d=konsulko.se; s=ed2;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:date:subject:cc:to:from:from;
+	bh=4IuKTho9AadcM+Re0nAwehN+zaegfeyCAyeD2EXwBdM=;
+	b=4kaiBPQtOZ/PWNLcFNX3C1uWz0M7ZqHYVA1wUtVitG2pKAYKIz0+b7gh2ytX5Qe+YuDykFtycLGbE
+	 vE+uZE8Bg==
+X-HalOne-ID: 44b5596e-8972-11f0-8a3c-85eb291bc831
+Received: from localhost.localdomain (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
+	by mailrelay5.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id 44b5596e-8972-11f0-8a3c-85eb291bc831;
+	Thu, 04 Sep 2025 09:33:54 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: hannes@cmpxchg.org
+Cc: linux-kernel@vger.kernel.org,
+	Vlastimil Babka <vbabka@suse.cz>,
+	linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: Re: [PATCH 0/3] mm: remove zpool
+Date: Thu,  4 Sep 2025 11:33:24 +0200
+Message-Id: <20250904093325.2768507-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250829162212.208258-1-hannes@cmpxchg.org>
+References: <20250829162212.208258-1-hannes@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 131.175.126.3
-X-SA-Exim-Rcpt-To: w1nsom3gna@korea.ac.kr, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 
-On Wed, 03 Sep 2025 16:04:21 +0100,
-Geonha Lee <w1nsom3gna@korea.ac.kr> wrote:
->=20
-> kvm_vncr_tlb_lookup() is supposed to return true when the cached VNCR
-> TLB entry is valid for the current context. For non-Global entries, that
-> means the entry=E2=80=99s ASID must match the current ASID.
->=20
-> The current code returns true when the ASIDs do *not* match, which
-> inverts the logic. This is a potential vulnerability:
->=20
-> - Valid entries are ignored and we fall back to kvm_translate_vncr(),
->   hurting performance.
-> - Mismatched entries are treated as permission faults (-EPERM) instead
->   of triggering a fresh translation.
-> - This can also cause stale translations to be (wrongly) considered
->   valid across address spaces.
+> With zswap using zsmalloc directly, there are no more in-tree users of
+> this code. Remove it.
+> 
+> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 
-I don't immediately see the vulnerability on the host. In the guest,
-yes, absolutely.
+Per the previous discussions, this gets a *NACK* from my side. There is
+hardly anything _technical_ preventing new in-tree users of zpool API.
+zpool API is neutral and well-defined, I don’t see *any* good reason for
+it to be phased out.
 
->=20
-> Flip the predicate so non-Global entries only hit when ASIDs match.
->=20
-> Reported-by: Team 0xB6 in bob14
->   DongHa Lee (@GAP-dev)
->   Gyujeong Jin (@gyutrange)
->   Daehyeon Ko (@4ncienth)
->   Geonha Lee (@leegn4a)
->   Hyungyu Oh (@DQPC_lover)
->   Jaewon Yang (@R4mbb)
+BTW, remarkable is that you didn't bother to CC: me to this patch.
 
-Reported-by: has a specific meaning, and needs addresses. Oliver, can
-you change this to some sort of attribution?
+Anyway,
 
->=20
-> Signed-off-by: Geonha Lee <w1nsom3gna@korea.ac.kr>
-> ---
->  arch/arm64/kvm/nested.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
-> index 77db81bae86f..24eab94d7d7f 100644
-> --- a/arch/arm64/kvm/nested.c
-> +++ b/arch/arm64/kvm/nested.c
-> @@ -1276,7 +1276,7 @@ static bool kvm_vncr_tlb_lookup(struct kvm_vcpu *vc=
-pu)
->  		    !(tcr & TCR_ASID16))
->  			asid &=3D GENMASK(7, 0);
-> =20
-> -		return asid !=3D vt->wr.asid;
-> +		return asid =3D=3D vt->wr.asid;
->  	}
-> =20
->  	return true;
-
-Yup, looks correct to me. Thanks again for fixing it.
-
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-
-	M.
-
---=20
-Jazz isn't dead. It just smells funny.
+Nacked-by: Vitaly Wool <vitaly.wool@konsulko.se>
 
