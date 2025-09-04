@@ -1,192 +1,233 @@
-Return-Path: <linux-kernel+bounces-800718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54B7FB43AFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:05:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3FEB43AF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3A513AC2E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:05:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 282481C25A3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EB92D46CB;
-	Thu,  4 Sep 2025 12:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2C6277CA4;
+	Thu,  4 Sep 2025 12:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LvUzB9AB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KIXHkON0"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDF5271469
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CC82CCC0
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756987507; cv=none; b=f9e/2IlG0fPdBpB6P3AYjy6EGdhd20B0BzEGQVvgD4apXAbo2JhSuzBetseqy4CEchrr7tqdON5PoqfHWbe3hFBmdoO6GCXRUOgpk45C2YeQaaT3u21//d41L5HBa2lVFRyfXOG+ugrj2KieW6+qeglNy2GdbqzR8oyIXa6TPzY=
+	t=1756987456; cv=none; b=bKQ9Z5zUWhKtVTv/ea0J9+z3JCfXI0n76DRNRY+jNaDTY9cTDVZhgKnWe30UnZcf3RhF7zkefaXY1+ItuREweMsufTCKnTvfWf6EDaYR/o9LWip8pSXY56PaZAR3zTp2rK+MYK7pbkojDuog6qzoTucpJYx+sPArogHoGttRjzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756987507; c=relaxed/simple;
-	bh=edjEqdm4hJw0PJOsQz0naD9uQqqwvK/BiCh/M8NcXJU=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=iRpAqn12F2Mv6NhLgGI4M7diEZU/7faR8lnz+7xGdoHKNq/mm3Z5x8MpwLTmYvkPPiGsGfn57Uw0Skd/Qh2D6G6LDuY0S21Tfh5i8tC6/Hfwmd9IlG5ls1+hZzuVfxVa/96ZAwY/zYZvc0STTy8+NgKKbBNhCmyLq4aAm9sv5Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LvUzB9AB; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756987507; x=1788523507;
-  h=date:from:to:cc:subject:message-id;
-  bh=edjEqdm4hJw0PJOsQz0naD9uQqqwvK/BiCh/M8NcXJU=;
-  b=LvUzB9ABuQ/BZVKZqVWk580DrkQo3iC6WCYEHA3uNG9EyRRqeb3xYpji
-   hmMr8t8tebR/rMbYrvHpksg8KuGFGW9j9zMtbbbmbpwySTPpkKd91le04
-   zy5MIMHjLwWW3JLfpe/9stUB8tjmWZ0W+s6g+fRRIV4+Af5TIxbvhlTQ1
-   q5bYJCF/7995w9HhvUooSQXAwgstSkY9Uzekt7eiJWetgRUbkJ+4eRDi+
-   EQKd79pgk7GMEyD/g6jiIUPwiuGLNISwTOxasdMd313pUb9DL9QhWeMRy
-   4D5FtlovCdDcJyb4xh4xag8sOqxFuSZAbN4Ntl9sJVJQuOdpEk9R+dX8x
-   w==;
-X-CSE-ConnectionGUID: mXUfqu56QDSVhEby+uZxpw==
-X-CSE-MsgGUID: 4PB67DbzSoqtaqkiLNDNlw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81912184"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="81912184"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 05:05:06 -0700
-X-CSE-ConnectionGUID: VxEw2cHlTQ6u/xOcKX4ADQ==
-X-CSE-MsgGUID: DapzaX6mRaGVUifnXI3D9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="175991248"
-Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 04 Sep 2025 05:05:04 -0700
-Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uu8i5-0005Dl-2N;
-	Thu, 04 Sep 2025 12:05:01 +0000
-Date: Thu, 04 Sep 2025 20:03:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:timers/urgent] BUILD SUCCESS
- 762af5a2aa0ad18da1316666dae30d369268d44c
-Message-ID: <202509042046.gydMN16z-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1756987456; c=relaxed/simple;
+	bh=lGl2MbNsirxTb2TdNSbAhzazcBr/rp1kOoYDd4ovgYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J5b4f43E2a+chkxvAqzgqqjTMdZSh22+S5vbp+/ItWgkpKQNKgoUUGavF/mrN59h0FWnANbLWqDJNtbduJCTIpKtTY8zQd6NEHFHAGEtSTFUiINBd2QyGFkJq7X5rOiRvD0RHYWtvqUdsRUMiZUPRLAME30vTc8/St6In+JqTgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KIXHkON0; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-329e1c8e079so799089a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 05:04:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1756987453; x=1757592253; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IJUjFRTIwREb6ZjdrljHQu9O3h67SQdkCtIrAFpCPbs=;
+        b=KIXHkON0wIIk1p0oAZAnWDkgCpmrpd4lcLFbQZQ35iatLKnY6ug9h9wR5n/hVUTRHo
+         qWC0dqSdAptENB9qVOkEVa7J/Br+fTw4rAPL025oLxXjsHOQVt3+XxSENcUajg51elK0
+         pC4qHKDOtnzt/drqNs7EyMC7VpRPzlQFfwjQfi8pPUvLL6MUjHI5LzQkvTMDqV4LB0d5
+         Yu2i9tAQmNKEGrt8DjsCsWxBTr67odORjriM98Z6LFQsBU+6bOd2lswHTXP9Gq3xRGLV
+         GkHUUfTEhXRo8Qc8ozWBQD8Ybg1ZrAqBraRQw/5wWCjdPvc+ki3UyIeouJynxMq+BCjz
+         epJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756987453; x=1757592253;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IJUjFRTIwREb6ZjdrljHQu9O3h67SQdkCtIrAFpCPbs=;
+        b=jalRQLq0ChSbLqGK59IvD93sJJKc/x9TzWd4vywnBPqeoWgfW+R3I+H3Y0KfEO+jdN
+         dD0ma35z5/hfIG2xTCVvk5Sw1N+8Tp77W2iBeQmWFVVpKkaBZnF1OSPvvxeTJh56LrD1
+         9u9Da92tWNbrgNsjKHNGnVP9Vb+nXNFX6HkUiQnwf9F8hUkh8NRW6x+eqCg0l0nOjQMm
+         hY50xAoS0qGO7zMIzE5E9qOWrSqwLnJlXn3VUYqr0cP7Sxi19/HLaB7PVsXQVcL1KkM+
+         +CcBzu7zTC7W3IgJwwD9RGrcsTF7qZpBo4BxEBjOtdam1weMwuPlRaaEbr6Nsdk0Ukr+
+         ghzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/aVxqnOsVBZIEN8Hqs+coaI/R/8XJV2w7XYycOTERIMiLrbqUOPDLyjpT4oBR/IyDaM38bWhHjyVUhMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yymqu2fDfTpFAsTQNzqovt0Bzgora5OXCQAZQ+8aHR7hAygG14h
+	g8YmyRslhjCR9l4odmEqzLsJ5CKyg6bF5dAl7E4K6guzqT04NYfxmZ7kqhnsRFG0qA==
+X-Gm-Gg: ASbGncslmCsi43MWcDGICv6n8q5Ekxrt7or8wbAeKzqeIoTJRYDk7g/vdyqgTdstGYP
+	Wzvsm4no+R0ii0ao4WIfs3YGJwb4yOdMv/KpmbEw4v2+qA8wFmUdoRBf1nNelkZVKcQPzLFKKVc
+	pWaHYKixhz1v75Ilirl/Irs+yoNsZvE3P98AVqFgXh9uNqpFT166RJ0IlMcE0lT16xZ82hXG0pi
+	a0ogNfdvmTvAGSrhA+Y4a1Ny9MBC3qfrji1TRjn/p7+QnUeQnoldU039Ri46Ki+zB7qLPC4RywI
+	DJ1WPxq6MtpIe3bS6NThosSZe6PNbvFm4OKg1ZCBJqL4UGevvIQ2RSap4n+9EcTszqniVoRNh3x
+	Z7eSjLQZl2fJnuvNdYY8K4yspdNS511LwlDeIu7r/gDoDj4IrUw==
+X-Google-Smtp-Source: AGHT+IH8Tg9q+phA5iI4fVJwpeklHVNbQqKLI4VFDnhH5jlcO/eiU3I6e37RUnTQfdOYSHOwldwpyg==
+X-Received: by 2002:a17:90b:4d92:b0:327:a638:d21 with SMTP id 98e67ed59e1d1-3281531d3bbmr25209004a91.0.1756987452489;
+        Thu, 04 Sep 2025 05:04:12 -0700 (PDT)
+Received: from bytedance ([61.213.176.58])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7726c1ed65bsm8688569b3a.45.2025.09.04.05.04.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 05:04:11 -0700 (PDT)
+Date: Thu, 4 Sep 2025 20:04:01 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Benjamin Segall <bsegall@google.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Matteo Martelli <matteo.martelli@codethink.co.uk>,
+	Michal Koutn?? <mkoutny@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH v4 3/5] sched/fair: Switch to task based throttle model
+Message-ID: <20250904120401.GJ42@bytedance>
+References: <20250829081120.806-1-ziqianlu@bytedance.com>
+ <20250829081120.806-4-ziqianlu@bytedance.com>
+ <20250903145124.GM4067720@noisy.programming.kicks-ass.net>
+ <14be66aa-e088-4267-ac10-d04d600b1294@amd.com>
+ <xm26o6rrtgav.fsf@google.com>
+ <20250904081611.GE42@bytedance>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904081611.GE42@bytedance>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/urgent
-branch HEAD: 762af5a2aa0ad18da1316666dae30d369268d44c  vdso/vsyscall: Avoid slow division loop in auxiliary clock update
+On Thu, Sep 04, 2025 at 04:16:11PM +0800, Aaron Lu wrote:
+> On Wed, Sep 03, 2025 at 01:46:48PM -0700, Benjamin Segall wrote:
+> > K Prateek Nayak <kprateek.nayak@amd.com> writes:
+> > 
+> > > Hello Peter,
+> > >
+> > > On 9/3/2025 8:21 PM, Peter Zijlstra wrote:
+> > >>>  static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+> > >>>  {
+> > >>> +	if (task_is_throttled(p)) {
+> > >>> +		dequeue_throttled_task(p, flags);
+> > >>> +		return true;
+> > >>> +	}
+> > >>> +
+> > >>>  	if (!p->se.sched_delayed)
+> > >>>  		util_est_dequeue(&rq->cfs, p);
+> > >>>  
+> > >> 
+> > >> OK, so this makes it so that either a task is fully enqueued (all
+> > >> cfs_rq's) or full not. A group cfs_rq is only marked throttled when all
+> > >> its tasks are gone, and unthrottled when a task gets added. Right?
+> > >
+> > > cfs_rq (and the hierarchy below) is marked throttled when the quota
+> > > has elapsed. Tasks on the throttled hierarchies will dequeue
+> > > themselves completely via task work added during pick. When the last
+> > > task leaves on a cfs_rq of throttled hierarchy, PELT is frozen for
+> > > that cfs_rq.
+> > >
+> > > When a new task is added on the hierarchy, the PELT is unfrozen and
+> > > the task becomes runnable. The cfs_rq and the hierarchy is still
+> > > marked throttled.
+> > >
+> > > Unthrottling of hierarchy is only done at distribution.
+> > >
+> > >> 
+> > >> But propagate_entity_cfs_rq() is still doing the old thing, and has a
+> > >> if (cfs_rq_throttled(cfs_rq)) break; inside the for_each_sched_entity()
+> > >> iteration.
+> > >> 
+> > >> This seems somewhat inconsistent; or am I missing something ? 
+> > >
+> > > Probably an oversight. But before that, what was the reason to have
+> > > stopped this propagation at throttled_cfs_rq() before the changes?
+> > >
+> > 
+> > Yeah, this was one of the things I was (slowly) looking at - with this
+> > series we currently still abort in:
+> > 
+> > 1) update_cfs_group
+> > 2) dequeue_entities's set_next_buddy
+> > 3) check_preempt_fair
+> > 4) yield_to
+> > 5) propagate_entity_cfs_rq
+> > 
+> > In the old design on throttle immediately remove the entire cfs_rq,
+> > freeze time for it, and stop adjusting load. In the new design we still
+> > pick from it, so we definitely don't want to stop time (and don't). I'm
 
-elapsed time: 1566m
+Per my understanding, we keep PELT clock running because we want the
+throttled cfs_rq's load to continue get update when it still has tasks
+running in kernel mode and have that up2date load could let it have a
+hopefully more accurate weight through update_cfs_group(). So it looks
+to me, if PELT clock should not be stopped, then we should not abort in
+propagate_entity_cfs_rq() and update_cfs_group(). I missed these two
+aborts in these two functions, but now you and Peter have pointed this
+out, I suppose there is no doubt we should not abort in
+update_cfs_group() and propagate_entity_cfs_rq()? If we should not mess
+with shares distribution, then the up2date load is not useful and why
+not simply freeze PELT clock on throttle :)
 
-configs tested: 100
-configs skipped: 1
+> > guessing we probably also want to now adjust load for it, but it is
+> > arguable - since all the cfs_rqs for the tg are likely to throttle at the
+> > same time, so we might not want to mess with the shares distribution,
+> > since when unthrottle comes around the most likely correct distribution
+> > is the distribution we had at the time of throttle.
+> >
+> 
+> I can give it a test to see how things change by adjusting load and share
+> distribution using my previous performance tests.
+>
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Run hackbench and netperf on AMD Genoa and didn't notice any obvious
+difference with the cumulated diff.
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                   randconfig-001-20250903    gcc-15.1.0
-arc                   randconfig-002-20250903    gcc-8.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                   randconfig-001-20250903    clang-22
-arm                   randconfig-002-20250903    clang-16
-arm                   randconfig-003-20250903    clang-22
-arm                   randconfig-004-20250903    clang-22
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250903    gcc-8.5.0
-arm64                 randconfig-002-20250903    gcc-11.5.0
-arm64                 randconfig-003-20250903    clang-22
-arm64                 randconfig-004-20250903    clang-22
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250903    gcc-9.5.0
-csky                  randconfig-002-20250903    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20250903    clang-22
-hexagon               randconfig-002-20250903    clang-18
-i386                             allmodconfig    gcc-13
-i386                              allnoconfig    gcc-13
-i386                             allyesconfig    gcc-13
-i386        buildonly-randconfig-001-20250903    gcc-13
-i386        buildonly-randconfig-002-20250903    gcc-13
-i386        buildonly-randconfig-003-20250903    clang-20
-i386        buildonly-randconfig-004-20250903    clang-20
-i386        buildonly-randconfig-005-20250903    clang-20
-i386        buildonly-randconfig-006-20250903    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20250903    gcc-15.1.0
-loongarch             randconfig-002-20250903    clang-22
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                 randconfig-001-20250903    gcc-10.5.0
-nios2                 randconfig-002-20250903    gcc-10.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                randconfig-001-20250903    gcc-13.4.0
-parisc                randconfig-002-20250903    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc               randconfig-001-20250903    gcc-8.5.0
-powerpc               randconfig-002-20250903    gcc-8.5.0
-powerpc               randconfig-003-20250903    gcc-14.3.0
-powerpc64             randconfig-001-20250903    clang-22
-powerpc64             randconfig-002-20250903    clang-22
-powerpc64             randconfig-003-20250903    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                 randconfig-001-20250903    gcc-8.5.0
-riscv                 randconfig-002-20250903    gcc-9.5.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20250903    gcc-8.5.0
-s390                  randconfig-002-20250903    clang-22
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                    randconfig-001-20250903    gcc-12.5.0
-sh                    randconfig-002-20250903    gcc-10.5.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                 randconfig-001-20250903    gcc-11.5.0
-sparc                 randconfig-002-20250903    gcc-15.1.0
-sparc64               randconfig-001-20250903    gcc-8.5.0
-sparc64               randconfig-002-20250903    gcc-11.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-13
-um                    randconfig-001-20250903    gcc-13
-um                    randconfig-002-20250903    clang-18
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250903    clang-20
-x86_64      buildonly-randconfig-002-20250903    clang-20
-x86_64      buildonly-randconfig-003-20250903    clang-20
-x86_64      buildonly-randconfig-004-20250903    gcc-13
-x86_64      buildonly-randconfig-005-20250903    clang-20
-x86_64      buildonly-randconfig-006-20250903    gcc-13
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250903    gcc-11.5.0
-xtensa                randconfig-002-20250903    gcc-14.3.0
+> > Assuming we do want to adjust load for a throttle then we probably want
+> > to remove the aborts from update_cfs_group and propagate_entity_cfs_rq.
+> > I'm guessing that we need the list_add_leaf_cfs_rq from propagate, but
+> > I'm not 100% sure when they are actually doing something in propagate as
+> > opposed to enqueue.
+> >
+> 
+> Yes, commit 0258bdfaff5bd("sched/fair: Fix unfairness caused by missing 
+> load decay") added that list_add_leaf_cfs_rq() in
+> propagate_entity_cfs_rq() to fix a problem.
+> 
+> > The other 3 are the same sort of thing - scheduling pick heuristics
+> > which imo are pretty arbitrary to keep. We can reasonably say that "the
+> > most likely thing a task in a throttled hierarchy will do is just go
+> > throttle itself, so we shouldn't buddy it or let it preempt", but it
+> > would also be reasonable to let them preempt/buddy normally, in case
+> > they hold locks or such.
+> 
+> I think we do not need to special case tasks in throttled hierarchy in
+> check_preempt_wakeup_fair().
+>
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Since there is pros and cons either way and consider the performance
+test result, I'm now feeling maybe we can leave these 3 as is and revisit
+them later when there is some clear case.
+
+> > 
+> > yield_to is used by kvm and st-dma-fence-chain.c. Yielding to a
+> > throttle-on-exit kvm cpu thread isn't useful (so no need to remove the
+> > abort there). The dma code is just yielding to a just-spawned kthread,
+> > so it should be fine either way.
+> 
+> Get it.
+> 
+> The cumulated diff I'm going to experiment is below, let me know if
+> something is wrong, thanks.
 
