@@ -1,116 +1,219 @@
-Return-Path: <linux-kernel+bounces-799763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFDBB42FFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:46:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5EAB42FFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B30981B211E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:47:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1AA31893613
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABD478F51;
-	Thu,  4 Sep 2025 02:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECB12BAF7;
+	Thu,  4 Sep 2025 02:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dEx4GWbu"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DIQNRML0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4498819AD8B;
-	Thu,  4 Sep 2025 02:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DBE57C9F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 02:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756954007; cv=none; b=phL4EY5WLA6RrPokFF5cC07+D423IWtY8MuL3xjZCuz8kSWMyu0zZbR7+dzRp4iUL5Qg35x8otcyBpfcfr/xIn0bMC/zq9daaq5JoYhcV/hStFc0JUvZGBRmfVVU9itMCThpuq7JOmayq+j72fO7oFM7xpgcTzi7ateXnQ5H47g=
+	t=1756954070; cv=none; b=GWAi5A8kEWymup04U0dHlvoKSuXC0Hzc56/udRR8fqNWq+z7iW6FdqMrfA7F7kw8AOu1bo/a1wAQvBTvwvU3zPBepLP2pcOx1ek7udv3GlzbTfCCi1mbo3BpmBT1pmXCv7KiyfRmwCstJcjxfUEeGkShqbgBZtOAmSdQa/S1ia0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756954007; c=relaxed/simple;
-	bh=TFZJyppGpgM785beXgOJE2uko5s++996WRpRlm49wlU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=XAsZyBFgBvmCyJYNOA5gMQ0Hjd5g0b2JauD5ivtwX3eSyTC0z3RT9qEVMpjnOk4GJ3lyJ+4G2U9a52tqdG9Al/8SSJgiwUiS5eUy2Njy25obhGJutXI/t6GJoNNxRdSU1KK+srnduhBg4icBbI76uQEAKuhy9RWf/hpuWiqS1PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dEx4GWbu; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-7209bd264f0so18755746d6.1;
-        Wed, 03 Sep 2025 19:46:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756954005; x=1757558805; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3IhbpWeMVcBjFY/vJMFt8gcYgr0JiVin6Pv1b6AVKHA=;
-        b=dEx4GWbu+ddfX2BmAeafY0aN34DC7vzvNQwGeoepNbeqtptt0/ozRu/6L6kdDwSg8y
-         gDgZEsgFVwLxXVHctWVx7vWn1ie0CU34ArZxtuiFMss3bAYzNz1WLrB5Ds4NO8/NVos1
-         k7sshqFiLb2F4f66ue1LcQcR6Ln4/FDlTeLF5NxC/Xr6kTvIzoCTA+gKo15QIMG3EEFN
-         UgL+J0Qb9QZhhKSnX924zkR7OaLEwGYGsXb8Nh8G+oFZYEV52tcmm5mdOV+Fz3WSMukz
-         /8+X83/WMwE8ttORJfTtEKCqXHKA8Eo4nZ9ctAkj+nwYdHnIiOxZGNeX/ro8YeDu/190
-         bTWA==
+	s=arc-20240116; t=1756954070; c=relaxed/simple;
+	bh=Jq8qiDws42tS3DgBZxRymrwfYw1lrOAh8NEvTO9bXLM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=avBSxneXtZCaSYOWrn6A/nxxFVve0aCmbAYXhlzH4dZQdDGA4SU5dmX6yCUaIYaGc95iUePg+gTIZPOcJnUbc4a5SGphQbMGKo+n2Wc8eVDIcTL5pJSxEygURNlh+IVUF7YGqiPSAl8/znPG714wHoJ7vVhf4jE6nOnG5V9pCt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DIQNRML0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756954066;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nPuBzO5sFF7pz/Em0FpS2T39kkMf6PUBGHFAt6g8pC0=;
+	b=DIQNRML0K4gJ5c5RrfgMXMceuXevmT50ufiGAmwbWB7ZxN75uiDzpGKruszlbtcjFNQqJc
+	YlGSlPGNrb3lUK9HaV3fxtwNUMvHCMHS9gfKcMHGByBBhde77eqUz8YLqSGHjfy6VbqKQd
+	NlOauNhC9OE91v7sEhYJ1jnW/pxQqTE=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-575-xgOWLF34PnCvbT07hvJ6uA-1; Wed, 03 Sep 2025 22:47:45 -0400
+X-MC-Unique: xgOWLF34PnCvbT07hvJ6uA-1
+X-Mimecast-MFC-AGG-ID: xgOWLF34PnCvbT07hvJ6uA_1756954065
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-327b5e7f2f6so604809a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 19:47:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756954005; x=1757558805;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3IhbpWeMVcBjFY/vJMFt8gcYgr0JiVin6Pv1b6AVKHA=;
-        b=Hf53wS2FBe27lMGuXIZsM2mw9JLz+NirUOs4IJT6s4n4B5zUkJQ48sK81dYOIvaZyK
-         7n/k1VdlT9iD2/SVK111tkNw+9OT3vmRiZiWuhV6H5Zcy0gzM2DZZPZGzlqcmUEJYCyH
-         miqer3peW5M05+ZGz+zNdvzPiyJOeu0R9PxfhldsCig31hXhQfGrj3fybokIOhAXsHOd
-         jv6q6JhJOxfV3OPRdYSLTfHH8d10hmK8MLIKZYZQNhC3BLjLJPUMdI5jlFUbb/wVqF2e
-         npgFgyIazmAokG4J13m3gK2xqL3TA/+wCSHOEV2WQ0yaA0ZSF9RHm18EZT2ryFe46iOV
-         lXVg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1XfrFHS6UYdN+pOjrkSBLiQDrorU/5yopjE0myQO16eR4UHLxLUOWiozr0lShNrQrvfFhMc/TW5hNwh/2@vger.kernel.org, AJvYcCWs29XRIOqXXiWSXREXY21h6c/mGYHSfol4s2M2JGTiXxbfhN/SZmeh/veUF/5E8Pc/0AlS4wtonLCU@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOwxKLkGMQkuHL/vm0cB4THG/2VANxBrfn0sM9W5Pvin8ArR7E
-	/SGf4N1wdK6EXWmkyXGTWIPMwNeNAQgtPQevAovwia2Lu6Yqtzf57cmq6PO33gl/BrYX0tydJjb
-	cVFzxPEEcK+hQGuPxQDxtpP9+TvhoIqI=
-X-Gm-Gg: ASbGncuxJrgl6gGPNQ3GQkGMLsmZGIFpM4A49taSMNHzLTvE7DA3XDDvaXTWo7jZNh/
-	U8fli++CFCmdYChMyap/WxTDs/GqZF8Km82DuEyIHV36KkASu7cU1rJ2co+s+1kNm542eohDnsn
-	t5T5PUrktRZiOvn0b8IAFvYm6/OyefWA83zbDTwrW1HUQ7GE2/5iOxpk9FAeNNF5mZL2TE7qoj7
-	FZsjR0YdxgYLsdU6wfE6NLqI0DuaXnfuTB9LBbrVsKxOX9fZxl1+qwTV+LXhcHyP246dfnlTCTo
-	H/ugx+ThEaVX1lCuvme30NBE+9HWDiovV2yBAMvUyAiaSWNbTAj4EanHn2IvXoDZgl4XHNOiEFr
-	6
-X-Google-Smtp-Source: AGHT+IGytADtHdg1qJ4UWeh3qQAmZx2u7rgOEcAoWiD4v/EzjzcDZni4g+vvDW9wNW4rCG4X1sr3dMWLlR0QEkxHbVI=
-X-Received: by 2002:a05:6214:260b:b0:721:f163:8678 with SMTP id
- 6a1803df08f44-721f1638732mr78294166d6.30.1756954005044; Wed, 03 Sep 2025
- 19:46:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756954065; x=1757558865;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nPuBzO5sFF7pz/Em0FpS2T39kkMf6PUBGHFAt6g8pC0=;
+        b=HufoUzYa2w/VNTUsPjqiR9OLMr4z6qX/qJEo+3UoPS8czG8TKKo8wxR4VtFOgGelmC
+         ND9jR6TojAkeuFZOIuY9DnnbQPIWG9C7Ya8QfyWvkWEMltPmpiZnUv03LaQZuz5KN2aj
+         QmTRDtsYhsIxac8rKm+RoM848Be5Q/cZ/Y1815DJLROpPRClcCBZPVIag1edop2E02WO
+         BhMrVaz2E7om17ljZeusDLMvg7UR0EiNjzSBq7Wg/R/eCed7pC1DiWwcBQ1K7UOgq34K
+         yV2S0hNYdbitxhg5se9+2FAW5b0Hf6eTDB7Z+IM0Dl1U/SwTdJYFGG3/J12kPFWZgJ18
+         uDtg==
+X-Forwarded-Encrypted: i=1; AJvYcCUn+ECbv9pKtXMHURFlXd6UQqHS933qj9P+0ITrCZXbK4hFxa737FulyWPY/3eK7ydY2MsaWUc0eORT7Ls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY+YS0egkI32F6D7okYSvSigfcYa+Ddn8JbvsRICLmiHkyLGyv
+	+5es1bIdTJuCd8melsDTA5ufVrQTZEAib6PDXpWzIwbdLBvCpRHCi2Z8zqUH5rw4DxefHpYGo3G
+	Okz1Ci3DeyvYNCIkH7Yq/UGN5r506rMG0edLtGEGnAtH3k/YgOCceK2VWLiNduUFrEhH1m0eHC7
+	PkU/FvK5KpjVj3nndq7viYUhiPnRi1cmpCPITlHvlJ
+X-Gm-Gg: ASbGncspbH5rY7Zh72PtHefwU1QISKK/QEWhYdB76x9VLzz7bsL48wzpmNkFSuSVGel
+	Hn5+M9bZtHPLEJN5GAI0wLIhNCrSsl4vp3sp2PNYqjM2GHGTnID4KGvfhsdsY/OMS5swdYCvXj3
+	44PAiK51Nl5OkeDSeRA38=
+X-Received: by 2002:a17:90b:2ecc:b0:329:e3dc:db6c with SMTP id 98e67ed59e1d1-329e3dcdc0bmr10993114a91.23.1756954064577;
+        Wed, 03 Sep 2025 19:47:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkDHqgDH/M72TzEiUNO4/wpezo4wquRaQJWXdohPpca0lZdT3tIFYzQxV00AK8Pp2pJZe1TcsVp6WvFKCncjI=
+X-Received: by 2002:a17:90b:2ecc:b0:329:e3dc:db6c with SMTP id
+ 98e67ed59e1d1-329e3dcdc0bmr10993085a91.23.1756954064125; Wed, 03 Sep 2025
+ 19:47:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 3 Sep 2025 21:46:33 -0500
-X-Gm-Features: Ac12FXwB7M1Hr0IivoMKxINa1EzgkBmxbSmeNOoR8dzN5iNhTHNEfoveeDbDXME
-Message-ID: <CAH2r5muAY1obqbwyP_KR_mZedEaARQhMyDyKenDv4UOW3cD4bA@mail.gmail.com>
-Subject: [GIT PULL] ksmbd server fix
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namjae Jeon <linkinjeon@kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
+References: <20250902080957.47265-1-simon.schippers@tu-dortmund.de>
+ <20250902080957.47265-5-simon.schippers@tu-dortmund.de> <willemdebruijn.kernel.251eacee11eca@gmail.com>
+ <CACGkMEshZGJfh+Og_xrPeZYoWkBAcvqW8e93_DCr7ix4oOaP8Q@mail.gmail.com> <willemdebruijn.kernel.372e97487ad8b@gmail.com>
+In-Reply-To: <willemdebruijn.kernel.372e97487ad8b@gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 4 Sep 2025 10:47:30 +0800
+X-Gm-Features: Ac12FXxK8G6F5K9kP9hZAbVWxKTcqMiuodU5d2Yu_6h48rhPlNy4xjY3e_hnfFc
+Message-ID: <CACGkMEtv+TKu+yBc_+WQsUj3UKqrRPvOVMGFDr7mB3zPHsW=wQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] netdev queue flow control for vhost_net
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: Simon Schippers <simon.schippers@tu-dortmund.de>, mst@redhat.com, eperezma@redhat.com, 
+	stephen@networkplumber.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
+	kvm@vger.kernel.org, Tim Gebauer <tim.gebauer@tu-dortmund.de>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Please pull the following changes since commit
-b320789d6883cc00ac78ce83bccbfe7ed58afcf0:
+On Wed, Sep 3, 2025 at 9:52=E2=80=AFPM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> Jason Wang wrote:
+> > On Wed, Sep 3, 2025 at 5:31=E2=80=AFAM Willem de Bruijn
+> > <willemdebruijn.kernel@gmail.com> wrote:
+> > >
+> > > Simon Schippers wrote:
+> > > > Stopping the queue is done in tun_net_xmit.
+> > > >
+> > > > Waking the queue is done by calling one of the helpers,
+> > > > tun_wake_netdev_queue and tap_wake_netdev_queue. For that, in
+> > > > get_wake_netdev_queue, the correct method is determined and saved i=
+n the
+> > > > function pointer wake_netdev_queue of the vhost_net_virtqueue. Then=
+, each
+> > > > time after consuming a batch in vhost_net_buf_produce, wake_netdev_=
+queue
+> > > > is called.
+> > > >
+> > > > Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> > > > Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> > > > Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
+> > > > ---
+> > > >  drivers/net/tap.c      |  6 ++++++
+> > > >  drivers/net/tun.c      |  6 ++++++
+> > > >  drivers/vhost/net.c    | 34 ++++++++++++++++++++++++++++------
+> > > >  include/linux/if_tap.h |  2 ++
+> > > >  include/linux/if_tun.h |  3 +++
+> > > >  5 files changed, 45 insertions(+), 6 deletions(-)
+> > > >
+> > > > diff --git a/drivers/net/tap.c b/drivers/net/tap.c
+> > > > index 4d874672bcd7..0bad9e3d59af 100644
+> > > > --- a/drivers/net/tap.c
+> > > > +++ b/drivers/net/tap.c
+> > > > @@ -1198,6 +1198,12 @@ struct socket *tap_get_socket(struct file *f=
+ile)
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(tap_get_socket);
+> > > >
+> > > > +void tap_wake_netdev_queue(struct file *file)
+> > > > +{
+> > > > +     wake_netdev_queue(file->private_data);
+> > > > +}
+> > > > +EXPORT_SYMBOL_GPL(tap_wake_netdev_queue);
+> > > > +
+> > > >  struct ptr_ring *tap_get_ptr_ring(struct file *file)
+> > > >  {
+> > > >       struct tap_queue *q;
+> > > > diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> > > > index 735498e221d8..e85589b596ac 100644
+> > > > --- a/drivers/net/tun.c
+> > > > +++ b/drivers/net/tun.c
+> > > > @@ -3739,6 +3739,12 @@ struct socket *tun_get_socket(struct file *f=
+ile)
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(tun_get_socket);
+> > > >
+> > > > +void tun_wake_netdev_queue(struct file *file)
+> > > > +{
+> > > > +     wake_netdev_queue(file->private_data);
+> > > > +}
+> > > > +EXPORT_SYMBOL_GPL(tun_wake_netdev_queue);
+> > >
+> > > Having multiple functions with the same name is tad annoying from a
+> > > cscape PoV, better to call the internal functions
+> > > __tun_wake_netdev_queue, etc.
+> > >
+> > > > +
+> > > >  struct ptr_ring *tun_get_tx_ring(struct file *file)
+> > > >  {
+> > > >       struct tun_file *tfile;
+> > > > diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> > > > index 6edac0c1ba9b..e837d3a334f1 100644
+> > > > --- a/drivers/vhost/net.c
+> > > > +++ b/drivers/vhost/net.c
+> > > > @@ -130,6 +130,7 @@ struct vhost_net_virtqueue {
+> > > >       struct vhost_net_buf rxq;
+> > > >       /* Batched XDP buffs */
+> > > >       struct xdp_buff *xdp;
+> > > > +     void (*wake_netdev_queue)(struct file *f);
+> > >
+> > > Indirect function calls are expensive post spectre. Probably
+> > > preferable to just have a branch.
+> > >
+> > > A branch in `file->f_op !=3D &tun_fops` would be expensive still as i=
+t
+> > > may touch a cold cacheline.
+> > >
+> > > How about adding a bit in struct ptr_ring itself. Pahole shows plenty
+> > > of holes. Jason, WDYT?
+> > >
+> >
+> > I'm not sure I get the idea, did you mean a bit for classifying TUN
+> > and TAP? If this is, I'm not sure it's a good idea as ptr_ring should
+> > have no knowledge of its user.
+>
+> That is what I meant.
+>
+> > Consider there were still indirect calls to sock->ops, maybe we can
+> > start from the branch.
+>
+> What do you mean?
+>
+> Tangential: if indirect calls really are needed in a hot path, e.g.,
+> to maintain this isolation of ptr_ring from its users, then
+> INDIRECT_CALL wrappers can be used to avoid the cost.
+>
+> That too effectively breaks the isolation between caller and callee.
+> But only for the most important N callers that are listed in the
+> INDIRECT_CALL_? wrapper.
 
-  Linux 6.17-rc4 (2025-08-31 15:33:07 -0700)
+Yes, I mean we can try to store the flag for example vhost_virtqueue struct=
+.
 
-are available in the Git repository at:
+Thanks
 
-  git://git.samba.org/ksmbd.git tags/v6.17-rc4-ksmbd-fix
+>
 
-for you to fetch changes up to b5ee94ac651aa42612095c4a75ff7f5c47cd9315:
-
-  ksmbd: allow a filename to contain colons on SMB3.1.1 posix
-extensions (2025-08-31 17:48:38 -0500)
-
-----------------------------------------------------------------
-ksmbd server fix
-- fix handling filenames with ":" (colon) in them
-----------------------------------------------------------------
-Philipp Kerling (1):
-      ksmbd: allow a filename to contain colons on SMB3.1.1 posix extensions
-
- fs/smb/server/smb2pdu.c   | 25 ++++++++++++++-----------
- fs/smb/server/vfs_cache.h |  2 ++
- 2 files changed, 16 insertions(+), 11 deletions(-)
-
-
--- 
-Thanks,
-
-Steve
 
