@@ -1,103 +1,88 @@
-Return-Path: <linux-kernel+bounces-800759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B22B43BAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:34:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 493D8B43B7E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7BEF3B1256
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:34:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0204D188E903
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEF22EB5CE;
-	Thu,  4 Sep 2025 12:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DD92EB865;
+	Thu,  4 Sep 2025 12:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tssltd.ru header.i=@tssltd.ru header.b="K17XNy8E"
-Received: from forward204b.mail.yandex.net (forward204b.mail.yandex.net [178.154.239.153])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E4GnCT/t";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EcZcEeGF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF0172604;
-	Thu,  4 Sep 2025 12:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC0C2D663E
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756989250; cv=none; b=mNh6XkhxorUnPuQQOXq7reiE0Y5OiQOTaHtjQ81Ng4tZ+fqJDEFrt7KlX6K2nHtKEmOP/sJ7YmZEoorKA5L3Shs+J3MCINImIxkDMwySc1HUqGx77mTjbzufp18D5G/zlsVApuf2ERZ3CSW3Gobj6Te9mWNYFul1XLweuEHvi0s=
+	t=1756988783; cv=none; b=MYoJ2E/9MiZ19flCH1LRJxeHbOL3xdKh85ylER55RZ6OwRf5i7bqJbg0ZJ1nbpzKKb124oPccdl/sKFbxspdqlWM6zICX9QOouPlHJ1o8wWhhdpqtL6tTGTqSJL8BXHdRHhL6/p3IVFS7+0sHPhtvcqrCt41Oy08NqCrBoYfk/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756989250; c=relaxed/simple;
-	bh=vwm7GGsrLL/OVj0CpPOITZLD/fK5xL4QobL+2xI45HA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nJgI0CEFQDfjtnW3LUYs4o3cNSMuv3z33c15ksWpPr92/f3KM461E3SPoWLoSNGsB3fBYFb+Hx6Opslt9hO0eRsEU6I9M9KUHRpP5s1isX511Gs0qa468zhUGj1isNpOiepXetLisguKok3w8vgV+yhVMl1z7teYs8V9rMvEH9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tssltd.ru; spf=pass smtp.mailfrom=tssltd.ru; dkim=pass (1024-bit key) header.d=tssltd.ru header.i=@tssltd.ru header.b=K17XNy8E; arc=none smtp.client-ip=178.154.239.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tssltd.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tssltd.ru
-Received: from forward103b.mail.yandex.net (forward103b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d103])
-	by forward204b.mail.yandex.net (Yandex) with ESMTPS id D330783B36;
-	Thu, 04 Sep 2025 15:25:57 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-70.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-70.sas.yp-c.yandex.net [IPv6:2a02:6b8:c1c:2e14:0:640:43be:0])
-	by forward103b.mail.yandex.net (Yandex) with ESMTPS id E7FE6C00E9;
-	Thu, 04 Sep 2025 15:25:47 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-70.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id VPgvX4AMwW20-OKyITQBl;
-	Thu, 04 Sep 2025 15:25:46 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tssltd.ru; s=mail;
-	t=1756988747; bh=DSMtOUnaIgJT+68cQ7DFikj09QnC79n67WWGzOI7FMU=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=K17XNy8Eueq73JoE8kjsPtJqZAyAIufzZNax7aKR/XI+T0k7s7soCinHY7aRj47ej
-	 9VqBhs7dQhdFME07f0OfWWosFvGkaS6l4vT6Nix1YiLEw0YBEG+Qu+08Sp7Ks0IGGs
-	 I4E6sO916wrsR17N6jPnCJDhVnA9K2fwpRzhvMJA=
-Authentication-Results: mail-nwsmtp-smtp-production-main-70.sas.yp-c.yandex.net; dkim=pass header.i=@tssltd.ru
-From: Makar Semyonov <m.semenov@tssltd.ru>
-To: Steve French <sfrench@samba.org>
-Cc: Makar Semyonov <m.semenov@tssltd.ru>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>,
-	linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] cifs: prevent NULL pointer dereference in UTF16 conversion
-Date: Thu,  4 Sep 2025 15:25:12 +0300
-Message-ID: <20250904122515.1680767-1-m.semenov@tssltd.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756988783; c=relaxed/simple;
+	bh=zNllfNBoARBDljqfRXqVOGETW/y6HHQqyqnSQy7Jbfw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WA6uCzBqHEJlbLpVlj3OSFc8xw3kZQHY49fLvDQoJtJuXabiBQ0wuvDSDDe5iirA9HITiRNyLPVFP85APeyz/ftwJKWre5d5PLKpQHHE0tQibxZdm7xybgnlTY64mDLVv4/Q1/kgz2d9V670su9M09vKKBekWoATDbpp4bAG+1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E4GnCT/t; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EcZcEeGF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756988779;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GT+4xzFad7vxuZsNfgdp6OupSbkDwbYzbg44k6lM+Bc=;
+	b=E4GnCT/tbEbroAbdX6FLaiAQQnym7AbYHtv5ym+KljkJY9G7oBy1SqsW90DM71aJpgw2Qb
+	dbD9PD4jOWLVP/ujtGCDKG1Rlj8HXdWpnxKSf3kS6jhmP+x0pT6vFSZi52cYlLvUkkT56V
+	OzFqHAW/IWGszvZt4bAZKJojQvgwjM+/DY4fNnAX2Yo0gKlr/YC1+ezFEO0pQnOyI2ZlRX
+	itj5Hqg22JbksYUzyAIc/8LvAEQVFTpg9At4x4RemtHID2gMW4M2LFgrlSwlgxii+oqVji
+	9rTdDnbBDDBlOOSvvZAyoh6Pbvw+HXvCBviVI8O02QHLjCODGZnabHTRjtFpGA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756988779;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GT+4xzFad7vxuZsNfgdp6OupSbkDwbYzbg44k6lM+Bc=;
+	b=EcZcEeGFgxbB1QZuEJobGTaJnfwTFR4BlZz18edUsz2EJCsKclPMVb7b/P/wA1Z4M9mLsO
+	hzLTyCpLPTNwVAAQ==
+To: Sean Christopherson <seanjc@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra
+ <peterz@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>, Boqun
+ Feng <boqun.feng@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, Wei Liu
+ <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, x86@kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
+ <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [patch V2 36/37] rseq: Switch to TIF_RSEQ if supported
+In-Reply-To: <aLllFObsXWOtaVVI@google.com>
+References: <20250823161326.635281786@linutronix.de>
+ <20250823161655.586695263@linutronix.de> <aKzBQRKuEmrNtCiB@google.com>
+ <877byh2k13.ffs@tglx> <aLllFObsXWOtaVVI@google.com>
+Date: Thu, 04 Sep 2025 14:26:18 +0200
+Message-ID: <87ikhyxv2t.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-There can be a NULL pointer dereference bug here. NULL is passed to
-__cifs_sfu_make_node without checks, which passes it unchecked to
-cifs_strndup_to_utf16, which in turn passes it to
-cifs_local_to_utf16_bytes where '*from' is dereferenced, causing a crash.
+On Thu, Sep 04 2025 at 03:08, Sean Christopherson wrote:
+> On Tue, Sep 02, 2025, Thomas Gleixner wrote:
+>> I'm happy to add a comment which explains that.
+>
+> And maybe a BUILD_BUG_ON() to assert that TIF_RSEQ != TIF_NOTIFY_RESUME?  My main
+> interest is documenting why the generic implementation doesn't need to re-raise
+> TIF_NOTIFY_RESUME.  E.g. something like this?
 
-This patch adds a check for NULL 'src' in cifs_strndup_to_utf16 and
-returns NULL early to prevent dereferencing NULL pointer.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE
-
-Signed-off-by: Makar Semyonov <m.semenov@tssltd.ru>
----
- fs/smb/client/cifs_unicode.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/smb/client/cifs_unicode.c b/fs/smb/client/cifs_unicode.c
-index 4cc6e0896fad..1a9324bec7d6 100644
---- a/fs/smb/client/cifs_unicode.c
-+++ b/fs/smb/client/cifs_unicode.c
-@@ -628,6 +628,9 @@ cifs_strndup_to_utf16(const char *src, const int maxlen, int *utf16_len,
- {
- 	int len;
- 	__le16 *dst;
-+
-+	if (!src)
-+		return NULL;
- 
- 	len = cifs_local_to_utf16_bytes(src, maxlen, cp);
- 	len += 2; /* NULL */
--- 
-2.43.0
-
+Done.
 
