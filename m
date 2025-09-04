@@ -1,387 +1,151 @@
-Return-Path: <linux-kernel+bounces-800946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A43E0B43E07
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:06:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1E6B43E0D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9174B7AC792
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:05:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED62958698D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E23304BB6;
-	Thu,  4 Sep 2025 14:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD96C307484;
+	Thu,  4 Sep 2025 14:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BjTqFkaH"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxQvHPqh"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D174163
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60994163;
+	Thu,  4 Sep 2025 14:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756994805; cv=none; b=HpbijbnU4w/X7+2Nl7JDm/H5QdwwdCp8LFmZC+K+c4ueFdZZJau7Qoxqgd5p6vZJvuJ4HFD+uKb4fwUQqxuSJMd5uawTTgh52JMPUKbuOSNWb2jOce/9JDOsQQGgkNqrElL2U3Dr4EYEeL0JeuYKB4RnfLMIEcgqwfsScck2jcQ=
+	t=1756994836; cv=none; b=BAMAaFn8O3XZB8TRksjluyrLU1TykylBlLfGTGxgi/JZKpx22g0h0A+U0XR7IHsdMFprx7i0k1GhOz/Orz7dZQjEHS75rZ//06wuWI9cOdNeJLRj3yhV8r4Dt8mfV7EPYOp6tku9PL+Zm3LELm/Gg+Ik8o0xh0x2a8mP4KxiFFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756994805; c=relaxed/simple;
-	bh=LN4trsiwqoatuevDhzEjiLUvZjNbhPE4QwBE1fJYgCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=OLWNuh9f2ergFE4oTcrMdS7mjuC3tFOKqyj4y+qWSbrzaNv79nY4N/Al9M47SCws+CxcoaZIPdkUdqRhTbW8DVO3ezjIsDfaqA3VAnVpv1byERGx4LB5rnpWbe7lc7E4M/YjDeKz1ju68y/tCG8smKou7Fv/lG27KnqxSUrU7E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BjTqFkaH; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250904140640epoutp0480e9757d34b90b6635c4af34aee24ff9~iGXY2p0ha2304123041epoutp04c
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:06:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250904140640epoutp0480e9757d34b90b6635c4af34aee24ff9~iGXY2p0ha2304123041epoutp04c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756994800;
-	bh=QpNFk0B54CNxrWdHDWbagQbykXx8/dneb8A2T1Ez0II=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BjTqFkaHe5+jxDyukPgA1cr4TeZhdCXIoaGcblqMlwWt+gjCHO2KDz7ayJM/yG8/X
-	 mLTNXCdDElWzRwFMGxtBFqss1FgEp2h1tAfKP9NfA9b8gPweqG18sia8YjJ1bUnW0F
-	 AEvXtUyRssycfxb2MsH41JYpEJVt06cwfmycg4DA=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250904140639epcas5p1a63069d5f87812190ec42e111cb1deb9~iGXYiEyHz0163401634epcas5p1t;
-	Thu,  4 Sep 2025 14:06:39 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cHh9V62x4z6B9m4; Thu,  4 Sep
-	2025 14:06:38 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250904140638epcas5p192ce129faa78534b83c3807a9a03ad24~iGXXQrfSO3106931069epcas5p1X;
-	Thu,  4 Sep 2025 14:06:38 +0000 (GMT)
-Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250904140637epsmtip1520d3794f03cc6cd959d7d3c5b0b0f31~iGXWHREpO2360223602epsmtip1x;
-	Thu,  4 Sep 2025 14:06:37 +0000 (GMT)
-Date: Thu, 4 Sep 2025 19:36:31 +0530
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
-	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	cpgs@samsung.com
-Subject: Re: [PATCH V2 05/20] nvdimm/region_label: Add region label updation
- routine
-Message-ID: <20250904140631.gxhaxwjjmexexj4t@test-PowerEdge-R740xd>
+	s=arc-20240116; t=1756994836; c=relaxed/simple;
+	bh=ly5NeSE539nxeXkPhgKBaDj4r7GvtHEHx5sOROseuOI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PHCSh+INEJmny63Pvnbafsq9ENngCtQpabpg51j/ob91IfOTouiekX6NRMCKKdbmswg87zkzgynZ5xIQVhXyHLWdLGuj8DOZZoz1EjEirbx+Pp/LgwpwZPI8H6iGDNES78DJLwauXhU7WeVBmHz7IsaastgRvcSkqvk4MiRHMy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxQvHPqh; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7f74b42ec59so72341585a.2;
+        Thu, 04 Sep 2025 07:07:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756994834; x=1757599634; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eihtZU8OHYKgtMximmIrUFJ856exD8VD53vOuodUiTU=;
+        b=RxQvHPqhaUWfVgs2fdW7u9hdu5II8asXVgiIRylLJM6dvzxNSXfsTe1cvKmOxC4uYU
+         IkDZWEP0p+i9rcCGfezhN1/ab/MwbnKiLnomvPmGS1r1j+aMi0Pt8SDTupKzCVmthlCG
+         arAjcegwBMjVRIYagmbvGSsZIun8kiraDJSX8rI5Bq+0XIHqM8Z/CgcxiaH7Z/dMLE8H
+         kVRAPKngtbrgiNPr9y1WZVqZxqm+ipnIyGDg57pYa3f/uwcYw+7fx0WvADFK8aaUSyz0
+         wf+4SYDGIr4+PUp+y1opU+bukJi1ueeTY4bTtFWciZKYApME0D32IZJ3iHoHwy7pTGi2
+         Ynsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756994834; x=1757599634;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eihtZU8OHYKgtMximmIrUFJ856exD8VD53vOuodUiTU=;
+        b=m5rgGBScYV8lB+TXwnRJYHiy/y5+BaMACKPRSpZzsjteWd0Q/gDyVt9JD7SVFKD/yV
+         HUn/S1f0U9XnADb2laIwzI7WP4Bh9Cwy63Z09SijUYSuAzJSfI10deKWkByEguAtM6tD
+         hLcFYoGaLYVwBSn2uV/ctlbf6cv/KF7ywySIYMwWLIOc/2MqgI43jpMfokflcQWSKjjq
+         8AQQQNHtJTWpJiMERXenHU11RRS84CMCKDKYq24pwcImW8tiOO8rR24SLXsBol3zJeRH
+         5uRcKJ0yqlthp8UcOfURjaiZ9goY+PR8po1Fixx7ko/LQthiy0Mj55XeKs4oglIkMKND
+         dB7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUrtBnBs/AjofAQ57hIhI7POM1yjpWLPGKphlkY84Mi7Gq/DV5T46GoImtIxBPAe5UsKjutnXA7SQdv@vger.kernel.org, AJvYcCUuxrx2LXFrFY5LTzH9HGXEjR6AzaN4x1ABmmWCb0kv/nktUDe+yRb2e9RkrE0WSHc4D0z5Sgxvwbr+0O8K@vger.kernel.org, AJvYcCWS4X4zD2JUksCfnTUyDSdupI/cAyM26tfttYTIEwwYLUBr/W52o9pWVQrFthRXMTEegmyVl7T9fM0J@vger.kernel.org, AJvYcCXVFqaxqUCBHH3l+P5dUI31VRCaqzFb2zqLLOnavwqnohbtc6sv2nu5yDa4pZRckqzDw+32gniEU0Cq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyim9HJUKlBfugFFvoxBFbyXMAHulYIcA6eug3t13mU6P6NjXWK
+	rlSgzNOIEFyhjxo5dZhWPoyFeJZwu8gnSxYgGfQf6ci0cDnlhn+f3Uv5u3uFYAl5
+X-Gm-Gg: ASbGncv0/XEGQbFsPjMFOjKuOz99jgGfX0GUND9s9GwV23Xg5U8ERaZ++3ekksrFQcm
+	9cEFWkn6EOKhGt/jJQJyAWcRYF+BWm7PgWwFJ/PvzE60nyeT5mevL3renNUppZyQ/SV6q9KVzPU
+	YlxHszNeon4v1NLo899JtrmVJeT81S0FmHVOxL88MOtrWtGv9m9/Rvh52o8r+sHfpbctv45gJdP
+	ia2iWGeRP/PpIb4j815+NUCeuA/1SQQc8lcqorD6r9DKhp2HfxvR+7UrYRiwsBIBx2We96dA477
+	vJehWHP7uISXsA2DQRGHf4taWC3qo6TQKCiGAWNDJ81GsYup4SGlGAc3QvKMYw2L/O6QUfDzITy
+	4XiqCC1EEodOphkWqKEdzJDNUiPu0
+X-Google-Smtp-Source: AGHT+IFAmc0wnCtcOEvRgXDrQ6IUkfol6ZeLbzKo/Il17bCwAzz4m4TitxyZWAzjU/KhfhX5q02NmA==
+X-Received: by 2002:a05:620a:394f:b0:806:522a:25ae with SMTP id af79cd13be357-806522a2b71mr1163297885a.36.1756994833844;
+        Thu, 04 Sep 2025 07:07:13 -0700 (PDT)
+Received: from [127.0.0.1] ([74.249.85.194])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-80bdedfeaedsm212280285a.70.2025.09.04.07.07.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 07:07:13 -0700 (PDT)
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
+Subject: [PATCH v3 0/4] Add PERIC0/1 support for Exynos 990 and hsi2c
+ compatible
+Date: Thu, 04 Sep 2025 14:07:10 +0000
+Message-Id: <20250904-perics-usi-v3-0-3ea109705cb6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250813154811.00000257@huawei.com>
-X-CMS-MailID: 20250904140638epcas5p192ce129faa78534b83c3807a9a03ad24
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e261b_"
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250730121228epcas5p411e5cc6d29fb9417178dbd07a1d8f02d
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121228epcas5p411e5cc6d29fb9417178dbd07a1d8f02d@epcas5p4.samsung.com>
-	<20250730121209.303202-6-s.neeraj@samsung.com>
-	<20250813154811.00000257@huawei.com>
-
-------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e261b_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-
-On 13/08/25 03:48PM, Jonathan Cameron wrote:
->On Wed, 30 Jul 2025 17:41:54 +0530
->Neeraj Kumar <s.neeraj@samsung.com> wrote:
->
->> Added __pmem_region_label_update region label update routine to update
->> region label.
->>
->> Also used guard(mutex)(&nd_mapping->lock) in place of mutex_lock() and
->> mutex_unlock()
->>
->> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
->
->A few comments inline,
->
->Thanks,
->
->Jonathan
->
->
->>  static bool slot_valid(struct nvdimm_drvdata *ndd,
->>  		struct nd_lsa_label *lsa_label, u32 slot)
->>  {
->> @@ -960,7 +970,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
->>  		return rc;
->>
->>  	/* Garbage collect the previous label */
->> -	mutex_lock(&nd_mapping->lock);
->> +	guard(mutex)(&nd_mapping->lock);
->>  	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
->>  		if (!label_ent->label)
->>  			continue;
->> @@ -972,20 +982,20 @@ static int __pmem_label_update(struct nd_region *nd_region,
->>  	/* update index */
->>  	rc = nd_label_write_index(ndd, ndd->ns_next,
->>  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
->> -	if (rc == 0) {
->> -		list_for_each_entry(label_ent, &nd_mapping->labels, list)
->> -			if (!label_ent->label) {
->> -				label_ent->label = lsa_label;
->> -				lsa_label = NULL;
->> -				break;
->> -			}
->> -		dev_WARN_ONCE(&nspm->nsio.common.dev, lsa_label,
->> -				"failed to track label: %d\n",
->> -				to_slot(ndd, lsa_label));
->> -		if (lsa_label)
->> -			rc = -ENXIO;
->> -	}
->> -	mutex_unlock(&nd_mapping->lock);
->> +	if (rc)
->> +		return rc;
->> +
->> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
->> +		if (!label_ent->label) {
->> +			label_ent->label = lsa_label;
->> +			lsa_label = NULL;
->> +			break;
->> +		}
->> +	dev_WARN_ONCE(&nspm->nsio.common.dev, lsa_label,
->> +			"failed to track label: %d\n",
->> +			to_slot(ndd, lsa_label));
->> +	if (lsa_label)
->> +		rc = -ENXIO;
->	if (lsa_label)
->		return -ENXIO;
->
->	return 0;
->
->is a little clearer.
-
-Sure, I will fix it in next patch-set
-
->
->>
->>  	return rc;
->>  }
->> @@ -1127,6 +1137,137 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
->>  	return 0;
->>  }
->>
->> +static int __pmem_region_label_update(struct nd_region *nd_region,
->> +		struct nd_mapping *nd_mapping, int pos, unsigned long flags)
->> +{
->> +	struct nd_interleave_set *nd_set = nd_region->nd_set;
->> +	struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
->> +	struct nd_lsa_label *nd_label;
->> +	struct cxl_region_label *rg_label;
->> +	struct nd_namespace_index *nsindex;
->> +	struct nd_label_ent *label_ent;
->> +	unsigned long *free;
->> +	u32 nslot, slot;
->> +	size_t offset;
->> +	int rc;
->> +	uuid_t tmp;
->> +
->> +	if (!preamble_next(ndd, &nsindex, &free, &nslot))
->> +		return -ENXIO;
->> +
->> +	/* allocate and write the label to the staging (next) index */
->> +	slot = nd_label_alloc_slot(ndd);
->> +	if (slot == UINT_MAX)
->> +		return -ENXIO;
->> +	dev_dbg(ndd->dev, "allocated: %d\n", slot);
->> +
->> +	nd_label = to_label(ndd, slot);
->> +
->> +	memset(nd_label, 0, sizeof_namespace_label(ndd));
->> +	rg_label = &nd_label->rg_label;
->> +
->> +	/* Set Region Label Format identification UUID */
->> +	uuid_parse(CXL_REGION_UUID, &tmp);
->> +	export_uuid(nd_label->rg_label.type, &tmp);
->
->	export_uuid(rg_label->type, &tmp);
-
-Thanks Jonathan, I will fix it in next patch-set
-
->
->> +
->> +	/* Set Current Region Label UUID */
->> +	export_uuid(nd_label->rg_label.uuid, &nd_set->uuid);
->
->	export_uuid(rg_label->uuid, &nd_set->uuid);
-
-Sure, I will fix it in next patch-set
-
->
->
->> +
->> +	rg_label->flags = __cpu_to_le32(flags);
->> +	rg_label->nlabel = __cpu_to_le16(nd_region->ndr_mappings);
->> +	rg_label->position = __cpu_to_le16(pos);
->> +	rg_label->dpa = __cpu_to_le64(nd_mapping->start);
->> +	rg_label->rawsize = __cpu_to_le64(nd_mapping->size);
->> +	rg_label->hpa = __cpu_to_le64(nd_set->res->start);
->> +	rg_label->slot = __cpu_to_le32(slot);
->> +	rg_label->ig = __cpu_to_le32(nd_set->interleave_granularity);
->> +	rg_label->align = __cpu_to_le16(0);
->
->As the bot complained... It's le32
-
-Yes, I will fix it in next patch-set
-
->
->> +
->> +	/* Update fletcher64 Checksum */
->> +	rgl_calculate_checksum(ndd, rg_label);
->> +
->> +	/* update label */
->> +	offset = nd_label_offset(ndd, nd_label);
->> +	rc = nvdimm_set_config_data(ndd, offset, nd_label,
->> +			sizeof_namespace_label(ndd));
->> +	if (rc < 0) {
->> +		nd_label_free_slot(ndd, slot);
->> +		return rc;
->> +	}
->> +
->> +	/* Garbage collect the previous label */
->> +	guard(mutex)(&nd_mapping->lock);
->> +	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
->> +		if (!label_ent->label)
->> +			continue;
->> +		if (rgl_uuid_equal(&label_ent->label->rg_label, &nd_set->uuid))
->> +			reap_victim(nd_mapping, label_ent);
->> +	}
->> +
->> +	/* update index */
->> +	rc = nd_label_write_index(ndd, ndd->ns_next,
->> +			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
->> +	if (rc)
->> +		return rc;
->> +
->> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
->> +		if (!label_ent->label) {
->> +			label_ent->label = nd_label;
->> +			nd_label = NULL;
->> +			break;
->> +		}
->> +	dev_WARN_ONCE(&nd_region->dev, nd_label,
->> +			"failed to track label: %d\n",
->> +			to_slot(ndd, nd_label));
->> +	if (nd_label)
->> +		rc = -ENXIO;
->
->		return -ENXIO;
->
->> +
->
->	return 0;
->
->is clearer.
-
-Sure, I will fix it in next patch-set
-
->
->> +	return rc;
->> +}
->> +
->> +int nd_pmem_region_label_update(struct nd_region *nd_region)
->> +{
->> +	int i, rc;
->> +
->> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
->> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
->> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
->> +
->> +		/* No need to update region label for non cxl format */
->> +		if (!ndd->cxl)
->> +			continue;
->> +
->> +		/* Init labels to include region label */
->> +		rc = init_labels(nd_mapping, 1);
->> +
->
->No blank line here - keep the error check closely associated with the
->thing that it is checking.
-
-Sure, I will fix it in next patch-set
-
->
->> +		if (rc < 0)
->> +			return rc;
->> +
->> +		rc = __pmem_region_label_update(nd_region, nd_mapping, i,
->> +					NSLABEL_FLAG_UPDATING);
->> +
->
->Same here.
-
-Sure, I will fix it in next patch-set
-
->
->> +		if (rc)
->> +			return rc;
->> +	}
->> +
->> +	/* Clear the UPDATING flag per UEFI 2.7 expectations */
->> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
->> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
->> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
->> +
->> +		/* No need to update region label for non cxl format */
->> +		if (!ndd->cxl)
->> +			continue;
->> +
->> +		rc = __pmem_region_label_update(nd_region, nd_mapping, i, 0);
->> +
->
->and here.
-
-Sure, I will fix it in next patch-set
-
->
->> +		if (rc)
->> +			return rc;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>  int __init nd_label_init(void)
->>  {
->>  	WARN_ON(guid_parse(NVDIMM_BTT_GUID, &nvdimm_btt_guid));
->> diff --git a/drivers/nvdimm/label.h b/drivers/nvdimm/label.h
->> index 4883b3a1320f..0f428695017d 100644
->> --- a/drivers/nvdimm/label.h
->> +++ b/drivers/nvdimm/label.h
->> @@ -190,6 +190,7 @@ struct nd_namespace_label {
->>  struct nd_lsa_label {
->
->Would be better to have this explicitly as a union
->unless later patches add more elements.  That way it'll
->be obvious at all sites where it is used that it can be one
->of several things.
->
->>  	union {
->>  		struct nd_namespace_label ns_label;
->> +		struct cxl_region_label rg_label;
->>  	};
->>  };
-
-Thanks Jonathan for your suggestion. I will revisit this change and try
-using region label handling separately instead of using union.
-
-
-Regards,
-Neeraj
-
-------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e261b_
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA6duWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDC2ND3QKg+uRi3dLiTF1DI0tTYyPDVFPT5CQloIaCotS0zAqwYdGxtbU
+ ANmCpbFwAAAA=
+X-Change-ID: 20250831-perics-usi-1295321e55cb
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>, 
+ Andi Shyti <andi.shyti@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
+ Denzeel Oliva <wachiturroxd150@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756994833; l=1287;
+ i=wachiturroxd150@gmail.com; s=20250831; h=from:subject:message-id;
+ bh=ly5NeSE539nxeXkPhgKBaDj4r7GvtHEHx5sOROseuOI=;
+ b=x5fRiKxuNl7/HyAUuv2TiCNfWDovKgGZuKvCrCwKms3j7fN31H08qUfze44YgZlEusYLZ0AnJ
+ RgL9/06hOEIBF6BxPXba4/LTG3kFYYYN4WKqsB2MOZ/NMszO+WUFfjB
+X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
+ pk=3fZmF8+BzoNPhZuzL19/BkBXzCDwLBPlLqQYILU0U5k=
 
+Hi,
 
-------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e261b_--
+This patch series enables the PERIC0/1 (Peripheral Connectivity)
+and compatible hsi2c for Exynos990:
+
+- PERIC0/1 feeds HSI2C, SPI and UART
+
+Changes in v2:
+- Remove other unnecessary patches not related to mainline style
+
+Changes in v3:
+- Fix compatible string ordering in bindings (alphabetical)
+- Reorder device tree nodes by address as requested
+
+Denzeel Oliva
+
+Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+---
+Denzeel Oliva (4):
+      dt-bindings: clock: exynos990: Add PERIC0 and PERIC1 clock units
+      dt-bindings: i2c: exynos5: Add exynos990-hsi2c compatible
+      clk: samsung: exynos990: Add PERIC0 and PERIC1 clock support
+      arm64: dts: exynos990: Enable PERIC0 and PERIC1 clock controllers
+
+ .../bindings/clock/samsung,exynos990-clock.yaml    |   24 +
+ .../devicetree/bindings/i2c/i2c-exynos5.yaml       |    1 +
+ arch/arm64/boot/dts/exynos/exynos990.dtsi          |   22 +
+ drivers/clk/samsung/clk-exynos990.c                | 1152 ++++++++++++++++++++
+ include/dt-bindings/clock/samsung,exynos990.h      |  176 +++
+ 5 files changed, 1375 insertions(+)
+---
+base-commit: 1b15d1010a693feaf99fe3e08271cfc72be0f9f2
+change-id: 20250831-perics-usi-1295321e55cb
+
+Best regards,
+-- 
+Denzeel Oliva <wachiturroxd150@gmail.com>
+
 
