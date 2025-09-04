@@ -1,90 +1,158 @@
-Return-Path: <linux-kernel+bounces-800409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9932DB4374D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:36:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F92B43751
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D587F1891A4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:36:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31441188E84D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6CF2F745B;
-	Thu,  4 Sep 2025 09:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBC42F746E;
+	Thu,  4 Sep 2025 09:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WtsHWGYY"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFED1A9F82;
-	Thu,  4 Sep 2025 09:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aPK/l/nE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C22F2C08A8;
+	Thu,  4 Sep 2025 09:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756978589; cv=none; b=cntpiGgKudILhGEdR/ocoNEMemFYUHiDjfhgxDrwBcY2UqGRWAY1j7AQh5XfNAn+U9obX8QoOgfFAno/PhiMkK4kcDVLebTJePtl4mX4NKUDMIGbSFWCXQQF5bE6BpIr4uvE+CFmmgYH8tTrG8o6sikzn6pA3dksbrD/LWHlpKA=
+	t=1756978643; cv=none; b=WAfzmx8Hcg+j3IMdKhRIn5GUony/5KoCR7iBH/uGrpDdoc+nS3rCqY7pqXTBsLTBSGbm4BKqwhHeMXsbei+5EgQNZeZgD4kpwQkBiglfMFolT3EuOjkgtzrXBVtNI7bhvPJuIoaW8RDnNwXVuBst0cPvBlK5VrSn+9xI7CKFbtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756978589; c=relaxed/simple;
-	bh=DcicNNUfFZKj/Yr+O+tHFbD8gezJ6gELfrIdlSYHVeY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t3wCExuqPOmicLSHkqWfZbrGSi7EUQJHmeFgov5Vk4MSCUAwgRrOEaokDd/vVyVu1uodjiJz6yYQ/eeYAUfQ6JB7bDBlux0I+kySms7V4o6S3U9pu79iKMVTNDam0KyAmwJMlf8UTgsyxN6z/8luHNn4TcvQ5NvN+KosM9OmmJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WtsHWGYY; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=fJ
-	bLh6waA+QrGunKjnxkbrkEAjiU744DKZaf6sYLl2M=; b=WtsHWGYYedINvrPyra
-	+c2WHl1uU2g1Gm0DMiuqw5iETRXFdNGON51o471PHnFFvVY/GPaJpmLuCaufl8KU
-	IeQzPx/ftIM1I6HJobUY3uiAGkbdvSzjHLEy20ZqpFn4xuyxEs3ylYt/JrdZkzy/
-	r912aG3lkPkoL0MT34S0r7lNI=
-Received: from neo-TianYi510Pro-15ICK.. (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDXz3yEXbloOb6fGg--.11019S2;
-	Thu, 04 Sep 2025 17:36:07 +0800 (CST)
-From: liuqiangneo@163.com
-To: anil.gurumurthy@qlogic.com,
-	sudarsana.kalluru@qlogic.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Qiang Liu <liuqiang@kylinos.cn>
-Subject: [PATCH] [SCSI] bfa: Remove self-assignment code
-Date: Thu,  4 Sep 2025 17:35:58 +0800
-Message-ID: <20250904093600.175762-1-liuqiangneo@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756978643; c=relaxed/simple;
+	bh=Ru8LuNV8bt6ini4vsqcji1npJYCBupUTZdYydr2pSVs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=boebUQT8Qxm7s4wVO/9mfOS684timi+DV1s/4iO909uyxP78Cy8p8vDJlcvmiOwi/vri18ywyEykIPQ+C6nzEMHqQFHhm+9JXCCqKWfxQgc/yN67Q2R9LPabEy4SxLQWn8173v8sEIIKMV35augFTZO76jdifpZg3+rWeVkI/zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aPK/l/nE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5849XbGE032532;
+	Thu, 4 Sep 2025 09:37:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ut+Aq//GktFW68mBohguf53n8Nv4N9BK/1mX88xZtS0=; b=aPK/l/nEmuI9qdyo
+	sb6kfBbDR+diWqBAiKVD9tuCFBBOg6C1Mog2HBXSSv59tuJhm6lv6SSA8fRI/yfz
+	LLk5r6ZqPLQ7FUwhvmFQn3QxjvUWJ/Vzh4IHXcJ8CiWPSwdbiCtWHZGXxNfUayJw
+	JJcrNEyULEkGjz2uvZnBctk70AOhWgvw5XC0vetD/U5O7nv+ikzLY2+SKUIelEOW
+	RJTv4hLS6uQTtpOBBtAXEi0IC6Lx2XVMqD8rkoBfVxr8Sdw+HjNDnaKQjgDhUk3b
+	gxgOImLVwJZV+dCHEE0W1j2/6gjoEAsMcdeylTQ0/KDZwOUjdTgc2OcnSn5uyW8h
+	0lUK+w==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48upnpf55y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Sep 2025 09:37:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5849b85O025642
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 4 Sep 2025 09:37:08 GMT
+Received: from hu-ashayj-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Thu, 4 Sep 2025 02:37:05 -0700
+Date: Thu, 4 Sep 2025 15:07:02 +0530
+From: Ashay Jaiswal <quic_ashayj@quicinc.com>
+To: Waiman Long <llong@redhat.com>
+CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>,
+        Michal =?iso-8859-1?Q?Koutn=FD?=
+	<mkoutny@suse.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Peter Zijlstra (Intel)"
+	<peterz@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH] cpuset: prevent freeing unallocated cpumask in hotplug
+ handling
+Message-ID: <aLldvhYAYwHIlvXi@hu-ashayj-hyd.qualcomm.com>
+References: <20250902-cpuset-free-on-condition-v1-1-f46ffab53eac@quicinc.com>
+ <533633c5-90cc-4a35-9ec3-9df2720a6e9e@redhat.com>
+ <927f1afc-4fd4-4d42-948b-5da355443a4a@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXz3yEXbloOb6fGg--.11019S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtr4Utr4kJF1fKry7Aw45trb_yoWfAwb_Kr
-	WvqFWxuw10yw47Gw18Wr1I9Fy2vry7Gr4kurn2qFyfCayIqFn5Jr1DZrZxZ3W8GF4DKF97
-	Xayxtr10v348JjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1gyZUUUUUU==
-X-CM-SenderInfo: 5olx1xxdqj0vrr6rljoofrz/1tbiXwe+YWi5VRf9IAAAsJ
+In-Reply-To: <927f1afc-4fd4-4d42-948b-5da355443a4a@redhat.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xClNHPCjTsBaVIK_VtBh9cwVmHqsRmcj
+X-Authority-Analysis: v=2.4 cv=Jt/xrN4C c=1 sm=1 tr=0 ts=68b95dc5 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=8nJEP1OIZ-IA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=Sa9plrczSu04kPGlYXoA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: xClNHPCjTsBaVIK_VtBh9cwVmHqsRmcj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAwMSBTYWx0ZWRfX1ChNzD/vSgso
+ le0JInI+0Cv1heh4ap4Aq8nV0KuVZRrlXH3IRlQQKm/wnurRbejhYkkRKd8cucgQdqsT4k/yUa1
+ ogXu/vW/PxaAnMW2fwU5ZWxhaw9R4j48wY3c1g3NT/ijheXD3PExzRtHTC9Rw3Tqu1jYzWVBtJt
+ b9UMcMWsgp2coi58VEyJKo8ttsngvBYm1Crdr3ttPiDH3sWrNbsWmALiGDmVlSP0Y5RanUtj+VS
+ SltmV6bNFa9toPMrxNKWSjvnZIMkJu3T/oWs/IIVb8n0ORp5xCv3BUlG63JkEOI+qvNtVYtKNej
+ 9/HAQuD4kKN087Szh+p9NnyK90auofGilIuziEmJxvI/RqBpCQYTA8QRIS34cQzY8qqlFIm71wV
+ 2eEAJ5+8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_03,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 clxscore=1011 bulkscore=0 impostorscore=0
+ spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300001
 
-From: Qiang Liu <liuqiang@kylinos.cn>
+On Tue, Sep 02, 2025 at 02:21:25PM -0400, Waiman Long wrote:
+> On 9/2/25 1:14 PM, Waiman Long wrote:
+> > 
+> > On 9/2/25 12:26 AM, Ashay Jaiswal wrote:
+> > > In cpuset hotplug handling, temporary cpumasks are allocated only when
+> > > running under cgroup v2. The current code unconditionally frees these
+> > > masks, which can lead to a crash on cgroup v1 case.
+> > > 
+> > > Free the temporary cpumasks only when they were actually allocated.
+> > > 
+> > > Fixes: 4b842da276a8 ("cpuset: Make CPU hotplug work with partition")
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Ashay Jaiswal <quic_ashayj@quicinc.com>
+> > > ---
+> > >   kernel/cgroup/cpuset.c | 3 ++-
+> > >   1 file changed, 2 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> > > index a78ccd11ce9b43c2e8b0e2c454a8ee845ebdc808..a4f908024f3c0a22628a32f8a5b0ae96c7dccbb9
+> > > 100644
+> > > --- a/kernel/cgroup/cpuset.c
+> > > +++ b/kernel/cgroup/cpuset.c
+> > > @@ -4019,7 +4019,8 @@ static void cpuset_handle_hotplug(void)
+> > >       if (force_sd_rebuild)
+> > >           rebuild_sched_domains_cpuslocked();
+> > >   -    free_tmpmasks(ptmp);
+> > > +    if (on_dfl && ptmp)
+> > > +        free_tmpmasks(ptmp);
+> > >   }
+> > >     void cpuset_update_active_cpus(void)
+> > The patch that introduces the bug is actually commit 5806b3d05165
+> > ("cpuset: decouple tmpmasks and cpumasks freeing in cgroup") which
+> > removes the NULL check. The on_dfl check is not necessary and I would
+> > suggest adding the NULL check in free_tmpmasks().
+> 
+> As this email was bounced back from your email account because it is full, I
+> decide to send out another patch on your behalf. Note that this affects only
+> the linux-next tree as the commit to be fixed isn't merged into the mainline
+> yet. There is no need for stable branch backport.
+>
 
-The variable num_cqs is of type u8 and does not require be16_to_cpu
-conversion, so the redundant  code is removed.
+Thank you for your help, and I apologize for the email bouncing back.
 
-Signed-off-by: Qiang Liu <liuqiang@kylinos.cn>
----
- drivers/scsi/bfa/bfa_core.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/scsi/bfa/bfa_core.c b/drivers/scsi/bfa/bfa_core.c
-index a99a101b95ef..2559df8baa05 100644
---- a/drivers/scsi/bfa/bfa_core.c
-+++ b/drivers/scsi/bfa/bfa_core.c
-@@ -1282,7 +1282,6 @@ bfa_iocfc_cfgrsp(struct bfa_s *bfa)
- 	struct bfi_iocfc_cfgrsp_s	*cfgrsp	 = iocfc->cfgrsp;
- 	struct bfa_iocfc_fwcfg_s	*fwcfg	 = &cfgrsp->fwcfg;
- 
--	fwcfg->num_cqs	      = fwcfg->num_cqs;
- 	fwcfg->num_ioim_reqs  = be16_to_cpu(fwcfg->num_ioim_reqs);
- 	fwcfg->num_fwtio_reqs = be16_to_cpu(fwcfg->num_fwtio_reqs);
- 	fwcfg->num_tskim_reqs = be16_to_cpu(fwcfg->num_tskim_reqs);
--- 
-2.43.0
-
+> Cheers,
+> Longman
+> 
 
