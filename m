@@ -1,128 +1,161 @@
-Return-Path: <linux-kernel+bounces-800433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 520DBB4378D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:49:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A539EB43796
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE9E27B0C4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:48:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 329055E3A30
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D692F83DC;
-	Thu,  4 Sep 2025 09:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04D42F8BC8;
+	Thu,  4 Sep 2025 09:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BnQGCtsO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dla9BiBA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1920E2E88A6;
-	Thu,  4 Sep 2025 09:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA38263C7F;
+	Thu,  4 Sep 2025 09:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756979384; cv=none; b=FPlx+q00hOqgWgZmV0cv82gcOsLX4ZBa0C/LmYucjlqp98wo4QkkXkSsI0yvAIbAhVPscMIumzQLjiLnPxy4onrObDlkK0/w2um64fLmFs8BLn5C3fV5VbDzRnhCrTyMowlcj4HUhYwsLhQ6oWVMOb0LH6jeQEIW4F9aLhwmfEg=
+	t=1756979445; cv=none; b=CjFMq79B2QjCkfCxNMPMrcY3nHHVBkkTiqxlAWsJyblMH7mFRxxaqgQ7A1ZT5bJ8CO8Ef93PEi+rBnzBNe7Oe0acfkYar0DGs6z9slheoWdYKpeg6erLINoaVuGnalN2g9fEIRhJA3hpWBZfjfttAYvK2cOKDut8bQ47sFuJ7Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756979384; c=relaxed/simple;
-	bh=LTd9DO5iC+rsaQHJ8nmu4yfR1TBtklbVQoOL9sBZ8W4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DOEIsRqkM34m5gY785Y2gW2T4ymQPHMAoUcW8OJFQgUI32xf2LoHfJItbHKvpyMJqoJ3j5lQVsMiSgn3WCdB84zeXJlcCtfGXBM4lrSHFcHI0tUtjL+3ZtpIukg+Nh8hegEDxXJpXuXIsRBFIbq1+DAwPtEo4SIOcWwaZdTXy8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BnQGCtsO; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756979383; x=1788515383;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=LTd9DO5iC+rsaQHJ8nmu4yfR1TBtklbVQoOL9sBZ8W4=;
-  b=BnQGCtsOtFqgRddNttKO15qrDW36OdxsEOqLN7bd33V7xmFfz74s9doZ
-   ovE5Rc8q2ZPFNUAYtV/ZaDT9sf9lU8haxkmw8xgtLk62VkBhzCcl3Tqf6
-   Jq5fDDo1jiWQog8sfnfaGfyOfhsnGTqPpc6NfE8SSQ2LLHhZuWe30X1i0
-   ICCEZbsT19B23fQ4vz2RO1cXBcRnWux2HJBp3sH3/AtrE+FSXnMW0PO2a
-   JlIHIvz2uIr2s5wQUjx40JR94U5sFGgtprYB1tjikqbwnVuSekG4yZSNN
-   ZakK+TtLA1VZGJn8tMh3X8p85t2sVsKE8ijsOy+KASde0tQr4nv+CpXC6
-   A==;
-X-CSE-ConnectionGUID: pchJcaZsQ1aa50pnp4rn6A==
-X-CSE-MsgGUID: Tgvd9UFHTS+neAufB9Eo1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="62953476"
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="62953476"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 02:49:42 -0700
-X-CSE-ConnectionGUID: 760uCKLlQriNhzKI2gxazg==
-X-CSE-MsgGUID: AwXql6ATTpafFERblQI85Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="195504677"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 02:49:39 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uu6b3-0000000BEWA-0pfE;
-	Thu, 04 Sep 2025 12:49:37 +0300
-Date: Thu, 4 Sep 2025 12:49:36 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: =?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: designware: use dev_err_probe when probing platform
- device
-Message-ID: <aLlgsLDFvBGA7OZA@smile.fi.intel.com>
-References: <20250904-i2c-dw-dev-err-probe-v1-1-acca6ffd122e@bootlin.com>
- <aLlgRorNlvF1k2h9@smile.fi.intel.com>
+	s=arc-20240116; t=1756979445; c=relaxed/simple;
+	bh=2MnOEkYSMvUjHgMQUXhttZOsid3FO5mXYEicZ6UDPo8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CJF/bQlBxS3wLMb0yf4K2vdEEoqn+K2bkOSaR0Omvb0OVrA42vzVjaJqealcLVtn9ry58FFyXkr7mZ7tp6RUoXyRVzk2pOd6UID/ksUoWezplO40K52AN8xZBfFftlr88ta3NToTvvH2jCk927FBz36b7DcXC/mVy0kpXJSH0AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dla9BiBA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D95CBC4CEF0;
+	Thu,  4 Sep 2025 09:50:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756979444;
+	bh=2MnOEkYSMvUjHgMQUXhttZOsid3FO5mXYEicZ6UDPo8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Dla9BiBAuAZcJvTOx2DgjwKjk+/LIri6OLDNundoy/17BZCXttpODfti03++6fSjo
+	 ItKWbjDG4ihJpTZ786TEyXlggLVlvZbRPMuVprYLXz2q9WpbORx7WZErJ7bQVmSzJL
+	 bYEvMY0Z3o+TL+BL3sGhGmkmmnVOaTtG9w7G0KTYWiBKDhlXz2zCthWYrGrmCV/P/n
+	 sIM7hfTX5s9+HzpV90zdNQUayUptPb+js7jMYhxUyUJp8k6Pn5LvPgx63x6lBRv0G+
+	 xMiaOAkyezvMJ+ANUBA8VLN9iX7i2L9JszyTs1VB6WAWbGoVo/gNHqLt7NOsfpU2fS
+	 Hvz6YilRhxnsw==
+Message-ID: <5f6bc8da-ac78-4f21-8f9f-c84f213f60a9@kernel.org>
+Date: Thu, 4 Sep 2025 11:50:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aLlgRorNlvF1k2h9@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: ata: eswin: Document for EIC7700 SoC
+ ahci
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Yulin Lu <luyulin@eswincomputing.com>, dlemoal@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, vkoul@kernel.org, kishon@kernel.org,
+ linux-phy@lists.infradead.org, ningyu@eswincomputing.com,
+ zhengyu@eswincomputing.com, linmin@eswincomputing.com,
+ huangyifeng@eswincomputing.com, fenglin@eswincomputing.com,
+ lianghujun@eswincomputing.com
+References: <20250904063427.1954-1-luyulin@eswincomputing.com>
+ <20250904063718.421-1-luyulin@eswincomputing.com>
+ <8489c13b-6810-480c-9894-bb5c80cfbde0@kernel.org> <aLlYkZWBaI5Yz6fo@ryzen>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <aLlYkZWBaI5Yz6fo@ryzen>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 04, 2025 at 12:47:51PM +0300, Andy Shevchenko wrote:
-> On Thu, Sep 04, 2025 at 10:59:24AM +0200, Benoît Monin wrote:
-> > Add calls to dev_err_probe on error paths that can return -EPROBE_DEFER
-
-Also add () to the function names or macros with parameters, i.e.
-dev_err_probe()
-
-> > when probing platform device. Namely when requesting the reset controller,
-> > when probing for lock support and when requesting the clocks.
-> > 
-> > In i2c_dw_probe_master and i2c_dw_probe_slave, called by the platform
-
-i2c_dw_probe_master() and i2c_dw_probe_slave()
-
-> > probe from i2c_dw_probe, replace the call to dev_err by dev_err_probe
-
-i2c_dw_probe()
-dev_err() by dev_err_probe()
-
-> > when failing to acquire the IRQ.
-> > 
-> > PCI device probing already use dev_err_probe.
-
-dev_err_probe()
-
-> What I see here is two patches:
-> 1) conversion existing dev_err() to dev_err_probe();
-> 2) adding messages to some of the plain return $ERR.
+On 04/09/2025 11:14, Niklas Cassel wrote:
+> Hello Krzysztof, Rob,
 > 
-> Can you split with respective justification for each of them?
+> On Thu, Sep 04, 2025 at 09:10:34AM +0200, Krzysztof Kozlowski wrote:
+>>> +
+>>> +  ports-implemented:
+>>> +    const: 1
+>>
+>> I do not see how you addressed request about firmware. Nothing changed
+>> here, no explanation in the commit msg.
+> 
+> In Yulin's defence, he did comment that when having the Ports Implemented
+> register initialized by firmware, the Ports Implemented register apparently
+> gets cleared to zero when rmmoding the driver (probably because it disables
+> the clocks and regulators to the controller), thus this suggestion breaks
+> the use case of being able to reload the driver (rmmod + insmod).
+> 
+> He mentioned this, and asked for advice here:
+> https://lore.kernel.org/linux-ide/2cc9f2ff.6a2.198e04fd36e.Coremail.luyulin@eswincomputing.com/
+> 
+> After no reply he asked the same question again:
+> https://lore.kernel.org/linux-ide/692e11ca.843.198f0337528.Coremail.luyulin@eswincomputing.com/
+> 
+> I assume that Rob simply missed those messages.
+> 
+> Anyway, I provided my 50 cents here:
+> https://lore.kernel.org/linux-ide/aLBUC116MdJqDGIJ@flawful.org/
+> 
+> (I would like to add that I think it is the disabling of clocks and
+> regulators that causes the register to be cleared, since we do call
+> ahci_platform_assert_rsts() during the first probe, so if it was the reset
+> that cleared the register, the first probe should also not have worked.)
+> 
+> 
+> Not sure if it relevant to mention this reply to Rob's review comment in the
+> commit message, but perhaps it should have been mentioned in the change log.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Reviewer questions for more serious stuff happen for a reason, so when
+discussion is resolved somehow differently than reviewer suggested, it
+pretty often deserves explanation in commit msg.
 
+Well, in changelog as absolute minimum. No explanation happened here in
+the changelog, nor in the commit msg.
 
+Best regards,
+Krzysztof
 
