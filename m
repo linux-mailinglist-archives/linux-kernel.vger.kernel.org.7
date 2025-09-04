@@ -1,108 +1,83 @@
-Return-Path: <linux-kernel+bounces-799953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A3DB43197
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:29:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 952F3B4319A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B3F97A5098
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:27:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC1B1B27B7A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089D0240611;
-	Thu,  4 Sep 2025 05:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B74233722;
+	Thu,  4 Sep 2025 05:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="MHMaYCas"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eVd2RIGB"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C8442AA6;
-	Thu,  4 Sep 2025 05:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F01B14A60C
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 05:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756963742; cv=none; b=gV6gXwVAoiKGuTuzJv8qjSYxlhjsO7LwjC1IGc04IaW7J5NOenu1EarWzEQ+0IFDRcgsS+fJsrOsh9LW3b6POS6RnjFl53uc5Jw7lMljAxJ9AeGK+TQNx11g9iAXlUOoVt9tWzFkyFj2FGO3TAalltckAcVrgAh0K54h9aS/nfE=
+	t=1756963856; cv=none; b=D0n/2q7VkXK2dK9OR+2b/GM9GCMgRCHc588DVOz6RHaYB4rw+u/k7TkxtfH2ba7CvBc9VkIOLG+WBRXd3EoB5FX/QOdxMUofHgtTS9bMIOba9tzh+R70NqWvna6CTzvHA3PPdeJoGIRTX8xzqH7C5LC3rqoH2X8rNs7+gSQKn4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756963742; c=relaxed/simple;
-	bh=0xxDI8sR+v/mjCVtVzGelqoB/xDNYqvcId9UcD42+dk=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=OAbxsSNpjdR2ceQ7LhuuxizErXPkGh7CNQRatexrdFsCy46XADg+nAUfnYZgCzba9rdUPA+Pgt0/suX8jhvDhyvt2Oo3lgcm8YFJyXYfGvq6QUDDWXIU3KvHgAH6Qi2lxBDuHl0zFP2rO5Y2hRpZESO4Kp3NG4itq6Wy0FAC/m4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=MHMaYCas; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1756963856; c=relaxed/simple;
+	bh=QbtysNsVS2fD+bIGwCcBf0x7URUoQDF5HoZ72mIJ+r8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bBhZ+Z2/tpZR+wDWXhk/pLehA5JI9035vlunR3H5DdLdLAkb/a1KJE7rEaE0SjP/S6BdKcTOPv+pRbtYw1I3VxQm76fdB8sHc5Dl+ack0QTAf/6UoYgSeHw86YxAVQsiFMw5xdEUxiQ5XJGDk7dedhjpWVUDW5p/ED2mGYz8Pvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eVd2RIGB; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <3b86ceb7-5dd4-4531-83cb-4b0229caae97@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756963843;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QbtysNsVS2fD+bIGwCcBf0x7URUoQDF5HoZ72mIJ+r8=;
+	b=eVd2RIGBDJEqSGK3foxgaEsefELGup0McpeOxqMLEq8zE0kMF8LW1sewIM34PXqFyR2UWZ
+	Y8Z0imChzysfJSH3d01WAbvg95txXcCA/P4kYki9h54T6YTdOpUJ9SyiXKsrV5zjTmkdyj
+	m4KAJil8Ahm/OUmmTAeEqU+X2/HlRMw=
+Date: Wed, 3 Sep 2025 22:30:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1756963737;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MBvTSzGPuYGhT6QiGjBpqwb8Lf4wsBXioz82E47vycI=;
-	b=MHMaYCasbppXMhRcrM/4UKZUM+ctgpxEJ9f2NSDFtvnlPBLM1PDT6+7WPbDUQICfB8VbgG
-	YsVX8vE2XwvlihZTM45fjzjm5BzvQayL5kY2Ps3ruoAeYDKfk5WSehlpStwe3kJIx2JK1p
-	UvRLJtziTyAYPK97VA7Ii69/MW508jII1kOx1mH6j4DnkysbXwC1YKG9li5JQQFYjtOXfW
-	S855nRcQAnEXWc1hFLlH+/R4IHbytLREpu6JQc7xNMrVsXND9P1DN5LEAhTCOhvfZbqMnI
-	rSK9m7Y0gNuZbXJAoJavrQi6obrIv070/0bI32tuOpFhAPkz88WW7ZYdiuWQ7Q==
-Date: Thu, 04 Sep 2025 07:28:56 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Sarthak Garg <quic_sartgarg@quicinc.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad
- Dybcio <konradybcio@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
- quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
- quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com,
- kernel@oss.qualcomm.com
-Subject: Re: [PATCH V5 0/4] Add level shifter support for qualcomm SOC's
-In-Reply-To: <20250903204258.GB2663015-robh@kernel.org>
-References: <20250903080404.3260135-1-quic_sartgarg@quicinc.com>
- <3453985c13aa51d068c0174e51e378fb@manjaro.org>
- <20250903204258.GB2663015-robh@kernel.org>
-Message-ID: <65c430990c9fef0325c6b12ac6482b90@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Subject: Re: [PATCH v1] libbpf: remove unused args in parse_usdt_note
+Content-Language: en-GB
+To: Jiawei Zhao <phoenix500526@163.com>, ast@kernel.org
+Cc: daniel@iogearbox.net, andrii@kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250904030525.1932293-1-phoenix500526@163.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250904030525.1932293-1-phoenix500526@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-Migadu-Flow: FLOW_OUT
 
-Hello Rob,
 
-On 2025-09-03 22:42, Rob Herring wrote:
-> On Wed, Sep 03, 2025 at 10:24:55AM +0200, Dragan Simic wrote:
->> On 2025-09-03 10:04, Sarthak Garg wrote:
->> > Add level shifter support for qualcomm SOC's.
->> >
->> > - Changed from v4
->> >     - As suggested by Krzysztof Kozlowski Renamed the property from
->> >     `max-sd-hs-frequency` to `max-sd-hs-hz` for clarity.
->> 
->> I just spotted this series, so I'm sorry for jumping in late.  To me,
->> "max-sd-hs-frequency" was actually a better choice, because it goes
->> together with the already existing "max-frequency" property.
->> 
->> Yes, "max-sd-hs-hz" is obviously more clear, but to me, consistency
->> is more important.  Just my $.02.
-> 
-> It's about defining the property units as 'frequency' could be kHz, 
-> MHz,
-> etc. Unfortunately 'max-frequency' existed before standardizing with
-> units.
 
-I see, thanks for the clarification.  In that case, we should perhaps
-declare the "max-frequency" property obsolete and substitute it with new
-"max-hz" property.  I'll see to whip up an RFC patch for that.
+On 9/3/25 8:05 PM, Jiawei Zhao wrote:
+> Remove unused 'elf' and 'path' parameters from parse_usdt_note function
+> signature. These parameters are not referenced within the function body
+> and only add unnecessary complexity.
+>
+> The function only requires the note header, data buffer, offsets, and
+> output structure to perform USDT note parsing.
+>
+> Update function declaration, definition, and the single call site in
+> collect_usdt_targets() to match the simplified signature.
+>
+> This is a safe internal cleanup as parse_usdt_note is a static function.
+>
+> Signed-off-by: Jiawei Zhao <phoenix500526@163.com>
 
-Hmm, there's also the "spi-max-frequency" property, for example, which
-would also benefit from becoming replaced with "spi-max-hz".  That 
-should
-be another RFC patch. :)
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
+
 
