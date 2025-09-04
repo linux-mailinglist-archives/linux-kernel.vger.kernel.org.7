@@ -1,179 +1,107 @@
-Return-Path: <linux-kernel+bounces-801541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E789B4466A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:30:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88AF1B44673
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2846548440A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:30:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E84DA5861EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09F826C3AC;
-	Thu,  4 Sep 2025 19:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203F4242D6C;
+	Thu,  4 Sep 2025 19:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="ePErnDy9"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XqU9NY0f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660A31E7C03;
-	Thu,  4 Sep 2025 19:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2083AC1C;
+	Thu,  4 Sep 2025 19:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757014233; cv=none; b=F5gPkEzK4X3lXrB0qnEzPBIsy9y4o83+SIwp/tMzWhrFT0/y0VtAgfdTFgKX8KZZ0hr1DXy7PuZk6zPapTVpbldBCTJP4UuK7lADJ+BEZt2YPRJF8F5UeeMAB/U5mTqEIPsRn7wHYyHYxg2syl84AuUG2sbttZnLlZnEgJbEJyk=
+	t=1757014240; cv=none; b=G37fq7Muoed5RkS5VI5E5WtxK66UyK6QyDRiPbU8YVvyE/eKEJg3qiZdy1/R9erPqZR/iE20lVqQhn4ZPO6VHP0TceZHVepItgF1H3+yHg4cNlL996tAcrCxmGYhJeTb+qtGpLNoJMfqsfjw23b1hDR8dYWMygv3yKSW8KCvsCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757014233; c=relaxed/simple;
-	bh=LdjrBqHNySgGCqLUpDAg2cNVuB1zQHra9RI5Y7l4VMg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OA7ef9fDRVeXlPdEvFCXIlso2Nt6UPUdl02aGM19VI2FJj+KrQ2v9rrIWf+AsDXXAUJGSnsVdUR2kjizGvZwuC6jx5sb2J85vXxMvjCFpUjT7hJEFtTNlKaVOPo9PJPVouog4OOo2epInOHx2s46V2fIU+dVsUhXB3dtux2yQ3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=ePErnDy9; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=49z+RXBHWF+ZWLEEcCHqztLIKJvBSXs0MnjD4k2Qkf8=; t=1757014231;
-	x=1757619031; b=ePErnDy9gtqTAMrpwFsVkrF8EjbiOAsMxEwo/xS+6deReceD5X9ss5jron6VS
-	+Mt3jvND06XD+47JpT1sdpVXjCC4IONXyqRRL4PqxEXvLvkE5mvrTscCJpCr/sn4MdLVxqGCrSY/3
-	GSDdIccOWKRh0N1BLlGhbFIPlGZfL2fJYIDF6drH6jRy/NREYfrMHqt2S09Xt2TwW+lppGAb6OseP
-	hSNPYKufH0ua5l9GRi1zebPMdQN3jN2adWL8HDZHorLoOVsOm0VHZTxVOQw+vwLpy4wgWHDWWy2Ob
-	UPyiumYjZA8oJj9hxkKwtPu5rU7B2HR07MMktmRd5X/WuCddjg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <mkarcher@zedat.fu-berlin.de>)
-          id 1uuFfB-00000000UCG-3HGn; Thu, 04 Sep 2025 21:30:29 +0200
-Received: from 89-103-142-46.pool.kielnet.net ([46.142.103.89] helo=Geist14.)
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <kernel@mkarcher.dialup.fu-berlin.de>)
-          id 1uuFfB-00000001eLL-2eKb; Thu, 04 Sep 2025 21:30:29 +0200
-From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
-Date: Thu, 04 Sep 2025 21:29:57 +0200
-Subject: [PATCH v3 5/5] sparc: fix accurate exception reporting in
- copy_{from,to}_user for M7
+	s=arc-20240116; t=1757014240; c=relaxed/simple;
+	bh=0RZ8CnMwf4NqKb6arTE1y1641ehql4WXMwOOTJDdIbw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K8x/IUExnLPPTcRp9eG0eZPCVfQJMu2xJrTDH16m4VgLzOLL7yCwgekusYKDfAjY4lQgb1Iploo8U1JJt/mEIWSMVpNR670Wd9HF19Et76CxGFOcJKPXnGTwx4Kjnut+2BHV3m774LjI5AOEwDJOYdWtNorsThmUHe79lL8mwL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XqU9NY0f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 909FDC4CEF6;
+	Thu,  4 Sep 2025 19:30:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757014240;
+	bh=0RZ8CnMwf4NqKb6arTE1y1641ehql4WXMwOOTJDdIbw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XqU9NY0f4OsloxJ8hrjbay3uVxPdDfrJdhw+yQhou50Mf8usGqoTPhJTDxoNZp+w6
+	 eu6nxigNZ8yXtk74xrcMlP3GhpB2hvBpxU8ah4yk5t3JX8Lb1vFpRH7YwijLTSgbWz
+	 qa9mBqjd3NaDpDjXFuhgVL3ZcMFKlqGV8sDgsAaqf5VbqGYVLBnMpIt1xy+iFdzoOR
+	 gNmUrbAa7u2A5P+g9AScjho9KWkTUaNgRl2ZBG1zaws8KKSV6BH1t5vhbS0CK2T0zA
+	 ywZqzYHxLFtRwnoZ7Dz4d747xiS8+AL/sRcm6VTWQeX0uaJ4oW2rz2DMJ+YwSutGZT
+	 wOMJINbdy8Rbw==
+Message-ID: <5b02ef9e-3017-400a-826c-59b5d5770a44@kernel.org>
+Date: Thu, 4 Sep 2025 21:30:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/9] nvme: apple: Add Apple A11 support
+To: Janne Grunau <j@jannau.net>, Christoph Hellwig <hch@lst.de>
+Cc: Nick Chan <towinchenmi@gmail.com>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Hector Martin <marcan@marcan.st>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Keith Busch <kbusch@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ iommu@lists.linux.dev, linux-nvme@lists.infradead.org
+References: <20250821-t8015-nvme-v3-0-14a4178adf68@gmail.com>
+ <20250821-t8015-nvme-v3-7-14a4178adf68@gmail.com>
+ <20250825080710.GA23193@lst.de>
+ <89251134-9685-439e-b220-92717663f038@kernel.org>
+ <20250902052646.GA11139@lst.de> <20250903095325.GA89417@robin.jannau.net>
+Content-Language: en-US
+From: Sven Peter <sven@kernel.org>
+In-Reply-To: <20250903095325.GA89417@robin.jannau.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-memcpy_series-v3-5-906655a5a7ad@mkarcher.dialup.fu-berlin.de>
-References: <20250904-memcpy_series-v3-0-906655a5a7ad@mkarcher.dialup.fu-berlin.de>
-In-Reply-To: <20250904-memcpy_series-v3-0-906655a5a7ad@mkarcher.dialup.fu-berlin.de>
-To: Andreas Larsson <andreas@gaisler.com>
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- Anthony Yznaga <anthony.yznaga@oracle.com>
-X-Mailer: b4 0.14.2
-X-Original-Sender: kernel@mkarcher.dialup.fu-berlin.de
-X-ZEDAT-Hint: PO
 
-The referenced commit introduced exception handlers on user-space memory
-references in copy_from_user and copy_to_user. These handlers return from
-the respective function and calculate the remaining bytes left to copy
-using the current register contents. This commit fixes a couple of bad
-calculations. This will fix the return value of copy_from_user and
-copy_to_user in the faulting case. The behaviour of memcpy stays unchanged.
+On 03.09.25 11:53, Janne Grunau wrote:
+> On Tue, Sep 02, 2025 at 07:26:46AM +0200, Christoph Hellwig wrote:
+>> On Wed, Aug 27, 2025 at 05:56:33PM +0200, Sven Peter wrote:
+>>>> Do you want to merge this through the apple SOC tree?  If so:
+>>>>
+>>>> Acked-by: Christoph Hellwig <hch@lst.de>
+>>>>
+>>>>
+>>>
+>>> I don't think that's necessary since there are no build time dependencies
+>>> but if you want to I can take it through there.
+>>
+>> Merging it through nvme sounds fine as well, I just through up
+>> grabbing everything together would be easier.  I also noticed there's
+>> another Apple hw enablement series that touches nvme, so I guess both
+>> should go through the same tree?
+> 
+> yes, they should go through the same tree if they go in the same cycle.
+> They conflict in dt-bindings and possibly the driver. We should avoid
+> burden someone else with this conflict resolution.
 
-Fixes: 34060b8fffa7 ("arch/sparc: Add accurate exception reporting in M7memcpy")
-Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de> # on Oracle SPARC S7
-Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
----
- arch/sparc/lib/M7memcpy.S     | 20 ++++++++++----------
- arch/sparc/lib/Memcpy_utils.S |  9 +++++++++
- 2 files changed, 19 insertions(+), 10 deletions(-)
+Good points, I'll pick up the latest version of this series on the 
+weekend then and handle any conflicts in case the other one is ready for 
+this cycle (which it probably will be) as well then.
 
-diff --git a/arch/sparc/lib/M7memcpy.S b/arch/sparc/lib/M7memcpy.S
-index cbd42ea7c3f7c25a369536eaf8d0b28a808ae5ba..99357bfa8e82ad7cf15dfd04117c89b905082f5b 100644
---- a/arch/sparc/lib/M7memcpy.S
-+++ b/arch/sparc/lib/M7memcpy.S
-@@ -696,16 +696,16 @@ FUNC_NAME:
- 	EX_LD_FP(LOAD(ldd, %o4+40, %f26), memcpy_retl_o2_plus_o5_plus_40)
- 	faligndata %f24, %f26, %f10
- 	EX_ST_FP(STORE(std, %f6, %o0+24), memcpy_retl_o2_plus_o5_plus_40)
--	EX_LD_FP(LOAD(ldd, %o4+48, %f28), memcpy_retl_o2_plus_o5_plus_40)
-+	EX_LD_FP(LOAD(ldd, %o4+48, %f28), memcpy_retl_o2_plus_o5_plus_32)
- 	faligndata %f26, %f28, %f12
--	EX_ST_FP(STORE(std, %f8, %o0+32), memcpy_retl_o2_plus_o5_plus_40)
-+	EX_ST_FP(STORE(std, %f8, %o0+32), memcpy_retl_o2_plus_o5_plus_32)
- 	add	%o4, 64, %o4
--	EX_LD_FP(LOAD(ldd, %o4-8, %f30), memcpy_retl_o2_plus_o5_plus_40)
-+	EX_LD_FP(LOAD(ldd, %o4-8, %f30), memcpy_retl_o2_plus_o5_plus_24)
- 	faligndata %f28, %f30, %f14
--	EX_ST_FP(STORE(std, %f10, %o0+40), memcpy_retl_o2_plus_o5_plus_40)
--	EX_ST_FP(STORE(std, %f12, %o0+48), memcpy_retl_o2_plus_o5_plus_40)
-+	EX_ST_FP(STORE(std, %f10, %o0+40), memcpy_retl_o2_plus_o5_plus_24)
-+	EX_ST_FP(STORE(std, %f12, %o0+48), memcpy_retl_o2_plus_o5_plus_16)
- 	add	%o0, 64, %o0
--	EX_ST_FP(STORE(std, %f14, %o0-8), memcpy_retl_o2_plus_o5_plus_40)
-+	EX_ST_FP(STORE(std, %f14, %o0-8), memcpy_retl_o2_plus_o5_plus_8)
- 	fsrc2	%f30, %f14
- 	bgu,pt	%xcc, .Lunalign_sloop
- 	 prefetch [%o4 + (8 * BLOCK_SIZE)], 20
-@@ -728,7 +728,7 @@ FUNC_NAME:
- 	add	%o4, 8, %o4
- 	faligndata %f0, %f2, %f16
- 	subcc	%o5, 8, %o5
--	EX_ST_FP(STORE(std, %f16, %o0), memcpy_retl_o2_plus_o5)
-+	EX_ST_FP(STORE(std, %f16, %o0), memcpy_retl_o2_plus_o5_plus_8)
- 	fsrc2	%f2, %f0
- 	bgu,pt	%xcc, .Lunalign_by8
- 	 add	%o0, 8, %o0
-@@ -772,7 +772,7 @@ FUNC_NAME:
- 	subcc	%o5, 0x20, %o5
- 	EX_ST(STORE(stx, %o3, %o0 + 0x00), memcpy_retl_o2_plus_o5_plus_32)
- 	EX_ST(STORE(stx, %g2, %o0 + 0x08), memcpy_retl_o2_plus_o5_plus_24)
--	EX_ST(STORE(stx, %g7, %o0 + 0x10), memcpy_retl_o2_plus_o5_plus_24)
-+	EX_ST(STORE(stx, %g7, %o0 + 0x10), memcpy_retl_o2_plus_o5_plus_16)
- 	EX_ST(STORE(stx, %o4, %o0 + 0x18), memcpy_retl_o2_plus_o5_plus_8)
- 	bne,pt	%xcc, 1b
- 	 add	%o0, 0x20, %o0
-@@ -804,12 +804,12 @@ FUNC_NAME:
- 	brz,pt	%o3, 2f
- 	 sub	%o2, %o3, %o2
- 
--1:	EX_LD(LOAD(ldub, %o1 + 0x00, %g2), memcpy_retl_o2_plus_g1)
-+1:	EX_LD(LOAD(ldub, %o1 + 0x00, %g2), memcpy_retl_o2_plus_o3)
- 	add	%o1, 1, %o1
- 	subcc	%o3, 1, %o3
- 	add	%o0, 1, %o0
- 	bne,pt	%xcc, 1b
--	 EX_ST(STORE(stb, %g2, %o0 - 0x01), memcpy_retl_o2_plus_g1_plus_1)
-+	 EX_ST(STORE(stb, %g2, %o0 - 0x01), memcpy_retl_o2_plus_o3_plus_1)
- 2:
- 	and	%o1, 0x7, %o3
- 	brz,pn	%o3, .Lmedium_noprefetch_cp
-diff --git a/arch/sparc/lib/Memcpy_utils.S b/arch/sparc/lib/Memcpy_utils.S
-index 64fbac28b3db18864b0d067acaee0d7898feec7a..207343367bb2daa41a70398e20ef271116423b38 100644
---- a/arch/sparc/lib/Memcpy_utils.S
-+++ b/arch/sparc/lib/Memcpy_utils.S
-@@ -137,6 +137,15 @@ ENTRY(memcpy_retl_o2_plus_63_8)
- 	ba,pt	%xcc, __restore_asi
- 	 add	%o2, 8, %o0
- ENDPROC(memcpy_retl_o2_plus_63_8)
-+ENTRY(memcpy_retl_o2_plus_o3)
-+	ba,pt	%xcc, __restore_asi
-+	 add	%o2, %o3, %o0
-+ENDPROC(memcpy_retl_o2_plus_o3)
-+ENTRY(memcpy_retl_o2_plus_o3_plus_1)
-+	add	%o3, 1, %o3
-+	ba,pt	%xcc, __restore_asi
-+	 add	%o2, %o3, %o0
-+ENDPROC(memcpy_retl_o2_plus_o3_plus_1)
- ENTRY(memcpy_retl_o2_plus_o5)
- 	ba,pt	%xcc, __restore_asi
- 	 add	%o2, %o5, %o0
 
--- 
-2.50.1
+Thanks,
+
+
+Sven
 
 
