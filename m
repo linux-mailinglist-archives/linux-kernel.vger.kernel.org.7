@@ -1,192 +1,140 @@
-Return-Path: <linux-kernel+bounces-801160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8CEBB440B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:32:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B9DB440B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A49483BFCC2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:32:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0CC75A1290
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735372641FB;
-	Thu,  4 Sep 2025 15:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B314926CE03;
+	Thu,  4 Sep 2025 15:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VvVqsOFs"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="l1cE2wrC"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FC424677A
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693EB2566E2;
+	Thu,  4 Sep 2025 15:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756999961; cv=none; b=sBjpU1SN1CIL8K3WDUa252SbDPnXhBMGolT3qpOaB/oZ64J3EF2VUj7zQci1wpQyCRdz1aCkXwXfOSZb6end3dPQXpwGbGMU7osaue0Fni0st8hokK912wgjFOjV8MCNERPCEKPMTLFOf4T+nExUezcKTbvfk7CnRBfvZySiK6U=
+	t=1756999974; cv=none; b=Ufda5nzjZbQ98p9tuS+zHcN46kBXaPiu4u6bkE/5TQpBmQDe1cYQxddNwwt/Xea5FgPnLcU4n5lIbZVSA5/qstIjrla3UhzZBDVT81tkuAFNjL+aEtt7J+RlLuVGkbcjaknPiqzmwWlvotecWlUCf1dw2Cd46EGOILkBSmFSR2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756999961; c=relaxed/simple;
-	bh=ZovBSTg3+nS4gEH8MquKWObavniQvrJ/CjBnS51s8KU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RGxgnMouT09GklX/+aw4zRvxTzHzbc0IKxIa0eCUx/X3jFyQA6x/N6GCTDoWWwFuC4eIf0GEOYikhoLBFDkzyFi2zPCDK7ZNSF1/lI4bE+UsYjHv3TLjcP4oi1chUVZaZAAh6V8WFMfeNIQVKpLuEx1/Yyi21H7D7sUQWJ3IKqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VvVqsOFs; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3cf991e8bb8so853131f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 08:32:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756999958; x=1757604758; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zcywffTAPMM3Aelnx79fSslBG214GVPApnPBoT9pItY=;
-        b=VvVqsOFsw4FhfJfUTUhrpMFZwyUD3VALHXx/evw4+b0s3PyjsnNwdLexWrIsF55abi
-         eYaBi1/R4gvs+4tXLGW9m2gw6Tpcnbx0TLW5s9Fh+z0050jwj9Xwup8YfpL0y3nlhIdM
-         71EovvnS7OZbduE0HWOieftFGnyzG8Zrg83IUbNd+ME0C9CiOlKQtLqeYhnub3uWe9vK
-         th3D+yYvWheYaKcsMI+2rGYW9eWK4bAvfMsMMMBbDpfx8Zq3Cq9htoYmYH9oOUBFaxof
-         LFKdrg5kpF6jvXiooY/JpdBIDhSsDdv4Rn0q1VtLlA1N1weAr3RPkTa32MXc4EdkQ0G8
-         Q7xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756999958; x=1757604758;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zcywffTAPMM3Aelnx79fSslBG214GVPApnPBoT9pItY=;
-        b=LCF+F0skQyAS/jiU/gKmEpwdsYxmVswM8AKfWnrWkBY8/SEMP5qABPsMwjWdS7gsZW
-         unLXrRv1TGsZmglFcQJe6NIjDTR1p1kQldZKMJrmWlXUAnCQ2ZMFqmvv9JpSsllQVR8U
-         nCSQZnJAA1Ld9Sv9erzmW9dqbu8oWOGIAS0PPUB+e1o+QAEX2iQHEJFDTSKKzICPa9iS
-         QTkgmZ3FvoZzEUEG27Bdd2oxhIb/lJDUe1eW+E/hph2juIU+pUfyoTX9K9qXFn9Y5pbk
-         RJf2e2fBgDrxBW0JcvomPjyXN8PoAfIXHlayO3PVFU+xvcQ2S7elJ75UbjJ8/BlMltRH
-         9tow==
-X-Gm-Message-State: AOJu0YzMpCid4a3DAKfersoy8e3PYXoNTeLYkqEocV3WA4SJFvSootvh
-	LtMr4ymm78lcNaSOh3RGNajYTS54qoq7V/xwFqv4TfojgMdtt3Dq+O4lWgnOJzTtmf4=
-X-Gm-Gg: ASbGncvM+Vr2KJwlzTknzzTWuVZFxIMnBwFI3nPgPCdLdtSpGI2vc//VJjDik7d9SQH
-	qZQdBej8n5mefjSaJZ+QjanXabFqex/B0SvLlCeWWkwnUrbiuxy0gzLhcmdnpIn9tINbjDUOsB1
-	aMhzC5JJKjceGg6KKvCzyKonmswv93/hTfr7Bz8V1z1mUs3R64LVPILf8knCPLxJkRtF6zM/eEm
-	PNsSLjvDORA928yKpBZnx3YXihlH2AXVya7ngJ4OSWz0pwMbS4ILAvei3crWhwECYrH1lowSiaU
-	7PFtDo66hl8mCplUNipqsMb43LOUz0Y8MgXGhV/w8+77q07AvACU4W91SWiwJf4KgcgjrUhSTZt
-	4Jzu8RNZOncx6O8KfQy00+j7afKWvfWcdtVd9DOOt7KtlRxosKFc=
-X-Google-Smtp-Source: AGHT+IEOK+thU4lBF9QkvDsW3QAK6jUHRnRYoVFlARXInUUOYeTnV9kbJl8HLIspvAB0lbR2Tb1UIQ==
-X-Received: by 2002:a05:6000:2886:b0:3e0:b982:ca5a with SMTP id ffacd0b85a97d-3e0b982cf37mr3073696f8f.5.1756999958082;
-        Thu, 04 Sep 2025 08:32:38 -0700 (PDT)
-Received: from gpeter-l.roam.corp.google.com ([150.228.9.248])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf34494776sm27889919f8f.61.2025.09.04.08.32.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 08:32:37 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 04 Sep 2025 16:32:29 +0100
-Subject: [PATCH] clocksource/drivers/exynos_mct: only use IRQF_PERCPU flag
- on ARM64 SoCs
+	s=arc-20240116; t=1756999974; c=relaxed/simple;
+	bh=tDTbE3SehodMHw7uN73rIR5YQxukV3vhONZfNB5DYxE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dEFZ9DVbRlu4cMMF8+akZ9Izbkt7ruGv0FRrQrdXlyLD6rkQE25MIxH2Dm+7TjE3Y93r78P32IgdisaNglZdkJiVmFSc+30p/WXATEvuNmsComt9UyKdBqlU1xlv/Jy2zZv9/RB4J2e6EzGRt5XJbv+XUzXmw9j7DXTKI8wUpd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=l1cE2wrC; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cHk4w4LNXz9sWS;
+	Thu,  4 Sep 2025 17:32:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1756999968;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JIzZVheBRvd0iBPFoIGMoS2ar7q8yBpuYylj7gKGkt8=;
+	b=l1cE2wrC8tFhr3lNLLGeDqyCiW5tXKlSkRZVLpTDb48ra5RX9AJXKOZfJwOnKu89Ijxnix
+	kMsI0zpruaAlJZZ9m0nENDX0vd1rJra2I3jYNtKzJtE6+60uVRwKQ6VpPJPSwuhn8GpvVl
+	5BUMdnlvFb2J7hWIi8u9FVbydwX1g+aO725fJhgLg2IfvonEndnN8JXtTnrpWN4oclufdO
+	X30Uy1moDoUgSYRl0HVGo+o6BnJb4mlb45DtVqxuL2KQMYW7RGkVXor3+G3Av5MlEvlo0A
+	8XO4qy0E1NsmBHxR4eAlr7kr8e3j2LuqTDdVOAF18LShrgpzyaCV+qZwWnHSUw==
+Message-ID: <472aac3c-9d3e-4892-8d6c-665fa6793464@mailbox.org>
+Date: Thu, 4 Sep 2025 17:32:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-exynos-mct-arm32-cpuhp-regression-v1-1-5d9e4dd356ab@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAAyxuWgC/x2NwQ6CMBAFf4Xs2U3aUg74K8ZDUx+wB0qzqwZD+
- HerxznMzEEGFRhdu4MUbzHZSgN/6SgvqcxgeTSm4MLgRhcZ+6dsxmt+ctK1D5zra6msmBX2s9n
- HqQ8eMQ2jp9apikn2/+N2P88vx6ou3XMAAAA=
-X-Change-ID: 20250904-exynos-mct-arm32-cpuhp-regression-14f321e4a591
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Ingo Molnar <mingo@kernel.org>, 
- Hosung Kim <hosung0.kim@samsung.com>, 
- Will McVicker <willmcvicker@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- John Stultz <jstultz@google.com>, kernel-team@android.com, 
- youngmin.nam@samsung.com, hoony.yu@samsung.com, 
- Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2713;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=ZovBSTg3+nS4gEH8MquKWObavniQvrJ/CjBnS51s8KU=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoubEU/E74sQgeTf+abf8JCGdjferSkVZiIA4BB
- SPYJAGILouJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaLmxFAAKCRDO6LjWAjRy
- uhFYEACRe7uggDyXQmWDb08QOlfPW3pieYUctnlx1bnlUd8qsbJmBmdwTnLUvDmX7bUGx08DvCm
- UOxqkOZD/FTTCfIXx9DVZKsUYEWQnlevCSJDINtIFSLakExB+yNXfTz7BQ2g7aEOlFVv96CpDg3
- 7BNqnTNsy3K6awhvLIkow2aNwNAgBoX5HnQig4WTbchmFO7SGPkqIOLo7oWqhRidAY7S38TqeBS
- t1jL8vFaZpl+TovAbn0tkMzdSM9ynUFKHfPXQpG6pW78cjfLvSPSJNrZK6FWAfhcfEkdUP565FF
- UZKi1k9ZHrAqAkgMdTnPCIdXJc2RbbkCGzZf0I8+4EBS1zzO6+DeJArO4lJjDqpHkbeMoTDfxj5
- 3gitcgPJ4M8XOLLegJdppIPn2VysPWxxqMeNSHfZfpAZZ2Mu0wXx58jTA/fFRf728CJcV8Op3Xh
- PWXwrdtN58YsmVBiZNY9VQn/ryGRcHyEklwMtdSjx+xNPtUO/hG0BeNxZHjaW49OD2f1lyQOFbu
- bw71aQ1JoA3GJZuKXZuvG6TPGk2NZU9nzBNIEhPugDhqsHGsDA0IdqD6VlZe5CDsjNh0LD/kr0r
- nLY/g3nGIphqaXwDoJc9GcsEkg2qDlp9nryDfIVUYt8NUdpwBiUegQZVM6uOX+sfme/Iykiey8w
- vtuTK3l+nGVzpzw==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+Subject: Re: [PATCH v2 0/8] Add support for Wave6 video codec driver
+To: Nicolas Dufresne <nicolas@ndufresne.ca>,
+ Nas Chung <nas.chung@chipsnmedia.com>, mchehab@kernel.org,
+ hverkuil@xs4all.nl, sebastian.fricke@collabora.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+ jackson.lee@chipsnmedia.com, lafley.kim@chipsnmedia.com
+References: <20250422093119.595-1-nas.chung@chipsnmedia.com>
+ <f03d0ae0-d28b-4b06-8f63-9d06f15c0522@mailbox.org>
+ <fcfa00b5ae102d76b02ce1667d27822e6d2c3c81.camel@ndufresne.ca>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <fcfa00b5ae102d76b02ce1667d27822e6d2c3c81.camel@ndufresne.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 2dd240b7f7c824b2b50
+X-MBO-RS-META: nbjes31bh5qwrbn7sqdhimymj64fxzc6
 
-This patch addresses a regression reported in [1] whereby CPU hotplug now
-fails on little CPUs (for reasons that aren't fully understood) for Arm
-32bit platforms such as Exynos 5422 used in OdroidXU3/XU4 boards.
+On 9/4/25 3:25 PM, Nicolas Dufresne wrote:
+> Hi,
+> 
+> Le mercredi 03 septembre 2025 à 23:47 +0200, Marek Vasut a écrit :
+>> On 4/22/25 11:31 AM, Nas Chung wrote:
+>>> This patch series introduces support for the Chips&Media Wave6 video
+>>> codec IP, a completely different hardware architecture compared to Wave5.
+>>>
+>>> The wave6 driver is a M2M stateful encoder/decoder driver.
+>>> It supports various video formats, including H.264 and H.265,
+>>> for both encoding and decoding.
+>>> While other versions of the Wave6 IP may support VP9 decoding and
+>>> AV1 decoding and encoding those formats are not implemented or validated
+>>> in this driver at this time.
+>>>
+>>> On NXP i.MX SoCs, the Wave6 IP functionality is split between two regions:
+>>> VPU Control region, Manages shared resources such as firmware memory.
+>>> VPU Core region, Provides encoding and decoding capabilities.
+>>> The VPU core cannot operate independently without the VPU control region.
+>>>
+>>> This driver has been tested with GStreamer on:
+>>> - NXP i.MX95 board
+>>> - pre-silicon FPGA environment
+>>>
+>>> Test results for decoder fluster:
+>>> - JVT-AVC_V1, Ran 77/135 tests successfully              in 35.519 secs
+>>> - JVT-FR-EXT, Ran 25/69 tests successfully               in 17.725 secs
+>>> - JCT-VC-HEVC_V1, Ran 132/147 tests successfully         in 81.549 secs
+>>> - All failures are due to unsupported hardware features:
+>>> -- 10bit, Resolutions higher than 4K, FMO, MBAFF
+>>> -- Extended profile, Field encoding and High422 sreams.
+>>>
+>>> Test results for v4l2-compliance:
+>>> v4l2-compliance 1.29.0-5359, 64 bits, 64-bit time_t
+>>> v4l2-compliance SHA: 2a91a869eb8a 2025-04-12 11:35:53
+>>>
+>>> Compliance test for wave6-dec device /dev/video0:
+>>>                   fail: ../utils/v4l2-compliance/v4l2-test-controls.cpp(1180): !have_source_change || !have_eos
+>>>           test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
+>>> Total for wave6-dec device /dev/video0: 48, Succeeded: 47, Failed: 1, Warnings: 0
+>>>
+>>> Compliance test for wave6-enc device /dev/video1:
+>>>                   fail: ../utils/v4l2-compliance/v4l2-test-controls.cpp(1169): node->codec_mask & STATEFUL_ENCODER
+>>>           test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
+>>> Total for wave6-enc device /dev/video1: 48, Succeeded: 47, Failed: 1, Warnings: 0
+>>>
+>>> Note: the failures are all related with the eos event.
+>>
+>> For what its worth, the whole series:
+>>
+>> Tested-by: Marek Vasut <marek.vasut@mailbox.org> # NXP i.MX95 rev. A0
+> 
+> Do you mind sharing what tests you have done ? Are you confirming the same
+> fluster and compliance results, have you done more ? Since this is largely
+> inspired on Wave5, I'd like to see people testing real-world playback, with
+> seeks, dynamic resolution changes, data lost. On Wave5, latest performance
+> patches leads to crash or hangs.
+I did not use fluster this time, I used h264 decode of 1920x1080 60 FPS 
+stream. The pipeline was very basic, something along the lines of:
 
-Note: This patch makes an assumption that the exynos_mct driver is only
-used on Arm 32/64 bit SoCs.
-
-Fixes: f3cec54ee3bf ("clocksource/drivers/exynos_mct: Set local timer interrupts as percpu")
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Closes: https://lore.kernel.org/lkml/8c861182-7e90-4bbf-ac04-173d59f5af69@samsung.com/
-Link: https://lore.kernel.org/lkml/8c861182-7e90-4bbf-ac04-173d59f5af69@samsung.com/ [1]
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
-Hi Marek & Krzysztof,
-    
-Can you test this patch on your Exynos5422 based boards and see if it
-resolves the issue Marek reported of CPU hot plug failing on the little
-cores of Exynos 5422 based boards?
-
-Unfortunately I only have gs101 based Exynos hardware (which is Arm 64 bit
-SoC) to test on. I can confirm CPU hotplug is functional on the little
-cluster CPUs with IRQF_PERCPU flag on Pixel6/gs101 though.
-
-Thanks,
-
-Peter
----
----
- drivers/clocksource/exynos_mct.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 62febeb4e1decec7f5db104db395884824563915..91d79b73a96a7e8a354d803c2b497bcde92af8d8 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -532,6 +532,16 @@ static int __init exynos4_timer_resources(struct device_node *np)
- 	return 0;
- }
- 
-+/*
-+ * For reasons that aren't fully understood IRQF_PERCPU breaks CPU hotplug on
-+ * little cores of ARM 32 bit SoCs like Exynos5422 used in OdroidXU3/4 boards.
-+ */
-+#if defined(CONFIG_ARM64) || defined(CONFIG_COMPILE_TEST)
-+#define MCT_IRQ_FLAGS (IRQF_TIMER | IRQF_NOBALANCING | IRQF_PERCPU)
-+#elif defined(CONFIG_ARM)
-+#define MCT_IRQ_FLAGS (IRQF_TIMER | IRQF_NOBALANCING)
-+#endif
-+
- /**
-  * exynos4_timer_interrupts - initialize MCT interrupts
-  * @np: device node for MCT
-@@ -602,8 +612,7 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
- 			irq_set_status_flags(mct_irq, IRQ_NOAUTOEN);
- 			if (request_irq(mct_irq,
- 					exynos4_mct_tick_isr,
--					IRQF_TIMER | IRQF_NOBALANCING |
--					IRQF_PERCPU,
-+					MCT_IRQ_FLAGS,
- 					pcpu_mevt->name, pcpu_mevt)) {
- 				pr_err("exynos-mct: cannot register IRQ (cpu%d)\n",
- 									cpu);
-
----
-base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
-change-id: 20250904-exynos-mct-arm32-cpuhp-regression-14f321e4a591
-
-Best regards,
--- 
-Peter Griffin <peter.griffin@linaro.org>
-
+gst-launch-1.0 -v filesrc location=/test.mp4 ! qtdemux ! h264parse ! 
+v4l2h264dec ! fpsdisplaysink text-overlay=false video-sink=waylandsink
 
