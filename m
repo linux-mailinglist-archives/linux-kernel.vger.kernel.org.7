@@ -1,162 +1,128 @@
-Return-Path: <linux-kernel+bounces-800950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DB6B43E1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:08:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C707B43E2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D71B7189CF15
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:08:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A0D67BA31F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44E73090F1;
-	Thu,  4 Sep 2025 14:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0210130BF77;
+	Thu,  4 Sep 2025 14:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JFN2t3q7"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmx8C5ID"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4530307AD3;
-	Thu,  4 Sep 2025 14:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9C22D3A86
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756994840; cv=none; b=t27TVchEmmScbdKHtPrClwWiTK87/0ecdu00IB3UOdu4GOOE8g3kRja4AjHU5AxwIyrVz/9KVeUOAJlyvQ6krGB442cKQrat1JurTHwZTeMOV4CL50Kjz1OVM0blSvZx5JSkb3UCnJWlQFRji88ZPiQi6TdUJgmcTyDEoIO/rhI=
+	t=1756994853; cv=none; b=iVLIa9HV677WmWaFDWcHjw/AN9VEMcVXuVKN3dxiDuavxQ6aJne2F8kA/tXmBUoRonHSJcJY5BOwbEHK8syqpz+IzUQkk1yYcyrvi88XmX2B8A27RO5OEBVEf7q0odF2GCztMgkpzIz0vWsbvH17t7F7CeoNr6j2ZrgDi6DIF5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756994840; c=relaxed/simple;
-	bh=2QadQ6p8DLVRx/cTe7HdT6hSMdg6XZNjMfLKvG2yQww=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C0C56E8i/H+Sp9RKYQFuWUkqjqthGXTW5ci4skZ8Kp9rPpCP0YtStRgHJisFRYFY+OqsotYxeUcf/3Rq2sJo7EG8Pipyj6ZhRlLzYq1taNruQdnQ1LrLMXVC8gvly5iNW46hNvHAbkNYou9EanLmsHFVyen1Ph82FZ76tKiqdng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JFN2t3q7; arc=none smtp.client-ip=209.85.222.176
+	s=arc-20240116; t=1756994853; c=relaxed/simple;
+	bh=GpLrwpBjFgVZ/+5BOLTD+3omYqDGzzxW7dP1pUXDtbA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ipF2MYTLI9sW+1GaXHFiGaZCTCeVwmjpwwODdYiMx+9Nk2DY8/+IwB/wDV+Y1bVA+5dIDG+XyI7LYgjN+9spgRF56QZuniPoNf6vORLyqCNoFtROLCvbpD4FAgDWCKoGBK04oBoA4lRzSGmR+beklicQPazrm9mCHz5d/StPdrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lmx8C5ID; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-80a6937c99bso113822585a.2;
-        Thu, 04 Sep 2025 07:07:18 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24cb267c50eso1571725ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 07:07:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756994837; x=1757599637; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AQbUui2bkGKG7EBeLpHjxdTepdI99tueiIT2G5JOAB0=;
-        b=JFN2t3q7xvpap1qRJyCsV4n8YgHvMBVieJeRBr2WpmoF0Ywjsy5LdD/cO72AjmA/wB
-         RY+mbEshnPKQr6/n6bm4JnczASsOTYzu7ZwWN/YX75Rg5+oD+Rfyy2UUwoAuMpyoNj8F
-         G4VfDLKIBRXADO3zQUf86teRTanDeCSZM3rGEEXz6jyJX3xwxDtYD6crYSxTg7d350kp
-         +x83VbvpZ7U3uslIEVY6Cw2dxMI6Ino0sXuxde7RX0/DQzp2xpKor7pI2zvIDzr2uwLg
-         RWxCAr6w22kuvCZmXiskisBn8exjLYWWOXul+8YVcHSiqoVV9Jdx0TjYARTWZCP5lfXe
-         dnmQ==
+        d=gmail.com; s=20230601; t=1756994851; x=1757599651; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JXF7lUGlzoUNaaSeGTJ59Qfx95myet4lfZdU71qhW/c=;
+        b=lmx8C5IDnGP5p1QmsfSjSuMMpyFked29UfBj0ZNYjTwwHq1LFiL+i5H+ac8W8++oKt
+         1v06+mgGEpZ+V1D1+hMNWaMg3O22c+TPOGE26iTH59vrYs3bTndxIObZKEhVUdfhh4P6
+         /mefpVZzYTUxUPi6eoTfy3f5XMTwqXbMxVBhnj5dCjyeqrehccwpgdJwe5Dvh7OPlWU6
+         yRX13SNY8KS7R43vLcxlLCDs/bq8jCxyX9uawpoB7l7QLKbYy3RDjMp6IPKA0m8N0z0P
+         xL4akY10Q+kFIFqlL/6oKXzPuNDyz6CZtNLyHxk9mUnhuz1fPj3IhezcpBtVyPv9EJQB
+         BFjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756994837; x=1757599637;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756994851; x=1757599651;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AQbUui2bkGKG7EBeLpHjxdTepdI99tueiIT2G5JOAB0=;
-        b=bLSbaHwOmFMCzzM//d+7EtUjfMET8jXcXLwGMISXXOhDUcriyz6UOPYk0xpduA11ag
-         4Xd19We4DMI1SRk9uIcSoFXJU4nMT9RNIkFMwcJULA1pWEHLBuh4XpzLvNE9ddmyA/+q
-         cw09LNuG5E6Ql2aCoVb+MuW5Te5irAAwNqrGjye6y/fHhgaZ2XvyrtvLxEEWK/OqiQUW
-         12RTcerlZBaQySL0ojq2WRiRtQAay2CwEQKT8W/dxrB8aC/8X70CEwSngCge4DTTTkUl
-         zFEX+QwlWO8lsaF6X+o7ZyBKuw/69As2Wlmb4+rJ9A/d8C0k0ls1wPJcfxTi7/ioefat
-         +2Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCUPMNl71VcCsxR53wk5SSURETBb2Dv/vwneemKNYDQ+KleDY04AWlgpR6Iu+jeMaoAidB64cJoTdPqV@vger.kernel.org, AJvYcCWLtMbOOyfp2Pldcfe+Bp69Ag7fGzdiijnnCdbWiuHtgDjpa/dwwys4fGOrPIxcMt45OLgUf7ZvBVhSw9fE@vger.kernel.org, AJvYcCWnwE6ww7VTvllsUdaJNaFbHjPAFJrQq2KW1zMSMvVHrDxUbF7HnZYnQuZuenZj6bu67YV2hUBHUsyS@vger.kernel.org, AJvYcCX/kUg1gc0WLoTho1bmuhXRHR/W3D0hnAsZaCe+1FL2zognGlZpM1XKyaCkVNWzT3JCEoD9qxaD6Pb9@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEtUqOT752+9ssUaT9k/ZgZOCwDxcEeVOSkGcFn1d8qeb7fFz1
-	m2MmrKfXHYxrRWcQnNHInp5Fdv1D9HiF9748l/MfvR0UPemdU9UJUXs9uhx+863I
-X-Gm-Gg: ASbGnctL+Xd0UuGC76iJXZljf7pZD0H/T43Kg88LHKY7feS5SX9trbrhyh9Ug1PdXOc
-	fHg8T6VYBcvU9kyn9prC9ksMczIrRrV/ZtxvyPOZWXlfrf9oVJliYott/vBUdJYzC4QXDsZ3I3A
-	BYuUKxFF5rh/XKrIuh/ATcsdkU9Y1SaZb0oeHbqRp83yIhDSnI+ZDcl6MLmJK0/Oa8BXHPaHIWS
-	JDaWI77NZlhof4F8+5AEK4ZQNVZNGFZSclkNanoa58VBPKWogV0l8j1KcfEH4PBIcyuN0RnvSg3
-	8hADAxD0sMmj3qiDTFL7mcTG86/vJQikBXGDxxI68KFqECq30B40E3BdfUNmTfxHlz76f1U2cJW
-	ucAFyfDy3MuUyd/B1BJpNjWvjTi1EiSvZALVdETYSCaMUNV/DqA==
-X-Google-Smtp-Source: AGHT+IHq/xxFdWJlU+2WryWLfgdKbagbPMPj9QUjM/EX0bmWcPN2dNhctsEDsJoaBCr6UBfUzIFnyg==
-X-Received: by 2002:a05:620a:4621:b0:809:e8aa:aa89 with SMTP id af79cd13be357-809e8aaab57mr909452685a.14.1756994836809;
-        Thu, 04 Sep 2025 07:07:16 -0700 (PDT)
-Received: from [127.0.0.1] ([74.249.85.194])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-80bdedfeaedsm212280285a.70.2025.09.04.07.07.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 07:07:16 -0700 (PDT)
-From: Denzeel Oliva <wachiturroxd150@gmail.com>
-Date: Thu, 04 Sep 2025 14:07:14 +0000
-Subject: [PATCH v3 4/4] arm64: dts: exynos990: Enable PERIC0 and PERIC1
- clock controllers
+        bh=JXF7lUGlzoUNaaSeGTJ59Qfx95myet4lfZdU71qhW/c=;
+        b=wVbrGXIZ7WkLgWEw/326CPJsx0RN7qkxXrZH12jswlXoqTWqD50mTQP25UFARS9fLF
+         J9m9SjlA4UeIowNjfqSfo9NJ57fHq6E9U2Df0dbYkVASqg7rtiyrLAEsk//xZwRiubO8
+         Tyl9mb29ujSsgu+eAkF08Nilo/OcZODPDYaaYla1Pb8oGSC9G/oNwGZrW0MqDRLL07hV
+         h2ed58uWQDr2ThecAn5kLQdaYeePSMbiRjtiRg73ZAL3BJJXaTO3jjhFTXmnAgMahCdU
+         g7YWJ/07zpqPUWW9xLuQwO7W25aI0w7GGNuO0UfgfUdUa+Akepa1f94IlHSqS7rrXvrZ
+         3QKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOzDQ7Ob6tzcmUXZEnAKDYzLcKTwBEhIGqSUNC+q5poSRnw0nMRJKEikyTq27ZkdEHdA0L3sG3g/iJ5FM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi4P5c//8N15nExvzC727x3ljKoA+jb2kdsxM4ApZcoJVSSlqF
+	Fz+kFjhTfMezDxJpFXC7jcx+EEd8PfRp/ZI+24c2iAsA/UuyXtDitsKipOAn7eqFI435NvjW4FT
+	wrBx942EjHHbsyPAqKazWau2LEwE3FNM=
+X-Gm-Gg: ASbGncsoXZHT6qF+jCNXWGXiioD77l1DGbQ+TbM96W7zqzaty1HMZnx/hHCYnTAZvMn
+	dpqUr/5rWD0df3gGKu7rF6S12PTWT+dSeXZr1NIP2bYnI9Rg7fvm/OZJ6unVJJZUO2OdT0VK5Yu
+	77y2wj5/jRZxpyvR6vrOXmLS4DuWquddwdmd6hLbRT0ugk4ehgcrTQJ6ljn6s+wu73uIpRwwAst
+	JIGrMcuIwFmcxsvyA==
+X-Google-Smtp-Source: AGHT+IH3MY/OTockoauDSyOp/l19fy2ykBd3RlTZfyNT0ABfjsmLAysxtPRcG50Q0m4OIHq4m+LRitinGGXWpfoiUgE=
+X-Received: by 2002:a17:903:22d1:b0:248:8a31:bf6f with SMTP id
+ d9443c01a7336-2491eadb922mr166015585ad.4.1756994851019; Thu, 04 Sep 2025
+ 07:07:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-perics-usi-v3-4-3ea109705cb6@gmail.com>
-References: <20250904-perics-usi-v3-0-3ea109705cb6@gmail.com>
-In-Reply-To: <20250904-perics-usi-v3-0-3ea109705cb6@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Igor Belwon <igor.belwon@mentallysanemainliners.org>, 
- Andi Shyti <andi.shyti@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
- Denzeel Oliva <wachiturroxd150@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756994833; l=1581;
- i=wachiturroxd150@gmail.com; s=20250831; h=from:subject:message-id;
- bh=2QadQ6p8DLVRx/cTe7HdT6hSMdg6XZNjMfLKvG2yQww=;
- b=lhQ28jDDQdtdqkS4uzcvkeiUDTYYHpnSRGBbH3JSREg1X9aSx2b7oxOVidB1+ag+Id/8EocOy
- SdDO4lDJsJnBk0iZx1BQW2zDy23X5do+OlT4DHo+XBt+zMPTK8f3W3R
-X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
- pk=3fZmF8+BzoNPhZuzL19/BkBXzCDwLBPlLqQYILU0U5k=
+References: <20250904123646.464028-1-rongqianfeng@vivo.com>
+In-Reply-To: <20250904123646.464028-1-rongqianfeng@vivo.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 4 Sep 2025 10:07:19 -0400
+X-Gm-Features: Ac12FXykgD4aIBzDItZHcqzk1vdrpEvCwQuABoCP0-tmsZGt2PPBgJYPMj3ZoqA
+Message-ID: <CADnq5_N=hQH9OGp2GfdPeOq7V2B_UX0VCDQ-XcTDroy-WHRmyQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdkfd: Fix error code sign for EINVAL in svm_ioctl()
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Felix Kuehling <Felix.Kuehling@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Philip Yang <Philip.Yang@amd.com>, 
+	Alex Sierra <alex.sierra@amd.com>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add clock controller nodes for PERIC0 and PERIC1 blocks for USI nodes.
+Applied.  Thanks!
 
-Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
----
- arch/arm64/boot/dts/exynos/exynos990.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Alex
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos990.dtsi b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-index dd7f99f51a75412f5c3b91c3425a63652546fa5e..418fc59fd9e9122f3059482276d3388920fab382 100644
---- a/arch/arm64/boot/dts/exynos/exynos990.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-@@ -225,12 +225,34 @@ gic: interrupt-controller@10101000 {
- 			#size-cells = <1>;
- 		};
- 
-+		cmu_peric0: clock-controller@10400000 {
-+			compatible = "samsung,exynos990-cmu-peric0";
-+			reg = <0x10400000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&oscclk>,
-+				 <&cmu_top CLK_DOUT_CMU_PERIC0_BUS>,
-+				 <&cmu_top CLK_DOUT_CMU_PERIC0_IP>;
-+			clock-names = "oscclk", "bus", "ip";
-+		};
-+
- 		pinctrl_peric0: pinctrl@10430000 {
- 			compatible = "samsung,exynos990-pinctrl";
- 			reg = <0x10430000 0x1000>;
- 			interrupts = <GIC_SPI 392 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		cmu_peric1: clock-controller@10700000 {
-+			compatible = "samsung,exynos990-cmu-peric1";
-+			reg = <0x10700000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&oscclk>,
-+				 <&cmu_top CLK_DOUT_CMU_PERIC1_BUS>,
-+				 <&cmu_top CLK_DOUT_CMU_PERIC1_IP>;
-+			clock-names = "oscclk", "bus", "ip";
-+		};
-+
- 		pinctrl_peric1: pinctrl@10730000 {
- 			compatible = "samsung,exynos990-pinctrl";
- 			reg = <0x10730000 0x1000>;
-
--- 
-2.50.1
-
+On Thu, Sep 4, 2025 at 8:54=E2=80=AFAM Qianfeng Rong <rongqianfeng@vivo.com=
+> wrote:
+>
+> Use negative error code -EINVAL instead of positive EINVAL in the default
+> case of svm_ioctl() to conform to Linux kernel error code conventions.
+>
+> Fixes: 42de677f7999 ("drm/amdkfd: register svm range")
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> ---
+>  drivers/gpu/drm/amd/amdkfd/kfd_svm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c b/drivers/gpu/drm/amd/a=
+mdkfd/kfd_svm.c
+> index 521c14c7a789..68ba239b2e5d 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
+> @@ -4261,7 +4261,7 @@ svm_ioctl(struct kfd_process *p, enum kfd_ioctl_svm=
+_op op, uint64_t start,
+>                 r =3D svm_range_get_attr(p, mm, start, size, nattrs, attr=
+s);
+>                 break;
+>         default:
+> -               r =3D EINVAL;
+> +               r =3D -EINVAL;
+>                 break;
+>         }
+>
+> --
+> 2.34.1
+>
 
