@@ -1,136 +1,253 @@
-Return-Path: <linux-kernel+bounces-801707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F9BFB44915
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:05:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA87B448FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310431BC1CF4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:05:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7804A458F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906922E8E11;
-	Thu,  4 Sep 2025 22:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9052D94BC;
+	Thu,  4 Sep 2025 22:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="HhCs/zKf"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aBJnOU+n"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20462DF6E9;
-	Thu,  4 Sep 2025 22:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D12B2D7DC8;
+	Thu,  4 Sep 2025 22:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757023411; cv=none; b=QUbWfzaistSAnqxsfalBKdVJZjf1pC6r1ZOHv3OCyRYewwFRtq9ytuPNuDLzWZLXgtV+x0nGcoyS3xP+dlHc6fRQh+7lupNI0oCYOYnJE663xgWRpYOnm0WcSwvKwysutx6fShLoyfUjupmdtbMmIcYSK6EMFNBkNmvFSUvqt60=
+	t=1757023365; cv=none; b=GgMMLyBvEshRXk5/yvid5PS5BEruXZV6qgDV96aakGKGRrhhdbXwtGaTB4DT5MydP7rfMnS7atSStCl3JkpgiyENdYpV+LOWlq9jf9n8jDT/pr5yYck3kaXqZstEZ/K3HL+7AuKptiMft9+SGrBnM73pZvNzqvKMj4XfLi2S5Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757023411; c=relaxed/simple;
-	bh=kfNKsp1FHappfXlSa3oCQen0sULVOEgKmZ5WZwpdTBk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HIuFe/hNkAy44WnPSPO7OY8VIZe7JjTYNd0d+RLZwEqgqCKqxtJBkegN6jlT3yJCD/Z/R0RuRDQRxugEE+EwqGx4tYGpBmNJ4xdteDjObA1je1sccdV6alNPEKNGDKINy6w491IsVH6bt8pS0PARYo6Hy39SJQbNSAmSv6w5DVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=HhCs/zKf; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1757023398;
-	bh=kfNKsp1FHappfXlSa3oCQen0sULVOEgKmZ5WZwpdTBk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HhCs/zKfXQtb+hq+pa99bB1PTkRLkiO84V9dq15EmSJ/7PDXYqePkTS4Kxe7A4Kui
-	 /Ggma/1U5k+fZeVj03VOXSNzULLuzFfQqFdgO+L/SrRKHoH0fWcOf9RQD42wvHKm41
-	 sxWwZHSzWSB/0haGq/bShUKKUkDomWGs9AoILzyYGYTQjOkQBM6Mrf4DRRMOAVyxNc
-	 gSMZ8HXgUPFLkk2fJDMGOwOts+xB0+sRyvPpTlhLHVMYGulzk5BflSFjoIrr+oq9JO
-	 7j7R61lMNpbvNCi1roX5TtWlYHYqobDzTTEf/vO1mx9dCz/+6ZSTqmU0JYTB8P7/4p
-	 9QtGcAAlyHj9w==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id 9485860142;
-	Thu,  4 Sep 2025 22:03:18 +0000 (UTC)
-Received: by x201s (Postfix, from userid 1000)
-	id B168C2024AB; Thu, 04 Sep 2025 22:02:09 +0000 (UTC)
-From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	wireguard@lists.zx2c4.com,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1757023365; c=relaxed/simple;
+	bh=YGBOBYVHcwskEjwSDQ07AodkAK4jg+Ii7MFxCwoqKqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ABSMP8CEqO2tKaFQGzXFFgSkEo9lCK5uog7vFCEy3yTcWfLhV5K3A6Uyi1lHqq+0Vm9XlrTKhZl6cVx4iffzFgR8DAXeiui5MyvjSYYOvQPSaEgYg57Mb97ZyjwD52hjhoJ53/OJ99goVnD5tps6O+H2uhNHlzyO7VIeXbe2Dv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aBJnOU+n; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757023364; x=1788559364;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YGBOBYVHcwskEjwSDQ07AodkAK4jg+Ii7MFxCwoqKqw=;
+  b=aBJnOU+nz8c2pNAdcOmp46inGxoL/Pz+9Tj57XeBQ4bd+17DmXK5BzYP
+   8Xs3VDveSxnyMwmozBvyX3/2sAyllLkTRf2HdJYEAXoJ1HP2n1XflJxJd
+   DnHozAy2DpEOdfWH/deRCu8tXh+Gy9qzYm6cxQvuCwZi7Iu/kM+VWoUw3
+   HD7kpOuUE2fiXUX+64upKEB5cwanZwSPQkDtZJDB5suhQFDS7rRQYSr/c
+   +tJtItvgeWhWeoKHMx0qoChIUIzHgLkLkjo7SkgRudCIdThi020g8DfjP
+   j4sfilJm0xWmdnyMCA6YZGqJcz2nDHOmD//d+6mNO3X3m60dE9E71AJsw
+   A==;
+X-CSE-ConnectionGUID: GXyamMTqSCqlt2NYBj8Kqw==
+X-CSE-MsgGUID: 5JbHSfMCRWOUTwlrP9pcgA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="70805160"
+X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
+   d="scan'208";a="70805160"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 15:02:43 -0700
+X-CSE-ConnectionGUID: L94f7WjeSmWfsbvS5lsy2g==
+X-CSE-MsgGUID: 1y1YUecNQs6jp+xNNArMdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
+   d="scan'208";a="177260579"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 04 Sep 2025 15:02:40 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uuI29-0005yR-24;
+	Thu, 04 Sep 2025 22:02:37 +0000
+Date: Fri, 5 Sep 2025 06:01:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vincent Mailhol <mailhol@kernel.org>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Vincent Mailhol <mailhol@kernel.org>,
+	=?iso-8859-1?Q?St=E9phane?= Grosjean <stephane.grosjean@hms-networks.com>,
+	Robert Nawrath <mbro1689@gmail.com>,
+	Minh Le <minh.le.aj@renesas.com>,
+	Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 05/11] tools: ynl-gen: define nlattr *array in a block scope
-Date: Thu,  4 Sep 2025 22:01:28 +0000
-Message-ID: <20250904220156.1006541-5-ast@fiberby.net>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250904-wg-ynl-prep@fiberby.net>
-References: <20250904-wg-ynl-prep@fiberby.net>
+Subject: Re: [PATCH 18/21] can: netlink: make can_tdc_fill_info() FD agnostic
+Message-ID: <202509050541.1FKRbqOi-lkp@intel.com>
+References: <20250903-canxl-netlink-prep-v1-18-904bd6037cd9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903-canxl-netlink-prep-v1-18-904bd6037cd9@kernel.org>
 
-Instead of trying to define "struct nlattr *array;" in the all
-the right places, then simply define it in a block scope,
-as it's only used here.
+Hi Vincent,
 
-Before this patch it was generated for attribute set _put()
-functions, like wireguard_wgpeer_put(), but missing and caused a
-compile error for the command function wireguard_set_device().
+kernel test robot noticed the following build warnings:
 
-$ make -C tools/net/ynl/generated wireguard-user.o
--e      CC wireguard-user.o
-wireguard-user.c: In function ‘wireguard_set_device’:
-wireguard-user.c:548:9: error: ‘array’ undeclared (first use in ..)
-  548 |         array = ynl_attr_nest_start(nlh, WGDEVICE_A_PEERS);
-      |         ^~~~~
+[auto build test WARNING on 2fd4161d0d2547650d9559d57fc67b4e0a26a9e3]
 
-Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
----
- tools/net/ynl/pyynl/ynl_gen_c.py | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Vincent-Mailhol/can-dev-move-struct-data_bittiming_params-to-linux-can-bittiming-h/20250903-170807
+base:   2fd4161d0d2547650d9559d57fc67b4e0a26a9e3
+patch link:    https://lore.kernel.org/r/20250903-canxl-netlink-prep-v1-18-904bd6037cd9%40kernel.org
+patch subject: [PATCH 18/21] can: netlink: make can_tdc_fill_info() FD agnostic
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20250905/202509050541.1FKRbqOi-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250905/202509050541.1FKRbqOi-lkp@intel.com/reproduce)
 
-diff --git a/tools/net/ynl/pyynl/ynl_gen_c.py b/tools/net/ynl/pyynl/ynl_gen_c.py
-index b0eeedfca2f2..e6a84e13ec0a 100755
---- a/tools/net/ynl/pyynl/ynl_gen_c.py
-+++ b/tools/net/ynl/pyynl/ynl_gen_c.py
-@@ -842,6 +842,9 @@ class TypeArrayNest(Type):
-         return get_lines, None, local_vars
- 
-     def attr_put(self, ri, var):
-+        ri.cw.block_start()
-+        ri.cw.p('struct nlattr *array;')
-+        ri.cw.nl()
-         ri.cw.p(f'array = ynl_attr_nest_start(nlh, {self.enum_name});')
-         if self.sub_type in scalars:
-             put_type = self.sub_type
-@@ -857,6 +860,7 @@ class TypeArrayNest(Type):
-         else:
-             raise Exception(f"Put for ArrayNest sub-type {self.attr['sub-type']} not supported, yet")
-         ri.cw.p('ynl_attr_nest_end(nlh, array);')
-+        ri.cw.block_end()
- 
-     def _setter_lines(self, ri, member, presence):
-         return [f"{member} = {self.c_name};",
-@@ -2063,13 +2067,9 @@ def put_req_nested(ri, struct):
-         init_lines.append(f"hdr = ynl_nlmsg_put_extra_header(nlh, {struct_sz});")
-         init_lines.append(f"memcpy(hdr, &obj->_hdr, {struct_sz});")
- 
--    has_anest = False
-     has_count = False
-     for _, arg in struct.member_list():
--        has_anest |= arg.type == 'indexed-array'
-         has_count |= arg.presence_type() == 'count'
--    if has_anest:
--        local_vars.append('struct nlattr *array;')
-     if has_count:
-         local_vars.append('unsigned int i;')
- 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509050541.1FKRbqOi-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/net/can/dev/netlink.c:111:6: warning: variable 'is_on' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     111 |         if (ifla_can_data_bittiming == IFLA_CAN_DATA_BITTIMING) {
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/net/can/dev/netlink.c:119:6: note: uninitialized use occurs here
+     119 |         if (is_on) {
+         |             ^~~~~
+   drivers/net/can/dev/netlink.c:111:2: note: remove the 'if' if its condition is always true
+     111 |         if (ifla_can_data_bittiming == IFLA_CAN_DATA_BITTIMING) {
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     112 |                 data_tdc = data[IFLA_CAN_TDC];
+     113 |                 tdc_flags = flags & CAN_CTRLMODE_FD_TDC_MASK;
+     114 |                 is_on = flags & CAN_CTRLMODE_FD;
+     115 |         } else {
+         |           ~~~~~~
+     116 |                 WARN_ON(1); /* Place holder for CAN XL */
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     117 |         }
+         |         ~
+   drivers/net/can/dev/netlink.c:108:12: note: initialize the variable 'is_on' to silence this warning
+     108 |         bool is_on;
+         |                   ^
+         |                    = 0
+   drivers/net/can/dev/netlink.c:281:6: warning: variable 'data_bittiming' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     281 |         if (fd) {
+         |             ^~
+   drivers/net/can/dev/netlink.c:290:7: note: uninitialized use occurs here
+     290 |         if (!data_bittiming)
+         |              ^~~~~~~~~~~~~~
+   drivers/net/can/dev/netlink.c:281:2: note: remove the 'if' if its condition is always true
+     281 |         if (fd) {
+         |         ^~~~~~~
+     282 |                 data_bittiming = data[IFLA_CAN_DATA_BITTIMING];
+     283 |                 data_tdc = data[IFLA_CAN_TDC];
+     284 |                 dbt_params = &priv->fd;
+     285 |                 tdc_mask = CAN_CTRLMODE_FD_TDC_MASK;
+     286 |         } else {
+         |           ~~~~~~
+     287 |                 WARN_ON(1); /* Place holder for CAN XL */
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     288 |         }
+         |         ~
+   drivers/net/can/dev/netlink.c:273:31: note: initialize the variable 'data_bittiming' to silence this warning
+     273 |         struct nlattr *data_bittiming, *data_tdc;
+         |                                      ^
+         |                                       = NULL
+>> drivers/net/can/dev/netlink.c:591:6: warning: variable 'dbt_params' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     591 |         if (ifla_can_tdc == IFLA_CAN_TDC) {
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/net/can/dev/netlink.c:598:14: note: uninitialized use occurs here
+     598 |         tdc_const = dbt_params->tdc_const;
+         |                     ^~~~~~~~~~
+   drivers/net/can/dev/netlink.c:591:2: note: remove the 'if' if its condition is always true
+     591 |         if (ifla_can_tdc == IFLA_CAN_TDC) {
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     592 |                 dbt_params = &priv->fd;
+     593 |                 tdc_is_enabled = can_fd_tdc_is_enabled(priv);
+     594 |                 tdc_manual = priv->ctrlmode & CAN_CTRLMODE_TDC_MANUAL;
+     595 |         } else {
+         |           ~~~~~~
+     596 |                 WARN_ON(1); /* Place holder for CAN XL */
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     597 |         }
+         |         ~
+   drivers/net/can/dev/netlink.c:585:42: note: initialize the variable 'dbt_params' to silence this warning
+     585 |         struct data_bittiming_params *dbt_params;
+         |                                                 ^
+         |                                                  = NULL
+   3 warnings generated.
+
+
+vim +591 drivers/net/can/dev/netlink.c
+
+   580	
+   581	static int can_tdc_fill_info(struct sk_buff *skb, const struct net_device *dev,
+   582				     int ifla_can_tdc)
+   583	{
+   584		struct can_priv *priv = netdev_priv(dev);
+   585		struct data_bittiming_params *dbt_params;
+   586		const struct can_tdc_const *tdc_const;
+   587		struct can_tdc *tdc;
+   588		struct nlattr *nest;
+   589		bool tdc_is_enabled, tdc_manual;
+   590	
+ > 591		if (ifla_can_tdc == IFLA_CAN_TDC) {
+   592			dbt_params = &priv->fd;
+   593			tdc_is_enabled = can_fd_tdc_is_enabled(priv);
+   594			tdc_manual = priv->ctrlmode & CAN_CTRLMODE_TDC_MANUAL;
+   595		} else {
+   596			WARN_ON(1); /* Place holder for CAN XL */
+   597		}
+   598		tdc_const = dbt_params->tdc_const;
+   599		tdc = &dbt_params->tdc;
+   600	
+   601		if (!tdc_const)
+   602			return 0;
+   603	
+   604		nest = nla_nest_start(skb, ifla_can_tdc);
+   605		if (!nest)
+   606			return -EMSGSIZE;
+   607	
+   608		if (tdc_manual &&
+   609		    (nla_put_u32(skb, IFLA_CAN_TDC_TDCV_MIN, tdc_const->tdcv_min) ||
+   610		     nla_put_u32(skb, IFLA_CAN_TDC_TDCV_MAX, tdc_const->tdcv_max)))
+   611			goto err_cancel;
+   612		if (nla_put_u32(skb, IFLA_CAN_TDC_TDCO_MIN, tdc_const->tdco_min) ||
+   613		    nla_put_u32(skb, IFLA_CAN_TDC_TDCO_MAX, tdc_const->tdco_max))
+   614			goto err_cancel;
+   615		if (tdc_const->tdcf_max &&
+   616		    (nla_put_u32(skb, IFLA_CAN_TDC_TDCF_MIN, tdc_const->tdcf_min) ||
+   617		     nla_put_u32(skb, IFLA_CAN_TDC_TDCF_MAX, tdc_const->tdcf_max)))
+   618			goto err_cancel;
+   619	
+   620		if (tdc_is_enabled) {
+   621			u32 tdcv;
+   622			int err = -EINVAL;
+   623	
+   624			if (tdc_manual) {
+   625				tdcv = tdc->tdcv;
+   626				err = 0;
+   627			} else if (dbt_params->do_get_auto_tdcv) {
+   628				err = dbt_params->do_get_auto_tdcv(dev, &tdcv);
+   629			}
+   630			if (!err && nla_put_u32(skb, IFLA_CAN_TDC_TDCV, tdcv))
+   631				goto err_cancel;
+   632			if (nla_put_u32(skb, IFLA_CAN_TDC_TDCO, tdc->tdco))
+   633				goto err_cancel;
+   634			if (tdc_const->tdcf_max &&
+   635			    nla_put_u32(skb, IFLA_CAN_TDC_TDCF, tdc->tdcf))
+   636				goto err_cancel;
+   637		}
+   638	
+   639		nla_nest_end(skb, nest);
+   640		return 0;
+   641	
+   642	err_cancel:
+   643		nla_nest_cancel(skb, nest);
+   644		return -EMSGSIZE;
+   645	}
+   646	
+
 -- 
-2.51.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
