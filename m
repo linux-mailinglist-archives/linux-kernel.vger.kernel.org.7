@@ -1,126 +1,136 @@
-Return-Path: <linux-kernel+bounces-800012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA8F0B43267
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:30:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D14B43293
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:37:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C5861C204D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:31:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6A4C7B19F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483C624468D;
-	Thu,  4 Sep 2025 06:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAD7275B1F;
+	Thu,  4 Sep 2025 06:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IJxEZOYi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rYnNUfie"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10921E3DFE;
-	Thu,  4 Sep 2025 06:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8867F2750E1
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756967448; cv=none; b=Wv9v/1f1XgGUozgIkTglodJKx88czyueyeJlGngvE61MW1FfkYkn7sy87MUN6JA/t+yHbNtRKQemRw4PIOKQKhl1RGzzzhG+ItNixDivzKbxCgOtpnLLKWv8nPbxRXh5vQoaW8a+J2NYnH50S00M4MFv51FizRSbs+TfZfrrOEI=
+	t=1756967865; cv=none; b=SC9kQOprZIYmsdPFY990v4c8rPjm5VuLE1OUVh1cv1GM07Ohbrm2OkROohId4UCpAfNLVKHjrw0qD3E1zp6dLhm5MM7I5HQZs2COqrH3eKJrLbZNx8ll0buZFd6Da2A6u8eEj7uVN1vPXkLqLwZnmQ3nTfi1fTl8qbAh4km4BVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756967448; c=relaxed/simple;
-	bh=kdYDjzaNlwToulTmT/ZGxJ3bp57/mMqU1jSrlRUBtEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcIvWk+inVD4IP4hySBUyQDyxF5fKI5optejATbCmu0mE1Kr1PPt4nMXIwXQwFIGpP5tQ/ustepGMfdS0kcFxh9Yq2sOkH8iX1hz/BtnXYoK/Di+kE/3+FKw1jGkwb+vpSgz6XaaW7bGnfEZPhJfu+HcZFzcipuOp8JSbI6nCdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IJxEZOYi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE956C4CEF0;
-	Thu,  4 Sep 2025 06:30:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756967448;
-	bh=kdYDjzaNlwToulTmT/ZGxJ3bp57/mMqU1jSrlRUBtEc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IJxEZOYiO79gME1yD0oYDYc6pNzxOr0n0/Q2rP8X42wCB/GYZd/d7zQQRu6Nwie5P
-	 M99vp8mQFwPVHFfeDmwJEzFAZhqJOB1e5XRn3L0prD7YsxHC3oSCbcACFu6haFxq6H
-	 QJm8QQkLAE/Jb15qdxXbS6x2zt+ktoIyP5YLzWrm166RhCbav7xgAFgLOdQ/mgetw9
-	 ad6vfCnPtBfgMzrNNsSUqggi4tSpywRCEE6CExEOpRTEbaA9EOXxLl2/4dV0q/6v2E
-	 RqRQ8rTTtGeDQuuLBfajEZ+geLMEXNhKiASlWEPLHWAdZAXONfQ4aw6JxbYOexTbaI
-	 ycNofzaNgj9Ug==
-Date: Thu, 4 Sep 2025 07:30:43 +0100
-From: Lee Jones <lee@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Message-ID: <20250904063043.GE2764654@google.com>
-References: <20250904154122.63acc45c@canb.auug.org.au>
+	s=arc-20240116; t=1756967865; c=relaxed/simple;
+	bh=4G9E878SIS/wbuyZyR8KFsHh8YP6quGk35BoPlc/5o0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=GTYhtEX5Fnqef5rlemMwIBbdBxR9XumpYFZ6KsObc4+qI1h88QSxEm157pO31nBOGhKKJlsCRa0Ti+ebbAMJXCgsHZatO6zXY9E73sFtuZtSq+eixg4rHIXaFxXlzs0QaYFf0NS+VlarBQHJ+1bYDF3QdEVPAXeoqcyp0oJgFtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rYnNUfie; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250904063740epoutp04c398124beca7d495e840ceca49beef0b~iAPXQfedB3191131911epoutp04N
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:37:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250904063740epoutp04c398124beca7d495e840ceca49beef0b~iAPXQfedB3191131911epoutp04N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756967860;
+	bh=L7d+FR1/8tzMMzgyBtzSiqeqlPWmljT4OodjD28MEuE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rYnNUfieCPp1two5PYM4yfmwkEP5UrJka+GQycWZGrula6GFRqwzXYDzLC1560hgW
+	 yYs/zyxj0peIaR/sRVFZ9oaPwQL/SzRbd5uNpdDhZ0Ivj2fzSozf4x/L1d0FWHknCL
+	 jM28GCeU7AHEV9RNmRyWJKItiNkNHyTc1IpjO884=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250904063740epcas5p46e506f80abbf698a49575878c2fd3dc1~iAPW97Ib01444614446epcas5p4c;
+	Thu,  4 Sep 2025 06:37:40 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.87]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cHVCQ6wY7z6B9mB; Thu,  4 Sep
+	2025 06:37:38 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250904063643epcas5p3a831ee47fb91bae02b07dfe398b77dd8~iAOibCy-J0506205062epcas5p3A;
+	Thu,  4 Sep 2025 06:36:43 +0000 (GMT)
+Received: from node122.. (unknown [109.105.118.122]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250904063642epsmtip249667dfd8f792ee479b5833d10408d3d~iAOhnvQLo1627016270epsmtip2u;
+	Thu,  4 Sep 2025 06:36:42 +0000 (GMT)
+From: Xue He <xue01.he@samsung.com>
+To: yukuai1@huaweicloud.com, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com
+Subject: Re: [PATCH] block: plug attempts to batch allocate tags multiple
+ times
+Date: Thu,  4 Sep 2025 06:32:09 +0000
+Message-Id: <20250904063209.12586-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <bfc12406-e608-b3fa-45e7-2105d9cc15bf@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250904154122.63acc45c@canb.auug.org.au>
+X-CMS-MailID: 20250904063643epcas5p3a831ee47fb91bae02b07dfe398b77dd8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-505,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250904063643epcas5p3a831ee47fb91bae02b07dfe398b77dd8
+References: <bfc12406-e608-b3fa-45e7-2105d9cc15bf@huaweicloud.com>
+	<CGME20250904063643epcas5p3a831ee47fb91bae02b07dfe398b77dd8@epcas5p3.samsung.com>
 
-On Thu, 04 Sep 2025, Stephen Rothwell wrote:
+On 2025/09/03/18:35PM, Yu Kuai wrote:
+>On 2025/09/03 16:41 PM, Xue He wrote:
+>> On 2025/09/02 08:47 AM, Yu Kuai wrote:
+>>> On 2025/09/01 16:22 PM, Xue He wrote:
+>> ......
+>> 
+>> the information of my nvme like this:
+>> number of CPU: 16
+>> memory: 16G
+>> nvme nvme0: 16/0/16 default/read/poll queue
+>> cat /sys/class/nvme/nvme0/nvme0n1/queue/nr_requests
+>> 1023
+>> 
+>> In more precise terms, I think it is not that the tags are fully exhausted,
+>> but rather that after scanning the bitmap for free bits, the remaining
+>> contiguous bits are nsufficient to meet the requirement (have but not enough).
+>> The specific function involved is __sbitmap_queue_get_batch in lib/sbitmap.c.
+>>                      get_mask = ((1UL << nr_tags) - 1) << nr;
+>>                      if (nr_tags > 1) {
+>>                              printk("before %ld\n", get_mask);
+>>                      }
+>>                      while (!atomic_long_try_cmpxchg(ptr, &val,
+>>                                                        get_mask | val))
+>>                              ;
+>>                      get_mask = (get_mask & ~val) >> nr;
+>> 
+>> where during the batch acquisition of contiguous free bits, an atomic operation
+>> is performed, resulting in the actual tag_mask obtained differing from the
+>> originally requested one.
+>
+>Yes, so this function will likely to obtain less tags than nr_tags,the
+>mask is always start from first zero bit with nr_tags bit, and
+>sbitmap_deferred_clear() is called uncondionally, it's likely there are
+>non-zero bits within this range.
+>
+>Just wonder, do you consider fixing this directly in
+>__blk_mq_alloc_requests_batch()?
+>
+>  - call sbitmap_deferred_clear() and retry on allocation failure, so
+>that the whole word can be used even if previous allocated request are
+>done, especially for nvme with huge tag depths;
+>  - retry blk_mq_get_tags() until data->nr_tags is zero;
+>
 
-> Hi all,
-> 
-> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_get':
-> gpio-stmpe.c:(.text+0x21a7c29): undefined reference to `stmpe_reg_read'
-> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_get_direction':
-> gpio-stmpe.c:(.text+0x21a7db2): undefined reference to `stmpe_reg_read'
-> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_irq_sync_unlock':
-> gpio-stmpe.c:(.text+0x21a8166): undefined reference to `stmpe_reg_write'
-> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a82ef): undefined reference to `stmpe_reg_read'
-> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a8372): undefined reference to `stmpe_reg_read'
-> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_irq':
-> gpio-stmpe.c:(.text+0x21a8c27): undefined reference to `stmpe_block_read'
-> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a8f05): undefined reference to `stmpe_reg_write'
-> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a8f89): undefined reference to `stmpe_reg_write'
-> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_disable':
-> gpio-stmpe.c:(.text+0x21a91dc): undefined reference to `stmpe_disable'
-> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_set':
-> gpio-stmpe.c:(.text+0x21a93a4): undefined reference to `stmpe_reg_write'
-> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a941e): undefined reference to `stmpe_set_bits'
-> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_direction_output':
-> gpio-stmpe.c:(.text+0x21a95a4): undefined reference to `stmpe_set_bits'
-> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_direction_input':
-> gpio-stmpe.c:(.text+0x21a9705): undefined reference to `stmpe_set_bits'
-> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_request':
-> gpio-stmpe.c:(.text+0x21a983e): undefined reference to `stmpe_set_altfunc'
-> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_dbg_show_one':
-> gpio-stmpe.c:(.text+0x21a99c0): undefined reference to `stmpe_reg_read'
-> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9b8c): undefined reference to `stmpe_reg_read'
-> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9bb1): undefined reference to `stmpe_reg_read'
-> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9c61): undefined reference to `stmpe_reg_read'
-> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9e6c): undefined reference to `stmpe_reg_read'
-> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_probe':
-> gpio-stmpe.c:(.text+0x21aa5b2): undefined reference to `stmpe_enable'
-> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21aa83e): undefined reference to `stmpe_disable'
-> 
-> Presumably caused by commit
-> 
->   e160dd0ac8c3 ("mfd: stmpe: Allow building as module")
+I haven't tried this yet, as I'm concerned that if it spin here, it might
+introduce more latency. Anyway, I may try to implement this idea and do some
+tests to observe the results.
 
-Okay, I have removed this patch until it can be better tested.
-
-> I have used the mfd tree from next-20250903 for today.
-> 
-> Note that commit
-> 
->  03db20aaa3ba ("gpio: stmpe: Allow to compile as a module")
-> 
-> is in the gpio-brgl tree which has not been merged into linux-next at
-> this point.
-
-Okay, perhaps these need to go in together then.
-
-Thanks Stephen.
-
-
--- 
-Lee Jones [李琼斯]
+Thanks.
 
