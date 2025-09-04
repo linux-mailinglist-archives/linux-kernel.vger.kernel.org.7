@@ -1,129 +1,104 @@
-Return-Path: <linux-kernel+bounces-800180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D9AB43450
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BAA5B43453
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EDC97C3114
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:39:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 777D37C2C4B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175802BDC10;
-	Thu,  4 Sep 2025 07:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4392BD59C;
+	Thu,  4 Sep 2025 07:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zHNtuccX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T6LTMTvn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C61529C33F;
-	Thu,  4 Sep 2025 07:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098F629C33F;
+	Thu,  4 Sep 2025 07:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756971237; cv=none; b=ANY1Jkv6tmQfRLAoKDcSGtKzRgYudmyc5IQN8KiA4+fvPClFLp2jvtTaOgQ2vNqNcRUkq2+vT7geetqjs1TQR1J0auFyFes+rMuM3YmUAClLNU74XjtdrEp5G9+9jFuPNwgeovLYpNwP43QVIBuyp67dxOXck470l0ti87XDFcQ=
+	t=1756971252; cv=none; b=L5vsdKIFFO/jCwW4eiHFrOIUjS+DksrqV+7b+/8VSSuoIdmRX7og/wuvJMdbCKApRnM3IqiAhpt/0WeR0Do0X0tOLWpUOPodI9P7ib2vKKzL286FYrtoxUSlgeBCrJK9EjmWtSgc7Y6AM0+Vjs2Q3aJeeF1cKInZGR1vZ8f3mnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756971237; c=relaxed/simple;
-	bh=Qr04LJto2UZzgwUz5dPBMi+5BZlYNfRAH2bzLTO8lKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IYFecv48vuuIml0yeGHhRFJI/WGiTUzdF4mnCbz4LHsJsnJLPPyN16C3GY7bkELVl9UiSGdRhgAEej+B3NekzIBHAKlKP0s5I17Uw/pmC2WHpTIhsG3p4Olr9IducbA0prAnUbWXoygj05L4rGKp1xEzwJpeFFQFAon7n9P+rBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zHNtuccX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F070C4CEF0;
-	Thu,  4 Sep 2025 07:33:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756971236;
-	bh=Qr04LJto2UZzgwUz5dPBMi+5BZlYNfRAH2bzLTO8lKI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=zHNtuccXkJxCUDj+r3HS2Nfya69B7GqPu4E5Q9rS9V4mR/bTzsGwVXbIv6YcAJRPE
-	 zqz0J6ETw198sFSpPQC5MDNwZXBuXQgsNV0PiQfIwtmCiN9smB0lB3aLcOjdXY53hd
-	 smpwcSlm5Xwfz6/NA+iFJ/FixmgpZlWnIinHU70k=
-Date: Thu, 4 Sep 2025 09:33:51 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Kuen-Han Tsai <khtsai@google.com>
-Cc: krzysztof.kozlowski@linaro.org, prashanth.k@oss.qualcomm.com,
-	Thinh.Nguyen@synopsys.com, s.hauer@pengutronix.de,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@kernel.org
-Subject: Re: [PATCH v2] usb: gadget: f_ecm: Fix ecm_opts->bound logic in bind
- path
-Message-ID: <2025090436-baffle-clubbing-1a20@gregkh>
-References: <20250904065203.1162629-1-khtsai@google.com>
+	s=arc-20240116; t=1756971252; c=relaxed/simple;
+	bh=L/bWGeB8kTEOn+PN/IeMrwA0U0cVwwjEnV+25ziMZ9E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hix6g3oRRlxi1rYQtRVOfi5xdCdFXwfYKYWiUDdyo4SMGOtWwdTsBbrEhafLpdAnkkmvVm59z/DnmGoz+1wPllQAH9KmcYTWCGqfPX9/G+551CbtFu08331uYqzv27fLsrLPSyPJ+xM/fr9bbUM36L6XBrobeYAEvEzgqZ83+fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T6LTMTvn; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756971251; x=1788507251;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=L/bWGeB8kTEOn+PN/IeMrwA0U0cVwwjEnV+25ziMZ9E=;
+  b=T6LTMTvn0X+vSEvRy7YrG5CBVYg38xEicz0nTveAho9CZy2ieu9Ojf27
+   2TRveF9FofdOh/qfJvuvh002LJvx7maOiVYKk7S7EiN9J+8Wv1RXipDYR
+   CDf6KkwTXxZ8MHEbqb3Q0FBBYI2HM4DWGrZugl5e2QLUsOpm5NZySj0oS
+   z1Y7/k8WL2xBe0sU4ZngfHFsakTx3hfnp/PxOerrWhS+ozclpU98XKeBW
+   xsTRY+eFZvp4hza1MZJxA1s3Dovw7K3TrvEcbHqDxrmFet/SSgAuMXvs3
+   Ke1izfpl4e1C8E7nbkUwxhQ1S9MPEtqWb9s49t0vZYDgrW5SxbJC3G3fc
+   A==;
+X-CSE-ConnectionGUID: 9WUmbFssQD+mUyACJGsXyg==
+X-CSE-MsgGUID: KVg9oenkSumbf6oA9+Zo3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="59369853"
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="59369853"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 00:34:11 -0700
+X-CSE-ConnectionGUID: jcYrLhqzS1qmJh6Hprb+UQ==
+X-CSE-MsgGUID: okMTWexWT5yQoiSVO9wCaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="176157061"
+Received: from carterle-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.79])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 00:34:08 -0700
+From: Jani Nikula <jani.nikula@intel.com>
+To: Kees Cook <kees@kernel.org>
+Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, "Gustavo A. R. Silva"
+ <gustavoars@kernel.org>, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 3/3] overflow: add range_overflows() and
+ range_end_overflows()
+In-Reply-To: <202509031942.A1669D10F@keescook>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250829174601.2163064-1-jani.nikula@intel.com>
+ <20250829174601.2163064-3-jani.nikula@intel.com>
+ <202509031942.A1669D10F@keescook>
+Date: Thu, 04 Sep 2025 10:34:04 +0300
+Message-ID: <eb4a61f86330afe95e232cc515f117ed602e108d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904065203.1162629-1-khtsai@google.com>
+Content-Type: text/plain
 
-On Thu, Sep 04, 2025 at 02:52:00PM +0800, Kuen-Han Tsai wrote:
-> The bound flag in ecm_opts is being set to true even if
-> gether_register_netdev() failed.
-> 
-> Move the assignment of ecm_opts->bound to after the success check to
-> ensure the flag only reflects the true state. The race condition on this
-> flag is not a concern because the caller, configfs_composite_bind(),
-> binds functions sequentially.
-> 
-> Fixes: d65e6b6e884a ("usb: gadget: f_ecm: Always set current gadget in ecm_bind()")
-> Cc: stable@kernel.org
-> Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
-> ---
->  drivers/usb/gadget/function/f_ecm.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/gadget/function/f_ecm.c b/drivers/usb/gadget/function/f_ecm.c
-> index 027226325039..9f5ed6f32a62 100644
-> --- a/drivers/usb/gadget/function/f_ecm.c
-> +++ b/drivers/usb/gadget/function/f_ecm.c
-> @@ -690,13 +690,14 @@ ecm_bind(struct usb_configuration *c, struct usb_function *f)
->  
->  	if (!ecm_opts->bound) {
->  		status = gether_register_netdev(ecm_opts->net);
-> -		ecm_opts->bound = true;
->  	}
->  
->  	mutex_unlock(&ecm_opts->lock);
->  	if (status)
->  		return status;
->  
-> +	ecm_opts->bound = true;
-> +
->  	ecm_string_defs[1].s = ecm->ethaddr;
->  
->  	us = usb_gstrings_attach(cdev, ecm_strings,
-> -- 
-> 2.51.0.338.gd7d06c2dae-goog
-> 
-> 
+On Wed, 03 Sep 2025, Kees Cook <kees@kernel.org> wrote:
+> On Fri, Aug 29, 2025 at 08:46:01PM +0300, Jani Nikula wrote:
+>> Move the range_overflows() and range_end_overflows() along with the _t
+>> variants over from drm/i915 and drm/buddy to overflow.h.
+>> 
+>> Cc: Kees Cook <kees@kernel.org>
+>> Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
+>> Cc: linux-hardening@vger.kernel.org
+>> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+>
+> Looks good to me! :)
+>
+> Reviewed-by: Kees Cook <kees@kernel.org>
 
-Hi,
+Cool, thanks! How do you want to handle merging this?
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+BR,
+Jani.
 
-You are receiving this message because of the following common error(s)
-as indicated below:
 
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+-- 
+Jani Nikula, Intel
 
