@@ -1,343 +1,114 @@
-Return-Path: <linux-kernel+bounces-799892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20712B43132
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:34:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC70B43129
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 075BC4E540D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:34:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C30E1BC4E2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF3B2701DA;
-	Thu,  4 Sep 2025 04:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hJTdIWaT"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38A82561AB;
+	Thu,  4 Sep 2025 04:32:27 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F2F26D4DA
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 04:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E0B248F5A;
+	Thu,  4 Sep 2025 04:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756960358; cv=none; b=Ulcevsis9eHWQta5b9Ty95vQc0uGGZr2hf46HmLZuSog2nVQxmqV3nwGe7YNEz5ISZvMbEDR2e9UyJ7sYguT+YAhevWhPJCwcvyrlnHYTeQ19Up/aqah3Ui5fZ1/G8RA7GOILKb2umw3Ll6N0suvsICNRi0exO7Jdf+DMPKva/Y=
+	t=1756960347; cv=none; b=WUqTn92YIASzz/wXR6puHiHU8aV2fGwdgfTc68SJiQ3LHb1wMNhA29JpZm7YirBw+H7yZRKKqcnkQUE3DU19FiFxZlS6TEip+ETPJBh4PZQZfErkwt/epl6vSsvVh9tzDbzFzatPAZDLJEOeCe6I0jHHZCX7kTXoM0LQTBN/7lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756960358; c=relaxed/simple;
-	bh=uOdqkqdSzW4Dmmlo6sfJmMLpPlifrugxSM7HCX2d0RA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=DcQBAClsEFL06pCELRl3e2ARbjWfrtwlND026eqYkc+H36CJqBQcDlwQdpNJ6DqryWjoHJsA6Hhg/tN6PoNWRaGdoItz2cPpo6YbgErCwa0Xs2dpGe20jC79f4OnX+Qq5YPSZSzv5mBKCFnLLRlYYpeUvp05gyF+JG91gPcuc5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hJTdIWaT; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-329cb4c3f78so532955a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 21:32:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756960355; x=1757565155; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xUwT+w8blYW9VWDtocCp6rvrdJRShZimavEsL52zW9Y=;
-        b=hJTdIWaTWQYSS8xL5YO5C8BKHU/2ymB+YeyoCv0iEMSft3B9NAVk0vQ/wFKcB5qvWa
-         3akqkcDIz7w22ZbeIRxXhBX7fvLTRiyOlfxEPN1FTehZCh9bL6T2+xHgVR/AWt61X6dc
-         LvwwEas7Rdbzs/69hOfTLzZbUeK2xeOl+lZ+AcxXRl6USAd3V/7S3RDVA4woiEJcB3/V
-         D++BMkjp/7DBRyv4brrMm72XNsBsKzOBQG4D/iFZDX9fWOHovHjrDTXBD8PjXYsSCRyV
-         MVINjdJ9a/mAVgfu5VY4YWdsFATmDqn3sKzq0DrOZNvJB84TSdLwcWhM4/aPcJwVYfGD
-         hYxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756960355; x=1757565155;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xUwT+w8blYW9VWDtocCp6rvrdJRShZimavEsL52zW9Y=;
-        b=kU1BT72dfyTZlgH6J6vdbZ+BpG7AVH89P+WCHBclOvLriR4o01MqfDH0j4gZov+GrJ
-         4/vkERcUvqGPyDrukBuZSoxUq0ViQjnjIt+dLkwtQRx1bkNyzECJLNvKmqSD103YTjSk
-         OXKCXL5RPEwihp94wU7x+vgMyTMD3I42HBGtBcpqsuEl7sy2gWB0zYCS+u6DmNEvbBXJ
-         BDQ2vbWSEe85sUAIwfdLf9jTeqKsmMf0khKa1FBWETtvA+8BDBpymPg5R4JPFVFtXzSA
-         TFPLf+sbX9zELXWLcanDk9CesCHMNJw2pfz2iK4+U5aJe61R/MnqCvUs5UYoZ3z8dfX9
-         tBbw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5y6pW381gAkrscqSq6/2pupoHj8AZMKdZUNeuu5Af426SUcH+PioTGJmhhau50r2ikvQGMBCDlLpIMfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGBOgcwJF08vHoX0eH/IfwZof3+lTFwcyZg4fyui/sTfFVVT2r
-	9J7oD0r6d9nfrE+tFq4J1uKi+KRgCVpOD6KuCflL9hSYgEGXC3X8GI1MdR5DYggty+BPMJOuYnN
-	szV3HLCLHZA==
-X-Google-Smtp-Source: AGHT+IHlL+ryoIVhOXWSjI+5zz0037zJc6H2kzUnY86l5dIDcYh+9cIrvTg/Nnvfv39gBWIxr4yTCh5vBbwr
-X-Received: from pjbsy12.prod.google.com ([2002:a17:90b:2d0c:b0:327:a21a:7e8d])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5190:b0:324:ece9:6afb
- with SMTP id 98e67ed59e1d1-3281541225emr22512277a91.3.1756960355345; Wed, 03
- Sep 2025 21:32:35 -0700 (PDT)
-Date: Wed,  3 Sep 2025 21:32:07 -0700
-In-Reply-To: <20250904043208.995243-1-irogers@google.com>
+	s=arc-20240116; t=1756960347; c=relaxed/simple;
+	bh=LcDZQhkcMwba7JkT0p7KkSDYlKeumO7ncV9SrwwRBVg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n2nWln8uT1KgyZm92H5X3nHgMn7DZNi2R5ptSmNxm+4LCSBEAx0w5EK7Qx+ImBp+Bqnw7sOpetn99X0sZdl2l3AlzPobL+BVpQLkT2EJPy6zcUUGjVo6Hwls1OEgh7kpIWG89JB+MwTpDGzzEjb79i428S1G1JlKAmoh5YuDvcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 242e2128894811f0b29709d653e92f7d-20250904
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:d8e5f360-34f5-480b-be9b-25cecafd7d83,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:ea8ac0a2738023c573ad850ccad84cbd,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|817,TC:nil,Content:-10|-
+	8|-5|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,
+	OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 242e2128894811f0b29709d653e92f7d-20250904
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 726798956; Thu, 04 Sep 2025 12:32:18 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 6B56FE008FA5;
+	Thu,  4 Sep 2025 12:32:18 +0800 (CST)
+X-ns-mid: postfix-68B91651-6275844
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id CFDCEE008FA2;
+	Thu,  4 Sep 2025 12:32:16 +0800 (CST)
+Message-ID: <05c6d3bb-1fd4-4fb7-b1db-906a6689eb94@kylinos.cn>
+Date: Thu, 4 Sep 2025 12:32:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250904043208.995243-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
-Message-ID: <20250904043208.995243-13-irogers@google.com>
-Subject: [PATCH v6 12/12] perf jevents: Add load event json to verify and
- allow fallbacks
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, John Garry <john.g.garry@oracle.com>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Benjamin Gray <bgray@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] cpufreq: intel_pstate: Rearrange variable declaration
+ involving __free()
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+References: <2251447.irdbgypaU6@rafael.j.wysocki>
+ <20250904041508.z5546b6a4usk5go2@vireshk-i7>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <20250904041508.z5546b6a4usk5go2@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-Add a LoadEvents function that loads all event json files in a
-directory. In the Event constructor ensure all events are defined in
-the event json except for legacy events like "cycles". If the initial
-event isn't found then legacy_event1 is used, and if that isn't found
-legacy_event2 is used. This allows a single Event to have multiple
-event names as models will often rename the same event over time. If
-the event doesn't exist an exception is raised.
 
-So that references to metrics can be added, add the MetricRef
-class. This doesn't validate as an event name and so provides an
-escape hatch for metrics to refer to each other.
+> On 03-09-25, 16:59, Rafael J. Wysocki wrote:
+>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>
+>> Follow cleanup.h recommendations and define and assign a variable
+>> in one statement when __free() is used.
+>>
+>> No intentional functional impact.
+>>
+>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> ---
+>>
+>> Zhang, I said the code structure here was intentional, but that was be=
+fore
+>> the cleanup.h recommendation was pointed out to me.
+>>
+>> ---
+>>   drivers/cpufreq/intel_pstate.c |    4 +---
+>>   1 file changed, 1 insertion(+), 3 deletions(-)
+>>
+>> --- a/drivers/cpufreq/intel_pstate.c
+>> +++ b/drivers/cpufreq/intel_pstate.c
+>> @@ -1502,9 +1502,7 @@ static void __intel_pstate_update_max_fr
+>>  =20
+>>   static bool intel_pstate_update_max_freq(struct cpudata *cpudata)
+>>   {
+>> -	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>> -
+>> -	policy =3D cpufreq_cpu_get(cpudata->cpu);
+>> +	struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpufreq=
+_cpu_get(cpudata->cpu);
+>>   	if (!policy)
+>>   		return false;
+>>  =20
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/pmu-events/Build            | 12 ++--
- tools/perf/pmu-events/amd_metrics.py   |  6 +-
- tools/perf/pmu-events/arm64_metrics.py |  6 +-
- tools/perf/pmu-events/intel_metrics.py |  6 +-
- tools/perf/pmu-events/metric.py        | 83 +++++++++++++++++++++++++-
- 5 files changed, 101 insertions(+), 12 deletions(-)
-
-diff --git a/tools/perf/pmu-events/Build b/tools/perf/pmu-events/Build
-index 162d5f74cbe8..366cd720659a 100644
---- a/tools/perf/pmu-events/Build
-+++ b/tools/perf/pmu-events/Build
-@@ -52,11 +52,11 @@ ZEN_METRICGROUPS = $(foreach x,$(ZENS),$(OUTPUT)$(x)/extra-metricgroups.json)
- 
- $(ZEN_METRICS): pmu-events/amd_metrics.py $(GEN_METRIC_DEPS)
- 	$(call rule_mkdir)
--	$(Q)$(call echo-cmd,gen)$(PYTHON) $< $(call model_name,$@) arch > $@
-+	$(Q)$(call echo-cmd,gen)$(PYTHON) $< $(call model_name,$@) pmu-events/arch > $@
- 
- $(ZEN_METRICGROUPS): pmu-events/amd_metrics.py $(GEN_METRIC_DEPS)
- 	$(call rule_mkdir)
--	$(Q)$(call echo-cmd,gen)$(PYTHON) $< -metricgroups $(call model_name,$@) arch > $@
-+	$(Q)$(call echo-cmd,gen)$(PYTHON) $< -metricgroups $(call model_name,$@) pmu-events/arch > $@
- 
- # Generate ARM Json
- ARMS = $(shell ls -d pmu-events/arch/arm64/arm/*)
-@@ -65,11 +65,11 @@ ARM_METRICGROUPS = $(foreach x,$(ARMS),$(OUTPUT)$(x)/extra-metricgroups.json)
- 
- $(ARM_METRICS): pmu-events/arm64_metrics.py $(GEN_METRIC_DEPS)
- 	$(call rule_mkdir)
--	$(Q)$(call echo-cmd,gen)$(PYTHON) $< $(call vendor_name,$@) $(call model_name,$@) arch > $@
-+	$(Q)$(call echo-cmd,gen)$(PYTHON) $< $(call vendor_name,$@) $(call model_name,$@) pmu-events/arch > $@
- 
- $(ARM_METRICGROUPS): pmu-events/arm64_metrics.py $(GEN_METRIC_DEPS)
- 	$(call rule_mkdir)
--	$(Q)$(call echo-cmd,gen)$(PYTHON) $< -metricgroups $(call vendor_name,$@) $(call model_name,$@) arch > $@
-+	$(Q)$(call echo-cmd,gen)$(PYTHON) $< -metricgroups $(call vendor_name,$@) $(call model_name,$@) pmu-events/arch > $@
- 
- # Generate Intel Json
- INTELS = $(shell ls -d pmu-events/arch/x86/*|grep -v amdzen|grep -v mapfile.csv)
-@@ -78,11 +78,11 @@ INTEL_METRICGROUPS = $(foreach x,$(INTELS),$(OUTPUT)$(x)/extra-metricgroups.json
- 
- $(INTEL_METRICS): pmu-events/intel_metrics.py $(GEN_METRIC_DEPS)
- 	$(call rule_mkdir)
--	$(Q)$(call echo-cmd,gen)$(PYTHON) $< $(call model_name,$@) arch > $@
-+	$(Q)$(call echo-cmd,gen)$(PYTHON) $< $(call model_name,$@) pmu-events/arch > $@
- 
- $(INTEL_METRICGROUPS): pmu-events/intel_metrics.py $(GEN_METRIC_DEPS)
- 	$(call rule_mkdir)
--	$(Q)$(call echo-cmd,gen)$(PYTHON) $< -metricgroups $(call model_name,$@) arch > $@
-+	$(Q)$(call echo-cmd,gen)$(PYTHON) $< -metricgroups $(call model_name,$@) pmu-events/arch > $@
- 
- GEN_JSON = $(patsubst %,$(OUTPUT)%,$(JSON)) \
-             $(LEGACY_CACHE_JSON) \
-diff --git a/tools/perf/pmu-events/amd_metrics.py b/tools/perf/pmu-events/amd_metrics.py
-index 7ab2ee4fdb17..4f728e7aae4a 100755
---- a/tools/perf/pmu-events/amd_metrics.py
-+++ b/tools/perf/pmu-events/amd_metrics.py
-@@ -1,6 +1,7 @@
- #!/usr/bin/env python3
- # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
--from metric import (JsonEncodeMetric, JsonEncodeMetricGroupDescriptions, MetricGroup)
-+from metric import (JsonEncodeMetric, JsonEncodeMetricGroupDescriptions, LoadEvents,
-+                    MetricGroup)
- import argparse
- import json
- import os
-@@ -27,6 +28,9 @@ def main() -> None:
-   )
-   _args = parser.parse_args()
- 
-+  directory = f"{_args.events_path}/x86/{_args.model}/"
-+  LoadEvents(directory)
-+
-   all_metrics = MetricGroup("",[])
- 
-   if _args.metricgroups:
-diff --git a/tools/perf/pmu-events/arm64_metrics.py b/tools/perf/pmu-events/arm64_metrics.py
-index a9f0e6bc751b..c9aa2d827a82 100755
---- a/tools/perf/pmu-events/arm64_metrics.py
-+++ b/tools/perf/pmu-events/arm64_metrics.py
-@@ -1,6 +1,7 @@
- #!/usr/bin/env python3
- # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
--from metric import (JsonEncodeMetric, JsonEncodeMetricGroupDescriptions, MetricGroup)
-+from metric import (JsonEncodeMetric, JsonEncodeMetricGroupDescriptions, LoadEvents,
-+                    MetricGroup)
- import argparse
- import json
- import os
-@@ -30,6 +31,9 @@ def main() -> None:
- 
-   all_metrics = MetricGroup("",[])
- 
-+  directory = f"{_args.events_path}/arm64/{_args.vendor}/{_args.model}/"
-+  LoadEvents(directory)
-+
-   if _args.metricgroups:
-     print(JsonEncodeMetricGroupDescriptions(all_metrics))
-   else:
-diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
-index f004c27640d2..04a19d05c6c1 100755
---- a/tools/perf/pmu-events/intel_metrics.py
-+++ b/tools/perf/pmu-events/intel_metrics.py
-@@ -1,6 +1,7 @@
- #!/usr/bin/env python3
- # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
--from metric import (JsonEncodeMetric, JsonEncodeMetricGroupDescriptions, MetricGroup)
-+from metric import (JsonEncodeMetric, JsonEncodeMetricGroupDescriptions, LoadEvents,
-+                    MetricGroup)
- import argparse
- import json
- import os
-@@ -27,6 +28,9 @@ def main() -> None:
-   )
-   _args = parser.parse_args()
- 
-+  directory = f"{_args.events_path}/x86/{_args.model}/"
-+  LoadEvents(directory)
-+
-   all_metrics = MetricGroup("",[])
- 
-   if _args.metricgroups:
-diff --git a/tools/perf/pmu-events/metric.py b/tools/perf/pmu-events/metric.py
-index dd8fd06940e6..e33e163b2815 100644
---- a/tools/perf/pmu-events/metric.py
-+++ b/tools/perf/pmu-events/metric.py
-@@ -3,10 +3,56 @@
- import ast
- import decimal
- import json
-+import os
- import re
- from enum import Enum
- from typing import Dict, List, Optional, Set, Tuple, Union
- 
-+all_events = set()
-+
-+def LoadEvents(directory: str) -> None:
-+  """Populate a global set of all known events for the purpose of validating Event names"""
-+  global all_events
-+  all_events = {
-+      "context\\-switches",
-+      "cpu\\-cycles",
-+      "cycles",
-+      "duration_time",
-+      "instructions",
-+      "l2_itlb_misses",
-+  }
-+  for file in os.listdir(os.fsencode(directory)):
-+    filename = os.fsdecode(file)
-+    if filename.endswith(".json"):
-+      try:
-+        for x in json.load(open(f"{directory}/{filename}")):
-+          if "EventName" in x:
-+            all_events.add(x["EventName"])
-+          elif "ArchStdEvent" in x:
-+            all_events.add(x["ArchStdEvent"])
-+      except json.decoder.JSONDecodeError:
-+        # The generated directory may be the same as the input, which
-+        # causes partial json files. Ignore errors.
-+        pass
-+
-+
-+def CheckEvent(name: str) -> bool:
-+  """Check the event name exists in the set of all loaded events"""
-+  global all_events
-+  if len(all_events) == 0:
-+    # No events loaded so assume any event is good.
-+    return True
-+
-+  if ':' in name:
-+    # Remove trailing modifier.
-+    name = name[:name.find(':')]
-+  elif '/' in name:
-+    # Name could begin with a PMU or an event, for now assume it is good.
-+    return True
-+
-+  return name in all_events
-+
-+
- class MetricConstraint(Enum):
-   GROUPED_EVENTS = 0
-   NO_GROUP_EVENTS = 1
-@@ -317,9 +363,18 @@ def _FixEscapes(s: str) -> str:
- class Event(Expression):
-   """An event in an expression."""
- 
--  def __init__(self, name: str, legacy_name: str = ''):
--    self.name = _FixEscapes(name)
--    self.legacy_name = _FixEscapes(legacy_name)
-+  def __init__(self, *args: str):
-+    error = ""
-+    for name in args:
-+      if CheckEvent(name):
-+        self.name = _FixEscapes(name)
-+        return
-+      if error:
-+        error += " or " + name
-+      else:
-+        error = name
-+    global all_events
-+    raise Exception(f"No event {error} in:\n{all_events}")
- 
-   def ToPerfJson(self):
-     result = re.sub('/', '@', self.name)
-@@ -338,6 +393,28 @@ class Event(Expression):
-     return self
- 
- 
-+class MetricRef(Expression):
-+  """A metric reference in an expression."""
-+
-+  def __init__(self, name: str):
-+    self.name = _FixEscapes(name)
-+
-+  def ToPerfJson(self):
-+    return self.name
-+
-+  def ToPython(self):
-+    return f'MetricRef(r"{self.name}")'
-+
-+  def Simplify(self) -> Expression:
-+    return self
-+
-+  def Equals(self, other: Expression) -> bool:
-+    return isinstance(other, MetricRef) and self.name == other.name
-+
-+  def Substitute(self, name: str, expression: Expression) -> Expression:
-+    return self
-+
-+
- class Constant(Expression):
-   """A constant within the expression tree."""
- 
--- 
-2.51.0.338.gd7d06c2dae-goog
-
+Reviewed-by:=C2=A0 =C2=A0Zihuan Zhang <zhangzihuan@kylinos.cn>
 
