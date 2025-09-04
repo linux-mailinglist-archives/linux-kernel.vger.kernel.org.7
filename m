@@ -1,221 +1,174 @@
-Return-Path: <linux-kernel+bounces-800492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544F5B4386A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:18:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 297A8B4387A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 617E55628C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:17:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6029A00B6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9399E2FCBEA;
-	Thu,  4 Sep 2025 10:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802832FD7A8;
+	Thu,  4 Sep 2025 10:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ADMeXip8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tzuvLD/f";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ADMeXip8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tzuvLD/f"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HbaN6Yjz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061552C08C4
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04222F83C0;
+	Thu,  4 Sep 2025 10:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756980807; cv=none; b=oSBrYPG9dtGTyEU7Do+ymxIdzGqfe0vqEE2OyPa3Csc/lmjJk4javYsp3pGj3G6v+vJ7YxSFNGXVp1mI4cMV3CiF23RgEtZyc5PpyV6emdnzC9CYJTVZXOZ5hVzsj5VWqCCQ/lGyW4nIUeJIt0j4oBLNO9bC4n5dTSlcrDq0wFk=
+	t=1756980830; cv=none; b=aS2fCvOOo5422Edg3/onw89J2+uTiqz9Fc2yOIYIX8KFqaGyE2bFMxWojexbst6n+q28thf8cp2YloY+9LHuS5J1JJKjNLCy1z1TQ/+75mQdWMKdDhlJXA3q9gqq50XuJVC0lkalafL1njncU7POcYLCw35UkY/bifzhMZQw6pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756980807; c=relaxed/simple;
-	bh=r2jrMCzlHINe2y/zoU59XCweavVVEjBnVBuRAgX/llQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CQ/oI5T5i+R0p3p80CaUNxrqHwOQAKFQrnVdgyFtlqiipa1/ZSeJFKvwwwNZdg0QgIUoe4EYkVuoul9zuPvlrZC72tDfIZjTZe31/eZ1yzSaYs36xsMO8JFjVqJrvIlyWZofTTD2BW9eeTvXsaMaSBILhDSD56k4ZoFCPacnj1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ADMeXip8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tzuvLD/f; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ADMeXip8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tzuvLD/f; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 140BF3442D;
-	Thu,  4 Sep 2025 10:13:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756980804; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2X+C3ZZNjZ4YV3oyJvmZaV0E/yUjqNpHuzGBIGNUEg4=;
-	b=ADMeXip8ilmTbst4zCAEIzTvtwV1rbeDu7Yv290/EhnP8tg4RwrnVjYhaMJefp/I3CCA+W
-	IeRpgtEfR7wuXtftXxxkZBVPIE+9iQS4kSBaaiUYxtHpVEkNlnM/rZ7cfiqdvAFyu6h6LV
-	UkX6+KFdmJc0VuDMEKpHP5ycxWGTcAk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756980804;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2X+C3ZZNjZ4YV3oyJvmZaV0E/yUjqNpHuzGBIGNUEg4=;
-	b=tzuvLD/fqKgoCoqkPa0KGOor5sFp3O5/m7IBSzvfx15OzSOBkzg/TKRPjF2RyD83ITmsW+
-	ayrm0NJtXKwhHRBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756980804; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2X+C3ZZNjZ4YV3oyJvmZaV0E/yUjqNpHuzGBIGNUEg4=;
-	b=ADMeXip8ilmTbst4zCAEIzTvtwV1rbeDu7Yv290/EhnP8tg4RwrnVjYhaMJefp/I3CCA+W
-	IeRpgtEfR7wuXtftXxxkZBVPIE+9iQS4kSBaaiUYxtHpVEkNlnM/rZ7cfiqdvAFyu6h6LV
-	UkX6+KFdmJc0VuDMEKpHP5ycxWGTcAk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756980804;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2X+C3ZZNjZ4YV3oyJvmZaV0E/yUjqNpHuzGBIGNUEg4=;
-	b=tzuvLD/fqKgoCoqkPa0KGOor5sFp3O5/m7IBSzvfx15OzSOBkzg/TKRPjF2RyD83ITmsW+
-	ayrm0NJtXKwhHRBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 068BA13675;
-	Thu,  4 Sep 2025 10:13:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HqRIAURmuWjnKQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 04 Sep 2025 10:13:24 +0000
-Message-ID: <7b1ca42d-1b89-44f4-bffb-e6b09f86fdc5@suse.cz>
-Date: Thu, 4 Sep 2025 12:13:23 +0200
+	s=arc-20240116; t=1756980830; c=relaxed/simple;
+	bh=TaCx2xdJ0PkyIQESevtrNgnqTCDtw2YcyYY/Mn7haVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VjdxU73xUAXL0e9OPTL56/fWqGZGURtYJSuAw71h8KAd3sUvirMFkZ4Ypu3bI4Wni1Vh4OPO6hWGbkeDKmr6khdEbitU6U5GthEzHHYVQJwS4FdayryuzRpg2jWm8cAMAJnzrc3kc8YtNLvkuJH5gE6y8UDyzgP8FLq8wP/ofO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HbaN6Yjz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3A65C4CEF0;
+	Thu,  4 Sep 2025 10:13:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756980830;
+	bh=TaCx2xdJ0PkyIQESevtrNgnqTCDtw2YcyYY/Mn7haVg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HbaN6Yjznr5n3Gogxrsx99hUcU54nZ3/fhnW5jw8827xmZUpTdL0M+x2zcrkKwdSr
+	 trKtFHUXICoR0Xtx3Wbnyr5gw63yTDdUsLaUsHsVCp7HunCjNBGw/MB5D+pb1lpr5G
+	 wMBAHcGyWwaUHK1j8FAbAVsfuDRbUjmc16AiEWPvPSb21XPNUNlCPL+h8f9sV6Joqw
+	 NDiK8o1f1BuiCRt7RsPXBmzmB6YyWWEquxW3QZAMneehJos4WyLbIVxIAgLfcgW8Zy
+	 TSB/mkGN5d2iXf0RkLf7zYyD/C7Z68NpUDPcWEKUrY/jDeyFfWcM59N1y8QeTidVnP
+	 JcmXOFrYFRL2w==
+Date: Thu, 4 Sep 2025 12:13:43 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, bhelgaas@google.com, heiko@sntech.de,
+	mani@kernel.org, yue.wang@amlogic.com, pali@kernel.org,
+	neil.armstrong@linaro.org, robh@kernel.org, jingoohan1@gmail.com,
+	khilman@baylibre.com, jbrunet@baylibre.com,
+	martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v5 1/2] PCI: Configure root port MPS during host probing
+Message-ID: <aLlmV8Qiaph1PHFY@ryzen>
+References: <20250620155507.1022099-2-18255117159@163.com>
+ <20250902174828.GA1165373@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] mm: remove zpool
-Content-Language: en-US
-To: Vitaly Wool <vitaly.wool@konsulko.se>, hannes@cmpxchg.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Christoph Hellwig <hch@infradead.org>
-References: <20250829162212.208258-1-hannes@cmpxchg.org>
- <20250904093325.2768507-1-vitaly.wool@konsulko.se>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250904093325.2768507-1-vitaly.wool@konsulko.se>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902174828.GA1165373@bhelgaas>
 
-On 9/4/25 11:33, Vitaly Wool wrote:
->> With zswap using zsmalloc directly, there are no more in-tree users of
->> this code. Remove it.
->> 
->> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+On Tue, Sep 02, 2025 at 12:48:28PM -0500, Bjorn Helgaas wrote:
+> On Fri, Jun 20, 2025 at 11:55:06PM +0800, Hans Zhang wrote:
+> > Current PCIe initialization logic may leave root ports operating with
+> > non-optimal Maximum Payload Size (MPS) settings. While downstream device
+> > configuration is handled during bus enumeration, root port MPS values
+> > inherited from firmware or hardware defaults ...
 > 
-> Per the previous discussions, this gets a *NACK* from my side. There is
-> hardly anything _technical_ preventing new in-tree users of zpool API.
-> zpool API is neutral and well-defined, I don’t see *any* good reason for
-> it to be phased out.
+> Apparently Root Port MPS configuration is different from that for
+> downstream devices?
 
-AFAIK it's a policy that unused code should be removed ASAP. And that's the
-case for zpool after Patch 1, no? It could be different if another user was
-about to be merged (to avoid unnecessary churn), but that doesn't seem the
-case for zblock?
+pci_host_probe() will call pci_scan_root_bus_bridge(), which will call
+pci_scan_single_device(), which will call pci_device_add(), which will
+call pci_configure_device(), which will call pci_configure_mps().
 
-My concern would be if the removal breaks any existing installations relying
-on zswap. Presumably not as a make oldconfig will produce a config where
-nothing important is missing, and existing boot options such as
-"zswap.zpool=" or attempts to write to in the init scripts to
-"/sys/module/zswap/parameters/zpool" will cause some errors/noise but not
-prevent booting correctly?
+This will be done for both bridges and endpoints.
 
-I mean if we were paranoid and anticipated somebody would break their
-booting if writing to /sys/module/zswap/parameters/zpool failed, we could
-keep the file (for a while) and just produce a warning in dmesg that it's
-deprecated and does nothing?
-
-From Patch 1:
-
-> Note that this does not preclude future improvements and experiments
-> with different allocation strategies. Should it become necessary, it's
-> possible to provide an alternate implementation for the zsmalloc API,
-> selectable at compile time. However, zsmalloc is also rather mature
-> and feature rich, with years of widespread production exposure; it's
-> encouraged to make incremental improvements rather than fork it.
-
-With my history of maintaining the slab allocators I can only support this
-approach.
+The bridge will be scanned/added first, before devices behind the bridge.
 
 
-> BTW, remarkable is that you didn't bother to CC: me to this patch.
+While pci_configure_device()/pci_configure_mps() will be called for both
+bridges and endpoints, pci_configure_mps() will do an early return for
+devices where pci_upstream_bridge() returns NULL, i.e. for devices where
+that does not have an upstream bridge, i.e. for the root bridge itself:
+https://github.com/torvalds/linux/blob/v6.17-rc4/drivers/pci/probe.c#L2181-L2182
+
+So MPS will not be touched for root bridges.
+
+This patch ensures that MPS for root bridges gets initialized to MPSS
+(Max supported MPS).
+
+Later, when pci_configure_device()/pci_configure_mps() is called for a
+device behind the bridge, if the MPSS of the device behind the bridge is
+smaller than the MPS of the bridge, the code reduces the MPS of the bridge:
+https://github.com/torvalds/linux/blob/v6.17-rc4/drivers/pci/probe.c#L2205
+
+
+My only question with this patch is if there is a bridge behind a bridge,
+will the bridge behind the bridge still have pci_pcie_type() ==
+PCI_EXP_TYPE_ROOT_PORT ?
+
+If so, perhaps we should modify this patch from:
+
++       if (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT &&
++           pcie_bus_config != PCIE_BUS_TUNE_OFF) {
++               pcie_write_mps(dev, 128 << dev->pcie_mpss);
++       }
++
+        if (!bridge || !pci_is_pcie(bridge))
+                return;
+
+
+to:
+
++       if (!bridge && pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT &&
++           pcie_bus_config != PCIE_BUS_TUNE_OFF) {
++               pcie_write_mps(dev, 128 << dev->pcie_mpss);
++       }
++
+        if (!bridge || !pci_is_pcie(bridge))
+                return;
+
+
+
+> > During host controller probing phase, when PCIe bus tuning is enabled,
+> > the implementation now configures root port MPS settings to their
+> > hardware-supported maximum values. Specifically, when configuring the MPS
+> > for a PCIe device, if the device is a root port and the bus tuning is not
+> > disabled (PCIE_BUS_TUNE_OFF), the MPS is set to 128 << dev->pcie_mpss to
+> > match the Root Port's maximum supported payload size. The Max Read Request
+> > Size (MRRS) is subsequently adjusted through existing companion logic to
+> > maintain compatibility with PCIe specifications.
+> > 
+> > Note that this initial setting of the root port MPS to the maximum might
+> > be reduced later during the enumeration of downstream devices if any of
+> > those devices do not support the maximum MPS of the root port.
+> > 
+> > Explicit initialization at host probing stage ensures consistent PCIe
+> > topology configuration before downstream devices perform their own MPS
+> > negotiations. This proactive approach addresses platform-specific
+> > requirements where controller drivers depend on properly initialized
+> > root port settings, while maintaining backward compatibility through
+> > PCIE_BUS_TUNE_OFF conditional checks. Hardware capabilities are fully
+> > utilized without altering existing device negotiation behaviors.
 > 
-> Anyway,
+> This last paragraph seems kind of like marketing without any real
+> content.  Is there something important in there?
 > 
-> Nacked-by: Vitaly Wool <vitaly.wool@konsulko.se>
+> Nits:
+> s/root port/Root Port/
 > 
+> Reword "implementation now configures" to be clear about whether "now"
+> refers to before this patch or after.
+> 
+> Update the MRRS "to maintain compatibility" part.  I'm dubious about
+> there being a spec compatibility issue with respect to MRRS.  Cite the
+> relevant section if there is an issue.
 
+I'm not sure why the commit message mentions MRRS at all.
+
+Sure, pcie_write_mrrs() might set MRRS to MPS, but that is existing logic
+and not really related to the change in this patch IMO.
+
+
+Kind regards,
+Niklas
 
