@@ -1,130 +1,110 @@
-Return-Path: <linux-kernel+bounces-801336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953C6B443D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:02:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C61DB443DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 542F91C8401D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:02:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A44097BB69B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A1328153D;
-	Thu,  4 Sep 2025 17:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0EF3019DE;
+	Thu,  4 Sep 2025 17:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QauJivRl"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bopkcvzx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBFB179BD;
-	Thu,  4 Sep 2025 17:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C591F2E2F0E;
+	Thu,  4 Sep 2025 17:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757005344; cv=none; b=a8HjutiOCcRfdhWnSBNg22CT763wnAhJFyf9lf/B9xKoLqoD2l3sYJpQ1cY7k+vTs+XyCb0LVXKekKgspL2iYBuWcGw8nERC3RzDWCcy+80rAtzMz6L2ETjT50QgAnlqyjqv09C3GYlZBplcWn0mFquhbJm7C+oNkM9F30FXDnU=
+	t=1757005416; cv=none; b=USGLds9lcqLsJrXAd9kp3hTe0oQWGF/akhMjsqdhQaQaSL6geEDGjb5O7y9UcJOpmeQOg4FvhJWecQNEMm7l+zSpkD0KWCf4aIePUk+aNUFe3v7i2OWDbOk06oahxu3HoOEz76WjwHGHOA/xu/kX3K1n6aR0rmDkldZ3/gLPxD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757005344; c=relaxed/simple;
-	bh=qWUAfaIAwE02j83CxoHHqLBOvWVQ0yY4hz4cGgpAgVw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jEi4zC/RzN8W8j8hFQWxnb0yXbSAFvv2rYlrwYIeY4eFPxYf/KcMGR1AhRmV3Z1Hp4EbZt2iU/WYTVtMNxnE07b4lf4vIgNqQAqstGK9wIMCniPYIdL+bDnO7H8vnBHgDPjIhDYlIaVpTeIezIWCx8gOamEF8vZIM7kt+5SQSt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QauJivRl; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3c6abcfd142so640896f8f.2;
-        Thu, 04 Sep 2025 10:02:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757005340; x=1757610140; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qWUAfaIAwE02j83CxoHHqLBOvWVQ0yY4hz4cGgpAgVw=;
-        b=QauJivRlCP/omea0HkUDZSV8kerfmR/h8kgNSTgKlG8BOOWIOz7W0RqrJSYGh0wZdu
-         txVzvoY87VtQt6YUVanQfA3gKHF4VX9iE8IggYP55oRV4GybFu+tGYgw6oCRpW3RsFek
-         xwiebfhBTJTeBK3xv5j4BwRfbGPbHq0+YbantaNvbAOWJgMuu1ZUKMS3sLjqQ2uKPlG9
-         LNi2NPYXlbivHxC9w4PK4Bn4sNUmJ2LsOY5AzueyeBwqvNKx0V1k4nII1ZNHkj5kAuar
-         TkIUxxrqn3By1TIT0VzxHlSrR6Dhw7chHVvvQiD8bGhW78uMVYI2HNomybsS8B+02rwx
-         pL7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757005340; x=1757610140;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qWUAfaIAwE02j83CxoHHqLBOvWVQ0yY4hz4cGgpAgVw=;
-        b=rZ8Lg4ddaJlAYIz43RMG6BoreQk0E/testTfjrtghpd9UIbclHRUfxefQBojwNGIi3
-         qS7RUVk/PVEaogHW7Y5AzQHyRfqFTSFw2MFkTJSvzCu0bwkTuslpdf+G/AowYSDy64LE
-         X3iLuHhDdDs7CJ8JpSERmoDF6ygLyeh+mRzaCM/RtUBoWvmT7Zlcdgn3VrlG7uVn+ILE
-         znAQNHiSOLfj34BdY3Ln0WNbqZPKI+7HgGWd/7ncSZYgvDz9AGFMKJRP1+2JJLPzhpO6
-         IVKYsI4OkACZqzw/lnpnL5J2TuYO/zRmUMv8CCvw6lOduyziub2BT4legswTgF339i5H
-         S1Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZxq1o+TA98sxtJ+I8Q5CqMaJenHCVTdx2i6b3C1ISH513UShMS4oq2mpAiz6iJPuAzZUt5KxdWZ1+Yipg@vger.kernel.org, AJvYcCVxF3PRjgH6XSr1VL3SGi22CvCCZIbU5TsY/wXqtE/mbP2T9Er+x2zqzVBxGyAUqrCez7lrR5Nf/wjU@vger.kernel.org, AJvYcCXprnyOpZ2DEh6AbWipnIElg8SDXheBtjEuPnLSfVffhLJoqdfgoEyue+OAsNQrFV0/rJ3T14LQFgQEhLemRifGYrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb+fcAXoePgbUPvxoEP0dyiZ1b+lu7tPcgcz+ZcqDMIetlSu78
-	bkmS7tKuO69yOS0JKTQA4SEWiBkGcHt09XVyJeRnTJHTIpGkgApnZ+89gInRk5auj4Otncf0Iyh
-	u//vr5bpOT3ppzCskqsp7bsM4zoeH4i4=
-X-Gm-Gg: ASbGnctdz0P2zW+s0nuo67cA0DzEa7u02CmQxxEUIvfzAjWIjPhb5uesAjUCfltN4Kl
-	/P9Sqon06TVkFarWXciHpvIZHsunvTDs9LqhGpST8/AY3i3O/TKpZAbGBTjvTIWEOqDynHvCMDI
-	kMSoRaxN+Vx8ea3Uf4fPU8cyeZfvrgDfGWDM0eVu1NItE89jFfyR80D4tS+mMsibW13WERTVvLe
-	qjJibRpHx/YP5kdNbWfZl2rgrCVZ16NzBAKVkl1cWkYpis9NPE=
-X-Google-Smtp-Source: AGHT+IGGWSzsCgErsrGr8zjXQxnW7N11Z1K/YsLBq7BIXz9uzKohNBsjiRHo+et+EPwzJ8Pg+931qO/wQAziXr+D7/w=
-X-Received: by 2002:a05:6000:3107:b0:3de:e787:5d7b with SMTP id
- ffacd0b85a97d-3dee787626fmr6296285f8f.46.1757005339757; Thu, 04 Sep 2025
- 10:02:19 -0700 (PDT)
+	s=arc-20240116; t=1757005416; c=relaxed/simple;
+	bh=cMNkrcEAHaz5vcVwAPPjgBUbsHMV2zR/t5dQZATrRu0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=aWMN3pQFtiId55tw343PoEsKZl4kh2VbrmX4VFQXcEtifX/4aXdcscVgvRZOsmioH3dKQYCKz0srZuYaX3c+4YAsOCBK7dkrpN7yHXDu2W+UvYLxRSaEocVD6KI5HChw6T/wcqFJrlxj1NK2nRAoIZqF1+iDdU4+ucWLfEqeGlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bopkcvzx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 419CEC4CEF0;
+	Thu,  4 Sep 2025 17:03:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757005415;
+	bh=cMNkrcEAHaz5vcVwAPPjgBUbsHMV2zR/t5dQZATrRu0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=BopkcvzxoMxvONFbzzkOSxTfYsZi/1PEvde1l/KjMF3AyXJOkvJ3QgNkKz0jZKqa8
+	 aTATQb/kgqi5BiGLck043gbvoaz3SIy+3hk1hiuFs8VLAps1y6M+xv8GbHXMy3Kfde
+	 6oDdPu07BnHeppnU4ty9TSeUS45mi4t7tlE8T5fWImmIPATgH/344uloeb9/5UZfhi
+	 CFgF6QAsnvzW+4twkXgM97o8wJDtfActZlylQdfZ7J5zgm/vQsvsGaSpY2ULbkXSz9
+	 HPpNh1aKSHeceJRlS1AW+gcx3I+r/qUVcKEHVOUgsW0HPgd7QsBaGJK9sEa+eZ7oMc
+	 YH5/woC9UKCYw==
+From: Mark Brown <broonie@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+ kernel@oss.qualcomm.com, 
+ Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+In-Reply-To: <20250720173215.3075576-1-quic_pkumpatl@quicinc.com>
+References: <20250720173215.3075576-1-quic_pkumpatl@quicinc.com>
+Subject: Re: (subset) [PATCH v7 0/9] Enable audio on qcs6490-RB3Gen2 and
+ qcm6490-idp boards
+Message-Id: <175700541199.105370.17920346254717819046.b4-ty@kernel.org>
+Date: Thu, 04 Sep 2025 18:03:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904160305.247618-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <aLm5kbgRIcomBo6a@ninjato>
-In-Reply-To: <aLm5kbgRIcomBo6a@ninjato>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 4 Sep 2025 18:01:53 +0100
-X-Gm-Features: Ac12FXxTKxEN51lya8eiqIz8Bn1e7rM0j_VjpYYSnIrgeF09dJthnrp4kknf5ok
-Message-ID: <CA+V-a8t9VU4+Q6ofTYru2=OsrsfiSM53=rtvEzxoYmu_A0wwBg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: i3c: renesas,i3c: Add RZ/V2H(P) and RZ/V2N support
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Frank Li <Frank.Li@nxp.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-dfb17
 
-Hi Wolfram,
+On Sun, 20 Jul 2025 23:02:06 +0530, Prasad Kumpatla wrote:
+> Audio support is now enabled on the qcs6490-RB3Gen2 and qcm6490-idp boards.
+> The updates include adding the necessary audio device tree support and the required
+> dependencies.
+> 
+> Both the qcs6490-RB3Gen2 and qcm6490-idp boards are derived from the same SoC
+> platform. Therefore, the audio support changes are included in a single patch
+> set for consistency and ease of maintenance.
+> 
+> [...]
 
-Thank you for the review.
+Applied to
 
-On Thu, Sep 4, 2025 at 5:08=E2=80=AFPM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> Hi,
->
-> > Add device tree binding support for the I3C Bus Interface on Renesas
-> > RZ/V2H(P) and RZ/V2N SoCs. The I3C IP on these SoCs is identical to
-> > that found on the RZ/G3E SoC.
->
-> Cool, has it been tested with devices already?
->
-Yes with the P3T1085UK Arduino Shield Evaluation kit (logs can be found at =
-[0]).
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-[0] https://lore.kernel.org/all/20250904165909.281131-1-prabhakar.mahadev-l=
-ad.rj@bp.renesas.com/
+Thanks!
 
-> > -title: Renesas RZ/G3S and RZ/G3E I3C Bus Interface
-> > +title: Renesas RZ/G3S, RZ/G3E, RZ/V2H(P) and RZ/V2N I3C Bus Interface
->
-> I suggest "Renesas I3C Bus Interface". The above is not going to scale.
->
-OK, I'll update and re-spin the patch.
+[3/9] ASoC: dt-bindings: qcom,lpass-va-macro: Update bindings for clocks to support ADSP
+      commit: 7748328c2fd82efed24257b2bfd796eb1fa1d09b
 
-> Rest looks good from a glimpse!
->
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Cheers,
-Prabhakar
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
