@@ -1,265 +1,253 @@
-Return-Path: <linux-kernel+bounces-801301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCEAEB44381
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:48:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89291B44386
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CF4D5638E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:46:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 604354804CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F8330AD14;
-	Thu,  4 Sep 2025 16:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31B52FD1B6;
+	Thu,  4 Sep 2025 16:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="PvrH1zkq"
-Received: from fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.178.132.221])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hs8omudL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A3E311963;
-	Thu,  4 Sep 2025 16:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.178.132.221
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757004224; cv=none; b=QXQY8FhvSmCo+k+InM9VlK3cLleXMZDiqKydzYeBCfb+ZsfVCtEeHfmQORE8tk8sbHCqqdQLoe89cHK9PaUUritDnsxyFpAGVi1uvV4RJmJLZa4SoKLltlWm6M5pieZuTckctq+Lw8ZGYxff3ZzOYKiE+Kv5pcW1HVgBVo45hXo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757004224; c=relaxed/simple;
-	bh=SJEax+sJCd7KjF37QH115LhRNddCeH4qrcOU8RdH30s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OXmh+y6ek/h8RpWPsdWtWHHA89El/CgiGgfbVkm7PkE4Ccqz+4jtN86FDDm61rXmOVtLhHTM7iR6u2vnd/usIN5N46OSD66vOLkdW00SaZP4+inKZ3936gaE52dpmhKVSSoc3iUn+zPMZCWpB5UF0zDQVDmznCi73swJQStFOiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=PvrH1zkq; arc=none smtp.client-ip=63.178.132.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1757004222; x=1788540222;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=P42vo7zyNRCoT+Y0yuyfOsLQrHZEK242rnGHx+iqWJc=;
-  b=PvrH1zkqcQXXbNBRPk1XcA3ZtqFodKAfXrzrVx0Mkz9Nbqtip3YFa3QN
-   PTm98z5lZ7CWsuoXc9n3bbDChOPTCNLMxZCiSyeJKUpnyVprVCrItpI6p
-   tYY2BSzp/K9vt4sLkjFXKPdSSQ+RNEPWNvY0jRaqcG/Q6deg5/BhrSJRR
-   19gIb990i30YFoMBUnU44Esf7GfC6uecY+A1CuN20wTd/DXsLOWSC/K6r
-   AdkxAYoerlPL1SSwYyywCFoweeO0qnKTSbGg6n07hUH6Yuk+A1lZgu3IN
-   jqQYWtb3Amia/iY9J4ZDxQUgUAo9nrTX3KM031M7997GxCDcWQZdJ1Emt
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37572D739E;
+	Thu,  4 Sep 2025 16:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757004304; cv=fail; b=JSwQgZAlA/Wt6QGImmVRG+dVPQHmNAX/g3dXiMfvyRdhMgpDpsAjiSl0usuwc5yg2RHp5/cwpODmul/bPO36ofWwcT/6RSS8LXDlX1OZbJnke45suQjxerWCJAtsi36H/1VF6zTteAuyzgQRa98uk9ZtXkX3Tv1FLvOyljzIfq0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757004304; c=relaxed/simple;
+	bh=XxIHWWpbjn8PjZNF1GlCJdKMFpsa+l71XoEBPCUSs3c=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PezTxma73h+0TtlgCiNOofuvhYlJ6VSOvL4y66pNACkY3Vp+qzOIV2seosSw1r8cwze3SurQUV8dOTf7TZrEPV/IwzLjcjjydraVEXbBcUBSPxdQVmo7g9kok4ao982o0nRvBaT7XhlU4lT/U/jL6rX9LefsDJ6UQilLEeVknMY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hs8omudL; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757004303; x=1788540303;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=XxIHWWpbjn8PjZNF1GlCJdKMFpsa+l71XoEBPCUSs3c=;
+  b=Hs8omudLPlg4Q3OJ+PscB6wUCs9oES7mdwvNXUPHmhctgy1SGOzonqGc
+   IisLSLrDFfoP0cQeFFdy+mABp//KtXbawZhH5tTddfYS16KVJtvztOTz9
+   R+TKsgFOAQZWRvT4o/uyzjGd2zVtUE6INv2pYzsKv6v+qbOoLCNvEdJjg
+   jx+xZo1/ZrOnMgLB7mFroyDaAntG1XtJeKFmnee1f5c2ktFlerNTzXxaf
+   pB/ZwiyCf4JaWUekkXj3MmD3G9CHRGROumTqtE/DAQongh22ODstLJKas
+   6u2IqfVC2iAi408vfFkj//TJSAeuiqRmTtAN8UR6Y8xULMCcmdLOmjGPF
    w==;
-X-CSE-ConnectionGUID: VbhW2i58QR+l4y4akwjfNw==
-X-CSE-MsgGUID: d9TOW0SWShiX/ph1efFPpg==
-X-IronPort-AV: E=Sophos;i="6.18,214,1751241600"; 
-   d="scan'208";a="1553836"
-Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
-  by internal-fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 16:43:32 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [54.240.197.232:12184]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.16.219:2525] with esmtp (Farcaster)
- id 2a1e5134-b6e7-4d6e-a935-760d82fd56e1; Thu, 4 Sep 2025 16:43:32 +0000 (UTC)
-X-Farcaster-Flow-ID: 2a1e5134-b6e7-4d6e-a935-760d82fd56e1
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.79) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Thu, 4 Sep 2025 16:43:31 +0000
-Received: from [192.168.20.69] (10.106.83.23) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Thu, 4 Sep 2025
- 16:43:30 +0000
-Message-ID: <de7da4d8-0e9d-46f2-88ec-cfd5dc14421c@amazon.com>
-Date: Thu, 4 Sep 2025 17:43:29 +0100
+X-CSE-ConnectionGUID: IqLh4l2DT5CO+VjW9LmmNw==
+X-CSE-MsgGUID: d/n09y7lSlOdM2xQwKSuQg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63181197"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63181197"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:45:02 -0700
+X-CSE-ConnectionGUID: CxbQ7jFrQwmFG4h+18VJ4Q==
+X-CSE-MsgGUID: U+G1ousDSJysxQM4nmCSYw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="209121371"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:45:01 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 4 Sep 2025 09:45:00 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Thu, 4 Sep 2025 09:45:00 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.55)
+ by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 4 Sep 2025 09:45:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CCXdzsmE6NkQRjn1W7mFRgdszRlf7VIHErPK8Wc/gPF04SJoR313mQiY9JHVWxkoPJ99uab4ef30FfBX7OM6hcZihTQfEW8dG06X1/cpvwsp4MP8FuOyCPAra78KkobysMHhafAPirlG71dm6AJhiBU0gz+El3hfp99voYc+WxVDFcSg6RKsnTR2r9CMRnOOxL/JP72oT8YpOYGa+g3ni5Cc6lfiS/lPwHYs8kNrmW68Fm2Cg2SCMTt1Zn0YlMdqCmb39UNao1wCAh+H7RvNw8+5ZHIFjqLQEQDs5qu0t1G6hB3jqbVKODDQOb8sWJ+tBUq9No0RlCLH1b8AuWiXow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TTAUF1HWx4cESZ9gFNeK90ATUVokXj2DsmHnfYJ4t/4=;
+ b=dEFK8tH+r8eFXi0o10F/tCjeOaDXxx2ExzzEFSM3h+NmTemk9J6hG6BWziWALimtw8705QmFCzlDVZLWEGoJfUjNdA+AwWkoSpNr7oFGUscPZf/A9FGNMjTj51FjTZmkIr9/TJG0Zh9rM4L/lV4PklKuPNTbIxKCuRNXF2IDTBZ8vMQCUH4m2q/LGPF4wFhQP633CrJGlo7jmOWF+Gsbou4kEJeAQWw4iyZL53EVdRAE3eXQOEPno08ud38sRGdrMAOYcBduZ/NXVHHO1fHG3GL/eElXrSzTxf6vjWfiwB3wK5BsqJTtwaqYjz6DS13/tf5liG7j6xTkrLLosIvfCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM4PR11MB6455.namprd11.prod.outlook.com (2603:10b6:8:ba::17) by
+ PH3PPF9E162731D.namprd11.prod.outlook.com (2603:10b6:518:1::d3c) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Thu, 4 Sep
+ 2025 16:44:55 +0000
+Received: from DM4PR11MB6455.namprd11.prod.outlook.com
+ ([fe80::304a:afb1:cd4:3425]) by DM4PR11MB6455.namprd11.prod.outlook.com
+ ([fe80::304a:afb1:cd4:3425%6]) with mapi id 15.20.9009.013; Thu, 4 Sep 2025
+ 16:44:55 +0000
+From: "R, Ramu" <ramu.r@intel.com>
+To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
+CC: "Lobakin, Aleksander" <aleksander.lobakin@intel.com>, "Kubiak, Michal"
+	<michal.kubiak@intel.com>, "Fijalkowski, Maciej"
+	<maciej.fijalkowski@intel.com>, "Nguyen, Anthony L"
+	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "Simon
+ Horman" <horms@kernel.org>, NXNE CNSE OSDT ITP Upstreaming
+	<nxne.cnse.osdt.itp.upstreaming@intel.com>, "bpf@vger.kernel.org"
+	<bpf@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [Intel-wired-lan] [PATCH iwl-next v5 01/13] xdp, libeth: make the
+ xdp_init_buff() micro-optimization generic
+Thread-Topic: [Intel-wired-lan] [PATCH iwl-next v5 01/13] xdp, libeth: make
+ the xdp_init_buff() micro-optimization generic
+Thread-Index: AQHcFqVrTZiegyG6SkyNo0ajjtWdFLSDMsfwgAAWCsA=
+Date: Thu, 4 Sep 2025 16:44:55 +0000
+Message-ID: <DM4PR11MB6455F02DDCD8FB0084D10BA49800A@DM4PR11MB6455.namprd11.prod.outlook.com>
+References: <20250826155507.2138401-1-aleksander.lobakin@intel.com>
+ <20250826155507.2138401-2-aleksander.lobakin@intel.com>
+ <PH0PR11MB5013AB6B0FE10D9986EDC1909600A@PH0PR11MB5013.namprd11.prod.outlook.com>
+In-Reply-To: <PH0PR11MB5013AB6B0FE10D9986EDC1909600A@PH0PR11MB5013.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM4PR11MB6455:EE_|PH3PPF9E162731D:EE_
+x-ms-office365-filtering-correlation-id: 50dc1dd5-32a5-4385-6de7-08ddebd260bf
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?qcixBulG/dHRpD04Z5LzWLCEdQgbaJigigVDo4o+m3hT/iB0O6G7Uceak7Pv?=
+ =?us-ascii?Q?u7jUVgtMW/2ruFWvqEzeLZjM1QIaRXAvH4duJygvQ0LSAzL60AX3x9p5iecC?=
+ =?us-ascii?Q?rpCBy6CIEPHnaTDPisARjG+uq9cAONNwPBFoIApRI8cdgPt6bQbTnYYEXGqw?=
+ =?us-ascii?Q?Oa4sMZXeFTylMzE2+5JBOnT5kdafGb7rI9kffD7vdh1YgiHFoE5SNoJIGcvO?=
+ =?us-ascii?Q?NxDbN3UiC3rp3XGyIb9EQvp0PXCjJ3hnRjZK9cIR7kon/f/X9zo97bcHtVKg?=
+ =?us-ascii?Q?ti4ri4ue0SUTNPtaSSy9PebK+ULmpBtGjHENS/5TO/pknhm4ICnOfs/aApYi?=
+ =?us-ascii?Q?GpXPAb8wfF5yIivwk3CU/Z470c2H62Ql6cqlUSGAcoNXa1vp/MTWJ+pb+jm/?=
+ =?us-ascii?Q?2BPs0xEwv5TWvmX9rvayN4+BudTvl2pZp9xu2/eyjyrbXDSjBEW6WSKYdmKa?=
+ =?us-ascii?Q?c6T/VT6VpnItLP+8y4GFxW3OIIL7DTjs/QxDlLmIK3KWC3HwAAb4NLUc1sR8?=
+ =?us-ascii?Q?2BbnFy0JNmLcXwcn/VEVW2pFOSa6YrAkTvg4PcOTDh0I7Yt3TFpCfsOC6wpC?=
+ =?us-ascii?Q?cXH6PxbQbn3B3q7L3sJsWLT/Xpkrl+kfT91SjAqcr/57+5pFQu6a/xmfld8x?=
+ =?us-ascii?Q?gA0mE9ynHwQzVmFTyTQ3+O7WHcI6D4NhhbY8S9kxUEFoRv3tVyW48rl3i4kw?=
+ =?us-ascii?Q?XMDWfX+l8IiCTdXZn63NU/laTJEDyiUCmQ63AtMOW23Tfrg7jZaI/P675Ug+?=
+ =?us-ascii?Q?JNMcFeVKGWj2Xc/4V9sBMN+7joVv+65IbSvoTtzQ8A1A8h+jwvgRv2qAE3+q?=
+ =?us-ascii?Q?I6o/X2r0ys83nk72y5Vv74zf0PhqtT/BxxWL+3tmjxzK9rMtOaRYQ1iKChPv?=
+ =?us-ascii?Q?S9vCphmowWII8NpJAniEhs7Oq0k+7NYFo0l8xEpOX3//gA/Rhmr3s9GMCy60?=
+ =?us-ascii?Q?AyyQfwVkTmgsTg1qBtFKxQG4SxHblQqk9mV/OekrHq0bGolKp2dJ7rb2/nDo?=
+ =?us-ascii?Q?Eelftb1VRIbYWshZfisdkj2L7X42uIE+EKxMHH06KlD1PFzJE+OgnIXXuaOl?=
+ =?us-ascii?Q?xrAaKXWL+zd2Zs7i4jYGn9r3AF237pZTiqtRsNcZ8hOelQeOEcGNZSoJP9iy?=
+ =?us-ascii?Q?mUuQBf30/pLGJn9EaPZEzStYp54VbSnDo/b0qCEg4kRqf6QGSXByxoGYV8Y5?=
+ =?us-ascii?Q?OVsUj2Mk8jiGw9UdGfIgZFBaVMDiLWSZ1trVprnut9KTEKX9RKl4ZDg1Xy6+?=
+ =?us-ascii?Q?fR5WOu8ET+xP24uSSCi5OoaCVWZsJ2AIFGgPR+RrIf1wn+w4V96e6h/PXmaW?=
+ =?us-ascii?Q?xi/ZusZ8rkHQ8Z+CFbTPpPcnUBdZm+4ANOlAn64P9tLfiiLJYsBI9PNzmnFq?=
+ =?us-ascii?Q?8PmdsYjnuUC3ECs/TNpK46p9V3BXYEY9Isj9K+LIXQIGGswIdoBW/N6fcnOx?=
+ =?us-ascii?Q?RS+dVaMbXEH/qmQK8XH6/xMOwNoT7hzEnlMA2u5FLble5jXJplDY9A=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6455.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?tD3QiAQKddU1pcUVq2QAqzNZsEc6HX3yu0wDSyl0Ofklk8aFvPtkvRcCct07?=
+ =?us-ascii?Q?+6L/dSRuPJyjusTZKGaNXqrdSdNYkShVJfYTGKxNtKLihhaVq6efAhG8ODLQ?=
+ =?us-ascii?Q?FmLaENk5q1vwL20YkH80Pu5VTXRmjioV2atdNMOau/gn6A3UyUmspSxqkkd8?=
+ =?us-ascii?Q?/wtutVQvTbQ0GUMVq2svB8jsjfmam3zZip3fEIa4IbuJwR6A+1VvDLOlFDed?=
+ =?us-ascii?Q?akQJgRmG/gE0G6YxmvXejuRRDT/WOIjmV33+t1ZoONIr7+EwC/x+V1IwnVfI?=
+ =?us-ascii?Q?xg96bekZQ4MkgPN+lc1LjeVqFX8syS2D+R3eV9MiMKYyxrTCMfA5GUSXIXFm?=
+ =?us-ascii?Q?bhqIV/nT/1eB0ZX7GMvGq/1VLbdgaxHfFng2ziReC0Y2be3+5mEbt9x8TGwD?=
+ =?us-ascii?Q?WFKrqKqt9oLcNCnjNGy6iOAB5QN4hq79qtY8OcITf2SaSgs/BXvgmI5Hc7S1?=
+ =?us-ascii?Q?8lYWVYR/giBBnTalQOazT6ZQVwGA0kOGXtGOa83t7TBbaWfPABJztF8xYbwz?=
+ =?us-ascii?Q?dIRVIbrGtyOTMw86bEwInXPn6WxRmHv7nXp1uigmzRYU1aT/7uL0prlqyI99?=
+ =?us-ascii?Q?lt6AvYUPRIte60Tca4qbgCHtwRgqdA6kg9GfmBv4gdy3UdxGeYTX9mpetOph?=
+ =?us-ascii?Q?LmsQ9bxwDJP7L6kwzZ2hDcvpueF5jlV+6XZh+i7+F9w8J2oK5b9km1PmPO9S?=
+ =?us-ascii?Q?ksNQnBYwFNpHRKS68wEmelyecmuBHs4sCycwWj5SVxBwL7Yz152155nYymdu?=
+ =?us-ascii?Q?Pj+h//fOidZaCumsN1/jw5TzU3imBjtDOOncYQQWvap0o929FZ0UeL8vm6FA?=
+ =?us-ascii?Q?EzktkVG+66WXiAcj6Kh2P7ss79rnn2rvhOAEKx1igib2nspjw3AExCsp5w9e?=
+ =?us-ascii?Q?KEw50hkdc42b6jFXtY2w2m/INOftj0yS76KRvXXcGsoTL4tlVbxlHdapsmlR?=
+ =?us-ascii?Q?Dbmm0WfDhAk2CbR7lasK6NofAUI3bVZgWVkpF606V/o+cV8t67C2RoaO0DyG?=
+ =?us-ascii?Q?nylIeAhsWMYqNR1tG0jjlTqe0wOsErLLNVC3XURv0FlG3gU9JvwZTGCs1a3A?=
+ =?us-ascii?Q?e0NFDoyr2SwvJSiDhiRcmNAxKJkWudneFTitzMaYSilNihnTFpv3AMIj4GUq?=
+ =?us-ascii?Q?O5cNY9JHjqctpGhfVEr6waGR6ii7g0BdRCMfWY411SKOl42wy3rYgqSse7Hy?=
+ =?us-ascii?Q?W/PZUYEQUIzbaJwAnHDKPvBdJgX8kSwElLzu9apF9G631puUwLKYcNQcKPLf?=
+ =?us-ascii?Q?dmJttiA6D8C9To7TdFt9VjQkJaGChCh07Ve+4sglXHSYjAZW2IfhPFLvevl8?=
+ =?us-ascii?Q?wuy9yLRyU1pQ0yStTTOykGIJ12ZOeZW9L81XcqpabRK6FM6/hrsXhuRGEQhk?=
+ =?us-ascii?Q?CuWXfNqbpPdrJHyPdr87r8GVmEV0i75ftQv0k2f4788qYkeK/1PPgCbwhf8F?=
+ =?us-ascii?Q?ztS2X/CuWA5I/52GbDx1XvcpWhUthmRN1KPYkwHCRmR5vHdvrF+KOU/HIhje?=
+ =?us-ascii?Q?B2rh5pisDxopLwjANSjpnbc16Hsfojn56RbAug0gL7dF6IekcHMnD5TOuvE2?=
+ =?us-ascii?Q?fhAGdWnffRJdiZjwI30=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH v3 00/15] KVM: Introduce KVM Userfault
-To: James Houghton <jthoughton@google.com>, Paolo Bonzini
-	<pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Oliver Upton
-	<oliver.upton@linux.dev>
-CC: Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, Yan Zhao
-	<yan.y.zhao@intel.com>, Anish Moorthy <amoorthy@google.com>, Peter Gonda
-	<pgonda@google.com>, Peter Xu <peterx@redhat.com>, David Matlack
-	<dmatlack@google.com>, <wei.w.wang@intel.com>, <kvm@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>
-References: <20250618042424.330664-1-jthoughton@google.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
- CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
- i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <20250618042424.330664-1-jthoughton@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D015EUB004.ant.amazon.com (10.252.51.13) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6455.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50dc1dd5-32a5-4385-6de7-08ddebd260bf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2025 16:44:55.4698
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zMU0i1hvDi3SHp7YmgwldaqXnjrkfonZBXQ2yaqr75gNU/6q1uiGAj5Nld2638cDEpiT+814Cigwrfz3skjkew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF9E162731D
+X-OriginatorOrg: intel.com
 
-
-
-On 18/06/2025 05:24, James Houghton wrote:
-> Hi Sean, Paolo, Oliver, + others,
-> 
-> Here is a v3 of KVM Userfault. Thanks for all the feedback on the v2,
-> Sean. I realize it has been 6 months since the v2; I hope that isn't an
-> issue.
-> 
-> I am working on the QEMU side of the changes as I get time. Let me know
-> if it's important for me to send those patches out for this series to be
-> merged.
-
-Hi Sean and others,
-
-Are there any blockers for merging this series?  We would like to use 
-the functionality in Firecracker for restoring guest_memfd-backed VMs 
-from snapshots via UFFD [1].  [2] is a Firecracker feature branch that 
-builds on top of KVM userfault, along with direct map removal [3], write 
-syscall [4] and UFFD support [5] in guest_memfd (currently in discussion 
-with MM at [6]) series.
-
-Thanks,
-Nikita
-
-[1]: 
-https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/handling-page-faults-on-snapshot-resume.md
-[2]: 
-https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding
-[3]: https://lore.kernel.org/kvm/20250828093902.2719-1-roypat@amazon.co.uk
-[4]: https://lore.kernel.org/kvm/20250902111951.58315-1-kalyazin@amazon.com
-[5]: https://lore.kernel.org/kvm/20250404154352.23078-1-kalyazin@amazon.com
-[6]: 
-https://lore.kernel.org/linux-mm/20250627154655.2085903-1-peterx@redhat.com
-
-> Be aware that this series will have non-trivial conflicts with Fuad's
-> user mapping support for guest_memfd series[1]. For example, for the
-> arm64 change he is making, the newly introduced gmem_abort() would need
-> to be enlightened to handle KVM Userfault exits.
-> 
-> Changelog:
-> v2[2]->v3:
-> - Pull in Sean's changes to genericize struct kvm_page_fault and use it
->    for arm64. Many of these patches now have Sean's SoB.
-> - Pull in Sean's small rename and squashing of the main patches.
-> - Add kvm_arch_userfault_enabled() in place of calling
->    kvm_arch_flush_shadow_memslot() directly from generic code.
-> - Pull in Xin Li's documentation section number fix for
->    KVM_CAP_ARM_WRITABLE_IMP_ID_REGS[3].
-> v1[4]->v2:
-> - For arm64, no longer zap stage 2 when disabling KVM_MEM_USERFAULT
->    (thanks Oliver).
-> - Fix the userfault_bitmap validation and casts (thanks kernel test
->    robot).
-> - Fix _Atomic cast for the userfault bitmap in the selftest (thanks
->    kernel test robot).
-> - Pick up Reviewed-by on doc changes (thanks Bagas).
-> 
-> Below is the cover letter from v1, mostly unchanged:
-> 
-> Please see the RFC[5] for the problem description. In summary,
-> guest_memfd VMs have no mechanism for doing post-copy live migration.
-> KVM Userfault provides such a mechanism.
-> 
-> There is a second problem that KVM Userfault solves: userfaultfd-based
-> post-copy doesn't scale very well. KVM Userfault when used with
-> userfaultfd can scale much better in the common case that most post-copy
-> demand fetches are a result of vCPU access violations. This is a
-> continuation of the solution Anish was working on[6]. This aspect of
-> KVM Userfault is important for userfaultfd-based live migration when
-> scaling up to hundreds of vCPUs with ~30us network latency for a
-> PAGE_SIZE demand-fetch.
-> 
-> The implementation in this series is version than the RFC[5]. It adds...
->   1. a new memslot flag is added: KVM_MEM_USERFAULT,
->   2. a new parameter, userfault_bitmap, into struct kvm_memory_slot,
->   3. a new KVM_RUN exit reason: KVM_MEMORY_EXIT_FLAG_USERFAULT,
->   4. a new KVM capability KVM_CAP_USERFAULT.
-> 
-> KVM Userfault does not attempt to catch KVM's own accesses to guest
-> memory. That is left up to userfaultfd.
-> 
-> When enabling KVM_MEM_USERFAULT for a memslot, the second-stage mappings
-> are zapped, and new faults will check `userfault_bitmap` to see if the
-> fault should exit to userspace.
-> 
-> When KVM_MEM_USERFAULT is enabled, only PAGE_SIZE mappings are
-> permitted.
-> 
-> When disabling KVM_MEM_USERFAULT, huge mappings will be reconstructed
-> consistent with dirty log disabling. So on x86, huge mappings will be
-> reconstructed, but on arm64, they won't be.
-> 
-> KVM Userfault is not compatible with async page faults. Nikita has
-> proposed a new implementation of async page faults that is more
-> userspace-driven that *is* compatible with KVM Userfault[7].
-> 
-> See v1 for more performance details[4]. They are unchanged in this
-> version.
-> 
-> This series is based on the latest kvm-x86/next.
-> 
-> [1]: https://lore.kernel.org/kvm/20250611133330.1514028-1-tabba@google.com/
-> [2]: https://lore.kernel.org/kvm/20250109204929.1106563-1-jthoughton@google.com/
-> [3]: https://lore.kernel.org/kvm/20250414165146.2279450-1-xin@zytor.com/
-> [4]: https://lore.kernel.org/kvm/20241204191349.1730936-1-jthoughton@google.com/
-> [5]: https://lore.kernel.org/kvm/20240710234222.2333120-1-jthoughton@google.com/
-> [6]: https://lore.kernel.org/all/20240215235405.368539-1-amoorthy@google.com/
-> [7]: https://lore.kernel.org/kvm/20241118123948.4796-1-kalyazin@amazon.com/#t
-> 
-> James Houghton (11):
->    KVM: Add common infrastructure for KVM Userfaults
->    KVM: x86: Add support for KVM userfault exits
->    KVM: arm64: Add support for KVM userfault exits
->    KVM: Enable and advertise support for KVM userfault exits
->    KVM: selftests: Fix vm_mem_region_set_flags docstring
->    KVM: selftests: Fix prefault_mem logic
->    KVM: selftests: Add va_start/end into uffd_desc
->    KVM: selftests: Add KVM Userfault mode to demand_paging_test
->    KVM: selftests: Inform set_memory_region_test of KVM_MEM_USERFAULT
->    KVM: selftests: Add KVM_MEM_USERFAULT + guest_memfd toggle tests
->    KVM: Documentation: Add KVM_CAP_USERFAULT and KVM_MEM_USERFAULT
->      details
-> 
-> Sean Christopherson (3):
->    KVM: x86/mmu: Move "struct kvm_page_fault" definition to
->      asm/kvm_host.h
->    KVM: arm64: Add "struct kvm_page_fault" to gather common fault
->      variables
->    KVM: arm64: x86: Require "struct kvm_page_fault" for memory fault
->      exits
-> 
-> Xin Li (Intel) (1):
->    KVM: Documentation: Fix section number for
->      KVM_CAP_ARM_WRITABLE_IMP_ID_REGS
-> 
->   Documentation/virt/kvm/api.rst                |  35 ++++-
->   arch/arm64/include/asm/kvm_host.h             |   9 ++
->   arch/arm64/kvm/Kconfig                        |   1 +
->   arch/arm64/kvm/mmu.c                          |  48 +++---
->   arch/x86/include/asm/kvm_host.h               |  68 +++++++-
->   arch/x86/kvm/Kconfig                          |   1 +
->   arch/x86/kvm/mmu/mmu.c                        |  13 +-
->   arch/x86/kvm/mmu/mmu_internal.h               |  77 +---------
->   arch/x86/kvm/x86.c                            |  27 ++--
->   include/linux/kvm_host.h                      |  49 +++++-
->   include/uapi/linux/kvm.h                      |   6 +-
->   .../selftests/kvm/demand_paging_test.c        | 145 ++++++++++++++++--
->   .../testing/selftests/kvm/include/kvm_util.h  |   5 +
->   .../selftests/kvm/include/userfaultfd_util.h  |   2 +
->   tools/testing/selftests/kvm/lib/kvm_util.c    |  42 ++++-
->   .../selftests/kvm/lib/userfaultfd_util.c      |   2 +
->   .../selftests/kvm/set_memory_region_test.c    |  33 ++++
->   virt/kvm/Kconfig                              |   3 +
->   virt/kvm/kvm_main.c                           |  57 ++++++-
->   19 files changed, 489 insertions(+), 134 deletions(-)
-> 
-> 
-> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-> --
-> 2.50.0.rc2.692.g299adb8693-goog
-> 
-
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
+> Alexander Lobakin
+> Sent: Tuesday, August 26, 2025 9:25 PM
+> To: intel-wired-lan@lists.osuosl.org
+> Cc: Lobakin, Aleksander <aleksander.lobakin@intel.com>; Kubiak, Michal
+> <michal.kubiak@intel.com>; Fijalkowski, Maciej
+> <maciej.fijalkowski@intel.com>; Nguyen, Anthony L
+> <anthony.l.nguyen@intel.com>; Kitszel, Przemyslaw
+> <przemyslaw.kitszel@intel.com>; Andrew Lunn <andrew+netdev@lunn.ch>;
+> David S. Miller <davem@davemloft.net>; Eric Dumazet
+> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
+> <pabeni@redhat.com>; Alexei Starovoitov <ast@kernel.org>; Daniel
+> Borkmann <daniel@iogearbox.net>; Simon Horman <horms@kernel.org>;
+> NXNE CNSE OSDT ITP Upstreaming
+> <nxne.cnse.osdt.itp.upstreaming@intel.com>; bpf@vger.kernel.org;
+> netdev@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [Intel-wired-lan] [PATCH iwl-next v5 01/13] xdp, libeth: make th=
+e
+> xdp_init_buff() micro-optimization generic
+>=20
+> Often times the compilers are not able to expand two consecutive 32-bit
+> writes into one 64-bit on the corresponding architectures. This applies t=
+o
+> xdp_init_buff() called for every received frame (or at least once per eac=
+h 64
+> frames when the frag size is fixed).
+> Move the not-so-pretty hack from libeth_xdp straight to xdp_init_buff(), =
+but
+> using a proper union around ::frame_sz and ::flags.
+> The optimization is limited to LE architectures due to the structure layo=
+ut.
+>=20
+> One simple example from idpf with the XDP series applied (Clang 22-git,
+> CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE =3D> -O2):
+>=20
+> add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-27 (-27)
+> Function                                     old     new   delta
+> idpf_vport_splitq_napi_poll                 5076    5049     -27
+>=20
+> The perf difference with XDP_DROP is around +0.8-1% which I see as more
+> than satisfying.
+>=20
+> Suggested-by: Simon Horman <horms@kernel.org>
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> ---
+>  include/net/libeth/xdp.h | 11 +----------
+>  include/net/xdp.h        | 28 +++++++++++++++++++++++++---
+>  2 files changed, 26 insertions(+), 13 deletions(-)
+>=20
+Tested-by: R,Ramu <ramu.r@intel.com>
 
