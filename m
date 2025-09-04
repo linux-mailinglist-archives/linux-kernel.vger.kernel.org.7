@@ -1,378 +1,512 @@
-Return-Path: <linux-kernel+bounces-799948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31BB4B43189
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:20:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C490B4318C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD35E5800D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:20:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2131B25681
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C521F4169;
-	Thu,  4 Sep 2025 05:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B609523D7C3;
+	Thu,  4 Sep 2025 05:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AZigOvc7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="pPAGSOeS"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5DEC8CE
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 05:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756963247; cv=fail; b=UVop//ggIP5Ex9KiSErvwHueQvtCgV8gSBWZbWCO0G/eBIp2Piy7JjXw5kalmshJ2XQxQfYWbx5km3tztuNZv6sHtZBdUKP/Tj7hRoj5qEnK7X6VsJGEcuOVgJGUOD7JUqEDVCFle05aCvuZkhNPuC+47t+G+GpAaHn0udnmDvY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756963247; c=relaxed/simple;
-	bh=RyFXP5NvuKX+wUNZHITKNL/pjGKuumCIz5jlsQ7RcU8=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=nrmH3Vuf47DnU/LNIKb4TnzNEypqfB2uc01GJv3juBEPWdV1VAypuEMP+vlEgwkPFDxNGWUJpUpIzi47oSCra6nHUPx5NudcFI21Li9Un2bCsz8c+JNWw2oIuJDWADp9uGZtm7omKJKlFW+1Myq+6KEwONfeV9dT7HIHJcyH0CE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AZigOvc7; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756963245; x=1788499245;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=RyFXP5NvuKX+wUNZHITKNL/pjGKuumCIz5jlsQ7RcU8=;
-  b=AZigOvc7HlblpJnWGpHWGI+CbmSXraZkkiqf9Sv6gjstEpGGsykvaKKL
-   Tw3T5G8V3APgJpZh2kb/IVbMZS+1/kuCwwq//7IMfdSKecf7YvltmfB4J
-   iITdmH6StuTjk4lcs0dnSyXV5o/5Jup00NUm0AyoiUeIQ89jOIZqP6QM2
-   t5GMp98jpeGapyQMydUkHWrXfcWs35z/iZ17lqdhXdsKEq+5DoZZQ5wHs
-   bcX7kmaWpmifqdDUYRmPoMI0tVlkTYCWDbaMEgaGbvd5aSHtqrkBehmIX
-   Ovy0an2jswBue8ZV0UoMDj3/Uw64T8a00oaOYWmgc8KN+sj20V5qUZUQG
-   w==;
-X-CSE-ConnectionGUID: yfXHvox6RqGuRjkrbHET3A==
-X-CSE-MsgGUID: yniN3+ziQZK49WXSPbK65g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="63116058"
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="63116058"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 22:20:44 -0700
-X-CSE-ConnectionGUID: 7F1lEJY/SZCrL1963bNwqg==
-X-CSE-MsgGUID: LF9Nz5eVSWCbWtdqH8K8eg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="172240343"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 22:20:44 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 3 Sep 2025 22:20:43 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Wed, 3 Sep 2025 22:20:43 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.88)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 3 Sep 2025 22:20:43 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cs4UaCLsswbJod+hheGIsEEmNjId7qGFBItmuyA2m66J4oZi/yGcKKvgWXoUN0FOgVrgOSlzlBT/dzpBsPNwMfswXMpgZ+p9IJjNKgjJh7DNrUJqGSAaQarSbtBko1UCOqHxUJk45Z2P2uZO4mafXyKngYBs/+wWqqHmcdjpUzkXFZMisbKi73kXsx0/tbxzpH/QNYIsjO/5IGxT4+MrI5YdvWIhBQSFT5xC8aqoRQR5Jd6tVV9ZcL+lIpkJ6/pXQUCaTXBcUDBKGxxrMX9/8OEZmPR/gHwvhsJ7QOWfkwmygmw5WyRrb7O+ysk3bK/t2vNYmHkGVzj+u9W98j52ng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uf+17bEZHZMMnk6pBFwOxSU9FiHj/i3uqxxIu+deeOc=;
- b=MuSbQZPRTQVFVuEEb1/VqHi1lTBE55YyyIhKwuP5LP+X+SSDfKH1xd8+b3jamWwOsPWbbmNNoaxf/qipTHP8pTV/i8yHCT6boZ58kMuR873os2TME8kJvLad2nES4kuFeNTBQNSEHP+eX7gkregcrbj25j2TgC9M6A+Bw0x2sPG9eyEEDgSRnrX333MAWUCHuhqm4wO/16Ghxedyu0L5xuPCo97k4KX9XxhL0gKjZTgJzE43Pal/volKZyC1D5KMGfqn8dNT09BiqSOsH+BZcFthIhygn5vZnCOSgvn9LaeSdn16OejT/FGQGfQxv3nSlTUD+CG6najLWFOejZLs8w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by CO1PR11MB4818.namprd11.prod.outlook.com (2603:10b6:303:93::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Thu, 4 Sep
- 2025 05:20:41 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.9094.016; Thu, 4 Sep 2025
- 05:20:39 +0000
-Date: Thu, 4 Sep 2025 13:20:30 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, Vlastimil Babka
-	<vbabka@suse.cz>, <maple-tree@lists.infradead.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <oliver.sang@intel.com>
-Subject: [vbabka:slub-percpu-sheaves-v6r2] [maple_tree] 99848157f7:
- WARNING:possible_circular_locking_dependency_detected
-Message-ID: <202509041248.b7ece14a-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SG2PR01CA0184.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::9) To SJ2PR11MB8587.namprd11.prod.outlook.com
- (2603:10b6:a03:568::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7701D22C355;
+	Thu,  4 Sep 2025 05:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756963400; cv=none; b=S00i+sKYKYcUJH6xad2Obmdfsgm56ww6ja9MRGZJMsfd1MozkGYHYV4Jb+gsftF6Ozi/jnIv1ZIdU+viAlHSzXzNhzSMo0XEiJiQRYn3+/mQ4L/+4n8g2MZcOZjw9K8o4JjV3UCQvdIC1llbs37oPgXp2vJrZlrUACZomnoKCyU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756963400; c=relaxed/simple;
+	bh=9Ncc76f7r6X3/WIpidg9syWc+9qLbxJ6LwGkKPfzdB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aMyuSikSYx9xcAR13HHscDBIY+DF9UZuHRcmfX/R9uHoTiTaAQHOsdvbJKb4zUTiUZiUoAOvYpRPM/Uy6AVcX6xnWxFAoCWGDDYSy7OnCk+h+FJ3TQLcpuwIScX59WS/JivBJuFZe9udLBDc9pl2Y62W8aYN0f0MB1Dj/P0Af+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au; spf=pass smtp.mailfrom=gandalf.ozlabs.org; dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b=pPAGSOeS; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gandalf.ozlabs.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=gibson.dropbear.id.au; s=202508; t=1756963393;
+	bh=FxWP4Q8hke5JPl6divIUiMrs2seCWXdaxgvLompvkXg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pPAGSOeSmZpvSEk5yaJGKSi2CahX0YI0xPartYDKpMN4KvNKrqF78HAuIxQmipcqc
+	 b/pmOQOJV0oD+ltSSKlL8dD3qQthCg+RDHB+i4rJPirzhgreuO/Rkljymo4ZlFV4Be
+	 PeZog0qlJ3PmVwa42DJm30o3L/jj7tnXJc0uSDDqAZObLUcV+iX5d5428PTnAx0FC6
+	 8OdVn8s/xVrtwYu4LtOnGYSRwBHz3+3NzYBDIBewBuDcKJbjUi8xhuVQ8KcDp4pD2z
+	 H4aO4ZG775xZJtKlV7NzjVIlmGGDCobARNkFB4TtqH9ruHNa8Y0uQyQEe7uKplcmQS
+	 n0zFR4zihhs0g==
+Received: by gandalf.ozlabs.org (Postfix, from userid 1007)
+	id 4cHSYY37f4z4wB5; Thu,  4 Sep 2025 15:23:13 +1000 (AEST)
+Date: Thu, 4 Sep 2025 15:23:01 +1000
+From: David Gibson <david@gibson.dropbear.id.au>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>, Ayush Singh <ayush@beagleboard.org>,
+	Jason Kridner <jkridner@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>, Andrew Davis <afd@ti.com>
+Subject: Re: Device tree representation of (hotplug) connectors: discussion
+ at ELCE
+Message-ID: <aLkiNdGIXsogC6Rr@zatzit>
+References: <20250902105710.00512c6d@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|CO1PR11MB4818:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0a71a18e-987b-4a39-dda6-08ddeb72c8c2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?g64Spw7hwo+GSOCK/eCho8z/F8BGg8Ax2HobBmIltDiqyzcS6briCqF+TM0Y?=
- =?us-ascii?Q?k1gSOEe/azUk+Z+O0BPnlQRWd83FjAZMro1V9KvLVFOLr5qOoETrx4oWuAai?=
- =?us-ascii?Q?ZP/przUv/sudl3Z8GJBPwud0i/ryt0/jfDYfGJcFMDFfoLIg1eIJ+v9olRfo?=
- =?us-ascii?Q?mOvKmlX/hs14cSZwDDvQ6+B6S3lthS8SFJXNHMtYAgemxaGHbSKtgjWSUZTp?=
- =?us-ascii?Q?GeCV3fYiEYc0HK9FR8wxoTRV50F0Dsd7B8vXE0P5IyoVv7+0PfkZbLvH9+E3?=
- =?us-ascii?Q?+3j/zMv4kZ3oLIwB7Tlr8dEUbYaJGgmfo9WKlVnZ421NntnKN+A9SbQt5bz8?=
- =?us-ascii?Q?cD7FM3+T0oaS62UuQggKOu+ChPeV2TIdmeF8xGVnnYfgzyXn5pH1UHfCR500?=
- =?us-ascii?Q?TSy8P1epdaUzm7zIdEcYKB5Wvnjs+ZMETaNjuNWk1uNiCBmtzNYoev6Cx5i1?=
- =?us-ascii?Q?qrx/9q1VxJGJT1jYeiuyffJu7qWXjVUGbzYT4VkfT920iWlJw+IBcJNxi5SQ?=
- =?us-ascii?Q?+roYKwHR+qKoKXa75FbkpEup4mW2W++Ka2HJbYM6/LP9KOHJqRZ8w2I4SbG7?=
- =?us-ascii?Q?QW+BjjSMG0Sx6B0bnblMi2x0m2egZ0rYzaq9J1SGoUpfhGQRW5/0E7MJ7y0n?=
- =?us-ascii?Q?eVGpHZVHOTf+MhSdUOmZ9olE6JUaJNCLtvPhiknOR/zgh8CyJ6oaxGp6Cvz5?=
- =?us-ascii?Q?UXS8s1Tt/T7RL8a2SO5wGsokL3zx/T+0RxbUbbSCyxWQq7NmEbBWeDA2ShqK?=
- =?us-ascii?Q?qVLrvDO5xRNxvBdRLgW42QiajiMYArxxcMuHUBd8SN+iDqTxg7cA8h5NzIGo?=
- =?us-ascii?Q?S6gdxvTlxXeAEGuiQUNcp6NFW4UowIT9gjJAM6yAb74KdPUt9m6d2gY4kmNo?=
- =?us-ascii?Q?4m04wB1ruvqoaL5VQ8F9fmCoPGo3I5UTSZDvszSyWm70gBDzd90LT8bvsFLH?=
- =?us-ascii?Q?O5fb33NJsblm8U/AuLaR09ytXeAr1jcRCv0liEd/ISFDshva9PF/mBu8rOkZ?=
- =?us-ascii?Q?fb+4mkH6L7UufBU2EfUmHp2cGKKo/pBTz9MnKnY2y1oVBWIG17S2xzXTTMNF?=
- =?us-ascii?Q?Rpu1K5dh6JX21FmgEgRHVcCc42WCPrgXCZfyXt5CIfPipmMB4eXuEyJXNhxF?=
- =?us-ascii?Q?Fgoo0XDCtN7S5MQLMEQe+nUZdl7+Bkyr1qd/frNlDS5nFOqnfBlMq1xf4kiW?=
- =?us-ascii?Q?I1qmF5TaLqJ1q4PlYQR1YZl7tcYrzcqX8r+DT0HjyLj83b3aD2F7K4yVW1Ys?=
- =?us-ascii?Q?6ff3ziNsPguSNRKZOqNQh89TZpPVuZEWMr7dLHYvt88Gh6V/A8RNCXfNRwSf?=
- =?us-ascii?Q?VADhGt345Mlqj5CVHDmn8LEgwqxlN7nzFcbB4YF7/VXmW2VhBT71FXo+OjpH?=
- =?us-ascii?Q?IFzW+0zwUL16d51cHRikxs6RUMiC?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ELx411ZdiSB9Zb30xusdmp/pX6ZO82Z6np6glFU/FJE+4E8i6zopokkztIXA?=
- =?us-ascii?Q?By5jOoNYMjfDzfHiPM2fpo/Ddo9Ev+U7t8p38j6djsizYM6Bb1IMX/KxNZeh?=
- =?us-ascii?Q?lXV6Io2cFm9Xvs0od3FCW0hQUxA7UjQ8ABD8RSqzn+cRqs4FCXAMdnQz3Rvz?=
- =?us-ascii?Q?n9XzVRs78ldmZdfcyl+0mISfas24vXMEO99bvx0iI+nXufjoQSf3tmwJIOtx?=
- =?us-ascii?Q?SHXFTIut260kyov06WrbgYckYA3Evd1eVPqpYQ56PQcahjMR8oERi2XdnjTl?=
- =?us-ascii?Q?OmYDa2SOGHTKMrieQJc73JhORBhkRBJ0r/0kjSxJyiMCY7InvHUJYGtnegL/?=
- =?us-ascii?Q?2jEPmYKebfcpqTDD5LCJt5vnCC93LovS4VQ9Sp2a+QFHafuKZMDGMeAonfjw?=
- =?us-ascii?Q?cV4Ac2u7bsQ0swx9gzSFjGQJPgScPWZbH7FmKgNwjLT6iAIgCpflp7CWjlA0?=
- =?us-ascii?Q?WiP9gC/qSKLLd9gN2F+DisrNWAzI0K249+tyEWjEFNX0dwu9VgfJH4QzrZMH?=
- =?us-ascii?Q?L0IeBH4MkfvMb5R6Fv9qBPxvKE3Q1V8eyYyJwIeNbmdFPPaAQCk80IRkx82V?=
- =?us-ascii?Q?UobjeRC+WXCBfu1H51x0R0R9CetI0xjoF+o/IPaFbGTnzk7xvRvF6BUNIEsc?=
- =?us-ascii?Q?BCtmDnpF6Z1hMb3OXM7qC6hIMKJxzokaQ9pTnQL1RSeFwjqKdePv4As89QVL?=
- =?us-ascii?Q?x15ST/zKZ0Xby7/i29Xnj1uP2cxvqEFVZXQdDczwGQB3NEOaeCq2xdZjw2iD?=
- =?us-ascii?Q?0MMhxCN9UrlgAvYDamuDZVTnyqK7yM5Y/kFd5BfU++Oqb0aiFFJRYDwr1CXG?=
- =?us-ascii?Q?3awLzhVjO/wNARAH46W58vVsn4iNNthfZO8w2IVpb3KOfcxZMfsAOxPdmQl6?=
- =?us-ascii?Q?HG2Tw6UEv9jMF2ogZ4zj9XqfuldS+hk2FR3hKCA99W/WTtndbgQy0BZ0sF28?=
- =?us-ascii?Q?QbugCS/dfO0XtrmCmfX+PxnUJIA5gvqwdMHWgZ4+7uVU23pt0UNC3cvPzRMH?=
- =?us-ascii?Q?Lk01KeieHuvNWtMiH+GnurD/qu64iQf0e/SGkNTfPZMqoXSCl2AsdV+RZLGz?=
- =?us-ascii?Q?McX527oYV2PM+3OgztWo6drf9a2afyeFM2Ne9HQABzfqXMLEPLHL7z1XIjWH?=
- =?us-ascii?Q?HXbvbJT/+cjMvCMdRFvbVlp/XLgKYV+rbyAxyunwrKEcNL/kBIjUQw9ZH7Nt?=
- =?us-ascii?Q?7y+KCx1rjmIjMQLW4pwku3GQb7TNQNLV6Og5rSpTAx5MiVQPGNzeikSTSxBT?=
- =?us-ascii?Q?oF+VLxkPa9iSTcYNjCgbHiSU80R9U3aGr62yY5H9TI8ee6XOUMC+ZeHzp4Vm?=
- =?us-ascii?Q?0PDaAaQqIgA8nTQInNxBz2uF+NbvHeSr1UfbHgZTn7gg1Zpoa1xYQ87vGciN?=
- =?us-ascii?Q?xd/ZeqEtyjGoIa4emGzxcfFalM5zKzuI41ZQlLukipKzUvbwl9C4CWpRKOPn?=
- =?us-ascii?Q?1fWSGxWfjVN/vml8VxibNI+lIJTQebPMAz4dlNXGEZQY5bLxMxBMSlY1S7os?=
- =?us-ascii?Q?zpgqC2IYCjO/Idl549kaDVqm+fGHxfLMH6ItP5hsnCV2ya+a+hVPOKi/Fv5n?=
- =?us-ascii?Q?J5hb8nUQlkPPvAMvNlVb4Eal/8VnrivWNly0WYrAwS+l66//oFgRkslO0EYq?=
- =?us-ascii?Q?vA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a71a18e-987b-4a39-dda6-08ddeb72c8c2
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB8587.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 05:20:39.7112
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RKD69uvrkm+bhsPw+Dad7tfi4RSC7ugVr6x7u2IV2q8Sp/5p9kWA+gInQ4PCorVx/yYrwglc8lMuPrEe8cWjPA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4818
-X-OriginatorOrg: intel.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Bfxbpu956IhQajja"
+Content-Disposition: inline
+In-Reply-To: <20250902105710.00512c6d@booty>
 
 
+--Bfxbpu956IhQajja
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Sep 02, 2025 at 10:57:10AM +0200, Luca Ceresoli wrote:
+> Hello,
+>=20
+> [this main was co-written by Herv=E9 and Luca]
+>=20
+> Herv=E9 and I are working since 1+y to allow describing hot-pluggable
+> add-ons and their connectors with device tree overlays. Our work is not
 
-kernel test robot noticed "WARNING:possible_circular_locking_dependency_detected" on:
+So.. I think this is a poor way of framing the question.  Device tree
+overlays were, frankly, a quick hack to get some sort device tree
+variability happening.  They were pretty easy to implement, but they
+have a bunch of limitations.  Then, as such things so often are, they
+were used and overused.
 
-commit: 99848157f71c03ca5e975b0e686def1d66e8b19f ("maple_tree: Sheaf conversion")
-https://git.kernel.org/cgit/linux/kernel/git/vbabka/linux.git slub-percpu-sheaves-v6r2
+IMO, a lot of the problems being encountered now are really those
+fundamental limitations of the overlay approach.  Trying to address
+them "with device tree overlays" is constraining you to a poorly
+thought out approach, adding hacks on top of hacks.
 
-in testcase: rcuscale
-version: 
-with following parameters:
+I proposed a possible "connector" format years ago (which I still
+think could do with renewed consideration) as an *alternative to*
+device tree overlays, not as an extension of them.
 
-	runtime: 300s
-	scale_type: rcu
+> very much progressing because discussions about device tree bindings
+> has raised some issue that are not obvious to solve.
+>=20
+> This e-mail is a report of the efforts we did last week during the
+> Embedded Linux Conference Europe to try to address the currently
+> blocking issues.
+>=20
+> First, I gave a talk about the overall hotplug work, to provide a
+> status update but also to clarify the goals and use cases. Slides are
+> available at [2]. Goals include:
+>=20
+> - decoupling base board and add-on, so an addon can have a single dtbo
+>   valid for any base board, and vice versa
 
+Good goal.  This one can be somewhat addressed within the dtbo format
+(e.g. the 'export-symbols' proposal').  However doing so leans into
+the limitations of the dtbo format, which I think won't serve you
+well.
 
+> - supporting main boards with multiple connectors where multiple
+>   instances of the same addon model can be connected independently
 
-config: x86_64-randconfig-075-20250831
-compiler: gcc-12
-test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+Such as right here.  The basic overlay approach is really badly
+suited to this.
 
-(please refer to attached dmesg/kmsg for entire log/backtrace)
+> - allowing overlay insertion and removal at runtime (hotplug)
 
+Again, I think that's poor framing.  You want to be able to insert and
+remove things into connectors.  Thinking of that as inserting and
+removing overlays hotplug limits you to crappy solutions.  The basic
+definition of overlay application is fundmentally lossy - making them
+removable requires a pile of ugly hacks.  Better to look at an
+approach at a different semantic layer.
 
+> The first goal implies that addon overlays do not refer to anything
+> (phandles) beyond the connector node.
+>=20
+> The talk has attracted a lot of people. All seats in the 200+ room were
+> taken, and when I asked who has a connector use case about 40-50
+> attendeed raised their hands. I also had several questions asked after
+> the talk and in the hallway.
+>=20
+> After the talk we had planned a discussion about the topic. Krzysztof
+> Kozlowski was present in person (thanks!), while Ayush Singh and
+> Wolfram Sang connected remotely. Jason Kridner (beagleboard.org) and
+> Geert Uytterhoeven were present and actively constributing to the
+> discussion. Unfortunately Rob Herring was not connected, but still we
+> tried to make the best out of the discussion. So we focused on
+> discussing the current proposals to go past the issues with our
+> export-symbols proposal raised mainly by Rob.
+>=20
+> Here is a summary of the ideas we have discussed, in order from
+> simplest discussion (looking like not doable) to most complex (which
+> look like doable).
+>=20
+> ---------------------------------------------------------------------
+>=20
+> Idea #1: Label on __overlay__
+> Proposed by Rob in [0]
+>=20
+> > Couldn't we make something like this work:
+> >
+> > connector: __overlay__ {
+> >    node {
+> >       foo-gpio =3D <&connector 0 GPIO_ACTIVE_HIGH>;
+> >    };
+> > };
+>=20
+> This would be OK for simple cases but it only allows exporting one
+> label, for the connector (i.e. the overlay target node). More than one
+> label need to be referenced from the overlay for cases such as:
+>=20
+> - pinmux, where each pinmux configuration is a node, and is defined
+>   in the pinmux node outside of the connector
+> - HDMI ddc-i2c property, for HDMI chips in the overlay which needs to
+>   point at an I2C adapter in the base tree
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202509041248.b7ece14a-lkp@intel.com
+Even wiring up plain old interrupts could be hard with this approach.
+It's also not clear how it would be encoded in the dtb.
+=20
+> ---------------------------------------------------------------------
+>=20
+> Idea #2: add /export/ keyword to mark labels to be exported
+> Proposed by Rob in [1]
+>=20
+> The idea is to mark modes in the base tree that can be referenced by
+> overlays:
+>=20
+> > /export/ label: node {
+> > };
+> >
+> > And then __symbols__ can be only those exported labels (unless -@ is us=
+ed).
+>=20
+> This is an opt-in version of the "global" __symbols__ to limit the
+> issues __symbols__ introduces. However it is not sufficient for
+> connectors because it tells what can be exported but not on which
+> connector. Also, overlays would need to refer to the nodes in the main
+> tree, thus not decoupling mainboard and addon.
 
+Sounds like a strictly worse version of export-symbols.
 
-[   17.413963][   T74] WARNING: possible circular locking dependency detected
-[   17.414491][   T74] 6.17.0-rc3-00017-g99848157f71c #1 Not tainted
-[   17.414936][   T74] ------------------------------------------------------
-[   17.415483][   T74] systemd-cryptse/74 is trying to acquire lock:
-[ 17.415965][ T74] ffffffffb02789c0 (fs_reclaim){+.+.}-{0:0}, at: prepare_alloc_pages+0xd5/0x23d 
-[   17.416782][   T74]
-[   17.416782][   T74] but task is already holding lock:
-[ 17.417298][ T74] ffff88812925dbf8 (&mapping->i_mmap_rwsem){++++}-{4:4}, at: vma_prepare (mm/vma.c:296) 
-[   17.418021][   T74]
-[   17.418021][   T74] which lock already depends on the new lock.
-[   17.418021][   T74]
-[   17.418779][   T74]
-[   17.418779][   T74] the existing dependency chain (in reverse order) is:
-[   17.419530][   T74]
-[   17.419530][   T74] -> #1 (&mapping->i_mmap_rwsem){++++}-{4:4}:
-[ 17.420152][ T74] validate_chain (kernel/locking/lockdep.c:3285 kernel/locking/lockdep.c:3908) 
-[ 17.420562][ T74] __lock_acquire (kernel/locking/lockdep.c:5237) 
-[ 17.420968][ T74] lock_acquire (kernel/locking/lockdep.c:470 kernel/locking/lockdep.c:5870) 
-[ 17.421364][ T74] down_write (kernel/locking/rwsem.c:1315 kernel/locking/rwsem.c:1326 kernel/locking/rwsem.c:1591) 
-[ 17.421735][ T74] dma_resv_lockdep (include/linux/fs.h:557 drivers/dma-buf/dma-resv.c:798) 
-[ 17.422159][ T74] do_one_initcall (init/main.c:1269) 
-[ 17.422573][ T74] do_initcalls (init/main.c:1330 init/main.c:1347) 
-[ 17.423031][ T74] kernel_init_freeable (init/main.c:1583) 
-[ 17.423481][ T74] kernel_init (init/main.c:1471) 
-[ 17.423840][ T74] ret_from_fork (arch/x86/kernel/process.c:154) 
-[ 17.424211][ T74] ret_from_fork_asm (arch/x86/entry/entry_64.S:258) 
-[   17.424612][   T74]
-[   17.424612][   T74] -> #0 (fs_reclaim){+.+.}-{0:0}:
-[ 17.425162][ T74] check_noncircular (kernel/locking/lockdep.c:2179) 
-[ 17.425561][ T74] check_prev_add (kernel/locking/lockdep.c:3166) 
-[ 17.425954][ T74] validate_chain (kernel/locking/lockdep.c:3285 kernel/locking/lockdep.c:3908) 
-[ 17.426681][ T74] __lock_acquire (kernel/locking/lockdep.c:5237) 
-[ 17.427085][ T74] lock_acquire (kernel/locking/lockdep.c:470 kernel/locking/lockdep.c:5870) 
-[ 17.427458][ T74] __fs_reclaim_acquire (mm/page_alloc.c:4235) 
-[ 17.427840][ T74] prepare_alloc_pages+0xd5/0x23d 
-[ 17.428255][ T74] __alloc_frozen_pages_noprof (mm/page_alloc.c:5137) 
-[ 17.428658][ T74] alloc_slab_page (mm/slub.c:2990) 
-[ 17.428987][ T74] allocate_slab (mm/slub.c:3155) 
-[ 17.429316][ T74] ___slab_alloc (mm/slub.c:4406 (discriminator 3)) 
-[ 17.429757][ T74] __kmem_cache_alloc_bulk (mm/slub.c:6757) 
-[ 17.430188][ T74] refill_sheaf (mm/slub.c:2571) 
-[ 17.430554][ T74] kmem_cache_return_sheaf (mm/slub.c:5174 (discriminator 1)) 
-[ 17.430998][ T74] mas_destroy (lib/maple_tree.c:5384) 
-[ 17.431366][ T74] mas_store_prealloc (lib/maple_tree.c:5292 (discriminator 4)) 
-[ 17.431789][ T74] commit_merge (mm/vma.c:767) 
-[ 17.432172][ T74] vma_expand (mm/vma.c:1158) 
-[ 17.432530][ T74] vma_merge_new_range (mm/vma.c:1095 (discriminator 1)) 
-[ 17.433237][ T74] __mmap_region (mm/vma.c:2664) 
-[ 17.433621][ T74] mmap_region (mm/vma.c:2739) 
-[ 17.433987][ T74] do_mmap (mm/mmap.c:559) 
-[ 17.434342][ T74] vm_mmap_pgoff (mm/util.c:582) 
-[ 17.434736][ T74] ksys_mmap_pgoff (mm/mmap.c:606) 
-[ 17.435128][ T74] do_int80_emulation (arch/x86/entry/syscall_32.c:83 arch/x86/entry/syscall_32.c:172) 
-[ 17.435557][ T74] asm_int80_emulation (arch/x86/include/asm/idtentry.h:626) 
-[   17.436031][   T74]
-[   17.436031][   T74] other info that might help us debug this:
-[   17.436031][   T74]
-[   17.436803][   T74]  Possible unsafe locking scenario:
-[   17.436803][   T74]
-[   17.437381][   T74]        CPU0                    CPU1
-[   17.437800][   T74]        ----                    ----
-[   17.438213][   T74]   lock(&mapping->i_mmap_rwsem);
-[   17.438614][   T74]                                lock(fs_reclaim);
-[   17.439118][   T74]                                lock(&mapping->i_mmap_rwsem);
-[   17.439737][   T74]   lock(fs_reclaim);
-[   17.440045][   T74]
-[   17.440045][   T74]  *** DEADLOCK ***
-[   17.440045][   T74]
-[   17.440668][   T74] 2 locks held by systemd-cryptse/74:
-[ 17.441085][ T74] #0: ffff88813b6a9d48 (&mm->mmap_lock){++++}-{4:4}, at: vm_mmap_pgoff (include/linux/mmap_lock.h:415 mm/util.c:578) 
-[ 17.441777][ T74] #1: ffff88812925dbf8 (&mapping->i_mmap_rwsem){++++}-{4:4}, at: vma_prepare (mm/vma.c:296) 
-[   17.442517][   T74]
-[   17.442517][   T74] stack backtrace:
-[   17.443019][   T74] CPU: 0 UID: 0 PID: 74 Comm: systemd-cryptse Not tainted 6.17.0-rc3-00017-g99848157f71c #1 PREEMPT(full)
-[   17.443875][   T74] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[   17.444619][   T74] Call Trace:
-[   17.444877][   T74]  <TASK>
-[ 17.445101][ T74] print_circular_bug (kernel/locking/lockdep.c:2046) 
-[ 17.445469][ T74] check_noncircular (kernel/locking/lockdep.c:2179) 
-[ 17.445823][ T74] ? add_chain_block (kernel/locking/lockdep.c:3442) 
-[ 17.446245][ T74] check_prev_add (kernel/locking/lockdep.c:3166) 
-[ 17.446608][ T74] validate_chain (kernel/locking/lockdep.c:3285 kernel/locking/lockdep.c:3908) 
-[ 17.446960][ T74] __lock_acquire (kernel/locking/lockdep.c:5237) 
-[ 17.447332][ T74] ? prepare_alloc_pages+0xd5/0x23d 
-[ 17.447831][ T74] lock_acquire (kernel/locking/lockdep.c:470 kernel/locking/lockdep.c:5870) 
-[ 17.448188][ T74] ? prepare_alloc_pages+0xd5/0x23d 
-[ 17.448649][ T74] ? lookup_chain_cache (kernel/locking/lockdep.c:3801 (discriminator 1)) 
-[ 17.449018][ T74] __fs_reclaim_acquire (mm/page_alloc.c:4235) 
-[ 17.449456][ T74] ? prepare_alloc_pages+0xd5/0x23d 
-[ 17.449923][ T74] prepare_alloc_pages+0xd5/0x23d 
-[ 17.450400][ T74] __alloc_frozen_pages_noprof (mm/page_alloc.c:5137) 
-[ 17.450855][ T74] ? __alloc_pages_slowpath+0xa4d/0xa4d 
-[ 17.451376][ T74] ? lock_is_held_type (kernel/locking/lockdep.c:5601 kernel/locking/lockdep.c:5940) 
-[ 17.451778][ T74] ? find_held_lock (kernel/locking/lockdep.c:5350) 
-[ 17.452142][ T74] ? mark_lock (kernel/locking/lockdep.c:4731 (discriminator 3)) 
-[ 17.452492][ T74] alloc_slab_page (mm/slub.c:2990) 
-[ 17.452912][ T74] allocate_slab (mm/slub.c:3155) 
-[ 17.453271][ T74] ___slab_alloc (mm/slub.c:4406 (discriminator 3)) 
-[ 17.453601][ T74] ? lock_acquire (kernel/locking/lockdep.c:470 kernel/locking/lockdep.c:5870) 
-[ 17.453949][ T74] ? refill_sheaf (mm/slub.c:2571) 
-[ 17.454278][ T74] ? mark_lock (kernel/locking/lockdep.c:4731 (discriminator 3)) 
-[ 17.454611][ T74] ? mark_held_locks (kernel/locking/lockdep.c:4325) 
-[ 17.454987][ T74] __kmem_cache_alloc_bulk (mm/slub.c:6757) 
-[ 17.455387][ T74] refill_sheaf (mm/slub.c:2571) 
-[ 17.455731][ T74] kmem_cache_return_sheaf (mm/slub.c:5174 (discriminator 1)) 
-[ 17.456221][ T74] mas_destroy (lib/maple_tree.c:5384) 
-[ 17.456575][ T74] mas_store_prealloc (lib/maple_tree.c:5292 (discriminator 4)) 
-[ 17.456968][ T74] ? mas_store (lib/maple_tree.c:5292) 
-[ 17.457303][ T74] ? __mas_set_range (include/linux/maple_tree.h:755 (discriminator 20)) 
-[ 17.457685][ T74] commit_merge (mm/vma.c:767) 
-[ 17.458038][ T74] ? vma_complete (mm/vma.c:731) 
-[ 17.458384][ T74] ? lock_is_held_type (kernel/locking/lockdep.c:5601 kernel/locking/lockdep.c:5940) 
-[ 17.458757][ T74] vma_expand (mm/vma.c:1158) 
-[ 17.459090][ T74] ? unmap_region (mm/vma.c:1121) 
-[ 17.459519][ T74] ? can_vma_merge_right (mm/vma.c:197 mm/vma.c:440) 
-[ 17.459890][ T74] vma_merge_new_range (mm/vma.c:1095 (discriminator 1)) 
-[ 17.460253][ T74] __mmap_region (mm/vma.c:2664) 
-[ 17.460604][ T74] ? __mmap_new_vma (mm/vma.c:2641) 
-[ 17.460977][ T74] ? inc_stack_record_count (include/linux/refcount.h:290 include/linux/refcount.h:312 mm/page_owner.c:216) 
-[ 17.461414][ T74] ? lock_is_held_type (kernel/locking/lockdep.c:5601 kernel/locking/lockdep.c:5940) 
-[ 17.461808][ T74] ? mas_prev_slot (lib/maple_tree.c:4369) 
-[ 17.462190][ T74] ? mas_prev_slot (lib/maple_tree.c:5664) 
-[ 17.462586][ T74] ? lock_is_held_type (kernel/locking/lockdep.c:5601 kernel/locking/lockdep.c:5940) 
-[ 17.463001][ T74] mmap_region (mm/vma.c:2739) 
-[ 17.463353][ T74] ? generic_file_readonly_mmap (mm/filemap.c:3852) 
-[ 17.463779][ T74] do_mmap (mm/mmap.c:559) 
-[ 17.464082][ T74] ? __get_unmapped_area (mm/mmap.c:339) 
-[ 17.464468][ T74] ? tracer_preempt_on (kernel/trace/trace_irqsoff.c:689) 
-[ 17.464878][ T74] vm_mmap_pgoff (mm/util.c:582) 
-[ 17.465244][ T74] ? randomize_page (mm/util.c:568) 
-[ 17.465615][ T74] ksys_mmap_pgoff (mm/mmap.c:606) 
-[ 17.466035][ T74] do_int80_emulation (arch/x86/entry/syscall_32.c:83 arch/x86/entry/syscall_32.c:172) 
-[ 17.466429][ T74] asm_int80_emulation (arch/x86/include/asm/idtentry.h:626) 
-[   17.466827][   T74] RIP: 0023:0xf7f95cb0
-[ 17.467133][ T74] Code: 4c 24 34 89 44 24 0c 8b 44 24 44 8b 54 24 38 8b 74 24 3c 8b 7c 24 40 a9 ff 0f 00 00 75 1c c1 e8 0c 89 c5 b8 c0 00 00 00 cd 80 <3d> 00 f0 ff ff 77 21 83 c4 1c 5b 5e 5f 5d c3 90 83 c4 1c b8 ea ff
-All code
-========
-   0:	4c 24 34             	rex.WR and $0x34,%al
-   3:	89 44 24 0c          	mov    %eax,0xc(%rsp)
-   7:	8b 44 24 44          	mov    0x44(%rsp),%eax
-   b:	8b 54 24 38          	mov    0x38(%rsp),%edx
-   f:	8b 74 24 3c          	mov    0x3c(%rsp),%esi
-  13:	8b 7c 24 40          	mov    0x40(%rsp),%edi
-  17:	a9 ff 0f 00 00       	test   $0xfff,%eax
-  1c:	75 1c                	jne    0x3a
-  1e:	c1 e8 0c             	shr    $0xc,%eax
-  21:	89 c5                	mov    %eax,%ebp
-  23:	b8 c0 00 00 00       	mov    $0xc0,%eax
-  28:	cd 80                	int    $0x80
-  2a:*	3d 00 f0 ff ff       	cmp    $0xfffff000,%eax		<-- trapping instruction
-  2f:	77 21                	ja     0x52
+> ---------------------------------------------------------------------
+>=20
+> Idea #3: label on empty (*) node
+> (*) until overlay applied
+> Proposed by Herv=E9 at LPC2024 in a discussion with Krzysztof, later
+> abandoned
+>=20
+> This is based on Idea #1 but tries to make HDMI ddc-i2c work:
+>=20
+> connector1: connector1 {
+>     #gpio-cells =3D <2>;
+>     gpio-map =3D <0 0 &soc_gpio 12 0>;
+>     gpio-map-mask =3D <0xf 0x0>;
+>     gpio-map-pass-thru =3D <0x0 0xf>;
+>=20
+>     i2c8: i2c-hdmi {                [**]
+>       i2c-parent =3D <&soc_i2c8>;
+>     }
+> };
+>=20
+> connector: __overlay__ {
+>    node {
+>       foo-gpio =3D <&connector 0 GPIO_ACTIVE_HIGH>;
+>    };
+>    i2c_hdmi: i2c-hdmi {
+>      //empty
+>    };
+>    hdmictrl@99876 {
+>       ddc-i2c =3D <&i2c_hdmi>;
+>    };
+> };
 
+Having symbol / glue information that's local to a particular
+connector is, I think, the way to go.  But again, I think encoding
+this in terms of overlays semantics is going to make it harder than it
+needs to be.
 
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20250904/202509041248.b7ece14a-lkp@intel.com
+> This would leverage the i2c-bus-extension work (also under discussion
+> [3]). Since for HDMI an I2C device is not added it would have a node
+> (i2c-hdmi) that is empty in the overlay (but not in the base tree and
+> thus not in the live tree after the overlay is applied). This empty
+> node is needed to ensure we can have a label (i2c_hdmi) that can be
+> referenced from elsewhere in the overlay (ddc-i2c).
+>=20
+> However there are various issues with this approach:
+>=20
+>  - mainlin, it does not handle pinumxes nicely
+>  - if the node that is overlayed by the empty node (i2c-hdmi) has a
+>    label in the base tree (line [**]), then the overlay-provided
+>    phandle ID would screw up the base-tree phandle ID
+>  - in dtbo, the empty node (i2c-hdmi) has a property in the overlay
+>    (phandle) but the node exists in the base tree, thus the property
+>    would leak on removal
+>=20
+> ---------------------------------------------------------------------
+>=20
+> Idea #4: resolving phandle errors by the connector driver
+> Proposed by Rob in [1]
+>=20
+> > I'll throw out another idea. What if we make resolving phandle errors
+> > something that can be handled by the connector driver? The driver
+> > knows 'connector' resolves to the connector node it is applying the
+> > overlay to.
+>=20
+> This idea looked promising, so we tried simulating the process with a
+> dts/dtso example:
+>=20
+> Base tree:
+>=20
+> connector1 {
+>     compatible =3D "myvendor,myconn";
+>=20
+>     #gpio-cells =3D <2>;
+>     gpio-map =3D <0 0 &soc_gpio1 12 0>, <1 0 &soc_gpio3 42 0>;
+>     gpio-map-mask =3D <0xf 0x0>;
+>     gpio-map-pass-thru =3D <0x0 0xf>;
+>=20
+>     i2c-sensors {
+>        compatible =3D "i2c-bus-extension";
+>        i2c-parent =3D <&i2c@abcd0000>;
+>     };
+>=20
+>     hdmi-ddc-adapter =3D <&soc_i2c8>;
+>=20
+>     // All pinctrls that addons may need
+>     pin12-pinctrl-i2c =3D <&pin12_mode_i2c>;
+>     pin1-pinctrl-gpio =3D <&pin1_mode_gpio>;
+>     pin2-pinctrl-gpio =3D <&pin2_mode_gpio>;
+> };
+>=20
+> Overlay:
+>=20
+> / {
+>  fragment@0 {
+>   __overlay__ {
+>    node {
+>       foo-gpios =3D <&connector 0 GPIO_ACTIVE_HIGH>,  <&connector 1 GPIO_=
+ACTIVE_HIGH>;
+>    };
+>    i2c-sensors {
+>       thm: thermal@15 {reg =3D <15>;...};
+>    };
+>    hdmictrl@12345678 {
+>       ddc-i2c =3D <&ddc_adapter>;   [*]
+>    };
+>    some_other_node {
+>       pinctrl-0 =3D <&pin12_pinctrl_i2c>;
+>       thermal =3D <&thm>;
+>    };
+> };
+>=20
+> This is what would happen for the HDMI ddc-i2c at line [*]:
+>=20
+> 1. of_overlay_fdt_apply_new(..., resolve_dt_error_cb) is called;
+>    it is a variant of of_overlay_fdt_apply() (name to be defined!) that:
+>      a. takes a function pointer to invoke the connector for resolving
+>         unknown labels
+>      b. does not even try to resolve phandles beyond the connector
+>      c. if target node has no phandle, creates one with next unused
+>         number
+> 2. resolver does not find 'ddc_adapter' label
+> 3. before calling it a fatal error, resolver calls connector driver
+>    callback
+> 4. connector driver callback knows the "ddc_adapter" string must be
+>    resolved using the "hdmi-ddc-adapter" property, returns soc_i2c8
+>    phandle ID
+>=20
+> connector driver callback in pseudocode:
+>=20
+>   resolve_dt_error_cb(conn, label)
+>   {
+>     switch (label) {
+>       case "connector":
+>         return conn->of_node;
+>       case "ddc_adapter":
+>         return resolve(conn->of_node, "hdmi-ddc-adapter");
+>       case "pin12_pinctrl_i2c":
+>         return resolve(conn->of_node, "pin12-pinctrl-i2c");
+>       }
+>   }
 
+The idea of putting logic into a connector driver makes sense.
+However, it's unclear to me where those strings its resolving are
+actually encoded in the dtb.
 
+> We discussed some possible issues, such as: what if a label is actually
+> found in the base tree and thus resolved? This is handled by point 1.b.
+> above: the OF core does not even try to resolve phandles beyond the
+> connector, it would not make sense for connector anyway. In other words
+> it only resolves local fixups, which are internal to the overlay, such
+> as "thm" in the example above.
+>=20
+> This looked like the most promising approach because it handles nicely
+> HDMI DDC and pinmux and minimize pollution in the phandle ID space.
+>=20
+> ---------------------------------------------------------------------
+>=20
+> So that was what we discussed in the meeting last Tuesday. We hope this
+> will help in setting the current point and let the discussion move
+> forward.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Let me throw a few more ideas in the pot.  None of these are total
+solutions, but I think they may make good components of solutions.
 
+1) Connector local labels/symbols/aliases
+
+This is not a new idea - both the export-symbols proposal and my
+ancient connector proposal had this in one form or another.  I think
+something along these lines is almost essential.  Things that plug
+into connectors almost always require references to several host board
+resources (interrupt controller, gpio, ...).  In order to be pluggable
+on multiple host boards you want to refer to those symbolically.  In
+order to support multiple instances of the same connector type, you
+need those symbols to refer to different things fordifferent connector
+instances.
+
+Whhat I think is a mistake is trying to tie this too closely to the
+existing __symbols__ structure.  Those have an ugly encoding that
+requires tortured processing in a way that's not natural for dtb
+handling.  Plus they already kinda-sorta duplicate old-school aliases
+in an odd way.
+
+You want some sort of string =3D> node mapping on the connector side,
+and a way to mark portions of properties on the plugin side as being
+resolved to some string reference.  But we can take the opportunity to
+design a better way of doing that than the ugly one we have now.
+
+2) Extend dtb itself
+
+A maor thing that makes current symbols and fixups ugly is the fact
+that they are encoded into properties in the device tree itself,
+despite being logically at a different semantic level.  Obviously you
+*can* do that, but it's not natural.  It would make more sense to add
+fixup tags into the dtb format itself.
+
+3) bus-reg / bus-ranges
+
+One thing that makes connector plugins a bit awkward is that they
+often need to add things to multiple buses on the host system (MMIO &
+i2c for a simple case).  This means that once resolved the plugin
+isn't neatly a single subtree.  That's one factor making removal
+really awkward.  Here's an idea I had a while ago to allow plugins to
+be a single subtree, by extending what's allowed in the tree content:
+
+Currently a node can only really have a presence on its immediate
+parent bus, as encoded in the 'reg' and 'ranges' properties.
+'bus-reg' and 'bus-ranges' would extend that having a similar format
+to 'reg' and 'ranges' but adding a phandle for each entry saying which
+bus it lives on - somewhat similar to interrupt-map.
+
+For example, here's an MMIO bus bridge of some sort, which has control
+registers on I2C:
+
+	mmio-bus@... {
+		#address-cells =3D < 2 >;
+		#size-cells =3D < 2 >;
+		bridge@XXXX {
+			ranges =3D <...>;
+			bus-reg =3D <&i2c0 0x407>
+		}
+	}
+	i2c0: i2c@... {
+		#address-cells =3D < 1 >;
+		#size-cells =3D < 0 >;
+	}
+
+In a sense this extends the device tree to a device DAG.
+
+Obviously this does need changes at the OS device core level, but it
+gives you a lot of flexibility having done so.
+
+4) You don't necessarily need to build a "full" device tree
+
+Flattened device trees (as opposed to original IEEE1275 device trees)
+- by design - allow certain information to be omitted.  The most
+common example is that for introspectable buses, like PCI, it's normal
+to have the DT only include a node for the host bridge, with devices
+under it being discovered by their own bus specific methods.  That's
+discovery is handled by the bus/bridge driver.
+
+Connectors usually aren't introspectable, but it's still possible to
+use an approach like this where the connector driver's discovery
+method is "look at a different device tree".  So, for example,
+
+Board device tree:
+
+/ {
+	compatible =3D "board-with-foo-connector";
+	. . .
+	mmio@... {
+		foo-connector@... {
+			compatible =3D "foo-connector";
+			ranges =3D < ... >;
+		}
+	}
+}
+
+Foo device tree:
+
+/ {
+	compatible =3D "foo-device";
+	foo-port-id =3D < 0x1234 >;
+	component@... {
+		reg =3D < ... >;
+	}
+}
+
+Obviously a "foo device tree" would have different conventions than a
+board device tree.  It wouldn't have /cpus, /memory, /chosen - but it
+could have its own "magic" nodes that make sense for the properties of
+the specific connector type.
+
+Again, that would require work in the device core part of the OS.  The
+bonus is that runtime addition and removal is now trivial.  No hacking
+of the base device tree is needed, and so doesn't need to be reverted.
+The connector driver just adds/removes the reference to its own
+private tree.
+
+This would, of course, need some way to refer to board resources
+(interrupt controller, gpio controller) etc.  I think that can be
+assembled using some of the previous ideas, though.
+
+--=20
+David Gibson (he or they)	| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you, not the other way
+				| around.
+http://www.ozlabs.org/~dgibson
+
+--Bfxbpu956IhQajja
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEO+dNsU4E3yXUXRK2zQJF27ox2GcFAmi5IjQACgkQzQJF27ox
+2Gdi7A//fqi//NZ0OfA3rXFkDFd2sELrcPBRiTTmOSv9wQ12PMpYncGB2AVxiL3D
+DQeEfJaorimUkhBEghSI65mIssDaser/o7mBKDMrkZOHoL02SaPc8fqObg9gQ9Er
+iGFDbG5QxL1BU16dwYSRevYGOo/kkFS6sB8hEST7Fvf+PrgcZvPsUDiBB8qaUtWD
+uiUsEHPWj4IWXU1pz28bZ4Se/0/mYSxViEngnPzSCqQGJpiuuomEGBJlccsqTKwM
+ciUAK8aVCoLkFjapuDdrkzPyd9PUfAD+cs+032v05NZQTuUI+VsxsKUphSYDE7c4
+aE8Ghvu4RPxaZdF8Hy4pPjvrsya1oegGh0TN+KawfZcXuH57SXGjtVmPjyuOzzIM
+sAIwgXTy11iW0nE25pG3gmqV42MdimJtPyqYnOIAyp991z2Cz7hTEeYc33FHnC17
+AkZWROUQM8HShF+aVrZ09nEfViw/Ojzsm9GlDFVLQauRMGQxuvburMRK3seNmuBT
+fwGueRFv7pJ14f06ZzMcw2eoPZRlwNzFvxETfevRXY8NzUbHe0T9SJ7uCJa/uVuD
+jtX9QtqYtM+lulx+TgvdpBPSus1/ORRKtUhePXtMpoEEce0r0/5KMjUP5JVFqhyg
+nKrElyLW9D19u6dFKhpnBRtUxCqcppqiK0Up+qOLCBPLHUi25QM=
+=7CT/
+-----END PGP SIGNATURE-----
+
+--Bfxbpu956IhQajja--
 
