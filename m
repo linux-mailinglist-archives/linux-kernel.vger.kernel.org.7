@@ -1,192 +1,141 @@
-Return-Path: <linux-kernel+bounces-800941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A78E1B43DF3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:03:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D440FB43DFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:03:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B7AB5A493D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:03:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4A3D7A7982
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CD63054C0;
-	Thu,  4 Sep 2025 14:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1F7303C87;
+	Thu,  4 Sep 2025 14:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqoTEP1S"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HvZD2U9R"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21CF20408A;
-	Thu,  4 Sep 2025 14:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B172D8771
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756994589; cv=none; b=IeTUlZN6JbHgXMKw1evYWV8r9oo7Smfiiq7sVDr8NYAyREMk87bftXxyBrU7IeqBx2vw7mYTDdoi8TdxwR/vgWyX2MaWDeRG2YDWXyIbf3QbGOPuLvHoKBYPdCcWbEx4NR1eW/NwcpO/IPxwTdFKQIJaZqXZ2/fdjjb1/y75kSo=
+	t=1756994612; cv=none; b=EVNRiB97rInFOphX0lPJ5eG47/R+lL4fI4AdQ6yZJzU54qtiERqx3f97ETWYWQrHOXGeKFi7sq0i3QrzkBJ6Hu4l+TpzNWvRLYagYDmzja+4HsLCmc/J4ptFe+yGaNUw6i8xvEPjEaJQahXoylaStyf284rKTANGrGUR78dA6l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756994589; c=relaxed/simple;
-	bh=3qM7uV+5UMLViDXjERZK/FA9M3c/FnFeaYWRo66RaHs=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QIu3U8J6Sieb9FF/Xw4gw45bjobA2ZvO3a6Bf2iHUPe6H5IHIcIVNLNzBSvbKV+1WjO6p0lBwK+acFZNz3ADnm4xys4FmFHe6uX0YXhMl5vdy7mUwROZYuu6EmrxvT2yGf8ZD+AO46qq+4hO+hPYlyfQwHnBODyKuYcAOusInko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqoTEP1S; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad681so1692881a12.0;
-        Thu, 04 Sep 2025 07:03:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756994586; x=1757599386; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GhoiaZNxxlj25tTSW2x4zxK6+7X5oeucikOwx7TRzr8=;
-        b=AqoTEP1SUSyia0OCh1Viu5CDtQa0H1OWZinNORt5h4BWxVfxFwZ1FMBXP+t3hIaDG4
-         BF40LzMG5zv68jno8prxV4TffG6dxpPyxf2XmxB1DPvtJ0xywxwo1Y9JMjmmKgj1EhLa
-         IQJiXwLV3Foor/mE6ra8RobYjkyT2A7olxahY+byiq7WLsv9RgVVzS+8yiZrRffr0yQq
-         4rmuK4wE4j31B8dXpY53mWWVbwKO8T1ys/ZU8PMiovT/2lZVwXvSngkM6aIBJzWnv89D
-         4mYBhGdO9nEeZrZe/3uutecMNC5pF2MZ58TKTJR+wFHXK0NjEIbH5piJ5p9fAUBfjccb
-         yX8A==
+	s=arc-20240116; t=1756994612; c=relaxed/simple;
+	bh=ArO34LFWAHT6cgbIIgrLmpPjzc7jkLJhhCwhm9njkJg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uYQRZ0oBdx64ZTagJPBQhUQqun66CR8HjBW949arCMQcz3ZT7TMlAuBAsebpl18mM7X1wAMCIdXv8b6deNTlC9rINykW6pgJWQpr3sZ/4Vk6GQ3zIam4IkKBdsYap+FvMf7frnENukYmRrvKKqkzjI0I2wS2ExFTYD550SIkzR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HvZD2U9R; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5849XHar022433
+	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 14:03:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YWpJrvw9vwWJVOBOCwWHiQEXh4D7P2GkFtskOHhXN7Y=; b=HvZD2U9R+UWFBATU
+	91D05jhpzqp6KNdXE7VUfdWfkq4yof3ZGyKHqzdB0+LNdIQiaIUn0Hel4LsbAc8X
+	wzH5F5WZFsmmB8W7sCXmF+GIpiJetOBAsigKfR44f6Ps5XN8d8DOjw3mqX5vqXd+
+	IWlCXfrhw4+15tMhAVRmOhCdCoFjGgLyCXnPY2YseUL73dbEZNI9oyLQu51UX4pS
+	8XfI5pNBsqMp2vym9bISUg2YH9AMmk/ZTWvOmrh9YqtA3LMb9BiEws8fsIGcoyyj
+	dTKdWI5DHaGx5PYXjxAS8gBVcatA/18h+Y07O69Scy2mxFL9dHiDMKlYhK8XEkEA
+	qGWCkA==
+Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com [209.85.217.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48utk97hx2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 14:03:30 +0000 (GMT)
+Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-52dd4f1374dso55090137.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 07:03:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756994586; x=1757599386;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
+        d=1e100.net; s=20230601; t=1756994609; x=1757599409;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GhoiaZNxxlj25tTSW2x4zxK6+7X5oeucikOwx7TRzr8=;
-        b=aQQIXDiiDRPC1eWqzCB0geQczol3qo8AEpy3pw7+Surxu6EPtUPCIp72D8jU+LcUWI
-         3W4JC5koNrhZk+R2qkwLXXVlJ9g/W+ThbOEcsHqtVP/tQZaeobW8BjIFxaF8TARPkqtF
-         rVdqXAmCSXx7bsUlHmqL8TInON1sLo8tFmbp/AT/bkCvwtqzPu767JzRsbAx0/wrFdZY
-         Smp1a5AXWBnWxZbpOMrn6uOsJ2quB1L3pfJ3vlsHFDKvkmVx8+a3sIMnsjgGl21LHuXd
-         pRbbbXqe7bQWdxNsrZ22H+ANF48TpRp7CpvhGooTIU32bYlzNRBalQoPdydljma3wyft
-         opfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHupM1So0YTxyC5Ee8zvMQlEQoGFo/8an6Zkit0EyJXUyKIL2acbSmLmwHWdP77diSG6pRGpbXbZGWn0no+RQZOvud@vger.kernel.org, AJvYcCVhf7Hvumk1Mb/NDoAyPVXZMaxy2eyfwyFd9rxGLVHxpxKIO1UNAB+L8I/KG4+xGnLVNMU=@vger.kernel.org, AJvYcCWI4tVaANrya/Ur114e+ipfBGZsbIm56GZxuz3jjvn2mBdnSheKTgyGIgGE4/+ieZGI5NeLiaXmdmkc1y/N@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkGXlboCusjQCHbIprjLop3r/bQn0jkg7iEsHU9g6P485kKXmj
-	uIC+xRlx3gn13PacEybppPK806NHjuyWzFsugK+KP/azsYX4GJNRpnQt
-X-Gm-Gg: ASbGnctM+EXm8olwmpwkt72YPd3M0i+c0FHjPbJGJ3XmQqd66qpkVvkDAfOzstv7Uc6
-	D7szxK4OJv4HcmZhB57dFUMpagMc1pefV4XFwyMDMBjhnfVXoVyswQ7YpMFpGJ7WaFECUoLNJ+G
-	HGO5yNKuNcazCyDZklkcTOtvcvWD8aAId9CA8BN18MChlNEoy0ATQyubbeBnqmvFyv1FyKGPlT6
-	wFy9uHdtNrIt97rccmFCcXQrUhtZetthkPorP3bb6bU3sxiIGErMcLWF/R2j7XVPfMTE3VKGMRZ
-	Lgb3hXNAgFFfxnLyfrNSvtJQT8TnNQZZXfvQinbUeAhnh3Vi1WPynhAVrGrFaI6P9k+kPMefBeV
-	1x2umO+9Pmrg=
-X-Google-Smtp-Source: AGHT+IFAbZiozd6cdFmgXfmverq93S0YaAXJcno52giATX+FJi/xSH9+WMm7vLIv18AeMJeuskQpJg==
-X-Received: by 2002:a05:6402:1e8c:b0:620:894c:656c with SMTP id 4fb4d7f45d1cf-620894c7c6fmr1002749a12.29.1756994585528;
-        Thu, 04 Sep 2025 07:03:05 -0700 (PDT)
-Received: from krava ([176.74.159.170])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc5575dcsm14326489a12.49.2025.09.04.07.03.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 07:03:05 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 4 Sep 2025 16:03:02 +0200
-To: Jann Horn <jannh@google.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCHv6 perf/core 09/22] uprobes/x86: Add uprobe syscall to
- speed up uprobe
-Message-ID: <aLmcFp4Ya7SL6FxU@krava>
-References: <20250720112133.244369-1-jolsa@kernel.org>
- <20250720112133.244369-10-jolsa@kernel.org>
- <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
- <aLirakTXlr4p2Z7K@krava>
- <20250903210112.GS4067720@noisy.programming.kicks-ass.net>
- <CAEf4Bza-5u1j75YjvMdfgsEexv2W8nwikMaOUYpScie6ZWDOsg@mail.gmail.com>
- <aLlGHSgTR5T17dma@krava>
- <CAG48ez2BBTiDGT1NNK2dfZLiYMF-C75EAcufcVKWtP+Y4v-Utw@mail.gmail.com>
+        bh=YWpJrvw9vwWJVOBOCwWHiQEXh4D7P2GkFtskOHhXN7Y=;
+        b=fpG1UQIYrGoEdMddaKWWydQ8Knx9KpGHIuujifxfJZfk0TQllbw3mjR+DkT6z5G0kl
+         Un4DvIAaoOzWo4p6R98Y6GNgH5gbKqc9sUhdYVCQPPd05zQWsc494pIX7K4j5A7fl4gT
+         mO9oLajNu0D97aePCgXreOjyOjkDQoHv7PmEQ8o+or1WsePlN/Zarj8fAN9msDzOIIiV
+         3M7LgRKtVW50GY7TepSma5IUu5l9aT/pB4THpUpp6JjhYySQ9AH5hPoHmA7oVShXnArn
+         0wv9IornWpMePJDR2xQggYFAIC/qv5gAJB67Ilu8h3Hf4odKlI8YfhXtDyPxxSYtxEB2
+         fOPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSK0UdywOkQIEmbL+zSfEQ3gyGczej5HicVEC1fmYCzanqEMoO8ygMNnh8wHw+uu7Xb+/R8Ro6c3YSjfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLwQEC7Etnlxl6xGTB3Q8yLYTGsPYimRzmZCxL0z+/VE10KAJk
+	y3AVP3vus4SH5X43fL6b3odNFjtmxQClZREgPNuptgw8TmW9Ke/rXAsdALB/WcpYRUWd6Z4eGNU
+	b6lht/QioiLhmEWhuC/MCzl/ceBsEBpHhsUtbCD9K0/q0I89Sc5qHx/is6LDm4JdfC/8=
+X-Gm-Gg: ASbGncsx84V96kOkCopcBiAtlAwxr3BycuahSbSq8QsSMyfyFfi7BBcYKA0uPScu/no
+	8DRDBoTwNPrM/Q7uYm6L4plb7LzDAYqzwo0wcNpa1SZHen/0cQZz0AcqGqkIbxuRH6JKGqogaVk
+	5jPSi41GFPN44CEAb91Hk+rMjjpngZtnQNtGWjuV64HtGXHyz9++0rYfEn/7FVRI1459NkZA5UI
+	a0FLfrD6mOQZury75MlxSDrCFcqJQoatzgAIySByqB8L0Ri9cmfqaIfJL3paW2OZkgNRABK1aj3
+	Nx25MceRc/wRhbvIJAVlL8muVEr6e+5ZN7dZsoIy6fUJB6FG07IZwaR+7tuOgb3lmfskTWPmWKH
+	ODnxD4mLpNZtXD4C7rqWFRA==
+X-Received: by 2002:a05:6122:530d:10b0:545:eb6c:c6cd with SMTP id 71dfb90a1353d-545eb6ccd07mr149557e0c.0.1756994608506;
+        Thu, 04 Sep 2025 07:03:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEemEW1KVZ+XfsmWOhxU5sZGSGNKVct6j7eGnjkrqmieGlIosDSRswoXL29fuGAJkdSjSxbYg==
+X-Received: by 2002:a05:6122:530d:10b0:545:eb6c:c6cd with SMTP id 71dfb90a1353d-545eb6ccd07mr149338e0c.0.1756994605943;
+        Thu, 04 Sep 2025 07:03:25 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62069b79e1asm848778a12.26.2025.09.04.07.03.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 07:03:24 -0700 (PDT)
+Message-ID: <2c5d97b4-762a-4bbc-b85e-53bc59aaa4c9@oss.qualcomm.com>
+Date: Thu, 4 Sep 2025 16:03:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez2BBTiDGT1NNK2dfZLiYMF-C75EAcufcVKWtP+Y4v-Utw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: sdm845-enchilada: Add notification LED
+To: David Heidelberg <david@ixit.cz>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Antonio Rische <nt8r@protonmail.com>
+References: <20250904-enchilada-led-v1-1-dcf936ea7795@ixit.cz>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250904-enchilada-led-v1-1-dcf936ea7795@ixit.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: xidQcl2_bIEMP_dNaS10YopWBVcDvbSc
+X-Proofpoint-ORIG-GUID: xidQcl2_bIEMP_dNaS10YopWBVcDvbSc
+X-Authority-Analysis: v=2.4 cv=ccnSrmDM c=1 sm=1 tr=0 ts=68b99c32 cx=c_pps
+ a=DUEm7b3gzWu7BqY5nP7+9g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=sfOm8-O8AAAA:8 a=EUspDBNiAAAA:8
+ a=sMes0nJH1TucWEBAg2MA:9 a=QEXdDO2ut3YA:10 a=-aSRE8QhW-JAV6biHavz:22
+ a=TvTJqdcANYtsRzA46cdi:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDA0MiBTYWx0ZWRfX4BKCchtQErF3
+ fSPtnCtjr2BPTlB4h9PP3/qGfCtucdbD3ktNdMoSTlt7i7CHYCXCXx+pRJP2dPPd6TWI5OPZEh+
+ nwYX3yKpesGw9PrcTmbXb+jOwKHk+A894BSX8ou9tdS8UZIbR2+SBtblXZ1eRABUi4GfNWLzzfs
+ gDJATz3cX/vP4j6/JQ63d3RYDs4+4y5Dqc6wk39+Tu7Wht2PxodndlYPDJkqtgthbDRAtAGoGpm
+ qpVkM90VEoKZSBZyFkxSP/HC20nrPtcVL0kD6I+UzaVqnFV2M+V/scxdUwzA2yn03otLfyntB3x
+ TJzHvi3jzBDgulCO9a0wTqIdErqgYgFokouKEzV4rsTvsCHAYKFDQY69fngKzGjXkjtJRMKnKzp
+ a0Y0xP56
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_05,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ clxscore=1015 suspectscore=0 spamscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300042
 
-On Thu, Sep 04, 2025 at 11:39:33AM +0200, Jann Horn wrote:
-> On Thu, Sep 4, 2025 at 9:56 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> > On Wed, Sep 03, 2025 at 04:12:37PM -0700, Andrii Nakryiko wrote:
-> > > On Wed, Sep 3, 2025 at 2:01 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> > > >
-> > > > On Wed, Sep 03, 2025 at 10:56:10PM +0200, Jiri Olsa wrote:
-> > > >
-> > > > > > > +SYSCALL_DEFINE0(uprobe)
-> > > > > > > +{
-> > > > > > > +       struct pt_regs *regs = task_pt_regs(current);
-> > > > > > > +       struct uprobe_syscall_args args;
-> > > > > > > +       unsigned long ip, sp;
-> > > > > > > +       int err;
-> > > > > > > +
-> > > > > > > +       /* Allow execution only from uprobe trampolines. */
-> > > > > > > +       if (!in_uprobe_trampoline(regs->ip))
-> > > > > > > +               goto sigill;
-> > > > > >
-> > > > > > Hey Jiri,
-> > > > > >
-> > > > > > So I've been thinking what's the simplest and most reliable way to
-> > > > > > feature-detect support for this sys_uprobe (e.g., for libbpf to know
-> > > > > > whether we should attach at nop5 vs nop1), and clearly that would be
-> > > > > > to try to call uprobe() syscall not from trampoline, and expect some
-> > > > > > error code.
-> > > > > >
-> > > > > > How bad would it be to change this part to return some unique-enough
-> > > > > > error code (-ENXIO, -EDOM, whatever).
-> > > > > >
-> > > > > > Is there any reason not to do this? Security-wise it will be just fine, right?
-> > > > >
-> > > > > good question.. maybe :) the sys_uprobe sigill error path followed the
-> > > > > uprobe logic when things go bad, seem like good idea to be strict
-> > > > >
-> > > > > I understand it'd make the detection code simpler, but it could just
-> > > > > just fork and check for sigill, right?
-> > > >
-> > > > Can't you simply uprobe your own nop5 and read back the text to see what
-> > > > it turns into?
-> > >
-> > > Sure, but none of that is neither fast, nor cheap, nor that simple...
-> > > (and requires elevated permissions just to detect)
-> > >
-> > > Forking is also resource-intensive. (think from libbpf's perspective,
-> > > it's not cool for library to fork some application just to check such
-> > > a seemingly simple thing as whether to
-> > >
-> > > The question is why all that? That SIGILL when !in_uprobe_trampoline()
-> > > is just paranoid. I understand killing an application if it tries to
-> > > screw up "protocol" in all the subsequent checks. But here it's
-> > > equally secure to just fail that syscall with normal error, instead of
-> > > punishing by death.
-> >
-> > adding Jann to the loop, any thoughts on this ^^^ ?
+On 9/4/25 3:54 PM, David Heidelberg wrote:
+> From: Antonio Rische <nt8r@protonmail.com>
 > 
-> If I understand correctly, the main reason for the SIGILL is that if
-> you hit an error in here when coming from an actual uprobe, and if the
-> syscall were to just return an error, then you'd end up not restoring
-> registers as expected which would probably end up crashing the process
-> in a pretty ugly way?
-
-for some cases yes, for the initial checks I think we could just skip
-the uprobe and process would continue just fine
-
-we use sigill because the trap code paths use it for errors and to be
-paranoid about the !in_uprobe_trampoline check
-
-jirka
-
+> Add the notification LED for the device.
+> The R/G/B channels are controlled by the PMI8998 LPG.
 > 
-> I guess as long as in_uprobe_trampoline() is reliable (which it should
-> be), it would be fine to return an error when in_uprobe_trampoline()
-> fails, though it would be nice to have a short comment describing that
-> calls from uprobe trampolines must never fail with an error.
+> Signed-off-by: Antonio Rische <nt8r@protonmail.com>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
+Konrad
 
