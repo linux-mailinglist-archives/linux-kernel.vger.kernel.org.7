@@ -1,114 +1,93 @@
-Return-Path: <linux-kernel+bounces-800440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A69B4379C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F005CB4379E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C1B23B44D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:52:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6775189BBCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4213A2F99B5;
-	Thu,  4 Sep 2025 09:52:02 +0000 (UTC)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2884F2F90EB;
+	Thu,  4 Sep 2025 09:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="IzbD0+2u";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="9gUm64XN"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D322F83D8;
-	Thu,  4 Sep 2025 09:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8672F9C23
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756979521; cv=none; b=Av2JcZKpC67Hdxjnu1j1lZh63LUV/8tiEDusAj92DyicxzfW+ZjEselAYu7/ckOl+msUtnV2jMbVjyNgQKxAEi0rFYjEkDfxUQAN5zw2kE5sZP2vSlf+DR20EKOfCmQBatd6Xvcy9InlPdfBlDiuRjFE7M7GI/E2WmUu5kGVIqw=
+	t=1756979526; cv=none; b=l2Z+2np+C6uCtBtsnMVgeFKn40Mxuwk+EUU84ZNPqcRr3CJBCPHvfCTWhQoAGctzV2+NpagYlugO8qQHphpBVA8gJWvMp4Ga4NWNoG6gzEp7CkYSUcBc+brazVRtKFjxccKithGowwa6uZOMgMHT+CYdusLVvuWpt/XxbbeAMKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756979521; c=relaxed/simple;
-	bh=aRh9ECIvCZ+BSu3p11lpn1TnBSepXTWeXORdoXjYepE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pImU/QAZcO+yJDsCh89DDnr0U2ZmYe0JZKKZyg9ug/Z07XwpR3h7x1WVJY0LZz3rO5x8g0E22wzsUHY/2AbzRVRf276EsTw0AS9EMkKSr7hqocum/LLwUSaL0dusFupMaptVGsZ71QMGdcz/f4dCqED48tKNo/5KfizUWgadvc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-89434e44afcso504952241.3;
-        Thu, 04 Sep 2025 02:51:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756979519; x=1757584319;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G+4vrH2QO8CjdsLy8N7yx+23YHCO6qODmfoFZkVh+xU=;
-        b=CNzRIRZu0ype/gjs9H/oZB4HKXaLxyYa7I5QNJ49sLenovGyF2WuoDvTwE4foBVied
-         7Sbt3yzUeZPNe2knSWlF8dypfYbPGNnkmp+Ze3bWVpcxFNEvzQKMhmb8Hb8/k0HSrefY
-         UrHYYECSA4ldN/EHqPwH+WlIG8EN4i/SJWU7vEf6+4KN9ZPItitCKOOM2OutckxBRqaF
-         knqRTMxmz4juXWdwJRBdEChAhb9i2mQzGFK5fUQHiXwGN+bm0XraWaoMIL/juYPAEFWn
-         AEx71sgATBYUYJ+5VvoWau3d+LMEnbhyn7D/TX2SASdS1swiS9EpTvH3+Qh5Yx5J+lDo
-         liuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCEUkZ8NOfqUzXR4wPKQ/iJEHMgEiF2C8DaOm85xI8iQxADO1WX7/vdcZEm6bh7nZfFUQTU5OP7wm1@vger.kernel.org, AJvYcCVgEvxyemE7uu5sDoO4h4lrXMLXNciODkd4EraVSRXRJqnndPuTBhonZzyoaA132/uqfP+SAX+RGrdEaOz1YlU13vs=@vger.kernel.org, AJvYcCXiiJNTjCfrGYUlq/8kWx6+Su7AIXRe/O7gicgYdGVlNoljn+APOA5J6cuinexUsqNVIuq8oNKn/xA1/y5e@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWBZyqvaIpDDUTeedG7ejfVIMQv+BRtwYio+kt0ue64xoM+w3L
-	Wuxi+uWFJQxxzOMcbYOv6LOylGiyz9U2u1w5x+86X+5vJOOJu0rRLxhD+kDE4aO9
-X-Gm-Gg: ASbGncui0Bq+w6BI1gpT6mW7Q8I+ILCtpAJYLT4GP0AAWmA1MEAD1QbpexV5pnx5dTw
-	MQBUeXlq7GJobAOwykTT0IiCNwJLBjlHynNqBCUyYkWKBK3qYNN2p0ovM+zjUoyQ/7QrZ74Vb2m
-	egxKts0BsvEg5CNHile1n2UBen6KoD8J8Br2xhAaF6WbGZpv5itRSB5vGS0QFBiyGuW07Eo3ZS/
-	1AmUfebEhdx5PQMlstC+HlocyrFTqRgOSCy5FnyOLvUyveX0DYC4AC8z6L2CteoH409JUruhPzJ
-	xrmx7J6eFkz7zBuM2Fm2lGuq2ziQIc8ff2wyOjfwIxTCKxDDayrXPYyjNQyr1EaEBWzKt7xbkbe
-	p+px10Z8N9Gg0vboQOP+rgYOmRXAGsYZLQpNXasU+Ds8iR8VXoI7Ijxfo/f8i
-X-Google-Smtp-Source: AGHT+IF5uzLnV8WSshDf+gXCFiLlvmuDBnlLEA9YOUOp0iJFBNobguAAE5tQCqVakEcKZInDyQH4Ew==
-X-Received: by 2002:a05:6122:a1f:b0:539:5cff:8070 with SMTP id 71dfb90a1353d-544a0254443mr6348094e0c.9.1756979518796;
-        Thu, 04 Sep 2025 02:51:58 -0700 (PDT)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544912eef59sm7988926e0c.8.2025.09.04.02.51.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 02:51:58 -0700 (PDT)
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-8943761ca20so536860241.2;
-        Thu, 04 Sep 2025 02:51:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1reHDZbY+6ujc9e/JqHtZ6G2qoFWLeDlF2Mbz4PgEDr0WxW4Kb2+JJGfN1C/igXj07SJucJsA9q0/@vger.kernel.org, AJvYcCUuiv7I/JtkzXMDjgiu428yThoM6LocpYrky7pwTHVB2iogFtzbjcmJiKiLro6PTEFtdvOGlr7iOTRSbjwe@vger.kernel.org, AJvYcCVb6rWmjE0PnQiPGHoOHlUyhBCDqVZIYHjTK6Q36c6TABESoMcCBI7Yx7DPgdyBENTcW7qQx6tfYAbikhp70bmKWTk=@vger.kernel.org
-X-Received: by 2002:a05:6102:2ac9:b0:4f3:1d:6b47 with SMTP id
- ada2fe7eead31-52b1b8fe837mr7122022137.25.1756979518360; Thu, 04 Sep 2025
- 02:51:58 -0700 (PDT)
+	s=arc-20240116; t=1756979526; c=relaxed/simple;
+	bh=kAhDKjDH0/7hCdvshzbpJuJxL8ynu+aHcOlt/BEHvIE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LSks/xGcC2stnfrM9A94gpRc5H68qNICBGVez9/vUuDh2S5DBuqk8pwf1ulUv0Eib4mPUKF2Dh88uE3oJIHsbFkPpB9UsUtY1CFAeKpIxI9uaJ+wBHCy6F4kW7JG2EoeTw/qEqH1OQbzvAaoGQnkwpEB9hRdgL4QB3hNTAJ0kGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=IzbD0+2u; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=9gUm64XN; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1756979520; x=1757584320;
+	d=konsulko.se; s=rsa2;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:date:subject:cc:to:from:from;
+	bh=4IuKTho9AadcM+Re0nAwehN+zaegfeyCAyeD2EXwBdM=;
+	b=IzbD0+2uO5U8AscM4gquZJ3tAqNYStOBjdL12NYAp5Dcjn9XjytYchcTeGTLBkv9MrLBGRQL5iM99
+	 Z7SzMmgVKEHmrEp+cahwgJ3hVdsZgsFe7JYrmeYLVabFh+SDMhBPZS9qXF3ypyxo7iZBN5mo+X2m/R
+	 VYtWh63Vg8yv8TfqfXXzikRsJUD3wwAXpT6HNW+hEcbT8+pik0DHWx5jqK8J/A4iOs1zGxrBZZTv2G
+	 ZtxxUkFwA/zSI7Pmv1D5H/lhj/uEHltqBju9KJCYvwpdQ8RiEHVlRIKQ7ibC/jhh210BjX0/l/0SeX
+	 1Zg+/0ryeDCbc/GaMc0+pelej8Oi7bw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1756979520; x=1757584320;
+	d=konsulko.se; s=ed2;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:date:subject:cc:to:from:from;
+	bh=4IuKTho9AadcM+Re0nAwehN+zaegfeyCAyeD2EXwBdM=;
+	b=9gUm64XNHZ4cOo/2ZWkc5UqXi6ybhDmmSCuReZQFe5x22w732XhYI0nMT0nGI6mlW9Q8rPeC+QePM
+	 QMQ/EojDg==
+X-HalOne-ID: cca8378f-8974-11f0-940b-632fe8569f3f
+Received: from localhost.localdomain (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
+	by mailrelay2.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id cca8378f-8974-11f0-940b-632fe8569f3f;
+	Thu, 04 Sep 2025 09:52:00 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: hannes@cmpxchg.org
+Cc: linux-kernel@vger.kernel.org,
+	Vlastimil Babka <vbabka@suse.cz>,
+	linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: Re: [PATCH 0/3] mm: remove zpool
+Date: Thu,  4 Sep 2025 11:51:50 +0200
+Message-Id: <20250904095150.2770293-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250829162212.208258-1-hannes@cmpxchg.org>
+References: <20250829162212.208258-1-hannes@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821161946.1096033-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250821161946.1096033-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXoaz8ZJS5==-6_5ojFg6igSg+VUaXuDyus=2365g-9dw@mail.gmail.com>
-In-Reply-To: <CAMuHMdXoaz8ZJS5==-6_5ojFg6igSg+VUaXuDyus=2365g-9dw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 4 Sep 2025 11:51:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU5RZFChUZPkNpiB+55KXX+4KbTUg5=Z543hPiuYsAgZw@mail.gmail.com>
-X-Gm-Features: Ac12FXyOlu_dZieWgINxQelvoG77msqMY2GyW7rtdIO6qK6sGu_JVE2fDK5WslY
-Message-ID: <CAMuHMdU5RZFChUZPkNpiB+55KXX+4KbTUg5=Z543hPiuYsAgZw@mail.gmail.com>
-Subject: Re: [PATCH 3/6] arm64: dts: renesas: rzt2h-evk-common: Enable WDT2
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 3 Sept 2025 at 15:49, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Thu, 21 Aug 2025 at 18:19, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Enable watchdog (WDT2) on RZ/T2H and RZ/N2H EVKs.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-devel for v6.18.
+> With zswap using zsmalloc directly, there are no more in-tree users of
+> this code. Remove it.
+> 
+> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 
-FTR: s/rzt2h-evk-common/rzt2h-n2h-evk-common/g...
+Per the previous discussions, this gets a *NACK* from my side. There is
+hardly anything _technical_ preventing new in-tree users of zpool API.
+zpool API is neutral and well-defined, I don’t see *any* good reason for
+it to be phased out.
 
-Gr{oetje,eeting}s,
+BTW, remarkable is that you didn't bother to CC: me to this patch.
 
-                        Geert
+Anyway,
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Nacked-by: Vitaly Wool <vitaly.wool@konsulko.se>
 
