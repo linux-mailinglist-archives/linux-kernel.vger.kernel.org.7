@@ -1,123 +1,388 @@
-Return-Path: <linux-kernel+bounces-800741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18CE0B43B67
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:21:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11585B43B6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 614377C41DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:21:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DFF556754F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A692ED143;
-	Thu,  4 Sep 2025 12:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFD02EBDD0;
+	Thu,  4 Sep 2025 12:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="hT4WE83t"
-Received: from smtpout6.mo534.mail-out.ovh.net (smtpout6.mo534.mail-out.ovh.net [54.36.140.177])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SndjjUac"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92372E62BF
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.36.140.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961C02D663E
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756988480; cv=none; b=J8nCXXPsh4+daaI7oIx5vYMWlWypCfZiy177idIS705UEE682kVExfI1F36AySoDpc89sN/hx+8FbtwCo58aygU1ShPYP+3xZ/cZAQE/VCA6rTNBEdHTqCDRziNla+jck0H5SF8pLe5H7mgqeae8fobS+lyeZmQjuHgkUuhbMlQ=
+	t=1756988504; cv=none; b=D4WvTdLyfdmVH5l9wsCDdFreQ7FrIYiJBmv36rbtkExZy4tSj98u0yzMa6yrOnM/y6zCrBACUzV1lcsMJvchBRQb3bxxIJ+lkSb8w1UoDvWTqS5GRGvUs9h1WZOztOa60v3PImaORC1LAAFfP8Hmz2nGh3PMXLtrfNYGMX6/a84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756988480; c=relaxed/simple;
-	bh=7X4O6HXlH9iQ1Hsrlwz3r/yjl54fpwY6CM802gdqlPo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qynZqwWJUHVr6I15cNRJKmHQ5XMTZWUuzOy05UhTRDVHFZdDJt9FYidNAJdKQH7wfohKcz3b8ctm8ocWDQfYyfq+JBFt9cO4hrMRbF2CSUZlZTIsDTSTNwkXOoK56zpffLfAfErtCteeWuAK2lz0UmQsagnL3dh2IxmsdMxFrk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=hT4WE83t; arc=none smtp.client-ip=54.36.140.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
-Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net [79.137.60.37])
-	by mo534.mail-out.ovh.net (Postfix) with ESMTPS id 4cHdqs29Ytz6FjT;
-	Thu,  4 Sep 2025 12:21:13 +0000 (UTC)
-Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net. [127.0.0.1])
-        by director4.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <brgl@bgdev.pl>; Thu,  4 Sep 2025 12:21:12 +0000 (UTC)
-Received: from mta6.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.118.83])
-	by director4.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4cHdqr3Bd0z1xsB;
-	Thu,  4 Sep 2025 12:21:12 +0000 (UTC)
-Received: from orca.pet (unknown [10.1.6.8])
-	by mta6.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id DB2708E337B;
-	Thu,  4 Sep 2025 12:21:10 +0000 (UTC)
-Authentication-Results:garm.ovh; auth=pass (GARM-97G002c5ec3bc3-e4fe-4836-9217-05bc8e07bcaf,
-                    9D83928BDD5912CB49B4BF67D3C99AFCADCD49FA) smtp.auth=marcos@orca.pet
-X-OVh-ClientIp:79.117.41.176
-Message-ID: <75920526-64f4-4eda-8552-58de165f6597@orca.pet>
-Date: Thu, 4 Sep 2025 14:21:11 +0200
+	s=arc-20240116; t=1756988504; c=relaxed/simple;
+	bh=/BOk9zz8RNedr5LxKCmqSfFAQLV/pUIz6rkKE6NxI3I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PxguZ8VLoU1Z4Ufya9eqYe3Pqu5oxwfeXROZQhCK77TK3HFjIDAHeQi+0qjA0Y8lvQJYSOhKkc/v2x8IXqmnhH+Xk0sQUgQTuM0jebLQ/g6L8JLXuizMhfdXhPeNLRx0/W3sc6HUuGYGR3120vrEWDSNR00c8WZAZ64q84pM72w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=SndjjUac; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cHdrK2Whbz9tln;
+	Thu,  4 Sep 2025 14:21:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1756988497; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N9J1O3ytfo0P4VBaS4kMaz2qKZjQjAFNlOY0psjZpuE=;
+	b=SndjjUaceL0QkzdtGUfnlX3lR35ZwKgOxBawGZP/MjlGfYSzEctuM3Rv9Xz0iOLb2Hhg31
+	N2c3yJSWKQJHbUxmgenUGA2YSPc1FQPrWDG4yj5efyqJQihOSSxp2yZ3vu3fbSRyV09qzP
+	oP0GuSSZZvLJvz5GjriJ2rmEa0USyU+V5o7avZuEvVNGV8HfanuCFHDVoimSIe9HoC7UNC
+	X77GUAYVpkLH2DdvyiEoyFWwkEy6lVJZbzjkyZ6wpt8dp5XVxzYHXfINotNrBbNJ5VfPX0
+	JIoWJFAQl1FxamGHojYURzUKGRIBge/fkOMVjavg65A22wipF5QvlT55T1V/3Q==
+Message-ID: <27521eb23cca7c75eb0e0249f1f1a307279a5dff.camel@mailbox.org>
+Subject: Re: [PATCH v2] Revert "drm/nouveau: Remove waitque for sched
+ teardown"
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, 
+	phasta@kernel.org, Lyude Paul <lyude@redhat.com>, Danilo Krummrich
+	 <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter
+	 <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 04 Sep 2025 14:21:32 +0200
+In-Reply-To: <53ec7656-d5d7-460e-a245-0c9598a71f26@amd.com>
+References: <20250901083107.10206-2-phasta@kernel.org>
+	 <3407fd9d-68e0-4c45-9761-98ede450bb25@amd.com>
+	 <b35506de99be38f560709660b10667ca9f386181.camel@mailbox.org>
+	 <53ec7656-d5d7-460e-a245-0c9598a71f26@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] mfd: vortex: implement new driver for Vortex
- southbridges
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Michael Walle <mwalle@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org,
- linux-pci@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>
-References: <20250822135816.739582-1-marcos@orca.pet>
- <20250822135816.739582-4-marcos@orca.pet>
- <20250902151828.GU2163762@google.com>
- <45b84c38-4046-4fb0-89af-6a2cc4de99cf@orca.pet>
- <20250903072117.GY2163762@google.com>
- <1d4352b6-c27e-4946-be36-87765f3fb7c3@orca.pet>
- <20250903140115.GC2764654@google.com>
- <b11dcd50-a87e-47ff-b406-776e432f07bd@orca.pet>
- <20250904101705.GH2764654@google.com>
-Content-Language: es-ES
-From: Marcos Del Sol Vives <marcos@orca.pet>
-In-Reply-To: <20250904101705.GH2764654@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 9527365014460520038
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeitddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpeelteejgeejhfdutdelhffgvedtfeffteevgefhgfetueeltddtfeeuveefgefhvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduvdejrddtrddtrddupdejledruddujedrgedurddujeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehmrghrtghoshesohhrtggrrdhpvghtpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkohesihhnthgvlhdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpd
- hrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-DKIM-Signature: a=rsa-sha256; bh=rJzm0HSs8UGGmqFisPR6K2tkEBXOcV7SXVx5vxgiMRY=;
- c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1756988473;
- v=1;
- b=hT4WE83tetDttzT70Nyi/9SDmvMZzbXCCUvwY1cC49rEfEvcgYpnTp1o6sBck+m05gH97l91
- IyQT5UWUnS38bAZn69IIpL8CrVEa6SAWqdkvwvFh5GOGE/HFznxFLtCtKA8WQIWi7ZOGI1RbgYo
- 6ihH0ZhOcT1M6JGptNQZg78sJaYxctcYzGc/2Y3IBrp0Xxta7uImGmOcpN0GGO5HZ7Oerkh3cEH
- 7CIyaS/owdiHqml2ivPVO2agYEwwloSr+2QDaGQGAT48j4Jdrqh6AkF4HdWwoIKYcraf2bLFwKO
- PJ5b1dEpwZzj4VOg6Uh6JXTRMrloznscZJkuEDbjV7h8A==
+X-MBO-RS-META: 91x5maptto5obfsr6rmgp7z4x1yyhiu8
+X-MBO-RS-ID: cc295356d2fe4975c84
 
-El 04/09/2025 a las 12:17, Lee Jones escribió:
->> That GPIO is something required to perform the poweroff sequence, a must
->> for any machine, while WDT is just a "nice to have".
->>
->> Implementing now the WDT just because of a linguistic preference means
->> delaying something more important in favour of a "nice to have".
-> 
-> You use the word "delaying" here.  What's the rush?
-> 
-> If you only need a GPIO driver, then you don't need the MFD part.
-> 
+On Thu, 2025-09-04 at 13:56 +0200, Christian K=C3=B6nig wrote:
+> On 04.09.25 13:12, Philipp Stanner wrote:
+> > On Thu, 2025-09-04 at 12:27 +0200, Christian K=C3=B6nig wrote:
+> > > On 01.09.25 10:31, Philipp Stanner wrote:
+> > > > This reverts:
+> > > >=20
+> > > > commit bead88002227 ("drm/nouveau: Remove waitque for sched teardow=
+n")
+> > > > commit 5f46f5c7af8c ("drm/nouveau: Add new callback for scheduler t=
+eardown")
+> > > >=20
+> > > > from the drm/sched teardown leak fix series:
+> > > >=20
+> > > > https://lore.kernel.org/dri-devel/20250710125412.128476-2-phasta@ke=
+rnel.org/
+> > > >=20
+> > > > The aforementioned series removed a blocking waitqueue from
+> > > > nouveau_sched_fini(). It was mistakenly assumed that this waitqueue=
+ only
+> > > > prevents jobs from leaking, which the series fixed.
+> > > >=20
+> > > > The waitqueue, however, also guarantees that all VM_BIND related jo=
+bs
+> > > > are finished in order, cleaning up mappings in the GPU's MMU. These=
+ jobs
+> > > > must be executed sequentially. Without the waitqueue, this is no lo=
+nger
+> > > > guaranteed, because entity and scheduler teardown can race with eac=
+h
+> > > > other.
+> > >=20
+> > > That sounds like exactly the kind of issues I tried to catch with the=
+ recent dma_fence changes.
+> >=20
+> > Link? :)
+>=20
+> dma-buf: add warning when dma_fence is signaled from IOCTL
+>=20
+> >=20
+> > >=20
+> > > Going to keep working on that and potentially using this here as blue=
+print for something it should catch.
+> >=20
+> > This is more like a nouveau-specific issue. The problem is that
+> > unmapping mappings in the GPU's MMU must be done in a specific order,
+> > and all the unmappings must be performed, not canceled.
+> >=20
+> > For EXEC jobs, it's perfectly fine to cancel pending jobs, remove the
+> > waitqueue and just rush through drm_sched_fini().
+> >=20
+> > I don't know the issue you're describing, but I don't think a feature
+> > in dma_fence could help with that specific Nouveau problem. dma_fence
+> > can't force the driver to submit jobs in a specific order or to wait
+> > until they're all completed.
+>=20
+> Well the updates are represented by a dma_fence, aren't they?
+>=20
+> So the dma_fence framework could potentially warn if a fence from the sam=
+e context signals out of order.
 
-I would honestly like that my machines can turn off properly and pretty
-sure others using these platforms would agree on that, as having to yank
-out the power cable is far from ideal.
+Ah yes, it would warn.
 
-Adding WDT would lengthen even further the review process. That ignoring
-I am doing this as a hobby on my spare time and I'd rather spend my
-scarce free time implementing the power off driver than the WDT
-(something I'd do out of completion, I have absolutely no use for a WDT
-in this machine).
+However, in this case, applications would have faulted anyways, making
+the problem obvious. But granted, some warning mechanism for out of
+order signaling would make it easier to find problems.
 
-The reason I am using an MFD is that I was asked to back in v2
-(https://lore.kernel.org/all/aHElavFTptu0q4Kj@smile.fi.intel.com/).
-I'll be CC'ing him.
+P.
 
-I was told to create a southbridge driver that would match on PCI
-and registered other devices exposed by it as platform drivers.
-GPIO was the only functionality implemented at the time, and is
-the only functionality implemented right now. So I simply delivered was
-I was asked for.
+
+>=20
+> Regards,
+> Christian.
+>=20
+> >=20
+> > Gr=C3=BC=C3=9Fe
+> > P.
+> >=20
+> > >=20
+> > > Regards,
+> > > Christian.
+> > >=20
+> > > >=20
+> > > > Revert all patches related to the waitqueue removal.
+> > > >=20
+> > > > Fixes: bead88002227 ("drm/nouveau: Remove waitque for sched teardow=
+n")
+> > > > Suggested-by: Danilo Krummrich <dakr@kernel.org>
+> > > > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> > > > ---
+> > > > Changes in v2:
+> > > > =C2=A0 - Don't revert commit 89b2675198ab ("drm/nouveau: Make fence=
+ container helper usable driver-wide")
+> > > > =C2=A0 - Add Fixes-tag
+> > > > ---
+> > > > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.c | 15 -----------
+> > > > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.h |=C2=A0 1 -
+> > > > =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.c | 35 ++++++++++------=
+---------
+> > > > =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.h |=C2=A0 9 ++++---
+> > > > =C2=A0drivers/gpu/drm/nouveau/nouveau_uvmm.c=C2=A0 |=C2=A0 8 +++---
+> > > > =C2=A05 files changed, 24 insertions(+), 44 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/=
+drm/nouveau/nouveau_fence.c
+> > > > index 9f345a008717..869d4335c0f4 100644
+> > > > --- a/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > > > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > > > @@ -240,21 +240,6 @@ nouveau_fence_emit(struct nouveau_fence *fence=
+)
+> > > > =C2=A0	return ret;
+> > > > =C2=A0}
+> > > > =C2=A0
+> > > > -void
+> > > > -nouveau_fence_cancel(struct nouveau_fence *fence)
+> > > > -{
+> > > > -	struct nouveau_fence_chan *fctx =3D nouveau_fctx(fence);
+> > > > -	unsigned long flags;
+> > > > -
+> > > > -	spin_lock_irqsave(&fctx->lock, flags);
+> > > > -	if (!dma_fence_is_signaled_locked(&fence->base)) {
+> > > > -		dma_fence_set_error(&fence->base, -ECANCELED);
+> > > > -		if (nouveau_fence_signal(fence))
+> > > > -			nvif_event_block(&fctx->event);
+> > > > -	}
+> > > > -	spin_unlock_irqrestore(&fctx->lock, flags);
+> > > > -}
+> > > > -
+> > > > =C2=A0bool
+> > > > =C2=A0nouveau_fence_done(struct nouveau_fence *fence)
+> > > > =C2=A0{
+> > > > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.h b/drivers/gpu/=
+drm/nouveau/nouveau_fence.h
+> > > > index 9957a919bd38..183dd43ecfff 100644
+> > > > --- a/drivers/gpu/drm/nouveau/nouveau_fence.h
+> > > > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.h
+> > > > @@ -29,7 +29,6 @@ void nouveau_fence_unref(struct nouveau_fence **)=
+;
+> > > > =C2=A0
+> > > > =C2=A0int=C2=A0 nouveau_fence_emit(struct nouveau_fence *);
+> > > > =C2=A0bool nouveau_fence_done(struct nouveau_fence *);
+> > > > -void nouveau_fence_cancel(struct nouveau_fence *fence);
+> > > > =C2=A0int=C2=A0 nouveau_fence_wait(struct nouveau_fence *, bool laz=
+y, bool intr);
+> > > > =C2=A0int=C2=A0 nouveau_fence_sync(struct nouveau_bo *, struct nouv=
+eau_channel *, bool exclusive, bool intr);
+> > > > =C2=A0
+> > > > diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/=
+drm/nouveau/nouveau_sched.c
+> > > > index 0cc0bc9f9952..e60f7892f5ce 100644
+> > > > --- a/drivers/gpu/drm/nouveau/nouveau_sched.c
+> > > > +++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
+> > > > @@ -11,7 +11,6 @@
+> > > > =C2=A0#include "nouveau_exec.h"
+> > > > =C2=A0#include "nouveau_abi16.h"
+> > > > =C2=A0#include "nouveau_sched.h"
+> > > > -#include "nouveau_chan.h"
+> > > > =C2=A0
+> > > > =C2=A0#define NOUVEAU_SCHED_JOB_TIMEOUT_MS		10000
+> > > > =C2=A0
+> > > > @@ -122,9 +121,11 @@ nouveau_job_done(struct nouveau_job *job)
+> > > > =C2=A0{
+> > > > =C2=A0	struct nouveau_sched *sched =3D job->sched;
+> > > > =C2=A0
+> > > > -	spin_lock(&sched->job_list.lock);
+> > > > +	spin_lock(&sched->job.list.lock);
+> > > > =C2=A0	list_del(&job->entry);
+> > > > -	spin_unlock(&sched->job_list.lock);
+> > > > +	spin_unlock(&sched->job.list.lock);
+> > > > +
+> > > > +	wake_up(&sched->job.wq);
+> > > > =C2=A0}
+> > > > =C2=A0
+> > > > =C2=A0void
+> > > > @@ -305,9 +306,9 @@ nouveau_job_submit(struct nouveau_job *job)
+> > > > =C2=A0	}
+> > > > =C2=A0
+> > > > =C2=A0	/* Submit was successful; add the job to the schedulers job =
+list. */
+> > > > -	spin_lock(&sched->job_list.lock);
+> > > > -	list_add(&job->entry, &sched->job_list.head);
+> > > > -	spin_unlock(&sched->job_list.lock);
+> > > > +	spin_lock(&sched->job.list.lock);
+> > > > +	list_add(&job->entry, &sched->job.list.head);
+> > > > +	spin_unlock(&sched->job.list.lock);
+> > > > =C2=A0
+> > > > =C2=A0	drm_sched_job_arm(&job->base);
+> > > > =C2=A0	job->done_fence =3D dma_fence_get(&job->base.s_fence->finish=
+ed);
+> > > > @@ -392,23 +393,10 @@ nouveau_sched_free_job(struct drm_sched_job *=
+sched_job)
+> > > > =C2=A0	nouveau_job_fini(job);
+> > > > =C2=A0}
+> > > > =C2=A0
+> > > > -static void
+> > > > -nouveau_sched_cancel_job(struct drm_sched_job *sched_job)
+> > > > -{
+> > > > -	struct nouveau_fence *fence;
+> > > > -	struct nouveau_job *job;
+> > > > -
+> > > > -	job =3D to_nouveau_job(sched_job);
+> > > > -	fence =3D to_nouveau_fence(job->done_fence);
+> > > > -
+> > > > -	nouveau_fence_cancel(fence);
+> > > > -}
+> > > > -
+> > > > =C2=A0static const struct drm_sched_backend_ops nouveau_sched_ops =
+=3D {
+> > > > =C2=A0	.run_job =3D nouveau_sched_run_job,
+> > > > =C2=A0	.timedout_job =3D nouveau_sched_timedout_job,
+> > > > =C2=A0	.free_job =3D nouveau_sched_free_job,
+> > > > -	.cancel_job =3D nouveau_sched_cancel_job,
+> > > > =C2=A0};
+> > > > =C2=A0
+> > > > =C2=A0static int
+> > > > @@ -458,8 +446,9 @@ nouveau_sched_init(struct nouveau_sched *sched,=
+ struct nouveau_drm *drm,
+> > > > =C2=A0		goto fail_sched;
+> > > > =C2=A0
+> > > > =C2=A0	mutex_init(&sched->mutex);
+> > > > -	spin_lock_init(&sched->job_list.lock);
+> > > > -	INIT_LIST_HEAD(&sched->job_list.head);
+> > > > +	spin_lock_init(&sched->job.list.lock);
+> > > > +	INIT_LIST_HEAD(&sched->job.list.head);
+> > > > +	init_waitqueue_head(&sched->job.wq);
+> > > > =C2=A0
+> > > > =C2=A0	return 0;
+> > > > =C2=A0
+> > > > @@ -493,12 +482,16 @@ nouveau_sched_create(struct nouveau_sched **p=
+sched, struct nouveau_drm *drm,
+> > > > =C2=A0	return 0;
+> > > > =C2=A0}
+> > > > =C2=A0
+> > > > +
+> > > > =C2=A0static void
+> > > > =C2=A0nouveau_sched_fini(struct nouveau_sched *sched)
+> > > > =C2=A0{
+> > > > =C2=A0	struct drm_gpu_scheduler *drm_sched =3D &sched->base;
+> > > > =C2=A0	struct drm_sched_entity *entity =3D &sched->entity;
+> > > > =C2=A0
+> > > > +	rmb(); /* for list_empty to work without lock */
+> > > > +	wait_event(sched->job.wq, list_empty(&sched->job.list.head));
+> > > > +
+> > > > =C2=A0	drm_sched_entity_fini(entity);
+> > > > =C2=A0	drm_sched_fini(drm_sched);
+> > > > =C2=A0
+> > > > diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.h b/drivers/gpu/=
+drm/nouveau/nouveau_sched.h
+> > > > index b98c3f0bef30..20cd1da8db73 100644
+> > > > --- a/drivers/gpu/drm/nouveau/nouveau_sched.h
+> > > > +++ b/drivers/gpu/drm/nouveau/nouveau_sched.h
+> > > > @@ -103,9 +103,12 @@ struct nouveau_sched {
+> > > > =C2=A0	struct mutex mutex;
+> > > > =C2=A0
+> > > > =C2=A0	struct {
+> > > > -		struct list_head head;
+> > > > -		spinlock_t lock;
+> > > > -	} job_list;
+> > > > +		struct {
+> > > > +			struct list_head head;
+> > > > +			spinlock_t lock;
+> > > > +		} list;
+> > > > +		struct wait_queue_head wq;
+> > > > +	} job;
+> > > > =C2=A0};
+> > > > =C2=A0
+> > > > =C2=A0int nouveau_sched_create(struct nouveau_sched **psched, struc=
+t nouveau_drm *drm,
+> > > > diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/d=
+rm/nouveau/nouveau_uvmm.c
+> > > > index d94a85509176..79eefdfd08a2 100644
+> > > > --- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+> > > > +++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+> > > > @@ -1019,8 +1019,8 @@ bind_validate_map_sparse(struct nouveau_job *=
+job, u64 addr, u64 range)
+> > > > =C2=A0	u64 end =3D addr + range;
+> > > > =C2=A0
+> > > > =C2=A0again:
+> > > > -	spin_lock(&sched->job_list.lock);
+> > > > -	list_for_each_entry(__job, &sched->job_list.head, entry) {
+> > > > +	spin_lock(&sched->job.list.lock);
+> > > > +	list_for_each_entry(__job, &sched->job.list.head, entry) {
+> > > > =C2=A0		struct nouveau_uvmm_bind_job *bind_job =3D to_uvmm_bind_job=
+(__job);
+> > > > =C2=A0
+> > > > =C2=A0		list_for_each_op(op, &bind_job->ops) {
+> > > > @@ -1030,7 +1030,7 @@ bind_validate_map_sparse(struct nouveau_job *=
+job, u64 addr, u64 range)
+> > > > =C2=A0
+> > > > =C2=A0				if (!(end <=3D op_addr || addr >=3D op_end)) {
+> > > > =C2=A0					nouveau_uvmm_bind_job_get(bind_job);
+> > > > -					spin_unlock(&sched->job_list.lock);
+> > > > +					spin_unlock(&sched->job.list.lock);
+> > > > =C2=A0					wait_for_completion(&bind_job->complete);
+> > > > =C2=A0					nouveau_uvmm_bind_job_put(bind_job);
+> > > > =C2=A0					goto again;
+> > > > @@ -1038,7 +1038,7 @@ bind_validate_map_sparse(struct nouveau_job *=
+job, u64 addr, u64 range)
+> > > > =C2=A0			}
+> > > > =C2=A0		}
+> > > > =C2=A0	}
+> > > > -	spin_unlock(&sched->job_list.lock);
+> > > > +	spin_unlock(&sched->job.list.lock);
+> > > > =C2=A0}
+> > > > =C2=A0
+> > > > =C2=A0static int
+> > >=20
+> >=20
+>=20
+
 
