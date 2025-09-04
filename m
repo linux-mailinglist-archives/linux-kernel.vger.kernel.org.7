@@ -1,205 +1,125 @@
-Return-Path: <linux-kernel+bounces-800288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0C0BB435D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:33:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF159B435DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 105431C262CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:34:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 572327ACB8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7B82C21DE;
-	Thu,  4 Sep 2025 08:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72672C2353;
+	Thu,  4 Sep 2025 08:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KvcJpCfa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PFwaZDlx"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990B3258EED;
-	Thu,  4 Sep 2025 08:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A0A21D5B3
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756974822; cv=none; b=WW/WBFBWW1GKSdPyZ8Y2OckFwEG0EHvzXBp4uWFFPfCCkg7gnbN9U31kORdw7IAzVMX2SXKBx34edXzoFpHc1a3AIDdnSexZwqe0aB08BMIVF17O05fHMSrJuWm/TY6SkDPmEkz+bwz+D7KfM4iE1kkcLATpP5nDotZOhQd3JYI=
+	t=1756974949; cv=none; b=uHBwPDh+c4Vio7zO4qGhz3HOlPxnO0cQF+07KmIHDv4hR9rcDX+KFUqyYooKOeRzszuXH6vhoBYIlqj8r2slOkf9C0Zg3LTgMZqDDagz0+qHNors151mK01zwbsOt+bPOEK3VNHBwsOy8jcvW1QrWJ0oslbQ6LnBy/v80SVakms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756974822; c=relaxed/simple;
-	bh=xa1DNZh9ZS1PCU6W7gGSjK02tfE2cD6nLJfB1gnM5PI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F//xhcGbRSygO1r5b5P+r7go5eVmPgtJEHTyny4vSz8XmCU8/GbEbysQNWtfXfycEPzOaEKwA047TOtDaGcyE0EeDIjAX/Jogsz6gyXSG7B6KYqkG/62L5iA2qfiQugeBcaSdiZtgr4fWK2woDQYxQuPFmstkGLNjxs4Z+wB0yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KvcJpCfa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5A241C4CEF1;
-	Thu,  4 Sep 2025 08:33:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756974822;
-	bh=xa1DNZh9ZS1PCU6W7gGSjK02tfE2cD6nLJfB1gnM5PI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=KvcJpCfaYNNRQilKjRoW3jmSHmV1Hdzliu1dOsOKNFM/kLnu50KyyaeainO4Y30YA
-	 vF36WCYkLTQ28JFaYmdlz/RLZaUGjnlLvXSWskHpIH2Iq58rUxec4DvSulajP1m8ab
-	 DVH/tu5wdQKxfFO4wV/jbTHWXdakAyMa9LrGbRdFhQ5KISjF5wi2lfkvYtgMCTYPXv
-	 /LE/tnBbIXV/ehjdYe1e+OBXbOCqmAUlNFwgirX4xpdRAjTiu7O/sAjJZ2Emb4n1a6
-	 y6D/To8UOpafcZlNRfFe6RPIVsbobMO71liDE2FvZ5FGhUBaZINZa+HhWysnCP97dp
-	 rZLAR/dg8q3+Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E072CA1013;
-	Thu,  4 Sep 2025 08:33:42 +0000 (UTC)
-From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
-Date: Thu, 04 Sep 2025 16:33:42 +0800
-Subject: [PATCH v8 2/2] hwmon: document: add gpd-fan
+	s=arc-20240116; t=1756974949; c=relaxed/simple;
+	bh=h5RvIxe8l9bzN8R6dikvAkNskzPyZRDzMQGJ9HnLDwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j9BV6dhEO1hGuJoFsgHq75rJh0/ddWEwhBK8cfiLm3T+kEPiN9RahDXZwPVE8+xi1Sj59uNsOlW0IiA5h5r458Dt+JkFrQhjm97KbQFoOO7CEzbw5DMjSZOnFJSlZsmgTycgy55YyPhtPMSZHhm0Y/sniq6pA1RLY7ZZWlJLG6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PFwaZDlx; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3d3f46e231fso695842f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 01:35:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756974946; x=1757579746; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fvYi+R5i77yXA26UvQlFEfyxfCLO5Nh7bbNkyAiJE6Y=;
+        b=PFwaZDlxI82RXm/WFSbYT61FqELc0WqAhsSHYkbXFHymbK0ayV+Y6xfqV95Ifjf+5H
+         TRLlyVoBAT+AgUNgjPZZMN/W6Zyk2t6VbnvvA1UTlxji1WK5My4knJOnuh3C2qAHOATB
+         PWdf6JLUOXkFVrm5SsT2nGw17PyKryicwZO7f2cWmUFtwuvmD5jW1wRoQVEy4oZw45LW
+         vOcpD+soWduIkzjhcsAUOTZZuX7v082pTftoiuJ7elDTw0OM+wUCRqg1G7HafedOM4XE
+         4Pe1TFx79EZ5J0W1eF2kGw3kypLGc+JV9iil5VTTF4dYdcvyT7ven5mFosiFspVVE7YR
+         Sg/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756974946; x=1757579746;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fvYi+R5i77yXA26UvQlFEfyxfCLO5Nh7bbNkyAiJE6Y=;
+        b=eWlvaGFQFCx5heY2iFn7lMYGQRksoZW4Z/DVWfH9lo8WHzzjRUIxq8RDNsfMGN6VGc
+         dA2WVABtXbcuTrvcPT5hRInlEceF6cVl94qd0idyFfmvZVZjr9uZ5FBu4P3Sg2S0y7Vu
+         32MA1uxX1GBG7+5ENws+YXHeua1fqO4iqxgM3s+XQ3DTIFL1Kez+cL8R5auMKKTJFXIm
+         n+sDxjuqNWVbMbRjmdShkL6Pnbv40eVR22ZadiFcdgvjE7hoDMCsAia3SqpEElTrHwg4
+         sg9xk2fcYCzfJbXcvXwY3RFC46y7KT32AvS1urPzXHaD14RsdVfbpyy+zSYn3XaxCLS4
+         4iaw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7c/3ZUhfEvlPlINighsCgmqq8KmQmozAbyn/Kn8szDAO9RDywfFFlrDbD9NAlcqi9RUSh8wcFEfm9VXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaRzONAHhoHOl/kDLyNjEUwTGgQskzoWYUPun6s+T+qCWnnirX
+	ypc6y+wIHwRJEBOg98gyTki1qUXDIcQgSo1w7gm85fANu7D4NwJ4Jl+/6I5rqQChzig=
+X-Gm-Gg: ASbGnctokpdim9y0rFop6G0ef7cFbV13l1QWmrwDGqnNjP5pX73kXD2GiuKrgnLbyAW
+	isYEAurOsePBBmWLiIcARwyTu/wFIuxG60Nnbrv5WXzklBpj5NdOrzuW5lTeuZhEapMg21WLZGI
+	bR8fj9bkqawtfPF3UwEPq/wNMEpb+GIdQFRlRYBwNXaA92pFpl1DvsYMkyjWKriOeLQhAGsf/x0
+	FUXgVby4jKOWiW3x00tNqD6PQeCkIr3HYuBTVTEi5Zc9TZRdQwHJXPZm69GLzwGsUubMqKWqBe/
+	n8Wm440mIaI+V3N2hzpCMJNUaNNbbf7fMGhe25hi8pIJyAFeP6mBKJN5E7Jq4Hy9zBuz2QxUcIB
+	pLYx+IgUKlpcn5PzM6x/NAX/YiYtop7Js
+X-Google-Smtp-Source: AGHT+IH6tluwSmCG7lH+rafRzjnl/FD5MXJunjJ8MX7ouc4VDFS8i7jTuo2LLXbEBzN3/cqZwlGBAA==
+X-Received: by 2002:a5d:5887:0:b0:3db:f9f7:df86 with SMTP id ffacd0b85a97d-3dbf9f7e8d7mr4806530f8f.61.1756974945927;
+        Thu, 04 Sep 2025 01:35:45 -0700 (PDT)
+Received: from linaro.org ([86.121.170.194])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e68c83asm297479605e9.20.2025.09.04.01.35.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 01:35:44 -0700 (PDT)
+Date: Thu, 4 Sep 2025 11:35:42 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
+	Rajendra Nayak <quic_rjendra@quicinc.com>, Johan Hovold <johan@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: phy: qcom-edp: Add missing clock for
+ X Elite
+Message-ID: <nmennvrestyn6pf54wb7bwvblrtwdczqeokjdd7srj5eljyyfv@gqobw5rexdy6>
+References: <20250903-phy-qcom-edp-add-missing-refclk-v2-0-d88c1b0cdc1b@linaro.org>
+ <20250903-phy-qcom-edp-add-missing-refclk-v2-1-d88c1b0cdc1b@linaro.org>
+ <04437373-c5a2-43e4-b591-921ce450f3d8@linaro.org>
+ <49a1ed5b-2afd-46b5-b5b1-74dd82dae95b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250904-gpd_fan-v8-2-0752584f16da@uniontech.com>
-References: <20250904-gpd_fan-v8-0-0752584f16da@uniontech.com>
-In-Reply-To: <20250904-gpd_fan-v8-0-0752584f16da@uniontech.com>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Cryolitia PukNgae <cryolitia@uniontech.com>
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
- linux-doc@vger.kernel.org, Celeste Liu <CoelacanthusHex@gmail.com>, 
- Yao Zi <ziyao@disroot.org>, Derek John Clark <derekjohn.clark@gmail.com>, 
- Jun Zhan <zhanjun@uniontech.com>, Cheng Nie <niecheng1@uniontech.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756974821; l=3706;
- i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
- bh=LpIT/dc1H9CoyCcFgvvZK2Mbndl3sEjj5NTpoDZaSng=;
- b=TpLbyysrkvlDAZXFVN6a6xnwrd6Zu4nmp7QsMEFNb5HGs1gGOag1kgmrf3SPXcFnEawtpaNMO
- cQK2ULzM/6GCL1cNYWBcBk+JPbNglTf1Um3479E+i6sDvBYzWxX+TnX
-X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
- pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
-X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
- auth_id=474
-X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-Reply-To: cryolitia@uniontech.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <49a1ed5b-2afd-46b5-b5b1-74dd82dae95b@linaro.org>
 
-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+On 25-09-04 08:51:49, Krzysztof Kozlowski wrote:
+> On 04/09/2025 08:50, Krzysztof Kozlowski wrote:
+> >> +allOf:
+> >> +  - if:
+> >> +      properties:
+> >> +        compatible:
+> >> +          enum:
+> >> +            - qcom,x1e80100-dp-phy
+> >> +    then:
+> >> +      properties:
+> >> +        clocks:
+> >> +          minItems: 3
+> > 
+> > That's an ABI break, so you need to explain it and mention the impact.
+> > Reason that there is one more clock, but everything was working fine, is
+> > not usually enough.
+> Heh, I already asked for that at v1 and nothing improved.
 
-Add GPD fan driver document
+I missed that comment. Sorry about that.
 
-Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
----
- Documentation/hwmon/gpd-fan.rst | 79 +++++++++++++++++++++++++++++++++++++++++
- Documentation/hwmon/index.rst   |  1 +
- MAINTAINERS                     |  1 +
- 3 files changed, 81 insertions(+)
+Will address in v3.
 
-diff --git a/Documentation/hwmon/gpd-fan.rst b/Documentation/hwmon/gpd-fan.rst
-new file mode 100644
-index 0000000000000000000000000000000000000000..a8541049d680beef93c5f7623de77e759242ffac
---- /dev/null
-+++ b/Documentation/hwmon/gpd-fan.rst
-@@ -0,0 +1,79 @@
-+.. SPDX-License-Identifier: GPL-2.0-or-later
-+
-+Kernel driver gpd-fan
-+=========================
-+
-+Author:
-+    - Cryolitia PukNgae <cryolitia@uniontech.com>
-+
-+Description
-+------------
-+
-+Handheld devices from Shenzhen GPD Technology Co., Ltd. provide fan readings
-+and fan control through their embedded controllers.
-+
-+Supported devices
-+-----------------
-+
-+Currently the driver supports the following handhelds:
-+
-+ - GPD Win Mini (7840U)
-+ - GPD Win Mini (8840U)
-+ - GPD Win Mini (HX370)
-+ - GPD Pocket 4
-+ - GPD Duo
-+ - GPD Win Max 2 (6800U)
-+ - GPD Win Max 2 2023 (7840U)
-+ - GPD Win Max 2 2024 (8840U)
-+ - GPD Win Max 2 2025 (HX370)
-+ - GPD Win 4 (6800U)
-+ - GPD Win 4 (7840U)
-+
-+Module parameters
-+-----------------
-+
-+gpd_fan_board
-+  Force specific which module quirk should be used.
-+  Use it like "gpd_fan_board=wm2".
-+
-+   - wm2
-+       - GPD Win 4 (7840U)
-+       - GPD Win Max 2 (6800U)
-+       - GPD Win Max 2 2023 (7840U)
-+       - GPD Win Max 2 2024 (8840U)
-+       - GPD Win Max 2 2025 (HX370)
-+   - win4
-+       - GPD Win 4 (6800U)
-+   - win_mini
-+       - GPD Win Mini (7840U)
-+       - GPD Win Mini (8840U)
-+       - GPD Win Mini (HX370)
-+       - GPD Pocket 4
-+       - GPD Duo
-+
-+Sysfs entries
-+-------------
-+
-+The following attributes are supported:
-+
-+fan1_input
-+  Read Only. Reads current fan RPM.
-+
-+pwm1_enable
-+  Read/Write. Enable manual fan control. Write "0" to disable control and run
-+  at full speed. Write "1" to set to manual, write "2" to let the EC control
-+  decide fan speed. Read this attribute to see current status.
-+
-+  NB：In consideration of the safety of the device, when setting to manual mode,
-+  the pwm speed will be set to the maximum value (255) by default. You can set
-+  a different value by writing pwm1 later.
-+
-+pwm1
-+  Read/Write. Read this attribute to see current duty cycle in the range
-+  [0-255]. When pwm1_enable is set to "1" (manual) write any value in the
-+  range [0-255] to set fan speed.
-+
-+  NB: Many boards (except listed under wm2 above) don't support reading the
-+  current pwm value in auto mode. That will just return 255 as default on
-+  those boards, or a previously written value. In manual mode it will always
-+  return the real value.
-diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-index d292a86ac5da902cad02c1965c90f5de530489df..ce4419f064e1368740387af70af38a85cadd952d 100644
---- a/Documentation/hwmon/index.rst
-+++ b/Documentation/hwmon/index.rst
-@@ -82,6 +82,7 @@ Hardware Monitoring Kernel Drivers
-    gigabyte_waterforce
-    gsc-hwmon
-    gl518sm
-+   gpd-fan
-    gxp-fan-ctrl
-    hih6130
-    hp-wmi-sensors
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 14a616be5ff08aaeee52436dff54a86c4a81e5fb..0b6ae95c2007f0737bc4a4e1f2bac52f71628f78 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10425,6 +10425,7 @@ GPD FAN DRIVER
- M:	Cryolitia PukNgae <cryolitia@uniontech.com>
- L:	linux-hwmon@vger.kernel.org
- S:	Maintained
-+F:	Documentation/hwmon/gpd-fan.rst
- F:	drivers/hwmon/gpd-fan.c
- 
- GPD POCKET FAN DRIVER
-
--- 
-2.51.0
-
-
+Thanks for reviewing.
 
