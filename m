@@ -1,247 +1,213 @@
-Return-Path: <linux-kernel+bounces-801267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9915EB442DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:34:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94FEFB442DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D74B25A69B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:33:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72B7F5A5D57
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75192F28E0;
-	Thu,  4 Sep 2025 16:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0C3230BEC;
+	Thu,  4 Sep 2025 16:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T1UrFUh2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Vgw4SJxy"
+Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218A03090D5;
-	Thu,  4 Sep 2025 16:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757003587; cv=fail; b=gzk0Bd7GLleoBPAAutzmBiIBMMkV34jGXN/PYZNYAdCeZUurWB47KPLR+eaA4rATqobqIqGfWhKUIK9z3BwUZUPpAB+Gc7NZFEMa0fz70rxUQKyyvGrOrbD1jZpR7j1DFuItCfdR5vNz6dNmvprkZLUz5SrAo5GrBtiwwrIGrEY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757003587; c=relaxed/simple;
-	bh=WeP0IZMz5aS5LzJnUIJ/K5j0fc5zF1lVOW1QNbt+x1U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=J1KoOBpxcYAMYmi1CSNTTPfmDXY6z/04nU9Hefx5I8DwP9JZhtpHa5n8F4ZS/4MtqCLFzL3MvIVQKBP90wCg0dP4n1Ft0cGkP3ochbbmQFQ0OnyqjjZwfWmJ7SmD6tHFJ4/CMra7xhRAM14HWo9X1r7Scr9pWnJszzP8duCIALg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T1UrFUh2; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757003586; x=1788539586;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=WeP0IZMz5aS5LzJnUIJ/K5j0fc5zF1lVOW1QNbt+x1U=;
-  b=T1UrFUh2jaQDBRqg8tNMBS7l3jDnSBfGH8N1YlZD3TAK1OgQ2Pb8lvSe
-   7ZNeg9NcaVVmxFqV9oF3DVhkB6j3gFWI4UEAAsZ8tbt+nvW+g+dY7Iyfk
-   KqDahanBMZoSTuZDp04C76qLqs/Jjf2f58VETdyucxrjtfZltt3h71gJU
-   UX7nMStHPVex3Jx+LJgqkScUcCXnyFXQ4NUTH+ZRBDT1LskAEVD+r/5K7
-   cszNelupd7doBvrynLOXEJdJ5DUyoLltDRzcuV9gCBHFWeZ13+1RhMm8w
-   1f17yDUXUogclusuWNmtik9dfq/Nwdt1LsWK00DyPClSIM2tM7/aDLOc3
-   g==;
-X-CSE-ConnectionGUID: ioUlQOvOT1y5DJ7HSPZSRQ==
-X-CSE-MsgGUID: SCczTEjTTTqTuFTdBvpMGQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="63175393"
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="63175393"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:33:05 -0700
-X-CSE-ConnectionGUID: sLlM5MKDSk6OPkH7JLKPDw==
-X-CSE-MsgGUID: a5eeD8vFTKabPJF1nwBzEw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="202869509"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:33:05 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 4 Sep 2025 09:33:04 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Thu, 4 Sep 2025 09:33:04 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.51)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 4 Sep 2025 09:33:04 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C1KJmPhsvptBFfrfFES69UHPr/eMCRFHt7cPPjrIKWLUyvQjEaYczDuemNC9MzwTOnEwSjb5YaJQY4OybV6aqX9KYQDtqROETgWb75U4dP4387cCPs7wTdax56xhkLuc24C/PWYEgzFuH0DaLUhztHL1YpnerNI49kwCPQCpiL4RYMhmQuu2r1iBSTh3TBjgNzH8RK/aaGztsxlMKes9GqZQUIleg2jaBwhdTpvrxzB3Jyc2gaOskkXhiDJ/10Hn57v5DAH02MrsE5ao9aLftVvDMyXTzwxZLwxmZhtPT91GFUesA/CzEPW8jnFdb4ThX2MUMTzhGzrQwyX5tKCzaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kkF7j7PMyVvp+bhDiAiYKynN/kx63BzYz/70ID7k/nE=;
- b=cDaowyMyApctWZ8icnJWUvrcuJqnJ0y5HIb03Bb5D3AExx5LhkztFF+ODq35lnz4DOH0fakuDYkMjXoOEQGfjusw1L97H1318QeM/e139FksvkvasACA3wyHtzpmD2cUC6oYZuwgQsf0kwxW/oeFwj7RtvvZH5w0Oh+BQYB6Acq+E2ahUYlqGjcLkBqjxoWVclEk1C4utJ3hqKXcSq3wNs5CpFDhfkZUp2ZI28BFHJS2nWizgjREhwp5CpwGdnEQTtDIRXkdDbmcOL/hICB+6moyAPchXrCjzs83xU7r077QkTsGmMBesil0ok4WblPbWr32aUP7SmcmLzcbXHUsiw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM4PR11MB6455.namprd11.prod.outlook.com (2603:10b6:8:ba::17) by
- SJ5PPF8225D2149.namprd11.prod.outlook.com (2603:10b6:a0f:fc02::83a) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Thu, 4 Sep
- 2025 16:33:01 +0000
-Received: from DM4PR11MB6455.namprd11.prod.outlook.com
- ([fe80::304a:afb1:cd4:3425]) by DM4PR11MB6455.namprd11.prod.outlook.com
- ([fe80::304a:afb1:cd4:3425%6]) with mapi id 15.20.9009.013; Thu, 4 Sep 2025
- 16:33:00 +0000
-From: "R, Ramu" <ramu.r@intel.com>
-To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
-CC: "Lobakin, Aleksander" <aleksander.lobakin@intel.com>, "Kubiak, Michal"
-	<michal.kubiak@intel.com>, "Fijalkowski, Maciej"
-	<maciej.fijalkowski@intel.com>, "Nguyen, Anthony L"
-	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
-	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
- Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "Simon
- Horman" <horms@kernel.org>, NXNE CNSE OSDT ITP Upstreaming
-	<nxne.cnse.osdt.itp.upstreaming@intel.com>, "bpf@vger.kernel.org"
-	<bpf@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [Intel-wired-lan] [PATCH iwl-next v5 06/13] idpf: remove SW
- marker handling from NAPI
-Thread-Topic: [Intel-wired-lan] [PATCH iwl-next v5 06/13] idpf: remove SW
- marker handling from NAPI
-Thread-Index: AQHcFqV4xu5iYcQsAUCoANVg1/qUsLSDMzaQgAAR4wA=
-Date: Thu, 4 Sep 2025 16:33:00 +0000
-Message-ID: <DM4PR11MB6455D1792D2CBB7E83887FCC9800A@DM4PR11MB6455.namprd11.prod.outlook.com>
-References: <20250826155507.2138401-1-aleksander.lobakin@intel.com>
- <20250826155507.2138401-7-aleksander.lobakin@intel.com>
- <PH0PR11MB5013310C54F6A0098AC9F45F9600A@PH0PR11MB5013.namprd11.prod.outlook.com>
-In-Reply-To: <PH0PR11MB5013310C54F6A0098AC9F45F9600A@PH0PR11MB5013.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM4PR11MB6455:EE_|SJ5PPF8225D2149:EE_
-x-ms-office365-filtering-correlation-id: fb0a9c26-36c9-43d2-d9a8-08ddebd0b6cc
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016|7053199007|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?19LovUZVNiSAqOpG/k/C0l7qXmvNZROifbyLjLOo+yLt7TclkB6FHTwUxZUG?=
- =?us-ascii?Q?5UWESgXQa4gekI7P0ujbFdetBkolnMLhoQXVR12z467a/jroBpdHZLAo++7S?=
- =?us-ascii?Q?8mN+Cr5+Vqe7+5CpbG4EzHcoaD38CjHpwkvUilfOIn5trL6W8Cb7D6rMx+T1?=
- =?us-ascii?Q?cyh1onpmug9a2NKVzPIPHPBIp5HjLg6U6lkM18UWQTnfh+SYcal7YjFi7Kcr?=
- =?us-ascii?Q?memQS7Pt2M/Rg3s14oTBD9ie5ugc/UTRGZKttn5kE9kqHoZfd/MKFktryDVp?=
- =?us-ascii?Q?mJ/k77XFDz1zG9NrVbAhUZFDz/y0tD02vDfOqO1ZO+z2adNlS6Yf1w7dQqdg?=
- =?us-ascii?Q?8cr1u1suQlvpEb8pd3VCjQvseXtppMgwTMNO41pLcrBWqO3HQK8hEyxLXvy/?=
- =?us-ascii?Q?bIYs9qgc5yuOAOsq24t6TJbyigztLVrsjFoahYaBlCWeoGFh0qkSRHaGlxci?=
- =?us-ascii?Q?vOqZsR8EHqfbFoBHNrLhd8t6N7smC0MpW4f3iO/ki0SWEiJBte6Qs4qRe4Ri?=
- =?us-ascii?Q?FitbcDjTNUnw8MYxM2WhYTi8T3C4IeLo0jMA7e4UZ5jwBaQbDgMgppGaLADY?=
- =?us-ascii?Q?nUdVo9d3miRbqZngKmmUMHmEvi+uXBvwvKUAA1o4wHTGpIzrF/IpyMo9yLv8?=
- =?us-ascii?Q?BjoEOE1NjONR4/0VUjuVWG6KH52XKXlCFmM+qi/3zhBGDPy5GbBcMsMIX0+y?=
- =?us-ascii?Q?jVdrKo3HS08i45+3TJ+1IhWBQLxAwDH5cwhTeeounwtXP1coDNcJr1qquh7E?=
- =?us-ascii?Q?fG9lIhp2t1/iGwxtAeT7LO0hQgy8ZO/7B+hwMGfXd8+wWJjIIZoCN71U8c8B?=
- =?us-ascii?Q?6eEI43hk3pWFPWNRsYZ2a71T3rzbXdKIgoKzrph1x62wzXKTQsj7oSP6Lnwt?=
- =?us-ascii?Q?FPz5p2apdAXHMkIGWpKa6pq0r5YRJwH6h/AsqdjDS2PoBbqsHN2C6EEyk8Dm?=
- =?us-ascii?Q?5/fPhm9DZsJ4J6MoOzxtWwzeS9W3CaP34gVBgqQaLq8Uq445VYyTIa5V0MgY?=
- =?us-ascii?Q?HL+QjCkn0gB638ZWlkBdGUosJXt/ipvTOoHYO94PLzFX0dwATLr2xJlMQdWE?=
- =?us-ascii?Q?Jl2Omu79YS8Xgr1wdzx4pdBR1i1B4gspq3jdKqCUZnxgfa2gOnOHsmMYw11o?=
- =?us-ascii?Q?+Rbj75wT8Vrq/smrEZIYvDsSRxis8O8X8JRGKQ34Udl2PdgoUnjCss+PPj7p?=
- =?us-ascii?Q?LnDSOP/zQ1UfINxMAZDQPDCOIHRt9tNf1GsCAM4zMhWwkbGzemtg8n3cU9cW?=
- =?us-ascii?Q?nPEY4FfnNwtLQI8EqDlkdE2VY0IU0al/gdsMKSPmV9zwnPcn3jBA8KLl7dEE?=
- =?us-ascii?Q?WwmYGYX3OOjmMn1IvBJIPseQ1OW3JTpewU0VVjaVKZwujAtld6eYRl4XvKin?=
- =?us-ascii?Q?Fvo1qH1FUDTJMmNLaM1VTYBWIr692xEmNXPv3u2yOhMlNyaXnaDPpkDOfAv2?=
- =?us-ascii?Q?1wp2+PBvZaBOo1A459lnZCHbuz9HBNWs3V32d10idPdxawGa4WpuYw=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6455.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(7053199007)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?zYGIwOnKggHXT2scqF76Y5jDlLoqgdvKS/rCZtp3XYXHGQ37/LWKnQFumKEw?=
- =?us-ascii?Q?r0Xr1MDb2haqTMjolxxw5hXnKMLu4HIXhAx+hbmvKF1ejcNf0c3O/+11gDGP?=
- =?us-ascii?Q?761hjNw33nvn74DsnofHixaH/d9xxMnv7l7KXC4F2IDsnyZ8NQKV3qfq4oV6?=
- =?us-ascii?Q?TPHnSia2KaTY/BRUoZGTZP6UsQdWzcCjv4DaVeeyr2V3eJ3ivMdHxWj3QbY6?=
- =?us-ascii?Q?vRfpIDsQs3eNrgDLxjz9X/JKSSzDIrDHMGG/ATU542LNYZzpbJ7k/G+4BDMy?=
- =?us-ascii?Q?nNmxUE/+sBRjuSYQYS5c5JTtAeoBp8/PjyVSilNOPOT7+qIxakw6C5F3pI8C?=
- =?us-ascii?Q?tfqjoeK2WAa6Dej65atEu5ZrPRBf+926AZNC9o0OPQQSzYIXSKXCV+ZmylQC?=
- =?us-ascii?Q?688Q87265CebJEd6HrsQGEMosk13nrBpMHCGwfhBkI/YXFWUFMfaCcLKvxX+?=
- =?us-ascii?Q?Oit+EGVLUKo4sho1yHNS4hmGiUMucVSeVy6uSiq+PgHPkED9cUqZrHD/EOgO?=
- =?us-ascii?Q?p5bDd+hM01vdribkhFnK17Phi7ODn4p41rZDX2+KToMOngOaDaU4LYC3SPu7?=
- =?us-ascii?Q?EcVeKYX/5UWgEmBg6yE0vwsRAqo+ECSMxNhaJKP2cbFWpl9P5QqVVZjarfML?=
- =?us-ascii?Q?bP2ZQDZyEoTXkpbaYZPcsPUJDVlXVQGPeViZ5qv1bQXrSvOxu5PmwxbKFUvJ?=
- =?us-ascii?Q?YO+ANk2XkFkC6z8xZfcRtOfDccLYv6bhi8FK8v6UMPeor5djm3Z1F0KemkYl?=
- =?us-ascii?Q?KwQfOTTkXhXu/xl3uTdFyb87aaJPe0MqfcjZ0wuEMobE5Yhha9rkhOCy6GnO?=
- =?us-ascii?Q?fSZ6OebMaoYxa7JlK/JwWRu7gKVhzAxPHNIhQ2pao2LTpxAdV6nZtTKp1/eH?=
- =?us-ascii?Q?fCUf/9rTnS+JAGbko4pj8pFv1ptarQb4c33xpWHM4k7y8Gvcpo4HOQeK/32W?=
- =?us-ascii?Q?paqvcwuJ9qB1SLK/2NBEZDXtH3JaAEsomRd5lcy7EE0BH04h9qJjbNp+26Uo?=
- =?us-ascii?Q?5L3unb25VsFdcRutCjP1dbKQxD/bn2zfsMktEhebB8ssDn/HamO9Qw3zCdeW?=
- =?us-ascii?Q?eF9Kn07JzlAb1xc+KW27Iz4O3XtoqSTZVylfjBnEdIElsvxcmsg3BgTTgijE?=
- =?us-ascii?Q?x1RwVKJ0u+dW7TZjkVPPFY8DsKDnkYWTPptNaxqqYC8twXLha8oLLrEnaUtB?=
- =?us-ascii?Q?ZEH/68UFpZrWz9QtcG5vIVzifiSkJQFniz6fmCwnYpGp+DshqENR+CSi7lUP?=
- =?us-ascii?Q?97YiTiI1njcgIRWougRfzosj8gcxaRIEX/37CR8YDr26dUF0YhowNBHUvBqc?=
- =?us-ascii?Q?xx1O3QFcIzwaefO/EnPrz5zVD/ADmfx2DMndgzw4SeCftVkMzLwqvk5em3pg?=
- =?us-ascii?Q?YPArja8R/1wQzi7p+EmKCocBl4HS7kn1BUvXZuthyMpMEAv5YZjUU5NWxkPT?=
- =?us-ascii?Q?twTZc7/5MTcu+EX9rCqO6T4ldhO2kaieSF+oHzJbBCOdetDR7hAwaBgXKuaP?=
- =?us-ascii?Q?i9pozYp4FTjNtjUVyrDuKno5DiaQtTB/bp+MapOZW5aMcgW7nM9c4HGQFFky?=
- =?us-ascii?Q?YynhtRIdGMg3b1PW/dU=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9A226D4D4
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757003601; cv=none; b=HkYNUEJVlmQHaIxRdCUBuvCqwZb623aTILjTr27w9V3CLLM8KGVz6HG9zCNXapu6KYVMjdeQ2sC6b2mfCPZDLfZNV79hWKwUp+t2LhPAvhuH4DFW3KcVr6ARh1xi+XtideiJinZdSwiOzLPhVVQARU54lyvOgfHA5sGkwINhLsA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757003601; c=relaxed/simple;
+	bh=sFzHSI7OFjhnpOz0tW3ouW4B7o6ZJtVjm3gZS+DwQZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nsEEuCvX9f4FlT9kMc+D006+SNKs5G94P9fdYoQ8mONB+nq1GFECR3WWj96rCHtRL3He45lPFx/pAnbEzPzvgekjnrO84156hxNy4Y9O0/6qu3yxMRmefQUI7+iCk4tsMep/g7gfn5jrQ5EQbAU3AupqH24E3nlLci5F+sW/SHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Vgw4SJxy; arc=none smtp.client-ip=209.85.218.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-b046f6fb2a9so196477666b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 09:33:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1757003597; x=1757608397; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C+8LFVwxKn/dVrIwb+zJ640cPN+H4+SAhZsFuvyC+sg=;
+        b=Vgw4SJxyur70n05iVK9nYTi0/e/3UGtBV+cYcJl6lzdO3cjwKuqzxwDtiLO/xpPPnm
+         z57uuDwNzgt8hIT/CLvIvdWZ/uaIQdCjUa1IqDMunX7JX7GIZWQbdghbfWstGkC3+DiP
+         57T0YBvME9dBt4tDHWe/i5mizCVDqTiyQpP8NgyrxeFAwDJ7RoRIWaXl6YOGeAoHemN7
+         3j0azQgwt+xMKUVxCgqI7JDrVL272w2mS3VtgLyjlHgS8K8/YR8B2IVZNrxwVkzcW/bN
+         WMpynJYhXTr6c/+k0kXVh0tTHB/Mc+E5XEBiez5hZhs5M2iiCYKfpdUnhTMViftH0UmX
+         5hog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757003597; x=1757608397;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C+8LFVwxKn/dVrIwb+zJ640cPN+H4+SAhZsFuvyC+sg=;
+        b=utwXaGg1vMoRuToRhhOtpbUnijLMfnxve/Bvp1sy9WGFrvp2tIbvA2PWjGU1OhFy+C
+         MY0YqT//4fIBZC/J3iQZzDQo/YgdX6U1NDwp7v7InVMZsWJ2iaV/+tsMAT2OkpW3un39
+         CkpBX8MpEnpOiinYvBaw0J/UMe/i15GviiPLjkzmO5+zE3v1fsCaL88Wyd+Oor2boF74
+         wPro9g9UR1U1un/LDZh9cyD5mxGlzE/CLliZTKYOd0jyNwG+iliwMqRgc723BQQ5f6CP
+         ukdFySUsUP8wAaHpMOmlTf/MXhFPjjYvzUuQ8WqQfxr+kEPTl9UZZXxnfL42eZR7nLkH
+         tbUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVG9WG2YTLPJ/hQ0y6N09gHYx2QtKNcXgym3oazVVcRa5uNxDGt0zYpSNZparymRO5jny+Nbi1xZtvgmM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4xmCbmrf8ifcavCmCgLHNUu89wytorTEmvPaCvZcK/k68NRaY
+	WMhAvxhyaf8slUHcORbqElqzHlBkRZKIge18hHRRQW7H9zTN253kzRIOyGXuRyapC38=
+X-Gm-Gg: ASbGncv0K5bCwHxUsEStCnIl5ayXT/lYQITtVPp7dyCvNTIu9rpyRhzz15ClsA1IOJ7
+	U1Hfdh2xqwooEoAzb+776na3S//Q7e3Fpwr9rFEcNwStpgwWZlito461z1BLt4+fOigJs/Ky2uw
+	bGwYB43hUhvhQ+kgMvMxUXGkR9O/XExyUqxQtsLueGanGMgwEfBuYNf4oxTe+KIDbfa1T3p1EbY
+	Se1QteziRpAszit+zI8FtPss55fP/rYG2E/PkI641RpCf/qy+oLi7pg9nRWy7mqzQRcsqaUU5yr
+	hAUYwqHvj+SLwY162UV/Tg+0wE9P8Hfh0bC+2c1PU76Yeyo3L/Y1Qqp4PaeJ6Py7yilSABUItBU
+	1XKF3oP0l6WmtHqtqelSh4M9GW6YmGg==
+X-Google-Smtp-Source: AGHT+IHRA0tkdSfCZjvi9gvD86a2f3d6jr2OQ0TT1sA+gs7TZ5ztQT1JSuFmlxLYmm/VoUW+lzTtWA==
+X-Received: by 2002:a17:907:1b10:b0:afe:85d5:a318 with SMTP id a640c23a62f3a-b01d9755f83mr2037658266b.36.1757003596762;
+        Thu, 04 Sep 2025 09:33:16 -0700 (PDT)
+Received: from pathway (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b034db02d54sm1325210066b.106.2025.09.04.09.33.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 09:33:16 -0700 (PDT)
+Date: Thu, 4 Sep 2025 18:33:14 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Daniil Tatianin <d-tatianin@yandex-team.ru>,
+	linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v1] printk_ringbuffer: don't needlessly wrap data blocks
+ around
+Message-ID: <aLm_SpmQP3UwzkqQ@pathway>
+References: <20250903001008.6720-1-d-tatianin@yandex-team.ru>
+ <84jz2etj3t.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6455.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb0a9c26-36c9-43d2-d9a8-08ddebd0b6cc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2025 16:33:00.9031
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QTChtB7Vm7NzbE6tZaLTIrzrqSpcgZws3DXC83PK0uB7VnjHpHAOtnAmkglzrWRuFbrI83KTc0mshD9fxr273Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF8225D2149
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84jz2etj3t.fsf@jogness.linutronix.de>
 
-> -----Original Message-----
-> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
-> Alexander Lobakin
-> Sent: Tuesday, August 26, 2025 9:25 PM
-> To: intel-wired-lan@lists.osuosl.org
-> Cc: Lobakin, Aleksander <aleksander.lobakin@intel.com>; Kubiak, Michal
-> <michal.kubiak@intel.com>; Fijalkowski, Maciej
-> <maciej.fijalkowski@intel.com>; Nguyen, Anthony L
-> <anthony.l.nguyen@intel.com>; Kitszel, Przemyslaw
-> <przemyslaw.kitszel@intel.com>; Andrew Lunn <andrew+netdev@lunn.ch>;
-> David S. Miller <davem@davemloft.net>; Eric Dumazet
-> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
-> <pabeni@redhat.com>; Alexei Starovoitov <ast@kernel.org>; Daniel
-> Borkmann <daniel@iogearbox.net>; Simon Horman <horms@kernel.org>;
-> NXNE CNSE OSDT ITP Upstreaming
-> <nxne.cnse.osdt.itp.upstreaming@intel.com>; bpf@vger.kernel.org;
-> netdev@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [Intel-wired-lan] [PATCH iwl-next v5 06/13] idpf: remove SW mark=
-er
-> handling from NAPI
->=20
-> From: Michal Kubiak <michal.kubiak@intel.com>
->=20
-> SW marker descriptors on completion queues are used only when a queue is
-> about to be destroyed. It's far from hotpath and handling it in the hotpa=
-th
-> NAPI poll makes no sense.
-> Instead, run a simple poller after a virtchnl message for destroying the =
-queue
-> is sent and wait for the replies. If replies for all of the queues are re=
-ceived,
-> this means the synchronization is done correctly and we can go forth with
-> stopping the link.
->=20
-> Signed-off-by: Michal Kubiak <michal.kubiak@intel.com>
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> ---
->  drivers/net/ethernet/intel/idpf/idpf.h        |  7 +-
->  drivers/net/ethernet/intel/idpf/idpf_txrx.h   |  4 +-
->  drivers/net/ethernet/intel/idpf/idpf_lib.c    |  2 -
->  drivers/net/ethernet/intel/idpf/idpf_txrx.c   | 97 ++++++++++++-------
->  .../net/ethernet/intel/idpf/idpf_virtchnl.c   | 34 ++-----
->  5 files changed, 72 insertions(+), 72 deletions(-)
->=20
-Tested-by: R,Ramu <ramu.r@intel.com>
+On Thu 2025-09-04 16:04:30, John Ogness wrote:
+> On 2025-09-03, Daniil Tatianin <d-tatianin@yandex-team.ru> wrote:
+> > Previously, data blocks that perfectly fit the data ring buffer would
+> > get wrapped around to the beginning for no reason since the calculated
+> > offset of the next data block would belong to the next wrap. Since this
+> > offset is not actually part of the data block, but rather the offset of
+> > where the next data block is going to start, there is no reason to
+> > include it when deciding whether the current block fits the buffer.
+> 
+> This is a nice catch!
+> 
+> Although note that this patch avoids wasting a maximum of 8 bytes of
+> ringbuffer space. If you are interested in tackling the wasted-space
+> issue of the printk ringbuffer there are much larger [0] fish to catch.
+> 
+> [0] https://lore.kernel.org/lkml/84y10vz7ty.fsf@jogness.linutronix.de
+> 
+> My comments below...
+> 
+> > diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+> > index d9fb053cff67..f885ba8be5e6 100644
+> > --- a/kernel/printk/printk_ringbuffer.c
+> > +++ b/kernel/printk/printk_ringbuffer.c
+> > @@ -1002,6 +1002,18 @@ static bool desc_reserve(struct printk_ringbuffer *rb, unsigned long *id_out)
+> >  	return true;
+> >  }
+> >  
+> > +static bool same_lpos_wraps(struct prb_data_ring *data_ring,
+> > +			     unsigned long begin_lpos, unsigned long next_lpos)
+> 
+> We need a better name here since it is not actually using the value of
+> @next_lpos to check the wrap count. Perhaps inverting the return value
+> and naming it blk_lpos_wraps(). So it would be identifying if the given
+> blk_lpos values lead to a wrapping data block. Some like this:
+> 
+> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+> index d9fb053cff67d..cf0fcd9b106ae 100644
+> --- a/kernel/printk/printk_ringbuffer.c
+> +++ b/kernel/printk/printk_ringbuffer.c
+> @@ -1002,6 +995,17 @@ static bool desc_reserve(struct printk_ringbuffer *rb, unsigned long *id_out)
+>  	return true;
+>  }
+>  
+> +/* Identify if given blk_lpos values represent a wrapping data block. */
+> +static bool blk_lpos_wraps(struct prb_data_ring *data_ring,
+> +			   unsigned long begin_lpos, unsigned long next_lpos)
+> +{
+> +	/*
+> +	 * Subtract one from @next_lpos since it is not actually part of this
+> +	 * data block. This allows perfectly fitting records to not wrap.
+> +	 */
+> +	return (DATA_WRAPS(data_ring, begin_lpos) != DATA_WRAPS(data_ring, next_lpos - 1));
+> +}
+
+Or a combination of my and this proposal: is_blk_wrapped().
+
+> +
+>  /* Determine the end of a data block. */
+>  static unsigned long get_next_lpos(struct prb_data_ring *data_ring,
+>  				   unsigned long lpos, unsigned int size)
+> 
+> > +{
+> > +	/*
+> > +	 * Subtract one from next_lpos since it's not actually part of this data
+> > +	 * block. We do this to prevent perfectly fitting records from wrapping
+> > +	 * around for no reason.
+> > +	 */
+> > +	return DATA_WRAPS(data_ring, begin_lpos) ==
+> > +	       DATA_WRAPS(data_ring, next_lpos - 1);
+> > +}
+> > +
+> >  /* Determine the end of a data block. */
+> >  static unsigned long get_next_lpos(struct prb_data_ring *data_ring,
+> >  				   unsigned long lpos, unsigned int size)
+> 
+> The rest looked fine to me and also passed various private
+> tests. However, we should also update data_check_size(), since now data
+> blocks are allowed to occupy the entire data ring. Something like this:
+> 
+> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+> index d9fb053cff67d..e6bdfb8237a3d 100644
+> --- a/kernel/printk/printk_ringbuffer.c
+> +++ b/kernel/printk/printk_ringbuffer.c
+> @@ -397,21 +397,14 @@ static unsigned int to_blk_size(unsigned int size)
+>   */
+>  static bool data_check_size(struct prb_data_ring *data_ring, unsigned int size)
+>  {
+> -	struct prb_data_block *db = NULL;
+> -
+>  	if (size == 0)
+>  		return true;
+>  
+>  	/*
+>  	 * Ensure the alignment padded size could possibly fit in the data
+> -	 * array. The largest possible data block must still leave room for
+> -	 * at least the ID of the next block.
+> +	 * array.
+>  	 */
+> -	size = to_blk_size(size);
+> -	if (size > DATA_SIZE(data_ring) - sizeof(db->id))
+> -		return false;
+> -
+> -	return true;
+> +	return (to_blk_size(size) <= DATA_SIZE(data_ring));
+>  }
+
+I hope that we would never reach this limit. A buffer for one
+message does not look practical. I originally suggested to avoid
+messages bigger than 1/4 of the buffer size ;-)
+
+That said, strictly speaking, the above change looks correct.
+I would just do it in a separate patch. The use of the full
+buffer and the limit of the maximal message are related
+but they are not the same things. Also separate patch might
+help with bisection in case of problems.
+
+Best Regards,
+Petr
 
