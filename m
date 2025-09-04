@@ -1,170 +1,157 @@
-Return-Path: <linux-kernel+bounces-800257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C14B4356A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:18:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B9FB43572
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2656F3A373E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:18:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C560E1883321
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5112C08D4;
-	Thu,  4 Sep 2025 08:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A332C11C7;
+	Thu,  4 Sep 2025 08:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="KUwYP7X/"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmFoytlr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7086B28934F;
-	Thu,  4 Sep 2025 08:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45ECB2BEFE8;
+	Thu,  4 Sep 2025 08:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756973879; cv=none; b=NNSvi9i29PihlUq1jFQYCJ6gRTilHGyXj/2YAjJNu744fFEoEJGfONw3a6jMa7KORfeBhAN1kdWlFvJbqK7ZEIx3BSl2Lak/ohtuLlVr7jxYo8sKHkb0OS9gOqz/1C8ex/DGS+mMdLI2vrqyITqQeZLV7HPaEnBsAnpjKNRm79I=
+	t=1756973974; cv=none; b=SKtBDwSw0vOEq3rjZGa0DZMDWbFToRTs3OAQa+yaqecvpC/OIE7z/h3c/j5FkxYC2eLEDKjxqrQamukT0219KRDA8uuUCGVWj/V7siC+p2AqeFpYN/chaRGcuA+CU8S6SMNd9POHuHdKWBReXjtSmh73EXYTCbRiBl6nJR/Dw/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756973879; c=relaxed/simple;
-	bh=iB8zf4ILLJtrhXWACql/9RfpikVB1vZodKodgHO7l2M=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=q7Je1wpqpOQcAFE229981K/ijP7BqWME44sM0cLIiMwHeBf4lAJ0tDwzvvK8nMsYbGqiQS5uTSrkHJ7QnFWRKswot/FA1VfYfDtl2KQrYUwmKdiHcWhBWf2UTqILQW4IBhl3VOfAhQNV6DxLvhWyGR+4AIWN3G99MhQLHM3o5xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=KUwYP7X/; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756973864;
-	bh=gkJTf2c1jzQR5OVVEr7uU0ySLW7GWWkeJTjOv6J6hGk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=KUwYP7X/0SLY51bF3laX/H+jmhb3g25s0lnndGhL2sGBD/M1PSJO4wAlcMju7HbZv
-	 Fx5ehgaLpPbaSMiWKFYyVf9Nx4MrFUVUv5WBxPFe1hOgVmpjE1W2+gTWvPqzge98Db
-	 ZnASVxnepi0RAb8fvDR9UGavce7uhwHwX4uYDgfE=
-Received: from SSOC3-SH.company.local ([58.33.109.195])
-	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
-	id 45E044AB; Thu, 04 Sep 2025 16:17:30 +0800
-X-QQ-mid: xmsmtpt1756973850tuug394uz
-Message-ID: <tencent_2B678DA920124B08854638A6BE68746CCC05@qq.com>
-X-QQ-XMAILINFO: N2bAIxLK0elnhXEhPkfXE/RSi6PihdH4cXUbzQ0GGcOAG32Qhxgni3WQaKSVHI
-	 pRmntZwJtpUeAE507+g9Q3g63Y1T3y/vhMZD89SZnn3YZU02ZWLUFmBVRDfAOZlJ+uc9J5bcvgIs
-	 zJ4nqLuVLpnWZTqtVjLJ3Bht2UOxsZDhcmRX22rY+43hd/4aZkfRamGs2A08Z33vlXXykWuMwSH+
-	 0ZnJcBS3ey5ABVx8sojnRJMubsSHhFtfJKzU6Y8kULz4hitlNKsSMZL0WUX8+67ioGjd7S5Vmyls
-	 xWUDbLrpEK7J54PYb4/Whw/24gpXmpAkfifO60NUDScQQ5SHIdarpFRKVcFd0WFM5aUgt3kUsMoO
-	 SrLctRWZOORFmz7165O4nVhiX3RoAwyJ26IfYO+JIgbI5/t3XaA1ZxD27xsJhxxVGn/ebkcR76v7
-	 34GTasWshqzU9DT35H8u3PhYYCcYVEDmtiXm8DYOqELECFBgSPPPLxzehYvcAqJbvxubG5YHDPLf
-	 p4wKJZ/FKyLHjpag+h6boHAQylzevEgsTDhpm94z3VHosp5lWqzRLkhUBBguCM927sbgdt5QjGun
-	 3gc9oj89FEXWdrfWobXcm6TqZw6ub1whPa/PXB+91E4lldSViMrh5GVnfwITqcbyL7lCuTaBKlG1
-	 gfhAWSx40P16RvU6XDYteu7PKjs5YYeAsVqwfNHXuZZz5OOvL9e9dcm+/6eL3n8cS3Yi14ZR3X3D
-	 DDouRsD/ehhXjU6AU2NAMoz9dTZVWGFhLNF/r9iCIF81MmYGC7Kc9FQ2DB19hqQXDTDf6Ah3OMqo
-	 GyxScuPL6sxvUP0dmhEExoWd78A9/7dvofok+bCZBOKpOY/lRN8gajzTYnMdRtOGH+RvoQk0VWG0
-	 aKJhrIcoplhIIl7k8RthT2oOmfAZ3eSKgx6Ur7za3/jEheYTA7nzgsOz4Z4DAYHNY/qblYSdVjzy
-	 RCLziPTySMPuin2F9eEgSkYTdYk05TfkPgQXzj3imHCs0TgoXXPOAQS6720M0x
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Han Guangjiang <gj.han@foxmail.com>
-To: yukuai1@huaweicloud.com,
-	Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org (open list:BLOCK LAYER),
-	linux-kernel@vger.kernel.org (open list)
-Cc: hanguangjiang@lixiang.com,
-	fanggeng@lixiang.com,
-	yangchen11@lixiang.com,
-	liangjie@lixiang.com
-Subject: [PATCH v2] blk-throttle: fix access race during throttle policy activation
-Date: Thu,  4 Sep 2025 16:17:26 +0800
-X-OQ-MSGID: <20250904081727.3975758-1-gj.han@foxmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <59464ad0-856c-4ec3-b5b7-e7799c337a84@yukuai.org.cn>
-References: <59464ad0-856c-4ec3-b5b7-e7799c337a84@yukuai.org.cn>
+	s=arc-20240116; t=1756973974; c=relaxed/simple;
+	bh=kxMA6xJIchs9QR1tfO7hgVmWfcdv0CoNQonnp5feJiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cDGUBSocC5l8WAzr/4qUa/qCLzNzGmSH7Oxle9/6qN+nsjcu8M7ua0t08jM6DY2t4VGRFIlzlLAYcTq6191zMppIcPSjJNXD9CXSuOYX7oNZaN9tKLgltyFP4ZpM6TkNn/FabkxPRtRbj1RkPk1An/bN/TVkqL0UITf5qKWbBXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmFoytlr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B01C4CEF0;
+	Thu,  4 Sep 2025 08:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756973974;
+	bh=kxMA6xJIchs9QR1tfO7hgVmWfcdv0CoNQonnp5feJiU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pmFoytlrB60TuzrpAsR5wdSCNjdICXeOP+kFtNbfcpuUsFZNrj/dlrtSbLiRxNHCt
+	 WvJ1kfQmjsmELWl3mCa7Ptd7+4zagRgZkj6rY+8veiUupCeHu6kFQREvU8nXOsYG1m
+	 vaJhW91XH9hO5tuQaPpaIraXRCFEZUwpwMuVCWzTmQvnzSvJQ8frE8KOiQ04mvx279
+	 Ml4X1THzPtoEv1qmJsyeYJVpphzSOhndH7OQdDTxF4vcCN9BaNikA1IAJ6oJBvoNtV
+	 FoqlfUTF0kfHaWGjcCGrObVyf6SSzTgq5+BEPZxMXZgKP15fM/Zv3wf56Ueppn4QMt
+	 tJ6g215RFgbEw==
+Message-ID: <08062eb7-1b7d-4fc3-86ea-af70069065eb@kernel.org>
+Date: Thu, 4 Sep 2025 10:19:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/8] Support dynamic EMC frequency scaling on
+ Tegra186/Tegra194
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
+ <20250902-glittering-toucan-of-feminism-95fd9f@kuoka>
+ <CALHNRZ_CNvq_srzBZytrO6ZReg81Z6g_-Sa+=26kBEHx_c8WQA@mail.gmail.com>
+ <47c7adc9-fa91-4d4e-9be4-912623c627d6@kernel.org>
+ <CALHNRZ8rxyRvb1GCifeXRKjPkkBE+sK6VnPc2nS01iZV_NcjaQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CALHNRZ8rxyRvb1GCifeXRKjPkkBE+sK6VnPc2nS01iZV_NcjaQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Han Guangjiang <hanguangjiang@lixiang.com>
+On 03/09/2025 08:37, Aaron Kling wrote:
+> On Wed, Sep 3, 2025 at 1:20 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 02/09/2025 18:51, Aaron Kling wrote:
+>>> On Tue, Sep 2, 2025 at 3:23 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>
+>>>> On Sun, Aug 31, 2025 at 10:33:48PM -0500, Aaron Kling wrote:
+>>>>> This series borrows the concept used on Tegra234 to scale EMC based on
+>>>>> CPU frequency and applies it to Tegra186 and Tegra194. Except that the
+>>>>> bpmp on those archs does not support bandwidth manager, so the scaling
+>>>>> iteself is handled similar to how Tegra124 currently works.
+>>>>>
+>>>>
+>>>> Three different subsystems and no single explanation of dependencies and
+>>>> how this can be merged.
+>>>
+>>> The only cross-subsystem hard dependency is that patches 5 and 6 need
+>>> patches 1 and 2 respectively. Patch 5 logically needs patch 3 to
+>>> operate as expected, but there should not be compile compile or probe
+>>> failures if those are out of order. How would you expect this to be
+>>> presented in a cover letter?
+>>
+>> Also, placing cpufreq patch between two memory controller patches means
+>> you really make it more difficult to apply it for the maintainers.
+>> Really, think thoroughly how this patchset is supposed to be read.
+> 
+> This is making me more confused. My understanding was that a series
+> like this that has binding, driver, and dt changes would flow like
+> that: all bindings first, all driver changes in the middle, and all dt
 
-On repeated cold boots we occasionally hit a NULL pointer crash in
-blk_should_throtl() when throttling is consulted before the throttle
-policy is fully enabled for the queue. Checking only q->td != NULL is
-insufficient during early initialization, so blkg_to_pd() for the
-throttle policy can still return NULL and blkg_to_tg() becomes NULL,
-which later gets dereferenced.
+You mix completely independent subsystems, that's the main problem.
+Don't send v3 before you understand it or we finish the discussion here.
 
- Unable to handle kernel NULL pointer dereference
- at virtual address 0000000000000156
- ...
- pc : submit_bio_noacct+0x14c/0x4c8
- lr : submit_bio_noacct+0x48/0x4c8
- sp : ffff800087f0b690
- x29: ffff800087f0b690 x28: 0000000000005f90 x27: ffff00068af393c0
- x26: 0000000000080000 x25: 000000000002fbc0 x24: ffff000684ddcc70
- x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
- x20: 0000000000080000 x19: ffff000684ddcd08 x18: ffffffffffffffff
- x17: 0000000000000000 x16: ffff80008132a550 x15: 0000ffff98020fff
- x14: 0000000000000000 x13: 1fffe000d11d7021 x12: ffff000688eb810c
- x11: ffff00077ec4bb80 x10: ffff000688dcb720 x9 : ffff80008068ef60
- x8 : 00000a6fb8a86e85 x7 : 000000000000111e x6 : 0000000000000002
- x5 : 0000000000000246 x4 : 0000000000015cff x3 : 0000000000394500
- x2 : ffff000682e35e40 x1 : 0000000000364940 x0 : 000000000000001a
- Call trace:
-  submit_bio_noacct+0x14c/0x4c8
-  verity_map+0x178/0x2c8
-  __map_bio+0x228/0x250
-  dm_submit_bio+0x1c4/0x678
-  __submit_bio+0x170/0x230
-  submit_bio_noacct_nocheck+0x16c/0x388
-  submit_bio_noacct+0x16c/0x4c8
-  submit_bio+0xb4/0x210
-  f2fs_submit_read_bio+0x4c/0xf0
-  f2fs_mpage_readpages+0x3b0/0x5f0
-  f2fs_readahead+0x90/0xe8
+> changes last. Are you suggesting that this should be: cpufreq driver
+> -> bindings -> memory drivers -> dt? Are the bindings supposed to be
+> pulled with the driver changes? I had understood those to be managed
+> separately.
+What does the submitting patches doc in DT say?
 
-Tighten blk_throtl_activated() to also require that the throttle policy
-bit is set on the queue:
-
-  return q->td != NULL &&
-         test_bit(blkcg_policy_throtl.plid, q->blkcg_pols);
-
-This prevents blk_should_throtl() from accessing throttle group state
-until policy data has been attached to blkgs.
-
-Fixes: a3166c51702b ("blk-throttle: delay initialization until configuration")
-Co-developed-by: Liang Jie <liangjie@lixiang.com>
-Signed-off-by: Liang Jie <liangjie@lixiang.com>
-Signed-off-by: Han Guangjiang <hanguangjiang@lixiang.com>
----
-v2:
- - remove the comment about freeze queue in blk_should_throtl()
- - Retitle: "blk-throttle: fix access race during throttle policy activation"
----
- block/blk-throttle.h | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/block/blk-throttle.h b/block/blk-throttle.h
-index 3b27755bfbff..fbf97c531c48 100644
---- a/block/blk-throttle.h
-+++ b/block/blk-throttle.h
-@@ -156,7 +156,7 @@ void blk_throtl_cancel_bios(struct gendisk *disk);
- 
- static inline bool blk_throtl_activated(struct request_queue *q)
- {
--	return q->td != NULL;
-+	return q->td != NULL && test_bit(blkcg_policy_throtl.plid, q->blkcg_pols);
- }
- 
- static inline bool blk_should_throtl(struct bio *bio)
-@@ -164,11 +164,6 @@ static inline bool blk_should_throtl(struct bio *bio)
- 	struct throtl_grp *tg;
- 	int rw = bio_data_dir(bio);
- 
--	/*
--	 * This is called under bio_queue_enter(), and it's synchronized with
--	 * the activation of blk-throtl, which is protected by
--	 * blk_mq_freeze_queue().
--	 */
- 	if (!blk_throtl_activated(bio->bi_bdev->bd_queue))
- 		return false;
- 
--- 
-2.25.1
-
+Best regards,
+Krzysztof
 
