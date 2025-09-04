@@ -1,86 +1,123 @@
-Return-Path: <linux-kernel+bounces-800117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E4BB43393
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:18:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0602B43395
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABA0917632A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:18:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86D0716B4CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1021529B8D3;
-	Thu,  4 Sep 2025 07:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D0929A9C3;
+	Thu,  4 Sep 2025 07:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DiR9HoJX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RkpRQhtW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E1929ACDB;
-	Thu,  4 Sep 2025 07:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BB223D7D0;
+	Thu,  4 Sep 2025 07:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756970297; cv=none; b=OyZL7EEOyQeLUKr1NIXRIZEqOHXcD/4Vakbm0/25EzimAofZsGsb6oDB4Wn9siT6JjbVtXIQ63JuBzrRbfjzdHZW3V7GDQZ1q2HctXNWldPO1/pVNZ2hSdxVA1aeZpVRYNsAlpfHB2i8OUBuEqM8ZVpWLU0eAFELg2rgJUJEG6s=
+	t=1756970375; cv=none; b=sZwDCgcGXUnAkugrCZLlgMx/biM8N9lstaMIAzZJ8PPmtQf8U9EKwD5NmOeQdTAqBzgWAsRi6ThZFSY0xMd1ixf0gQin19jEr15efVNt+QA787SxBqcgUhzZ1gg3vGl2pnn2ldVVw38CvBKZjFGWCJGrtz7sLZ/HEehaS+O7F2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756970297; c=relaxed/simple;
-	bh=C+Qu2udb4820W+KVG6rDMY6wlAdNCAarHtoXWsJRqpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tXG7QBXtmBPFNp9MQ21ywsHBgCANaZHeWrr7GDJeWB2WZbSPzdHrZKTPXK8q1HW4YEb4w3sJ5gmZ/YZB1dF9zKRcCqwEKq/hRWogKT5uNbt9f7WB5SfDGzGlDTcKUvTFUrQ2+u620a5mPTYk2GkvYfJhZFmnEj0NnXWB/CmUJ6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DiR9HoJX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 859D4C4CEF0;
-	Thu,  4 Sep 2025 07:18:15 +0000 (UTC)
+	s=arc-20240116; t=1756970375; c=relaxed/simple;
+	bh=72oYlNKXXmAjA5Q5e13+DWrwi/CpM80zljJXvzw63aw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T3BDHcaunE59z+Z31y3OUTRiYvcpsT0W3RFpwKSF+H0/+/iosjuVIqCp20TsB9oFzfDkrhVgf+TWmqjRgRzhTBqh8/WHGRSwX0sQlqxqdxu3yrGgAyE24q7FSvpPLyAl3JMTxXg8W0PXMYn6T5/9rOXwFR/LMoaJErJ8RNGBT6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RkpRQhtW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 633E4C4CEFA;
+	Thu,  4 Sep 2025 07:19:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756970296;
-	bh=C+Qu2udb4820W+KVG6rDMY6wlAdNCAarHtoXWsJRqpI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DiR9HoJXKXkRr1st3luOxzv9rjFHD8ctDQge4d0JC+BEsbCenr/eKDRVtAJsIgPph
-	 qxsPCG8/+3U/VPznbzDsGFbCXWfZHoJSMhOBfX0yfgZJjqT8KBPwfqiSnuPXSFZTVQ
-	 ZsRVIallmVeuz2v9mDL+pHSeborSY5CMObzv64XJ+tFxbaCuppIt5AR4/ypzuQopNd
-	 1zKsj7RFxIlgnDjP9fh4cjOtxOVpCYwN4Nzt/IS6xscAtowLqzuSj+ZCLvy0ReDX7x
-	 4rSgyjNtnuKFNZKaWpMISFBARN9yKcJOnYZR8GcK0Nt3floXrk+q+brsDuAKXmfV5J
-	 Il4Bg4xMBcKvg==
-Date: Thu, 4 Sep 2025 09:18:13 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-Subject: Re: [PATCH v6 1/2] dt-bindings: clock: add TI CDCE6214 binding
-Message-ID: <20250904-arboreal-upbeat-iguana-aebba6@kuoka>
-References: <20250903-clk-cdce6214-v6-0-b2cc0a6f282b@pengutronix.de>
- <20250903-clk-cdce6214-v6-1-b2cc0a6f282b@pengutronix.de>
+	s=k20201202; t=1756970375;
+	bh=72oYlNKXXmAjA5Q5e13+DWrwi/CpM80zljJXvzw63aw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RkpRQhtW+a9Y5lrqRKRhT35FXEw1JPCeIWAQrYQnCH0PzIhHfBAOhG2Y5tMpknarz
+	 Pl6vzMh5wTJkjfijbtkfNLawzbNfsDaIq0XFhQ03u1qXSHpsWOyAsewXLQkmGGDpF4
+	 g5AZtKvc/NMoBuOSrEYboremIyftnqUZnccdN63+lyYaqC2zXAg1ev7wfVJH2lBPPs
+	 JVWLymM+QXBvbXwT51vLAHuB98LJ3hPXoXOI0XidDfDFuhAkXtfKW2uJbzeDUKLK45
+	 gu3YhlMYSQbv5cDMx39swAF/M58+EsE1FTxDMYZouqSbCtxD0PLFI34ZU+9r65T2RB
+	 b7Av9NcRTOQvQ==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55ce508d4d6so615037e87.0;
+        Thu, 04 Sep 2025 00:19:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVYrD1EUn4okIdh9ojyq48KhMGhjaKeJ4HOdHn14wCgEXNVJCHgChPMSkP4mh/Jm7eR88ElK9kAmBE=@vger.kernel.org, AJvYcCXLxESFQFDg8TZUkM11ZvPvW9QkH9JjQDqxORazMkZdSBvgvbjqK2cLoLDIYTNCz91iOFjhTW9V4JSKj0Mk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB0Afkgp4sQG4fB8IV3EyEfxQiHGORgyu2UA5pZhVsLfpUWv5a
+	/VE11zR0aOrFE4OC0rC/xMdvJv7kqmbXvmia57UIfdfF3Gw1Q+H9FTCwhsoa0B9Fx72LO4XIU+r
+	G1O+aRO0eOf685VPS4hg92d/uWyChMFU=
+X-Google-Smtp-Source: AGHT+IEFvmAnCvfgO7PlnrG1BYUxZTjjsz6BPZ180OOcQw+OkZ+byNbMMbmHC7LJX6qhewccjpN/hH5j8/8g6mEFmZQ=
+X-Received: by 2002:a05:6512:239a:b0:560:8d97:8bb8 with SMTP id
+ 2adb3069b0e04-5608d978cd1mr1413481e87.32.1756970373660; Thu, 04 Sep 2025
+ 00:19:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250903-clk-cdce6214-v6-1-b2cc0a6f282b@pengutronix.de>
+References: <cover.1755721529.git.epetron@amazon.de> <b34da9fd50c89644cd4204136cfa6f5533445c56.1755721529.git.epetron@amazon.de>
+ <CAMj1kXFQwOHyQg2LtabMA3qxiBn_AVV_JNfki2WPSg8u_XbBcg@mail.gmail.com>
+In-Reply-To: <CAMj1kXFQwOHyQg2LtabMA3qxiBn_AVV_JNfki2WPSg8u_XbBcg@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 4 Sep 2025 09:19:21 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFzKzpoqczq7Rk-u+kKLFO057XEXMD+KM=iRMMsoUZbJA@mail.gmail.com>
+X-Gm-Features: Ac12FXzg-Gwf5w9Dkz74akKGMbsagt1QMuLWSxeot3bSIi-D7R24FEVq60rM11k
+Message-ID: <CAMj1kXFzKzpoqczq7Rk-u+kKLFO057XEXMD+KM=iRMMsoUZbJA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] efi: Support booting with kexec handover (KHO)
+To: Evangelos Petrongonas <epetron@amazon.de>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@kernel.org>, Alexander Graf <graf@amazon.com>, 
+	Changyuan Lyu <changyuanl@google.com>, Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org, 
+	linux-mm@kvack.org, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nh-open-source@amazon.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 03, 2025 at 03:55:45PM +0200, Sascha Hauer wrote:
-> Add device tree binding for the CDCE6214, an Ultra-Low Power Clock
-> Generator With One PLL, Four Differential Outputs, Two Inputs, and
-> Internal EEPROM.
-> 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
->  .../devicetree/bindings/clock/ti,cdce6214.yaml     | 198 +++++++++++++++++++++
->  include/dt-bindings/clock/ti,cdce6214.h            |  24 +++
->  2 files changed, 222 insertions(+)
-> 
+On Sat, 23 Aug 2025 at 23:47, Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> (cc Ilias)
+>
+> Note to akpm: please drop this series for now.
+>
+> On Fri, 22 Aug 2025 at 04:00, Evangelos Petrongonas <epetron@amazon.de> wrote:
+> >
+> > When KHO (Kexec HandOver) is enabled, it sets up scratch memory regions
+> > early during device tree scanning. After kexec, the new kernel
+> > exclusively uses this region for memory allocations during boot up to
+> > the initialization of the page allocator
+> >
+> > However, when booting with EFI, EFI's reserve_regions() uses
+> > memblock_remove(0, PHYS_ADDR_MAX) to clear all memory regions before
+> > rebuilding them from EFI data. This destroys KHO scratch regions and
+> > their flags, thus causing a kernel panic, as there are no scratch
+> > memory regions.
+> >
+> > Instead of wholesale removal, iterate through memory regions and only
+> > remove non-KHO ones. This preserves KHO scratch regions, which are
+> > good known memory, while still allowing EFI to rebuild its memory map.
+> >
+> > Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
+> > ---
+> > Changes in v3:
+> >         - Improve the code comments, by stating that the scratch regions are
+> >         good known memory
+> >
+> > Changes in v2:
+> >         - Replace the for loop with for_each_mem_region
+> >         - Fix comment indentation
+> >         - Amend commit message to specify that scratch regions
+> >         are known good regions
+> >
+> >  drivers/firmware/efi/efi-init.c | 29 +++++++++++++++++++++++++----
+> >  1 file changed, 25 insertions(+), 4 deletions(-)
+> >
+>
+> I'd rather drop the memblock_remove() entirely if possible. Could we
+> get some insight into whether memblocks are generally already
+> populated at this point during the boot?
+>
+>
 
-I don't understand what is happening here.
-
-Patch changed in weird and unexplained way - nothing in the changelog
-explains dropping SPDX - and does not pass even checkpatch.
-
-Best regards,
-Krzysztof
-
+Ping?
 
