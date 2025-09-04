@@ -1,177 +1,168 @@
-Return-Path: <linux-kernel+bounces-801559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A1DB446A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:42:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8454BB446A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5E11165754
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:42:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41693171ED7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D7E279918;
-	Thu,  4 Sep 2025 19:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129212749FE;
+	Thu,  4 Sep 2025 19:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sBS/cKkA"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PsMSQaIh"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C6927703A
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 19:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29A72701C4;
+	Thu,  4 Sep 2025 19:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757014911; cv=none; b=ci6BEcx0vDVcFebYPoYe6KEW6D3MfK6mg7qzaozRbcriw/6w6GhoyKre9WUqnZBV9lILIZ+mcqCmjVAt8Am0jCCAj9B3t/mbZEtIHwY+ohy9QdnMbeRw6MwJ/XIEUsUukpGnUZS0ZNi7VV844SlWNM0QFUj7LMDDl30esmlTFqQ=
+	t=1757014961; cv=none; b=Gvg4Al6F+AwtpXfFh90t11RxDSLeGCD1mJGsQEUaVrn9d85V86DE4WWYg5GuLgBpQ+DqvbibeUxiqjg5Jvvo1q/s5StSKTgGhkCUAc09KidPVn3IMkSa0w0HN3lyNF9qQlMNj4t5M4Hz+ezcOVM2eEo+P6sEX5o9oThTH0do+Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757014911; c=relaxed/simple;
-	bh=tq+7uK3RNkzWKqgghouLXQ6ydvGUzT8I9ujvOYYLYpY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=V/XH9jTQyz4Eiyjv8oioJzrVdi9ycFhwrrIV461SUCbZm9Ug3DbNMpagwMcwIS3GEdwE8ByeFBZkHcsgN0YwTaOUrb+9uUUG4GttOo9UA6lbNqDxh7SSm1HfgsZh5WwNlGaMDHE8WSZ3x9jQESe8dDgLnPaWl5MLjqbH35OMbJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sBS/cKkA; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24c9304b7bcso15848715ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 12:41:49 -0700 (PDT)
+	s=arc-20240116; t=1757014961; c=relaxed/simple;
+	bh=RnviVVbWEOiXEHtL4IcjzUZfgue4MBSlmwXOenkFBFk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ehzkltmOEjPPLDQrbEDKbGn1WI6VD9edNT8QW1Q16/8DfZrqEzFUSgNDVlc4EF5iW91kY5wB2/cHK6CSuOrhD6yudzYFC8GU87eHEe0hp7LQV2S2P6fjTwSmWFoo1xBUvPpdXHA7f1Y+hhh2T0+bF2F8JFQuYAXTIOM67dgRLyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PsMSQaIh; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32b4c6a2a98so1371814a91.1;
+        Thu, 04 Sep 2025 12:42:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757014909; x=1757619709; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sLeowBwbmQjy8Diimn5aYxWMz09beruC8PAjvN25K+s=;
-        b=sBS/cKkAD9wMWwySnSLBpKYWLe3myp6B7euAEvVp41ZMZ2WmS3lrpqwdUMT7kjQA/f
-         Kp/VTg4WIpee1YixfwSM365tpFSdAyCk21CqtdGdgU1zDitvhysqqjiXQcrs9SOrFIhW
-         7o1Wmirt0bjcN1GIIsedl4jdaKp5DvB2fPAi9jH9AvPn1Kz6tnS4E0ScYa4Jmfti7gkq
-         tEkfcoNQBKxlm2wF0Pcj6I18PwIoQD355gUT45Ua2Z7o6n1QIiCh85FIJY9xFdPh1Yzm
-         rjc+ldPmuG9SSmBNJZQNuW07IHx4jQ4hFrmbyviXKmLblFpIbLL9KQ0PgLCRKKBc2Jsf
-         RbZQ==
+        d=gmail.com; s=20230601; t=1757014959; x=1757619759; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sRRH8xuKcexqodKPmFErIaLChAXFetcv8fz2tMfV9ZI=;
+        b=PsMSQaIhZKSOitxrtb5BMqCgbKq6RdqpwQXxj6QwzZvzzLFBmkb4uUNWlxr0/8kwrr
+         mTHWw2XWdX0wATHauVxGGYiKUtflM8MokcUhQaLvSgRKmbSrwmb+fGjsCC8zoMnUAKZw
+         FhLN3w4PJgAsYbx9lOWPgXh9qvASZ0NdJ9NkJ3GXHi+BK/5K841voh4/k2qfDugPbE3F
+         y4eV+mhiydpiVdoKJMfPBMsGDxs9zK7OMk3h20078n9pxO+Y+uwUKb6HaZciplj/yjF8
+         d8CYLObQQDAwE4vlONEiKTvOxOezysseWJoxLKCa/M0j6f21LmdLw6EOc75DY9CunI75
+         BH0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757014909; x=1757619709;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sLeowBwbmQjy8Diimn5aYxWMz09beruC8PAjvN25K+s=;
-        b=XKSavbiTKRLexn7kw2Jd9fNIUfpmPXEpmiOFfKbaQZlvvHQobHQKP+/kdoCGiwQnwL
-         tmZ5DJff4WzoLn7kqPxcNfSbtqMWIU7tjLjMi0VVPhVbVBm0whJ9du1FTX6ah/aRLunX
-         e0AR5KcECtmdP5r9X52YDZmkPw8rAu5peOLsdUmv4ecJS3Sl7dBem3iPqxlLpx7nXR0t
-         F/250nklLJjnILJnbaV4SkVKXD3+/6PJ4G/zfOxQ1g77OO2kcoiHklgShz2H+vSVQFiq
-         6luIfr7XRSIcypKnOTnu+FlSJZKu02BFE1jCXnk6f5cGF0KO7n5g2Xd4cPhzWIDrsdtP
-         8Bdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvwqRaYZvM61EY6/SpWlQJTDPWcM1XOKI/+DTUr2xGtN0QAFyg9Fg0EiihrTedKt+nVKtocMQOOO5FvQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydIU/9kL9f7eam42OduKiUBNdDoGnRgIuVbRxXverblIZ/68dl
-	TiG4LBOJ0eT5M18s0bczRO5aAGJ/1wCXbvjJvFoX0fdyAB0fm4lHcjKcfVYH47328JGVTTKbSQA
-	TXO4C2WPuJA==
-X-Google-Smtp-Source: AGHT+IHOB6CqGG31C3TB2oFy7ZLtb/1XgDWq9belMrFQZ/ICWYQNjGIhyYl39Z21TKgn08wM23bNH8G4iN8z
-X-Received: from plblm13.prod.google.com ([2002:a17:903:298d:b0:248:9b66:3356])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e84a:b0:24b:270e:56c0
- with SMTP id d9443c01a7336-24b270e59d9mr133206195ad.36.1757014909264; Thu, 04
- Sep 2025 12:41:49 -0700 (PDT)
-Date: Thu,  4 Sep 2025 12:41:39 -0700
-In-Reply-To: <20250904194139.1540230-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1757014959; x=1757619759;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sRRH8xuKcexqodKPmFErIaLChAXFetcv8fz2tMfV9ZI=;
+        b=cjPupRwP6k8Z0Y1jWFAgY9aGn9N0aWYhCMcIFP0uzFDg7BRPQZxeYNlx6A80x1RPKY
+         E0KI2WpzduD/L8v86nv52EOBXO+DqnVxKjbVaIEcXhgyFqlENsGnXcDP1kJ0J73Jh02O
+         j+5HtGAHPdkZX3yMIp4Gf46IGQvbSITk/mAFhbmOPVl2vyGyuqkvEhixKFDUpE5rN68h
+         fpe+eDFU7YUZ3m9oAgKpYXdqiLPkg8RXNG56k9WMewoiFkn9sWHwJC1PcWtoXgQR7Oqa
+         zgMYNJItzwN/jmKJN/T8vsOWFQ/SRVhokx8k8RP5D/gAdtq2gfVwdJ2i3oKihDwv+y9U
+         vk8A==
+X-Forwarded-Encrypted: i=1; AJvYcCU7mHUcTMwZvXCIXMz5UaMWNgPcWDGbpsXyByKl+ynEmf2Ko0ZLU0YysCtEOGiL9HGEYn+NfutXvS/KO5TOxHhS5/Nv@vger.kernel.org, AJvYcCW5sXogWglBIUzVRw+Gh/ulhFMEDSQTsrvPXJZRfhjVc9fETLayNLJjJQ0Dg9vyMzHKDhA=@vger.kernel.org, AJvYcCX8ynNeZj3JBKdJE4urAMwDI+3ElaHqzOHZwbF/j5rFZ+ZJiJyt4TPVBWb7K9rCAmtN1LxN4bxRxoj2O1uh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTAWO5CHWXT3W3oNaJqaGXWLahHV7jgURDJ4i5R6R1Uuzcfx9T
+	uxQ4dpjBRUnGipHKujJQwGyjJtyDDoNJT2PQp6PU/bFiiB3XKoYZAchM+em7xNxbNYCpax77npi
+	gd3RaZUgotqJiHEOK4cDuc5MWhCmEzQc=
+X-Gm-Gg: ASbGncvfm3+8gdnVUh5RaxbIo0Mlsh/LDiXbZqguSc5G8RQYAuWRLE07UTJm6LTxwSI
+	Nsp1FnVaVhgtCSgXgXVPOp3v2uA6ilEYuYDbVvhWGJN63WuYFHuhh0BxjaBckRpV6p6C7efz0zS
+	z+FqfCylhTWNZ/s/SUOTBEMLMCShh7TR/tGg1DouLTYzmlRvzIkwD1U+ecVgsSWVTO5cUMVPLOp
+	pNRDDPuLFPSYwHW7PmPc5E=
+X-Google-Smtp-Source: AGHT+IH+FSKKN9rspP5eEoPLAKkz+ytKYowGIauifwS5Ywzucmk/3A+wIJDBwpzQ6AC0BXwu5SDZBr5uK9EqvWD3ioM=
+X-Received: by 2002:a17:90b:1c12:b0:329:d8d2:3602 with SMTP id
+ 98e67ed59e1d1-329d8d23bbbmr17688480a91.17.1757014958776; Thu, 04 Sep 2025
+ 12:42:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250904194139.1540230-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
-Message-ID: <20250904194139.1540230-4-irogers@google.com>
-Subject: [PATCH v7 3/3] perf jevents: Validate that all names given an Event
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, John Garry <john.g.garry@oracle.com>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Benjamin Gray <bgray@linux.ibm.com>, Leo Yan <leo.yan@arm.com>
+MIME-Version: 1.0
+References: <20250902143504.1224726-1-jolsa@kernel.org> <20250902143504.1224726-3-jolsa@kernel.org>
+ <20250903112648.GC18799@redhat.com> <aLicCjuqchpm1h5I@krava>
+ <20250904084949.GB27255@redhat.com> <aLluB1Qe6Y9B8G_e@krava>
+ <20250904112317.GD27255@redhat.com> <CAADnVQ+DHGc8R0Tdxf7eUj1R0TDGHXLwk5D4i_0==2_rfXGbfw@mail.gmail.com>
+ <CAEf4BzbxjRwxhJTLUgJNwR-vEbDybBpawNsRb+y+PiDsxzT=eA@mail.gmail.com> <20250904185553.GB23718@redhat.com>
+In-Reply-To: <20250904185553.GB23718@redhat.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 4 Sep 2025 12:42:23 -0700
+X-Gm-Features: Ac12FXzy5H0zV8JjGNVM9nTVhltOVCESG_bHF7Ua-LTn184gsKfoxNXLvmdrFBo
+Message-ID: <CAEf4BzYb=mqN84a8+xc-Du1QkUBYMgwAuStYqastJJHQE4Os5g@mail.gmail.com>
+Subject: Re: [PATCH perf/core 02/11] uprobes: Skip emulate/sstep on unique
+ uprobe when ip is changed
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Jiri Olsa <olsajiri@gmail.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Validate they exist in a json file from one directory found from one
-directory above the model's json directory. This avoids broken
-fallback encodings being created.
+On Thu, Sep 4, 2025 at 11:57=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wro=
+te:
+>
+> On 09/04, Andrii Nakryiko wrote:
+> >
+> > On Thu, Sep 4, 2025 at 8:02=E2=80=AFAM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Thu, Sep 4, 2025 at 4:26=E2=80=AFAM Oleg Nesterov <oleg@redhat.com=
+> wrote:
+> > > >
+> > > > On 09/04, Jiri Olsa wrote:
+> > > > >
+> > > > >
+> > > > > ok, got excited too soon.. so you meant getting rid of is_unique
+> > > > > check only for this patch and have just change below..  but keep
+> > > > > the unique/exclusive flag from patch#1
+> > > >
+> > > > Yes, this is what I meant,
+> > > >
+> > > > > IIUC Andrii would remove the unique flag completely?
+> > > >
+> > > > Lets wait for Andrii...
+> > >
+> > > Not Andrii, but I see only negatives in this extra flag.
+> > > It doesn't add any safety or guardrails.
+> > > No need to pollute uapi with pointless flags.
+> >
+> > +1. I think it's fine to just have something like
+> >
+> > if (unlikely(instruction_pointer(regs) !=3D bp_vaddr))
+> >       goto out;
+> >
+> > after all uprobe callbacks were processed. Even if every single one of
+> > them modify IP, the last one that did that wins.
+>
+> OK. If any consumer can change regs->ip, then I can only repeat:
+>
+>         Yes... but what if we there are multiple consumers? The 1st one c=
+hanges
+>         instruction_pointer, the next is unaware. Or it may change regs->=
+ip too...
+>
+> > Others (if they care)
+> > can detect this.
+>
+> How? If the the consumer which changes regs->ip is not the 1st one?
+>
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/pmu-events/metric.py | 36 +++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+We are probably speaking past each other. uprobe consumers (including
+BPF ones) see struct pt_regs, so they get what's the latest regs->ip.
+Sure, they won't know that it was changed, but oh well, not sure that
+matters all that much. And if it does matter, then we can solve that
+by giving users ability to carefully order consumers (we have similar
+problems and some solutions for that in BPF for some other BPF
+programs; it just never been necessary for uprobes/kprobes
+specifically).
 
-diff --git a/tools/perf/pmu-events/metric.py b/tools/perf/pmu-events/metric.py
-index 2029b6e28365..585454828c2f 100644
---- a/tools/perf/pmu-events/metric.py
-+++ b/tools/perf/pmu-events/metric.py
-@@ -11,12 +11,14 @@ from typing import Dict, List, Optional, Set, Tuple, Union
- all_pmus = set()
- all_events = set()
- experimental_events = set()
-+all_events_all_models = set()
- 
- def LoadEvents(directory: str) -> None:
-   """Populate a global set of all known events for the purpose of validating Event names"""
-   global all_pmus
-   global all_events
-   global experimental_events
-+  global all_events_all_models
-   all_events = {
-       "context\\-switches",
-       "cpu\\-cycles",
-@@ -42,6 +44,20 @@ def LoadEvents(directory: str) -> None:
-         # The generated directory may be the same as the input, which
-         # causes partial json files. Ignore errors.
-         pass
-+  all_events_all_models = all_events.copy()
-+  for root, dirs, files in os.walk(directory + ".."):
-+    for filename in files:
-+      if filename.endswith(".json"):
-+        try:
-+          for x in json.load(open(f"{root}/{filename}")):
-+            if "EventName" in x:
-+              all_events_all_models.add(x["EventName"])
-+            elif "ArchStdEvent" in x:
-+              all_events_all_models.add(x["ArchStdEvent"])
-+        except json.decoder.JSONDecodeError:
-+          # The generated directory may be the same as the input, which
-+          # causes partial json files. Ignore errors.
-+          pass
- 
- 
- def CheckPmu(name: str) -> bool:
-@@ -64,6 +80,25 @@ def CheckEvent(name: str) -> bool:
- 
-   return name in all_events
- 
-+def CheckEveryEvent(*names: str) -> None:
-+  """Check all the events exist in at least one json file"""
-+  global all_events_all_models
-+  if len(all_events_all_models) == 0:
-+    assert len(names) == 1, f"Cannot determine valid events in {names}"
-+    # No events loaded so assume any event is good.
-+    return
-+
-+  for name in names:
-+    # Remove trailing modifier.
-+    if ':' in name:
-+      name = name[:name.find(':')]
-+    elif '/' in name:
-+      name = name[:name.find('/')]
-+      if any([name.startswith(x) for x in ['amd', 'arm', 'cpu', 'msr', 'power']]):
-+        continue
-+    if name not in all_events_all_models:
-+      raise Exception(f"Is {name} a named json event?")
-+
- 
- def IsExperimentalEvent(name: str) -> bool:
-   global experimental_events
-@@ -403,6 +438,7 @@ class Event(Expression):
- 
-   def __init__(self, *args: str):
-     error = ""
-+    CheckEveryEvent(*args)
-     for name in args:
-       if CheckEvent(name):
-         self.name = _FixEscapes(name)
--- 
-2.51.0.355.g5224444f11-goog
+> That said. If you guys don't see a problem - I won't even try to argue.
 
+I don't, yep.
+
+>
+> As I said many times, I have no idea how people actually use uprobes ;)
+>
+> Oleg.
+>
 
