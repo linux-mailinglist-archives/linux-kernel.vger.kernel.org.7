@@ -1,187 +1,106 @@
-Return-Path: <linux-kernel+bounces-801331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33484B443CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:00:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A5DB443CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEADC16EC53
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:00:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00DDD1C87AD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FBF2FB624;
-	Thu,  4 Sep 2025 16:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T3ol7o3g"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8673081C2;
+	Thu,  4 Sep 2025 16:59:41 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867AF2F3C0C
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990FC304BBC
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757005173; cv=none; b=QmO/hHko9RQGcCtaRZarTjL4jJEISfRBA0ypUYlGaBm6uaxtK2a29GE1RnlF2wtgAjT/bzsjnceD6b2VlZgN8wD3f3QEIOmfOPkbPhFwrk0i0zwVblsNFZZoCSSAeDB2p0dNvld9NRgdu5dcYlYWClQ4lXKq5Dc+XWmG+KvOcrE=
+	t=1757005180; cv=none; b=g3PZq0dhRr6632dBEs+2blqNA2HmoO7QIQgMKShVW8WTC+vghoWuV5usRU8WTZ8i3Us4hnq6wzp2eCC6wAo+ScHWXncN7VayRWCHA+mr5nkP8IfMeRcCEjoNHmReY02pM0J/hoj8tBfugPuzSqC03XYNDAzKjuwOmTVj8t8yapQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757005173; c=relaxed/simple;
-	bh=GwGa1VVBJOYX6Cuh5Z3rjCzdVbbjZ7uaala3loTkIO8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VYUJuDZFVYERzba8LrHvGJHsgDxnEuG8RHYhTXbDOKnfO4EHczwkohMxCMCQ0o1w5SH2+4tUsUGzCTlc0JGg/c+2PolZyT+GhdtOGllRZcfiPY8Ij94sytRZKosP2PclnzfH+udG9n47ump4h+/E3QXVjYURrQ943cX5f5y9V8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T3ol7o3g; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757005170;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=lXvCrt+DTTQMf7tnGktkXK8dIlODkW2gH3Cn4in8KJk=;
-	b=T3ol7o3gOXL2sIYsEmR/Ac7jd5KpJ1nmeH5zBy5fV2sDp5cmEmYhPmT/LYvrngrkUQdYmF
-	58cjZgrGp8eXisxs+7biBdT0OaM9BeVYS2T795t72mJW9Ti/tSJeubOho027CQ6JFF8n+A
-	52VzHzTllCgSDtzCigF544sq4JtboMA=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-157-qktPnUO2N3aKwQ0BmKt3UA-1; Thu,
- 04 Sep 2025 12:59:27 -0400
-X-MC-Unique: qktPnUO2N3aKwQ0BmKt3UA-1
-X-Mimecast-MFC-AGG-ID: qktPnUO2N3aKwQ0BmKt3UA_1757005166
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0BBB018002C1;
-	Thu,  4 Sep 2025 16:59:26 +0000 (UTC)
-Received: from wsxc.redhat.com (unknown [10.96.134.42])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9005B3002D27;
-	Thu,  4 Sep 2025 16:59:23 +0000 (UTC)
-From: Ricardo Robaina <rrobaina@redhat.com>
-To: audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: paul@paul-moore.com,
-	eparis@redhat.com,
-	Ricardo Robaina <rrobaina@redhat.com>
-Subject: [PATCH v1] audit: merge loops in __audit_inode_child()
-Date: Thu,  4 Sep 2025 13:59:19 -0300
-Message-ID: <20250904165919.3362000-1-rrobaina@redhat.com>
+	s=arc-20240116; t=1757005180; c=relaxed/simple;
+	bh=EvlrGT6jRZ/SdOpiTsJSBYsdJ+ydpA2SasKIwowhrKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YAJ4goVaoYyOl0v9Kot6lLs2Db6aXZja5Rg1Hbq6z9Nu/DuhK+2iytDJiADEpXW7p+8DJi2QIdZG86PKJ6/gp3XCtI6RfK+WRS3Y4+fdpZAS06wOfRv+010KV21lHxLBcgZgqHJ8ZAkvwt6hhmuOp5UGyY1podk/CiB5HaVIoBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC426C4CEF0;
+	Thu,  4 Sep 2025 16:59:37 +0000 (UTC)
+Date: Thu, 4 Sep 2025 17:59:35 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	Ard Biesheuvel <ardb@kernel.org>, Dev Jain <dev.jain@arm.com>,
+	scott@os.amperecomputing.com, cl@gentwo.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v7 5/6] arm64: mm: split linear mapping if BBML2
+ unsupported on secondary CPUs
+Message-ID: <aLnFd1Hl_FSHZR3z@arm.com>
+References: <20250829115250.2395585-1-ryan.roberts@arm.com>
+ <20250829115250.2395585-6-ryan.roberts@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829115250.2395585-6-ryan.roberts@arm.com>
 
-Whenever there's audit context, __audit_inode_child() gets called
-numerous times, which can lead to high latency in scenarios that
-create too many sysfs/debugfs entries at once, for instance, upon
-device_add_disk() invocation.
+On Fri, Aug 29, 2025 at 12:52:46PM +0100, Ryan Roberts wrote:
+> The kernel linear mapping is painted in very early stage of system boot.
+> The cpufeature has not been finalized yet at this point. So the linear
+> mapping is determined by the capability of boot CPU only. If the boot
+> CPU supports BBML2, large block mappings will be used for linear
+> mapping.
+> 
+> But the secondary CPUs may not support BBML2, so repaint the linear
+> mapping if large block mapping is used and the secondary CPUs don't
+> support BBML2 once cpufeature is finalized on all CPUs.
+> 
+> If the boot CPU doesn't support BBML2 or the secondary CPUs have the
+> same BBML2 capability with the boot CPU, repainting the linear mapping
+> is not needed.
+> 
+> Repainting is implemented by the boot CPU, which we know supports BBML2,
+> so it is safe for the live mapping size to change for this CPU. The
+> linear map region is walked using the pagewalk API and any discovered
+> large leaf mappings are split to pte mappings using the existing helper
+> functions. Since the repainting is performed inside of a stop_machine(),
+> we must use GFP_ATOMIC to allocate the extra intermediate pgtables. But
+> since we are still early in boot, it is expected that there is plenty of
+> memory available so we will never need to sleep for reclaim, and so
+> GFP_ATOMIC is acceptable here.
+> 
+> The secondary CPUs are all put into a waiting area with the idmap in
+> TTBR0 and reserved map in TTBR1 while this is performed since they
+> cannot be allowed to observe any size changes on the live mappings. Some
+> of this infrastructure is reused from the kpti case. Specifically we
+> share the same flag (was __idmap_kpti_flag, now idmap_kpti_bbml2_flag)
+> since it means we don't have to reserve any extra pgtable memory to
+> idmap the extra flag.
+> 
+> Co-developed-by: Yang Shi <yang@os.amperecomputing.com>
+> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 
-   # uname -r
-   6.17.0-rc3+
+I think this works, so:
 
-   # auditctl -a always,exit -F path=/tmp -k foo
-   # time insmod loop max_loop=1000
-   real 0m42.753s
-   user 0m0.000s
-   sys  0m42.494s
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
-   # perf record -a insmod loop max_loop=1000
-   # perf report --stdio |grep __audit_inode_child
-   37.95%  insmod  [kernel.kallsyms]  [k] __audit_inode_child
+However, I wonder how likely we are to find this combination in the
+field to be worth carrying this code upstream. With kpti, we were aware
+of platforms requiring it but is this also the case for BBM? If not, I'd
+keep the patch out until we get a concrete example.
 
-__audit_inode_child() searches for both the parent and the child
-in two different loops that iterate over the same list. This
-process can be optimized by merging these into a single loop,
-without changing the function behavior or affecting the code's
-readability.
-
-This patch merges the two loops that walk through the list
-context->names_list into a single loop. This optimization resulted
-in around 54% performance enhancement for the benchmark.
-
-   # uname -r
-   6.17.0-rc3+-enhanced
-
-   # auditctl -a always,exit -F path=/tmp -k foo
-   # time insmod loop max_loop=1000
-   real 0m19.388s
-   user 0m0.000s
-   sys  0m19.149s
-
-Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
----
- kernel/auditsc.c | 40 ++++++++++++++++++----------------------
- 1 file changed, 18 insertions(+), 22 deletions(-)
-
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index eb98cd6fe91f..7abfb68687fb 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2437,44 +2437,40 @@ void __audit_inode_child(struct inode *parent,
- 	if (inode)
- 		handle_one(inode);
- 
--	/* look for a parent entry first */
- 	list_for_each_entry(n, &context->names_list, list) {
--		if (!n->name ||
--		    (n->type != AUDIT_TYPE_PARENT &&
--		     n->type != AUDIT_TYPE_UNKNOWN))
-+		/* can only match entries that have a name */
-+		if (!n->name)
- 			continue;
- 
--		if (n->ino == parent->i_ino && n->dev == parent->i_sb->s_dev &&
--		    !audit_compare_dname_path(dname,
--					      n->name->name, n->name_len)) {
-+		/* look for a parent entry first */
-+		if (!found_parent &&
-+		    (n->type == AUDIT_TYPE_PARENT || n->type == AUDIT_TYPE_UNKNOWN) &&
-+		    (n->ino == parent->i_ino && n->dev == parent->i_sb->s_dev &&
-+		     !audit_compare_dname_path(dname, n->name->name, n->name_len))) {
- 			if (n->type == AUDIT_TYPE_UNKNOWN)
- 				n->type = AUDIT_TYPE_PARENT;
- 			found_parent = n;
--			break;
- 		}
--	}
- 
--	cond_resched();
--
--	/* is there a matching child entry? */
--	list_for_each_entry(n, &context->names_list, list) {
--		/* can only match entries that have a name */
--		if (!n->name ||
--		    (n->type != type && n->type != AUDIT_TYPE_UNKNOWN))
--			continue;
--
--		if (!strcmp(dname->name, n->name->name) ||
--		    !audit_compare_dname_path(dname, n->name->name,
-+		/* is there a matching child entry? */
-+		if (!found_child &&
-+		    (n->type == type || n->type == AUDIT_TYPE_UNKNOWN) &&
-+		    (!strcmp(dname->name, n->name->name) ||
-+		     !audit_compare_dname_path(dname, n->name->name,
- 						found_parent ?
- 						found_parent->name_len :
--						AUDIT_NAME_FULL)) {
-+						AUDIT_NAME_FULL))) {
- 			if (n->type == AUDIT_TYPE_UNKNOWN)
- 				n->type = type;
- 			found_child = n;
--			break;
- 		}
-+
-+		if (found_parent && found_child)
-+			break;
- 	}
- 
-+	cond_resched();
-+
- 	if (!found_parent) {
- 		/* create a new, "anonymous" parent record */
- 		n = audit_alloc_name(context, AUDIT_TYPE_PARENT);
 -- 
-2.51.0
-
+Catalin
 
