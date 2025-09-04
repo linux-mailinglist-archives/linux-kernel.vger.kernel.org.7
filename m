@@ -1,96 +1,387 @@
-Return-Path: <linux-kernel+bounces-800945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1706DB43E02
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:05:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A43E0B43E07
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E05ED5A3BB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:05:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9174B7AC792
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D61302779;
-	Thu,  4 Sep 2025 14:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E23304BB6;
+	Thu,  4 Sep 2025 14:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="LAlcubKS"
-Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BjTqFkaH"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2B2303C9D;
-	Thu,  4 Sep 2025 14:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D174163
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756994711; cv=none; b=Fk1sOOZJgKHFQrHMwAtyQjcWEq08B9jbu5kvUM1aTcxed2XGw964ArWhRVQR8DW/0CYENtU/FadwuZA+epLfXJx5PI9AyUfxGHD9uva8MbSpYWd1uLBCxoksUa/L5TgdNdbt4Q1T+uGUVDWCX8x4rvtKNVEoA2Fg7A7ZuGDdtzE=
+	t=1756994805; cv=none; b=HpbijbnU4w/X7+2Nl7JDm/H5QdwwdCp8LFmZC+K+c4ueFdZZJau7Qoxqgd5p6vZJvuJ4HFD+uKb4fwUQqxuSJMd5uawTTgh52JMPUKbuOSNWb2jOce/9JDOsQQGgkNqrElL2U3Dr4EYEeL0JeuYKB4RnfLMIEcgqwfsScck2jcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756994711; c=relaxed/simple;
-	bh=9UGYpN5Lego2P4czss4c+ufIK4ScIbTQMOH52X2qv+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SYzy5+WvbOORVgvTa7znn5gYNmVXhNxJ445CnI+sysin4g4HcVAatZlXwNz/IIbnEP87agk3UsLbnDPbWR74V7rlazaWhJ7sezAVISe3Osm1CIXrSJ8CeBWQoMjw5yGji4OUuSan/8KYnhmuyl03rn38EqK+oVh7kzS9hu3XraI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=fail (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=LAlcubKS reason="key not found in DNS"; arc=none smtp.client-ip=94.231.106.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4cHh7j05L9z1FXhv;
-	Thu,  4 Sep 2025 16:05:05 +0200 (CEST)
-Received: from [192.168.0.25] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp.simply.com (Simply.com) with ESMTPSA id 4cHh7h5kSYz1FXSw;
-	Thu,  4 Sep 2025 16:05:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
-	s=simplycom2; t=1756994704;
-	bh=J4tJiqKaK/wPgbe9np5CLuawS4hkf0a+JOKMhBWenco=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=LAlcubKSl7KTkISuJ1TFhgZvOgUKn5EaOG46fo1kJg0v6Uk+igNjGK8oEcK7lUU7p
-	 OQZTEM/NXLhZxOj4Iu9nF7t6dGoduFIX/qTAehBpa4Nm1xNsEk/aB8poAzpiJGSrta
-	 tDGpNMneBggVvxdANWsW9lkZJb4MKoNWSGkdyuk2V3dKLiUali6kSLv/nPabubGiH2
-	 ESHbWMQR5WIgg8Kh8sfKxPqEpFvraGYa1GIDUgI1d3ywS8ykoi20tS2VY3HQnvTYch
-	 zYAjMn0wjG8RFSWvop3gVCObWS++V/DBBTmnUuueBTmkAoIwMde0HOvT6q623mrzKf
-	 AnH3SiBlLsx1Q==
-Message-ID: <8403ac15-bb3a-4e88-97ef-6eaff26cc8db@gaisler.com>
-Date: Thu, 4 Sep 2025 16:05:04 +0200
+	s=arc-20240116; t=1756994805; c=relaxed/simple;
+	bh=LN4trsiwqoatuevDhzEjiLUvZjNbhPE4QwBE1fJYgCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=OLWNuh9f2ergFE4oTcrMdS7mjuC3tFOKqyj4y+qWSbrzaNv79nY4N/Al9M47SCws+CxcoaZIPdkUdqRhTbW8DVO3ezjIsDfaqA3VAnVpv1byERGx4LB5rnpWbe7lc7E4M/YjDeKz1ju68y/tCG8smKou7Fv/lG27KnqxSUrU7E4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BjTqFkaH; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250904140640epoutp0480e9757d34b90b6635c4af34aee24ff9~iGXY2p0ha2304123041epoutp04c
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:06:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250904140640epoutp0480e9757d34b90b6635c4af34aee24ff9~iGXY2p0ha2304123041epoutp04c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756994800;
+	bh=QpNFk0B54CNxrWdHDWbagQbykXx8/dneb8A2T1Ez0II=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BjTqFkaHe5+jxDyukPgA1cr4TeZhdCXIoaGcblqMlwWt+gjCHO2KDz7ayJM/yG8/X
+	 mLTNXCdDElWzRwFMGxtBFqss1FgEp2h1tAfKP9NfA9b8gPweqG18sia8YjJ1bUnW0F
+	 AEvXtUyRssycfxb2MsH41JYpEJVt06cwfmycg4DA=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250904140639epcas5p1a63069d5f87812190ec42e111cb1deb9~iGXYiEyHz0163401634epcas5p1t;
+	Thu,  4 Sep 2025 14:06:39 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.95]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cHh9V62x4z6B9m4; Thu,  4 Sep
+	2025 14:06:38 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904140638epcas5p192ce129faa78534b83c3807a9a03ad24~iGXXQrfSO3106931069epcas5p1X;
+	Thu,  4 Sep 2025 14:06:38 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904140637epsmtip1520d3794f03cc6cd959d7d3c5b0b0f31~iGXWHREpO2360223602epsmtip1x;
+	Thu,  4 Sep 2025 14:06:37 +0000 (GMT)
+Date: Thu, 4 Sep 2025 19:36:31 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V2 05/20] nvdimm/region_label: Add region label updation
+ routine
+Message-ID: <20250904140631.gxhaxwjjmexexj4t@test-PowerEdge-R740xd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] sparc: fix accurate exception reporting in
- copy_{from_to}_user for UltraSPARC III
-To: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
- Anthony Yznaga <anthony.yznaga@oracle.com>, linux-kernel@vger.kernel.org
-Cc: sparclinux@vger.kernel.org,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
- <20250826160312.2070-3-kernel@mkarcher.dialup.fu-berlin.de>
- <528a5d4b-1e07-4379-afd6-7e58d423e713@oracle.com>
- <C90C7694-C913-499B-8426-8DEC42137066@mkarcher.dialup.fu-berlin.de>
-Content-Language: en-US
-From: Andreas Larsson <andreas@gaisler.com>
-In-Reply-To: <C90C7694-C913-499B-8426-8DEC42137066@mkarcher.dialup.fu-berlin.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20250813154811.00000257@huawei.com>
+X-CMS-MailID: 20250904140638epcas5p192ce129faa78534b83c3807a9a03ad24
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e261b_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250730121228epcas5p411e5cc6d29fb9417178dbd07a1d8f02d
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121228epcas5p411e5cc6d29fb9417178dbd07a1d8f02d@epcas5p4.samsung.com>
+	<20250730121209.303202-6-s.neeraj@samsung.com>
+	<20250813154811.00000257@huawei.com>
 
-On 2025-08-30 10:35, Michael Karcher wrote:
-> 
->> I think there should be a little more text about the nature of the failure. Maybe:
-> 
-> I will add something like that in v2 of the series.
-> Do you think it is useful to add the message ID
-> b14f55642207e63e907965e209f6323a0df6dcee.camel@physik.fu-berlin.de
-> as well, or an abbreviated backtrace from that message?
-> I suppose, that is the BUG_ON you are referring to.
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e261b_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-If that is the message referred to, I think it is a good idea to refer
-to it, in addition to a description. If so, please do it on the form of
-a lore link, like this:
+On 13/08/25 03:48PM, Jonathan Cameron wrote:
+>On Wed, 30 Jul 2025 17:41:54 +0530
+>Neeraj Kumar <s.neeraj@samsung.com> wrote:
+>
+>> Added __pmem_region_label_update region label update routine to update
+>> region label.
+>>
+>> Also used guard(mutex)(&nd_mapping->lock) in place of mutex_lock() and
+>> mutex_unlock()
+>>
+>> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+>
+>A few comments inline,
+>
+>Thanks,
+>
+>Jonathan
+>
+>
+>>  static bool slot_valid(struct nvdimm_drvdata *ndd,
+>>  		struct nd_lsa_label *lsa_label, u32 slot)
+>>  {
+>> @@ -960,7 +970,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>>  		return rc;
+>>
+>>  	/* Garbage collect the previous label */
+>> -	mutex_lock(&nd_mapping->lock);
+>> +	guard(mutex)(&nd_mapping->lock);
+>>  	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
+>>  		if (!label_ent->label)
+>>  			continue;
+>> @@ -972,20 +982,20 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>>  	/* update index */
+>>  	rc = nd_label_write_index(ndd, ndd->ns_next,
+>>  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
+>> -	if (rc == 0) {
+>> -		list_for_each_entry(label_ent, &nd_mapping->labels, list)
+>> -			if (!label_ent->label) {
+>> -				label_ent->label = lsa_label;
+>> -				lsa_label = NULL;
+>> -				break;
+>> -			}
+>> -		dev_WARN_ONCE(&nspm->nsio.common.dev, lsa_label,
+>> -				"failed to track label: %d\n",
+>> -				to_slot(ndd, lsa_label));
+>> -		if (lsa_label)
+>> -			rc = -ENXIO;
+>> -	}
+>> -	mutex_unlock(&nd_mapping->lock);
+>> +	if (rc)
+>> +		return rc;
+>> +
+>> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
+>> +		if (!label_ent->label) {
+>> +			label_ent->label = lsa_label;
+>> +			lsa_label = NULL;
+>> +			break;
+>> +		}
+>> +	dev_WARN_ONCE(&nspm->nsio.common.dev, lsa_label,
+>> +			"failed to track label: %d\n",
+>> +			to_slot(ndd, lsa_label));
+>> +	if (lsa_label)
+>> +		rc = -ENXIO;
+>	if (lsa_label)
+>		return -ENXIO;
+>
+>	return 0;
+>
+>is a little clearer.
 
-https://lore.kernel.org/r/<message-id>
+Sure, I will fix it in next patch-set
 
-Cheers,
-Andreas
+>
+>>
+>>  	return rc;
+>>  }
+>> @@ -1127,6 +1137,137 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
+>>  	return 0;
+>>  }
+>>
+>> +static int __pmem_region_label_update(struct nd_region *nd_region,
+>> +		struct nd_mapping *nd_mapping, int pos, unsigned long flags)
+>> +{
+>> +	struct nd_interleave_set *nd_set = nd_region->nd_set;
+>> +	struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+>> +	struct nd_lsa_label *nd_label;
+>> +	struct cxl_region_label *rg_label;
+>> +	struct nd_namespace_index *nsindex;
+>> +	struct nd_label_ent *label_ent;
+>> +	unsigned long *free;
+>> +	u32 nslot, slot;
+>> +	size_t offset;
+>> +	int rc;
+>> +	uuid_t tmp;
+>> +
+>> +	if (!preamble_next(ndd, &nsindex, &free, &nslot))
+>> +		return -ENXIO;
+>> +
+>> +	/* allocate and write the label to the staging (next) index */
+>> +	slot = nd_label_alloc_slot(ndd);
+>> +	if (slot == UINT_MAX)
+>> +		return -ENXIO;
+>> +	dev_dbg(ndd->dev, "allocated: %d\n", slot);
+>> +
+>> +	nd_label = to_label(ndd, slot);
+>> +
+>> +	memset(nd_label, 0, sizeof_namespace_label(ndd));
+>> +	rg_label = &nd_label->rg_label;
+>> +
+>> +	/* Set Region Label Format identification UUID */
+>> +	uuid_parse(CXL_REGION_UUID, &tmp);
+>> +	export_uuid(nd_label->rg_label.type, &tmp);
+>
+>	export_uuid(rg_label->type, &tmp);
 
+Thanks Jonathan, I will fix it in next patch-set
+
+>
+>> +
+>> +	/* Set Current Region Label UUID */
+>> +	export_uuid(nd_label->rg_label.uuid, &nd_set->uuid);
+>
+>	export_uuid(rg_label->uuid, &nd_set->uuid);
+
+Sure, I will fix it in next patch-set
+
+>
+>
+>> +
+>> +	rg_label->flags = __cpu_to_le32(flags);
+>> +	rg_label->nlabel = __cpu_to_le16(nd_region->ndr_mappings);
+>> +	rg_label->position = __cpu_to_le16(pos);
+>> +	rg_label->dpa = __cpu_to_le64(nd_mapping->start);
+>> +	rg_label->rawsize = __cpu_to_le64(nd_mapping->size);
+>> +	rg_label->hpa = __cpu_to_le64(nd_set->res->start);
+>> +	rg_label->slot = __cpu_to_le32(slot);
+>> +	rg_label->ig = __cpu_to_le32(nd_set->interleave_granularity);
+>> +	rg_label->align = __cpu_to_le16(0);
+>
+>As the bot complained... It's le32
+
+Yes, I will fix it in next patch-set
+
+>
+>> +
+>> +	/* Update fletcher64 Checksum */
+>> +	rgl_calculate_checksum(ndd, rg_label);
+>> +
+>> +	/* update label */
+>> +	offset = nd_label_offset(ndd, nd_label);
+>> +	rc = nvdimm_set_config_data(ndd, offset, nd_label,
+>> +			sizeof_namespace_label(ndd));
+>> +	if (rc < 0) {
+>> +		nd_label_free_slot(ndd, slot);
+>> +		return rc;
+>> +	}
+>> +
+>> +	/* Garbage collect the previous label */
+>> +	guard(mutex)(&nd_mapping->lock);
+>> +	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
+>> +		if (!label_ent->label)
+>> +			continue;
+>> +		if (rgl_uuid_equal(&label_ent->label->rg_label, &nd_set->uuid))
+>> +			reap_victim(nd_mapping, label_ent);
+>> +	}
+>> +
+>> +	/* update index */
+>> +	rc = nd_label_write_index(ndd, ndd->ns_next,
+>> +			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
+>> +	if (rc)
+>> +		return rc;
+>> +
+>> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
+>> +		if (!label_ent->label) {
+>> +			label_ent->label = nd_label;
+>> +			nd_label = NULL;
+>> +			break;
+>> +		}
+>> +	dev_WARN_ONCE(&nd_region->dev, nd_label,
+>> +			"failed to track label: %d\n",
+>> +			to_slot(ndd, nd_label));
+>> +	if (nd_label)
+>> +		rc = -ENXIO;
+>
+>		return -ENXIO;
+>
+>> +
+>
+>	return 0;
+>
+>is clearer.
+
+Sure, I will fix it in next patch-set
+
+>
+>> +	return rc;
+>> +}
+>> +
+>> +int nd_pmem_region_label_update(struct nd_region *nd_region)
+>> +{
+>> +	int i, rc;
+>> +
+>> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
+>> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
+>> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+>> +
+>> +		/* No need to update region label for non cxl format */
+>> +		if (!ndd->cxl)
+>> +			continue;
+>> +
+>> +		/* Init labels to include region label */
+>> +		rc = init_labels(nd_mapping, 1);
+>> +
+>
+>No blank line here - keep the error check closely associated with the
+>thing that it is checking.
+
+Sure, I will fix it in next patch-set
+
+>
+>> +		if (rc < 0)
+>> +			return rc;
+>> +
+>> +		rc = __pmem_region_label_update(nd_region, nd_mapping, i,
+>> +					NSLABEL_FLAG_UPDATING);
+>> +
+>
+>Same here.
+
+Sure, I will fix it in next patch-set
+
+>
+>> +		if (rc)
+>> +			return rc;
+>> +	}
+>> +
+>> +	/* Clear the UPDATING flag per UEFI 2.7 expectations */
+>> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
+>> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
+>> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+>> +
+>> +		/* No need to update region label for non cxl format */
+>> +		if (!ndd->cxl)
+>> +			continue;
+>> +
+>> +		rc = __pmem_region_label_update(nd_region, nd_mapping, i, 0);
+>> +
+>
+>and here.
+
+Sure, I will fix it in next patch-set
+
+>
+>> +		if (rc)
+>> +			return rc;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  int __init nd_label_init(void)
+>>  {
+>>  	WARN_ON(guid_parse(NVDIMM_BTT_GUID, &nvdimm_btt_guid));
+>> diff --git a/drivers/nvdimm/label.h b/drivers/nvdimm/label.h
+>> index 4883b3a1320f..0f428695017d 100644
+>> --- a/drivers/nvdimm/label.h
+>> +++ b/drivers/nvdimm/label.h
+>> @@ -190,6 +190,7 @@ struct nd_namespace_label {
+>>  struct nd_lsa_label {
+>
+>Would be better to have this explicitly as a union
+>unless later patches add more elements.  That way it'll
+>be obvious at all sites where it is used that it can be one
+>of several things.
+>
+>>  	union {
+>>  		struct nd_namespace_label ns_label;
+>> +		struct cxl_region_label rg_label;
+>>  	};
+>>  };
+
+Thanks Jonathan for your suggestion. I will revisit this change and try
+using region label handling separately instead of using union.
+
+
+Regards,
+Neeraj
+
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e261b_
+Content-Type: text/plain; charset="utf-8"
+
+
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e261b_--
 
