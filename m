@@ -1,110 +1,141 @@
-Return-Path: <linux-kernel+bounces-800008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3552CB4325E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:25:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A08B43330
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D3A3189FCAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:26:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ABAE5E5526
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BACF267733;
-	Thu,  4 Sep 2025 06:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02F42C0289;
+	Thu,  4 Sep 2025 06:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tTDyjq3J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="dbfK9a5M";
+	dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="LfO3RmLV"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B4125A328;
-	Thu,  4 Sep 2025 06:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756967139; cv=none; b=U9xuQHmcoBjA87TWk3LK9RWEUEBQAOfj2MnmjmRvQjqLXJnv8+TotCS0hPe06ANVkinQXbbczeJ4SwNqJO/EwdD426wn6pjn13PXGA7ARcnP26XOO12RESNkiIIgIR6HMXf9idgmC8zH84drTfJdEalwJNKQqW89Se/2ImJqNp4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756967139; c=relaxed/simple;
-	bh=OiyQg+RIct2VcV7DDl+1YPRlSTFJG6extkQc30EN9eE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ilo3dNl1Itk15T1da0DbiqlSJh6VLQMstnj2UvGhHdZeJXXSP5bTlZJ+kjIUaRNNoV8s/N9qMvwNxhT5Gj906Qi88k3Poz0QniufFi50lP71dKHSKn5o6lXwPyKLVMDHISKuYSCJGA7r9rvtpprdTZvdMLyXWaJxjRE6q6lec4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tTDyjq3J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32DE3C4CEF1;
-	Thu,  4 Sep 2025 06:25:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756967139;
-	bh=OiyQg+RIct2VcV7DDl+1YPRlSTFJG6extkQc30EN9eE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tTDyjq3JdIVLxtQmDTLKhtZFQhY5ZpPAWyuaGNg4HsT3tkkTzggq+ooI4yyb2N4ER
-	 VWz+BoBXpPZOKOi27m0Qr4bAnA4b6RdGnUjf9iJqCXSdxx21+1OCRX4gByuvpjnUwb
-	 FIgjt+NcvPHeU/lMRLispT2DkaiMQyU0JN1T9x7G5UZ9Kr51Os9P5k3HjDpXYK73JC
-	 oIC3BwVJSuunFD9uX0QJ7srIh/um13Zd2HHw0YWmLUVAbzJYoPMOLgjmYkZjCFJumW
-	 GMxDQvnpZopxpyM0QH7D419sBYA097IwWmKkMBFdx+73hrqS4EUg6k+Q/8Q+MYjfro
-	 QJt8Mx2xChuMA==
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b046f6fb2a9so99244666b.2;
-        Wed, 03 Sep 2025 23:25:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW4TusYm9uaj3IsNJ0zxoORTNjnbWxTVey/gRM3Q35tz80laGU9IbjKr+FiKjGE9i64FEA=@vger.kernel.org, AJvYcCXgm9WWUupGFugim/nKCNl6r49wSfv7R6hogOzXQ85yNQy3VpH63+iZyp+kTWsPA7kXQl6HQ7rhrEbArZjO@vger.kernel.org
-X-Gm-Message-State: AOJu0YyER+BEotv17E/1lv/NERYsPpq2/FVVo64yTgt34Ls5YOiCd84g
-	TxAlQaIZTLpHpkdTnBirFady0CGs7JGeBJw2BfomL22PhH2Ph9ksvIf4WvitZhw/htydKJ2jwmV
-	+HnzHNa9iSmEF+h8ZkrxHI8351pqA8Xo=
-X-Google-Smtp-Source: AGHT+IEuSgUEojFL2lGX5tP7lxrB3EtHth4NYh/l+8QCJ5MmWsFTsME71131TAohVLCemezrMPb56TXZN5B5xjH98S8=
-X-Received: by 2002:a17:907:6e8f:b0:b04:67f3:890f with SMTP id
- a640c23a62f3a-b0467f38cfdmr562352066b.33.1756967137680; Wed, 03 Sep 2025
- 23:25:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C726286412;
+	Thu,  4 Sep 2025 06:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.166
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756968943; cv=pass; b=Ozdb6NHaeO0zowUVmte2M2WwDhEqDtTiuypo657MZX6jrNlTZTiJOHKTKNnhxTct8Ka/r6bV+SHCI2ErG9dQArGhmtTVFBwEAch1lrQUVrqCse2VgAoeIvPe/tSso6SQW5Zn+2vdMB/rD3uGh3bE3sV7xM5xp+vpSSTg0SwKXek=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756968943; c=relaxed/simple;
+	bh=bCInGNafFosv2/EfM0snbVd+AWphjz5RaQRvz2HRRWc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jHukFFz/70uYr76Q4TQFMnSP6gJT8utkCUbZCNSMkAFI+7IUfHoANOSoD3nMKAB8NKkF1glyt2Amu5DkCTDQequCW7aazmeZek6A5KTeg42jSiiuGnB4O4vrIumNWezyGVcYkwb71nWOD0FA3NKXMsnhzsV6VjckCvx8y4JSSKA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net; spf=pass smtp.mailfrom=hartkopp.net; dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=dbfK9a5M; dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=LfO3RmLV; arc=pass smtp.client-ip=81.169.146.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hartkopp.net
+ARC-Seal: i=1; a=rsa-sha256; t=1756967139; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=jhq13UGEQj+UVTk+FWkawpup0vWB4vRosIpcfSqaHJGKkk+Dhe0og8uhEFj4d6JneY
+    e+bjNgmNs4dO27TjhMBlijH9o3muPliKutXtBtJas2EHGbIXCEUE+39i0hKfkeM8GvoB
+    WFxaCyW4EeWT1H2zqGlYGrZUxNoJ1P/J3f49h6P61fACrTouQG3zQQylHQ3BLjkM7ebV
+    xlDkHAm5ZkT1zZMb7WwVMCPsIwVfbO6klyFMfeiYtdYydgrQSSTvcpslAuloVRrAuBM+
+    K+G5Tih4IhRcnRjJ8bjdnaLmUSFcumNL/heDZDnONfJmRYt+oC1GyX4mh0Xp0WdxoTnY
+    zuBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1756967139;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=Et1a3Y43DomKtCR9LncztA0z4+5TKf95ey/BMZttA8Y=;
+    b=YJ7Zq4RffSAYvQ4PAcODpZPt/IguDM1sVSWYL5sbpbtRhwiqmZOyjVeuTxRuyGgMPf
+    xH73WxLHA+b1d1Hwy4xTDUALSA0TBosFv5ZNrvAgWJ1AOkPsKhVBxMmzR5pmluT+K83+
+    lEMAZa9el1uPH8lK8FU5cbT6r+UIO9/dPbQB5yAVDj53dylYRHATUAJYGPamn34EPJeb
+    Zp33XZ4ID18Fu4isdsdTFFKcDhL0fQl+l2Uq2hZ4n6POfxbw0nveNz4d8Ff1T+fnomPu
+    DsviOJPSZOPpJI3fCHQ1V0rhuMDEnracpCtWPadiNVk0Qr2rDBzsgCEGSkQmctPhr/Fy
+    +uMw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1756967139;
+    s=strato-dkim-0002; d=hartkopp.net;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=Et1a3Y43DomKtCR9LncztA0z4+5TKf95ey/BMZttA8Y=;
+    b=dbfK9a5Mgo+loiwoQD9/Qn2XvVKcsbBEDCo8BQtzhJhC4Ik7MrAdQ0BPbfVsvrcom5
+    VQavMhKiJJ1BVZ3rymEhPjG+uVHMigPqBvIvy4wuNqqq5Qx9v+63vxB1WFw8wPbaF6Oc
+    SeyGfQwuSF6qcllQYX04K1Eo7XB2GvCJL4ts+JkO+DGrPs9KQxwpWA3YMhgFxRYnIR8D
+    cVxXpVX+FbIzpIdHnFley9eEy5qvAPp4RtJk+z94ewfgEePHRou2g2OU6y+y3l/mwWLd
+    GAoODfCCXqE3xpYIrBIvNTQTsVae2czBtsq9cV/3lTxKFUEvMfhOSacEFKdUZwxfv14U
+    iImA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1756967139;
+    s=strato-dkim-0003; d=hartkopp.net;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=Et1a3Y43DomKtCR9LncztA0z4+5TKf95ey/BMZttA8Y=;
+    b=LfO3RmLVCHeKqxyFq05BCUkJ+hEc08nOhAClgxTWDjRJj0w87El7mpFbFrL1j5Jmw0
+    yXbDCD9J9xtU/Mle0kBQ==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjH4JKvMdQv2tTUsMrZpkO3Mw3lZ/t54cFxeEQ7s8bGWj0Q=="
+Received: from [IPV6:2a00:6020:4a38:6810::9f3]
+    by smtp.strato.de (RZmta 52.1.2 AUTH)
+    with ESMTPSA id K5d3611846PcLfl
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Thu, 4 Sep 2025 08:25:38 +0200 (CEST)
+Message-ID: <a7c707b7-61e1-4c40-8708-f3331da96d34@hartkopp.net>
+Date: Thu, 4 Sep 2025 08:25:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904042622.1291085-1-cuitao@kylinos.cn> <c70e595e-c1ab-2c8a-3f46-3862ecd6e0b8@loongson.cn>
-In-Reply-To: <c70e595e-c1ab-2c8a-3f46-3862ecd6e0b8@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 4 Sep 2025 14:25:26 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7j=7RSsyNFkfT_t0GuhzNL1kX1XaWhk3uU=VqYWtRiow@mail.gmail.com>
-X-Gm-Features: Ac12FXyz1ygNs0gFRYev90sVCFlGP3Iehi__0o2aVnlYycpoWG1QGUYC90zfJwg
-Message-ID: <CAAhV-H7j=7RSsyNFkfT_t0GuhzNL1kX1XaWhk3uU=VqYWtRiow@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: KVM: remove unused returns.
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: cuitao <cuitao@kylinos.cn>, zhaotianrui@loongson.cn, loongarch@lists.linux.dev, 
-	kernel@xen0n.name, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] docs: networking: can: change bcm_msg_head frames
+ member to support flexible array
+To: Alex Tran <alex.t.tran@gmail.com>
+Cc: mkl@pengutronix.de, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ linux-can@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250904031709.1426895-1-alex.t.tran@gmail.com>
+Content-Language: en-US
+From: Oliver Hartkopp <socketcan@hartkopp.net>
+In-Reply-To: <20250904031709.1426895-1-alex.t.tran@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 4, 2025 at 2:17=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrote=
-:
->
->
->
-> On 2025/9/4 =E4=B8=8B=E5=8D=8812:26, cuitao wrote:
-> > The default branch has already handled all undefined cases,
-> > so the final return statement is redundant.
-> >
-> > Signed-off-by: cuitao <cuitao@kylinos.cn>
-> > ---
-> >   arch/loongarch/kvm/exit.c | 4 +---
-> >   1 file changed, 1 insertion(+), 3 deletions(-)
-> >
-> > diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
-> > index 2ce41f93b2a4..e501867740b1 100644
-> > --- a/arch/loongarch/kvm/exit.c
-> > +++ b/arch/loongarch/kvm/exit.c
-> > @@ -778,9 +778,7 @@ static long kvm_save_notify(struct kvm_vcpu *vcpu)
-> >               return 0;
-> >       default:
-> >               return KVM_HCALL_INVALID_CODE;
-> > -     };
-> > -
-> > -     return KVM_HCALL_INVALID_CODE;
-> > +     }
-> >   };
-> >
-> >   /*
-> >
-> Reviewed-by: Bibo Mao <maobibo@loongson.cn>
-Applied, thanks.
 
-Huacai
 
->
->
+On 04.09.25 05:17, Alex Tran wrote:
+> The documentation of the 'bcm_msg_head' struct does not match how
+> it is defined in 'bcm.h'. Changed the frames member to a flexible array,
+> matching the definition in the header file.
+> 
+> See commit 94dfc73e7cf4 ("treewide: uapi: Replace zero-length arrays with
+> flexible-array members")
+> 
+> Bug 217783 <https://bugzilla.kernel.org/show_bug.cgi?id=217783>
+> 
+> Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+
+Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
+
+Thanks Alex!
+
+> ---
+>   Documentation/networking/can.rst | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/networking/can.rst b/Documentation/networking/can.rst
+> index bc1b585355f7..7650c4b5be5f 100644
+> --- a/Documentation/networking/can.rst
+> +++ b/Documentation/networking/can.rst
+> @@ -742,7 +742,7 @@ The broadcast manager sends responses to user space in the same form:
+>               struct timeval ival1, ival2;    /* count and subsequent interval */
+>               canid_t can_id;                 /* unique can_id for task */
+>               __u32 nframes;                  /* number of can_frames following */
+> -            struct can_frame frames[0];
+> +            struct can_frame frames[];
+>       };
+>   
+>   The aligned payload 'frames' uses the same basic CAN frame structure defined
+
 
