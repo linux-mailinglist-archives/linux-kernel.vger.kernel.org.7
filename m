@@ -1,156 +1,117 @@
-Return-Path: <linux-kernel+bounces-800521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 374A3B438BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:28:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D237BB438BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA07E1669DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:28:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67712481DDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D7D2EC571;
-	Thu,  4 Sep 2025 10:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BEF2F83DA;
+	Thu,  4 Sep 2025 10:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qx7LdcBW"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ixWBUIU0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2813F2DCF77
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A44C2135B9;
+	Thu,  4 Sep 2025 10:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756981701; cv=none; b=WJ+eTUos3pBZt6yNr5lvuasO4YK/vjCZykNKwOTn8J/OvlsxyPWLfHxDYHGBMS0p1peQH4aoRFjCwclEwAaLnjykMsJEB6eb6vk+xU6omvOR72aWH99XI6mlTJnK97miOAsRvrXVYMsWRNajWBnUPom9Uek6V2m2CfjQ2LIWoWU=
+	t=1756981730; cv=none; b=P9qUxKePE9KwksDlmzyVipNgMAMp/A3XlZVtNDJCzUqJZCTMMKjnZM8F3W15b0QftorKEikXikSaYFXggZJKjhFMhLIUjCFfktp0sRvt96MYKNJVTvRoSi6slLdxhEAMlgu5yxk3zIxBWgQlrYc3+XKOYzFwGuMtXN02Gb5pJCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756981701; c=relaxed/simple;
-	bh=qbUdaJpkZUNHp9jHGrfzQUVMcgv61VMXD3m2CVITtec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HtmDfS8wRMwv/W/+btSh76Y3ZnD8Nb+pb4/FZaKrMtD7Pyd/Am8yPGHg56oh6ekfNt00cTrcfbD/G6ujgPYv2FuWevDM6V8a0uJOrkgxbhfrY7l95+FLDZrRc6fUgV/4A2CznFhWcOnwHqatIWXt06n26aau9PiVcxfrvAi2g2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qx7LdcBW; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb731ca55so11581366b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 03:28:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756981698; x=1757586498; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i1WbBVjWxA4EfQgsM8BlOAO7GONdCMwV9UB8qyjfBQA=;
-        b=Qx7LdcBWQ0fhRzuIrdTdWZtzB4n8dmSU43bz2M9IdsoeauM8unxVW4pQoSl7HIVARI
-         oLJHjl9D58gzs4wl9fzbKiU2rNhbB2jNo13GIWiWlNJ3QHMDN10nomk6yjltXiBucar8
-         ONSNQgS92fjW1t0x30Aevj9O9DaJrO5smQDmCIIagFBFTTNXruXLPdOQlrD+6wB7v4iM
-         DFP/YdzZUDH3DfnPvkWoo0o50lnNauHRXaewRx2fvvLW78Q/4cBWNT3szywx9+eo7XHC
-         O/pp1eE57H4EDXSsHkbQl6p5TncMX1C1BqJHRt3Riv3XdrGieJXABveQRGClEkyvhy4Z
-         Eg1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756981698; x=1757586498;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i1WbBVjWxA4EfQgsM8BlOAO7GONdCMwV9UB8qyjfBQA=;
-        b=P8CDQRl+cZ+n7SEwidFw/bmTXH61+NTf3LZ2700Va3W4NDnc8GOcbmOp3XNSfKJ/Jw
-         0AkbtcVGS1andmqeQBs2dMsWKJOH4ecoR7tivCciHBn2ZpVq5Z987iTElZq05EQ9HV0x
-         3VD6iknYhaz3EywWDinY6FPZqf23gXYz/qQCyJhl6ebi8dMJyfUWLdrB3SxE+heBBacO
-         QUepHtu7TiX5OEWLrZ0AFFLWoCXLvW8lzFZWgDfwuiyVqpJ15Mg0DfbmxSEGtveHkjUZ
-         62+qN7QG4ep49O3GZwo9bAWXR1MhFllg0SCmETQ+aEO3dMSwIFCnmYz79BeY+2FgT+cT
-         nXIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMbx8F5Isux1Py3XKbCgGy9Q+f9aUN0+8Gyd+VAMGJRI6Wvx4uJ+PuetZVzQcekir+URzXyFq0Rq9VIhw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwvY+/ouFzZuAnSAWYmqFvnXY3xFmw5eaDfI53dXFjmdxc9J1d
-	uz8gjUx64hY3TEMDWIMYDQEG972ErIwWunOGegOCqLKGX+4Rqb7uLlAbvSalb3VjQBU=
-X-Gm-Gg: ASbGnctOh9mdpyUKb9acuTcLRu8BJHZf4D8foIg4VZpvm63uaVdfawpBbOddHAl5doi
-	of35D61IfXH6QuuKSsE3ASTHphtOCVYVQ+Ld7CkzPdzehnMfSjiAllyCUr3cy/qOSo6QH7Y8zGe
-	2SF7F24Cz2MhVQ/R22e5ZHeYmF5P+LOyfAM2tO/WtAKkrKyAYEj/8GrzdXLLnn/XMUxQXZxZdLX
-	+XXwHlYUGYPqZK/P6YSECXe/YxkcFQxa/38XFQkaIrgY2eQxU2XaMGrx3cQMlR81bPYQht+VFVA
-	sauNxIdDGrAuzZxYSED2LtoCGILlSnqDowED7f/FXMSa0sEpgqCXzY3pPuKUCFaLnC+N0rnsjIN
-	4qZ6WENimztxym1oTN24NfA010lWFWaRa/aL+N3f7WZ0=
-X-Google-Smtp-Source: AGHT+IGm0SQo3pUnsDlRExnSN4uloFxusrJCYADHHQqT05DYpckwZlVlB1+5UK2fMt5CUtQdDfixag==
-X-Received: by 2002:a17:907:9455:b0:afe:ed61:b3d8 with SMTP id a640c23a62f3a-aff042497a5mr1221075366b.5.1756981698516;
-        Thu, 04 Sep 2025 03:28:18 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b042258f4ffsm1031853466b.91.2025.09.04.03.28.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 03:28:17 -0700 (PDT)
-Message-ID: <59deb4ea-0364-4abc-bb99-36a032cc4464@linaro.org>
-Date: Thu, 4 Sep 2025 12:28:16 +0200
+	s=arc-20240116; t=1756981730; c=relaxed/simple;
+	bh=ErbxO5/wHN1AdSE92UHPrTjG2PfFKUR4AzwDgopvUss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GKhhlKOgX+GsxBKDpzEhsPdZ18MKXegiRJdwRDCYEL/CeHI0AvAllHw3ilE0+H7XdKptnHf6EVaIBO5pb0K2D9b/syRcA2Nl3qWQfcaZslJ0IJMmBF9m+JWADGGRp44ovDLcuPNLA78lC7guyOxeZML+TMs4inptGr8TXDpe5K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ixWBUIU0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D167C4CEF0;
+	Thu,  4 Sep 2025 10:28:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756981729;
+	bh=ErbxO5/wHN1AdSE92UHPrTjG2PfFKUR4AzwDgopvUss=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ixWBUIU0YQ6tHk3M8l4X1k2WTRKz+XCz6x17USQfH+ncdZ8e4t2Q3J+D+nBd3IM7Y
+	 L79xi2dgRFC3nUjxYbvHDOQSIz4wokb7+6qhNNyFj+u7aXL8jh+5T5WWdTPZTvJdtf
+	 UBqrZXOMiVxMAr1y1NXwzNsk8rQHLXWuuKhdH2y9QTBCPd56LWBOZ6l2aNZp5K/TSU
+	 3m4czHUCYKZjBnVAGNKlID1oHbgnvpiaxD3wALS/L6W0x4t8EM8hGI8zscn5KAaZg5
+	 sPKI+0kvR6HP1PNqZqYm53WHFvUfudFYgg+OLGHnzT6N5kaN6CQxiD7uU/u++e2zZZ
+	 5qTCOt0zPLzTw==
+Date: Thu, 4 Sep 2025 11:28:45 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH net] net: stmmac: dwmac-rk: Ensure clk_phy doesn't
+ contain invalid address
+Message-ID: <20250904102845.GG372207@horms.kernel.org>
+References: <20250904031222.40953-3-ziyao@disroot.org>
+ <20250904095457.GE372207@horms.kernel.org>
+ <20250904095657.GF372207@horms.kernel.org>
+ <aLlleb271owHNIbt@pie>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] ASoC: qcom: audioreach: Add support for VI Sense
- module
-To: Srinivas Kandagatla <srini@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250904102558.143745-3-krzysztof.kozlowski@linaro.org>
- <20250904102558.143745-4-krzysztof.kozlowski@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20250904102558.143745-4-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLlleb271owHNIbt@pie>
 
-On 04/09/2025 12:26, Krzysztof Kozlowski wrote:
-> +	cm_cfg->cfg.num_channels = num_channels * 2;
-> +	for (i = 0; i < num_channels; i++) {
-> +		/*
-> +		 * Map speakers into Vsense and then Isense of each channel.
-> +		 * E.g. for PCM_CHANNEL_FL and PCM_CHANNEL_FR to:
-> +		 * [ 1, 2, 3, 4]
-I forgot to change this to [1
+On Thu, Sep 04, 2025 at 10:10:01AM +0000, Yao Zi wrote:
+> On Thu, Sep 04, 2025 at 10:56:57AM +0100, Simon Horman wrote:
+> > On Thu, Sep 04, 2025 at 10:54:57AM +0100, Simon Horman wrote:
+> > > On Thu, Sep 04, 2025 at 03:12:24AM +0000, Yao Zi wrote:
+> > > > We must set the clk_phy pointer to NULL to indicating it isn't available
+> > > > if the optional phy clock couldn't be obtained. Otherwise the error code
+> > > > returned by of_clk_get() could be wrongly taken as an address, causing
+> > > > invalid pointer dereference when later clk_phy is passed to
+> > > > clk_prepare_enable().
+> > > > 
+> > > > Fixes: da114122b831 ("net: ethernet: stmmac: dwmac-rk: Make the clk_phy could be used for external phy")
+> > > > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > > 
+> > > ...
+> > > 
+> > > Hi,
+> > > 
+> > > I this patch doesn't seem to match upstream code.
+> > > 
+> > > Looking over the upstream code, it seems to me that
+> > > going into the code in question .clk_phy should
+> > > be NULL, as bsp_priv it is allocated using devm_kzalloc()
+> > > over in rk_gmac_setup()
+> > > 
+> > > While the upstream version of the code your patch modifies
+> > > is as follows. And doesn't touch .clk_phy if integrated_phy is not set.
+> > > 
+> > >         if (plat->phy_node && bsp_priv->integrated_phy) {
+> > >                 bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
+> > >                 ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
+> > >                 if (ret)
+> > >                         return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
+> > >                 clk_set_rate(bsp_priv->clk_phy, 50000000);
+> > >         }
+> > > 
+> > > Am I missing something?
+> > 
+> > Oops, I missed that da114122b831 is present in net-next (but not net).
+> > Let me look over this a second time.
+> 
+> Oops, yes. Though this is a fix patch, it should target net-next instead
+> of net since the commit causing problems hasn't landed in net. Sorry for
+> the confusion.
 
-I'll wait for reviews and sent v3 later.
-
-Best regards,
-Krzysztof
+It's ok. I'm pretty good at confusing myself without any assistance.
 
