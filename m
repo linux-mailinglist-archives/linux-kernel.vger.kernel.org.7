@@ -1,40 +1,39 @@
-Return-Path: <linux-kernel+bounces-800251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BECB43543
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:15:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82D0CB434DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 462E8580D54
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:15:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9C207A8DD0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A522264B1;
-	Thu,  4 Sep 2025 08:15:31 +0000 (UTC)
-Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF5D279781;
-	Thu,  4 Sep 2025 08:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987462C028A;
+	Thu,  4 Sep 2025 07:59:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75EEA2C027D;
+	Thu,  4 Sep 2025 07:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756973731; cv=none; b=j4Rf8016ESH/eFIcl4w5QyciWz80Tzrk5FKSEZkHb5hdex0jePaFpS69jCGBtieu6QEOJeGsWhTkfWS/jMcx/X+ZnHo4Y7dxfw0D38/cjpO4iZcFPSZCaKHnp1v12gSTDI/5lwZ44gjZ73qzdiCeEyRS2NAp7yBDKYvPajjPhUc=
+	t=1756972784; cv=none; b=YejrmtK4hmhfXNfuEnMQu/VTx4BOfbie8EFS5xMiaus3Oieur1HrNSxgwmXbT7Jez3PsT4JjPpACikG0DpYHm1wrzdcTz9/H12HcHC4C/bAD7mC1GWzSggxTcxgRf+VycXDCM7XF/TQMtjFdrQGOw20sbRkR1B0PKjacbuZrxHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756973731; c=relaxed/simple;
-	bh=wHgAp1bPS67y9L/pNxvKgZMwcYuvEFp49cXyVS+95h4=;
+	s=arc-20240116; t=1756972784; c=relaxed/simple;
+	bh=BEpL8T3pVthq/Brupqx6F0B7Tu7nfWohdKOdIfMO5T8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eArs3r7kmBma0hiUU5az5QyvhWHhGSJRKNdl8FA3EyXNlwnt/bZRpXTCpuiNpXueqrO3ECWQGpHUXPywX7PiE4U59cUOhOeGQad6GNDeogSffOrX9Bljl7gFS5bA0Ya1jH2m60ZKFaI2jIktpJIrQRihhOl7pGHKv7jACWB02oI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	by mslow3.mail.gandi.net (Postfix) with ESMTP id 8A79F5846D7;
-	Thu,  4 Sep 2025 07:59:57 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DA75643CB6;
-	Thu,  4 Sep 2025 07:59:46 +0000 (UTC)
-Message-ID: <ca18ee32-db74-4ec7-a6e2-805ac7abdee6@ghiti.fr>
-Date: Thu, 4 Sep 2025 09:59:46 +0200
+	 In-Reply-To:Content-Type; b=LuejpcjVHHjuxKrvkFIN8c6Uti8v9k7U2rpt/gIcU3VuUSfWVPKQXbpHgByYUYs9QbD/HwSYS1pd0cggi0ffXOveLsuKHSdkMR32bbKEf+5gUxT19oTyb5jU4SQYVXsRFt0pTQyl++w4zQso9DmcoR4FGThdF/7n7d3vZE0SrzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F0C61596;
+	Thu,  4 Sep 2025 00:59:33 -0700 (PDT)
+Received: from [10.57.60.120] (unknown [10.57.60.120])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 941673F63F;
+	Thu,  4 Sep 2025 00:59:40 -0700 (PDT)
+Message-ID: <3069755e-770b-4fb7-806e-7a55cc84e26c@arm.com>
+Date: Thu, 4 Sep 2025 08:59:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,59 +41,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] riscv: Do not handle break traps from kernel as nmi
-To: Peter Zijlstra <peterz@infradead.org>,
- Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Guo Ren <guoren@kernel.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>, Palmer Dabbelt <palmer@rivosinc.com>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250903-dev-alex-break_nmi_v1-v1-1-4a3d81c29598@rivosinc.com>
- <20250903202803.GQ4067720@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH] thermal: k3_j72xx_bandgap: register sensors with hwmon
+To: Michael Walle <mwalle@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+References: <20250828124042.1680853-1-mwalle@kernel.org>
 Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250903202803.GQ4067720@noisy.programming.kicks-ass.net>
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20250828124042.1680853-1-mwalle@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehgeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeetieeitefghfeuvddvjeeiudehheeiffffgeeviedtleehgeffgfdtveekteehudenucffohhmrghinhepihhnfhhrrgguvggrugdrohhrghenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeekheeftgemfegrfhegmegvfhegheemsggvudejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeekheeftgemfegrfhegmegvfhegheemsggvudejpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeekheeftgemfegrfhegmegvfhegheemsggvudejngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrlhgvgihghhhithhisehrihhvohhsihhntgdrtghomhdprhgtphhtthhop
- ehrohhsthgvughtsehgohhoughmihhsrdhorhhgpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehguhhorhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghjohhrnhesrhhivhhoshhinhgtrdgtohhm
-X-GND-Sasl: alex@ghiti.fr
-
-Hi Peter,
-
-On 9/3/25 22:28, Peter Zijlstra wrote:
-> On Wed, Sep 03, 2025 at 07:54:29PM +0000, Alexandre Ghiti wrote:
->> kprobe has been broken on riscv for quite some time. There is an attempt
->> [1] to fix that which actually works. This patch works because it enables
->> ARCH_HAVE_NMI_SAFE_CMPXCHG and that makes the ring buffer allocation
->> succeed when handling a kprobe because we handle *all* kprobes in nmi
->> context. We do so because Peter advised us to treat all kernel traps as
->> nmi [2].
->>
->> But that does not seem right for kprobe handling, so instead, treat
->> break traps from kernel as non-nmi.
-> You can put a kprobe inside: local_irq_disable(), no? Inside any random
-> spinlock region in fact. How is the probe then not NMI like?
 
 
-Yes yes, in that case that will be NMI-like, sorry this patch is coarse 
-grain. The ideal solution would be to re-enable the interrupts if they 
-were enabled at the moment of the trap. In that case, would that make 
-sense to you?
 
-Thanks,
+On 8/28/25 13:40, Michael Walle wrote:
+> Make the sensors available in the hwmon subsystem (if
+> CONFIG_THERMAL_HWMON is enabled).
+> 
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
+> ---
+>   drivers/thermal/k3_j72xx_bandgap.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/thermal/k3_j72xx_bandgap.c b/drivers/thermal/k3_j72xx_bandgap.c
+> index a36289e61315..d9ec3bf19496 100644
+> --- a/drivers/thermal/k3_j72xx_bandgap.c
+> +++ b/drivers/thermal/k3_j72xx_bandgap.c
+> @@ -20,6 +20,8 @@
+>   #include <linux/delay.h>
+>   #include <linux/slab.h>
+>   
+> +#include "thermal_hwmon.h"
+> +
+>   #define K3_VTM_DEVINFO_PWR0_OFFSET		0x4
+>   #define K3_VTM_DEVINFO_PWR0_TEMPSENS_CT_MASK	0xf0
+>   #define K3_VTM_TMPSENS0_CTRL_OFFSET		0x300
+> @@ -513,6 +515,8 @@ static int k3_j72xx_bandgap_probe(struct platform_device *pdev)
+>   			ret = PTR_ERR(ti_thermal);
+>   			goto err_free_ref_table;
+>   		}
+> +
+> +		devm_thermal_add_hwmon_sysfs(bgp->dev, ti_thermal);
+>   	}
+>   
+>   	platform_set_drvdata(pdev, bgp);
 
-Alex
 
+LGTM,
 
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
