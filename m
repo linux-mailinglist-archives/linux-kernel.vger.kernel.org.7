@@ -1,132 +1,113 @@
-Return-Path: <linux-kernel+bounces-800425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D014DB43779
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:47:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67857B4377B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96DDA7AE381
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:45:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 252043AC0AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410802F60DD;
-	Thu,  4 Sep 2025 09:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30F72F619C;
+	Thu,  4 Sep 2025 09:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Bd1UXp99"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kdQv8xyU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2E32DF6E9
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D31A7081F;
+	Thu,  4 Sep 2025 09:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756979239; cv=none; b=Eiiq/rIX9ELkmqmZNSlU4a4v5pBq+l5QcS5du5F4fSgSEE6l3EXYmcNEBzqWc+Oop0a+xsSH6oVB1aTWjxfFa6jExC1G5dHJedSqLGlY8vjNmnkXi8e2Bcmz1GwAAGKoB0e3+b4mqcH3ieSXEpNb2E6vOsp6pGRIFOwwVKvS2hE=
+	t=1756979279; cv=none; b=dEjJGKo4DZBT+fr8RfBk5+wQ8Rvw/0W0Lc+Wk1BfHT0uOUIfGqeKTRpG5hkAuykL7dnQEvZ1LnrdYFUQM1NnZdmxoT/Ev3uUBvkt0TG2HQ/hhtqOexqikW1sHzP7pXIKBAC+qcI3Nbphst5vDp65cexGEN1PsYPvzfw2Roep2hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756979239; c=relaxed/simple;
-	bh=Co1V1iVYZyrAxYVz64uRvth7glMtN+0ZaCCb7K2hm94=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=n7VP1UEvtjRAcrhTdv696L9eQTrxtjeldCM7yFNI+iy2SE74jsNVFF8tZViT4UdhHHODHEEbb6F9BhulzCzmIPJYsRXLN/FhBZ+OI4fGqZEVTVeEQKsFBdKuGiWP9RUZcZTtGrsM7fB/r/+KcEIt8VdC5pg1S0n4OywTVMWITJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Bd1UXp99; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:mime-version:content-type; s=k1; bh=Z94ywxLihlP5imbl3FU1jjKwYYC
-	zYT7fwycWOKoAX7s=; b=Bd1UXp993IfnsYG251n/negH7uTJHbLI7dgi/rjn/GN
-	IUjLMOu0lewDU5/rZkpfTVRSS9HaYcNK3hg6A+ounw3N2mcIv6VKBdNHMKQhdiS1
-	Ima1sNLahAkVTCVRx55o+IjehFgMi78M8wyGnmOFeNrPB/a/Ed0Sz/oEQsev/XYB
-	IbEyG+bCugWaXGS5hi3cEvmpNF3mOU2E2P+R72trHgstDImBXK/mg9N3ycvzwX+s
-	lE7wWbv9Q2UEzOwcUrSIUPSRc169/wDs9osF7OM4A8midxD1pfRnjP1Jgv1btyCc
-	+dpkymv9Z4c3QYn6RcHfn9W9zJjNtu1tm2nDpjDP2vA==
-Received: (qmail 3617510 invoked from network); 4 Sep 2025 11:47:06 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Sep 2025 11:47:06 +0200
-X-UD-Smtp-Session: l3s3148p1@vUWhmvY9xC5tKPNb
-Date: Thu, 4 Sep 2025 11:47:05 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: soc@lists.linux.dev
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PULL REQUEST RESEND] i2c-gpio-fixes-for-6.18
-Message-ID: <aLlgGdrFEjh26knK@shikoro>
+	s=arc-20240116; t=1756979279; c=relaxed/simple;
+	bh=QDSgMPM/pIsOiE1PCV3Zn9xlxxsgmypyU+SNLu8IyH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HzW0aThN06InsJ65DNjM94dNiGPkUw0Zol2i/2VUX1JmtX4AziSsFQykNBNqCL8p0EVFqjQnyeqF5u/8G0i3JqV+u+4TSsU+fkd/34X1nIPuiCyaeTCDbywzJLHcUZ00lrQ0S7/aepfrW77XcsFAvLOl6BqqVD5T/rZRKJaIg+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kdQv8xyU; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756979277; x=1788515277;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=QDSgMPM/pIsOiE1PCV3Zn9xlxxsgmypyU+SNLu8IyH8=;
+  b=kdQv8xyUQwBo8ififPgcXAMFKfBqLLAHLU/fBT51h+OcZKKcN8aN0TN1
+   wFcuAg0J+hsEcUNp/QqHBxl3swkA7kZqQnuB+Vk0iZcSgSnWSjfXfUzb3
+   r2PPLJSHHbkz/HjNDVXaMxD7A2X11O9zlCPgVPS0fhuez8EWi8zK3lQUM
+   CmXqFHGsMf2X+IS/AlKKQKYzGbKrwyBcKdhCu6+pmJ7u/MNCOiUSjo3+t
+   jShYTnXEBGdf6GeOgyyEAv2+RVmua14M2rcB1IZzsmcROW3HLE6ts9d+1
+   9sHnQNrF3fOWVfBGpfkW6GrdLeyPuGhj6rAX0p5FeOM63lxCZ0E2vAD71
+   w==;
+X-CSE-ConnectionGUID: eSdxrUOVQcOhlhiuCRbOTQ==
+X-CSE-MsgGUID: 79KJBoDuTGyJztdEDXFLVA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="61945074"
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="61945074"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 02:47:56 -0700
+X-CSE-ConnectionGUID: YqiqTZ1vSFmdgzlccKkiRQ==
+X-CSE-MsgGUID: 1c9oWbTrRlCtVVVkyqQvHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="171724144"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 02:47:54 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uu6ZL-0000000BEV4-06n9;
+	Thu, 04 Sep 2025 12:47:51 +0300
+Date: Thu, 4 Sep 2025 12:47:50 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: =?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: designware: use dev_err_probe when probing platform
+ device
+Message-ID: <aLlgRorNlvF1k2h9@smile.fi.intel.com>
+References: <20250904-i2c-dw-dev-err-probe-v1-1-acca6ffd122e@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FVwHWn2AG0eyJRbl"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250904-i2c-dw-dev-err-probe-v1-1-acca6ffd122e@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
+
+On Thu, Sep 04, 2025 at 10:59:24AM +0200, Benoît Monin wrote:
+> Add calls to dev_err_probe on error paths that can return -EPROBE_DEFER
+> when probing platform device. Namely when requesting the reset controller,
+> when probing for lock support and when requesting the clocks.
+> 
+> In i2c_dw_probe_master and i2c_dw_probe_slave, called by the platform
+> probe from i2c_dw_probe, replace the call to dev_err by dev_err_probe
+> when failing to acquire the IRQ.
+> 
+> PCI device probing already use dev_err_probe.
+
+What I see here is two patches:
+1) conversion existing dev_err() to dev_err_probe();
+2) adding messages to some of the plain return $ERR.
+
+Can you split with respective justification for each of them?
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
---FVwHWn2AG0eyJRbl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi all,
-
-this is a resend because I used an old address for the SoC mailing list.
-Sorry for the noise!
-
-Happy hacking,
-
-   Wolfram
-
-
-The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
-
-  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-gpio-fixes-for-6.18
-
-for you to fetch changes up to ed8c952aee4183ac866a83397e12ceb99493c6ad:
-
-  ARM: dts: stm32: use recent scl/sda gpio bindings (2025-08-28 12:33:26 +0200)
-
-----------------------------------------------------------------
-i2c-gpio-fixes-for-6.18
-
-We have dedictaded bindings for scl/sda nowadays. Switch away from the
-deprecated plain 'gpios' property.
-
-----------------------------------------------------------------
-Wolfram Sang (2):
-      ARM: dts: cirrus: ep7211: use recent scl/sda gpio bindings
-      ARM: dts: stm32: use recent scl/sda gpio bindings
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Linus Walleij (2):
-      (Rev.) ARM: dts: stm32: use recent scl/sda gpio bindings
-      (Rev.) ARM: dts: cirrus: ep7211: use recent scl/sda gpio bindings
-
- arch/arm/boot/dts/cirrus/ep7211-edb7211.dts | 4 ++--
- arch/arm/boot/dts/st/ste-nomadik-s8815.dts  | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
---FVwHWn2AG0eyJRbl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmi5YBkACgkQFA3kzBSg
-Kbag2hAAqxotRdcs2jDfUxL9ubnQ3k/TfkhqOEeU1mI7gF/zyC/egI96lb496+F6
-Z4eatokRljKjTBvsfZefc8ppw+/JipizoFqZNSyqWeAMj3dXpFTh3KXkIBo7zRxl
-mGcHl5hYkFiR2E+EuCPvMP+CudsqnkWPOMT23JDsWquEmfC+zGEjFbUpx/d1MlPW
-sbsYvlY7Jep5WcNDwjgHVejf+XEnZNgsJnbmZUPuNhyFVXLQOQQheRqV/GyoQthn
-UFQYBQt9ZL/lbR+timthvUuXP+6CGcdeVNk1AzO0DBjNbbyV4UweCiM8KaLFSRa0
-WlOQUSg1sQh2ZPcZ2UURyt1NpvhefA8sw6K7NZZwXn7irkY2skmesElwSfZWcePH
-+7wBwlZN+B6U3Lx18oWCrp6TkQhhBkSXpNhXbYSFttOmgsE8iBFPasfwarX1E6A+
-epiPhWLYR+MvamKftL+A5EdA1m3JL2fZcslNQlrdxWC+xMag4+hNzWRvjsVuI58f
-r7EP1IejZ8YZSljzXS/U+onzO7AGoFB3Uktk2r7/ztCW9t9ejEAWpEl92HJVnxyf
-0lr+ZEwAtX9SH0b4D2Bk/QWxBN9k1Es/FtqnCjTsvcK4DiTaz29zYdWQyL+xmBtW
-UblRFgKUZvJ9UCeYC00A+oDPOCVudy4G1FXgTDwANfFt6SRdd+k=
-=1Vdc
------END PGP SIGNATURE-----
-
---FVwHWn2AG0eyJRbl--
 
