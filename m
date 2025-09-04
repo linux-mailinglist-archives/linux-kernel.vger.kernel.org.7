@@ -1,270 +1,96 @@
-Return-Path: <linux-kernel+bounces-800943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F88CB43DFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:03:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1706DB43E02
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D75391C21FDF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:04:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E05ED5A3BB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AA1306487;
-	Thu,  4 Sep 2025 14:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D61302779;
+	Thu,  4 Sep 2025 14:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QC/MO2Y2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="LAlcubKS"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8D730275B;
-	Thu,  4 Sep 2025 14:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2B2303C9D;
+	Thu,  4 Sep 2025 14:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756994627; cv=none; b=u90LgSubbWPWGjRD22FLIFo7R/y7hMyHl6R13Kj3bX6IwFI++zAxFygcAacNnQGENGpPGRFcS+z0XADpp1azW1O+6xtgLBh6MsdF+3YUF4u/+3NSikt+1sReQ7qKuCos+KTG4kw3rRX75FFkG5FGn5unSwPsCWTGna+FJh1F8oU=
+	t=1756994711; cv=none; b=Fk1sOOZJgKHFQrHMwAtyQjcWEq08B9jbu5kvUM1aTcxed2XGw964ArWhRVQR8DW/0CYENtU/FadwuZA+epLfXJx5PI9AyUfxGHD9uva8MbSpYWd1uLBCxoksUa/L5TgdNdbt4Q1T+uGUVDWCX8x4rvtKNVEoA2Fg7A7ZuGDdtzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756994627; c=relaxed/simple;
-	bh=R15ptoc9ZlyJDelkbhGWd7+PsXr/DbQC7TFvXfTYnKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b/I0Yq89UoL9FazBbHYFkHmlRO/eelNZNXhBp1GZ8HLGEA+Huc9pWhn9hYQqDeAr5V5ipR3C5zU3NHya7YzkuQyl3Jf+UKGM3kFq+zvGfCvDFmSluyQZsgK16XiXbOXMYYif5PdBZ+f50rB4x1UGfZU3EXUOz/ja83hMuFROxFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QC/MO2Y2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 879F7C4CEF5;
-	Thu,  4 Sep 2025 14:03:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756994626;
-	bh=R15ptoc9ZlyJDelkbhGWd7+PsXr/DbQC7TFvXfTYnKA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QC/MO2Y21Nvl8IUs+sKbBsur180b4DnqC1iRGs4cDEmtA2dB/F/DnTrHtME+ejmVt
-	 Luw0G/b7TvS7mgqn4/WGSz4oN0IxJL4Qp4DYbP1QiYIZ6dJC+aYOy016xPny2cLPdp
-	 qXCYd3SoXMaiy6V8e+4y/EWctLTx89eNUWbPQlzkcICrdqPWKjBZ5cM+cm2gN0i5to
-	 2uHoLd86exMI9vMi6Eaz9JWEuNZ+hMpteDcLawe2q2LzBrnzIqS75vGOlEqBd9cdCI
-	 5172NQ1AECfMvUm+FZS/Svpc+N9NQOhz7vDTOR9r2AfIE9ewQk1UYNlx+Ffe+LAe7R
-	 1esFMTJP1dR+Q==
-Date: Thu, 4 Sep 2025 16:03:39 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver O'Halloran <oohall@gmail.com>, Will Deacon <will@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Wilfred Mallawa <wilfred.mallawa@wdc.com>,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v6 0/4] PCI: Add support for resetting the Root Ports in
- a platform specific way
-Message-ID: <aLmcO8ukT-CDZMuT@ryzen>
-References: <20250715-pci-port-reset-v6-0-6f9cce94e7bb@oss.qualcomm.com>
- <aHoh1XfhR8EB_5yY@ryzen>
- <aHokdhpJUhSZ5FSp@ryzen>
- <tujurux64if24z7w7h6wjxhrnh4owkgiv33u2fftp7zr5ucv2m@2ijo5ok5jhfk>
- <aJ743hJw-T9y3waX@ryzen>
- <lakgphb7ym3cybwmpdqyipzi4tlkwbfijzhd4r6hvhho3pc7iu@6ludgw6wqkjh>
+	s=arc-20240116; t=1756994711; c=relaxed/simple;
+	bh=9UGYpN5Lego2P4czss4c+ufIK4ScIbTQMOH52X2qv+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SYzy5+WvbOORVgvTa7znn5gYNmVXhNxJ445CnI+sysin4g4HcVAatZlXwNz/IIbnEP87agk3UsLbnDPbWR74V7rlazaWhJ7sezAVISe3Osm1CIXrSJ8CeBWQoMjw5yGji4OUuSan/8KYnhmuyl03rn38EqK+oVh7kzS9hu3XraI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=fail (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=LAlcubKS reason="key not found in DNS"; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4cHh7j05L9z1FXhv;
+	Thu,  4 Sep 2025 16:05:05 +0200 (CEST)
+Received: from [192.168.0.25] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4cHh7h5kSYz1FXSw;
+	Thu,  4 Sep 2025 16:05:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=simplycom2; t=1756994704;
+	bh=J4tJiqKaK/wPgbe9np5CLuawS4hkf0a+JOKMhBWenco=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=LAlcubKSl7KTkISuJ1TFhgZvOgUKn5EaOG46fo1kJg0v6Uk+igNjGK8oEcK7lUU7p
+	 OQZTEM/NXLhZxOj4Iu9nF7t6dGoduFIX/qTAehBpa4Nm1xNsEk/aB8poAzpiJGSrta
+	 tDGpNMneBggVvxdANWsW9lkZJb4MKoNWSGkdyuk2V3dKLiUali6kSLv/nPabubGiH2
+	 ESHbWMQR5WIgg8Kh8sfKxPqEpFvraGYa1GIDUgI1d3ywS8ykoi20tS2VY3HQnvTYch
+	 zYAjMn0wjG8RFSWvop3gVCObWS++V/DBBTmnUuueBTmkAoIwMde0HOvT6q623mrzKf
+	 AnH3SiBlLsx1Q==
+Message-ID: <8403ac15-bb3a-4e88-97ef-6eaff26cc8db@gaisler.com>
+Date: Thu, 4 Sep 2025 16:05:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <lakgphb7ym3cybwmpdqyipzi4tlkwbfijzhd4r6hvhho3pc7iu@6ludgw6wqkjh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for UltraSPARC III
+To: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
+ Anthony Yznaga <anthony.yznaga@oracle.com>, linux-kernel@vger.kernel.org
+Cc: sparclinux@vger.kernel.org,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
+ <20250826160312.2070-3-kernel@mkarcher.dialup.fu-berlin.de>
+ <528a5d4b-1e07-4379-afd6-7e58d423e713@oracle.com>
+ <C90C7694-C913-499B-8426-8DEC42137066@mkarcher.dialup.fu-berlin.de>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <C90C7694-C913-499B-8426-8DEC42137066@mkarcher.dialup.fu-berlin.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Mani,
-
-On Fri, Aug 29, 2025 at 09:44:08PM +0530, Manivannan Sadhasivam wrote:
-> On Fri, Aug 15, 2025 at 11:07:42AM GMT, Niklas Cassel wrote:
-
-(snip)
-
-> > > > > ## On EP side:
-> > > > > # echo 0 > /sys/kernel/config/pci_ep/controllers/a40000000.pcie-ep/start && \
-> > > > >   sleep 0.1 && echo 1 > /sys/kernel/config/pci_ep/controllers/a40000000.pcie-ep/start
-> > > > > 
-> > > > > Basically all tests timeout
-> > > > > # FAILED: 1 / 16 tests passed.
-> > > > > 
-> > > > > Which is the same as before this patch series.
-> > > 
-> > > This is kind of expected since the pci_endpoint_test driver doesn't have the AER
-> > > err_handlers defined.
-> > 
-> > I see.
-> > Would be nice if we could add them then, so that we can verify that this
-> > series is working as intended.
-
-(snip)
-
-> Ok, thanks for the logs. I guess what is happening here is that we are not
-> saving/restoring the config space of the devices under the Root Port if linkdown
-> is happens. TBH, we cannot do that from the PCI core since once linkdown
-> happens, we cannot access any devices underneath the Root Port. But if
-> err_handlers are available for drivers for all devices, they could do something
-> smart like below:
+On 2025-08-30 10:35, Michael Karcher wrote:
 > 
-> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-> index c4e5e2c977be..9aabf1fe902e 100644
-> --- a/drivers/misc/pci_endpoint_test.c
-> +++ b/drivers/misc/pci_endpoint_test.c
-> @@ -989,6 +989,8 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
->  
->         pci_set_drvdata(pdev, test);
->  
-> +       pci_save_state(pdev);
-> +
->         id = ida_alloc(&pci_endpoint_test_ida, GFP_KERNEL);
->         if (id < 0) {
->                 ret = id;
-> @@ -1140,12 +1142,31 @@ static const struct pci_device_id pci_endpoint_test_tbl[] = {
->  };
->  MODULE_DEVICE_TABLE(pci, pci_endpoint_test_tbl);
->  
-> +static pci_ers_result_t pci_endpoint_test_error_detected(struct pci_dev *pdev,
-> +                                              pci_channel_state_t state)
-> +{
-> +       return PCI_ERS_RESULT_NEED_RESET;
-> +}
-> +
-> +static pci_ers_result_t pci_endpoint_test_slot_reset(struct pci_dev *pdev)
-> +{
-> +       pci_restore_state(pdev);
-> +
-> +       return PCI_ERS_RESULT_RECOVERED;
-> +}
-> +
-> +static const struct pci_error_handlers pci_endpoint_test_err_handler = {
-> +       .error_detected = pci_endpoint_test_error_detected,
-> +       .slot_reset = pci_endpoint_test_slot_reset,
-> +};
-> +
->  static struct pci_driver pci_endpoint_test_driver = {
->         .name           = DRV_MODULE_NAME,
->         .id_table       = pci_endpoint_test_tbl,
->         .probe          = pci_endpoint_test_probe,
->         .remove         = pci_endpoint_test_remove,
->         .sriov_configure = pci_sriov_configure_simple,
-> +       .err_handler    = &pci_endpoint_test_err_handler,
->  };
->  module_pci_driver(pci_endpoint_test_driver);
+>> I think there should be a little more text about the nature of the failure. Maybe:
 > 
-> This essentially saves the good known config space during probe and restores it
-> during the slot_reset callback. Ofc, the state would've been overwritten if
-> suspend/resume happens in-between, but the point I'm making is that unless all
-> device drivers restore their known config space, devices cannot be resumed
-> properly post linkdown recovery.
-> 
-> I can add a patch based on the above diff in next revision if that helps. Right
-> now, I do not have access to my endpoint test setup. So can't test anything.
+> I will add something like that in v2 of the series.
+> Do you think it is useful to add the message ID
+> b14f55642207e63e907965e209f6323a0df6dcee.camel@physik.fu-berlin.de
+> as well, or an abbreviated backtrace from that message?
+> I suppose, that is the BUG_ON you are referring to.
 
-I tested your patch series + your suggested change above, and after a:
+If that is the message referred to, I think it is a good idea to refer
+to it, in addition to a description. If so, please do it on the form of
+a lore link, like this:
 
-## On EP side:
-# echo 0 > /sys/kernel/config/pci_ep/controllers/a40000000.pcie-ep/start && \
-  sleep 0.1 && echo 1 > /sys/kernel/config/pci_ep/controllers/a40000000.pcie-ep/start
+https://lore.kernel.org/r/<message-id>
 
-Instead of:
+Cheers,
+Andreas
 
-# FAILED: 1 / 16 tests passed.
-
-I now get:
-# FAILED: 7 / 16 tests passed.
-
-Test cases 1-7 now passes (the test cases related to BARs),
-all other test cases still fail:
-
-# /pcitest 
-TAP version 13
-1..16
-# Starting 16 tests from 9 test cases.
-#  RUN           pci_ep_bar.BAR0.BAR_TEST ...
-#            OK  pci_ep_bar.BAR0.BAR_TEST
-ok 1 pci_ep_bar.BAR0.BAR_TEST
-#  RUN           pci_ep_bar.BAR1.BAR_TEST ...
-#            OK  pci_ep_bar.BAR1.BAR_TEST
-ok 2 pci_ep_bar.BAR1.BAR_TEST
-#  RUN           pci_ep_bar.BAR2.BAR_TEST ...
-#            OK  pci_ep_bar.BAR2.BAR_TEST
-ok 3 pci_ep_bar.BAR2.BAR_TEST
-#  RUN           pci_ep_bar.BAR3.BAR_TEST ...
-#            OK  pci_ep_bar.BAR3.BAR_TEST
-ok 4 pci_ep_bar.BAR3.BAR_TEST
-#  RUN           pci_ep_bar.BAR4.BAR_TEST ...
-#      SKIP      BAR is disabled
-#            OK  pci_ep_bar.BAR4.BAR_TEST
-ok 5 pci_ep_bar.BAR4.BAR_TEST # SKIP BAR is disabled
-#  RUN           pci_ep_bar.BAR5.BAR_TEST ...
-#            OK  pci_ep_bar.BAR5.BAR_TEST
-ok 6 pci_ep_bar.BAR5.BAR_TEST
-#  RUN           pci_ep_basic.CONSECUTIVE_BAR_TEST ...
-#            OK  pci_ep_basic.CONSECUTIVE_BAR_TEST
-ok 7 pci_ep_basic.CONSECUTIVE_BAR_TEST
-#  RUN           pci_ep_basic.LEGACY_IRQ_TEST ...
-# pci_endpoint_test.c:106:LEGACY_IRQ_TEST:Expected 0 (0) == ret (-110)
-# pci_endpoint_test.c:106:LEGACY_IRQ_TEST:Test failed for Legacy IRQ
-# LEGACY_IRQ_TEST: Test failed
-#          FAIL  pci_ep_basic.LEGACY_IRQ_TEST
-not ok 8 pci_ep_basic.LEGACY_IRQ_TEST
-#  RUN           pci_ep_basic.MSI_TEST ...
-# pci_endpoint_test.c:118:MSI_TEST:Expected 0 (0) == ret (-110)
-# pci_endpoint_test.c:118:MSI_TEST:Test failed for MSI1
-# pci_endpoint_test.c:118:MSI_TEST:Expected 0 (0) == ret (-110)
-# pci_endpoint_test.c:118:MSI_TEST:Test failed for MSI2
-# pci_endpoint_test.c:118:MSI_TEST:Expected 0 (0) == ret (-110)
-# pci_endpoint_test.c:118:MSI_TEST:Test failed for MSI3
-...
-
-
-I think I know the reason.. you save the state before the IRQs have been allocated.
-
-Perhaps we need to save the state after enabling IRQs?
-
-I tried this patch on top of your patch:
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -851,6 +851,8 @@ static int pci_endpoint_test_set_irq(struct pci_endpoint_test *test,
-                return ret;
-        }
- 
-+       pci_save_state(pdev);
-+
-        return 0;
- }
-
-
-But still:
-# FAILED: 7 / 16 tests passed.
-
-So... apparently that did not help...
-
-I tried with the following change as well (on top of my patch above):
-
-+static pci_ers_result_t pci_endpoint_test_slot_reset(struct pci_dev *pdev)
-+{
-+       struct pci_endpoint_test *test = pci_get_drvdata(pdev);
-+       int irq_type = test->irq_type;
-+
-+       pci_restore_state(pdev);
-+
-+       if (irq_type != PCITEST_IRQ_TYPE_UNDEFINED) {
-+               pci_endpoint_test_clear_irq(test);
-+               pci_endpoint_test_set_irq(test, irq_type);
-+       }
-+
-+       return PCI_ERS_RESULT_RECOVERED;
-+}
-
-But still only:
-# FAILED: 7 / 16 tests passed.
-
-Do you have any suggestions?
-
-
-Kind regards,
-Niklas
 
