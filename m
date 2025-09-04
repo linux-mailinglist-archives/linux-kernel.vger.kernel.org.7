@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-801753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655F2B44985
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:24:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC5DB44987
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 375C81C219EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:24:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD782188EFF2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7714C301486;
-	Thu,  4 Sep 2025 22:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC382E9757;
+	Thu,  4 Sep 2025 22:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ck+U4evy";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tiedn6zT"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2FZsgZpx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4hzmgYh6"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3203C2F83BE
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B443009CD
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757024471; cv=none; b=If7mdX61H9Vx/TI6fVl+0aPQidWx+1b3jGniohu8ktnYjWBu9gnJAbWGyC2qzwer78iRUCh1fo4qZlqp0KmHjs6YMey2SE3U9XMKElDnS68J484iYQusM7CD6h8ZhDbgMjTyxr54TKMhnhGeCUJpIL4ahco49nA4OmllXec8y3M=
+	t=1757024472; cv=none; b=TwqQZc/kils87eYnKIDHiCaFSh0/aAxF5HKc0n2PVg1AxeKpIG2dOW0RNGqoN/XQtMlYFnJ3NWXBniGSCOvo+8j8bORr7gxjRF8tvLe8CFep6HO/k5PVh69uMXZUZHaKiJVJmHHLZfUqVyUvF/bhAtSfKVmdsVY7Gbi2fWeDNhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757024471; c=relaxed/simple;
-	bh=s/ykN+O31OjO7kaVa9MvVTRAM3TTa2BEe375dPl0FNc=;
+	s=arc-20240116; t=1757024472; c=relaxed/simple;
+	bh=MgrLu8885YykjI9T+zoAugV4jP2T9LfTNVif86nyMpQ=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=mdmtuaZ2JHjgey9JUjbSACoBMdtYJcy39j5bHBhvoMBIXlGu0hN0brftbVt8rxp/WtXZdyvEKfTkV9KUPV41TRylhjVUBwixzSNQFotfNqL1VT4jDvLT5xeE0lGuFRGHUCvCNnEcWr0F2HsFje+wn6kekrTLZqFub3DFNkmDxM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ck+U4evy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Tiedn6zT; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=EZp1QSA8sz5alnghbXzfidknUiGhaTN4uWd+0KZOcS/NuFSdiG1prbgNiviK768QKCjDUh6UhqbyO9gOBEME5XAKHLLig1cWdYmape3luRFR+TvEHrVspyygoKe2DNrt8h/JPjWMnVXnTNDPOsjz0LoI4SIhcm3rIU2wIfx3LXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2FZsgZpx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4hzmgYh6; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250904185720.213348260@linutronix.de>
+Message-ID: <20250904185720.276985797@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757024466;
+	s=2020; t=1757024468;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=iPQWnCY0n4Xt8dT+av0u7VX4+zlKEqpbY9KlcvAHpTA=;
-	b=Ck+U4evyQmYJaCHnd3sSNfmPXniqQY8xnSdNfApUuQIKhvxHlyZK68vEDqhzv7+DGN8wwA
-	pLcaZqkSTlPQaIet7C8uC6ndQ0w8wpzOyb1NHTwXv0QpJw68kL42nD+TXpKJyBg66SAug5
-	0wd/DMh6pJPh+5Wr1loOqHxy3y9NisLHivAPZi8o2sSvCQJXyy/dWI1C8+NSiWB3PMyv2H
-	kKSyb3tNAEfxMcnQs1KkJ4AoGkzAJ6acKx039/PK+BQB1XGhaBMWk1E9xgw5pfWRJPxRQx
-	u//FijHo4LnGWYa0fAPLyDaOdy99FzGhzN0l7v7StIh+hEgl22FuWbvZ6QXTmA==
+	 references:references; bh=ELIY36Vd7T3xHlN9AvBbx8OgIkFV2rxtaqgthmf+YiE=;
+	b=2FZsgZpx38c/9ZCiGq873wWqMYbJJ5MNZcoQPwD8vTeYrrU1K4TDj7P1tZkXQFGu29mnlf
+	GnNzGZARaZcgzksC7eQLfol9nU27xD2Z/RCFSHRUM88zsKkAdqssjFdEQs3nfPShgdVLW8
+	TbHWZDQhkxmAR4GuyWTj3yiaDZbc3q5kwwpLEDtFR38JkR3XoMSxnNPf1apSGnAIKRO8+W
+	egh6+5c51txq6/VQ7OrzGVEk2hD9ermZaRkWA6vQx6n8CFOkMKw4CHixUYHUH9eAO2ofWz
+	WklkZWrdxSGvFDSVDXNJoh5hv7poHUhvofIPSjhe2B8ejQhEDeLm57EEzbS4NQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757024466;
+	s=2020e; t=1757024468;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=iPQWnCY0n4Xt8dT+av0u7VX4+zlKEqpbY9KlcvAHpTA=;
-	b=Tiedn6zTXpp8Qy+iyyV6Xdrcm7tdrIgbGun5hY6bCbMB5Tu308ZsdFOcobIVqFAIy6Uc4w
-	0gpMOysjemoOA2Cw==
+	 references:references; bh=ELIY36Vd7T3xHlN9AvBbx8OgIkFV2rxtaqgthmf+YiE=;
+	b=4hzmgYh6NnbayUiMBJrJ2VCCVKdH+zEhdrNi+yEM91tcL75nHnqi8MEufqC00JlMse0b0E
+	Jr3OFHrewgbHcjAg==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Michael Jeanson <mjeanson@efficios.com>,
  Jens Axboe <axboe@kernel.dk>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Peter Zijlstra <peterz@infradead.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  "Paul E. McKenney" <paulmck@kernel.org>,
  Boqun Feng <boqun.feng@gmail.com>,
  Paolo Bonzini <pbonzini@redhat.com>,
@@ -69,7 +69,7 @@ Cc: Michael Jeanson <mjeanson@efficios.com>,
  Huacai Chen <chenhuacai@kernel.org>,
  Paul Walmsley <paul.walmsley@sifive.com>,
  Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [patch V3 17/37] rseq: Expose lightweight statistics in debugfs
+Subject: [patch V3 18/37] rseq: Provide static branch for runtime debugging
 References: <20250904185336.943880027@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,280 +78,200 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Fri,  5 Sep 2025 00:21:05 +0200 (CEST)
+Date: Fri,  5 Sep 2025 00:21:07 +0200 (CEST)
 
-Analyzing the call frequency without actually using tracing is helpful for
-analysis of this infrastructure. The overhead is minimal as it just
-increments a per CPU counter associated to each operation.
+Config based debug is rarely turned on and is not available easily when
+things go wrong.
 
-The debugfs readout provides a racy sum of all counters.
+Provide a static branch to allow permanent integration of debug mechanisms
+along with the usual toggles in Kconfig, command line and debugfs.
 
+Requested-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-
 ---
- include/linux/rseq.h       |   16 ---------
- include/linux/rseq_entry.h |   49 +++++++++++++++++++++++++++
- init/Kconfig               |   12 ++++++
- kernel/rseq.c              |   79 +++++++++++++++++++++++++++++++++++++++++----
- 4 files changed, 133 insertions(+), 23 deletions(-)
+V3: Fix __setup() return value - Michael
+---
+ Documentation/admin-guide/kernel-parameters.txt |    4 +
+ include/linux/rseq_entry.h                      |    3 
+ init/Kconfig                                    |   14 ++++
+ kernel/rseq.c                                   |   73 ++++++++++++++++++++++--
+ 4 files changed, 90 insertions(+), 4 deletions(-)
 
---- a/include/linux/rseq.h
-+++ b/include/linux/rseq.h
-@@ -29,21 +29,6 @@ static inline void rseq_sched_switch_eve
- 	}
- }
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6443,6 +6443,10 @@
+ 			Memory area to be used by remote processor image,
+ 			managed by CMA.
  
--static __always_inline void rseq_exit_to_user_mode(void)
--{
--	struct rseq_event *ev = &current->rseq_event;
--
--	if (IS_ENABLED(CONFIG_DEBUG_RSEQ))
--		WARN_ON_ONCE(ev->sched_switch);
--
--	/*
--	 * Ensure that event (especially user_irq) is cleared when the
--	 * interrupt did not result in a schedule and therefore the
--	 * rseq processing did not clear it.
--	 */
--	ev->events = 0;
--}
--
- /*
-  * KVM/HYPERV invoke resume_user_mode_work() before entering guest mode,
-  * which clears TIF_NOTIFY_RESUME. To avoid updating user space RSEQ in
-@@ -97,7 +82,6 @@ static inline void rseq_sched_switch_eve
- static inline void rseq_virt_userspace_exit(void) { }
- static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags) { }
- static inline void rseq_execve(struct task_struct *t) { }
--static inline void rseq_exit_to_user_mode(void) { }
- #endif  /* !CONFIG_RSEQ */
- 
- #ifdef CONFIG_DEBUG_RSEQ
++	rseq_debug=	[KNL] Enable or disable restartable sequence
++			debug mode. Defaults to CONFIG_RSEQ_DEBUG_DEFAULT_ENABLE.
++			Format: <bool>
++
+ 	rt_group_sched=	[KNL] Enable or disable SCHED_RR/FIFO group scheduling
+ 			when CONFIG_RT_GROUP_SCHED=y. Defaults to
+ 			!CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED.
 --- a/include/linux/rseq_entry.h
 +++ b/include/linux/rseq_entry.h
-@@ -2,6 +2,37 @@
- #ifndef _LINUX_RSEQ_ENTRY_H
- #define _LINUX_RSEQ_ENTRY_H
+@@ -34,6 +34,7 @@ DECLARE_PER_CPU(struct rseq_stats, rseq_
+ #endif /* !CONFIG_RSEQ_STATS */
  
-+/* Must be outside the CONFIG_RSEQ guard to resolve the stubs */
-+#ifdef CONFIG_RSEQ_STATS
-+#include <linux/percpu.h>
-+
-+struct rseq_stats {
-+	unsigned long	exit;
-+	unsigned long	signal;
-+	unsigned long	slowpath;
-+	unsigned long	ids;
-+	unsigned long	cs;
-+	unsigned long	clear;
-+	unsigned long	fixup;
-+};
-+
-+DECLARE_PER_CPU(struct rseq_stats, rseq_stats);
-+
-+/*
-+ * Slow path has interrupts and preemption enabled, but the fast path
-+ * runs with interrupts disabled so there is no point in having the
-+ * preemption checks implied in __this_cpu_inc() for every operation.
-+ */
-+#ifdef RSEQ_BUILD_SLOW_PATH
-+#define rseq_stat_inc(which)	this_cpu_inc((which))
-+#else
-+#define rseq_stat_inc(which)	raw_cpu_inc((which))
-+#endif
-+
-+#else /* CONFIG_RSEQ_STATS */
-+#define rseq_stat_inc(x)	do { } while (0)
-+#endif /* !CONFIG_RSEQ_STATS */
-+
  #ifdef CONFIG_RSEQ
++#include <linux/jump_label.h>
  #include <linux/rseq.h>
  
-@@ -39,8 +70,26 @@ static __always_inline void rseq_note_us
- 		current->rseq_event.user_irq = true;
- }
+ #include <linux/tracepoint-defs.h>
+@@ -64,6 +65,8 @@ static inline void rseq_trace_ip_fixup(u
+ 				       unsigned long offset, unsigned long abort_ip) { }
+ #endif /* !CONFIG_TRACEPOINT */
  
-+static __always_inline void rseq_exit_to_user_mode(void)
-+{
-+	struct rseq_event *ev = &current->rseq_event;
++DECLARE_STATIC_KEY_MAYBE(CONFIG_RSEQ_DEBUG_DEFAULT_ENABLE, rseq_debug_enabled);
 +
-+	rseq_stat_inc(rseq_stats.exit);
-+
-+	if (IS_ENABLED(CONFIG_DEBUG_RSEQ))
-+		WARN_ON_ONCE(ev->sched_switch);
-+
-+	/*
-+	 * Ensure that event (especially user_irq) is cleared when the
-+	 * interrupt did not result in a schedule and therefore the
-+	 * rseq processing did not clear it.
-+	 */
-+	ev->events = 0;
-+}
-+
- #else /* CONFIG_RSEQ */
- static inline void rseq_note_user_irq_entry(void) { }
-+static inline void rseq_exit_to_user_mode(void) { }
- #endif /* !CONFIG_RSEQ */
- 
- #endif /* _LINUX_RSEQ_ENTRY_H */
+ static __always_inline void rseq_note_user_irq_entry(void)
+ {
+ 	if (IS_ENABLED(CONFIG_GENERIC_IRQ_ENTRY))
 --- a/init/Kconfig
 +++ b/init/Kconfig
-@@ -1883,6 +1883,18 @@ config RSEQ
+@@ -1895,10 +1895,24 @@ config RSEQ_STATS
  
- 	  If unsure, say Y.
+ 	  If unsure, say N.
  
-+config RSEQ_STATS
++config RSEQ_DEBUG_DEFAULT_ENABLE
 +	default n
-+	bool "Enable lightweight statistics of restartable sequences" if EXPERT
-+	depends on RSEQ && DEBUG_FS
++	bool "Enable restartable sequences debug mode by default" if EXPERT
++	depends on RSEQ
 +	help
-+	  Enable lightweight counters which expose information about the
-+	  frequency of RSEQ operations via debugfs. Mostly interesting for
-+	  kernel debugging or performance analysis. While lightweight it's
-+	  still adding code into the user/kernel mode transitions.
++	  This enables the static branch for debug mode of restartable
++	  sequences.
++
++	  This also can be controlled on the kernel command line via the
++	  command line parameter "rseq_debug=0/1" and through debugfs.
 +
 +	  If unsure, say N.
 +
  config DEBUG_RSEQ
  	default n
  	bool "Enable debugging of rseq() system call" if EXPERT
+ 	depends on RSEQ && DEBUG_KERNEL
++	select RSEQ_DEBUG_DEFAULT_ENABLE
+ 	help
+ 	  Enable extra debugging checks for the rseq system call.
+ 
 --- a/kernel/rseq.c
 +++ b/kernel/rseq.c
-@@ -67,12 +67,16 @@
-  *   F1. <failure>
-  */
+@@ -95,6 +95,27 @@
+ 				  RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL | \
+ 				  RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE)
  
-+/* Required to select the proper per_cpu ops for rseq_stats_inc() */
-+#define RSEQ_BUILD_SLOW_PATH
++DEFINE_STATIC_KEY_MAYBE(CONFIG_RSEQ_DEBUG_DEFAULT_ENABLE, rseq_debug_enabled);
 +
-+#include <linux/debugfs.h>
-+#include <linux/ratelimit.h>
-+#include <linux/rseq_entry.h>
- #include <linux/sched.h>
--#include <linux/uaccess.h>
- #include <linux/syscalls.h>
--#include <linux/rseq.h>
-+#include <linux/uaccess.h>
- #include <linux/types.h>
--#include <linux/ratelimit.h>
- #include <asm/ptrace.h>
- 
- #define CREATE_TRACE_POINTS
-@@ -108,6 +112,56 @@ void __rseq_trace_ip_fixup(unsigned long
++static inline void rseq_control_debug(bool on)
++{
++	if (on)
++		static_branch_enable(&rseq_debug_enabled);
++	else
++		static_branch_disable(&rseq_debug_enabled);
++}
++
++static int __init rseq_setup_debug(char *str)
++{
++	bool on;
++
++	if (kstrtobool(str, &on))
++		return -EINVAL;
++	rseq_control_debug(on);
++	return 1;
++}
++__setup("rseq_debug=", rseq_setup_debug);
++
+ #ifdef CONFIG_TRACEPOINTS
+ /*
+  * Out of line, so the actual update functions can be in a header to be
+@@ -112,10 +133,11 @@ void __rseq_trace_ip_fixup(unsigned long
  }
  #endif /* CONFIG_TRACEPOINTS */
  
-+#ifdef CONFIG_RSEQ_STATS
-+DEFINE_PER_CPU(struct rseq_stats, rseq_stats);
-+
-+static int rseq_debug_show(struct seq_file *m, void *p)
++#ifdef CONFIG_DEBUG_FS
+ #ifdef CONFIG_RSEQ_STATS
+ DEFINE_PER_CPU(struct rseq_stats, rseq_stats);
+ 
+-static int rseq_debug_show(struct seq_file *m, void *p)
++static int rseq_stats_show(struct seq_file *m, void *p)
+ {
+ 	struct rseq_stats stats = { };
+ 	unsigned int cpu;
+@@ -140,14 +162,56 @@ static int rseq_debug_show(struct seq_fi
+ 	return 0;
+ }
+ 
++static int rseq_stats_open(struct inode *inode, struct file *file)
 +{
-+	struct rseq_stats stats = { };
-+	unsigned int cpu;
-+
-+	for_each_possible_cpu(cpu) {
-+		stats.exit	+= data_race(per_cpu(rseq_stats.exit, cpu));
-+		stats.signal	+= data_race(per_cpu(rseq_stats.signal, cpu));
-+		stats.slowpath	+= data_race(per_cpu(rseq_stats.slowpath, cpu));
-+		stats.ids	+= data_race(per_cpu(rseq_stats.ids, cpu));
-+		stats.cs	+= data_race(per_cpu(rseq_stats.cs, cpu));
-+		stats.clear	+= data_race(per_cpu(rseq_stats.clear, cpu));
-+		stats.fixup	+= data_race(per_cpu(rseq_stats.fixup, cpu));
-+	}
-+
-+	seq_printf(m, "exit:   %16lu\n", stats.exit);
-+	seq_printf(m, "signal: %16lu\n", stats.signal);
-+	seq_printf(m, "slowp:  %16lu\n", stats.slowpath);
-+	seq_printf(m, "ids:    %16lu\n", stats.ids);
-+	seq_printf(m, "cs:     %16lu\n", stats.cs);
-+	seq_printf(m, "clear:  %16lu\n", stats.clear);
-+	seq_printf(m, "fixup:  %16lu\n", stats.fixup);
-+	return 0;
++	return single_open(file, rseq_stats_show, inode->i_private);
 +}
 +
-+static int rseq_debug_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, rseq_debug_show, inode->i_private);
-+}
-+
-+static const struct file_operations dfs_ops = {
-+	.open		= rseq_debug_open,
++static const struct file_operations stat_ops = {
++	.open		= rseq_stats_open,
 +	.read		= seq_read,
 +	.llseek		= seq_lseek,
 +	.release	= single_release,
 +};
 +
-+static int __init rseq_debugfs_init(void)
++static int __init rseq_stats_init(struct dentry *root_dir)
 +{
-+	struct dentry *root_dir = debugfs_create_dir("rseq", NULL);
-+
-+	debugfs_create_file("stats", 0444, root_dir, NULL, &dfs_ops);
++	debugfs_create_file("stats", 0444, root_dir, NULL, &stat_ops);
 +	return 0;
 +}
-+__initcall(rseq_debugfs_init);
++#else
++static inline void rseq_stats_init(struct dentry *root_dir) { }
 +#endif /* CONFIG_RSEQ_STATS */
 +
++static int rseq_debug_show(struct seq_file *m, void *p)
++{
++	bool on = static_branch_unlikely(&rseq_debug_enabled);
++
++	seq_printf(m, "%d\n", on);
++	return 0;
++}
++
++static ssize_t rseq_debug_write(struct file *file, const char __user *ubuf,
++			    size_t count, loff_t *ppos)
++{
++	bool on;
++
++	if (kstrtobool_from_user(ubuf, count, &on))
++		return -EINVAL;
++
++	rseq_control_debug(on);
++	return count;
++}
++
+ static int rseq_debug_open(struct inode *inode, struct file *file)
+ {
+ 	return single_open(file, rseq_debug_show, inode->i_private);
+ }
+ 
+-static const struct file_operations dfs_ops = {
++static const struct file_operations debug_ops = {
+ 	.open		= rseq_debug_open,
+ 	.read		= seq_read,
++	.write		= rseq_debug_write,
+ 	.llseek		= seq_lseek,
+ 	.release	= single_release,
+ };
+@@ -156,11 +220,12 @@ static int __init rseq_debugfs_init(void
+ {
+ 	struct dentry *root_dir = debugfs_create_dir("rseq", NULL);
+ 
+-	debugfs_create_file("stats", 0444, root_dir, NULL, &dfs_ops);
++	debugfs_create_file("debug", 0644, root_dir, NULL, &debug_ops);
++	rseq_stats_init(root_dir);
+ 	return 0;
+ }
+ __initcall(rseq_debugfs_init);
+-#endif /* CONFIG_RSEQ_STATS */
++#endif /* CONFIG_DEBUG_FS */
+ 
  #ifdef CONFIG_DEBUG_RSEQ
  static struct rseq *rseq_kernel_fields(struct task_struct *t)
- {
-@@ -187,12 +241,13 @@ static int rseq_update_cpu_node_id(struc
- 	u32 node_id = cpu_to_node(cpu_id);
- 	u32 mm_cid = task_mm_cid(t);
- 
--	/*
--	 * Validate read-only rseq fields.
--	 */
-+	rseq_stat_inc(rseq_stats.ids);
-+
-+	/* Validate read-only rseq fields on debug kernels */
- 	if (rseq_validate_ro_fields(t))
- 		goto efault;
- 	WARN_ON_ONCE((int) mm_cid < 0);
-+
- 	if (!user_write_access_begin(rseq, t->rseq_len))
- 		goto efault;
- 
-@@ -403,6 +458,8 @@ static int rseq_ip_fixup(struct pt_regs
- 	struct rseq_cs rseq_cs;
- 	int ret;
- 
-+	rseq_stat_inc(rseq_stats.cs);
-+
- 	ret = rseq_get_rseq_cs(t, &rseq_cs);
- 	if (ret)
- 		return ret;
-@@ -412,8 +469,10 @@ static int rseq_ip_fixup(struct pt_regs
- 	 * If not nested over a rseq critical section, restart is useless.
- 	 * Clear the rseq_cs pointer and return.
- 	 */
--	if (!in_rseq_cs(ip, &rseq_cs))
-+	if (!in_rseq_cs(ip, &rseq_cs)) {
-+		rseq_stat_inc(rseq_stats.clear);
- 		return clear_rseq_cs(t->rseq);
-+	}
- 	ret = rseq_check_flags(t, rseq_cs.flags);
- 	if (ret < 0)
- 		return ret;
-@@ -422,6 +481,7 @@ static int rseq_ip_fixup(struct pt_regs
- 	ret = clear_rseq_cs(t->rseq);
- 	if (ret)
- 		return ret;
-+	rseq_stat_inc(rseq_stats.fixup);
- 	trace_rseq_ip_fixup(ip, rseq_cs.start_ip, rseq_cs.post_commit_offset,
- 			    rseq_cs.abort_ip);
- 	instruction_pointer_set(regs, (unsigned long)rseq_cs.abort_ip);
-@@ -462,6 +522,11 @@ void __rseq_handle_notify_resume(struct
- 	if (unlikely(t->flags & PF_EXITING))
- 		return;
- 
-+	if (ksig)
-+		rseq_stat_inc(rseq_stats.signal);
-+	else
-+		rseq_stat_inc(rseq_stats.slowpath);
-+
- 	/*
- 	 * Read and clear the event pending bit first. If the task
- 	 * was not preempted or migrated or a signal is on the way,
 
 
