@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-800696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88EB5B43AA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:48:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEAA7B43AA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80F9A7B0A75
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:46:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CAFC189339B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C670B2ED170;
-	Thu,  4 Sep 2025 11:47:34 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F192627FC;
-	Thu,  4 Sep 2025 11:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F002FCBF0;
+	Thu,  4 Sep 2025 11:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfibLHMm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5004F5E0;
+	Thu,  4 Sep 2025 11:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756986454; cv=none; b=PwI2hk3qnhlkcIwva0dy7AsFKl/UiuSmZz/qLqn3Z6IfX1uunyn9mcxqozQHPEmG36ctUUGs8ZSdP2JCnaCAAPZL6zXAqd/io/RDCQcTh6qyQTn1C6yTrRvwiZrJMVmZPMUrbdZ/eamFrNGYsRaw9l5To0tlrat+j0BIb0k3lgA=
+	t=1756986444; cv=none; b=Xh6YYbZ5H4UFwiC8D18ACPsqOrBa9TAEB6l1Oj2CUvd/kVSLPyzg4vf5y/OOwZiuvR9gy6afmJFXZTyMBRT8ZMydg3gmkcTKf7yeuLXsHYH1S2kmkZ+Mdr9Wbwn1DcQJjZAhSJMUu2jJg1Lo5cTXpVd4McZ1VBozYgP1A6qkFyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756986454; c=relaxed/simple;
-	bh=c3VrT1iZNiKGnElPx+n5S9798I9O0fi2SAybCahpS4A=;
+	s=arc-20240116; t=1756986444; c=relaxed/simple;
+	bh=o978/oTphchkmVEgNaLUD3g7cIryOP+nlIgbUqietoA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uIgnh81mL10avwVlvwq3e2Yoy8En4pDlFISN6eulZVZca2UTTt9v1gWYo0gRHmKflu1kBMPIOi5nKXzt0DvDN7hQmOdcNTC/RWf399wN3dMsDyu4//u9ZBfSdkIfm+Gc2BM/Bo7VfmF+yOoEyxM/0oc7lXAmkwlZ4wHlqThs+6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.89])
-	by gateway (Coremail) with SMTP id _____8Bx379JfLlo16UGAA--.12732S3;
-	Thu, 04 Sep 2025 19:47:21 +0800 (CST)
-Received: from [10.161.0.102] (unknown [223.64.68.89])
-	by front1 (Coremail) with SMTP id qMiowJBxD8JEfLloHet9AA--.40538S2;
-	Thu, 04 Sep 2025 19:47:19 +0800 (CST)
-Message-ID: <3d5ca9ac-c5a0-4553-bce6-0c937390f53f@loongson.cn>
-Date: Thu, 4 Sep 2025 19:47:15 +0800
+	 In-Reply-To:Content-Type; b=hMC6t76GKd1Nc7/SMOoun9RobARsJlreCeDZ+0h4GYsfW/ODe3OHUm02QA/773fLc7KzkVmq9nA+pi0oxDS+w321GBHwrumrYuFaHxn2ccTIXePLikTKRrG69Vfiy/JKePdvQlNUC2lgz0o5/M1N6h7ngeTyWxinBZCoK2odcSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfibLHMm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFD24C4CEF1;
+	Thu,  4 Sep 2025 11:47:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756986443;
+	bh=o978/oTphchkmVEgNaLUD3g7cIryOP+nlIgbUqietoA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dfibLHMmSo1A49fetMhkvhOnBmshOVF3VntGS0MTX1R4tOvccuS/XpP5O3AtJodiC
+	 6ym3psAJ5iMVmD8sLYt3NqYvRPXF7I3nzA5Xhq948/Vx9NBQPXwFs1CfT3r6dPe1MY
+	 0DssSWP8/ZuIuad79MZFnLfwOI+axavBhYxhtPoA6M4JruOkDFD8luI4vycUbnGmwS
+	 0aR8zBR2+2CxSaQXTuGM4rthayQBt8fP66c8+1A8g1epBgpbTXJv6F7X6mU9xFhWU4
+	 EDTsmHbr/X+jXlmybp3VNqIz8c5QR6OXd1lp75wVtbQUj//qagygShWhLDJmhGOl2H
+	 wlxOR0DcSX44g==
+Message-ID: <ece22424-ea6f-4d6e-8964-3418853dba2f@kernel.org>
+Date: Thu, 4 Sep 2025 13:47:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,89 +49,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] ASoC: dt-bindings: everest,es8316: Document
- routing strings
-To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>, linux-sound@vger.kernel.org,
- krzk+dt@kernel.org
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
- conor+dt@kernel.org, drake@endlessm.com, katsuhiro@katsuster.net,
- matteomartelli3@gmail.com, KCHSU0@nuvoton.com,
- patches@opensource.cirrus.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, shuah@kernel.org
-References: <20250903160119.83625-1-jihed.chaibi.dev@gmail.com>
- <20250903160119.83625-2-jihed.chaibi.dev@gmail.com>
-From: Binbin Zhou <zhoubinbin@loongson.cn>
-In-Reply-To: <20250903160119.83625-2-jihed.chaibi.dev@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 1/2] dt-bindings: leds: add generic LED consumer
+ documentation
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Aleksandrs Vinarskis <alex@vinarskis.com>
+Cc: robh@kernel.org, bryan.odonoghue@linaro.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, krzk+dt@kernel.org, lee@kernel.org,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, pavel@kernel.org
+References: <20250902182114.GA965402-robh@kernel.org>
+ <20250903235615.134520-1-alex@vinarskis.com>
+ <20250904-brave-zippy-quoll-fcb054@kuoka>
+ <daf442a6-b4d6-4213-8ec0-10397d682cc4@kernel.org>
+ <fdc68c54-a499-4ba6-8788-70c7ea515f2d@kernel.org>
+ <691f72aa-6d3e-47a1-9efe-a5f7a61ecb72@kernel.org>
+ <9c536e24-ab5a-454a-93af-6d4c51d4e1ce@kernel.org>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <9c536e24-ab5a-454a-93af-6d4c51d4e1ce@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qMiowJBxD8JEfLloHet9AA--.40538S2
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7CF1DCryDury8Zr45tF17CFX_yoW8XF1xpF
-	Z29a98tryFgr17W39xG3W8Gr43W3yfCF45uFZrtwnFq3Z8Xwn2vrnIkrn8WF4q9FZ5ZF1U
-	ZFW7uF1fKFyYywcCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Kb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l
-	4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxV
-	WUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAF
-	wI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcI
-	k0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j
-	6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUcpBTUUUUU
 
+Hi Krzysztof,
 
-On 2025/9/4 00:01, Jihed Chaibi wrote:
-> Add a list of the es8316 pin names to the binding's description to make
-> it self-contained and improve the user experience for board developers.
->
-> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+On 4-Sep-25 12:47 PM, Krzysztof Kozlowski wrote:
+> On 04/09/2025 12:29, Hans de Goede wrote:
+>> Hi Krzysztof,
+>>
+>> On 4-Sep-25 11:45 AM, Krzysztof Kozlowski wrote:
+>>> On 04/09/2025 09:26, Hans de Goede wrote:
+>>>>>>>> +maintainers:
+>>>>>>>> +  - Aleksandrs Vinarskis <alex@vinarskis.com>
+>>>>>>>> +
+>>>>>>>> +description:
+>>>>>>>> +  Some LED defined in DT are required by other DT consumers, for example
+>>>>>>>> +  v4l2 subnode may require privacy or flash LED.
+>>>>>>>> +
+>>>>>>>> +  Document LED properties that its consumers may define.
+>>>>>>>
+>>>>>>> We already have the trigger-source binding for "attaching" LEDs to 
+>>>>>>> devices. Why does that not work here?
+>>>>>>
+>>>>>> I have not actually considered this, as the existing privacy-led solution
+>>>>>> from the original series is not trigger based. At least one of the reasons
+>>>>>> for that is that trigger source can be rather easily altered from user
+>>>>>> space, which would've been bad for this use case. If v4l2 acquires control
+>>>>>> over the LED it actually removes triggers and disables sysfs on that LED.
+>>>>>
+>>>>> So does that mean that v4l2 solves the problem of "trigger source can be
+>>>>> rather easily altered from user space"?
+>>>>
+>>>> Yes, currently the v4l2-core already does:
+>>>
+>>> Thanks, I understand that it solves the problem described in the patch,
+>>> so the patch can be dropped.
+>>
+>> I'm a bit confused now, do you mean that this dt-bindings patch can
+>> be dropped ?
+> 
+> Yes.
+> 
+> Alex's explanation to Rob felt confusing, so I asked for clarification.
+> You clarfiied that that v4l2 solves the problem, therefore there is no
+> problem to be solved.
+> 
+> If there is no problem to be solved, this patch is not needed.
+> 
+> If this patch is needed, just describe the problem accurately.
+> 
+>>
+>> The existing v4l2-core code solves getting the privacy-LED on ACPI/x86_64,
+>> on DT there is no official bindings-docs for directly getting a LED with
+> 
+> There are and Rob pointed to them. If Rob's answer is not enough, make
+> it explicit.
+> 
+> Really, there are here some long explanations which do not really
+> explain this in simple terms. Simple term is: "existing property foo
+> does not work because <here goes the reason>".
 
+The existing trigger-source binding for "attaching" LEDs to 
+devices does not work because:
 
-Reviewed-by: Binbin Zhou <zhoubinbin@loongson.cn>
+1. It depends on the Linux specific LED trigger mechanism where as
+   DT should describe hw in an OS agnostic manner
 
->
-> ---
-> Changes in v2:
->   - Rephrased description to refer to device pins instead of the
->     driver.
-> ---
->   .../bindings/sound/everest,es8316.yaml           | 16 ++++++++++++++++
->   1 file changed, 16 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/sound/everest,es8316.yaml b/Documentation/devicetree/bindings/sound/everest,es8316.yaml
-> index e4b2eb5fae2..81a0215050e 100644
-> --- a/Documentation/devicetree/bindings/sound/everest,es8316.yaml
-> +++ b/Documentation/devicetree/bindings/sound/everest,es8316.yaml
-> @@ -12,6 +12,22 @@ maintainers:
->     - Matteo Martelli <matteomartelli3@gmail.com>
->     - Binbin Zhou <zhoubinbin@loongson.cn>
->   
-> +description: |
-> +  Everest ES8311, ES8316 and ES8323 audio CODECs
-> +
-> +  Pins on the device (for linking into audio routes):
-> +
-> +    Outputs:
-> +      * LOUT:     Left Analog Output
-> +      * ROUT:     Right Analog Output
-> +      * MICBIAS:  Microphone Bias
-> +
-> +    Inputs:
-> +      * MIC1P:    Microphone 1 Positive Analog Input
-> +      * MIC1N:    Microphone 1 Negative Analog Input
-> +      * MIC2P:    Microphone 2 Positive Analog Input
-> +      * MIC2N:    Microphone 2 Negative Analog Input
-> +
->   allOf:
->     - $ref: dai-common.yaml#
->   
+2. It puts the world upside down by giving possible event-sources 
+   for the (again) Linux specific trigger rather then allowing
+   specifying e.g. specific privacy and flash LEDs as part
+   of a camera dts node. IOW it makes the LED DT note point to
+   the camera, while the LED is a part of the camera-module.
+   not the other way around. So it does not properly allow
+   describing the composition of the camera.
 
-Thanks.
-Binbin
+   Note that Rob actually put "" around attaching because this
+   property really is not proper attaching / composition as
+   we would normally do in dt.
+
+IMHO 1. alone (this being Linux specific) warrants a new better
+binding for this.
+
+Regards,
+
+Hans
 
 
