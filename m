@@ -1,134 +1,93 @@
-Return-Path: <linux-kernel+bounces-801527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B7BB4463A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:16:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EAC5B4463F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759911C27A89
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:16:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E77431C27BAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F8C26E6E1;
-	Thu,  4 Sep 2025 19:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6CB26E6E1;
+	Thu,  4 Sep 2025 19:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="KiAdctAj"
-Received: from fossa.ash.relay.mailchannels.net (fossa.ash.relay.mailchannels.net [23.83.222.62])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BAQ/matM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37321D6DA9;
-	Thu,  4 Sep 2025 19:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.222.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757013356; cv=pass; b=uPvt09tbmNyKyrrBzcABxlhnLSbDTaeZgZay28Fr49268DDBtQJasYq9YXWWSBXnFaVNc9X1A2gyUXimkr2oJDMGJsvSdVEE9zieexD3ZJSuXELZ2O7UUDJAUWF//c9Y0HLlsoqXgXSu7Qy1auCMTmZDy21OVGbF8+/+vPYi6hc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757013356; c=relaxed/simple;
-	bh=wzEL6NG8otzv6w22FIroHhxlJ82Wd23EcDr+/drdg2s=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECEB33997;
+	Thu,  4 Sep 2025 19:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757013428; cv=none; b=VPffcZXESrNmFAotMR2mImE9l6lUHgDzDwlg6xVoEsE6f96PH++N31zWzbNQQERx9ILdIs7Nb4Vt4nD4NOqDTEAk+HzAfT6g9lB8R3anVNkV1uhj3PYiN/6avseNcH5pnq8XLEV/3sAVPM874wCy1Mjui3qp0kuJtdh1bQEToR4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757013428; c=relaxed/simple;
+	bh=4cyZJK5eWDP/Os6zTLIOjZf3POA/Dw2ry2+a0/RupNc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JDgtsq6sfBK4+lTFrBdZntOGOZt4zkhh65j6IHoL9Z/7Vyx+ZYIcg/9a8rrR4iqqsZ1ArmLWkBbYiWBaf+yG1ZXSodxleUdmoTYLRpO3vOcYuEJVdifN6GoIEFjgXsy/W5DqUpE+ouKHovYqAPdap52nXU2CqrbDlvGNye8nMTM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=KiAdctAj; arc=pass smtp.client-ip=23.83.222.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 4044C4E2BFC;
-	Thu,  4 Sep 2025 19:15:44 +0000 (UTC)
-Received: from pdx1-sub0-mail-a216.dreamhost.com (100-103-70-103.trex-nlb.outbound.svc.cluster.local [100.103.70.103])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id C78F54E6CDA;
-	Thu,  4 Sep 2025 19:15:43 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1757013343; a=rsa-sha256;
-	cv=none;
-	b=dC5Ah8QIgHBYCaFkm6ofG0RbEm330ydIucQBKYaTBo8xaGocko7IAgHW6aKKU+vHe/7RC7
-	eYP6Kl0rCAI8Lknq59WZmVhOYV2JSEPzlQGigmVfM+kJPobrfH1osPWIIW5DGfdIH0lG0j
-	ZWOSOPFsEXdEexrn/bVZyaNaPy2a4KtdRtl80hZ1E7wivLYbrx2iDvNuF2bQiZ46REvFjn
-	cZKeOnTa77sCxVsYKsItUOAKCCAn6esd6n4bKYHMTDQFNdnjCqthzLeoYS+2SRwMZzAlOw
-	xJ11aAjkC4WMTAwuyVBQSmhFaLt8bRhP/HN4XZo/loUs6qDYfRs6m3bBFHgvvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1757013343;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=wzEL6NG8otzv6w22FIroHhxlJ82Wd23EcDr+/drdg2s=;
-	b=3xMsy+wI0wXeVgO0FejtOdaonRP6VIZoY3uuehCtqztmLvml4SbPnExQROeEWyWKUBm8mU
-	ekk1F+IxbLaJFa2DnhJh9Co//NryeGKd9lsqon9yR6pDbOYUffN2oY8U3ZeE/QxX42eLXo
-	kkVTKYcxMowwZbrKC4/nDmQe1Vxlwa5uxVtVs/hQRsaQlwYbMn2wZVGygtuE5MPNta0oV2
-	Cuii8kex1Ivaz3xyC8zZkikx3UngEdDllFCeaXdTp14hXN+AuJb+8LAffCV93byvBZZ6qz
-	L3L0wbVB74bbt6KuxZivfVQXPlUDcjYA7NkHqG+vSzKKe+l6cQXhS1lQZGi0wA==
-ARC-Authentication-Results: i=1;
-	rspamd-c79647f57-75mrv;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Tasty-Imminent: 3f45dc202bef1583_1757013344101_1843994034
-X-MC-Loop-Signature: 1757013344101:3850763103
-X-MC-Ingress-Time: 1757013344101
-Received: from pdx1-sub0-mail-a216.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.103.70.103 (trex/7.1.3);
-	Thu, 04 Sep 2025 19:15:44 +0000
-Received: from offworld (syn-076-167-199-067.res.spectrum.com [76.167.199.67])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a216.dreamhost.com (Postfix) with ESMTPSA id 4cHq266dV7z6b;
-	Thu,  4 Sep 2025 12:15:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1757013343;
-	bh=wzEL6NG8otzv6w22FIroHhxlJ82Wd23EcDr+/drdg2s=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=KiAdctAj2riQ+aPH9sJRjoDoEbcvYiTxguFMBBf/zNiuGnvlgTXNarq5Qf5cM+HwY
-	 02utt3nMGsdCQiPuXUcrn8e1AyEqI/4wcRRNOawXvsWpLTPknjFGbz0GaI1XrrcoUL
-	 j5GyFO+4M9NkN8cUrDChDL1w79JTf6yRtzjAGV6KH+D8rJ0fTLl3BR/6oNtwze8TNN
-	 PBKt9HsY5I2pP8Bswz0jLf4qAQyyAjkyOAB6vbMzhUv1xsuOjQZ6Cd85gHl+s3S6Pe
-	 rhaD7LkBK7l3kkiIxLHEqcrnuxK5IoTzN3ADX0Ix09ZAcHqiwK3h0pZRLa+nIxbk/S
-	 4GbZviPUVn3dg==
-Date: Thu, 4 Sep 2025 12:15:40 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: rafael.j.wysocki@intel.com, dave.jiang@intel.com,
-	dan.j.williams@intel.com, jonathan.cameron@huawei.com,
-	alejandro.lucero-palau@amd.com, ira.weiny@intel.com,
-	alison.schofield@intel.com, a.manzanares@samsung.com,
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZLFXJosNutpLjFELQQ5LajhVDMkk7iHrxj8Xyn6LbN+sKIPDfewxEfoXlLIwUTg3Jyvd3Fi313HlU9Ez7S4/p7HWHiWxrdxbTqrbIY5VzcHlvJFzQIvt6eEiRUj/Iod5RJwbgA6U5mSIv4zJYHT7m2QtWLxWBaDYxZzAvB8JQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BAQ/matM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D7A5C4CEF0;
+	Thu,  4 Sep 2025 19:17:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757013428;
+	bh=4cyZJK5eWDP/Os6zTLIOjZf3POA/Dw2ry2+a0/RupNc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BAQ/matM+PqMMACKj9h7Bzj61ss27I49ThmK0YjHCe39lYfGQ4bTj/nu3jK2yREMt
+	 f0DhoPVqOlFzQ/EhJaQM4pQ8pVn9wfMNHSooHmMXZ55RRgmVxLwZZSGEvYhrpmbpX7
+	 NS//yBebW+8myAVveojmau8n8ZCLinNGb14vsSzsHmsDvThT/kbVElT7kW1dYarhaU
+	 uhBuEWdKiC57zM7jfYPh+LmA8LMQm4BuDO/A4Q91offvA8G4S8HiUWusqDfc/I6CX5
+	 +n8vyQcXDLFtsaXzi0cL7HpoEnVs9vHzzor103Thyfh13/RfZj3LdJiGfb/v56z7lf
+	 lr99Pg4HaF4bA==
+Date: Thu, 4 Sep 2025 20:17:03 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Vladimir Yakovlev <vovchkir@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Cong Yang <yangcong5@huaqin.corp-partner.google.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] acpi, tables: Rename coherency CFMW restrictions
-Message-ID: <20250904191540.rb2dn4frng2ruq76@offworld>
-References: <20250904184801.47498-1-dave@stgolabs.net>
- <CAJZ5v0j9r6bKOXuo+o0gdhryR1ne3WY3B0o0DufEHB9y3j0Leg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: display: panel: Add compatible for
+ STARRY xr109ai2t
+Message-ID: <20250904-utopia-boggle-3d26664bbbf0@spud>
+References: <20250904002232.322218-1-vovchkir@gmail.com>
+ <20250904002232.322218-2-vovchkir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sAVWlh9d1DjThvII"
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0j9r6bKOXuo+o0gdhryR1ne3WY3B0o0DufEHB9y3j0Leg@mail.gmail.com>
-User-Agent: NeoMutt/20220429
+In-Reply-To: <20250904002232.322218-2-vovchkir@gmail.com>
 
-On Thu, 04 Sep 2025, Rafael J. Wysocki wrote:
 
->On Thu, Sep 4, 2025 at 8:48???PM Davidlohr Bueso <dave@stgolabs.net> wrote:
->>
->> ACPICA commit 710745713ad3a2543dbfb70e84764f31f0e46bdc
->>
->> This has been renamed in more recent CXL specs, as
->> type3 (memory expanders) can also use HDM-DB for
->> device coherent memory.
->>
->> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
->
->A link to the corresponding upstream commit, please?
+--sAVWlh9d1DjThvII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-https://github.com/acpica/acpica/commit/710745713ad3a2543dbfb70e84764f31f0e46bdc
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Thanks,
-Davidlohr
+--sAVWlh9d1DjThvII
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLnlrwAKCRB4tDGHoIJi
+0tUnAP9L1WfnoP9hrgMwAnX4lKp7VleNEjUU2M4rmDu17AJbeAD+IFdcN7Kru1QB
+/l0Hp/v6QSwcBhJgRdTsZPjmhKxNFwg=
+=KRbg
+-----END PGP SIGNATURE-----
+
+--sAVWlh9d1DjThvII--
 
