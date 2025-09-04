@@ -1,202 +1,184 @@
-Return-Path: <linux-kernel+bounces-800744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3BF1B43B7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:24:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74174B43B7C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3418B482DA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:24:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFED41B21750
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2022F0C6E;
-	Thu,  4 Sep 2025 12:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="hDNDwMru";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nwHa/7xp"
-Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E121C2EA480;
+	Thu,  4 Sep 2025 12:24:54 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E8A2E1C6F;
-	Thu,  4 Sep 2025 12:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829C72E1C6F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756988671; cv=none; b=nUnMh4qZMgUNwbAVKrgTIcN/7BkzL90zYllU0/0rmQD53enbX1tQuUm4B4SZqzegn2Z1kgyGrS7YraK+7OJwH4pVsbGYLSXPRlMQdteL9ePw5f4E69iaQ0thIDcD9uUDbD/xon7edfVSeMi7bA6YtoHiVTvXHB6PeQN4Lr3rWos=
+	t=1756988694; cv=none; b=DRnI6BWqdAc2Fi4abUmCFk1+HXGMdWN8Fz0cb8Nv4E26Qr4fgPLX3hfU3Ov07JrpCW5ueCfo1UMjaIp2mzeAEVCRcGgIYP2vA9V80DNnh14Ux1U/uIjT5c4KwPIdOnZHYLKuEk2D4/ePLiqttKla3YBPkgTiVrkVYD7PyEGQIgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756988671; c=relaxed/simple;
-	bh=KTI+fAni0p2MENKwxEmxfldj86CWpRNVIqjj2os4Uhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=swZ3D021e9GKvqpwcHdeFHpyRidBYOrSm+XnXxAbMvt7yxJ0cavyfgfzMMFQchani6r0z29WFfqqmV1hPKNwI3p07IYFleN6cAgiZ8bnnPZTIkavwKOtd1Bi9vGr68s+imvANCjcYG3ltDHFgopM0G8QRsNEReNKagBIwtgxBA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=hDNDwMru; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nwHa/7xp; arc=none smtp.client-ip=103.168.172.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailflow.phl.internal (Postfix) with ESMTP id 91B7A138030E;
-	Thu,  4 Sep 2025 08:24:27 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Thu, 04 Sep 2025 08:24:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1756988667; x=1756995867; bh=8U7GdOjxhs
-	TzAyM8D4u5BI8G2Xd1f8HkMUIoKDmyl7w=; b=hDNDwMrunWW+ZSBiQCae5O6HdM
-	rHIzrk1w93POFvUtWhk8/PTcjfDQw70b/bAYalCtI2CEx2Jf3r36xMTLqz9CDIHu
-	HZcPpZPQ+saIaP0ny4IDb8U+Rt3hJOO0nBCCwBQG1znzCFlMcLqF43sj3v5cxi5F
-	JrUfDaG0n1YTh8zUbpL1UxNYnnzVf7SsFPCIxwfijVgSkmuLxLS3N65UfaS6exGA
-	ADh5LalaVXZoXMFdoF1Z1f55no4+j5lcUJw0Jasq3jj0uF9M2iWqQlJ4iQPxmKgW
-	bJR0slNQsYWBDyjz0B2oPnJfmGr+7Cs2dBc6c3jMcMe8lqkFrYcT3BVZQUFg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1756988667; x=1756995867; bh=8U7GdOjxhsTzAyM8D4u5BI8G2Xd1f8HkMUI
-	oKDmyl7w=; b=nwHa/7xpjU32Z0Hf4NkHRGrhCI9S0+o+3GkFeLYaD4BO4ahSIiE
-	AzfgjNUTcHpC8m5rkhEaZpprVmEahYBL4a3IXs7TKP7uSms2vaqjFv/7OVT1+BrN
-	HiMWeD78WUeyUOqv6Ut+wjdDFtN7PwBIpxpp77y9j/hfwsM5M40bJShcazAq2Nfj
-	vU0k0733ZUqRn1WSn2lEKneSOFqnM5iYPhEZMUh5lh5NYIX7eFe8AmPGcP1UL9Oo
-	NpVS0IuWh+DjWJNqzDnp+c3xE7dELMyc/KjBBuMsB0ith0KURGCxVQ8t1hCBLsHq
-	Nw/5Zqgh0Zq1JjITNRJNb43qV+z/R/mJORA==
-X-ME-Sender: <xms:-YS5aPp7-Q-PJ75oKwTPe0FcPwMF6CU7PPlMZUYvafzhxITyOuiNQQ>
-    <xme:-YS5aNw42Jh_uRF-Vh88T3KVyMb5UDEtsSugx0zRywWFbbhkl6SwQIyf9iLELaMQ5
-    m338mmu0yL4v5o3LG8>
-X-ME-Received: <xmr:-YS5aHydJs3sY-GK3oCbvAHsOkngOP2IJEXL3-Xsm7VL-Gn688r9we0YV-V5onScvbN07mdHctJXOIr-NeHO4ekZlmvdoAv7z3Y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeitdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    epfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomheplfgrnhhnvgcuifhr
-    uhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpefgvdffve
-    elgedujeeffeehheekheelheefgfejffeftedugeethfeuudefheefteenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruhdrnh
-    gvthdpnhgspghrtghpthhtohepieefpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
-    pehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhvvghnsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopegrlhihshhsrgesrhhoshgvnhiifigvihhgrdhiohdprhgt
-    phhtthhopehnvggrlhesghhomhhprgdruggvvhdprhgtphhtthhopehkrhiikhdoughtse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshhtpdhrtghpthhtoheprh
-    grfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrvghshhdrkhhumhgr
-    rheslhhinhgrrhhordhorhhg
-X-ME-Proxy: <xmx:-YS5aFL5RENaptCIz0BuOu7c20yv3c3vvpf0r7dw-JaCLTja_Bz-qQ>
-    <xmx:-YS5aMhqfqjJDjwhEwdZLnuYL-XJITqjWEtj1CN62kOs7Lr-e1ARig>
-    <xmx:-YS5aLmrOIowpLzSrzFmFlJi5IwpCHBFCji4UnFHC3LawjtEN9XozQ>
-    <xmx:-YS5aBjdESh3CesfnA5BUM2uF_YS4jSIK-ieYu5ywQQcEQrIsgMdmQ>
-    <xmx:-4S5aHzTvFrOsjIChzaXkMhnpIzOEDH0ImtlmNuExND3IUGhmeRiqy8O>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 4 Sep 2025 08:24:24 -0400 (EDT)
-Date: Thu, 4 Sep 2025 14:24:23 +0200
-From: Janne Grunau <j@jannau.net>
-To: Rob Herring <robh@kernel.org>
-Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,	Hector Martin <marcan@marcan.st>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,	Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>,	Robin Murphy <robin.murphy@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Kettenis <kettenis@openbsd.org>,	Andi Shyti <andi.shyti@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sasha Finkelstein <fnkl.kernel@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,	Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>,	Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>,	Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,	asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org,	devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,	linux-pm@vger.kernel.org,
- iommu@lists.linux.dev,	linux-gpio@vger.kernel.org,
- linux-i2c@vger.kernel.org,	dri-devel@lists.freedesktop.org,
- linux-bluetooth@vger.kernel.org,	linux-wireless@vger.kernel.org,
- linux-pwm@vger.kernel.org,	linux-watchdog@vger.kernel.org,
- linux-clk@vger.kernel.org,	dmaengine@vger.kernel.org,
- linux-sound@vger.kernel.org,	linux-spi@vger.kernel.org,
- linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 00/37] arm64: Add initial device trees for Apple M2
- Pro/Max/Ultra devices
-Message-ID: <20250904122423.GB89417@robin.jannau.net>
-References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
- <20250829195119.GA1206685-robh@kernel.org>
- <20250830071620.GD204299@robin.jannau.net>
- <20250902194528.GA1014943-robh@kernel.org>
+	s=arc-20240116; t=1756988694; c=relaxed/simple;
+	bh=nlvI5R2I4d5Ekcq08wG77He1tpk7ggoqtMgPiSxHnGE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kZp0Wdbfkqau8j6eM7lMf1uUnju7YPsSs1hmFWIOZ/IEEB63O+0qgkSfsy3EokirpQi0xF36yBscTCMkS7MQ989XzbHY1yb1wNXu7eU/Gth4toYx4VonNtee2McMpbqayR0yVZg7sUTjYyw6sxQrt3pBLE4q8NZvwRTj/dYFw9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w011.hihonor.com (unknown [10.68.20.122])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4cHdvT1XnhzYlNNF;
+	Thu,  4 Sep 2025 20:24:21 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w011.hihonor.com
+ (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 4 Sep
+ 2025 20:24:43 +0800
+Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
+ (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 4 Sep
+ 2025 20:24:43 +0800
+From: zhongjinji <zhongjinji@honor.com>
+To: <mhocko@suse.com>
+CC: <akpm@linux-foundation.org>, <feng.han@honor.com>,
+	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <liulu.liu@honor.com>, <lorenzo.stoakes@oracle.com>,
+	<rientjes@google.com>, <shakeel.butt@linux.dev>, <surenb@google.com>,
+	<tglx@linutronix.de>, <zhongjinji@honor.com>
+Subject: Re: [PATCH v7 2/2] mm/oom_kill: The OOM reaper traverses the VMA maple tree in reverse order
+Date: Thu, 4 Sep 2025 20:24:38 +0800
+Message-ID: <20250904122438.22957-1-zhongjinji@honor.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <aLg7ajpko2j1qV4h@tiehlicka>
+References: <aLg7ajpko2j1qV4h@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250902194528.GA1014943-robh@kernel.org>
+Content-Type: text/plain
+X-ClientProxiedBy: w011.hihonor.com (10.68.20.122) To a018.hihonor.com
+ (10.68.17.250)
 
-On Tue, Sep 02, 2025 at 02:54:34PM -0500, Rob Herring wrote:
-> On Sat, Aug 30, 2025 at 09:16:20AM +0200, Janne Grunau wrote:
-> > On Fri, Aug 29, 2025 at 02:51:19PM -0500, Rob Herring wrote:
-> > > On Thu, Aug 28, 2025 at 04:01:19PM +0200, Janne Grunau wrote:
-> > > > This series adds device trees for Apple's M2 Pro, Max and Ultra based
-> > > > devices. The M2 Pro (t6020), M2 Max (t6021) and M2 Ultra (t6022) SoCs
-> > > > follow design of the t600x family so copy the structure of SoC *.dtsi
-> > > > files.
-
-...
-
-> > > > After discussion with the devicetree maintainers we agreed to not extend
-> > > > lists with the generic compatibles anymore [1]. Instead either the first
-> > > > compatible SoC or t8103 is used as fallback compatible supported by the
-> > > > drivers. t8103 is used as default since most drivers and bindings were
-> > > > initially written for M1 based devices.
-> > > 
-> > > An issue here is any OS without the compatibles added to the drivers 
-> > > won't work. Does that matter here? Soon as you need any new drivers or 
-> > > significant driver changes it won't. The compatible additions could be 
-> > > backported to stable. They aren't really any different than new PCI IDs 
-> > > which get backported.
+> On Wed 03-09-25 17:27:29, zhongjinji wrote:
+> > Although the oom_reaper is delayed and it gives the oom victim chance to
+> > clean up its address space this might take a while especially for
+> > processes with a large address space footprint. In those cases
+> > oom_reaper might start racing with the dying task and compete for shared
+> > resources - e.g. page table lock contention has been observed.
 > > 
-> > I don't think backporting the driver compatible additions to stable
-> > linux is very useful. It is only relevant for t602x devices and the only
-> > way to interact with them is the serial console. The T602x PCIe support
-> > added in v6.16 requires dart changes (the posted 4th level io page table
-> > support) to be useful. After that PCIe ethernet works so there is a
-> > practical way to interact with t602x systems. So there are probably zero
-> > user of upstream linux on those devices 
-> > I'm more concerned about other projects already supporting t602x
-> > devices. At least u-boot and OpenBSD will be affected by this. As short
-> > term solution m1n1 will add the generic compatibles [1] temporarily.
-> > I think keeping this roughly for a year should allow to add the
-> > compatibles and wait for "fixed" releases of those projects.
-> > I'll send fixes for u-boot once the binding changes are reviewed.
+> > Reduce those races by reaping the oom victim from the other end of the
+> > address space.
+> > 
+> > It is also a significant improvement for process_mrelease(). When a process
+> > is killed, process_mrelease is used to reap the killed process and often
+> > runs concurrently with the dying task. The test data shows that after
+> > applying the patch, lock contention is greatly reduced during the procedure
+> > of reaping the killed process.
 > 
-> Honestly, at least in the cases where the generic compatible works for 
-> every chip so far, I'd just stick with it. The issue with generic 
-> compatibles is more that you don't really know if things are going to be 
-> the same or not. And most of the time, the h/w ends up changing.
+> Thank you this is much better!
 > 
-> If you want to keep it like this since you've already done it, then for 
-> all the binding patches:
+> > Without the patch:
+> > |--99.74%-- oom_reaper
+> > |  |--76.67%-- unmap_page_range
+> > |  |  |--33.70%-- __pte_offset_map_lock
+> > |  |  |  |--98.46%-- _raw_spin_lock
+> > |  |  |--27.61%-- free_swap_and_cache_nr
+> > |  |  |--16.40%-- folio_remove_rmap_ptes
+> > |  |  |--12.25%-- tlb_flush_mmu
+> > |  |--12.61%-- tlb_finish_mmu
+> > 
+> > With the patch:
+> > |--98.84%-- oom_reaper
+> > |  |--53.45%-- unmap_page_range
+> > |  |  |--24.29%-- [hit in function]
+> > |  |  |--48.06%-- folio_remove_rmap_ptes
+> > |  |  |--17.99%-- tlb_flush_mmu
+> > |  |  |--1.72%-- __pte_offset_map_lock
+> > |  |--30.43%-- tlb_finish_mmu
+> 
+> Just curious. Do I read this correctly that the overall speedup is
+> mostly eaten by contention over tlb_finish_mmu?
 
-Let's keep with this series. I still have a branch with dt-binding
-changes using the generic compatibles but let's keep this approach to
-confusion and duplicate review work.
+Here is a more detailed perf report, which includes the execution times
+of some important functions. I believe it will address your concerns.
 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+tlb_flush_mmu and tlb_finish_mmu perform similar tasks; they both mainly
+call free_pages_and_swap_cache, and its execution time is related to the
+number of anonymous pages being reclaimed.
 
-Thanks
+In previous tests, the pte spinlock contention was so obvious that I
+overlooked other issues.
 
-Janne
+Without the patch
+|--99.50%-- oom_reaper
+|    |--0.50%-- [hit in function]
+|    |--71.06%-- unmap_page_range
+|    |    |--41.75%-- __pte_offset_map_lock
+|    |    |--23.23%-- folio_remove_rmap_ptes
+|    |    |--20.34%-- tlb_flush_mmu
+|    |    |           free_pages_and_swap_cache
+|    |    |--2.23%-- folio_mark_accessed
+|    |    |--1.19%-- free_swap_and_cache_nr
+|    |    |--1.13%-- __tlb_remove_folio_pages
+|    |    |--0.76%-- _raw_spin_lock
+|    |--16.02%-- tlb_finish_mmu
+|    |    |--26.08%-- [hit in function]
+|    |    |--72.97%-- free_pages_and_swap_cache
+|    |    |--0.67%-- free_pages
+|    |--2.27%-- folio_remove_rmap_ptes
+|    |--1.54%-- __tlb_remove_folio_pages
+|    |    |--83.47%-- [hit in function]
+|    |--0.51%-- __pte_offset_map_lock
+
+Period (ms)           Symbol
+79.180156             oom_reaper
+56.321241             unmap_page_range
+23.891714             __pte_offset_map_lock
+20.711614             free_pages_and_swap_cache
+12.831778             tlb_finish_mmu
+11.443282             tlb_flush_mmu
+
+With the patch
+|--99.54%-- oom_reaper
+|    |--0.29%-- [hit in function]
+|    |--57.91%-- unmap_page_range
+|    |    |--20.42%-- [hit in function]
+|    |    |--53.35%-- folio_remove_rmap_ptes
+|    |    |    |--5.85%-- [hit in function]
+|    |    |--10.49%-- __pte_offset_map_lock
+|    |    |    |--5.17%-- [hit in function]
+|    |    |--8.40%-- tlb_flush_mmu
+|    |    |--2.35%-- _raw_spin_lock
+|    |    |--1.89%-- folio_mark_accessed
+|    |    |--1.64%-- __tlb_remove_folio_pages
+|    |    |    |--57.95%-- [hit in function]
+|    |--36.34%-- tlb_finish_mmu
+|    |    |--14.70%-- [hit in function]
+|    |    |--84.85%-- free_pages_and_swap_cache
+|    |    |    |--2.32%-- [hit in function]
+|    |    |--0.37%-- free_pages
+|    |     --0.08%-- free_unref_page
+|    |--1.94%-- folio_remove_rmap_ptes
+|    |--1.68%-- __tlb_remove_folio_pages
+|    |--0.93%-- __pte_offset_map_lock
+|    |--0.43%-- folio_mark_accessed
+
+Period (ms)           Symbol
+49.580521             oom_reaper
+28.781660             unmap_page_range
+18.105898             tlb_finish_mmu
+17.688397             free_pages_and_swap_cache
+ 3.471721             __pte_offset_map_lock
+ 2.412970             tlb_flush_mmu
+
+
+> > Signed-off-by: zhongjinji <zhongjinji@honor.com>
+> 
+> Anyway, the change on its own makes sense to me
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> 
+> Thanks for working on the changelog improvements.
 
