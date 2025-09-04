@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-799856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C62FB430FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:16:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F3F0B430FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBCE83B64A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:16:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF2BE3B645E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8301FA272;
-	Thu,  4 Sep 2025 04:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9FA1E9919;
+	Thu,  4 Sep 2025 04:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="M6SLL1mM"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2041.outbound.protection.outlook.com [40.107.96.41])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UDe/kQ4W"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2059.outbound.protection.outlook.com [40.107.223.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982EA78F43
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 04:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730031A9F88
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 04:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.59
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756959376; cv=fail; b=NUcxeClpgTPlgdBKxBcQ7lCBexaPPrkYM8I0uWZeZym9SnPXi2/vgfIwuDv21CAwLcxCy2IXEBXvZTTnPqjdrn+or0DevKWZh8G/zVTBqoTX1Iy2JKqN9TqIKJAgwZkIUK2cZl0tDpItVTO2o3aHzeTUEK8dw5JKlZXArRf18gE=
+	t=1756959392; cv=fail; b=OXLBy3gq5UWPWLefF1Bt6vzLnUWOO/Hmbq+sJ047qZxJxW/e5w5eptvxkO34mejxOmsmoDP01dDjhiZjG/HoQFxPpaQc7N8enhTDueolAWwC8SsVebu/GFU2+cyVXnDX7X6ugjmb9pRJCH7fo48RcF5t9FMCmaanLqFcDSIueXI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756959376; c=relaxed/simple;
-	bh=5CMoVeo+lSr2x/LAY3GtJa9hw+58CYHL1tEr8k0q2r4=;
+	s=arc-20240116; t=1756959392; c=relaxed/simple;
+	bh=Qr1WRu9cKpi/2lsCmhnKlIDO48HzMf0bYugwkA84dPQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g+dGrFmw9I4ibvjcSTc7vW2jRCoZplrF5GajKeZ3udhuRdAtsOPsc3FgD5rebVP/w30Ltp/GMgwBFV3ElCq5Fb7zeGIq4RAcm/ryBOg6ulSBfSOWIJ2sxmIxzaka+n6yBZAnBldRiMK9SPw03oCwyfO1ffrYLdzLUZKFLdZN4fM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=M6SLL1mM; arc=fail smtp.client-ip=40.107.96.41
+	 MIME-Version:Content-Type; b=ikG/MgeQHHFrMmRvah0X3r8B2M00LBBDNCEhFMPrPtidYIiv67/VA7yy2BSllZX643X839/XipPSZudPOqa4cXEZwRy6PA1Mz2mXadkUbEnX6eipdXs3+wryUs18Mp0VI+tBGDmEUK6EMlJVgoPlyrMjSnbCj3HFrgbjuveM6rk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UDe/kQ4W; arc=fail smtp.client-ip=40.107.223.59
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MIANTpL60iB+Yipy/YAYwDefWTQYt9Wk+m4sUEQEu5WnCYSW1mybiMRyUqQF1kJFdLa2oZtQvSG/79usW9LaVANaJNaBmkU77hvGPpo6Gtqqs1EDpllMu9iCvXNBhovpaCpURoWlkYYahy9Q97ViaFPtT66c4pz4NqNKL4Ip9BK1JAuovhbynGvQHE1EvyBjXPzg907Ezja0ZnxYnXATfNNe+s4vqFrJgFH00fYUzXyVfpNuavunX7Yn+7F2XCdvUoIZU+OjUsnhRoqxmSxx+OvIXm3RpahNyxOcTw5dO5SAYCW3e4gDCMwPEe8fpNbm0BQxb/cCvwKbVV5tQHeN5g==
+ b=zHD/QzSXF0mWMxu08Frwc8vZQOtFrriow5dYANVcWyskJNIJ7txm8ohOGox5qJBCnFIa9AZrAOG0XubSZ92qd1KyI/lPerWJ0GW6geXuMgWVcLCrOYUFX9RpbjRZKRM+BT7KTib2yzWcNMNZO4BWknAbm78iL0GkjIYA8BDyhOPotcpomC7nlQgZI4/rOSrf0rd6hsv1FbJ+xFV4plxthOZ+BVMGz/gw0uI1pcLwWDuXxrfDD+/MbzYUeEq/YUaioYCGIBRoJhOUryNKTq/F29XjkjuPzHbVTGvrsYDUKSCBKs/r14ZU7G5QKoIpjYolBQfl8xVwqAuvJEKyFShRzg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KZm5hOD2EeqPbqgTIlFeXFjiImSIw5UtCsLCiAciRA8=;
- b=UXq0v7PVrv9GAn97FZULM5PA9zTnyqPtH9ICYbwlvORLsZZUVikoyMzPntc0X0NhM72VndLkvTCOOr94R65TaelQKkYMfa5HXCarjbR9rwVO8ScqCwCoUlH/JUFfqhGJbKJkQ3rwwtT1mf0gJHghxIuNO2XLdLffTRlel9uVA6l+auMFiz65lEfWSZfcxHCjHrPaZ0S1BwUmcY70rjp2Ir7xGdV8OKWTuEwDpzjvDaI5DiMt5lLuEzt4MQllBBcGxLO++1py6DX5eBSXME1pscC+UK9JXUzC384GkLXjfcrMeS65L2Ktrox5kDDwmInC3EImFuNKFpoivG3O1/zsXQ==
+ bh=Li9NRlPeSt6+5NzF4+XuWwqei7SmM/TmdtydgazBA2k=;
+ b=WTD2KZHqmqucrYNA1L0hW9lS7utKtF9u3akRxPA9afbaH0b7RjBu6l/93wAaiMeNpTd/Hs17PW47kCAhjIdQA6JOrnCh8foLpC/uCdlMOZOk2FtXEddCLCTkIbe3m1TSlfNVx9c2vZOzWAZYrbol2r2IZEXBpd82476UzDlMlwLT6+jrmgXaqW2g1FDVm+J5FfCkFXfrk8QZDoULlNa5imFQGYznxePBPkK9D47E2zbJI3qeVakFHWfRnVrYahpW679J/gO6Wo2qL7NdKVKSYGiLS7GcaisqUcwmM5Bun2o97qwyFuW7dAGmjDObNLdPZ58jpa9N/TfQrsulzNm9Xw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KZm5hOD2EeqPbqgTIlFeXFjiImSIw5UtCsLCiAciRA8=;
- b=M6SLL1mMSv/q3d6DY71eWqfnHWZcdVj0bZltfwTX1G/TcVjmbFoNrwKY6XYis/1F8ELtvcaE12wA2BcmOcDTz9zPkDj2D5jUS+rJQs2FlfvvWo9jOhNTz9jAv2BF/aBO6iS0Kc0LP+oIJ2XQg+bUWEdLecy2VfL+0+owszIap7g=
-Received: from BY1P220CA0011.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:59d::11)
- by PH8PR12MB6818.namprd12.prod.outlook.com (2603:10b6:510:1c9::11) with
+ bh=Li9NRlPeSt6+5NzF4+XuWwqei7SmM/TmdtydgazBA2k=;
+ b=UDe/kQ4WznmNQu1G8ffJpOJLvHw1oQKDMDK7PclZ6fbiVUj8/R5OnkVss+PGEKI8ZqU25bP7JtofydO8aWkBnRZDdOIEIO5VE/eW6v0s3QcOCd0rsve5HHHm49gIreDtM8RMTtT3l8oBPWQSCiLY44VHgM3pA2tKKIDQ8dfENbw=
+Received: from DS7PR03CA0314.namprd03.prod.outlook.com (2603:10b6:8:2b::26) by
+ DS5PPF8002542C7.namprd12.prod.outlook.com (2603:10b6:f:fc00::657) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Thu, 4 Sep
- 2025 04:16:09 +0000
-Received: from SJ1PEPF00002322.namprd03.prod.outlook.com
- (2603:10b6:a03:59d:cafe::15) by BY1P220CA0011.outlook.office365.com
- (2603:10b6:a03:59d::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.17 via Frontend Transport; Thu,
- 4 Sep 2025 04:16:09 +0000
+ 2025 04:16:27 +0000
+Received: from CY4PEPF0000E9D7.namprd05.prod.outlook.com
+ (2603:10b6:8:2b:cafe::e1) by DS7PR03CA0314.outlook.office365.com
+ (2603:10b6:8:2b::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.16 via Frontend Transport; Thu,
+ 4 Sep 2025 04:16:26 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,17 +62,17 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
 Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SJ1PEPF00002322.mail.protection.outlook.com (10.167.242.84) with Microsoft
+ CY4PEPF0000E9D7.mail.protection.outlook.com (10.167.241.70) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9094.14 via Frontend Transport; Thu, 4 Sep 2025 04:16:09 +0000
+ 15.20.9094.14 via Frontend Transport; Thu, 4 Sep 2025 04:16:26 +0000
 Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 3 Sep
- 2025 23:16:08 -0500
+ 2025 23:16:25 -0500
 Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by satlexmb09.amd.com
  (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Wed, 3 Sep
- 2025 21:16:04 -0700
+ 2025 21:16:21 -0700
 From: K Prateek Nayak <kprateek.nayak@amd.com>
 To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
 	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
@@ -84,9 +84,9 @@ CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
 	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, K Prateek Nayak
 	<kprateek.nayak@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
 	Swapnil Sapkal <swapnil.sapkal@amd.com>
-Subject: [RFC PATCH 02/19] sched/topology: Optimize sd->shared allocation and assignment
-Date: Thu, 4 Sep 2025 04:14:58 +0000
-Message-ID: <20250904041516.3046-3-kprateek.nayak@amd.com>
+Subject: [RFC PATCH 03/19] sched/fair: Use rq->nohz_tick_stopped in update_nohz_stats()
+Date: Thu, 4 Sep 2025 04:14:59 +0000
+Message-ID: <20250904041516.3046-4-kprateek.nayak@amd.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250904041516.3046-1-kprateek.nayak@amd.com>
 References: <20250904041516.3046-1-kprateek.nayak@amd.com>
@@ -102,320 +102,115 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To satlexmb09.amd.com
  (10.181.42.218)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002322:EE_|PH8PR12MB6818:EE_
-X-MS-Office365-Filtering-Correlation-Id: 35ca6ff4-8702-4b44-d31d-08ddeb69c6c7
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D7:EE_|DS5PPF8002542C7:EE_
+X-MS-Office365-Filtering-Correlation-Id: f2072109-96ff-4545-052e-08ddeb69d11a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013|7416014;
+	BCL:0;ARA:13230040|82310400026|36860700013|7416014|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?B/LZSVNZwfDsiUSzn07+TzFc3PAXM+80n5L7JawkW/Hash8c19BtNKdtbGEB?=
- =?us-ascii?Q?kwwteHyv5+LTqas1jIzQO/F5VwL4q9E8gQRWPMEb5wMcyro0Y496xp1SdcBx?=
- =?us-ascii?Q?m0+ANfAEUQ855il9CcyjBCI6FnKVhDuF2WOIm0JKpdm5i1AuCyH7+EWS7RKx?=
- =?us-ascii?Q?nyCw70DaOw4Bm6Z7iqznRZ84rQDPDAhD4lqxehdc7h1PrmrnKq5nRhOPp+zT?=
- =?us-ascii?Q?m27OYLvin07b/AFonUkObVlBySlnD+1UFQTbQzjlSrpRqW6PdHQjmg/9oTpS?=
- =?us-ascii?Q?RFZYLsFBXKGyHay3iqth8ohSGm2g3PNpTm/CGEY+f4pl9z74+Yq7PbXUmOZf?=
- =?us-ascii?Q?ydA4QhHq/0b2+fQwKNozeU80eN5HauMLflx1J6Xp/+txZn6/COoke3qyaQ4B?=
- =?us-ascii?Q?3oQ2l1Xxk4C6zPkFI3aWWXiRPlCUBfZH0PNjJJWP+V6R7Mav0gaKjWWB2IfO?=
- =?us-ascii?Q?ThbE6m0326L279/fdFzf9CoqxTMBnDZWsGmjbWgW632ujqCsXNuQUeh6wtQ3?=
- =?us-ascii?Q?90PSL/m4/+4rYk3VZv/VQbICYrB2BEb6FpI6YKkPVx5p+ia3zshTcnYqg8Jj?=
- =?us-ascii?Q?Zipmw5UFLFph6iDMCIpjLsSppldf0+3so8459CBB0DEqg/LTXwWVpaJcIgyw?=
- =?us-ascii?Q?CmQ24qcDs0mWdM1XajiDzARZKVwK5Vw/92z9H8mskYscEjaf9gzUuMzIPTls?=
- =?us-ascii?Q?7QsOqJih3NdHASFqplEneLvHn7pfd5sTvBuyz+ADo1qfOIQM1WVflKzUMYhx?=
- =?us-ascii?Q?UcVj/dB2RHrkO2tXyk8noMIRQPJT90bg7rwbDRnOM/qIqXrhGrai2ZhAZ0eA?=
- =?us-ascii?Q?t8chYiXwj0h2LT1Bf2m+PF+C5RR6+CHS8+wGCP6uf8Tfjs1kOe+wQ3JQ4xnC?=
- =?us-ascii?Q?loWJXyMgOnKyfHvmg8f53H1v14La27gD7CqR1VeY0jtgu1rD4JxGxqanRixI?=
- =?us-ascii?Q?IIrEiRzOrsHHVxupo71cxP/ZBchT69qHtWMDh+FDEoB7mG6m0iIBNC5AWI4k?=
- =?us-ascii?Q?STumVL+uucRcg1GtGscDGqfSMnCx81KmL3Yjk4k7e5pih3S8iehGd23/Yn3v?=
- =?us-ascii?Q?08zY5tPjVliM9np86Hz33tst3vzFDXk3pyfyoe07Fo3PGsjm2uq25Hhxgo8c?=
- =?us-ascii?Q?q6RWgyvLpzIO/BTGg/wKHX686Yyuky/TmN5/UTQWPxCWAcLQUPAvmGBKfGoi?=
- =?us-ascii?Q?+gdFo3FoxilNGslMsxmWQGhpWHUCVnTrAtQACoIO/9DDCmAgaOLLWjZRe0hd?=
- =?us-ascii?Q?bf72EuO9gORaatmGJENquJm1O89RrU1tuklYsS/ODoCxWffanzJUlFSuHpU7?=
- =?us-ascii?Q?sm4gPKM7BX5i7GTMrNj1UWPNMiTX4eNZDHWNi4L2Uin6cI7LiCh1MTr7q/w3?=
- =?us-ascii?Q?M/VNlyaBvrn7ZJOB9iHiuVu8c3wfUy5iFfh4aEV2uCHjqtN00AP47XXHEHZs?=
- =?us-ascii?Q?ATYBeEoH0GglgbYl0SSthSqH2UxdfYzdZY6F3SV7XcNgqhkG2WBQPMkVL7U0?=
- =?us-ascii?Q?H94aSKNy0WQNU3GZD06mNuj49mafrEajH673?=
+	=?us-ascii?Q?0NJ2Hi2jGJSoIKhqtB4/UMCKSjVwK/hAx4bhj1aLKpZSea0g26gBCp+rzEK/?=
+ =?us-ascii?Q?cJLEO+/mRfYfXsBQFG4JCmwQz1QAK+9/64soshrOiJkU/kSodDt+aoeDGDg7?=
+ =?us-ascii?Q?LLMcKVfiJ3fPRcNJuqxER5mCnQQEAaKFJOaG5MwpBO7Qe6z9cfzvFZxcQbgi?=
+ =?us-ascii?Q?GTbexLRg1UcVMjsnPxue1EkGg+g/vcZGy+flVvk/9J//e0dGb6H5b7Ll43cB?=
+ =?us-ascii?Q?1jHM2SaZEdJolJow5WMOb6nh6gI4UaIEpAeHtocIlNfc2Jto+EBtMRg/cUq4?=
+ =?us-ascii?Q?gcmFc0vVPHJX5igBo3szAfUDlZWgHUP8jmBEP+xbZd1Kupn3M8JlnHJvdXlT?=
+ =?us-ascii?Q?nlJqy0QEB8gGBizcuhBfblBHfY3Eo2VWu06XuGl0l7uJnzCZD9YIosy6JRhY?=
+ =?us-ascii?Q?6g66eFlv/KT8lJxEMXRbzAkikxmF4AfPIuGGiPj7rUKvPBVIVHgtb5uP5uEZ?=
+ =?us-ascii?Q?Cv+nBPjmuLMRoSTH7YSHq8iDGOIvqFP7JSNcJUL7QxhJb0bG5bqa5LYttdJB?=
+ =?us-ascii?Q?W/5ozuAKEJsLcgeisNWOJiVA/gdUlDS06E1uM9PXxD+UhD0L3sWRxO+OA2sD?=
+ =?us-ascii?Q?Br2e5gcAR6WjnG2x6XkXk7ZOSYETcddfrWclpxmLAYsBHL9vEHkhYHm0aBCh?=
+ =?us-ascii?Q?zTuwx24bGz9DDWjLEAcbnEPI+/oCR5cOC5tcbuUaZcFb4uqLMZnPLEaT+qx8?=
+ =?us-ascii?Q?Wh+QcpZe8IVhqO5P3356UCYmJ3RXjASPGAcLUvUC7F/lcYG3YlTX8Fcme3jr?=
+ =?us-ascii?Q?NBnJO1oK7yT/nB+fqUJW20p7dBptIY95mT9dIekPsk2HZWsdyshP8GPBalWG?=
+ =?us-ascii?Q?v/PoJixUb/lae+W2LeMHGWpthaweuVDveXKlC7EiJTdukJuecvUype1hfcCV?=
+ =?us-ascii?Q?AT1R615ek7ZYLgBk44bdtLaSUc6QtLxlaTXKw0i+F8MhooFiU7nrxVTbgydw?=
+ =?us-ascii?Q?XR/lW6xRXG1FV1YsF2RsTqwqrvgdxykAUlM/NfbpTjgi9MMFbVjgE9M7GPMn?=
+ =?us-ascii?Q?laLmIYv00vCFb82k8mnqeHV+X1WXldDxEjmzcgk1pHJwKha6e43x+sP1/bX1?=
+ =?us-ascii?Q?ZVlGAaHAAXvya8B2RRtRspZ+tZcaQw/B5I2RBHSI3XSPiUl9RWinysuymjEA?=
+ =?us-ascii?Q?jLbVIaMmGovisGe+lLR1qldDE3HTyBLf6dyDOCFq9e1LsARafgyGahNuepRk?=
+ =?us-ascii?Q?IA5UCLWn8Po5kEeoLnGx806N1NBciJCQ3lM7CWBrjWFGmammWFle76WhNwMc?=
+ =?us-ascii?Q?fW068dUzg+Zdk5wrPwbbZLOXKbf6FMUeStnBQcvbRtynoVAXpA7WijrlASzd?=
+ =?us-ascii?Q?KEVZ20J3EsjGULqlKsAHxFyDsyruRa19vCn19Tl1Nv1vTeNweoacSY5xeDC6?=
+ =?us-ascii?Q?XsHXDaB+Gxy8Qtm7jOdTxcfH/xZ+tnblFnDDjARG/Z4oqKFJANfmuoDcapSP?=
+ =?us-ascii?Q?YjQK/wJV9L0tVBlPnP05Zjla+XnQ/Qsmr0WvqzxG3kBp1WxWiB3RPjGwdFfJ?=
+ =?us-ascii?Q?IusiljHE7+GDbmXKYa4Y7gUmg3RJfHJKsY6d?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013)(7416014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 04:16:09.4212
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 04:16:26.7826
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35ca6ff4-8702-4b44-d31d-08ddeb69c6c7
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2072109-96ff-4545-052e-08ddeb69d11a
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002322.namprd03.prod.outlook.com
+	CY4PEPF0000E9D7.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6818
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPF8002542C7
 
-sd->shared is ever only used for sd_llc_shared and the sd->shared of
-lower domains are never referenced by the scheduler. Subsequent
-optimization will bloat the size of sd->shared and allocation of
-redundant "sd->shared" can be expensive.
+"rq->nohz_tick_stopped" always follows the state of CPU on
+"nohz.idle_cpus_mask". Use the local rq indicator instead of checking
+for the CPU on the "idle_cpus_mask".
 
-sd_llc is always a !SD_OVERLAP domain and it's children are always a
-subset of the domain, thus the degeneration of a SD_SHARE_LLC  domain
-implies that it either contains a single CPU, or its span matches with
-that of a its child domain.
+Use READ_ONCE() and WRITE_ONCE() for "rq->nohz_tick_stopped" to ensure
+update_nohz_stats() always sees the latest value.
 
-Initialize a single level of per-CPU sched_domain_shared objects instead
-of doing it for each topology level. Assign sd->shared to the highest
-SD_SHARE_LLC domain and rely on the degeneration path to pass it to the
-correct topology level.
+This cleanup is necessary to avoid the number of references to the
+global "nohz.idle_cpus_mask" to ease the transition to a distributed
+nohz idle tracking strategy.
+
+No functional changes intended.
 
 Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
 Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 ---
-Valentin, Peter,
+ kernel/sched/fair.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Was this ever attempted in the past? Is there some interesting topology
-out there that I'm missing where this wouldn't work?
----
- include/linux/sched/topology.h |   1 -
- kernel/sched/topology.c        | 101 +++++++++++++++++++++++----------
- 2 files changed, 71 insertions(+), 31 deletions(-)
-
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index bbcfdf12aa6e..d816911de435 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -168,7 +168,6 @@ typedef int (*sched_domain_flags_f)(void);
- 
- struct sd_data {
- 	struct sched_domain *__percpu *sd;
--	struct sched_domain_shared *__percpu *sds;
- 	struct sched_group *__percpu *sg;
- 	struct sched_group_capacity *__percpu *sgc;
- };
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 1104d931c015..f3ebb9e8fe00 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -679,6 +679,9 @@ static void update_top_cache_domain(int cpu)
- 	if (sd) {
- 		id = cpumask_first(sched_domain_span(sd));
- 		size = cpumask_weight(sched_domain_span(sd));
-+
-+		/* If sd_llc exists, sd_llc_shared should exist too. */
-+		WARN_ON_ONCE(!sd->shared);
- 		sds = sd->shared;
- 	}
- 
-@@ -727,6 +730,13 @@ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
- 		if (sd_parent_degenerate(tmp, parent)) {
- 			tmp->parent = parent->parent;
- 
-+			/* Pick reference to parent->shared. */
-+			if (parent->shared) {
-+				WARN_ON_ONCE(tmp->shared);
-+				tmp->shared = parent->shared;
-+				parent->shared = NULL;
-+			}
-+
- 			if (parent->parent) {
- 				parent->parent->child = tmp;
- 				parent->parent->groups->flags = tmp->flags;
-@@ -776,6 +786,7 @@ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
- }
- 
- struct s_data {
-+	struct sched_domain_shared * __percpu *sds;
- 	struct sched_domain * __percpu *sd;
- 	struct root_domain	*rd;
- };
-@@ -783,6 +794,7 @@ struct s_data {
- enum s_alloc {
- 	sa_rootdomain,
- 	sa_sd,
-+	sa_sd_shared,
- 	sa_sd_storage,
- 	sa_none,
- };
-@@ -1529,6 +1541,9 @@ static void set_domain_attribute(struct sched_domain *sd,
- static void __sdt_free(const struct cpumask *cpu_map);
- static int __sdt_alloc(const struct cpumask *cpu_map);
- 
-+static void __sds_free(struct s_data *d, const struct cpumask *cpu_map);
-+static int __sds_alloc(struct s_data *d, const struct cpumask *cpu_map);
-+
- static void __free_domain_allocs(struct s_data *d, enum s_alloc what,
- 				 const struct cpumask *cpu_map)
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 61b59fd75ced..af9f2c1e93f8 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -12463,10 +12463,10 @@ void nohz_balance_exit_idle(struct rq *rq)
  {
-@@ -1540,6 +1555,9 @@ static void __free_domain_allocs(struct s_data *d, enum s_alloc what,
- 	case sa_sd:
- 		free_percpu(d->sd);
- 		fallthrough;
-+	case sa_sd_shared:
-+		__sds_free(d, cpu_map);
-+		fallthrough;
- 	case sa_sd_storage:
- 		__sdt_free(cpu_map);
- 		fallthrough;
-@@ -1555,9 +1573,11 @@ __visit_domain_allocation_hell(struct s_data *d, const struct cpumask *cpu_map)
+ 	WARN_ON_ONCE(rq != this_rq());
  
- 	if (__sdt_alloc(cpu_map))
- 		return sa_sd_storage;
-+	if (__sds_alloc(d, cpu_map))
-+		return sa_sd_shared;
- 	d->sd = alloc_percpu(struct sched_domain *);
- 	if (!d->sd)
--		return sa_sd_storage;
-+		return sa_sd_shared;
- 	d->rd = alloc_rootdomain();
- 	if (!d->rd)
- 		return sa_sd;
-@@ -1577,9 +1597,6 @@ static void claim_allocations(int cpu, struct sched_domain *sd)
- 	WARN_ON_ONCE(*per_cpu_ptr(sdd->sd, cpu) != sd);
- 	*per_cpu_ptr(sdd->sd, cpu) = NULL;
+-	if (likely(!rq->nohz_tick_stopped))
++	if (likely(!READ_ONCE(rq->nohz_tick_stopped)))
+ 		return;
  
--	if (atomic_read(&(*per_cpu_ptr(sdd->sds, cpu))->ref))
--		*per_cpu_ptr(sdd->sds, cpu) = NULL;
--
- 	if (atomic_read(&(*per_cpu_ptr(sdd->sg, cpu))->ref))
- 		*per_cpu_ptr(sdd->sg, cpu) = NULL;
+-	rq->nohz_tick_stopped = 0;
++	WRITE_ONCE(rq->nohz_tick_stopped, 0);
+ 	cpumask_clear_cpu(rq->cpu, nohz.idle_cpus_mask);
+ 	atomic_dec(&nohz.nr_cpus);
  
-@@ -1709,16 +1726,6 @@ sd_init(struct sched_domain_topology_level *tl,
- 		sd->cache_nice_tries = 1;
- 	}
+@@ -12514,14 +12514,14 @@ void nohz_balance_enter_idle(int cpu)
+ 	 * *_avg. The CPU is already part of nohz.idle_cpus_mask so the clear
+ 	 * of nohz.has_blocked can only happen after checking the new load
+ 	 */
+-	if (rq->nohz_tick_stopped)
++	if (READ_ONCE(rq->nohz_tick_stopped))
+ 		goto out;
  
--	/*
--	 * For all levels sharing cache; connect a sched_domain_shared
--	 * instance.
--	 */
--	if (sd->flags & SD_SHARE_LLC) {
--		sd->shared = *per_cpu_ptr(sdd->sds, sd_id);
--		atomic_inc(&sd->shared->ref);
--		atomic_set(&sd->shared->nr_busy_cpus, sd_weight);
--	}
--
- 	sd->private = sdd;
+ 	/* If we're a completely isolated CPU, we don't play: */
+ 	if (on_null_domain(rq))
+ 		return;
  
- 	return sd;
-@@ -2295,10 +2302,6 @@ static int __sdt_alloc(const struct cpumask *cpu_map)
- 		if (!sdd->sd)
- 			return -ENOMEM;
+-	rq->nohz_tick_stopped = 1;
++	WRITE_ONCE(rq->nohz_tick_stopped, 1);
  
--		sdd->sds = alloc_percpu(struct sched_domain_shared *);
--		if (!sdd->sds)
--			return -ENOMEM;
--
- 		sdd->sg = alloc_percpu(struct sched_group *);
- 		if (!sdd->sg)
- 			return -ENOMEM;
-@@ -2309,7 +2312,6 @@ static int __sdt_alloc(const struct cpumask *cpu_map)
+ 	cpumask_set_cpu(cpu, nohz.idle_cpus_mask);
+ 	atomic_inc(&nohz.nr_cpus);
+@@ -12551,7 +12551,7 @@ static bool update_nohz_stats(struct rq *rq)
+ 	if (!rq->has_blocked_load)
+ 		return false;
  
- 		for_each_cpu(j, cpu_map) {
- 			struct sched_domain *sd;
--			struct sched_domain_shared *sds;
- 			struct sched_group *sg;
- 			struct sched_group_capacity *sgc;
+-	if (!cpumask_test_cpu(cpu, nohz.idle_cpus_mask))
++	if (!READ_ONCE(rq->nohz_tick_stopped))
+ 		return false;
  
-@@ -2320,13 +2322,6 @@ static int __sdt_alloc(const struct cpumask *cpu_map)
- 
- 			*per_cpu_ptr(sdd->sd, j) = sd;
- 
--			sds = kzalloc_node(sizeof(struct sched_domain_shared),
--					GFP_KERNEL, cpu_to_node(j));
--			if (!sds)
--				return -ENOMEM;
--
--			*per_cpu_ptr(sdd->sds, j) = sds;
--
- 			sg = kzalloc_node(sizeof(struct sched_group) + cpumask_size(),
- 					GFP_KERNEL, cpu_to_node(j));
- 			if (!sg)
-@@ -2368,8 +2363,6 @@ static void __sdt_free(const struct cpumask *cpu_map)
- 				kfree(*per_cpu_ptr(sdd->sd, j));
- 			}
- 
--			if (sdd->sds)
--				kfree(*per_cpu_ptr(sdd->sds, j));
- 			if (sdd->sg)
- 				kfree(*per_cpu_ptr(sdd->sg, j));
- 			if (sdd->sgc)
-@@ -2377,8 +2370,6 @@ static void __sdt_free(const struct cpumask *cpu_map)
- 		}
- 		free_percpu(sdd->sd);
- 		sdd->sd = NULL;
--		free_percpu(sdd->sds);
--		sdd->sds = NULL;
- 		free_percpu(sdd->sg);
- 		sdd->sg = NULL;
- 		free_percpu(sdd->sgc);
-@@ -2386,6 +2377,42 @@ static void __sdt_free(const struct cpumask *cpu_map)
- 	}
- }
- 
-+static int __sds_alloc(struct s_data *d, const struct cpumask *cpu_map)
-+{
-+	int j;
-+
-+	d->sds = alloc_percpu(struct sched_domain_shared *);
-+	if (!d->sds)
-+		return -ENOMEM;
-+
-+	for_each_cpu(j, cpu_map) {
-+		struct sched_domain_shared *sds;
-+
-+		sds = kzalloc_node(sizeof(struct sched_domain_shared),
-+				GFP_KERNEL, cpu_to_node(j));
-+		if (!sds)
-+			return -ENOMEM;
-+
-+		*per_cpu_ptr(d->sds, j) = sds;
-+	}
-+
-+	return 0;
-+}
-+
-+static void __sds_free(struct s_data *d, const struct cpumask *cpu_map)
-+{
-+	int j;
-+
-+	if (!d->sds)
-+		return;
-+
-+	for_each_cpu(j, cpu_map)
-+		kfree(*per_cpu_ptr(d->sds, j));
-+
-+	free_percpu(d->sds);
-+	d->sds = NULL;
-+}
-+
- static struct sched_domain *build_sched_domain(struct sched_domain_topology_level *tl,
- 		const struct cpumask *cpu_map, struct sched_domain_attr *attr,
- 		struct sched_domain *child, int cpu)
-@@ -2537,8 +2564,19 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
- 		unsigned int imb_span = 1;
- 
- 		for (sd = *per_cpu_ptr(d.sd, i); sd; sd = sd->parent) {
-+			struct sched_domain *parent = sd->parent;
- 			struct sched_domain *child = sd->child;
- 
-+			/* Attach sd->shared to the topmost SD_SHARE_LLC domain. */
-+			if ((sd->flags & SD_SHARE_LLC) &&
-+			    (!parent || !(parent->flags & SD_SHARE_LLC))) {
-+				int llc_id = cpumask_first(sched_domain_span(sd));
-+
-+				sd->shared = *per_cpu_ptr(d.sds, llc_id);
-+				atomic_set(&sd->shared->nr_busy_cpus, sd->span_weight);
-+				atomic_inc(&sd->shared->ref);
-+			}
-+
- 			if (!(sd->flags & SD_SHARE_LLC) && child &&
- 			    (child->flags & SD_SHARE_LLC)) {
- 				struct sched_domain __rcu *top_p;
-@@ -2591,6 +2629,9 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
- 		if (!cpumask_test_cpu(i, cpu_map))
- 			continue;
- 
-+		if (atomic_read(&(*per_cpu_ptr(d.sds, i))->ref))
-+			*per_cpu_ptr(d.sds, i) = NULL;
-+
- 		for (sd = *per_cpu_ptr(d.sd, i); sd; sd = sd->parent) {
- 			claim_allocations(i, sd);
- 			init_sched_groups_capacity(i, sd);
+ 	if (!time_after(jiffies, READ_ONCE(rq->last_blocked_load_update_tick)))
 -- 
 2.34.1
 
