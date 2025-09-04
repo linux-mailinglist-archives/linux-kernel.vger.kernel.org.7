@@ -1,111 +1,135 @@
-Return-Path: <linux-kernel+bounces-800892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97A3B43D65
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:37:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B24AB43D68
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73DF63AAABB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:37:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5BD048233C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFA130275E;
-	Thu,  4 Sep 2025 13:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A873043B2;
+	Thu,  4 Sep 2025 13:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hQu8COUH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cTt8cB6V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643BF2629C
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44F514AA9;
+	Thu,  4 Sep 2025 13:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756993055; cv=none; b=UFXeerGVE/1a8zHZ2+5WojX6JG1a8qWzjpOQ/DCIwfpxFjHLzb447srE4vFSIUTBCNL65RZVKjND5ThGPtpfLl2OJHKn6TiH6dAxithp6LLB3hTZwul9jNlNU10CuaOiaeUBGy4GDbqvc9u0YAQaSdnxC0Esrf0SL/aGVyNdRz4=
+	t=1756993073; cv=none; b=EZwEh4KU0NcZHX7JUYWB9X24LvvAG60N978yxFEzDFbCX+kIjGGPZbj8glfuaU9f5+NfBeUH1gtwkGoMZT10cPpkfbeakM3hEkZFA/pef0oQRpdklyswOJu+r1Lip+K0I6t/9sIF+LT8b2ha+y/kF0vJTZlm3aQcMH9cvf/Suic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756993055; c=relaxed/simple;
-	bh=WU6tQpzrmdXl89ghGhurVpS7C+6D5xA5aYEdzDaTZ8A=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mDIQtFtwgZJmEVU1ng2dbpHm35eRrJx03IIjs2I8ISfa9NudSTwyegSyVJLFjF+azd5w5I4PzUrgHQjUjli3ZxhnAd+tv1Z8pazng0ZRtzZU3Cz7KiNyreYFWdakouL4Vk3cvACEHu0xzEgJ1rCGKbRBGegLg/cEGPXVzC5FulQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hQu8COUH; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756993054; x=1788529054;
-  h=date:from:to:subject:message-id:references:mime-version:
-   in-reply-to;
-  bh=WU6tQpzrmdXl89ghGhurVpS7C+6D5xA5aYEdzDaTZ8A=;
-  b=hQu8COUHZuZXtnroWTJMjjkKipFEaFe8YgaM2EhuQC1BWs2skUOsfAiH
-   MvjK0oVOMLAi5t7VsKNxpb2NB56SxSz/Va0EOqJHkdmuIxsSa3UEN/NL+
-   asWJ4t27RFztUueFfmrBW752kJy18E3jfdG6mudkYENOkYOtZ2ux/kQUm
-   1pIny+NlO3XcFQW0YtdtBO5dYA+VjdXJGHCHGWODHEdb/tMAyeSUEWW0R
-   cLOQTJUYR0tE9KIGNE0VvVISI/iU2zl/Xe5M+HoQ4mBIw6x9W0BdkCy/v
-   0qtRrCsZJ3DDnm/+5NAdli66T4KJC1O0bO6805kh4ECaPn6F9XfoEyIkp
-   A==;
-X-CSE-ConnectionGUID: lEcM2/36TeSsE+Ouq22N/g==
-X-CSE-MsgGUID: nGANFnM/Q6avvo5fQVDIpA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="59441413"
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="59441413"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 06:37:33 -0700
-X-CSE-ConnectionGUID: u/UrqEt+SSiYqp+ytxt0Sg==
-X-CSE-MsgGUID: bYfeoYc6SOO31hSDk0Ef6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
-   d="scan'208";a="172001622"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 06:37:31 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uuA9X-0000000BHSP-2wRg;
-	Thu, 04 Sep 2025 16:37:27 +0300
-Date: Thu, 4 Sep 2025 16:37:27 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
-	linux-mm@kvack.org, llvm@lists.linux.dev,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v1 1/1] mapple_tree: Fix build error (`make W=1`)
-Message-ID: <aLmWF3V8ILOkL8W2@smile.fi.intel.com>
-References: <20250904090423.2293933-1-andriy.shevchenko@linux.intel.com>
- <6nk7wvp2vbsc5myxnx4mfohpq4yk4ixazkvif4hntilpuz7jtw@a2q2if4nc7kn>
+	s=arc-20240116; t=1756993073; c=relaxed/simple;
+	bh=iEjmw+Y2bpLiaHgJC0+lp77LIFLzY6oAYKyYoQa1MUI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gpK3xEi6cytCFekyyaHjhRsG0aYbHB176v6+GOBeRG20Jdfd/u3sfrqxzjFh2ZpmdJVsQPVjPqJrmOPUy2ttwHuRt4SZnq+kX08FX5BF8R5TWLkdGYM2AYj1D9bdrUqUQzoARKLs57ND/jKzty4d9443DSxyVA5sL3EZzdVcFng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cTt8cB6V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75013C4CEF0;
+	Thu,  4 Sep 2025 13:37:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756993072;
+	bh=iEjmw+Y2bpLiaHgJC0+lp77LIFLzY6oAYKyYoQa1MUI=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=cTt8cB6V/YDH4q7TTzvAD2KdR/EqfNt12mG98LU4Bw9dH+I9c7jQYK8jqX6/xCrgb
+	 OHe5Wk9PlSJP8AAiw0SaHIlOu21xFkWkFEwLlCMzR/qVp6nMPUS+ilncKbDyTtWdMD
+	 Y0472waDfltsSQgJ4SiqK4sm+XFVyKccoGcF9v9gbdlizGZQ2MJfusEzlAN76qx6V5
+	 /Umm5z4Vt8VP/ko/tXlvaIhrLHO+KpmreYXAj6QgtpG4hCn5/+kkTBlwvdsW6P5+x+
+	 ANZYjiZaUWIdntcLk3ABjWQZaEyWj98M2mK7XiMuQNenNlleU3uvMPkDNvxEhWZSwD
+	 SvVpSOTQeKnSg==
+Message-ID: <e31d35c8-b2b2-4301-a13c-e18ad83a21d6@kernel.org>
+Date: Thu, 4 Sep 2025 15:37:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6nk7wvp2vbsc5myxnx4mfohpq4yk4ixazkvif4hntilpuz7jtw@a2q2if4nc7kn>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/11] arm64: dts: amlogic: Add cache information to
+ the Amlogic SM1 SoC
+To: Anand Moon <linux.amoon@gmail.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "moderated list:ARM/Amlogic Meson SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/Amlogic Meson SoC support"
+ <linux-amlogic@lists.infradead.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250825065240.22577-1-linux.amoon@gmail.com>
+ <20250825065240.22577-3-linux.amoon@gmail.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250825065240.22577-3-linux.amoon@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 04, 2025 at 09:32:52AM -0400, Liam R. Howlett wrote:
-> * Andy Shevchenko <andriy.shevchenko@linux.intel.com> [250904 05:04]:
-> > clang complains about unused function:
-> > 
-> > lib/maple_tree.c:179:19: error: unused function 'mt_alloc_bulk' [-Werror,-Wunused-function]
-> > 
-> > Fix this by removing unused code.
-> > 
-> > Fixes: a48d52b2d21b ("maple_tree: Convert forking to use the sheaf interface")
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On 25/08/2025 08:51, Anand Moon wrote:
+> As per S905X3 datasheet add missing cache information to the Amlogic
+> SM1 SoC. ARM Cortex-A55 CPU uses unified L3 cache instead of L2 cache.
 > 
-> Thanks.  This should be squashed into the patch listed in the fixes tag
-> since it's not a stable commit yet.
+> - Each Cortex-A55 core has 32KB of L1 instruction cache available and
+> 	32KB of L1 data cache available.
+> - Along with 256KB Unified L2 cache.
+> 
+> Cache memory significantly reduces the time it takes for the CPU
+> to access data and instructions, leading to faster program execution
+> and overall system responsiveness.
 
-I fine with any solution, I just want this to be fixes rather sooner. So, please go ahead!
 
--- 
-With Best Regards,
-Andy Shevchenko
+This statement is obvious and completely redundant. Drop it from all of
+the commits.
 
-
+Best regards,
+Krzysztof
 
