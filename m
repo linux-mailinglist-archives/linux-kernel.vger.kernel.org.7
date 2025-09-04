@@ -1,83 +1,100 @@
-Return-Path: <linux-kernel+bounces-801229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1D8B4426B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:14:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F7EAB4426E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DB851C86CAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:15:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 62AA44E5E20
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C552F5306;
-	Thu,  4 Sep 2025 16:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124B92F60C9;
+	Thu,  4 Sep 2025 16:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtnaQX91"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBu3SAFq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4532F1FD8;
-	Thu,  4 Sep 2025 16:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4092DD60E;
+	Thu,  4 Sep 2025 16:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757002476; cv=none; b=TjpTkGoEL8nP8cHq2hJpwbXuRyErhlq0XtolGV4yGh/sHaN5hHIRrmnc7BOHafi33cnXmmag8l2f/7JWrxi+krVf0hXIUBtq2/ZoK4P+e2WlYCGKfvumphzSG21RpJ+UDZajVSy0KiMf4TzufNOXToFt3jGWPXy2QK0tS7jMkzM=
+	t=1757002490; cv=none; b=XndrU1cVZGg4wOM40ed6hAlfoT3Vu9kRcnsuFDCB3H1SIv1T63axOxkJDBsQ5TBV5UP4Cb2PxM17IUzPZJZhIHzRW3mVOnhFDDuz+1rTmg7ARZVHdHOnkYIX5jfgHW/J11ZJY+5wsAsI9QKt7Gy9+3oNqwL9nIDvCze9CK89y7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757002476; c=relaxed/simple;
-	bh=Nc22WOHnx23uoyvBPLboSQ4H5Xk+n08JTo2ZpvR8CDc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=Sr0ItO1j9JFte9zE90OHSYxsOC1CGHeOt+HqyJVjT7VWD8SxJMHSZKcst//3QX6LNi3F9txGnQ0KG/8kGIlID8kBL9gLSkk4lKgzkEJbi/m+UXGNpiKu8JtKe+6I5FO6jn5JZpz1BYjC0Xp/EmW+hZI+kQOf8b6/4rm+NkDALMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CtnaQX91; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B8FFC4CEF6;
-	Thu,  4 Sep 2025 16:14:33 +0000 (UTC)
+	s=arc-20240116; t=1757002490; c=relaxed/simple;
+	bh=rEMEwwiqX71jcWwIKg4FqSuCHtmTX8Sm6z7xLdJeohA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Qt8/msuHJBRaJDypVVc6X+t2IwpRnHZocrqjHFWHzXBjw6SdsJONQKOPTAZTMGDOZvXOB74TDfZ3AM5EVQ+r26W7ZVXdkzMObBLvuTrwb2x/y+3VCKY+N5w7pewnk2DCLdGhE/MGitUqo9fLC49cnJv76sAHVC4g46JnCzgS3/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBu3SAFq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACEB2C4CEF0;
+	Thu,  4 Sep 2025 16:14:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757002475;
-	bh=Nc22WOHnx23uoyvBPLboSQ4H5Xk+n08JTo2ZpvR8CDc=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=CtnaQX91CBxaqcLbHzHoXDg1+Mit302FyXwOGwSZ/7XFMkCgDzyPMLrxuWopx7Cqf
-	 LgSKs9vegeJhXi06GHs9Qp6Ty70eho8LtQrC3cr68I3ldpJ+9z0AotBZ3cJral84hu
-	 whY0ppIv9cXx10tSoUWlgS9PwkG9786I4m5VRFNFM/fHJxijaVZ9Pz3JM2+0/nTqew
-	 mczAmNf5UF9W8p4DfFZ8WUTfmWUJrrxh+SNar9htf0HumhfMYGHuahAkeXRQP/bLB9
-	 Em2OgubLpsRtDt/25K5ECSdtKLtAz0eM2DOScVUIiOTLCzdV30rksiDN4iYNlg79TV
-	 ZIFMiJnjrJ1Uw==
+	s=k20201202; t=1757002489;
+	bh=rEMEwwiqX71jcWwIKg4FqSuCHtmTX8Sm6z7xLdJeohA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=LBu3SAFqqnRZNJy0wmMXB8N1fWO3P+KG8YnKIoLXdFC3rvCnrAnWUIgtr+5j3SYC4
+	 h6IiRYnflaajuAfo+q08qeTM6Uncn6B0HOHW8CXSWBKkGPpxQyStX6e+4cCE/4prHk
+	 J1iKBglX59vHRPrRkDDha6xlBGtVElxGjz5NP/gigH1i0npkbvCmkOt0olNslkFMo/
+	 znCpV9nwhiNc9gF26DVqos5ypl1vczW+F4+n3K/U2iDAwXvMe8Q8lfoBaga5xSQI6B
+	 mIfYJTScp3Ws02O/hnB60sEllOvxjlYkccFv/SxBV1ukGPKiTZ1jIdPM/Hrfk0mpC2
+	 Itqcji/NBlo4g==
+Date: Thu, 4 Sep 2025 11:14:48 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+	mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+	kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+	kw@linux.com, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	qiang.yu@oss.qualcomm.com, quic_krichai@quicinc.com,
+	quic_vbadigan@quicinc.com
+Subject: Re: [PATCH v6 1/3] PCI: qcom: Add equalization settings for 8.0 GT/s
+ and 32.0 GT/s
+Message-ID: <20250904161448.GA1265317@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 04 Sep 2025 18:14:31 +0200
-Message-Id: <DCK5E8KIEV7M.25EFO2EE7JS9V@kernel.org>
-To: "Sakari Ailus" <sakari.ailus@linux.intel.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v4 1/2] device property: Add scoped fwnode child node
- iterators
-Cc: =?utf-8?q?Jean-Fran=C3=A7ois_Lessard?= <jefflessard3@gmail.com>,
- "Wolfram Sang" <wsa+renesas@sang-engineering.com>, "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>, "Daniel Scally" <djrscally@gmail.com>,
- "Heikki Krogerus" <heikki.krogerus@linux.intel.com>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Javier Carrasco" <javier.carrasco.cruz@gmail.com>,
- <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-acpi@vger.kernel.org>
-References: <20250902190443.3252-1-jefflessard3@gmail.com>
- <20250902190443.3252-2-jefflessard3@gmail.com>
- <aLhAKJBUNQVH1Vmf@kekkonen.localdomain>
- <DCJC7Q9MZEM3.34FU7BXXZ7UGF@kernel.org>
- <aLkqE9c9w9m4Axsp@kekkonen.localdomain>
- <DCJTOIQ4Q0Z5.Q2UE5AQU1X35@kernel.org>
- <aLlDJETaWTjiSP0L@kekkonen.localdomain>
- <DCJVYUINZ7KM.7RCV9P9KHTVM@kernel.org>
- <aLl-ABtFi2R9Wc1a@kekkonen.localdomain>
-In-Reply-To: <aLl-ABtFi2R9Wc1a@kekkonen.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904065225.1762793-2-ziyue.zhang@oss.qualcomm.com>
 
-On Thu Sep 4, 2025 at 1:54 PM CEST, Sakari Ailus wrote:
-> If you're concerned of the use on ACPI platforms, none of the drivers usi=
-ng
-> the two available variants list any ACPI IDs, signifying they're not used
-> on ACPI systems -- I don't think they ever have been.
+On Thu, Sep 04, 2025 at 02:52:23PM +0800, Ziyue Zhang wrote:
+> Add lane equalization setting for 8.0 GT/s and 32.0 GT/s to enhance link
+> stability and avoid AER Correctable Errors reported on some platforms
+> (eg. SA8775P).
+>
+> 8.0 GT/s, 16.0 GT/s and 32.0 GT/s require the same equalization setting.
+> This setting is programmed into a group of shadow registers, which can be
+> switched to configure equalization for different speeds by writing 00b,
+> 01b and 10b to `RATE_SHADOW_SEL`.
+> 
+> Hence program equalization registers in a loop using link speed as index,
+> so that equalization setting can be programmed for 8.0 GT/s, 16.0 GT/s
+> and 32.0 GT/s.
+> 
+> Fixes: 489f14be0e0a ("arm64: dts: qcom: sa8775p: Add pcie0 and pcie1 nodes")
+> 
 
-Great -- sounds reasonable then.
+Drop this blank line.
+
+> Co-developed-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+
+> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.c
+
+> +	for (speed = PCIE_SPEED_8_0GT; speed <= pcie_link_speed[pci->max_link_speed]; ++speed) {
+
+Use "speed++" when there's no need for preincrement to follow typical
+drivers/pci/ usage.
+
+No need to repost for these.
 
