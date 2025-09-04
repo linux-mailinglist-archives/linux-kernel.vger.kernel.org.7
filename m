@@ -1,110 +1,94 @@
-Return-Path: <linux-kernel+bounces-800119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B28FB43399
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:20:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B960B433F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2576F173784
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:19:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4148B3A51BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A098829B217;
-	Thu,  4 Sep 2025 07:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003EE29BDAB;
+	Thu,  4 Sep 2025 07:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ak5tC+BF"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MRE6gby3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3436D2868A6
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 07:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D3E29B78E;
+	Thu,  4 Sep 2025 07:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756970387; cv=none; b=bjNqb0iIjxjz4QSuuXKgy6lmYcY1YTCm3OBJkxtxoXp8O/nsN+V4quzYtxw0RYL07QoCA3cfL+tg5qKdOQLYB/f5ifOEceotVdN7+KF2R8jVUMg+vy2t05BxDNwqNcmG9BYri/sScoYV7dq53PHlrC9HS7fJjy+N1eeoGh5LkT4=
+	t=1756970959; cv=none; b=F+1EfCaHPA/TGj9aIG4hu9kl5xuNE+jIJxV0M/hRC2Sdzwt9B/NLPtj+x9af8RBOrxiL3su2JY+rvvRzf+qZWDZkUtAma6BkG1ZFc7WiRN9dbbRiN3N90fMcj9cO+ws7j7fSXo9QZw1npX4TknoiIsd9k0nVDDDhGXy2sjmX9To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756970387; c=relaxed/simple;
-	bh=If26aWe6HDRuUd8BLxK/DNXNMPYO7QPBtdN29DandUs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=eh8ROZotbBEWzbph9F+HYpqgqIoZTCVPopQOkD0FvED1F+WYCl4I2tdq6ARiNRTDNgbM7hZQQCO2mdjSxAx5qIH9xfn4SHg7RYDP0IDtkTRF4EQla2xpOcMelLiDwKoS20tnOTiE0e4wTaNyD2O+y2tOgWrHzLm/8FVDVSMvw5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ak5tC+BF; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250904071943epoutp0471468a495f8ed35edf341a31962cb95b~iA0E5OF1K1017910179epoutp04o
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 07:19:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250904071943epoutp0471468a495f8ed35edf341a31962cb95b~iA0E5OF1K1017910179epoutp04o
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756970383;
-	bh=XIDY5zJ3pMt83TWBBmEEmGxMtm/5CHCj2NnIva/BZ98=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=ak5tC+BFukzrUTWfIQGVKoVs3fE3A1pMBMpvIbCCnxwXVljg8dReeZVJljr5b5tuj
-	 pvjMRqzqUEwrCTFeY9BdCBIAjRUw9KsLIPoexT2J8J+mQ1iFL+8mJAkRQZuL2hc7K4
-	 +NlnWziASrp6fpu9SlQ5thFrSPByo3MeHuUumzng=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250904071942epcas5p1c7fd121345ed8fc30e6c449b18f1e023~iA0ES--qd0357003570epcas5p17;
-	Thu,  4 Sep 2025 07:19:42 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.87]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cHW7x4cL9z2SSKX; Thu,  4 Sep
-	2025 07:19:41 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1~iA0C3ZhEO0357003570epcas5p10;
-	Thu,  4 Sep 2025 07:19:41 +0000 (GMT)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250904071939epsmtip1658d4b2730e1a080e4041b37c376d7cb~iA0BI2m9F0339503395epsmtip1d;
-	Thu,  4 Sep 2025 07:19:39 +0000 (GMT)
-From: Faraz Ata <faraz.ata@samsung.com>
-To: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, alim.akhtar@samsung.com
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rosa.pila@samsung.com,
-	pritam.sutar@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com
-Subject: [PATCH] dt-bindings: i2c: exynos5: add exynosautov920-hsi2c
- compatible
-Date: Thu,  4 Sep 2025 12:58:44 +0530
-Message-Id: <20250904072844.358759-1-faraz.ata@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756970959; c=relaxed/simple;
+	bh=ZfDC/ITMRgaGG6h9hvAFUqwnJEvgAnYkZF1Z1AGJOhw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=C2pBmGXcoK4da3sBzhsOqCegpF+p9W8Yc6UuSBAcueDQU4HZnxAqb4KYaFKQjjY+jsZZiz7ayy1JM8BARQ3IA5X4Xc8Pr6GqvrtStggUoHyCqTunKdAyirY0nuyV2lx3vnnD3I4OdREo8/1X/YTPTbMOR3me9WyuJo43kJYbJVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MRE6gby3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33DC3C4CEF0;
+	Thu,  4 Sep 2025 07:29:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756970958;
+	bh=ZfDC/ITMRgaGG6h9hvAFUqwnJEvgAnYkZF1Z1AGJOhw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=MRE6gby3g/PKtN4d283wXDO3RQCpNJ/cS0zZp9OYUHEYIN05Mb7fo42b7vw6srfUS
+	 wMRKT5W2AGlOl1EvLwXpVw4ZUruA69531j7AkHeSI9thGPhsufC+G1EsRB+0sWCfb2
+	 5RVrZhYzu8S52+Y3gCJATZteAQUoRz1Vm6JN3Sa3T4GdFAilkqzKUH3deOdywx9T9f
+	 pOzwHgfk4rpLBaL99ZJDtqfpoOSPSNGiz+LfJBE2Ucvkx5kNVCrYTam5DWaDKKPEIY
+	 gbDUNYEMkVJLOhXc6fkF3poKUHo98Z7bxuFGob0GnAFHT13GO760GOsnNugh4zco5n
+	 6wspu8B8OOapQ==
+From: Srinivas Kandagatla <srini@kernel.org>
+To: Chester Lin <chester62515@gmail.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Ciprian Costea <ciprianmarian.costea@nxp.com>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, imx@lists.linux.dev, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Matthias Brugger <mbrugger@suse.com>, NXP S32 Linux Team <s32@nxp.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Shawn Guo <shawnguo@kernel.org>
+In-Reply-To: <cover.1756800543.git.dan.carpenter@linaro.org>
+References: <cover.1756800543.git.dan.carpenter@linaro.org>
+Subject: Re: (subset) [PATCH v3 0/3] nvmem: s32g-ocotp: Add driver for S32G
+ OCOTP
+Message-Id: <175697095597.8283.15697258146228301679.b4-ty@kernel.org>
+Date: Thu, 04 Sep 2025 08:29:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1
-References: <CGME20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1@epcas5p1.samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Add "samsung,exynosautov920-hsi2c" dedicated compatible for
-HSI2C found in ExynosAutov920 SoC.
 
-Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
----
- Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, 02 Sep 2025 12:47:40 +0300, Dan Carpenter wrote:
+> This driver provides a way to access the On Chip One-Time Programmable
+> Controller (OCOTP) on the s32g chipset.  There are three versions of this
+> chip but they're compatible.
+> 
+> v3: Mostly small cleanups.  Re-order device tree entries.  Remove unused
+>     label.  Use dev_err_probe().
+> 
+> [...]
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-index 7ae8c7b1d006..207b95e392e5 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-+++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-@@ -38,6 +38,7 @@ properties:
-               - google,gs101-hsi2c
-               - samsung,exynos2200-hsi2c
-               - samsung,exynos850-hsi2c
-+              - samsung,exynosautov920-hsi2c
-           - const: samsung,exynosautov9-hsi2c
-       - const: samsung,exynos5-hsi2c    # Exynos5250 and Exynos5420
-         deprecated: true
+Applied, thanks!
+
+[1/3] dt-bindings: nvmem: Add the nxp,s32g-ocotp yaml file
+      commit: a3430382174a78a4a6b981feca44bcaa405e0f2c
+[2/3] nvmem: s32g-ocotp: Add driver for S32G OCOTP
+      commit: f7605ba1859724d44a7be4994335b31666110c84
+
+Best regards,
 -- 
-2.34.1
+Srinivas Kandagatla <srini@kernel.org>
 
 
