@@ -1,105 +1,83 @@
-Return-Path: <linux-kernel+bounces-801359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88802B4442B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:16:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBBBDB44432
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4904A1C838C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:16:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D64493BB0AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F04430DD09;
-	Thu,  4 Sep 2025 17:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8BE30AD04;
+	Thu,  4 Sep 2025 17:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IkxFS2Ik"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="dnyhiNRY"
+Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C071F75A6;
-	Thu,  4 Sep 2025 17:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EAE6223DFB;
+	Thu,  4 Sep 2025 17:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757006164; cv=none; b=UM9pd2Q4ZXyMR4uMUuyJKPtNsMaBut11sqtdbsggGPneL2ljCFHzQQU+G2WmpuuVU7VrezUNk6scjJ1ddASqQERhyzqUH04IY3aK6ndG88ftmi5pPu5aZQW8IGRIZh6Tt5nyikWzDRKJKpahEph/23y9QeWsUayoNq4ump/+jig=
+	t=1757006222; cv=none; b=BF/u276K1ITWO/xR3WecOvUNxlF7n4VZlbkkdKBdlIB4aAsL5QpgNgMNKZi2TzGYqWr4j356onrkfEJxqPDy2fqJrp2ga6mqJGY+iOjk+X3HwXEZTMu+IUS6mfRlWRIHvySPXD6FRNzRE8qU2seIV/6hxA2ClT01v3EAd/VwU/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757006164; c=relaxed/simple;
-	bh=RLDNaMvtTcDFLBRI8CRbBMtmCXNq09oCo1x8DhLKx1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cg/XpvfUE7R6PpMvLdKL1tZal2v5xR6SC+Q+6liqBZxqqSK8OVc+9pJG9zbN0IF9ZX5PFIpKDdIpLlWaNTGJCyUPA5v9hpT9vhNFxikylw8m6Ix9pHRgUd+SWwrCndwYW5gbGsd54zbXL/smpzp/3D5ubyOUa+964QJXwyvWSEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IkxFS2Ik; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E563C4CEF0;
-	Thu,  4 Sep 2025 17:16:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757006162;
-	bh=RLDNaMvtTcDFLBRI8CRbBMtmCXNq09oCo1x8DhLKx1c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IkxFS2IkdAtwB3Vh43Sjl55zEKa6+/w0Sx5c7pthtfcoAXDLknCNY2tzNpHe0s9BC
-	 /3Ub8kxvCHyb9NXPwBLME8V1kk0IOK6cB9fhjGbi3zsCCAR/2p+CCmFtAl2ekW/0dQ
-	 Zkfzn7Vu9SxEL0ZubGSvnCTr2PrKq4+L2T1Rr7g0/Sy9Qh1r8F7xShzd+U0OSIQhuI
-	 uESS+8YbK/EaO6jSHzHdy2z5qwsdtly65It5Xdhuy9no0BqLUmjOYCKL5IcP1IeSg1
-	 y9lU4eH4PICyqKBJ/RQyzg5YEcyGANlf81qiomNJX+MJzXM0FqXbmZrBqVLNqbQBNg
-	 yOnPNg/iU3eKA==
-Date: Thu, 4 Sep 2025 10:16:00 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] LoongArch: Fix unreachable instruction warnings
- about entry functions
-Message-ID: <kjiyla6qj3l7ezspitulrdoc5laj2e6hoecvd254hssnpddczm@g6nkaombh6va>
-References: <20250901072156.31361-1-yangtiezhu@loongson.cn>
- <20250901072156.31361-4-yangtiezhu@loongson.cn>
- <ots6w2ntyudj5ucs5eowncta2vmfssatpcqwzpar3ekk577hxi@j45dd4dmwx6x>
- <3da2092b-e6ca-a7a1-9459-c2754adf19aa@loongson.cn>
+	s=arc-20240116; t=1757006222; c=relaxed/simple;
+	bh=PwEkw/L3lPTN7Vt5BEzJjtAPyOMvzL2GIs+DqSnYTJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WVmwfExwK+OO62Yn57ezcYJNYBVvmeSOxJkEXmxu+1yfQUb4xCE9t+SjdIhOItOlEElLpSDo6HIncWInj9bGQOLN5uKCO7R88l/E1wjORf2hDk6cSWBAt+2KReos0z6jCgBHhPogQxcqMyrEmJVZdQgu6BR80BlNXMwINNa7T5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=dnyhiNRY; arc=none smtp.client-ip=166.84.1.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
+Received: from [192.168.8.212] (kenny-tx.gotdns.com [162.196.229.233])
+	by mailbackend.panix.com (Postfix) with ESMTPSA id 4cHmP44LtjzMcm;
+	Thu,  4 Sep 2025 13:16:56 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
+	t=1757006218; bh=PwEkw/L3lPTN7Vt5BEzJjtAPyOMvzL2GIs+DqSnYTJQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=dnyhiNRYvjxFegXGNMknsm0Bojq5TuflTKQaCEIbpYXO2xPOhMOPdtunq6zAKvN+x
+	 O/yxRlPfY3e3uSZtD2xRZOZuTzljZ87yJebKRUrvSX+YUa/I/aIUpy+FBrSdOGInRN
+	 VFHXwLpf8e1DDHU5glJiFxiy26bt82MaACQgtylQ=
+Message-ID: <121a26de-b5d4-42a2-ae52-02b386f17109@panix.com>
+Date: Thu, 4 Sep 2025 10:16:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/2] PCI/ASPM: Add host-bridge API to override default
+ ASPM/CLKPM link state
+To: Bjorn Helgaas <helgaas@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>
+Cc: "David E. Box" <david.e.box@linux.intel.com>, rafael@kernel.org,
+ bhelgaas@google.com, vicamo.yang@canonical.com,
+ ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com,
+ linux-pm@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kenneth C <kenny@panix.com>
+References: <20250904171158.GA1268495@bhelgaas>
+Content-Language: en-US
+From: Kenneth Crudup <kenny@panix.com>
+In-Reply-To: <20250904171158.GA1268495@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3da2092b-e6ca-a7a1-9459-c2754adf19aa@loongson.cn>
 
-On Thu, Sep 04, 2025 at 11:18:28AM +0800, Tiezhu Yang wrote:
-> On 2025/9/4 上午3:22, Josh Poimboeuf wrote:
-> > On Mon, Sep 01, 2025 at 03:21:56PM +0800, Tiezhu Yang wrote:
-> > > +++ b/arch/loongarch/kernel/Makefile
-> > > @@ -3,8 +3,6 @@
-> > >   # Makefile for the Linux/LoongArch kernel.
-> > >   #
-> > > -OBJECT_FILES_NON_STANDARD_head.o := y
-> > > -
-> > >   always-$(KBUILD_BUILTIN)	:= vmlinux.lds
-> > >   obj-y		+= head.o cpu-probe.o cacheinfo.o env.o setup.o entry.o genex.o \
-> > > diff --git a/arch/loongarch/kernel/head.S b/arch/loongarch/kernel/head.S
-> > > index e3865e92a917..a11880f3a7e1 100644
-> > > --- a/arch/loongarch/kernel/head.S
-> > > +++ b/arch/loongarch/kernel/head.S
-> > > @@ -42,6 +42,7 @@ SYM_DATA(kernel_fsize, .long _kernel_fsize);
-> > >   	.align 12
-> > >   SYM_CODE_START(kernel_entry)			# kernel entry point
-> > > +	UNWIND_HINT_UNDEFINED
-> > 
-> > Should this not be UNWIND_HINT_END_OF_STACK?
-> 
-> Yes, makes sense, will do it in the next version.
-> 
-> > I notice Loongarch doesn't seem to use that anywhere.  How does any ORC
-> > unwind succeed?  UNWIND_HINT_UNDEFINED sets an error condition which
-> > should cause a livepatch transition to stall.
-> 
-> Actually, kernel_entry() or smpboot_entry() is recognized as the last
-> frame, because at this point is_entry_func() is true and
-> state->stack_info.type = STACK_TYPE_UNKNOWN in unwind_next_frame() of
-> arch/loongarch/kernel/unwind_orc.c.
 
-I think you can get rid of is_entry_func() in favor of just using
-UNWIND_HINT_END_OF_STACK at all the entry points.
+On 9/4/25 10:11, Bjorn Helgaas wrote:
+
+> but if we can get in -next for a bit now, that would be great.
+
+Yes, please 🙂 Other than some my-hardware-specific gcc flags, this 
+effort in its various forms is the only diff between Linus' master and 
+what I run, and for nearly 3 years now; it'd be great to see it in 
+mainline (and a hearty thank you all for getting us nearly there!)
+
+-Kenny
 
 -- 
-Josh
+Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
+County CA
+
 
