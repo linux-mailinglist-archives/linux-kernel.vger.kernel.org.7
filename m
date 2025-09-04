@@ -1,76 +1,79 @@
-Return-Path: <linux-kernel+bounces-800060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D418DB432EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:55:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECD9EB432EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24AD582E1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:55:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78821C24586
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA6B28641E;
-	Thu,  4 Sep 2025 06:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E6E286425;
+	Thu,  4 Sep 2025 06:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TaKJafZS"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wQu2SncI"
 Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADAF2857F9
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FB22857F9
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756968901; cv=none; b=sQSSJvfOgJK1xtXgYmolrvpw9U4Tdyzz/5jDKE/C8R6UtG1knOjJ4ShPJ5ht/Kzm3dsT5ebCqnChe6JgOTsVID9FtM7KYpozTUOylsQRRN031hwj31fxmDP43pSlOENMO5m+4ytfk/SUP9MRw4duqYWTj40lLELDklhCTUgik2w=
+	t=1756968906; cv=none; b=OUOlwE330pJ4YPllgFBfTb2csA3HZi6YoZstkKXWitk7LqfH+N2atwGEKwDpb5BLliFUNfeQxMETiYn8GlXkugYi1EAMms8fZo76CBpzEcWCc0+cMUXgmuKct8k0NNOAaJWVZmjppM7H6hU+6tUObnXOdtapj4ICSt9r2TigO9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756968901; c=relaxed/simple;
-	bh=/ZjwF0eb57MFfQ0u1/6Mn1Dzepvq+jsfOb0OYfST3cs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=bS3B20PzcukHASY8871s3XVZkxHuprNuPuj0b9In0w8XwLb/auWtBI++WL0eTTgjlDTDOi+HQdnY5M3EcaN9UdDbIJ2t6OHTLqKroVnO7aYu2WZF2eV9zXEYfYW6nCrq3Ycm3DYQJmLzXK2yCf8S3dO0HG4HLX7eGXWzxp6ny9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TaKJafZS; arc=none smtp.client-ip=209.85.210.201
+	s=arc-20240116; t=1756968906; c=relaxed/simple;
+	bh=faOGkpSzpOyOpNjAb1lIsIvMQ/6D2s/m8DjORXdbeBc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Zwq5tMOApeHehH3VkZDnJiTAvZmUlnad/WFBSxU3dl6i2MSl99q0GLgH+4earQMKqok1XhiZGwK64AwuSh+uuwliWSy0G/vXqYE0ca+Qohbkg43KBVo5WC0LRaItCZzGKiyTcBQdiCltxEZsAeAmuGYXYGaTc9TcUZLxHdUcl1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wQu2SncI; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7724bca103dso681086b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 23:54:59 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7725b77b795so789666b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 23:55:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756968899; x=1757573699; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FHGYOIhg/J+dMYpL69zSQ+33zwU0B0JWFC+OU+r7YsU=;
-        b=TaKJafZSVadJ3pcOzPQB2JFY78l9hjvUvAAL3oVBZVLrK79yYPFd9X6jq2pn+lEI/C
-         ETZ52AR6X9lOyM0VtrTHT64VJHkczzjKj3A4TlRV4kcHvhdPNWhi+fNR6AHfK53ETrHb
-         sFBB9DsqnxuFK/Uk3BY/2VwNXMRqgME7exNefMlHg0RVYiZjTm7mt05tXXAyDmwrbRBi
-         T0Mz3wLOv/NfMTMJZWLkAvY/0uN34d+lz1fJ1h+iQdWwyM80aD6lwUMllhEZ+a28vO2p
-         qWT/soHJvDA2v8xGDFn3RaUBIBdCGHgAHUYNOBz/1Ms4FtOtja+YO+1cRI8dOFB3J2tq
-         2HDw==
+        d=google.com; s=20230601; t=1756968905; x=1757573705; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ASqlFc0gx6M5+AiwFcVEnxp7D9dEbOExh/FBrBmvKuE=;
+        b=wQu2SncIvbSbZ4GodfwVvwcAlVC9fe8E/lqIGu2Mats2og34CLKwyFe/XWH1HCiofN
+         1K8BKq1kDvQMKEqTrrnKaLB/eoPFgLmcYLR+MHIGprW/ddBlaXYnhkVp4iebcZ/VskKx
+         f9BFMrR2Dav/8kMTuw42s/1GHQ6JFq1+xar6qOIZRH7pdf2NIWxWoU/ivprxIY/bMnBL
+         lnxHo11ihOGVFL0xv7TeUTbj6vnMdvPmpnPz2xw0/qCGZAb8WAcI7rNLDLSxDYyK9V36
+         tUE0/W/7bMDiB7IoTnzgBeEG0xIGgGliWMafcaBsBla7M1eZY3jbzqmmO9axOUDwutbo
+         OeMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756968899; x=1757573699;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FHGYOIhg/J+dMYpL69zSQ+33zwU0B0JWFC+OU+r7YsU=;
-        b=TYOzq3Xtl0yzNFhhPlKSuTTP9dsQ5LytPUGoajaK26y9GWClurA/UNcnWg61gaXk4a
-         a6JvDc5mmNKL68EUeDDQIFeZGdRY/4rY+vBCvxXUqoUGTG8rWeWrFOFr8KlItbQTo4jO
-         +gxc06INmgErQJHYm9VAltpPsQbClUkpUQ0f9DLmerD72JHS+0o8SnfKbD+t34hCREUj
-         m22OtcgXGy98rHLqci1j3lDZgPHmleMcZEJAru7nBcaYbWwnvC/hHYpQjI8aA+BZmRjQ
-         /8vN6GrwAfBUeHrScFxHfDh7mjQDFg63GRku8tIB6L19LTAuqama2T/tP+O4/LsfJnFL
-         ZiUg==
-X-Gm-Message-State: AOJu0YzROHuXOZiLHrVBKXBsixZ0n9OP5Y+bzUGn6fpb6IXeRfTpvU4+
-	lAKBZw4+E9Xskf4Yd688U7CIHb1jjuekkFftZmFEdgRRWSQgksDaWDfbGMYgg2NDr0Rl5M2xCR5
-	fdQ==
-X-Google-Smtp-Source: AGHT+IFvt4tNR/cPbIZfnDTcOZH10snlcQH3uYkOATnvhbTeDy0L0ItUv9BiEg/jI2hz3v5syTYuKkpAOw==
-X-Received: from pfbiv14.prod.google.com ([2002:a05:6a00:66ce:b0:772:493d:275e])
- (user=sagis job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:230a:b0:76e:885a:c338
- with SMTP id d2e1a72fcca58-7723e3e5340mr17200087b3a.30.1756968898723; Wed, 03
- Sep 2025 23:54:58 -0700 (PDT)
-Date: Wed,  3 Sep 2025 23:54:30 -0700
+        d=1e100.net; s=20230601; t=1756968905; x=1757573705;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ASqlFc0gx6M5+AiwFcVEnxp7D9dEbOExh/FBrBmvKuE=;
+        b=nQ4VYvF7xyEsp7Fab4rxEQ7uCs2h2PifLUsoGucqm7HKID95osK/lSx7/3YwP8QfyA
+         qf9O5I05HFTqS2Q0ybC1geCzvHUeg7I2RXpL7v3zmfBmkMn5yKZ4mnyZ6gjPk6tqZxrt
+         XRnja34IcaWLVoTvT8je7hsA4kQVawD1n5xNe03mgDsqAlNweMTPt3UcdCGfpXLQQmVe
+         7lYfVwmUscgDEv8Xz4JRfyIUeBmeHTGm7mo724k+xEbnsCNHiAKIziIuO6qviucvEsoW
+         4nO/DtGxKD46/3zlQJHrzqoBLZtz0zkNXAKT8NWRLuvveSDmWHSQTtRMsCafIxzyN1z1
+         iC6g==
+X-Gm-Message-State: AOJu0YyEnJU4V/5nkbNTXSIR+Xmcbre4pUwjgBwTnHhig12JQjUqp7OK
+	FawkLWfpV29sdB/kqcPUEA/+DzqQOJjoB+rzpepFxieLsaS0GAqlURbvgUEB6IWIzonQFtGTM+R
+	qkg==
+X-Google-Smtp-Source: AGHT+IGD4KfK7NxbzN0CDzkoj/otOhDOsc4uzoW3Q6Gl7r7SokK8q8EF58+f6sfFSh2rTUNKYH1JEJ1SXg==
+X-Received: from pfuf51.prod.google.com ([2002:a05:6a00:b33:b0:772:7103:df0f])
+ (user=sagis job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:3e04:b0:76b:c882:e0a
+ with SMTP id d2e1a72fcca58-7723e21e636mr18372274b3a.5.1756968904663; Wed, 03
+ Sep 2025 23:55:04 -0700 (PDT)
+Date: Wed,  3 Sep 2025 23:54:31 -0700
+In-Reply-To: <20250904065453.639610-1-sagis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250904065453.639610-1-sagis@google.com>
 X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
-Message-ID: <20250904065453.639610-1-sagis@google.com>
-Subject: [PATCH v10 00/21] TDX KVM selftests
+Message-ID: <20250904065453.639610-2-sagis@google.com>
+Subject: [PATCH v10 01/21] KVM: selftests: Allocate pgd in virt_map() as necessary
 From: Sagi Shahar <sagis@google.com>
 To: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
 	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
@@ -85,89 +88,31 @@ To: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
 Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-This is v10 of the TDX selftests.
+If virt_map() is called before any call to ____vm_vaddr_alloc() it
+will create the mapping using an invalid pgd.
 
-This series is based on v6.17-rc4 and has a dependency on
-"KVM: TDX: Force split irqchip for TDX at irqchip creation time" [1]
+Add call to virt_pgd_alloc() as part of virt_map() before creating the
+mapping, similarly to ____vm_vaddr_alloc()
 
-Changes from v9 [2]:
-- Rebased on top of v6.17-rc4.
-- Addressed the comments from v9.
-- Removed special handling for split irqchip in the test code in favor
-  for the kvm fix in [1].
-- Removed outdated support for VM memory not backed by guest_memfd.
-- Split "KVM: selftests: Hook TDX support to vm and vcpu creation" into
-  4 separate patches.
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+Signed-off-by: Sagi Shahar <sagis@google.com>
+---
+ tools/testing/selftests/kvm/lib/kvm_util.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-[1] https://lore.kernel.org/lkml/20250904062007.622530-1-sagis@google.com/
-[2] https://lore.kernel.org/lkml/20250821042915.3712925-1-sagis@google.com/
-
-Ackerley Tng (2):
-  KVM: selftests: Add helpers to init TDX memory and finalize VM
-  KVM: selftests: Add ucall support for TDX
-
-Erdem Aktas (2):
-  KVM: selftests: Add TDX boot code
-  KVM: selftests: Add support for TDX TDCALL from guest
-
-Isaku Yamahata (2):
-  KVM: selftests: Update kvm_init_vm_address_properties() for TDX
-  KVM: selftests: TDX: Use KVM_TDX_CAPABILITIES to validate TDs'
-    attribute configuration
-
-Sagi Shahar (15):
-  KVM: selftests: Allocate pgd in virt_map() as necessary
-  KVM: selftests: Expose functions to get default sregs values
-  KVM: selftests: Expose function to allocate guest vCPU stack
-  KVM: selftests: Expose segment definitons to assembly files
-  KVM: selftests: Add kbuild definitons
-  KVM: selftests: Define structs to pass parameters to TDX boot code
-  KVM: selftests: Set up TDX boot code region
-  KVM: selftests: Set up TDX boot parameters region
-  KVM: selftests: Add helper to initialize TDX VM
-  KVM: selftests: Call TDX init when creating a new TDX vm
-  KVM: selftests: Setup memory regions for TDX on vm creation
-  KVM: selftests: Call KVM_TDX_INIT_VCPU when creating a new TDX vcpu
-  KVM: selftests: Set entry point for TDX guest code
-  KVM: selftests: Add wrapper for TDX MMIO from guest
-  KVM: selftests: Add TDX lifecycle test
-
- tools/include/linux/kbuild.h                  |  18 +
- tools/testing/selftests/kvm/Makefile.kvm      |  32 ++
- .../selftests/kvm/include/x86/processor.h     |  35 ++
- .../selftests/kvm/include/x86/processor_asm.h |  12 +
- .../selftests/kvm/include/x86/tdx/td_boot.h   |  74 ++++
- .../kvm/include/x86/tdx/td_boot_asm.h         |  16 +
- .../selftests/kvm/include/x86/tdx/tdcall.h    |  34 ++
- .../selftests/kvm/include/x86/tdx/tdx.h       |  14 +
- .../selftests/kvm/include/x86/tdx/tdx_util.h  |  86 +++++
- .../testing/selftests/kvm/include/x86/ucall.h |   4 +-
- tools/testing/selftests/kvm/lib/kvm_util.c    |  10 +-
- .../testing/selftests/kvm/lib/x86/processor.c |  91 +++--
- .../selftests/kvm/lib/x86/tdx/td_boot.S       |  60 +++
- .../kvm/lib/x86/tdx/td_boot_offsets.c         |  21 ++
- .../selftests/kvm/lib/x86/tdx/tdcall.S        |  93 +++++
- .../kvm/lib/x86/tdx/tdcall_offsets.c          |  16 +
- tools/testing/selftests/kvm/lib/x86/tdx/tdx.c |  23 ++
- .../selftests/kvm/lib/x86/tdx/tdx_util.c      | 354 ++++++++++++++++++
- tools/testing/selftests/kvm/lib/x86/ucall.c   |  45 ++-
- tools/testing/selftests/kvm/x86/tdx_vm_test.c |  31 ++
- 20 files changed, 1032 insertions(+), 37 deletions(-)
- create mode 100644 tools/include/linux/kbuild.h
- create mode 100644 tools/testing/selftests/kvm/include/x86/processor_asm.h
- create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/td_boot.h
- create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/td_boot_asm.h
- create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/tdcall.h
- create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/tdx.h
- create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
- create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/td_boot.S
- create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/td_boot_offsets.c
- create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/tdcall.S
- create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/tdcall_offsets.c
- create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/tdx.c
- create mode 100644 tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
- create mode 100644 tools/testing/selftests/kvm/x86/tdx_vm_test.c
-
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+index c3f5142b0a54..b4c8702ba4bd 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -1609,6 +1609,7 @@ void virt_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr,
+ 	TEST_ASSERT(vaddr + size > vaddr, "Vaddr overflow");
+ 	TEST_ASSERT(paddr + size > paddr, "Paddr overflow");
+ 
++	virt_pgd_alloc(vm);
+ 	while (npages--) {
+ 		virt_pg_map(vm, vaddr, paddr);
+ 		sparsebit_set(vm->vpages_mapped, vaddr >> vm->page_shift);
 -- 
 2.51.0.338.gd7d06c2dae-goog
 
