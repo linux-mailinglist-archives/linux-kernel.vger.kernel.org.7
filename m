@@ -1,113 +1,207 @@
-Return-Path: <linux-kernel+bounces-800921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABAD5B43DBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:52:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4D51B43DC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50BD7A04E3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:52:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85A9CA04E0D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6592FE05D;
-	Thu,  4 Sep 2025 13:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557223002C3;
+	Thu,  4 Sep 2025 13:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="YXroj9DQ"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jJUAFgrg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB7318A956;
-	Thu,  4 Sep 2025 13:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FC72EFD81
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756993940; cv=none; b=D3qH3Kw+oe8VIZXdtzGUJq1f7o/XCA7TEMeSYZf1hUXF4Y03uvbhRXy8Gt89Obr8fgokmzJ91QOAVXwPAVfDYiCpDeRIz3c1U0u4w6bjtHgQKGx4TAgVazD/We4DI5odWKo9ZeTNr3lAItA8YGTBgP9l6Hgdf2F57NOStHOmY6w=
+	t=1756993953; cv=none; b=hdG2Gk6wsfEJwSrueln3HnAsauI85KMdGbuUW9IgcWHBwxiGWXEy53ALtuPBlMh0Pq9BNWh+wcxiOJ7odE0DW+b6UVYKrWdbwPdwRAUfrXCNZv4SZvctOGf8vEOiAKWZSP2VrYRASsn6i2b6c/rWoqaoY5FJ/PLx5akJN3mCP8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756993940; c=relaxed/simple;
-	bh=Mls69VKfWElYGVqggJF++7wDVfDhORSsd8b4fL4Wibs=;
+	s=arc-20240116; t=1756993953; c=relaxed/simple;
+	bh=HIX4eku98Wc54feYB0CQVeLO6u4tKzM8o896BSZOplE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b5uk7juqwVS7d1MWQA/okLwfiqJLktEvEebh4jLktzAOEoY8xpyESH7GwfVZLlfcOPobkUHKcJ/meA+8yOf/PK0/S43vgvWDVAOKploik0N1kY86CgVLxam9ztXSz+sn/SaoD2R4Ex0aBHEFWjQX2xQWLX8Pfiul88i2GsIoFas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=YXroj9DQ; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=jioOZ/YKP696h31GdxCKZH7S75Olh8LYI/7clG07OIA=; b=YXroj9DQwIFA53lTCR7LfFXm0i
-	7L/PiLzUl4wRbv/I+ZCAx5xJH30otZKXQOVRSpqERsNvKRwz12aqTpdB7HXRTqO2O+GzJeK6K4Dec
-	p6yD4CoHT4r9BhVtRZ6H4SINS6H9j81sRSgUFBkDdNAX5eDz+mcXAoHgGmzLjxb+wx+9InjGRPFul
-	3eGDinWRPuKngBkrtjX1oMascVVgTkySUVABC6Qybv/1dRbJ8AH3JG4R7LMrdIl06Eki4AB4+TUiF
-	zHAKIAHIAiRe64y2j2gUSaZVsPhiONC5f2VFV01PBOGzJxLlEncDxlgXS9FJsXR7N2TAn3i8UMrSF
-	gXvwlM8Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57008)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uuANq-0000000025R-2HbV;
-	Thu, 04 Sep 2025 14:52:14 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uuANn-000000001Zp-1hw1;
-	Thu, 04 Sep 2025 14:52:11 +0100
-Date: Thu, 4 Sep 2025 14:52:11 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 net 1/2] net: phylink: add lock for serializing
- concurrent pl->phydev writes with resolver
-Message-ID: <aLmZiwnGGSCS8Ll-@shell.armlinux.org.uk>
-References: <20250904125238.193990-1-vladimir.oltean@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iC8SH56ycIos2lLY0R9DUqMVfBCPUquf83j0qzZ5S060S981bE3IQoPjOoYE8n1FDXzNUBONitFGn1KShghl9Ur/q7errJ/kso45uzfO8BJzAPYq5x6wywzazOlYOAJvZPgR7xwad0GQ3XSFaO0VOF02ytBiF4ICf03xiPTF+Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jJUAFgrg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5849XMDE022487
+	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 13:52:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	N4tKvhnJISTCkWgQtCnG+ZlZTaMj9wRAoIAEATKuC6g=; b=jJUAFgrgLl1eO0XE
+	H435B9ors58IzgB9fud572oJwSlLJJ1zz1V3r3g0JZEvX6XMeB1ezvMYv3sg7VFa
+	z2pUlv8pMnc2ozaaGDPlq+R/FpPUsOgpYYjtzXrwO1hn9N1fAarSrjDbRGw8WqlW
+	DiyKjciWFQsKfz9Lr/Ts97u+vGK1tzkJ9Jt7aYEzoaDvXEreEoQ+xiDt+UNkpysT
+	Aq45yYvWMiQx+MzI4Nc0zdIYMeIvHSPDyBZo4AKIsgD0Fd5zDhYC7CP2Q9b3zhDy
+	TkeuZAMAzzz5AogPNNg9YwuqPzXH9osD0I7LnHSsPuiFLxvmQW/yfnKV818qGrMg
+	+fP6rQ==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48utk97gyg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 13:52:31 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-7296c012f6bso10656046d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 06:52:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756993950; x=1757598750;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N4tKvhnJISTCkWgQtCnG+ZlZTaMj9wRAoIAEATKuC6g=;
+        b=CQN7+g/RwWHVvOGR5NlY440aJj4yqkUl4JEjLvz/IyJfGGFpX6fBeyDfmrlsLCo1rc
+         2OMLp1DRg6Ar9Im3P0rp4PJnIrIELhWLewXI2ZmgIuSuB1hCuHdTYly56YLmzFW/ypn8
+         +hl45kB4VUHHOF5gfWJnz0582h508e19EucZ5xP45tvqrnsV45WODQemFON6as/w/Vvl
+         VDbS96buzQ3J54yAXdEQ4PY2SrNAFNOm5H1SBRlYJLAydE3wSIDbxB7hYjXa07hyLTd9
+         1Nxj+UaWpewQjL/LvIbOzT8ca2ewT6tWbI7yMbQKrTxj55YlsSsETeL0U/G6ws+GCq7e
+         SnRA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/lP0+bv2YGU3lPhRr6h1IMcwJfjCCudHNyvCkIcTj6GmAHIki3wOhri8aQPXcepw5oH4LFRLTW2ViU8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz6pDNjRW/NeHQbhDtbLpn/h7RJFHC0iHheGDgyq36I5m2CIKQ
+	dGfHmwZAErsJVWo6SP4lD6+maRlcpBeaw1D3fi5YNRWLiQtfUKGM2vXQNmgzc2DitX5BpFPxcxc
+	3N/40I8gDZDaTwdsMSHzUnNL4tW1hvtXAuw0eYS/44pk9bvN2NLNHqWAx0G0aINTBtxV8DlEOdP
+	0=
+X-Gm-Gg: ASbGnct5GxWPCy3ahJ8nqChpigUJuryVwSeRKQ+ndFupzg4QrqQG4vhObN5uOcEtT5e
+	7mmbYRge5KxqhRoFn5sBNcfCCYQZPvki9Xm1svxTDgCoQy+Y21SMvBsHT+0sdBeMpBFaxp0jkdq
+	gZItvlTI4naHhBULtD2mPm8Vk1ttE8liJ4UPsSl3SypM1M0abkNUthmJq6A2vy4P/cDEjU8Kh4f
+	bSMuYkUj1qcnyDJR5uHUoX/2YcWo9VYBj6PddL5PMcPz0l2XsBWJ7s+OMPK33RzJMak4/v2FCAw
+	uQhQgRTR7+Lbi7rDFvH8U42rURr2ATpekpqrR1oMynKYEXoJtdiflooDcY/w47aXbK1O1zxEnp7
+	QP0vx60PNBJlpuNGlFp3K5kSkOXhpmPlfy/RwlhTqS70VvhKFzV26
+X-Received: by 2002:a05:6214:21c8:b0:725:16ca:a76a with SMTP id 6a1803df08f44-72516caace5mr71502026d6.3.1756993949801;
+        Thu, 04 Sep 2025 06:52:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE0EbzO3RGw4eqBINrGkwEPKwOp5hhL8Lt3eiyZMY3NmrRXVtmOrj8S+YObl1fR76T6Vkoa2A==
+X-Received: by 2002:a05:6214:21c8:b0:725:16ca:a76a with SMTP id 6a1803df08f44-72516caace5mr71501656d6.3.1756993949282;
+        Thu, 04 Sep 2025 06:52:29 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608aba7e15sm1241448e87.52.2025.09.04.06.52.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 06:52:28 -0700 (PDT)
+Date: Thu, 4 Sep 2025 16:52:26 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yijie Yang <yijie.yang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v9 2/3] arm64: dts: qcom: Add HAMOA-IOT-SOM platform
+Message-ID: <2o2ypmxo6wbohrb5edkj27ueqpgbqhsnqu4ofzfubtfwg7vyri@mdsu4ca63fr5>
+References: <20250904-hamoa_initial-v9-0-d73213fa7542@oss.qualcomm.com>
+ <20250904-hamoa_initial-v9-2-d73213fa7542@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250904125238.193990-1-vladimir.oltean@nxp.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250904-hamoa_initial-v9-2-d73213fa7542@oss.qualcomm.com>
+X-Proofpoint-GUID: 11C1z9ota4OPUBs9QnWwrEgU4EqFIZUt
+X-Proofpoint-ORIG-GUID: 11C1z9ota4OPUBs9QnWwrEgU4EqFIZUt
+X-Authority-Analysis: v=2.4 cv=ccnSrmDM c=1 sm=1 tr=0 ts=68b9999f cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=PhgHo22kut4TJJxNvVMA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDA0MiBTYWx0ZWRfX/1qbOT9pmkFH
+ 5LJ8+3qM/r6ynnJSKdwFiJrkHT/s31GYTrAYAjM5gRqPBnObzDdfiNQM18TWzKUj3pkOlYCMNqW
+ 4FB8z9E8jb5qgZB0o3XPhKTqDWSf4fFg12vtA2vb93EceZmNulcZ+3WgfgT2VkK9ZVtVvuzqnqG
+ yiTxcqu6zYntb7mr+nvayGJIhMDuSva982/U0jbYH5bM/CVJERMzjIq9K3PhLAabxBu0aCpi9vp
+ UxSLZvyd2xDlvHRBa1aDglukgtzYPn706E2aue4dizsOMnEFA3y/NpxO3SBJzSsnIRii+YKYlgD
+ CW6lx54wPFJdy9OFs0W/kaFvAY/a1KFrkgFTi/fRSdkkvZHLpsR80c0iy2U/RS0XZn9c64Vd5Ui
+ 0l9r1GTM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_05,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ clxscore=1015 suspectscore=0 spamscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300042
 
-On Thu, Sep 04, 2025 at 03:52:37PM +0300, Vladimir Oltean wrote:
-> Currently phylink_resolve() protects itself against concurrent
-> phylink_bringup_phy() or phylink_disconnect_phy() calls which modify
-> pl->phydev by relying on pl->state_mutex.
+On Thu, Sep 04, 2025 at 03:48:33PM +0800, Yijie Yang wrote:
+> The HAMOA-IOT-SOM is a compact computing module that integrates a System
+> on Chip (SoC) — specifically the x1e80100 — along with essential
+> components optimized for IoT applications. It is designed to be mounted on
+> carrier boards, enabling the development of complete embedded systems.
 > 
-> The problem is that in phylink_resolve(), pl->state_mutex is in a lock
-> inversion state with pl->phydev->lock. So pl->phydev->lock needs to be
-> acquired prior to pl->state_mutex. But that requires dereferencing
-> pl->phydev in the first place, and without pl->state_mutex, that is
-> racy.
-> 
-> Hence the reason for the extra lock. Currently it is redundant, but it
-> will serve a functional purpose once mutex_lock(&phy->lock) will be
-> moved outside of the mutex_lock(&pl->state_mutex) section.
-> 
-> Another alternative considered would have been to let phylink_resolve()
-> acquire the rtnl_mutex, which is also held when phylink_bringup_phy()
-> and phylink_disconnect_phy() are called. But since phylink_disconnect_phy()
-> runs under rtnl_lock(), it would deadlock with phylink_resolve() when
-> calling flush_work(&pl->resolve). Additionally, it would have been
-> undesirable because it would have unnecessarily blocked many other call
-> paths as well in the entire kernel, so the smaller-scoped lock was
-> preferred.
-> 
-> Link: https://lore.kernel.org/netdev/aLb6puGVzR29GpPx@shell.armlinux.org.uk/
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> This change enables the following components:
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Documentation/process/submitting-patches.rst, "[This patch] makes xyzzy
+do frot".
 
-Thanks!
+> - Regulators on the SOM
+> - Reserved memory regions
+> - PCIe6a and its PHY
+> - PCIe4 and its PHY
+> - USB0 through USB6 and their PHYs
+> - ADSP, CDSP
+> - WLAN, Bluetooth (M.2 interface)
+
+No, you don't. WiFi and BT are not present on the SoM.
+
+> 
+> Written in collaboration with Yingying Tang (PCIe4 and WLAN)
+> <quic_yintang@quicinc.com>.
+
+Co-developed-by, Signed-off-by.
+
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi | 609 ++++++++++++++++++++++++++++
+>  1 file changed, 609 insertions(+)
+
+> +
+> +&usb_1_ss0 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_ss0_dwc3 {
+> +	dr_mode = "otg";
+> +	usb-role-switch;
+
+Please check with Johan or any other X1E8 developers and make this into
+a platform default.
+
+> +};
+> +
+> +&usb_1_ss0_hsphy {
+> +	vdd-supply = <&vreg_l3j_0p8>;
+> +	vdda12-supply = <&vreg_l2j_1p2>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_ss0_qmpphy {
+> +	vdda-phy-supply = <&vreg_l2j_1p2>;
+> +	vdda-pll-supply = <&vreg_l1j_0p8>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_ss1 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_ss1_dwc3 {
+> +	dr_mode = "otg";
+> +	usb-role-switch;
+> +};
+> +
+
+The same.
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+With best wishes
+Dmitry
 
