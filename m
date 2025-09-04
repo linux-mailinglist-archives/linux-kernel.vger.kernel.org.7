@@ -1,65 +1,93 @@
-Return-Path: <linux-kernel+bounces-800353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21FA0B436AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:09:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539B7B436AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D49F17BA4E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:07:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28E0D5A09CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DB52E1C5C;
-	Thu,  4 Sep 2025 09:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D37E2DFA5C;
+	Thu,  4 Sep 2025 09:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="TMBW675y"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ceca3pwi"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66222DF6F6;
-	Thu,  4 Sep 2025 09:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28E52D12ED
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756976951; cv=none; b=ipIsbcEMatMK0imTrBIEN1GT6zamEVdS0ToOEPYWZlRyP96a9knSwiwWWnMfhCW7I8EYsJqq60KgnF/Qja2kB+bwBWZfZ1qCObvBni27OFUdAUU1FwEI0kwOyYS/ahgZJYXKL7DmVqySVrGjJmpzK1NgQsPujfs3Mv39pmkHI1s=
+	t=1756976935; cv=none; b=XZrIWofjA9S1jjPJaRzCwL7x6ylhCe8OBmQkGaw5inR6knUGcMuzAf7AcWlgfdamzsYjUyuHltCGphQxeS/PWSlz7Jbh0K8aa/inLYIVJC+/4xVdbLLwvpWgrG1cXje8sRn8Pral6Rfy02rSh+MgrMc+0+4keZQxraZyiWZXHXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756976951; c=relaxed/simple;
-	bh=G/J06Q7pmBlKJjTl3EXiNLMWxSy8VxCDwe2a+IgycIw=;
+	s=arc-20240116; t=1756976935; c=relaxed/simple;
+	bh=9OuwB/mKcO6haey57JJkqXea6iJb0zgcty8aAKBWe5w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=syMUpAGxeKrDvveUHA8oehdrBrin12YlOUN8V9KN2UDvU7SAdRwPzRHQH1h/M0W/IOwAvOnDgj6NVewI7NP//iguPthw35ke+9k1sP+0B5pPWlfyNWwLEEMRO1OS7w01PO8Xr0cndqacjevKf3PVwdWVPyO0VtFRvE05dF0hchU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=TMBW675y; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=X8lJPPz3uM+KxHe0Nl9wRADaXsNsKIAR64B5GXSwg2c=; b=TMBW675yw/+89loQ095MXEB8Z+
-	IAvtY7OTS48P8otGdOUX5t3gH7wg1hgnvRzxzqQvG/POQ+aE6xCHUjEYcWYq35Q89VMtEcU6rPvei
-	xS05RYuyHvCCXwJDs0XdEZnyNqXZKva4VndSsUtO6g9k1y2SydxgOYwtmJNDoCXeT/rqV9Q+vCVZ4
-	0s1+e6W5wEsKpMXogMG6EX7nktGMcJEvZGVqfd8KX6M4ZIEgiPVBZkBJ7tqDToOE907Mfk26Yhnlx
-	jPsLlSrjtg5c2O80LpZayRU5vOKpI9VV83hdMP6qv493DrjKaz4BR96anUG2OyE+ICXZEKaA/TsXp
-	I00k4Uhg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uu5hw-002YvI-25;
-	Thu, 04 Sep 2025 17:08:38 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 04 Sep 2025 17:08:37 +0800
-Date: Thu, 4 Sep 2025 17:08:37 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Menglong Dong <menglong.dong@linux.dev>
-Cc: mhiramat@kernel.org, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, oliver.sang@intel.com,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] tracing: fprobe: fix suspicious rcu usage in fprobe_entry
-Message-ID: <aLlXFQaRmKaCeXTG@gondor.apana.org.au>
-References: <aLa2D4It1Zxc7bs0@gondor.apana.org.au>
- <3005966.e9J7NaK4W3@7940hx>
- <aLfCa1FkLc3T4QI3@gondor.apana.org.au>
- <5038598.31r3eYUQgx@7940hx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kiqi9rNcTDeib1qWrBa3DCMc0/3jweBxrO4OBLy7aqVCR5dd5W8gS9cpWVTL9mVJqEraGuEdCjs0l1lSxofyrZvDNqODse4wM92DTFgzzoyjzve4DaXQPz80lCgVa1IJ7tA7VqJhgU37LwXj0PCPJEqdFKr7cFIWzsW5u/hAunw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ceca3pwi; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7724fe9b24dso611437b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 02:08:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756976932; x=1757581732; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rmBbjONRTs6bzm6TRjxemHxdhBeOSzGNBuBX1gDxW0c=;
+        b=Ceca3pwiSSggVuowWec1JaLEyCaRIHEEeuEXh/Pg2vqE4eeee5PYsZ+7FpTWtLbdhj
+         b4fSSdlxnHgsOgH0tE4QoRCkkGqnV8SE5M0FsiiPVT59UJZ1++fNuZk20zJPCpBdGnsR
+         bpoIUhJsiAOj7N0+5yRiIsQOKPKmMd/wVrADJu5SOAWagOrdk6vbjacvbxuc3sXT4oVw
+         zFBGDbt0SKUAyXznewucg5kpr1wGY5ascZUvXoNkaSBuaeaPLSDfGckGKi+g9W59H+W2
+         Xcn+nidUd00WcL37TCqzcWFEEUFK96Pv2bIHPNTXA0qI0c0dkaHNtr8W9gP24zxFye5r
+         2veQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756976932; x=1757581732;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rmBbjONRTs6bzm6TRjxemHxdhBeOSzGNBuBX1gDxW0c=;
+        b=sCTkv2vw56Wfzt3W9s675z5GGHotg78f4Z6lNmQlgD/rrientK9nzgFxtKG6myskaZ
+         QBP2f+JmyBF0wirruzN9em2KSXkynOHOzAe5+8dsZyN6esZTNq0beoIlrEe89HKCDRJG
+         Fw9HIrhAJv4BhLl+6uKTyEoCk52JsBmkimhsgreFfHMf9K6l/DMP7+voi/wrL8AGJTKQ
+         DU34VfDyGyGTqwoXLW0OoYb+oH5RRQDk1I5xZREJ5sfFHBcMLxsBs7/tMuQ04wRd3Rrz
+         Zfd49yjLiPfGbWYspi2BouVmZlasGkd39B1lG/UTGO5rvZ3rpW3jwrs3/A1YNUReFbmD
+         Lk+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV9hMW2MFX6GVL7IrwXYRfX85kWKqcOaA6qC05WyCSJTpIWseNjq3EDASv4nOEd7mvLuV8aDjirlLjqobo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUZQCn0mkGOhCAWx/FnpvVczvvzI5/7Uh6eZmR6ADW+dAdg2Kr
+	jsglur5lGnmA0YRGOBhCf5F7GgtMhpRFdv+6n4ioC4u0tRvEMa2OmsrE1NZhz2ITaNM=
+X-Gm-Gg: ASbGnctJKs7akHDLPeE9tBCDurK3w0QkByvfDTpbYdd9WM7cF9S3vwYjZxSvONTxSkR
+	fwaF0r9KM//Lx9j3JTCor9n5lt8oekyqtNDtgxfjgZb4v9RbY18YzSzczvvHRR5pQY+klLmY/Fk
+	BVZTSt95cmRgBNGEqKLjX6VfJcPJI7/pNtIy9b/TK60S4jhRWbwaBiRnyb9DiEeuvQRnX/m7hmV
+	6LlS2hC2dtstpf67xZhC+rN9ixm25SJ9nHU2OQpyeawW4YtXGZ2cEz6lUgg3YvphaJpb/uof9aw
+	wnBmhUOQmnNxNBYQ5XwQFfUkBNb8gJHErUB/26W2WGgx2pLK/j23lixHi7nRLKQMqa2daVQpKAw
+	42/USB2wn9jyhhkJ6RXl0l7H6ujkJMa6iDSk=
+X-Google-Smtp-Source: AGHT+IHI7lc2wZNpnK6c7bml3S96KONYzvjvTqV1qrfL3bzvd/FiM6GZPsewH6KTBQYgX9g7o654HA==
+X-Received: by 2002:a05:6a20:3d86:b0:243:a189:f1f8 with SMTP id adf61e73a8af0-243d6ddb3bdmr27908154637.8.1756976931899;
+        Thu, 04 Sep 2025 02:08:51 -0700 (PDT)
+Received: from localhost ([122.172.87.183])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd0736ba7sm16257509a12.12.2025.09.04.02.08.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 02:08:51 -0700 (PDT)
+Date: Thu, 4 Sep 2025 14:38:49 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: clk: implement Send and Sync
+Message-ID: <20250904090849.7uiroafxk5juml6b@vireshk-i7>
+References: <20250904-clk-send-sync-v1-1-48d023320eb8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,39 +96,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5038598.31r3eYUQgx@7940hx>
+In-Reply-To: <20250904-clk-send-sync-v1-1-48d023320eb8@google.com>
 
-On Thu, Sep 04, 2025 at 11:37:35AM +0800, Menglong Dong wrote:
->
-> Yeah, I understand what you mean. I noticed this, and that's why
-> I added the rcu_read_lock() for rhashtable_lookup() only.
+On 04-09-25, 09:03, Alice Ryhl wrote:
+> These traits are required for drivers to embed the Clk type in their own
+> data structures because driver data structures are usually required to
+> be Send. See e.g. [1] for the kind of workaround that drivers currently
+> need due to lacking this annotation.
 > 
-> Maybe it is to obtain better performance? Just guess ;)
-> And hlist_for_each_entry_rcu() also uses rcu_dereference_raw().
+> Link: https://lore.kernel.org/rust-for-linux/20250812-tyr-v2-1-9e0f3dc9da95@collabora.com/ [1]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+> I'm not sure if there was already sent a patch for this. I recall
+> being told that one had been sent, but I could not find it. Maybe I
+> mixed it up with the regulator change, so now I'm sending a change for
+> clk.
+> ---
+>  rust/kernel/clk.rs | 7 +++++++
+>  1 file changed, 7 insertions(+)
 
-I did some digging and this appears to be the source of the
-rcu_dereference_raw call:
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-commit 3120438ad68601f341e61e7cb1323b0e1a6ca367
-Author: Paul E. McKenney <paulmck@kernel.org>
-Date:   Mon Feb 22 17:04:48 2010 -0800
-
-    rcu: Disable lockdep checking in RCU list-traversal primitives
-
-    The theory is that use of bare rcu_dereference() is more prone
-    to error than use of the RCU list-traversal primitives.
-    Therefore, disable lockdep RCU read-side critical-section
-    checking in these primitives for the time being.  Once all of
-    the rcu_dereference() uses have been dealt with, it may be time
-    to re-enable lockdep checking for the RCU list-traversal
-    primitives.
-
-So I don't think there is a good reason to use rcu_dereference_raw
-here at all.
-
-Cheers,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+viresh
 
