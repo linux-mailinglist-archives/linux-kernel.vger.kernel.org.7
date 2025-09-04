@@ -1,108 +1,139 @@
-Return-Path: <linux-kernel+bounces-799875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A386B43115
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:27:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333CCB43118
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AED661C24047
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:27:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8B6E17FA7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D0A224882;
-	Thu,  4 Sep 2025 04:26:53 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C4221767C;
+	Thu,  4 Sep 2025 04:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KcAdNLfg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044E11BC58;
-	Thu,  4 Sep 2025 04:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D374437A;
+	Thu,  4 Sep 2025 04:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756960013; cv=none; b=QM3uZmLoguIMuU7QvwFbRtjk2t1tpbOLkqInTWLNnihWu7qTd/1p+R7VTMLiNdek9/mUWeAqV6CLqpTADW6l7vjUtF4CyfxbDY2CNMUzD099IbW8AM1I6s5TeejTx+6NfFUFgYbE88kou1xS8vMCyN/hRHs0c0rU0Z2FavXTCM0=
+	t=1756960175; cv=none; b=CJPCGlPRznehrxvHly6ApuQ6sTjkq4TG6Ta9uSj7e9pdM3NpXCDkYzJXsbkVQuPDMrfYIecyEYgLHcix2XAbtiaIGlbTtVs3zgKY4XVrycqsByzFXHx0UJ+D2k0FpsJZCtGxDUh8QqWzzXv28i1wAjkOv1JudItInecbLyiEOMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756960013; c=relaxed/simple;
-	bh=FZ3hp9QC4qMTv8OfmfI7/9tLLAbqepHOg93t9NYVi6Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OHko3iZ+znKqTRl310iluhZ9e36DH7RhAPN5YgWXfWLg55XF19NKla2T2dveio/ALyHxy0Pn3PwIGogmtarWVo2KR7lLDDvK63lXOT3jDG/jx/kjvXSoTGSp+GzCZV1FAqAHpx8gmz8seg2zm88Jd8J95vv3z3nQ1E84EFfr70o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 5916e9de894711f0b29709d653e92f7d-20250904
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_LOWREP
-	SA_EXISTED, SN_UNTRUSTED, SN_LOWREP, SN_EXISTED, SPF_NOPASS
-	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF
-	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
-	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:2d54f3e2-bec7-42bd-bbf8-e29200111e39,IP:15,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:10
-X-CID-INFO: VERSION:1.1.45,REQID:2d54f3e2-bec7-42bd-bbf8-e29200111e39,IP:15,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:10
-X-CID-META: VersionHash:6493067,CLOUDID:18a91f417ddc5b29999841a85909ed68,BulkI
-	D:250904122643NMZQD1AN,BulkQuantity:0,Recheck:0,SF:19|24|38|44|66|72|78|10
-	2,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,B
-	EC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: 5916e9de894711f0b29709d653e92f7d-20250904
-X-User: cuitao@kylinos.cn
-Received: from ctao-ubuntu.. [(39.156.73.13)] by mailgw.kylinos.cn
-	(envelope-from <cuitao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 2133732486; Thu, 04 Sep 2025 12:26:37 +0800
-From: cuitao <cuitao@kylinos.cn>
-To: zhaotianrui@loongson.cn,
-	maobibo@loongson.cn,
-	chenhuacai@kernel.org,
-	loongarch@lists.linux.dev
-Cc: kernel@xen0n.name,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cuitao <cuitao@kylinos.cn>
-Subject: [PATCH] LoongArch: KVM: remove unused returns.
-Date: Thu,  4 Sep 2025 12:26:22 +0800
-Message-ID: <20250904042622.1291085-1-cuitao@kylinos.cn>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1756960175; c=relaxed/simple;
+	bh=wfmMCtQkYy7kMMCYDDyBRhhKXRcmqUlls5+MC/y169w=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=pkzW2EGfFMBPG4tVCp42hgAe9Nek3S0BItuiXB79O5x4JBJWXpWH1ecv2v187YVdUYkVEQ0omHzyc9tBneT8tZk7s6JUH564EBGbG7Vd+FZjdlowgNPMrleH8OGnIp6HwIw/sfAPEKWPNtwriwnv8NwV7w8I8vc9MPnoBwB+UJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KcAdNLfg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C2A0C4CEF0;
+	Thu,  4 Sep 2025 04:29:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756960174;
+	bh=wfmMCtQkYy7kMMCYDDyBRhhKXRcmqUlls5+MC/y169w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KcAdNLfgTd4f07sAiJkYgN2ebk8yr2J7uTlWiRj5VmxTz0qjCyhydrcrBArRkBxmE
+	 y+f28hQRHx/WgMfptcxJh1Ro0ciDYZuiAyQMJfVPtMrJu75yvJbrXW+6lgkQvTKOMV
+	 1mHcddZivLSq7I9olniDRXakZ8VAKQQKTZJpNY6mqJaweAfGqaNB3dyT269EBwZsbO
+	 qVA9e2JYh0B9CqsPuM+yCnChWfuymGDl3ZIH96ycCXcL+WGI3a/7P+CVvsWSZEVCp2
+	 pniuAxh6su+LeZ61+G0GnbxD1kOWC4wlct2BTvllQhhKc8FC8bcF1Vb5cIYi8T08v2
+	 hqbfvsK3iip8A==
+Date: Thu, 4 Sep 2025 13:29:31 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Menglong Dong <menglong.dong@linux.dev>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, mhiramat@kernel.org,
+ rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ oliver.sang@intel.com
+Subject: Re: [PATCH] tracing: fprobe: fix suspicious rcu usage in
+ fprobe_entry
+Message-Id: <20250904132931.8c46a011b2fa1743fc87def4@kernel.org>
+In-Reply-To: <5038598.31r3eYUQgx@7940hx>
+References: <aLa2D4It1Zxc7bs0@gondor.apana.org.au>
+	<3005966.e9J7NaK4W3@7940hx>
+	<aLfCa1FkLc3T4QI3@gondor.apana.org.au>
+	<5038598.31r3eYUQgx@7940hx>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The default branch has already handled all undefined cases,
-so the final return statement is redundant.
+On Thu, 04 Sep 2025 11:37:35 +0800
+Menglong Dong <menglong.dong@linux.dev> wrote:
 
-Signed-off-by: cuitao <cuitao@kylinos.cn>
----
- arch/loongarch/kvm/exit.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+> On 2025/9/3 12:22 Herbert Xu <herbert@gondor.apana.org.au> write:
+> > On Tue, Sep 02, 2025 at 05:50:32PM +0800, menglong.dong@linux.dev wrote:
+> > > On 2025/9/2 17:17 Herbert Xu <herbert@gondor.apana.org.au> write:
+> > > > Menglong Dong <dongml2@chinatelecom.cn> wrote:
+> > > > >
+> > > > > diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+> > > > > index fb127fa95f21..fece0f849c1c 100644
+> > > > > --- a/kernel/trace/fprobe.c
+> > > > > +++ b/kernel/trace/fprobe.c
+> > > > > @@ -269,7 +269,9 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+> > > > >        if (WARN_ON_ONCE(!fregs))
+> > > > >                return 0;
+> > > > > 
+> > > > > +       rcu_read_lock();
+> > > > >        head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
+> > > > > +       rcu_read_unlock();
+> > > > >        reserved_words = 0;
+> > > > >        rhl_for_each_entry_rcu(node, pos, head, hlist) {
+> > > > >                if (node->addr != func)
+> > > > 
+> > > > Actually this isn't quite right.  I know that it is a false-positive
+> > > > so that it's actually safe, but if you're going to mark it with
+> > > > rcu_read_lock, it should cover both the lookup as well as the
+> > > > dereference which happens in the loop rhl_for_each_entry_rcu.
+> > > 
+> > > Yeah, I understand. The rcu_read_lock() here is totally used to
+> > > suppress the suspicious rcu usage warning, not for the protection.
+> > > So I used it just for the rhltable_lookup() to reduce the impact.
+> > > Maybe I should add some comment for it.
+> > 
+> > My point is that after a lookup you will be doing some sort of a
+> > dereference on the RCU pointer.  That would cause exactly the same
+> > splat that rhltable_lookup itself generated.
+> > 
+> > For example, rhl_for_each_entry_rcu should have created the same
+> > warning, but it doesn't because for some reason it is using
+> > rcu_dereference_raw.  I'll need to dig up the history of this
+> > to see if there is a good reason for it to not warn.
+> 
+> Yeah, I understand what you mean. I noticed this, and that's why
+> I added the rcu_read_lock() for rhashtable_lookup() only.
+> 
+> Maybe it is to obtain better performance? Just guess ;)
+> And hlist_for_each_entry_rcu() also uses rcu_dereference_raw().
 
-diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
-index 2ce41f93b2a4..e501867740b1 100644
---- a/arch/loongarch/kvm/exit.c
-+++ b/arch/loongarch/kvm/exit.c
-@@ -778,9 +778,7 @@ static long kvm_save_notify(struct kvm_vcpu *vcpu)
- 		return 0;
- 	default:
- 		return KVM_HCALL_INVALID_CODE;
--	};
--
--	return KVM_HCALL_INVALID_CODE;
-+	}
- };
- 
- /*
+Hi Menglong, if you update the patch to use guard(rcu)() because
+head is used repeatedly in fprobe_entry(), I can replace it.
+
+Thank you,
+
+> 
+> Thanks!
+> Menglong Dong
+> > 
+> > Cheers,
+> > -- 
+> > Email: Herbert Xu <herbert@gondor.apana.org.au>
+> > Home Page: http://gondor.apana.org.au/~herbert/
+> > PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> > 
+> 
+> 
+> 
+> 
+
+
 -- 
-2.48.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
