@@ -1,105 +1,265 @@
-Return-Path: <linux-kernel+bounces-801549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9FA6B4467A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:35:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 066A1B4467C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A57A01738
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:35:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8B42177E2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21C22701C4;
-	Thu,  4 Sep 2025 19:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57817271475;
+	Thu,  4 Sep 2025 19:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xFVx0wqg"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPsj5hMX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4CE267733
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 19:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0C126C391;
+	Thu,  4 Sep 2025 19:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757014543; cv=none; b=JMLEq4/vRuAk0U3vPHTkwWEmnuqP4MDlgZmJ1zTl5JqMVhPD36plAT3zGPLp/j1NtV+H6UbxHnc+aFbUw7aGZAwCDuU/rCB8kLggM5SMdFLLk8f5lufR9ZX6JanbXsintkACZl3/Tr1BQmUZexo7ivsDDIcneTzmW7KXU2k5064=
+	t=1757014556; cv=none; b=g3+54PbpajQxSEpD/wkLYsaeYbSxvBLZYC4zk5tkmbKiabWiAnBi29D9aA/R2eocRLOleunIuo+i/G+I0fiU2xpAK/V4ZIFSpHxNbjcXR0yOgYuvwYFwkdtfUjUXiagm/yexGz91H6Z5n3DHfIGDBhV42CDIChvxMiLOfhjo2gQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757014543; c=relaxed/simple;
-	bh=32nYEhO3U0uVRAxCwAscIZa3xyyyN4IzR3cTBfcZ/4s=;
+	s=arc-20240116; t=1757014556; c=relaxed/simple;
+	bh=jDs7p00i6UOtKWdROmQyoqSnQHwd4KapxwOB5494hvk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aywn75A0q+RB8fL3/JhPagw1vQqGUF5fn/d8r9+E6mKyM68ftRpqC77eZUOi4FE2c2YyDx/QSweHG6hdcYhqigfi2poC4i2zA90GOBBAithFwhtA4+8sVdfADCblPv0Ty797BJ7x0ViindgtWxZq06mdkQsLu+Lic6tw+MFT0+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xFVx0wqg; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55f6f434c96so1252172e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 12:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757014539; x=1757619339; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=32nYEhO3U0uVRAxCwAscIZa3xyyyN4IzR3cTBfcZ/4s=;
-        b=xFVx0wqgOn7c2ZpHLjaVzxtGc4XHsgiAAS4p9qJLptr7Si1mgY+XmAKEpqRuYm/cdb
-         7gVnfC9pGrukbXoiDPPavzOZlAmm0/9c+O9oHYeCUNkjYNXIC4XSXA3KyqDtQMM9CEcA
-         dnvpTCRCQhKFaSlUw141azOpaLG26XAA25rM8ayG8IPDHMYs+4ycpmC8Fw8wM5F9aPjF
-         cIiJWPxJqwiWszERMOUIaWOmGE2F3zptKsc/vaLgrO6EBD3f56lvBq7HD+xrH9Tl5o6D
-         xT7YvowSW4Db+7wxPtJ1aXiJYQYhG4p1yp/Ov8ZHyIpHDSC9lt1D4LAMI7TQuRGB3x6i
-         1N6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757014539; x=1757619339;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=32nYEhO3U0uVRAxCwAscIZa3xyyyN4IzR3cTBfcZ/4s=;
-        b=szBUEgYJ7QjYuoivcgFx+cN/FIPjmXYVRCF/oZ7vfJY3jwIi6rM2Rq2hSxLGJrL4L8
-         hmpWka8U+CywLrmzQZVhhOmWUaEUtHULDvBOPt1ZpPlx8ulBSEVHQLuNbwRomJEojlwY
-         GuQEs2kwEqRzUsy+nICfbSQQfcN4HSynoX4W6KXwr0wMA7SDWZZctk73fZNDO0fvMQXO
-         hMffhfV77n2PEHa8Y6CIj9zGNaPLVk4gV4O1qy/+3RQ+lNlB6QoySzJJ1CduZn4Q/2fL
-         yey+jgji0UcIcnIGf96RshNLBR4R8Qmq87fMbEblAe1mzm1N9hgK5ZHs8oYnwh7pIm6l
-         W/uw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzSMxzDLrvABjPNVNqz0cC4JXMcSzSZCt7u/bCUMNHgFbXOKHY/o39B1GpfimE3PAX0YmDh81YVA0WOO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtMSk6yQWyNeAtdaHYKfCSlqDFSb+zePD8nhjM8qWtk3Ia69Ap
-	fPDV3NUgll72iykNqg3mA1Zwz3Mv1/gCFt+dgqTeBxka6aVN38S4BBoU+NHu0oitvAtTxXdKLlK
-	oj/tpRMjfsGCDYww3i4RaZCDWmughZM1IiCWrGtkI+w==
-X-Gm-Gg: ASbGnctm2Ld0Nxl1NgMBYDSRAJigAdbk7DRsbqBoW2jqOcZ9kFFXXay1bLrBwGLTZAA
-	lfqVqyhQdHJ+ro2TCM3Mmq02WQObyGqlj3d+ljLQG94qc52IA/sl6uxTSdGUWeiamSrJCWzIPrV
-	FxTNSonu1nawhvPd8gvCpg5T0I7DJVSmcpY2D0ahkwH68uvw/DgF68PfCneRja3yLfdLY9GcpXo
-	+ICpKFw/t0TFhmAEg==
-X-Google-Smtp-Source: AGHT+IFk6qWrCgBCMUMmRXmwNfVdMojmRglmfhyiJ5psNymemT9FqXab1r+PbaMVvluse9Mju6Gt2tnrWCGHPJdZfDY=
-X-Received: by 2002:a05:651c:1079:b0:332:3fd0:15fb with SMTP id
- 38308e7fff4ca-336ca5c1a70mr38397421fa.0.1757014539436; Thu, 04 Sep 2025
- 12:35:39 -0700 (PDT)
+	 To:Cc:Content-Type; b=IHHdoILlPx+26XTR1LzEQWQ44DQukOL7AGvnCWyVoriwv7tNEqrMH9x7FoQcs6BbAgtWq+ag0ZyP6C0MZgxxEH2DJbducyOLL1fWCY7IkJqobXxg3ZidcO4bwuIoQGidgBGuVr3JA5dOWVwP2pshLbFVMY1+QiAxXsKdFkcgmNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VPsj5hMX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB24FC4CEF1;
+	Thu,  4 Sep 2025 19:35:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757014555;
+	bh=jDs7p00i6UOtKWdROmQyoqSnQHwd4KapxwOB5494hvk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VPsj5hMXbsJk7+19y9SBKgKCsQydxHqO8PyVkmIyY5woR6mvVAIBvHoSevR99UCuD
+	 fWz1e3AmHgIiwEGck4lUbZGZKOnpxRp8k2sTVivXqnp7mVw6f2b9Z2/g9E7122JTS9
+	 k8bTtz4c6aIhddPFp1z1iHiVG2Q9YYrjC0L6/7i8Xs3E2N++oxfdUgKp7sswIObV55
+	 RAM+02fGZ8TBJycznVEKP//MCGJMsg8618Hr63EHRS5b9TChoQW/H3N3ZkD6/7yNKq
+	 Utt5aop7+JL6VXfAZMcucSzbpJafrGmlxMRjlM4ORp0BPS479AjpkBv0D/rFDFVdp+
+	 c4Dfif48RulUw==
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-74526ca79c2so672972a34.3;
+        Thu, 04 Sep 2025 12:35:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU2cD2lzltzgvfwIdcxnJoO6AKQdgZIOa1u4pDsJNGTnmtg+YrJSP/iU/T6Yy3cUdBfwvfNe36ArVfj8PI=@vger.kernel.org, AJvYcCVVIYf02r5wPGLu39bj1NODSuAlpVwly+afje7HDSifEeemnXhdEGO+rMowd4WALO7Bw8ccCnGWCRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzytY91XDgVM8m7WwznH43ygdjVm+TlHCmijUU7zeGyFWVaF5nL
+	BtDN2En1f5iDmU4/LBwU7YlbyT7+1+al9hC/vV3u7uo28MkklTk52bcJ1ZYSz3ogKDvg/O6+VY0
+	AwhJfHyXDzVdY9Bk6DRU8f6tPgBhQQxA=
+X-Google-Smtp-Source: AGHT+IFbDVUkOR2oFA/bcez8jL9GRyu9uLaT7u4abAl0aiilKDwn5aVIULY7Nk5+m/CybhJ82+i9C1JAAH9F1vYxFLw=
+X-Received: by 2002:a05:6808:8292:b0:438:1adb:248f with SMTP id
+ 5614622812f47-4381adb25e5mr4280150b6e.27.1757014555160; Thu, 04 Sep 2025
+ 12:35:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903100104.360637-1-hendrik.hamerlinck@hammernet.be>
-In-Reply-To: <20250903100104.360637-1-hendrik.hamerlinck@hammernet.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 4 Sep 2025 21:35:28 +0200
-X-Gm-Features: Ac12FXwi4fLng12UMi28VuiL73WI6CiLUWCY-CJjaRNMNpJieZixpye9Zb1GrH8
-Message-ID: <CACRpkdYMHMvFCzcA0G9sj+xSrjXROU4OmnV=x0EPfRBpVycQtg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: spacemit: fix typo in PRI_TDI pin name
-To: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Cc: dlan@gentoo.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev, linux-gpio@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
+References: <20250825185807.57668-1-vivekyadav1207731111@gmail.com>
+In-Reply-To: <20250825185807.57668-1-vivekyadav1207731111@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 4 Sep 2025 21:35:43 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gfrTvLgs=PdmRbRRN05GE4Bk8Q7hJdtQfyk3VqaOz7FQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyIdAkve35YQAht4PDr-aLjEZqibWHxw4SI6REqMWQk_QBh7TvokGelwbI
+Message-ID: <CAJZ5v0gfrTvLgs=PdmRbRRN05GE4Bk8Q7hJdtQfyk3VqaOz7FQ@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle: sysfs: Use sysfs_emit/sysfs_emit_at instead of sprintf/scnprintf
+To: vivekyadav1207731111@gmail.com
+Cc: daniel.lezcano@linaro.org, rafael@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, joe@perches.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 3, 2025 at 12:01=E2=80=AFPM Hendrik Hamerlinck
-<hendrik.hamerlinck@hammernet.be> wrote:
-
-> The datasheet lists this signal as PRI_TDI, not PRI_DTI.
-> Fix the pin name to match the documentation and JTAG naming
-> convention (TDI =3D Test Data In).
+On Mon, Aug 25, 2025 at 8:58=E2=80=AFPM <vivekyadav1207731111@gmail.com> wr=
+ote:
 >
-> Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+> From: Vivek Yadav <vivekyadav1207731111@gmail.com>
+>
+> The ->show() callbacks in sysfs should use sysfs_emit() or
+> sysfs_emit_at() when formatting values for user space. These helpers
+> are the recommended way to ensure correct buffer handling and
+> consistency across the kernel.
+>
+> See Documentation/filesystems/sysfs.rst for details.
+>
+> No functional change intended.
+>
+> Suggested-by: Joe Perches <joe@perches.com>
+> Signed-off-by: Vivek Yadav <vivekyadav1207731111@gmail.com>
+> ---
+>  drivers/cpuidle/sysfs.c | 38 +++++++++++++++++++-------------------
+>  1 file changed, 19 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/cpuidle/sysfs.c b/drivers/cpuidle/sysfs.c
+> index d6f5da61cb7d..c7af09460b74 100644
+> --- a/drivers/cpuidle/sysfs.c
+> +++ b/drivers/cpuidle/sysfs.c
+> @@ -22,21 +22,21 @@ static ssize_t show_available_governors(struct device=
+ *dev,
+>                                         struct device_attribute *attr,
+>                                         char *buf)
+>  {
+> -       ssize_t i =3D 0;
+> +       ssize_t len =3D 0;
 
-Patch applied!
+The variable rename is not necessary or even useful AFAICS ->
 
-Yours,
-Linus Walleij
+>         struct cpuidle_governor *tmp;
+>
+>         mutex_lock(&cpuidle_lock);
+>         list_for_each_entry(tmp, &cpuidle_governors, governor_list) {
+> -               if (i >=3D (ssize_t) (PAGE_SIZE - (CPUIDLE_NAME_LEN + 2))=
+)
+> +               if (len >=3D (ssize_t)(PAGE_SIZE - (CPUIDLE_NAME_LEN + 2)=
+))
+>                         goto out;
+>
+> -               i +=3D scnprintf(&buf[i], CPUIDLE_NAME_LEN + 1, "%s ", tm=
+p->name);
+> +               len +=3D sysfs_emit_at(buf, len, "%.*s ", CPUIDLE_NAME_LE=
+N, tmp->name);
+
+-> because the second argument here is still an offset relative to
+buf, isn't it?
+
+>         }
+>
+>  out:
+> -       i+=3D sprintf(&buf[i], "\n");
+> +       len +=3D sysfs_emit_at(buf, len, "\n");
+>         mutex_unlock(&cpuidle_lock);
+> -       return i;
+> +       return len;
+>  }
+>
+>  static ssize_t show_current_driver(struct device *dev,
+> @@ -49,9 +49,9 @@ static ssize_t show_current_driver(struct device *dev,
+>         spin_lock(&cpuidle_driver_lock);
+>         drv =3D cpuidle_get_driver();
+>         if (drv)
+> -               ret =3D sprintf(buf, "%s\n", drv->name);
+> +               ret =3D sysfs_emit(buf, "%s\n", drv->name);
+>         else
+> -               ret =3D sprintf(buf, "none\n");
+> +               ret =3D sysfs_emit(buf, "none\n");
+>         spin_unlock(&cpuidle_driver_lock);
+>
+>         return ret;
+> @@ -65,9 +65,9 @@ static ssize_t show_current_governor(struct device *dev=
+,
+>
+>         mutex_lock(&cpuidle_lock);
+>         if (cpuidle_curr_governor)
+> -               ret =3D sprintf(buf, "%s\n", cpuidle_curr_governor->name)=
+;
+> +               ret =3D sysfs_emit(buf, "%s\n", cpuidle_curr_governor->na=
+me);
+>         else
+> -               ret =3D sprintf(buf, "none\n");
+> +               ret =3D sysfs_emit(buf, "none\n");
+>         mutex_unlock(&cpuidle_lock);
+>
+>         return ret;
+> @@ -230,7 +230,7 @@ static struct cpuidle_state_attr attr_##_name =3D __A=
+TTR(_name, 0644, show, store)
+>  static ssize_t show_state_##_name(struct cpuidle_state *state, \
+>                          struct cpuidle_state_usage *state_usage, char *b=
+uf) \
+>  { \
+> -       return sprintf(buf, "%u\n", state->_name);\
+> +       return sysfs_emit(buf, "%u\n", state->_name);\
+>  }
+>
+>  #define define_show_state_ull_function(_name) \
+> @@ -238,7 +238,7 @@ static ssize_t show_state_##_name(struct cpuidle_stat=
+e *state, \
+>                                   struct cpuidle_state_usage *state_usage=
+, \
+>                                   char *buf)                            \
+>  { \
+> -       return sprintf(buf, "%llu\n", state_usage->_name);\
+> +       return sysfs_emit(buf, "%llu\n", state_usage->_name);\
+>  }
+>
+>  #define define_show_state_str_function(_name) \
+> @@ -247,8 +247,8 @@ static ssize_t show_state_##_name(struct cpuidle_stat=
+e *state, \
+>                                   char *buf)                            \
+>  { \
+>         if (state->_name[0] =3D=3D '\0')\
+> -               return sprintf(buf, "<null>\n");\
+> -       return sprintf(buf, "%s\n", state->_name);\
+> +               return sysfs_emit(buf, "<null>\n");\
+> +       return sysfs_emit(buf, "%s\n", state->_name);\
+>  }
+>
+>  #define define_show_state_time_function(_name) \
+> @@ -256,7 +256,7 @@ static ssize_t show_state_##_name(struct cpuidle_stat=
+e *state, \
+>                                   struct cpuidle_state_usage *state_usage=
+, \
+>                                   char *buf) \
+>  { \
+> -       return sprintf(buf, "%llu\n", ktime_to_us(state->_name##_ns)); \
+> +       return sysfs_emit(buf, "%llu\n", ktime_to_us(state->_name##_ns));=
+ \
+>  }
+>
+>  define_show_state_time_function(exit_latency)
+> @@ -273,14 +273,14 @@ static ssize_t show_state_time(struct cpuidle_state=
+ *state,
+>                                struct cpuidle_state_usage *state_usage,
+>                                char *buf)
+>  {
+> -       return sprintf(buf, "%llu\n", ktime_to_us(state_usage->time_ns));
+> +       return sysfs_emit(buf, "%llu\n", ktime_to_us(state_usage->time_ns=
+));
+>  }
+>
+>  static ssize_t show_state_disable(struct cpuidle_state *state,
+>                                   struct cpuidle_state_usage *state_usage=
+,
+>                                   char *buf)
+>  {
+> -       return sprintf(buf, "%llu\n",
+> +       return sysfs_emit(buf, "%llu\n",
+>                        state_usage->disable & CPUIDLE_STATE_DISABLED_BY_U=
+SER);
+>  }
+>
+> @@ -310,7 +310,7 @@ static ssize_t show_state_default_status(struct cpuid=
+le_state *state,
+>                                           struct cpuidle_state_usage *sta=
+te_usage,
+>                                           char *buf)
+>  {
+> -       return sprintf(buf, "%s\n",
+> +       return sysfs_emit(buf, "%s\n",
+>                        state->flags & CPUIDLE_FLAG_OFF ? "disabled" : "en=
+abled");
+>  }
+>
+> @@ -358,7 +358,7 @@ static ssize_t show_state_s2idle_##_name(struct cpuid=
+le_state *state, \
+>                                          struct cpuidle_state_usage *stat=
+e_usage, \
+>                                          char *buf)                      =
+       \
+>  { \
+> -       return sprintf(buf, "%llu\n", state_usage->s2idle_##_name);\
+> +       return sysfs_emit(buf, "%llu\n", state_usage->s2idle_##_name);\
+>  }
+>
+>  define_show_state_s2idle_ull_function(usage);
+> @@ -550,7 +550,7 @@ static ssize_t show_driver_name(struct cpuidle_driver=
+ *drv, char *buf)
+>         ssize_t ret;
+>
+>         spin_lock(&cpuidle_driver_lock);
+> -       ret =3D sprintf(buf, "%s\n", drv ? drv->name : "none");
+> +       ret =3D sysfs_emit(buf, "%s\n", drv ? drv->name : "none");
+>         spin_unlock(&cpuidle_driver_lock);
+>
+>         return ret;
+> --
 
