@@ -1,200 +1,184 @@
-Return-Path: <linux-kernel+bounces-799700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64FC8B42F4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 03:59:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C155B42FB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D0B95658B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:59:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B445188D645
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F471DF97C;
-	Thu,  4 Sep 2025 01:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA831E3DFE;
+	Thu,  4 Sep 2025 02:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/E7rQoc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="mZG+uOmf"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011039.outbound.protection.outlook.com [52.101.70.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8471C6B4;
-	Thu,  4 Sep 2025 01:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756951148; cv=none; b=XfUgn5bJ6oG+l0xMBNRdSvg5Ka1izkk8qaHfmx8T8WdcuU+k4GOel2UfDRR2FZKR/MaAeW9xb37kXSwDeJSGRUgK5Wu/tKO/HaHDfSzUEY6UF0LAAtQB0Go2sd229z3plToYCXkIZ4Bok1BdyMGehYDtgJ8qC2LuAvDacidCxzQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756951148; c=relaxed/simple;
-	bh=COr4rVD1Rbl6LzzAujkyKf5egCLVDLyy5/J9/B88ioE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=M87KBzW3VumrUcu6cK6iNZaPp8eA9h5pKk2rq6ovg39yc7rwIdA0fmZGLm/mAPKiJIVr3fLsXAw2gm3Ac9RQhpr3CFbjifJgtq7UMcYc/YlsFMBQxnibAgusLbuTV1WSLOI3RGD2Ylk1zwOtQf7p75APMkAZ6GUA5r+WWo9UK5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/E7rQoc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2D8E6C4CEE7;
-	Thu,  4 Sep 2025 01:59:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756951148;
-	bh=COr4rVD1Rbl6LzzAujkyKf5egCLVDLyy5/J9/B88ioE=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=V/E7rQoc3zvXbaVDNlvicgIqxzFopvyJbGOyfG+yQrPjKML8krjMLFNquXRU9MiOY
-	 3QGGoTrEXU4rS5uj5mzf3+6UZhbvwrDj+oYwpWuBrKgdibaMQEuvp9R4ORcqKPL/Cs
-	 uWDsG3KxksO8CofaHld0CAqkvGJDlE4Xx28unZY8YqP2Wl3goZNYnpvB3NRVfAHzVV
-	 pvx2gz4Di428GC3VlbBAaefL39yq9LARibXsAs0QRejzA5CQ/N/fEPsiwqgDzfh+48
-	 rtMf1EUPHZ3XZ2hKfduVe0cpVMH5+vfwdRUcPkk4cOamL0X8rT7vgL0LUeMwKVvIZm
-	 MyRp5CXCj152g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1912ACA1015;
-	Thu,  4 Sep 2025 01:59:08 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Wed, 03 Sep 2025 20:58:58 -0500
-Subject: [PATCH v3] soc: tegra: fuse: speedo-tegra210: Update speedo ids
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61ED51E521B;
+	Thu,  4 Sep 2025 02:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756952525; cv=fail; b=jcG3jHTyvRmnkwqHOQsdXJMJyc5B7slVo+CRt1+nbUAPYrherZw/QPtrmzmgQs7Ec5Zdtiqu2NzbZdIsvCNRK8/w80EyFLcBlt6buJL9osHqqAhWn+n6dd+x5AG0fFY9L2Ark3giXwsFa3WM3blrisVM8jSDerRZ8ucRodN4Jp8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756952525; c=relaxed/simple;
+	bh=OJrvOymifW8tPcCDlt3jcyosaCxFw9/6cKj6g5uOF+g=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=RD/XOxm33KKcKlF8VnKvXlOaQdrrewrqMmryJOm03ddbMHQJ7GDTpTMtGDWh+WEgi7OF0+1s7QpGi6yCiZMeMmVcGSwMQChNx80IN6AUzifssaeH14rxQMqCjxSzO5wTJlm1Hs7pdDDKR0Yrp2zbtsMt3nAQmaepsixOGc05dhs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=mZG+uOmf; arc=fail smtp.client-ip=52.101.70.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q3m7M86MdMgjYyuJEWVG3vbGGbik/WHYnCPbDHrFRreuM4aPDaI6GDwwaXoNEHXuuftDiW3mUyDP2bS3+2++n9/FAq0EkeGRX3sbHThssk1r8iiWJx24TBPEWCc+vxsaLWVcu80cCdzWNB1MRxF5H2chXmFpdSKnyFf/BUxQVSfycUNwPq0ivEefsGRFr4ZdY2OPHGVwohU7QcpkH3LIMc9PjUh3wNZFA343llbvrtETaowOBPf6F0jDPa60xODG+B3b0NW6MH3PP+Fn8I4KydKUXz+9uw4YIiAaAWO7EJR4LMf29y5O1oLLGOUW+LnS329E5z6X6V5u/x51a4RDdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fbGBZtJDk7qC+hulcRHjxbAc1kMKuY7njWVb9x8AF10=;
+ b=AWl7FC1AVadG+cSwxpKWenvZ+KYon2kuy+8EvhiU8N67sVORZXKZtr0tZwBfbtft0eoiG9WWWdc/5knmB4krrw+FNVmPlyWxwXsFWPoWkLtcp8/5AqUGRuhY471k+TuIImQyrCrsYMu5LDdJiFppneorcQl7tgzbluVzKDlnNqs6v3yakHUoK4yxDiVgObLPyjaCCHV8krasEQWCQU0lX+493tTVwSqgjA7JuCwU2xzt1FVATSs1xaKlQ1ilZteIjj6HN1qgghvmoeAOH/YijQJjqPXwO/bNlRnFNdmgYHWv6SuknXSvBKWOLzgloi3VEYZCe9bOBaBaLKpc2+2fhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fbGBZtJDk7qC+hulcRHjxbAc1kMKuY7njWVb9x8AF10=;
+ b=mZG+uOmf+IE3DZsQVPeRKYuzqsXdP/shnR/ALxL1xML/qnTuLQmg+DvNFFr6oQYf2sx/0Wtc6VbKMdrEXG1xntYznfauZR/xmbKVdj1GktOTnc4KZwCTfyPvpOiR/aF75900C699kFSLDtGH5eXvE+je6DYHKEKyCOmb9595CMYqeeupHleuj8NX0ty7/VqADyCz9NviRX3cInj6k4k+JhrdqyVJ9pAR7SkzWEZTiZaH6cVsFto9OSU9/hvK0uQ87ehpKfy9YEhz9VxekHnK29HNI+aHjL/efxwDm4oXGKMx2uvh15bQZldkTPLirrTFEuIBBD5SvM1Wr4eFHoAbLA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by AS8PR04MB9509.eurprd04.prod.outlook.com (2603:10a6:20b:441::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Thu, 4 Sep
+ 2025 02:22:00 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.9094.017; Thu, 4 Sep 2025
+ 02:22:00 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	Frank.Li@nxp.com
+Cc: devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: imx95: add standard PCI device compatible string to NETC Timer
+Date: Thu,  4 Sep 2025 10:00:49 +0800
+Message-Id: <20250904020049.1397308-1-wei.fang@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR06CA0199.apcprd06.prod.outlook.com (2603:1096:4:1::31)
+ To PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-tegra210-speedo-v3-1-73e09e0fbb36@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAGHyuGgC/2WN0QqDIBhGXyW8nkN/m+mu9h5jF2Z/JawMDdmI3
- n0WjA26PB+c8y0kYnAYybVYSMDkovNjBnEqiO3N2CF1TWYCDC5McaAzdsEAZzROiI2nZcWk5qh
- qZS3J1hSwda+9eH9k7l2cfXjvB4lv67clD63EKaNGKy4kM42F6tYNxj3P1g9kayX4+ZqJow/ZV
- xplq2StdAn//rquH8g0yjLuAAAA
-X-Change-ID: 20250812-tegra210-speedo-470691e8b8cc
-To: Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756951147; l=3689;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=RDXctTbmGxlSSv4dmzycEd2KLlflflCn0kxYFTnBz+U=;
- b=e6WTY/oNHOtWBHpCY4U/f+KyFymNrmKE7TuAmaL9HV0ch8628dgXWr2YCOEiRnI8eQ3sdrRBB
- oEnwbVA1IRzAAjIT2T/b6WlLzgS7mARcpaXNSHpvnUnSoy9k/suKWRw
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|AS8PR04MB9509:EE_
+X-MS-Office365-Filtering-Correlation-Id: f17a12c4-3a7f-4511-aac8-08ddeb59d40d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|1800799024|376014|52116014|7416014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8lYtSc0ilKTK7WH/Y8I7wi9z2OC116gY0KH8z6688rboZDmSSBHvDECLGBtk?=
+ =?us-ascii?Q?dy5X4rOo8TBC1JgQz++aVd2pBl3Ia7JdSRbwS1bBnU/wf+0a7kSykoMfk60t?=
+ =?us-ascii?Q?hUXMYI67+WdC4YnjUVLK9iE/m6PJ6Gae+1hE8bjO7YvGkymWZUZDtgFvIwpi?=
+ =?us-ascii?Q?c5JH0In2I6VLZrE894d1+1sH6pG4RGkxaUoYXfZyiUiNBffYnTUHywpJ7v2x?=
+ =?us-ascii?Q?dAYfvjf06HqTIsPmNxe1k0G9BLptb9zATdarSY0KSf99Y4rmBVI8v+fkz7yP?=
+ =?us-ascii?Q?aHbL+UAH1DzLsXhkbK4EcOSBNIPlE0glyT3o+6Iy/KJqwzodPQOKCk9UVTBV?=
+ =?us-ascii?Q?Z024JnDZjN3O6ha0NGka2+Oe1FQ21CewaFOT5RoRNtnnPm7ryALhI4EklPa8?=
+ =?us-ascii?Q?/XTDvC1uh4rvdLErTTqTNdB/UFpC14iI6WmoV5Q2g7UePck5uHhXAlk4svlt?=
+ =?us-ascii?Q?k0CJvPUwI3FjVLlkLvYtEbnqjuIrbb2V8mwRTeUh8PCABBecY2f6nSzGFVvI?=
+ =?us-ascii?Q?uUirtjUx1KwPnQt9VC1JDRGuQ5VKbugdRfv1oMVaXbJIEB+4mtckmAwWqY9p?=
+ =?us-ascii?Q?Mb5wg/c6yLnPpTHOqCHphAjEWw9A3vETLAMztEVpfRVJuuIAQVheDYU3IOrf?=
+ =?us-ascii?Q?FHFImtQvzTebtgX4Aj+Up8ixtWQIkrC7UVVUKFeG7xjopoSjRlTRVkOXalQq?=
+ =?us-ascii?Q?gzly6bCb8GAhUDOk3JdSoO8grANVwvpW/8AZJx2x4YujQoqy499bmFSTdEVH?=
+ =?us-ascii?Q?chv/fRitcuUPe7qtCbmCuWwr04w1pVLvbePWP/N+oMAL3vd7CDdoFw4sG0Im?=
+ =?us-ascii?Q?xC+DIhsr30Rr1TZccqaorb+rYOqy3JiRCjm/jEnx1RH3xuMYRJxji1XhxUQb?=
+ =?us-ascii?Q?TH4WhyahjNKSewrI731ta1kzCJMJYAM2dDc9ZIkkdtMnfhGPalG252PSiTup?=
+ =?us-ascii?Q?tZ5sp+gqnkVTrs5NQOgYVWbvKp/JAlNbq2poM5uD2CimSbx9wQI0UycZwFWN?=
+ =?us-ascii?Q?agLJlff+H+jAyMsqLav+9GIibr1bOLyb7okskzH5017zFaQog81wzc/afafq?=
+ =?us-ascii?Q?Am2E0OVCCzvVYrhdhoT64E7pWUCupbn61heLBvzGSh1xccTembHFxI1idnPy?=
+ =?us-ascii?Q?tG8btzeoDegnPQloNc6j5+9Co4sG5kZ+LuvnziNc61iJx6AE9KoF4J6Ak6e0?=
+ =?us-ascii?Q?ppjADcnZwC9fA1fecH7NpHrp+c2cms1KgUfIUDvAN2jZ8avIwaGClPW16Tu/?=
+ =?us-ascii?Q?6GyVyq3SdZzB4VwRylQth3axkSQE54PtYaEFVNFLqmBQpRI6kzWxWXN5jqf/?=
+ =?us-ascii?Q?8RXrp5BHpht5LIEa8sVY9pliKbrgRGH4sYGKdKgKtMyOYG42MbALpyru6FGU?=
+ =?us-ascii?Q?0wiGLdvSZuofjGA/kq6yAoA8GwOgQc4vfdHjt1uSleLM262FMB4X9Svcmjlx?=
+ =?us-ascii?Q?1oMs2O2vxniDxEkTm8mI+6hdeOG7kGTXO8KVD8RlUt5X0xHJs8qeUw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(376014)(52116014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?wNxIG7FpuGnvJq6QuT5PMdE+fmm1iihTtmXPu7g3PiWTx8Rt5n55bv8LMXXE?=
+ =?us-ascii?Q?U8gszi6/FLz6ayks/bQ75Qo/E08YJQMovBTfXLDaUS+I2VIK5z4h9BHtWofZ?=
+ =?us-ascii?Q?WxJ3O6V68pcyWwsnoU8lVIJx47VAChI/VOc+UpzHvSFTWv9BDhVmPTqzZk8y?=
+ =?us-ascii?Q?Zl++gWVTbMGkZ7IZqF2xgTU51/2PZo4wnc4ToHtN8OjuyIB8QN3jSJV1v023?=
+ =?us-ascii?Q?QQ9ejy2IEr8uarncqf0pfH6O1fdaeHoY7Azz812DmGVeHVOI7kzIgJdqQCYG?=
+ =?us-ascii?Q?8kIhBaqMEJfrRy9NScBuLpwcyiZR7BYQqpBo/W22DCjckjlDxWUBrPp9xkgL?=
+ =?us-ascii?Q?Yw8Y5vXSyoeo2gAUl8e/PbZsnZpEucHDVP9Jl6E8U46az4P0C7MWCT5YRaOh?=
+ =?us-ascii?Q?4wbcbkz/Cdkc1QWantkh4tEGXfKQq7TgZWtxjKo4Sw8RwU626NQsMCZjfoZj?=
+ =?us-ascii?Q?8k9LKWg4RzljQLVFlqsYkMltM0qI1Y9RcJBfSnb0YhOsueabfzVQ5v3hBfPO?=
+ =?us-ascii?Q?ZrNJbMj1fTjM5kuzBR6NmH30NVgE8oIGgIQWe17MwExnO9HgKgFvzIwEpNij?=
+ =?us-ascii?Q?MyOVx2/8zChGdzNed021RSHmqH79vEBmxlmWJO7MN1Rhcc42P+wDwvs1ec9l?=
+ =?us-ascii?Q?MM3QSgb4+2VI1H/VcBJHzyCQ5y/4wQO1uprEgzxwYOCcJmIHe0o7pLb06Z7E?=
+ =?us-ascii?Q?YtJ54b/W9vAShD3wCDR+6t9g8uz4/Fe8Rcxu3QAG/yiEI3zvDQWXDaIRCDFz?=
+ =?us-ascii?Q?Yt4rcUvow1HIf0tGFOIH3hgn7s6et+OPp1R3k64fV3FBTf+ehl8oxwW3K2aT?=
+ =?us-ascii?Q?9HANr3i76eKjBuxbdBAvQA+S2GiGJNmxf9ghjNfIewUcDl/CFMaJHZaZCcWc?=
+ =?us-ascii?Q?Lt8iVl/HdjXH4TIEOtoIg39XmU3jAP4jJb9r+7gQeENLAo8LWvCzb/IvPn7y?=
+ =?us-ascii?Q?EgKWtitkgaMFIBoTuJ9JWbjfIKcONnEGvf4hU0EZB3CCGuJ2ZCaaLhk5Va+X?=
+ =?us-ascii?Q?2sC+AK0i+tHkci2VsoyE8RiPCPuDauuCVv3F2+qj/pO2zqIzBaNKuCBkGUUa?=
+ =?us-ascii?Q?7qUTCwohcupg+LY8N6HJ02CxeSLrYRnLnFJWMyj0wrHh6fsne89n9AFDRrbW?=
+ =?us-ascii?Q?s+8ABH63IU0mP/kIYmSC9rT1IvUu8J55fgGtwHuYpdplOTOIOByAku+vDdne?=
+ =?us-ascii?Q?ykOZss6ECTrCELJ16WwFkB7ADMhgaacjnthjj9XFgZgXBe/B5puAL5MOMm1J?=
+ =?us-ascii?Q?qHIos/L9+Tbt8+Hfb8TJB7LOFNeEUkDs1touJP2W4VM6LqX6f0HoLr8l5Kpp?=
+ =?us-ascii?Q?hNPsxTKCbnz8guceXmnpRJMfb8I47m2sMHKnDKQXT5fibckYOiAzCo6G/1kR?=
+ =?us-ascii?Q?E18f4dMHZFvBRg7DtNVw5aDu98eUjRsz7XXEH3dExWOLgYjiU+SDwIYEBcw4?=
+ =?us-ascii?Q?UQs/slzH+ST885QuzBvfCPXk+rYxGJDH0GZH/ewT5nQo0wzvqRFkKvNepJvw?=
+ =?us-ascii?Q?QWoUsNEAVs1zRWMdu28NYW4OUJjdVEDWkIymZ9JtfEVrbs8/zZ2aSw25pnls?=
+ =?us-ascii?Q?tieJc+pKnboycr0+07GC57zHjtYB5w2Pii8lcJUV?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f17a12c4-3a7f-4511-aac8-08ddeb59d40d
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 02:22:00.2413
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Dgl2ZmsR8xaUN5LxrVwRZNbTi/YyVtt6oFPKuVGqS/qJOWifuPIC9G3bCS7I4+HoVChkFAX/l3fNKXwckJcd8Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9509
 
-From: Aaron Kling <webgeek1234@gmail.com>
+PCI devices should have a compatible string based on the vendor and
+device IDs. So add this compatible string to NETC Timer.
 
-Existing code only sets cpu and gpu speedo ids 0 and 1. The cpu dvfs
-code supports 11 ids and nouveau supports 5. This aligns with what the
-downstream vendor kernel supports. Align skus with the downstream list.
-
-The Tegra210 CVB tables were added in the first referenced fixes commit.
-Since then, all Tegra210 socs have tried to scale to 1.9 GHz, when the
-supported devkits are only supposed to scale to 1.5 or 1.7 GHZ.
-Overclocking should not be the default state.
-
-Fixes: 2b2dbc2f94e5 ("clk: tegra: dfll: add CVB tables for Tegra210")
-Fixes: 579db6e5d9b8 ("arm64: tegra: Enable DFLL support on Jetson Nano")
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+Signed-off-by: Wei Fang <wei.fang@nxp.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 ---
-The Tegra210 CVB tables were added in commit 2b2dbc2f94e5. Since then,
-all Tegra210 socs have tried to scale the cpu to 1.9 GHz, when the
-supported devkits are only supposed to scale to 1.5 or 1.7 GHZ.
-Overclocking should not be the default state.
----
-Changes in v3:
-- Drop all patches related to limiting cpu frequency from a dt property
-- Link to v2: https://lore.kernel.org/r/20250903-tegra210-speedo-v2-0-89e6f86b8942@gmail.com
+ arch/arm64/boot/dts/freescale/imx95.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes in v2:
-- Define units in patch 1
-- Update patch 1 commit message to better explain the need
-- Pull all downstream sku's into patch 2, which eliminates patch 3
-- Update patch 4 commit message to indicate the limit is due to thermal
-  constraints.
-- Link to v1: https://lore.kernel.org/r/20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com
----
- drivers/soc/tegra/fuse/speedo-tegra210.c | 62 ++++++++++++++++++++++----------
- 1 file changed, 43 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/soc/tegra/fuse/speedo-tegra210.c b/drivers/soc/tegra/fuse/speedo-tegra210.c
-index 695d0b7f9a8abe53c497155603147420cda40b63..60356159e00d2059e55eaacba27b5ca63bf96c90 100644
---- a/drivers/soc/tegra/fuse/speedo-tegra210.c
-+++ b/drivers/soc/tegra/fuse/speedo-tegra210.c
-@@ -65,27 +65,51 @@ static void __init rev_sku_to_speedo_ids(struct tegra_sku_info *sku_info,
- 	sku_info->gpu_speedo_id = 0;
- 	*threshold = THRESHOLD_INDEX_0;
+diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/dts/freescale/imx95.dtsi
+index 4ca6a7ea586e..605f14d8fa25 100644
+--- a/arch/arm64/boot/dts/freescale/imx95.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
+@@ -1948,6 +1948,7 @@ enetc_port2: ethernet@10,0 {
+ 				};
  
--	switch (sku) {
--	case 0x00: /* Engineering SKU */
--	case 0x01: /* Engineering SKU */
--	case 0x07:
--	case 0x17:
--	case 0x27:
--		if (speedo_rev >= 2)
-+	if (speedo_rev >= 2) {
-+		switch (sku) {
-+		case 0x00: /* Engineering SKU */
-+		case 0x01: /* Engineering SKU */
-+		case 0x13:
-+			sku_info->cpu_speedo_id = 5;
-+			sku_info->gpu_speedo_id = 2;
-+			break;
-+
-+		case 0x07:
-+		case 0x17:
-+		case 0x1F:
-+			sku_info->cpu_speedo_id = 7;
-+			sku_info->gpu_speedo_id = 2;
-+			break;
-+
-+		case 0x27:
-+			sku_info->cpu_speedo_id = 1;
-+			sku_info->gpu_speedo_id = 2;
-+			break;
-+
-+		case 0x83:
-+			sku_info->cpu_speedo_id = 3;
-+			sku_info->gpu_speedo_id = 3;
-+			break;
-+
-+		case 0x87:
-+			sku_info->cpu_speedo_id = 2;
- 			sku_info->gpu_speedo_id = 1;
--		break;
--
--	case 0x13:
--		if (speedo_rev >= 2)
--			sku_info->gpu_speedo_id = 1;
--
--		sku_info->cpu_speedo_id = 1;
--		break;
--
--	default:
-+			break;
-+
-+		case 0x8F:
-+			sku_info->cpu_speedo_id = 9;
-+			sku_info->gpu_speedo_id = 2;
-+			break;
-+
-+		default:
-+			pr_err("Tegra210: unknown revision 2 or newer SKU %#04x\n", sku);
-+			/* Using the default for the error case */
-+			break;
-+		}
-+	} else if (sku == 0x00 || sku == 0x01 || sku == 0x07 || sku == 0x13 || sku == 0x17) {
-+		sku_info->gpu_speedo_id = 1;
-+	} else {
- 		pr_err("Tegra210: unknown SKU %#04x\n", sku);
--		/* Using the default for the error case */
--		break;
- 	}
- }
- 
-
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250812-tegra210-speedo-470691e8b8cc
-
-Best regards,
+ 				netc_timer: ethernet@18,0 {
++					compatible = "pci1131,ee02";
+ 					reg = <0x00c000 0 0 0 0>;
+ 					status = "disabled";
+ 				};
 -- 
-Aaron Kling <webgeek1234@gmail.com>
-
+2.34.1
 
 
