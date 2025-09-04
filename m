@@ -1,65 +1,74 @@
-Return-Path: <linux-kernel+bounces-800022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE8E5B4328F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:36:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57CD1B4326B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E38A561491
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:36:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12AAA1C21B5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E96275B0D;
-	Thu,  4 Sep 2025 06:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D632750E6;
+	Thu,  4 Sep 2025 06:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fv1TVnEl"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="vC9OUcFI"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE6A2750E1;
-	Thu,  4 Sep 2025 06:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42FF274FDE
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756967797; cv=none; b=TtMiHxkf6AMrAE8bDdV4B21axTWqfZZtplv7674fMnMg0RJtro8hrCB8uk7Ba7L9tR0A8uSOyCSxi2mN2oNch7EBIgxX3mGBXOZRInVXlRmmrmtRBUwhwrc4TXD9L7hVYfiFYV9yRbSeckb6bwh8WaL/kcd9TCpW9H6mcxNXbMU=
+	t=1756967577; cv=none; b=aFArL2CaL2HIbmdfRoe79NOOhbFv4XJaZdqROHkrCFE61AQ0MZtFlEliIZm8gGwrTnf7lUmVs31HHrypIZ03GYxz58U4upXOKSdbRNsCZRJtJAoWgS+GEPvYhrWUn7nUzquDCoZBaLU35Qdek4/H3Yt7SssStyAAGWVMKWQley0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756967797; c=relaxed/simple;
-	bh=DpE82IJAwixADlnMuviaS0MAb4mJckPRZS0EepdPCVc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hLzbmMqUyI4+7u37WxC6pIFBFpVBF6SmMm0Vxvt+9GKregLg09Hyhv6bfRs2PHgX3gpcf84u4H82UC0OnawhBpnviVqln7QqxbRHU7LB5gZyDD86s9unvDAXsepx+VqpHiJk2x96En1D30MZd0sjJbquvzpzEshluElUFQgRGew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fv1TVnEl; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=KxCfRS8/dIzqWWtc3wSYSDwPd9eAd3omN4Lj9Pa5Xi0=; b=fv1TVnEl4thmm1prMBC18GOGOt
-	//dRAfezKTviuTLVDljsrJaNhm5m95oYJWrjAq59bj7C+SOpIg7AGQ8LOEcoy+EJ29rQQaOnElXNI
-	sCw5UeRV3x107+1UOO0ca0zaCT6qJ6OpvBdyvQ6r8Pt8vlZuo2jmJ+1OvhMhq16CW1tbUI21IWT5Y
-	rIPdYnF3qUBmDHjRuJDbAcJs1kfWEbxRBT8Chgcfjha2FkQ76rFZTRQGXZMvX2dj0wqIcqqZbMvgS
-	hr/1DwJz+rys8ZqveEeYED/qv/BL0CDESRGO4DX4cTYNcGuu521CoP9UpecqwNAOZ0beea/ytW9LN
-	FAkWJopg==;
-Received: from [50.53.25.54] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uu3aC-00000009ZVY-3nK0;
-	Thu, 04 Sep 2025 06:36:32 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Pavel Machek <pavel@ucw.cz>,
-	Len Brown <len.brown@intel.com>,
-	linux-pm@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-Subject: [PATCH v4] kernel.h: add comments for system_states
-Date: Wed,  3 Sep 2025 23:36:31 -0700
-Message-ID: <20250904063631.2364995-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756967577; c=relaxed/simple;
+	bh=XTPMjwPDF2AZ+57/aHZmP02iLqyHKlLYVEOILKdXFDc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AMTlJw/g7DwQmD1WDw3+56sove4QOWCWfizQfwNch4qiDm54ehOuaXzQKyWIk8ZtHwItDV5xbM4mLFzIi6EJXbZsVNbc3arxj5//RlIcIwrXg7ExFJhMCN6xWTfvcdAH7J+dCmlWN1ChJ7/NqgndRQkrAwTUJXvY8nNQNOmby5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=vC9OUcFI; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: f9b35858895811f0b33aeb1e7f16c2b6-20250904
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=scGC82lmtFfVt/+rH55JPxyeN4hMWcRWm/ClysXmIqg=;
+	b=vC9OUcFIELgZmfP35+gD+sc0hXPuAf0l1q5sd/cW7qA2GJ3uArlO7bNHdI85TGcuAFIzFKPxg3eGKVF+mDUJ7ql5Dl1H4MeH6naWNIHxujQ/LkIPZylUpfqygmqYnJOuGkHkCA8XVaIqfupAI/gQCHdq8LGZtAQk5Awna6cMfXA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:0ec38f95-293f-406f-b381-05c3a4f92e08,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:f1326cf,CLOUDID:17eeeef7-ebfe-43c9-88c9-80cb93f22ca4,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
+	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
+	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 3,DMD|SSN|SDN
+X-CID-BAS: 3,DMD|SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: f9b35858895811f0b33aeb1e7f16c2b6-20250904
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
+	(envelope-from <xion.wang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1963622347; Thu, 04 Sep 2025 14:32:48 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Thu, 4 Sep 2025 14:32:45 +0800
+Received: from mbjsdccf07.gcn.mediatek.inc (10.15.20.246) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Thu, 4 Sep 2025 14:32:42 +0800
+From: <xion.wang@mediatek.com>
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Akinobu
+ Mita <akinobu.mita@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+CC: <wsd_upstream@mediatek.com>, <huadian.liu@mediatek.com>, Xion Wang
+	<xion.wang@mediatek.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+Subject: [PATCH 0/1] char: Use list_del_init() in misc_deregister()
+Date: Thu, 4 Sep 2025 14:37:03 +0800
+Message-ID: <20250904063714.28925-1-xion.wang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,81 +76,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-Provide some basic comments about the system_states and what they imply.
-Also convert the comments to kernel-doc format.
+From: Xion Wang <xion.wang@mediatek.com>
 
-However, kernel-doc does not support kernel-doc notation on extern
-struct/union/typedef/enum/etc. So I made this a DOC: block so that
-I can use (insert) it into a Documentation (.rst) file and have it
-look decent.
+Hi all,
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Rafael J. Wysocki <rafael@kernel.org> # v1
----
-v2: add Rafael's Ack.
-v3: add Andrew
-v4: add DOC: so that this DOC: block can be used in Documentation/
-    add Greg K-H
-    add Jon Corbet, Mauro Chehab, & linux-doc
+This patch updates the misc_deregister() function to use list_del_init()
+instead of list_del() when removing the device from the list.
+While list_del() poisons the list pointers to catch invalid usage,
+it does not reset the list head. 
+If misc_deregister() is called more than once on the same device, 
+list_empty() will not return true and list_del() may be called again,
+leading to undefined behavior.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Len Brown <len.brown@intel.com>
-Cc: linux-pm@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
----
- Documentation/driver-api/pm/devices.rst |    8 ++++++++
- include/linux/kernel.h                  |   18 ++++++++++++++++--
- 2 files changed, 24 insertions(+), 2 deletions(-)
+By switching to list_del_init(), we ensure the list head is reinitialized,
+making the code more robust against double deregistration and
+allowing safe usage of list_empty() after deregistration.
 
---- linux-next-20250819.orig/include/linux/kernel.h
-+++ linux-next-20250819/include/linux/kernel.h
-@@ -164,8 +164,22 @@ extern int root_mountflags;
- 
- extern bool early_boot_irqs_disabled;
- 
--/*
-- * Values used for system_state. Ordering of the states must not be changed
-+/**
-+ * DOC: General system_states available for drivers
-+ *
-+ * enum system_states - Values used for system_state.
-+ *
-+ * * @SYSTEM_BOOTING:	%0, no init needed
-+ * * @SYSTEM_SCHEDULING:	system is ready for scheduling; OK to use RCU
-+ * * @SYSTEM_FREEING_INITMEM: system is freeing all of initmem; almost running
-+ * * @SYSTEM_RUNNING:	system is up and running
-+ * * @SYSTEM_HALT:	system entered clean system halt state
-+ * * @SYSTEM_POWER_OFF:	system entered shutdown/clean power off state
-+ * * @SYSTEM_RESTART:	system entered emergency power off or normal restart
-+ * * @SYSTEM_SUSPEND:	system entered suspend or hibernate state
-+ *
-+ * Note:
-+ * Ordering of the states must not be changed
-  * as code checks for <, <=, >, >= STATE.
-  */
- extern enum system_states {
---- linux-next-20250819.orig/Documentation/driver-api/pm/devices.rst
-+++ linux-next-20250819/Documentation/driver-api/pm/devices.rst
-@@ -241,6 +241,14 @@ before reactivating its class I/O queues
- More power-aware drivers might prepare the devices for triggering system wakeup
- events.
- 
-+System states available for drivers
-+-----------------------------------
-+
-+These system states are available for drivers to help them determine how to
-+handle state transitions.
-+
-+.. kernel-doc:: include/linux/kernel.h
-+   :doc: General system_states available for drivers
- 
- Call Sequence Guarantees
- ------------------------
+Fixes: b329becfc78b1 ("char: add WARN_ON() in misc_deregister()")
+
+Let me know if you have any questions or suggestions.
+
+Thanks,
+Xion Wang
+
+Xion Wang (1):
+  char: Use list_del_init() in misc_deregister() to reinitialize list
+    pointer
+
+ drivers/char/misc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+2.45.2
+
 
