@@ -1,113 +1,134 @@
-Return-Path: <linux-kernel+bounces-801037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8456B43EF8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:35:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596E8B43EFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A4194E5CAF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:35:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2F047B7359
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9538133A001;
-	Thu,  4 Sep 2025 14:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38150321F3B;
+	Thu,  4 Sep 2025 14:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="QGSnNXd8"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TD+/1NJZ"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9EC3375DE
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C2A3218B3
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756996309; cv=none; b=trasLtSiHVmaCjr2t8q5mEvXDnQh8/Pjf/e7cgNyIDkHCOAA4u2Oh5yFKlxGC4sgSNbqmcpVOipLr3Xv2WZlZyGLSgvHJ4ooCS0lJIkMQ8FuDX4WzoVcA/78KrSpTAbBv2PhGYsSY89g408HzL3t+a6V9nn0U7NZTf0q76tRIJ0=
+	t=1756996320; cv=none; b=YfVKfyPIFhaHGC1qxKZmTRvEvkjoG9d+BfqVHAmGY7YmSYAetnwQaZlJEX9fO3LDWsbeI8YTurjOHD8jxRdPjemKlNxn/vBLzelfAGfWceniAMG2cKqhZkr1ShAI1MfoTZ3PuZWliOrKEOePHB5ExGJkno29g/1E8j+H0BwaIj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756996309; c=relaxed/simple;
-	bh=z7pU301qN5RSzlZY8CDhBRBS3U4WTNApANa5rq8fplY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sc577Ns+TWzv3KJIzl0MlKJB0PqBGTmb/XK8yWwHCLJ2Hf+FT9L4v3z98IyChF6B5ZwewkaDMpupRi42nSjENf28icp/7BNKJePjaLxLaIbHnrjVaooQit+TB55kgcXNWjVZ8S2UseJM07O65Oc7GpuOunZ6jdxfW8WlvMEftzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=QGSnNXd8; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b7722ea37so5769845e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 07:31:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756996305; x=1757601105; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5NdywsOyjdkDiRe/+b+HSItb4HDB4ynduYkGNWZSwr8=;
-        b=QGSnNXd829I69Zg+6GEnTdSXvn38Bh3gt1x860dTtkY/lXUfk25EVXGr1t4XRsuKki
-         G5mnG7//BJ92zQAdS0XqVFKS91Y1FnezfmPVpvBtAdWRza5RAJsNvTltqIL2XggKkjvu
-         WoS6MSgwESIYuTg0elNFZzVXaABlpfZR3+Ym0qy5liqYqmyfJxxzEhw/SxHm3Dvnywqk
-         WxUqTeL9iZrTgFjqZX6Qckb2/QTrG6ZoAccfRiaadKB4rhBhNsA4/tbbT+/DPo6d8J3M
-         c7RNKRRc1sXrjL6dDhC++SSRi+8IWP7q3ilwm/AwDNP9+ipwsXol24jFbrutFnDyWwif
-         bTZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756996305; x=1757601105;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5NdywsOyjdkDiRe/+b+HSItb4HDB4ynduYkGNWZSwr8=;
-        b=RTJudpflfix06i0hPsuxonyVFd+NOdLzNzU3BrjbnlH0+ndjMZHrOe0BPvKLtDxzqm
-         1ZP4zAxFwkLSMLnGVfvOzh0k2+H0SAc3EBm2EvV8WgionwAvW+qte7tuolMpIx3sXZuf
-         MwIpyBunJaunA8uXjdg5TA92aeUb3cEtwdYs1Y8wNfn+UHa6BDGOXT+1Bmr+5vCLLjFm
-         a3N62YEAyUAqXVBqh4YpI5Bm7r3iD7Hzm1mNQjmsGeV34eUyolZPJYbFwX3c45i7ci1t
-         U/egVUpf1wTK2iQOtb31qVv6H1VLj0MnujWDSICzkLDUtgPCwhI4DNZEDAUZ0f1+8h/W
-         vYFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWk6wtVgEQlihxvdWyjnSOTrab6c3IC0QtWdnhxInRcfPhtpJlWGOGaf29tltGh+mxVarnTv9EQ1YHIVOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPMmtPdPZeiCy/bjQyNur9IwqrXmIs6b6+bJf7rYkQRDlXOVlV
-	fwyuT2WU41Mv1h6ex3mdoNmsteqB2ABm+7CPeRyGri9INyvb9CIqIxPswG3/yzUHqZk=
-X-Gm-Gg: ASbGncsArNalcbKRVCbPytRsNj6RneqnIeqd3tf585kwDJ5GkwRKQ+5Bay2gO/ndIYQ
-	vCdfSiQUzW+LCrxC7+QY6mc/4ZMiO5PH0Bke4Mfpwbn9YtxXbsRqds3J+HiPQ0hjsONmTtfioR4
-	aNYcOjNfOjjXh9Kjr27NfFaH7juEO1SmY/fmFIMcPLd8fPgkDfF6D71hY6WDBfbUKd+kWEoVN/X
-	2rz8YhDHNpTcz3rQRqQbIaES8s3t0AkRF9dPcExJPj4HQgrVUeqlOOjfP8asmqmDP1Mwu9pIdRt
-	VBBuJAKFSeZTsZjgqTYPVsESpe48S2f4QDLxiPhlV9paBwcuHbSKRJsPX7N7Fe8Pp2EuRzl0x56
-	c0T5gVmHUlxNmEMMP8DumJWE=
-X-Google-Smtp-Source: AGHT+IFXvXdGc6f5H5pPzlrvLjHoiygtB9yAgkixLIkLuOxDxYYjkerLppwkC8XIDL7Kyt9fmkZJyQ==
-X-Received: by 2002:a05:600c:1d24:b0:45d:cfa4:ce10 with SMTP id 5b1f17b1804b1-45dcfa4cf3dmr27357855e9.10.1756996304971;
-        Thu, 04 Sep 2025 07:31:44 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6e82:a4aa:49e0:a7d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7d1319sm319642535e9.5.2025.09.04.07.31.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 07:31:43 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: brgl@bgdev.pl,
-	zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	warthog618@gmail.com,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools: gpio: rm include dir when make clean
-Date: Thu,  4 Sep 2025 16:31:30 +0200
-Message-ID: <175699628268.79535.1530693991646063200.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250903063621.2424-1-zhangjiao2@cmss.chinamobile.com>
-References: <20250903063621.2424-1-zhangjiao2@cmss.chinamobile.com>
+	s=arc-20240116; t=1756996320; c=relaxed/simple;
+	bh=pOYzpNvEXfcm0qpIrYMCDV44pd/YqH0tr1BQn22KkZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=KySxUcUK43QbCn9C8kBeHmbsOpRZv79ASn9vd6/Mo3YUQyYRRFJ7LXyzSXca0+sdUs+w407XJasPs3p6rzMIb+onLREw925jSIkVPXM7B8ivmU0LJ7F6PRKLSP7pWn9F8ZK0sgP9ZVt+S3Agw0IEWDzBf0kAyDwXuhi43PLB6tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TD+/1NJZ; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250904143156epoutp0172df0971dec6a6d3144ff1a730d04288~iGtdWQvzf0994109941epoutp015
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:31:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250904143156epoutp0172df0971dec6a6d3144ff1a730d04288~iGtdWQvzf0994109941epoutp015
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756996316;
+	bh=/dCjz648ZMWWscvrximJ+HPN0rRyOBvUSp8nmPnE2Z0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TD+/1NJZ31JjTz5nkhBeH3xwu1CUO/45hHkDrCmQcd7THY/c7j+QK89Qb4Cb6fBik
+	 WBXRuMPkL601nyMGs7/55wgE7z0mYvzKUDzinVBJjk2qDb8L0Iaxdk02oHVtu5KuG6
+	 oR1MbZJCYHon6B9jAWo/ep8WIF93DtZjfXpeZfn4=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250904143155epcas5p4c781c9d12c51e66d84b2ad5d2681e0a2~iGtb-yaca1643116431epcas5p4M;
+	Thu,  4 Sep 2025 14:31:55 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cHhkf2wlpz6B9m4; Thu,  4 Sep
+	2025 14:31:54 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250904143153epcas5p3be47c3d064aa6a0143f28ffda269c0bc~iGtaou6GP0637606376epcas5p3D;
+	Thu,  4 Sep 2025 14:31:53 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904143152epsmtip1876f9cefe9bfe18804dbf941dafbaa7b~iGtZetsv50745407454epsmtip1D;
+	Thu,  4 Sep 2025 14:31:52 +0000 (GMT)
+Date: Thu, 4 Sep 2025 20:01:48 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V2 09/20] nvdimm/namespace_label: Skip region label
+ during ns label DPA reservation
+Message-ID: <20250904143148.yqv5ialvoruzf5po@test-PowerEdge-R740xd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20250813160925.000015c8@huawei.com>
+X-CMS-MailID: 20250904143153epcas5p3be47c3d064aa6a0143f28ffda269c0bc
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----CDBSwZz52MZUMeM1Rx6lI.cEW_5b_YZAAzr3v09AM7rvldzc=_ea748_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250730121234epcas5p2605fbec7bc95f6096550792844b8f8ee
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121234epcas5p2605fbec7bc95f6096550792844b8f8ee@epcas5p2.samsung.com>
+	<20250730121209.303202-10-s.neeraj@samsung.com>
+	<20250813160925.000015c8@huawei.com>
+
+------CDBSwZz52MZUMeM1Rx6lI.cEW_5b_YZAAzr3v09AM7rvldzc=_ea748_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
+
+On 13/08/25 04:09PM, Jonathan Cameron wrote:
+>On Wed, 30 Jul 2025 17:41:58 +0530
+>Neeraj Kumar <s.neeraj@samsung.com> wrote:
+>
+>> If Namespace label is present in LSA during nvdimm_probe then DPA
+>> reservation is required. But this reservation is not required by region
+>> label. Therefore if LSA scanning finds any region label, skip it.
+>>
+>> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+>> ---
+>>  drivers/nvdimm/label.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+>> index c4748e30f2b6..064a945dcdd1 100644
+>> --- a/drivers/nvdimm/label.c
+>> +++ b/drivers/nvdimm/label.c
+>> @@ -452,6 +452,10 @@ int nd_label_reserve_dpa(struct nvdimm_drvdata *ndd)
+>>  		lsa_label = to_label(ndd, slot);
+>>  		nd_label = &lsa_label->ns_label;
+>>
+>> +		/* skip region label, dpa reservation for ns label only */
+>Confusing comment and not clear if skip applies just to region label or
+>to dpa reservation as well.
+>
+>		/* Skip region label.  DPA reservation is for NS label only. */
+>
+>or something along those lines (assuming I have understood this right!)
+
+Sure Jonathan, I will fix it in next patch-set
+
+
+Regards,
+Neeraj
+
+------CDBSwZz52MZUMeM1Rx6lI.cEW_5b_YZAAzr3v09AM7rvldzc=_ea748_
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-On Wed, 03 Sep 2025 14:36:20 +0800, zhangjiao2 wrote:
-> rm include dir when make clean
-> 
-> 
-
-Applied, thanks!
-
-[1/1] tools: gpio: rm include dir when make clean
-      https://git.kernel.org/brgl/linux/c/ed42d80f3bae89592fbb2ffaf8b6b2e720d53f6a
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+------CDBSwZz52MZUMeM1Rx6lI.cEW_5b_YZAAzr3v09AM7rvldzc=_ea748_--
 
