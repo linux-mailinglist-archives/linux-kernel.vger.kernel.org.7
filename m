@@ -1,129 +1,147 @@
-Return-Path: <linux-kernel+bounces-800691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033F1B43A96
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:45:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E07B5B43A9C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B3487AF558
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:44:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BC13684394
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1743E2FF156;
-	Thu,  4 Sep 2025 11:44:20 +0000 (UTC)
-Received: from www3141.sakura.ne.jp (www3141.sakura.ne.jp [49.212.207.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA972DEA96;
+	Thu,  4 Sep 2025 11:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="pNxz98lR"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF9F2D7DDE;
-	Thu,  4 Sep 2025 11:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=49.212.207.181
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756986259; cv=pass; b=exCKj/R/uvi8VabLWGrH53rJSdNExh1FhIhQfUM3n3iKlndY4WD9bc4f+lF2Masvi6K0zglpCiKkfdQyfBKGub2aZlsNqF1BjB9sQvrIwivyBPbhqGUyCdvoeveKmDbiO/9QZfLvv1PG/RcsEmWs7qNtqFBwVXMpqGiDXIZNbD8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756986259; c=relaxed/simple;
-	bh=lUZcPcdlTGGC6/ME1bzkDa1FnX6wyUh4jg5N6/vaCb8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UZeDzcH0LmM6ZZZruyJ4fcdF4Eds58gQvYMQog1euYJ0AP0H01EzbNyBrVSk3+bYuv0Qp07P+Da5oBQ+mYq86hAtNthhbZXOi9Ht92EAt1BSoz/Ya6xqsZcllhwf0Zdd30ENB0c+szoDeQA+PvqkkJdOKOOaKqMgu5HgsuY8rJY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=www.redadmin.org; arc=pass smtp.client-ip=49.212.207.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=www.redadmin.org
-Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
-	(authenticated bits=0)
-	by www3141.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 584Bi288054121
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 4 Sep 2025 20:44:03 +0900 (JST)
-	(envelope-from redadmin@www.redadmin.org)
-Received: from localhost (localhost [127.0.0.1])
-	by www.redadmin.org (Postfix) with ESMTP id 0F6EA10AC3741;
-	Thu,  4 Sep 2025 20:44:02 +0900 (JST)
-X-Virus-Scanned: amavis at redadmin.org
-Received: from www.redadmin.org ([127.0.0.1])
- by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id fmcSEQ6wl1Xk; Thu,  4 Sep 2025 20:43:57 +0900 (JST)
-Received: by www.redadmin.org (Postfix, from userid 1000)
-	id 00C2610A42C03; Thu,  4 Sep 2025 20:43:56 +0900 (JST)
-Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
-ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1756986237;
-	cv=none; b=KqtIrNgT0KwNIn62r/jUWdjstT8MfrB8s5nt1At/4FJONXbSNA3jKqgr4iUUW1SFLhqmqSLR2kK+OCsM23Rr1dM7AcRvpRQoMR+/M/N8neiv8zXIwAJ81R4TctCaVPZxCSj7X2BLnXkcNABoUeR91ClYuwGK+E0PO34V09N7Xbk=
-ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
-	t=1756986237; c=relaxed/relaxed;
-	bh=vHbujjZ+EInbimvfDmNEuvFJ9WrP/PwQ6VBllN00vPg=;
-	h=DKIM-Filter:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding; b=OTg9xU8STyV35RaKrYfPFyZADf5gMCDzho6LRNhTP38KksHAk8NP+SNApFb4zps0m2fWWskr1kVYcTd49w03wH00eaYIdsVuRNBiBN0GEIitEMcrBOwjxY6anchtqRfFmo+566wriljcXEQk23WPdBlgo7+9lrSAfhWevMtCx1M=
-ARC-Authentication-Results: i=1; www.redadmin.org
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org 00C2610A42C03
-From: Akiyoshi Kurita <akito5623@gmail.com>
-To: akiyks@gmail.com, corbet@lwn.net
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kurita <akito5623@gmail.com>
-Subject: [PATCH] docs: ja_JP: Update SubmittingPatches based on commit 8401aa1f5997
-Date: Thu,  4 Sep 2025 20:43:51 +0900
-Message-ID: <20250904114354.2168571-1-akito5623@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF8D2566E9;
+	Thu,  4 Sep 2025 11:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756986385; cv=none; b=Rasdd9VCJuqLMDzbhrAMHRMlXVd30NDcuuCwaDiF0lDzfk3WAZxQiBJhDIHiD4KLqdrpPtv4h9UJD34YS9SahRU8yfByU64P7eAgvzPJcsMOTZvuPwRfWcoVSo27RV9BYt+KGi1uXzaDu61Hbq+fihqsfW81j3bXDFujBpEXif4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756986385; c=relaxed/simple;
+	bh=Ze4ANDrL3GBDTmeGUJu5VkpUhAY2ZUM0qgj4z2JGg0Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KDH+NwSkq7u/3kg6bdA3OEGJeyhMlpXXfte7Gsv5OiXX9vTvACAY35Kl0kk4c1Sayjj0jOnArjrXsst8nmek/172zMM8qQsfxk0dElJBMUJLKXPmi5PpPG3jFXCiFs2TEI1SQi0W3cwVKOyS500m7JwlztlkenYWfGaeXvYKRGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=pNxz98lR; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: c3021476898411f0b33aeb1e7f16c2b6-20250904
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=yodm8a39j4w35ZB3zyvGXXORr9oUDxAP3eddF5wzbJ4=;
+	b=pNxz98lRV3XT7xUnlSzG6kY5bVv5QBXkJiT8/JLp1MlX1JGerh5r/8jeu7/Tc1gqauR1eSbG0v5N4PAqYBCDZv+ubXSXM0aspp8lCaMmWXxbX4MsmeT3XLm0aKhdZ2JUdCKJJUXu6PCesGh2Y0nJfPuowaPm9JtUNzt1RnTj1Oo=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:b6029015-f3ab-433e-9abc-e48ae450de83,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:f1326cf,CLOUDID:cbfff1f7-ebfe-43c9-88c9-80cb93f22ca4,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
+	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
+	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: c3021476898411f0b33aeb1e7f16c2b6-20250904
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 723954080; Thu, 04 Sep 2025 19:46:14 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Thu, 4 Sep 2025 19:46:11 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Thu, 4 Sep 2025 19:46:11 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Jiande Lu <jiande.lu@mediatek.com>,
+	Will Lee <will-cy.Lee@mediatek.com>, SS Wu <ss.wu@mediatek.com>, Steve Lee
+	<steve.lee@mediatek.com>, linux-bluetooth <linux-bluetooth@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH v1] Bluetooth: btusb: Add new VID/PID 13d3/3633 for MT7922
+Date: Thu, 4 Sep 2025 19:46:11 +0800
+Message-ID: <20250904114611.762004-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: kurita <akito5623@gmail.com>
+Add VID 13d3 & PID 3633 for MediaTek MT7922 USB Bluetooth chip.
 
-The Japanese translation of SubmittingPatches is outdated.
+The information in /sys/kernel/debug/usb/devices about the Bluetooth
+device is listed as the below.
 
-This patch adds the full description for the 'Fixes:' tag,
-aligning the translation with the original English change
-introduced in commit 8401aa1f5997 ("Documentation/SubmittingPatches:
-describe the Fixes: tag").
+T:  Bus=06 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=13d3 ProdID=3633 Rev= 1.00
+S:  Manufacturer=MediaTek Inc.
+S:  Product=Wireless_Device
+S:  SerialNumber=000000000
+C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
+
+Signed-off-by: Chris Lu <chris.lu@mediatek.com>
 ---
- .../translations/ja_JP/SubmittingPatches      | 24 +++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/bluetooth/btusb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/translations/ja_JP/SubmittingPatches b/Documentation/translations/ja_JP/SubmittingPatches
-index 5334db471744..96f1d80dfcbd 100644
---- a/Documentation/translations/ja_JP/SubmittingPatches
-+++ b/Documentation/translations/ja_JP/SubmittingPatches
-@@ -132,6 +132,26 @@ http://savannah.nongnu.org/projects/quilt
-        platform_set_drvdata(), but left the variable "dev" unused,
-        delete it.
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 505efc4872c3..86797adf4c63 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -701,6 +701,8 @@ static const struct usb_device_id quirks_table[] = {
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x13d3, 0x3615), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x13d3, 0x3633), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x35f5, 0x7922), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
  
-+特定のコミットのバグを修正するパッチの場合（例：``git bisect``で問題を発見した場合）、
-+少なくともSHA-1 IDの最初の12文字と1行の要約を含む「Fixes:」タグを使用してください。 タグを複数行に分割しないでください。
-+解析スクリプトを簡素化するため、タグは「75 文字で折り返す」ルールから除外されます。
-+
-+例:
-+
-+        Fixes: 54a4f0239f2e (「KVM: MMU: make kvm_mmu_zap_page() return the number of pages it actually freed」)
-+
-+以下の``git config``設定を使用すると、``git log``や``git show``コマンドで上記形式を
-+出力する際にプレティフォーマットを追加できます::
-+
-+        [core]
-+                abbrev = 12
-+        [pretty]
-+                fixes = Fixes: %h (\「%s\」)
-+
-+呼び出し例:
-+
-+        $ git log -1 --pretty=fixes 54a4f0239f2e
-+        Fixes: 54a4f0239f2e (「KVM: MMU: make kvm_mmu_zap_page() return the number of pages it actually freed」)..
- 
- 3) パッチの分割
- 
-@@ -465,6 +485,10 @@ Suggested-by: タグは、パッチのアイデアがその人からの提案に
- クレジットしていけば、望むらくはその人たちが将来別の機会に再度力を貸す気に
- なってくれるかもしれません。
- 
-+パッチが特定のコミットのバグを修正するものである場合、
-+（例えば、``git bisect`` を使用して問題を発見した場合など）、
-+SHA-1 ID の最初の 12 文字以上と 1 行の要約を含む「Fixes:」タグを使用してください。
-+
- 15) 標準的なパッチのフォーマット
- 
- 標準的なパッチのサブジェクトは以下のとおりです。
 -- 
-2.47.3
+2.45.2
 
 
