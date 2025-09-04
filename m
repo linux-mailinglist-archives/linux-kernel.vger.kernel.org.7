@@ -1,162 +1,204 @@
-Return-Path: <linux-kernel+bounces-800283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEC01B435C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:31:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E972FB435CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182F65A1127
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:31:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 652756861F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B65F2C028F;
-	Thu,  4 Sep 2025 08:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597092C11EF;
+	Thu,  4 Sep 2025 08:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FBQibgZv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="a7Oz2wp/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OZmivB4d"
+Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345F832F775;
-	Thu,  4 Sep 2025 08:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7042BE7AB;
+	Thu,  4 Sep 2025 08:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756974653; cv=none; b=t/drxuFhl6C/RNtfcgZKzDjjwM1cmVTOESx9YCzDilB9O7Byzcvz4IoXTa9laJL/i9yRfUITyNxXgB+tYMqwQz+mP4cSImAL7itxNccXFqCmlWvuW70TnRDW4TbdrTosynCpcBPqAmh9o8FCnMrvBsBlFktu8PQL9N7cwyzVmpg=
+	t=1756974793; cv=none; b=kaHnrTlmNra2ksSUHnwlA85qm8g8SDASA+SfuDJZYoRZhZS/bPJXbH4MyGvjdU3RGN9fbNfT6k7yXrf8z2rDR2Wu3WTCneG8XoZ3KhCZwln99TAUdUYHTgzhZMozHnl1rhx/taInVUGNJlooBFoFFnBpZYwH/h4TsztrIXrzwZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756974653; c=relaxed/simple;
-	bh=MsF1HR3chZW/DsuL6znagb7Yadd+L8PV3E//3Vse2Aw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aO8rV6ZD3cCcpXe8XVnpsyx3DXc5A2sHHQoLKv9tSec4+Rflwza3Voa7octRGgSFsGBSliTiQ9dxxV2t0R5ZpC47h+TAAUu22tyrL7tYwO4NAPYvu51LsbXAdPiJNwFHV0WFGxneHKBXqReQrZOMI+PC6mAgYq3L6Sf4oMesoQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FBQibgZv; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756974652; x=1788510652;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=MsF1HR3chZW/DsuL6znagb7Yadd+L8PV3E//3Vse2Aw=;
-  b=FBQibgZvRQg7AswJLwi3zHy+H+OQ7/S6rbZgavJburtLWhSSIIYIuSjr
-   /80+mEhhniddRaC+Q9klOCgAgoTxasHPNR0XJpzDNZpuWPQ2v2SWB1/11
-   Ub+vq6znqb45TGzAF07Hpu5wF7eZSw+XWWrQ3iKbeyU+hf0nuuIrgwJem
-   bkwNVajBS5AW9SAhlGzUkFTou77ZILSvYui9EI9WAo2E5G8YygEFH2x1s
-   LAx+u2xxSEsGGctLiAHBwblaoJpo63wTPOgLV6scuAA5RN3Za+/8GwFrb
-   O8GFqMN7vGlBxqDx2A3gjIiKC9xsE5AExQcKzKTwbxDPVf06BEO7yOKeB
-   g==;
-X-CSE-ConnectionGUID: LeV1r7zkRb6hJx1zKA4bPg==
-X-CSE-MsgGUID: 1Iy4a2YbTcOnyWhslgbOiA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="76908978"
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="76908978"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:30:52 -0700
-X-CSE-ConnectionGUID: HYfq4vrQQwikTfgDBeAQxw==
-X-CSE-MsgGUID: d267pWpoSLaa865mT0NTUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="171410140"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:30:46 -0700
-Message-ID: <6fc69050-bd96-401f-8226-947b94a1f027@linux.intel.com>
-Date: Thu, 4 Sep 2025 16:30:44 +0800
+	s=arc-20240116; t=1756974793; c=relaxed/simple;
+	bh=QMc156WtoSHwoqi/fQG9Zopo7d5WjIyJWFRe9bvzkjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kvldXcFlbovTaXCAGts33vMMyDwsz70ugojNgnG7z1zyfOoPeC5jG2RNylfHksTfkaEALiEYAIWtoCytIJdfxtYyb2eGg4EpfARHG0tfYtFxCH4Pw5OmtLQ+4IMxMqW/xdKo2hgD8yrwLhMRfI2P6vRUnZqSv+wpIBmv+RVZxUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=a7Oz2wp/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OZmivB4d; arc=none smtp.client-ip=103.168.172.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailflow.phl.internal (Postfix) with ESMTP id 22471138007E;
+	Thu,  4 Sep 2025 04:33:10 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Thu, 04 Sep 2025 04:33:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1756974790;
+	 x=1756981990; bh=Ge3LWeRDjf/4/fWFaTRcCNOOaVH7hBOVvV6LtBvwLVs=; b=
+	a7Oz2wp/Lr6CCXTbEtXTQEqdnaTzqhuXeg5oAOW0OYoOq1/zLlt26Alb1NclkU7G
+	AQWNVACneUSVnPLAogLUlJI4WM28+ZygiP9zvCK2KvaR1ajJVE8CuDPO+Htreelz
+	xmPCRnIXUw6IZgZQaxS+Ei8LZWfFwC/3SjkgHYpmCAIz5u/2W+cw9B7qk4A6gfpW
+	XD8cSQ1Vi4FFVoum1ZoBcitQwW4jiAhpMr2GKowGyDcZ+s7jpIBrkvZcGTEDwFpF
+	rmg+lUlYJd28kq+1WC5BS0oTgWHQNWOFzZCQL6xDS7WFkRKl8wfHTRn4bb3jZ6QD
+	ixauGULjU5XMHY0PY5fhYg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756974790; x=
+	1756981990; bh=Ge3LWeRDjf/4/fWFaTRcCNOOaVH7hBOVvV6LtBvwLVs=; b=O
+	ZmivB4dwZfPVlmHBopD+QagJYu9aK0XzRL3SxwQeOZGC2hMB4If2zUlcHc6dOiQI
+	o8K0O9QjMJ2oI2bHgfpPsDCFkGohRoYEgi+6HUwlMVimXDlBWvBDqrLppu0mk6D1
+	0WWKSykTDHxRCEeNyGo00zPQ4xj64H9eiJIYZDfxWof7bFTy0seHDLPQeZubzxvT
+	Kgysk65/vgvI99FEmEQXIRJZ73AkhfnjEQFN9Eux+Zad8n3aKJYH3fIIYmCG9Gfl
+	yl0CSRSv2ANx3TcFFGd4Pdw7ZYcQQwZT3DjN6I4amQBhD9qQ8LmL8ThRnFCsaDtA
+	SXzkVhQHqWZU5jOr1RvxA==
+X-ME-Sender: <xms:xE65aGfSXTWUUuxu7iDfpgGuvPVwRuT1NKP-HzqqVOT5onUvr5-KtA>
+    <xme:xE65aDsFsbNHLZcT0zJQ0PWoDLlG0dDtdX_-UR_uA0xEyN1qE8PvrLDq5PS3lFzjl
+    R90s63gER2kDbukHYc>
+X-ME-Received: <xmr:xE65aADjh086tO-IuSzPWv7R1qNG5Z3zGVzswPyP5yNyufUj_Qe3j342lkCqxyoJ7TaTmpyucnlriRybyObqo1LIUU6jbei_Jg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehheehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhklhgrshcu
+    ufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrsh
+    esrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeefhfellefhffejgfef
+    udfggeejlefhveehieekhfeulefgtdefueehffdtvdelieenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhluhhn
+    ugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgvpdhnsggprhgtphhtthhopedvvd
+    dpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepihhsrggrtgdrshgtohhtthesihgu
+    vggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhgruhhrvghnthdrphhinhgthh
+    grrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehrmhhfrhhfshes
+    ghhmrghilhdrtghomhdprhgtphhtthhopehmrghrthhinhhksehpohhsthgvohdruggvpd
+    hrtghpthhtohepkhgvrhhnvghlsehpuhhrihdrshhmpdhrtghpthhtohepmhgthhgvhhgr
+    sgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdp
+    rhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
+X-ME-Proxy: <xmx:xE65aGxDyAQ6_yrAXEMOTPSgYThOClOvGXdEEO1oug1sNJvkY_PrLQ>
+    <xmx:xE65aHKwuMdz-ly42WbDA4PFvkqJkKfobcOSyKJ4ft4Ca_khjrum-Q>
+    <xmx:xE65aF6dbdUYkHURtEB47_QbLsMA0ynfFfnxWShE4MiwUDuq4PzYLg>
+    <xmx:xE65aOlEWf7Rr4n6CKQSb4nafNMcjineDvT8anmeS6WBpe0nRKenYw>
+    <xmx:xk65aJmNvrPwa1r7bi4tEiJzKLtX8i2tvdZALOj_b44Gnn7pTqJIgwKx>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 4 Sep 2025 04:33:07 -0400 (EDT)
+Date: Thu, 4 Sep 2025 10:33:05 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Isaac Scott <isaac.scott@ideasonboard.com>
+Cc: laurent.pinchart@ideasonboard.com, rmfrfs@gmail.com, martink@posteo.de,
+	kernel@puri.sm, mchehab@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	linux-media@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	hverkuil@kernel.org, nicolas.dufresne@collabora.com,
+	sakari.ailus@linux.intel.com, tomi.valkeinen@ideasonboard.com,
+	jonas@kwiboo.se, dan.scally+renesas@ideasonboard.com,
+	m.szyprowski@samsung.com, mehdi.djait@linux.intel.com
+Subject: Re: [PATCH v2 1/3] media: v4l: Add helper to get number of active
+ lanes via a pad
+Message-ID: <20250904083305.GB1207681@ragnatech.se>
+References: <20250903102243.1563527-1-isaac.scott@ideasonboard.com>
+ <20250903102243.1563527-2-isaac.scott@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 19/23] KVM: TDX: Pass down pfn to
- split_external_spt()
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, x86@kernel.org, rick.p.edgecombe@intel.com,
- dave.hansen@intel.com, kas@kernel.org, tabba@google.com,
- ackerleytng@google.com, quic_eberman@quicinc.com, michael.roth@amd.com,
- david@redhat.com, vannapurve@google.com, vbabka@suse.cz,
- thomas.lendacky@amd.com, pgonda@google.com, zhiquan1.li@intel.com,
- fan.du@intel.com, jun.miao@intel.com, ira.weiny@intel.com,
- isaku.yamahata@intel.com, xiaoyao.li@intel.com, chao.p.peng@intel.com
-References: <20250807093950.4395-1-yan.y.zhao@intel.com>
- <20250807094537.4732-1-yan.y.zhao@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250807094537.4732-1-yan.y.zhao@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250903102243.1563527-2-isaac.scott@ideasonboard.com>
 
+Hi Issac,
 
+Thanks for your work.
 
-On 8/7/2025 5:45 PM, Yan Zhao wrote:
-> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
->
-> Pass down pfn to kvm_x86_ops::split_external_spt(). It is required for
-> handling Dynamic PAMT in tdx_sept_split_private_spt().
->
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+On 2025-09-03 11:22:40 +0100, Isaac Scott wrote:
+> Sometimes, users will not use all of the MIPI CSI 2 lanes available when
+> connecting to the MIPI CSI receiver of their device. Add a helper
+> function that checks the mbus_config for the device driver to allow
+> users to define the number of active data lanes through the
+> get_mbus_config op.
+> 
+> If the driver does not implement this op, fall back to using the number
+> of data lanes specified in device tree.
+> 
+> Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
 > ---
-> RFC v2:
-> - Pulled from
->    git://git.kernel.org/pub/scm/linux/kernel/git/kas/linux.git tdx/dpamt-huge.
-> - Rebased on top of TDX huge page RFC v2 (Yan)
-> ---
->   arch/x86/include/asm/kvm_host.h | 3 ++-
->   arch/x86/kvm/mmu/tdp_mmu.c      | 6 +++++-
->   arch/x86/kvm/vmx/tdx.c          | 3 ++-
->   3 files changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 6cb5b422dd1d..6b6c46c27390 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1841,7 +1841,8 @@ struct kvm_x86_ops {
->   
->   	/* Split the external page table into smaller page tables */
->   	int (*split_external_spt)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
-> -				  void *external_spt, bool mmu_lock_shared);
-> +				  kvm_pfn_t pfn_for_gfn, void *external_spt,
-> +				  bool mmu_lock_shared);
->   
->   	bool (*has_wbinvd_exit)(void);
->   
-> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> index 62a09a9655c3..eb758aaa4374 100644
-> --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> @@ -389,11 +389,15 @@ static int split_external_spt(struct kvm *kvm, gfn_t gfn, u64 old_spte,
->   			      u64 new_spte, int level, bool shared)
->   {
->   	void *external_spt = get_external_spt(gfn, new_spte, level);
-> +	kvm_pfn_t pfn_for_gfn = spte_to_pfn(old_spte);
->   	int ret;
->   
->   	KVM_BUG_ON(!external_spt, kvm);
->   
-> -	ret = kvm_x86_call(split_external_spt)(kvm, gfn, level, external_spt, shared);
-> +	ret = kvm_x86_call(split_external_spt)(kvm, gfn, level,
-> +					       pfn_for_gfn, external_spt,
-> +					       shared);
+>  drivers/media/v4l2-core/v4l2-common.c | 25 +++++++++++++++++++++++++
+>  include/media/v4l2-common.h           |  1 +
+>  2 files changed, 26 insertions(+)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
+> index 6e585bc76367..8683107b3704 100644
+> --- a/drivers/media/v4l2-core/v4l2-common.c
+> +++ b/drivers/media/v4l2-core/v4l2-common.c
+> @@ -571,6 +571,31 @@ s64 __v4l2_get_link_freq_pad(struct media_pad *pad, unsigned int mul,
+>  	return __v4l2_get_link_freq_ctrl(sd->ctrl_handler, mul, div);
+>  }
+>  EXPORT_SYMBOL_GPL(__v4l2_get_link_freq_pad);
+> +
+> +unsigned int v4l2_get_active_data_lanes(const struct media_pad *pad, unsigned int dt_lanes)
+> +{
+> +	struct v4l2_mbus_config mbus_config = {};
+> +	struct v4l2_subdev *sd;
+> +	unsigned int lanes;
+> +	int ret;
+> +
+> +	sd = media_entity_to_v4l2_subdev(pad->entity);
+> +	ret = v4l2_subdev_call(sd, pad, get_mbus_config, pad->index,
+> +			       &mbus_config);
+> +	if (ret < 0 && ret != -ENOIOCTLCMD)
+> +		return ret;
 
-It can save one line by moving "pfn_for_gfn" up.
+The function prototype is 'unsigned int' and here you return a signed 
+value here.
 
 > +
->   	return ret;
->   }
->   /**
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 71115058e5e6..24aa9aaad6d8 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -1941,7 +1941,8 @@ static int tdx_spte_demote_private_spte(struct kvm *kvm, gfn_t gfn,
->   }
->   
->   static int tdx_sept_split_private_spt(struct kvm *kvm, gfn_t gfn, enum pg_level level,
-> -				      void *private_spt, bool mmu_lock_shared)
-> +				      kvm_pfn_t pfn_for_gfn, void *private_spt,
-> +				      bool mmu_lock_shared)
->   {
->   	struct page *page = virt_to_page(private_spt);
->   	int ret;
 
+Maybe add a comment here that this check depends on mbus_config being 
+zeroed at init if the call above pass with -ENOIOCTLCMD? It's not 
+immediately clear what is going on here even tho the code is clever ;-)
+
+> +	if (!mbus_config.bus.mipi_csi2.num_data_lanes)
+> +		return dt_lanes;
+> +
+> +	lanes = mbus_config.bus.mipi_csi2.num_data_lanes;
+> +
+> +	if (lanes < 0 || lanes > dt_lanes)
+> +		return -EINVAL;
+> +
+> +	return lanes;
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_get_active_data_lanes);
+>  #endif /* CONFIG_MEDIA_CONTROLLER */
+>  
+>  /*
+> diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
+> index 0a43f56578bc..3f8937260c76 100644
+> --- a/include/media/v4l2-common.h
+> +++ b/include/media/v4l2-common.h
+> @@ -584,6 +584,7 @@ int v4l2_fill_pixfmt_mp(struct v4l2_pix_format_mplane *pixfmt, u32 pixelformat,
+>  	(pad, mul, div)
+>  s64 __v4l2_get_link_freq_pad(struct media_pad *pad, unsigned int mul,
+>  			     unsigned int div);
+> +unsigned int v4l2_get_active_data_lanes(const struct media_pad *pad, unsigned int dt_lanes);
+>  #else
+>  #define v4l2_get_link_freq(handler, mul, div)		\
+>  	__v4l2_get_link_freq_ctrl(handler, mul, div)
+> -- 
+> 2.43.0
+> 
+
+-- 
+Kind Regards,
+Niklas Söderlund
 
