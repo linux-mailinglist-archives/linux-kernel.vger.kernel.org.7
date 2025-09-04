@@ -1,94 +1,187 @@
-Return-Path: <linux-kernel+bounces-801274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D3A2B442EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:37:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D27B442EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96B7AA41042
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:36:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC46A05886
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591B62D47EB;
-	Thu,  4 Sep 2025 16:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F442DD60E;
+	Thu,  4 Sep 2025 16:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UUNny2Xz"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fn3N8jCy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641C8230BEC;
-	Thu,  4 Sep 2025 16:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827C3230BEC;
+	Thu,  4 Sep 2025 16:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757003763; cv=none; b=qVid/yEZtmqb/a09I4kN02SkUNuXTOaH1yO3LbZNluICrWKUuBRGyPu+3h67RHPkgAlFe+oio+tZc0wNlCVaizc4mgb9qzQiE7aHGxM0L7/xtguP8MI+H582Moek+teJb7sbybuc1JnGoTj2xk6BURibPB3siSN+poiP9ic7a4U=
+	t=1757003750; cv=none; b=AONh0Zrs2m5mWjT+q/IwFCLQ6PFe8Ix8nIXi066ELnoSa0czuJlie3uCVEvJDqxplwC9y/F7w7ozaLmgIVkxCh1wo2AYKhT4BHErRlktvPbsLtZU1DB+0U01Qc8ZC/asMstqjG3RAdV6E6kaO4THLMDbSvUPrsbN5YXgETBLswY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757003763; c=relaxed/simple;
-	bh=Eo8mcJx96u8VH4jn7nXN0WzI3pTAqmoosY5GMUzgLRE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GP8qK/tfGCg5OGJTWspSGrRzJp7tWj0H2eVuJ5hjgw5+5IgPMq8FON+iJdstC2n0SpRUgAMq6XDJBr0rJThAsqWQ5PQMXtChrNRB5aa06YA900uSmfxcNNN5YDHbAZjlAfsk1qdeQtCkj1CW+HS2txfG4Y8XDnP5JJf3ejIp2NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UUNny2Xz; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d60504bf8so12657047b3.2;
-        Thu, 04 Sep 2025 09:36:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757003761; x=1757608561; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Eo8mcJx96u8VH4jn7nXN0WzI3pTAqmoosY5GMUzgLRE=;
-        b=UUNny2XzIlghaU8t5F0yVh1oFaAPe+l0/QZhGspIUsyMldBb/Z52GJYQQkQV/JbY+z
-         C3jT/iWVpykzoWQcQ9G3u4xjNjzg8eNZ0AoQyZ08G2PdbwTVPo0UFf1Zg49e1kEc3l2G
-         5S07G8q1Mj+ZUsgYAsqMzY3aw3PZ4rEI7eaVN3ZYhfh5DNMhyyf7nuj3F7EwqEE4VllI
-         Lda9mqBPBxPYZYLwphcA/XcrwoGvmWQ4zn15z3cwYE5vc+lYPR3ZvzZOYMupoKckxDnE
-         I2uBnuUMUrLOIvJyIRn3DPFKssxV5xc1oziHQ1uK90ly5D2em0+GFm05JnHKIJ795xff
-         28ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757003761; x=1757608561;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Eo8mcJx96u8VH4jn7nXN0WzI3pTAqmoosY5GMUzgLRE=;
-        b=C60eRlv0XRocycYh7tNh0P7ub2RVlgkO/tBR3wB3Vd5CiE0sige7qwA44OfDjnPLYu
-         aePlLgCYvGqv/P9Dpwi66muW6fkNGHQMeLVNJO6O6UQmM/lAnMyQsMybwcH+DFrIA4c9
-         nn3BuHg+jp2+Q5TScqadJE8u8cXWn3dsL9ch/kSScAhkYRXNt4PpFKt+peHSiQWUb5Es
-         l4LVhDRDjR9FToBM3seG6WRYaXiRWfxU4di4qOK/q4tnWAbkTF62+Bls4n1LxtgDrde8
-         eHeGrM+8aDKzi7R94RnsrlrIZo6H1gJ/GAN5PgWOkfDVAg5Oa/BNipXs+lyro4L6gjQu
-         1vvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkXdZ1CAt3j2HPkIwgtT6/tYHMXAWumOzWYx+BIlO//F0FOArzlTk9HafsXu1fXOFVySk2mvPp1dGS6CI=@vger.kernel.org, AJvYcCUzJCXgeo47TAFhW8MElCCXuz5dgEPqmh1ZU1nKvNgAmBifaYCCldG6LrnzG4aDkoLtoAdQGfBjd9avtQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YymeKa2xakcbPSSXX+ud4pVGJja8lKAmEDGF4OPAZXNInAhZpgd
-	P/oZrwH5x7rdjlqoH1+py4cWmsf+2zJjOThgkIt+OVbyGdrlxDJ72nMnPv0vzG5nUMl/Y3O5eU/
-	lKmxX1wjNjCs2qrUrvl78dQMQRgmpxH5vGtHF
-X-Gm-Gg: ASbGnct7oDEv3DASMyWnWwwWOSIzyXbTKV5eKrt0JZwv3craEFn1fNiZjEh+Ze9pNdp
-	LtIPrKTGrfI00G6ENE47ncG2CESUqSxjF2rNPie+VlAMAA0sdKn2fKZXYVAkLyK320fSNSmKbKA
-	/sFu2f1aTWhkecfabRqyq3FX+RcA15bwfvb5s0rISQXqvZiecHXDJq53e6HUsfLGeBxZb0jRfFA
-	UKa8Bdb
-X-Google-Smtp-Source: AGHT+IEvMBkMGRTR8EguBjURUkXIzun48yw7+ga8Eb2RRBAzc5q2IPU3UOBfHoRTpRuVhibA8WDpyoBzZIpqRTAFMz4=
-X-Received: by 2002:a05:690c:6bc6:b0:722:81ef:2979 with SMTP id
- 00721157ae682-72281ef69d7mr205949597b3.22.1757003761032; Thu, 04 Sep 2025
- 09:36:01 -0700 (PDT)
+	s=arc-20240116; t=1757003750; c=relaxed/simple;
+	bh=licaZp2ybh8noYPh9P971ur58m6wEBdUMOVNCc7Es9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AuTNI1zuQCs9MMIoaBvGxRiS/2gccNRDTeMI//HRPyh7IjTsxpUMR3vc+kzgZf6Bl6oIE9gOCjuRB/Vb/WWVRt1qJQ56ogKRF9Cj+SJCHY+pD24bV+TDVSSjJ0YEvSFog1K0Vr4wNN6djPXO9z1IV43zc9Y87ViBwpsEX3D8sMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fn3N8jCy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F27FC4CEF0;
+	Thu,  4 Sep 2025 16:35:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757003750;
+	bh=licaZp2ybh8noYPh9P971ur58m6wEBdUMOVNCc7Es9U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fn3N8jCya+OEPCs9oBYZply8Iq7u146UCHkl8NI7Ks+J0dCCYHDEjvhktJ9fEFARD
+	 7gyiILo7qFQz7gYLy0mFEHIugCVvw84/a6yAT98sQXUBe98Ma8svlRbBg9ePG+Bfiu
+	 +akXBeYnsAKaUoVOH+cJxKKZmDxjic7J5L5l6sVdYBHQKCkSnKe/IUkc6KkmKZvd4f
+	 IBcKu/TYuzTctbKsviy1td2Za8jDwaR9roOUAXaG2u/XTZrIUHWAugfJrDzo1PmimJ
+	 mm+LXaUJmApZkdpIjFQJkRVY5IigpQNAs7baA/xjXXzczYKgkw/F7dE9em8Pkd/pMY
+	 n9TpaFQdcH0Qw==
+Date: Thu, 4 Sep 2025 22:05:38 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: David Box <david.e.box@linux.intel.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, rafael@kernel.org, 
+	bhelgaas@google.com, vicamo.yang@canonical.com, kenny@panix.com, 
+	ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com, linux-pm@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 1/2] PCI/ASPM: Add host-bridge API to override default
+ ASPM/CLKPM link state
+Message-ID: <edsuntasypojlpegqec4chsixmxvutcetnklkglah5dooe5xai@y6vh6lrnp72f>
+References: <ng67s7imjpj7i5ym7unvmewzhyk4ybgpkgw5aizicfs423vsxh@hvpfmk32ooe4>
+ <20250903230450.GA1236832@bhelgaas>
+ <ywuno3ssrgl3limng35j4hep6l7qvx5zmyuutrv4nqhd7r34pf@4apznk3xyyiv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904132351.483297-1-rongqianfeng@vivo.com>
-In-Reply-To: <20250904132351.483297-1-rongqianfeng@vivo.com>
-From: Justin Tee <justintee8345@gmail.com>
-Date: Thu, 4 Sep 2025 09:35:31 -0700
-X-Gm-Features: Ac12FXzUFBivrHIqO1NKmjHuS9NvvXHu7zHXiq_RxQ7K0jRxyRJeNuE5d-eWxS8
-Message-ID: <CABPRKS9MXLV7JB00Xz65Lzh2gcX1ndURW4dmdeBzLiGd=XoeXQ@mail.gmail.com>
-Subject: Re: [PATCH] scsi: lpfc: Use int type to store negative error codes
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: James Smart <james.smart@broadcom.com>, Justin Tee <justin.tee@broadcom.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ywuno3ssrgl3limng35j4hep6l7qvx5zmyuutrv4nqhd7r34pf@4apznk3xyyiv>
 
-Reviewed-by: Justin Tee <justin.tee@broadcom.com>
+On Thu, Sep 04, 2025 at 09:02:38AM GMT, David Box wrote:
+> On Wed, Sep 03, 2025 at 06:04:50PM -0500, Bjorn Helgaas wrote:
+> > On Fri, Aug 29, 2025 at 12:54:20PM -0700, David Box wrote:
+> > > On Thu, Aug 28, 2025 at 03:43:45PM -0500, Bjorn Helgaas wrote:
+> > > > On Mon, Aug 25, 2025 at 01:35:22PM -0700, David E. Box wrote:
+> > > > > Synthetic PCIe hierarchies, such as those created by Intel VMD, are not
+> > > > > enumerated by firmware and do not receive BIOS-provided ASPM or CLKPM
+> > > > > defaults. Devices in such domains may therefore run without the intended
+> > > > > power management.
+> > > > > 
+> > > > > Add a host-bridge mechanism that lets controller drivers supply their own
+> > > > > defaults. A new aspm_default_link_state field in struct pci_host_bridge is
+> > > > > set via pci_host_set_default_pcie_link_state(). During link initialization,
+> > > > > if this field is non-zero, ASPM and CLKPM defaults come from it instead of
+> > > > > BIOS.
+> > > > > 
+> > > > > This enables drivers like VMD to align link power management with platform
+> > > > > expectations and avoids embedding controller-specific quirks in ASPM core
+> > > > > logic.
+> > > > 
+> > > > I think this kind of sidesteps the real issue.  Drivers for host
+> > > > controllers or PCI devices should tell us about *broken* things, but
+> > > > not about things advertised by the hardware and available for use.
+> > > 
+> > > I agree with the principle. The intent isn’t for VMD (or any controller) to
+> > > override valid platform policy. It’s to handle synthetic domains where the
+> > > platform doesn’t provide any policy path (no effective _OSC/FADT for the child
+> > > hierarchy). In those cases, the controller is the only agent that knows the
+> > > topology and can supply sane defaults.
+> > > 
+> > > I’m happy to tighten the patch to explicitly cover synthetic domains only.
+> > > Instead of an API, we could have a boolean flag 'aspm_synthetic_domain'. When
+> > > set by the controller, we can do:
+> > > 
+> > >     if (host_bridge->aspm_synthetic_domain)
+> > >             link->aspm_default = PCIE_LINK_STATE_ALL;
+> > > 
+> > > This at least addresses your concern about policy decision, leaving it to the
+> > > core to determine how these domains are handled rather than an ABI that lets
+> > > domains set policy.
+> > > 
+> > > > The only documented policy controls I'm aware of for ASPM are:
+> > > > 
+> > > >   - FADT "PCIe ASPM Controls" bit ("if set, OS must not enable ASPM
+> > > >     control on this platform")
+> > > > 
+> > > >   - _OSC negotiation for control of the PCIe Capability (OS is only
+> > > >     allowed to write PCI_EXP_LNKCTL if platform has granted control to
+> > > >     the OS)
+> > > > 
+> > > > I think what we *should* be doing is enabling ASPM when it's
+> > > > advertised, subject to those platform policy controls and user choices
+> > > > like CONFIG_PCIEASPM_PERFORMANCE/POWERSAVE/etc and sysfs attributes.
+> > > > 
+> > > > So basically I think link->aspm_default should be PCIE_LINK_STATE_ALL
+> > > > without drivers doing anything at all.  Maybe we have to carve out
+> > > > exceptions, e.g., "VMD hierarchies are exempt from _OSC," or "devices
+> > > > on x86 systems before 2026 can't enable more ASPM than BIOS did," or
+> > > > whatever.  Is there any baby step we can make in that direction?
+> > > > 
+> > > > This feels a little scary, so feel free to convince me it can't be
+> > > > done :)
+> > > 
+> > > I understand your direction of enabling all advertised states by
+> > > default (subject to FADT/_OSC and user settings). To explore that,
+> > > I’ll send an RFC in parallel with this patch that proposes a baby
+> > > step, e.g.  add instrumentation so we can see where BIOS left
+> > > capabilities unused, and make it opt-in via a boot param so we can
+> > > evaluate impact safely.
+> > 
+> > The instrumentation, absolutely.  We need something about what was
+> > already enabled and when we change things.
+> > 
+> > > So this series will handle the VMD gap directly, and the RFC can
+> > > kick off the wider discussion about defaults on ACPI-managed hosts.
+> > > Does that sound like a reasonable approach and split?
+> > 
+> > I don't really want a parallel approach because I don't think it would
+> > ever converge again.  BUT I think you're still OK for VMD, because I
+> > think the default should be PCIE_LINK_STATE_ALL, and when we carve out
+> > the exceptions that would not be in vmd.c, and it's easy to say that
+> > there's no exception for VMD.
+> 
+> While I agree this is a better overall direction, it still won’t cover VMD in
+> the “FADT disallows OS ASPM control” case. VMD (and others) are already using
+> pci_enable_link_state() to set PCIE_LINK_STATE_ALL. But that doesn’t apply when
+> aspm_disabled = 1, which is the primary issue this patch addresses — moving away
+> from a runtime control setting to init-time and allowing policy to be set even
+> when aspm_disabled = 1.
+> 
+> I want to be clear that this is needed because VMD is NOT fully ACPI-compliant.
+> There is AML code, but it’s deliberately obfuscated to prevent the OS from
+> enumerating the devices natively [1]. VMD was designed to give the driver
+> complete control over the domain configuration, and that includes power
+> management settings.
+> 
+> So I can send a patch to make the default PCIE_LINK_STATE_ALL, but I would still
+> need a follow-on in that series that does something like:
+> 
+> 	if (host_bridge->synthetic_domain)
+> 		link->aspm_default = PCIE_LINK_STATE_ALL;
+> 
+> 
+> That carve-out is still required, because without it synthetic domains like VMD
+> would inherit invalid or nonexistent BIOS defaults. The key difference is that
+> only vmd.c would set itself as synthetic_domain; ASPM core still decides what
+> policy applies.
+> 
 
-Regards,
-Justin
+Both VMD and the non-ACPI host bridge controllers are mostly same functionality
+wise, so I don't think the 'synthetic_domain' property makes sense.
+
+IMO, it is better to go with the API introduced in this patch for VMD as it
+clearly tells us the host bridge driver is overriding for a purpose and I can
+set PCIE_LINK_STATE_ALL for DT based platforms separately.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
