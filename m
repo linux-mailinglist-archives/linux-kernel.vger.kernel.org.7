@@ -1,175 +1,351 @@
-Return-Path: <linux-kernel+bounces-800593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 231C9B439A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:11:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9DA2B439BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C936B5A1A5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:11:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A86553BD3C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E46B2FC002;
-	Thu,  4 Sep 2025 11:11:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7945EEACE
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0032F4A08;
+	Thu,  4 Sep 2025 11:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="cnQTmwcd"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240C22A1B2
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756984262; cv=none; b=dz7eI1qt7oYnSZSnOBpgUsuJMFEZ7HTCPU5HKDwzIvJ4J1SlW5yXfjt0r9cvUw+xfS9Q9ezSc2mp9c0diiIY3QdIwxC6fsx5ACAOTR94LCrBAI5svQDTvut3Biii7FN4OUUmIPihytj/lb0cOX5cKWs8+9mqYpo9dZ56yrY6q+M=
+	t=1756984812; cv=none; b=CRdbV99F+ea7nyoGII3GXE9O8OzABq9BKmB/zW6/8kvEKoymcJgsIkisoK/5e4IG4Mwm5+yStLy6NT/5tmwEXJObw0NXxkhVRN49LSpWdKINH3d8oBjFe0cF5RvOjaGO6V+bMfjO2gBdBlfo4Hm2dIPxfyBQNqik6U+mzpd21os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756984262; c=relaxed/simple;
-	bh=AjubLziIWm2PaHJzSKCy1Ww2rBsGsZvCJ1Z7fzId+k8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F/KiqR7vcWsjjq5GT8Y0DvIQPyP6dLor5pJT8t9hfzhyIg3qVjhAZBoYM/1VVuW4sxbT/gS2q0xoF1WySpeYFChcxuPKq4yRr0y+NeDaujTw7wQbj8i2xSr6NOYb5X1VPNjvE0KE1c8wlV4FWJd9CSq3GQcb/ojg+m+AnIPPXXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2CAC1756;
-	Thu,  4 Sep 2025 04:10:51 -0700 (PDT)
-Received: from [10.1.37.179] (XHFQ2J9959.cambridge.arm.com [10.1.37.179])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 378AB3F6A8;
-	Thu,  4 Sep 2025 04:10:58 -0700 (PDT)
-Message-ID: <2cf02021-10d2-46f6-b3e6-f5c55546ca9e@arm.com>
-Date: Thu, 4 Sep 2025 12:10:56 +0100
+	s=arc-20240116; t=1756984812; c=relaxed/simple;
+	bh=Dmb8SBDJOM16cZwrxUkS9YN30urgHiFF33K//ejpJ1Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=chNqiKLxkiPQYtDq8ixWumCxEZC4LU+O2F8KY5WVGyF8EYD5iAdOKH1uzjNTcKGmHO+AnhSunUP7YYIVmtWPRWqj1bL1D6phcQ/ftABFIaKpeQX4C86zhCX0u+0b5Owb0pZbYenjLLe6MDKwIz3e3DekB+cVpWPMVGmTlfu+dVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=cnQTmwcd; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cHcJG2tj1z9tfj;
+	Thu,  4 Sep 2025 13:12:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1756984334; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mgFBwRT9dIgvy3AOVDN4aP5Af2uJGAVza9uOG2VbXEY=;
+	b=cnQTmwcdlWm+TBO80LPk6LJaHAodVcEWyFx+5bX7lkb23KmvvO5aE1iHSW06b5/6E+NoVv
+	aslS3RmQQB0iIqfKs68jR8wtZCN8PKLk5q/GwYKvjCGy0oWOGyovTTtqbwIO+uJqfAV49t
+	7AA7S8u9T3/cF8Sdym5iN7Q/sEVixnXpETjn7qj9PJgrdEo/YFpIJsU8B7Rvo9rjd1XLdS
+	iQWbUunYm5vC5IZpEnujZah1GVgVbw1zSGoDhLpfclkxw7fi/kcjZ0Ccw71TSrM/+9EUX7
+	+hu9zHv4JMvjUKblgATraio0dcBFt6rdLIvZOYBO0kcLyzHB/QsneTfY5EoTBA==
+Message-ID: <b35506de99be38f560709660b10667ca9f386181.camel@mailbox.org>
+Subject: Re: [PATCH v2] Revert "drm/nouveau: Remove waitque for sched
+ teardown"
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Philipp
+ Stanner <phasta@kernel.org>, Lyude Paul <lyude@redhat.com>, Danilo
+ Krummrich <dakr@kernel.org>,  David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 04 Sep 2025 13:12:10 +0200
+In-Reply-To: <3407fd9d-68e0-4c45-9761-98ede450bb25@amd.com>
+References: <20250901083107.10206-2-phasta@kernel.org>
+	 <3407fd9d-68e0-4c45-9761-98ede450bb25@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 6/6] arm64: mm: Optimize linear_map_split_to_ptes()
-Content-Language: en-GB
-To: Yang Shi <yang@os.amperecomputing.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Ard Biesheuvel <ardb@kernel.org>, Dev Jain <dev.jain@arm.com>,
- scott@os.amperecomputing.com, cl@gentwo.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20250829115250.2395585-1-ryan.roberts@arm.com>
- <20250829115250.2395585-7-ryan.roberts@arm.com>
- <9d666caf-a799-4229-86b5-3a22a60fa79f@os.amperecomputing.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <9d666caf-a799-4229-86b5-3a22a60fa79f@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: a4ascgdpn1w3bydypredr54rs7bd1c3w
+X-MBO-RS-ID: 90a219ffd1067569ea5
 
-On 29/08/2025 23:27, Yang Shi wrote:
-> 
-> 
-> On 8/29/25 4:52 AM, Ryan Roberts wrote:
->> When splitting kernel leaf mappings, either via
->> split_kernel_leaf_mapping_locked() or linear_map_split_to_ptes(),
->> previously a leaf mapping was always split to the next size down. e.g.
->> pud -> contpmd -> pmd -> contpte -> pte. But for
->> linear_map_split_to_ptes() we can avoid the contpmd and contpte states
->> because we know we want to split all the way down to ptes.
->>
->> This avoids visiting all the ptes in a table if it was created by
->> splitting a pmd, which is noticible on systems with a lot of memory.
-> 
-> Similar to patch #4, this patch should be squashed into patch #5 IMHO.
+On Thu, 2025-09-04 at 12:27 +0200, Christian K=C3=B6nig wrote:
+> On 01.09.25 10:31, Philipp Stanner wrote:
+> > This reverts:
+> >=20
+> > commit bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
+> > commit 5f46f5c7af8c ("drm/nouveau: Add new callback for scheduler teard=
+own")
+> >=20
+> > from the drm/sched teardown leak fix series:
+> >=20
+> > https://lore.kernel.org/dri-devel/20250710125412.128476-2-phasta@kernel=
+.org/
+> >=20
+> > The aforementioned series removed a blocking waitqueue from
+> > nouveau_sched_fini(). It was mistakenly assumed that this waitqueue onl=
+y
+> > prevents jobs from leaking, which the series fixed.
+> >=20
+> > The waitqueue, however, also guarantees that all VM_BIND related jobs
+> > are finished in order, cleaning up mappings in the GPU's MMU. These job=
+s
+> > must be executed sequentially. Without the waitqueue, this is no longer
+> > guaranteed, because entity and scheduler teardown can race with each
+> > other.
+>=20
+> That sounds like exactly the kind of issues I tried to catch with the rec=
+ent dma_fence changes.
 
-That's fine by me. I was just trying to make the review easier by splitting
-non-essential stuff out. Let's squash for next version.
+Link? :)
 
-> 
-> Thanks,
-> Yang
-> 
->>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
->>   arch/arm64/mm/mmu.c | 26 ++++++++++++++++++--------
->>   1 file changed, 18 insertions(+), 8 deletions(-)
->>
->> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->> index 6bd0b065bd97..8e45cd08bf3a 100644
->> --- a/arch/arm64/mm/mmu.c
->> +++ b/arch/arm64/mm/mmu.c
->> @@ -550,7 +550,7 @@ static void split_contpte(pte_t *ptep)
->>           __set_pte(ptep, pte_mknoncont(__ptep_get(ptep)));
->>   }
->>   -static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp)
->> +static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp, bool to_cont)
->>   {
->>       pmdval_t tableprot = PMD_TYPE_TABLE | PMD_TABLE_UXN | PMD_TABLE_AF;
->>       unsigned long pfn = pmd_pfn(pmd);
->> @@ -568,7 +568,9 @@ static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp)
->>           tableprot |= PMD_TABLE_PXN;
->>         prot = __pgprot((pgprot_val(prot) & ~PTE_TYPE_MASK) | PTE_TYPE_PAGE);
->> -    prot = __pgprot(pgprot_val(prot) | PTE_CONT);
->> +    prot = __pgprot(pgprot_val(prot) & ~PTE_CONT);
->> +    if (to_cont)
->> +        prot = __pgprot(pgprot_val(prot) | PTE_CONT);
->>         for (i = 0; i < PTRS_PER_PTE; i++, ptep++, pfn++)
->>           __set_pte(ptep, pfn_pte(pfn, prot));
->> @@ -592,7 +594,7 @@ static void split_contpmd(pmd_t *pmdp)
->>           set_pmd(pmdp, pmd_mknoncont(pmdp_get(pmdp)));
->>   }
->>   -static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp)
->> +static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp, bool to_cont)
->>   {
->>       pudval_t tableprot = PUD_TYPE_TABLE | PUD_TABLE_UXN | PUD_TABLE_AF;
->>       unsigned int step = PMD_SIZE >> PAGE_SHIFT;
->> @@ -611,7 +613,9 @@ static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp)
->>           tableprot |= PUD_TABLE_PXN;
->>         prot = __pgprot((pgprot_val(prot) & ~PMD_TYPE_MASK) | PMD_TYPE_SECT);
->> -    prot = __pgprot(pgprot_val(prot) | PTE_CONT);
->> +    prot = __pgprot(pgprot_val(prot) & ~PTE_CONT);
->> +    if (to_cont)
->> +        prot = __pgprot(pgprot_val(prot) | PTE_CONT);
->>         for (i = 0; i < PTRS_PER_PMD; i++, pmdp++, pfn += step)
->>           set_pmd(pmdp, pfn_pmd(pfn, prot));
->> @@ -669,7 +673,7 @@ static int split_kernel_leaf_mapping_locked(unsigned long
->> addr)
->>       if (!pud_present(pud))
->>           goto out;
->>       if (pud_leaf(pud)) {
->> -        ret = split_pud(pudp, pud, GFP_PGTABLE_KERNEL);
->> +        ret = split_pud(pudp, pud, GFP_PGTABLE_KERNEL, true);
->>           if (ret)
->>               goto out;
->>       }
->> @@ -694,7 +698,7 @@ static int split_kernel_leaf_mapping_locked(unsigned long
->> addr)
->>            */
->>           if (ALIGN_DOWN(addr, PMD_SIZE) == addr)
->>               goto out;
->> -        ret = split_pmd(pmdp, pmd, GFP_PGTABLE_KERNEL);
->> +        ret = split_pmd(pmdp, pmd, GFP_PGTABLE_KERNEL, true);
->>           if (ret)
->>               goto out;
->>       }
->> @@ -771,7 +775,7 @@ static int __init split_to_ptes_pud_entry(pud_t *pudp,
->> unsigned long addr,
->>       int ret = 0;
->>         if (pud_leaf(pud))
->> -        ret = split_pud(pudp, pud, GFP_ATOMIC);
->> +        ret = split_pud(pudp, pud, GFP_ATOMIC, false);
->>         return ret;
->>   }
->> @@ -786,7 +790,13 @@ static int __init split_to_ptes_pmd_entry(pmd_t *pmdp,
->> unsigned long addr,
->>       if (pmd_leaf(pmd)) {
->>           if (pmd_cont(pmd))
->>               split_contpmd(pmdp);
->> -        ret = split_pmd(pmdp, pmd, GFP_ATOMIC);
->> +        ret = split_pmd(pmdp, pmd, GFP_ATOMIC, false);
->> +
->> +        /*
->> +         * We have split the pmd directly to ptes so there is no need to
->> +         * visit each pte to check if they are contpte.
->> +         */
->> +        walk->action = ACTION_CONTINUE;
->>       }
->>         return ret;
-> 
+>=20
+> Going to keep working on that and potentially using this here as blueprin=
+t for something it should catch.
+
+This is more like a nouveau-specific issue. The problem is that
+unmapping mappings in the GPU's MMU must be done in a specific order,
+and all the unmappings must be performed, not canceled.
+
+For EXEC jobs, it's perfectly fine to cancel pending jobs, remove the
+waitqueue and just rush through drm_sched_fini().
+
+I don't know the issue you're describing, but I don't think a feature
+in dma_fence could help with that specific Nouveau problem. dma_fence
+can't force the driver to submit jobs in a specific order or to wait
+until they're all completed.
+
+Gr=C3=BC=C3=9Fe
+P.
+
+>=20
+> Regards,
+> Christian.
+>=20
+> >=20
+> > Revert all patches related to the waitqueue removal.
+> >=20
+> > Fixes: bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
+> > Suggested-by: Danilo Krummrich <dakr@kernel.org>
+> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> > ---
+> > Changes in v2:
+> > =C2=A0 - Don't revert commit 89b2675198ab ("drm/nouveau: Make fence con=
+tainer helper usable driver-wide")
+> > =C2=A0 - Add Fixes-tag
+> > ---
+> > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.c | 15 -----------
+> > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.h |=C2=A0 1 -
+> > =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.c | 35 ++++++++++----------=
+-----
+> > =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.h |=C2=A0 9 ++++---
+> > =C2=A0drivers/gpu/drm/nouveau/nouveau_uvmm.c=C2=A0 |=C2=A0 8 +++---
+> > =C2=A05 files changed, 24 insertions(+), 44 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/=
+nouveau/nouveau_fence.c
+> > index 9f345a008717..869d4335c0f4 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > @@ -240,21 +240,6 @@ nouveau_fence_emit(struct nouveau_fence *fence)
+> > =C2=A0	return ret;
+> > =C2=A0}
+> > =C2=A0
+> > -void
+> > -nouveau_fence_cancel(struct nouveau_fence *fence)
+> > -{
+> > -	struct nouveau_fence_chan *fctx =3D nouveau_fctx(fence);
+> > -	unsigned long flags;
+> > -
+> > -	spin_lock_irqsave(&fctx->lock, flags);
+> > -	if (!dma_fence_is_signaled_locked(&fence->base)) {
+> > -		dma_fence_set_error(&fence->base, -ECANCELED);
+> > -		if (nouveau_fence_signal(fence))
+> > -			nvif_event_block(&fctx->event);
+> > -	}
+> > -	spin_unlock_irqrestore(&fctx->lock, flags);
+> > -}
+> > -
+> > =C2=A0bool
+> > =C2=A0nouveau_fence_done(struct nouveau_fence *fence)
+> > =C2=A0{
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.h b/drivers/gpu/drm/=
+nouveau/nouveau_fence.h
+> > index 9957a919bd38..183dd43ecfff 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_fence.h
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.h
+> > @@ -29,7 +29,6 @@ void nouveau_fence_unref(struct nouveau_fence **);
+> > =C2=A0
+> > =C2=A0int=C2=A0 nouveau_fence_emit(struct nouveau_fence *);
+> > =C2=A0bool nouveau_fence_done(struct nouveau_fence *);
+> > -void nouveau_fence_cancel(struct nouveau_fence *fence);
+> > =C2=A0int=C2=A0 nouveau_fence_wait(struct nouveau_fence *, bool lazy, b=
+ool intr);
+> > =C2=A0int=C2=A0 nouveau_fence_sync(struct nouveau_bo *, struct nouveau_=
+channel *, bool exclusive, bool intr);
+> > =C2=A0
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/=
+nouveau/nouveau_sched.c
+> > index 0cc0bc9f9952..e60f7892f5ce 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_sched.c
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
+> > @@ -11,7 +11,6 @@
+> > =C2=A0#include "nouveau_exec.h"
+> > =C2=A0#include "nouveau_abi16.h"
+> > =C2=A0#include "nouveau_sched.h"
+> > -#include "nouveau_chan.h"
+> > =C2=A0
+> > =C2=A0#define NOUVEAU_SCHED_JOB_TIMEOUT_MS		10000
+> > =C2=A0
+> > @@ -122,9 +121,11 @@ nouveau_job_done(struct nouveau_job *job)
+> > =C2=A0{
+> > =C2=A0	struct nouveau_sched *sched =3D job->sched;
+> > =C2=A0
+> > -	spin_lock(&sched->job_list.lock);
+> > +	spin_lock(&sched->job.list.lock);
+> > =C2=A0	list_del(&job->entry);
+> > -	spin_unlock(&sched->job_list.lock);
+> > +	spin_unlock(&sched->job.list.lock);
+> > +
+> > +	wake_up(&sched->job.wq);
+> > =C2=A0}
+> > =C2=A0
+> > =C2=A0void
+> > @@ -305,9 +306,9 @@ nouveau_job_submit(struct nouveau_job *job)
+> > =C2=A0	}
+> > =C2=A0
+> > =C2=A0	/* Submit was successful; add the job to the schedulers job list=
+. */
+> > -	spin_lock(&sched->job_list.lock);
+> > -	list_add(&job->entry, &sched->job_list.head);
+> > -	spin_unlock(&sched->job_list.lock);
+> > +	spin_lock(&sched->job.list.lock);
+> > +	list_add(&job->entry, &sched->job.list.head);
+> > +	spin_unlock(&sched->job.list.lock);
+> > =C2=A0
+> > =C2=A0	drm_sched_job_arm(&job->base);
+> > =C2=A0	job->done_fence =3D dma_fence_get(&job->base.s_fence->finished);
+> > @@ -392,23 +393,10 @@ nouveau_sched_free_job(struct drm_sched_job *sche=
+d_job)
+> > =C2=A0	nouveau_job_fini(job);
+> > =C2=A0}
+> > =C2=A0
+> > -static void
+> > -nouveau_sched_cancel_job(struct drm_sched_job *sched_job)
+> > -{
+> > -	struct nouveau_fence *fence;
+> > -	struct nouveau_job *job;
+> > -
+> > -	job =3D to_nouveau_job(sched_job);
+> > -	fence =3D to_nouveau_fence(job->done_fence);
+> > -
+> > -	nouveau_fence_cancel(fence);
+> > -}
+> > -
+> > =C2=A0static const struct drm_sched_backend_ops nouveau_sched_ops =3D {
+> > =C2=A0	.run_job =3D nouveau_sched_run_job,
+> > =C2=A0	.timedout_job =3D nouveau_sched_timedout_job,
+> > =C2=A0	.free_job =3D nouveau_sched_free_job,
+> > -	.cancel_job =3D nouveau_sched_cancel_job,
+> > =C2=A0};
+> > =C2=A0
+> > =C2=A0static int
+> > @@ -458,8 +446,9 @@ nouveau_sched_init(struct nouveau_sched *sched, str=
+uct nouveau_drm *drm,
+> > =C2=A0		goto fail_sched;
+> > =C2=A0
+> > =C2=A0	mutex_init(&sched->mutex);
+> > -	spin_lock_init(&sched->job_list.lock);
+> > -	INIT_LIST_HEAD(&sched->job_list.head);
+> > +	spin_lock_init(&sched->job.list.lock);
+> > +	INIT_LIST_HEAD(&sched->job.list.head);
+> > +	init_waitqueue_head(&sched->job.wq);
+> > =C2=A0
+> > =C2=A0	return 0;
+> > =C2=A0
+> > @@ -493,12 +482,16 @@ nouveau_sched_create(struct nouveau_sched **psche=
+d, struct nouveau_drm *drm,
+> > =C2=A0	return 0;
+> > =C2=A0}
+> > =C2=A0
+> > +
+> > =C2=A0static void
+> > =C2=A0nouveau_sched_fini(struct nouveau_sched *sched)
+> > =C2=A0{
+> > =C2=A0	struct drm_gpu_scheduler *drm_sched =3D &sched->base;
+> > =C2=A0	struct drm_sched_entity *entity =3D &sched->entity;
+> > =C2=A0
+> > +	rmb(); /* for list_empty to work without lock */
+> > +	wait_event(sched->job.wq, list_empty(&sched->job.list.head));
+> > +
+> > =C2=A0	drm_sched_entity_fini(entity);
+> > =C2=A0	drm_sched_fini(drm_sched);
+> > =C2=A0
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.h b/drivers/gpu/drm/=
+nouveau/nouveau_sched.h
+> > index b98c3f0bef30..20cd1da8db73 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_sched.h
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_sched.h
+> > @@ -103,9 +103,12 @@ struct nouveau_sched {
+> > =C2=A0	struct mutex mutex;
+> > =C2=A0
+> > =C2=A0	struct {
+> > -		struct list_head head;
+> > -		spinlock_t lock;
+> > -	} job_list;
+> > +		struct {
+> > +			struct list_head head;
+> > +			spinlock_t lock;
+> > +		} list;
+> > +		struct wait_queue_head wq;
+> > +	} job;
+> > =C2=A0};
+> > =C2=A0
+> > =C2=A0int nouveau_sched_create(struct nouveau_sched **psched, struct no=
+uveau_drm *drm,
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/n=
+ouveau/nouveau_uvmm.c
+> > index d94a85509176..79eefdfd08a2 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+> > @@ -1019,8 +1019,8 @@ bind_validate_map_sparse(struct nouveau_job *job,=
+ u64 addr, u64 range)
+> > =C2=A0	u64 end =3D addr + range;
+> > =C2=A0
+> > =C2=A0again:
+> > -	spin_lock(&sched->job_list.lock);
+> > -	list_for_each_entry(__job, &sched->job_list.head, entry) {
+> > +	spin_lock(&sched->job.list.lock);
+> > +	list_for_each_entry(__job, &sched->job.list.head, entry) {
+> > =C2=A0		struct nouveau_uvmm_bind_job *bind_job =3D to_uvmm_bind_job(__j=
+ob);
+> > =C2=A0
+> > =C2=A0		list_for_each_op(op, &bind_job->ops) {
+> > @@ -1030,7 +1030,7 @@ bind_validate_map_sparse(struct nouveau_job *job,=
+ u64 addr, u64 range)
+> > =C2=A0
+> > =C2=A0				if (!(end <=3D op_addr || addr >=3D op_end)) {
+> > =C2=A0					nouveau_uvmm_bind_job_get(bind_job);
+> > -					spin_unlock(&sched->job_list.lock);
+> > +					spin_unlock(&sched->job.list.lock);
+> > =C2=A0					wait_for_completion(&bind_job->complete);
+> > =C2=A0					nouveau_uvmm_bind_job_put(bind_job);
+> > =C2=A0					goto again;
+> > @@ -1038,7 +1038,7 @@ bind_validate_map_sparse(struct nouveau_job *job,=
+ u64 addr, u64 range)
+> > =C2=A0			}
+> > =C2=A0		}
+> > =C2=A0	}
+> > -	spin_unlock(&sched->job_list.lock);
+> > +	spin_unlock(&sched->job.list.lock);
+> > =C2=A0}
+> > =C2=A0
+> > =C2=A0static int
+>=20
 
 
