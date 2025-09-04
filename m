@@ -1,187 +1,87 @@
-Return-Path: <linux-kernel+bounces-801234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EEFB4427D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:17:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AE4CB4427B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1E42A01044
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:17:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EB43189A5D3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825EA23507B;
-	Thu,  4 Sep 2025 16:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F5222422E;
+	Thu,  4 Sep 2025 16:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="YnoKmLxf"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOytbBFP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E0E224244;
-	Thu,  4 Sep 2025 16:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757002631; cv=pass; b=ZjhIywkkEX2xB6scjYlmZ5ugYQAgy0M6BEklycaSYQ4Qn5c0HfSB4d+F28q+wpy29Da6SAi7V9x7OWrGRmLoOFwRfAo1OI4vBkNlO0GfPpw3ukV+MYA0JjGESKO1S/ESaGG5TJFIPltWkyAlvhD8aKNAJL7mEQR1y9M7VqTG7Vk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757002631; c=relaxed/simple;
-	bh=vkNlwPsXCh03q4QvUN7xLznR2qq7bO1XsEL19DXw7jk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=qtjV1xC/o53Bc40OYngSZ/nogywgHZwEXUduBFn/FldFfIh95UeSjjlOPNEEBeAvqnPo4eMSGd01eZmyEDvr0rmVAV+0oORf65BG1Flqe6qUmiLwgBxeWnMGV1rsqGCDDOsxn18uUmVk+M5G7y6mwnihpC0WxydZ5pvXV8IoOA4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=YnoKmLxf; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757002602; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VHMYafhZFE2pstJbX0WhsvQVHtyyyFgCvVKQ3nO5Ilwy5s9+qiXR6/NDUee9kV/Xvm0I0whyov8yvtNAyNJtZBFfrbljwKTBHvYRJv3xvNzenqQ8WXYCgfbqJN/DDbVWqT9QFwCQ2d62Dwx1/Q6DJ8G5s2NyruqN9vF/JHoFzVg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757002602; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=FIqcoPZSc1O3/JVIvRpHNLeM+xtMfjWtg6IHGtGPB9M=; 
-	b=VktHaoNE3ghG/Rp38dGH3zb2IAwEqWaLlhG9Cc6g9zkJfXNJj95tMUg7FHJRCFY+SH7OENHpmRFDAZJgFFKIP9XttaBJz+872H2rok1RlPOhRhZnfEf8ZVhPFOyja9qStx3i7rDOEeoFYI4WCUbxnw3tVr3EmrMDwaAQiM3Zwv8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757002602;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=FIqcoPZSc1O3/JVIvRpHNLeM+xtMfjWtg6IHGtGPB9M=;
-	b=YnoKmLxfdFea7bkc4g6zROBrQB6TPG/6gccwAfRJBqq63fbKnvn+XO0mwnkkEg0n
-	nY9dly0GuhXtCrUhHj6SY1h4DSldODjdCbAFLnKuIitBP8/W8owMowpz3NyiZ1mrhXn
-	rtxgaCn8cuE0HX6vquorJXulozUSTbc9dnxekLhg=
-Received: by mx.zohomail.com with SMTPS id 1757002600009698.7115522639169;
-	Thu, 4 Sep 2025 09:16:40 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5A527713;
+	Thu,  4 Sep 2025 16:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757002629; cv=none; b=A1jJkWFOTHKeayPGWPK5L1gAMvXL7A38dm8uvKOVs/uqUzJyehnQmCnmbrlZcqgnncm3uTFWizRJi/8+NqerTGWJRYk52fW+U1MIjDNE4h/rTBvjiF2OYB1IoyWDoYzGBkwoPR7mxzXem5tsGzEhJySqyg4VipfQkfyDiJ13yNo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757002629; c=relaxed/simple;
+	bh=kMEh60br9LzSzqFcFHdSCGeQFfw5Y/5AEaz/h73Frvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=szKJc+gsMBJzoSkIqx3suCAsKA5EkdiZUZjwbJAP0KvGsRgYCDnDYp8EnTT6gCU6oj+2onZPBR/i3zKUQSziYSQEqtoUnXtjQVqYaJ4eOkN0T2PWgm6mj1IL8xGmrTGkakll2Lqapin/PNBaL9w3DFQxV6xixU6zPErhgblbJuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IOytbBFP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73743C4CEF0;
+	Thu,  4 Sep 2025 16:17:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757002628;
+	bh=kMEh60br9LzSzqFcFHdSCGeQFfw5Y/5AEaz/h73Frvo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=IOytbBFPIsOca+/MXV537lUnp0nEEYwr1DDK4VhyN+Io/EgWbeMGXtIv5sNacnY5J
+	 TN3td5nXVAUUzDTi2IdEfuwG4Y7hrLQwvswULTSrDDmFYBqdkS+vwQyBlHfWePFrjd
+	 SDAhGIPxAfpntpRU295jhVs5oZFYraA2k4HH8/eBgaoPIMTTQ+uxYlvAT+aN29gnaC
+	 UlfvJBQtFCPOt45URsf001P3Xo8GMHFl/74JVqSFRfJhfhZe2TgEifmJkdAwyKx/xJ
+	 XSrrdAX6Qki1J18v2QqLvFJFPyXlfWDVClSDf/ysXT1+ONY13vPQiXJTzTS+Etbnl0
+	 qXPW27pz+XEAg==
+Date: Thu, 4 Sep 2025 11:17:07 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+	mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+	kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+	kw@linux.com, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	qiang.yu@oss.qualcomm.com, quic_krichai@quicinc.com,
+	quic_vbadigan@quicinc.com,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v6 2/3] PCI: qcom: fix macro typo for CURSOR
+Message-ID: <20250904161707.GA1265471@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v3 12/14] rust: Add dma_buf stub bindings
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250829224116.477990-13-lyude@redhat.com>
-Date: Thu, 4 Sep 2025 13:16:22 -0300
-Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Xiangfei Ding <dingxiangfei2009@gmail.com>,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	"open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b <linux-media"@vger.kernel.org (ope>),
-	"moderated list:DMA BUFFER SHARING  FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b <linaro-mm-sig"@lists.linaro.org (mod>)
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <88013821-0710-4B52-B622-3BAB429A6254@collabora.com>
-References: <20250829224116.477990-1-lyude@redhat.com>
- <20250829224116.477990-13-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904065225.1762793-3-ziyue.zhang@oss.qualcomm.com>
 
+On Thu, Sep 04, 2025 at 02:52:24PM +0800, Ziyue Zhang wrote:
+> Corrected a typo in the macro name GEN3_EQ_FMDC_MAX_PRE_CURSOR_DELTA and
+> GEN3_EQ_FMDC_MAX_POST_CURSOR_DELTA to ensure consistency and avoid
+> potential issues.
 
+In subject, s/fix macro/Fix macro/ to follow precedent.
 
-> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> In order to implement the gem export callback, we need a type to =
-represent
-> struct dma_buf. So - this commit introduces a set of stub bindings for
-> dma_buf. These bindings provide a ref-counted DmaBuf object, but don't
-> currently implement any functionality for using the DmaBuf.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->=20
-> ---
-> V3:
-> * Rename as_ref() to from_raw()
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> rust/kernel/dma_buf.rs | 40 ++++++++++++++++++++++++++++++++++++++++
-> rust/kernel/lib.rs     |  1 +
-> 2 files changed, 41 insertions(+)
-> create mode 100644 rust/kernel/dma_buf.rs
->=20
-> diff --git a/rust/kernel/dma_buf.rs b/rust/kernel/dma_buf.rs
-> new file mode 100644
-> index 0000000000000..a66829afcd129
-> --- /dev/null
-> +++ b/rust/kernel/dma_buf.rs
-> @@ -0,0 +1,40 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! DMA buffer API
+s/Corrected/Correct/ for imperative mood.
 
-Missing period?
+I'd stop after GEN3_EQ_FMDC_MAX_POST_CURSOR_DELTA.  Pointless to go on
+and talk about consistency and issues.  It's a simple typo fix.
 
-> +//!
-> +//! C header: =
-[`include/linux/dma-buf.h`](srctree/include/linux/dma-buf.h)
-> +
-> +use bindings;
-> +use kernel::types::*;
-> +
-> +/// A DMA buffer object.
-> +///
-> +/// # Invariants
-> +///
-> +/// The data layout of this type is equivalent to that of `struct =
-dma_buf`.
-> +#[repr(transparent)]
-> +pub struct DmaBuf(Opaque<bindings::dma_buf>);
-> +
-> +// SAFETY: `struct dma_buf` is thread-safe
-> +unsafe impl Send for DmaBuf {}
-> +// SAFETY: `struct dma_buf` is thread-safe
-> +unsafe impl Sync for DmaBuf {}
-> +
-> +#[expect(unused)]
-> +impl DmaBuf {
-> +    /// Convert from a `*mut bindings::dma_buf` to a [`DmaBuf`].
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The caller guarantees that `self_ptr` points to a valid =
-initialized `struct dma_buf` for the
-> +    /// duration of the lifetime of `'a`, and promises to not violate =
-rust's data aliasing rules
-> +    /// using the reference provided by this function.
-> +    pub(crate) unsafe fn from_raw<'a>(self_ptr: *mut =
-bindings::dma_buf) -> &'a Self {
-> +        // SAFETY: Our data layout is equivalent to `dma_buf` .
-> +        unsafe { &*self_ptr.cast() }
-> +    }
-> +
-> +    pub(crate) fn as_raw(&self) -> *mut bindings::dma_buf {
-> +        self.0.get()
-> +    }
-> +}
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index fcffc3988a903..59242d83efe21 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -81,6 +81,7 @@
-> pub mod device_id;
-> pub mod devres;
-> pub mod dma;
-> +pub mod dma_buf;
-> pub mod driver;
-> #[cfg(CONFIG_DRM =3D "y")]
-> pub mod drm;
-> --=20
-> 2.50.0
->=20
+No need to repost for this.
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-
+> -#define GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA	GENMASK(13, 10)
+> -#define GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA	GENMASK(17, 14)
+> +#define GEN3_EQ_FMDC_MAX_PRE_CURSOR_DELTA	GENMASK(13, 10)
+> +#define GEN3_EQ_FMDC_MAX_POST_CURSOR_DELTA	GENMASK(17, 14)
 
