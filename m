@@ -1,103 +1,83 @@
-Return-Path: <linux-kernel+bounces-801553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD21B4468C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:38:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F45B4469A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AEDA7AE505
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:36:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C846A4083E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F5E2749C4;
-	Thu,  4 Sep 2025 19:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B1E2727F5;
+	Thu,  4 Sep 2025 19:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJQ3n7Xu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="glsruVWQ"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFC726A0C5;
-	Thu,  4 Sep 2025 19:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0177025E469
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 19:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757014652; cv=none; b=N3hnNpfZQCdb/eJ86lX5ihOGoDnFlbfvHU3+pMr8Y7V1Z8dI2PE/Qf63dY8+V3ARYRpmnZSZHJWKRO8i+BLxqeiIvwkmADcSGOd2NbNMDnk8DngDliS/SpPnSaiLLNf8lERWPpz08G4Bwtjps2eR7yBAab0pioIFW9fCt7d7r1I=
+	t=1757014877; cv=none; b=c+WPNaPjS2Phx74Ih3lpVet8HzPU363QeHjlUI8TyIfF5keqQEFGdkb6NAXz3xQHCqhTBbei7jLDgNyOwqzXzJQVcX1nwskplpnxtVdfiueQQkir97lTaVmaJRgaF35KTBg+juXJpMW4lXKlvPjHdTIKNsgpxbTMdp7nxCU+CEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757014652; c=relaxed/simple;
-	bh=TDoylOXD5ciLSskYTbNihAxiYFz/Px6Na6LHqpi/t2Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gPmSwiaflQ2lls3U6BVwfn8Og593JERVC48M8G0QVGATh0Q48dyvfBX+wzD423ri6WuF5lW3Me9e0fVBAkT8N9nK7eNZRMPK7HzmpOM9vFfypV/vBMambtz567WGy94Wr6SVticfn1WLKExM3sGDwPDY/ZDz0pNhwolK9e3huvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJQ3n7Xu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93557C4CEF1;
-	Thu,  4 Sep 2025 19:37:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757014651;
-	bh=TDoylOXD5ciLSskYTbNihAxiYFz/Px6Na6LHqpi/t2Q=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XJQ3n7XuTTPSOVwMCEMavOo//TQDr9WlBWNp7rJt+JEuO0uYlaT4+y0p6g8avobOV
-	 J8CsSgUw6SsuGM9f9agIVujvWrJK61G+DeeEKhf0lW4s92aCPqLLpy1ha+MzrjhaGB
-	 chxJXCxItr7oc+fcS8FBMCuwV7icCwuPDT6jKx7wpSNtLkV7IqLkKFGosGVbky8SAN
-	 BfFGf1waIGdOBMWHVftT1U5qwIvzz1DeqB7Gt0KZD3XPPf8oJfdXQ38vqoWL700EuT
-	 pInoZBlO+l6L8F+bAc5HSCCNYoZzn+FoP1+EOsZsVInRjDys4tgzQiEbj3D6k0JUa/
-	 sNu1oFZ3M7geA==
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-746d7c469a8so397435a34.3;
-        Thu, 04 Sep 2025 12:37:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVPINRZSDG112X2vAFpILOrG/KEXMR/4HW9imHvpZJTwWT9G+B8sWiR3ZKY+QJ8aBazeHLa9HXqdvVTgG0=@vger.kernel.org, AJvYcCVzyzzj2g2NYQo1RfAlvj94zHPL7ReuwVpd3C8aXPRLdcxVLj+TJCYTuMZJbxtMalcb8xc/Whwjvvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgItYlyyuYFhlkLOso8ocWtUvNjMCuJ175Y2oBdYtWzDoE1nmm
-	wu0yeT9PpG2Zn2u3XJCN0f4CU42IQhN1mxU+AdSCL2EatL2zEzTixkd3Y0k5ORPmNTK/Relm3JB
-	qz9dqSwKvkL1Ml0KnykqkpPTk3zQfSOw=
-X-Google-Smtp-Source: AGHT+IGh4zyXiX5/8UySg6CnF/0Po/f2mWycNLVviSQumSfoUo05ZtR3cgcsU+YLle89jtub4MZE2QIM33671iAeuPc=
-X-Received: by 2002:a05:6830:6ac2:b0:742:29a0:1c20 with SMTP id
- 46e09a7af769-74569e852famr11250654a34.28.1757014650918; Thu, 04 Sep 2025
- 12:37:30 -0700 (PDT)
+	s=arc-20240116; t=1757014877; c=relaxed/simple;
+	bh=DwES1wrjYaHfI91Feyf2ssbbKbox3kR6dFZNwsihPIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k9ySGE4yaVwV13Z0FLTzWznCGhf3NSbx1tr7ahgsl//LlktgZExYmg20TJm7tVOQqUD6R1SgHikqMdZZo+XBMQTjO3vk7pGjjzGiuUjdyT8QVDqlZSLeKPolWPGT8I55F4mOqlQKFDGIfgbHtDJ5xQPZ9nin6DJ2pGaRzTB/UIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=glsruVWQ; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=DwES
+	1wrjYaHfI91Feyf2ssbbKbox3kR6dFZNwsihPIM=; b=glsruVWQ0NXAEunbgIhp
+	ewUnSVdUEfF/nIifW5ym1larMzX78qtZjp8/nelGKg+PpXmP7bBMyLOQaFJJHWWn
+	eY9rWz9MH0cDGlg+Vs1cd/SQ7B18oiiWAlvzAljkaWBF/9VOezA3GbqY+NItM+RG
+	HRq4PDnraQET7bQE6CPSW4j2cpxXsz13147UPCM0Y/iXYapa79oBGq/Hx1WBed2M
+	3/FciEC8nggumVnbFArJIggNDcYTS+/w1Q6+LmVuTTImJxUEnam0SMGc7qGABwFb
+	HLy9pWvgyiiLQs80KVSJrV99A3lZ5qMIxiXlAp1ZkED1XeyVdAfu3eaiT9yiWaWB
+	Hw==
+Received: (qmail 3776238 invoked from network); 4 Sep 2025 21:41:11 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Sep 2025 21:41:11 +0200
+X-UD-Smtp-Session: l3s3148p1@5xpF5/49GtQujnuV
+Date: Thu, 4 Sep 2025 21:41:11 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-i3c@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH] dt-bindings: i3c: renesas,i3c: Add RZ/V2H(P) and RZ/V2N
+ support
+Message-ID: <aLnrV0VBVvQ-XB83@ninjato>
+References: <20250904160305.247618-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <aLm5kbgRIcomBo6a@ninjato>
+ <CA+V-a8t9VU4+Q6ofTYru2=OsrsfiSM53=rtvEzxoYmu_A0wwBg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826091937.991667-1-luoxueqin@kylinos.cn> <CAJZ5v0gD8RkKG8+6MneaDkxndS-oAm8a1AswEDP1w8HVCGZDdw@mail.gmail.com>
- <e0968be3-e33a-4e94-ab8f-215cdaa2be17@kylinos.cn>
-In-Reply-To: <e0968be3-e33a-4e94-ab8f-215cdaa2be17@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 4 Sep 2025 21:37:19 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j2Xa410LBfcKhxP3K1r0bpe6TU1FbnqXZJjUEJpubynQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwsR0Xb0pEfy2FOoZEp8-r7iL6_NyVuzMEZIeoMhgCBz6zNXFbSwukgfFI
-Message-ID: <CAJZ5v0j2Xa410LBfcKhxP3K1r0bpe6TU1FbnqXZJjUEJpubynQ@mail.gmail.com>
-Subject: Re: [PATCH] PM: hibernate: make compression threads configurable via
- kernel parameter
-To: luoxueqin <luoxueqin@kylinos.cn>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, pavel@kernel.org, lenb@kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+V-a8t9VU4+Q6ofTYru2=OsrsfiSM53=rtvEzxoYmu_A0wwBg@mail.gmail.com>
 
-On Thu, Aug 28, 2025 at 5:30=E2=80=AFAM luoxueqin <luoxueqin@kylinos.cn> wr=
-ote:
->
->
-> =E5=9C=A8 2025/8/26 19:43, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> > On Tue, Aug 26, 2025 at 11:19=E2=80=AFAM Xueqin Luo <luoxueqin@kylinos.=
-cn> wrote:
-> >> A new kernel parameter 'cmp_threads=3D' is introduced to
-> >> allow tuning the number of compression/decompression threads at boot.
-> > And why is it useful/needed?
-> The number of compression/decompression threads directly impacts
-> hibernate and resume time.
-> In our tests(averaged over 10 runs):
->      cmp_threads   hibernate(s)   resume(s)
->              3                           12.14          18.86
->              4                           12.28          17.48
->              5                           11.09          16.77
->              6                           11.08          16.44
-> With 5=E2=80=936 threads, resume latency improves by ~12% compared to 3 t=
-hreads.
-> But on low-core systems,
-> more threads may cause contention. Making it configurable allows
-> integrators to balance performance
->   and CPU usage across different hardware without recompiling the kernel.
 
-So please add this information to the changelog of the patch and resend it.
+> Yes with the P3T1085UK Arduino Shield Evaluation kit (logs can be found at [0]).
 
-Thanks!
+Cool. Since it reports two temperatures, it must be my modified version
+of the shield :)
+
 
