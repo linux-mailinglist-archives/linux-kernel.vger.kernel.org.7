@@ -1,129 +1,127 @@
-Return-Path: <linux-kernel+bounces-801365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82BB7B44439
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:22:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA76BB4443D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A0F2567D12
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:22:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5651CC174A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489AB30DEB8;
-	Thu,  4 Sep 2025 17:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2077D30AAAF;
+	Thu,  4 Sep 2025 17:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="HWnbsygc"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (1024-bit key) header.d=anirudhrb.com header.i=anirudh@anirudhrb.com header.b="dQc40yqK"
+Received: from sender4-of-o54.zoho.com (sender4-of-o54.zoho.com [136.143.188.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCB1292938;
-	Thu,  4 Sep 2025 17:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757006521; cv=none; b=Zr8RaDzTxUS2t79mSsrFRigrO/VEhWIZYn+zfLfssQKuOuuYUbsXMrqB5Xpu7F7mbDJA4M4kuILq/6xKZRu5vRL53QWRnnRYNaU8KJIMhmV4M2PyMEifKj0ItPiQ9OdjPcnEOD4aKJFtgzMlL8wuPQzXlAhBwNHK3rtxfnyVL00=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757006521; c=relaxed/simple;
-	bh=ySe/GcDqsh1QnW43IVRLeuFm1LRq2D8d6GaeGrKHO1U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sZF6PSZhQPpgLUZu0tzw5GxOavGVrZKoRuoZVoLZ4dIBnr/EFSoIZn4ohfhMI6jlA4219HAaqpFN5WauXFLBMPPhiPhnPCmG0e4jj/wlnBO7ngbZV8cEn5e409W7wh2frS06bIxtLmyNItWTCgirGWFJt/Vugq0UCO53PfykDy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=HWnbsygc; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=WJb7aKj7ZvDj0/bNVa1rqqK/4QiAd4WEQvK9Le3i/Rc=; t=1757006518;
-	x=1757611318; b=HWnbsygcVVbuTza52TJd1T/jwcy1Ob8PGERQ2bgrI+9kjaETPiIXTPH4V9kh6
-	YyHidUdxxeV0a75LMGo1Z5iqbFSg5FHW2WJe1ZsU0GQIgSAs7/whZxgKi2DQ31HSUYwQ8vHbY90g7
-	JcI+8Bu97shi3DIQM8ggjcAt0NzNB1Fou3wH+ttRzUXpIMmI993Mu1IpIakFGGKY4oHwqH+bsXGvB
-	4axyzprAODvTgjLhF9mFRCVcF6J9PKjDZQHdIi/mi/NRmbU5Ca53YIuFf5xof8Pgoq8V+z466YIQZ
-	0JRmr7ZPXO02EJZiCjFeP1JR0ceE8Q6H69kh00jItFKRPWawMQ==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1uuDel-00000004AOH-22ty; Thu, 04 Sep 2025 19:21:55 +0200
-Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1uuDel-00000001BjZ-10e9; Thu, 04 Sep 2025 19:21:55 +0200
-Message-ID: <2e8a8a058e7451174ddbf3ec2a0a1d7728c45210.camel@physik.fu-berlin.de>
-Subject: Re: Fix accurate exception reporting in SPARC assembly
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Andreas Larsson <andreas@gaisler.com>, Michael Karcher
-	 <kernel@mkarcher.dialup.fu-berlin.de>, linux-kernel@vger.kernel.org
-Cc: sparclinux@vger.kernel.org, Anthony Yznaga <anthony.yznaga@oracle.com>
-Date: Thu, 04 Sep 2025 19:21:54 +0200
-In-Reply-To: <0253d6fe-dafe-492f-b7ad-12f98ba3c507@gaisler.com>
-References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
-	 <0253d6fe-dafe-492f-b7ad-12f98ba3c507@gaisler.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CE3EEAB;
+	Thu,  4 Sep 2025 17:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757006575; cv=pass; b=GQ1L2suR83lXwccoAmjUhnY1+YiZmn5ijNkGGmJKB8W8dPM46lLDRqlhmUqyOtFXDKp/xMNb6lrnzBcGmgrpieySxEFAxajG2YavCS/UXtNSybU092jKgea+2Z68ubu4jTLjfh3mGHLU0oCpnQjEEMewSjC4H5AKsqVdXqzPjy8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757006575; c=relaxed/simple;
+	bh=IXUhTyGSEq6cODsVKJKAvacHUbsTJvpdZAMsIzfQDnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L9jtGJapkz4bWYltEOI95SOG57bRELDJszwOXmGh1bctvUyXFOab6lDXSggInI7sXHYVUUIn6BDzTUPnKJR6SnTWM13o34uFxdqUHvxKWIwlGiOjth2Ftf+nPwn/ptFKW4DDWQc5WvCS3PIPn8XwldGjGSN+zojupiBmR73JyDs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=anirudhrb.com; spf=pass smtp.mailfrom=anirudhrb.com; dkim=pass (1024-bit key) header.d=anirudhrb.com header.i=anirudh@anirudhrb.com header.b=dQc40yqK; arc=pass smtp.client-ip=136.143.188.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=anirudhrb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anirudhrb.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757006535; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=JlrR3IwW1M98FTaE1uSA6CKsxK/BT2Y73sbxQIKPDKHPwvop5GvUZRvEiLqwB4N68QItpHNL3kcNjxgZuYXMGcfKMqsEmqAadKpKSRcUPGwOHTkVlakwHEvASxRTy+CUeM/L+dxjRirGl6AgsPEaSPSXc4I53YlY3EZjt1BYlNY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757006535; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=sug0CNElZw5SXr+EPiBghFae43QdyGzoVG7yd36m4G4=; 
+	b=iFovEAps1XPIkxJG/BKOXKaPGqjndlWs8aNwfgAgCKnE7NNUluIBF3i7NbSwNrisz78dj1L+wHrTZYSuGh0X4LwUFO//o2yamHLoTgc3eYARaJF4iV0fp0ZO+BYXmOkMaZVw91tfUZi3j6FbAYazY9A5EYZcRSQsUkl7DWCPZnE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=anirudhrb.com;
+	spf=pass  smtp.mailfrom=anirudh@anirudhrb.com;
+	dmarc=pass header.from=<anirudh@anirudhrb.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757006535;
+	s=zoho; d=anirudhrb.com; i=anirudh@anirudhrb.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=sug0CNElZw5SXr+EPiBghFae43QdyGzoVG7yd36m4G4=;
+	b=dQc40yqKrM9Z19oaZ+ppv9wvwdTxm1vAq+brKm1We5WQ1tSbcygG9fnutFY6/6k6
+	KE+xvXUqU1rsLqtFCTQtFi1PYpmuY+KT/ewHPvqztoz5DKGXgohZ+CYykFR2aI6I+iM
+	SVGgun8PIfK19KX3mzkQB9e7JHutnzZCMBpaHEnM=
+Received: by mx.zohomail.com with SMTPS id 175700653350928.19407257757507;
+	Thu, 4 Sep 2025 10:22:13 -0700 (PDT)
+Date: Thu, 4 Sep 2025 17:22:04 +0000
+From: Anirudh Rayabharam <anirudh@anirudhrb.com>
+To: Mukesh Rathor <mrathor@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	arnd@arndb.de
+Subject: Re: [PATCH v0 1/6] x86/hyperv: Rename guest shutdown functions
+Message-ID: <aLnKvGvTyowA_PMv@anirudh-surface.localdomain>
+References: <20250904021017.1628993-1-mrathor@linux.microsoft.com>
+ <20250904021017.1628993-2-mrathor@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250904021017.1628993-2-mrathor@linux.microsoft.com>
+X-ZohoMailClient: External
 
-Hi Andreas,
+On Wed, Sep 03, 2025 at 07:10:12PM -0700, Mukesh Rathor wrote:
+> This commit renames hv_machine_crash_shutdown to more appropriate
 
-On Thu, 2025-09-04 at 15:49 +0200, Andreas Larsson wrote:
-> On 2025-08-26 18:03, Michael Karcher wrote:
-> > In 2018, David Miller implemented accurate exception reporting in
-> > copy_from_user and copy_to_user by handling exceptions on each load
-> > or store instruction that accesses userspace memory and calculating
-> > the remaining bytes from the processor context. As issues with
-> > transparent huge page support and folio support in ext4 were due
-> > to a bogus return value from copy_from_user, I wrote a comprehensive
-> > testsuite for the generic variant, and the machine-specific variants
-> > for UltraSPARC I/II, UltraSPARC III, Niagara, Niagara 2/3 and
-> > Niagara 4, see
-> >=20
-> > https://github.com/karcherm/sparc-cfu-bug-reproducer
-> >=20
-> > despite the name of the project, it does not only test copy_from_user,
-> > but also copy_to_user, and it also contains fixes to a very small amoun=
-t
-> > of exception handler references that were calculating the result in
-> > a wrong way.
-> >=20
-> > For UltraSPARC III, I chose to adjust the memcpy code itself instead of
-> > adding complexity to multiple exception handlers. That fix has already
-> > been tested to fix stability issues observed by Adrian Glaubitz which
-> > kicked of the investigation. On all other architectures, the changes
-> > are just to the exception handlers.
->=20
-> Hi Michael,
->=20
-> Thank you very much for this series as well as the followup patch for M7!
->=20
-> This cover letter for this series gives good contextual information for
-> the series, but when looking at the commit message for a single patch in
-> isolation it is not clear at a glance what is being fixed. Do you think
-> you could put in a short description in each patch in this series, and
-> also in the followup M7 patch, on what it is doing and what it is
-> solving?
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html
 
-FWIW, Michael is just waiting for a pending test on a SPARC T1 CPU which
-would test patch 3/4 which fixes the Niagara-specific implementation.
+Please describe your changes in imperative mood. For e.g.:
 
-Results should be posted today or tomorrow.
+“make xyzzy do frotz” instead of “[This patch] makes xyzzy do frotz”
 
-Adrian
+Please fix this for all the patches in this series.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Thanks,
+Anirudh.
+
+> hv_guest_crash_shutdown and makes it applicable to guests only. This
+> in preparation for the subsequent hypervisor root/dom0 crash support
+> patches.
+> 
+> Signed-off-by: Mukesh Rathor <mrathor@linux.microsoft.com>
+> ---
+>  arch/x86/kernel/cpu/mshyperv.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+> index b8caf78c4336..f5d76d854d39 100644
+> --- a/arch/x86/kernel/cpu/mshyperv.c
+> +++ b/arch/x86/kernel/cpu/mshyperv.c
+> @@ -237,7 +237,7 @@ static void hv_machine_shutdown(void)
+>  #endif /* CONFIG_KEXEC_CORE */
+>  
+>  #ifdef CONFIG_CRASH_DUMP
+> -static void hv_machine_crash_shutdown(struct pt_regs *regs)
+> +static void hv_guest_crash_shutdown(struct pt_regs *regs)
+>  {
+>  	if (hv_crash_handler)
+>  		hv_crash_handler(regs);
+> @@ -824,7 +824,8 @@ static void __init ms_hyperv_init_platform(void)
+>  	machine_ops.shutdown = hv_machine_shutdown;
+>  #endif
+>  #if defined(CONFIG_CRASH_DUMP)
+> -	machine_ops.crash_shutdown = hv_machine_crash_shutdown;
+> +	if (!hv_root_partition)
+> +		machine_ops.crash_shutdown = hv_guest_crash_shutdown;
+>  #endif
+>  #endif
+>  	/*
+> -- 
+> 2.36.1.vfs.0.0
+> 
 
