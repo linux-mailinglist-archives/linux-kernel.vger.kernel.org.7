@@ -1,231 +1,176 @@
-Return-Path: <linux-kernel+bounces-801672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EF20B44897
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:33:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150CAB44899
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E0991CC169A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:33:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3F03AA14AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705A629A30E;
-	Thu,  4 Sep 2025 21:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B542C1585;
+	Thu,  4 Sep 2025 21:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xp/KtA/e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="skSKxo/0"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F3A2C032E
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 21:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359F1295516
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 21:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757021587; cv=none; b=CK7xAzwvxDUbOKUdG5LXoXUBWyYDyDE8rOmKkmbcHx4Cli8lvainBXbaMXsrLCo0YhQOYZ/lCYH2dXSx0edyBuzbh6l3n8/wed1zN4q//VFpJQ/lZYDx0KZNAZfHEvLO7p/OgjzJj5hHQq38K3KdVDKYkuLcPmN3o+sPLRnI69w=
+	t=1757021618; cv=none; b=C/ZYl5ZejemvOyYPbuyCUt/6dauPmTYyriZhOdPAEmE804INA6mOP4WW0CYsUfeor30pgZQiRFwSc0S8Zx2pf7NejjVYv3a97g0MHbTZ5s8R7LBPh36z3gl8ndfW3K4yanK6fNTCh0WSy+CgWh39ISk74mCFB+XGhWCoqSHIlzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757021587; c=relaxed/simple;
-	bh=9MiI5ZvuCO1wq15mMD/fHkYQx414pGpbtnQ0zoGU7d8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nMKVGrsZCcloJxkRMgzJhMCPd5QRRXODKBZpaeW5Gkp2fpgGc1Q/dKY3Y144R/eH5cJIjkHBXUy5hIvUFxqQLFFbsVEGGC0ItY+FUjbheYIWJc3WtBkIa57x1pmJFRyDMHNwVT/pk3XVGCLWpnIHP/Mg39am8lJq7OrqYAA/e74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xp/KtA/e; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757021585;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G12ZvoIGncdc5q9Oz1isjoS1D9PWqRfwj3EJGyQfxdc=;
-	b=Xp/KtA/eyk3YDRLcUOr5SnITUMJzCWutnkLG7kPdjGAR++Kl5AqHcSLKsTNysctANVBU0z
-	DIMEUKU7cKXT/xxmY5+vnYuepxrnG5RuKVUbn9HzwGzzT7qEUGDLIUp6UfFoJtazDO4CVu
-	NpsuSj3LorBFuh0CVIEkHLKHMXfXUZA=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-630-KQfXbXJaP_68DDBX-vmtYQ-1; Thu, 04 Sep 2025 17:33:03 -0400
-X-MC-Unique: KQfXbXJaP_68DDBX-vmtYQ-1
-X-Mimecast-MFC-AGG-ID: KQfXbXJaP_68DDBX-vmtYQ_1757021582
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3dabec38299so889255f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 14:33:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757021582; x=1757626382;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1757021618; c=relaxed/simple;
+	bh=PqVLHo5CPSR85HHC5DHtcCHy8ewqDlEjk0LgdeCzP3w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sMqDna/ed56YMd7xNA4W5VU75goMFFjv/ZG+Q0uFQZbYxgrF6QhJ+FIC9QigxK08P+oUUhx+zzRCunCQIDhaCfoQX22mMJkDsaFpL+EAKysxe/JCzbKWhQFwvvfDQyMujzq1vOTHwftuK36SOr1716Pdq/oLiBMXfTlLu1as764=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=skSKxo/0; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24cf5bcfb60so45705ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 14:33:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757021616; x=1757626416; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=G12ZvoIGncdc5q9Oz1isjoS1D9PWqRfwj3EJGyQfxdc=;
-        b=A++xga00aAUp+GfSCJsiJIedYgujpQEic6dbY2iMqc11DQ9R26gMzjPIEG5BOcD2Um
-         pdCr3lnCQSc8jG1mtIE6jaJeUBJH3am+zzs4p4sRRt6B9MpMLiCMZj0Lfloij49RIh0F
-         5uT1bPnYk8JUasb418snA2iKfJIe5ENBes4h732iVsg3pDyyhELDznQYx+PxaI9TnEu+
-         PEn3g0EFw50vD/+4BqQPUaFZRjBfWZcoW1z5CdIggh5I4WLJyQ4FOgrMZgvClDn50Q98
-         KbybIvHCI39oRS9S9ntuoimouFCItuCqr/fUyC2ED75YKIvb5DpSzP5c8aEasaeDa8Ql
-         QPwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXRfoMRL4geN1jJnghX+LJSzP8g0SIN5w9S6BshP5uIS5ar47UMMy8SFKqPTgUaXTqASOxnVhNkrwwKxi8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSclgphiPke137BiyMURgpPh7uAf4hgkatYzYg2KpEmwLxvRkx
-	Ns5F/aoXyODqT7CU/K6dSDE5dsm6nCj4tDTOhI8AwViOAmPiMLIRaGKcWGswKFVyA3QEXkMdaj8
-	1zz97fICgRrcwS8f8nMJN6O/HqRpKBVWmne5wn0b+/Zs0WwyeBgai815CoHIaBGjZyA==
-X-Gm-Gg: ASbGncuoY3UKz5IHdPOgzzE9y2lvBHFgtdUY0+M3lcFSimQ71wCn1Iel+wK591ixzA5
-	U4IxEjVVnbphm7sQ9pdIhO61hcRS7xKlElqkXVMWe8086vyPoVf7x9CtmrhomNnulA6lCjHt42g
-	XwRFqQEPr6A023lOiuXlXO4Cgk8UZu/HAZk2X800VQ5aRijUPna2nV8RZrBKccwr14LKPnc/vD8
-	uRrR2SIZlbqfZZt7axF4mavla+JHwwG+HkxUPk7J6RM6KtcKWzvCkMvc0bYdbBYTGReKijWD985
-	rmBmjq7uM7G3iDnjCRDaf09Qtk4I1t4m9xsD+Mrp3FDwqoKknhiun7l5r14YHhBIzw==
-X-Received: by 2002:a05:6000:2703:b0:3d3:6525:e35a with SMTP id ffacd0b85a97d-3d36525e8edmr9572274f8f.4.1757021581606;
-        Thu, 04 Sep 2025 14:33:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFfw63CZFozF8s+C6cWdSgHCPxbPiLm75XGfmKwvUvkmtLdSrYut8mMraqSLccxduV85Qv9AQ==
-X-Received: by 2002:a05:6000:2703:b0:3d3:6525:e35a with SMTP id ffacd0b85a97d-3d36525e8edmr9572266f8f.4.1757021581097;
-        Thu, 04 Sep 2025 14:33:01 -0700 (PDT)
-Received: from redhat.com (93-51-222-138.ip268.fastwebnet.it. [93.51.222.138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e50e30asm302706375e9.24.2025.09.04.14.33.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 14:33:00 -0700 (PDT)
-Date: Thu, 4 Sep 2025 17:32:58 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] virtio_net: Fix alignment and avoid
- -Wflex-array-member-not-at-end warning
-Message-ID: <20250904173150-mutt-send-email-mst@kernel.org>
-References: <aLiYrQGdGmaDTtLF@kspp>
+        bh=6zG76W1jomTU5mpaT41jEFnyrs6Anr9kT/wRqoSffro=;
+        b=skSKxo/0CNUr/rlxUl5R1ZShJnPzHPUcR7N9RkX0q9FoXnoPdMpYqgEQ7sgz2EepHd
+         YDzslYLk44vGzcUMzp2j+OI+ATJVsI+1+wKu6MIA+wQXtOWjvhzlp/32kozGtYAy8QCf
+         bMAVWsfWXAuDzblK9N36/KmUqlqOkqM16rYhXjAjxWxzzD3NT+az1jD+TmuL/t1Zt+U5
+         JuA/AAt6KZj5PEhjfeX9XW7gLwFmkYqcNGvxKufdi1nZbUVjn9ZNE44Eii5OVuKU6XCW
+         mYW64zvxojkr2JGAFTbjvFMxz6NuDca62ZwOdB0404KRyTkIPhq3lNREn/YDbCB10cXL
+         Hm0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757021616; x=1757626416;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6zG76W1jomTU5mpaT41jEFnyrs6Anr9kT/wRqoSffro=;
+        b=MaR2XbBSnlIO/8YxwFe/Q2OqLa/1RPd+2ZNAmRXNXj/3gOTgl7KzCBbKrIY46aaZRY
+         bxx0WoJ6mrkZMHRj37vXpPgpHiIksJr53SlYseI0rHsDLLRslDzLepE9Lx8YPHmMWZvn
+         umUp1vkhnarP5gNsJrBmef4MQ94WAGRmXUwUpgPX5+m8OMxDRkHzpqNVYcrU94nZTUSA
+         1XbQ2V1MQBeYLAXyA6OLe9Pxw9i+piN1CuDarE0/kq8FJgsLCtgroFBjj7OfTZh8Ln4/
+         phNKs0ameMDy00h8+tbNt5xPuV9nRfjfkyi+trhQOD4RDSGstXLhmCaD01smMbe/PvY1
+         vzJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQwt7MXyCy5qrK9d4pg7jib1KGtS1lFPWBcMqNROBXoCmWgS8A7OGE+ojUm40t9CvK5GOKYlZHeim4eIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwovpDN4wwKyOmjLCBbRKqTKmbzxTGm86MMZ7RHG/U20vgNNnMT
+	Qi9C8yFHDVDDKYJqZYS6Xu9usdeRXd0nulSNbqWeZtmadK93Byq66N62pYQq16hdzDjNmyYxqnn
+	YVzaSYk6cOb13sG806izQtrrOj3J+Y7P8rcWlk6ig
+X-Gm-Gg: ASbGncv0BaSvlDpnu3zDSb6KIpb6S+uliTpCt2yCdMrO4Z0As4eOrsNt2onEJoHLlaW
+	JxgA3JgHLMVn4DFs1PULB7f3cAz6gvKNQsNI46rcl+FSZvth5BGdChHHzrFvOIA2ftWmXM/6ncT
+	5HMcUwB+mU9sQdLftlsE0w9E2QLfaf/TBOXLg/ax2UmnBRGW2ZmXdPPJE7JpbaFaPYUKoV8YRYQ
+	jbohAu5WjhSlgQLhpJM+XnWUgz0dP+u36NUzEM+z40KUphSz+sR3LA=
+X-Google-Smtp-Source: AGHT+IEAi1buQEt6c6lTvS9UBO9bvlQdRmjUWdOf0PquuTMedsYvCLBFG+qnF2Bhz7XgAVg01cR8YHV0rKomIqlJA68=
+X-Received: by 2002:a17:902:ea08:b0:234:bfa1:da3e with SMTP id
+ d9443c01a7336-24d3ae4107emr381405ad.5.1757021615914; Thu, 04 Sep 2025
+ 14:33:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLiYrQGdGmaDTtLF@kspp>
+References: <20250904174430.1414548-1-irogers@google.com> <20250904204117.GC4067720@noisy.programming.kicks-ass.net>
+ <20250904205924.GO4068168@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250904205924.GO4068168@noisy.programming.kicks-ass.net>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 4 Sep 2025 14:33:24 -0700
+X-Gm-Features: Ac12FXw6DScmpvcc6457h5dDGfQuEEAVlaaKR7yJzp_tmfqCgA-SjzzYwDjCYrk
+Message-ID: <CAP-5=fXneV5fawTncLH13p_8-9OAxwpTERXk5ty=8m0s8U1ANg@mail.gmail.com>
+Subject: Re: [PATCH v1] perf build: Revert "enable -fno-strict-aliasing"
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Eric Biggers <ebiggers@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 03, 2025 at 09:36:13PM +0200, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> Use the new TRAILING_OVERLAP() helper to fix the following warning:
-> 
-> drivers/net/virtio_net.c:429:46: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> This helper creates a union between a flexible-array member (FAM)
-> and a set of members that would otherwise follow it (in this case
-> `u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];`). This
-> overlays the trailing members (rss_hash_key_data) onto the FAM
-> (hash_key_data) while keeping the FAM and the start of MEMBERS aligned.
-> The static_assert() ensures this alignment remains, and it's
-> intentionally placed inmediately after `struct virtnet_info` (no
-> blank line in between).
-> 
-> Notice that due to tail padding in flexible `struct
-> virtio_net_rss_config_trailer`, `rss_trailer.hash_key_data`
-> (at offset 83 in struct virtnet_info) and `rss_hash_key_data` (at
-> offset 84 in struct virtnet_info) are misaligned by one byte. See
-> below:
-> 
-> struct virtio_net_rss_config_trailer {
->         __le16                     max_tx_vq;            /*     0     2 */
->         __u8                       hash_key_length;      /*     2     1 */
->         __u8                       hash_key_data[];      /*     3     0 */
-> 
->         /* size: 4, cachelines: 1, members: 3 */
->         /* padding: 1 */
->         /* last cacheline: 4 bytes */
-> };
-> 
-> struct virtnet_info {
-> ...
->         struct virtio_net_rss_config_trailer rss_trailer; /*    80     4 */
-> 
->         /* XXX last struct has 1 byte of padding */
-> 
->         u8                         rss_hash_key_data[40]; /*    84    40 */
-> ...
->         /* size: 832, cachelines: 13, members: 48 */
->         /* sum members: 801, holes: 8, sum holes: 31 */
->         /* paddings: 2, sum paddings: 5 */
-> };
-> 
-> After changes, those members are correctly aligned at offset 795:
-> 
-> struct virtnet_info {
-> ...
->         union {
->                 struct virtio_net_rss_config_trailer rss_trailer; /*   792     4 */
->                 struct {
->                         unsigned char __offset_to_hash_key_data[3]; /*   792     3 */
->                         u8         rss_hash_key_data[40]; /*   795    40 */
->                 };                                       /*   792    43 */
->         };                                               /*   792    44 */
-> ...
->         /* size: 840, cachelines: 14, members: 47 */
->         /* sum members: 801, holes: 8, sum holes: 35 */
->         /* padding: 4 */
->         /* paddings: 1, sum paddings: 4 */
->         /* last cacheline: 8 bytes */
-> };
-> 
-> As a last note `struct virtio_net_rss_config_hdr *rss_hdr;` is also
-> moved to the end, since it seems those three members should stick
-> around together. :)
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
-> 
-> This should probably include the following tag:
-> 
-> 	Fixes: ed3100e90d0d ("virtio_net: Use new RSS config structs")
-> 
-> but I'd like to hear some feedback, first.
-> 
-> Thanks!
-> 
+On Thu, Sep 4, 2025 at 1:59=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
+> wrote:
+>
+> On Thu, Sep 04, 2025 at 10:41:17PM +0200, Peter Zijlstra wrote:
+> > On Thu, Sep 04, 2025 at 10:44:30AM -0700, Ian Rogers wrote:
+> > > This reverts commit 55a18d2f3ff7 ("perf build: enable
+> > > -fno-strict-aliasing"). With (get|put)_unaligned_* using memcpy
+> > > -fno-strict-aliasing is no longer necessary as memcpys are assumed to
+> > > possibly alias.
+> >
+> > I don't think this is a good idea. Much of tools/ includes kernel
+> > headers and various kernel code, all of which is written in the
+> > understanding that this (often called broken) C language feature does
+> > not exist.
+> >
+> > As such, I would strongly suggest all of tools is built with
+> > -fno-strict-aliasing.
+>
+> Similarly I would strongly suggest having -fwrapv on all code that
+> includes kernel headers.
 
+Given we can build and run with sanitizers, ubsan covers fwrapv and
+type sanitizer is in development to detect strict aliasing violations.
+So we can have correct code without hamstringing the compiler.
 
-I would add:
+There's lots wrong with C, a particular favorite of mine is:
+```
+void foo(const int *p) {
+   int x =3D *p;
+   if (x =3D=3D 10) {
+      mutex_lock(&global_mutex);
+      if (x =3D=3D 10) {
+          // Code should always run ...
+```
+The compiler can save registers by re-loading from p in the code
+above, meaning the second "if" may not always run.
 
-as a result, the RSS key passed to the device is shifted by 1
-byte: the last byte is cut off, and instead a (possibly uninitialized) byte
-is added at the beginning.
+Anyway, the intent with adding -fno-strict-aliasing was that it was
+temporary as part of removing the libcrypto dependency and when the
+unaligned code landed we'd do this revert.
 
->  drivers/net/virtio_net.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 975bdc5dab84..f4964a18a214 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -425,9 +425,6 @@ struct virtnet_info {
->  	u16 rss_indir_table_size;
->  	u32 rss_hash_types_supported;
->  	u32 rss_hash_types_saved;
-> -	struct virtio_net_rss_config_hdr *rss_hdr;
-> -	struct virtio_net_rss_config_trailer rss_trailer;
-> -	u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];
->  
->  	/* Has control virtqueue */
->  	bool has_cvq;
-> @@ -493,7 +490,16 @@ struct virtnet_info {
->  	struct failover *failover;
->  
->  	u64 device_stats_cap;
-> +
-> +	struct virtio_net_rss_config_hdr *rss_hdr;
-> +
-> +	/* Must be last --ends in a flexible-array member. */
-> +	TRAILING_OVERLAP(struct virtio_net_rss_config_trailer, rss_trailer, hash_key_data,
-> +		u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];
-> +	);
->  };
-> +static_assert(offsetof(struct virtnet_info, rss_trailer.hash_key_data) ==
-> +	      offsetof(struct virtnet_info, rss_hash_key_data));
->  
->  struct padded_vnet_hdr {
->  	struct virtio_net_hdr_v1_hash hdr;
-> -- 
-> 2.43.0
+Wrt the kernel headers, I think we may be better breaking away from
+them. I can see sense in using stdint types rather than __u32 or u32,
+using stdatomic.h rather than linux/atomic.h, etc. This wasn't an
+option 15 years ago, but things have progressed a little since then.
 
+Thanks,
+Ian
+
+> > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > ---
+> > > This patch needs:
+> > > https://lore.kernel.org/lkml/20250722215754.672330-1-irogers@google.c=
+om/
+> > > which have been merged into the tip timers/vdso branch.
+> > > ---
+> > >  tools/perf/Makefile.config | 4 ----
+> > >  1 file changed, 4 deletions(-)
+> > >
+> > > diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> > > index 5a5832ee7b53..306b8334b788 100644
+> > > --- a/tools/perf/Makefile.config
+> > > +++ b/tools/perf/Makefile.config
+> > > @@ -19,10 +19,6 @@ detected_var =3D $(shell echo "$(1)=3D$($(1))" >> =
+$(OUTPUT).config-detected)
+> > >  CFLAGS :=3D $(EXTRA_CFLAGS) $(filter-out -Wnested-externs,$(EXTRA_WA=
+RNINGS))
+> > >  HOSTCFLAGS :=3D $(filter-out -Wnested-externs,$(EXTRA_WARNINGS))
+> > >
+> > > -# This is required because the kernel is built with this and some of=
+ the code
+> > > -# borrowed from kernel headers depends on it, e.g. put_unaligned_*()=
+.
+> > > -CFLAGS +=3D -fno-strict-aliasing
+> > > -
+> > >  # Enabled Wthread-safety analysis for clang builds.
+> > >  ifeq ($(CC_NO_CLANG), 0)
+> > >    CFLAGS +=3D -Wthread-safety
+> > > --
+> > > 2.51.0.355.g5224444f11-goog
+> > >
 
